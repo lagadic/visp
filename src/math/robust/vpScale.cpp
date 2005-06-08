@@ -14,7 +14,7 @@
  */
 // ===================================================================
 
-
+#include <stdlib.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
 

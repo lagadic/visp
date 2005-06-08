@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRowVector.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpRowVector.cpp,v 1.2 2005-06-08 08:57:51 fspindle Exp $
  *
  * Description
  * ============
@@ -26,7 +26,7 @@
   \brief Definition of vpRowVector class member
 */
 
-
+#include <string.h>
 #include <stdlib.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpRowVector.h>
