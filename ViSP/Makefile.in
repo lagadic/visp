@@ -1,0 +1,129 @@
+SHELL=/bin/sh
+
+OS		= @OS@
+SUFFIX		= @SUFFIX@
+HOSTNAME	= @ac_hostname@
+VISP_HOME	= @VISP_HOME@
+VISP_DIR_INCLUDE= $(VISP_HOME)/src
+VISP_DIR_LIB	= $(VISP_HOME)/lib
+VISP_DIR_OBJ	= $(VISP_HOME)/.obj
+VISP_DIR_DEP	= $(VISP_HOME)/.dep
+VISP_LIB_PATH	= $(VISP_DIR_LIB)
+VISP_OBJ_PATH	= $(VISP_DIR_OBJ)/$(HOSTNAME)$(SUFFIX)
+VISP_DEP_PATH	= $(VISP_DIR_DEP)/$(HOSTNAME)$(SUFFIX)
+
+LIB		= $(VISP_LIB_PATH)/lib@VISP_LIBNAME@.a
+
+.DELETE_ON_ERROR:
+
+all install: src FORCE
+	cd test; $(MAKE) $@
+
+src: directory FORCE
+	cd include; $(MAKE) install
+	cd src; $(MAKE) install
+	$(MAKE) lib-link
+
+test: src FORCE
+	cd test; $(MAKE) install
+
+directory:
+	@if [ ! -d bin ] ;\
+	then \
+		echo "*" ; \
+		echo "* Creation of the bin directory..." ; \
+		echo "*" ; \
+		mkdir bin ; \
+	fi ;
+	@if [ ! -d lib ] ;\
+	then \
+		echo "*" ; \
+		echo "* Creation of the lib directory..." ; \
+		echo "*" ; \
+		mkdir lib ; \
+	fi ;
+
+clean:
+	rm -f *% */*%
+	rm -f *~ */*~
+	cd include; $(MAKE) $@
+	cd src; $(MAKE) $@
+	cd test; $(MAKE) $@
+	@for i in `find -type f -name *~ -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+
+uninstall:
+	cd include; $(MAKE) $@
+	cd src; $(MAKE) $@
+	cd test; $(MAKE) $@
+	rm -f $(VISP_DEP_PATH)/*.P
+	rm -f $(VISP_OBJ_PATH)/*.o
+	rm -f $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
+	@for i in `find -type f -name Makefile.in -print | sort` ; do\
+		filetoremove=`echo "$$i" | sed -e "s;Makefile.in;Makefile;g"`;\
+		rm -f $${filetoremove};\
+		echo "rm -f " $${filetoremove};\
+	done
+	@for i in `find -type f -name build.mk.in -print | sort` ; do\
+		filetoremove=`echo "$$i" | sed -e "s;build.mk.in;build.mk;g"`;\
+		rm -f $${filetoremove};\
+		echo "rm -f " $${filetoremove};\
+	done
+	@for i in `find -type f -name vpConfig.h.in -print | sort` ; do\
+		filetoremove=`echo "$$i" | sed -e "s;vpConfig.h.in;vpConfig.h;g"`;\
+		rm -f $${filetoremove};\
+		echo "rm -f " $${filetoremove};\
+	done
+	@for i in `find -type f -name config-doxygen.in -print | sort` ; do\
+		filetoremove=`echo "$$i" | sed -e "s;config-doxygen.in;config-doxygen;g"`;\
+		rm -f $${filetoremove};\
+		echo "rm -f " $${filetoremove};\
+	done
+
+
+uninstallall:
+	$(MAKE) clean;
+	$(MAKE) uninstall;
+	rm -f config.log config.status
+	rm -rf $(VISP_DIR_DEP)
+	rm -rf $(VISP_DIR_OBJ)
+	rm -rf lib/*
+	rm -rf doc/html
+	@for i in `find -type f -name .inslog2 -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+	@for i in `find -type f -name .depend -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+	@for i in `find -type f -name tca.* -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+	@for i in `find -type d -name pchdir -print | sort` ; do\
+		rm -fr $$i;\
+		echo "rm -fr " $$i;\
+	done
+	@for i in `find -type f -name *.d -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+	@for i in `find -type f -name *.exe -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+
+html-doc:
+	@echo "html documentation creation..."
+	cd doc; /local/soft/doxygen-1.4.2/bin/doxygen config-doxygen
+#	cp src/doc/index.html doc/html
+
+
+lib-link:
+	rm -f $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
+	ln -s $(LIB) $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
+
+FORCE:

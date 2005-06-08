@@ -1,0 +1,50 @@
+
+
+SRC_REP =  math \
+	servo-afma6 \
+	servo-simulation  \
+	feature \
+	pose \
+	image \
+	tracking \
+	grabber \
+	model-based-tracking \
+	simulator \
+	homography
+
+
+all install uninstall:
+	@for i in $(SRC_REP);\
+	do \
+		if [ -d $$i ] ;\
+		then \
+			echo "*" ; \
+			echo "* cd $$i ; $(MAKE) $@" ; \
+			echo "*" ; \
+			( cd $$i; $(MAKE) $@ ) ;\
+			echo "" ; \
+			continue; \
+		fi ;\
+		echo "Must be in a directory." ;\
+	done
+	@echo ""
+
+
+clean:
+	rm -f *~
+	rm -f *%
+	@for i in $(SRC_REP);\
+	do \
+		if [ -d $$i ] ;\
+		then \
+			echo "*" ; \
+			echo "* cd $$i ; $(MAKE) $@" ; \
+			echo "*" ; \
+			( cd $$i; $(MAKE) $@ ) ;\
+			echo "" ; \
+			continue; \
+		fi ;\
+		echo "Must be in a directory." ;\
+	done
+	@echo ""
+

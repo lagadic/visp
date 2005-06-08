@@ -1,0 +1,61 @@
+/*! \page changes-1.6.2.html
+
+<h1 align="center">
+Change notes for ViSP 1.6.2
+</h1><br clear="all">
+
+\latexonly
+\label{changes-1.6.2}
+\endlatexonly
+
+<br>
+
+This file describes the changes between ViSP 1.6.1 and 1.6.2.
+
+<h3>General</h3>
+
+<ul>
+<li> Compatibily Solaris/Linux in CDisplay
+</ul>
+
+<h3>Library</h3>
+
+<ul> 
+
+<li>Change the name of the CColor class to CRGBa
+<li>Modify Init(CPoint, CPoint CPoint) in CPlane
+<li>New Features:
+  - New Frame Grabber class CVideo4Linux
+  - New Frame Grabber class CICcompLx2 (a driver for the ICcomp Imaging Technology framegrabber under for Linux 2.4.x)
+  - Display 32 bits images for CDisplayX
+  . 
+<li>New tools:
+  - Calibration tools
+  .
+
+</ul>
+
+<h3>Examples</h3>
+
+<ul> 
+
+<li>Add new example programs.
+  - testJPG.cpp: Test the JPG image io interface
+  - testPNG.cpp: Test the PNG image io interface
+  - ComputePose.cpp: HowTo for the pose computation class
+  .
+</ul>
+
+<h3>Documentation</h3>
+
+<ul> 
+
+<li> Comment in CPlane (no previous comments)
+<li> Comment in CImage (no previous comments)
+<li> Comment in CCamera (no previous comments)
+
+</ul>
+
+
+
+*/

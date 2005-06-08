@@ -1,0 +1,45 @@
+@build_mk@
+
+
+SOURCES		= \
+	test1ServoPoint.cpp \
+	test2ServoPoint.cpp \
+	test3ServoPoint.cpp \
+	testServo4Points.cpp \
+	\
+	testServoSphere1.cpp \
+	testServoCircle1.cpp \
+	testServoCircle2.cpp \
+	\
+	testServoLine1.cpp \
+	\
+	testServoCylinder1.cpp \
+	\
+	testServo3dPoint.cpp \
+	testServoThetaU.cpp \
+	testServo3D.cpp \
+	\
+	testServo2D0.5.cpp \
+	test2Servo2D0.5.cpp \
+	\
+	testServo4PointsDisplay.cpp
+
+
+PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
+
+all install: directory  $(PROGS)
+
+@directory_mk@
+
+@bin_mk@
+
+$(VISP_LIBNAME):
+	cd $(VISP_DIR_SRC); $(MAKE)
+
+uninstall:
+	rm -f $(PROGS)
+	rm -f $(DEPFILES)
+
+@clean_mk@
+
+@depend_mk@

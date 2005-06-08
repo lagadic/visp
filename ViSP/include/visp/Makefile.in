@@ -1,0 +1,207 @@
+MATH	=  \
+	vpMath.h \
+	vpMatrix.h \
+	vpEulerVector.h \
+	vpTranslationVector.h \
+	vpRotationVector.h \
+	vpThetaUVector.h \
+	vpRxyzVector.h  \
+	vpRzyxVector.h \
+	vpRotationMatrix.h  \
+	vpTwistMatrix.h \
+	vpHomogeneousMatrix.h \
+	vpPoseVector.h \
+	vpColVector.h \
+	vpRowVector.h \
+	vpMatrixException.h  \
+	vpException.h \
+	vpScale.h \
+	vpRobust.h
+
+VISUALFEATURE =  \
+	vpFeatureException.h  \
+	\
+	vpBasicFeature.h \
+	vpGenericFeature.h \
+	\
+	vpFeaturePoint.h \
+	vpFeatureLine.h \
+	vpFeatureEllipse.h \
+	\
+	vpFeatureThetaU.h \
+	vpFeaturePoint3D.h \
+	vpFeatureTranslation.h \
+	\
+	vpFeatureDisplay.h
+
+
+SERVO =  \
+	vpServo.h  \
+	vpServoException.h \
+	\
+	vpServoDisplay.h \
+	vpServoData.h
+
+ROBOT = \
+	vpRobot.h  \
+	vpRobotException.h  \
+	vpRobotTemplate.h  \
+	\
+	vpRobotAfma6.h \
+	\
+	vpAfma6.h \
+	afma.h \
+	afma_main.h \
+	\
+	vpRobotCamera.h
+
+TOOLS = \
+	vpTime.h \
+	\
+	vpIoTools.h \
+	vpIoException.h \
+	vpParseArgv.h \
+	\
+	vpPlane.h
+
+DATASTRUCTURE =  \
+	vpList.h
+
+DEBUG =  \
+	vpDebug.h
+
+POSE = \
+	vpPoseException.h \
+	vpPose.h \
+	vpHomography.h
+
+IMAGE =  \
+	vpImage.h \
+	vpImageBase.t.cpp \
+	\
+	vpImageConvert.h \
+	\
+	vpImageException.h \
+	\
+	vpColor.h \
+	vpRGBa.h \
+	\
+	vpImageIo.h
+
+VIDEODEVICE = \
+	vpDisplay.h \
+	vpDisplayX.h	\
+	\
+	vpDisplayException.h
+
+GRABBER = \
+	vpFrameGrabber.h \
+	vpFrameGrabberException.h \
+	\
+	vpIcComp.h
+
+TRACKING = \
+	vpTrackingException.h \
+	\
+	vpTracker.h \
+	\
+	vpDot.h \
+	\
+	vpMe.h \
+	vpMeSite.h \
+	vpMeTracker.h \
+	vpMeLine.h \
+	vpMeEllipse.h \
+	\
+	vpFeatureBuilder.h
+
+
+FORWARDPROJECTION =  \
+	vpForwardProjection.h \
+	\
+	vpPoint.h \
+	vpLine.h \
+	vpCylinder.h \
+	vpSphere.h \
+	vpCircle.h
+
+SIMULATOR = \
+	vpProjectionDisplay.h	\
+	\
+	vpSimulatorException.h \
+	vpViewer.h \
+	vpSimulator.h
+
+CAMERA =  \
+	vpCameraParameters.h \
+	\
+	vpMeterPixelConversion.h \
+	vpPixelMeterConversion.h
+
+MODELBASEDTRACKING = \
+	\
+	artFace.h \
+	artAbstractFeature.h \
+	\
+	artPoint.h \
+	artLine.h \
+	artPolygon.h \
+	artDistance.h \
+	artSphere.h \
+	artCircle.h \
+	artCylinder.h \
+	artDistance.h \
+	artFDisk.h \
+	artFCylinder.h \
+	artFSphere.h \
+	\
+	artCylinderSimu.h \
+	artLineSimu.h \
+	artPointSimu.h \
+	artCircleSimu.h \
+	artSphereSimu.h \
+	\
+	artFeatureSet.h \
+	\
+	artDistanceCircle.h \
+	artDistanceLine.h \
+	artDistanceCylinder.h  \
+	artDistanceSphere.h \
+	\
+	artPlane.h \
+	\
+	artPixel.h \
+	artRobustTracking.h \
+	artXmlParser.h \
+	artCadModel.h \
+	artCadIVModel.h \
+	\
+	artViewer.h \
+	artMouseInitTracking.h  \
+	artTrackball.h
+
+
+HEADERS	  = \
+	$(MATH) $(VISUALFEATURE)  \
+	$(SERVO) $(DATASTRUCTURE) \
+	$(ROBOT) $(DEBUG) \
+	$(TOOLS) $(IMAGE) $(VIDEODEVICE) \
+	$(FORWARDPROJECTION) $(TRACKING) \
+	$(CAMERA) $(POSE) $(GRABBER) $(MODELBASEDTRACKING) \
+	$(SIMULATOR)
+
+SUFFIXES := .h
+
+all install: $(HEADERS)
+
+uninstall:
+	rm -f $(HEADERS)
+
+clean:
+	rm -f *~ *%
+
+#include files
+%.h: ;	ln -s `find ../../src -name $@|grep -v CVS` $@
+
+#template files
+%.t.cpp: ;	ln -s `find ../../src -name $@|grep -v CVS` $@

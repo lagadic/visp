@@ -1,0 +1,565 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#include <visp/vpMath.h>
+#include <visp/vpMatrix.h>
+#include <visp/vpColVector.h>
+
+// Exception
+#include <visp/vpException.h>
+#include <visp/vpMatrixException.h>
+
+// Debug trace
+#include <visp/vpDebug.h>
+
+#include <visp/vpConfig.h>
+
+
+/*---------------------------------------------------------------------
+
+SVD related functions
+
+---------------------------------------------------------------------*/
+
+
+static double pythag(double a, double b)
+{
+  double absa, absb;
+  absa = fabs(a);
+  absb = fabs(b);
+  if (absa > absb) return absa*sqrt(1.0+vpMath::sqr(absb/absa));
+  else return (absb == 0.0 ? 0.0 : absb*sqrt(1.0+vpMath::sqr(absa/absb)));
+}
+
+//static double maxarg1,maxarg2;
+#ifdef MAX
+#undef MAX
+#endif
+//#define MAX(a,b) (maxarg1=(a),maxarg2=(b),(maxarg1) > (maxarg2) ? (maxarg1) : (maxarg2))
+#define MAX(a,b) ( (a) > (b) ? (a) : (b))
+
+#ifdef SIGN
+#undef SIGN
+#endif
+#define SIGN(a,b) ((b) >= 0.0 ? fabs(a) : -fabs(a))
+
+/*!
+  \brief Singular value decomposition
+
+  Given a matrix A (m x n) this routine compute its sngular value decomposition
+  A = U W V^T. The matrice U replace A on output. the diagonal matrix of
+  singular value is output as a vector W (n).  The matrix V (not the transpose
+  V^T) is output as V (n x n)
+
+
+  \warning Destructive wrt A
+  \warning
+
+
+  \sa SVD for a more intuitive use
+
+
+  This function is extracted from the NRC
+
+*/
+
+#define  MAX_ITER_SVD 50
+
+void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
+{
+
+  int m = rowNum;
+  int n = colNum;
+
+  int flag,i,its,j,jj,k,l=0,nm=0;
+  double c,f,h,s,x,y,z;
+  double anorm=0.0,g=0.0,scale=0.0;
+
+  // So that the original NRC code (using 1..n indexing) can be used
+  // This should be considered as a temporary fix.
+  double **a = new double*[m+1];
+  double **v = new double*[n+1];
+  //  double **w = W.rowPtrs;
+  //  w--;
+
+  double *w = new double[n+1];
+  for (i=0;i<n;i++) w[i+1] = 0.0;
+
+  for (i=1;i<=m;i++) {
+    a[i] = this->rowPtrs[i-1]-1;
+  }
+  for (i=1;i<=n;i++) {
+    v[i] = V.rowPtrs[i-1]-1;
+  }
+
+
+  if (m < n)
+  {
+    ERROR_TRACE("\n\t\tSVDcmp: You must augment A with extra zero rows") ;
+    throw(vpMatrixException(vpMatrixException::matrixERR,
+			    "\n\t\tSVDcmp: You must augment A with "
+			    "extra zero rows")) ;
+  }
+  double* rv1=new double[n+1];
+
+  for (i=1;i<=n;i++) {
+    l=i+1;
+    rv1[i]=scale*g;
+    g=s=scale=0.0;
+    if (i <= m) {
+      for (k=i;k<=m;k++) scale += fabs(a[k][i]);
+      if (scale != 0.0) {
+	for (k=i;k<=m;k++) {
+	  a[k][i] /= scale;
+	  s += a[k][i]*a[k][i];
+	}
+	f=a[i][i];
+	g = -SIGN(sqrt(s),f);
+	h=f*g-s;
+	a[i][i]=f-g;
+	if (i != n) {
+	  for (j=l;j<=n;j++) {
+	    for (s=0.0,k=i;k<=m;k++) s += a[k][i]*a[k][j];
+	    f=s/h;
+	    for (k=i;k<=m;k++) a[k][j] += f*a[k][i];
+	  }
+	}
+	for (k=i;k<=m;k++) a[k][i] *= scale;
+      }
+    }
+    w[i]=scale*g;
+    g=s=scale=0.0;
+    if (i <= m && i != n) {
+      for (k=l;k<=n;k++) scale += fabs(a[i][k]);
+      if (scale != 0.0) {
+	for (k=l;k<=n;k++) {
+	  a[i][k] /= scale;
+	  s += a[i][k]*a[i][k];
+	}
+	f=a[i][l];
+	g = -SIGN(sqrt(s),f);
+	h=f*g-s;
+	a[i][l]=f-g;
+	for (k=l;k<=n;k++) rv1[k]=a[i][k]/h;
+	if (i != m) {
+	  for (j=l;j<=m;j++) {
+	    for (s=0.0,k=l;k<=n;k++) s += a[j][k]*a[i][k];
+	    for (k=l;k<=n;k++) a[j][k] += s*rv1[k];
+	  }
+	}
+	for (k=l;k<=n;k++) a[i][k] *= scale;
+      }
+    }
+    anorm=MAX(anorm,(fabs(w[i])+fabs(rv1[i])));
+  }
+  for (i=n;i>=1;i--) {
+    if (i < n) {
+      if (g) {
+	for (j=l;j<=n;j++)
+	  v[j][i]=(a[i][j]/a[i][l])/g;
+	for (j=l;j<=n;j++) {
+	  for (s=0.0,k=l;k<=n;k++) s += a[i][k]*v[k][j];
+	  for (k=l;k<=n;k++) v[k][j] += s*v[k][i];
+	}
+      }
+      for (j=l;j<=n;j++) v[i][j]=v[j][i]=0.0;
+    }
+    v[i][i]=1.0;
+    g=rv1[i];
+    l=i;
+  }
+  for (i=n;i>=1;i--) {
+    l=i+1;
+    g=w[i];
+    if (i < n)
+      for (j=l;j<=n;j++) a[i][j]=0.0;
+    if (g != 0.0) {
+      g=1.0/g;
+      if (i != n) {
+	for (j=l;j<=n;j++) {
+	  for (s=0.0,k=l;k<=m;k++) s += a[k][i]*a[k][j];
+	  f=(s/a[i][i])*g;
+	  for (k=i;k<=m;k++) a[k][j] += f*a[k][i];
+	}
+      }
+      for (j=i;j<=m;j++) a[j][i] *= g;
+    } else {
+      for (j=i;j<=m;j++) a[j][i]=0.0;
+    }
+    ++a[i][i];
+  }
+  for (k=n;k>=1;k--) {
+    for (its=1;its<=MAX_ITER_SVD;its++) {
+      flag=1;
+      for (l=k;l>=1;l--) {
+	nm=l-1;
+	if (fabs(rv1[l])+anorm == anorm) {
+	  flag=0;
+	  break;
+	}
+	if (fabs(w[nm])+anorm == anorm) break;
+      }
+      if (flag) {
+	c=0.0;
+	s=1.0;
+	for (i=l;i<=k;i++) {
+	  f=s*rv1[i];
+	  if (fabs(f)+anorm != anorm) {
+	    g=w[i];
+	    h=pythag(f,g);
+	    w[i]=h;
+	    h=1.0/h;
+	    c=g*h;
+	    s=(-f*h);
+	    for (j=1;j<=m;j++) {
+	      y=a[j][nm];
+	      z=a[j][i];
+	      a[j][nm]=y*c+z*s;
+	      a[j][i]=z*c-y*s;
+	    }
+	  }
+	}
+      }
+      z=w[k];
+      if (l == k) {
+	if (z < 0.0) {
+	  w[k] = -z;
+	  for (j=1;j<=n;j++) v[j][k]=(-v[j][k]);
+	}
+	break;
+      }
+      if (its == MAX_ITER_SVD)
+      {
+	ERROR_TRACE("\n\t\t No convergence in  SVDcmp ") ;
+	cout << *this <<endl ;
+	//	throw(vpMatrixException(vpMatrixException::matrixERR,
+	//				"\n\t\t No convergence in  SVDcmp ")) ;
+      }
+      x=w[l];
+      nm=k-1;
+      y=w[nm];
+      g=rv1[nm];
+      h=rv1[k];
+      f=((y-z)*(y+z)+(g-h)*(g+h))/(2.0*h*y);
+      g=pythag(f,1.0);
+      f=((x-z)*(x+z)+h*((y/(f+SIGN(g,f)))-h))/x;
+      c=s=1.0;
+      for (j=l;j<=nm;j++) {
+	i=j+1;
+	g=rv1[i];
+	y=w[i];
+	h=s*g;
+	g=c*g;
+	z=pythag(f,h);
+	rv1[j]=z;
+	c=f/z;
+	s=h/z;
+	f=x*c+g*s;
+	g=g*c-x*s;
+	h=y*s;
+	y=y*c;
+	for (jj=1;jj<=n;jj++) {
+	  x=v[jj][j];
+	  z=v[jj][i];
+	  v[jj][j]=x*c+z*s;
+	  v[jj][i]=z*c-x*s;
+	}
+	z=pythag(f,h);
+	w[j]=z;
+	if (z != 0.0) {
+	  z=1.0/z;
+	  c=f*z;
+	  s=h*z;
+	}
+	f=(c*g)+(s*y);
+	x=(c*y)-(s*g);
+	for (jj=1;jj<=m;jj++) {
+	  y=a[jj][j];
+	  z=a[jj][i];
+	  a[jj][j]=y*c+z*s;
+	  a[jj][i]=z*c-y*s;
+	}
+      }
+      rv1[l]=0.0;
+      rv1[k]=f;
+      w[k]=x;
+    }
+  }
+  for (i=0;i<n;i++) W[i] = w[i+1];
+
+
+  delete[] w;
+  delete[] rv1;
+  delete[] a;
+  delete[] v;
+
+}
+
+#undef SIGN
+#undef MAX
+#undef PYTHAG
+
+/*!
+  \brief solve a linear system AX = B using an SVD decomposition
+
+  Solves AX = B for a vector X, where A is am matrix m x n, w a vector (n) and
+  v a matrix (n x n) as returned by SVDcmp.  m and n are the dimensions of A,
+  and will be equal for square matrices. b (m) is the input right-hand
+  side. x (n) is the output solution vector. No input quantities are
+  destroyed, so the routine may be called sequentially with different b's.
+
+  \warning not to be used directly
+
+  \sa to be used with svd first
+
+  \sa solveBySVD and  SVDsolve for a more intuitive solution of AX=B problem
+*/
+
+
+void vpMatrix::SVBksb( const vpColVector& w,
+		       const vpMatrix& v,
+		       const vpColVector& b, vpColVector& x)
+{
+  int m = this->rowNum;
+  int n = this->colNum;
+  double** u = rowPtrs;
+
+  int jj,j,i;
+  double s,*tmp;
+
+  tmp=new double[n];
+  for (j=0;j<n;j++) {
+    s=0.0;
+    if (w[j])
+    {
+      for (i=0;i<m;i++) s += u[i][j]*b[i];
+      s /= w[j];
+    }
+    tmp[j]=s;
+  }
+  for (j=0;j<n;j++) {
+    s=0.0;
+    for (jj=0;jj<n;jj++) s += v[j][jj]*tmp[jj];
+    x[j]=s;
+  }
+  delete [] tmp;
+}
+
+#define TOL 1.0e-5
+
+/*!
+  \brief Compute the SVD decomposition
+
+  Computes the singular value decomposition of the matrix, U.
+  The contents of U are replaced such that A = U*S*V' where A represents
+  the initial value of U.
+  S is understood to have only room for ncol elements.
+  The matrix V may be NULL, in which case, no values are returned for V.
+
+  This SVD routine is based on pgs 30-48 of "Compact Numerical Methods
+  for Computers" by J.C. Nash (1990), used to compute the pseudoinverse.
+
+  Gary William Flake
+  http://research.yahoo.com/~flakeg/nodelib/html/
+  http://www.neci.nec.com/homepages/flake/nodelib/html/svd.html (not valid)
+
+  \sa SVDcmp and SVDksb
+*/
+
+#define TOLERANCE 1.0e-7
+
+static
+void svd_internal_use(double *U, double *S, double *V,
+		      int nRow, int nCol)
+{
+  int i, j, k, EstColRank, RotCount, SweepCount, slimit;
+  double eps, e2, tol, vt, p, x0, y0, q, r, c0, s0, d1, d2;
+
+  eps = TOLERANCE;
+  slimit = nCol / 4;
+  if (slimit < 6.0)
+    slimit = 6;
+  SweepCount = 0;
+  e2 = 10.0 * nRow * eps * eps;
+  tol = eps * .1;
+  EstColRank = nCol;
+  if(V)
+    for (i = 0; i < nCol; i++)
+      for (j = 0; j < nCol; j++) {
+	V[nCol * i + j] = 0.0;
+	V[nCol * i + i] = 1.0;
+      }
+  RotCount = EstColRank * (EstColRank - 1) / 2;
+  while (RotCount != 0 && SweepCount <= slimit) {
+    RotCount = EstColRank * (EstColRank - 1) / 2;
+    SweepCount++;
+    for (j = 0; j < EstColRank - 1; j++) {
+      for (k = j + 1; k < EstColRank; k++) {
+	p = q = r = 0.0;
+	for (i = 0; i < nRow; i++) {
+	  x0 = U[nCol * i + j];
+	  y0 = U[nCol * i + k];
+	  p += x0 * y0;
+	  q += x0 * x0;
+	  r += y0 * y0;
+	}
+	S[j] = q;
+	S[k] = r;
+	if (q >= r) {
+	  if (q <= e2 * S[0] || fabs(p) <= tol * q)
+	    RotCount--;
+	  else {
+	    p /= q;
+	    r = 1 - r / q;
+	    vt = sqrt(4 * p * p + r * r);
+	    c0 = sqrt(fabs(.5 * (1 + r / vt)));
+	    s0 = p / (vt * c0);
+	    for (i = 0; i < nRow; i++) {
+	      d1 = U[nCol * i + j];
+	      d2 = U[nCol * i + k];
+	      U[nCol * i + j] = d1 * c0 + d2 * s0;
+	      U[nCol * i + k] = -d1 * s0 + d2 * c0;
+	    }
+	    if(V)
+	      for (i = 0; i < nCol; i++) {
+		d1 = V[nCol * i + j];
+		d2 = V[nCol * i + k];
+		V[nCol * i + j] = d1 * c0 + d2 * s0;
+		V[nCol * i + k] = -d1 * s0 + d2 * c0;
+	      }
+	  }
+	}
+	else {
+	  p /= r;
+	  q = q / r - 1;
+	  vt = sqrt(4 * p * p + q * q);
+	  s0 = sqrt(fabs(.5 * (1 - q / vt)));
+	  if (p < 0)
+	    s0 = -s0;
+	  c0 = p / (vt * s0);
+	  for (i = 0; i < nRow; i++) {
+	    d1 = U[nCol * i + j];
+	    d2 = U[nCol * i + k];
+	    U[nCol * i + j] = d1 * c0 + d2 * s0;
+	    U[nCol * i + k] = -d1 * s0 + d2 * c0;
+	  }
+	  if(V)
+	    for (i = 0; i < nCol; i++) {
+	      d1 = V[nCol * i + j];
+	      d2 = V[nCol * i + k];
+	      V[nCol * i + j] = d1 * c0 + d2 * s0;
+	      V[nCol * i + k] = -d1 * s0 + d2 * c0;
+	    }
+	}
+      }
+    }
+    while (EstColRank >= 3 && S[(EstColRank - 1)] <= S[0] * tol + tol * tol)
+      EstColRank--;
+  }
+  for(i = 0; i < nCol; i++)
+    S[i] = sqrt(S[i]);
+  for(i = 0; i < nCol; i++)
+    for(j = 0; j < nRow; j++)
+      U[nCol * j + i] = U[nCol * j + i] / S[i];
+}
+
+/*!
+  \brief Singular value decomposition (other function)
+
+  Given a matrix A (m x n) this routine compute its singular value decomposition
+  A = U W V^T. The matrice U replace A on output. the diagonal matrix of
+  singular value is output as a vector W (n).  The matrix V (not the transpose
+  V^T) is output as V (n x n)
+
+
+  \warning Destructive wrt A
+  \warning
+
+
+  \sa SVD for a more intuitive use
+
+  This SVD routine is based on pgs 30-48 of "Compact Numerical Methods
+  for Computers" by J.C. Nash (1990), used to compute the pseudoinverse.
+
+  http://www.neci.nec.com/homepages/flake/nodelib/html/svd.html
+  http://labs.yahoo.com/~flakeg/nodelib/html/svd.html
+
+  \sa SVDcmp and SVDksb
+
+*/
+
+void vpMatrix::svdFlake(vpColVector &W, vpMatrix &V)
+{
+
+
+  svd_internal_use(data, W.data, V.data, getRows(), getCols());
+}
+
+
+
+
+
+#ifdef HAVE_LIBGSL
+#include<gsl/gsl_linalg.h>
+
+void
+vpMatrix::svdGsl(vpColVector& w, vpMatrix& v)
+{
+  // premier test avec la gsl 1. on recopie...
+  int i,j ;
+
+  int nc = getCols() ;
+  int nr = getRows() ;
+  gsl_matrix *A = gsl_matrix_alloc(nr, nc) ;
+
+  int Atda = A->tda ;
+  for (i=0 ; i < nr ; i++)
+  {
+    int k = i*Atda ;
+    for (j=0 ; j < nc ; j++)
+      A->data[k+j] = (*this)[i][j] ;
+  }
+  // gsl_matrix_set(A,i,j,(*this)[i][j]) ;
+
+  gsl_matrix *V = gsl_matrix_alloc(nc, nc) ;
+  gsl_vector *S = gsl_vector_alloc(nc) ;
+  gsl_vector *work = gsl_vector_alloc(nc) ;
+
+  // gsl_linalg_SV_decomp(A,V,S, work) ;
+  gsl_linalg_SV_decomp_jacobi(A,V,S) ;
+
+
+  //l'acces par gsl_matrix_get est tres lourd, voir si on peut pas faire
+  // autremement (surement !)
+
+  Atda = A->tda ;
+  for (i=0 ; i < nr ; i++)
+    for (j=0 ; j < nc ; j++)
+      (*this)[i][j] =  gsl_matrix_get(A,i,j) ;
+
+  int Vtda = V->tda ;
+  for (i=0 ; i < nc ; i++)
+  {
+    int k = i*Vtda ;
+    for (j=0 ; j < nc ; j++)
+      v[i][j] = V->data[k+j] ;
+  }
+
+  for (j=0 ; j < nc ; j++)
+    w[j] = gsl_vector_get(S,j) ;
+
+
+  gsl_matrix_free(V) ;
+  gsl_matrix_free(A) ;
+  gsl_vector_free(S) ;
+  gsl_vector_free(work) ;
+
+}
+#endif // # #GSL
+
+
+#undef TOL
+#undef TOLERANCE
+
+#undef MAX_ITER_SVD
+
+#endif // doxygen should skip this

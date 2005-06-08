@@ -1,0 +1,98 @@
+/*! \page about.html
+
+<h1 align="center">
+About ViSP
+</h1><br clear="all">
+
+\latexonly
+\label{about}
+\endlatexonly
+
+<br>
+
+<h2>Introduction</h2>
+
+ViSP is a modular software that allows fast development of visual servoing
+applications. Visual servoing consists in specifying a task as the regulation
+of a set of visual features.  Various issues have thus to be considered in the
+design of such applications: among these issues we find the control of robots
+motions, the modeling of the visual features, and the tracking of the visual
+measurements.  Our environment features a wide class of control skills as well
+as a library of real-time tracking processes and a simulation toolkit..
+
+
+ViSP is released in different versions: 
+
+<b>ViSP Free Edition</b> is the version of ViSP available for
+development of Free and Open Source software only (no commercial use). It is
+provided free of charge under the terms of the <a href=license.html>Q Public
+License</a>. It includes the source code and makefiles for Linux, Solaris,
+SunOS, and Irix. The latest version is available for 
+<a href=download.html>download</a>.
+	
+<b>ViSP Professional Edition</b> provided for commercial software
+development. This version also supports Windows 95 and NT. It permits
+traditional commercial software distribution and includes free upgrades and
+Technical Support Service. For questions regarding purchase and pricing
+(royalties) for the ViSP Professional Edition, please contact us at
+visp@irisa.fr
+
+<br>
+<br>
+<h2>ViSP authors</h2>
+
+ViSP was developed at <a href=http://www.irisa.fr/accueil/index_uk.htm>Irisa/INRIA Rennes</a> by the
+<a href=http://www.irisa.fr/lagadic/welcome-eng.html>Lagadic team</a>.
+
+The ViSP authors are <a href=http://www.irisa.fr/lagadic/team/Eric.Marchand-eng.html>Eric Marchand</a>, <a href=http://www.irisa.fr/lagadic/team/Fabien.Spindler-eng.html>Fabien Spindler</a> and <a href=http://www.irisa.fr/lagadic/team/Francois.Chaumette-eng.html>Francois.Chaumette</a>. The ViSP contributors are Andrew Comport, Nicolas Mansard, Anne-Sophie Tranchant... 
+
+This software was initially developed by <a
+href=http://www.irisa.fr/lagadic/team/Eric.Marchand-eng.html>Eric
+Marchand</a>. Then, it was optimized and extended by the contribution of the
+other authors.
+
+
+<br>
+<br>
+<h2>ViSP supported platforms</h2>
+
+The ViSP (Free and Professional Editions) library runs on Unix (Linux,
+SunOS, Solaris and Irix) operating systems.  Currently we actively support the
+following combinations of operating systems and compilers, where g++ can be
+either egcs 2.91.x, g++ 2.8.x, g++ 2.95.x, g++ 2.96, g++ 3.0.4, g++-3.1,
+g++-3.2.x, g++-3.3.x or g++-3.4.x and where CC can be either CC-5.x or
+CC-7.3.x.
+
+Moreover, the ViSP Professional Edition library runs on Windows 95/98/ME,
+Windows NT 4, Windows 2000 and Windows XP. ViSP/Windows can be used with
+Cygwin g++ 2.95.x or Microsoft Visual C++ 6.0. In that case, the distribution
+includes project files for Microsoft Visual C++ (.dsp files).
+
+<center>
+<table width=40%>
+<tr><td align=center><strong>Operating system</strong> <td align=center> <strong>Compiler</strong></tr>
+<tr><td>Linux <td> g++</tr>
+<tr><td>SunOS <td> g++</tr>
+<tr><td>Solaris <td> g++, CC</tr>
+<tr><td>Irix64 <td> g++, CC</tr>
+<tr><td>Windows <td> Visual C++, Cygwin g++</tr></table>
+</center>
+
+ViSP does not require any special libraries. To know more about the supported platforms see the <a href=platform-notes.html>platform notes</a>.
+
+
+<br>
+<br>
+<h2>Publication including results obtained with ViSP</h2>
+
+In any publication reporting results obtained with the ViSP software
+please include the following reference:
+
+E. Marchand. <b>ViSP: A generic software platform for visual servoing</b>  <i>Journal of </i>, 6(4):348-365, December 1995.
+
+and the acknowledgment:
+
+The authors thank the Lagadic research team at Irisa/Inria Rennes for the use of the ViSP software.
+
+
+  */	

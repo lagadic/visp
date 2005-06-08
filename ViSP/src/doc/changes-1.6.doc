@@ -1,0 +1,63 @@
+/*! \page changes-1.6.html
+
+<h1 align="center">
+Change notes for ViSP 1.6
+</h1><br clear="all">
+
+\latexonly
+\label{changes-1.6}
+\endlatexonly
+
+<br>
+
+This file describes the changes between ViSP 1.5 and 1.6.
+
+<h3>General</h3>
+
+
+<ul>
+
+<li> Compile with g++ 3.0 (for solaris, not tested yet for linux)
+<li> Test on Silicon Linux
+</ul>
+
+<h3>Library</h3>
+
+<ul> 
+
+<li>New SVD in CMatrix (no external change)
+  - Member templates suppressed in CImage (better for M$)
+  - Use CList in CSetFeatures. This is more reliable. (no external change)
+  . 
+
+<li>Features
+  - Read/Write PNM, PNG, JPG images. Add a ReadImage/WriteImage function.
+  - New class CVirtualImage for augmented reality and virtual image creation. It is based on Open Inventor.
+  - New basic features for 3D and 2D1/2 visual servoing (C3D, C2D15) 
+  - New Frame Grabber classes (CVideoFromDisk, CICCompNT...)
+  - New Display class (CDisplayNT)
+  . 
+
+</ul>
+
+<h3>Examples</h3>
+
+<ul> 
+
+<li>Some improvements.
+
+</ul>
+
+<h3>Documentation</h3>
+
+<ul> 
+
+<li>Creation of the online documentation.
+<li>Comment CMatrix class (no previous comments)
+<li>Comment CList class (no previous comments)
+
+</ul>
+
+
+
+*/

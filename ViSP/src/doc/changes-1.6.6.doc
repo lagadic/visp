@@ -1,0 +1,69 @@
+/*! \page changes-1.6.6.html
+
+<h1 align="center">
+Change notes for ViSP 1.6.6
+</h1><br clear="all">
+
+\latexonly
+\label{changes-1.6.6}
+\endlatexonly
+
+<br>
+
+This file describes the changes between ViSP 1.6.5 and 1.6.6.
+
+<h3>General</h3>
+
+<ul>
+<li> Portage dans CVS
+<li> Modification des Makefiles pour creer automatiquement les repertoires de lib,
+  installer et désinstaller
+<li> Ajout fonctionnalités V4L2
+<li> Ajout fonctionnalités IEEE1394
+<li> Ajout fonctionnalités gestion couleur YUV (4:4:4, 4:2:2, 4:1:1)
+</ul>
+
+<h3>Library</h3>
+
+<ul> 
+
+<li> Suppression des fuites mémoire dans les fonctions ReadPNG() et WritePNG()
+<li> Correction bug dans WritePNG()
+<li> Dans CDisplayX ajout de la couleur JAUNE.
+<li> Modification de la fonction CMatrix::SVD
+<li> Suppression des members templates dans la classe CImage
+  cela devrait permettre une meilleur compatibilite avec Windows
+<li> Ecriture d'une classe CVideoFromDisk permettant de lire
+  une sequence d'image PGM cette classe est heritee de la classe CFrameGrabber et ce comporte donc
+  comme tel.
+<li> Possibilite de lire/ecrire des images au format JPEG
+<li> Possibilite de lire/ecrire des images au format PNG
+<li> Possibilite de lire des images au format PPM
+<li> Ajout d'une classe pour l'asservissement visuel 2D 1/2 (C2D15)
+<li> Ajout d'une classe pour l'asservissement visuel 3D (C3D) 
+<li> Correction d'un bug dans ~CSetFeatures()
+<li> Correction d'un bug dans CServoSimu()
+
+</ul>
+
+<h3>Examples</h3>
+
+<ul> 
+
+<li>Ajout d'un exemple ServoPointAfma4.cpp d'asservissement visuel 2D sur l'Afma4 en utilisant:
+  - la carte ICcomp: classe CICcompLx2 ou
+  - la carte MVDelta: classe CVideo4Linux2
+  .
+</ul>
+
+<h3>Documentation</h3>
+
+<ul> 
+
+<li> Some improvements
+
+</ul>
+
+
+
+*/

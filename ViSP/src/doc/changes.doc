@@ -1,0 +1,45 @@
+/*! \page changes.html
+
+<h1 align="center">
+ViSP changes
+</h1><br clear="all">
+
+\latexonly
+\label{changes}
+\endlatexonly
+
+<br>
+
+ViSP is a continuously evolving library. Here are user-visible changes in
+the recent releases:
+
+1.6.8 (february 2005)<br> 
+Addition of new features.
+
+<a href=changes-1.6.7.html>1.6.7</a> (??)<br> 
+Addition of new features.
+
+<a href=changes-1.6.6.html>1.6.6</a> (August 2004)<br> 
+Addition of new features.
+
+1.6.5 <br> 
+No changes registered.
+
+1.6.4 <br> 
+No changes registered.
+
+1.6.3 <br> 
+No changes registered.
+
+<a href=changes-1.6.2.html>1.6.2</a> (2002)<br> 
+Addition of new features.
+
+1.6.1 <br> 
+No changes registered.
+
+<a href=changes-1.6.html>1.6</a> (May 2002)<br> 
+Bugfixes and improvements.
+
+<a href=changes-1.5.html>1.5</a> (April 2001)<br> 
+Bugfixes and improvements.
+*/

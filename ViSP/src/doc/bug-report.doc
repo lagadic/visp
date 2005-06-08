@@ -1,0 +1,30 @@
+/*! \page bug-report.html
+
+<h1 align="center">
+How-to report a bug
+</h1><br clear="all">
+
+\latexonly
+\label{bug-report}
+\endlatexonly
+
+<br> 
+
+If you find a bug in the ViSP software, we appreciate that you inform us in
+order that we can fix it.
+
+Before reporting a bug, please check the <a href=faq.html>FAQ</a> and <a href=platform-notes.html>Platform Notes</a> on our web site to check if the problem has already been addressed. 
+
+Please, include the following information in your bug report: 
+-  The name and version number of your compiler 
+-  The name and version number of your operating system 
+-  The version of the ViSP software you are using, and what configure options it was compiled with. 
+
+If the problem you are reporting is only visible during run-time, try to create
+a small test program that exhibits the problem when run. Often, such a program
+can be made by simply introducing some minor changes to one of the examples
+provided in the ViSP examples directory.
+
+Please send the bug report to <a mailto=visp@irisa.fr>visp@irisa.fr</a>.
+
+  */	
