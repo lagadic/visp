@@ -1,0 +1,64 @@
+AC3Db
+MATERIAL "ac3dmat3" rgb 1 0 0  amb 0.2 0.2 0.2  emis 0 0 0  spec 0.5 0.5 0.5  shi 10  trans 0
+MATERIAL "ac3dmat6" rgb 0 1 0  amb 0.2 0.2 0.2  emis 0 0 0  spec 0.5 0.5 0.5  shi 10  trans 0
+MATERIAL "ac3dmat9" rgb 0 0 1  amb 0.2 0.2 0.2  emis 0 0 0  spec 0.5 0.5 0.5  shi 10  trans 0
+OBJECT world
+kids 4
+OBJECT poly
+name "rect"
+loc 0 0.0491663 0.0498893
+crease 45.000000
+numvert 4
+0 -0.05 -0.05
+0 -0.05 0.05
+0 0.05 0.05
+0 0.05 -0.05
+numsurf 1
+SURF 0x20
+mat 0
+refs 4
+3 0 0
+2 1 0
+1 1 1
+0 0 1
+kids 0
+OBJECT poly
+name "rect"
+loc 0.0486206 0.0503449 0
+crease 45.000000
+numvert 4
+-0.05 -0.05 0
+0.05 -0.05 0
+0.05 0.05 0
+-0.05 0.05 0
+numsurf 1
+SURF 0x20
+mat 1
+refs 4
+3 0 0
+2 1 0
+1 1 1
+0 0 1
+kids 0
+OBJECT poly
+name "rect"
+loc 0.049352 0 0.0512501
+crease 45.000000
+numvert 4
+-0.05 0 -0.05
+0.05 0 -0.05
+0.05 0 0.05
+-0.05 0 0.05
+numsurf 1
+SURF 0x20
+mat 2
+refs 4
+3 0 0
+2 1 0
+1 1 1
+0 0 1
+kids 0
+OBJECT light
+name "light"
+loc 0.128967 0.154918 0.143178
+kids 0

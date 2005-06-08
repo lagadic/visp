@@ -1,0 +1,113 @@
+#Inventor V2.0 ascii
+
+Separator {
+	DEF EixX Separator {
+		DEF CilindreX Separator {
+			Material {
+				diffuseColor 1.0 1.0 1.0
+			}
+			Transform {
+				rotation 0 0 -1 1.5708
+			}
+			Transform {
+				translation 0 100 0
+			}
+			Cylinder {
+				radius 1
+				height 200
+			}
+		}
+		DEF ConX Separator {
+			Material {
+				diffuseColor 1.0 1.0 1.0
+			}
+			Transform {
+				rotation 0 0 -1 1.5708
+			}
+			Transform {
+				translation 0 210 0
+			}
+			Cone {
+				bottomRadius 10
+				height 20
+			}
+			Transform {
+				translation 0 15 0
+			}
+			Text2 {
+				string "X"
+			}
+		}
+	}
+	DEF EixY Separator {
+		DEF CilindreY Separator {
+			Material {
+				diffuseColor 1.0 1.0 1.0
+			}
+			Transform {
+				translation 0 100 0
+			}
+			Cylinder {
+				radius 1
+				height 200
+			}
+		}
+		DEF ConY Separator {
+			Material {
+				diffuseColor 1.0 1.0 1.0
+			}
+			Transform {
+				translation 0 210 0
+			}
+			Cone {
+				bottomRadius 10
+				height 20
+			}
+			Transform {
+				translation 0 15 0
+			}
+			Text2 {
+				string "Y"
+			}
+		}
+	}
+	DEF EixZ Separator {
+		DEF CilindreZ Separator {
+			Material {
+				diffuseColor 1.0 0.0 0.0
+			}
+			Transform {
+				rotation 1 0 0 1.5708
+			}
+			Transform {
+				translation 0 100 0
+			}
+			Cylinder {
+				radius 1
+				height 200
+			}
+		}
+		DEF ConZ Separator {
+			Material {
+				diffuseColor 1.0 0.0 0.0
+			}
+			Transform {
+				rotation 1 0 0 1.5708
+			}
+			Transform {
+				translation 0 210 0
+			}
+			Cone {
+				bottomRadius 10
+				height 20
+			}
+			Transform {
+				translation 0 15 0
+			}
+			Text2 {
+				string "Z"
+			}
+		}
+	}
+}
+

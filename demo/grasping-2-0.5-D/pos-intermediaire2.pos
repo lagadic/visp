@@ -1,0 +1,16 @@
+#AFMA6 - Position - Version 2.01
+# 
+# Septembre 2000 - Fabien SPINDLER
+# Fichier de sauvegarde des positions du robot cartésien.
+# 
+# Ordre des axes:
+# R: axes du robot cartésien
+#     - translation sur x
+#     - translation sur y
+#     - translation sur z
+#     - rotation autour de x
+#     - rotation autour de y
+#     - rotation autour de z
+# 
+
+R: 659.657 531.118 309.448 109.488 0.647654 -1.30017

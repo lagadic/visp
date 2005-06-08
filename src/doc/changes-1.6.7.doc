@@ -1,0 +1,50 @@
+/*! \page changes-1.6.7.html
+
+<h1 align="center">
+Change notes for ViSP 1.6.7
+</h1><br clear="all">
+
+\latexonly
+\label{changes-1.6.7}
+\endlatexonly
+
+<br>
+
+This file describes the changes between ViSP 1.6.6 and 1.6.7.
+
+<h3>General</h3>
+
+<ul>
+<li> 
+</ul>
+
+<h3>Library</h3>
+
+<ul> 
+
+<li> Modification de CServoAfma6 pour pouvoir modifier la matrice
+  pince-image en fonction de la camera
+<li> Modification CCamera pour pouvoir charger les parametres à partir
+  des nouveaux fichiers de configuration
+  .
+
+</ul>
+
+<h3>Examples</h3>
+
+<ul> 
+
+<li>
+</ul>
+
+<h3>Documentation</h3>
+
+<ul> 
+
+<li>
+
+</ul>
+
+
+
+*/
