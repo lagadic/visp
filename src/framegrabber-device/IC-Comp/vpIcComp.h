@@ -90,10 +90,6 @@ public:
   bool getField();
   void setFramerate(framerateEnum framerate);
   framerateEnum getFramerate();
-  /*!
-    This virtual function is used to de-allocate
-    the memory used by a specific frame grabber
-  */
   void close()  ;
 
 

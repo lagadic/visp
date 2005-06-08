@@ -314,7 +314,7 @@ vpIcCompGrabber::acquire(vpImage<unsigned char> &I)
 
   int framebuffer = 0 ;
 
-  unsigned  char *bitmap ;
+  unsigned  char *bitmap = NULL ;
 
   switch (framerate) {
   case framerate_25fps:
@@ -372,7 +372,7 @@ vpIcCompGrabber::getField()
 
 */
 void
-vpIcCompGrabber::setFramerate(framerateEnum framerate)
+vpIcCompGrabber::setFramerate(vpIcCompGrabber::framerateEnum framerate)
 {
    this->framerate = framerate;
 }
@@ -383,9 +383,10 @@ vpIcCompGrabber::setFramerate(framerateEnum framerate)
   \return The actual framerate of the framegrabber.
 
   \sa setFramerate()
-
 */
-framerateEnum
+
+
+vpIcCompGrabber::framerateEnum
 vpIcCompGrabber::getFramerate()
 {
   return framerate;
