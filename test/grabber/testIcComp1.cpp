@@ -7,6 +7,8 @@
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpTime.h>
+#include <visp/vpParseArgv.h>
 
 /*!
   \example testTrackDot.cpp
@@ -15,21 +17,43 @@
 */
 
 int
-main()
+main(int argc, char ** argv)
 {
   cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  " testTrackDot.cpp" <<endl << endl ;
-
-  cout <<  "  test dot tracking on an image sequence" << endl ;
+  cout <<  "  test frame grabbing" << endl ;
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
+  int fps = 25;
+
+  vpArgvInfo argTable[] =
+    {
+      {NULL, ARGV_HELP, NULL, NULL,"     "},
+      {NULL, ARGV_HELP, NULL, NULL," test frame grabbing "},
+      {NULL, ARGV_HELP, NULL, NULL,"     "},
+      {"-fps", ARGV_INT, (char *) 1, (char *) &fps,
+      "Frame per second (25 or 50)."},
+      {NULL, ARGV_HELP, NULL, NULL,"     "},
+      {NULL, ARGV_HELP, NULL, NULL,"     "},
+      {NULL, ARGV_HELP, NULL, NULL,"     "},
+      {NULL, ARGV_END, NULL,NULL,NULL}
+    } ;
+  //Parsing of the table
+  if (vpParseArgv(&argc,argv,argTable,0))
+  {
+    cout << endl << "Usage : " << argv[0] << "  [-help] [-fps 50] [-fps 25] "<<endl ;
+    exit(1) ;
+  }
 
   vpImage<unsigned char> I ;
 
 
   vpIcCompGrabber g(2) ;
   g.open(I) ;
+  if (fps == 25)
+    g.setFramerate(vpIcCompGrabber::framerate_25fps);
+  else
+    g.setFramerate(vpIcCompGrabber::framerate_50fps);
 
   try{
     g.acquire(I) ;
@@ -61,9 +85,11 @@ main()
 
   while(1)
   {
+    long t = vpTime::measureTimeMs();
     g.acquire(I) ;
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
+    cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
   }
 }
 #else
