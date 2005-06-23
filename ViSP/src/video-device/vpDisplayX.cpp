@@ -74,8 +74,6 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I,
 {
   init(I,_windowXPosition,_windowYPosition, _title) ;
 
-  I.display = this ;
-  I.initDisplay =  true ;
 }
 
 
@@ -95,8 +93,6 @@ vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I,
 {
   title = NULL ;
   init(I,_windowXPosition,_windowYPosition, _title) ;
-  I.display = this ;
-  I.initDisplay =  true ;
 }
 
 /*!
@@ -413,6 +409,10 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _windowXPosition, int _windowYPo
   Xinitialise = true ;
   flushTitle(title) ;
   XSync (display, 1);
+
+  I.display = this ;
+  I.initDisplay =  true ;
+
 }
 
 /*!
@@ -669,6 +669,8 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _windowXPosition, int _windowYPosition,
   XSync (display, true);
   flushTitle(title) ;
 
+  I.display = this ;
+  I.initDisplay =  true ;
 }
 
 
