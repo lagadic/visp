@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMeterPixelConversion.cpp,v 1.1.1.1 2005-06-08 07:08:13 fspindle Exp $
+ *  $Id: vpMeterPixelConversion.cpp,v 1.2 2005-06-28 13:26:11 marchand Exp $
  *
  * Description
  * ============
@@ -61,7 +61,7 @@ vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
   if (fabs(d)<1e-6)
   {
     ERROR_TRACE("division by zero") ;
-    throw(vpException(vpException::divideByZeroERR,
+    throw(vpException(vpException::divideByZeroError,
 		      "division by zero")) ;
   }
 

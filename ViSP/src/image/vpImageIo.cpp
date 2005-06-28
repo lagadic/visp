@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageIo.cpp,v 1.1.1.1 2005-06-08 07:08:08 fspindle Exp $
+ *  $Id: vpImageIo.cpp,v 1.2 2005-06-28 13:30:44 marchand Exp $
  *
  * Description
  * ============
@@ -36,7 +36,7 @@ vpImageIo::openFileRead(const char filename[FILENAME_MAX])
   // Lecture du nom du fichier image.
   if (filename == '\0')   {
     ERROR_TRACE("filename empty ") ;
-    throw (vpImageException(vpImageException::noFileNameERR,
+    throw (vpImageException(vpImageException::noFileNameError,
 			    "filename empty ")) ;
   }
 
@@ -44,7 +44,7 @@ vpImageIo::openFileRead(const char filename[FILENAME_MAX])
   if ((fd = fopen(filename, "r")) == NULL)
   {
     ERROR_TRACE("cannot open file") ;
-    throw (vpImageException(vpImageException::ioERR,
+    throw (vpImageException(vpImageException::ioError,
 			    "cannot open file")) ;
   }
   return fd ;
@@ -60,7 +60,7 @@ vpImageIo::openFileWrite(const char filename[FILENAME_MAX],
   if (filename == '\0')
   {
     ERROR_TRACE("filename empty ") ;
-    throw (vpImageException(vpImageException::noFileNameERR,
+    throw (vpImageException(vpImageException::noFileNameError,
 			    "filename empty ")) ;
   }
 
@@ -68,7 +68,7 @@ vpImageIo::openFileWrite(const char filename[FILENAME_MAX],
   if ((fd = fopen(filename, s)) == NULL)
   {
     ERROR_TRACE("cannot open file") ;
-    throw (vpImageException(vpImageException::ioERR,
+    throw (vpImageException(vpImageException::ioError,
 			    "cannot open file")) ;
   }
   return fd ;

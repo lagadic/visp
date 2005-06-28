@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRotationMatrix.cpp,v 1.2 2005-06-28 08:33:02 marchand Exp $
+ *  $Id: vpRotationMatrix.cpp,v 1.3 2005-06-28 13:25:13 marchand Exp $
  *
  * Description
  * ============
@@ -121,7 +121,7 @@ vpRotationMatrix::operator=(const vpMatrix &m)
   if ((m.getCols() !=3) &&(m.getRows() !=3))
     {
       ERROR_TRACE("m is not a rotation matrix !!!!! ") ;
-      throw(vpMatrixException(vpMatrixException::forbiddenOperatorERR,
+      throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "m is not a rotation matrix !!!!!"));
     }
 
@@ -136,7 +136,7 @@ vpRotationMatrix::operator=(const vpMatrix &m)
   if (isARotationMatrix() == false)
   {
     ERROR_TRACE("m is not a rotation matrix !!!!! ") ;
-      throw(vpMatrixException(vpMatrixException::forbiddenOperatorERR,
+      throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "m is not a rotation matrix !!!!!"));
   }
 
@@ -164,13 +164,13 @@ vpRotationMatrix::operator*(const vpRotationMatrix &B) const
 
 
   \exception Cannot add two rotation matrices !!!!!
-  vpMatrixException::forbiddenOperatorERR
+  vpMatrixException::forbiddenOperatorError
  */
 vpRotationMatrix
 vpRotationMatrix::operator+(const vpRotationMatrix &B) const
 {
  ERROR_TRACE("Cannot add two rotation matrices !!!!! ") ;
-  throw(vpMatrixException(vpMatrixException::forbiddenOperatorERR,
+  throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "Cannot add two rotation matrices !!!!!"));
 
   return vpRotationMatrix();
@@ -180,13 +180,13 @@ vpRotationMatrix::operator+(const vpRotationMatrix &B) const
 
 
   \exception Cannot substract two rotation matrices !!!!!
-  vpMatrixException::forbiddenOperatorERR
+  vpMatrixException::forbiddenOperatorError
  */
 vpRotationMatrix
 vpRotationMatrix::operator-(const vpRotationMatrix &B) const
 {
   ERROR_TRACE("Cannot substract two rotation matrices !!!!! ") ;
-  throw(vpMatrixException(vpMatrixException::forbiddenOperatorERR,
+  throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "Cannot substract two rotation matrices !!!!!"));
 
   return vpRotationMatrix();

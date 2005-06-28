@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTwistMatrix.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpTwistMatrix.cpp,v 1.2 2005-06-28 13:25:13 marchand Exp $
  *
  * Description
  * ============
@@ -150,7 +150,7 @@ vpTwistMatrix::vpTwistMatrix(const double Rx,
   init() ;
 
   ERROR_TRACE("function not implemented") ;
-  throw(vpException(vpException::functionNotImplementedERR)) ;
+  throw(vpException(vpException::functionNotImplementedError)) ;
 
 }
 

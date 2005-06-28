@@ -95,7 +95,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
   if (m < n)
   {
     ERROR_TRACE("\n\t\tSVDcmp: You must augment A with extra zero rows") ;
-    throw(vpMatrixException(vpMatrixException::matrixERR,
+    throw(vpMatrixException(vpMatrixException::matrixError,
 			    "\n\t\tSVDcmp: You must augment A with "
 			    "extra zero rows")) ;
   }
@@ -231,7 +231,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
       {
 	ERROR_TRACE("\n\t\t No convergence in  SVDcmp ") ;
 	cout << *this <<endl ;
-	//	throw(vpMatrixException(vpMatrixException::matrixERR,
+	//	throw(vpMatrixException(vpMatrixException::matrixError,
 	//				"\n\t\t No convergence in  SVDcmp ")) ;
       }
       x=w[l];

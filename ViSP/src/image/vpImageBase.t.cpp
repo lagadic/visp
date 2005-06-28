@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageBase.t.cpp,v 1.1.1.1 2005-06-08 07:08:08 fspindle Exp $
+ *  $Id: vpImageBase.t.cpp,v 1.2 2005-06-28 13:30:44 marchand Exp $
  *
  * Description
  * ============
@@ -44,7 +44,7 @@
 
   Set all the element of the bitmap to value
 
-  \exception vpException::memoryAllocationERR
+  \exception vpException::memoryAllocationError
 
   \sa vpImage::init(_nrows, _ncols)
 */
@@ -78,7 +78,7 @@ vpImage<Type>::init(int _nrows, int _ncols, Type value)
   only if the new image size is different, else we re-use the same
   memory space.
 
-  \exception vpException::memoryAllocationERR
+  \exception vpException::memoryAllocationError
 
 */
 template<class Type>
@@ -117,7 +117,7 @@ vpImage<Type>::init(int _nrows, int _ncols)
   if (bitmap == NULL)
   {
         ERROR_TRACE("cannot allocate bitmap ") ;
-    throw(vpException(vpException::memoryAllocationERR,
+    throw(vpException(vpException::memoryAllocationError,
 		      "cannot allocate bitmap ")) ;
   }
 
@@ -126,7 +126,7 @@ vpImage<Type>::init(int _nrows, int _ncols)
   if (row == NULL)
   {
     ERROR_TRACE("cannot allocate row ") ;
-    throw(vpException(vpException::memoryAllocationERR,
+    throw(vpException(vpException::memoryAllocationError,
 		      "cannot allocate row ")) ;
   }
 
@@ -146,7 +146,7 @@ vpImage<Type>::init(int _nrows, int _ncols)
   only if the new image size is different, else we re-use the same
   memory space.
 
-  \exception vpException::memoryAllocationERR
+  \exception vpException::memoryAllocationError
 
   \sa vpImage::init(_nrows, _ncols)
 */
@@ -240,7 +240,7 @@ vpImage<Type>::vpImage()
   only if the new image size is different, else we re-use the same
   memory space.
 
-  \exception vpException::memoryAllocationERR
+  \exception vpException::memoryAllocationError
 
   \sa vpImage::init(_nrows, _ncols)
 */

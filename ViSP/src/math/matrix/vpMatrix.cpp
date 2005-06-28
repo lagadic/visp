@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.2 2005-06-28 13:25:07 marchand Exp $
  *
  * Description
  * ============
@@ -109,14 +109,14 @@ vpMatrix::vpMatrix(const vpMatrix &m,
   if ( (r<0) || (c<0) )
   {
     ERROR_TRACE("\n\t\t Illegal subMatrix operation") ;
-    throw(vpMatrixException(vpMatrixException::subMatrixERR,
+    throw(vpMatrixException(vpMatrixException::subMatrixError,
 			    "\n\t\t Illegal subMatrix operation")) ;
   }
 
   if (((r + nrows) > m.rowNum) || ((c + ncols) > m.colNum))
   {
     ERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
-    throw(vpMatrixException(vpMatrixException::subMatrixERR,
+    throw(vpMatrixException(vpMatrixException::subMatrixError,
 			    "\n\t\t SubvpMatrix larger than vpMatrix")) ;
   }
 
@@ -172,7 +172,7 @@ vpMatrix::resize(int nrows, int ncols)
     if (data == NULL)
     {
       ERROR_TRACE("\n\t\tMemory allocation error") ;
-      throw(vpException(vpException::memoryAllocationERR,
+      throw(vpException(vpException::memoryAllocationError,
 			"\n\t\t Memory allocation error")) ;
     }
 
@@ -182,7 +182,7 @@ vpMatrix::resize(int nrows, int ncols)
     if (rowPtrs == NULL)
     {
       ERROR_TRACE("\n\t\tMemory allocation error") ;
-      throw(vpException(vpException::memoryAllocationERR,
+      throw(vpException(vpException::memoryAllocationError,
 			"\n\t\t Memory allocation error")) ;
     }
 
@@ -328,7 +328,7 @@ vpMatrix::operator*(const vpMatrix &B) const
   if (colNum != B.rowNum)
   {
     ERROR_TRACE("\n\t\tvpMatrix mismatch in vpMatrix/vpMatrix multiply") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeERR,
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\tvpMatrix mismatch in "
 			    "vpMatrix/vpMatrix multiply")) ;
   }
@@ -363,7 +363,7 @@ vpMatrix::operator+(const vpMatrix &B) const
   if ( (colNum != B.getCols())||(rowNum != B.getRows()))
   {
     ERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeERR,
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix/vpMatrix addition")) ;
 
@@ -402,7 +402,7 @@ vpMatrix::operator-(const vpMatrix &B) const
   if ( (colNum != B.getCols())||(rowNum != B.getRows()))
   {
     ERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix substraction") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeERR,
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix/vpMatrix substraction")) ;
 
@@ -431,7 +431,7 @@ vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
   if ( (colNum != B.getCols())||(rowNum != B.getRows()))
   {
     ERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix +=  addition") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeERR,
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix += addition")) ;
 
@@ -462,7 +462,7 @@ vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
   if ( (colNum != B.getCols())||(rowNum != B.getRows()))
   {
     ERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix -= substraction") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeERR,
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix -= substraction")) ;
 
@@ -554,7 +554,7 @@ vpMatrix::operator*(const vpColVector &b) const
   if (colNum != b.getRows())
   {
     ERROR_TRACE("vpMatrix mismatch in vpMatrix/vector multiply") ;
-    throw(vpMatrixException::incorrectMatrixSizeERR) ;
+    throw(vpMatrixException::incorrectMatrixSizeError) ;
   }
 
 
@@ -756,7 +756,7 @@ vpMatrix::setIdentity()
   if (rowNum != colNum)
   {
     ERROR_TRACE("non square matrix") ;
-    throw(vpMatrixException(vpMatrixException::matrixERR)) ;
+    throw(vpMatrixException(vpMatrixException::matrixError)) ;
   }
 
 
@@ -1092,7 +1092,7 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     if (A.getCols() != B.getCols())
     {
       ERROR_TRACE("\n\t\t incorrect matrices size") ;
-      throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeERR,
+      throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			      "\n\t\t incorrect matrices size")) ;
     }
 
@@ -1184,7 +1184,7 @@ vpMatrix::det33(const vpMatrix &M)
   if ((M.getCols() !=3 ) || (M.getRows() !=3))
   {
     TRACE("matrix is not of size 3x3 ") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeERR,
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\tmatrix is not of size 3x3"
 			    )) ;
   }
