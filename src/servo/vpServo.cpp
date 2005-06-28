@@ -292,7 +292,7 @@ vpServo::computeInteractionMatrix()
 	if (featureList.empty())
 	{
 	  ERROR_TRACE("feature list empty, cannot compute Ls") ;
-	  throw(vpServoException(vpServoException::noFeatureErr,
+	  throw(vpServoException(vpServoException::noFeatureError,
 				 "feature list empty, cannot compute Ls")) ;
 	}
 	vpMatrix         M ;
@@ -319,7 +319,7 @@ vpServo::computeInteractionMatrix()
 	if (desiredFeatureList.empty())
 	{
 	  ERROR_TRACE("feature list empty, cannot compute Ls") ;
-	  throw(vpServoException(vpServoException::noFeatureErr,
+	  throw(vpServoException(vpServoException::noFeatureError,
 				 "feature list empty, cannot compute Ls")) ;
 	}
 	vpMatrix         M ;
@@ -347,13 +347,13 @@ vpServo::computeInteractionMatrix()
 	if (featureList.empty())
 	{
 	  ERROR_TRACE("feature list empty, cannot compute Ls") ;
-	  throw(vpServoException(vpServoException::noFeatureErr,
+	  throw(vpServoException(vpServoException::noFeatureError,
 				 "feature list empty, cannot compute Ls")) ;
 	}
 	if (desiredFeatureList.empty())
 	{
 	  ERROR_TRACE("feature list empty, cannot compute Ls") ;
-	  throw(vpServoException(vpServoException::noFeatureErr,
+	  throw(vpServoException(vpServoException::noFeatureError,
 				 "feature list empty, cannot compute Ls")) ;
 	}
 	vpMatrix         M ;
@@ -411,13 +411,13 @@ vpServo::computeError()
   if (featureList.empty())
   {
     ERROR_TRACE("feature list empty, cannot compute Ls") ;
-    throw(vpServoException(vpServoException::noFeatureErr,
+    throw(vpServoException(vpServoException::noFeatureError,
 			   "feature list empty, cannot compute Ls")) ;
   }
   if (desiredFeatureList.empty())
   {
     ERROR_TRACE("feature list empty, cannot compute Ls") ;
-    throw(vpServoException(vpServoException::noFeatureErr,
+    throw(vpServoException(vpServoException::noFeatureError,
 			   "feature list empty, cannot compute Ls")) ;
   }
 
@@ -470,7 +470,7 @@ vpServo::testInitialization()
   {
   case NONE:
     ERROR_TRACE("No control law have been yet defined") ;
-    throw(vpServoException(vpServoException::servoERR,
+    throw(vpServoException(vpServoException::servoError,
 			   "No control law have been yet defined")) ;
     test = true ;
     break ;
@@ -507,7 +507,7 @@ vpServo::testUpdated()
   {
   case NONE:
     ERROR_TRACE("No control law have been yet defined") ;
-    throw(vpServoException(vpServoException::servoERR,
+    throw(vpServoException(vpServoException::servoError,
 			   "No control law have been yet defined")) ;
     test = true ;
     break ;
@@ -559,7 +559,7 @@ vpServo::computeControlLaw()
       else
       {
 	ERROR_TRACE("All the matrices are not correctly initialized") ;
-	throw(vpServoException(vpServoException::servoERR,
+	throw(vpServoException(vpServoException::servoError,
 			       "Cannot compute control law "
 			       "All the matrices are not correctly"
 			       "initialized")) ;
@@ -579,7 +579,7 @@ vpServo::computeControlLaw()
     {
     case NONE :
       ERROR_TRACE("No control law have been yet defined") ;
-      throw(vpServoException(vpServoException::servoERR,
+      throw(vpServoException(vpServoException::servoError,
 			     "No control law have been yet defined")) ;
       break ;
     case EYEINHAND_CAMERA:
@@ -621,7 +621,7 @@ vpServo::computeControlLaw()
     else
       J1p = J1.t() ;
 
-    e1 = J1p*error ;// primary task 
+    e1 = J1p*error ;// primary task
 
     e = -lambda* e1 ;
 
