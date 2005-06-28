@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeaturePoint3D.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
+ *  $Id: vpFeaturePoint3D.cpp,v 1.3 2005-06-28 14:00:11 marchand Exp $
  *
  * Description
  * ============
@@ -232,7 +232,7 @@ vpFeaturePoint3D::error(const int select)
   ERROR_TRACE("This function has no meaning related to 3D point ") ;
   ERROR_TRACE("It is not implemented ") ;
 
-  throw(vpException(vpException::notImplementedERR,
+  throw(vpException(vpException::notImplementedError,
 			   "This function has no meaning related to 3D point")) ;
 
   return vpColVector() ;

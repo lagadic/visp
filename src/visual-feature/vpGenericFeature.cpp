@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpGenericFeature.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
+ *  $Id: vpGenericFeature.cpp,v 1.3 2005-06-28 14:00:11 marchand Exp $
  *
  * Description
  * ============
@@ -57,7 +57,7 @@ vpGenericFeature::vpGenericFeature()
 	      "constructor") ;
   ERROR_TRACE("And provide the dimension of the visual feature ") ;
 
-  throw(vpException(vpException::cannotUseConstructorERR,
+  throw(vpException(vpException::cannotUseConstructorError,
 			     "You are not allow to use this constructor ")) ;
 }
 
