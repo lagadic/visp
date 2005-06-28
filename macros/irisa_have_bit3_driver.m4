@@ -50,7 +50,7 @@ if test "x$with_bit3" = "xyes"; then
     CXXFLAGS="$CXXFLAGS $BIT3_CXXFLAGS"
     CPPFLAGS="$CPPFLAGS $BIT3_CPPFLAGS"
     LDFLAGS="$LDFLAGS $BIT3_LDFLAGS"
-    LIBS="$LIBS $BIT3_LIBS"
+    LIBS="$BIT3_LIBS $LIBS"
     AC_DEFINE([HAVE_BIT3], 1,
               [Define to 1 if the SBS Bit3 bus driver is available])
     AC_MSG_RESULT(yes)
