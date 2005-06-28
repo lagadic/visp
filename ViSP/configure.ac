@@ -222,14 +222,14 @@ LDFLAGS="$LDFLAGS -L$VISP_LIB_PATH"
 # check for specific hardware
 ########################################################################
 
-HAVE_V4L_FG
-HAVE_V4L2_FG
-IRISA_HAVE_ICCOMP_FG
+HAVE_FG_V4L
+HAVE_FG_V4L2
+IRISA_HAVE_FG_ICCOMP
 IRISA_HAVE_BIT3_DRIVER
-IRISA_HAVE_AFMA4_ROBOT
-IRISA_HAVE_AFMA6_ROBOT
-IRISA_HAVE_PTUEVI_ROBOT
-IRISA_HAVE_VIC2500_ROBOT
+IRISA_HAVE_ROBOT_AFMA4
+IRISA_HAVE_ROBOT_AFMA6
+IRISA_HAVE_ROBOT_PTUEVI
+IRISA_HAVE_ROBOT_VIC2500
 
 
 ########################################################################
@@ -308,7 +308,7 @@ test/Makefile
 test/pose/Makefile
 test/servo-simu/Makefile
 test/servo-afma6/Makefile
-test/grabber/Makefile
+test/framegrabber/Makefile
 test/feature/Makefile
 test/math/Makefile
 test/image/Makefile
