@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDisplayException.h,v 1.1.1.1 2005-06-08 07:08:13 fspindle Exp $
+ *  $Id: vpDisplayException.h,v 1.2 2005-06-28 13:54:12 marchand Exp $
  *
  * Description
  * ============
@@ -53,9 +53,9 @@ public:
    */
   enum errorDisplayCodeEnum
     {
-      notInitializedERR,
-      cannotOpenWindowERR,
-      connexionERR,
+      notInitializedError,
+      cannotOpenWindowError,
+      connexionError,
       XWindowsError,
       colorAllocError,
       depthNotSupportedError
