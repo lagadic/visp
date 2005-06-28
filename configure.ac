@@ -40,6 +40,10 @@ AC_CHECK_LIB(gslcblas,main)
 # Check for -lgsl library
 AC_CHECK_LIB(gsl,main)
 #-----------------------------------------------------------------------
+# Check for ieee 1394 capabilities
+AC_CHECK_LIB(raw1394,main)
+AC_CHECK_LIB(dc1394_control,main)
+#-----------------------------------------------------------------------
 # Check for X
 AC_PATH_XTRA
 #-----------------------------------------------------------------------
@@ -218,15 +222,14 @@ LDFLAGS="$LDFLAGS -L$VISP_LIB_PATH"
 # check for specific hardware
 ########################################################################
 
+HAVE_V4L_FG
+HAVE_V4L2_FG
+IRISA_HAVE_ICCOMP_FG
+IRISA_HAVE_BIT3_DRIVER
 IRISA_HAVE_AFMA4_ROBOT
 IRISA_HAVE_AFMA6_ROBOT
-IRISA_HAVE_BIT3_DRIVER
 IRISA_HAVE_PTUEVI_ROBOT
 IRISA_HAVE_VIC2500_ROBOT
-IRISA_HAVE_ICCOMP_FG
-IRISA_HAVE_V4L_FG
-IRISA_HAVE_V4L2_FG
-IRISA_HAVE_IEEE1394_FG
 
 
 ########################################################################
@@ -292,6 +295,8 @@ src/computer-vision/homography-estimation/Makefile
 src/video-device/Makefile
 src/framegrabber-device/Makefile
 src/framegrabber-device/IC-Comp/Makefile
+src/framegrabber-device/1394/Makefile
+src/framegrabber-device/v4l2/Makefile
 src/framegrabber-device/generic-framegrabber/Makefile
 src/tracking/Makefile
 src/tracking/dots/Makefile
