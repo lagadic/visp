@@ -272,7 +272,7 @@ PACKAGE_VERSION='2.0.6'
 PACKAGE_STRING='ViSP 2.0.6'
 PACKAGE_BUGREPORT='visp@irisa.fr'
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSIDE_GNOME_COMMON_TRUE INSIDE_GNOME_COMMON_FALSE CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB AR ac_ct_AR HAVE_DOT INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA SET_MAKE CC CFLAGS ac_ct_CC CPP X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS QT_CXXFLAGS QT_DIR QT_LIBS QT_UIC QT_MOC HAVE_QT sim_ac_coin_configcmd HAVE_COIN OS ac_hostname CXX_VERSION SUFFIX VISP_LIBNAME VISP_HOME ROBOT_AFMA4_CXXFLAGS ROBOT_AFMA4_LDFLAGS ROBOT_AFMA4_LIBS ROBOT_AFMA6_CXXFLAGS ROBOT_AFMA6_LDFLAGS ROBOT_AFMA6_LIBS BIT3_CXXFLAGS BIT3_CPPFLAGS BIT3_LDFLAGS BIT3_LIBS ROBOT_PTUEVI_CXXFLAGS ROBOT_PTUEVI_LDFLAGS ROBOT_PTUEVI_LIBS ROBOT_VIC2500_CXXFLAGS ROBOT_VIC2500_LDFLAGS ROBOT_VIC2500_LIBS FG_ICCOMP_CXXFLAGS FG_ICCOMP_LDFLAGS FG_ICCOMP_LIBS FG_V4L2_CXXFLAGS FG_V4L2_LDFLAGS FG_V4L2_LIBS FG_IEEE1394_CXXFLAGS FG_IEEE1394_LDFLAGS FG_IEEE1394_LIBS LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSIDE_GNOME_COMMON_TRUE INSIDE_GNOME_COMMON_FALSE CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB AR ac_ct_AR HAVE_DOT INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA SET_MAKE CC CFLAGS ac_ct_CC CPP X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS QT_CXXFLAGS QT_DIR QT_LIBS QT_UIC QT_MOC HAVE_QT sim_ac_coin_configcmd HAVE_COIN OS ac_hostname CXX_VERSION SUFFIX VISP_LIBNAME VISP_HOME FG_ICCOMP_CXXFLAGS FG_ICCOMP_LDFLAGS FG_ICCOMP_LIBS BIT3_CXXFLAGS BIT3_CPPFLAGS BIT3_LDFLAGS BIT3_LIBS ROBOT_AFMA4_CXXFLAGS ROBOT_AFMA4_LDFLAGS ROBOT_AFMA4_LIBS ROBOT_AFMA6_CXXFLAGS ROBOT_AFMA6_LDFLAGS ROBOT_AFMA6_LIBS ROBOT_PTUEVI_CXXFLAGS ROBOT_PTUEVI_LDFLAGS ROBOT_PTUEVI_LIBS ROBOT_VIC2500_CXXFLAGS ROBOT_VIC2500_LDFLAGS ROBOT_VIC2500_LIBS LIBOBJS LTLIBOBJS'
 ac_subst_files='build_mk debug_mk directory_mk lib_mk bin_mk clean_mk uninstall_mk depend_mk'
 
 # Initialize some variables set by options.
@@ -840,28 +840,19 @@ Optional Packages:
   --with-Qt-lib=LIB       Use -lLIB to link with the Qt library
   --with-coin             enable use of Coin [default=yes]
   --with-coin=DIR         give prefix location of Coin
-  --with-robot-Afma4-dir=DIR
-                          Location of Afma4 robot api. By default
-                          /udd/fspindle/robot/Afma4/current
-  --with-robot-Afma6-dir=DIR
-                          Location of Afma6 robot api. By default
-                          /udd/fspindle/robot/Afma6/current
-  --with-bit3-dir=DIR     Location of SBS Bit3 driver. By default
+  --with-fg-iccomp=DIR    Location of ICcomp framegrabber api. By default
+                          /udd/fspindle/robot/IC-comp/current
+  --with-bit3=DIR         Location of SBS Bit3 driver. By default
                           /udd/fspindle/robot/driver/bit3-617/1003/current
-  --with-robot-PtuEvi-dir=DIR
-                          Location of PtuEvi robot api. By default
+  --with-robot-Afma4=DIR  Location of Afma4 robot api. By default
+                          /udd/fspindle/robot/Afma4/current
+  --with-robot-Afma6=DIR  Location of Afma6 robot api. By default
+                          /udd/fspindle/robot/Afma6/current
+  --with-robot-PtuEvi=DIR Location of PtuEvi robot api. By default
                           /udd/fspindle/robot/Ptu-Evi/current
-  --with-robot-Vic2500-dir=DIR
+  --with-robot-Vic2500=DIR
                           Location of Vic2500 robot api. By default
                           /udd/fspindle/robot/Vic2500/current
-  --with-fg-iccomp-dir=DIR
-                          Location of ICcomp framegrabber api. By default
-                          /udd/fspindle/robot/IC-comp/current
-  --with-fg-v4l2-dir=DIR  Location of Video4Linux2 framegrabber api. By
-                          default /udd/fspindle/robot/V4L2/current
-  --with-fg-ieee1394-dir=DIR
-                          Location of Firewire IEEE1394 framegrabber api. By
-                          default /udd/fspindle/robot/IEEE1394/current
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -3072,6 +3063,124 @@ if test $ac_cv_lib_gsl_main = yes; then
 _ACEOF
 
   LIBS="-lgsl $LIBS"
+
+fi
+
+#-----------------------------------------------------------------------
+# Check for ieee 1394 capabilities
+
+echo "$as_me:$LINENO: checking for main in -lraw1394" >&5
+echo $ECHO_N "checking for main in -lraw1394... $ECHO_C" >&6
+if test "${ac_cv_lib_raw1394_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lraw1394  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_raw1394_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_raw1394_main=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_raw1394_main" >&5
+echo "${ECHO_T}$ac_cv_lib_raw1394_main" >&6
+if test $ac_cv_lib_raw1394_main = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBRAW1394 1
+_ACEOF
+
+  LIBS="-lraw1394 $LIBS"
+
+fi
+
+
+echo "$as_me:$LINENO: checking for main in -ldc1394_control" >&5
+echo $ECHO_N "checking for main in -ldc1394_control... $ECHO_C" >&6
+if test "${ac_cv_lib_dc1394_control_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldc1394_control  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_dc1394_control_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_dc1394_control_main=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_dc1394_control_main" >&5
+echo "${ECHO_T}$ac_cv_lib_dc1394_control_main" >&6
+if test $ac_cv_lib_dc1394_control_main = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBDC1394_CONTROL 1
+_ACEOF
+
+  LIBS="-ldc1394_control $LIBS"
 
 fi
 
@@ -5876,6 +5985,334 @@ LDFLAGS="$LDFLAGS -L$VISP_LIB_PATH"
 ########################################################################
 
 
+#-----------------------------------------------------------------------
+# check if video 4 Linux is reachable
+echo "$as_me:$LINENO: checking whether Video For Linux api works" >&5
+echo $ECHO_N "checking whether Video For Linux api works... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <linux/videodev.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  have_include_videodev=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  have_include_videodev=no
+fi
+rm -f conftest.err conftest.$ac_ext
+
+if test "x$have_include_videodev" = "xyes"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_INCLUDE_VIDEODEV 1
+_ACEOF
+
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+
+#-----------------------------------------------------------------------
+# check if video 4 Linux 2 is reachable
+echo "$as_me:$LINENO: checking whether Video For Linux Two api works" >&5
+echo $ECHO_N "checking whether Video For Linux Two api works... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include </usr/src/linux/include/linux/videodev2.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  have_include_videodev2=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  have_include_videodev2=no
+fi
+rm -f conftest.err conftest.$ac_ext
+
+if test "x$have_include_videodev2" = "xyes"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_INCLUDE_VIDEODEV2 1
+_ACEOF
+
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+  CXXFLAGS="-I/usr/src/linux/include $CXXFLAGS"
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+
+#-----------------------------------------------------------------------
+# Manage the --with-fg-iccomp-dir option
+
+# Check whether --with-fg-iccomp-dir or --without-fg-iccomp-dir was given.
+if test "${with_fg_iccomp_dir+set}" = set; then
+  withval="$with_fg_iccomp_dir"
+  path_fg_iccomp=$withval
+else
+  path_fg_iccomp=/udd/fspindle/robot/IC-comp/current
+fi;
+
+# check if the IC-comp framegrabber home dir exists
+#AC_CHECK_FILE([$path_fg_iccomp], [with_fg_iccomp=yes], [with_fg_iccomp=no])
+with_fg_iccomp=yes
+# set some variables if the IC-comp framegrabber is reacheable
+echo "$as_me:$LINENO: checking whether framegrabber ICcomp api works" >&5
+echo $ECHO_N "checking whether framegrabber ICcomp api works... $ECHO_C" >&6
+if test "x$with_fg_iccomp" = "xyes"; then
+  FG_ICCOMP_HOME=$path_fg_iccomp
+  FG_ICCOMP_DIR_INCLUDE=$FG_ICCOMP_HOME/include
+  FG_ICCOMP_DIR_LIB=$FG_ICCOMP_HOME/lib
+  FG_ICCOMP_CXXFLAGS=-I$FG_ICCOMP_DIR_INCLUDE
+  FG_ICCOMP_LDFLAGS="-L$FG_ICCOMP_DIR_LIB"
+  FG_ICCOMP_LIBS="-liccomp2x -lfl"
+  # save values
+  TMP_CXXFLAGS=$CXXFLAGS
+  TMP_CPPFLAGS=$CPPFLAGS
+  TMP_LDFLAGS=$LDFLAGS
+  TMP_LIBS=$LIBS
+  # set linker options for a local test
+  CXXFLAGS=$FG_ICCOMP_CXXFLAGS
+  LDFLAGS=$FG_ICCOMP_LDFLAGS
+  LIBS=$FG_ICCOMP_LIBS
+  # test a single function of the SBS Vic2500 bus driver
+  ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include "ic-comp2x.h"
+int
+main ()
+{
+ICcomp2x fg;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  have_lib_iccomp2x=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+have_lib_iccomp2x=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+  ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+  # put the saved values
+  CXXFLAGS=$TMP_CXXFLAGS
+  CPPFLAGS=$TMP_CPPFLAGS
+  LDFLAGS=$TMP_LDFLAGS
+  LIBS=$TMP_LIBS
+
+  if test "x$have_lib_iccomp2x" = "xyes"; then
+    # Vic2500 robot works
+    CXXFLAGS="$CXXFLAGS $FG_ICCOMP_CXXFLAGS"
+    LDFLAGS="$LDFLAGS $FG_ICCOMP_LDFLAGS"
+    LIBS="$FG_ICCOMP_LIBS $LIBS"
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_FG_ICCOMP 1
+_ACEOF
+
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+
+
+  else
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+  fi
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+
+
+
+#-----------------------------------------------------------------------
+# Manage Bit3 driver with --with-bit3-dir option
+
+# Check whether --with-bit3-dir or --without-bit3-dir was given.
+if test "${with_bit3_dir+set}" = set; then
+  withval="$with_bit3_dir"
+  path_bit3=$withval
+else
+  path_bit3=/udd/fspindle/robot/driver/bit3-617/1003/current
+fi;
+# check if the bit3 home dir exists
+#AC_CHECK_FILE([$path_bit3], [with_bit3=yes], [with_bit3=no])
+with_bit3=yes
+echo "$as_me:$LINENO: checking whether SBS Bit3 bus driver works" >&5
+echo $ECHO_N "checking whether SBS Bit3 bus driver works... $ECHO_C" >&6
+# set some variables if the bit3 driver is reacheable
+if test "x$with_bit3" = "xyes"; then
+  BIT3_HOME=$path_bit3
+  BIT3_DIR_INCLUDE=$BIT3_HOME/include
+  BIT3_DIR_LIB=$BIT3_HOME/include
+  BIT3_CXXFLAGS=-I$BIT3_DIR_INCLUDE
+  BIT3_CPPFLAGS="-DBT1003"
+  BIT3_LDFLAGS="-L$BIT3_DIR_LIB"
+  BIT3_LIBS="-lbtp -lpthread"
+  # save values
+  TMP_CXXFLAGS=$CXXFLAGS
+  TMP_CPPFLAGS=$CPPFLAGS
+  TMP_LDFLAGS=$LDFLAGS
+  TMP_LIBS=$LIBS
+  # set linker options for a local test
+  CXXFLAGS=$BIT3_CXXFLAGS
+  CPPFLAGS=$BIT3_CPPFLAGS
+  LDFLAGS=$BIT3_LDFLAGS
+  LIBS=$BIT3_LIBS
+  # test a single function of the SBS Bit3 bus driver
+  #AC_LANG_PUSH(C++)
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+char *name="foo"; char bt_str2dev(char *);
+int
+main ()
+{
+bt_str2dev(name)
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  have_lib_btp=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+have_lib_btp=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+  # put the saved values
+  CXXFLAGS=$TMP_CXXFLAGS
+  CPPFLAGS=$TMP_CPPFLAGS
+  LDFLAGS=$TMP_LDFLAGS
+  LIBS=$TMP_LIBS
+
+  if test "x$have_lib_btp" = "xyes"; then
+    # Bit3 robot works
+    CXXFLAGS="$CXXFLAGS $BIT3_CXXFLAGS"
+    CPPFLAGS="$CPPFLAGS $BIT3_CPPFLAGS"
+    LDFLAGS="$LDFLAGS $BIT3_LDFLAGS"
+    LIBS="$BIT3_LIBS $LIBS"
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_BIT3 1
+_ACEOF
+
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+
+
+
+  else
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+  fi
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+
+
 
 #-----------------------------------------------------------------------
 # Manage Afma4 robot with --with-robot-Afma4-dir option
@@ -5965,10 +6402,10 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
   LIBS=$TMP_LIBS
 
   if test "x$have_lib_toolsAfma4" = "xyes"; then
-    # Afma6 robot works
+    # Afma4 robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_AFMA4_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_AFMA4_LDFLAGS"
-    LIBS="$LIBS $ROBOT_AFMA4_LIBS"
+    LIBS="$ROBOT_AFMA4_LIBS $LIBS"
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_ROBOT_AFMA4 1
@@ -6080,7 +6517,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
     # Afma6 robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_AFMA6_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_AFMA6_LDFLAGS"
-    LIBS="$LIBS $ROBOT_AFMA6_LIBS"
+    LIBS="$ROBOT_AFMA6_LIBS $LIBS"
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_ROBOT_AFMA6 1
@@ -6100,113 +6537,6 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
-
-
-
-
-#-----------------------------------------------------------------------
-# Manage Bit3 driver with --with-bit3-dir option
-
-# Check whether --with-bit3-dir or --without-bit3-dir was given.
-if test "${with_bit3_dir+set}" = set; then
-  withval="$with_bit3_dir"
-  path_bit3=$withval
-else
-  path_bit3=/udd/fspindle/robot/driver/bit3-617/1003/current
-fi;
-# check if the bit3 home dir exists
-#AC_CHECK_FILE([$path_bit3], [with_bit3=yes], [with_bit3=no])
-with_bit3=yes
-echo "$as_me:$LINENO: checking whether SBS Bit3 bus driver works" >&5
-echo $ECHO_N "checking whether SBS Bit3 bus driver works... $ECHO_C" >&6
-# set some variables if the bit3 driver is reacheable
-if test "x$with_bit3" = "xyes"; then
-  BIT3_HOME=$path_bit3
-  BIT3_DIR_INCLUDE=$BIT3_HOME/include
-  BIT3_DIR_LIB=$BIT3_HOME/include
-  BIT3_CXXFLAGS=-I$BIT3_DIR_INCLUDE
-  BIT3_CPPFLAGS="-DBT1003"
-  BIT3_LDFLAGS="-L$BIT3_DIR_LIB"
-  BIT3_LIBS="-lbtp -lpthread"
-  # save values
-  TMP_CXXFLAGS=$CXXFLAGS
-  TMP_CPPFLAGS=$CPPFLAGS
-  TMP_LDFLAGS=$LDFLAGS
-  TMP_LIBS=$LIBS
-  # set linker options for a local test
-  CXXFLAGS=$BIT3_CXXFLAGS
-  CPPFLAGS=$BIT3_CPPFLAGS
-  LDFLAGS=$BIT3_LDFLAGS
-  LIBS=$BIT3_LIBS
-  # test a single function of the SBS Bit3 bus driver
-  #AC_LANG_PUSH(C++)
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-char *name="foo"; char bt_str2dev(char *);
-int
-main ()
-{
-bt_str2dev(name)
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  have_lib_btp=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-have_lib_btp=no
-fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-  # put the saved values
-  CXXFLAGS=$TMP_CXXFLAGS
-  CPPFLAGS=$TMP_CPPFLAGS
-  LDFLAGS=$TMP_LDFLAGS
-  LIBS=$TMP_LIBS
-
-  if test "x$have_lib_btp" = "xyes"; then
-    # Bit3 robot works
-    CXXFLAGS="$CXXFLAGS $BIT3_CXXFLAGS"
-    CPPFLAGS="$CPPFLAGS $BIT3_CPPFLAGS"
-    LDFLAGS="$LDFLAGS $BIT3_LDFLAGS"
-    LIBS="$LIBS $BIT3_LIBS"
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_BIT3 1
-_ACEOF
-
-    echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-
-
-
-  else
-    echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-  fi
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
 
 
 
@@ -6302,7 +6632,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
     # Ptuevi robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_PTUEVI_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_PTUEVI_LDFLAGS"
-    LIBS="$LIBS $ROBOT_PTUEVI_LIBS"
+    LIBS="$ROBOT_PTUEVI_LIBS $LIBS"
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_ROBOT_PTUEVI 1
@@ -6416,7 +6746,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
     # Vic2500 robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_VIC2500_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_VIC2500_LDFLAGS"
-    LIBS="$LIBS $ROBOT_VIC2500_LIBS"
+    LIBS="$ROBOT_VIC2500_LIBS $LIBS"
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_ROBOT_VIC2500 1
@@ -6435,553 +6765,6 @@ else
   echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
-
-
-
-#-----------------------------------------------------------------------
-# Manage the --with-fg-iccomp-dir option
-
-# Check whether --with-fg-iccomp-dir or --without-fg-iccomp-dir was given.
-if test "${with_fg_iccomp_dir+set}" = set; then
-  withval="$with_fg_iccomp_dir"
-  path_fg_iccomp=$withval
-else
-  path_fg_iccomp=/udd/fspindle/robot/IC-comp/current
-fi;
-
-# check if the IC-comp framegrabber home dir exists
-#AC_CHECK_FILE([$path_fg_iccomp], [with_fg_iccomp=yes], [with_fg_iccomp=no])
-with_fg_iccomp=yes
-# set some variables if the IC-comp framegrabber is reacheable
-echo "$as_me:$LINENO: checking whether framegrabber ICcomp api works" >&5
-echo $ECHO_N "checking whether framegrabber ICcomp api works... $ECHO_C" >&6
-if test "x$with_fg_iccomp" = "xyes"; then
-  FG_ICCOMP_HOME=$path_fg_iccomp
-  FG_ICCOMP_DIR_INCLUDE=$FG_ICCOMP_HOME/include
-  FG_ICCOMP_DIR_LIB=$FG_ICCOMP_HOME/lib
-  FG_ICCOMP_CXXFLAGS=-I$FG_ICCOMP_DIR_INCLUDE
-  FG_ICCOMP_LDFLAGS="-L$FG_ICCOMP_DIR_LIB"
-  FG_ICCOMP_LIBS="-liccomp2x -lfl"
-  # save values
-  TMP_CXXFLAGS=$CXXFLAGS
-  TMP_CPPFLAGS=$CPPFLAGS
-  TMP_LDFLAGS=$LDFLAGS
-  TMP_LIBS=$LIBS
-  # set linker options for a local test
-  CXXFLAGS=$FG_ICCOMP_CXXFLAGS
-  LDFLAGS=$FG_ICCOMP_LDFLAGS
-  LIBS=$FG_ICCOMP_LIBS
-  # test a single function of the SBS Vic2500 bus driver
-  ac_ext=cc
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include "ic-comp2x.h"
-int
-main ()
-{
-ICcomp2x fg;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  have_lib_iccomp2x=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-have_lib_iccomp2x=no
-fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-  ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-  # put the saved values
-  CXXFLAGS=$TMP_CXXFLAGS
-  CPPFLAGS=$TMP_CPPFLAGS
-  LDFLAGS=$TMP_LDFLAGS
-  LIBS=$TMP_LIBS
-
-  if test "x$have_lib_iccomp2x" = "xyes"; then
-    # Vic2500 robot works
-    CXXFLAGS="$CXXFLAGS $FG_ICCOMP_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $FG_ICCOMP_LDFLAGS"
-    LIBS="$LIBS $FG_ICCOMP_LIBS"
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_FG_ICCOMP 1
-_ACEOF
-
-    echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-
-
-  else
-    echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-  fi
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
-
-
-#-----------------------------------------------------------------------
-# check if video 4 Linux is reachable
-echo "$as_me:$LINENO: checking whether Video For Linux api works" >&5
-echo $ECHO_N "checking whether Video For Linux api works... $ECHO_C" >&6
-cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <linux/videodev.h>
-_ACEOF
-if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
-  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } >/dev/null; then
-  if test -s conftest.err; then
-    ac_cpp_err=$ac_c_preproc_warn_flag
-  else
-    ac_cpp_err=
-  fi
-else
-  ac_cpp_err=yes
-fi
-if test -z "$ac_cpp_err"; then
-  have_include_videodev=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-  have_include_videodev=no
-fi
-rm -f conftest.err conftest.$ac_ext
-
-if test "x$have_include_videodev" = "xyes"; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_FG_V4L 1
-_ACEOF
-
-    echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
-
-
-
-#-----------------------------------------------------------------------
-# Manage the --with-fg-v4l2-dir option
-
-# Check whether --with-fg-v4l2-dir or --without-fg-v4l2-dir was given.
-if test "${with_fg_v4l2_dir+set}" = set; then
-  withval="$with_fg_v4l2_dir"
-  path_fg_v4l2=$withval
-else
-  path_fg_v4l2=/udd/fspindle/robot/V4L2/current
-fi;
-# check if the Video4Linux2 framegrabber home dir exists
-#AC_CHECK_FILE([$path_fg_v4l2], [with_fg_v4l2=yes], [with_fg_v4l2=no])
-with_fg_v4l2=yes
-
-# check if libraw1394 is reachable
-echo "$as_me:$LINENO: checking whether Video For Linux Two api works" >&5
-echo $ECHO_N "checking whether Video For Linux Two api works... $ECHO_C" >&6
-cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include </usr/src/linux/include/linux/videodev2.h>
-_ACEOF
-if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
-  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } >/dev/null; then
-  if test -s conftest.err; then
-    ac_cpp_err=$ac_c_preproc_warn_flag
-  else
-    ac_cpp_err=
-  fi
-else
-  ac_cpp_err=yes
-fi
-if test -z "$ac_cpp_err"; then
-  have_include_videodev2=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-  have_include_videodev2=no
-fi
-rm -f conftest.err conftest.$ac_ext
-
-if test "x$have_include_videodev2" = "xyes"; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_INCLUDE_VIDEODEV2 1
-_ACEOF
-
-
-  # set some variables if the V4L2 framegrabber api is reacheable
-  FG_V4L2_HOME=$path_fg_v4l2
-  FG_V4L2_DIR_INCLUDE=$FG_V4L2_HOME/include
-  FG_V4L2_DIR_LIB=$FG_V4L2_HOME/lib/$OS/$CXX_VERSION
-  FG_V4L2_CXXFLAGS="-I$FG_V4L2_DIR_INCLUDE -I/usr/src/linux/include"
-  FG_V4L2_LDFLAGS="-L$FG_V4L2_DIR_LIB"
-  FG_V4L2_LIBS="-lv4l2-0.9.x"
-  # save values
-  TMP_CXXFLAGS=$CXXFLAGS
-  TMP_CPPFLAGS=$CPPFLAGS
-  TMP_LDFLAGS=$LDFLAGS
-  TMP_LIBS=$LIBS
-  # set linker options for a local test
-  CXXFLAGS=$FG_V4L2_CXXFLAGS
-  LDFLAGS=$FG_V4L2_LDFLAGS
-  LIBS=$FG_V4L2_LIBS
-  # test a single function of the V4L2 api
-  ac_ext=cc
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include "CBTTV09x.h"
-int
-main ()
-{
-CBTTV09x fg;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  have_lib_v4l2=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-have_lib_v4l2=no
-fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-  ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-  # put the saved values
-  CXXFLAGS=$TMP_CXXFLAGS
-  CPPFLAGS=$TMP_CPPFLAGS
-  LDFLAGS=$TMP_LDFLAGS
-  LIBS=$TMP_LIBS
-
-  if test "x$have_lib_v4l2" = "xyes"; then
-    # firewire api works
-    CXXFLAGS="$CXXFLAGS $FG_V4L2_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $FG_V4L2_LDFLAGS"
-    LIBS="$LIBS $FG_V4L2_LIBS"
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_FG_V4L2 1
-_ACEOF
-
-    echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-
-
-  else
-    echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-  fi
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
-
-
-
-
-#-----------------------------------------------------------------------
-# Manage the --with-fg-ieee1394-dir option
-
-# Check whether --with-fg-ieee1394-dir or --without-fg-ieee1394-dir was given.
-if test "${with_fg_ieee1394_dir+set}" = set; then
-  withval="$with_fg_ieee1394_dir"
-  path_fg_ieee1394=$withval
-else
-  path_fg_ieee1394=/udd/fspindle/robot/IEEE1394/current
-fi;
-# check if the firewire Ieee1394 framegrabber home dir exists
-#AC_CHECK_FILE([$path_fg_ieee1394], [with_fg_ieee1394=yes], [with_fg_ieee1394=no])
-with_fg_ieee1394=yes
-
-# check if libraw1394 is reachable
-echo "$as_me:$LINENO: checking whether libraw1394 works" >&5
-echo $ECHO_N "checking whether libraw1394 works... $ECHO_C" >&6
-cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <libraw1394/raw1394.h>
-_ACEOF
-if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
-  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } >/dev/null; then
-  if test -s conftest.err; then
-    ac_cpp_err=$ac_c_preproc_warn_flag
-  else
-    ac_cpp_err=
-  fi
-else
-  ac_cpp_err=yes
-fi
-if test -z "$ac_cpp_err"; then
-  have_include_raw1394=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-  have_include_raw1394=no
-fi
-rm -f conftest.err conftest.$ac_ext
-
-if test "x$have_include_raw1394" = "xyes"; then
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_INCLUDE_RAW1394 1
-_ACEOF
-
-
-  # check if libraw1394 is reachable
-  echo "$as_me:$LINENO: checking whether libdc1394 works" >&5
-echo $ECHO_N "checking whether libdc1394 works... $ECHO_C" >&6
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <libdc1394/dc1394_control.h>
-_ACEOF
-if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
-  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } >/dev/null; then
-  if test -s conftest.err; then
-    ac_cpp_err=$ac_c_preproc_warn_flag
-  else
-    ac_cpp_err=
-  fi
-else
-  ac_cpp_err=yes
-fi
-if test -z "$ac_cpp_err"; then
-  have_include_dc1394=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-  have_include_dc1394=no
-fi
-rm -f conftest.err conftest.$ac_ext
-  if test "x$have_include_dc1394" = "xyes"; then
-    echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_INCLUDE_DC1394 1
-_ACEOF
-
-
-
-    # set some variables if the firewire framegrabber is reacheable
-    echo "$as_me:$LINENO: checking whether framegrabber Ieee1394 api (firewire) works" >&5
-echo $ECHO_N "checking whether framegrabber Ieee1394 api (firewire) works... $ECHO_C" >&6
-    # set some variables if the firewire framegrabber is reacheable
-    if test "x$with_fg_ieee1394" = "xyes"; then
-      FG_IEEE1394_HOME=$path_fg_ieee1394
-      FG_IEEE1394_DIR_INCLUDE=$FG_IEEE1394_HOME/include
-      FG_IEEE1394_DIR_LIB=$FG_IEEE1394_HOME/lib/$OS/$CXX_VERSION
-      FG_IEEE1394_CXXFLAGS=-I$FG_IEEE1394_DIR_INCLUDE
-      FG_IEEE1394_LDFLAGS="-L$FG_IEEE1394_DIR_LIB"
-      FG_IEEE1394_LIBS="-lieee1394 -lraw1394 -ldc1394_control"
-
-      # save values
-      TMP_CXXFLAGS=$CXXFLAGS
-      TMP_CPPFLAGS=$CPPFLAGS
-      TMP_LDFLAGS=$LDFLAGS
-      TMP_LIBS=$LIBS
-      # set linker options for a local test
-      CXXFLAGS="$FG_IEEE1394_CXXFLAGS -I$VISP_DIR_INCLUDE"
-      LDFLAGS=$FG_IEEE1394_LDFLAGS
-      LIBS=$FG_IEEE1394_LIBS
-      # test a single function of the firewire api
-      ac_ext=cc
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-      cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include "CIEEE1394.h"
-int
-main ()
-{
-CIEEE1394 fg;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  have_lib_ieee1394=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-have_lib_ieee1394=no
-fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-      ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-      # put the saved values
-      CXXFLAGS=$TMP_CXXFLAGS
-      CPPFLAGS=$TMP_CPPFLAGS
-      LDFLAGS=$TMP_LDFLAGS
-      LIBS=$TMP_LIBS
-
-      if test "x$have_lib_ieee1394" = "xyes"; then
-        # firewire api works
-        CXXFLAGS="$CXXFLAGS $FG_IEEE1394_CXXFLAGS"
-        LDFLAGS="$LDFLAGS $FG_IEEE1394_LDFLAGS"
-        LIBS="$LIBS $FG_IEEE1394_LIBS"
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_FG_IEEE1394 1
-_ACEOF
-
-        echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-
-
-      else
-        echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-      fi
-    else
-      echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-    fi # test for libieee1394
-
-  else # test for libdc1394
-    echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-  fi
-else # test for libraw1394
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
 
 
 
@@ -7014,7 +6797,7 @@ uninstall_mk=$VISP_HOME/configs/uninstall.mk
 
 depend_mk=$VISP_HOME/configs/depend.mk
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ac_config_files="$ac_config_files configs/build.mk doc/config-doxygen include/Makefile include/visp/Makefile Makefile src/Makefile src/camera/Makefile src/debug/Makefile src/exceptions/Makefile src/math/Makefile src/math/misc/Makefile src/math/transformation/Makefile src/math/matrix/Makefile src/math/robust/Makefile src/data-structure/Makefile src/robot/Makefile src/robot/robot/Makefile src/robot/simulation-robot/Makefile src/robot/real-robot/Makefile src/robot/real-robot/afma6/Makefile src/servo/Makefile src/simulator/Makefile src/tools/Makefile src/tools/io/Makefile src/tools/geometry/Makefile src/tools/time/Makefile src/visual-feature/Makefile src/image/Makefile src/computer-vision/Makefile src/computer-vision/pose-estimation/Makefile src/computer-vision/homography-estimation/Makefile src/video-device/Makefile src/framegrabber-device/Makefile src/framegrabber-device/IC-Comp/Makefile src/framegrabber-device/generic-framegrabber/Makefile src/tracking/Makefile src/tracking/dots/Makefile src/tracking/moving-edges/Makefile src/tracking/forward-projection/Makefile src/tracking/feature-builder/Makefile src/tracking/general-tracking-issues/Makefile test/Makefile test/pose/Makefile test/servo-simu/Makefile test/servo-afma6/Makefile test/grabber/Makefile test/feature/Makefile test/math/Makefile test/image/Makefile test/tracking/Makefile test/simulator/Makefile test/homography/Makefile demo/Makefile demo/grasping-2-0.5-D/Makefile"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ac_config_files="$ac_config_files configs/build.mk doc/config-doxygen include/Makefile include/visp/Makefile Makefile src/Makefile src/camera/Makefile src/debug/Makefile src/exceptions/Makefile src/math/Makefile src/math/misc/Makefile src/math/transformation/Makefile src/math/matrix/Makefile src/math/robust/Makefile src/data-structure/Makefile src/robot/Makefile src/robot/robot/Makefile src/robot/simulation-robot/Makefile src/robot/real-robot/Makefile src/robot/real-robot/afma6/Makefile src/servo/Makefile src/simulator/Makefile src/tools/Makefile src/tools/io/Makefile src/tools/geometry/Makefile src/tools/time/Makefile src/visual-feature/Makefile src/image/Makefile src/computer-vision/Makefile src/computer-vision/pose-estimation/Makefile src/computer-vision/homography-estimation/Makefile src/video-device/Makefile src/framegrabber-device/Makefile src/framegrabber-device/IC-Comp/Makefile src/framegrabber-device/1394/Makefile src/framegrabber-device/v4l2/Makefile src/framegrabber-device/generic-framegrabber/Makefile src/tracking/Makefile src/tracking/dots/Makefile src/tracking/moving-edges/Makefile src/tracking/forward-projection/Makefile src/tracking/feature-builder/Makefile src/tracking/general-tracking-issues/Makefile test/Makefile test/pose/Makefile test/servo-simu/Makefile test/servo-afma6/Makefile test/grabber/Makefile test/feature/Makefile test/math/Makefile test/image/Makefile test/tracking/Makefile test/simulator/Makefile test/homography/Makefile demo/Makefile demo/grasping-2-0.5-D/Makefile"
 
 
 ########################################################################
@@ -7593,6 +7376,8 @@ do
   "src/video-device/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/video-device/Makefile" ;;
   "src/framegrabber-device/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/framegrabber-device/Makefile" ;;
   "src/framegrabber-device/IC-Comp/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/framegrabber-device/IC-Comp/Makefile" ;;
+  "src/framegrabber-device/1394/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/framegrabber-device/1394/Makefile" ;;
+  "src/framegrabber-device/v4l2/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/framegrabber-device/v4l2/Makefile" ;;
   "src/framegrabber-device/generic-framegrabber/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/framegrabber-device/generic-framegrabber/Makefile" ;;
   "src/tracking/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/Makefile" ;;
   "src/tracking/dots/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/dots/Makefile" ;;
@@ -7738,31 +7523,25 @@ s,@CXX_VERSION@,$CXX_VERSION,;t t
 s,@SUFFIX@,$SUFFIX,;t t
 s,@VISP_LIBNAME@,$VISP_LIBNAME,;t t
 s,@VISP_HOME@,$VISP_HOME,;t t
+s,@FG_ICCOMP_CXXFLAGS@,$FG_ICCOMP_CXXFLAGS,;t t
+s,@FG_ICCOMP_LDFLAGS@,$FG_ICCOMP_LDFLAGS,;t t
+s,@FG_ICCOMP_LIBS@,$FG_ICCOMP_LIBS,;t t
+s,@BIT3_CXXFLAGS@,$BIT3_CXXFLAGS,;t t
+s,@BIT3_CPPFLAGS@,$BIT3_CPPFLAGS,;t t
+s,@BIT3_LDFLAGS@,$BIT3_LDFLAGS,;t t
+s,@BIT3_LIBS@,$BIT3_LIBS,;t t
 s,@ROBOT_AFMA4_CXXFLAGS@,$ROBOT_AFMA4_CXXFLAGS,;t t
 s,@ROBOT_AFMA4_LDFLAGS@,$ROBOT_AFMA4_LDFLAGS,;t t
 s,@ROBOT_AFMA4_LIBS@,$ROBOT_AFMA4_LIBS,;t t
 s,@ROBOT_AFMA6_CXXFLAGS@,$ROBOT_AFMA6_CXXFLAGS,;t t
 s,@ROBOT_AFMA6_LDFLAGS@,$ROBOT_AFMA6_LDFLAGS,;t t
 s,@ROBOT_AFMA6_LIBS@,$ROBOT_AFMA6_LIBS,;t t
-s,@BIT3_CXXFLAGS@,$BIT3_CXXFLAGS,;t t
-s,@BIT3_CPPFLAGS@,$BIT3_CPPFLAGS,;t t
-s,@BIT3_LDFLAGS@,$BIT3_LDFLAGS,;t t
-s,@BIT3_LIBS@,$BIT3_LIBS,;t t
 s,@ROBOT_PTUEVI_CXXFLAGS@,$ROBOT_PTUEVI_CXXFLAGS,;t t
 s,@ROBOT_PTUEVI_LDFLAGS@,$ROBOT_PTUEVI_LDFLAGS,;t t
 s,@ROBOT_PTUEVI_LIBS@,$ROBOT_PTUEVI_LIBS,;t t
 s,@ROBOT_VIC2500_CXXFLAGS@,$ROBOT_VIC2500_CXXFLAGS,;t t
 s,@ROBOT_VIC2500_LDFLAGS@,$ROBOT_VIC2500_LDFLAGS,;t t
 s,@ROBOT_VIC2500_LIBS@,$ROBOT_VIC2500_LIBS,;t t
-s,@FG_ICCOMP_CXXFLAGS@,$FG_ICCOMP_CXXFLAGS,;t t
-s,@FG_ICCOMP_LDFLAGS@,$FG_ICCOMP_LDFLAGS,;t t
-s,@FG_ICCOMP_LIBS@,$FG_ICCOMP_LIBS,;t t
-s,@FG_V4L2_CXXFLAGS@,$FG_V4L2_CXXFLAGS,;t t
-s,@FG_V4L2_LDFLAGS@,$FG_V4L2_LDFLAGS,;t t
-s,@FG_V4L2_LIBS@,$FG_V4L2_LIBS,;t t
-s,@FG_IEEE1394_CXXFLAGS@,$FG_IEEE1394_CXXFLAGS,;t t
-s,@FG_IEEE1394_LDFLAGS@,$FG_IEEE1394_LDFLAGS,;t t
-s,@FG_IEEE1394_LIBS@,$FG_IEEE1394_LIBS,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 /@build_mk@/r $build_mk

@@ -1,6 +1,6 @@
-# aclocal.m4 generated automatically by aclocal 1.6.3 -*- Autoconf -*-
+# generated automatically by aclocal 1.7.8 -*- Autoconf -*-
 
-# Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002
+# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002
 # Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -68,7 +68,7 @@ else
 fi
 AC_CONFIG_COMMANDS_PRE(
 [if test -z "${$1_TRUE}" && test -z "${$1_FALSE}"; then
-  AC_MSG_ERROR([conditional \"$1\" was never defined.
+  AC_MSG_ERROR([conditional "$1" was never defined.
 Usually this means the macro was only invoked conditionally.])
 fi])])
 
@@ -711,106 +711,80 @@ fi
 
 
 
-dnl Calls IRISA_HAVE_AFMA4_ROBOT (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_AFMA4_ROBOT],
+dnl Calls HAVE_FG_V4L (contained in this file) as a subroutine.
+AC_DEFUN([HAVE_FG_V4L],
 [
-
 #-----------------------------------------------------------------------
-# Manage Afma4 robot with --with-robot-Afma4-dir option
-AC_ARG_WITH([robot-Afma4-dir],
-  AC_HELP_STRING([--with-robot-Afma4-dir=DIR],
-		 [Location of Afma4 robot api. By default /udd/fspindle/robot/Afma4/current]),
-                 path_robot_afma4=$withval, 
-                 path_robot_afma4=/udd/fspindle/robot/Afma4/current)
-# check if the afma4 robot home dir exists
-#AC_CHECK_FILE([$path_robot_afma4], [with_robot_afma4=yes], [with_robot_afma4=no])
-with_robot_afma4=yes
-AC_MSG_CHECKING(whether Afma4 robot api works)
-# set some variables if the afma4 robot is reacheable
-if test "x$with_robot_afma4" = "xyes"; then
-  ROBOT_AFMA4_HOME=$path_robot_afma4
-  ROBOT_AFMA4_DIR_INCLUDE=$ROBOT_AFMA4_HOME/include
-  ROBOT_AFMA4_DIR_LIB=$ROBOT_AFMA4_HOME/lib
-  ROBOT_AFMA4_CXXFLAGS=-I$ROBOT_AFMA4_DIR_INCLUDE
-  ROBOT_AFMA4_LDFLAGS="-L$ROBOT_AFMA4_DIR_LIB"
-  ROBOT_AFMA4_LIBS="-lrobotAfma4 -ltoolsAfma4 -luprimAfma4 -lbit3Afma4 -lservolensAfma4"
-  # save values
-  TMP_CXXFLAGS=$CXXFLAGS
-  TMP_CPPFLAGS=$CPPFLAGS
-  TMP_LDFLAGS=$LDFLAGS
-  TMP_LIBS=$LIBS
-  # set linker options for a local test 
-  CXXFLAGS=$ROBOT_AFMA4_CXXFLAGS
-  LDFLAGS=$ROBOT_AFMA4_LDFLAGS
-  LIBS=$ROBOT_AFMA4_LIBS
-  # test a single function of the Afma4 api
-  AC_LANG_PUSH(C++)		
-  AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([void mesure_temps();],[mesure_temps()])],
-    have_lib_toolsAfma4=yes,
-    have_lib_toolsAfma4=no)
-  AC_LANG_POP(C++)		
-  # put the saved values
-  CXXFLAGS=$TMP_CXXFLAGS
-  CPPFLAGS=$TMP_CPPFLAGS
-  LDFLAGS=$TMP_LDFLAGS
-  LIBS=$TMP_LIBS
+# check if video 4 Linux is reachable
+AC_MSG_CHECKING(whether Video For Linux api works)
+AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <linux/videodev.h>]])],[have_include_videodev=yes],[have_include_videodev=no])
 
-  if test "x$have_lib_toolsAfma4" = "xyes"; then
-    # Afma6 robot works
-    CXXFLAGS="$CXXFLAGS $ROBOT_AFMA4_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $ROBOT_AFMA4_LDFLAGS"
-    LIBS="$LIBS $ROBOT_AFMA4_LIBS"
-    AC_DEFINE([HAVE_ROBOT_AFMA4], 1,
-              [Define to 1 if the Afma4 robot api are available])
-    AC_MSG_RESULT(yes)
-    AC_SUBST(ROBOT_AFMA4_CXXFLAGS)
-    AC_SUBST(ROBOT_AFMA4_LDFLAGS)
-    AC_SUBST(ROBOT_AFMA4_LIBS)
-  else
-    AC_MSG_RESULT(no)
-  fi
+if test "x$have_include_videodev" = "xyes"; then
+  AC_DEFINE(HAVE_INCLUDE_VIDEODEV, 1, 
+    [Define to 1 if the include linux/videodev.h for Video4Linux acquisition is available])
+  AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
 fi
 ])
-dnl Calls IRISA_HAVE_AFMA6_ROBOT (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_AFMA6_ROBOT],
+
+dnl Calls HAVE_FG_V4L2 (contained in this file) as a subroutine.
+AC_DEFUN([HAVE_FG_V4L2],
 [
 #-----------------------------------------------------------------------
-# Manage Afma6 robot with --with-robot-Afma6-dir option
-AC_ARG_WITH([robot-Afma6-dir],
-  AC_HELP_STRING([--with-robot-Afma6-dir=DIR],
-		 [Location of Afma6 robot api. By default /udd/fspindle/robot/Afma6/current]),
-                 path_robot_afma6=$withval, 
-                 path_robot_afma6=/udd/fspindle/robot/Afma6/current)
-# check if the afma6 robot home dir exists
-#AC_CHECK_FILE([$path_robot_afma6], [with_robot_afma6=yes], [with_robot_afma6=no])
-with_robot_afma6=yes
-AC_MSG_CHECKING(whether Afma6 robot api works)
-# set some variables if the afma6 robot is reacheable
-if test "x$with_robot_afma6" = "xyes"; then
-  ROBOT_AFMA6_HOME=$path_robot_afma6
-  ROBOT_AFMA6_DIR_INCLUDE=$ROBOT_AFMA6_HOME/include
-  ROBOT_AFMA6_DIR_LIB=$ROBOT_AFMA6_HOME/lib
-  ROBOT_AFMA6_CXXFLAGS=-I$ROBOT_AFMA6_DIR_INCLUDE
-  ROBOT_AFMA6_LDFLAGS="-L$ROBOT_AFMA6_DIR_LIB"
-  ROBOT_AFMA6_LIBS="-lrobotAfma6 -ltoolsAfma6 -luprimAfma6 -lbit3Afma6"
+# check if video 4 Linux 2 is reachable
+AC_MSG_CHECKING(whether Video For Linux Two api works)
+AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include </usr/src/linux/include/linux/videodev2.h>]])],[have_include_videodev2=yes],[have_include_videodev2=no])
+
+if test "x$have_include_videodev2" = "xyes"; then
+  AC_DEFINE(HAVE_INCLUDE_VIDEODEV2, 1, 
+    [Define to 1 if the include linux/videodev2.h for Video4Linux2 acquisition is available])
+  AC_MSG_RESULT(yes)
+  CXXFLAGS="-I/usr/src/linux/include $CXXFLAGS"
+else
+  AC_MSG_RESULT(no)
+fi
+])
+
+dnl Calls IRISA_HAVE_FG_ICCOMP (contained in this file) as a subroutine.
+AC_DEFUN([IRISA_HAVE_FG_ICCOMP],
+[
+#-----------------------------------------------------------------------
+# Manage the --with-fg-iccomp-dir option
+AC_ARG_WITH([fg-iccomp-dir],
+  AC_HELP_STRING([--with-fg-iccomp=DIR],
+		 [Location of ICcomp framegrabber api. By default /udd/fspindle/robot/IC-comp/current]),
+                 path_fg_iccomp=$withval, 
+                 path_fg_iccomp=/udd/fspindle/robot/IC-comp/current)
+
+# check if the IC-comp framegrabber home dir exists
+#AC_CHECK_FILE([$path_fg_iccomp], [with_fg_iccomp=yes], [with_fg_iccomp=no])
+with_fg_iccomp=yes
+# set some variables if the IC-comp framegrabber is reacheable
+AC_MSG_CHECKING(whether framegrabber ICcomp api works)
+if test "x$with_fg_iccomp" = "xyes"; then
+  FG_ICCOMP_HOME=$path_fg_iccomp
+  FG_ICCOMP_DIR_INCLUDE=$FG_ICCOMP_HOME/include
+  FG_ICCOMP_DIR_LIB=$FG_ICCOMP_HOME/lib
+  FG_ICCOMP_CXXFLAGS=-I$FG_ICCOMP_DIR_INCLUDE
+  FG_ICCOMP_LDFLAGS="-L$FG_ICCOMP_DIR_LIB"
+  FG_ICCOMP_LIBS="-liccomp2x -lfl"
   # save values
   TMP_CXXFLAGS=$CXXFLAGS
   TMP_CPPFLAGS=$CPPFLAGS
   TMP_LDFLAGS=$LDFLAGS
   TMP_LIBS=$LIBS
   # set linker options for a local test 
-  CXXFLAGS=$ROBOT_AFMA6_CXXFLAGS
-  LDFLAGS=$ROBOT_AFMA6_LDFLAGS
-  LIBS=$ROBOT_AFMA6_LIBS
-  # test a single function of the Afma4 api
+  CXXFLAGS=$FG_ICCOMP_CXXFLAGS
+  LDFLAGS=$FG_ICCOMP_LDFLAGS
+  LIBS=$FG_ICCOMP_LIBS
+  # test a single function of the SBS Vic2500 bus driver
   AC_LANG_PUSH(C++)		
   AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([void mesure_temps();],[mesure_temps()])],
-    have_lib_toolsAfma6=yes,
-    have_lib_toolsAfma6=no)
+    [AC_LANG_PROGRAM([#include "ic-comp2x.h"],
+                     [ICcomp2x fg;])],
+    have_lib_iccomp2x=yes,
+    have_lib_iccomp2x=no)
   AC_LANG_POP(C++)		
   # put the saved values
   CXXFLAGS=$TMP_CXXFLAGS
@@ -818,24 +792,23 @@ if test "x$with_robot_afma6" = "xyes"; then
   LDFLAGS=$TMP_LDFLAGS
   LIBS=$TMP_LIBS
 
-  if test "x$have_lib_toolsAfma6" = "xyes"; then
-    # Afma6 robot works
-    CXXFLAGS="$CXXFLAGS $ROBOT_AFMA6_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $ROBOT_AFMA6_LDFLAGS"
-    LIBS="$LIBS $ROBOT_AFMA6_LIBS"
-    AC_DEFINE([HAVE_ROBOT_AFMA6], 1,
-              [Define to 1 if the Afma6 robot api are available])
+  if test "x$have_lib_iccomp2x" = "xyes"; then
+    # Vic2500 robot works
+    CXXFLAGS="$CXXFLAGS $FG_ICCOMP_CXXFLAGS"
+    LDFLAGS="$LDFLAGS $FG_ICCOMP_LDFLAGS"
+    LIBS="$FG_ICCOMP_LIBS $LIBS"
+    AC_DEFINE([HAVE_FG_ICCOMP], 1,
+              [Define to 1 if the ICcomp framegrabber api is available])
     AC_MSG_RESULT(yes)
-    AC_SUBST(ROBOT_AFMA6_CXXFLAGS)
-    AC_SUBST(ROBOT_AFMA6_LDFLAGS)
-    AC_SUBST(ROBOT_AFMA6_LIBS)
+    AC_SUBST(FG_ICCOMP_CXXFLAGS)
+    AC_SUBST(FG_ICCOMP_LDFLAGS)
+    AC_SUBST(FG_ICCOMP_LIBS)
   else
     AC_MSG_RESULT(no)
   fi
 else
   AC_MSG_RESULT(no)
 fi
-
 
 ])
 dnl Calls IRISA_HAVE_BIT3_DRIVER (contained in this file) as a subroutine.
@@ -845,7 +818,7 @@ AC_DEFUN([IRISA_HAVE_BIT3_DRIVER],
 #-----------------------------------------------------------------------
 # Manage Bit3 driver with --with-bit3-dir option
 AC_ARG_WITH([bit3-dir],
-  AC_HELP_STRING([--with-bit3-dir=DIR],
+  AC_HELP_STRING([--with-bit3=DIR],
 		 [Location of SBS Bit3 driver. By default /udd/fspindle/robot/driver/bit3-617/1003/current]),
                  path_bit3=$withval, 
                  path_bit3=/udd/fspindle/robot/driver/bit3-617/1003/current)
@@ -890,7 +863,7 @@ if test "x$with_bit3" = "xyes"; then
     CXXFLAGS="$CXXFLAGS $BIT3_CXXFLAGS"
     CPPFLAGS="$CPPFLAGS $BIT3_CPPFLAGS"
     LDFLAGS="$LDFLAGS $BIT3_LDFLAGS"
-    LIBS="$LIBS $BIT3_LIBS"
+    LIBS="$BIT3_LIBS $LIBS"
     AC_DEFINE([HAVE_BIT3], 1,
               [Define to 1 if the SBS Bit3 bus driver is available])
     AC_MSG_RESULT(yes)
@@ -906,14 +879,141 @@ else
 fi
 
 ])
-dnl Calls IRISA_HAVE_PTUEVI_ROBOT (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_PTUEVI_ROBOT],
+dnl Calls IRISA_HAVE_ROBOT_AFMA4 (contained in this file) as a subroutine.
+AC_DEFUN([IRISA_HAVE_ROBOT_AFMA4],
+[
+
+#-----------------------------------------------------------------------
+# Manage Afma4 robot with --with-robot-Afma4-dir option
+AC_ARG_WITH([robot-Afma4-dir],
+  AC_HELP_STRING([--with-robot-Afma4=DIR],
+		 [Location of Afma4 robot api. By default /udd/fspindle/robot/Afma4/current]),
+                 path_robot_afma4=$withval, 
+                 path_robot_afma4=/udd/fspindle/robot/Afma4/current)
+# check if the afma4 robot home dir exists
+#AC_CHECK_FILE([$path_robot_afma4], [with_robot_afma4=yes], [with_robot_afma4=no])
+with_robot_afma4=yes
+AC_MSG_CHECKING(whether Afma4 robot api works)
+# set some variables if the afma4 robot is reacheable
+if test "x$with_robot_afma4" = "xyes"; then
+  ROBOT_AFMA4_HOME=$path_robot_afma4
+  ROBOT_AFMA4_DIR_INCLUDE=$ROBOT_AFMA4_HOME/include
+  ROBOT_AFMA4_DIR_LIB=$ROBOT_AFMA4_HOME/lib
+  ROBOT_AFMA4_CXXFLAGS=-I$ROBOT_AFMA4_DIR_INCLUDE
+  ROBOT_AFMA4_LDFLAGS="-L$ROBOT_AFMA4_DIR_LIB"
+  ROBOT_AFMA4_LIBS="-lrobotAfma4 -ltoolsAfma4 -luprimAfma4 -lbit3Afma4 -lservolensAfma4"
+  # save values
+  TMP_CXXFLAGS=$CXXFLAGS
+  TMP_CPPFLAGS=$CPPFLAGS
+  TMP_LDFLAGS=$LDFLAGS
+  TMP_LIBS=$LIBS
+  # set linker options for a local test 
+  CXXFLAGS=$ROBOT_AFMA4_CXXFLAGS
+  LDFLAGS=$ROBOT_AFMA4_LDFLAGS
+  LIBS=$ROBOT_AFMA4_LIBS
+  # test a single function of the Afma4 api
+  AC_LANG_PUSH(C++)		
+  AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([void mesure_temps();],[mesure_temps()])],
+    have_lib_toolsAfma4=yes,
+    have_lib_toolsAfma4=no)
+  AC_LANG_POP(C++)		
+  # put the saved values
+  CXXFLAGS=$TMP_CXXFLAGS
+  CPPFLAGS=$TMP_CPPFLAGS
+  LDFLAGS=$TMP_LDFLAGS
+  LIBS=$TMP_LIBS
+
+  if test "x$have_lib_toolsAfma4" = "xyes"; then
+    # Afma4 robot works
+    CXXFLAGS="$CXXFLAGS $ROBOT_AFMA4_CXXFLAGS"
+    LDFLAGS="$LDFLAGS $ROBOT_AFMA4_LDFLAGS"
+    LIBS="$ROBOT_AFMA4_LIBS $LIBS"
+    AC_DEFINE([HAVE_ROBOT_AFMA4], 1,
+              [Define to 1 if the Afma4 robot api are available])
+    AC_MSG_RESULT(yes)
+    AC_SUBST(ROBOT_AFMA4_CXXFLAGS)
+    AC_SUBST(ROBOT_AFMA4_LDFLAGS)
+    AC_SUBST(ROBOT_AFMA4_LIBS)
+  else
+    AC_MSG_RESULT(no)
+  fi
+else
+  AC_MSG_RESULT(no)
+fi
+])
+dnl Calls IRISA_HAVE_ROBOT_AFMA6 (contained in this file) as a subroutine.
+AC_DEFUN([IRISA_HAVE_ROBOT_AFMA6],
+[
+#-----------------------------------------------------------------------
+# Manage Afma6 robot with --with-robot-Afma6-dir option
+AC_ARG_WITH([robot-Afma6-dir],
+  AC_HELP_STRING([--with-robot-Afma6=DIR],
+		 [Location of Afma6 robot api. By default /udd/fspindle/robot/Afma6/current]),
+                 path_robot_afma6=$withval, 
+                 path_robot_afma6=/udd/fspindle/robot/Afma6/current)
+# check if the afma6 robot home dir exists
+#AC_CHECK_FILE([$path_robot_afma6], [with_robot_afma6=yes], [with_robot_afma6=no])
+with_robot_afma6=yes
+AC_MSG_CHECKING(whether Afma6 robot api works)
+# set some variables if the afma6 robot is reacheable
+if test "x$with_robot_afma6" = "xyes"; then
+  ROBOT_AFMA6_HOME=$path_robot_afma6
+  ROBOT_AFMA6_DIR_INCLUDE=$ROBOT_AFMA6_HOME/include
+  ROBOT_AFMA6_DIR_LIB=$ROBOT_AFMA6_HOME/lib
+  ROBOT_AFMA6_CXXFLAGS=-I$ROBOT_AFMA6_DIR_INCLUDE
+  ROBOT_AFMA6_LDFLAGS="-L$ROBOT_AFMA6_DIR_LIB"
+  ROBOT_AFMA6_LIBS="-lrobotAfma6 -ltoolsAfma6 -luprimAfma6 -lbit3Afma6"
+  # save values
+  TMP_CXXFLAGS=$CXXFLAGS
+  TMP_CPPFLAGS=$CPPFLAGS
+  TMP_LDFLAGS=$LDFLAGS
+  TMP_LIBS=$LIBS
+  # set linker options for a local test 
+  CXXFLAGS=$ROBOT_AFMA6_CXXFLAGS
+  LDFLAGS=$ROBOT_AFMA6_LDFLAGS
+  LIBS=$ROBOT_AFMA6_LIBS
+  # test a single function of the Afma4 api
+  AC_LANG_PUSH(C++)		
+  AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([void mesure_temps();],[mesure_temps()])],
+    have_lib_toolsAfma6=yes,
+    have_lib_toolsAfma6=no)
+  AC_LANG_POP(C++)		
+  # put the saved values
+  CXXFLAGS=$TMP_CXXFLAGS
+  CPPFLAGS=$TMP_CPPFLAGS
+  LDFLAGS=$TMP_LDFLAGS
+  LIBS=$TMP_LIBS
+
+  if test "x$have_lib_toolsAfma6" = "xyes"; then
+    # Afma6 robot works
+    CXXFLAGS="$CXXFLAGS $ROBOT_AFMA6_CXXFLAGS"
+    LDFLAGS="$LDFLAGS $ROBOT_AFMA6_LDFLAGS"
+    LIBS="$ROBOT_AFMA6_LIBS $LIBS"
+    AC_DEFINE([HAVE_ROBOT_AFMA6], 1,
+              [Define to 1 if the Afma6 robot api are available])
+    AC_MSG_RESULT(yes)
+    AC_SUBST(ROBOT_AFMA6_CXXFLAGS)
+    AC_SUBST(ROBOT_AFMA6_LDFLAGS)
+    AC_SUBST(ROBOT_AFMA6_LIBS)
+  else
+    AC_MSG_RESULT(no)
+  fi
+else
+  AC_MSG_RESULT(no)
+fi
+
+
+])
+dnl Calls IRISA_HAVE_ROBOT_PTUEVI (contained in this file) as a subroutine.
+AC_DEFUN([IRISA_HAVE_ROBOT_PTUEVI],
 [
 
 #-----------------------------------------------------------------------
 # Manage the --with-robot-PtuEvi-dir option
 AC_ARG_WITH([robot-PtuEvi-dir],
-  AC_HELP_STRING([--with-robot-PtuEvi-dir=DIR],
+  AC_HELP_STRING([--with-robot-PtuEvi=DIR],
 		 [Location of PtuEvi robot api. By default /udd/fspindle/robot/Ptu-Evi/current]),
                  path_robot_ptuevi=$withval, 
                  path_robot_ptuevi=/udd/fspindle/robot/Ptu-Evi/current)
@@ -956,7 +1056,7 @@ if test "x$with_robot_ptuevi" = "xyes"; then
     # Ptuevi robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_PTUEVI_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_PTUEVI_LDFLAGS"
-    LIBS="$LIBS $ROBOT_PTUEVI_LIBS"
+    LIBS="$ROBOT_PTUEVI_LIBS $LIBS"
     AC_DEFINE([HAVE_ROBOT_PTUEVI], 1,
               [Define to 1 if the Ptu-Evi robot api is available])
     AC_MSG_RESULT(yes)
@@ -971,14 +1071,14 @@ else
 fi
 
 ])
-dnl Calls IRISA_HAVE_VIC2500_ROBOT (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_VIC2500_ROBOT],
+dnl Calls IRISA_HAVE_ROBOT_VIC2500 (contained in this file) as a subroutine.
+AC_DEFUN([IRISA_HAVE_ROBOT_VIC2500],
 [
 
 #-----------------------------------------------------------------------
 # Manage the --with-robot-Vic2500-dir option
 AC_ARG_WITH([robot-Vic2500-dir],
-  AC_HELP_STRING([--with-robot-Vic2500-dir=DIR],
+  AC_HELP_STRING([--with-robot-Vic2500=DIR],
 		 [Location of Vic2500 robot api. By default /udd/fspindle/robot/Vic2500/current]),
                  path_robot_vic2500=$withval, 
                  path_robot_vic2500=/udd/fspindle/robot/Vic2500/current)
@@ -1021,7 +1121,7 @@ if test "x$with_robot_vic2500" = "xyes"; then
     # Vic2500 robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_VIC2500_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_VIC2500_LDFLAGS"
-    LIBS="$LIBS $ROBOT_VIC2500_LIBS"
+    LIBS="$ROBOT_VIC2500_LIBS $LIBS"
     AC_DEFINE([HAVE_ROBOT_VIC2500], 1,
               [Define to 1 if the Vic2500 robot api is available])
     AC_MSG_RESULT(yes)
@@ -1034,254 +1134,5 @@ if test "x$with_robot_vic2500" = "xyes"; then
 else
   AC_MSG_RESULT(no)
 fi
-
-])
-dnl Calls IRISA_HAVE_ICCOMP_FG (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_ICCOMP_FG],
-[
-#-----------------------------------------------------------------------
-# Manage the --with-fg-iccomp-dir option
-AC_ARG_WITH([fg-iccomp-dir],
-  AC_HELP_STRING([--with-fg-iccomp-dir=DIR],
-		 [Location of ICcomp framegrabber api. By default /udd/fspindle/robot/IC-comp/current]),
-                 path_fg_iccomp=$withval, 
-                 path_fg_iccomp=/udd/fspindle/robot/IC-comp/current)
-
-# check if the IC-comp framegrabber home dir exists
-#AC_CHECK_FILE([$path_fg_iccomp], [with_fg_iccomp=yes], [with_fg_iccomp=no])
-with_fg_iccomp=yes
-# set some variables if the IC-comp framegrabber is reacheable
-AC_MSG_CHECKING(whether framegrabber ICcomp api works)
-if test "x$with_fg_iccomp" = "xyes"; then
-  FG_ICCOMP_HOME=$path_fg_iccomp
-  FG_ICCOMP_DIR_INCLUDE=$FG_ICCOMP_HOME/include
-  FG_ICCOMP_DIR_LIB=$FG_ICCOMP_HOME/lib
-  FG_ICCOMP_CXXFLAGS=-I$FG_ICCOMP_DIR_INCLUDE
-  FG_ICCOMP_LDFLAGS="-L$FG_ICCOMP_DIR_LIB"
-  FG_ICCOMP_LIBS="-liccomp2x -lfl"
-  # save values
-  TMP_CXXFLAGS=$CXXFLAGS
-  TMP_CPPFLAGS=$CPPFLAGS
-  TMP_LDFLAGS=$LDFLAGS
-  TMP_LIBS=$LIBS
-  # set linker options for a local test 
-  CXXFLAGS=$FG_ICCOMP_CXXFLAGS
-  LDFLAGS=$FG_ICCOMP_LDFLAGS
-  LIBS=$FG_ICCOMP_LIBS
-  # test a single function of the SBS Vic2500 bus driver
-  AC_LANG_PUSH(C++)		
-  AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([#include "ic-comp2x.h"],
-                     [ICcomp2x fg;])],
-    have_lib_iccomp2x=yes,
-    have_lib_iccomp2x=no)
-  AC_LANG_POP(C++)		
-  # put the saved values
-  CXXFLAGS=$TMP_CXXFLAGS
-  CPPFLAGS=$TMP_CPPFLAGS
-  LDFLAGS=$TMP_LDFLAGS
-  LIBS=$TMP_LIBS
-
-  if test "x$have_lib_iccomp2x" = "xyes"; then
-    # Vic2500 robot works
-    CXXFLAGS="$CXXFLAGS $FG_ICCOMP_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $FG_ICCOMP_LDFLAGS"
-    LIBS="$LIBS $FG_ICCOMP_LIBS"
-    AC_DEFINE([HAVE_FG_ICCOMP], 1,
-              [Define to 1 if the ICcomp framegrabber api is available])
-    AC_MSG_RESULT(yes)
-    AC_SUBST(FG_ICCOMP_CXXFLAGS)
-    AC_SUBST(FG_ICCOMP_LDFLAGS)
-    AC_SUBST(FG_ICCOMP_LIBS)
-  else
-    AC_MSG_RESULT(no)
-  fi
-else
-  AC_MSG_RESULT(no)
-fi
-
-])
-dnl Calls IRISA_HAVE_V4L_FG (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_V4L_FG],
-[
-#-----------------------------------------------------------------------
-# check if video 4 Linux is reachable
-AC_MSG_CHECKING(whether Video For Linux api works)
-AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <linux/videodev.h>]])],[have_include_videodev=yes],[have_include_videodev=no])
-
-if test "x$have_include_videodev" = "xyes"; then
-  AC_DEFINE(HAVE_FG_V4L, 1, 
-    [Define to 1 if the include linux/videodev.h for Video4Linux acquisition is available])
-    AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-fi
-
-
-])
-dnl Calls IRISA_HAVE_V4L2_FG (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_V4L2_FG],
-[
-#-----------------------------------------------------------------------
-# Manage the --with-fg-v4l2-dir option
-AC_ARG_WITH([fg-v4l2-dir],
-  AC_HELP_STRING([--with-fg-v4l2-dir=DIR],
-		 [Location of Video4Linux2 framegrabber api. By default /udd/fspindle/robot/V4L2/current]),
-                 path_fg_v4l2=$withval, 
-                 path_fg_v4l2=/udd/fspindle/robot/V4L2/current)
-# check if the Video4Linux2 framegrabber home dir exists
-#AC_CHECK_FILE([$path_fg_v4l2], [with_fg_v4l2=yes], [with_fg_v4l2=no])
-with_fg_v4l2=yes
-
-# check if libraw1394 is reachable
-AC_MSG_CHECKING(whether Video For Linux Two api works)
-AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include </usr/src/linux/include/linux/videodev2.h>]])],[have_include_videodev2=yes],[have_include_videodev2=no])
-
-if test "x$have_include_videodev2" = "xyes"; then
-  AC_DEFINE(HAVE_INCLUDE_VIDEODEV2, 1, 
-    [Define to 1 if the include linux/videodev2.h for Video4Linux2 acquisition is available])
-
-  # set some variables if the V4L2 framegrabber api is reacheable
-  FG_V4L2_HOME=$path_fg_v4l2
-  FG_V4L2_DIR_INCLUDE=$FG_V4L2_HOME/include
-  FG_V4L2_DIR_LIB=$FG_V4L2_HOME/lib/$OS/$CXX_VERSION
-  FG_V4L2_CXXFLAGS="-I$FG_V4L2_DIR_INCLUDE -I/usr/src/linux/include"
-  FG_V4L2_LDFLAGS="-L$FG_V4L2_DIR_LIB"
-  FG_V4L2_LIBS="-lv4l2-0.9.x"
-  # save values
-  TMP_CXXFLAGS=$CXXFLAGS
-  TMP_CPPFLAGS=$CPPFLAGS
-  TMP_LDFLAGS=$LDFLAGS
-  TMP_LIBS=$LIBS
-  # set linker options for a local test 
-  CXXFLAGS=$FG_V4L2_CXXFLAGS
-  LDFLAGS=$FG_V4L2_LDFLAGS
-  LIBS=$FG_V4L2_LIBS
-  # test a single function of the V4L2 api
-  AC_LANG_PUSH(C++)		
-  AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([#include "CBTTV09x.h"],
-                     [CBTTV09x fg;])],
-    have_lib_v4l2=yes,
-    have_lib_v4l2=no)
-  AC_LANG_POP(C++)		
-  # put the saved values
-  CXXFLAGS=$TMP_CXXFLAGS
-  CPPFLAGS=$TMP_CPPFLAGS
-  LDFLAGS=$TMP_LDFLAGS
-  LIBS=$TMP_LIBS
-
-  if test "x$have_lib_v4l2" = "xyes"; then
-    # firewire api works
-    CXXFLAGS="$CXXFLAGS $FG_V4L2_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $FG_V4L2_LDFLAGS"
-    LIBS="$LIBS $FG_V4L2_LIBS"
-    AC_DEFINE([HAVE_FG_V4L2], 1,
-      [Define to 1 if the Video4Linux2 framegrabber api is available])
-    AC_MSG_RESULT(yes)
-    AC_SUBST(FG_V4L2_CXXFLAGS)
-    AC_SUBST(FG_V4L2_LDFLAGS)
-    AC_SUBST(FG_V4L2_LIBS)
-  else
-    AC_MSG_RESULT(no)
-  fi
-else
-  AC_MSG_RESULT(no)
-fi
-
-
-])
-dnl Calls IRISA_HAVE_IEEE1394_FG (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_IEEE1394_FG],
-[
-
-#-----------------------------------------------------------------------
-# Manage the --with-fg-ieee1394-dir option
-AC_ARG_WITH([fg-ieee1394-dir],
-  AC_HELP_STRING([--with-fg-ieee1394-dir=DIR],
-		 [Location of Firewire IEEE1394 framegrabber api. By default /udd/fspindle/robot/IEEE1394/current]),
-                 path_fg_ieee1394=$withval, 
-                 path_fg_ieee1394=/udd/fspindle/robot/IEEE1394/current)
-# check if the firewire Ieee1394 framegrabber home dir exists
-#AC_CHECK_FILE([$path_fg_ieee1394], [with_fg_ieee1394=yes], [with_fg_ieee1394=no])
-with_fg_ieee1394=yes
-
-# check if libraw1394 is reachable
-AC_MSG_CHECKING(whether libraw1394 works)
-AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <libraw1394/raw1394.h>]])],[have_include_raw1394=yes],[have_include_raw1394=no])
-
-if test "x$have_include_raw1394" = "xyes"; then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(HAVE_INCLUDE_RAW1394, 1, 
-    [Define to 1 if the include libraw1394/raw1394.h for firewire acquisition is available])
-
-  # check if libraw1394 is reachable
-  AC_MSG_CHECKING(whether libdc1394 works)
-  AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <libdc1394/dc1394_control.h>]])],[have_include_dc1394=yes],[have_include_dc1394=no])
-  if test "x$have_include_dc1394" = "xyes"; then
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_INCLUDE_DC1394, 1, 
-      [Define to 1 if the include libdc1394/dc1394_control.h for firewire acquisition is available])
-
-
-    # set some variables if the firewire framegrabber is reacheable
-    AC_MSG_CHECKING(whether framegrabber Ieee1394 api (firewire) works)
-    # set some variables if the firewire framegrabber is reacheable
-    if test "x$with_fg_ieee1394" = "xyes"; then
-      FG_IEEE1394_HOME=$path_fg_ieee1394
-      FG_IEEE1394_DIR_INCLUDE=$FG_IEEE1394_HOME/include
-      FG_IEEE1394_DIR_LIB=$FG_IEEE1394_HOME/lib/$OS/$CXX_VERSION
-      FG_IEEE1394_CXXFLAGS=-I$FG_IEEE1394_DIR_INCLUDE
-      FG_IEEE1394_LDFLAGS="-L$FG_IEEE1394_DIR_LIB"
-      FG_IEEE1394_LIBS="-lieee1394 -lraw1394 -ldc1394_control"
-
-      # save values
-      TMP_CXXFLAGS=$CXXFLAGS
-      TMP_CPPFLAGS=$CPPFLAGS
-      TMP_LDFLAGS=$LDFLAGS
-      TMP_LIBS=$LIBS
-      # set linker options for a local test 
-      CXXFLAGS="$FG_IEEE1394_CXXFLAGS -I$VISP_DIR_INCLUDE"
-      LDFLAGS=$FG_IEEE1394_LDFLAGS
-      LIBS=$FG_IEEE1394_LIBS
-      # test a single function of the firewire api
-      AC_LANG_PUSH(C++)		
-      AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([#include "CIEEE1394.h"],
-                         [CIEEE1394 fg;])],
-        have_lib_ieee1394=yes,
-        have_lib_ieee1394=no)
-      AC_LANG_POP(C++)		
-      # put the saved values
-      CXXFLAGS=$TMP_CXXFLAGS
-      CPPFLAGS=$TMP_CPPFLAGS
-      LDFLAGS=$TMP_LDFLAGS
-      LIBS=$TMP_LIBS
-
-      if test "x$have_lib_ieee1394" = "xyes"; then
-        # firewire api works
-        CXXFLAGS="$CXXFLAGS $FG_IEEE1394_CXXFLAGS"
-        LDFLAGS="$LDFLAGS $FG_IEEE1394_LDFLAGS"
-        LIBS="$LIBS $FG_IEEE1394_LIBS"
-        AC_DEFINE([HAVE_FG_IEEE1394], 1,
-                [Define to 1 if the Ieee1394 (firewire) framegrabber api is available])
-        AC_MSG_RESULT(yes)
-        AC_SUBST(FG_IEEE1394_CXXFLAGS)
-        AC_SUBST(FG_IEEE1394_LDFLAGS)
-        AC_SUBST(FG_IEEE1394_LIBS)
-      else
-        AC_MSG_RESULT(no)
-      fi
-    else
-      AC_MSG_RESULT(no)
-    fi # test for libieee1394
-
-  else # test for libdc1394
-    AC_MSG_RESULT(no)
-  fi
-else # test for libraw1394
-  AC_MSG_RESULT(no)
-fi
-
 
 ])
