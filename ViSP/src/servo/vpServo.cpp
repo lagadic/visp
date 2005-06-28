@@ -584,10 +584,11 @@ vpServo::computeControlLaw()
       break ;
     case EYEINHAND_CAMERA:
     case EYEINHAND_L_cVe_eJe:
-    case  EYETOHAND_L_cVe_eJe:
-      //   TRACE(" ") ;
+    case EYETOHAND_L_cVe_eJe:
+
       cVa = cVe ;
       aJe = eJe ;
+
       init_cVe = false ;
       init_eJe = false ;
       break ;
@@ -619,10 +620,8 @@ vpServo::computeControlLaw()
       rankJ1 = J1.pseudoInverse(J1p,1e-6) ; // rank of the task Jacobian
     else
       J1p = J1.t() ;
-    //  cout << "aJe " <<endl <<J1*J1p << endl ;
 
-    //    cout << "rank = " << rankJ1 << endl ;
-    e1 = J1p*error ;// primary task // la
+    e1 = J1p*error ;// primary task 
 
     e = -lambda* e1 ;
 
