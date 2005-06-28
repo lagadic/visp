@@ -298,15 +298,6 @@ src/tracking/moving-edges/Makefile
 src/tracking/forward-projection/Makefile
 src/tracking/feature-builder/Makefile
 src/tracking/general-tracking-issues/Makefile
-src/tracking/model-based-tracking/Makefile
-src/tracking/model-based-tracking/feature/Makefile
-src/tracking/model-based-tracking/feature-simulation/Makefile
-src/tracking/model-based-tracking/feature-real-images/Makefile
-src/tracking/model-based-tracking/tools/Makefile
-src/tracking/model-based-tracking/tracking/Makefile
-src/tracking/model-based-tracking/xml/Makefile
-src/tracking/model-based-tracking/model/Makefile
-src/tracking/model-based-tracking/init/Makefile
 test/Makefile
 test/pose/Makefile
 test/servo-simu/Makefile
@@ -318,7 +309,6 @@ test/image/Makefile
 test/tracking/Makefile
 test/simulator/Makefile	
 test/homography/Makefile	
-test/model-based-tracking/Makefile
 demo/Makefile
 demo/grasping-2-0.5-D/Makefile
 demo/virtual/Makefile
