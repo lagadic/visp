@@ -3,7 +3,9 @@
 SRC_REP = \
 	\
 	generic-framegrabber \
-	IC-Comp
+	IC-Comp \
+	1394 \
+	v4l2
 
 
 all install uninstall:
