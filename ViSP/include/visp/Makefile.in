@@ -1,5 +1,6 @@
 MATH	=  \
 	vpMath.h \
+	vpNoise.h \
 	vpMatrix.h \
 	vpEulerVector.h \
 	vpTranslationVector.h \
@@ -16,7 +17,9 @@ MATH	=  \
 	vpMatrixException.h  \
 	vpException.h \
 	vpScale.h \
-	vpRobust.h
+	vpRobust.h \
+	vpRansac.h \
+	vpRansac.t.cpp
 
 VISUALFEATURE =  \
 	vpFeatureException.h  \
@@ -138,47 +141,6 @@ CAMERA =  \
 	vpMeterPixelConversion.h \
 	vpPixelMeterConversion.h
 
-MODELBASEDTRACKING = \
-	\
-	artFace.h \
-	artAbstractFeature.h \
-	\
-	artPoint.h \
-	artLine.h \
-	artPolygon.h \
-	artDistance.h \
-	artSphere.h \
-	artCircle.h \
-	artCylinder.h \
-	artDistance.h \
-	artFDisk.h \
-	artFCylinder.h \
-	artFSphere.h \
-	\
-	artCylinderSimu.h \
-	artLineSimu.h \
-	artPointSimu.h \
-	artCircleSimu.h \
-	artSphereSimu.h \
-	\
-	artFeatureSet.h \
-	\
-	artDistanceCircle.h \
-	artDistanceLine.h \
-	artDistanceCylinder.h  \
-	artDistanceSphere.h \
-	\
-	artPlane.h \
-	\
-	artPixel.h \
-	artRobustTracking.h \
-	artXmlParser.h \
-	artCadModel.h \
-	artCadIVModel.h \
-	\
-	artViewer.h \
-	artMouseInitTracking.h  \
-	artTrackball.h
 
 
 HEADERS	  = \
@@ -187,7 +149,7 @@ HEADERS	  = \
 	$(ROBOT) $(DEBUG) \
 	$(TOOLS) $(IMAGE) $(VIDEODEVICE) \
 	$(FORWARDPROJECTION) $(TRACKING) \
-	$(CAMERA) $(POSE) $(GRABBER) $(MODELBASEDTRACKING) \
+	$(CAMERA) $(POSE) $(GRABBER)  \
 	$(SIMULATOR)
 
 SUFFIXES := .h
