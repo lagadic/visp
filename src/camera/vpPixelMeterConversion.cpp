@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPixelMeterConversion.cpp,v 1.2 2005-06-28 08:42:47 marchand Exp $
+ *  $Id: vpPixelMeterConversion.cpp,v 1.3 2005-06-28 13:26:11 marchand Exp $
  *
  * Description
  * ============
@@ -46,13 +46,13 @@ vpPixelMeterConversion::convertPoint(const vpCameraParameters &cam,
   if (fabs(cam.px)<1e-6)
   {
     ERROR_TRACE("Camera parameter px = 0") ;
-    throw(vpException(vpException::divideByZeroERR,
+    throw(vpException(vpException::divideByZeroError,
 		      "Camera parameter px = 0")) ;
   }
   if (fabs(cam.py)<1e-6)
   {
     ERROR_TRACE("Camera parameter py = 0") ;
-    throw(vpException(vpException::divideByZeroERR,
+    throw(vpException(vpException::divideByZeroError,
 		      "Camera parameter px = 0")) ;
   }
   x = (u - cam.u0)/cam.px ;
@@ -75,7 +75,7 @@ vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
   if (fabs(d)<1e-6)
   {
     ERROR_TRACE("division by zero") ;
-    throw(vpException(vpException::divideByZeroERR,
+    throw(vpException(vpException::divideByZeroError,
 		      "division by zero")) ;
   }
   theta_m = atan2(si*py, co*px) ;

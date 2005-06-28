@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageException.h,v 1.1.1.1 2005-06-08 07:08:08 fspindle Exp $
+ *  $Id: vpImageException.h,v 1.2 2005-06-28 13:30:44 marchand Exp $
  *
  * Description
  * ============
@@ -53,10 +53,10 @@ public:
    */
   enum errorImageCodeEnum
     {
-      ioERR,
-      noFileNameERR,
-      notInitializedERR,
-      badInitializationERR
+      ioError,
+      noFileNameError,
+      notInitializedError,
+      incorrectInitializationError
     } ;
 
 public:

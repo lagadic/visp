@@ -54,7 +54,7 @@ vpMatrix::LUDcmp(int *perm, int& d)
     if (big == 0.0)
     {
       ERROR_TRACE("Singular vpMatrix in  LUDcmp") ;
-        throw(vpMatrixException(vpMatrixException::matrixERR,
+        throw(vpMatrixException(vpMatrixException::matrixError,
 			    "\n\t\tSingular vpMatrix in  LUDcmp")) ;
     }
     vv[i]=1.0/big;
@@ -151,7 +151,7 @@ vpMatrix::inverseByLU() const
   if ( rowNum != colNum)
   {
     ERROR_TRACE("\n\t\tCannot invert a non-square vpMatrix") ;
-    throw(vpMatrixException(vpMatrixException::matrixERR,
+    throw(vpMatrixException(vpMatrixException::matrixError,
 			    "Cannot invert a non-square vpMatrix")) ;
   }
 

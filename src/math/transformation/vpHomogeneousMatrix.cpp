@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomogeneousMatrix.cpp,v 1.2 2005-06-28 08:31:20 marchand Exp $
+ *  $Id: vpHomogeneousMatrix.cpp,v 1.3 2005-06-28 13:25:12 marchand Exp $
  *
  * Description
  * ============
@@ -367,7 +367,7 @@ vpHomogeneousMatrix::save(ofstream &f) const
   else
   {
     ERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioERR, "\t\t file not open")) ;
+    throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
 
@@ -392,7 +392,7 @@ vpHomogeneousMatrix::load(ifstream &f)
   else
   {
     ERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioERR, "\t\t file not open")) ;
+    throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
 
@@ -416,7 +416,7 @@ vpHomogeneousMatrix::loadMatrix34(ifstream &f)
   else
   {
     ERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioERR, "\t\t file not open")) ;
+    throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
 

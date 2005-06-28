@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseVector.cpp,v 1.1.1.1 2005-06-08 07:08:07 fspindle Exp $
+ *  $Id: vpPoseVector.cpp,v 1.2 2005-06-28 13:25:12 marchand Exp $
  *
  * Description
  * ============
@@ -165,7 +165,7 @@ vpPoseVector::save(ofstream &f) const
   else
   {
     ERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioERR, "\t\t file not open")) ;
+    throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
 
@@ -189,7 +189,7 @@ vpPoseVector::load(ifstream &f)
   else
   {
     ERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioERR, "\t\t file not open")) ;
+    throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
 

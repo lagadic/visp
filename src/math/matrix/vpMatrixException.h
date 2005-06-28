@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrixException.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpMatrixException.h,v 1.2 2005-06-28 13:25:07 marchand Exp $
  *
  * Description
  * ============
@@ -51,19 +51,19 @@ public:
   enum errorCodeEnum
     {
       //! error returns by a constructor
-      constructionorERR,
+      constructionError,
       //! something is not initialized
-      notInitializedERR,
+      notInitializedError,
       //! function not implemented
-      notImplementedERR,
+      notImplementedError,
       //! index out of range
-      outOfRangeERR,
+      outOfRangeError,
       //! iterative algorithm doesn't converge (ex SVD)
-      convergencyERR,
-      incorrectMatrixSizeERR,
-      forbiddenOperatorERR,
-      subMatrixERR,
-      matrixERR
+      convergencyError,
+      incorrectMatrixSizeError,
+      forbiddenOperatorError,
+      subMatrixError,
+      matrixError
     } ;
 
 public:
