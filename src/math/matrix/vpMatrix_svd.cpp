@@ -524,7 +524,7 @@ vpMatrix::svdGsl(vpColVector& w, vpMatrix& v)
   gsl_vector *S = gsl_vector_alloc(nc) ;
   gsl_vector *work = gsl_vector_alloc(nc) ;
 
-  // gsl_linalg_SV_decomp(A,V,S, work) ;
+//  gsl_linalg_SV_decomp(A,V,S, work) ;
   gsl_linalg_SV_decomp_jacobi(A,V,S) ;
 
 
