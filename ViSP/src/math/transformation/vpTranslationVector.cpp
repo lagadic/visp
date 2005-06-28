@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTranslationVector.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpTranslationVector.cpp,v 1.2 2005-06-28 08:33:43 marchand Exp $
  *
  * Description
  * ============
@@ -72,6 +72,18 @@ vpTranslationVector vpTranslationVector::operator-() const //negate
     }
 
     return t;
+}
+
+//! initialisation each element of the vector is x
+vpTranslationVector & vpTranslationVector::operator=(double x)
+{
+
+  double *d = data ;
+
+  for (int i=0;i<3;i++)
+    *(d++)=  x ;
+
+  return *this;
 }
 
 /*!
