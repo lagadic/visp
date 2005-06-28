@@ -559,8 +559,10 @@ vpMeEllipse::leastSquare(vpImage<unsigned char>  &I)
 
       DAx = DA*Kc ;
 
+      vpColVector res ;
+      res = DAx-b ;
       r.setIteration(0) ;
-      r.MEstimator(vpRobust::TUKEY,DAx,w) ;
+      r.MEstimator(vpRobust::TUKEY,res,w) ;
 
       list.front() ;
       k =0 ;
