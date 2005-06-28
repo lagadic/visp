@@ -1,3 +1,6 @@
+#ifndef vpConfig_h
+#define vpConfig_h
+
 /* include/visp/vpConfig.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if the SBS Bit3 bus driver is available */
@@ -9,27 +12,16 @@
 /* Define to 1 if the ICcomp framegrabber api is available */
 #undef HAVE_FG_ICCOMP
 
-/* Define to 1 if the Ieee1394 (firewire) framegrabber api is available */
-#undef HAVE_FG_IEEE1394
-
 /* Define to 1 if the include linux/videodev.h for Video4Linux acquisition is
    available */
-#undef HAVE_FG_V4L
-
-/* Define to 1 if the Video4Linux2 framegrabber api is available */
-#undef HAVE_FG_V4L2
-
-/* Define to 1 if the include libdc1394/dc1394_control.h for firewire
-   acquisition is available */
-#undef HAVE_INCLUDE_DC1394
-
-/* Define to 1 if the include libraw1394/raw1394.h for firewire acquisition is
-   available */
-#undef HAVE_INCLUDE_RAW1394
+#undef HAVE_INCLUDE_VIDEODEV
 
 /* Define to 1 if the include linux/videodev2.h for Video4Linux2 acquisition
    is available */
 #undef HAVE_INCLUDE_VIDEODEV2
+
+/* Define to 1 if you have the `dc1394_control' library (-ldc1394_control). */
+#undef HAVE_LIBDC1394_CONTROL
 
 /* Define to 1 if you have the `gsl' library (-lgsl). */
 #undef HAVE_LIBGSL
@@ -45,6 +37,9 @@
 
 /* Define to 1 if you have the `png' library (-lpng). */
 #undef HAVE_LIBPNG
+
+/* Define to 1 if you have the `raw1394' library (-lraw1394). */
+#undef HAVE_LIBRAW1394
 
 /* Define to 1 if you have the `SoQt' library (-lSoQt). */
 #undef HAVE_LIBSOQT
@@ -73,20 +68,7 @@
 /* Define to 1 if the Vic2500 robot api is available */
 #undef HAVE_ROBOT_VIC2500
 
-/* Define to the address where bug reports for this package should be sent. */
-#undef PACKAGE_BUGREPORT
-
-/* Define to the full name of this package. */
-#undef PACKAGE_NAME
-
-/* Define to the full name and version of this package. */
-#undef PACKAGE_STRING
-
-/* Define to the one symbol short name of this package. */
-#undef PACKAGE_TARNAME
-
-/* Define to the version of this package. */
-#undef PACKAGE_VERSION
-
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
+
+#endif

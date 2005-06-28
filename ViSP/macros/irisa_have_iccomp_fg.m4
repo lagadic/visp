@@ -48,7 +48,7 @@ if test "x$with_fg_iccomp" = "xyes"; then
     # Vic2500 robot works
     CXXFLAGS="$CXXFLAGS $FG_ICCOMP_CXXFLAGS"
     LDFLAGS="$LDFLAGS $FG_ICCOMP_LDFLAGS"
-    LIBS="$LIBS $FG_ICCOMP_LIBS"
+    LIBS="$FG_ICCOMP_LIBS $LIBS"
     AC_DEFINE([HAVE_FG_ICCOMP], 1,
               [Define to 1 if the ICcomp framegrabber api is available])
     AC_MSG_RESULT(yes)

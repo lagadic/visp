@@ -46,7 +46,7 @@ if test "x$with_robot_afma6" = "xyes"; then
     # Afma6 robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_AFMA6_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_AFMA6_LDFLAGS"
-    LIBS="$LIBS $ROBOT_AFMA6_LIBS"
+    LIBS="$ROBOT_AFMA6_LIBS $LIBS"
     AC_DEFINE([HAVE_ROBOT_AFMA6], 1,
               [Define to 1 if the Afma6 robot api are available])
     AC_MSG_RESULT(yes)

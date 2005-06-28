@@ -48,7 +48,7 @@ if test "x$with_robot_ptuevi" = "xyes"; then
     # Ptuevi robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_PTUEVI_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_PTUEVI_LDFLAGS"
-    LIBS="$LIBS $ROBOT_PTUEVI_LIBS"
+    LIBS="$ROBOT_PTUEVI_LIBS $LIBS"
     AC_DEFINE([HAVE_ROBOT_PTUEVI], 1,
               [Define to 1 if the Ptu-Evi robot api is available])
     AC_MSG_RESULT(yes)

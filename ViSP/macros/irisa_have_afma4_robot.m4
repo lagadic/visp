@@ -44,10 +44,10 @@ if test "x$with_robot_afma4" = "xyes"; then
   LIBS=$TMP_LIBS
 
   if test "x$have_lib_toolsAfma4" = "xyes"; then
-    # Afma6 robot works
+    # Afma4 robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_AFMA4_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_AFMA4_LDFLAGS"
-    LIBS="$LIBS $ROBOT_AFMA4_LIBS"
+    LIBS="$ROBOT_AFMA4_LIBS $LIBS"
     AC_DEFINE([HAVE_ROBOT_AFMA4], 1,
               [Define to 1 if the Afma4 robot api are available])
     AC_MSG_RESULT(yes)

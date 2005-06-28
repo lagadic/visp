@@ -48,7 +48,7 @@ if test "x$with_robot_vic2500" = "xyes"; then
     # Vic2500 robot works
     CXXFLAGS="$CXXFLAGS $ROBOT_VIC2500_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_VIC2500_LDFLAGS"
-    LIBS="$LIBS $ROBOT_VIC2500_LIBS"
+    LIBS="$ROBOT_VIC2500_LIBS $LIBS"
     AC_DEFINE([HAVE_ROBOT_VIC2500], 1,
               [Define to 1 if the Vic2500 robot api is available])
     AC_MSG_RESULT(yes)
