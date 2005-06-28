@@ -66,10 +66,10 @@ public:
     MONO16  /*!< MONO16 coding format (16 bits/pixel) */
   } ImageFormatEnum;
 
-  static const int DROP_FRAMES; //!< Number of frames to drop
-  static const int NUM_BUFFERS; //!< Number of buffers
-  static const int MAX_PORTS;   //!< Port maximal number
-  static const int MAX_CAMERAS; //!< Maximal number of cameras on the bus
+  static const int DROP_FRAMES; // Number of frames to drop
+  static const int NUM_BUFFERS; // Number of buffers
+  static const int MAX_PORTS;   // Port maximal number
+  static const int MAX_CAMERAS; // Maximal number of cameras on the bus
 
 
 public:
@@ -89,18 +89,6 @@ public:
 
   void getWidth (int &width, int camera=0);
   void getHeight(int &height, int camera=0);
-
-public:
-
-//   void open(vpImage<unsigned char> &I) ;
-//   void open(vpImage<vpRGBa> &I) ;
-
-//   void acquire(vpImage<unsigned char> &I) ;
-//   void acquire(vpImage<vpRGBa> &I)  ;
-//   bool getField();
-//   void setFramerate(framerateEnum framerate);
-//   framerateEnum getFramerate();
-//   void close()  ;
 
 private:
 
