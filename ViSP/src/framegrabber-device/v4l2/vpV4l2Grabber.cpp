@@ -82,7 +82,7 @@ vpV4l2Grabber::vpV4l2Grabber()
   buf_me    = NULL;
 
   setFramerate(vpV4l2Grabber::framerate_25fps);
-  setInput(vpV4l2Grabber::DEFAULT_INPUT_BOARD);
+  setInput(vpV4l2Grabber::DEFAULT_INPUT);
   setScale(vpV4l2Grabber::DEFAULT_SCALE);
 
   init = false;
