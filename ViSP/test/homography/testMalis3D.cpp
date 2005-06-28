@@ -38,7 +38,7 @@ main()
   vpPoint bP[nbpt]  ;  //  Point to be tracked
 
   P[0].setWorldCoordinates(-L,-L, 0 ) ;
-  P[1].setWorldCoordinates(2*L,-L, -L ) ;
+  P[1].setWorldCoordinates(2*L,-L, 0 ) ;
   P[2].setWorldCoordinates(L,L, 0 ) ;
   P[3].setWorldCoordinates(-L,3*L, 0 ) ;
   P[4].setWorldCoordinates(0,0, L ) ;
@@ -53,7 +53,7 @@ main()
     P[6].setWorldCoordinates(-10,12, 0 ) ;
   */
   vpHomogeneousMatrix bMo(0,0,1, 0,0,0) ;
-  vpHomogeneousMatrix aMb(0,1,0.0,vpMath::rad(10),0,vpMath::rad(40)) ;
+  vpHomogeneousMatrix aMb(0.1,0.1,0.1,vpMath::rad(10),0,vpMath::rad(40)) ;
   vpHomogeneousMatrix aMo =aMb*bMo ;
   for(i=0 ; i < nbpt ; i++)
   {
@@ -75,7 +75,7 @@ main()
   vpTranslationVector aTb ;
   vpColVector n ;
   cout << "-------------------------------" <<endl ;
-  TRACE("Compare with built homography H = R + t/d ") ;
+  TRACE("Compare with built homography H = R + t/d n ") ;
   vpPlane bp(0,0,1,1) ;
   vpHomography aHb_built(aMb,bp) ;
   TRACE( "aHb built from the displacement ") ;
@@ -93,11 +93,11 @@ main()
   cout << "aMb "<<endl <<aMb << endl ;
   cout << "-------------------------------" <<endl ;
   vpHomography aHb ;
-  vpColVector epipole ;
-  vpHomography::Malis(nbpt,xb,yb,xa,ya,false, aHb, epipole) ;
+
+  vpHomography::HLM(nbpt,xb,yb,xa,ya,false, aHb) ;
 
   TRACE("aHb computed using the Malis paralax  algorithm") ;
-  aHb /= aHb[2][2] ;
+    aHb /= aHb[2][2] ;
   cout << endl << aHb<<  endl ;
 
 
@@ -125,6 +125,7 @@ main()
     p = aHb*bP[i] ;
     cout << p.get_x() /p.get_w()<<",  "<< p.get_y()/ p.get_w() <<")"<<endl ;
   }
+
 
 
 
