@@ -2,7 +2,10 @@
 
 
 SOURCES		= \
-	testIcComp1.cpp
+	testIcComp1.cpp \
+	test1394.cpp \
+	testV4l2Grey.cpp
+	testV4l2Color.cpp
 
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
