@@ -9,7 +9,7 @@ SOURCES		=
 .KEEP_STATE	:
 .PRECIOUS	: $(LIB)
 
-all install	: directory $(LIB)
+all install	: directory
 
 @directory_mk@
 
@@ -19,5 +19,5 @@ all install	: directory $(LIB)
 
 @uninstall_mk@
 
-@depend_mk@
+
 

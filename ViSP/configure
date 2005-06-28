@@ -7014,7 +7014,7 @@ uninstall_mk=$VISP_HOME/configs/uninstall.mk
 
 depend_mk=$VISP_HOME/configs/depend.mk
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ac_config_files="$ac_config_files configs/build.mk doc/config-doxygen include/Makefile include/visp/Makefile Makefile src/Makefile src/camera/Makefile src/debug/Makefile src/exceptions/Makefile src/math/Makefile src/math/misc/Makefile src/math/transformation/Makefile src/math/matrix/Makefile src/math/robust/Makefile src/robot/Makefile src/robot/robot/Makefile src/robot/simulation-robot/Makefile src/robot/real-robot/Makefile src/robot/real-robot/afma6/Makefile src/servo/Makefile src/simulator/Makefile src/tools/Makefile src/tools/io/Makefile src/tools/geometry/Makefile src/tools/time/Makefile src/visual-feature/Makefile src/image/Makefile src/computer-vision/Makefile src/computer-vision/pose-estimation/Makefile src/computer-vision/homography-estimation/Makefile src/video-device/Makefile src/framegrabber-device/Makefile src/framegrabber-device/IC-Comp/Makefile src/framegrabber-device/generic-framegrabber/Makefile src/tracking/Makefile src/tracking/dots/Makefile src/tracking/moving-edges/Makefile src/tracking/forward-projection/Makefile src/tracking/feature-builder/Makefile src/tracking/general-tracking-issues/Makefile src/tracking/model-based-tracking/Makefile src/tracking/model-based-tracking/feature/Makefile src/tracking/model-based-tracking/feature-simulation/Makefile src/tracking/model-based-tracking/feature-real-images/Makefile src/tracking/model-based-tracking/tools/Makefile src/tracking/model-based-tracking/tracking/Makefile src/tracking/model-based-tracking/xml/Makefile src/tracking/model-based-tracking/model/Makefile src/tracking/model-based-tracking/init/Makefile test/Makefile test/pose/Makefile test/servo-simu/Makefile test/servo-afma6/Makefile test/grabber/Makefile test/feature/Makefile test/math/Makefile test/image/Makefile test/tracking/Makefile test/simulator/Makefile test/homography/Makefile test/model-based-tracking/Makefile demo/Makefile demo/grasping-2-0.5-D/Makefile demo/virtual/Makefile demo/virtual/positioning/Makefile"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ac_config_files="$ac_config_files configs/build.mk doc/config-doxygen include/Makefile include/visp/Makefile Makefile src/Makefile src/camera/Makefile src/debug/Makefile src/exceptions/Makefile src/math/Makefile src/math/misc/Makefile src/math/transformation/Makefile src/math/matrix/Makefile src/math/robust/Makefile src/data-structure/Makefile src/robot/Makefile src/robot/robot/Makefile src/robot/simulation-robot/Makefile src/robot/real-robot/Makefile src/robot/real-robot/afma6/Makefile src/servo/Makefile src/simulator/Makefile src/tools/Makefile src/tools/io/Makefile src/tools/geometry/Makefile src/tools/time/Makefile src/visual-feature/Makefile src/image/Makefile src/computer-vision/Makefile src/computer-vision/pose-estimation/Makefile src/computer-vision/homography-estimation/Makefile src/video-device/Makefile src/framegrabber-device/Makefile src/framegrabber-device/IC-Comp/Makefile src/framegrabber-device/generic-framegrabber/Makefile src/tracking/Makefile src/tracking/dots/Makefile src/tracking/moving-edges/Makefile src/tracking/forward-projection/Makefile src/tracking/feature-builder/Makefile src/tracking/general-tracking-issues/Makefile test/Makefile test/pose/Makefile test/servo-simu/Makefile test/servo-afma6/Makefile test/grabber/Makefile test/feature/Makefile test/math/Makefile test/image/Makefile test/tracking/Makefile test/simulator/Makefile test/homography/Makefile demo/Makefile demo/grasping-2-0.5-D/Makefile"
 
 
 ########################################################################
@@ -7573,6 +7573,7 @@ do
   "src/math/transformation/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/math/transformation/Makefile" ;;
   "src/math/matrix/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/math/matrix/Makefile" ;;
   "src/math/robust/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/math/robust/Makefile" ;;
+  "src/data-structure/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/data-structure/Makefile" ;;
   "src/robot/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/robot/Makefile" ;;
   "src/robot/robot/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/robot/robot/Makefile" ;;
   "src/robot/simulation-robot/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/robot/simulation-robot/Makefile" ;;
@@ -7599,15 +7600,6 @@ do
   "src/tracking/forward-projection/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/forward-projection/Makefile" ;;
   "src/tracking/feature-builder/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/feature-builder/Makefile" ;;
   "src/tracking/general-tracking-issues/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/general-tracking-issues/Makefile" ;;
-  "src/tracking/model-based-tracking/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/Makefile" ;;
-  "src/tracking/model-based-tracking/feature/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/feature/Makefile" ;;
-  "src/tracking/model-based-tracking/feature-simulation/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/feature-simulation/Makefile" ;;
-  "src/tracking/model-based-tracking/feature-real-images/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/feature-real-images/Makefile" ;;
-  "src/tracking/model-based-tracking/tools/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/tools/Makefile" ;;
-  "src/tracking/model-based-tracking/tracking/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/tracking/Makefile" ;;
-  "src/tracking/model-based-tracking/xml/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/xml/Makefile" ;;
-  "src/tracking/model-based-tracking/model/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/model/Makefile" ;;
-  "src/tracking/model-based-tracking/init/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/tracking/model-based-tracking/init/Makefile" ;;
   "test/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
   "test/pose/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/pose/Makefile" ;;
   "test/servo-simu/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/servo-simu/Makefile" ;;
@@ -7619,11 +7611,8 @@ do
   "test/tracking/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/tracking/Makefile" ;;
   "test/simulator/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/simulator/Makefile" ;;
   "test/homography/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/homography/Makefile" ;;
-  "test/model-based-tracking/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/model-based-tracking/Makefile" ;;
   "demo/Makefile" ) CONFIG_FILES="$CONFIG_FILES demo/Makefile" ;;
   "demo/grasping-2-0.5-D/Makefile" ) CONFIG_FILES="$CONFIG_FILES demo/grasping-2-0.5-D/Makefile" ;;
-  "demo/virtual/Makefile" ) CONFIG_FILES="$CONFIG_FILES demo/virtual/Makefile" ;;
-  "demo/virtual/positioning/Makefile" ) CONFIG_FILES="$CONFIG_FILES demo/virtual/positioning/Makefile" ;;
   "include/visp/vpConfig.h" ) CONFIG_HEADERS="$CONFIG_HEADERS include/visp/vpConfig.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

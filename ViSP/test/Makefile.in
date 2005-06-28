@@ -2,13 +2,12 @@
 
 SRC_REP =  math \
 	servo-afma6 \
-	servo-simulation  \
+	servo-simu  \
 	feature \
 	pose \
 	image \
 	tracking \
 	grabber \
-	model-based-tracking \
 	simulator \
 	homography
 

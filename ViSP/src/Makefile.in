@@ -22,7 +22,6 @@ SRC_REP = \
 	framegrabber-device \
 	\
 	camera \
-	fio \
 	\
 	simulator
 
