@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoCircle2.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testServoCircle2.cpp,v 1.2 2005-06-28 09:04:12 marchand Exp $
  *
  * Description
  * ============
@@ -55,6 +55,8 @@
 int
 main()
 {
+
+
   vpImage<unsigned char> I(512,512,0) ;
   vpDisplayX display(I,100,100) ;
 
@@ -134,6 +136,8 @@ main()
     //retrieve x,y and Z of the vpCircle structure
     circle.track(cMo) ;
     vpFeatureBuilder::create(p,circle);
+    circle.print() ;
+    p.print() ;
 
     vpDisplay::display(I) ;
     vpServoDisplay::display(task,cam,I) ;
@@ -144,9 +148,6 @@ main()
     cout << task.rankJ1 <<endl ;
     if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-    //  TRACE("\t\t || s - s* || ") ;
-    //  cout << task.error.sumSquare() <<endl ; ;
   }
 
   TRACE("Display task information " ) ;
