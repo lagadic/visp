@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpDot.h,v 1.2 2005-06-28 08:22:54 marchand Exp $
  *
  * Description
  * ============
@@ -91,9 +91,9 @@ private:
       in,
       out
     } ;
-
+  double nbMaxPoint ;
   int connexe(vpImage<unsigned char>& I, int i, int j, int seuil,
-	       double &i_cog, double &j_cog,  int &n) ;
+	       double &i_cog, double &j_cog,  double &n) ;
   void COG(vpImage<unsigned char> &I,double& i, double& j) ;
 
   int seuil ;
@@ -115,6 +115,8 @@ public:
   void track(vpImage<unsigned char> & I) ;
   //! track and get the new dot coordinates
   void track(vpImage<unsigned char> & I, double &i, double &j) ;
+  //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels) 
+  void setNbMaxPoint(double nb) ;
 
 private:
   bool graphics ;

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpDot.cpp,v 1.2 2005-06-28 08:22:54 marchand Exp $
  *
  * Description
  * ============
@@ -49,6 +49,7 @@ void vpDot::init()
   seuil_min = 200 ;
   compute_moment = false ;
   graphics = false ;
+  nbMaxPoint =5000 ;
 }
 
 vpDot::vpDot() : vpTracker()
@@ -137,7 +138,7 @@ vpDot::operator==(const vpDot& m)
 
 int
 vpDot::connexe(vpImage<unsigned char>& I, int i, int j, int seuil,
-	       double &i_cog, double &j_cog,  int &n)
+	       double &i_cog, double &j_cog,  double &n)
 {
 
   if (I[i][j] >=seuil)
@@ -150,7 +151,7 @@ vpDot::connexe(vpImage<unsigned char>& I, int i, int j, int seuil,
     Lj += j ;
     i_cog += i ;
     j_cog += j ;
-    n++ ;
+    n+=1 ;
     if (compute_moment==true)
     {
       m00++ ;
@@ -200,7 +201,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
 
   double i_cog = 0 ;
   double j_cog = 0 ;
-  int npoint =0 ;
+  double npoint =0 ;
   Li.kill() ;
   Lj.kill() ;
 
@@ -244,8 +245,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
     Lj.next() ;
   }
 
-  i_cog /= npoint ;
-  j_cog /= npoint ;
+  i_cog = (int) (i_cog/npoint) ;
+  j_cog = (int) (j_cog/npoint) ;
 
 
   i = i_cog ;
@@ -256,11 +257,23 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
     ERROR_TRACE("Dot has been lost") ;
     throw(vpTrackingException(vpTrackingException::featureLostERR,
 			      "Dot has been lost")) ;
+  } 
+  if (npoint > nbMaxPoint)
+  {
+    ERROR_TRACE("Too many point %f (max allowed is %f)", npoint, nbMaxPoint) ;
+    ERROR_TRACE("This threshold can be modified using the setNbMaxPoint(int) method") ;
+
+    throw(vpTrackingException(vpTrackingException::featureLostERR,
+			      "Dot has been lost")) ;
   }
 }
 
 
-
+void 
+vpDot::setNbMaxPoint(double nb)
+{
+  nbMaxPoint = nb ;
+}
 
 //! init the traking with a mouse click
 void
