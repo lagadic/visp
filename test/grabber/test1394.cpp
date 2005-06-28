@@ -1,9 +1,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#ifdef HAVE_FG_ICCOMP
+#if ( defined (HAVE_LIBDC1394_CONTROL) & defined(HAVE_LIBRAW1394) )
 
-#include <visp/vpIcComp.h>
+#include <visp/vp1394Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -11,9 +11,9 @@
 #include <visp/vpParseArgv.h>
 
 /*!
-  \example testTrackDot.cpp
+  \example test1394.cpp
 
-  \brief   test dot tracking on an image sequence
+  Test frame grabbing capabilities using ieee 1394 video device.
 */
 
 int
@@ -48,12 +48,8 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
 
-  vpIcCompGrabber g(2) ;
+  vp1394Grabber g ;
   g.open(I) ;
-  if (fps == 25)
-    g.setFramerate(vpIcCompGrabber::framerate_25fps);
-  else
-    g.setFramerate(vpIcCompGrabber::framerate_50fps);
 
   try{
     g.acquire(I) ;

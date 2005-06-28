@@ -1,9 +1,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#ifdef HAVE_FG_ICCOMP
+#ifdef HAVE_INCLUDE_VIDEODEV2
 
-#include <visp/vpIcComp.h>
+#include <visp/vpV4l2Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -11,9 +11,10 @@
 #include <visp/vpParseArgv.h>
 
 /*!
-  \example testTrackDot.cpp
+  \example testV4l2Color.cpp
 
-  \brief   test dot tracking on an image sequence
+  Test frame grabbing capabilities using video 4 linux two video device.
+  Only grabbing of color level images is tested.
 */
 
 int
@@ -45,15 +46,15 @@ main(int argc, char ** argv)
     exit(1) ;
   }
 
-  vpImage<unsigned char> I ;
+  vpImage<vpRGBa> I ;
 
+  vpV4l2Grabber g;
 
-  vpIcCompGrabber g(2) ;
+  g.setInput(vpV4l2Grabber::DEFAULT_INPUT_BOARD);
+  g.setScale(vpV4l2Grabber::DEFAULT_SCALE);
+  g.setFramerate(vpV4l2Grabber::framerate_25fps);
   g.open(I) ;
-  if (fps == 25)
-    g.setFramerate(vpIcCompGrabber::framerate_25fps);
-  else
-    g.setFramerate(vpIcCompGrabber::framerate_50fps);
+
 
   try{
     g.acquire(I) ;
@@ -69,7 +70,7 @@ main(int argc, char ** argv)
 
   TRACE(" ") ;
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+  vpDisplayX display(I,100,100,"Video4Linux2 grabbing... ") ;
   TRACE(" ") ;
 
   try{
@@ -92,6 +93,11 @@ main(int argc, char ** argv)
     vpDisplay::flush(I) ;
     cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
   }
+
+  g.close();
+
+
+
 }
 #else
 int
