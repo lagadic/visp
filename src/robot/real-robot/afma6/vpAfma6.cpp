@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.cpp,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpAfma6.cpp,v 1.2 2005-06-28 08:29:04 marchand Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -1277,7 +1277,12 @@ vpAfma6::get_cMe(vpHomogeneousMatrix &cMe)
 
 #define CTE_L -0.068826
 
-//! get the robot Jacobian expressed in the end-effector frame
+/*! 
+  \brief get the robot Jacobian expressed in the end-effector frame
+
+  \warning Re is not the embedded camera  frame (see also get_cMe)
+
+*/
 void
 vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
 {
@@ -1286,9 +1291,6 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
   eJe.resize(6,6) ;
   try
   {
-
-    cout << q << endl ;
-
     double s3,c3,s4,c4,s5,c5 ;
 
     s3=sin(q[3]); c3=cos(q[3]);
@@ -1331,7 +1333,6 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
 }
 /*!
   \brief get the robot Jacobian expressed in the robot reference frame
-  \warning this functionality is not implemented ont he Afma6
   \exception vpRobotException (vpRobotException::ERRNotImplemented)
 */
 
