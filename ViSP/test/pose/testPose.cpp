@@ -27,6 +27,13 @@
 
 #define L 0.035
 
+// #if HAVE_LIBGSL
+// extern int gsl_warnings_off;
+// //#include <gsl/gsl_errno.h>
+// //#include <gsl/gsl_message.h>
+// gsl_warnings_off = 1;
+// #endif
+
 /*!
   \example testPose.cpp
 
