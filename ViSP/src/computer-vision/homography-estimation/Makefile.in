@@ -9,7 +9,8 @@ SOURCES		= \
 	vpHomography.cpp \
 	vpHomographyExtract.cpp	\
 	vpHomographyDLT.cpp \
-	vpHomographyMalis.cpp
+	vpHomographyMalis.cpp \
+	vpHomographyRansac.cpp
 
 .KEEP_STATE	:
 .PRECIOUS	: $(LIB)

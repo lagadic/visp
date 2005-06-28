@@ -148,9 +148,11 @@ vpPose::coplanaire()
   x1 = P1.get_oX() ;
   x2 = P2.get_oX() ;
   x3 = P3.get_oX() ;
+
   y1 = P1.get_oY() ;
   y2 = P2.get_oY() ;
   y3 = P3.get_oY() ;
+
   z1 = P1.get_oZ() ;
   z2 = P2.get_oZ() ;
   z3 = P3.get_oZ() ;
@@ -164,7 +166,7 @@ vpPose::coplanaire()
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
   if (fabs(D) < 1e-10)
   {
-        ERROR_TRACE("division by zero  ") ;
+    //       ERROR_TRACE("division by zero  ") ;
     // throw(vpException(vpException::divideByZeroERR,
     //		      "division by zero  ")) ;
   }
@@ -407,65 +409,11 @@ vpPose::printPoint()
 
 
 void
-vpPose::display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size, int col)
+vpPose::display(vpImage<unsigned char> &I,
+		vpHomogeneousMatrix &cMo,
+		vpCameraParameters &cam,
+		double size,
+		int col)
 {
- // used by display
-  /*  vpPoint o; o.setWorldCoordinates(0.0,0.0,0.0) ;
-  vpPoint x; x.setWorldCoordinates(size,0.0,0.0) ;
-  vpPoint y; y.setWorldCoordinates(0.0,size,0.0) ;
-  vpPoint z; z.setWorldCoordinates(0.0,0.0,size) ;
-
-  o.track(cMo) ;
-  x.track(cMo) ;
-  y.track(cMo) ;
-  z.track(cMo) ;
-
-  double ox,oy, x1,y1 ;
-
-  if (col == vpColor::none)
-    {
-      vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
-
-      vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
-      vpDisplay::displayArrow(I,
-			      vpMath::round(oy), vpMath::round(ox),
-			      vpMath::round(y1), vpMath::round(x1),
-			      vpColor::green) ;
-
-      vpMeterPixelConversion::convertPoint(cam,y.p[0],y.p[1],x1,y1) ;
-      vpDisplay::displayArrow(I,
-			      vpMath::round(oy), vpMath::round(ox),
-			      vpMath::round(y1), vpMath::round(x1),
-			      vpColor::blue) ;
-
-      vpMeterPixelConversion::convertPoint(cam,z.p[0],z.p[1],x1,y1) ;
-      vpDisplay::displayArrow(I,
-			      vpMath::round(oy), vpMath::round(ox),
-			      vpMath::round(y1), vpMath::round(x1),
-			      vpColor::red) ;
-    }
-  else
-     {
-      vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
-
-      vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
-      vpDisplay::displayArrow(I,
-			      vpMath::round(oy), vpMath::round(ox),
-			      vpMath::round(y1), vpMath::round(x1),
-			      col) ;
-
-      vpMeterPixelConversion::convertPoint(cam,y.p[0],y.p[1],x1,y1) ;
-      vpDisplay::displayArrow(I,
-			      vpMath::round(oy), vpMath::round(ox),
-			      vpMath::round(y1), vpMath::round(x1),
-			      col) ;
-
-      vpMeterPixelConversion::convertPoint(cam,z.p[0],z.p[1],x1,y1) ;
-      vpDisplay::displayArrow(I,
-			      vpMath::round(oy), vpMath::round(ox),
-			      vpMath::round(y1), vpMath::round(x1),
-			      col) ;
-    }
-  */
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }

@@ -11,6 +11,7 @@ SOURCES		= \
 	vpPoseLagrange.cpp \
 	vpPoseLowe.cpp \
 	vpPoseNonLinearMinimisation.cpp \
+	vpPoseRansac.cpp \
 	vpPoseException.cpp
 
 
