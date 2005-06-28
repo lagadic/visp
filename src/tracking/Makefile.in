@@ -6,8 +6,7 @@ SRC_REP = \
 	dots \
 	moving-edges \
 	forward-projection \
-	feature-builder \
-	model-based-tracking
+	feature-builder
 
 
 all install uninstall:
