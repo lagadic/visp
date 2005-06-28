@@ -1,3 +1,6 @@
+#include<visp/vpConfig.h>
+
+#ifdef HAVE_LIBSOQT
 #include <visp/vpViewer.h>
 #include <visp/vpSimulator.h>
 
@@ -124,3 +127,4 @@ vpViewer::processSoEvent(const SoEvent * const event)
   return  SoQtExaminerViewer::processSoEvent(event);
 }
 
+#endif
