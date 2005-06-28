@@ -124,7 +124,7 @@ vpCircle::projection(const vpColVector &_cP, vpColVector &_p)
   if (fabs(det) < 1e-8)
   {
     ERROR_TRACE("division par 0") ;
-    throw(vpException(vpException::divideByZeroERR,
+    throw(vpException(vpException::divideByZeroError,
 		      "division par 0")) ;
 
   }
