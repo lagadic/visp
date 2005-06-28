@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFrameGrabberException.h,v 1.1.1.1 2005-06-08 07:08:13 fspindle Exp $
+ *  $Id: vpFrameGrabberException.h,v 1.2 2005-06-28 10:22:49 fspindle Exp $
  *
  * Description
  * ============
@@ -53,9 +53,9 @@ public:
    */
   enum errorFrameGrabberCodeEnum
     {
-      ERRWrongInput,
-      ERRWrongScale,
-      ERRNotInitialiazed
+      settingError,
+      initializationError,
+      otherError
     } ;
 
 public:
