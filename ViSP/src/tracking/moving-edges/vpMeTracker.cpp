@@ -177,8 +177,8 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
     case  ERR_TRACKING:
       cout << "vpMeTracker::initTracking:Track return ERR_TRACKING " << endl ;
       break ;
-    case FATAL_ERROR:
-      cout << "vpMeTracker::initTracking:Track return FATAL_ERROR" << endl ;
+    case fatalError:
+      cout << "vpMeTracker::initTracking:Track return fatalError" << endl ;
       break ;
     default:
       cout << "vpMeTracker::initTracking:Track return error " << res << endl ;
@@ -204,7 +204,7 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
  * \n	  -int test_contrast : 1 if you want to test the contrast (using mu1 and mu2)
  *				also to test temporal component of the hypothesis. i.e. log liklihood ratio
  * \post modification of the liste of pixel
- * 				Return value : OK : all is ok, FATAL_ERROR : ususaly a division by 0
+ * 				Return value : OK : all is ok, fatalError : ususaly a division by 0
  * \author Andrew Comport
  * \date 2002
  */
@@ -220,7 +220,7 @@ vpMeTracker::track(vpImage<unsigned char>& I)
 
     ERROR_TRACE("Error Tracking: only %d "
 		 "pixels when entered the function ",list.nbElement()) ;
-    throw(vpTrackingException(vpTrackingException::NOT_ENOUGH_POINT_ERR,
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "too few pixel to track")) ;
 
   }
