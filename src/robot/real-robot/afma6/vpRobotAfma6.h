@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.h,v 1.1.1.1 2005-06-08 07:08:08 fspindle Exp $
+ *  $Id: vpRobotAfma6.h,v 1.2 2005-06-28 15:48:47 marchand Exp $
  *
  * Description
  * ============
@@ -36,6 +36,7 @@
 #include <visp/vpRobot.h>   /* Classe CRobot dont herite CRobotAfma6.  */
 #include <visp/vpAfma6.h>   /* Constantes du robot (classe vpAfma6).    */
 #include <visp/vpColVector.h>   /* Constantes du robot (classe vpAfma6).    */
+#include <visp/vpDebug.h>   /* Constantes du robot (classe vpAfma6).    */
 
 /* --- GENERAL --- */
 #include <iostream>                /* Classe std::ostream.              */
@@ -240,11 +241,16 @@ public:
   DV6_mmrad_mrad (const double * input, vpColVector & output);
 
   //! get a displacement expressed in the camera frame
-  void getCameraDisplacement(vpColVector &v) const { ; }
+  void getCameraDisplacement(vpColVector &v) const
+  {ERROR_TRACE("not implemented") ; }
   //! get a displacement expressed  in the articular frame
-  void getArticularDisplacement(vpColVector  &qdot)  const { ; }
+  void getArticularDisplacement(vpColVector  &qdot)  const
+  {ERROR_TRACE("not implemented") ; }
+
   //! get a displacement (frame as to ve specified)
-  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q)  const  { ; }
+  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q)  const
+  {ERROR_TRACE("not implemented") ; }
+
 
   void move(char *name) ;
   int  readPosFile(char *name, vpColVector &v)  ;
