@@ -182,7 +182,7 @@ vp1394Grabber::setFormat(int format, int camera)
   Set the camera capture mode.
 
   \param mode The camera capture mode. The current camera mode is given by
-  GetMode(). The supported modes are given by GetSupportedModes().
+  getMode(). The supported modes are given by getSupportedModes().
 
   \param camera A camera. The value must be comprised between 0 and the
   number of cameras found on the bus and returned by GetNumCameras().
