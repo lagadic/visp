@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.1.1.1 2005-06-08 07:08:08 fspindle Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.2 2005-06-28 12:57:36 marchand Exp $
  *
  * Description
  * ============
@@ -138,14 +138,14 @@ vpRobotAfma6::init (void)
   if (0 != vmeOpenA32D32_Afma6())
   {
     ERROR_TRACE ("Cannot open connexion between PC and VME.");
-    throw vpRobotException (vpRobotException::ERRConstruction,
+    throw vpRobotException (vpRobotException::constructionError,
 			    "Cannot open connexion between PC and VME");
   }
 
   if (0 != initialisation_Afma6())
   {
     ERROR_TRACE ("Error during robot initialization.");
-    throw vpRobotException (vpRobotException::ERRCommunication,
+    throw vpRobotException (vpRobotException::communicationError,
 			    "Error during robot initialization.");
   }
 
@@ -231,7 +231,7 @@ vpRobotAfma6::setRobotState(vpRobot::RobotStateType newState)
 	if (0 != init_mouvement_Afma6 ())
 	{
 	  ERROR_TRACE ("Cannot init velocity control.");
-	  throw vpRobotException (vpRobotException::ERRLowLevel,
+	  throw vpRobotException (vpRobotException::lowLevelError,
 				  "Cannot init velocity control.");
 	}
       }
@@ -396,7 +396,7 @@ vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
   if (0 != positionnement_Afma6(& communicationPosition ))
   {
     ERROR_TRACE ("Positionning error.");
-    throw vpRobotException (vpRobotException::ERRLowLevel,
+    throw vpRobotException (vpRobotException::lowLevelError,
 			    "Positionning error.");
   }
 
@@ -465,7 +465,7 @@ vpRobotAfma6::getPosition (const vpRobot::ControlFrameType frame,
   if (0 != recup_posit_Afma6(& (communicationPosition) ) )
   {
     ERROR_TRACE ("Error when calling  recup_posit_Afma6.");
-    throw vpRobotException (vpRobotException::ERRLowLevel,
+    throw vpRobotException (vpRobotException::lowLevelError,
 			    "Error when calling  recup_posit_Afma6.");
   }
 
@@ -527,7 +527,7 @@ setVelocity (const vpRobot::ControlFrameType frame,
   {
     ERROR_TRACE ("Cannot send a velocity to the robot "
 		 "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-    throw vpRobotException (vpRobotException::ERRWrongState,
+    throw vpRobotException (vpRobotException::wrongStateError,
 			    "Cannot send a velocity to the robot "
 			    "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   }

@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.cpp,v 1.2 2005-06-28 08:29:04 marchand Exp $
+ *  $Id: vpAfma6.cpp,v 1.3 2005-06-28 12:57:36 marchand Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -219,7 +219,7 @@ computeInverseJacobian (const vpColVector & pos,
 		 "fichier de parametres n'a ete parse. La fonction "
 		 "CParametresAfma6::init () doit etre appelee apres "
 		 "la construction.");
-    throw vpRobotException (vpRobotException::ERRNotInitialized,
+    throw vpRobotException (vpRobotException::notInitializedError,
 			    "L'objet n'a pas ete initialise correctement. Aucun "
 			    "fichier de parametres n'a ete parse. La fonction "
 			    "CParametresAfma6::init () doit etre appelee apres "
@@ -804,7 +804,7 @@ parseConfigFile (const char * filename)
     ERROR_TRACE ("Impossible d'ouvrir le fichier de constantes robot %s.",
 		 filename);
     fclose(fdtask);
-    throw vpRobotException (vpRobotException::ERRReadingParameters,
+    throw vpRobotException (vpRobotException::readingParametersError,
 			    "Impossible d'ouvrir le fichier de constantes robot.");
   }
 
@@ -1277,7 +1277,7 @@ vpAfma6::get_cMe(vpHomogeneousMatrix &cMe)
 
 #define CTE_L -0.068826
 
-/*! 
+/*!
   \brief get the robot Jacobian expressed in the end-effector frame
 
   \warning Re is not the embedded camera  frame (see also get_cMe)
