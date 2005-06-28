@@ -1,9 +1,7 @@
 
 
 SRC_REP = \
-	grasping-2-0.5-D \
-	model-based-tracking \
-	virtual
+	grasping-2-0.5-D
 
 all install uninstall:
 	@for i in $(SRC_REP);\
