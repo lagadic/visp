@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpSimulatorException.h,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: vpSimulatorException.h,v 1.2 2005-06-28 13:13:06 marchand Exp $
  *
  * Description
  * ============
@@ -53,11 +53,11 @@ public:
    */
   enum errorSimulatorCodeEnum
     {
-      ioERR,
-      noFileNameERR,
-      notInitializedERR,
-      windowSizeNotInitializedERR,
-      badInitializationERR
+      ioError,
+      noFileNameError,
+      notInitializedError,
+      windowSizeNotInitializedError,
+      badInitializationError
     } ;
 
 public:
