@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureEllipse.cpp,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeatureEllipse.cpp,v 1.2 2005-06-28 08:25:20 marchand Exp $
  *
  * Description
  * ============
@@ -255,6 +255,7 @@ vpFeatureEllipse::print(const int select ) const
     cout << " mu11=" << s[3] <<endl ;
   if (vpFeatureEllipse::selectMu02() & select )
     cout << " mu02=" << s[4] <<endl ;
+  cout << "A = "<<A <<" B = "<<B <<" C = "<<C << endl ; 
 }
 
 
