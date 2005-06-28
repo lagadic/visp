@@ -1,6 +1,13 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
+/*!
+  \example testV4l2Color.cpp
+
+  Test frame grabbing capabilities using video 4 linux two video device.
+  Only grabbing of color level images is tested.
+*/
+
 #ifdef HAVE_INCLUDE_VIDEODEV2
 
 #include <visp/vpV4l2Grabber.h>
@@ -10,12 +17,6 @@
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
 
-/*!
-  \example testV4l2Color.cpp
-
-  Test frame grabbing capabilities using video 4 linux two video device.
-  Only grabbing of color level images is tested.
-*/
 
 int
 main(int argc, char ** argv)
@@ -103,7 +104,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  TRACE("ICcomp frame grabber drivers are not available") ;
+  TRACE("v4l2 frame grabber drivers are not available") ;
 }
 #endif
 
