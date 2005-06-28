@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTranslationVector.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpTranslationVector.h,v 1.2 2005-06-28 08:33:43 marchand Exp $
  *
  * Description
  * ============
@@ -20,6 +20,9 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+/* Modifications
+   june, 8 2005 (EM) Add operator=(double)
+*/
 
 
 #ifndef vpTRANSLATIONVECTOR_H
@@ -54,6 +57,8 @@ public:
     vpTranslationVector operator+(const vpTranslationVector &b) const ;
     //! negate t = -a  (t is unchanged)
     vpTranslationVector vpTranslationVector::operator-() const ;
+
+    vpTranslationVector &operator=(double x) ;
 
 
     //! Skew Symmetric matrix
