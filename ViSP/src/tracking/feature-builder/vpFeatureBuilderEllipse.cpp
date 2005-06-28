@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilderEllipse.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpFeatureBuilderEllipse.cpp,v 1.2 2005-06-28 08:21:57 marchand Exp $
  *
  * Description
  * ============
@@ -115,26 +115,26 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
     vpMatrix m(order,order) ; m = 0 ;
 
     mp[0][0] = t.m00 ;
-    mp[1][0] = t.m01;
-    mp[0][1] = t.m10 ;
-    mp[2][0] = t.m02 ;
+    mp[1][0] = t.m10;
+    mp[0][1] = t.m01 ;
+    mp[2][0] = t.m20 ;
     mp[1][1] = t.m11 ;
-    mp[0][2] = t.m20 ;
+    mp[0][2] = t.m02 ;
 
     vpPixelMeterConversion::convertMoment(cam,order,mp,m) ;
 
     double  m00 = m[0][0] ;
-    double  m01 = m[1][0] ;
-    double  m10 = m[0][1] ;
-    double  m02 = m[2][0] ;
+    double  m01 = m[0][1] ;
+    double  m10 = m[1][0] ;
+    double  m02 = m[0][2] ;
     double  m11 = m[1][1] ;
-    double  m20 = m[0][2] ;
+    double  m20 = m[2][0] ;
 
-    double xc = m10/m00 ; // sum i /S
-    double yc = m01/m00 ; // sum j /S
+    double xc = m10/m00 ; // sum j /S
+    double yc = m01/m00 ; // sum i /S
 
-    double mu02 = 4*(m02 - m00*vpMath::sqr(yc))/(m00) ;
     double mu20 = 4*(m20 - m00*vpMath::sqr(xc))/(m00) ;
+    double mu02 = 4*(m02 - m00*vpMath::sqr(yc))/(m00) ;
     double mu11 = 4*(m11 - m00*xc*yc)/(m00) ;
 
     s.buildFrom(xc, yc,  mu20, mu11, mu02  ) ;
