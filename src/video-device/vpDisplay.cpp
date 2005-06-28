@@ -54,7 +54,7 @@ vpDisplay::getImage(vpImage<unsigned  char> &Isrc, vpImage<vpRGBa> &Idest)
     else
     {
       ERROR_TRACE("Display not initialized") ;
-      throw(vpDisplayException(vpDisplayException::notInitializedERR,
+      throw(vpDisplayException(vpDisplayException::notInitializedError,
 			       "Display not initialized")) ;
     }
   }
@@ -428,7 +428,7 @@ vpDisplay::display(vpImage<vpRGBa> &I)
     else
     {
       ERROR_TRACE("Display not initialized") ;
-      throw(vpDisplayException(vpDisplayException::notInitializedERR,
+      throw(vpDisplayException(vpDisplayException::notInitializedError,
 			       "Display not initialized")) ;
     }
   }
@@ -456,7 +456,7 @@ vpDisplay::getImage(vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
     else
     {
       ERROR_TRACE("Display not initialized") ;
-      throw(vpDisplayException(vpDisplayException::notInitializedERR,
+      throw(vpDisplayException(vpDisplayException::notInitializedError,
 			       "Display not initialized")) ;
     }
   }

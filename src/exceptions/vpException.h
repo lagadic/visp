@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpException.h,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpException.h,v 1.2 2005-06-28 13:49:56 marchand Exp $
  *
  * Description
  * ============
@@ -65,13 +65,13 @@ public:
 
   enum generalExceptionEnum
     {
-      memoryAllocationERR,
-      memoryFreeERR,
-      functionNotImplementedERR,
-      ioERR,
-      cannotUseConstructorERR,
-      notImplementedERR,
-      divideByZeroERR
+      memoryAllocationError,
+      memoryFreeError,
+      functionNotImplementedError,
+      ioError,
+      cannotUseConstructorError,
+      notImplementedError,
+      divideByZeroError
     } ;
   // ~vpException() throw() {;}
 
