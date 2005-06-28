@@ -68,8 +68,8 @@ main()
   cout << "aMb "<<endl <<aMb << endl ;
   cout << "-------------------------------" <<endl ;
   vpHomography aHb ;
-  vpColVector epipole ;
-  vpHomography::Malis(nbpt,xb,yb,xa,ya,true, aHb, epipole) ;
+
+  vpHomography::HLM(nbpt,xb,yb,xa,ya,true, aHb) ;
 
   TRACE("aHb computed using the Malis paralax  algorithm") ;
   aHb /= aHb[2][2] ;
@@ -119,6 +119,37 @@ main()
     cout << p.get_x() /p.get_w()<<",  "<< p.get_y()/ p.get_w() <<")"<<endl ;
   }
 
+  cout << "-------------------------------" <<endl ;
+  TRACE("test displacement") ;
 
+  vpList<vpRotationMatrix> laRb ;
+  vpList<vpTranslationVector> laTb ;
+  vpList<vpColVector> lnb ;
+
+  vpHomography::computeDisplacement(aHb,bP[0].get_x(),bP[0].get_y(),
+				    laRb, laTb, lnb) ;
+
+  laRb.front() ;
+  laTb.front() ;
+  lnb.front() ;
+  int k =1 ;
+  while (!lnb.outside())
+  {
+    cout << "Solution " << k++ << endl ;
+
+    aRb = laRb.value() ;
+    aTb = laTb.value() ;
+    n = lnb.value() ;
+    cout << "Rotation aRb" <<endl ;
+    cout << aRb << endl ;
+    cout << "Translation  aTb" <<endl;
+    cout << (aTb).t() <<endl ;
+    cout << "normale  n" <<endl;
+    cout << (n).t() <<endl ;
+
+    laRb.next() ;
+    laTb.next() ;
+    lnb.next() ;
+  }
 
 }

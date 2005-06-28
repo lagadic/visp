@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoCircle1.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testServoCircle1.cpp,v 1.2 2005-06-28 09:04:05 marchand Exp $
  *
  * Description
  * ============
@@ -128,6 +128,7 @@ main()
     cout << task.rankJ1 <<endl ;
     if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+ 
 
     //  TRACE("\t\t || s - s* || ") ;
     //  cout << task.error.sumSquare() <<endl ; ;

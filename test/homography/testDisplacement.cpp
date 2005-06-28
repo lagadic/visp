@@ -17,7 +17,6 @@ main()
 {
 
 
-
   {
     vpThetaUVector tu(vpMath::rad(90), vpMath::rad(120), vpMath::rad(45)) ;
 
