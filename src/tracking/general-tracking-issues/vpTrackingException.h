@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTrackingException.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpTrackingException.h,v 1.2 2005-06-28 13:08:00 marchand Exp $
  *
  * Description
  * ============
@@ -53,11 +53,12 @@ public:
    */
   enum errorTrackingCodeEnum
     {
-      featureLostERR,
+      featureLostError,
+
       // Moving edges
-      NOT_ENOUGH_POINT_ERR,
-      INIT_ERR,
-      FATAL_ERROR
+      notEnoughPointError,
+      initializationError,
+      fatalError
     } ;
 
 public:
