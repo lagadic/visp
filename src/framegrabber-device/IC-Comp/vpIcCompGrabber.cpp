@@ -19,7 +19,10 @@
 
 /*!
   \file vpIcCompGrabber.cpp
-  \brief member functions for the ICComp (Imaging Technology) video device class (suitable for new Linux Kernel > 2.4)
+
+  \brief Member functions for the IcComp (Imaging Technology) video device
+  class (suitable for new Linux Kernel > 2.4).
+
   \ingroup libdevice
 */
 #include <visp/vpConfig.h>
@@ -28,13 +31,15 @@
 #ifdef HAVE_FG_ICCOMP
 
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpFrameGrabberException.h>
 #include <visp/vpImageIo.h>
-#define DEBUG_LEVEL1 0
+
+const int vpIcCompGrabber::DEFAULT_INPUT = 2;
+const int vpIcCompGrabber::DEFAULT_SCALE = 2;
 
 /*!
-  \brief constructor
+  Constructor.
 
   \param _input : video port
   \param _scale : decimation factor
@@ -45,23 +50,17 @@
 */
 vpIcCompGrabber::vpIcCompGrabber( unsigned _input, unsigned _scale)
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin vpIcCompGrabber::vpIcCompGrabber()" << endl ;
-
-  framerate = vpIcCompGrabber::framerate_25fps;
   init = false ;
 
   framegrabber = new ICcomp2x ;
 
-  setInput(_input);
-  setScale(_scale) ;
-
-  if (DEBUG_LEVEL1)
-    cout << "end vpIcCompGrabber::vpIcCompGrabber()" << endl ;
+  setInput     (_input);
+  setScale     (_scale) ;
+  setFramerate (vpIcCompGrabber::framerate_25fps);
 }
 
 /*!
-  \brief constructor
+  Constructor.
 
   \param I : Image data structure (8 bits image)
   \param _input : video port
@@ -71,27 +70,22 @@ vpIcCompGrabber::vpIcCompGrabber( unsigned _input, unsigned _scale)
 
   \sa setFramerate()
 */
-vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I, unsigned _input, unsigned _scale )
+vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I,
+				 unsigned _input, unsigned _scale )
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I, int scal)" << endl ;
-  framerate = vpIcCompGrabber::framerate_25fps;
-
   framegrabber = new ICcomp2x ;
 
   setInput(_input);
   setScale(_scale) ;
+  setFramerate (vpIcCompGrabber::framerate_25fps);
 
   init = false ;
 
   open(I) ;
-
-  if (DEBUG_LEVEL1)
-    cout << "end vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I, int scal)" << endl ;
 }
 
 /*!
-  \brief constructor
+  Constructor.
 
   \param I : Image data structure (32 bits image)
   \param _input : video port
@@ -101,25 +95,22 @@ vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I, unsigned _input, uns
 
   \sa setFramerate()
 */
-vpIcCompGrabber::vpIcCompGrabber(vpImage<vpRGBa> &I, unsigned _input, unsigned _scale )
+vpIcCompGrabber::vpIcCompGrabber(vpImage<vpRGBa> &I,
+				 unsigned _input, unsigned _scale )
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I, int scal)" << endl ;
-
-  framerate = vpIcCompGrabber::framerate_25fps;
   framegrabber = new ICcomp2x ;
 
   setInput(_input);
   setScale(_scale) ;
+  setFramerate (vpIcCompGrabber::framerate_25fps);
 
   open(I) ;
 
-  if (DEBUG_LEVEL1)
-    cout << "end vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I, int scal)" << endl ;
 }
 
 /*!
-  \brief set the video port
+  Set the video port.
+  \exception settingError : Wrong input (shoud be between 0 and 3).
 */
 void
 vpIcCompGrabber::setInput(unsigned _input)
@@ -128,7 +119,7 @@ vpIcCompGrabber::setInput(unsigned _input)
   {
     ERROR_TRACE("Wrong input %d, IC-Comp Frame grabber has only 4 input channels",_input) ;
 
-    throw (vpFrameGrabberException(vpFrameGrabberException::ERRWrongInput,
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong input channel") );
   }
 
@@ -137,9 +128,11 @@ vpIcCompGrabber::setInput(unsigned _input)
 }
 
 /*!
-  \brief set the scale
+  Set the scale
 
-  \param scale : decimation factor
+  \param scale : Decimation factor.
+
+  \exception settingError : Wrong scale (shoud be between 1 and 16).
 */
 void
 vpIcCompGrabber::setScale(unsigned scale)
@@ -147,7 +140,7 @@ vpIcCompGrabber::setScale(unsigned scale)
   if ((scale <1) || (scale >16))
   {
     ERROR_TRACE("Wrong scale %d, scale shoud be between 1 and 16",scale) ;
-    throw (vpFrameGrabberException(vpFrameGrabberException::ERRWrongInput,
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong scale") );
   }
 
@@ -157,18 +150,15 @@ vpIcCompGrabber::setScale(unsigned scale)
 }
 
 /*!
-  \brief Initialize image acquisition
+  Initialize the device for grey level image acquisition.
 
   \param I : Image data structure (8 bits image)
-  \param _input : video port
-  \param _scale : decimation factor
+
+  \sa setScale(), setInput(), setFramerate(), acquire(vpImage<unsigned char>)
 */
 void
 vpIcCompGrabber::open(vpImage<unsigned char> &I)
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin  vpIcCompGrabber::open(vpImage<unsigned char> &I" << endl ;
-
   if (framegrabber->GetDecimation() ==1)
     framegrabber->SetNBufs(1);
   else
@@ -188,24 +178,18 @@ vpIcCompGrabber::open(vpImage<unsigned char> &I)
   I.resize(nrows,ncols) ;
 
   init = true ;
-
-  if (DEBUG_LEVEL1)
-    cout << "end  vpIcCompGrabber::open(vpImage<unsigned char> &I" << endl ;
 }
 
 /*!
-  \brief Initialize image acquisition
+  Initialize the device for color image acquisition.
 
   \param I : Image data structure (32 bits image)
-  \param _input : video port
-  \param _scale : decimation factor
+
+  \sa setScale(), setInput(), setFramerate(), acquire(vpImage<vpRGBa>)
 */
 void
 vpIcCompGrabber::open(vpImage<vpRGBa> &I)
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin  vpIcCompGrabber::open(vpImage<vpRGBa> &I) " << endl ;
-
   framegrabber->SetDecimation(1) ;
 
   framegrabber->SetNBufs(1);
@@ -221,30 +205,26 @@ vpIcCompGrabber::open(vpImage<vpRGBa> &I)
   I.resize(nrows,ncols) ;
 
   init = true ;
-
-  if (DEBUG_LEVEL1)
-    cout << "end  vpIcCompGrabber::open(vpImage<vpRGBa> &I) " << endl ;
 }
 
 /*!
-  \brief Acquire a color image
+  Acquire a color image
 
   \param I : Image data structure (32 bits image)
 
-  \sa getField()
+  \exception initializationError : The device is not initialized.
+
+  \sa open(vpImage<vpRGBa> &), getField()
 */
 void
 vpIcCompGrabber::acquire(vpImage<vpRGBa> &I)
 {
 
-  if (DEBUG_LEVEL1)
-    cout << "begin vpIcCompGrabber::acquire(...)" << endl ;
-
   if (framegrabber==NULL)
   {
     ERROR_TRACE("ICcomp not initialized ") ;
 
-    throw (vpFrameGrabberException(vpFrameGrabberException::ERRNotInitialiazed,
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "ICcomp not initialized ") );
   }
 
@@ -284,31 +264,27 @@ vpIcCompGrabber::acquire(vpImage<vpRGBa> &I)
     delete [] bitmaprgba ;
 
   }
-
-  if (DEBUG_LEVEL1)
-    cout << "end vpIcCompGrabber::acquire(...)" << endl ;
-
 }
 
 
 /*!
-  \brief Acquire a gray level image
+  Acquire a grey level image.
 
   \param I : Image data structure (8 bits image)
 
-  \sa getField()
+  \exception initializationError : The device is not initialized.
+
+  \sa open(vpImage<unsigned char> &), getField()
 */
 void
 vpIcCompGrabber::acquire(vpImage<unsigned char> &I)
 {
 
-  if (DEBUG_LEVEL1)
-    cout << "begin vpIcCompGrabber::acquire(..<uchar>.)" << endl ;
   if (framegrabber==NULL)
   {
     ERROR_TRACE("ICcomp not initialized ") ;
 
-    throw (vpFrameGrabberException(vpFrameGrabberException::ERRNotInitialiazed,
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "ICcomp not initialized ") );
   }
 
@@ -337,19 +313,14 @@ vpIcCompGrabber::acquire(vpImage<unsigned char> &I)
     I.resize(nrows,ncols) ;
 
   memcpy(I.bitmap,bitmap,nrows*ncols)  ;
-
-  //vpImageIo::writePGM(I,"test.pgm") ;
-
-  if (DEBUG_LEVEL1)
-    cout << "end vpIcCompGrabber::acquire(...)" << endl ;
 }
 
 /*!
 
-  \brief Return the field (odd or even) corresponding to the last acquired
+  Return the field (odd or even) corresponding to the last acquired
   frame.
 
-  This method is to call after acquire() and has only a sens if the acquisition
+  This method is to call after acquire() and has only a mean if the acquisition
   framerate is set to 50 fps.
 
   \return Field of the acquired frame (0 if odd field, 1 if even field).
@@ -364,7 +335,7 @@ vpIcCompGrabber::getField()
 }
 /*!
 
-  \brief Set the framerate of the acquisition.
+  Set the framerate of the acquisition.
 
   \param framerate The framerate for the acquisition.
 
@@ -378,7 +349,7 @@ vpIcCompGrabber::setFramerate(vpIcCompGrabber::framerateEnum framerate)
 }
 /*!
 
-  \brief Return the framerate of the acquisition.
+  Return the framerate of the acquisition.
 
   \return The actual framerate of the framegrabber.
 
@@ -394,7 +365,7 @@ vpIcCompGrabber::getFramerate()
 
 
 /*!
-  \brief Close the video port
+  Close the video port.
 */
 void
 vpIcCompGrabber::close()
@@ -402,7 +373,6 @@ vpIcCompGrabber::close()
 
   if (framegrabber!=NULL)
   {
-    TRACE("appel destructeur framegrabber->~ICcomp() ") ;
     framegrabber->~ICcomp2x() ;
     framegrabber = NULL ;
   }
@@ -410,20 +380,13 @@ vpIcCompGrabber::close()
 
 
 /*!
-  \brief Destructor
-  \sa close() ;
+  Destructor.
+  \sa close()
 */
 vpIcCompGrabber::~vpIcCompGrabber()
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin vpIcCompGrabber::~vpIcCompGrabber()" << endl ;
-
   close() ;
-
-  if (DEBUG_LEVEL1)
-    cout << "end vpIcCompGrabber::~vpIcCompGrabber()" << endl ;
 }
 
-#undef DEBUG_LEVEL1
 
 #endif
