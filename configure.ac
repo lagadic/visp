@@ -272,6 +272,7 @@ src/math/misc/Makefile
 src/math/transformation/Makefile
 src/math/matrix/Makefile
 src/math/robust/Makefile
+src/data-structure/Makefile
 src/robot/Makefile
 src/robot/robot/Makefile
 src/robot/simulation-robot/Makefile
@@ -311,8 +312,6 @@ test/simulator/Makefile
 test/homography/Makefile	
 demo/Makefile
 demo/grasping-2-0.5-D/Makefile
-demo/virtual/Makefile
-demo/virtual/positioning/Makefile
 ])
 
 ########################################################################
