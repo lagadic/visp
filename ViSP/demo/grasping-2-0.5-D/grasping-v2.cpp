@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: grasping-v2.cpp,v 1.2 2005-06-28 09:27:28 marchand Exp $
+ *  $Id: grasping-v2.cpp,v 1.3 2005-06-28 12:40:26 fspindle Exp $
  *
  * Description
  * ============
@@ -27,7 +27,7 @@
 */
 
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplay.h>
