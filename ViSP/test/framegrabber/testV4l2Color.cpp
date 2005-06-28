@@ -50,7 +50,7 @@ main(int argc, char ** argv)
 
   vpV4l2Grabber g;
 
-  g.setInput(vpV4l2Grabber::DEFAULT_INPUT_BOARD);
+  g.setInput(vpV4l2Grabber::DEFAULT_INPUT);
   g.setScale(vpV4l2Grabber::DEFAULT_SCALE);
   g.setFramerate(vpV4l2Grabber::framerate_25fps);
   g.open(I) ;
