@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoint.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpPoint.h,v 1.2 2005-06-28 13:57:55 marchand Exp $
  *
  * Description
  * ============
@@ -75,7 +75,7 @@ public:
   double get_Z() const  { return cP[2] ; }
   double get_W()  const { return cP[3] ; }
 
-  //! get the point coordinates (camera frame)
+  //! get the point coordinates (object frame)
   double get_oX() const { return oP[0] ; }
   double get_oY() const { return oP[1] ; }
   double get_oZ() const { return oP[2] ; }
