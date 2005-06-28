@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoLine-v1.cpp,v 1.1.1.1 2005-06-08 07:08:15 fspindle Exp $
+ *  $Id: testServoLine-v1.cpp,v 1.2 2005-06-28 13:32:37 fspindle Exp $
  *
  * Description
  * ============
@@ -32,7 +32,7 @@
 
 #ifdef HAVE_ROBOT_AFMA6
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -166,19 +166,19 @@ main()
     try {
       g.acquire(I) ;
       vpDisplay::display(I) ;
-      
+
       line.track(I) ;
       line.display(I, vpColor::red) ;
-      
+
       //    vpDisplay::displayCross(I,(int)line.I(), (int)line.J(),
       //			   10,vpColor::green) ;
-      
+
       vpFeatureBuilder::create(p,cam,line);
       TRACE("%f %f ",line.getRho(), line.getTheta()) ;
 
       p.display(cam, I,  vpColor::red) ;
       v = task.computeControlLaw() ;
-      
+
       vpServoDisplay::display(task,cam,I) ;
       //  cout << v.t() ;
       if (iter==0)  vpDisplay::getClick(I) ;

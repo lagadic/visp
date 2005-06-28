@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoEllipse.cpp,v 1.1 2005-06-28 09:01:04 marchand Exp $
+ *  $Id: testServoEllipse.cpp,v 1.2 2005-06-28 13:32:37 fspindle Exp $
  *
  * Description
  * ============
@@ -32,7 +32,7 @@
 
 #ifdef HAVE_ROBOT_AFMA6
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -122,7 +122,7 @@ main()
 
   TRACE("sets the current position of the visual feature ") ;
   vpFeatureEllipse c ;
-  vpFeatureBuilder::create(c,cam, dot)  ;  
+  vpFeatureBuilder::create(c,cam, dot)  ;
 
 
   cout << " Learning 0/1 " <<endl ;
@@ -188,8 +188,8 @@ main()
 	  }
       }
     else gain = lambda_av ;
-     
-      
+
+
     TRACE("%f %f", task.error.sumSquare(),  gain) ;
     task.setLambda(gain) ;
     vpColVector v ;

@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testEyeToHand.cpp,v 1.1 2005-06-28 09:00:23 marchand Exp $
+ *  $Id: testEyeToHand.cpp,v 1.2 2005-06-28 13:32:36 fspindle Exp $
  *
  * Description
  * ============
@@ -34,7 +34,7 @@
 
 #define SAVE 0
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -317,8 +317,8 @@ main()
       vpHomogeneousMatrix cMe, camrobotMe ;
       robot.get_cMe(camrobotMe) ;
       cMe = cMo *oMcamrobot * camrobotMe  ;
-      
-      
+
+
       task.set_cVe(cMe) ;
 
       vpMatrix eJe ;
@@ -339,7 +339,7 @@ main()
       else gain = lambda_av ;
       if (SAVE==1)
 	gain = gain/5 ;
-      
+
       TRACE("%f %f %f %f  %f",alpha, beta, lambda_av, task.error.sumSquare(),  gain) ;
       task.setLambda(gain) ;
 

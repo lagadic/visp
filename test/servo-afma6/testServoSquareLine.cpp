@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoSquareLine.cpp,v 1.1.1.1 2005-06-08 07:08:15 fspindle Exp $
+ *  $Id: testServoSquareLine.cpp,v 1.2 2005-06-28 13:32:37 fspindle Exp $
  *
  * Description
  * ============
@@ -32,7 +32,7 @@
 
 #ifdef HAVE_ROBOT_AFMA6
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplay.h>
@@ -197,13 +197,13 @@ main()
 	{
 	  line[i].track(I) ;
 	  line[i].display(I, vpColor::red) ;
-	  
+
 	  //    vpDisplay::displayCross(I,(int)line.I(), (int)line.J(),
 	  //			   10,vpColor::green) ;
-	  
+
 	  vpFeatureBuilder::create(p[i],cam,line[i]);
 	  //  TRACE("%f %f ",p[i].getRho(), p[i].getTheta()) ;
-	  
+
 	  p[i].display(cam, I,  vpColor::red) ;
 	}
       double gain ;
@@ -214,10 +214,10 @@ main()
 	    gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av ;
 	  }
       }
-      
+
       task.setLambda(gain) ;
       v = task.computeControlLaw() ;
-      
+
       //  cout << task.error.t() << endl ;
 
       vpServoDisplay::display(task,cam,I) ;
@@ -227,13 +227,13 @@ main()
 	{
 	  v =0 ;
 	  robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-	  robot.stopMotion() ; 
+	  robot.stopMotion() ;
 	  vpDisplay::getClick(I) ;
 	}
 
      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-     
+
     }
     catch(...)
       {
