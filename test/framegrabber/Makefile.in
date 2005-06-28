@@ -4,7 +4,7 @@
 SOURCES		= \
 	testIcComp1.cpp \
 	test1394.cpp \
-	testV4l2Grey.cpp
+	testV4l2Grey.cpp \
 	testV4l2Color.cpp
 
 
