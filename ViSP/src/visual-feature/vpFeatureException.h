@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureException.h,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeatureException.h,v 1.2 2005-06-28 13:05:12 marchand Exp $
  *
  * Description
  * ============
@@ -54,10 +54,10 @@ public:
   enum errorFeatureCodeEnum
     {
       //! feature list or desired feature list is empty
-      badErrorERR,
-      sizeMismatchERR,
-      notInitializedERR,
-      badInitializationERR
+      badErrorVectorError,
+      sizeMismatchError,
+      notInitializedError,
+      badInitializationError
     } ;
 
 public:

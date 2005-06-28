@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpGenericFeature.cpp,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpGenericFeature.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
  *
  * Description
  * ============
@@ -75,7 +75,7 @@ vpGenericFeature::setError(vpColVector &_error)
   {
     ERROR_TRACE("size mismatch between error dimension"
 		"and feature dimension");
-    throw(vpFeatureException(vpFeatureException::sizeMismatchERR,
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between error dimension"
 			     "and feature dimension"));
 
@@ -107,7 +107,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
   {
     ERROR_TRACE("size mismatch between s* dimension "
 		"and feature dimension");
-    throw(vpFeatureException(vpFeatureException::sizeMismatchERR,
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between s* dimension "
 			     "and feature dimension"));
 
@@ -122,7 +122,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
       ERROR_TRACE("Error has no been updated since last iteration"
 		  "you should have used vpGenericFeature::setError"
 		  "in you visual servoing loop") ;
-      throw(vpFeatureException(vpFeatureException::badErrorERR,
+      throw(vpFeatureException(vpFeatureException::badErrorVectorError,
 			       "Error has no been updated since last iteration"));
     }
     else
@@ -183,7 +183,7 @@ vpGenericFeature::error( const int select)
       ERROR_TRACE("Error has no been updated since last iteration"
 		  "you should have used vpGenericFeature::setError"
 		  "in you visual servoing loop") ;
-      throw(vpFeatureException(vpFeatureException::badErrorERR,
+      throw(vpFeatureException(vpFeatureException::badErrorVectorError,
 			       "Error has no been updated since last iteration"));
     }
     else
@@ -238,7 +238,7 @@ vpGenericFeature::interaction(const int select) const
   if (L.getRows() == 0)
   {
     ERROR_TRACE("Interaction has not been initialized");
-    throw(vpFeatureException(vpFeatureException::notInitializedERR,
+    throw(vpFeatureException(vpFeatureException::notInitializedError,
 			     "size mismatch between s* dimension "
 			     "and feature dimension"));
 
@@ -277,7 +277,7 @@ vpGenericFeature::setInteractionMatrix(const vpMatrix &_L)
     cout << L.getRows() <<"  " << dim_s << endl ;;
     ERROR_TRACE("size mismatch between interaction matrix size "
 		"and feature dimension");
-    throw(vpFeatureException(vpFeatureException::sizeMismatchERR,
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between interaction matrix size "
 			     "and feature dimension"));
 
@@ -301,7 +301,7 @@ vpGenericFeature::set_s(const vpColVector &_s)
   {
     ERROR_TRACE("size mismatch between s dimension"
 		"and feature dimension");
-    throw(vpFeatureException(vpFeatureException::sizeMismatchERR,
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between s dimension"
 			     "and feature dimension"));
 
@@ -323,7 +323,7 @@ vpGenericFeature::set_s(const double s0, const double s1, const double s2)
   {
     ERROR_TRACE("size mismatch between number of parameters"
 		"and feature dimension");
-    throw(vpFeatureException(vpFeatureException::sizeMismatchERR,
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between  number of parameters"
 			     "and feature dimension"));
 
@@ -345,7 +345,7 @@ vpGenericFeature::set_s(const double s0, const double s1)
   {
     ERROR_TRACE("size mismatch between number of parameters"
 		"and feature dimension");
-    throw(vpFeatureException(vpFeatureException::sizeMismatchERR,
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between  number of parameters"
 			     "and feature dimension"));
 
@@ -367,7 +367,7 @@ vpGenericFeature::set_s(const double s0)
   {
     ERROR_TRACE("size mismatch between number of parameters"
 		"and feature dimension");
-    throw(vpFeatureException(vpFeatureException::sizeMismatchERR,
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between  number of parameters"
 			     "and feature dimension"));
 

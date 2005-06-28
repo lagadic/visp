@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureThetaU.cpp,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeatureThetaU.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
  *
  * Description
  * ============
@@ -208,7 +208,7 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
   {
 
     ERROR_TRACE("s* should be zero ! ") ;
-        throw(vpFeatureException(vpFeatureException::badInitializationERR,
+        throw(vpFeatureException(vpFeatureException::badInitializationError,
 				 "s* should be zero !")) ;
 
   }
