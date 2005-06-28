@@ -174,7 +174,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     if (normI+normJ < 1e-10)
     {
       ERROR_TRACE(" normI+normJ = 0, division par zero " ) ;
-      throw(vpException(vpException::divideByZeroERR,
+      throw(vpException(vpException::divideByZeroError,
 			"division by zero  ")) ;
     }
 
@@ -190,7 +190,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     if (npt==0)
     {
       ERROR_TRACE( " npt = 0, division par zero ");
-      throw(vpException(vpException::divideByZeroERR,
+      throw(vpException(vpException::divideByZeroError,
 			"division by zero  ")) ;
     }
     seuil/=npt;

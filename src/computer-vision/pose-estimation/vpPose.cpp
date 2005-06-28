@@ -128,7 +128,7 @@ vpPose::coplanaire()
   if (npt <2)
   {
     ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-    throw(vpPoseException(vpPoseException::notEnoughPointERR,
+    throw(vpPoseException(vpPoseException::notEnoughPointError,
 		      "Not enough points ")) ;
   }
 
@@ -167,7 +167,7 @@ vpPose::coplanaire()
   if (fabs(D) < 1e-10)
   {
     //       ERROR_TRACE("division by zero  ") ;
-    // throw(vpException(vpException::divideByZeroERR,
+    // throw(vpException(vpException::divideByZeroError,
     //		      "division by zero  ")) ;
   }
 
@@ -261,7 +261,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 	  ERROR_TRACE("Dementhon method cannot be used in that case ") ;
 	  ERROR_TRACE("(at least 4 points are required)") ;
 	  ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-	  throw(vpPoseException(vpPoseException::notEnoughPointERR,
+	  throw(vpPoseException(vpPoseException::notEnoughPointError,
 				"Not enough points ")) ;
       }
 
@@ -308,7 +308,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 	  ERROR_TRACE("Lagrange method cannot be used in that case ") ;
 	  ERROR_TRACE("(at least 4 points are required)") ;
 	  ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-	  throw(vpPoseException(vpPoseException::notEnoughPointERR,
+	  throw(vpPoseException(vpPoseException::notEnoughPointError,
 				"Not enough points ")) ;
 	}
 	try {
@@ -327,7 +327,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 	  ERROR_TRACE("Lagrange method cannot be used in that case ") ;
 	  ERROR_TRACE("(at least 4 points are required)") ;
 	  ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-	  throw(vpPoseException(vpPoseException::notEnoughPointERR,
+	  throw(vpPoseException(vpPoseException::notEnoughPointError,
 				"Not enough points ")) ;
 	}
 	try {

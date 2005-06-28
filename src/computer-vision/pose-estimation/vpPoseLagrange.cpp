@@ -265,7 +265,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
     if (s<1e-10)
     {
       ERROR_TRACE( "in vpCalculPose::PosePlan(...) division par zero ") ;
-      throw(vpException(vpException::divideByZeroERR,
+      throw(vpException(vpException::divideByZeroError,
 			"division by zero  ")) ;
     }
 
@@ -406,7 +406,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     if (s<1e-10)
     {
       ERROR_TRACE(" division par zero " ) ;
-      throw(vpException(vpException::divideByZeroERR,
+      throw(vpException(vpException::divideByZeroError,
 			"division by zero  ")) ;
 
     }

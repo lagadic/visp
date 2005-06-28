@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomography.cpp,v 1.2 2005-06-28 08:14:55 marchand Exp $
+ *  $Id: vpHomography.cpp,v 1.3 2005-06-28 13:18:35 marchand Exp $
  *
  * Description
  * ============
@@ -286,7 +286,7 @@ vpHomography::save(ofstream &f) const
   else
   {
     ERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioERR, "\t\t file not open")) ;
+    throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
 
@@ -311,7 +311,7 @@ vpHomography::load(ifstream &f)
   else
   {
     ERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioERR, "\t\t file not open")) ;
+    throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
 
