@@ -4,7 +4,7 @@ AC_DEFUN([IRISA_HAVE_ICCOMP_FG],
 #-----------------------------------------------------------------------
 # Manage the --with-fg-iccomp-dir option
 AC_ARG_WITH([fg-iccomp-dir],
-  AC_HELP_STRING([--with-fg-iccomp-dir=DIR],
+  AC_HELP_STRING([--with-fg-iccomp=DIR],
 		 [Location of ICcomp framegrabber api. By default /udd/fspindle/robot/IC-comp/current]),
                  path_fg_iccomp=$withval, 
                  path_fg_iccomp=/udd/fspindle/robot/IC-comp/current)
