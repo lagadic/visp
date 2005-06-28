@@ -3,8 +3,8 @@ AC_DEFUN([IRISA_HAVE_ROBOT_VIC2500],
 [
 
 #-----------------------------------------------------------------------
-# Manage the --with-robot-Vic2500-dir option
-AC_ARG_WITH([robot-Vic2500-dir],
+# Manage the --with-robot-Vic2500 option
+AC_ARG_WITH([robot-Vic2500],
   AC_HELP_STRING([--with-robot-Vic2500=DIR],
 		 [Location of Vic2500 robot api. By default /udd/fspindle/robot/Vic2500/current]),
                  path_robot_vic2500=$withval, 

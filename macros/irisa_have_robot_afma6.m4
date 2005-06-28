@@ -2,8 +2,8 @@ dnl Calls IRISA_HAVE_ROBOT_AFMA6 (contained in this file) as a subroutine.
 AC_DEFUN([IRISA_HAVE_ROBOT_AFMA6],
 [
 #-----------------------------------------------------------------------
-# Manage Afma6 robot with --with-robot-Afma6-dir option
-AC_ARG_WITH([robot-Afma6-dir],
+# Manage Afma6 robot with --with-robot-Afma6 option
+AC_ARG_WITH([robot-Afma6],
   AC_HELP_STRING([--with-robot-Afma6=DIR],
 		 [Location of Afma6 robot api. By default /udd/fspindle/robot/Afma6/current]),
                  path_robot_afma6=$withval, 
