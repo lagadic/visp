@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilderPoint.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpFeatureBuilderPoint.cpp,v 1.2 2005-06-28 13:10:56 marchand Exp $
  *
  * Description
  * ============
@@ -72,7 +72,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
       ERROR_TRACE("Point is behind the camera ") ;
       cout <<"Z = " << s.get_Z() << endl ;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationERR,
+      throw(vpFeatureException(vpFeatureException::badInitializationError,
 			       "Point is behind the camera ")) ;
     }
 
@@ -81,7 +81,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
       ERROR_TRACE("Point Z coordinates is null ") ;
       cout <<"Z = " << s.get_Z() << endl ;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationERR,
+      throw(vpFeatureException(vpFeatureException::badInitializationError,
 			       "Point Z coordinates is null")) ;
     }
 

@@ -98,7 +98,7 @@ vpMeLine::sample(vpImage<unsigned char>& I)
   if (me->sample_step==0)
   {
     ERROR_TRACE("function called with sample step = 0") ;
-    throw(vpTrackingException(vpTrackingException::FATAL_ERROR,
+    throw(vpTrackingException(vpTrackingException::fatalError,
 			      "sample step = 0")) ;
   }
 
@@ -256,7 +256,7 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
   if (list.nbElement() < 2)
   {
     ERROR_TRACE("Not enough point") ;
-    throw(vpTrackingException(vpTrackingException::NOT_ENOUGH_POINT_ERR,
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "not enough point")) ;
   }
 
@@ -359,7 +359,7 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
   if (list.nbElement() < 2)
   {
     ERROR_TRACE("Not enough point") ;
-    throw(vpTrackingException(vpTrackingException::NOT_ENOUGH_POINT_ERR,
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "not enough point")) ;
   }
 
@@ -632,7 +632,7 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
   {
 
     ERROR_TRACE("function called with sample step = 0") ;
-    throw(vpTrackingException(vpTrackingException::FATAL_ERROR,
+    throw(vpTrackingException(vpTrackingException::fatalError,
 			      "sample step = 0")) ;
   }
 

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.2 2005-06-28 08:22:54 marchand Exp $
+ *  $Id: vpDot.cpp,v 1.3 2005-06-28 13:10:48 marchand Exp $
  *
  * Description
  * ============
@@ -230,7 +230,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
     if (sol == false)
     {
       ERROR_TRACE("Dot has been lost") ;
-      throw(vpTrackingException(vpTrackingException::featureLostERR,
+      throw(vpTrackingException(vpTrackingException::featureLostError,
 				"Dot has been lost")) ;
     }
   }
@@ -255,7 +255,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
   if (npoint < 5)
   {
     ERROR_TRACE("Dot has been lost") ;
-    throw(vpTrackingException(vpTrackingException::featureLostERR,
+    throw(vpTrackingException(vpTrackingException::featureLostError,
 			      "Dot has been lost")) ;
   } 
   if (npoint > nbMaxPoint)
@@ -263,7 +263,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
     ERROR_TRACE("Too many point %f (max allowed is %f)", npoint, nbMaxPoint) ;
     ERROR_TRACE("This threshold can be modified using the setNbMaxPoint(int) method") ;
 
-    throw(vpTrackingException(vpTrackingException::featureLostERR,
+    throw(vpTrackingException(vpTrackingException::featureLostError,
 			      "Dot has been lost")) ;
   }
 }

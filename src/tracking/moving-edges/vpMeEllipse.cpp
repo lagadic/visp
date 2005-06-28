@@ -12,7 +12,7 @@
 #define DEBUG_LEVEL3 3
 
 #define OK 0
-#define FATAL_ERROR 1
+#define fatalError 1
 
 
 void
@@ -86,7 +86,7 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
   {
     cout << "In vpMeEllipse::sample: " ;
     cout << "function called with sample step = 0" ;
-    //return FATAL_ERROR ;
+    //return fatalError ;
   }
 
   double j, i, j11, i11;
@@ -442,7 +442,7 @@ vpMeEllipse::leastSquare(vpImage<unsigned char>  &I)
   if (list.nbElement() < 3)
   {
     ERROR_TRACE("Not enough point") ;
-    throw(vpTrackingException(vpTrackingException::NOT_ENOUGH_POINT_ERR,
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "not enough point")) ;
   }
   if (circle ==false)

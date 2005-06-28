@@ -332,8 +332,8 @@ vpMeSite::track(vpImage<unsigned char>& I,
 	cout << "vpMeSite::track : Division by zero  convlt = 0" << endl ;
 	delete []list_query_pixels ;
 	delete []likelyhood;
-	throw(vpTrackingException(vpTrackingException::INIT_ERR,
-				  "Division by zero")) ;//	return FATAL_ERROR  ;
+	throw(vpTrackingException(vpTrackingException::initializationError,
+				  "Division by zero")) ;//	return fatalError  ;
       }
       //      ERROR_TRACE(" %f %f",convolution,convlt)  ;
       contraste = fabs(convolution / convlt) ;
