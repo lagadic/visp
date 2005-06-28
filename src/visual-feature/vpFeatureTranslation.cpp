@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureTranslation.cpp,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeatureTranslation.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
  *
  * Description
  * ============
@@ -155,7 +155,7 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
     if (s_star.get_s().sumSquare() > 1e-6)
     {
       ERROR_TRACE("\n\t\t s* should be 0") ;
-      throw(vpFeatureException(vpFeatureException::badErrorERR,
+      throw(vpFeatureException(vpFeatureException::badErrorVectorError,
 			       "\n\t\t s* should be 0")) ;
     }
 

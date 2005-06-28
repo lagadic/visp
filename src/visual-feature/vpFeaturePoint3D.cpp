@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeaturePoint3D.cpp,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeaturePoint3D.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
  *
  * Description
  * ============
@@ -255,7 +255,7 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
     ERROR_TRACE("Point is behind the camera ") ;
     cout <<"Z = " << Z << endl ;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationERR,
+    throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
   }
 
@@ -264,7 +264,7 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
     ERROR_TRACE("Point Z coordinates is null ") ;
     cout <<"Z = " << Z << endl ;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationERR,
+    throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
   }
 
@@ -284,7 +284,7 @@ vpFeaturePoint3D::buildFrom(const double _X, const double _Y, const double _Z)
     ERROR_TRACE("Point is behind the camera ") ;
     cout <<"Z = " << Z << endl ;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationERR,
+    throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
   }
 
@@ -293,7 +293,7 @@ vpFeaturePoint3D::buildFrom(const double _X, const double _Y, const double _Z)
     ERROR_TRACE("Point Z coordinates is null ") ;
     cout <<"Z = " << Z << endl ;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationERR,
+    throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
   }
 

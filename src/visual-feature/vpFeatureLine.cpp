@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureLine.cpp,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeatureLine.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
  *
  * Description
  * ============
@@ -132,7 +132,7 @@ vpFeatureLine::interaction(const int select) const
   {
     ERROR_TRACE("Incorrect plane  coordinates D is null, D = %f",D) ;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationERR,
+    throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Incorrect plane  coordinates D")) ;
   }
 
