@@ -101,7 +101,9 @@ GRABBER = \
 	vpFrameGrabber.h \
 	vpFrameGrabberException.h \
 	\
-	vpIcComp.h
+	vpIcCompGrabber.h \
+	vp1394Grabber.h \
+	vpV4l2Grabber.h
 
 TRACKING = \
 	vpTrackingException.h \
