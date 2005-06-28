@@ -2,8 +2,8 @@ dnl Calls IRISA_HAVE_FG_ICCOMP (contained in this file) as a subroutine.
 AC_DEFUN([IRISA_HAVE_FG_ICCOMP],
 [
 #-----------------------------------------------------------------------
-# Manage the --with-fg-iccomp-dir option
-AC_ARG_WITH([fg-iccomp-dir],
+# Manage the --with-fg-iccomp option
+AC_ARG_WITH([fg-iccomp],
   AC_HELP_STRING([--with-fg-iccomp=DIR],
 		 [Location of ICcomp framegrabber api. By default /udd/fspindle/robot/IC-comp/current]),
                  path_fg_iccomp=$withval, 

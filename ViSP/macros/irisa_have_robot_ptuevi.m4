@@ -3,8 +3,8 @@ AC_DEFUN([IRISA_HAVE_ROBOT_PTUEVI],
 [
 
 #-----------------------------------------------------------------------
-# Manage the --with-robot-PtuEvi-dir option
-AC_ARG_WITH([robot-PtuEvi-dir],
+# Manage the --with-robot-PtuEvi option
+AC_ARG_WITH([robot-PtuEvi],
   AC_HELP_STRING([--with-robot-PtuEvi=DIR],
 		 [Location of PtuEvi robot api. By default /udd/fspindle/robot/Ptu-Evi/current]),
                  path_robot_ptuevi=$withval, 
