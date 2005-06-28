@@ -1,3 +1,7 @@
+#include<visp/vpConfig.h>
+
+#ifdef HAVE_LIBSOQT
+
 #include <visp/vpSimulator.h>
 #include <visp/vpTime.h>
 
@@ -859,7 +863,7 @@ vpSimulator::write (viewEnum view,
   this->offScreenRenderer = NULL ;
 }
 
-
+#endif
 
 /*
  * Local variables:
