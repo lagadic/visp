@@ -292,7 +292,9 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
 
     DAx = DAmemory*x ;
 
-    r.MEstimator(vpRobust::TUKEY,DAx,w) ;
+
+    vpColVector res = DAx - b ;
+    r.MEstimator(vpRobust::TUKEY,res,w) ;
 
 
     list.front() ;
