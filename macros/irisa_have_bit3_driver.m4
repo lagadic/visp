@@ -5,7 +5,7 @@ AC_DEFUN([IRISA_HAVE_BIT3_DRIVER],
 #-----------------------------------------------------------------------
 # Manage Bit3 driver with --with-bit3-dir option
 AC_ARG_WITH([bit3-dir],
-  AC_HELP_STRING([--with-bit3-dir=DIR],
+  AC_HELP_STRING([--with-bit3=DIR],
 		 [Location of SBS Bit3 driver. By default /udd/fspindle/robot/driver/bit3-617/1003/current]),
                  path_bit3=$withval, 
                  path_bit3=/udd/fspindle/robot/driver/bit3-617/1003/current)

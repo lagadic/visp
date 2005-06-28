@@ -4,7 +4,7 @@ AC_DEFUN([IRISA_HAVE_AFMA6_ROBOT],
 #-----------------------------------------------------------------------
 # Manage Afma6 robot with --with-robot-Afma6-dir option
 AC_ARG_WITH([robot-Afma6-dir],
-  AC_HELP_STRING([--with-robot-Afma6-dir=DIR],
+  AC_HELP_STRING([--with-robot-Afma6=DIR],
 		 [Location of Afma6 robot api. By default /udd/fspindle/robot/Afma6/current]),
                  path_robot_afma6=$withval, 
                  path_robot_afma6=/udd/fspindle/robot/Afma6/current)

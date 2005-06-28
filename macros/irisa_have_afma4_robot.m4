@@ -5,7 +5,7 @@ AC_DEFUN([IRISA_HAVE_AFMA4_ROBOT],
 #-----------------------------------------------------------------------
 # Manage Afma4 robot with --with-robot-Afma4-dir option
 AC_ARG_WITH([robot-Afma4-dir],
-  AC_HELP_STRING([--with-robot-Afma4-dir=DIR],
+  AC_HELP_STRING([--with-robot-Afma4=DIR],
 		 [Location of Afma4 robot api. By default /udd/fspindle/robot/Afma4/current]),
                  path_robot_afma4=$withval, 
                  path_robot_afma4=/udd/fspindle/robot/Afma4/current)
