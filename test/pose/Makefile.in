@@ -2,7 +2,7 @@
 
 
 SOURCES		= \
-	testPose.cpp
+	testPose.cpp testPoseRansac.cpp
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
 

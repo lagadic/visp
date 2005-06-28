@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoFourPoint1.cpp,v 1.1.1.1 2005-06-08 07:08:15 fspindle Exp $
+ *  $Id: testServoFourPoint1.cpp,v 1.2 2005-06-28 09:01:28 marchand Exp $
  *
  * Description
  * ============
@@ -121,7 +121,7 @@ main()
   TRACE("sets the current position of the visual feature ") ;
   vpFeaturePoint p[4] ;
   for (i=0 ; i < 4 ; i++)
-    vpFeatureBuilder::create(p[i],cam, dot[i])  ;  //retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p[i],cam, dot[i])  ;  //retrieve x,y  of the vpFeaturePoint structure
 
   TRACE("sets the desired position of the visual feature ") ;
   vpFeaturePoint pd[4] ;

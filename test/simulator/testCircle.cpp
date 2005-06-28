@@ -5,6 +5,12 @@
 // *************************************************************************
 
 
+
+#include <visp/vpConfig.h>
+
+
+#ifdef HAVE_SOQT
+
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpTime.h>
@@ -180,3 +186,11 @@ main(int argc, char ** argv)
 
   simu.mainLoop() ;
 }
+
+
+#else
+int
+main()
+{
+}
+#endif

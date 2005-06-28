@@ -10,7 +10,10 @@ SOURCES		= \
 	\
 	testServoLine-v1.cpp \
 	testServo2Line-v1.cpp \
-	testServoSquareLine.cpp
+	testServoSquareLine.cpp \
+	\
+	testEyeToHand.cpp
+
 
 
 
