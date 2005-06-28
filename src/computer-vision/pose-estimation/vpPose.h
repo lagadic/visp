@@ -25,8 +25,8 @@
   \date   April, 6 1999 (first issue)
 */
 
-#ifndef CPOSE_HH
-#define CPOSE_HH
+#ifndef vpPOSE_HH
+#define vpPOSE_HH
 
 #include <math.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -122,6 +122,46 @@ public:
   void printPoint() ;
   void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size, int col=vpColor::none) ;
 
+
+public:
+  static bool degenerateConfiguration(vpColVector &x,int *ind) ;
+  static void computeTransformation(vpColVector &x,int *ind, vpColVector &M) ;
+  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d) ;
+private:
+  static void initRansac(const int n,
+			 const double *x, const double *y,
+			 const int m,
+			 const double *X, const double *Y, const double *Z,
+			 vpColVector &data) ;
+public:
+  static void ransac(const int n,
+		     const double *x, const double *y,
+		     const int m,
+		     const double *X, const double *Y, const double *Z,
+		     const int numberOfInlierToReachAConsensus,
+		     const double threshold,
+		     int &ninliers,
+		     vpColVector &xi,  vpColVector &yi,
+		     vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
+		     vpHomogeneousMatrix &cMo) ;
+  static void ransac(const int n,
+		     const vpPoint *p,
+		     const int m,
+		     const vpPoint *P,
+		     const int numberOfInlierToReachAConsensus,
+		     const double threshold,
+		     int &ninliers,
+		     vpList<vpPoint> &Pi,
+		     vpHomogeneousMatrix &cMo) ;
+
+
+  static void ransac(vpList<vpPoint> &p,
+		     vpList<vpPoint> &P,
+		     const int numberOfInlierToReachAConsensus,
+		     const double threshold,
+		     int &ninliers,
+		     vpList<vpPoint> &lPi,
+		     vpHomogeneousMatrix &cMo) ;
 } ;
 
 

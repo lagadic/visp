@@ -16,23 +16,54 @@
   #----------------------------------------------------------------------------
 */
 
-#define DEBUG_Homographie
 
 /*!
   \file vpHomographyMalis.cpp
 
   This file implements the fonctions related with the homography
-  estimation using the Malis algorithm
+  estimation from non planar points using the Malis algorithm
+
+  references
+
+  E. Malis, F. Chaumette. 2 1/2 D visual servoing with respect to unknown
+  objects through a new estimation scheme of camera displacement. Int. Journal
+  of Computer Vision, 37(1):79-97, Juin 2000.
+
+   @article{Malis00b,
+     Author = {Malis, E. and Chaumette, F.},
+     Title = {2 1/2 D visual servoing with respect to unknown objects
+              through a new estimation scheme of camera displacement},
+     Journal = {Int. Journal of Computer Vision},
+     Volume = {37},
+     Number = {1},
+     Pages = {79--97},
+     Month = {June},
+     Year = {2000}
+  }
+
+  paper can be obtained at this url :
+    http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html
+
+  the algorithm for 2D scene implemented in this file is described in Ezio
+  Malis PhD thesis
+
+  E. Malis. Contributions à la modélisation et à la commande en asservissement
+  visuel.
+  Thèse de l'Universite de Rennes 1, Télécommunications et Traitement du Signal,
+  Novembre 1998.
+  http://www.irisa.fr/lagadic/publi/publi/TheseMalis-fra.html
 */
 #include <visp/vpHomography.h>
+#include <visp/vpDebug.h>
 
-const double eps = 0.0000000001 ;
 
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+const double eps = 1e-6 ;
 
 /**************************************************************************
 * NOM :
-* Homographie_CrvHofChRepEucl
+* changeFrame
 *
 * DESCRIPTION :
 * Changement de repere Euclidien.
@@ -42,8 +73,8 @@ const double eps = 0.0000000001 ;
 * int pts_ref[4]	: Definit quels sont les points de reference, ils ne
 *			  seront pas affectes par le changement de repere
 * int nb_pts		: nombre de points a changer de repere
-* double **point_des	: La matrice des coordonnees des points desires
-* double **point_cour	: La matrice des coordonnees des points courants
+* double **pd	: La matrice des coordonnees des points desires
+* double **p	: La matrice des coordonnees des points courants
 *
 *
 * SORTIES :
@@ -52,25 +83,19 @@ const double eps = 0.0000000001 ;
 *			  dans le nouveau repere.
 * double **pt_cour_nr	: La matrice des coordonnees des points courants
 *			  dans le nouveau repere
-* double **M_cour	: ??
-* double **pinv_M_des	: pseudo inverse de M  ..
+* double **M	: ??
+* double **Mpd	: pseudo inverse de M  ..
 *
 *
 ****************************************************************************
-* AUTEUR : BOSSARD Nicolas.  INSA Rennes 5eme annee.
-*
-* DATE DE FIN DE CREATION : 15/12/98
-*
-* DATES DE MISE A JOUR :
-*
-****************************************************************************/
+*/
 
 
-void ChRepEucl(int *pts_ref,
+void changeFrame(int *pts_ref,
 	       int nb_pts,
-	       vpMatrix &point_des, vpMatrix &point_cour,
-	       vpMatrix &pt_des_nr, vpMatrix &pt_cour_nr,
-	       vpMatrix &M_cour, vpMatrix &pinv_M_des)
+	       vpMatrix &pd, vpMatrix &p,
+	       vpMatrix &pnd, vpMatrix &pn,
+	       vpMatrix &M, vpMatrix &Mdp)
 {
 
 
@@ -83,36 +108,36 @@ void ChRepEucl(int *pts_ref,
 
 
   /* Construction des matrices de changement de repere */
-  vpMatrix M_des(3,3) ;
-  vpMatrix pinv_M_cour(3,3) ;
+  vpMatrix Md(3,3) ;
+  vpMatrix Mp(3,3) ;
 
   for (i=0;i<3;i++) {
     for (j=0;j<3;j++) {
-      M_cour[j][i] = point_cour[pts_ref[i]][j] ;
-      M_des[j][i]  = point_des[pts_ref[i]][j]  ;
+      M[j][i] = p[pts_ref[i]][j] ;
+      Md[j][i]  = pd[pts_ref[i]][j]  ;
     }
   }
 
   /*calcul de la pseudo inverse  */
-  pinv_M_cour= M_cour.pseudoInverse(1e-16) ;
-  pinv_M_des = M_des.pseudoInverse(1e-16) ;
+  Mp= M.pseudoInverse(1e-16) ;
+  Mdp = Md.pseudoInverse(1e-16) ;
 
   if (pts_ref[3] > 0) {
     for (i=0;i<3;i++) {
       for (j=0;j<3;j++) {
-	lamb_cour[i] = pinv_M_cour[i][j]*point_cour[pts_ref[3]][j] ;
-	lamb_des[i]  = pinv_M_des[i][j]*point_des[pts_ref[3]][j] ;
+	lamb_cour[i] = Mp[i][j]*p[pts_ref[3]][j] ;
+	lamb_des[i]  = Mdp[i][j]*pd[pts_ref[3]][j] ;
       }
     }
 
     for (i=0;i<3;i++) {
       for (j=0;j<3;j++) {
-	M_cour[i][j] = M_cour[i][j]*lamb_cour[j] ;
-	M_des[i][j] = M_des[i][j]*lamb_des[j] ;
+	M[i][j] = M[i][j]*lamb_cour[j] ;
+	Md[i][j] = Md[i][j]*lamb_des[j] ;
       }
     }
 
-    pinv_M_des = M_des.pseudoInverse(1e-16);
+    Mdp = Md.pseudoInverse(1e-16);
   }
 
 
@@ -123,17 +148,16 @@ void ChRepEucl(int *pts_ref,
   for (k=0;k<nb_pts;k++) {
     if ((pts_ref[0] != k) && (pts_ref[1] != k) && (pts_ref[2] != k)) {
       for (i=0;i<3;i++) {
-	pt_cour_nr[cont_pts][i] = 0.0 ;
-	pt_des_nr[cont_pts][i]  = 0.0 ;
+	pn[cont_pts][i] = 0.0 ;
+	pnd[cont_pts][i]  = 0.0 ;
 	for (j=0;j<3;j++) {
-	  pt_cour_nr[cont_pts][i] = pt_cour_nr[cont_pts][i] + pinv_M_cour[i][j]*point_cour[k][j] ;
-	  pt_des_nr[cont_pts][i]  = pt_des_nr[cont_pts][i]  + pinv_M_des[i][j]*point_des[k][j]   ;
+	  pn[cont_pts][i] = pn[cont_pts][i] + Mp[i][j]*p[k][j] ;
+	  pnd[cont_pts][i]  = pnd[cont_pts][i]  + Mdp[i][j]*pd[k][j]   ;
 	}
       }
       cont_pts = cont_pts + 1;
     }
   }
-
 
 
 }
@@ -151,8 +175,8 @@ void ChRepEucl(int *pts_ref,
 ****************************************************************************
 * ENTREES :
 * int 	Nb_pts : nombre de points
-* double	**point_des : tableau des coordonnees des points desires
-* couble	**point_cour : tableau des coordonnees des points courants
+* double	**pd : tableau des coordonnees des points desires
+* couble	**p : tableau des coordonnees des points courants
 *
 * SORTIES :
 *
@@ -167,7 +191,7 @@ void ChRepEucl(int *pts_ref,
 *
 ****************************************************************************/
 void
-ezio2D(int nb_pts,
+HLM2D(int nb_pts,
        vpMatrix &points_des,
        vpMatrix &points_cour,
        vpMatrix &H)
@@ -177,13 +201,9 @@ ezio2D(int nb_pts,
   double  vals_inf ;
   int  contZeros, vect;
 
-#ifdef DEBUG_Homographie
-  printf ("debut : Homographie_CrvMafEstHomoPointsCible2D\n");
-#endif
-
 
   /** allocation des matrices utilisees uniquement dans la procedure **/
-   vpMatrix M(3*nb_pts,9) ;
+  vpMatrix M(3*nb_pts,9) ;
   vpMatrix V(9,9) ;
   vpColVector sv(9) ;
 
@@ -222,17 +242,9 @@ ezio2D(int nb_pts,
     M[3*j+2][8] =  0 ;
   }
 
-#ifdef DEBUG_Homographie
-  printf("Affichage de M\n");
-  cout << M << endl ;
-#endif
   /** calcul de la pseudo-inverse V de M et des valeurs singulières **/
   M.svd(sv,V);
 
-#ifdef DEBUG_Homographie
-  printf("Affichage de V\n");
-  cout << V << endl ;
-#endif
   /*****
 	La meilleure solution est le vecteur de V associe
 	a la valeur singuliere la plus petite en valeur	absolu.
@@ -260,7 +272,8 @@ ezio2D(int nb_pts,
 
   /** cas d'erreur : plus de 2 valeurs singulières =0 **/
   if (contZeros > 2) {
-    printf("erreur dans le rang de la matrice \r\n");
+    ERROR_TRACE("matrix is rank deficient");
+    throw ;
   }
 
   H.resize(3,3) ;
@@ -271,9 +284,6 @@ ezio2D(int nb_pts,
     }
   }
 
-#ifdef DEBUG_Homographie
-  printf("H :\n"); cout << H << endl ;
-#endif
 
 }
 
@@ -291,8 +301,8 @@ ezio2D(int nb_pts,
 ****************************************************************************
 * ENTREES :
 * int 	Nb_pts : nombre de points
-* double	**point_des : tableau des coordonnees des points desires
-* couble	**point_cour : tableau des coordonnees des points courants
+* double	**pd : tableau des coordonnees des points desires
+* couble	**p : tableau des coordonnees des points courants
 *
 * SORTIES :
 *
@@ -300,22 +310,13 @@ ezio2D(int nb_pts,
 * double epipole[3]		epipole
 *
 ****************************************************************************
-* AUTEUR : BOSSARD Nicolas.  INSA Rennes 5eme annee.
-*
-* DATE DE FIN CREATION : 15/12/98
-*
-* DATES DE MISE A JOUR :
-*
-****************************************************************************/
+**/
 void
-ezio3D(int nb_pts,
-       vpMatrix &point_des,
-       vpMatrix & point_cour,
-       vpMatrix &H,
-       vpColVector &epipole)
+HLM3D(int nb_pts,
+       vpMatrix &pd,
+       vpMatrix &p,
+       vpMatrix &H)
 {
-   TRACE(" ") ;
-
   int i,j,k,ii,jj ;
   int cont_pts;			/* Pour compter le nombre de points dans l'image */
   int nl;			/*** Nombre de lignes ***/
@@ -332,55 +333,59 @@ ezio3D(int nb_pts,
   int 	 prob;
 
   /***** Corps de la fonction	*****/
-#ifdef DEBUG_Homographie
-  printf ("debut : Homographie_CrvMafEstHomoPointsC3DEzio\n");
-#endif
 
   /* allocation des matrices utilisees uniquement dans la procedure */
   prob=0;
 
-  vpMatrix M_cour(3,3) ;
-  vpMatrix pinv_M_des(3,3) ;
+  vpMatrix M(3,3) ;
+  vpMatrix Mdp(3,3) ;
   vpMatrix c(8,2) ; // matrice des coeff C
 
   vpColVector d(8) ;
-  vpMatrix pinv_c(2,8) ; //matrice pseudo-inverse de C
+  vpMatrix cp(2,8) ; //matrice pseudo-inverse de C
 
 
   vpMatrix H_int(3,3) ;
-  vpMatrix pt_cnr((nb_pts-3),3) ; //points courant nouveau repère
+  vpMatrix pn((nb_pts-3),3) ; //points courant nouveau repère
 
 
-  vpMatrix pt_dnr((nb_pts-3),3) ; //points dérivés nouveau repère
+  vpMatrix pnd((nb_pts-3),3) ; //points dérivés nouveau repère
 
   /* preparation du changement de repere */
   /****
        comme plan de reference on choisit pour le moment
        arbitrairement le plan contenant les points 1,2,3 du cinq
   ****/
-  pts_ref[0] = 0 ; pts_ref[1] = 1 ; pts_ref[2] = 2 ; pts_ref[3] = -1 ;
+  pts_ref[0] = 0 ;
+  pts_ref[1] = 1 ;
+  pts_ref[2] = 2 ;
+  pts_ref[3] = -1 ;
 
   /* changement de repere pour tous les points autres que les trois points de reference */
 
-  ChRepEucl(pts_ref,nb_pts,point_des,point_cour,pt_dnr,pt_cnr,M_cour,pinv_M_des);
+  changeFrame(pts_ref,nb_pts,pd,p,pnd,pn,M,Mdp);
 
 
   cont_pts = nb_pts - 3 ;
 
-  if (cont_pts < 5) printf(" attention !! pas assez de points ... \r\n");
+  if (cont_pts < 5)
+  {
+    ERROR_TRACE(" not enough point to compute the homography ... ");
+    throw ;
+  }
 
   nl = cont_pts*(cont_pts-1)*(cont_pts-2)/6 ;
   nc = 7  ;
 
-  /* Allocation matrice MTM */
-  vpMatrix MTM(nc,nc) ;
+  /* Allocation matrice CtC */
+  vpMatrix CtC(nc,nc) ;
 
-  /* Initialisation matrice MTM */
-  for (ii=0;ii<nc;ii++) for (jj=0;jj<nc;jj++) MTM[ii][jj] = 0.0;
+  /* Initialisation matrice CtC */
+  for (i=0;i<nc;i++) for (j=0;j<nc;j++) CtC[i][j] = 0.0;
 
 
   /* Allocation matrice M */
-  vpColVector M(nc) ; //Matrice des coefficients
+  vpColVector C(nc) ; //Matrice des coefficients
 
   /* construction de la matrice M des coefficients dans le cas general */
   /****
@@ -397,85 +402,88 @@ ezio3D(int nb_pts,
     for (j = i+1 ; j<nb_pts-4; j++) {
       for (k = j+1 ; k<nb_pts-3; k ++) {
 	/* coeff a^2*b  */
-	M[0] = pt_cnr[i][2]*pt_cnr[j][2]*pt_cnr[k][1]*pt_dnr[k][0]
-	  * (pt_dnr[j][0]*pt_dnr[i][1] - pt_dnr[j][1]*pt_dnr[i][0])
-	  + pt_cnr[i][2]*pt_cnr[k][2]*pt_cnr[j][1]*pt_dnr[j][0]
-	  *(pt_dnr[i][0]*pt_dnr[k][1] - pt_dnr[i][1]*pt_dnr[k][0])
-	  + pt_cnr[j][2]*pt_cnr[k][2]*pt_cnr[i][1]*pt_dnr[i][0]
-	  *(pt_dnr[k][0]*pt_dnr[j][1] - pt_dnr[k][1]*pt_dnr[j][0]) ;
+	C[0] = pn[i][2]*pn[j][2]*pn[k][1]*pnd[k][0] //
+	  * (pnd[j][0]*pnd[i][1] - pnd[j][1]*pnd[i][0])//
+	  + pn[i][2]*pn[k][2]*pn[j][1]*pnd[j][0]//
+	  *(pnd[i][0]*pnd[k][1] - pnd[i][1]*pnd[k][0])//
+	  + pn[j][2]*pn[k][2]*pn[i][1]*pnd[i][0] //
+	  *(pnd[k][0]*pnd[j][1] - pnd[k][1]*pnd[j][0]) ; //
 	/* coeff a*b^2 */
-	M[1] = pt_cnr[i][2]*pt_cnr[j][2]*pt_cnr[k][0]*pt_dnr[k][1]
-	  *(pt_dnr[i][0]*pt_dnr[j][1] - pt_dnr[i][1]*pt_dnr[j][0])
-	  + pt_cnr[i][2]*pt_cnr[k][2]*pt_cnr[j][0]*pt_dnr[j][1]
-	  *(pt_dnr[k][0]*pt_dnr[i][1] - pt_dnr[k][1]*pt_dnr[i][0])
-	  + pt_cnr[j][2]*pt_cnr[k][2]*pt_cnr[i][0]*pt_dnr[i][1]
-	  *(pt_dnr[j][0]*pt_dnr[k][1] - pt_dnr[j][1]*pt_dnr[k][0]) ;
+	C[1] = pn[i][2]*pn[j][2]*pn[k][0]*pnd[k][1]//
+	  *(pnd[i][0]*pnd[j][1] - pnd[i][1]*pnd[j][0])//
+	  + pn[i][2]*pn[k][2]*pn[j][0]*pnd[j][1]//
+	  *(pnd[k][0]*pnd[i][1] - pnd[k][1]*pnd[i][0])//
+	  + pn[j][2]*pn[k][2]*pn[i][0]*pnd[i][1]//
+	  *(pnd[j][0]*pnd[k][1] - pnd[j][1]*pnd[k][0]) ;//
 	/* coeff a^2 */
-	M[2] = pt_cnr[i][1]*pt_cnr[j][1]*pt_cnr[k][2]*pt_dnr[k][0]
-	  *(pt_dnr[i][2]*pt_dnr[j][0] - pt_dnr[i][0]*pt_dnr[j][2])
-	  + pt_cnr[i][1]*pt_cnr[k][1]*pt_cnr[j][2]*pt_dnr[j][0]
-	  *(pt_dnr[k][2]*pt_dnr[i][0] - pt_dnr[k][0]*pt_dnr[i][2])
-	  + pt_cnr[j][1]*pt_cnr[k][1]*pt_cnr[i][2]*pt_dnr[i][0]
-	  *(pt_dnr[j][2]*pt_dnr[k][0] - pt_dnr[j][0]*pt_dnr[k][2]) ;
+	C[2] = 	  + pn[i][1]*pn[k][1]*pn[j][2]*pnd[j][0]//
+	  *(pnd[k][2]*pnd[i][0] - pnd[k][0]*pnd[i][2])//
+	  +pn[i][1]*pn[j][1]*pn[k][2]*pnd[k][0] //
+	  *(pnd[i][2]*pnd[j][0] - pnd[i][0]*pnd[j][2])
+	  + pn[j][1]*pn[k][1]*pn[i][2]*pnd[i][0] //
+	  *(pnd[j][2]*pnd[k][0] - pnd[j][0]*pnd[k][2]) ; //
+
+
+
 	/* coeff b^2 */
-	M[3] = pt_cnr[i][0]*pt_cnr[j][0]*pt_cnr[k][2]*pt_dnr[k][1]
-	  *(pt_dnr[i][2]*pt_dnr[j][1] - pt_dnr[i][1]*pt_dnr[j][2])
-	  + pt_cnr[i][0]*pt_cnr[k][0]*pt_cnr[j][2]*pt_dnr[j][1]
-	  *(pt_dnr[k][2]*pt_dnr[i][1] - pt_dnr[k][1]*pt_dnr[i][2])
-	  + pt_cnr[j][0]*pt_cnr[k][0]*pt_cnr[i][2]*pt_dnr[i][1]
-	  *(pt_dnr[j][2]*pt_dnr[k][1] - pt_dnr[j][1]*pt_dnr[k][2]) ;
-	/* coeff a*b */
-	M[4] = pt_cnr[i][0]*pt_cnr[k][1]*pt_cnr[j][2]
-	  *(pt_dnr[k][0]*pt_dnr[j][1]*pt_dnr[i][2] - pt_dnr[j][0]*pt_dnr[i][1]*pt_dnr[k][2])
-	  + pt_cnr[k][0]*pt_cnr[i][1]*pt_cnr[j][2]
-	  *(pt_dnr[j][0]*pt_dnr[k][1]*pt_dnr[i][2] - pt_dnr[i][0]*pt_dnr[j][1]*pt_dnr[k][2])
-	  + pt_cnr[i][0]*pt_cnr[j][1]*pt_cnr[k][2]
-	  *(pt_dnr[k][0]*pt_dnr[i][1]*pt_dnr[j][2] - pt_dnr[j][0]*pt_dnr[k][1]*pt_dnr[i][2])
-	  + pt_cnr[j][0]*pt_cnr[i][1]*pt_cnr[k][2]
-	  *(pt_dnr[i][0]*pt_dnr[k][1]*pt_dnr[j][2] - pt_dnr[k][0]*pt_dnr[j][1]*pt_dnr[i][2])
-	  + pt_cnr[k][0]*pt_cnr[j][1]*pt_cnr[i][2]
-	  *(pt_dnr[j][0]*pt_dnr[i][1]*pt_dnr[k][2] - pt_dnr[i][0]*pt_dnr[k][1]*pt_dnr[j][2])
-	  + pt_cnr[j][0]*pt_cnr[k][1]*pt_cnr[i][2]
-	  *(pt_dnr[i][0]*pt_dnr[j][1]*pt_dnr[k][2] - pt_dnr[k][0]*pt_dnr[i][1]*pt_dnr[j][2]) ;
+	C[3] = pn[i][0]*pn[j][0]*pn[k][2]*pnd[k][1] //
+	  *(pnd[i][2]*pnd[j][1] - pnd[i][1]*pnd[j][2]) //
+	  + pn[i][0]*pn[k][0]*pn[j][2]*pnd[j][1] //
+	  *(pnd[k][2]*pnd[i][1] - pnd[k][1]*pnd[i][2]) //
+	  + pn[j][0]*pn[k][0]*pn[i][2]*pnd[i][1] //
+	  *(pnd[j][2]*pnd[k][1] - pnd[j][1]*pnd[k][2]) ; //
+
 	/* coeff a */
-	M[5] = pt_cnr[i][1]*pt_cnr[j][1]*pt_cnr[k][0]*pt_dnr[k][2]
-	  *(pt_dnr[i][0]*pt_dnr[j][2] - pt_dnr[i][2]*pt_dnr[j][0])
-	  + pt_cnr[i][1]*pt_cnr[k][1]*pt_cnr[j][0]*pt_dnr[j][2]
-	  *(pt_dnr[k][0]*pt_dnr[i][2] - pt_dnr[k][2]*pt_dnr[i][0])
-	  + pt_cnr[j][1]*pt_cnr[k][1]*pt_cnr[i][0]*pt_dnr[i][2]
-	  *(pt_dnr[j][0]*pt_dnr[k][2] - pt_dnr[j][2]*pt_dnr[k][0]) ;
+	C[5] = pn[i][1]*pn[j][1]*pn[k][0]*pnd[k][2]//
+	  *(pnd[i][0]*pnd[j][2] - pnd[i][2]*pnd[j][0])//
+	  + pn[i][1]*pn[k][1]*pn[j][0]*pnd[j][2] //
+	  *(pnd[k][0]*pnd[i][2] - pnd[k][2]*pnd[i][0])//
+	  + pn[j][1]*pn[k][1]*pn[i][0]*pnd[i][2]//
+	  *(pnd[j][0]*pnd[k][2] - pnd[j][2]*pnd[k][0]) ;//
 	/* coeff b */
-	M[6] = pt_cnr[i][0]*pt_cnr[j][0]*pt_cnr[k][1]*pt_dnr[k][2]
-	  *(pt_dnr[i][1]*pt_dnr[j][2] - pt_dnr[i][2]*pt_dnr[j][1])
-	  + pt_cnr[i][0]*pt_cnr[k][0]*pt_cnr[j][1]*pt_dnr[j][2]
-	  *(pt_dnr[k][1]*pt_dnr[i][2] - pt_dnr[k][2]*pt_dnr[i][1])
-	  + pt_cnr[j][0]*pt_cnr[k][0]*pt_cnr[i][1]*pt_dnr[i][2]
-	  *(pt_dnr[j][1]*pt_dnr[k][2] - pt_dnr[j][2]*pt_dnr[k][1]) ;
+	C[6] = pn[i][0]*pn[j][0]*pn[k][1]*pnd[k][2] //
+	  *(pnd[i][1]*pnd[j][2] - pnd[i][2]*pnd[j][1])//
+	  + pn[i][0]*pn[k][0]*pn[j][1]*pnd[j][2]//
+	  *(pnd[k][1]*pnd[i][2] - pnd[k][2]*pnd[i][1])//
+	  + pn[j][0]*pn[k][0]*pn[i][1]*pnd[i][2]//
+	  *(pnd[j][1]*pnd[k][2] - pnd[j][2]*pnd[k][1]) ;//
+	/* coeff a*b */
+	C[4] = pn[i][0]*pn[k][1]*pn[j][2] //
+	  *(pnd[k][0]*pnd[j][1]*pnd[i][2] - pnd[j][0]*pnd[i][1]*pnd[k][2])//
+	  + pn[k][0]*pn[i][1]*pn[j][2]//
+	  *(pnd[j][0]*pnd[k][1]*pnd[i][2] - pnd[i][0]*pnd[j][1]*pnd[k][2])//
+	  + pn[i][0]*pn[j][1]*pn[k][2]//
+	  *(pnd[k][0]*pnd[i][1]*pnd[j][2] - pnd[j][0]*pnd[k][1]*pnd[i][2])//
+	  + pn[j][0]*pn[i][1]*pn[k][2]//
+	  *(pnd[i][0]*pnd[k][1]*pnd[j][2] - pnd[k][0]*pnd[j][1]*pnd[i][2])//
+	  + pn[k][0]*pn[j][1]*pn[i][2]//
+	  *(pnd[j][0]*pnd[i][1]*pnd[k][2] - pnd[i][0]*pnd[k][1]*pnd[j][2])//
+	  + pn[j][0]*pn[k][1]*pn[i][2]//
+	  *(pnd[i][0]*pnd[j][1]*pnd[k][2] - pnd[k][0]*pnd[i][1]*pnd[j][2]) ;//
+
 	cont = cont+1 ;
-	/* construction de la matrice MTM */
+	/* construction de la matrice CtC */
 	for (ii=0;ii<nc;ii++) {
 	  for (jj=ii;jj<nc;jj++) {
-	    MTM[ii][jj] = MTM[ii][jj] + M[ii]*M[jj];
+	    CtC[ii][jj] = CtC[ii][jj] + C[ii]*C[jj];
 	  }
 	}
 
-      }	/* Fin boucle k */
-    }	/* Fin boucle j */
-  } /* Fin boucle i */
-
-  TRACE(" ") ;
-  /* calcul de MTM */
-  for (i=0; i<nc ;i++) {
-    for (j=i+1; j<nc ;j++) MTM[j][i] = MTM[i][j];
+      }
+    }
   }
-  TRACE(" ") ;
 
-  cout << MTM << endl ;
+
+
+  /* calcul de CtC */
+  for (i=0; i<nc ;i++) {
+    for (j=i+1; j<nc ;j++) CtC[j][i] = CtC[i][j];
+  }
 
   nl = cont ;   /* nombre de lignes   */
   nc = 7 ;      /* nombre de colonnes */
 
-  /* Creation de matrice MTM termine */
+  /* Creation de matrice CtC termine */
   /* Allocation matrice V */
   vpMatrix V(nc,nc) ;
   /*****
@@ -485,7 +493,7 @@ ezio3D(int nb_pts,
   *****/
   vpColVector sv(nc) ; //Vecteur contenant les valeurs singulières
 
-  MTM.svd(sv,V) ;
+  CtC.svd(sv,V) ;
 
   /*****
 	Il faut un controle sur le rang de la matrice !!
@@ -494,10 +502,9 @@ ezio3D(int nb_pts,
 	absolu
   *****/
 
-  /* Allocation matrice svSorted */
-  vpColVector svSorted(nc) ; //Vecteur contenant les valeurs singulières				     en ordre croissant
+  vpColVector svSorted(nc) ; // sorted singular value
 
-  /* Rangement des valeurs singulières en ordre croissant */
+  // sorting the singular value
   for (i=0; i < nc ;i++) svSorted[i] = sv[i] ;
   perm = 1 ;
   double v_temp;
@@ -516,67 +523,87 @@ ezio3D(int nb_pts,
   /*****
 	Parcours de la matrice ordonnée des valeurs singulières
 	On note "cont_zeros" le nbre de valeurs quasi= à 0.
-	On note "vect" le rang de la plus petite valeur singlière en valeur absolu
+	On note "vect" le rang de la plus petite valeur singlière
+	en valeur absolu
   *****/
+
   vect = 0 ; cont_zeros = 0 ; cont = 0 ;
   for (j=0; j < nc; j++) {
     if (fabs(sv[j]) == svSorted[cont]) vect = j ;
     if (fabs(sv[j]/svSorted[nc-1]) < eps) cont_zeros = cont_zeros + 1 ;
   }
-  TRACE(" ") ;
 
-  cout << sv.t() ;
   if (cont_zeros > 5) {
-    printf("erreur dans le rang de la matrice: %d \r\n ",7-cont_zeros);
-    ezio2D(nb_pts,point_des,point_cour,H);
+    //    printf("erreur dans le rang de la matrice: %d \r\n ",7-cont_zeros);
+    HLM2D(nb_pts,pd,p,H);
   }
   else
   {
-    /*****
-	  estimation de a = 1,b,c ; je cherche le min de somme(i=1:n) (0.5*(ei)^2)
-	  e1 = V[1][.] * b - V[3][.] = 0 ;
-	  e2 = V[2][.] * c - V[3][.] = 0 ;
-	  e3 = V[2][.] * b - V[3][.] * c = 0 ;
-	  e4 = V[4][.] * b - V[5][.] = 0 ;
-	  e5 = V[4][.] * c - V[6][.] = 0 ;
-	  e6 = V[6][.] * b - V[5][.] * c = 0 ;
-	  e7 = V[7][.] * b - V[8][.] = 0 ;
-	  e8 = V[7][.] * c - V[9][.] = 0 ;
-    *****/
-    d[0] = V[3-1][vect] ; d[1]  = V[5-1][vect] ;
-    d[2] = V[2-1][vect] ; d[3] = V[1-1][vect] ;
-    d[4] = V[4-1][vect] ; d[5]  = V[5-1][vect] ;
-    d[6] = V[1-1][vect] ; d[7] = V[2-1][vect] ;
 
-    c[0][0] = V[6-1][vect] ; c[0][1] = 0.0 ;
-    c[1][0] = V[7-1][vect] ; c[1][1] = 0.0 ;
-    c[2][0] = V[4-1][vect] ; c[2][1] = 0.0 ;
-    c[3][0] = V[5-1][vect] ; c[3][1] = 0.0        ;
-    c[4][0] = 0.0        ; c[4][1] = V[7-1][vect] ;
-    c[5][0] = 0.0        ; c[5][1] = V[6-1][vect] ;
-    c[6][0] = 0.0        ; c[6][1] = V[3-1][vect] ;
-    c[7][0] = 0.0        ; c[7][1] = V[5-1][vect] ;
+//     estimation de a = 1,b,c ; je cherche le min de somme(i=1:n) (0.5*(ei)^2)
+// 	  e1 = V[1][.] * b - V[3][.] = 0 ;
+// 	  e2 = V[2][.] * c - V[3][.] = 0 ;
+// 	  e3 = V[2][.] * b - V[3][.] * c = 0 ;
+// 	  e4 = V[4][.] * b - V[5][.] = 0 ;
+// 	  e5 = V[4][.] * c - V[6][.] = 0 ;
+// 	  e6 = V[6][.] * b - V[5][.] * c = 0 ;
+// 	  e7 = V[7][.] * b - V[8][.] = 0 ;
+// 	  e8 = V[7][.] * c - V[9][.] = 0 ;
+    d[0] = V[2][vect] ;
+    d[1] = V[4][vect] ;
+    d[2] = V[1][vect] ;
+    d[3] = V[0][vect] ;
+    d[4] = V[3][vect] ;
+    d[5] = V[4][vect] ;
+    d[6] = V[0][vect] ;
+    d[7] = V[1][vect] ;
 
-    /* Calcul de la pseudo-inverse de C */
-    pinv_c = c.pseudoInverse(1e-16) ;
+    c[0][0] = V[5][vect] ; c[0][1] = 0.0 ;
+    c[1][0] = V[6][vect] ; c[1][1] = 0.0 ;
+    c[2][0] = V[3][vect] ; c[2][1] = 0.0 ;
+    c[3][0] = V[4][vect] ; c[3][1] = 0.0
+			       ;
+    c[4][0] = 0.0        ; c[4][1] = V[6][vect] ;
+    c[5][0] = 0.0        ; c[5][1] = V[5][vect] ;
+    c[6][0] = 0.0        ; c[6][1] = V[2][vect] ;
+    c[7][0] = 0.0        ; c[7][1] = V[4][vect] ;
 
-    vpColVector H_nr(3), temp ;	/*** Homographie diagonale 	***/
-    /* Multiplication de la matrice H_nr par le vecteur pinv_c */
-    temp =  pinv_c * d;
+
+
+    /// Calcul de la pseudo-inverse de C
+    cp = c.pseudoInverse(1e-6) ;
+
+
+    vpColVector H_nr(3), temp ;	// Homographie diagonale
+    // Multiplication de la matrice H_nr par le vecteur cp
+    temp =  cp * d;
+
     H_nr[0] = temp[0] ; H_nr[1] = temp[1] ;
     H_nr[2] = 1.0 ;
 
-    /* multiplication de M_cour * H_nr  */
-    H_int = 0.0 ;
-    for (i=0; i<3; i++) {
-      for (j=0; j<3; j++) H_int[i][j] = M_cour[i][j]*H_nr[j];
-    }
+    vpMatrix T(9,3) ; T =0 ;
+    T[0][0] = -V[1][vect] ; T[0][1] = V[0][vect] ;
+    T[1][0] =  V[4][vect] ; T[1][2] = -V[2][vect] ;
+    T[2][0] = -V[6][vect] ; T[2][1] = V[2][vect] ;
+    T[3][0] =  V[6][vect] ; T[3][2] = -V[0][vect] ;
+    T[4][0] = -V[3][vect] ; T[4][1] = V[6][vect] ;
+    T[5][0] =  V[3][vect] ; T[5][2] = -V[1][vect] ;
+    T[6][0] = -V[5][vect] ; T[6][1] = V[4][vect] ;
+    T[7][0] =  V[5][vect] ; T[7][2] = -V[6][vect] ;
+    T[8][1] =  -V[5][vect] ; T[8][2] = V[2][vect] ;
 
-    H = H_int * pinv_M_des ;
 
-    epipole[0] = 0; epipole[1] = 0; epipole[2] = 0;
+    vpMatrix Hd(3,3) ; //  diag(gu,gv,gw)
+    for (i=0 ; i < 3 ; i++) Hd[i][i] = H_nr[i] ;
 
+    // H = M diag(gu,gv,gw) M*-1
+    H = M*Hd*Mdp ;
+
+
+
+  }
 }
+
 
 /**************************************************************************
 * NOM :
@@ -605,7 +632,7 @@ ezio3D(int nb_pts,
 * SORTIES :
 *
 * double **H 			matrice d'homographie
-* double epipole[3]  epipole
+
 *
 ****************************************************************************
 * AUTEUR : BOSSARD Nicolas.  INSA Rennes 5ème année.
@@ -616,13 +643,12 @@ ezio3D(int nb_pts,
 *
 ****************************************************************************/
 void
-ezio(int q_cible,
+HLM(int q_cible,
      int nbpt,
      double *xm, double *ym,
      double *xmi, double *ymi,
-     vpMatrix &H, vpColVector  &epipole)
+     vpMatrix &H)
 {
-  TRACE(" ") ;
   int   i;
 
 
@@ -630,93 +656,117 @@ ezio(int q_cible,
        on regarde si il y a au moins un point mais pour l'homographie
        il faut au moins quatre points
   ****/
-  vpMatrix point_des(nbpt,3) ;
-  vpMatrix point_cour(nbpt,3) ;
+  vpMatrix pd(nbpt,3) ;
+  vpMatrix p(nbpt,3) ;
 
   for (i=0;i<nbpt;i++)  {
     /****
 	 on assigne les points fournies par la structure robot
 	 pour la commande globale
     ****/
-    point_des[i][0] = xmi[i];
-    point_des[i][1] = ymi[i];
-    point_des[i][2] = 1.0 ;
-    point_cour[i][0] = xm[i];
-    point_cour[i][1] = ym[i];
-    point_cour[i][2] = 1.0 ;
+    pd[i][0] = xmi[i];
+    pd[i][1] = ymi[i];
+    pd[i][2] = 1.0 ;
+    p[i][0] = xm[i];
+    p[i][1] = ym[i];
+    p[i][2] = 1.0 ;
   }
 
-  epipole.resize(3) ;
+
   switch (q_cible) {
   case (1):
   case (2):
     /* La cible est planaire  de type points   */
 
-    ezio2D(nbpt,point_des,point_cour,H);
-    epipole[0] = 0.0 ; epipole[1] = 0.0 ; epipole[2] = 0.0 ;
+    HLM2D(nbpt,pd,p,H);
 
     break;
   case (3) : /* cible non planaire : chateau */
     /* cible non planaire  de type points   */
-    epipole[0] = 0 ; epipole[1] = 0 ; epipole[2] = 0 ;
-    ezio3D(nbpt,point_des,point_cour,H,epipole);
+    HLM3D(nbpt,pd,p,H);
     break;
   } /* fin switch */
 
-  TRACE(" ") ;
 
 
 } /* fin procedure calcul_homogaphie */
 
 
-// ============================================================================
-// NOM : MatchesToHomo
-// ============================================================================
-// A partir de deux liste de points, calcule l'homographie associe
-// ============================================================================
-// ENTREES : 4
-//  LP1         : la liste de points dans la 1ere image
-//  LP2         : la liste de correspondants dans la deuxieme image
-//  isplan      : vrai si tous les points sont sur le meme plan
-//  epi    : l'epipole
-// ============================================================================
-// SORTIES : l'homographie obtenue
-//=============================================================================
+#endif
 
 /*!
-  A partir de deux listes de points, calcule l'homographie associee
-  \param LP1 premiere liste de points
-  \param LP2 deuxieme liste de points
-  \param isplan les points sont-ils tous coplanaires?
-  \param epi l'epipole obtenue (le programme d'Ezio ne met pas cette variable a jour)
-  \return la collineation associee
- */
-void vpHomography::Malis(int n,
+  \brief Computes the homography matrix from panar or non planar points
+  using Ezio Malis (IJCV00) algorithm
+
+  Computes H such as  \f[
+  ^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}
+  \f]
+
+  This function implements the fonctions related with the homography
+  estimation from non coplanar points using the Malis algorithm
+
+  references
+
+  E. Malis, F. Chaumette. 2 1/2 D visual servoing with respect to unknown
+  objects through a new estimation scheme of camera displacement. Int. Journal
+  of Computer Vision, 37(1):79-97, Juin 2000.
+
+   @article{Malis00b,
+     Author = {Malis, E. and Chaumette, F.},
+     Title = {2 1/2 D visual servoing with respect to unknown objects
+              through a new estimation scheme of camera displacement},
+     Journal = {Int. Journal of Computer Vision},
+     Volume = {37},
+     Number = {1},
+     Pages = {79--97},
+     Month = {June},
+     Year = {2000}
+  }
+
+  paper can be obtained at this url :
+    http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html
+
+  the algorithm for 2D scene implemented in this file is described in Ezio
+  Malis PhD thesis
+
+  E. Malis. Contributions à la modélisation et à la commande en asservissement
+  visuel.
+  Thèse de l'Universite de Rennes 1, Télécommunications et Traitement du Signal,
+  Novembre 1998.
+  http://www.irisa.fr/lagadic/publi/publi/TheseMalis-fra.html
+
+
+  if the boolean isplanar is true the point is assumed to be in a plane
+  otherwise there are assumed to be planar.
+
+  the reference planar is the plane build from the 3 first points
+
+*/
+void vpHomography::HLM(int n,
 			 double *xb, double *yb,
 			 double *xa, double *ya ,
-			 bool isplan,
-			 vpHomography &Homography,
-			 vpColVector & epipole)
+			 bool isplanar,
+			 vpHomography &aHb)
 {
-  TRACE(" ") ;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   int i,j;
   int q_cible;
-  epipole.resize(3);
   vpMatrix H; // matrice d'homographie en metre
 
-  Homography.setIdentity();
+  aHb.setIdentity();
 
 
-  if (isplan)
+  if (isplanar)
     q_cible =1;
   else
     q_cible =3;
-  //cout <<"homo: calcul de la collineation " << endl;
-  ezio(q_cible,n, xa,ya,xb,yb,H,epipole) ;
-  //cout << "homo:ok" << endl;
+
+  ::HLM(q_cible,n, xa,ya,xb,yb,H) ;
+
   for(i=0;i<3;i++)
     for(j=0;j<3;j++)
-      Homography[i][j] = H[i][j];
-  TRACE(" ") ;
+      aHb[i][j] = H[i][j];
 
+#endif
 }

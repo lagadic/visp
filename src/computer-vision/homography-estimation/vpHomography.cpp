@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomography.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: vpHomography.cpp,v 1.2 2005-06-28 08:14:55 marchand Exp $
  *
  * Description
  * ============
@@ -37,6 +37,8 @@
 
 // Debug trace
 #include <visp/vpDebug.h>
+
+#include <stdio.h>
 
 
 

@@ -30,6 +30,7 @@ tools for homography computation.
 
 #include<visp/vpHomogeneousMatrix.h>
 #include<visp/vpPlane.h>
+#include<visp/vpList.h>
 
 
 /*!  \class vpHomography
@@ -156,6 +157,12 @@ public:
 				   vpTranslationVector &aTb,
 				   vpColVector &n) ;
 
+  static void computeDisplacement(const vpMatrix H,
+				  const double x,
+				  const double y,
+				  vpList<vpRotationMatrix> & vR,
+				  vpList<vpTranslationVector> & vT,
+				  vpList<vpColVector> & vN) ;
 private:
   static void HartleyNormalization(int n,
 				   double *x, double *y,
@@ -179,14 +186,27 @@ public:
 		  double *xa, double *ya,
 		  vpHomography &aHb) ;
 
- static void Malis(int n,
-	     double *xb, double *yb,
-	     double *xa, double *ya ,
-	     bool isplan,
-	     vpHomography &Homography,
-	     vpColVector & epipole) ;
-}
-;
+  //!  compute the homography using the linear method (HLM) proposed by Ezio Malis
+  static void HLM(int n,
+		    double *xb, double *yb,
+		    double *xa, double *ya ,
+		    bool isplan,
+		    vpHomography &aHb) ;
+
+private:
+  static void  initRansac(int n,
+		   double *xb, double *yb,
+		   double *xa, double *ya,
+		   vpColVector &x  ) ;
+public:
+  static bool degenerateConfiguration(vpColVector &x,int *ind) ;
+  static void computeTransformation(vpColVector &x,int *ind, vpColVector &M) ;
+  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d) ;
+  static void ransac(int n,
+		     double *xb, double *yb,
+		     double *xa, double *ya ,
+		     vpHomography &aHb) ;
+} ;
 
 
 

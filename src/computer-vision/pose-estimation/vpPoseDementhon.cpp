@@ -42,8 +42,6 @@
 void
 vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin CCalculPose::PoseDementhon()" << endl ;
 
   int i ;
   double normI = 0., normJ = 0.;
@@ -61,7 +59,6 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   listP.front() ;
   p0 = listP.value() ;
 
-  cout << p0.oP.t()  ;
 
   vpPoint P ;
   listP.front() ;
@@ -222,9 +219,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   cMo[1][3] -= (p0.get_oX()*cMo[1][0]+p0.get_oY()*cMo[1][1]+p0.get_oZ()*cMo[1][2]);
   cMo[2][3] -= (p0.get_oX()*cMo[2][0]+p0.get_oY()*cMo[2][1]+p0.get_oZ()*cMo[2][2]);
 
-
-  if (DEBUG_LEVEL1)
-    cout << "end CCalculPose::PoseDementhon()" << endl ;
+  delete [] c3d ; c3d = NULL ;
 }
 
 
@@ -686,6 +681,7 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   cMo[1][3] -= p0.get_oX()*cMo[1][0]+p0.get_oY()*cMo[1][1]+p0.get_oZ()*cMo[1][2];
   cMo[2][3] -= p0.get_oX()*cMo[2][0]+p0.get_oY()*cMo[2][1]+p0.get_oZ()*cMo[2][2];
 
+  delete [] c3d ; c3d = NULL ;
   if (DEBUG_LEVEL1)
     cout << "end CCalculPose::PoseDementhonPlan()" << endl ;
 }
