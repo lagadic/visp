@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: grasping-v3.cpp,v 1.1.1.1 2005-06-08 07:08:03 fspindle Exp $
+ *  $Id: grasping-v3.cpp,v 1.2 2005-06-28 12:40:27 fspindle Exp $
  *
  * Description
  * ============
@@ -29,7 +29,7 @@
 #include <visp/vpTime.h>
 
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplay.h>
@@ -105,7 +105,7 @@ void *mainLoop (void *_simu)
     }
 
 
-  
+
 
   TRACE(" ") ;
 
@@ -182,7 +182,7 @@ void *mainLoop (void *_simu)
   // compute the initial pose using Dementhon method followed by a non linear
   // minimisation method
   pose.computePose(vpPose::LAGRANGE_LOWE, cMo) ;
-      
+
 
   simu->setCameraPosition(cMo) ;
 
@@ -205,23 +205,23 @@ void *mainLoop (void *_simu)
       f.close() ;
       exit(1) ;
     }
-  
-  
+
+
   cout << "------------------------------------------------------ " <<endl ;
-  
+
   double lambda_av =0.1;
   double alpha = 0 ; //1 ;
   double beta =0 ; //3 ;
-  
+
   cout << "Gain adaptatif g =" <<alpha<<" *  exp (-"<<beta<<" * err_max ) + "<<lambda_av <<endl ;
-  
+
   int it = 0 ;
   vpImage<vpRGBa> Ic ;
 
   int nbpos =2 ;
   while (nbpos >=0)
     {
-    
+
       vpServo task ;
 
       {
@@ -333,20 +333,20 @@ void *mainLoop (void *_simu)
       vpDisplay::displayCharString(I,40,20,
 				   "Click please",
 				   vpColor::green) ;
- 
-      // display the pose 
+
+      // display the pose
       //  pose.display(I,cMo,cam, 0.025, vpColor::red) ;
-      // display the pose 
+      // display the pose
       //   pose.display(I,cdMo,cam, 0.025, vpColor::blue) ;
 
      vpDisplay::getClick(I) ;
-     
+
      //-------------------------------------------------------------
      double error =1 ;
      int iter=0 ;
      TRACE("\t loop") ;
      robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-     vpColVector v ; // computed robot velocity 
+     vpColVector v ; // computed robot velocity
 
      vpList<double> Lu, Lv ;
      while(error > convergence_threshold)
@@ -398,22 +398,22 @@ void *mainLoop (void *_simu)
 	  vpDisplay::flush(I) ;
 
 
-    
 
-	  // display the pose 
+
+	  // display the pose
 	  //  pose.display(I,cMo,cam, 0.025, vpColor::red) ;
-	  // display the pose 
+	  // display the pose
 	  //pose.display(I,cdMo,cam, 0.025, vpColor::blue) ;
 
 	  //current Z
 	  {
 	    vpColVector cP ;
 	    point[indexOfReferencePoint].changeFrame(cMo, cP) ;
-	    Z = cP[2] ;   
+	    Z = cP[2] ;
 	    p.set_Z(Z) ;
 
 	  }
-    
+
 	  // compute log (Z/Z*) anf the corresponding interaction matrix
 	  logZ.set_s(log(Z/Zd)) ;
 	  vpMatrix LlogZ(1,6) ;
@@ -440,9 +440,9 @@ void *mainLoop (void *_simu)
 		gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av ;
 	      }
 	  }
-	  if (SAVE==1) 
+	  if (SAVE==1)
 	    gain = gain/5 ;
-	    
+
 	  TRACE("%d %f",SAVE, gain) ;
 	  task.setLambda(gain) ;
 
@@ -454,7 +454,7 @@ void *mainLoop (void *_simu)
 	    {
 	      double u = Lu.value() ;
 	      double v = Lv.value() ;
-	      
+
 	      vpDisplay::displayPoint(I,
 				      vpMath::round(v), vpMath::round(u),
 				      vpColor::red) ;
@@ -467,14 +467,14 @@ void *mainLoop (void *_simu)
 	  error = task.error.sumSquare() ;
 	  cout << "|| s - s* || = "<< error<<endl ;
 
-	  if (error>7) 
+	  if (error>7)
 	    {
 	      TRACE("Error detected while tracking visual features") ;
 	      robot.stopMotion() ;
 	      exit(1) ;
 	    }
 	  if ((SAVE==1) && (iter %3==0))
-	{ 
+	{
 
 	  vpDisplay::getImage(I,Ic) ;
 	  sprintf(name,"/tmp/marchand/image.%04d.ppm",it++) ;
@@ -485,7 +485,7 @@ void *mainLoop (void *_simu)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
       nbpos -=1 ;
-    
+
     }
 
   cout << "Fermeture de la pince " << endl ;
