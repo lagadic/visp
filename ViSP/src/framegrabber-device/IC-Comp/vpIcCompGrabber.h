@@ -18,8 +18,8 @@
 */
 
 /*!
-  \file CICcomp.h
-  \brief class for the ICComp (Imaging Technology)  video device
+  \file vpIcCompGrabber.h
+  \brief Class for the IcComp (Imaging Technology)  video device.
   \ingroup libdevice
 */
 
@@ -45,18 +45,17 @@
 
   \ingroup libdevice
 
-  \date  june, 3 2002
-
-  \author Eric Marchand (Eric.Marchand@irisa.fr), Irisa / Inria Rennes
-  Fabien Spindler, Irisa / Inria Rennes
+  \author Eric Marchand (Eric.Marchand@irisa.fr) and
+  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 
   \warning suitable for "new" Linux Kernel > 2.4
-
-  \sa CVideo,  vpICcomp, Acq-iccomp.cpp
 */
 class vpIcCompGrabber : public vpFrameGrabber
 {
 public:
+  static const int DEFAULT_INPUT;
+  static const int DEFAULT_SCALE;
+
   enum framerateEnum
     {
       framerate_50fps, //!< 50 frames per second
@@ -71,14 +70,14 @@ private:
   bool field; // The type of the acquired frame (0 if odd, 1 if even).
 
 public:
-  vpIcCompGrabber(unsigned input =DEFAULT_INPUT_BOARD,
-		  unsigned scale=2 )  ;
+  vpIcCompGrabber(unsigned input,
+		  unsigned scale = vpIcCompGrabber::DEFAULT_SCALE);
   vpIcCompGrabber(vpImage<unsigned char> &I,
-		  unsigned input =DEFAULT_INPUT_BOARD,
-		  unsigned scale=2 ) ;
+		  unsigned input,
+		  unsigned scale = vpIcCompGrabber::DEFAULT_SCALE);
   vpIcCompGrabber(vpImage<vpRGBa> &I,
-		  unsigned input =DEFAULT_INPUT_BOARD,
-		  unsigned scale=2 ) ;
+		  unsigned input,
+		  unsigned scale = vpIcCompGrabber::DEFAULT_SCALE);
   ~vpIcCompGrabber() ;
 public:
 
@@ -95,8 +94,8 @@ public:
 
 
   // fct pour changer le port d'entree
-  void setInput(unsigned input=1) ;
-  void setScale(unsigned scale) ;
+  void setInput(unsigned input = vpIcCompGrabber::DEFAULT_INPUT) ;
+  void setScale(unsigned scale = vpIcCompGrabber::DEFAULT_SCALE) ;
 } ;
 
 #endif

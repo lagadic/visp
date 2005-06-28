@@ -6,7 +6,7 @@ LIB		= $(VISP_LIB_PATH)/lib@VISP_LIBNAME@.a
 
 
 SOURCES		= \
-	vpIcComp.cpp \
+	vpIcCompGrabber.cpp \
 
 .PRECIOUS	: $(LIB)
 
