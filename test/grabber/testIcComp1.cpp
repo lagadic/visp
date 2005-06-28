@@ -3,7 +3,7 @@
 
 #ifdef HAVE_FG_ICCOMP
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>

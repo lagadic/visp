@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoPoint1.cpp,v 1.1.1.1 2005-06-08 07:08:15 fspindle Exp $
+ *  $Id: testServoPoint1.cpp,v 1.2 2005-06-28 12:33:42 fspindle Exp $
  *
  * Description
  * ============
@@ -32,7 +32,7 @@
 
 #ifdef HAVE_ROBOT_AFMA6
 
-#include <visp/vpIcComp.h>
+#include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
