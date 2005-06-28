@@ -53,6 +53,22 @@ clean:
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
+	@for i in `find -type f -name tca.* -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+	@for i in `find -type d -name pchdir -print | sort` ; do\
+		rm -fr $$i;\
+		echo "rm -fr " $$i;\
+	done
+	@for i in `find -type f -name *.d -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+	@for i in `find -type f -name .inslog2 -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
 
 uninstall:
 	cd include; $(MAKE) $@
@@ -81,24 +97,6 @@ uninstall:
 		rm -f $${filetoremove};\
 		echo "rm -f " $${filetoremove};\
 	done
-
-
-uninstallall:
-	$(MAKE) clean;
-	$(MAKE) uninstall;
-	rm -f config.log config.status
-	rm -rf $(VISP_DIR_DEP)
-	rm -rf $(VISP_DIR_OBJ)
-	rm -rf lib/*
-	rm -rf doc/html
-	@for i in `find -type f -name .inslog2 -print | sort` ; do\
-		rm -f $$i;\
-		echo "rm -f " $$i;\
-	done
-	@for i in `find -type f -name .depend -print | sort` ; do\
-		rm -f $$i;\
-		echo "rm -f " $$i;\
-	done
 	@for i in `find -type f -name tca.* -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
@@ -111,6 +109,20 @@ uninstallall:
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
+
+
+uninstallall:
+	$(MAKE) clean;
+	$(MAKE) uninstall;
+	rm -f config.log config.status
+	rm -rf $(VISP_DIR_DEP)
+	rm -rf $(VISP_DIR_OBJ)
+	rm -rf lib/*
+	rm -rf doc/html
+	@for i in `find -type f -name .depend -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
 	@for i in `find -type f -name *.exe -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
@@ -118,7 +130,7 @@ uninstallall:
 
 html-doc:
 	@echo "html documentation creation..."
-	cd doc; /local/soft/doxygen-1.4.2/bin/doxygen config-doxygen
+	cd doc; doxygen config-doxygen
 #	cp src/doc/index.html doc/html
 
 
