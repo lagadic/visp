@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomogeneousMatrix.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpHomogeneousMatrix.cpp,v 1.2 2005-06-28 08:31:20 marchand Exp $
  *
  * Description
  * ============
@@ -426,11 +426,8 @@ vpHomogeneousMatrix::loadMatrix34(ifstream &f)
 void
 vpHomogeneousMatrix::print()
 {
- {
-    ERROR_TRACE("\t\t functionNotImplementedERR " );
-    throw(vpException(vpException::functionNotImplementedERR,
-		      "\t\t functionNotImplementedERR")) ;
-  }
+  vpPoseVector r(*this) ;
+  cout << r.t() ;
 }
 //! Basic initialisation (identity)
 void
