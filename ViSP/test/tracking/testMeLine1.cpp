@@ -19,11 +19,10 @@ main()
   int im = 1 ;
 
   char rep[FILENAME_MAX] ;
-  sprintf(rep,"/local/images/primitives/ellipse2/") ;
   sprintf(rep,"/udd/marchand/im2/") ;
 
   vpImage<unsigned char> I ; char s[FILENAME_MAX] ;
-  sprintf(s,"%s/image.%04d.ppm",rep,im) ;
+  sprintf(s,"%s/image%04d.pgm",rep,im) ;
 
   cout << "chargement de " << endl <<s << endl ;
 
@@ -49,8 +48,8 @@ main()
   vpMeLine L1 ;
 
   vpMe me ;
-  me.setRange(10) ;
-  me.setPointsToTrack(60) ;
+  me.setRange(5) ;
+  me.setPointsToTrack(160) ;
   me.setThreshold(15000) ;
 
 
@@ -70,7 +69,7 @@ main()
   for (int iter = 1 ; iter < 1500 ; iter++)
   {
    cout <<"------------------------------------------------------------"<<endl;
-   sprintf(s,"%s/image.%04d.ppm",rep,iter) ;
+   sprintf(s,"%s/image%04d.pgm",rep,iter) ;
     vpImageIo::readPGM(I,s) ;
     vpDisplay::display(I) ;
 
