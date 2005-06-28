@@ -30,7 +30,7 @@
 
 #ifdef HAVE_INCLUDE_VIDEODEV2
 
-#include <linux/fs.h>
+#include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/videodev2.h> // Video For Linux Two interface
 
