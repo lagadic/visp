@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRotationMatrix.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpRotationMatrix.cpp,v 1.2 2005-06-28 08:33:02 marchand Exp $
  *
  * Description
  * ============
@@ -104,6 +104,40 @@ vpRotationMatrix::operator=(const vpRotationMatrix &m)
     {
       rowPtrs[i][j] = m.rowPtrs[i][j];
     }
+  }
+
+  return *this;
+}
+
+/*!
+  \brief  affectation of two rotation matrix
+
+  \param vpRotationMatrix &m : *this = m
+*/
+vpRotationMatrix &
+vpRotationMatrix::operator=(const vpMatrix &m)
+{
+
+  if ((m.getCols() !=3) &&(m.getRows() !=3))
+    {
+      ERROR_TRACE("m is not a rotation matrix !!!!! ") ;
+      throw(vpMatrixException(vpMatrixException::forbiddenOperatorERR,
+			  "m is not a rotation matrix !!!!!"));
+    }
+
+  for (int i=0; i<3; i++)
+  {
+    for (int j=0; j<3; j++)
+    {
+      (*this)[i][j] = m[i][j];
+    }
+  }
+
+  if (isARotationMatrix() == false)
+  {
+    ERROR_TRACE("m is not a rotation matrix !!!!! ") ;
+      throw(vpMatrixException(vpMatrixException::forbiddenOperatorERR,
+			  "m is not a rotation matrix !!!!!"));
   }
 
   return *this;
