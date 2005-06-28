@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: grasping-v2.cpp,v 1.1.1.1 2005-06-08 07:08:03 fspindle Exp $
+ *  $Id: grasping-v2.cpp,v 1.2 2005-06-28 09:27:28 marchand Exp $
  *
  * Description
  * ============
@@ -60,7 +60,7 @@
 
 int
 main()
-{  
+{
 
   vpRobotAfma6 robot ;
   robot.openGripper() ;
@@ -99,7 +99,7 @@ main()
     }
 
 
-  
+
 
   TRACE(" ") ;
 
@@ -196,23 +196,23 @@ main()
       f.close() ;
       exit(1) ;
     }
-  
-  
+
+
   cout << "------------------------------------------------------ " <<endl ;
-  
+
   double lambda_av =0.1;
   double alpha = 0 ; //1 ;
   double beta =0 ; //3 ;
-  
+
   cout << "Gain adaptatif g =" <<alpha<<" *  exp (-"<<beta<<" * err_max ) + "<<lambda_av <<endl ;
-  
+
   int it = 0 ;
   vpImage<vpRGBa> Ic ;
 
   int nbpos =2 ;
   while (nbpos >=0)
     {
-    
+
       vpServo task ;
 
       {
@@ -224,7 +224,7 @@ main()
       }
 
 
- 
+
 
       //------------------------------------------------------------------
       TRACE("1st feature (x,y)");
@@ -314,7 +314,7 @@ main()
 	  }
 	else
 	  {
-	    convergence_threshold = 0.0003 ;
+	    convergence_threshold = 0.0008 ;
 	    vpDisplay::displayCharString(I,20,20,
 					 "Grasping task",
 					 vpColor::green) ;
@@ -324,20 +324,20 @@ main()
       vpDisplay::displayCharString(I,40,20,
 				   "Click please",
 				   vpColor::green) ;
- 
-      // display the pose 
+
+      // display the pose
       //  pose.display(I,cMo,cam, 0.025, vpColor::red) ;
-      // display the pose 
+      // display the pose
       //   pose.display(I,cdMo,cam, 0.025, vpColor::blue) ;
 
      vpDisplay::getClick(I) ;
-     
+
      //-------------------------------------------------------------
      double error =1 ;
      int iter=0 ;
      TRACE("\t loop") ;
      robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-     vpColVector v ; // computed robot velocity 
+     vpColVector v ; // computed robot velocity
 
      vpList<double> Lu, Lv ;
      while(error > convergence_threshold)
@@ -389,22 +389,22 @@ main()
 	  vpDisplay::flush(I) ;
 
 
-    
 
-	  // display the pose 
+
+	  // display the pose
 	  //  pose.display(I,cMo,cam, 0.025, vpColor::red) ;
-	  // display the pose 
+	  // display the pose
 	  //pose.display(I,cdMo,cam, 0.025, vpColor::blue) ;
 
 	  //current Z
 	  {
 	    vpColVector cP ;
 	    point[indexOfReferencePoint].changeFrame(cMo, cP) ;
-	    Z = cP[2] ;   
+	    Z = cP[2] ;
 	    p.set_Z(Z) ;
 
 	  }
-    
+
 	  // compute log (Z/Z*) anf the corresponding interaction matrix
 	  logZ.set_s(log(Z/Zd)) ;
 	  vpMatrix LlogZ(1,6) ;
@@ -431,9 +431,9 @@ main()
 		gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av ;
 	      }
 	  }
-	  if (SAVE==1) 
+	  if (SAVE==1)
 	    gain = gain/5 ;
-	    
+
 	  TRACE("%d %f",SAVE, gain) ;
 	  task.setLambda(gain) ;
 
@@ -445,7 +445,7 @@ main()
 	    {
 	      double u = Lu.value() ;
 	      double v = Lv.value() ;
-	      
+
 	      vpDisplay::displayPoint(I,
 				      vpMath::round(v), vpMath::round(u),
 				      vpColor::red) ;
@@ -457,14 +457,14 @@ main()
 	  error = task.error.sumSquare() ;
 	  cout << "|| s - s* || = "<< error<<endl ;
 
-	  if (error>7) 
+	  if (error>7)
 	    {
 	      TRACE("Error detected while tracking visual features") ;
 	      robot.stopMotion() ;
 	      exit(1) ;
 	    }
 	  if ((SAVE==1) && (iter %3==0))
-	{ 
+	{
 
 	  vpDisplay::getImage(I,Ic) ;
 	  sprintf(name,"/tmp/marchand/image.%04d.ppm",it++) ;
@@ -475,21 +475,22 @@ main()
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
       nbpos -=1 ;
-    
+
     }
 
   cout << "Fermeture de la pince " << endl ;
   robot.closeGripper() ;
   vpDisplay::getClick(I) ;
-  robot.move("pos-intermediaire2.pos") ;
-  vpDisplay::getClick(I) ;
-  robot.move("show.pos") ;
-  vpDisplay::getClick(I) ;
-  robot.move("pos-intermediaire2.pos") ;
+  //  robot.move("pos-intermediaire2.pos") ;
+  // vpDisplay::getClick(I) ;
+  //  robot.move("show.pos") ;
+  //  vpDisplay::getClick(I) ;
+  //  robot.move("show2.pos") ;
+  //  robot.move("pos-intermediaire2.pos") ;
   vpDisplay::getClick(I) ;
    robot.move("pos-intermediaire1.pos") ;
   cout << "Ouverture de la pince " << endl ;
-  robot.openGripper() ;
+    robot.openGripper() ;
 
   vpDisplay::getClick(I) ;
  robot.move("pos-intermediaire2.pos") ;
