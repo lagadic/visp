@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServoException.h,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpServoException.h,v 1.2 2005-06-28 12:52:55 marchand Exp $
  *
  * Description
  * ============
@@ -54,9 +54,9 @@ public:
   enum errorServoCodeEnum
     {
       //! feature list or desired feature list is empty
-      noFeatureErr,
+      noFeatureError,
       //! other exception
-      servoERR
+      servoError
     } ;
 
 public:
