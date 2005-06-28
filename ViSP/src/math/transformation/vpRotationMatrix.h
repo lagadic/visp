@@ -12,13 +12,18 @@
  * Version control
  * ===============
  *
- *  $Id: vpRotationMatrix.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpRotationMatrix.h,v 1.2 2005-06-28 08:33:02 marchand Exp $
  *
  * Description
  * ============
  *     Class that consider the particular case of rotation matrix
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+/* Modifications
+   june, 8 2005      |  Add operator=(vpMatrix &m)
+   EM                |  with a test to know is m is rotation matrix
+*/
 
 
 #ifndef vpROTATIONMATRIX_H
@@ -71,9 +76,10 @@ public:
   vpRotationMatrix(const double tux, const  double tuy, const double tuz) ;
 
 
-  //! copy operator from vpMatrix (handle with care)
+  //! copy operator from vpRotationMatrix
   vpRotationMatrix &operator=(const vpRotationMatrix &R);
-
+  //! copy operator from vpMatrix (handle with care)
+  vpRotationMatrix &operator=(const vpMatrix &m) ;
   //! operation c = A * b (A is unchanged)
   vpTranslationVector operator*(const vpTranslationVector &mat) const ;
   //! operation C = A * B (A is unchanged)
