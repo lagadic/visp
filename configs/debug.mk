@@ -2,12 +2,8 @@
 # ---> CFLAGS
 # --->
 
-# ceci est positionné directement par configure
-#ifeq ($(DEBUG), yes)
-#  CXXFLAGS += -g -DDEBUG -Wno-deprecated
-#else
-#  CXXFLAGS += -O3 -Werror
-#endif
+# In debugging mode, (configure --enable-debug) we set automatically CXXFLAGS
+# to -g -Wno-deprecated -DDEBUG and turn off -O1, -O2, -O3 options
 
 # LEVEL OF TRACE
 ifdef DMODE
