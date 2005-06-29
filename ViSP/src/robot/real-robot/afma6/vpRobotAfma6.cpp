@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.2 2005-06-28 12:57:36 marchand Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.3 2005-06-29 08:58:58 fspindle Exp $
  *
  * Description
  * ============
@@ -37,6 +37,9 @@
 /* ------------------------------------------------------------------------ */
 
 bool vpRobotAfma6::robotAlreadyCreated = false;
+const double       vpRobotAfma6::defaultPositioningVelocity = 20.0;
+const int          vpRobotAfma6::defaultVelocityMeasureTempo = 10;
+const int          vpRobotAfma6::nbArticulations = 6;
 
 /* ----------------------------------------------------------------------- */
 /* --- CONSTRUCTOR ------------------------------------------------------ */
