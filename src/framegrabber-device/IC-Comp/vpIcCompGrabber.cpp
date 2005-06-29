@@ -373,7 +373,7 @@ vpIcCompGrabber::close()
 
   if (framegrabber!=NULL)
   {
-    framegrabber->~ICcomp2x() ;
+    delete framegrabber;
     framegrabber = NULL ;
   }
 }
