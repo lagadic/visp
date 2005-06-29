@@ -141,7 +141,7 @@ vpHomography::computeDisplacement (const vpHomography &H,
   if (((sv[0] - sv[1]) < SEUIL_SING) && (sv[0] - sv[2]) < SEUIL_SING)
   {
     //#ifdef DEBUG_Homographie
-    printf ("\nCas rotation pure\n");
+    //   printf ("\nPure  rotation\n");
     //#endif
     /*****
 	  Cas ou le deplacement est une rotation pure
