@@ -1,9 +1,3 @@
-// This example shows how to put a permanent background image on your
-// viewer canvas, below the 3D graphics, plus overlay foreground
-// geometry.  Written by mortene.  Copyright Systems in Motion 2002.
-
-// *************************************************************************
-
 
 
 #include <visp/vpConfig.h>
