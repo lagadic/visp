@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: test_svd.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: test_svd.cpp,v 1.2 2005-06-29 12:20:01 fspindle Exp $
  *
  * Description
  * ============
@@ -52,6 +52,8 @@ main()
   cout <<"svdNr Numerical recipes \n time " <<t << endl;
     cout << W.t() ;
   cout << "--------------------------------------"<<endl ;
+
+#if (defined HAVE_LIBGSL) && (defined HAVE_LIBGSLCBLAS)
   L = Ls ;
   t = vpTime::measureTimeMs() ;
   L.svdGsl(W,V) ;
@@ -60,6 +62,7 @@ main()
     cout << W.t() ;
 
   cout << "--------------------------------------"<<endl ;
+#endif
 
   L = Ls ;
   t = vpTime::measureTimeMs() ;
