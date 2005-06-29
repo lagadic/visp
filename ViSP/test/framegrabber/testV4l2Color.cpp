@@ -22,7 +22,7 @@ int
 main(int argc, char ** argv)
 {
   cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  "  test frame grabbing" << endl ;
+  cout <<  "  test frame grabbing with Video 4 Linux 2" << endl ;
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
@@ -104,7 +104,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  TRACE("v4l2 frame grabber drivers are not available") ;
+  TRACE("Video 4 Linux 2 frame grabber drivers are not available") ;
 }
 #endif
 
