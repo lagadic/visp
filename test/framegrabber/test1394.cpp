@@ -20,7 +20,7 @@ int
 main(int argc, char ** argv)
 {
   cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  "  test frame grabbing" << endl ;
+  cout <<  "  test frame grabbing with ieee 1394" << endl ;
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
@@ -65,7 +65,7 @@ main(int argc, char ** argv)
 
   TRACE(" ") ;
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+  vpDisplayX display(I,100,100,"ieee 1394 grabbing... ") ;
   TRACE(" ") ;
 
   try{
@@ -93,7 +93,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  TRACE("ICcomp frame grabber drivers are not available") ;
+  TRACE("Ieee 1394 grabber capabilities are not available...") ;
 }
 #endif
 

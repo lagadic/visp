@@ -20,7 +20,7 @@ int
 main(int argc, char ** argv)
 {
   cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  "  test frame grabbing" << endl ;
+  cout <<  "  test frame grabbing with IC-comp framegrabber" << endl ;
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
@@ -69,7 +69,7 @@ main(int argc, char ** argv)
 
   TRACE(" ") ;
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+  vpDisplayX display(I,100,100,"IC-comp frame grabbing...") ;
   TRACE(" ") ;
 
   try{
