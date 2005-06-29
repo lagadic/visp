@@ -1,5 +1,6 @@
 
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 
 #ifdef HAVE_ROBOT_AFMA6
 
@@ -55,6 +56,7 @@ main()
 int
 main()
 {
+  ERROR_TRACE("Youd do not have an afma6 robot connected to your computer...");
 }
 
 #endif
