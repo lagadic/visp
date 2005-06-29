@@ -6,6 +6,7 @@
 
 
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 
 
 #ifdef HAVE_SOQT
@@ -21,7 +22,6 @@
 #include <visp/vpFeaturePoint.h>
 #include <visp/vpServo.h>
 #include <visp/vpRobotCamera.h>
-#include <visp/vpDebug.h>
 #include <visp/vpFeatureBuilder.h>
 
 #define SAVE 1
@@ -196,5 +196,6 @@ main(int argc, char ** argv)
 int
 main()
 {
+  TRACE("You should install Coin3D and SoQT") ;
 }
 #endif
