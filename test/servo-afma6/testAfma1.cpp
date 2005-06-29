@@ -56,7 +56,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("Youd do not have an afma6 robot connected to your computer...");
+  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
 }
 
 #endif

@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoLine-v1.cpp,v 1.2 2005-06-28 13:32:37 fspindle Exp $
+ *  $Id: testServoLine-v1.cpp,v 1.3 2005-06-29 15:57:35 fspindle Exp $
  *
  * Description
  * ============
@@ -204,6 +204,7 @@ main()
 int
 main()
 {
+  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
 }
 
 #endif
