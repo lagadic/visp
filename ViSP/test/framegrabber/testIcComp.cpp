@@ -11,9 +11,9 @@
 #include <visp/vpParseArgv.h>
 
 /*!
-  \example testTrackDot.cpp
+  \example testIcComp.cpp
 
-  \brief   test dot tracking on an image sequence
+  \brief   Test framegrabbing using Imaging Technology IC-comp framegrabber.
 */
 
 int
