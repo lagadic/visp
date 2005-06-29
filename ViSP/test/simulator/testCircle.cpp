@@ -7,6 +7,7 @@
 
 
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 
 
 #ifdef HAVE_SOQT
@@ -179,8 +180,8 @@ main(int argc, char ** argv)
   simu.setZoomFactor(0.2) ;
   simu.addAbsoluteFrame() ;
   //  simu.load("4points.iv") ;
-  // simu.load("tie.iv",fMo) ;
-  simu.load("/local/modeles-3D/starwars/platform3ds/platform.iv") ;
+  simu.load("tie.iv",fMo) ;
+  //simu.load("/local/modeles-3D/starwars/platform3ds/platform.iv") ;
   simu.setCameraParameters(cam) ;
   simu.initApplication(&mainLoop) ;
 
@@ -191,6 +192,7 @@ main(int argc, char ** argv)
 #else
 int
 main()
-{
+{  TRACE("You should install Coin3D and SoQT") ;
+
 }
 #endif
