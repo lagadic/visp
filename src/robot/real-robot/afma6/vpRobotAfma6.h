@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.h,v 1.2 2005-06-28 15:48:47 marchand Exp $
+ *  $Id: vpRobotAfma6.h,v 1.3 2005-06-29 08:58:58 fspindle Exp $
  *
  * Description
  * ============
@@ -125,15 +125,15 @@ public:  /* Constantes */
    * positioningVelocity. Cette valeur peut etre changee par la fonction
    * #setPositioningVelocity.
    */
-  static const double       defaultPositioningVelocity = 20.0;
+  static const double       defaultPositioningVelocity; // = 20.0;
 
   /** Valeur par default de l'attribut prive velocityMeasureTempo, accessible
    * en lecture par #getVelocityMeasureTempo, et en ecriture par
    * #setVelocityMeasureTempo. */
-  static const int          defaultVelocityMeasureTempo = 10;
+  static const int          defaultVelocityMeasureTempo; // = 10;
 
   /** Nombre d'articulation, i.e. taille des vecteurs articulaires. */
-  static const int          nbArticulations = 6;
+  static const int          nbArticulations; // = 6;
 
 public:  /* Attributs publiques */
 

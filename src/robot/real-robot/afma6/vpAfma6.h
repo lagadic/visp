@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.h,v 1.1.1.1 2005-06-08 07:08:08 fspindle Exp $
+ *  $Id: vpAfma6.h,v 1.2 2005-06-29 08:58:58 fspindle Exp $
  *
  * Description
  * ============
@@ -60,7 +60,7 @@ class vpAfma6
 public: /* Constantes */
 
   /** Nombre d'articulations du robot. */
-  static const int            articulationsNb = 6;
+  static const int articulationsNb; // 6
 
   /** Nom du fichier ou est rangee la liste de parametres chez Fabien. */
   static const char * const PARAMETRES_AFMA6_FILENAME ;
@@ -80,9 +80,9 @@ public: /* Constantes */
       CAMERA_XC77_12MM,
       CAMERA_HF,
       CAMERA_IEEE1394_12MM,
-    };
+    } ;
   /** Camera utilisee par default. */
-  static const CameraRobotType defaultCameraRobot = CAMERA_XC77_12MM;
+  static const CameraRobotType defaultCameraRobot;// = CAMERA_XC77_12MM;
 
 public: /* Attributs publiques */
 
@@ -190,7 +190,7 @@ public:
 public: /* Constantes publiques */
 
   /** \brief parametre par default des fonctions getActivationThreshold.  */
-  static const double rhoDefault = 0.1;
+  static const double rhoDefault;
 
 protected: /* Attributs prives */
 
@@ -205,10 +205,12 @@ public: /* Methodes publiques */
   //@{
 
   /** \brief Renvoie les butees basses du robot.   */
-  void            getJointLimitsMin (double jointMin[articulationsNb]) const;
+  void getJointLimitsMin (double jointMin[6]) const;
+  //void getJointLimitsMin (double jointMin[articulationsNb]) const;
 
   /** \brief Renvoie les butees hautes du robot.    */
-  void            getJointLimitsMax (double jointMax[articulationsNb]) const;
+  void getJointLimitsMax (double jointMax[6]) const;
+  //  void getJointLimitsMax (double jointMax[articulationsNb]) const;
 
   //@}
 
@@ -218,14 +220,16 @@ public: /* Methodes publiques */
   //@{
 
   /** \brief Modifie la position pour rester dans l'espace autorise.   */
-  void            respectJointLimits (vpColVector &q) const;
+  void respectJointLimits (vpColVector &q) const;
 
   /** Verifie si les limites des butees sont respectées.    */
-  bool            areJointLimitsrespected (const vpColVector & q) const;
+  bool areJointLimitsrespected (const vpColVector & q) const;
 
   /** \brief Renvoie la position courrante relative aux butees.    */
-  void            getPositionInJointInterval (const vpColVector &q,
-					      double jointPos[articulationsNb]) const;
+  void getPositionInJointInterval (const vpColVector &q,
+				   double jointPos[6]) const;
+  //void getPositionInJointInterval (const vpColVector &q,
+  //                                 double jointPos[articulationsNb]) const;
 
   //@}
 
