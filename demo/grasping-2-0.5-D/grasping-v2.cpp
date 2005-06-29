@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: grasping-v2.cpp,v 1.4 2005-06-29 11:57:45 marchand Exp $
+ *  $Id: grasping-v2.cpp,v 1.5 2005-06-29 16:01:44 fspindle Exp $
  *
  * Description
  * ============
@@ -508,8 +508,7 @@ main()
 int
 main()
 {
-  TRACE("Youd do not have an afma6 robot connected to your computer...");
-
+  TRACE("You do not have an afma6 robot connected to your computer...");
 }
 
 #endif
