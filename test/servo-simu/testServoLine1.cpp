@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoLine1.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testServoLine1.cpp,v 1.2 2005-06-30 08:22:37 fspindle Exp $
  *
  * Description
  * ============
@@ -57,7 +57,7 @@ main()
   // open a display for the visualization
 
   vpImage<unsigned char> I(512,512,255) ;
-  vpDisplayX display(I,100,100) ;
+  vpDisplayX display(I,100,100,"Camera view") ;
 
   vpCameraParameters cam ;
   double px, py ; px = py = 600 ;
@@ -135,7 +135,7 @@ main()
   vpServoDisplay::display(task,cam,I) ;
 
   TRACE("\t set the gain") ;
-  task.setLambda(0.1) ;
+  task.setLambda(1.) ;
 
 
   TRACE("Display task information " ) ;

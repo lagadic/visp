@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoCylinder1.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testServoCylinder1.cpp,v 1.2 2005-06-30 08:22:37 fspindle Exp $
  *
  * Description
  * ============
@@ -57,7 +57,7 @@ main()
   // open a display for the visualization
 
   vpImage<unsigned char> I(512,512,255) ;
-  vpDisplayX display(I,100,100) ;
+  vpDisplayX display(I,100,100, "Camera view") ;
 
   vpCameraParameters cam ;
   double px, py ; px = py = 600 ;
@@ -140,6 +140,7 @@ main()
   task.print() ;
 
 
+  TRACE("\n\nClick in the camera view window to start...");
   vpDisplay::getClick(I) ;
   TRACE("\t set the gain") ;
   task.setLambda(0.1) ;
@@ -186,6 +187,7 @@ main()
   }
   while(task.error.sumSquare() >  1e-9) ;
 
+  TRACE("\n\nClick in the camera view window to end...");
   vpDisplay::getClick(I) ;
   TRACE("Display task information " ) ;
   task.print() ;

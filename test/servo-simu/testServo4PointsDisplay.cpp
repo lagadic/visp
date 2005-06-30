@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServo4PointsDisplay.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testServo4PointsDisplay.cpp,v 1.2 2005-06-30 08:22:36 fspindle Exp $
  *
  * Description
  * ============
@@ -59,9 +59,9 @@ main()
   // open a display for the visualization
 
   vpImage<unsigned char> I(300,300,0) ;
-  vpDisplayX display(I,0,0, "vue interne") ;
+  vpDisplayX display(I,0,0, "Internal view") ;
   vpImage<unsigned char> Iext(300,300,0) ;
-  vpDisplayX displayExt(Iext,330,000) ;
+  vpDisplayX displayExt(Iext,330,000, "External view") ;
 
   vpProjectionDisplay externalview ;
 
@@ -202,6 +202,8 @@ main()
 
   TRACE("Display task information " ) ;
   task.print() ;
+
+  TRACE("\n\nClick in the internal view window to end...");
   vpDisplay::getClick(I) ;
 }
 
