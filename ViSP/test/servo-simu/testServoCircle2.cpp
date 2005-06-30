@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoCircle2.cpp,v 1.2 2005-06-28 09:04:12 marchand Exp $
+ *  $Id: testServoCircle2.cpp,v 1.3 2005-06-30 08:22:37 fspindle Exp $
  *
  * Description
  * ============
@@ -58,7 +58,7 @@ main()
 
 
   vpImage<unsigned char> I(512,512,0) ;
-  vpDisplayX display(I,100,100) ;
+  vpDisplayX display(I,100,100, "Camera view") ;
 
   vpCameraParameters cam ;
   double px, py ; px = py = 600 ;
