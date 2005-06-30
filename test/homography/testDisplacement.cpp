@@ -1,11 +1,15 @@
 
 
 /*!
-  \file test_homography.cpp
+  \file testDisplacement.cpp
   \brief tests transformation within various representations of rotation
 */
 
+/*!
+  \example testDisplacement.cpp
 
+
+*/
 #include <visp/vpMath.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpHomography.h>
