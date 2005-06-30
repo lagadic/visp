@@ -2,6 +2,7 @@
 
 
 
+
 /*
 #----------------------------------------------------------------------------
 #  Copyright (C) 1998  IRISA-INRIA Rennes Vista Project
@@ -71,22 +72,22 @@ main()
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::LAGRANGE, cMo) ;
-  TRACE("Pose  LAGRANGE") ;
+  TRACE("LAGRANGE pose : ") ;
   cout << cMo << endl ;
-  cout << "residu Lagrange " << pose.computeResidual(cMo) <<endl ;
+  cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<endl ;
 
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
-  TRACE( "Pose LOWE" ) ;
+  TRACE( "LOWE pose :" ) ;
   cout <<  cMo << endl ;
-  cout << "residu Lowe " <<pose.computeResidual(cMo) <<endl ;
+  cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<endl ;
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
-  TRACE(  "Pose DEMENTHON" ) ;
+  TRACE(  "DEMENTHON pose :" ) ;
   cout <<  cMo << endl ;
-  cout << "residu Dementhon " << pose.computeResidual(cMo) <<endl ;
+  cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<endl ;
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
@@ -101,9 +102,12 @@ main()
   cMo1 = cMo_ref ;
   cMo1[2][3] += 0.1 ;
   cMo1[1][3] += 0.1 ;
-  cout << pose.computeResidual(cMo1) <<endl ;
+  TRACE("VIRTUAL_VS");
+  cout << "initial residual term obtained with LOWE method: "
+       << pose.computeResidual(cMo1) <<endl ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo1) ;
-  cout << "Pose   VVS" << endl << cMo1 << endl ;
-  cout << pose.computeResidual(cMo1) <<endl ;
+  TRACE("VIRTUAL_VS pose : ") ;
+  cout << cMo1 << endl ;
+  cout << "VIRTUAL_VS residual term: " << pose.computeResidual(cMo1) <<endl ;
 
 }
