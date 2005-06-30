@@ -58,7 +58,7 @@ void *mainLoop (void *_simu)
     robot.setPosition(cMo) ;
     simu->setCameraPosition(cMo) ;
 
-    cout << "play 0/1" <<endl ;
+    cout << "\nEnter a character to continue..." <<endl ;
     {    int a ; cin >> a ; }
 
     simu->getCameraPosition(cMo) ;
@@ -147,7 +147,7 @@ void *mainLoop (void *_simu)
     }
     TRACE("Display task information " ) ;
     task.print() ;
-    cout << "play 0/1" <<endl ;
+    cout << "\nEnter a character to continue..." <<endl ;
     {    int a ; cin >> a ; }
 
   }
