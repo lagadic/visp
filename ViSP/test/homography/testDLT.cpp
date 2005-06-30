@@ -1,7 +1,7 @@
 
 
 /*!
-  \file test_homography.cpp
+  \file testDLT.cpp
   \brief tests transformation within various representations of rotation
 */
 
@@ -82,11 +82,11 @@ main()
   cout << "-------------------------------" <<endl ;
   TRACE("extract R, T and n ") ;
   aHb.computeDisplacement(aRb, aTb, n) ;
-  cout << "Rotation aRb" <<endl ;
+  cout << "Rotation: aRb" <<endl ;
   cout << aRb << endl ;
-  cout << "Translation  aTb" <<endl;
+  cout << "Translation: aTb" <<endl;
   cout << (aTb).t() <<endl   ;
-  cout << "normale  n" <<endl;
+  cout << "Normal to the plane: n" <<endl;
   cout << (n).t() <<endl ;
 
 
@@ -98,11 +98,11 @@ main()
   cout <<  endl <<aHb_built/aHb_built[2][2] <<  endl ;
 
   aHb_built.computeDisplacement(aRb, aTb, n) ;
-  cout << "Rotation aRb" <<endl ;
+  cout << "Rotation: aRb" <<endl ;
   cout << aRb << endl ;
-  cout << "Translation  aTb" <<endl;
+  cout << "Translation: aTb" <<endl;
   cout << (aTb).t() <<endl ;
-  cout << "normale  n" <<endl;
+  cout << "Normal to the plane: n" <<endl;
   cout << (n).t() <<endl ;
 
   cout << "-------------------------------" <<endl ;

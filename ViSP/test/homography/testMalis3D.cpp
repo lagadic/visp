@@ -1,7 +1,7 @@
 
 
 /*!
-  \file test_homography.cpp
+  \file testMalis3D.cpp
   \brief tests transformation within various representations of rotation
 */
 
@@ -20,9 +20,9 @@
 #define L 0.1
 #define nbpt 11
 /*!
-  \example testDLT.cpp
+  \example testMalis3D.cpp
 
-  test the DLT homography estimation algorithm
+  test the Malis homography estimation algorithm
 
 */
 int
@@ -82,11 +82,11 @@ main()
   cout <<  endl <<aHb_built/aHb_built[2][2] <<  endl ;
 
   aHb_built.computeDisplacement(aRb, aTb, n) ;
-  cout << "Rotation aRb" <<endl ;
+  cout << "Rotation: aRb" <<endl ;
   cout << aRb << endl ;
-  cout << "Translation  aTb" <<endl;
+  cout << "Translation: aTb" <<endl;
   cout << (aTb).t() <<endl ;
-  cout << "normale  n" <<endl;
+  cout << "Normal to the plane: n" <<endl;
   cout << (n).t() <<endl ;
 
   cout << "-------------------------------" <<endl ;
@@ -104,11 +104,11 @@ main()
   cout << "-------------------------------" <<endl ;
   TRACE("extract R, T and n ") ;
   aHb.computeDisplacement(aRb, aTb, n) ;
-  cout << "Rotation aRb" <<endl ;
+  cout << "Rotation: aRb" <<endl ;
   cout << aRb << endl ;
-  cout << "Translation  aTb" <<endl;
+  cout << "Translation: aTb" <<endl;
   cout << (aTb).t() <<endl   ;
-  cout << "normale  n" <<endl;
+  cout << "Normal to the plane: n" <<endl;
   cout << (n).t() <<endl ;
 
 
