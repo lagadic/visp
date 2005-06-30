@@ -24,7 +24,7 @@
 #include <visp/vpRobotCamera.h>
 #include <visp/vpFeatureBuilder.h>
 
-#define SAVE 1
+#define SAVE 0
 
 static
 void *mainLoop (void *_simu)
@@ -114,7 +114,7 @@ void *mainLoop (void *_simu)
     TRACE("\t set the gain") ;
     task.setLambda(0.051) ;
 
-    cout << "play 0/1" <<endl ;
+    cout << "\nEnter a character to continue..." <<endl ;
     {    int a ; cin >> a ; }
 
     TRACE("Display task information " ) ;
@@ -144,12 +144,12 @@ void *mainLoop (void *_simu)
 
       simu->setCameraPosition(cMo) ;
 
-      sprintf(name,"/tmp/marchand/image.%04d.external.png",iter) ;
-      cout << name << endl ;
       if(SAVE==1)
       {
+	sprintf(name,"/tmp/image.%04d.external.png",iter) ;
+	cout << name << endl ;
 	simu->write(vpSimulator::EXTERNAL,name) ;
-	sprintf(name,"/tmp/marchand/image.%04d.internal.png",iter) ;
+	sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
 	simu->write(vpSimulator::INTERNAL,name) ;
       }
       {int a ;
