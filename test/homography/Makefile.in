@@ -1,7 +1,8 @@
 @build_mk@
 
 
-SOURCES		= testDisplacement.cpp testDLT.cpp testMalis.cpp testMalis3D.cpp testRansac.cpp
+SOURCES		= testDisplacement.cpp testDLT.cpp \
+		testMalis.cpp testMalis3D.cpp testHomographyRansac.cpp
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
 
