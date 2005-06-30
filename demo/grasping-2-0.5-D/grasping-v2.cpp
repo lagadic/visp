@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: grasping-v2.cpp,v 1.5 2005-06-29 16:01:44 fspindle Exp $
+ *  $Id: grasping-v2.cpp,v 1.6 2005-06-30 07:50:35 fspindle Exp $
  *
  * Description
  * ============
@@ -54,9 +54,6 @@
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpServoDisplay.h>
-
-// Debug trace
-#include <visp/vpDebug.h>
 
 #include <visp/vpDot.h>
 #include <visp/vpList.h>

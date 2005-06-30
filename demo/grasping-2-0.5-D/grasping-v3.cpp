@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: grasping-v3.cpp,v 1.2 2005-06-28 12:40:27 fspindle Exp $
+ *  $Id: grasping-v3.cpp,v 1.3 2005-06-30 07:50:35 fspindle Exp $
  *
  * Description
  * ============
@@ -22,9 +22,14 @@
 
 
 /*!
-  \example grasping-v0.cpp
+  \example grasping-v3.cpp
   \brief 2 1/D visual servoing experiment on 7 points
 */
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
+
+#ifdef HAVE_ROBOT_AFMA6
+
 #include <visp/vpSimulator.h>
 #include <visp/vpTime.h>
 
@@ -51,9 +56,6 @@
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpServoDisplay.h>
-
-// Debug trace
-#include <visp/vpDebug.h>
 
 #include <visp/vpDot.h>
 #include <visp/vpList.h>
@@ -533,6 +535,14 @@ main(int argc, char ** argv)
   simu.mainLoop() ;
 }
 
+#else
+int
+main()
+{
+  TRACE("You do not have an afma6 robot connected to your computer...");
+}
+
+#endif
 
 
 /*
