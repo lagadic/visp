@@ -17,6 +17,9 @@
    is available */
 #undef HAVE_INCLUDE_VIDEODEV2
 
+/* Define to 1 if insure++ debugging tool is available */
+#undef HAVE_INSURE
+
 /* Define to 1 if you have the `dc1394_control' library (-ldc1394_control). */
 #undef HAVE_LIBDC1394_CONTROL
 
