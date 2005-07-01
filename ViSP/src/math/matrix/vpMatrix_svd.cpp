@@ -501,6 +501,11 @@ void vpMatrix::svdFlake(vpColVector &W, vpMatrix &V)
 #ifdef HAVE_LIBGSL
 #include<gsl/gsl_linalg.h>
 
+#ifdef HAVE_INSURE
+extern int gsl_warnings_off;
+int gsl_warnings_off = 1;
+#endif
+
 void
 vpMatrix::svdGsl(vpColVector& w, vpMatrix& v)
 {
