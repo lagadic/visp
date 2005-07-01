@@ -167,6 +167,16 @@ fi
 
 #-----------------------------------------------------------------------
 # Manage the --enable-insure option
+AC_CHECK_PROG(have_insure, insure, yes, no, ,)
+if test "x$have_insure" = "xyes"; then
+  AC_DEFINE([HAVE_INSURE], 1,
+            [Define to 1 if insure++ debugging tool is available])
+  AC_SUBST(HAVE_INSURE,yes)
+else
+  AC_SUBST(HAVE_INSURE,no)
+fi
+
+if test "x$have_insure" = "xyes"; then
 AC_MSG_CHECKING(whether to enable insure++ debugging tool)
 AC_ARG_ENABLE(insure,
   AC_HELP_STRING([--enable-insure@<:@yes/no@:>@],
@@ -181,6 +191,7 @@ else
 #  INSURE=""
 #  SUFFIX=""
   AC_MSG_RESULT(no)
+fi
 fi
 
 AC_SUBST(SUFFIX,$SUFFIX)
