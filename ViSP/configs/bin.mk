@@ -1,5 +1,11 @@
 DEPFILES_TMP=$(SOURCES:%.cpp=$(VISP_DEP_PATH)/%.P)
-DEPFILES    =$(DEPFILES_TMP:%.c=%.P)
+DEPFILES    =$(DEPFILES_TMP:%.c=$(VISP_DEP_PATH)/%.P)
+
+ifeq ($(SUFFIX), _insure)
+DEP_FILE	= $*.d
+else
+DEP_FILE	= $(*F)$(SUFFIX).d
+endif
 
 # Rule for combining compilation and dependency generation
 # - put binaries in current directory
@@ -9,8 +15,8 @@ DEPFILES    =$(DEPFILES_TMP:%.c=%.P)
 	@echo "* Create the binary file $@ for $< "
 	@echo "*"
 	$(CXXALL) -MD -o $@ $< $(LDFLAGS) $(LIBS)
-	@cp $(*F)$(SUFFIX).d $(VISP_DEP_PATH)/$(*F)$(SUFFIX).P; \
+	@cp $(DEP_FILE) $(VISP_DEP_PATH)/$(*F)$(SUFFIX).P; \
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-	    -e '/^$$/ d' -e 's/$$/ :/' < $(*F)$(SUFFIX).d \
+	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE) \
 	    >> $(VISP_DEP_PATH)/$(*F).P; \
-	rm -f $(*F)$(SUFFIX).d
+	rm -f $(DEP_FILE)
