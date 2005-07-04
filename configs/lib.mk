@@ -1,8 +1,8 @@
 OBJECTS_TMP =$(SOURCES:%.cpp=$(VISP_OBJ_PATH)/%.o)
-OBJECTS     =$(OBJECTS_TMP:.c=.o)
+OBJECTS     =$(OBJECTS_TMP:%.c=$(VISP_OBJ_PATH)/%.o)
 
 DEPFILES_TMP=$(SOURCES:%.cpp=$(VISP_DEP_PATH)/%.P)
-DEPFILES    =$(DEPFILES_TMP:%.c=%.P)
+DEPFILES    =$(DEPFILES_TMP:%.c=$(VISP_DEP_PATH)/%.P)
 
 # Be aware: with insure option -MD puts the dependency file in the same
 # directory than the source file.  With classic compilators, -MD puts the
