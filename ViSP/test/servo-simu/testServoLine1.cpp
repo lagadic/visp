@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoLine1.cpp,v 1.2 2005-06-30 08:22:37 fspindle Exp $
+ *  $Id: testServoLine1.cpp,v 1.3 2005-07-05 10:32:24 marchand Exp $
  *
  * Description
  * ============
@@ -135,7 +135,7 @@ main()
   vpServoDisplay::display(task,cam,I) ;
 
   TRACE("\t set the gain") ;
-  task.setLambda(1.) ;
+  task.setLambda(0.1) ;
 
 
   TRACE("Display task information " ) ;
