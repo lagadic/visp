@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.3 2005-06-28 13:10:48 marchand Exp $
+ *  $Id: vpDot.cpp,v 1.4 2005-07-05 14:10:44 fspindle Exp $
  *
  * Description
  * ============
@@ -245,8 +245,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
     Lj.next() ;
   }
 
-  i_cog = (int) (i_cog/npoint) ;
-  j_cog = (int) (j_cog/npoint) ;
+  i_cog = i_cog/npoint ;
+  j_cog = j_cog/npoint ;
 
 
   i = i_cog ;
@@ -257,7 +257,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
     ERROR_TRACE("Dot has been lost") ;
     throw(vpTrackingException(vpTrackingException::featureLostError,
 			      "Dot has been lost")) ;
-  } 
+  }
   if (npoint > nbMaxPoint)
   {
     ERROR_TRACE("Too many point %f (max allowed is %f)", npoint, nbMaxPoint) ;
@@ -269,7 +269,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
 }
 
 
-void 
+void
 vpDot::setNbMaxPoint(double nb)
 {
   nbMaxPoint = nb ;
