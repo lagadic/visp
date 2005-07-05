@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServo4PointsDisplay.cpp,v 1.2 2005-06-30 08:22:36 fspindle Exp $
+ *  $Id: testServo4PointsDisplay.cpp,v 1.3 2005-07-05 10:27:31 marchand Exp $
  *
  * Description
  * ============
@@ -87,12 +87,12 @@ main()
 
 
   TRACE("sets the initial camera location " ) ;
-  vpHomogeneousMatrix cMo(0,0,1.5,0,0,M_PI/3.00) ;//-0.1,-0.1,1.5,
-  //  vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+  vpHomogeneousMatrix cMo(-0.1,-0.1,1,
+			  vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
   robot.setPosition(cMo) ;
 
-  vpHomogeneousMatrix cextMo(0,0,5,
+  vpHomogeneousMatrix cextMo(0,0,2,
 			     0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
 
