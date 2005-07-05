@@ -1,0 +1,96 @@
+AC3Db
+MATERIAL "ac3dmat5" rgb 1 1 0  amb 0.2 0.2 0.2  emis 0 0 0  spec 0.5 0.5 0.5  shi 10  trans 0
+OBJECT world
+kids 1
+OBJECT poly
+name "disk"
+loc 9.31323e-10 -1.86265e-09 0
+crease 45.000000
+numvert 13
+0.05 0 0
+0.0433013 0.025 0
+0.025 0.0433013 0
+0 0.05 0
+-0.025 0.0433013 0
+-0.0433013 0.025 0
+-0.05 0 0
+-0.0433013 -0.025 0
+-0.025 -0.0433013 0
+0 -0.05 0
+0.025 -0.0433013 0
+0.0433013 -0.025 0
+0 0 0
+numsurf 12
+SURF 0x20
+mat 0
+refs 3
+11 0 0
+0 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+10 0 0
+11 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+9 0 0
+10 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+8 0 0
+9 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+7 0 0
+8 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+6 0 0
+7 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+5 0 0
+6 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+4 0 0
+5 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+3 0 0
+4 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+2 0 0
+3 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+1 0 0
+2 0 0
+12 0 0
+SURF 0x20
+mat 0
+refs 3
+0 0 0
+1 0 0
+12 0 0
+kids 0
