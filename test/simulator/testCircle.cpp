@@ -1,3 +1,8 @@
+/*!
+  \example testCircle.cpp
+  \brief Visual servoing experiment on a circle with a visualization
+  from the camera and from an external view
+*/
 
 
 
@@ -71,8 +76,10 @@ void *mainLoop (void *_simu)
   robot.setPosition(cMo) ;
   simu->setCameraPosition(cMo) ;
 
+
   if (pos==1)  cMod[2][3] = 0.32 ;
 
+  cout << " Hit a key "<< endl ;
   {int a ; cin >>a ; } ;
 
   TRACE("sets the circle coordinates in the world frame "  ) ;
@@ -174,9 +181,9 @@ main(int argc, char ** argv)
   vpTime::wait(1000) ;
   simu.setZoomFactor(0.2) ;
   simu.addAbsoluteFrame() ;
-  //  simu.load("4points.iv") ;
-  simu.load("tie.iv",fMo) ;
-  //simu.load("/local/modeles-3D/starwars/platform3ds/platform.iv") ;
+
+  simu.load("iv/circle.iv",fMo) ;
+
   simu.setCameraParameters(cam) ;
   simu.initApplication(&mainLoop) ;
 

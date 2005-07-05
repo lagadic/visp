@@ -1,8 +1,8 @@
 /*!
   \example test4points.cpp
-  \brief Visual servoing experiment on 4 points
+  \brief Visual servoing experiment on 4 points with a visualization
+  from the camera and from an external view
 */
-
 
 
 #include <visp/vpConfig.h>
@@ -10,7 +10,6 @@
 
 
 #ifdef HAVE_LIBSOQT
-
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpTime.h>
@@ -42,7 +41,7 @@ void *mainLoop (void *_simu)
     cout << endl ;
     cout << "-------------------------------------------------------" << endl ;
     cout << " Test program for vpServo "  <<endl ;
-    cout << " Eye-in-hand task control,  articular velocity are computed" << endl ;
+    cout << " Eye-in-hand task control" << endl ;
     cout << " Simulation " << endl ;
     cout << " task : servo 4 points " << endl ;
     cout << "-------------------------------------------------------" << endl ;
@@ -114,7 +113,7 @@ void *mainLoop (void *_simu)
     TRACE("\t set the gain") ;
     task.setLambda(0.051) ;
 
-    cout << "\nEnter a character to continue..." <<endl ;
+    cout << "\nEnter a character to continue... " <<endl ;
     {    int a ; cin >> a ; }
 
     TRACE("Display task information " ) ;
@@ -152,8 +151,6 @@ void *mainLoop (void *_simu)
 	sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
 	simu->write(vpSimulator::INTERNAL,name) ;
       }
-      {int a ;
-      cin >>a ; }
     }
 
     TRACE("Display task information " ) ;
