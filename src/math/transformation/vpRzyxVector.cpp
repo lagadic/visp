@@ -12,12 +12,12 @@
  * Version control
  * ===============
  *
- *  $Id: vpRzyxVector.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpRzyxVector.cpp,v 1.2 2005-07-06 14:44:49 marchand Exp $
  *
  * Description
  * ============
  *   class that consider the case of the Rzyx angle parameterization for the
- *   rotation
+ *   rotation ( yaw pitch roll )
  *
  *  Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta,Rot(x,psi)
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -25,15 +25,17 @@
 #include <math.h>
 #include <vpRzyxVector.h>
 
-/*!
-  \file vpRzyxVector.cpp
-  \brief class that consider the case of the euler angles  parameterization
-  for the  rotation
+/*!  \file   vpRzyxVector.cpp
+
+  \brief class that consider the case of the yaw pitch roll
+  angles parameterization for the rotation
+
+  Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta,Rot(x,psi)
 */
 
 
 /*!
-  \brief  affectation of two euler vector matrix
+  \brief  affectation of two  vector
 */
 vpRzyxVector &
 vpRzyxVector::operator=(const vpRzyxVector &m)
@@ -68,7 +70,12 @@ vpRzyxVector::vpRzyxVector(const vpThetaUVector& tu)
     buildFrom(tu) ;
 }
 
-//! convert a rotation matrix into Rzyx vector
+/*! convert a rotation matrix into Rzyx vector
+
+  source
+  R. Paul, Robot Manipulators: Mathematics, Programming, and Control.
+  MIT Press, 1981,  p. 71
+*/
 vpRzyxVector
 vpRzyxVector::buildFrom(const vpRotationMatrix& R)
 {
