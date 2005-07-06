@@ -12,11 +12,11 @@
  * Version control
  * ===============
  *
- *  $Id: vpRzyxVector.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpRzyxVector.h,v 1.2 2005-07-06 14:44:49 marchand Exp $
  *
  * Description
  * ============
- *   class that consider the case of the Roll Yaw pitch angles parameterization for the   rotation
+ *   class that consider the case of the roll  pitch Yaw angles parameterization for the   rotation
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -27,7 +27,7 @@
 
 /*!
   \file vpRzyxVector.h
-  \brief class that consider the case of the yow-pitch-roll  parameterization
+  \brief class that consider the case of the yaw pitch roll  parameterization
   for the  rotation
 */
 
@@ -37,10 +37,10 @@
 
 /*!
   \class vpRzyxVector
-  \brief class that consider the case of the  yow-pitch-roll parameterization
+  \brief class that consider the case of the  yaw pitch roll parameterization
   for the  rotation
 
-  Rzyx(phi,theta,phi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
+  Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
 
 */
 
