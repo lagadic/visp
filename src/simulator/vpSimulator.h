@@ -19,6 +19,12 @@
 
 #ifdef HAVE_LIBSOQT
 
+/*   KNOWN ISSUE DEALING WITH X11 and QT
+     If you get a strange compiler error on the line with None,
+     it's probably because you're also including X11 headers,
+     which #define the symbol None. Put the X11 includes after
+     the Qt includes to solve this problem.
+ */
 
 // Qt and Coin stuff
 #include <Inventor/Qt/SoQt.h>
