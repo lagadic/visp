@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRansac.t.cpp,v 1.1 2005-06-28 08:37:15 marchand Exp $
+ *  $Id: vpRansac.t.cpp,v 1.2 2005-07-06 09:58:19 marchand Exp $
  *
  * Description
  * ============
@@ -93,8 +93,8 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
   double p = 0.99;    // Desired probability of choosing at least one sample
   // free from outliers
 
-  int maxTrials = 1000;    // Maximum number of trials before we give up.
-  int  maxDataTrials = 100; // Max number of attempts to select a non-degenerate
+  int maxTrials = 10000;    // Maximum number of trials before we give up.
+  int  maxDataTrials = 1000; // Max number of attempts to select a non-degenerate
   // data set.
 
   // Sentinel value allowing detection of solution failure.
@@ -106,6 +106,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
 
   vpUniRand random ;
 
+  //  cout << "random " << random() <<endl ;
   // index of the detected inliers
   vpColVector bestinliers ;
   int ind[s] ;
@@ -121,8 +122,10 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
       // Generate s random indicies in the range 1..npts
       for  (int i=0 ; i < s ; i++)
       {
-	ind[i] = (int)ceil(random()*npts);
+	ind[i] = (int)ceil(random()*npts) -1;
+	//	cout <<ind[i] << "  " ;
       }
+      //	cout <<endl ;
 
       // Test that these points are not a degenerate configuration.
       degenerate = vpTransformation::degenerateConfiguration(x,ind) ;
@@ -137,10 +140,6 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
       }
 
     }
-
-
-    //   for (int i=0 ; i < 5 ; i++) ind[i] = 11*i ;
-
 
     // Fit model to this random selection of data points.
     vpTransformation::computeTransformation(x,ind, M) ;
@@ -174,12 +173,14 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
     }
 
     trialcount = trialcount+1;
-    //    if (trialcount%20==0) printf("trial %d out of %d         \n",trialcount, (int)ceil((double)N));
+    //       if (trialcount%20==0) printf("trial %d out of %d         \n",trialcount, (int)ceil((double)N));
+    //    cout <<trialcount << "\n"  ;
 
     // Safeguard against being stuck in this loop forever
     if (trialcount > maxTrials)
     {
-      //      TRACE("ransac reached the maximum number of %d trials",   maxTrials);
+      TRACE("ransac reached the maximum number of %d trials",   maxTrials);
+      break ;
     }
   }
 
