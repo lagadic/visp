@@ -141,6 +141,16 @@ AC_SUBST(ac_hostname,$ac_hostname)
 CXX_VERSION=`$CXX -dumpversion`
 AC_SUBST(CXX_VERSION,$CXX_VERSION)
 
+
+#-----------------------------------------------------------------------
+# Manage --doxygen-html-output option
+AC_ARG_WITH([doxygen-html-output],
+  AC_HELP_STRING([--with-doxygen-html-output=DIR],
+		 [Location of generated doxygen html documentation. By default in doc/html]),
+                 DOXYGEN_HTML_OUTPUT=$withval, 
+                 DOXYGEN_HTML_OUTPUT=html)
+AC_SUBST(DOXYGEN_HTML_OUTPUT)
+
 ########################################################################
 # check for compiler debug options
 ########################################################################

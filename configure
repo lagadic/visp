@@ -272,7 +272,7 @@ PACKAGE_VERSION='2.0.7'
 PACKAGE_STRING='ViSP 2.0.7'
 PACKAGE_BUGREPORT='visp@irisa.fr'
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSIDE_GNOME_COMMON_TRUE INSIDE_GNOME_COMMON_FALSE CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB AR ac_ct_AR HAVE_DOT INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA SET_MAKE CC CFLAGS ac_ct_CC CPP X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS QT_CXXFLAGS QT_DIR QT_LIBS QT_UIC QT_MOC HAVE_QT sim_ac_coin_configcmd HAVE_COIN OS ac_hostname CXX_VERSION have_insure HAVE_INSURE SUFFIX VISP_LIBNAME VISP_HOME FG_ICCOMP_CXXFLAGS FG_ICCOMP_LDFLAGS FG_ICCOMP_LIBS BIT3_CXXFLAGS BIT3_CPPFLAGS BIT3_LDFLAGS BIT3_LIBS ROBOT_AFMA4_CXXFLAGS ROBOT_AFMA4_LDFLAGS ROBOT_AFMA4_LIBS ROBOT_AFMA6_CXXFLAGS ROBOT_AFMA6_LDFLAGS ROBOT_AFMA6_LIBS ROBOT_PTUEVI_CXXFLAGS ROBOT_PTUEVI_LDFLAGS ROBOT_PTUEVI_LIBS ROBOT_VIC2500_CXXFLAGS ROBOT_VIC2500_LDFLAGS ROBOT_VIC2500_LIBS LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSIDE_GNOME_COMMON_TRUE INSIDE_GNOME_COMMON_FALSE CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB AR ac_ct_AR HAVE_DOT INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA SET_MAKE CC CFLAGS ac_ct_CC CPP X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS QT_CXXFLAGS QT_DIR QT_LIBS QT_UIC QT_MOC HAVE_QT sim_ac_coin_configcmd HAVE_COIN OS ac_hostname CXX_VERSION DOXYGEN_HTML_OUTPUT have_insure HAVE_INSURE SUFFIX VISP_LIBNAME VISP_HOME FG_ICCOMP_CXXFLAGS FG_ICCOMP_LDFLAGS FG_ICCOMP_LIBS BIT3_CXXFLAGS BIT3_CPPFLAGS BIT3_LDFLAGS BIT3_LIBS ROBOT_AFMA4_CXXFLAGS ROBOT_AFMA4_LDFLAGS ROBOT_AFMA4_LIBS ROBOT_AFMA6_CXXFLAGS ROBOT_AFMA6_LDFLAGS ROBOT_AFMA6_LIBS ROBOT_PTUEVI_CXXFLAGS ROBOT_PTUEVI_LDFLAGS ROBOT_PTUEVI_LIBS ROBOT_VIC2500_CXXFLAGS ROBOT_VIC2500_LDFLAGS ROBOT_VIC2500_LIBS LIBOBJS LTLIBOBJS'
 ac_subst_files='build_mk debug_mk directory_mk lib_mk bin_mk clean_mk uninstall_mk depend_mk'
 
 # Initialize some variables set by options.
@@ -840,6 +840,9 @@ Optional Packages:
   --with-Qt-lib=LIB       Use -lLIB to link with the Qt library
   --with-coin             enable use of Coin [default=yes]
   --with-coin=DIR         give prefix location of Coin
+  --with-doxygen-html-output=DIR
+                          Location of generated doxygen html documentation. By
+                          default in doc/html
   --with-fg-iccomp=DIR    Location of ICcomp framegrabber api. By default
                           /udd/fspindle/robot/IC-comp/current
   --with-bit3=DIR         Location of SBS Bit3 driver. By default
@@ -5887,6 +5890,19 @@ CXX_VERSION=`$CXX -dumpversion`
 CXX_VERSION=$CXX_VERSION
 
 
+
+#-----------------------------------------------------------------------
+# Manage --doxygen-html-output option
+
+# Check whether --with-doxygen-html-output or --without-doxygen-html-output was given.
+if test "${with_doxygen_html_output+set}" = set; then
+  withval="$with_doxygen_html_output"
+  DOXYGEN_HTML_OUTPUT=$withval
+else
+  DOXYGEN_HTML_OUTPUT=html
+fi;
+
+
 ########################################################################
 # check for compiler debug options
 ########################################################################
@@ -7571,6 +7587,7 @@ s,@HAVE_COIN@,$HAVE_COIN,;t t
 s,@OS@,$OS,;t t
 s,@ac_hostname@,$ac_hostname,;t t
 s,@CXX_VERSION@,$CXX_VERSION,;t t
+s,@DOXYGEN_HTML_OUTPUT@,$DOXYGEN_HTML_OUTPUT,;t t
 s,@have_insure@,$have_insure,;t t
 s,@HAVE_INSURE@,$HAVE_INSURE,;t t
 s,@SUFFIX@,$SUFFIX,;t t
