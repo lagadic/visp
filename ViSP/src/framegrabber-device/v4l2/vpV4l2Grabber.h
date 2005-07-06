@@ -89,6 +89,7 @@ public:
     V4L2_BGR32_FORMAT /*!<  */
   } pixelformatEnum;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct ng_video_fmt {
     unsigned int   pixelformat;         /* VIDEO_* */
     unsigned int   width;
@@ -103,6 +104,7 @@ public:
     unsigned char        *data;
     int                  refcount;
   };
+#endif
 
 public:
   vpV4l2Grabber();
