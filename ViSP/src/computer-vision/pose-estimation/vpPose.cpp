@@ -166,7 +166,19 @@ vpPose::coplanaire()
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
   if (fabs(D) < 1e-10)
   {
-    //       ERROR_TRACE("division by zero  ") ;
+    /*   listP.front() ;
+    while (!listP.outside())
+      { 
+	P1 = listP.value() ;
+	P1.print() ;
+	listP.next() ;
+
+      }
+
+    cout << x1 <<" " << y1 << " "<< z1 << endl ;
+    cout << x2 <<" " << y2 << " "<< z2 << endl ;
+    cout << x3 <<" " << y3 << " "<< z3 << endl ;
+    ERROR_TRACE("division by zero  ") ;*/
     // throw(vpException(vpException::divideByZeroError,
     //		      "division by zero  ")) ;
   }
@@ -180,13 +192,15 @@ vpPose::coplanaire()
 
     if (fabs(dist) > 0.01)
     {
-	DEBUG_TRACE(10," points are not coplanar ") ;
+      	DEBUG_TRACE(10," points are not coplanar ") ;
+	//	TRACE(" points are not coplanar ") ;
       return false ;
     }
     listP.next() ;
   }
 
   DEBUG_TRACE(10," points are  coplanar ") ;
+  //  TRACE(" points are  coplanar ") ;
 
   return true ;
  }
