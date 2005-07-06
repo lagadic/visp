@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpForwardProjection.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpForwardProjection.cpp,v 1.2 2005-07-06 09:57:03 marchand Exp $
  *
  * Description
  * ============
@@ -38,7 +38,7 @@ void
 vpForwardProjection::print() const
 {
   cout << "oP : " << oP.t() ;
-  cout << "oC : " << cP.t() ;
+  cout << "cP : " << cP.t() ;
   cout << "p : " << p.t() ;
 }
 
