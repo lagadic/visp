@@ -615,7 +615,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = @DOXYGEN_HTML_OUTPUT@
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for 
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank 
@@ -948,7 +948,7 @@ PERLMOD_MAKEVAR_PREFIX =
 # evaluate all C-preprocessor directives found in the sources and include 
 # files.
 
-ENABLE_PREPROCESSING   = NO
+ENABLE_PREPROCESSING   = YES
 
 # If the MACRO_EXPANSION tag is set to YES Doxygen will expand all macro 
 # names in the source code. If set to NO (the default) only conditional 
@@ -989,7 +989,30 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator 
 # instead of the = operator.
 
-PREDEFINED             = 
+PREDEFINED             = \
+		       DOXYGEN_SHOULD_SKIP_THIS \
+		       HAVE_BIT3 \
+		       HAVE_COIN \
+		       HAVE_FG_ICCOMP \
+		       HAVE_INCLUDE_VIDEODEV \
+		       HAVE_INCLUDE_VIDEODEV2 \
+		       HAVE_INSURE \
+		       HAVE_LIBDC1394_CONTROL \
+		       HAVE_LIBGSL \
+		       HAVE_LIBGSLCBLAS \
+		       HAVE_LIBJPEG \
+		       HAVE_LIBM \
+		       HAVE_LIBPNG \
+		       HAVE_LIBRAW1394 \
+		       HAVE_LIBSOQT \
+		       HAVE_LIBSOXT \
+		       HAVE_LIBX11 \
+		       HAVE_LIBZ \
+		       HAVE_QT \
+		       HAVE_ROBOT_AFMA4 \
+		       HAVE_ROBOT_AFMA6 \
+		       HAVE_ROBOT_PTUEVI \
+		       HAVE_ROBOT_VIC2500
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
