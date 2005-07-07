@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.3 2005-07-07 08:28:49 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.4 2005-07-07 08:29:37 fspindle Exp $
  *
  * Description
  * ============
@@ -1157,24 +1157,6 @@ vpMatrix::CreateDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 */
 ostream &operator <<(ostream &s,const vpMatrix &m)
 {
-#if 0
-  int i,j;
-  vpMatrix *tm = (vpMatrix *)(&m);
-
-  s.precision(5) ;
-  s.width(6) ;
-  s.precision(10) ;
-  //  s.width(10) ;
-  //  s.setf(ios::right,ios::adjustfield) ;
-  for (i=0;i<m.getRows();i++) {
-    for (j=0;j<m.getCols();j++)
-      //   if (fabs((*tm)[i][j])  > 1e-15)
-      s <<  (*tm)[i][j] << "  ";
-    //	else
-    //	  s <<  0 << "  " ;
-    s << endl;
-  }
-#else
   s.precision(10) ;
   for (int i=0;i<m.getRows();i++) {
     for (int j=0;j<m.getCols();j++){
@@ -1182,7 +1164,7 @@ ostream &operator <<(ostream &s,const vpMatrix &m)
     }
     s <<std::endl;
   }
-#endif
+
   return s;
 }
 
