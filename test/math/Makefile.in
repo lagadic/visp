@@ -2,7 +2,7 @@
 
 
 SOURCES		= test_rotation.cpp test_matrix_exception.cpp test_svd.cpp \
-	test_robust.cpp
+	test_robust.cpp test_matrix.cpp
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
 
