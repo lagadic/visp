@@ -2,6 +2,12 @@
 #include<visp/vpRobust.h>
 #include <fstream>
 
+/*!
+  \example test_robust.cpp
+
+  Test some vpMath functionalities.
+*/
+
 int
 main()
 {
