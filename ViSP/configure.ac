@@ -144,12 +144,12 @@ AC_SUBST(CXX_VERSION,$CXX_VERSION)
 
 #-----------------------------------------------------------------------
 # Manage --doxygen-html-output option
-AC_ARG_WITH([doxygen-html-output],
-  AC_HELP_STRING([--with-doxygen-html-output=DIR],
-		 [Location of generated doxygen html documentation. By default in doc/html]),
-                 DOXYGEN_HTML_OUTPUT=$withval, 
-                 DOXYGEN_HTML_OUTPUT=html)
-AC_SUBST(DOXYGEN_HTML_OUTPUT)
+AC_ARG_WITH([doxygen-output-directory],
+  AC_HELP_STRING([--with-doxygen-output-directory=DIR],
+		 [Location of generated doxygen documentation. By default in doc]),
+                 DOXYGEN_OUTPUT_DIRECTORY=$withval, 
+                 DOXYGEN_OUTPUT_DIRECTORY=.)
+AC_SUBST(DOXYGEN_OUTPUT_DIRECTORY)
 
 ########################################################################
 # check for compiler debug options
