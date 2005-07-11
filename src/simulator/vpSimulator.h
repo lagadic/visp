@@ -190,6 +190,25 @@ private:
   void offScreenRendering (viewEnum view=vpSimulator::EXTERNAL,
 			   int * width = NULL,
 			   int * height = NULL);
+private:
+  //! image of the internal view
+  unsigned char * bufferView;
+
+public:
+  //! get the image corresponding to the internal view
+  unsigned char* getBufferedOffScreenRenderer()
+  {
+    return bufferView;
+  }
+
+  //! get the size of the internal view 
+  void getSizeInternalView(int& width, int& height);
+
+  //! get the intrinsic parameters of the camera
+  void getCameraParameters(vpCameraParameters &cam)
+  {
+    cam = internalCameraParameters;
+  }
 
 } ;
 

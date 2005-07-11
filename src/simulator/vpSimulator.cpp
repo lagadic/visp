@@ -233,12 +233,14 @@ vpSimulator::init()
   // write image process
   realtime=NULL ;
   offScreenRenderer = NULL ;
+  bufferView = NULL;
 }
 void
 vpSimulator::kill()
 {
   if (internalView !=NULL) delete internalView ;
   if (externalView !=NULL) delete externalView ;
+  if (bufferView!=NULL) delete[] bufferView ;
 }
 
 vpSimulator::vpSimulator()
@@ -833,7 +835,20 @@ vpSimulator::offScreenRendering(viewEnum view, int * width, int * height)
     delete this ->offScreenRenderer;
     this ->offScreenRenderer = NULL;
   }
-
+  else
+  {
+    if (view==vpSimulator::INTERNAL)
+    {
+      //Recopie du buffer contenant l'image, dans bufferView
+      int length = 3*size [0]*size[1];
+      delete bufferView;
+      bufferView = new unsigned char [length];
+      for(int i=0; i<length; i++)
+      {
+	bufferView[i] = this ->offScreenRenderer->getBuffer()[i];
+      }
+    }
+  }
 
   if (NULL != width) { * width = size [0]; }
   if (NULL != height) { * height = size [1]; }
@@ -861,6 +876,14 @@ vpSimulator::write (viewEnum view,
   this->realtime->setValue(realtime->getValue() + 1/24.0);
   delete offScreenRenderer ;
   this->offScreenRenderer = NULL ;
+}
+
+void
+vpSimulator::getSizeInternalView(int& width, int& height)
+{
+  SbVec2s size = this ->internalView ->getViewportRegion().getWindowSize();
+  width = size [0];
+  height = size[1];
 }
 
 #endif
