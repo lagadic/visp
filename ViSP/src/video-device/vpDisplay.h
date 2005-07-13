@@ -97,6 +97,7 @@ protected:
   //! window
   virtual void displayArrow(int i1,int j1, int i2, int j2, int col=1, int L=4,int l=2) =0;
 
+  virtual void displayRectangle(int i, int j, int width, int height, int col)=0 ;
   virtual void displayCharString(int i,int j,char *s, int c=vpColor::green)=0 ;
 
 public:
@@ -137,6 +138,10 @@ public:
   static void displayArrow(vpImage<unsigned char> &I,
 			   int i1,int j1, int i2, int j2,
 			   int col=1, int L=4,int l=2) ;
+  //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
+  //! window
+  static void displayRectangle(vpImage<unsigned char> &I, int i, int j,
+			       int width, int height, int col);
   //! Display a string
   static void displayCharString(vpImage<unsigned char> &I,
 				int i,int j,char *s, int c) ;
