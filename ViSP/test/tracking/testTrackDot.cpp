@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testTrackDot.cpp,v 1.1.1.1 2005-06-08 07:08:15 fspindle Exp $
+ *  $Id: testTrackDot.cpp,v 1.2 2005-07-13 10:42:02 fspindle Exp $
  *
  * Description
  * ============
@@ -40,7 +40,7 @@ main()
   cout <<  "-------------------------------------------------------" << endl ;
   cout <<  " testTrackDot.cpp" <<endl << endl ;
 
-  cout <<  "  test dot tracking on an image sequence" << endl ;
+  cout <<  " test dot tracking on an image sequence" << endl ;
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
@@ -57,6 +57,8 @@ main()
   sprintf(s,"%s/image.%04d.pgm",dir,iter) ;
 
   vpDot d ;
+  d.setGraphics(true);
+  d.setComputeMoments(true);
 
   try{
     vpImageIo::readPGM(I,s) ;
@@ -67,7 +69,7 @@ main()
     throw ;
   }
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+  vpDisplayX display(I,100,100,"Test tracking using vpDot") ;
 
   try{
     vpDisplay::display(I) ;
@@ -86,15 +88,25 @@ main()
     throw ;
   }
 
-  for (iter = 1 ; iter < 1500 ; iter++)
+  while (iter < 1500)
   {
     sprintf(s,"%s/image.%04d.pgm",dir,iter) ;
     vpImageIo::readPGM(I,s) ;
-    d.track(I) ;
     vpDisplay::display(I) ;
+    d.track(I) ;
+    cout << "Moments: \n" << endl;
+    cout << "m00: " << d.m00 << endl;
+    cout << "m11: " << d.m11 << endl;
+    cout << "m02: " << d.m02 << endl;
+    cout << "m20: " << d.m20 << endl;
+    cout << "m10: " << d.m10 << endl;
+    cout << "m01: " << d.m01 << endl;
+
     vpDisplay::displayCross(I,(int)d.I(), (int)d.J(),
 			   10,vpColor::green) ;
     vpDisplay::flush(I) ;
+//     vpDisplay::getClick(I);
+    iter ++;
   }
 }
 
