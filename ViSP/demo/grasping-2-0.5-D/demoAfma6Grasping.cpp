@@ -5,13 +5,13 @@
  * www  : http://www.irisa.fr/lagadic
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:      $RCSfile: graspingAfma6.cpp,v $
+ * File:      $RCSfile: demoAfma6Grasping.cpp,v $
  * Author:    Eric Marchand
  *
  * Version control
  * ===============
  *
- *  $Id: graspingAfma6.cpp,v 1.2 2005-07-13 09:25:52 fspindle Exp $
+ *  $Id: demoAfma6Grasping.cpp,v 1.1 2005-07-13 10:03:31 fspindle Exp $
  *
  * Description
  * ============
@@ -21,7 +21,7 @@
 
 
 /*!
-  \example graspingAfma6.cpp
+  \example demoAfma6Grasping.cpp
 
   We control here a real robot, the Afma6 robot (cartesian robot, with 6
   degrees of freedom) in order to grasp an object. The visual servoing scheme
