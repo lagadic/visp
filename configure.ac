@@ -328,7 +328,6 @@ src/tracking/general-tracking-issues/Makefile
 test/Makefile
 test/pose/Makefile
 test/servo-simu/Makefile
-test/servo-afma6/Makefile
 test/framegrabber/Makefile
 test/feature/Makefile
 test/math/Makefile
@@ -338,6 +337,8 @@ test/simulator/Makefile
 test/homography/Makefile	
 demo/Makefile
 demo/grasping-2-0.5-D/Makefile
+example/Makefile
+example/servo-afma6/Makefile
 ])
 
 ########################################################################
