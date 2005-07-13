@@ -3,8 +3,9 @@
 
 SOURCES		= \
 	\
-	testTrackDot2.cpp \
 	testTrackDot.cpp \
+	testTrackDot2.cpp \
+	testTrackDot3.cpp \
 	testMeLine1.cpp  \
 	testMeEllipse1.cpp \
 	testMeCircle1.cpp
