@@ -5,14 +5,13 @@
  * www  : http://www.irisa.fr/lagadic
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:      grasping-v0.cpp
- * Project:   ViSP 2.0
+ * File:      $RCSfile: graspingAfma6.cpp,v $
  * Author:    Eric Marchand
  *
  * Version control
  * ===============
  *
- *  $Id: graspingAfma6.cpp,v 1.1 2005-07-13 09:21:30 fspindle Exp $
+ *  $Id: graspingAfma6.cpp,v 1.2 2005-07-13 09:25:52 fspindle Exp $
  *
  * Description
  * ============
@@ -22,8 +21,12 @@
 
 
 /*!
-  \example grasping-v2.cpp
-  \brief 2 1/D visual servoing experiment on 7 points
+  \example graspingAfma6.cpp
+
+  We control here a real robot, the Afma6 robot (cartesian robot, with 6
+  degrees of freedom) in order to grasp an object. The visual servoing scheme
+  is a 2D 1/2 control law based on 7 points.
+
 */
 #include <sys/stat.h>
 #include <sys/types.h>
