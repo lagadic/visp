@@ -111,6 +111,7 @@ TRACKING = \
 	vpTracker.h \
 	\
 	vpDot.h \
+	vpDot2.h \
 	\
 	vpMe.h \
 	vpMeSite.h \
