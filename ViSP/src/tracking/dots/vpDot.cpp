@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.4 2005-07-05 14:10:44 fspindle Exp $
+ *  $Id: vpDot.cpp,v 1.5 2005-07-13 10:36:41 fspindle Exp $
  *
  * Description
  * ============
@@ -50,6 +50,8 @@ void vpDot::init()
   compute_moment = false ;
   graphics = false ;
   nbMaxPoint =5000 ;
+
+  m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 }
 
 vpDot::vpDot() : vpTracker()
@@ -101,12 +103,6 @@ vpDot::~vpDot()
 }
 
 
-void vpDot::setComputeMoments(const bool c)
-{
-  compute_moment = c ;
-}
-
-
 vpDot&
 vpDot::operator=(const vpDot& pt)
 {
@@ -119,7 +115,13 @@ vpDot::operator=(const vpDot& pt)
 
   graphics = pt.graphics ;
   seuil = pt.seuil ;
-  compute_moment =  pt. compute_moment ;
+  compute_moment = pt.compute_moment ;
+
+  m00 = pt.m00;
+  m01 = pt.m01;
+  m10 = pt.m10;
+  m02 = pt.m02;
+  m20 = pt.m20;
 
   return *this ;
 }

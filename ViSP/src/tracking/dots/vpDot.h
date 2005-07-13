@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.h,v 1.2 2005-06-28 08:22:54 marchand Exp $
+ *  $Id: vpDot.h,v 1.3 2005-07-13 10:36:41 fspindle Exp $
  *
  * Description
  * ============
@@ -55,9 +55,30 @@ private:
 
 
 public :
-  //!  moments d'ordre 0,1 et 2 sum_i sum_j ( i^k,j^l ) k+l =0,1,2
-  double m00,m01,m10,m20,m11,m02 ;
-
+  double m00; /*!< Considering the general distribution moments for \f$ N \f$
+		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+		x_h^i y_h^i \f$, \f$ m_{00} \f$ is a zero order moment obtained
+		with \f$i = j = 0 \f$. */
+  double m01; /*!< Considering the general distribution moments for \f$ N \f$
+		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+		x_h^i y_h^i \f$, \f$ m_{01} \f$ is a first order moment
+		obtained with \f$i = 0 \f$ and \f$ j = 1 \f$. */
+  double m10; /*!< Considering the general distribution moments for \f$ N \f$
+		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+		x_h^i y_h^i \f$, \f$ m_{10} \f$ is a first order moment
+		obtained with \f$i = 1 \f$ and \f$ j = 0 \f$. */
+  double m11; /*!< Considering the general distribution moments for \f$ N \f$
+		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+		x_h^i y_h^i \f$, \f$ m_{11} \f$ is a first order moment
+		obtained with \f$i = 1 \f$ and \f$ j = 1 \f$. */
+  double m20; /*!< Considering the general distribution moments for \f$ N \f$
+		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+		x_h^i y_h^i \f$, \f$ m_{20} \f$ is a second order moment
+		obtained with \f$i = 2 \f$ and \f$ j = 0 \f$. */
+  double m02; /*!< Considering the general distribution moments for \f$ N \f$
+		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+		x_h^i y_h^i \f$, \f$ m_{02} \f$ is a second order moment
+		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$. */
 public:
   void init() ;
   vpDot() ;
@@ -104,8 +125,15 @@ private:
   //! flag : true moment are computed
   bool compute_moment ;
 public:
-  //! to be used if you want to compute the moments
-  void setComputeMoments(const bool c) ;
+  /*!
+
+    Activates the dot's moments computation.
+
+    \param activate true, if you want to compute the moments. If false, moments
+    are not computed.
+
+  */
+  void setComputeMoments(const bool activate) { compute_moment = activate; }
 public:
   //! init the traking with a mouse click
   void initTracking(vpImage<unsigned char> &I) ;
@@ -115,13 +143,19 @@ public:
   void track(vpImage<unsigned char> & I) ;
   //! track and get the new dot coordinates
   void track(vpImage<unsigned char> & I, double &i, double &j) ;
-  //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels) 
+  //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels)
   void setNbMaxPoint(double nb) ;
 
 private:
   bool graphics ;
 public:
-  void setGraphics(const bool k) { graphics = k ; }
+  /*!
+    Activates the display of all the pixels of the dot during the tracking.
+
+    \param activate true to activate the display of dot pixels, false to turn
+    off the display
+  */
+  void setGraphics(const bool activate) { graphics = activate ; }
 
 } ;
 
