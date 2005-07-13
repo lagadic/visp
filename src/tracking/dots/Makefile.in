@@ -4,7 +4,8 @@ LIB		= $(VISP_LIB_PATH)/lib@VISP_LIBNAME@.a
 
 
 SOURCES		= \
-	vpDot.cpp
+	vpDot.cpp \
+	vpDot2.cpp
 
 .KEEP_STATE	:
 .PRECIOUS	: $(LIB)
