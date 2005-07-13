@@ -180,7 +180,7 @@ void vpDisplay::displayDotLine(vpImage<unsigned char> &I,
 		    int col, int e2)
 {
   try
-  { 
+  {
     if (I.display != NULL)
     {
       (I.display)->displayDotLine(i1,j1,i2,j2,col,e2) ;
@@ -193,11 +193,11 @@ void vpDisplay::displayDotLine(vpImage<unsigned char> &I,
   }
 }
 
-void 
+void
 vpDisplay::displayFrame(vpImage<unsigned char> &I,
-			vpHomogeneousMatrix &cMo, 
-			vpCameraParameters &cam, 
-			double size, int col) 
+			vpHomogeneousMatrix &cMo,
+			vpCameraParameters &cam,
+			double size, int col)
 {
  // used by display
   vpPoint o; o.setWorldCoordinates(0.0,0.0,0.0) ;
@@ -215,19 +215,19 @@ vpDisplay::displayFrame(vpImage<unsigned char> &I,
   if (col == vpColor::none)
     {
       vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
-      
+
       vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
       vpDisplay::displayArrow(I,
 			      vpMath::round(oy), vpMath::round(ox),
 			      vpMath::round(y1), vpMath::round(x1),
 			      vpColor::green) ;
-      
+
       vpMeterPixelConversion::convertPoint(cam,y.p[0],y.p[1],x1,y1) ;
       vpDisplay::displayArrow(I,
 			      vpMath::round(oy), vpMath::round(ox),
 			      vpMath::round(y1), vpMath::round(x1),
 			      vpColor::blue) ;
-      
+
       vpMeterPixelConversion::convertPoint(cam,z.p[0],z.p[1],x1,y1) ;
       vpDisplay::displayArrow(I,
 			      vpMath::round(oy), vpMath::round(ox),
@@ -237,19 +237,19 @@ vpDisplay::displayFrame(vpImage<unsigned char> &I,
   else
      {
       vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
-      
+
       vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
       vpDisplay::displayArrow(I,
 			      vpMath::round(oy), vpMath::round(ox),
 			      vpMath::round(y1), vpMath::round(x1),
 			      col) ;
-      
+
       vpMeterPixelConversion::convertPoint(cam,y.p[0],y.p[1],x1,y1) ;
       vpDisplay::displayArrow(I,
 			      vpMath::round(oy), vpMath::round(ox),
 			      vpMath::round(y1), vpMath::round(x1),
 			      col) ;
-      
+
       vpMeterPixelConversion::convertPoint(cam,z.p[0],z.p[1],x1,y1) ;
       vpDisplay::displayArrow(I,
 			      vpMath::round(oy), vpMath::round(ox),
@@ -281,6 +281,36 @@ vpDisplay::displayArrow(vpImage<unsigned char> &I,
   }
 }
 
+/*!
+
+  Display a rectangle in the display window.  The rectangle upper left corner
+  has coordinates (i,j). The size of the rectangle is fixed by \e width and \e
+  height.
+
+  \param i Row number of the rectangle upper corner
+  \param j Column number of the rectangle upper corner
+  \param width Width of the rectangle.
+  \param height Height of the rectangle.
+  \param col Color of the rectangle.
+
+*/
+void
+vpDisplay::displayRectangle(vpImage<unsigned char> &I, int i, int j,
+			    int width, int height, int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayRectangle(i,j,width,height,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
 /*! display a string at coordinates (i,j) to (i2,j2) in the display
   window
 */
