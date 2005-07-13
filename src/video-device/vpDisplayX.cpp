@@ -1465,6 +1465,37 @@ void vpDisplayX::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int 
   }
 }
 
+/*!
+
+  Trace un rectangle de couleur \e col sur le plan overlay de la fenêtre X. Les
+  couleurs disponibles sont NOIR, BLANC, ROUGE, VERT, BLEU et JAUNE.  Le sommet
+  supérieur gauche du carré a pour coordonnées (\e i, \e j). Le paramètre \e i
+  correspond au lignes, \e j correspond aux colonnes. La largeur du rectangle
+  est spécifiée par \e width et la hauteur par \e height.
+
+  Cette méthode renvoie OK en cas de succès. Elle renvoie l'erreur
+  DISPLAY_ERROR si la fenêtre X n'est pas initialisée.
+
+
+*/
+void
+vpDisplayX::displayRectangle(int i, int j, int width, int height, int col)
+{
+  if (Xinitialise)
+  {
+    XSetForeground (display, context, x_color[col]);
+    XSetLineAttributes (display, context, 0,
+			LineSolid, CapButt, JoinBevel);
+
+    XDrawRectangle (display, window, context,  j, i, width, height);
+  }
+ else
+  {
+    ERROR_TRACE("X not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+			     "X not initialized")) ;
+  }
+}
 
 
 /*!

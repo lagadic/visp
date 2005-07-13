@@ -132,6 +132,7 @@ protected:
   void displayArrow(int i1,int j1, int i2, int j2,
 		    int col=1, int L=4,int l=2) ;
 
+  void displayRectangle(int i, int j, int width, int height, int col);
   void displayCharString(int i,int j,char *s, int c=vpColor::green) ;
 
   bool  getClick(int& i, int& j) ;
