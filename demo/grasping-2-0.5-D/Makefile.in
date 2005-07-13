@@ -2,7 +2,7 @@
 
 
 SOURCES		= \
-	grasping-v2.cpp
+	graspingAfma6.cpp
 
 
 
