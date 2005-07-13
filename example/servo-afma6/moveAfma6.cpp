@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma6.cpp,v 1.1 2005-07-13 08:07:16 fspindle Exp $
+ *  $Id: moveAfma6.cpp,v 1.2 2005-07-13 09:02:24 fspindle Exp $
  *
  * Description
  * ============
@@ -21,7 +21,8 @@
 /*!
   \example moveAfma6.cpp
 
-  Example were the Afma6 (6 dof) is controlled first in position, then in
+  Example of a real robot control, the Afma6 robot (cartesian robot, with 6
+  degrees of freedom). The robot is controlled first in position, then in
   velocity.
 
 */
