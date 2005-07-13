@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testTrackDot2.cpp,v 1.1.1.1 2005-06-08 07:08:15 fspindle Exp $
+ *  $Id: testTrackDot2.cpp,v 1.2 2005-07-13 10:42:02 fspindle Exp $
  *
  * Description
  * ============
@@ -32,18 +32,18 @@
 #include <visp/vpFeatureBuilder.h>
 
 /*!
-  \example testTrackDot.cpp
+  \example testTrackDot2.cpp
 
-  \brief   test dot tracking on an image sequence
+  \brief   Test dot tracking on an image sequence by using vpDot.
 */
 
 int
 main()
 {
   cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  " testTrackDot.cpp" <<endl << endl ;
+  cout <<  " testTrackDot2.cpp" <<endl << endl ;
 
-  cout <<  "  test dot tracking on an image sequence" << endl ;
+  cout <<  " test dot tracking on an image sequence" << endl ;
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
@@ -68,7 +68,7 @@ main()
     throw ;
   }
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+  vpDisplayX display(I,100,100,"Test tracking using vpDot") ;
 
   try{
     vpDisplay::display(I) ;
@@ -80,6 +80,7 @@ main()
   }
 
   vpDot dot ;
+  dot.setNbMaxPoint(8000);
   dot.initTracking(I) ;
   dot.setGraphics(true) ;
   dot.setComputeMoments(true) ;
