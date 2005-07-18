@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.5 2005-07-13 10:36:41 fspindle Exp $
+ *  $Id: vpDot.cpp,v 1.6 2005-07-18 12:42:11 fspindle Exp $
  *
  * Description
  * ============
@@ -49,7 +49,7 @@ void vpDot::init()
   seuil_min = 200 ;
   compute_moment = false ;
   graphics = false ;
-  nbMaxPoint =5000 ;
+  nbMaxPoint = 10000 ;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 }
