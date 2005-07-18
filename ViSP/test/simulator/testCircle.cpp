@@ -137,20 +137,21 @@ void *mainLoop (void *_simu)
     if (iter==1) TRACE("\t\t compute the control law ") ;
     v = task.computeControlLaw() ;
     //  TRACE("computeControlLaw" ) ;
-    cout << task.rankJ1 <<endl ;
+    cout << "Task rank: " << task.rankJ1 <<endl ;
     if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
     simu->setCameraPosition(cMo) ;
     vpTime::wait(40) ;
 
-    sprintf(name,"/tmp/marchand/image.%04d.external.png",it) ;
-    cout << name << endl ;
     if(SAVE==1)
     {
-    	simu->write(vpSimulator::EXTERNAL,name) ;
-	sprintf(name,"/tmp/marchand/image.%04d.internal.png",iter) ;
-	simu->write(vpSimulator::INTERNAL,name) ;
+      sprintf(name,"/tmp/image.%04d.external.png",it) ;
+      cout << "Save " << name << endl ;
+      simu->write(vpSimulator::EXTERNAL,name) ;
+      sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
+      cout << "Save " << name << endl ;
+      simu->write(vpSimulator::INTERNAL,name) ;
       it++ ;
     }
     //  TRACE("\t\t || s - s* || ") ;
