@@ -6,6 +6,7 @@ SOURCES		= \
 	testTrackDot.cpp \
 	testTrackDot2.cpp \
 	testTrackDot3.cpp \
+	testAutoDetectDot.cpp \
 	testMeLine1.cpp  \
 	testMeEllipse1.cpp \
 	testMeCircle1.cpp
