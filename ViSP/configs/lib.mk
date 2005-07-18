@@ -27,17 +27,24 @@ m%.cpp: %.h
 # Rule for combining compilation and dependency generation:
 # - put objects in $(VISP_OBJ_PATH)
 # - put dependencies in $(VISP_DEP_PATH)
-
+# - add Makefile in the list of dependencies
 $(VISP_OBJ_PATH)/%.o : %.cpp
 	@echo "*"
 	@echo "* Build $@ from $<  "
 	@echo "*"
 	$(CXXALL) -MD -o $@ -c $<
-	@cp $(DEP_FILE) $(VISP_DEP_PATH)/$*.P; \
+	@sed -e 's/\($*.o\)*[:]/\1: Makefile/' < $(DEP_FILE) \
+	    > $(VISP_DEP_PATH)/$*.P; \
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE)\
+	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE) \
 	    >> $(VISP_DEP_PATH)/$*.P; \
 	rm -f $(DEP_FILE)
+
+#	@cp $(DEP_FILE) $(VISP_DEP_PATH)/$*.P; \
+#	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+#	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE)\
+#	    >> $(VISP_DEP_PATH)/$*.P; \
+#	rm -f $(DEP_FILE)
 
 
 $(VISP_OBJ_PATH)/%.o : %.c
@@ -45,9 +52,16 @@ $(VISP_OBJ_PATH)/%.o : %.c
 	@echo "* Build $@ from $<  "
 	@echo "*"
 	$(CXXALL) -MD -o $@ -c $<
-	@cp $(DEP_FILE) $(VISP_DEP_PATH)/$*.P; \
+	@sed -e 's/\($*.o\)*[:]/\1: Makefile/' < $(DEP_FILE) \
+	    > $(VISP_DEP_PATH)/$*.P; \
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE)\
+	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE) \
 	    >> $(VISP_DEP_PATH)/$*.P; \
 	rm -f $(DEP_FILE)
+
+#	@cp $(DEP_FILE) $(VISP_DEP_PATH)/$*.P; \
+#	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+#	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE)\
+#	    >> $(VISP_DEP_PATH)/$*.P; \
+#	rm -f $(DEP_FILE)
 
