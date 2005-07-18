@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.cpp,v 1.1 2005-07-13 10:38:49 fspindle Exp $
+ *  $Id: vpDot2.cpp,v 1.2 2005-07-18 13:58:31 fspindle Exp $
  *
  * Description
  * ============
@@ -309,7 +309,8 @@ void vpDot2::track(vpImage<unsigned char> &I)
 
   // Updates the in and out levels for the next iteration
   setInLevel ( (int) (I[(int)this->I()][(int)this->J()] * accuracy) );
-  setOutLevel( (int) (I[(int)this->I()][(int)this->J()] / accuracy) );
+  //setOutLevel( (int) (I[(int)this->I()][(int)this->J()] / accuracy) );
+  setOutLevel( (int) (I[(int)this->I()][(int)this->J()] * accuracy) );
   // display a red cross at the center of gravity's location in the image.
   // vpDisplay::displayCross(I, (int)this->I(), (int)this->J(), 15, vpColor::red) ;
   //vpDisplay::flush(I);
@@ -1010,7 +1011,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // continue.
   if( !hasGoodLevel( I, (int)iEstimated, (int)jEstimated ) )
   {
-    ERROR_TRACE("Can't find a dot from pixel (%d, %d) coordinates",
+    DEBUG_TRACE(3, "Can't find a dot from pixel (%d, %d) coordinates",
 		(int)iEstimated, (int)jEstimated) ;
     return false;
   }
@@ -1031,7 +1032,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // error tracking
     if( getWidth() > 0 && fabs( jEstimated - firstBorderJ )> getWidth()/getAccuracy() )
     {
-      ERROR_TRACE("The found dot has a greater with than the required one") ;
+      DEBUG_TRACE(3, "The found dot has a greater with than the required one") ;
       return false;
     }
 
@@ -1046,7 +1047,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // if we are now out of the image, return an error tracking
   if( !isInImage( I, firstBorderI, firstBorderJ ) )
   {
-    ERROR_TRACE("Border pixel coordinates (%d, %d) of the dot are not in the image",
+    DEBUG_TRACE(3, "Border pixel coordinates (%d, %d) of the dot are not in the image",
 		firstBorderI, firstBorderJ);
     return false;
   }
@@ -1212,7 +1213,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   if( newSurface == 0 || newSurface == 1 )
 #endif
   {
-    ERROR_TRACE("The center of gravity of the dot wasn't properly detected");
+    DEBUG_TRACE(3, "The center of gravity of the dot wasn't properly detected");
     return false;
   }
   else // compute the center
@@ -1229,7 +1230,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // check the center is in the image... never know...
     if( !hasGoodLevel( I, (int)tmpCenterI, (int)tmpCenterJ ) )
     {
-      ERROR_TRACE("The center of gravity of the dot is not in the image");
+      DEBUG_TRACE(3, "The center of gravity of the dot has not a good in level");
       return false;
     }
 
@@ -1241,14 +1242,14 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     {
       //cerr << "Error tracking due to volume change exess.";
 
-      ERROR_TRACE("The surface of the dot change to much");
+      DEBUG_TRACE("The surface of the dot change to much");
       return false;
     } // check the dot didn't move too much too.
     else if( dt01!= 0 &&
 	     ((fabs( (tmpCenterI-iEstimated)/dt01 ) > MAX_DOT_I_SPEED) ||
 	      (fabs( (tmpCenterJ-jEstimated)/dt01 ) > MAX_DOT_J_SPEED)) )
     {
-      ERROR_TRACE("The center of gravity of the dot moves to much");
+      DEBUG_TRACE("The center of gravity of the dot moves to much");
       return false;
     }
     else
