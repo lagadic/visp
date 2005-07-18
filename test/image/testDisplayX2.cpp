@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX2.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testDisplayX2.cpp,v 1.2 2005-07-18 12:40:49 fspindle Exp $
  *
  * Description
  * ============
@@ -43,7 +43,7 @@ int
 main()
 {
   cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  " testDisplay1.cpp" <<endl << endl ;
+  cout <<  " testDisplayX2cpp" <<endl << endl ;
   cout << endl ;
   cout <<  " test the vpDisplayX class " << endl ;
   cout << endl ;
@@ -72,13 +72,7 @@ main()
     throw ;
   }
 
-  try{  vpDisplay::display(I) ;
-  }
-  catch(...)
-  {
-    ERROR_TRACE(" ") ;
-  }
-  vpDisplayX display(I,100,100,"testDisplayX.cpp") ;
+  vpDisplayX display(I,100,100,"Display...") ;
 
 
   vpDisplay::display(I) ;
@@ -97,7 +91,7 @@ main()
 
   vpDisplay::displayCharString(I,100,100,
 			       "ViSP is a marvelous software",
-			       vpColor::yellow) ;
+			       vpColor::blue) ;
 
 
   vpImage<vpRGBa> Iaug ;
