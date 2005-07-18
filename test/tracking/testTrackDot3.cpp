@@ -4,20 +4,16 @@
  * www  : http://www.irisa.fr/lagadic
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:      testIoPGM.cpp
- * Project:   ViSP2
- * Author:    Eric Marchand
+ * File:      Fabien Spindler
  *
  * Version control
  * ===============
  *
- *  $Id: testTrackDot3.cpp,v 1.1 2005-07-13 10:41:08 fspindle Exp $
+ *  $Id: testTrackDot3.cpp,v 1.2 2005-07-18 13:58:02 fspindle Exp $
  *
  * Description
  * ============
- *   test reading and writting of PGM image
- *   read an image that does not exist
- *   write in a directory that does no exist
+ *   test dot tracking
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
