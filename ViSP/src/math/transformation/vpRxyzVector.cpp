@@ -12,14 +12,14 @@
  * Version control
  * ===============
  *
- *  $Id: vpRxyzVector.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpRxyzVector.cpp,v 1.2 2005-07-19 13:03:39 obourqua Exp $
  *
  * Description
  * ============
  *   class that consider the case of the Rxyz angle parameterization for the
  *   rotation
  *
- *  Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta,Rot(z,psi)
+ *  Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <math.h>
@@ -27,12 +27,13 @@
 
 /*!
   \file vpRxyzVector.cpp
-  \brief class that consider the case of the Roll Yaw pitch angles parameterization for the   rotation  for the  rotation
+  \brief class that consider the case of the  Rxyz angle parameterization for the rotation :
+  Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
 
 /*!
-  \brief  affectation of two euler vector matrix
+  \brief  affectation of two vector
 */
 vpRxyzVector &
 vpRxyzVector::operator=(const vpRxyzVector &m)
@@ -61,7 +62,7 @@ vpRxyzVector::vpRxyzVector(const vpRotationMatrix& R)
 }
 
 
-//! initialize a Rxyz vector from a thetau vector
+//! initialize a Rxyz vector from a Theta U vector
 vpRxyzVector::vpRxyzVector(const vpThetaUVector& tu)
 {
 
@@ -107,7 +108,7 @@ vpRxyzVector::buildFrom(const vpRotationMatrix& R)
 }
 
 
-//! convert a rotation matrix into thetaU vector
+//! convert a rotation matrix into Theta U vector
 vpRxyzVector
 vpRxyzVector::buildFrom(const vpThetaUVector& tu)
 {

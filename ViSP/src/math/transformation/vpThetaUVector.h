@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpThetaUVector.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpThetaUVector.h,v 1.2 2005-07-19 13:03:39 obourqua Exp $
  *
  * Description
  * ============
@@ -36,7 +36,7 @@
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpEulerVector.h>
 #include <visp/vpRxyzVector.h>
-
+#include <visp/vpRzyxVector.h>
 
 /*!
   \class vpThetaUVector
@@ -46,9 +46,11 @@
 class vpThetaUVector : public vpRotationVector
 {
   friend class vpRotationMatrix;
-  friend class vpEulerVector;
+  friend class vpRzyxVector;
   friend class vpRxyzVector;
+  friend class vpEulerVector;
   friend class vpRzyzVector;
+
 private:
   //! initialize a size 3 vector
   void init() ;
@@ -62,20 +64,22 @@ public:
   //! copy constructor
   vpThetaUVector(const vpThetaUVector &m) ;
 
-  //! constructor initialize a thetaU vector from a rotation matrix
+  //! constructor initialize a Theta U vector from a rotation matrix
   vpThetaUVector(const vpRotationMatrix& R) ;
 
   //! constructor from 3 angles (in radian)
   vpThetaUVector(const double phi, const double theta, const double psi) :
     vpRotationVector (phi, theta, psi) { ; }
 
-  //! convert a rotation matrix into thetaU vector
+  //! convert a rotation matrix into Theta U vector
   vpThetaUVector buildFrom(const vpRotationMatrix& R) ;
-  //! convert an Rzyz vector into thetaU vector
-  vpThetaUVector buildFrom(const vpEulerVector &e) ;
-  //! convert an Rzyz vector into thetaU vector
+  //! convert an Rzyx vector into Theta U vector
+  vpThetaUVector buildFrom(const vpRzyxVector &e) ;
+  //! convert an Rzyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRzyzVector &e) ;
-  //! convert an Rxyz vector into thetaU vector
+  //! convert an Euler vector into Theta U vector
+  vpThetaUVector buildFrom(const vpEulerVector &e) ;
+  //! convert an Rxyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRxyzVector &e) ;
 
 } ;
