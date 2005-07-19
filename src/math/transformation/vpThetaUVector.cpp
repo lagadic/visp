@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpThetaUVector.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpThetaUVector.cpp,v 1.2 2005-07-19 13:03:39 obourqua Exp $
  *
  * Description
  * ============
@@ -36,7 +36,7 @@
 */
 
 /*!
-  \brief  affectation of two thetau vector matrix
+  \brief  affectation of two Theta U vector
 */
 vpThetaUVector &
 vpThetaUVector::operator=(const vpThetaUVector &m)
@@ -57,7 +57,7 @@ vpThetaUVector::vpThetaUVector(const vpThetaUVector &m)
     *this = m ;
 }
 
-//! initialize a thetaU vector from a rotation matrix
+//! initialize a Theta U vector from a rotation matrix
 vpThetaUVector::vpThetaUVector(const vpRotationMatrix& R)
 {
 
@@ -65,7 +65,7 @@ vpThetaUVector::vpThetaUVector(const vpRotationMatrix& R)
 }
 
 #define MINIMUM 0.0001
-//! convert a rotation matrix into thetaU vector
+//! convert a rotation matrix into Theta U vector
 vpThetaUVector
 vpThetaUVector::buildFrom(const vpRotationMatrix& R)
 {
@@ -107,6 +107,15 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
 #undef MINIMUM
 
 vpThetaUVector
+vpThetaUVector::buildFrom(const vpRzyxVector& e)
+{
+    vpRotationMatrix R(e) ;
+
+    buildFrom(R) ;
+    return *this ;
+}
+
+vpThetaUVector
 vpThetaUVector::buildFrom(const vpEulerVector& e)
 {
     vpRotationMatrix R(e) ;
@@ -114,6 +123,7 @@ vpThetaUVector::buildFrom(const vpEulerVector& e)
     buildFrom(R) ;
     return *this ;
 }
+
 
 vpThetaUVector
 vpThetaUVector::buildFrom(const vpRzyzVector& e)

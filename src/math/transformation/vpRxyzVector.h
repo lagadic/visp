@@ -12,12 +12,13 @@
  * Version control
  * ===============
  *
- *  $Id: vpRxyzVector.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpRxyzVector.h,v 1.2 2005-07-19 13:03:39 obourqua Exp $
  *
  * Description
  * ============
- *   class that consider the case of the Roll Yaw pitch angles parameterization for the   rotation
- *
+ *    class that consider the case of the  Rxyz angle parameterization for the rotation
+
+ *   Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 
@@ -27,7 +28,8 @@
 
 /*!
   \file vpRxyzVector.h
-  \brief  class that consider the case of the Roll Yaw pitch angles parameterization for the   rotation  for the  rotation
+  \brief   class that consider the case of the  Rxyz angle parameterization for the rotation :
+  Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
 #include <visp/vpMatrix.h>
@@ -37,7 +39,8 @@
 
 /*!
   \class vpRxyzVector
-  \brief class that consider the case of the Roll Yaw pitch angles parameterization for the   rotation  for the  rotation
+  \brief  class that consider the case of the  Rxyz angle parameterization for the rotation
+  Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
 class vpRxyzVector : public vpRotationVector
@@ -60,14 +63,14 @@ public:
   vpRxyzVector(const double phi, const double theta, const double psi) :
     vpRotationVector (phi, theta, psi) { ; }
 
-  //! constructor initialize a thetaU vector from a rotation matrix
+  //! constructor initialize a Theta U vector from a rotation matrix
   vpRxyzVector(const vpRotationMatrix& R) ;
-  //! constructor initialize a thetaU vector from a rotation matrix
+  //! constructor initialize a Theta U vector from a rotation matrix
   vpRxyzVector(const vpThetaUVector&  tu) ;
 
-  //! convert a rotation matrix into Ryp vector
+  //! convert a rotation matrix into Rxyz vector
   vpRxyzVector buildFrom(const vpRotationMatrix& R) ;
-  //! convert a  thetau vector into Ryp vector
+  //! convert a  Theta U vector into Rxyz vector
   vpRxyzVector buildFrom(const vpThetaUVector& R) ;
 
 } ;

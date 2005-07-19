@@ -12,12 +12,13 @@
  * Version control
  * ===============
  *
- *  $Id: vpRzyxVector.h,v 1.2 2005-07-06 14:44:49 marchand Exp $
+ *  $Id: vpRzyxVector.h,v 1.3 2005-07-19 13:03:39 obourqua Exp $
  *
  * Description
  * ============
- *   class that consider the case of the roll  pitch Yaw angles parameterization for the   rotation
- *
+ *  class that consider the case of the Rzyx angle parameterization for the
+ *   rotation
+ *  Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 
@@ -27,8 +28,8 @@
 
 /*!
   \file vpRzyxVector.h
-  \brief class that consider the case of the yaw pitch roll  parameterization
-  for the  rotation
+  \brief  class that consider the case of the Rzyx angle parameterization for the
+    rotation : Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
 */
 
 #include <visp/vpRotationMatrix.h>
@@ -37,11 +38,9 @@
 
 /*!
   \class vpRzyxVector
-  \brief class that consider the case of the  yaw pitch roll parameterization
-  for the  rotation
-
-  Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
-
+  \brief class that consider the case of the Rzyx angle parameterization for the
+    rotation
+    Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
 */
 
 class vpRzyxVector : public vpRotationVector
@@ -57,18 +56,18 @@ public:
   vpRzyxVector &operator=(const vpRzyxVector &m);
   //! copy constructor
   vpRzyxVector(const vpRzyxVector &m);
-  //! constructor initialize a thetaU vector from a rotation matrix
+  //! constructor initialize a Theta U vector from a rotation matrix
   vpRzyxVector(const vpRotationMatrix& R) ;
-  //! constructor initialize a thetaU vector from a rotation matrix
+  //! constructor initialize a Theta U vector from a rotation matrix
   vpRzyxVector(const vpThetaUVector&  tu) ;
 
   //! constructor from 3 angles (in radian)
   vpRzyxVector(const double phi, const double theta, const double psi) :
     vpRotationVector (phi, theta, psi) { ; }
 
-  //! convert a rotation matrix into Ryp vector
+  //! convert a rotation matrix into Rzyx vector
   vpRzyxVector buildFrom(const vpRotationMatrix& R) ;
-  //! convert a  thetau vector into Ryp vector
+  //! convert a  thetau vector into Rzyx vector
   vpRzyxVector buildFrom(const vpThetaUVector& R) ;
 
 } ;

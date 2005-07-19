@@ -12,16 +12,16 @@
  * Version control
  * ===============
  *
- *  $Id: vpEulerVector.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpEulerVector.cpp,v 1.2 2005-07-19 13:02:11 obourqua Exp $
  *
  * Description
  * ============
  *   class that consider the case of the Euler angle parameterization for the
  *   rotation
  *
- *  Euler(phi,theta,phi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
+ *  Euler(phi,theta,psi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
  *
- *  Rzyz
+ *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <math.h>
@@ -31,14 +31,14 @@
 /*!
   \file vpEulerVector.cpp
 
-  \brief class that consider the case of the euler angles  parameterization
+  \brief class that consider the case of the Euler angles  parameterization
   for the  rotation
 
-  Euler(phi,theta,phi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
+  Euler(phi,theta,psi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
 
 /*!
-  \brief  affectation of two euler vector matrix
+  \brief  affectation of two Euler vector matrix
 */
 vpEulerVector &
 vpEulerVector::operator=(const vpEulerVector &m)
@@ -65,7 +65,7 @@ vpEulerVector::vpEulerVector(const vpRotationMatrix& R)
 }
 
 
-//! initialize a Euler vector from a thetau vector
+//! initialize a Euler vector from a Theta U vector
 vpEulerVector::vpEulerVector(const vpThetaUVector& tu)
 {
     buildFrom(tu) ;
@@ -95,7 +95,7 @@ vpEulerVector::buildFrom(const vpRotationMatrix& R)
 }
 
 
-//! convert a rotation matrix into thetaU vector
+//! convert a rotation matrix into Theta U vector
 vpEulerVector
 vpEulerVector::buildFrom(const vpThetaUVector& tu)
 {

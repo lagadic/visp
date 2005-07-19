@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRotationMatrix.cpp,v 1.3 2005-06-28 13:25:13 marchand Exp $
+ *  $Id: vpRotationMatrix.cpp,v 1.4 2005-07-19 13:03:39 obourqua Exp $
  *
  * Description
  * ============
@@ -23,7 +23,7 @@
 
 /*!
   \file vpRotationMatrix.cpp
-  \brief Définition de la classe vpRotationMatrix. Class that consider
+  \brief Class that consider
   the particular case of rotation matrix
 */
 
@@ -257,7 +257,7 @@ vpRotationMatrix::isARotationMatrix() const
 
 
 /*!
-  \brief initialize an rotation matrix as Identity
+  \brief initialize a rotation matrix as Identity
 */
 vpRotationMatrix::vpRotationMatrix() : vpMatrix()
 {
@@ -266,7 +266,7 @@ vpRotationMatrix::vpRotationMatrix() : vpMatrix()
 
 
 /*!
-  \brief initialize an rotation matrix from another rotation matrix
+  \brief initialize a rotation matrix from another rotation matrix
 */
 
 vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpMatrix()
@@ -275,7 +275,7 @@ vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpMatrix()
   (*this) = M ;
 }
 
-//! Construction from  rotation (theta U parameterization)
+//! Construction from  rotation (Theta U parameterization)
 vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpMatrix()
 {
   init() ;
@@ -289,7 +289,7 @@ vpRotationMatrix::vpRotationMatrix(const vpEulerVector &euler) : vpMatrix()
   buildFrom(euler) ;
 }
 
-//! Construction from  rotation (Euler parameterization)
+//! Construction from  rotation (Euler parameterization, ie Rzyz parameterization)
 vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpMatrix()
 {
   init() ;
@@ -312,7 +312,7 @@ vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpMatrix()
   buildFrom(Rzyx) ;
 }
 
-//! Construction from  rotation (theta U parameterization)
+//! Construction from  rotation (Theta U parameterization)
 vpRotationMatrix::vpRotationMatrix(const double tux,
 				   const double tuy,
 				   const double tuz) : vpMatrix()
