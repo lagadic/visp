@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRxyzVector.cpp,v 1.2 2005-07-19 13:03:39 obourqua Exp $
+ *  $Id: vpRxyzVector.cpp,v 1.3 2005-07-19 15:18:42 obourqua Exp $
  *
  * Description
  * ============
@@ -73,7 +73,7 @@ vpRxyzVector::vpRxyzVector(const vpThetaUVector& tu)
 vpRxyzVector
 vpRxyzVector::buildFrom(const vpRotationMatrix& R)
 {
-  /*
+
     double  v1;
     v1 = R[0][2];
     if (v1 > 1.0 ) v1 = 1.0;
@@ -89,9 +89,9 @@ vpRxyzVector::buildFrom(const vpRotationMatrix& R)
 	r[0] = atan2(-R[1][2],R[2][2]);
 	r[2] = atan2(-R[0][1],R[0][0]);
     }
-  */
 
-  double phi ;
+
+  /* double phi ;
   if ((fabs(R[1][2]) < 1e-6)&&(fabs(R[2][2]) < 1e-6)) phi = 0 ;
   else phi = atan2(R[1][2], R[2][2]) ;
 
@@ -102,7 +102,7 @@ vpRxyzVector::buildFrom(const vpRotationMatrix& R)
 
   r[0] = phi ;
   r[1] = theta ;
-  r[2] = psi ;
+  r[2] = psi ;*/
 
   return *this ;
 }
