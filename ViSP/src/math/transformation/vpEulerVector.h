@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpEulerVector.h,v 1.2 2005-07-19 13:02:11 obourqua Exp $
+ *  $Id: vpEulerVector.h,v 1.3 2005-07-19 13:53:46 obourqua Exp $
  *
  * Description
  * ============
@@ -44,7 +44,7 @@
   \brief class that consider the case of the euler angles  parameterization
   for the  rotation
 
-  Euler(phi,theta,phi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
+  Euler(phi,theta,psi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
 class vpEulerVector : public vpRotationVector
 {
