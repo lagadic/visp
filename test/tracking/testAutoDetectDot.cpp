@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testAutoDetectDot.cpp,v 1.1 2005-07-18 13:57:04 fspindle Exp $
+ *  $Id: testAutoDetectDot.cpp,v 1.2 2005-07-20 15:34:07 fspindle Exp $
  *
  * Description
  * ============
@@ -56,7 +56,6 @@ main()
   sprintf(s,"%s/image.%04d.pgm",dir,iter) ;
 
   vpDot2 d ;
-  vpList<vpDot2> * list_d;
 
   d.setGraphics(true);
 
@@ -112,6 +111,7 @@ main()
     vpImageIo::readPGM(I,s) ;
     vpDisplay::display(I) ;
 
+    vpList<vpDot2> * list_d;
     list_d = d.searchDotsInArea(I, 0, 0, I.getRows(), I.getCols()) ;
 
     if( list_d->nbElement() == 0 ) {
@@ -139,6 +139,9 @@ main()
       vpDisplay::flush(I) ;
     }
 
+    // free memory allocated for the list of dots found in d.searchDotsInArea()
+    list_d->kill();
+    delete list_d;
 
     TRACE("Click in the image to continue...");
     vpDisplay::getClick(I);
