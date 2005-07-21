@@ -18,6 +18,8 @@ LIB		= $(VISP_LIB_PATH)/lib@VISP_LIBNAME@.a
 
 all install: src FORCE
 	cd test; $(MAKE) $@
+	cd example; $(MAKE) $@
+	cd demo; $(MAKE) $@
 
 src: directory FORCE
 	cd include; $(MAKE) install
@@ -26,6 +28,12 @@ src: directory FORCE
 
 test: src FORCE
 	cd test; $(MAKE) install
+
+example: src FORCE
+	cd example; $(MAKE) install
+
+demo: src FORCE
+	cd demo; $(MAKE) install
 
 directory:
 	@if [ ! -d bin ] ;\
@@ -49,6 +57,8 @@ clean:
 	cd include; $(MAKE) $@
 	cd src; $(MAKE) $@
 	cd test; $(MAKE) $@
+	cd example; $(MAKE) $@
+	cd demo; $(MAKE) $@
 	@for i in `find -type f -name *~ -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
@@ -74,6 +84,8 @@ uninstall:
 	cd include; $(MAKE) $@
 	cd src; $(MAKE) $@
 	cd test; $(MAKE) $@
+	cd example; $(MAKE) $@
+	cd demo; $(MAKE) $@
 	rm -f $(VISP_DEP_PATH)/*.P
 	rm -f $(VISP_OBJ_PATH)/*.o
 	rm -f $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
@@ -131,8 +143,6 @@ uninstallall:
 html-doc:
 	@echo "html documentation creation..."
 	cd doc; doxygen config-doxygen
-#	cp src/doc/index.html doc/html
-
 
 lib-link:
 	rm -f $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
