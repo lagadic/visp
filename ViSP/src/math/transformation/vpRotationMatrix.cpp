@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRotationMatrix.cpp,v 1.4 2005-07-19 13:03:39 obourqua Exp $
+ *  $Id: vpRotationMatrix.cpp,v 1.5 2005-07-21 14:55:04 obourqua Exp $
  *
  * Description
  * ============
@@ -540,7 +540,7 @@ vpRotationMatrix::buildFrom(const vpRzyxVector &v)
   (*this)[0][1] = c0*s1*s2 - s0*c2 ;
   (*this)[0][2] = c0*s1*c2 + s0*s2 ;
 
-  (*this)[1][0] = s0*s1 ;
+  (*this)[1][0] = s0*c1 ;
   (*this)[1][1] = s0*s1*s2 + c0*c2 ;
   (*this)[1][2] = s0*s1*c2 - c0*s2 ;
 
