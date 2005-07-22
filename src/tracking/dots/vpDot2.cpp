@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.cpp,v 1.2 2005-07-18 13:58:31 fspindle Exp $
+ *  $Id: vpDot2.cpp,v 1.3 2005-07-22 10:36:56 fspindle Exp $
  *
  * Description
  * ============
@@ -43,7 +43,6 @@
     can also be used to find a certain type of dots in the full image.
 */
 
-#include <visp/vpTime.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpList.h>
@@ -85,19 +84,9 @@ const int vpDot2::DEFAULT_OUT_LEVEL = 140;
 */
 vpDot2::vpDot2() : vpTracker()
 {
-  iterNumber = 0;
-
-  p_t1_i = 0;
-  p_t1_j = 0;
-
-  t0 = 0;
-  dt01 = 0;
-
-  v_t1_i = 0;
-  v_t1_j = 0;
-
   this->i = 0;
   this->j = 0;
+
   width = 0;
   height = 0;
   surface = 0;
@@ -122,17 +111,6 @@ vpDot2::vpDot2( int i, int j ) : vpTracker()
 {
   this->i = i;
   this->j = j;
-
-  iterNumber = 0;
-
-  p_t1_i = 0;
-  p_t1_j = 0;
-
-  t0 = 0;
-  dt01 = 0;
-
-  v_t1_i = 0;
-  v_t1_j = 0;
 
   width = 0;
   height = 0;
@@ -161,19 +139,9 @@ vpDot2::vpDot2( const vpDot2& twinDot ) : vpTracker()
 */
 void vpDot2::operator=( const vpDot2& twinDot )
 {
-  iterNumber = twinDot.iterNumber;
+  this->i = twinDot.i;
+  this->j = twinDot.j;
 
-  p_t1_i = twinDot.p_t1_i;
-  p_t1_j = twinDot.p_t1_j;
-
-  t0 = twinDot.t0;
-  dt01 = twinDot.dt01;
-
-  v_t1_i = twinDot.v_t1_i;
-  v_t1_j = twinDot.v_t1_j;
-
-  i = twinDot.i;
-  j = twinDot.j;
   width = twinDot.width;
   height = twinDot.height;
   surface = twinDot.surface;
@@ -235,17 +203,15 @@ void vpDot2::track(vpImage<unsigned char> &I)
 
   // First, we will estimate the potition of the tracked point
 
-  double estimatedI = 0.;
-  double estimatedJ = 0.;
+  double estimatedI = this->I();
+  double estimatedJ = this->J();
 
-  estimateCurrentPosition( estimatedI, estimatedJ);
-
-  if ( ! isInImage( I, (int)estimatedI, (int)estimatedJ ) ) {
-    ERROR_TRACE("Dot (%d, %d) to track is not in the image",
-		(int)estimatedI, (int)estimatedJ) ;
-    throw(vpTrackingException(vpTrackingException::featureLostError,
-			      "Dot has been lost")) ;
-  }
+//   if ( ! isInImage( I, (int)estimatedI, (int)estimatedJ ) ) {
+//     ERROR_TRACE("Dot (%d, %d) to track is not in the image",
+// 		(int)estimatedI, (int)estimatedJ) ;
+//     throw(vpTrackingException(vpTrackingException::featureLostError,
+// 			      "Dot has been lost")) ;
+//   }
 
   if (computeParameters(I, estimatedI, estimatedJ) == false)
   {
@@ -414,10 +380,6 @@ double vpDot2::getDistance( const vpDot2& distantDot ) const
   return sqrt( diffI*diffI + diffJ*diffJ );
 }
 
-int vpDot2::getIterNumber() const
-{
-  return iterNumber;
-}
 
 ///// SET METHODS ////////////////////////////////////////////////////////////
 
@@ -508,7 +470,7 @@ void vpDot2::setAccuracy( double accuracy )
   }
   else if( accuracy>1 )
   {
-    accuracy = 1;
+    accuracy = 1.0;
   }
   else
   {
@@ -516,10 +478,6 @@ void vpDot2::setAccuracy( double accuracy )
   }
 }
 
-void vpDot2::setIterNumber( int iter)
-{
-  iterNumber = iter;
-}
 
 ///// CLASS FUNCTIONALITY ////////////////////////////////////////////////////
 
@@ -542,8 +500,8 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   i = intI;
   j = intJ;
 
-  inLevel  = (int) (I[(int)i][(int)j] * 0.8);
-  outLevel = (int) (I[(int)i][(int)j] / 0.8);
+  inLevel  = (int) (I[(int)i][(int)j] * accuracy);
+  outLevel = (int) (I[(int)i][(int)j] * accuracy);
 
   if ( inLevel < MIN_IN_LEVEL ) inLevel = MIN_IN_LEVEL;
 
@@ -969,7 +927,6 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   iCoords.kill();
   jCoords.kill();
 
-  double oldSurface = surface;
   double newSurface = 0.;
   int pathI = 0;
   int pathJ = 0;
@@ -996,7 +953,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // return an error tracking
   if( !isInImage( I, (int)iEstimated, (int)jEstimated ) )
   {
-    ERROR_TRACE("Initial pixel coordinates (%d, %d) for dot tracking are not in the image",
+    DEBUG_TRACE(3, "Initial pixel coordinates (%d, %d) for dot tracking are not in the image",
 		(int)iEstimated, (int)jEstimated) ;
     return false;
   }
@@ -1234,29 +1191,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
       return false;
     }
 
-    // first we check the center of gravity didn't move to much and that the
-    //  volume didn't change too much since the last time. Oterwise
-    // return an ERROR_TRACKING.
-    if( dt01!= 0 &&
-	fabs( (1 - oldSurface/(double)newSurface)/dt01 ) > MAX_VOLUME_CHANGE )
-    {
-      //cerr << "Error tracking due to volume change exess.";
-
-      DEBUG_TRACE("The surface of the dot change to much");
-      return false;
-    } // check the dot didn't move too much too.
-    else if( dt01!= 0 &&
-	     ((fabs( (tmpCenterI-iEstimated)/dt01 ) > MAX_DOT_I_SPEED) ||
-	      (fabs( (tmpCenterJ-jEstimated)/dt01 ) > MAX_DOT_J_SPEED)) )
-    {
-      DEBUG_TRACE("The center of gravity of the dot moves to much");
-      return false;
-    }
-    else
-    {
-      this->i = tmpCenterI;
-      this->j = tmpCenterJ;
-    }
+    this->i = tmpCenterI;
+    this->j = tmpCenterJ;
   }
 
   width = rightestPix - leftestPix;
@@ -1459,121 +1395,6 @@ void vpDot2::getTop( int& posI, int& posJ, int dir )
     }
   }
 }
-
-
-/*!
-  \brief Estimate the position of the tracked point.
-
-  For the estimation, we use se speed and acceleration of the dot in the last iterations, and the time between the last iteration and this iteration.\n
-  The different times are:\n
-  - ta : the actual time\n
-  - t0 : time of the last loop\n
-  - t1 : actual time -1 loop\n
-
-  Of course, first iterations estimations are different:\n
-
-  - Estimation for iteration 0 and 1: last known position
-
-  - Estimation for iteration 2: last position+last speed
-  We know the last speed: V(t0) = (P(t0)-P(t1))/(t0-t1)
-  We have estim(P(ta)) = P(t0) + V(t0)(ta-t0)
-
-  - Estimation from iteration 3: last position+last speed+last acceleration
-
-  From iteration 3 we know the position, the speed and the acceleration of the dot in the last iteration. To make our estimation, we assume we have constant acceleration since the last time. That allow us to compute the average speed between the last iteration and now. We have\n
-  Vavg = V(t0) + accel*(ta-t0)/2\n
-  So we can estimate the position of the new point:\n
-  estim(P(ta)) = P(t0) + Vavg*(ta-t0)
-*/
-bool vpDot2::estimateCurrentPosition(double& estimatedI, double& estimatedJ)
-{
-  long ta = vpTime::measureTimeMs();
-
-
-  double p_t0_i = I();
-  double p_t0_j = J();
-
-
-  // if(iterNumber == 0) // first time tracking
-  //{
-  estimatedI = p_t0_i;
-  estimatedJ = p_t0_j;
-
-  t0 = ta;
-
-  iterNumber++;
-  // }
-  /* else //if( iterNumber == 1 ) // second time tracking,
-     {
-     estimatedI = p_t0_i;
-     estimatedJ = p_t0_j;
-
-     dt01 = ta - t0;
-     t0 = ta;
-
-     p_t1_i = p_t0_i;
-     p_t1_j = p_t0_j;
-
-     iterNumber++;
-     }*//*
-	  else if( iterNumber == 2 ) // third time tracking,
-	  {
-
-	  // compute the speed at last iteration
-	  double v_t0_i = (p_t0_i - p_t1_i)/dt01;
-	  double v_t0_j = (p_t0_j - p_t1_j)/dt01;
-
-	  // estimate the new position from that speed
-	  double dta0 = ta - t0;
-	  estimatedI = p_t0_i + v_t0_i * dta0;
-	  estimatedJ = p_t0_j + v_t0_j * dta0;
-
-	  // store the usefull values for next iterations
-	  v_t1_i = v_t0_i;
-	  v_t1_j = v_t0_j;
-	  dt01 = dta0;
-
-	  p_t1_i = p_t0_i;
-	  p_t1_j = p_t0_j;
-
-	  t0 = ta;
-
-	  // update iteration number
-	  // note: iteration number won't be updated after that.
-	  iterNumber++;
-	  }
-	  else // at least the third time tracking
-	  {
-	  // use the speed and acceleration to estimate the position
-
-	  // compute the speed at last iteration
-	  double v_t0_i = (p_t0_i - p_t1_i)/dt01;
-	  double v_t0_j = (p_t0_j - p_t1_j)/dt01;
-
-	  // compute the acceleration at last iteration
-	  double accel_i = ( v_t0_i - v_t1_i )/dt01;
-	  double accel_j = ( v_t0_j - v_t1_j )/dt01;
-
-
-	  // estimate the new position from that speed and that acceleration
-	  double dta0 = ta - t0;
-	  estimatedI = p_t0_i + ( v_t0_i + accel_i * dta0 / 2 ) * dta0;
-	  estimatedJ = p_t0_j + ( v_t0_j + accel_j * dta0 / 2 ) * dta0;
-
-	  // store the usefull values for next iterations
-	  p_t1_i = p_t0_i;
-	  p_t1_j = p_t0_j;
-
-	  v_t1_i = v_t0_i;
-	  v_t1_j = v_t0_j;
-
-	  dt01 = dta0;
-	  t0 = ta;
-	  }*/
-
-  return true;
-}
-
 
 /*!
   Test if a pixel is in the image. Points of the border are not considered to be in the image.
