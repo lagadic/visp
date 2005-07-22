@@ -11,7 +11,8 @@ endif
 # - put binaries in current directory
 # - put dependencies in $(VISP_DEP_PATH)#$(VISP_LIBNAME)
 # - add Makefile in the list of dependencies
-%$(SUFFIX).exe : %.cpp
+# - add ViSP library to the list of dependencies
+%$(SUFFIX).exe : %.cpp $(VISP_LIB_PATH)/lib$(VISP_LIBNAME).a
 	@echo "*"
 	@echo "* Create the binary file $@ for $< "
 	@echo "*"
