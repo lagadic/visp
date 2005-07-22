@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilderPoint.cpp,v 1.2 2005-06-28 13:10:56 marchand Exp $
+ *  $Id: vpFeatureBuilderPoint.cpp,v 1.3 2005-07-22 09:37:21 fspindle Exp $
  *
  * Description
  * ============
@@ -34,6 +34,28 @@
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
 			      const vpDot &t)
+{
+  try
+  {
+    double x,y ;
+
+    double u = t.J() ;
+    double v = t.I() ;
+
+    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+
+    s.set_x(x) ;
+    s.set_y(y) ;
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+void vpFeatureBuilder::create(vpFeaturePoint &s,
+			      const vpCameraParameters &cam,
+			      const vpDot2 &t)
 {
   try
   {

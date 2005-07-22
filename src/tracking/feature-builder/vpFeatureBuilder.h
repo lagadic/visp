@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilder.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpFeatureBuilder.h,v 1.2 2005-07-22 09:37:21 fspindle Exp $
  *
  * Description
  * ============
@@ -26,6 +26,7 @@
 */
 // tracker
 #include<visp/vpDot.h>
+#include<visp/vpDot2.h>
 #include<visp/vpMeLine.h>
 
 
@@ -63,6 +64,8 @@ public:
   // create vpFeaturePoint feature
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
 		      const vpDot &t) ;
+  static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
+		      const vpDot2 &t) ;
   static void create(vpFeaturePoint &s, const vpPoint &t) ;
   static void create(vpFeaturePoint &s,
 		     const vpCameraParameters &goodCam,
@@ -76,7 +79,7 @@ public:
   static void create(vpFeatureLine &s, const vpLine &t ) ;
   static void create(vpFeatureLine &s, const vpCylinder &t, const int line) ;
 
-  static  void create(vpFeatureLine &s, 	
+  static  void create(vpFeatureLine &s,
 		      const vpCameraParameters &cam,
 		      const vpMeLine &t) ;
 
