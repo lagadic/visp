@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.h,v 1.1 2005-07-13 10:38:49 fspindle Exp $
+ *  $Id: vpDot2.h,v 1.2 2005-07-22 10:36:56 fspindle Exp $
  *
  * Description
  * ============
@@ -52,7 +52,6 @@ public:
   virtual int getInLevel() const;
   virtual int getOutLevel() const;
   double getAccuracy() const;
-  int getIterNumber() const;
 
   /*!
     Activates the display of the border of the dot during the tracking.
@@ -80,7 +79,6 @@ public:
   virtual void setOutLevel( int outLevel );
 
   void setAccuracy( double accuracy );
-  void setIterNumber(int iter);
 
   void initTracking(vpImage<unsigned char>& I);
   int getNumberOfInformation();
@@ -165,8 +163,6 @@ private:
 			  double iEstimated = -1.,
 			  double jEstimated = -1.);
 
-  bool estimateCurrentPosition(double& estimatedI, double& estimatedJ);
-
   void move( vpImage<unsigned char> &I, int& posI, int& posJ, int& dir);
 
   void getLeftPixelPosition( int& posI, int& posJ, int dir );
@@ -188,18 +184,6 @@ private:
   int inLevel;
   int outLevel;
   double accuracy;
-
-  // attributes for dot parameters computation
-  int iterNumber;
-
-  double p_t1_i;
-  double p_t1_j;
-  double t0;
-  double dt01;
-
-  double v_t1_i;
-  double v_t1_j;
-
 
   // other
   vpList<int> directions;
