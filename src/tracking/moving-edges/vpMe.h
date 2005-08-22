@@ -15,8 +15,8 @@
 */
 // ====================================================================
 
-#ifndef ECM_HH
-#define ECM_HH
+#ifndef vpMe_H
+#define vpMe_H
 
 #include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
