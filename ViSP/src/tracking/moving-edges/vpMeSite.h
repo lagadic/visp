@@ -23,8 +23,8 @@
 
 
 
-#ifndef SITE_HH
-#define SITE_HH
+#ifndef vpMeSite_H
+#define vpMeSite_H
 
 #include <visp/vpMatrix.h>
 #include <visp/vpImage.h>
