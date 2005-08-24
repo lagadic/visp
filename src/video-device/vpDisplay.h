@@ -154,6 +154,8 @@ public:
   //! flushes the output buffer
   static void flush(vpImage<unsigned char> &I) ;
 
+  //! Close a display
+  static void close(vpImage<unsigned char> &I) ;
 public:
 
   //! Display a 32bits image in the display window
