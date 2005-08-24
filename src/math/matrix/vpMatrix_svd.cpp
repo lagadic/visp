@@ -30,6 +30,11 @@ static double pythag(double a, double b)
   else return (absb == 0.0 ? 0.0 : absb*sqrt(1.0+vpMath::sqr(absa/absb)));
 }
 
+#ifdef EPS_SVD
+#undef EPS_SVD
+#endif
+#define EPS_SVD 1e-16
+
 //static double maxarg1,maxarg2;
 #ifdef MAX
 #undef MAX
@@ -91,7 +96,6 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
     v[i] = V.rowPtrs[i-1]-1;
   }
 
-
   if (m < n)
   {
     ERROR_TRACE("\n\t\tSVDcmp: You must augment A with extra zero rows") ;
@@ -107,7 +111,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
     g=s=scale=0.0;
     if (i <= m) {
       for (k=i;k<=m;k++) scale += fabs(a[k][i]);
-      if (scale != 0.0) {
+      if ((scale != 0.0) || (fabs(scale) > EPS_SVD)) {
 	for (k=i;k<=m;k++) {
 	  a[k][i] /= scale;
 	  s += a[k][i]*a[k][i];
@@ -130,7 +134,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
     g=s=scale=0.0;
     if (i <= m && i != n) {
       for (k=l;k<=n;k++) scale += fabs(a[i][k]);
-      if (scale != 0.0) {
+      if ((scale != 0.0) || (fabs(scale) > EPS_SVD)) {
 	for (k=l;k<=n;k++) {
 	  a[i][k] /= scale;
 	  s += a[i][k]*a[i][k];
@@ -153,7 +157,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
   }
   for (i=n;i>=1;i--) {
     if (i < n) {
-      if (g) {
+      if ((g) || (fabs(g) > EPS_SVD)) {
 	for (j=l;j<=n;j++)
 	  v[j][i]=(a[i][j]/a[i][l])/g;
 	for (j=l;j<=n;j++) {
@@ -172,7 +176,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
     g=w[i];
     if (i < n)
       for (j=l;j<=n;j++) a[i][j]=0.0;
-    if (g != 0.0) {
+    if ((g != 0.0) || (fabs(g) > EPS_SVD)) {
       g=1.0/g;
       if (i != n) {
 	for (j=l;j<=n;j++) {
@@ -192,18 +196,18 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
       flag=1;
       for (l=k;l>=1;l--) {
 	nm=l-1;
-	if (fabs(rv1[l])+anorm == anorm) {
+	if ((fabs(rv1[l])+anorm == anorm) || (fabs(rv1[l]) <= EPS_SVD)) {
 	  flag=0;
 	  break;
 	}
-	if (fabs(w[nm])+anorm == anorm) break;
+	if ((fabs(w[nm])+anorm == anorm) || (fabs(w[nm]) <= EPS_SVD)) break;
       }
       if (flag) {
 	c=0.0;
 	s=1.0;
 	for (i=l;i<=k;i++) {
 	  f=s*rv1[i];
-	  if (fabs(f)+anorm != anorm) {
+	  if ((fabs(f)+anorm != anorm)  || (fabs(f) <= EPS_SVD)) {
 	    g=w[i];
 	    h=pythag(f,g);
 	    w[i]=h;
@@ -229,6 +233,8 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
       }
       if (its == MAX_ITER_SVD)
       {
+	for (i=0;i<n;i++) W[i] = w[i+1];
+
 	ERROR_TRACE("\n\t\t No convergence in  SVDcmp ") ;
 	cout << *this <<endl ;
 	//	throw(vpMatrixException(vpMatrixException::matrixError,
@@ -265,7 +271,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 	}
 	z=pythag(f,h);
 	w[j]=z;
-	if (z != 0.0) {
+	if ((z != 0.0) || (fabs(z) > EPS_SVD)) {
 	  z=1.0/z;
 	  c=f*z;
 	  s=h*z;
@@ -293,7 +299,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
   delete[] v;
 
 }
-
+#undef EPS_SVD
 #undef SIGN
 #undef MAX
 #undef PYTHAG
@@ -500,11 +506,6 @@ void vpMatrix::svdFlake(vpColVector &W, vpMatrix &V)
 
 #ifdef HAVE_LIBGSL
 #include<gsl/gsl_linalg.h>
-
-#ifdef HAVE_INSURE
-extern int gsl_warnings_off;
-int gsl_warnings_off = 1;
-#endif
 
 void
 vpMatrix::svdGsl(vpColVector& w, vpMatrix& v)
