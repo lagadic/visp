@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX2.cpp,v 1.2 2005-07-18 12:40:49 fspindle Exp $
+ *  $Id: testDisplayX2.cpp,v 1.3 2005-08-24 16:38:31 fspindle Exp $
  *
  * Description
  * ============
@@ -98,8 +98,9 @@ main()
   vpDisplay::getImage(I,Iaug) ;
   vpImageIo::writePPM(Iaug,"images-res/DisplayX2.Klimt-augmented.ppm") ;
 
+
+  cout << "\nA click to exit..." << endl;
   vpDisplay::getClick(I) ;
-  vpDisplay::flush(I) ;
 
 }
 
