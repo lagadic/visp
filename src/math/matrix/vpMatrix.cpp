@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.4 2005-07-07 08:29:37 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.5 2005-08-24 15:32:57 chaumett Exp $
  *
  * Description
  * ============
@@ -53,6 +53,7 @@
 // Debug trace
 #include <visp/vpConfig.h>
 
+#define DEBUG_LEVEL1 1
 
 /*!
   \brief initialization of the object matrix.
@@ -878,14 +879,55 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
 void
 vpMatrix::svd(vpColVector& w, vpMatrix& v)
 {
-#ifdef HAVE_LIBGSL
-  svdGsl(w,v) ;
+  if (DEBUG_LEVEL1 == 0) /* no verification */
+  {
+#ifdef HAVE_LIBGSL  /* be careful of the copy below */
+    svdGsl(w,v) ;
 #else
-  svdNr(w,v) ;
+    svdNr(w,v) ;
 #endif
+  //svdNr(w,v) ;
+  }
+  else  /* verification of the SVD */
+  {
+    int pb = 0;
+    int i,j,k,nrows,ncols;
+    vpMatrix A, Asvd;
 
+    A = (*this);        /* copy because svd is destructive */
+
+#ifdef HAVE_LIBGSL  /* be careful of the copy above */
+    svdGsl(w,v) ;
+#else
+    svdNr(w,v) ;
+#endif
+  //svdNr(w,v) ;
+
+    nrows = A.getRows();
+    ncols = A.getCols();
+    Asvd.resize(nrows,ncols);
+
+    for (i = 0 ; i < nrows ; i++)
+    {
+      for (j = 0 ; j < ncols ; j++)
+      {
+        Asvd[i][j] = 0.0;
+        for (k=0 ; k < ncols ; k++) Asvd[i][j] += (*this)[i][k]*w[k]*v[j][k];
+      }
+    }
+    for (i=0;i<nrows;i++)
+    {
+      for (j=0;j<ncols;j++) if (fabs(A[i][j]-Asvd[i][j]) > 1e-6) pb = 1;
+    }
+    if (pb == 1)
+    {
+      printf("pb in SVD\n");
+      cout << " A : " << endl << A << endl;
+      cout << " Asvd : " << endl << Asvd << endl;
+    }
+    //    else printf("SVD ok ;-)\n");  /* It's so good... */
+  }
 }
-
 /*!
   \brief Compute the pseudo inverse of the matrix Ap = A^+
   \param Ap = A^+ the pseudo inverse
@@ -924,84 +966,175 @@ int
 vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double seuilvp) const
 {
 
-  int i, j ;
-  int nrows = getRows() ;
+  int i, j, k ;
 
+  // debut FC
+  int nrows, ncols;
+  int nrows_orig = getRows() ;
+  int ncols_orig = getCols() ;
+  Ap.resize(ncols_orig,nrows_orig) ;
 
+  if (nrows_orig >=  ncols_orig)
+  {
+    nrows = nrows_orig;
+    ncols = ncols_orig;
+  }
+  else
+  {
+    nrows = ncols_orig;
+    ncols = nrows_orig;
+  }
 
-  int ncols = getCols() ;
-  Ap.resize(ncols,nrows) ;
-  int min ;
-
-  if (nrows > ncols) min = ncols ; else min = nrows ;
-
-  // ! the SVDcmp function inthe matrix lib is destructive
-
-  vpMatrix a1 ;
-  vpMatrix a2 ;
-
+  vpMatrix a(nrows,ncols) ;
+  vpMatrix a1(ncols,nrows);
   vpMatrix v(ncols,ncols) ;
-
   sv.resize(ncols) ;
-  if (nrows < ncols)
-  {
-    a1.resize(ncols,ncols) ;
-  }
-  else
-  {
-    a1.resize(nrows,ncols) ;
-  }
-  a2.resize(nrows,ncols) ;
 
-  for (i=0 ; i < nrows ; i++)
-    for (j=0 ; j < ncols ; j++)
-    {
-      a1[i][j] = (*this)[i][j] ;
-    }
+  if (nrows_orig >=  ncols_orig) a = *this;
+  else a = (*this).t();
 
-  a2 = *this ;
+  a.svd(sv,v);
 
-  if (nrows < ncols)
-  {
-    for (i=nrows ; i < ncols ; i++)
-      for (j=0 ; j < ncols ; j++)
-	a1[i][j] = 0 ;
-    a1.svd(sv,v);
-
-  }
-  else
-  {
-    a1.svd(sv,v);
-  }
   // compute the highest singular value and the rank of h
   double maxsv = 0 ;
   for (i=0 ; i < ncols ; i++)
-    if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
 
   int rank = 0 ;
   for (i=0 ; i < ncols ; i++)
     if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
 
   /*------------------------------------------------------- */
-
   for (i = 0 ; i < ncols ; i++)
   {
     for (j = 0 ; j < nrows ; j++)
     {
-      int k=0 ;
-      Ap[i][j] = 0.0;
+      a1[i][j] = 0.0;
 
-      // modif le 25 janvier 1999 0.001 <-- maxsv*1.e-6
-      // sinon on peut observer une perte de range de la matrice
-      // ( d'ou venait ce 0.001 ??? )
       for (k=0 ; k < ncols ; k++)
-	if (fabs(sv[k]) > maxsv*seuilvp)
-	{
-	  Ap[i][j] += v[i][k]*a1[j][k]/sv[k];
-	}
+    	if (fabs(sv[k]) > maxsv*seuilvp)
+  	{
+	    a1[i][j] += v[i][k]*a[j][k]/sv[k];
+        }
     }
   }
+  if (nrows_orig >=  ncols_orig) Ap = a1;
+  else Ap = a1.t();
 
+  // fin FC
+
+//   int nrows = getRows() ;
+//   int ncols = getCols() ;
+//   Ap.resize(ncols,nrows) ;
+//   //  int min ;
+
+//   //  if (nrows > ncols) min = ncols ; else min = nrows ;
+
+//   // ! the SVDcmp function in the matrix lib is destructive
+
+
+//   vpMatrix a1 ;
+
+//   vpMatrix v(ncols,ncols) ;
+
+//   sv.resize(ncols) ;
+//   if (nrows < ncols)
+//   {
+//     a1.resize(ncols,ncols) ;
+//   }
+//   else
+//   {
+//     a1.resize(nrows,ncols) ;
+//   }
+
+//   for (i=0 ; i < nrows ; i++)
+//     for (j=0 ; j < ncols ; j++)
+//     {
+//       a1[i][j] = (*this)[i][j] ;
+//     }
+
+//   if (nrows < ncols)
+//   {
+//     for (i=nrows ; i < ncols ; i++)
+//       for (j=0 ; j < ncols ; j++)
+// 	a1[i][j] = 0 ;
+//   }
+
+//   a1.svd(sv,v);
+
+//   // compute the highest singular value and the rank of h
+//   double maxsv = 0 ;
+//   for (i=0 ; i < ncols ; i++)
+//     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+
+//   int rank = 0 ;
+//   for (i=0 ; i < ncols ; i++)
+//     if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
+
+//   /*------------------------------------------------------- */
+
+//   for (i = 0 ; i < ncols ; i++)
+//   {
+//     for (j = 0 ; j < nrows ; j++)
+//     {
+//       int k=0 ;
+//       Ap[i][j] = 0.0;
+
+//       // modif le 25 janvier 1999 0.001 <-- maxsv*1.e-6
+//       // sinon on peut observer une perte de range de la matrice
+//       // ( d'ou venait ce 0.001 ??? )
+//       for (k=0 ; k < ncols ; k++)
+// 	if (fabs(sv[k]) > maxsv*seuilvp)
+// 	{
+// 	  Ap[i][j] += v[i][k]*a1[j][k]/sv[k];
+// 	}
+//     }
+//   }
+  if (DEBUG_LEVEL1)
+  {
+    int pb = 0;
+    vpMatrix A, ApA, AAp, AApA, ApAAp ;
+
+    nrows = nrows_orig;
+    ncols = ncols_orig;
+
+    A.resize(nrows,ncols) ;
+    A = *this ;
+
+    ApA = Ap * A;
+    AApA = A * ApA;
+    ApAAp = ApA * Ap;
+    AAp = A * Ap;
+
+    for (i=0;i<nrows;i++)
+    {
+      for (j=0;j<ncols;j++) if (fabs(AApA[i][j]-A[i][j]) > 1e-6) pb = 1;
+    }
+    for (i=0;i<ncols;i++)
+    {
+      for (j=0;j<nrows;j++) if (fabs(ApAAp[i][j]-Ap[i][j]) > 1e-6) pb = 1;
+    }
+    for (i=0;i<nrows;i++)
+    {
+      for (j=0;j<nrows;j++) if (fabs(AAp[i][j]-AAp[j][i]) > 1e-6) pb = 1;
+    }
+    for (i=0;i<ncols;i++)
+    {
+      for (j=0;j<ncols;j++) if (fabs(ApA[i][j]-ApA[j][i]) > 1e-6) pb = 1;
+    }
+    if (pb == 1)
+    {
+      printf("pb in pseudo inverse\n");
+      cout << " A : " << endl << A << endl;
+      cout << " Ap : " << endl << Ap << endl;
+      cout << " A - AApA : " << endl << A - AApA << endl;
+      cout << " Ap - ApAAp : " << endl << Ap - ApAAp << endl;
+      cout << " AAp - (AAp)^T : " << endl << AAp - AAp.t() << endl;
+      cout << " ApA - (ApA)^T : " << endl << ApA - ApA.t() << endl;
+    }
+    //    else printf("Ap OK ;-) \n");
+
+  }
   // cout << v << endl ;
   return rank ;
 }
@@ -1192,6 +1325,7 @@ vpMatrix::det33(const vpMatrix &M)
 
 }
 
+#undef DEBUG_LEVEL1
 /*
  * Local variables:
  * c-basic-offset: 2
