@@ -354,6 +354,26 @@ void vpDisplay::flush(vpImage<unsigned char> &I)
   }
 }
 
+/*!
+   Close the display attached to I.
+*/
+void vpDisplay::close(vpImage<unsigned char> &I)
+{
+
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->closeDisplay() ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
 
 /*!
   return true way a button is pressed
