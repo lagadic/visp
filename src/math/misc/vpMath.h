@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMath.h,v 1.1.1.1 2005-06-08 07:08:05 fspindle Exp $
+ *  $Id: vpMath.h,v 1.2 2005-08-24 15:13:26 chaumett Exp $
  *
  * Description
  * ============
@@ -87,7 +87,10 @@ public:
    static int min(const int x,const  int y) ;
 
   //! sinus cardinal
-   static double sinc(double x) ;
+  static double sinc(double x) ;
+  static double sinc(double si, double x) ;
+  static double mcosc(double co, double x) ;
+  static double msinc(double si, double x) ;
 
    static void swap(double &a, double &b) ;
    static void swap(int &a, int &b) ;

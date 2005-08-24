@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMath.cpp,v 1.1.1.1 2005-06-08 07:08:05 fspindle Exp $
+ *  $Id: vpMath.cpp,v 1.2 2005-08-24 15:13:26 chaumett Exp $
  *
  * Description
  * ============
@@ -104,12 +104,58 @@ int vpMath::min(const int x, const int y)
 {
     if (x>y) return y ; else return x ;
 }
+#ifdef ANG_MIN_SINC // used also in vpRotationMatrix.cpp and vpThetaUVector.cpp
+#undef ANG_MIN_SINC
+#endif
+#define ANG_MIN_SINC 1e-8
 
 double vpMath::sinc(double x)
 {
-  if (fabs(x) < 1e-6) return 1.0 ;
+  if (fabs(x) < ANG_MIN_SINC) return 1.0 ;
   else  return sin(x)/x ;
 }
+/*!
+Compute sinus cardinal.
+
+\arg si sin(x)
+\arg x x
+
+*/
+double vpMath::sinc(double si, double x)
+{
+  if (fabs(x) < ANG_MIN_SINC) return 1.0 ;
+  else  return (si/x) ;
+}
+#undef ANG_MIN_SINC
+/*!
+Compute (1-cos(x))/x^2
+
+\arg co cos(x)
+\arg x x
+
+*/
+#ifdef ANG_MIN_MC // used also in vpRotationMatrix.cpp
+#undef ANG_MIN_MC
+#endif
+#define ANG_MIN_MC 2.5e-4
+double vpMath::mcosc(double co, double x)
+{
+  if (fabs(x) < ANG_MIN_MC) return 0.5 ;
+  else  return ((1.0-co)/x/x) ;
+}
+
+/*!
+Compute (1-sinc(x))/x^2
+
+\arg si sin(x)
+\arg x x
+
+*/double vpMath::msinc(double si, double x)
+{
+  if (fabs(x) < ANG_MIN_MC) return (1./6.0) ;
+  else  return ((1.0-si/x)/x/x) ;
+}
+#undef ANG_MIN_MC
 
 void vpMath::swap(double &a, double &b)
 {
