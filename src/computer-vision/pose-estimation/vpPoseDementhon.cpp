@@ -25,9 +25,11 @@
 #define DEBUG_LEVEL2 0
 #define DEBUG_LEVEL3 0
 
+/* FC
 #ifndef DEG
-#define DEG 180.0/M_PI
+#define DEG (180.0/M_PI)
 #endif
+*/
 
 /*!
   \brief  Compute the pose using Dementhon approach for non planar objects
@@ -481,9 +483,9 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
 }
 
 /*!
-  \brief  Compute the pose using Dementhon approach for non planar objects
+  \brief  Compute the pose using Dementhon approach for planar objects
           this is a direct implementation of the algorithm proposed by
-	  Dementhon in its PhD
+	  Dementhon in his PhD
 
   \author Francois Chaumette (simplified by Eric Marchand)
 */
@@ -540,6 +542,19 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   // calcul a^T a
   vpMatrix ata ;
   ata = a.t()*a ;
+
+  /* essai FC pour debug SVD */
+  /*
+  vpMatrix ata_old ;
+  ata_old = a.t()*a ;
+
+  vpMatrix ata((ata_old.getRows()-1),(ata_old.getCols()-1)) ;
+  for (i=0;i<ata.getRows();i++)
+    for (j=0;j<ata.getCols();j++) ata[i][j] = ata_old[i][j];
+  */
+  vpMatrix ata_sav;
+  ata_sav = ata;
+
   if (DEBUG_LEVEL2)
   {
     cout << "a" << endl <<a<<endl ;
@@ -547,9 +562,9 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   }
 
   // calcul (a^T a)^-1
-  vpMatrix ata1(ata.getRows(),ata.getCols()) ; ;
+  vpMatrix ata1(ata.getRows(),ata.getCols()) ;
   vpMatrix v(ata.getRows(),ata.getCols());
-  vpColVector sv(ata.getRows()); ;
+  vpColVector sv(ata.getRows());
   //  ata1 = ata.i() ;
   int imin = 0;
   double s = 0.0;
@@ -599,9 +614,9 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   if (DEBUG_LEVEL2)
   {
     cout << "a" << endl <<a<<endl ;
-    cout << "ata" << endl <<ata<<endl ;
+    cout << "ata" << endl <<ata_sav<<endl ;
     cout << "ata1" << endl <<ata1<<endl ;
-    cout << "ata*ata1"  << endl <<  ata1*ata ;
+    cout << "ata1*ata"  << endl <<  ata1*ata_sav ;
     cout << "b"  << endl <<  b ;
     cout << "U " << U.t()  << endl ;
 
