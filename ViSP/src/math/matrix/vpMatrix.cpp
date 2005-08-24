@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.5 2005-08-24 15:32:57 chaumett Exp $
+ *  $Id: vpMatrix.cpp,v 1.6 2005-08-24 16:27:06 fspindle Exp $
  *
  * Description
  * ============
@@ -38,6 +38,10 @@
 
 
 #include <stdlib.h>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+
 #include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpTranslationVector.h>
@@ -1299,6 +1303,78 @@ ostream &operator <<(ostream &s,const vpMatrix &m)
   }
 
   return s;
+}
+
+/*!
+
+  Pretty print a matrix. The data are tabulated.
+
+  \param maxlen The length of the columns for the printing
+  \return Returns the maximum lenght of the matrix elements
+
+  \sa vpMatrix::print(), ostream &operator <<(ostream &s,const vpMatrix &m)
+*/
+int
+vpMatrix::print(std::ostream& s, unsigned maxlen)
+{
+  int m = getRows();
+  int n = getCols();
+
+  std::vector<std::string> values(m*n);
+  std::ostringstream oss;
+
+  unsigned maxBefore=0;
+  unsigned maxAfter=0;
+
+  for (int i=0;i<m;++i) {
+    for (int j=0;j<n;++j){
+      oss.str("");
+      oss << (*this)[i][j];
+
+      values[i*n+j]=oss.str();
+      unsigned len=values[i*n+j].size();
+      unsigned p=values[i*n+j].find('.');
+
+      if (p==std::string::npos){
+        maxBefore=std::max(maxBefore, len);
+        // maxAfter remains the same
+      } else{
+	maxBefore=std::max(maxBefore, p);
+	maxAfter=std::max(maxAfter, len-p-1);
+      }
+    }
+  }
+
+  // increase maxlen if needed to accomodate
+  // the whole integral part
+  maxlen=std::max(maxlen,maxBefore);
+  // decrease the number of decimals,
+  // according to maxlen
+  maxAfter=std::min(maxAfter, maxlen-maxBefore-1);
+
+  for (int i=0;i<m;i++) {
+    for (int j=0;j<n;j++){
+      unsigned p=values[i*n+j].find('.');
+      s.setf(ios::right, ios::adjustfield);
+      s.width(maxBefore);
+      s <<values[i*n+j].substr(0,p);
+
+      if (maxAfter>0){
+        s <<'.';
+        s.setf(ios::left, ios::adjustfield);
+        s.width(maxAfter+1);
+        s<<values[i*n+j].substr(p+1,maxAfter);
+      }
+
+      s <<' ';
+    }
+    s <<std::endl;
+  }
+
+  int rv=maxBefore;
+  if (maxAfter>0)
+    rv+=(1+maxAfter);
+  return rv;
 }
 
 double
