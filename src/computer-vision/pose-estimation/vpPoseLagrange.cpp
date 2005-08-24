@@ -113,7 +113,8 @@ calculTranslation (vpMatrix &a, vpMatrix &b, int nl, int nc1,
 //  		sous la contrainte || x1 || = 1
 //  		ou A est de dimension nl x nc1 et B nl x nc2
 //*********************************************************************
-#define EPS 1.e-5
+
+//#define EPS 1.e-5
 
 static
 void
@@ -133,11 +134,16 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     vpMatrix bta ;  // B^T A
     bta = b.t()*a ;
 
-
-
-
     vpMatrix btb1 ;  // (B^T B)^(-1)
-    btb1 = btb.inverseByLU() ;
+
+    if (b.getRows() >= b.getCols()) btb1 = btb.inverseByLU() ;
+    else btb1 = btb.pseudoInverse();
+
+    if (DEBUG_LEVEL1)
+    {
+      cout << " BTB1 * BTB : " << endl << btb1*btb << endl;
+      cout << " BTB * BTB1 : " << endl << btb*btb1 << endl;
+   }
 
     vpMatrix r ;  // (B^T B)^(-1) B^T A
     r = btb1*bta ;
@@ -147,27 +153,45 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 
     e += ata ; // calcul E = A^T A - A^T B (B^T B)^(-1) B^T A
 
-    vpColVector sv ;
-    vpMatrix v ;
-    e.svd(x1,ata) ;// destructuf sur e
+    if (DEBUG_LEVEL1)
+    {
+      cout << " E :" << endl << e << endl;
+    }
+
+    //   vpColVector sv ;
+    //    vpMatrix v ;
+    e.svd(x1,ata) ;// destructif sur e
     // calcul du vecteur propre de E correspondant a la valeur propre min.
 
     /* calcul de SVmax	*/
-    double  svm = 0.0;
     imin = 0;
-    for (i=0;i<x1.getRows();i++)
-    {
-      if (x1[i] > svm) { svm = x1[i]; imin = i; }
-    }
-    svm *= EPS;	/* pour le rang	*/
+    // FC : Pourquoi calculer SVmax ??????
+    //     double  svm = 0.0;
+    //    for (i=0;i<x1.getRows();i++)
+    //    {
+    //      if (x1[i] > svm) { svm = x1[i]; imin = i; }
+    //    }
+    //    svm *= EPS;	/* pour le rang	*/
 
     for (i=0;i<x1.getRows();i++)
       if (x1[i] < x1[imin]) imin = i;
+
+    if (DEBUG_LEVEL1)
+    {
+      printf("SV(E) : %.15lf %.15lf %.15lf\n",x1[0],x1[1],x1[2]);
+      cout << " i_min " << imin << endl;
+    }
 
     for (i=0;i<x1.getRows();i++)
       x1[i] = ata[i][imin];
 
     x2 = - (r*x1) ; // X_2 = - (B^T B)^(-1) B^T A X_1
+
+    if (DEBUG_LEVEL1)
+    {
+      cout << " X1 : " <<  x1.t() << endl;
+      cout << " V : " << endl << ata << endl;
+    }
   }
   catch(...)
   {
@@ -179,6 +203,7 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 
 }
 
+//#undef EPS
 
 /*!
   \brief  Compute the pose using Lagrange approach
