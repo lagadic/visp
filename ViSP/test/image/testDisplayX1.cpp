@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX1.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testDisplayX1.cpp,v 1.2 2005-08-24 16:38:31 fspindle Exp $
  *
  * Description
  * ============
@@ -95,8 +95,9 @@ main()
   vpDisplay::getImage(I,Iaug) ;
   vpImageIo::writePPM(Iaug,"images-res/DisplayX1.Klimt-augmented.ppm") ;
 
+  cout << "\nA click to close the windows..." << endl;
   vpDisplay::getClick(I) ;
-  vpDisplay::flush(I) ;
+  vpDisplay::close(I);
 }
 
 /*
