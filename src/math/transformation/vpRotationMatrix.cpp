@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRotationMatrix.cpp,v 1.5 2005-07-21 14:55:04 obourqua Exp $
+ *  $Id: vpRotationMatrix.cpp,v 1.6 2005-08-24 15:11:14 chaumett Exp $
  *
  * Description
  * ============
@@ -45,6 +45,7 @@
 // Debug trace
 #include <visp/vpDebug.h>
 
+#define DEBUG_LEVEL1 0
 
 /*!
   \class vpRotationMatrix
@@ -390,7 +391,11 @@ vpRotationMatrix::printVector()
   cout << endl ;
 }
 
-#define MINIMUM 0.0001
+
+#ifdef MINIMUM
+#undef MINIMUM
+#endif
+#define MINIMUM 0.00001  // now useless
 
 /*
   \relates vpRotationMatrix
@@ -407,38 +412,86 @@ vpRotationMatrix::printVector()
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 {
-
   int i,j;
-  double sinu,cosi,mcosi,u[3],ang;
+  double theta, si, co, sinc, mcosc;
+  vpRotationMatrix R;
 
-  ang = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-  if (ang > MINIMUM)
+  theta = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+  si = sin(theta);
+  co = cos(theta);
+  sinc = vpMath::sinc(si,theta);
+  mcosc = vpMath::mcosc(co,theta);
+
+  R[0][0] = co + mcosc*v[0]*v[0];
+  R[0][1] = -sinc*v[2] + mcosc*v[0]*v[1];
+  R[0][2] = sinc*v[1] + mcosc*v[0]*v[2];
+  R[1][0] = sinc*v[2] + mcosc*v[1]*v[0];
+  R[1][1] = co + mcosc*v[1]*v[1];
+  R[1][2] = -sinc*v[0] + mcosc*v[1]*v[2];
+  R[2][0] = -sinc*v[1] + mcosc*v[2]*v[0];
+  R[2][1] = sinc*v[0] + mcosc*v[2]*v[1];
+  R[2][2] = co + mcosc*v[2]*v[2];
+
+  for (i=0;i<3;i++) for (j=0;j<3;j++) (*this)[i][j] = R[i][j];
+
+  if (DEBUG_LEVEL1)  // test new version wrt old version
   {
-    for (i=0;i<3;i++) u[i] = v[i]/ang;
-    sinu = sin(ang);
-    cosi = cos(ang);
-    mcosi = 1-cosi;
-    (*this)[0][0] = cosi + mcosi*u[0]*u[0];
-    (*this)[0][1] = -sinu*u[2] + mcosi*u[0]*u[1];
-    (*this)[0][2] = sinu*u[1] + mcosi*u[0]*u[2];
-    (*this)[1][0] = sinu*u[2] + mcosi*u[1]*u[0];
-    (*this)[1][1] = cosi + mcosi*u[1]*u[1];
-    (*this)[1][2] = -sinu*u[0] + mcosi*u[1]*u[2];
-    (*this)[2][0] = -sinu*u[1] + mcosi*u[2]*u[0];
-    (*this)[2][1] = sinu*u[0] + mcosi*u[2]*u[1];
-    (*this)[2][2] = cosi + mcosi*u[2]*u[2];
-  }
-  else
-  {
+    // old version
+    vpRotationMatrix R_old; // has to be replaced by (*this) if good version
+    double sinu,cosi,mcosi,u[3],ang;
+
+    ang = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+    if (ang > MINIMUM)
+    {
+      for (i=0;i<3;i++) u[i] = v[i]/ang;
+      sinu = sin(ang);
+      cosi = cos(ang);
+      mcosi = 1-cosi;
+      R_old[0][0] = cosi + mcosi*u[0]*u[0];
+      R_old[0][1] = -sinu*u[2] + mcosi*u[0]*u[1];
+      R_old[0][2] = sinu*u[1] + mcosi*u[0]*u[2];
+      R_old[1][0] = sinu*u[2] + mcosi*u[1]*u[0];
+      R_old[1][1] = cosi + mcosi*u[1]*u[1];
+      R_old[1][2] = -sinu*u[0] + mcosi*u[1]*u[2];
+      R_old[2][0] = -sinu*u[1] + mcosi*u[2]*u[0];
+      R_old[2][1] = sinu*u[0] + mcosi*u[2]*u[1];
+      R_old[2][2] = cosi + mcosi*u[2]*u[2];
+    }
+    else
+    {
+      for (i=0;i<3;i++)
+      {
+        for(j=0;j<3;j++) R_old[i][j] = 0.0;
+        R_old[i][i] = 1.0;
+      }
+    }
+    // end old version
+    // test the new version
+
+    int pb = 0;
     for (i=0;i<3;i++)
     {
-      for(j=0;j<3;j++) (*this)[i][j] = 0.0;
-      (*this)[i][i] = 1.0;
+      for(j=0;j<3;j++)
+        if (fabs(R_old[i][j] - R[i][j]) > 1.e-4) pb = 1;
     }
+    if (pb == 1)
+    {
+      printf("vpRotationMatrix::buildFrom(const vpThetaUVector &v)\n");
+      cout << " theta " << theta << endl;
+      cout << " R : " << endl << R << endl;
+      cout << " R_old : " << endl << R_old << endl;
+    }
+
   }
+  // end test
   return *this ;
 }
-#undef MINIMUM
+#undef ANG_MIN_SINC
+#undef ANG_MIN_MC
+#undef SINC
+#undef MCOSC
+
+#undef MINIMUM  // now useless
 
 /*!
   \brief   Transform a vector reprensenting the euler angle
