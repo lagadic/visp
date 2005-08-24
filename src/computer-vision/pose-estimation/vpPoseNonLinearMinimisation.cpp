@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseNonLinearMinimisation.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: vpPoseNonLinearMinimisation.cpp,v 1.2 2005-08-24 15:53:02 chaumett Exp $
  *
  * Description
  * ============
@@ -47,16 +47,18 @@ void
 vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 {
   try{
-    // points du modele exprimes dans le repere de la camera
-    vpPoint cP ;
 
     double  residu_1 = 1e8 ;
     double r =1e8-1;
-    // on arete le processus iteratif quand l'erreur est constante
+
+     // on arete le processus iteratif quand l'erreur est constante
     // a 1e-8 pres
-    while((int)((residu_1 - r)*1e33) !=0)
+    while((int)((residu_1 - r)*1e12) !=0)
     {
-      residu_1 = r ;
+      //       cout << "----------------------------" << endl;
+      //       cout << cMo << endl ;
+
+       residu_1 = r ;
       vpMatrix L;  // matrice d'interaction
       vpColVector error ; // vecteur d'erreur
 
@@ -66,14 +68,32 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       while (!listP.outside())
       {
 
-	vpFeaturePoint point ;
+	double xi,yi,xp,yp;
+	vpColVector err(2);
+
+       	vpFeaturePoint point ;
 	P = listP.value() ;
 	vpFeatureBuilder::create(point,P) ;
+
+	xi = point.get_x();  /* point measured in the image */
+	yi = point.get_y();
+
+	//	cout << "measured point : " << xi << " " << yi << endl;
+
 	// Calcul de la projection du modele 3D pour la pose cMo
 	// changement de repere
 	// projection perspective
 	P.track(cMo) ;
 
+	xp = P.get_x();  /* point projected from cMo */
+	yp = P.get_y();
+
+	//	cout << "projected point : " << xp << " " << yp << endl;
+
+	err[0] = xp-xi;
+	err[1] = yp-yi;
+
+	point.set_xyZ(xp,yp,P.get_Z());
 	// calcul de la matrice d'interaction pour un point
 	vpMatrix H ;
 	H = point.interaction() ;
@@ -81,19 +101,22 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 	// on empile les matrice d'interaction et l'erreur pour former
 	// la matrice d'interaction globale et le vecteur d'erreur
 
-	{
 	  L =  vpMatrix::stackMatrices(L,H) ;
-	  error = vpMatrix::stackMatrices(error, point.get_s() - P.p) ;
-	}
+	  //        error = vpMatrix::stackMatrices(error, -(point.get_s() - P.p)) ;
+      	  error = vpMatrix::stackMatrices(error, err) ;
 
-	//   exit(1) ;
 	listP.next() ;
 
       }
+      // 	cout << L << endl;
+      // 	cout << "error : " << error.t() <<endl;
 
       // calcul du residu
       r = error.sumSquare() ;
-      if (r>residu_1) break ;
+
+      // cout << "residu : " << r << endl;
+
+      // FC      if (r>residu_1) break ;
 
       // calcul de la pseudo inverse de la matrice d'interaction
       vpMatrix Lp ;
@@ -103,9 +126,14 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       vpColVector v ;
       v = -lambda*Lp*error ;
 
-      // mise a jour de la pose
-      cMo = cMo.expMap(-v) ;
+      //  cout << "v : " << v.t() << endl;
 
+      // mise a jour de la pose
+      cMo = cMo.expMap(v) ;
+
+      //  cout << cMo << endl ;
+      //      int in;
+      //      scanf("%d", &in);
     }
   }catch(...)
   {
