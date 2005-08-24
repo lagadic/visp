@@ -4,14 +4,14 @@
  * www  : http://www.irisa.fr/lagadic
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:     testDisplay1.cpp
+ * File:     testDisplayX1.cpp
  * Project:   ViSP2
  * Author:    Eric Marchand
  *
  * Version control
  * ===============
  *
- *  $Id: testDisplayX1.cpp,v 1.2 2005-08-24 16:38:31 fspindle Exp $
+ *  $Id: testDisplayX1.cpp,v 1.3 2005-08-24 16:42:33 fspindle Exp $
  *
  * Description
  * ============
@@ -29,7 +29,7 @@
 #include <visp/vpDisplayX.h>
 
 /*!
-  \example testDisplay1.cpp
+  \example testDisplayX1.cpp
 
   \brief
    read a pgm image
