@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpMatrix.h,v 1.2 2005-08-24 16:27:06 fspindle Exp $
  *
  * Description
  * ============
@@ -53,7 +53,8 @@ using namespace std ;
 
   \ingroup libmath
 
-  \sa vpRowVector, vpColVector, vpMatrixHomogeneous
+  \sa vpRowVector, vpColVector, vpHomogeneousMatrix, vpRotationMatrix,
+  vpTwistMatrix, vpHomography
 */
 class vpMatrix
 {
@@ -114,9 +115,7 @@ public:
   //---------------------------------
   friend ostream &operator << (ostream &s,const vpMatrix &m);
 
-  //! Print the size of the matrix
-  void print() { cout << getRows() << "x" << getCols() << endl ; }
-
+  int print(std::ostream& s, unsigned maxlen);
   //---------------------------------
   // Copy / assigment
   //---------------------------------
