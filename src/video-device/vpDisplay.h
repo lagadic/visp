@@ -200,6 +200,8 @@ public:
   //! flushes the output buffer
   static void flush(vpImage<vpRGBa> &I) ;
 
+  //! Close a display
+  static void close(vpImage<vpRGBa> &I) ;
 
   /* Simple interface with the mouse event */
 public:
