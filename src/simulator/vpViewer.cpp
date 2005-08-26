@@ -49,12 +49,18 @@ vpViewer::actualRedraw(void)
 
 }
 
+/*!
 
+\param x : width
+\param y : height
+
+*/
 void
 vpViewer::resize(int x, int y)
 {
   SbVec2s size(x,y) ;
-  setGlxSize(size) ;
+  //  setGlxSize(size) ;
+  setSize(size) ;
 }
 
 SbBool
