@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMeterPixelConversion.cpp,v 1.2 2005-06-28 13:26:11 marchand Exp $
+ *  $Id: vpMeterPixelConversion.cpp,v 1.3 2005-08-26 12:57:57 fspindle Exp $
  *
  * Description
  * ============
@@ -39,8 +39,8 @@ vpMeterPixelConversion::convertPoint(const vpCameraParameters &cam,
 				     double &u, double &v)
 
 {
-  u = x * cam.px + cam.u0 ;
-  v = y * cam.py + cam.v0 ;
+  u = x * cam.get_px() + cam.get_u0() ;
+  v = y * cam.get_py() + cam.get_v0() ;
 }
 //! line coordinates conversion (rho,theta)
 void
@@ -50,8 +50,8 @@ vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
 {
 
 
-  double u0 = cam.u0 ;  double v0 = cam.v0 ;
-  double px = cam.px ;  double py = cam.py ;
+  double u0 = cam.get_u0() ;  double v0 = cam.get_v0() ;
+  double px = cam.get_px() ;  double py = cam.get_py() ;
 
 
   double co = cos(theta_m) ;

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpCameraParameters.h,v 1.1.1.1 2005-06-08 07:08:13 fspindle Exp $
+ *  $Id: vpCameraParameters.h,v 1.2 2005-08-26 12:57:57 fspindle Exp $
  *
  * Description
  * ============
@@ -82,37 +82,34 @@
 
 */
 
-#define  VISP_DEFAULT_CAMERA_U0 192
-#define  VISP_DEFAULT_CAMERA_V0 144
-
-#define  VISP_DEFAULT_CAMERA_PX 600
-#define  VISP_DEFAULT_CAMERA_PY 600
-
-#define  VISP_DEFAULT_CAMERA_COL 300
-#define  VISP_DEFAULT_CAMERA_LIG 200
-
 
 class vpCameraParameters
 {
 public:
+  static const double DEFAULT_U0_PARAMETER;
+  static const double DEFAULT_V0_PARAMETER;
+  static const double DEFAULT_PX_PARAMETER;
+  static const double DEFAULT_PY_PARAMETER;
+  static const double DEFAULT_KD_PARAMETER;
+
+private:
   double px, py ; //!< pixel size
 
   double u0,v0 ;  //!<  principal point
   double kd;	  //!<  Radial distortion
 
-  int nlig, ncol ;
 public:
   vpCameraParameters() ;
   vpCameraParameters(const vpCameraParameters &) ;
   vpCameraParameters(const double _px, const double _py,
 		     const double _u0, const double _v0,
-		     const double _kd = 0) ;
+		     const double _kd = vpCameraParameters::DEFAULT_KD_PARAMETER) ;
 
   void init() ;
   void init(const vpCameraParameters &c) ;
   void init(const double _px, const double _py,
 	   const double _u0, const double _v0,
-	   const double _kd = 0) ;
+	   const double _kd = vpCameraParameters::DEFAULT_KD_PARAMETER) ;
 
 
   ~vpCameraParameters() ;
@@ -131,11 +128,11 @@ public:
 
   vpCameraParameters& operator =(const vpCameraParameters& f) ;
 
-  inline double get_px() { return px ; }
-  inline double get_py() { return py ; }
-  inline double get_u0() { return u0 ; }
-  inline double get_v0() { return v0 ; }
-  inline double get_kd() { return kd ; }
+  inline double get_px() const { return px ; }
+  inline double get_py() const { return py ; }
+  inline double get_u0() const { return u0 ; }
+  inline double get_v0() const{ return v0 ; }
+  inline double get_kd() const{ return kd ; }
 
 } ;
 
