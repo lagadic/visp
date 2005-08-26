@@ -197,8 +197,8 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 	double    x11 = x + ce *x1 - se *y1 ;
 	double    y11 = y + se *x1 + ce *y1 ;
 
-	x1=x11*cam.px +cam.u0 ;
-	y1=y11*cam.py +cam.v0 ;
+	x1=x11*cam.get_px() + cam.get_u0() ;
+	y1=y11*cam.get_py() + cam.get_v0() ;
 
 	if (i>1) vpDisplay::displayLine(I,
 					(int)y1, (int)x1,
