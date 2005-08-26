@@ -1,8 +1,9 @@
 @build_mk@
 
 
-SOURCES		= test_rotation.cpp test_matrix_exception.cpp test_svd.cpp \
-	test_robust.cpp test_matrix.cpp
+SOURCES		=\
+		test_rotation.cpp test_matrix_exception.cpp test_svd.cpp \
+		test_robust.cpp test_matrix.cpp test_colvector.cpp
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
 
