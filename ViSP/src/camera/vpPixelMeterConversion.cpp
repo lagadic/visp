@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPixelMeterConversion.cpp,v 1.3 2005-06-28 13:26:11 marchand Exp $
+ *  $Id: vpPixelMeterConversion.cpp,v 1.4 2005-08-26 12:57:57 fspindle Exp $
  *
  * Description
  * ============
@@ -43,20 +43,20 @@ vpPixelMeterConversion::convertPoint(const vpCameraParameters &cam,
 				     double &x, double &y)
 {
 
-  if (fabs(cam.px)<1e-6)
+  if (fabs(cam.get_px())<1e-6)
   {
     ERROR_TRACE("Camera parameter px = 0") ;
     throw(vpException(vpException::divideByZeroError,
 		      "Camera parameter px = 0")) ;
   }
-  if (fabs(cam.py)<1e-6)
+  if (fabs(cam.get_py())<1e-6)
   {
     ERROR_TRACE("Camera parameter py = 0") ;
     throw(vpException(vpException::divideByZeroError,
 		      "Camera parameter px = 0")) ;
   }
-  x = (u - cam.u0)/cam.px ;
-  y = (v - cam.v0)/cam.py ;
+  x = (u - cam.get_u0() )/cam.get_px() ;
+  y = (v - cam.get_v0() )/cam.get_py() ;
 }
 //! line coordinates conversion (rho,theta)
 void
@@ -65,8 +65,8 @@ vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
 				    double &rho_m, double &theta_m)
 {
 
-  double u0 = cam.u0 ;  double v0 = cam.v0 ;
-  double px = cam.px ;  double py = cam.py ;
+  double u0 = cam.get_u0() ;  double v0 = cam.get_v0() ;
+  double px = cam.get_px() ;  double py = cam.get_py() ;
 
   double co = cos(theta_p) ;
   double si = sin(theta_p) ;
@@ -93,10 +93,10 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
   long double m[order][order];
   int p, r, q, t;
   int k;
-  double yc = -cam.v0 ;
-  double xc = -cam.u0 ;
-  double my = 1/cam.py ;
-  double mx = 1/cam.px ;
+  double yc = -cam.get_v0() ;
+  double xc = -cam.get_u0() ;
+  double my = 1.0 / cam.get_py() ;
+  double mx = 1.0 / cam.get_px() ;
 
 
   for (k=0; k<order; k++) // itération correspondant à l'ordre du moment

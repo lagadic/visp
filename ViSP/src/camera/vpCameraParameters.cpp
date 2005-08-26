@@ -27,6 +27,11 @@
 
 #include <visp/vpCameraParameters.h>
 
+const double vpCameraParameters::DEFAULT_U0_PARAMETER = 192.0;
+const double vpCameraParameters::DEFAULT_V0_PARAMETER = 144.0;
+const double vpCameraParameters::DEFAULT_PX_PARAMETER = 600.0;
+const double vpCameraParameters::DEFAULT_PY_PARAMETER = 600.0;
+const double vpCameraParameters::DEFAULT_KD_PARAMETER = 0.0;
 
 /*!
   basic constructor
@@ -53,16 +58,13 @@ void
 vpCameraParameters::init()
 {
 
-  u0 = VISP_DEFAULT_CAMERA_U0 ;
-  v0 = VISP_DEFAULT_CAMERA_V0 ;
+  u0 = DEFAULT_U0_PARAMETER ;
+  v0 = DEFAULT_V0_PARAMETER ;
 
-  px = VISP_DEFAULT_CAMERA_PX ;
-  py = VISP_DEFAULT_CAMERA_PY ;
+  px = DEFAULT_PX_PARAMETER ;
+  py = DEFAULT_PY_PARAMETER ;
 
-  ncol =  VISP_DEFAULT_CAMERA_COL ;
-  nlig =  VISP_DEFAULT_CAMERA_LIG ;
-
-  kd = 0 ;
+  kd = DEFAULT_KD_PARAMETER ;
 
   computeMatrix()  ;
 }
@@ -124,12 +126,12 @@ void
 vpCameraParameters::computeMatrix()
 {
   K.resize(3,3) ;
-  K = 0 ;
+  K = 0.0 ;
   K[0][0] = px ;
   K[1][1] = py ;
   K[0][2] = u0 ;
   K[1][2] = v0 ;
-  K[2][2] = 1 ;
+  K[2][2] = 1.0 ;
 }
 
 
@@ -139,9 +141,6 @@ vpCameraParameters::computeMatrix()
 vpCameraParameters&
 vpCameraParameters::operator=(const vpCameraParameters& cam)
 {
-
-  nlig = cam.nlig ;
-  ncol = cam.ncol ;
 
   u0 = cam.u0 ;
   v0 = cam.v0 ;
