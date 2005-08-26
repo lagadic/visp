@@ -223,6 +223,11 @@ createCameraObject (const double zoomFactor = 1.0)
 void
 vpSimulator::init()
 {
+  internal_width = 200;
+  internal_height= 200;
+  external_width = 200;
+  external_height= 200;
+
   mainWindowInitialized = false ;
   internalView = NULL ;
   externalView = NULL ;
@@ -334,8 +339,10 @@ vpSimulator::setZoomFactor (const double zoom)
 
 
 void
-vpSimulator::initInternalViewer(int , int)
+vpSimulator::initInternalViewer(int width, int height)
 {
+  internal_width = width;
+  internal_height = height;
 
   if (mainWindowInitialized==false)
   {
@@ -359,7 +366,7 @@ vpSimulator::initInternalViewer(int , int)
   // Turn the viewer decorations
   internalView->setDecoration(false) ;
 
-  internalView->resize(200,200) ;
+  internalView->resize(width, height) ;
 
   // open the window
   internalView->show();
@@ -368,8 +375,11 @@ vpSimulator::initInternalViewer(int , int)
 
 
 void
-vpSimulator::initExternalViewer(int , int)
+vpSimulator::initExternalViewer(int width, int height)
 {
+
+  external_width = width;
+  external_height = height;
 
   if (mainWindowInitialized==false)
   {
@@ -385,7 +395,7 @@ vpSimulator::initExternalViewer(int , int)
   // set the title
   externalView->setTitle("External View") ;
 
-
+  externalView->resize(width, height) ;
 
   // open the window
   externalView->show();
@@ -397,20 +407,18 @@ vpSimulator::initExternalViewer(int , int)
 
 
 void
-vpSimulator::setCameraParameters(vpCameraParameters &_cam)
+vpSimulator::setInternalCameraParameters(vpCameraParameters &_cam)
 {
   internalCameraParameters = _cam ;
 
 
-  double px = _cam.px;
-  double py = _cam.py;
-  double width = _cam.ncol;
-  double height = _cam.nlig;
-  double v=height/(2*py);
+  double px = _cam.get_px();
+  double py = _cam.get_py();
+  double v  = internal_height/(2*py);
 
   internalCamera->ref() ;
   internalCamera->heightAngle = 2*atan(v);
-  internalCamera->aspectRatio=(width/height)*(px/py);
+  internalCamera->aspectRatio=(internal_width/internal_height)*(px/py);
   internalCamera->nearDistance = 0.001 ;
 
   internalCamera->farDistance = 1000;
@@ -423,15 +431,13 @@ vpSimulator::setExternalCameraParameters(vpCameraParameters &_cam)
   SoPerspectiveCamera *camera ;
   camera  = (SoPerspectiveCamera *)this->externalView->getCamera() ;
 
-  double px = _cam.px;
-  double py = _cam.py;
-  double width = _cam.ncol;
-  double height = _cam.nlig;
-  double v=height/(2*py);
+  double px = _cam.get_px();
+  double py = _cam.get_py();
+  double v  = external_height/(2*py);
 
   camera->ref() ;
   camera->heightAngle = 2*atan(v);
-  camera->aspectRatio=(width/height)*(px/py);
+  camera->aspectRatio=(external_width/external_height)*(px/py);
   camera->nearDistance = 0.001 ;
 
   camera->farDistance = 1000;
