@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpColVector.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpColVector.h,v 1.2 2005-08-26 08:33:33 fspindle Exp $
  *
  * Description
  * ============
@@ -104,7 +104,7 @@ public:
   //! normalise the vector
   vpColVector &normalize() ;
   //! normalise the vector
-  vpColVector &normalize(vpColVector &x) const ;
+  //  vpColVector &normalize(vpColVector &x) const ;
 
   //! compute the cross product of two vectors C = a x b
   static vpColVector cross(const vpColVector &a, const vpColVector &b)  ;
