@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpColVector.cpp,v 1.2 2005-06-28 13:25:07 marchand Exp $
+ *  $Id: vpColVector.cpp,v 1.3 2005-08-26 08:33:33 fspindle Exp $
  *
  * Description
  * ============
@@ -382,12 +382,12 @@ vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
   {\bf x}_i = \frac{{\bf x}_i}{\sqrt{\sum_{i=1}^{n}x^2_i}}
   \f]
 */
-vpColVector &vpColVector::normalize(vpColVector &x) const
-{
-  x = x/sqrt(x.sumSquare());
+// vpColVector &vpColVector::normalize(vpColVector &x) const
+// {
+//   x = x/sqrt(x.sumSquare());
 
-  return x;
-}
+//   return x;
+// }
 
 
 /*!
@@ -401,10 +401,12 @@ vpColVector &vpColVector::normalize(vpColVector &x) const
 vpColVector &vpColVector::normalize()
 {
 
-
   double sum = sumSquare() ;
-  *this /= sum ;
 
+  if (sum != 0.0)
+    *this /= sqrt(sum) ;
+
+  // If sum = 0, we have a nul vector. So we return just.
   return *this;
 }
 
