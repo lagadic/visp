@@ -173,8 +173,8 @@ main(int argc, char ** argv)
   vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
 
   vpSimulator simu ;
-  simu.initInternalViewer(10,10) ;
-  simu.initExternalViewer(10,10) ;
+  simu.initInternalViewer(300, 300) ;
+  simu.initExternalViewer(300, 300) ;
 
   vpTime::wait(1000) ;
   simu.setZoomFactor(0.2) ;
@@ -182,7 +182,7 @@ main(int argc, char ** argv)
   simu.load("iv/4points.iv") ;
   // simu.load("tie.iv",fMo) ;
   //  simu.load("/local/modeles-3D/starwars/jabbaTheHutt3DS/jabba.iv") ;
-  simu.setCameraParameters(cam) ;
+  simu.setInternalCameraParameters(cam) ;
   simu.initApplication(&mainLoop) ;
 
   simu.mainLoop() ;
