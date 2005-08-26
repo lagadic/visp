@@ -108,6 +108,11 @@ public:
   //----------------------------------------------------
   // scene description
 private:
+  int internal_width;
+  int internal_height;
+  int external_width;
+  int external_height;
+
   //! root node of the scene : contains everything except stuff specific to
   //! each view
   SoSeparator *scene;
@@ -173,7 +178,7 @@ public:
   //! modify the position of the camera in the scene graph
   void moveInternalCamera(vpHomogeneousMatrix &cMf) ;
   //! set internal camera parameters
-  void setCameraParameters(vpCameraParameters &cam) ;
+  void setInternalCameraParameters(vpCameraParameters &cam) ;
   //! set external camera parameters
   void setExternalCameraParameters(vpCameraParameters &cam) ;
   //! get the external camera position
@@ -201,7 +206,7 @@ public:
     return bufferView;
   }
 
-  //! get the size of the internal view 
+  //! get the size of the internal view
   void getSizeInternalView(int& width, int& height);
 
   //! get the intrinsic parameters of the camera
