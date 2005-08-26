@@ -140,7 +140,8 @@ vpDisplay::displayCircle(vpImage<unsigned char> &I,
   try
   {
     if (I.display != NULL)
-    {(I.display)->displayCircle(i,j,r,col) ;
+    {
+      (I.display)->displayCircle(i,j,r,col) ;
     }
   }
   catch(...)
@@ -529,7 +530,7 @@ void vpDisplay::displayPoint(vpImage<vpRGBa> &I,
   {
     if (I.display != NULL)
     {
-      (I.display)->displayPoint(I,i,j,col) ;
+      (I.display)->displayPoint(i,j,col) ;
     }
   }
   catch(...)
@@ -550,7 +551,7 @@ void vpDisplay::displayCross(vpImage<vpRGBa> &I,
   {
     if (I.display != NULL)
     {
-      (I.display)->displayCross(I,i,j,size,col) ;
+      (I.display)->displayCross(i,j,size,col) ;
     }
   }
   catch(...)
@@ -571,7 +572,7 @@ vpDisplay::displayCrossLarge(vpImage<vpRGBa> &I,
   {
     if (I.display != NULL)
     {
-      (I.display)->displayCrossLarge(I,i,j,size,col) ;
+      (I.display)->displayCrossLarge(i,j,size,col) ;
     }
   }
   catch(...)
