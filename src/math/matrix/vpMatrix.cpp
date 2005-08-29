@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.6 2005-08-24 16:27:06 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.7 2005-08-29 08:49:46 fspindle Exp $
  *
  * Description
  * ============
@@ -1309,8 +1309,8 @@ ostream &operator <<(ostream &s,const vpMatrix &m)
 
   Pretty print a matrix. The data are tabulated.
 
-  \param maxlen The length of the columns for the printing
-  \return Returns the maximum lenght of the matrix elements
+  \param maxlen The width of each column for the printing
+  \return Returns the maximum width of the matrix elements
 
   \sa vpMatrix::print(), ostream &operator <<(ostream &s,const vpMatrix &m)
 */
@@ -1360,10 +1360,15 @@ vpMatrix::print(std::ostream& s, unsigned maxlen)
       s <<values[i*n+j].substr(0,p);
 
       if (maxAfter>0){
-        s <<'.';
         s.setf(ios::left, ios::adjustfield);
-        s.width(maxAfter+1);
-        s<<values[i*n+j].substr(p+1,maxAfter);
+        if (p!=std::string::npos){
+          s <<'.';
+          s.width(maxAfter);
+          s <<values[i*n+j].substr(p+1,maxAfter);
+        } else{
+          s.width(maxAfter+1);
+          s <<".0";
+        }
       }
 
       s <<' ';
