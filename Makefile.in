@@ -145,7 +145,7 @@ html-doc:
 	cd doc; doxygen config-doxygen
 
 lib-link:
-	rm -f $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
+	rm -f $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).a
 	ln -s $(LIB) $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).a
 
 FORCE:
