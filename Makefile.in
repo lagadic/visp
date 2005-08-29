@@ -146,6 +146,6 @@ html-doc:
 
 lib-link:
 	rm -f $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
-	ln -s $(LIB) $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
+	ln -s $(LIB) $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).a
 
 FORCE:
