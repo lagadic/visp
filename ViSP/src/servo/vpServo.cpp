@@ -426,6 +426,8 @@ vpServo::computeError()
     vpBasicFeature *desired_s ;
 
     error.resize(0) ;
+    s.resize(0);
+    sStar.resize(0);
 
     for (featureList.front(),
 	   desiredFeatureList.front(),
