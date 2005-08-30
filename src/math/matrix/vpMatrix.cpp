@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.7 2005-08-29 08:49:46 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.8 2005-08-30 08:17:03 fspindle Exp $
  *
  * Description
  * ============
@@ -1308,9 +1308,15 @@ ostream &operator <<(ostream &s,const vpMatrix &m)
 /*!
 
   Pretty print a matrix. The data are tabulated.
+  The common widths before and after the decimal point
+  are set with respect to the parameter maxlen.
 
-  \param maxlen The width of each column for the printing
-  \return Returns the maximum width of the matrix elements
+  \param length
+    The suggested width of each matrix element.
+    The actual width grows in order to accomodate the whole integral part,
+    and shrinks if the whole extent is not needed for all the numbers.
+  \return
+    Returns the common total width for all matrix elements
 
   \sa vpMatrix::print(), ostream &operator <<(ostream &s,const vpMatrix &m)
 */
