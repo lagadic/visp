@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMath.cpp,v 1.2 2005-08-24 15:13:26 chaumett Exp $
+ *  $Id: vpMath.cpp,v 1.3 2005-08-31 16:22:13 fspindle Exp $
  *
  * Description
  * ============
@@ -35,20 +35,27 @@
 /*
   \class vpMath
 
-  \brief Provides simple Math computation that are not available in
+  \brief Provides simple math computation that are not available in
   the C mathematics library (math.h)
 
   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */
 
-//!  factorial of x
+/*!
+  Compute factorial.
+
+  \return !x
+*/
 long double vpMath::fact(int x)
 {
     if ( (x == 1) || (x == 0)) return 1;
     return x * fact(x-1);
 }
 
-/*! calcul de combinaison
+/*!
+  Combinaison computation.
+
+  \return \f$ !n / (!(n-p) !p) \f$
  */
 long double vpMath::comb(int n, int p)
 {
@@ -57,12 +64,12 @@ long double vpMath::comb(int n, int p)
 }
 
 
-//! x power ex
-double vpMath::exp(double x, int ex)
-{
-    return pow(x, ex);
-}
+/*!
+  Round x to the nearest integer.
 
+  \return Nearest integer of x.
+
+*/
 int vpMath::round(const double x)
 {
     if (sign(x) > 0)
@@ -77,6 +84,12 @@ int vpMath::round(const double x)
     }
 }
 
+/*!
+  Return the sign of x.
+
+  \return -1 if x is negative, +1 if positive.
+
+*/
 int vpMath::sign(double x)
 {
     if (fabs(x) < 1e-15) return 0 ;else
@@ -85,21 +98,45 @@ int vpMath::sign(double x)
     }
 }
 
+/*!
+
+  Return the maximum value of x or y.
+
+  \return max(x,y)
+*/
 double vpMath::max(const double x, const double y)
 {
     if (x>y) return x ; else return y ;
 }
 
+/*!
+
+  Return the minimum value of x or y.
+
+  \return min(x,y)
+*/
 double vpMath::min(const double x, const double y)
 {
     if (x>y) return y ; else return x ;
 }
 
+/*!
+
+  Return the maximum value of x or y.
+
+  \return max(x,y)
+*/
 int vpMath::max(const int x, const int y)
 {
     if (x>y) return x ; else return y ;
 }
 
+/*!
+
+  Return the minimum value of x or y.
+
+  \return min(x,y)
+*/
 int vpMath::min(const int x, const int y)
 {
     if (x>y) return y ; else return x ;
@@ -109,54 +146,81 @@ int vpMath::min(const int x, const int y)
 #endif
 #define ANG_MIN_SINC 1e-8
 
+/*!
+
+  Compute sinus cardinal \f$ \frac{sin(x)}{x} \f$.
+
+  \param x Value of x.
+
+  \return Sinus cardinal.
+
+*/
 double vpMath::sinc(double x)
 {
   if (fabs(x) < ANG_MIN_SINC) return 1.0 ;
   else  return sin(x)/x ;
 }
 /*!
-Compute sinus cardinal.
 
-\arg si sin(x)
-\arg x x
+  Compute sinus cardinal \f$ sinx / x \f$.
+
+  \param sinx Value of sin(x).
+  \param x Value of x.
+
+  \return Sinus cardinal.
 
 */
-double vpMath::sinc(double si, double x)
+double vpMath::sinc(double sinx, double x)
 {
   if (fabs(x) < ANG_MIN_SINC) return 1.0 ;
-  else  return (si/x) ;
+  else  return (sinx/x) ;
 }
 #undef ANG_MIN_SINC
-/*!
-Compute (1-cos(x))/x^2
 
-\arg co cos(x)
-\arg x x
-
-*/
 #ifdef ANG_MIN_MC // used also in vpRotationMatrix.cpp
 #undef ANG_MIN_MC
 #endif
 #define ANG_MIN_MC 2.5e-4
-double vpMath::mcosc(double co, double x)
+/*!
+  Compute \f$ (1-cos(x))/x^2 \f$
+
+  \param cosx Value of cos(x).
+  \param x Value of x.
+
+  \return \f$ (1-cosx)/x^2 \f$
+
+*/
+double vpMath::mcosc(double cosx, double x)
 {
   if (fabs(x) < ANG_MIN_MC) return 0.5 ;
-  else  return ((1.0-co)/x/x) ;
+  else  return ((1.0-cosx)/x/x) ;
 }
 
 /*!
-Compute (1-sinc(x))/x^2
 
-\arg si sin(x)
-\arg x x
+  Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sinx / x \f$.
 
-*/double vpMath::msinc(double si, double x)
+  \param sinx value of sin(x).
+  \param x  Value of x.
+
+  \return \f$ (1-sinc(x))/x^2 \f$
+
+*/
+double vpMath::msinc(double sinx, double x)
 {
   if (fabs(x) < ANG_MIN_MC) return (1./6.0) ;
-  else  return ((1.0-si/x)/x/x) ;
+  else  return ((1.0-sinx/x)/x/x) ;
 }
 #undef ANG_MIN_MC
 
+/*!
+
+  Exchange two numbers.
+
+  \param a First number to exchange.
+  \param b Second number to exchange
+
+*/
 void vpMath::swap(double &a, double &b)
 {
   double tmp = a ;
@@ -164,6 +228,15 @@ void vpMath::swap(double &a, double &b)
   b = tmp ;
 }
 
+/*!
+
+  Exchange two numbers.
+
+  \param a First number to exchange.
+  \param b Second number to exchange
+
+
+*/
 void vpMath::swap(int &a, int &b)
 {
   int tmp = a ;
@@ -171,31 +244,6 @@ void vpMath::swap(int &a, int &b)
   b = tmp ;
 }
 
-/*!
-  \brief Calcul de l'arctangente atan(y/x)
-*/
-
-double
-vpMath::atan2(double y,double x)
-{
-  double xx,yy,zz;
-  xx = fabs(x);yy = fabs(y);
-
-  if (xx > 0.0001) zz = atan(yy/xx);
-  else zz = M_PI/2;
-
-  if(y >= 0.0)
-  {
-    if(x >=0.0) zz = zz;
-    else zz = M_PI - zz;
-  }
-  else
-  {
-    if(x >=0.0) zz =  - zz;
-    else zz = zz - M_PI;
-  }
-  return(zz);
-}
 
 /*
  * Local variables:
