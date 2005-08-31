@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMath.h,v 1.2 2005-08-24 15:13:26 chaumett Exp $
+ *  $Id: vpMath.h,v 1.3 2005-08-31 16:22:13 fspindle Exp $
  *
  * Description
  * ============
@@ -52,54 +52,58 @@ class vpMath
 {
 
 public:
-  //! convert radian in degre
-    static double deg(double rad) { return (rad*180.0)/M_PI ; }
+  /*!
+    Convert radian in degrees.
 
-  //! convert degre in radian
-   static double rad(double deg) { return (deg*M_PI)/180.0 ; }
+    \param rad Angle in radian.
+    \return Angle converted in degrees
+  */
+  static double deg(double rad) { return (rad*180.0)/M_PI ; }
 
-  //! compute square
-   static double sqr(double x) { return x*x ; }
+  /*!
+    Convert degrees in radian.
+    \param deg Angle in degrees.
+    \return Angle converted in radian.
+  */
 
-  //!  factorial of x
-   static long double fact(int x) ;
+  static double rad(double deg) { return (deg*M_PI)/180.0 ; }
 
-  //! calcul de combinaison
-   static long double comb(int n, int p) ;
+  /*!
+    Compute x square value.
+    \return \f$ x^2 \f$.
+  */
+  static double sqr(double x) { return x*x ; }
 
-  //! exponential computation
-   static  double exp(double x, int ex) ;
+  //  factorial of x
+  static long double fact(int x) ;
 
-  //!   round x to the nearest integer
+  // combinaison
+  static long double comb(int n, int p) ;
+
+  //   round x to the nearest integer
   static int round(const double x) ;
 
-  //!   return the sign of x (+-1)
-   static int sign(double x) ;
+  //   return the sign of x (+-1)
+  static int sign(double x) ;
 
-  //! max of two numbers
-   static  double max(const double x,const  double y) ;
-  //! min of two numbers
-   static double min(const double x, const double y) ;
+  // max of two numbers
+  static  double max(const double x,const  double y) ;
+  // min of two numbers
+  static double min(const double x, const double y) ;
 
-  //! max of two numbers
-   static  int max(const int x, const int y) ;
-  //! min of two numbers
-   static int min(const int x,const  int y) ;
+  // max of two numbers
+  static  int max(const int x, const int y) ;
+  // min of two numbers
+  static int min(const int x,const  int y) ;
 
-  //! sinus cardinal
+  // sinus cardinal
   static double sinc(double x) ;
-  static double sinc(double si, double x) ;
-  static double mcosc(double co, double x) ;
-  static double msinc(double si, double x) ;
+  static double sinc(double sinx, double x) ;
+  static double mcosc(double cosx, double x) ;
+  static double msinc(double sinx, double x) ;
 
-   static void swap(double &a, double &b) ;
-   static void swap(int &a, int &b) ;
-
-  //! Calcul de l'arctangente atan(y/x)
-  static double atan2(double y,double x) ;
-
-
-
+  static void swap(double &a, double &b) ;
+  static void swap(int &a, int &b) ;
 };
 #endif
 
