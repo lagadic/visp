@@ -22,7 +22,7 @@ computeTheta(double &theta, vpColVector &K, double i, double j)
   double A = 2*i+2*K[1]*j + 2*K[2] ;
   double B = 2*K[0]*j + 2*K[1]*i + 2*K[3];
 
-  theta =  vpMath::atan2(A,B) ; //tangente
+  theta = atan2(A,B) ; //tangente
 
   while (theta > M_PI) { theta -= M_PI ; }
   while (theta < 0) { theta += M_PI ; }

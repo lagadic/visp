@@ -45,8 +45,8 @@ computeDelta(double &delta, int i1, int j1, int i2, int j2)
   double B = i1-i2 ;
   double A = j1-j2 ;
 
-  delta =  vpMath::atan2(B,A) ;
-  delta -= M_PI/2 ;
+  delta =  atan2(B,A) ;
+  delta -= M_PI/2.0 ;
   normalizeAngle(delta) ;
 
 }
@@ -326,7 +326,7 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
   cout << "x "<< x.t() ;
 
   // mise a jour du delta
-  delta = vpMath::atan2(a,b) ;
+  delta = atan2(a,b) ;
 
   normalizeAngle(delta) ;
 
@@ -495,7 +495,7 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
 
   //  TRACE("ai+bj+c %f %f %f",a,b,c) ;
   // mise a jour du delta
-  delta = vpMath::atan2(a,b) ;
+  delta = atan2(a,b) ;
 
   normalizeAngle(delta) ;
 
@@ -518,7 +518,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,int i1,int j1, int i2, int j2)
       PExt[1].ifloat = i2 ;
       PExt[1].jfloat = j2 ;
 
-      double angle =  vpMath::atan2(i1-i2,j1-j2) ;
+      double angle = atan2((double)(i1-i2),(double)(j1-j2)) ;
       a = cos(angle) ;
       b = sin(angle) ;
 
@@ -853,7 +853,7 @@ void
 vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
 {
   rho = -c ;
-  theta =  vpMath::atan2(a,b) ;
+  theta = atan2(a,b) ;
 
   /*  while(theta < -M_PI)	theta += 2*M_PI ;
   while(theta >= M_PI)	theta -= 2*M_PI ;
@@ -990,7 +990,7 @@ vpMeLine::getRho() const
 double
 vpMeLine::getTheta() const
 {
-  //  double theta =  vpMath::atan2(a,b) ;
+  //  double theta =  atan2(a,b) ;
   return theta ;
 }
 
