@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPixelMeterConversion.cpp,v 1.4 2005-08-26 12:57:57 fspindle Exp $
+ *  $Id: vpPixelMeterConversion.cpp,v 1.5 2005-08-31 16:24:47 fspindle Exp $
  *
  * Description
  * ============
@@ -111,7 +111,7 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
 	    {
 	      m[p][q] +=
 		vpMath::comb(p, r) * vpMath::comb(q, t)
-		* vpMath::exp(xc, p-r) * vpMath::exp(yc, q-t)
+		* pow(xc, p-r) * pow(yc, q-t)
 		* moment_pixel[r][t];
 
 	    }
@@ -124,7 +124,7 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
       for (q=0; q<order; q++)
 	if (p+q==k)
 	{
-	  m[p][q] *= vpMath::exp(mx,1+p) * vpMath::exp(my,1+q);
+	  m[p][q] *= pow(mx,1+p) * pow(my,1+q);
 	}
 
   for (k=0; k<order; k++) // itération correspondant à l'ordre du moment
