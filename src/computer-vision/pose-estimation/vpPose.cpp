@@ -168,7 +168,7 @@ vpPose::coplanaire()
   {
     /*   listP.front() ;
     while (!listP.outside())
-      { 
+      {
 	P1 = listP.value() ;
 	P1.print() ;
 	listP.next() ;
@@ -262,6 +262,12 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 {
   if (DEBUG_LEVEL1)
     cout << "begin vpPose::ComputePose()" << endl ;
+  if (npt <4)
+  {
+    ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+    throw(vpPoseException(vpPoseException::notEnoughPointError,
+			  "No enough point ")) ;
+  }
 
   switch (methode)
   {
