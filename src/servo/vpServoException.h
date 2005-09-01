@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServoException.h,v 1.2 2005-06-28 12:52:55 marchand Exp $
+ *  $Id: vpServoException.h,v 1.3 2005-09-01 11:45:19 marchand Exp $
  *
  * Description
  * ============
@@ -55,6 +55,8 @@ public:
     {
       //! feature list or desired feature list is empty
       noFeatureError,
+      //! no degree of freedom is available (secondary task)
+      noDofFree,
       //! other exception
       servoError
     } ;
