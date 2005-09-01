@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServo.h,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpServo.h,v 1.2 2005-09-01 11:45:48 marchand Exp $
  *
  * Description
  * ============
@@ -63,6 +63,8 @@ public:
   vpColVector error ;
   //! task Jacobian  J1 = L cVa aJe
   vpMatrix J1 ;
+  //! pseudo inverse of the Jacobian
+  vpMatrix J1p ;
 
   //! current state
   vpColVector s ;
@@ -180,7 +182,8 @@ public:
       PSEUDO_INVERSE
     } ;
   //! set the type of the interaction matrox (current, mean, desired, user)
-  void setInteractionMatrixType(const int interactionMatrixType, const int interactionMatrixInversion = PSEUDO_INVERSE) ;
+  void setInteractionMatrixType(const int interactionMatrixType,
+				const int interactionMatrixInversion=PSEUDO_INVERSE) ;
 
   //! create a new ste of  two visual features
   void addFeature(vpBasicFeature& s, vpBasicFeature& s_star,
@@ -203,12 +206,24 @@ public:
   //! compute the desired control law
   vpColVector computeControlLaw() ;
 
+
+private:
+  //! projection operators WpW
+  vpMatrix WpW ;
+  //! projection operators I-WpW
+  vpMatrix I_WpW ;
+
+public:
+  //! add a secondary task
+  vpColVector SecondaryTask(vpColVector &de2dt) ;
+  //! add a secondary task
+  vpColVector SecondaryTask(vpColVector &e2, vpColVector &de2dt) ;
+
+public:
   //! get the task dimension
   int getDimension() ;
 
-  /*
-    gain
-  */
+  /*    gain  */
 private:
   //! gain
   double lambda ;

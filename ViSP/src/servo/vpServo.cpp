@@ -387,6 +387,7 @@ vpServo::computeInteractionMatrix()
 
     dim_task = L.getRows() ;
 
+
     interactionMatrixComputed = true ;
   }
   catch(vpException me)
@@ -541,8 +542,20 @@ vpServo::testUpdated()
 /*!
   \brief compute the desired control law
 
-  \note
-*/
+  Compute the control law according to the equation:
+  \f[
+  -\lambda {\bf W^+W\widehat J_s^+(s-s^*)}
+  \f]
+  of
+  \f[
+  -\lambda {\bf\widehat J_s^+(s-s^*)}
+  \f]
+  if the task the dimension of the task is equal to number of availble degrees of freedom (in that case \f${\bf W^+W = I}\f$)
+
+  in this equation Js is function of the interaction matrix and of the robot
+  Jacobian. It is also build according to the chosen configuration eye-in-hand
+  or eye-to-hand (see vpServo::setServo method)
+ */
 vpColVector
 vpServo::computeControlLaw()
 {
@@ -617,14 +630,53 @@ vpServo::computeControlLaw()
     J1 *= signInteractionMatrix ;
 
     // pseudo inverse of the task Jacobian
-    vpMatrix J1p ;
+    // and rank of the task Jacobian
+    // the image of J1 is also computed to allows the computation
+    // of the projection operator
+    vpMatrix imJ1t, imJ1 ;
+    bool imageComputed = false ;
+
     if (inversionType==PSEUDO_INVERSE)
-      rankJ1 = J1.pseudoInverse(J1p,1e-6) ; // rank of the task Jacobian
+    {
+      vpColVector sv ;
+      rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t) ;
+
+      imageComputed = true ;
+    }
     else
       J1p = J1.t() ;
 
-    e1 = J1p*error ;// primary task
+    if (rankJ1 == L.getCols())
+    {
+      /* if no degrees of freedom remains (rank J1 = ndof)
+	 WpW = I, multiply by WpW is useless
+       */
+      e1 = J1p*error ;// primary task
+    }
+    else
+    {
+      if (imageComputed!=true)
+      {
+	vpMatrix Jtmp ;
+	vpColVector sv ;
+	// image of J1 is computed to allows the computation
+	// of the projection operator
+	rankJ1 = J1.pseudoInverse(Jtmp,sv, 1e-6, imJ1, imJ1t) ;
+	imageComputed = true ;
+      }
+	WpW = imJ1t*imJ1t.t() ;
 
+#ifdef DEBUG
+	cout << "rank J1 " << rankJ1 <<endl ;
+	cout << "imJ1t"<<endl  << imJ1t ;
+	cout << "imJ1"<<endl  << imJ1 ;
+
+	cout << "WpW" <<endl <<WpW  ;
+	cout << "J1" <<endl <<J1  ;
+	cout << "J1p" <<endl <<J1p  ;
+#endif
+	e1 = WpW*J1p*error ;
+    }
     e = -lambda* e1 ;
 
   }
@@ -644,6 +696,98 @@ vpServo::computeControlLaw()
   iteration++ ;
   return e ;
 }
+
+
+/*!
+  compute the secondary task according to the projection operator
+
+  see equation (7) of the IEEE RA magazine, dec 2005 paper.
+
+  compute the vector
+  \f[
+  + ({\bf I-W^+W})\frac{\partial {\bf e_2}}{\partial t}
+  \f]
+  to be added to the primary task
+  \f[
+  -\lambda {\bf W^+W\widehat J_s^+(s-s^*)}
+  \f]
+  which is computed using the vpServo::computeControlLaw method
+
+  \warning the projection operator \f$ \bf W^+W \f$ is computed in
+  vpServo::computeControlLaw which must be called prior to this function.
+
+  \sa vpServo::computeControlLaw
+*/
+vpColVector
+vpServo::SecondaryTask(vpColVector &de2dt)
+{
+  if (rankJ1 == L.getCols())
+  {
+     ERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
+     throw(vpServoException(vpServoException::noDofFree,
+			    "no degree of freedom is free, cannot use secondary task")) ;
+  }
+  else
+  {
+    vpColVector sec ;
+    vpMatrix I ;
+
+    I.resize(J1.getCols(),J1.getCols()) ;
+    I.setIdentity() ;
+    I_WpW = (I - WpW) ;
+
+    //    cout << "I-WpW" << endl << I_WpW <<endl ;
+    sec = I_WpW*de2dt ;
+
+    return sec ;
+  }
+}
+
+/*!
+  compute the secondary task according to the projection operator.
+  see equation (7) of the IEEE RA magazine, dec 2005 paper.
+
+  compute the vector
+  \f[
+-\lambda ({\bf I-W^+W}) {\bf e_2} +  ({\bf I-W^+W})\frac{\partial {\bf e_2}}{\partial t}
+  \f]
+  to be added to the primary task
+  \f[
+  -\lambda {\bf W^+W\widehat J_s^+(s-s^*)}
+  \f]
+  which is computed using the vpServo::computeControlLaw method
+
+  \warning the projection operator \f$ \bf W^+W \f$ is computed in
+  vpServo::computeControlLaw which must be called prior to this function.
+
+  \sa vpServo::computeControlLaw
+*/
+vpColVector
+vpServo::SecondaryTask(vpColVector &e2, vpColVector &de2dt)
+{
+  if (rankJ1 == L.getCols())
+  {
+     ERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
+     throw(vpServoException(vpServoException::noDofFree,
+			    "no degree of freedom is free, cannot use secondary task")) ;
+  }
+  else
+  {
+    vpColVector sec ;
+    vpMatrix I ;
+
+    I.resize(J1.getCols(),J1.getCols()) ;
+    I.setIdentity() ;
+
+    I_WpW = (I - WpW) ;
+
+    sec = -lambda*I_WpW*e2 + I_WpW *de2dt ;
+
+    return sec ;
+  }
+}
+
+
 /*
  * Local variables:
  * c-basic-offset: 2
