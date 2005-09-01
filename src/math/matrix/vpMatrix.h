@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.2 2005-08-24 16:27:06 fspindle Exp $
+ *  $Id: vpMatrix.h,v 1.3 2005-09-01 11:46:57 marchand Exp $
  *
  * Description
  * ============
@@ -266,6 +266,12 @@ public:
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank and the singular value
   int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double seuil=1e-6) const ;
+  //! Compute the pseudo inverse of the matrix using the SVD.
+  //! return the rank and the singular value, image
+  int pseudoInverse(vpMatrix &Ap,
+		    vpColVector &sv, double seuilvp,
+		    vpMatrix &ImAt,
+		    vpMatrix &ImA) const ;
   //! Compute the pseudo inverse of the matrix using the SVD.
   vpMatrix pseudoInverse(double seuil=1e-6)  const;
 
