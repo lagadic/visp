@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX1.cpp,v 1.3 2005-08-24 16:42:33 fspindle Exp $
+ *  $Id: testDisplayX1.cpp,v 1.4 2005-09-02 14:20:21 fspindle Exp $
  *
  * Description
  * ============
@@ -98,6 +98,28 @@ main()
   cout << "\nA click to close the windows..." << endl;
   vpDisplay::getClick(I) ;
   vpDisplay::close(I);
+
+  TRACE("-------------------------------------");
+  vpImage<vpRGBa> Irgba ;
+
+  vpImageIo::readPGM(Irgba,"images/Klimt.pgm") ;
+  char name[100];
+
+  sprintf(name, "Visualisation image : Klimt.ppm");
+  vpDisplayX displayRGBa(Irgba,100,100,name);
+  vpDisplay::display(Irgba) ;
+
+  cout << "\nA click to display a point..." << endl;
+
+  vpDisplay::getClick(Irgba);
+  vpDisplay::displayCross(Irgba,50,50,15,vpColor::red);
+
+  cout << "flush the display" << endl;
+  vpDisplay::flush(Irgba);
+
+  cout << "\nA click to exit the program..." << endl;
+  vpDisplay::getClick(Irgba) ;
+  cout << "Bye" << endl;
 }
 
 /*
