@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.11 2005-09-02 14:05:29 marchand Exp $
+ *  $Id: vpMatrix.cpp,v 1.12 2005-09-02 16:04:39 nmansard Exp $
  *
  * Description
  * ============
@@ -53,9 +53,6 @@
 
 // Debug trace
 #include <visp/vpDebug.h>
-
-// Debug trace
-#include <visp/vpConfig.h>
 
 #define DEBUG_LEVEL1 1
 
@@ -1149,20 +1146,6 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
   return rank ;
 }
 
-/*
-vpMatrix
-vpMatrix::ker(vpMatrix &A)
-{
-}
-
-
-vpMatrix
-vpMatrix::ker(vpMatrix &imA, vpMatrix& imAt)
-{
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////
 
 /*!
   \brief  Return the ith rows of the matrix
@@ -1218,7 +1201,7 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
   }
   catch(vpMatrixException me)
   {
-    ctrace ;
+    CERROR ;
     throw ;
   }
 
@@ -1429,6 +1412,50 @@ vpMatrix::det33(const vpMatrix &M)
   return(detint);
 
 }
+
+
+
+
+
+
+
+/*!
+  \return the norm if the matrix is initialized, 0 otherwise
+  \sa infinityNorm
+*/
+double 
+vpMatrix::euclidianNorm () const
+{
+  double norm=0.0;
+  double x ;
+  for (int i=0;i<dsize;i++)
+    { x = *(data +i); norm += x*x;  }
+  
+  return norm;
+}
+
+
+
+/*!
+  \return the norm if the matrix is initialized, 0 otherwise
+  \sa euclidianNorm
+*/
+double  
+vpMatrix::infinityNorm () const
+{
+  double norm=0.0;
+  double x ;
+  for (int i=0;i<dsize;i++)
+    {
+      x = fabs (*(data + i)) ;
+      if (x > norm) { norm = x; }
+    }
+  
+  return norm;
+}
+
+
+
 
 #undef DEBUG_LEVEL1
 /*
