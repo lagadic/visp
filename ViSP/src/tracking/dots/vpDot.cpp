@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.6 2005-07-18 12:42:11 fspindle Exp $
+ *  $Id: vpDot.cpp,v 1.7 2005-09-02 14:01:10 marchand Exp $
  *
  * Description
  * ============
@@ -318,6 +318,10 @@ vpDot::initTracking(vpImage<unsigned char>& I, int i, int j)
 
 /*!
   track and get the new dot coordinates
+
+  \warning the image is modified (all the pixel that belong to the point
+  are set to black.
+
 */
 void
 vpDot::track(vpImage<unsigned char> &I)
