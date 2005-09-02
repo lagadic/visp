@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServoData.cpp,v 1.2 2005-09-02 14:14:48 marchand Exp $
+ *  $Id: vpServoData.cpp,v 1.3 2005-09-02 14:37:25 marchand Exp $
  *
  * Description
  * ============
@@ -68,11 +68,28 @@ vpServoData::open(const char *directory)
 
 }
 
+void vpServoData::setCmDeg()
+{
+  cmDeg = true ;
+}
+void vpServoData::setMeterRad()
+{
+  cmDeg = false ;
+}
 void vpServoData::save(const vpServo &task)
 {
-  velocityFile << task.q_dot.t() ;
+  if (cmDeg==false) velocityFile << task.q_dot.t() ;
+  else
+  {
+    for (int i=0 ; i < 3 ; i++)
+      velocityFile <<  task.q_dot[i]*100 <<" " ;
+    for (int i=4 ; i < 6 ; i++)
+      velocityFile <<  vpMath::deg(task.q_dot[i]) <<" " ;
+    velocityFile << endl ;
+  }
   errorFile << task.error.t() ;
   errorNormFile << task.error.sumSquare() << endl ;
+  vNormFile << task.q_dot.sumSquare() << endl ;
 
   sFile <<task.s.t() ;
   sStarFile << task.sStar.t();

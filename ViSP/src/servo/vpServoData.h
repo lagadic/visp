@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServoData.h,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpServoData.h,v 1.2 2005-09-02 14:37:25 marchand Exp $
  *
  * Description
  * ============
@@ -48,6 +48,11 @@ private:
   ofstream errorNormFile ;
   ofstream sFile ;
   ofstream sStarFile ;
+  ofstream vNormFile ;
+
+  //! flag to known if velocity should be output in cm and degrees (true)
+  //! or in m/rad
+  bool cmDeg ;
 
 
 
@@ -55,6 +60,11 @@ public:
 
 
   ~vpServoData() ;
+
+  //! velocity output in cm and deg
+  void setCmDeg() ;
+  //! velocity output in meter and deg (default)
+  void setMeterRad() ;
 
   void save(const vpServo &task) ;
   void open(const char *baseDirectory) ;
