@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServoData.cpp,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpServoData.cpp,v 1.2 2005-09-02 14:14:48 marchand Exp $
  *
  * Description
  * ============
@@ -54,6 +54,10 @@ vpServoData::open(const char *directory)
     errorFile.open(s)  ;
     sprintf(s,"%s/errornorm.dat",directory) ;
     errorNormFile.open(s)  ;
+    sprintf(s,"%s/s.dat",directory) ;
+    sFile.open(s)  ;
+    sprintf(s,"%s/sStar.dat",directory) ;
+    sStarFile.open(s)  ;
 
   }
   catch(...)
