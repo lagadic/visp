@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpBasicFeature.h,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpBasicFeature.h,v 1.2 2005-09-02 08:45:13 aremazei Exp $
  *
  * Description
  * ============
@@ -85,7 +85,7 @@ public:
   vpColVector get_s() const;
 
   //! get the feature dimension
-  int getDimension(int select=FEATURE_ALL) ;
+  int getDimension(int select=FEATURE_ALL) const;
   //! compute the interaction matrix from a subset a the possible features
   virtual vpMatrix interaction(const int select = FEATURE_ALL) const = 0;
   //! compute the error between two visual features from a subset
