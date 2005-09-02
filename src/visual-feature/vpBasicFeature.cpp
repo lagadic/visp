@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpBasicFeature.cpp,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpBasicFeature.cpp,v 1.2 2005-09-02 08:43:52 aremazei Exp $
  *
  * Description
  * ============
@@ -44,7 +44,7 @@ vpBasicFeature::vpBasicFeature()
 
 //! get the feature dimension
 int
-vpBasicFeature::getDimension(int select)
+vpBasicFeature::getDimension(int select) const
 {
     int dim = 0 ;
     for (int i=0 ; i < s.getRows() ; i++)
