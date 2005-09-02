@@ -42,6 +42,8 @@
 
 */
 
+#include <visp/vpConfig.h>
+#ifdef HAVE_LIBX11
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1870,3 +1872,4 @@ void vpDisplayX::displayCircle(int i, int j, int r, int c)
    }
 }
 
+#endif // HAVE_LIBX11

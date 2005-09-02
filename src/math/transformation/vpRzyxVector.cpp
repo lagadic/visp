@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRzyxVector.cpp,v 1.3 2005-07-19 13:03:39 obourqua Exp $
+ *  $Id: vpRzyxVector.cpp,v 1.4 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -23,7 +23,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <math.h>
-#include <vpRzyxVector.h>
+#include <visp/vpRzyxVector.h>
 
 /*!
   \file vpRzyxVector.cpp

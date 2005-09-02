@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpLine.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpLine.cpp,v 1.2 2005-09-02 14:35:18 fspindle Exp $
  *
  * Description
  * ============
@@ -54,20 +54,20 @@ vpLine::vpLine()
 
 //! set the line world coordinates
 void
-vpLine::setWorldCoordinates(const double _A1, const double _B1,
-			    const double _C1, const double _D1,
-			    const double _A2, const double _B2,
-			    const double _C2, const double _D2)
+vpLine::setWorldCoordinates(const double &A1, const double &B1,
+			    const double &C1, const double &D1,
+			    const double &A2, const double &B2,
+			    const double &C2, const double &D2)
 {
-  oP[0] = _A1 ;
-  oP[1] = _B1 ;
-  oP[2] = _C1 ;
-  oP[3] = _D1 ;
+  oP[0] = A1 ;
+  oP[1] = B1 ;
+  oP[2] = C1 ;
+  oP[3] = D1 ;
 
-  oP[4] = _A2 ;
-  oP[5] = _B2 ;
-  oP[6] = _C2 ;
-  oP[7] = _D2 ;
+  oP[4] = A2 ;
+  oP[5] = B2 ;
+  oP[6] = C2 ;
+  oP[7] = D2 ;
 }
 
 

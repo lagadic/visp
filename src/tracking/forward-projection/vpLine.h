@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpLine.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpLine.h,v 1.2 2005-09-02 14:35:18 fspindle Exp $
  *
  * Description
  * ============
@@ -81,8 +81,8 @@ public:
 public:
 
   //! set the line coordinates
-  void setRho(const double _rho) {  p[0] = _rho ; }
-  void setTheta(const double _theta) {  p[1] = _theta ;}
+  void setRho(const double _rho) {  p[0] = _rho ; };
+  void setTheta(const double _theta) {  p[1] = _theta ;};
 
   //! get the line -coordinates
   double getTheta()   const {  return p[1] ; }
@@ -90,10 +90,10 @@ public:
 
 
   //! set the line world coordinates
-  void setWorldCoordinates(const double _A1, const double _B1,
-			   const double _C1, const double _D1,
-			   const double _A2, const double _B2,
-			   const double _C2, const double _D2) ;
+  void setWorldCoordinates(const double &A1, const double &B1, 
+	  const double &C1, const double &D1,
+	  const double &A2, const double &B2, 
+	  const double &C2, const double &D2) ;
   //! set the line world coordinates from two planes
   void setWorldCoordinates(const vpColVector &_oP1,
 			   const vpColVector &_oP2) ;

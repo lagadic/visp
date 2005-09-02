@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRotationVector.cpp,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpRotationVector.cpp,v 1.2 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -21,7 +21,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <math.h>
-#include <vpRotationVector.h>
+#include <visp/vpRotationVector.h>
 
 /*!
   \file vpRotationVector.cpp

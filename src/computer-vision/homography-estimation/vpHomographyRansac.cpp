@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomographyRansac.cpp,v 1.1 2005-06-28 08:14:55 marchand Exp $
+ *  $Id: vpHomographyRansac.cpp,v 1.2 2005-09-02 14:35:16 fspindle Exp $
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -132,8 +132,11 @@ vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 {
   int i ;
   int n = x.getRows()/4 ;
-  vpColVector pa[n] ;
-  vpColVector pb[n] ;
+  vpColVector *pa;
+  vpColVector *pb;
+
+  pa = new vpColVector [n];
+  pb = new vpColVector [n];
 
   for( i=0 ; i < n ; i++)
   {
@@ -169,6 +172,9 @@ vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 
     d[i] = sqrt((pa[i] - Hpb ).sumSquare()) ;
   }
+
+  delete [] pa;
+  delete [] pb;
 
   return 0 ;
 }

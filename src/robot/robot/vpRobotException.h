@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotException.h,v 1.2 2005-06-28 12:55:19 marchand Exp $
+ *  $Id: vpRobotException.h,v 1.3 2005-09-02 14:35:18 fspindle Exp $
  *
  * Description
  * ============
@@ -33,10 +33,11 @@
    \brief error that can be emited by the vpRobot class and its derivates
  */
 /* Classes standards. */
-using namespace std;
 #include <iostream>                /* Classe ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpException.h>
+
+using namespace std;
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */

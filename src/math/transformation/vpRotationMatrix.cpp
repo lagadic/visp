@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRotationMatrix.cpp,v 1.6 2005-08-24 15:11:14 chaumett Exp $
+ *  $Id: vpRotationMatrix.cpp,v 1.7 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -224,7 +224,7 @@ bool
 vpRotationMatrix::isARotationMatrix() const
 {
   int i,j ;
-  int isRotation = true ;
+  bool isRotation = true ;
 
   // test R^TR = Id ;
   vpRotationMatrix RtR = (*this).t()*(*this) ;

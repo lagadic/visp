@@ -34,11 +34,11 @@ vpHomography::HartleyNormalization(int n,
 				   double &xg, double &yg,
 				   double &coef)
 {
-
+  int i;
   xg = 0 ;
   yg = 0 ;
 
-  for (int i =0 ; i < n ; i++)
+  for (i =0 ; i < n ; i++)
   {
     xg += x[i] ;
     yg += y[i] ;
@@ -49,7 +49,7 @@ vpHomography::HartleyNormalization(int n,
   //Changement d'origine : le centre de gravité doit correspondre
   // à l'origine des coordonnées
   double distance=0;
-  for(int i=0; i<n;i++)
+  for(i=0; i<n;i++)
   {
     double xni=x[i]-xg;
     double yni=y[i]-yg;
@@ -66,7 +66,7 @@ vpHomography::HartleyNormalization(int n,
   else
     coef=sqrt(2.0)/distance;
 
-  for(int i=0; i<n;i++)
+  for(i=0; i<n;i++)
   {
     xn[i] *= coef;
     yn[i] *= coef;
@@ -133,8 +133,10 @@ vpHomography::HartleyDLT(int n,
   // code_retour =InitialData(n, p1,p2);
 
   // normalize points
-  double xbn[n] ;
-  double ybn[n] ;
+  double *xbn;
+  double *ybn;
+  xbn = new double [n];
+  ybn = new double [n];
 
   double xg1, yg1, coef1 ;
   HartleyNormalization(n,
@@ -142,8 +144,11 @@ vpHomography::HartleyDLT(int n,
 		       xbn,ybn,
 		       xg1, yg1,coef1);
 
-  double xan[n] ;
-  double yan[n] ;
+  double *xan;
+  double *yan;
+  xan = new double [n];
+  yan = new double [n];
+
   double xg2, yg2, coef2 ;
   vpHomography::HartleyNormalization(n,
 		       xa,ya,
@@ -156,6 +161,11 @@ vpHomography::HartleyDLT(int n,
 
   //H dénormalisée
   vpHomography::HartleyDenormalization(aHbn,aHb,xg1,yg1,coef1,xg2,yg2, coef2);
+
+  delete [] xbn;
+  delete [] ybn;
+  delete [] xan;
+  delete [] yan;
 
   }
   catch(...)
@@ -247,9 +257,10 @@ void vpHomography::DLT(int n,
     vpColVector h(9);
     vpColVector D(9);
     vpMatrix V(9,9);
+	int i, j;
 
     // build matrix A
-    for(int i=0; i<n;i++)
+    for(i=0; i<n;i++)
     {
 
       A[2*i][0]=0;
@@ -284,7 +295,7 @@ void vpHomography::DLT(int n,
     // on en profite pour effectuer un controle sur le rang de la matrice :
     // pas plus de 2 valeurs singulières quasi=0
     int rank=0;
-    for(int i = 0; i<9;i++) if(D[i]>1e-7) rank++;
+    for(i = 0; i<9;i++) if(D[i]>1e-7) rank++;
     if(rank <7)
     {
      TRACE(" le rang est de : %d, shoud be 8", rank);
@@ -296,16 +307,16 @@ void vpHomography::DLT(int n,
     // singular value... we seek for the smallest
     double smallestSv = 1e30 ;
     int indexSmallestSv  = 0 ;
-    for (int i=0 ; i < 9 ; i++)
+    for (i=0 ; i < 9 ; i++)
       if ((D[i] < smallestSv) ){ smallestSv = D[i] ;indexSmallestSv = i ; }
 
 
     h=V.column(indexSmallestSv+1);
 
     // build the homography
-    for(int i =0;i<3;i++)
+    for(i =0;i<3;i++)
     {
-      for(int j=0;j<3;j++)
+      for(j=0;j<3;j++)
 	aHb[i][j]=h[3*i+j];
     }
 

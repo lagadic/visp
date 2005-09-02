@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPixelMeterConversion.cpp,v 1.5 2005-08-31 16:24:47 fspindle Exp $
+ *  $Id: vpPixelMeterConversion.cpp,v 1.6 2005-09-02 14:35:16 fspindle Exp $
  *
  * Description
  * ============
@@ -90,14 +90,13 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
 				      vpMatrix &moment_meter)
 {
 
-  long double m[order][order];
+  vpMatrix m(order, order);
   int p, r, q, t;
   int k;
   double yc = -cam.get_v0() ;
   double xc = -cam.get_u0() ;
   double my = 1.0 / cam.get_py() ;
   double mx = 1.0 / cam.get_px() ;
-
 
   for (k=0; k<order; k++) // itération correspondant à l'ordre du moment
   {
