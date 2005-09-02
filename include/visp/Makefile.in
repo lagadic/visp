@@ -89,7 +89,9 @@ IMAGE =  \
 	vpColor.h \
 	vpRGBa.h \
 	\
-	vpImageIo.h
+	vpImageIo.h \
+	\
+	vpImageTools.h
 
 VIDEODEVICE = \
 	vpDisplay.h \
