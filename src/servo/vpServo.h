@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServo.h,v 1.2 2005-09-01 11:45:48 marchand Exp $
+ *  $Id: vpServo.h,v 1.3 2005-09-02 14:01:30 marchand Exp $
  *
  * Description
  * ============
@@ -215,9 +215,9 @@ private:
 
 public:
   //! add a secondary task
-  vpColVector SecondaryTask(vpColVector &de2dt) ;
+  vpColVector secondaryTask(vpColVector &de2dt) ;
   //! add a secondary task
-  vpColVector SecondaryTask(vpColVector &e2, vpColVector &de2dt) ;
+  vpColVector secondaryTask(vpColVector &e2, vpColVector &de2dt) ;
 
 public:
   //! get the task dimension
