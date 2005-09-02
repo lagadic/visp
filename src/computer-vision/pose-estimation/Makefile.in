@@ -12,8 +12,8 @@ SOURCES		= \
 	vpPoseLowe.cpp \
 	vpPoseNonLinearMinimisation.cpp \
 	vpPoseRansac.cpp \
-	vpPoseException.cpp
-
+	vpPoseException.cpp \
+	vpLevenbergMarquartd.cpp
 
 
 .KEEP_STATE	:
