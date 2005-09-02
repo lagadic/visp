@@ -13,6 +13,8 @@ SOURCES		= \
 	vpImageIo.cpp \
 	vpImageIoPnm.cpp \
 	\
+	vpImageTools.cpp \
+	\
 	vpRGBa.cpp
 
 .KEEP_STATE	:

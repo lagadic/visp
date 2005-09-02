@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoSphereSecondaryTask.cpp,v 1.1 2005-09-01 11:43:23 marchand Exp $
+ *  $Id: testServoSphereSecondaryTask.cpp,v 1.2 2005-09-02 14:06:57 marchand Exp $
  *
  * Description
  * ============
@@ -134,7 +134,7 @@ main()
 
     cout << "de2dt :"<< de2dt.t() ;
     vpColVector sec ;
-    sec = task.SecondaryTask(de2dt) ;
+    sec = task.secondaryTask(de2dt) ;
     cout << " (I-WpW)de2dt :"<< sec.t() ;
 
     if (iter>20)  v += sec ;
