@@ -719,7 +719,7 @@ vpServo::computeControlLaw()
   \sa vpServo::computeControlLaw
 */
 vpColVector
-vpServo::SecondaryTask(vpColVector &de2dt)
+vpServo::secondaryTask(vpColVector &de2dt)
 {
   if (rankJ1 == L.getCols())
   {
@@ -763,7 +763,7 @@ vpServo::SecondaryTask(vpColVector &de2dt)
   \sa vpServo::computeControlLaw
 */
 vpColVector
-vpServo::SecondaryTask(vpColVector &e2, vpColVector &de2dt)
+vpServo::secondaryTask(vpColVector &e2, vpColVector &de2dt)
 {
   if (rankJ1 == L.getCols())
   {
