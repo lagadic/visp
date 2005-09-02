@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.3 2005-09-01 11:46:57 marchand Exp $
+ *  $Id: vpMatrix.h,v 1.4 2005-09-02 16:04:39 nmansard Exp $
  *
  * Description
  * ============
@@ -289,7 +289,19 @@ public:
 
     static double det33(const vpMatrix &P) ;
 
+
+
+  // -------------------------
+  // Norms
+  // -------------------------
+  
+  //! Euclidian norm ||x||=sqrt(sum(x_i))
+  double euclidianNorm () const;
+  //! Infinity norm ||x||=max(fabs(x_i))
+  double infinityNorm () const;
+
 };
+
 
 //////////////////////////////////////////////////////////////////////////
 
