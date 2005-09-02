@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX2.cpp,v 1.4 2005-08-24 16:42:33 fspindle Exp $
+ *  $Id: testDisplayX2.cpp,v 1.5 2005-09-02 14:20:21 fspindle Exp $
  *
  * Description
  * ============
@@ -93,6 +93,10 @@ main()
 			       "ViSP is a marvelous software",
 			       vpColor::blue) ;
 
+  cout << "\nA click to display a point..." << endl;
+
+  vpDisplay::getClick(I);
+  vpDisplay::displayCross(I, 50, 50, 3, vpColor::red);
 
   vpImage<vpRGBa> Iaug ;
   vpDisplay::getImage(I,Iaug) ;
