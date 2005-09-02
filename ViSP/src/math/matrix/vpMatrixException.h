@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrixException.h,v 1.2 2005-06-28 13:25:07 marchand Exp $
+ *  $Id: vpMatrixException.h,v 1.3 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -30,10 +30,11 @@
 
 
 /* Classes standards. */
-using namespace std;
+//using namespace std;
 #include <iostream>                /* Classe ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpException.h>
+using namespace std;
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */

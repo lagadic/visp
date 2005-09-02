@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpProjectionDisplay.cpp,v 1.1.1.1 2005-06-08 07:08:13 fspindle Exp $
+ *  $Id: vpProjectionDisplay.cpp,v 1.2 2005-09-02 14:35:18 fspindle Exp $
  *
  * Description
  * ============
@@ -25,6 +25,8 @@
   \brief interface with the image for feature display
 */
 
+#include <visp/vpConfig.h>
+#ifdef HAVE_LIBX11
 
 // Meter/pixel conversion
 #include <visp/vpCameraParameters.h>
@@ -165,6 +167,8 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
 			  vpColor::red) ;
 
 }
+
+#endif // HAVE_LIBX11
 
 /*
  * Local variables:

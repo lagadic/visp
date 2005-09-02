@@ -13,7 +13,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseRansac.cpp,v 1.1 2005-06-28 08:16:30 marchand Exp $
+ *  $Id: vpPoseRansac.cpp,v 1.2 2005-09-02 14:35:17 fspindle Exp $
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -123,7 +123,8 @@ vpPose::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
   int i ;
   int n = x.getRows()/5 ;
 
-  vpPoint p[n] ;
+  vpPoint *p;
+  p = new vpPoint [n] ;
   {
     //    firsttime=1 ;
     for( i=0 ; i < n ; i++)
@@ -148,6 +149,8 @@ vpPose::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
     p[i].projection(cP,xy) ;
     d[i] = sqrt(vpMath::sqr(x[5*i]-xy[0])+vpMath::sqr(x[5*i+1]-xy[1])) ;
   }
+
+  delete [] p;
 
   return 0 ;
 }
@@ -205,6 +208,7 @@ vpPose::ransac(const int n,
 
   int tms = vpTime::measureTimeMs() ;
   vpColVector data ;
+  int i;
   vpPose::initRansac(n,x,y,m,X,Y,Z, data) ;
 
   vpColVector M(16) ;
@@ -216,7 +220,7 @@ vpPose::ransac(const int n,
 
   // we count the number of inliers
   ninliers = 0 ;
-  for(int i=0 ; i < n*m ; i++)
+  for(i=0 ; i < n*m ; i++)
   {
     if (inliers[i]==1)
     {
@@ -231,7 +235,7 @@ vpPose::ransac(const int n,
   Zi.resize(ninliers) ;
 
   int k =0 ;
-  for(int i=0 ; i < n*m ; i++)
+  for(i=0 ; i < n*m ; i++)
   {
     if (inliers[i]==1)
     {
@@ -244,7 +248,7 @@ vpPose::ransac(const int n,
     }
   }
 
-  for (int i=0 ; i <16 ; i++)
+  for (i=0 ; i <16 ; i++)
   {
       cMo.data[i] = M[i];
   }
@@ -278,14 +282,20 @@ vpPose::ransac(const int n,
 {
 
 
-  double x[n], y[n] ;
-  for (int i=0 ; i < n ; i++)
+  double *x, *y;
+  x = new double [n];
+  y = new double [n] ;
+  int i;
+  for (i=0 ; i < n ; i++)
   {
     x[i] = p[i].get_x() ;
     y[i] = p[i].get_y() ;
   }
-  double X[m], Y[m],Z[m] ;
-  for (int i=0 ; i < m ; i++)
+  double *X, *Y, *Z;
+  X = new double [m];
+  Y = new double [m];
+  Z = new double [m];
+  for (i=0 ; i < m ; i++)
   {
     X[i] = P[i].get_oX() ;
     Y[i] = P[i].get_oY() ;
@@ -302,7 +312,7 @@ vpPose::ransac(const int n,
 	 cMo) ;
 
 
-  for(int i=0 ; i < ninliers ; i++)
+  for(i=0 ; i < ninliers ; i++)
   {
     vpPoint Pi ;
     Pi.setWorldCoordinates(Xi[i],Yi[i], Zi[i]) ;
@@ -310,6 +320,12 @@ vpPose::ransac(const int n,
     Pi.set_y(yi[i]) ;
     lPi += Pi ;
   }
+
+  delete [] x;
+  delete [] y;
+  delete [] X;
+  delete [] Y;
+  delete [] Z;
 }
 
 
@@ -338,7 +354,9 @@ vpPose::ransac(vpList<vpPoint> &lp,
   int n = lp.nbElement() ;
   int m = lP.nbElement() ;
 
-  double x[n], y[n] ;
+  double *x, *y;
+  x = new double [n];
+  y = new double [n];
 
   vpPoint pin ;
 
@@ -352,7 +370,10 @@ vpPose::ransac(vpList<vpPoint> &lp,
     i++ ;
   }
 
-  double X[m], Y[m],Z[m] ;
+  double *X, *Y, *Z;
+  X = new double [m];
+  Y = new double [m];
+  Z = new double [m];
   lP.front() ;
    i = 0 ;
   while(!lP.outside())
@@ -382,6 +403,14 @@ vpPose::ransac(vpList<vpPoint> &lp,
     Pi.set_y(yi[i]) ;
     lPi += Pi ;
   }
+
+
+  delete [] x;
+  delete [] y;
+  delete [] X;
+  delete [] Y;
+  delete [] Z;
+
 }
 
 

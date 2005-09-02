@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMath.cpp,v 1.3 2005-08-31 16:22:13 fspindle Exp $
+ *  $Id: vpMath.cpp,v 1.4 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -30,7 +30,7 @@
 
 
 #include <math.h>
-#include <vpMath.h>
+#include <visp/vpMath.h>
 
 /*
   \class vpMath

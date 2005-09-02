@@ -22,6 +22,9 @@
 #ifndef vpDisplayX_h
 #define vpDisplayX_h
 
+#include <visp/vpConfig.h>
+#ifdef HAVE_LIBX11
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
@@ -150,4 +153,5 @@ public:
   void   getImage(vpImage<vpRGBa> &I) ;
 } ;
 
+#endif // HAVE_LIBX11
 #endif

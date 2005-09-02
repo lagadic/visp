@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpIoTools.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpIoTools.cpp,v 1.2 2005-09-02 14:35:18 fspindle Exp $
  *
  * Description
  * ============
@@ -24,8 +24,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <unistd.h>
-
+#ifndef WIN32
+#  include <unistd.h>
+#endif
 #include <visp/vpIoTools.h>
 #include <visp/vpDebug.h>
 #include <visp/vpIoException.h>

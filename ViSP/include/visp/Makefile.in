@@ -76,7 +76,8 @@ DEBUG =  \
 POSE = \
 	vpPoseException.h \
 	vpPose.h \
-	vpHomography.h
+	vpHomography.h \
+	vpLevenbergMarquartd.h
 
 IMAGE =  \
 	vpImage.h \

@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpThetaUVector.cpp,v 1.3 2005-08-24 15:10:38 chaumett Exp $
+ *  $Id: vpThetaUVector.cpp,v 1.4 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -27,7 +27,7 @@
   rotation
 */
 
-#include <vpThetaUVector.h>
+#include <visp/vpThetaUVector.h>
 
 #define DEBUG_LEVEL1 0
 

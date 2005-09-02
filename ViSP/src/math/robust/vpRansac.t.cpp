@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRansac.t.cpp,v 1.2 2005-07-06 09:58:19 marchand Exp $
+ *  $Id: vpRansac.t.cpp,v 1.3 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -109,7 +109,8 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
   //  cout << "random " << random() <<endl ;
   // index of the detected inliers
   vpColVector bestinliers ;
-  int ind[s] ;
+  int *ind;
+  ind = new int [s] ;
   while(( N > trialcount) && (consensus > bestscore))
   {
     // Select at random s datapoints to form a trial model, M.
@@ -135,6 +136,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
       count = count + 1;
       if (count > maxDataTrials)
       {
+		  delete [] ind;
 	ERROR_TRACE("Unable to select a nondegenerate data set");
 	throw ;
       }
@@ -194,5 +196,6 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
     TRACE("ransac was unable to find a useful solution");
     M = 0;
   }
+  delete [] ind;
 }
 

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageBase.t.cpp,v 1.2 2005-06-28 13:30:44 marchand Exp $
+ *  $Id: vpImageBase.t.cpp,v 1.3 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -275,7 +275,7 @@ vpImage<Type>::destroy()
   if (bitmap!=NULL)
   {
   //  ERROR_TRACE("Deallocate bitmap memory %p",bitmap) ;
-    DEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap) ;
+//    DEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap) ;
     delete [] bitmap ;
     bitmap = NULL;
   }
@@ -284,7 +284,7 @@ vpImage<Type>::destroy()
   if (row!=NULL)
   {
  //   ERROR_TRACE("Deallocate row memory %p",row) ;
-    DEBUG_TRACE(20,"Deallocate row memory %p",row) ;
+//    DEBUG_TRACE(20,"Deallocate row memory %p",row) ;
     delete [] row ;
     row = NULL;
   }

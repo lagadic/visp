@@ -25,9 +25,9 @@
 
 // besoin de la librairie mathematique, en particulier des
 // fonctions de minimisation de Levenberg Marquartd
-#include <levenberg_marquartd.c>
+#include <visp/vpLevenbergMarquartd.h>
 
-#include <vpPose.h>
+#include <visp/vpPose.h>
 
 #define NBR_PAR	6
 #define X3_SIZE	3

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpException.h,v 1.2 2005-06-28 13:49:56 marchand Exp $
+ *  $Id: vpException.h,v 1.3 2005-09-02 14:35:17 fspindle Exp $
  *
  * Description
  * ============
@@ -33,9 +33,10 @@
 
 
 /* Classes standards. */
-using namespace std;
 #include <iostream>                /* Classe ostream.    */
 #include <string>                  /* Classe string.     */
+
+using namespace std;
 
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
