@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.10 2005-09-02 14:02:08 marchand Exp $
+ *  $Id: vpMatrix.cpp,v 1.11 2005-09-02 14:05:29 marchand Exp $
  *
  * Description
  * ============
@@ -970,7 +970,7 @@ int
 vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double seuilvp) const
 {
   vpMatrix imA, imAt ;
-  return pseudoInverse(Ap,sc,seuilvp, imA, imAt) ;
+  return pseudoInverse(Ap,sv,seuilvp, imA, imAt) ;
 }
 
 /*!
