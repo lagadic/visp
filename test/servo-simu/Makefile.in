@@ -8,6 +8,7 @@ SOURCES		= \
 	testServo4Points.cpp \
 	\
 	testServoSphere1.cpp \
+	testServoSphereSecondaryTask.cpp \
 	testServoCircle1.cpp \
 	testServoCircle2.cpp \
 	\

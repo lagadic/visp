@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.9 2005-09-01 11:46:57 marchand Exp $
+ *  $Id: vpMatrix.cpp,v 1.10 2005-09-02 14:02:08 marchand Exp $
  *
  * Description
  * ============
@@ -969,178 +969,8 @@ vpMatrix::pseudoInverse(double seuilvp) const
 int
 vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double seuilvp) const
 {
-
-  int i, j, k ;
-
-  // debut FC
-  int nrows, ncols;
-  int nrows_orig = getRows() ;
-  int ncols_orig = getCols() ;
-  Ap.resize(ncols_orig,nrows_orig) ;
-
-  if (nrows_orig >=  ncols_orig)
-  {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  }
-  else
-  {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
-
-  vpMatrix a(nrows,ncols) ;
-  vpMatrix a1(ncols,nrows);
-  vpMatrix v(ncols,ncols) ;
-  sv.resize(ncols) ;
-
-  if (nrows_orig >=  ncols_orig) a = *this;
-  else a = (*this).t();
-
-  a.svd(sv,v);
-
-  // compute the highest singular value and the rank of h
-  double maxsv = 0 ;
-  for (i=0 ; i < ncols ; i++)
-     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
-
-  int rank = 0 ;
-  for (i=0 ; i < ncols ; i++)
-    if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
-
-  /*------------------------------------------------------- */
-  for (i = 0 ; i < ncols ; i++)
-  {
-    for (j = 0 ; j < nrows ; j++)
-    {
-      a1[i][j] = 0.0;
-
-      for (k=0 ; k < ncols ; k++)
-    	if (fabs(sv[k]) > maxsv*seuilvp)
-  	{
-	    a1[i][j] += v[i][k]*a[j][k]/sv[k];
-        }
-    }
-  }
-  if (nrows_orig >=  ncols_orig) Ap = a1;
-  else Ap = a1.t();
-
-  // fin FC
-
-//   int nrows = getRows() ;
-//   int ncols = getCols() ;
-//   Ap.resize(ncols,nrows) ;
-//   //  int min ;
-
-//   //  if (nrows > ncols) min = ncols ; else min = nrows ;
-
-//   // ! the SVDcmp function in the matrix lib is destructive
-
-
-//   vpMatrix a1 ;
-
-//   vpMatrix v(ncols,ncols) ;
-
-//   sv.resize(ncols) ;
-//   if (nrows < ncols)
-//   {
-//     a1.resize(ncols,ncols) ;
-//   }
-//   else
-//   {
-//     a1.resize(nrows,ncols) ;
-//   }
-
-//   for (i=0 ; i < nrows ; i++)
-//     for (j=0 ; j < ncols ; j++)
-//     {
-//       a1[i][j] = (*this)[i][j] ;
-//     }
-
-//   if (nrows < ncols)
-//   {
-//     for (i=nrows ; i < ncols ; i++)
-//       for (j=0 ; j < ncols ; j++)
-// 	a1[i][j] = 0 ;
-//   }
-
-//   a1.svd(sv,v);
-
-//   // compute the highest singular value and the rank of h
-//   double maxsv = 0 ;
-//   for (i=0 ; i < ncols ; i++)
-//     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
-
-//   int rank = 0 ;
-//   for (i=0 ; i < ncols ; i++)
-//     if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
-
-//   /*------------------------------------------------------- */
-
-//   for (i = 0 ; i < ncols ; i++)
-//   {
-//     for (j = 0 ; j < nrows ; j++)
-//     {
-//       int k=0 ;
-//       Ap[i][j] = 0.0;
-
-//       // modif le 25 janvier 1999 0.001 <-- maxsv*1.e-6
-//       // sinon on peut observer une perte de range de la matrice
-//       // ( d'ou venait ce 0.001 ??? )
-//       for (k=0 ; k < ncols ; k++)
-// 	if (fabs(sv[k]) > maxsv*seuilvp)
-// 	{
-// 	  Ap[i][j] += v[i][k]*a1[j][k]/sv[k];
-// 	}
-//     }
-//   }
-  if (DEBUG_LEVEL1)
-  {
-    int pb = 0;
-    vpMatrix A, ApA, AAp, AApA, ApAAp ;
-
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-
-    A.resize(nrows,ncols) ;
-    A = *this ;
-
-    ApA = Ap * A;
-    AApA = A * ApA;
-    ApAAp = ApA * Ap;
-    AAp = A * Ap;
-
-    for (i=0;i<nrows;i++)
-    {
-      for (j=0;j<ncols;j++) if (fabs(AApA[i][j]-A[i][j]) > 1e-6) pb = 1;
-    }
-    for (i=0;i<ncols;i++)
-    {
-      for (j=0;j<nrows;j++) if (fabs(ApAAp[i][j]-Ap[i][j]) > 1e-6) pb = 1;
-    }
-    for (i=0;i<nrows;i++)
-    {
-      for (j=0;j<nrows;j++) if (fabs(AAp[i][j]-AAp[j][i]) > 1e-6) pb = 1;
-    }
-    for (i=0;i<ncols;i++)
-    {
-      for (j=0;j<ncols;j++) if (fabs(ApA[i][j]-ApA[j][i]) > 1e-6) pb = 1;
-    }
-    if (pb == 1)
-    {
-      printf("pb in pseudo inverse\n");
-      cout << " A : " << endl << A << endl;
-      cout << " Ap : " << endl << Ap << endl;
-      cout << " A - AApA : " << endl << A - AApA << endl;
-      cout << " Ap - ApAAp : " << endl << Ap - ApAAp << endl;
-      cout << " AAp - (AAp)^T : " << endl << AAp - AAp.t() << endl;
-      cout << " ApA - (ApA)^T : " << endl << ApA - ApA.t() << endl;
-    }
-    //    else printf("Ap OK ;-) \n");
-
-  }
-  // cout << v << endl ;
-  return rank ;
+  vpMatrix imA, imAt ;
+  return pseudoInverse(Ap,sc,seuilvp, imA, imAt) ;
 }
 
 /*!
@@ -1319,7 +1149,18 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
   return rank ;
 }
 
+/*
+vpMatrix
+vpMatrix::ker(vpMatrix &A)
+{
+}
 
+
+vpMatrix
+vpMatrix::ker(vpMatrix &imA, vpMatrix& imAt)
+{
+}
+*/
 
 //////////////////////////////////////////////////////////////////////////
 
