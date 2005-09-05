@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.3 2005-06-29 08:58:58 fspindle Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.4 2005-09-05 08:56:36 fspindle Exp $
  *
  * Description
  * ============
@@ -209,7 +209,7 @@ vpRobotAfma6::setRobotState(vpRobot::RobotStateType newState)
     {
       if (vpRobot::STATE_STOP != getRobotState ())
       {
-	 stop_mouvement_Afma6();
+	stop_mouvement_Afma6();
       }
       break;
     }
@@ -219,7 +219,7 @@ vpRobotAfma6::setRobotState(vpRobot::RobotStateType newState)
       {
 	DEBUG_TRACE (12, "Passage vitesse -> position.");
 	stop_mouvement_Afma6();
-      }
+       }
       else
       {
 	DEBUG_TRACE (1, "Passage arret -> position.");
@@ -260,6 +260,7 @@ void
 vpRobotAfma6::stopMotion(void)
 {
   stop_mouvement_Afma6();
+  setRobotState (vpRobot::STATE_STOP);
 }
 
 
