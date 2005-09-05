@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomogeneousMatrix.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpHomogeneousMatrix.h,v 1.2 2005-09-05 09:09:01 crenaudi Exp $
  *
  * Description
  * ============
@@ -27,8 +27,8 @@
 */
 
 
-#ifndef MATRIX_HOMO_HH
-#define MATRIX_HOMO_HH
+#ifndef VPHOMOGENEOUSMATRIX_HH
+#define VPHOMOGENEOUSMATRIX_HH
 #include <fstream>
 
 #include <visp/vpMatrix.h>
