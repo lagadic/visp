@@ -49,7 +49,7 @@ using namespace std;
     fprintf (stderr, a); \
     fprintf (stderr, "\n"); \
     fflush (stderr); } while (0)
-#define cerror cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#define CERROR cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 #define TRACE(a...)    do {\
     cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); \
