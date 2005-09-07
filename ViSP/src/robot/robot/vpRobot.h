@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobot.h,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpRobot.h,v 1.2 2005-09-07 13:44:16 nmansard Exp $
  *
  * Description
  * ============
@@ -78,6 +78,13 @@ public:
 
 
 protected:
+  double maxTranslationVelocity;
+  static const double maxTranslationVelocityDefault = 0.2;
+  double maxRotationVelocity;
+  static const double maxRotationVelocityDefault = 0.7;
+
+
+protected:
   //! number of degrees of freedom
   int nDof ;
   //! robot Jacobian expressed in the end-effector frame
@@ -92,7 +99,7 @@ protected:
 public:
   virtual void init() = 0 ;
 
-
+  vpRobot (void);
   virtual ~vpRobot() { ; }
 
   //---------- Jacobian -----------------------------
@@ -105,6 +112,20 @@ public:
   //! set to the controller a velocity (frame as to ve specified)
   virtual void setVelocity(const vpRobot::ControlFrameType frame,
 			   const vpColVector &vel) = 0 ;
+
+  
+  //! Set the maximal velocity that can be sent to the robot (in 
+  // translation).
+  void setMaxTranslationVelocity (const double maxVt);
+  //! Get the maximal velocity that can be sent to the robot (in 
+  // translation).
+  double getMaxTranslationVelocity (void) const ;
+  //! Set the maximal velocity that can be sent to the robot (in 
+  // rotation).
+  void setMaxRotationVelocity (const double maxVr);
+  //! Get the maximal velocity that can be sent to the robot (in 
+  // rotation).
+  double getMaxRotationVelocity (void) const;
 
   //---------- POSITION -----------------------------
 
