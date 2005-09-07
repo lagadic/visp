@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: test_matrix_exception.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: test_matrix_exception.cpp,v 1.2 2005-09-07 14:05:13 fspindle Exp $
  *
  * Description
  * ============
@@ -55,7 +55,7 @@ main()
   }
   catch (vpMatrixException me)
   {
-    ctrace ;
+    CTRACE ;
     cout << me << endl ;
   }
 
@@ -68,10 +68,10 @@ main()
   }
   catch (vpMatrixException me)
   {
-    ctrace ;
+    CTRACE ;
     cout << me << endl ;
   }
 
 
-  ctrace ;
+  CTRACE ;
 }

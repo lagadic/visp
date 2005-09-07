@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoThetaU.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testServoThetaU.cpp,v 1.2 2005-09-07 14:05:16 fspindle Exp $
  *
  * Description
  * ============
@@ -58,11 +58,11 @@ main()
 		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
 		     ) ;
 
-  ctrace ; cout << endl ;
+  CTRACE ; cout << endl ;
   vpHomogeneousMatrix cMo(c_r_o) ;
-  ctrace ; cout << endl ;
+  CTRACE ; cout << endl ;
   robot.setPosition(cMo) ;
-  ctrace ; cout << endl ;
+  CTRACE ; cout << endl ;
 
   TRACE("sets the desired camera location " ) ;
   vpPoseVector cd_r_o(0,0,1,
