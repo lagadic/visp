@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.4 2005-09-05 08:56:36 fspindle Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.5 2005-09-07 13:43:40 nmansard Exp $
  *
  * Description
  * ============
@@ -553,12 +553,49 @@ setVelocity (const vpRobot::ControlFrameType frame,
       communicationVelocity.repere = REPFIX;
       break ;
     }
+  default:
+    {
+      ERROR_TRACE ("Error in spec of vpRobot. "
+		   "Case not taken in account.");
+    }
   }
+
+
+  DEBUG_TRACE (12, "Velocity limitation.");
+  double max = this ->maxTranslationVelocity;
+  vpColVector v(6);
+  for (int i = 0 ; i < 3; ++ i) 
+    { 
+      if (fabs (r_dot[i]) > max)
+	{  
+	  max = fabs (r_dot[i]); 
+	  ERROR_TRACE ("Excess velocity: TRANSLATION "
+		       "(axe nr.%d).", i);
+	}
+    }
+  max =  this ->maxTranslationVelocity / max; 
+  for (int i = 0 ; i < 3; ++ i) 
+    { v [i] = r_dot[i]*max;	}
+  
+  max = this ->maxRotationVelocity;
+  for (int i = 3 ; i < 6; ++ i) 
+    { 
+      if (fabs (r_dot[i]) > max)
+	{
+	  max = fabs (r_dot[i]);
+	  ERROR_TRACE ("Excess velocity: ROTATION "
+		       "(axe nr.%d).", i);
+	}
+    }
+  max =  this ->maxRotationVelocity / max; 
+  for (int i = 3 ; i < 6; ++ i) 
+    { v [i] = r_dot[i]*max; }
+  
 
   for (int i = 0; i < 6; ++ i)
   {
     communicationVelocity.aserv[i] = VITESSE;
-    communicationVelocity.mvt[i] = r_dot[i] ;
+    communicationVelocity.mvt[i] = v[i] ;
   }
   communicationVelocity.mvt[0] *= 1000.0 ;
   communicationVelocity.mvt[1] *= 1000.0 ;
@@ -566,7 +603,12 @@ setVelocity (const vpRobot::ControlFrameType frame,
 
 
   active_mouvement_Afma6(& (communicationVelocity) );
+
+  return;
 }
+
+
+
 
 
 
