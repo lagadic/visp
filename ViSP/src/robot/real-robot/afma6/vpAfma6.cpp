@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.cpp,v 1.4 2005-06-29 08:58:58 fspindle Exp $
+ *  $Id: vpAfma6.cpp,v 1.5 2005-09-07 13:17:29 nmansard Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -90,7 +90,7 @@ computeMGD (const vpColVector & q,
   oMc[3][2] = 0;
   oMc[3][3] = 1;
 
-  cdebug (6) << "Position de l'effecteur: " << endl << oMc;
+  CDEBUG (6) << "Position de l'effecteur: " << endl << oMc;
 
   /* Multiplication par rapport poignee-image. */
   double            t [3];
@@ -175,7 +175,7 @@ computeMGD (const vpColVector & q,
 
   DEBUG_TRACE (9, "Appel du calcul de oMc.");
   computeMGD (q, fMc);
-  cdebug (15) << "fMc: " << endl << fMc;
+  CDEBUG (15) << "fMc: " << endl << fMc;
 
   DEBUG_TRACE (9, "Conversion du cMf en vecteur.");
   r.buildFrom(fMc.inverse());
