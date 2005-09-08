@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.4 2005-09-02 16:04:39 nmansard Exp $
+ *  $Id: vpMatrix.h,v 1.5 2005-09-08 14:51:52 crenaudi Exp $
  *
  * Description
  * ============
@@ -209,12 +209,8 @@ public:
 
   //! Initialize an identity matrix n-by-n
   void eye(int n) ;
-  //! Initialize an identity matrix n-by-n
-  friend vpMatrix eye(int n) ;
   //! Initialize an identity matrix m-by-n
    void eye(int m, int n) ;
-  //! Initialize an identity matrix m-by-n
-  friend vpMatrix eye(int m, int n) ;
 
 
   //-------------------------------------------------
