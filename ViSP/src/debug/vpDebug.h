@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDebug.h,v 1.4 2005-09-06 08:31:28 nmansard Exp $
+ *  $Id: vpDebug.h,v 1.5 2005-09-09 07:32:38 crenaudi Exp $
  *
  * Description
  * ============
@@ -38,6 +38,7 @@
 
 #include <stdio.h>
 #include <iostream>
+using namespace std;
 
 #ifndef WIN32
 ////////////////////////////////////////////////////////////////////////////
