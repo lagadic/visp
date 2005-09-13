@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma6.cpp,v 1.2 2005-07-13 09:02:24 fspindle Exp $
+ *  $Id: moveAfma6.cpp,v 1.3 2005-09-13 14:41:09 fspindle Exp $
  *
  * Description
  * ============
@@ -48,7 +48,7 @@ main()
 		    -0.1,0.2,0.1,
 		    vpMath::rad(10),vpMath::rad(20),vpMath::rad(30)) ;
 
-  vpColVector q ;
+  vpColVector q(6) ;
   robot.getPosition(vpRobot::REFERENCE_FRAME, q) ;
   cout << "Position in the reference frame " << q.t() ;
 
