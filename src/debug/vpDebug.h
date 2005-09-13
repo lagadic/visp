@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDebug.h,v 1.5 2005-09-09 07:32:38 crenaudi Exp $
+ *  $Id: vpDebug.h,v 1.6 2005-09-13 15:05:42 nmansard Exp $
  *
  * Description
  * ============
@@ -49,20 +49,26 @@ using namespace std;
 /* --- TRACE ---------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-#ifndef SILENT_TRACES
 #define ERROR_TRACE(a...)   do {\
     std::cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     fprintf (stderr, a); \
     fprintf (stderr, "\n"); \
     fflush (stderr); } while (0) 
 #define CERROR std::cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" 
+#ifdef DEBUG
 #define TRACE(a...)    do {\
     std::cout << "(N0)" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); \
     printf ("\n"); \
     fflush (stdout); } while (0) 
+#else /* #ifdef DEBUG */
+#define TRACE(a...)    do {\
+    std::cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
+    printf (a); \
+    printf ("\n"); \
+    fflush (stdout); } while (0) 
+#endif /* #ifdef DEBUG */
 #define CTRACE std::cout << "(N0)" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" 
-#endif /* #ifndef SILENT_TRACES */
 
 /* -------------------------------------------------------------------------- */
 /* --- DEBUG ---------------------------------------------------------------- */
