@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageIoPnm.cpp,v 1.2 2005-06-28 13:30:44 marchand Exp $
+ *  $Id: vpImageIoPnm.cpp,v 1.3 2005-09-19 13:39:02 fspindle Exp $
  *
  * Description
  * ============
@@ -87,7 +87,29 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
   fclose(fd);
 
 }
+/*!
+  \brief
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a portable gray pixmap (PGM P5) file.
+*/
 
+void
+vpImageIo::writePGM(const vpImage<short> &I,
+		    const char *filename)
+{
+  vpImage<unsigned char> Iuc ;
+  int nrows = I.getRows();
+  int ncols = I.getCols();
+
+  Iuc.resize(nrows, ncols);
+
+  for (int i=0 ; i < nrows * ncols ; i++)
+    Iuc.bitmap[i] =  (unsigned char)I.bitmap[i] ;
+
+  vpImageIo::writePGM(Iuc, filename) ;
+
+
+}
 /*!
   \brief
   Write the content of the bitmap in the file which name is given by \e
