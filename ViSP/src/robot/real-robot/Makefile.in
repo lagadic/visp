@@ -2,7 +2,8 @@
 
 SRC_REP = \
 	\
-	afma6
+	afma6 \
+	afma4
 
 
 all install uninstall:
