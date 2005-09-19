@@ -48,7 +48,10 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
 
-  vpIcCompGrabber g(2) ;
+  vpIcCompGrabber g;
+
+  g.setScale(1);
+  g.setInput(2);
   g.open(I) ;
   if (fps == 25)
     g.setFramerate(vpIcCompGrabber::framerate_25fps);
