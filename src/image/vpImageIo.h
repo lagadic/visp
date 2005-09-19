@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageIo.h,v 1.1.1.1 2005-06-08 07:08:08 fspindle Exp $
+ *  $Id: vpImageIo.h,v 1.2 2005-09-19 13:39:02 fspindle Exp $
  *
  * Description
  * ============
@@ -56,6 +56,7 @@ public:
   static
   void readPGM(vpImage<unsigned char> &I,
 	       const char filename[FILENAME_MAX]) ;
+
   //! Read PGM images
   static
   void readPGM(vpImage<vpRGBa> &I,
@@ -63,6 +64,10 @@ public:
   //! Write PGM images
   static
   void writePGM(const vpImage<unsigned char> &I,
+		const char filename[FILENAME_MAX]) ;
+  //! Write PGM images
+  static
+  void writePGM(const vpImage<short> &I,
 		const char filename[FILENAME_MAX]) ;
   //! Write PGM images
   static
