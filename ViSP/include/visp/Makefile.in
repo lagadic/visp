@@ -51,10 +51,13 @@ ROBOT = \
 	vpRobotTemplate.h  \
 	\
 	vpRobotAfma6.h \
-	\
 	vpAfma6.h \
 	afma.h \
 	afma_main.h \
+	\
+	vpRobotAfma4Contrib.h \
+	vpRobotAfma4.h \
+	vpAfma4.h \
 	\
 	vpRobotCamera.h
 
