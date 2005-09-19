@@ -1,7 +1,8 @@
 
 
 SRC_REP = \
-	servo-afma6
+	servo-afma6 \
+	servo-afma4
 
 
 all install uninstall:
