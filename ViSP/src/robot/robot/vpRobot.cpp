@@ -1,6 +1,10 @@
 #include <visp/vpRobot.h>
 #include <visp/vpDebug.h>
 
+
+const double vpRobot::maxTranslationVelocityDefault = 0.2;
+const double vpRobot::maxRotationVelocityDefault = 0.7;
+
 /* -------------------------------------------------------------------------- */
 /* --- CONSTRUCTEUR --------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -59,7 +63,7 @@ getPosition (vpRobot::ControlFrameType repere)
 /* --- VELOCITY CONTROL ----------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-/*! Set the maximal velocity that can be sent to the robot (in 
+/*! Set the maximal velocity that can be sent to the robot (in
  *translation).
  */
 void vpRobot::
@@ -69,16 +73,16 @@ setMaxTranslationVelocity (const double maxVt)
   return;
 }
 
-/*! Get the maximal velocity that can be sent to the robot (in 
+/*! Get the maximal velocity that can be sent to the robot (in
  * translation).
  */
 
 double vpRobot::
-getMaxTranslationVelocity (void) const 
+getMaxTranslationVelocity (void) const
 {
   return this ->maxTranslationVelocity;
 }
-/*! Set the maximal velocity that can be sent to the robot (in 
+/*! Set the maximal velocity that can be sent to the robot (in
  * rotation).
  */
 
@@ -89,7 +93,7 @@ setMaxRotationVelocity (const double maxVr)
   return;
 }
 
-/*! Get the maximal velocity that can be sent to the robot (in 
+/*! Get the maximal velocity that can be sent to the robot (in
  * rotation).
  */
 double vpRobot::
