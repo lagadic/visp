@@ -41,6 +41,26 @@ const int vpIcCompGrabber::DEFAULT_SCALE = 2;
 /*!
   Constructor.
 
+  Uses the default input and scale.
+  By default the framerate is set to 25 fps.
+
+  \sa setFramerate()
+*/
+vpIcCompGrabber::vpIcCompGrabber()
+{
+  init = false ;
+
+  framegrabber = new ICcomp2x ;
+  cout << "const------------------1" << endl;
+
+  setInput     (vpIcCompGrabber::DEFAULT_INPUT);
+  setScale     (vpIcCompGrabber::DEFAULT_SCALE) ;
+  setFramerate (vpIcCompGrabber::framerate_25fps);
+}
+
+/*!
+  Constructor.
+
   \param _input : video port
   \param _scale : decimation factor
 
@@ -51,6 +71,7 @@ const int vpIcCompGrabber::DEFAULT_SCALE = 2;
 vpIcCompGrabber::vpIcCompGrabber( unsigned _input, unsigned _scale)
 {
   init = false ;
+  cout << "const------------------2" << endl;
 
   framegrabber = new ICcomp2x ;
 
@@ -75,6 +96,7 @@ vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I,
 {
   framegrabber = new ICcomp2x ;
 
+  cout << "const------------------3" << endl;
   setInput(_input);
   setScale(_scale) ;
   setFramerate (vpIcCompGrabber::framerate_25fps);
@@ -99,6 +121,7 @@ vpIcCompGrabber::vpIcCompGrabber(vpImage<vpRGBa> &I,
 				 unsigned _input, unsigned _scale )
 {
   framegrabber = new ICcomp2x ;
+  cout << "const------------------4" << endl;
 
   setInput(_input);
   setScale(_scale) ;
@@ -124,6 +147,7 @@ vpIcCompGrabber::setInput(unsigned _input)
   }
 
   this->input = _input ;
+
   framegrabber->SetCamera(_input);
 }
 
@@ -190,6 +214,9 @@ vpIcCompGrabber::open(vpImage<unsigned char> &I)
 void
 vpIcCompGrabber::open(vpImage<vpRGBa> &I)
 {
+  if (framegrabber != NULL)
+    framegrabber = new ICcomp2x ;
+
   framegrabber->SetDecimation(1) ;
 
   framegrabber->SetNBufs(1);

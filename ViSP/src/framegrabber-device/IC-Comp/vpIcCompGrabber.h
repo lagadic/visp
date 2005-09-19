@@ -64,12 +64,13 @@ public:
   int ncols, nrows ;
   ICcomp2x *framegrabber ; //!< pointeur sur l'objet ICcomp
 private:
-  unsigned input ; //!< video entry
+   unsigned input ; //!< video entry
   unsigned scale ;
   framerateEnum framerate;
   bool field; // The type of the acquired frame (0 if odd, 1 if even).
 
 public:
+  vpIcCompGrabber();
   vpIcCompGrabber(unsigned input,
 		  unsigned scale = vpIcCompGrabber::DEFAULT_SCALE);
   vpIcCompGrabber(vpImage<unsigned char> &I,
