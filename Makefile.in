@@ -131,6 +131,7 @@ uninstallall:
 	rm -rf $(VISP_DIR_OBJ)
 	rm -rf lib/*
 	rm -rf doc/html
+	rm -f  doc/warning.log
 	@for i in `find -type f -name .depend -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
