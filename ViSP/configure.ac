@@ -302,6 +302,7 @@ src/robot/robot/Makefile
 src/robot/simulation-robot/Makefile
 src/robot/real-robot/Makefile
 src/robot/real-robot/afma6/Makefile
+src/robot/real-robot/afma4/Makefile
 src/servo/Makefile
 src/simulator/Makefile
 src/tools/Makefile
@@ -328,6 +329,7 @@ src/tracking/general-tracking-issues/Makefile
 test/Makefile
 test/pose/Makefile
 test/servo-simu/Makefile
+test/servo-afma4/Makefile
 test/framegrabber/Makefile
 test/feature/Makefile
 test/math/Makefile
@@ -339,6 +341,7 @@ demo/Makefile
 demo/grasping-2-0.5-D/Makefile
 example/Makefile
 example/servo-afma6/Makefile
+example/servo-afma4/Makefile
 ])
 
 ########################################################################
