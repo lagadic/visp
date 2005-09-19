@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageTools.h,v 1.1 2005-09-02 14:03:18 marchand Exp $
+ *  $Id: vpImageTools.h,v 1.2 2005-09-19 13:38:02 fspindle Exp $
  *
  * Description
  * ============
@@ -63,7 +63,52 @@ public:
 		       vpImage<double>& If,
 		       const vpMatrix& M) ;
 
+  template<class Type>
+  static void createSubImage(const vpImage<Type> &I,
+			     int i_sub, int j_sub,
+			     int nrow_sub, int ncol_sub,
+			     vpImage<Type> &SI);
+
+
 } ;
+
+/*!
+  Extract a sub part of an image
+
+  \param I : Input image from which a sub image will be extracted.
+  \param i_sub, j_sub : coordinates of the upper left point of the sub image
+  \param nrow_sub, ncol_sub : number of row, column of the sub image
+  \param SI : new sub-image
+*/
+template<class Type>
+void vpImageTools::createSubImage(const vpImage<Type> &I,
+				  int i_sub, int j_sub,
+				  int nrow_sub, int ncol_sub,
+				  vpImage<Type> &SI)
+{
+  int i,j ;
+  int  imax = i_sub + nrow_sub ;
+  int  jmax = j_sub + ncol_sub ;
+
+  if (imax > I.getRows())
+  {
+    imax = I.getRows() -1 ;
+    nrow_sub = imax-i_sub ;
+  }
+  if (jmax > I.getCols())
+  {
+    jmax = I.getCols() -1 ;
+    ncol_sub = jmax -j_sub ;
+  }
+
+  SI.resize(nrow_sub, ncol_sub) ;
+  for (i=i_sub ; i < imax ; i++)
+    for (j=j_sub ; j < jmax ; j++)
+    {
+      SI[i-i_sub][j-j_sub] = I[i][j] ;
+    }
+}
+
 
 
 #endif
