@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobot.h,v 1.2 2005-09-07 13:44:16 nmansard Exp $
+ *  $Id: vpRobot.h,v 1.3 2005-09-19 13:36:01 fspindle Exp $
  *
  * Description
  * ============
@@ -79,9 +79,9 @@ public:
 
 protected:
   double maxTranslationVelocity;
-  static const double maxTranslationVelocityDefault = 0.2;
+  static const double maxTranslationVelocityDefault;// = 0.2;
   double maxRotationVelocity;
-  static const double maxRotationVelocityDefault = 0.7;
+  static const double maxRotationVelocityDefault;// = 0.7;
 
 
 protected:
@@ -113,17 +113,17 @@ public:
   virtual void setVelocity(const vpRobot::ControlFrameType frame,
 			   const vpColVector &vel) = 0 ;
 
-  
-  //! Set the maximal velocity that can be sent to the robot (in 
+
+  //! Set the maximal velocity that can be sent to the robot (in
   // translation).
   void setMaxTranslationVelocity (const double maxVt);
-  //! Get the maximal velocity that can be sent to the robot (in 
+  //! Get the maximal velocity that can be sent to the robot (in
   // translation).
   double getMaxTranslationVelocity (void) const ;
-  //! Set the maximal velocity that can be sent to the robot (in 
+  //! Set the maximal velocity that can be sent to the robot (in
   // rotation).
   void setMaxRotationVelocity (const double maxVr);
-  //! Get the maximal velocity that can be sent to the robot (in 
+  //! Get the maximal velocity that can be sent to the robot (in
   // rotation).
   double getMaxRotationVelocity (void) const;
 
