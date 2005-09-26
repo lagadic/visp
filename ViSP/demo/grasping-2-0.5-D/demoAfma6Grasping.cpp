@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: demoAfma6Grasping.cpp,v 1.1 2005-07-13 10:03:31 fspindle Exp $
+ *  $Id: demoAfma6Grasping.cpp,v 1.2 2005-09-26 08:38:52 fspindle Exp $
  *
  * Description
  * ============
@@ -55,7 +55,6 @@
 #include <visp/vpTime.h>
 
 #include <visp/vpRobotAfma6.h>
-#include <visp/afma_main.h>
 
 // Exception
 #include <visp/vpException.h>
@@ -464,7 +463,7 @@ main()
     vpColVector v ; // computed robot velocity
 
     vpList<double> Lu, Lv ;
-    int begin_time, end_time;
+    double begin_time, end_time;
 
     while(error > convergence_threshold)
     {
