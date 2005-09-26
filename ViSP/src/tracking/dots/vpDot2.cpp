@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.cpp,v 1.3 2005-07-22 10:36:56 fspindle Exp $
+ *  $Id: vpDot2.cpp,v 1.4 2005-09-26 08:11:29 fspindle Exp $
  *
  * Description
  * ============
@@ -246,6 +246,9 @@ void vpDot2::track(vpImage<unsigned char> &I)
     // in the area, return an error tracking.
     if( candidates->nbElement() == 0 )
     {
+      // desallocation
+      candidates->kill();
+      delete candidates;
       ERROR_TRACE("No dot was found") ;
       throw(vpTrackingException(vpTrackingException::featureLostError,
 				"No dot was found")) ;
@@ -277,9 +280,15 @@ void vpDot2::track(vpImage<unsigned char> &I)
   setInLevel ( (int) (I[(int)this->I()][(int)this->J()] * accuracy) );
   //setOutLevel( (int) (I[(int)this->I()][(int)this->J()] / accuracy) );
   setOutLevel( (int) (I[(int)this->I()][(int)this->J()] * accuracy) );
-  // display a red cross at the center of gravity's location in the image.
-  // vpDisplay::displayCross(I, (int)this->I(), (int)this->J(), 15, vpColor::red) ;
-  //vpDisplay::flush(I);
+
+  if (graphics) {
+    // display a red cross at the center of gravity's location in the image.
+
+    vpDisplay::displayCross(I, (int)this->I(), (int)this->J(), 15,
+			    vpColor::red) ;
+    vpDisplay::flush(I);
+  }
+
 
   if (__DEBUG_LEVEL_ & 1)
     cout << "End vpDot2::Track()" << endl;
@@ -568,7 +577,6 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
   int gridHeight = 1;
   getGridSize( gridWidth, gridHeight );
 
-
   if (graphics) {
     // Display the area were the dot is search
     vpDisplay::displayRectangle(I, areaI, areaJ,
@@ -605,6 +613,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       dotToTest->setJ(j);
       dotToTest->setInLevel ( (int) getInLevel()  );
       dotToTest->setOutLevel( (int) getOutLevel() );
+      dotToTest->setGraphics( graphics );
 
 
       // first comput the parameters of the dot.
@@ -745,6 +754,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDotParam )
 
   double innerCoef = 0.4;
   int iCoord, jCoord;
+
   for( double alpha=0. ; alpha<2*M_PI ; alpha+= 0.4 )
   {
     iCoord = (int) ( (this->I() + cos( alpha )*innerCoef*getHeight()/2) );
