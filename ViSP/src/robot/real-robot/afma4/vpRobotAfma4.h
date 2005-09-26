@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma4.h,v 1.1 2005-09-19 13:32:52 fspindle Exp $
+ *  $Id: vpRobotAfma4.h,v 1.2 2005-09-26 08:17:43 fspindle Exp $
  *
  * Description
  * ============
@@ -199,19 +199,6 @@ public:
   void get_eJe(vpMatrix &_eJe)  ;
   //! get the robot Jacobian expressed in the robot reference frame
   void get_fJe(vpMatrix &_fJe)  ;
-
-  /* --- AFFICHAGE -------------------------------------------------------- */
-
-
-  /** \brief Operateur de flux de sortie.
-   *
-   * Affiche une trace de l'objet, reprenant les parametres principaux.
-   * \param os     : flux de sortie, non constant et modifie, renvoye par la
-   * fonction apres modification.
-   * \param moment : objet vpRobot, constant.
-   */
-//   friend std::ostream &     operator<< (std::ostream & os,
-// 					const vpRobotAfma4 & robot);
 
   void stopMotion() ;
 
