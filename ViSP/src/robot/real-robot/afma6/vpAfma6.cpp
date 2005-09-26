@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.cpp,v 1.5 2005-09-07 13:17:29 nmansard Exp $
+ *  $Id: vpAfma6.cpp,v 1.6 2005-09-26 15:58:05 fspindle Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -737,6 +737,7 @@ vpAfma6 (void)
   /* Tous les autres attributs sont initialises dans l'init. */
 {
   DEBUG_TRACE (25, "# Entree - Sortie.");
+  init();
 }
 /* ---------------------------------------------------------------------- */
 /* --- PRIVATE ---------------------------------------------------------- */
@@ -1049,7 +1050,7 @@ init (vpAfma6::CameraRobotType camera)
 void vpAfma6::
 init (void)
 {
-  this->init (vpAfma6::defaultCameraRobot);
+  this->init ( vpAfma6::defaultCameraRobot);
   return;
 }
 /* ----------------------------------------------------------------------- */
