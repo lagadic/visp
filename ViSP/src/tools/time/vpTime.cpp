@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpTime.cpp,v 1.2 2005-09-26 08:09:01 fspindle Exp $
  *
  * Description
  * ============
@@ -110,7 +110,7 @@ vpTime::measureTime()
 /*!
   \brief Return the time in  milliseconds
 */
-int
+double
 vpTime::measureTimeMs()
 {
    struct timeval tp;
@@ -122,7 +122,7 @@ vpTime::measureTimeMs()
 /*!
   \brief Return the time in  milliseconds
 */
-long
+double
 vpTime::measureTimeMicros()
 {
    struct timeval tp;
@@ -141,7 +141,8 @@ vpTime::measureTimeMicros()
   \return 1 the function did wait, 0 the time was already over
 */
 
-int vpTime::wait(int t0,int t)
+int
+vpTime::wait(double t0, double t)
 {
   struct timeval tp;
 

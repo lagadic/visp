@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpTime.h,v 1.2 2005-09-26 08:09:01 fspindle Exp $
  *
  * Description
  * ============
@@ -47,10 +47,10 @@ public:
   //! mesaure the time in seconds since the last call to the function
   static double measureTimeSecond() ;
   //! mesaure the time in miliseconds since the last call to the function
-  static int measureTimeMs() ;
+  static double measureTimeMs() ;
   //! mesaure the time in microseconds since the last call to the function
-  static long measureTimeMicros() ;
-  static int wait(int t0,int t) ;
+  static double measureTimeMicros() ;
+  static int wait(double t0, double t) ;
   //! wait t milisecond
   static void wait(int t) ;
 } ;
