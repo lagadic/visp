@@ -88,7 +88,7 @@ main(int argc, char ** argv)
   long cpt = 1;
   while(cpt ++ < 100)
   {
-    long t = vpTime::measureTimeMs();
+    double t = vpTime::measureTimeMs();
     g.acquire(I) ;
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
