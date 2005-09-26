@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: test_svd.cpp,v 1.2 2005-06-29 12:20:01 fspindle Exp $
+ *  $Id: test_svd.cpp,v 1.3 2005-09-26 16:05:17 fspindle Exp $
  *
  * Description
  * ============
@@ -45,7 +45,7 @@ main()
   vpColVector W(L.getCols()) ;
   vpMatrix V(L.getCols(), L.getCols()) ;
 
-  long t = vpTime::measureTimeMs() ;
+  double t = vpTime::measureTimeMs() ;
   L.svdNr(W,V) ;
   t = vpTime::measureTimeMs() -t ;
 
