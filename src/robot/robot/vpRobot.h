@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobot.h,v 1.3 2005-09-19 13:36:01 fspindle Exp $
+ *  $Id: vpRobot.h,v 1.4 2005-09-26 15:59:19 fspindle Exp $
  *
  * Description
  * ============
@@ -58,7 +58,8 @@ public:
     {
       REFERENCE_FRAME,
       ARTICULAR_FRAME,
-      CAMERA_FRAME
+      CAMERA_FRAME,
+      MIXT_FRAME
     }  ;
 
     static const vpRobot::ControlFrameType

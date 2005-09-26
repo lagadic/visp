@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotCamera.cpp,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpRobotCamera.cpp,v 1.2 2005-09-26 15:59:22 fspindle Exp $
  *
  * Description
  * ============
@@ -28,6 +28,7 @@
 
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpRobotCamera.h>
+#include <visp/vpRobotException.h>
 #include <visp/vpDebug.h>
 
 //! basic initialization
@@ -113,6 +114,14 @@ vpRobotCamera::setVelocity(const vpRobot::ControlFrameType frame,
     break ;
   case vpRobot::ARTICULAR_FRAME:
     setArticularVelocity(vel) ;
+    break ;
+  case vpRobot::MIXT_FRAME:
+    ERROR_TRACE ("Cannot set a velocity in the mixt frame: "
+		 "functionality not implemented");
+    throw vpRobotException (vpRobotException::wrongStateError,
+			    "Cannot get a velocity in the reference frame:"
+			    "functionality not implemented");
+
     break ;
   }
 }
