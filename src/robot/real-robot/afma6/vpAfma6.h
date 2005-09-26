@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.h,v 1.2 2005-06-29 08:58:58 fspindle Exp $
+ *  $Id: vpAfma6.h,v 1.3 2005-09-26 15:56:54 fspindle Exp $
  *
  * Description
  * ============
@@ -36,6 +36,7 @@
 #include <iostream>                /* Definition class ostream.               */
 
 /* --- ViSP --- */
+#include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPoseVector.h>
 
