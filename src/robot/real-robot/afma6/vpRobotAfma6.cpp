@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.5 2005-09-07 13:43:40 nmansard Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.6 2005-09-26 15:58:24 fspindle Exp $
  *
  * Description
  * ============
@@ -22,15 +22,9 @@
 /* Headers des fonctions implementees. */
 #include <visp/vpRobotAfma6.h>           /* Header de la classe.          */
 #include <visp/vpRobotException.h>/* Erreurs lancees par les classes CRobot. */
-
 #include <visp/vpDebug.h>           /* Macros de trace et debug.  */
-// Fonctions AFMA6 bas niveau
-#include <afma.h>          /* Communication avec le robot.      */
 
 #include <signal.h>
-
-
-#include "/udd/fspindle/robot/Afma6/current/src/robot/local/lib/sp_erreur_Afma6.h"
 
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
@@ -388,6 +382,14 @@ vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
       communicationPosition.repere = REPFIX;
       break ;
     }
+  case vpRobot::MIXT_FRAME:
+    {
+      ERROR_TRACE ("Positionning error. Mixt frame not implemented");
+      throw vpRobotException (vpRobotException::lowLevelError,
+			      "Positionning error: "
+			      "Mixt frame not implemented.");
+     break ;
+    }
   }
 
 
@@ -463,6 +465,14 @@ vpRobotAfma6::getPosition (const vpRobot::ControlFrameType frame,
       communicationPosition.repere = REPFIX;
       break ;
     }
+  case vpRobot::MIXT_FRAME:
+    {
+      ERROR_TRACE ("Cannot get position in mixt frame: not implemented");
+      throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot get position in mixt frame: "
+			      "not implemented");
+     break ;
+    }
   }
 
   communicationPosition.mode=ABSOLU;
@@ -481,8 +491,8 @@ vpRobotAfma6::getPosition (const vpRobot::ControlFrameType frame,
 
 
 
-void vpRobotAfma6::
-DV6_mmrad_mrad(const double * input, vpColVector & output)
+void
+vpRobotAfma6::DV6_mmrad_mrad(const double * input, vpColVector & output)
 {
   output [0] = input [0] / 1000.0;
   output [1] = input [1] / 1000.0;
@@ -492,8 +502,8 @@ DV6_mmrad_mrad(const double * input, vpColVector & output)
   output [5] = input [5];
 }
 
-void vpRobotAfma6::
-VD6_mrad_mmrad (const vpColVector & input, double * output)
+void
+vpRobotAfma6::VD6_mrad_mmrad (const vpColVector & input, double * output)
 {
   output [0] = input [0] * 1000.0;
   output [1] = input [1] * 1000.0;
@@ -522,9 +532,9 @@ VD6_mrad_mmrad (const vpColVector & input, double * output)
  *   - ERRMauvaisEtatRobot si le robot n'est pas dans l'etat
  * ETAT_ROBOT_COMMANDE_VITESSE.
  */
-void vpRobotAfma6::
-setVelocity (const vpRobot::ControlFrameType frame,
-	     const vpColVector & r_dot)
+void
+vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
+			   const vpColVector & r_dot)
 {
 
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
@@ -553,6 +563,11 @@ setVelocity (const vpRobot::ControlFrameType frame,
       communicationVelocity.repere = REPFIX;
       break ;
     }
+  case vpRobot::MIXT_FRAME :
+    {
+      communicationVelocity.repere = REPMIX;
+      break ;
+    }
   default:
     {
       ERROR_TRACE ("Error in spec of vpRobot. "
@@ -564,33 +579,33 @@ setVelocity (const vpRobot::ControlFrameType frame,
   DEBUG_TRACE (12, "Velocity limitation.");
   double max = this ->maxTranslationVelocity;
   vpColVector v(6);
-  for (int i = 0 ; i < 3; ++ i) 
-    { 
-      if (fabs (r_dot[i]) > max)
-	{  
-	  max = fabs (r_dot[i]); 
-	  ERROR_TRACE ("Excess velocity: TRANSLATION "
-		       "(axe nr.%d).", i);
-	}
-    }
-  max =  this ->maxTranslationVelocity / max; 
-  for (int i = 0 ; i < 3; ++ i) 
-    { v [i] = r_dot[i]*max;	}
-  
-  max = this ->maxRotationVelocity;
-  for (int i = 3 ; i < 6; ++ i) 
-    { 
+  for (int i = 0 ; i < 3; ++ i)
+    {
       if (fabs (r_dot[i]) > max)
 	{
 	  max = fabs (r_dot[i]);
-	  ERROR_TRACE ("Excess velocity: ROTATION "
-		       "(axe nr.%d).", i);
+	  ERROR_TRACE ("Excess velocity %g: TRANSLATION "
+		       "(axe nr.%d).", r_dot[i], i);
 	}
     }
-  max =  this ->maxRotationVelocity / max; 
-  for (int i = 3 ; i < 6; ++ i) 
+  max =  this ->maxTranslationVelocity / max;
+  for (int i = 0 ; i < 3; ++ i)
+    { v [i] = r_dot[i]*max;	}
+
+  max = this ->maxRotationVelocity;
+  for (int i = 3 ; i < 6; ++ i)
+    {
+      if (fabs (r_dot[i]) > max)
+	{
+	  max = fabs (r_dot[i]);
+	  ERROR_TRACE ("Excess velocity %g: ROTATION "
+		       "(axe nr.%d).", r_dot[i], i);
+	}
+    }
+  max =  this ->maxRotationVelocity / max;
+  for (int i = 3 ; i < 6; ++ i)
     { v [i] = r_dot[i]*max; }
-  
+
 
   for (int i = 0; i < 6; ++ i)
   {
@@ -627,9 +642,9 @@ setVelocity (const vpRobot::ControlFrameType frame,
  * OUTPUT:
  *   - r_dot: reference dans laquelle est placee le resultat (mm/s et rad/s).
  */
-void vpRobotAfma6::
-getVelocity (const vpRobot::ControlFrameType frame,
-	     vpColVector & r_dot)
+void
+vpRobotAfma6::getVelocity (const vpRobot::ControlFrameType frame,
+			   vpColVector & r_dot)
 {
 
   long                 frameAfma6 = REPFIX;
@@ -651,6 +666,12 @@ getVelocity (const vpRobot::ControlFrameType frame,
   case vpRobot::REFERENCE_FRAME:
     {
       frameAfma6 = REPFIX;
+      r_dot.resize (nbArticulations);
+      break ;
+    }
+  case vpRobot::MIXT_FRAME:
+    {
+      frameAfma6 = REPMIX;
       r_dot.resize (nbArticulations);
       break ;
     }
@@ -719,15 +740,15 @@ vpRobotAfma6::setVelocityMeasureTempo (const int tempo)
  *   - Retourne la duree d'attente entre les deux mesures de
  * position de la fonction de lecteure de la vitesse (mm/s et rad/s).
  */
-int vpRobotAfma6::
-getVelocityMeasureTempo (void)
+int
+vpRobotAfma6::getVelocityMeasureTempo (void)
 {
   return velocityMeasureTempo;
 }
 
 
-void vpRobotAfma6::
-V6_mmrad_mrad (vpColVector & inoutput)
+void
+vpRobotAfma6::V6_mmrad_mrad (vpColVector & inoutput)
 {
   inoutput [0] = inoutput [0] / 1000.0;
   inoutput [1] = inoutput [1] / 1000.0;
@@ -741,8 +762,8 @@ V6_mmrad_mrad (vpColVector & inoutput)
 
 /* --- COPIES --------------------------------------------------------------- */
 
-void vpRobotAfma6::
-VD6_mdg_mrad (const vpColVector & input, double * output)
+void
+vpRobotAfma6::VD6_mdg_mrad (const vpColVector & input, double * output)
 {
   output [0] = input [0];
   output [1] = input [1];
@@ -752,6 +773,90 @@ VD6_mdg_mrad (const vpColVector & input, double * output)
   output [5] = input [5] / 180.0 * M_PI;
 
   return ;
+}
+/*!
+
+  Get the robot displacement expressed in the camera frame since the last call
+  of this method.
+
+  \param v The measured displacement in camera frame. The dimension of v is 6
+  (tx, ty, ty, rx, ry, rz). Translations are expressed in meters, rotations in
+  radians.
+
+  \sa getDisplacement(), getArticularDisplacement()
+
+*/
+void
+vpRobotAfma6::getCameraDisplacement(vpColVector &v) const
+{
+  getDisplacement(vpRobot::CAMERA_FRAME, v);
+}
+/*!
+
+  Get the robot articular displacement since the last call of this method.
+
+  \param qdot The measured articular displacement. The dimension of qdot is 6
+  (the number of axis of the robot). Translations are expressed in meters,
+  rotations in radians.
+
+  \sa getDisplacement(), getCameraDisplacement()
+
+*/
+void vpRobotAfma6::getArticularDisplacement(vpColVector  &qdot) const
+{
+  getDisplacement(vpRobot::ARTICULAR_FRAME, qdot);
+}
+
+/*!
+
+  Get the robot displacement since the last call of this method.
+
+  \param frame The frame in which the measured displacement is expressed.
+
+  \param q The displacement.
+  . In articular, the dimension of q is 6.
+  . In camera or reference frame, the dimension of q is 6 (tx, ty, ty, rx, ry,
+  rz). Translations are expressed in meters, rotations in radians.
+
+  \sa getArticularDisplacement(), getCameraDisplacement()
+
+*/
+void
+vpRobotAfma6::getDisplacement(vpRobot::ControlFrameType frame,
+			      vpColVector &q) const
+{
+  double td[6];
+
+  q.resize (6);
+  switch (frame)
+  {
+  case vpRobot::CAMERA_FRAME:
+    {
+      mesure_dpl_Afma6(REPCAM,td);
+      break ;
+    }
+  case vpRobot::ARTICULAR_FRAME:
+    {
+      mesure_dpl_Afma6(REPART,td);
+      break ;
+    }
+  case vpRobot::REFERENCE_FRAME:
+    {
+      mesure_dpl_Afma6(REPFIX,td);
+      break ;
+    }
+  case vpRobot::MIXT_FRAME:
+    {
+      mesure_dpl_Afma6(REPMIX,td);
+      break ;
+    }
+  }
+  q[0]=td[0]/1000.0; // values are returned in mm
+  q[1]=td[1]/1000.0;
+  q[2]=td[2]/1000.0;
+  q[3]=td[3];
+  q[4]=td[4];
+  q[5]=td[5];
 }
 
 
