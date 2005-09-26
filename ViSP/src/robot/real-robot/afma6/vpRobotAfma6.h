@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.h,v 1.3 2005-06-29 08:58:58 fspindle Exp $
+ *  $Id: vpRobotAfma6.h,v 1.4 2005-09-26 15:58:44 fspindle Exp $
  *
  * Description
  * ============
@@ -42,8 +42,8 @@
 #include <iostream>                /* Classe std::ostream.              */
 #include <stdio.h>                /* Classe std::ostream.              */
 
-#include "afma.h"   /* Constantes du robot (classe vpAfma6).    */
-#include<visp/vpTwistMatrix.h>
+#include <visp/vpRobotAfma6Contrib.h>   /* Constantes du robot (classe vpAfma6).    */
+//#include <visp/vpTwistMatrix.h>
 /* ------------------------------------------------------------------------ */
 /* --- CLASSE ------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
@@ -202,23 +202,7 @@ public:
   //! get the robot Jacobian expressed in the robot reference frame
   void get_fJe(vpMatrix &_fJe)  ;
 
-  /* --- AFFICHAGE -------------------------------------------------------- */
-
-
-  /** \brief Operateur de flux de sortie.
-   *
-   * Affiche une trace de l'objet, reprenant les parametres principaux.
-   * \param os     : flux de sortie, non constant et modifie, renvoye par la
-   * fonction apres modification.
-   * \param moment : objet vpRobot, constant.
-   */
-  friend std::ostream &     operator<< (std::ostream & os,
-					const vpRobotAfma6 & robot);
-
   void stopMotion() ;
-
-
-
 
   /* --- Vecteur vers double --- */
   static inline void          V6_mmrad_mrad(vpColVector& r);
@@ -240,16 +224,13 @@ public:
   static inline void
   DV6_mmrad_mrad (const double * input, vpColVector & output);
 
-  //! get a displacement expressed in the camera frame
-  void getCameraDisplacement(vpColVector &v) const
-  {ERROR_TRACE("not implemented") ; }
-  //! get a displacement expressed  in the articular frame
-  void getArticularDisplacement(vpColVector  &qdot)  const
-  {ERROR_TRACE("not implemented") ; }
+  // get a displacement expressed in the camera frame
+  void getCameraDisplacement(vpColVector &v) const;
+  // get a displacement expressed  in the articular frame
+  void getArticularDisplacement(vpColVector  &qdot)  const;
 
-  //! get a displacement (frame as to ve specified)
-  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q)  const
-  {ERROR_TRACE("not implemented") ; }
+  // get a displacement (frame as to ve specified)
+  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q) const;
 
 
   void move(char *name) ;
