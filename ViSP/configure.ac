@@ -330,6 +330,7 @@ test/Makefile
 test/pose/Makefile
 test/servo-simu/Makefile
 test/servo-afma4/Makefile
+test/servo-afma6/Makefile
 test/framegrabber/Makefile
 test/feature/Makefile
 test/math/Makefile
