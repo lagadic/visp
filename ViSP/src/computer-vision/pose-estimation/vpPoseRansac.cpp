@@ -13,7 +13,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseRansac.cpp,v 1.2 2005-09-02 14:35:17 fspindle Exp $
+ *  $Id: vpPoseRansac.cpp,v 1.3 2005-09-26 16:00:43 fspindle Exp $
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -206,7 +206,7 @@ vpPose::ransac(const int n,
 {
 
 
-  int tms = vpTime::measureTimeMs() ;
+  double tms = vpTime::measureTimeMs() ;
   vpColVector data ;
   int i;
   vpPose::initRansac(n,x,y,m,X,Y,Z, data) ;
