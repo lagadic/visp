@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6FourPointCameraVelocity.cpp,v 1.2 2005-09-02 08:55:12 aremazei Exp $
+ *  $Id: servoAfma6FourPointCameraVelocity.cpp,v 1.3 2005-09-26 16:01:31 fspindle Exp $
  *
  * Description
  * ============
@@ -49,7 +49,6 @@
 #include <visp/vpFeatureBuilder.h>
 
 #include <visp/vpRobotAfma6.h>
-#include <visp/afma_main.h>
 
 // Exception
 #include <visp/vpException.h>

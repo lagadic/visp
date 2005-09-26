@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6EyeToHand.cpp,v 1.1 2005-07-13 09:02:24 fspindle Exp $
+ *  $Id: servoAfma6EyeToHand.cpp,v 1.2 2005-09-26 16:01:31 fspindle Exp $
  *
  * Description
  * ============
@@ -51,7 +51,6 @@
 #include <visp/vpFeatureBuilder.h>
 
 #include <visp/vpRobotAfma6.h>
-#include <visp/afma_main.h>
 
 // Exception
 #include <visp/vpException.h>
