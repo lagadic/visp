@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma4.cpp,v 1.1 2005-09-19 13:32:52 fspindle Exp $
+ *  $Id: vpRobotAfma4.cpp,v 1.2 2005-09-26 08:18:09 fspindle Exp $
  *
  * Description
  * ============
@@ -392,6 +392,13 @@ vpRobotAfma4::setPosition (const vpRobot::ControlFrameType frame,
 			    "Cannot move the robot in reference frame: "
 			    "not implemented");
     break;
+  case vpRobot::MIXT_FRAME:
+    ERROR_TRACE ("Cannot move the robot in mixt frame: "
+		 "not implemented");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Cannot move the robot in mixt frame: "
+			    "not implemented");
+    break;
   case vpRobot::ARTICULAR_FRAME:
     break ;
   }
@@ -466,6 +473,13 @@ vpRobotAfma4::getPosition (const vpRobot::ControlFrameType frame,
 		 "not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot get position in reference frame: "
+			    "not implemented");
+    break;
+  case vpRobot::MIXT_FRAME:
+    ERROR_TRACE ("Cannot get position in mixt frame: "
+		 "not implemented");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Cannot get position in mixt frame: "
 			    "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
@@ -582,7 +596,8 @@ vpRobotAfma4::VD4_mrad_mmrad (const vpColVector & input, double * output)
  *   - ERRMauvaisEtatRobot si le robot n'est pas dans l'etat
  * ETAT_ROBOT_COMMANDE_VITESSE.
 
- \param frame Speed control frame type. Be aware, the REFERENCE_FRAME is not implemented
+ \param frame Speed control frame type. Be aware, the REFERENCE_FRAME and
+ MIXT_FRAME are not implemented
 
  \warning In CAMERA_FRAME, we control only the rx and ry camera velocities;
  r_dot dimension must be two: r_dot[0] correspond to rx, and r_dot[1] to ry
@@ -639,6 +654,17 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot send a velocity to the robot "
 			      "in the reference frame:"
+			      "functionality not implemented");
+      break ;
+    }
+  case vpRobot::MIXT_FRAME :
+    {
+      ERROR_TRACE ("Cannot send a velocity to the robot "
+		   "in the mixt frame: "
+		   "functionality not implemented");
+      throw vpRobotException (vpRobotException::wrongStateError,
+			      "Cannot send a velocity to the robot "
+			      "in the mixt frame:"
 			      "functionality not implemented");
       break ;
     }
@@ -780,6 +806,16 @@ vpRobotAfma4::getVelocity (const vpRobot::ControlFrameType frame,
     {
       frameAfma4 = REPFIX;
       r_dot.resize (nbArticulations);
+      break ;
+    }
+  case vpRobot::MIXT_FRAME:
+    {
+
+      ERROR_TRACE ("Cannot get a velocity in the mixt frame: "
+		   "functionality not implemented");
+      throw vpRobotException (vpRobotException::wrongStateError,
+			      "Cannot get a velocity in the reference frame:"
+			      "functionality not implemented");
       break ;
     }
   }
@@ -951,7 +987,7 @@ void vpRobotAfma4::getArticularDisplacement(vpColVector  &qdot) const
 
   \param q The displacement.
   . In articular, the dimension of q is 4 (the number of axis of the robot)
-  with respectively q[1] (turret rotation), q[2] (vertaical translation), q[3]
+  with respectively q[1] (turret rotation), q[2] (vertical translation), q[3]
   (pan), q[4] (tilt).
   . In camera or reference frame, the dimension of q is 6 (tx, ty, ty, rx, ry,
   rz). Translations are expressed in meters, rotations in radians.
@@ -998,6 +1034,16 @@ vpRobotAfma4::getDisplacement(vpRobot::ControlFrameType frame,
       q[3]=td[3];
       q[4]=td[4];
       q[5]=td[5];
+      break ;
+    }
+  case vpRobot::MIXT_FRAME:
+    {
+      ERROR_TRACE ("Cannot get a displacement in the mixt frame: "
+		   "functionality not implemented");
+      throw vpRobotException (vpRobotException::wrongStateError,
+			      "Cannot get a displacement in the reference frame:"
+			      "functionality not implemented");
+
       break ;
     }
   }
