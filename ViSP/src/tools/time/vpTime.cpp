@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.cpp,v 1.2 2005-09-26 08:09:01 fspindle Exp $
+ *  $Id: vpTime.cpp,v 1.3 2005-09-27 12:31:07 fspindle Exp $
  *
  * Description
  * ============
@@ -115,7 +115,7 @@ vpTime::measureTimeMs()
 {
    struct timeval tp;
    gettimeofday(&tp,0);
-   return(1000*tp.tv_sec + tp.tv_usec/1000);
+   return(1000.0*tp.tv_sec + tp.tv_usec/1000.0);
 }
 
 
@@ -127,7 +127,7 @@ vpTime::measureTimeMicros()
 {
    struct timeval tp;
    gettimeofday(&tp,0);
-   return(1000000*tp.tv_sec + tp.tv_usec);
+   return(1000000.0*tp.tv_sec + tp.tv_usec);
 }
 
 
@@ -147,14 +147,14 @@ vpTime::wait(double t0, double t)
   struct timeval tp;
 
   gettimeofday(&tp, 0);
-  if ((1000*tp.tv_sec + tp.tv_usec/1000 - t0) > t) return(1);
+  if ((1000.0*tp.tv_sec + tp.tv_usec/1000.0 - t0) > t) return(1);
   else
     {
       do
 	{
 	  gettimeofday(&tp, 0);
 	}
-      while ((1000*tp.tv_sec + tp.tv_usec/1000 - t0) < t);
+      while ((1000.0*tp.tv_sec + tp.tv_usec/1000.0 - t0) < t);
 
  return(0);
     }
