@@ -18,6 +18,27 @@ vpDisplay::vpDisplay()
 }
 
 /*!
+  Display the windows title.
+*/
+void
+vpDisplay::displayTitle(vpImage<unsigned char> &I, const char *windowtitle)
+{
+
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->flushTitle(windowtitle) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*!
   Display a 8bits image in the display window
 */
 void
@@ -461,6 +482,26 @@ vpDisplay::getClickUp(vpImage<unsigned char> &I,
 }
 
 
+/*!
+  Display the windows title.
+*/
+void
+vpDisplay::displayTitle(vpImage<vpRGBa> &I, const char *windowtitle)
+{
+
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->flushTitle(windowtitle) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
 
 
 /*!

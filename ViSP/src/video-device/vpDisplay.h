@@ -101,6 +101,7 @@ protected:
   virtual void displayCharString(int i,int j,char *s, int c=vpColor::green)=0 ;
 
 public:
+  static void displayTitle(vpImage<unsigned char> &I, const char *windowtitle);
 
   //! Display a 8bits image in the display window
   static void display(vpImage<unsigned char> &I) ;
@@ -157,6 +158,8 @@ public:
   //! Close a display
   static void close(vpImage<unsigned char> &I) ;
 public:
+
+  static void displayTitle(vpImage<vpRGBa> &I, const char *windowtitle);
 
   //! Display a 32bits image in the display window
   static void display(vpImage<vpRGBa> &I) ;
