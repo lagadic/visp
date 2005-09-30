@@ -197,8 +197,6 @@ vpIcCompGrabber::open(vpImage<unsigned char> &I)
   ncols = framegrabber->GetWidth() ;
   nrows = framegrabber->GetHeight() ;
 
-  ERROR_TRACE("%d %d", nrows, ncols ) ;
-
   I.resize(nrows,ncols) ;
 
   init = true ;

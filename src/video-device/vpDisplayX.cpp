@@ -214,8 +214,6 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _windowXPosition, int _windowYPo
   lut          = DefaultColormap (display, screen);
   screen_depth = DefaultDepth    (display, screen);
 
-  TRACE("Screen depth: %d\n", screen_depth);
-
   if ((window =
        XCreateSimpleWindow (display, RootWindow (display, screen),
 			    windowXPosition, windowYPosition, ncols, nrows, 1,
