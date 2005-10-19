@@ -9,20 +9,20 @@
  * Version control
  * ===============
  *
- *  $Id: vpDebug.h,v 1.6 2005-09-13 15:05:42 nmansard Exp $
+ *  $Id: vpDebug.h,v 1.7 2005-10-19 14:24:21 fspindle Exp $
  *
  * Description
  * ============
  *
  * Macro de trace et de debugage
  *
- *   - TRACAGE:    TRACE et ERROR_TRACE fonctionnent comme des printf 
+ *   - TRACAGE:    TRACE et ERROR_TRACE fonctionnent comme des printf
  * avec retour chariot en fin de fonction.
- *                 CERROR et CTRACE fonctionnent comme les flux de sortie 
+ *                 CERROR et CTRACE fonctionnent comme les flux de sortie
  * C++ cout et cerr.
- *   - DEBUGAGE:   DEBUG_TRACE(niv,  et DERROR_TRACE(niv, fonctionnent 
- * comme des printf, n'imprimant que si le niveau de trace 'niv' est 
- * superieur au mode de debugage DEBUG_MODE.
+ *   - DEBUGAGE:   DEBUG_TRACE(niv,  et DERROR_TRACE(niv, fonctionnent
+ * comme des printf, n'imprimant que si le niveau de trace 'niv' est
+ * superieur au mode de debugage VP_DEBUG_MODE.
  *                 CDEBUG(niv) fonctionne comme le flux de sortie C++ cout.
  *                 DEBUG_ENABLE(niv) vaut 1 ssi le niveau de tracage 'niv'
  * est superieur au  mode de debugage DEBUG_MODE. Il vaut 0 sinon.
@@ -53,30 +53,30 @@ using namespace std;
     std::cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     fprintf (stderr, a); \
     fprintf (stderr, "\n"); \
-    fflush (stderr); } while (0) 
-#define CERROR std::cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" 
-#ifdef DEBUG
+    fflush (stderr); } while (0)
+#define CERROR std::cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#ifdef VP_DEBUG
 #define TRACE(a...)    do {\
     std::cout << "(N0)" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); \
     printf ("\n"); \
-    fflush (stdout); } while (0) 
-#else /* #ifdef DEBUG */
+    fflush (stdout); } while (0)
+#else /* #ifdef VP_DEBUG */
 #define TRACE(a...)    do {\
     std::cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); \
     printf ("\n"); \
-    fflush (stdout); } while (0) 
-#endif /* #ifdef DEBUG */
-#define CTRACE std::cout << "(N0)" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" 
+    fflush (stdout); } while (0)
+#endif /* #ifdef VP_DEBUG */
+#define CTRACE std::cout << "(N0)" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 /* -------------------------------------------------------------------------- */
-/* --- DEBUG ---------------------------------------------------------------- */
+/* --- VP_DEBUG ---------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-#ifdef DEBUG
+#ifdef VP_DEBUG
 #define DERROR_TRACE(niv, a...)  do {\
-    if (DEBUG_MODE >= niv) {\
+    if (VP_DEBUG_MODE >= niv) {\
     std::cerr << "(N" << niv << ") " ; \
     std::cerr << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     fprintf (stderr, a); \
@@ -84,22 +84,22 @@ using namespace std;
     fflush (stderr); } \
     } while (0)
 #define DEBUG_TRACE(niv, a...)   do {\
-    if (DEBUG_MODE >= niv) {\
+    if (VP_DEBUG_MODE >= niv) {\
     std::cout << "(N" << niv << ") " ; \
     std::cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); printf ("\n"); \
     fflush (stdout); } \
     } while (0)
-#define CDEBUG(niv) if (DEBUG_MODE < niv) ; else \
-    std::cout << "(N" << niv << ") "<< __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"  
-#define DEBUG_ENABLE(niv) (DEBUG_MODE >= niv)
+#define CDEBUG(niv) if (VP_DEBUG_MODE < niv) ; else \
+    std::cout << "(N" << niv << ") "<< __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#define DEBUG_ENABLE(niv) (VP_DEBUG_MODE >= niv)
 
-#else /*#ifdef DEBUG*/
-#define DERROR_TRACE(niv, a...)  do {} while (0) 
-#define DEBUG_TRACE(niv, a...)   do {} while (0) 
-#define CDEBUG(niv) if (1) ; else std::cout  
+#else /*#ifdef VP_DEBUG*/
+#define DERROR_TRACE(niv, a...)  do {} while (0)
+#define DEBUG_TRACE(niv, a...)   do {} while (0)
+#define CDEBUG(niv) if (1) ; else std::cout
 #define DEBUG_ENABLE(niv) (0)
-#endif /*#ifdef DEBUG*/
+#endif /*#ifdef VP_DEBUG*/
 
 
 /* -------------------------------------------------------------------------- */
@@ -118,15 +118,15 @@ using namespace std;
 /* -------------------------------------------------------------------------- */
 
 #define vpIN_FCT(niv, a...)   do {\
-    if (DEBUG_MODE >= niv) {\
+    if (VP_DEBUG_MODE >= niv) {\
     cout <<"begin" << __FILE__ << ": " << __FUNCTION__ <<  "(#" << __LINE__ << ") :"; \
     printf (a); printf ("\n"); \
     fflush (stdout); } \
     } while (0)
- 
+
 
 #define vpOUT_FCT(niv, a...)   do {\
-    if (DEBUG_MODE >= niv) {\
+    if (VP_DEBUG_MODE >= niv) {\
     cout <<"begin" << __FILE__ << ": " << __FUNCTION__ <<  "(#" << __LINE__ << ") :"; \
     printf (a); printf ("\n"); \
     fflush (stdout); } \
@@ -134,20 +134,17 @@ using namespace std;
 
 
 
-/* Macro de trace et de debugage pour les template
- * Ce fichier differe du fichier debug.hh classique par l'absence d'utilisation
- * des macros DEBUG et DEBUG_MODE. Les traces sont definies tout le temps, 
- * et ne depende pas d'une macro definie a la compilation, mais des macros 
- * TEMPLATE_DEBUG et TEMPLATE_DEBUG_MODE definies en debut de fichier .t.cc 
- * (par default, elle vaut 0 : pas de trace). Les lignes de traces sont retires de
- * l'executatble si une directive d'optimisation de compilation (-o3 par
- * exemple) est utilisee (dans ce cas, les branchements conditionnels sont
- * resolu avant la generation du code quand c'est possible, en particulier
- * dans ce cas).
- * L'utilisation classique est :
- * #define TEMPLATE_DEBUG    
- * #define TEMPLATE_DEBUG_MODE      5 
- * #include "template_debug.hh"
+/* Macro de trace et de debugage pour les template Ce fichier differe du
+ * fichier debug.hh classique par l'absence d'utilisation des macros VP_DEBUG
+ * et VP_DEBUG_MODE. Les traces sont definies tout le temps, et ne depende pas
+ * d'une macro definie a la compilation, mais des macros TEMPLATE_DEBUG et
+ * VP_TEMPLATE_DEBUG_MODE definies en debut de fichier .t.cc (par default, elle
+ * vaut 0 : pas de trace). Les lignes de traces sont retires de l'executatble
+ * si une directive d'optimisation de compilation (-o3 par exemple) est
+ * utilisee (dans ce cas, les branchements conditionnels sont resolu avant la
+ * generation du code quand c'est possible, en particulier dans ce cas).
+ * L'utilisation classique est :  #define TEMPLATE_DEBUG #define
+ * VP_TEMPLATE_DEBUG_MODE 5 #include "template_debug.hh"
  */
 
 #undef TDERROR_TRACE
@@ -157,33 +154,33 @@ using namespace std;
 
 #ifdef TEMPLATE_DEBUG
 
-#ifndef TEMPLATE_DEBUG_MODE
-#define TEMPLATE_DEBUG_MODE 0
-#endif /*#ifndef TEMPLATE_DEBUG_MODE*/
+#ifndef VP_TEMPLATE_DEBUG_MODE
+#define VP_TEMPLATE_DEBUG_MODE 0
+#endif /*#ifndef VP_TEMPLATE_DEBUG_MODE*/
 
 #define TDERROR_TRACE(niv, a...)  do {\
-    if (TEMPLATE_DEBUG_MODE >= niv) {\
+    if (VP_TEMPLATE_DEBUG_MODE >= niv) {\
     std::cerr <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); \
     fprintf (stderr, "\n"); \
     fflush (stderr); } \
     } while (0)
 #define TDEBUG_TRACE(niv, a...)   do {\
-    if (TEMPLATE_DEBUG_MODE >= niv) {\
+    if (VP_TEMPLATE_DEBUG_MODE >= niv) {\
     std::cout << "(N" << niv << ") " ; \
     std::cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); printf ("\n"); \
     fflush (stdout); } \
     } while (0)
-#define CTDEBUG(niv) if (TEMPLATE_DEBUG_MODE < niv) ; else \
+#define CTDEBUG(niv) if (VP_TEMPLATE_DEBUG_MODE < niv) ; else \
     std::cout << "(N" << niv << ") " ; \
-    std::cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"  
-#define TDEBUG_ENABLE(niv) (TDEBUG_MODE >= niv)
+    std::cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#define TDEBUG_ENABLE(niv) (VP_TEMPLATE_DEBUG_MODE >= niv)
 
 #else /*#ifdef TEMPLATE_DEBUG*/
-#define TDERROR_TRACE(niv, a...)  do {} while (0) 
-#define TDEBUG_TRACE(niv, a...)   do {} while (0) 
-#define CTDEBUG(niv) if (1) ; else std::cout  
+#define TDERROR_TRACE(niv, a...)  do {} while (0)
+#define TDEBUG_TRACE(niv, a...)   do {} while (0)
+#define CTDEBUG(niv) if (1) ; else std::cout
 #define TDEBUG_ENABLE(niv) (0)
 #endif /*#ifdef TEMPLATE_DEBUG*/
 
@@ -199,7 +196,7 @@ using namespace std;
 #endif
 
 #define vpIN_FCT(niv, a, b)   do {\
-    if (DEBUG_MODE >= niv) {\
+    if (VP_DEBUG_MODE >= niv) {\
     cout <<"begin" << __FILE__ << ": " << __FUNCTION__ <<  "(#" << __LINE__ << ") :"; \
     printf (a); printf ("\n"); \
     fflush (stdout); } \
@@ -207,7 +204,7 @@ using namespace std;
 
 
 #define vpOUT_FCT(niv, a, b)   do {\
-    if (DEBUG_MODE >= niv) {\
+    if (VP_DEBUG_MODE >= niv) {\
     cout <<"begin" << __FILE__ << ": " << __FUNCTION__ <<  "(#" << __LINE__ << ") :"; \
     printf (a); printf ("\n"); \
     fflush (stdout); } \
@@ -268,21 +265,21 @@ inline void TRACE(char *a, double b, double c, double d) {   do {\
     fflush (stdout); } while (0); };
 #define CTRACE cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
-#ifdef DEBUG
+#ifdef VP_DEBUG
 #define DERROR_TRACE(niv, a, b)  do {\
-    if (DEBUG_MODE >= niv) {\
+    if (VP_DEBUG_MODE >= niv) {\
     cerr <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); \
     fprintf (stderr, "\n"); \
     fflush (stderr); } \
     } while (0)
 #define DEBUG_TRACE(niv, a)   do {\
-    if (DEBUG_MODE >= niv) {\
+    if (VP_DEBUG_MODE >= niv) {\
     cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
     printf (a); printf ("\n"); \
     fflush (stdout); } \
     } while (0)
-#define CDEBUG(niv) if (DEBUG_MODE < niv) ; else \
+#define CDEBUG(niv) if (VP_DEBUG_MODE < niv) ; else \
     cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 #else
@@ -309,7 +306,7 @@ inline void DEBUG_TRACE(int niv, char *a, int b, int c) { do {} while (0); };
 
 
 
-#endif /* #ifdef __DEBUG_HH */ 
+#endif /* #ifdef __DEBUG_HH */
 
 /*
  * Local variables:

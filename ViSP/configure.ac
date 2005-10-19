@@ -166,7 +166,7 @@ AC_ARG_ENABLE(debug,
   [turn on debugging by adding -g compiler option [[default=no]] and add _g suffix to the build library names.]),enable_debug=yes, enable_debug=no)
 if test "x$enable_debug" = "xyes"; then
   CXXFLAGS="$CXXFLAGS -g -Wno-deprecated"
-  CPPFLAGS="$CPPFLAGS -DDEBUG"
+  CPPFLAGS="$CPPFLAGS -DVP_DEBUG"
   SUFFIX="_g"
   AC_MSG_RESULT(yes)
 else
@@ -194,7 +194,7 @@ AC_ARG_ENABLE(insure,
 if test "x$enable_insure" = "xyes"; then
   INSURE=insure
   CXXFLAGS="$CXXFLAGS -g -Wno-deprecated"
-  CPPFLAGS="$CPPFLAGS -DDEBUG"
+  CPPFLAGS="$CPPFLAGS -DVP_DEBUG"
   SUFFIX="_insure"
   AC_MSG_RESULT(yes)
 else
