@@ -5923,7 +5923,7 @@ else
 fi;
 if test "x$enable_debug" = "xyes"; then
   CXXFLAGS="$CXXFLAGS -g -Wno-deprecated"
-  CPPFLAGS="$CPPFLAGS -DDEBUG"
+  CPPFLAGS="$CPPFLAGS -DVP_DEBUG"
   SUFFIX="_g"
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
@@ -5998,7 +5998,7 @@ fi;
 if test "x$enable_insure" = "xyes"; then
   INSURE=insure
   CXXFLAGS="$CXXFLAGS -g -Wno-deprecated"
-  CPPFLAGS="$CPPFLAGS -DDEBUG"
+  CPPFLAGS="$CPPFLAGS -DVP_DEBUG"
   SUFFIX="_insure"
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6

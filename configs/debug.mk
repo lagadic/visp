@@ -3,14 +3,16 @@
 # --->
 
 # In debugging mode, (configure --enable-debug) we set automatically CXXFLAGS
-# to -g -Wno-deprecated -DDEBUG and turn off -O1, -O2, -O3 options
+# to -g -Wno-deprecated -DVP_DEBUG and turn off -O1, -O2, -O3 options
 
 # LEVEL OF TRACE
+ifdef VP_DEBUG
 ifdef DMODE
-  CPPFLAGS += -DDEBUG_MODE=$(DMODE)
+  CPPFLAGS += -DVP_DEBUG_MODE=$(DMODE)
 else
   # Niv de trace minimum par default.
-  CPPFLAGS += -DDEBUG_MODE=0
+  CPPFLAGS += -DVP_DEBUG_MODE=0
+endif
 endif
 
 # FLAG DEFENSIF
@@ -23,7 +25,7 @@ endif
 # --->
 
 MAKE_FLAGS     =
-ifeq ($(DEBUG),yes)
+ifeq ($(VP_DEBUG),yes)
   MAKE_FLAGS     += DEBUG=yes
 endif
 
