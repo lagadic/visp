@@ -149,4 +149,14 @@ lib-link:
 	rm -f $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).a
 	ln -s $(LIB) $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).a
 
+group-access:
+	@echo "Changing group access in process..."
+	chmod -R g+rw .
+	find . -type d -exec chmod g+rwx {} \;
+	@for i in `find -type f -name *.exe -print | sort` ; do\
+		chmod g+rw $$i;\
+		echo "chmod g+rw" $$i;\
+	done
+	@echo "done."
+
 FORCE:
