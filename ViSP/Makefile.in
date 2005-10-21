@@ -154,8 +154,8 @@ group-access:
 	chmod -R g+rw .
 	find . -type d -exec chmod g+rwx {} \;
 	@for i in `find -type f -name *.exe -print | sort` ; do\
-		chmod g+rw $$i;\
-		echo "chmod g+rw" $$i;\
+		chmod g+rwx $$i;\
+		echo "chmod g+rwx" $$i;\
 	done
 	@echo "done."
 
