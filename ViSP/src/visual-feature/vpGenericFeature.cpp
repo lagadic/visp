@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpGenericFeature.cpp,v 1.3 2005-06-28 14:00:11 marchand Exp $
+ *  $Id: vpGenericFeature.cpp,v 1.4 2005-11-03 10:53:57 nmansard Exp $
  *
  * Description
  * ============
@@ -145,7 +145,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
 	  if (featureLine[i] & select )
 	  {
 	    vpColVector ex(1) ;
-	    ex[i] = s[i] - s_star[i] ;
+	    ex[0] = s[i] - s_star[i] ;
 
 	    e = vpMatrix::stackMatrices(e,ex) ;
 	  }
