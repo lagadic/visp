@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.5 2005-09-08 14:51:52 crenaudi Exp $
+ *  $Id: vpMatrix.h,v 1.6 2005-11-03 13:04:09 nmansard Exp $
  *
  * Description
  * ============
@@ -116,6 +116,11 @@ public:
   friend ostream &operator << (ostream &s,const vpMatrix &m);
 
   int print(std::ostream& s, unsigned maxlen);
+  //! Affichage pour reinsertion dans matlab
+  ostream & matlabPrint(ostream & os);
+  //! Affichage pour reinsertion dans ViSP
+  ostream & cppPrint(ostream & os, const char * matrixName = NULL, bool octet = false);
+
   //---------------------------------
   // Copy / assigment
   //---------------------------------
@@ -235,8 +240,6 @@ public:
   // SVD decomposition
   //-------------------------------------------------
 
-  //! singular value decomposition
-  void SVD(vpColVector& w, vpMatrix& v);
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   void svdFlake(vpColVector& w, vpMatrix& v);
   void svdNr(vpColVector& w, vpMatrix& v);
@@ -248,6 +251,8 @@ public:
   	      const vpMatrix& v,
   	      const vpColVector& b, vpColVector& x);
 #endif
+
+  //! singular value decomposition
   void svd(vpColVector& w, vpMatrix& v);
 
 
@@ -281,7 +286,7 @@ public:
 //! Stack two Matrices C = [ A B ]^T
     static void stackMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C) ;
 //! Create a diagonal matrix with the element of a vector DAii = Ai
-    static void CreateDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
+    static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
 
     static double det33(const vpMatrix &P) ;
 
