@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.12 2005-09-02 16:04:39 nmansard Exp $
+ *  $Id: vpMatrix.cpp,v 1.13 2005-11-03 13:04:09 nmansard Exp $
  *
  * Description
  * ============
@@ -1268,7 +1268,7 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 */
 //! Create a diagonal matrix with the element of a vector DAii = Ai
 void
-vpMatrix::CreateDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
+vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 {
   int rows = A.getRows() ;
   try {
@@ -1388,6 +1388,92 @@ vpMatrix::print(std::ostream& s, unsigned maxlen)
     rv+=(1+maxAfter);
   return rv;
 }
+
+
+/*!
+  \brief Print using matlab syntax, to be put in matlab later.
+
+  Print using the following form:
+     [ a,b,c;
+       d,e,f;
+       g,h,i]
+*/
+ostream & vpMatrix::
+matlabPrint(ostream & os)
+{
+  
+  int i,j;
+
+  os << "[ ";
+  for (i=0; i < this->getRows(); ++ i) 
+    {
+      for (j=0; j < this ->getCols(); ++ j)
+	{
+	  os <<  (*this)[i][j] << ", ";
+	}
+      if (this ->getRows() != i+1) { os << ";" << endl; }
+      else { os << "]" << endl; }
+    }
+  return os;
+};
+
+/*!
+  \brief Print to be used as part of a C++ code later.
+
+  Print under the following form:
+    vpMatrix A(6,4);
+    A[0][0]  = 1.4;
+    A[0][1] = 0.6; ...
+
+  \param os: the stream to be printed in.
+  \param matrixName: name of the matrix, "A" by default, to be used for
+  the line vpMatrix A(6,7) (see example).
+  \param octet: if false, print using double, if true, print byte per byte
+  each bytes of the double array.
+*/
+ostream & vpMatrix::
+cppPrint(ostream & os, const char * matrixName, bool octet)
+{
+  
+  int i,j;
+  const char defaultName [] = "A";
+  if (NULL == matrixName)
+    {
+      matrixName = defaultName;
+    }
+  os << "vpMatrix " << defaultName 
+     << " (" << this ->getRows ()
+     << ", " << this ->getCols () << "); " <<endl;
+
+  for (i=0; i < this->getRows(); ++ i) 
+    {
+      for (j=0; j < this ->getCols(); ++ j)
+	{
+ 	  if (! octet)
+	    {
+	      os << defaultName << "[" << i << "][" << j 
+		 << "] = " << (*this)[i][j] << "; " << endl;
+	    }
+	  else
+	    {
+	      for (unsigned int k = 0; k < sizeof(double); ++ k)
+		{
+		  os << "((unsigned char*)&(" << defaultName 
+		     << "[" << i << "][" << j << "]) )[" << k 
+		     <<"] = 0x" <<hex<< 
+		    (unsigned int)((unsigned char*)& ((*this)[i][j])) [k] 
+		     << "; " << endl;
+		}
+	    }
+	}
+      os << endl; 
+    }
+  return os;
+};
+
+
+
+
 
 double
 vpMatrix::det33(const vpMatrix &M)
