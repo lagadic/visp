@@ -44,4 +44,20 @@ int main()
   TRACE("call M.print (std::cout, 2);");
   M.print (std::cout, 2);
 
+  TRACE("------------------------");
+  TRACE("--- TEST RESIZE --------");
+  TRACE("------------------------");
+  CTRACE  << "5x5" << endl;
+  M.resize(5,5,false);
+  CTRACE << endl<< M;
+  CTRACE  << "3x2" << endl;
+  M.resize(3,2,false);
+  CTRACE <<endl<< M;
+  CTRACE  << "2x2" << endl;
+  M.resize(2,2,false);
+  CTRACE << endl<<M;
+  TRACE("------------------------");
+  
+
+
 }
