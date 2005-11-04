@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDebug.h,v 1.7 2005-10-19 14:24:21 fspindle Exp $
+ *  $Id: vpDebug.h,v 1.8 2005-11-04 14:48:43 nmansard Exp $
  *
  * Description
  * ============
@@ -106,7 +106,7 @@ using namespace std;
 /* --- DEFENSIF ------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-#ifdef DEFENSIF
+#ifdef VP_DEFENSIF
 #define DEFENSIF(a)  (a)
 #else
 #define DEFENSIF(a)  (0)
@@ -152,7 +152,7 @@ using namespace std;
 #undef CTDEBUG
 #undef TDEBUG_ENABLE
 
-#ifdef TEMPLATE_DEBUG
+#ifdef VP_TEMPLATE_DEBUG
 
 #ifndef VP_TEMPLATE_DEBUG_MODE
 #define VP_TEMPLATE_DEBUG_MODE 0
@@ -293,7 +293,7 @@ inline void DEBUG_TRACE(int niv, char *a, int b, int c) { do {} while (0); };
 #endif
 
 
-#ifdef DEFENSIF
+#ifdef VP_DEFENSIF
 #define DEFENSIF(a)  (a)
 #else
 #define DEFENSIF(a)  (0)
