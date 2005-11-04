@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServo.h,v 1.3 2005-09-02 14:01:30 marchand Exp $
+ *  $Id: vpServo.h,v 1.4 2005-11-04 14:54:27 nmansard Exp $
  *
  * Description
  * ============
@@ -34,7 +34,7 @@
 #include <visp/vpServoException.h>
 
 #include <visp/vpList.h>
-
+#include <visp/vpAdaptativeGain.h>
 
 /*!
   \class vpServo
@@ -224,13 +224,16 @@ public:
   int getDimension() ;
 
   /*    gain  */
-private:
+public:
   //! gain
-  double lambda ;
+  vpAdaptativeGain lambda ;
 public:
   //! set the gain lambda
-  void setLambda(double _lambda) { lambda = _lambda ; }
-
+  void setLambda(double _lambda) { lambda .initFromConstant (_lambda) ; }
+  void setLambda(const double at_zero,
+		 const double at_infinity,
+		 const double deriv_at_zero)
+  { lambda .initStandard (at_zero, at_infinity, deriv_at_zero) ; }
 
   /*
     Print informations
@@ -243,7 +246,7 @@ public:
       MINIMUM
     } ;
   //! display information about the task
-  void print(const vpServo::printEnum display_level=ALL) ;
+  void print(const vpServo::printEnum display_level=ALL, ostream &os = cout) ;
 
 } ;
 
