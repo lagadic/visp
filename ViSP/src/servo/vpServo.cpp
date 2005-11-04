@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServo.cpp,v 1.7 2005-11-04 14:58:12 nmansard Exp $
+ *  $Id: vpServo.cpp,v 1.8 2005-11-04 15:19:21 nmansard Exp $
  *
  * Description
  * ============
@@ -374,7 +374,7 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
       colMatrixTmp = matrixTmp .getCols();
 
       /* Check the matrix L size, and realloc if needed. */
-      if (rowMatrixTmp + cursorL > rowL) 
+      while (rowMatrixTmp + cursorL > rowL) 
 	{ rowL *= 2; L .resize (rowL,colL,false); DEBUG_TRACE(15,"Realloc!"); }
 
       /* Copy the temporarily matrix into L. */
@@ -383,6 +383,8 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
 	  { L[cursorL][j] = matrixTmp[k][j]; }
 
     }
+
+  L.resize (cursorL,colL,false);
   
   return ;
 }
@@ -396,8 +398,6 @@ vpServo::computeInteractionMatrix()
 {
 
   try {
-    L.resize(0,6) ;
-
 
     switch (interactionMatrixType)
       {
@@ -535,14 +535,14 @@ vpServo::computeError()
 	/* Get s, and store it in the s vector. */
 	vectTmp = current_s->get_s();
 	dimVectTmp = vectTmp .getRows();
-	if (dimVectTmp + cursorS > dimS) 
+	while (dimVectTmp + cursorS > dimS) 
 	  { dimS *= 2; s .resize (dimS,false); DEBUG_TRACE(15,"Realloc!"); }
 	for (int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
 
 	/* Get s_star, and store it in the s vector. */
 	vectTmp = desired_s->get_s();
 	dimVectTmp = vectTmp .getRows();
-	if (dimVectTmp + cursorSStar > dimSStar) 
+	while (dimVectTmp + cursorSStar > dimSStar) 
 	  { dimSStar *= 2; sStar .resize (dimSStar,false);  }
 	for (int k = 0; k <  dimVectTmp; ++k) 
 	  { sStar[cursorSStar++] = vectTmp[k]; }
@@ -550,7 +550,7 @@ vpServo::computeError()
 	/* Get error, and store it in the s vector. */
 	vectTmp = current_s->error(*desired_s, select) ;
 	dimVectTmp = vectTmp .getRows();
-	if (dimVectTmp + cursorError > dimError) 
+	while (dimVectTmp + cursorError > dimError) 
 	  { dimError *= 2; error .resize (dimError,false);  }
 	for (int k = 0; k <  dimVectTmp; ++k) 
 	  { error[cursorError++] = vectTmp[k]; }
