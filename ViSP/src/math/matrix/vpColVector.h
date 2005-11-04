@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpColVector.h,v 1.2 2005-08-26 08:33:33 fspindle Exp $
+ *  $Id: vpColVector.h,v 1.3 2005-11-04 14:52:27 nmansard Exp $
  *
  * Description
  * ============
@@ -64,7 +64,8 @@ public:
   vpColVector (const vpColVector &v);
 
   //! Set the size of the Column vector
-  void resize(int i) {  vpMatrix::resize(i, 1); }
+  void resize(const int i, const bool flagNullify = true) 
+  {  vpMatrix::resize(i, 1, flagNullify); }
 
 
   //! Access  V[i] = x

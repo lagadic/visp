@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.6 2005-11-03 13:04:09 nmansard Exp $
+ *  $Id: vpMatrix.h,v 1.7 2005-11-04 14:52:27 nmansard Exp $
  *
  * Description
  * ============
@@ -108,7 +108,7 @@ public:
   inline int getCols() const { return colNum; }
 
   //! Set the size of the matrix A, initialization with a zero matrix
-  virtual void resize(int nrows, int ncols);
+  virtual void resize(const int nrows, const int ncols, const bool nullify = true);
 
   //---------------------------------
   // Printing
