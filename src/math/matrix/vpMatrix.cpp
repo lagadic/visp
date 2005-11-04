@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.13 2005-11-03 13:04:09 nmansard Exp $
+ *  $Id: vpMatrix.cpp,v 1.14 2005-11-04 14:52:27 nmansard Exp $
  *
  * Description
  * ============
@@ -149,53 +149,95 @@ vpMatrix::vpMatrix(const vpMatrix& m)
 
   \param nrows : number of rows
   \param ncols : number of column
+  \param flagNullify : if true, then the matrix is re-initialized to 0
+  afet resize. If false, the initial values from the common part of the 
+  matrix (comon part between old and new version of the matrix) are kept.
+  Default value is true.
 
   \return OK or MEMORY_FAULT if memory cannot be allocated
 */
 
 void
-vpMatrix::resize(int nrows, int ncols)
+vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
 {
 
-  //  ERROR_TRACE("In resize") ; cout << rowNum <<"  " << colNum <<endl ;
-  // If things are the same, do nothing and return
   if ((nrows == rowNum) && (ncols == colNum))
   {
-    memset(data,0,dsize*sizeof(double)) ;
+    if (flagNullify) 
+      { memset(this->data,0,this->dsize*sizeof(double)) ;}
   }
   else
   {
-    rowNum = nrows; colNum = ncols;
-    // Check data room
+    const bool recopyNeeded = (ncols != this ->colNum);
+    double * copyTmp = NULL;
+    int rowTmp = 0, colTmp=0;
 
-    dsize = nrows*ncols;
-    if ( data != NULL ) { delete [] data; data = NULL ; }
-    data = new double[dsize];
-    if (data == NULL)
+    DEBUG_TRACE (25, "Recopy case per case is required iff number of "
+		 "cols has changed (structure of double array is not "
+		 "the same in this case.");
+    if (recopyNeeded) 
+      { 
+	copyTmp = new double[this->dsize];
+	memcpy (copyTmp, this ->data, sizeof(double)*this->dsize);
+	rowTmp=this->rowNum; colTmp=this->colNum;
+      }
+
+    DEBUG_TRACE (25, "Reallocation of this->data array.");
+    this->dsize = nrows*ncols;
+    this->data = (double*)realloc(this->data, this->dsize*sizeof(double));
+    if ((NULL == this->data) && (0 != this->dsize))
     {
-      ERROR_TRACE("\n\t\tMemory allocation error") ;
+      ERROR_TRACE("\n\t\tMemory allocation error when allocating data") ;
       throw(vpException(vpException::memoryAllocationError,
-			"\n\t\t Memory allocation error")) ;
+			"\n\t\t Memory allocation error when "
+			"allocating data")) ;
     }
 
-    trsize = nrows;
-    if ( rowPtrs != NULL  ) delete [] rowPtrs;
-    rowPtrs = new double*[trsize];
-    if (rowPtrs == NULL)
+    DEBUG_TRACE (25, "Reallocation of this->trsize array.");
+    this->trsize = nrows;
+    this->rowPtrs = (double**)realloc (this->rowPtrs, this->trsize*sizeof(double*));
+    if ((NULL == this->rowPtrs) && (0 != this->dsize))
     {
-      ERROR_TRACE("\n\t\tMemory allocation error") ;
+      ERROR_TRACE("\n\t\tMemory allocation error when allocating rowPtrs") ;
       throw(vpException(vpException::memoryAllocationError,
-			"\n\t\t Memory allocation error")) ;
+			"\n\t\t Memory allocation error when "
+			"allocating rowPtrs")) ;
     }
 
-    double **t;
+    DEBUG_TRACE (25, "Recomputation this->trsize array values.");
+    {
+      double **t= rowPtrs;
+      for (int i=0; i<dsize; i+=ncols)  { *t++ = this->data + i; }
+    }
 
-    t = rowPtrs;
-    for (int i=0; i<dsize; i+=ncols)  *t++ = data + i;
+    this->rowNum = nrows; this->colNum = ncols;
 
-    memset(data,0,dsize*sizeof(double)) ;
+    DEBUG_TRACE (25, "Recopy of this->data array values or nullify.");
+    if (flagNullify) 
+      { memset(this->data,0,this->dsize*sizeof(double)) ;}
+    else 
+      {
+	if (recopyNeeded)
+	  {
+	    DEBUG_TRACE (25, "Recopy...");
+	    const int minRow = (this->rowNum<rowTmp)?this->rowNum:rowTmp;
+	    const int minCol = (this->colNum<colTmp)?this->colNum:colTmp;
+	    for (int i=0; i<this->rowNum; ++i) 
+	      for (int j=0; j<this->colNum; ++j) 
+		{
+		  if ((minRow > i) && (minCol > j))
+		    {
+		      (*this)[i][j] = copyTmp [i*colTmp+j];
+		      CDEBUG (25) << i << "x" << j << "<- " << i*colTmp+j 
+				  << "=" << copyTmp [i*colTmp+j] << endl;
+		    }
+		  else {(*this)[i][j] = 0;}
+		}
+	  }
+	else { DEBUG_TRACE (25,"Nothing to do: already done by realloc.");}
+      }
 
-  }  //ERROR_TRACE("out resize") ;
+  }
 
 }
 
