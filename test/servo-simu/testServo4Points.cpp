@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServo4Points.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testServo4Points.cpp,v 1.2 2005-11-04 15:01:17 nmansard Exp $
  *
  * Description
  * ============
@@ -165,8 +165,7 @@ main()
     if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    TRACE("\t\t || s - s* || ") ;
-    cout << task.error.sumSquare() <<endl ; ;
+    TRACE("\t\t || s - s* || = %.4f", task.error.sumSquare()) ;
   }
 
   TRACE("Display task information " ) ;
