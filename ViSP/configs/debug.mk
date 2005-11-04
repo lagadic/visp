@@ -6,18 +6,29 @@
 # to -g -Wno-deprecated -DVP_DEBUG and turn off -O1, -O2, -O3 options
 
 # LEVEL OF TRACE
-ifdef VP_DEBUG
-ifdef DMODE
-  CPPFLAGS += -DVP_DEBUG_MODE=$(DMODE)
-else
-  # Niv de trace minimum par default.
-  CPPFLAGS += -DVP_DEBUG_MODE=0
-endif
+ifeq ($(VP_DEBUG),yes)
+	CPPFLAGS += -DVP_DEBUG=yes -g
+	CXXFLAGST:=$(filter-out -O%,$(CXXFLAGS))
+	CXXFLAGS=$(CXXFLAGST)
+	# LEVEL OF TRACE
+	ifdef VP_DMODE
+	  CPPFLAGS += -DVP_DEBUG_MODE=$(VP_DMODE)
+	else
+	  # Niv de trace minimum par default.
+	  CPPFLAGS += -DVP_DEBUG_MODE=0
+	endif
 endif
 
+
 # FLAG DEFENSIF
-ifeq ($(DEFENSIF), yes)
-  CPPFLAGS += -DDEFENSIF
+ifeq ($(VP_DEFENSIF), yes)
+  CPPFLAGS += -DVP_DEFENSIF
+endif
+
+
+# FLAG DEFENSIF
+ifeq ($(VP_DEFENSIF), yes)
+  CPPFLAGS += -DVP_DEFENSIF
 endif
 
 # --->
@@ -26,13 +37,13 @@ endif
 
 MAKE_FLAGS     =
 ifeq ($(VP_DEBUG),yes)
-  MAKE_FLAGS     += DEBUG=yes
+  MAKE_FLAGS     += VP_DEBUG=yes
 endif
 
-ifeq ($(DEFENSIF), yes)
-  MAKE_FLAGS     += DEFENSIF=yes
+ifeq ($(VP_DEFENSIF), yes)
+  MAKE_FLAGS     += VP_DEFENSIF=yes
 endif
 
-ifdef DMODE
-  MAKE_FLAGS     += DMODE=$(DMODE)
+ifdef VP_DMODE
+  MAKE_FLAGS     += VP_DMODE=$(VP_DMODE)
 endif
