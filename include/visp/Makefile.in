@@ -43,7 +43,8 @@ SERVO =  \
 	vpServoException.h \
 	\
 	vpServoDisplay.h \
-	vpServoData.h
+	vpServoData.h \
+	vpAdaptativeGain.h
 
 ROBOT = \
 	vpRobot.h  \
@@ -70,7 +71,8 @@ TOOLS = \
 	vpPlane.h
 
 DATASTRUCTURE =  \
-	vpList.h
+	vpList.h \
+	vpList.t.cpp
 
 DEBUG =  \
 	vpDebug.h
