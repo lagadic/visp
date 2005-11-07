@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDebug.h,v 1.8 2005-11-04 14:48:43 nmansard Exp $
+ *  $Id: vpDebug.h,v 1.9 2005-11-07 13:30:42 nmansard Exp $
  *
  * Description
  * ============
@@ -44,6 +44,10 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////
 // Unix system
 //
+
+#ifndef VP_DEBUG_MODE
+#define VP_DEBUG_MODE 0
+#endif /*#ifndef VP_TEMPLATE_DEBUG_MODE*/
 
 /* -------------------------------------------------------------------------- */
 /* --- TRACE ---------------------------------------------------------------- */
@@ -190,6 +194,10 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////
 // Windows system
 //
+
+#ifndef VP_DEBUG_MODE
+#define VP_DEBUG_MODE 0
+#endif /*#ifndef VP_TEMPLATE_DEBUG_MODE*/
 
 #ifndef __FUNCTION__
 #define __FUNCTION__ " "
