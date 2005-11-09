@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.14 2005-11-04 14:52:27 nmansard Exp $
+ *  $Id: vpMatrix.cpp,v 1.15 2005-11-09 15:23:26 marchand Exp $
  *
  * Description
  * ============
@@ -54,7 +54,7 @@
 // Debug trace
 #include <visp/vpDebug.h>
 
-#define DEBUG_LEVEL1 1
+#define DEBUG_LEVEL1 0
 
 /*!
   \brief initialization of the object matrix.

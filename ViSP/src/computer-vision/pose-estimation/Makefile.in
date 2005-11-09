@@ -10,7 +10,7 @@ SOURCES		= \
 	vpPoseDementhon.cpp \
 	vpPoseLagrange.cpp \
 	vpPoseLowe.cpp \
-	vpPoseNonLinearMinimisation.cpp \
+	vpPoseVirtualVisualServoing.cpp \
 	vpPoseRansac.cpp \
 	vpPoseException.cpp \
 	vpLevenbergMarquartd.cpp
