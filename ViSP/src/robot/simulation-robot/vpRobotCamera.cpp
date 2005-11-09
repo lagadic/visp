@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotCamera.cpp,v 1.2 2005-09-26 15:59:22 fspindle Exp $
+ *  $Id: vpRobotCamera.cpp,v 1.3 2005-11-09 15:22:04 marchand Exp $
  *
  * Description
  * ============
@@ -90,14 +90,14 @@ sendArticularVelocity
 void
 vpRobotCamera::setCameraVelocity(const vpColVector &v)
 {
-  cMo = cMo.expMap(v) ;
+  cMo = expMap(v).inverse()*cMo ;
 }
 
 //! send to the controller a velocity expressed in the articular frame
 void
 vpRobotCamera::setArticularVelocity(const vpColVector &qdot)
 {
-  cMo = cMo.expMap(qdot) ;
+  cMo = expMap(qdot).inverse()*cMo ;
 }
 
 //! send to the controller a velocity (frame as to ve specified)
