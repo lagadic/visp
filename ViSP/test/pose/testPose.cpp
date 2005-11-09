@@ -53,10 +53,10 @@ main()
 
   P[0].setWorldCoordinates(-L,-L, 0 ) ;
   P[1].setWorldCoordinates(L,-L, 0 ) ;
-  P[2].setWorldCoordinates(L,L, 0.2 ) ;
+  P[2].setWorldCoordinates(L,L, 0 ) ;
   P[3].setWorldCoordinates(-L,L, 0 ) ;
 
-  vpHomogeneousMatrix cMo_ref(0,0.2,1,vpMath::rad(0),0,0) ;
+  vpHomogeneousMatrix cMo_ref(0.1,0.2,1,vpMath::rad(10),0,vpMath::rad(10)) ;
   int i ;
   for(i=0 ; i < 4 ; i++)
     P[i].project(cMo_ref) ;
@@ -91,23 +91,37 @@ main()
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
+  cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<endl ;
   //  TRACE(  "Pose LOWE"  ) ;
   //  cout <<  cMo << endl ;
   //  cout << "residu Lowe " << pose.computeResidual(cMo) <<endl ;
 
 
-  vpHomogeneousMatrix cMo1 ;
+  cout <<endl <<endl ;
+  cout <<"------------------------------------------------------------"<<endl ;
+  cout << "Virtual Visual servoing " << endl ;
+
+  cout <<"------------------------------------------------------------"<<endl ;
+  pose.computePose(vpPose::LAGRANGE, cMo) ;
+  TRACE("LAGRANGE pose : ") ;
+  cout << cMo << endl ;
+  cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<endl ;
 
 
-  cMo1 = cMo_ref ;
-  cMo1[2][3] += 0.1 ;
-  cMo1[1][3] += 0.1 ;
-  TRACE("VIRTUAL_VS");
-  cout << "initial residual term obtained with LOWE method: "
-       << pose.computeResidual(cMo1) <<endl ;
-  pose.computePose(vpPose::VIRTUAL_VS, cMo1) ;
-  TRACE("VIRTUAL_VS pose : ") ;
-  cout << cMo1 << endl ;
-  cout << "VIRTUAL_VS residual term: " << pose.computeResidual(cMo1) <<endl ;
+  cout <<"------------------------------------------------------------"<<endl ;
+  pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+  TRACE( "VIRTUAL_VS pose :" ) ;
+  cout <<  cMo << endl ;
+  cout << "vvs residual term: " <<pose.computeResidual(cMo) <<endl ;
+
+  cout <<"------------------------------------------------------------"<<endl ;
+  pose.computePose(vpPose::DEMENTHON, cMo) ;
+  TRACE(  "DEMENTHON pose :" ) ;
+  cout <<  cMo << endl ;
+  cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<endl ;
+
+  cout <<"------------------------------------------------------------"<<endl ;
+  pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+  cout << "vvs residual term: " <<pose.computeResidual(cMo) <<endl ;
 
 }
