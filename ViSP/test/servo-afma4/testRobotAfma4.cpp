@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testRobotAfma4.cpp,v 1.1 2005-09-19 13:28:58 fspindle Exp $
+ *  $Id: testRobotAfma4.cpp,v 1.2 2005-11-09 15:07:09 marchand Exp $
  *
  * Description
  * ============
@@ -30,6 +30,7 @@ using namespace std;
 #include <visp/vpRobotAfma4.h>
 #include <visp/vpDebug.h>
 
+#ifdef HAVE_ROBOT_AFMA4
 #ifdef HAVE_LIBGSL
 int gsl_warnings_off;
 #endif
@@ -45,3 +46,11 @@ int main()
   CTRACE << robotAfma4;
   return 1;
 }
+
+#else
+int main()
+{
+  cout << "a test..." << endl;
+}
+
+#endif
