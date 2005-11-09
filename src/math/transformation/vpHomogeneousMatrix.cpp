@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomogeneousMatrix.cpp,v 1.4 2005-08-24 15:11:53 chaumett Exp $
+ *  $Id: vpHomogeneousMatrix.cpp,v 1.5 2005-11-09 15:22:54 marchand Exp $
  *
  * Description
  * ============
@@ -439,6 +439,8 @@ vpHomogeneousMatrix::setIdentity()
 
 /* Delta is computed from an instantaneous velocity v */
 /* if v is expressed in frame c, Delta = cMc_new */
+
+/*
 vpHomogeneousMatrix
 vpHomogeneousMatrix::expMap(const vpColVector &dx) const
 {
@@ -554,6 +556,125 @@ vpHomogeneousMatrix::expMap(const vpColVector &dx) const
   mati = Delta.inverse() * mati ;
 
   return mati ;
+
+  // SHOULD return Delta ;
+
+}
+*/
+
+/* Delta is computed from an instantaneous velocity v */
+/* if v is expressed in frame c, Delta = cMc_new */
+vpHomogeneousMatrix
+expMap(const vpColVector &dx) 
+{
+  double theta,si,co,sinc,mcosc,msinc;
+  vpThetaUVector u ;
+  vpRotationMatrix rd ;
+  vpTranslationVector dt ;
+
+  u[0] = dx[3];
+  u[1] = dx[4];
+  u[2] = dx[5];
+  rd.buildFrom(u);
+
+  theta = sqrt(u[0]*u[0] + u[1]*u[1] + u[2]*u[2]);
+  si = sin(theta);
+  co = cos(theta);
+  sinc = vpMath::sinc(si,theta);
+  mcosc = vpMath::mcosc(co,theta);
+  msinc = vpMath::msinc(si,theta);
+
+  dt[0] = dx[0]*(sinc + u[0]*u[0]*msinc)
+        + dx[1]*(u[0]*u[1]*msinc - u[2]*mcosc)
+        + dx[2]*(u[0]*u[2]*msinc + u[1]*mcosc);
+
+  dt[1] = dx[0]*(u[0]*u[1]*msinc + u[2]*mcosc)
+        + dx[1]*(sinc + u[1]*u[1]*msinc)
+        + dx[2]*(u[1]*u[2]*msinc - u[0]*mcosc);
+
+  dt[2] = dx[0]*(u[0]*u[2]*msinc - u[1]*mcosc)
+        + dx[1]*(u[1]*u[2]*msinc + u[0]*mcosc)
+        + dx[2]*(sinc + u[2]*u[2]*msinc);
+
+  vpHomogeneousMatrix Delta ;
+  Delta.insert(rd) ;
+  Delta.insert(dt) ;
+
+
+ 
+
+  if (DEBUG_LEVEL1)  // test new version wrt old version
+  {
+    // old version
+    int i,j;
+
+    double sinu,cosi,mcosi,s;
+    // double u[3];
+    //  vpRotationMatrix rd ;
+    //  vpTranslationVector dt ;
+
+    s = sqrt(dx[3]*dx[3] + dx[4]*dx[4] + dx[5]*dx[5]);
+    if (s > 1.e-15)
+    {
+      for (i=0;i<3;i++) u[i] = dx[3+i]/s;
+      sinu = sin(s);
+      cosi = cos(s);
+      mcosi = 1-cosi;
+      rd[0][0] = cosi + mcosi*u[0]*u[0];
+      rd[0][1] = -sinu*u[2] + mcosi*u[0]*u[1];
+      rd[0][2] = sinu*u[1] + mcosi*u[0]*u[2];
+      rd[1][0] = sinu*u[2] + mcosi*u[1]*u[0];
+      rd[1][1] = cosi + mcosi*u[1]*u[1];
+      rd[1][2] = -sinu*u[0] + mcosi*u[1]*u[2];
+      rd[2][0] = -sinu*u[1] + mcosi*u[2]*u[0];
+      rd[2][1] = sinu*u[0] + mcosi*u[2]*u[1];
+      rd[2][2] = cosi + mcosi*u[2]*u[2];
+
+      dt[0] = dx[0]*(sinu/s + u[0]*u[0]*(1-sinu/s))
+            + dx[1]*(u[0]*u[1]*(1-sinu/s)-u[2]*mcosi/s)
+            + dx[2]*(u[0]*u[2]*(1-sinu/s)+u[1]*mcosi/s);
+
+      dt[1] = dx[0]*(u[0]*u[1]*(1-sinu/s)+u[2]*mcosi/s)
+            + dx[1]*(sinu/s + u[1]*u[1]*(1-sinu/s))
+            + dx[2]*(u[1]*u[2]*(1-sinu/s)-u[0]*mcosi/s);
+
+      dt[2] = dx[0]*(u[0]*u[2]*(1-sinu/s)-u[1]*mcosi/s)
+            + dx[1]*(u[1]*u[2]*(1-sinu/s)+u[0]*mcosi/s)
+            + dx[2]*(sinu/s + u[2]*u[2]*(1-sinu/s));
+    }
+    else
+    {
+      for (i=0;i<3;i++)
+      {
+        for(j=0;j<3;j++) rd[i][j] = 0.0;
+        rd[i][i] = 1.0;
+        dt[i] = dx[i];
+      }
+    }
+    // end old version
+
+    // Test of the new version
+    vpHomogeneousMatrix Delta_old ;
+    Delta_old.insert(rd) ;
+    Delta_old.insert(dt) ;
+
+    int pb = 0;
+    for (i=0;i<4;i++)
+    {
+      for(j=0;j<4;j++)
+        if (fabs(Delta[i][j] - Delta_old[i][j]) > 1.e-5) pb = 1;
+    }
+    if (pb == 1)
+    {
+      printf("pb vpHomogeneousMatrix::expMap\n");
+      cout << " Delta : " << endl << Delta << endl;
+      cout << " Delta_old : " << endl << Delta_old << endl;
+    }
+    // end of the test
+  }
+  
+
+  return Delta ;
 
   // SHOULD return Delta ;
 

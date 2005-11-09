@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomogeneousMatrix.h,v 1.2 2005-09-05 09:09:01 crenaudi Exp $
+ *  $Id: vpHomogeneousMatrix.h,v 1.3 2005-11-09 15:22:54 marchand Exp $
  *
  * Description
  * ============
@@ -121,7 +121,7 @@ class vpHomogeneousMatrix : public vpMatrix
   void inverse(vpHomogeneousMatrix &Mi) const;
 
   //! invert the homogeneous matrix
-  vpHomogeneousMatrix expMap(const vpColVector &v) const ;
+  //  vpHomogeneousMatrix expMap(const vpColVector &v) const ;
 
 
   //! test if the rotational part of the matrix is a rotation matrix
@@ -151,6 +151,9 @@ class vpHomogeneousMatrix : public vpMatrix
   void print() ;
 
  } ;
+
+
+ vpHomogeneousMatrix expMap(const vpColVector &v)  ;
 
 //void ComputeCameraPosition(const vpColVector& dx,vpHomogeneousMatrix&  mati,int typ_mvt=0) ;
 #endif
