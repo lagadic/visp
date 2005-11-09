@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: test_svd.cpp,v 1.3 2005-09-26 16:05:17 fspindle Exp $
+ *  $Id: test_svd.cpp,v 1.4 2005-11-09 15:36:27 marchand Exp $
  *
  * Description
  * ============
@@ -32,7 +32,7 @@
 
 int
 main()
-{
+{ 
   int i,j ;
   vpMatrix L(60000,6), Ls ;
   for (i=0 ; i < L.getRows() ; i++)
