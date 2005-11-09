@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.cpp,v 1.3 2005-09-27 12:31:07 fspindle Exp $
+ *  $Id: vpTime.cpp,v 1.4 2005-11-09 15:21:22 marchand Exp $
  *
  * Description
  * ============
@@ -87,11 +87,11 @@ void Wait(int t)
 
 
 #endif
-#if (defined(__Linux_) || defined(__SunOS_))
+#if (defined(__Linux_) || defined(__SunOS_)|| defined(__Darwin_) )
 
 
 
-// Unix depend version
+// Unix depend version 
 
 
 #include <sys/time.h>
