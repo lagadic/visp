@@ -6,13 +6,13 @@
  * File:      $Source: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/servo/vpServo.cpp,v $
  * Project:   ViSP 2.0
  * Author:    Eric Marchand
- * Modif:     Reimplementation of functions computeInteractionMatrix 
+ * Modif:     Reimplementation of functions computeInteractionMatrix
  *            and compute Error (linear algorithmic cost): N.Mansard 4-NOV-5
  *
  * Version control
  * ===============
  *
- *  $Id: vpServo.cpp,v 1.8 2005-11-04 15:19:21 nmansard Exp $
+ *  $Id: vpServo.cpp,v 1.9 2005-11-10 09:21:41 marchand Exp $
  *
  * Description
  * ============
@@ -96,7 +96,6 @@ vpServo::kill()
      s_ptr=  desiredFeatureList.value() ;
      if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
        {
-	 cout << "Deallocate " << endl ;
 	 s_ptr->print() ;
 	 delete s_ptr ;
 	 s_ptr = NULL ;
@@ -153,9 +152,9 @@ vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
     case vpServo::ALL:
 
       {
-	 
+
 	os << "Visual servoing task: " <<endl ;
-	 
+
 	os << "Type of control law " <<endl ;
 	switch( servoType )
 	  {
@@ -218,7 +217,7 @@ vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
 	  }
 	else
 	  {os << "not yet computed "<<endl ;}
-      
+
 	os <<"Error vector (s-s*) "<<endl  ;
 	if (errorComputed)
 	  {
@@ -228,7 +227,7 @@ vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
 	  {os << "not yet computed "<<endl ;}
 
 	os << "Gain : " << lambda <<endl ;
-    
+
 	break;
       }
 
@@ -240,7 +239,7 @@ vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
 	  {  os << error.t() ;  }
 	else
 	  {os << "not yet computed "<<endl ;}
-     
+
       }
 
 
@@ -323,7 +322,7 @@ vpServo::setInteractionMatrixType(const int _interactionMatrixType, const int _i
 }
 
 
-static void 
+static void
 computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureList,
 				   /*const*/ vpList<int> & featureSelectionList,
 				   vpMatrix & L)
@@ -356,7 +355,7 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
   vpMatrix matrixTmp;
   int rowMatrixTmp, colMatrixTmp;
 
-  /* The cursor are the number of the next case of the vector array to 
+  /* The cursor are the number of the next case of the vector array to
    * be affected. A memory reallocation should be done when cursor
    * is out of the vector-array range.*/
   int cursorL = 0;
@@ -374,18 +373,18 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
       colMatrixTmp = matrixTmp .getCols();
 
       /* Check the matrix L size, and realloc if needed. */
-      while (rowMatrixTmp + cursorL > rowL) 
+      while (rowMatrixTmp + cursorL > rowL)
 	{ rowL *= 2; L .resize (rowL,colL,false); DEBUG_TRACE(15,"Realloc!"); }
 
       /* Copy the temporarily matrix into L. */
-      for (int k = 0; k < rowMatrixTmp; ++k, ++cursorL) 
+      for (int k = 0; k < rowMatrixTmp; ++k, ++cursorL)
 	for (int j = 0; j <  colMatrixTmp; ++j)
 	  { L[cursorL][j] = matrixTmp[k][j]; }
 
     }
 
   L.resize (cursorL,colL,false);
-  
+
   return ;
 }
 
@@ -403,8 +402,8 @@ vpServo::computeInteractionMatrix()
       {
       case CURRENT:
 	{
-	  try 
-	    {computeInteractionMatrixFromList(this ->featureList, 
+	  try
+	    {computeInteractionMatrixFromList(this ->featureList,
 					      this ->featureSelectionList, L);}
 	  catch(vpException me)
 	    {
@@ -415,8 +414,8 @@ vpServo::computeInteractionMatrix()
 	break ;
       case DESIRED:
 	{
-	  try 
-	    {computeInteractionMatrixFromList(this ->desiredFeatureList, 
+	  try
+	    {computeInteractionMatrixFromList(this ->desiredFeatureList,
 					      this ->featureSelectionList, L);}
 	  catch(vpException me)
 	    {
@@ -428,11 +427,11 @@ vpServo::computeInteractionMatrix()
       case MEAN:
 	{
 	  vpMatrix Lstar (L.getRows(), L.getCols());
-	  try 
+	  try
 	    {
-	      computeInteractionMatrixFromList(this ->featureList, 
+	      computeInteractionMatrixFromList(this ->featureList,
 					      this ->featureSelectionList, L);
-	      computeInteractionMatrixFromList(this ->desiredFeatureList, 
+	      computeInteractionMatrixFromList(this ->desiredFeatureList,
 					      this ->featureSelectionList, Lstar);
 	    }
 	  catch(vpException me)
@@ -493,7 +492,7 @@ vpServo::computeError()
      * The algotithmic cost is linear in affectation, logarthmic in allocation
      * numbers and linear in allocation size.
      * No assumptions are made concerning size of each vector: they are
-     * not said equal, and could be different. 
+     * not said equal, and could be different.
      */
 
     /* First assumption: vector dimensions have not changed. If 0, they are
@@ -510,13 +509,13 @@ vpServo::computeError()
     vpColVector vectTmp;
     int dimVectTmp;
 
-    /* The cursor are the number of the next case of the vector array to 
+    /* The cursor are the number of the next case of the vector array to
      * be affected. A memory reallocation should be done when cursor
      * is out of the vector-array range.*/
     int cursorS = 0;
     int cursorSStar = 0;
     int cursorError = 0;
-    
+
     /* For each cell of the list, recopy value of s, s_star and error. */
     for (featureList.front(),
 	   desiredFeatureList.front(),
@@ -535,24 +534,24 @@ vpServo::computeError()
 	/* Get s, and store it in the s vector. */
 	vectTmp = current_s->get_s();
 	dimVectTmp = vectTmp .getRows();
-	while (dimVectTmp + cursorS > dimS) 
+	while (dimVectTmp + cursorS > dimS)
 	  { dimS *= 2; s .resize (dimS,false); DEBUG_TRACE(15,"Realloc!"); }
 	for (int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
 
 	/* Get s_star, and store it in the s vector. */
 	vectTmp = desired_s->get_s();
 	dimVectTmp = vectTmp .getRows();
-	while (dimVectTmp + cursorSStar > dimSStar) 
+	while (dimVectTmp + cursorSStar > dimSStar)
 	  { dimSStar *= 2; sStar .resize (dimSStar,false);  }
-	for (int k = 0; k <  dimVectTmp; ++k) 
+	for (int k = 0; k <  dimVectTmp; ++k)
 	  { sStar[cursorSStar++] = vectTmp[k]; }
-	
+
 	/* Get error, and store it in the s vector. */
 	vectTmp = current_s->error(*desired_s, select) ;
 	dimVectTmp = vectTmp .getRows();
-	while (dimVectTmp + cursorError > dimError) 
+	while (dimVectTmp + cursorError > dimError)
 	  { dimError *= 2; error .resize (dimError,false);  }
-	for (int k = 0; k <  dimVectTmp; ++k) 
+	for (int k = 0; k <  dimVectTmp; ++k)
 	  { error[cursorError++] = vectTmp[k]; }
       }
 
