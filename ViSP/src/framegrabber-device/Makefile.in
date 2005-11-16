@@ -2,6 +2,7 @@
 
 SRC_REP = \
 	\
+	disk \
 	generic-framegrabber \
 	IC-Comp \
 	1394 \

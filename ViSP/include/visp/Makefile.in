@@ -108,6 +108,7 @@ GRABBER = \
 	vpFrameGrabber.h \
 	vpFrameGrabberException.h \
 	\
+	vpDiskGrabber.h \
 	vpIcCompGrabber.h \
 	vp1394Grabber.h \
 	vpV4l2Grabber.h
