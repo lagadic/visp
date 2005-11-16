@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRzyxVector.h,v 1.3 2005-07-19 13:03:39 obourqua Exp $
+ *  $Id: vpRzyxVector.h,v 1.4 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -35,6 +35,8 @@
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpRotationVector.h>
 
+class vpRotationMatrix;
+class vpThetaUVector;
 
 /*!
   \class vpRzyxVector

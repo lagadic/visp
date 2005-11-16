@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomogeneousMatrix.h,v 1.3 2005-11-09 15:22:54 marchand Exp $
+ *  $Id: vpHomogeneousMatrix.h,v 1.4 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -38,6 +38,12 @@
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
 #include <visp/vpPoseVector.h>
+
+class vpMatrix;
+class vpRotationMatrix;
+class vpEulerVector;
+class vpPoseVector;
+class vpThetaUVector;
 
 /*!
   \class vpHomogeneousMatrix

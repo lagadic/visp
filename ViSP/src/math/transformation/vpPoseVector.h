@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseVector.h,v 1.1.1.1 2005-06-08 07:08:06 fspindle Exp $
+ *  $Id: vpPoseVector.h,v 1.2 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -38,6 +38,11 @@
 #include <visp/vpEulerVector.h>
 #include <visp/vpHomogeneousMatrix.h>
 
+class vpRotationMatrix;
+class vpHomogeneousMatrix;
+class vpTranslationVector;
+class vpEulerVector;
+class vpThetaUVector;
 
 
 /*!

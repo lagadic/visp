@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpEulerVector.h,v 1.3 2005-07-19 13:53:46 obourqua Exp $
+ *  $Id: vpEulerVector.h,v 1.4 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -38,6 +38,8 @@
 #include <visp/vpRotationVector.h>
 #include <visp/vpRotationMatrix.h>
 
+class vpRotationMatrix;
+class vpThetaUVector;
 
 /*!
   \class vpEulerVector

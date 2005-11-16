@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImage.h,v 1.1.1.1 2005-06-08 07:08:08 fspindle Exp $
+ *  $Id: vpImage.h,v 1.2 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -37,6 +37,8 @@
 #include <string.h>
 
 #include <visp/vpImageException.h>
+
+class vpDisplay;
 
 /*!
   \class vpImage

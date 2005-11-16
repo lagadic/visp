@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoint.h,v 1.2 2005-06-28 13:57:55 marchand Exp $
+ *  $Id: vpPoint.h,v 1.3 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -33,6 +33,7 @@
 
 #include <visp/vpForwardProjection.h>
 
+class vpHomography;
 
 /*!
   \class vpPoint
