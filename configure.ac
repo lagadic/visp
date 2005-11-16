@@ -320,6 +320,7 @@ src/framegrabber-device/IC-Comp/Makefile
 src/framegrabber-device/1394/Makefile
 src/framegrabber-device/v4l2/Makefile
 src/framegrabber-device/generic-framegrabber/Makefile
+src/framegrabber-device/disk/Makefile
 src/tracking/Makefile
 src/tracking/dots/Makefile
 src/tracking/moving-edges/Makefile

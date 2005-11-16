@@ -2,6 +2,7 @@
 
 
 SOURCES		= \
+	testDisk.cpp \
 	testIcComp.cpp \
 	test1394.cpp \
 	testV4l2Grey.cpp \
