@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpColVector.h,v 1.3 2005-11-04 14:52:27 nmansard Exp $
+ *  $Id: vpColVector.h,v 1.4 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -27,6 +27,8 @@
 
 #include <visp/vpMatrix.h>
 #include <visp/vpRowVector.h>
+
+class vpMatrix;
 
 /*!
   \file vpColVector.h

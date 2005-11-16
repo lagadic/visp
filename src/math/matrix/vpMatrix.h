@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.7 2005-11-04 14:52:27 nmansard Exp $
+ *  $Id: vpMatrix.h,v 1.8 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -29,6 +29,10 @@
 #include <math.h>
 
 #include <visp/vpConfig.h>
+
+class vpRowVector;
+class vpColVector;
+class vpTranslationVector;
 
 
 using namespace std ;

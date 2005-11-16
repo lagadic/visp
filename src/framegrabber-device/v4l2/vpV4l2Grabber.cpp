@@ -867,7 +867,7 @@ vpV4l2Grabber::waiton(int &index)
   {
     ERROR_TRACE("field: %d\n", buf_v4l2[index].field);
 
-    ERROR_TRACE("data adress : 0x%x\n", buf_me[buf.index].data);
+    ERROR_TRACE("data adress : 0x%p\n", buf_me[buf.index].data);
   }
   return buf_me[buf.index].data;
 }
@@ -958,7 +958,9 @@ vpV4l2Grabber::printBufInfo(struct v4l2_buffer buf)
   default:                          sprintf(type, "unknown"); break;
   }
 
-  fprintf(stdout,"v4l2:  buf %d:  %d ad:  0x%x offset 0x%x+%d (=0x%x),used %d\n", buf.index, buf.type, buf.m.userptr, buf.m.offset, buf.length, buf.length, buf.bytesused);
+  fprintf(stdout,"v4l2: buf %d: %d ad: 0x%lx offset 0x%x+%d (=0x%x),used %d\n",
+	  buf.index, buf.type, buf.m.userptr, buf.m.offset, 
+	  buf.length, buf.length, buf.bytesused);
 
 }
 #endif

@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpThetaUVector.h,v 1.2 2005-07-19 13:03:39 obourqua Exp $
+ *  $Id: vpThetaUVector.h,v 1.3 2005-11-16 09:44:07 fspindle Exp $
  *
  * Description
  * ============
@@ -37,6 +37,12 @@
 #include <visp/vpEulerVector.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpRzyxVector.h>
+
+class vpRotationMatrix;
+class vpRzyxVector;
+class vpRxyzVector;
+class vpEulerVector;
+class vpRzyzVector;
 
 /*!
   \class vpThetaUVector
