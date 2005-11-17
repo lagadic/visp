@@ -15,7 +15,7 @@ vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu)
 
   SoQtExaminerViewer::SoQtExaminerViewer(parent,(char *)NULL,false) ;
 
-  simu = _simu ;
+  this->simu = _simu ;
 
   // Coin should not clear the pixel-buffer, so the background image
   // is not removed.
