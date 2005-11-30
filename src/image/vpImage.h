@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImage.h,v 1.2 2005-11-16 09:44:07 fspindle Exp $
+ *  $Id: vpImage.h,v 1.3 2005-11-30 10:31:39 marchand Exp $
  *
  * Description
  * ============
@@ -22,14 +22,17 @@
 
 
 
-#ifndef vpImage_H
-#define vpImage_H
-
 /*!
   \file vpImage.h
   \brief  image handling
   \ingroup
 */
+
+#ifndef vpImage_H
+#define vpImage_H
+
+class vpDisplay;
+
 
 #include <fstream>
 #include <iostream>
@@ -86,8 +89,6 @@ class vpDisplay;
 template<class Type>
 class vpImage
 {
-
-  friend class vpDisplay ;
 
 private:
   int npixels ; //<! number of pixel in the image
