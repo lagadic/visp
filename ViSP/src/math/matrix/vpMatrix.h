@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.8 2005-11-16 09:44:07 fspindle Exp $
+ *  $Id: vpMatrix.h,v 1.9 2005-11-30 10:28:57 marchand Exp $
  *
  * Description
  * ============
@@ -35,7 +35,12 @@ class vpColVector;
 class vpTranslationVector;
 
 
+class vpColVector; 
+class vpTranslationVector;
+class vpRowVector;
+
 using namespace std ;
+
 /*!
   \file vpMatrix.h
   \brief definition of matrix class as well
@@ -62,11 +67,6 @@ using namespace std ;
 */
 class vpMatrix
 {
-
-  friend class vpRowVector;
-  friend class vpColVector;
-  friend class vpTranslationVector;
-
   int k ;
 protected:
   //! number of rows

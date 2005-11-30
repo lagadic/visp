@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseVector.h,v 1.2 2005-11-16 09:44:07 fspindle Exp $
+ *  $Id: vpPoseVector.h,v 1.3 2005-11-30 10:28:57 marchand Exp $
  *
  * Description
  * ============
@@ -32,6 +32,11 @@
     a rotation vector (theta u representation) and t is a translation
     vector
 */
+class vpRotationMatrix;
+class vpHomogeneousMatrix;
+class vpTranslationVector;
+class vpEulerVector;
+class vpThetaUVector;
 
 #include <visp/vpMatrix.h>
 #include <visp/vpRotationMatrix.h>
@@ -55,11 +60,7 @@ class vpThetaUVector;
 */
 class vpPoseVector : public vpColVector
 {
-    friend class vpRotationMatrix;
-    friend class vpHomogeneousMatrix;
-    friend class vpTranslationVector;
-    friend class vpEulerVector;
-    friend class vpThetaUVector;
+ 
 private:
     //! initialize a size 6 vector
     void init() ;
