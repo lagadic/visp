@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomogeneousMatrix.h,v 1.4 2005-11-16 09:44:07 fspindle Exp $
+ *  $Id: vpHomogeneousMatrix.h,v 1.5 2005-11-30 10:28:57 marchand Exp $
  *
  * Description
  * ============
@@ -29,6 +29,14 @@
 
 #ifndef VPHOMOGENEOUSMATRIX_HH
 #define VPHOMOGENEOUSMATRIX_HH
+
+class vpPoseVector;
+class vpMatrix;
+class vpRotationMatrix;
+class vpEulerVector;
+class vpPoseVector;
+class vpThetaUVector;
+
 #include <fstream>
 
 #include <visp/vpMatrix.h>
@@ -73,11 +81,7 @@ class vpThetaUVector;
 */
 class vpHomogeneousMatrix : public vpMatrix
 {
-  friend class vpMatrix;
-  friend class vpRotationMatrix;
-  friend class vpEulerVector;
-  friend class vpPoseVector;
-  friend class vpThetaUVector;
+ 
 
  public:
   //! Basic initialisation (identity)

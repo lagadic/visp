@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpEulerVector.h,v 1.4 2005-11-16 09:44:07 fspindle Exp $
+ *  $Id: vpEulerVector.h,v 1.5 2005-11-30 10:28:57 marchand Exp $
  *
  * Description
  * ============
@@ -35,6 +35,10 @@
   Euler(phi,theta,psi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
 
+class vpEulerVector;
+class vpRotationMatrix;
+class vpThetaUVector;
+
 #include <visp/vpRotationVector.h>
 #include <visp/vpRotationMatrix.h>
 
@@ -50,8 +54,6 @@ class vpThetaUVector;
 */
 class vpEulerVector : public vpRotationVector
 {
-  friend class vpRotationMatrix;
-  friend class vpThetaUVector;
 
 public:
   //! constructor

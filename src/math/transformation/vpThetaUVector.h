@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpThetaUVector.h,v 1.3 2005-11-16 09:44:07 fspindle Exp $
+ *  $Id: vpThetaUVector.h,v 1.4 2005-11-30 10:28:57 marchand Exp $
  *
  * Description
  * ============
@@ -31,6 +31,12 @@
   \brief class that consider the case of the Theta U parameterization for the
   rotation
 */
+
+class vpRotationMatrix;
+class vpRzyxVector;
+class vpRxyzVector;
+class vpEulerVector;
+class vpRzyzVector;
 
 #include <visp/vpRotationVector.h>
 #include <visp/vpRotationMatrix.h>
@@ -51,11 +57,6 @@ class vpRzyzVector;
 */
 class vpThetaUVector : public vpRotationVector
 {
-  friend class vpRotationMatrix;
-  friend class vpRzyxVector;
-  friend class vpRxyzVector;
-  friend class vpEulerVector;
-  friend class vpRzyzVector;
 
 private:
   //! initialize a size 3 vector
