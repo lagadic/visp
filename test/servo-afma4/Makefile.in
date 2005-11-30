@@ -2,7 +2,8 @@
 
 
 SOURCES		=\
-		testRobotAfma4.cpp
+		testRobotAfma4.cpp \
+		moveAfma4.cpp
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
 

@@ -340,7 +340,6 @@ test/tracking/Makefile
 test/simulator/Makefile	
 test/homography/Makefile	
 example/Makefile
-example/servo-afma4/Makefile
 ])
 
 ########################################################################
