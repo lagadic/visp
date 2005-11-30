@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseVirtualVisualServoing.cpp,v 1.1 2005-11-02 16:14:37 marchand Exp $
+ *  $Id: vpPoseVirtualVisualServoing.cpp,v 1.2 2005-11-30 10:30:41 marchand Exp $
  *
  * Description
  * ============
@@ -122,7 +122,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       v = -lambda*Lp*error ;
 
 
-      cout << "r=" << r <<endl ;
+      //cout << "r=" << r <<endl ;
       // update the pose
 
       cMo = expMap(v).inverse()*cMo ; ;
