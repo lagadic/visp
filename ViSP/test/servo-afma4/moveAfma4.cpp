@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma4.cpp,v 1.1 2005-09-19 13:30:27 fspindle Exp $
+ *  $Id: moveAfma4.cpp,v 1.1 2005-11-30 09:46:15 fspindle Exp $
  *
  * Description
  * ============
