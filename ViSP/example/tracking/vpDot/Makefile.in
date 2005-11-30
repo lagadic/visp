@@ -1,0 +1,24 @@
+@build_mk@
+
+
+SOURCES		= \
+	vpDotExample.cpp
+
+PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
+
+all install: directory  $(PROGS)
+
+@directory_mk@
+
+@bin_mk@
+
+$(VISP_LIBNAME):
+	cd $(VISP_DIR_SRC); $(MAKE)
+
+uninstall:
+	rm -f $(PROGS)
+	rm -f $(DEPFILES)
+
+@clean_mk@
+
+@depend_mk@
