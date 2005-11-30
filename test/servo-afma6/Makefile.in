@@ -2,7 +2,22 @@
 
 
 SOURCES		=\
-		testRobotAfma6.cpp
+	testRobotAfma6.cpp \
+	moveAfma6.cpp  \
+	\
+	servoAfma6EyeToHand.cpp \
+	\
+	servoAfma6PointArticularVelocity.cpp \
+	servoAfma6PointCameraVelocity.cpp \
+	servoAfma6FourPointArticularVelocity.cpp \
+	servoAfma6FourPointCameraVelocity.cpp \
+	\
+	servoAfma6Line.cpp \
+	servoAfma6TwoLine.cpp \
+	servoAfma6SquareLine.cpp \
+	\
+	servoAfma6Ellipse.cpp
+
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
 
