@@ -2,7 +2,7 @@ clean:
 	rm -f *%
 	rm -f *~
 	rm -f *.o
-	@for i in `find -type f -name tca.* -print | sort` ; do\
+	@for i in `find -type f -name "tca.*" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
@@ -10,7 +10,7 @@ clean:
 		rm -fr $$i;\
 		echo "rm -fr " $$i;\
 	done
-	@for i in `find -type f -name *.d -print | sort` ; do\
+	@for i in `find -type f -name "*.d" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done

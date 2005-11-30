@@ -19,7 +19,6 @@ LIB		= $(VISP_LIB_PATH)/lib@VISP_LIBNAME@.a
 all install: src FORCE
 	cd test; $(MAKE) $@
 	cd example; $(MAKE) $@
-	cd demo; $(MAKE) $@
 
 src: directory FORCE
 	cd include; $(MAKE) install
@@ -31,9 +30,6 @@ test: src FORCE
 
 example: src FORCE
 	cd example; $(MAKE) install
-
-demo: src FORCE
-	cd demo; $(MAKE) install
 
 directory:
 	@if [ ! -d bin ] ;\
@@ -58,12 +54,11 @@ clean:
 	cd src; $(MAKE) $@
 	cd test; $(MAKE) $@
 	cd example; $(MAKE) $@
-	cd demo; $(MAKE) $@
-	@for i in `find -type f -name *~ -print | sort` ; do\
+	@for i in `find -type f -name "*~" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
-	@for i in `find -type f -name tca.* -print | sort` ; do\
+	@for i in `find -type f -name "tca.*" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
@@ -71,7 +66,7 @@ clean:
 		rm -fr $$i;\
 		echo "rm -fr " $$i;\
 	done
-	@for i in `find -type f -name *.d -print | sort` ; do\
+	@for i in `find -type f -name "*.d" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
@@ -85,7 +80,6 @@ uninstall:
 	cd src; $(MAKE) $@
 	cd test; $(MAKE) $@
 	cd example; $(MAKE) $@
-	cd demo; $(MAKE) $@
 	rm -f $(VISP_DEP_PATH)/*.P
 	rm -f $(VISP_OBJ_PATH)/*.o
 	rm -f $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
@@ -109,7 +103,7 @@ uninstall:
 		rm -f $${filetoremove};\
 		echo "rm -f " $${filetoremove};\
 	done
-	@for i in `find -type f -name tca.* -print | sort` ; do\
+	@for i in `find -type f -name "tca.*" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
@@ -117,7 +111,7 @@ uninstall:
 		rm -fr $$i;\
 		echo "rm -fr " $$i;\
 	done
-	@for i in `find -type f -name *.d -print | sort` ; do\
+	@for i in `find -type f -name "*.d" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
@@ -136,7 +130,7 @@ uninstallall:
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
-	@for i in `find -type f -name *.exe -print | sort` ; do\
+	@for i in `find -type f -name "*.exe" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
@@ -153,7 +147,7 @@ group-access:
 	@echo "Changing group access in process..."
 	chmod -R g+rw .
 	find . -type d -exec chmod g+rwx {} \;
-	@for i in `find -type f -name *.exe -print | sort` ; do\
+	@for i in `find -type f -name "*.exe" -print | sort` ; do\
 		chmod g+rwx $$i;\
 		echo "chmod g+rwx" $$i;\
 	done
