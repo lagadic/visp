@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoint.h,v 1.3 2005-11-16 09:44:07 fspindle Exp $
+ *  $Id: vpPoint.h,v 1.4 2005-11-30 10:27:27 marchand Exp $
  *
  * Description
  * ============
@@ -22,6 +22,8 @@
 
 #ifndef vpPoint_H
 #define vpPoint_H
+
+class vpHomography ;
 
 /*!
   \file vpPoint.h
@@ -42,7 +44,6 @@ class vpHomography;
 class vpPoint : public vpForwardProjection
 {
 
-  friend class vpHomography ;
 public:
   //! basic construction
   void init() ;
