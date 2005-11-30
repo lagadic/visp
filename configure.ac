@@ -339,8 +339,6 @@ test/image/Makefile
 test/tracking/Makefile
 test/simulator/Makefile	
 test/homography/Makefile	
-demo/Makefile
-demo/grasping-2-0.5-D/Makefile
 example/Makefile
 example/servo-afma6/Makefile
 example/servo-afma4/Makefile
