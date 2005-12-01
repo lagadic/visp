@@ -45,6 +45,7 @@
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
 
+class vpSimulator;
 
 class vpViewer : public SoQtExaminerViewer {
 
