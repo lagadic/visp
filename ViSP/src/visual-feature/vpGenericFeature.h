@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpGenericFeature.h,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpGenericFeature.h,v 1.2 2005-12-05 10:21:04 marchand Exp $
  *
  * Description
  * ============
@@ -74,7 +74,8 @@ private:
       errorHasToBeUpdated
     } ;
 public:
-  void setInteractionMatrix(const vpMatrix &L) ;
+  void setInteractionMatrix(const vpMatrix &_L) ;
+  vpMatrix getInteractionMatrix() const { return L ; }
   void setError(vpColVector &_error)  ;
   void set_s(const vpColVector &_s) ;
   void set_s(const double s0) ;

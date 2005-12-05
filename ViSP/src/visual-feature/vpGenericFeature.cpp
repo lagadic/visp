@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpGenericFeature.cpp,v 1.4 2005-11-03 10:53:57 nmansard Exp $
+ *  $Id: vpGenericFeature.cpp,v 1.5 2005-12-05 10:21:04 marchand Exp $
  *
  * Description
  * ============
@@ -237,7 +237,12 @@ vpGenericFeature::interaction(const int select) const
 {
   if (L.getRows() == 0)
   {
+    cout << "interaction matrix " << L << endl ;
     ERROR_TRACE("Interaction has not been initialized");
+    cout << "A possible reason (may be) is that you have set" << endl ;
+    cout << "the interaction matrix for s and compute a control " << endl ;
+    cout << "with Ls=s* (default) or vice versa" << endl ;
+
     throw(vpFeatureException(vpFeatureException::notInitializedError,
 			     "size mismatch between s* dimension "
 			     "and feature dimension"));
@@ -393,6 +398,8 @@ vpGenericFeature::print(const int select) const
 vpGenericFeature *vpGenericFeature::duplicate() const
 {
   vpGenericFeature *feature= new vpGenericFeature(dim_s) ;
+
+  TRACE("dims = %d",dim_s) ;
   return feature ;
 }
 
