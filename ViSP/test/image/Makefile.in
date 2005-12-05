@@ -6,7 +6,8 @@ SOURCES		= \
 	testIoPPM.cpp \
 	\
 	testDisplayX1.cpp \
-	testDisplayX2.cpp
+	testDisplayX2.cpp \
+	testSequence.cpp
 
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
