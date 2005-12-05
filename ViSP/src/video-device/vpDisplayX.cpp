@@ -28,17 +28,13 @@
 /*!
   \class vpDisplayX
 
-  \brief La classe vpDisplayX permet de gérer l'affichage d'images dans des
-  fenêtres X.
+  \brief The  vpDisplayX allows to display image using the X11 library 
+.
+
 
   \author Fabien Spindler (Fabien.Spindler@irisa.fr), Eric Marchand
   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 
-  Cette classe permet d'afficher des images de type "unsigned char", d'y tracer
-  des points, des segments, d'y superposer du texte et de récupérer des
-  évenements liés à la souris.
-
-  Cette classe fonctionne avec des profondeurs d'écran de 8, 16 ou 24 bits.
 
 */
 
@@ -62,56 +58,53 @@
 
 /*!
 
-  Ce constructeur de la classe vpDisplayX gère l'ouverture de la fenêtre X
-  permettant de visualiser des images de taille (cols x rows). Les paramètres
-  \e windowXPosition et \e windowYPosition permettent de positionner le coin supérieur gauche de la
-  fenêtre. Si \e windowXPosition ou \e windowYPosition sont négatifs, la position de la fenêtre est
-  quelconque. Le paramètre \e title permet de donner un titre à la fenêtre.
+  \brief constructor : initialize a display to visualize a gray level image
+  (8 bits). 
+
+  \param I : image to be displayed (not that image has to be initialized)
+  \param _x, _y The window is set at position x,y (column index, row index).
+  \param _title  window  titled
 
 */
 vpDisplayX::vpDisplayX(vpImage<unsigned char> &I,
-		       int _windowXPosition,
-		       int _windowYPosition,
+		       int _x,
+		       int _y,
 		       char *_title) : vpDisplay()
 {
-  init(I,_windowXPosition,_windowYPosition, _title) ;
+  init(I,_x,_y, _title) ;
 
 }
 
 
+
 /*!
+  \brief constructor : initialize a display to visualize a RGBa level image
+  (32 bits). 
 
-  Ce constructeur de la classe vpDisplayX gère l'ouverture de la fenêtre X
-  permettant de visualiser des images de taille (cols x rows). Les paramètres
-  \e windowXPosition et \e windowYPosition permettent de positionner le coin supérieur gauche de la
-  fenêtre. Si \e windowXPosition ou \e windowYPosition sont négatifs, la position de la fenêtre est
-  quelconque. Le paramètre \e title permet de donner un titre à la fenêtre.
-
+  \param I : image to be displayed (not that image has to be initialized)
+  \param _x, _y The window is set at position x,y (column index, row index).
+  \param _title  window  titled
 */
 vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I,
-		     int _windowXPosition,
-		     int _windowYPosition,
+		     int _x,
+		     int _y,
 		     char *_title)
 {
   title = NULL ;
-  init(I,_windowXPosition,_windowYPosition, _title) ;
+  init(I,_x,_y, _title) ;
 }
 
 /*!
+  \brief constructor 
 
-
-  Ce constructeur de la classe vpDisplayX gère l'ouverture de la fenêtre X
-  permettant de visualiser des images de taille (cols x rows). Les paramètres
-  \e windowXPosition et \e windowYPosition permettent de positionner le coin supérieur gauche de la
-  fenêtre. Si \e windowXPosition ou \e windowYPosition sont négatifs, la position de la fenêtre est
-  quelconque. Le paramètre \e title permet de donner un titre à la fenêtre.
-
+  \param _x, _y The window is set at position x,y (column index, row index).
+  \param _title  window  titled
 */
-vpDisplayX::vpDisplayX(int _windowXPosition, int _windowYPosition, char *_title)
+vpDisplayX::vpDisplayX(int _x, int _y, char *_title)
 {
   displayHasBeenInitialized = false ;
-  windowXPosition = _windowXPosition ;
-  windowYPosition = _windowYPosition ;
+  windowXPosition = _x ;
+  windowYPosition = _y ;
 
   title = NULL ;
 
@@ -124,8 +117,10 @@ vpDisplayX::vpDisplayX(int _windowXPosition, int _windowYPosition, char *_title)
   ximage_data_init = false;
 
 }
+
 /*!
-  Constructeur vide de la classe vpDisplayX.
+  \brief basic constructor
+  \warning must an init member of the vpDisplayGTK function to be useful
   \sa init()
 */
 vpDisplayX::vpDisplayX()
@@ -147,32 +142,31 @@ vpDisplayX::vpDisplayX()
 }
 
 /*!
-  Destructeur de la classe vpDisplayX.
+  \brief close the window
 */
 vpDisplayX::~vpDisplayX()
 {
   closeDisplay() ;
 }
 
-/*!  Cette méthode initialise la fenêtre X permettant de visualiser des images
-  de taille (cols x rows). Les paramètres \e windowXPosition et \e
-  windowYPosition permettent de positionner le coin supérieur gauche de la
-  fenêtre. Si \e windowXPosition ou \e windowYPosition sont négatifs, la
-  position de la fenêtre est quelconque. Le paramètre \e title permet de donner
-  un titre à la fenêtre.
+/*!  
+  \brief Initialized the display of a gray level image
 
-  \sa DisplayImage(), closeDisplay()
+  \param I : image to be displayed (not that image has to be initialized)
+  \param _x, _y The window is set at position x,y (column index, row index).
+  \param _title  window  titled
+
 */
 void
-vpDisplayX::init(vpImage<unsigned char> &I, int _windowXPosition, int _windowYPosition, char *_title)
+vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
  {
 
   displayHasBeenInitialized =true ;
 
 
   XSizeHints	hints;
-  windowXPosition = _windowXPosition ;
-  windowYPosition = _windowYPosition ;
+  windowXPosition = _x ;
+  windowYPosition = _y ;
   {
     if (title != NULL)
     {
@@ -415,24 +409,23 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _windowXPosition, int _windowYPo
 
 }
 
-/*!
-  Cette méthode initialise la fenêtre X
-  permettant de visualiser des images de taille (cols x rows). Les paramètres
-  \e windowXPosition et \e windowYPosition permettent de positionner le coin supérieur gauche de la
-  fenêtre. Si \e windowXPosition ou \e windowYPosition sont négatifs, la position de la fenêtre est
-  quelconque. Le paramètre \e title permet de donner un titre à la fenêtre.
+/*!  
+  \brief Initialized the display of a RGBa  image
 
-  \sa DisplayImage(), closeDisplay()
+  \param I : image to be displayed (not that image has to be initialized)
+  \param _x, _y The window is set at position x,y (column index, row index).
+  \param _title  window  titled
+
 */
 void
-vpDisplayX::init(vpImage<vpRGBa> &I, int _windowXPosition, int _windowYPosition, char *_title)
+vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
 {
 
   displayHasBeenInitialized =true ;
 
   XSizeHints	hints;
-  windowXPosition = _windowXPosition ;
-  windowYPosition = _windowYPosition ;
+  windowXPosition = _x ;
+  windowYPosition = _y ;
 
   {
     if (title != NULL)
@@ -674,17 +667,16 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _windowXPosition, int _windowYPosition,
 }
 
 
-/*!
+/*!  
+  \brief actual member used to Initialize the display of a 
+  gray level or RGBa  image
 
-  Cette méthode initialise la fenêtre X
-  permettant de visualiser des images de taille (cols x rows). Les paramètres
-  \e windowXPosition et \e windowYPosition permettent de positionner le coin supérieur gauche de la
-  fenêtre. Si \e windowXPosition ou \e windowYPosition sont négatifs, la position de la fenêtre est
-  quelconque. Le paramètre \e title permet de donner un titre à la fenêtre.
+  \param I : image to be displayed (not that image has to be initialized)
+  \param _x, _y The window is set at position x,y (column index, row index).
+  \param _title  window  titled
 
-  \sa DisplayImage(), closeDisplay()
 */
-void vpDisplayX::init(int cols, int rows, int _windowXPosition, int _windowYPosition, char *_title)
+void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
 {
 
   displayHasBeenInitialized = true ;
@@ -696,8 +688,8 @@ void vpDisplayX::init(int cols, int rows, int _windowXPosition, int _windowYPosi
 
   XSizeHints	hints;
 
-  windowXPosition = _windowXPosition ;
-  windowYPosition = _windowYPosition ;
+  windowXPosition = _x ;
+  windowYPosition = _y ;
   // Positionnement de la fenetre dans l'écran.
   if ( (windowXPosition < 0) || (windowYPosition < 0) ) {
     hints.flags = 0;
@@ -933,17 +925,13 @@ void vpDisplayX::init(int cols, int rows, int _windowXPosition, int _windowYPosi
 
 }
 
+
 /*!
+  \brief display the gray level image (8bits)
 
-  Cette methode gère l'affichage de l'image \e I (codée sur 256 niveaux de
-  gris) dans la fenêtre X ouverte à l'aide du constructeur vpDisplayX(...) ou de
-  init().
+  GTK has to be initialized 
 
-  Cette méthode retourne une erreur si la fenêtre X devant contenir l'image \e
-  I n'a pas été initialisée, ou si la profondeur de l'écran n'est pas de 8, 16
-  ou 24 bits.
-
-  \warning Cette méthode a également pour effet d'effacer le plan overlay.
+  \warning suppres the overlay drawing
 
   \sa init(), closeDisplay()
 */
@@ -1025,7 +1013,15 @@ void vpDisplayX::displayImage(vpImage<unsigned char> &I)
 			     "X not initialized")) ;
   }
 }
+/*!
+  \brief display the RGBa level image (32bits)
 
+  GTK has to be initialized 
+
+  \warning suppres the overlay drawing
+
+  \sa init(), closeDisplay()
+*/
 void vpDisplayX::displayImage(vpImage<vpRGBa> &I)
 {
 
@@ -1038,15 +1034,25 @@ void vpDisplayX::displayImage(vpImage<vpRGBa> &I)
       /*
        * 32-bit source, 24/32-bit destination
        */
+
       unsigned char       *dst_32 = NULL;
       dst_32 = (unsigned char*)Ximage->data;
+#ifdef __Darwin_
+      // little indian/big indian
+      for (int i = 0; i < I.getCols() * I.getRows() ; i++) {
+	dst_32[i*4] = I.bitmap[i].A;
+	dst_32[i*4 + 1] = I.bitmap[i].R;
+	dst_32[i*4 + 2] = I.bitmap[i].G;
+	dst_32[i*4 + 3] = I.bitmap[i].B;
+      }
+#else
       for (int i = 0; i < I.getCols() * I.getRows() ; i++) {
 	dst_32[i*4] = I.bitmap[i].B;
 	dst_32[i*4 + 1] = I.bitmap[i].G;
 	dst_32[i*4 + 2] = I.bitmap[i].R;
 	dst_32[i*4 + 3] = I.bitmap[i].A;
-
       }
+#endif
       break;
     }
     default:
@@ -1067,7 +1073,10 @@ void vpDisplayX::displayImage(vpImage<vpRGBa> &I)
 			     "X not initialized")) ;
   }
 }
-
+/*
+  \brief gets the displayed image (including the overlay plane)
+  and returns an RGBa image
+*/ 
 void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 {
 
@@ -1107,17 +1116,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 
 /*!
 
-  Cette methode gère l'affichage de l'image \e I (codée sur 256 niveaux de
-  gris) dans la fenêtre X ouverte à l'aide du constructeur vpDisplayX(...) ou de
-  init().
-
-  Cette méthode retourne une erreur si la fenêtre X devant contenir l'image \e
-  I n'a pas été initialisée, ou si la profondeur de l'écran n'est pas de 8, 16
-  ou 24 bits.
-
-  \warning Cette méthode a également pour effet d'effacer le plan overlay.
-
-  \sa init(), closeDisplay()
+  
 */
 void vpDisplayX::displayImage(unsigned char *I)
 {
@@ -1158,7 +1157,7 @@ void vpDisplayX::displayImage(unsigned char *I)
 
 /*!
 
-  Gère la fermeture de la fenetre X ouverte à l'aide de init().
+  \brief close the window
 
   \sa init()
 
@@ -1194,13 +1193,13 @@ void vpDisplayX::closeDisplay()
 }
 
 
+
+
 /*!
-  Force l'exécution des opérations bufferisées dans la fenêtre X.
-
-  Cette méthode renvoie OK en cas de succès. Elle renvoie l'erreur
-  DISPLAY_ERROR si la fenêtre X n'est pas initialisée.
-
-  \sa init */
+  \brief flush the GTK buffer 
+  It's necessary to use this function to see the results of any drawing
+ 
+*/
 void vpDisplayX::flushDisplay()
 {
   if (Xinitialise)
@@ -1219,13 +1218,6 @@ void vpDisplayX::flushDisplay()
 
 /*!
 
-  Rempli la fenetre X de la couleur \e c. Les couleurs disponibles sont NOIR,
-  BLANC, ROUGE, VERT, BLEU et JAUNE.
-
-  Cette méthode renvoie OK en cas de succès. Elle renvoie l'erreur
-  DISPLAY_ERROR si la fenêtre X n'est pas initialisée.
-
-  \sa init
 */
 void vpDisplayX::clearDisplay(int c)
 {
@@ -1243,17 +1235,9 @@ void vpDisplayX::clearDisplay(int c)
 }
 
 /*!
-
-  Trace un point de cordonnée (\e i, \e j) et de couleur \e col sur le plan
-  overlay de la fenêtre X. Les couleurs disponibles sont NOIR, BLANC, ROUGE,
-  VERT, BLEU et JAUNE. Le paramètre \e i correspond au lignes. \e j correspond
-  aux colonnes.
-
-  Cette méthode renvoie OK en cas de succès. Elle renvoie l'erreur
-  DISPLAY_ERROR si la fenêtre X n'est pas initialisée.
-
-  \sa init
-
+  \brief display a point 
+  \param i,j (row,colum indexes)
+  \param color (see vpColor)
 */
 void vpDisplayX::displayPoint(int i, int j, int col)
 {
@@ -1270,17 +1254,13 @@ void vpDisplayX::displayPoint(int i, int j, int col)
   }
 }
 
+
 /*!
-
-  Trace un segment de couleur \e col et d'épaisseur \e e sur le plan overlay de
-  la fenêtre X. Les couleurs disponibles sont NOIR, BLANC, ROUGE, VERT, BLEU et
-  JAUNE.  Les points de coordonnées (\e i1, \e j1) et (\e i2, \e j2)
-  constituent les extrémités du segment. Les paramètres \e i1 et \e i2
-  correspondent à des lignes. Les paramètres \e j1 et \e j2 correspondent à des
-  colonnes.
-
-  \sa init
-
+  \brief display a line 
+  \param i1,j1 (row,colum indexes) initial coordinates
+  \param i2,j2 (row,colum indexes) final coordinates
+  \param color (see vpColor)
+  \param e : line_width
 */
 void vpDisplayX::displayLine(int i1, int j1, int i2, int j2, int col, int e)
 {
@@ -1303,14 +1283,11 @@ void vpDisplayX::displayLine(int i1, int j1, int i2, int j2, int col, int e)
 }
 
 /*!
-
-  Trace un segment en pointillés de couleur \e col et d'épaisseur \e e sur le
-  plan overlay de la fenêtre X. Les couleurs disponibles sont NOIR, BLANC,
-  ROUGE, VERT, BLEU et JAUNE.  Les points de coordonnées (\e i1, \e j1) et (\e
-  i2, \e j2) constituent les extrémités du segment. Les paramètres \e i1 et \e
-  i2 correspondent à des lignes. Les paramètres \e j1 et \e j2 correspondent à
-  des colonnes.
-
+  \brief display a dashed line 
+  \param i1,j1 (row,colum indexes) initial coordinates
+  \param i2,j2 (row,colum indexes) final coordinates
+  \param color (see vpColor)
+  \param e : line_width
 */
 void vpDisplayX::displayDotLine(int i1, int j1, int i2, int j2, int col, int e)
 {
@@ -1334,14 +1311,10 @@ void vpDisplayX::displayDotLine(int i1, int j1, int i2, int j2, int col, int e)
 }
 
 /*!
-
-  Trace une croix de couleur \e col et d'épaisseur 1 pixel sur le plan overlay
-  de la fenêtre X. Les couleurs disponibles sont NOIR, BLANC, ROUGE, VERT,
-  BLEU et JAUNE.  Le centre de la croix est positionné au point de coordonnée
-  (\e i, \e j). Le paramètre \e i correspond au lignes, \e j correspond aux
-  colonnes.
-
-
+  \brief display a cross  
+  \param i,j (row,colum indexes)
+  \param size of the cross
+  \param color (see vpColor)
 */
 void vpDisplayX::displayCross(int i,int j, int size,int col)
 {
@@ -1367,13 +1340,12 @@ void vpDisplayX::displayCross(int i,int j, int size,int col)
 
 }
 
+
 /*!
-
-  Trace une croix de couleur \e col et d'épaisseur 3 pixel sur le plan overlay
-  de la fenêtre X. Les couleurs disponibles sont NOIR, BLANC, ROUGE, VERT, BLEU
-  et JAUNE.  Le centre de la croix est positionné au point de coordonnée (\e i,
-  \e j). Le paramètre \e i correspond au lignes, \e j correspond aux colonnes.
-
+  \brief display a "large" cross  
+  \param i,j (row,colum indexes)
+  \param size of the cross
+  \param color (see vpColor)
 */
 void vpDisplayX::displayCrossLarge(int i,int j, int size,int col)
 {
@@ -1399,10 +1371,11 @@ void vpDisplayX::displayCrossLarge(int i,int j, int size,int col)
 
 
 /*!
-
-  Trace une flèche de couleur \e col sur le plan overlay de la fenêtre X. Les
-  couleurs disponibles sont NOIR, BLANC, ROUGE, VERT, BLEU et JAUNE.
-
+  \brief display an arrow 
+  \param i1,j1 (row,colum indexes) initial coordinates
+  \param i2,j2 (row,colum indexes) final coordinates
+  \param color (see vpColor)
+  \param L,l : width and height of the arrow
 */
 void vpDisplayX::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int l)
 {
@@ -1465,18 +1438,13 @@ void vpDisplayX::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int 
   }
 }
 
+
 /*!
-
-  Trace un rectangle de couleur \e col sur le plan overlay de la fenêtre X. Les
-  couleurs disponibles sont NOIR, BLANC, ROUGE, VERT, BLEU et JAUNE.  Le sommet
-  supérieur gauche du carré a pour coordonnées (\e i, \e j). Le paramètre \e i
-  correspond au lignes, \e j correspond aux colonnes. La largeur du rectangle
-  est spécifiée par \e width et la hauteur par \e height.
-
-  Cette méthode renvoie OK en cas de succès. Elle renvoie l'erreur
-  DISPLAY_ERROR si la fenêtre X n'est pas initialisée.
-
-
+  \brief display a rectangle  
+  \param i,j (row,colum indexes) up left corner
+  \param width
+  \param height
+  \param color (see vpColor)
 */
 void
 vpDisplayX::displayRectangle(int i, int j, int width, int height, int col)
@@ -1498,14 +1466,12 @@ vpDisplayX::displayRectangle(int i, int j, int width, int height, int col)
 }
 
 
+
 /*!
-
-  Affiche le texte \e string avec la couleur \e col sur le plan overlay de la
-  fenêtre X. Les couleurs disponibles sont NOIR, BLANC, ROUGE, VERT, BLEU et
-  JAUNE.  Le premier caratère du texte occupe la position (\e i, \e j). Le
-  paramètre \e i correspond au lignes, \e j correspond aux colonnes.
-
-
+  \brief display a string  
+  \param i,j (row,colum indexes)
+  \param string
+  \param color (see vpColor)
 */
 void vpDisplayX::displayCharString(int i, int j, char *string, int col)
 {
@@ -1523,13 +1489,11 @@ void vpDisplayX::displayCharString(int i, int j, char *string, int col)
 }
 
 /*!
-
-  Récupère la position du dernier clic de souris dans la fenêtre X. Le point
-  cliqué a pour coordonnées (\e i, \e j). Le paramètre \e i correspond au
-  lignes, \e j correspond aux colonnes.
-
+  \brief wait for and get the position of the click 
+  \param i,j (row,colum indexes)
 
 */
+
 bool
 vpDisplayX::getClick(int& i, int& j)
 {
@@ -1578,13 +1542,7 @@ vpDisplayX::getClick(int& i, int& j)
 
 
 /*!
-
-  Attend un clic de souris dans la fenêtre X.
-
-  Cette méthode renvoie OK en cas de succès. Elle renvoie l'erreur
-  DISPLAY_ERROR si la fenêtre X n'est pas initialisée.
-
-  \sa init
+  wait for a click
 */
 void
 vpDisplayX::getClick()
@@ -1635,18 +1593,9 @@ vpDisplayX::getClick()
 }
 
 /*!
-
-  Récupère la position du dernier clic de souris dans la fenêtre X et le numéro
-  du bouton utilisé pour réaliser ce clic. Le point cliqué a pour coordonnées
-  (\e i, \e j). Le paramètre \e i correspond au lignes, \e j correspond aux
-  colonnes. Le paramètre \e button peut prendre les valeurs 1 (bouton gauche de
-  la souris), 2 (bouton du milieu) ou encore 3 (bouton droit).
-
-  Cette méthode renvoie OK si un clic de souris a été détecté. Elle renvoie
-  l'erreur DISPLAY_ERROR si la fenêtre X n'est pas initialisée, ou si aucun
-  clic de souris n'a été détecté.
-
-  \sa init
+  \brief wait for and get the position of the click of the button specified
+  by "button"
+  \param i,j (row,colum indexes)
 
 */
 bool
@@ -1703,19 +1652,10 @@ vpDisplayX::getClick(int& i, int& j, int& button)
     return  false;
 }
 
-/*!
-
-  Récupère la position du dernier clic de souris dans la fenêtre X et le numéro
-  du bouton utilisé pour réaliser ce clic. Le point cliqué a pour coordonnées
-  (\e i, \e j). Le paramètre \e i correspond au lignes, \e j correspond aux
-  colonnes. Le paramètre \e button peut prendre les valeurs 1 (bouton gauche de
-  la souris), 2 (bouton du milieu) ou encore 3 (bouton droit).
-
-  Cette méthode renvoie OK si un clic de souris a été détecté. Elle renvoie
-  l'erreur DISPLAY_ERROR si la fenêtre X n'est pas initialisée, ou si aucun
-  clic de souris n'a été détecté.
-
-  \sa init
+/*!  
+  \brief wait for and get the position of the click release of the
+  button specified by "button" 
+  \param i,j (row,colum indexes)
 
 */
 bool
@@ -1773,8 +1713,9 @@ vpDisplayX::getClickUp(int& i, int& j, int& button)
 }
 
 /*!
-
-  Renvoie la profondeur de l'écran (8, 16 ou 24 bits).
+  \brief get the window depth (8,16,24,32)
+  
+  usualy it 24 bits now...
 */
 int vpDisplayX::getScreenDepth()
 {
@@ -1797,10 +1738,7 @@ int vpDisplayX::getScreenDepth()
 }
 
 /*!
-
-  Récupère la taille de l'écran. Le paramètre \e xsize correspond au nombre de
-  colonnes et \e ysize au nombre de lignes.
-
+  \brief get the window size
  */
 void vpDisplayX::getScreenSize(int *xsize, int *ysize)
 {
@@ -1824,8 +1762,8 @@ void vpDisplayX::getScreenSize(int *xsize, int *ysize)
 
 
 
-
 /*!
+  \brief set the window title
  */
 void
 vpDisplayX::flushTitle(const char *windowtitle)
@@ -1842,15 +1780,12 @@ vpDisplayX::flushTitle(const char *windowtitle)
   }
 }
 
+
 /*!
-
-   Trace un circle de couleur \e c sur le plan overlay de la fenêtre X. Les
-   couleurs disponibles sont NOIR, BLANC, ROUGE, VERT, BLEU et JAUNE.  Le
-   centre du cercle a pour coordonnées (\e i, \e j). Le paramètre \e i
-   correspond aux lignes, \e j correspond aux colonnes. Le rayon est spécifiée
-   par \e r.
-
-
+  \brief Display a circle
+  \param i,j : circle center position (row,column)
+  \param r : radius
+  \param color 
 */
 void vpDisplayX::displayCircle(int i, int j, int r, int c)
 {
@@ -1871,3 +1806,9 @@ void vpDisplayX::displayCircle(int i, int j, int r, int c)
 }
 
 #endif // HAVE_LIBX11
+
+/*
+ * Local variables:
+ * c-basic-offset: 2
+ * End:
+ */
