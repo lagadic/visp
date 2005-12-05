@@ -37,14 +37,14 @@ directory:
 		echo "*" ; \
 		echo "* Creation of the bin directory..." ; \
 		echo "*" ; \
-		mkdir bin ; \
+		mkdir -p  bin ; \
 	fi ;
 	@if [ ! -d lib ] ;\
 	then \
 		echo "*" ; \
 		echo "* Creation of the lib directory..." ; \
 		echo "*" ; \
-		mkdir lib ; \
+		mkdir -p  lib ; \
 	fi ;
 
 clean:
