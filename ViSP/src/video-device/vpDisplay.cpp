@@ -89,8 +89,6 @@ vpDisplay::getImage(vpImage<unsigned  char> &Isrc, vpImage<vpRGBa> &Idest)
 /*!
   Display a point at coordinates (i,j) in the display window
 */
-
-
 void vpDisplay::displayPoint(vpImage<unsigned char> &I,
 			     int i,int j,int col)
 {
@@ -833,6 +831,7 @@ void  vpDisplay::getClick(vpImage<vpRGBa> &I)
 }
 
 
+
 /*!
   return true way  button is released
  */
@@ -845,6 +844,515 @@ vpDisplay::getClickUp(vpImage<vpRGBa> &I,
     if (I.display != NULL)
     {
       return (I.display)->getClickUp(i,j,button) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+  return false ;
+}
+
+
+//--------------
+// uv
+
+/*!
+  Display a point at coordinates (u,v) in the display window
+*/
+void vpDisplay::displayPoint_uv(vpImage<unsigned char> &I,
+			     int u,int v,int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayPoint(v,u,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+
+}
+/*!
+  Display a cross at coordinates (u,v) in the display window
+*/
+void vpDisplay::displayCross_uv(vpImage<unsigned char> &I,
+		  int u,int v,
+		  int size,int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayCross(v,u,size,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+/*!
+  Display a large cross at coordinates (u,v) in the display window
+*/
+void
+vpDisplay::displayCrossLarge_uv(vpImage<unsigned char> &I,
+			     int u,int v,
+			     int size,int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayCrossLarge(v,u,size,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*!
+  Display a circle at coordinates (u,v) in the display window.
+  circle radius is given in pixel by paramter r
+*/
+void
+vpDisplay::displayCircle_uv(vpImage<unsigned char> &I,
+			 int u, int v, int r, int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayCircle(v,u,r,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+/*!
+  Display a line from coordinates (u1,v1) to (u2,v2) in the display window.
+*/
+void vpDisplay::displayLine_uv(vpImage<unsigned char> &I,
+			    int u1, int v1, int u2, int v2,
+			    int col, int e)
+{
+
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayLine(v1,u1,v2,u2,col,e) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+
+/*!  Display a dotted line from coordinates (u1,v1) to (u2,v2) in the display
+  window.  circle radius is given in pixel by paramter r
+*/
+void vpDisplay::displayDotLine_uv(vpImage<unsigned char> &I,
+		    int u1, int v1, int u2, int v2,
+		    int col, int e2)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayDotLine(v1,u1,v2,u2,col,e2) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+
+/*! Display an arrow from coordinates (u1,v1) to (u2,v2) in the display
+  window
+*/
+void
+vpDisplay::displayArrow_uv(vpImage<unsigned char> &I,
+			int u1,int v1, int u2, int v2,
+			int col, int L,int l)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayArrow(v1,u1,v2,u2,col,L,l) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display a rectangle in the display window.  The rectangle upper left corner
+  has coordinates (u,v). The size of the rectangle is fixed by \e width and \e
+  height.
+
+  \param i Row number of the rectangle upper corner
+  \param j Column number of the rectangle upper corner
+  \param width Width of the rectangle.
+  \param height Height of the rectangle.
+  \param col Color of the rectangle.
+
+*/
+void
+vpDisplay::displayRectangle_uv(vpImage<unsigned char> &I, int u, int v,
+			    int width, int height, int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayRectangle(v,u,width,height,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+/*! display a string at coordinates (u,v) in the display
+  window
+*/
+void
+vpDisplay::displayCharString_uv(vpImage<unsigned char> &I,
+			     int u,int v,char *s, int c)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayCharString(v,u,s,c) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+
+/*!
+  return true way a button is pressed
+ */
+bool  vpDisplay::getClick_uv(vpImage<unsigned char> &I,
+	       int& u, int& v)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      return (I.display)->getClick(v,u) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  return true way button is pressed
+ */
+bool  vpDisplay::getClick_uv(vpImage<unsigned char> &I,
+	       int& u, int& v, int& button)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      return (I.display)->getClick(v,u,button) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+  return false ;
+}
+
+
+/*!
+  return true way  button is released
+ */
+bool
+vpDisplay::getClickUp_uv(vpImage<unsigned char> &I,
+		      int& u, int& v, int& button)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      return (I.display)->getClickUp(v,u,button) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+  return false ;
+}
+
+
+/*!
+  Display a point at coordinates (u,v) in the display window
+*/
+
+
+void vpDisplay::displayPoint_uv(vpImage<vpRGBa> &I,
+			     int u,int v,int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayPoint(v,u,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+
+}
+/*!
+  Display a cross at coordinates (u,v) in the display window
+*/
+void vpDisplay::displayCross_uv(vpImage<vpRGBa> &I,
+		  int u,int v,
+		  int size,int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayCross(v,u,size,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+/*!
+  Display a large cross at coordinates (u,v) in the display window
+*/
+void
+vpDisplay::displayCrossLarge_uv(vpImage<vpRGBa> &I,
+			     int u,int v,
+			     int size,int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayCrossLarge(v,u,size,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*!
+  Display a circle at coordinates (u,v) in the display window.
+  circle radius is given in pixel by paramter r
+*/
+void
+vpDisplay::displayCircle_uv(vpImage<vpRGBa> &I,
+			 int u, int v, int r, int col)
+{
+  try
+  {
+    if (I.display != NULL)
+    {(I.display)->displayCircle(v,u,r,col) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+/*!
+  Display a line from coordinates (u1,v1) to (u2,v2) in the display window.
+*/
+void vpDisplay::displayLine_uv(vpImage<vpRGBa> &I,
+		 int u1, int v1, int u2, int v2,
+		 int col, int e)
+{
+
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayLine(v1,u1,v2,u2,col,e) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*!  Display a dotted line from coordinates  (u1,v1) to (u2,v2) in the display
+  window.  circle radius is given in pixel by paramter r
+*/
+void vpDisplay::displayDotLine_uv(vpImage<vpRGBa> &I,
+		    int u1, int v1, int u2, int v2,
+		    int col, int e2)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayDotLine(v1,u1,v2,u2,col,e2) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*! Display an arrow from coordinates  (u1,v1) to (u2,v2) in the display
+  window
+*/
+void
+vpDisplay::displayArrow_uv(vpImage<vpRGBa> &I,
+			int u1,int v1, int u2, int v2,
+			int col, int L,int l)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayArrow(v1,u1,v2,u2,col,L,l) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*! display a string at coordinates (u,v) to (i2,j2) in the display
+  window
+*/
+void
+vpDisplay::displayCharString_uv(vpImage<vpRGBa> &I,
+			     int u,int v,char *s, int c)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      (I.display)->displayCharString(v,u,s,c) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+
+
+/*!
+  return true way a button is pressed
+ */
+bool  vpDisplay::getClick_uv(vpImage<vpRGBa> &I,
+	       int& u, int& v)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      return (I.display)->getClick(v,u) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  return true way button is pressed
+ */
+bool  vpDisplay::getClick_uv(vpImage<vpRGBa> &I,
+	       int& u, int& v, int& button)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      return (I.display)->getClick(v,u,button) ;
+    }
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
+  return false ;
+}
+
+
+/*!
+  return true way  button is released
+ */
+bool
+vpDisplay::getClickUp_uv(vpImage<vpRGBa> &I,
+		      int& u, int& v, int& button)
+{
+  try
+  {
+    if (I.display != NULL)
+    {
+      return (I.display)->getClickUp(v,u,button) ;
     }
   }
   catch(...)
