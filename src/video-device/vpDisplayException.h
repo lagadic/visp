@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDisplayException.h,v 1.3 2005-09-02 14:35:18 fspindle Exp $
+ *  $Id: vpDisplayException.h,v 1.4 2005-12-05 10:19:09 marchand Exp $
  *
  * Description
  * ============
@@ -58,6 +58,7 @@ public:
       cannotOpenWindowError,
       connexionError,
       XWindowsError,
+      GTKWindowsError,
       colorAllocError,
       depthNotSupportedError
     } ;
