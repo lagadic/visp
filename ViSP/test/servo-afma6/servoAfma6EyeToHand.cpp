@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6EyeToHand.cpp,v 1.1 2005-11-30 09:43:51 fspindle Exp $
+ *  $Id: servoAfma6EyeToHand.cpp,v 1.2 2005-12-05 14:42:43 marchand Exp $
  *
  * Description
  * ============
@@ -147,7 +147,7 @@ main()
     {
       double x,y ;
       vpPixelMeterConversion::convertPoint(cam,
-					   dot[i].J(), dot[i].I(),
+					   dot[i].get_u(), dot[i].get_v(),
 					   x,y)  ;
       point[i].set_x(x) ;
       point[i].set_y(y) ;
@@ -275,8 +275,8 @@ main()
 	  for (i=0 ; i < nbPoint ; i++)
 	    {
 	      dot[i].track(I) ;
-	      Lu += dot[i].J() ;
-	      Lv += dot[i].I() ;
+	      Lu += dot[i].get_u() ;
+	      Lv += dot[i].get_v() ;
 	    }
 	}
       catch(...)
@@ -293,7 +293,7 @@ main()
 	{
 	  double x,y ;
 	  vpPixelMeterConversion::convertPoint(cam,
-					       dot[i].J(), dot[i].I(),
+					       dot[i].get_u(), dot[i].get_v(),
 					       x,y)  ;
 	  point[i].set_x(x) ;
 	  point[i].set_y(y) ;
