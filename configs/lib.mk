@@ -59,6 +59,19 @@ $(VISP_OBJ_PATH)/%.o : %.c
 	    >> $(VISP_DEP_PATH)/$*.P; \
 	rm -f $(DEP_FILE)
 
+
+$(VISP_OBJ_PATH)/%.o : %.m
+	@echo "*"
+	@echo "* Build $@ from $<  "
+	@echo "*"
+	$(CXXALL) -MD -o $@ -c $<
+	@sed -e 's/\($*.o\)*[:]/\1: Makefile/' < $(DEP_FILE) \
+	    > $(VISP_DEP_PATH)/$*.P; \
+	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE) \
+	    >> $(VISP_DEP_PATH)/$*.P; \
+	rm -f $(DEP_FILE)
+
 #	@cp $(DEP_FILE) $(VISP_DEP_PATH)/$*.P; \
 #	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 #	    -e '/^$$/ d' -e 's/$$/ :/' < $(DEP_FILE)\

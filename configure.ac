@@ -40,9 +40,19 @@ AC_CHECK_LIB(gslcblas,main)
 # Check for -lgsl library
 AC_CHECK_LIB(gsl,main)
 #-----------------------------------------------------------------------
+# Check for -lcfox library 1394 acquisition on the mac
+
+#AC_CHECK_LIB(cfox,main,have_cfox=yes,have_cfox=no)
+#if test "x$have_cfox" = "xyes"; then
+# AC_DEFINE([HAVE_LIBCFOX], 1,
+#            [Define to 1 if Cfox library is available])
+#  LIBS="$LIBS -lcfox -framework IOKit -framework Carbon "
+#fi 
+#-----------------------------------------------------------------------
 # Check for ieee 1394 capabilities
 AC_CHECK_LIB(raw1394,main)
 AC_CHECK_LIB(dc1394_control,main)
+AC_CHECK_LIB(jpeg,main)
 #-----------------------------------------------------------------------
 # Check for X
 AC_PATH_XTRA
@@ -103,7 +113,7 @@ fi
 #-----------------------------------------------------------------------
 # Check for -lCoin library and if Qt exists for -lSoQt. else for -lSoXt
 SIM_AC_HAVE_COIN_IFELSE(have_coin=yes,have_coin=no)
-if test "x$have_coin" = "xyes"; then
+if test "x$have_coin" = "yes"; then
   AC_DEFINE([HAVE_COIN], 1,
             [Define to 1 if Coin library is available])
   AC_SUBST(HAVE_COIN,yes)
@@ -125,7 +135,19 @@ else
 else
   AC_SUBST(HAVE_COIN,no)
 fi
-
+########################################################################
+# GTK
+AM_PATH_GTK(1.2.0,have_gtk=yes,have_gtk=no)
+if test "x$have_gtk" = "xyes" ; then 
+ echo "have gtk yes:	$have_gtk"
+  AC_DEFINE([HAVE_GTK],  1,
+            [Define to 1 if GTK library is available])
+  AC_SUBST(HAVE_GTK,yes)
+  LIBS="$LIBS $GTK_LIBS"
+  CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
+else
+echo "have gtk no:	$have_gtk"
+	fi 
 ########################################################################
 # Extra checks
 ########################################################################
@@ -340,6 +362,11 @@ test/tracking/Makefile
 test/simulator/Makefile	
 test/homography/Makefile	
 example/Makefile
+example/tracking/Makefile
+example/tracking/vpDot/Makefile
+example/simulation/Makefile
+example/image/Makefile
+example/pose-estimation/Makefile
 ])
 
 ########################################################################
@@ -369,3 +396,5 @@ echo "CXXFLAGS     : $CXXFLAGS"
 echo "CPPFLAGS     : $CPPFLAGS"
 echo "LDFLAGS      : $LDFLAGS"
 echo "LIBS         : $LIBS"
+echo "GTK_LIBS	   : $GTK_LIBS"
+
