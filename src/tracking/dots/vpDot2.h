@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.h,v 1.2 2005-07-22 10:36:56 fspindle Exp $
+ *  $Id: vpDot2.h,v 1.3 2005-12-05 16:23:45 fspindle Exp $
  *
  * Description
  * ============
@@ -37,15 +37,19 @@ class vpDot2 : public vpTracker
 {
 public:
   vpDot2();
-  vpDot2( int i, int j );
+  vpDot2( int u, int v );
   vpDot2( const vpDot2& twinDot );
   ~vpDot2();
   void operator=( const vpDot2& twinDot );
 
-  void track(vpImage<unsigned char> &I);
+  void initTracking(vpImage<unsigned char>& I);
+  void initTracking(vpImage<unsigned char>& I, int u, int v);
 
-  double I() const;
-  double J() const;
+  void track(vpImage<unsigned char> &I);
+  void track(vpImage<unsigned char> &I, double &u, double &v);
+
+  double get_u() const;
+  double get_v() const;
   double getWidth() const;
   double getHeight() const;
   double getSurface() const;
@@ -70,51 +74,35 @@ public:
 
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
-  void setI( double iCoord );
-  void setJ( double jCoord );
-  void setWidth( double width );
-  void setHeight( double height );
-  void setSurface( double surface );
-  virtual void setInLevel( int inLevel );
-  virtual void setOutLevel( int outLevel );
+  void set_u( const double & u );
+  void set_v( const double & v );
+  void setWidth( const double & width );
+  void setHeight( const double & height );
+  void setSurface( const double & surface );
+  virtual void setInLevel( const int & inLevel );
+  virtual void setOutLevel( const int & outLevel );
+  void setAccuracy( const double & accuracy );
 
-  void setAccuracy( double accuracy );
-
-  void initTracking(vpImage<unsigned char>& I);
-  int getNumberOfInformation();
-  vpColVector getState();
 
   double getDistance( const vpDot2& distantDot ) const;
 
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
-				    int areaX, int areaY,
-				    int areaHeight, int areaWidth );
+				    int corner_u, int corner_v,
+				    int width, int height );
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
 
 
-  virtual bool isValid( vpImage<unsigned char>& I,
+  virtual bool isValid(vpImage<unsigned char>& I,
 			const vpDot2& wantedDotParam );
 
-  virtual bool hasGoodLevel( vpImage<unsigned char>& I,
-			     int iCoord,
-			     int jCoord ) const;
-
-  virtual bool hasReverseLevel( vpImage<unsigned char>& I,
-				int iCoord,
-				int jCoord ) const;
+  virtual bool hasGoodLevel(vpImage<unsigned char>& I,
+			    const int &u, const int &v) const;
+  virtual bool hasReverseLevel(vpImage<unsigned char>& I,
+			       const int &u, const int &v) const;
 
   virtual vpDot2* getInstance();
-
-
-
-  //! max dot I speed, in pixels per milliseconds
-  static const double MAX_DOT_I_SPEED;//= 1.;
-  //! max dot J speed, in pixels per milliseconds
-  static const double MAX_DOT_J_SPEED;// = 1.;
-  //! max change of volume rate for the dot per milliseconds
-  static const double MAX_VOLUME_CHANGE;// = 0.005;
 
   //! minumum level for the dot, pixel with lower level
   //! don't belong to this dot.
@@ -125,6 +113,10 @@ public:
 
   //! Default level for the pixels surrounding the dot
   static const int DEFAULT_OUT_LEVEL;// = 140;
+
+public:
+  friend ostream& operator<< (ostream& os, vpDot2& p) { return (os << p ) ; } ;
+  void print(ostream& os) { os << *this << endl ; }
 
 public :
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
@@ -153,31 +145,32 @@ public :
 		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$. */
 
 protected:
-  vpList<int> getDirections() ;
-  vpList<int> getICoords();
-  vpList<int> getJCoords() ;
+  vpList<int> getList_directions() ;
+  vpList<int> getList_u();
+  vpList<int> getList_v() ;
 
 private:
 
   bool computeParameters( vpImage<unsigned char> &I,
-			  double iEstimated = -1.,
-			  double jEstimated = -1.);
+			  const double &u = -1.0,
+			  const double &v = -1.0);
 
-  void move( vpImage<unsigned char> &I, int& posI, int& posJ, int& dir);
+  void move( vpImage<unsigned char> &I, int& u, int& v, int& dir);
 
-  void getLeftPixelPosition( int& posI, int& posJ, int dir );
-  void turnLeft( int& posI, int& posJ, int dir );
-  void turnRight( int& posI, int& posJ, int dir );
-  void getTop( int& posI, int& posJ, int dir );
+  void getLeftPixelPosition( int& u, int& v, const int &dir );
+  void turnLeft            ( int& u, int& v, const int &dir );
+  void turnRight           ( int& u, int& v, const int &dir );
+  void getTop              ( int& u, int& v, const int &dir );
 
-  bool isInImage( vpImage<unsigned char> &I, int border=10 ) const;
-  bool isInImage( vpImage<unsigned char> &I, int i, int j, int border=10 ) const;
+  bool isInImage( vpImage<unsigned char> &I, const int &border=10 ) const;
+  bool isInImage( vpImage<unsigned char> &I,
+		  const int &u, const int &v, const int &border=10 ) const;
 
   void getGridSize( int &gridWidth, int &gridHeight );
 
-  // dot parameters
-  double i;
-  double j;
+  //! coordinates (float) of the point center of gravity
+  double cog_ufloat, cog_vfloat ;
+
   double width;
   double height;
   double surface;
@@ -186,9 +179,9 @@ private:
   double accuracy;
 
   // other
-  vpList<int> directions;
-  vpList<int> iCoords;
-  vpList<int> jCoords;
+  vpList<int> direction_list;
+  vpList<int> u_list;
+  vpList<int> v_list;
 
   // flag
   bool compute_moment ; // true moment are computed
