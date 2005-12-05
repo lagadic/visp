@@ -56,6 +56,9 @@
 /* Define to 1 if Qt library is available */
 #undef HAVE_QT
 
+/* Define to 1 if GTK library is available */
+#undef HAVE_GTK
+
 /* Define to 1 if the Afma4 robot api are available */
 #undef HAVE_ROBOT_AFMA4
 

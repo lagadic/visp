@@ -101,6 +101,7 @@ IMAGE =  \
 VIDEODEVICE = \
 	vpDisplay.h \
 	vpDisplayX.h	\
+	vpDisplayGTK.h	\
 	\
 	vpDisplayException.h
 
@@ -108,6 +109,7 @@ GRABBER = \
 	vpFrameGrabber.h \
 	vpFrameGrabberException.h \
 	\
+	vpOSXcfoxGrabber.h \
 	vpDiskGrabber.h \
 	vpIcCompGrabber.h \
 	vp1394Grabber.h \
