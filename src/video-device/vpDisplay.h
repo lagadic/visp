@@ -157,6 +157,47 @@ public:
 
   //! Close a display
   static void close(vpImage<unsigned char> &I) ;
+
+public:
+ 
+
+  //! Display a point at coordinates (i,j) in the display window
+  static void displayPoint_uv(vpImage<unsigned char> &I,
+			      int u,int v,int col) ;
+  //! Display a cross at coordinates (i,j) in the display window
+  static void displayCross_uv(vpImage<unsigned char> &I,
+			   int u,int v,
+			   int size,int col) ;
+  //! Display a large cross at coordinates (i,j) in the display window
+  static void displayCrossLarge_uv(vpImage<unsigned char> &I,
+				int u,int v,
+				int size,int col) ;
+  //! Display a circle at coordinates (i,j) in the display window.
+  static void displayCircle_uv(vpImage<unsigned char> &I,
+			    int u, int v, int r, int c);
+  //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
+  static void displayLine_uv(vpImage<unsigned char> &I,
+			  int u1, int v1, int u2, int v2,
+			  int col, int e=1) ;
+  //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
+  //! window.
+  static void displayDotLine_uv(vpImage<unsigned char> &I,
+			     int u1, int v1, int u2, int v2,
+			     int col, int e=1) ;
+
+  //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
+  //! window
+  static void displayArrow_uv(vpImage<unsigned char> &I,
+			   int u1,int v1, int u2, int v2,
+			   int col=1, int L=4,int l=2) ;
+  //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
+  //! window
+  static void displayRectangle_uv(vpImage<unsigned char> &I, int u, int v,
+			       int width, int height, int col);
+  //! Display a string
+  static void displayCharString_uv(vpImage<unsigned char> &I,
+				int u,int v,char *s, int c) ;
+
 public:
 
   static void displayTitle(vpImage<vpRGBa> &I, const char *windowtitle);
@@ -206,6 +247,40 @@ public:
   //! Close a display
   static void close(vpImage<vpRGBa> &I) ;
 
+public:
+
+  //! Display a point at coordinates (i,j) in the display window
+  static void displayPoint_uv(vpImage<vpRGBa> &I,
+			   int u,int v,int col) ;
+  //! Display a cross at coordinates (i,j) in the display window
+  static void displayCross_uv(vpImage<vpRGBa> &I,
+			   int u,int v,
+			   int size,int col) ;
+  //! Display a large cross at coordinates (i,j) in the display window
+  static void displayCrossLarge_uv(vpImage<vpRGBa> &I,
+				int u,int v,
+				int size,int col) ;
+  //! Display a circle at coordinates (i,j) in the display window.
+  static void displayCircle_uv(vpImage<vpRGBa> &I,
+			    int u, int v, int r, int c);
+  //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
+  static void displayLine_uv(vpImage<vpRGBa> &I,
+			  int u1, int v1, int u2, int v2,
+			  int col, int e=1) ;
+  //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
+  //! window.
+  static void displayDotLine_uv(vpImage<vpRGBa> &I,
+			     int u1, int v1, int u2, int v2,
+			     int col, int e=1) ;
+
+  //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
+  //! window
+  static void displayArrow_uv(vpImage<vpRGBa> &I,
+			   int u1,int v1, int u2, int v2,
+			   int col=1, int L=4,int l=2) ;
+  //! Display a string
+  static void displayCharString_uv(vpImage<vpRGBa> &I,
+				int u,int v,char *s, int c) ;
   /* Simple interface with the mouse event */
 public:
   enum buttonEnum
@@ -249,6 +324,27 @@ public:
   //! return true way  button is released
   static  bool  getClickUp(vpImage<vpRGBa> &I,
 			   int& i, int& j, int& button) ;
+public:
+  //!return true way a button is pressed
+  static bool  getClick_uv(vpImage<unsigned char> &I,
+			 int& u, int& v) ;
+  //!  return true way button is pressed
+  static  bool  getClick_uv(vpImage<unsigned char> &I,
+			 int& u, int& v, int& button) ;
+  //! return true way  button is released
+  static  bool  getClickUp_uv(vpImage<unsigned char> &I,
+			   int& u, int& v, int& button) ;
+
+
+  //!return true way a button is pressed
+  static bool  getClick_uv(vpImage<vpRGBa> &I,
+			 int& u, int& v) ;
+  //!  return true way button is pressed
+  static  bool  getClick_uv(vpImage<vpRGBa> &I,
+			 int& u, int& v, int& button) ;
+  //! return true way  button is released
+  static  bool  getClickUp_uv(vpImage<vpRGBa> &I,
+			   int& u, int& v, int& button) ;
 
 public:
 
