@@ -2,7 +2,7 @@
 
 
 SOURCES		= \
-	vpPoseExample.cpp
+	vpImageIoExample.cpp
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
 
