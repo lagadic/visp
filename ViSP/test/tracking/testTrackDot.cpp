@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testTrackDot.cpp,v 1.2 2005-07-13 10:42:02 fspindle Exp $
+ *  $Id: testTrackDot.cpp,v 1.3 2005-12-05 14:03:47 marchand Exp $
  *
  * Description
  * ============
@@ -102,7 +102,7 @@ main()
     cout << "m10: " << d.m10 << endl;
     cout << "m01: " << d.m01 << endl;
 
-    vpDisplay::displayCross(I,(int)d.I(), (int)d.J(),
+    vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),
 			   10,vpColor::green) ;
     vpDisplay::flush(I) ;
 //     vpDisplay::getClick(I);
