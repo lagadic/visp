@@ -12,7 +12,7 @@
     www  : http://www.irisa.fr/vista
 
     file vpDisplayGTK.cpp
-    
+
     Main Auteur :
       Christophe Collewet
 
@@ -27,14 +27,14 @@
 /*!
   \class vpDisplayGTK
 
-  \brief The  vpDisplayGTK allows to display image using the GTK+ library 
+  \brief The  vpDisplayGTK allows to display image using the GTK+ library
   version 1.2.
 
-  \author Christophe Collewet (Christophe.Collewet@irisa.fr), 
-  imported in ViSP by Eric Marchand (Eric.Marchand@irisa.fr) 
+  \author Christophe Collewet (Christophe.Collewet@irisa.fr),
+  imported in ViSP by Eric Marchand (Eric.Marchand@irisa.fr)
   Irisa / Inria Rennes
 
-  The GTK+ 1.2 library has to be available on the system 
+  The GTK+ 1.2 library has to be available on the system
 */
 
 #include <visp/vpConfig.h>
@@ -56,7 +56,7 @@
 /*!
 
   \brief constructor : initialize a display to visualize a gray level image
-  (8 bits). 
+  (8 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
   \param _x, _y The window is set at position x,y (column index, row index).
@@ -74,7 +74,7 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
 
 /*!
   \brief constructor : initialize a display to visualize a RGBa level image
-  (32 bits). 
+  (32 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
   \param _x, _y The window is set at position x,y (column index, row index).
@@ -92,7 +92,7 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
 
 
 /*!
-  \brief constructor 
+  \brief constructor
 
   \param _x, _y The window is set at position x,y (column index, row index).
   \param _title  window  titled
@@ -144,7 +144,7 @@ vpDisplayGTK::~vpDisplayGTK()
   closeDisplay() ;
 }
 
-/*!  
+/*!
   \brief Initialized the display of a gray level image
 
   \param I : image to be displayed (not that image has to be initialized)
@@ -153,9 +153,9 @@ vpDisplayGTK::~vpDisplayGTK()
 
 */
 void
-vpDisplayGTK::init(vpImage<unsigned char> &I, 
-		   int _x, 
-		   int _y, 
+vpDisplayGTK::init(vpImage<unsigned char> &I,
+		   int _x,
+		   int _y,
 		   char *_title)
  {
 
@@ -171,7 +171,7 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
    GTKinitialized = true ;
  }
 
-/*!  
+/*!
   \brief Initialized the display of a RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
@@ -181,8 +181,8 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
 */
 void
 vpDisplayGTK::init(vpImage<vpRGBa> &I,
-		   int _x, 
-		   int _y, 
+		   int _x,
+		   int _y,
 		   char *_title)
 {
   if ((I.getRows() == 0) || (I.getCols()==0))
@@ -195,11 +195,10 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
   init (I.getCols(), I.getRows(), _x, _y, _title) ;
   I.display = this ;
   I.initDisplay =  true ;
-  GTKinitialized = true ;
-  
+
 }
-/*!  
-  \brief actual member used to Initialize the display of a 
+/*!
+  \brief actual member used to Initialize the display of a
   gray level or RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
@@ -216,11 +215,11 @@ vpDisplayGTK::init(int _ncol, int _nrow,
   displayHasBeenInitialized =true ;
 
   /* Initialisation of thegdk et gdk_rgb library */
-  int *argc=NULL ; 
+  int *argc=NULL ;
   char **argv ;
   gdk_init(argc,&argv);
   gdk_rgb_init();
- 
+
   ncol = _ncol ;
   nrow = _nrow ;
 
@@ -232,25 +231,25 @@ vpDisplayGTK::init(int _ncol, int _nrow,
   attr.wclass =  GDK_INPUT_OUTPUT ;
   attr.window_type = GDK_WINDOW_TOPLEVEL ;
 
-  attr.event_mask = 
+  attr.event_mask =
     GDK_BUTTON_PRESS_MASK |
     GDK_BUTTON_RELEASE_MASK ;
-  
+
   /* Create the window*/
   window = gdk_window_new(NULL, &attr,0);
   gdk_window_show(window);
-  
+
 
   /* Create background pixmap */
   background = gdk_pixmap_new(window,ncol,nrow,-1);
 
   /* Create graphic context */
   gc = gdk_gc_new(window);
-  
+
   /* get the colormap  */
   GdkColormap		*colormap;
   colormap = gdk_window_get_colormap(window);
-  
+
 
   col = new GdkColor *[10] ;
 
@@ -258,7 +257,7 @@ vpDisplayGTK::init(int _ncol, int _nrow,
   gdk_color_parse("blue",&blue);
   gdk_colormap_alloc_color(colormap,&blue,FALSE,TRUE);
   col[vpColor::blue] = &blue ;
-  
+
   gdk_color_parse("red",&red);
   gdk_colormap_alloc_color(colormap,&red,FALSE,TRUE);
   col[vpColor::red] = &red ;
@@ -277,28 +276,26 @@ vpDisplayGTK::init(int _ncol, int _nrow,
 
   gdk_color_parse("magenta",&magenta);
   gdk_colormap_alloc_color(colormap,&magenta,FALSE,TRUE);
-  
+
   gdk_color_parse("goldenrod",&goldenrod);
   gdk_colormap_alloc_color(colormap,&goldenrod,FALSE,TRUE);
-  
+
   gdk_color_parse("coral",&coral);
   gdk_colormap_alloc_color(colormap,&coral,FALSE,TRUE);
-  
+
   gdk_color_parse("orange",&orange);
   gdk_colormap_alloc_color(colormap,&orange,FALSE,TRUE);
-  
+
   gdk_color_parse("white",&white);
   gdk_colormap_alloc_color(colormap,&white,FALSE,TRUE);
   col[vpColor::white] = &white ;
 
   /* Chargement des polices */
-  Police1 = gdk_font_load("-*-lucida-bold-r-normal-*-16-*-*-*-*-*-*-*");
+  Police1 = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");
   Police2 = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
-  
-
 
   title = NULL ;
- 
+
   if (_title != NULL)
   {
     if (title != NULL)
@@ -306,9 +303,11 @@ vpDisplayGTK::init(int _ncol, int _nrow,
 	delete [] title ;
 	title = NULL ;
       }
-    title = new char[strlen(_title) + 1] ; 
+    title = new char[strlen(_title) + 1] ;
     strcpy(title,_title) ;
-  } 
+  }
+
+  GTKinitialized = true ;
   flushTitle(title) ;
 
 
@@ -319,7 +318,7 @@ vpDisplayGTK::init(int _ncol, int _nrow,
 /*!
   \brief display the gray level image (8bits)
 
-  GTK has to be initialized 
+  GTK has to be initialized
 
   \warning suppres the overlay drawing
 
@@ -327,24 +326,24 @@ vpDisplayGTK::init(int _ncol, int _nrow,
 */
 void vpDisplayGTK::displayImage(vpImage<unsigned char> &I)
 {
- 
+
   if (GTKinitialized)
   {
-  
-  
+
+
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_gray_image(background,
 			gc,0, 0, ncol, nrow,
 			GDK_RGB_DITHER_NONE,
 			I.bitmap,
 			ncol);
- 
+
     /* Permet de fermer la fenêtre si besoin (cas des séquences d'images) */
     while (g_main_iteration(FALSE));
-    
+
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(window, background, FALSE);
-    
+
     /* Affichage */
     gdk_window_clear(window);
     gdk_window_show(window);
@@ -362,7 +361,7 @@ void vpDisplayGTK::displayImage(vpImage<unsigned char> &I)
 /*!
   \brief display the RGBa level image (32bits)
 
-  GTK has to be initialized 
+  GTK has to be initialized
 
   \warning suppres the overlay drawing
 
@@ -380,13 +379,13 @@ void vpDisplayGTK::displayImage(vpImage<vpRGBa> &I)
 			  GDK_RGB_DITHER_NONE,
 			  (unsigned char *)I.bitmap,
 			  4* ncol);
- 
+
     /* Permet de fermer la fenêtre si besoin (cas des séquences d'images) */
     while (g_main_iteration(FALSE));
-    
+
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(window, background, FALSE);
-    
+
     /* Affichage */
     flushDisplay() ;
 
@@ -402,31 +401,31 @@ void vpDisplayGTK::displayImage(vpImage<vpRGBa> &I)
 /*
   \brief gets the displayed image (including the overlay plane)
   and returns an RGBa image
-*/ 
+*/
 void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 {
 
 
   // shoudl certainly be optimized.
-  // marche pas 
+  // marche pas
   if (GTKinitialized)
   {
-    
+
     GdkImage	*ImageGtk;
     /*
     */
-    
+
     ImageGtk = gdk_image_get(background,0,0,ncol,nrow);
-    
+
 
     I.resize(nrow,ncol) ;
-#ifdef __Darwin_ 
+#ifdef __Darwin_
     guchar	*pos;
     guint32	pixel;
     gint	x,y;
     guchar	OctetRouge,OctetVert,OctetBleu,mask;
     mask = 0x000000FF;
-    
+
     pos = (unsigned char *)I.bitmap;
     for(y=0;y<nrow;y++)
       {
@@ -443,7 +442,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 	  }
       }
 #else
-    memcpy(I.bitmap, ImageGtk-> mem,nrow*ncol*4) ; 
+    memcpy(I.bitmap, ImageGtk-> mem,nrow*ncol*4) ;
 #endif
 
   }
@@ -453,12 +452,12 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
-    
+
 }
 
 /*!
-  \brief not implemented 
-  
+  \brief not implemented
+
   \sa init(), closeDisplay()
 */
 void vpDisplayGTK::displayImage(unsigned char *I)
@@ -479,7 +478,7 @@ void vpDisplayGTK::closeDisplay()
     {
       delete [] col ; col = NULL ;
     }
-  if (title != NULL) 
+  if (title != NULL)
     {
       delete [] title ;
       title = NULL ;
@@ -488,9 +487,9 @@ void vpDisplayGTK::closeDisplay()
 
 
 /*!
-  \brief flush the GTK buffer 
+  \brief flush the GTK buffer
   It's necessary to use this function to see the results of any drawing
- 
+
 */
 void vpDisplayGTK::flushDisplay()
 {
@@ -519,7 +518,7 @@ void vpDisplayGTK::clearDisplay(int c)
 }
 
 /*!
-  \brief display a point 
+  \brief display a point
   \param i,j (row,colum indexes)
   \param color (see vpColor)
 */
@@ -539,13 +538,13 @@ void vpDisplayGTK::displayPoint(int i, int j, int color)
 }
 
 /*!
-  \brief display a line 
+  \brief display a line
   \param i1,j1 (row,colum indexes) initial coordinates
   \param i2,j2 (row,colum indexes) final coordinates
   \param color (see vpColor)
   \param e : line_width
 */
-void 
+void
 vpDisplayGTK::displayLine(int i1, int j1,
 			  int i2, int j2,
 			  int color,
@@ -554,15 +553,15 @@ vpDisplayGTK::displayLine(int i1, int j1,
   if (GTKinitialized)
   {
     gdk_gc_set_foreground(gc,col[color]);
-    if (e>1) 
+    if (e>1)
       gdk_gc_set_line_attributes(gc,e,
 				 GDK_LINE_SOLID,GDK_CAP_BUTT,
-				 GDK_JOIN_BEVEL) ;     
-    gdk_draw_line(background,gc,j1,i1,j2,i2) ; 
-     if (e>1) 
+				 GDK_JOIN_BEVEL) ;
+    gdk_draw_line(background,gc,j1,i1,j2,i2) ;
+     if (e>1)
       gdk_gc_set_line_attributes(gc,0,
 				 GDK_LINE_SOLID,GDK_CAP_BUTT,
-				 GDK_JOIN_BEVEL) ;   
+				 GDK_JOIN_BEVEL) ;
 
   }
   else
@@ -575,15 +574,15 @@ vpDisplayGTK::displayLine(int i1, int j1,
 
 
 /*!
-  \brief display a dashed line 
+  \brief display a dashed line
   \param i1,j1 (row,colum indexes) initial coordinates
   \param i2,j2 (row,colum indexes) final coordinates
   \param color (see vpColor)
   \param e : line_width
 */
-void 
+void
 vpDisplayGTK::displayDotLine(int i1, int j1,
-			     int i2, int j2, 
+			     int i2, int j2,
 			     int color,
 			     int e)
 {
@@ -591,7 +590,7 @@ vpDisplayGTK::displayDotLine(int i1, int j1,
   if (GTKinitialized)
   {
     if (e == 1) e = 0;
-    
+
     gdk_gc_set_foreground(gc,col[color]);
     gdk_gc_set_line_attributes(gc,e
 			       ,GDK_LINE_ON_OFF_DASH,GDK_CAP_BUTT,
@@ -612,13 +611,13 @@ vpDisplayGTK::displayDotLine(int i1, int j1,
 
 
 /*!
-  \brief display a cross  
+  \brief display a cross
   \param i,j (row,colum indexes)
   \param size of the cross
   \param color (see vpColor)
 */
 void
-vpDisplayGTK::displayCross(int i,int j, 
+vpDisplayGTK::displayCross(int i,int j,
 			   int size,
 			   int col)
 {
@@ -646,7 +645,7 @@ vpDisplayGTK::displayCross(int i,int j,
 
 
 /*!
-  \brief display a "large" cross  
+  \brief display a "large" cross
   \param i,j (row,colum indexes)
   \param size of the cross
   \param color (see vpColor)
@@ -676,21 +675,20 @@ void vpDisplayGTK::displayCrossLarge(int i,int j, int size,int col)
 
 
 /*!
-  \brief display an arrow 
+  \brief display an arrow
   \param i1,j1 (row,colum indexes) initial coordinates
   \param i2,j2 (row,colum indexes) final coordinates
   \param color (see vpColor)
   \param L,l : width and height of the arrow
 */
 void
-vpDisplayGTK::displayArrow(int i1,int j1, 
+vpDisplayGTK::displayArrow(int i1,int j1,
 			   int i2, int j2,
-			   int col, 
+			   int col,
 			   int L,int l)
 {
   if (GTKinitialized)
   {
-       TRACE(" ") ;
   try{
       double a = i2 - i1 ;
       double b = j2 - j1 ;
@@ -750,14 +748,14 @@ vpDisplayGTK::displayArrow(int i1,int j1,
 
 
 /*!
-  \brief display a rectangle  
+  \brief display a rectangle
   \param i,j (row,colum indexes) up left corner
   \param width
   \param height
   \param color (see vpColor)
 */
 void
-vpDisplayGTK::displayRectangle(int i, int j, 
+vpDisplayGTK::displayRectangle(int i, int j,
 			       int width, int height,
 			       int color)
 {
@@ -775,7 +773,7 @@ vpDisplayGTK::displayRectangle(int i, int j,
 }
 
 /*!
-  \brief display a string  
+  \brief display a string
   \param i,j (row,colum indexes)
   \param string
   \param color (see vpColor)
@@ -785,7 +783,7 @@ void vpDisplayGTK::displayCharString(int i, int j, char *string, int color)
   if (GTKinitialized)
   {
     gdk_gc_set_foreground(gc,col[color]);
-    gdk_draw_string(background,Police1,gc,j,i,(const gchar *)string);
+    gdk_draw_string(background,Police2,gc,j,i,(const gchar *)string);
 
   }
   else
@@ -805,9 +803,11 @@ vpDisplayGTK::getClick()
 
   if (GTKinitialized)
   {
+
+    flushDisplay() ;
     bool end = false ;
     GdkEvent *ev ;
-    
+
     while (!end)
       {
 	ev = gdk_event_get() ;
@@ -815,7 +815,7 @@ vpDisplayGTK::getClick()
 	  {
 	    switch(ev->type)
 	      {
-	      case GDK_BUTTON_PRESS : 
+	      case GDK_BUTTON_PRESS :
 		end = true ;
 		break ;
 	      default :;
@@ -834,7 +834,7 @@ vpDisplayGTK::getClick()
 }
 
 /*!
-  \brief wait for and get the position of the click 
+  \brief wait for and get the position of the click
   \param i,j (row,colum indexes)
 
 */
@@ -844,10 +844,11 @@ vpDisplayGTK::getClick(int& i, int& j)
 
   if (GTKinitialized)
   {
-   
+
+    flushDisplay() ;
     bool end = false ;
     GdkEvent *ev ;
-    
+
     while (!end)
       {
 	ev = gdk_event_get() ;
@@ -855,9 +856,9 @@ vpDisplayGTK::getClick(int& i, int& j)
 	  {
 	    switch(ev->type)
 	      {
-	      case GDK_BUTTON_PRESS : 
+	      case GDK_BUTTON_PRESS :
 		i = (int)((GdkEventButton *)ev)->y ;
-		j = (int)((GdkEventButton *)ev)->x ; 
+		j = (int)((GdkEventButton *)ev)->x ;
 		end = true ;
 		break ;
 	      default :;
@@ -890,10 +891,11 @@ vpDisplayGTK::getClick(int& i, int& j, int& button)
 
   if (GTKinitialized)
   {
-   
+
+    flushDisplay() ;
     bool end = false ;
     GdkEvent *ev ;
-    
+
     while (!end)
       {
 	ev = gdk_event_get() ;
@@ -901,11 +903,11 @@ vpDisplayGTK::getClick(int& i, int& j, int& button)
 	  {
 	    switch(ev->type)
 	      {
-	      case GDK_BUTTON_PRESS : 
+	      case GDK_BUTTON_PRESS :
 		if ((int)((GdkEventButton *)ev)->button==button)
 		  {
 		    i = (int)((GdkEventButton *)ev)->y ;
-		    j = (int)((GdkEventButton *)ev)->x ; 
+		    j = (int)((GdkEventButton *)ev)->x ;
 		    end = true ;
 		  }
 		break ;
@@ -924,9 +926,9 @@ vpDisplayGTK::getClick(int& i, int& j, int& button)
     return  false;
 }
 
-/*!  
+/*!
   \brief wait for and get the position of the click release of the
-  button specified by "button" 
+  button specified by "button"
   \param i,j (row,colum indexes)
 
 */
@@ -937,9 +939,10 @@ vpDisplayGTK::getClickUp(int& i, int& j, int& button)
   if (GTKinitialized)
   {
 
+    flushDisplay() ;
     bool end = false ;
     GdkEvent *ev ;
-    
+
     while (!end)
       {
 	ev = gdk_event_get() ;
@@ -947,11 +950,11 @@ vpDisplayGTK::getClickUp(int& i, int& j, int& button)
 	  {
 	    switch(ev->type)
 	      {
-	      case GDK_BUTTON_RELEASE : 
+	      case GDK_BUTTON_RELEASE :
 		if ((int)((GdkEventButton *)ev)->button==button)
 		  {
 		    i = (int)((GdkEventButton *)ev)->y ;
-		    j = (int)((GdkEventButton *)ev)->x ; 
+		    j = (int)((GdkEventButton *)ev)->x ;
 		    end = true ;
 		  }
 		break ;
@@ -972,16 +975,16 @@ vpDisplayGTK::getClickUp(int& i, int& j, int& button)
 
 /*!
   \brief get the window depth (8,16,24,32)
-  
+
   usualy it 24 bits now...
 */
 int vpDisplayGTK::getScreenDepth()
 {
- 
+
   int		depth;
-  
+
   depth = gdk_window_get_visual(window)->depth ;
-  
+
   return (depth);
 }
 
@@ -1019,12 +1022,12 @@ vpDisplayGTK::flushTitle(const char *windowtitle)
   \brief Display a circle
   \param i,j : circle center position (row,column)
   \param r : radius
-  \param color 
+  \param color
 */
 void vpDisplayGTK::displayCircle(int i, int j, int r, int color)
 {
    if (GTKinitialized)
-   { 
+   {
      gdk_gc_set_foreground(gc,col[color]);
      gdk_draw_arc(background,gc,FALSE,j-r,i-r,2*r,2*r,360*64,360*64) ;
    }
