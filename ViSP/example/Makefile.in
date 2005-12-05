@@ -1,8 +1,10 @@
 
 
 SRC_REP = \
-	servo-afma6 \
-	servo-afma4
+	image \
+	pose-estimation \
+	tracking \
+	simulation
 
 
 all install uninstall:
