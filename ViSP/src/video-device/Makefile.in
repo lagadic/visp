@@ -8,6 +8,7 @@ LIB		= $(VISP_LIB_PATH)/lib@VISP_LIBNAME@.a
 SOURCES		= \
 	vpDisplay.cpp \
 	vpDisplayX.cpp \
+	vpDisplayGTK.cpp \
 	\
 	vpDisplayException.cpp
 
