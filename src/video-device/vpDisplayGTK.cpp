@@ -419,7 +419,6 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 
 
     I.resize(nrow,ncol) ;
-#ifdef __Darwin_
     guchar	*pos;
     guint32	pixel;
     gint	x,y;
@@ -441,9 +440,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 	    *pos++ = 0;
 	  }
       }
-#else
-    memcpy(I.bitmap, ImageGtk-> mem,nrow*ncol*4) ;
-#endif
+
 
   }
   else
