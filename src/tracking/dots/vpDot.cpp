@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.7 2005-09-02 14:01:10 marchand Exp $
+ *  $Id: vpDot.cpp,v 1.8 2005-12-05 10:31:54 marchand Exp $
  *
  * Description
  * ============
@@ -40,11 +40,11 @@
 
 void vpDot::init()
 {
-  cog_i = 0 ;
-  cog_j = 0 ;
+  cog_u = 0 ;
+  cog_v = 0 ;
 
-  cog_ifloat = 0 ;
-  cog_jfloat = 0 ;
+  cog_ufloat = 0 ;
+  cog_vfloat = 0 ;
 
   seuil_min = 200 ;
   compute_moment = false ;
@@ -59,32 +59,46 @@ vpDot::vpDot() : vpTracker()
   init() ;
 }
 
-vpDot::vpDot(const int i, const int j) : vpTracker()
+/*!
+  \brief constructor with initialization of the dot location
+
+  \param u : dot location (column)
+  \param v : dot location (row)
+ */
+vpDot::vpDot(const int u, const int v) : vpTracker()
 {
   init() ;
 
-  cog_i = i ;
-  cog_j = j ;
+  cog_u = u ;
+  cog_v = v ;
 
-  cog_ifloat = i ;
-  cog_jfloat = j ;
+  cog_ufloat = u ;
+  cog_vfloat = v ;
 
 }
 
+/*!
+  \brief constructor with initialization of the dot location
 
-vpDot::vpDot(const double i,const  double j) : vpTracker()
+  \param u : dot location (column)
+  \param v : dot location (row)
+ */
+vpDot::vpDot(const double u,const  double v) : vpTracker()
 {
 
   init() ;
 
-  cog_i = (int)i ;
-  cog_j = (int)j ;
+  cog_u = (int)u ;
+  cog_v = (int)v ;
 
-  cog_ifloat = i ;
-  cog_jfloat = j ;
+  cog_ufloat = u ;
+  cog_vfloat = v ;
 
 }
 
+/*!
+  \brief copy constructor
+ */
 vpDot::vpDot(const vpDot& c)  : vpTracker()
 {
 
@@ -93,25 +107,29 @@ vpDot::vpDot(const vpDot& c)  : vpTracker()
 }
 
 
-
+/*!
+  \brief destructor
+ */
 vpDot::~vpDot()
 {
 
-  Li.kill() ;
-  Lj.kill() ;
+  Lu.kill() ;
+  Lv.kill() ;
 
 }
 
-
+/*!
+  \brief copy operator
+ */
 vpDot&
 vpDot::operator=(const vpDot& pt)
 {
 
-  cog_i = pt.cog_i ;
-  cog_j = pt.cog_j ;
+  cog_u = pt.cog_u ;
+  cog_v = pt.cog_v ;
 
-  cog_ifloat = pt.cog_ifloat ;
-  cog_jfloat = pt.cog_jfloat ;
+  cog_ufloat = pt.cog_ufloat ;
+  cog_vfloat = pt.cog_vfloat ;
 
   graphics = pt.graphics ;
   seuil = pt.seuil ;
@@ -129,86 +147,86 @@ vpDot::operator=(const vpDot& pt)
 int
 vpDot::operator!=(const vpDot& m)
 {
-  return ((cog_i!=m.cog_j) || (cog_j!=m.cog_j)) ;
+  return ((cog_u!=m.cog_v) || (cog_v!=m.cog_v)) ;
 }
 
 int
 vpDot::operator==(const vpDot& m)
 {
-  return ((cog_i==m.cog_i) && (cog_j==m.cog_j)) ;
+  return ((cog_u==m.cog_u) && (cog_v==m.cog_v)) ;
 }
 
 int
-vpDot::connexe(vpImage<unsigned char>& I, int i, int j, int seuil,
-	       double &i_cog, double &j_cog,  double &n)
+vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
+	       double &u_cog, double &v_cog,  double &n)
 {
 
-  if (I[i][j] >=seuil)
+  if (I[v][u] >=seuil)
   {
     if (graphics==true)
     {
-      vpDisplay::displayPoint(I,i,j,vpColor::green) ;
+      vpDisplay::displayPoint(I,v,u,vpColor::green) ;
     }
-    Li += i ;
-    Lj += j ;
-    i_cog += i ;
-    j_cog += j ;
+    Lu += u ;
+    Lv += v ;
+    u_cog += u ;
+    v_cog += v ;
     n+=1 ;
     if (compute_moment==true)
     {
       m00++ ;
-      m10 += j ;
-      m01 += i ;
-      m11 += (i*j) ;
-      m20 += j*j ;
-      m02 += i*i ;
+      m10 += v ;
+      m01 += u ;
+      m11 += (u*v) ;
+      m20 += v*v ;
+      m02 += u*u ;
     }
-    I[i][j] = 0 ;
+    I[v][u] = 0 ;
   }
   else
   {
     return vpDot::out ;
   }
-  if ( j-1 >= 0)
+  if ( u-1 >= 0)
   {
-    if (I[i][j-1] >=seuil)
-      connexe(I,i,j-1,seuil,i_cog,j_cog,n) ;
+    if (I[v][u-1] >=seuil)
+      connexe(I,u-1,v,seuil,u_cog,v_cog,n) ;
   }
 
-  if (j+1 <  I.getCols())
+  if (u+1 <  I.getCols())
   {
-    if (I[i][j+1] >=seuil)
-      connexe(I,i,j+1,seuil,i_cog,j_cog,n) ;
+    if (I[v][u+1] >=seuil)
+      connexe(I,u+1,v,seuil,u_cog,v_cog,n) ;
   }
-  if  (i-1 >= 0)
+  if  (v-1 >= 0)
   {
-    if (I[i-1][j] >=seuil)
-      connexe(I,i-1,j,seuil,i_cog,j_cog,n) ;
+    if (I[v-1][u] >=seuil)
+      connexe(I,u, v-1,seuil,u_cog,v_cog,n) ;
   }
-  if  (i+1 < I.getRows())
+  if  (v+1 < I.getRows())
   {
-    if (I[i+1][j] >=seuil)
-      connexe(I,i+1,j,seuil,i_cog,j_cog,n) ;
+    if (I[v+1][u] >=seuil)
+      connexe(I,u,v+1,seuil,u_cog,v_cog,n) ;
   }
   return vpDot::in ;
 }
 
 void
-vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
+vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 {
   // segmentation de l'image apres seuillage
   // (etiquetage des composante connexe)
   if (compute_moment)
     m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
-  double i_cog = 0 ;
-  double j_cog = 0 ;
+  double u_cog = 0 ;
+  double v_cog = 0 ;
   double npoint =0 ;
-  Li.kill() ;
-  Lj.kill() ;
+  Lu.kill() ;
+  Lv.kill() ;
 
 
-  if (  connexe(I,(int)i,(int)j,seuil,i_cog, j_cog, npoint) == vpDot::out)
+  if (  connexe(I,(int)u,(int)v,seuil,u_cog, v_cog, npoint) == vpDot::out)
   {
     bool sol = false ;
     int pas  ;
@@ -217,15 +235,15 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
       for (int k=-1 ; k <=1 ; k++) if (sol==false)
 	for (int l=-1 ; l <=1 ; l++) if (sol==false)
 	{
-	  i_cog = 0 ;
-	  j_cog = 0 ;
-	  Li.kill() ;
-	  Lj.kill() ;
+	  u_cog = 0 ;
+	  v_cog = 0 ;
+	  Lu.kill() ;
+	  Lv.kill() ;
 	  if (connexe(I,
-		      (int)(i+k*pas),(int)(j+l*pas),
-		      seuil,i_cog, j_cog, npoint)     != vpDot::out)
+		      (int)(u+k*pas),(int)(v+l*pas),
+		      seuil,u_cog, v_cog, npoint)     != vpDot::out)
 	  {
-	    sol = true ; i += k*pas ; j += l*pas ;
+	    sol = true ; u += k*pas ; v += l*pas ;
 	  }
 	}
     }
@@ -237,22 +255,22 @@ vpDot::COG(vpImage<unsigned char> &I, double& i, double& j)
     }
   }
 
-  Li.front() ; Lj.front() ;
-  while (!Li.outside())
+  Lu.front() ; Lv.front() ;
+  while (!Lu.outside())
   {
-    int i,j ;
-    i = Li.value() ; j = Lj.value() ;
-    I[i][j] = 255 ;
-    Li.next() ;
-    Lj.next() ;
+    int u,v ;
+    u = Lu.value() ; v = Lv.value() ;
+    I[v][u] = 255 ;
+    Lu.next() ;
+    Lv.next() ;
   }
 
-  i_cog = i_cog/npoint ;
-  j_cog = j_cog/npoint ;
+  u_cog = u_cog/npoint ;
+  v_cog = v_cog/npoint ;
 
 
-  i = i_cog ;
-  j = j_cog ;
+  u = u_cog ;
+  v = v_cog ;
 
   if (npoint < 5)
   {
@@ -277,7 +295,7 @@ vpDot::setNbMaxPoint(double nb)
   nbMaxPoint = nb ;
 }
 
-//! init the traking with a mouse click
+//! init the traking with a right mouse click
 void
 vpDot::initTracking(vpImage<unsigned char>& I)
 {
@@ -290,28 +308,34 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   if (seuil <seuil_min) seuil = seuil_min ;
 
 
-  double i,j ;
-  i = i1 ;
-  j = j1 ;
+  double u,v ;
+  u = j1 ;
+  v = i1 ;
 
-  cog_ifloat = i ;
-  cog_jfloat = j ;
+  cog_ufloat = u ;
+  cog_vfloat = v ;
 
-  if ((i-(int)i) < 0.5)   cog_i = (int)i ; else  cog_i = (int)i+1 ;
-  if ((j-(int)j) < 0.5)   cog_j = (int)j ; else  cog_j = (int)j+1 ;
+  if ((u-(int)u) < 0.5)   cog_u = (int)u ; else  cog_u = (int)u+1 ;
+  if ((v-(int)v) < 0.5)   cog_v = (int)v ; else  cog_v = (int)v+1 ;
 
 }
 
-  //! init the tracking for a dot supposed to be located at (i,j)
+/*!
+  \brief init the tracking for a dot supposed to be located at (u,v)
+
+  \param I : image
+  \param u : dot location (column)
+  \param v : dot location (row)
+*/
 void
-vpDot::initTracking(vpImage<unsigned char>& I, int i, int j)
+vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
 {
 
-  cog_ifloat = i ;
-  cog_jfloat = j ;
+  cog_ufloat = u ;
+  cog_vfloat = v ;
 
-  cog_i = i ;
-  cog_j = j ;
+  cog_u = u ;
+  cog_v = v ;
 
 }
 
@@ -326,16 +350,16 @@ vpDot::initTracking(vpImage<unsigned char>& I, int i, int j)
 void
 vpDot::track(vpImage<unsigned char> &I)
 {
-  seuil = (int) (I[cog_i][cog_j] * 0.8);
-  seuil_min = (int) (I[cog_i][cog_j] * 0.6);
+  seuil = (int) (I[cog_v][cog_u] * 0.8);
+  seuil_min = (int) (I[cog_v][cog_u] * 0.6);
   if (seuil < seuil_min) seuil = seuil_min ;
 
-  double i = cog_ifloat ;
-  double j = cog_jfloat ;
+  double u = cog_ufloat ;
+  double v = cog_vfloat ;
 
   try{
 
-    COG(I,i, j) ;
+    COG(I,u,v) ;
   }
   catch(...)
   {
@@ -343,22 +367,26 @@ vpDot::track(vpImage<unsigned char> &I)
     throw ;
   }
 
-  cog_ifloat = i ;
-  cog_jfloat = j ;
+  cog_ufloat = u ;
+  cog_vfloat = v ;
 
-  if ((i-(int)i) < 0.5)   cog_i = (int)i ; else  cog_i = (int)i+1 ;
-  if ((j-(int)j) < 0.5)   cog_j = (int)j ; else  cog_j = (int)j+1 ;
+  if ((u-(int)u) < 0.5)   cog_u = (int)u ; else  cog_u = (int)u+1 ;
+  if ((v-(int)v) < 0.5)   cog_v = (int)v ; else  cog_v = (int)v+1 ;
 }
 
 /*!
   track and get the new dot coordinates
+
+  \param I : image
+  \param u : dot location (column)
+  \param v : dot location (row)
 */
 void
-vpDot::track(vpImage<unsigned char> &I, double &i, double &j)
+vpDot::track(vpImage<unsigned char> &I, double &u, double &v)
 {
   track(I) ;
-  i = vpDot::I() ;
-  j = vpDot::J() ;
+  u = vpDot::get_u() ;
+  v = vpDot::get_v() ;
 }
 
 

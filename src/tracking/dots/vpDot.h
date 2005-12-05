@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.h,v 1.3 2005-07-13 10:36:41 fspindle Exp $
+ *  $Id: vpDot.h,v 1.4 2005-12-05 10:31:54 marchand Exp $
  *
  * Description
  * ============
@@ -40,18 +40,20 @@
 /*
   \class vpDot
   \brief Track a white dot
+
+  \sa vpDotExample.cpp
 */
 class vpDot : public vpTracker
 {
 private:
   //! internal use only
-  vpList<int> Li, Lj ;
+  vpList<int> Lu, Lv ;
 private:
 
   //! coordinates of the point center of gravity
-  int cog_i, cog_j ;
+  int cog_u, cog_v ;
   //! coordinates (float) of the point center of gravity
-  double cog_ifloat, cog_jfloat ;
+  double cog_ufloat, cog_vfloat ;
 
 
 public :
@@ -82,8 +84,8 @@ public :
 public:
   void init() ;
   vpDot() ;
-  vpDot(const int a, const int b) ;
-  vpDot(const double a, const double b) ;
+  vpDot(const int u, const int v) ;
+  vpDot(const double u, const double v) ;
   vpDot(const vpDot& c) ;
   ~vpDot() ;
 
@@ -96,11 +98,11 @@ public:
 
 
 public:
-  double I() const { return cog_ifloat ; }
-  double J() const { return cog_jfloat ; }
+  double get_u() const { return cog_ufloat ; }
+  double get_v() const { return cog_vfloat ; }
 
-  void setI(double i) { cog_ifloat = i ; cog_i = (int)i ; }
-  void setJ(double j) { cog_jfloat = j ; cog_j = (int)j ; }
+  void set_u(double u) { cog_ufloat = u ; cog_u = (int)u ; }
+  void set_v(double v) { cog_vfloat = v ; cog_v = (int)v ; }
 
 public:
   friend ostream& operator<< (ostream& os, vpDot& p) { return (os << p ) ; } ;
@@ -113,9 +115,9 @@ private:
       out
     } ;
   double nbMaxPoint ;
-  int connexe(vpImage<unsigned char>& I, int i, int j, int seuil,
-	       double &i_cog, double &j_cog,  double &n) ;
-  void COG(vpImage<unsigned char> &I,double& i, double& j) ;
+  int connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
+	       double &u_cog, double &v_cog,  double &n) ;
+  void COG(vpImage<unsigned char> &I,double& u, double& v) ;
 
   int seuil ;
   int seuil_min ;
@@ -137,12 +139,12 @@ public:
 public:
   //! init the traking with a mouse click
   void initTracking(vpImage<unsigned char> &I) ;
-  //! init the tracking for a dot supposed to be located at (i,j)
-  void initTracking(vpImage<unsigned char> &I, int i, int j) ;
+  //! init the tracking for a dot supposed to be located at (u,v)
+  void initTracking(vpImage<unsigned char> &I, int u, int v) ;
   //! track and get the new dot coordinates
   void track(vpImage<unsigned char> & I) ;
   //! track and get the new dot coordinates
-  void track(vpImage<unsigned char> & I, double &i, double &j) ;
+  void track(vpImage<unsigned char> & I, double &u, double &v) ;
   //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels)
   void setNbMaxPoint(double nb) ;
 
