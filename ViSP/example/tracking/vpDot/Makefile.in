@@ -2,7 +2,8 @@
 
 
 SOURCES		= \
-	vpDotExample.cpp
+	vpDotExample.cpp \
+	vpDot2Example.cpp
 
 PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
 
