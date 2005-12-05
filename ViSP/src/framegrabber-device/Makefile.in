@@ -6,7 +6,8 @@ SRC_REP = \
 	generic-framegrabber \
 	IC-Comp \
 	1394 \
-	v4l2
+	v4l2 \
+	OSX-cfox
 
 
 all install uninstall:
