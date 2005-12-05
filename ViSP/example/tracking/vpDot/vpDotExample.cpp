@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDotExample.cpp,v 1.2 2005-12-05 10:33:01 marchand Exp $
+ *  $Id: vpDotExample.cpp,v 1.3 2005-12-05 16:19:31 fspindle Exp $
  *
  * Description
  * ============
@@ -31,7 +31,7 @@
 /*!
   \example vpDotExample.cpp
 
-  \brief   exampe of  dots tracking on an image sequence
+  \brief   example of dots tracking on an image sequence
 */
 
 int
@@ -40,7 +40,7 @@ main()
   cout <<  "-------------------------------------------------------" << endl ;
   cout <<  " vpDotExample.cpp" <<endl << endl ;
 
-  cout <<  " exampe of  dots tracking on an image sequence" << endl ;
+  cout <<  " example of dots tracking on an image sequence" << endl ;
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
@@ -129,6 +129,8 @@ main()
   // dot location can also be specified explicitely in the initTracking
   // method  : d.initTracking(I,u,v)  where u is the column index and v is
   // the row index
+
+  cout << "Click on a dot to initialize the tracking..." << endl;
   try{
     d.initTracking(I) ;
   }
