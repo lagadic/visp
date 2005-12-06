@@ -42,12 +42,12 @@ AC_CHECK_LIB(gsl,main)
 #-----------------------------------------------------------------------
 # Check for -lcfox library 1394 acquisition on the mac
 
-#AC_CHECK_LIB(cfox,main,have_cfox=yes,have_cfox=no)
-#if test "x$have_cfox" = "xyes"; then
-# AC_DEFINE([HAVE_LIBCFOX], 1,
-#            [Define to 1 if Cfox library is available])
-#  LIBS="$LIBS -lcfox -framework IOKit -framework Carbon "
-#fi 
+AC_CHECK_LIB(cfox,main,have_cfox=yes,have_cfox=no)
+if test "x$have_cfox" = "xyes"; then
+ AC_DEFINE([HAVE_LIBCFOX], 1,
+            [Define to 1 if Cfox library is available])
+  LIBS="$LIBS -lcfox -framework IOKit -framework Carbon "
+fi 
 #-----------------------------------------------------------------------
 # Check for ieee 1394 capabilities
 AC_CHECK_LIB(raw1394,main)
@@ -363,6 +363,7 @@ src/video-device/Makefile
 src/framegrabber-device/Makefile
 src/framegrabber-device/IC-Comp/Makefile
 src/framegrabber-device/1394/Makefile
+src/framegrabber-device/OSX-cfox/Makefile
 src/framegrabber-device/v4l2/Makefile
 src/framegrabber-device/generic-framegrabber/Makefile
 src/framegrabber-device/disk/Makefile
