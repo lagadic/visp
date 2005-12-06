@@ -445,8 +445,7 @@ WARN_LOGFILE           =  warning.log
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../src \
-                         ../example 
+INPUT                  = ../src ../example
 
 
 # If the value of the INPUT tag contains directories, you can use the 
@@ -493,8 +492,7 @@ EXCLUDE_PATTERNS       = *v0* \
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = ../example 
-
+EXAMPLE_PATH           = ../example
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
