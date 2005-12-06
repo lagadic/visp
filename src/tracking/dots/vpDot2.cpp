@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.cpp,v 1.5 2005-12-05 16:23:45 fspindle Exp $
+ *  $Id: vpDot2.cpp,v 1.6 2005-12-06 10:31:33 fspindle Exp $
  *
  * Description
  * ============
@@ -556,8 +556,6 @@ void vpDot2::setAccuracy( const double & accuracy )
 
 
 ///// CLASS FUNCTIONALITY ////////////////////////////////////////////////////
-
-
 
 
 /*!
