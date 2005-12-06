@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDotExample.cpp,v 1.3 2005-12-05 16:19:31 fspindle Exp $
+ *  $Id: vpDotExample.cpp,v 1.4 2005-12-06 13:29:36 fspindle Exp $
  *
  * Description
  * ============
@@ -31,8 +31,10 @@
 /*!
   \example vpDotExample.cpp
 
-  \brief   example of dots tracking on an image sequence
+  Example of dots tracking on an image sequence
 */
+#define	CAT(a,b)	a ## b
+#define	XCAT(a,b)	CAT(a,b)
 
 int
 main()
@@ -75,6 +77,7 @@ main()
 
   // define the vpDot structure
   vpDot d ;
+
   // by using setGraphics, we request to see the all the pixel of the dot
   // in green on the screen.
   // It uses the overlay image plane.
