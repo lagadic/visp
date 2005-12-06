@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServo.h,v 1.4 2005-11-04 14:54:27 nmansard Exp $
+ *  $Id: vpServo.h,v 1.5 2005-12-06 16:35:29 nmansard Exp $
  *
  * Description
  * ============
@@ -187,10 +187,10 @@ public:
 
   //! create a new ste of  two visual features
   void addFeature(vpBasicFeature& s, vpBasicFeature& s_star,
-	       const int select=FEATURE_ALL) ;
+	       const int select=vpBasicFeature::FEATURE_ALL) ;
   //! create a new ste of  two visual features
   void addFeature(vpBasicFeature& s,
-	       const int select=FEATURE_ALL) ;
+	       const int select=vpBasicFeature::FEATURE_ALL) ;
 
   //! compute the interaction matrix related to the set of visual features
   vpMatrix computeInteractionMatrix() ;
