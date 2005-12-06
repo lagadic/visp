@@ -1,0 +1,27 @@
+----------------------------------------------	
+ViSP 2.1.1 (Modification since ViSP 2.1.0)
+   - New examples 
+	- create an example directory
+	- add vpDotExample.cpp  
+	- add vpPoseExample.cpp 
+	- add 2D0.5.VisualServoingSimulation.cpp 
+  - New Feature
+	- add this ChangleLog file
+	- add a vpDisplayGTK class that the GTK2+ window system
+	- new member function in vpDisplay (_uv)
+	- add function getInteractionMatrix() in vpGenericFeature
+  - Specification modifications
+	- change the vpDot and vpDot specification
+	- supress demo directory
+  - Bug fix and improvement
+	- add a runtime warning when vpGenericFeature is not correctly used
+	- comment in english in vpDisplayX
+	- suppress a trace in vpPoseVirtualVisualServoing.cpp
+	- directory.mk : add -p option to mkdir
+	- improve XP compatibility
+  - WWW
+     - add an image sequence to download on the www site cube.tar.gz
+
+
+---------------------------------------	
+ViSP 2.1.0 released October, 24th 2005)
