@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureEllipse.h,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeatureEllipse.h,v 1.2 2005-12-06 16:28:49 nmansard Exp $
  *
  * Description
  * ============
@@ -82,11 +82,11 @@ public:
   */
 
   // feature selection
-  static int selectX()  { return FEATURE_LINE1 ; }
-  static int selectY()  { return FEATURE_LINE2 ; }
-  static int selectMu20()  { return FEATURE_LINE3 ; }
-  static int selectMu11()  { return FEATURE_LINE4 ; }
-  static int selectMu02()  { return FEATURE_LINE5 ; }
+  inline static int selectX()  { return FEATURE_LINE[0] ; }
+  inline static int selectY()  { return FEATURE_LINE[1] ; }
+  inline static int selectMu20()  { return FEATURE_LINE[2] ; }
+  inline static int selectMu11()  { return FEATURE_LINE[3] ; }
+  inline static int selectMu02()  { return FEATURE_LINE[4] ; }
 
   //! compute the interaction matrix from a subset a the possible features
   vpMatrix  interaction(const int select = FEATURE_ALL) const;

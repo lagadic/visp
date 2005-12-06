@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpBasicFeature.cpp,v 1.2 2005-09-02 08:43:52 aremazei Exp $
+ *  $Id: vpBasicFeature.cpp,v 1.3 2005-12-06 16:28:49 nmansard Exp $
  *
  * Description
  * ============
@@ -22,6 +22,18 @@
 
 #include <visp/vpBasicFeature.h>
 
+const int vpBasicFeature::FEATURE_LINE [32] =
+    {
+	1 <<  0,	1 <<  1,	1 <<  2,	1 <<  3,
+	1 <<  4,	1 <<  5,	1 <<  6,	1 <<  7,
+	1 <<  8,	1 <<  9,	1 << 10,	1 << 11,
+	1 << 12,	1 << 13,	1 << 14,	1 << 15,
+	1 << 16,	1 << 17,	1 << 18,	1 << 19,
+	1 << 20,	1 << 21,	1 << 22,	1 << 23,
+	1 << 24,	1 << 25,	1 << 26,	1 << 27,
+	1 << 28,	1 << 29,	1 << 30,	1 << 31
+    };
+const int vpBasicFeature::FEATURE_ALL = 0xffff;
 
 /*!
   \file vpBasicFeature.cpp
@@ -30,14 +42,14 @@
 
 vpBasicFeature::vpBasicFeature()
 {
-    featureLine[0] = 0x1 ;
-    featureLine[1] = 0x2 ;
-    featureLine[2] = 0x4 ;
-    featureLine[3] = 0x8 ;
-    featureLine[4] = 0x10 ;
-    featureLine[5] = 0x20 ;
-    featureLine[6] = 0x40 ;
-    featureLine[7] = 0x80 ;
+//     featureLine[0] = 0x1 ;
+//     featureLine[1] = 0x2 ;
+//     featureLine[2] = 0x4 ;
+//     featureLine[3] = 0x8 ;
+//     featureLine[4] = 0x10 ;
+//     featureLine[5] = 0x20 ;
+//     featureLine[6] = 0x40 ;
+//     featureLine[7] = 0x80 ;
 
     deallocate = vpBasicFeature::user ;
 }
@@ -50,7 +62,7 @@ vpBasicFeature::getDimension(int select) const
     for (int i=0 ; i < s.getRows() ; i++)
     {
 	//	printf("%x %x %d \n",select, featureLine[i], featureLine[i] & select);
-	if (featureLine[i] & select) dim +=1 ;
+	if (FEATURE_LINE[i] & select) dim +=1 ;
     }
     return dim ;
 }

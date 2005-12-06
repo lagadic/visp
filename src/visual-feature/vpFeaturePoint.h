@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeaturePoint.h,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeaturePoint.h,v 1.2 2005-12-06 16:28:49 nmansard Exp $
  *
  * Description
  * ============
@@ -98,8 +98,8 @@ public:
   */
 
   // feature selection
-  static int selectX()  { return FEATURE_LINE1 ; }
-  static int selectY()  { return FEATURE_LINE2 ; }
+  inline static int selectX()  { return FEATURE_LINE[0] ; }
+  inline static int selectY()  { return FEATURE_LINE[1] ; }
   //! compute the interaction matrix from a subset a the possible features
   vpMatrix  interaction(const int select = FEATURE_ALL) const;
   //! compute the error between two visual features from a subset

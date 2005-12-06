@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpBasicFeature.h,v 1.2 2005-09-02 08:45:13 aremazei Exp $
+ *  $Id: vpBasicFeature.h,v 1.3 2005-12-06 16:28:49 nmansard Exp $
  *
  * Description
  * ============
@@ -40,16 +40,16 @@
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
 
-#define FEATURE_ALL 0xff
+// #define FEATURE_ALL 0xff
 
-#define FEATURE_LINE1 0x1
-#define FEATURE_LINE2 0x2
-#define FEATURE_LINE3 0x4
-#define FEATURE_LINE4 0x8
-#define FEATURE_LINE5 0x10
-#define FEATURE_LINE6 0x20
-#define FEATURE_LINE7 0x40
-#define FEATURE_LINE8 0x80
+// #define FEATURE_LINE1 0x1
+// #define FEATURE_LINE2 0x2
+// #define FEATURE_LINE3 0x4
+// #define FEATURE_LINE4 0x8
+// #define FEATURE_LINE5 0x10
+// #define FEATURE_LINE6 0x20
+// #define FEATURE_LINE7 0x40
+// #define FEATURE_LINE8 0x80
 
 
 /*!
@@ -58,12 +58,17 @@
 */
 class vpBasicFeature
 {
+public: // Public constantes
+  static const int FEATURE_LINE [32];
+  static const int FEATURE_ALL;
+
 protected:
   //! state of the visual feature
   vpColVector s ;
   //! dimension of the visual feature
   int dim_s ;
-  int featureLine[8] ;
+  //int featureLine[8] ;
+
 public:
   int dimension_s() { return dim_s ; }
 
@@ -118,7 +123,6 @@ public:
   void setDeallocate(int d) { deallocate = d ; }
   int getDeallocate() { return deallocate ; }
 } ;
-
 
 
 #endif
