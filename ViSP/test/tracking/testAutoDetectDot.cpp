@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testAutoDetectDot.cpp,v 1.2 2005-07-20 15:34:07 fspindle Exp $
+ *  $Id: testAutoDetectDot.cpp,v 1.3 2005-12-06 13:19:50 fspindle Exp $
  *
  * Description
  * ============
@@ -112,7 +112,7 @@ main()
     vpDisplay::display(I) ;
 
     vpList<vpDot2> * list_d;
-    list_d = d.searchDotsInArea(I, 0, 0, I.getRows(), I.getCols()) ;
+    list_d = d.searchDotsInArea(I, 0, 0, I.getCols(), I.getRows()) ;
 
     if( list_d->nbElement() == 0 ) {
       cout << "Dot auto detection did not work, "
@@ -120,8 +120,8 @@ main()
 	   << endl;
 
       d.initTracking( I );
-      vpDisplay::displayCross(I,(int)d.I(), (int)d.J(),
-			      10,vpColor::green) ;
+      vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),
+				 10,vpColor::green) ;
       vpDisplay::flush(I) ;
     }
     else {
@@ -133,8 +133,8 @@ main()
 	vpDot2 tmp_d;
 	tmp_d = list_d->value() ;
 	list_d->next() ;
-	vpDisplay::displayCross(I,(int)tmp_d.I(), (int)tmp_d.J(),
-				10, vpColor::red) ;
+	vpDisplay::displayCross_uv(I,(int)tmp_d.get_u(), (int)tmp_d.get_v(),
+				   10, vpColor::red) ;
       }
       vpDisplay::flush(I) ;
     }
