@@ -3,15 +3,16 @@ ViSP 2.1.1 (Modification since ViSP 2.1.0)
    - New examples 
 	- create an example directory
 	- add vpDotExample.cpp  
+	- add vpDot2Example.cpp  
 	- add vpPoseExample.cpp 
 	- add 2D0.5.VisualServoingSimulation.cpp 
   - New Feature
 	- add this ChangleLog file
-	- add a vpDisplayGTK class that the GTK2+ window system
+	- add a vpDisplayGTK class with the GTK2+ window system
 	- new member function in vpDisplay (_uv)
 	- add function getInteractionMatrix() in vpGenericFeature
   - Specification modifications
-	- change the vpDot and vpDot specification
+	- change the vpDot and vpDot2 specifications
 	- supress demo directory
   - Bug fix and improvement
 	- add a runtime warning when vpGenericFeature is not correctly used
