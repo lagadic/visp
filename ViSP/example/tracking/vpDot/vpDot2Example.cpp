@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2Example.cpp,v 1.1 2005-12-05 16:22:08 fspindle Exp $
+ *  $Id: vpDot2Example.cpp,v 1.2 2005-12-06 13:29:36 fspindle Exp $
  *
  * Description
  * ============
@@ -29,9 +29,9 @@
 #include <visp/vpDot2.h>
 
 /*!
-  \example vpDotExample.cpp
+  \example vpDot2Example.cpp
 
-  \brief   example of dots tracking on an image sequence
+  Example of dots tracking on an image sequence using vpDot2 class
 */
 
 int
