@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.16 2005-12-06 14:15:57 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.17 2005-12-06 15:26:10 fspindle Exp $
  *
  * Description
  * ============
@@ -41,6 +41,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <assert.h>
 
 #include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
