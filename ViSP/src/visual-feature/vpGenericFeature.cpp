@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpGenericFeature.cpp,v 1.5 2005-12-05 10:21:04 marchand Exp $
+ *  $Id: vpGenericFeature.cpp,v 1.6 2005-12-06 16:28:49 nmansard Exp $
  *
  * Description
  * ============
@@ -130,7 +130,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
       {
 	errorStatus = errorHasToBeUpdated ;
 	for (int i=0 ; i < dim_s ; i++)
-	  if (featureLine[i] & select )
+	  if (FEATURE_LINE[i] & select )
 	  {
 	    vpColVector ex(1) ;
 	    ex[i] = err[i] ;
@@ -142,7 +142,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
       {
 
 	for (int i=0 ; i < dim_s ; i++)
-	  if (featureLine[i] & select )
+	  if (FEATURE_LINE[i] & select )
 	  {
 	    vpColVector ex(1) ;
 	    ex[0] = s[i] - s_star[i] ;
@@ -191,7 +191,7 @@ vpGenericFeature::error( const int select)
       {
 	errorStatus = errorHasToBeUpdated ;
 	for (int i=0 ; i < dim_s ; i++)
-	  if (featureLine[i] & select )
+	  if (FEATURE_LINE[i] & select )
 	  {
 	    vpColVector ex(1) ;
 	    ex[i] = err[i] ;
@@ -203,7 +203,7 @@ vpGenericFeature::error( const int select)
       {
 
 	for (int i=0 ; i < dim_s ; i++)
-	  if (featureLine[i] & select )
+	  if (FEATURE_LINE[i] & select )
 	  {
 	    vpColVector ex(1) ;
 	    ex[i] = s[i]  ;
@@ -254,7 +254,7 @@ vpGenericFeature::interaction(const int select) const
   Ls.resize(0,6) ;
 
   for (int i=0 ; i < dim_s ; i++)
-    if (featureLine[i] & select )
+    if (FEATURE_LINE[i] & select )
     {
       vpMatrix Lx(1,6) ; Lx = 0;
 
@@ -387,7 +387,7 @@ vpGenericFeature::print(const int select) const
 
   cout <<"Generic Feature: "  ;
   for (int i=0 ; i < dim_s ; i++)
-    if (featureLine[i] & select )
+    if (FEATURE_LINE[i] & select )
     {
       cout << " s["<<i << "]=" << s[i] ;
     }

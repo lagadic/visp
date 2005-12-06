@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureThetaU.h,v 1.1.1.1 2005-06-08 07:08:10 fspindle Exp $
+ *  $Id: vpFeatureThetaU.h,v 1.2 2005-12-06 16:28:49 nmansard Exp $
  *
  * Description
  * ============
@@ -89,9 +89,9 @@ public:
   */
 
   // feature selection
-  static int selectTUx()  { return FEATURE_LINE1 ; }
-  static int selectTUy()  { return FEATURE_LINE2 ; }
-  static int selectTUz()  { return FEATURE_LINE3 ; }
+  inline static int selectTUx()  { return FEATURE_LINE[0] ; }
+  inline static int selectTUy()  { return FEATURE_LINE[1] ; }
+  inline static int selectTUz()  { return FEATURE_LINE[2] ; }
   //! compute the interaction matrix from a subset a the possible features
   vpMatrix  interaction(const int select = FEATURE_ALL) const;
   //! compute the error between two visual features from a subset
