@@ -11,6 +11,8 @@
 int main()
 {
   TRACE("------------------------");
+  TRACE("--- TEST PRETTY PRINT---");
+  TRACE("------------------------");
   vpMatrix M ;
   M.eye(4);
 
@@ -45,6 +47,21 @@ int main()
   M.print (std::cout, 2);
 
   TRACE("------------------------");
+  M.resize(3,3) ;
+  M.eye(3);
+  M[0][2]=-0.0000000876;
+  TRACE("call std::cout << M;");
+  std::cout << M;
+
+  TRACE("call M.print (std::cout, 4);");
+  M.print (std::cout, 4);
+  TRACE("call M.print (std::cout, 10, \"M\");");
+  M.print (std::cout, 10, "M");
+  TRACE("call M.print (std::cout, 20, \"M\");");
+  M.print (std::cout, 20, "M");
+
+
+  TRACE("------------------------");
   TRACE("--- TEST RESIZE --------");
   TRACE("------------------------");
   CTRACE  << "5x5" << endl;
@@ -57,7 +74,7 @@ int main()
   M.resize(2,2,false);
   CTRACE << endl<<M;
   TRACE("------------------------");
-  
+
 
 
 }
