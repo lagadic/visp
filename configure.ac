@@ -388,6 +388,7 @@ example/Makefile
 example/tracking/Makefile
 example/tracking/vpDot/Makefile
 example/image/Makefile
+example/simulation/Makefile
 example/pose-estimation/Makefile
 ])
 
