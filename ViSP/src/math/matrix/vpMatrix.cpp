@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.15 2005-11-09 15:23:26 marchand Exp $
+ *  $Id: vpMatrix.cpp,v 1.16 2005-12-06 14:15:57 fspindle Exp $
  *
  * Description
  * ============
@@ -150,7 +150,7 @@ vpMatrix::vpMatrix(const vpMatrix& m)
   \param nrows : number of rows
   \param ncols : number of column
   \param flagNullify : if true, then the matrix is re-initialized to 0
-  afet resize. If false, the initial values from the common part of the 
+  afet resize. If false, the initial values from the common part of the
   matrix (comon part between old and new version of the matrix) are kept.
   Default value is true.
 
@@ -163,7 +163,7 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
 
   if ((nrows == rowNum) && (ncols == colNum))
   {
-    if (flagNullify) 
+    if (flagNullify)
       { memset(this->data,0,this->dsize*sizeof(double)) ;}
   }
   else
@@ -175,8 +175,8 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
     DEBUG_TRACE (25, "Recopy case per case is required iff number of "
 		 "cols has changed (structure of double array is not "
 		 "the same in this case.");
-    if (recopyNeeded) 
-      { 
+    if (recopyNeeded)
+      {
 	copyTmp = new double[this->dsize];
 	memcpy (copyTmp, this ->data, sizeof(double)*this->dsize);
 	rowTmp=this->rowNum; colTmp=this->colNum;
@@ -213,22 +213,22 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
     this->rowNum = nrows; this->colNum = ncols;
 
     DEBUG_TRACE (25, "Recopy of this->data array values or nullify.");
-    if (flagNullify) 
+    if (flagNullify)
       { memset(this->data,0,this->dsize*sizeof(double)) ;}
-    else 
+    else
       {
 	if (recopyNeeded)
 	  {
 	    DEBUG_TRACE (25, "Recopy...");
 	    const int minRow = (this->rowNum<rowTmp)?this->rowNum:rowTmp;
 	    const int minCol = (this->colNum<colTmp)?this->colNum:colTmp;
-	    for (int i=0; i<this->rowNum; ++i) 
-	      for (int j=0; j<this->colNum; ++j) 
+	    for (int i=0; i<this->rowNum; ++i)
+	      for (int j=0; j<this->colNum; ++j)
 		{
 		  if ((minRow > i) && (minCol > j))
 		    {
 		      (*this)[i][j] = copyTmp [i*colTmp+j];
-		      CDEBUG (25) << i << "x" << j << "<- " << i*colTmp+j 
+		      CDEBUG (25) << i << "x" << j << "<- " << i*colTmp+j
 				  << "=" << copyTmp [i*colTmp+j] << endl;
 		    }
 		  else {(*this)[i][j] = 0;}
@@ -1358,64 +1358,85 @@ ostream &operator <<(ostream &s,const vpMatrix &m)
     The suggested width of each matrix element.
     The actual width grows in order to accomodate the whole integral part,
     and shrinks if the whole extent is not needed for all the numbers.
-  \return
+  \param intro
+    The introduction which is printed before the matrix.
+    Can be set to zero (or omitted), in which case
+    the introduction is not printed.
+
+    \return
     Returns the common total width for all matrix elements
 
-  \sa vpMatrix::print(), ostream &operator <<(ostream &s,const vpMatrix &m)
+  \sa ostream &operator <<(ostream &s,const vpMatrix &m)
 */
 int
-vpMatrix::print(std::ostream& s, unsigned maxlen)
+vpMatrix::print(std::ostream& s, unsigned length, char const* intro)
 {
+  typedef std::string::size_type size_type;
+
   int m = getRows();
   int n = getCols();
 
   std::vector<std::string> values(m*n);
   std::ostringstream oss;
+  std::ostringstream ossFixed;
+  ossFixed <<std::fixed;
 
-  unsigned maxBefore=0;
-  unsigned maxAfter=0;
-
+  size_type maxBefore=0;  // the length of the integral part
+  size_type maxAfter=0;   // number of decimals plus
+                          // one place for the decimal point
   for (int i=0;i<m;++i) {
     for (int j=0;j<n;++j){
       oss.str("");
       oss << (*this)[i][j];
+      if (oss.str().find("e")!=std::string::npos){
+        ossFixed.str("");
+        ossFixed << (*this)[i][j];
+        oss.str(ossFixed.str());
+      }
 
       values[i*n+j]=oss.str();
-      unsigned len=values[i*n+j].size();
-      unsigned p=values[i*n+j].find('.');
+      size_type thislen=values[i*n+j].size();
+      size_type p=values[i*n+j].find('.');
 
       if (p==std::string::npos){
-        maxBefore=std::max(maxBefore, len);
+        maxBefore=std::max(maxBefore, thislen);
         // maxAfter remains the same
       } else{
-	maxBefore=std::max(maxBefore, p);
-	maxAfter=std::max(maxAfter, len-p-1);
+        maxBefore=std::max(maxBefore, p);
+        maxAfter=std::max(maxAfter, thislen-p-1);
       }
     }
   }
 
-  // increase maxlen if needed to accomodate
-  // the whole integral part
-  maxlen=std::max(maxlen,maxBefore);
-  // decrease the number of decimals,
-  // according to maxlen
-  maxAfter=std::min(maxAfter, maxlen-maxBefore-1);
+  size_type totalLength=length;
+  // increase totalLength according to maxBefore
+  totalLength=std::max(totalLength,maxBefore);
+  // decrease maxAfter according to totalLength
+  maxAfter=std::min(maxAfter, totalLength-maxBefore);
+  if (maxAfter==1) maxAfter=0;
+
+  // the following line is useful for debugging
+  // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
+
+  if (intro) s <<intro;
+  s <<"["<<m<<","<<n<<"]=\n";
 
   for (int i=0;i<m;i++) {
+    s <<"  ";
     for (int j=0;j<n;j++){
-      unsigned p=values[i*n+j].find('.');
-      s.setf(ios::right, ios::adjustfield);
+      size_type p=values[i*n+j].find('.');
+      s.setf(std::ios::right, std::ios::adjustfield);
       s.width(maxBefore);
       s <<values[i*n+j].substr(0,p);
 
       if (maxAfter>0){
-        s.setf(ios::left, ios::adjustfield);
+        s.setf(std::ios::left, std::ios::adjustfield);
         if (p!=std::string::npos){
-          s <<'.';
           s.width(maxAfter);
-          s <<values[i*n+j].substr(p+1,maxAfter);
+          s <<values[i*n+j].substr(p,maxAfter);
         } else{
-          s.width(maxAfter+1);
+          assert(maxAfter>1);
+          s.width(maxAfter);
           s <<".0";
         }
       }
@@ -1425,10 +1446,7 @@ vpMatrix::print(std::ostream& s, unsigned maxlen)
     s <<std::endl;
   }
 
-  int rv=maxBefore;
-  if (maxAfter>0)
-    rv+=(1+maxAfter);
-  return rv;
+  return maxBefore+maxAfter;
 }
 
 
@@ -1443,11 +1461,11 @@ vpMatrix::print(std::ostream& s, unsigned maxlen)
 ostream & vpMatrix::
 matlabPrint(ostream & os)
 {
-  
+
   int i,j;
 
   os << "[ ";
-  for (i=0; i < this->getRows(); ++ i) 
+  for (i=0; i < this->getRows(); ++ i)
     {
       for (j=0; j < this ->getCols(); ++ j)
 	{
@@ -1476,39 +1494,39 @@ matlabPrint(ostream & os)
 ostream & vpMatrix::
 cppPrint(ostream & os, const char * matrixName, bool octet)
 {
-  
+
   int i,j;
   const char defaultName [] = "A";
   if (NULL == matrixName)
     {
       matrixName = defaultName;
     }
-  os << "vpMatrix " << defaultName 
+  os << "vpMatrix " << defaultName
      << " (" << this ->getRows ()
      << ", " << this ->getCols () << "); " <<endl;
 
-  for (i=0; i < this->getRows(); ++ i) 
+  for (i=0; i < this->getRows(); ++ i)
     {
       for (j=0; j < this ->getCols(); ++ j)
 	{
  	  if (! octet)
 	    {
-	      os << defaultName << "[" << i << "][" << j 
+	      os << defaultName << "[" << i << "][" << j
 		 << "] = " << (*this)[i][j] << "; " << endl;
 	    }
 	  else
 	    {
 	      for (unsigned int k = 0; k < sizeof(double); ++ k)
 		{
-		  os << "((unsigned char*)&(" << defaultName 
-		     << "[" << i << "][" << j << "]) )[" << k 
-		     <<"] = 0x" <<hex<< 
-		    (unsigned int)((unsigned char*)& ((*this)[i][j])) [k] 
+		  os << "((unsigned char*)&(" << defaultName
+		     << "[" << i << "][" << j << "]) )[" << k
+		     <<"] = 0x" <<hex<<
+		    (unsigned int)((unsigned char*)& ((*this)[i][j])) [k]
 		     << "; " << endl;
 		}
 	    }
 	}
-      os << endl; 
+      os << endl;
     }
   return os;
 };
@@ -1551,14 +1569,14 @@ vpMatrix::det33(const vpMatrix &M)
   \return the norm if the matrix is initialized, 0 otherwise
   \sa infinityNorm
 */
-double 
+double
 vpMatrix::euclidianNorm () const
 {
   double norm=0.0;
   double x ;
   for (int i=0;i<dsize;i++)
     { x = *(data +i); norm += x*x;  }
-  
+
   return norm;
 }
 
@@ -1568,7 +1586,7 @@ vpMatrix::euclidianNorm () const
   \return the norm if the matrix is initialized, 0 otherwise
   \sa euclidianNorm
 */
-double  
+double
 vpMatrix::infinityNorm () const
 {
   double norm=0.0;
@@ -1578,7 +1596,7 @@ vpMatrix::infinityNorm () const
       x = fabs (*(data + i)) ;
       if (x > norm) { norm = x; }
     }
-  
+
   return norm;
 }
 

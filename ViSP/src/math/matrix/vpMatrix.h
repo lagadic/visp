@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.9 2005-11-30 10:28:57 marchand Exp $
+ *  $Id: vpMatrix.h,v 1.10 2005-12-06 14:15:57 fspindle Exp $
  *
  * Description
  * ============
@@ -35,7 +35,7 @@ class vpColVector;
 class vpTranslationVector;
 
 
-class vpColVector; 
+class vpColVector;
 class vpTranslationVector;
 class vpRowVector;
 
@@ -119,7 +119,7 @@ public:
   //---------------------------------
   friend ostream &operator << (ostream &s,const vpMatrix &m);
 
-  int print(std::ostream& s, unsigned maxlen);
+  int print(std::ostream& s, unsigned lenght, char const* intro=0);
   //! Affichage pour reinsertion dans matlab
   ostream & matlabPrint(ostream & os);
   //! Affichage pour reinsertion dans ViSP
@@ -299,7 +299,7 @@ public:
   // -------------------------
   // Norms
   // -------------------------
-  
+
   //! Euclidian norm ||x||=sqrt(sum(x_i))
   double euclidianNorm () const;
   //! Infinity norm ||x||=max(fabs(x_i))
