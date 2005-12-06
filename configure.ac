@@ -69,7 +69,42 @@ AC_CHECK_LIB(z, png_create_read_struct,,,$X_LIBS $X_EXTRA_LIBS)
 # Check for -ljpeg library
 AC_CHECK_LIB(jpeg, jpeg_std_error,,,$X_LIBS $X_EXTRA_LIBS)
 
-
+########################################################################
+# GTK
+# AM_PATH_GTK(1.2.0,have_gtk=yes,have_gtk=no)
+# if test "x$have_gtk" = "xyes" ; then 
+#  echo "have gtk yes:	$have_gtk"
+#  AC_DEFINE([HAVE_GTK],  1,
+#            [Define to 1 if GTK library is available])
+#  AC_SUBST(HAVE_GTK,yes)
+#  LIBS="$LIBS $GTK_LIBS"
+#  CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
+#else
+#echo "have gtk no:	$have_gtk"
+#	fi 
+########################################################################
+# GTK
+AM_PATH_GTK_2_0(2.0.0,have_gtk=yes,have_gtk=no)
+if test "x$have_gtk" = "xyes" ; then 
+ echo "have gtk yes:	$have_gtk"
+  AC_DEFINE([HAVE_GTK],  1,
+            [Define to 1 if GTK library is available])
+  AC_SUBST(HAVE_GTK,yes)
+  LIBS="$LIBS $GTK_LIBS"
+  CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
+else
+ AM_PATH_GTK(1.2.0,have_gtk=yes,have_gtk=no)
+ if test "x$have_gtk" = "xyes" ; then 
+  echo "have gtk yes:	$have_gtk"
+  AC_DEFINE([HAVE_GTK],  1,
+            [Define to 1 if GTK library is available])
+  AC_SUBST(HAVE_GTK,yes)
+  LIBS="$LIBS $GTK_LIBS"
+  CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
+ else
+  echo "have gtk no:	$have_gtk"
+ fi 
+fi 
 #-----------------------------------------------------------------------
 # Check for Qt library
 BNV_HAVE_QT
@@ -135,42 +170,7 @@ else
 else
   AC_SUBST(HAVE_COIN,no)
 fi
-########################################################################
-# GTK
-# AM_PATH_GTK(1.2.0,have_gtk=yes,have_gtk=no)
-# if test "x$have_gtk" = "xyes" ; then 
-#  echo "have gtk yes:	$have_gtk"
-#  AC_DEFINE([HAVE_GTK],  1,
-#            [Define to 1 if GTK library is available])
-#  AC_SUBST(HAVE_GTK,yes)
-#  LIBS="$LIBS $GTK_LIBS"
-#  CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
-#else
-#echo "have gtk no:	$have_gtk"
-#	fi 
-########################################################################
-# GTK
-AM_PATH_GTK_2_0(2.0.0,have_gtk=yes,have_gtk=no)
-if test "x$have_gtk" = "xyes" ; then 
- echo "have gtk yes:	$have_gtk"
-  AC_DEFINE([HAVE_GTK],  1,
-            [Define to 1 if GTK library is available])
-  AC_SUBST(HAVE_GTK,yes)
-  LIBS="$LIBS $GTK_LIBS"
-  CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
-else
- AM_PATH_GTK(1.2.0,have_gtk=yes,have_gtk=no)
- if test "x$have_gtk" = "xyes" ; then 
-  echo "have gtk yes:	$have_gtk"
-  AC_DEFINE([HAVE_GTK],  1,
-            [Define to 1 if GTK library is available])
-  AC_SUBST(HAVE_GTK,yes)
-  LIBS="$LIBS $GTK_LIBS"
-  CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
- else
-  echo "have gtk no:	$have_gtk"
- fi 
-fi 
+
 ########################################################################
 # Extra checks
 ########################################################################
