@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.h,v 1.3 2005-12-05 16:23:45 fspindle Exp $
+ *  $Id: vpDot2.h,v 1.4 2005-12-06 10:31:33 fspindle Exp $
  *
  * Description
  * ============
@@ -82,7 +82,6 @@ public:
   virtual void setInLevel( const int & inLevel );
   virtual void setOutLevel( const int & outLevel );
   void setAccuracy( const double & accuracy );
-
 
   double getDistance( const vpDot2& distantDot ) const;
 
