@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.cpp,v 1.6 2005-12-06 10:31:33 fspindle Exp $
+ *  $Id: vpDot2.cpp,v 1.7 2005-12-07 15:54:28 fspindle Exp $
  *
  * Description
  * ============
@@ -586,26 +586,26 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
   (\e corner_u, \e corner_v). The size of the rectangle is given by \e with and
   \e height.
 
-  \param corner_u Coordinate (column) of the upper-left area corner.
-  \param corner_v Coordinate (row) of the upper-left area corner.
+  \param area_u Coordinate (column) of the upper-left area corner.
+  \param area_v Coordinate (row) of the upper-left area corner.
 
-  \param width Width or the area in which a dot is searched.
-  \param height Height or the area in which a dot is searched.
+  \param area_width Width or the area in which a dot is searched.
+  \param area_height Height or the area in which a dot is searched.
 
   \warning Allocates memory for the list of vpDot2 returned by this method.
   Desallocation has to be done by yourself.
 */
 vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
-					  int corner_u, int corner_v,
-					  int width, int height)
+					  int area_u, int area_v,
+					  int area_width, int area_height)
 {
   if (__DEBUG_LEVEL_ & 1)
     cout << "Start vpDot2::searchDotsInArea()" << endl;
 
-  if( corner_u < 0 ) corner_u = 0;
-  if( corner_v < 0 ) corner_v = 0;
-  if( corner_u + width  >= I.getCols() ) width  = I.getCols()-corner_u-1;
-  if( corner_v + height >= I.getRows() ) height = I.getRows()-corner_v-1;
+  if( area_u < 0 ) area_u = 0;
+  if( area_v < 0 ) area_v = 0;
+  if( area_u + area_width  >= I.getCols() ) area_width  = I.getCols()-area_u-1;
+  if( area_v + area_height >= I.getRows() ) area_height = I.getRows()-area_v-1;
 
 
   // compute the size of the search grid
@@ -615,13 +615,13 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 
   if (graphics) {
     // Display the area were the dot is search
-    vpDisplay::displayRectangle_uv(I, corner_u, corner_v,
-				   width, height, vpColor::blue);
+    vpDisplay::displayRectangle_uv(I, area_u, area_v,
+				   area_width, area_height, vpColor::blue);
     vpDisplay::flush(I);
   }
   // compute the area center, we need it later in the loop
-  double areaCenter_u = corner_u + width/2.;
-  double areaCenter_v = corner_v + height/2.;
+  double areaCenter_u = area_u + area_width/2.;
+  double areaCenter_v = area_v + area_height/2.;
 
   // start the search loop; for all points of the search grid,
   // test if the pixel belongs to a valid dot.
@@ -633,9 +633,9 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 	 << " outlevel: " << getOutLevel() << endl;
   }
   vpDot2* dotToTest = NULL;
-  for( int v=corner_v ; v<corner_v+height ; v=v+gridHeight )
+  for( int v=area_v ; v<area_v+area_height ; v=v+gridHeight )
   {
-    for( int u=corner_u ; u<corner_u+width ; u=u+gridWidth )
+    for( int u=area_u ; u<area_u+area_width ; u=u+gridWidth )
     {
       // if the pixel we're in doesn't have the right color (not white enough), no
       // need to check futher, just get to the next grid intersection.
@@ -1106,8 +1106,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     if( border_v > lowestPix  ) lowestPix  = border_v;
     if( border_u < leftestPix ) leftestPix = border_u;
     if( border_u > rightestPix) {
-      rightestPix    = border_v;
-      rightPixHeight = border_u;
+      rightestPix    = border_u;
+      rightPixHeight = border_v;
     }
 
     //    TRACE("dir: %d", dir);
