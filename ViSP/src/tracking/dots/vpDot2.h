@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.h,v 1.4 2005-12-06 10:31:33 fspindle Exp $
+ *  $Id: vpDot2.h,v 1.5 2005-12-07 15:54:28 fspindle Exp $
  *
  * Description
  * ============
@@ -87,8 +87,8 @@ public:
 
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
-				    int corner_u, int corner_v,
-				    int width, int height );
+				    int area_u, int area_v,
+				    int area_width, int area_height );
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
 
