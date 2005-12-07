@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.18 2005-12-07 12:53:33 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.19 2005-12-07 13:37:43 fspindle Exp $
  *
  * Description
  * ============
@@ -1381,7 +1381,7 @@ vpMatrix::print(std::ostream& s, unsigned length, char const* intro)
   std::ostringstream oss;
   std::ostringstream ossFixed;
   // ossFixed <<std::fixed;
-  ossFixed.setf ( std::ios_base::fixed, std::ios_base::floatfield );
+  ossFixed.setf ( std::ios::fixed, std::ios::floatfield );
 
   size_type maxBefore=0;  // the length of the integral part
   size_type maxAfter=0;   // number of decimals plus
