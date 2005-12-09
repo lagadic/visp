@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.19 2005-12-07 13:37:43 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.20 2005-12-09 09:50:30 fspindle Exp $
  *
  * Description
  * ============
@@ -1418,7 +1418,7 @@ vpMatrix::print(std::ostream& s, unsigned length, char const* intro)
   if (maxAfter==1) maxAfter=0;
 
   // the following line is useful for debugging
-  // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
+  std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
   if (intro) s <<intro;
   s <<"["<<m<<","<<n<<"]=\n";
@@ -1429,13 +1429,13 @@ vpMatrix::print(std::ostream& s, unsigned length, char const* intro)
       size_type p=values[i*n+j].find('.');
       s.setf(std::ios::right, std::ios::adjustfield);
       s.width(maxBefore);
-      s <<values[i*n+j].substr(0,p);
+      s <<values[i*n+j].substr(0,p).c_str();
 
       if (maxAfter>0){
         s.setf(std::ios::left, std::ios::adjustfield);
         if (p!=std::string::npos){
           s.width(maxAfter);
-          s <<values[i*n+j].substr(p,maxAfter);
+          s <<values[i*n+j].substr(p,maxAfter).c_str();
         } else{
           assert(maxAfter>1);
           s.width(maxAfter);
