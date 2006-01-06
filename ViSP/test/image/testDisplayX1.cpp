@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX1.cpp,v 1.4 2005-09-02 14:20:21 fspindle Exp $
+ *  $Id: testDisplayX1.cpp,v 1.5 2006-01-06 15:40:08 nmansard Exp $
  *
  * Description
  * ============
@@ -111,11 +111,16 @@ main()
 
   cout << "\nA click to display a point..." << endl;
 
+  {
+    int i,j;
+    vpDisplay::getClick(Irgba,i,j);
+    vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
+    cout << "Cood: " << i << ", " << j << endl;
+  }
+  cout << "Click to flush..." <<endl;
   vpDisplay::getClick(Irgba);
-  vpDisplay::displayCross(Irgba,50,50,15,vpColor::red);
-
   cout << "flush the display" << endl;
-  vpDisplay::flush(Irgba);
+  //vpDisplay::flush(Irgba);
 
   cout << "\nA click to exit the program..." << endl;
   vpDisplay::getClick(Irgba) ;
