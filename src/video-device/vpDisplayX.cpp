@@ -1499,45 +1499,50 @@ vpDisplayX::getClick(int& i, int& j)
 {
 
   if (Xinitialise)
-  {
-    int x,y ;
-    Window	rootwin, childwin ;
-    int		root_x, root_y, win_x, win_y ;
-    unsigned int	modifier ;
-    // Test d'évènements.
-    if ( XPending(display) )  {
-      XNextEvent(display, &event);
-
-      /* Detection de l'appui sur l'un des bouton de la souris. */
-      switch(event.type) {
-
-      case ButtonPress: {
-	/* Recuperation de la coordonnee du pixel cliqué.	*/
-	if(XQueryPointer(display,
-			 window,
-			 &rootwin, &childwin,
-			 &root_x, &root_y,
-			 &win_x, &win_y,
-			 &modifier)) {
-	  x = event.xbutton.x;
-	  y = event.xbutton.y;
-	  i = y ;
-	  j = x ;
+    {
+      int x,y ;
+      bool ret = false;
+      while (ret==false)
+	{
+	  Window	rootwin, childwin ;
+	  int		root_x, root_y, win_x, win_y ;
+	  unsigned int	modifier ;
+	  // Test d'évènements.
+	  if ( XPending(display) )  {
+	    XNextEvent(display, &event);
+	  
+	    /* Detection de l'appui sur l'un des bouton de la souris. */
+	    switch(event.type) {
+	    
+	    case ButtonPress: 
+	      {
+		/* Recuperation de la coordonnee du pixel cliqué.	*/
+		if(XQueryPointer(display,
+				 window,
+				 &rootwin, &childwin,
+				 &root_x, &root_y,
+				 &win_x, &win_y,
+				 &modifier)) {
+		  x = event.xbutton.x;
+		  y = event.xbutton.y;
+		  i = y ;
+		  j = x ;
+		}
+		ret = true ;
+		break;
+	    
+	      } /* Fin case ButtonPress	*/
+	    } /* Fin switch type d'evenement.	*/
+	  }
 	}
-	return true ;
-	break;
-
-      } /* Fin case ButtonPress	*/
-      } /* Fin switch type d'evenement.	*/
     }
-  }
   else
-  {
-    ERROR_TRACE("X not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-			     "X not initialized")) ;
-  }
-    return false ;
+    {
+      ERROR_TRACE("X not initialized " ) ;
+      throw(vpDisplayException(vpDisplayException::notInitializedError,
+			       "X not initialized")) ;
+    }
+  return false ;
 }
 
 
