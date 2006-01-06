@@ -3,7 +3,7 @@
 #AC_CONFIG_MACRO_DIR(m4)
 
 AC_PREREQ(2.57)
-AC_INIT([ViSP],[2.1.0],[visp@irisa.fr])
+AC_INIT([ViSP],[2.1.1],[visp@irisa.fr])
 AC_CONFIG_HEADER([include/visp/vpConfig.h])
 dnl Pick up the needed m4 macros.
 AM_ACLOCAL_INCLUDE(macros)
