@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServo.h,v 1.5 2005-12-06 16:35:29 nmansard Exp $
+ *  $Id: vpServo.h,v 1.6 2006-01-12 09:55:02 nmansard Exp $
  *
  * Description
  * ============
@@ -234,7 +234,7 @@ public:
 		 const double at_infinity,
 		 const double deriv_at_zero)
   { lambda .initStandard (at_zero, at_infinity, deriv_at_zero) ; }
-
+  void setLambda(const vpAdaptativeGain& _l){lambda=_l;}
   /*
     Print informations
   */
