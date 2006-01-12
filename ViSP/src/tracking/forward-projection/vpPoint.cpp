@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoint.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpPoint.cpp,v 1.2 2006-01-12 09:35:47 nmansard Exp $
  *
  * Description
  * ============
@@ -75,6 +75,33 @@ vpPoint::setWorldCoordinates(const vpColVector &_oP)
   oP[3] = _oP[3] ;
 
   oP /= oP[3] ;
+}
+
+void 
+vpPoint::getWorldCoordinates(double& ox,
+			   double& oy,
+			   double& oz) 
+{
+  ox = oP[0] ;
+  oy = oP[1] ;
+  oz = oP[2] ;
+}
+
+
+void 
+vpPoint::getWorldCoordinates(vpColVector &_oP) 
+{
+  _oP[0] = oP[0] ;
+  _oP[1] = oP[1] ;
+  _oP[2] = oP[2] ;
+  _oP[3] = oP[3] ;
+}
+
+
+vpColVector 
+vpPoint::getWorldCoordinates(void) 
+{
+  return this->oP;
 }
 
 
