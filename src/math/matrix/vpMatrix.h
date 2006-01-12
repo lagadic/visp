@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.10 2005-12-06 14:15:57 fspindle Exp $
+ *  $Id: vpMatrix.h,v 1.11 2006-01-12 09:54:09 nmansard Exp $
  *
  * Description
  * ============
@@ -285,14 +285,19 @@ public:
   void printSize() { cout << getRows() <<" x " << getCols() <<"  " ; }
 
 
-//! Stack two Matrices C = [ A B ]^T
-    static vpMatrix stackMatrices(const vpMatrix &A,const  vpMatrix &B) ;
-//! Stack two Matrices C = [ A B ]^T
-    static void stackMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C) ;
-//! Create a diagonal matrix with the element of a vector DAii = Ai
-    static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
+  //! Stack two Matrices C = [ A B ]^T
+  static vpMatrix stackMatrices(const vpMatrix &A,const  vpMatrix &B) ;
+  //! Stack two Matrices C = [ A B ]^T
+  static void stackMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C) ;
+  //! Juxtapose to matrices C = [ A B ]
+  static vpMatrix juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B) ;
+  //! Juxtapose to matrices C = [ A B ]
+  static void juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C) ;
 
-    static double det33(const vpMatrix &P) ;
+  //! Create a diagonal matrix with the element of a vector DAii = Ai
+  static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
+  
+  static double det33(const vpMatrix &P) ;
 
 
 
