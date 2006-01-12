@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpGenericFeature.cpp,v 1.6 2005-12-06 16:28:49 nmansard Exp $
+ *  $Id: vpGenericFeature.cpp,v 1.7 2006-01-12 09:52:33 nmansard Exp $
  *
  * Description
  * ============
@@ -128,6 +128,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
     else
       if (errorStatus == errorInitialized)
       {
+	DEBUG_TRACE(25,"Error init: e=e.");
 	errorStatus = errorHasToBeUpdated ;
 	for (int i=0 ; i < dim_s ; i++)
 	  if (FEATURE_LINE[i] & select )
@@ -140,6 +141,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
       }
       else
       {
+	DEBUG_TRACE(25,"Error not init: e=s-s*.");
 
 	for (int i=0 ; i < dim_s ; i++)
 	  if (FEATURE_LINE[i] & select )
