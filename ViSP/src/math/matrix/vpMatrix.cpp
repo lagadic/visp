@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.20 2005-12-09 09:50:30 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.21 2006-01-12 09:54:09 nmansard Exp $
  *
  * Description
  * ============
@@ -1298,6 +1298,85 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     {
       C[i+nra][j] = B[i][j] ;
 
+    }
+
+
+}
+/*!
+  \relates vpMatrix
+  \brief juxtaposeMatrices. "juxtapos" two matrices  C = [ A B ]
+
+  \f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
+
+  \param vpMatrix A
+  \param vpMatrix B
+  \return  vpMatrix C = [ A B ]
+
+  \warning A and B must have the same number of column
+*/
+vpMatrix
+vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
+{
+  vpMatrix C ;
+
+  try{
+  juxtaposeMatrices(A,B, C) ;
+  }
+  catch(vpMatrixException me)
+  {
+    CERROR ;
+    throw ;
+  }
+
+  return C ;
+}
+
+/*!
+  \relates vpMatrix
+  \brief juxtaposeMatrices. "juxtapose" two matrices  C = [ A B ]
+
+  \f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
+
+  \param  A
+  \param  B
+  \param  C = [ A B ]
+
+  \warning A and B must have the same number of column
+*/
+void
+vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
+{
+  int nca = A.getCols() ;
+  int ncb = B.getCols() ;
+
+  if (nca !=0)
+    if (A.getRows() != B.getRows())
+    {
+      ERROR_TRACE("\n\t\t incorrect matrices size") ;
+      throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+			      "\n\t\t incorrect matrices size")) ;
+    }
+
+  try {
+    C.resize(B.getRows(),nca+ncb) ;
+  }
+  catch(vpException me)
+  {
+    ERROR_TRACE("Error caught") ;
+    cout << me << endl ;
+    throw ;
+  }
+
+  int i,j ;
+  for (i=0 ; i < C.getRows(); i++)
+    for (j=0 ; j < nca ; j++)
+      C[i][j] = A[i][j] ;
+
+
+  for (i=0 ; i < C.getRows() ; i++)
+    for (j=0 ; j < ncb ; j++)
+    {
+      C[i][nca+j] = B[i][j] ;
     }
 
 
