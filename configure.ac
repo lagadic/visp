@@ -291,6 +291,8 @@ AC_SUBST_FILE(directory_mk)
 directory_mk=$VISP_HOME/configs/directory.mk
 AC_SUBST_FILE(lib_mk)
 lib_mk=$VISP_HOME/configs/lib.mk
+AC_SUBST_FILE(sharedlib_mk)
+sharedlib_mk=$VISP_HOME/configs/sharedlib.mk
 AC_SUBST_FILE(bin_mk)
 bin_mk=$VISP_HOME/configs/bin.mk
 AC_SUBST_FILE(clean_mk)

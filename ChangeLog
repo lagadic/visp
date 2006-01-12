@@ -1,3 +1,6 @@
+ViSP 2.1.2 
+  - Shared Library
+	- add compilation rules for the creation of lib/libvisp-2.so
 ----------------------------------------------	
 ViSP 2.1.1 (Modification since ViSP 2.1.0)
    - New examples 

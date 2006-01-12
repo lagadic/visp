@@ -1,28 +1,20 @@
 SHELL=/bin/sh
 
-OS		= @OS@
-SUFFIX		= @SUFFIX@
-HOSTNAME	= @ac_hostname@
-VISP_HOME	= @VISP_HOME@
-VISP_DIR_INCLUDE= $(VISP_HOME)/src
-VISP_DIR_LIB	= $(VISP_HOME)/lib
-VISP_DIR_OBJ	= $(VISP_HOME)/.obj
-VISP_DIR_DEP	= $(VISP_HOME)/.dep
-VISP_LIB_PATH	= $(VISP_DIR_LIB)
-VISP_OBJ_PATH	= $(VISP_DIR_OBJ)/$(HOSTNAME)$(SUFFIX)
-VISP_DEP_PATH	= $(VISP_DIR_DEP)/$(HOSTNAME)$(SUFFIX)
-
-LIB		= $(VISP_LIB_PATH)/lib@VISP_LIBNAME@.a
+@build_mk@
 
 .DELETE_ON_ERROR:
 
-all install: src FORCE
+.DEFAULT: all
+all: install
+
+install: src FORCE
 	cd test; $(MAKE) $@
 	cd example; $(MAKE) $@
 
 src: directory FORCE
 	cd include; $(MAKE) install
 	cd src; $(MAKE) install
+	$(MAKE) shared-lib
 	$(MAKE) lib-link
 
 test: src FORCE
@@ -31,21 +23,12 @@ test: src FORCE
 example: src FORCE
 	cd example; $(MAKE) install
 
-directory:
-	@if [ ! -d bin ] ;\
-	then \
-		echo "*" ; \
-		echo "* Creation of the bin directory..." ; \
-		echo "*" ; \
-		mkdir -p  bin ; \
-	fi ;
-	@if [ ! -d lib ] ;\
-	then \
-		echo "*" ; \
-		echo "* Creation of the lib directory..." ; \
-		echo "*" ; \
-		mkdir -p  lib ; \
-	fi ;
+demo: src FORCE
+	cd demo; $(MAKE) install
+
+@directory_mk@
+
+@sharedlib_mk@
 
 clean:
 	rm -f *% */*%
@@ -138,10 +121,6 @@ uninstallall:
 html-doc:
 	@echo "html documentation creation..."
 	cd doc; doxygen config-doxygen
-
-lib-link:
-	rm -f $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).a
-	ln -s $(LIB) $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).a
 
 group-access:
 	@echo "Changing group access in process..."
