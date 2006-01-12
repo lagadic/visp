@@ -119,36 +119,10 @@ else
   AC_SUBST(HAVE_QT,no)
 fi
 
-
-#-----------------------------------------------------------------------
-# Check for -lCoin library and if Qt exists for -lSoQt. else for -lSoXt
-#SIM_AC_HAVE_COIN_IFELSE(have_coin=yes,have_coin=no)
-#if test "x$have_coin" = "xyes"; then
-#  AC_DEFINE([HAVE_COIN], 1,
-#            [Define to 1 if Coin library is available])
-#  AC_SUBST(HAVE_COIN,yes)
-#  CPPFLAGS="$CPPFLAGS $sim_ac_coin_cppflags"
-#  CXXFLAGS="$CXXFLAGS $sim_ac_coin_cxxflags"
-#  LDFLAGS="$LDFLAGS $sim_ac_coin_ldflags"
-#  LIBS="$LIBS $sim_ac_coin_libs"
-#  if test "x$have_qt" = "xyes"; then
-#    # Check for -lSoQt library
-#    AC_LANG_PUSH(C++)       
-#    AC_CHECK_LIB(SoQt,main)
-#    AC_LANG_POP(C++)       
-#  else
-##    # Check for -lSoXt library
-#    AC_LANG_PUSH(C++)       
-#    AC_CHECK_LIB(SoXt,main)
-#    AC_LANG_POP(C++)       
-#  fi
-#else
-#  AC_SUBST(HAVE_COIN,no)
-#fi
 #-----------------------------------------------------------------------
 # Check for -lCoin library and if Qt exists for -lSoQt. else for -lSoXt
 SIM_AC_HAVE_COIN_IFELSE(have_coin=yes,have_coin=no)
-if test "x$have_coin" = "yes"; then
+if test "$have_coin" = "yes"; then
   AC_DEFINE([HAVE_COIN], 1,
             [Define to 1 if Coin library is available])
   AC_SUBST(HAVE_COIN,yes)
