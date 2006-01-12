@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX2.cpp,v 1.5 2005-09-02 14:20:21 fspindle Exp $
+ *  $Id: testDisplayX2.cpp,v 1.6 2006-01-12 17:29:42 nmansard Exp $
  *
  * Description
  * ============
@@ -61,21 +61,27 @@ main()
 
 
   vpImage<vpRGBa> I ;
+  vpImage<vpRGBa> I2 ;
 
   // test read write vpRGBa pgm image.
 
   try{
     vpImageIo::readPPM(I,"images/Klimt.ppm") ;
+    vpImageIo::readPPM(I2,"images/Klimt.ppm") ;
   }
   catch(...)
   {
     throw ;
   }
 
-  vpDisplayX display(I,100,100,"Display...") ;
+  vpDisplayX display(I,00,00,"Display1...") ;
+  vpDisplayX display2(I2,200,200,"Display2...") ;
 
 
+  vpImageIo::readPPM(I,"images/Klimt.ppm") ;
   vpDisplay::display(I) ;
+  vpImageIo::readPPM(I2,"images/Klimt.ppm") ;
+  vpDisplay::display(I2) ;
 
   for (int i=0 ; i < I.getRows() ; i+=20)
     vpDisplay::displayLine(I,i,0,i,I.getCols(), vpColor::red) ;

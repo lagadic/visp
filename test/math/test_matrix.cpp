@@ -5,8 +5,24 @@
 */
 
 
-#include <visp/vpMatrix.h>
+
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
+
+#include <visp/vpImage.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpTime.h>
+#include <visp/vpImageIo.h>
+
+#include <visp/vpDisplayX.h>
+
+#include <visp/vpMath.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpFeaturePoint.h>
+#include <visp/vpServo.h>
+#include <visp/vpRobotCamera.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpPose.h>
 
 int main()
 {
@@ -75,6 +91,10 @@ int main()
   CTRACE << endl<<M;
   TRACE("------------------------");
 
+
+  vpTwistMatrix vMe;
+  vpMatrix A,B;
+  B=A*vMe;
 
 
 }
