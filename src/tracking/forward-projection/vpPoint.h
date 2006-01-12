@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoint.h,v 1.4 2005-11-30 10:27:27 marchand Exp $
+ *  $Id: vpPoint.h,v 1.5 2006-01-12 09:35:47 nmansard Exp $
  *
  * Description
  * ============
@@ -101,6 +101,13 @@ public:
 			   const double oz) ;
   //! set the point world coordinates
   void setWorldCoordinates(const vpColVector &_oP) ;
+  //! get the point world coordinates
+  void getWorldCoordinates(double& ox,
+			   double& oy,
+			   double& oz) ;
+  //! set the point world coordinates
+  void getWorldCoordinates(vpColVector &_oP) ;
+  vpColVector getWorldCoordinates(void) ;
   //@}
 
   //! projection
