@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotCamera.h,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpRobotCamera.h,v 1.2 2006-01-13 18:35:50 fspindle Exp $
  *
  * Description
  * ============
@@ -86,12 +86,12 @@ public:
   void setPosition(const vpColVector &q) { ;}
 
   //! get a displacement expressed in the camera frame
-  void getCameraDisplacement(vpColVector &v)  const  ;
+  void getCameraDisplacement(vpColVector &v)  ;
   //! get a displacement expressed  in the articular frame
-  void getArticularDisplacement(vpColVector &qdot) const   ;
+  void getArticularDisplacement(vpColVector &qdot) ;
   //! get a displacement (frame as to ve specified)
   void getDisplacement(const vpRobot::ControlFrameType repere,
-		       vpColVector &q) const   ;
+		       vpColVector &q) ;
 
 } ;
 
