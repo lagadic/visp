@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotCamera.cpp,v 1.3 2005-11-09 15:22:04 marchand Exp $
+ *  $Id: vpRobotCamera.cpp,v 1.4 2006-01-13 18:35:50 fspindle Exp $
  *
  * Description
  * ============
@@ -170,14 +170,14 @@ vpRobotCamera::getPosition(const vpRobot::ControlFrameType repere,
 
 //! get a displacement expressed in the camera frame
 void
-vpRobotCamera::getCameraDisplacement(vpColVector &v) const
+vpRobotCamera::getCameraDisplacement(vpColVector &v)
 {
   cout << "Not implemented ! " << endl;
 }
 
 //! get a displacement expressed  in the articular frame
 void
-vpRobotCamera::getArticularDisplacement(vpColVector &qdot) const
+vpRobotCamera::getArticularDisplacement(vpColVector &qdot)
 {
   cout << "Not implemented ! " << endl;
 }
@@ -185,7 +185,7 @@ vpRobotCamera::getArticularDisplacement(vpColVector &qdot) const
 //! get a displacement (frame as to ve specified)
 void
 vpRobotCamera::getDisplacement(const vpRobot::ControlFrameType repere,
-			       vpColVector &q) const
+			       vpColVector &q)
 {
   cout << "Not implemented ! " << endl;
 }
