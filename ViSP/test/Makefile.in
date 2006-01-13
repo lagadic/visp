@@ -4,6 +4,7 @@ SRC_REP =  math \
 	servo-simu  \
 	servo-afma4  \
 	servo-afma6  \
+	servo-ptu46  \
 	feature \
 	pose \
 	image \
