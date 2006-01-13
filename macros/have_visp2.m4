@@ -58,7 +58,7 @@ if $ac_visp2_desired; then
       ac_save_libs=$LIBS
 
       ac_visp2_cxxflags="-I$ac_visp2_extrapath/include"
-      ac_visp2_ldflags="-L$ac_visp2_extrapath/lib"
+      ac_visp2_ldflags="-L$ac_visp2_extrapath/lib -Wl,-rpath,$ac_visp2_extrapath/lib"
       ac_visp2_libs="-lvisp-2"
 
       CXXFLAGS="$CXXFLAGS $ac_visp2_cxxflags"
