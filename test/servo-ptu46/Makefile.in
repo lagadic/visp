@@ -1,0 +1,24 @@
+@build_mk@
+
+
+SOURCES		=\
+	movePtu46.cpp \
+	servoPtu46PointArticularVelocity.cpp
+
+
+PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
+
+all install: directory $(PROGS)
+
+@directory_mk@
+
+@bin_mk@
+
+
+uninstall:
+	rm -f $(PROGS)
+	rm -f $(DEPFILES)
+
+@clean_mk@
+
+@depend_mk@
