@@ -59,6 +59,9 @@ ROBOT = \
 	vpRobotAfma4.h \
 	vpAfma4.h \
 	\
+	vpPtu46.h \
+	vpRobotPtu46.h \
+	\
 	vpRobotCamera.h
 
 TOOLS = \
