@@ -324,6 +324,7 @@ src/robot/simulation-robot/Makefile
 src/robot/real-robot/Makefile
 src/robot/real-robot/afma6/Makefile
 src/robot/real-robot/afma4/Makefile
+src/robot/real-robot/ptu46/Makefile
 src/servo/Makefile
 src/simulator/Makefile
 src/tools/Makefile
@@ -354,6 +355,7 @@ test/pose/Makefile
 test/servo-simu/Makefile
 test/servo-afma4/Makefile
 test/servo-afma6/Makefile
+test/servo-ptu46/Makefile
 test/framegrabber/Makefile
 test/feature/Makefile
 test/math/Makefile
