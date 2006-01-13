@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.h,v 1.4 2005-09-26 15:58:44 fspindle Exp $
+ *  $Id: vpRobotAfma6.h,v 1.5 2006-01-13 18:15:07 fspindle Exp $
  *
  * Description
  * ============
@@ -225,12 +225,12 @@ public:
   DV6_mmrad_mrad (const double * input, vpColVector & output);
 
   // get a displacement expressed in the camera frame
-  void getCameraDisplacement(vpColVector &v) const;
+  void getCameraDisplacement(vpColVector &v);
   // get a displacement expressed  in the articular frame
-  void getArticularDisplacement(vpColVector  &qdot)  const;
+  void getArticularDisplacement(vpColVector  &qdot);
 
   // get a displacement (frame as to ve specified)
-  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q) const;
+  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q);
 
 
   void move(char *name) ;
