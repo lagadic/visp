@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma4.h,v 1.2 2005-09-26 08:17:43 fspindle Exp $
+ *  $Id: vpRobotAfma4.h,v 1.3 2006-01-13 18:14:47 fspindle Exp $
  *
  * Description
  * ============
@@ -223,12 +223,12 @@ public:
   VD4_mmrad_mrad (const double * input, vpColVector & output);
 
   // get a displacement expressed in the camera frame
-  void getCameraDisplacement(vpColVector &v) const;
+  void getCameraDisplacement(vpColVector &v);
   // get a displacement expressed  in the articular frame
-  void getArticularDisplacement(vpColVector  &qdot)  const;
+  void getArticularDisplacement(vpColVector  &qdot);
 
   // get a displacement (frame as to ve specified)
-  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q) const;
+  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q);
 
   void move(char *name) ;
   int  readPosFile(char *name, vpColVector &v)  ;

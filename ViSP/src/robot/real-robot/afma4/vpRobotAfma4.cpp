@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma4.cpp,v 1.2 2005-09-26 08:18:09 fspindle Exp $
+ *  $Id: vpRobotAfma4.cpp,v 1.3 2006-01-13 18:14:47 fspindle Exp $
  *
  * Description
  * ============
@@ -957,7 +957,7 @@ vpRobotAfma4::readPosFile(char *name, vpColVector &v)
 
 */
 void
-vpRobotAfma4::getCameraDisplacement(vpColVector &v) const
+vpRobotAfma4::getCameraDisplacement(vpColVector &v)
 {
   getDisplacement(vpRobot::CAMERA_FRAME, v);
 
@@ -974,7 +974,7 @@ vpRobotAfma4::getCameraDisplacement(vpColVector &v) const
   \sa getDisplacement(), getCameraDisplacement()
 
 */
-void vpRobotAfma4::getArticularDisplacement(vpColVector  &qdot) const
+void vpRobotAfma4::getArticularDisplacement(vpColVector  &qdot)
 {
   getDisplacement(vpRobot::ARTICULAR_FRAME, qdot);
 }
@@ -997,7 +997,7 @@ void vpRobotAfma4::getArticularDisplacement(vpColVector  &qdot) const
 */
 void
 vpRobotAfma4::getDisplacement(vpRobot::ControlFrameType frame,
-			      vpColVector &q) const
+			      vpColVector &q)
 {
   double td[6];
   switch (frame)

@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.6 2005-09-26 15:58:24 fspindle Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.7 2006-01-13 18:15:07 fspindle Exp $
  *
  * Description
  * ============
@@ -787,7 +787,7 @@ vpRobotAfma6::VD6_mdg_mrad (const vpColVector & input, double * output)
 
 */
 void
-vpRobotAfma6::getCameraDisplacement(vpColVector &v) const
+vpRobotAfma6::getCameraDisplacement(vpColVector &v)
 {
   getDisplacement(vpRobot::CAMERA_FRAME, v);
 }
@@ -802,7 +802,7 @@ vpRobotAfma6::getCameraDisplacement(vpColVector &v) const
   \sa getDisplacement(), getCameraDisplacement()
 
 */
-void vpRobotAfma6::getArticularDisplacement(vpColVector  &qdot) const
+void vpRobotAfma6::getArticularDisplacement(vpColVector  &qdot)
 {
   getDisplacement(vpRobot::ARTICULAR_FRAME, qdot);
 }
@@ -823,7 +823,7 @@ void vpRobotAfma6::getArticularDisplacement(vpColVector  &qdot) const
 */
 void
 vpRobotAfma6::getDisplacement(vpRobot::ControlFrameType frame,
-			      vpColVector &q) const
+			      vpColVector &q)
 {
   double td[6];
 

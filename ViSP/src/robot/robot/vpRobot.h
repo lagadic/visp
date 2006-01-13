@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobot.h,v 1.4 2005-09-26 15:59:19 fspindle Exp $
+ *  $Id: vpRobot.h,v 1.5 2006-01-13 18:18:58 fspindle Exp $
  *
  * Description
  * ============
@@ -143,12 +143,12 @@ public:
 
 
   //! get a displacement expressed in the camera frame
-  virtual void getCameraDisplacement(vpColVector &v) const  = 0 ;
+  virtual void getCameraDisplacement(vpColVector &v) = 0 ;
   //! get a displacement expressed  in the articular frame
-  virtual void getArticularDisplacement(vpColVector  &qdot)  const = 0 ;
+  virtual void getArticularDisplacement(vpColVector  &qdot) = 0 ;
   //! get a displacement (frame as to ve specified)
   virtual void getDisplacement(const vpRobot::ControlFrameType frame,
-			       vpColVector &q)  const = 0 ;
+			       vpColVector &q) = 0 ;
 
   /*
     Joint limits stuff
