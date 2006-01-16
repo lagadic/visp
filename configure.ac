@@ -255,7 +255,7 @@ CXXFLAGS="$CXXFLAGS -I$VISP_DIR_INCLUDE -I."
 # Add systematically compiler options: -L$(VISP_LIB_PATH)
 #VISP_LIB_PATH="$VISP_HOME/lib/$OS/$CXX_VERSION"
 VISP_LIB_PATH="$VISP_HOME/lib"
-LDFLAGS="$LDFLAGS -L$VISP_LIB_PATH"
+LDFLAGS="$LDFLAGS -L$VISP_LIB_PATH -Wl,-rpath,$VISP_LIB_PATH"
 
 
 ########################################################################
