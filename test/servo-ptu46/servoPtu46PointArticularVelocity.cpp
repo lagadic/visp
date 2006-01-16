@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.1 2006-01-16 09:57:08 fspindle Exp $
+ *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.2 2006-01-16 15:53:01 fspindle Exp $
  *
  * Description
  * ============
@@ -56,12 +56,30 @@
 #include <visp/vpMatrixException.h>
 #include <visp/vpServoDisplay.h>
 
-#include <visp/vpDot.h>
+#include <visp/vpDot2.h>
+
+#include <pthread.h>
+#include <signal.h>
+#include <error.h>
+
+pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;
+
+void signalCtrC( int signumber )
+{
+  pthread_mutex_unlock( &mutexEndLoop );
+  usleep( 1000*10 );
+  TRACE("Ctrl-C pressed...");
+}
 
 int
 main()
 {
-  vpImage<unsigned char> I ;
+  try{
+
+  pthread_mutex_lock( &mutexEndLoop );
+  signal( SIGINT,&signalCtrC );
+
+    vpImage<unsigned char> I ;
 
 
   vp1394Grabber g;
@@ -94,7 +112,12 @@ main()
   vpServo task ;
 
   vpRobotPtu46 robot ;
-
+  {
+    vpColVector q(2); q=0;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+    robot.setPosition( vpRobot::ARTICULAR_FRAME,q );
+    
+  }
   // exit(1) ;
 
   cout << endl ;
@@ -107,10 +130,18 @@ main()
   cout << endl ;
 
 
-  vpDot dot ;
+  vpDot2 dot ;
 
   try{
-    dot.initTracking(I) ;
+    ERROR_TRACE("start dot.initTracking(I) ") ;
+    int x,y;
+    vpDisplay::getClick( I,y,x );
+    dot.set_u( x ) ;
+    dot.set_v( y ) ; 
+    DEBUG_TRACE(25,"Click!");
+    //dot.initTracking(I) ;
+    dot.track(I);
+    ERROR_TRACE("after dot.initTracking(I) ") ;
   }
   catch(...)
   {
@@ -157,7 +188,7 @@ main()
   task.addFeature(p,pd) ;
 
   TRACE("\t set the gain") ;
-  task.setLambda(0.8) ;
+  task.setLambda(0.1) ;
 
 
   TRACE("Display task information " ) ;
@@ -168,7 +199,7 @@ main()
 
   int iter=0 ;
   TRACE("\t loop") ;
-  while(1)
+  while( 0 != pthread_mutex_trylock( &mutexEndLoop ) )
   {
     cout << "---------------------------------------------" << iter <<endl ;
 
@@ -201,6 +232,8 @@ main()
 
   TRACE("Display task information " ) ;
   task.print() ;
+
+  } catch (...) { ERROR_TRACE("Trow uncatched..."); }
 }
 
 
