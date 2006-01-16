@@ -33,4 +33,6 @@ MOC		= @QT_MOC@
 LDFLAGS		= @LDFLAGS@
 LIBS		= @LIBS@
 
+SHARED_LIBS:=$(filter-out -l$(VISP_LIBNAME),$(LIBS))
+
 @debug_mk@
