@@ -24,7 +24,7 @@ main(int argc, char ** argv)
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
-  int fps = 25;
+  int fps = 30;
 
   vpArgvInfo argTable[] =
     {
@@ -32,7 +32,7 @@ main(int argc, char ** argv)
       {NULL, ARGV_HELP, NULL, NULL," test frame grabbing "},
       {NULL, ARGV_HELP, NULL, NULL,"     "},
       {"-fps", ARGV_INT, (char *) 1, (char *) &fps,
-      "Frame per second (25 or 50)."},
+      "Frame per second (7, 15 or 30)."},
       {NULL, ARGV_HELP, NULL, NULL,"     "},
       {NULL, ARGV_HELP, NULL, NULL,"     "},
       {NULL, ARGV_HELP, NULL, NULL,"     "},
@@ -41,7 +41,7 @@ main(int argc, char ** argv)
   //Parsing of the table
   if (vpParseArgv(&argc,argv,argTable,0))
   {
-    cout << endl << "Usage : " << argv[0] << "  [-help] [-fps 50] [-fps 25] "<<endl ;
+    cout << endl << "Usage : " << argv[0] << "  [-help] [-fps 7] [-fps 15] [-fps 30] "<<endl ;
     exit(1) ;
   }
 
@@ -49,7 +49,26 @@ main(int argc, char ** argv)
 
 
   vp1394Grabber g ;
+
   g.open(I) ;
+
+  switch (fps) {
+  case 7:
+    CTRACE << "Framerate is set to 7.5 fps" << endl;
+    g.setFramerate(FRAMERATE_7_5);
+    break;
+  case 15:
+    CTRACE << "Framerate is set to 15 fps" << endl;
+    g.setFramerate(FRAMERATE_15);
+    break;
+  case 30:
+    CTRACE << "Framerate is set to 30 fps" << endl;
+    g.setFramerate(FRAMERATE_30);
+    break;
+  default:
+    CTRACE << "Use of default framerate" << endl;
+  }
+
 
   try{
     g.acquire(I) ;
