@@ -15,7 +15,7 @@
  * 18-10-4: Review toward inclusion in VisP (dir servo). In particular 
  *        conversion to double (N.Mansard)
  *
- *  $Id: vpAdaptativeGain.cpp,v 1.1 2005-11-08 10:39:29 nmansard Exp $
+ *  $Id: vpAdaptativeGain.cpp,v 1.2 2006-01-25 10:30:55 fspindle Exp $
  *
  * Description
  * ============
@@ -35,6 +35,9 @@
 #include "visp/vpDebug.h"          /* Macros de trace et debug.               */
 
 
+const double vpAdaptativeGain::DEFAULT_LAMBDA_ZERO = 1.666;
+const double vpAdaptativeGain::DEFAULT_LAMBDA_INFINI = 0.1666;
+const double vpAdaptativeGain::DEFAULT_LAMBDA_PENTE  = 1.666;
 
 /* -------------------------------------------------------------------------- */
 /* --- CONSTRUCTION --------------------------------------------------------- */
