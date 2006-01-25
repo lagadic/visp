@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.22 2006-01-25 10:19:14 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.23 2006-01-25 10:31:52 fspindle Exp $
  *
  * Description
  * ============
@@ -269,14 +269,12 @@ vpMatrix::kill()
 {
   if (data != NULL )
   {
-    //delete []data;
     free(data);
     data=NULL;
   }
 
   if (rowPtrs!=NULL)
   {
-    //delete []rowPtrs;
     free(rowPtrs);
     rowPtrs=NULL ;
   }
