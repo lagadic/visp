@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpPtu46.cpp,v 1.2 2006-01-16 15:53:50 fspindle Exp $
+ *  $Id: vpPtu46.cpp,v 1.3 2006-01-25 17:30:33 fspindle Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -45,9 +45,7 @@
 /* ------------------------------------------------------------------------ */
 const int   vpPtu46::articulationsNb = 2;
 const float vpPtu46::L               = 0.0765;
-const float vpPtu46::H               = 0.050;
 const float vpPtu46::h               = 0.068;
-const float vpPtu46::l1              = 0.0;
 const float vpPtu46::l2              = 0.0;
 
 
@@ -76,12 +74,12 @@ computeMGD (const vpColVector & q,
   fMc[0][0] = s1;
   fMc[0][1] = c1*s2;
   fMc[0][2] = c1*c2;
-  fMc[0][3] = -h*c1*s2 + (L-l1)*s1 + l2*c1*c2;
+  fMc[0][3] = -h*c1*s2 - L*s1 + l2*c1*c2;
 
   fMc[1][0] = -c1;
   fMc[1][1] = s1*s2;
   fMc[1][2] = s1*c2;
-  fMc[1][3] = -h*s1*s2 - (L-l1)*c1 + l2*s1*c2;
+  fMc[1][3] = -h*s1*s2 + L*c1 + l2*s1*c2;
 
   fMc[2][0] = 0;
   fMc[2][1] = -c2;
@@ -216,12 +214,8 @@ ostream & operator << (ostream & os,
     << "Geometric parameters: " << endl
     << "L: "
     << "\t" << vpPtu46::L << endl
-    << "H: "
-    << "\t" << vpPtu46::H
     << "h: "
     << "\t" << vpPtu46::h
-    << "l1: "
-    << "\t" << vpPtu46::l1
     << "l2: "
     << "\t" << vpPtu46::l2
     << "\t" << endl;
@@ -252,7 +246,7 @@ vpPtu46::get_cMe(vpHomogeneousMatrix &cMe)
   eMc[1][0] = 1;
   eMc[1][1] = 0;
   eMc[1][2] = 0;
-  eMc[1][3] = l1-L;
+  eMc[1][3] = -L;
 
   eMc[2][0] = 0;
   eMc[2][1] = 0;

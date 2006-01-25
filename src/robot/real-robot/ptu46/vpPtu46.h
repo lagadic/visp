@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpPtu46.h,v 1.1 2006-01-13 18:15:21 fspindle Exp $
+ *  $Id: vpPtu46.h,v 1.2 2006-01-25 17:30:33 fspindle Exp $
  *
  * Description
  * ============
@@ -64,9 +64,7 @@ public: /* Constantes */
 
   /** Geometric model */
   static const float L;
-  static const float H;
   static const float h;
-  static const float l1;
   static const float l2;
 
 
