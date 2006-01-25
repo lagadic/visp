@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.2 2006-01-16 15:53:01 fspindle Exp $
+ *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.3 2006-01-25 11:24:11 fspindle Exp $
  *
  * Description
  * ============
@@ -74,13 +74,28 @@ void signalCtrC( int signumber )
 int
 main()
 {
+  cout << endl ;
+  cout << "-------------------------------------------------------" << endl ;
+  cout << " Test program for vpServo "  <<endl ;
+  cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
+  cout << " Simulation " << endl ;
+  cout << " task : servo a point " << endl ;
+  cout << "-------------------------------------------------------" << endl ;
+  cout << endl ;
+
   try{
 
   pthread_mutex_lock( &mutexEndLoop );
   signal( SIGINT,&signalCtrC );
 
-    vpImage<unsigned char> I ;
+  vpRobotPtu46 robot ;
+  {
+    vpColVector q(2); q=0;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+    robot.setPosition( vpRobot::ARTICULAR_FRAME,q );
+  }
 
+  vpImage<unsigned char> I ;
 
   vp1394Grabber g;
 
@@ -110,25 +125,6 @@ main()
 
 
   vpServo task ;
-
-  vpRobotPtu46 robot ;
-  {
-    vpColVector q(2); q=0;
-    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
-    robot.setPosition( vpRobot::ARTICULAR_FRAME,q );
-    
-  }
-  // exit(1) ;
-
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
-  cout << " Simulation " << endl ;
-  cout << " task : servo a point " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
-
 
   vpDot2 dot ;
 
