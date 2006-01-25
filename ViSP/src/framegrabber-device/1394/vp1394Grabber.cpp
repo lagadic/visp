@@ -42,9 +42,23 @@ const int vp1394Grabber::MAX_CAMERAS = 8; /*!< Maximal number of cameras */
 /*!
   Constructor.
 
-  By default the framerate is set to 25 fps.
+  By default:
+  - the format is set to FORMAT_VGA_NONCOMPRESSED (format 0),
+  - the mode is set to MODE_640x480_MONO (mode 5)
+  - and the framerate is set to FRAMERATE_30 (30 fps).
 
-  \sa setFramerate()
+  To change these settings you can call setFormat(), setMode() or
+  setFramerate() after a call to open().
+
+  \code
+  vpImage<unsigned char> I;
+  vp1394Grabber g;
+  g.open(I);
+  g.setFramerate(FRAMERATE_15);
+  \endcode
+
+  \sa open(), setFormat(), setMode(), setFramerate()
+
 */
 vp1394Grabber::vp1394Grabber( )
 {
@@ -84,14 +98,28 @@ vp1394Grabber::vp1394Grabber( )
   init = false ;
 }
 
-/*!
-  Constructor.
+/*!  
+
+  Constructor which initialize the grabber to (format 0, mode 5,
+  and 30 fps) and call open() method.
 
   \param I  Image data structure (8 bits image)
 
-  By default the framerate is set to 25 fps.
+  By default:
+  - the format is set to FORMAT_VGA_NONCOMPRESSED (format 0),
+  - the mode is set to MODE_640x480_MONO (mode 5)
+  - and the framerate is set to FRAMERATE_30 (30 fps).
 
-  \sa setFramerate()
+  To change these settings you can call setFormat(), setMode() or
+  setFramerate().
+
+  \code
+  vpImage<unsigned char> I;
+  vp1394Grabber g(I);
+  g.setFramerate(FRAMERATE_15);
+  \endcode
+
+  \sa setFormat(), setMode(), setFramerate()
 */
 vp1394Grabber::vp1394Grabber(vpImage<unsigned char> &I)
 {
@@ -162,7 +190,9 @@ vp1394Grabber::~vp1394Grabber()
 
   \exception settingError If the required camera is not present.
 
-  \sa setMode(), setFramerate()
+  \warning Has to be called after open() to be sure that a camera is detected.
+
+  \sa setMode(), setFramerate(), open()
 
 */
 void
@@ -174,7 +204,19 @@ vp1394Grabber::setFormat(int format, int camera)
 				   "The required camera is not present") );
   }
 
+  if (iso_transmission_started  == true) {
+
+    stopIsoTransmission();
+
+    for (int i=0; i < num_cameras; i++)
+      dc1394_dma_unlisten( handles[i], &cameras[i] );
+    iso_transmission_started = false;
+  }
+
   this->format[camera] = format;
+
+  setup();
+  startIsoTransmission();
 }
 
 /*!
@@ -192,7 +234,9 @@ vp1394Grabber::setFormat(int format, int camera)
 
   \exception settingError If the required camera is not present.
 
-  \sa setFormat(), setFramerate()
+  \warning Has to be called after open() to be sure that a camera is detected.
+
+  \sa setFormat(), setFramerate(), open()
 
 */
 void
@@ -204,8 +248,19 @@ vp1394Grabber::setMode(int mode, int camera)
 				   "The required camera is not present") );
   }
 
+  if (iso_transmission_started  == true) {
+
+    stopIsoTransmission();
+
+    for (int i=0; i < num_cameras; i++)
+      dc1394_dma_unlisten( handles[i], &cameras[i] );
+    iso_transmission_started = false;
+  }
+
   this->mode[camera] = mode;
 
+  setup();
+  startIsoTransmission();
 }
 
 /*!
@@ -221,7 +276,9 @@ vp1394Grabber::setMode(int mode, int camera)
 
   \exception settingError If the required camera is not present.
 
-  \sa setFormat(), setMode()
+  \warning Has to be called after open() to be sure that a camera is detected.
+
+  \sa setFormat(), setMode(), open()
 
 */
 void
@@ -233,7 +290,19 @@ vp1394Grabber::setFramerate(int framerate, int camera)
 				   "The required camera is not present") );
   }
 
+  if (iso_transmission_started  == true) {
+
+    stopIsoTransmission();
+
+    for (int i=0; i < num_cameras; i++)
+      dc1394_dma_unlisten( handles[i], &cameras[i] );
+    iso_transmission_started = false;
+  }
+
   this->framerate[camera] = framerate;
+
+  setup();
+  startIsoTransmission();
 }
 
 /*!
@@ -246,6 +315,8 @@ vp1394Grabber::setFramerate(int framerate, int camera)
   number of cameras found on the bus and returned by GetNumCameras().
 
   \exception settingError If the required camera is not present.
+
+  \warning Has to be called after open() to be sure that a camera is detected.
 
   \sa getHeight()
 
@@ -273,6 +344,8 @@ void vp1394Grabber::getWidth(int &width, int camera)
   number of cameras found on the bus and returned by GetNumCameras().
 
   \exception settingError If the required camera is not present.
+
+  \warning Has to be called after open() to be sure that a camera is detected.
 
   \sa getWidth(), GetImageFormat(), close(), GetNumCameras()
 
@@ -335,13 +408,13 @@ vp1394Grabber::acquire(vpImage<unsigned char> &I)
 				   "Initialization not done") );
   }
 
-  int  *bitmap ;
+  int  *bitmap = NULL ;
   bitmap = dmaCapture();
 
   if ((I.getCols() != ncols)||(I.getRows() != nrows))
     I.resize(nrows,ncols) ;
 
-  memcpy(I.bitmap, bitmap,
+  memcpy(I.bitmap, (unsigned char *) bitmap,
 	 I.getRows()*I.getCols()*sizeof(unsigned char));
 
   dmaDoneWithBuffer();
@@ -827,6 +900,8 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
 
   \exception otherError If no frame is available.
 
+  \warning Has to be called after open() to be sure that a camera is detected.
+
   \sa DmaDoneWithBuffer(), GetNumCameras()
 */
 
@@ -899,6 +974,8 @@ vp1394Grabber::dmaCapture(bool waiting, int camera)
 
   \exception settingError If the required camera is not present.
   \exception otherError If can't stop the dma access.
+
+  \warning Has to be called after open() to be sure that a camera is detected.
 
   \sa DmaCapture()
 
