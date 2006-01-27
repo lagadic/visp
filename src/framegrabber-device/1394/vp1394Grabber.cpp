@@ -33,7 +33,7 @@
 #include <visp/vpImageIo.h>
 #define DEBUG_LEVEL1 0
 
-const int vp1394Grabber::DROP_FRAMES = 0; /*!< Number of dropped frames */
+const int vp1394Grabber::DROP_FRAMES = 1; /*!< With libdc1394-1.0.0 or more rencent versions, DROP_FRAMES has to be set to 1 in order to suppress the latency. */
 const int vp1394Grabber::NUM_BUFFERS = 8; /*!< Number of buffers */
 const int vp1394Grabber::MAX_PORTS   = 4; /*!< Maximal number of ports */
 const int vp1394Grabber::MAX_CAMERAS = 8; /*!< Maximal number of cameras */
@@ -86,6 +86,7 @@ vp1394Grabber::vp1394Grabber( )
   iso_transmission_started = false;
   handle_created           = false;
   camera_found             = false;
+  dma_started              = false;
   num_cameras              = 0;
 
   // Image settings
@@ -98,7 +99,7 @@ vp1394Grabber::vp1394Grabber( )
   init = false ;
 }
 
-/*!  
+/*!
 
   Constructor which initialize the grabber to (format 0, mode 5,
   and 30 fps) and call open() method.
@@ -177,13 +178,13 @@ vp1394Grabber::~vp1394Grabber()
 
 /*!
 
-  Set the capture format.
+  Set the capture format for a given camera on the bus.
 
   \param format The camera image format. The current camera format is given by
   GetFormat(). The supported formats are given by GetSupportedFormats().
 
   \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
+  number of cameras found on the bus and returned by getNumCameras().
 
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
@@ -192,14 +193,15 @@ vp1394Grabber::~vp1394Grabber()
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa setMode(), setFramerate(), open()
+  \sa setMode(), setFramerate(), open(), getNumCameras()
 
 */
 void
-vp1394Grabber::setFormat(int format, int camera)
+vp1394Grabber::setFormat(int format, unsigned int camera)
 {
-  if (camera < 0 || camera >= num_cameras) {
+  if (camera >= num_cameras) {
     close();
+    ERROR_TRACE("The required camera is not present");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "The required camera is not present") );
   }
@@ -208,7 +210,7 @@ vp1394Grabber::setFormat(int format, int camera)
 
     stopIsoTransmission();
 
-    for (int i=0; i < num_cameras; i++)
+    for (unsigned int i=0; i < num_cameras; i++)
       dc1394_dma_unlisten( handles[i], &cameras[i] );
     iso_transmission_started = false;
   }
@@ -221,13 +223,148 @@ vp1394Grabber::setFormat(int format, int camera)
 
 /*!
 
-  Set the camera capture mode.
+  Query the actual capture format of a given camera. The supported formats
+  are given by getSupportedFormats().
+
+  \warning Before requerying the actual format a handle must
+  be created by calling open(), and a camera must be connected.
+
+  \param format The camera capture format, either :
+  - FORMAT_VGA_NONCOMPRESSED for the Format_0
+  - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
+  - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
+  - FORMAT_STILL_IMAGE for the Format_6
+  - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
+
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by getNumCameras().
+
+  \exception settingError If the required camera is not present or if an error occurs.
+
+  \sa setFormat(), setFormatSupported(), open(), getNumCameras()
+
+*/
+void
+vp1394Grabber::getFormat(int & format, unsigned int camera)
+{
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+
+  if(dc1394_get_camera_misc_info(handles[camera],
+				 cameras[camera].node,
+				 &miscinfo) !=DC1394_SUCCESS) {
+    ERROR_TRACE("Unable to get misc info");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get misc info") );
+  }
+
+  format = miscinfo.format;
+}
+
+/*!
+
+  Query the available camera image formats.
+
+  \warning Before requerying supported formats a handle must be created by
+  calling open(), and a camera must be connected.
+
+  \param  formats The list of supported camera image formats.
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by GetNumCameras().
+
+  \return The number of supported camera image formats, 0 if an error occurs.
+
+  \exception settingError If the required camera is not present or if an error occurs.
+
+  \sa getModeSupported(), getFramerateSupported(), open(), getFormat()
+
+*/
+int
+vp1394Grabber::getFormatSupported(vpList<int> & formats, unsigned int camera)
+{
+  int nb = 0; // Number of supported formats
+
+  // Refresh the list of supported formats
+  formats.kill();
+
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+
+
+  quadlet_t value;
+  if (dc1394_query_supported_formats(handles[camera],
+				     cameras[camera].node,
+				     &value) != DC1394_SUCCESS) {
+    ERROR_TRACE("Could not query supported formats");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Could not query supported formats") );
+  }
+
+  if (value & (0x1<<31)) {
+    formats.addRight(FORMAT_VGA_NONCOMPRESSED);
+    nb ++;
+  }
+  if (value & (0x1<<30)) {
+    formats.addRight(FORMAT_SVGA_NONCOMPRESSED_1);
+    nb ++;
+  }
+  if (value & (0x1<<29)) {
+    formats.addRight(FORMAT_SVGA_NONCOMPRESSED_2);
+    nb ++;
+  }
+  if (value & (0x1<<25)) {
+    formats.addRight(FORMAT_STILL_IMAGE);
+    nb ++;
+  }
+  if (value & (0x1<<24)) {
+    formats.addRight(FORMAT_SCALABLE_IMAGE_SIZE);
+    nb ++;
+  }
+
+  return nb;
+}
+
+/*!
+
+  Set the camera capture mode for a given camera on the bus.
 
   \param mode The camera capture mode. The current camera mode is given by
   getMode(). The supported modes are given by getSupportedModes().
 
   \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
+  number of cameras found on the bus and returned by getNumCameras().
 
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
@@ -236,14 +373,15 @@ vp1394Grabber::setFormat(int format, int camera)
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa setFormat(), setFramerate(), open()
+  \sa setFormat(), setFramerate(), open(), getNumCameras()
 
 */
 void
-vp1394Grabber::setMode(int mode, int camera)
+vp1394Grabber::setMode(int mode, unsigned int camera)
 {
-  if (camera < 0 || camera >= num_cameras) {
+  if (camera >= num_cameras) {
     close();
+    ERROR_TRACE("The required camera is not present");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "The required camera is not present") );
   }
@@ -252,7 +390,7 @@ vp1394Grabber::setMode(int mode, int camera)
 
     stopIsoTransmission();
 
-    for (int i=0; i < num_cameras; i++)
+    for (unsigned int i=0; i < num_cameras; i++)
       dc1394_dma_unlisten( handles[i], &cameras[i] );
     iso_transmission_started = false;
   }
@@ -265,27 +403,189 @@ vp1394Grabber::setMode(int mode, int camera)
 
 /*!
 
-  Set the capture framerate.
+  Query the actual capture mode of a given camera. The supported modes
+  are given by getSupportedModes().
+
+  \warning Before requerying the actual mode a handle must
+  be created by calling open(), and a camera must be connected.
+
+  \param mode The camera capture mode.
+
+  \param camera A camera number. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by getNumCameras().
+
+  \exception settingError If the required camera is not present.
+
+  \sa setMode(), getModeSupported(), open()
+
+*/
+void
+vp1394Grabber::getMode(int & mode, unsigned int camera)
+{
+
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+  if(dc1394_get_camera_misc_info(handles[camera],
+				 cameras[camera].node,
+				 &miscinfo) !=DC1394_SUCCESS) {
+    ERROR_TRACE("Unable to get misc info");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get misc info") );
+  }
+
+  mode = miscinfo.mode;
+}
+
+/*!
+
+  Query the available camera modes for the given format.
+
+  \warning Before requerying supported modes for a given format a handle must
+  be created by calling open(), and a camera must be connected.
+
+  \param format Camera image format. Values for format are parts of the list:
+  - FORMAT_VGA_NONCOMPRESSED for the Format_0
+  - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
+  - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
+  - FORMAT_STILL_IMAGE for the Format_6
+  - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
+
+  \param modes The list of supported camera modes.
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by getNumCameras().
+
+  \return The number of supported camera modes, 0 if an error occurs.
+
+  \exception settingError If the required camera is not present.
+
+  \sa getMode(), getFramerateSupported(), open()
+*/
+int
+vp1394Grabber::getModeSupported(int format, vpList<int> & modes, unsigned int camera)
+{
+  int nb = 0; // Number of supported modes
+
+  // Refresh the list of supported modes
+  modes.kill();
+
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+
+  quadlet_t value;
+  if (dc1394_query_supported_modes(handles[camera],
+				   cameras[camera].node,
+				   format, &value) != DC1394_SUCCESS) {
+    ERROR_TRACE("Could not query supported modes for format %d\n", format);
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Could not query supported mode") );
+  }
+
+  switch (format) {
+  case FORMAT_VGA_NONCOMPRESSED:
+    for (int m = MODE_FORMAT0_MIN; m <= MODE_FORMAT0_MAX; m ++) {
+      if (value & (0x1<<(31-(m-MODE_FORMAT0_MIN)))) {
+	modes.addRight(m);
+	nb ++;
+      }
+    }
+    break;
+
+  case FORMAT_SVGA_NONCOMPRESSED_1:
+    for (int m = MODE_FORMAT1_MIN; m <= MODE_FORMAT1_MAX; m ++) {
+      if (value & (0x1<<(31-(m-MODE_FORMAT1_MIN)))) {
+	modes.addRight(m);
+	nb ++;
+      }
+    }
+    break;
+
+  case FORMAT_SVGA_NONCOMPRESSED_2:
+    for (int m = MODE_FORMAT2_MIN; m <= MODE_FORMAT2_MAX; m ++) {
+      if (value & (0x1<<(31-(m-MODE_FORMAT2_MIN)))) {
+	modes.addRight(m);
+	nb ++;
+      }
+    }
+    break;
+
+  case FORMAT_STILL_IMAGE:
+    for (int m = MODE_FORMAT6_MIN; m <= MODE_FORMAT6_MAX; m ++) {
+      if (value & (0x1<<(31-(m-MODE_FORMAT6_MIN)))) {
+	modes.addRight(m);
+	nb ++;
+      }
+    }
+    break;
+
+  case FORMAT_SCALABLE_IMAGE_SIZE:
+    for (int m = MODE_FORMAT7_MIN; m <= MODE_FORMAT7_MAX; m ++) {
+      if (value & (0x1<<(31-(m-MODE_FORMAT7_MIN)))) {
+	modes.addRight(m);
+	nb ++;
+      }
+    }
+    break;
+  }
+
+  return nb;
+}
+
+/*!
+
+  Set the capture framerate for a given camera on the bus.
 
   \param framerate The camera framerate. The current framerate of the camera is
   given by GetFramerate(). The supported framerates are given by
   GetSupportedFramerates().
 
   \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
+  number of cameras found on the bus and returned by getNumCameras().
 
   \exception settingError If the required camera is not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa setFormat(), setMode(), open()
+  \sa setFormat(), setMode(), open(), getNumCameras()
 
 */
 void
-vp1394Grabber::setFramerate(int framerate, int camera)
+vp1394Grabber::setFramerate(int framerate, unsigned int camera)
 {
-  if (camera < 0 || camera >= num_cameras) {
+  if (camera >= num_cameras) {
     close();
+    ERROR_TRACE("The required camera is not present");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "The required camera is not present") );
   }
@@ -294,7 +594,7 @@ vp1394Grabber::setFramerate(int framerate, int camera)
 
     stopIsoTransmission();
 
-    for (int i=0; i < num_cameras; i++)
+    for (unsigned int i=0; i < num_cameras; i++)
       dc1394_dma_unlisten( handles[i], &cameras[i] );
     iso_transmission_started = false;
   }
@@ -303,6 +603,462 @@ vp1394Grabber::setFramerate(int framerate, int camera)
 
   setup();
   startIsoTransmission();
+}
+
+/*!
+
+  Query the actual capture framerate of a given camera. The supported
+  framerates are given by getFramerateSupported().
+
+  \warning Before requerying the actual framerate a handle must
+  be created by calling open(), and a camera must be connected.
+
+  \param framerate The camera capture framerate.
+
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by GetNumCameras().
+
+  \return true if the framerate was obtained, false if an error occurs.
+
+  \exception settingError If the required camera is not present.
+
+  \sa setFramerate(), getFramerateSupported(), open(), getNumCameras()
+
+*/
+void
+vp1394Grabber::getFramerate(int & framerate, unsigned int camera)
+{
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+
+  if(dc1394_get_camera_misc_info(handles[camera],
+				 cameras[camera].node,
+				 &miscinfo) !=DC1394_SUCCESS) {
+    ERROR_TRACE("Unable to get misc info");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get misc info") );
+  }
+
+  framerate = miscinfo.framerate;
+}
+
+/*!
+
+  Query the available framerates for the given camera image format and
+  mode. The framerate is only avalaible if format is either
+  FORMAT_VGA_NONCOMPRESSED (format 0), FORMAT_SVGA_NONCOMPRESSED_1 (format 1)
+  or FORMAT_SVGA_NONCOMPRESSED_2 (format 2). If format is equal to
+  FORMAT_STILL_IMAGE (format 6) or FORMAT_SCALABLE_IMAGE_SIZE (format 7), the
+  framerate is not avalaible. In this case, we return 0.
+
+  \warning Before requerying supported framerates for a given format and mode a
+  handle must be created by calling open(), and a camera must be connected.
+
+  \param format Camera image format.
+  \param mode Camera mode.
+  \param framerates The list of supported camera framerates.
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by GetNumCameras().
+
+  \return The number of supported camera image framerates, 0 if an error
+  occurs.
+
+  \exception settingError If the required camera is not present.
+
+  \sa getFormatSupported(), getModeSupported(), open(), getFramerate()
+*/
+int
+vp1394Grabber::getFramerateSupported(int format, int mode,
+				     vpList<int> & framerates, unsigned int camera)
+{
+  int nb = 0; // Number of supported framerates
+
+  // Refresh the list of supported framerates
+  framerates.kill();
+
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+
+  switch(format) {
+    case FORMAT_VGA_NONCOMPRESSED:
+    case FORMAT_SVGA_NONCOMPRESSED_1:
+    case FORMAT_SVGA_NONCOMPRESSED_2:
+      {
+
+	quadlet_t value;
+	if (dc1394_query_supported_framerates(handles[camera],
+					      cameras[camera].node,
+					      format, mode,
+					      &value) != DC1394_SUCCESS) {
+	  ERROR_TRACE("Could not query supported frametates for format %d\n"
+		      "and mode %d\n", format, mode);
+	  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+					 "Could not query supported framerates") );
+	}
+
+	for (int f = FRAMERATE_MIN; f <= FRAMERATE_MAX; f ++) {
+	  if (value & (0x1<<(31-(f-FRAMERATE_MIN)))) {
+	    framerates.addRight(f);
+	    nb ++;
+	  }
+	}
+      }
+      break;
+  default:
+    // Framerate not avalaible for:
+    //  - FORMAT_STILL_IMAGE for the Format_6
+    //  - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
+    return 0;
+  }
+
+  return nb;
+}
+
+/*!
+
+  Set the shutter for a given camera.
+
+  \param shutter The shutter value to apply to the camera.
+
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by getNumCameras().
+
+  \exception settingError If the required camera is not present or if an error occurs.
+
+  \warning Has to be called after open() to be sure that a camera is detected.
+
+  \sa getShutter(), open(), getNumCameras()
+*/
+void
+vp1394Grabber::setShutter(unsigned int shutter, unsigned int camera)
+{
+  unsigned int min_shutter = 0;
+  unsigned int max_shutter = 0;
+
+
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+  if(dc1394_get_min_value(handles[camera],
+			  cameras[camera].node,
+			  FEATURE_SHUTTER, &min_shutter) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get min shutter value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get min shutter value") );
+  }
+
+  if(dc1394_get_max_value(handles[camera],
+			  cameras[camera].node,
+			  FEATURE_SHUTTER, &max_shutter) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get max shutter value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get max shutter value") );
+  }
+
+  if (shutter < min_shutter || shutter > max_shutter) {
+    CERROR << "The requested shutter " << shutter
+	   << " must be comprised between " << min_shutter
+	   << " and " << max_shutter << endl;
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Cannot set shutter: bad value") );
+  }
+
+  if ( dc1394_set_shutter(handles[camera],
+			  cameras[camera].node,
+			  shutter) != DC1394_SUCCESS) {
+    ERROR_TRACE("Unable to set shutter");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Cannot set shutter") );
+  }
+}
+
+/*!
+
+  Query the actual shutter value of a given camera and the bounded shutter
+  values.
+
+  \warning Before requerying the shutter a handle must
+  be created by calling open(), and a camera must be connected.
+
+  \param min_shutter Minimal autorized shutter value.
+
+  \param shutter The current camera shutter value. This value is comprised
+  between \e min_shutter and \e max_shutter.
+
+  \param max_shutter Maximal autorized shutter value.
+
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by getNumCameras().
+
+  \exception settingError If the required camera is not present or if an error occurs.
+
+  \sa setShutter(), open(), getNumCameras()
+
+*/
+void
+vp1394Grabber::getShutter(unsigned int &min_shutter,
+			  unsigned int &shutter,
+			  unsigned int &max_shutter,
+			  unsigned int camera)
+{
+  shutter = 0;
+  min_shutter = 0;
+  max_shutter = 0;
+
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+  if(dc1394_get_shutter(handles[camera],
+			cameras[camera].node,
+			&shutter) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get shutter value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get shutter value") );
+
+  }
+
+  if(dc1394_get_min_value(handles[camera],
+			  cameras[camera].node,
+			  FEATURE_SHUTTER, &min_shutter) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get min shutter value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get min shutter value") );
+  }
+
+  if(dc1394_get_max_value(handles[camera],
+			  cameras[camera].node,
+			  FEATURE_SHUTTER, &max_shutter) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get max shutter value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get max shutter value") );
+  }
+}
+
+/*!
+
+  Set the gain for a given camera.
+
+  \warning Before setting the gain a handle must
+  be created by calling open(), and a camera must be connected.
+
+  \param gain The gain value to apply to the camera.
+
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by getNumCameras().
+
+  \exception settingError If the required camera is not present or if an error occurs.
+
+  \sa getGain(), getNumCameras()
+*/
+void
+vp1394Grabber::setGain(unsigned int gain, unsigned int camera)
+{
+  unsigned int min_gain = 0;
+  unsigned int max_gain = 0;
+
+
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+  if(dc1394_get_min_value(handles[camera],
+			  cameras[camera].node,
+			  FEATURE_GAIN, &min_gain) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get min gain value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get min gain value") );
+  }
+
+  if(dc1394_get_max_value(handles[camera],
+			  cameras[camera].node,
+			  FEATURE_GAIN, &max_gain) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get max gain value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get max gain value") );
+  }
+
+  if (gain < min_gain || gain > max_gain) {
+    CERROR << "The requested gain " << gain
+	   << " must be comprised between " << min_gain
+	   << " and " << max_gain << endl;
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Cannot set shutter: bad value") );
+  }
+
+  if ( dc1394_set_gain(handles[camera],
+		       cameras[camera].node,
+		       gain) != DC1394_SUCCESS) {
+    ERROR_TRACE("Unable to set gain");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Cannot set gain") );
+  }
+}
+
+/*!
+
+  Query the actual gain value of a given camera and the bounded gain
+  values.
+
+  \warning Before requerying the gain a handle must
+  be created by calling open(), and a camera must be connected.
+
+  \param min_gain Minimal autorized gain value.
+
+  \param gain The current camera gain value. This value is comprised
+  between \e min_gain and \e max_gain.
+
+  \param max_gain Maximal autorized gain value.
+
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by GetNumCameras().
+
+  \exception settingError If the required camera is not present or if an error occurs.
+
+  \sa setGain(), open(), getNumCameras()
+
+*/
+void
+vp1394Grabber::getGain(unsigned int &min_gain,
+		       unsigned int &gain,
+		       unsigned int &max_gain,
+		       unsigned int camera)
+{
+  gain = 0;
+  min_gain = 0;
+  max_gain = 0;
+
+  if (handle_created == false) {
+    close();
+    ERROR_TRACE("To set the shutter the handle must be created");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter the handle must be created") );
+  }
+  if (camera_found == false) {
+    close();
+    ERROR_TRACE("To set the shutter a camera must be connected");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "To set the shutter a camera must be connected") );
+  }
+
+  if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "The required camera is not present") );
+  }
+
+  if(dc1394_get_gain(handles[camera],
+		     cameras[camera].node,
+		     &gain) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get gain value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get gain value") );
+
+  }
+
+  if(dc1394_get_min_value(handles[camera],
+			  cameras[camera].node,
+			  FEATURE_GAIN, &min_gain) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get min gain value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get min gain value") );
+  }
+
+  if(dc1394_get_max_value(handles[camera],
+			  cameras[camera].node,
+			  FEATURE_GAIN, &max_gain) !=DC1394_SUCCESS) {
+    close();
+    ERROR_TRACE("Unable to get max gain value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Unable to get max gain value") );
+
+  }
 }
 
 /*!
@@ -321,9 +1077,9 @@ vp1394Grabber::setFramerate(int framerate, int camera)
   \sa getHeight()
 
 */
-void vp1394Grabber::getWidth(int &width, int camera)
+void vp1394Grabber::getWidth(int &width, unsigned int camera)
 {
-  if (camera < 0 || camera >= num_cameras) {
+  if (camera >= num_cameras) {
     width = 0;
     close();
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
@@ -350,9 +1106,9 @@ void vp1394Grabber::getWidth(int &width, int camera)
   \sa getWidth(), GetImageFormat(), close(), GetNumCameras()
 
 */
-void vp1394Grabber::getHeight(int &height, int camera)
+void vp1394Grabber::getHeight(int &height, unsigned int camera)
 {
-  if (camera < 0 || camera >= num_cameras) {
+  if (camera >= num_cameras) {
     height = 0;
     close();
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
@@ -361,6 +1117,26 @@ void vp1394Grabber::getHeight(int &height, int camera)
 
   height = this->height[camera];
 }
+
+/*!
+
+  Query the number of cameras on the bus.
+
+  \param cameras The number of cameras found on the bus.
+
+
+*/
+void
+vp1394Grabber::getNumCameras(unsigned int &cameras)
+{
+  if (camera_found == false) {
+    CTRACE << "No camera found..."<< endl;
+    cameras = 0;
+  }
+
+  cameras = num_cameras;
+}
+
 
 /*!
   Initialize grey level image acquisition
@@ -546,7 +1322,7 @@ vp1394Grabber::setup()
 
   if ( handle_created == true && camera_found == true) {
 
-    for (int i = 0; i < num_cameras; i++) {
+    for (unsigned int i = 0; i < num_cameras; i++) {
       if (verbose) {
 	dc1394_feature_set features;
 
@@ -674,7 +1450,7 @@ void
 vp1394Grabber::getImageCharacteristics(int _format, int _mode,
 				       int &_width, int &_height,
 				       ImageFormatEnum &_image_format,
-				       int camera)
+				       unsigned int camera)
 {
   switch(_format)
   {
@@ -906,10 +1682,10 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
 */
 
 int*
-vp1394Grabber::dmaCapture(bool waiting, int camera)
+vp1394Grabber::dmaCapture(bool waiting, unsigned int camera)
 {
 
-  if (camera < 0 || camera >= num_cameras) {
+  if (camera >= num_cameras) {
     cout << "The required camera is not present..."
 	 << endl;
     return NULL;
@@ -981,10 +1757,10 @@ vp1394Grabber::dmaCapture(bool waiting, int camera)
 
 */
 void
-vp1394Grabber::dmaDoneWithBuffer(int camera)
+vp1394Grabber::dmaDoneWithBuffer(unsigned int camera)
 {
 
-  if (camera < 0 || camera >= num_cameras) {
+  if (camera >= num_cameras) {
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "The required camera is not present") );
   }
@@ -1011,17 +1787,18 @@ vp1394Grabber::close()
 
     stopIsoTransmission();
 
-    for (int i=0; i < num_cameras; i++)
+    for (unsigned int i=0; i < num_cameras; i++)
       dc1394_dma_unlisten( handles[i], &cameras[i] );
     iso_transmission_started = false;
   }
-  if (camera_found  == true) {
-    for (int i=0; i < num_cameras; i++)
+  if ((camera_found  == true) && (dma_started == true)) {
+    for (unsigned int i=0; i < num_cameras; i++)
       dc1394_dma_release_camera( handles[i], &cameras[i]);
     camera_found = false;
+    dma_started  = false;
   }
   if (handle_created == true) {
-    for (int i=0; i < num_cameras; i++)
+    for (unsigned int i=0; i < num_cameras; i++)
       dc1394_destroy_handle(handles[i]);
     handle_created = false;
   }
@@ -1049,7 +1826,7 @@ void vp1394Grabber::startIsoTransmission()
 {
   if ( handle_created == true && camera_found == true)  {
 
-    for (int i = 0; i < num_cameras; i ++) {
+    for (unsigned int i = 0; i < num_cameras; i ++) {
       if (dc1394_start_iso_transmission(handles[i],
 					cameras[i].node) !=DC1394_SUCCESS) {
 	close();
@@ -1075,7 +1852,7 @@ void vp1394Grabber::stopIsoTransmission()
 
   if (iso_transmission_started == true)  {
     if (handle_created == true && camera_found == true) {
-      for (int i = 0; i < num_cameras; i ++) {
+      for (unsigned int i = 0; i < num_cameras; i ++) {
 	if (dc1394_stop_iso_transmission(handles[i],
 					 cameras[i].node) != DC1394_SUCCESS) {
 	  close();

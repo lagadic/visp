@@ -24,15 +24,23 @@ main(int argc, char ** argv)
   cout <<  "-------------------------------------------------------" << endl ;
   cout << endl ;
 
-  int fps = 30;
+  int req_fps = 30;
+  unsigned int req_shutter = 0;
+  unsigned int req_gain = 0;
 
   vpArgvInfo argTable[] =
     {
       {NULL, ARGV_HELP, NULL, NULL,"     "},
       {NULL, ARGV_HELP, NULL, NULL," test frame grabbing "},
       {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {"-fps", ARGV_INT, (char *) 1, (char *) &fps,
-      "Frame per second (7, 15 or 30)."},
+      {"-fps", ARGV_INT, (char *) 1, (char *) &req_fps,
+      "Set frame per second to 7, 15 or 30 fps."},
+      {"-shutter", ARGV_INT, (char *) 1, (char *) &req_shutter,
+      "Set shutter to the requested value.\n"
+      "           If 0, the shutter is not modified"},
+      {"-gain", ARGV_INT, (char *) 1, (char *) &req_gain,
+      "Set gain to the requested value.\n"
+      "           If 0, the gain is not modified"},
       {NULL, ARGV_HELP, NULL, NULL,"     "},
       {NULL, ARGV_HELP, NULL, NULL,"     "},
       {NULL, ARGV_HELP, NULL, NULL,"     "},
@@ -41,7 +49,12 @@ main(int argc, char ** argv)
   //Parsing of the table
   if (vpParseArgv(&argc,argv,argTable,0))
   {
-    cout << endl << "Usage : " << argv[0] << "  [-help] [-fps 7] [-fps 15] [-fps 30] "<<endl ;
+    cout << endl << "Usage : " << argv[0]
+	 << " [-fps <7|15|30]" << endl
+	 << " [-shutter <value>] "
+	 << " [-gain <value>] "
+	 << " [-help] " << endl << endl;
+
     exit(1) ;
   }
 
@@ -52,23 +65,46 @@ main(int argc, char ** argv)
 
   g.open(I) ;
 
-  switch (fps) {
+  unsigned int cameras;
+  g.getNumCameras(cameras);
+  TRACE("Number of cameras on the bus: %d\n", cameras);
+
+  switch (req_fps) {
   case 7:
-    CTRACE << "Framerate is set to 7.5 fps" << endl;
+    TRACE("Framerate is set to 7.5 fps");
     g.setFramerate(FRAMERATE_7_5);
     break;
   case 15:
-    CTRACE << "Framerate is set to 15 fps" << endl;
+    TRACE("Framerate is set to 15 fps");
     g.setFramerate(FRAMERATE_15);
     break;
   case 30:
-    CTRACE << "Framerate is set to 30 fps" << endl;
+    TRACE("Framerate is set to 30 fps");
     g.setFramerate(FRAMERATE_30);
     break;
   default:
     CTRACE << "Use of default framerate" << endl;
   }
 
+  if (req_shutter) {
+    g.setShutter(req_shutter);
+    TRACE("Set shutter to : %d", req_shutter);
+  }
+
+  unsigned int min_shutter, shutter, max_shutter;
+  g.getShutter(min_shutter, shutter, max_shutter);
+
+  TRACE("Shutter: %d < %d < %d", min_shutter, shutter, max_shutter);
+
+  if (req_gain) {
+    g.setGain(req_gain);
+    TRACE("Set gain to : %d", req_gain);
+  }
+
+  unsigned int min_gain, gain, max_gain;
+  g.getGain(min_gain, gain, max_gain);
+
+  TRACE("Gain: %d < %d < %d", min_gain, gain, max_gain);
 
   try{
     g.acquire(I) ;
@@ -80,7 +116,7 @@ main(int argc, char ** argv)
   }
 
 
-  cout << I.getCols() << "  " << I.getRows() <<endl  ;
+  TRACE("Image size: %d cold %d rows", I.getCols(), I.getRows() );
 
   TRACE(" ") ;
 

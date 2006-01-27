@@ -20,6 +20,15 @@
 /*!
   \file vp1394Grabber.h
   \brief class for firewire cameras video capture
+
+  \warning This class needs at least libdc1394-1.0.0 and
+  libraw1394-1.1.0. These libraries are available from
+  http://sourceforge.net/projects/libdc1394 and
+  http://sourceforge.net/projects/libraw1394 .
+
+  vp1394Grabber was tested with a Marlin F033C camera.
+
+
   \ingroup libdevice
 */
 
@@ -38,12 +47,13 @@
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>
 #include <visp/vpRGBa.h>
+#include <visp/vpList.h>
 
 
 
 /*!
   \class vp1394Grabber
-  \brief class for firewire ieee1394 video devices. 
+  \brief class for firewire ieee1394 video devices.
 
   Needs libraw1394-1.2.0 and libdc1394-1.1.0 or more recent versions
   available on http://sourceforge.net.
@@ -82,9 +92,30 @@ public:
   vp1394Grabber(vpImage<unsigned char> &I);
   ~vp1394Grabber();
 
-  void setFormat(int format, int camera=0);
-  void setMode(int mode, int camera=0);
-  void setFramerate(int framerate, int camera=0);
+  void setFormat(int format, unsigned int camera=0);
+  void getFormat(int & format, unsigned int camera=0);
+  int  getFormatSupported(vpList<int> & formats, unsigned int camera);
+
+  void setMode(int mode, unsigned int camera=0);
+  void getMode(int & mode, unsigned int camera=0);
+  int  getModeSupported(int format, vpList<int> & modes, unsigned int camera);
+
+  void setFramerate(int framerate, unsigned int camera=0);
+  void getFramerate(int & framerate, unsigned int camera=0);
+  int  getFramerateSupported(int format, int mode,
+			     vpList<int> & framerates, unsigned int camera);
+
+  void setShutter(unsigned int shutter, unsigned int camera=0);
+  void getShutter(unsigned int &min_shutter,
+		  unsigned int &shutter,
+		  unsigned int &max_shutter,
+		  unsigned int camera=0);
+
+  void setGain(unsigned int gain, unsigned int camera=0);
+  void getGain(unsigned int &min_gain,
+	       unsigned int &gain,
+	       unsigned int &max_gain,
+	       unsigned int camera=0);
 
   void open(vpImage<unsigned char> &I);
   void acquire(vpImage<unsigned char> &I);
@@ -92,8 +123,9 @@ public:
   void acquire(vpImage<vpRGBa> &I) { ; };
   void close();
 
-  void getWidth (int &width, int camera=0);
-  void getHeight(int &height, int camera=0);
+  void getWidth (int &width, unsigned int camera=0);
+  void getHeight(int &height, unsigned int camera=0);
+  void getNumCameras(unsigned int &cameras);
 
 private:
 
@@ -103,9 +135,9 @@ private:
   void getImageCharacteristics(int _format, int _mode,
 			       int &width, int &height,
 			       ImageFormatEnum &imageformat,
-			       int camera=0);
-  int* dmaCapture(bool waiting = true, int camera=0);
-  void dmaDoneWithBuffer(int camera=0);
+			       unsigned int camera=0);
+  int* dmaCapture(bool waiting = true, unsigned int camera=0);
+  void dmaDoneWithBuffer(unsigned int camera=0);
 
   void startIsoTransmission();
   void stopIsoTransmission();
@@ -115,7 +147,8 @@ private:
   bool handle_created;
   bool camera_found;
   bool camera_nodes_allocated;
-  int  num_cameras;
+  bool dma_started;
+  unsigned int  num_cameras;
   /* declarations for libdc1394 */
   raw1394handle_t      *handles; // MAX_CAMERAS
   dc1394_cameracapture *cameras; // MAX_CAMERAS

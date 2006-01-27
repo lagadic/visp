@@ -4,7 +4,7 @@ ViSP 2.1.2 (Modification since ViSP 2.1.1)
   - New Feature
 	- add control for Directed Perception ptu-46 pan-tilt turret
   - Bug fix and improvement
-	- vp1394Grabber settings (format, mode, framerate)
+	- vp1394Grabber settings (format, mode, framerate, shutter, gain)
 ----------------------------------------------	
 ViSP 2.1.1 (released January, 6th 2006)
    - New examples 
@@ -27,6 +27,7 @@ ViSP 2.1.1 (released January, 6th 2006)
 	- suppress a trace in vpPoseVirtualVisualServoing.cpp
 	- directory.mk : add -p option to mkdir
 	- improve XP compatibility
+	- in vp1394Grabber, latency and memory leaks suppression
   - WWW
      - add an image sequence to download on the www site cube.tar.gz
 
