@@ -186,8 +186,8 @@ vp1394Grabber::~vp1394Grabber()
 
   \param camera A camera. The value must be comprised between 0 (the first
   camera) and the number of cameras found on the bus and returned by
-  getNumCameras(). If two cameras are connected on the bus, setCamera(1) allows
-  to communicate with the second one.
+  getNumCameras(). If two cameras are connected on the bus, setting \e camera
+  to one allows to communicate with the second one.
 
   \exception settingError If the required camera is not reachable.
 
@@ -224,7 +224,9 @@ vp1394Grabber::setCamera(unsigned int camera)
   specific camera, call setCamera() before.
 
   \param format The camera image format. The current camera format is given by
-  getFormat(). The supported formats are given by getSupportedFormats().
+  getFormat(). The camera supported formats are given by
+  getFormatSupported(). The allowed values are given in
+  libdc1394/dc1394_control.h file.
 
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
@@ -256,22 +258,24 @@ vp1394Grabber::setFormat(int format)
 
 /*!
 
-  Query the actual capture format of a given camera. The supported formats
-  are given by getSupportedFormats().
+  Query the actual capture format of a given camera. The camera supported
+  formats are given by getFormatSupported().
 
   \warning Before requerying the actual format a handle must
   be created by calling open(), and a camera must be connected.
 
-  \param format The camera capture format, either :
+  \param format The camera capture format (see file
+  libdc1394/dc1394_control.h), either :
+
   - FORMAT_VGA_NONCOMPRESSED for the Format_0
   - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
   - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
   - FORMAT_STILL_IMAGE for the Format_6
-  - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
+  - FORMAT_SCALABLE_IMAGE_SIZE for the  Format_7
 
   \exception settingError If the required camera is not present or if an error occurs.
 
-  \sa setFormat(), setFormatSupported(), open(), setCamera(), getNumCameras()
+  \sa setFormat(), getFormatSupported(), open(), setCamera(), getNumCameras()
 
 */
 void
@@ -377,7 +381,8 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats)
   Set the camera capture mode for a given camera on the bus.
 
   \param mode The camera capture mode. The current camera mode is given by
-  getMode(). The supported modes are given by getSupportedModes().
+  getMode(). The camera supported modes are given by getSupportedModes(). The
+  allowed values are given in libdc1394/dc1394_control.h file.
 
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
@@ -409,8 +414,8 @@ vp1394Grabber::setMode(int mode)
 
 /*!
 
-  Query the actual capture mode of a given camera. The supported modes
-  are given by getSupportedModes().
+  Query the actual capture mode of a given camera. The camera supported modes
+  are given by getModeSupported().
 
   \warning Before requerying the actual mode a handle must
   be created by calling open(), and a camera must be connected.
@@ -456,7 +461,9 @@ vp1394Grabber::getMode(int & mode)
   \warning Before requerying supported modes for a given format a handle must
   be created by calling open(), and a camera must be connected.
 
-  \param format Camera image format. Values for format are parts of the list:
+  \param format Camera image format. Values for format are parts of the list
+  (see file libdc1394/dc1394_control.h):
+
   - FORMAT_VGA_NONCOMPRESSED for the Format_0
   - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
   - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
@@ -556,8 +563,9 @@ vp1394Grabber::getModeSupported(int format, vpList<int> & modes)
   Set the capture framerate for a given camera on the bus.
 
   \param framerate The camera framerate. The current framerate of the camera is
-  given by getFramerate(). The supported framerates are given by
-  getSupportedFramerates().
+  given by getFramerate(). The camera supported framerates are given by
+  getFramerateSupported(). The allowed values are given in
+  libdc1394/dc1394_control.h file.
 
   \exception settingError If the required camera is not present.
 
@@ -586,7 +594,7 @@ vp1394Grabber::setFramerate(int framerate)
 
 /*!
 
-  Query the actual capture framerate of a given camera. The supported
+  Query the actual capture framerate of a given camera. The camera supported
   framerates are given by getFramerateSupported().
 
   \warning Before requerying the actual framerate a handle must
@@ -631,12 +639,13 @@ vp1394Grabber::getFramerate(int & framerate)
 
 /*!
 
-  Query the available framerates for the given camera image format and
-  mode. The framerate is only avalaible if format is either
-  FORMAT_VGA_NONCOMPRESSED (format 0), FORMAT_SVGA_NONCOMPRESSED_1 (format 1)
-  or FORMAT_SVGA_NONCOMPRESSED_2 (format 2). If format is equal to
-  FORMAT_STILL_IMAGE (format 6) or FORMAT_SCALABLE_IMAGE_SIZE (format 7), the
-  framerate is not avalaible. In this case, we return 0.
+  Query the available framerates for the given camera image format and mode
+  (see file libdc1394/dc1394_control.h). The framerate is only available if
+  format is either FORMAT_VGA_NONCOMPRESSED (format 0),
+  FORMAT_SVGA_NONCOMPRESSED_1 (format 1) or FORMAT_SVGA_NONCOMPRESSED_2 (format
+  2). If format is equal to FORMAT_STILL_IMAGE (format 6) or
+  FORMAT_SCALABLE_IMAGE_SIZE (format 7), the framerate is not avalaible. In
+  this case, we return 0.
 
   \warning Before requerying supported framerates for a given format and mode a
   handle must be created by calling open(), and a camera must be connected.
