@@ -31,7 +31,6 @@
 #include <visp/vp1394Grabber.h>
 #include <visp/vpFrameGrabberException.h>
 #include <visp/vpImageIo.h>
-#define DEBUG_LEVEL1 0
 
 const int vp1394Grabber::DROP_FRAMES = 1; /*!< With libdc1394-1.0.0 or more rencent versions, DROP_FRAMES has to be set to 1 in order to suppress the latency. */
 const int vp1394Grabber::NUM_BUFFERS = 8; /*!< Number of buffers */
@@ -43,11 +42,12 @@ const int vp1394Grabber::MAX_CAMERAS = 8; /*!< Maximal number of cameras */
   Constructor.
 
   By default:
+  - the camera is the first found on the bus,
   - the format is set to FORMAT_VGA_NONCOMPRESSED (format 0),
-  - the mode is set to MODE_640x480_MONO (mode 5)
+  - the mode is set to MODE_640x480_MONO (mode 5),
   - and the framerate is set to FRAMERATE_30 (30 fps).
 
-  To change these settings you can call setFormat(), setMode() or
+  To change these settings you can call setCamera(), setFormat(), setMode() or
   setFramerate() after a call to open().
 
   \code
@@ -57,7 +57,7 @@ const int vp1394Grabber::MAX_CAMERAS = 8; /*!< Maximal number of cameras */
   g.setFramerate(FRAMERATE_15);
   \endcode
 
-  \sa open(), setFormat(), setMode(), setFramerate()
+  \sa open(), setCamera(), setFormat(), setMode(), setFramerate()
 
 */
 vp1394Grabber::vp1394Grabber( )
@@ -88,6 +88,7 @@ vp1394Grabber::vp1394Grabber( )
   camera_found             = false;
   dma_started              = false;
   num_cameras              = 0;
+  camera                   = 0; // the first camera on the bus
 
   // Image settings
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
@@ -107,6 +108,7 @@ vp1394Grabber::vp1394Grabber( )
   \param I  Image data structure (8 bits image)
 
   By default:
+  - the camera is the first found on the bus,
   - the format is set to FORMAT_VGA_NONCOMPRESSED (format 0),
   - the mode is set to MODE_640x480_MONO (mode 5)
   - and the framerate is set to FRAMERATE_30 (30 fps).
@@ -120,7 +122,7 @@ vp1394Grabber::vp1394Grabber( )
   g.setFramerate(FRAMERATE_15);
   \endcode
 
-  \sa setFormat(), setMode(), setFramerate()
+  \sa setCamera(), setFormat(), setMode(), setFramerate()
 */
 vp1394Grabber::vp1394Grabber(vpImage<unsigned char> &I)
 {
@@ -149,6 +151,7 @@ vp1394Grabber::vp1394Grabber(vpImage<unsigned char> &I)
   handle_created           = false;
   camera_found             = false;
   num_cameras              = 0;
+  camera                   = 0; // the first camera on the bus
 
   // Image settings
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
@@ -178,26 +181,33 @@ vp1394Grabber::~vp1394Grabber()
 
 /*!
 
-  Set the capture format for a given camera on the bus.
+  If multiples cameras are connected on the bus, select the camero to dial
+  with.
 
-  \param format The camera image format. The current camera format is given by
-  GetFormat(). The supported formats are given by GetSupportedFormats().
+  \param camera A camera. The value must be comprised between 0 (the first
+  camera) and the number of cameras found on the bus and returned by
+  getNumCameras(). If two cameras are connected on the bus, setCamera(1) allows
+  to communicate with the second one.
 
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
-
-  \warning The requested format is sent to the camera only after a call to
-  close(). Depending on the format and the camera mode, image size can differ.
-
-  \exception settingError If the required camera is not present.
+  \exception settingError If the required camera is not reachable.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa setMode(), setFramerate(), open(), getNumCameras()
+  \code
+  vpImage<unsigned char> I;
+  vp1394Grabber g;
+  g.open(I);
+  unsigned int num_cameras; // Number of cameras on the bus
+  g.getNumCameras(num_cameras);
+  g.setCamera(num_cameras-1); // To dial with the last camera on the bus
+  acquire(I); // I contains the frame captured by the last camera on the bus
+  \endcode
+
+  \sa setFormat(), setMode(), setFramerate(), open(), getNumCameras()
 
 */
 void
-vp1394Grabber::setFormat(int format, unsigned int camera)
+vp1394Grabber::setCamera(unsigned int camera)
 {
   if (camera >= num_cameras) {
     close();
@@ -206,6 +216,29 @@ vp1394Grabber::setFormat(int format, unsigned int camera)
 				   "The required camera is not present") );
   }
 
+
+}
+/*!
+
+  Set the capture format for a given camera on the bus. To set the format for a
+  specific camera, call setCamera() before.
+
+  \param format The camera image format. The current camera format is given by
+  getFormat(). The supported formats are given by getSupportedFormats().
+
+  \warning The requested format is sent to the camera only after a call to
+  close(). Depending on the format and the camera mode, image size can differ.
+
+  \exception settingError If the required camera is not present.
+
+  \warning Has to be called after open() to be sure that a camera is detected.
+
+  \sa setMode(), setFramerate(), open(), setCamera(), getNumCameras()
+
+*/
+void
+vp1394Grabber::setFormat(int format)
+{
   if (iso_transmission_started  == true) {
 
     stopIsoTransmission();
@@ -236,16 +269,13 @@ vp1394Grabber::setFormat(int format, unsigned int camera)
   - FORMAT_STILL_IMAGE for the Format_6
   - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
 
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
-
   \exception settingError If the required camera is not present or if an error occurs.
 
-  \sa setFormat(), setFormatSupported(), open(), getNumCameras()
+  \sa setFormat(), setFormatSupported(), open(), setCamera(), getNumCameras()
 
 */
 void
-vp1394Grabber::getFormat(int & format, unsigned int camera)
+vp1394Grabber::getFormat(int & format)
 {
   if (handle_created == false) {
     close();
@@ -258,12 +288,6 @@ vp1394Grabber::getFormat(int & format, unsigned int camera)
     ERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
-  }
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
   }
 
   if(dc1394_get_camera_misc_info(handles[camera],
@@ -285,18 +309,17 @@ vp1394Grabber::getFormat(int & format, unsigned int camera)
   calling open(), and a camera must be connected.
 
   \param  formats The list of supported camera image formats.
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
 
   \return The number of supported camera image formats, 0 if an error occurs.
 
   \exception settingError If the required camera is not present or if an error occurs.
 
-  \sa getModeSupported(), getFramerateSupported(), open(), getFormat()
+  \sa getModeSupported(), getFramerateSupported(), open(),
+  getFormat(), setCamera()
 
 */
 int
-vp1394Grabber::getFormatSupported(vpList<int> & formats, unsigned int camera)
+vp1394Grabber::getFormatSupported(vpList<int> & formats)
 {
   int nb = 0; // Number of supported formats
 
@@ -315,13 +338,6 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats, unsigned int camera)
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
-  }
-
 
   quadlet_t value;
   if (dc1394_query_supported_formats(handles[camera],
@@ -363,9 +379,6 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats, unsigned int camera)
   \param mode The camera capture mode. The current camera mode is given by
   getMode(). The supported modes are given by getSupportedModes().
 
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
-
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
 
@@ -373,19 +386,12 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats, unsigned int camera)
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa setFormat(), setFramerate(), open(), getNumCameras()
+  \sa setFormat(), setFramerate(), open(), getNumCameras(), setCamera()
 
 */
 void
-vp1394Grabber::setMode(int mode, unsigned int camera)
+vp1394Grabber::setMode(int mode)
 {
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
-  }
-
   if (iso_transmission_started  == true) {
 
     stopIsoTransmission();
@@ -411,16 +417,13 @@ vp1394Grabber::setMode(int mode, unsigned int camera)
 
   \param mode The camera capture mode.
 
-  \param camera A camera number. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
-
   \exception settingError If the required camera is not present.
 
-  \sa setMode(), getModeSupported(), open()
+  \sa setMode(), getModeSupported(), open(), setCamera()
 
 */
 void
-vp1394Grabber::getMode(int & mode, unsigned int camera)
+vp1394Grabber::getMode(int & mode)
 {
 
   if (handle_created == false) {
@@ -434,12 +437,6 @@ vp1394Grabber::getMode(int & mode, unsigned int camera)
     ERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
-  }
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
   }
   if(dc1394_get_camera_misc_info(handles[camera],
 				 cameras[camera].node,
@@ -467,17 +464,15 @@ vp1394Grabber::getMode(int & mode, unsigned int camera)
   - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
 
   \param modes The list of supported camera modes.
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
 
   \return The number of supported camera modes, 0 if an error occurs.
 
   \exception settingError If the required camera is not present.
 
-  \sa getMode(), getFramerateSupported(), open()
+  \sa getMode(), getFramerateSupported(), open(), setCamera()
 */
 int
-vp1394Grabber::getModeSupported(int format, vpList<int> & modes, unsigned int camera)
+vp1394Grabber::getModeSupported(int format, vpList<int> & modes)
 {
   int nb = 0; // Number of supported modes
 
@@ -495,12 +490,6 @@ vp1394Grabber::getModeSupported(int format, vpList<int> & modes, unsigned int ca
     ERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
-  }
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
   }
 
   quadlet_t value;
@@ -567,29 +556,19 @@ vp1394Grabber::getModeSupported(int format, vpList<int> & modes, unsigned int ca
   Set the capture framerate for a given camera on the bus.
 
   \param framerate The camera framerate. The current framerate of the camera is
-  given by GetFramerate(). The supported framerates are given by
-  GetSupportedFramerates().
-
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
+  given by getFramerate(). The supported framerates are given by
+  getSupportedFramerates().
 
   \exception settingError If the required camera is not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa setFormat(), setMode(), open(), getNumCameras()
+  \sa setFormat(), setMode(), open(), getNumCameras(), setCamera()
 
 */
 void
-vp1394Grabber::setFramerate(int framerate, unsigned int camera)
+vp1394Grabber::setFramerate(int framerate)
 {
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
-  }
-
   if (iso_transmission_started  == true) {
 
     stopIsoTransmission();
@@ -615,18 +594,16 @@ vp1394Grabber::setFramerate(int framerate, unsigned int camera)
 
   \param framerate The camera capture framerate.
 
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
-
   \return true if the framerate was obtained, false if an error occurs.
 
   \exception settingError If the required camera is not present.
 
-  \sa setFramerate(), getFramerateSupported(), open(), getNumCameras()
+  \sa setFramerate(), getFramerateSupported(), open(), getNumCameras(),
+  setCamera()
 
 */
 void
-vp1394Grabber::getFramerate(int & framerate, unsigned int camera)
+vp1394Grabber::getFramerate(int & framerate)
 {
   if (handle_created == false) {
     close();
@@ -639,12 +616,6 @@ vp1394Grabber::getFramerate(int & framerate, unsigned int camera)
     ERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
-  }
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
   }
 
   if(dc1394_get_camera_misc_info(handles[camera],
@@ -673,19 +644,18 @@ vp1394Grabber::getFramerate(int & framerate, unsigned int camera)
   \param format Camera image format.
   \param mode Camera mode.
   \param framerates The list of supported camera framerates.
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
 
   \return The number of supported camera image framerates, 0 if an error
   occurs.
 
   \exception settingError If the required camera is not present.
 
-  \sa getFormatSupported(), getModeSupported(), open(), getFramerate()
+  \sa getFormatSupported(), getModeSupported(), open(), getFramerate(),
+  setCamera()
 */
 int
 vp1394Grabber::getFramerateSupported(int format, int mode,
-				     vpList<int> & framerates, unsigned int camera)
+				     vpList<int> & framerates)
 {
   int nb = 0; // Number of supported framerates
 
@@ -703,12 +673,6 @@ vp1394Grabber::getFramerateSupported(int format, int mode,
     ERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
-  }
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
   }
 
   switch(format) {
@@ -752,17 +716,16 @@ vp1394Grabber::getFramerateSupported(int format, int mode,
 
   \param shutter The shutter value to apply to the camera.
 
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
 
-  \exception settingError If the required camera is not present or if an error occurs.
+  \exception settingError If the required camera is not present or if an error
+  occurs.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa getShutter(), open(), getNumCameras()
+  \sa getShutter(), open(), getNumCameras(), setCamera()
 */
 void
-vp1394Grabber::setShutter(unsigned int shutter, unsigned int camera)
+vp1394Grabber::setShutter(unsigned int shutter)
 {
   unsigned int min_shutter = 0;
   unsigned int max_shutter = 0;
@@ -781,12 +744,6 @@ vp1394Grabber::setShutter(unsigned int shutter, unsigned int camera)
 				   "To set the shutter a camera must be connected") );
   }
 
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
-  }
   if(dc1394_get_min_value(handles[camera],
 			  cameras[camera].node,
 			  FEATURE_SHUTTER, &min_shutter) !=DC1394_SUCCESS) {
@@ -837,19 +794,16 @@ vp1394Grabber::setShutter(unsigned int shutter, unsigned int camera)
 
   \param max_shutter Maximal autorized shutter value.
 
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
 
   \exception settingError If the required camera is not present or if an error occurs.
 
-  \sa setShutter(), open(), getNumCameras()
+  \sa setShutter(), open(), getNumCameras(), setCamera()
 
 */
 void
 vp1394Grabber::getShutter(unsigned int &min_shutter,
 			  unsigned int &shutter,
-			  unsigned int &max_shutter,
-			  unsigned int camera)
+			  unsigned int &max_shutter)
 {
   shutter = 0;
   min_shutter = 0;
@@ -866,12 +820,6 @@ vp1394Grabber::getShutter(unsigned int &min_shutter,
     ERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
-  }
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
   }
   if(dc1394_get_shutter(handles[camera],
 			cameras[camera].node,
@@ -911,15 +859,12 @@ vp1394Grabber::getShutter(unsigned int &min_shutter,
 
   \param gain The gain value to apply to the camera.
 
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
-
   \exception settingError If the required camera is not present or if an error occurs.
 
-  \sa getGain(), getNumCameras()
+  \sa getGain(), getNumCameras(), setCamera()
 */
 void
-vp1394Grabber::setGain(unsigned int gain, unsigned int camera)
+vp1394Grabber::setGain(unsigned int gain)
 {
   unsigned int min_gain = 0;
   unsigned int max_gain = 0;
@@ -936,12 +881,6 @@ vp1394Grabber::setGain(unsigned int gain, unsigned int camera)
     ERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
-  }
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
   }
   if(dc1394_get_min_value(handles[camera],
 			  cameras[camera].node,
@@ -993,19 +932,16 @@ vp1394Grabber::setGain(unsigned int gain, unsigned int camera)
 
   \param max_gain Maximal autorized gain value.
 
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
+  \exception settingError If the required camera is not present or if an error
+  occurs.
 
-  \exception settingError If the required camera is not present or if an error occurs.
-
-  \sa setGain(), open(), getNumCameras()
+  \sa setGain(), open(), getNumCameras(), setCamera()
 
 */
 void
 vp1394Grabber::getGain(unsigned int &min_gain,
 		       unsigned int &gain,
-		       unsigned int &max_gain,
-		       unsigned int camera)
+		       unsigned int &max_gain)
 {
   gain = 0;
   min_gain = 0;
@@ -1022,13 +958,6 @@ vp1394Grabber::getGain(unsigned int &min_gain,
     ERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
-  }
-
-  if (camera >= num_cameras) {
-    close();
-    ERROR_TRACE("The required camera is not present");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "The required camera is not present") );
   }
 
   if(dc1394_get_gain(handles[camera],
@@ -1063,21 +992,19 @@ vp1394Grabber::getGain(unsigned int &min_gain,
 
 /*!
 
-  Get the image width. It depends on the camera format SetFormat() and mode
-  SetMode(). The width of the images is only available after a call to open().
+  Get the image width. It depends on the camera format setFormat() and mode
+  setMode(). The width of the images is only available after a call to open().
 
   \param width The image width, zero if the required camera is not avalaible.
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
 
   \exception settingError If the required camera is not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa getHeight()
+  \sa getHeight(), setCamera()
 
 */
-void vp1394Grabber::getWidth(int &width, unsigned int camera)
+void vp1394Grabber::getWidth(int &width)
 {
   if (camera >= num_cameras) {
     width = 0;
@@ -1091,22 +1018,22 @@ void vp1394Grabber::getWidth(int &width, unsigned int camera)
 
 /*!
 
-  Get the image height. It depends on the camera format setFormat() and mode
+  get the image height. It depends on the camera format setFormat() and mode
   setMode(). The height of the images is only available after a call to
   open().
 
   \param height The image width.
   \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
+  number of cameras found on the bus and returned by getNumCameras().
 
   \exception settingError If the required camera is not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa getWidth(), GetImageFormat(), close(), GetNumCameras()
+  \sa getWidth(), getImageFormat(), close(), getNumCameras(), setCamera()
 
 */
-void vp1394Grabber::getHeight(int &height, unsigned int camera)
+void vp1394Grabber::getHeight(int &height)
 {
   if (camera >= num_cameras) {
     height = 0;
@@ -1165,13 +1092,15 @@ vp1394Grabber::open(vpImage<unsigned char> &I)
 }
 
 /*!
-  Acquire a grey level image.
+  Acquire a grey level image from a given camera.
 
-  \param I : Image data structure (8 bits image)
+  \param I  Image data structure (8 bits image)
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by getNumCameras().
 
   \exception initializationError If the device is not openned.
 
-  \sa getField()
+  \sa getField(), setCamera()
 */
 void
 vp1394Grabber::acquire(vpImage<unsigned char> &I)
@@ -1344,8 +1273,7 @@ vp1394Grabber::setup()
 			      mode[i],
 			      width[i],
 			      height[i],
-			      image_format[i],
-			      i);
+			      image_format[i]);
 
       if (dc1394_get_iso_channel_and_speed(handles[i],
 					   cameras[i].node,
@@ -1438,19 +1366,15 @@ vp1394Grabber::setup()
   \param image_format Coding image format for the given camera capture
   format and mode.
 
-  \param camera The camera for which width, height and image format are
-  queried.
-
   \exception otherError If camera mode (see setMode()) and the image format
   (see setFormat()) are incompatible.
 
-  \sa setFormat(), setMode(), getWidth(), getHeight()
+  \sa setFormat(), setMode(), getWidth(), getHeight(), setCamera()
 */
 void
 vp1394Grabber::getImageCharacteristics(int _format, int _mode,
 				       int &_width, int &_height,
-				       ImageFormatEnum &_image_format,
-				       unsigned int camera)
+				       ImageFormatEnum &_image_format)
 {
   switch(_format)
   {
@@ -1663,13 +1587,10 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
   mode), either it returns if no frame is available (polling mode).
 
   After you have finished with the frame, you must return the buffer to the
-  pool by calling DmaDoneWithBuffer().
+  pool by calling dmaDoneWithBuffer().
 
   \param waiting Capture mode; true if you want to wait for an available image
   (waiting mode), false to activate the polling mode.
-
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
 
   \return NULL if no frame is available, the address of the image buffer
   otherwise.
@@ -1678,11 +1599,11 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa DmaDoneWithBuffer(), GetNumCameras()
+  \sa dmaDoneWithBuffer(), getNumCameras(), setCamera()
 */
 
 int*
-vp1394Grabber::dmaCapture(bool waiting, unsigned int camera)
+vp1394Grabber::dmaCapture(bool waiting)
 {
 
   if (camera >= num_cameras) {
@@ -1742,25 +1663,24 @@ vp1394Grabber::dmaCapture(bool waiting, unsigned int camera)
 
 /*!
 
-  Return the buffer to the pool. This allows the driver to use the buffer
-  previously handed to the user.
-
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by GetNumCameras().
+  Return the buffer to the pool for the given camera. This allows the driver to
+  use the buffer previously handed to the user.
 
   \exception settingError If the required camera is not present.
   \exception otherError If can't stop the dma access.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
-  \sa DmaCapture()
+  \sa dmaCapture(), setCamera()
 
 */
 void
-vp1394Grabber::dmaDoneWithBuffer(unsigned int camera)
+vp1394Grabber::dmaDoneWithBuffer()
 {
 
   if (camera >= num_cameras) {
+    close();
+    ERROR_TRACE("The required camera is not present");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "The required camera is not present") );
   }

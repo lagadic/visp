@@ -29,6 +29,7 @@
   vp1394Grabber was tested with a Marlin F033C camera.
 
 
+
   \ingroup libdevice
 */
 
@@ -92,30 +93,29 @@ public:
   vp1394Grabber(vpImage<unsigned char> &I);
   ~vp1394Grabber();
 
-  void setFormat(int format, unsigned int camera=0);
-  void getFormat(int & format, unsigned int camera=0);
-  int  getFormatSupported(vpList<int> & formats, unsigned int camera);
+  void setCamera(unsigned int camera);
 
-  void setMode(int mode, unsigned int camera=0);
-  void getMode(int & mode, unsigned int camera=0);
-  int  getModeSupported(int format, vpList<int> & modes, unsigned int camera);
+  void setFormat(int format);
+  void getFormat(int & format);
+  int  getFormatSupported(vpList<int> & formats);
 
-  void setFramerate(int framerate, unsigned int camera=0);
-  void getFramerate(int & framerate, unsigned int camera=0);
-  int  getFramerateSupported(int format, int mode,
-			     vpList<int> & framerates, unsigned int camera);
+  void setMode(int mode);
+  void getMode(int & mode);
+  int  getModeSupported(int format, vpList<int> & modes);
 
-  void setShutter(unsigned int shutter, unsigned int camera=0);
+  void setFramerate(int framerate);
+  void getFramerate(int & framerate);
+  int  getFramerateSupported(int format, int mode, vpList<int> & framerates);
+
+  void setShutter(unsigned int shutter);
   void getShutter(unsigned int &min_shutter,
 		  unsigned int &shutter,
-		  unsigned int &max_shutter,
-		  unsigned int camera=0);
+		  unsigned int &max_shutter);
 
-  void setGain(unsigned int gain, unsigned int camera=0);
+  void setGain(unsigned int gain);
   void getGain(unsigned int &min_gain,
 	       unsigned int &gain,
-	       unsigned int &max_gain,
-	       unsigned int camera=0);
+	       unsigned int &max_gain);
 
   void open(vpImage<unsigned char> &I);
   void acquire(vpImage<unsigned char> &I);
@@ -123,8 +123,8 @@ public:
   void acquire(vpImage<vpRGBa> &I) { ; };
   void close();
 
-  void getWidth (int &width, unsigned int camera=0);
-  void getHeight(int &height, unsigned int camera=0);
+  void getWidth (int &width);
+  void getHeight(int &height);
   void getNumCameras(unsigned int &cameras);
 
 private:
@@ -134,10 +134,9 @@ private:
 
   void getImageCharacteristics(int _format, int _mode,
 			       int &width, int &height,
-			       ImageFormatEnum &imageformat,
-			       unsigned int camera=0);
-  int* dmaCapture(bool waiting = true, unsigned int camera=0);
-  void dmaDoneWithBuffer(unsigned int camera=0);
+			       ImageFormatEnum &imageformat);
+  int* dmaCapture(bool waiting = true);
+  void dmaDoneWithBuffer();
 
   void startIsoTransmission();
   void stopIsoTransmission();
@@ -159,6 +158,7 @@ private:
   /* declarations for video1394 */
   char device_name[FILENAME_MAX];
 
+  unsigned int camera;
   // Camera settings
   int  *format;    // MAX_CAMERAS
   int  *mode;      // MAX_CAMERAS
