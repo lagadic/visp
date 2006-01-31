@@ -28,7 +28,7 @@
 /*!
   \class vpDisplayX
 
-  \brief The  vpDisplayX allows to display image using the X11 library 
+  \brief The  vpDisplayX allows to display image using the X11 library
 .
 
 
@@ -59,7 +59,7 @@
 /*!
 
   \brief constructor : initialize a display to visualize a gray level image
-  (8 bits). 
+  (8 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
   \param _x, _y The window is set at position x,y (column index, row index).
@@ -79,7 +79,7 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I,
 
 /*!
   \brief constructor : initialize a display to visualize a RGBa level image
-  (32 bits). 
+  (32 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
   \param _x, _y The window is set at position x,y (column index, row index).
@@ -95,7 +95,7 @@ vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I,
 }
 
 /*!
-  \brief constructor 
+  \brief constructor
 
   \param _x, _y The window is set at position x,y (column index, row index).
   \param _title  window  titled
@@ -149,7 +149,7 @@ vpDisplayX::~vpDisplayX()
   closeDisplay() ;
 }
 
-/*!  
+/*!
   \brief Initialized the display of a gray level image
 
   \param I : image to be displayed (not that image has to be initialized)
@@ -409,7 +409,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
 
 }
 
-/*!  
+/*!
   \brief Initialized the display of a RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
@@ -667,8 +667,8 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
 }
 
 
-/*!  
-  \brief actual member used to Initialize the display of a 
+/*!
+  \brief actual member used to Initialize the display of a
   gray level or RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
@@ -929,7 +929,7 @@ void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
 /*!
   \brief display the gray level image (8bits)
 
-  GTK has to be initialized 
+  GTK has to be initialized
 
   \warning suppres the overlay drawing
 
@@ -1016,7 +1016,7 @@ void vpDisplayX::displayImage(vpImage<unsigned char> &I)
 /*!
   \brief display the RGBa level image (32bits)
 
-  GTK has to be initialized 
+  GTK has to be initialized
 
   \warning suppres the overlay drawing
 
@@ -1076,7 +1076,7 @@ void vpDisplayX::displayImage(vpImage<vpRGBa> &I)
 /*
   \brief gets the displayed image (including the overlay plane)
   and returns an RGBa image
-*/ 
+*/
 void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 {
 
@@ -1116,7 +1116,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 
 /*!
 
-  
+
 */
 void vpDisplayX::displayImage(unsigned char *I)
 {
@@ -1196,9 +1196,9 @@ void vpDisplayX::closeDisplay()
 
 
 /*!
-  \brief flush the GTK buffer 
+  \brief flush the GTK buffer
   It's necessary to use this function to see the results of any drawing
- 
+
 */
 void vpDisplayX::flushDisplay()
 {
@@ -1235,7 +1235,7 @@ void vpDisplayX::clearDisplay(int c)
 }
 
 /*!
-  \brief display a point 
+  \brief display a point
   \param i,j (row,colum indexes)
   \param color (see vpColor)
 */
@@ -1256,7 +1256,7 @@ void vpDisplayX::displayPoint(int i, int j, int col)
 
 
 /*!
-  \brief display a line 
+  \brief display a line
   \param i1,j1 (row,colum indexes) initial coordinates
   \param i2,j2 (row,colum indexes) final coordinates
   \param color (see vpColor)
@@ -1283,7 +1283,7 @@ void vpDisplayX::displayLine(int i1, int j1, int i2, int j2, int col, int e)
 }
 
 /*!
-  \brief display a dashed line 
+  \brief display a dashed line
   \param i1,j1 (row,colum indexes) initial coordinates
   \param i2,j2 (row,colum indexes) final coordinates
   \param color (see vpColor)
@@ -1311,7 +1311,7 @@ void vpDisplayX::displayDotLine(int i1, int j1, int i2, int j2, int col, int e)
 }
 
 /*!
-  \brief display a cross  
+  \brief display a cross
   \param i,j (row,colum indexes)
   \param size of the cross
   \param color (see vpColor)
@@ -1342,7 +1342,7 @@ void vpDisplayX::displayCross(int i,int j, int size,int col)
 
 
 /*!
-  \brief display a "large" cross  
+  \brief display a "large" cross
   \param i,j (row,colum indexes)
   \param size of the cross
   \param color (see vpColor)
@@ -1371,7 +1371,7 @@ void vpDisplayX::displayCrossLarge(int i,int j, int size,int col)
 
 
 /*!
-  \brief display an arrow 
+  \brief display an arrow
   \param i1,j1 (row,colum indexes) initial coordinates
   \param i2,j2 (row,colum indexes) final coordinates
   \param color (see vpColor)
@@ -1440,7 +1440,7 @@ void vpDisplayX::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int 
 
 
 /*!
-  \brief display a rectangle  
+  \brief display a rectangle
   \param i,j (row,colum indexes) up left corner
   \param width
   \param height
@@ -1468,7 +1468,7 @@ vpDisplayX::displayRectangle(int i, int j, int width, int height, int col)
 
 
 /*!
-  \brief display a string  
+  \brief display a string
   \param i,j (row,colum indexes)
   \param string
   \param color (see vpColor)
@@ -1489,7 +1489,7 @@ void vpDisplayX::displayCharString(int i, int j, char *string, int col)
 }
 
 /*!
-  \brief wait for and get the position of the click 
+  \brief wait for and get the position of the click
   \param i,j (row,colum indexes)
 
 */
@@ -1498,51 +1498,51 @@ bool
 vpDisplayX::getClick(int& i, int& j)
 {
 
+  bool ret = false;
   if (Xinitialise)
+  {
+    int x,y ;
+    while (ret==false)
     {
-      int x,y ;
-      bool ret = false;
-      while (ret==false)
-	{
-	  Window	rootwin, childwin ;
-	  int		root_x, root_y, win_x, win_y ;
-	  unsigned int	modifier ;
-	  // Test d'évènements.
-	  if ( XPending(display) )  {
-	    XNextEvent(display, &event);
-	  
-	    /* Detection de l'appui sur l'un des bouton de la souris. */
-	    switch(event.type) {
-	    
-	    case ButtonPress: 
-	      {
-		/* Recuperation de la coordonnee du pixel cliqué.	*/
-		if(XQueryPointer(display,
-				 window,
-				 &rootwin, &childwin,
-				 &root_x, &root_y,
-				 &win_x, &win_y,
-				 &modifier)) {
-		  x = event.xbutton.x;
-		  y = event.xbutton.y;
-		  i = y ;
-		  j = x ;
-		}
-		ret = true ;
-		break;
-	    
-	      } /* Fin case ButtonPress	*/
-	    } /* Fin switch type d'evenement.	*/
-	  }
-	}
+      Window	rootwin, childwin ;
+      int		root_x, root_y, win_x, win_y ;
+      unsigned int	modifier ;
+      // Test d'évènements.
+      if ( XPending(display) )  {
+	XNextEvent(display, &event);
+
+	/* Detection de l'appui sur l'un des bouton de la souris. */
+	switch(event.type) {
+
+	case ButtonPress:
+	  {
+	    /* Recuperation de la coordonnee du pixel cliqué.	*/
+	    if(XQueryPointer(display,
+			     window,
+			     &rootwin, &childwin,
+			     &root_x, &root_y,
+			     &win_x, &win_y,
+			     &modifier)) {
+	      x = event.xbutton.x;
+	      y = event.xbutton.y;
+	      i = y ;
+	      j = x ;
+	    }
+	    ret = true ;
+	    break;
+
+	  } /* Fin case ButtonPress	*/
+	} /* Fin switch type d'evenement.	*/
+      }
     }
+  }
   else
-    {
-      ERROR_TRACE("X not initialized " ) ;
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-			       "X not initialized")) ;
-    }
-  return false ;
+  {
+    ERROR_TRACE("X not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+			     "X not initialized")) ;
+  }
+  return ret ;
 }
 
 
@@ -1553,9 +1553,10 @@ void
 vpDisplayX::getClick()
 {
 
+  bool ret = false;
+
   if (Xinitialise)
   {
-    bool ret = false;
     while (ret==false)
     {
       Window	rootwin, childwin ;
@@ -1595,6 +1596,7 @@ vpDisplayX::getClick()
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
+  return ;//ret;
 }
 
 /*!
@@ -1648,18 +1650,18 @@ vpDisplayX::getClick(int& i, int& j, int& button)
       } /* Fin switch type d'evenement.	*/
     }
   }
- else
+  else
   {
     ERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
-    return  false;
+  return  false;
 }
 
-/*!  
+/*!
   \brief wait for and get the position of the click release of the
-  button specified by "button" 
+  button specified by "button"
   \param i,j (row,colum indexes)
 
 */
@@ -1719,7 +1721,7 @@ vpDisplayX::getClickUp(int& i, int& j, int& button)
 
 /*!
   \brief get the window depth (8,16,24,32)
-  
+
   usualy it 24 bits now...
 */
 int vpDisplayX::getScreenDepth()
@@ -1790,7 +1792,7 @@ vpDisplayX::flushTitle(const char *windowtitle)
   \brief Display a circle
   \param i,j : circle center position (row,column)
   \param r : radius
-  \param color 
+  \param color
 */
 void vpDisplayX::displayCircle(int i, int j, int r, int c)
 {
