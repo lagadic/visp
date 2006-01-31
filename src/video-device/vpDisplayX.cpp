@@ -1661,62 +1661,16 @@ vpDisplayX::getClick(int& i, int& j, int& button)
 
 /*!
   \brief wait for and get the position of the click release of the
-  button specified by "button"
+  button specified by "button". Same method as getClick(int&, int&, int&).
   \param i,j (row,colum indexes)
+
+  \sa getClick(int&, int&, int&)
 
 */
 bool
 vpDisplayX::getClickUp(int& i, int& j, int& button)
 {
-
-  if (Xinitialise)
-  {
-    int x,y ;
-    Window	rootwin, childwin ;
-    int		root_x, root_y, win_x, win_y ;
-    unsigned int	modifier ;
-
-    // Test d'évènements.
-    if ( XPending(display) )  {
-
-      XNextEvent(display, &event);
-
-      /* Detection de l'appui sur l'un des bouton de la souris. */
-      switch(event.type) {
-
-      case ButtonRelease: {
-	/* Recuperation de la coordonnee du pixel cliqué.	*/
-	if(XQueryPointer(display,
-			 window,
-			 &rootwin, &childwin,
-			 &root_x, &root_y,
-			 &win_x, &win_y,
-			 &modifier)) {
-	  x = event.xbutton.x;
-	  y = event.xbutton.y;
-	  i = y ;
-	  j = x ;
-	  switch(event.xbutton.button)
-	  {
-	  case Button1: button = vpDisplay::button1; break;
-	  case Button2: button = vpDisplay::button2; break;
-	  case Button3: button = vpDisplay::button3; break;
-	  }
-	}
-	return true ;
-	break;
-
-      } /* Fin case ButtonPress	*/
-      } /* Fin switch type d'evenement.	*/
-    }
-  }
- else
-  {
-    ERROR_TRACE("X not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-			     "X not initialized")) ;
-  }
-  return  false ;
+  return getClick(i, j, button);
 }
 
 /*!
