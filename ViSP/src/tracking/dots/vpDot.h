@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.h,v 1.4 2005-12-05 10:31:54 marchand Exp $
+ *  $Id: vpDot.h,v 1.5 2006-02-03 17:00:53 fspindle Exp $
  *
  * Description
  * ============
@@ -45,10 +45,24 @@
 */
 class vpDot : public vpTracker
 {
+public:
+  /*! \enum ConnexityEnum
+  Type of connexity 4, or 8.
+  */
+  typedef enum {
+    CONNEXITY_4, /*!< For a given pixel 4 neighbors are considered (left,
+		   right, up, down) */
+    CONNEXITY_8 /*!< For a given pixel 8 neighbors are considered (left,
+		  right, up, down, and the 4 pixels located on the diagonal) */
+  } ConnexityEnum;
+
+  static const int SPIRAL_SEARCH_SIZE; /*!< spiral size for the dot search */
 private:
   //! internal use only
   vpList<int> Lu, Lv ;
-private:
+
+  //! Type of connexity
+  ConnexityEnum connexity;
 
   //! coordinates of the point center of gravity
   int cog_u, cog_v ;
@@ -90,19 +104,54 @@ public:
   ~vpDot() ;
 
 public:
-
-public:
   vpDot& operator =(const vpDot& f) ;
   int  operator ==(const vpDot& m);
   int  operator !=(const vpDot& m);
 
 
 public:
+  /*!
+
+  Return the "u" (column) coordinate of the center of the dot within the image
+  it comes from.
+  */
   double get_u() const { return cog_ufloat ; }
+  /*!
+
+  Return the "v" (row) coordinate of the center of the dot within the image it
+  comes from.
+  */
+
   double get_v() const { return cog_vfloat ; }
+  /*!
+
+  Return the list of the "u" coordinates (row) of all the pixels on the dot
+  border.
+
+  \param u_list The "u" coordinate of the pixels on the dot border. This list
+  is update after a call to track().
+
+
+  */
+  void   get_u(vpList<int> & u_list) { u_list = Lu; };
+  /*!
+
+  Return the list of the "v" coordinates (column) of all the pixels on the dot
+  border.
+
+  \param v_list The "v" coordinate of the pixels on the dot border. This list
+  is update after a call to track().
+
+  */
+  void   get_v(vpList<int> & v_list) { v_list = Lv; };
 
   void set_u(double u) { cog_ufloat = u ; cog_u = (int)u ; }
   void set_v(double v) { cog_vfloat = v ; cog_v = (int)v ; }
+
+  /*!
+    Set the type of connexity: 4 or 8.
+  */
+  void setConnexity(ConnexityEnum connexity) {this->connexity = connexity; };
 
 public:
   friend ostream& operator<< (ostream& os, vpDot& p) { return (os << p ) ; } ;
