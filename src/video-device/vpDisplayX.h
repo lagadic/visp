@@ -91,7 +91,7 @@ private:
 
 
 protected:
-  void setWindowPosition(int _winx, int _winy) { ; }
+  void setWindowPosition(int /*_winx*/, int /*_winy*/) { ; }
   inline  int getRows() { return nrows ; }
   inline  int getCols() { return ncols ; }
 
