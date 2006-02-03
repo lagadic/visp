@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.8 2005-12-05 10:31:54 marchand Exp $
+ *  $Id: vpDot.cpp,v 1.9 2006-02-03 17:00:53 fspindle Exp $
  *
  * Description
  * ============
@@ -37,7 +37,14 @@
   \brief Track a white dot
 */
 
+const int vpDot::SPIRAL_SEARCH_SIZE = 50; /* spiral size for the dot search */
 
+/*!
+
+  Initialize the tracker with default parameters.
+  - connexity is set to 4 (see setConnexity())
+  - dot maximal number of pixels is set to 10000 (see setNbMaxPoint())
+*/
 void vpDot::init()
 {
   cog_u = 0 ;
@@ -52,6 +59,8 @@ void vpDot::init()
   nbMaxPoint = 10000 ;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+
+  connexity = CONNEXITY_4;
 }
 
 vpDot::vpDot() : vpTracker()
@@ -156,11 +165,20 @@ vpDot::operator==(const vpDot& m)
   return ((cog_u==m.cog_u) && (cog_v==m.cog_v)) ;
 }
 
+/*!
+  Perform the tracking of a dot by connex components.
+
+  \return vpDot::out if an error occurs, vpDot::in otherwise.
+*/
 int
 vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
 	       double &u_cog, double &v_cog,  double &n)
 {
 
+  // Test if we are in the image
+  if ( (u < 0) || (v < 0) || (u >= I.getRows()) || (v >= I.getCols()) ) {
+    return  vpDot::out ;
+  }
   if (I[v][u] >=seuil)
   {
     if (graphics==true)
@@ -208,6 +226,37 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
     if (I[v+1][u] >=seuil)
       connexe(I,u,v+1,seuil,u_cog,v_cog,n) ;
   }
+
+  if (connexity == CONNEXITY_8) {
+    if ( (u-1 >= 0) && (v-1 >= 0) )
+    {
+
+      if (I[v-1][u-1] >=seuil)
+	connexe(I,u-1,v-1,seuil,u_cog,v_cog,n) ;
+    }
+
+    if ( (u+1 <  I.getCols()) && (v-1 >= 0 ) )
+    {
+
+      if (I[v-1][u+1] >=seuil)
+	connexe(I,u+1,v-1,seuil,u_cog,v_cog,n) ;
+    }
+    if  ( (v+1 < I.getRows()) && (u-1 >= 0) )
+    {
+
+      if (I[v+1][u-1] >=seuil)
+	connexe(I,u-1,v+1,seuil,u_cog,v_cog,n) ;
+    }
+    if  ( (v+1 < I.getRows()) && (u+1 < I.getCols()) )
+    {
+
+      if (I[v+1][u+1] >=seuil)
+	connexe(I,u+1,v+1,seuil,u_cog,v_cog,n) ;
+    }
+  }
+
+
+
   return vpDot::in ;
 }
 
@@ -225,7 +274,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   Lu.kill() ;
   Lv.kill() ;
 
-
+#if 0
+  // Original version
   if (  connexe(I,(int)u,(int)v,seuil,u_cog, v_cog, npoint) == vpDot::out)
   {
     bool sol = false ;
@@ -254,7 +304,88 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 				"Dot has been lost")) ;
     }
   }
+#else
+  // If the dot is not found, search around using a spiral
+  if (  connexe(I,(int)u,(int)v,seuil,u_cog, v_cog, npoint) == vpDot::out)
+  {
 
+    bool sol = false ;
+
+    int right = 1;
+    int botom = 1;
+    int left = 2;
+    int up = 2;
+    double u_ = u, v_ = v;
+    int k;
+
+    // balayage en spiral à partir du centre pour trouver le point le plus proche
+
+    while( (right < SPIRAL_SEARCH_SIZE) && (sol == false) ) {
+      for (k=1; k <= right; k++) if(sol==false) {
+	u_cog = 0 ;
+	v_cog = 0 ;
+	Lu.kill() ;
+	Lv.kill() ;
+
+	if (connexe(I, (int)u_+k, (int)(v_), seuil, u_cog, v_cog, npoint)
+	    != vpDot::out) {
+	  sol = true; u = u_+k; v = v_;
+	}
+      }
+      u_ += k;
+      right += 2;
+
+      for (k=1; k <= botom; k++) if (sol==false) {
+	u_cog = 0 ;
+	v_cog = 0 ;
+	Lu.kill() ;
+	Lv.kill() ;
+
+	if (connexe(I, (int)(u_), (int)(v_+k), seuil, u_cog, v_cog, npoint)
+	    != vpDot::out) {
+	  sol = true; u = u_; v = v_+k;
+	}
+      }
+      v_ += k;
+      botom += 2;
+
+      for (k=1; k <= left; k++) if (sol==false) {
+	u_cog = 0 ;
+	v_cog = 0 ;
+	Lu.kill() ;
+	Lv.kill() ;
+
+	if (connexe(I, (int)(u_-k), (int)(v_), seuil, u_cog, v_cog, npoint)
+	    != vpDot::out) {
+	  sol = true ; u = u_-k; v = v_;
+	}
+      }
+      u_ -= k;
+      left += 2;
+
+      for (k=1; k <= up; k++) if(sol==false) {
+	u_cog = 0 ;
+	v_cog = 0 ;
+	Lu.kill() ;
+	Lv.kill() ;
+
+	if (connexe(I, (int)(u_), (int)(v_-k), seuil, u_cog, v_cog, npoint)
+	    != vpDot::out) {
+	  sol = true ; u = u_; v = v_-k;
+	}
+      }
+      v_ -= k;
+      up += 2;
+    }
+
+    if (sol == false) {
+      ERROR_TRACE("Dot has been lost") ;
+      throw(vpTrackingException(vpTrackingException::featureLostError,
+				"Dot has been lost")) ;
+    }
+  }
+
+#endif
   Lu.front() ; Lv.front() ;
   while (!Lu.outside())
   {
