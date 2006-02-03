@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testTrackDot.cpp,v 1.3 2005-12-05 14:03:47 marchand Exp $
+ *  $Id: testTrackDot.cpp,v 1.4 2006-02-03 17:02:27 fspindle Exp $
  *
  * Description
  * ============
@@ -53,12 +53,13 @@ main()
   char dir[FILENAME_MAX] ;
 
   int iter = 1 ;
-  sprintf(dir,"/udd/marchand/dd/t/images/pattern/mire-2/") ;
+  sprintf(dir,"/local/seq/mire-2/") ;
   sprintf(s,"%s/image.%04d.pgm",dir,iter) ;
 
   vpDot d ;
   d.setGraphics(true);
   d.setComputeMoments(true);
+  d.setConnexity(vpDot::CONNEXITY_8);
 
   try{
     vpImageIo::readPGM(I,s) ;
