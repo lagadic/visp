@@ -7,7 +7,9 @@ SOURCES		= \
 	vpFeatureBuilderPoint.cpp \
 	vpFeatureBuilderPoint3D.cpp \
 	vpFeatureBuilderEllipse.cpp \
-	vpFeatureBuilderLine.cpp
+	vpFeatureBuilderLine.cpp \
+	vpFeatureBuilderVanishingPoint.cpp
+
 
 .KEEP_STATE	:
 .PRECIOUS	: $(LIB)
