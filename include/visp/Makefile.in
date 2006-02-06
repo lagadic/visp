@@ -28,6 +28,7 @@ VISUALFEATURE =  \
 	vpGenericFeature.h \
 	\
 	vpFeaturePoint.h \
+	vpFeatureVanishingPoint.h \
 	vpFeatureLine.h \
 	vpFeatureEllipse.h \
 	\
