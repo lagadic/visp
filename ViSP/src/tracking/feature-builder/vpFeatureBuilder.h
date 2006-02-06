@@ -1,4 +1,3 @@
-
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
  * www  : http://www.irisa.fr/lagadic
@@ -11,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilder.h,v 1.2 2005-07-22 09:37:21 fspindle Exp $
+ *  $Id: vpFeatureBuilder.h,v 1.3 2006-02-06 14:11:23 obourqua Exp $
  *
  * Description
  * ============
@@ -44,7 +43,7 @@
 #include<visp/vpFeaturePoint3D.h>
 #include<visp/vpFeatureThetaU.h>
 #include<visp/vpFeatureTranslation.h>
-
+#include<visp/vpFeatureVanishingPoint.h>
 
 //pixel / meter conversion
 #include<visp/vpCameraParameters.h>
@@ -89,6 +88,26 @@ public:
   static void create(vpFeatureEllipse &s,
 		     const vpCameraParameters &cam,
 		     const vpDot &t ) ;
+
+
+  /*!
+      create vpFeatureVanishingPoint feature from the 2D coordinates of a point
+      in the image plane
+  */
+  static void create(vpFeatureVanishingPoint &s, const vpPoint &t);
+  /*!
+    create vpFeatureVanishingPoint feature from 2 FeatureLine, ie lines in
+    the image plane (error if the 2 lines are parallel)
+  */
+  static void create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, const vpFeatureLine &L2 );
+  /*!
+    create vpFeatureVanishingPoint feature from 2 Lines, (error if the 2
+    lines are parallel in the image plane)
+  */
+  static void create(vpFeatureVanishingPoint &s, const vpLine &L1, const vpLine &L2 );
+
+
+
 } ;
 
 #endif
