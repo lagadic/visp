@@ -19,7 +19,8 @@ SOURCES		= \
 	vpFeatureThetaU.cpp \
 	vpFeatureTranslation.cpp \
 	\
-	vpFeatureDisplay.cpp
+	vpFeatureDisplay.cpp\
+	vpFeatureVanishingPoint.cpp \
 
 .KEEP_STATE	:
 .PRECIOUS	: $(LIB)
