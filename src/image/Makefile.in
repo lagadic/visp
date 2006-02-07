@@ -13,7 +13,9 @@ SOURCES		= \
 	vpImageIo.cpp \
 	vpImageIoPnm.cpp \
 	\
+	vpImageTools.cpp \
 	vpImageFilter.cpp \
+	vpImageMorphology.cpp \
 	\
 	vpRGBa.cpp
 
