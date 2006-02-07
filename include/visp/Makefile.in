@@ -100,7 +100,9 @@ IMAGE =  \
 	\
 	vpImageIo.h \
 	\
-	vpImageTools.h
+	vpImageTools.h \
+	vpImageFilter.h \
+	vpImageMorphology.h
 
 VIDEODEVICE = \
 	vpDisplay.h \
