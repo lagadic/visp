@@ -1,8 +1,6 @@
 
-
-
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
+ * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
  * www  : http://www.irisa.fr/lagadic
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
@@ -12,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageFilter.h,v 1.1 2006-02-06 14:49:41 fspindle Exp $
+ *  $Id: vpImageFilter.h,v 1.2 2006-02-07 14:43:11 fspindle Exp $
  *
  * Description
  * ============
@@ -27,7 +25,7 @@
 
 /*!
   \file vpImageFilter.h
-  \brief    various image tools, convolution, etc...
+  \brief  Various image filter, convolution, etc...
 
 */
 
@@ -43,7 +41,7 @@
 /*!
   \class vpImageFilter
 
-  \brief   various image tools, convolution, etc...
+  \brief  Various image filter, convolution, etc...
 
   \author Eric Marchand  (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 
@@ -63,7 +61,6 @@ public:
 		     vpImage<double>& If,
 		     const vpMatrix& M) ;
 } ;
-
 
 
 #endif

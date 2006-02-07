@@ -1,11 +1,31 @@
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
+ * www  : http://www.irisa.fr/lagadic
+ *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * File:      vpImageFilter.cpp
+ * Project:   ViSP2
+ *
+ * Version control
+ * ===============
+ *
+ *  $Id: vpImageFilter.cpp,v 1.2 2006-02-07 14:43:11 fspindle Exp $
+ *
+ * Description
+ * ============
+ *   various image tools, convolution, etc...
+ *
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 #include<visp/vpImageFilter.h>
 
 /*!
   Apply a filter to an image.
 
-  \param I: Image to filter
-  \param If: Filtered image.
-  \param M: Filter coefficients.
+  \param I : Image to filter
+  \param If : Filtered image.
+  \param M : Filter coefficients.
 
 */
 void
@@ -46,10 +66,10 @@ vpImageFilter::filter(const vpImage<unsigned char> &I,
 /*!
   Apply a filter to an image.
 
-  \param I: Image to filter
-  \param Iu: Filtered image along the horizontal axis (u = columns).
-  \param Iv: Filtered image along the vertical axis (v = rows).
-  \param M: Separate filter coefficients
+  \param I : Image to filter
+  \param Iu : Filtered image along the horizontal axis (u = columns).
+  \param Iv : Filtered image along the vertical axis (v = rows).
+  \param M : Separate filter coefficients
 
 */
 void
@@ -90,3 +110,4 @@ vpImageFilter::filter(const vpImage<double> &I,
   }
 
 }
+
