@@ -5,38 +5,39 @@ SHELL=/bin/sh
 .DELETE_ON_ERROR:
 
 .DEFAULT: all
-all: install
+all: bin
 
-install: src FORCE
-	cd test; $(MAKE) $@
-	cd example; $(MAKE) $@
+bin: lib FORCE
+	cd test; $(MAKE)
+	cd example; $(MAKE)
 
-src: directory FORCE
-	cd include; $(MAKE) install
-	cd src; $(MAKE) install
+lib: directory FORCE
+	cd include; $(MAKE)
+	cd src; $(MAKE)
 	$(MAKE) shared-lib
 	$(MAKE) lib-link
 
-test: src FORCE
-	cd test; $(MAKE) install
+test: lib FORCE
+	cd test; $(MAKE)
 
-example: src FORCE
-	cd example; $(MAKE) install
-
-demo: src FORCE
-	cd demo; $(MAKE) install
+example: lib FORCE
+	cd example; $(MAKE)
 
 @directory_mk@
 
 @sharedlib_mk@
 
 clean:
-	rm -f *% */*%
-	rm -f *~ */*~
 	cd include; $(MAKE) $@
 	cd src; $(MAKE) $@
 	cd test; $(MAKE) $@
 	cd example; $(MAKE) $@
+	rm -f $(VISP_DEP_PATH)/*.P
+	rm -f $(VISP_OBJ_PATH)/*.o
+	rm -f $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).a
+	rm -f $(VISP_LIB_PATH)/libvisp-2$(SUFFIX).so
+	rm -f $(STATIC_LIB_PATH)
+	rm -f $(SHARED_LIB_PATH)
 	@for i in `find -type f -name "*~" -print | sort` ; do\
 		rm -f $$i;\
 		echo "rm -f " $$i;\
@@ -57,15 +58,32 @@ clean:
 		rm -f $$i;\
 		echo "rm -f " $$i;\
 	done
+	@for i in `find -type f -name "tca.*" -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+	@for i in `find -type d -name pchdir -print | sort` ; do\
+		rm -fr $$i;\
+		echo "rm -fr " $$i;\
+	done
 
-uninstall:
-	cd include; $(MAKE) $@
-	cd src; $(MAKE) $@
-	cd test; $(MAKE) $@
-	cd example; $(MAKE) $@
-	rm -f $(VISP_DEP_PATH)/*.P
-	rm -f $(VISP_OBJ_PATH)/*.o
-	rm -f $(VISP_LIB_PATH)/libvisp$(SUFFIX).a
+
+distclean:
+	$(MAKE) clean;
+	rm -f config.log config.status
+	rm -rf $(VISP_DIR_DEP)
+	rm -rf $(VISP_DIR_OBJ)
+	rm -rf lib/*
+	rm -rf doc/html
+	rm -f  doc/warning.log
+	@for i in `find -type f -name .depend -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
+	@for i in `find -type f -name "*.exe" -print | sort` ; do\
+		rm -f $$i;\
+		echo "rm -f " $$i;\
+	done
 	@for i in `find -type f -name Makefile.in -print | sort` ; do\
 		filetoremove=`echo "$$i" | sed -e "s;Makefile.in;Makefile;g"`;\
 		rm -f $${filetoremove};\
@@ -86,37 +104,6 @@ uninstall:
 		rm -f $${filetoremove};\
 		echo "rm -f " $${filetoremove};\
 	done
-	@for i in `find -type f -name "tca.*" -print | sort` ; do\
-		rm -f $$i;\
-		echo "rm -f " $$i;\
-	done
-	@for i in `find -type d -name pchdir -print | sort` ; do\
-		rm -fr $$i;\
-		echo "rm -fr " $$i;\
-	done
-	@for i in `find -type f -name "*.d" -print | sort` ; do\
-		rm -f $$i;\
-		echo "rm -f " $$i;\
-	done
-
-
-uninstallall:
-	$(MAKE) clean;
-	$(MAKE) uninstall;
-	rm -f config.log config.status
-	rm -rf $(VISP_DIR_DEP)
-	rm -rf $(VISP_DIR_OBJ)
-	rm -rf lib/*
-	rm -rf doc/html
-	rm -f  doc/warning.log
-	@for i in `find -type f -name .depend -print | sort` ; do\
-		rm -f $$i;\
-		echo "rm -f " $$i;\
-	done
-	@for i in `find -type f -name "*.exe" -print | sort` ; do\
-		rm -f $$i;\
-		echo "rm -f " $$i;\
-	done
 
 html-doc:
 	@echo "html documentation creation..."
@@ -131,5 +118,25 @@ group-access:
 		echo "chmod g+rwx" $$i;\
 	done
 	@echo "done."
+
+install: bin
+	test -z "$(INSTALL_LIBDIR)" || $(mkdir_p) "$(INSTALL_LIBDIR)"
+	$(INSTALL_DATA) $(STATIC_LIB_PATH) $(INSTALL_LIBDIR)
+	$(INSTALL_DATA) $(SHARED_LIB_PATH) $(INSTALL_LIBDIR)
+	rm -f $(INSTALL_LIBDIR)/libvisp-2$(SUFFIX).a
+	ln -s $(INSTALL_LIBDIR)/$(STATIC_LIB_NAME) $(INSTALL_LIBDIR)/libvisp-2$(SUFFIX).a
+	rm -f $(INSTALL_LIBDIR)/libvisp-2$(SUFFIX).so
+	ln -s $(INSTALL_LIBDIR)/$(SHARED_LIB_NAME) $(INSTALL_LIBDIR)/libvisp-2$(SUFFIX).so
+	test -z "$(INSTALL_INCDIR)" || $(mkdir_p) "$(INSTALL_INCDIR)"
+	$(INSTALL_DATA) $(VISP_DIR_INCLUDE)/visp/*.h $(INSTALL_INCDIR)
+	$(INSTALL_DATA) $(VISP_DIR_INCLUDE)/visp/*.t.cpp $(INSTALL_INCDIR)
+
+uninstall:
+	rm -f $(INSTALL_LIBDIR)/libvisp-2$(SUFFIX).a
+	rm -f $(INSTALL_LIBDIR)/$(STATIC_LIB_NAME)
+	rm -f $(INSTALL_LIBDIR)/libvisp-2$(SUFFIX).so
+	rm -f $(INSTALL_LIBDIR)/$(SHARED_LIB_NAME)
+	rm -fr $(INSTALL_INCDIR)
+
 
 FORCE:

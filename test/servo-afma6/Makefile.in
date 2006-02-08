@@ -27,11 +27,6 @@ all install: directory $(PROGS)
 
 @bin_mk@
 
-
-uninstall:
-	rm -f $(PROGS)
-	rm -f $(DEPFILES)
-
 @clean_mk@
 
 @depend_mk@
