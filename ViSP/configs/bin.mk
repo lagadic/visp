@@ -16,7 +16,7 @@ endif
 	@echo "*"
 	@echo "* Create the binary file $@ for $< "
 	@echo "*"
-	$(CXXALL) -MD -o $@ $< $(LDFLAGS) $(LIBS)
+	$(CXXALL) -MD -o $@ $<  -Wl,-rpath,$(VISP_LIB_PATH) $(LDFLAGS) $(LIBS)
 	@sed -e 's/\($*.o\)*[:]/\1: Makefile/' < $(DEP_FILE) \
 	    > $(VISP_DEP_PATH)/$(*F)$(SUFFIX).P; \
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \

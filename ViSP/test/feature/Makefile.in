@@ -13,13 +13,6 @@ all install: directory  $(PROGS)
 
 @bin_mk@
 
-$(VISP_LIBNAME):
-	cd $(VISP_DIR_SRC); $(MAKE)
-
-uninstall:
-	rm -f $(PROGS)
-	rm -f $(DEPFILES)
-
 @clean_mk@
 
 @depend_mk@

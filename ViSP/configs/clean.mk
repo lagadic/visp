@@ -1,4 +1,10 @@
 clean:
+	@for i in $(PROGS) $(OBJECTS) $(DEPFILES); do \
+		if test -f "$$i"; then \
+			rm -f $$i;\
+			echo "rm -f " $$i;\
+		fi;\
+	done
 	rm -f *%
 	rm -f *~
 	rm -f *.o
