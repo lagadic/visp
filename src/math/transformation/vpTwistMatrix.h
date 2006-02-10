@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTwistMatrix.h,v 1.1.1.1 2005-06-08 07:08:07 fspindle Exp $
+ *  $Id: vpTwistMatrix.h,v 1.2 2006-02-10 14:17:45 fspindle Exp $
  *
  * Description
  * ============
@@ -23,6 +23,7 @@
 #define vpTWISTMATRIX_HH
 
 #include <visp/vpMatrix.h>
+#include <visp/vpColVector.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpRotationMatrix.h>
 
@@ -45,6 +46,8 @@ public:
     vpTwistMatrix(const vpHomogeneousMatrix &M) ;
 
     vpTwistMatrix operator*(const vpTwistMatrix &mat) const ;
+
+    vpColVector operator*(const vpColVector &v) const ;
 
     //! Construction from Translation and rotation (ThetaU parameterization)
     vpTwistMatrix(const vpTranslationVector &T, const vpThetaUVector &R) ;
