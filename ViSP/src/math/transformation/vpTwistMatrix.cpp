@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTwistMatrix.cpp,v 1.2 2005-06-28 13:25:13 marchand Exp $
+ *  $Id: vpTwistMatrix.cpp,v 1.3 2006-02-10 14:17:45 fspindle Exp $
  *
  * Description
  * ============
@@ -140,6 +140,15 @@ vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &T,
   buildFrom(T,R) ;
 }
 
+//! Construction from Translation and rotation (matrix parameterization)
+vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &T,
+			     const vpRotationMatrix &R)
+{
+  init() ;
+  buildFrom(T,R) ;
+}
+
+
 vpTwistMatrix::vpTwistMatrix(const double Rx,
 			     const double Ry,
 			     const double Rz,
@@ -179,6 +188,37 @@ vpTwistMatrix::operator*(const vpTwistMatrix &mat) const
       p[i][j] = s ;
     }
   return p;
+}
+
+/*!
+  operation c = A * v (A is unchanged, c and b are 6 dimension vectors )
+
+  \exception vpMatrixException::incorrectMatrixSizeError if v is not a 6
+  dimension vector.
+
+*/
+vpColVector
+vpTwistMatrix::operator*(const vpColVector &v) const
+{
+  vpColVector c(6);
+
+  if (6 != v.getRows())
+  {
+    ERROR_TRACE("vpTwistMatrix mismatch in vpTwistMatrix/vector multiply") ;
+    throw(vpMatrixException::incorrectMatrixSizeError) ;
+  }
+
+  c = 0.0;
+
+  for (int i=0;i<6;i++) {
+    for (int j=0;j<6;j++) {
+      {
+ 	c[i]+=rowPtrs[i][j] * v[j];
+      }
+    }
+  }
+
+  return c ;
 }
 
 
