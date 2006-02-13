@@ -1,17 +1,16 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet LAGADIC / IRISA, 2004
+ * Copyright Projet LAGADIC / IRISA, 2006
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:      vpAfma.cc
- * Author:    Nicolas Mansard
- * From: Classe CServoAfma6 de ViSP1, d'Eric Marchand
+ * File:      vpPtu46.cpp
+ * Author:    Fabien Spindler
  *
  * Version control
  * ===============
  *
  *
  *
- *  $Id: vpPtu46.cpp,v 1.3 2006-01-25 17:30:33 fspindle Exp $
+ *  $Id: vpPtu46.cpp,v 1.4 2006-02-13 09:27:54 fspindle Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

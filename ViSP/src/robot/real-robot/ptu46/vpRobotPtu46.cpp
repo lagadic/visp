@@ -1,15 +1,15 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA, 2004
+ * Copyright Projet Lagadic / IRISA, 2006
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
  * File:      vpRobotPtu46.cpp
  * Project:   Visp2
- * Author:    Nicolas Mansard
+ * Author:    Fabien Spindler
  *
  * Version control
  * ===============
  *
- *  $Id: vpRobotPtu46.cpp,v 1.1 2006-01-13 18:15:21 fspindle Exp $
+ *  $Id: vpRobotPtu46.cpp,v 1.2 2006-02-13 09:27:54 fspindle Exp $
  *
  * Description
  * ============
