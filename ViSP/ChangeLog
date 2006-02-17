@@ -1,10 +1,15 @@
 ViSP 2.1.2 (Modification since ViSP 2.1.1)
+  - Installation
+	- Standardization of makefile targets (clean, distclean, install,
+	  uninstall). Take into account configure --prefix option in
+	  installation process
   - Shared Library
 	- add compilation rules for the creation of lib/libvisp-2.so
   - New Feature
 	- add control for Directed Perception ptu-46 pan-tilt turret
   - Bug fix and improvement
 	- vp1394Grabber settings (format, mode, framerate, shutter, gain)
+	- vpDot (Moment computation)
 ----------------------------------------------	
 ViSP 2.1.1 (released January, 6th 2006)
    - New examples 
