@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.h,v 1.5 2006-02-03 17:00:53 fspindle Exp $
+ *  $Id: vpDot.h,v 1.6 2006-02-17 12:50:18 fspindle Exp $
  *
  * Description
  * ============
@@ -73,27 +73,27 @@ private:
 public :
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		x_h^i y_h^i \f$, \f$ m_{00} \f$ is a zero order moment obtained
+		u_h^i v_h^i \f$, \f$ m_{00} \f$ is a zero order moment obtained
 		with \f$i = j = 0 \f$. */
   double m01; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		x_h^i y_h^i \f$, \f$ m_{01} \f$ is a first order moment
+		u_h^i v_h^i \f$, \f$ m_{01} \f$ is a first order moment
 		obtained with \f$i = 0 \f$ and \f$ j = 1 \f$. */
   double m10; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		x_h^i y_h^i \f$, \f$ m_{10} \f$ is a first order moment
+		u_h^i v_h^i \f$, \f$ m_{10} \f$ is a first order moment
 		obtained with \f$i = 1 \f$ and \f$ j = 0 \f$. */
   double m11; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		x_h^i y_h^i \f$, \f$ m_{11} \f$ is a first order moment
+		u_h^i v_h^i \f$, \f$ m_{11} \f$ is a first order moment
 		obtained with \f$i = 1 \f$ and \f$ j = 1 \f$. */
   double m20; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		x_h^i y_h^i \f$, \f$ m_{20} \f$ is a second order moment
+		u_h^i v_h^i \f$, \f$ m_{20} \f$ is a second order moment
 		obtained with \f$i = 2 \f$ and \f$ j = 0 \f$. */
   double m02; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		x_h^i y_h^i \f$, \f$ m_{02} \f$ is a second order moment
+		u_h^i v_h^i \f$, \f$ m_{02} \f$ is a second order moment
 		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$. */
 public:
   void init() ;
