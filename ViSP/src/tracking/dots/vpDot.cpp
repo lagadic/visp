@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.9 2006-02-03 17:00:53 fspindle Exp $
+ *  $Id: vpDot.cpp,v 1.10 2006-02-17 12:50:18 fspindle Exp $
  *
  * Description
  * ============
@@ -193,11 +193,11 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
     if (compute_moment==true)
     {
       m00++ ;
-      m10 += v ;
-      m01 += u ;
+      m10 += u ;
+      m01 += v ;
       m11 += (u*v) ;
-      m20 += v*v ;
-      m02 += u*u ;
+      m20 += u*u ;
+      m02 += v*v ;
     }
     I[v][u] = 0 ;
   }
