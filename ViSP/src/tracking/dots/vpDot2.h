@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.h,v 1.6 2006-02-17 12:50:18 fspindle Exp $
+ *  $Id: vpDot2.h,v 1.7 2006-02-20 15:29:18 fspindle Exp $
  *
  * Description
  * ============
@@ -57,7 +57,7 @@ public:
   virtual int getOutLevel() const;
   double getAccuracy() const;
 
-  /*!
+   /*!
     Activates the display of the border of the dot during the tracking.
 
     \param activate If true, the border of the dot will be painted. false to
@@ -71,6 +71,12 @@ public:
 
     \param activate true, if you want to compute the moments. If false, moments
     are not computed.
+
+    Computed moment are vpDot::m00, vpDot::m10, vpDot::m01, vpDot::m11,
+    vpDot::m20, vpDot::m02.
+
+    The coordinates of the region's centroid (u, v) can be computed from the
+    moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.
 
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
@@ -121,27 +127,45 @@ public :
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^i \f$, \f$ m_{00} \f$ is a zero order moment obtained
-		with \f$i = j = 0 \f$. */
+		with \f$i = j = 0 \f$.
+
+		\sa setComputeMoments()
+	      */
   double m01; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^i \f$, \f$ m_{01} \f$ is a first order moment
-		obtained with \f$i = 0 \f$ and \f$ j = 1 \f$. */
+		obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
+
+		\sa setComputeMoments()
+	      */
   double m10; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^i \f$, \f$ m_{10} \f$ is a first order moment
-		obtained with \f$i = 1 \f$ and \f$ j = 0 \f$. */
+		obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
+
+		\sa setComputeMoments()
+	      */
   double m11; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^i \f$, \f$ m_{11} \f$ is a first order moment
-		obtained with \f$i = 1 \f$ and \f$ j = 1 \f$. */
+		obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
+
+		\sa setComputeMoments()
+	      */
   double m20; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^i \f$, \f$ m_{20} \f$ is a second order moment
-		obtained with \f$i = 2 \f$ and \f$ j = 0 \f$. */
+		obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
+
+		\sa setComputeMoments()
+	      */
   double m02; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^i \f$, \f$ m_{02} \f$ is a second order moment
-		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$. */
+		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
+
+		\sa setComputeMoments()
+	      */
 
 protected:
   vpList<int> getList_directions() ;
