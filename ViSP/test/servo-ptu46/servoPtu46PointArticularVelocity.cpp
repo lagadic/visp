@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.3 2006-01-25 11:24:11 fspindle Exp $
+ *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.4 2006-02-21 12:55:29 fspindle Exp $
  *
  * Description
  * ============
@@ -26,17 +26,21 @@
   \example servoPtu46PointArticularVelocity.cpp
 
   Example of eye-in-hand control law. We control here a real robot, the ptu-46
-  robot (pan-tilt turret provided by Directed Perception). The velocity is
+  robot (pan-tilt head provided by Directed Perception). The velocity is
   computed in articular. The visual feature is the center of gravity of a
   point.
 
 */
 
+#include <unistd.h>
+#include <pthread.h>
+#include <signal.h>
+#include <error.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#ifdef HAVE_ROBOT_PTUEVI
+#if (defined(HAVE_ROBOT_PTUEVI) & defined (HAVE_LIBDC1394_CONTROL) & defined(HAVE_LIBRAW1394) )
 #include <visp/vp1394Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
@@ -58,9 +62,6 @@
 
 #include <visp/vpDot2.h>
 
-#include <pthread.h>
-#include <signal.h>
-#include <error.h>
 
 pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;
 
@@ -133,7 +134,7 @@ main()
     int x,y;
     vpDisplay::getClick( I,y,x );
     dot.set_u( x ) ;
-    dot.set_v( y ) ; 
+    dot.set_v( y ) ;
     DEBUG_TRACE(25,"Click!");
     //dot.initTracking(I) ;
     dot.track(I);
@@ -237,6 +238,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
+  ERROR_TRACE("You don't have a ptu-46 head connected to your computer ",
+	      "or 1394 framegrabbing capabilities...");
 }
 #endif
