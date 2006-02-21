@@ -1012,7 +1012,8 @@ PREDEFINED             = \
 		       HAVE_ROBOT_AFMA4 \
 		       HAVE_ROBOT_AFMA6 \
 		       HAVE_ROBOT_PTUEVI \
-		       HAVE_ROBOT_VIC2500
+		       HAVE_ROBOT_VIC2500 \
+		       HAVE_ROBOT_BICLOPS_PT
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
