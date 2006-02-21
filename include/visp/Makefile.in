@@ -19,7 +19,8 @@ MATH	=  \
 	vpScale.h \
 	vpRobust.h \
 	vpRansac.h \
-	vpRansac.t.cpp
+	vpRansac.t.cpp \
+	vpExponentialMap.h
 
 VISUALFEATURE =  \
 	vpFeatureException.h  \
@@ -62,6 +63,10 @@ ROBOT = \
 	\
 	vpPtu46.h \
 	vpRobotPtu46.h \
+	\
+	vpBiclops.h \
+	vpRobotBiclops.h \
+	vpRobotBiclopsController.h \
 	\
 	vpRobotCamera.h
 
