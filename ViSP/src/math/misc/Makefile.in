@@ -4,7 +4,7 @@ LIB		= $(VISP_LIB_PATH)/lib@VISP_LIBNAME@.a
 
 
 SOURCES		= \
-	vpMath.cpp vpNoise.cpp
+	vpMath.cpp vpNoise.cpp vpExponentialMap.cpp
 
 .KEEP_STATE	:
 .PRECIOUS	: $(LIB)
