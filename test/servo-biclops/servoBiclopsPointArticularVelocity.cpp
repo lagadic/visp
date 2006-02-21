@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.1 2006-02-21 11:17:04 fspindle Exp $
+ *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.2 2006-02-21 15:34:45 fspindle Exp $
  *
  * Description
  * ============
@@ -52,15 +52,14 @@
 #include <visp/vpPoint.h>
 #include <visp/vpServo.h>
 #include <visp/vpFeatureBuilder.h>
-
 #include <visp/vpRobotBiclops.h>
+#include <visp/vpIoTools.h>
+#include <visp/vpServoDisplay.h>
+#include <visp/vpDot2.h>
 
 // Exception
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
-#include <visp/vpServoDisplay.h>
-
-#include <visp/vpDot2.h>
 
 
 pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;
@@ -88,6 +87,27 @@ main()
 
   pthread_mutex_lock( &mutexEndLoop );
   signal( SIGINT,&signalCtrC );
+
+  // Get the user login name
+  char *user;
+  user = getlogin();
+
+  // Set debug directory to /tmp/$user
+  char *debugdir = new char[FILENAME_MAX];
+  sprintf(debugdir, "/tmp/%s", user);
+
+  // If the debug dir don't exist, create it
+  try {
+    vpIoTools::checkDirectory(debugdir);
+  }
+  catch (...) {
+    vpIoTools::makeDirectory(debugdir);
+  }
+
+  // Create the debub file: /tmp/$user/biclops.txt
+  char *filename = new char[FILENAME_MAX];
+  sprintf(filename, "%s/biclops.txt", debugdir);
+  FILE *fd = fopen(filename, "w");
 
   vpRobotBiclops robot ;
   {
@@ -130,13 +150,9 @@ main()
   vpDot2 dot ;
 
   try{
-    ERROR_TRACE("start dot.initTracking(I) ") ;
-    int x,y;
-    vpDisplay::getClick( I,y,x );
-    dot.set_u( x ) ;
-    dot.set_v( y ) ;
-    DEBUG_TRACE(25,"Click!");
-    //dot.initTracking(I) ;
+    cout << "Click on a dot to initialize the tracking..." << endl;
+    dot.setGraphics(true);
+    dot.initTracking(I) ;
     dot.track(I);
     ERROR_TRACE("after dot.initTracking(I) ") ;
   }
@@ -173,6 +189,7 @@ main()
   cout << cVe <<endl ;
   task.set_cVe(cVe) ;
 
+  cout << "Click in the image to start the servoing..." << endl;
   vpDisplay::getClick(I) ;
   TRACE("Set the Jacobian (expressed in the end-effector frame)") ;
   vpMatrix eJe ;
@@ -225,12 +242,26 @@ main()
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
     TRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    {
+      vpColVector s_minus_sStar(2);
+      s_minus_sStar = task.s - task.sStar;
+      fprintf(fd, "%f %f %f %f %f\n", 
+	      v[0], v[1],
+	      s_minus_sStar[0], s_minus_sStar[1], 
+	      task.error.sumSquare());
+    }
   }
 
   TRACE("Display task information " ) ;
   task.print() ;
 
+  delete [] debugdir;
+  delete [] filename;
+
+  fclose(fd);
+
   } catch (...) { ERROR_TRACE("Trow uncatched..."); }
+
 }
 
 
