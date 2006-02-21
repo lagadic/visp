@@ -10,7 +10,7 @@
  *
  *
  *
- *  $Id: vpPtu46.cpp,v 1.4 2006-02-13 09:27:54 fspindle Exp $
+ *  $Id: vpPtu46.cpp,v 1.5 2006-02-21 11:14:43 fspindle Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -19,16 +19,13 @@
 
 
 /* ----------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------ */
+/* --- INCLUDE ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
 
-//#include "vpRobotError.h"       /* Classe d'erreur de la lib robot.        */
-#include <visp/vpPtu46.h>      /* Header definissant la classe.           */
-
-#include <visp/vpDebug.h>     /* Macros de trace et debugage.            */
-
-#include <visp/vpRobotException.h>/* Classe d'erreur de la lib robot.     */
+#include <visp/vpPtu46.h>
+#include <visp/vpDebug.h>
+#include <visp/vpRobotException.h>
 
 
 /* Inclusion des fichiers standards.		*/
@@ -42,21 +39,26 @@
 /* ------------------------------------------------------------------------ */
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
-const int   vpPtu46::articulationsNb = 2;
-const float vpPtu46::L               = 0.0765;
-const float vpPtu46::h               = 0.068;
-const float vpPtu46::l2              = 0.0;
+const int   vpPtu46::ndof = 2; /*<! Pan and tilt are considered. */
+const float vpPtu46::L    = 0.0765; /*! Horizontal offset along the last joint,
+				      from last joint to camera frame. */
+const float vpPtu46::h    = 0.068; /*<! Vertical offset from last joint to
+				     camera frame. */
 
 
 /*!
   Compute the direct geometric model of the camera: fMc
- */
-void vpPtu46::
-computeMGD (const vpColVector & q,
-	    vpHomogeneousMatrix & fMc)
-{
-  DEBUG_TRACE (3, "# Entree.");
 
+  \param q : Articular position for pan and tilt axis.
+
+  \param fMc : Homogeneous matrix corresponding to the direct geometric model
+  of the camera. Discribes the transformation between the robot reference frame
+  (called fixed) and the camera frame.
+
+*/
+void
+vpPtu46::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
+{
   if (q.getRows() != 2) {
     ERROR_TRACE("Bad dimension for ptu-46 articular vector");
     throw;
@@ -73,17 +75,17 @@ computeMGD (const vpColVector & q,
   fMc[0][0] = s1;
   fMc[0][1] = c1*s2;
   fMc[0][2] = c1*c2;
-  fMc[0][3] = -h*c1*s2 - L*s1 + l2*c1*c2;
+  fMc[0][3] = -h*c1*s2 - L*s1;
 
   fMc[1][0] = -c1;
   fMc[1][1] = s1*s2;
   fMc[1][2] = s1*c2;
-  fMc[1][3] = -h*s1*s2 + L*c1 + l2*s1*c2;
+  fMc[1][3] = -h*s1*s2 + L*c1;
 
   fMc[2][0] = 0;
   fMc[2][1] = -c2;
   fMc[2][2] = s2;
-  fMc[2][3] = h*c2 + l2*s2;
+  fMc[2][3] = h*c2;
 
   fMc[3][0] = 0;
   fMc[3][1] = 0;
@@ -92,94 +94,62 @@ computeMGD (const vpColVector & q,
 
   CDEBUG (6) << "Position de la camera: " << endl << fMc;
 
-  DEBUG_TRACE (3, "# Sortie.");
   return ;
 }
 
+/*!
+  Return the direct geometric model of the camera: fMc
 
+  \param q : Articular position for pan and tilt axis.
 
+  \return fMc, the homogeneous matrix corresponding to the direct geometric
+  model of the camera. Discribes the transformation between the robot reference
+  frame (called fixed) and the camera frame.
 
-/* ------------------------------------------------------------------------ */
-/* --- AUTRES METHODES ---------------------------------------------------- */
-/* ---------------------------------------------------------------------- */
-
-
-
-/* Calcul le MGD.
- * Calcul le MGD du robot a partir de la position articulaire <q>
- * donnee en argument. Cree une matrice de taille 6x6 et y place le resultat.
- * INPUT:
- *   - q : vecteur articulaire.
- * OUTPUT:
- *   - matrice homogene representant les changementsde repere
- * pour passer du repere fixe du robot au repere camera.
- */
-
-vpHomogeneousMatrix vpPtu46::
-computeMGD (const vpColVector & q)
+*/
+vpHomogeneousMatrix
+vpPtu46::computeMGD (const vpColVector & q)
 {
-  DEBUG_TRACE (6, "# Entree.");
-
-  DEBUG_TRACE (9, "Creation de la matrice resultat.");
   vpHomogeneousMatrix fMc;
 
-  DEBUG_TRACE (9, "Appel du calcul de fMc.");
   computeMGD (q, fMc);
 
-  DEBUG_TRACE (6, "# Sortie.");
   return fMc;
 }
 
+/*!
+  Compute the direct geometric model of the camera in terms of pose vector.
 
-/* Calcul le MGD du robot sous forme d'un vecteur.
- * Calcul le MGD du robot a partir de la position articulaire <q>
- * donnee en argument. Le resultat est sous forme d'une matrice
- * homogene. On traduit alors sous forme vectoriel de dimension 6.
- * INPUT:
- *   - q         : vecteur articulaire.
- * OUTPUT:
- *   -  r  : torseur camera calcule a partir de la matrice
- * homogene correspondant au MGD.
- */
-void vpPtu46::
-computeMGD (const vpColVector & q,
-	    vpPoseVector & r)
+  \param q : Articular position for pan and tilt axis.
+
+  \param r : Pose vector corresponding to the transformation between the robot
+  reference frame (called fixed) and the camera frame.
+
+*/
+void
+vpPtu46::computeMGD (const vpColVector & q, vpPoseVector & r)
 {
-  DEBUG_TRACE (6, "# Entree.");
-
-  DEBUG_TRACE (9, "Creation de la matrice resultat.");
   vpHomogeneousMatrix fMc;
 
-  DEBUG_TRACE (9, "Appel du calcul de oMc.");
   computeMGD (q, fMc);
-  CDEBUG (15) << "fMc: " << endl << fMc;
-
-  DEBUG_TRACE (9, "Conversion du cMf en vecteur.");
   r.buildFrom(fMc.inverse());
 
-  DEBUG_TRACE (6, "# Sortie.");
   return ;
 }
 
 
 
-
-/* -------------------------------------------------------------------- */
-/* --- COMPUTE ----------------------------------------------------------- */
-/* ----------------------------------------------------------------------- */
-
-
 /* ---------------------------------------------------------------------- */
-/* --- CONSTRUCTEUR ------------------------------------------------------ */
-/* ----------------------------------------------------------------------- */
+/* --- CONSTRUCTOR ------------------------------------------------------ */
+/* ---------------------------------------------------------------------- */
 
-/* Constructeur vide. */
-vpPtu46::
-vpPtu46 (void)
+/*!
 
-  /* Tous les autres attributs sont initialises dans l'init. */
+  Default construtor. Call init().
+
+*/
+vpPtu46::vpPtu46 (void)
 {
-  DEBUG_TRACE (25, "# Entree - Sortie.");
   init();
 }
 /* ---------------------------------------------------------------------- */
@@ -187,12 +157,13 @@ vpPtu46 (void)
 /* ---------------------------------------------------------------------- */
 
 
+/*!
+  Initialization. Here nothing to do.
 
-void vpPtu46::
-init ()
+*/
+void
+vpPtu46::init ()
 {
-  DEBUG_TRACE (15, "Objet initialise !");
-
   return ;
 }
 
@@ -200,10 +171,6 @@ init ()
 /* ----------------------------------------------------------------------- */
 /* --- DISPLAY ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
-
-
-
-
 
 ostream & operator << (ostream & os,
 		       const vpPtu46 & constant)
@@ -214,15 +181,22 @@ ostream & operator << (ostream & os,
     << "L: "
     << "\t" << vpPtu46::L << endl
     << "h: "
-    << "\t" << vpPtu46::h
-    << "l2: "
-    << "\t" << vpPtu46::l2
-    << "\t" << endl;
+    << "\t" << vpPtu46::h << endl;
 
   return os;
 }
 
 
+/*!
+
+  Get the twist matrix corresponding to the transformation between the
+  camera frame and the end effector frame. The end effector frame is located on
+  the tilt axis.
+
+  \param cVe : Twist transformation between camera and end effector frame to
+  expess a velocity skew from end effector frame in camera frame.
+
+*/
 void
 vpPtu46::get_cVe(vpTwistMatrix &cVe)
 {
@@ -232,6 +206,15 @@ vpPtu46::get_cVe(vpTwistMatrix &cVe)
   cVe.buildFrom(cMe) ;
 }
 
+/*!
+
+  Get the homogeneous matrix corresponding to the transformation between the
+  camera frame and the end effector frame. The end effector frame is located on
+  the tilt axis.
+
+  \param cMe :  Homogeneous matrix between camera and end effector frame.
+
+*/
 void
 vpPtu46::get_cMe(vpHomogeneousMatrix &cMe)
 {
@@ -250,7 +233,7 @@ vpPtu46::get_cMe(vpHomogeneousMatrix &cMe)
   eMc[2][0] = 0;
   eMc[2][1] = 0;
   eMc[2][2] = 1;
-  eMc[2][3] = l2;
+  eMc[2][3] = 0;
 
   eMc[3][0] = 0;
   eMc[3][1] = 0;
@@ -261,9 +244,15 @@ vpPtu46::get_cMe(vpHomogeneousMatrix &cMe)
 }
 
 /*!
-  \brief get the robot Jacobian expressed in the end-effector frame
+  Get the robot jacobian expressed in the end-effector frame.
 
-  \warning Re is not the embedded camera  frame (see also get_cMe)
+  \warning Re is not the embedded camera frame. It corresponds to the frame
+  associated to the tilt axis (see also get_cMe).
+
+  \param q : Articular position for pan and tilt axis.
+
+  \param eJe : Jacobian between end effector frame and end effector frame (on
+  tilt axis).
 
 */
 void
@@ -288,11 +277,16 @@ vpPtu46::get_eJe(const vpColVector &q, vpMatrix &eJe)
   eJe[5][0] = s2;
 
 }
-/*!
-  \brief get the robot Jacobian expressed in the robot reference frame
-  \exception vpRobotException (vpRobotException::ERRNotImplemented)
-*/
 
+/*!
+  Get the robot jacobian expressed in the robot reference frame
+
+  \param q : Articular position for pan and tilt axis.
+
+  \param fJe : Jacobian between reference frame (or fix frame) and end effector
+  frame (on tilt axis).
+
+*/
 void
 vpPtu46::get_fJe(const vpColVector &q, vpMatrix &fJe)
 {
