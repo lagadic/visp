@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotBiclops.cpp,v 1.1 2006-02-21 11:16:11 fspindle Exp $
+ *  $Id: vpRobotBiclops.cpp,v 1.2 2006-02-21 14:05:09 fspindle Exp $
  *
  * Description
  * ============
@@ -18,6 +18,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 #include <signal.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <visp/vpConfig.h>
 
