@@ -1,0 +1,18 @@
+@build_mk@
+
+
+SOURCES		=\
+	moveBiclops.cpp servoBiclopsPointArticularVelocity.cpp
+
+
+PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
+
+all install: directory $(PROGS)
+
+@directory_mk@
+
+@bin_mk@
+
+@clean_mk@
+
+@depend_mk@
