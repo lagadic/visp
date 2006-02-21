@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotCamera.cpp,v 1.4 2006-01-13 18:35:50 fspindle Exp $
+ *  $Id: vpRobotCamera.cpp,v 1.5 2006-02-21 11:12:59 fspindle Exp $
  *
  * Description
  * ============
@@ -30,6 +30,7 @@
 #include <visp/vpRobotCamera.h>
 #include <visp/vpRobotException.h>
 #include <visp/vpDebug.h>
+#include <visp/vpExponentialMap.h>
 
 //! basic initialization
 void vpRobotCamera::init()
@@ -90,14 +91,14 @@ sendArticularVelocity
 void
 vpRobotCamera::setCameraVelocity(const vpColVector &v)
 {
-  cMo = expMap(v).inverse()*cMo ;
+  cMo = vpExponentialMap::direct(v).inverse()*cMo ;
 }
 
 //! send to the controller a velocity expressed in the articular frame
 void
 vpRobotCamera::setArticularVelocity(const vpColVector &qdot)
 {
-  cMo = expMap(qdot).inverse()*cMo ;
+  cMo = vpExponentialMap::direct(qdot).inverse()*cMo ;
 }
 
 //! send to the controller a velocity (frame as to ve specified)
