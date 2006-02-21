@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpPtu46.h,v 1.2 2006-01-25 17:30:33 fspindle Exp $
+ *  $Id: vpPtu46.h,v 1.3 2006-02-21 11:14:43 fspindle Exp $
  *
  * Description
  * ============
@@ -32,7 +32,7 @@
 /* --------------------------------------------------------------------- */
 
 /* --- GENERAL --- */
-#include <iostream>                /* Definition class ostream.               */
+#include <iostream>
 
 /* --- ViSP --- */
 #include <visp/vpMatrix.h>
@@ -44,61 +44,46 @@
 #include <visp/vpTranslationVector.h>
 #include <visp/vpTwistMatrix.h>
 
+/*!
 
-/* ----------------------------------------------------------------------- */
-/* --- CLASSE ------------------------------------------------------------ */
-/* ----------------------------------------------------------------------- */
+  \brief Jacobian, geometric model functionnalities... for ptu46, pan, tilt
+  head from Directed Perception.
 
-/** \brief Lecture du fichiers de config du robot Afma6 et fonctionnalites en
- * decoulant (calcul du jacobien, du MGD, ...).
- *
- */
+  See http://www.DPerception.com for more details.
+
+*/
+
 
 class vpPtu46
 {
 
-public: /* Constantes */
+public: /* Constants */
 
   /** Nombre d'articulations du robot. */
-  static const int   articulationsNb;
+  static const int   ndof;  /*!< Number of dof */
 
   /** Geometric model */
   static const float L;
   static const float h;
-  static const float l2;
 
 
 public: /* Methodes publiques */
 
-  /** \brief Constructeur vide. */
   vpPtu46 (void);
+  void init (void);
 
-
-  /** \brief Initialisation a l'aide du fichier par default.    */
-  void                        init (void);
-
-  /** \brief Affichage.
-   *
-   * Affichage de tous les champs de la classe en mode texte.
-   */
-  friend ostream & operator << (ostream & os,
-				const vpPtu46 & constant);
-
-
-public:
-
-  //! \brief Calcul le MGD du robot.
   void  computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc);
 
-  //! \brief Calcul le MGD.
-  vpHomogeneousMatrix          computeMGD (const vpColVector & q);
-  //! \brief Calcul le MGD du robot sous forme d'un vecteur.
+  vpHomogeneousMatrix computeMGD (const vpColVector & q);
   void  computeMGD (const vpColVector & q,  vpPoseVector & r);
 
   void get_cMe(vpHomogeneousMatrix &_cMe) ;
   void get_cVe(vpTwistMatrix &_cVe) ;
   void get_eJe(const vpColVector &q, vpMatrix &eJe);
   void get_fJe(const vpColVector &q, vpMatrix &fJe);
+
+  friend ostream & operator << (ostream & os,
+				const vpPtu46 & constant);
 };
 
 

@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotPtu46.cpp,v 1.2 2006-02-13 09:27:54 fspindle Exp $
+ *  $Id: vpRobotPtu46.cpp,v 1.3 2006-02-21 11:14:43 fspindle Exp $
  *
  * Description
  * ============
@@ -20,11 +20,10 @@
 #ifdef HAVE_ROBOT_PTUEVI
 
 /* Headers des fonctions implementees. */
-#include <visp/vpPtu46.h>           /* Header de la classe.          */
-#include <visp/vpRobotPtu46.h>           /* Header de la classe.          */
-#include <visp/vpRobotException.h>/* Erreurs lancees par les classes CRobot. */
-
-#include <visp/vpDebug.h>           /* Macros de trace et debug.  */
+#include <visp/vpPtu46.h>
+#include <visp/vpRobotPtu46.h>
+#include <visp/vpRobotException.h>
+#include <visp/vpDebug.h>
 
 
 #include <signal.h>
@@ -34,20 +33,29 @@
 /* ------------------------------------------------------------------------ */
 
 bool vpRobotPtu46::robotAlreadyCreated = false;
-const double       vpRobotPtu46::defaultPositioningVelocity = 10.0;
-const int          vpRobotPtu46::nbArticulations = 2;
+const double vpRobotPtu46::defaultPositioningVelocity = 10.0;
 
 /* ----------------------------------------------------------------------- */
 /* --- CONSTRUCTOR ------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
 
-/*! constructor
- */
-vpRobotPtu46::vpRobotPtu46 (void)
+/*!
+
+  Default constructor.
+
+  Initialize the ptu-46 pan, tilt head by opening the serial port.
+
+  \sa init()
+
+*/
+vpRobotPtu46::vpRobotPtu46 (const char *device)
   :
   vpRobot ()
 {
+  device = new char [FILENAME_MAX];
+
+  sprintf(this->device, "%s", device);
 
   DEBUG_TRACE (12, "Open communication with Ptu-46.");
   init();
@@ -65,39 +73,16 @@ vpRobotPtu46::vpRobotPtu46 (void)
   return ;
 }
 
-
-
-/* -------------------------------------------------------------------------- */
-/* --- INITIALISATION ------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-/* Initialise les connexions avec la carte VME et demare le robot.
- * ERROR:
- *   - ERRConstruction si une erreur survient lors de l'ouverture du VME.
- *   - ERRCommunication si une erreur survient lors de l'initialisation de
- * l'afma4.
- */
-void
-vpRobotPtu46::init (void)
-{
-
-  DEBUG_TRACE (12, "Open connection Ptu-46.");
-  if (0 != ptu.init("/dev/ttyS0") )
-  {
-    ERROR_TRACE ("Cannot open connexion with ptu-46.");
-    throw vpRobotException (vpRobotException::constructionError,
-			    "Cannot open connexion with ptu-46");
-  }
-
-  return ;
-}
-
-
 /* ------------------------------------------------------------------------ */
-/* --- DESTRUCTEUR -------------------------------------------------------- */
+/* --- DESTRUCTOR  -------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-//! destructor
+/*!
+
+  Destructor.
+  Close the serial connection with the head.
+
+*/
 vpRobotPtu46::~vpRobotPtu46 (void)
 {
 
@@ -110,33 +95,48 @@ vpRobotPtu46::~vpRobotPtu46 (void)
 
   vpRobotPtu46::robotAlreadyCreated = false;
 
+  delete [] device;
+
   return;
 }
 
 
+/* -------------------------------------------------------------------------- */
+/* --- INITIALISATION ------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+/*!
+
+  Open the serial port.
+
+  \param device : Serial port.
+
+  \exception vpRobotException::constructionError If the device cannot be
+  oppened.
+
+*/
+void
+vpRobotPtu46::init ()
+{
+
+  DEBUG_TRACE (12, "Open connection Ptu-46.");
+  if (0 != ptu.init(device) )
+  {
+    ERROR_TRACE ("Cannot open connexion with ptu-46.");
+    throw vpRobotException (vpRobotException::constructionError,
+			    "Cannot open connexion with ptu-46");
+  }
+
+  return ;
+}
 
 
-/* Demarage du robot.
- * Change l'etat du robot, pour le placer en position arret, vitesse ou
- * position.
- * Les effets de bord sont:
- *   - si le robot est en arret, le changement est realise ssi le robot
- * est sous tension. Aucun effet de bord.
- *   - si le robot est en commande en position, le passage en arret stop
- * le robot a la position courrante, sans attendre la fin du deplacement.
- *   - si le robot est en commande en position, le passage en commande en
- * vitesse est impossible si le robot est en mouvement vers une nouvelle
- * position. Dans ce cas, une erreur ERRChangementEtat est lancee.
- *   - si le robot est en commande en vitesse, vitesse non nulle, un
- * changement d'etat arrete le robot (vitesse=0) a la position courrante.
- * INPUT:
- *   - newState: etat du robot apres l'appel a la fonction si aucune
- * erreur n'a ete lancee.
- * OUTPUT:
- *   - Retourne le precedent etat du robot.
- * ERROR:
- *   - ERRChangementEtat si le changement demande n'est pas possible.
- */
+/*!
+
+  Change the state of the robot either to stop them, or to set position or
+  speed control.
+
+*/
 vpRobot::RobotStateType
 vpRobotPtu46::setRobotState(vpRobot::RobotStateType newState)
 {
@@ -179,15 +179,11 @@ vpRobotPtu46::setRobotState(vpRobot::RobotStateType newState)
   return vpRobot::setRobotState (newState);
 }
 
+/*!
 
-/* ------------------------------------------------------------------------ */
-/* --- ARRET -------------------------------------------------------------- */
-/* ------------------------------------------------------------------------ */
+  Halt all the axis.
 
-/* Arret du robot.
- * Envoye une commande pour arreter le robot a sa position actuelle, et
- * place l'objet en etat ETAT_ROBOT_ARRET.
- */
+*/
 void
 vpRobotPtu46::stopMotion(void)
 {
@@ -196,6 +192,16 @@ vpRobotPtu46::stopMotion(void)
 }
 
 
+/*!
+
+  Get the twist matrix corresponding to the transformation between the
+  camera frame and the end effector frame. The end effector frame is located on
+  the tilt axis.
+
+  \param cVe : Twist transformation between camera and end effector frame to
+  expess a velocity skew from end effector frame in camera frame.
+
+*/
 void
 vpRobotPtu46::get_cVe(vpTwistMatrix &cVe)
 {
@@ -205,14 +211,31 @@ vpRobotPtu46::get_cVe(vpTwistMatrix &cVe)
   cVe.buildFrom(cMe) ;
 }
 
+/*!
+
+  Get the homogeneous matrix corresponding to the transformation between the
+  camera frame and the end effector frame. The end effector frame is located on
+  the tilt axis.
+
+  \param cMe :  Homogeneous matrix between camera and end effector frame.
+
+*/
 void
 vpRobotPtu46::get_cMe(vpHomogeneousMatrix &cMe)
 {
   vpPtu46::get_cMe(cMe) ;
 }
 
+/*!
+  Get the robot jacobian expressed in the end-effector frame.
 
-//! get the robot Jacobian expressed in the end-effector frame
+  \warning Re is not the embedded camera frame. It corresponds to the frame
+  associated to the tilt axis (see also get_cMe).
+
+  \param eJe : Jacobian between end effector frame and end effector frame (on
+  tilt axis).
+
+*/
 void
 vpRobotPtu46::get_eJe(vpMatrix &eJe)
 {
@@ -229,12 +252,14 @@ vpRobotPtu46::get_eJe(vpMatrix &eJe)
     throw ;
   }
 }
-/*!
-  \brief get the robot Jacobian expressed in the robot reference frame
-  \warning this functionality is not implemented ont he Afma4
-  \exception vpRobotException (vpRobotException::ERRNotImplemented)
-*/
 
+/*!
+  Get the robot jacobian expressed in the robot reference frame
+
+  \param fJe : Jacobian between reference frame (or fix frame) and end effector
+  frame (on tilt axis).
+
+*/
 void
 vpRobotPtu46::get_fJe(vpMatrix &fJe)
 {
@@ -253,10 +278,11 @@ vpRobotPtu46::get_fJe(vpMatrix &fJe)
 }
 
 
+/*!
 
-/*! Set the velocity for a positionning task
+  Set the velocity for a positionning task
 
-velocity in % of the maximum velocity between [0,100]
+  \param velocity : Velocity in % of the maximum velocity between [0,100].
 */
 void
 vpRobotPtu46::setPositioningVelocity (const double velocity)
@@ -264,7 +290,10 @@ vpRobotPtu46::setPositioningVelocity (const double velocity)
   positioningVelocity = velocity;
 }
 /*!
-  Set the velocity for a positionning task
+  Get the velocity in % for a positionning task.
+
+  \return Positionning velocity in [0, 100]
+
 */
 double
 vpRobotPtu46::getPositioningVelocity (void)
@@ -273,24 +302,25 @@ vpRobotPtu46::getPositioningVelocity (void)
 }
 
 
-/* Deplacement du robot en position.
- * Deplace le robot en position. Le robot se deplace jusqu'a avoir atteint
- * la position donnee en argument. La fonction est bloquante: elle rend la
- * main quand le deplacement est termine. Le robot doit etre dans l'etat
- * ETAT_ROBOT_COMMANDE_POSITION. Le repere de travail utilise est celui
- * donne par l'argument \a repere.
- * INPUT:
- *   - r: nouvelle position du robot apres l'appel a cette fonction.
- *   - repere: repere de travail utilise. Suel le repere articulaire
- *             est disponible
- * ATTENTION: Fonction bloquante.
- * ERROR:
- *   - ERRMauvaisEtatRobot si le robot n'est pas dans l'etat
- * ETAT_ROBOT_COMMANDE_POSITION.
- */
+/*!
+   Move the robot in position control.
+
+   \warning This method is blocking. That mean that it waits the end of the
+   positionning.
+
+   \param frame : Control frame. This head can only be controlled in
+   articular.
+
+   \param q : The position to set for each axis.
+
+   \exception vpRobotException::wrongStateError : If a not supported frame type
+   is given.
+
+*/
+
 void
 vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
-			   const vpColVector & r )
+			   const vpColVector & q )
 {
 
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState ())
@@ -305,21 +335,21 @@ vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
   case vpRobot::CAMERA_FRAME:
     ERROR_TRACE ("Cannot move the robot in camera frame: "
 		 "not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
+    throw vpRobotException (vpRobotException::wrongStateError,
 			    "Cannot move the robot in camera frame: "
 			    "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
     ERROR_TRACE ("Cannot move the robot in reference frame: "
 		 "not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
+    throw vpRobotException (vpRobotException::wrongStateError,
 			    "Cannot move the robot in reference frame: "
 			    "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     ERROR_TRACE ("Cannot move the robot in mixt frame: "
 		 "not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
+    throw vpRobotException (vpRobotException::wrongStateError,
 			    "Cannot move the robot in mixt frame: "
 			    "not implemented");
     break;
@@ -330,8 +360,8 @@ vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
   // Interface for the controller
   double artpos[2];
 
-  artpos[0] = r[0];
-  artpos[1] = r[1];
+  artpos[0] = q[0];
+  artpos[1] = q[1];
 
   if (0 != ptu.move(artpos, positioningVelocity, PTU_ABSOLUTE_MODE) )
   {
@@ -344,8 +374,25 @@ vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
 }
 
 
-void vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
-				const double q1, const double q2)
+/*!
+   Move the robot in position control.
+
+   \warning This method is blocking. That mean that it wait the end of the
+   positionning.
+
+   \param frame : Control frame. This head can only be controlled in
+   articular.
+
+   \param q1 : The pan position to set.
+   \param q2 : The tilt position to set.
+
+   \exception vpRobotException::wrongStateError : If a not supported frame type
+   is given.
+
+*/
+void
+vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
+			   const double &q1, const double &q2)
 {
   try{
     vpColVector q(2) ;
@@ -360,24 +407,47 @@ void vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
   }
 }
 
+/*!
 
-/* Recupere la position articulaire actuelle du robot.
- * Recupere la position actuelle du robot et place le resultat dans la
- * variable <r> donnee en argument. Le repere de travail dans lequel
- * est exprime le resultat est celui donne par l'argument \a repere.
- * OUTPUT:
- *   - r: reference dans laquelle est placee le resultat.
- * INPUT:
- *   - repere: repere de travail dans lequel est exprime le resultat.
- Seul le repere articulaire est disponible
+  Read the content of the position file and moves to head to articular
+  position.
 
- \warning Functionnality only available in articular frame, with
- the axis order: rotation arround the vertical axis, vertical
- translation, pan and tilt of the camera
+  \param filename : Position filename
+
+  \exception vpRobotException::readingParametersError : If the articular
+  position cannot be read from file.
+
+  \sa readPositionFile()
+
+*/
+void
+vpRobotPtu46::setPosition(const char *filename)
+{
+  vpColVector q ;
+  if (readPositionFile(filename, q) == false) {
+    ERROR_TRACE ("Cannot get ptu-46 position from file");
+    throw vpRobotException (vpRobotException::readingParametersError,
+			    "Cannot get ptu-46 position from file");
+  }
+  setPosition ( vpRobot::ARTICULAR_FRAME, q) ;
+}
+
+/*!
+
+  Return the position of each axis.
+
+  \param frame : Control frame. This head can only be controlled in
+  articular.
+
+  \param q : The position of the axis.
+
+  \exception vpRobotException::wrongStateError : If a not supported frame type
+  is given.
+
 */
 void
 vpRobotPtu46::getPosition (const vpRobot::ControlFrameType frame,
-			   vpColVector & r)
+			   vpColVector & q)
 {
   DEBUG_TRACE (9, "# Entree.");
 
@@ -416,39 +486,36 @@ vpRobotPtu46::getPosition (const vpRobot::ControlFrameType frame,
 			    "Error when calling  recup_posit_Afma4.");
   }
 
-  r.resize (vpRobotPtu46::nbArticulations);
+  q.resize (vpPtu46::ndof);
 
-  r[0] = artpos[0];
-  r[1] = artpos[1];
+  q[0] = artpos[0];
+  q[1] = artpos[1];
 }
 
 
-/* Envoye une commande en vitesse au robot.
- *
- * Envoye une commande en vitesse au robot, exprime dans le repere
- * donne par l'argument \a repere. Le robot doit etre dans l'etat
- * ETAT_ROBOT_COMMANDE_VITESSE.
- * INPUT:
- *   - r_dot: vitesse envoyee au robot (mm/s et rad/s).
- *   - repere: repere de travail dans lequel est exprime le resultat.
- * ERROR:
- *   - ERRMauvaisEtatRobot si le robot n'est pas dans l'etat
- * ETAT_ROBOT_COMMANDE_VITESSE.
+/*!
 
- \param frame Speed control frame type. Be aware, the REFERENCE_FRAME and
- MIXT_FRAME are not implemented
+  Send a velocity on each axis.
 
- \warning In CAMERA_FRAME, we control only the rx and ry camera velocities;
- r_dot dimension must be two: r_dot[0] correspond to rx, and r_dot[1] to ry
+  \param frame : Control frame. This head can only be controlled in articular
+  and camera frame. Be aware, the reference frame and the mixt frame are not
+  implemented
 
- \waning In ARTICULAR_FRAME, we control the 4 dof, r_dot dimension is
- 4. r_dot[0] corresponds to the turret rotation (in radians), r_dot[1] to the
- vertical translation (in meters), r_dot[2] to the pan of the camera (in
- radians) and r_dot[3] to the tilt of the camera (in radians)
+  \param v : The desired velocity of the axis.
+
+  \warning In camera frame, we control only the rx and ry camera velocities;
+  v dimension must be two: v[0] correspond to rx, and v[1] to ry
+
+  \waning In articular, we control the 2 dof, v[0] corresponds the pan velocity
+  and v[1] tilt velocity (in radians)
+
+  \exception vpRobotException::wrongStateError : If a not supported frame type
+  is given.
 */
+
 void
 vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
-			   const vpColVector & r_dot)
+			   const vpColVector & v)
 {
   TPtuFrame ptuFrameInterface;
 
@@ -466,7 +533,7 @@ vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
   case vpRobot::CAMERA_FRAME :
     {
       ptuFrameInterface = PTU_CAMERA_FRAME;
-      if ( r_dot.getRows() != 2) {
+      if ( v.getRows() != 2) {
 	ERROR_TRACE ("Bad dimension fo speed vector in camera frame");
 	throw vpRobotException (vpRobotException::wrongStateError,
 				"Bad dimension for speed vector "
@@ -477,7 +544,7 @@ vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
   case vpRobot::ARTICULAR_FRAME :
     {
       ptuFrameInterface = PTU_ARTICULAR_FRAME;
-      if ( r_dot.getRows() != 2) {
+      if ( v.getRows() != 2) {
 	ERROR_TRACE ("Bad dimension fo speed vector in articular frame");
 	throw vpRobotException (vpRobotException::wrongStateError,
 				"Bad dimension for speed vector "
@@ -525,16 +592,16 @@ vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
     double max = this ->maxRotationVelocity;
     for (int i = 0 ; i < 2; ++ i) // rx and ry of the camera
     {
-      if (fabs (r_dot[i]) > max)
+      if (fabs (v[i]) > max)
       {
-	max = fabs (r_dot[i]);
+	max = fabs (v[i]);
 	ERROR_TRACE ("Excess velocity: ROTATION "
 		     "(axe nr.%d).", i);
       }
     }
     max =  this ->maxRotationVelocity / max;
     for (int i = 0 ; i < 2; ++ i)
-     ptuSpeedInterface [i] = r_dot[i]*max;
+     ptuSpeedInterface [i] = v[i]*max;
 
     break;
   }
@@ -551,26 +618,25 @@ vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
 }
 
 
+/* ------------------------------------------------------------------------- */
+/* --- GET ----------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 
 
-/* -------------------------------------------------------------------------- */
-/* --- GET ------------------------------------------------------------------ */
-/* -------------------------------------------------------------------------- */
+/*!
 
+  Get the articular velocity.
 
-/* Recupere la vitesse actuelle du robot.
- * Recupere la vitesse actuelle du robot et place le resultat dans
- * la reference \a r_dot donnee en argument.
- * Le repere de travail dans lequel est exprime le resultat est celui
- * donne par l'argument \a repere
- * INPUT:
- *   - repere: repere de travail dans lequel est exprime le resultat.
- * OUTPUT:
- *   - r_dot: reference dans laquelle est placee le resultat (mm/s et rad/s).
- */
+  \param frame : Control frame. This head can only be controlled in articular.
+
+  \param q_dot : The measured articular velocity in rad/s.
+
+  \exception vpRobotException::wrongStateError : If a not supported frame type
+  is given.
+*/
 void
 vpRobotPtu46::getVelocity (const vpRobot::ControlFrameType frame,
-			   vpColVector & r_dot)
+			   vpColVector & q_dot)
 {
 
   TPtuFrame ptuFrameInterface = PTU_ARTICULAR_FRAME;
@@ -579,8 +645,12 @@ vpRobotPtu46::getVelocity (const vpRobot::ControlFrameType frame,
   {
   case vpRobot::CAMERA_FRAME:
     {
-      ptuFrameInterface = PTU_CAMERA_FRAME;
-      break ;
+      ERROR_TRACE ("Cannot get a velocity in the camera frame: "
+		   "functionality not implemented");
+      throw vpRobotException (vpRobotException::wrongStateError,
+			      "Cannot get a velocity in the camera frame:"
+			      "functionality not implemented");
+       break ;
     }
   case vpRobot::ARTICULAR_FRAME:
     {
@@ -608,104 +678,101 @@ vpRobotPtu46::getVelocity (const vpRobot::ControlFrameType frame,
     }
   }
 
-  r_dot.resize(vpRobotPtu46::nbArticulations);
+  q_dot.resize(vpPtu46::ndof);
   double ptuSpeedInterface[2];
 
   ptu.getCurrentSpeed(ptuSpeedInterface, ptuFrameInterface);
 
-  r_dot[0] = ptuSpeedInterface[0];
-  r_dot[1] = ptuSpeedInterface[1];
+  q_dot[0] = ptuSpeedInterface[0];
+  q_dot[1] = ptuSpeedInterface[1];
 
 }
 
 
+/*!
 
+  Return the articular velocity.
 
-/* Recupere la vitesse actuelle du robot.
- * Recupere la vitesse actuelle du robot et renvoie le resultat.
- * Le repere de travail dans lequel est exprime le resultat est celui
- * donne par l'argument \a repere
- * INPUT:
- *   - repere: repere de travail dans lequel est exprime le resultat.
- * OUTPUT:
- *   - Position actuelle du robot (mm/s et rad/s).
- */
+  \param frame : Control frame. This head can only be controlled in articular.
+
+  \return The measured articular velocity in rad/s.
+
+  \exception vpRobotException::wrongStateError : If a not supported frame type
+  is given.
+*/
 vpColVector
 vpRobotPtu46::getVelocity (vpRobot::ControlFrameType frame)
 {
-  vpColVector r_dot;
-  getVelocity (frame, r_dot);
+  vpColVector q_dot;
+  getVelocity (frame, q_dot);
 
-  return r_dot;
+  return q_dot;
 }
 
+/*!
 
+  Get an articular position from the position file.
 
+  \param filename : Position file.
 
-/*
- * PROCEDURE: 	lit_pos
- *
- * ENTREE:
- * pt_fich	Pointeur de fichier a lire.
- *
- * SORTIE:
- * position	Positions sauvegardees du robot et de la camera.
- *
- * RESUME:
- * La procedure recupere les positions sauvegardees du robot dans le fichier
- * ayant pour pointeur de fichier "pt_fich".  La procedure retourne "OK" en cas
- * de succes, et "NO_AFMA4_POSITION" en cas d'echec.
+  \param q : The articular position read in the file.
 
- \return 0 if succes, 1 if an error occurs.
+  \code
+  # Example of ptu-46 position file
+  # The axis positions must be preceed by R:
+  # First value : pan  articular position in degrees
+  # Second value: tilt articular position in degrees
+  R: 15.0 5.0
+  \endcode
+
+  \return true if a position was found, false otherwise.
+
 */
-
-int
-vpRobotPtu46::readPosFile(char *name, vpColVector &v)
-  //FILE *pt_fich, st_position_Afma4 *position)
+bool
+vpRobotPtu46::readPositionFile(const char *filename, vpColVector &q)
 {
+  FILE * pt_f ;
+  pt_f = fopen(filename,"r") ;
 
-  FILE * pt_fich ;
-  pt_fich = fopen(name,"r") ;
-
-  if (pt_fich == NULL) {
-    ERROR_TRACE ("Can not open file %s", name);
-    return 1;
+  if (pt_f == NULL) {
+    ERROR_TRACE ("Can not open ptu-46 position file %s", filename);
+    return false;
   }
 
   char line[FILENAME_MAX];
   char head[] = "R:";
-  bool  sortie = false;
+  bool end = false;
 
   do {
-    // Saut des lignes commencant par #
-    if (fgets (line, 100, pt_fich) != NULL) {
+    // skip lines begining with # for comments
+    if (fgets (line, 100, pt_f) != NULL) {
       if ( strncmp (line, "#", 1) != 0) {
-	// La ligne n'est pas un commentaire
-	if ( fscanf (pt_fich, "%s", line) != EOF)   {
+	// this line is not a comment
+	if ( fscanf (pt_f, "%s", line) != EOF)   {
 	  if ( strcmp (line, head) == 0)
-	    sortie = true; 	// Position robot trouvee.
+	    end = true; 	// robot position was found
 	}
 	else
-	  return (1); // fin fichier sans position robot.
+	  return (false); // end of file without position
       }
     }
     else {
-      return (1);		/* fin fichier 	*/
+      return (false);// end of file
     }
 
   }
-  while ( sortie != true );
+  while ( end != true );
 
   double q1,q2;
-  // Lecture des positions
-  fscanf(pt_fich, "%lf %lf", &q1, &q2);
-  v.resize(nbArticulations) ;
+  // Read positions
+  fscanf(pt_f, "%lf %lf", &q1, &q2);
+  q.resize(vpPtu46::ndof) ;
 
-  v[0] = vpMath::rad(q1) ; // Rot tourelle
-  v[1] = vpMath::rad(q2) ;
+  q[0] = vpMath::rad(q1) ; // Rot tourelle
+  q[1] = vpMath::rad(q2) ;
 
-  fclose(pt_fich) ;
-  return (0);
+  fclose(pt_f) ;
+  return (true);
 }
 
 /*!
@@ -730,61 +797,65 @@ vpRobotPtu46::getCameraDisplacement(vpColVector &v)
 
   Get the robot articular displacement since the last call of this method.
 
-  \param qdot The measured articular displacement. The dimension of qdot is 4
-  (the number of axis of the robot) with respectively qdot[1] (turret
-  rotation), qdot[2] (vertical translation), qdot[3] (pan), qdot[4]
-  (tilt). Translations are expressed in meters, rotations in radians.
+  \param d The measured articular displacement. The dimension of d is 2 (the
+  number of axis of the robot) with respectively d[0] (pan displacement),
+  d[1] (tilt displacement)
 
   \sa getDisplacement(), getCameraDisplacement()
 
 */
-void vpRobotPtu46::getArticularDisplacement(vpColVector  &qdot)
+void vpRobotPtu46::getArticularDisplacement(vpColVector  &d)
 {
-  getDisplacement(vpRobot::ARTICULAR_FRAME, qdot);
+  getDisplacement(vpRobot::ARTICULAR_FRAME, d);
 }
 
 /*!
 
   Get the robot displacement since the last call of this method.
 
+  \warning The first call of this method gives not a good value for the
+  displacement.
+
   \param frame The frame in which the measured displacement is expressed.
 
-  \param q The displacement.
-  . In articular, the dimension of q is 4 (the number of axis of the robot)
-  with respectively q[1] (turret rotation), q[2] (vertical translation), q[3]
-  (pan), q[4] (tilt).
-  . In camera or reference frame, the dimension of q is 6 (tx, ty, ty, rx, ry,
+  \param d The displacement:
+  - In articular, the dimension of q is 2  (the number of axis of the robot)
+  with respectively d[0] (pan displacement), d[1] (tilt displacement).
+  - In camera frame, the dimension of d is 6 (tx, ty, ty, rx, ry,
   rz). Translations are expressed in meters, rotations in radians.
+
+  \exception vpRobotException::wrongStateError If a not supported frame type is
+  given.
 
   \sa getArticularDisplacement(), getCameraDisplacement()
 
 */
 void
 vpRobotPtu46::getDisplacement(vpRobot::ControlFrameType frame,
-			      vpColVector &q)
+			      vpColVector &d)
 {
-  double d[6];
+  double d_[6];
 
   switch (frame)
   {
   case vpRobot::CAMERA_FRAME:
     {
-      q.resize (6);
-      ptu.measureDpl(d, PTU_CAMERA_FRAME);
-      q[0]=d[0];
-      q[1]=d[1];
-      q[2]=d[2];
-      q[3]=d[3];
-      q[4]=d[4];
-      q[5]=d[5];
+      d.resize (6);
+      ptu.measureDpl(d_, PTU_CAMERA_FRAME);
+      d[0]=d_[0];
+      d[1]=d_[1];
+      d[2]=d_[2];
+      d[3]=d_[3];
+      d[4]=d_[4];
+      d[5]=d_[5];
       break ;
     }
   case vpRobot::ARTICULAR_FRAME:
     {
-      ptu.measureDpl(d, PTU_ARTICULAR_FRAME);
-      q.resize (nbArticulations);
-      q[0]=d[0];  // pan
-      q[1]=d[1];  // tilt
+      ptu.measureDpl(d_, PTU_ARTICULAR_FRAME);
+      d.resize (vpPtu46::ndof);
+      d[0]=d_[0];  // pan
+      d[1]=d_[1];  // tilt
       break ;
     }
   case vpRobot::REFERENCE_FRAME:
@@ -807,14 +878,6 @@ vpRobotPtu46::getDisplacement(vpRobot::ControlFrameType frame,
       break ;
     }
   }
-}
-
-void
-vpRobotPtu46::move(char *name)
-{
-  vpColVector v ;
-  readPosFile(name, v)  ;
-  setPosition ( vpRobot::ARTICULAR_FRAME,  v) ;
 }
 
 /*
