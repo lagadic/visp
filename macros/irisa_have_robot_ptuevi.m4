@@ -33,7 +33,7 @@ if test "x$with_robot_ptuevi" = "xyes"; then
   # test a single function of the SBS Ptuevi bus driver
   AC_LANG_PUSH(C++)		
   AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([char *name="foo"; int speed = 19200; char openserial(char *, int );],
+    [AC_LANG_PROGRAM([const char *name="foo"; int speed = 19200; char openserial(const char *, int );],
                      [openserial(name, speed)])],
     have_lib_serial=yes,
     have_lib_serial=no)
