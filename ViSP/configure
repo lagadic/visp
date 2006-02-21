@@ -7585,7 +7585,7 @@ echo $ECHO_N "checking whether biclops pan-tilt api works... $ECHO_C" >&6
   # save values
   TMP_LIBS=$LIBS
   # set linker options for a local test
-  LIBS=$ROBOT_PTUEVI_LIBS
+  LIBS=$ROBOT_BICLOPS_LIBS
   # test a single function of the SBS Ptuevi bus driver
   ac_ext=cc
 ac_cpp='$CXXCPP $CPPFLAGS'

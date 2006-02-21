@@ -1539,7 +1539,7 @@ AC_MSG_CHECKING(whether biclops pan-tilt api works)
   # save values
   TMP_LIBS=$LIBS
   # set linker options for a local test 
-  LIBS=$ROBOT_PTUEVI_LIBS
+  LIBS=$ROBOT_BICLOPS_LIBS
   # test a single function of the SBS Ptuevi bus driver
   AC_LANG_PUSH(C++)		
   AC_LINK_IFELSE(
