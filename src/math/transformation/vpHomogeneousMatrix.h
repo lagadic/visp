@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomogeneousMatrix.h,v 1.5 2005-11-30 10:28:57 marchand Exp $
+ *  $Id: vpHomogeneousMatrix.h,v 1.6 2006-02-21 11:12:59 fspindle Exp $
  *
  * Description
  * ============
@@ -81,7 +81,7 @@ class vpThetaUVector;
 */
 class vpHomogeneousMatrix : public vpMatrix
 {
- 
+
 
  public:
   //! Basic initialisation (identity)
@@ -130,10 +130,6 @@ class vpHomogeneousMatrix : public vpMatrix
   //! invert the homogeneous matrix
   void inverse(vpHomogeneousMatrix &Mi) const;
 
-  //! invert the homogeneous matrix
-  //  vpHomogeneousMatrix expMap(const vpColVector &v) const ;
-
-
   //! test if the rotational part of the matrix is a rotation matrix
   bool isAnHomogeneousMatrix() const  ;
 
@@ -162,8 +158,6 @@ class vpHomogeneousMatrix : public vpMatrix
 
  } ;
 
-
- vpHomogeneousMatrix expMap(const vpColVector &v)  ;
 
 //void ComputeCameraPosition(const vpColVector& dx,vpHomogeneousMatrix&  mati,int typ_mvt=0) ;
 #endif

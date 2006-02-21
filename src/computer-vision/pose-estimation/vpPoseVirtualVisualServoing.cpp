@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseVirtualVisualServoing.cpp,v 1.2 2005-11-30 10:30:41 marchand Exp $
+ *  $Id: vpPoseVirtualVisualServoing.cpp,v 1.3 2006-02-21 11:12:54 fspindle Exp $
  *
  * Description
  * ============
@@ -29,11 +29,11 @@
 #include <visp/vpPoint.h>
 #include <visp/vpFeatureBuilder.h>
 #include <visp/vpFeaturePoint.h>
-
+#include <visp/vpExponentialMap.h>
 
 // define the maximum number of iteration
-#ifdef VVS_NB_ITER_MAX 
-#undef VVS_NB_ITER_MAX 
+#ifdef VVS_NB_ITER_MAX
+#undef VVS_NB_ITER_MAX
 #endif
 #define VVS_NB_ITER_MAX 1000
 /*!
@@ -59,7 +59,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
      // we stop the minimization when the error is bellow 1e-8
 
     int iter = 0 ;
-    while((int)((residu_1 - r)*1e12) !=0) 
+    while((int)((residu_1 - r)*1e12) !=0)
     {
 
       residu_1 = r ;
@@ -125,7 +125,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       //cout << "r=" << r <<endl ;
       // update the pose
 
-      cMo = expMap(v).inverse()*cMo ; ;
+      cMo = vpExponentialMap::direct(v).inverse()*cMo ; ;
       if (iter++>VVS_NB_ITER_MAX) break ;
     }
   }
