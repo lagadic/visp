@@ -6,7 +6,8 @@ ViSP 2.1.2 (Modification since ViSP 2.1.1)
   - Shared Library
 	- add compilation rules for the creation of lib/libvisp-2.so
   - New Feature
-	- add control for Directed Perception ptu-46 pan-tilt turret
+	- add control for Traclabs biclops pan-tilt head
+	- add control for Directed Perception ptu-46 pan-tilt head
   - Bug fix and improvement
 	- vp1394Grabber settings (format, mode, framerate, shutter, gain)
 	- vpDot (Moment computation)

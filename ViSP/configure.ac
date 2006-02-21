@@ -270,7 +270,7 @@ IRISA_HAVE_ROBOT_AFMA4
 IRISA_HAVE_ROBOT_AFMA6
 IRISA_HAVE_ROBOT_PTUEVI
 IRISA_HAVE_ROBOT_VIC2500
-
+HAVE_ROBOT_BICLOPS
 
 ########################################################################
 # Add all the ViSP libraries
@@ -325,6 +325,7 @@ src/robot/real-robot/Makefile
 src/robot/real-robot/afma6/Makefile
 src/robot/real-robot/afma4/Makefile
 src/robot/real-robot/ptu46/Makefile
+src/robot/real-robot/biclops/Makefile
 src/servo/Makefile
 src/simulator/Makefile
 src/tools/Makefile
@@ -356,6 +357,7 @@ test/servo-simu/Makefile
 test/servo-afma4/Makefile
 test/servo-afma6/Makefile
 test/servo-ptu46/Makefile
+test/servo-biclops/Makefile
 test/framegrabber/Makefile
 test/feature/Makefile
 test/math/Makefile
