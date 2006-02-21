@@ -10,7 +10,7 @@
  *
  *
  *
- *  $Id: vpBiclops.cpp,v 1.1 2006-02-21 11:16:10 fspindle Exp $
+ *  $Id: vpBiclops.cpp,v 1.2 2006-02-21 15:35:16 fspindle Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -72,15 +72,15 @@ vpBiclops::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
   fMc[0][2] = c1*c2;
   fMc[0][3] = -h*c1*s2;
 
-  fMc[1][0] = -c1;
-  fMc[1][1] = -s1*s2;
-  fMc[1][2] = -s1*c2;
-  fMc[1][3] = h*s1*s2;
+  fMc[1][0] = c1;
+  fMc[1][1] = s1*s2;
+  fMc[1][2] = s1*c2;
+  fMc[1][3] = -h*s1*s2;
 
   fMc[2][0] = 0;
-  fMc[2][1] = -c2;
-  fMc[2][2] = s2;
-  fMc[2][3] = h*c2;
+  fMc[2][1] = c2;
+  fMc[2][2] = -s2;
+  fMc[2][3] = -h*c2;
 
   fMc[3][0] = 0;
   fMc[3][1] = 0;
@@ -266,9 +266,9 @@ vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe)
 
   eJe = 0;
 
-  eJe[3][0] = c2;
+  eJe[3][0] = -c2;
   eJe[4][1] = 1;
-  eJe[5][0] = s2;
+  eJe[5][0] = -s2;
 
 }
 /*!
@@ -298,7 +298,7 @@ vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe)
   fJe = 0;
 
   fJe[3][1] = -s1;
-  fJe[4][1] = -c1;
+  fJe[4][1] = c1;
   fJe[5][0] = 1;
 }
 
