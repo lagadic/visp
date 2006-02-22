@@ -1,20 +1,14 @@
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
+ * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:      vpExponentialMap.h
  * Project:   ViSP2
- * Author:    Fabien Spindler
  *
  * Version control
  * ===============
  *
- *  $Id: vpExponentialMap.cpp,v 1.1 2006-02-21 11:09:46 fspindle Exp $
- *
- * Description
- * ============
- *  provide exponential map computation
+ *  $Id: vpExponentialMap.cpp,v 1.2 2006-02-22 09:51:39 fspindle Exp $
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 

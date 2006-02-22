@@ -1,29 +1,21 @@
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
+ * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:      vpMath.h
  * Project:   ViSP 2.0
- * Author:    Eric Marchand
- * From:      simple-math, ViSP 1.6.8 (author:Eric Marchand)
  *
  * Version control
  * ===============
  *
- *  $Id: vpExponentialMap.h,v 1.1 2006-02-21 11:09:46 fspindle Exp $
+ *  $Id: vpExponentialMap.h,v 1.2 2006-02-22 09:51:39 fspindle Exp $
  *
- * Description
- * ============
- *  provide some simple mathematical function that are not available in
- *  the C mathematics library (math.h)
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /*!
-  \file vpMath.h
-  \brief Provides simple Math computation that are not available in
-  the C mathematics library (math.h)
+  \file vpExponentialMap.h
+  \brief Provides exponential map computation
 */
 
 
