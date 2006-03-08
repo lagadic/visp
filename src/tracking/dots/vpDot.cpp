@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot.cpp,v 1.10 2006-02-17 12:50:18 fspindle Exp $
+ *  $Id: vpDot.cpp,v 1.11 2006-03-08 15:51:24 fspindle Exp $
  *
  * Description
  * ============
@@ -425,8 +425,19 @@ vpDot::setNbMaxPoint(double nb)
 {
   nbMaxPoint = nb ;
 }
+/*!
 
-//! init the traking with a right mouse click
+  Initialize the tracking with a mouse click and update the dot
+  characteristics (center of gravity, moments).
+
+  Wait a user click in a white area in the image. The clicked pixel
+  will be the starting point from which the dot will be tracked.
+
+  To get center of gravity of the dot, see get_u() and get_v(). To compute the
+  moments see setComputeMoments().
+
+  \sa track()
+*/
 void
 vpDot::initTracking(vpImage<unsigned char>& I)
 {
@@ -449,14 +460,28 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   if ((u-(int)u) < 0.5)   cog_u = (int)u ; else  cog_u = (int)u+1 ;
   if ((v-(int)v) < 0.5)   cog_v = (int)v ; else  cog_v = (int)v+1 ;
 
+  try {
+    track( I );
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
 }
 
 /*!
-  \brief init the tracking for a dot supposed to be located at (u,v)
+
+  Initialize the tracking for a dot supposed to be located at (u,v) and
+  update the dot characteristics (center of gravity, moments).
 
   \param I : image
   \param u : dot location (column)
   \param v : dot location (row)
+
+  To get center of gravity of the dot, see get_u() and get_v(). To compute the
+  moments see setComputeMoments().
+
 */
 void
 vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
@@ -468,6 +493,14 @@ vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
   cog_u = u ;
   cog_v = v ;
 
+  try {
+    track( I );
+  }
+  catch(...)
+  {
+    ERROR_TRACE(" ") ;
+    throw ;
+  }
 }
 
 
