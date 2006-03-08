@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.h,v 1.7 2006-02-20 15:29:18 fspindle Exp $
+ *  $Id: vpDot2.h,v 1.8 2006-03-08 15:49:13 fspindle Exp $
  *
  * Description
  * ============
@@ -94,15 +94,14 @@ public:
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
 				    int area_u, int area_v,
-				    int area_width, int area_height );
+				    int area_w, int area_h );
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
 
 
-  virtual bool isValid(vpImage<unsigned char>& I,
-			const vpDot2& wantedDotParam );
+  virtual bool isValid(vpImage<unsigned char>& I, const vpDot2& wantedDot);
 
-  virtual bool hasGoodLevel(vpImage<unsigned char>& I,
+  virtual bool hasGoodLevel(const vpImage<unsigned char>& I,
 			    const int &u, const int &v) const;
   virtual bool hasReverseLevel(vpImage<unsigned char>& I,
 			       const int &u, const int &v) const;
@@ -126,70 +125,97 @@ public:
 public :
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^i \f$, \f$ m_{00} \f$ is a zero order moment obtained
-		with \f$i = j = 0 \f$.
-
-		\sa setComputeMoments()
-	      */
-  double m01; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^i \f$, \f$ m_{01} \f$ is a first order moment
-		obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
+		u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
+		with \f$i = j = 0 \f$. This moment corresponds to the dot
+		surface.
 
 		\sa setComputeMoments()
 	      */
   double m10; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^i \f$, \f$ m_{10} \f$ is a first order moment
-		obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
+		u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
+		obtained with \f$i = 1 \f$ and \f$ j = 0 \f$. \f$ m_{10} \f$
+		corresponds to the inertia first order moment along the v axis.
+
+		\sa setComputeMoments()
+	      */
+  double m01; /*!< Considering the general distribution moments for \f$ N \f$
+		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+		u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
+		obtained with \f$i = 0 \f$ and \f$ j = 1 \f$. \f$ m_{01} \f$
+		corresponds to the inertia first order moment along the u axis.
 
 		\sa setComputeMoments()
 	      */
   double m11; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^i \f$, \f$ m_{11} \f$ is a first order moment
+		u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
 		obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
 
 		\sa setComputeMoments()
 	      */
   double m20; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^i \f$, \f$ m_{20} \f$ is a second order moment
-		obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
+		u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
+		obtained with \f$i = 2 \f$ and \f$ j = 0 \f$. \f$ m_{20} \f$
+		corresponds to the inertia second order moment along the v
+		axis.
 
 		\sa setComputeMoments()
 	      */
   double m02; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^i \f$, \f$ m_{02} \f$ is a second order moment
-		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
+		u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
+		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$. \f$ m_{02} \f$
+		corresponds to the inertia second order moment along the u
+		axis.
 
 		\sa setComputeMoments()
 	      */
 
 protected:
-  vpList<int> getList_directions() ;
+  vpList<int> getListFreemanElement() ;
   vpList<int> getList_u();
   vpList<int> getList_v() ;
 
 private:
+  typedef struct {
+    int u_min;
+    int u_max;
+    int v_min;
+    int v_max;
+    int w; // u_max - u_min
+    int h; // v_max - v_min
+    double cog_u;
+    double cog_v;
+  } vpAreaType;
+
 
   bool computeParameters( vpImage<unsigned char> &I,
 			  const double &u = -1.0,
 			  const double &v = -1.0);
 
-  void move( vpImage<unsigned char> &I, int& u, int& v, int& dir);
+  bool computeFreemanChainElement(const vpImage<unsigned char> &I,
+				  const int &u, const int &v, int &element);
+  void computeFreemanParameters(const vpImage<unsigned char> &I,
+				const int &u_p, const int &v_p, int &element,
+				int &du, int &dv, float &dS,
+				float &dMu, float &dMv,
+				float &dMuv,
+				float &dMu2, float &dMv2);
+  void updateFreemanPosition       ( int& u, int& v, const int &dir );
 
-  void getLeftPixelPosition( int& u, int& v, const int &dir );
-  void turnLeft            ( int& u, int& v, const int &dir );
-  void turnRight           ( int& u, int& v, const int &dir );
-  void getTop              ( int& u, int& v, const int &dir );
 
-  bool isInImage( vpImage<unsigned char> &I, const int &border=10 ) const;
-  bool isInImage( vpImage<unsigned char> &I,
-		  const int &u, const int &v, const int &border=10 ) const;
+  bool isInImage( vpImage<unsigned char> &I ) const;
+  bool isInImage( vpImage<unsigned char> &I, const int &u, const int &v) const;
+
+  bool isInArea(const vpImage<unsigned char> &I) const;
+  bool isInArea(const vpImage<unsigned char> &I, const int &u, const int &v) const;
 
   void getGridSize( int &gridWidth, int &gridHeight );
+  void setArea(vpImage<unsigned char> &I, int u, int v, int w, int h);
+  void setArea(vpImage<unsigned char> &I);
+  void setArea(const vpAreaType & a);
 
   //! coordinates (float) of the point center of gravity
   double cog_ufloat, cog_vfloat ;
@@ -200,6 +226,9 @@ private:
   int inLevel;
   int outLevel;
   double accuracy;
+
+  // Area where the dot is to search
+  vpAreaType area;
 
   // other
   vpList<int> direction_list;
