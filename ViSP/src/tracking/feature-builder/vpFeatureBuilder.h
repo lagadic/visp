@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilder.h,v 1.3 2006-02-06 14:11:23 obourqua Exp $
+ *  $Id: vpFeatureBuilder.h,v 1.4 2006-03-09 14:33:18 rtatsamb Exp $
  *
  * Description
  * ============
@@ -88,6 +88,9 @@ public:
   static void create(vpFeatureEllipse &s,
 		     const vpCameraParameters &cam,
 		     const vpDot &t ) ;
+  static void create(vpFeatureEllipse &s,
+		     const vpCameraParameters &cam,
+		     const vpDot2 &t ) ;
 
 
   /*!
