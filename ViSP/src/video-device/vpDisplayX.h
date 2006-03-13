@@ -25,15 +25,15 @@
 #include <visp/vpConfig.h>
 #ifdef HAVE_LIBX11
 
-namespace X11name
-{
+//namespace X11name
+//{
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 //#include <X11/Xatom.h>
 //#include <X11/cursorfont.h>
-} ;
+//} ;
 
-using namespace X11name ;
+//using namespace X11name ;
 
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
