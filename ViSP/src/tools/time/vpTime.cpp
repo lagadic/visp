@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.cpp,v 1.5 2006-03-21 10:46:17 fspindle Exp $
+ *  $Id: vpTime.cpp,v 1.6 2006-03-21 10:56:43 fspindle Exp $
  *
  * Description
  * ============
@@ -25,10 +25,8 @@
 using namespace std;
 
 /*!
-  \file vpTime.h
-  \brief time management and measurement
-  \author Francois Chaumette
-  \date in 19... a long time ago...
+  \file vpTime.cpp
+  \brief Time management and measurement
 
 */
 
