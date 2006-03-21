@@ -1,0 +1,21 @@
+@build_mk@
+
+
+SOURCES		= \
+	\
+	testTime.cpp
+
+
+PROGS		= $(SOURCES:.cpp=$(SUFFIX).exe)
+
+all  :  $(PROGS)
+install: directory $(PROGS)
+
+
+@directory_mk@
+
+@bin_mk@
+
+@clean_mk@
+
+@depend_mk@

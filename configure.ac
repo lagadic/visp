@@ -363,6 +363,7 @@ test/feature/Makefile
 test/math/Makefile
 test/image/Makefile
 test/tracking/Makefile
+test/time/Makefile
 test/simulator/Makefile	
 test/homography/Makefile	
 example/Makefile

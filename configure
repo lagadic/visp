@@ -7168,11 +7168,11 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-void mesure_temps();
+
 int
 main ()
 {
-mesure_temps()
+
   ;
   return 0;
 }
@@ -7280,11 +7280,11 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-void mesure_temps();
+
 int
 main ()
 {
-mesure_temps()
+
   ;
   return 0;
 }
@@ -7685,7 +7685,7 @@ uninstall_mk=$VISP_HOME/configs/uninstall.mk
 
 depend_mk=$VISP_HOME/configs/depend.mk
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ac_config_files="$ac_config_files configs/build.mk doc/config-doxygen include/Makefile include/visp/Makefile Makefile src/Makefile src/camera/Makefile src/debug/Makefile src/exceptions/Makefile src/math/Makefile src/math/misc/Makefile src/math/transformation/Makefile src/math/matrix/Makefile src/math/robust/Makefile src/data-structure/Makefile src/robot/Makefile src/robot/robot/Makefile src/robot/simulation-robot/Makefile src/robot/real-robot/Makefile src/robot/real-robot/afma6/Makefile src/robot/real-robot/afma4/Makefile src/robot/real-robot/ptu46/Makefile src/robot/real-robot/biclops/Makefile src/servo/Makefile src/simulator/Makefile src/tools/Makefile src/tools/io/Makefile src/tools/geometry/Makefile src/tools/time/Makefile src/visual-feature/Makefile src/image/Makefile src/computer-vision/Makefile src/computer-vision/pose-estimation/Makefile src/computer-vision/homography-estimation/Makefile src/video-device/Makefile src/framegrabber-device/Makefile src/framegrabber-device/IC-Comp/Makefile src/framegrabber-device/1394/Makefile src/framegrabber-device/OSX-cfox/Makefile src/framegrabber-device/v4l2/Makefile src/framegrabber-device/generic-framegrabber/Makefile src/framegrabber-device/disk/Makefile src/tracking/Makefile src/tracking/dots/Makefile src/tracking/moving-edges/Makefile src/tracking/forward-projection/Makefile src/tracking/feature-builder/Makefile src/tracking/general-tracking-issues/Makefile test/Makefile test/pose/Makefile test/servo-simu/Makefile test/servo-afma4/Makefile test/servo-afma6/Makefile test/servo-ptu46/Makefile test/servo-biclops/Makefile test/framegrabber/Makefile test/feature/Makefile test/math/Makefile test/image/Makefile test/tracking/Makefile test/simulator/Makefile test/homography/Makefile example/Makefile example/tracking/Makefile example/tracking/vpDot/Makefile example/image/Makefile example/simulation/Makefile example/pose-estimation/Makefile"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ac_config_files="$ac_config_files configs/build.mk doc/config-doxygen include/Makefile include/visp/Makefile Makefile src/Makefile src/camera/Makefile src/debug/Makefile src/exceptions/Makefile src/math/Makefile src/math/misc/Makefile src/math/transformation/Makefile src/math/matrix/Makefile src/math/robust/Makefile src/data-structure/Makefile src/robot/Makefile src/robot/robot/Makefile src/robot/simulation-robot/Makefile src/robot/real-robot/Makefile src/robot/real-robot/afma6/Makefile src/robot/real-robot/afma4/Makefile src/robot/real-robot/ptu46/Makefile src/robot/real-robot/biclops/Makefile src/servo/Makefile src/simulator/Makefile src/tools/Makefile src/tools/io/Makefile src/tools/geometry/Makefile src/tools/time/Makefile src/visual-feature/Makefile src/image/Makefile src/computer-vision/Makefile src/computer-vision/pose-estimation/Makefile src/computer-vision/homography-estimation/Makefile src/video-device/Makefile src/framegrabber-device/Makefile src/framegrabber-device/IC-Comp/Makefile src/framegrabber-device/1394/Makefile src/framegrabber-device/OSX-cfox/Makefile src/framegrabber-device/v4l2/Makefile src/framegrabber-device/generic-framegrabber/Makefile src/framegrabber-device/disk/Makefile src/tracking/Makefile src/tracking/dots/Makefile src/tracking/moving-edges/Makefile src/tracking/forward-projection/Makefile src/tracking/feature-builder/Makefile src/tracking/general-tracking-issues/Makefile test/Makefile test/pose/Makefile test/servo-simu/Makefile test/servo-afma4/Makefile test/servo-afma6/Makefile test/servo-ptu46/Makefile test/servo-biclops/Makefile test/framegrabber/Makefile test/feature/Makefile test/math/Makefile test/image/Makefile test/tracking/Makefile test/time/Makefile test/simulator/Makefile test/homography/Makefile example/Makefile example/tracking/Makefile example/tracking/vpDot/Makefile example/image/Makefile example/simulation/Makefile example/pose-estimation/Makefile"
 
 
 ########################################################################
@@ -8290,6 +8290,7 @@ do
   "test/math/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/math/Makefile" ;;
   "test/image/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/image/Makefile" ;;
   "test/tracking/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/tracking/Makefile" ;;
+  "test/time/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/time/Makefile" ;;
   "test/simulator/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/simulator/Makefile" ;;
   "test/homography/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/homography/Makefile" ;;
   "example/Makefile" ) CONFIG_FILES="$CONFIG_FILES example/Makefile" ;;
