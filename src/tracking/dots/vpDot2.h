@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.h,v 1.8 2006-03-08 15:49:13 fspindle Exp $
+ *  $Id: vpDot2.h,v 1.9 2006-03-21 10:47:50 fspindle Exp $
  *
  * Description
  * ============
@@ -37,7 +37,8 @@ class vpDot2 : public vpTracker
 {
 public:
   vpDot2();
-  vpDot2( int u, int v );
+  vpDot2(const int u, const int v) ;
+  vpDot2(const double u, const double v) ;
   vpDot2( const vpDot2& twinDot );
   ~vpDot2();
   void operator=( const vpDot2& twinDot );

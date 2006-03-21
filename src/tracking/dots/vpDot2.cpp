@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.cpp,v 1.8 2006-03-08 15:49:13 fspindle Exp $
+ *  $Id: vpDot2.cpp,v 1.9 2006-03-21 10:47:50 fspindle Exp $
  *
  * Description
  * ============
@@ -102,7 +102,37 @@ vpDot2::vpDot2() : vpTracker()
   image.
 
 */
-vpDot2::vpDot2( int u, int v ) : vpTracker()
+vpDot2::vpDot2(const int u, const int v ) : vpTracker()
+{
+  cog_ufloat = u ;
+  cog_vfloat = v ;
+
+  width = 0;
+  height = 0;
+  surface = 0;
+  inLevel = 210;
+  outLevel = 150;
+  accuracy = 0.65;
+
+  m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+
+  compute_moment = false ;
+  graphics = false;
+}
+
+/*!
+
+  Constructor initialise the coordinates of the gravity center of the dot to
+  (u,v).  Rest is the same as the default constructor.
+
+  \param u : The horizontal coordinate of the dot's center of gravity in the
+  image.
+
+  \param v : The vertical coordinate of the dot's center of gravity in the
+  image.
+
+*/
+vpDot2::vpDot2(const double u, const double v ) : vpTracker()
 {
   cog_ufloat = u ;
   cog_vfloat = v ;
