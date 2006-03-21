@@ -32,7 +32,7 @@ if test "x$with_robot_afma6" = "xyes"; then
   # test a single function of the Afma4 api
   AC_LANG_PUSH(C++)		
   AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([void mesure_temps();],[mesure_temps()])],
+    [AC_LANG_PROGRAM(,)],
     have_lib_toolsAfma6=yes,
     have_lib_toolsAfma6=no)
   AC_LANG_POP(C++)		
