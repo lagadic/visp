@@ -1,6 +1,6 @@
-# aclocal.m4 generated automatically by aclocal 1.6.3 -*- Autoconf -*-
+# generated automatically by aclocal 1.7.8 -*- Autoconf -*-
 
-# Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002
+# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002
 # Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -68,7 +68,7 @@ else
 fi
 AC_CONFIG_COMMANDS_PRE(
 [if test -z "${$1_TRUE}" && test -z "${$1_FALSE}"; then
-  AC_MSG_ERROR([conditional \"$1\" was never defined.
+  AC_MSG_ERROR([conditional "$1" was never defined.
 Usually this means the macro was only invoked conditionally.])
 fi])])
 
@@ -1306,7 +1306,7 @@ if test "x$with_robot_afma4" = "xyes"; then
   # test a single function of the Afma4 api
   AC_LANG_PUSH(C++)		
   AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([void mesure_temps();],[mesure_temps()])],
+    [AC_LANG_PROGRAM(,)],
     have_lib_toolsAfma4=yes,
     have_lib_toolsAfma4=no)
   AC_LANG_POP(C++)		
@@ -1368,7 +1368,7 @@ if test "x$with_robot_afma6" = "xyes"; then
   # test a single function of the Afma4 api
   AC_LANG_PUSH(C++)		
   AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([void mesure_temps();],[mesure_temps()])],
+    [AC_LANG_PROGRAM(,)],
     have_lib_toolsAfma6=yes,
     have_lib_toolsAfma6=no)
   AC_LANG_POP(C++)		
