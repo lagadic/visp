@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.h,v 1.2 2005-09-26 08:09:01 fspindle Exp $
+ *  $Id: vpTime.h,v 1.3 2006-03-21 10:46:17 fspindle Exp $
  *
  * Description
  * ============
@@ -25,33 +25,26 @@
 
 /*!
   \file vpTime.h
-  \brief time management and measurement
-  \author Francois Chaumette
-  \date in 19... a long time ago...
+  \brief Time management and measurement
 
 */
 
 /*!
   \class vpTime
-  \brief time management and measurement
-  \author Francois Chaumette
-  \date in 19... a long time ago...
+  \brief Time management and measurement
 
 */
 
 class vpTime
 {
-private:
-  static long measureTime() ;
 public:
-  //! mesaure the time in seconds since the last call to the function
+#if (defined(__Linux_) || defined(__SunOS_)|| defined(__Darwin_) )
+  static double minTimeForUsleepCall;
+#endif
   static double measureTimeSecond() ;
-  //! mesaure the time in miliseconds since the last call to the function
   static double measureTimeMs() ;
-  //! mesaure the time in microseconds since the last call to the function
   static double measureTimeMicros() ;
-  static int wait(double t0, double t) ;
-  //! wait t milisecond
+  static int  wait(double t0, double t) ;
   static void wait(int t) ;
 } ;
 
