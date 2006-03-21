@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.cpp,v 1.4 2005-11-09 15:21:22 marchand Exp $
+ *  $Id: vpTime.cpp,v 1.5 2006-03-21 10:46:17 fspindle Exp $
  *
  * Description
  * ============
@@ -19,9 +19,10 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-
+#include <iostream>
 #include <visp/vpTime.h>
 
+using namespace std;
 
 /*!
   \file vpTime.h
@@ -32,95 +33,55 @@
 */
 
 #ifdef WIN32
-// Partie dependante de la plateforme (M$ Windows)
+// MS Windows
 
-#include <afx.h>
-#include <sys/types.h>
-#include <sys/timeb.h>
-#include <app/CViSPApp.h>
-#include <unistd.h>
+#  include <afx.h>
+#  include <sys/types.h>
+#  include <sys/timeb.h>
+#  include <app/CViSPApp.h>
+#  include <unistd.h>
 
-/*!
-  \ingroup libtime
-  \brief Return the time in milli seconds
-*/
+#else // UNIX
 
-int MeasureTimeMs()
-{
-	LARGE_INTEGER count;
-	QueryPerformanceCounter(&count);
-	return (int) (count.QuadPart*1000/(double)CViSPApp::getFrequency());
-}
-
-/*!
-  \ingroup libtime
-  \brief Wait t miliseconds after t0 ms
-
-  \param t0 : reference time (in ms)
-  \param t  : time to wait (in ms)
-
-  \return 1 the function did wait, 0 the time was already over
-*/
-
-int Wait(int t0, int t)
-{
-
-	if (MeasureTimeMs()>t0+t)
-		return 1;
-	Wait(t-(MeasureTimeMs()-t0));
-	return 0;
-}
-
-
-/*!
-  \ingroup libtime
-  \brief wait t  miliseconds from now
-  \param t time to wait
-  \return 1 the function did wait, 0 the time was already over
-*/
-
-void Wait(int t)
-{
-	int tfin=MeasureTimeMs()+t;
-	while(MeasureTimeMs()<tfin);
-}
-
-
-#endif
-#if (defined(__Linux_) || defined(__SunOS_)|| defined(__Darwin_) )
-
-
-
-// Unix depend version 
-
+// Unix depend version
 
 #include <sys/time.h>
 #include <unistd.h>
 
-long
-vpTime::measureTime()
-{
-  struct timeval tp;
 
-  gettimeofday(&tp,0);
-  return(tp.tv_usec);
-}
+double vpTime::minTimeForUsleepCall = 20; /*! Threshold to activate usleep() in
+					    waiting methods. This threshold is
+					    needed, because usleep() is not
+					    accurate on many machines. */
+
+#endif
+
 
 
 /*!
-  \brief Return the time in  milliseconds
+  Return the time in milliseconds.
+
+  \sa measureTimeMicros(), measureTimeSecond()
 */
 double
 vpTime::measureTimeMs()
 {
-   struct timeval tp;
-   gettimeofday(&tp,0);
-   return(1000.0*tp.tv_sec + tp.tv_usec/1000.0);
+#ifdef WIN32
+  LARGE_INTEGER count;
+  QueryPerformanceCounter(&count);
+  return (int) (count.QuadPart*1000/(double)CViSPApp::getFrequency());
+#else
+  struct timeval tp;
+  gettimeofday(&tp,0);
+  return(1000.0*tp.tv_sec + tp.tv_usec/1000.0);
+#endif
 }
 
 
 /*!
-  \brief Return the time in  milliseconds
+  Return the time in microseconds.
+
+  \sa measureTimeMs(), measureTimeSecond()
 */
 double
 vpTime::measureTimeMicros()
@@ -133,55 +94,85 @@ vpTime::measureTimeMicros()
 
 
 /*!
-  \brief Wait t miliseconds after t0 ms
+
+  Wait t miliseconds after t0 (in ms).
+
+  The waiting is done by a call to usleep() if the time to wait is greater than
+  vpTime::minTimeForUsleepCall.
 
   \param t0 : reference time (in ms)
   \param t  : time to wait (in ms)
 
-  \return 1 the function did wait, 0 the time was already over
+  \return 0 : The function did wait.
+  \return 1 : The time was already over, no need to wait.
 */
 
 int
 vpTime::wait(double t0, double t)
 {
-  struct timeval tp;
+  double timeCurrent, timeToWait;
+  timeCurrent = measureTimeMs();
 
-  gettimeofday(&tp, 0);
-  if ((1000.0*tp.tv_sec + tp.tv_usec/1000.0 - t0) > t) return(1);
-  else
-    {
-      do
-	{
-	  gettimeofday(&tp, 0);
-	}
-      while ((1000.0*tp.tv_sec + tp.tv_usec/1000.0 - t0) < t);
+  timeToWait = t0 + t - timeCurrent;
 
- return(0);
+  if ( timeToWait <= 0. ) // no need to wait
+    return(1);
+  else {
+    if (timeToWait > vpTime::minTimeForUsleepCall) {
+      usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
+
+    // Blocking loop to have an accurate waiting
+    do {
+      timeCurrent = measureTimeMs();
+      timeToWait = t0 + t - timeCurrent;
+
+    } while (timeToWait > 0.);
+
+    return 0;
+  }
 }
 
 
 /*!
-  \brief wait t  miliseconds from now
-  \param t time to wait
-  \return 1 the function did wait, 0 the time was already over
+  Wait t miliseconds from now.
+
+  The waiting is done by a call to usleep() if the time to wait is greater than
+  vpTime::minTimeForUsleepCall.
+
+  \param t : Time to wait in ms.
+
 */
 void vpTime::wait(int t)
 {
+  double t0, timeCurrent, timeToWait;
+  t0 = timeCurrent = measureTimeMs();
 
-  usleep(t*1000) ;
-  //  wait(measureTimeMs(),t);
+  timeToWait = t;
+
+  if ( timeToWait <= 0. ) // no need to wait
+    return;
+  else {
+    if (timeToWait > vpTime::minTimeForUsleepCall) {
+      usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
+    }
+
+    // Blocking loop to have an accurate waiting
+    do {
+      timeCurrent = measureTimeMs();
+      timeToWait = t0 + t - timeCurrent;
+
+    } while (timeToWait > 0.);
+
+    return;
+  }
 }
 
-
-
-#endif // Partie dependante de la plateforme
-
-
-
 /*!
-  \ingroup libtime
-  \brief Return the time in  seconds
+
+  Return the measured time in seconds.
+
+  \sa measureTimeMs()
 */
 double  vpTime::measureTimeSecond()
 {
