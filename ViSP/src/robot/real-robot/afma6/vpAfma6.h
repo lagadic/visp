@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.h,v 1.3 2005-09-26 15:56:54 fspindle Exp $
+ *  $Id: vpAfma6.h,v 1.4 2006-03-22 17:05:06 fspindle Exp $
  *
  * Description
  * ============
@@ -79,7 +79,7 @@ public: /* Constantes */
   enum CameraRobotType
     {
       CAMERA_XC77_12MM,
-      CAMERA_HF,
+      CAMERA_HF_8MM,
       CAMERA_IEEE1394_12MM,
     } ;
   /** Camera utilisee par default. */

@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.7 2006-01-13 18:15:07 fspindle Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.8 2006-03-22 17:05:06 fspindle Exp $
  *
  * Description
  * ============
@@ -97,10 +97,7 @@ vpRobotAfma6::vpRobotAfma6 (void)
   signal(SIGQUIT, emergencyStop);
 
   DEBUG_TRACE (12, "Open communication with VME.");
-  init();
-
-  DEBUG_TRACE (12, "Read Config parameters.");
-  vpAfma6::init ();
+  this->init();
 
   try
   {
@@ -116,12 +113,11 @@ vpRobotAfma6::vpRobotAfma6 (void)
 }
 
 
-
 /* -------------------------------------------------------------------------- */
 /* --- INITIALISATION ------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-/* Initialise les connexions avec la carte VME et demare le robot.
+/* Initialise les connexions avec la carte VME et demarre le robot.
  * ERROR:
  *   - ERRConstruction si une erreur survient lors de l'ouverture du VME.
  *   - ERRCommunication si une erreur survient lors de l'initialisation de
@@ -145,10 +141,94 @@ vpRobotAfma6::init (void)
     throw vpRobotException (vpRobotException::communicationError,
 			    "Error during robot initialization.");
   }
+  // Charge sur le VME la matrice de passage pince-image correspondant
+  // a la camera par defaut
+  init(vpAfma6::defaultCameraRobot);
 
   return ;
 }
 
+/*!
+
+  Charge la matrice-pince camera associee à la camera
+
+*/
+void
+vpRobotAfma6::init (vpAfma6::CameraRobotType camera)
+{
+  ECameraAfma6 api_camera; // Interface with low level Afma6 api
+
+  switch (camera)
+  {
+  case vpAfma6::CAMERA_XC77_12MM:
+    api_camera = CAMERA_XC77;
+    break;
+  case vpAfma6::CAMERA_HF_8MM:
+    api_camera = CAMERA_HF;
+    break;
+  case vpAfma6::CAMERA_IEEE1394_12MM:
+    api_camera = CAMERA_IEEE1394;
+    break;
+  default:
+    {
+      api_camera = CAMERA_DEFAULT;
+      ERROR_TRACE ("Cette erreur ne peut pas arriver.");
+      ERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
+		   "que les specs de la classe ont ete modifiee, "
+		   "et que le code n'a pas ete mis a jour "
+		   "correctement.");
+      ERROR_TRACE ("Verifiez les valeurs possibles du type "
+		   "vpAfma6::CameraRobotType, et controlez que "
+		   "tous les cas ont ete pris en compte dans la "
+		   "fonction init(camera).");
+      break;
+    }
+  }
+
+
+  update_mpi_Afma6(api_camera);
+
+
+  DEBUG_TRACE (12, "Read Config parameters from the VME.");
+
+  // The constant values on the VME
+  STCONST_AFMA6 vme_constants;	/* Value of the joint limits */
+  recup_all_const_Afma6(&vme_constants);
+
+  // Update internal constant values
+  for (int i=0; i < vpAfma6::articulationsNb; i ++) {
+    this->Kp[i] = vme_constants.Kp[i];
+    this->Kd[i] = vme_constants.Kd[i];
+    this->Ki[i] = vme_constants.Ki[i];
+    this->QMax[i] = vme_constants.QMax[i];
+    this->QMin[i] = vme_constants.QMin[i];
+    this->top[i] = vme_constants.top[i];
+    this->RstQm[i] = vme_constants.RstQm[i];
+    this->SensDep[i] = vme_constants.SensDep[i];
+    this->EpsMax[i] = vme_constants.EpsMax[i];
+    this->TiMax[i] = vme_constants.TiMax[i];
+    this->AccMax[i] = vme_constants.AccMax[i];
+    this->VitMax[i] = vme_constants.VitMax[i];
+    this->ErrTMax[i] = vme_constants.ErrTMax[i];
+  }
+  this->l = vme_constants.l;
+  this->coupl = vme_constants.coupl;
+  this->FlagMod = vme_constants.FlagMod;
+  this->FlagReset = vme_constants.FlagReset;
+  for (int i=0; i < 3; i ++) {
+    this->rrpi[i] = vme_constants.teta[i] * M_PI / 180.0;
+    this->trpi[i] = vme_constants.trpi[i];
+  }
+  DEBUG_TRACE (15, "Compute homogeneous RPI matrix.");
+
+  vpRotationMatrix Rrpi ;
+  Rrpi.buildFrom(this->rrpi) ;
+
+  rpi.insert(Rrpi) ;
+  rpi.insert(trpi) ;
+
+  return ;
+}
 
 /* ------------------------------------------------------------------------ */
 /* --- DESTRUCTEUR -------------------------------------------------------- */

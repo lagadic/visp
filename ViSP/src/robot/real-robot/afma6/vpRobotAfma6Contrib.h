@@ -13,6 +13,7 @@
 #include "tools_Afma6.h"	// Outils communs Afma6
 #include "robot_Afma6.h"	// Robot Afma6
 #include "path_Afma6.h"		// Chemin d'acces aux api de l'Afma6
+#include "appli_Afma6.h"	// Chemin d'acces aux api de l'Afma6
 
 
 
