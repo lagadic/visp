@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.h,v 1.5 2006-01-13 18:15:07 fspindle Exp $
+ *  $Id: vpRobotAfma6.h,v 1.6 2006-03-22 17:05:06 fspindle Exp $
  *
  * Description
  * ============
@@ -117,6 +117,7 @@ public: /* Methodes */
    * l'afma6.
    */
   void init (void);
+  void init (vpAfma6::CameraRobotType camera);
 
 public:  /* Constantes */
 

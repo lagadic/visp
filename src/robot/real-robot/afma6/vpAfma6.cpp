@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.cpp,v 1.6 2005-09-26 15:58:05 fspindle Exp $
+ *  $Id: vpAfma6.cpp,v 1.7 2006-03-22 17:05:06 fspindle Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -1000,7 +1000,7 @@ init (const char * paramAfma6,
 void vpAfma6::
 init (vpAfma6::CameraRobotType camera)
 {
-  char            filenameMPI [256];
+  char            filenameMPI [FILENAME_MAX];
 
   switch (camera)
   {
@@ -1010,7 +1010,7 @@ init (vpAfma6::CameraRobotType camera)
 	       CONST_MPI_XC77);
       break;
     }
-  case vpAfma6::CAMERA_HF:
+  case vpAfma6::CAMERA_HF_8MM:
     {
      snprintf(filenameMPI, 100, "%s",
 	       CONST_MPI_HF);
