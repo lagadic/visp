@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.h,v 1.3 2006-03-21 10:46:17 fspindle Exp $
+ *  $Id: vpTime.h,v 1.4 2006-04-10 13:53:30 fspindle Exp $
  *
  * Description
  * ============
@@ -45,7 +45,7 @@ public:
   static double measureTimeMs() ;
   static double measureTimeMicros() ;
   static int  wait(double t0, double t) ;
-  static void wait(int t) ;
+  static void wait(double t) ;
 } ;
 
 #endif
