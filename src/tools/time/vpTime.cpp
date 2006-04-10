@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpTime.cpp,v 1.6 2006-03-21 10:56:43 fspindle Exp $
+ *  $Id: vpTime.cpp,v 1.7 2006-04-10 13:53:30 fspindle Exp $
  *
  * Description
  * ============
@@ -141,7 +141,7 @@ vpTime::wait(double t0, double t)
   \param t : Time to wait in ms.
 
 */
-void vpTime::wait(int t)
+void vpTime::wait(double t)
 {
   double t0, timeCurrent, timeToWait;
   t0 = timeCurrent = measureTimeMs();
