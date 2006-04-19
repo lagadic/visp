@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageTools.cpp,v 1.3 2006-02-07 14:44:27 fspindle Exp $
+ *  $Id: vpImageTools.cpp,v 1.4 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -17,7 +17,7 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-#include<visp/vpImageTools.h>
+#include <visp/vpImageTools.h>
 
 
 /*!

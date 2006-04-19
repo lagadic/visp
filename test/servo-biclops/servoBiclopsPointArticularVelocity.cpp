@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.2 2006-02-21 15:34:45 fspindle Exp $
+ *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.3 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -32,7 +32,9 @@
 
 */
 
-#include <unistd.h>
+#ifdef UNIX
+#  include <unistd.h>
+#endif
 #include <pthread.h>
 #include <signal.h>
 #include <error.h>
@@ -40,7 +42,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if ( defined (HAVE_ROBOT_BICLOPS_PT) & defined (HAVE_LIBDC1394_CONTROL) & defined(HAVE_LIBRAW1394) )
+#if ( defined (VISP_HAVE_BICLOPS) & defined (VISP_HAVE_DC1394) )
 #include <visp/vp1394Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
@@ -245,9 +247,9 @@ main()
     {
       vpColVector s_minus_sStar(2);
       s_minus_sStar = task.s - task.sStar;
-      fprintf(fd, "%f %f %f %f %f\n", 
+      fprintf(fd, "%f %f %f %f %f\n",
 	      v[0], v[1],
-	      s_minus_sStar[0], s_minus_sStar[1], 
+	      s_minus_sStar[0], s_minus_sStar[1],
 	      task.error.sumSquare());
     }
   }

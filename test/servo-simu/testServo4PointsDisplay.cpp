@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServo4PointsDisplay.cpp,v 1.3 2005-07-05 10:27:31 marchand Exp $
+ *  $Id: testServo4PointsDisplay.cpp,v 1.4 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -35,7 +35,10 @@
 
 */
 
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
 
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -203,7 +206,17 @@ main()
   TRACE("Display task information " ) ;
   task.print() ;
 
+#if 0
+  // suppressed for automate test
   TRACE("\n\nClick in the internal view window to end...");
   vpDisplay::getClick(I) ;
+#endif
+}
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
+#endif

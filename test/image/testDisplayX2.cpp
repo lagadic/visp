@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX2.cpp,v 1.6 2006-01-12 17:29:42 nmansard Exp $
+ *  $Id: testDisplayX2.cpp,v 1.7 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -23,6 +23,11 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -99,6 +104,7 @@ main()
 			       "ViSP is a marvelous software",
 			       vpColor::blue) ;
 
+#if 0
   cout << "\nA click to display a point..." << endl;
 
   vpDisplay::getClick(I);
@@ -111,8 +117,24 @@ main()
 
   cout << "\nA click to exit..." << endl;
   vpDisplay::getClick(I) ;
+#else
+  // Suppress the getClick() call for automate test
+  vpDisplay::displayCross(I, 50, 50, 3, vpColor::red);
 
+  vpImage<vpRGBa> Iaug ;
+  vpDisplay::getImage(I,Iaug) ;
+  vpImageIo::writePPM(Iaug,"images-res/DisplayX2.Klimt-augmented.ppm") ;
+#endif
 }
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
+
+#endif
+
 
 /*
  * Local variables:

@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServo4Points.cpp,v 1.2 2005-11-04 15:01:17 nmansard Exp $
+ *  $Id: testServo4Points.cpp,v 1.3 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -35,14 +35,16 @@
 
 */
 
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
 
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpFeaturePoint.h>
 #include <visp/vpServo.h>
 #include <visp/vpRobotCamera.h>
-#include <visp/vpDebug.h>
 #include <visp/vpFeatureBuilder.h>
 
 
@@ -172,3 +174,17 @@ main()
   task.print() ;
 }
 
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
+
+#endif
+
+/*
+ * Local variables:
+ * c-basic-offset: 2
+ * End:
+ */

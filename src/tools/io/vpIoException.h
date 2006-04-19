@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpIoException.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpIoException.h,v 1.2 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -33,10 +33,11 @@
    \brief error that can be emited by the vpIo class and its derivates
  */
 /* Classes standards. */
-using namespace std;
 #include <iostream>                /* Classe ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpException.h>
+
+using namespace std;
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */

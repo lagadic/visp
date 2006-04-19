@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureThetaU.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
+ *  $Id: vpFeatureThetaU.cpp,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -85,9 +85,9 @@ vpFeatureThetaU::buildFrom(vpThetaUVector &tu)
   s[2] = tu[2] ;
 }
 
-void vpFeatureThetaU::set_TUx(const double _TUx)
+void vpFeatureThetaU::set_TUx(const double TUx)
 {
-    s[0] = _TUx ;
+    s[0] = TUx ;
 }
 
 double vpFeatureThetaU::get_TUx()  const
@@ -95,9 +95,9 @@ double vpFeatureThetaU::get_TUx()  const
     return s[0] ;
 }
 
-void vpFeatureThetaU::set_TUy(const double _TUy)
+void vpFeatureThetaU::set_TUy(const double TUy)
 {
-    s[1] = _TUy ;
+    s[1] = TUy ;
 }
 
 double vpFeatureThetaU::get_TUy()   const
@@ -106,9 +106,9 @@ double vpFeatureThetaU::get_TUy()   const
 }
 
 void
-vpFeatureThetaU::set_TUz(const double _TUz)
+vpFeatureThetaU::set_TUz(const double TUz)
 {
-    s[2] = _TUz ;
+    s[2] = TUz ;
 }
 
 double

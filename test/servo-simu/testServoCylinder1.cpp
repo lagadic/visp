@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoCylinder1.cpp,v 1.2 2005-06-30 08:22:37 fspindle Exp $
+ *  $Id: testServoCylinder1.cpp,v 1.3 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -26,6 +26,10 @@
   \brief Servo a cylinder
 */
 
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -139,9 +143,10 @@ main()
   TRACE("Display task information " ) ;
   task.print() ;
 
-
+#if 0
   TRACE("\n\nClick in the camera view window to start...");
   vpDisplay::getClick(I) ;
+#endif
   TRACE("\t set the gain") ;
   task.setLambda(0.1) ;
 
@@ -186,10 +191,19 @@ main()
     //   vpDisplay::getClick(I) ;
   }
   while(task.error.sumSquare() >  1e-9) ;
-
+#if 0
   TRACE("\n\nClick in the camera view window to end...");
   vpDisplay::getClick(I) ;
+#endif
   TRACE("Display task information " ) ;
   task.print() ;
 }
 
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
+
+#endif

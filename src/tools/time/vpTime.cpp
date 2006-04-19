@@ -4,14 +4,14 @@
  * www  : http://www.irisa.fr/lagadic
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:      vpMatrixException.h
+ * File:      vpTime.cpp
  * Project:   ViSP2
  * Author:    Eric Marchand
  *
  * Version control
  * ===============
  *
- *  $Id: vpTime.cpp,v 1.7 2006-04-10 13:53:30 fspindle Exp $
+ *  $Id: vpTime.cpp,v 1.8 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <visp/vpTime.h>
+#include <visp/vpDebug.h>
 
 using namespace std;
 
@@ -30,30 +31,22 @@ using namespace std;
 
 */
 
-#ifdef WIN32
-// MS Windows
-
-#  include <afx.h>
-#  include <sys/types.h>
-#  include <sys/timeb.h>
-#  include <app/CViSPApp.h>
-#  include <unistd.h>
-
-#else // UNIX
 
 // Unix depend version
 
-#include <sys/time.h>
-#include <unistd.h>
-
+#if defined UNIX
+#  include <sys/time.h>
+#  include <unistd.h>
+#elif defined WIN32
+#  include <windows.h>
+#  include <mmsystem.h>
+#  include <winbase.h>
+#endif
 
 double vpTime::minTimeForUsleepCall = 20; /*! Threshold to activate usleep() in
 					    waiting methods. This threshold is
 					    needed, because usleep() is not
 					    accurate on many machines. */
-
-#endif
-
 
 
 /*!
@@ -64,11 +57,9 @@ double vpTime::minTimeForUsleepCall = 20; /*! Threshold to activate usleep() in
 double
 vpTime::measureTimeMs()
 {
-#ifdef WIN32
-  LARGE_INTEGER count;
-  QueryPerformanceCounter(&count);
-  return (int) (count.QuadPart*1000/(double)CViSPApp::getFrequency());
-#else
+#if defined WIN32
+  return(timeGetTime());
+#elif defined UNIX
   struct timeval tp;
   gettimeofday(&tp,0);
   return(1000.0*tp.tv_sec + tp.tv_usec/1000.0);
@@ -84,9 +75,14 @@ vpTime::measureTimeMs()
 double
 vpTime::measureTimeMicros()
 {
-   struct timeval tp;
-   gettimeofday(&tp,0);
-   return(1000000.0*tp.tv_sec + tp.tv_usec);
+#ifdef WIN32
+  return(1000.0 * timeGetTime());
+#else
+
+  struct timeval tp;
+  gettimeofday(&tp,0);
+  return(1000000.0*tp.tv_sec + tp.tv_usec);
+#endif
 }
 
 
@@ -116,10 +112,15 @@ vpTime::wait(double t0, double t)
   if ( timeToWait <= 0. ) // no need to wait
     return(1);
   else {
+#if defined UNIX
     if (timeToWait > vpTime::minTimeForUsleepCall) {
       usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
-
+#elif defined WIN32
+    if (timeToWait > vpTime::minTimeForUsleepCall) {
+      Sleep((long )(timeToWait-vpTime::minTimeForUsleepCall));
+    }
+#endif
     // Blocking loop to have an accurate waiting
     do {
       timeCurrent = measureTimeMs();
@@ -151,10 +152,15 @@ void vpTime::wait(double t)
   if ( timeToWait <= 0. ) // no need to wait
     return;
   else {
-    if (timeToWait > vpTime::minTimeForUsleepCall) {
+#if defined UNIX
+	if (timeToWait > vpTime::minTimeForUsleepCall) {
       usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
-
+#elif defined WIN32
+    if (timeToWait > vpTime::minTimeForUsleepCall) {
+      Sleep((long )(timeToWait-vpTime::minTimeForUsleepCall));
+    }
+#endif
     // Blocking loop to have an accurate waiting
     do {
       timeCurrent = measureTimeMs();

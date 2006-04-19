@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.cpp,v 1.23 2006-01-25 10:31:52 fspindle Exp $
+ *  $Id: vpMatrix.cpp,v 1.24 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -925,7 +925,7 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
 {
   if (DEBUG_LEVEL1 == 0) /* no verification */
   {
-#ifdef HAVE_LIBGSL  /* be careful of the copy below */
+#ifdef VISP_HAVE_GSL  /* be careful of the copy below */
     svdGsl(w,v) ;
 #else
     svdNr(w,v) ;
@@ -940,7 +940,7 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
 
     A = (*this);        /* copy because svd is destructive */
 
-#ifdef HAVE_LIBGSL  /* be careful of the copy above */
+#ifdef VISP_HAVE_GSL  /* be careful of the copy above */
     svdGsl(w,v) ;
 #else
     svdNr(w,v) ;

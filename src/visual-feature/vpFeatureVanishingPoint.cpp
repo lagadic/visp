@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureVanishingPoint.cpp,v 1.1 2006-02-06 14:25:26 obourqua Exp $
+ *  $Id: vpFeatureVanishingPoint.cpp,v 1.2 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -34,9 +34,9 @@
 #include <visp/vpDebug.h>
 
 // math
-#include<visp/vpMath.h>
+#include <visp/vpMath.h>
 
-#include<visp/vpFeatureDisplay.h>
+#include <visp/vpFeatureDisplay.h>
 
 void
 vpFeatureVanishingPoint::init()

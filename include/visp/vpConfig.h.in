@@ -4,84 +4,47 @@
 #define vpConfig_h
 
 
-/* Define to 1 if the SBS Bit3 bus driver is available */
-#undef HAVE_BIT3
-
-/* Define to 1 if Coin library is available */
-#undef HAVE_COIN
-
 /* Define to 1 if the ICcomp framegrabber api is available */
-#undef HAVE_FG_ICCOMP
+#undef VISP_HAVE_ICCOMP
 
 /* Define to 1 if GTK library is available */
-#undef HAVE_GTK
-
-/* Define to 1 if the include linux/videodev.h for Video4Linux acquisition is
-   available */
-#undef HAVE_INCLUDE_VIDEODEV
+#undef VISP_HAVE_GTK
 
 /* Define to 1 if the include linux/videodev2.h for Video4Linux2 acquisition
    is available */
-#undef HAVE_INCLUDE_VIDEODEV2
+#undef VISP_HAVE_V4L2
 
 /* Define to 1 if insure++ debugging tool is available */
-#undef HAVE_INSURE
+#undef VISP_HAVE_INSURE
 
 /* Define to 1 if Cfox library is available */
-#undef HAVE_LIBCFOX
+#undef VISP_HAVE_CFOX
 
 /* Define to 1 if you have the `dc1394_control' library (-ldc1394_control). */
-#undef HAVE_LIBDC1394_CONTROL
+#undef VISP_HAVE_DC1394
 
-/* Define to 1 if you have the `gsl' library (-lgsl). */
-#undef HAVE_LIBGSL
-
-/* Define to 1 if you have the `gslcblas' library (-lgslcblas). */
-#undef HAVE_LIBGSLCBLAS
-
-/* Define to 1 if you have the `jpeg' library (-ljpeg). */
-#undef HAVE_LIBJPEG
-
-/* Define to 1 if you have the `m' library (-lm). */
-#undef HAVE_LIBM
-
-/* Define to 1 if you have the `png' library (-lpng). */
-#undef HAVE_LIBPNG
-
-/* Define to 1 if you have the `raw1394' library (-lraw1394). */
-#undef HAVE_LIBRAW1394
+/* Define to 1 if you have the `gsl' library (-lgslcblas -lgsl). */
+#undef VISP_HAVE_GSL
 
 /* Define to 1 if you have the `SoQt' library (-lSoQt). */
-#undef HAVE_LIBSOQT
-
-/* Define to 1 if you have the `SoXt' library (-lSoXt). */
-#undef HAVE_LIBSOXT
+#undef VISP_HAVE_SOQT
 
 /* Define to 1 if you have the `X11' library (-lX11). */
-#undef HAVE_LIBX11
-
-/* Define to 1 if you have the `z' library (-lz). */
-#undef HAVE_LIBZ
+#undef VISP_HAVE_X11
 
 /* Define to 1 if Qt library is available */
-#undef HAVE_QT
+#undef VISP_HAVE_QT
 
 /* Define to 1 if the Afma4 robot api are available */
-#undef HAVE_ROBOT_AFMA4
+#undef VISP_HAVE_AFMA4
 
 /* Define to 1 if the Afma6 robot api are available */
-#undef HAVE_ROBOT_AFMA6
+#undef VISP_HAVE_AFMA6
 
 /* Define to 1 if the biclops pan-tilt api is available */
-#undef HAVE_ROBOT_BICLOPS_PT
+#undef VISP_HAVE_BICLOPS
 
 /* Define to 1 if the Ptu-Evi robot api is available */
-#undef HAVE_ROBOT_PTUEVI
-
-/* Define to 1 if the Vic2500 robot api is available */
-#undef HAVE_ROBOT_VIC2500
-
-/* Define to 1 if the X Window System is missing or not being used. */
-#undef X_DISPLAY_MISSING
+#undef VISP_HAVE_PTUEVI
 
 #endif

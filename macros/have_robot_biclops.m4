@@ -23,7 +23,7 @@ AC_MSG_CHECKING(whether biclops pan-tilt api works)
   if test "x$have_robot_biclops" = "xyes"; then
     # Biclops robot works
     LIBS="$ROBOT_BICLOPS_LIBS $LIBS"
-    AC_DEFINE([HAVE_ROBOT_BICLOPS_PT], 1,
+    AC_DEFINE([VISP_HAVE_BICLOPS], 1,
               [Define to 1 if the biclops pan-tilt api is available])
     AC_MSG_RESULT(yes)
   else

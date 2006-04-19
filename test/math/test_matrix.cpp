@@ -8,21 +8,10 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-
-#include <visp/vpImage.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpTime.h>
-#include <visp/vpImageIo.h>
-
-#include <visp/vpDisplayX.h>
-
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpPose.h>
+#include <visp/vpTwistMatrix.h>
+
 
 int main()
 {
@@ -93,7 +82,10 @@ int main()
 
 
   vpTwistMatrix vMe;
-  vpMatrix A,B;
+  vpMatrix A(1,6),B;
+
+  A=1.0;
+  //vMe=1.0;
   B=A*vMe;
 
 

@@ -28,9 +28,9 @@ tools for homography computation.
 #ifndef vpHomography_hh
 #define vpHomography_hh
 
-#include<visp/vpHomogeneousMatrix.h>
-#include<visp/vpPlane.h>
-#include<visp/vpList.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpPlane.h>
+#include <visp/vpList.h>
 
 
 /*!  \class vpHomography

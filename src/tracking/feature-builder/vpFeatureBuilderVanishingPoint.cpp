@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilderVanishingPoint.cpp,v 1.1 2006-02-06 14:24:25 obourqua Exp $
+ *  $Id: vpFeatureBuilderVanishingPoint.cpp,v 1.2 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -24,9 +24,9 @@
   \brief  conversion between vpPoint
   and visual feature vanishing Point
 */
-#include<visp/vpFeatureBuilder.h>
-#include<visp/vpFeatureException.h>
-#include<visp/vpException.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeatureException.h>
+#include <visp/vpException.h>
 
 
 /*!

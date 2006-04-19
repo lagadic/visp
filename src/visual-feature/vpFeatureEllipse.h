@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureEllipse.h,v 1.2 2005-12-06 16:28:49 nmansard Exp $
+ *  $Id: vpFeatureEllipse.h,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -63,17 +63,17 @@ public:
     /section Set coordinates
   */
  //! basic constructor
-  vpFeatureEllipse(const double _x, const double _y,
-		   const double _mu20, const double _mu11, const double _mu02);
+  vpFeatureEllipse(const double x, const double y,
+		   const double mu20, const double mu11, const double mu02);
 
   // void buildFrom(const vpEllipse &p) ;
-  void buildFrom(const double _x, const double _y,
-		 const double _mu20, const double _mu11, const double _mu02) ;
-  void buildFrom(const double _x, const double _y,
-		 const double _mu20, const double _mu11, const double _mu02,
-		 const double _A, const double _B, const double _C) ;
-  void setABC(const double _A, const double _B, const double _C) ;
-  void setMu(const double _mu20, const double _mu11, const double _mu02) ;
+  void buildFrom(const double x, const double y,
+		 const double mu20, const double mu11, const double mu02) ;
+  void buildFrom(const double x, const double y,
+		 const double mu20, const double mu11, const double mu02,
+		 const double A, const double B, const double C) ;
+  void setABC(const double A, const double B, const double C) ;
+  void setMu(const double mu20, const double mu11, const double mu02) ;
   //@}
 
 public:

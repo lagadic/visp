@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilder.h,v 1.4 2006-03-09 14:33:18 rtatsamb Exp $
+ *  $Id: vpFeatureBuilder.h,v 1.5 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -24,31 +24,31 @@
   \brief  class  that defines conversion between tracker and visual feature
 */
 // tracker
-#include<visp/vpDot.h>
-#include<visp/vpDot2.h>
-#include<visp/vpMeLine.h>
+#include <visp/vpDot.h>
+#include <visp/vpDot2.h>
+#include <visp/vpMeLine.h>
 
 
 // forward projection tracker
-#include<visp/vpPoint.h>
-#include<visp/vpLine.h>
-#include<visp/vpSphere.h>
-#include<visp/vpCircle.h>
-#include<visp/vpCylinder.h>
+#include <visp/vpPoint.h>
+#include <visp/vpLine.h>
+#include <visp/vpSphere.h>
+#include <visp/vpCircle.h>
+#include <visp/vpCylinder.h>
 
 // visual feature
-#include<visp/vpFeaturePoint.h>
-#include<visp/vpFeatureLine.h>
-#include<visp/vpFeatureEllipse.h>
-#include<visp/vpFeaturePoint3D.h>
-#include<visp/vpFeatureThetaU.h>
-#include<visp/vpFeatureTranslation.h>
-#include<visp/vpFeatureVanishingPoint.h>
+#include <visp/vpFeaturePoint.h>
+#include <visp/vpFeatureLine.h>
+#include <visp/vpFeatureEllipse.h>
+#include <visp/vpFeaturePoint3D.h>
+#include <visp/vpFeatureThetaU.h>
+#include <visp/vpFeatureTranslation.h>
+#include <visp/vpFeatureVanishingPoint.h>
 
 //pixel / meter conversion
-#include<visp/vpCameraParameters.h>
-#include<visp/vpPixelMeterConversion.h>
-#include<visp/vpMeterPixelConversion.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpPixelMeterConversion.h>
+#include <visp/vpMeterPixelConversion.h>
 
 #ifndef vpFeatureBuilder_H
 #define vpFeatureBuilder_H

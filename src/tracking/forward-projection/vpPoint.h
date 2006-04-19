@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoint.h,v 1.5 2006-01-12 09:35:47 nmansard Exp $
+ *  $Id: vpPoint.h,v 1.6 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -60,16 +60,16 @@ public:
   //@{
 
   //! set the point coordinates (camera frame)
-  void set_X(const double _X) { cP[0] = _X ; }
-  void set_Y(const double _Y) { cP[1] = _Y ; }
-  void set_Z(const double _Z) { cP[2] = _Z ; }
-  void set_W(const double _W) { cP[3] = _W ; }
+  void set_X(const double X) { cP[0] = X ; }
+  void set_Y(const double Y) { cP[1] = Y ; }
+  void set_Z(const double Z) { cP[2] = Z ; }
+  void set_W(const double W) { cP[3] = W ; }
 
   //! set the point coordinates (object frame)
-  void set_oX(const double _X) { oP[0] = _X ; }
-  void set_oY(const double _Y) { oP[1] = _Y ; }
-  void set_oZ(const double _Z) { oP[2] = _Z ; }
-  void set_oW(const double _W) { oP[3] = _W ; }
+  void set_oX(const double X) { oP[0] = X ; }
+  void set_oY(const double Y) { oP[1] = Y ; }
+  void set_oZ(const double Z) { oP[2] = Z ; }
+  void set_oW(const double W) { oP[3] = W ; }
 
   //! get the point coordinates (camera frame)
   double get_X()  const { return cP[0] ; }
@@ -84,9 +84,9 @@ public:
   double get_oW() const { return oP[3] ; }
 
   //! set the point xyw-coordinates
-  void set_x(const double _x) {  p[0] = _x ; }
-  void set_y(const double _y) {  p[1] = _y ; }
-  void set_w(const double _w) {  p[2] = _w ; }
+  void set_x(const double x) {  p[0] = x ; }
+  void set_y(const double y) {  p[1] = y ; }
+  void set_w(const double w) {  p[2] = w ; }
 
 
   //! get the point xyw-coordinates

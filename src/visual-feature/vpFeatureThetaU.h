@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureThetaU.h,v 1.2 2005-12-06 16:28:49 nmansard Exp $
+ *  $Id: vpFeatureThetaU.h,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -69,11 +69,11 @@ public:
 public:
 
 
-  void set_TUx(const double _X) ;
+  void set_TUx(const double X) ;
   double get_TUx()  const ;
-  void set_TUy(const double _Y) ;
+  void set_TUy(const double Y) ;
   double get_TUy()   const ;
-  void set_TUz(const double _Z) ;
+  void set_TUz(const double Z) ;
   double get_TUz() const  ;
 
   //! build from a rotation matrix

@@ -17,7 +17,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_LIBSOQT
+#ifdef VISP_HAVE_SOQT
 
 /*   KNOWN ISSUE DEALING WITH X11 and QT
      If you get a strange compiler error on the line with None,

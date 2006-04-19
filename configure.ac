@@ -3,7 +3,7 @@
 #AC_CONFIG_MACRO_DIR(m4)
 
 AC_PREREQ(2.57)
-AC_INIT([ViSP],[2.1.1],[visp@irisa.fr])
+AC_INIT([ViSP],[2.1.2],[visp@irisa.fr])
 AC_CONFIG_HEADER([include/visp/vpConfig.h])
 dnl Pick up the needed m4 macros.
 AM_ACLOCAL_INCLUDE(macros)
@@ -12,7 +12,7 @@ AM_ACLOCAL_INCLUDE(macros)
 AC_PROG_CXX
 AC_PROG_RANLIB
 AC_CHECK_TOOL(AR, ar crs, :)
-AC_CHECK_PROG(HAVE_DOT, dot, YES, NO, ,)
+AC_CHECK_PROG(DOXYGEN_DOT_FOUND, dot, YES, NO, ,)
 
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
@@ -35,30 +35,50 @@ fi
 AC_CHECK_LIB(m,main)
 #-----------------------------------------------------------------------
 # Check for -lgslcblas library
-AC_CHECK_LIB(gslcblas,main)
+AC_CHECK_LIB(gslcblas,main,have_gslcblas=yes, have_gslcblas=no)
 #-----------------------------------------------------------------------
 # Check for -lgsl library
-AC_CHECK_LIB(gsl,main)
+if test "x$have_gslcblas" = "xyes"; then
+   AC_CHECK_LIB(gsl,main,have_gsl=yes,have_gsl=no,-lgslcblas)
+   if test "x$have_gsl" = "xyes"; then
+      LIBS="-lgslcblas -lgsl $LIBS"
+      AC_DEFINE([VISP_HAVE_GSL], 1,
+                [Define to 1 if the gsl lib is available])
+   fi
+fi
+
 #-----------------------------------------------------------------------
 # Check for -lcfox library 1394 acquisition on the mac
 
 AC_CHECK_LIB(cfox,main,have_cfox=yes,have_cfox=no)
 if test "x$have_cfox" = "xyes"; then
- AC_DEFINE([HAVE_LIBCFOX], 1,
+  AC_DEFINE([VISP_HAVE_CFOX], 1,
             [Define to 1 if Cfox library is available])
   LIBS="$LIBS -lcfox -framework IOKit -framework Carbon "
 fi 
 #-----------------------------------------------------------------------
 # Check for ieee 1394 capabilities
-AC_CHECK_LIB(raw1394,main)
-AC_CHECK_LIB(dc1394_control,main)
-AC_CHECK_LIB(jpeg,main)
+AC_CHECK_LIB(raw1394,main,have_raw1394=yes,have_raw1394=no)
+if test "x$have_raw1394" = "xyes"; then
+   AC_CHECK_LIB(dc1394_control,main,have_dc1394=yes,have_dc1394=no)
+   if test "x$have_dc1394" = "xyes"; then
+      AC_DEFINE([VISP_HAVE_DC1394], 1,
+            [Define to 1 if 1394 library is available])
+      LIBS="-ldc1394_control -lraw1394 $LIBS"
+   fi
+fi
+
+
 #-----------------------------------------------------------------------
 # Check for X
 AC_PATH_XTRA
 #-----------------------------------------------------------------------
 # Check for X11 library
-AC_CHECK_LIB(X11, XOpenDisplay,,,$X_LIBS $X_EXTRA_LIBS)
+AC_CHECK_LIB(X11, XOpenDisplay,have_x11=yes,have_x11=no,$X_LIBS $X_EXTRA_LIBS)
+if test "x$have_x11" = "xyes"; then
+   AC_DEFINE([VISP_HAVE_X11], 1,
+            [Define to 1 if X11 library is available])
+fi
 #-----------------------------------------------------------------------
 # Check for -lpng library
 AC_CHECK_LIB(png, png_create_read_struct,,,$X_LIBS $X_EXTRA_LIBS)
@@ -87,18 +107,18 @@ AC_CHECK_LIB(jpeg, jpeg_std_error,,,$X_LIBS $X_EXTRA_LIBS)
 AM_PATH_GTK_2_0(2.0.0,have_gtk=yes,have_gtk=no)
 if test "x$have_gtk" = "xyes" ; then 
  echo "have gtk yes:	$have_gtk"
-  AC_DEFINE([HAVE_GTK],  1,
+  AC_DEFINE([VISP_HAVE_GTK],  1,
             [Define to 1 if GTK library is available])
-  AC_SUBST(HAVE_GTK,yes)
+  AC_SUBST(VISP_HAVE_GTK,yes)
   LIBS="$LIBS $GTK_LIBS"
   CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
 else
  AM_PATH_GTK(1.2.0,have_gtk=yes,have_gtk=no)
  if test "x$have_gtk" = "xyes" ; then 
-  echo "have gtk yes:	$have_gtk"
-  AC_DEFINE([HAVE_GTK],  1,
+#  echo "have gtk yes:	$have_gtk"
+  AC_DEFINE([VISP_HAVE_GTK],  1,
             [Define to 1 if GTK library is available])
-  AC_SUBST(HAVE_GTK,yes)
+  AC_SUBST(VISP_HAVE_GTK,yes)
   LIBS="$LIBS $GTK_LIBS"
   CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
  else
@@ -109,23 +129,23 @@ fi
 # Check for Qt library
 BNV_HAVE_QT
 if test "x$have_qt" = "xyes"; then
-  AC_DEFINE([HAVE_QT], 1,
+  AC_DEFINE([VISP_HAVE_QT], 1,
             [Define to 1 if Qt library is available])
-  AC_SUBST(HAVE_QT,yes)
+  AC_SUBST(VISP_HAVE_QT,yes)
   CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS"
   LIBS="$LIBS $QT_LIBS"
 else
   LDFLAGS="$LDFLAGS $X_LIBS"
-  AC_SUBST(HAVE_QT,no)
+  AC_SUBST(VISP_HAVE_QT,no)
 fi
 
 #-----------------------------------------------------------------------
 # Check for -lCoin library and if Qt exists for -lSoQt. else for -lSoXt
 SIM_AC_HAVE_COIN_IFELSE(have_coin=yes,have_coin=no)
 if test "$have_coin" = "yes"; then
-  AC_DEFINE([HAVE_COIN], 1,
+  AC_DEFINE([VISP_HAVE_COIN], 1,
             [Define to 1 if Coin library is available])
-  AC_SUBST(HAVE_COIN,yes)
+  AC_SUBST(VISP_HAVE_COIN,yes)
   CPPFLAGS="$CPPFLAGS $sim_ac_coin_cppflags"
   CXXFLAGS="$CXXFLAGS $sim_ac_coin_cxxflags"
   LDFLAGS="$LDFLAGS $sim_ac_coin_ldflags"
@@ -133,8 +153,14 @@ if test "$have_coin" = "yes"; then
   if test "x$have_qt" = "xyes"; then
     # Check for -lSoQt library
     AC_LANG_PUSH(C++)       
-    AC_CHECK_LIB(SoQt,main)
-    AC_LANG_POP(C++)       
+    AC_CHECK_LIB(SoQt,main,have_soqt=yes,have_soqt=no)
+    AC_LANG_POP(C++)
+    if test "x$have_soqt" = "xyes"; then
+      LIBS="$LIBS -lSoQt"
+      AC_DEFINE([VISP_HAVE_SOQT], 1,
+            [Define to 1 if SoQt library is available])
+    
+    fi
 else
       # Check for -lSoXt library
   AC_LANG_PUSH(C++)       
@@ -142,7 +168,7 @@ else
   AC_LANG_POP(C++)   
     fi
 else
-  AC_SUBST(HAVE_COIN,no)
+  AC_SUBST(VISP_HAVE_COIN,no)
 fi
 
 ########################################################################
@@ -198,11 +224,11 @@ fi
 # Manage the --enable-insure option
 AC_CHECK_PROG(have_insure, insure, yes, no, ,)
 if test "x$have_insure" = "xyes"; then
-  AC_DEFINE([HAVE_INSURE], 1,
+  AC_DEFINE([VISP_HAVE_INSURE], 1,
             [Define to 1 if insure++ debugging tool is available])
-  AC_SUBST(HAVE_INSURE,yes)
+  AC_SUBST(VISP_HAVE_INSURE,yes)
 else
-  AC_SUBST(HAVE_INSURE,no)
+  AC_SUBST(VISP_HAVE_INSURE,no)
 fi
 
 if test "x$have_insure" = "xyes"; then
@@ -241,7 +267,12 @@ AC_SUBST(VISP_LIBNAME,$VISP_LIBNAME)
 CXXFLAGS="$CXXFLAGS -Wall -Wunused -Werror"
 #-----------------------------------------------------------------------
 # Add systematically compiler options: -Wall -Wunused
-CPPFLAGS="$CPPFLAGS -D__${OS}_"
+if test "x$OS" = "xLinux"; then
+  CPPFLAGS="$CPPFLAGS -DUNIX"
+fi
+if test "x$OS" = "xDarwin"; then
+  CPPFLAGS="$CPPFLAGS -DUNIX -DAPPLE"
+fi
 #-----------------------------------------------------------------------
 # Set VISP home path
 relpath=`dirname $0`
@@ -262,14 +293,14 @@ LDFLAGS="$LDFLAGS -L$VISP_LIB_PATH"
 # check for specific hardware
 ########################################################################
 
-HAVE_FG_V4L
+#HAVE_FG_V4L
 HAVE_FG_V4L2
 IRISA_HAVE_FG_ICCOMP
 IRISA_HAVE_BIT3_DRIVER
 IRISA_HAVE_ROBOT_AFMA4
 IRISA_HAVE_ROBOT_AFMA6
 IRISA_HAVE_ROBOT_PTUEVI
-IRISA_HAVE_ROBOT_VIC2500
+#IRISA_HAVE_ROBOT_VIC2500
 HAVE_ROBOT_BICLOPS
 
 ########################################################################
@@ -310,7 +341,6 @@ include/visp/Makefile
 Makefile
 src/Makefile
 src/camera/Makefile
-src/debug/Makefile
 src/exceptions/Makefile
 src/math/Makefile
 src/math/misc/Makefile

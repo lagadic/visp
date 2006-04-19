@@ -17,7 +17,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_LIBSOQT
+#ifdef VISP_HAVE_SOQT
 
 
 // Qt and Coin stuff

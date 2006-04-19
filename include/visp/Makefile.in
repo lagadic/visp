@@ -77,14 +77,13 @@ TOOLS = \
 	vpIoException.h \
 	vpParseArgv.h \
 	\
-	vpPlane.h
+	vpPlane.h \
+	\
+	vpDebug.h
 
 DATASTRUCTURE =  \
 	vpList.h \
 	vpList.t.cpp
-
-DEBUG =  \
-	vpDebug.h
 
 POSE = \
 	vpPoseException.h \
@@ -170,7 +169,7 @@ CAMERA =  \
 HEADERS	  = \
 	$(MATH) $(VISUALFEATURE)  \
 	$(SERVO) $(DATASTRUCTURE) \
-	$(ROBOT) $(DEBUG) \
+	$(ROBOT)  \
 	$(TOOLS) $(IMAGE) $(VIDEODEVICE) \
 	$(FORWARDPROJECTION) $(TRACKING) \
 	$(CAMERA) $(POSE) $(GRABBER)  \

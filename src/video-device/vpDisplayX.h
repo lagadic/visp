@@ -23,7 +23,7 @@
 #define vpDisplayX_h
 
 #include <visp/vpConfig.h>
-#ifdef HAVE_LIBX11
+#ifdef VISP_HAVE_X11
 
 //namespace X11name
 //{
@@ -152,11 +152,8 @@ public:
 
   int  getScreenDepth();
   void getScreenSize(int *xsize, int *ysize);
-
-
-
-  void   getImage(vpImage<vpRGBa> &I) ;
+  void getImage(vpImage<vpRGBa> &I) ;
 } ;
 
-#endif // HAVE_LIBX11
+#endif
 #endif

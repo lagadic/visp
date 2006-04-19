@@ -504,8 +504,8 @@ void vpMatrix::svdFlake(vpColVector &W, vpMatrix &V)
 
 
 
-#ifdef HAVE_LIBGSL
-#include<gsl/gsl_linalg.h>
+#ifdef VISP_HAVE_GSL
+#include <gsl/gsl_linalg.h>
 
 void
 vpMatrix::svdGsl(vpColVector& w, vpMatrix& v)

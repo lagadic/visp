@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: movePtu46.cpp,v 1.1 2006-01-16 09:57:08 fspindle Exp $
+ *  $Id: movePtu46.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -25,12 +25,14 @@
   robot is controlled first in position, then in velocity.
 
 */
-#include <unistd.h>
+#ifdef UNIX
+#  include <unistd.h>
+#endif
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#ifdef HAVE_ROBOT_PTUEVI
+#ifdef VISP_HAVE_PTU46
 
 #include <visp/vpRobotPtu46.h>
 

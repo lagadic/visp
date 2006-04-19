@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testAutoDetectDot.cpp,v 1.3 2005-12-06 13:19:50 fspindle Exp $
+ *  $Id: testAutoDetectDot.cpp,v 1.4 2006-04-19 09:01:25 fspindle Exp $
  *
  * Description
  * ============
@@ -17,7 +17,10 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-#include <stdio.h>
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <stdio.h>
 
@@ -143,11 +146,21 @@ main()
     list_d->kill();
     delete list_d;
 
+#if 0
     TRACE("Click in the image to continue...");
     vpDisplay::getClick(I);
+#endif
     iter ++;
   }
 }
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
+
+#endif
 
 
 /*

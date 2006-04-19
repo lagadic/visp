@@ -49,7 +49,7 @@ if test "x$with_fg_iccomp" = "xyes"; then
     CXXFLAGS="$CXXFLAGS $FG_ICCOMP_CXXFLAGS"
     LDFLAGS="$LDFLAGS $FG_ICCOMP_LDFLAGS"
     LIBS="$FG_ICCOMP_LIBS $LIBS"
-    AC_DEFINE([HAVE_FG_ICCOMP], 1,
+    AC_DEFINE([VISP_HAVE_ICCOMP], 1,
               [Define to 1 if the ICcomp framegrabber api is available])
     AC_MSG_RESULT(yes)
     AC_SUBST(FG_ICCOMP_CXXFLAGS)

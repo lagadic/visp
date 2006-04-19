@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2Example.cpp,v 1.2 2005-12-06 13:29:36 fspindle Exp $
+ *  $Id: vpDot2Example.cpp,v 1.3 2006-04-19 09:01:20 fspindle Exp $
  *
  * Description
  * ============
@@ -22,6 +22,10 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <stdio.h>
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -222,7 +226,14 @@ main()
     iter +=5 ;
   }
 }
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
 
+#endif
 
 /*
  * Local variables:

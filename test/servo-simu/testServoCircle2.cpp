@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoCircle2.cpp,v 1.3 2005-06-30 08:22:37 fspindle Exp $
+ *  $Id: testServoCircle2.cpp,v 1.4 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -28,6 +28,10 @@
   \brief servo a circle
 */
 
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -153,4 +157,17 @@ main()
   TRACE("Display task information " ) ;
   task.print() ;
 }
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
 
+#endif
+
+/*
+ * Local variables:
+ * c-basic-offset: 2
+ * End:
+ */

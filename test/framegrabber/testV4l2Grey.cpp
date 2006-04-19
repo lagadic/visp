@@ -8,7 +8,7 @@
   Only grabbing of grey level images is tested.
 */
 
-#ifdef HAVE_INCLUDE_VIDEODEV2
+#ifdef VISP_HAVE_V4L2
 
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vpImage.h>

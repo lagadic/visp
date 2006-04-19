@@ -39,7 +39,7 @@
 */
 
 #include <visp/vpConfig.h>
-#ifdef HAVE_LIBX11
+#ifdef VISP_HAVE_X11
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1037,7 +1037,7 @@ void vpDisplayX::displayImage(vpImage<vpRGBa> &I)
 
       unsigned char       *dst_32 = NULL;
       dst_32 = (unsigned char*)Ximage->data;
-#ifdef __Darwin_
+#ifdef APPLE
       // little indian/big indian
       for (int i = 0; i < I.getCols() * I.getRows() ; i++) {
 	dst_32[i*4] = I.bitmap[i].A;
@@ -1766,7 +1766,7 @@ void vpDisplayX::displayCircle(int i, int j, int r, int c)
    }
 }
 
-#endif // HAVE_LIBX11
+#endif
 
 /*
  * Local variables:

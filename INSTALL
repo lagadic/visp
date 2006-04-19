@@ -1,0 +1,76 @@
+                            ViSP-2
+                     Visual Servoing Platform
+
+         Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
+                  www: http://www.irisa.fr/lagadic
+
+
+
+INSTALL howto for the ViSP library
+
+QUICKINSTALL: 
+> get ViSP source
+> install CMake (see http://www.cmake.org)
+> cmake .
+> make
+> make install
+
+
+
+Building ViSP with CMake
+------------------------
+
+Prerequsits: 
+(1) Install newest cmake version (minimum 2.2.3) from http://www.cmake.org
+    Under Windows, it is preferable to install the CVS version of CMake 
+(2) checkout/install ViSP source code.
+
+(3) configure 
+run cmake to change options and to generate makefiles. 
+
+example for a build on Linux:
+cd to source directory of ViSP
+> cd ViSP
+To configure and generate makefiles:
+
+On Linux:
+> ccmake . (mind the 'dot')
+See the bottom line for usage instructions, in particular:
+- press 'c', then modify options as required and press 'c' again to configure
+- finally press 'g' to generate Makefiles
+
+On Win32:
+> CMakeSetup.exe 
+The GUI is self-explaining.
+
+Note:
+You can also use 
+ > cmake .
+directly if you prefer command line instead of graphical interface.
+
+
+(4) compile:
+> make
+
+(5) install:
+> make install
+Copy headers in ${CMAKE_INSTALL_PREFIX}/include/visp
+Copy library in ${CMAKE_INSTALL_PREFIX}/lib
+Copy visp-config shell script in ${CMAKE_INSTALL_PREFIX}/bin
+
+(6) uninstall:
+> make uninstall
+Dual from install.
+Remove headers in ${CMAKE_INSTALL_PREFIX}/include/visp
+Remove library and cmake files in ${CMAKE_INSTALL_PREFIX}/lib 
+Remove visp-config shell script in ${CMAKE_INSTALL_PREFIX}/bin
+
+(7) clean:
+> make clean
+Suppress all the generated files during the build process
+
+(8) documentation
+> make html-doc
+Generate doxygen html documentation in doc/html.
+
+See README.txt for further information.

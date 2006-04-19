@@ -1,6 +1,28 @@
 
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
+ * www  : http://www.irisa.fr/lagadic
+ *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * File:      testMeLine1.cpp
+ * Project:   ViSP 2.0
+ * Author:    Eric Marchand
+ *
+ * Version control
+ * ===============
+ *
+ *  $Id: testMeLine1.cpp,v 1.3 2006-04-19 09:01:25 fspindle Exp $
+ *
+ * Description
+ * ============
+ *   
+ *
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
 
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -96,6 +118,13 @@ main()
 
   }
   vpDisplay::getClick(I) ;
-
-
 }
+
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have a biclops robot connected to your computer...");
+}
+
+#endif

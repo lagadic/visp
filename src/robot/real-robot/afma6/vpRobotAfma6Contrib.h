@@ -1,6 +1,6 @@
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_ROBOT_AFMA6
+#ifdef VISP_HAVE_AFMA6
 
 #ifndef vpRobotAfma6Contrib_h
 #define vpRobotAfma6Contrib_h

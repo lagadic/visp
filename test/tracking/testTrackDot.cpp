@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testTrackDot.cpp,v 1.4 2006-02-03 17:02:27 fspindle Exp $
+ *  $Id: testTrackDot.cpp,v 1.5 2006-04-19 09:01:25 fspindle Exp $
  *
  * Description
  * ============
@@ -21,7 +21,14 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+#define ADD_TEST 1
+
 #include <stdio.h>
+
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -70,10 +77,26 @@ main()
     throw ;
   }
 
+  if (ADD_TEST) {
+    I = 0;
+
+    int half_w = 10;
+    int half_h = 10;
+    int u0 = 200;
+    int v0 = 110;
+
+    for (int v = v0-half_h; v < v0+half_h; v ++)
+      for (int u = u0-half_w; u < u0+half_w; u ++)
+	if (u >=0 && u < I.getCols() && v>=0 && v < I.getRows())
+	  I[v][u] = 255;
+
+  }
+
   vpDisplayX display(I,100,100,"Test tracking using vpDot") ;
 
   try{
     vpDisplay::display(I) ;
+    vpDisplay::flush(I) ;
   }
   catch(...)
   {
@@ -82,6 +105,20 @@ main()
   }
   try{
     d.initTracking(I) ;
+    if (ADD_TEST) {
+      cout << "COG: " << endl;
+      cout << d.get_u() << " " << d.get_v()
+	   << " - "
+	   << d.m10 / d.m00 << " " << d.m01 / d.m00 << endl;
+      cout << "Moments:" << endl;
+      cout << "m00: " << d.m00 << endl;
+      cout << "m11: " << d.m11 << endl;
+      cout << "m02: " << d.m02 << endl;
+      cout << "m20: " << d.m20 << endl;
+      cout << "m10: " << d.m10 << endl;
+      cout << "m01: " << d.m01 << endl;
+      vpDisplay::getClick(I);
+    }
   }
   catch(...)
   {
@@ -93,8 +130,29 @@ main()
   {
     sprintf(s,"%s/image.%04d.pgm",dir,iter) ;
     vpImageIo::readPGM(I,s) ;
+
+    if (ADD_TEST) {
+      I = 0;
+
+      int half_w = 15;
+      int half_h = 10;
+      int u0 = 240;
+      int v0 = 110;
+
+      for (int v = v0-half_h; v < v0+half_h; v ++)
+	for (int u = u0-half_w; u < u0+half_w; u ++)
+	  if (u >=0 && u < I.getCols() && v>=0 && v < I.getRows())
+	    I[v][u] = 255;
+
+    }
+
     vpDisplay::display(I) ;
     d.track(I) ;
+
+    cout << "COG: " << endl;
+    cout << d.get_u() << " " << d.get_v()
+	 << " - "
+	 << d.m10 / d.m00 << " " << d.m01 / d.m00 << endl;
     cout << "Moments: \n" << endl;
     cout << "m00: " << d.m00 << endl;
     cout << "m11: " << d.m11 << endl;
@@ -106,11 +164,18 @@ main()
     vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),
 			   10,vpColor::green) ;
     vpDisplay::flush(I) ;
-//     vpDisplay::getClick(I);
+    vpDisplay::getClick(I);
     iter ++;
   }
 }
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
 
+#endif
 
 /*
  * Local variables:

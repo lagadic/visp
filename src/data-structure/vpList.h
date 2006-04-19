@@ -12,11 +12,11 @@
  * Version control
  * ===============
  *
- *  $Id: vpList.h,v 1.2 2005-11-04 14:40:54 nmansard Exp $
+ *  $Id: vpList.h,v 1.3 2006-04-19 09:01:20 fspindle Exp $
  *
  * Description
  * ============
- *  
+ *
  *  Definition of template class vpList<>.
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -159,7 +159,8 @@ class vpList
 };
 
 
-#include <visp/vpList.t.cpp>       /* Implementation of template functions.   */
+#include <visp/vpList.t.cpp>    /* Implementation of template functions.   */
+
 
 #endif  /* #ifndef VP_LIST_H */
 

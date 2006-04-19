@@ -12,10 +12,10 @@
  * 30-1-4 : initialisation of coefficients a, b et c from f(inf),
  *          f(0) and f'(0). (N.Mansard)
  * 3-3-4: Conversion into c++. (N.Mansard)
- * 18-10-4: Review toward inclusion in VisP (dir servo). In particular 
+ * 18-10-4: Review toward inclusion in VisP (dir servo). In particular
  *        conversion to double (N.Mansard)
  *
- *  $Id: vpAdaptativeGain.cpp,v 1.2 2006-01-25 10:30:55 fspindle Exp $
+ *  $Id: vpAdaptativeGain.cpp,v 1.3 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -26,13 +26,13 @@
 
 
 
-#include "vpAdaptativeGain.h"      /* Header de la classe.                    */
 
 #include <iostream>                /* Class ostream.                          */
 
 /* --- VISP --- */
 #include <visp/vpColVector.h>      /* Def classe vpColVector                  */
-#include "visp/vpDebug.h"          /* Macros de trace et debug.               */
+#include <visp/vpDebug.h>          /* Macros de trace et debug.               */
+#include <visp/vpAdaptativeGain.h>      /* Header de la classe.                    */
 
 
 const double vpAdaptativeGain::DEFAULT_LAMBDA_ZERO = 1.666;

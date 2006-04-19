@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpSphere.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpSphere.h,v 1.2 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -46,16 +46,16 @@ public:
   ~vpSphere() ;
 
 public:
-  vpSphere(const vpColVector& _oP) ;
-  vpSphere(const double _X0, const double _Y0,
-	   const double _Z0,
-	   const double _R) ;
+  vpSphere(const vpColVector& oP) ;
+  vpSphere(const double X0, const double Y0,
+	   const double Z0,
+	   const double R) ;
 
 
-  void setWorldCoordinates(const vpColVector& _oP) ;
-  void setWorldCoordinates(const double _X0, const double _Y0,
-			   const double _Z0,
-			   const double _R) ;
+  void setWorldCoordinates(const vpColVector& oP) ;
+  void setWorldCoordinates(const double X0, const double Y0,
+			   const double Z0,
+			   const double R) ;
 
   double get_x() { return p[0] ; }
   double get_y() { return p[1] ; }
@@ -71,8 +71,8 @@ public:
 
 
 
-  void projection(const vpColVector &_cP, vpColVector &_p) ;
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) ;
+  void projection(const vpColVector &cP, vpColVector &p) ;
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
 
 
   void display(vpImage<unsigned char> &I,

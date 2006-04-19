@@ -1,0 +1,31 @@
+##
+## Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
+## www: http://www.irisa.fr/lagadic
+##
+## Author: Fabien Spindler email:Fabien.Spindler@irisa.fr
+##
+## visp2-config shell script
+## auto-generated from visp2-config.in by cmake
+##
+
+PREFIX="${VISP_CONFIG_SCRIPT_PREFIX}"
+CFLAGS="${VISP_CONFIG_SCRIPT_CFLAGS}"
+LIBS="${VISP_CONFIG_SCRIPT_EXTERN_LIBS}"
+VERSION="${VISP_CONFIG_SCRIPT_VERSION}"
+
+usage()
+{
+    cat <<EOF
+Usage: $0 [--prefix] [--cflags] [--libs] [--version] [--help]
+
+  --prefix              Show ViSP-2 installation prefix.
+  --cflags              Print pre-processor and compiler flags including
+                        third party indudes we depend on.
+  --libs                Print library linking information with ViSP-2
+                        including third party libraries we depend on.
+  --version             Output ViSP-2 version information.
+  --help                Display this help and exit.
+
+EOF
+    exit $1
+}

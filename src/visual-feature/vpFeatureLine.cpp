@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureLine.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
+ *  $Id: vpFeatureLine.cpp,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -96,21 +96,21 @@ vpFeatureLine::vpFeatureLine() : vpBasicFeature()
 
 //! set the line xy and Z-coordinates
 void
-vpFeatureLine::setRhoTheta(const double _rho, const double _theta)
+vpFeatureLine::setRhoTheta(const double rho, const double theta)
 {
-  s[0] = _rho ;
-  s[1] = _theta ;
+  s[0] = rho ;
+  s[1] = theta ;
 }
 
 //! set the line xy and Z-coordinates
 void
-vpFeatureLine::setABCD(const double _A, const double _B,
-		       const double _C, const double _D)
+vpFeatureLine::setABCD(const double A, const double B,
+		       const double C, const double D)
 {
-  A = _A ;
-  B = _B ;
-  C = _C ;
-  D = _D ;
+  this->A = A ;
+  this->B = B ;
+  this->C = C ;
+  this->D = D ;
 }
 
 //! compute the interaction matrix from a subset a the possible features
@@ -235,22 +235,22 @@ vpFeatureLine::print(const int select ) const
 }
 
 void
-vpFeatureLine::buildFrom(const double _rho, const double _theta)
+vpFeatureLine::buildFrom(const double rho, const double theta)
 {
-  s[0] = _rho ;
-  s[1] = _theta ;
+  s[0] = rho ;
+  s[1] = theta ;
 }
 
-void vpFeatureLine::buildFrom(const double _rho, const double _theta,
-			      const double _A, const double _B,
-			      const double _C, const double _D)
+void vpFeatureLine::buildFrom(const double rho, const double theta,
+			      const double A, const double B,
+			      const double C, const double D)
 {
-  s[0] = _rho ;
-  s[1] = _theta ;
-  A = _A ;
-  B = _B ;
-  C = _C ;
-  D = _D ;
+  s[0] = rho ;
+  s[1] = theta ;
+  this->A = A ;
+  this->B = B ;
+  this->C = C ;
+  this->D = D ;
 }
 
 vpFeatureLine *vpFeatureLine::duplicate() const

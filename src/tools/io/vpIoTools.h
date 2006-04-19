@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpIoTools.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpIoTools.h,v 1.2 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -41,5 +41,6 @@ public:
   static void checkDirectory(const char *dir );
   static void makeDirectory(const  char *dir );
 } ;
+
 
 #endif

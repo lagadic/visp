@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeaturePoint3D.h,v 1.2 2005-12-06 16:28:49 nmansard Exp $
+ *  $Id: vpFeaturePoint3D.h,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -58,25 +58,25 @@ public:
   //@{
 
   //! set the point depth (camera frame)
-  void set_Z(const double _Z) ;
+  void set_Z(const double Z) ;
   //! get the point depth (camera frame)
   double get_Z() const  ;
 
   //! set the point X-coordinates
-  void set_X(const double _X) ;
+  void set_X(const double X) ;
   //! get the point X-coordinates
   double get_X()  const ;
   //! set the point Y-coordinates
-  void set_Y(const double _Y) ;
+  void set_Y(const double Y) ;
   //! get the point Y-coordinates
   double get_Y()   const ;
   //! set the point XY and Z-coordinates
-  void set_XYZ(const double _X, const double _Y, const double _Z) ;
+  void set_XYZ(const double X, const double Y, const double Z) ;
 
   //! build feature from a point (vpPoint)
   void buildFrom(const vpPoint &p) ;
   //! set the point XY and Z-coordinates
-  void buildFrom(const double _X, const double _Y, const double _Z) ;
+  void buildFrom(const double X, const double Y, const double Z) ;
   //@}
 
 public:

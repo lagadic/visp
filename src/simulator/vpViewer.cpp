@@ -1,6 +1,6 @@
-#include<visp/vpConfig.h>
+#include <visp/vpConfig.h>
 
-#ifdef HAVE_LIBSOQT
+#ifdef VISP_HAVE_SOQT
 #include <visp/vpViewer.h>
 #include <visp/vpSimulator.h>
 

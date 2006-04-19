@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.4 2006-02-21 12:55:29 fspindle Exp $
+ *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.5 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -32,7 +32,9 @@
 
 */
 
-#include <unistd.h>
+#ifdef UNIX
+#  include <unistd.h>
+#endif
 #include <pthread.h>
 #include <signal.h>
 #include <error.h>
@@ -40,7 +42,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if (defined(HAVE_ROBOT_PTUEVI) & defined (HAVE_LIBDC1394_CONTROL) & defined(HAVE_LIBRAW1394) )
+#if (defined(VISP_HAVE_PTU46) & defined (VISP_HAVE_DC1394) )
 #include <visp/vp1394Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>

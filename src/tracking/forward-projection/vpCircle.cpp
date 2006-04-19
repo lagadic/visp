@@ -34,25 +34,25 @@ vpCircle::init()
 }
 
 void
-vpCircle::setWorldCoordinates(const vpColVector& _oP)
+vpCircle::setWorldCoordinates(const vpColVector& oP)
 {
-  oP = _oP ;
+  this->oP = oP ;
 }
 
 void
-vpCircle::setWorldCoordinates(const double _A, const double _B,
-			       const double _C,
-			       const double _X0, const double _Y0,
-			       const double _Z0,
-			       const double _R)
+vpCircle::setWorldCoordinates(const double A, const double B,
+			       const double C,
+			       const double X0, const double Y0,
+			       const double Z0,
+			       const double R)
 {
-  oP[0] = _A ;
-  oP[1] = _B ;
-  oP[2] = _C ;
-  oP[3] = _X0 ;
-  oP[4] = _Y0 ;
-  oP[5] = _Z0 ;
-  oP[6] = _R ;
+  oP[0] = A ;
+  oP[1] = B ;
+  oP[2] = C ;
+  oP[3] = X0 ;
+  oP[4] = Y0 ;
+  oP[5] = Z0 ;
+  oP[6] = R ;
 }
 
 
@@ -63,22 +63,22 @@ vpCircle::vpCircle()
 }
 
 
-vpCircle::vpCircle(const vpColVector& _oP)
+vpCircle::vpCircle(const vpColVector& oP)
 {
   init() ;
-  setWorldCoordinates(_oP) ;
+  setWorldCoordinates(oP) ;
 }
 
-vpCircle::vpCircle(const double _A, const double _B,
-		   const double _C,
-		   const double _X0, const double _Y0,
-		   const double _Z0,
-		   const double _R)
+vpCircle::vpCircle(const double A, const double B,
+		   const double C,
+		   const double X0, const double Y0,
+		   const double Z0,
+		   const double R)
 {
   init() ;
-  setWorldCoordinates(_A,  _B,   _C,
-		      _X0, _Y0,  _Z0,
-		      _R) ;
+  setWorldCoordinates(A,  B,  C,
+		      X0, Y0, Z0,
+		      R) ;
 }
 
 vpCircle::~vpCircle()
@@ -89,21 +89,21 @@ vpCircle::~vpCircle()
 
 //! perspective projection of the circle
 void
-vpCircle::projection(const vpColVector &_cP, vpColVector &_p)
+vpCircle::projection(const vpColVector &cP, vpColVector &p)
 {
 
   vpColVector K(6) ;
 
   {
-    double A = _cP[0] ;
-    double B = _cP[1] ;
-    double C = _cP[2] ;
+    double A = cP[0] ;
+    double B = cP[1] ;
+    double C = cP[2] ;
 
-    double X0 = _cP[3] ;
-    double Y0 = _cP[4] ;
-    double Z0 = _cP[5] ;
+    double X0 = cP[3] ;
+    double Y0 = cP[4] ;
+    double Z0 = cP[5] ;
 
-    double r =  _cP[6];
+    double r =  cP[6];
 
     // projection
     double s = X0*X0 + Y0*Y0 + Z0*Z0 - r*r ;
@@ -173,16 +173,16 @@ vpCircle::projection(const vpColVector &_cP, vpColVector &_p)
   double m11 = (vpMath::sqr(A)  - vpMath::sqr(B)) *E / det ;
   double m02 = (vpMath::sqr(B) + vpMath::sqr(A*E))   / det ;
 
-  _p[0] = xc ;
-  _p[1] = yc ;
-  _p[2] = m20 ;
-  _p[3] = m11 ;
-  _p[4] = m02 ;
+  p[0] = xc ;
+  p[1] = yc ;
+  p[2] = m20 ;
+  p[3] = m11 ;
+  p[4] = m02 ;
 }
 
 //! perspective projection of the circle
 void
-vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
+vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 {
 
   double A,B,C ;
@@ -196,15 +196,15 @@ vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
   Z0 = cMo[2][3] + cMo[2][0]*oP[3] + cMo[2][1]*oP[4] + cMo[2][2]*oP[5];
   double R = oP[6] ;
 
-  _cP[0] = A ;
-  _cP[1] = B ;
-  _cP[2] = C ;
+  cP[0] = A ;
+  cP[1] = B ;
+  cP[2] = C ;
 
-  _cP[3] = X0 ;
-  _cP[4] = Y0 ;
-  _cP[5] = Z0 ;
+  cP[3] = X0 ;
+  cP[4] = Y0 ;
+  cP[5] = Z0 ;
 
-  _cP[6] = R ;
+  cP[6] = R ;
 
   // TRACE("_cP :") ; cout << _cP.t() ;
 

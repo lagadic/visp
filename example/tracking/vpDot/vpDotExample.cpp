@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDotExample.cpp,v 1.4 2005-12-06 13:29:36 fspindle Exp $
+ *  $Id: vpDotExample.cpp,v 1.5 2006-04-19 09:01:20 fspindle Exp $
  *
  * Description
  * ============
@@ -23,6 +23,11 @@
 
 #include <stdio.h>
 
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
+
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayX.h>
@@ -33,8 +38,6 @@
 
   Example of dots tracking on an image sequence
 */
-#define	CAT(a,b)	a ## b
-#define	XCAT(a,b)	CAT(a,b)
 
 int
 main()
@@ -219,7 +222,14 @@ main()
     iter +=5 ;
   }
 }
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
 
+#endif
 
 /*
  * Local variables:
