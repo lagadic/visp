@@ -1,3 +1,5 @@
+#!/bin/sh
+
 ##
 ## Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
 ## www: http://www.irisa.fr/lagadic
@@ -9,8 +11,11 @@
 ##
 
 PREFIX="${VISP_CONFIG_SCRIPT_PREFIX}"
+
 CFLAGS="${VISP_CONFIG_SCRIPT_CFLAGS}"
+
 LIBS="${VISP_CONFIG_SCRIPT_EXTERN_LIBS}"
+
 VERSION="${VISP_CONFIG_SCRIPT_VERSION}"
 
 usage()
@@ -29,3 +34,14 @@ Usage: $0 [--prefix] [--cflags] [--libs] [--version] [--help]
 EOF
     exit $1
 }
+
+for arg in $@; do
+    case $arg in
+	--prefix) echo -n " $PREFIX";;
+	--cflags) echo -n " $CFLAGS";;
+	--libs) echo -n " $LIBS";;
+	--version) echo -n " $VERSION";;
+	*) usage; exit -1 ;;
+    esac;
+done;
+echo -e "\n"

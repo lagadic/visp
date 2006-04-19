@@ -30,6 +30,10 @@ FOREACH(header ${HEADER_ALL})
     )
   SET(HEADER_IN_INCLUDE_DIR ${HEADER_IN_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/include/visp/${headerName}
     )
+  # add read permissions on installed files/directories
+  IF(CHMOD)
+    EXEC_PROGRAM(${CHMOD} ARGS 644 ${CMAKE_SOURCE_DIR}/include/visp/${headerName})
+  ENDIF(CHMOD)
 ENDFOREACH(header)
 
 #----------------------------------------------------------------------

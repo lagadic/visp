@@ -96,21 +96,7 @@ IF (UNIX)
 
 
   SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_TMP_LDFLAGS} ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
-  #SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${TMP_LDFLAGS} ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
 
-#--------------
-#  FOREACH(LIB ${VISP_EXTERN_LIBS})
- #   # convert semicolon-separated vector to space-separated string 
- #   SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS 
- #     "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} ${LIB}"
- #     )
-#	  
- # ENDFOREACH(LIB)
-
-#---------------
-  #MESSAGE("DBG  VISP_CONFIG_SCRIPT_EXTERN_LIBS=${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
-  
-  
   # prepend with ViSP own lib dir
   SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS  "-L${CMAKE_INSTALL_PREFIX}/lib -l${VISP_INTERN_LIBS} ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
   IF(UNIX)
@@ -120,14 +106,19 @@ IF (UNIX)
   ENDIF(UNIX)
 
   #---------------------------------------------------------------------
-  # Updates the visp-config shell script
-  #----------------------------------------------------------------------
-  CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
-
-  #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_VERSION
   #----------------------------------------------------------------------
   SET(VISP_CONFIG_SCRIPT_VERSION "${VISP_VERSION_FULL}")
+
+  #---------------------------------------------------------------------
+  # Updates the visp-config shell script
+  #----------------------------------------------------------------------
+  CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
+  # add read permissions on installed files/directories
+  IF(CHMOD)
+    EXEC_PROGRAM(${CHMOD} ARGS 755 ${VISP_BINARY_DIR})
+    EXEC_PROGRAM(${CHMOD} ARGS 755 ${FILE_VISP_CONFIG_SCRIPT})
+  ENDIF(CHMOD)
 
 ELSE(UNIX)
   MESSAGE("GenerateConfigScript works only on Unix platforms, sorry.")
