@@ -5,6 +5,12 @@ RM="rm -f"
 $RM CMakeCache.txt CMakeOutput.log config.log warning.log cmake.check_cache
 $RM install_manifest.txt DartConfiguration.tcl
 $RM doc/config-doxygen warning.log cmake_uninstall.cmake
+$RM include/visp/vpConfig.h
+$RM lib/VISPBuildSettings.cmake
+$RM lib/VISPConfig.cmake
+$RM lib/VISPLibraryDepends.cmake
+$RM lib/VISPUse.cmake
+$RM bin/visp-config
 
 $RM -r Testing autom4te.cache
 
