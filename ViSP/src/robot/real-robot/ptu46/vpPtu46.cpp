@@ -10,7 +10,7 @@
  *
  *
  *
- *  $Id: vpPtu46.cpp,v 1.5 2006-02-21 11:14:43 fspindle Exp $
+ *  $Id: vpPtu46.cpp,v 1.6 2006-04-19 09:01:22 fspindle Exp $
  *
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -40,9 +40,9 @@
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
 const int   vpPtu46::ndof = 2; /*<! Pan and tilt are considered. */
-const float vpPtu46::L    = 0.0765; /*! Horizontal offset along the last joint,
+const float vpPtu46::L    = 0.0765f; /*! Horizontal offset along the last joint,
 				      from last joint to camera frame. */
-const float vpPtu46::h    = 0.068; /*<! Vertical offset from last joint to
+const float vpPtu46::h    = 0.068f; /*<! Vertical offset from last joint to
 				     camera frame. */
 
 

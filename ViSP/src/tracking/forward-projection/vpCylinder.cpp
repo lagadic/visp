@@ -34,25 +34,25 @@ vpCylinder::init()
 }
 
 void
-vpCylinder::setWorldCoordinates(const vpColVector& _oP)
+vpCylinder::setWorldCoordinates(const vpColVector& oP)
 {
-  oP = _oP ;
+  this->oP = oP ;
 }
 
 void
-vpCylinder::setWorldCoordinates(const double _A, const double _B,
-			       const double _C,
-			       const double _X0, const double _Y0,
-			       const double _Z0,
-			       const double _R)
+vpCylinder::setWorldCoordinates(const double A, const double B,
+			       const double C,
+			       const double X0, const double Y0,
+			       const double Z0,
+			       const double R)
 {
-  oP[0] = _A ;
-  oP[1] = _B ;
-  oP[2] = _C ;
-  oP[3] = _X0 ;
-  oP[4] = _Y0 ;
-  oP[5] = _Z0 ;
-  oP[6] = _R ;
+  oP[0] = A ;
+  oP[1] = B ;
+  oP[2] = C ;
+  oP[3] = X0 ;
+  oP[4] = Y0 ;
+  oP[5] = Z0 ;
+  oP[6] = R ;
 }
 
 
@@ -63,22 +63,22 @@ vpCylinder::vpCylinder()
 }
 
 
-vpCylinder::vpCylinder(const vpColVector& _oP)
+vpCylinder::vpCylinder(const vpColVector& oP)
 {
   init() ;
-  setWorldCoordinates(_oP) ;
+  setWorldCoordinates(oP) ;
 }
 
-vpCylinder::vpCylinder(const double _A, const double _B,
-	   const double _C,
-	   const double _X0, const double _Y0,
-	   const double _Z0,
-	   const double _R)
+vpCylinder::vpCylinder(const double A, const double B,
+	   const double C,
+	   const double X0, const double Y0,
+	   const double Z0,
+	   const double R)
 {
   init() ;
-  setWorldCoordinates(_A,  _B,   _C,
-		      _X0, _Y0,  _Z0,
-		      _R) ;
+  setWorldCoordinates(A,  B,   C,
+		      X0, Y0, Z0,
+		      R) ;
 }
 
 vpCylinder::~vpCylinder()
@@ -89,7 +89,7 @@ vpCylinder::~vpCylinder()
 
 //! perspective projection of the cylinder
 void
-vpCylinder::projection(const vpColVector &_cP, vpColVector &_p)
+vpCylinder::projection(const vpColVector &cP, vpColVector &p)
 {
   //calcul de la scene 2-D
 
@@ -98,13 +98,13 @@ vpCylinder::projection(const vpColVector &_cP, vpColVector &_p)
   double s, a, b, c;
 
 
-  A = _cP[0] ;
-  B = _cP[1] ;
-  C = _cP[2] ;
-  X0 = _cP[3] ;
-  Y0 = _cP[4] ;
-  Z0 = _cP[5] ;
-  R= _cP[6] ;
+  A = cP[0] ;
+  B = cP[1] ;
+  C = cP[2] ;
+  X0 = cP[3] ;
+  Y0 = cP[4] ;
+  Z0 = cP[5] ;
+  R= cP[6] ;
 
   s = X0*X0 + Y0*Y0 + Z0*Z0 - R*R
     - ( A*X0 + B*Y0 + C*Z0) * (A*X0 + B*Y0 + C*Z0);
@@ -121,29 +121,29 @@ vpCylinder::projection(const vpColVector &_cP, vpColVector &_p)
   co = R*a/s-x0;
   si = R*b/s-y0;
   e = sqrt(co*co + si*si);
-  _p[0]  =  -(R*c/s-z0)/e ;  // rho1
-  _p[1] =  atan2(si,co) ; // theta 1
+  p[0]  =  -(R*c/s-z0)/e ;  // rho1
+  p[1] =  atan2(si,co) ; // theta 1
 
-  while (_p[1] > M_PI/2)  { _p[1] -= M_PI ; _p[0] *= -1 ; }
-  while (_p[1] < -M_PI/2) { _p[1] += M_PI ; _p[0] *= -1 ; }
+  while (p[1] > M_PI/2)  { p[1] -= M_PI ; p[0] *= -1 ; }
+  while (p[1] < -M_PI/2) { p[1] += M_PI ; p[0] *= -1 ; }
 
   // rho2 / theta2
   co = R*a/s+x0;
   si = R*b/s+y0;
   e = sqrt(co*co + si*si);
-  _p[2]  =  -( R*c/s+z0 )/e ; //rho2
-  _p[3]  =  atan2( si,co ) ;  //theta2
+  p[2]  =  -( R*c/s+z0 )/e ; //rho2
+  p[3]  =  atan2( si,co ) ;  //theta2
 
 
-  while (_p[3] > M_PI/2)  { _p[3] -= M_PI ; _p[2] *= -1 ; }
-  while (_p[3] < -M_PI/2) { _p[3] += M_PI ; _p[2] *= -1 ; }
+  while (p[3] > M_PI/2)  { p[3] -= M_PI ; p[2] *= -1 ; }
+  while (p[3] < -M_PI/2) { p[3] += M_PI ; p[2] *= -1 ; }
 
 //  cout << p.t() << endl ;
 }
 
 //! perspective projection of the cylinder
 void
-vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
+vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 {
   double X1, Y1, Z1;
   double X2, Y2, Z2;
@@ -168,18 +168,18 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
   c = Z1 / s;
 
   // set axis coordinates  in camera frame
-  _cP[0] = a ;
-  _cP[1] = b ;
-  _cP[2] = c ;
+  cP[0] = a ;
+  cP[1] = b ;
+  cP[2] = c ;
 
 
   X2 = cMo[0][3] + cMo[0][0]*oX0 + cMo[0][1]*oY0 + cMo[0][2]*oZ0;
   Y2 = cMo[1][3] + cMo[1][0]*oX0 + cMo[1][1]*oY0 + cMo[1][2]*oZ0;
   Z2 = cMo[2][3] + cMo[2][0]*oX0 + cMo[2][1]*oY0 + cMo[2][2]*oZ0;
  // set point coordinates  in camera frame
-  _cP[3] = X2 ;
-  _cP[4] = Y2 ;
-  _cP[5] = Z2 ;
+  cP[3] = X2 ;
+  cP[4] = Y2 ;
+  cP[5] = Z2 ;
   /*
   if ( fabs(a) > 0.25 )
   {
@@ -229,7 +229,7 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
   }
   */
   //radius
-  _cP[6] = oP[6] ;
+  cP[6] = oP[6] ;
 
 }
 

@@ -1,0 +1,56 @@
+##
+## Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
+## www: http://www.irisa.fr/lagadic
+##
+## Author: Fabien Spindler email:Fabien.Spindler@irisa.fr
+##
+## Try to find libraw1394 for IEEE1394 camera 
+## Once run this will define: 
+##
+## RAW1394_FOUND
+## RAW1394_INCLUDE_DIR
+## RAW1394_LIBRARIES
+##
+
+IF(NOT UNIX)
+  # MESSAGE("FindRAW1394.cmake: libraw1394 only available for Unix.")
+  SET(RAW1394_FOUND FALSE)
+ELSE(NOT UNIX)
+  
+  FIND_PATH(RAW1394_INCLUDE_DIR libraw1394/raw1394.h
+    $ENV{RAW1394_HOME}/include
+    /usr/include )
+  #MESSAGE("DBG RAW1394_INCLUDE_DIR=${RAW1394_INCLUDE_DIR}")  
+  
+  FIND_LIBRARY(RAW1394_LIBRARY
+    NAMES raw1394
+    PATHS 
+    $ENV{RAW1394_HOME}/lib
+    /usr/lib
+    )
+  #MESSAGE("DBG RAW1394_LIBRARY=${RAW1394_LIBRARY}")
+  
+  ## --------------------------------
+  
+  IF(RAW1394_LIBRARY)
+    SET(RAW1394_LIBRARIES ${RAW1394_LIBRARY})
+  ELSE(RAW1394_LIBRARY)
+    #MESSAGE("libraw1394 library not found.")
+  ENDIF(RAW1394_LIBRARY)
+  
+  IF(NOT RAW1394_INCLUDE_DIR)
+    #MESSAGE("libraw1394 include dir not found.")
+  ENDIF(NOT RAW1394_INCLUDE_DIR)
+  
+  IF(RAW1394_LIBRARIES AND RAW1394_INCLUDE_DIR)
+    SET(RAW1394_FOUND TRUE)
+  ELSE(RAW1394_LIBRARIES AND RAW1394_INCLUDE_DIR)
+    SET(RAW1394_FOUND FALSE)
+  ENDIF(RAW1394_LIBRARIES AND RAW1394_INCLUDE_DIR)
+  
+  MARK_AS_ADVANCED(
+    RAW1394_INCLUDE_DIR
+    RAW1394_LIBRARIES
+    RAW1394_LIBRARY
+    )
+ENDIF(NOT UNIX)

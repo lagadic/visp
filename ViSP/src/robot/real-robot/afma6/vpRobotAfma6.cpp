@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.8 2006-03-22 17:05:06 fspindle Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.9 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -17,7 +17,7 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 #include <visp/vpConfig.h>
-#ifdef HAVE_ROBOT_AFMA6
+#ifdef VISP_HAVE_AFMA6
 
 /* Headers des fonctions implementees. */
 #include <visp/vpRobotAfma6.h>           /* Header de la classe.          */

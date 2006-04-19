@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpServoException.h,v 1.3 2005-09-01 11:45:19 marchand Exp $
+ *  $Id: vpServoException.h,v 1.4 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -29,11 +29,12 @@
 */
 
 
-using namespace std;
 
 #include <iostream>                /* Classe ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpException.h>
+
+using namespace std;
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */

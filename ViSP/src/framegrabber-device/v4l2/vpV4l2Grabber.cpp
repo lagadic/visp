@@ -25,7 +25,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_INCLUDE_VIDEODEV2
+#ifdef VISP_HAVE_V4L2
 
 #include <stdio.h>
 #include <unistd.h>
@@ -959,7 +959,7 @@ vpV4l2Grabber::printBufInfo(struct v4l2_buffer buf)
   }
 
   fprintf(stdout,"v4l2: buf %d: %d ad: 0x%lx offset 0x%x+%d (=0x%x),used %d\n",
-	  buf.index, buf.type, buf.m.userptr, buf.m.offset, 
+	  buf.index, buf.type, buf.m.userptr, buf.m.offset,
 	  buf.length, buf.length, buf.bytesused);
 
 }

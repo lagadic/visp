@@ -23,7 +23,7 @@
 #define vpDisplayGTK_h
 
 #include <visp/vpConfig.h>
-#ifdef HAVE_GTK
+#if ( defined(VISP_HAVE_GTK) )
 
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
@@ -41,20 +41,20 @@
 
 
 /*!
- 
+
   \class vpDisplayGTK
 
-  \brief The  vpDisplayGTK allows to display image using the GTK+ library 
+  \brief The  vpDisplayGTK allows to display image using the GTK+ library
   version 1.2.
 
-  \author Christophe Collewet (Christophe.Collewet@irisa.fr), 
-  imported in ViSP by Eric Marchand (Eric.Marchand@irisa.fr) 
+  \author Christophe Collewet (Christophe.Collewet@irisa.fr),
+  imported in ViSP by Eric Marchand (Eric.Marchand@irisa.fr)
   Irisa / Inria Rennes
 
-  The GTK+ 1.2 library has to be available on the system 
+  The GTK+ 1.2 library has to be available on the system
 
 
-  \date December 2005 
+  \date December 2005
 */
 
 class vpDisplayGTK: public vpDisplay
@@ -72,7 +72,7 @@ private:
   int windowXPosition ; int  windowYPosition ;
   GdkColor **col ;
   int ncol, nrow ;
-  
+
 protected:
   void setWindowPosition(int _winx, int _winy) { ; }
   inline  int getRows() { return nrows ; }
@@ -141,7 +141,7 @@ public:
   void   getImage(vpImage<vpRGBa> &I) ;
 } ;
 
-#endif // HAVE_LIBX11
+#endif
 #endif
 
 /*

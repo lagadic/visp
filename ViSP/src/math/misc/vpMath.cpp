@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMath.cpp,v 1.4 2005-09-02 14:35:17 fspindle Exp $
+ *  $Id: vpMath.cpp,v 1.5 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -46,7 +46,7 @@
 
   \return !x
 */
-long double vpMath::fact(int x)
+double vpMath::fact(int x)
 {
     if ( (x == 1) || (x == 0)) return 1;
     return x * fact(x-1);
@@ -57,7 +57,7 @@ long double vpMath::fact(int x)
 
   \return \f$ !n / (!(n-p) !p) \f$
  */
-long double vpMath::comb(int n, int p)
+double vpMath::comb(int n, int p)
 {
     if (n == p) return 1;
     return fact(n)/ (fact(n-p) * fact(p));

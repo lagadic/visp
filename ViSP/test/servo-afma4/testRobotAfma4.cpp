@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testRobotAfma4.cpp,v 1.2 2005-11-09 15:07:09 marchand Exp $
+ *  $Id: testRobotAfma4.cpp,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -30,8 +30,9 @@ using namespace std;
 #include <visp/vpRobotAfma4.h>
 #include <visp/vpDebug.h>
 
-#ifdef HAVE_ROBOT_AFMA4
-#ifdef HAVE_LIBGSL
+#ifdef VISP_HAVE_AFMA4
+
+#ifdef VISP_HAVE_GSL
 int gsl_warnings_off;
 #endif
 

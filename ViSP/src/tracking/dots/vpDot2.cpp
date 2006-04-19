@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpDot2.cpp,v 1.9 2006-03-21 10:47:50 fspindle Exp $
+ *  $Id: vpDot2.cpp,v 1.10 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -1593,38 +1593,38 @@ vpDot2::computeFreemanParameters(const vpImage<unsigned char> &I,
   switch(element) {
   case 0:
     du = 1;
-    dS = v_p;
+    dS = (float) v_p;
     dMu = 0.0;
-    dMv = 0.5 * v_p * v_p;
+    dMv = (float)(0.5 * v_p * v_p);
     if (compute_moment) {
-      dMuv = 0.25 * v_p * v_p * (2 * u_p + 1);
+      dMuv = (float)(0.25 * v_p * v_p * (2 * u_p + 1));
       dMu2 = 0;
-      dMv2 = 1.0/ 3. * v_p * v_p * v_p;
+      dMv2 = (float)(1.0/ 3. * v_p * v_p * v_p);
     }
     break;
 
   case 1:
     du = 1;
     dv = 1;
-    dS = v_p + 0.5;
-    dMu = - (0.5 * u_p * ( u_p + 1 ) + 1.0 / 6.0);
-    dMv = 0.5 * v_p * ( v_p + 1 ) + 1.0 / 6.0;
+    dS = (float)(v_p + 0.5);
+    dMu = - (float)(0.5 * u_p * ( u_p + 1 ) + 1.0 / 6.0);
+    dMv = (float)(0.5 * v_p * ( v_p + 1 ) + 1.0 / 6.0);
     if (compute_moment) {
-      float half_u_p = 0.5*u_p;
-      dMuv = v_p*v_p*(0.25+half_u_p) + v_p*(1./3.+half_u_p) + 1./6.*u_p +0.125;
-      dMu2 = -1./3. * u_p * (u_p * u_p + 1.5 * u_p  + 1.) - 1./12.0;
-      dMv2 =  1./3. * v_p * (v_p * v_p + 1.5 * v_p  + 1.) + 1./12.0;
+      float half_u_p = (float)(0.5*u_p);
+      dMuv = (float)(v_p*v_p*(0.25+half_u_p) + v_p*(1./3.+half_u_p) + 1./6.*u_p +0.125);
+      dMu2 = (float)(-1./3. * u_p * (u_p * u_p + 1.5 * u_p  + 1.) - 1./12.0);
+      dMv2 = (float)( 1./3. * v_p * (v_p * v_p + 1.5 * v_p  + 1.) + 1./12.0);
     }
     break;
 
   case 2:
     dv = 1;
     dS = 0.0;
-    dMu = - 0.5 * u_p *  u_p;
+    dMu = (float)(- 0.5 * u_p *  u_p);
     dMv = 0.0;
     if (compute_moment) {
       dMuv = 0;
-      dMu2 = -1.0/ 3. * u_p * u_p * u_p;
+      dMu2 = (float)(-1.0/ 3. * u_p * u_p * u_p);
       dMv2 = 0;
     }
     break;
@@ -1632,51 +1632,51 @@ vpDot2::computeFreemanParameters(const vpImage<unsigned char> &I,
   case 3:
     du = -1;
     dv = 1;
-    dS = - v_p - 0.5;
-    dMu = - (0.5 * u_p * ( u_p - 1 ) + 1.0 / 6.0);
-    dMv = - (0.5 * v_p * ( v_p + 1 ) + 1.0 / 6.0);
+    dS = (float)(- v_p - 0.5);
+    dMu = - (float)(0.5 * u_p * ( u_p - 1 ) + 1.0 / 6.0);
+    dMv = - (float)(0.5 * v_p * ( v_p + 1 ) + 1.0 / 6.0);
     if (compute_moment) {
-      float half_u_p = 0.5*u_p;
-      dMuv = v_p*v_p*(0.25-half_u_p) + v_p*(1./3.-half_u_p) - 1./6.*u_p +0.125;
-      dMu2 = -1./3. * u_p * (u_p * u_p - 1.5 * u_p  + 1.) - 1./12.0;
-      dMv2 = -1./3. * v_p * (v_p * v_p + 1.5 * v_p  + 1.) - 1./12.0;
+      float half_u_p = (float)(0.5*u_p);
+      dMuv = (float)(v_p*v_p*(0.25-half_u_p) + v_p*(1./3.-half_u_p) - 1./6.*u_p +0.125);
+      dMu2 = (float)(-1./3. * u_p * (u_p * u_p - 1.5 * u_p  + 1.) - 1./12.0);
+      dMv2 = (float)(-1./3. * v_p * (v_p * v_p + 1.5 * v_p  + 1.) - 1./12.0);
     }
     break;
 
   case 4:
     du = -1;
-    dS = - v_p;
-    dMv = - 0.5 * v_p * v_p;
+    dS = (float)(- v_p);
+    dMv = (float)(- 0.5 * v_p * v_p);
     dMu = 0.0;
     if (compute_moment) {
-      dMuv = -0.25 * v_p * v_p * (2 * u_p - 1);
+      dMuv = (float)(-0.25 * v_p * v_p * (2 * u_p - 1));
       dMu2 = 0;
-      dMv2 = -1.0/ 3. * v_p * v_p * v_p;
+      dMv2 = (float)(-1.0/ 3. * v_p * v_p * v_p);
     }
     break;
 
   case 5:
     du = -1;
     dv = -1;
-    dS = - v_p + 0.5;
-    dMu =    0.5 * u_p * ( u_p - 1 ) + 1.0 / 6.0;
-    dMv = - (0.5 * v_p * ( v_p - 1 ) + 1.0 / 6.0);
+    dS = (float)(- v_p + 0.5);
+    dMu = (float)(   0.5 * u_p * ( u_p - 1 ) + 1.0 / 6.0);
+    dMv = (float)(- (0.5 * v_p * ( v_p - 1 ) + 1.0 / 6.0));
     if (compute_moment) {
-      float half_u_p = 0.5*u_p;
-      dMuv = v_p*v_p*(0.25-half_u_p) - v_p*(1./3.-half_u_p) - 1./6.*u_p +0.125;
-      dMu2 =  1./3. * u_p * (u_p * u_p - 1.5 * u_p  + 1.) - 1./12.0;
-      dMv2 = -1./3. * v_p * (v_p * v_p - 1.5 * v_p  + 1.) - 1./12.0;
+      float half_u_p = (float)(0.5*u_p);
+      dMuv = (float)(v_p*v_p*(0.25-half_u_p) - v_p*(1./3.-half_u_p) - 1./6.*u_p +0.125);
+      dMu2 = (float)( 1./3. * u_p * (u_p * u_p - 1.5 * u_p  + 1.) - 1./12.0);
+      dMv2 = (float)(-1./3. * v_p * (v_p * v_p - 1.5 * v_p  + 1.) - 1./12.0);
     }
     break;
 
   case 6:
     dv = -1;
     dS = 0.0;
-    dMu = 0.5 * u_p *  u_p;
+    dMu = (float)(0.5 * u_p *  u_p);
     dMv = 0.0;
     if (compute_moment) {
       dMuv = 0;
-      dMu2 = 1.0/ 3. * u_p * u_p * u_p;
+      dMu2 = (float)(1.0/ 3. * u_p * u_p * u_p);
       dMv2 = 0;
     }
     break;
@@ -1684,14 +1684,14 @@ vpDot2::computeFreemanParameters(const vpImage<unsigned char> &I,
   case 7:
     du = 1;
     dv = -1;
-    dS = v_p - 0.5;
-    dMu = 0.5 * u_p * ( u_p + 1 ) + 1.0 / 6.0;
-    dMv = 0.5 * v_p * ( v_p - 1 ) + 1.0 / 6.0;
+    dS = (float)(v_p - 0.5);
+    dMu = (float)(0.5 * u_p * ( u_p + 1 ) + 1.0 / 6.0);
+    dMv = (float)(0.5 * v_p * ( v_p - 1 ) + 1.0 / 6.0);
     if (compute_moment) {
-      float half_u_p = 0.5*u_p;
-      dMuv = v_p*v_p*(0.25+half_u_p) - v_p*(1./3.+half_u_p) + 1./6.*u_p +0.125;
-      dMu2 = 1./3. * u_p * (u_p * u_p + 1.5 * u_p  + 1.) + 1./12.0;
-      dMv2 = 1./3. * v_p * (v_p * v_p - 1.5 * v_p  + 1.) - 1./12.0;
+      float half_u_p = (float)(0.5*u_p);
+      dMuv = (float)(v_p*v_p*(0.25+half_u_p) - v_p*(1./3.+half_u_p) + 1./6.*u_p +0.125);
+      dMu2 = (float)(1./3. * u_p * (u_p * u_p + 1.5 * u_p  + 1.) + 1./12.0);
+      dMv2 = (float)(1./3. * v_p * (v_p * v_p - 1.5 * v_p  + 1.) - 1./12.0);
     }
     break;
   }

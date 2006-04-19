@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureLine.h,v 1.2 2005-12-06 16:28:49 nmansard Exp $
+ *  $Id: vpFeatureLine.h,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -64,16 +64,16 @@ public:
   */
 
   //! set the point xy and Z-coordinates
-  void setRhoTheta(const double _rho, const double _theta) ;
-  void setABCD(const double _A, const double _B,
-	       const double _C, const double _D) ;
+  void setRhoTheta(const double rho, const double theta) ;
+  void setABCD(const double A, const double B,
+	       const double C, const double D) ;
 
   //  void buildFrom(const vpLine &l) ;
   //  void buildFrom(const vpCylinder &c, const int l) ;
-  void buildFrom(const double _rho, const double _theta) ;
-  void buildFrom(const double _rho, const double _theta,
-		 const double _A, const double _B,
-		 const double _C, const double _D) ;
+  void buildFrom(const double rho, const double theta) ;
+  void buildFrom(const double rho, const double theta,
+		 const double A, const double B,
+		 const double C, const double D) ;
 
   //@}
 

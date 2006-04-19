@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpGenericFeature.cpp,v 1.7 2006-01-12 09:52:33 nmansard Exp $
+ *  $Id: vpGenericFeature.cpp,v 1.8 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -61,17 +61,17 @@ vpGenericFeature::vpGenericFeature()
 			     "You are not allow to use this constructor ")) ;
 }
 
-vpGenericFeature::vpGenericFeature(int _dim_s)
+vpGenericFeature::vpGenericFeature(int dim_s)
 {
-  dim_s = _dim_s ;
+  this->dim_s = dim_s ;
   s.resize(dim_s) ;
   errorStatus = errorNotInitalized ;
 }
 
 void
-vpGenericFeature::setError(vpColVector &_error)
+vpGenericFeature::setError(vpColVector &error)
 {
-  if (_error.getRows() != dim_s)
+  if (error.getRows() != dim_s)
   {
     ERROR_TRACE("size mismatch between error dimension"
 		"and feature dimension");
@@ -81,7 +81,7 @@ vpGenericFeature::setError(vpColVector &_error)
 
   }
   errorStatus = errorInitialized ;
-  err = _error ;
+  err = error ;
 }
 
 
@@ -276,10 +276,10 @@ vpGenericFeature::interaction(const int select) const
   in the constructor
 */
 void
-vpGenericFeature::setInteractionMatrix(const vpMatrix &_L)
+vpGenericFeature::setInteractionMatrix(const vpMatrix &L)
 {
 
-  if (_L.getRows() != dim_s)
+  if (L.getRows() != dim_s)
   {
     cout << L.getRows() <<"  " << dim_s << endl ;;
     ERROR_TRACE("size mismatch between interaction matrix size "
@@ -290,7 +290,7 @@ vpGenericFeature::setInteractionMatrix(const vpMatrix &_L)
 
   }
 
-  L = _L ;
+  this->L = L ;
 
 }
 
@@ -301,10 +301,10 @@ vpGenericFeature::setInteractionMatrix(const vpMatrix &_L)
   in the constructor
 */
 void
-vpGenericFeature::set_s(const vpColVector &_s)
+vpGenericFeature::set_s(const vpColVector &s)
 {
 
-  if (_s.getRows() != dim_s)
+  if (s.getRows() != dim_s)
   {
     ERROR_TRACE("size mismatch between s dimension"
 		"and feature dimension");
@@ -313,7 +313,7 @@ vpGenericFeature::set_s(const vpColVector &_s)
 			     "and feature dimension"));
 
   }
-  s = _s ;
+  this->s = s ;
 }
 
 /*!

@@ -17,20 +17,20 @@
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = @PACKAGE_TARNAME@
+PROJECT_NAME           = ViSP
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = @PACKAGE_VERSION@
+PROJECT_NUMBER         = @VISP_VERSION_FULL@
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @DOXYGEN_OUTPUT_DIRECTORY@
+OUTPUT_DIRECTORY       = doc
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -106,8 +106,7 @@ INLINE_INHERITED_MEMB  = NO
 # path before files name in the file list and in the header files. If set 
 # to NO the shortest path that makes the file name unique will be used.
 
-FULL_PATH_NAMES        =  NO
-#YES
+FULL_PATH_NAMES        = YES
 
 # If the FULL_PATH_NAMES tag is set to YES then the STRIP_FROM_PATH tag 
 # can be used to strip a user-defined part of the path. Stripping is 
@@ -116,7 +115,7 @@ FULL_PATH_NAMES        =  NO
 # If left blank the directory from which doxygen is run is used as the 
 # path to strip.
 
-STRIP_FROM_PATH        = 
+STRIP_FROM_PATH        = @VISP_SOURCE_DIR@
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of 
 # the path mentioned in the documentation of a class, which tells 
@@ -445,7 +444,8 @@ WARN_LOGFILE           =  warning.log
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../src ../example
+INPUT                  = @VISP_SOURCE_DIR@/src \
+		         @VISP_SOURCE_DIR@/example
 
 
 # If the value of the INPUT tag contains directories, you can use the 
@@ -492,7 +492,7 @@ EXCLUDE_PATTERNS       = *v0* \
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = ../example
+EXAMPLE_PATH           = @VISP_SOURCE_DIR@/example
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -512,7 +512,7 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see 
 # the \image command).
 
-IMAGE_PATH             = image
+IMAGE_PATH             = @VISP_SOURCE_DIR@/doc/image
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should 
 # invoke to filter for each input file. Doxygen will invoke the filter program 
@@ -642,7 +642,7 @@ HTML_FOOTER            =
 # the style sheet file to the HTML output directory, so don't put your own 
 # stylesheet in the HTML output directory as well, or it will be erased!
 
-HTML_STYLESHEET        = doxygen.css
+HTML_STYLESHEET        = @VISP_SOURCE_DIR@/doc/doxygen.css
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
@@ -732,13 +732,13 @@ LATEX_OUTPUT           = latex
 # The LATEX_CMD_NAME tag can be used to specify the LaTeX command name to be 
 # invoked. If left blank `latex' will be used as the default command name.
 
-LATEX_CMD_NAME         = latex
+LATEX_CMD_NAME         = @LATEX_COMPILER@
 
 # The MAKEINDEX_CMD_NAME tag can be used to specify the command name to 
 # generate index for LaTeX. If left blank `makeindex' will be used as the 
 # default command name.
 
-MAKEINDEX_CMD_NAME     = makeindex
+MAKEINDEX_CMD_NAME     = @MAKEINDEX_COMPILER@
 
 # If the COMPACT_LATEX tag is set to YES Doxygen generates more compact 
 # LaTeX documents. This may be useful for small projects and may help to 
@@ -991,29 +991,16 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = \
 		       DOXYGEN_SHOULD_SKIP_THIS \
-		       HAVE_BIT3 \
-		       HAVE_COIN \
-		       HAVE_FG_ICCOMP \
-		       HAVE_INCLUDE_VIDEODEV \
-		       HAVE_INCLUDE_VIDEODEV2 \
-		       HAVE_INSURE \
-		       HAVE_LIBDC1394_CONTROL \
-		       HAVE_LIBGSL \
-		       HAVE_LIBGSLCBLAS \
-		       HAVE_LIBJPEG \
-		       HAVE_LIBM \
-		       HAVE_LIBPNG \
-		       HAVE_LIBRAW1394 \
-		       HAVE_LIBSOQT \
-		       HAVE_LIBSOXT \
-		       HAVE_LIBX11 \
-		       HAVE_LIBZ \
-		       HAVE_QT \
-		       HAVE_ROBOT_AFMA4 \
-		       HAVE_ROBOT_AFMA6 \
-		       HAVE_ROBOT_PTUEVI \
-		       HAVE_ROBOT_VIC2500 \
-		       HAVE_ROBOT_BICLOPS_PT
+		       VISP_HAVE_GSL \
+		       VISP_HAVE_DC1394 \
+		       VISP_HAVE_V4L2 \
+		       VISP_HAVE_ICCOMP \
+		       VISP_HAVE_AFMA4 \
+		       VISP_HAVE_AFMA6 \
+		       VISP_HAVE_BICLOPS \
+		       VISP_HAVE_PTU46
+		       VISP_HAVE_SOQT
+
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
@@ -1097,7 +1084,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # toolkit from AT&T and Lucent Bell Labs. The other options in this section 
 # have no effect if this option is set to NO (the default)
 
-HAVE_DOT               = @HAVE_DOT@
+HAVE_DOT               = @DOXYGEN_DOT_FOUND@
 
 # If the CLASS_GRAPH and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for each documented class showing the direct and 
@@ -1172,7 +1159,7 @@ DOT_IMAGE_FORMAT       = png
 # The tag DOT_PATH can be used to specify the path where the dot tool can be 
 # found. If left blank, it is assumed the dot tool can be found in the path.
 
-DOT_PATH               = /usr/bin
+DOT_PATH               = @DOXYGEN_DOT_EXECUTABLE_PATH@
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that 
 # contain dot files that are included in the documentation (see the 

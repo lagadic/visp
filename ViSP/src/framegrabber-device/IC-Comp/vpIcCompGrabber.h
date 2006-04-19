@@ -28,7 +28,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_FG_ICCOMP
+#ifdef VISP_HAVE_ICCOMP
 
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>

@@ -10,7 +10,7 @@
 #include <visp/vpDebug.h>
 
 // math
-#include<visp/vpMath.h>
+#include <visp/vpMath.h>
 
 
 

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpIoTools.cpp,v 1.2 2005-09-02 14:35:18 fspindle Exp $
+ *  $Id: vpIoTools.cpp,v 1.3 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -24,8 +24,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#ifndef WIN32
+#if defined UNIX
 #  include <unistd.h>
+#elif defined WIN32
+#  include <direct.h>
 #endif
 #include <visp/vpIoTools.h>
 #include <visp/vpDebug.h>
@@ -34,14 +36,24 @@
 void
 vpIoTools::checkDirectory(const char *dir )
 {
+#if defined UNIX
   struct stat stbuf;
+#elif defined WIN32
+  struct _stat stbuf;
+#endif
 
   if ( dir == NULL || dir[0] == '\0' ) {
     ERROR_TRACE( " invalid directory name\n" );
     throw(vpIoException(vpIoException::ERRInvalidDirectoryName,
 			"invalid directory name")) ;
   }
-  if ( stat( dir, &stbuf ) != 0 ) {
+
+#if defined UNIX
+  if ( stat( dir, &stbuf ) != 0 )
+#elif defined WIN32
+  if ( _stat( dir, &stbuf ) != 0 )
+#endif
+  {
     ERROR_TRACE( "can't stat directory '%s' (doesn't exist?)\n", dir );
     throw(vpIoException(vpIoException::ERRCantStatDirectory,
 			"can't stat directory")) ;
@@ -51,7 +63,12 @@ vpIoTools::checkDirectory(const char *dir )
     throw(vpIoException(vpIoException::ERRNotADirectory,
 			"not a directory")) ;
   }
-  if ( (stbuf.st_mode & S_IWUSR) == 0 ) {
+#if defined UNIX
+  if ( (stbuf.st_mode & S_IWUSR) == 0 )
+#elif defined WIN32
+  if ( (stbuf.st_mode & S_IWRITE) == 0 )
+#endif
+  {
     ERROR_TRACE( "'%s' is not writable\n", dir );
     throw(vpIoException(vpIoException::ERRNotWritable,
 			"Directory not writable")) ;
@@ -61,15 +78,29 @@ vpIoTools::checkDirectory(const char *dir )
 void
 vpIoTools::makeDirectory(const  char *dir )
 {
+#if defined UNIX
   struct stat stbuf;
+#elif defined WIN32
+  struct _stat stbuf;
+#endif
 
   if ( dir == NULL || dir[0] == '\0' ) {
     ERROR_TRACE( "invalid directory name\n");
     throw(vpIoException(vpIoException::ERRInvalidDirectoryName,
 			"invalid directory name")) ;
   }
-  if ( stat( dir, &stbuf ) != 0 ) {
-    if ( mkdir( dir, (mode_t)0755 ) != 0 ) {
+#if defined UNIX
+  if ( stat( dir, &stbuf ) != 0 )
+#elif defined WIN32
+  if ( _stat( dir, &stbuf ) != 0 )
+#endif  
+  {
+#if defined UNIX
+    if ( mkdir( dir, (mode_t)0755 ) != 0 )
+#elif defined WIN32
+    if ( _mkdir( dir) != 0 )
+#endif  
+	{
       ERROR_TRACE("unable to create directory '%s'\n",  dir );
       throw(vpIoException(vpIoException::ERRCantCreateDirectory,
 			  "unable to create directory")) ;
@@ -86,3 +117,4 @@ vpIoTools::makeDirectory(const  char *dir )
     throw ;
   }
 }
+

@@ -39,7 +39,7 @@
 #include <visp/vpConfig.h>
 
 
-#ifdef __Darwin_
+#if ( defined(APPLE) && defined(VISP_HAVE_CFOX) )
 
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>

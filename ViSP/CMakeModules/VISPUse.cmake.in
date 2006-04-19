@@ -1,0 +1,25 @@
+##
+## Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
+## www: http://www.irisa.fr/lagadic
+##
+## Author: Fabien Spindler email:Fabien.Spindler@irisa.fr
+##
+##
+## cmake PackageConfig file
+##
+
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeImportBuildSettings.cmake)
+
+# Import ViSP's build settings:
+CMAKE_IMPORT_BUILD_SETTINGS(${VISP_BUILD_SETTINGS_FILE})
+
+# Tell the compiler where to find ViSP's header files
+# and the third party headers we depend on
+INCLUDE_DIRECTORIES(${VISP_INCLUDE_DIR})
+
+# Tell the compiler where to find ViSP's libraries
+# and the third party libraries we depend on
+LINK_DIRECTORIES(${VISP_LINK_DIRECTORIES})
+
+LINK_LIBRARIES(${VISP_LIBRARIES})
+

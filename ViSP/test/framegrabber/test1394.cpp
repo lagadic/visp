@@ -1,7 +1,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if ( defined (HAVE_LIBDC1394_CONTROL) & defined(HAVE_LIBRAW1394) )
+#ifdef VISP_HAVE_DC1394
 
 #include <visp/vp1394Grabber.h>
 #include <visp/vpImage.h>

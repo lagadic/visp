@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testSequence.cpp,v 1.1 2005-12-05 10:02:55 marchand Exp $
+ *  $Id: testSequence.cpp,v 1.2 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -20,6 +20,11 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <stdio.h>
+
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -140,7 +145,14 @@ main()
   }
   cout << "mean time (display) " << totaltms/niter << " ms" << endl ;
 }
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
 
+#endif
 
 /*
  * Local variables:

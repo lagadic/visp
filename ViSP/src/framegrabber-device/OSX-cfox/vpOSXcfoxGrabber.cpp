@@ -25,7 +25,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_LIBCFOX
+#if ( defined(APPLE) && defined(VISP_HAVE_CFOX) )
 
 #include <stdio.h>
 #include <unistd.h>

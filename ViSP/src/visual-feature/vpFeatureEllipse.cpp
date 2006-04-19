@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureEllipse.cpp,v 1.2 2005-06-28 08:25:20 marchand Exp $
+ *  $Id: vpFeatureEllipse.cpp,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -37,7 +37,7 @@
 #include <visp/vpDebug.h>
 
 // math
-#include<visp/vpMath.h>
+#include <visp/vpMath.h>
 
 
 
@@ -255,58 +255,60 @@ vpFeatureEllipse::print(const int select ) const
     cout << " mu11=" << s[3] <<endl ;
   if (vpFeatureEllipse::selectMu02() & select )
     cout << " mu02=" << s[4] <<endl ;
-  cout << "A = "<<A <<" B = "<<B <<" C = "<<C << endl ; 
+  cout << "A = "<<A <<" B = "<<B <<" C = "<<C << endl ;
 }
 
 
 void
-vpFeatureEllipse::buildFrom(const double _x, const double _y, const double _mu20, const double _mu11, const double _mu02)
+vpFeatureEllipse::buildFrom(const double x, const double y,
+			    const double mu20, const double mu11,
+			    const double mu02)
 {
 
-  s[0] = _x ;
-  s[1] = _y ;
-  s[2] = _mu20 ;
-  s[3] = _mu11 ;
-  s[4] = _mu02 ;
+  s[0] = x ;
+  s[1] = y ;
+  s[2] = mu20 ;
+  s[3] = mu11 ;
+  s[4] = mu02 ;
 
 }
 
 void
-vpFeatureEllipse::buildFrom(const double _x, const double _y,
-			    const double _mu20, const double _mu11,
-			    const double _mu02,
-			    const double _A, const double _B, const double _C)
+vpFeatureEllipse::buildFrom(const double x, const double y,
+			    const double mu20, const double mu11,
+			    const double mu02,
+			    const double A, const double B, const double C)
 {
 
-  s[0] = _x ;
-  s[1] = _y ;
-  s[2] = _mu20 ;
-  s[3] = _mu11 ;
-  s[4] = _mu02 ;
+  s[0] = x ;
+  s[1] = y ;
+  s[2] = mu20 ;
+  s[3] = mu11 ;
+  s[4] = mu02 ;
 
-  A = _A ;
-  B = _B ;
-  C = _C ;
+  this->A = A ;
+  this->B = B ;
+  this->C = C ;
 }
 
 
 void
-vpFeatureEllipse::setABC(const double _A, const double _B, const double _C)
+vpFeatureEllipse::setABC(const double A, const double B, const double C)
 {
-  A = _A ;
-  B = _B ;
-  C = _C ;
+  this->A = A ;
+  this->B = B ;
+  this->C = C ;
 }
 
 
 void
-vpFeatureEllipse::setMu(const double _mu20, const double _mu11,
-			const double _mu02)
+vpFeatureEllipse::setMu(const double mu20, const double mu11,
+			const double mu02)
 {
 
-  s[2] = _mu20 ;
-  s[3] = _mu11 ;
-  s[4] = _mu02 ;
+  s[2] = mu20 ;
+  s[3] = mu11 ;
+  s[4] = mu02 ;
 
 }
 

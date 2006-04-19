@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilderEllipse.cpp,v 1.3 2006-03-09 14:33:18 rtatsamb Exp $
+ *  $Id: vpFeatureBuilderEllipse.cpp,v 1.4 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -28,10 +28,10 @@
   and visual feature Ellipse
 */
 
-#include<visp/vpFeatureBuilder.h>
+#include <visp/vpFeatureBuilder.h>
 
 
-#include<visp/vpMath.h>
+#include <visp/vpMath.h>
 
 // create vpFeatureEllipse feature
 void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCircle &t )

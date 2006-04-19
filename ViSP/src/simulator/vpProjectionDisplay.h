@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpProjectionDisplay.h,v 1.2 2005-09-02 14:35:18 fspindle Exp $
+ *  $Id: vpProjectionDisplay.h,v 1.3 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -29,7 +29,7 @@
 */
 
 #include <visp/vpConfig.h>
-#ifdef HAVE_LIBX11
+#ifdef VISP_HAVE_X11
 
 // Meter/pixel conversion
 #include <visp/vpCameraParameters.h>
@@ -97,7 +97,7 @@ public:
 
 
 
-#endif // HAVE_LIBX11
+#endif
 #endif
 
 /*

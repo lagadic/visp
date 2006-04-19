@@ -1,6 +1,6 @@
-# generated automatically by aclocal 1.7.8 -*- Autoconf -*-
+# aclocal.m4 generated automatically by aclocal 1.6.3 -*- Autoconf -*-
 
-# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002
+# Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002
 # Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -68,7 +68,7 @@ else
 fi
 AC_CONFIG_COMMANDS_PRE(
 [if test -z "${$1_TRUE}" && test -z "${$1_FALSE}"; then
-  AC_MSG_ERROR([conditional "$1" was never defined.
+  AC_MSG_ERROR([conditional \"$1\" was never defined.
 Usually this means the macro was only invoked conditionally.])
 fi])])
 
@@ -1103,23 +1103,6 @@ fi
 
 
 
-dnl Calls HAVE_FG_V4L (contained in this file) as a subroutine.
-AC_DEFUN([HAVE_FG_V4L],
-[
-#-----------------------------------------------------------------------
-# check if video 4 Linux is reachable
-AC_MSG_CHECKING(whether Video For Linux api works)
-AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <linux/videodev.h>]])],[have_include_videodev=yes],[have_include_videodev=no])
-
-if test "x$have_include_videodev" = "xyes"; then
-  AC_DEFINE(HAVE_INCLUDE_VIDEODEV, 1, 
-    [Define to 1 if the include linux/videodev.h for Video4Linux acquisition is available])
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-fi
-])
-
 dnl Calls HAVE_FG_V4L2 (contained in this file) as a subroutine.
 AC_DEFUN([HAVE_FG_V4L2],
 [
@@ -1129,7 +1112,7 @@ AC_MSG_CHECKING(whether Video For Linux Two api works)
 AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include </usr/src/linux/include/linux/videodev2.h>]])],[have_include_videodev2=yes],[have_include_videodev2=no])
 
 if test "x$have_include_videodev2" = "xyes"; then
-  AC_DEFINE(HAVE_INCLUDE_VIDEODEV2, 1, 
+  AC_DEFINE(VISP_HAVE_V4L2, 1, 
     [Define to 1 if the include linux/videodev2.h for Video4Linux2 acquisition is available])
   AC_MSG_RESULT(yes)
   CXXFLAGS="-I/usr/src/linux/include $CXXFLAGS"
@@ -1189,7 +1172,7 @@ if test "x$with_fg_iccomp" = "xyes"; then
     CXXFLAGS="$CXXFLAGS $FG_ICCOMP_CXXFLAGS"
     LDFLAGS="$LDFLAGS $FG_ICCOMP_LDFLAGS"
     LIBS="$FG_ICCOMP_LIBS $LIBS"
-    AC_DEFINE([HAVE_FG_ICCOMP], 1,
+    AC_DEFINE([VISP_HAVE_ICCOMP], 1,
               [Define to 1 if the ICcomp framegrabber api is available])
     AC_MSG_RESULT(yes)
     AC_SUBST(FG_ICCOMP_CXXFLAGS)
@@ -1256,7 +1239,7 @@ if test "x$with_bit3" = "xyes"; then
     CPPFLAGS="$CPPFLAGS $BIT3_CPPFLAGS"
     LDFLAGS="$LDFLAGS $BIT3_LDFLAGS"
     LIBS="$BIT3_LIBS $LIBS"
-    AC_DEFINE([HAVE_BIT3], 1,
+    AC_DEFINE([VISP_HAVE_BIT3], 1,
               [Define to 1 if the SBS Bit3 bus driver is available])
     AC_MSG_RESULT(yes)
     AC_SUBST(BIT3_CXXFLAGS)
@@ -1321,7 +1304,7 @@ if test "x$with_robot_afma4" = "xyes"; then
     CXXFLAGS="$CXXFLAGS $ROBOT_AFMA4_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_AFMA4_LDFLAGS"
     LIBS="$ROBOT_AFMA4_LIBS $LIBS"
-    AC_DEFINE([HAVE_ROBOT_AFMA4], 1,
+    AC_DEFINE([VISP_HAVE_AFMA4], 1,
               [Define to 1 if the Afma4 robot api are available])
     AC_MSG_RESULT(yes)
     AC_SUBST(ROBOT_AFMA4_CXXFLAGS)
@@ -1383,7 +1366,7 @@ if test "x$with_robot_afma6" = "xyes"; then
     CXXFLAGS="$CXXFLAGS $ROBOT_AFMA6_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_AFMA6_LDFLAGS"
     LIBS="$ROBOT_AFMA6_LIBS $LIBS"
-    AC_DEFINE([HAVE_ROBOT_AFMA6], 1,
+    AC_DEFINE([VISP_HAVE_AFMA6], 1,
               [Define to 1 if the Afma6 robot api are available])
     AC_MSG_RESULT(yes)
     AC_SUBST(ROBOT_AFMA6_CXXFLAGS)
@@ -1449,77 +1432,12 @@ if test "x$with_robot_ptuevi" = "xyes"; then
     CXXFLAGS="$CXXFLAGS $ROBOT_PTUEVI_CXXFLAGS"
     LDFLAGS="$LDFLAGS $ROBOT_PTUEVI_LDFLAGS"
     LIBS="$ROBOT_PTUEVI_LIBS $LIBS"
-    AC_DEFINE([HAVE_ROBOT_PTUEVI], 1,
+    AC_DEFINE([VISP_HAVE_PTUEVI], 1,
               [Define to 1 if the Ptu-Evi robot api is available])
     AC_MSG_RESULT(yes)
     AC_SUBST(ROBOT_PTUEVI_CXXFLAGS)
     AC_SUBST(ROBOT_PTUEVI_LDFLAGS)
     AC_SUBST(ROBOT_PTUEVI_LIBS)
-  else
-    AC_MSG_RESULT(no)
-  fi
-else
-  AC_MSG_RESULT(no)
-fi
-
-])
-dnl Calls IRISA_HAVE_ROBOT_VIC2500 (contained in this file) as a subroutine.
-AC_DEFUN([IRISA_HAVE_ROBOT_VIC2500],
-[
-
-#-----------------------------------------------------------------------
-# Manage the --with-robot-Vic2500 option
-AC_ARG_WITH([robot-Vic2500],
-  AC_HELP_STRING([--with-robot-Vic2500=DIR],
-		 [Location of Vic2500 robot api. By default /udd/fspindle/robot/Vic2500/current]),
-                 path_robot_vic2500=$withval, 
-                 path_robot_vic2500=/udd/fspindle/robot/Vic2500/current)
-# check if the vic2500 robot home dir exists
-#AC_CHECK_FILE([$path_robot_vic2500], [with_robot_vic2500=yes], [with_robot_vic2500=no])
-with_robot_vic2500=yes
-AC_MSG_CHECKING(whether Vic2500 robot api works)
-# set some variables if the vic2500 robot is reacheable
-if test "x$with_robot_vic2500" = "xyes"; then
-  ROBOT_VIC2500_HOME=$path_robot_vic2500
-  ROBOT_VIC2500_DIR_INCLUDE=$ROBOT_VIC2500_HOME/include
-  ROBOT_VIC2500_DIR_LIB=$ROBOT_VIC2500_HOME/lib
-  ROBOT_VIC2500_CXXFLAGS=-I$ROBOT_VIC2500_DIR_INCLUDE
-  ROBOT_VIC2500_LDFLAGS="-L$ROBOT_VIC2500_DIR_LIB"
-  ROBOT_VIC2500_LIBS="-lvic2500 -lvic2500serial"
-  # save values
-  TMP_CXXFLAGS=$CXXFLAGS
-  TMP_CPPFLAGS=$CPPFLAGS
-  TMP_LDFLAGS=$LDFLAGS
-  TMP_LIBS=$LIBS
-  # set linker options for a local test 
-  CXXFLAGS=$ROBOT_VIC2500_CXXFLAGS
-  LDFLAGS=$ROBOT_VIC2500_LDFLAGS
-  LIBS=$ROBOT_VIC2500_LIBS
-  # test a single function of the SBS Vic2500 bus driver
-  AC_LANG_PUSH(C++)		
-  AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([char *name="foo"; char openserial(char *);],
-                     [openserial(name)])],
-    have_lib_serial=yes,
-    have_lib_serial=no)
-  AC_LANG_POP(C++)		
-  # put the saved values
-  CXXFLAGS=$TMP_CXXFLAGS
-  CPPFLAGS=$TMP_CPPFLAGS
-  LDFLAGS=$TMP_LDFLAGS
-  LIBS=$TMP_LIBS
-
-  if test "x$have_lib_serial" = "xyes"; then
-    # Vic2500 robot works
-    CXXFLAGS="$CXXFLAGS $ROBOT_VIC2500_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $ROBOT_VIC2500_LDFLAGS"
-    LIBS="$ROBOT_VIC2500_LIBS $LIBS"
-    AC_DEFINE([HAVE_ROBOT_VIC2500], 1,
-              [Define to 1 if the Vic2500 robot api is available])
-    AC_MSG_RESULT(yes)
-    AC_SUBST(ROBOT_VIC2500_CXXFLAGS)
-    AC_SUBST(ROBOT_VIC2500_LDFLAGS)
-    AC_SUBST(ROBOT_VIC2500_LIBS)
   else
     AC_MSG_RESULT(no)
   fi
@@ -1553,7 +1471,7 @@ AC_MSG_CHECKING(whether biclops pan-tilt api works)
   if test "x$have_robot_biclops" = "xyes"; then
     # Biclops robot works
     LIBS="$ROBOT_BICLOPS_LIBS $LIBS"
-    AC_DEFINE([HAVE_ROBOT_BICLOPS_PT], 1,
+    AC_DEFINE([VISP_HAVE_BICLOPS], 1,
               [Define to 1 if the biclops pan-tilt api is available])
     AC_MSG_RESULT(yes)
   else

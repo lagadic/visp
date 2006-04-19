@@ -28,7 +28,7 @@
 
 #define L 0.035
 
-// #if HAVE_LIBGSL
+// #ifdef HAVE_GSL
 // extern int gsl_warnings_off;
 // //#include <gsl/gsl_errno.h>
 // //#include <gsl/gsl_message.h>

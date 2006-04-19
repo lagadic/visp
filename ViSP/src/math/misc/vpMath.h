@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMath.h,v 1.3 2005-08-31 16:22:13 fspindle Exp $
+ *  $Id: vpMath.h,v 1.4 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -75,10 +75,10 @@ public:
   static double sqr(double x) { return x*x ; }
 
   //  factorial of x
-  static long double fact(int x) ;
+  static double fact(int x) ;
 
   // combinaison
-  static long double comb(int n, int p) ;
+  static double comb(int n, int p) ;
 
   //   round x to the nearest integer
   static int round(const double x) ;

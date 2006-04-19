@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeaturePoint.cpp,v 1.2 2005-06-28 13:05:13 marchand Exp $
+ *  $Id: vpFeaturePoint.cpp,v 1.3 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -37,9 +37,9 @@
 #include <visp/vpDebug.h>
 
 // math
-#include<visp/vpMath.h>
+#include <visp/vpMath.h>
 
-#include<visp/vpFeatureDisplay.h>
+#include <visp/vpFeatureDisplay.h>
 
 
 

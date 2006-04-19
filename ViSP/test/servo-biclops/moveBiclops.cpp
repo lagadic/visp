@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveBiclops.cpp,v 1.1 2006-02-21 11:17:04 fspindle Exp $
+ *  $Id: moveBiclops.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -26,13 +26,16 @@
 
   See http://www.traclabs.com/tracbiclops.htm for more details.
 */
-#include <unistd.h>
+
+#ifdef UNIX
+#  include <unistd.h>
+#endif
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpColVector.h>
 
-#ifdef HAVE_ROBOT_BICLOPS_PT
+#ifdef VISP_HAVE_BICLOPS
 
 #include <visp/vpRobotBiclops.h>
 

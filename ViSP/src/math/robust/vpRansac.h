@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRansac.h,v 1.1 2005-06-28 08:37:14 marchand Exp $
+ *  $Id: vpRansac.h,v 1.2 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -78,5 +78,7 @@ public:
 
 
 #include <visp/vpRansac.t.cpp>
+
+
 
 #endif

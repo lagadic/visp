@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotBiclopsController.h,v 1.1 2006-02-21 11:16:11 fspindle Exp $
+ *  $Id: vpRobotBiclopsController.h,v 1.2 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -20,7 +20,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_ROBOT_BICLOPS_PT
+#ifdef VISP_HAVE_BICLOPS
 
 #ifndef __vpROBOT_BICLOPS_CONTROLLER_H
 #define __vpROBOT_BICLOPS_CONTROLLER_H

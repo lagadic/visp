@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX1.cpp,v 1.5 2006-01-06 15:40:08 nmansard Exp $
+ *  $Id: testDisplayX1.cpp,v 1.6 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -23,6 +23,10 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -95,8 +99,10 @@ main()
   vpDisplay::getImage(I,Iaug) ;
   vpImageIo::writePPM(Iaug,"images-res/DisplayX1.Klimt-augmented.ppm") ;
 
+#if 0
   cout << "\nA click to close the windows..." << endl;
   vpDisplay::getClick(I) ;
+#endif
   vpDisplay::close(I);
 
   TRACE("-------------------------------------");
@@ -109,6 +115,7 @@ main()
   vpDisplayX displayRGBa(Irgba,100,100,name);
   vpDisplay::display(Irgba) ;
 
+#if 0
   cout << "\nA click to display a point..." << endl;
 
   {
@@ -125,8 +132,25 @@ main()
   cout << "\nA click to exit the program..." << endl;
   vpDisplay::getClick(Irgba) ;
   cout << "Bye" << endl;
+
+#else
+
+  {
+    int i=10,j=20;
+    vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
+    cout << "Cood: " << i << ", " << j << endl;
+  }
+
+#endif
+}
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: test_svd.cpp,v 1.4 2005-11-09 15:36:27 marchand Exp $
+ *  $Id: test_svd.cpp,v 1.5 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -32,7 +32,7 @@
 
 int
 main()
-{ 
+{
   int i,j ;
   vpMatrix L(60000,6), Ls ;
   for (i=0 ; i < L.getRows() ; i++)
@@ -53,7 +53,7 @@ main()
     cout << W.t() ;
   cout << "--------------------------------------"<<endl ;
 
-#if (defined HAVE_LIBGSL) && (defined HAVE_LIBGSLCBLAS)
+#ifdef VISP_HAVE_GSL
   L = Ls ;
   t = vpTime::measureTimeMs() ;
   L.svdGsl(W,V) ;

@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.h,v 1.6 2006-03-22 17:05:06 fspindle Exp $
+ *  $Id: vpRobotAfma6.h,v 1.7 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -20,7 +20,8 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <visp/vpConfig.h>
-#ifdef HAVE_ROBOT_AFMA6
+
+#ifdef VISP_HAVE_AFMA6
 
 
 #ifndef __vpROBOT_AFMA6_H

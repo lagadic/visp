@@ -1,7 +1,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#ifdef HAVE_FG_ICCOMP
+#ifdef VISP_HAVE_ICCOMP
 
 #include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>

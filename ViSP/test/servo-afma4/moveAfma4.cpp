@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma4.cpp,v 1.1 2005-11-30 09:46:15 fspindle Exp $
+ *  $Id: moveAfma4.cpp,v 1.2 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -30,7 +30,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#ifdef HAVE_ROBOT_AFMA4
+#ifdef VISP_HAVE_AFMA4
 
 #include <visp/vpRobotAfma4.h>
 #include <visp/vpDebug.h>

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6FourPointCameraVelocity.cpp,v 1.1 2005-11-30 09:43:51 fspindle Exp $
+ *  $Id: servoAfma6FourPointCameraVelocity.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -34,7 +34,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#ifdef HAVE_ROBOT_AFMA6
+#ifdef VISP_HAVE_AFMA6
 
 #include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>

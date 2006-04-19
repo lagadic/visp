@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMatrix.h,v 1.11 2006-01-12 09:54:09 nmansard Exp $
+ *  $Id: vpMatrix.h,v 1.12 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -247,7 +247,7 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   void svdFlake(vpColVector& w, vpMatrix& v);
   void svdNr(vpColVector& w, vpMatrix& v);
-#ifdef HAVE_LIBGSL
+#ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector& w, vpMatrix& v);
 #endif
  //! solve AX=B using the SVD decomposition
@@ -296,7 +296,7 @@ public:
 
   //! Create a diagonal matrix with the element of a vector DAii = Ai
   static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
-  
+
   static double det33(const vpMatrix &P) ;
 
 

@@ -1,5 +1,34 @@
-#include <visp/vpConfig.h>
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
+ * www  : http://www.irisa.fr/lagadic
+ *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * File:     testDisplayX2.cpp
+ * Project:   ViSP2
+ * Author:    Eric Marchand
+ *
+ * Version control
+ * ===============
+ *
+ *  $Id: testDisk.cpp,v 1.2 2006-04-19 09:01:23 fspindle Exp $
+ *
+ * Description
+ * ============
+ *  read a pgm image from the disk
+ *  open X display
+ *  display red lines on the image
+ *  wait for a mouse click
+ *
+ *
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+
 #include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
+
 #include <visp/vpDiskGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
@@ -97,8 +126,8 @@ main(int argc, char ** argv)
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
 
-    cout << "a click to continue..." << endl;
-    vpDisplay::getClick(I);
+    // cout << "a click to continue..." << endl;
+    //vpDisplay::getClick(I);
     cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
   }
 
@@ -107,6 +136,14 @@ main(int argc, char ** argv)
 
 }
 
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
+}
+
+#endif
 
 /*
  * Local variables:

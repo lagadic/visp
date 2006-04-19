@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma6.h,v 1.4 2006-03-22 17:05:06 fspindle Exp $
+ *  $Id: vpAfma6.h,v 1.5 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -22,7 +22,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <visp/vpConfig.h>
-#ifdef HAVE_ROBOT_AFMA6
+#ifdef VISP_HAVE_AFMA6
 
 #ifndef __vpAFMA6_H
 #define __vpAFMA6_H

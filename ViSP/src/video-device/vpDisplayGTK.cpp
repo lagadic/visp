@@ -39,7 +39,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_GTK
+#if ( defined(VISP_HAVE_GTK) )
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1036,7 +1036,7 @@ void vpDisplayGTK::displayCircle(int i, int j, int r, int color)
    }
 }
 
-#endif // HAVE_GTK
+#endif
 
 /*
  * Local variables:

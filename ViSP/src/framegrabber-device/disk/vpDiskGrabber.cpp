@@ -19,7 +19,7 @@
 
 
 
-#include <vpDiskGrabber.h>
+#include <visp/vpDiskGrabber.h>
 
 
 /*!

@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testTrackDot2.cpp,v 1.3 2005-07-18 13:58:02 fspindle Exp $
+ *  $Id: testTrackDot2.cpp,v 1.4 2006-04-19 09:01:25 fspindle Exp $
  *
  * Description
  * ============
@@ -18,6 +18,11 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <stdio.h>
+
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_X11
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -77,7 +82,7 @@ main()
 
   vpDot dot ;
   dot.setNbMaxPoint(8000);
-  dot.initTracking(I) ;
+  dot.initTracking(I, 140, 140) ;
   dot.setGraphics(true) ;
   dot.setComputeMoments(true) ;
   dot.track(I) ;
@@ -88,11 +93,15 @@ main()
   vpFeatureBuilder::create(e,cam,dot) ;
   e.display(cam, I, vpColor::red) ;
 
-  vpDisplay::getClick(I) ;
-
-
+}
+#else
+int
+main()
+{
+  ERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
+#endif
 
 /*
  * Local variables:

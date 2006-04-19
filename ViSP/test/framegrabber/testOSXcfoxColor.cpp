@@ -8,15 +8,17 @@
   Only grabbing of color level images is tested.
 */
 
-#ifdef HAVE_LIBCFOX
+#if ( defined(APPLE) && defined(VISP_HAVE_CFOX) && defined(VISP_HAVE_GTK) )
+
 
 #include <visp/vpOSXcfoxGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
+
 #include <visp/vpDisplayGTK.h>
+
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
-#include <visp/vpDebug.h>
 
 
 int
@@ -83,7 +85,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  TRACE("Cfox OSX frame grabber drivers are not available") ;
+  TRACE("Cfox OSX frame grabber drivers are not available or GTK was not activated") ;
 }
 #endif
 

@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilderPoint3D.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpFeatureBuilderPoint3D.cpp,v 1.2 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -27,9 +27,9 @@
   \brief  conversion between tracker
   and visual feature 3D Point
 */
-#include<visp/vpFeatureBuilder.h>
-#include<visp/vpFeatureException.h>
-#include<visp/vpException.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeatureException.h>
+#include <visp/vpException.h>
 
 
 void

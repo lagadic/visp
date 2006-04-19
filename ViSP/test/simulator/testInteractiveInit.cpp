@@ -4,7 +4,7 @@
 #include <visp/vpDebug.h>
 
 
-#ifdef HAVE_LIBSOQT
+#ifdef VISP_HAVE_SOQT
 
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>

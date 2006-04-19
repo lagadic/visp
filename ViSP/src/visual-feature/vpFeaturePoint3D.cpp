@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeaturePoint3D.cpp,v 1.3 2005-06-28 14:00:11 marchand Exp $
+ *  $Id: vpFeaturePoint3D.cpp,v 1.4 2006-04-19 09:01:23 fspindle Exp $
  *
  * Description
  * ============
@@ -69,9 +69,9 @@ vpFeaturePoint3D::vpFeaturePoint3D() : vpBasicFeature()
 
 //! set the point X coordinates
 void
-vpFeaturePoint3D::set_X(const double _X)
+vpFeaturePoint3D::set_X(const double X)
 {
-    s[0] = _X ;
+    s[0] = X ;
 }
 
 //! get the point X coordinates
@@ -83,9 +83,9 @@ vpFeaturePoint3D::get_X() const
 
 //! set the point Y coordinates
 void
-vpFeaturePoint3D::set_Y(const double _Y)
+vpFeaturePoint3D::set_Y(const double Y)
 {
-    s[1] = _Y ;
+    s[1] = Y ;
 }
 
 //! get the point Y coordinates
@@ -97,9 +97,9 @@ vpFeaturePoint3D::get_Y() const
 
 //! set the point depth
 void
-vpFeaturePoint3D::set_Z(const double _Z)
+vpFeaturePoint3D::set_Z(const double Z)
 {
-    s[2] = _Z ;
+    s[2] = Z ;
 }
 
 //! get the point depth
@@ -111,13 +111,13 @@ vpFeaturePoint3D::get_Z() const
 
 //! set the point XY and Z-coordinates
 void
-vpFeaturePoint3D::set_XYZ(const double _X,
-			  const double _Y,
-			  const double _Z)
+vpFeaturePoint3D::set_XYZ(const double X,
+			  const double Y,
+			  const double Z)
 {
-  set_X(_X) ;
-  set_Y(_Y) ;
-  set_Z(_Z) ;
+  set_X(X) ;
+  set_Y(Y) ;
+  set_Z(Z) ;
 }
 
 //! compute the interaction matrix from a subset a the possible features
@@ -271,14 +271,13 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
 }
 
 void
-vpFeaturePoint3D::buildFrom(const double _X, const double _Y, const double _Z)
+vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
 {
 
-  s[0] = _X ;
-  s[1] = _Y ;
-  s[2] = _Z  ;
+  s[0] = X ;
+  s[1] = Y ;
+  s[2] = Z  ;
 
-  double Z = s[2] ;
   if (Z < 0)
   {
     ERROR_TRACE("Point is behind the camera ") ;

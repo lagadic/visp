@@ -1,0 +1,67 @@
+##
+## Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
+## www: http://www.irisa.fr/lagadic
+##
+## Author: Fabien Spindler email:Fabien.Spindler@irisa.fr
+##
+##
+## cmake PackageConfig file for VISP
+##
+## Typical usage in user project:
+##   FIND_PACKAGE(VISP)
+##   IF (VISP_FOUND)
+##     INCLUDE(${VISP_USE_FILE})
+##   ENDIF (VISP_FOUND)
+##
+
+
+# Tell the user project where to find ViSP headers and third party
+# headers used to compile ViSP
+SET(VISP_INCLUDE_DIR
+  "@CMAKE_INSTALL_PREFIX@/include"
+  "@VISP_EXTERN_INCLUDE_DIR@" )
+
+# Tell the user project where to find ViSP libraries and third party
+# libraries used to compile ViSP
+SET(VISP_LINK_DIRECTORIES 
+  "@CMAKE_INSTALL_PREFIX@/lib" 
+  "@VISP_EXTERN_LINK_DIR@"
+  )
+
+# Tell the user project where to find where to find ViSP build settings
+SET(VISP_BUILD_SETTINGS_FILE 
+  "@CMAKE_INSTALL_PREFIX@/lib/VISPBuildSettings.cmake"
+  )
+
+# Tell the user project where to find where to find ViSP dependencies
+INCLUDE("@CMAKE_INSTALL_PREFIX@/lib/VISPLibraryDepends.cmake")
+
+# export source dir for doxygen
+SET(VISP_SOURCE_DIR "@VISP_SOURCE_DIR@")
+
+# set the (one) library child projects can use (if they dont want to solve dependencies theirselves)
+SET(VISP_LIBRARIES @VISP_INTERN_LIBS@ @VISP_EXTERN_LIBS@)
+
+# where to find the USE file to be used by user project
+SET(VISP_USE_FILE
+  "@CMAKE_INSTALL_PREFIX@/lib/VISPUse.cmake"
+  )
+
+#
+# Remember VISP' third party libs configuration: 
+#
+
+SET(VISP_HAVE_X11       "@VISP_HAVE_X11@")
+SET(VISP_HAVE_GTK       "@VISP_HAVE_GTK@")
+SET(VISP_HAVE_GSL       "@VISP_HAVE_GSL@")
+SET(VISP_HAVE_COIN      "@VISP_HAVE_COIN@")
+SET(VISP_HAVE_QT        "@VISP_HAVE_QT@")
+SET(VISP_HAVE_SOQT      "@VISP_HAVE_SOQT@")
+SET(VISP_HAVE_DC1394    "@VISP_HAVE_DC1394@")
+SET(VISP_HAVE_CFOX      "@VISP_HAVE_CFOX@")
+SET(VISP_HAVE_V4L2      "@VISP_HAVE_V4L2@")
+SET(VISP_HAVE_ICCOMP    "@VISP_HAVE_ICCOMP@")
+SET(VISP_HAVE_AFMA4     "@VISP_HAVE_AFMA4@")
+SET(VISP_HAVE_AFMA6     "@VISP_HAVE_AFMA6@")
+SET(VISP_HAVE_BICLOPS   "@VISP_HAVE_BICLOPS@")
+SET(VISP_HAVE_PTU46     "@VISP_HAVE_PTU46@")

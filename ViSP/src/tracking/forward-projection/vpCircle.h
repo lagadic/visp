@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpCircle.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $
+ *  $Id: vpCircle.h,v 1.2 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -52,20 +52,20 @@ public:
       line2
     };
 
-  vpCircle(const vpColVector& _oP) ;
-  vpCircle(const double _A, const double _B1,
-	   const double _C,
-	   const double _X0, const double _Y0,
-	   const double _Z0,
-	   const double _R) ;
+  vpCircle(const vpColVector& oP) ;
+  vpCircle(const double A, const double B1,
+	   const double C,
+	   const double X0, const double Y0,
+	   const double Z0,
+	   const double R) ;
 
 
-  void setWorldCoordinates(const vpColVector& _oP) ;
-  void setWorldCoordinates(const double _A, const double _B1,
-			   const double _C,
-			   const double _X0, const double _Y0,
-			   const double _Z0,
-			   const double _R) ;
+  void setWorldCoordinates(const vpColVector& oP) ;
+  void setWorldCoordinates(const double A, const double B1,
+			   const double C,
+			   const double X0, const double Y0,
+			   const double Z0,
+			   const double R) ;
 
 
   double getA() const { return cP[0] ; }
@@ -80,8 +80,8 @@ public:
 
 
 
-  void projection(const vpColVector &_cP, vpColVector &_p) ;
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) ;
+  void projection(const vpColVector &cP, vpColVector &p) ;
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
 
 
   void display(vpImage<unsigned char> &I,

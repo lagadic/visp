@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpException.cpp,v 1.1.1.1 2005-06-08 07:08:09 fspindle Exp $
+ *  $Id: vpException.cpp,v 1.2 2006-04-19 09:01:20 fspindle Exp $
  *
  * Description
  * ============
@@ -24,7 +24,7 @@
    \brief error that can be emited by the vp class and its derivates
  */
 
-#include "vpException.h"
+#include "visp/vpException.h"
 
 
 /* ------------------------------------------------------------------------- */

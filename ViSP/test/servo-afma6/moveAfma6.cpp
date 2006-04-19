@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma6.cpp,v 1.1 2005-11-30 09:43:51 fspindle Exp $
+ *  $Id: moveAfma6.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
  *
  * Description
  * ============
@@ -30,7 +30,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#ifdef HAVE_ROBOT_AFMA6
+#ifdef VISP_HAVE_AFMA6
 
 #include <visp/vpRobotAfma6.h>
 

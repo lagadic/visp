@@ -10,7 +10,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageFilter.cpp,v 1.2 2006-02-07 14:43:11 fspindle Exp $
+ *  $Id: vpImageFilter.cpp,v 1.3 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -18,7 +18,7 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-#include<visp/vpImageFilter.h>
+#include <visp/vpImageFilter.h>
 
 /*!
   Apply a filter to an image.

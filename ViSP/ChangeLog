@@ -1,5 +1,8 @@
 ViSP 2.1.2 (Modification since ViSP 2.1.1)
   - Installation
+	- To increase the code portability, especially under windows), 
+	  all the build process is now based on CMake 
+	  (see http://www.cmake.org).
 	- Standardization of makefile targets (clean, distclean, install,
 	  uninstall). Take into account configure --prefix option in
 	  installation process

@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotPtu46.h,v 1.2 2006-02-21 11:14:43 fspindle Exp $
+ *  $Id: vpRobotPtu46.h,v 1.3 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -19,7 +19,7 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <visp/vpConfig.h>
-#ifdef HAVE_ROBOT_PTUEVI
+#ifdef VISP_HAVE_PTU46
 
 
 #ifndef __vpROBOT_PTU46_H

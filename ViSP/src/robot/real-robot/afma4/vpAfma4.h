@@ -11,7 +11,7 @@
  *
  *
  *
- *  $Id: vpAfma4.h,v 1.1 2005-09-19 13:32:52 fspindle Exp $
+ *  $Id: vpAfma4.h,v 1.2 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -22,7 +22,8 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include <visp/vpConfig.h>
-#ifdef HAVE_ROBOT_AFMA4
+
+#ifdef VISP_HAVE_AFMA4
 
 #ifndef __vpAFMA4_H
 #define __vpAFMA4_H

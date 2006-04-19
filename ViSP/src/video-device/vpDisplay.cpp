@@ -1,9 +1,9 @@
-#include<visp/vpDisplay.h>
-#include<visp/vpDisplayException.h>
+#include <visp/vpDisplay.h>
+#include <visp/vpDisplayException.h>
 
-#include<visp/vpPoint.h>
-#include<visp/vpMeterPixelConversion.h>
-#include<visp/vpMath.h>
+#include <visp/vpPoint.h>
+#include <visp/vpMeterPixelConversion.h>
+#include <visp/vpMath.h>
 
 
 /*!

@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpFeatureBuilderPoint.cpp,v 1.5 2005-12-06 10:32:45 fspindle Exp $
+ *  $Id: vpFeatureBuilderPoint.cpp,v 1.6 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -27,9 +27,9 @@
   \brief  conversion between tracker
   and visual feature Point
 */
-#include<visp/vpFeatureBuilder.h>
-#include<visp/vpFeatureException.h>
-#include<visp/vpException.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeatureException.h>
+#include <visp/vpException.h>
 
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,

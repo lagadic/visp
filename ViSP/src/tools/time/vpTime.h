@@ -4,14 +4,14 @@
  * www  : http://www.irisa.fr/lagadic
  *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * File:      vpMatrixException.h
+ * File:      vpTime.h
  * Project:   ViSP2
  * Author:    Eric Marchand
  *
  * Version control
  * ===============
  *
- *  $Id: vpTime.h,v 1.4 2006-04-10 13:53:30 fspindle Exp $
+ *  $Id: vpTime.h,v 1.5 2006-04-19 09:01:22 fspindle Exp $
  *
  * Description
  * ============
@@ -35,12 +35,12 @@
 
 */
 
+
 class vpTime
 {
 public:
-#if (defined(__Linux_) || defined(__SunOS_)|| defined(__Darwin_) )
   static double minTimeForUsleepCall;
-#endif
+
   static double measureTimeSecond() ;
   static double measureTimeMs() ;
   static double measureTimeMicros() ;

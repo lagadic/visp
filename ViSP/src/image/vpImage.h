@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImage.h,v 1.3 2005-11-30 10:31:39 marchand Exp $
+ *  $Id: vpImage.h,v 1.4 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -171,6 +171,7 @@ public:
 } ;
 
 #include <visp/vpImageBase.t.cpp>
+
 
 #endif
 

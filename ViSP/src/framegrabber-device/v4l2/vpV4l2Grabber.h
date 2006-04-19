@@ -28,7 +28,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef HAVE_INCLUDE_VIDEODEV2
+#ifdef VISP_HAVE_V4L2
 
 #include <linux/types.h>
 #include <linux/kernel.h>

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMeterPixelConversion.cpp,v 1.3 2005-08-26 12:57:57 fspindle Exp $
+ *  $Id: vpMeterPixelConversion.cpp,v 1.4 2006-04-19 09:01:20 fspindle Exp $
  *
  * Description
  * ============
@@ -26,11 +26,11 @@
 
 */
 
-#include<visp/vpMeterPixelConversion.h>
-#include<visp/vpCameraParameters.h>
-#include<visp/vpException.h>
-#include<visp/vpMath.h>
-#include<visp/vpDebug.h>
+#include <visp/vpMeterPixelConversion.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpException.h>
+#include <visp/vpMath.h>
+#include <visp/vpDebug.h>
 
   //! point coordinates conversion (u,v)->(x,y)
 void

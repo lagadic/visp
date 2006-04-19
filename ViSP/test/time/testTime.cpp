@@ -1,3 +1,10 @@
+#if defined UNIX
+#  include <unistd.h>
+#elif defined WIN32
+#  include <windows.h>
+#  include <mmsystem.h>
+#  include <winbase.h>
+#endif
 #include <iostream>
 #include <time.h>
 
@@ -20,15 +27,22 @@ int main()
 
   double t2 = vpTime::measureTimeMs();
 
+#if defined UNIX
   usleep(10);
+#elif defined WIN32
+  Sleep(10);
+#endif
 
   double t3 = vpTime::measureTimeMs();
 
+#if defined UNIX
   struct timespec req;
   req.tv_sec = 0;
   req.tv_nsec = 2*1000*1000;
   nanosleep(&req, NULL);
-
+#elif defined WIN32
+  Sleep(2);
+#endif
   double t4 = vpTime::measureTimeMs();
 
   vpTime::wait(t4, 19);

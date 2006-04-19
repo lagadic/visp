@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma4.cpp,v 1.3 2006-01-13 18:14:47 fspindle Exp $
+ *  $Id: vpRobotAfma4.cpp,v 1.4 2006-04-19 09:01:21 fspindle Exp $
  *
  * Description
  * ============
@@ -17,7 +17,8 @@
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 #include <visp/vpConfig.h>
-#ifdef HAVE_ROBOT_AFMA4
+
+#ifdef VISP_HAVE_AFMA4
 
 /* Headers des fonctions implementees. */
 #include <visp/vpRobotAfma4Contrib.h>    /* Communication avec le robot. */

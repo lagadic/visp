@@ -1,0 +1,72 @@
+##
+## Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
+## www: http://www.irisa.fr/lagadic
+##
+## Author: Fabien Spindler email:Fabien.Spindler@irisa.fr
+##
+## Try to find libBiclops, libPMD and libUtils for Biclops head
+## Once run this will define: 
+##
+## BICLOPS_FOUND
+## BICLOPS_INCLUDE_DIR
+## BICLOPS_LIBRARIES
+##
+
+IF(NOT UNIX)
+  # MESSAGE("FindBICLOPS.cmake: macro only for Unix for the moment.")
+  SET(BICLOPS_FOUND FALSE)
+ELSE(NOT UNIX)
+
+  FIND_PATH(BICLOPS_INCLUDE_DIR Biclops.h
+    $ENV{BICLOPS_HOME}/include
+    /usr/include )
+  #MESSAGE("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")  
+
+  FIND_LIBRARY(BICLOPS_LIBRARY
+    NAMES Biclops
+    PATHS 
+    $ENV{BICLOPS_HOME}/lib
+    /usr/lib
+    )
+
+  FIND_LIBRARY(PMD_LIBRARY
+    NAMES PMD Utils 
+    PATHS 
+    $ENV{BICLOPS_HOME}/lib
+    /usr/lib
+    )
+
+  FIND_LIBRARY(UTILS_LIBRARY
+    NAMES Utils 
+    PATHS 
+    $ENV{BICLOPS_HOME}/lib
+    /usr/lib
+    )
+  #MESSAGE("DBG BICLOPS_LIBRARY=${BICLOPS_LIBRARY}")
+
+  ## --------------------------------
+
+  IF(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
+    SET(BICLOPS_LIBRARIES ${BICLOPS_LIBRARY} ${PMD_LIBRARY} ${UTILS_LIBRARY})
+  ELSE(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
+    MESSAGE(SEND_ERROR "Biclops library not found.")
+  ENDIF(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
+
+  IF(NOT BICLOPS_INCLUDE_DIR)
+    MESSAGE(SEND_ERROR "Biclops include dir not found.")
+  ENDIF(NOT BICLOPS_INCLUDE_DIR)
+
+  IF(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR)
+    SET(BICLOPS_FOUND TRUE)
+  ELSE(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR)
+    SET(BICLOPS_FOUND FALSE)
+  ENDIF(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR)
+
+  MARK_AS_ADVANCED(
+    BICLOPS_INCLUDE_DIR
+    BICLOPS_LIBRARIES
+    BICLOPS_LIBRARY
+    PMD_LIBRARY
+    UTILS_LIBRARY
+    )
+ENDIF(NOT UNIX)

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpMeterPixelConversion.h,v 1.1.1.1 2005-06-08 07:08:13 fspindle Exp $
+ *  $Id: vpMeterPixelConversion.h,v 1.2 2006-04-19 09:01:20 fspindle Exp $
  *
  * Description
  * ============
@@ -28,7 +28,7 @@
   \brief meter to pixel  conversion
 
 */
-#include<visp/vpCameraParameters.h>
+#include <visp/vpCameraParameters.h>
 
 
 /*!
