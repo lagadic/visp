@@ -20,6 +20,10 @@ SET(VISP_VERSION_FULL "${VISP_VERSION}.${VISP_VERSION_PATCH}")
 SET(VISP_INCLUDE_DIR "${VISP_SOURCE_DIR}/include/visp")
 
 #-----------------------------------------------------------------------------
+# try to found chmod to set file permissions
+FIND_PROGRAM(CHMOD chmod)
+
+#-----------------------------------------------------------------------------
 
 # The location in which to install VISP libraries.
 IF(NOT LIBRARY_OUTPUT_PATH)
@@ -43,6 +47,13 @@ SET(VISP_DEFS "")
 # Get the OS
 SET(OS ${CMAKE_SYSTEM_NAME})
 
+# add read permissions on installed files/directories
+IF(CHMOD)
+  EXEC_PROGRAM(${CHMOD} ARGS 755 ${VISP_SOURCE_DIR}/lib)
+  EXEC_PROGRAM(${CHMOD} ARGS 644 ${VISP_SOURCE_DIR}/lib/*)
+  EXEC_PROGRAM(${CHMOD} ARGS 755 ${VISP_INTERN_INCLUDE_DIR})
+  EXEC_PROGRAM(${CHMOD} ARGS 755 ${VISP_INCLUDE_DIR})
+ENDIF(CHMOD)
 
 ## where are user-specific cmake modules
 ## make_dist.sh relies on $ENV{CMAKE_MODULES_PATH} (TODO, FIXME)
@@ -465,7 +476,6 @@ INCLUDE(${CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 INSTALL_FILES(/bin FILES bin/visp-config)
 # install rule for vpConfig.h
 INSTALL_FILES(/include/visp FILES include/visp/vpConfig.h)
-
 #----------------------------------------------------------------------
 # add distclean target 
 #----------------------------------------------------------------------
@@ -531,13 +541,13 @@ SUBDIRS(example)
 CONFIGURE_FILE(
   ${CMAKE_MODULE_PATH}/VISPConfig.cmake.in
   ${LIBRARY_OUTPUT_PATH}/VISPConfig.cmake
-  @ONLY IMMEDIATE )
+  IMMEDIATE @ONLY)
 
 # Just to copy ./CMakeModule/VISPUse.cmake.in in ./lib/UseVISP.cmake
 CONFIGURE_FILE(
   ${CMAKE_MODULE_PATH}/VISPUse.cmake.in
   ${LIBRARY_OUTPUT_PATH}/VISPUse.cmake
-  @ONLY IMMEDIATE )
+  IMMEDIATE @ONLY)
 
 # Export our build settings and library dependencies for use by the third party
 # user projects
@@ -548,6 +558,14 @@ CMAKE_EXPORT_BUILD_SETTINGS(
 EXPORT_LIBRARY_DEPENDENCIES(
   ${LIBRARY_OUTPUT_PATH}/VISPLibraryDepends.cmake
   )
+IF(CHMOD)
+  EXEC_PROGRAM(${CHMOD} ARGS 644 
+    ${LIBRARY_OUTPUT_PATH}/VISPLibraryDepends.cmake
+    )
+  EXEC_PROGRAM(${CHMOD} ARGS 644 
+    ${LIBRARY_OUTPUT_PATH}/VISPBuildSettings.cmake
+    )
+ENDIF(CHMOD)
 
 # Install the packaging files for use by FIND_PACKAGE(VISP) in user projects
 INSTALL_FILES(/lib FILES
