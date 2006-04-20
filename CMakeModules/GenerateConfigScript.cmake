@@ -114,11 +114,6 @@ IF (UNIX)
   # Updates the visp-config shell script
   #----------------------------------------------------------------------
   CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
-  # add read permissions on installed files/directories
-  IF(CHMOD)
-    EXEC_PROGRAM(${CHMOD} ARGS 755 ${VISP_BINARY_DIR})
-    EXEC_PROGRAM(${CHMOD} ARGS 755 ${FILE_VISP_CONFIG_SCRIPT})
-  ENDIF(CHMOD)
 
 ELSE(UNIX)
   MESSAGE("GenerateConfigScript works only on Unix platforms, sorry.")
