@@ -60,6 +60,12 @@ SET_TARGET_PROPERTIES(${VISP_INTERN_LIBS}
 # customize install target 
 #----------------------------------------------------------------------
 # install rule for the library
-INSTALL_TARGETS(/lib ${VISP_INTERN_LIBS})
+INSTALL(TARGETS ${VISP_INTERN_LIBS}
+  DESTINATION lib
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
 # install rule for all the headers
-INSTALL_FILES(/include/visp FILES ${HEADER_ALL})
+INSTALL(FILES ${HEADER_ALL}
+  DESTINATION include/visp
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
