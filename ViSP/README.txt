@@ -26,6 +26,9 @@ ccmake .
 make
 make install
 
+The make install step is needed if you want to use ViSP in your own
+projects. To do the installation, you don't need to be root.
+
 --- WIN32 ---
 Use cmake to set environment variables and proceed as described for Linux.
 
@@ -177,8 +180,18 @@ HOWTO:
    cd <build dir>
    rm CMakeCache.txt
 
+11. Make a distclean:
+    -----------------
+  CMake does not generate a "make distclean" target (see the cmake FAQ).  CMake
+  generates many files related to the build system, but since CMakeLists.txt
+  files can run scripts and other arbitrary commands, there is no way it can
+  keep track of exactly which files are generated as part of running CMake.  So
+  we have developped a distclean shell script (working under Unix platforms)
+  that removes these files related to the build system.
+  To remove all the intermediate files related to the build system:
+  sh ./distclean.sh
 
-11. Where to found doc about CMake:
+12. Where to found doc about CMake:
     ------------------------------
    Almost complete documentation of cmake commands: 
    cmake --help-full  and  http://www.cmake.org
