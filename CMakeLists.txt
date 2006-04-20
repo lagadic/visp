@@ -461,9 +461,16 @@ INCLUDE(${CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 # customize install target 
 #----------------------------------------------------------------------
 # install rule for visp-config shell script
-INSTALL_FILES(/bin FILES bin/visp-config)
+INSTALL(FILES bin/visp-config 
+  DESTINATION bin
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+  OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+  )
 # install rule for vpConfig.h
-INSTALL_FILES(/include/visp FILES include/visp/vpConfig.h)
+INSTALL(FILES include/visp/vpConfig.h
+  DESTINATION include/visp 
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
 #----------------------------------------------------------------------
 # add distclean target 
 #----------------------------------------------------------------------
@@ -548,12 +555,14 @@ EXPORT_LIBRARY_DEPENDENCIES(
   )
 
 # Install the packaging files for use by FIND_PACKAGE(VISP) in user projects
-INSTALL_FILES(/lib FILES
+INSTALL(FILES
   ${LIBRARY_OUTPUT_PATH}/VISPUse.cmake
   ${LIBRARY_OUTPUT_PATH}/VISPConfig.cmake
   ${LIBRARY_OUTPUT_PATH}/VISPBuildSettings.cmake
   ${LIBRARY_OUTPUT_PATH}/VISPLibraryDepends.cmake
-)
+  DESTINATION lib
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
   
 
 #----------------------------------------------------------------------
