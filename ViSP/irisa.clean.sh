@@ -127,3 +127,8 @@ for i in `find -type f -name "*.o" -print | sort`
     	$RM $i;
 	echo "$RM $i"
     done
+for i in `find -type f -name "*.{bb,bbg}" -print | sort`
+    do
+    	$RM $i;
+	echo "$RM $i"
+    done
