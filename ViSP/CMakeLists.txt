@@ -572,8 +572,11 @@ ENABLE_TESTING()
 INCLUDE(DartConfig.cmake)
 INCLUDE(Dart)
 
-# Add build options for test coverage
-SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+# Add build options for test coverage. Currently coverage is only supported on
+# gcc compiler 
+IF(CMAKE_COMPILER_IS_GNUCXX)
+  SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 IF(BUILD_TESTING)
    SUBDIRS(Testing)
