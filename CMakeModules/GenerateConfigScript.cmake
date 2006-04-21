@@ -29,6 +29,11 @@ IF (UNIX)
     SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -I${INCDIR}")
   ENDFOREACH(INCDIR)
 
+  # Add build options for test coverage. Currently coverage is only supported
+  # on gcc compiler 
+  IF(CMAKE_COMPILER_IS_GNUCXX)
+    SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -fprofile-arcs -ftest-coverage")
+  ENDIF(CMAKE_COMPILER_IS_GNUCXX)
   
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_EXTERN_LIBS
