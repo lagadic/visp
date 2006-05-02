@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.5 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.6 2006-05-02 08:46:20 fspindle Exp $
  *
  * Description
  * ============
@@ -37,7 +37,6 @@
 #endif
 #include <pthread.h>
 #include <signal.h>
-#include <error.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
