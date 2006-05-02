@@ -7,8 +7,6 @@
 ## This file generates the ViSP-2 library config shell script: "visp2-config"
 ## from visp2-config.in (in VISP_SOURCE_DIR) 
 ##
-
-
 IF (UNIX)
   SET(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.in")
   SET(FILE_VISP_CONFIG_SCRIPT    "${VISP_BINARY_DIR}/visp-config")
@@ -48,8 +46,7 @@ IF (UNIX)
   SET(VISP_CONFIG_SCRIPT_TMP_LIBS "")
   FOREACH(LIB ${VISP_EXTERN_LIBS})
     #MESSAGE("LIB to process: ${LIB}")
-    # do not prefix back-quited expressions, e.g/ `/bin/foo-config`
-    IF (${LIB} MATCHES ".+[.][s][o]" OR ${LIB} MATCHES  ".+[.][a]")
+    IF("${LIB}" MATCHES .so OR "${LIB}" MATCHES .a)
       #MESSAGE("matches .so or .a, processing to create -L and -l")
       GET_FILENAME_COMPONENT(path ${LIB} PATH)
 
@@ -90,10 +87,10 @@ IF (UNIX)
       # convert semicolon-separated vector to space-separated string 
       SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} -l${LIB}")
       
-    ELSE (${LIB} MATCHES ".+[.][s][o]" OR ${LIB} MATCHES  ".+[.][a]")
+    ELSE("${LIB}" MATCHES .so OR "${LIB}" MATCHES .a)
       #MESSAGE("not a lib in .so or .a, to keep")
       SET(VISP_CONFIG_SCRIPT_TMP_LIBS "${VISP_CONFIG_SCRIPT_TMP_LIBS} ${LIB}")
-    ENDIF (${LIB} MATCHES ".+[.][s][o]" OR ${LIB} MATCHES  ".+[.][a]")
+    ENDIF("${LIB}" MATCHES .so OR "${LIB}" MATCHES .a)
   ENDFOREACH(LIB)
 
   #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
@@ -121,6 +118,6 @@ IF (UNIX)
   CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
 
 ELSE(UNIX)
-  MESSAGE("GenerateConfigScript works only on Unix platforms, sorry.")
+  #MESSAGE("GenerateConfigScript works only on Unix platforms, sorry.")
 ENDIF(UNIX)
 
