@@ -40,7 +40,7 @@ IF (UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_EXTERN_LIBS
   #
-  # add "-l" to "real" library names  
+  # add "-l" to "real" library names ending with .so or .a
   # add "-L" to library path
   # skip *.so  and *.a
   #
@@ -50,8 +50,8 @@ IF (UNIX)
   SET(VISP_CONFIG_SCRIPT_TMP_LIBS "")
   FOREACH(LIB ${VISP_EXTERN_LIBS})
     #MESSAGE("LIB to process: ${LIB}")
-    IF("${LIB}" MATCHES .so OR "${LIB}" MATCHES .a)
-      #MESSAGE("matches .so or .a, processing to create -L and -l")
+    IF("${LIB}" MATCHES ".+[.][s][o]" OR "${LIB}" MATCHES ".+[.][a]")
+      #MESSAGE("${LIB} matches .so or .a, processing to create -L and -l")
       GET_FILENAME_COMPONENT(path ${LIB} PATH)
 
       #----
@@ -91,10 +91,10 @@ IF (UNIX)
       # convert semicolon-separated vector to space-separated string 
       SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} -l${LIB}")
       
-    ELSE("${LIB}" MATCHES .so OR "${LIB}" MATCHES .a)
-      #MESSAGE("not a lib in .so or .a, to keep")
+    ELSE("${LIB}" MATCHES ".+[.][s][o]" OR "${LIB}" MATCHES ".+[.][a]")
+      #MESSAGE("${LIB} is not a lib in .so or .a, to keep")
       SET(VISP_CONFIG_SCRIPT_TMP_LIBS "${VISP_CONFIG_SCRIPT_TMP_LIBS} ${LIB}")
-    ENDIF("${LIB}" MATCHES .so OR "${LIB}" MATCHES .a)
+    ENDIF("${LIB}" MATCHES ".+[.][s][o]" OR "${LIB}" MATCHES ".+[.][a]")
   ENDFOREACH(LIB)
 
   #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
