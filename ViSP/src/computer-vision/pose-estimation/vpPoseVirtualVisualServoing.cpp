@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpPoseVirtualVisualServoing.cpp,v 1.3 2006-02-21 11:12:54 fspindle Exp $
+ *  $Id: vpPoseVirtualVisualServoing.cpp,v 1.4 2006-05-03 07:26:31 fspindle Exp $
  *
  * Description
  * ============
@@ -21,8 +21,8 @@
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /*!
-\file vpPoseVirtualVisualServoing.cpp
-\brief Compute the pose using virtual visual servoing approach
+  \file vpPoseVirtualVisualServoing.cpp
+  \brief Compute the pose using virtual visual servoing approach
 */
 
 #include <visp/vpPose.h>
@@ -46,7 +46,7 @@
   H.-P. Seidel (eds.), Computer Graphics Forum, Volume 21(3), Pages 289-298,
   Sarrebruck, Allemagne, 2002.
 
- */
+*/
 
 void
 vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
@@ -56,7 +56,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
     double  residu_1 = 1e8 ;
     double r =1e8-1;
 
-     // we stop the minimization when the error is bellow 1e-8
+    // we stop the minimization when the error is bellow 1e-8
 
     int iter = 0 ;
     while((int)((residu_1 - r)*1e12) !=0)
@@ -136,3 +136,4 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
   }
 
 }
+
