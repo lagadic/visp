@@ -1,26 +1,26 @@
 
 /*
-#----------------------------------------------------------------------------
-#  Copyright (C) 1998  IRISA-INRIA Rennes Vista Project
-#  All Rights Reserved.
-#
-#    Contact:
-#       Eric Marchand
-#       IRISA-INRIA Rennes
-#       Campus Universitaire de Beaulieu
-#       35042 Rennes Cedex
-#       France
-#
-#    email: marchand@irisa.fr
-#    www  : http://www.irisa.fr/vista
-#
-#----------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
+  #  Copyright (C) 1998  IRISA-INRIA Rennes Vista Project
+  #  All Rights Reserved.
+  #
+  #    Contact:
+  #       Eric Marchand
+  #       IRISA-INRIA Rennes
+  #       Campus Universitaire de Beaulieu
+  #       35042 Rennes Cedex
+  #       France
+  #
+  #    email: marchand@irisa.fr
+  #    www  : http://www.irisa.fr/vista
+  #
+  #----------------------------------------------------------------------------
 */
 
 /*!
   \file vpPose.h
   \brief Fichier contenant la classe vpPose (tout ce qui est necessaire
-         pour faire du calcul de pose par difference methode
+  pour faire du calcul de pose par difference methode
 */
 
 #include <visp/vpPose.h>
@@ -36,7 +36,7 @@
 
 #define DEBUG_LEVEL1 0
 /*!
- \brief   basic initialisation (called by the constructors)
+  \brief   basic initialisation (called by the constructors)
 */
 void
 vpPose::init()
@@ -99,8 +99,8 @@ vpPose::clearPoint()
   \brief  Add a new point in the array of point
   \param  vpPoint& newP, this new point
   \warning Considering a point from the class vpPoint, X, Y, and Z will
-           represent the 3D information and x and y its 2D informations.
-	   These 5 fields must be initialized to be used within this library
+  represent the 3D information and x and y its 2D informations.
+  These 5 fields must be initialized to be used within this library
 */
 void
 vpPose::addPoint(const vpPoint& newP)
@@ -119,8 +119,8 @@ vpPose::addPoint(const vpPoint& newP)
 /*!
   \brief test the coplanarity of the set of points
   \return true if points are coplanar
-          false if not
- */
+  false if not
+*/
 bool
 vpPose::coplanaire()
 {
@@ -129,7 +129,7 @@ vpPose::coplanaire()
   {
     ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
-		      "Not enough points ")) ;
+			  "Not enough points ")) ;
   }
 
   if (npt ==3) return true ;
@@ -167,18 +167,18 @@ vpPose::coplanaire()
   if (fabs(D) < 1e-10)
   {
     /*   listP.front() ;
-    while (!listP.outside())
-      {
-	P1 = listP.value() ;
-	P1.print() ;
-	listP.next() ;
+	 while (!listP.outside())
+	 {
+	 P1 = listP.value() ;
+	 P1.print() ;
+	 listP.next() ;
 
-      }
+	 }
 
-    cout << x1 <<" " << y1 << " "<< z1 << endl ;
-    cout << x2 <<" " << y2 << " "<< z2 << endl ;
-    cout << x3 <<" " << y3 << " "<< z3 << endl ;
-    ERROR_TRACE("division by zero  ") ;*/
+	 cout << x1 <<" " << y1 << " "<< z1 << endl ;
+	 cout << x2 <<" " << y2 << " "<< z2 << endl ;
+	 cout << x3 <<" " << y3 << " "<< z3 << endl ;
+	 ERROR_TRACE("division by zero  ") ;*/
     // throw(vpException(vpException::divideByZeroError,
     //		      "division by zero  ")) ;
   }
@@ -192,8 +192,8 @@ vpPose::coplanaire()
 
     if (fabs(dist) > 0.01)
     {
-      	DEBUG_TRACE(10," points are not coplanar ") ;
-	//	TRACE(" points are not coplanar ") ;
+      DEBUG_TRACE(10," points are not coplanar ") ;
+      //	TRACE(" points are not coplanar ") ;
       return false ;
     }
     listP.next() ;
@@ -203,11 +203,11 @@ vpPose::coplanaire()
   //  TRACE(" points are  coplanar ") ;
 
   return true ;
- }
+}
 
 /*!
   \brief Compute and return the residual expressed in meter for
-         the pose matrix 'cMo'
+  the pose matrix 'cMo'
   \param input vpMatrix &pose : the matrix that defines the pose to be tested
   \return the value of he residual in meter
 */
@@ -241,20 +241,20 @@ vpPose::computeResidual(vpHomogeneousMatrix &_cMo)
   the different method are
 
   LAGRANGE         Lagrange approach
-                   (test is done to switch between planar and
-		   non planar algorithm)
+  (test is done to switch between planar and
+  non planar algorithm)
 
   DEMENTHON        Dementhon approach
-                   (test is done to switch between planar and
-		   non planar algorithm)
+  (test is done to switch between planar and
+  non planar algorithm)
 
   VIRTUAL_VS       Virtual visual servoing approach
 
   DEMENTHON_VIRTUAL_VS Virtual visual servoing approach initialized using
-                   Dementhon approach
+  Dementhon approach
 
   LAGRANGE_VIRTUAL_VS  Virtual visual servoing initialized using
-                   Lagrange approach
+  Lagrange approach
 
 */
 void
@@ -278,11 +278,11 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 
       if (npt <4)
       {
-	  ERROR_TRACE("Dementhon method cannot be used in that case ") ;
-	  ERROR_TRACE("(at least 4 points are required)") ;
-	  ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-	  throw(vpPoseException(vpPoseException::notEnoughPointError,
-				"Not enough points ")) ;
+	ERROR_TRACE("Dementhon method cannot be used in that case ") ;
+	ERROR_TRACE("(at least 4 points are required)") ;
+	ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+	throw(vpPoseException(vpPoseException::notEnoughPointError,
+			      "Not enough points ")) ;
       }
 
       // test si les point 3D sont coplanaires
@@ -437,3 +437,4 @@ vpPose::display(vpImage<unsigned char> &I,
 {
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }
+

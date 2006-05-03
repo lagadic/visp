@@ -5,12 +5,11 @@
 const double vpRobot::maxTranslationVelocityDefault = 0.2;
 const double vpRobot::maxRotationVelocityDefault = 0.7;
 
-/* -------------------------------------------------------------------------- */
-/* --- CONSTRUCTEUR --------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+/* --- CONSTRUCTEUR -------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 
-vpRobot::
-vpRobot (void)
+vpRobot::vpRobot (void)
   :
   maxTranslationVelocity (maxTranslationVelocityDefault),
   maxRotationVelocity (maxRotationVelocityDefault)
@@ -41,17 +40,18 @@ vpRobot::setRobotFrame (vpRobot::ControlFrameType newFrame)
   return newFrame ;
 }
 
-/* Recupere la position actuelle du robot.
- * Recupere la position actuelle du robot et renvoie le resultat
- * Le repere de travail dans lequel est exprime le resultat est celui
- * donne par la variable \a repere.
- * INPUT:
- *   - repere: repere de travail dans lequel est exprime le resultat.
- * OUTPUT:
- *   - Position actuelle du robot.
- */
-vpColVector vpRobot::
-getPosition (vpRobot::ControlFrameType repere)
+/*!
+  Recupere la position actuelle du robot.
+  Recupere la position actuelle du robot et renvoie le resultat
+  Le repere de travail dans lequel est exprime le resultat est celui
+  donne par la variable \a repere.
+  INPUT:
+    - repere: repere de travail dans lequel est exprime le resultat.
+  OUTPUT:
+    - Position actuelle du robot.
+*/
+vpColVector
+vpRobot::getPosition (vpRobot::ControlFrameType repere)
 {
   vpColVector r;
   this ->getPosition (repere, r);
@@ -59,26 +59,26 @@ getPosition (vpRobot::ControlFrameType repere)
   return r;
 }
 
-/* -------------------------------------------------------------------------- */
-/* --- VELOCITY CONTROL ----------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+/* --- VELOCITY CONTROL ---------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 
 /*! Set the maximal velocity that can be sent to the robot (in
  *translation).
  */
-void vpRobot::
-setMaxTranslationVelocity (const double maxVt)
+void
+vpRobot::setMaxTranslationVelocity (const double maxVt)
 {
   this ->maxTranslationVelocity = maxVt;
   return;
 }
 
-/*! Get the maximal velocity that can be sent to the robot (in
- * translation).
- */
-
-double vpRobot::
-getMaxTranslationVelocity (void) const
+/*!
+  Get the maximal velocity that can be sent to the robot (in
+  translation).
+*/
+double
+vpRobot::getMaxTranslationVelocity (void) const
 {
   return this ->maxTranslationVelocity;
 }
@@ -86,8 +86,8 @@ getMaxTranslationVelocity (void) const
  * rotation).
  */
 
-void vpRobot::
-setMaxRotationVelocity (const double maxVr)
+void
+vpRobot::setMaxRotationVelocity (const double maxVr)
 {
   this ->maxRotationVelocity = maxVr;
   return;
@@ -96,8 +96,9 @@ setMaxRotationVelocity (const double maxVr)
 /*! Get the maximal velocity that can be sent to the robot (in
  * rotation).
  */
-double vpRobot::
-getMaxRotationVelocity (void) const
+double
+vpRobot::getMaxRotationVelocity (void) const
 {
   return this ->maxRotationVelocity;
 }
+

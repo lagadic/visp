@@ -29,20 +29,20 @@
   objects through a new estimation scheme of camera displacement. Int. Journal
   of Computer Vision, 37(1):79-97, Juin 2000.
 
-   @article{Malis00b,
-     Author = {Malis, E. and Chaumette, F.},
-     Title = {2 1/2 D visual servoing with respect to unknown objects
-              through a new estimation scheme of camera displacement},
-     Journal = {Int. Journal of Computer Vision},
-     Volume = {37},
-     Number = {1},
-     Pages = {79--97},
-     Month = {June},
-     Year = {2000}
+  @article{Malis00b,
+  Author = {Malis, E. and Chaumette, F.},
+  Title = {2 1/2 D visual servoing with respect to unknown objects
+  through a new estimation scheme of camera displacement},
+  Journal = {Int. Journal of Computer Vision},
+  Volume = {37},
+  Number = {1},
+  Pages = {79--97},
+  Month = {June},
+  Year = {2000}
   }
 
   paper can be obtained at this url :
-    http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html
+  http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html
 
   the algorithm for 2D scene implemented in this file is described in Ezio
   Malis PhD thesis
@@ -62,40 +62,40 @@
 const double eps = 1e-6 ;
 
 /**************************************************************************
-* NOM :
-* changeFrame
-*
-* DESCRIPTION :
-* Changement de repere Euclidien.
-*
-****************************************************************************
-* ENTREES :
-* int pts_ref[4]	: Definit quels sont les points de reference, ils ne
-*			  seront pas affectes par le changement de repere
-* int nb_pts		: nombre de points a changer de repere
-* double **pd	: La matrice des coordonnees des points desires
-* double **p	: La matrice des coordonnees des points courants
-*
-*
-* SORTIES :
-*
-* double **pt_des_nr 	: La matrice des coordonnees des points desires
-*			  dans le nouveau repere.
-* double **pt_cour_nr	: La matrice des coordonnees des points courants
-*			  dans le nouveau repere
-* double **M	: ??
-* double **Mpd	: pseudo inverse de M  ..
-*
-*
-****************************************************************************
-*/
+ * NOM :
+ * changeFrame
+ *
+ * DESCRIPTION :
+ * Changement de repere Euclidien.
+ *
+ ****************************************************************************
+ * ENTREES :
+ * int pts_ref[4]	: Definit quels sont les points de reference, ils ne
+ *			  seront pas affectes par le changement de repere
+ * int nb_pts		: nombre de points a changer de repere
+ * double **pd	: La matrice des coordonnees des points desires
+ * double **p	: La matrice des coordonnees des points courants
+ *
+ *
+ * SORTIES :
+ *
+ * double **pt_des_nr 	: La matrice des coordonnees des points desires
+ *			  dans le nouveau repere.
+ * double **pt_cour_nr	: La matrice des coordonnees des points courants
+ *			  dans le nouveau repere
+ * double **M	: ??
+ * double **Mpd	: pseudo inverse de M  ..
+ *
+ *
+ ****************************************************************************
+ */
 
 
 void changeFrame(int *pts_ref,
-	       int nb_pts,
-	       vpMatrix &pd, vpMatrix &p,
-	       vpMatrix &pnd, vpMatrix &pn,
-	       vpMatrix &M, vpMatrix &Mdp)
+		 int nb_pts,
+		 vpMatrix &pd, vpMatrix &p,
+		 vpMatrix &pnd, vpMatrix &pn,
+		 vpMatrix &M, vpMatrix &Mdp)
 {
 
 
@@ -164,37 +164,37 @@ void changeFrame(int *pts_ref,
 
 
 /**************************************************************************
-* NOM :
-* Homographie_CrvMafEstHomoPointsCible2D
-*
-* DESCRIPTION :
-* Calcul de l'homographie entre une image courante et une image desiree dans le
-* cas particulier d'une cible planaire de points (cible pi).
-* Cette procedure est appellee par "Homographie_CrvMafCalculHomographie".
-*
-****************************************************************************
-* ENTREES :
-* int 	Nb_pts : nombre de points
-* double	**pd : tableau des coordonnees des points desires
-* couble	**p : tableau des coordonnees des points courants
-*
-* SORTIES :
-*
-* double **H 			matrice d homographie
-*
-****************************************************************************
-* AUTEUR : BOSSARD Nicolas.  INSA Rennes 5eme annee.
-*
-* DATE DE CREATION : 02/12/98
-*
-* DATES DE MISE A JOUR :
-*
-****************************************************************************/
+ * NOM :
+ * Homographie_CrvMafEstHomoPointsCible2D
+ *
+ * DESCRIPTION :
+ * Calcul de l'homographie entre une image courante et une image desiree dans le
+ * cas particulier d'une cible planaire de points (cible pi).
+ * Cette procedure est appellee par "Homographie_CrvMafCalculHomographie".
+ *
+ ****************************************************************************
+ * ENTREES :
+ * int 	Nb_pts : nombre de points
+ * double	**pd : tableau des coordonnees des points desires
+ * couble	**p : tableau des coordonnees des points courants
+ *
+ * SORTIES :
+ *
+ * double **H 			matrice d homographie
+ *
+ ****************************************************************************
+ * AUTEUR : BOSSARD Nicolas.  INSA Rennes 5eme annee.
+ *
+ * DATE DE CREATION : 02/12/98
+ *
+ * DATES DE MISE A JOUR :
+ *
+ ****************************************************************************/
 void
 HLM2D(int nb_pts,
-       vpMatrix &points_des,
-       vpMatrix &points_cour,
-       vpMatrix &H)
+      vpMatrix &points_des,
+      vpMatrix &points_cour,
+      vpMatrix &H)
 {
   int i,j ;
 
@@ -289,33 +289,33 @@ HLM2D(int nb_pts,
 
 
 /**************************************************************************
-* NOM :
-* Homographie_CrvMafEstHomoPointsC3DEzio
-*
-* DESCRIPTION :
-* Calcul de l'homographie entre une image courante et une image desiree dans le
-* cas particulier d'une cible non planaire de points (cible pi).
-* Cette procedure est appellee par "Homographie_CrvMafCalculHomographie".
-*
-*
-****************************************************************************
-* ENTREES :
-* int 	Nb_pts : nombre de points
-* double	**pd : tableau des coordonnees des points desires
-* couble	**p : tableau des coordonnees des points courants
-*
-* SORTIES :
-*
-* double **H 			matrice d'homographie
-* double epipole[3]		epipole
-*
-****************************************************************************
-**/
+ * NOM :
+ * Homographie_CrvMafEstHomoPointsC3DEzio
+ *
+ * DESCRIPTION :
+ * Calcul de l'homographie entre une image courante et une image desiree dans le
+ * cas particulier d'une cible non planaire de points (cible pi).
+ * Cette procedure est appellee par "Homographie_CrvMafCalculHomographie".
+ *
+ *
+ ****************************************************************************
+ * ENTREES :
+ * int 	Nb_pts : nombre de points
+ * double	**pd : tableau des coordonnees des points desires
+ * couble	**p : tableau des coordonnees des points courants
+ *
+ * SORTIES :
+ *
+ * double **H 			matrice d'homographie
+ * double epipole[3]		epipole
+ *
+ ****************************************************************************
+ **/
 void
 HLM3D(int nb_pts,
-       vpMatrix &pd,
-       vpMatrix &p,
-       vpMatrix &H)
+      vpMatrix &pd,
+      vpMatrix &p,
+      vpMatrix &H)
 {
   int i,j,k,ii,jj ;
   int cont_pts;			/* Pour compter le nombre de points dans l'image */
@@ -323,9 +323,9 @@ HLM3D(int nb_pts,
   int nc ;			/*** Nombre de colonnes ***/
   int  pts_ref[4];		/*** définit lesquels des points de
 				     l'image sont les points de référence***/
- 	/***  ***/
+  /***  ***/
   int perm;			/***  Compte le nombre de permutations, quand le nombre
-				     de permutations =0 arret de l'ordonnancement **/
+				      de permutations =0 arret de l'ordonnancement **/
   int  cont_zeros;		/*** pour compter les valeurs quasi= a zero	***/
   int  cont;
   int  vect;
@@ -540,15 +540,15 @@ HLM3D(int nb_pts,
   else
   {
 
-//     estimation de a = 1,b,c ; je cherche le min de somme(i=1:n) (0.5*(ei)^2)
-// 	  e1 = V[1][.] * b - V[3][.] = 0 ;
-// 	  e2 = V[2][.] * c - V[3][.] = 0 ;
-// 	  e3 = V[2][.] * b - V[3][.] * c = 0 ;
-// 	  e4 = V[4][.] * b - V[5][.] = 0 ;
-// 	  e5 = V[4][.] * c - V[6][.] = 0 ;
-// 	  e6 = V[6][.] * b - V[5][.] * c = 0 ;
-// 	  e7 = V[7][.] * b - V[8][.] = 0 ;
-// 	  e8 = V[7][.] * c - V[9][.] = 0 ;
+    //     estimation de a = 1,b,c ; je cherche le min de somme(i=1:n) (0.5*(ei)^2)
+    // 	  e1 = V[1][.] * b - V[3][.] = 0 ;
+    // 	  e2 = V[2][.] * c - V[3][.] = 0 ;
+    // 	  e3 = V[2][.] * b - V[3][.] * c = 0 ;
+    // 	  e4 = V[4][.] * b - V[5][.] = 0 ;
+    // 	  e5 = V[4][.] * c - V[6][.] = 0 ;
+    // 	  e6 = V[6][.] * b - V[5][.] * c = 0 ;
+    // 	  e7 = V[7][.] * b - V[8][.] = 0 ;
+    // 	  e8 = V[7][.] * c - V[9][.] = 0 ;
     d[0] = V[2][vect] ;
     d[1] = V[4][vect] ;
     d[2] = V[1][vect] ;
@@ -562,7 +562,7 @@ HLM3D(int nb_pts,
     c[1][0] = V[6][vect] ; c[1][1] = 0.0 ;
     c[2][0] = V[3][vect] ; c[2][1] = 0.0 ;
     c[3][0] = V[4][vect] ; c[3][1] = 0.0
-			       ;
+			     ;
     c[4][0] = 0.0        ; c[4][1] = V[6][vect] ;
     c[5][0] = 0.0        ; c[5][1] = V[5][vect] ;
     c[6][0] = 0.0        ; c[6][1] = V[2][vect] ;
@@ -606,48 +606,48 @@ HLM3D(int nb_pts,
 
 
 /**************************************************************************
-* NOM :
-* Homographie_CrvMafCalculHomographie
-*
-* DESCRIPTION :
-* Calcul de l'homographie, en fonction de la cible désirée et de la cible
-* en cours. C'est une estimation linéaire.
-* Cette procédure n'effectue pas elle-même le calcul de l'homographie :
-* elle se contente d'appeler la bonne sous-procédure.
-* Cette procédure est appellée par "crv_maf_calcul_tomographie".
-*
-****************************************************************************
-* ENTREES :
-*  STR_CIBLE_ASSER   *cible_asser  	Pointeur sur structure contenant les
-*                                       commandes du robot, les données de la
-*					carte...
-*					Voir "cvda/edixaa/param/robot.h"
-*	STR_VITESSE_ROBOT *data_common   Pointeur sur la structure décrivant la
-*					cible d'asservissement.
-*					Voir "cvda/edixia/param/param.h"
-*	STR_MACH_DIV 		*machine_div   Pointeur sur structure contenant divers
-*					paramètres de configuration du robot.
-*					Voir "cvda/edixia/param/param.h"
-*
-* SORTIES :
-*
-* double **H 			matrice d'homographie
+ * NOM :
+ * Homographie_CrvMafCalculHomographie
+ *
+ * DESCRIPTION :
+ * Calcul de l'homographie, en fonction de la cible désirée et de la cible
+ * en cours. C'est une estimation linéaire.
+ * Cette procédure n'effectue pas elle-même le calcul de l'homographie :
+ * elle se contente d'appeler la bonne sous-procédure.
+ * Cette procédure est appellée par "crv_maf_calcul_tomographie".
+ *
+ ****************************************************************************
+ * ENTREES :
+ *  STR_CIBLE_ASSER   *cible_asser  	Pointeur sur structure contenant les
+ *                                       commandes du robot, les données de la
+ *					carte...
+ *					Voir "cvda/edixaa/param/robot.h"
+ *	STR_VITESSE_ROBOT *data_common   Pointeur sur la structure décrivant la
+ *					cible d'asservissement.
+ *					Voir "cvda/edixia/param/param.h"
+ *	STR_MACH_DIV 		*machine_div   Pointeur sur structure contenant divers
+ *					paramètres de configuration du robot.
+ *					Voir "cvda/edixia/param/param.h"
+ *
+ * SORTIES :
+ *
+ * double **H 			matrice d'homographie
 
-*
-****************************************************************************
-* AUTEUR : BOSSARD Nicolas.  INSA Rennes 5ème année.
-*
-* DATE DE CREATION : 01/12/98
-*
-* DATES DE MISE A JOUR :
-*
-****************************************************************************/
+ *
+ ****************************************************************************
+ * AUTEUR : BOSSARD Nicolas.  INSA Rennes 5ème année.
+ *
+ * DATE DE CREATION : 01/12/98
+ *
+ * DATES DE MISE A JOUR :
+ *
+ ****************************************************************************/
 void
 HLM(int q_cible,
-     int nbpt,
-     double *xm, double *ym,
-     double *xmi, double *ymi,
-     vpMatrix &H)
+    int nbpt,
+    double *xm, double *ym,
+    double *xmi, double *ymi,
+    vpMatrix &H)
 {
   int   i;
 
@@ -711,20 +711,20 @@ HLM(int q_cible,
   objects through a new estimation scheme of camera displacement. Int. Journal
   of Computer Vision, 37(1):79-97, Juin 2000.
 
-   @article{Malis00b,
-     Author = {Malis, E. and Chaumette, F.},
-     Title = {2 1/2 D visual servoing with respect to unknown objects
-              through a new estimation scheme of camera displacement},
-     Journal = {Int. Journal of Computer Vision},
-     Volume = {37},
-     Number = {1},
-     Pages = {79--97},
-     Month = {June},
-     Year = {2000}
+  @article{Malis00b,
+  Author = {Malis, E. and Chaumette, F.},
+  Title = {2 1/2 D visual servoing with respect to unknown objects
+  through a new estimation scheme of camera displacement},
+  Journal = {Int. Journal of Computer Vision},
+  Volume = {37},
+  Number = {1},
+  Pages = {79--97},
+  Month = {June},
+  Year = {2000}
   }
 
   paper can be obtained at this url :
-    http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html
+  http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html
 
   the algorithm for 2D scene implemented in this file is described in Ezio
   Malis PhD thesis
@@ -743,10 +743,10 @@ HLM(int q_cible,
 
 */
 void vpHomography::HLM(int n,
-			 double *xb, double *yb,
-			 double *xa, double *ya ,
-			 bool isplanar,
-			 vpHomography &aHb)
+		       double *xb, double *yb,
+		       double *xa, double *ya ,
+		       bool isplanar,
+		       vpHomography &aHb)
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -770,3 +770,4 @@ void vpHomography::HLM(int n,
 
 #endif
 }
+
