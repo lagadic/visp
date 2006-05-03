@@ -27,6 +27,10 @@ IF (UNIX)
     SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -I${INCDIR}")
   ENDFOREACH(INCDIR)
 
+  IF(BIT3_FOUND)
+    SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -DBT1003")
+  ENDIF(BIT3_FOUND)
+
   # Add build options for test coverage. Currently coverage is only supported
   # on gcc compiler 
   IF(CMAKE_COMPILER_IS_GNUCXX)
