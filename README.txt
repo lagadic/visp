@@ -10,7 +10,8 @@ This project is using the CMake build system.
 
 CMake is a complete stand-alone platform-independant build-system 
 replacing autotools (autoconf/autoheader/automake/libtools) completely. 
-It depends just on installed cmake (tested with version 2.2.x)
+It depends just on installed cmake (tested with cmake cvs version). It
+needs a cmake 2.4.x or more recent version of cmake.
 See http://www.cmake.org for details.
 
 USAGE: 
