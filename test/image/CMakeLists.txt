@@ -10,6 +10,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
+  testDisplayGTK.cpp
   testDisplayX1.cpp
   testDisplayX2.cpp
   testIoPGM.cpp
