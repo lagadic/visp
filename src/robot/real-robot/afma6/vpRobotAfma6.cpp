@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpRobotAfma6.cpp,v 1.9 2006-04-19 09:01:21 fspindle Exp $
+ *  $Id: vpRobotAfma6.cpp,v 1.10 2006-05-12 08:33:25 fspindle Exp $
  *
  * Description
  * ============
@@ -513,15 +513,49 @@ void vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
 }
 
 
-/* Recupere la position actuelle du robot.
- * Recupere la position actuelle du robot et place le resultat dans la
- * variable <r> donnee en argument. Le repere de travail dans lequel
- * est exprime le resultat est celui donne par l'argument \a repere.
- * OUTPUT:
- *   - r: reference dans laquelle est placee le resultat.
- * INPUT:
- *   - repere: repere de travail dans lequel est exprime le resultat.
- */
+/*!
+
+  Get the current position of the robot.
+
+  \param frame : Control frame type in which to get the position, either :
+  - in the camera cartesien frame,
+  - articular coordinates of each axes
+  - in a reference or fixed cartesien frame attached to the robot base
+  - in a mixt cartesien frame (not sure but probably translation in reference
+    frame, and rotation in camera frame)
+
+  \param r : Measured position of the robot:
+  - in camera cartesien frame, a 6 dimension vector, set to 0,
+
+  - in articular, a 6 dimension vector corresponding to the articular position of each dof, first the 3 translations, then the 3 articular rotation positions.
+
+  - in reference frame, a 6 dimension vector, the first 3 values correspond to
+    the translation tx, ty, tz in meters (like a vpTranslationVector), and the
+    last 3 values to the rx, ry, rz rotation (like a vpRxyzVector). The code
+    below show how to convert this position into a vpHomogenousMatrix:
+
+    \code
+    vpRobotAfma6 robot;
+    vpColVector r;
+    robot.getPosition(vpRobot::REFERENCE_FRAME, r);
+    vpTranslationVector ftc; // camera to fix frame translation
+    vpRxyzVector frc; // camera to fix frame rotation
+
+    // Update the transformation between  camera to fix frame
+    for (int i=0; i < 3; i++) {
+      ftc[i] = r[i];
+      frc[i] = r[i+3];
+    }
+
+    // Create the camera to fix frame pose in terms of a homogenous matrix
+    vpHomogenousMatrix fMc(frc, ftc);
+
+    \endcode
+
+
+  \sa setPosition(const vpRobot::ControlFrameType frame, const vpColVector & r)
+
+*/
 void
 vpRobotAfma6::getPosition (const vpRobot::ControlFrameType frame,
 			   vpColVector & r)
