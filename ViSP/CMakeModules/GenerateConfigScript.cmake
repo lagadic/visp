@@ -48,60 +48,92 @@ IF (UNIX)
   SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "")
   SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS "")
   SET(VISP_CONFIG_SCRIPT_TMP_LIBS "")
-  FOREACH(LIB ${VISP_EXTERN_LIBS})
-    #MESSAGE("LIB to process: ${LIB}")
-    IF("${LIB}" MATCHES ".+[.][s][o]" OR "${LIB}" MATCHES ".+[.][a]")
-      #MESSAGE("${LIB} matches .so or .a, processing to create -L and -l")
-      GET_FILENAME_COMPONENT(path ${LIB} PATH)
+  FOREACH(lib ${VISP_EXTERN_LIBS})
+    #MESSAGE("library to process: ${lib}")
+    IF("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
+      #MESSAGE("${lib} matches .so or .a, processing to create -L and -l")
 
+      # If the string lib to process is like: /usr/lib/libgtk-x11-2.0.so
+      # with GET_FILENAME_COMPONENT(libname_we ${LIB} NAME_WE) we get: 
+      # libgtk-x11-2 (it should be libgtk-x11-2.0)
+      # with GET_FILENAME_COMPONENT(libext ${LIB} EXT) we get: .0.so
+      # (it should be .so)
+      # So we use GET_FILENAME_COMPONENT(libname ${LIB} NAME) to get: 
+      # libgtk-x11-2.0.so which is good
+      # The idea is than to suppress the extension .so (or .a) and to replace
+      # lib by -l
+
+      # Get the library path 
+      GET_FILENAME_COMPONENT(path ${lib} PATH)
+      #MESSAGE("library path: ${path}")
+
+      # Get the library name
+      GET_FILENAME_COMPONENT(libname ${lib} NAME)
+      #MESSAGE("library name: ${libname}")
+      # Suppress the .so or .a suffix extension
+      IF("${libname}" MATCHES ".+[.][s][o]")
+        #STRING(REGEX REPLACE ".so" "" libname ${libname})
+        STRING(REGEX REPLACE "[.][s][o]" "" libname ${libname})
+      ENDIF("${libname}" MATCHES ".+[.][s][o]")
+      IF("${libname}" MATCHES ".+[.][a]")
+        #STRING(REGEX REPLACE ".a" "" libname ${libname})
+        STRING(REGEX REPLACE "[.][a]" "" libname ${libname})
+      ENDIF("${libname}" MATCHES ".+[.][a]")
+      # In all cases, replace lib prefix by -l
+      STRING(REGEX REPLACE "^[lib]+" "-l" libname ${libname})
+      #MESSAGE("processed library name: ${libname}")
+
+      SET(VISP_CONFIG_SCRIPT_TMP_LIBS ${VISP_CONFIG_SCRIPT_TMP_LIBS} ${libname})
       #----
-      # Add test to be sure that the library path is unique
+      # Add test to be sure that the library path is unique in 
+      # VISP_CONFIG_SCRIPT_TMP_LDFLAGS
       SET(LDFLAGS_ADDED 0)
+
+      #MESSAGE("actual LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
+
       FOREACH(ldflags ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS})
-	SET(tmp_ldflags " -L${path}")
+	SET(ldflags_to_add "-L${path}")
 	#MESSAGE("compare:")
-	#MESSAGE("dummy${tmp_ldflags}dummy")
+	#MESSAGE("dummy${ldflags_to_add}dummy")
 	#MESSAGE("dummy${ldflags}dummy")
-	STRING(COMPARE EQUAL "${tmp_ldflags}" "${ldflags}" INLDFLAGS)
+	STRING(COMPARE EQUAL "${ldflags_to_add}" "${ldflags}" INLDFLAGS)
 	  
 	IF(INLDFLAGS)
 	  SET(LDFLAGS_ADDED 1)
-#	  MESSAGE("equal----")
+	  #MESSAGE("equal----")
 	#ELSE(INLDFLAGS)
-	 # MESSAGE("not equal----")
+	  #MESSAGE("not equal----")
 	ENDIF(INLDFLAGS)
       ENDFOREACH(ldflags)
       IF(NOT ${LDFLAGS_ADDED})
 	#MESSAGE("add ${path} ")
 	# Add the path to ldflags
-	SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS "${VISP_CONFIG_SCRIPT_TMP_LDFLAGS} -L${path}")
+	SET(LDFLAGS_TO_ADD "-L${path}")
+	SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS} ${LDFLAGS_TO_ADD})
 
       ENDIF(NOT ${LDFLAGS_ADDED})
 
-
       #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
-      GET_FILENAME_COMPONENT(libs ${LIB} NAME_WE)
-      STRING(REGEX REPLACE "lib" "-l" libs ${libs})
-      
-      SET(VISP_CONFIG_SCRIPT_TMP_LIBS "${VISP_CONFIG_SCRIPT_TMP_LIBS} ${libs}")
       #MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
-      
-      
-      
-      # convert semicolon-separated vector to space-separated string 
-      SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} -l${LIB}")
-      
-    ELSE("${LIB}" MATCHES ".+[.][s][o]" OR "${LIB}" MATCHES ".+[.][a]")
-      #MESSAGE("${LIB} is not a lib in .so or .a, to keep")
-      SET(VISP_CONFIG_SCRIPT_TMP_LIBS "${VISP_CONFIG_SCRIPT_TMP_LIBS} ${LIB}")
-    ENDIF("${LIB}" MATCHES ".+[.][s][o]" OR "${LIB}" MATCHES ".+[.][a]")
-  ENDFOREACH(LIB)
+            
+    ELSE("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
+      #MESSAGE("${lib} is not a library in .so or .a, to keep")
+      SET(VISP_CONFIG_SCRIPT_TMP_LIBS ${VISP_CONFIG_SCRIPT_TMP_LIBS} ${lib})
+    ENDIF("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
+  ENDFOREACH(lib)
 
   #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
   #MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
 
+  # convert semicolon-separated vector to space-separated string 
+  FOREACH(val ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS})
+     SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} ${val}")
+  ENDFOREACH(val)
+  FOREACH(val ${VISP_CONFIG_SCRIPT_TMP_LIBS})
+     SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} ${val}")
+  ENDFOREACH(val)
 
-  SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_TMP_LDFLAGS} ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
+  #MESSAGE("EXTERN LIBS: ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
 
   # prepend with ViSP own lib dir
   SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS  "-L${CMAKE_INSTALL_PREFIX}/lib -l${VISP_INTERN_LIBS} ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
