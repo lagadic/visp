@@ -53,13 +53,12 @@ main()
   for (int i=0 ; i < 5 ; i++) lP += P[i] ;
 
   vpHomogeneousMatrix cMo_ref(0,0.2,1,vpMath::rad(0),0,0) ;
-  int i ;
-  for(i=0 ; i < 5 ; i++)
+  for(int i=0 ; i < 5 ; i++)
     P[i].project(cMo_ref) ;
 
   vpPoint p[10] ;
 
-  for (i=0 ; i < 5 ; i++)
+  for (int i=0 ; i < 5 ; i++)
   {
     p[2*i] = P[i] ;
   }
