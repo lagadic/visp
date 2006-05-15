@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.4 2006-05-02 08:46:20 fspindle Exp $
+ *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.5 2006-05-15 15:43:45 fspindle Exp $
  *
  * Description
  * ============
@@ -35,13 +35,17 @@
 #ifdef UNIX
 #  include <unistd.h>
 #endif
-#include <pthread.h>
 #include <signal.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
 #if ( defined (VISP_HAVE_BICLOPS) & defined (VISP_HAVE_DC1394) )
+
+#ifdef VISP_HAVE_PTHREAD
+#  include <pthread.h>
+#endif
+
 #include <visp/vp1394Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
@@ -63,11 +67,15 @@
 #include <visp/vpMatrixException.h>
 
 
+#ifdef VISP_HAVE_PTHREAD
 pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;
+#endif
 
 void signalCtrC( int signumber )
 {
+#ifdef VISP_HAVE_PTHREAD
   pthread_mutex_unlock( &mutexEndLoop );
+#endif
   usleep( 1000*10 );
   TRACE("Ctrl-C pressed...");
 }
@@ -86,7 +94,9 @@ main()
 
   try{
 
+#ifdef VISP_HAVE_PTHREAD
   pthread_mutex_lock( &mutexEndLoop );
+#endif
   signal( SIGINT,&signalCtrC );
 
   // Get the user login name
@@ -214,7 +224,11 @@ main()
 
   int iter=0 ;
   TRACE("\t loop") ;
+#ifdef VISP_HAVE_PTHREAD
   while( 0 != pthread_mutex_trylock( &mutexEndLoop ) )
+#else
+  while (1)
+#endif
   {
     cout << "---------------------------------------------" << iter <<endl ;
 

@@ -4,6 +4,9 @@
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
 
+// Defined if pthread library available.
+#cmakedefine VISP_HAVE_PTHREAD
+
 // Defined if GTK library available (either gtk or gtk2).
 #cmakedefine VISP_HAVE_GTK
 
