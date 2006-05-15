@@ -160,6 +160,7 @@ ENDIF(UNIX)
   #--------------------------------------------------------------------
   FIND_PACKAGE(PTHREAD)
   IF(PTHREAD_FOUND)  
+    SET(VISP_HAVE_PTHREAD TRUE)  # for header vpConfig.h
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
 	${PTHREAD_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${PTHREAD_LIBRARIES})
