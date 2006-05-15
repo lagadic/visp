@@ -25,7 +25,7 @@ FOREACH(header ${HEADER_ALL})
   GET_FILENAME_COMPONENT(headerName ${header} NAME) 
   ADD_CUSTOM_COMMAND(
     OUTPUT ${CMAKE_SOURCE_DIR}/include/visp/${headerName}
-    COMMAND ${CMAKE_COMMAND} -E copy ${header} ${CMAKE_SOURCE_DIR}/include/visp/${headerName}
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${header} ${CMAKE_SOURCE_DIR}/include/visp/${headerName}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${header}
     )
   SET(HEADER_IN_INCLUDE_DIR ${HEADER_IN_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/include/visp/${headerName}
