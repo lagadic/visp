@@ -51,7 +51,7 @@ IF (UNIX)
   FOREACH(lib ${VISP_EXTERN_LIBS})
     #MESSAGE("library to process: ${lib}")
     IF("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
-      MESSAGE("${lib} matches .so or .a, processing to create -L and -l")
+      #MESSAGE("${lib} matches .so or .a, processing to create -L and -l")
 
       # If the string lib to process is like: /usr/lib/libgtk-x11-2.0.so
       # with GET_FILENAME_COMPONENT(libname_we ${LIB} NAME_WE) we get: 
@@ -65,11 +65,11 @@ IF (UNIX)
 
       # Get the library path 
       GET_FILENAME_COMPONENT(path ${lib} PATH)
-      MESSAGE("library path: ${path}")
+      #MESSAGE("library path: ${path}")
 
       # Get the library name
       GET_FILENAME_COMPONENT(libname ${lib} NAME)
-      MESSAGE("library name: ${libname}")
+      #MESSAGE("library name: ${libname}")
       # Suppress the .so or .a suffix extension
       IF("${libname}" MATCHES ".+[.][s][o]")
         #STRING(REGEX REPLACE ".so" "" libname ${libname})
@@ -79,10 +79,10 @@ IF (UNIX)
         #STRING(REGEX REPLACE ".a" "" libname ${libname})
         STRING(REGEX REPLACE "[.][a]" "" libname ${libname})
       ENDIF("${libname}" MATCHES ".+[.][a]")
-      MESSAGE("library name without extension: ${libname}")
+      #MESSAGE("library name without extension: ${libname}")
       # In all cases, replace lib prefix by -l
       STRING(REGEX REPLACE "^[l][i][b]" "-l" libname ${libname})
-      MESSAGE("processed library name: ${libname}")
+      #MESSAGE("processed library name: ${libname}")
 
       SET(VISP_CONFIG_SCRIPT_TMP_LIBS ${VISP_CONFIG_SCRIPT_TMP_LIBS} ${libname})
       #----
@@ -114,8 +114,8 @@ IF (UNIX)
 
       ENDIF(NOT ${LDFLAGS_ADDED})
 
-      MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
-      MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
+      #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
+      #MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
             
     ELSE("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
       #MESSAGE("${lib} is not a library in .so or .a, to keep")
@@ -123,8 +123,8 @@ IF (UNIX)
     ENDIF("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
   ENDFOREACH(lib)
 
-  MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
-  MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
+  #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
+  #MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
 
   # convert semicolon-separated vector to space-separated string 
   FOREACH(val ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS})
