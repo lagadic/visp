@@ -2,16 +2,16 @@
 #define vpConfig_h
 
 // ViSP major version.
-#cmakedefine VISP_MAJOR_VERSION
+#cmakedefine VISP_MAJOR_VERSION "${VISP_MAJOR_VERSION}"
 
 // ViSP minor version.
-#cmakedefine VISP_MINOR_VERSION
+#cmakedefine VISP_MINOR_VERSION "${VISP_MINOR_VERSION}"
 
 // ViSP patch version.
-#cmakedefine VISP_PATCH_VERSION
+#cmakedefine VISP_PATCH_VERSION "${VISP_PATCH_VERSION}"
 
 // ViSP version.
-#cmakedefine VISP_VERSION
+#cmakedefine VISP_VERSION "${VISP_VERSION}"
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
