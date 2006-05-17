@@ -11,27 +11,57 @@ This project is using the CMake build system.
 CMake is a complete stand-alone platform-independant build-system 
 replacing autotools (autoconf/autoheader/automake/libtools) completely. 
 It depends just on installed cmake (tested with cmake cvs version). It
-needs a cmake 2.4.x or more recent version of cmake.
+needs a cmake 2.3.x or more recent version of cmake.
 See http://www.cmake.org for details.
 
 USAGE: 
 =====
 
 1. Install the newest cmake from www.cmake.org
+
+   See INSTALL file for further information.
+
 2. Check out/install ViSP source code
 
---- Linux ---
-cd <visp source dir>;  
-ccmake .  
-  or for defaults:  cmake .
-make
-make install
+   Checkout, copy or unzip the ViSP tar ball in <visp source dir>.
 
-The make install step is needed if you want to use ViSP in your own
-projects. To do the installation, you don't need to be root.
+   For building you have got the option of "in-source" or "out-of-source"
+   builds. CMake developpers strongly recommend using an "out-of-source" build
+   which never writes any files to the source tree. Using a separate source and
+   build tree greatly reduces the need for "make clean" and "make distclean"
+   targets.
 
---- WIN32 ---
-Use cmake to set environment variables and proceed as described for Linux.
+2.1 In-source build under Unix platforms:
+
+   cd <visp source dir>;  
+   ccmake .  
+     or for defaults:  cmake .
+   make
+   make install
+
+   The make install step is needed if you want to use ViSP in your own
+   projects. To do the installation, you don't need to be root.
+
+2.2 Out-of-source build under Unix platforms:
+    
+   The out-of-source build is very useful for different parallel build
+   configurations:
+
+   mkdir <visp build dir>
+   cd <visp build dir>
+   ccmake <visp source dir>   
+     or for defaults:  cmake <source dir>
+   make
+   make install
+
+   The make install step is needed if you want to use ViSP in your own
+   projects. To do the installation, you don't need to be root.
+
+
+2.3 Build under Win32
+
+   Use cmake or CMakeSetup Gui for in-source or out-of-source build.
+   Set environment variables and proceed as described for Unix.
 
 
 
@@ -113,6 +143,7 @@ HOWTO:
    The flags according to the different build types can be seen with
       cmake -LA <source_dir>
 
+
 3. Build shared libraries:
    -----------------------
    cmake -DBUILD_SHARED_LIBS:STRING=ON <visp source dir>
@@ -120,6 +151,7 @@ HOWTO:
    or use ccmake <visp source dir> to set BUILD_SHARED_LIBS.
 
    Produce shared libraries (.so).
+
 
 4. Build static libraries:
    -----------------------
@@ -129,10 +161,12 @@ HOWTO:
 
    Produce static libraries (.a).
 
+
 5. Add more files to clean target:
    ------------------------------
    SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES 
                             "file_to_remove")
+
 
 
 6. Use ViSP with another cmake project:
@@ -169,6 +203,7 @@ HOWTO:
    Generate more 'verbose' makefile including compiler calls instead of 
    default "SILENT" .
 
+
 9. View all available options/variables:
    ------------------------------------
    ccmake <source dir> 
@@ -176,26 +211,35 @@ HOWTO:
    or 
    cmake -LA <source dir>
 
+
 10. Remove Cache:
     -------------
    cd <build dir>
    rm CMakeCache.txt
+
 
 11. Make a distclean:
     -----------------
   CMake does not generate a "make distclean" target (see the cmake FAQ).  CMake
   generates many files related to the build system, but since CMakeLists.txt
   files can run scripts and other arbitrary commands, there is no way it can
-  keep track of exactly which files are generated as part of running CMake.  So
-  we have developped a distclean shell script (working under Unix platforms)
-  that removes these files related to the build system.
-  To remove all the intermediate files related to the build system:
-  sh ./distclean.sh
+  keep track of exactly which files are generated as part of running CMake.
 
-12. Where to found doc about CMake:
-    ------------------------------
+
+  So, for in-source build under Unix platforms, we have developped a distclean
+  shell script (working only under Unix platforms) that removes these files
+  related to the build system.  To remove some intermediate files related to
+  the build system:  sh ./distclean.sh
+
+  For out-of-source build, just remove the <visp build dir> tree.
+
+12. Where to found documentation about CMake:
+    ----------------------------------------
    Almost complete documentation of cmake commands: 
    cmake --help-full  and  http://www.cmake.org
+
+   The 250-page book Mastering CMake by Ken Martin and Bill Hoffman, ISBN
+   1-930934-16-5, published by Kitware, Inc.
 
 ------------------------
 
