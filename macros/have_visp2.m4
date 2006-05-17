@@ -35,11 +35,11 @@ ac_visp2_libs=
 
 # internal variables
 ac_visp2_desired=true
-ac_visp2_extrapath="/local/soft/ViSP/ViSP-2"
+ac_visp2_extrapath="/usr/bin"
 
-AC_ARG_WITH([visp2],
-AC_HELP_STRING([--with-visp2], [enable use of ViSP2 [[default=yes]]])
-AC_HELP_STRING([--with-visp2=DIR], [give prefix location of ViSP2]),
+AC_ARG_WITH([visp-install-bin],
+AC_HELP_STRING([--with-visp-install-bin], [enable use of ViSP2 [[default=yes]]])
+AC_HELP_STRING([--with-visp-install-bin=DIR], [give location of visp-config shell script (/usr/bin by default)]),
   [ case $withval in
     no)  ac_visp2_desired=false ;;
     yes) ac_visp2_desired=true ;;
@@ -49,40 +49,16 @@ AC_HELP_STRING([--with-visp2=DIR], [give prefix location of ViSP2]),
   [])
 
 if $ac_visp2_desired; then
+  ac_visp2_config_script="$ac_visp2_extrapath/visp-config"
 
-    AC_CACHE_CHECK(
-      [if we can compile and link with the ViSP2 library],
-      cv_visp2_avail,
-      [ac_save_cxxflags=$CXXFLAGS
-      ac_save_ldflags=$LDFLAGS
-      ac_save_libs=$LIBS
-
-      ac_visp2_cxxflags="-I$ac_visp2_extrapath/include"
-      ac_visp2_ldflags="-L$ac_visp2_extrapath/lib -Wl,-rpath,$ac_visp2_extrapath/lib"
-      ac_visp2_libs="-lvisp-2"
-
-      CXXFLAGS="$CXXFLAGS $ac_visp2_cxxflags"
-      LDFLAGS="$LDFLAGS $ac_visp2_ldflags"
-      LIBS="$ac_visp2_libs $LIBS"
-
-      AC_LANG_PUSH(C++)
-
-      AC_TRY_LINK(
-        [#include <visp/vpMath.h>],
-        [vpMath::fact(2);],
-        [cv_visp2_avail=true],
-        [cv_visp2_avail=false])
-
-      AC_LANG_POP
-
-      CXXFLAGS=$ac_save_cxxflags
-      LDFLAGS=$ac_save_ldflags
-      LIBS=$ac_save_libs
-    ])
-    ac_visp2_avail=$cv_visp2_avail
+  AC_CHECK_FILE($ac_visp2_config_script,[cv_visp2_avail=true],
+                 [cv_visp2_avail=false])
+  ac_visp2_avail=$cv_visp2_avail
 fi
 
 if $ac_visp2_avail; then
+  ac_visp2_cflags="`$ac_visp2_config_script --cflags`"
+  ac_visp2_libs="`$ac_visp2_config_script --libs`"
   ifelse([$1], , :, [$1])
 else
   ifelse([$2], , :, [$2])
