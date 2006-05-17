@@ -74,7 +74,7 @@ Important Files:
 - CMakeHeaderFileList.cmake:
     The list of all the headers (*.h) or (*.t.cpp for templates) to copy
     in <visp source dir>/include/visp directory or to install in 
-    <install prefix>/include/visp
+    <visp install prefix>/include/visp
 
 - CMakeSourceFileList.cmake:
     The list of all the sources (*.cpp) used to build the ViSP library.
@@ -178,25 +178,51 @@ HOWTO:
      INCLUDE(${VISP_USE_FILE})
    ENDIF(VISP_FOUND)
    
-   Set the environment variable VISP_DIR or
-   issue `cmake -DVISP_DIR=<path to visp library> <example source dir>`
+   With CMake GUI set the environment variable VISP_DIR to 
+   <visp install prefix>/lib
+   or using a command line run:
+   `cmake -DVISP_DIR=<visp install prefix>/lib <project source dir>`
 
 
-7. Use ViSP with a common Makefile:
+7. Use ViSP with autoconf (autotools):
+   -----------------------------------
+   Copy the M4 macro file `macro/have_visp2.m4` in your project. 
+
+   cp macro/have_visp2.m4 <your project home dir>/macro
+   
+   This macro check if <visp install prefix>/bin/visp-config shell script
+   is available (see below how to use ViSP with a common Makefile).
+
+   In your configure.ac project file add lines like:
+
+   AC_HAVE_VISP2_IFELSE(have_visp2=yes,have_visp2=no)
+   if test "x$have_visp2" = "xyes"; then
+     CXXFLAGS="$CXXFLAGS $ac_visp2_cflags "
+     LIBS="$LIBS $ac_visp2_libs "
+   fi
+
+   cd <your project home dir>
+   aclocal -I macro # updates the aclocal.m4 file
+   autoconf
+   configure --with-visp-install-bin=<visp install prefix>/bin
+      
+
+8. Use ViSP with a common Makefile:
    -------------------------------
    a: Install ViSP: 
-      - configure ViSP using cmake, particularly set the install prefix
-        (cmake -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>)
-      - build ViSP: make
+      - configure ViSP using cmake, particularly set the ViSP install prefix
+        (cmake -DCMAKE_INSTALL_PREFIX:PATH=<visp install prefix>)
+      - build ViSP: 
+	  make
       - install ViSP by:
-           make install
+          make install
    b: Make sure, the visp-config shell script is found by the makefile:
-	   export PATH=$PATH:<install prefix>/bin
-   c: Use `visp-config --prefix/--cflags/--libs/--version]`
+	   export PATH=$PATH:<visp install prefix>/bin
+   c: Use `visp-config --prefix/--cflags/--libs/--version`
            to get the compiler/linker flags needed to use ViSP
          
   
-8. View compiler and linker options used:
+9. View compiler and linker options used:
    -------------------------------------
    cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON <visp source dir>
 
@@ -204,7 +230,7 @@ HOWTO:
    default "SILENT" .
 
 
-9. View all available options/variables:
+10. View all available options/variables:
    ------------------------------------
    ccmake <source dir> 
    type 't' to toggle display of advanced variables
@@ -212,13 +238,13 @@ HOWTO:
    cmake -LA <source dir>
 
 
-10. Remove Cache:
+11. Remove Cache:
     -------------
-   cd <build dir>
+   cd <visp build dir>
    rm CMakeCache.txt
 
 
-11. Make a distclean:
+12. Make a distclean:
     -----------------
   CMake does not generate a "make distclean" target (see the cmake FAQ).  CMake
   generates many files related to the build system, but since CMakeLists.txt
@@ -233,7 +259,7 @@ HOWTO:
 
   For out-of-source build, just remove the <visp build dir> tree.
 
-12. Where to found documentation about CMake:
+13. Where to found documentation about CMake:
     ----------------------------------------
    Almost complete documentation of cmake commands: 
    cmake --help-full  and  http://www.cmake.org
