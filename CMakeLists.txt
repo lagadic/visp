@@ -1,10 +1,39 @@
+#############################################################################
 #
-# Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
-# www: http://www.irisa.fr/lagadic
+# $Id: CMakeLists.txt,v 1.9 2006-05-30 08:31:17 fspindle Exp $
 #
-# Author: Fabien Spindler email:Fabien.Spindler@irisa.fr
+# Copyright (C) 1998-2006 Inria. All rights reserved.
 #
+# This software was developed at:
+# IRISA/INRIA Rennes
+# Projet Lagadic
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# http://www.irisa.fr/lagadic
+#
+# This file is part of the ViSP toolkit
+#
+# This file may be distributed under the terms of the Q Public License
+# as defined by Trolltech AS of Norway and appearing in the file
+# LICENSE included in the packaging of this file.
+#
+# Licensees holding valid ViSP Professional Edition licenses may
+# use this file in accordance with the ViSP Commercial License
+# Agreement provided with the Software.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Contact visp@irisa.fr if any conditions of this licensing are
+# not clear to you.
+#
+# Description:
 # ViSP overall configuration file. Detect third party libraries (X11, GTK, ...)
+#
+# Authors:
+# Fabien Spindler
+#
+#############################################################################
 
 PROJECT(VISP)
 
@@ -22,20 +51,17 @@ SET(VISP_VERSION "${VISP_MAJOR_VERSION}.${VISP_MINOR_VERSION}")
 SET(VISP_VERSION_FULL "${VISP_VERSION}.${VISP_VERSION_PATCH}")      
 
 #SET(VISP_INCLUDE_DIR "${VISP_SOURCE_DIR}/include/visp-${VISP_VERSION_FULL}")
-SET(VISP_INCLUDE_DIR "${VISP_SOURCE_DIR}/include/visp")
+SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")
 
 #-----------------------------------------------------------------------------
 
 # The location in which to install VISP libraries.
-IF(NOT LIBRARY_OUTPUT_PATH)
-  SET(LIBRARY_OUTPUT_PATH ${VISP_SOURCE_DIR}/lib)
-ENDIF(NOT LIBRARY_OUTPUT_PATH)
-
-# The location in which to install VISP binaries.
-SET(VISP_BINARY_DIR ${VISP_SOURCE_DIR}/bin)
+SET(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/lib)
+# The location in which to install some VISP binaries.
+SET(BINARY_OUTPUT_PATH ${VISP_BINARY_DIR}/bin)
 
 # the include directory we depend on
-SET(VISP_INTERN_INCLUDE_DIR ${VISP_SOURCE_DIR}/include)
+SET(VISP_INTERN_INCLUDE_DIR ${VISP_BINARY_DIR}/include)
 # the third party include directories we depend on
 SET(VISP_EXTERN_INCLUDE_DIR "")
 # the internal visp libs we depend on
@@ -62,6 +88,7 @@ IF(WIN32 AND NOT CYGWIN)
   SET(VISP_DEFS "${VISP_DEFS} -DGX") # To support exceptions
   CHECK_LIBRARY_EXISTS("winmm"  getch "" HAVE_LIBWINMM) # for timeGetTime()
   IF(HAVE_LIBWINMM)
+    #MESSAGE("have winmm.lib")
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} "winmm")
   ENDIF(HAVE_LIBWINMM)
 ENDIF(WIN32 AND NOT CYGWIN)
@@ -520,6 +547,7 @@ ADD_CUSTOM_TARGET(uninstall
 #----------------------------------------------------------------------
 ADD_DEFINITIONS(${VISP_DEFS})
 
+
 #----------------------------------------------------------------------
 # Propagation in sub dirs
 #----------------------------------------------------------------------
@@ -582,10 +610,13 @@ INCLUDE(Dart)
 
 # Add build options for test coverage. Currently coverage is only supported on
 # gcc compiler 
-IF(CMAKE_COMPILER_IS_GNUCXX)
+# Because using -fprofile-arcs with shared lib can cause problems like:
+# hidden symbol `__bb_init_func', we add this option only for static library
+# build
+IF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
   SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
-ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+ENDIF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
 
-IF(BUILD_TESTING)
-   SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
+#IF(BUILD_TESTING)
+#   SUBDIRS(Testing)
+#ENDIF(BUILD_TESTING)

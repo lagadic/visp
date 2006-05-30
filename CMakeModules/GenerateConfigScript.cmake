@@ -1,15 +1,44 @@
-##
-## Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
-## www: http://www.irisa.fr/lagadic
-##
-## Author: Fabien Spindler email:Fabien.Spindler@irisa.fr
-##
-## This file generates the ViSP-2 library config shell script: "visp2-config"
-## from visp2-config.in (in VISP_SOURCE_DIR) 
-##
+#############################################################################
+#
+# $Id: GenerateConfigScript.cmake,v 1.11 2006-05-30 08:35:02 fspindle Exp $
+#
+# Copyright (C) 1998-2006 Inria. All rights reserved.
+#
+# This software was developed at:
+# IRISA/INRIA Rennes
+# Projet Lagadic
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# http://www.irisa.fr/lagadic
+#
+# This file is part of the ViSP toolkit.
+#
+# This file may be distributed under the terms of the Q Public License
+# as defined by Trolltech AS of Norway and appearing in the file
+# LICENSE included in the packaging of this file.
+#
+# Licensees holding valid ViSP Professional Edition licenses may
+# use this file in accordance with the ViSP Commercial License
+# Agreement provided with the Software.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Contact visp@irisa.fr if any conditions of this licensing are
+# not clear to you.
+#
+# Description:
+# This file generates the ViSP-2 library config shell script: "visp2-config"
+# from visp2-config.in (in VISP_SOURCE_DIR).
+#
+# Authors:
+# Fabien Spindler
+#
+#############################################################################
+
 IF (UNIX)
   SET(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.in")
-  SET(FILE_VISP_CONFIG_SCRIPT    "${VISP_BINARY_DIR}/visp-config")
+  SET(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config")
   
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_PREFIX
@@ -33,9 +62,12 @@ IF (UNIX)
 
   # Add build options for test coverage. Currently coverage is only supported
   # on gcc compiler 
-  IF(CMAKE_COMPILER_IS_GNUCXX)
+  # Because using -fprofile-arcs with shared lib can cause problems like:
+  # hidden symbol `__bb_init_func', we add this option only for static library
+  # build
+  IF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
     SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -fprofile-arcs -ftest-coverage")
-  ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+  ENDIF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
   
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_EXTERN_LIBS
