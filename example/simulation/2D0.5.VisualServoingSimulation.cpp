@@ -1,23 +1,40 @@
+/****************************************************************************
+ *
+ * $Id: 2D0.5.VisualServoingSimulation.cpp,v 1.2 2006-05-30 08:42:20 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit.
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Simulation of a 2 1/2 D visual servoing control law.
+ *
+ * Authors:
+ * Eric Marchand
+ *
+ *****************************************************************************/
 
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- * File:      2D0.5.VisualServoingSimulation.cpp
- * Project:   ViSP 2.0
- * Author:    Eric Marchand
- *
- * Version control
- * ===============
- *
- *  $Id: 2D0.5.VisualServoingSimulation.cpp,v 1.1 2005-12-05 13:02:34 marchand Exp $
- *
- * Description
- * ============
- *   Simulation of a 2 1/2 D visual servoing control law
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 
 /*!
@@ -48,9 +65,9 @@ main()
   cout << endl ;
 
   // In this example we will simulate a visual servoing task.
-  // In simulation, we have to define the scene frane Ro and the  
-  // camera frame Rc. 
-  // The camera location is given by an homogenous matrix cMo that 
+  // In simulation, we have to define the scene frane Ro and the
+  // camera frame Rc.
+  // The camera location is given by an homogenous matrix cMo that
   // describes the position of the camera in the scene frame.
 
 
@@ -64,17 +81,17 @@ main()
   // this pose vector is then transformed in a 4x4 homogeneous matrix
   vpHomogeneousMatrix cMo(c_r_o) ;
 
-  // We define a robot 
+  // We define a robot
   // The vpRobot Camera implements a simple moving that is juste defined
   // by its location cMo
   vpRobotCamera robot ;
-  
+
   // the robot position is set to the defined cMo position
   robot.setPosition(cMo) ;
 
-  // Now that the current camera position has been defined, 
+  // Now that the current camera position has been defined,
   // let us defined the defined camera location.
-  // It is defined by cdMo 
+  // It is defined by cdMo
   TRACE("sets the desired camera location " ) ;
   vpPoseVector cd_r_o(0,0,1,
 		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
@@ -82,7 +99,7 @@ main()
 
 
   //----------------------------------------------------------------------
-  // A 2 1/2 D visual servoing can be defined by 
+  // A 2 1/2 D visual servoing can be defined by
   // - the position of a point x,y
   // - the difference between this point depth and a desire depth
   //   modeled by log Z/Zd to be regulated to 0
@@ -91,21 +108,21 @@ main()
   // Let us now defined the current value of these features
 
 
-  // since we simulate we have to define a 3D point that will 
+  // since we simulate we have to define a 3D point that will
   // forward-projected to define the current position x,y of the
   // reference point
-  
+
   //------------------------------------------------------------------
   // First feature (x,y)
   TRACE("1st feature (x,y)");
 
-  // Let oP be this ... point, 
+  // Let oP be this ... point,
   // a vpPoint class has three main member
   // .oP : 3D coordinates in scene frame
   // .cP : 3D coordinates in camera frame
-  // .p : 2D 
+  // .p : 2D
 
-  vpPoint P ;    
+  vpPoint P ;
   // defined P coordinates in the scene frame : oP
   P.setWorldCoordinates(0,0,0) ;
   // computes  the point coordinates in the camera frame and its
@@ -115,7 +132,7 @@ main()
 
   // Nevertheless, a vpPoint is not a feature, this is just a "tracker"
   // from which the feature are built
-  // a feature is juste defined by a vector s, a way to compute the 
+  // a feature is juste defined by a vector s, a way to compute the
   // interaction matrix and the error, and if required a (or a vector of)
   // 3D information
 
@@ -144,10 +161,10 @@ main()
   // Second feature log (Z/Zd)
   //
 
-  // This case in intersting since this visual feature has not 
+  // This case in intersting since this visual feature has not
   // been predefined in VisP
   // In such case we have a generic feature class vpGenericFeature
-  // We will have to defined 
+  // We will have to defined
   // the vector s : .set_s(...)
   // the interaction matrix Ls : .setInteractionMatrix(...)
 
@@ -155,12 +172,12 @@ main()
   vpGenericFeature logZ(1) ;
 
   // initialized to s = log(Z/Zd)
-  // Let us note that here we use the point P and Pd, it's not necessary 
+  // Let us note that here we use the point P and Pd, it's not necessary
   // to forward project twice (it's already done)
   logZ.set_s(log(P.get_Z()/Pd.get_Z())) ;
 
   // This visual has to be regulated to zero
-  
+
   //------------------------------------------------------------------
   // 3rd feature ThetaU
   // The thetaU feature is defined, tu represents the rotation that the camera
@@ -168,7 +185,7 @@ main()
   // the complete displacement is then defined by:
   vpHomogeneousMatrix cdMc ;
   cdMc = cdMo*cMo.inverse() ;  // cdMo * oMc
-  
+
   // from this displacement, we extract the rotation cdRc represented by
   // the angle theta and the rotation axis u
   vpFeatureThetaU tu ;
@@ -180,7 +197,7 @@ main()
   // Let us now the task itself
   vpServo task ;
 
-  
+
   // we build the task by "stacking" the visual feature
   // previously defined
   task.addFeature(p,pd) ;
@@ -191,17 +208,17 @@ main()
   // addFeature(X) means that X should be regulated to 0
   // some features such as vpFeatureThetaU MUST be regulated to zero
   // (otherwise, it will results in an error at exectution level)
-  
+
   //  we choose to control the robot in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
   // Interaction matrix is computed with the current value of s
   task.setInteractionMatrixType(vpServo::CURRENT) ;
-  
+
   // set the gain
   task.setLambda(0.1) ;
 
-  // and display some information related to the task 
+  // and display some information related to the task
   task.print() ;
 
 
@@ -216,10 +233,10 @@ main()
 
     // and recompute the position of the reference point (x,y) and Z
     P.track(cMo) ;
-    
+
     // and update the visual feature p
     vpFeatureBuilder::create(p,P)  ;
-    
+
     // the visual feature logZ
     logZ.set_s(log(P.get_Z()/Pd.get_Z())) ;
 
@@ -233,18 +250,18 @@ main()
     // and initialized
     logZ.setInteractionMatrix(LlogZ) ;
 
-    // Update the displacement that the camera has to realized 
-    cdMc = cdMo*cMo.inverse() ;			
+    // Update the displacement that the camera has to realized
+    cdMc = cdMo*cMo.inverse() ;
     // and the corresponding rotation
     tu.buildFrom(cdMc) ;
 
     // Let us note that that task is mainly defined by a list of pointers
     // toward visual feature
-    // therefore by updating the visual feature we also update the 
+    // therefore by updating the visual feature we also update the
     // the vector  of visual feature s
 
     //  compute the control law
-    vpColVector v ; 
+    vpColVector v ;
     TRACE(" ") ;
 
     cout << logZ.getInteractionMatrix() ;
@@ -252,12 +269,12 @@ main()
     v = task.computeControlLaw() ;
     TRACE(" ") ;
 
-    // and send the computed velocity expressed in the camera frame 
+    // and send the computed velocity expressed in the camera frame
     // to the robot controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-    // Note that for vpRobotCamera, camera position cMo, is updated using the 
+    // Note that for vpRobotCamera, camera position cMo, is updated using the
     // exponential map.
-    
+
   }
 
   TRACE("Display task information " ) ;
