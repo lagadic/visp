@@ -1,22 +1,39 @@
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA, 2006
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      vpRobotBiclops.h
- * Project:   ViSP robot
- * Author:    Fabien Spindler
+ * $Id: vpRobotBiclopsController.h,v 1.3 2006-05-30 08:40:45 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: vpRobotBiclopsController.h,v 1.2 2006-04-19 09:01:21 fspindle Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
+ * This file is part of the ViSP toolkit.
  *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
  *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Interface for the Biclops robot.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 #include <visp/vpConfig.h>
 
@@ -35,6 +52,7 @@
 #include <stdio.h>                /* Classe std::ostream.              */
 #include <pthread.h>                /* Classe std::ostream.              */
 
+#include <visp/vpConfig.h>
 
 #include "Biclops.h"	// Contrib for Biclops robot
 #include "PMDUtils.h"  	// Contrib for Biclops robot
@@ -55,7 +73,7 @@
   includes Biclops.h and PMDUtils.h provided by Traclabs.
 
 */
-class vpRobotBiclopsController
+class VISP_EXPORT vpRobotBiclopsController
 {
 public:
   typedef enum {

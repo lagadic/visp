@@ -1,21 +1,39 @@
-/*                                                                -*-c++-*-
-#----------------------------------------------------------------------------
-#  Copyright (C) 2005  IRISA-INRIA Rennes Vista Project
-#  All Rights Reserved.
-#
-#
-#    Contact:
-#       Fabien Spindler
-#       IRISA-INRIA Rennes
-#       Campus Universitaire de Beaulieu
-#       35042 Rennes Cedex
-#       France
-#
-#    email: fspindle@irisa.fr
-#    www  : http://www.irisa.fr/lagadic
-#
-#----------------------------------------------------------------------------
-*/
+/****************************************************************************
+ *
+ * $Id: vp1394Grabber.h,v 1.7 2006-05-30 08:40:42 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Firewire cameras video capture.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 /*!
   \file vp1394Grabber.h
@@ -27,8 +45,6 @@
   http://sourceforge.net/projects/libraw1394 .
 
   vp1394Grabber was tested with a Marlin F033C camera.
-
-
 
   \ingroup libdevice
 */
@@ -66,7 +82,7 @@
   \author  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 
 */
-class vp1394Grabber : public vpFrameGrabber
+class VISP_EXPORT vp1394Grabber : public vpFrameGrabber
 {
 public:
   /*! \enum ImageFormatEnum

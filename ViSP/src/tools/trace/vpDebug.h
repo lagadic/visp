@@ -1,20 +1,34 @@
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic, 2005
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      debug.hh
- * Project:   ViSP
- * Author:    Nicolas Mansard
+ * $Id: vpDebug.h,v 1.2 2006-05-30 08:40:46 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: vpDebug.h,v 1.1 2006-04-19 08:49:39 fspindle Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
+ * This file is part of the ViSP toolkit.
  *
- * Macro de trace et de debugage
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Debug and trace macro.
  *
  *   - TRACAGE:    TRACE et ERROR_TRACE fonctionnent comme des printf
  * avec retour chariot en fin de fonction.
@@ -29,7 +43,10 @@
  *   - PROG DEFENSIVE: DEFENSIF(a) vaut a ssi le mode defensif est active,
  * et vaut 0 sinon.
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * Authors:
+ * Nicolas Mansard
+ *
+ *****************************************************************************/
 
 #ifndef __VP_DEBUG_HH
 #define __VP_DEBUG_HH

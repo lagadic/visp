@@ -1,3 +1,41 @@
+/****************************************************************************
+ *
+ * $Id: vpMeSite.cpp,v 1.3 2006-05-30 08:40:47 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit.
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Moving edges.
+ *
+ * Authors:
+ * Eric Marchand
+ * Andrew Comport
+ *
+ *****************************************************************************/
+
 /*!
   \file vpMeSite.cpp
   \name Element de Contour en Mouvement
@@ -9,14 +47,13 @@
  * \brief Performs search in a given direction(normal) for a given distance(pixels)
  * \n for a given 'site'. Gives the most likely site given the probablility
  * \n from an ME mask
- * \author Andrew Comport - adapted from vpMeSite ViSP and added functionality:
+ * \n
  * \n - Bug fix rewrote application of masks to use the temporal information
  * \n instead of applying both temporal masks to the same image.
  * \n ie: spacial -> spatio/temporal
  * \n - Added new tracking function to choose the most similar edge amongst
  * \n - all edges found.
  * \n sample step.
- * \date 4/7/03
  */
 // ====================================================================
 

@@ -15,7 +15,7 @@
  *
  * This file has been modified to be used only for argv parsing without
  * reference to tk, tcl or X11. Base on tk.h from tk2.3
- * $Header: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/tools/io/vpParseArgv.h,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $ SPRITE (Berkeley)
+ * $Header: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/tools/io/vpParseArgv.h,v 1.2 2006-05-30 08:40:46 fspindle Exp $ SPRITE (Berkeley)
  */
 
 /*
@@ -29,6 +29,8 @@
 #else
 #   define _ANSI_ARGS_(x)	()
 #endif
+
+#include <visp/vpConfig.h>
 
 /*
 
@@ -72,7 +74,7 @@ typedef struct {
 //#define ARGV_NO_PRINT 0x16
 #define ARGV_NO_PRINT 0x10
 
-
+
 /*
  *--------------------------------------------------------------
  *
@@ -80,6 +82,6 @@ typedef struct {
  *
  *--------------------------------------------------------------
  */
-extern int vpParseArgv _ANSI_ARGS_((int *argcPtr, char **argv,
+extern int VISP_EXPORT vpParseArgv _ANSI_ARGS_((int *argcPtr, char **argv,
                                   vpArgvInfo *argTable, int flags));
 
