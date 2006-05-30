@@ -1,25 +1,40 @@
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet LAGADIC / IRISA, 2006
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      vpBiclops.h
- * Project:   ViSP chapitre robot
- * Author:    Fabien Spindler
+ * $Id: vpBiclops.h,v 1.2 2006-05-30 08:40:45 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
+ * This file is part of the ViSP toolkit.
  *
- *  $Id: vpBiclops.h,v 1.1 2006-02-21 11:16:11 fspindle Exp $
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
  *
- * Description
- * ============
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
  *
- * vpBiclops definition.
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * Description:
+ * Interface for the Biclops robot.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
+
 
 #include <visp/vpConfig.h>
 
@@ -35,6 +50,7 @@
 #include <iostream>
 
 /* --- ViSP --- */
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPoseVector.h>
@@ -55,7 +71,7 @@
 
 */
 
-class vpBiclops
+class VISP_EXPORT vpBiclops
 {
 
 public: /* Constants */

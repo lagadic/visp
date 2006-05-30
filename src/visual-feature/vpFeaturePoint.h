@@ -1,23 +1,39 @@
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      vpPoint.h
- * Project:   ViSP 2.0
- * Author:    Eric Marchand
+ * $Id: vpFeaturePoint.h,v 1.3 2006-05-30 08:40:48 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: vpFeaturePoint.h,v 1.2 2005-12-06 16:28:49 nmansard Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *     class that defines what is a visual feature
+ * This file is part of the ViSP toolkit.
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * 2D point visual feature.
+ *
+ * Authors:
+ * Eric Marchand
+ *
+ *****************************************************************************/
 
 
 #ifndef vpFeaturePoint_H
@@ -28,6 +44,7 @@
   \brief Class that defines 2D point visual feature
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpPoint.h>
@@ -39,7 +56,7 @@
   \class vpFeaturePoint
   \brief Class that defines 2D point visual feature
 */
-class vpFeaturePoint : public vpBasicFeature
+class VISP_EXPORT vpFeaturePoint : public vpBasicFeature
 {
 public:
   enum pointFeatureEnum

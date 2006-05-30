@@ -1,23 +1,39 @@
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      vpPoint.cpp
- * Project:   ViSP 2.0
- * Author:    Eric Marchand
+ * $Id: vpPoint.cpp,v 1.3 2006-05-30 08:40:46 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: vpPoint.cpp,v 1.2 2006-01-12 09:35:47 nmansard Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *     class that defines what is a point
+ * This file is part of the ViSP toolkit.
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Point feature.
+ *
+ * Authors:
+ * Eric Marchand
+ *
+ *****************************************************************************/
 
 
 #include <visp/vpPoint.h>
@@ -77,10 +93,10 @@ vpPoint::setWorldCoordinates(const vpColVector &_oP)
   oP /= oP[3] ;
 }
 
-void 
+void
 vpPoint::getWorldCoordinates(double& ox,
 			   double& oy,
-			   double& oz) 
+			   double& oz)
 {
   ox = oP[0] ;
   oy = oP[1] ;
@@ -88,8 +104,8 @@ vpPoint::getWorldCoordinates(double& ox,
 }
 
 
-void 
-vpPoint::getWorldCoordinates(vpColVector &_oP) 
+void
+vpPoint::getWorldCoordinates(vpColVector &_oP)
 {
   _oP[0] = oP[0] ;
   _oP[1] = oP[1] ;
@@ -98,8 +114,8 @@ vpPoint::getWorldCoordinates(vpColVector &_oP)
 }
 
 
-vpColVector 
-vpPoint::getWorldCoordinates(void) 
+vpColVector
+vpPoint::getWorldCoordinates(void)
 {
   return this->oP;
 }

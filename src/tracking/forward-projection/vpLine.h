@@ -1,23 +1,39 @@
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      vpLine.h
- * Project:   ViSP 2.0
- * Author:    Eric Marchand
+ * $Id: vpLine.h,v 1.3 2006-05-30 08:40:46 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: vpLine.h,v 1.2 2005-09-02 14:35:18 fspindle Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *     class that defines what is a visual feature
+ * This file is part of the ViSP toolkit.
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Line feature.
+ *
+ * Authors:
+ * Eric Marchand
+ *
+ *****************************************************************************/
 
 
 #ifndef vpLine_H
@@ -28,6 +44,7 @@
   \brief  class that defines what is a line
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 
@@ -54,7 +71,7 @@
   || a2 || = 1
 
 */
-class vpLine : public vpForwardProjection
+class VISP_EXPORT vpLine : public vpForwardProjection
 {
 
 public:
@@ -90,9 +107,9 @@ public:
 
 
   //! set the line world coordinates
-  void setWorldCoordinates(const double &A1, const double &B1, 
+  void setWorldCoordinates(const double &A1, const double &B1,
 	  const double &C1, const double &D1,
-	  const double &A2, const double &B2, 
+	  const double &A2, const double &B2,
 	  const double &C2, const double &D2) ;
   //! set the line world coordinates from two planes
   void setWorldCoordinates(const vpColVector &_oP1,

@@ -1,40 +1,52 @@
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet LAGADIC / IRISA, 2005
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      $Source: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/servo/vpAdaptativeGain.h,v $
- * Author:    Anne-Sophie Tranchant
- * Corrections: Nicolas Mansard 30-10-5
+ * $Id: vpAdaptativeGain.h,v 1.3 2006-05-30 08:40:45 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- * 30-1-4 : initialisation of coefficients a, b et c from f(inf),
- *          f(0) and f'(0). (N.Mansard)
- * 3-3-4: Conversion into c++. (N.Mansard)
- * 18-10-4: Review toward inclusion in VisP (dir servo). In particular 
- *        conversion to double (N.Mansard)
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- *  $Id: vpAdaptativeGain.h,v 1.2 2006-01-25 10:30:55 fspindle Exp $
+ * This file is part of the ViSP toolkit.
  *
- * Description
- * ============
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
  *
- * Implementation of class vpAdaptativeGain, defined in vpAdaptativeGain.h
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Adaptative gain.
+ *
+ * Authors:
+ * Nicolas Mansard
+ *
+ *****************************************************************************/
 
 
 #ifndef __VP_ADAPTATIVE_GAIN_H
 #define __VP_ADAPTATIVE_GAIN_H
 
 
-#include <iostream>                /* Class ostream.                          */
+#include <iostream>
+
+#include <visp/vpConfig.h>
 
 class vpColVector;
 
-class vpAdaptativeGain
+class VISP_EXPORT vpAdaptativeGain
 {
 
 public: /* constantes */

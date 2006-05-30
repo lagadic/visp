@@ -1,24 +1,39 @@
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      vpServoData.h
- * Project:   ViSP 2.0
- * Author:    Eric Marchand
+ * $Id: vpServoData.h,v 1.3 2006-05-30 08:40:45 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: vpServoData.h,v 1.2 2005-09-02 14:37:25 marchand Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *       save data during the task execution
+ * This file is part of the ViSP toolkit.
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Save data during the task execution.
+ *
+ * Authors:
+ * Eric Marchand
+ *
+ *****************************************************************************/
 
 #ifndef vpServoData_H
 #define vpServoData_H
@@ -31,13 +46,14 @@
 #include <iostream>
 
 // Servo
+#include <visp/vpConfig.h>
 #include <visp/vpServo.h>
 
 /*!
   \class vpServoData
   \brief save data during the task execution
 */
-class vpServoData
+class VISP_EXPORT vpServoData
 {
 
 private:

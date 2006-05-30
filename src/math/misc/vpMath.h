@@ -1,24 +1,39 @@
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      vpMath.h
- * Project:   ViSP 2.0
- * Author:    Eric Marchand
- * From:      simple-math, ViSP 1.6.8 (author:Eric Marchand)
+ * $Id: vpMath.h,v 1.5 2006-05-30 08:40:43 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: vpMath.h,v 1.4 2006-04-19 09:01:21 fspindle Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *  provide some simple mathematical function that are not available in
- *  the C mathematics library (math.h)
+ * This file is part of the ViSP toolkit
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Simple mathematical function not available in the C math library (math.h).
+ *
+ * Authors:
+ * Eric Marchand
+ *
+ *****************************************************************************/
 
 /*!
   \file vpMath.h
@@ -32,6 +47,7 @@
 #define vpMATH_HH
 
 #include <math.h>
+#include <visp/vpConfig.h>
 
 #ifdef WIN32	// Non defines in M$ math.h
 #define M_PI            3.14159265358979323846
@@ -48,7 +64,7 @@
 
   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */
-class vpMath
+class VISP_EXPORT vpMath
 {
 
 public:

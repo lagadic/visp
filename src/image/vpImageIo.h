@@ -1,23 +1,40 @@
+/****************************************************************************
+ *
+ * $Id: vpImageIo.h,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Read/write images.
+ *
+ * Authors:
+ * Eric Marchand
+ *
+ *****************************************************************************/
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- * File:      vpImageIO.cpp
- * Project:   ViSP2
- * Author:    Eric Marchand
- *
- * Version control
- * ===============
- *
- *  $Id: vpImageIo.h,v 1.2 2005-09-19 13:39:02 fspindle Exp $
- *
- * Description
- * ============
- *
- * Read/write images
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /*!
   \file vpImageIo.h
@@ -29,10 +46,8 @@
 
 #include <stdio.h>
 
-// image
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
-
-// color
 #include <visp/vpRGBa.h>
 
 
@@ -41,7 +56,7 @@
   \brief Read/write images with various image format
 */
 
-class vpImageIo
+class VISP_EXPORT vpImageIo
 {
 
 private:
