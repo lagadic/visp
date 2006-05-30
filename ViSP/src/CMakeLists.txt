@@ -1,10 +1,39 @@
+#############################################################################
 #
-# Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
-# www: http://www.irisa.fr/lagadic
+# $Id: CMakeLists.txt,v 1.7 2006-05-30 08:33:07 fspindle Exp $
 #
-# Author: Fabien Spindler email:Fabien.Spindler@irisa.fr
+# Copyright (C) 1998-2006 Inria. All rights reserved.
 #
-# This file creates the ViSP library
+# This software was developed at:
+# IRISA/INRIA Rennes
+# Projet Lagadic
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# http://www.irisa.fr/lagadic
+#
+# This file is part of the ViSP toolkit
+#
+# This file may be distributed under the terms of the Q Public License
+# as defined by Trolltech AS of Norway and appearing in the file
+# LICENSE included in the packaging of this file.
+#
+# Licensees holding valid ViSP Professional Edition licenses may
+# use this file in accordance with the ViSP Commercial License
+# Agreement provided with the Software.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Contact visp@irisa.fr if any conditions of this licensing are
+# not clear to you.
+#
+# Description:
+# This file creates the ViSP library.
+#
+# Authors:
+# Fabien Spindler
+#
+#############################################################################
 
 #----------------------------------------------------------------------
 # Include project files 
@@ -24,18 +53,18 @@ SET(ADDED_SRC_DEPEND_PROPERTIES "")
 FOREACH(header ${HEADER_ALL})
   GET_FILENAME_COMPONENT(headerName ${header} NAME) 
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${CMAKE_SOURCE_DIR}/include/visp/${headerName}
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${header} ${CMAKE_SOURCE_DIR}/include/visp/${headerName}
+    OUTPUT ${VISP_BINARY_DIR}/include/visp/${headerName}
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${header} ${VISP_BINARY_DIR}/include/visp/${headerName}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${header}
     )
-  SET(HEADER_IN_INCLUDE_DIR ${HEADER_IN_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/include/visp/${headerName}
+  SET(HEADER_IN_INCLUDE_DIR ${HEADER_IN_INCLUDE_DIR} ${VISP_BINARY_DIR}/include/visp/${headerName}
     )
 ENDFOREACH(header)
 
 #----------------------------------------------------------------------
 # Create a top level rule to copy all the headers from src to include/visp
 #----------------------------------------------------------------------
-ADD_CUSTOM_TARGET(header
+ADD_CUSTOM_TARGET(header ALL
   DEPENDS ${HEADER_IN_INCLUDE_DIR}
   )
 
@@ -55,6 +84,14 @@ SET_TARGET_PROPERTIES(${VISP_INTERN_LIBS}
   VERSION ${VISP_MAJOR_VERSION}.${VISP_MINOR_VERSION}
   SOVERSION ${VISP_PATCH_VERSION}
   )
+
+# Link with external libs especially under windows for winmm.lib
+# needed to create visp-2.dll. Why ? Because for binaries, winmm.lib
+# is considered in the link stage. Probably a CMake bug ! 
+#IF(WIN32 AND BUILD_SHARED_LIBS AND HAVE_LIBWINMM)
+#  TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBS} "winmm")
+#ENDIF(WIN32 AND BUILD_SHARED_LIBS AND HAVE_LIBWINMM)
+TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
 #----------------------------------------------------------------------
 # customize install target 
