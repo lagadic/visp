@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.h,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpTranslationVector.h,v 1.4 2006-05-31 10:19:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,7 +69,7 @@ public:
     //! translation vectors additions  c = a + b (a, b  unchanged)
     vpTranslationVector operator+(const vpTranslationVector &b) const ;
     //! negate t = -a  (t is unchanged)
-    vpTranslationVector vpTranslationVector::operator-() const ;
+    vpTranslationVector operator-() const ;
 
     vpTranslationVector &operator=(double x) ;
 
