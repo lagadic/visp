@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.25 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpMatrix.cpp,v 1.26 2006-05-31 13:53:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -939,6 +939,8 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
 {
   if (DEBUG_LEVEL1 == 0) /* no verification */
   {
+    w.resize( this->getCols() );
+    v.resize( this->getCols(), this->getCols() );
 #ifdef VISP_HAVE_GSL  /* be careful of the copy below */
     svdGsl(w,v) ;
 #else
@@ -954,6 +956,8 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
 
     A = (*this);        /* copy because svd is destructive */
 
+    w.resize( this->getCols() );
+    v.resize( this->getCols(), this->getCols() );
 #ifdef VISP_HAVE_GSL  /* be careful of the copy above */
     svdGsl(w,v) ;
 #else
