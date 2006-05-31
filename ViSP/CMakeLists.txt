@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.9 2006-05-30 08:31:17 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.10 2006-05-31 12:34:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -496,13 +496,13 @@ INCLUDE(${CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 # customize install target 
 #----------------------------------------------------------------------
 # install rule for visp-config shell script
-INSTALL(FILES bin/visp-config 
+INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config 
   DESTINATION bin
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
   OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
   )
 # install rule for vpConfig.h
-INSTALL(FILES include/visp/vpConfig.h
+INSTALL(FILES ${VISP_BINARY_DIR}/include/visp/vpConfig.h
   DESTINATION include/visp 
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
   )
