@@ -27,19 +27,18 @@ int main()
 
   double t2 = vpTime::measureTimeMs();
 
+  // Sleep 10ms
 #if defined UNIX
-  usleep(10);
+  usleep(10*1000);
 #elif defined WIN32
   Sleep(10);
 #endif
 
   double t3 = vpTime::measureTimeMs();
 
+  // Sleep 2ms
 #if defined UNIX
-  struct timespec req;
-  req.tv_sec = 0;
-  req.tv_nsec = 2*1000*1000;
-  nanosleep(&req, NULL);
+  usleep(2*1000);
 #elif defined WIN32
   Sleep(2);
 #endif
@@ -58,13 +57,13 @@ int main()
   double t7 = vpTime::measureTimeMs();
 
   cout << "t1-t0: computation: " << t1 - t0 << endl;
-  cout << "t2-t0: wait(t, 40): " << t2 - t0 << endl;
+  cout << "t2-t0: wait(t, 40 ms): " << t2 - t0 << endl;
   cout << "t2-t1: waiting time(t, 40): " << t2 - t1 << endl;
-  cout << "t3-t2: usleep(10): " << t3 - t2 << endl;
-  cout << "t4-t3: nanosleep(2): " << t4 - t3 << endl;
-  cout << "t5-t4: wait(t, 19): " << t5 - t4 << endl;
-  cout << "t6-t5: wait(5): " << t6 - t5 << endl;
-  cout << "t7-t7: wait(21): " << t7 - t6 << endl;
+  cout << "t3-t2: sleep(10 ms): " << t3 - t2 << endl;
+  cout << "t4-t3: sleep(2 ms): " << t4 - t3 << endl;
+  cout << "t5-t4: wait(t, 19 ms): " << t5 - t4 << endl;
+  cout << "t6-t5: wait(5 ms): " << t6 - t5 << endl;
+  cout << "t7-t7: wait(21 ms): " << t7 - t6 << endl;
 
   return 0;
 }
