@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.11 2006-06-01 08:48:58 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.12 2006-06-01 10:30:17 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -546,6 +546,18 @@ ADD_CUSTOM_TARGET(uninstall
 # Add definitions
 #----------------------------------------------------------------------
 ADD_DEFINITIONS(${VISP_DEFS})
+
+# With Visual Studio 2005, Microsoft deprecates the standard C library, for
+# example fopen() and sprintf(), to non-portable functions fopen_s() and
+# sprintf_s(). These functions are considered by Microsoft more secure. This is
+# a worthwhile exercise ! The use of these deprecated functions causes a lot of
+# warnings. To suppress it, we add the _CRT_SECURE_NO_DEPRECATE preprocessor
+# definition
+IF(WIN32 AND MSVC80)
+  #  MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")  
+  ADD_DEFINITIONS("-D_CRT_SECURE_NO_DEPRECATE")
+ENDIF(WIN32 AND MSVC80)
+
 
 #----------------------------------------------------------------------
 # Configure the file describing how to use ViSP. VISPConfig.cmake
