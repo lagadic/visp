@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.10 2006-05-31 12:34:53 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.11 2006-06-01 08:48:58 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -547,14 +547,6 @@ ADD_CUSTOM_TARGET(uninstall
 #----------------------------------------------------------------------
 ADD_DEFINITIONS(${VISP_DEFS})
 
-
-#----------------------------------------------------------------------
-# Propagation in sub dirs
-#----------------------------------------------------------------------
-SUBDIRS(src)
-SUBDIRS(test)
-SUBDIRS(example)
-
 #----------------------------------------------------------------------
 # Configure the file describing how to use ViSP. VISPConfig.cmake
 # is the main file configuring a CMake package.
@@ -617,6 +609,11 @@ IF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
   SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
 
-#IF(BUILD_TESTING)
-#   SUBDIRS(Testing)
-#ENDIF(BUILD_TESTING)
+#----------------------------------------------------------------------
+# Propagation in sub dirs
+#----------------------------------------------------------------------
+SUBDIRS(src)
+SUBDIRS(example)
+IF(BUILD_TESTING)
+  SUBDIRS(test)
+ENDIF(BUILD_TESTING)
