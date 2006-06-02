@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGTK2.cmake,v 1.4 2006-06-01 08:10:10 fspindle Exp $
+# $Id: FindGTK2.cmake,v 1.5 2006-06-02 14:58:09 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -238,6 +238,7 @@ IF(UNIX)
     GTK2_gdkconfig_INCLUDE_PATH
     GTK2_gobject_LIBRARY
     GTK2_pango_INCLUDE_PATH 
+    GTK2_cairo_INCLUDE_PATH
   )
 
 ELSE(UNIX)
