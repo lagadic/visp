@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.12 2006-06-01 10:30:17 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.13 2006-06-08 12:26:54 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -225,6 +225,11 @@ IF (UNIX)
      OPTION(USE_CFOX   "Compile ViSP with cfox usage" OFF)
    ENDIF(APPLE)
 ENDIF(UNIX)
+
+IF(BUILD_SHARED_LIBS)
+  SET(VISP_BUILD_SHARED_LIBS TRUE)  # for header vpConfig.h
+ENDIF(BUILD_SHARED_LIBS)
+
 
 # Default 
 SET(USE_DC1394 ON)
