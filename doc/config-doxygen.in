@@ -115,7 +115,7 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the 
 # path to strip.
 
-STRIP_FROM_PATH        = @VISP_SOURCE_DIR@
+STRIP_FROM_PATH        =
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of 
 # the path mentioned in the documentation of a class, which tells 
@@ -991,15 +991,21 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = \
 		       DOXYGEN_SHOULD_SKIP_THIS \
+		       VISP_HAVE_X11 \
+		       VISP_HAVE_PTHREAD \
+		       VISP_HAVE_GTK \
 		       VISP_HAVE_GSL \
+		       VISP_HAVE_COIN \
+		       VISP_HAVE_QT \
+		       VISP_HAVE_SOQT \
 		       VISP_HAVE_DC1394 \
+		       VISP_HAVE_CFOX \
 		       VISP_HAVE_V4L2 \
 		       VISP_HAVE_ICCOMP \
 		       VISP_HAVE_AFMA4 \
 		       VISP_HAVE_AFMA6 \
 		       VISP_HAVE_BICLOPS \
 		       VISP_HAVE_PTU46
-		       VISP_HAVE_SOQT
 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 

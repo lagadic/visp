@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.13 2006-06-08 12:26:54 brenier Exp $
+# $Id: CMakeLists.txt,v 1.14 2006-06-08 13:04:22 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -52,6 +52,7 @@ SET(VISP_VERSION_FULL "${VISP_VERSION}.${VISP_VERSION_PATCH}")
 
 #SET(VISP_INCLUDE_DIR "${VISP_SOURCE_DIR}/include/visp-${VISP_VERSION_FULL}")
 SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")
+SET(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
 #-----------------------------------------------------------------------------
 
@@ -470,9 +471,9 @@ IF (DOXYGEN_FOUND)
   ENDIF (NOT DVIPS_CONVERTER)
    
   CONFIGURE_FILE(${VISP_SOURCE_DIR}/doc/config-doxygen.in
-    ${VISP_SOURCE_DIR}/doc/config-doxygen
+    ${VISP_DOC_DIR}/config-doxygen
     @ONLY )
-  ADD_CUSTOM_TARGET(html-doc ${DOXYGEN_EXECUTABLE} ${VISP_SOURCE_DIR}/doc/config-doxygen) 
+  ADD_CUSTOM_TARGET(html-doc ${DOXYGEN_EXECUTABLE} ${VISP_DOC_DIR}/config-doxygen) 
 ENDIF(DOXYGEN_FOUND)
 
 
