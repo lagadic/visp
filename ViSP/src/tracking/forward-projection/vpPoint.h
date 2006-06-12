@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.7 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpPoint.h,v 1.8 2006-06-12 14:50:04 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -141,11 +141,12 @@ public:
 	       const int color=vpColor::green) ;
   vpPoint *duplicate() const ;
 
+  friend ostream& operator<<(ostream& os, vpPoint& vpp);
 } ;
 
 
-const vpPoint operator*(const vpHomogeneousMatrix &M, const vpPoint& p) ;
-const vpPoint operator*(const vpHomography &H, const vpPoint& p) ;
+const vpPoint VISP_EXPORT operator*(const vpHomogeneousMatrix &M, const vpPoint& p) ;
+const vpPoint VISP_EXPORT operator*(const vpHomography &H, const vpPoint& p) ;
 
 #endif
 

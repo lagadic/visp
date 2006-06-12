@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.h,v 1.3 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMeSite.h,v 1.4 2006-06-12 14:50:04 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,6 +86,9 @@ public:
 
   vpMeSite &operator=(const vpMeSite &m) ;
   int operator!=(const vpMeSite  &m) ;
+  
+  // Needed in order to use it in vpList
+  friend ostream& operator<<(ostream& os, vpMeSite& vpMeS);
 
   void getSign(vpImage<unsigned char> &I, const int range) ;
   double convolution(vpImage<unsigned char>& ima, const vpMe *me) ;

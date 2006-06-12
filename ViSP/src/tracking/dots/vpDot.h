@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.9 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpDot.h,v 1.10 2006-06-12 14:50:04 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,6 +55,10 @@
 
 #include <visp/vpTracker.h>
 
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT vpList<int>;
+#endif
+
 /*
   \class vpDot
   \brief Track a white dot
@@ -76,6 +80,7 @@ public:
 
   static const int SPIRAL_SEARCH_SIZE; /*!< spiral size for the dot search */
 private:
+
   //! internal use only
   vpList<int> Lu, Lv ;
 
@@ -196,7 +201,12 @@ public:
   void setConnexity(ConnexityEnum connexity) {this->connexity = connexity; };
 
 public:
-  friend ostream& operator<< (ostream& os, vpDot& p) { return (os << p ) ; } ;
+
+  /*!
+    Print the coordinates of the point center of gravity
+    in the stream.
+  */
+  friend ostream& operator<< (ostream& os, vpDot& p) { return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ; } ;
   void print(ostream& os) { os << *this << endl ; }
 
 private:

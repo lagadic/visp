@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.13 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpMatrix.h,v 1.14 2006-06-12 14:50:03 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -133,7 +133,7 @@ public:
   //---------------------------------
   // Printing
   //---------------------------------
-  friend ostream &operator << (ostream &s,const vpMatrix &m);
+  friend VISP_EXPORT ostream &operator << (ostream &s,const vpMatrix &m);
 
   int print(std::ostream& s, unsigned lenght, char const* intro=0);
   //! Affichage pour reinsertion dans matlab

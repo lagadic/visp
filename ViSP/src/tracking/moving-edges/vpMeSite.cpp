@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.3 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMeSite.cpp,v 1.4 2006-06-12 14:50:04 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -463,3 +463,8 @@ int vpMeSite::operator!=(const vpMeSite &m)
   return((m.i != i) || (m.j != j)) ;
 
 }
+
+ostream& operator<<(ostream& os, vpMeSite& vpMeS)
+    {
+      return (os<<"Alpha: "<<vpMeS.alpha<<"  Convolution: "<<vpMeS.convlt<<"  Flag: "<<vpMeS.suppress<<"  Weight: "<<vpMeS.weight );
+    }

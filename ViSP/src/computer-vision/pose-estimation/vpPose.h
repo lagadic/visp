@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.3 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpPose.h,v 1.4 2006-06-12 14:49:23 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,6 +67,10 @@
   \sa the example in ComputePose.cpp
   \date   April, 6 1999 (first issue)
 */
+
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT vpList<vpPoint>;
+#endif
 
 class VISP_EXPORT vpPose
 {

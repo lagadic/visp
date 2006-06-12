@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpList.h,v 1.5 2006-06-12 14:49:40 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,6 +95,8 @@ class vpListElement
 
   \endverbatim
 */
+
+
 
 template <class type>
 class vpList

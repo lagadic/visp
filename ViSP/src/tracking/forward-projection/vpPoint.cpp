@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.cpp,v 1.3 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpPoint.cpp,v 1.4 2006-06-12 14:50:04 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -233,6 +233,10 @@ vpPoint::display(vpImage<unsigned char> &I,
 
 }
 
+ostream& operator<<(ostream& os, vpPoint& vpp)
+{
+  return( os<<"vpPoint" );
+}
 
 void
 vpPoint::display(vpImage<unsigned char> &I,
