@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.5 2006-05-30 08:38:36 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.6 2006-06-12 14:41:51 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,9 @@
 // ViSP library is either compiled static or shared
 // Used to set declspec(import, export) in headers if required under Windows
 #cmakedefine VISP_BUILD_SHARED_LIBS
+
+// Defined if MSVC is the compiler
+#cmakedefine VISP_USE_MSVC
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
