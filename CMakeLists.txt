@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.14 2006-06-08 13:04:22 brenier Exp $
+# $Id: CMakeLists.txt,v 1.15 2006-06-12 14:36:06 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -92,6 +92,9 @@ IF(WIN32 AND NOT CYGWIN)
     #MESSAGE("have winmm.lib")
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} "winmm")
   ENDIF(HAVE_LIBWINMM)
+  IF(MSVC) #check if MSVC is the compiler and set VISP_USE_MSVC accordingly
+    SET(VISP_USE_MSVC TRUE)
+  ENDIF(MSVC)
 ENDIF(WIN32 AND NOT CYGWIN)
 IF(UNIX)
   SET(VISP_DEFS "${VISP_DEFS} -DUNIX")
@@ -101,7 +104,6 @@ IF(UNIX)
     SET(VISP_DEFS "${VISP_DEFS} -DAPPLE")
   ENDIF(APPLE)
 ENDIF(UNIX)
-
 
 #----------------------------------------------------------------------
 # Unix libraries : Coin, Qt, SoQt, X11, pthread, cfox (MAC OS X) 
@@ -261,13 +263,17 @@ ENDIF(USE_GSL)
 # strategy for gtk: search first gtk2. If not found search gtk1
 # gtk-2 library: 
 IF(USE_GTK2)
-  IF(UNIX) 
+   IF(UNIX OR WIN32) 
     FIND_PACKAGE(GTK2) 
     IF(GTK2_FOUND)
       SET(VISP_HAVE_GTK TRUE)  # for header vpConfig.h
       SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GTK2_INCLUDE_DIR})      
-      ## ignore gtk pedantic warnings by gcc specific -isystem : 
-      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK2_gtk_INCLUDE_PATH}")
+      
+      IF(UNIX)
+	## ignore gtk pedantic warnings by gcc specific -isystem : 
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK2_gtk_INCLUDE_PATH}")
+      ENDIF(UNIX)
+
       SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${GTK2_LIBRARIES})
       # MESSAGE(STATUS "DBG CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}")
       #MESSAGE("GTK2 includes: ${GTK2_INCLUDE_DIR}")
@@ -280,7 +286,7 @@ IF(USE_GTK2)
 #    IF(USE_GTK1)
 #      MESSAGE(FATAL_ERROR "gtk1 and gtk2 cannot be used together")
 #    ENDIF(USE_GTK1)
-  ENDIF(UNIX)
+   ENDIF(UNIX OR WIN32)
 ENDIF(USE_GTK2)
 
 # gtk-1 library: is search only ig gtk-2 was not found
