@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.10 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpDot2.h,v 1.11 2006-06-12 14:50:04 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,6 +50,10 @@
 #include <visp/vpImage.h>
 
 #include <visp/vpTracker.h>
+
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT vpList<int>;
+#endif
 
 class VISP_EXPORT vpDot2 : public vpTracker
 {
@@ -138,7 +142,12 @@ public:
   static const int DEFAULT_OUT_LEVEL;// = 140;
 
 public:
-  friend ostream& operator<< (ostream& os, vpDot2& p) { return (os << p ) ; } ;
+  /*!
+    Print the coordinates of the point center of gravity
+    in the stream.
+  */
+  friend ostream& operator<< (ostream& os, vpDot2& p) { return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ; } ;
+
   void print(ostream& os) { os << *this << endl ; }
 
 public :
