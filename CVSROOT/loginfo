@@ -29,3 +29,4 @@
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
+DEFAULT /usr/bin/syncmail -f users.gforge.inria.fr  %S visp-commits@lists.gforge.inria.fr
