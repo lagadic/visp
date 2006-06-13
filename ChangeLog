@@ -1,16 +1,17 @@
 ViSP 2.1.2 (Modification since ViSP 2.1.1)
-  - Installation
+  - Build
 	- To increase the code portability, especially under windows), 
 	  all the build process is now based on CMake 
 	  (see http://www.cmake.org).
-	- Standardization of makefile targets (clean, distclean, install,
-	  uninstall). Take into account configure --prefix option in
-	  installation process
-  - Shared Library
-	- add compilation rules for the creation of lib/libvisp-2.so
+	- Supported platforms:
+	  Linux, Mac OSX, SunOS: g++ 2.95.3, 2.96, 3.3.x, 3.4.x, 4.1.0)
+	  Windows: MSVC7 (2003.NET), MSVC8 (2005) 
+	- Suppression of autotools support (configure)
+	- Allows shared library building (.so and .dll)
   - New Feature
 	- add control for Traclabs biclops pan-tilt head
 	- add control for Directed Perception ptu-46 pan-tilt head
+	- add vpDisplayGTK display under Windows
   - Bug fix and improvement
 	- vp1394Grabber settings (format, mode, framerate, shutter, gain)
 	- vpDot (Moment computation)
