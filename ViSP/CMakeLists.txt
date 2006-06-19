@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.15 2006-06-12 14:36:06 brenier Exp $
+# $Id: CMakeLists.txt,v 1.16 2006-06-19 08:57:55 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -368,6 +368,18 @@ IF(USE_ICCOMP)
     # SET(USE_ICCOMP OFF)
   ENDIF(ICCOMP_FOUND)
 ENDIF(USE_ICCOMP)
+
+# Under Windows, usage of Direct Show
+FIND_PACKAGE(DIRECTSHOW)
+IF(DIRECTSHOW_FOUND)
+  SET(VISP_HAVE_DIRECTSHOW TRUE) # for header vpConfig.h
+  #MESSAGE("DBG VISP_HAVE_DIRECTSHOW= ${VISP_HAVE_PTU46}")
+  #MESSAGE("DBG DIRECTSHOW_INCLUDE_DIR=${DIRECTSHOW_INCLUDE_DIR}")
+  SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    ${DIRECTSHOW_INCLUDE_DIR})
+  SET(VISP_EXTERN_LIBS ${DIRECTSHOW_LIBRARIES} ${VISP_EXTERN_LIBS})
+  #MESSAGE("DIRECTSHOW_LIBRARIES = ${DIRECTSHOW_LIBRARIES}")
+ENDIF(DIRECTSHOW_FOUND)
 
 
 #----------------------------------------------------------------------
