@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.13 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpDot.cpp,v 1.14 2006-06-23 15:40:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,7 +193,7 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
 {
 
   // Test if we are in the image
-  if ( (u < 0) || (v < 0) || (u >= I.getRows()) || (v >= I.getCols()) ) {
+  if ( (u < 0) || (v < 0) || (u >= I.getCols()) || (v >= I.getRows()) ) {
     return  vpDot::out ;
   }
   if (I[v][u] >=seuil)
