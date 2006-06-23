@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.4 2006-06-12 14:50:04 brenier Exp $
+ * $Id: vpMeSite.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -326,7 +326,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
   double max = 0 ;
   double contraste = 0;
   //  vpDisplay::display(I) ;
-  //  ERROR_TRACE("getclcik %d",me->range) ;
+  //  vpERROR_TRACE("getclcik %d",me->range) ;
   //  vpDisplay::getClick(I) ;
 
   // range = +/- range of pixels within which the correspondent
@@ -372,7 +372,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
 	throw(vpTrackingException(vpTrackingException::initializationError,
 				  "Division by zero")) ;//	return fatalError  ;
       }
-      //      ERROR_TRACE(" %f %f",convolution,convlt)  ;
+      //      vpERROR_TRACE(" %f %f",convolution,convlt)  ;
       contraste = fabs(convolution / convlt) ;
       //      cout << "contraste " << contraste <<endl ;
       // likelihood ratios

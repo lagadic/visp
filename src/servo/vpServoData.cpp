@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoData.cpp,v 1.4 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpServoData.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,7 +78,7 @@ vpServoData::open(const char *directory)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 

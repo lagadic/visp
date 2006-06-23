@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: test_point.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: test_point.cpp,v 1.2 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -50,24 +50,24 @@ main()
   cMo[2][3] = 2 ;
 
   vpPoint point ;
-  TRACE("set point coordinates in the world  frame ") ;
+  vpTRACE("set point coordinates in the world  frame ") ;
   point.setWorldCoordinates(0,0,0) ;
 
 
   cout <<"------------------------------------------------------"<<endl ;
-  TRACE("test the projection ") ;
+  vpTRACE("test the projection ") ;
   point.track(cMo) ;
 
-  TRACE("coordinates in the world frame ") ;
+  vpTRACE("coordinates in the world frame ") ;
   cout << point.oP.t() << endl ;
-  TRACE("coordinates in the camera frame  ") ;
+  vpTRACE("coordinates in the camera frame  ") ;
   cout << point.cP.t() << endl ;
 
-  TRACE("2D coordinates ") ;
+  vpTRACE("2D coordinates ") ;
   cout<< point.get_x() << "  " << point.get_y() << endl ;
 
   cout <<"------------------------------------------------------"<<endl ;
-  TRACE("test the interaction matrix ") ;
+  vpTRACE("test the interaction matrix ") ;
 
   vpFeaturePoint p ;
   vpFeatureBuilder::create(p,point) ;
@@ -76,26 +76,26 @@ main()
   L = p.interaction() ;
   cout << L << endl ;
 
-  TRACE("test the interaction matrix select") ;
-  TRACE("\t only X") ;
+  vpTRACE("test the interaction matrix select") ;
+  vpTRACE("\t only X") ;
   L = p.interaction(vpFeaturePoint::selectX()) ;
   cout << L << endl ;
 
-  TRACE("\t only Y") ;
+  vpTRACE("\t only Y") ;
   L = p.interaction(vpFeaturePoint::selectY()) ;
   cout << L << endl ;
 
-  TRACE("\t X & Y") ;
+  vpTRACE("\t X & Y") ;
   L = p.interaction(vpFeaturePoint::selectX() |
 		    vpFeaturePoint::selectY()) ;
   cout << L << endl ;
 
-  TRACE("\t selectAll") ;
+  vpTRACE("\t selectAll") ;
   L = p.interaction(vpFeaturePoint::selectAll() ) ;
   cout << L << endl ;
 
   cout <<"------------------------------------------------------"<<endl ;
-  TRACE("test the error ") ;
+  vpTRACE("test the error ") ;
 
   try{
   vpFeaturePoint pd ;
@@ -107,45 +107,45 @@ main()
   e = p.error(pd) ;
   cout << e << endl ;
 
-  TRACE("test the interaction matrix select") ;
-  TRACE("\t only X") ;
+  vpTRACE("test the interaction matrix select") ;
+  vpTRACE("\t only X") ;
   e = p.error(pd,vpFeaturePoint::selectX()) ;
   cout << e << endl ;
 
-  TRACE("\t only Y") ;
+  vpTRACE("\t only Y") ;
   e = p.error(pd,vpFeaturePoint::selectY()) ;
   cout << e << endl ;
 
-  TRACE("\t X & Y") ;
+  vpTRACE("\t X & Y") ;
   e = p.error(pd,vpFeaturePoint::selectX() | vpFeaturePoint::selectY()) ;
   cout << e << endl ;
 
-  TRACE("\t selectAll") ;
+  vpTRACE("\t selectAll") ;
   e = p.error(pd,vpFeaturePoint::selectAll() ) ;
   cout << e << endl ;
   }
   catch(vpFeatureException me){ cout << me << endl ; }
   catch(vpException me){ cout << me << endl ; }
   cout <<"------------------------------------------------------"<<endl ;
-  TRACE("test the  dimension") ;
+  vpTRACE("test the  dimension") ;
   int dim ;
   dim = p.getDimension() ;
   cout << "Dimension = " << dim << endl ;
 
-  TRACE("test the dimension with  select") ;
-  TRACE("\t only X") ;
+  vpTRACE("test the dimension with  select") ;
+  vpTRACE("\t only X") ;
   dim = p.getDimension(vpFeaturePoint::selectX()) ;
   cout << "Dimension = " << dim << endl ;
 
-  TRACE("\t only Y") ;
+  vpTRACE("\t only Y") ;
   dim = p.getDimension(vpFeaturePoint::selectY()) ;
   cout << "Dimension = " << dim << endl ;
 
-  TRACE("\t X & Y") ;
+  vpTRACE("\t X & Y") ;
   dim = p.getDimension(vpFeaturePoint::selectX() | vpFeaturePoint::selectY()) ;
   cout << "Dimension = " << dim << endl ;
 
-  TRACE("\t selectAll") ;
+  vpTRACE("\t selectAll") ;
   dim = p.getDimension(vpFeaturePoint::selectAll() ) ;
   cout << "Dimension = " << dim << endl ;
 

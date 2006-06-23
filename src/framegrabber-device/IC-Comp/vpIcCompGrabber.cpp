@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.cpp,v 1.6 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpIcCompGrabber.cpp,v 1.7 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -159,7 +159,7 @@ vpIcCompGrabber::setInput(unsigned _input)
 {
   if (_input >3)
   {
-    ERROR_TRACE("Wrong input %d, IC-Comp Frame grabber has only 4 input channels",_input) ;
+    vpERROR_TRACE("Wrong input %d, IC-Comp Frame grabber has only 4 input channels",_input) ;
 
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong input channel") );
@@ -182,7 +182,7 @@ vpIcCompGrabber::setScale(unsigned scale)
 {
   if ((scale <1) || (scale >16))
   {
-    ERROR_TRACE("Wrong scale %d, scale shoud be between 1 and 16",scale) ;
+    vpERROR_TRACE("Wrong scale %d, scale shoud be between 1 and 16",scale) ;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong scale") );
   }
@@ -266,7 +266,7 @@ vpIcCompGrabber::acquire(vpImage<vpRGBa> &I)
 
   if (framegrabber==NULL)
   {
-    ERROR_TRACE("ICcomp not initialized ") ;
+    vpERROR_TRACE("ICcomp not initialized ") ;
 
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "ICcomp not initialized ") );
@@ -326,7 +326,7 @@ vpIcCompGrabber::acquire(vpImage<unsigned char> &I)
 
   if (framegrabber==NULL)
   {
-    ERROR_TRACE("ICcomp not initialized ") ;
+    vpERROR_TRACE("ICcomp not initialized ") ;
 
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "ICcomp not initialized ") );

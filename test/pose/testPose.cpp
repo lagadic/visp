@@ -72,27 +72,27 @@ main()
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::LAGRANGE, cMo) ;
-  TRACE("LAGRANGE pose : ") ;
+  vpTRACE("LAGRANGE pose : ") ;
   cout << cMo << endl ;
   cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<endl ;
 
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
-  TRACE( "LOWE pose :" ) ;
+  vpTRACE( "LOWE pose :" ) ;
   cout <<  cMo << endl ;
   cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<endl ;
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
-  TRACE(  "DEMENTHON pose :" ) ;
+  vpTRACE(  "DEMENTHON pose :" ) ;
   cout <<  cMo << endl ;
   cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<endl ;
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
   cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<endl ;
-  //  TRACE(  "Pose LOWE"  ) ;
+  //  vpTRACE(  "Pose LOWE"  ) ;
   //  cout <<  cMo << endl ;
   //  cout << "residu Lowe " << pose.computeResidual(cMo) <<endl ;
 
@@ -103,20 +103,20 @@ main()
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::LAGRANGE, cMo) ;
-  TRACE("LAGRANGE pose : ") ;
+  vpTRACE("LAGRANGE pose : ") ;
   cout << cMo << endl ;
   cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<endl ;
 
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
-  TRACE( "VIRTUAL_VS pose :" ) ;
+  vpTRACE( "VIRTUAL_VS pose :" ) ;
   cout <<  cMo << endl ;
   cout << "vvs residual term: " <<pose.computeResidual(cMo) <<endl ;
 
   cout <<"------------------------------------------------------------"<<endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
-  TRACE(  "DEMENTHON pose :" ) ;
+  vpTRACE(  "DEMENTHON pose :" ) ;
   cout <<  cMo << endl ;
   cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<endl ;
 

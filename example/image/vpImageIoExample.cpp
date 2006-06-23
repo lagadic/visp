@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIoExample.cpp,v 1.2 2006-05-30 08:42:16 fspindle Exp $
+ * $Id: vpImageIoExample.cpp,v 1.3 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,7 +78,7 @@ main()
   }
   catch(vpImageException e)
   {
-    ERROR_TRACE("at main level");
+    vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
 
@@ -90,7 +90,7 @@ main()
   }
   catch(vpImageException e)
   {
-    ERROR_TRACE("at main level");
+    vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
 
@@ -111,7 +111,7 @@ main()
   }
   catch(vpImageException e)
   {
-    ERROR_TRACE("at main level");
+    vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
 
@@ -122,7 +122,7 @@ main()
   }
   catch(vpImageException e)
   {
-    ERROR_TRACE("at main level");
+    vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
 

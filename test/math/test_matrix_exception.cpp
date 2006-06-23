@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: test_matrix_exception.cpp,v 1.2 2005-09-07 14:05:13 fspindle Exp $
+ *  $Id: test_matrix_exception.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -47,7 +47,7 @@ main()
   vpMatrix M2(3,3) ;
   vpMatrix M3(2,2) ;
 
-  TRACE("test matrix size in multiply") ;
+  vpTRACE("test matrix size in multiply") ;
 
   try
   {
@@ -55,12 +55,12 @@ main()
   }
   catch (vpMatrixException me)
   {
-    CTRACE ;
+    vpCTRACE ;
     cout << me << endl ;
   }
 
 
-  TRACE("test matrix size in addition") ;
+  vpTRACE("test matrix size in addition") ;
 
   try
   {
@@ -68,10 +68,10 @@ main()
   }
   catch (vpMatrixException me)
   {
-    CTRACE ;
+    vpCTRACE ;
     cout << me << endl ;
   }
 
 
-  CTRACE ;
+  vpCTRACE ;
 }

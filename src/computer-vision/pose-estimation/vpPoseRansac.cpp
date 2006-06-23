@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseRansac.cpp,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpPoseRansac.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,7 @@ bool
 vpPose::degenerateConfiguration(vpColVector &x,int *ind)
 {
 
-  //  TRACE("%p %p %d",&x, ind, x.getRows()) ;
+  //  vpTRACE("%p %p %d",&x, ind, x.getRows()) ;
   for (int i=1 ; i < 4 ; i++)
     for (int j=0 ; j<i ; j++)
     {

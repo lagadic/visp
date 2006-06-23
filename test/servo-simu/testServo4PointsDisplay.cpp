@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServo4PointsDisplay.cpp,v 1.4 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: testServo4PointsDisplay.cpp,v 1.5 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -89,7 +89,7 @@ main()
   cout << endl ;
 
 
-  TRACE("sets the initial camera location " ) ;
+  vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo(-0.1,-0.1,1,
 			  vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
@@ -99,7 +99,7 @@ main()
 			     0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
 
-  TRACE("sets the point coordinates in the world frame "  ) ;
+  vpTRACE("sets the point coordinates in the world frame "  ) ;
   vpPoint point[4] ;
   point[0].setWorldCoordinates(-0.1,-0.1,0) ;
   point[1].setWorldCoordinates(0.1,-0.1,0) ;
@@ -110,17 +110,17 @@ main()
   for (i = 0 ; i < 4 ; i++)
     externalview.insert(point[i]) ;
 
-  TRACE("project : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
+  vpTRACE("project : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
   for (i = 0 ; i < 4 ; i++)
     point[i].track(cMo) ;
 
-  TRACE("sets the desired position of the point ") ;
+  vpTRACE("sets the desired position of the point ") ;
   vpFeaturePoint p[4] ;
   for (i = 0 ; i < 4 ; i++)
     vpFeatureBuilder::create(p[i],point[i])  ;  //retrieve x,y and Z of the vpPoint structure
 
 
-  TRACE("sets the desired position of the point ") ;
+  vpTRACE("sets the desired position of the point ") ;
   vpFeaturePoint pd[4] ;
 
   pd[0].buildFrom(-0.1,-0.1,1) ;
@@ -128,36 +128,36 @@ main()
   pd[2].buildFrom(0.1,0.1,1) ;
   pd[3].buildFrom(-0.1,0.1,1) ;
 
-  TRACE("define the task") ;
-  TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t articular velocity are computed") ;
+  vpTRACE("define the task") ;
+  vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t articular velocity are computed") ;
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
   task.setInteractionMatrixType(vpServo::MEAN) ;
 
 
-  TRACE("Set the position of the camera in the end-effector frame ") ;
+  vpTRACE("Set the position of the camera in the end-effector frame ") ;
   vpHomogeneousMatrix cMe ;
   vpTwistMatrix cVe(cMe) ;
   task.set_cVe(cVe) ;
 
-  TRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+  vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
   vpMatrix eJe ;
   robot.get_eJe(eJe) ;
   task.set_eJe(eJe) ;
 
-  TRACE("\t we want to see a point on a point..") ;
+  vpTRACE("\t we want to see a point on a point..") ;
   for (i = 0 ; i < 4 ; i++)
     task.addFeature(p[i],pd[i]) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.1) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   while(iter++<200)
   {
     cout << "---------------------------------------------" << iter <<endl ;
@@ -166,16 +166,16 @@ main()
 
      if (iter==1)
      {
-       TRACE("Set the Jacobian (expressed in the end-effector frame)") ;
-       TRACE("since q is modified eJe is modified") ;
+       vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+       vpTRACE("since q is modified eJe is modified") ;
      }
     robot.get_eJe(eJe) ;
     task.set_eJe(eJe) ;
 
 
-    if (iter==1) TRACE("\t\t get the robot position ") ;
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
     robot.getPosition(cMo) ;
-    if (iter==1) TRACE("\t\t new point position ") ;
+    if (iter==1) vpTRACE("\t\t new point position ") ;
     for (i = 0 ; i < 4 ; i++)
     {
       point[i].track(cMo) ;
@@ -187,28 +187,28 @@ main()
     vpServoDisplay::display(task,cam,I) ;
     externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
 
-    if (iter==1) TRACE("\t\t compute the control law ") ;
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
     v = task.computeControlLaw() ;
 
     if (iter==1)
     {
-      TRACE("Display task information " ) ;
+      vpTRACE("Display task information " ) ;
       task.print() ;
     }
 
-    if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    TRACE("\t\t || s - s* || ") ;
+    vpTRACE("\t\t || s - s* || ") ;
     cout << task.error.sumSquare() <<endl ; ;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
 #if 0
   // suppressed for automate test
-  TRACE("\n\nClick in the internal view window to end...");
+  vpTRACE("\n\nClick in the internal view window to end...");
   vpDisplay::getClick(I) ;
 #endif
 }
@@ -216,7 +216,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

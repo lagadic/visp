@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.cpp,v 1.5 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpRobotAfma4.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -120,10 +120,10 @@ vpRobotAfma4::vpRobotAfma4 (void)
   signal(SIGKILL, emergencyStopAfma4);
   signal(SIGQUIT, emergencyStopAfma4);
 
-  DEBUG_TRACE (12, "Open communication with VME.");
+  vpDEBUG_TRACE (12, "Open communication with VME.");
   init();
 
-  DEBUG_TRACE (12, "Read Config parameters.");
+  vpDEBUG_TRACE (12, "Read Config parameters.");
   vpAfma4::init ();
 
   try
@@ -132,7 +132,7 @@ vpRobotAfma4::vpRobotAfma4 (void)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   positioningVelocity = defaultPositioningVelocity ;
@@ -155,17 +155,17 @@ void
 vpRobotAfma4::init (void)
 {
 
-  DEBUG_TRACE (12, "Open connection to the VME.");
+  vpDEBUG_TRACE (12, "Open connection to the VME.");
   if (0 != vmeOpenA32D32_Afma4())
   {
-    ERROR_TRACE ("Cannot open connexion between PC and VME.");
+    vpERROR_TRACE ("Cannot open connexion between PC and VME.");
     throw vpRobotException (vpRobotException::constructionError,
 			    "Cannot open connexion between PC and VME");
   }
 
   if (0 != initialisation_Afma4())
   {
-    ERROR_TRACE ("Error during robot initialization.");
+    vpERROR_TRACE ("Error during robot initialization.");
     throw vpRobotException (vpRobotException::communicationError,
 			    "Error during robot initialization.");
   }
@@ -194,7 +194,7 @@ vpRobotAfma4::~vpRobotAfma4 (void)
 
   if (0 != vmeClose_Afma4())
   {
-    ERROR_TRACE ("Error while closing communications with the robot.");
+    vpERROR_TRACE ("Error while closing communications with the robot.");
   }
   close_rs232_servolens();
 
@@ -244,12 +244,12 @@ vpRobotAfma4::setRobotState(vpRobot::RobotStateType newState)
     {
       if (vpRobot::STATE_VELOCITY_CONTROL  == getRobotState ())
       {
-	DEBUG_TRACE (12, "Passage vitesse -> position.");
+	vpDEBUG_TRACE (12, "Passage vitesse -> position.");
 	stop_mouvement_Afma4();
       }
       else
       {
-	DEBUG_TRACE (1, "Passage arret -> position.");
+	vpDEBUG_TRACE (1, "Passage arret -> position.");
       }
       break;
     }
@@ -257,10 +257,10 @@ vpRobotAfma4::setRobotState(vpRobot::RobotStateType newState)
     {
       if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
       {
-	DEBUG_TRACE (10, "Robot en arret: demarage...");
+	vpDEBUG_TRACE (10, "Robot en arret: demarage...");
 	if (0 != init_mouvement_Afma4 ())
 	{
-	  ERROR_TRACE ("Cannot init velocity control.");
+	  vpERROR_TRACE ("Cannot init velocity control.");
 	  throw vpRobotException (vpRobotException::lowLevelError,
 				  "Cannot init velocity control.");
 	}
@@ -321,7 +321,7 @@ vpRobotAfma4::get_eJe(vpMatrix &eJe)
   }
   catch(...)
   {
-    ERROR_TRACE("catch exception ") ;
+    vpERROR_TRACE("catch exception ") ;
     throw ;
   }
 }
@@ -392,7 +392,7 @@ vpRobotAfma4::setPosition (const vpRobot::ControlFrameType frame,
 
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState ())
   {
-    ERROR_TRACE ("Robot was not in position-based control\n"
+    vpERROR_TRACE ("Robot was not in position-based control\n"
 		 "Modification of the robot state");
     setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
   }
@@ -400,20 +400,20 @@ vpRobotAfma4::setPosition (const vpRobot::ControlFrameType frame,
   switch(frame)
   {
   case vpRobot::CAMERA_FRAME:
-    ERROR_TRACE ("Cannot move the robot in camera frame: not implemented");
+    vpERROR_TRACE ("Cannot move the robot in camera frame: not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot move the robot in camera frame: "
 			    "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
-    ERROR_TRACE ("Cannot move the robot in reference frame: "
+    vpERROR_TRACE ("Cannot move the robot in reference frame: "
 		 "not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot move the robot in reference frame: "
 			    "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
-    ERROR_TRACE ("Cannot move the robot in mixt frame: "
+    vpERROR_TRACE ("Cannot move the robot in mixt frame: "
 		 "not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot move the robot in mixt frame: "
@@ -431,7 +431,7 @@ vpRobotAfma4::setPosition (const vpRobot::ControlFrameType frame,
 
   if (0 != positionnement_Afma4(& communicationPosition ))
   {
-    ERROR_TRACE ("Positionning error.");
+    vpERROR_TRACE ("Positionning error.");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Positionning error.");
   }
@@ -478,25 +478,25 @@ void
 vpRobotAfma4::getPosition (const vpRobot::ControlFrameType frame,
 			   vpColVector & r)
 {
-  DEBUG_TRACE (9, "# Entree.");
+  vpDEBUG_TRACE (9, "# Entree.");
 
   switch(frame)
   {
   case vpRobot::CAMERA_FRAME :
-    ERROR_TRACE ("Cannot get position in camera frame: not implemented");
+    vpERROR_TRACE ("Cannot get position in camera frame: not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot get position in camera frame: "
 			    "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
-    ERROR_TRACE ("Cannot get position in reference frame: "
+    vpERROR_TRACE ("Cannot get position in reference frame: "
 		 "not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot get position in reference frame: "
 			    "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
-    ERROR_TRACE ("Cannot get position in mixt frame: "
+    vpERROR_TRACE ("Cannot get position in mixt frame: "
 		 "not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot get position in mixt frame: "
@@ -509,7 +509,7 @@ vpRobotAfma4::getPosition (const vpRobot::ControlFrameType frame,
   communicationPosition.mode=ABSOLU;
   if (0 != recup_posit_Afma4(& (communicationPosition) ) )
   {
-    ERROR_TRACE ("Error when calling  recup_posit_Afma4.");
+    vpERROR_TRACE ("Error when calling  recup_posit_Afma4.");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Error when calling  recup_posit_Afma4.");
   }
@@ -634,7 +634,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
 
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
   {
-    ERROR_TRACE ("Cannot send a velocity to the robot "
+    vpERROR_TRACE ("Cannot send a velocity to the robot "
 		 "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
     throw vpRobotException (vpRobotException::wrongStateError,
 			    "Cannot send a velocity to the robot "
@@ -647,7 +647,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     {
       communicationVelocity.repere = REPCAM;
       if ( r_dot.getRows() != 2) {
-	ERROR_TRACE ("Bad dimension fo speed vector in camera frame");
+	vpERROR_TRACE ("Bad dimension fo speed vector in camera frame");
 	throw vpRobotException (vpRobotException::wrongStateError,
 				"Bad dimension for speed vector "
 				"in camera frame");
@@ -658,7 +658,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     {
       communicationVelocity.repere = REPART;
       if ( r_dot.getRows() != 4) {
-	ERROR_TRACE ("Bad dimension fo speed vector in articular frame");
+	vpERROR_TRACE ("Bad dimension fo speed vector in articular frame");
 	throw vpRobotException (vpRobotException::wrongStateError,
 				"Bad dimension for speed vector "
 				"in articular frame");
@@ -668,7 +668,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
   case vpRobot::REFERENCE_FRAME :
     {
       communicationVelocity.repere = REPFIX;
-      ERROR_TRACE ("Cannot send a velocity to the robot "
+      vpERROR_TRACE ("Cannot send a velocity to the robot "
 		   "in the reference frame: "
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
@@ -679,7 +679,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     }
   case vpRobot::MIXT_FRAME :
     {
-      ERROR_TRACE ("Cannot send a velocity to the robot "
+      vpERROR_TRACE ("Cannot send a velocity to the robot "
 		   "in the mixt frame: "
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
@@ -690,7 +690,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     }
   default:
     {
-      ERROR_TRACE ("Error in spec of vpRobot. "
+      vpERROR_TRACE ("Error in spec of vpRobot. "
 		   "Case not taken in account.");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot send a velocity to the robot ");
@@ -703,7 +703,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     communicationVelocity.mvt[i] = 0.0;
   }
 
-  DEBUG_TRACE (12, "Velocity limitation.");
+  vpDEBUG_TRACE (12, "Velocity limitation.");
   vpColVector v(6);
 
   switch(frame) {
@@ -714,7 +714,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
       if (fabs (r_dot[i]) > max)
       {
 	max = fabs (r_dot[i]);
-	ERROR_TRACE ("Excess velocity: ROTATION "
+	vpERROR_TRACE ("Excess velocity: ROTATION "
 		     "(axe nr.%d).", i);
       }
     }
@@ -735,7 +735,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     if (fabs (r_dot[0]) > max) // turret rotation
     {
       max = fabs (r_dot[0]);
-      ERROR_TRACE ("Excess velocity: ROTATION "
+      vpERROR_TRACE ("Excess velocity: ROTATION "
 		   "(axe nr.%d).", 0);
     }
     for (int i = 2 ; i < 4; ++ i) // pan and tilt
@@ -743,7 +743,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
       if (fabs (r_dot[i]) > max)
       {
 	max = fabs (r_dot[i]);
-	ERROR_TRACE ("Excess velocity: ROTATION "
+	vpERROR_TRACE ("Excess velocity: ROTATION "
 		     "(axe nr.%d).", i);
       }
     }
@@ -756,7 +756,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     if (fabs (r_dot[1]) > max)
     {
       max = fabs (r_dot[1]);
-      ERROR_TRACE ("Excess velocity: TRANSLATION "
+      vpERROR_TRACE ("Excess velocity: TRANSLATION "
 		   "(axe nr.%d).", 1);
     }
     v [1] = r_dot[1]*max;
@@ -776,7 +776,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
 
   }
 
-  CDEBUG(12) << "v: " << v.t() << endl;
+  vpCDEBUG(12) << "v: " << v.t() << endl;
   active_mouvement_Afma4(& (communicationVelocity) );
   return;
 }
@@ -831,7 +831,7 @@ vpRobotAfma4::getVelocity (const vpRobot::ControlFrameType frame,
   case vpRobot::MIXT_FRAME:
     {
 
-      ERROR_TRACE ("Cannot get a velocity in the mixt frame: "
+      vpERROR_TRACE ("Cannot get a velocity in the mixt frame: "
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot get a velocity in the reference frame:"
@@ -921,7 +921,7 @@ vpRobotAfma4::readPosFile(char *name, vpColVector &v)
   pt_fich = fopen(name,"r") ;
 
   if (pt_fich == NULL) {
-    ERROR_TRACE ("Can not open file %s", name);
+    vpERROR_TRACE ("Can not open file %s", name);
     return 1;
   }
 
@@ -1058,7 +1058,7 @@ vpRobotAfma4::getDisplacement(vpRobot::ControlFrameType frame,
     }
   case vpRobot::MIXT_FRAME:
     {
-      ERROR_TRACE ("Cannot get a displacement in the mixt frame: "
+      vpERROR_TRACE ("Cannot get a displacement in the mixt frame: "
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot get a displacement in the reference frame:"

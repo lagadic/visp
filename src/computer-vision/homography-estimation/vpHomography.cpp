@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.cpp,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpHomography.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,7 @@ vpHomography::init()
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -300,7 +300,7 @@ vpHomography::save(ofstream &f) const
   }
   else
   {
-    ERROR_TRACE("\t\t file not open " );
+    vpERROR_TRACE("\t\t file not open " );
     throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
@@ -325,7 +325,7 @@ vpHomography::load(ifstream &f)
   }
   else
   {
-    ERROR_TRACE("\t\t file not open " );
+    vpERROR_TRACE("\t\t file not open " );
     throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }

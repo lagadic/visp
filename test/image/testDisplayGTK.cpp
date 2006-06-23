@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayGTK.cpp,v 1.1 2006-05-10 13:01:28 fspindle Exp $
+ *  $Id: testDisplayGTK.cpp,v 1.2 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -105,7 +105,7 @@ main()
 #endif
   vpDisplay::close(I);
 
-  TRACE("-------------------------------------");
+  vpTRACE("-------------------------------------");
   vpImage<vpRGBa> Irgba ;
 
   vpImageIo::readPGM(Irgba,"images/Klimt.pgm") ;
@@ -147,7 +147,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have GTK functionalities to display images...");
+  vpERROR_TRACE("You do not have GTK functionalities to display images...");
 }
 
 #endif

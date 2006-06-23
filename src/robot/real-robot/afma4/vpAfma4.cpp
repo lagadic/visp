@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma4.cpp,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpAfma4.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,7 +67,7 @@ const int    vpAfma4::articulationsNb = 4;
 void
 vpAfma4::computeMGD (const vpColVector & q, vpHomogeneousMatrix & oMc)
 {
-  DEBUG_TRACE (3, "# Entree.");
+  vpDEBUG_TRACE (3, "# Entree.");
 
   /* Passage de m en mm. */
   double            q0 = q[0]; // rot tourelle
@@ -103,7 +103,7 @@ vpAfma4::computeMGD (const vpColVector & q, vpHomogeneousMatrix & oMc)
   oMc[3][2] = 0.f;
   oMc[3][3] = 1;
 
-  CDEBUG (6) << "Position de l'effecteur: " << endl << oMc;
+  vpCDEBUG (6) << "Position de l'effecteur: " << endl << oMc;
 
   /* Multiplication par rapport poignee-image. */
   double            t [3];
@@ -125,7 +125,7 @@ vpAfma4::computeMGD (const vpColVector & q, vpHomogeneousMatrix & oMc)
     }
   }
 
-  DEBUG_TRACE (3, "# Sortie.");
+  vpDEBUG_TRACE (3, "# Sortie.");
   return ;
 }
 
@@ -151,15 +151,15 @@ vpAfma4::computeMGD (const vpColVector & q, vpHomogeneousMatrix & oMc)
 vpHomogeneousMatrix
 vpAfma4::computeMGD (const vpColVector & q)
 {
-  DEBUG_TRACE (6, "# Entree.");
+  vpDEBUG_TRACE (6, "# Entree.");
 
-  DEBUG_TRACE (9, "Creation de la matrice resultat.");
+  vpDEBUG_TRACE (9, "Creation de la matrice resultat.");
   vpHomogeneousMatrix fMc;
 
-  DEBUG_TRACE (9, "Appel du calcul de oMc.");
+  vpDEBUG_TRACE (9, "Appel du calcul de oMc.");
   computeMGD (q, fMc);
 
-  DEBUG_TRACE (6, "# Sortie.");
+  vpDEBUG_TRACE (6, "# Sortie.");
   return fMc;
 }
 
@@ -177,19 +177,19 @@ vpAfma4::computeMGD (const vpColVector & q)
 void
 vpAfma4::computeMGD (const vpColVector & q, vpPoseVector & r)
 {
-  DEBUG_TRACE (6, "# Entree.");
+  vpDEBUG_TRACE (6, "# Entree.");
 
-  DEBUG_TRACE (9, "Creation de la matrice resultat.");
+  vpDEBUG_TRACE (9, "Creation de la matrice resultat.");
   vpHomogeneousMatrix fMc;
 
-  DEBUG_TRACE (9, "Appel du calcul de oMc.");
+  vpDEBUG_TRACE (9, "Appel du calcul de oMc.");
   computeMGD (q, fMc);
-  CDEBUG (15) << "fMc: " << endl << fMc;
+  vpCDEBUG (15) << "fMc: " << endl << fMc;
 
-  DEBUG_TRACE (9, "Conversion du cMf en vecteur.");
+  vpDEBUG_TRACE (9, "Conversion du cMf en vecteur.");
   r.buildFrom(fMc.inverse());
 
-  DEBUG_TRACE (6, "# Sortie.");
+  vpDEBUG_TRACE (6, "# Sortie.");
   return ;
 }
 
@@ -220,7 +220,7 @@ vpAfma4::computeInverseJacobian (const vpColVector & pos,
 				 vpMatrix & Jinverse)
 {
 
-  ERROR_TRACE ("Inverse jacobian non implemented");
+  vpERROR_TRACE ("Inverse jacobian non implemented");
   throw vpRobotException (vpRobotException::notInitializedError,
 			  "Inverse jacobian non implemented");
 }
@@ -245,15 +245,15 @@ vpAfma4::computeInverseJacobian (const vpColVector & pos,
 vpMatrix
 vpAfma4::computeInverseJacobian (const vpColVector & q)
 {
-  DEBUG_TRACE (6, "# Entree.");
+  vpDEBUG_TRACE (6, "# Entree.");
 
-  DEBUG_TRACE (9, "Creation de la matrice resultat.");
+  vpDEBUG_TRACE (9, "Creation de la matrice resultat.");
   vpMatrix Jp (4,6);
 
-  DEBUG_TRACE (9, "Appel du calcul de cMo.");
+  vpDEBUG_TRACE (9, "Appel du calcul de cMo.");
   computeInverseJacobian (q, Jp);
 
-  DEBUG_TRACE (6, "# Sortie.");
+  vpDEBUG_TRACE (6, "# Sortie.");
   return Jp;
 }
 
@@ -273,7 +273,7 @@ vpAfma4::computeInverseJacobian (const vpColVector & q)
 void
 vpAfma4::getJointLimitsMin (double __jointMin[articulationsNb]) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     for (int i = 0; i < vpAfma4::articulationsNb ; ++ i)
 	{
@@ -281,7 +281,7 @@ vpAfma4::getJointLimitsMin (double __jointMin[articulationsNb]) const
 	}
 
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -293,14 +293,14 @@ vpAfma4::getJointLimitsMin (double __jointMin[articulationsNb]) const
 void
 vpAfma4::getJointLimitsMax (double __jointMax[articulationsNb]) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     for (int i = 0; i < vpAfma4::articulationsNb ; ++ i)
 	{
 	    __jointMax [i] = jointMax [i] ;
 	}
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -319,7 +319,7 @@ vpAfma4::getJointLimitsMax (double __jointMax[articulationsNb]) const
 void
 vpAfma4::respectJointLimits (vpColVector &q) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     for (int i = 0 ; i < vpAfma4::articulationsNb ; ++ i)
     {
@@ -328,7 +328,7 @@ vpAfma4::respectJointLimits (vpColVector &q) const
     }
 
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -374,7 +374,7 @@ void
 vpAfma4::getPositionInJointInterval (const vpColVector &q,
 			    double jointPos[articulationsNb]) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     for (int i = 0 ; i < vpAfma4::articulationsNb ; ++ i)
 	{
@@ -383,7 +383,7 @@ vpAfma4::getPositionInJointInterval (const vpColVector &q,
 		   / (jointMax [i]- jointMin [i]));
 	}
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -412,7 +412,7 @@ vpAfma4::vpAfma4 (void)
 
   /* Tous les autres attributs sont initialises dans l'init. */
 {
-  DEBUG_TRACE (25, "# Entree - Sortie.");
+  vpDEBUG_TRACE (25, "# Entree - Sortie.");
   init();
 }
 /* ---------------------------------------------------------------------- */
@@ -475,17 +475,17 @@ vpAfma4::parseConfigFile (const char * filename)
   FILE *            fdtask;
   int               numLn = 0;
 
-  DEBUG_TRACE (15, "Ouverture du fichier de parametres %s.", filename);
+  vpDEBUG_TRACE (15, "Ouverture du fichier de parametres %s.", filename);
   if ((fdtask = fopen(filename, "r" )) == NULL)
   {
-    ERROR_TRACE ("Impossible d'ouvrir le fichier de constantes robot %s.",
+    vpERROR_TRACE ("Impossible d'ouvrir le fichier de constantes robot %s.",
 		 filename);
     fclose(fdtask);
     throw vpRobotException (vpRobotException::readingParametersError,
 			    "Impossible d'ouvrir le fichier de constantes robot.");
   }
 
-  DEBUG_TRACE (15, "Parsage du fichier.");
+  vpDEBUG_TRACE (15, "Parsage du fichier.");
   while (fgets(Ligne,100,fdtask) != NULL)
   {
     numLn ++;
@@ -633,13 +633,13 @@ vpAfma4::parseConfigFile (const char * filename)
       break;
 
     default:
-      ERROR_TRACE ("Fichier de configuration %s incorrect: "
+      vpERROR_TRACE ("Fichier de configuration %s incorrect: "
 		   "ligne #%d.", filename, numLn);
     } /* SWITCH */
   } /* WHILE */
 
     /* Fin de la lecture du fichier. */
-  DEBUG_TRACE (15, "On ferme le fichier de configuration.");
+  vpDEBUG_TRACE (15, "On ferme le fichier de configuration.");
   fclose (fdtask);
 
   return;
@@ -652,16 +652,16 @@ vpAfma4::init (const char * paramAfma4)
   this->FlagMod = 0;
   this->FlagReset = 0;
 
-  DEBUG_TRACE (15, "Parsage fichier robot.");
+  vpDEBUG_TRACE (15, "Parsage fichier robot.");
   this->parseConfigFile (paramAfma4);
 
-  DEBUG_TRACE (15, "Calcul de la matrice RPI.");
+  vpDEBUG_TRACE (15, "Calcul de la matrice RPI.");
   this->initRpi ();
 
-  DEBUG_TRACE (15, "Calcul du domaine Joint Limits.");
+  vpDEBUG_TRACE (15, "Calcul du domaine Joint Limits.");
   this->initJointLimits ();
 
-  DEBUG_TRACE (15, "Objet initialise !");
+  vpDEBUG_TRACE (15, "Objet initialise !");
   this->dejaInitialisee = true;
 
   return ;
@@ -893,7 +893,7 @@ vpAfma4::get_eJe(const vpColVector &q, vpMatrix &eJe)
 {
 
   eJe = 0;
-  ERROR_TRACE("Jacobian expressed in the end-effector frame not implemneted");
+  vpERROR_TRACE("Jacobian expressed in the end-effector frame not implemneted");
 }
 
 /*!

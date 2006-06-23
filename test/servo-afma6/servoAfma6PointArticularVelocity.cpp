@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6PointArticularVelocity.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: servoAfma6PointArticularVelocity.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -71,20 +71,20 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
 
   vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -112,29 +112,29 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
   vpCameraParameters cam ;
 
-  TRACE("sets the current position of the visual feature ") ;
+  vpTRACE("sets the current position of the visual feature ") ;
   vpFeaturePoint p ;
   vpFeatureBuilder::create(p,cam, dot)  ;  //retrieve x,y and Z of the vpPoint structure
 
   p.set_Z(1) ;
-  TRACE("sets the desired position of the visual feature ") ;
+  vpTRACE("sets the desired position of the visual feature ") ;
   vpFeaturePoint pd ;
   pd.buildFrom(0,0,1) ;
 
-  TRACE("define the task") ;
-   TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t articular velocity are computed") ;
+  vpTRACE("define the task") ;
+   vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t articular velocity are computed") ;
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
   task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
 
 
-  TRACE("Set the position of the camera in the end-effector frame ") ;
+  vpTRACE("Set the position of the camera in the end-effector frame ") ;
   vpHomogeneousMatrix cMe ;
   //  robot.get_cMe(cMe) ;
 
@@ -144,28 +144,28 @@ main()
   task.set_cVe(cVe) ;
 
   vpDisplay::getClick(I) ;
-  TRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+  vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
   vpMatrix eJe ;
   robot.get_eJe(eJe) ;
   task.set_eJe(eJe) ;
 
 
-  TRACE("\t we want to see a point on a point..") ;
+  vpTRACE("\t we want to see a point on a point..") ;
   cout << endl ;
   task.addFeature(p,pd) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.8) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
 
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   while(1)
   {
     cout << "---------------------------------------------" << iter <<endl ;
@@ -194,10 +194,10 @@ main()
     cout << v.t() ;
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
-    TRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 }
 
@@ -206,6 +206,6 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot connected to your computer...");
 }
 #endif

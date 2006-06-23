@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testMeCircle1.cpp,v 1.2 2006-04-19 09:01:25 fspindle Exp $
+ *  $Id: testMeCircle1.cpp,v 1.3 2006-06-23 14:45:09 brenier Exp $
  *
  * Description
  * ============
@@ -50,7 +50,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -61,7 +61,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   vpMeEllipse E1 ;
@@ -96,7 +96,7 @@ main()
 #endif
   E1.display(I, vpColor::green) ;
 
-  ERROR_TRACE("sample step %f ",E1.me->sample_step) ;
+  vpERROR_TRACE("sample step %f ",E1.me->sample_step) ;
   E1.track(I) ;
 #if 0
   vpDisplay::getClick(I) ;
@@ -117,7 +117,7 @@ main()
     }
     catch(...)
     {
-      ERROR_TRACE("Error in tracking vpMeLine ") ;
+      vpERROR_TRACE("Error in tracking vpMeLine ") ;
       exit(1) ;
     }
 
@@ -135,7 +135,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

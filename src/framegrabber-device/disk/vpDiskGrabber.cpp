@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.cpp,v 1.3 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpDiskGrabber.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,7 +85,7 @@ vpDiskGrabber::open(vpImage<unsigned char> &I)
 {
   unsigned long first_number = getImageNumber();
 
-  DEBUG_TRACE(2, "first %ld", first_number);
+  vpDEBUG_TRACE(2, "first %ld", first_number);
 
   acquire(I);
 
@@ -105,7 +105,7 @@ vpDiskGrabber::open(vpImage<vpRGBa> &I)
   // Fisrt we save the image number, so that it can be reaffected after the
   // acquisition. That means that the first image is readed twice
   unsigned long first_number = getImageNumber();
-  DEBUG_TRACE(2, "first %ld", first_number);
+  vpDEBUG_TRACE(2, "first %ld", first_number);
 
   acquire(I);
 
@@ -153,7 +153,7 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I)
   }
   image_number += image_step ;
 
-  DEBUG_TRACE(2, "load: %s\n", name);
+  vpDEBUG_TRACE(2, "load: %s\n", name);
 
   vpImageIo::readPGM(I, name) ;
 
@@ -212,7 +212,7 @@ void
 vpDiskGrabber::setImageNumber(unsigned long number)
 {
   image_number = number ;
-  DEBUG_TRACE(2, "image number %ld", image_number);
+  vpDEBUG_TRACE(2, "image number %ld", image_number);
 
 }
 

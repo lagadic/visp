@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix_svd.cpp,v 1.8 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpMatrix_svd.cpp,v 1.9 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -134,7 +134,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 
   if (m < n)
   {
-    ERROR_TRACE("\n\t\tSVDcmp: You must augment A with extra zero rows") ;
+    vpERROR_TRACE("\n\t\tSVDcmp: You must augment A with extra zero rows") ;
     throw(vpMatrixException(vpMatrixException::matrixError,
 			    "\n\t\tSVDcmp: You must augment A with "
 			    "extra zero rows")) ;
@@ -271,7 +271,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
       {
 	for (i=0;i<n;i++) W[i] = w[i+1];
 
-	ERROR_TRACE("\n\t\t No convergence in  SVDcmp ") ;
+	vpERROR_TRACE("\n\t\t No convergence in  SVDcmp ") ;
 	cout << *this <<endl ;
 	//	throw(vpMatrixException(vpMatrixException::matrixError,
 	//				"\n\t\t No convergence in  SVDcmp ")) ;

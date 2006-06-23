@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix_lu.cpp,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpMatrix_lu.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -90,7 +90,7 @@ vpMatrix::LUDcmp(int *perm, int& d)
       if ((temp=fabs(rowPtrs[i][j])) > big) big=temp;
     if (big == 0.0)
     {
-      ERROR_TRACE("Singular vpMatrix in  LUDcmp") ;
+      vpERROR_TRACE("Singular vpMatrix in  LUDcmp") ;
         throw(vpMatrixException(vpMatrixException::matrixError,
 			    "\n\t\tSingular vpMatrix in  LUDcmp")) ;
     }
@@ -187,7 +187,7 @@ vpMatrix::inverseByLU() const
 
   if ( rowNum != colNum)
   {
-    ERROR_TRACE("\n\t\tCannot invert a non-square vpMatrix") ;
+    vpERROR_TRACE("\n\t\tCannot invert a non-square vpMatrix") ;
     throw(vpMatrixException(vpMatrixException::matrixError,
 			    "Cannot invert a non-square vpMatrix")) ;
   }

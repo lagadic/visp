@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.5 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -121,7 +121,7 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 
   if (me->sample_step==0)
   {
-    ERROR_TRACE("function called with sample step = 0") ;
+    vpERROR_TRACE("function called with sample step = 0") ;
     throw(vpTrackingException(vpTrackingException::fatalError,
 			      "sample step = 0")) ;
   }
@@ -244,7 +244,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -279,7 +279,7 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
 
   if (list.nbElement() < 2)
   {
-    ERROR_TRACE("Not enough point") ;
+    vpERROR_TRACE("Not enough point") ;
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "not enough point")) ;
   }
@@ -382,12 +382,12 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
 
   if (list.nbElement() < 2)
   {
-    ERROR_TRACE("Not enough point") ;
+    vpERROR_TRACE("Not enough point") ;
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "not enough point")) ;
   }
 
-  // TRACE("%f %f %f ",a,b,c) ;
+  // vpTRACE("%f %f %f ",a,b,c) ;
   if ((fabs(b) >=0.9) )// ax+y +c =0
   {
     while (iter < 1)
@@ -448,7 +448,7 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
       a /= s ;
       b /= s ;
       c /= s ;
-      //   TRACE("ax+y+c %f %f %f",a,b,c) ;
+      //   vpTRACE("ax+y+c %f %f %f",a,b,c) ;
       // -------------------
     }
 
@@ -511,13 +511,13 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
       a /= s ;
       b /= s ;
       c /= s ;
-      //   TRACE("x+by+c %f %f %f",a,b,c) ;
+      //   vpTRACE("x+by+c %f %f %f",a,b,c) ;
       // -------------------
     }
   }
   // mise a jour de l'equation de la droite
 
-  //  TRACE("ai+bj+c %f %f %f",a,b,c) ;
+  //  vpTRACE("ai+bj+c %f %f %f",a,b,c) ;
   // mise a jour du delta
   delta = atan2(a,b) ;
 
@@ -557,7 +557,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,int i1,int j1, int i2, int j2)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   if (DEBUG_LEVEL1)
@@ -655,7 +655,7 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
   if (me->sample_step==0)
   {
 
-    ERROR_TRACE("function called with sample step = 0") ;
+    vpERROR_TRACE("function called with sample step = 0") ;
     throw(vpTrackingException(vpTrackingException::fatalError,
 			      "sample step = 0")) ;
   }
@@ -825,7 +825,7 @@ vpMeLine::track(vpImage<unsigned char> &I)
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ; throw ;
+      vpERROR_TRACE(" ") ; throw ;
     }
 
 
@@ -840,7 +840,7 @@ vpMeLine::track(vpImage<unsigned char> &I)
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ; throw ;
+      vpERROR_TRACE(" ") ; throw ;
     }
 
     // suppression des points rejetes par la regression robuste
@@ -945,12 +945,12 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
   while (theta < -M_PI)   theta +=2*M_PI ;
 
 
-    TRACE("%f %f %d", rho, theta, sgn) ;
+    vpTRACE("%f %f %d", rho, theta, sgn) ;
   if ( (theta > M_PI/4) &&  (theta < 3*M_PI/4))
   {
     if (sgn <0)
     {
-            TRACE(" ") ;
+            vpTRACE(" ") ;
       rho *=-1 ;
       theta += M_PI ;
     }
@@ -960,7 +960,7 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
     {
       if (sgn>0)
       {
-	      TRACE(" ") ;
+	      vpTRACE(" ") ;
 	rho *=-1 ;
 	theta += M_PI ;
       }
@@ -970,26 +970,26 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
     {
       if (sgn>0)
       {
-	      TRACE(" ") ;
+	      vpTRACE(" ") ;
 	rho *=-1 ;
 	theta += M_PI ;
       }
     }
     else
     {
-       if (sgn<0)
+      if (sgn<0)
       {
-		TRACE(" ") ;
+	vpTRACE(" ") ;
 	rho *=-1 ;
 	theta += M_PI ;
       }
     }
-     TRACE("%f %f", rho, theta) ;
+     vpTRACE("%f %f", rho, theta) ;
 
 
   while (theta > M_PI)     theta -=2*M_PI ;
   while (theta < -M_PI)    theta +=2*M_PI ;
-     TRACE("%f %f", rho, theta) ;
+     vpTRACE("%f %f", rho, theta) ;
 
   //  if (DEBUG_LEVEL2)
     vpDisplay::displayArrow(I,i,j,i3,j3, vpColor::green) ;
@@ -1001,10 +1001,10 @@ vpMeLine::getRho() const
 
 
   /*  double s = vpMath::sqr(a)+vpMath::sqr(b) ;
-  //  TRACE("%f %f %f %f", a,b,c,s) ;
+  //  vpTRACE("%f %f %f %f", a,b,c,s) ;
   if (fabs(s) < 1e-10)
   {
-    ERROR_TRACE("Division par zero") ;
+    vpERROR_TRACE("Division par zero") ;
     throw(vpTrackingException(vpException::divideByZeroERR,
 			      "division by zero in getRho")) ;
   }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderLine.cpp,v 1.3 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpFeatureBuilderLine.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,7 +76,7 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpLine &t )
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -133,7 +133,7 @@ void vpFeatureBuilder::create(vpFeatureLine &s,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -154,9 +154,9 @@ vpFeatureBuilder::create(vpFeatureLine &s,
     rhop = t.getRho() ;
     thetap = t.getTheta();
 
-    //  TRACE("pixel %f %f",rhop, thetap) ;
+    //  vpTRACE("pixel %f %f",rhop, thetap) ;
     vpPixelMeterConversion::convertLine(cam,rhop,thetap, rho,theta) ;
-    //   TRACE("meter %f %f",rho, theta) ;
+    //   vpTRACE("meter %f %f",rho, theta) ;
     /*
 
     while(theta < -M_PI)	theta += 2*M_PI ;
@@ -178,12 +178,12 @@ vpFeatureBuilder::create(vpFeatureLine &s,
     }
     */
     s.buildFrom(rho,theta) ;
-    //   TRACE("meter %f %f",rho, theta) ;
+    //   vpTRACE("meter %f %f",rho, theta) ;
 
   }
   catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
 }

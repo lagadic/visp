@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseDementhon.cpp,v 1.5 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpPoseDementhon.cpp,v 1.6 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,7 +102,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -152,7 +152,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
       }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   try{
@@ -160,7 +160,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -170,7 +170,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -195,7 +195,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
     if (normI+normJ < 1e-10)
     {
-      ERROR_TRACE(" normI+normJ = 0, division par zero " ) ;
+      vpERROR_TRACE(" normI+normJ = 0, division par zero " ) ;
       throw(vpException(vpException::divideByZeroError,
 			"division by zero  ")) ;
     }
@@ -211,7 +211,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     }
     if (npt==0)
     {
-      ERROR_TRACE( " npt = 0, division par zero ");
+      vpERROR_TRACE( " npt = 0, division par zero ");
       throw(vpException(vpException::divideByZeroError,
 			"division by zero  ")) ;
     }
@@ -547,7 +547,7 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 

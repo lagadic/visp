@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisplayX2.cpp,v 1.7 2006-04-19 09:01:23 fspindle Exp $
+ *  $Id: testDisplayX2.cpp,v 1.8 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -130,7 +130,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

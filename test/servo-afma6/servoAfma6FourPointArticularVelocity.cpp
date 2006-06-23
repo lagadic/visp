@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6FourPointArticularVelocity.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: servoAfma6FourPointArticularVelocity.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -71,20 +71,20 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
 
   vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -112,18 +112,18 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
   vpCameraParameters cam ;
 
-  TRACE("sets the current position of the visual feature ") ;
+  vpTRACE("sets the current position of the visual feature ") ;
   vpFeaturePoint p[4] ;
   for (i=0 ; i < 4 ; i++)
     vpFeatureBuilder::create(p[i],cam, dot[i])  ;  //retrieve x,y and Z of the vpPoint structure
 
-  TRACE("sets the desired position of the visual feature ") ;
+  vpTRACE("sets the desired position of the visual feature ") ;
   vpFeaturePoint pd[4] ;
 
 #define L 0.075
@@ -134,21 +134,21 @@ main()
   pd[2].buildFrom(L,L,D) ;
   pd[3].buildFrom(-L,L,D) ;
 
-  TRACE("\t we want to see a point on a point..") ;
+  vpTRACE("\t we want to see a point on a point..") ;
   cout << endl ;
   for (i=0 ; i < 4 ; i++)
     task.addFeature(p[i],pd[i]) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.2) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
-  TRACE("define the task") ;
-  TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t articular velocity are computed") ;
+  vpTRACE("define the task") ;
+  vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t articular velocity are computed") ;
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
   task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
   task.print() ;
@@ -158,7 +158,7 @@ main()
   task.set_cVe(cVe) ;
   task.print() ;
 
-  TRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+  vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
   vpMatrix eJe ;
   robot.get_eJe(eJe) ;
   task.set_eJe(eJe) ;
@@ -167,7 +167,7 @@ main()
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   while(1)
   {
     cout << "---------------------------------------------" << iter <<endl ;
@@ -182,7 +182,7 @@ main()
       }
     catch(...)
       {
-	TRACE("Error detected while tracking visual features") ;
+	vpTRACE("Error detected while tracking visual features") ;
 	robot.stopMotion() ;
 	exit(1) ;
       }
@@ -205,10 +205,10 @@ main()
     cout << v.t() ;
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
-    TRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 }
 
@@ -216,7 +216,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot connected to your computer...");
 }
 
 #endif

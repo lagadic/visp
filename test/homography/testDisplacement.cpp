@@ -43,11 +43,11 @@ main()
 
     vpHomography H(M,p) ;
 
-    TRACE(" ") ;
+    vpTRACE(" ") ;
     cout << "H" <<endl <<H << endl ;
 
 
-    TRACE(" ") ;
+    vpTRACE(" ") ;
 
     vpColVector n ;
     vpTranslationVector T ;
@@ -57,8 +57,8 @@ main()
     cout << "R" <<endl << R ;
     cout << "T" <<endl << T.t()  ;
     cout << "n" <<endl << n.t()  ;
-    TRACE(" ") ;
-    TRACE(" ") ;
+    vpTRACE(" ") ;
+    vpTRACE(" ") ;
   }
   cout <<"------------------------------------------------------" << endl ;
 
@@ -88,11 +88,11 @@ main()
 
     vpHomography H(M,p) ;
 
-    TRACE(" ") ;
+    vpTRACE(" ") ;
     cout << "H" <<endl <<H << endl ;
 
 
-    TRACE(" ") ;
+    vpTRACE(" ") ;
 
     vpColVector n ;
     vpTranslationVector T ;
@@ -102,8 +102,8 @@ main()
     cout << "R" <<endl << R ;
     cout << "T" <<endl << T.t()  ;
     cout << "n" <<endl << n.t()  ;
-    TRACE(" ") ;
-    TRACE(" ") ;
+    vpTRACE(" ") ;
+    vpTRACE(" ") ;
   }
 
   cout <<"------------------------------------------------------" << endl ;
@@ -126,10 +126,10 @@ main()
 
     vpHomography H(M,p) ;
 
-    TRACE(" ") ;
+    vpTRACE(" ") ;
     cout << "H" <<endl <<H << endl ;
 
-    TRACE(" ") ;
+    vpTRACE(" ") ;
     vpColVector n ;
     vpTranslationVector T ;
     H.computeDisplacement(R,T,n) ;
@@ -142,7 +142,7 @@ main()
     H.buildFrom(R,T,p1) ;
     cout << "H" <<endl <<H << endl ;
 
-    TRACE(" ") ;
+    vpTRACE(" ") ;
 
 
   }

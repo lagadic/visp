@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.cpp,v 1.4 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpCircle.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -140,7 +140,7 @@ vpCircle::projection(const vpColVector &cP, vpColVector &p)
   double det  = K[2]*K[2] -K[0]*K[1];
   if (fabs(det) < 1e-8)
   {
-    ERROR_TRACE("division par 0") ;
+    vpERROR_TRACE("division par 0") ;
     throw(vpException(vpException::divideByZeroError,
 		      "division par 0")) ;
 
@@ -223,7 +223,7 @@ vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 
   cP[6] = R ;
 
-  // TRACE("_cP :") ; cout << _cP.t() ;
+  // vpTRACE("_cP :") ; cout << _cP.t() ;
 
 }
 

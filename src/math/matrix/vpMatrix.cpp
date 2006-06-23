@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.26 2006-05-31 13:53:49 fspindle Exp $
+ * $Id: vpMatrix.cpp,v 1.27 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -125,14 +125,14 @@ vpMatrix::vpMatrix(const vpMatrix &m,
 
   if ( (r<0) || (c<0) )
   {
-    ERROR_TRACE("\n\t\t Illegal subMatrix operation") ;
+    vpERROR_TRACE("\n\t\t Illegal subMatrix operation") ;
     throw(vpMatrixException(vpMatrixException::subMatrixError,
 			    "\n\t\t Illegal subMatrix operation")) ;
   }
 
   if (((r + nrows) > m.rowNum) || ((c + ncols) > m.colNum))
   {
-    ERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
+    vpERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
     throw(vpMatrixException(vpMatrixException::subMatrixError,
 			    "\n\t\t SubvpMatrix larger than vpMatrix")) ;
   }
@@ -187,7 +187,7 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
     double * copyTmp = NULL;
     int rowTmp = 0, colTmp=0;
 
-    DEBUG_TRACE (25, "Recopy case per case is required iff number of "
+    vpDEBUG_TRACE (25, "Recopy case per case is required iff number of "
 		 "cols has changed (structure of double array is not "
 		 "the same in this case.");
     if (recopyNeeded)
@@ -197,29 +197,29 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
 	rowTmp=this->rowNum; colTmp=this->colNum;
       }
 
-    DEBUG_TRACE (25, "Reallocation of this->data array.");
+    vpDEBUG_TRACE (25, "Reallocation of this->data array.");
     this->dsize = nrows*ncols;
     this->data = (double*)realloc(this->data, this->dsize*sizeof(double));
     if ((NULL == this->data) && (0 != this->dsize))
     {
-      ERROR_TRACE("\n\t\tMemory allocation error when allocating data") ;
+      vpERROR_TRACE("\n\t\tMemory allocation error when allocating data") ;
       throw(vpException(vpException::memoryAllocationError,
 			"\n\t\t Memory allocation error when "
 			"allocating data")) ;
     }
 
-    DEBUG_TRACE (25, "Reallocation of this->trsize array.");
+    vpDEBUG_TRACE (25, "Reallocation of this->trsize array.");
     this->trsize = nrows;
     this->rowPtrs = (double**)realloc (this->rowPtrs, this->trsize*sizeof(double*));
     if ((NULL == this->rowPtrs) && (0 != this->dsize))
     {
-      ERROR_TRACE("\n\t\tMemory allocation error when allocating rowPtrs") ;
+      vpERROR_TRACE("\n\t\tMemory allocation error when allocating rowPtrs") ;
       throw(vpException(vpException::memoryAllocationError,
 			"\n\t\t Memory allocation error when "
 			"allocating rowPtrs")) ;
     }
 
-    DEBUG_TRACE (25, "Recomputation this->trsize array values.");
+    vpDEBUG_TRACE (25, "Recomputation this->trsize array values.");
     {
       double **t= rowPtrs;
       for (int i=0; i<dsize; i+=ncols)  { *t++ = this->data + i; }
@@ -227,14 +227,14 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
 
     this->rowNum = nrows; this->colNum = ncols;
 
-    DEBUG_TRACE (25, "Recopy of this->data array values or nullify.");
+    vpDEBUG_TRACE (25, "Recopy of this->data array values or nullify.");
     if (flagNullify)
       { memset(this->data,0,this->dsize*sizeof(double)) ;}
     else
       {
 	if (recopyNeeded)
 	  {
-	    DEBUG_TRACE (25, "Recopy...");
+	    vpDEBUG_TRACE (25, "Recopy...");
 	    const int minRow = (this->rowNum<rowTmp)?this->rowNum:rowTmp;
 	    const int minCol = (this->colNum<colTmp)?this->colNum:colTmp;
 	    for (int i=0; i<this->rowNum; ++i)
@@ -243,13 +243,13 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
 		  if ((minRow > i) && (minCol > j))
 		    {
 		      (*this)[i][j] = copyTmp [i*colTmp+j];
-		      CDEBUG (25) << i << "x" << j << "<- " << i*colTmp+j
+		      vpCDEBUG (25) << i << "x" << j << "<- " << i*colTmp+j
 				  << "=" << copyTmp [i*colTmp+j] << endl;
 		    }
 		  else {(*this)[i][j] = 0;}
 		}
 	  }
-	else { DEBUG_TRACE (25,"Nothing to do: already done by realloc.");}
+	else { vpDEBUG_TRACE (25,"Nothing to do: already done by realloc.");}
       }
 
   }
@@ -265,7 +265,7 @@ vpMatrix::init(const vpMatrix &m,int r, int c, int nrows, int ncols)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -317,7 +317,7 @@ vpMatrix::operator=(const vpMatrix &B)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -379,14 +379,14 @@ vpMatrix::operator*(const vpMatrix &B) const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
 
   if (colNum != B.rowNum)
   {
-    ERROR_TRACE("\n\t\tvpMatrix mismatch in vpMatrix/vpMatrix multiply") ;
+    vpERROR_TRACE("\n\t\tvpMatrix mismatch in vpMatrix/vpMatrix multiply") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\tvpMatrix mismatch in "
 			    "vpMatrix/vpMatrix multiply")) ;
@@ -414,14 +414,14 @@ vpMatrix::operator+(const vpMatrix &B) const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
 
   if ( (colNum != B.getCols())||(rowNum != B.getRows()))
   {
-    ERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
+    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix/vpMatrix addition")) ;
@@ -453,14 +453,14 @@ vpMatrix::operator-(const vpMatrix &B) const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
 
   if ( (colNum != B.getCols())||(rowNum != B.getRows()))
   {
-    ERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix substraction") ;
+    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix substraction") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix/vpMatrix substraction")) ;
@@ -489,7 +489,7 @@ vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
 {
   if ( (colNum != B.getCols())||(rowNum != B.getRows()))
   {
-    ERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix +=  addition") ;
+    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix +=  addition") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix += addition")) ;
@@ -520,7 +520,7 @@ vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
 {
   if ( (colNum != B.getCols())||(rowNum != B.getRows()))
   {
-    ERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix -= substraction") ;
+    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix -= substraction") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix -= substraction")) ;
@@ -557,7 +557,7 @@ vpMatrix vpMatrix::operator-() const //negate
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -612,7 +612,7 @@ vpMatrix::operator*(const vpColVector &b) const
 
   if (colNum != b.getRows())
   {
-    ERROR_TRACE("vpMatrix mismatch in vpMatrix/vector multiply") ;
+    vpERROR_TRACE("vpMatrix mismatch in vpMatrix/vector multiply") ;
     throw(vpMatrixException::incorrectMatrixSizeError) ;
   }
 
@@ -667,7 +667,7 @@ vpMatrix operator*(const double &x,const vpMatrix &B)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -688,7 +688,7 @@ vpMatrix vpMatrix::operator*(double x) const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -718,7 +718,7 @@ vpMatrix  vpMatrix::operator/(double x) const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -814,7 +814,7 @@ vpMatrix::setIdentity()
 
   if (rowNum != colNum)
   {
-    ERROR_TRACE("non square matrix") ;
+    vpERROR_TRACE("non square matrix") ;
     throw(vpMatrixException(vpMatrixException::matrixError)) ;
   }
 
@@ -842,7 +842,7 @@ vpMatrix::eye(int n)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -861,7 +861,7 @@ vpMatrix::eye(int m, int n)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -888,7 +888,7 @@ vpMatrix vpMatrix::t() const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -1262,7 +1262,7 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
   }
   catch(vpMatrixException me)
   {
-    CERROR ;
+    vpCERROR ;
     throw ;
   }
 
@@ -1290,7 +1290,7 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   if (nra !=0)
     if (A.getCols() != B.getCols())
     {
-      ERROR_TRACE("\n\t\t incorrect matrices size") ;
+      vpERROR_TRACE("\n\t\t incorrect matrices size") ;
       throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			      "\n\t\t incorrect matrices size")) ;
     }
@@ -1300,7 +1300,7 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -1342,7 +1342,7 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
   }
   catch(vpMatrixException me)
   {
-    CERROR ;
+    vpCERROR ;
     throw ;
   }
 
@@ -1370,7 +1370,7 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   if (nca !=0)
     if (A.getRows() != B.getRows())
     {
-      ERROR_TRACE("\n\t\t incorrect matrices size") ;
+      vpERROR_TRACE("\n\t\t incorrect matrices size") ;
       throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			      "\n\t\t incorrect matrices size")) ;
     }
@@ -1380,7 +1380,7 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -1416,7 +1416,7 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     cout << me << endl ;
     throw ;
   }
@@ -1640,7 +1640,7 @@ vpMatrix::det33(const vpMatrix &M)
 
   if ((M.getCols() !=3 ) || (M.getRows() !=3))
   {
-    TRACE("matrix is not of size 3x3 ") ;
+    vpTRACE("matrix is not of size 3x3 ") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\tmatrix is not of size 3x3"
 			    )) ;

@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoLine1.cpp,v 1.4 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: testServoLine1.cpp,v 1.5 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -82,19 +82,19 @@ main()
   cout << endl ;
 
 
-  TRACE("sets the initial camera location " ) ;
+  vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo(-0.2,0.1,1,
 			  vpMath::rad(5),  vpMath::rad(5),  vpMath::rad(90));
 
   robot.setPosition(cMo) ;
 
-  TRACE("sets the final camera location (for simulation purpose)" ) ;
+  vpTRACE("sets the final camera location (for simulation purpose)" ) ;
   vpHomogeneousMatrix cMod(0,0,1,
 			  vpMath::rad(0),  vpMath::rad(0),  vpMath::rad(0));
 
 
 
-  TRACE("sets the line coordinates (2 planes) in the world frame "  ) ;
+  vpTRACE("sets the line coordinates (2 planes) in the world frame "  ) ;
 
   vpColVector plane1(4) ;
   vpColVector plane2(4) ;
@@ -111,7 +111,7 @@ main()
   vpLine line ;
   line.setWorldCoordinates(plane1, plane2) ;
 
-  TRACE("sets the desired position of the visual feature ") ;
+  vpTRACE("sets the desired position of the visual feature ") ;
   line.track(cMod) ;
   line.print() ;
 
@@ -119,8 +119,8 @@ main()
   vpFeatureBuilder::create(ld,line)  ;
 
 
-  TRACE("project : computes  the line coordinates in the camera frame and its 2D coordinates"  ) ;
-  TRACE("sets the current position of the visual feature ") ;
+  vpTRACE("project : computes  the line coordinates in the camera frame and its 2D coordinates"  ) ;
+  vpTRACE("sets the current position of the visual feature ") ;
   line.track(cMo) ;
   line.print() ;
 
@@ -128,33 +128,33 @@ main()
   vpFeatureBuilder::create(l,line)  ;
   l.print() ;
 
-  TRACE("define the task") ;
-  TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t robot is controlled in the camera frame") ;
+  vpTRACE("define the task") ;
+  vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t robot is controlled in the camera frame") ;
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
-  TRACE("\t we want to see a line on a line..\n") ;
+  vpTRACE("\t we want to see a line on a line..\n") ;
 
   task.addFeature(l,ld) ;
   vpServoDisplay::display(task,cam,I) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.1) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   while(iter++<100)
   {
     cout << "---------------------------------------------" << iter <<endl ;
     vpColVector v ;
 
-    if (iter==1) TRACE("\t\t get the robot position ") ;
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
     robot.getPosition(cMo) ;
-    if (iter==1) TRACE("\t\t new line position ") ;
+    if (iter==1) vpTRACE("\t\t new line position ") ;
     //retrieve x,y and Z of the vpLine structure
 
     line.track(cMo) ;
@@ -163,18 +163,18 @@ main()
     vpDisplay::display(I) ;
     vpServoDisplay::display(task,cam,I) ;
 
-    if (iter==1) TRACE("\t\t compute the control law ") ;
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
     v = task.computeControlLaw() ;
 
-    if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    TRACE("\t\t || s - s* || ") ;
+    vpTRACE("\t\t || s - s* || ") ;
     cout << task.error.sumSquare() <<endl ; ;
 
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 }
 
@@ -182,7 +182,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.10 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.11 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,7 @@ vpDisplay::displayTitle(vpImage<unsigned char> &I, const char *windowtitle)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -91,7 +91,7 @@ vpDisplay::display(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -111,14 +111,14 @@ vpDisplay::getImage(vpImage<unsigned  char> &Isrc, vpImage<vpRGBa> &Idest)
     }
     else
     {
-      ERROR_TRACE("Display not initialized") ;
+      vpERROR_TRACE("Display not initialized") ;
       throw(vpDisplayException(vpDisplayException::notInitializedError,
 			       "Display not initialized")) ;
     }
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -138,7 +138,7 @@ void vpDisplay::displayPoint(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -159,7 +159,7 @@ void vpDisplay::displayCross(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -180,7 +180,7 @@ vpDisplay::displayCrossLarge(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -202,7 +202,7 @@ vpDisplay::displayCircle(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -223,7 +223,7 @@ void vpDisplay::displayLine(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -245,7 +245,7 @@ void vpDisplay::displayDotLine(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -333,7 +333,7 @@ vpDisplay::displayArrow(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -364,7 +364,7 @@ vpDisplay::displayRectangle(vpImage<unsigned char> &I, int i, int j,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -384,7 +384,7 @@ vpDisplay::displayCharString(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -406,7 +406,7 @@ void vpDisplay::flush(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -426,7 +426,7 @@ void vpDisplay::close(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -447,7 +447,7 @@ bool  vpDisplay::getClick(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -468,7 +468,7 @@ bool  vpDisplay::getClick(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -488,7 +488,7 @@ void  vpDisplay::getClick(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -510,7 +510,7 @@ vpDisplay::getClickUp(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -533,7 +533,7 @@ vpDisplay::displayTitle(vpImage<vpRGBa> &I, const char *windowtitle)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -554,14 +554,14 @@ vpDisplay::display(vpImage<vpRGBa> &I)
     }
     else
     {
-      ERROR_TRACE("Display not initialized") ;
+      vpERROR_TRACE("Display not initialized") ;
       throw(vpDisplayException(vpDisplayException::notInitializedError,
 			       "Display not initialized")) ;
     }
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -582,14 +582,14 @@ vpDisplay::getImage(vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
     }
     else
     {
-      ERROR_TRACE("Display not initialized") ;
+      vpERROR_TRACE("Display not initialized") ;
       throw(vpDisplayException(vpDisplayException::notInitializedError,
 			       "Display not initialized")) ;
     }
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -611,7 +611,7 @@ void vpDisplay::displayPoint(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -632,7 +632,7 @@ void vpDisplay::displayCross(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -653,7 +653,7 @@ vpDisplay::displayCrossLarge(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -674,7 +674,7 @@ vpDisplay::displayCircle(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -695,7 +695,7 @@ void vpDisplay::displayLine(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -716,7 +716,7 @@ void vpDisplay::displayDotLine(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -738,7 +738,7 @@ vpDisplay::displayArrow(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -759,7 +759,7 @@ vpDisplay::displayCharString(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -781,7 +781,7 @@ void vpDisplay::flush(vpImage<vpRGBa> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -801,7 +801,7 @@ void vpDisplay::close(vpImage<vpRGBa> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -821,7 +821,7 @@ bool  vpDisplay::getClick(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -842,7 +842,7 @@ bool  vpDisplay::getClick(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -862,7 +862,7 @@ void  vpDisplay::getClick(vpImage<vpRGBa> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -885,7 +885,7 @@ vpDisplay::getClickUp(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -910,7 +910,7 @@ void vpDisplay::displayPoint_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -931,7 +931,7 @@ void vpDisplay::displayCross_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -952,7 +952,7 @@ vpDisplay::displayCrossLarge_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -974,7 +974,7 @@ vpDisplay::displayCircle_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -995,7 +995,7 @@ void vpDisplay::displayLine_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1017,7 +1017,7 @@ void vpDisplay::displayDotLine_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1040,7 +1040,7 @@ vpDisplay::displayArrow_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1071,7 +1071,7 @@ vpDisplay::displayRectangle_uv(vpImage<unsigned char> &I, int u, int v,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1091,7 +1091,7 @@ vpDisplay::displayCharString_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1112,7 +1112,7 @@ bool  vpDisplay::getClick_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -1133,7 +1133,7 @@ bool  vpDisplay::getClick_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -1156,7 +1156,7 @@ vpDisplay::getClickUp_uv(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -1180,7 +1180,7 @@ void vpDisplay::displayPoint_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -1201,7 +1201,7 @@ void vpDisplay::displayCross_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1222,7 +1222,7 @@ vpDisplay::displayCrossLarge_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1243,7 +1243,7 @@ vpDisplay::displayCircle_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1264,7 +1264,7 @@ void vpDisplay::displayLine_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1285,7 +1285,7 @@ void vpDisplay::displayDotLine_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1307,7 +1307,7 @@ vpDisplay::displayArrow_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1328,7 +1328,7 @@ vpDisplay::displayCharString_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -1350,7 +1350,7 @@ bool  vpDisplay::getClick_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -1371,7 +1371,7 @@ bool  vpDisplay::getClick_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;
@@ -1394,7 +1394,7 @@ vpDisplay::getClickUp_uv(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   return false ;

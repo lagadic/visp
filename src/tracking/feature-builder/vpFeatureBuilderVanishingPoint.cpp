@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderVanishingPoint.cpp,v 1.3 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpFeatureBuilderVanishingPoint.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,7 @@ vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpPoint &t)
   }
   catch(...)
   {
-    ERROR_TRACE("Cannot create vanishing point feature") ;
+    vpERROR_TRACE("Cannot create vanishing point feature") ;
     throw ;
   }
 }
@@ -98,7 +98,7 @@ vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, co
   if(fabs(theta_r-theta_l)<min || fabs(fabs(theta_r-theta_l)-M_PI)<min \
      || fabs(fabs(theta_r-theta_l)-2*M_PI)<min)
   {
-    CERROR<<"there is no vanishing point : the lines are parallel in the image plane"<<endl;
+    vpCERROR<<"there is no vanishing point : the lines are parallel in the image plane"<<endl;
     throw(" ");
   }
 

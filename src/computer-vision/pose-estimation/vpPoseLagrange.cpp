@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseLagrange.cpp,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpPoseLagrange.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -118,7 +118,7 @@ calculTranslation (vpMatrix &a, vpMatrix &b, int nl, int nc1,
 
     // en fait il y a des dizaines de raisons qui font que cette fonction
     // rende une erreur (matrice pas inversible, pb de memoire etc...)
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -215,7 +215,7 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   if (DEBUG_LEVEL1)
@@ -309,7 +309,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 
     if (s<1e-10)
     {
-      ERROR_TRACE( "in vpCalculPose::PosePlan(...) division par zero ") ;
+      vpERROR_TRACE( "in vpCalculPose::PosePlan(...) division par zero ") ;
       throw(vpException(vpException::divideByZeroError,
 			"division by zero  ")) ;
     }
@@ -340,7 +340,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -450,7 +450,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     if (s<1e-10)
     {
-      ERROR_TRACE(" division par zero " ) ;
+      vpERROR_TRACE(" division par zero " ) ;
       throw(vpException(vpException::divideByZeroError,
 			"division by zero  ")) ;
 
@@ -477,7 +477,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 

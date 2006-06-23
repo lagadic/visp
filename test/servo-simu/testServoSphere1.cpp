@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoSphere1.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testServoSphere1.cpp,v 1.2 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -61,7 +61,7 @@ main()
   cout << endl ;
 
 
-  TRACE("sets the initial camera location " ) ;
+  vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo ;
   cMo[0][3] = 0.1 ;
   cMo[1][3] = 0.2 ;
@@ -75,65 +75,65 @@ main()
 
 
 
-  TRACE("sets the sphere coordinates in the world frame "  ) ;
+  vpTRACE("sets the sphere coordinates in the world frame "  ) ;
   vpSphere sphere ;
   sphere.setWorldCoordinates(0,0,0,0.1) ;
 
-  TRACE("sets the desired position of the visual feature ") ;
+  vpTRACE("sets the desired position of the visual feature ") ;
   vpFeatureEllipse pd ;
   sphere.track(cMod) ;
   vpFeatureBuilder::create(pd,sphere)  ;
 
-  TRACE("project : computes  the sphere coordinates in the camera frame and its 2D coordinates"  ) ;
+  vpTRACE("project : computes  the sphere coordinates in the camera frame and its 2D coordinates"  ) ;
 
-  TRACE("sets the current position of the visual feature ") ;
+  vpTRACE("sets the current position of the visual feature ") ;
   vpFeatureEllipse p ;
   sphere.track(cMo) ;
   vpFeatureBuilder::create(p,sphere)  ;
 
-  TRACE("define the task") ;
-  TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t robot is controlled in the camera frame") ;
+  vpTRACE("define the task") ;
+  vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t robot is controlled in the camera frame") ;
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
-  TRACE("\t we want to see a sphere on a sphere..") ;
+  vpTRACE("\t we want to see a sphere on a sphere..") ;
   cout << endl ;
   task.addFeature(p,pd) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.1) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
   // exit(1) ;
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   while(iter++<500)
   {
     cout << "---------------------------------------------" << iter <<endl ;
     vpColVector v ;
 
-    if (iter==1) TRACE("\t\t get the robot position ") ;
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
     robot.getPosition(cMo) ;
-    if (iter==1) TRACE("\t\t new sphere position ") ;
+    if (iter==1) vpTRACE("\t\t new sphere position ") ;
     //retrieve x,y and Z of the vpSphere structure
 
     sphere.track(cMo) ;
     vpFeatureBuilder::create(p,sphere);
 
-    if (iter==1) TRACE("\t\t compute the control law ") ;
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
     v = task.computeControlLaw() ;
-    //  TRACE("computeControlLaw" ) ;
+    //  vpTRACE("computeControlLaw" ) ;
     cout << task.rankJ1 <<endl ;
-    if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    //  TRACE("\t\t || s - s* || ") ;
+    //  vpTRACE("\t\t || s - s* || ") ;
     //  cout << task.error.sumSquare() <<endl ; ;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 }
 

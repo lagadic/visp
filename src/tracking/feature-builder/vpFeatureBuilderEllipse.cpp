@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderEllipse.cpp,v 1.5 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpFeatureBuilderEllipse.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,7 +78,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCircle &t )
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -111,7 +111,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,  const vpSphere &t)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -155,7 +155,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -200,7 +200,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 

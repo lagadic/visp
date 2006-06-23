@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisk.cpp,v 1.2 2006-04-19 09:01:23 fspindle Exp $
+ *  $Id: testDisk.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -102,21 +102,21 @@ main(int argc, char ** argv)
 
   cout << I.getCols() << "  " << I.getRows() <<endl  ;
 
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   vpDisplayX display(I,100,100,"Display...") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   long cpt = 1;
   while(cpt ++ < 100)
@@ -140,7 +140,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.7 2006-05-15 15:43:45 fspindle Exp $
+ *  $Id: servoPtu46PointArticularVelocity.cpp,v 1.8 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -78,7 +78,7 @@ void signalCtrC( int signumber )
   pthread_mutex_unlock( &mutexEndLoop );
 #endif
   usleep( 1000*10 );
-  TRACE("Ctrl-C pressed...");
+  vpTRACE("Ctrl-C pressed...");
 }
 
 int
@@ -118,20 +118,20 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
 
   vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -141,41 +141,41 @@ main()
   vpDot2 dot ;
 
   try{
-    ERROR_TRACE("start dot.initTracking(I) ") ;
+    vpERROR_TRACE("start dot.initTracking(I) ") ;
     int x,y;
     vpDisplay::getClick( I,y,x );
     dot.set_u( x ) ;
     dot.set_v( y ) ;
-    DEBUG_TRACE(25,"Click!");
+    vpDEBUG_TRACE(25,"Click!");
     //dot.initTracking(I) ;
     dot.track(I);
-    ERROR_TRACE("after dot.initTracking(I) ") ;
+    vpERROR_TRACE("after dot.initTracking(I) ") ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
   vpCameraParameters cam ;
 
-  TRACE("sets the current position of the visual feature ") ;
+  vpTRACE("sets the current position of the visual feature ") ;
   vpFeaturePoint p ;
   vpFeatureBuilder::create(p,cam, dot)  ;  //retrieve x,y and Z of the vpPoint structure
 
   p.set_Z(1) ;
-  TRACE("sets the desired position of the visual feature ") ;
+  vpTRACE("sets the desired position of the visual feature ") ;
   vpFeaturePoint pd ;
   pd.buildFrom(0,0,1) ;
 
-  TRACE("define the task") ;
-   TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t articular velocity are computed") ;
+  vpTRACE("define the task") ;
+   vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t articular velocity are computed") ;
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
   task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
 
 
-  TRACE("Set the position of the camera in the end-effector frame ") ;
+  vpTRACE("Set the position of the camera in the end-effector frame ") ;
   vpHomogeneousMatrix cMe ;
   //  robot.get_cMe(cMe) ;
 
@@ -185,28 +185,28 @@ main()
   task.set_cVe(cVe) ;
 
   vpDisplay::getClick(I) ;
-  TRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+  vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
   vpMatrix eJe ;
   robot.get_eJe(eJe) ;
   task.set_eJe(eJe) ;
 
 
-  TRACE("\t we want to see a point on a point..") ;
+  vpTRACE("\t we want to see a point on a point..") ;
   cout << endl ;
   task.addFeature(p,pd) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.1) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
 
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
 #ifdef VISP_HAVE_PTHREAD
   while( 0 != pthread_mutex_trylock( &mutexEndLoop ) )
 #else
@@ -239,13 +239,13 @@ main()
     cout << v.t() ;
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
-    TRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
-  } catch (...) { ERROR_TRACE("Trow uncatched..."); }
+  } catch (...) { vpERROR_TRACE("Trow uncatched..."); }
 }
 
 
@@ -253,7 +253,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You don't have a ptu-46 head connected to your computer ",
+  vpERROR_TRACE("You don't have a ptu-46 head connected to your computer ",
 	      "or 1394 framegrabbing capabilities...");
 }
 #endif

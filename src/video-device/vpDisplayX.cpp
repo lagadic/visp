@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.13 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.14 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -180,7 +180,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
   {
     if (title != NULL)
     {
-      //   TRACE(" ") ;
+      //   vpTRACE(" ") ;
       delete [] title ;
       title = NULL ;
     }
@@ -209,7 +209,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
 
   if ((display = XOpenDisplay (NULL)) == NULL)
   {
-    ERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
+    vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
     throw(vpDisplayException(vpDisplayException::connexionError,
 			     "Can't connect display on server.")) ;
   }
@@ -224,7 +224,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
 			    BlackPixel (display, screen),
 			    WhitePixel (display, screen))) == 0)
   {
-    ERROR_TRACE("Can't create window." );
+    vpERROR_TRACE("Can't create window." );
     throw(vpDisplayException(vpDisplayException::cannotOpenWindowError,
 			     "Can't create window.")) ;
   }
@@ -256,7 +256,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
       color.pad = 0;
       color.red = color.green = color.blue = 256 * i;
       if (XAllocColor (display, lut, &color) == 0) {
-	ERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
+	vpERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
 	throw(vpDisplayException(vpDisplayException::colorAllocError,
 				 "Can't allocate 256 colors.")) ;
       }
@@ -391,7 +391,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
 
   if (context == NULL)
   {
-    ERROR_TRACE("Can't create graphics context.");
+    vpERROR_TRACE("Can't create graphics context.");
     throw(vpDisplayException(vpDisplayException::XWindowsError,
 			     "Can't create graphics context")) ;
 
@@ -467,7 +467,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   nrows = I.getRows();
 
   if ((display = XOpenDisplay (NULL)) == NULL) {
-    ERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
+    vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
     throw(vpDisplayException(vpDisplayException::connexionError,
 			     "Can't connect display on server.")) ;
   }
@@ -476,14 +476,14 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   lut          = DefaultColormap (display, screen);
   screen_depth = DefaultDepth    (display, screen);
 
-  DEBUG_TRACE(1, "Screen depth: %d\n", screen_depth);
+  vpDEBUG_TRACE(1, "Screen depth: %d\n", screen_depth);
 
   if ((window = XCreateSimpleWindow (display, RootWindow (display, screen),
 				     windowXPosition, windowYPosition, ncols, nrows, 1,
 				     BlackPixel (display, screen),
 				     WhitePixel (display, screen))) == 0)
   {
-    ERROR_TRACE("Can't create window." );
+    vpERROR_TRACE("Can't create window." );
     throw(vpDisplayException(vpDisplayException::cannotOpenWindowError,
 			     "Can't create window.")) ;
   }
@@ -515,7 +515,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
       color.pad = 0;
       color.red = color.green = color.blue = 256 * i;
       if (XAllocColor (display, lut, &color) == 0) {
-	ERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
+	vpERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
 	throw(vpDisplayException(vpDisplayException::colorAllocError,
 				 "Can't allocate 256 colors.")) ;
       }
@@ -647,7 +647,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
 		      &values);
 
   if (context == NULL) {
-   ERROR_TRACE("Can't create graphics context.");
+   vpERROR_TRACE("Can't create graphics context.");
     throw(vpDisplayException(vpDisplayException::XWindowsError,
 			     "Can't create graphics context")) ;
   }
@@ -727,7 +727,7 @@ void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
 
 
   if ((display = XOpenDisplay (NULL)) == NULL) {
-    ERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
+    vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
     throw(vpDisplayException(vpDisplayException::connexionError,
 			     "Can't connect display on server.")) ;
   }
@@ -736,7 +736,7 @@ void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
   lut          = DefaultColormap (display, screen);
   screen_depth = DefaultDepth    (display, screen);
 
-  TRACE("Screen depth: %d\n", screen_depth);
+  vpTRACE("Screen depth: %d\n", screen_depth);
 
   if ((window = XCreateSimpleWindow (display, RootWindow (display, screen),
 				     windowXPosition, windowYPosition,
@@ -744,7 +744,7 @@ void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
 				     BlackPixel (display, screen),
 				     WhitePixel (display, screen))) == 0)
   {
-    ERROR_TRACE("Can't create window." );
+    vpERROR_TRACE("Can't create window." );
     throw(vpDisplayException(vpDisplayException::cannotOpenWindowError,
 			     "Can't create window.")) ;
   }
@@ -777,7 +777,7 @@ void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
       color.pad = 0;
       color.red = color.green = color.blue = 256 * i;
       if (XAllocColor (display, lut, &color) == 0) {
-	ERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
+	vpERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
 	throw(vpDisplayException(vpDisplayException::colorAllocError,
 				 "Can't allocate 256 colors.")) ;
       }
@@ -911,7 +911,7 @@ void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
 		      &values);
 
   if (context == NULL) {
-    ERROR_TRACE("Can't create graphics context.");
+    vpERROR_TRACE("Can't create graphics context.");
     throw(vpDisplayException(vpDisplayException::XWindowsError,
 			     "Can't create graphics context")) ;
   }
@@ -1018,7 +1018,7 @@ void vpDisplayX::displayImage(vpImage<unsigned char> &I)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1066,7 +1066,7 @@ void vpDisplayX::displayImage(vpImage<vpRGBa> &I)
       break;
     }
     default:
-      ERROR_TRACE("Unsupported depth (%d bpp) for color display",
+      vpERROR_TRACE("Unsupported depth (%d bpp) for color display",
 		  screen_depth) ;
       throw(vpDisplayException(vpDisplayException::depthNotSupportedError,
 			       "Unsupported depth for color display")) ;
@@ -1078,7 +1078,7 @@ void vpDisplayX::displayImage(vpImage<vpRGBa> &I)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1101,7 +1101,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
 
@@ -1118,7 +1118,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1159,7 +1159,7 @@ void vpDisplayX::displayImage(unsigned char *I)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1219,7 +1219,7 @@ void vpDisplayX::flushDisplay()
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1238,7 +1238,7 @@ void vpDisplayX::clearDisplay(int c)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1258,7 +1258,7 @@ void vpDisplayX::displayPoint(int i, int j, int col)
   }
  else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1286,7 +1286,7 @@ void vpDisplayX::displayLine(int i1, int j1, int i2, int j2, int col, int e)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1314,7 +1314,7 @@ void vpDisplayX::displayDotLine(int i1, int j1, int i2, int j2, int col, int e)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1336,14 +1336,14 @@ void vpDisplayX::displayCross(int i,int j, int size,int col)
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
   }
 
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1367,13 +1367,13 @@ void vpDisplayX::displayCrossLarge(int i,int j, int size,int col)
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;    //
   }
@@ -1436,13 +1436,13 @@ void vpDisplayX::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int 
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1469,7 +1469,7 @@ vpDisplayX::displayRectangle(int i, int j, int width, int height, int col)
   }
  else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1492,7 +1492,7 @@ void vpDisplayX::displayCharString(int i, int j, char *string, int col)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1548,7 +1548,7 @@ vpDisplayX::getClick(int& i, int& j)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1602,7 +1602,7 @@ vpDisplayX::getClick()
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1662,7 +1662,7 @@ vpDisplayX::getClick(int& i, int& j, int& button)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1695,7 +1695,7 @@ int vpDisplayX::getScreenDepth()
   int		depth;
 
   if ((display = XOpenDisplay(NULL)) == NULL) {
-    ERROR_TRACE("Can't connect display on server %s.",
+    vpERROR_TRACE("Can't connect display on server %s.",
 	    XDisplayName(NULL));
     throw(vpDisplayException(vpDisplayException::connexionError,
 			     "Can't connect display on server.")) ;
@@ -1718,7 +1718,7 @@ void vpDisplayX::getScreenSize(int *xsize, int *ysize)
 
   if ((display = XOpenDisplay(NULL)) == NULL)
   {
-    ERROR_TRACE("Can't connect display on server %s.",
+    vpERROR_TRACE("Can't connect display on server %s.",
 		XDisplayName(NULL));
     throw(vpDisplayException(vpDisplayException::connexionError,
 			     "Can't connect display on server.")) ;
@@ -1745,7 +1745,7 @@ vpDisplayX::flushTitle(const char *windowtitle)
   }
   else
   {
-    ERROR_TRACE("X not initialized " ) ;
+    vpERROR_TRACE("X not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
@@ -1770,7 +1770,7 @@ void vpDisplayX::displayCircle(int i, int j, int r, int c)
    }
   else
    {
-     ERROR_TRACE("X not initialized " ) ;
+     vpERROR_TRACE("X not initialized " ) ;
      throw(vpDisplayException(vpDisplayException::notInitializedError,
 			      "X not initialized")) ;
    }

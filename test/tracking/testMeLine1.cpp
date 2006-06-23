@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testMeLine1.cpp,v 1.3 2006-04-19 09:01:25 fspindle Exp $
+ *  $Id: testMeLine1.cpp,v 1.4 2006-06-23 14:45:09 brenier Exp $
  *
  * Description
  * ============
@@ -53,7 +53,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -64,7 +64,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   vpMeLine L1 ;
@@ -101,13 +101,13 @@ main()
     }
     catch(...)
     {
-      ERROR_TRACE("Error in tracking vpMeLine ") ;
+      vpERROR_TRACE("Error in tracking vpMeLine ") ;
       exit(1) ;
     }
 
-    TRACE("L1 : %f %f", L1.getRho(), vpMath::deg(L1.getTheta())) ;
+    vpTRACE("L1 : %f %f", L1.getRho(), vpMath::deg(L1.getTheta())) ;
     vpFeatureBuilder::create(l,cam,L1) ;
-    TRACE("L1 : %f %f", l.getRho(), vpMath::deg(l.getTheta())) ;
+    vpTRACE("L1 : %f %f", l.getRho(), vpMath::deg(l.getTheta())) ;
 
 
     L1.display(I,vpColor::green) ;
@@ -124,7 +124,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have a biclops robot connected to your computer...");
+  vpERROR_TRACE("You do not have a biclops robot connected to your computer...");
 }
 
 #endif

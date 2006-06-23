@@ -21,9 +21,9 @@
 
 int main()
 {
-  TRACE("--------------------------");
-  TRACE("--- TEST vpTwistMatrix ---");
-  TRACE("--------------------------");
+  vpTRACE("--------------------------");
+  vpTRACE("--- TEST vpTwistMatrix ---");
+  vpTRACE("--------------------------");
 
   // Set the translation
   vpTranslationVector cte;
@@ -43,7 +43,7 @@ int main()
   // Build the twist matrix
   vpTwistMatrix cVe(cte, cRe);
 
-  TRACE("cVe twist matrix:");
+  vpTRACE("cVe twist matrix:");
   cVe.print (std::cout, 6);
 
 
@@ -57,7 +57,7 @@ int main()
   ev[4] = M_PI/18.;
   ev[5] = M_PI/10.;
 
-  TRACE("ev colvector:");
+  vpTRACE("ev colvector:");
   ev.print (std::cout, 6);
 
   // Set a speed skew
@@ -65,7 +65,7 @@ int main()
 
   cv = cVe * ev;
 
-  TRACE("cv = cVe * ev:");
+  vpTRACE("cv = cVe * ev:");
   cv.print (std::cout, 6);
 
 }

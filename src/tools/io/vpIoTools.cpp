@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.4 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpIoTools.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@ vpIoTools::checkDirectory(const char *dir )
 #endif
 
   if ( dir == NULL || dir[0] == '\0' ) {
-    ERROR_TRACE( " invalid directory name\n" );
+    vpERROR_TRACE( " invalid directory name\n" );
     throw(vpIoException(vpIoException::ERRInvalidDirectoryName,
 			"invalid directory name")) ;
   }
@@ -70,12 +70,12 @@ vpIoTools::checkDirectory(const char *dir )
   if ( _stat( dir, &stbuf ) != 0 )
 #endif
   {
-    ERROR_TRACE( "can't stat directory '%s' (doesn't exist?)\n", dir );
+    vpERROR_TRACE( "can't stat directory '%s' (doesn't exist?)\n", dir );
     throw(vpIoException(vpIoException::ERRCantStatDirectory,
 			"can't stat directory")) ;
   }
   if ( (stbuf.st_mode & S_IFDIR) == 0 ) {
-    ERROR_TRACE( "'%s' is not a directory\n",  dir );
+    vpERROR_TRACE( "'%s' is not a directory\n",  dir );
     throw(vpIoException(vpIoException::ERRNotADirectory,
 			"not a directory")) ;
   }
@@ -85,7 +85,7 @@ vpIoTools::checkDirectory(const char *dir )
   if ( (stbuf.st_mode & S_IWRITE) == 0 )
 #endif
   {
-    ERROR_TRACE( "'%s' is not writable\n", dir );
+    vpERROR_TRACE( "'%s' is not writable\n", dir );
     throw(vpIoException(vpIoException::ERRNotWritable,
 			"Directory not writable")) ;
   }
@@ -101,7 +101,7 @@ vpIoTools::makeDirectory(const  char *dir )
 #endif
 
   if ( dir == NULL || dir[0] == '\0' ) {
-    ERROR_TRACE( "invalid directory name\n");
+    vpERROR_TRACE( "invalid directory name\n");
     throw(vpIoException(vpIoException::ERRInvalidDirectoryName,
 			"invalid directory name")) ;
   }
@@ -117,11 +117,11 @@ vpIoTools::makeDirectory(const  char *dir )
     if ( _mkdir( dir) != 0 )
 #endif
 	{
-      ERROR_TRACE("unable to create directory '%s'\n",  dir );
+      vpERROR_TRACE("unable to create directory '%s'\n",  dir );
       throw(vpIoException(vpIoException::ERRCantCreateDirectory,
 			  "unable to create directory")) ;
     }
-    DEBUG_TRACE(2,"has created directory '%s'\n", dir );
+    vpDEBUG_TRACE(2,"has created directory '%s'\n", dir );
   }
 
   try{
@@ -129,7 +129,7 @@ vpIoTools::makeDirectory(const  char *dir )
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }

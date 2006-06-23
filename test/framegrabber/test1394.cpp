@@ -67,72 +67,72 @@ main(int argc, char ** argv)
 
   unsigned int cameras;
   g.getNumCameras(cameras);
-  TRACE("Number of cameras on the bus: %d\n", cameras);
+  vpTRACE("Number of cameras on the bus: %d\n", cameras);
 
   switch (req_fps) {
   case 7:
-    TRACE("Framerate is set to 7.5 fps");
+    vpTRACE("Framerate is set to 7.5 fps");
     g.setFramerate(FRAMERATE_7_5);
     break;
   case 15:
-    TRACE("Framerate is set to 15 fps");
+    vpTRACE("Framerate is set to 15 fps");
     g.setFramerate(FRAMERATE_15);
     break;
   case 30:
-    TRACE("Framerate is set to 30 fps");
+    vpTRACE("Framerate is set to 30 fps");
     g.setFramerate(FRAMERATE_30);
     break;
   default:
-    CTRACE << "Use of default framerate" << endl;
+    vpCTRACE << "Use of default framerate" << endl;
   }
 
   if (req_shutter) {
     g.setShutter(req_shutter);
-    TRACE("Set shutter to : %d", req_shutter);
+    vpTRACE("Set shutter to : %d", req_shutter);
   }
 
   unsigned int min_shutter, shutter, max_shutter;
   g.getShutter(min_shutter, shutter, max_shutter);
 
-  TRACE("Shutter: %d < %d < %d", min_shutter, shutter, max_shutter);
+  vpTRACE("Shutter: %d < %d < %d", min_shutter, shutter, max_shutter);
 
   if (req_gain) {
     g.setGain(req_gain);
-    TRACE("Set gain to : %d", req_gain);
+    vpTRACE("Set gain to : %d", req_gain);
   }
 
   unsigned int min_gain, gain, max_gain;
   g.getGain(min_gain, gain, max_gain);
 
-  TRACE("Gain: %d < %d < %d", min_gain, gain, max_gain);
+  vpTRACE("Gain: %d < %d < %d", min_gain, gain, max_gain);
 
   try{
     g.acquire(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
 
-  TRACE("Image size: %d cold %d rows", I.getCols(), I.getRows() );
+  vpTRACE("Image size: %d cold %d rows", I.getCols(), I.getRows() );
 
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   vpDisplayX display(I,100,100,"ieee 1394 grabbing... ") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   long cpt = 1;
   while(cpt ++ < 100)
@@ -148,7 +148,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  TRACE("Ieee 1394 grabber capabilities are not available...") ;
+  vpTRACE("Ieee 1394 grabber capabilities are not available...") ;
 }
 #endif
 

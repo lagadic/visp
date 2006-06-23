@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServoCircle2.cpp,v 1.4 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: testServoCircle2.cpp,v 1.5 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -83,7 +83,7 @@ main()
   cout << endl ;
 
 
-  TRACE("sets the initial camera location " ) ;
+  vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo(0,0,1,
 			  vpMath::rad(0),  vpMath::rad(80),  vpMath::rad(30))   ;
   robot.setPosition(cMo) ;
@@ -93,50 +93,50 @@ main()
 
 
 
-  TRACE("sets the circle coordinates in the world frame "  ) ;
+  vpTRACE("sets the circle coordinates in the world frame "  ) ;
   vpCircle circle ;
   circle.setWorldCoordinates(0,0,1,
 			     0,0,0,
 			     0.1) ;
 
-  TRACE("sets the desired position of the visual feature ") ;
+  vpTRACE("sets the desired position of the visual feature ") ;
   vpFeatureEllipse pd ;
   circle.track(cMod) ;
   vpFeatureBuilder::create(pd,circle)  ;
 
-  TRACE("project : computes  the circle coordinates in the camera frame and its 2D coordinates"  ) ;
+  vpTRACE("project : computes  the circle coordinates in the camera frame and its 2D coordinates"  ) ;
 
-  TRACE("sets the current position of the visual feature ") ;
+  vpTRACE("sets the current position of the visual feature ") ;
   vpFeatureEllipse p ;
   circle.track(cMo) ;
   vpFeatureBuilder::create(p,circle)  ;
 
-  TRACE("define the task") ;
-  TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t robot is controlled in the camera frame") ;
+  vpTRACE("define the task") ;
+  vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t robot is controlled in the camera frame") ;
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
   task.setInteractionMatrixType(vpServo::DESIRED) ;
-  TRACE("\t we want to see a circle on a circle..") ;
+  vpTRACE("\t we want to see a circle on a circle..") ;
   cout << endl ;
   task.addFeature(p,pd) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.1) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   while(iter++<200)
   {
     cout << "---------------------------------------------" << iter <<endl ;
     vpColVector v ;
 
-    if (iter==1) TRACE("\t\t get the robot position ") ;
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
     robot.getPosition(cMo) ;
-    if (iter==1) TRACE("\t\t new circle position ") ;
+    if (iter==1) vpTRACE("\t\t new circle position ") ;
     //retrieve x,y and Z of the vpCircle structure
     circle.track(cMo) ;
     vpFeatureBuilder::create(p,circle);
@@ -146,22 +146,22 @@ main()
     vpDisplay::display(I) ;
     vpServoDisplay::display(task,cam,I) ;
 
-    if (iter==1) TRACE("\t\t compute the control law ") ;
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
     v = task.computeControlLaw() ;
-    //  TRACE("computeControlLaw" ) ;
+    //  vpTRACE("computeControlLaw" ) ;
     cout << task.rankJ1 <<endl ;
-    if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 }
 #else
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

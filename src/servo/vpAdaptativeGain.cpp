@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAdaptativeGain.cpp,v 1.4 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpAdaptativeGain.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,10 +59,10 @@ vpAdaptativeGain (void)
   coeff_b (),
   coeff_c ()
 {
-  DEBUG_TRACE (10, "# Entree constructeur par default.");
+  vpDEBUG_TRACE (10, "# Entree constructeur par default.");
   this ->initFromVoid ();
 
-  DEBUG_TRACE (10, "# Sortie constructeur par default.");
+  vpDEBUG_TRACE (10, "# Sortie constructeur par default.");
   return;
 }
 
@@ -75,13 +75,13 @@ vpAdaptativeGain (void)
 void vpAdaptativeGain::
 initFromConstant (const double lambda)
 {
-    DEBUG_TRACE (10, "# Entree.");
+    vpDEBUG_TRACE (10, "# Entree.");
 
     this ->coeff_a = 0;
     this ->coeff_b = 1;
     this ->coeff_c = lambda;
 
-    DEBUG_TRACE (10, "# Sortie.");
+    vpDEBUG_TRACE (10, "# Sortie.");
     return;
 }
 
@@ -91,13 +91,13 @@ initFromConstant (const double lambda)
 void vpAdaptativeGain::
 initFromVoid (void)
 {
-  DEBUG_TRACE (10, "# Entree.");
+  vpDEBUG_TRACE (10, "# Entree.");
 
   this ->initStandard (vpAdaptativeGain::DEFAULT_LAMBDA_ZERO,
 		       vpAdaptativeGain::DEFAULT_LAMBDA_INFINI,
 		       vpAdaptativeGain::DEFAULT_LAMBDA_PENTE);
 
-  DEBUG_TRACE (10, "# Sortie.");
+  vpDEBUG_TRACE (10, "# Sortie.");
   return;
 }
 
@@ -111,7 +111,7 @@ initStandard (const double en_zero,
 	      const double en_infini,
 	      const double pente_en_zero)
 {
-  DEBUG_TRACE (10, "# Entree.");
+  vpDEBUG_TRACE (10, "# Entree.");
 
   this ->coeff_a = en_zero - en_infini;
   if (0 == this ->coeff_a)
@@ -124,7 +124,7 @@ initStandard (const double en_zero,
     }
   this ->coeff_c = en_infini;
 
-  DEBUG_TRACE (10, "# Sortie :a,b,c= %.3f,%.3f,%.3f.",
+  vpDEBUG_TRACE (10, "# Sortie :a,b,c= %.3f,%.3f,%.3f.",
 	       this ->coeff_a, this ->coeff_b, this ->coeff_c);
   return;
 }
@@ -143,7 +143,7 @@ initStandard (const double en_zero,
 double vpAdaptativeGain::
 setConstant (void)
 {
-  DEBUG_TRACE (10, "# Entree.");
+  vpDEBUG_TRACE (10, "# Entree.");
 
   double res = this ->coeff_a + this ->coeff_c;
 
@@ -151,7 +151,7 @@ setConstant (void)
   this ->coeff_b = 1;
   this ->coeff_c = res;
 
-  DEBUG_TRACE (10, "# Sortie: %.3f.", res);
+  vpDEBUG_TRACE (10, "# Sortie: %.3f.", res);
   return res;
 }
 
@@ -165,12 +165,12 @@ setConstant (void)
 double vpAdaptativeGain::
 value_const (const double val_e) const
 {
-  DEBUG_TRACE (10, "# Entree.");
+  vpDEBUG_TRACE (10, "# Entree.");
 
   double res = this ->coeff_a * exp (- this ->coeff_b * val_e)
     + this ->coeff_c;
 
-  DEBUG_TRACE (10, "# Sortie: %.3f.", res);
+  vpDEBUG_TRACE (10, "# Sortie: %.3f.", res);
   return res;
 }
 
@@ -179,11 +179,11 @@ value_const (const double val_e) const
 double vpAdaptativeGain::
 limitValue_const (void) const
 {
-  DEBUG_TRACE (10, "# Entree.");
+  vpDEBUG_TRACE (10, "# Entree.");
 
   double res = this ->coeff_c;
 
-  DEBUG_TRACE (10, "# Sortie: %.3f.", res);
+  vpDEBUG_TRACE (10, "# Sortie: %.3f.", res);
   return res;
 }
 
@@ -195,11 +195,11 @@ limitValue_const (void) const
 double vpAdaptativeGain::
 value (const double val_e) const
 {
-  DEBUG_TRACE (10, "# Entree.");
+  vpDEBUG_TRACE (10, "# Entree.");
 
   this ->lambda = this ->value_const (val_e);
 
-  DEBUG_TRACE (10, "# Sortie: %.3f.", this ->lambda);
+  vpDEBUG_TRACE (10, "# Sortie: %.3f.", this ->lambda);
   return lambda;
 }
 
@@ -208,11 +208,11 @@ value (const double val_e) const
 double vpAdaptativeGain::
 limitValue (void) const
 {
-  DEBUG_TRACE (10, "# Entree.");
+  vpDEBUG_TRACE (10, "# Entree.");
 
   this ->lambda = this ->limitValue_const ();
 
-  DEBUG_TRACE (10, "# Sortie: %.3f.", this ->lambda);
+  vpDEBUG_TRACE (10, "# Sortie: %.3f.", this ->lambda);
   return lambda;
 }
 

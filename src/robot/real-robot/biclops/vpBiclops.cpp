@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBiclops.cpp,v 1.4 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpBiclops.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,7 +73,7 @@ void
 vpBiclops::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
 {
   if (q.getRows() != 2) {
-    ERROR_TRACE("Bad dimension for biclops articular vector");
+    vpERROR_TRACE("Bad dimension for biclops articular vector");
     throw;
   }
 
@@ -105,7 +105,7 @@ vpBiclops::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
   fMc[3][2] = 0;
   fMc[3][3] = 1;
 
-  CDEBUG (6) << "camera position: " << endl << fMc;
+  vpCDEBUG (6) << "camera position: " << endl << fMc;
 
   return ;
 }
@@ -275,7 +275,7 @@ vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe)
   eJe.resize(6,2) ;
 
   if (q.getRows() != 2) {
-    ERROR_TRACE("Bad dimension for biclops articular vector");
+    vpERROR_TRACE("Bad dimension for biclops articular vector");
     throw;
   }
 
@@ -304,7 +304,7 @@ vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe)
 {
 
   if (q.getRows() != 2) {
-    ERROR_TRACE("Bad dimension for biclops articular vector");
+    vpERROR_TRACE("Bad dimension for biclops articular vector");
     throw;
   }
 

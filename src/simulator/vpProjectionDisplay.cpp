@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.cpp,v 1.4 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpProjectionDisplay.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -162,7 +162,7 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
 
   vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
   o.print() ;
-  TRACE("%f %f",ox,oy) ;
+  vpTRACE("%f %f",ox,oy) ;
 
   vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
   vpDisplay::displayArrow(I,

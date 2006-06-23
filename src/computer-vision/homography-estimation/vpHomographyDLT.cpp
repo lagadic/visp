@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyDLT.cpp,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpHomographyDLT.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -189,7 +189,7 @@ vpHomography::HartleyDLT(int n,
   }
   catch(...)
   {
-    TRACE(" ") ;
+    vpTRACE(" ") ;
     throw ;
   }
 }
@@ -267,7 +267,7 @@ void vpHomography::DLT(int n,
   // 4 point are required
   if(n<4)
   {
-    TRACE("there must be at least 4 points in the both images\n") ;
+    vpTRACE("there must be at least 4 points in the both images\n") ;
     throw ;
   }
 
@@ -317,7 +317,7 @@ void vpHomography::DLT(int n,
     for(i = 0; i<9;i++) if(D[i]>1e-7) rank++;
     if(rank <7)
     {
-      TRACE(" le rang est de : %d, shoud be 8", rank);
+      vpTRACE(" le rang est de : %d, shoud be 8", rank);
       throw ;
     }
     //h = is the column of V associated with the smallest singular value of A
@@ -342,7 +342,7 @@ void vpHomography::DLT(int n,
   }
   catch(...)
   {
-    TRACE(" ") ;
+    vpTRACE(" ") ;
     throw ;
   }
 }

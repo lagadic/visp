@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVirtualVisualServoing.cpp,v 1.5 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpPoseVirtualVisualServoing.cpp,v 1.6 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -146,7 +146,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 

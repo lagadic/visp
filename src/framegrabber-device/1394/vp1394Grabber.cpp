@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.8 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.9 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -229,7 +229,7 @@ vp1394Grabber::setCamera(unsigned int camera)
 {
   if (camera >= num_cameras) {
     close();
-    ERROR_TRACE("The required camera is not present");
+    vpERROR_TRACE("The required camera is not present");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "The required camera is not present") );
   }
@@ -301,13 +301,13 @@ vp1394Grabber::getFormat(int & format)
 {
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -315,7 +315,7 @@ vp1394Grabber::getFormat(int & format)
   if(dc1394_get_camera_misc_info(handles[camera],
 				 cameras[camera].node,
 				 &miscinfo) !=DC1394_SUCCESS) {
-    ERROR_TRACE("Unable to get misc info");
+    vpERROR_TRACE("Unable to get misc info");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get misc info") );
   }
@@ -350,13 +350,13 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats)
 
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -365,7 +365,7 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats)
   if (dc1394_query_supported_formats(handles[camera],
 				     cameras[camera].node,
 				     &value) != DC1394_SUCCESS) {
-    ERROR_TRACE("Could not query supported formats");
+    vpERROR_TRACE("Could not query supported formats");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Could not query supported formats") );
   }
@@ -451,20 +451,20 @@ vp1394Grabber::getMode(int & mode)
 
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
   if(dc1394_get_camera_misc_info(handles[camera],
 				 cameras[camera].node,
 				 &miscinfo) !=DC1394_SUCCESS) {
-    ERROR_TRACE("Unable to get misc info");
+    vpERROR_TRACE("Unable to get misc info");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get misc info") );
   }
@@ -506,13 +506,13 @@ vp1394Grabber::getModeSupported(int format, vpList<int> & modes)
 
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -521,7 +521,7 @@ vp1394Grabber::getModeSupported(int format, vpList<int> & modes)
   if (dc1394_query_supported_modes(handles[camera],
 				   cameras[camera].node,
 				   format, &value) != DC1394_SUCCESS) {
-    ERROR_TRACE("Could not query supported modes for format %d\n", format);
+    vpERROR_TRACE("Could not query supported modes for format %d\n", format);
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Could not query supported mode") );
   }
@@ -633,13 +633,13 @@ vp1394Grabber::getFramerate(int & framerate)
 {
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -647,7 +647,7 @@ vp1394Grabber::getFramerate(int & framerate)
   if(dc1394_get_camera_misc_info(handles[camera],
 				 cameras[camera].node,
 				 &miscinfo) !=DC1394_SUCCESS) {
-    ERROR_TRACE("Unable to get misc info");
+    vpERROR_TRACE("Unable to get misc info");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get misc info") );
   }
@@ -691,13 +691,13 @@ vp1394Grabber::getFramerateSupported(int format, int mode,
 
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -713,7 +713,7 @@ vp1394Grabber::getFramerateSupported(int format, int mode,
 					      cameras[camera].node,
 					      format, mode,
 					      &value) != DC1394_SUCCESS) {
-	  ERROR_TRACE("Could not query supported frametates for format %d\n"
+	  vpERROR_TRACE("Could not query supported frametates for format %d\n"
 		      "and mode %d\n", format, mode);
 	  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 					 "Could not query supported framerates") );
@@ -760,13 +760,13 @@ vp1394Grabber::setShutter(unsigned int shutter)
 
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -775,7 +775,7 @@ vp1394Grabber::setShutter(unsigned int shutter)
 			  cameras[camera].node,
 			  FEATURE_SHUTTER, &min_shutter) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get min shutter value");
+    vpERROR_TRACE("Unable to get min shutter value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get min shutter value") );
   }
@@ -784,13 +784,13 @@ vp1394Grabber::setShutter(unsigned int shutter)
 			  cameras[camera].node,
 			  FEATURE_SHUTTER, &max_shutter) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get max shutter value");
+    vpERROR_TRACE("Unable to get max shutter value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get max shutter value") );
   }
 
   if (shutter < min_shutter || shutter > max_shutter) {
-    CERROR << "The requested shutter " << shutter
+    vpCERROR << "The requested shutter " << shutter
 	   << " must be comprised between " << min_shutter
 	   << " and " << max_shutter << endl;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
@@ -800,7 +800,7 @@ vp1394Grabber::setShutter(unsigned int shutter)
   if ( dc1394_set_shutter(handles[camera],
 			  cameras[camera].node,
 			  shutter) != DC1394_SUCCESS) {
-    ERROR_TRACE("Unable to set shutter");
+    vpERROR_TRACE("Unable to set shutter");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Cannot set shutter") );
   }
@@ -838,13 +838,13 @@ vp1394Grabber::getShutter(unsigned int &min_shutter,
 
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -852,7 +852,7 @@ vp1394Grabber::getShutter(unsigned int &min_shutter,
 			cameras[camera].node,
 			&shutter) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get shutter value");
+    vpERROR_TRACE("Unable to get shutter value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get shutter value") );
 
@@ -862,7 +862,7 @@ vp1394Grabber::getShutter(unsigned int &min_shutter,
 			  cameras[camera].node,
 			  FEATURE_SHUTTER, &min_shutter) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get min shutter value");
+    vpERROR_TRACE("Unable to get min shutter value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get min shutter value") );
   }
@@ -871,7 +871,7 @@ vp1394Grabber::getShutter(unsigned int &min_shutter,
 			  cameras[camera].node,
 			  FEATURE_SHUTTER, &max_shutter) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get max shutter value");
+    vpERROR_TRACE("Unable to get max shutter value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get max shutter value") );
   }
@@ -899,13 +899,13 @@ vp1394Grabber::setGain(unsigned int gain)
 
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -913,7 +913,7 @@ vp1394Grabber::setGain(unsigned int gain)
 			  cameras[camera].node,
 			  FEATURE_GAIN, &min_gain) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get min gain value");
+    vpERROR_TRACE("Unable to get min gain value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get min gain value") );
   }
@@ -922,13 +922,13 @@ vp1394Grabber::setGain(unsigned int gain)
 			  cameras[camera].node,
 			  FEATURE_GAIN, &max_gain) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get max gain value");
+    vpERROR_TRACE("Unable to get max gain value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get max gain value") );
   }
 
   if (gain < min_gain || gain > max_gain) {
-    CERROR << "The requested gain " << gain
+    vpCERROR << "The requested gain " << gain
 	   << " must be comprised between " << min_gain
 	   << " and " << max_gain << endl;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
@@ -938,7 +938,7 @@ vp1394Grabber::setGain(unsigned int gain)
   if ( dc1394_set_gain(handles[camera],
 		       cameras[camera].node,
 		       gain) != DC1394_SUCCESS) {
-    ERROR_TRACE("Unable to set gain");
+    vpERROR_TRACE("Unable to set gain");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Cannot set gain") );
   }
@@ -976,13 +976,13 @@ vp1394Grabber::getGain(unsigned int &min_gain,
 
   if (handle_created == false) {
     close();
-    ERROR_TRACE("To set the shutter the handle must be created");
+    vpERROR_TRACE("To set the shutter the handle must be created");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter the handle must be created") );
   }
   if (camera_found == false) {
     close();
-    ERROR_TRACE("To set the shutter a camera must be connected");
+    vpERROR_TRACE("To set the shutter a camera must be connected");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "To set the shutter a camera must be connected") );
   }
@@ -991,7 +991,7 @@ vp1394Grabber::getGain(unsigned int &min_gain,
 		     cameras[camera].node,
 		     &gain) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get gain value");
+    vpERROR_TRACE("Unable to get gain value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get gain value") );
 
@@ -1001,7 +1001,7 @@ vp1394Grabber::getGain(unsigned int &min_gain,
 			  cameras[camera].node,
 			  FEATURE_GAIN, &min_gain) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get min gain value");
+    vpERROR_TRACE("Unable to get min gain value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get min gain value") );
   }
@@ -1010,7 +1010,7 @@ vp1394Grabber::getGain(unsigned int &min_gain,
 			  cameras[camera].node,
 			  FEATURE_GAIN, &max_gain) !=DC1394_SUCCESS) {
     close();
-    ERROR_TRACE("Unable to get max gain value");
+    vpERROR_TRACE("Unable to get max gain value");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Unable to get max gain value") );
 
@@ -1084,7 +1084,7 @@ void
 vp1394Grabber::getNumCameras(unsigned int &cameras)
 {
   if (camera_found == false) {
-    CTRACE << "No camera found..."<< endl;
+    vpCTRACE << "No camera found..."<< endl;
     cameras = 0;
   }
 
@@ -1110,7 +1110,7 @@ vp1394Grabber::open(vpImage<unsigned char> &I)
   getWidth(ncols) ;
   getHeight(nrows) ;
 
-  ERROR_TRACE("%d %d", nrows, ncols ) ;
+  vpERROR_TRACE("%d %d", nrows, ncols ) ;
 
   I.resize(nrows, ncols) ;
 
@@ -1194,7 +1194,7 @@ vp1394Grabber::open()
 
   if (raw_handle==NULL) {
     close();
-    ERROR_TRACE("Unable to aquire a raw1394 handle\n\n"
+    vpERROR_TRACE("Unable to aquire a raw1394 handle\n\n"
 		"Please check \n"
 		"  - if the kernel modules `ieee1394',`raw1394' and `ohci1394' are loaded \n"
 		"  - if you have read/write access to /dev/raw1394\n\n");
@@ -1233,8 +1233,8 @@ vp1394Grabber::open()
       handles[num_cameras] = dc1394_create_handle(p);
       if (handles[num_cameras]==NULL) {
 	close();
-	ERROR_TRACE("Unable to aquire a raw1394 handle\n");
-	ERROR_TRACE("did you load the drivers?\n");
+	vpERROR_TRACE("Unable to aquire a raw1394 handle\n");
+	vpERROR_TRACE("did you load the drivers?\n");
 	throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				       "Unable to aquire a raw1394 handle.") );
       }
@@ -1250,7 +1250,7 @@ vp1394Grabber::open()
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "no cameras found") );
   }
-  ERROR_TRACE("%d cameras detected\n", num_cameras);
+  vpERROR_TRACE("%d cameras detected\n", num_cameras);
 
   camera_found = true;
 
@@ -1327,7 +1327,7 @@ vp1394Grabber::setup()
 					     &cameras[i]) != DC1394_SUCCESS) {
 	  close();
 
-	  ERROR_TRACE("Unable to setup camera in format 7 mode 0-\n"
+	  vpERROR_TRACE("Unable to setup camera in format 7 mode 0-\n"
 		      "check line %d of %s to"
 		      "make sure that the video mode,framerate and format are "
 		      "supported by your camera.\n",
@@ -1364,7 +1364,7 @@ vp1394Grabber::setup()
 				     vp1394Grabber::DROP_FRAMES,
 				     device_name,
 				     &cameras[i]) != DC1394_SUCCESS) {
-	  ERROR_TRACE("Unable to setup camera- check line %d of %s to"
+	  vpERROR_TRACE("Unable to setup camera- check line %d of %s to"
 		      "make sure that the video mode,framerate and format are "
 		      "supported by your camera.\n",
 		      __LINE__,__FILE__);
@@ -1438,8 +1438,8 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
       break;
     default:
       close();
-      ERROR_TRACE("Error: camera image format and camera mode are uncompatible...\n");
-      ERROR_TRACE("format: %d and mode: %d\n", _format, _mode);
+      vpERROR_TRACE("Error: camera image format and camera mode are uncompatible...\n");
+      vpERROR_TRACE("format: %d and mode: %d\n", _format, _mode);
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				     "Wrong mode for format 0") );
       break;
@@ -1482,8 +1482,8 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
       break;
     default:
       close();
-      ERROR_TRACE("Error: camera image format and camera mode are uncompatible...\n");
-      ERROR_TRACE("format: %d and mode: %d\n", _format, _mode);
+      vpERROR_TRACE("Error: camera image format and camera mode are uncompatible...\n");
+      vpERROR_TRACE("format: %d and mode: %d\n", _format, _mode);
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				     "Wrong mode for format 1") );
       break;
@@ -1526,8 +1526,8 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
      break;
     default:
       close();
-      ERROR_TRACE("Error: camera image format and camera mode are uncompatible...\n");
-      ERROR_TRACE("format: %d and mode: %d\n", _format, _mode);
+      vpERROR_TRACE("Error: camera image format and camera mode are uncompatible...\n");
+      vpERROR_TRACE("format: %d and mode: %d\n", _format, _mode);
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				     "Wrong mode for format 2") );
       break;
@@ -1588,7 +1588,7 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
 					    &_width,
 					    &_height) != DC1394_SUCCESS) {
       close();
-      ERROR_TRACE("Unable to get maximal image size for format 7\n");
+      vpERROR_TRACE("Unable to get maximal image size for format 7\n");
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				     "Unable to get maximal image size for format 7 ") );
     }
@@ -1598,8 +1598,8 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
     break;
   default:
     close();
-    ERROR_TRACE("Error: camera image format and camera mode are uncompatible...\n");
-    ERROR_TRACE("format: %d and mode: %d\n", _format, _mode);
+    vpERROR_TRACE("Error: camera image format and camera mode are uncompatible...\n");
+    vpERROR_TRACE("format: %d and mode: %d\n", _format, _mode);
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Wrong format") );
     break;
@@ -1707,7 +1707,7 @@ vp1394Grabber::dmaDoneWithBuffer()
 
   if (camera >= num_cameras) {
     close();
-    ERROR_TRACE("The required camera is not present");
+    vpERROR_TRACE("The required camera is not present");
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "The required camera is not present") );
   }

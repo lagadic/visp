@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpForwardProjection.cpp,v 1.3 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpForwardProjection.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,7 +85,7 @@ vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -99,7 +99,7 @@ vpForwardProjection::track(const vpHomogeneousMatrix &cMo)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }

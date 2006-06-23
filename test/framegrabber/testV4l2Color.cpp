@@ -62,28 +62,28 @@ main(int argc, char ** argv)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
 
   cout << I.getCols() << "  " << I.getRows() <<endl  ;
 
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   vpDisplayX display(I,100,100,"Video4Linux2 grabbing... ") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   long cpt = 1;
   while(cpt ++ < 100)
@@ -104,7 +104,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  TRACE("Video 4 Linux 2 frame grabber drivers are not available") ;
+  vpTRACE("Video 4 Linux 2 frame grabber drivers are not available") ;
 }
 #endif
 

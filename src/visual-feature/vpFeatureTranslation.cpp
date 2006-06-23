@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.cpp,v 1.3 2006-05-30 08:40:48 fspindle Exp $
+ * $Id: vpFeatureTranslation.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -170,7 +170,7 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
 
     if (s_star.get_s().sumSquare() > 1e-6)
     {
-      ERROR_TRACE("\n\t\t s* should be 0") ;
+      vpERROR_TRACE("\n\t\t s* should be 0") ;
       throw(vpFeatureException(vpFeatureException::badErrorVectorError,
 			       "\n\t\t s* should be 0")) ;
     }
@@ -226,7 +226,7 @@ vpFeatureTranslation::display(const vpCameraParameters &cam,
   if (firsttime==0)
   {
     firsttime=1 ;
-    ERROR_TRACE("not implemented") ;
+    vpERROR_TRACE("not implemented") ;
     // Do not throw and error since it is not subject
     // to produce a failure
   }

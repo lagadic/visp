@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testAutoDetectDot.cpp,v 1.4 2006-04-19 09:01:25 fspindle Exp $
+ *  $Id: testAutoDetectDot.cpp,v 1.5 2006-06-23 14:45:09 brenier Exp $
  *
  * Description
  * ============
@@ -63,12 +63,12 @@ main()
   d.setGraphics(true);
 
   try{
-    TRACE("Load: %s", s);
+    vpTRACE("Load: %s", s);
     vpImageIo::readPGM(I,s) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -79,7 +79,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   try{
@@ -94,7 +94,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -110,7 +110,7 @@ main()
   while (iter < 3)
   {
     sprintf(s,"%s/image.%04d.pgm",dir,iter) ;
-    TRACE("Load: %s", s);
+    vpTRACE("Load: %s", s);
     vpImageIo::readPGM(I,s) ;
     vpDisplay::display(I) ;
 
@@ -147,7 +147,7 @@ main()
     delete list_d;
 
 #if 0
-    TRACE("Click in the image to continue...");
+    vpTRACE("Click in the image to continue...");
     vpDisplay::getClick(I);
 #endif
     iter ++;
@@ -157,7 +157,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

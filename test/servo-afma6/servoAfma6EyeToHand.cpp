@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6EyeToHand.cpp,v 1.3 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: servoAfma6EyeToHand.cpp,v 1.4 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -79,20 +79,20 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
 
   vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -124,7 +124,7 @@ main()
  }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -175,7 +175,7 @@ main()
   if (learning ==1)
     {
       // save the object position
-      TRACE("Save the location of the object in a file cdMo.dat") ;
+      vpTRACE("Save the location of the object in a file cdMo.dat") ;
       ofstream f(name) ;
       cMo.save(f) ;
       f.close() ;
@@ -187,7 +187,7 @@ main()
   vpRobotAfma6 robot ;
 
   {
-    TRACE("Loading desired location from cdMo.dat") ;
+    vpTRACE("Loading desired location from cdMo.dat") ;
     ifstream f("cdMo.dat") ;
     cdMo.load(f) ;
     f.close() ;
@@ -211,9 +211,9 @@ main()
 
   //------------------------------------------------------------------
 
-  TRACE("define the task") ;
-  TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t robot is controlled in the camera frame") ;
+  vpTRACE("define the task") ;
+  vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t robot is controlled in the camera frame") ;
   task.setServo(vpServo::EYETOHAND_L_cVe_eJe) ;
   task.setInteractionMatrixType(vpServo::CURRENT) ;
 
@@ -224,7 +224,7 @@ main()
     }
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
 
@@ -237,7 +237,7 @@ main()
   //-------------------------------------------------------------
   double error =1 ;
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
   vpColVector v ; // computed robot velocity
 
@@ -281,7 +281,7 @@ main()
 	}
       catch(...)
 	{
-	  TRACE("Error detected while tracking visual features") ;
+	  vpTRACE("Error detected while tracking visual features") ;
 	  robot.stopMotion() ;
 	  exit(1) ;
 	}
@@ -340,7 +340,7 @@ main()
       if (SAVE==1)
 	gain = gain/5 ;
 
-      TRACE("%f %f %f %f  %f",alpha, beta, lambda_av, task.error.sumSquare(),  gain) ;
+      vpTRACE("%f %f %f %f  %f",alpha, beta, lambda_av, task.error.sumSquare(),  gain) ;
       task.setLambda(gain) ;
 
 
@@ -366,7 +366,7 @@ main()
 
       if (error>7)
 	{
-	  TRACE("Error detected while tracking visual features") ;
+	  vpTRACE("Error detected while tracking visual features") ;
 	  robot.stopMotion() ;
 	  exit(1) ;
 	}
@@ -393,7 +393,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot connected to your computer...");
 }
 
 #endif

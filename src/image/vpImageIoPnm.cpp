@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageIoPnm.cpp,v 1.3 2005-09-19 13:39:02 fspindle Exp $
+ *  $Id: vpImageIoPnm.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
  *
  * Description
  * ============
@@ -52,7 +52,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
 
   // Test the filename
   if (filename == '\0')   {
-     ERROR_TRACE("no filename\n");
+     vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
 		       "no filename")) ;
   }
@@ -60,7 +60,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
   fd = fopen(filename, "wb");
 
   if (fd == NULL) {
-     ERROR_TRACE("couldn't write to file %s\n",  filename);
+     vpERROR_TRACE("couldn't write to file %s\n",  filename);
     throw (vpImageException(vpImageException::ioError,
 		       "cannot write file")) ;
   }
@@ -77,7 +77,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
   ierr = fwrite(I.bitmap, sizeof(unsigned char), nbyte, fd) ;
   if (ierr == ! nbyte) {
     fclose(fd);
-    ERROR_TRACE("couldn't write %d bytes to file %s\n",
+    vpERROR_TRACE("couldn't write %d bytes to file %s\n",
 	    nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
 		       "cannot write file")) ;
@@ -126,7 +126,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
 
   // Test the filename
   if (filename == '\0')   {
-     ERROR_TRACE("no filename\n");
+     vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
 		       "no filename")) ;
   }
@@ -134,7 +134,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
   fd = fopen(filename, "wb");
 
   if (fd == NULL) {
-     ERROR_TRACE("couldn't write to file %s\n",  filename);
+     vpERROR_TRACE("couldn't write to file %s\n",  filename);
     throw (vpImageException(vpImageException::ioError,
 		       "cannot write file")) ;
   }
@@ -155,7 +155,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
   ierr = fwrite(Itmp.bitmap, sizeof(unsigned char), nbyte, fd) ;
   if (ierr == ! nbyte) {
     fclose(fd);
-    ERROR_TRACE("couldn't write %d bytes to file %s\n",
+    vpERROR_TRACE("couldn't write %d bytes to file %s\n",
 	    nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
 		       "cannot write file")) ;
@@ -197,7 +197,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   // Test the filename
   if (filename == '\0')
   {
-    ERROR_TRACE("no filename") ;
+    vpERROR_TRACE("no filename") ;
     throw (vpImageException(vpImageException::ioError,
 			    " no filename")) ;
 
@@ -207,7 +207,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   fd = fopen(filename, "rb");
   if (fd == NULL)
   {
-    ERROR_TRACE("couldn't read file %s", filename) ;
+    vpERROR_TRACE("couldn't read file %s", filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -220,7 +220,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   if (err == NULL)
   {
     fclose (fd);
-    ERROR_TRACE("couldn't read line %d of file %s\n",  line, filename) ;
+    vpERROR_TRACE("couldn't read line %d of file %s\n",  line, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -228,7 +228,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   if (strlen(str) != 3)
   {
     fclose (fd);
-    ERROR_TRACE("%s is not a PGM file\n", filename) ;
+    vpERROR_TRACE("%s is not a PGM file\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "this is not a pgm file")) ;
   }
@@ -237,7 +237,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   if (strcmp(str, "P5") != 0)
   {
     fclose (fd);
-    ERROR_TRACE("%s is not a PGM file\n", filename) ;
+    vpERROR_TRACE("%s is not a PGM file\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "this is not a pgm file")) ;
   }
@@ -257,7 +257,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   if (ierr == EOF)
   {
     fclose (fd);
-    ERROR_TRACE("couldn't read line %d of file %s\n",line, filename) ;
+    vpERROR_TRACE("couldn't read line %d of file %s\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -271,7 +271,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
   }
@@ -281,7 +281,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   line++;
   if (err == NULL) {
     fclose (fd);
-    ERROR_TRACE("couldn't read line %d of file %s\n",line, filename) ;
+    vpERROR_TRACE("couldn't read line %d of file %s\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -289,7 +289,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   ierr = sscanf(str, "%d", &is255);
   if (ierr == EOF) {
     fclose (fd);
-    ERROR_TRACE("couldn't read line %d of file %s\n", line, filename) ;
+    vpERROR_TRACE("couldn't read line %d of file %s\n", line, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -297,7 +297,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   if (is255 != 255)
   {
     fclose (fd);
-    ERROR_TRACE("MAX_VAL is not 255 in file %s\n", filename) ;
+    vpERROR_TRACE("MAX_VAL is not 255 in file %s\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "error reading pgm file")) ;
   }
@@ -306,7 +306,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   if (fread (I.bitmap, sizeof(unsigned char), nbyte, fd ) != nbyte)
   {
     fclose (fd);
-    ERROR_TRACE("couldn't read %d bytes in file %s\n", nbyte, filename) ;
+    vpERROR_TRACE("couldn't read %d bytes in file %s\n", nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "error reading pgm file")) ;
   }
@@ -351,7 +351,7 @@ vpImageIo::readPGM(vpImage<vpRGBa> &I,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -391,7 +391,7 @@ vpImageIo::readPPM(vpImage<unsigned char> &I, const char *filename)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -419,7 +419,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   // Test the filename
   if (filename == '\0')
   {
-    ERROR_TRACE("no filename") ;
+    vpERROR_TRACE("no filename") ;
     throw (vpImageException(vpImageException::ioError,
 			    " no filename")) ;
 
@@ -429,7 +429,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   fd = fopen(filename, "rb");
   if (fd == NULL)
   {
-    ERROR_TRACE("couldn't read file %s", filename) ;
+    vpERROR_TRACE("couldn't read file %s", filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -442,7 +442,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   if (err == NULL)
   {
     fclose (fd);
-    ERROR_TRACE("couldn't read line %d of file %s\n",  line, filename) ;
+    vpERROR_TRACE("couldn't read line %d of file %s\n",  line, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -450,7 +450,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   if (strlen(str) != 3)
   {
     fclose (fd);
-    ERROR_TRACE("%s is not a PPM file\n", filename) ;
+    vpERROR_TRACE("%s is not a PPM file\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "this is not a ppm file")) ;
   }
@@ -459,7 +459,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   if (strcmp(str, "P6") != 0)
   {
     fclose (fd);
-    ERROR_TRACE("%s is not a PPM file\n", filename) ;
+    vpERROR_TRACE("%s is not a PPM file\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "this is not a ppm file")) ;
   }
@@ -479,7 +479,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   if (ierr == EOF)
   {
     fclose (fd);
-    ERROR_TRACE("couldn't read line %d of file %s\n",line, filename) ;
+    vpERROR_TRACE("couldn't read line %d of file %s\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -493,7 +493,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
   }
@@ -503,7 +503,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   line++;
   if (err == NULL) {
     fclose (fd);
-    ERROR_TRACE("couldn't read line %d of file %s\n",line, filename) ;
+    vpERROR_TRACE("couldn't read line %d of file %s\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -511,7 +511,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   ierr = sscanf(str, "%d", &is255);
   if (ierr == EOF) {
     fclose (fd);
-    ERROR_TRACE("couldn't read line %d of file %s\n", line, filename) ;
+    vpERROR_TRACE("couldn't read line %d of file %s\n", line, filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
@@ -519,7 +519,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   if (is255 != 255)
   {
     fclose (fd);
-    ERROR_TRACE("MAX_VAL is not 255 in file %s\n", filename) ;
+    vpERROR_TRACE("MAX_VAL is not 255 in file %s\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
 			    "error reading ppm file")) ;
   }
@@ -537,7 +537,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
       if (res==0)
       {
 	 fclose (fd);
-	 ERROR_TRACE("couldn't read  bytes in file %s\n", filename) ;
+	 vpERROR_TRACE("couldn't read  bytes in file %s\n", filename) ;
 	 throw (vpImageException(vpImageException::ioError,
 				 "error reading ppm file")) ;
       }
@@ -569,7 +569,7 @@ vpImageIo::writePPM(const vpImage<unsigned char> &I, const char *filename)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -589,7 +589,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
 
   // Test the filename
   if (filename == '\0')   {
-     ERROR_TRACE("no filename\n");
+     vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
 		       "no filename")) ;
   }
@@ -597,7 +597,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
   f = fopen(filename, "wb");
 
   if (f == NULL) {
-     ERROR_TRACE("couldn't write to file %s\n",  filename);
+     vpERROR_TRACE("couldn't write to file %s\n",  filename);
      throw (vpImageException(vpImageException::ioError,
 			     "cannot write file")) ;
   }
@@ -622,7 +622,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
       if (res==0)
       {
 	fclose(f);
-	ERROR_TRACE("couldn't write file") ;
+	vpERROR_TRACE("couldn't write file") ;
 	throw (vpImageException(vpImageException::ioError,
 				"cannot write file")) ;
       }
@@ -631,7 +631,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
       if (res==0)
       {
 	fclose(f);
-	ERROR_TRACE("couldn't write file") ;
+	vpERROR_TRACE("couldn't write file") ;
 	throw (vpImageException(vpImageException::ioError,
 				"cannot write file")) ;
       }
@@ -640,7 +640,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
       if (res==0)
       {
 	fclose(f);
-	ERROR_TRACE("couldn't write file") ;
+	vpERROR_TRACE("couldn't write file") ;
 	throw (vpImageException(vpImageException::ioError,
 				"cannot write file")) ;
       }
