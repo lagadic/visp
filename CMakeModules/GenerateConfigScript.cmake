@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: GenerateConfigScript.cmake,v 1.11 2006-05-30 08:35:02 fspindle Exp $
+# $Id: GenerateConfigScript.cmake,v 1.12 2006-06-23 10:13:40 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -65,10 +65,11 @@ IF (UNIX)
   # Because using -fprofile-arcs with shared lib can cause problems like:
   # hidden symbol `__bb_init_func', we add this option only for static library
   # build
-  IF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
-    SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -fprofile-arcs -ftest-coverage")
-  ENDIF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
-  
+  IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+  SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
+
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_EXTERN_LIBS
   #

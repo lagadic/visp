@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.16 2006-06-19 08:57:55 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.17 2006-06-23 10:13:40 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -322,9 +322,10 @@ IF(USE_DC1394)
   FIND_PACKAGE(DC1394)
   IF(RAW1394_FOUND AND DC1394_FOUND)
     SET(VISP_HAVE_DC1394 TRUE) # for header vpConfig.h
-     #MESSAGE("DBG VISP_HAVE_DC1394= ${VISP_HAVE_DC1394}")
-     #MESSAGE("DBG DC1394_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
-     #MESSAGE("DBG RAW1394_INCLUDE_DIR=${RAW1394_INCLUDE_DIR}")
+    SET(VISP_HAVE_DC1394_VERSION ${DC1394_VERSION}) # for header vpConfig.h
+    #MESSAGE("DBG VISP_HAVE_DC1394= ${VISP_HAVE_DC1394}")
+    #MESSAGE("DBG DC1394_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
+    #MESSAGE("DBG RAW1394_INCLUDE_DIR=${RAW1394_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
       ${RAW1394_INCLUDE_DIR} ${DC1394_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} 
@@ -641,9 +642,10 @@ INCLUDE(Dart)
 # Because using -fprofile-arcs with shared lib can cause problems like:
 # hidden symbol `__bb_init_func', we add this option only for static library
 # build
-IF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
-  SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
-ENDIF(CMAKE_COMPILER_IS_GNUCXX AND BUILD_STATIC_LIBS)
+IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+  SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
 
 #----------------------------------------------------------------------
 # Propagation in sub dirs
