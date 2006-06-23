@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.cpp,v 1.3 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMeTracker.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -180,7 +180,7 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
       catch(...)
       {
 	// EM verifier quel signal est de sortie !!!
-	ERROR_TRACE(" ") ;
+	vpERROR_TRACE(" ") ;
 	throw ;
       }
       if(refp.suppress==0) nGoodElement++;
@@ -253,7 +253,7 @@ vpMeTracker::track(vpImage<unsigned char>& I)
   if (list.nbElement()==0)
   {
 
-    ERROR_TRACE("Error Tracking: only %d "
+    vpERROR_TRACE("Error Tracking: only %d "
 		 "pixels when entered the function ",list.nbElement()) ;
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "too few pixel to track")) ;
@@ -274,19 +274,18 @@ vpMeTracker::track(vpImage<unsigned char>& I)
     {
 
       try{
-	//	ERROR_TRACE("%d",d ) ;
-	//	ERROR_TRACE("range %d",me->range) ;
+	//	vpERROR_TRACE("%d",d ) ;
+	//	vpERROR_TRACE("range %d",me->range) ;
 	 s.track(I,me,true);
       }
       catch(vpTrackingException)
       {
-	ERROR_TRACE("catch exception ") ;
+	vpERROR_TRACE("catch exception ") ;
 	s.suppress=2 ;
       }
 
       if(s.suppress != 2)
       {
-	//	ERROR_TRACE("je passe la ") ;
 	nGoodElement++;
 
 	if(DEBUG_LEVEL2)

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotTemplate.cpp,v 1.2 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobotTemplate.cpp,v 1.3 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,7 +49,7 @@
 //! basic initialization
 void vpRobotTemplate::init()
 {
-  TRACE(" Get the joint limits " ) ;
+  vpTRACE(" Get the joint limits " ) ;
   cout << "Not implemented ! " << endl;
 }
 

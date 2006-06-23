@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.5 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMeEllipse.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -477,7 +477,7 @@ vpMeEllipse::leastSquare(vpImage<unsigned char>  &I)
 
   if (list.nbElement() < 3)
   {
-    ERROR_TRACE("Not enough point") ;
+    vpERROR_TRACE("Not enough point") ;
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "not enough point")) ;
   }
@@ -787,7 +787,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n, int *i,int *j)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   vpMeTracker::display(I) ;
@@ -815,7 +815,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
     //    cout << "number of signals " << numberOfSignal() << endl ;
@@ -829,7 +829,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
       leastSquare(I) ;  }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
     computeAngle(i1,j1, i2, j2) ;
@@ -841,7 +841,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
 	leastSquare(I) ;  }
       catch(...)
       {
-	ERROR_TRACE(" ") ;
+	vpERROR_TRACE(" ") ;
 	throw ;
       }
       computeAngle(i1,j1, i2, j2) ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.cpp,v 1.4 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpColVector.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,7 +67,7 @@ vpColVector::operator+(const vpColVector &m) const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -112,7 +112,7 @@ vpColVector vpColVector::operator-(const vpColVector &m) const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -125,13 +125,13 @@ vpColVector::vpColVector (vpColVector &m, int r, int nrows)
 {
   if (r<0)
   {
-    ERROR_TRACE("\n\t\t Illegal subMatrix operation") ;
+    vpERROR_TRACE("\n\t\t Illegal subMatrix operation") ;
     throw(vpMatrixException(vpMatrixException::subMatrixError,
 			    "\n\t\t Illegal subMatrix operation")) ;
   }
   if ( (r+nrows) > m.getRows() )
   {
-    ERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
+    vpERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
     throw(vpMatrixException(vpMatrixException::subMatrixError,
 			    "\n\t\t SubvpMatrix larger than vpColVector")) ;
   }
@@ -147,7 +147,7 @@ vpColVector vpColVector::operator-()
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -169,7 +169,7 @@ vpColVector vpColVector::operator*(double x) const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -192,7 +192,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &m)
 
   if (m.getCols() !=1)
   {
-    TRACE(" m should be a 1 cols matrix ") ;
+    vpTRACE(" m should be a 1 cols matrix ") ;
     throw ;
   }
 
@@ -201,7 +201,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &m)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -237,7 +237,7 @@ vpColVector &vpColVector::operator=(const vpColVector &v)
     }
     catch(vpException me)
     {
-      ERROR_TRACE("Error caught") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   }
@@ -267,7 +267,7 @@ vpColVector & vpColVector::operator<<(const vpColVector &v)
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -324,7 +324,7 @@ vpRowVector vpColVector::t() const
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
   memcpy(v.data, data, rowNum*sizeof(double)) ;
@@ -371,12 +371,12 @@ vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 {
   if (a.data==NULL)
   {
-    ERROR_TRACE("vpColVector a non initialized") ;
+    vpERROR_TRACE("vpColVector a non initialized") ;
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
   if (b.data==NULL)
   {
-    ERROR_TRACE("vpColVector b non initialized") ;
+    vpERROR_TRACE("vpColVector b non initialized") ;
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
   double *ad = a.data ;   double *bd = b.data ;
@@ -432,7 +432,7 @@ vpColVector::invSort(const vpColVector &v)
 {
  if (v.data==NULL)
   {
-    ERROR_TRACE("vpColVector v non initialized") ;
+    vpERROR_TRACE("vpColVector v non initialized") ;
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
   vpColVector tab ;
@@ -463,7 +463,7 @@ vpColVector::sort(const vpColVector &v)
 {
  if (v.data==NULL)
   {
-    ERROR_TRACE("vpColVector a non initialized") ;
+    vpERROR_TRACE("vpColVector a non initialized") ;
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
  vpColVector tab ;
@@ -496,7 +496,7 @@ double vpColVector::mean(const vpColVector &v)
 {
  if (v.data==NULL)
   {
-    ERROR_TRACE("vpColVector v non initialized") ;
+    vpERROR_TRACE("vpColVector v non initialized") ;
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
  double mean = 0 ;
@@ -523,7 +523,7 @@ vpColVector::median(const vpColVector &v)
 {
   if (v.data==NULL)
   {
-    ERROR_TRACE("vpColVector v non initialized") ;
+    vpERROR_TRACE("vpColVector v non initialized") ;
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
 
@@ -591,7 +591,7 @@ vpColVector::skew(const vpColVector &v)
   vpMatrix M ;
   if (v.getRows() != 3)
   {
-    ERROR_TRACE("Cannot compute skew kinematic matrix,"
+    vpERROR_TRACE("Cannot compute skew kinematic matrix,"
 		"v has not 3 rows") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t Cannot compute skew kinematic matrix"
@@ -616,7 +616,7 @@ vpColVector vpColVector::cross(const vpColVector &a, const vpColVector &b)
 
   if (a.getRows() != 3)
   {
-    ERROR_TRACE("Cannot compute cross product,"
+    vpERROR_TRACE("Cannot compute cross product,"
 		"a has not 3 rows") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t Cannot compute  cross product"
@@ -625,7 +625,7 @@ vpColVector vpColVector::cross(const vpColVector &a, const vpColVector &b)
   if (b.getRows() != 3)
   {
 
-    ERROR_TRACE("Cannot compute cross product,"
+    vpERROR_TRACE("Cannot compute cross product,"
 		"b has not 3 rows") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t Cannot compute  cross product"

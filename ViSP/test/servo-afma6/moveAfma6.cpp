@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma6.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: moveAfma6.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -39,7 +39,7 @@ main()
 {
   vpRobotAfma6 robot ;
 
-  ERROR_TRACE(" ") ;
+  vpERROR_TRACE(" ") ;
 
 
   robot.setPosition(vpRobot::REFERENCE_FRAME,
@@ -54,7 +54,7 @@ main()
   cout << "Position in the articular frame " << q.t() ;
 
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-  ERROR_TRACE(" ") ;
+  vpERROR_TRACE(" ") ;
   q =0 ;
   q[2] = 0.01 ;
 
@@ -82,7 +82,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot connected to your computer...");
 }
 
 #endif

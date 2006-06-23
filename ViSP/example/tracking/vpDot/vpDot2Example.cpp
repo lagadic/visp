@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2Example.cpp,v 1.4 2006-05-30 08:42:21 fspindle Exp $
+ * $Id: vpDot2Example.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -124,7 +124,7 @@ main()
     // here this will result in the end of the program
     // Note that another error message has been printed from readPGM
     // to give more information about the error
-    ERROR_TRACE("Error while reading the image") ;
+    vpERROR_TRACE("Error while reading the image") ;
     throw ;
   }
 
@@ -143,7 +143,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE("Error while displaying the image") ;
+    vpERROR_TRACE("Error while displaying the image") ;
     throw ;
   }
 
@@ -161,7 +161,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE("Error in tracking initialization ") ;
+    vpERROR_TRACE("Error in tracking initialization ") ;
     throw ;
   }
 
@@ -182,7 +182,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE("Error in tracking ") ;
+    vpERROR_TRACE("Error in tracking ") ;
     throw ;
   }
 
@@ -235,7 +235,7 @@ main()
     }
     catch(...)
       {
-	ERROR_TRACE("Error in tracking loop") ;
+	vpERROR_TRACE("Error in tracking loop") ;
 	throw ;
       }
     iter +=5 ;
@@ -245,7 +245,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.8 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.9 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,7 +86,7 @@ vpRotationMatrix::init()
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
   for (i=0 ; i < 3 ; i++)
@@ -135,7 +135,7 @@ vpRotationMatrix::operator=(const vpMatrix &m)
 
   if ((m.getCols() !=3) &&(m.getRows() !=3))
     {
-      ERROR_TRACE("m is not a rotation matrix !!!!! ") ;
+      vpERROR_TRACE("m is not a rotation matrix !!!!! ") ;
       throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "m is not a rotation matrix !!!!!"));
     }
@@ -150,7 +150,7 @@ vpRotationMatrix::operator=(const vpMatrix &m)
 
   if (isARotationMatrix() == false)
   {
-    ERROR_TRACE("m is not a rotation matrix !!!!! ") ;
+    vpERROR_TRACE("m is not a rotation matrix !!!!! ") ;
       throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "m is not a rotation matrix !!!!!"));
   }
@@ -184,7 +184,7 @@ vpRotationMatrix::operator*(const vpRotationMatrix &B) const
 vpRotationMatrix
 vpRotationMatrix::operator+(const vpRotationMatrix &B) const
 {
- ERROR_TRACE("Cannot add two rotation matrices !!!!! ") ;
+ vpERROR_TRACE("Cannot add two rotation matrices !!!!! ") ;
   throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "Cannot add two rotation matrices !!!!!"));
 
@@ -200,7 +200,7 @@ vpRotationMatrix::operator+(const vpRotationMatrix &B) const
 vpRotationMatrix
 vpRotationMatrix::operator-(const vpRotationMatrix &B) const
 {
-  ERROR_TRACE("Cannot substract two rotation matrices !!!!! ") ;
+  vpERROR_TRACE("Cannot substract two rotation matrices !!!!! ") ;
   throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "Cannot substract two rotation matrices !!!!!"));
 

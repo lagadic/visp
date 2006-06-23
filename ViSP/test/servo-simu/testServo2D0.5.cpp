@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServo2D0.5.cpp,v 1.2 2005-09-07 14:05:16 fspindle Exp $
+ *  $Id: testServo2D0.5.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -54,37 +54,37 @@ main()
   cout << endl ;
 
 
-  TRACE("sets the initial camera location " ) ;
+  vpTRACE("sets the initial camera location " ) ;
   vpPoseVector c_r_o(0.1,0.2,2,
 		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
 		     ) ;
 
-  CTRACE ; cout << endl ;
+  vpCTRACE ; cout << endl ;
   vpHomogeneousMatrix cMo(c_r_o) ;
-  CTRACE ; cout << endl ;
+  vpCTRACE ; cout << endl ;
   robot.setPosition(cMo) ;
-  CTRACE ; cout << endl ;
+  vpCTRACE ; cout << endl ;
 
-  TRACE("sets the desired camera location " ) ;
+  vpTRACE("sets the desired camera location " ) ;
   vpPoseVector cd_r_o(0,0,1,
 		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   vpHomogeneousMatrix cdMo(cd_r_o) ;
 
 
-  TRACE("\tsets the point coordinates in the world frame "  ) ;
+  vpTRACE("\tsets the point coordinates in the world frame "  ) ;
   vpPoint point ;
   point.setWorldCoordinates(0,0,0) ;
-  TRACE("\tproject : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
+  vpTRACE("\tproject : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
   point.track(cMo) ;
 
   vpPoint pointd ;
   pointd.setWorldCoordinates(0,0,0) ;
   pointd.track(cdMo) ;
   //------------------------------------------------------------------
-  TRACE("1st feature (x,y)");
+  vpTRACE("1st feature (x,y)");
 
 
-  TRACE("\t want to it at (0,0)") ;
+  vpTRACE("\t want to it at (0,0)") ;
   vpFeaturePoint p ;
   vpFeatureBuilder::create(p,point)  ;
 
@@ -94,58 +94,58 @@ main()
 
 
   //------------------------------------------------------------------
-  TRACE("2nd feature (Z)") ;
-  TRACE("\tnot necessary to project twice (reuse p)") ;
+  vpTRACE("2nd feature (Z)") ;
+  vpTRACE("\tnot necessary to project twice (reuse p)") ;
   vpFeaturePoint3D Z ;
   vpFeatureBuilder::create(Z,point)  ;  //retrieve x,y and Z of the vpPoint structure
 
-  TRACE("\twant to see it one meter away (here again use pd)") ;
+  vpTRACE("\twant to see it one meter away (here again use pd)") ;
   vpFeaturePoint3D Zd ;
   vpFeatureBuilder::create(Zd,pointd)  ;  //retrieve x,y and Z of the vpPoint structure
 
 
   //------------------------------------------------------------------
-  TRACE("3rd feature ThetaU") ;
-  TRACE("\tcompute the rotation that the camera has to realize "  ) ;
+  vpTRACE("3rd feature ThetaU") ;
+  vpTRACE("\tcompute the rotation that the camera has to realize "  ) ;
   vpHomogeneousMatrix cdMc ;
   cdMc = cdMo*cMo.inverse() ;
 
   vpFeatureThetaU tu ;
   tu.buildFrom(cdMc) ;
 
-  TRACE("\tsets the desired rotation (always zero !) ") ;
-  TRACE("\tsince s is the rotation that the camera has to realize ") ;
+  vpTRACE("\tsets the desired rotation (always zero !) ") ;
+  vpTRACE("\tsince s is the rotation that the camera has to realize ") ;
 
 
   //------------------------------------------------------------------
 
-  TRACE("define the task") ;
-  TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t robot is controlled in the camera frame") ;
+  vpTRACE("define the task") ;
+  vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t robot is controlled in the camera frame") ;
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
   task.addFeature(p,pd) ;
   task.addFeature(Z,Zd,vpFeaturePoint3D::selectZ()) ;
   task.addFeature(tu) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.1) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   while(iter++<200)
   {
     cout << "---------------------------------------------" << iter <<endl ;
     vpColVector v ;
 
-    if (iter==1) TRACE("\t\t get the robot position ") ;
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
     robot.getPosition(cMo) ;
 
-    if (iter==1) TRACE("\t\t update the feature ") ;
+    if (iter==1) vpTRACE("\t\t update the feature ") ;
     point.track(cMo) ;
     vpFeatureBuilder::create(p,point)  ;
     vpFeatureBuilder::create(Z,point)  ;
@@ -154,20 +154,20 @@ main()
     tu.buildFrom(cdMc) ;
 
 
-    if (iter==1) TRACE("\t\t compute the control law ") ;
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
     v = task.computeControlLaw() ;
     if (iter==1) task.print() ;
 
-    if (iter==1) TRACE("\t\t send the camera velocity to the controller ") ;
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
 
     cout << task.error.sumSquare() <<endl ; ;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
-  TRACE("Final camera location " ) ;
+  vpTRACE("Final camera location " ) ;
   cout << cMo << endl ;
 }
 

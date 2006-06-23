@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: 2D0.5.VisualServoingSimulation.cpp,v 1.2 2006-05-30 08:42:20 fspindle Exp $
+ * $Id: 2D0.5.VisualServoingSimulation.cpp,v 1.3 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,7 @@ main()
   // describes the position of the camera in the scene frame.
 
 
-  TRACE("sets the initial camera location " ) ;
+  vpTRACE("sets the initial camera location " ) ;
   // we give the camera location as a size 6 vector (3 translations in meter
   // and 3 rotation (theta U representation) )
   vpPoseVector c_r_o(0.1,0.2,2,
@@ -92,7 +92,7 @@ main()
   // Now that the current camera position has been defined,
   // let us defined the defined camera location.
   // It is defined by cdMo
-  TRACE("sets the desired camera location " ) ;
+  vpTRACE("sets the desired camera location " ) ;
   vpPoseVector cd_r_o(0,0,1,
 		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   vpHomogeneousMatrix cdMo(cd_r_o) ;
@@ -114,7 +114,7 @@ main()
 
   //------------------------------------------------------------------
   // First feature (x,y)
-  TRACE("1st feature (x,y)");
+  vpTRACE("1st feature (x,y)");
 
   // Let oP be this ... point,
   // a vpPoint class has three main member
@@ -225,7 +225,7 @@ main()
   //------------------------------------------------------------------
   // An now the closed loop
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   while(iter++<200)
   {
     // We get the new camera position cMo
@@ -262,12 +262,12 @@ main()
 
     //  compute the control law
     vpColVector v ;
-    TRACE(" ") ;
+    vpTRACE(" ") ;
 
     cout << logZ.getInteractionMatrix() ;
     // compute v = -lambda L^+(s-sd)
     v = task.computeControlLaw() ;
-    TRACE(" ") ;
+    vpTRACE(" ") ;
 
     // and send the computed velocity expressed in the camera frame
     // to the robot controller
@@ -277,9 +277,9 @@ main()
 
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
-  TRACE("Final camera location " ) ;
+  vpTRACE("Final camera location " ) ;
   cout << cMo << endl ;
 }
 

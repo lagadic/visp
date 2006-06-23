@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveBiclops.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: moveBiclops.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -53,133 +53,133 @@ main()
   q = 0;
   q[0] = vpMath::rad(-10);
   q[1] = vpMath::rad(-20);
-  CTRACE << "Set position in the articular frame: "
+  vpCTRACE << "Set position in the articular frame: "
 	 << " pan: " << vpMath::deg(q[0]) << " deg"
 	 << " tilt: " << vpMath::deg(q[1]) << " deg" << endl ;
   robot.setPositioningVelocity(30.) ;
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q) ;
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Position in the articular frame: "
+  vpCTRACE << "Position in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Velocity in the articular frame: "
+  vpCTRACE << "Velocity in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
 
-  CTRACE << "---------------------------------------- " << endl;
+  vpCTRACE << "---------------------------------------- " << endl;
 
   q[0] = vpMath::rad(10);
   q[1] = vpMath::rad(20);
-  CTRACE << "Set position in the articular frame: "
+  vpCTRACE << "Set position in the articular frame: "
 	 << " pan: " << vpMath::deg(q[0]) << " deg"
 	 << " tilt: " << vpMath::deg(q[1]) << " deg" << endl ;
   robot.setPositioningVelocity(10) ;
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q) ;
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Position in the articular frame: "
+  vpCTRACE << "Position in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Velocity in the articular frame: "
+  vpCTRACE << "Velocity in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
 
-  CTRACE << "---------------------------------------- " << endl;
+  vpCTRACE << "---------------------------------------- " << endl;
 
-  CTRACE << "Set STATE_VELOCITY_CONTROL" << endl;
+  vpCTRACE << "Set STATE_VELOCITY_CONTROL" << endl;
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Position in the articular frame: "
+  vpCTRACE << "Position in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0]) << " deg"
 	 << " tilt: " << vpMath::deg(qm[1]) << " deg" << endl ;
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Velocity in the articular frame: "
+  vpCTRACE << "Velocity in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
 
-  CTRACE << "---------------------------------------- " << endl;
+  vpCTRACE << "---------------------------------------- " << endl;
   qdot = 0 ;
   //  qdot[0] = vpMath::rad(0.1) ;
   qdot[1] = vpMath::rad(25) ;
-  CTRACE << "Set articular frame velocity "
+  vpCTRACE << "Set articular frame velocity "
 	 << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
 	 << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << endl ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
   sleep(5) ;
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Position in the articular frame: "
+  vpCTRACE << "Position in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0]) << " deg"
 	 << " tilt: " << vpMath::deg(qm[1]) << " deg" << endl ;
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Velocity in the articular frame: "
+  vpCTRACE << "Velocity in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
 
 
-  CTRACE << "---------------------------------------- " << endl;
+  vpCTRACE << "---------------------------------------- " << endl;
   qdot = 0 ;
   //  qdot[0] = vpMath::rad(0.1) ;
   qdot[1] = -vpMath::rad(25) ;
-  CTRACE << "Set articular frame velocity "
+  vpCTRACE << "Set articular frame velocity "
 	 << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
 	 << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << endl ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
   sleep(3) ;
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Position in the articular frame: "
+  vpCTRACE << "Position in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0]) << " deg"
 	 << " tilt: " << vpMath::deg(qm[1]) << " deg" << endl ;
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Velocity in the articular frame: "
+  vpCTRACE << "Velocity in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
 
 
-  CTRACE << "---------------------------------------- " << endl;
+  vpCTRACE << "---------------------------------------- " << endl;
 
 
   qdot = 0 ;
   //  qdot[0] = vpMath::rad(0.1) ;
   qdot[1] = vpMath::rad(10) ;
-  CTRACE << "Set articular frame velocity "
+  vpCTRACE << "Set articular frame velocity "
 	 << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
 	 << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << endl ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
   sleep(2) ;
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Position in the articular frame: "
+  vpCTRACE << "Position in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0]) << " deg"
 	 << " tilt: " << vpMath::deg(qm[1]) << " deg" << endl ;
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Velocity in the articular frame: "
+  vpCTRACE << "Velocity in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
 
-  CTRACE << "---------------------------------------- " << endl;
+  vpCTRACE << "---------------------------------------- " << endl;
 
   qdot = 0 ;
   qdot[0] = vpMath::rad(-5);
   //qdot[1] = vpMath::rad(-5);
 
-  CTRACE << "Set articular frame velocity "
+  vpCTRACE << "Set articular frame velocity "
 	 << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
 	 << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << endl ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
   sleep(2) ;
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Position in the articular frame: "
+  vpCTRACE << "Position in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0]) << " deg"
 	 << " tilt: " << vpMath::deg(qm[1]) << " deg" << endl ;
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  CTRACE << "Velocity in the articular frame: "
+  vpCTRACE << "Velocity in the articular frame: "
 	 << " pan: " << vpMath::deg(qm[0])
 	 << " tilt: " << vpMath::deg(qm[1]) << endl ;
 
@@ -189,7 +189,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have a biclops robot connected to your computer...");
+  vpERROR_TRACE("You do not have a biclops robot connected to your computer...");
 }
 
 #endif

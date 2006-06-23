@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6Ellipse.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: servoAfma6Ellipse.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -70,20 +70,20 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
 
   vpDisplayX display(I,0,0,"testServoEllipse.cpp ") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -114,13 +114,13 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
   vpCameraParameters cam ;
 
-  TRACE("sets the current position of the visual feature ") ;
+  vpTRACE("sets the current position of the visual feature ") ;
   vpFeatureEllipse c ;
   vpFeatureBuilder::create(c,cam, dot)  ;
 
@@ -133,7 +133,7 @@ main()
   if (learning ==1)
     {
       // save the object position
-      TRACE("Save the location of the object in a file dat/ellipse.dat") ;
+      vpTRACE("Save the location of the object in a file dat/ellipse.dat") ;
       ofstream f(name) ;
       f << c.get_s().t() ;
       f.close() ;
@@ -141,7 +141,7 @@ main()
     }
 
 
-  TRACE("sets the desired position of the visual feature ") ;
+  vpTRACE("sets the desired position of the visual feature ") ;
   vpFeatureEllipse cd ;
   ifstream f("dat/ellipse.dat") ;
   double x,y,mu20,mu11,mu02 ;
@@ -190,7 +190,7 @@ main()
     else gain = lambda_av ;
 
 
-    TRACE("%f %f", task.error.sumSquare(),  gain) ;
+    vpTRACE("%f %f", task.error.sumSquare(),  gain) ;
     task.setLambda(gain) ;
     vpColVector v ;
     v = task.computeControlLaw() ;
@@ -199,10 +199,10 @@ main()
     cout << v.t() ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    TRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 }
 
@@ -211,6 +211,6 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot connected to your computer...");
 }
 #endif

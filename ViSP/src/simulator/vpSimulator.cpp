@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.6 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpSimulator.cpp,v 1.7 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -163,7 +163,7 @@ createFrame (double longueurFleche = LONGUEUR_FLECHE    ,
 	     double proportionFleche = PROPORTION_FLECHE,
 	     double radiusFleche = RAYON_FLECHE)
 {
-  DEBUG_TRACE (15, "# Entree.");
+  vpDEBUG_TRACE (15, "# Entree.");
 
   SoSeparator *frame = new SoSeparator;
   frame-> ref ();
@@ -208,14 +208,14 @@ createFrame (double longueurFleche = LONGUEUR_FLECHE    ,
 
   frame-> unrefNoDelete ();
 
-  DEBUG_TRACE (15, "# Sortie.");
+  vpDEBUG_TRACE (15, "# Sortie.");
   return frame;
 }
 
 SoSeparator *
 createCameraObject (const double zoomFactor = 1.0)
 {
-  DEBUG_TRACE (15, "# Entree.");
+  vpDEBUG_TRACE (15, "# Entree.");
 
   SoSeparator * cam = new SoSeparator;
   cam->ref ();
@@ -251,7 +251,7 @@ createCameraObject (const double zoomFactor = 1.0)
   cam->addChild(createFrame(2.0,0.1,0.01));
 
   //  cam->unref() ;
- DEBUG_TRACE (15, "# Sortie.");
+ vpDEBUG_TRACE (15, "# Sortie.");
   return cam;
 }
 
@@ -578,7 +578,7 @@ vpSimulator::redraw()
     }
   }
 
-  // TRACE(" ") ;
+  // vpTRACE(" ") ;
 
 }
 
@@ -596,7 +596,7 @@ vpSimulator::mainLoop()
 {
   if (mainWindowInitialized==false)
   {
-    ERROR_TRACE("main window is not openned ") ;
+    vpERROR_TRACE("main window is not openned ") ;
   }
 
   vpTime::wait(1000) ;
@@ -624,14 +624,14 @@ vpSimulator::load(const char *file_name)
   SoInput input;
   if (!input.openFile(file_name))
   {
-    ERROR_TRACE("Erreur cannot open file %s",file_name);
+    vpERROR_TRACE("Erreur cannot open file %s",file_name);
   }
 
   SoSeparator *newscene=SoDB::readAll(&input);
   newscene->ref() ;
   if (newscene==NULL)
   {
-    ERROR_TRACE("Error while reading %s",file_name);
+    vpERROR_TRACE("Error while reading %s",file_name);
   }
 
   this->scene->addChild(newscene);
@@ -697,13 +697,13 @@ vpSimulator::load(const char * iv_filename,const vpHomogeneousMatrix &fMo)
 
   if (! in.openFile (iv_filename))
   {
-    ERROR_TRACE ("Erreur lors de la lecture du fichier %s.", iv_filename);
+    vpERROR_TRACE ("Erreur lors de la lecture du fichier %s.", iv_filename);
   }
 
   newObject = SoDB::readAll (&in);
   if (NULL == newObject)
   {
-    ERROR_TRACE ("Problem reading data for file <%s>.", iv_filename);
+    vpERROR_TRACE ("Problem reading data for file <%s>.", iv_filename);
   }
 
   try
@@ -712,7 +712,7 @@ vpSimulator::load(const char * iv_filename,const vpHomogeneousMatrix &fMo)
   }
   catch(...)
   {
-    ERROR_TRACE("Error adding object from file <%s> ",iv_filename) ;
+    vpERROR_TRACE("Error adding object from file <%s> ",iv_filename) ;
     throw ;
   }
 
@@ -733,7 +733,7 @@ vpSimulator::addObject(SoSeparator * newObject, const vpHomogeneousMatrix &fMo)
   }
   catch(...)
   {
-    ERROR_TRACE("Error adding object in scene graph ") ;
+    vpERROR_TRACE("Error adding object in scene graph ") ;
     throw ;
   }
 }
@@ -767,7 +767,7 @@ vpSimulator::addObject(SoSeparator * object,
 
   if (identity==true)
   {
-    TRACE("identity ") ;
+    vpTRACE("identity ") ;
     root->addChild (object);
   }
   else
@@ -874,7 +874,7 @@ vpSimulator::offScreenRendering(viewEnum view, int * width, int * height)
   // Rendu offscreen
   if (! this ->offScreenRenderer ->render(thisroot))
   {
-    ERROR_TRACE("La scene n'a pas pu etre rendue offscreen.");
+    vpERROR_TRACE("La scene n'a pas pu etre rendue offscreen.");
     delete this ->offScreenRenderer;
     this ->offScreenRenderer = NULL;
   }

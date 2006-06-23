@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testRobotAfma4.cpp,v 1.3 2006-04-19 09:01:23 fspindle Exp $
+ *  $Id: testRobotAfma4.cpp,v 1.4 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -41,10 +41,10 @@ int main()
   cout << "a test..." << endl;
 
   vpAfma4 afma4;
-  CTRACE << afma4;
+  vpCTRACE << afma4;
 
   vpRobotAfma4 robotAfma4;
-  CTRACE << robotAfma4;
+  vpCTRACE << robotAfma4;
   return 1;
 }
 

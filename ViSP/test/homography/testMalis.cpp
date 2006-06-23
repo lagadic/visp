@@ -71,7 +71,7 @@ main()
 
   vpHomography::HLM(nbpt,xb,yb,xa,ya,true, aHb) ;
 
-  TRACE("aHb computed using the Malis paralax  algorithm") ;
+  vpTRACE("aHb computed using the Malis paralax  algorithm") ;
   aHb /= aHb[2][2] ;
   cout << endl << aHb<<  endl ;
 
@@ -80,7 +80,7 @@ main()
   vpColVector n ;
 
   cout << "-------------------------------" <<endl ;
-  TRACE("extract R, T and n ") ;
+  vpTRACE("extract R, T and n ") ;
   aHb.computeDisplacement(aRb, aTb, n) ;
   cout << "Rotation: aRb" <<endl ;
   cout << aRb << endl ;
@@ -91,10 +91,10 @@ main()
 
 
   cout << "-------------------------------" <<endl ;
-  TRACE("Compare with built homography H = R + t/d ") ;
+  vpTRACE("Compare with built homography H = R + t/d ") ;
   vpPlane bp(0,0,1,1) ;
   vpHomography aHb_built(aMb,bp) ;
-  TRACE( "aHb built from the displacement ") ;
+  vpTRACE( "aHb built from the displacement ") ;
   cout <<  endl <<aHb_built/aHb_built[2][2] <<  endl ;
 
   aHb_built.computeDisplacement(aRb, aTb, n) ;
@@ -106,7 +106,7 @@ main()
   cout << (n).t() <<endl ;
 
   cout << "-------------------------------" <<endl ;
-  TRACE("test if ap = aHb bp") ;
+  vpTRACE("test if ap = aHb bp") ;
 
   for(i=0 ; i < nbpt ; i++)
   {
@@ -120,7 +120,7 @@ main()
   }
 
   cout << "-------------------------------" <<endl ;
-  TRACE("test displacement") ;
+  vpTRACE("test displacement") ;
 
   vpList<vpRotationMatrix> laRb ;
   vpList<vpTranslationVector> laTb ;

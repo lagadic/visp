@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGenericFeature.cpp,v 1.9 2006-05-30 08:40:48 fspindle Exp $
+ * $Id: vpGenericFeature.cpp,v 1.10 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,10 +68,10 @@ void vpGenericFeature::init()
 
 vpGenericFeature::vpGenericFeature()
 {
-  ERROR_TRACE("You are not allow to use this constructor ") ;
-  ERROR_TRACE("Please, use  vpGenericFeature::vpGenericFeature(int _dim) "
+  vpERROR_TRACE("You are not allow to use this constructor ") ;
+  vpERROR_TRACE("Please, use  vpGenericFeature::vpGenericFeature(int _dim) "
 	      "constructor") ;
-  ERROR_TRACE("And provide the dimension of the visual feature ") ;
+  vpERROR_TRACE("And provide the dimension of the visual feature ") ;
 
   throw(vpException(vpException::cannotUseConstructorError,
 			     "You are not allow to use this constructor ")) ;
@@ -89,7 +89,7 @@ vpGenericFeature::setError(vpColVector &error)
 {
   if (error.getRows() != dim_s)
   {
-    ERROR_TRACE("size mismatch between error dimension"
+    vpERROR_TRACE("size mismatch between error dimension"
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between error dimension"
@@ -121,7 +121,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
 {
   if (s_star.get_s().getRows() != dim_s)
   {
-    ERROR_TRACE("size mismatch between s* dimension "
+    vpERROR_TRACE("size mismatch between s* dimension "
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between s* dimension "
@@ -135,7 +135,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
   {
     if (errorStatus == errorHasToBeUpdated)
     {
-      ERROR_TRACE("Error has no been updated since last iteration"
+      vpERROR_TRACE("Error has no been updated since last iteration"
 		  "you should have used vpGenericFeature::setError"
 		  "in you visual servoing loop") ;
       throw(vpFeatureException(vpFeatureException::badErrorVectorError,
@@ -144,7 +144,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
     else
       if (errorStatus == errorInitialized)
       {
-	DEBUG_TRACE(25,"Error init: e=e.");
+	vpDEBUG_TRACE(25,"Error init: e=e.");
 	errorStatus = errorHasToBeUpdated ;
 	for (int i=0 ; i < dim_s ; i++)
 	  if (FEATURE_LINE[i] & select )
@@ -157,7 +157,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
       }
       else
       {
-	DEBUG_TRACE(25,"Error not init: e=s-s*.");
+	vpDEBUG_TRACE(25,"Error not init: e=s-s*.");
 
 	for (int i=0 ; i < dim_s ; i++)
 	  if (FEATURE_LINE[i] & select )
@@ -172,13 +172,13 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
   }
   catch(vpMatrixException me)
   {
-    ERROR_TRACE("caught a Matric related error") ;
+    vpERROR_TRACE("caught a Matric related error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
-    ERROR_TRACE("caught another error") ;
+    vpERROR_TRACE("caught another error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
@@ -198,7 +198,7 @@ vpGenericFeature::error( const int select)
   {
     if (errorStatus == errorHasToBeUpdated)
     {
-      ERROR_TRACE("Error has no been updated since last iteration"
+      vpERROR_TRACE("Error has no been updated since last iteration"
 		  "you should have used vpGenericFeature::setError"
 		  "in you visual servoing loop") ;
       throw(vpFeatureException(vpFeatureException::badErrorVectorError,
@@ -233,13 +233,13 @@ vpGenericFeature::error( const int select)
   }
   catch(vpMatrixException me)
   {
-    ERROR_TRACE("caught a Matric related error") ;
+    vpERROR_TRACE("caught a Matric related error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
-    ERROR_TRACE("caught another error") ;
+    vpERROR_TRACE("caught another error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
@@ -256,7 +256,7 @@ vpGenericFeature::interaction(const int select) const
   if (L.getRows() == 0)
   {
     cout << "interaction matrix " << L << endl ;
-    ERROR_TRACE("Interaction has not been initialized");
+    vpERROR_TRACE("Interaction has not been initialized");
     cout << "A possible reason (may be) is that you have set" << endl ;
     cout << "the interaction matrix for s and compute a control " << endl ;
     cout << "with Ls=s* (default) or vice versa" << endl ;
@@ -298,7 +298,7 @@ vpGenericFeature::setInteractionMatrix(const vpMatrix &L)
   if (L.getRows() != dim_s)
   {
     cout << L.getRows() <<"  " << dim_s << endl ;;
-    ERROR_TRACE("size mismatch between interaction matrix size "
+    vpERROR_TRACE("size mismatch between interaction matrix size "
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between interaction matrix size "
@@ -322,7 +322,7 @@ vpGenericFeature::set_s(const vpColVector &s)
 
   if (s.getRows() != dim_s)
   {
-    ERROR_TRACE("size mismatch between s dimension"
+    vpERROR_TRACE("size mismatch between s dimension"
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between s dimension"
@@ -344,7 +344,7 @@ vpGenericFeature::set_s(const double s0, const double s1, const double s2)
 
   if (3 != dim_s)
   {
-    ERROR_TRACE("size mismatch between number of parameters"
+    vpERROR_TRACE("size mismatch between number of parameters"
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between  number of parameters"
@@ -366,7 +366,7 @@ vpGenericFeature::set_s(const double s0, const double s1)
 
   if (2 != dim_s)
   {
-    ERROR_TRACE("size mismatch between number of parameters"
+    vpERROR_TRACE("size mismatch between number of parameters"
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between  number of parameters"
@@ -388,7 +388,7 @@ vpGenericFeature::set_s(const double s0)
 
   if (1 != dim_s)
   {
-    ERROR_TRACE("size mismatch between number of parameters"
+    vpERROR_TRACE("size mismatch between number of parameters"
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between  number of parameters"
@@ -417,7 +417,7 @@ vpGenericFeature *vpGenericFeature::duplicate() const
 {
   vpGenericFeature *feature= new vpGenericFeature(dim_s) ;
 
-  TRACE("dims = %d",dim_s) ;
+  vpTRACE("dims = %d",dim_s) ;
   return feature ;
 }
 
@@ -431,7 +431,7 @@ vpGenericFeature::display(const vpCameraParameters &cam,
   if (firsttime==0)
   {
     firsttime=1 ;
-    ERROR_TRACE("not implemented") ;
+    vpERROR_TRACE("not implemented") ;
     // Do not throw and error since it is not subject
     // to produce a failure
   }

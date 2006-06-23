@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.cpp,v 1.4 2006-05-30 08:40:48 fspindle Exp $
+ * $Id: vpFeatureThetaU.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -223,7 +223,7 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
   if (fabs(s_star.get_s().sumSquare()) > 1e-6)
   {
 
-    ERROR_TRACE("s* should be zero ! ") ;
+    vpERROR_TRACE("s* should be zero ! ") ;
         throw(vpFeatureException(vpFeatureException::badInitializationError,
 				 "s* should be zero !")) ;
 
@@ -281,7 +281,7 @@ vpFeatureThetaU::display(const vpCameraParameters &cam,
   if (firsttime==0)
   {
     firsttime=1 ;
-    ERROR_TRACE("not implemented") ;
+    vpERROR_TRACE("not implemented") ;
     // Do not throw and error since it is not subject
     // to produce a failure
   }

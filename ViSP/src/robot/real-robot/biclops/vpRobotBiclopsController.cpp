@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclopsController.cpp,v 1.3 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobotBiclopsController.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -109,9 +109,9 @@ vpRobotBiclopsController::~vpRobotBiclopsController()
 void
 vpRobotBiclopsController::init(const char *configfile)
 {
-  DEBUG_TRACE (12, "Initialize biclops.");
+  vpDEBUG_TRACE (12, "Initialize biclops.");
   if (biclops.Initialize(configfile)) {
-    DEBUG_TRACE(12, "Biclops initialized");
+    vpDEBUG_TRACE(12, "Biclops initialized");
 
     // Get shortcut references to each axis.
     panAxis = biclops.GetAxis(Biclops::Pan);
@@ -121,15 +121,15 @@ vpRobotBiclopsController::init(const char *configfile)
 
 
     if (!panAxis -> IsAlreadyHomed() || !tiltAxis -> IsAlreadyHomed()) {
-       DEBUG_TRACE(12, "Biclops is not homed");
+       vpDEBUG_TRACE(12, "Biclops is not homed");
     }
 
     //Execute the homing sequence for all axes.
-    DEBUG_TRACE(12, "Execute the homing sequence for all axes");
+    vpDEBUG_TRACE(12, "Execute the homing sequence for all axes");
     if ( biclops.HomeAxes(axisMask))
-      DEBUG_TRACE(12, "Homing sequence succeed.");
+      vpDEBUG_TRACE(12, "Homing sequence succeed.");
     else {
-      ERROR_TRACE("Homing sequence failed. Program is stopped");
+      vpERROR_TRACE("Homing sequence failed. Program is stopped");
       throw vpRobotException (vpRobotException::constructionError,
 			      "Cannot open connexion with biclops");
     }
@@ -142,10 +142,10 @@ vpRobotBiclopsController::init(const char *configfile)
       vergeAxis->GetProfile(vergeProfile);
   }
   else {
-    ERROR_TRACE ("Cannot initialize biclops head.");
-    ERROR_TRACE ("Check if the robot is powered on.");
-    ERROR_TRACE ("Check if the serial cable is connected.");
-    ERROR_TRACE ("Check if you try to open the good serial port.");
+    vpERROR_TRACE ("Cannot initialize biclops head.");
+    vpERROR_TRACE ("Check if the robot is powered on.");
+    vpERROR_TRACE ("Check if the serial cable is connected.");
+    vpERROR_TRACE ("Check if you try to open the good serial port.");
     throw vpRobotException (vpRobotException::notInitializedError,
 			    "Cannot initialize biclops head.");
   }
@@ -173,7 +173,7 @@ vpRobotBiclopsController::setPosition(const vpColVector & q,
 {
   if (q.getRows() != vpBiclops::ndof )
   {
-    ERROR_TRACE ("Bad dimension for positioning vector.");
+    vpERROR_TRACE ("Bad dimension for positioning vector.");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Bad dimension for positioning vector.");
   }
@@ -195,12 +195,12 @@ vpRobotBiclopsController::setPosition(const vpColVector & q,
   panProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit
 					* percentVelocity / 100.);
 
-  DEBUG_TRACE(12, "Speed percent: %lf",
+  vpDEBUG_TRACE(12, "Speed percent: %lf",
 	      vpBiclops::speedLimit * percentVelocity / 100.);
 
   panAxis -> ProfileToCounts(panProfile, desired_profile);
-  CDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << endl;
-  CDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << endl;
+  vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << endl;
+  vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << endl;
 
   panAxis -> SetProfile(desired_profile);
 
@@ -212,8 +212,8 @@ vpRobotBiclopsController::setPosition(const vpColVector & q,
 					* percentVelocity / 100.);
 
   tiltAxis -> ProfileToCounts(tiltProfile, desired_profile);
-  CDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << endl;
-  CDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << endl;
+  vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << endl;
+  vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << endl;
 
   tiltAxis -> SetProfile(desired_profile);
 
@@ -237,7 +237,7 @@ vpRobotBiclopsController::setVelocity(const vpColVector & q_dot)
 {
   if (q_dot.getRows() != vpBiclops::ndof )
   {
-    ERROR_TRACE ("Bad dimension for velocity vector.");
+    vpERROR_TRACE ("Bad dimension for velocity vector.");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Bad dimension for velocity vector.");
   }
@@ -277,7 +277,7 @@ vpRobotBiclopsController::setVelocity(const vpColVector & q_dot)
 vpColVector
 vpRobotBiclopsController::getPosition()
 {
-  DEBUG_TRACE (12, "Start vpRobotBiclopsController::getPosition() ");
+  vpDEBUG_TRACE (12, "Start vpRobotBiclopsController::getPosition() ");
   vpColVector q(vpBiclops::ndof);
   PMDint32 panpos, tiltpos;
 
@@ -287,8 +287,8 @@ vpRobotBiclopsController::getPosition()
   q[0] = PMDUtils::RevsToRads(panAxis ->CountsToUnits(panpos));
   q[1] = PMDUtils::RevsToRads(tiltAxis->CountsToUnits(tiltpos));
 
-  CDEBUG(11) << "++++++++ Mesure : " << q.t();
-  DEBUG_TRACE (12, "End vpRobotBiclopsController::getPosition()");
+  vpCDEBUG(11) << "++++++++ Mesure : " << q.t();
+  vpDEBUG_TRACE (12, "End vpRobotBiclopsController::getPosition()");
 
   return q;
 }
@@ -369,12 +369,12 @@ void
 vpRobotBiclopsController::writeShm(shmType &shm_)
 {
   for(int i=0; i < vpBiclops::ndof; i ++) {
-    DEBUG_TRACE(13, "q_dot[%d]=%f", i, shm_.q_dot[i]);
+    vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, shm_.q_dot[i]);
   }
   memcpy(&this->shm, &shm_, sizeof(shmType));
    //this->shm = shm_;
   for(int i=0; i < vpBiclops::ndof; i ++) {
-    DEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
+    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
   }
 }
 
@@ -390,12 +390,12 @@ vpRobotBiclopsController::readShm()
   shmType tmp_shm;
 
   for(int i=0; i < vpBiclops::ndof; i ++) {
-    DEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
+    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
   }
   memcpy(&tmp_shm, &this->shm, sizeof(shmType));
   //tmp_shm = shm;
   for(int i=0; i < vpBiclops::ndof; i ++) {
-    DEBUG_TRACE(13, "tmp_shm.q_dot[%d]=%f", i, tmp_shm.q_dot[i]);
+    vpDEBUG_TRACE(13, "tmp_shm.q_dot[%d]=%f", i, tmp_shm.q_dot[i]);
   }
 
   return tmp_shm;

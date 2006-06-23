@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.10 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.11 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -345,7 +345,7 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
 {
   if (featureList.empty())
     {
-      ERROR_TRACE("feature list empty, cannot compute Ls") ;
+      vpERROR_TRACE("feature list empty, cannot compute Ls") ;
       throw(vpServoException(vpServoException::noFeatureError,
 			     "feature list empty, cannot compute Ls")) ;
     }
@@ -390,7 +390,7 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
 
       /* Check the matrix L size, and realloc if needed. */
       while (rowMatrixTmp + cursorL > rowL)
-	{ rowL *= 2; L .resize (rowL,colL,false); DEBUG_TRACE(15,"Realloc!"); }
+	{ rowL *= 2; L .resize (rowL,colL,false); vpDEBUG_TRACE(15,"Realloc!"); }
 
       /* Copy the temporarily matrix into L. */
       for (int k = 0; k < rowMatrixTmp; ++k, ++cursorL)
@@ -423,7 +423,7 @@ vpServo::computeInteractionMatrix()
 					      this ->featureSelectionList, L);}
 	  catch(vpException me)
 	    {
-	      ERROR_TRACE("Error caught") ;
+	      vpERROR_TRACE("Error caught") ;
 	      throw ;
 	    }
 	}
@@ -435,7 +435,7 @@ vpServo::computeInteractionMatrix()
 					      this ->featureSelectionList, L);}
 	  catch(vpException me)
 	    {
-	      ERROR_TRACE("Error caught") ;
+	      vpERROR_TRACE("Error caught") ;
 	      throw ;
 	    }
 	}
@@ -452,7 +452,7 @@ vpServo::computeInteractionMatrix()
 	    }
 	  catch(vpException me)
 	    {
-	      ERROR_TRACE("Error caught") ;
+	      vpERROR_TRACE("Error caught") ;
 	      throw ;
 	    }
 	  L = (L+Lstar)/2;
@@ -465,7 +465,7 @@ vpServo::computeInteractionMatrix()
   }
   catch(vpException me)
     {
-      ERROR_TRACE("Error caught") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return L ;
@@ -484,13 +484,13 @@ vpServo::computeError()
 {
   if (featureList.empty())
     {
-      ERROR_TRACE("feature list empty, cannot compute Ls") ;
+      vpERROR_TRACE("feature list empty, cannot compute Ls") ;
       throw(vpServoException(vpServoException::noFeatureError,
 			     "feature list empty, cannot compute Ls")) ;
     }
   if (desiredFeatureList.empty())
     {
-      ERROR_TRACE("feature list empty, cannot compute Ls") ;
+      vpERROR_TRACE("feature list empty, cannot compute Ls") ;
       throw(vpServoException(vpServoException::noFeatureError,
 			     "feature list empty, cannot compute Ls")) ;
     }
@@ -551,7 +551,7 @@ vpServo::computeError()
 	vectTmp = current_s->get_s();
 	dimVectTmp = vectTmp .getRows();
 	while (dimVectTmp + cursorS > dimS)
-	  { dimS *= 2; s .resize (dimS,false); DEBUG_TRACE(15,"Realloc!"); }
+	  { dimS *= 2; s .resize (dimS,false); vpDEBUG_TRACE(15,"Realloc!"); }
 	for (int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
 
 	/* Get s_star, and store it in the s vector. */
@@ -582,7 +582,7 @@ vpServo::computeError()
   }
   catch(vpException me)
     {
-      ERROR_TRACE("Error caught") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   catch(...)
@@ -599,7 +599,7 @@ vpServo::testInitialization()
   switch (servoType)
     {
     case NONE:
-      ERROR_TRACE("No control law have been yet defined") ;
+      vpERROR_TRACE("No control law have been yet defined") ;
       throw(vpServoException(vpServoException::servoError,
 			     "No control law have been yet defined")) ;
       test = true ;
@@ -609,20 +609,20 @@ vpServo::testInitialization()
       break ;
     case EYEINHAND_L_cVe_eJe:
     case  EYETOHAND_L_cVe_eJe:
-      if (!init_cVe) ERROR_TRACE("cVe not initialized") ;
-      if (!init_eJe) ERROR_TRACE("eJe not initialized") ;
+      if (!init_cVe) vpERROR_TRACE("cVe not initialized") ;
+      if (!init_eJe) vpERROR_TRACE("eJe not initialized") ;
       return (init_cVe && init_eJe) ;
       break ;
     case  EYETOHAND_L_cVf_fVe_eJe:
-      if (!init_cVf) ERROR_TRACE("cVf not initialized") ;
-      if (!init_fJe) ERROR_TRACE("fVe not initialized") ;
-      if (!init_eJe) ERROR_TRACE("eJe not initialized") ;
+      if (!init_cVf) vpERROR_TRACE("cVf not initialized") ;
+      if (!init_fJe) vpERROR_TRACE("fVe not initialized") ;
+      if (!init_eJe) vpERROR_TRACE("eJe not initialized") ;
       return (init_cVf && init_fVe && init_eJe) ;
       break ;
 
     case EYETOHAND_L_cVf_fJe    :
-      if (!init_cVf) ERROR_TRACE("cVf not initialized") ;
-      if (!init_fJe) ERROR_TRACE("fJe not initialized") ;
+      if (!init_cVf) vpERROR_TRACE("cVf not initialized") ;
+      if (!init_fJe) vpERROR_TRACE("fJe not initialized") ;
       return (init_cVf && init_fJe) ;
       break ;
     }
@@ -636,7 +636,7 @@ vpServo::testUpdated()
   switch (servoType)
     {
     case NONE:
-      ERROR_TRACE("No control law have been yet defined") ;
+      vpERROR_TRACE("No control law have been yet defined") ;
       throw(vpServoException(vpServoException::servoError,
 			     "No control law have been yet defined")) ;
       test = true ;
@@ -644,22 +644,22 @@ vpServo::testUpdated()
     case EYEINHAND_CAMERA:
       return true ;
     case EYEINHAND_L_cVe_eJe:
-      if (!init_eJe) ERROR_TRACE("eJe not updated") ;
+      if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
       return (init_eJe) ;
       break ;
     case  EYETOHAND_L_cVe_eJe:
-      if (!init_cVe) ERROR_TRACE("cVe not updated") ;
-      if (!init_eJe) ERROR_TRACE("eJe not updated") ;
+      if (!init_cVe) vpERROR_TRACE("cVe not updated") ;
+      if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
       return (init_cVe && init_eJe) ;
       break ;
     case  EYETOHAND_L_cVf_fVe_eJe:
-      if (!init_fVe) ERROR_TRACE("fVe not updated") ;
-      if (!init_eJe) ERROR_TRACE("eJe not updated") ;
+      if (!init_fVe) vpERROR_TRACE("fVe not updated") ;
+      if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
       return (init_fVe && init_eJe) ;
       break ;
 
     case EYETOHAND_L_cVf_fJe    :
-      if (!init_fJe) ERROR_TRACE("fJe not updated") ;
+      if (!init_fJe) vpERROR_TRACE("fJe not updated") ;
       return (init_fJe) ;
       break ;
     }
@@ -700,7 +700,7 @@ vpServo::computeControlLaw()
 	    }
 	  else
 	    {
-	      ERROR_TRACE("All the matrices are not correctly initialized") ;
+	      vpERROR_TRACE("All the matrices are not correctly initialized") ;
 	      throw(vpServoException(vpServoException::servoError,
 				     "Cannot compute control law "
 				     "All the matrices are not correctly"
@@ -713,14 +713,14 @@ vpServo::computeControlLaw()
 	}
       else
 	{
-	  ERROR_TRACE("All the matrices are not correctly updated") ;
+	  vpERROR_TRACE("All the matrices are not correctly updated") ;
 	}
 
       // test if all the required initialization have been done
       switch (servoType)
 	{
 	case NONE :
-	  ERROR_TRACE("No control law have been yet defined") ;
+	  vpERROR_TRACE("No control law have been yet defined") ;
 	  throw(vpServoException(vpServoException::servoError,
 				 "No control law have been yet defined")) ;
 	  break ;
@@ -809,13 +809,13 @@ vpServo::computeControlLaw()
     }
   catch(vpMatrixException me)
     {
-      ERROR_TRACE("Caught a matrix related error") ;
+      vpERROR_TRACE("Caught a matrix related error") ;
       cout << me << endl ;
       throw me;
     }
   catch(vpException me)
     {
-      ERROR_TRACE("Error caught") ;
+      vpERROR_TRACE("Error caught") ;
       cout << me << endl ;
       throw me ;
     }
@@ -850,7 +850,7 @@ vpServo::secondaryTask(vpColVector &de2dt)
 {
   if (rankJ1 == L.getCols())
     {
-      ERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
+      vpERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
       throw(vpServoException(vpServoException::noDofFree,
 			     "no degree of freedom is free, cannot use secondary task")) ;
     }
@@ -894,7 +894,7 @@ vpServo::secondaryTask(vpColVector &e2, vpColVector &de2dt)
 {
   if (rankJ1 == L.getCols())
     {
-      ERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
+      vpERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
       throw(vpServoException(vpServoException::noDofFree,
 			     "no degree of freedom is free, cannot use secondary task")) ;
     }

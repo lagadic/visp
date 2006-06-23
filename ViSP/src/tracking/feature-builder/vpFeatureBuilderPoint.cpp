@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderPoint.cpp,v 1.7 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpFeatureBuilderPoint.cpp,v 1.8 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,7 +63,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -85,7 +85,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -105,7 +105,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
 
     if (s.get_Z() < 0)
     {
-      ERROR_TRACE("Point is behind the camera ") ;
+      vpERROR_TRACE("Point is behind the camera ") ;
       cout <<"Z = " << s.get_Z() << endl ;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -114,7 +114,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
 
     if (fabs(s.get_Z()) < 1e-6)
     {
-      ERROR_TRACE("Point Z coordinates is null ") ;
+      vpERROR_TRACE("Point Z coordinates is null ") ;
       cout <<"Z = " << s.get_Z() << endl ;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -124,7 +124,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -154,7 +154,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }

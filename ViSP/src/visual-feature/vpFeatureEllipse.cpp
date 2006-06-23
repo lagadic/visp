@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.cpp,v 1.4 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpFeatureEllipse.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -240,13 +240,13 @@ vpFeatureEllipse::error(const vpBasicFeature &s_star,
   }
   catch(vpMatrixException me)
   {
-    ERROR_TRACE("caught a Matrix related error") ;
+    vpERROR_TRACE("caught a Matrix related error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
-    ERROR_TRACE("caught another error") ;
+    vpERROR_TRACE("caught another error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
@@ -351,7 +351,7 @@ vpFeatureEllipse::display(const vpCameraParameters &cam,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }

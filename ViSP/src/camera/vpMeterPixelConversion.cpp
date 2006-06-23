@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeterPixelConversion.cpp,v 1.5 2006-05-30 08:40:36 fspindle Exp $
+ * $Id: vpMeterPixelConversion.cpp,v 1.6 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,7 +75,7 @@ vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
 
   if (fabs(d)<1e-6)
   {
-    ERROR_TRACE("division by zero") ;
+    vpERROR_TRACE("division by zero") ;
     throw(vpException(vpException::divideByZeroError,
 		      "division by zero")) ;
   }

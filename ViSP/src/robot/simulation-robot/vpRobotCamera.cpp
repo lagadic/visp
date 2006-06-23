@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.cpp,v 1.6 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobotCamera.cpp,v 1.7 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -132,7 +132,7 @@ vpRobotCamera::setVelocity(const vpRobot::ControlFrameType frame,
     setArticularVelocity(vel) ;
     break ;
   case vpRobot::MIXT_FRAME:
-    ERROR_TRACE ("Cannot set a velocity in the mixt frame: "
+    vpERROR_TRACE ("Cannot set a velocity in the mixt frame: "
 		 "functionality not implemented");
     throw vpRobotException (vpRobotException::wrongStateError,
 			    "Cannot get a velocity in the reference frame:"

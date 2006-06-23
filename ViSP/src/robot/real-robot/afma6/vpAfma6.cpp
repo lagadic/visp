@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.9 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.10 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,7 +73,7 @@ void vpAfma6::
 computeMGD (const vpColVector & q,
 	    vpHomogeneousMatrix & oMc)
 {
-  DEBUG_TRACE (3, "# Entree.");
+  vpDEBUG_TRACE (3, "# Entree.");
 
   /* Passage de m en mm. */
   double            q0 = q[0] * 1000;
@@ -110,7 +110,7 @@ computeMGD (const vpColVector & q,
   oMc[3][2] = 0;
   oMc[3][3] = 1;
 
-  CDEBUG (6) << "Position de l'effecteur: " << endl << oMc;
+  vpCDEBUG (6) << "Position de l'effecteur: " << endl << oMc;
 
   /* Multiplication par rapport poignee-image. */
   double            t [3];
@@ -135,7 +135,7 @@ computeMGD (const vpColVector & q,
   /* Passage de mm en m. */
   for (int i = 0; i < 3; ++ i) {  oMc [i][3] /= 1000;  }
 
-  DEBUG_TRACE (3, "# Sortie.");
+  vpDEBUG_TRACE (3, "# Sortie.");
   return ;
 }
 
@@ -161,15 +161,15 @@ computeMGD (const vpColVector & q,
 vpHomogeneousMatrix vpAfma6::
 computeMGD (const vpColVector & q)
 {
-  DEBUG_TRACE (6, "# Entree.");
+  vpDEBUG_TRACE (6, "# Entree.");
 
-  DEBUG_TRACE (9, "Creation de la matrice resultat.");
+  vpDEBUG_TRACE (9, "Creation de la matrice resultat.");
   vpHomogeneousMatrix fMc;
 
-  DEBUG_TRACE (9, "Appel du calcul de oMc.");
+  vpDEBUG_TRACE (9, "Appel du calcul de oMc.");
   computeMGD (q, fMc);
 
-  DEBUG_TRACE (6, "# Sortie.");
+  vpDEBUG_TRACE (6, "# Sortie.");
   return fMc;
 }
 
@@ -188,19 +188,19 @@ void vpAfma6::
 computeMGD (const vpColVector & q,
 	    vpPoseVector & r)
 {
-  DEBUG_TRACE (6, "# Entree.");
+  vpDEBUG_TRACE (6, "# Entree.");
 
-  DEBUG_TRACE (9, "Creation de la matrice resultat.");
+  vpDEBUG_TRACE (9, "Creation de la matrice resultat.");
   vpHomogeneousMatrix fMc;
 
-  DEBUG_TRACE (9, "Appel du calcul de oMc.");
+  vpDEBUG_TRACE (9, "Appel du calcul de oMc.");
   computeMGD (q, fMc);
-  CDEBUG (15) << "fMc: " << endl << fMc;
+  vpCDEBUG (15) << "fMc: " << endl << fMc;
 
-  DEBUG_TRACE (9, "Conversion du cMf en vecteur.");
+  vpDEBUG_TRACE (9, "Conversion du cMf en vecteur.");
   r.buildFrom(fMc.inverse());
 
-  DEBUG_TRACE (6, "# Sortie.");
+  vpDEBUG_TRACE (6, "# Sortie.");
   return ;
 }
 
@@ -234,11 +234,11 @@ void vpAfma6::
 computeInverseJacobian (const vpColVector & pos,
 			vpMatrix & Jinverse)
 {
-  DEBUG_TRACE (9, "# Entree.");
+  vpDEBUG_TRACE (9, "# Entree.");
 
   if (! dejaInitialisee)
   {
-    ERROR_TRACE ("L'objet n'a pas ete initialise correctement. Aucun "
+    vpERROR_TRACE ("L'objet n'a pas ete initialise correctement. Aucun "
 		 "fichier de parametres n'a ete parse. La fonction "
 		 "CParametresAfma6::init () doit etre appelee apres "
 		 "la construction.");
@@ -387,7 +387,7 @@ computeInverseJacobian (const vpColVector & pos,
       Jinverse[i+3][j+3] = J22[i][j];
     }
   }
-  DEBUG_TRACE (9, "# Sortie.");
+  vpDEBUG_TRACE (9, "# Sortie.");
   return  ;
 }
 
@@ -411,15 +411,15 @@ computeInverseJacobian (const vpColVector & pos,
 vpMatrix vpAfma6::
 computeInverseJacobian (const vpColVector & q)
 {
-  DEBUG_TRACE (6, "# Entree.");
+  vpDEBUG_TRACE (6, "# Entree.");
 
-  DEBUG_TRACE (9, "Creation de la matrice resultat.");
+  vpDEBUG_TRACE (9, "Creation de la matrice resultat.");
   vpMatrix Jp (6,6);
 
-  DEBUG_TRACE (9, "Appel du calcul de cMo.");
+  vpDEBUG_TRACE (9, "Appel du calcul de cMo.");
   computeInverseJacobian (q, Jp);
 
-  DEBUG_TRACE (6, "# Sortie.");
+  vpDEBUG_TRACE (6, "# Sortie.");
   return Jp;
 }
 
@@ -439,7 +439,7 @@ computeInverseJacobian (const vpColVector & q)
 void vpAfma6::
 getJointLimitsMin (double __jointMin[articulationsNb]) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     for (int i = 0; i < vpAfma6::articulationsNb ; ++ i)
 	{
@@ -447,7 +447,7 @@ getJointLimitsMin (double __jointMin[articulationsNb]) const
 	}
 
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -459,14 +459,14 @@ getJointLimitsMin (double __jointMin[articulationsNb]) const
 void vpAfma6::
 getJointLimitsMax (double __jointMax[articulationsNb]) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     for (int i = 0; i < vpAfma6::articulationsNb ; ++ i)
 	{
 	    __jointMax [i] = jointMax [i] ;
 	}
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -485,7 +485,7 @@ getJointLimitsMax (double __jointMax[articulationsNb]) const
 void vpAfma6::
 respectJointLimits (vpColVector &q) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     for (int i = 0 ; i < vpAfma6::articulationsNb ; ++ i)
     {
@@ -494,7 +494,7 @@ respectJointLimits (vpColVector &q) const
     }
 
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -540,7 +540,7 @@ void vpAfma6::
 getPositionInJointInterval (const vpColVector &q,
 			    double jointPos[articulationsNb]) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     for (int i = 0 ; i < vpAfma6::articulationsNb ; ++ i)
 	{
@@ -549,7 +549,7 @@ getPositionInJointInterval (const vpColVector &q,
 		   / (jointMax [i]- jointMin [i]));
 	}
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -569,11 +569,11 @@ getPositionInJointInterval (const vpColVector &q,
 void vpAfma6::
 setActivationThreshold (const double __rho)
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     rho = __rho;
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -584,11 +584,11 @@ setActivationThreshold (const double __rho)
 void vpAfma6::
 getActivationThreshold (double &__rho) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
     __rho = rho;
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return ;
 }
 
@@ -599,9 +599,9 @@ getActivationThreshold (double &__rho) const
 double vpAfma6::
 getActivationThreshold (void) const
 {
-    DEBUG_TRACE (6, "# Entree.");
+    vpDEBUG_TRACE (6, "# Entree.");
 
-    DEBUG_TRACE (6, "# Sortie.");
+    vpDEBUG_TRACE (6, "# Sortie.");
     return rho;
 }
 
@@ -650,7 +650,7 @@ getAvoidanceGradiant (const vpColVector & q,
       /* L'articulation est dans la partie interdite inferieure. */
       if (q[i] + distance > jointMax [i])
 	{
-	  DEBUG_TRACE (15,"L'articulation %d est dans la partie "
+	  vpDEBUG_TRACE (15,"L'articulation %d est dans la partie "
 		       "interdite inferieure.", i);
 	  grad [i] = (- q [i] - distance + jointMax [i])/deltaQ;
 	  returnCode = true;
@@ -659,7 +659,7 @@ getAvoidanceGradiant (const vpColVector & q,
       /* L'articulation est dans la partie interdite superieure. */
       else if (q[i] - distance < jointMin [i])
 	{
-	  DEBUG_TRACE (15,"L'articulation %d est dans la partie "
+	  vpDEBUG_TRACE (15,"L'articulation %d est dans la partie "
 		       "interdite superieure.", i);
 	  grad [i] = (jointMin [i] - (q [i] - distance))/deltaQ;
 	  returnCode = true;
@@ -673,7 +673,7 @@ getAvoidanceGradiant (const vpColVector & q,
 	}
     }
 
-  DEBUG_TRACE (6, "# Sortie r=%s.", (returnCode)?"VRAI":"FAUX");
+  vpDEBUG_TRACE (6, "# Sortie r=%s.", (returnCode)?"VRAI":"FAUX");
   return returnCode;
 }
 
@@ -756,7 +756,7 @@ vpAfma6 (void)
 
   /* Tous les autres attributs sont initialises dans l'init. */
 {
-  DEBUG_TRACE (25, "# Entree - Sortie.");
+  vpDEBUG_TRACE (25, "# Entree - Sortie.");
   init();
 }
 /* ---------------------------------------------------------------------- */
@@ -822,17 +822,17 @@ parseConfigFile (const char * filename)
   FILE *            fdtask;
   int               numLn = 0;
 
-  DEBUG_TRACE (15, "Ouverture du fichier de parametres %s.", filename);
+  vpDEBUG_TRACE (15, "Ouverture du fichier de parametres %s.", filename);
   if ((fdtask = fopen(filename, "r" )) == NULL)
   {
-    ERROR_TRACE ("Impossible d'ouvrir le fichier de constantes robot %s.",
+    vpERROR_TRACE ("Impossible d'ouvrir le fichier de constantes robot %s.",
 		 filename);
     fclose(fdtask);
     throw vpRobotException (vpRobotException::readingParametersError,
 			    "Impossible d'ouvrir le fichier de constantes robot.");
   }
 
-  DEBUG_TRACE (15, "Parsage du fichier.");
+  vpDEBUG_TRACE (15, "Parsage du fichier.");
   while (fgets(Ligne,100,fdtask) != NULL)
   {
     numLn ++;
@@ -974,13 +974,13 @@ parseConfigFile (const char * filename)
       break; // rien a faire (nom de la camera).
 
     default:
-      ERROR_TRACE ("Fichier de configuration %s incorrect: "
+      vpERROR_TRACE ("Fichier de configuration %s incorrect: "
 		   "ligne #%d.", filename, numLn);
     } /* SWITCH */
   } /* WHILE */
 
     /* Fin de la lecture du fichier. */
-  DEBUG_TRACE (15, "On ferme le fichier de configuration.");
+  vpDEBUG_TRACE (15, "On ferme le fichier de configuration.");
   fclose (fdtask);
 
   return;
@@ -994,19 +994,19 @@ init (const char * paramAfma6,
   this->FlagMod = 0;
   this->FlagReset = 0;
 
-  DEBUG_TRACE (15, "Parsage fichier robot.");
+  vpDEBUG_TRACE (15, "Parsage fichier robot.");
   this->parseConfigFile (paramAfma6);
 
-  DEBUG_TRACE (15, "Parsage fichier camera.");
+  vpDEBUG_TRACE (15, "Parsage fichier camera.");
   this->parseConfigFile (paramCamera);
 
-  DEBUG_TRACE (15, "Calcul de la matrice RPI.");
+  vpDEBUG_TRACE (15, "Calcul de la matrice RPI.");
   this->initRpi ();
 
-  DEBUG_TRACE (15, "Calcul du domaine Joint Limits.");
+  vpDEBUG_TRACE (15, "Calcul du domaine Joint Limits.");
   this->initJointLimits ();
 
-  DEBUG_TRACE (15, "Objet initialise !");
+  vpDEBUG_TRACE (15, "Objet initialise !");
   this->dejaInitialisee = true;
 
   return ;
@@ -1044,12 +1044,12 @@ init (vpAfma6::CameraRobotType camera)
     }
   default:
     {
-      ERROR_TRACE ("Cette erreur ne peut pas arriver.");
-      ERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
+      vpERROR_TRACE ("Cette erreur ne peut pas arriver.");
+      vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
 		   "que les specs de la classe ont ete modifiee, "
 		   "et que le code n'a pas ete mis a jour "
 		   "correctement.");
-      ERROR_TRACE ("Verifiez les valeurs possibles du type "
+      vpERROR_TRACE ("Verifiez les valeurs possibles du type "
 		   "vpAfma6::CameraRobotType, et controlez que "
 		   "tous les cas ont ete pris en compte dans la "
 		   "fonction init(camera).");
@@ -1351,7 +1351,7 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
   }
   catch(...)
   {
-    ERROR_TRACE("catch exception ") ;
+    vpERROR_TRACE("catch exception ") ;
     throw ;
   }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint3D.cpp,v 1.5 2006-05-30 08:40:48 fspindle Exp $
+ * $Id: vpFeaturePoint3D.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -224,13 +224,13 @@ vpFeaturePoint3D::error(const vpBasicFeature &s_star,
   }
   catch(vpMatrixException me)
   {
-    ERROR_TRACE("caught a Matric related error") ;
+    vpERROR_TRACE("caught a Matric related error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
-    ERROR_TRACE("caught another error") ;
+    vpERROR_TRACE("caught another error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
@@ -245,8 +245,8 @@ vpColVector
 vpFeaturePoint3D::error(const int select)
 {
 
-  ERROR_TRACE("This function has no meaning related to 3D point ") ;
-  ERROR_TRACE("It is not implemented ") ;
+  vpERROR_TRACE("This function has no meaning related to 3D point ") ;
+  vpERROR_TRACE("It is not implemented ") ;
 
   throw(vpException(vpException::notImplementedError,
 			   "This function has no meaning related to 3D point")) ;
@@ -268,7 +268,7 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
   double Z = s[2] ;
   if (Z < 0)
   {
-    ERROR_TRACE("Point is behind the camera ") ;
+    vpERROR_TRACE("Point is behind the camera ") ;
     cout <<"Z = " << Z << endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -277,7 +277,7 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
 
   if (fabs(Z) < 1e-6)
   {
-    ERROR_TRACE("Point Z coordinates is null ") ;
+    vpERROR_TRACE("Point Z coordinates is null ") ;
     cout <<"Z = " << Z << endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -296,7 +296,7 @@ vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
 
   if (Z < 0)
   {
-    ERROR_TRACE("Point is behind the camera ") ;
+    vpERROR_TRACE("Point is behind the camera ") ;
     cout <<"Z = " << Z << endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -305,7 +305,7 @@ vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
 
   if (fabs(Z) < 1e-6)
   {
-    ERROR_TRACE("Point Z coordinates is null ") ;
+    vpERROR_TRACE("Point Z coordinates is null ") ;
     cout <<"Z = " << Z << endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -347,7 +347,7 @@ vpFeaturePoint3D::display(const vpCameraParameters &cam,
   if (firsttime==0)
   {
     firsttime=1 ;
-    ERROR_TRACE("not implemented") ;
+    vpERROR_TRACE("not implemented") ;
     // Do not throw and error since it is not subject
     // to produce a failure
   }

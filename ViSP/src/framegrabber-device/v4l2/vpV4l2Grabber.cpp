@@ -226,7 +226,7 @@ vpV4l2Grabber::setScale(unsigned scale)
   {
     close();
 
-    ERROR_TRACE("Wrong scale %d, scale shoud be between 1 and 16",scale) ;
+    vpERROR_TRACE("Wrong scale %d, scale shoud be between 1 and 16",scale) ;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong scale") );
   }
@@ -251,7 +251,7 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
   {
     close();
 
-    ERROR_TRACE("Wrong v4l2 frame grabber input %d channel",input) ;
+    vpERROR_TRACE("Wrong v4l2 frame grabber input %d channel",input) ;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong input channel") );
   }
@@ -281,7 +281,7 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
   {
     close();
 
-    ERROR_TRACE("Wrong v4l2 frame grabber input %d channel",input) ;
+    vpERROR_TRACE("Wrong v4l2 frame grabber input %d channel",input) ;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong input channel") );
   }
@@ -470,7 +470,7 @@ vpV4l2Grabber::open()
   if (fd < 0) {
     close();
 
-    ERROR_TRACE ("No video device \"%s\"\n", device);
+    vpERROR_TRACE ("No video device \"%s\"\n", device);
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "Can't access to video device") );
 
@@ -768,7 +768,7 @@ vpV4l2Grabber::stopStreaming()
   //nothing to do if (fd < 0) or if  (streaming == false)
   if ((fd >= 0) && (streaming == true)) {
 
-    TRACE(" Stop the streaming...");
+    vpTRACE(" Stop the streaming...");
     /* stop capture */
     if (ioctl(fd, VIDIOC_STREAMOFF,&fmt_v4l2.type)) {
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
@@ -865,9 +865,9 @@ vpV4l2Grabber::waiton(int &index)
 
   if(verbose)
   {
-    ERROR_TRACE("field: %d\n", buf_v4l2[index].field);
+    vpERROR_TRACE("field: %d\n", buf_v4l2[index].field);
 
-    ERROR_TRACE("data adress : 0x%p\n", buf_me[buf.index].data);
+    vpERROR_TRACE("data adress : 0x%p\n", buf_me[buf.index].data);
   }
   return buf_me[buf.index].data;
 }

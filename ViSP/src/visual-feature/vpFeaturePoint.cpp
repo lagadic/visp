@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint.cpp,v 1.4 2006-05-30 08:40:48 fspindle Exp $
+ * $Id: vpFeaturePoint.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -159,7 +159,7 @@ vpFeaturePoint::interaction(const int select) const
 
   if (Z < 0)
   {
-    ERROR_TRACE("Point is behind the camera ") ;
+    vpERROR_TRACE("Point is behind the camera ") ;
     cout <<"Z = " << Z << endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -168,7 +168,7 @@ vpFeaturePoint::interaction(const int select) const
 
   if (fabs(Z) < 1e-6)
   {
-    ERROR_TRACE("Point Z coordinates is null ") ;
+    vpERROR_TRACE("Point Z coordinates is null ") ;
     cout <<"Z = " << Z << endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -231,13 +231,13 @@ vpFeaturePoint::error(const vpBasicFeature &s_star,
   }
   catch(vpMatrixException me)
   {
-    ERROR_TRACE("caught a Matrix related error") ;
+    vpERROR_TRACE("caught a Matrix related error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
-    ERROR_TRACE("caught another error") ;
+    vpERROR_TRACE("caught another error") ;
     cout <<endl << me << endl ;
     throw(me) ;
   }
@@ -272,7 +272,7 @@ vpFeaturePoint::buildFrom(const double _x, const double _y, const double _Z)
 
   if (Z < 0)
   {
-    ERROR_TRACE("Point is behind the camera ") ;
+    vpERROR_TRACE("Point is behind the camera ") ;
     cout <<"Z = " << Z << endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -281,7 +281,7 @@ vpFeaturePoint::buildFrom(const double _x, const double _y, const double _Z)
 
   if (fabs(Z) < 1e-6)
   {
-    ERROR_TRACE("Point Z coordinates is null ") ;
+    vpERROR_TRACE("Point Z coordinates is null ") ;
     cout <<"Z = " << Z << endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
@@ -307,7 +307,7 @@ vpFeaturePoint::display(const vpCameraParameters &cam,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }

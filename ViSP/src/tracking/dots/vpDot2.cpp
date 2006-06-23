@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.11 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.12 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -256,7 +256,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -291,7 +291,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I, int u, int v)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -338,15 +338,15 @@ void vpDot2::track(vpImage<unsigned char> &I)
   // Set the search area to the entire image
   setArea(I);
 
-//   DEBUG_TRACE(0, "Previous dot: ");
-//   DEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
-//   DEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
+//   vpDEBUG_TRACE(0, "Previous dot: ");
+//   vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
+//   vpDEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
   if (computeParameters(I, estimated_u, estimated_v) == false)
   {
-//     DEBUG_TRACE(0, "Search the dot in a bigest window around the last position");
-//     DEBUG_TRACE(0, "Bad computed dot: ");
-//     DEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
-//     DEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
+//     vpDEBUG_TRACE(0, "Search the dot in a bigest window around the last position");
+//     vpDEBUG_TRACE(0, "Bad computed dot: ");
+//     vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
+//     vpDEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
 
     // if estimation was wrong (get an error tracking), look for the dot
     // closest from the estimation,
@@ -380,7 +380,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
       // desallocation
       candidates->kill();
       delete candidates;
-      ERROR_TRACE("No dot was found") ;
+      vpERROR_TRACE("No dot was found") ;
       throw(vpTrackingException(vpTrackingException::featureLostError,
 				"No dot was found")) ;
     }
@@ -409,7 +409,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
   // if this dot is partially out of the image, return an error tracking.
   if( !isInImage( I ) )
   {
-    ERROR_TRACE("The center of gravity of the dot is not in the image") ;
+    vpERROR_TRACE("The center of gravity of the dot is not in the image") ;
     throw(vpTrackingException(vpTrackingException::featureLostError,
 			      "No dot was found")) ;
   }
@@ -1289,7 +1289,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // return an error tracking
   if( !isInArea( I, (int) est_u, (int) est_v ) )
   {
-    DEBUG_TRACE(3, "Initial pixel coordinates (%d, %d) for dot tracking are not in the area",
+    vpDEBUG_TRACE(3, "Initial pixel coordinates (%d, %d) for dot tracking are not in the area",
 		(int) est_u, (int) est_v) ;
     return false;
   }
@@ -1303,7 +1303,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // continue.
   if( !hasGoodLevel( I, (int) est_u, (int) est_v ) )
   {
-    DEBUG_TRACE(3, "Can't find a dot from pixel (%d, %d) coordinates",
+    vpDEBUG_TRACE(3, "Can't find a dot from pixel (%d, %d) coordinates",
 		(int) est_u, (int) est_v) ;
     return false;
   }
@@ -1324,7 +1324,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // error tracking
     if( getWidth() > 0 && fabs( est_u - firstBorder_u )> getWidth()/getAccuracy() )
     {
-      DEBUG_TRACE(3, "The found dot has a greater with than the required one") ;
+      vpDEBUG_TRACE(3, "The found dot has a greater with than the required one") ;
       return false;
     }
 
@@ -1340,7 +1340,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // if we are now out of the image, return an error tracking
   if( !isInArea( I, firstBorder_u, firstBorder_v ) )
   {
-    DEBUG_TRACE(3, "Border pixel coordinates (%d, %d) of the dot are not in the area",
+    vpDEBUG_TRACE(3, "Border pixel coordinates (%d, %d) of the dot are not in the area",
 		firstBorder_u, firstBorder_v);
     return false;
   }
@@ -1353,8 +1353,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   int border_u = firstBorder_u;
   int border_v = firstBorder_v;
 
-//   TRACE("-----------------------------------------");
-//   TRACE("first border_u: %d border_v: %d dir: %d",
+//   vpTRACE("-----------------------------------------");
+//   vpTRACE("first border_u: %d border_v: %d dir: %d",
 // 	firstBorder_u, firstBorder_v,firstDir);
   int du, dv;
   float dS, dMu, dMv, dMuv, dMu2, dMv2;
@@ -1391,7 +1391,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // if we are now out of the image, return an error tracking
     if( !isInArea( I, border_u, border_v ) )  {
 
-      ERROR_TRACE("Not in area: Should not occur");
+      vpERROR_TRACE("Not in area: Should not occur");
     }
 
     // store the new direction and dot border coordinates.
@@ -1412,7 +1412,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     if (computeFreemanChainElement(I, border_u, border_v, dir) == false)
       return false;
 
-//     TRACE("border_u: %d border_v: %d dir: %d", border_u, border_v, dir);
+//     vpTRACE("border_u: %d border_v: %d dir: %d", border_u, border_v, dir);
 
   }
   while( (firstBorder_u != border_u
@@ -1425,7 +1425,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // detected. Return an error tracking.
   if( m00 == 0 || m00 == 1 )
   {
-    DEBUG_TRACE(3, "The center of gravity of the dot wasn't properly detected");
+    vpDEBUG_TRACE(3, "The center of gravity of the dot wasn't properly detected");
     return false;
   }
   else // compute the center
@@ -1437,7 +1437,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // check the center is in the image... never know...
     if( !hasGoodLevel( I, (int)tmpCenter_u, (int)tmpCenter_v ) )
     {
-      DEBUG_TRACE(3, "The center of gravity of the dot has not a good in level");
+      vpDEBUG_TRACE(3, "The center of gravity of the dot has not a good in level");
       return false;
     }
 

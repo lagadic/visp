@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testIoPPM.cpp,v 1.1.1.1 2005-06-08 07:08:14 fspindle Exp $
+ *  $Id: testIoPPM.cpp,v 1.2 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -61,7 +61,7 @@ main()
   }
   catch(vpImageException e)
   {
-    ERROR_TRACE("at main level");
+    vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
 
@@ -72,7 +72,7 @@ main()
   }
   catch(vpImageException e)
   {
-    ERROR_TRACE("at main level");
+    vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
 
@@ -91,7 +91,7 @@ main()
   }
   catch(vpImageException e)
   {
-    ERROR_TRACE("at main level");
+    vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
 
@@ -102,7 +102,7 @@ main()
   }
   catch(vpImageException e)
   {
-    ERROR_TRACE("at main level");
+    vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
 

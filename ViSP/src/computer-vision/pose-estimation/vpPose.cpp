@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.7 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpPose.cpp,v 1.8 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -147,7 +147,7 @@ vpPose::coplanaire()
 
   if (npt <2)
   {
-    ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+    vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
 			  "Not enough points ")) ;
   }
@@ -198,7 +198,7 @@ vpPose::coplanaire()
 	 cout << x1 <<" " << y1 << " "<< z1 << endl ;
 	 cout << x2 <<" " << y2 << " "<< z2 << endl ;
 	 cout << x3 <<" " << y3 << " "<< z3 << endl ;
-	 ERROR_TRACE("division by zero  ") ;*/
+	 vpERROR_TRACE("division by zero  ") ;*/
     // throw(vpException(vpException::divideByZeroError,
     //		      "division by zero  ")) ;
   }
@@ -212,15 +212,15 @@ vpPose::coplanaire()
 
     if (fabs(dist) > 0.01)
     {
-      DEBUG_TRACE(10," points are not coplanar ") ;
+      vpDEBUG_TRACE(10," points are not coplanar ") ;
       //	TRACE(" points are not coplanar ") ;
       return false ;
     }
     listP.next() ;
   }
 
-  DEBUG_TRACE(10," points are  coplanar ") ;
-  //  TRACE(" points are  coplanar ") ;
+  vpDEBUG_TRACE(10," points are  coplanar ") ;
+  //  vpTRACE(" points are  coplanar ") ;
 
   return true ;
 }
@@ -284,7 +284,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
     cout << "begin vpPose::ComputePose()" << endl ;
   if (npt <4)
   {
-    ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+    vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
 			  "No enough point ")) ;
   }
@@ -298,9 +298,9 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 
       if (npt <4)
       {
-	ERROR_TRACE("Dementhon method cannot be used in that case ") ;
-	ERROR_TRACE("(at least 4 points are required)") ;
-	ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+	vpERROR_TRACE("Dementhon method cannot be used in that case ") ;
+	vpERROR_TRACE("(at least 4 points are required)") ;
+	vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
 	throw(vpPoseException(vpPoseException::notEnoughPointError,
 			      "Not enough points ")) ;
       }
@@ -315,7 +315,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 	}
 	catch(...)
 	{
-	  ERROR_TRACE(" ") ;
+	  vpERROR_TRACE(" ") ;
 	  throw ;
 	}
       }
@@ -326,7 +326,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 	}
 	catch(...)
 	{
-	  ERROR_TRACE(" ") ;
+	  vpERROR_TRACE(" ") ;
 	  throw ;
 	}
       }
@@ -345,9 +345,9 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 
 	if (npt <4)
 	{
-	  ERROR_TRACE("Lagrange method cannot be used in that case ") ;
-	  ERROR_TRACE("(at least 4 points are required)") ;
-	  ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+	  vpERROR_TRACE("Lagrange method cannot be used in that case ") ;
+	  vpERROR_TRACE("(at least 4 points are required)") ;
+	  vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
 	  throw(vpPoseException(vpPoseException::notEnoughPointError,
 				"Not enough points ")) ;
 	}
@@ -356,7 +356,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 	}
 	catch(...)
 	{
-	  ERROR_TRACE(" ") ;
+	  vpERROR_TRACE(" ") ;
 	  throw ;
 	}
       }
@@ -364,9 +364,9 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
       {
 	if (npt <4)
 	{
-	  ERROR_TRACE("Lagrange method cannot be used in that case ") ;
-	  ERROR_TRACE("(at least 4 points are required)") ;
-	  ERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+	  vpERROR_TRACE("Lagrange method cannot be used in that case ") ;
+	  vpERROR_TRACE("(at least 4 points are required)") ;
+	  vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
 	  throw(vpPoseException(vpPoseException::notEnoughPointError,
 				"Not enough points ")) ;
 	}
@@ -375,7 +375,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 	}
 	catch(...)
 	{
-	  ERROR_TRACE(" ") ;
+	  vpERROR_TRACE(" ") ;
 	  throw ;
 	}
       }
@@ -401,7 +401,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
       }
       catch(...)
       {
-	ERROR_TRACE(" ") ;
+	vpERROR_TRACE(" ") ;
 	throw ;
       }
     }
@@ -416,7 +416,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
       }
       catch(...)
       {
-	ERROR_TRACE(" ") ;
+	vpERROR_TRACE(" ") ;
 	throw ;
       }
     }

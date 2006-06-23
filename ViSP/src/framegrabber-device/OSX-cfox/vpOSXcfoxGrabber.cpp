@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.cpp,v 1.3 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -183,7 +183,7 @@ vpOSXcfoxGrabber::setScale(unsigned scale)
   {
     close();
 
-    ERROR_TRACE("Wrong scale %d, scale shoud be between 1 and 2",scale) ;
+    vpERROR_TRACE("Wrong scale %d, scale shoud be between 1 and 2",scale) ;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong scale") );
   }

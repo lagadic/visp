@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6SquareLine.cpp,v 1.2 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: servoAfma6SquareLine.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -75,20 +75,20 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
 
   vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   try{
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -125,19 +125,19 @@ main()
       }
       catch(...)
 	{
-	  ERROR_TRACE(" ") ;
+	  vpERROR_TRACE(" ") ;
 	  throw ;
 	}
     }
 
   vpCameraParameters cam ;
 
-  TRACE("sets the current position of the visual feature ") ;
+  vpTRACE("sets the current position of the visual feature ") ;
   vpFeatureLine p[nbline] ;
   for (i=0 ; i < nbline ; i++)
     vpFeatureBuilder::create(p[i],cam, line[i])  ;
 
-  TRACE("sets the desired position of the visual feature ") ;
+  vpTRACE("sets the desired position of the visual feature ") ;
   vpFeatureLine pd[nbline] ;
    // vertical BW
   pd[0].setRhoTheta(0.15,M_PI) ;
@@ -155,28 +155,28 @@ main()
   pd[3].setRhoTheta(-0.15,-M_PI/2) ;
   pd[3].setABCD(0.0,0,1,-1) ; //z = 1
 
-  TRACE("define the task") ;
-  TRACE("\t we want an eye-in-hand control law") ;
-  TRACE("\t robot is controlled in the camera frame") ;
+  vpTRACE("define the task") ;
+  vpTRACE("\t we want an eye-in-hand control law") ;
+  vpTRACE("\t robot is controlled in the camera frame") ;
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
-  TRACE("\t we want to see a point on a point..") ;
+  vpTRACE("\t we want to see a point on a point..") ;
   cout << endl ;
   for (i=0 ; i < nbline ; i++)
     task.addFeature(p[i],pd[i]) ;
 
-  TRACE("\t set the gain") ;
+  vpTRACE("\t set the gain") ;
   task.setLambda(0.032) ;
 
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 
   vpDisplay::getClick(I) ;
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
   int iter=0 ;
-  TRACE("\t loop") ;
+  vpTRACE("\t loop") ;
   vpColVector v ;
   char s[FILENAME_MAX] ;
   vpImage<vpRGBa> Ic ;
@@ -202,7 +202,7 @@ main()
 	  //			   10,vpColor::green) ;
 
 	  vpFeatureBuilder::create(p[i],cam,line[i]);
-	  //  TRACE("%f %f ",p[i].getRho(), p[i].getTheta()) ;
+	  //  vpTRACE("%f %f ",p[i].getRho(), p[i].getTheta()) ;
 
 	  p[i].display(cam, I,  vpColor::red) ;
 	}
@@ -245,11 +245,11 @@ main()
     //   vpDisplay::getImage(I,Ic) ;
     //   vpImageIo::writePPM(Ic,s) ;
 
-    TRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
     iter++;
   }
 
-  TRACE("Display task information " ) ;
+  vpTRACE("Display task information " ) ;
   task.print() ;
 }
 
@@ -257,7 +257,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have an afma6 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot connected to your computer...");
 }
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLine.cpp,v 1.3 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpLine.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -181,8 +181,8 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
     vpMath::swap(D1,D2) ;
   }
 
-  //  ERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-  //  ERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
+  //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
+  //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
 
   if ((fabs(D1) > 1e-8) || (fabs(D2) > 1e-8))
@@ -208,7 +208,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
     C1 =  gamma1/s1 ;
     D1 = 0 ;
 
-    //   ERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
+    //   vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
 
     //cout <<"--> "<< A1 << "  " << B1 << "  " << C1<< "  " << D1 <<endl ;
 
@@ -217,8 +217,8 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
     if (fabs(A1) > 0.01)
     {
 
-      //    ERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-      //   ERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
+      //    vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
+      //   vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
       x1 = A1*B2 - B1*A2;
       y1 = A1*C2 - C1*A2;
       A2 = -(B1*x1+C1*y1);
@@ -227,8 +227,8 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
     }
     else if (fabs(B1) > 0.01){
 
-      //    ERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-      //   ERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
+      //    vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
+      //   vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
       x1 = A1*B2 - B1*A2;
       y1 = C1*B2 - B1*C2;
@@ -238,8 +238,8 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
     }
     else {
 
-      //    ERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-      //   ERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
+      //    vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
+      //   vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
       x1 = A1*C2 - C1*A2;
       y1 = B1*C2 - C1*B2;
@@ -248,7 +248,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
       C2 = A1*x1+B1*y1;
     }
     // Contrainte de normalisation
-    //   ERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
+    //   vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
     double s2 = sqrt (A2*A2 +  B2*B2 + C2*C2);
     A2 = A2/s2;

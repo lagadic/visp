@@ -13,16 +13,16 @@ int main()
   vpColVector V(4) ;
   V = 1.0;
 
-  TRACE("------------------------");
-  TRACE("call std::cout << V;");
+  vpTRACE("------------------------");
+  vpTRACE("call std::cout << V;");
   std::cout << V << endl;
 
-  TRACE("------------------------");
-  TRACE("call V.normalize();");
+  vpTRACE("------------------------");
+  vpTRACE("call V.normalize();");
   V.normalize();
 
-  TRACE("------------------------");
-  TRACE("call std::cout << V;");
+  vpTRACE("------------------------");
+  vpTRACE("call std::cout << V;");
   std::cout << V << endl;
 
 }

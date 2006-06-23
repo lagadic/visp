@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.cpp,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpPoseVector.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -179,7 +179,7 @@ vpPoseVector::save(ofstream &f) const
   }
   else
   {
-    ERROR_TRACE("\t\t file not open " );
+    vpERROR_TRACE("\t\t file not open " );
     throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
@@ -203,7 +203,7 @@ vpPoseVector::load(ifstream &f)
   }
   else
   {
-    ERROR_TRACE("\t\t file not open " );
+    vpERROR_TRACE("\t\t file not open " );
     throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }

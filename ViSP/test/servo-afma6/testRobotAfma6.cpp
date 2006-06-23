@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testRobotAfma6.cpp,v 1.4 2006-04-19 09:01:24 fspindle Exp $
+ *  $Id: testRobotAfma6.cpp,v 1.5 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -40,18 +40,18 @@ int main()
   cout << "a test..." << endl;
 
   vpAfma6 afma6;
-  CTRACE << afma6;
+  vpCTRACE << afma6;
 
   vpRobotAfma6 robotAfma6;
 
-  CTRACE << "------- set camera 1394 -------------------" << endl;
+  vpCTRACE << "------- set camera 1394 -------------------" << endl;
   robotAfma6.init( vpAfma6::CAMERA_IEEE1394_12MM);
 
-  CTRACE << robotAfma6;
+  vpCTRACE << robotAfma6;
 
-  CTRACE << "------- set camera XC77 -------------------" << endl;
+  vpCTRACE << "------- set camera XC77 -------------------" << endl;
   robotAfma6.init( vpAfma6::CAMERA_XC77_12MM);
-  CTRACE << robotAfma6;
+  vpCTRACE << robotAfma6;
   return 1;
 }
 #else

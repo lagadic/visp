@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.cpp,v 1.7 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpHomogeneousMatrix.cpp,v 1.8 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,7 +68,7 @@ vpHomogeneousMatrix::init()
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -380,7 +380,7 @@ vpHomogeneousMatrix::save(ofstream &f) const
   }
   else
   {
-    ERROR_TRACE("\t\t file not open " );
+    vpERROR_TRACE("\t\t file not open " );
     throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
@@ -405,7 +405,7 @@ vpHomogeneousMatrix::load(ifstream &f)
   }
   else
   {
-    ERROR_TRACE("\t\t file not open " );
+    vpERROR_TRACE("\t\t file not open " );
     throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }
@@ -429,7 +429,7 @@ vpHomogeneousMatrix::loadMatrix34(ifstream &f)
   }
   else
   {
-    ERROR_TRACE("\t\t file not open " );
+    vpERROR_TRACE("\t\t file not open " );
     throw(vpException(vpException::ioError, "\t\t file not open")) ;
   }
 }

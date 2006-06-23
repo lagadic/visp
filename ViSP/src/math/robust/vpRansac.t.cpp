@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.t.cpp,v 1.4 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpRansac.t.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -147,7 +147,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
       if (count > maxDataTrials)
       {
 		  delete [] ind;
-	ERROR_TRACE("Unable to select a nondegenerate data set");
+	vpERROR_TRACE("Unable to select a nondegenerate data set");
 	throw ;
       }
 
@@ -191,7 +191,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
     // Safeguard against being stuck in this loop forever
     if (trialcount > maxTrials)
     {
-      TRACE("ransac reached the maximum number of %d trials",   maxTrials);
+      vpTRACE("ransac reached the maximum number of %d trials",   maxTrials);
       break ;
     }
   }
@@ -203,7 +203,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
   }
   else
   {
-    TRACE("ransac was unable to find a useful solution");
+    vpTRACE("ransac was unable to find a useful solution");
     M = 0;
   }
   delete [] ind;

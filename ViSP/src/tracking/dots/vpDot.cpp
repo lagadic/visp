@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.12 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpDot.cpp,v 1.13 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -316,7 +316,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
     }
     if (sol == false)
     {
-      ERROR_TRACE("Dot has been lost") ;
+      vpERROR_TRACE("Dot has been lost") ;
       throw(vpTrackingException(vpTrackingException::featureLostError,
 				"Dot has been lost")) ;
     }
@@ -396,7 +396,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
     }
 
     if (sol == false) {
-      ERROR_TRACE("Dot has been lost") ;
+      vpERROR_TRACE("Dot has been lost") ;
       throw(vpTrackingException(vpTrackingException::featureLostError,
 				"Dot has been lost")) ;
     }
@@ -422,14 +422,14 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 
   if (npoint < 5)
   {
-    ERROR_TRACE("Dot has been lost") ;
+    vpERROR_TRACE("Dot has been lost") ;
     throw(vpTrackingException(vpTrackingException::featureLostError,
 			      "Dot has been lost")) ;
   }
   if (npoint > nbMaxPoint)
   {
-    ERROR_TRACE("Too many point %f (max allowed is %f)", npoint, nbMaxPoint) ;
-    ERROR_TRACE("This threshold can be modified using the setNbMaxPoint(int) method") ;
+    vpERROR_TRACE("Too many point %f (max allowed is %f)", npoint, nbMaxPoint) ;
+    vpERROR_TRACE("This threshold can be modified using the setNbMaxPoint(int) method") ;
 
     throw(vpTrackingException(vpTrackingException::featureLostError,
 			      "Dot has been lost")) ;
@@ -482,7 +482,7 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -515,7 +515,7 @@ vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -544,7 +544,7 @@ vpDot::track(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 

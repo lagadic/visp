@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.cpp,v 1.4 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpFeatureDisplay.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,7 +69,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -93,7 +93,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
     double si = sin(thetap) ;
     double c = -rhop ;
 
-    // TRACE("rhop %f %f ",rhop, atan2(si,co)) ;
+    // vpTRACE("rhop %f %f ",rhop, atan2(si,co)) ;
     // double u1,v1,u2,v2 ;
 
     double a = si ;
@@ -113,8 +113,8 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
     vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
   }
   /*
-     //  ERROR_TRACE("********* %f %f %f %f ",si, co, theta, rho) ;
-    //      ERROR_TRACE("********* %f %f %f %f ",si, co, thetap, rhop) ;
+     //  vpERROR_TRACE("********* %f %f %f %f ",si, co, theta, rho) ;
+    //      vpERROR_TRACE("********* %f %f %f %f ",si, co, thetap, rhop) ;
 
     // cout << co <<  "  " << si << endl ;
     if (fabs(si) < 1e-5)
@@ -124,7 +124,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 
       v2 = I.getRows()-1 ;
       u2 = c/co ;
-      //       ERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
+      //       vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
     }
     else
       if (fabs(co) < 1e-5)
@@ -133,7 +133,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 	u1 = 0 ;
 	v2 =c/si ;
 	u2 = I.getCols()-1 ;
-	//	  ERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
+	//	  vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
       }
       else
       {
@@ -157,7 +157,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 
       }
 
-    //   ERROR_TRACE("-------->%f %f %f %f \n",u1,v1,u2,v2) ;
+    //   vpERROR_TRACE("-------->%f %f %f %f \n",u1,v1,u2,v2) ;
     vpDisplay::displayLine(I,
 			   vpMath::round(v1),vpMath::round(u1),
 			   vpMath::round(v2),vpMath::round(u2),
@@ -167,7 +167,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -184,7 +184,7 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -213,7 +213,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
       double a =sqrt( (mu02+mu20+s)/2.0) ;
       double b =sqrt( (mu02+mu20-s)/2.0) ;
 
-      //    TRACE("%f %f %f", a,b,e) ;
+      //    vpTRACE("%f %f %f", a,b,e) ;
 
       double e1  = atan(e) ;
 
@@ -252,7 +252,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.5 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -179,7 +179,7 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
 
    if ((I.getRows() == 0) || (I.getCols()==0))
      {
-       ERROR_TRACE("Image not initialized " ) ;
+       vpERROR_TRACE("Image not initialized " ) ;
        throw(vpDisplayException(vpDisplayException::notInitializedError,
 				"Image not initialized")) ;
      }
@@ -205,7 +205,7 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
 {
   if ((I.getRows() == 0) || (I.getCols()==0))
      {
-       ERROR_TRACE("Image not initialized " ) ;
+       vpERROR_TRACE("Image not initialized " ) ;
        throw(vpDisplayException(vpDisplayException::notInitializedError,
 				"Image not initialized")) ;
      }
@@ -369,7 +369,7 @@ void vpDisplayGTK::displayImage(vpImage<unsigned char> &I)
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -410,7 +410,7 @@ void vpDisplayGTK::displayImage(vpImage<vpRGBa> &I)
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -463,7 +463,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -477,7 +477,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 */
 void vpDisplayGTK::displayImage(unsigned char *I)
 {
-  TRACE(" not implemented ") ;
+  vpTRACE(" not implemented ") ;
 }
 
 /*!
@@ -517,7 +517,7 @@ void vpDisplayGTK::flushDisplay()
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -529,7 +529,7 @@ void vpDisplayGTK::flushDisplay()
 */
 void vpDisplayGTK::clearDisplay(int c)
 {
-  TRACE("Not implemented") ;
+  vpTRACE("Not implemented") ;
 }
 
 /*!
@@ -546,7 +546,7 @@ void vpDisplayGTK::displayPoint(int i, int j, int color)
   }
  else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -581,7 +581,7 @@ vpDisplayGTK::displayLine(int i1, int j1,
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -618,7 +618,7 @@ vpDisplayGTK::displayDotLine(int i1, int j1,
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -644,14 +644,14 @@ vpDisplayGTK::displayCross(int i,int j,
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
   }
 
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -675,13 +675,13 @@ void vpDisplayGTK::displayCrossLarge(int i,int j, int size,int col)
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;    //
   }
@@ -749,13 +749,13 @@ vpDisplayGTK::displayArrow(int i1,int j1,
     }
     catch(...)
     {
-      ERROR_TRACE(" ") ;
+      vpERROR_TRACE(" ") ;
       throw ;
     }
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -781,7 +781,7 @@ vpDisplayGTK::displayRectangle(int i, int j,
   }
  else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -803,7 +803,7 @@ void vpDisplayGTK::displayCharString(int i, int j, char *string, int color)
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -842,7 +842,7 @@ vpDisplayGTK::getClick()
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -884,7 +884,7 @@ vpDisplayGTK::getClick(int& i, int& j)
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -934,7 +934,7 @@ vpDisplayGTK::getClick(int& i, int& j, int& button)
   }
  else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -981,7 +981,7 @@ vpDisplayGTK::getClickUp(int& i, int& j, int& button)
   }
  else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -1008,7 +1008,7 @@ int vpDisplayGTK::getScreenDepth()
  */
 void vpDisplayGTK::getScreenSize(int *xsize, int *ysize)
 {
-  TRACE("Not implemented") ;
+  vpTRACE("Not implemented") ;
 }
 
 
@@ -1027,7 +1027,7 @@ vpDisplayGTK::flushTitle(const char *windowtitle)
   }
   else
   {
-    ERROR_TRACE("GTK not initialized " ) ;
+    vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
@@ -1048,7 +1048,7 @@ void vpDisplayGTK::displayCircle(int i, int j, int r, int color)
    }
   else
    {
-     ERROR_TRACE("GTK not initialized " ) ;
+     vpERROR_TRACE("GTK not initialized " ) ;
      throw(vpDisplayException(vpDisplayException::notInitializedError,
 			      "GTK not initialized")) ;
    }

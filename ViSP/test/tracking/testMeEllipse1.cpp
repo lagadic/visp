@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testMeEllipse1.cpp,v 1.2 2006-04-19 09:01:25 fspindle Exp $
+ *  $Id: testMeEllipse1.cpp,v 1.3 2006-06-23 14:45:09 brenier Exp $
  *
  * Description
  * ============
@@ -51,7 +51,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -62,7 +62,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
   vpMeEllipse E1 ;
@@ -79,7 +79,7 @@ main()
   E1.initTracking(I) ;
   E1.display(I, vpColor::green) ;
 
-  ERROR_TRACE("sample step %f ",E1.me->sample_step) ;
+  vpERROR_TRACE("sample step %f ",E1.me->sample_step) ;
   E1.track(I) ;
   vpDisplay::getClick(I) ;
   cout <<"------------------------------------------------------------"<<endl;
@@ -97,7 +97,7 @@ main()
     }
     catch(...)
     {
-      ERROR_TRACE("Error in tracking vpMeLine ") ;
+      vpERROR_TRACE("Error in tracking vpMeLine ") ;
       exit(1) ;
     }
 
@@ -114,7 +114,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have a biclops robot connected to your computer...");
+  vpERROR_TRACE("You do not have a biclops robot connected to your computer...");
 }
 
 #endif

@@ -45,11 +45,11 @@ main(int argc, char ** argv)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
-  TRACE(" ") ;
+  vpTRACE(" ") ;
 
   cout << I.getCols() << "  " << I.getRows() <<endl  ;
 
@@ -61,7 +61,7 @@ main(int argc, char ** argv)
   }
   catch(...)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -85,7 +85,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  TRACE("Cfox OSX frame grabber drivers are not available or GTK was not activated") ;
+  vpTRACE("Cfox OSX frame grabber drivers are not available or GTK was not activated") ;
 }
 #endif
 

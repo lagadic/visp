@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testSequence.cpp,v 1.2 2006-04-19 09:01:23 fspindle Exp $
+ *  $Id: testSequence.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -93,7 +93,7 @@ main()
     // here this will result in the end of the program
     // Note that another error message has been printed from readPGM
     // to give more information about the error
-    ERROR_TRACE("Error while reading the image") ;
+    vpERROR_TRACE("Error while reading the image") ;
     throw ;
   }
 
@@ -112,7 +112,7 @@ main()
   }
   catch(...)
   {
-    ERROR_TRACE("Error while displaying the image") ;
+    vpERROR_TRACE("Error while displaying the image") ;
     throw ;
   }
 
@@ -138,7 +138,7 @@ main()
     }
     catch(...)
       {
-	ERROR_TRACE("Error in tracking loop") ;
+	vpERROR_TRACE("Error in tracking loop") ;
 	throw ;
       }
     iter +=5 ;
@@ -149,7 +149,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif

@@ -77,10 +77,10 @@ main()
   vpRotationMatrix aRb  ;
   vpTranslationVector aTb ;
   vpColVector n ;
-  TRACE("Compare with built homography H = R + t/d n ") ;
+  vpTRACE("Compare with built homography H = R + t/d n ") ;
   vpPlane bp(0,0,1,1) ;
   vpHomography aHb_built(aMb,bp) ;
-  TRACE( "aHb built from the displacement ") ;
+  vpTRACE( "aHb built from the displacement ") ;
   cout <<  endl <<aHb_built/aHb_built[2][2] <<  endl ;
 
   aHb_built.computeDisplacement(aRb, aTb, n) ;
@@ -92,7 +92,7 @@ main()
   cout << (n).t() <<endl ;
 
   cout << "-------------------------------" <<endl ;
-  TRACE(" ") ;
+  vpTRACE(" ") ;
   vpHomography aHb ;
   vpHomography::ransac(nbpt,xb,yb,xa,ya, aHb) ;
 

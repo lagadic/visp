@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPtu46.cpp,v 1.7 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpPtu46.cpp,v 1.8 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@ void
 vpPtu46::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
 {
   if (q.getRows() != 2) {
-    ERROR_TRACE("Bad dimension for ptu-46 articular vector");
+    vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
     throw;
   }
 
@@ -112,7 +112,7 @@ vpPtu46::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
   fMc[3][2] = 0;
   fMc[3][3] = 1;
 
-  CDEBUG (6) << "Position de la camera: " << endl << fMc;
+  vpCDEBUG (6) << "Position de la camera: " << endl << fMc;
 
   return ;
 }
@@ -283,7 +283,7 @@ vpPtu46::get_eJe(const vpColVector &q, vpMatrix &eJe)
   eJe.resize(6,2) ;
 
   if (q.getRows() != 2) {
-    ERROR_TRACE("Bad dimension for ptu-46 articular vector");
+    vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
     throw;
   }
 
@@ -312,7 +312,7 @@ vpPtu46::get_fJe(const vpColVector &q, vpMatrix &fJe)
 {
 
   if (q.getRows() != 2) {
-    ERROR_TRACE("Bad dimension for ptu-46 articular vector");
+    vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
     throw;
   }
 

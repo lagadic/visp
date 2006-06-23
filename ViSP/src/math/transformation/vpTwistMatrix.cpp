@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTwistMatrix.cpp,v 1.4 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpTwistMatrix.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -109,7 +109,7 @@ vpTwistMatrix::init()
   }
   catch(vpException me)
   {
-    ERROR_TRACE("Error caught") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -174,7 +174,7 @@ vpTwistMatrix::vpTwistMatrix(const double Rx,
 {
   init() ;
 
-  ERROR_TRACE("function not implemented") ;
+  vpERROR_TRACE("function not implemented") ;
   throw(vpException(vpException::functionNotImplementedError)) ;
 
 }
@@ -220,7 +220,7 @@ vpTwistMatrix::operator*(const vpColVector &v) const
 
   if (6 != v.getRows())
   {
-    ERROR_TRACE("vpTwistMatrix mismatch in vpTwistMatrix/vector multiply") ;
+    vpERROR_TRACE("vpTwistMatrix mismatch in vpTwistMatrix/vector multiply") ;
     throw(vpMatrixException::incorrectMatrixSizeError) ;
   }
 

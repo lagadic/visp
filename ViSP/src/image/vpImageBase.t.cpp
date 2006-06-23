@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageBase.t.cpp,v 1.4 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpImageBase.t.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@ vpImage<Type>::init(int _nrows, int _ncols, Type value)
   }
   catch(vpException me)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 
@@ -102,7 +102,7 @@ vpImage<Type>::init(int _nrows, int _ncols)
 
   if (_nrows != nrows) {
     if (row != NULL)  {
-      DEBUG_TRACE(10,"Destruction row[]");
+      vpDEBUG_TRACE(10,"Destruction row[]");
       delete [] row;
       row = NULL;
     }
@@ -111,7 +111,7 @@ vpImage<Type>::init(int _nrows, int _ncols)
   if ((_nrows != nrows) || (_ncols != ncols))
   {
     if (bitmap != NULL) {
-      DEBUG_TRACE(10,"Destruction bitmap[]") ;
+      vpDEBUG_TRACE(10,"Destruction bitmap[]") ;
       delete [] bitmap;
       bitmap = NULL;
     }
@@ -127,19 +127,19 @@ vpImage<Type>::init(int _nrows, int _ncols)
 
   if (bitmap == NULL)  bitmap = new  Type[npixels] ;
 
-  //  ERROR_TRACE("Allocate bitmap %p",bitmap) ;
+  //  vpERROR_TRACE("Allocate bitmap %p",bitmap) ;
   if (bitmap == NULL)
   {
-        ERROR_TRACE("cannot allocate bitmap ") ;
+        vpERROR_TRACE("cannot allocate bitmap ") ;
     throw(vpException(vpException::memoryAllocationError,
 		      "cannot allocate bitmap ")) ;
   }
 
   if (row == NULL)  row = new  Type*[nrows] ;
-//  ERROR_TRACE("Allocate row %p",row) ;
+//  vpERROR_TRACE("Allocate row %p",row) ;
   if (row == NULL)
   {
-    ERROR_TRACE("cannot allocate row ") ;
+    vpERROR_TRACE("cannot allocate row ") ;
     throw(vpException(vpException::memoryAllocationError,
 		      "cannot allocate row ")) ;
   }
@@ -180,7 +180,7 @@ vpImage<Type>::vpImage(int _nrows, int _ncols)
   }
   catch(vpException me)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -215,7 +215,7 @@ vpImage<Type>::vpImage (int _nrows, int _ncols, Type value)
   }
   catch(vpException me)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -268,7 +268,7 @@ vpImage<Type>::resize(int n_rows, int n_cols)
   }
   catch(vpException me)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -283,13 +283,13 @@ template<class Type>
 void
 vpImage<Type>::destroy()
 {
- //   ERROR_TRACE("Deallocate ") ;
+ //   vpERROR_TRACE("Deallocate ") ;
 
 
   if (bitmap!=NULL)
   {
-  //  ERROR_TRACE("Deallocate bitmap memory %p",bitmap) ;
-//    DEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap) ;
+  //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap) ;
+//    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap) ;
     delete [] bitmap ;
     bitmap = NULL;
   }
@@ -297,8 +297,8 @@ vpImage<Type>::destroy()
 
   if (row!=NULL)
   {
- //   ERROR_TRACE("Deallocate row memory %p",row) ;
-//    DEBUG_TRACE(20,"Deallocate row memory %p",row) ;
+ //   vpERROR_TRACE("Deallocate row memory %p",row) ;
+//    vpDEBUG_TRACE(20,"Deallocate row memory %p",row) ;
     delete [] row ;
     row = NULL;
   }
@@ -340,7 +340,7 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
   }
   catch(vpException me)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }
@@ -387,7 +387,7 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
   }
   catch(vpException me)
   {
-    ERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ") ;
     throw ;
   }
 }

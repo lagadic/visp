@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma4.cpp,v 1.2 2006-04-19 09:01:23 fspindle Exp $
+ *  $Id: moveAfma4.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
  *
  * Description
  * ============
@@ -53,14 +53,14 @@ main()
   qd[2] = vpMath::rad(20);
   qd[3] = vpMath::rad(-10);
 
-  TRACE("Position control: in articular...") ;
-  CTRACE << "  position to reach: " << qd.t() << endl ;
+  vpTRACE("Position control: in articular...") ;
+  vpCTRACE << "  position to reach: " << qd.t() << endl ;
   robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
   robot.setPosition(vpRobot::ARTICULAR_FRAME, qd) ;
   sleep(1) ;
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
-  CTRACE << "  measured position: " << q.t() ;
+  vpCTRACE << "  measured position: " << q.t() ;
   sleep(1) ;
 
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
@@ -68,30 +68,30 @@ main()
   //
   // Velocity control in articular
   //
-  TRACE("Velocity control: in articular...") ;
-  TRACE("Velocity control: rotation arround vertical axis...") ;
+  vpTRACE("Velocity control: in articular...") ;
+  vpTRACE("Velocity control: rotation arround vertical axis...") ;
   q = 0 ;
   q[0] = vpMath::rad(2) ; // rotation arround vertical axis
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
 
-  TRACE("Velocity control: vertical translation...") ;
+  vpTRACE("Velocity control: vertical translation...") ;
   q = 0 ;
   q[1] = 0.2 ; // Vertical translation
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
   sleep(5) ;
 
-  TRACE("Velocity control: vertical translation...") ;
+  vpTRACE("Velocity control: vertical translation...") ;
   q = 0 ;
   q[1] = -0.2 ; // Vertical translation
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
   sleep(5) ;
-  TRACE("Velocity control: pan rotation...") ;
+  vpTRACE("Velocity control: pan rotation...") ;
   q = 0 ;
   q[2] = vpMath::rad(3) ; // pan
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
   sleep(5) ;
 
-  TRACE("Velocity control: tilt rotation...") ;
+  vpTRACE("Velocity control: tilt rotation...") ;
   q = 0 ;
   q[3] = vpMath::rad(2) ; // tilt
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
@@ -101,15 +101,15 @@ main()
   // Velocity control in camera frame
   //
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-  TRACE("Velocity control: in camera frame...") ;
-  TRACE("Velocity control: rx rotation...") ;
+  vpTRACE("Velocity control: in camera frame...") ;
+  vpTRACE("Velocity control: rx rotation...") ;
   q.resize(2) ;
   q = 0.0;
   q[0] = vpMath::rad(2) ; // rotation arround vertical axis
   robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
   sleep(5) ;
 
-  TRACE("Velocity control: ry rotation...") ;
+  vpTRACE("Velocity control: ry rotation...") ;
   q.resize(2) ;
   q = 0.0;
   q[1] = vpMath::rad(2) ; // rotation arround vertical axis
@@ -122,39 +122,39 @@ main()
 
   int zoom, focus, iris;
 
-  TRACE("Camera control...") ;
-  TRACE("Actual camera settings...") ;
+  vpTRACE("Camera control...") ;
+  vpTRACE("Actual camera settings...") ;
   zoom = robot.getZoom() ;
   iris = robot.getIris() ;
   focus = robot.getFocus() ;
-  CTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
+  vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
 
-  TRACE("Set camera settings...") ;
+  vpTRACE("Set camera settings...") ;
   zoom = 3000;
   focus = 400;
   iris = 900;
-  CTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
+  vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
   robot.setZoom(zoom);
   robot.setIris(iris);
   robot.setFocus(focus);
 
-  TRACE("Actual camera settings...") ;
+  vpTRACE("Actual camera settings...") ;
   zoom = robot.getZoom() ;
   iris = robot.getIris() ;
   focus = robot.getFocus() ;
-  CTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
+  vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
 
-  TRACE("Set camera auto iris on...") ;
+  vpTRACE("Set camera auto iris on...") ;
   robot.setAutoIris(true);
   sleep(2);
   iris = robot.getIris() ;
-  CTRACE << "Actual iris: " << iris << endl;
+  vpCTRACE << "Actual iris: " << iris << endl;
 
-  TRACE("Set camera auto iris off...") ;
+  vpTRACE("Set camera auto iris off...") ;
   robot.setAutoIris(false);
   robot.setIris(400);
   iris = robot.getIris() ;
-  CTRACE << "Actual iris: " << iris << endl;
+  vpCTRACE << "Actual iris: " << iris << endl;
 
 
 
@@ -163,7 +163,7 @@ main()
 int
 main()
 {
-  ERROR_TRACE("You do not have an afma4 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma4 robot connected to your computer...");
 }
 
 #endif

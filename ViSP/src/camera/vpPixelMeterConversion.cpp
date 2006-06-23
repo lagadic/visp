@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPixelMeterConversion.cpp,v 1.7 2006-05-30 08:40:36 fspindle Exp $
+ * $Id: vpPixelMeterConversion.cpp,v 1.8 2006-06-23 14:45:05 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,13 +60,13 @@ vpPixelMeterConversion::convertPoint(const vpCameraParameters &cam,
 
   if (fabs(cam.get_px())<1e-6)
   {
-    ERROR_TRACE("Camera parameter px = 0") ;
+    vpERROR_TRACE("Camera parameter px = 0") ;
     throw(vpException(vpException::divideByZeroError,
 		      "Camera parameter px = 0")) ;
   }
   if (fabs(cam.get_py())<1e-6)
   {
-    ERROR_TRACE("Camera parameter py = 0") ;
+    vpERROR_TRACE("Camera parameter py = 0") ;
     throw(vpException(vpException::divideByZeroError,
 		      "Camera parameter px = 0")) ;
   }
@@ -89,7 +89,7 @@ vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
 
   if (fabs(d)<1e-6)
   {
-    ERROR_TRACE("division by zero") ;
+    vpERROR_TRACE("division by zero") ;
     throw(vpException(vpException::divideByZeroError,
 		      "division by zero")) ;
   }
