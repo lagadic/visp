@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.7 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.8 2006-06-23 15:35:44 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,10 +74,12 @@ protected:
 
   vpDisplay() ;
 
+public:
   // get information
   inline  int getRows() const { return nrows ; }
   inline  int getCols() const { return ncols ; }
 
+protected:
   //! initialization
   virtual void init(vpImage<unsigned char> &I,
 		   int winx=-1, int winy=-1,
