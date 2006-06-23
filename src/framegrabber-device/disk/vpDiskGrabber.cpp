@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpDiskGrabber.cpp,v 1.5 2006-06-23 15:35:44 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,7 +73,7 @@ vpDiskGrabber::vpDiskGrabber(const char *dir, const char *basename,
 {
   setDirectory(dir);
   setBaseName(basename);
-  setImageNumber(image_number);
+  setImageNumber(number);
   setStep(step);
   setNumberOfZero(noz);
 
@@ -127,30 +127,8 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I)
 
   char name[FILENAME_MAX] ;
 
-  switch(number_of_zero)
-  {
-  case 0:
-    sprintf(name,"%s/%s%ld.pgm",directory,base_name,image_number) ;
-    break ;
-  case 1:
-    sprintf(name,"%s/%s%01ld.pgm",directory,base_name,image_number) ;
-    break ;
-  case 2:
-    sprintf(name,"%s/%s%02ld.pgm",directory,base_name,image_number) ;
-    break ;
-  case 3:
-    sprintf(name,"%s/%s%03ld.pgm",directory,base_name,image_number) ;
-    break ;
-  case 4:
-    sprintf(name,"%s/%s%04ld.pgm",directory,base_name,image_number) ;
-    break ;
-  case 5:
-    sprintf(name,"%s/%s%05ld.pgm",directory,base_name,image_number) ;
-    break ;
-  case 6:
-    sprintf(name,"%s/%s%06ld.pgm",directory,base_name,image_number) ;
-    break ;
-  }
+  sprintf(name,"%s/%s%0*ld.pgm",directory,base_name,number_of_zero,image_number) ;
+
   image_number += image_step ;
 
   vpDEBUG_TRACE(2, "load: %s\n", name);
