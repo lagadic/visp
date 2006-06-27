@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.8 2006-06-27 10:12:46 fspindle Exp $
+ * $Id: vp1394Grabber.h,v 1.9 2006-06-27 16:34:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,6 +57,8 @@
 #if defined(VISP_HAVE_DC1394) && (VISP_HAVE_DC1394_VERSION == 1)
 
 #include <string>
+using namespace std;
+
 
 #include <libraw1394/raw1394.h>
 #include <libdc1394/dc1394_control.h>
@@ -103,6 +105,15 @@ public:
   static const int MAX_PORTS;   // Port maximal number
   static const int MAX_CAMERAS; // Maximal number of cameras on the bus
 
+  static const char * strFormats[NUM_FORMATS];
+  static const char * strModesInFormat0[NUM_FORMAT0_MODES];
+  static const char * strModesInFormat1[NUM_FORMAT1_MODES];
+  static const char * strModesInFormat2[NUM_FORMAT2_MODES];
+  static const char * strModesInFormat6[NUM_FORMAT6_MODES];
+  static const char * strModesInFormat7[NUM_MODE_FORMAT7];
+  static const char * strColorsInFormat7[NUM_COLOR_FORMAT7];
+  static const char * strFramerates[NUM_FRAMERATES];
+
 
 public:
   vp1394Grabber();
@@ -110,6 +121,7 @@ public:
   ~vp1394Grabber();
 
   void setCamera(unsigned int camera);
+  void getCamera(unsigned int &camera);
 
   void setFormat(int format);
   void getFormat(int & format);
@@ -122,6 +134,14 @@ public:
   void setFramerate(int framerate);
   void getFramerate(int & framerate);
   int  getFramerateSupported(int format, int mode, vpList<int> & framerates);
+
+  int  convertFormat   (string format);
+  int  convertMode     (string mode);
+  int  convertFramerate(string framerate);
+
+  string convertFormat   (int format);
+  string convertMode     (int mode);
+  string convertFramerate(int framerate);
 
   void setShutter(unsigned int shutter);
   void getShutter(unsigned int &min_shutter,
@@ -177,9 +197,9 @@ private:
 
   unsigned int camera;
   // Camera settings
-  int  *format;    // MAX_CAMERAS
-  int  *mode;      // MAX_CAMERAS
-  int  *framerate; // MAX_CAMERAS
+  int  *pformat;    // MAX_CAMERAS
+  int  *pmode;      // MAX_CAMERAS
+  int  *pframerate; // MAX_CAMERAS
   bool verbose;
 
   // Image settings
