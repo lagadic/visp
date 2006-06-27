@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpOSXcfoxGrabber.cpp,v 1.5 2006-06-27 10:11:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,73 +62,7 @@
 #include <visp/vpOSXcfoxGrabber.h>
 #include <visp/vpFrameGrabberException.h>
 #include <visp/vpImageIo.h>
-
-/*!
-
-Convert YUV422 into RGBa
-yuv422 : u y1 v y2 u y3 v y4
-
-*/
-#define YUV2RGB(y, u, v, r, g, b)\
-  r = 0.9999695*y - 0.0009508*(u-128) + 1.1359061*(v-128);\
-  g = 0.9999695*y - 0.3959609*(u-128) - 0.5782955*(v-128);\
-  b = 0.9999695*y + 2.04112*(u-128) - 0.0016314*(v-128);\
-  r = r < 0 ? 0 : r;\
-  g = g < 0 ? 0 : g;\
-  b = b < 0 ? 0 : b;\
-  r = r > 255 ? 255 : r;\
-  g = g > 255 ? 255 : g;\
-  b = b > 255 ? 255 : b
-
-
-
-static void ConvertYUV422ToRGBa(unsigned char* yuv, unsigned char* rgba,
-			  int numpixels)
-{
-
- int i=0,j=0;
- double r, g, b;
-
- while( j < numpixels*2)
- {
-
-   YUV2RGB (yuv[j+1], yuv[j], yuv[j+2], r, g, b);
-   rgba[i] =  (unsigned char) r;
-   rgba[i+1] = (unsigned char) g;
-   rgba[i+2] = (unsigned char)b;
-   rgba[i+3] = 0;
-   i+=4;
-
-   YUV2RGB (yuv[j+3], yuv[j], yuv[j+2], r, g, b);
-   rgba[i] = (unsigned char)r;
-   rgba[i+1] = (unsigned char)g;
-   rgba[i+2] =  (unsigned char)b;
-   rgba[i+3] = 0;
-   i+=4;
-   j+=4;
-
- }
-
-}
-
-static void ConvertYUV422toUchar(unsigned char* yuv, unsigned char* img,
-			  int numpixels)
-{
-
- int i=0,j=0;
-
- while( j < numpixels*2)
- {
-
-
-   img[i++] = yuv[j+1] ;
-   img[i++] = yuv[j+3] ;
-
-   j+=4;
-
- }
-
-}
+#include <visp/vpImageConvert.h>
 
 
 const int vpOSXcfoxGrabber::DEFAULT_INPUT = 0;
@@ -250,7 +184,7 @@ vpOSXcfoxGrabber::acquire(vpImage<unsigned char> &I)
     {
       CFRunLoopRunInMode(kCFRunLoopDefaultMode,1, true);
        Camera::Frame  img = cam.getFrame(MODE_FRAME,0,0) ;
-      ConvertYUV422toUchar(img,(unsigned char *)I.bitmap,I.getRows()*I.getCols()) ;
+       vpImageConvert::YUV422ToGrey(img,(unsigned char *)I.bitmap,I.getRows()*I.getCols()) ;
 
     }
 
@@ -282,7 +216,7 @@ vpOSXcfoxGrabber::acquire(vpImage<vpRGBa> &I)
     {
       CFRunLoopRunInMode(kCFRunLoopDefaultMode,1, true);
       Camera::Frame  img = cam.getFrame(MODE_FRAME,0,0) ;
-      ConvertYUV422ToRGBa(img,(unsigned char *)I.bitmap,I.getRows()*I.getCols()) ;
+      vpImageConvert::YUV422ToRGBa(img,(unsigned char *)I.bitmap,I.getRows()*I.getCols()) ;
 
     }
 
