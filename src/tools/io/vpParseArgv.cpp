@@ -1,8 +1,9 @@
-/*
- * vpParseArgv.c --
+/****************************************************************************
  *
- *	This file contains a procedure that handles table-based
- *	argv-argc parsing.
+ * $Id: vpParseArgv.cpp,v 1.2 2006-06-27 10:10:27 fspindle Exp $
+ *
+ * This file contains a procedure that handles table-based
+ * argv-argc parsing.
  *
  * Copyright 1990 Regents of the University of California
  * Permission to use, copy, modify, and distribute this
@@ -16,55 +17,50 @@
  *
  * This file has been modified to not rely on tcl, tk or X11.
  * Based on tkArgv.c from tk2.3 :
-static char rcsid[] = "$Header: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/tools/io/vpParseArgv.cpp,v 1.1.1.1 2005-06-08 07:08:11 fspindle Exp $ SPRITE (Berkeley)";
+ *
  *
  * Modifications by Peter Neelin (November 27, 1992)
+ * Modifications by Fabien Spindler (June 20, 2006)
  */
+
+/*!
+  \file vpParseArgv.cpp
+  \brief Command line argument parsing.
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
+
 #include <visp/vpParseArgv.h>
 
-#define TRUE  1
-#define FALSE 0
 
 /*
  * Default table of argument descriptors.  These are normally available
  * in every application.
  */
 
-static vpArgvInfo defaultTable[] = {
+vpArgvInfo vpParseArgv::defaultTable[2] = {
     {"-help",	ARGV_HELP,	(char *) NULL,	(char *) NULL,
 	"Print summary of command-line options and abort.\n"},
     {NULL,	ARGV_END,	(char *) NULL,	(char *) NULL,
 	(char *) NULL}
 };
-#ifdef HP
-int (*handlerProc1)();
-int (*handlerProc2)();
-#else
+
 int (*handlerProc1)(char *dst, char *key, char *argument);
 int (*handlerProc2)(char *dst, char *key, int valargc, char **argument);
-#endif
 
-/*
- * Forward declarations for procedures defined in this file:
- */
 
-static void	PrintUsage _ANSI_ARGS_((vpArgvInfo *argTable, int flags));
-
-/*
- *----------------------------------------------------------------------
+/*!
  *
- * vpParseArgv --
  *
  *	Process an argv array according to a table of expected
  *	command-line options.  See the manual page for more details.
  *
  * Results:
- *	The return value is a Boolean value with TRUE indicating an error.
+ *	The return value is a Boolean value with true indicating an error.
  *	If an error occurs then an error message is printed on stderr.
  *	Under normal conditions, both *argcPtr and *argv are modified
  *	to return the arguments that couldn't be processed here (they
@@ -73,23 +69,10 @@ static void	PrintUsage _ANSI_ARGS_((vpArgvInfo *argTable, int flags));
  *
  * Side effects:
  *
- *----------------------------------------------------------------------
  */
+bool
+vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
 
-
-#ifdef HP
-int vpParseArgv (argcPtr, argv, argTable, flags)
-    int *argcPtr;		 /*Number of arguments in argv.  Modified */
-				 /*to hold # args left in argv at end.  */
-    char **argv;		 /*Array of arguments.  Modified to hold */
-				 /* those that couldn't be processed here. */
-    vpArgvInfo *argTable;	 	 /*Array of option descriptions  */
-
-    int flags;			 /*Or'ed combination of various flag bits, */
-				 /* such as ARGV_NO_DEFAULTS. */
-#else
-int vpParseArgv(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
-#endif
 {
    register vpArgvInfo *infoPtr;	/* Pointer to the current entry in the
 				 * table of argument descriptions. */
@@ -157,7 +140,7 @@ int vpParseArgv(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
             }
             if (matchPtr != NULL) {
                FPRINTF(stderr, "ambiguous option \"%s\"\n", curArg);
-               return TRUE;
+               return true;
             }
             matchPtr = infoPtr;
          }
@@ -201,7 +184,7 @@ int vpParseArgv(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
                   FPRINTF(stderr,
                   "expected integer argument for \"%s\" but got \"%s\"",
                           infoPtr->key, argv[srcIndex]);
-                  return TRUE;
+                  return true;
                }
                srcIndex++;
                argc--;
@@ -239,7 +222,7 @@ int vpParseArgv(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
                   FPRINTF(stderr,
        "expected floating-point argument for \"%s\" but got\"%s\"\n",
                           infoPtr->key, argv[srcIndex]);
-                  return TRUE;
+                  return true;
                }
                srcIndex++;
                argc--;
@@ -248,11 +231,8 @@ int vpParseArgv(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
          break;
 
       case ARGV_FUNC: {
-#ifdef HP
-        handlerProc1 = (int (*)())infoPtr->src;
-#else
          handlerProc1 = (int (*)(char *dst, char *key, char *argument))infoPtr->src;
-#endif
+
          if ((*handlerProc1)(infoPtr->dst, infoPtr->key, argv[srcIndex]))
 	 {
             srcIndex += 1;
@@ -261,25 +241,22 @@ int vpParseArgv(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
          break;
       }
       case ARGV_GENFUNC: {
-#ifdef HP
-        handlerProc2 = (int (*)())infoPtr->src;
-#else
          handlerProc2 = (int (*)(char *dst, char *key, int valargc, char **argument))infoPtr->src;
-#endif
+
          argc = (*handlerProc2)(infoPtr->dst, infoPtr->key, argc, argv+srcIndex);
          if (argc < 0) {
-            return TRUE;
+            return true;
          }
          break;
       }
 
       case ARGV_HELP:
-         PrintUsage (argTable, flags);
-         return TRUE;
+         printUsage (argTable, flags);
+         return true;
       default:
          FPRINTF(stderr, "bad argument type %d in vpArgvInfo",
                  infoPtr->type);
-         return TRUE;
+         return true;
       }
    }
 
@@ -297,17 +274,15 @@ int vpParseArgv(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
    }
    argv[dstIndex] = (char *) NULL;
    *argcPtr = dstIndex;
-   return FALSE;
+   return false;
 
  missingArg:
    FPRINTF(stderr, "\"%s\" option requires an additional argument\n", curArg);
-   return TRUE;
+   return true;
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * PrintUsage --
+
+/*!
+
  *
  *	Generate a help string describing command-line options.
  *
@@ -317,24 +292,16 @@ int vpParseArgv(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
  *	in the default table unless ARGV_NO_DEFAULTS is
  *	specified in flags.
  *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
-#ifdef HP
-static void
-PrintUsage(argTable, flags)
+ \param argTable: Array of command-specific argument.descriptions.
 
-     vpArgvInfo *argTable;	/* Array of command-specific argument */
-				/* descriptions. */
-     int flags;			/* If the ARGV_NO_DEFAULTS bit is set */
-				/* in this word, then don't generate */
-				/*information for default options. */
-#else
-static void
-PrintUsage(vpArgvInfo * argTable, int flags)
-#endif
+ \param flgas: If the ARGV_NO_DEFAULTS bit is set in this word, then
+ don't generate information for default options.
+
+
+ */
+
+void
+vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
 {
    register vpArgvInfo *infoPtr;
    int width, i, j, numSpaces;
@@ -438,3 +405,100 @@ PrintUsage(vpArgvInfo * argTable, int flags)
    FPRINTF(stderr, "\n");
 }
 
+/*
+
+  Get next command line option and parameter.
+
+  \param argc: Count of command line arguments.
+
+  \param argv: Array of command line argument strings.
+
+  \param validOpts: String of valid, case-sensitive option characters, a
+  colon ':' following a given character means that option can take a parameter.
+
+  \param param: Pointer to a pointer to a string for output.
+
+  \return If valid option is found, the character value of that option is
+  returned, and *param points to the parameter if given, or is NULL if no
+  param.
+
+  \return If standalone parameter (with no option) is found, 1 is returned, and
+  *param points to the standalone parameter
+
+  \return If option is found, but it is not in the list of valid options, -1 is
+  returned, and *param points to the invalid argument.
+
+  \return When end of argument list is reached, 0 is returned, and *param
+  is NULL.
+
+*/
+int vpParseArgv::parse(int argc, char** argv, char* validOpts, char** param)
+{
+  static int iArg = 1;
+  int chOpt;
+  char* psz = NULL;
+  char* pszParam = NULL;
+
+  if (iArg < argc) {
+    psz = &(argv[iArg][0]);
+    if (*psz == '-') { // || *psz == '/')  {
+      // we have an option specifier
+      chOpt = argv[iArg][1];
+      if (isalnum(chOpt) || ispunct(chOpt)) {
+	// we have an option character
+	psz = strchr(validOpts, chOpt);
+	if (psz != NULL) {
+	  // option is valid, we want to return chOpt
+	  if (psz[1] == ':') {
+	    // option can have a parameter
+	    psz = &(argv[iArg][2]);
+	    if (*psz == '\0') {
+	      // must look at next argv for param
+	      if (iArg+1 < argc) {
+		psz = &(argv[iArg+1][0]);
+		// next argv is the param
+		iArg++;
+		pszParam = psz;
+	      }
+	      else {
+		// reached end of args looking for param
+	      }
+
+	    }
+	    else {
+	      // param is attached to option
+	      pszParam = psz;
+	    }
+	  }
+	  else {
+	    // option is alone, has no parameter
+	  }
+	}
+	else {
+	  // option specified is not in list of valid options
+	  chOpt = -1;
+	  pszParam = &(argv[iArg][0]);
+	}
+      }
+      else {
+	// though option specifier was given, option character
+	// is not alpha or was was not specified
+	chOpt = -1;
+	pszParam = &(argv[iArg][0]);
+      }
+    }
+    else {
+      // standalone arg given with no option specifier
+      chOpt = 1;
+      pszParam = &(argv[iArg][0]);
+    }
+  }
+  else {
+    // end of argument list
+    chOpt = 0;
+  }
+
+  iArg++;
+  *param = pszParam;
+  return (chOpt);
+}

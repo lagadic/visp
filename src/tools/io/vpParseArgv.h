@@ -1,8 +1,9 @@
-/*
- * vpParseArgv.h --
+/****************************************************************************
  *
- *	Declarations for Tk-related things that are visible
- *	outside of the Tk module itself.
+ * $Id: vpParseArgv.h,v 1.3 2006-06-27 10:10:27 fspindle Exp $
+ *
+ * Declarations for Tk-related things that are visible
+ * outside of the Tk module itself.
  *
  * Copyright 1989-1992 Regents of the University of California.
  * Permission to use, copy, modify, and distribute this
@@ -15,73 +16,89 @@
  *
  * This file has been modified to be used only for argv parsing without
  * reference to tk, tcl or X11. Base on tk.h from tk2.3
- * $Header: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/tools/io/vpParseArgv.h,v 1.2 2006-05-30 08:40:46 fspindle Exp $ SPRITE (Berkeley)
- */
+ *
+ * Description:
+ * Command line argument parsing.
+ *
+ * Authors:
+ * Fabien Spindler (modification of the original version)
+ *
+ *****************************************************************************/
 
-/*
- * Definitions that allow this header file to be used either with or
- * without ANSI C features like function prototypes.
- */
+/*!
+  \file vpParseArgv.h
+  \brief Command line argument parsing.
+*/
 
-#undef _ANSI_ARGS_
-#if ((defined(__STDC__) || defined(SABER)) && !defined(NO_PROTOTYPE)) || defined(__cplusplus)
-#   define _ANSI_ARGS_(x)	x
-#else
-#   define _ANSI_ARGS_(x)	()
-#endif
+#ifndef vpParseArgv_h
+#define vpParseArgv_h
+
 
 #include <visp/vpConfig.h>
 
-/*
+/*!
+  \class vpParseArgv
+  \brief Command line argument parsing.
 
- * Structure used to specify how to handle argv options.
+*/
+
+/*! \enum ArgvType
+  Legal values for the type field of a ArgvInfo: see the user
+  documentation for details.
  */
+typedef enum  {
+  ARGV_CONSTANT,
+  ARGV_INT,
+  ARGV_STRING,
+  ARGV_REST,
+  ARGV_FLOAT,
+  ARGV_FUNC,
+  ARGV_GENFUNC,
+  ARGV_HELP,
+  ARGV_END
+} vpArgvType;
 
+/*!
+
+  Structure used to specify how to handle argv options.
+*/
 typedef struct {
-    char *key;		/* The key string that flags the option in the
+    char *key;		/*!< The key string that flags the option in the
 			 * argv array. */
-    int type;		/* Indicates option type;  see below. */
-    char *src;		/* Value to be used in setting dst;  usage
+    vpArgvType type;	/*!< Indicates option type;  see below. */
+    char *src;		/*!< Value to be used in setting dst;  usage
 			 * depends on type. */
-    char *dst;		/* Address of value to be modified;  usage
+    char *dst;		/*!< Address of value to be modified;  usage
 			 * depends on type. */
-    char *help;		/* Documentation message describing this option. */
+    char *help;		/*!< Documentation message describing this option. */
 } vpArgvInfo;
 
-/*
- * Legal values for the type field of a ArgvInfo: see the user
- * documentation for details.
- */
 
-#define ARGV_CONSTANT		15
-#define ARGV_INT			16
-#define ARGV_STRING			17
-#define ARGV_REST			19
-#define ARGV_FLOAT			20
-#define ARGV_FUNC			21
-#define ARGV_GENFUNC			22
-#define ARGV_HELP			23
-#define ARGV_END			27
+class VISP_EXPORT vpParseArgv
+{
 
-/*
- * Flag bits for passing to vpParseArgv:
- */
+ public:
+  static vpArgvInfo defaultTable[2];
+  static bool parse(int *argcPtr, char **argv,
+		    vpArgvInfo *argTable, int flags);
+  static int  parse(int argc, char** argv, char* validOpts, char** param);
 
-#define ARGV_NO_DEFAULTS		0x1
-#define ARGV_NO_LEFTOVERS		0x2
-#define ARGV_NO_ABBREV		0x4
-#define ARGV_DONT_SKIP_FIRST_ARG	0x8
-//#define ARGV_NO_PRINT 0x16
-#define ARGV_NO_PRINT 0x10
+ private:
+  static void printUsage (vpArgvInfo *argTable, int flags);
 
 
-/*
- *--------------------------------------------------------------
- *
- * Exported procedures and variables.
- *
- *--------------------------------------------------------------
- */
-extern int VISP_EXPORT vpParseArgv _ANSI_ARGS_((int *argcPtr, char **argv,
-                                  vpArgvInfo *argTable, int flags));
+  /* \enum ArgvFlags
+    Flag bits for passing to vpParseArgv:
+   */
+  enum ArgvFlags {
+    ARGV_NO_DEFAULTS		= 0x1,
+    ARGV_NO_LEFTOVERS		= 0x2,
+    ARGV_NO_ABBREV		= 0x4,
+    ARGV_DONT_SKIP_FIRST_ARG	= 0x8,
+    ARGV_NO_PRINT		= 0x10
+  };
 
+} ;
+
+
+#endif
