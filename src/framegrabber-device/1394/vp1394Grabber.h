@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.7 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vp1394Grabber.h,v 1.8 2006-06-27 10:12:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_DC1394
+#if defined(VISP_HAVE_DC1394) && (VISP_HAVE_DC1394_VERSION == 1)
 
 #include <string>
 
@@ -135,13 +135,14 @@ public:
 
   void open(vpImage<unsigned char> &I);
   void acquire(vpImage<unsigned char> &I);
-  void open(vpImage<vpRGBa> &I) { ; };
-  void acquire(vpImage<vpRGBa> &I) { ; };
+  void open(vpImage<vpRGBa> &I);
+  void acquire(vpImage<vpRGBa> &I);
   void close();
 
   void getWidth (int &width);
   void getHeight(int &height);
   void getNumCameras(unsigned int &cameras);
+
 
 private:
 
