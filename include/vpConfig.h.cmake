@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.7 2006-06-19 08:57:55 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.8 2006-06-27 10:14:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,16 +39,19 @@
 #define vpConfig_h
 
 // ViSP major version.
-#cmakedefine VISP_MAJOR_VERSION "${VISP_MAJOR_VERSION}"
+#cmakedefine VISP_TEST "${VISP_TEST}"
+
+// ViSP major version.
+#cmakedefine VISP_MAJOR_VERSION ${VISP_MAJOR_VERSION}
 
 // ViSP minor version.
-#cmakedefine VISP_MINOR_VERSION "${VISP_MINOR_VERSION}"
+#cmakedefine VISP_MINOR_VERSION ${VISP_MINOR_VERSION}
 
 // ViSP patch version.
-#cmakedefine VISP_PATCH_VERSION "${VISP_PATCH_VERSION}"
+#cmakedefine VISP_PATCH_VERSION ${VISP_PATCH_VERSION}
 
 // ViSP version.
-#cmakedefine VISP_VERSION "${VISP_VERSION}"
+#cmakedefine VISP_VERSION ${VISP_VERSION}
 
 // ViSP library is either compiled static or shared
 // Used to set declspec(import, export) in headers if required under Windows
@@ -80,6 +83,9 @@
 
 // Defined if dc1394_control and raw1394 libraries available.
 #cmakedefine VISP_HAVE_DC1394
+
+// Version of libdc1394_control (1 or 2)
+#cmakedefine VISP_HAVE_DC1394_VERSION ${DC1394_VERSION}
 
 // Defined if cfox library is available (only under MAC OS X).
 #cmakedefine VISP_HAVE_CFOX
