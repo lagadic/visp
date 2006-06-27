@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2006-05-30 08:31:21 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.4 2006-06-27 10:08:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,6 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
+  testConversion.cpp
   testDisplayGTK.cpp
   testDisplayX1.cpp
   testDisplayX2.cpp
