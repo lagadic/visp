@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.2 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpImageConvert.h,v 1.3 2006-06-27 10:08:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,6 +63,34 @@ public:
 		      vpImage<vpRGBa> & dest) ;
   static void convert(const vpImage<vpRGBa> &src,
 		      vpImage<unsigned char> & dest) ;
+  static inline void YUVToRGB(unsigned char y,
+			      unsigned char u,
+			      unsigned char v,
+			      unsigned char &r,
+			      unsigned char &g,
+			      unsigned char &b);
+  static void YUV411ToRGBa(unsigned char* yuv, 
+			   unsigned char* rgba, int size);
+  static void YUV411ToRGB(unsigned char* yuv, 
+			  unsigned char* rgb, int size);
+  static void YUV411ToGrey(unsigned char* yuv, 
+			  unsigned char* grey, int size);
+  static void YUV422ToRGBa(unsigned char* yuv, 
+			   unsigned char* rgba, int size);
+  static void YUV422ToRGB(unsigned char* yuv, 
+			  unsigned char* rgb, int size);
+  static void YUV422ToGrey(unsigned char* yuv, 
+			   unsigned char* grey, int size);
+  static void RGBToRGBa(unsigned char* rgb, 
+			unsigned char* rgba, int size);
+  static void RGBToGrey(unsigned char* rgb, 
+			unsigned char* grey, int size);
+  static void RGBaToGrey(unsigned char* rgba, 
+			 unsigned char* grey, int size);
+  static void GreyToRGBa(unsigned char* grey, 
+			 unsigned char* rgba, int size);
+  static void GreyToRGB(unsigned char* grey, 
+			unsigned char* rgb, int size);
 } ;
 
 #endif
