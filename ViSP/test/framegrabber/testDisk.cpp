@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: testDisk.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: testDisk.cpp,v 1.4 2006-06-27 10:15:28 fspindle Exp $
  *
  * Description
  * ============
@@ -73,7 +73,7 @@ main(int argc, char ** argv)
       {NULL, ARGV_END, NULL,NULL,NULL}
     } ;
   //Parsing of the table
-  if (vpParseArgv(&argc,argv,argTable,0))
+  if (vpParseArgv::parse(&argc,argv,argTable,0))
   {
     cout << endl << "Usage : " << argv[0] << "  [-help] "<<endl ;
     delete [] directory;
