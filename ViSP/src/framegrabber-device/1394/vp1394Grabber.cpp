@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.9 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vp1394Grabber.cpp,v 1.10 2006-06-27 10:12:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,12 +43,13 @@
 */
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_DC1394
+#if defined(VISP_HAVE_DC1394) && (VISP_HAVE_DC1394_VERSION == 1)
 
 
 #include <visp/vp1394Grabber.h>
 #include <visp/vpFrameGrabberException.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
 
 const int vp1394Grabber::DROP_FRAMES = 1; /*!< With libdc1394-1.0.0 or more rencent versions, DROP_FRAMES has to be set to 1 in order to suppress the latency. */
 const int vp1394Grabber::NUM_BUFFERS = 8; /*!< Number of buffers */
@@ -57,22 +58,25 @@ const int vp1394Grabber::MAX_CAMERAS = 8; /*!< Maximal number of cameras */
 
 
 /*!
-  Constructor.
+  Default constructor. Using this constructor, you have explicitly to call
+  open().
 
   By default:
   - the camera is the first found on the bus,
-  - the format is set to FORMAT_VGA_NONCOMPRESSED (format 0),
-  - the mode is set to MODE_640x480_MONO (mode 5),
-  - and the framerate is set to FRAMERATE_30 (30 fps).
 
-  To change these settings you can call setCamera(), setFormat(), setMode() or
-  setFramerate() after a call to open().
+  Current camera settings can be changed using setCamera(),
+  setFormat(), setMode() or setFramerate() after a call to open(). The
+  list of supported formats, modes and framerates is available using
+  respectively getFormatSupported(), getModeSupported(),
+  getFramerateSupported().
 
   \code
   vpImage<unsigned char> I;
   vp1394Grabber g;
   g.open(I);
-  g.setFramerate(FRAMERATE_15);
+  g.setFormat(FORMAT_VGA_NONCOMPRESSED); // Format_0
+  g.setMode(MODE_640x480_MONO); // Mode 5
+  g.setFramerate(FRAMERATE_15); //  15 fps
   \endcode
 
   \sa open(), setCamera(), setFormat(), setMode(), setFramerate()
@@ -93,11 +97,11 @@ vp1394Grabber::vp1394Grabber( )
   height       = new int [vp1394Grabber::MAX_CAMERAS];
   image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
 
-  // Camera settings
+  // Camera settings initialisation
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
-    format[i]    = FORMAT_VGA_NONCOMPRESSED;
-    mode[i]      = MODE_640x480_MONO;
-    framerate[i] = FRAMERATE_30;
+    format[i]    = 0;
+    mode[i]      = 0;
+    framerate[i] = 0;
   }
   verbose = false;
 
@@ -120,24 +124,25 @@ vp1394Grabber::vp1394Grabber( )
 
 /*!
 
-  Constructor which initialize the grabber to (format 0, mode 5,
-  and 30 fps) and call open() method.
+  Constructor which initialize the grabber and call the open() method.
 
   \param I  Image data structure (8 bits image)
 
   By default:
   - the camera is the first found on the bus,
-  - the format is set to FORMAT_VGA_NONCOMPRESSED (format 0),
-  - the mode is set to MODE_640x480_MONO (mode 5)
-  - and the framerate is set to FRAMERATE_30 (30 fps).
 
-  To change these settings you can call setFormat(), setMode() or
-  setFramerate().
+  Current camera settings can be changed using setCamera(),
+  setFormat(), setMode() or setFramerate() after a call to open(). The
+  list of supported formats, modes and framerates is available using
+  respectively getFormatSupported(), getModeSupported(),
+  getFramerateSupported().
 
   \code
   vpImage<unsigned char> I;
   vp1394Grabber g(I);
-  g.setFramerate(FRAMERATE_15);
+  g.setFormat(FORMAT_VGA_NONCOMPRESSED); // Format_0
+  g.setMode(MODE_640x480_MONO); // Mode 5
+  g.setFramerate(FRAMERATE_15); //  15 fps
   \endcode
 
   \sa setCamera(), setFormat(), setMode(), setFramerate()
@@ -159,9 +164,9 @@ vp1394Grabber::vp1394Grabber(vpImage<unsigned char> &I)
 
   // Camera settings
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
-    format[i]    = FORMAT_VGA_NONCOMPRESSED;
-    mode[i]      = MODE_640x480_MONO;
-    framerate[i] = FRAMERATE_30;
+    format[i]    = 0;
+    mode[i]      = 0;
+    framerate[i] = 0;
   }
   verbose = false;
 
@@ -234,6 +239,7 @@ vp1394Grabber::setCamera(unsigned int camera)
 				   "The required camera is not present") );
   }
 
+  this->camera = camera;
 
 }
 /*!
@@ -243,8 +249,13 @@ vp1394Grabber::setCamera(unsigned int camera)
 
   \param format The camera image format. The current camera format is given by
   getFormat(). The camera supported formats are given by
-  getFormatSupported(). The allowed values are given in
-  libdc1394/dc1394_control.h file.
+  getFormatSupported(). The allowed values given in
+  libdc1394/dc1394_control.h are:
+  - FORMAT_VGA_NONCOMPRESSED for the Format_0
+  - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
+  - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
+  - FORMAT_STILL_IMAGE for the Format_6
+  - FORMAT_SCALABLE_IMAGE_SIZE for the  Format_7
 
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
@@ -398,9 +409,24 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats)
 
   Set the camera capture mode for a given camera on the bus.
 
-  \param mode The camera capture mode. The current camera mode is given by
-  getMode(). The camera supported modes are given by getSupportedModes(). The
-  allowed values are given in libdc1394/dc1394_control.h file.
+  \param mode The camera capture mode. The current camera mode is
+  given by getMode(). The camera supported modes are given by
+  getSupportedModes(). The allowed values are given in
+  libdc1394/dc1394_control.h file:
+
+  - Allowed mode for Format 0: MODE_160x120_YUV444 = 64, MODE_320x240_YUV422, MODE_640x480_YUV411, MODE_640x480_YUV422, MODE_640x480_RGB, MODE_640x480_MONO, MODE_640x480_MONO16
+
+  - Allowed modes for Format 1: MODE_800x600_YUV422 = 96, MODE_800x600_RGB, MODE_800x600_MONO, MODE_1024x768_YUV422, MODE_1024x768_RGB, MODE_1024x768_MONO, MODE_800x600_MONO16, MODE_1024x768_MONO16
+
+  - Allowed modes for Format 2: MODE_1280x960_YUV422 = 128, MODE_1280x960_RGB, MODE_1280x960_MONO, MODE_1600x1200_YUV422, MODE_1600x1200_RGB, MODE_1600x1200_MONO, MODE_1280x960_MONO16, MODE_1600x1200_MONO16
+
+  - Allowed modes for Format 6: MODE_EXIF= 256
+
+  - Allowed modes for Format 7: MODE_FORMAT7_0= 288, MODE_FORMAT7_1, MODE_FORMAT7_2, MODE_FORMAT7_3, MODE_FORMAT7_4, MODE_FORMAT7_5, MODE_FORMAT7_6, MODE_FORMAT7_7
+
+
+  All these modes are not supported by your camera. The camera supported modes
+  are given by getModeSupported().
 
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
@@ -432,8 +458,8 @@ vp1394Grabber::setMode(int mode)
 
 /*!
 
-  Query the actual capture mode of a given camera. The camera supported modes
-  are given by getModeSupported().
+  Query the actual capture mode of a given camera. Given a format, all
+  the camera supported modes are given by getModeSupported().
 
   \warning Before requerying the actual mode a handle must
   be created by calling open(), and a camera must be connected.
@@ -482,10 +508,10 @@ vp1394Grabber::getMode(int & mode)
   \param format Camera image format. Values for format are parts of the list
   (see file libdc1394/dc1394_control.h):
 
-  - FORMAT_VGA_NONCOMPRESSED for the Format_0
+  - FORMAT_VGA_NONCOMPRESSED = 384 for the Format_0
   - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
   - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
-  - FORMAT_STILL_IMAGE for the Format_6
+  - FORMAT_STILL_IMAGE = 390 for the Format_6
   - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
 
   \param modes The list of supported camera modes.
@@ -582,8 +608,16 @@ vp1394Grabber::getModeSupported(int format, vpList<int> & modes)
 
   \param framerate The camera framerate. The current framerate of the camera is
   given by getFramerate(). The camera supported framerates are given by
-  getFramerateSupported(). The allowed values are given in
-  libdc1394/dc1394_control.h file.
+  getFramerateSupported(). The allowed values given in
+  libdc1394/dc1394_control.h are:
+  - FRAMERATE_1_875 = 32 for 1.875 fps,
+  - FRAMERATE_3_75 for 3.75 fps,
+  - FRAMERATE_7_5 for 7.5 fps,
+  - FRAMERATE_15 for 15 fps,
+  - FRAMERATE_30 for 30 fps,
+  - FRAMERATE_60 for 60 fps,
+  - FRAMERATE_120 for 120 fps,
+  - FRAMERATE_240 for 240 fps.
 
   \exception settingError If the required camera is not present.
 
@@ -1104,6 +1138,42 @@ vp1394Grabber::open(vpImage<unsigned char> &I)
 
   open();
 
+  // Get the actual camera format, mode and framerate
+  getFormat(format[camera]);
+  getMode(mode[camera]);
+  getFramerate(framerate[camera]);
+
+  setup();
+  startIsoTransmission();
+
+  getWidth(ncols) ;
+  getHeight(nrows) ;
+
+  vpERROR_TRACE("%d %d", nrows, ncols ) ;
+
+  I.resize(nrows, ncols) ;
+
+  init = true ;
+
+}
+
+/*!
+  Initialize color image (in RGBa format) acquisition
+
+  \param I : Image data structure (RGBa format)
+
+*/
+void
+vp1394Grabber::open(vpImage<vpRGBa> &I)
+{
+
+  open();
+
+  // Get the actual camera format, mode and framerate
+  getFormat(format[camera]);
+  getMode(mode[camera]);
+  getFramerate(framerate[camera]);
+
   setup();
   startIsoTransmission();
 
@@ -1146,8 +1216,97 @@ vp1394Grabber::acquire(vpImage<unsigned char> &I)
   if ((I.getCols() != ncols)||(I.getRows() != nrows))
     I.resize(nrows,ncols) ;
 
-  memcpy(I.bitmap, (unsigned char *) bitmap,
-	 I.getRows()*I.getCols()*sizeof(unsigned char));
+  int size  = I.getRows()*I.getCols();
+  switch (image_format[camera])
+  {
+  case MONO:
+    memcpy(I.bitmap, (unsigned char *) bitmap, size*sizeof(unsigned char));
+    break;
+  case YUV411: {
+    vpImageConvert::YUV411ToGrey( (unsigned char *) bitmap, I.bitmap, size);
+    break;
+  }
+  case YUV422: {
+    vpImageConvert::YUV422ToGrey( (unsigned char *) bitmap, I.bitmap, size);
+    break;
+  }
+  case RGB: {
+    vpImageConvert::RGBToGrey((unsigned char *) bitmap, I.bitmap, size);
+    break;
+  }
+  case RGBa: {
+    vpImageConvert::RGBaToGrey((unsigned char *) bitmap, I.bitmap, size);
+    break;
+  }
+  default:
+    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+				   "Format conversion not implemented. Acquisition failed.") );
+    break;
+  };
+
+  dmaDoneWithBuffer();
+
+}
+
+/*!
+  Acquire a color image from a given camera.
+
+  \param I  Image data structure (RGBa image)
+  \param camera A camera. The value must be comprised between 0 and the
+  number of cameras found on the bus and returned by getNumCameras().
+
+  \exception initializationError If the device is not openned.
+
+  \sa getField(), setCamera()
+*/
+void
+vp1394Grabber::acquire(vpImage<vpRGBa> &I)
+{
+
+  if (init==false)
+  {
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "Initialization not done") );
+  }
+
+  int  *bitmap = NULL ;
+  bitmap = dmaCapture();
+
+  if ((I.getCols() != ncols)||(I.getRows() != nrows))
+    I.resize(nrows,ncols) ;
+
+  int size  = I.getRows()*I.getCols();
+  switch (image_format[camera])
+  {
+  case MONO:
+    vpImageConvert::GreyToRGBa((unsigned char *) bitmap,
+			       (unsigned char *) I.bitmap, size);
+    break;
+  case YUV411: {
+    vpImageConvert::YUV411ToRGBa( (unsigned char *) bitmap,
+				  (unsigned char *) I.bitmap, size);
+    break;
+  }
+  case YUV422: {
+    vpImageConvert::YUV422ToRGBa( (unsigned char *) bitmap,
+				  (unsigned char *) I.bitmap, size);
+    break;
+  }
+  case RGB: {
+    vpImageConvert::RGBToRGBa((unsigned char *) bitmap,
+			      (unsigned char *) I.bitmap, size);
+    break;
+  }
+  case RGBa: {
+    memcpy((unsigned char *) I.bitmap, (unsigned char *) bitmap, size);
+    break;
+  }
+  default:
+    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+				   "Format conversion not implemented. Acquisition failed.") );
+    break;
+  };
 
   dmaDoneWithBuffer();
 
@@ -1255,6 +1414,11 @@ vp1394Grabber::open()
   camera_found = true;
 
   handle_created = true;
+
+  // Get the actual camera format, mode and framerate
+  getFormat(format[camera]);
+  getMode(mode[camera]);
+  getFramerate(framerate[camera]);
 }
 
 /*!
@@ -1812,4 +1976,6 @@ void vp1394Grabber::stopIsoTransmission()
     }
   }
 }
+
+
 #endif
