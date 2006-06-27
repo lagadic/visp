@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPlane.cpp,v 1.2 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpPlane.cpp,v 1.3 2006-06-27 10:09:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -112,7 +112,7 @@ vpPlane::vpPlane(const double a,const double b,const double c, const double d)
 /*!
   \brief copy constructor
 */
-vpPlane::vpPlane(vpPlane& P)
+vpPlane::vpPlane(const vpPlane& P)
 {
   setA(P.getA()) ;
   setB(P.getB()) ;
@@ -131,7 +131,7 @@ vpPlane::vpPlane(vpPoint& P,vpColVector &n)
   D=-(A*P.get_X()+B*P.get_Y()+C*P.get_Z());
 }
 
-void vpPlane::init(vpPlane& P)
+void vpPlane::init(const vpPlane& P)
 {
   setA(P.getA()) ;
   setB(P.getB()) ;
