@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix_svd.cpp,v 1.9 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpMatrix_svd.cpp,v 1.10 2006-06-27 14:35:55 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,13 +70,6 @@ static double pythag(double a, double b)
 #undef EPS_SVD
 #endif
 #define EPS_SVD 1e-16
-
-//static double maxarg1,maxarg2;
-#ifdef MAX
-#undef MAX
-#endif
-//#define MAX(a,b) (maxarg1=(a),maxarg2=(b),(maxarg1) > (maxarg2) ? (maxarg1) : (maxarg2))
-#define MAX(a,b) ( (a) > (b) ? (a) : (b))
 
 #ifdef SIGN
 #undef SIGN
@@ -189,7 +182,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 	for (k=l;k<=n;k++) a[i][k] *= scale;
       }
     }
-    anorm=MAX(anorm,(fabs(w[i])+fabs(rv1[i])));
+    anorm=vpMath::max(anorm,(fabs(w[i])+fabs(rv1[i])));
   }
   for (i=n;i>=1;i--) {
     if (i < n) {
@@ -337,7 +330,6 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 }
 #undef EPS_SVD
 #undef SIGN
-#undef MAX
 #undef PYTHAG
 
 /*!
