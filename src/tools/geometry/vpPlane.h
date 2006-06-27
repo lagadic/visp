@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPlane.h,v 1.2 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpPlane.h,v 1.3 2006-06-27 10:09:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,12 +73,12 @@ public:
 public:
   vpPlane(const double a, const double b,const  double c,const  double d) ;
   vpPlane() ;
-  vpPlane(vpPlane& P) ;
+  vpPlane(const vpPlane& P) ;
   vpPlane(vpPoint& P,vpColVector &n) ;
   vpPlane(vpPoint &P, vpPoint &Q, vpPoint &R) ;
   void init(vpPoint& P,   vpPoint& Q,  vpPoint& R) ;
   void init(vpColVector& P,vpColVector &n) ;
-  void init(vpPlane& P) ;
+  void init(const vpPlane& P) ;
   // SET information
 public:
 
