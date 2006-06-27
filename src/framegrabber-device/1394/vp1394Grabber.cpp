@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.10 2006-06-27 10:12:46 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.11 2006-06-27 16:34:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,9 +41,12 @@
   \brief member functions for firewire cameras
   \ingroup libdevice
 */
+#include <iostream>
+
 #include <visp/vpConfig.h>
 
 #if defined(VISP_HAVE_DC1394) && (VISP_HAVE_DC1394_VERSION == 1)
+
 
 
 #include <visp/vp1394Grabber.h>
@@ -56,6 +59,82 @@ const int vp1394Grabber::NUM_BUFFERS = 8; /*!< Number of buffers */
 const int vp1394Grabber::MAX_PORTS   = 4; /*!< Maximal number of ports */
 const int vp1394Grabber::MAX_CAMERAS = 8; /*!< Maximal number of cameras */
 
+const char * vp1394Grabber::strFormats[NUM_FORMATS]= {
+  "Format_0",
+  "Format_1",
+  "Format_2",
+  "Reserved", // 3 reserved formats
+  "Reserved",
+  "Reserved",
+  "Format_6",
+  "Format_7"
+};
+
+const char * vp1394Grabber::strModesInFormat0[NUM_FORMAT0_MODES]= {
+  "Format_0, Mode_0: 160x120 YUV (4:4:4)",
+  "Format_0, Mode_1: 320x240 YUV (4:2:2)",
+  "Format_0, Mode_2: 640x480 YUV (4:1:1)",
+  "Format_0, Mode_3: 640x480 YUV (4:2:2)",
+  "Format_0, Mode_4: 640x480 RGB 24bpp",
+  "Format_0, Mode_5: 640x480 Mono 8bpp",
+  "Format_0, Mode_6: 640x480 Mono 16bpp"
+};
+
+const char * vp1394Grabber::strModesInFormat1[NUM_FORMAT1_MODES]= {
+  "Format_1, Mode_0: 800x600 YUV (4:2:2)",
+  "Format_1, Mode_1: 800x600 RGB 24bpp",
+  "Format_1, Mode_2: 800x600 Mono 8bpp",
+  "Format_1, Mode_3: 1024x768 YUV (4:2:2)",
+  "Format_1, Mode_4: 1024x768 RGB 24bpp",
+  "Format_1, Mode_5: 1024x768 Mono 8bpp",
+  "Format_1, Mode_6: 800x600 Mono 16bpp",
+  "Format_1, Mode_7: 1024x768 Mono 16bpp"
+};
+
+const char * vp1394Grabber::strModesInFormat2[NUM_FORMAT2_MODES]= {
+  "Format_2, Mode_0: 1280x960 YUV (4:2:2)",
+  "Format_2, Mode_1: 1280x960 RGB 24bpp",
+  "Format_2, Mode_2: 1280x960 Mono 8bpp",
+  "Format_2, Mode_3: 1600x1200 YUV (4:2:2)",
+  "Format_2, Mode_4: 1600x1200 RGB 24bpp",
+  "Format_2, Mode_5: 1600x1200 Mono 8bpp",
+  "Format_2, Mode_6: 1280x960 Mono 16bpp",
+  "Format_2, Mode_7: 1600x1200 Mono 16bpp"
+};
+
+const char * vp1394Grabber::strModesInFormat6[NUM_FORMAT6_MODES]= {
+  "Format6, Mode_0: EXIT (not supported)"
+};
+
+const char * vp1394Grabber::strModesInFormat7[NUM_MODE_FORMAT7]= {
+  "Format_7, Mode_0",
+  "Format_7, Mode_1",
+  "Format_7, Mode_2",
+  "Format_7, Mode_3",
+  "Format_7, Mode_4",
+  "Format_7, Mode_5",
+  "Format_7, Mode_6",
+  "Format_7, Mode_7"
+};
+
+const char * vp1394Grabber::strColorsInFormat7[NUM_COLOR_FORMAT7] = {
+  "Format_7 Color, Mono 8bpp",
+  "Format_7 Color, YUV 4:1:1",
+  "Format_7 Color, YUV 4:2:2",
+  "Format_7 Color, YUV 4:4:4",
+  "Format_7 Color, RGB 24bpp",
+  "Format_7 Color, Mono 16bpp",
+  "Format_7 Color, RGB 48bpp"
+};
+
+const char * vp1394Grabber::strFramerates[NUM_FRAMERATES] = {
+  "1.875 Hz",
+  "3.75 Hz",
+  "7.5 Hz",
+  "15 Hz",
+  "30 Hz",
+  "60 Hz"
+};
 
 /*!
   Default constructor. Using this constructor, you have explicitly to call
@@ -90,18 +169,18 @@ vp1394Grabber::vp1394Grabber( )
   handles      = new raw1394handle_t      [vp1394Grabber::MAX_CAMERAS];
   cameras      = new dc1394_cameracapture [vp1394Grabber::MAX_CAMERAS];
   cam_count    = new int [vp1394Grabber::MAX_CAMERAS];
-  format       = new int [vp1394Grabber::MAX_CAMERAS];
-  mode         = new int [vp1394Grabber::MAX_CAMERAS];
-  framerate    = new int [vp1394Grabber::MAX_CAMERAS];
+  pformat      = new int [vp1394Grabber::MAX_CAMERAS];
+  pmode        = new int [vp1394Grabber::MAX_CAMERAS];
+  pframerate   = new int [vp1394Grabber::MAX_CAMERAS];
   width        = new int [vp1394Grabber::MAX_CAMERAS];
   height       = new int [vp1394Grabber::MAX_CAMERAS];
   image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
 
   // Camera settings initialisation
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
-    format[i]    = 0;
-    mode[i]      = 0;
-    framerate[i] = 0;
+    pformat[i]    = 0;
+    pmode[i]      = 0;
+    pframerate[i] = 0;
   }
   verbose = false;
 
@@ -155,18 +234,18 @@ vp1394Grabber::vp1394Grabber(vpImage<unsigned char> &I)
   handles      = new raw1394handle_t      [vp1394Grabber::MAX_CAMERAS];
   cameras      = new dc1394_cameracapture [vp1394Grabber::MAX_CAMERAS];
   cam_count    = new int [vp1394Grabber::MAX_CAMERAS];
-  format       = new int [vp1394Grabber::MAX_CAMERAS];
-  mode         = new int [vp1394Grabber::MAX_CAMERAS];
-  framerate    = new int [vp1394Grabber::MAX_CAMERAS];
+  pformat      = new int [vp1394Grabber::MAX_CAMERAS];
+  pmode        = new int [vp1394Grabber::MAX_CAMERAS];
+  pframerate   = new int [vp1394Grabber::MAX_CAMERAS];
   width        = new int [vp1394Grabber::MAX_CAMERAS];
   height       = new int [vp1394Grabber::MAX_CAMERAS];
   image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
 
   // Camera settings
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
-    format[i]    = 0;
-    mode[i]      = 0;
-    framerate[i] = 0;
+    pformat[i]    = 0;
+    pmode[i]      = 0;
+    pframerate[i] = 0;
   }
   verbose = false;
 
@@ -244,6 +323,23 @@ vp1394Grabber::setCamera(unsigned int camera)
 }
 /*!
 
+  Get the active camera on the bus.
+
+  \param camera A camera id. The value is comprised between 0 (the first
+  camera) and the number of cameras found on the bus and returned by
+  getNumCameras().
+
+  \sa setCamera(), getNumCameras()
+
+*/
+void
+vp1394Grabber::getCamera(unsigned int &camera)
+{
+  camera = this->camera;
+
+}
+/*!
+
   Set the capture format for a given camera on the bus. To set the format for a
   specific camera, call setCamera() before.
 
@@ -279,7 +375,7 @@ vp1394Grabber::setFormat(int format)
     iso_transmission_started = false;
   }
 
-  this->format[camera] = format;
+  this->pformat[camera] = format;
 
   setup();
   startIsoTransmission();
@@ -450,7 +546,7 @@ vp1394Grabber::setMode(int mode)
     iso_transmission_started = false;
   }
 
-  this->mode[camera] = mode;
+  this->pmode[camera] = mode;
 
   setup();
   startIsoTransmission();
@@ -638,7 +734,7 @@ vp1394Grabber::setFramerate(int framerate)
     iso_transmission_started = false;
   }
 
-  this->framerate[camera] = framerate;
+  this->pframerate[camera] = framerate;
 
   setup();
   startIsoTransmission();
@@ -769,6 +865,281 @@ vp1394Grabber::getFramerateSupported(int format, int mode,
   }
 
   return nb;
+}
+
+/*!
+
+  Converts the string containing the description of the format into the format
+  dentifier.
+
+  \param format The string describing the format given by Format(int)
+
+  \return The camera capture format identifier, either :
+  - FORMAT_VGA_NONCOMPRESSED for the Format_0
+  - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
+  - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
+  - FORMAT_STILL_IMAGE for the Format_6
+  - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
+  .
+  This method returns 0 if the string does not match to a format string.
+
+  \sa convertFormat(int), convertMode(string), convertFramerate(string&)
+
+*/
+int vp1394Grabber::convertFormat(string format)
+{
+  for (int i = FORMAT_MIN; i <= FORMAT_MAX; i ++) {
+    //    if (format.compare(0, format(i).length(), format(i)) == 0) {
+    if (format.compare(0, convertFormat(i).length(), convertFormat(i)) == 0) {
+       return i;
+    }
+  };
+
+  return 0;
+}
+/*!
+
+  Converts the string containing the description of the mode into the mode
+  dentifier.
+
+  \param mode The string describing the mode given by Mode(int)
+
+  \return The camera capture mode identifier.
+
+  This method returns 0 if the string does not match to a mode string.
+
+  \sa convertMode(int), convertFormat(string), convertFramerate(string)
+
+*/
+int vp1394Grabber::convertMode(string mode)
+{
+  for (int i = MODE_FORMAT0_MIN; i <= MODE_FORMAT0_MAX; i ++) {
+    if (mode.compare(convertMode(i)) == 0)
+      return i;
+  };
+  for (int i = MODE_FORMAT1_MIN; i <= MODE_FORMAT1_MAX; i ++) {
+    if (mode.compare(convertMode(i)) == 0)
+      return i;
+  };
+  for (int i = MODE_FORMAT2_MIN; i <= MODE_FORMAT2_MAX; i ++) {
+    if (mode.compare(convertMode(i)) == 0)
+      return i;
+  };
+  for (int i = MODE_FORMAT6_MIN; i <= MODE_FORMAT6_MAX; i ++) {
+    if (mode.compare(convertMode(i)) == 0)
+      return i;
+  };
+  for (int i = MODE_FORMAT7_MIN; i <= MODE_FORMAT7_MAX; i ++) {
+    if (mode.compare(convertMode(i)) == 0)
+      return i;
+  };
+  for (int i = COLOR_FORMAT7_MIN; i <= COLOR_FORMAT7_MAX; i ++) {
+    if (mode.compare(convertMode(i)) == 0)
+      return i;
+  };
+
+  return 0;
+}
+/*!
+
+  Converts the string containing the description of the framerate into the
+  framerate dentifier.
+
+  \param framerate The string describing the framerate given by Framerate(int)
+
+  \return The camera capture framerate identifier.
+
+  This method returns 0 if the string does not match to a framerate string.
+
+  \sa convertFramerate(int), convertFormat(string &), convertMode(string)
+
+*/
+int vp1394Grabber::convertFramerate(string framerate)
+{
+  for (int i = FRAMERATE_MIN; i <= FRAMERATE_MAX; i ++) {
+    if (framerate.compare(convertFramerate(i)) == 0)
+      return i;
+  };
+
+  return 0;
+}
+
+
+/*!
+
+  Converts the format identifier into a string containing the description of
+  the format.
+
+  \param format The camera capture format, either :
+  - FORMAT_VGA_NONCOMPRESSED for the Format_0
+  - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
+  - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
+  - FORMAT_STILL_IMAGE for the Format_6
+  - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
+
+  \return A string describing the format, an empty string if the format is not
+  supported.
+
+  \sa convertMode(), convertFramerate()
+
+*/
+string vp1394Grabber::convertFormat(int format)
+{
+  string _format;
+  if ((format >= FORMAT_MIN) && (format <= FORMAT_MAX)) {
+    switch (format) {
+    case FORMAT_VGA_NONCOMPRESSED:    _format = strFormats[0]; break;
+    case FORMAT_SVGA_NONCOMPRESSED_1: _format = strFormats[1]; break;
+    case FORMAT_SVGA_NONCOMPRESSED_2: _format = strFormats[2]; break;
+      // 3 reserved formats
+    case FORMAT_SVGA_NONCOMPRESSED_2 + 1: _format = strFormats[3]; break;
+    case FORMAT_SVGA_NONCOMPRESSED_2 + 2: _format = strFormats[4]; break;
+    case FORMAT_SVGA_NONCOMPRESSED_2 + 3: _format = strFormats[5]; break;
+
+    case FORMAT_STILL_IMAGE:          _format = strFormats[6]; break;
+    case FORMAT_SCALABLE_IMAGE_SIZE:  _format = strFormats[7]; break;
+    default:
+      break;
+    }
+  }
+  else {
+    cout << "The format " << format
+	 << " is not supported by the camera" << endl;
+    _format = "Not Valid";
+  }
+
+  return _format;
+}
+/*!
+
+  Converts the mode identifier into a string containing the description of the
+  mode.
+
+  \param mode The camera capture mode.
+
+  \return A string describing the mode, an empty string if the mode is not
+  supported.
+
+  \sa convertFormat(), convertFramerate()
+
+*/
+string vp1394Grabber::convertMode(int mode)
+{
+  string _mode;
+
+  if ((mode >= MODE_FORMAT0_MIN) && (mode <= MODE_FORMAT0_MAX)) {
+    switch (mode) {
+    case MODE_160x120_YUV444: _mode = strModesInFormat0[0]; break;
+    case MODE_320x240_YUV422: _mode = strModesInFormat0[1]; break;
+    case MODE_640x480_YUV411: _mode = strModesInFormat0[2]; break;
+    case MODE_640x480_YUV422: _mode = strModesInFormat0[3]; break;
+    case MODE_640x480_RGB:    _mode = strModesInFormat0[4]; break;
+    case MODE_640x480_MONO:   _mode = strModesInFormat0[5]; break;
+    case MODE_640x480_MONO16: _mode = strModesInFormat0[6]; break;
+    default: break;
+    }
+  }
+  else if ((mode >= MODE_FORMAT1_MIN) && (mode <= MODE_FORMAT1_MAX)) {
+    switch (mode) {
+    case MODE_800x600_YUV422:  _mode = strModesInFormat1[0]; break;
+    case MODE_800x600_RGB:     _mode = strModesInFormat1[1]; break;
+    case MODE_800x600_MONO:    _mode = strModesInFormat1[2]; break;
+    case MODE_1024x768_YUV422: _mode = strModesInFormat1[3]; break;
+    case MODE_1024x768_RGB:    _mode = strModesInFormat1[4]; break;
+    case MODE_1024x768_MONO:   _mode = strModesInFormat1[5]; break;
+    case MODE_800x600_MONO16:  _mode = strModesInFormat1[6]; break;
+    case MODE_1024x768_MONO16: _mode = strModesInFormat1[7]; break;
+    default: break;
+    }
+  }
+  else if ((mode >= MODE_FORMAT2_MIN) && (mode <= MODE_FORMAT2_MAX)) {
+    switch (mode) {
+    case MODE_1280x960_YUV422:  _mode = strModesInFormat2[0]; break;
+    case MODE_1280x960_RGB:     _mode = strModesInFormat2[1]; break;
+    case MODE_1280x960_MONO:    _mode = strModesInFormat2[2]; break;
+    case MODE_1600x1200_YUV422: _mode = strModesInFormat2[3]; break;
+    case MODE_1600x1200_RGB:    _mode = strModesInFormat2[4]; break;
+    case MODE_1600x1200_MONO:   _mode = strModesInFormat2[5]; break;
+    case MODE_1280x960_MONO16:  _mode = strModesInFormat2[6]; break;
+    case MODE_1600x1200_MONO16: _mode = strModesInFormat2[7]; break;
+    default: break;
+    }
+  }
+  else if ((mode >= MODE_FORMAT6_MIN) && (mode <= MODE_FORMAT6_MAX)) {
+    switch (mode) {
+    case MODE_EXIF: _mode = strModesInFormat6[0]; break;
+    default: break;
+    }
+  }
+  else if ((mode >= MODE_FORMAT7_MIN) && (mode <= MODE_FORMAT7_MAX)) {
+    switch (mode) {
+    case MODE_FORMAT7_0: _mode = strModesInFormat7[0]; break;
+    case MODE_FORMAT7_1: _mode = strModesInFormat7[1]; break;
+    case MODE_FORMAT7_2: _mode = strModesInFormat7[2]; break;
+    case MODE_FORMAT7_3: _mode = strModesInFormat7[3]; break;
+    case MODE_FORMAT7_4: _mode = strModesInFormat7[4]; break;
+    case MODE_FORMAT7_5: _mode = strModesInFormat7[5]; break;
+    case MODE_FORMAT7_6: _mode = strModesInFormat7[6]; break;
+    case MODE_FORMAT7_7: _mode = strModesInFormat7[7]; break;
+    default: break;
+    }
+  }
+  else if ((mode >= COLOR_FORMAT7_MIN) && (mode <= COLOR_FORMAT7_MAX)) {
+    switch (mode) {
+    case COLOR_FORMAT7_MONO8:  _mode = strColorsInFormat7[0]; break;
+    case COLOR_FORMAT7_YUV411: _mode = strColorsInFormat7[1]; break;
+    case COLOR_FORMAT7_YUV422: _mode = strColorsInFormat7[2]; break;
+    case COLOR_FORMAT7_YUV444: _mode = strColorsInFormat7[3]; break;
+    case COLOR_FORMAT7_RGB8:   _mode = strColorsInFormat7[4]; break;
+    case COLOR_FORMAT7_MONO16: _mode = strColorsInFormat7[5]; break;
+    case COLOR_FORMAT7_RGB16:  _mode = strColorsInFormat7[6]; break;
+    default: break;
+    }
+  }
+  else {
+    cout << "The mode " << mode << " is not supported by the camera" << endl;
+    _mode = "Not valid";
+  }
+
+  return _mode;
+}
+
+/*!
+
+  Converts the framerate identifier into a string
+  containing the description of the framerate.
+
+  \param framerate The camera capture framerate.
+
+  \return A string describing the framerate, an empty string if the framerate
+  is not supported.
+
+  \sa convertFormat(), convertMode()
+
+*/
+string vp1394Grabber::convertFramerate(int framerate)
+{
+  string _framerate;
+
+  if ((framerate >= FRAMERATE_MIN) && (framerate <= FRAMERATE_MAX)) {
+    switch (framerate) {
+    case FRAMERATE_1_875: _framerate = strFramerates[0]; break;
+    case FRAMERATE_3_75:  _framerate = strFramerates[1]; break;
+    case FRAMERATE_7_5:   _framerate = strFramerates[2]; break;
+    case FRAMERATE_15:    _framerate = strFramerates[3]; break;
+    case FRAMERATE_30:    _framerate = strFramerates[4]; break;
+    case FRAMERATE_60:    _framerate = strFramerates[5]; break;
+    default: break;
+    }
+  }
+  else {
+    cout << "The framerate " << framerate
+	 << " is not supported by the camera" << endl;
+    _framerate = "Not valid";
+  }
+
+  return _framerate;
+
 }
 
 /*!
@@ -1139,9 +1510,9 @@ vp1394Grabber::open(vpImage<unsigned char> &I)
   open();
 
   // Get the actual camera format, mode and framerate
-  getFormat(format[camera]);
-  getMode(mode[camera]);
-  getFramerate(framerate[camera]);
+  getFormat(pformat[camera]);
+  getMode(pmode[camera]);
+  getFramerate(pframerate[camera]);
 
   setup();
   startIsoTransmission();
@@ -1149,7 +1520,7 @@ vp1394Grabber::open(vpImage<unsigned char> &I)
   getWidth(ncols) ;
   getHeight(nrows) ;
 
-  vpERROR_TRACE("%d %d", nrows, ncols ) ;
+  vpDEBUG_TRACE(10, "%d %d", nrows, ncols ) ;
 
   I.resize(nrows, ncols) ;
 
@@ -1170,9 +1541,9 @@ vp1394Grabber::open(vpImage<vpRGBa> &I)
   open();
 
   // Get the actual camera format, mode and framerate
-  getFormat(format[camera]);
-  getMode(mode[camera]);
-  getFramerate(framerate[camera]);
+  getFormat(pformat[camera]);
+  getMode(pmode[camera]);
+  getFramerate(pframerate[camera]);
 
   setup();
   startIsoTransmission();
@@ -1336,12 +1707,12 @@ vp1394Grabber::open()
     cameras      = new dc1394_cameracapture [vp1394Grabber::MAX_CAMERAS];
   if (cam_count == NULL)
     cam_count    = new int [vp1394Grabber::MAX_CAMERAS];
-  if (format == NULL)
-    format       = new int [vp1394Grabber::MAX_CAMERAS];
-  if (mode == NULL)
-    mode         = new int [vp1394Grabber::MAX_CAMERAS];
-  if (framerate == NULL)
-    framerate    = new int [vp1394Grabber::MAX_CAMERAS];
+  if (pformat == NULL)
+    pformat      = new int [vp1394Grabber::MAX_CAMERAS];
+  if (pmode == NULL)
+    pmode        = new int [vp1394Grabber::MAX_CAMERAS];
+  if (pframerate == NULL)
+    pframerate   = new int [vp1394Grabber::MAX_CAMERAS];
   if (width == NULL)
     width        = new int [vp1394Grabber::MAX_CAMERAS];
   if (height == NULL)
@@ -1409,16 +1780,16 @@ vp1394Grabber::open()
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "no cameras found") );
   }
-  vpERROR_TRACE("%d cameras detected\n", num_cameras);
+  vpDEBUG_TRACE(10, "%d cameras detected\n", num_cameras);
 
   camera_found = true;
 
   handle_created = true;
 
   // Get the actual camera format, mode and framerate
-  getFormat(format[camera]);
-  getMode(mode[camera]);
-  getFramerate(framerate[camera]);
+  getFormat(pformat[camera]);
+  getMode(pmode[camera]);
+  getFramerate(pframerate[camera]);
 }
 
 /*!
@@ -1460,8 +1831,8 @@ vp1394Grabber::setup()
       }
 
       // After setting the camera format and mode we update the image size
-      getImageCharacteristics(format[i],
-			      mode[i],
+      getImageCharacteristics(pformat[i],
+			      pmode[i],
 			      width[i],
 			      height[i],
 			      image_format[i]);
@@ -1475,11 +1846,11 @@ vp1394Grabber::setup()
 				       "Unable to get the iso channel number") );
       }
 
-      if (format[i] == FORMAT_SCALABLE_IMAGE_SIZE) {
+      if (pformat[i] == FORMAT_SCALABLE_IMAGE_SIZE) {
 	if( dc1394_dma_setup_format7_capture(handles[i],
 					     cameras[i].node,
 					     channel,
-					     mode[i],
+					     pmode[i],
 					     speed,
 					     USE_MAX_AVAIL, /*max packet size*/
 					     0, 0, /* left, top */
@@ -1505,7 +1876,7 @@ vp1394Grabber::setup()
 	  unsigned int qpp; // packet bytes
 	  if (dc1394_query_format7_byte_per_packet(handles[i],
 						   cameras[i].node,
-						   mode[i],
+						   pmode[i],
 						   &qpp) != DC1394_SUCCESS) {
 	    close();
 
@@ -1520,10 +1891,10 @@ vp1394Grabber::setup()
 	if (dc1394_dma_setup_capture(handles[i],
 				     cameras[i].node,
 				     channel,
-				     format[i],
-				     mode[i],
+				     pformat[i],
+				     pmode[i],
 				     speed,
-				     framerate[i],
+				     pframerate[i],
 				     vp1394Grabber::NUM_BUFFERS,
 				     vp1394Grabber::DROP_FRAMES,
 				     device_name,
@@ -1917,9 +2288,9 @@ vp1394Grabber::close()
   if (handles != NULL)      { delete [] handles;      handles = NULL;      }
   if (cameras != NULL)      { delete [] cameras;      cameras = NULL;      }
   if (cam_count != NULL)    { delete [] cam_count;    cam_count = NULL;    }
-  if (format != NULL)       { delete [] format;       format = NULL;       }
-  if (mode != NULL)         { delete [] mode;         mode = NULL;         }
-  if (framerate != NULL)    { delete [] framerate;    framerate = NULL;    }
+  if (pformat != NULL)      { delete [] pformat;      pformat = NULL;       }
+  if (pmode != NULL)        { delete [] pmode;        pmode = NULL;         }
+  if (pframerate != NULL)   { delete [] pframerate;   pframerate = NULL;    }
   if (width != NULL)        { delete [] width;        width = NULL;        }
   if (height != NULL)       { delete [] height;       height = NULL;       }
   if (image_format != NULL) { delete [] image_format; image_format = NULL; }
