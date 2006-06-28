@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.19 2006-06-28 13:04:32 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.20 2006-06-28 16:01:32 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -502,7 +502,6 @@ ENDIF(DOXYGEN_FOUND)
 # Concatenate intern and third party include dirs
 #----------------------------------------------------------------------
 INCLUDE_DIRECTORIES(${VISP_INTERN_INCLUDE_DIR} ${VISP_EXTERN_INCLUDE_DIR})
-LINK_DIRECTORIES(${VISP_SOURCE_DIR}/lib)
 
 #----------------------------------------------------------------------
 # Generate the package dependent file include/visp/vpConfig.h
@@ -649,7 +648,6 @@ INCLUDE(Dart)
 # build
 IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
-  SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
 
 #----------------------------------------------------------------------
