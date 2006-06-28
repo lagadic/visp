@@ -39,7 +39,7 @@ main(int argc, char ** argv)
       {NULL, ARGV_END, NULL,NULL,NULL}
     } ;
   //Parsing of the table
-  if (vpParseArgv(&argc,argv,argTable,0))
+  if (vpParseArgv::parse(&argc,argv,argTable,0))
   {
     cout << endl << "Usage : " << argv[0] << "  [-help] [-fps 50] [-fps 25] "<<endl ;
     exit(1) ;
