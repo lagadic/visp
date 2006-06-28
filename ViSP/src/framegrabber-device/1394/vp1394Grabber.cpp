@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.11 2006-06-27 16:34:52 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.12 2006-06-28 08:52:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1446,6 +1446,7 @@ void vp1394Grabber::getWidth(int &width)
   }
 
   width = this->width[camera];
+  nrows = width;
 }
 
 /*!
@@ -1475,6 +1476,7 @@ void vp1394Grabber::getHeight(int &height)
   }
 
   height = this->height[camera];
+  ncols = height;
 }
 
 /*!
@@ -1517,12 +1519,13 @@ vp1394Grabber::open(vpImage<unsigned char> &I)
   setup();
   startIsoTransmission();
 
-  getWidth(ncols) ;
-  getHeight(nrows) ;
+  int _ncols, _nrows;
+  getWidth(_ncols) ;
+  getHeight(_nrows) ;
 
-  vpDEBUG_TRACE(10, "%d %d", nrows, ncols ) ;
+  vpDEBUG_TRACE(10, "%d %d", _nrows, _ncols ) ;
 
-  I.resize(nrows, ncols) ;
+  I.resize(_nrows, _ncols) ;
 
   init = true ;
 
@@ -1548,12 +1551,13 @@ vp1394Grabber::open(vpImage<vpRGBa> &I)
   setup();
   startIsoTransmission();
 
-  getWidth(ncols) ;
-  getHeight(nrows) ;
+  int _ncols, _nrows;
+  getWidth(_ncols) ;
+  getHeight(_nrows) ;
 
-  vpERROR_TRACE("%d %d", nrows, ncols ) ;
+  vpERROR_TRACE("%d %d", _nrows, _ncols ) ;
 
-  I.resize(nrows, ncols) ;
+  I.resize(_nrows, _ncols) ;
 
   init = true ;
 
@@ -1584,8 +1588,12 @@ vp1394Grabber::acquire(vpImage<unsigned char> &I)
   int  *bitmap = NULL ;
   bitmap = dmaCapture();
 
-  if ((I.getCols() != ncols)||(I.getRows() != nrows))
-    I.resize(nrows,ncols) ;
+  int _ncols, _nrows;
+  getWidth(_ncols) ;
+  getHeight(_nrows) ;
+
+  if ((I.getCols() != _ncols)||(I.getRows() != _nrows))
+    I.resize(_nrows, _ncols) ;
 
   int size  = I.getRows()*I.getCols();
   switch (image_format[camera])
@@ -1644,8 +1652,12 @@ vp1394Grabber::acquire(vpImage<vpRGBa> &I)
   int  *bitmap = NULL ;
   bitmap = dmaCapture();
 
-  if ((I.getCols() != ncols)||(I.getRows() != nrows))
-    I.resize(nrows,ncols) ;
+  int _ncols, _nrows;
+  getWidth(_ncols) ;
+  getHeight(_nrows) ;
+
+  if ((I.getCols() != _ncols)||(I.getRows() != _nrows))
+    I.resize(_nrows, _ncols) ;
 
   int size  = I.getRows()*I.getCols();
   switch (image_format[camera])
