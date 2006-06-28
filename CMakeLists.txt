@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.18 2006-06-27 09:06:20 brenier Exp $
+# $Id: CMakeLists.txt,v 1.19 2006-06-28 13:04:32 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -212,6 +212,8 @@ MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
 
 # Choose static or shared libraries.
 OPTION(BUILD_SHARED_LIBS "Build ViSP with shared libraries." OFF)
+# Build examples as an option.
+OPTION(BUILD_EXAMPLES "Build ViSP examples." ON)
 
 IF (UNIX)
 #  OPTION(USE_DC1394  "Compile ViSP with firewire 1394 cameras usage" OFF)
@@ -654,7 +656,9 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MA
 # Propagation in sub dirs
 #----------------------------------------------------------------------
 SUBDIRS(src)
-SUBDIRS(example)
+IF(BUILD_EXAMPLES)
+  SUBDIRS(example)
+ENDIF(BUILD_EXAMPLES)
 IF(BUILD_TESTING)
   SUBDIRS(test)
 ENDIF(BUILD_TESTING)
