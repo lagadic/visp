@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test1394.cpp,v 1.8 2006-06-27 16:34:52 fspindle Exp $
+ * $Id: test1394.cpp,v 1.9 2006-06-28 08:52:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -106,9 +106,6 @@ void usage(char *name, char *badparam, vp1394Grabber &g, long &req_number,
 
   n_framerates = g.getFramerateSupported(act_format, act_mode, l_framerates);
 
-  if (badparam)
-    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-
   fprintf(stdout, "\n\
 Test firewire 1394 framegrabbing.\n\
 \n\
@@ -170,7 +167,7 @@ CAMERA OPTIONS:                                   Default\n\
   while (! l_framerates.outside()) {
     int value = l_framerates.value();
     string _value = g.convertFramerate(value);
-    fprintf(stderr, "       %d (%s)\n", value, _value.c_str());
+    fprintf(stdout, "       %d (%s)\n", value, _value.c_str());
     l_framerates.next();
   }
 
@@ -208,10 +205,13 @@ ACQUISITION OPTIONS:\n\
 OTHER OPTIONS:\n\
   -h\n\
      Print the help.\n\
-\n\
 \n");
 
-  exit(0);
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
+
 }
 
 /*
@@ -240,15 +240,19 @@ void getOptions(int argc, char **argv,
     case 'r': framerate = atoi(optarg); break;
     case 's': shutter = (unsigned int) atoi(optarg); break;
     case 't': color = (bool) atoi(optarg); break;
-    case 'h': usage(argv[0], NULL, g, number, display, color); break;
+    case 'h': usage(argv[0], NULL, g, number, display, color); exit(0); break;
 
-    default:  usage(argv[0], NULL, g, number, display, color); break;
+    default:
+      usage(argv[0], optarg, g, number, display, color); exit(0); break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    fprintf(stderr, "Bad argument %s\n", optarg);
+    usage(argv[0], NULL, g, number, display, color);
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "  Bad argument %s\n", optarg);
+    fprintf(stderr, "\n");
     exit(0);
   }
 }
