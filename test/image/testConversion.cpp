@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.1 2006-06-27 10:08:49 fspindle Exp $
+ * $Id: testConversion.cpp,v 1.2 2006-06-29 13:38:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -119,6 +119,13 @@ main(int argc, char ** argv)
   sprintf(filename, "%s/Klimt_grey.ppm", opath);
   vpTRACE("Write %s", filename);
   vpImageIo::writePPM(Ig, filename) ;
+
+  //-------------------- YUV -> RGB
+  unsigned char y=187, u=10, v=30;
+  unsigned char r, g, b;
+
+  vpImageConvert::YUVToRGB(y, u, v, r, g, b);
+  vpTRACE("y(%d) u(%d) v(%d) = r(%d) g(%d) b(%d)", y, u, v, r, g, b);
 
 
   //--------------------
