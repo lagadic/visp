@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRowVector.cpp,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpRowVector.cpp,v 1.4 2006-06-29 15:09:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,8 +44,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <visp/vpMatrix.h>
+#include <visp/vpMatrixException.h>
 #include <visp/vpRowVector.h>
 #include <visp/vpColVector.h>
+#include <visp/vpDebug.h>
 
 //! Copy operator.   Allow operation such as A = v
 vpRowVector & vpRowVector::operator=(const vpRowVector &v)
@@ -90,6 +92,38 @@ vpRowVector & vpRowVector::operator=(double x)
   }
   return *this;
 }
+
+/*!
+
+  Multiply a row vector by a column vector.
+
+  \param x : Column vector.
+
+  \warning The number of elements of the two vectors must be equal.
+
+  \exception vpMatrixException::matrixError : If the number of elements of the
+  two vectors is not the same.
+
+  \return A scalar.
+
+*/
+double vpRowVector::operator*(const vpColVector &x)
+{
+  int nelements = x.getRows();
+  if (getCols() != nelements ) {
+    vpERROR_TRACE("\n\t\t Illegal matrix operation") ;
+    throw(vpMatrixException(vpMatrixException::matrixError,
+			    "\n\t\t Illegal matrix operation, bad vector size")) ;
+  }
+
+  double scalar = 0.0;
+
+  for (int i=0; i<nelements; i++) {
+    scalar += (*this)[i] * x[i];
+  }
+  return scalar;
+}
+
 /*
   \brief Transpose the column vector A
 
