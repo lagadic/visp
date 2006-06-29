@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.3 2006-06-27 10:08:08 fspindle Exp $
+ * $Id: vpImageConvert.h,v 1.4 2006-06-29 16:06:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,12 +63,46 @@ public:
 		      vpImage<vpRGBa> & dest) ;
   static void convert(const vpImage<vpRGBa> &src,
 		      vpImage<unsigned char> & dest) ;
+  /*!
+    Converts a yuv pixel value in rgb format.
+
+    \param y Y component of a pixel.
+    \param u U component of a pixel.
+    \param v V component of a pixel.
+    \param r Red component from the YUV coding format. This value is computed
+    using:
+    \f[ r = 0.9999695*y - 0.0009508*(u-128) + 1.1359061*(v-128) \f]
+    \param g Green component from the YUV coding format. This value is computed
+    using:
+    \f[g = 0.9999695*y - 0.3959609*(u-128) - 0.5782955*(v-128) \f]
+    \param b Blue component from the YUV coding format. This value is computed
+    using:
+    \f[b = 0.9999695*y + 2.04112*(u-128) - 0.0016314*(v-128) \f]
+
+  */ 
   static inline void YUVToRGB(unsigned char y,
 			      unsigned char u,
 			      unsigned char v,
 			      unsigned char &r,
 			      unsigned char &g,
-			      unsigned char &b);
+			      unsigned char &b)
+    {
+      double dr, dg, db;
+      dr = floor(0.9999695*y - 0.0009508*(u-128) + 1.1359061*(v-128));
+      dg = floor(0.9999695*y - 0.3959609*(u-128) - 0.5782955*(v-128));
+      db = floor(0.9999695*y + 2.04112*(u-128) - 0.0016314*(v-128));
+
+      dr = dr < 0. ? 0. : dr;
+      dg = dg < 0. ? 0. : dg;
+      db = db < 0. ? 0. : db;
+      dr = dr > 255. ? 255. : dr;
+      dg = dg > 255. ? 255. : dg;
+      db = db > 255. ? 255. : db;
+
+      r = (unsigned char) dr;
+      g = (unsigned char) dg;
+      b = (unsigned char) db;
+    };
   static void YUV411ToRGBa(unsigned char* yuv, 
 			   unsigned char* rgba, int size);
   static void YUV411ToRGB(unsigned char* yuv, 
