@@ -88,5 +88,24 @@ int main()
   //vMe=1.0;
   B=A*vMe;
 
+  vpTRACE("------------------------");
+  vpTRACE("--- TEST vpRowVector * vpColVector");
+  vpTRACE("------------------------");
+  vpRowVector r(3);
+  r[0] = 2;
+  r[1] = 3;
+  r[2] = 4;
+
+  vpColVector c(3);
+  c[0] = 1;
+  c[1] = 2;
+  c[2] = -1;
+
+  double rc = r * c;
+
+  r.print(std::cout, 2, "r");
+  c.print(std::cout, 2, "c");
+  cout << "r * c = " << rc << endl;
+
 
 }
