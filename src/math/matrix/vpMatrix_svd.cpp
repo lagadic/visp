@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix_svd.cpp,v 1.10 2006-06-27 14:35:55 brenier Exp $
+ * $Id: vpMatrix_svd.cpp,v 1.11 2006-06-30 10:06:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -182,7 +182,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 	for (k=l;k<=n;k++) a[i][k] *= scale;
       }
     }
-    anorm=vpMath::max(anorm,(fabs(w[i])+fabs(rv1[i])));
+    anorm=vpMath::maximum(anorm,(fabs(w[i])+fabs(rv1[i])));
   }
   for (i=n;i>=1;i--) {
     if (i < n) {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.h,v 1.5 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpMath.h,v 1.6 2006-06-30 10:06:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,7 @@
 #endif
 
 
-/*
+/*!
   \class vpMath
 
   \brief Provides simple Math computation that are not available in
@@ -64,63 +64,254 @@
 
   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */
+
 class VISP_EXPORT vpMath
 {
-
 public:
+
   /*!
     Convert radian in degrees.
 
     \param rad Angle in radian.
     \return Angle converted in degrees
   */
-  static double deg(double rad) { return (rad*180.0)/M_PI ; }
+   static inline double deg(double rad) { return (rad*180.0)/M_PI ; }
 
   /*!
     Convert degrees in radian.
     \param deg Angle in degrees.
     \return Angle converted in radian.
   */
-
-  static double rad(double deg) { return (deg*M_PI)/180.0 ; }
+   static inline double rad(double deg) { return (deg*M_PI)/180.0 ; }
 
   /*!
     Compute x square value.
     \return \f$ x^2 \f$.
   */
-  static double sqr(double x) { return x*x ; }
+   static inline double sqr(double x) { return x*x ; }
 
   //  factorial of x
-  static double fact(int x) ;
+   static inline double fact(int x) ;
 
   // combinaison
-  static double comb(int n, int p) ;
+   static inline double comb(int n, int p) ;
 
   //   round x to the nearest integer
-  static int round(const double x) ;
+   static inline int round(const double x) ;
 
   //   return the sign of x (+-1)
-  static int sign(double x) ;
+   static inline int sign(double x) ;
 
-  // max of two numbers
-  static  double max(const double x,const  double y) ;
-  // min of two numbers
-  static double min(const double x, const double y) ;
 
-  // max of two numbers
-  static  int max(const int x, const int y) ;
-  // min of two numbers
-  static int min(const int x,const  int y) ;
+  // test if a number equals 0 (with threshold value)
+   static inline bool nul(double x, double s=0.001);
+
+  // test if two numbers ar equals (with a user defined threshold)
+   static inline bool equal(double x, double y, double s=0.001);
+
+
+  /*!
+    Find the maximum between two numbers (or other)
+    \param a first number
+    \param b second number
+    \return The maximum of the two numbers
+  */
+  template <class Type> static Type maximum(const Type& a, const Type& b)
+  {
+	return (a > b) ? a : b;
+  }
+
+  /*!
+    Find the minimum between two numbers (or other)
+    \param a first number
+    \param b second number
+    \return The minimum of the two numbers
+  */
+  template <class Type> static Type minimum(const Type& a, const Type& b)
+  {
+	return (a < b) ? a : b;
+  }
 
   // sinus cardinal
-  static double sinc(double x) ;
-  static double sinc(double sinx, double x) ;
-  static double mcosc(double cosx, double x) ;
-  static double msinc(double sinx, double x) ;
+  static inline double sinc(double x) ;
+  static inline double sinc(double sinx, double x) ;
+  static inline double mcosc(double cosx, double x) ;
+  static inline double msinc(double sinx, double x) ;
 
-  static void swap(double &a, double &b) ;
-  static void swap(int &a, int &b) ;
+  /*!
+    Exchange two numbers.
+
+    \param a First number to exchange.
+    \param b Second number to exchange
+  */
+  template <class Type> static void swap(Type& a, Type& b)
+  {
+	Type tmp = b;
+        b = a;
+	a = tmp;
+  }
+
 };
+
+//Begining of the inline functions definition
+
+
+/*!
+  Compute factorial.
+
+  \return !x
+*/
+double vpMath::fact(int x)
+{
+    if ( (x == 1) || (x == 0)) return 1;
+    return x * fact(x-1);
+}
+
+/*!
+  Combinaison computation.
+
+  \return \f$ !n / (!(n-p) !p) \f$
+ */
+double vpMath::comb(int n, int p)
+{
+    if (n == p) return 1;
+    return fact(n)/ (fact(n-p) * fact(p));
+}
+
+
+/*!
+  Round x to the nearest integer.
+
+  \return Nearest integer of x.
+
+*/
+int vpMath::round(const double x)
+{
+    if (sign(x) > 0)
+    {
+	if ((x-(int)x) <= 0.5) return (int)x ;
+	else return (int)x+1 ;
+    }
+    else
+    {
+	if (fabs(x-(int)x) <= 0.5) return (int)x ;
+	else return (int)x-1 ;
+    }
+}
+
+/*!
+  Return the sign of x.
+
+  \return -1 if x is negative, +1 if positive.
+
+*/
+int vpMath::sign(double x)
+{
+    if (fabs(x) < 1e-15) return 0 ;else
+    {
+	if (x<0) return -1 ; else return 1 ;
+    }
+}
+
+/*!
+  Test if x is "null"
+  \param s tolerance threshold
+  \return true if the absolute value of x is inferior to s
+
+*/
+bool vpMath::nul(double x, double s)
+{
+  return(fabs(x)<s);
+}
+
+/*!
+  Compares x and y
+  \param s tolerance threshold
+  \return true if x is equal to y 
+*/
+bool vpMath::equal(double x, double y, double s)
+{
+  return( nul(x-y, s) );
+}
+
+
+
+
+#ifdef vpANG_MIN_SINC // used also in vpRotationMatrix.cpp and vpThetaUVector.cpp
+#undef vpANG_MIN_SINC
+#endif
+#define vpANG_MIN_SINC 1e-8
+
+/*!
+
+  Compute sinus cardinal \f$ \frac{sin(x)}{x} \f$.
+
+  \param x Value of x.
+
+  \return Sinus cardinal.
+
+*/
+double vpMath::sinc(double x)
+{
+  if (fabs(x) < vpANG_MIN_SINC) return 1.0 ;
+  else  return sin(x)/x ;
+}
+/*!
+
+  Compute sinus cardinal \f$ sinx / x \f$.
+
+  \param sinx Value of sin(x).
+  \param x Value of x.
+
+  \return Sinus cardinal.
+
+*/
+double vpMath::sinc(double sinx, double x)
+{
+  if (fabs(x) < vpANG_MIN_SINC) return 1.0 ;
+  else  return (sinx/x) ;
+}
+#undef vpANG_MIN_SINC
+
+#ifdef vpANG_MIN_MC // used also in vpRotationMatrix.cpp
+#undef vpANG_MIN_MC
+#endif
+#define vpANG_MIN_MC 2.5e-4
+/*!
+  Compute \f$ (1-cos(x))/x^2 \f$
+
+  \param cosx Value of cos(x).
+  \param x Value of x.
+
+  \return \f$ (1-cosx)/x^2 \f$
+
+*/
+double vpMath::mcosc(double cosx, double x)
+{
+  if (fabs(x) < vpANG_MIN_MC) return 0.5 ;
+  else  return ((1.0-cosx)/x/x) ;
+}
+
+/*!
+
+  Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sinx / x \f$.
+
+  \param sinx value of sin(x).
+  \param x  Value of x.
+
+  \return \f$ (1-sinc(x))/x^2 \f$
+
+*/
+double vpMath::msinc(double sinx, double x)
+{
+  if (fabs(x) < vpANG_MIN_MC) return (1./6.0) ;
+  else  return ((1.0-sinx/x)/x/x) ;
+}
+#undef vpANG_MIN_MC
+
+
+
+
 #endif
 
 

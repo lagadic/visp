@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLevenbergMarquartd.cpp,v 1.2 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpLevenbergMarquartd.cpp,v 1.3 2006-06-30 10:06:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -345,15 +345,15 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
     paru = gnorm / *delta;
 
     if (paru == 0.0)
-      paru = dwarf / vpMath::min(*delta, tol1);
+      paru = dwarf / vpMath::minimum(*delta, tol1);
 
     /*
      *	Si "par" en entree tombe hors de l'intervalle (parl,paru),
      *	on le prend proche du point final.
      */
 
-    *par = vpMath::max(*par, parl);
-    *par = vpMath::min(*par, paru);
+    *par = vpMath::maximum(*par, parl);
+    *par = vpMath::minimum(*par, paru);
 
     if (*par == 0.0)
       *par = gnorm / dxnorm;
@@ -370,7 +370,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
        *	de "par".
        */
       if (*par == 0.0)
-	*par = vpMath::max(dwarf, (tol001 * paru));
+	*par = vpMath::maximum(dwarf, (tol001 * paru));
 
       temp = sqrt(*par);
 
@@ -435,15 +435,15 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
        *	de parl ou paru.
        */
       if (fp > 0.0)
-	parl = vpMath::max(parl, *par);
+	parl = vpMath::maximum(parl, *par);
 
       if (fp < 0.0)
-	paru = vpMath::min(paru, *par);
+	paru = vpMath::minimum(paru, *par);
 
       /*
        *	calcul d'une estimee ameliree de "par".
        */
-      *par = vpMath::max(parl, (*par + parc));
+      *par = vpMath::maximum(parl, (*par + parc));
     }/* fin boucle sur iter	*/
   }/* fin fp > tol1 * delta	*/
 
@@ -474,7 +474,7 @@ double pythag (double a, double b)
 {
   double	pyth, p, r, s, t, u;
 
-  p = vpMath::max(fabs(a), fabs(b));
+  p = vpMath::maximum(fabs(a), fabs(b));
 
   if (p == 0.0)
   {
@@ -482,7 +482,7 @@ double pythag (double a, double b)
     return (pyth);
   }
 
-  r = (vpMath::min(fabs(a), fabs(b)) / p) * (vpMath::min(fabs(a), fabs(b)) / p);
+  r = (vpMath::minimum(fabs(a), fabs(b)) / p) * (vpMath::minimum(fabs(a), fabs(b)) / p);
   t = 4.0 + r;
 
   while (t != 4.0)
@@ -575,7 +575,7 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
   /*
    *     reduction de "a" en "r" avec les tranformations de Householder.
    */
-  minmn = vpMath::min(m, n);
+  minmn = vpMath::minimum(m, n);
   for (i = 0; i < minmn; i++)
   {
     if (pivot)
@@ -641,7 +641,7 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
 	  if (pivot && rdiag[k] != 0.0)
 	  {
 	    temp = *MIJ (a, k, i, lda) / rdiag[k];
-	    rdiag[k] *= sqrt(vpMath::max(0.0, (1.0 - temp * temp)));
+	    rdiag[k] *= sqrt(vpMath::maximum(0.0, (1.0 - temp * temp)));
 
 	    if (tolerance * (rdiag[k] / wa[k]) * (rdiag[k] / wa[k]) <= epsmch)
 	    {
@@ -1231,7 +1231,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 	  for (j = 0; j <= i; j++)
 	    sum += *MIJ(fjac, i, j, ldfjac) * (qtf[j] / fnorm);
 
-	  gnorm = vpMath::max(gnorm, fabs(sum / wa2[l]));
+	  gnorm = vpMath::maximum(gnorm, fabs(sum / wa2[l]));
 	}
       }
     }
@@ -1266,7 +1266,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     if (mode != 2)
     {
       for (j = 0; j < n; j++)
-	diag[j] = vpMath::max(diag[j], wa2[j]);
+	diag[j] = vpMath::maximum(diag[j], wa2[j]);
     }
 
     /*
@@ -1301,7 +1301,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        */
 
       if (iter == 1)
-	delta = vpMath::min(delta, pnorm);
+	delta = vpMath::minimum(delta, pnorm);
 
       /*
        *	evaluation de la fonction en x + p et calcul de leur norme.
@@ -1390,7 +1390,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 	if ((tol1 * fnorm1 >= fnorm) || (temp < tol1))
 	  temp = tol1;
 
-	delta = temp * vpMath::min(delta, (pnorm / tol1));
+	delta = temp * vpMath::minimum(delta, (pnorm / tol1));
 	par /= temp;
       }
 

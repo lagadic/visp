@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMe.cpp,v 1.2 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMe.cpp,v 1.3 2006-06-30 10:06:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,109 +73,10 @@ struct droite
   double c ;
 } ;
 
-#define VRAI 1
-#define FAUX 0
-
-#define PI 3.1415927
-
-static inline int
-signe(const double x)
-{
- if(x>0)
-   return(1);
- else if(x<0)
-   return(-1);
- else
-   return(0);  // si nul => retourne 0
-}
-
-// Already declared in simple-math.h
-/*static inline int
-signe(double x)
-{
- if(x>0.0)
-	return(+1);
- else if(x<0.0)
-	return(-1);
- else
-	return(0);  // si nul => retourne 0
-}*/
-
-// sur-définition : v_abs(reel)
-static inline double
-v_abs(double x)
-{
- if(x<0.0)
-	 return(-x);
- else
-	 return(x);
-}
-
-// sur-définition : v_abs(entier)
-static inline int
-v_abs(int x)
-{
- if(x<0)
-	 return(-x);
- else
-	 return(x);
-}
 
 
-static inline double
-carre(double x)
-{
-	return( x*x );
-}
-
-static inline double
-carre(int x)
-{
-	return( x*x );
-}
-
-template <class Type>
-inline Type
-max(Type a, Type b)
-{
- if(a>b)
-	 return a;
- else
-	 return b;
-}
-
-template <class Type>
-inline Type
-min(Type a, Type b)
-{
- if(a<b)
-	return a;
- else
-	return b;
-}
 
 
-template <class Type>
-inline int
-arrondi(Type x)              // décimal -> entier le plus proche
-{
- if(x>=0)
-	return (int)(x+0.5);
- else
-	return (int)(x-0.5);
-}
-
-static inline int
-nul(double x)
-{
-  return( (v_abs(x)<0.001)? 1 : 0 );
-}
-
-static inline int
-eg(double x, double y)
-{
-  return( nul(x-y) );
-}
 
 
 template <class Type>
@@ -218,14 +119,14 @@ static void
 recale(point & P,
 			 double Xmin, double Ymin, double Xmax, double Ymax)
 {
-  if(eg(P.x,Xmin))
+  if(vpMath::equal(P.x,Xmin))
 		P.x=Xmin; // à peu près => exactement !
-  if(eg(P.x,Xmax))
+  if(vpMath::equal(P.x,Xmax))
 		P.x=Xmax;
 
-  if(eg(P.y,Ymin))
+  if(vpMath::equal(P.y,Ymin))
 		P.y=Ymin;
-  if(eg(P.y,Ymax))
+  if(vpMath::equal(P.y,Ymax))
 		P.y=Ymax;
 }
 
@@ -245,7 +146,7 @@ permute(point &A,  point &B)
 
 
 // vrai si partie visible
-static int
+static bool
 clipping  (point  A, point B,
  					 double Xmin, double Ymin, double Xmax, double Ymax,
 					 point  & Ac , point & Bc )// résultat: A,B clippés
@@ -293,15 +194,15 @@ clipping  (point  A, point B,
 		*/
     {
 			Ac=P[0];  Bc=P[1];
-      if(eg(Ac.x,Bc.x) && eg(Ac.y,Bc.y))
-      	return(FAUX);    // AB = 1 point = invisible
+      if(vpMath::equal(Ac.x,Bc.x) && vpMath::equal(Ac.y,Bc.y))
+      	return(false);    // AB = 1 point = invisible
       else
-				return(VRAI);    // Partie de AB clippée visible!
+				return(true);    // Partie de AB clippée visible!
     }
 
    if((code_P[0] & code_P[1])!=0000)  // au moins 1 bit commun
    {
-		 return(FAUX);  // AB complètement invisible!
+		 return(false);  // AB complètement invisible!
    }
 
 
@@ -352,11 +253,11 @@ S_relative(point P, point Q,
 
 
   if(P.x==Xmin && Q.x==Xmax)
-	  return( v_abs(Ymax+Ymin-P.y-Q.y) );
+	  return( fabs(Ymax+Ymin-P.y-Q.y) );
 
   if( (P.y==Ymin && Q.y==Ymax) ||
       (Q.y==Ymin && P.y==Ymax))
-	  return( v_abs(Xmax+Xmin-P.x-Q.x) );
+	  return( fabs(Xmax+Xmin-P.x-Q.x) );
 
   if( P.x==Xmin && Q.y==Ymax )
 		 return( 1-(Ymax-P.y)*(Q.x-Xmin) );
@@ -396,7 +297,7 @@ calcul_masques(vpColVector &angle, // définitions des angles theta
 
  for(i_theta=0; i_theta<nb_theta; i_theta++)
  {
-   theta = PI/180*angle[i_theta]; // indice i -> theta(i) en radians
+   theta = M_PI/180*angle[i_theta]; // indice i -> theta(i) en radians
    																//  angle[] dans [0,180[
    cos_theta = cos(theta);        // vecteur directeur de l'ECM
    sin_theta = sin(theta);        //  associe au masque
@@ -424,7 +325,7 @@ calcul_masques(vpColVector &angle, // définitions des angles theta
      for(j=0,X=-moitie+0.5 ;   j<n  ; j++,X++)
      {
        // produit vectoriel dir_droite*(X,Y)
-       sgn = signe(cos_theta*Y - sin_theta*X);
+       sgn = vpMath::sign(cos_theta*Y - sin_theta*X);
 
        // Résultat = P,Q
        if( clipping(P1,Q1, X-0.5,Y-0.5,X+0.5,Y+0.5, P,Q) )
@@ -435,7 +336,7 @@ calcul_masques(vpColVector &angle, // définitions des angles theta
        else
 	 v=1; // PQ ne coupe pas le pixel(i,j)
 
-       M[i_theta][i][j] = arrondi(100*sgn*v);
+       M[i_theta][i][j] = vpMath::round(100*sgn*v);
 
        // 2 chiffres significatifs
        // M(i,j) sans incorporer le coef a
