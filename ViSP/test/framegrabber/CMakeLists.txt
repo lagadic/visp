@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:21 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2006-06-30 09:48:23 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -47,6 +47,7 @@ SET (SOURCE
   testOSXcfoxColor.cpp
   testV4l2Color.cpp
   testV4l2Grey.cpp
+  testDirectShow.cpp
 )
 
 # rule for binary build
