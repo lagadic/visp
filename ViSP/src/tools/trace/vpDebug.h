@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDebug.h,v 1.3 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpDebug.h,v 1.4 2006-06-30 10:06:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -298,6 +298,12 @@ inline void vpTRACE(char *a, double b, double c, double d) {   do {\
     printf (a, b, c, d); \
     printf ("\n"); \
     fflush (stdout); } while (0); };
+inline void vpTRACE(char *a, unsigned char b, unsigned char c, unsigned char d, unsigned char e, unsigned char f, unsigned char g) {   do {\
+    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
+    printf (a, b, c, d, e, f, g); \
+    printf ("\n"); \
+    fflush (stdout); } while (0); };
+
 #define vpCTRACE cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 #ifdef VP_DEBUG

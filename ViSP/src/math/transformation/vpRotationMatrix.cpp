@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.9 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.10 2006-06-30 10:06:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -500,8 +500,8 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
   // end test
   return *this ;
 }
-#undef ANG_MIN_SINC
-#undef ANG_MIN_MC
+#undef vpANG_MIN_SINC
+#undef vpANG_MIN_MC
 #undef SINC
 #undef MCOSC
 

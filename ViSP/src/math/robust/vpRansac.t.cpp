@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.t.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpRansac.t.cpp,v 1.6 2006-06-30 10:06:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -178,8 +178,8 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
       double fracinliers =  (double)ninliers/(double)npts;
       double pNoOutliers = 1 -  pow(fracinliers,s);
 
-      pNoOutliers = vpMath::max(eps, pNoOutliers);  // Avoid division by -Inf
-      pNoOutliers = vpMath::min(1-eps, pNoOutliers);// Avoid division by 0.
+      pNoOutliers = vpMath::maximum(eps, pNoOutliers);  // Avoid division by -Inf
+      pNoOutliers = vpMath::minimum(1-eps, pNoOutliers);// Avoid division by 0.
       N = (log(1-p)/log(pNoOutliers));
 
     }
