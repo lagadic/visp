@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGTK2.cmake,v 1.6 2006-06-12 14:36:20 brenier Exp $
+# $Id: FindGTK2.cmake,v 1.7 2006-07-03 08:26:03 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -28,7 +28,7 @@
 # not clear to you.
 #
 # Description:
-# Try to find GTK (and glib) and GTKGLArea.
+# Try to find GTK (and glib).
 # Once run this will define: 
 #
 # GTK2_INCLUDE_DIR   - Directories to include to use GTK
@@ -48,6 +48,7 @@ IF(UNIX OR WIN32)
     /usr/include/gtk-2.0
     /usr/local/include/gtk-2.0
     /opt/gnome/include/gtk-2.0
+    "C:/GTK/include/gtk-2.0"
   )
 
   # Some Linux distributions (e.g. Red Hat) have glibconfig.h
@@ -59,59 +60,43 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_HOME}/lib/glib-2.0/include
     /usr/lib/glib-2.0/include
     /opt/gnome/lib/glib-2.0/include
+    "C:/GTK/lib/glib-2.0/include"
   )
 
   FIND_PATH( GTK2_glib_INCLUDE_PATH glib.h
     $ENV{GTK2_HOME}/include/glib-2.0
     /usr/include/glib-2.0
     /opt/gnome/include/glib-2.0
-  )
-
-  FIND_PATH( GTK2_gtkgl_INCLUDE_PATH gtkgl/gtkglarea.h
-    $ENV{GTK2_HOME}/include
-    /usr/include
-    /usr/local/include
-    /usr/openwin/share/include
-    /opt/gnome/include
+    "C:/GTK/include/glib-2.0"
   )
 
   FIND_PATH( GTK2_pango_INCLUDE_PATH pango/pango.h
     $ENV{GTK2_HOME}/include/pango-1.0
     /usr/include/pango-1.0
     /opt/gnome/include/pango-1.0
+    "C:/GTK/include/pango-1.0"
   )
 
   FIND_PATH( GTK2_cairo_INCLUDE_PATH cairo.h
     $ENV{GTK2_HOME}/include/cairo
     /usr/include/cairo
     /opt/gnome/include/cairo
+    "C:/GTK/include/cairo"
   )
 
   FIND_PATH( GTK2_gdkconfig_INCLUDE_PATH gdkconfig.h
     $ENV{GTK2_HOME}/lib/gtk-2.0/include
     /usr/lib/gtk-2.0/include
     /opt/gnome/lib/gtk-2.0/include
+    "C:/GTK/lib/gtk-2.0/include"
   )
 
   FIND_PATH( GTK2_atk_INCLUDE_PATH atk/atk.h
     $ENV{GTK2_HOME}/include/atk-1.0
     /usr/include/atk-1.0
     /opt/gnome/include/atk-1.0
+    "C:/GTK/include/atk-1.0"
   )
-
-
-  FIND_LIBRARY( GTK2_gtkgl_LIBRARY gtkgl
-    $ENV{GTK2_HOME}/lib
-    /usr/lib
-    /usr/local/lib
-    /usr/openwin/lib
-    /usr/X11R6/lib
-    /opt/gnome/lib
-  )
-
-  #
-  # The 12 suffix is thanks to the FreeBSD ports collection
-  #
 
   FIND_LIBRARY( GTK2_gtk_LIBRARY
     NAMES  gtk-x11-2.0 gtk-win32-2.0
@@ -121,6 +106,7 @@ IF(UNIX OR WIN32)
           /usr/openwin/lib
           /usr/X11R6/lib
           /opt/gnome/lib
+          "C:/GTK/lib"
   )
 
   FIND_LIBRARY( GTK2_gdk_LIBRARY
@@ -131,6 +117,7 @@ IF(UNIX OR WIN32)
            /usr/openwin/lib
            /usr/X11R6/lib
            /opt/gnome/lib
+           "C:/GTK/lib"
   )
 
   FIND_LIBRARY( GTK2_gmodule_LIBRARY
@@ -141,6 +128,7 @@ IF(UNIX OR WIN32)
            /usr/openwin/lib
            /usr/X11R6/lib
            /opt/gnome/lib
+           "C:/GTK/lib"
   )
 
   FIND_LIBRARY( GTK2_glib_LIBRARY
@@ -151,17 +139,8 @@ IF(UNIX OR WIN32)
            /usr/openwin/lib
            /usr/X11R6/lib
            /opt/gnome/lib
+           "C:/GTK/lib"
   )
-
-  FIND_LIBRARY( GTK2_Xi_LIBRARY 
-    NAMES Xi 
-    PATHS $ENV{GTK2_HOME}/lib
-    /usr/lib 
-    /usr/local/lib 
-    /usr/openwin/lib 
-    /usr/X11R6/lib 
-    /opt/gnome/lib 
-    ) 
 
   FIND_LIBRARY( GTK2_gthread_LIBRARY
     NAMES  gthread-2.0
@@ -171,6 +150,7 @@ IF(UNIX OR WIN32)
            /usr/openwin/lib
            /usr/X11R6/lib
            /opt/gnome/lib
+           "C:/GTK/lib"
   )
 
   FIND_LIBRARY( GTK2_gobject_LIBRARY
@@ -178,6 +158,7 @@ IF(UNIX OR WIN32)
     PATHS  $ENV{GTK2_HOME}/lib
            /usr/lib
            /opt/gnome/lib
+           "C:/GTK/lib"
   )
 
   IF(GTK2_gtk_INCLUDE_PATH)
@@ -243,11 +224,8 @@ IF(UNIX OR WIN32)
     GTK2_glibconfig_INCLUDE_PATH
     GTK2_gmodule_LIBRARY
     GTK2_gthread_LIBRARY
-    GTK2_Xi_LIBRARY
     GTK2_gtk_INCLUDE_PATH
     GTK2_gtk_LIBRARY
-    GTK2_gtkgl_INCLUDE_PATH
-    GTK2_gtkgl_LIBRARY
     GTK2_atk_INCLUDE_PATH
     GTK2_gdkconfig_INCLUDE_PATH
     GTK2_gobject_LIBRARY
