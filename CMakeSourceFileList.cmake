@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.5 2006-07-03 09:42:10 brenier Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.6 2006-07-03 09:57:04 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -100,7 +100,6 @@ SET (SRC_MATH
   math/matrix/vpRowVector.cpp
   math/misc/vpExponentialMap.cpp 
   math/misc/vpNoise.cpp 
-  math/misc/vpMath.cpp
   math/robust/vpRobust.cpp
   math/robust/vpScale.cpp
   math/transformation/vpEulerVector.cpp
