@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.3 2006-06-22 15:00:30 brenier Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.4 2006-07-03 09:42:10 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -73,6 +73,7 @@ SET (HEADER_FRAMEGRABBER_DEVICE
   framegrabber-device/OSX-cfox/vpOSXcfoxGrabber.h
   framegrabber-device/v4l2/vpV4l2Grabber.h
   framegrabber-device/directshow/vpDirectShowGrabber.h
+  framegrabber-device/directshow/vpDirectShowGrabberImpl.h
   framegrabber-device/directshow/vpDirectShowDevice.h
   framegrabber-device/directshow/vpDirectShowSampleGrabberI.h
   )

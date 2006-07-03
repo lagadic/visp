@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowSampleGrabberI.h,v 1.1 2006-06-22 15:00:30 brenier Exp $
+ * $Id: vpDirectShowSampleGrabberI.h,v 1.2 2006-07-03 09:42:10 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,7 +89,7 @@ private:
 	//semaphore used to synchronize the productor (callback) and the consumer (acquire)
 	HANDLE copySem;
 
-	friend class vpDirectShowGrabber;
+	friend class vpDirectShowGrabberImpl;
 };
 
 #endif
