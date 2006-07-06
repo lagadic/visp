@@ -1,39 +1,12 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpDirectShowSampleGrabberI.h>
+#include <visp/vpImageConvert.h>
 
 #include <visp/vpConfig.h>
 #if ( defined(VISP_HAVE_DIRECTSHOW) ) 
 
 
-/*!
-	Converts a BGRa image (pBuffer) to RGBa
-	assumes that rgbaIm is already resized
-*/
-void BGRaToRGBa(vpImage<vpRGBa> * rgbaIm, const BYTE * pBuffer, long BufferLen)
-{
-	for(long i=0 ; i<BufferLen ; i+=4)
-	{
-		rgbaIm->bitmap[i>>2].R = pBuffer[i+2];
-		rgbaIm->bitmap[i>>2].G = pBuffer[i+1];
-		rgbaIm->bitmap[i>>2].B = pBuffer[i+0];
-		rgbaIm->bitmap[i>>2].A = pBuffer[i+3];
-	}
-}
-
-/*!
-	Converts a BGRa image (pBuffer) to grayscale
-	assumes that rgbaIm is already resized
-*/
-void BGRaToGray(vpImage<unsigned char> * grayIm, const BYTE * pBuffer, long BufferLen)
-{
-  for (int i =0 ; i<BufferLen ; i+=4)
-  {
-	  grayIm->bitmap[i>>2] = (unsigned char)( 0.299 * pBuffer[i+2]
-										 + 0.597 * pBuffer[i+1] 
-										 + 0.114 * pBuffer[i+0]) ;
-  }
-}
 
 /*!
 	Constructor - creates the semaphore
@@ -97,7 +70,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
 					//first, resizes the image as needed
 					rgbaIm->resize(bmpInfo.biHeight, bmpInfo.biWidth);
 					//copy and convert the image
-					BGRaToRGBa(rgbaIm, pBuffer, BufferLen);
+					vpImageConvert::BGRaToRGBa(pBuffer,
+							 (unsigned char*) rgbaIm->bitmap, BufferLen);
 					//reset the demand boolean
 					acqRGBaDemand = false;
 				}
@@ -106,7 +80,7 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
 					//first, resizes the image as needed
 					grayIm->resize(bmpInfo.biHeight, bmpInfo.biWidth);
 					//copy and convert the image
-					BGRaToGray(grayIm, pBuffer, BufferLen);
+					vpImageConvert::BGRaToGrey(pBuffer, grayIm->bitmap, BufferLen);
 					//reset the demand boolean
 					acqGrayDemand = false;
 				}
