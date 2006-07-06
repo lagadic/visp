@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.4 2006-06-29 16:06:12 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.5 2006-07-06 12:34:03 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -513,6 +513,38 @@ vpImageConvert::GreyToRGB(unsigned char* grey,
 
     pt_input ++;
     pt_output += 3;
+  }
+}
+
+
+/*!
+	Converts a BGRa image to RGBa
+	assumes that rgba is already resized
+*/
+void 
+vpImageConvert::BGRaToRGBa(const unsigned char * bgra, unsigned char * rgba, int size)
+{
+	for(long i=0 ; i<size ; i+=4)
+	{
+		rgba[i+0] = bgra[i+2];
+		rgba[i+1] = bgra[i+1];
+		rgba[i+2] = bgra[i+0];
+		rgba[i+3] = bgra[i+3];
+	}
+}
+
+/*!
+	Converts a BGRa image to greyscale
+	assumes that grey is already resized
+*/
+void
+vpImageConvert::BGRaToGrey(const unsigned char * bgra, unsigned char * grey, int size)
+{
+  for (int i =0 ; i<size ; i+=4)
+  {
+	  grey[i>>2] = (unsigned char)( 0.2126 * bgra[i+2]
+				      + 0.7152 * bgra[i+1] 
+				      + 0.0722 * bgra[i+0]) ;
   }
 }
 
