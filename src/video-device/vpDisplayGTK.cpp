@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.7 2006-07-10 16:41:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -213,7 +213,7 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
   init (I.getCols(), I.getRows(), _x, _y, _title) ;
   I.display = this ;
   I.initDisplay =  true ;
-
+  GTKinitialized = true ;
 }
 /*!
   \brief actual member used to Initialize the display of a
