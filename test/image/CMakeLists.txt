@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2006-06-27 10:08:49 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.5 2006-07-10 16:44:45 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -59,10 +59,20 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
-  # Add test
-  ADD_TEST(${binary} ${binary})
-
 ENDFOREACH(source)
+
+# Add test
+# To run some of these tests don't forget to set VISP_INPUT_IMAGE_PATH
+# environment variable to the ViSP test sequences location.
+# To get these sequence download ViSP-images.tar.gz from
+# http://www.irisa.fr/lagadic/visp/visp.html
+ADD_TEST(testConversion testConversion)
+ADD_TEST(testDisplayGTK testDisplayGTK -c)
+ADD_TEST(testDisplayX1  testDisplayX1  -c)
+ADD_TEST(testDisplayX2  testDisplayX2  -c)
+ADD_TEST(testIoPGM      testIoPGM)
+ADD_TEST(testIoPPM      testIoPPM)
+ADD_TEST(testSequence   testSequence)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

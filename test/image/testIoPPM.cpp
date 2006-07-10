@@ -1,63 +1,237 @@
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      testIoPPM.cpp
- * Project:   ViSP2
- * Author:    Eric Marchand
+ * $Id: testIoPPM.cpp,v 1.3 2006-07-10 16:44:45 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: testIoPPM.cpp,v 1.2 2006-06-23 14:45:07 brenier Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *   test reading and writting of PGM image
- *   read an image that does not exist
- *   write in a directory that does no exist
+ * This file is part of the ViSP toolkit
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Read and write PGM images on the disk.
+ *
+ * Authors:
+ * Eric Marchand
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
 
 /*!
   \example testIoPPM.cpp
 
-  \brief  test reading and writting of PPM image
-  test the exception :
-  read an image that does not exist
-  write in a directory that does no exist
+  \brief Read and write PPM images on the disk. Also test exceptions.
+
+*/
+
+// List of allowed command line options
+#define GETOPTARGS	"i:o:h"
+
+
+/*
+
+  Print the program options.
+
+  \param ipath: Input image path.
+  \param opath : Output image path.
+  \param user : Username.
+
  */
+void usage(char *name, char *badparam, string ipath, string opath, string user)
+{
+  fprintf(stdout, "\n\
+Read and write PPM images on the disk. Also test exceptions.\n\
+\n\
+SYNOPSIS\n\
+  %s [-p <input image path>] [-o <output image path>]\n\
+     [-h]\n						      \
+", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -i <input image path>                                %s\n\
+     Set image input path.\n\
+     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     and \"ViSP-images/Klimt/Klimt.ppm\" images.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment\n\
+     variable produces the same behaviour than using\n\
+     this option.\n\
+\n\
+  -o <output image path>                               %s\n\
+     Set image output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     Klimt_grey.ppm and Klimt_color.ppm output image\n\
+     are written.\n\n", 
+	  ipath.c_str(), opath.c_str(), user.c_str());
+
+}
+
+/*!
+
+  Set the program options.
+
+  \param ipath: Input image path.
+  \param opath : Output image path.
+  \param user : Username.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv,
+		string &ipath, string &opath, string user)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'i': ipath = optarg; break;
+    case 'o': opath = optarg; break;
+    case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+
+    default:
+      usage(argv[0], optarg, ipath, opath, user); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, ipath, opath, user);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
 
 int
-main()
+main(int argc, char ** argv)
 {
-  cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  " testIoPPM.cpp" <<endl << endl ;
 
-  cout <<  "  test reading and writting of PPM image" << endl ;
-  cout <<  "  read an image that does not exist" << endl ;
-  cout <<  "  write in a directory that does no exist" << endl ;
-  cout <<  "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  string env_ipath;
+  string opt_ipath;
+  string opt_opath;
+  string ipath;
+  string opath;
+  string filename;
+  string username;
 
+  // Get the VISP_IMAGE_PATH environment variable value
+  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+  if (ptenv != NULL)
+    env_ipath = ptenv;
 
+  // Set the default input path
+  if (! env_ipath.empty())
+    ipath = env_ipath;
+
+  // Set the default output path
+#ifdef UNIX
+  opt_opath = "/tmp";
+#elif WIN32
+  opt_opath = "C:/temp";
+#endif
+
+  // Get the user login name
+  vpIoTools::getUserName(username);
+  
+  // Read the command line options
+  if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
+    exit (-1);
+  }
+
+  // Get the option values
+  if (!opt_ipath.empty()) 
+    ipath = opt_ipath;
+  if (!opt_opath.empty())
+    opath = opt_opath;
+
+  // Append to the output path string, the login name of the user
+  string dirname = opath + "/" + username;
+
+  // Test if the output path exist. If no try to create it
+  if (vpIoTools::checkDirectory(dirname) == false) {
+    try {
+      // Create the dirname
+      vpIoTools::makeDirectory(dirname);
+    }
+    catch (...) {
+      usage(argv[0], NULL, ipath, opath, username);
+      cerr << endl 
+	   << "ERROR:" << endl;
+      cerr << "  Cannot create " << dirname << endl;
+      cerr << "  Check your -o " << opath << " option " << endl;
+      exit(-1);
+    }
+  }
+
+  // Compare ipath and env_ipath. If they differ, we take into account
+  // the input path comming from the command line option
+  if (opt_ipath.empty()) {
+    if (ipath != env_ipath) {
+      cout << endl
+	   << "WARNING: " << endl;
+      cout << "  Since -i <visp image path=" << ipath << "> " 
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
+	   << "  we skip the environment variable." << endl;
+    }
+  }
+
+  // Test if an input path is set
+  if (opt_ipath.empty() && env_ipath.empty()){
+    usage(argv[0], NULL, ipath, opath, username);
+    cerr << endl 
+	 << "ERROR:" << endl;
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " 
+	 << endl
+	 << "  environment variable to specify the location of the " << endl
+	 << "  image path where test images are located." << endl << endl; 
+    exit(-1);
+  }
+
+  /////////////////////////////////////////////////////////////////////
+  // Create a grey level image
   vpImage<unsigned char> I ;
 
-  // test read write unsigned char pgm image.
+  // Load a color image from the disk and convert it to a grey level one
+  filename = ipath + "/ViSP-images/Klimt/Klimt.ppm";
+  vpImageIo::readPPM(I, filename);
+  // Write the content of the image on the disk
+  filename = opath + "/Klimt_grey.ppm";
+  vpImageIo::writePGM(I, filename) ;
 
-  vpImageIo::readPPM(I,"images/Klimt.ppm") ;
-  vpImageIo::writePPM(I,"images-res/IoPPM.Klimt_char.ppm") ;
-
-  // test io error
+  // Try to load a non existing image (test for exceptions)
   try
   {
-    vpImageIo::readPPM(I,"images/image-that-does-not-exist.ppm") ;
+    // Load a non existing grey image
+    filename = ipath + "/images/image-that-does-not-exist.ppm";
+    vpImageIo::readPPM(I, filename) ;
   }
   catch(vpImageException e)
   {
@@ -65,10 +239,11 @@ main()
     cout << e << endl ;
   }
 
- // test io error
+  // Try to write an image to a non existing directory
   try
   {
-    vpImageIo::writePPM(I,"directory-that-does-not-exist/Klimt.ppm") ;
+    filename = opath + "/directory-that-does-not-exist/Klimt.ppm";
+    vpImageIo::writePPM(I, filename) ;
   }
   catch(vpImageException e)
   {
@@ -76,18 +251,23 @@ main()
     cout << e << endl ;
   }
 
-  cout << "----------------------------------------------------" << endl ;
+  /////////////////////////////////////////////////////////////////////
+  // Create a color image
   vpImage<vpRGBa> Irgba ;
 
-  // test read write unsigned char pgm image.
+  // Load a color image from the disk
+  filename = ipath + "/ViSP-images/Klimt/Klimt.ppm";
+  vpImageIo::readPPM(Irgba, filename);
+  // Write the content of the color image on the disk
+  filename = opath + "/Klimt_color.ppm";
+  vpImageIo::writePPM(Irgba, filename) ;
 
-  vpImageIo::readPPM(Irgba,"images/Klimt.ppm") ;
-  vpImageIo::writePPM(Irgba,"images-res/IoPGM.Klimt_rgba.ppm") ;
-
-  // test io error
+  // Try to load a non existing image (test for exceptions)
   try
   {
-    vpImageIo::readPPM(Irgba,"images/image-that-does-not-exist.ppm") ;
+    // Load a non existing color image
+    filename = ipath + "/images/image-that-does-not-exist.ppm";
+    vpImageIo::readPPM(Irgba, filename) ;
   }
   catch(vpImageException e)
   {
@@ -95,19 +275,17 @@ main()
     cout << e << endl ;
   }
 
- // test io error
+  // Try to write a color image to a non existing directory
   try
   {
-    vpImageIo::writePPM(Irgba,"directory-that-does-not-exist/Klimt.ppm") ;
+    filename = opath + "/directory-that-does-not-exist/Klimt.ppm";
+    vpImageIo::writePPM(Irgba, filename) ;
   }
   catch(vpImageException e)
   {
     vpERROR_TRACE("at main level");
     cout << e << endl ;
   }
-
-
-
 }
 
 /*
