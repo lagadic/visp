@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpImageIo.cpp,v 1.5 2006-07-10 16:40:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,7 +68,7 @@ vpImageIo::openFileRead(const char filename[FILENAME_MAX])
 
 FILE *
 vpImageIo::openFileWrite(const char filename[FILENAME_MAX],
-			 const char *s)
+			 const char *mode)
 {
   FILE *fd ;
 
@@ -81,7 +81,7 @@ vpImageIo::openFileWrite(const char filename[FILENAME_MAX],
   }
 
   // Ouverture de l'image.
-  if ((fd = fopen(filename, s)) == NULL)
+  if ((fd = fopen(filename, mode)) == NULL)
   {
     vpERROR_TRACE("cannot open file") ;
     throw (vpImageException(vpImageException::ioError,
@@ -89,6 +89,55 @@ vpImageIo::openFileWrite(const char filename[FILENAME_MAX],
   }
   return fd ;
 }
+
+FILE *
+vpImageIo::openFileRead(const string filename)
+{
+
+  FILE *fd ;
+
+  // Lecture du nom du fichier image.
+  if (filename.empty()) {
+    vpERROR_TRACE("filename empty ") ;
+    throw (vpImageException(vpImageException::noFileNameError,
+			    "filename empty ")) ;
+  }
+  
+  // Ouverture de l'image.
+  if ((fd = fopen(filename.c_str(), "r")) == NULL)
+  {
+    vpERROR_TRACE("cannot open file") ;
+    throw (vpImageException(vpImageException::ioError,
+			    "cannot open file")) ;
+  }
+  return fd ;
+}
+
+FILE *
+vpImageIo::openFileWrite(const string filename,
+			 const string mode)
+{
+  FILE *fd ;
+
+ // Lecture du nom du fichier image.
+  if (filename.empty())
+  {
+    vpERROR_TRACE("filename empty ") ;
+    throw (vpImageException(vpImageException::noFileNameError,
+			    "filename empty ")) ;
+  }
+
+  // Ouverture de l'image.
+  if ((fd = fopen(filename.c_str(), mode.c_str())) == NULL)
+  {
+    vpERROR_TRACE("cannot open file") ;
+    throw (vpImageException(vpImageException::ioError,
+			    "cannot open file")) ;
+  }
+  return fd ;
+}
+
+
 
 
 /*

@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageIoPnm.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
+ *  $Id: vpImageIoPnm.cpp,v 1.5 2006-07-10 16:40:04 fspindle Exp $
  *
  * Description
  * ============
@@ -29,7 +29,8 @@
 
 //image  conversion
 #include <visp/vpImageConvert.h>
-#define MAX_LEN 100
+
+const int vpImageIo::vpMAX_LEN = 100;
 
 
 
@@ -191,7 +192,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   int   line;
   int   is255;
   char* err ;
-  char  str[MAX_LEN];
+  char  str[vpMAX_LEN];
   int   w, h;
 
   // Test the filename
@@ -215,7 +216,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   // Read the first line with magic number P5
   line = 0;
 
-  err = fgets(str, MAX_LEN - 1, fd);
+  err = fgets(str, vpMAX_LEN - 1, fd);
   line++;
   if (err == NULL)
   {
@@ -244,7 +245,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
 
   // Jump the possible comment, or empty line and read the following line
   do {
-    err = fgets(str, MAX_LEN - 1, fd);
+    err = fgets(str, vpMAX_LEN - 1, fd);
     line++;
     if (err == NULL) {
       fprintf(stderr, "couldn't read line %d of file %s\n", line, filename);
@@ -277,7 +278,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   }
 
   // Read 255
-  err = fgets(str, MAX_LEN - 1, fd);
+  err = fgets(str, vpMAX_LEN - 1, fd);
   line++;
   if (err == NULL) {
     fclose (fd);
@@ -346,8 +347,6 @@ vpImageIo::readPGM(vpImage<vpRGBa> &I,
 
     vpImageConvert::convert(Itmp, I) ;
 
-
-    printf("%d \n",I[10][10].R);
   }
   catch(...)
   {
@@ -413,7 +412,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   int   line;
   int   is255;
   char* err ;
-  char  str[MAX_LEN];
+  char  str[vpMAX_LEN];
   int   w, h;
 
   // Test the filename
@@ -437,7 +436,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   // Read the first line with magic number P5
   line = 0;
 
-  err = fgets(str, MAX_LEN - 1, fd);
+  err = fgets(str, vpMAX_LEN - 1, fd);
   line++;
   if (err == NULL)
   {
@@ -466,7 +465,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 
   // Jump the possible comment, or empty line and read the following line
   do {
-    err = fgets(str, MAX_LEN - 1, fd);
+    err = fgets(str, vpMAX_LEN - 1, fd);
     line++;
     if (err == NULL) {
       fprintf(stderr, "couldn't read line %d of file %s\n", line, filename);
@@ -499,7 +498,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   }
 
   // Read 255
-  err = fgets(str, MAX_LEN - 1, fd);
+  err = fgets(str, vpMAX_LEN - 1, fd);
   line++;
   if (err == NULL) {
     fclose (fd);
@@ -651,7 +650,159 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
   fclose(f);
 }
 
-#undef MAX_LEN
+
+/*!
+  \brief read a PGM file and initialize  a scalar image
+
+
+  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
+  memory for the corresponding image, and set the bitmap whith the content of
+  the file.
+
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+*/
+
+void
+vpImageIo::readPGM(vpImage<unsigned char> &I,
+		   const string filename)
+{
+  vpImageIo::readPGM(I, filename.c_str());
+}
+
+/*!
+  \brief read a PGM file and initialize  a scalar image
+
+
+  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
+  memory for the corresponding image, and set the bitmap whith the content of
+  the file.
+
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+*/
+
+void
+vpImageIo::readPGM(vpImage<vpRGBa> &I,
+		   const  string filename)
+{
+  vpImageIo::readPGM(I, filename.c_str());
+}
+
+/*!
+  \brief
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a portable gray pixmap (PGM P5) file.
+*/
+
+void
+vpImageIo::writePGM(const vpImage<unsigned char> &I,
+		    const string filename)
+{
+  vpImageIo::writePGM(I, filename.c_str());
+}
+
+/*!
+  \brief
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a portable gray pixmap (PGM P5) file.
+*/
+
+void
+vpImageIo::writePGM(const vpImage<short> &I,
+		    const string filename)
+{
+
+  vpImageIo::writePGM(I, filename.c_str());
+}
+
+/*!
+  \brief
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a portable gray pixmap (PGM P5) file.
+  Color image is converted into a grayscale image.
+*/
+
+void
+vpImageIo::writePGM(const vpImage<vpRGBa> &I,
+		    const string filename)
+{
+  vpImageIo::writePGM(I, filename.c_str());
+}
+
+//--------------------------------------------------------------------------
+// PPM
+//--------------------------------------------------------------------------
+
+/*!
+  \brief
+  Read the contents of the portable pixmap (PPM P6) filename, allocate memory
+  for the corresponding gray level image, convert the data in gray level, and
+  set the bitmap whith the gray level data. That means that the image \e I is a
+  "black and white" rendering of the original image in \e filename, as in a
+  black and white photograph. The quantization formula used is \f$0,299 r +
+  0,587 g + 0,114 b\f$.
+
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+
+*/
+void
+vpImageIo::readPPM(vpImage<unsigned char> &I, const string filename)
+{
+  vpImageIo::readPPM(I, filename.c_str());
+}
+
+/*!  \brief Read the contents of the portable pixmap (PPM P6) filename,
+  allocate memory for the corresponding vpRGBa image.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+*/
+void
+vpImageIo::readPPM(vpImage<vpRGBa> &I, const string filename)
+{
+  vpImageIo::readPPM(I, filename.c_str());
+}
+
+/*!
+  \brief
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a portable gray pixmap (PPM P6) file.
+  grayscale image is converted into a color image vpRGBa.
+*/
+
+void
+vpImageIo::writePPM(const vpImage<unsigned char> &I, const string filename)
+{
+  vpImageIo::writePPM(I, filename.c_str());
+}
+
+/*!
+  \brief
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a portable gray pixmap (PPM P6) file.
+*/
+void
+vpImageIo::writePPM(const vpImage<vpRGBa> &I, const string filename)
+{
+
+  vpImageIo::writePPM(I, filename.c_str());
+}
+
+
+
+#undef vpMAX_LEN
 /*
  * Local variables:
  * c-basic-offset: 2

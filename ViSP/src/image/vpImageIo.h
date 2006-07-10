@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.h,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpImageIo.h,v 1.4 2006-07-10 16:40:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,6 +45,7 @@
 #define vpIMAGEIO_H
 
 #include <stdio.h>
+#include <iostream>
 
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>
@@ -60,9 +61,14 @@ class VISP_EXPORT vpImageIo
 {
 
 private:
+  static const int vpMAX_LEN;
+
   static FILE * openFileRead(const char filename[FILENAME_MAX]) ;
   static FILE * openFileWrite(const char filename[FILENAME_MAX],
-			      const char *s="w") ;
+			      const char *mode="w") ;
+
+  static FILE * openFileRead(const string filename) ;
+  static FILE * openFileWrite(const string filename, const string mode="w") ;
 
 public:
 
@@ -90,6 +96,28 @@ public:
 		const char *filename) ;
 
 
+  //! Read PGM images
+  static
+  void readPGM(vpImage<unsigned char> &I,
+	       const string filename) ;
+
+  //! Read PGM images
+  static
+  void readPGM(vpImage<vpRGBa> &I,
+	       const string filename) ;
+  //! Write PGM images
+  static
+  void writePGM(const vpImage<unsigned char> &I,
+		const string filename) ;
+  //! Write PGM images
+  static
+  void writePGM(const vpImage<short> &I,
+		const string filename) ;
+  //! Write PGM images
+  static
+  void writePGM(const vpImage<vpRGBa> &I,
+		const string filename) ;
+
 
 
   //! Read PPM images
@@ -108,6 +136,24 @@ public:
   static
   void writePPM(const vpImage<vpRGBa> &I,
 		const char *filename) ;
+
+  //! Read PPM images
+  static
+  void readPPM(vpImage<unsigned char> &I,
+	       const string filename) ;
+  //! Read PPM images
+  static
+  void readPPM(vpImage<vpRGBa> &I,
+	       const string filename) ;
+  //! Write PPM images
+  static
+  void writePPM(const vpImage<unsigned char> &I,
+		const string filename) ;
+  //! Write PPM images
+  static
+  void writePPM(const vpImage<vpRGBa> &I,
+		const string filename) ;
+
   } ;
 #endif
 
