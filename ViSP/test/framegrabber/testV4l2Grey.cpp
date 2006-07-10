@@ -1,102 +1,233 @@
+/****************************************************************************
+ *
+ * $Id: testV4l2Grey.cpp,v 1.9 2006-07-10 16:44:44 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Acquire images using 1394 device with cfox (MAC OSX) and display it
+ * using GTK or GTK.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
+
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
 /*!
   \example testV4l2Grey.cpp
 
-  Test frame grabbing capabilities using video 4 linux two video device.
+  Test frame grabbing capabilities using video for linux two video device.
   Only grabbing of grey level images is tested.
 */
 
 #ifdef VISP_HAVE_V4L2
 
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
+
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGTK.h>
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
 
+// List of allowed command line options
+#define GETOPTARGS	"f:i:hs:"
+
+/*!
+
+  Print the program options.
+
+  \param fps : Framerate.
+  \param input : Card input number.
+  \param scale : Subsampling factor.
+
+ */
+void usage(char *name, char *badparam, unsigned fps, unsigned input, 
+	   unsigned scale)
+{
+  fprintf(stdout, "\n\
+Grab grey level images using the Video For Linux Two framegrabber. \n\
+Display these images using X11 or GTK.\n\
+\n\
+SYNOPSIS\n\
+  %s [-f <fps=25|50>] [-i <input=0|1|2|3> \n\
+     [-s <scale=1|2|4>] [-h]\n", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                                  Default\n\
+  -f <fps>                                                  %u\n\
+     Framerate in term od number of images per second.\n\
+     Possible values are 25 (for 25Hz) or 50 (for %) Hz)\n\
+\n\
+  -i <input>                                                %u\n\
+     Framegrabber active input. Values can be 0, 1, 2, 4\n\
+\n\
+  -s <scale>                                                %u\n\
+     Framegrabber subsampling factor. \n\
+     If 1, full resolution image acquisition 768x576.\n\
+     If 2, half resolution acquisition 384x288. The \n\
+     subsampling is achieved by the hardware.\n\
+\n\
+", 
+	  fps, input, scale);
+
+}
+
+/*!
+
+  Set the program options.
+
+  \param fps : Framerate.
+  \param input : Card input.
+  \param scale : Subsampling factor.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv, unsigned &fps, unsigned &input, 
+		unsigned &scale)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'f': fps = (unsigned) atoi(optarg); break;
+    case 'i': input = (unsigned) atoi(optarg); break;
+    case 's': scale = (unsigned) atoi(optarg); break;
+    case 'h': usage(argv[0], NULL, fps, input, scale); return false; break;
+
+    default:
+      usage(argv[0], optarg, fps, input, scale); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, fps, input, scale);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
 
 int
 main(int argc, char ** argv)
 {
-  cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  "  test frame grabbing with Video 4 Linux 2" << endl ;
-  cout <<  "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  unsigned fps = 25;
+  unsigned input = vpV4l2Grabber::DEFAULT_INPUT;
+  unsigned scale = vpV4l2Grabber::DEFAULT_SCALE;
 
-  int fps = 25;
-
-  vpArgvInfo argTable[] =
-    {
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {NULL, ARGV_HELP, NULL, NULL," test frame grabbing "},
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {"-fps", ARGV_INT, (char *) 1, (char *) &fps,
-      "Frame per second (25 or 50)."},
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {NULL, ARGV_END, NULL,NULL,NULL}
-    } ;
-  //Parsing of the table
-  if (vpParseArgv::parse(&argc,argv,argTable,0))
-  {
-    cout << endl << "Usage : " << argv[0] << "  [-help] [-fps 50] [-fps 25] "<<endl ;
-    exit(1) ;
+  // Read the command line options
+  if (getOptions(argc, argv, fps, input, scale) == false) {
+    exit (-1);
   }
 
+  // Declare an image, this is a gray level image (unsigned char). It
+  // size is not defined yet. It will be defined when the image will
+  // acquired the first time.
   vpImage<unsigned char> I ;
 
-
+  // Creates the grabber
   vpV4l2Grabber g;
 
-  g.setInput(vpV4l2Grabber::DEFAULT_INPUT);
-  g.setScale(vpV4l2Grabber::DEFAULT_SCALE);
-  g.setFramerate(vpV4l2Grabber::framerate_25fps);
-  g.open(I) ;
-
   try{
+    // Initialize the grabber
+    g.setInput(input);
+    g.setScale(scale);
+    if (fps == 25)
+      g.setFramerate(vpV4l2Grabber::framerate_25fps);
+    else
+      g.setFramerate(vpV4l2Grabber::framerate_50fps);
+    // Open the framegrabber with the specified settings
+    g.open(I) ;
+    // Acquire an image
     g.acquire(I) ;
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
-    throw ;
+    vpERROR_TRACE("Cannot acquire an image...") ;
+    exit(-1);
   }
 
+  cout << "Image size: " << I.getCols() << "  " << I.getRows() <<endl  ;
 
-  cout << I.getCols() << "  " << I.getRows() <<endl  ;
-
-  vpTRACE(" ") ;
-
-  vpDisplayX display(I,100,100,"Video4Linux2 grabbing... ") ;
-  vpTRACE(" ") ;
+  // We open a window using either X11 or GTK.
+  // Its size is automatically defined by the image (I) size
+#if defined VISP_HAVE_X11
+  vpDisplayX display(I, 100, 100,"V4L2 grabbing - Display X...") ;
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK display(I, 100, 100,"V4L2 grabbing - Display GTK...") ;
+#endif
 
   try{
+    // Display the image
+    // The image class has a member that specify a pointer toward
+    // the display that has been initialized in the display declaration
+    // therefore is is no longuer necessary to make a reference to the
+    // display variable.
     vpDisplay::display(I) ;
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
-    throw ;
+    vpERROR_TRACE("Error while displaying the image") ;
+    exit(-1);
   }
 
-  vpTRACE(" ") ;
-
+  // Acquisition loop
   long cpt = 1;
   while(cpt ++ < 100)
   {
+    // Measure the initial time of an iteration
     double t = vpTime::measureTimeMs();
+    // Acquire the image
     g.acquire(I) ;
+    // Display the image
     vpDisplay::display(I) ;
+    // Flush the display
     vpDisplay::flush(I) ;
+    // Print the iteration duration
     cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
   }
 
   g.close();
 }
+#else
+int
+main()
+{
+  vpTRACE("X11 or GTK display are not avalaible") ;
+}
+#endif
 #else
 int
 main()

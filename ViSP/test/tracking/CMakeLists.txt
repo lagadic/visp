@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:21 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2006-07-10 16:44:45 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -59,10 +59,17 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
-  # Add test
-  ADD_TEST(${binary} ${binary})
 
 ENDFOREACH(source)
+
+# Add test
+ADD_TEST(testAutoDetectDot testAutoDetectDot)
+ADD_TEST(testMeCircle1     testMeCircle1 -c)
+ADD_TEST(testMeEllipse1    testMeEllipse1)
+ADD_TEST(testMeLine1       testMeLine1)
+ADD_TEST(testTrackDot2     testTrackDot2 -c)
+ADD_TEST(testTrackDot3     testTrackDot3)
+ADD_TEST(testTrackDot      testTrackDot -c)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

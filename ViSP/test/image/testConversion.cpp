@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.2 2006-06-29 13:38:24 fspindle Exp $
+ * $Id: testConversion.cpp,v 1.3 2006-07-10 16:44:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,103 +35,221 @@
  *
  *****************************************************************************/
 
+#include <stdlib.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
 
 /*!
   \example testConversion.cpp
 
-  \brief Test image conversion.
+  \brief Manipulation of image conversions.
 
 */
+
+// List of allowed command line options
+#define GETOPTARGS	"i:o:h"
+
+/*
+
+  Print the program options.
+
+  \param ipath: Input image path.
+  \param opath : Output image path.
+  \param user : Username.
+
+ */
+void usage(char *name, char *badparam, string ipath, string opath, string user)
+{
+  fprintf(stdout, "\n\
+Test image conversions.\n\
+\n\
+SYNOPSIS\n\
+  %s [-p <input image path>] [-o <output image path>]\n\
+     [-h]\n						      \
+", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -i <input image path>                                %s\n\
+     Set image input path.\n\
+     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     and \"ViSP-images/Klimt/Klimt.ppm\" images.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment\n\
+     variable produces the same behaviour than using\n\
+     this option.\n\
+\n\
+  -o <output image path>                               %s\n\
+     Set image output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     Klimt_grey.pgm and Klimt_color.ppm output images\n\
+     are written.\n\n", 
+	  ipath.c_str(), opath.c_str(), user.c_str());
+
+}
+
+/*!
+
+  Set the program options.
+
+  \param ipath: Input image path.
+  \param opath : Output image path.
+  \param user : Username.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv,
+		string &ipath, string &opath, string user)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'i': ipath = optarg; break;
+    case 'o': opath = optarg; break;
+    case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+
+    default:
+      usage(argv[0], optarg, ipath, opath, user); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, ipath, opath, user);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
 
 int
 main(int argc, char ** argv)
 {
-  char *_ipath = NULL;
-  char *ipath = new char [FILENAME_MAX];
-  char *_opath = NULL;
-  char *opath = new char [FILENAME_MAX];
-  char *filename = new char [FILENAME_MAX];
 
-  sprintf(ipath, "images");
-  sprintf(opath, "images-res");
-  _ipath = ipath;
-  _opath = opath;
+  string env_ipath;
+  string opt_ipath;
+  string opt_opath;
+  string ipath;
+  string opath;
+  string filename;
+  string username;
 
-  vpArgvInfo argTable[] =
-    {
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {NULL, ARGV_HELP, NULL, NULL," Test image conversion "},
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {"-i", ARGV_STRING, (char *) 1, (char *) &_ipath,
-      "Set image input path. Default: "},
-      {"-o", ARGV_STRING, (char *) 1, (char *) &_opath,
-      "Set image output path. Default: "},
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {NULL, ARGV_HELP, NULL, NULL,"     "},
-      {NULL, ARGV_END, NULL,NULL,NULL}
-    } ;
-  //Parsing of the table
-  if (vpParseArgv::parse(&argc,argv,argTable,0))
-  {
-    cout << endl << "Usage : " << argv[0]
-	 << " [-i <image input path>] [-o <image output path>]" << endl
-	 << " [-help] " << endl << endl;
-    delete [] ipath;
-    delete [] opath;
-    delete [] filename;
-    exit(1) ;
+  // Get the VISP_IMAGE_PATH environment variable value
+  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+  if (ptenv != NULL)
+    env_ipath = ptenv;
+
+  // Set the default input path
+  if (! env_ipath.empty())
+    ipath = env_ipath;
+
+  // Set the default output path
+#ifdef UNIX
+  opt_opath = "/tmp";
+#elif WIN32
+  opt_opath = "C:/temp";
+#endif
+
+  // Get the user login name
+  vpIoTools::getUserName(username);
+  
+  // Read the command line options
+  if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
+    exit (-1);
   }
 
-  if (_ipath != NULL)
-    sprintf(ipath, "%s", _ipath);
-  if (_opath != NULL)
-    sprintf(opath, "%s", _opath);
+  // Get the option values
+  if (!opt_ipath.empty()) 
+    ipath = opt_ipath;
+  if (!opt_opath.empty())
+    opath = opt_opath;
 
+  // Append to the output path string, the login name of the user
+  string dirname = opath + "/" + username;
+
+  // Test if the output path exist. If no try to create it
+  if (vpIoTools::checkDirectory(dirname) == false) {
+    try {
+      // Create the dirname
+      vpIoTools::makeDirectory(dirname);
+    }
+    catch (...) {
+      usage(argv[0], NULL, ipath, opath, username);
+      cerr << endl 
+	   << "ERROR:" << endl;
+      cerr << "  Cannot create " << dirname << endl;
+      cerr << "  Check your -o " << opath << " option " << endl;
+      exit(-1);
+    }
+  }
+
+  // Compare ipath and env_ipath. If they differ, we take into account
+  // the input path comming from the command line option
+  if (opt_ipath.empty()) {
+    if (ipath != env_ipath) {
+      cout << endl
+	   << "WARNING: " << endl;
+      cout << "  Since -i <visp image path=" << ipath << "> " 
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
+	   << "  we skip the environment variable." << endl;
+    }
+  }
+
+  // Test if an input path is set
+  if (opt_ipath.empty() && env_ipath.empty()){
+    usage(argv[0], NULL, ipath, opath, username);
+    cerr << endl 
+	 << "ERROR:" << endl;
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " 
+	 << endl
+	 << "  environment variable to specify the location of the " << endl
+	 << "  image path where test images are located." << endl << endl; 
+    exit(-1);
+  }
+  
   vpImage<unsigned char> Ig ; // Grey image
   vpImage<vpRGBa> Ic ; // Color image
 
   //-------------------- .pgm -> .ppm
   vpTRACE("Convert a grey image (.pgm) to a color image (.ppm)");
   // Load a grey image from the disk
-  sprintf(filename, "%s/Klimt.pgm", ipath);
-  vpTRACE("Load %s", filename);
+  filename = ipath + "/ViSP-images/Klimt/Klimt.pgm";
+  vpCTRACE << "Load " <<  filename << endl;
   vpImageIo::readPGM(Ig, filename) ;
   // Create a color image from the grey
   vpImageConvert::convert(Ig, Ic);
-  sprintf(filename, "%s/Klimt_color.pgm", opath);
-  vpTRACE("Write %s", filename);
+  filename = opath + "/Klimt_color.ppm";
+  vpCTRACE << "Write " << filename << endl;
   vpImageIo::writePPM(Ic, filename) ;
 
   //-------------------- .ppm -> .pgm
   vpTRACE("Convert a color image (.ppm) to a grey image (.pgm)");
   // Load a color image from the disk
-  sprintf(filename, "%s/Klimt.ppm", ipath);
-  vpTRACE("Load %s", filename);
+  filename = ipath + "/ViSP-images/Klimt/Klimt.ppm";
+  vpCTRACE << "Load " << filename << endl;
   vpImageIo::readPPM(Ic, filename) ;
   // Create a grey image from the color
   vpImageConvert::convert(Ic, Ig);
-  sprintf(filename, "%s/Klimt_grey.ppm", opath);
-  vpTRACE("Write %s", filename);
+  filename = opath + "/Klimt_grey.pgm";
+  vpCTRACE << "Write " << filename << endl;
   vpImageIo::writePPM(Ig, filename) ;
 
   //-------------------- YUV -> RGB
   unsigned char y=187, u=10, v=30;
   unsigned char r, g, b;
 
+  // Convert a YUV pixel value to a RGB value 
   vpImageConvert::YUVToRGB(y, u, v, r, g, b);
   vpTRACE("y(%d) u(%d) v(%d) = r(%d) g(%d) b(%d)", y, u, v, r, g, b);
 
-
-  //--------------------
-  delete [] ipath;
-  delete [] opath;
-  delete [] filename;
 }
 
 /*
