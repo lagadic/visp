@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.5 2006-07-06 12:34:03 brenier Exp $
+ * $Id: vpImageConvert.h,v 1.6 2006-07-11 15:12:41 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -126,9 +126,9 @@ public:
   static void GreyToRGB(unsigned char* grey, 
 			unsigned char* rgb, int size);
 
-  static void BGRaToRGBa(const unsigned char * bgra, unsigned char * rgba, int size);
+  static void BGRToRGBa(unsigned char * bgr, unsigned char * rgba, int cols, int rows, bool flip);
 
-  static void BGRaToGrey(const unsigned char * bgra, unsigned char * grey, int size);
+  static void BGRToGrey(unsigned char * bgr, unsigned char * grey, int cols, int rows, bool flip);
 } ;
 
 #endif

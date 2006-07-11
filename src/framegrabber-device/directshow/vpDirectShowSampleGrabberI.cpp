@@ -54,33 +54,38 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
 	//if there has been a frame demand
 	if(acqGrayDemand || acqRGBaDemand)
 	{
-		//check if the connected media is compatible (TODO maybe not necessary)
+		//check if the connected media is compatible 
 		if(connectedMediaType.formattype==FORMAT_VideoInfo)
 		{
-			//if the buffer contains an ARGB32 image (DS ARGB32 <=> BGRA)
-			if(connectedMediaType.subtype==MEDIASUBTYPE_ARGB32)
+			//if the buffer contains a RGB24 image (DS RGB24 <=> BGR)
+			if(connectedMediaType.subtype==MEDIASUBTYPE_RGB24)
 			{
 				//retrieve the image information
 				VIDEOINFOHEADER *pVih = reinterpret_cast<VIDEOINFOHEADER*>(connectedMediaType.pbFormat);
 				BITMAPINFOHEADER bmpInfo = pVih->bmiHeader;
 
+				//if biHeight > 0 and the source is rgb
+				//then  the image needs to be verticaly flipped
+				bool flip = bmpInfo.biHeight>=0;
+ 
 				//if it was an RGBa image demand
 				if(acqRGBaDemand)
 				{
 					//first, resizes the image as needed
-					rgbaIm->resize(bmpInfo.biHeight, bmpInfo.biWidth);
+					rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
 					//copy and convert the image
-					vpImageConvert::BGRaToRGBa(pBuffer,
-							 (unsigned char*) rgbaIm->bitmap, BufferLen);
+					vpImageConvert::BGRToRGBa(pBuffer,(unsigned char*) rgbaIm->bitmap,
+								  rgbaIm->getCols() , rgbaIm->getRows(), flip);
 					//reset the demand boolean
 					acqRGBaDemand = false;
 				}
 				else//if it was a grayscale image demand
 				{
 					//first, resizes the image as needed
-					grayIm->resize(bmpInfo.biHeight, bmpInfo.biWidth);
+					grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
 					//copy and convert the image
-					vpImageConvert::BGRaToGrey(pBuffer, grayIm->bitmap, BufferLen);
+					vpImageConvert::BGRToGrey(pBuffer, grayIm->bitmap,
+								  grayIm->getCols(), grayIm->getRows(), flip);
 					//reset the demand boolean
 					acqGrayDemand = false;
 				}

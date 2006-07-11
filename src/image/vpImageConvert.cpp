@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.5 2006-07-06 12:34:03 brenier Exp $
+ * $Id: vpImageConvert.cpp,v 1.6 2006-07-11 15:12:41 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -518,34 +518,73 @@ vpImageConvert::GreyToRGB(unsigned char* grey,
 
 
 /*!
-	Converts a BGRa image to RGBa
+	Converts a BGR image to RGBa
+	Flips the image verticaly if needed
 	assumes that rgba is already resized
 */
 void 
-vpImageConvert::BGRaToRGBa(const unsigned char * bgra, unsigned char * rgba, int size)
+vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba, int cols, int rows, bool flip)
 {
-	for(long i=0 ; i<size ; i+=4)
+	//if we have to flip the image, we start from the end last scanline so the step is negative
+	int lineStep = (flip) ? -(cols*3) : (cols*3);
+
+	//starting source address = last line if we need to flip the image
+	unsigned char * src = (flip) ? (bgr+(cols*rows*3)+lineStep) : bgr;
+	unsigned char * line;
+
+	int j=0;
+	int i=0;
+
+	for(i=0 ; i < rows ; i++)
 	{
-		rgba[i+0] = bgra[i+2];
-		rgba[i+1] = bgra[i+1];
-		rgba[i+2] = bgra[i+0];
-		rgba[i+3] = bgra[i+3];
+	  line = src;
+	  for( j=0 ; j < cols ; j++)
+	    {
+   		*rgba++ = *(line+2);
+		*rgba++ = *(line+1);
+		*rgba++ = *(line+0);
+		*rgba++ = 0;
+
+		line+=3;
+	    }
+	  //go to the next line
+	  src+=lineStep;
 	}
+
 }
 
 /*!
-	Converts a BGRa image to greyscale
+	Converts a BGR image to greyscale
+	Flips the image verticaly if needed
 	assumes that grey is already resized
 */
 void
-vpImageConvert::BGRaToGrey(const unsigned char * bgra, unsigned char * grey, int size)
+vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey, int cols, int rows, bool flip)
 {
-  for (int i =0 ; i<size ; i+=4)
-  {
-	  grey[i>>2] = (unsigned char)( 0.2126 * bgra[i+2]
-				      + 0.7152 * bgra[i+1] 
-				      + 0.0722 * bgra[i+0]) ;
-  }
+  //if we have to flip the image, we start from the end last scanline so the step is negative
+  int lineStep = (flip) ? -(cols*3) : (cols*3);
+
+  //starting source address = last line if we need to flip the image
+  unsigned char * src = (flip) ? bgr+(cols*rows*3)+lineStep : bgr;
+  unsigned char * line;
+
+  int j=0;
+  int i=0;
+  
+  for(i=0 ; i < rows ; i++)
+    {
+      line = src;
+      for( j=0 ; j < cols ; j++)
+	{
+	  *grey++ = (unsigned char)( 0.2126 * *(line+2)
+				    + 0.7152 * *(line+1) 
+				    + 0.0722 * *(line+0)) ;
+	  line+=3;
+	}
+
+      //go to the next line
+      src+=lineStep;
+    }
 }
 
 
