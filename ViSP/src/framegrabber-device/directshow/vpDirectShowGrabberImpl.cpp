@@ -359,8 +359,8 @@ bool vpDirectShowGrabberImpl::createSampleGrabber(CComPtr<IBaseFilter>& ppGrabbe
 	
 	mt.majortype = MEDIATYPE_Video;
 
-	//ask for a ARGB32 connection
-	mt.subtype = MEDIASUBTYPE_ARGB32;
+	//ask for an RGB24 connection (argb seems to cause some problems)
+	mt.subtype = MEDIASUBTYPE_RGB24;
 
 
 	if(FAILED(hr = pGrabberI->SetMediaType(&mt)))
@@ -384,16 +384,16 @@ bool vpDirectShowGrabberImpl::createSampleGrabber(CComPtr<IBaseFilter>& ppGrabbe
 	\param pGrabber The grabber
 	\return Was the operation successful
 */
-bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& pCapSource, CComPtr<IBaseFilter>& pGrabberFilter)
+bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& _pCapSource, CComPtr<IBaseFilter>& _pGrabberFilter)
 {
 	//get the capture source's output pin
 	CComPtr<IPin> pCapSourcePin;
-	if(FAILED(pBuild->FindPin(pCapSource, PINDIR_OUTPUT, NULL, NULL, false, 0, &pCapSourcePin)))
+	if(FAILED(pBuild->FindPin(_pCapSource, PINDIR_OUTPUT, NULL, NULL, false, 0, &pCapSourcePin)))
 		return false;
 	
 	//get the grabber's input pin
 	CComPtr<IPin> pGrabberInputPin;
-	if(FAILED(pBuild->FindPin(pGrabberFilter, PINDIR_INPUT, NULL, NULL, false, 0, &pGrabberInputPin)))
+	if(FAILED(pBuild->FindPin(_pGrabberFilter, PINDIR_INPUT, NULL, NULL, false, 0, &pGrabberInputPin)))
 		return false;
 
 	//connect the two of them
@@ -401,12 +401,12 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& pCapS
 		return false;
 
 	//not used anymore, we can release them
-	pCapSourcePin.Release();
 	pGrabberInputPin.Release();
+	pCapSourcePin.Release();
 
 	//get the grabber's output pin
 	CComPtr<IPin> pGrabberOutputPin;
-	if(FAILED(pBuild->FindPin(pGrabberFilter, PINDIR_OUTPUT, NULL, NULL, false, 0, &pGrabberOutputPin)))
+	if(FAILED(pBuild->FindPin(_pGrabberFilter, PINDIR_OUTPUT, NULL, NULL, false, 0, &pGrabberOutputPin)))
 		return false;
 
 	//get the Null renderer
@@ -432,6 +432,7 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& pCapS
 	return true;
 }
 
+
 /*!
 	Removes all the filters from the filter graph
 	
@@ -449,7 +450,7 @@ bool vpDirectShowGrabberImpl::removeAll()
     while(pEnum->Next(1, &pFilter, &cFetched) == S_OK)
     {
 		if(FAILED(hr = pGraph->RemoveFilter(pFilter))) return false;
-        pFilter.Release();
+		pFilter.Release();
 		pEnum->Reset();
     }
 
@@ -571,7 +572,7 @@ bool vpDirectShowGrabberImpl::setInput(unsigned int n)
 
 
 	//we add the grabber back in the graph
-	pGraph->AddFilter(pGrabberFilter,NULL);
+	pGraph->AddFilter(pGrabberFilter,L"SampleGrabber");
 
 	//get the n-th device's filter
 	if(!getDevice(n,pCapSource))

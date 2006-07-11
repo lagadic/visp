@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.h,v 1.1 2006-07-03 09:42:10 brenier Exp $
+ * $Id: vpDirectShowGrabberImpl.h,v 1.2 2006-07-11 15:12:41 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -120,7 +120,7 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		CComPtr<ISampleGrabber> pGrabberI;		//the sample grabber's interface and filter
 		CComPtr<IBaseFilter> pGrabberFilter;
 		
-		CComPtr<IMediaControl> pControl;		//The DS filter graph control interface
+		CComPtr<IMediaControl> pControl; 		//The DS filter graph control interface
 		CComPtr<IMediaEvent> pEvent;			//The DS filter graph event interface
 		
 		vpDirectShowSampleGrabberI sgCB;		//Interface used to implement the frame grabber callback
@@ -165,6 +165,7 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 
 		//removes all the filters in the graph
 		bool removeAll();
+
 };
 
 #endif
