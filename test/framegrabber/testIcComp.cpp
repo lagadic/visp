@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIcComp.cpp,v 1.8 2006-07-10 16:44:44 fspindle Exp $
+ * $Id: testIcComp.cpp,v 1.9 2006-07-13 08:05:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -220,7 +220,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  vpTRACE("You do not have X11 or GTK display functionalities..."") ;
+  vpTRACE("You do not have X11 or GTK display functionalities...") ;
 }
 #endif
 #else
