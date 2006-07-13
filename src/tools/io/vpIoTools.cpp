@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpIoTools.cpp,v 1.6 2006-07-13 06:59:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,14 +43,59 @@
 #if defined UNIX
 #  include <unistd.h>
 #elif defined WIN32
+#  include <windows.h>
 #  include <direct.h>
 #endif
 #include <visp/vpIoTools.h>
 #include <visp/vpDebug.h>
 #include <visp/vpIoException.h>
 
+/*!
+  Get the user name.
+
+  \param username : The user name.
+
+  \exception ERRCantGetUserName : If this method cannot get the user name.
+*/
 void
-vpIoTools::checkDirectory(const char *dir )
+vpIoTools::getUserName(string &username)
+{
+#if defined UNIX
+  // Get the user name. 
+  char *_username;
+  _username = getlogin();
+  username = _username;
+#elif defined WIN32
+  int info_buffer_size = 1024;
+  TCHAR  *infoBuf = new TCHAR [info_buffer_size];
+  DWORD  bufCharCount = info_buffer_size;
+  // Get the user name. 
+  if( ! GetUserName( infoBuf, &bufCharCount ) ) {
+    delete [] infoBuf;
+    vpERROR_TRACE( "Cannot get the username" );
+    throw(vpIoException(vpIoException::ERRCantGetUserName,
+			"Cannot get the username")) ;
+
+  }
+  username = infoBuf;
+  delete [] infoBuf;
+#endif
+}
+
+/*!
+
+  Check if a directory exists.
+
+  \param dirname : Directory to test if it exists.
+
+  \return true : If the directory exists and is accessible with write access.
+
+  \return false : If dirname string is null, or is not a directory, or
+  has no write access.
+
+*/
+bool
+vpIoTools::checkDirectory(const char *dirname )
 {
 #if defined UNIX
   struct stat stbuf;
@@ -58,26 +103,20 @@ vpIoTools::checkDirectory(const char *dir )
   struct _stat stbuf;
 #endif
 
-  if ( dir == NULL || dir[0] == '\0' ) {
-    vpERROR_TRACE( " invalid directory name\n" );
-    throw(vpIoException(vpIoException::ERRInvalidDirectoryName,
-			"invalid directory name")) ;
+  if ( dirname == NULL || dirname[0] == '\0' ) {
+    return false;
   }
 
 #if defined UNIX
-  if ( stat( dir, &stbuf ) != 0 )
+  if ( stat( dirname, &stbuf ) != 0 )
 #elif defined WIN32
-  if ( _stat( dir, &stbuf ) != 0 )
+  if ( _stat( dirname, &stbuf ) != 0 )
 #endif
   {
-    vpERROR_TRACE( "can't stat directory '%s' (doesn't exist?)\n", dir );
-    throw(vpIoException(vpIoException::ERRCantStatDirectory,
-			"can't stat directory")) ;
+    return false;
   }
   if ( (stbuf.st_mode & S_IFDIR) == 0 ) {
-    vpERROR_TRACE( "'%s' is not a directory\n",  dir );
-    throw(vpIoException(vpIoException::ERRNotADirectory,
-			"not a directory")) ;
+    return false;
   }
 #if defined UNIX
   if ( (stbuf.st_mode & S_IWUSR) == 0 )
@@ -85,14 +124,37 @@ vpIoTools::checkDirectory(const char *dir )
   if ( (stbuf.st_mode & S_IWRITE) == 0 )
 #endif
   {
-    vpERROR_TRACE( "'%s' is not writable\n", dir );
-    throw(vpIoException(vpIoException::ERRNotWritable,
-			"Directory not writable")) ;
+    return false;
   }
+  return true;
 }
 
+/*!
+  Check if a directory exists.
+
+  \param dirname : Directory to test if it exists.
+
+  \return true : If the directory exists and is accessible with write access.
+
+  \return false : If dirname string is null, or is not a directory, or
+  has no write access.
+
+*/
+bool
+vpIoTools::checkDirectory(const string dirname )
+{
+  return vpIoTools::checkDirectory(dirname.c_str());
+}
+/*!
+
+  Create a new directory.
+
+  \param dirname : Directory to create.
+
+  \exception ERRInvalidDirectoryName : If the directory cannot be created.
+*/
 void
-vpIoTools::makeDirectory(const  char *dir )
+vpIoTools::makeDirectory(const  char *dirname )
 {
 #if defined UNIX
   struct stat stbuf;
@@ -100,37 +162,52 @@ vpIoTools::makeDirectory(const  char *dir )
   struct _stat stbuf;
 #endif
 
-  if ( dir == NULL || dir[0] == '\0' ) {
+  if ( dirname == NULL || dirname[0] == '\0' ) {
     vpERROR_TRACE( "invalid directory name\n");
     throw(vpIoException(vpIoException::ERRInvalidDirectoryName,
 			"invalid directory name")) ;
   }
 #if defined UNIX
-  if ( stat( dir, &stbuf ) != 0 )
+  if ( stat( dirname, &stbuf ) != 0 )
 #elif defined WIN32
-  if ( _stat( dir, &stbuf ) != 0 )
+  if ( _stat( dirname, &stbuf ) != 0 )
 #endif
   {
 #if defined UNIX
-    if ( mkdir( dir, (mode_t)0755 ) != 0 )
+    if ( mkdir( dirname, (mode_t)0755 ) != 0 )
 #elif defined WIN32
-    if ( _mkdir( dir) != 0 )
+    if ( _mkdir( dirname) != 0 )
 #endif
 	{
-      vpERROR_TRACE("unable to create directory '%s'\n",  dir );
+      vpERROR_TRACE("unable to create directory '%s'\n",  dirname );
       throw(vpIoException(vpIoException::ERRCantCreateDirectory,
 			  "unable to create directory")) ;
     }
-    vpDEBUG_TRACE(2,"has created directory '%s'\n", dir );
+    vpDEBUG_TRACE(2,"has created directory '%s'\n", dirname );
   }
 
-  try{
-    checkDirectory( dir ) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
+  if ( checkDirectory( dirname ) == false) {
+    vpERROR_TRACE("unable to create directory '%s'\n",  dirname );
+    throw(vpIoException(vpIoException::ERRCantCreateDirectory,
+			"unable to create directory")) ;
   }
 }
 
+/*!
+
+  Create a new directory.
+
+  \param dirname : Directory to create.
+
+  \exception ERRInvalidDirectoryName : If the directory cannot be created.
+*/
+void
+vpIoTools::makeDirectory(const string dirname )
+{
+  try {
+    vpIoTools::makeDirectory(dirname.c_str());
+  }
+  catch (...) {
+    throw;
+  }
+}

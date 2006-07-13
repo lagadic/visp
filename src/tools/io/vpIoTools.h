@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.h,v 1.3 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpIoTools.h,v 1.4 2006-07-13 06:59:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,7 +44,10 @@
   \brief io basic tools
 */
 
+#include <iostream>
 #include <visp/vpConfig.h>
+
+using namespace std;
 
 /*!
   \class vpIoTools
@@ -56,8 +59,11 @@ class VISP_EXPORT vpIoTools
 {
 
 public:
-  static void checkDirectory(const char *dir );
-  static void makeDirectory(const  char *dir );
+  static void getUserName(string &username);
+  static bool checkDirectory(const char *dirname );
+  static bool checkDirectory(const string dirname );
+  static void makeDirectory(const char *dirname );
+  static void makeDirectory(const string dirname );
 } ;
 
 
