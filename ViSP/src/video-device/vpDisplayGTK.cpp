@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.7 2006-07-10 16:41:01 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.8 2006-07-13 08:32:08 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -241,9 +241,10 @@ vpDisplayGTK::init(int _ncol, int _nrow,
   ncol = _ncol ;
   nrow = _nrow ;
 
+
   GdkWindowAttr attr ;
-  attr.y = _x;
-  attr.x = _y ;
+  attr.x = _x;
+  attr.y = _y ;
   attr.width = ncol ;
   attr.height = nrow ;
   attr.wclass =  GDK_INPUT_OUTPUT ;
@@ -253,8 +254,10 @@ vpDisplayGTK::init(int _ncol, int _nrow,
     GDK_BUTTON_PRESS_MASK |
     GDK_BUTTON_RELEASE_MASK ;
 
+  int attributes_mask = GDK_WA_X | GDK_WA_Y;
+
   /* Create the window*/
-  window = gdk_window_new(NULL, &attr,0);
+  window = gdk_window_new(NULL, &attr, attributes_mask);
   gdk_window_show(window);
 
 
@@ -498,6 +501,15 @@ void vpDisplayGTK::closeDisplay()
       delete [] title ;
       title = NULL ;
     }
+
+  if(window != NULL)
+    {
+      gdk_window_hide (window);
+      gdk_window_destroy(window);
+      window = NULL;
+    }
+
+  GTKinitialized= false;
 }
 
 
@@ -831,7 +843,8 @@ vpDisplayGTK::getClick()
 	    switch(ev->type)
 	      {
 	      case GDK_BUTTON_PRESS :
-		end = true ;
+		if(ev->any.window == window)
+		  end = true ;
 		break ;
 	      default :;
 	      }
@@ -872,9 +885,12 @@ vpDisplayGTK::getClick(int& i, int& j)
 	    switch(ev->type)
 	      {
 	      case GDK_BUTTON_PRESS :
-		i = (int)((GdkEventButton *)ev)->y ;
-		j = (int)((GdkEventButton *)ev)->x ;
-		end = true ;
+		if(ev->any.window == window)
+		  {
+		    i = (int)((GdkEventButton *)ev)->y ;
+		    j = (int)((GdkEventButton *)ev)->x ;
+		    end = true ;
+		  }
 		break ;
 	      default :;
 	      }
@@ -919,12 +935,14 @@ vpDisplayGTK::getClick(int& i, int& j, int& button)
 	    switch(ev->type)
 	      {
 	      case GDK_BUTTON_PRESS :
-		if ((int)((GdkEventButton *)ev)->button==button)
-		  {
-		    i = (int)((GdkEventButton *)ev)->y ;
-		    j = (int)((GdkEventButton *)ev)->x ;
-		    end = true ;
-		  }
+		if(ev->any.window == window){
+		  if ((int)((GdkEventButton *)ev)->button==button)
+		    {
+		      i = (int)((GdkEventButton *)ev)->y ;
+		      j = (int)((GdkEventButton *)ev)->x ;
+		      end = true ;
+		    }
+		}
 		break ;
 	      default :;
 	      }
@@ -966,11 +984,14 @@ vpDisplayGTK::getClickUp(int& i, int& j, int& button)
 	    switch(ev->type)
 	      {
 	      case GDK_BUTTON_RELEASE :
-		if ((int)((GdkEventButton *)ev)->button==button)
+		if(ev->any.window == window)
 		  {
-		    i = (int)((GdkEventButton *)ev)->y ;
-		    j = (int)((GdkEventButton *)ev)->x ;
-		    end = true ;
+		    if ((int)((GdkEventButton *)ev)->button==button)
+		      {
+			i = (int)((GdkEventButton *)ev)->y ;
+			j = (int)((GdkEventButton *)ev)->x ;
+			end = true ;
+		      }
 		  }
 		break ;
 	      default :;
