@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.2 2006-06-27 10:10:27 fspindle Exp $
+ * $Id: vpParseArgv.cpp,v 1.3 2006-07-13 06:59:17 fspindle Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -462,6 +462,9 @@ int vpParseArgv::parse(int argc, char** argv, char* validOpts, char** param)
 	      }
 	      else {
 		// reached end of args looking for param
+		// option specified without parameter
+		chOpt = -1;
+		pszParam = &(argv[iArg][0]);
 	      }
 
 	    }
