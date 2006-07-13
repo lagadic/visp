@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test_robust.cpp,v 1.3 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: test_robust.cpp,v 1.4 2006-07-13 13:38:19 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,8 +41,9 @@
   Test some vpMath functionalities.
 */
 
-#include<iostream>
-#include<visp/vpRobust.h>
+#include <iostream>
+#include <visp/vpRobust.h>
+#include <string>
 #include <fstream>
 #include <visp/vpIoTools.h>
 #include <visp/vpParseArgv.h>
