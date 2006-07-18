@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2006-07-10 16:44:45 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.6 2006-07-18 14:46:40 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -43,6 +43,7 @@
 SET (SOURCE
   testConversion.cpp
   testDisplayGTK.cpp
+  testDisplayGDI.cpp
   testDisplayX1.cpp
   testDisplayX2.cpp
   testIoPGM.cpp
