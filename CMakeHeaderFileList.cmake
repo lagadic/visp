@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.4 2006-07-03 09:42:10 brenier Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.5 2006-07-18 14:43:30 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -181,6 +181,11 @@ SET (HEADER_VIDEO_DEVICE
   video-device/vpDisplayGTK.h
   video-device/vpDisplay.h
   video-device/vpDisplayX.h
+  video-device/windows/vpDisplayGDI.h
+  video-device/windows/vpDisplayWin32.h
+  video-device/windows/vpGDIRenderer.h
+  video-device/windows/vpWin32Renderer.h
+  video-device/windows/vpWin32Window.h
   )
 
 SET (HEADER_VISUAL_FEATURE
