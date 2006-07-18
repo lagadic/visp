@@ -1,0 +1,629 @@
+/****************************************************************************
+ *
+ * $Id: vpGDIRenderer.cpp,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * GDI renderer for windows 32 display
+ *
+ * Authors:
+ * Bruno Renier
+ *
+ *****************************************************************************/
+
+#include <visp/vpConfig.h>
+
+#if ( defined(WIN32) ) 
+
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#include <visp/vpGDIRenderer.h>
+
+/*!
+	Constructor
+*/
+vpGDIRenderer::vpGDIRenderer()
+{
+	//if the screen depth is not 32bpp, throw an exception
+	if( GetDeviceCaps(GetDC(NULL),BITSPIXEL) != 32 ) 
+		throw vpDisplayException(vpDisplayException::depthNotSupportedError, "Only works in 32bits mode!");
+
+	InitializeCriticalSection(&CriticalSection);
+
+	//initialize the palette
+	colors[vpColor::black] =  RGB(0,0,0);
+	colors[vpColor::blue]  =  RGB(0,0,0xFF);
+	colors[vpColor::cyan]  =  RGB(0,0xFF,0xFF);
+	colors[vpColor::green] =  RGB(0,0xFF,0);
+	colors[vpColor::red]   =  RGB(0xFF,0,0);
+	colors[vpColor::white] =  RGB(0xFF,0xFF,0xFF);
+	colors[vpColor::yellow]=  RGB(0xFF,0xFF,0);
+}
+
+/*!
+	Destructor
+
+*/
+vpGDIRenderer::~vpGDIRenderer()
+{
+	DeleteCriticalSection(&CriticalSection);
+	DeleteObject(bmp);
+	DeleteObject(hFont);
+}
+
+/*!
+	Initialiaze the renderer
+	\param hWindow Handle of the window we are working with
+	\param width largeur de la fenêtre
+	\param height hauteur de la fenêtre
+*/
+bool vpGDIRenderer::init(HWND hWindow, int width, int height)
+{
+	hWnd = hWindow;
+	nbCols = width;
+	nbRows = height;
+
+	//creates the font
+	hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,
+						DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+						DEFAULT_PITCH | FF_DONTCARE, NULL);
+	return true;
+}
+
+void vpGDIRenderer::setImg(vpImage<vpRGBa>& im)
+{		
+	//convert the image into a HBITMAP
+	convert(im, bmp);
+	nbCols=im.getCols();
+	nbRows=im.getRows();
+}
+
+
+void vpGDIRenderer::setImg(vpImage<unsigned char>& im)
+{		
+	//convert the image into a HBITMAP
+	convert(im, bmp);
+	nbCols=im.getCols();
+	nbRows=im.getRows();
+}
+
+bool vpGDIRenderer::render()
+{
+	//get the window's DC
+	PAINTSTRUCT ps;
+	HDC hDCScreen = BeginPaint(hWnd, &ps);
+
+	//createa memory DC
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	//select this bmp in memory
+	EnterCriticalSection(&CriticalSection);
+	SelectObject(hDCMem, bmp);
+	LeaveCriticalSection(&CriticalSection);
+
+	//blit it on the window's DC
+	BitBlt(hDCScreen, 0, 0, nbCols, nbRows, hDCMem, 0, 0, SRCCOPY);
+	DeleteDC(hDCMem);
+
+	EndPaint(hWnd, &ps);
+
+	return true;
+}
+
+void vpGDIRenderer::convert(vpImage<vpRGBa> &I, HBITMAP& hBmp)
+{
+	//get the image's width and height
+	int w = I.getCols();
+	int h = I.getRows();
+
+	//each line of a HBITMAP needs to be word aligned
+	//we need padding if the width is an odd number
+	bool needPad = ((w%2) == 0) ? false : true;
+	int newW = w;
+
+	//in case of padding, the new width is width+1
+	newW = (needPad) ? (w+1) : w;
+
+	//allocate the buffer
+	unsigned char * imBuffer = new unsigned char[newW * h * 4];
+
+	//if we need padding
+	if(needPad)
+	{
+		int j = w;
+		for(int i=0 ; i<newW * h ; i+=4)
+		{
+			//end of a line = padding = inserts 0s
+			if(j==0 && needPad)
+			{
+				imBuffer[i+0] = 0;
+				imBuffer[i+1] = 0;
+				imBuffer[i+2] = 0;
+				imBuffer[i+3] = 0;
+				j = w;
+			}
+			else
+			{	
+				imBuffer[i+0] = I.bitmap[i>>2].B;
+				imBuffer[i+1] = I.bitmap[i>>2].G;
+				imBuffer[i+2] = I.bitmap[i>>2].R;
+				imBuffer[i+3] = I.bitmap[i>>2].A;
+				j--;
+			}
+		}
+	}
+	else
+	{
+		for(int i=0 ; i<w * h * 4 ; i+=4)
+		{	imBuffer[i+0] = I.bitmap[i>>2].B;
+			imBuffer[i+1] = I.bitmap[i>>2].G;
+			imBuffer[i+2] = I.bitmap[i>>2].R;
+			imBuffer[i+3] = I.bitmap[i>>2].A;
+		}
+	}
+
+
+	updateBitmap(hBmp,imBuffer, newW, h);
+
+	//we don't need this buffer anymore
+	delete imBuffer;
+}
+
+
+
+void vpGDIRenderer::convert(vpImage<unsigned char> &I, HBITMAP& hBmp)
+{
+	//get the image's width and height
+	int w = I.getCols();
+	int h = I.getRows();
+
+	//each line of a HBITMAP needs to be word aligned
+	//we need padding if the width is an odd number
+	bool needPad = ((w%2) == 0) ? false : true;
+	int newW = w;
+
+	//in case of padding, the new width is width+1
+	newW = (needPad) ? (w+1) : w;
+
+	//allocate the buffer
+	unsigned char * imBuffer = new unsigned char[newW * h * 4];
+
+	//if we need padding
+	if(needPad)
+	{
+		int j = w;
+		for(int i=0 ; i<newW * h * 4; i+=4)
+		{
+			//end of a line = padding = inserts 0s
+			if(j==0 && needPad)
+			{
+				imBuffer[i+0] = 0;
+				imBuffer[i+1] = 0;
+				imBuffer[i+2] = 0;
+				imBuffer[i+3] = 0;
+				j = w;
+			}
+			else
+			{	
+				imBuffer[i+0] = I.bitmap[i>>2];
+				imBuffer[i+1] = I.bitmap[i>>2];
+				imBuffer[i+2] = I.bitmap[i>>2];
+				imBuffer[i+3] = I.bitmap[i>>2];
+				j--;
+			}
+		}
+	}
+	else
+	{
+		for(int i=0 ; i<w * h * 4 ; i+=4)
+		{	imBuffer[i+0] = I.bitmap[i>>2];
+			imBuffer[i+1] = I.bitmap[i>>2];
+			imBuffer[i+2] = I.bitmap[i>>2];
+			imBuffer[i+3] = I.bitmap[i>>2];
+		}
+	}
+
+
+	updateBitmap(hBmp,imBuffer, newW, h);
+
+	//we don't need this buffer anymore
+	delete imBuffer;
+}
+
+/*!
+	Updates the bitmap to display.
+	Contains a critical section.
+	\param hBmp The bitmap to update
+	\param imBuffer The new pixel data
+	\param w The image's width
+	\param h The image's height
+
+	\return the operation succefulness
+*/
+bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, int w, int h)
+{
+	//the bitmap may only be accessed by one thread at the same time
+	//that's why we enter critical section
+	EnterCriticalSection(&CriticalSection);
+
+	//if the existing bitmap object is of the right size
+	if( (nbCols==w) && (nbRows==h) )
+	{
+		//just replace the content
+		SetBitmapBits(hBmp, w * h * 4, imBuffer);
+	}
+	else
+	{
+		if(hBmp != NULL)
+		{
+			//delete the old BITMAP
+			DeleteObject(hBmp);
+		}
+		//create a new BITMAP from this buffer
+		if( (hBmp = CreateBitmap(w,h,1,32,(void*)imBuffer)) == NULL)
+			return false;
+	}
+
+	LeaveCriticalSection(&CriticalSection);
+	return true;
+}
+
+
+void vpGDIRenderer::setPixel(int x, int y, int color)
+{
+	//get the window's DC
+	HDC hDCScreen = GetDC(hWnd);
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	//select this bmp in memory
+	EnterCriticalSection(&CriticalSection);
+	SelectObject(hDCMem, bmp);
+	
+
+	SetPixel(hDCMem,x,y,colors[color]);
+	//display the result (flush)
+	BitBlt(hDCScreen, x, y, 1, 1, hDCMem, x, y, SRCCOPY);
+	
+	LeaveCriticalSection(&CriticalSection);
+
+	DeleteDC(hDCMem);
+	ReleaseDC(hWnd, hDCScreen);
+}
+
+void vpGDIRenderer::drawLine(int i1, int j1, int i2, int j2, int col, int e, int style)
+{
+
+	//get the window's DC
+	HDC hDCScreen = GetDC(hWnd);
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	//create the pen
+	HPEN hPen = CreatePen(style, e, colors[col]);
+
+	SetBkMode(hDCMem, TRANSPARENT);
+
+	//select this bmp in memory
+	EnterCriticalSection(&CriticalSection);
+	SelectObject(hDCMem, bmp);
+
+	//select the pen
+	SelectObject(hDCMem, hPen);
+
+	//move to the starting point
+	MoveToEx(hDCMem, j1, i1, NULL);
+	//Draw the line
+	LineTo(hDCMem, j2, i2);
+
+	//computes the coordinates of the rectangle to blit
+	int x = (j2 >= j1) ? j1 : j2;
+	int y = (i2 >= i1) ? i1 : i2;
+	int w = (j2 >= j1) ? j2-j1 : j1-j2;
+	int h = (i2 >= i1) ? i2-i1 : i1-i2;
+
+	//display the result (flush)
+	BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
+	
+	LeaveCriticalSection(&CriticalSection);
+
+	DeleteObject(hPen); 
+	DeleteDC(hDCMem);
+	ReleaseDC(hWnd, hDCScreen);
+
+}
+
+void vpGDIRenderer::drawRect(int i, int j, int width, int height, int col, bool fill)
+{
+
+	//get the window's DC
+	HDC hDCScreen = GetDC(hWnd);
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	//create the pen
+	HPEN hPen = CreatePen(PS_SOLID, 1, colors[col]);
+
+	//create an hollow or solid brush (depends on boolean fill)
+	LOGBRUSH lBrush;
+	if(fill)
+	{
+		 lBrush.lbStyle = BS_SOLID;
+		 lBrush.lbColor = colors[col];
+	}
+	else lBrush.lbStyle = BS_HOLLOW;
+	HBRUSH hbrush = CreateBrushIndirect(&lBrush);
+
+	//select this bmp in memory
+	EnterCriticalSection(&CriticalSection);
+	SelectObject(hDCMem, bmp);
+
+	//select the brush
+	SelectObject(hDCMem, hbrush);
+	//select the pen
+	SelectObject(hDCMem, hPen);
+
+	//draw the rectangle
+	Rectangle(hDCMem, j, i, j+width, i+height);
+
+	//display the result (flush)
+	BitBlt(hDCScreen, j, i, width, height, hDCMem, j, i, SRCCOPY);
+	
+	LeaveCriticalSection(&CriticalSection);
+
+	DeleteObject(hbrush); 
+	DeleteObject(hPen); 
+	DeleteDC(hDCMem);
+	ReleaseDC(hWnd, hDCScreen);
+
+}
+
+void vpGDIRenderer::drawCircle(int i, int j, int r, int c)
+{
+
+	//get the window's DC
+	HDC hDCScreen = GetDC(hWnd);
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	//create the pen
+	HPEN hPen = CreatePen(PS_SOLID, 1, colors[c]);
+
+	//create an hollow brush
+	LOGBRUSH lBrush;
+	lBrush.lbStyle = BS_HOLLOW;
+	HBRUSH hbrush = CreateBrushIndirect(&lBrush);
+
+	//computes bounding rectangle
+	int x1 = j-r;
+	int y1 = i-r;
+	int x2 = j+r;
+	int y2 = i+r;
+	
+	//select this bmp in memory
+	EnterCriticalSection(&CriticalSection);
+	SelectObject(hDCMem, bmp);
+	
+	//select the brush
+	SelectObject(hDCMem, hbrush);
+	//select the pen
+	SelectObject(hDCMem, hPen);
+
+	//draw the circle
+	Ellipse(hDCMem, x1, y1, x2, y2),
+
+	//display the result (flush)
+	BitBlt(hDCScreen, x1, y1, x2-x1, y2-y1, hDCMem, x1, y1, SRCCOPY);
+	
+	LeaveCriticalSection(&CriticalSection);
+
+	DeleteObject(hbrush); 
+	DeleteObject(hPen); 
+	DeleteDC(hDCMem);
+	ReleaseDC(hWnd, hDCScreen);
+}
+
+void vpGDIRenderer::drawText(int i, int j, char * s, int c)
+{
+	//get the window's DC
+	HDC hDCScreen = GetDC(hWnd);
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	//select this bmp in memory
+	EnterCriticalSection(&CriticalSection);
+	SelectObject(hDCMem, bmp);
+	
+	//Select the font
+	SelectObject(hDCMem, hFont);
+	
+	//set the text color
+	SetTextColor(hDCMem, colors[c]);
+
+	//we don't use the bkColor
+	SetBkMode(hDCMem, TRANSPARENT);
+     
+	SIZE size;
+	int length = (int) strlen(s);
+
+	//get the displayed string dimensions
+	GetTextExtentPoint32(hDCMem, s, length, &size);
+    
+	//displays the string
+	TextOut(hDCMem, j, i, s, length); 
+
+	//display the result (flush)
+	BitBlt(hDCScreen, j, i, size.cx, size.cy, hDCMem, j, i, SRCCOPY);
+	
+	LeaveCriticalSection(&CriticalSection);
+
+	DeleteDC(hDCMem);
+	ReleaseDC(hWnd, hDCScreen);
+}
+
+void vpGDIRenderer::drawCross(int i,int j, int size,int col, int e)
+{
+	//get the window's DC
+	HDC hDCScreen = GetDC(hWnd);
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	//create the pen
+	HPEN hPen = CreatePen(PS_SOLID, e, colors[col]);
+
+	//select this bmp in memory
+	EnterCriticalSection(&CriticalSection);
+	SelectObject(hDCMem, bmp);
+
+	//select the pen
+	SelectObject(hDCMem, hPen);
+
+	//move to the starting point
+	MoveToEx(hDCMem, j-(size/2), i, NULL);
+	//Draw the first line (horizontal)
+	LineTo(hDCMem, j+(size/2), i);
+
+	//move to the starting point
+	MoveToEx(hDCMem, j, i-(size/2), NULL);
+	//Draw the second line (vertical)
+	LineTo(hDCMem, j, i+(size/2));
+
+
+	//display the result (flush)
+	BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size, hDCMem, j-(size/2), i-(size/2), SRCCOPY);
+	
+	LeaveCriticalSection(&CriticalSection);
+
+	DeleteObject(hPen); 
+	DeleteDC(hDCMem);
+	ReleaseDC(hWnd, hDCScreen);
+
+}
+
+void vpGDIRenderer::drawArrow(int i1,int j1, int i2, int j2, int col, int L,int l)
+{
+	double a = j2 - j1 ;
+	double b = i2 - i1 ;
+	double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
+
+	//computes the coordinates of the rectangle to blit later
+	int x = (j2 >= j1) ? j1 : j2;
+	int y = (i2 >= i1) ? i1 : i2;
+	int w = (j2 >= j1) ? j2-j1 : j1-j2;
+	int h = (i2 >= i1) ? i2-i1 : i1-i2;
+
+	//get the window's DC
+	HDC hDCScreen = GetDC(hWnd);
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	//create the pen
+	HPEN hPen = CreatePen(PS_SOLID, 1, colors[col]);
+
+	//select this bmp in memory
+	EnterCriticalSection(&CriticalSection);
+	SelectObject(hDCMem, bmp);
+
+	//select the pen
+	SelectObject(hDCMem, hPen);
+
+
+	if ((a==0)&&(b==0))
+	{
+		// DisplayCrossLarge(i1,j1,3,col) ;
+	}
+	else
+	{
+		a /= lg ;
+		b /= lg ;
+
+		double i3,j3  ;
+		i3 = i2 - L*a ;
+		j3 = j2 - L*b ;
+
+
+		double i4,j4 ;
+
+		double t = 0 ;
+		while (t<=l)
+		{
+			i4 = i3 - b*t ;
+			j4 = j3 + a*t ;
+
+			MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
+			LineTo(hDCMem, (int)j4, (int)i4);
+			
+			t+=0.1 ;
+		}
+
+		t = 0 ;
+		while (t>= -l)
+			{
+			i4 = i3 - b*t ;
+			j4 = j3 + a*t ;
+
+			MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
+			LineTo(hDCMem, (int)j4, (int)i4);
+
+			t-=0.1 ;
+		}
+		MoveToEx(hDCMem, j1, i1, NULL);
+		LineTo(hDCMem, j2, i2);
+
+	}
+
+	
+	//display the result (flush)
+	BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
+	
+	LeaveCriticalSection(&CriticalSection);
+
+	DeleteObject(hPen); 
+	DeleteDC(hDCMem);
+	ReleaseDC(hWnd, hDCScreen);
+}
+
+
+void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
+{
+	//size of image buffer : nbCols*nbRows*4
+	long size = nbCols*nbRows*4;
+	unsigned char * imBuffer = new unsigned char[size];
+	
+	//gets the hbitmap's bitmap
+	GetBitmapBits(bmp, size, (void *)imBuffer);
+
+	//resize the destination image as needed
+	I.resize(nbRows, nbCols);
+
+	//copy the content
+	for(int i=0 ; i<size ; i+=4)
+	{
+		I.bitmap[i>>2].R = imBuffer[i+2];
+		I.bitmap[i>>2].G = imBuffer[i+1];
+		I.bitmap[i>>2].B = imBuffer[i+0];
+		I.bitmap[i>>2].A = 0;
+	}
+
+	delete imBuffer;
+}
+#endif
+#endif
