@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.20 2006-06-28 16:01:32 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.21 2006-07-19 07:18:31 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -45,8 +45,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.3)
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
 SET(VISP_MAJOR_VERSION 2)
-SET(VISP_MINOR_VERSION 1)
-SET(VISP_PATCH_VERSION 2)
+SET(VISP_MINOR_VERSION 2)
+SET(VISP_PATCH_VERSION 0)
 SET(VISP_VERSION "${VISP_MAJOR_VERSION}.${VISP_MINOR_VERSION}")
 SET(VISP_VERSION_FULL "${VISP_VERSION}.${VISP_VERSION_PATCH}")      
 
