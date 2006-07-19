@@ -1,4 +1,4 @@
-ViSP 2.1.2 (Modification since ViSP 2.1.1)
+ViSP 2.2.0 (Modification since ViSP 2.1.1)
   - Build
 	- To increase the code portability, especially under windows), 
 	  all the build process is now based on CMake 
@@ -12,9 +12,12 @@ ViSP 2.1.2 (Modification since ViSP 2.1.1)
 	- add control for Traclabs biclops pan-tilt head
 	- add control for Directed Perception ptu-46 pan-tilt head
 	- add vpDisplayGTK display under Windows
+	- add vpDirectShowGrabber framegrabber under Windows
+	- add vpDisplayGDI display under windows
   - Bug fix and improvement
 	- vp1394Grabber settings (format, mode, framerate, shutter, gain)
 	- vpDot (Moment computation)
+	- some fixes in vpDisplayGTK
 ----------------------------------------------	
 ViSP 2.1.1 (released January, 6th 2006)
    - New examples 
