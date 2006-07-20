@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: 2D0.5.VisualServoingSimulation.cpp,v 1.3 2006-06-23 14:45:05 brenier Exp $
+ * $Id: 2D0.5.VisualServoingSimulation.cpp,v 1.4 2006-07-20 07:31:09 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 
 /*!
-  \example 2D0.5.VisualServoingSsimulation.cpp
+  \example 2D0.5.VisualServoingSimulation.cpp
   \brief  Simulation of a 2 1/2 D visual servoing control law
 */
 
