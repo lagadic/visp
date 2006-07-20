@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.h,v 1.2 2006-07-11 15:12:41 brenier Exp $
+ * $Id: vpDirectShowGrabberImpl.h,v 1.3 2006-07-20 09:35:41 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -147,6 +147,9 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 
 		//creates the sample grabber
 		bool createSampleGrabber(CComPtr<IBaseFilter>& ppGrabberFilter);
+
+		//checks the capture filter's media type and sets flags as needed
+		bool checkSourceType(CComPtr<IPin>& pCapSourcePin);
 
 		//connects the filters as needed
 		bool connectSourceToGrabber(CComPtr<IBaseFilter>& pCapSource, CComPtr<IBaseFilter>& pGrabberFilter);

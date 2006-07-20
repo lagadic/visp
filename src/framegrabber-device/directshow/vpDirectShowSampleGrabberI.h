@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowSampleGrabberI.h,v 1.2 2006-07-03 09:42:10 brenier Exp $
+ * $Id: vpDirectShowSampleGrabberI.h,v 1.3 2006-07-20 09:35:41 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,6 +77,11 @@ class VISP_EXPORT vpDirectShowSampleGrabberI : public ISampleGrabberCB
 private:
 	//the currently connected media type
 	AM_MEDIA_TYPE connectedMediaType;
+
+	//true if the source media type is not a standard one
+	bool specialMediaType;
+	//true if the image needs to be flipped (only for special media types)
+	bool invertedSource;
 
 	//booleans used to signal a demand from acquire
 	bool acqGrayDemand;

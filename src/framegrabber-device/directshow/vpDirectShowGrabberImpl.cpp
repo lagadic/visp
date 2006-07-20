@@ -379,6 +379,100 @@ bool vpDirectShowGrabberImpl::createSampleGrabber(CComPtr<IBaseFilter>& ppGrabbe
 }
 
 /*!
+  Checks the capture filter's ouput pin media type.
+  Some formats' orientation is automatically handled by directshow but this isn't the
+  case for all the existing formats.
+  If the grabbed image is inverted, the source format's orientation may not be
+  known by directshow so consider adding an additional handler for this FourCC format.
+
+  \return True if the connection media type was a video media type.
+*/
+bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin>& pCapSourcePin)
+{
+	//retrieves the connected media type
+	AM_MEDIA_TYPE mt;
+	if(FAILED (pCapSourcePin->ConnectionMediaType(&mt)))
+		return false;
+
+	if(mt.majortype != MEDIATYPE_Video)
+		return false;
+		
+	//Known RGB formats
+	if(mt.subtype == MEDIASUBTYPE_ARGB32 ||
+	   mt.subtype == MEDIASUBTYPE_RGB32  ||
+	   mt.subtype == MEDIASUBTYPE_RGB24  ||
+	   mt.subtype == MEDIASUBTYPE_RGB555 ||
+	   mt.subtype == MEDIASUBTYPE_RGB565 ||
+	   mt.subtype == MEDIASUBTYPE_RGB8   ||
+	   mt.subtype == MEDIASUBTYPE_RGB4   ||
+	   mt.subtype == MEDIASUBTYPE_RGB1   )
+	  {
+	    //image orientation will be handled "automatically"
+	    sgCB.specialMediaType = false;
+	  }
+	//Known YUV formats
+	else if(mt.subtype == MEDIASUBTYPE_AYUV ||
+		mt.subtype == MEDIASUBTYPE_UYVY ||
+		mt.subtype == MEDIASUBTYPE_Y411 ||
+		mt.subtype == MEDIASUBTYPE_Y41P ||
+		mt.subtype == MEDIASUBTYPE_Y211 ||
+		mt.subtype == MEDIASUBTYPE_YUY2 ||
+		mt.subtype == MEDIASUBTYPE_YVYU ||
+		mt.subtype == MEDIASUBTYPE_YUYV ||
+		mt.subtype == MEDIASUBTYPE_IF09 ||
+		mt.subtype == MEDIASUBTYPE_IYUV ||
+		mt.subtype == MEDIASUBTYPE_YV12 ||	
+		mt.subtype == MEDIASUBTYPE_YVU9 )
+	  {
+	    //image orientation will be handled "automatically"
+	    sgCB.specialMediaType = false;
+	  }
+	//FOURCC formats
+	else
+	  {  
+	    //invertedSource boolean will decide the bitmap orientation
+	    sgCB.specialMediaType = true;
+
+	    DWORD format;
+	    VIDEOINFOHEADER *pVih = reinterpret_cast<VIDEOINFOHEADER*>(mt.pbFormat);
+	    BITMAPINFOHEADER bmpInfo = pVih->bmiHeader;
+	    
+	    //get the fourcc code 
+	    format = ((bmpInfo.biCompression&0xFF000000)>>24) |
+	      ((bmpInfo.biCompression&0x00FF0000)>>8) |
+	      ((bmpInfo.biCompression&0x0000FF00)<<8) |
+	      (bmpInfo.biCompression&0x000000FF)<<24;
+
+	    cout<<"This format is not one of the standard YUV or RGB format supported by DirectShow.\n"
+		<<"FourCC : "
+		<<(char)(bmpInfo.biCompression&0x000000FF)
+		<<(char)((bmpInfo.biCompression&0x0000FF00)>>8) 
+		<<(char)((bmpInfo.biCompression&0x00FF0000)>>16) 
+		<<(char)((bmpInfo.biCompression&0xFF000000)>>24)<<endl;
+
+	    //Y800 is top-down oriented so the image doesn't have to be flipped vertically
+	    if(format == 'Y800')
+	      {
+		sgCB.invertedSource = false;
+	      }
+	    //cyuv seems to be the only yuv bottom-up oriented format (image has to be flipped)
+	    else if(format == 'cyuv')
+	      {
+		sgCB.invertedSource = true;
+	      }
+	    //insert code for other fourcc formats here
+	    //see fourcc.org to know which format is bottom-up oriented and thus needs invertedSource sets to true
+	    else
+	      {
+		cout<<"Unknown FourCC compression type, assuming top-down orientation. Image may be inverted."<<endl;
+		sgCB.invertedSource = false; //consider that the image is topdown oriented by default
+	      }
+	  }
+
+	return true;
+}
+
+/*!
 	Connects the capture device's output pin to the grabber's input pin
 	\param pCapSource The capture device
 	\param pGrabber The grabber
@@ -400,9 +494,9 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& _pCap
 	if(FAILED(pGraph->Connect(pCapSourcePin, pGrabberInputPin)))
 		return false;
 
-	//not used anymore, we can release them
+	//not used anymore, we can release it
 	pGrabberInputPin.Release();
-	pCapSourcePin.Release();
+	
 
 	//get the grabber's output pin
 	CComPtr<IPin> pGrabberOutputPin;
@@ -424,7 +518,13 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& _pCap
 		FAILED(pGraph->Connect(pGrabberOutputPin, pNullInputPin)))
 		return false;
 
+	//checks the media type of the capture filter
+	//and if the image needs to be inverted
+	if(!checkSourceType(pCapSourcePin))
+	  return false;
+
 	//release the remaining interfaces
+	pCapSourcePin.Release();
 	pNull.Release();	
 	pGrabberOutputPin.Release();
 	pNullInputPin.Release();

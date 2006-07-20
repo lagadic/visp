@@ -12,7 +12,7 @@
 	Constructor - creates the semaphore
 */
 vpDirectShowSampleGrabberI::vpDirectShowSampleGrabberI()
-: acqGrayDemand(false), acqRGBaDemand(false)
+  : acqGrayDemand(false), acqRGBaDemand(false), specialMediaType(false), invertedSource(false)
 {
 	//semaphore(0), max value = 1
 	copySem = CreateSemaphore (NULL,0,1,NULL);
@@ -64,10 +64,19 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
 				VIDEOINFOHEADER *pVih = reinterpret_cast<VIDEOINFOHEADER*>(connectedMediaType.pbFormat);
 				BITMAPINFOHEADER bmpInfo = pVih->bmiHeader;
 
-				//if biHeight > 0 and the source is rgb
+				//if biHeight > 0 and the source is not special
 				//then  the image needs to be verticaly flipped
-				bool flip = bmpInfo.biHeight>=0;
- 
+				bool flip;
+				if(!specialMediaType)
+				  flip = bmpInfo.biHeight>=0;
+				//the source is fourcc and the image is inverted with this compression
+				else if(invertedSource)
+				  flip = true; 
+				//fourcc and the image doesn't need to be flipped
+				else
+				  flip = false;
+
+
 				//if it was an RGBa image demand
 				if(acqRGBaDemand)
 				{
