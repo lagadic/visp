@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.h,v 1.7 2006-08-21 08:36:59 brenier Exp $
+ * $Id: vpMath.h,v 1.8 2006-08-21 10:18:21 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,11 +56,11 @@
 # endif
 
 # ifndef M_PI_2
-#   define M_PI_2          M_PI/2
+#   define M_PI_2          (M_PI/2)
 # endif
 
 # ifndef M_PI_4
-#   define M_PI_4          M_PI/4
+#   define M_PI_4          (M_PI/4)
 # endif
 
 #endif
