@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.cpp,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ * $Id: vpWin32Window.cpp,v 1.2 2006-08-21 10:02:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,13 +44,15 @@
 #include <visp/vpWin32Window.h>
 
 //Should be already defined ...
-#undef GET_X_LPARAM
-#undef GET_Y_LPARAM
-#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
-#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+#ifndef GET_X_LPARAM
+# define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
+#endif
 
+#ifndef GET_Y_LPARAM
+# define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+#endif
 
-//declare the window as thread local
+//declares the window as thread local
 //allows multiple displays
 _declspec(thread) vpWin32Window * window;
 
@@ -181,7 +183,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 /*!
-	Constructor
+	Constructor.
 */
 vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
 {
@@ -198,7 +200,7 @@ vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
 }
 
 /*!
-	Destructor
+	Destructor.
 */
 vpWin32Window::~vpWin32Window()
 {

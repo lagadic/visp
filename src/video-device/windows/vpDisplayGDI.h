@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.h,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ * $Id: vpDisplayGDI.h,v 1.2 2006-08-21 10:02:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,6 +47,8 @@
   \class vpDisplayGDI
 
   \brief Display for windows using GDI (available on any windows 32 platform).
+  GDI stands for Graphics Device Interface and is a core component of Microsoft
+  Windows operating systems used for displaying graphics in a window.
 
   \author Bruno Renier
 */

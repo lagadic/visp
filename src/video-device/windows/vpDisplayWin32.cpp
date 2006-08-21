@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.2 2006-08-21 10:02:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,8 +45,8 @@
 
 
 /*!
-	Thread entry point
-	Used as a detour to initWindow
+	Thread entry point.
+	Used as a detour to initWindow.
 */
 void createWindow(threadParam * param)
 {
@@ -56,7 +56,7 @@ void createWindow(threadParam * param)
 }
 
 /*!
-	Constructor
+	Constructor.
 */
 vpDisplayWin32::vpDisplayWin32(vpWin32Renderer * rend) : iStatus(false), window(rend)
 {
@@ -64,7 +64,7 @@ vpDisplayWin32::vpDisplayWin32(vpWin32Renderer * rend) : iStatus(false), window(
 
 
 /*!
-	Destructor
+	Destructor.
 */
 vpDisplayWin32::~vpDisplayWin32()
 {
@@ -381,7 +381,7 @@ void vpDisplayWin32::displayDotLine(int i1, int j1, int i2, int j2, int col, int
 }
 
 /*!
-	Displays a line.
+	Displays a rectangle.
 	\param i its top left point's first coordinate
 	\param j its top left point's second coordinate
 	\param width width of the rectangle
@@ -452,7 +452,7 @@ void vpDisplayWin32::displayCrossLarge(int i,int j, int size,int col)
 }
 
 /*!
-	Displays a dotted line.
+	Displays an arrow.
 	\param i1 its starting point's first coordinate
 	\param j1 its starting point's second coordinate
 	\param i2 its ending point's first coordinate
@@ -477,7 +477,7 @@ void vpDisplayWin32::clearDisplay(int c)
 {
 	//wait if the window is not initialized
 	waitForInit();
-	window.renderer->drawRect(0,0,window.getImageWidth(), window.getImageHeight(),c, true);
+	window.renderer->clear(c);
 }
 
 
