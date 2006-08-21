@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.8 2006-07-13 08:32:08 brenier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.9 2006-08-21 08:42:02 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -869,12 +869,12 @@ vpDisplayGTK::getClick()
 bool
 vpDisplayGTK::getClick(int& i, int& j)
 {
+  bool end = false ;
 
   if (GTKinitialized)
   {
 
     flushDisplay() ;
-    bool end = false ;
     GdkEvent *ev ;
 
     while (!end)
@@ -904,7 +904,7 @@ vpDisplayGTK::getClick(int& i, int& j)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
-    return false ;
+    return end ;
 }
 
 
@@ -919,12 +919,12 @@ vpDisplayGTK::getClick(int& i, int& j)
 bool
 vpDisplayGTK::getClick(int& i, int& j, int& button)
 {
+  bool end = false ;
 
   if (GTKinitialized)
   {
 
     flushDisplay() ;
-    bool end = false ;
     GdkEvent *ev ;
 
     while (!end)
@@ -956,7 +956,7 @@ vpDisplayGTK::getClick(int& i, int& j, int& button)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
-    return  false;
+    return end;
 }
 
 /*!
@@ -968,12 +968,12 @@ vpDisplayGTK::getClick(int& i, int& j, int& button)
 bool
 vpDisplayGTK::getClickUp(int& i, int& j, int& button)
 {
+  bool end = false ;
 
   if (GTKinitialized)
   {
 
     flushDisplay() ;
-    bool end = false ;
     GdkEvent *ev ;
 
     while (!end)
@@ -1006,7 +1006,7 @@ vpDisplayGTK::getClickUp(int& i, int& j, int& button)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
-  return  false ;
+  return end ;
 }
 
 /*!
