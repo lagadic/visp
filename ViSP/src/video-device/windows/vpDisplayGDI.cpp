@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.cpp,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ * $Id: vpDisplayGDI.cpp,v 1.2 2006-08-21 10:02:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * GDI renderer for windows 32 display
+ * GDI based Display for windows 32.
  *
  * Authors:
  * Bruno Renier
@@ -41,6 +41,7 @@
 
 #include <visp/vpDisplayGDI.h>
 
+//A vpDisplayGDI is just a vpDisplayWin23 which uses a vpGDIRenderer to do the drawing.
 
 vpDisplayGDI::vpDisplayGDI(): vpDisplayWin32(new vpGDIRenderer()){}
 

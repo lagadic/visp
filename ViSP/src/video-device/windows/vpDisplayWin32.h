@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ * $Id: vpDisplayWin32.h,v 1.2 2006-08-21 10:02:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,7 +76,12 @@ struct threadParam
 /*!
   \class vpDisplayWin32
 
-  \brief Base class for windows displays.
+  \brief Base abstract class for Windows 32 displays.
+  Implements the window creation in a separate thread
+  and the associated event handling functions for
+  Windows 32 displays.
+  Uses calls to a renderer to do some display.
+  (i.e. all display methods are implemented in the renderer)
 
   \author Bruno Renier
 */

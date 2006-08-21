@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.h,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ * $Id: vpGDIRenderer.h,v 1.2 2006-08-21 10:02:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,28 +74,31 @@ public:
 	vpGDIRenderer();
 	~vpGDIRenderer();
 
-	//init the display 
+	//inits the display. 
 	bool init(HWND hWnd, int width, int height);
 
-	//render on the window's DC
+	//renders on the window's DC.
 	bool render();
 
-	// get the image's width
+	// gets the image's width.
 	int getImageWidth(){ return nbCols; }
 
-	// get the image's height
+	// gets the image's height.
 	int getImageHeight(){ return nbRows; }
 
-	//
+	// sets the image to display.
 	void setImg(vpImage<vpRGBa>& im);
 	void setImg(vpImage<unsigned char>& im);
 
-	//Draw a pixel of color color at (x,y)
-	void setPixel(int x, int y, int color);
+	//Draws a pixel of color color at (x,y).
+	void setPixel(int y, int x, int color);
 
+	//other drawing methods
 	void drawLine(int i1, int j1, int i2, int j2, int col, int e, int style=PS_SOLID);
 
 	void drawRect(int i, int j, int width, int height, int col, bool fill=false);
+
+	void clear(int c);
 
 	void drawCircle(int i, int j, int r, int c);
 
@@ -106,18 +109,18 @@ public:
 	void drawArrow(int i1,int j1, int i2, int j2, int col, int L,int l);
 
 
-	// returns the currently displayed image
+	// returns the currently displayed image.
 	void getImage(vpImage<vpRGBa> &I);
 
 private:
 
-	//updates the renderer hbitmaps
+	//updates the renderer hbitmaps.
 	bool updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, int w, int h);
 
-	//convert a vpImage<vpRGBa> into a HBITMAP 
+	//converts a vpImage<vpRGBa> into a HBITMAP .
 	void convert(vpImage<vpRGBa> &I, HBITMAP& hBmp);
 
-	//convert a vpImage<unsigned char> into a HBITMAP 
+	//converst a vpImage<unsigned char> into a HBITMAP .
 	void convert(vpImage<unsigned char> &I, HBITMAP& hBmp);
 
 };

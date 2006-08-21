@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.2 2006-08-21 10:02:43 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,88 +45,102 @@
 #include <visp/vpGDIRenderer.h>
 
 /*!
-	Constructor
+	Constructor.
 */
 vpGDIRenderer::vpGDIRenderer()
 {
-	//if the screen depth is not 32bpp, throw an exception
-	if( GetDeviceCaps(GetDC(NULL),BITSPIXEL) != 32 ) 
-		throw vpDisplayException(vpDisplayException::depthNotSupportedError, "Only works in 32bits mode!");
-
-	InitializeCriticalSection(&CriticalSection);
-
-	//initialize the palette
-	colors[vpColor::black] =  RGB(0,0,0);
-	colors[vpColor::blue]  =  RGB(0,0,0xFF);
-	colors[vpColor::cyan]  =  RGB(0,0xFF,0xFF);
-	colors[vpColor::green] =  RGB(0,0xFF,0);
-	colors[vpColor::red]   =  RGB(0xFF,0,0);
-	colors[vpColor::white] =  RGB(0xFF,0xFF,0xFF);
-	colors[vpColor::yellow]=  RGB(0xFF,0xFF,0);
+  //if the screen depth is not 32bpp, throw an exception
+  if( GetDeviceCaps(GetDC(NULL),BITSPIXEL) != 32 ) 
+    throw vpDisplayException(vpDisplayException::depthNotSupportedError, "Only works in 32bits mode!");
+  
+  InitializeCriticalSection(&CriticalSection);
+  
+  //initialize the palette
+  colors[vpColor::black] =  RGB(0,0,0);
+  colors[vpColor::blue]  =  RGB(0,0,0xFF);
+  colors[vpColor::cyan]  =  RGB(0,0xFF,0xFF);
+  colors[vpColor::green] =  RGB(0,0xFF,0);
+  colors[vpColor::red]   =  RGB(0xFF,0,0);
+  colors[vpColor::white] =  RGB(0xFF,0xFF,0xFF);
+  colors[vpColor::yellow]=  RGB(0xFF,0xFF,0);
 }
 
 /*!
-	Destructor
-
+	Destructor.
 */
 vpGDIRenderer::~vpGDIRenderer()
 {
-	DeleteCriticalSection(&CriticalSection);
-	DeleteObject(bmp);
-	DeleteObject(hFont);
+  //Deletes the critical section object
+  DeleteCriticalSection(&CriticalSection);
+  //Deletes the bitmap
+  DeleteObject(bmp);
+  //Deletes the font object
+  DeleteObject(hFont);
 }
 
 /*!
-	Initialiaze the renderer
-	\param hWindow Handle of the window we are working with
-	\param width largeur de la fenêtre
-	\param height hauteur de la fenêtre
+  Initialiaze the renderer
+  \param hWindow Handle of the window we are working with
+  \param width largeur de la fenêtre
+  \param height hauteur de la fenêtre
 */
 bool vpGDIRenderer::init(HWND hWindow, int width, int height)
 {
-	hWnd = hWindow;
-	nbCols = width;
-	nbRows = height;
-
-	//creates the font
-	hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,
-						DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-						DEFAULT_PITCH | FF_DONTCARE, NULL);
-	return true;
+  hWnd = hWindow;
+  nbCols = width;
+  nbRows = height;
+  
+  //creates the font
+  hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,
+		     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+		     DEFAULT_PITCH | FF_DONTCARE, NULL);
+  return true;
 }
 
+/*!
+  Sets the image to display.
+  \param im The rgba image to display.
+*/
 void vpGDIRenderer::setImg(vpImage<vpRGBa>& im)
 {		
-	//convert the image into a HBITMAP
-	convert(im, bmp);
-	nbCols=im.getCols();
-	nbRows=im.getRows();
+  //converts the image into a HBITMAP
+  convert(im, bmp);
+  //updates the size of the image
+  nbCols=im.getCols();
+  nbRows=im.getRows();
 }
 
-
+/*!
+  Sets the image to display.
+  \param im The grayscale image to display.
+*/
 void vpGDIRenderer::setImg(vpImage<unsigned char>& im)
 {		
-	//convert the image into a HBITMAP
+	//converts the image into a HBITMAP
 	convert(im, bmp);
+	//updates the size of the image
 	nbCols=im.getCols();
 	nbRows=im.getRows();
 }
 
+/*!
+  Render the current image buffer.
+*/
 bool vpGDIRenderer::render()
 {
-	//get the window's DC
+	//gets the window's DC
 	PAINTSTRUCT ps;
 	HDC hDCScreen = BeginPaint(hWnd, &ps);
 
-	//createa memory DC
+	//create a memory DC
 	HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
-	//select this bmp in memory
+	//selects this bmp in memory
 	EnterCriticalSection(&CriticalSection);
 	SelectObject(hDCMem, bmp);
 	LeaveCriticalSection(&CriticalSection);
 
-	//blit it on the window's DC
+	//blits it on the window's DC
 	BitBlt(hDCScreen, 0, 0, nbCols, nbRows, hDCMem, 0, 0, SRCCOPY);
 	DeleteDC(hDCMem);
 
@@ -135,6 +149,11 @@ bool vpGDIRenderer::render()
 	return true;
 }
 
+/*!
+  Converts the image form ViSP in GDI's image format (bgra with padding).
+  \param I The image to convert.
+  \param hBmp The destination image.
+*/
 void vpGDIRenderer::convert(vpImage<vpRGBa> &I, HBITMAP& hBmp)
 {
 	//get the image's width and height
@@ -148,54 +167,61 @@ void vpGDIRenderer::convert(vpImage<vpRGBa> &I, HBITMAP& hBmp)
 
 	//in case of padding, the new width is width+1
 	newW = (needPad) ? (w+1) : w;
-
+	
 	//allocate the buffer
 	unsigned char * imBuffer = new unsigned char[newW * h * 4];
-
-	//if we need padding
+	
+	//if we need padding (width needs to be a multiple of 2)
 	if(needPad)
-	{
-		int j = w;
-		for(int i=0 ; i<newW * h ; i+=4)
-		{
-			//end of a line = padding = inserts 0s
-			if(j==0 && needPad)
-			{
-				imBuffer[i+0] = 0;
-				imBuffer[i+1] = 0;
-				imBuffer[i+2] = 0;
-				imBuffer[i+3] = 0;
-				j = w;
-			}
-			else
-			{	
-				imBuffer[i+0] = I.bitmap[i>>2].B;
-				imBuffer[i+1] = I.bitmap[i>>2].G;
-				imBuffer[i+2] = I.bitmap[i>>2].R;
-				imBuffer[i+3] = I.bitmap[i>>2].A;
-				j--;
-			}
-		}
-	}
+	  {
+	    int j = w;
+	    for(int i=0 ; i<newW * h ; i+=4)
+	      {
+		//end of a line = padding = inserts 0s
+		if(j==0 && needPad)
+		  {
+		    imBuffer[i+0] = 0;
+		    imBuffer[i+1] = 0;
+		    imBuffer[i+2] = 0;
+		    imBuffer[i+3] = 0;
+		    j = w;
+		  }
+		else
+		  {	
+		    //RGBA -> BGRA
+		    imBuffer[i+0] = I.bitmap[i>>2].B;
+		    imBuffer[i+1] = I.bitmap[i>>2].G;
+		    imBuffer[i+2] = I.bitmap[i>>2].R;
+		    imBuffer[i+3] = I.bitmap[i>>2].A;
+		    j--;
+		  }
+	      }
+	  }
 	else
-	{
-		for(int i=0 ; i<w * h * 4 ; i+=4)
-		{	imBuffer[i+0] = I.bitmap[i>>2].B;
-			imBuffer[i+1] = I.bitmap[i>>2].G;
-			imBuffer[i+2] = I.bitmap[i>>2].R;
-			imBuffer[i+3] = I.bitmap[i>>2].A;
-		}
-	}
-
-
+	  //Simple conversion (no padding)
+	  {
+	    for(int i=0 ; i<w * h * 4 ; i+=4)
+	      {
+		imBuffer[i+0] = I.bitmap[i>>2].B;
+		imBuffer[i+1] = I.bitmap[i>>2].G;
+		imBuffer[i+2] = I.bitmap[i>>2].R;
+		imBuffer[i+3] = I.bitmap[i>>2].A;
+	      }
+	  }
+	
+	//updates the bitmap's pixel data
 	updateBitmap(hBmp,imBuffer, newW, h);
-
+	
 	//we don't need this buffer anymore
 	delete imBuffer;
 }
 
 
-
+/*!
+  Converts the image form ViSP in GDI's image format (bgra with padding).
+  \param I The image to convert.
+  \param hBmp The destination image.
+*/
 void vpGDIRenderer::convert(vpImage<unsigned char> &I, HBITMAP& hBmp)
 {
 	//get the image's width and height
@@ -215,42 +241,44 @@ void vpGDIRenderer::convert(vpImage<unsigned char> &I, HBITMAP& hBmp)
 
 	//if we need padding
 	if(needPad)
-	{
-		int j = w;
-		for(int i=0 ; i<newW * h * 4; i+=4)
-		{
-			//end of a line = padding = inserts 0s
-			if(j==0 && needPad)
-			{
-				imBuffer[i+0] = 0;
-				imBuffer[i+1] = 0;
-				imBuffer[i+2] = 0;
-				imBuffer[i+3] = 0;
-				j = w;
-			}
-			else
-			{	
-				imBuffer[i+0] = I.bitmap[i>>2];
-				imBuffer[i+1] = I.bitmap[i>>2];
-				imBuffer[i+2] = I.bitmap[i>>2];
-				imBuffer[i+3] = I.bitmap[i>>2];
-				j--;
-			}
-		}
-	}
+	  {
+	    int j = w;
+	    for(int i=0 ; i<newW * h * 4; i+=4)
+	      {
+		//end of a line = padding = inserts 0s
+		if(j==0 && needPad)
+		  {
+		    imBuffer[i+0] = 0;
+		    imBuffer[i+1] = 0;
+		    imBuffer[i+2] = 0;
+		    imBuffer[i+3] = 0;
+		    j = w;
+		  }
+		else
+		  {	
+		    imBuffer[i+0] = I.bitmap[i>>2];
+		    imBuffer[i+1] = I.bitmap[i>>2];
+		    imBuffer[i+2] = I.bitmap[i>>2];
+		    imBuffer[i+3] = I.bitmap[i>>2];
+		    j--;
+		  }
+	      }
+	  }
 	else
-	{
-		for(int i=0 ; i<w * h * 4 ; i+=4)
-		{	imBuffer[i+0] = I.bitmap[i>>2];
-			imBuffer[i+1] = I.bitmap[i>>2];
-			imBuffer[i+2] = I.bitmap[i>>2];
-			imBuffer[i+3] = I.bitmap[i>>2];
-		}
+	  //Simple conversion
+	  {
+	    for(int i=0 ; i<w * h * 4 ; i+=4)
+	      {
+		imBuffer[i+0] = I.bitmap[i>>2];
+		imBuffer[i+1] = I.bitmap[i>>2];
+		imBuffer[i+2] = I.bitmap[i>>2];
+		imBuffer[i+3] = I.bitmap[i>>2];
+	      }
 	}
-
-
+	
+	//updates the bitmap's pixel data
 	updateBitmap(hBmp,imBuffer, newW, h);
-
+	
 	//we don't need this buffer anymore
 	delete imBuffer;
 }
@@ -267,34 +295,39 @@ void vpGDIRenderer::convert(vpImage<unsigned char> &I, HBITMAP& hBmp)
 */
 bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, int w, int h)
 {
-	//the bitmap may only be accessed by one thread at the same time
-	//that's why we enter critical section
-	EnterCriticalSection(&CriticalSection);
-
-	//if the existing bitmap object is of the right size
-	if( (nbCols==w) && (nbRows==h) )
+  //the bitmap may only be accessed by one thread at the same time
+  //that's why we enter critical section
+  EnterCriticalSection(&CriticalSection);
+  
+  //if the existing bitmap object is of the right size
+  if( (nbCols==w) && (nbRows==h) )
+    {
+      //just replace the content
+      SetBitmapBits(hBmp, w * h * 4, imBuffer);
+    }
+  else
+    {
+      if(hBmp != NULL)
 	{
-		//just replace the content
-		SetBitmapBits(hBmp, w * h * 4, imBuffer);
+	  //delete the old BITMAP
+	  DeleteObject(hBmp);
 	}
-	else
-	{
-		if(hBmp != NULL)
-		{
-			//delete the old BITMAP
-			DeleteObject(hBmp);
-		}
-		//create a new BITMAP from this buffer
-		if( (hBmp = CreateBitmap(w,h,1,32,(void*)imBuffer)) == NULL)
-			return false;
-	}
-
-	LeaveCriticalSection(&CriticalSection);
-	return true;
+      //create a new BITMAP from this buffer
+      if( (hBmp = CreateBitmap(w,h,1,32,(void*)imBuffer)) == NULL)
+	return false;
+    }
+  
+  LeaveCriticalSection(&CriticalSection);
+  return true;
 }
 
-
-void vpGDIRenderer::setPixel(int x, int y, int color)
+/*!
+  Sets the pixel at (x,y).
+  \param y The y coordinate of the pixel.
+  \param x The x coordinate of the pixel.
+  \param color The color of the pixel.
+*/
+void vpGDIRenderer::setPixel(int y, int x, int color)
 {
 	//get the window's DC
 	HDC hDCScreen = GetDC(hWnd);
@@ -315,6 +348,16 @@ void vpGDIRenderer::setPixel(int x, int y, int color)
 	ReleaseDC(hWnd, hDCScreen);
 }
 
+/*!
+	Draws a line.
+	\param i1 its starting point's first coordinate
+	\param j1 its starting point's second coordinate
+	\param i2 its ending point's first coordinate
+	\param j2 its ending point's second coordinate
+	\param e width of the line
+	\param col the line's color
+	\param style style of the line
+*/
 void vpGDIRenderer::drawLine(int i1, int j1, int i2, int j2, int col, int e, int style)
 {
 
@@ -356,6 +399,15 @@ void vpGDIRenderer::drawLine(int i1, int j1, int i2, int j2, int col, int e, int
 
 }
 
+/*!
+	Draws a rectangle.
+	\param i its top left point's first coordinate
+	\param j its top left point's second coordinate
+	\param width width of the rectangle
+	\param height height of the rectangle
+	\param col The rectangle's color
+	\param fill True if it is a filled rectangle
+*/
 void vpGDIRenderer::drawRect(int i, int j, int width, int height, int col, bool fill)
 {
 
@@ -400,6 +452,23 @@ void vpGDIRenderer::drawRect(int i, int j, int width, int height, int col, bool 
 
 }
 
+/*!
+  Clears the image to color c.
+  \param c The color used to fill the image.
+*/
+void vpGDIRenderer::clear(int c)
+{
+  drawRect(0, 0, nbCols, nbRows, c, true);
+}
+
+
+/*!
+	Draws a circle.
+	\param i its center point's first coordinate
+	\param j its center point's second coordinate
+	\param r The circle's radius
+	\param col The circle's color
+*/
 void vpGDIRenderer::drawCircle(int i, int j, int r, int c)
 {
 
@@ -444,6 +513,14 @@ void vpGDIRenderer::drawCircle(int i, int j, int r, int c)
 	ReleaseDC(hWnd, hDCScreen);
 }
 
+
+/*!
+	Draws some text.
+	\param i its top left point's first coordinate
+	\param j its top left point's second coordinate
+	\param s The string to display
+	\param col The text's color
+*/
 void vpGDIRenderer::drawText(int i, int j, char * s, int c)
 {
 	//get the window's DC
@@ -481,6 +558,16 @@ void vpGDIRenderer::drawText(int i, int j, char * s, int c)
 	ReleaseDC(hWnd, hDCScreen);
 }
 
+
+
+/*!
+	Draws a cross.
+	\param i its center point's first coordinate
+	\param j its center point's second coordinate
+	\param size Size of the cross
+	\param col The cross' color
+	\param e width of the cross
+*/
 void vpGDIRenderer::drawCross(int i,int j, int size,int col, int e)
 {
 	//get the window's DC
@@ -519,6 +606,16 @@ void vpGDIRenderer::drawCross(int i,int j, int size,int col, int e)
 
 }
 
+/*!
+	Draws an arrow.
+	\param i1 its starting point's first coordinate
+	\param j1 its starting point's second coordinate
+	\param i2 its ending point's first coordinate
+	\param j2 its ending point's second coordinate
+	\param col The line's color
+	\param L ...
+	\param l ...
+*/
 void vpGDIRenderer::drawArrow(int i1,int j1, int i2, int j2, int col, int L,int l)
 {
 	double a = j2 - j1 ;
@@ -601,7 +698,10 @@ void vpGDIRenderer::drawArrow(int i1,int j1, int i2, int j2, int col, int L,int 
 	ReleaseDC(hWnd, hDCScreen);
 }
 
-
+/*!
+  Gets the currently displayed image.
+  \param I Image returned.
+*/
 void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
 {
 	//size of image buffer : nbCols*nbRows*4
@@ -620,7 +720,7 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
 		I.bitmap[i>>2].R = imBuffer[i+2];
 		I.bitmap[i>>2].G = imBuffer[i+1];
 		I.bitmap[i>>2].B = imBuffer[i+0];
-		I.bitmap[i>>2].A = 0;
+		I.bitmap[i>>2].A =  0xFF; //255 = maximum opacity
 	}
 
 	delete imBuffer;
