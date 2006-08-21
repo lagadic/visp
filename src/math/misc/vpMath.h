@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.h,v 1.6 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpMath.h,v 1.7 2006-08-21 08:36:59 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,10 +49,20 @@
 #include <math.h>
 #include <visp/vpConfig.h>
 
-#ifdef WIN32	// Non defines in M$ math.h
-#define M_PI            3.14159265358979323846
-#define M_PI_2          1.57079632679489661923
-#define M_PI_4          0.78539816339744830962
+#ifdef WIN32	// Not defined in Microsoft math.h
+
+# ifndef M_PI
+#   define M_PI            3.14159265358979323846
+# endif
+
+# ifndef M_PI_2
+#   define M_PI_2          M_PI/2
+# endif
+
+# ifndef M_PI_4
+#   define M_PI_4          M_PI/4
+# endif
+
 #endif
 
 
