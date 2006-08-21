@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.8 2006-06-23 15:35:44 brenier Exp $
+ * $Id: vpDisplay.h,v 1.9 2006-08-21 08:43:23 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -347,41 +347,41 @@ public:
 			 int& i, int& j, int& button) ;
   //! wait for a click
   static void  getClick(vpImage<unsigned char> &I) ;
-  //! return true way  button is released
+  //! return true when  button is released
   static  bool  getClickUp(vpImage<unsigned char> &I,
 			   int& i, int& j, int& button) ;
 
 
-  //!return true way a button is pressed
+  //!return true when a button is pressed
   static bool  getClick(vpImage<vpRGBa> &I,
 			 int& i, int& j) ;
-  //!  return true way button is pressed
+  //!  return true when button is pressed
   static  bool  getClick(vpImage<vpRGBa> &I,
 			 int& i, int& j, int& button) ;
   //! wait for a click
   static void  getClick(vpImage<vpRGBa> &I) ;
-  //! return true way  button is released
+  //! return true when button is released
   static  bool  getClickUp(vpImage<vpRGBa> &I,
 			   int& i, int& j, int& button) ;
 public:
-  //!return true way a button is pressed
+  //!return true when a button is pressed
   static bool  getClick_uv(vpImage<unsigned char> &I,
 			 int& u, int& v) ;
-  //!  return true way button is pressed
+  //!  return true when button is pressed
   static  bool  getClick_uv(vpImage<unsigned char> &I,
 			 int& u, int& v, int& button) ;
-  //! return true way  button is released
+  //! return true when button is released
   static  bool  getClickUp_uv(vpImage<unsigned char> &I,
 			   int& u, int& v, int& button) ;
 
 
-  //!return true way a button is pressed
+  //!return true when a button is pressed
   static bool  getClick_uv(vpImage<vpRGBa> &I,
 			 int& u, int& v) ;
-  //!  return true way button is pressed
+  //!  return true when button is pressed
   static  bool  getClick_uv(vpImage<vpRGBa> &I,
 			 int& u, int& v, int& button) ;
-  //! return true way  button is released
+  //! return true when button is released
   static  bool  getClickUp_uv(vpImage<vpRGBa> &I,
 			   int& u, int& v, int& button) ;
 
