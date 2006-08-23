@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveBiclops.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: moveBiclops.cpp,v 1.4 2006-08-23 10:43:57 brenier Exp $
  *
  * Description
  * ============
@@ -27,22 +27,89 @@
   See http://www.traclabs.com/tracbiclops.htm for more details.
 */
 
-#ifdef UNIX
-#  include <unistd.h>
-#endif
-
+#include <visp/vpParseArgv.h>
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpColVector.h>
+#include <visp/vpTime.h>
 
 #ifdef VISP_HAVE_BICLOPS
 
 #include <visp/vpRobotBiclops.h>
 
-int
-main()
+// List of allowed command line options
+#define GETOPTARGS	"c:h"
+
+/*
+
+  Print the program options.
+
+  \param conf : Biclops configuration file.
+
+ */
+void usage(char *name, char *badparam, string conf)
 {
-  vpRobotBiclops robot ;
+  fprintf(stdout, "\n\
+Move the biclops robot\n\
+\n\
+SYNOPSIS\n\
+  %s [-c <Biclops configuration file>] [-h]\n						      \
+", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -c <Biclops configuration file>                      %s\n\
+     Sets the biclops robot configuration file.\n\n",
+	  conf.c_str());
+
+}
+
+/*!
+
+  Set the program options.
+
+  \param conf : Biclops configuration file.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv, string& conf)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'c': conf = optarg; break;
+    case 'h': usage(argv[0], NULL, conf); return false; break;
+
+    default:
+      usage(argv[0], optarg, conf); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, conf);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
+
+int
+main(int argc, char ** argv)
+{
+  string opt_conf = "/usr/share/BiclopsDefault.cfg";
+
+  // Read the command line options
+  if (getOptions(argc, argv, opt_conf) == false) {
+    exit (-1);
+  }
+
+  vpRobotBiclops robot(opt_conf.c_str());
+  
   vpColVector q     (vpBiclops::ndof) ; // desired position
   vpColVector qdot  (vpBiclops::ndof) ; // desired velocity
   vpColVector qm    (vpBiclops::ndof) ; // measured position
@@ -109,7 +176,9 @@ main()
 	 << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
 	 << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << endl ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
-  sleep(5) ;
+ 
+  //waits 5000ms
+  vpTime::wait(5000.0);
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
   vpCTRACE << "Position in the articular frame: "
@@ -129,7 +198,9 @@ main()
 	 << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
 	 << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << endl ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
-  sleep(3) ;
+  
+  //waits 3000 ms
+  vpTime::wait(3000.0);
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
   vpCTRACE << "Position in the articular frame: "
@@ -151,7 +222,9 @@ main()
 	 << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
 	 << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << endl ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
-  sleep(2) ;
+
+  //waits 2000 ms
+  vpTime::wait(2000.0);
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
   vpCTRACE << "Position in the articular frame: "
@@ -172,7 +245,9 @@ main()
 	 << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
 	 << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << endl ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
-  sleep(2) ;
+
+  //waits 2000 ms
+  vpTime::wait(2000.0);
 
   robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
   vpCTRACE << "Position in the articular frame: "

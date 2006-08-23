@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.6 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.7 2006-08-23 10:43:57 brenier Exp $
  *
  * Description
  * ============
@@ -32,24 +32,26 @@
 
 */
 
-#ifdef UNIX
-#  include <unistd.h>
-#endif
+#include <visp/vpTime.h>
+
 #include <signal.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if ( defined (VISP_HAVE_BICLOPS) & defined (VISP_HAVE_DC1394) )
+#if ( defined (VISP_HAVE_BICLOPS) & (defined (VISP_HAVE_DC1394) | defined(VISP_HAVE_DIRECTSHOW)) )
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>
 #endif
 
 #include <visp/vp1394Grabber.h>
+#include <visp/vpDirectShowGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -59,8 +61,9 @@
 #include <visp/vpFeatureBuilder.h>
 #include <visp/vpRobotBiclops.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpParseArgv.h>
 #include <visp/vpServoDisplay.h>
-#include <visp/vpDot2.h>
+#include <visp/vpDot.h>
 
 // Exception
 #include <visp/vpException.h>
@@ -76,12 +79,81 @@ void signalCtrC( int signumber )
 #ifdef VISP_HAVE_PTHREAD
   pthread_mutex_unlock( &mutexEndLoop );
 #endif
-  usleep( 1000*10 );
+  vpTime::wait(10);
   vpTRACE("Ctrl-C pressed...");
 }
 
+
+// List of allowed command line options
+#define GETOPTARGS	"c:d:h"
+
+/*!
+
+  Print the program options.
+
+  \param ipath : Input image path.
+ */
+void usage(char *name, char *badparam, string& conf, string& debugdir, string& user)
+{
+  fprintf(stdout, "\n\
+  Example of eye-in-hand control law. We control here a real robot, the biclops\n\
+  robot (pan-tilt head provided by Traclabs). The velocity is\n\
+  computed in articular. The visual feature is the center of gravity of a\n\
+  point.\n\
+\n\
+SYNOPSIS\n\
+  %s [-c <Biclops configuration file>] [-d <debug file directory>] [-h]\n", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -c <Biclops configuration file>                      %s\n\
+     Sets the biclops robot configuration file.\n\n\
+  -d <debug file directory>                            %s\n\
+     Sets the debug file directory.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where\n\
+     it writes biclops.txt file.\n", conf.c_str(), debugdir.c_str(), user.c_str());
+
+}
+/*!
+
+  Set the program options.
+
+  \param ipath : Input image path.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv, string& conf, string &debugdir, string& user)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'c': conf = optarg; break;
+    case 'd': debugdir = optarg; break;
+    case 'h': usage(argv[0], NULL, conf, debugdir, user); return false; break;
+
+    default:
+      usage(argv[0], optarg, conf, debugdir, user); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, conf, debugdir, user);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
+
+
+
 int
-main()
+main(int argc, char ** argv)
 {
   cout << endl ;
   cout << "-------------------------------------------------------" << endl ;
@@ -95,32 +167,61 @@ main()
   try{
 
 #ifdef VISP_HAVE_PTHREAD
-  pthread_mutex_lock( &mutexEndLoop );
+    pthread_mutex_lock( &mutexEndLoop );
 #endif
-  signal( SIGINT,&signalCtrC );
+    signal( SIGINT,&signalCtrC );
+    
+    //default unix configuration file path
+    string opt_conf = "/usr/share/BiclopsDefault.cfg";
+
+    string username;
+    string debugdir;
+    string opt_debugdir;
+    
+  // Set the default output path
+#ifdef UNIX
+  opt_debugdir = "/tmp";
+#elif WIN32
+  opt_debugdir = "C:/temp";
+#endif
 
   // Get the user login name
-  char *user;
-  user = getlogin();
-
-  // Set debug directory to /tmp/$user
-  char *debugdir = new char[FILENAME_MAX];
-  sprintf(debugdir, "/tmp/%s", user);
-
-  // If the debug dir don't exist, create it
-  try {
-    vpIoTools::checkDirectory(debugdir);
-  }
-  catch (...) {
-    vpIoTools::makeDirectory(debugdir);
+  vpIoTools::getUserName(username);
+  
+  // Read the command line options
+  if (getOptions(argc, argv, opt_conf, opt_debugdir , username) == false) {
+    exit (-1);
   }
 
-  // Create the debub file: /tmp/$user/biclops.txt
+  // Get the option value
+  if (!opt_debugdir.empty())
+    debugdir = opt_debugdir;
+
+  // Append to the output path string, the login name of the user
+  string dirname = debugdir + "/" + username;
+
+  // Test if the output path exist. If no try to create it
+  if (vpIoTools::checkDirectory(dirname) == false) {
+    try {
+      // Create the dirname
+      vpIoTools::makeDirectory(dirname);
+    }
+    catch (...) {
+      usage(argv[0], NULL, opt_conf, debugdir, username);
+      cerr << endl 
+	   << "ERROR:" << endl;
+      cerr << "  Cannot create " << dirname << endl;
+      cerr << "  Check your -d " << debugdir << " option " << endl;
+      exit(-1);
+    }
+  }
+
+  // Create the debug file: debugdir/$user/biclops.txt
   char *filename = new char[FILENAME_MAX];
-  sprintf(filename, "%s/biclops.txt", debugdir);
+  sprintf(filename, "%s/biclops.txt", debugdir.c_str());
   FILE *fd = fopen(filename, "w");
 
-  vpRobotBiclops robot ;
+  vpRobotBiclops robot(opt_conf.c_str()) ;
   {
     vpColVector q(2); q=0;
     robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
@@ -129,7 +230,11 @@ main()
 
   vpImage<unsigned char> I ;
 
+#if defined VISP_HAVE_DC1394
   vp1394Grabber g;
+#elif defined VISP_HAVE_DIRECTSHOW
+  vpDirectShowGrabber g;
+#endif
 
   g.open(I) ;
 
@@ -142,8 +247,16 @@ main()
     throw ;
   }
 
+  // We open a window using either X11 or GTK or GDI.
+  // Its size is automatically defined by the image (I) size
+#if defined VISP_HAVE_X11
+  vpDisplayX display(I, 100, 100,"Display X...") ;
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK display(I, 100, 100,"Display GTK...") ;
+#elif defined WIN32
+  vpDisplayGDI display(I, 100, 100,"Display GDI...") ;
+#endif
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
   vpTRACE(" ") ;
 
   try{
@@ -158,7 +271,7 @@ main()
 
   vpServo task ;
 
-  vpDot2 dot ;
+  vpDot dot ;
 
   try{
     cout << "Click on a dot to initialize the tracking..." << endl;
@@ -257,6 +370,7 @@ main()
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
     vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    
     {
       vpColVector s_minus_sStar(2);
       s_minus_sStar = task.s - task.sStar;
@@ -270,12 +384,9 @@ main()
   vpTRACE("Display task information " ) ;
   task.print() ;
 
-  delete [] debugdir;
-  delete [] filename;
-
   fclose(fd);
 
-  } catch (...) { vpERROR_TRACE("Trow uncatched..."); }
+  } catch (...) { vpERROR_TRACE("Throw uncatched..."); }
 
 }
 
