@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindPTHREAD.cmake,v 1.3 2006-05-30 08:35:01 fspindle Exp $
+# $Id: FindPTHREAD.cmake,v 1.4 2006-08-23 10:41:55 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -40,9 +40,9 @@
 #
 #############################################################################
 
-#IF(NOT UNIX)
+#IF(NOT UNIX AND NOT WIN32)
 #  SET(PTHREAD_FOUND FALSE)
-#ELSE(NOT UNIX)
+#ELSE(NOT UNIX AND NOT WIN32)
   
   FIND_PATH(PTHREAD_INCLUDE_DIR pthread.h
     /usr/include
@@ -52,7 +52,7 @@
   
   # pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2 are comming from web
   FIND_LIBRARY(PTHREAD_LIBRARY
-    NAMES pthread pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2
+    NAMES pthread pthreadGC2 pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2
     PATHS
     /usr/lib
     /usr/local/lib
@@ -86,4 +86,4 @@
   #  )
   #MESSAGE(STATUS "PTHREAD_FOUND : ${PTHREAD_FOUND}")
 
-#ENDIF(NOT UNIX)
+#ENDIF(NOT UNIX AND NOT WIN32)

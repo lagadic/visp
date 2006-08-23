@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpRobotBiclops.cpp,v 1.6 2006-08-23 10:41:55 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,9 +37,8 @@
 
 #include <signal.h>
 #include <errno.h>
-#ifdef UNIX
-#  include <unistd.h>
-#endif
+
+#include <visp/vpTime.h>
 
 #include <visp/vpConfig.h>
 
@@ -78,13 +77,13 @@ static pthread_mutex_t vpMeasure_mutex;
   To change the default configuration file see setConfigFile().
 
 */
-vpRobotBiclops::vpRobotBiclops (void)
+vpRobotBiclops::vpRobotBiclops (const char * filename)
   :
   vpRobot ()
 {
   vpDEBUG_TRACE (12, "Begin default constructor.");
 
-  sprintf(configfile, "/usr/share/BiclopsDefault.cfg");
+  sprintf(configfile, filename);
 
   // Initialize the mutex dedicated to she shm protection
   pthread_mutex_init (&vpShm_mutex, NULL);
@@ -457,7 +456,9 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
       prev_q_dot[i] = shm.q_dot[i];
 
     vpDEBUG_TRACE(12, "iter: %d", iter);
-    usleep(5000);
+
+    //wait 5 ms
+    vpTime::wait(5.0);
 
     if (pthread_mutex_trylock(&vpEndThread_mutex) == 0) {
       vpDEBUG_TRACE (12, "Calling thread will end");
