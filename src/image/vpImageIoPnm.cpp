@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageIoPnm.cpp,v 1.5 2006-07-10 16:40:04 fspindle Exp $
+ *  $Id: vpImageIoPnm.cpp,v 1.6 2006-08-23 12:05:18 brenier Exp $
  *
  * Description
  * ============
@@ -225,8 +225,8 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
-
-  if (strlen(str) != 3)
+  
+  if (strlen(str) < 3)
   {
     fclose (fd);
     vpERROR_TRACE("%s is not a PGM file\n", filename) ;
@@ -446,7 +446,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 			    "couldn't read file")) ;
   }
 
-  if (strlen(str) != 3)
+  if (strlen(str) < 3)
   {
     fclose (fd);
     vpERROR_TRACE("%s is not a PPM file\n", filename) ;
