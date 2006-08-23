@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDebug.h,v 1.4 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpDebug.h,v 1.5 2006-08-23 10:20:36 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -30,324 +30,258 @@
  * Description:
  * Debug and trace macro.
  *
- *   - TRACAGE:    vpTRACE et vpERROR_TRACE fonctionnent comme des printf
- * avec retour chariot en fin de fonction.
- *                 vpCERROR et vpCTRACE fonctionnent comme les flux de sortie
- * C++ cout et cerr.
- *   - DEBUGAGE:   vpDEBUG_TRACE(niv,  et vpDERROR_TRACE(niv, fonctionnent
- * comme des printf, n'imprimant que si le niveau de trace 'niv' est
- * superieur au mode de debugage VP_DEBUG_MODE.
- *                 vpCDEBUG(niv) fonctionne comme le flux de sortie C++ cout.
- *                 vpDEBUG_ENABLE(niv) vaut 1 ssi le niveau de tracage 'niv'
- * est superieur au  mode de debugage VP_DEBUG_MODE. Il vaut 0 sinon.
- *   - PROG DEFENSIVE: DEFENSIF(a) vaut a ssi le mode defensif est active,
- * et vaut 0 sinon.
+ *   - TRACING:    vpTRACE and vpERROR_TRACE work like printf with carreer return at the end of the string.
+ *                 vpCERROR et vpCTRACE work like the C++ output streams cout and cerr.
+ *   - DEBUGING:   vpDEBUG_TRACE(niv,  and vpDERROR_TRACE(niv, work like printf, but print only if the 
+ *                 tracing level niv is greater than the debug level VP_DEBUG_MODE.
+ *                 vpCDEBUG(niv) work like the C++ output stream cout.
+ *                 vpDEBUG_ENABLE(niv) is equal to 1 if the debug level niv is greater than the debug mode
+ *                 VP_DEBUG_MODE, 0 else.
+ *   - PROG DEFENSIVE: DEFENSIF(a) is equal to a if defensive mode is active, 0 else.
  *
  * Authors:
- * Nicolas Mansard
+ * Nicolas Mansard, Bruno Renier
  *
  *****************************************************************************/
 
 #ifndef __VP_DEBUG_HH
 #define __VP_DEBUG_HH
 
-#define __VP_TEMPLATE_DEBUG_HH
-
 #include <stdio.h>
+#include <stdarg.h>
 #include <iostream>
 using namespace std;
-
-#ifndef WIN32
-////////////////////////////////////////////////////////////////////////////
-// Unix system
-//
-
-#ifndef VP_DEBUG_MODE
-#define VP_DEBUG_MODE 0
-#endif /*#ifndef VP_TEMPLATE_DEBUG_MODE*/
-
-/* -------------------------------------------------------------------------- */
-/* --- vpTRACE ---------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-#define vpERROR_TRACE(a...)   do {\
-    std::cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    fprintf (stderr, a); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } while (0)
-#define vpCERROR std::cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
-#ifdef VP_DEBUG
-#define vpTRACE(a...)    do {\
-    std::cout << "(N0)" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a); \
-    printf ("\n"); \
-    fflush (stdout); } while (0)
-#else /* #ifdef VP_DEBUG */
-#define vpTRACE(a...)    do {\
-    std::cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a); \
-    printf ("\n"); \
-    fflush (stdout); } while (0)
-#endif /* #ifdef VP_DEBUG */
-#define vpCTRACE std::cout << "(N0)" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
-
-/* -------------------------------------------------------------------------- */
-/* --- VP_DEBUG ---------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-#ifdef VP_DEBUG
-#define vpDERROR_TRACE(niv, a...)  do {\
-    if (VP_DEBUG_MODE >= niv) {\
-    std::cerr << "(N" << niv << ") " ; \
-    std::cerr << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    fprintf (stderr, a); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } \
-    } while (0)
-#define vpDEBUG_TRACE(niv, a...)   do {\
-    if (VP_DEBUG_MODE >= niv) {\
-    std::cout << "(N" << niv << ") " ; \
-    std::cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a); printf ("\n"); \
-    fflush (stdout); } \
-    } while (0)
-#define vpCDEBUG(niv) if (VP_DEBUG_MODE < niv) ; else \
-    std::cout << "(N" << niv << ") "<< __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
-#define vpDEBUG_ENABLE(niv) (VP_DEBUG_MODE >= niv)
-
-#else /*#ifdef VP_DEBUG*/
-#define vpDERROR_TRACE(niv, a...)  do {} while (0)
-#define vpDEBUG_TRACE(niv, a...)   do {} while (0)
-#define vpCDEBUG(niv) if (1) ; else std::cout
-#define vpDEBUG_ENABLE(niv) (0)
-#endif /*#ifdef VP_DEBUG*/
-
-
-/* -------------------------------------------------------------------------- */
-/* --- DEFENSIF ------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-#ifdef VP_DEFENSIF
-#define DEFENSIF(a)  (a)
-#else
-#define DEFENSIF(a)  (0)
-#endif  /*#ifdef DEFENSIF*/
-
-
-/* -------------------------------------------------------------------------- */
-/* --- vpTRACE ENTREE/SORTIE FONCTION ----------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-#define vpIN_FCT(niv, a...)   do {\
-    if (VP_DEBUG_MODE >= niv) {\
-    cout <<"begin" << __FILE__ << ": " << __FUNCTION__ <<  "(#" << __LINE__ << ") :"; \
-    printf (a); printf ("\n"); \
-    fflush (stdout); } \
-    } while (0)
-
-
-#define vpOUT_FCT(niv, a...)   do {\
-    if (VP_DEBUG_MODE >= niv) {\
-    cout <<"begin" << __FILE__ << ": " << __FUNCTION__ <<  "(#" << __LINE__ << ") :"; \
-    printf (a); printf ("\n"); \
-    fflush (stdout); } \
-    } while (0)
-
-
-
-/* Macro de trace et de debugage pour les template Ce fichier differe du
- * fichier debug.hh classique par l'absence d'utilisation des macros VP_DEBUG
- * et VP_DEBUG_MODE. Les traces sont definies tout le temps, et ne depende pas
- * d'une macro definie a la compilation, mais des macros TEMPLATE_DEBUG et
- * VP_TEMPLATE_DEBUG_MODE definies en debut de fichier .t.cc (par default, elle
- * vaut 0 : pas de trace). Les lignes de traces sont retires de l'executatble
- * si une directive d'optimisation de compilation (-o3 par exemple) est
- * utilisee (dans ce cas, les branchements conditionnels sont resolu avant la
- * generation du code quand c'est possible, en particulier dans ce cas).
- * L'utilisation classique est :  #define TEMPLATE_DEBUG #define
- * VP_TEMPLATE_DEBUG_MODE 5 #include "template_debug.hh"
- */
-
-#undef vpTDERROR_TRACE
-#undef vpTDEBUG_TRACE
-#undef vpCTDEBUG
-#undef vpTDEBUG_ENABLE
-
-#ifdef VP_TEMPLATE_DEBUG
-
-#ifndef VP_TEMPLATE_DEBUG_MODE
-#define VP_TEMPLATE_DEBUG_MODE 0
-#endif /*#ifndef VP_TEMPLATE_DEBUG_MODE*/
-
-#define vpTDERROR_TRACE(niv, a...)  do {\
-    if (VP_TEMPLATE_DEBUG_MODE >= niv) {\
-    std::cerr <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } \
-    } while (0)
-#define vpTDEBUG_TRACE(niv, a...)   do {\
-    if (VP_TEMPLATE_DEBUG_MODE >= niv) {\
-    std::cout << "(N" << niv << ") " ; \
-    std::cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a); printf ("\n"); \
-    fflush (stdout); } \
-    } while (0)
-#define vpCTDEBUG(niv) if (VP_TEMPLATE_DEBUG_MODE < niv) ; else \
-    std::cout << "(N" << niv << ") " ; \
-    std::cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
-#define vpTDEBUG_ENABLE(niv) (VP_TEMPLATE_DEBUG_MODE >= niv)
-
-#else /*#ifdef TEMPLATE_DEBUG*/
-#define vpTDERROR_TRACE(niv, a...)  do {} while (0)
-#define vpTDEBUG_TRACE(niv, a...)   do {} while (0)
-#define vpCTDEBUG(niv) if (1) ; else std::cout
-#define vpTDEBUG_ENABLE(niv) (0)
-#endif /*#ifdef TEMPLATE_DEBUG*/
-
-
-
-#else  /* #ifndef WIN32 */
-////////////////////////////////////////////////////////////////////////////
-// Windows system
-//
-
-#ifndef VP_DEBUG_MODE
-#define VP_DEBUG_MODE 0
-#endif /*#ifndef VP_TEMPLATE_DEBUG_MODE*/
 
 #ifndef __FUNCTION__
 #define __FUNCTION__ " "
 #endif
 
-#define vpIN_FCT(niv, a, b)   do {\
-    if (VP_DEBUG_MODE >= niv) {\
-    cout <<"begin" << __FILE__ << ": " << __FUNCTION__ <<  "(#" << __LINE__ << ") :"; \
-    printf (a); printf ("\n"); \
-    fflush (stdout); } \
-    } while (0)
-
-
-#define vpOUT_FCT(niv, a, b)   do {\
-    if (VP_DEBUG_MODE >= niv) {\
-    cout <<"begin" << __FILE__ << ": " << __FUNCTION__ <<  "(#" << __LINE__ << ") :"; \
-    printf (a); printf ("\n"); \
-    fflush (stdout); } \
-    } while (0)
-
-
-
-inline void vpERROR_TRACE(char *a) {  do {\
-    cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    fprintf (stderr, a); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } while (0); };
-inline void vpERROR_TRACE(char *a, int b) {  do {\
-    cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    fprintf (stderr, a, b); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } while (0); };
-inline void vpERROR_TRACE(char *a, double b) {  do {\
-    cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    fprintf (stderr, a, b); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } while (0); };
-inline void vpERROR_TRACE(char *a, const char *b) {  do {\
-    cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    fprintf (stderr, a, b); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } while (0); };
-inline void vpERROR_TRACE(char *a, unsigned b, const char *c) {  do {\
-    cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    fprintf (stderr, a, b, c); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } while (0); };
-inline void vpERROR_TRACE(char *a, double b, double c) {  do {\
-    cerr << "!!\t" << __FILE__ << ": " <<__FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    fprintf (stderr, a, b, c); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } while (0); };
-#define vpCERROR cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
-inline void vpTRACE(char *a) {   do {\
-    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a); \
-    printf ("\n"); \
-    fflush (stdout); } while (0); };
-inline void vpTRACE(char *a, int b) {   do {\
-    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a, b); \
-    printf ("\n"); \
-    fflush (stdout); } while (0); };
-inline void vpTRACE(char *a, float b) {   do {\
-    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a, b); \
-    printf ("\n"); \
-    fflush (stdout); } while (0); };
-inline void vpTRACE(char *a, char *b) {   do {\
-    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a, b); \
-    printf ("\n"); \
-    fflush (stdout); } while (0); };
-inline void vpTRACE(char *a, double b, double c) {   do {\
-    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a, b, c); \
-    printf ("\n"); \
-    fflush (stdout); } while (0); };
-inline void vpTRACE(char *a, double b, double c, double d) {   do {\
-    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a, b, c, d); \
-    printf ("\n"); \
-    fflush (stdout); } while (0); };
-inline void vpTRACE(char *a, unsigned char b, unsigned char c, unsigned char d, unsigned char e, unsigned char f, unsigned char g) {   do {\
-    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a, b, c, d, e, f, g); \
-    printf ("\n"); \
-    fflush (stdout); } while (0); };
-
-#define vpCTRACE cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
-
-#ifdef VP_DEBUG
-#define vpDERROR_TRACE(niv, a, b)  do {\
-    if (VP_DEBUG_MODE >= niv) {\
-    cerr <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a); \
-    fprintf (stderr, "\n"); \
-    fflush (stderr); } \
-    } while (0)
-#define vpDEBUG_TRACE(niv, a)   do {\
-    if (VP_DEBUG_MODE >= niv) {\
-    cout <<__FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :" ; \
-    printf (a); printf ("\n"); \
-    fflush (stdout); } \
-    } while (0)
-#define vpCDEBUG(niv) if (VP_DEBUG_MODE < niv) ; else \
-    cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
-
-#else
-#define vpDERROR_TRACE(niv, a, b)  do {} while (0)
-inline void vpDEBUG_TRACE(int niv, char *a) {  do {} while (0); };
-inline void vpDEBUG_TRACE(int niv, char *a, char *b) { do {} while (0); };
-inline void vpDEBUG_TRACE(int niv, char *a, const char *b) { do {} while (0); };
-inline void vpDEBUG_TRACE(int niv, char *a, unsigned char *b) { do {} while (0); };
-inline void vpDEBUG_TRACE(int niv, char *a, unsigned char **b) { do {} while (0); };
-inline void vpDEBUG_TRACE(int niv, char *a, int b, int c) { do {} while (0); };
-inline void vpDEBUG_TRACE(int niv, char *a, double b) { do {} while (0); };
-inline void vpDEBUG_TRACE(int niv, char *a, double b, double c, double d) { do {} while (0); };
-#define vpCDEBUG(niv) if (1) ; else cout
+#ifndef VP_DEBUG_MODE
+#define VP_DEBUG_MODE 0
 #endif
 
 
+/*!
+	\class vpTraceOutput
+	\brief This class is used to display debug or error messages.
+	       It needs to be initialized with the file name, function name and line, of 
+	       the place where it is created.
+	       It is best used by first instanciating the object and directly calling the () operator.
+	       This is used to mimic variadic macros (not supported in MSVC prior to version 8)
+*/
+class vpTraceOutput
+{
+ private:
+    const char* currentFile; //Name of the file to use in the displays
+    const char* currentFunc; //Name of the function to use in the displays
+    int currentLine;		 //Line to use in the displays
+    
+    //if true, output to cerr/stderr else cout/stdout
+    bool err;
+    //string to display before anything else
+    const char* header;
+
+public:
+         /*!
+                Constructor.
+		\param file Should be the name of the file where this constructor was called.
+		\param line Should be the line in file where this constructor was called.
+		\param func Should be the name of the function where this constructor was called.
+		\param error If true, writes to the error stream.
+		\param s String to print before any other message (acts like a header).
+		\note Call the constructor with something like vpTraceOutput(__FILE__,__LINE__, __FUNCTION__).
+	*/
+    vpTraceOutput(const char* file, int line, const char* func, bool error=false, const char * s=NULL) :
+        currentFile(file),
+		currentLine(line),
+		currentFunc(func),
+		err(error),
+		header(s)
+		{}
+
+	/*!
+		Displays a string if the debug level is inferior to VP_DEBUG_MODE.
+		\param niv Level of this message.
+		\param format Formating string.
+	*/
+	 void operator()(int niv, const char* format, ...)
+    {
+		//if the niv level is inferior to VP_DEBUG_MODE
+		if(VP_DEBUG_MODE >= niv)
+		{
+			//gets the variable list of arguments
+			va_list args;
+			va_start(args, format);
+
+                        cout << "(N" << niv << ") " ; 
+			//calls display with it
+			display(format, args);
+
+			va_end(args);	
+		}
+    }
+
+	/*!
+		Displays a string.
+		\param format Formating string.
+	*/
+    void operator()(const char* format, ...)
+    {
+		//gets the variable list of arguments
+		va_list args;
+		va_start(args, format);
+
+		#ifdef VP_DEBUG
+		cout<<"(N0) ";
+		#endif
+
+		//calls display with it
+		display(format, args);
+
+		va_end(args);	
+	}
+
+	/*!
+		Displays a message to either stdout/cout or stderr/cerr (based on error boolean).
+		\param format Formating string.
+		\param args List of arguments.
+
+	*/
+	void display(const char* format, va_list args)
+	{
+		//if we want to write to cerr/stderr
+		if(err)
+		{
+			//first writes the header if there is one
+			if(header != NULL) cerr<<header;
+			//then writes the recorded namefile, function and line
+			cerr << "!!\t" << currentFile << ": " <<currentFunc << "(#" << currentLine << ") :" ;
+			//and finally writes the message passed to () operator.
+			vfprintf (stderr, format, args); 
+			fprintf (stderr, "\n");
+			//flushes the buffer
+			fflush (stderr);
+		}
+		else
+		{
+			//first writes the header if there is one
+			if(header != NULL) cout<<header;
+			//then writes the recorded namefile, function and line
+			cout <<currentFile << ": " << currentFunc << "(#" << currentLine << ") :" ;
+			//and finally writes the message passed to () operator.
+			vprintf (format, args); 
+			printf ("\n");
+			//flushes the buffer
+			fflush (stdout);
+		}
+	}
+
+};
+
+
+
+
+/* -------------------------------------------------------------------------- */
+/* --- vpTRACE -------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+/*!
+  Used to display trace messages on the standard stream (C++).
+  Use like this : vpCTRACE<<"my message"<<endl;
+*/
+#define vpCTRACE cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+
+
+/*!
+  Used to display error messages on the error stream (C++).
+  Use like this : vpCERROR<<"my message"<<endl;
+*/
+#define vpCERROR cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+
+/*!
+	Used to display error messages on the error stream.
+	Prints the name of the file, the function name and the line where
+	it was used.
+	Use like this : vpERRORTRACE("my error message number %d", i);
+	with any "printf" string.
+*/
+#define vpERROR_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, true))
+
+/*!
+	Used to display trace messages on the standard stream.
+	Prints the name of the file, the function name and the line where
+	it was used.
+	Use like this : vpTRACE("my debug message number %d", i);
+	with any "printf" string.
+*/
+#define vpTRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, false))
+
+
+/* -------------------------------------------------------------------------- */
+/* --- VP_DEBUG ------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+#ifdef VP_DEBUG
+
+/*!
+  vpDERROR_TRACE works like printf, but prints only if the 
+  tracing level niv is greater than the debug level VP_DEBUG_MODE. 
+*/
+#define vpDERROR_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, true))
+
+/*! 
+  vpDEBUG_TRACE works like printf, but prints only if the 
+  tracing level niv is greater than the debug level VP_DEBUG_MODE. 
+*/
+#define vpDEBUG_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, false))
+
+/*!
+  vpCDEBUG(niv) work like the C++ output stream cout.
+*/
+#define vpCDEBUG(niv) if (VP_DEBUG_MODE < niv) ; else \
+		cout << "(N" << niv << ") "<<  __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+
+/*!
+  vpDEBUG_ENABLE(niv) is equal to 1 if the debug level niv is greater than the debug mode
+  VP_DEBUG_MODE, 0 else.
+*/
+#define vpDEBUG_ENABLE(niv) (VP_DEBUG_MODE >= niv)
+
+#else
+
+inline void vpDERROR_TRACE(int niv, char *a, ...){};
+inline void vpDEBUG_TRACE(int niv, char *a, ...){};
+#define vpCDEBUG(niv) if (1) ; else cout  
+#define vpDEBUG_ENABLE(niv) (0)
+
+#endif
+
+
+
+/* -------------------------------------------------------------------------- */
+/* --- vpTRACE IN/OUT FONCTION ---------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+/*!
+  Works like vpTRACE and should be used at the beginning of a function.
+*/
+#define vpIN_FCT (vpTraceOutput(__FILE__,__LINE__, __FUNCTION__, false, "begin "))
+
+
+/*!
+  Works like vpTRACE and should be used at the end of a function.
+*/
+#define vpOUT_FCT (vpTraceOutput(__FILE__,__LINE__, __FUNCTION__, false, "end "))
+
+
+/* -------------------------------------------------------------------------- */
+/* --- DEFENSIF ------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 #ifdef VP_DEFENSIF
 #define DEFENSIF(a)  (a)
 #else
 #define DEFENSIF(a)  (0)
-#endif
-
-
-
-#endif /* #ifndef WIN32 */
-////////////////////////////////////////////////////////////////////////////
-
+#endif  /*#ifdef DEFENSIF*/
 
 
 #endif /* #ifdef __DEBUG_HH */
