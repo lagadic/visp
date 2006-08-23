@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclopsController.h,v 1.3 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobotBiclopsController.h,v 1.4 2006-08-23 10:41:55 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,6 +57,9 @@
 #include "Biclops.h"	// Contrib for Biclops robot
 #include "PMDUtils.h"  	// Contrib for Biclops robot
 
+#ifdef WIN32
+class VISP_EXPORT Biclops; //needed for dll creation
+#endif
 
 /* ------------------------------------------------------------------------ */
 /* --- CLASS ------------------------------------------------------------- */

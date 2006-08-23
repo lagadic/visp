@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.h,v 1.3 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobotBiclops.h,v 1.4 2006-08-23 10:41:55 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -119,7 +119,7 @@ public:
   static const double       defaultPositioningVelocity;
 
 
-  vpRobotBiclops (void);
+  vpRobotBiclops (const char * filename="/usr/share/BiclopsDefault.cfg");
   ~vpRobotBiclops (void);
 
   void init (void);
@@ -127,7 +127,7 @@ public:
 
   /* --- STATE ---------------------------------------------------------- */
 
-  vpRobot::RobotStateType   setRobotState (vpRobot::RobotStateType newState);
+  vpRobot::RobotStateType   setRobotState (const vpRobot::RobotStateType newState);
 
   /* --- POSITION --------------------------------------------------- */
   void setPosition(const vpRobot::ControlFrameType frame,
@@ -164,7 +164,7 @@ public:
 
   void getCameraDisplacement(vpColVector &d);
   void getArticularDisplacement(vpColVector &d);
-  void getDisplacement(vpRobot::ControlFrameType frame, vpColVector &d);
+  void getDisplacement(const vpRobot::ControlFrameType frame, vpColVector &d);
 
   bool readPositionFile(const char *filename, vpColVector &q)  ;
 
