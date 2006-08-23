@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.h,v 1.4 2006-07-13 06:59:53 fspindle Exp $
+ * $Id: vpIoTools.h,v 1.5 2006-08-23 10:25:55 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,6 +64,9 @@ public:
   static bool checkDirectory(const string dirname );
   static void makeDirectory(const char *dirname );
   static void makeDirectory(const string dirname );
+
+  static string path(const char * _p);
+  static string path(const string& _p);
 } ;
 
 

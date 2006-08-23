@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.6 2006-07-13 06:59:53 fspindle Exp $
+ * $Id: vpIoTools.cpp,v 1.7 2006-08-23 10:25:55 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -210,4 +210,37 @@ vpIoTools::makeDirectory(const string dirname )
   catch (...) {
     throw;
   }
+}
+
+/*!
+  Converts a pathname to the current system's format.
+  \param _p Pathname to convert.
+  \return The converted pathname.
+*/
+string
+vpIoTools::path(const char * _p)
+{
+  string path(_p);
+  
+#ifdef WIN32
+  for(unsigned int i=0 ; i<path.length() ; i++)
+    if( path[i] == '/')	path[i] = '\\';
+#else
+  for(unsigned int i=0 ; i<path.length() ; i++)
+    if( path[i] == '\\')	path[i] = '/';
+#endif
+  
+  return path;
+}
+
+
+/*!
+  Converts a pathname to the current system's format.
+  \param _p Pathname to convert.
+  \return The converted pathname.
+*/
+string
+vpIoTools::path(const string& _p)
+{
+  return path(_p.c_str());
 }
