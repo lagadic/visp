@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.cpp,v 1.2 2006-08-21 10:02:43 brenier Exp $
+ * $Id: vpDisplayGDI.cpp,v 1.3 2006-08-23 12:08:17 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,8 +43,21 @@
 
 //A vpDisplayGDI is just a vpDisplayWin23 which uses a vpGDIRenderer to do the drawing.
 
+/*!
+  \brief Basic constructor.
+*/
 vpDisplayGDI::vpDisplayGDI(): vpDisplayWin32(new vpGDIRenderer()){}
 
+/*!
+
+  \brief Constructor : Initialize a display to visualize a RGBa image
+  (32 bits).
+
+  \param I : image to be displayed (note that image has to be initialized).
+  \param _x, _y The window is set at position x,y (column index, row index).
+  \param _title  Window's title.
+
+*/
 vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
 			   int winx, int winy,
 			   char *_title) 
@@ -53,7 +66,16 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
   init(I,winx,winy,_title);
 }
 
+/*!
 
+  \brief Constructor : Initialize a display to visualize a grayscale image
+  (8 bits).
+
+  \param I Image to be displayed (note that image has to be initialized).
+  \param _x, _y The window is set at position x,y (column index, row index).
+  \param _title  Window's title.
+
+*/
 vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I,
 			   int winx, int winy,
 			   char *_title)
@@ -62,6 +84,9 @@ vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I,
   init(I,winx,winy,_title);
 }
 
+/*!
+  \brief Basic destructor.
+*/
 vpDisplayGDI::~vpDisplayGDI(){}
 
 
