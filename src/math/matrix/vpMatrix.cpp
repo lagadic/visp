@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.27 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpMatrix.cpp,v 1.28 2006-08-23 16:37:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -252,6 +252,7 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
 	else { vpDEBUG_TRACE (25,"Nothing to do: already done by realloc.");}
       }
 
+    if (copyTmp != NULL) delete [] copyTmp;
   }
 
 }
