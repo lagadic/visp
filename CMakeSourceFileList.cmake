@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.7 2006-07-18 14:43:30 brenier Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.8 2006-08-24 08:27:25 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -186,6 +186,8 @@ SET (SRC_VIDEO_DEVICE
   video-device/windows/vpGDIRenderer.cpp
   video-device/windows/vpWin32Window.cpp
   video-device/windows/vpDisplayGDI.cpp
+  video-device/windows/vpDisplayD3D.cpp
+  video-device/windows/vpD3DRenderer.cpp
   )
 
 SET (SRC_VISUAL_FEATURE

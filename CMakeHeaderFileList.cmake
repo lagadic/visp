@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.5 2006-07-18 14:43:30 brenier Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.6 2006-08-24 08:27:25 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -186,6 +186,8 @@ SET (HEADER_VIDEO_DEVICE
   video-device/windows/vpGDIRenderer.h
   video-device/windows/vpWin32Renderer.h
   video-device/windows/vpWin32Window.h
+  video-device/windows/vpD3DRenderer.h
+  video-device/windows/vpDisplayD3D.h
   )
 
 SET (HEADER_VISUAL_FEATURE
