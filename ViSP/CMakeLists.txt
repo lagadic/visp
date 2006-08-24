@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.21 2006-07-19 07:18:31 brenier Exp $
+# $Id: CMakeLists.txt,v 1.22 2006-08-24 08:27:25 brenier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -313,6 +313,20 @@ IF(USE_GTK1)
     ENDIF(USE_GTK2)
   ENDIF(UNIX)
 ENDIF(USE_GTK1)
+
+# Under Windows, usage of Direct3D9
+FIND_PACKAGE(DIRECT3D)
+IF(DIRECT3D_FOUND)
+  SET(VISP_HAVE_D3D9 TRUE) # for header vpConfig.h
+  #MESSAGE("DBG VISP_HAVE_D3D9= ${VISP_HAVE_D3D9}")
+  #MESSAGE("DBG DIRECT3D_INCLUDE_DIR=${DIRECT3D_INCLUDE_DIR}")
+  SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    ${DIRECT3D_INCLUDE_DIR})
+  SET(VISP_EXTERN_LIBS ${DIRECT3D_LIBRARIES} ${VISP_EXTERN_LIBS})
+  #MESSAGE("DIRECT3D_LIBRARIES = ${DIRECT3D_LIBRARIES}")
+ENDIF(DIRECT3D_FOUND)
+
+
 
 #----------------------------------------------------------------------
 # Specific hardware : framegrabbers and cameras
