@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMeCircle1.cpp,v 1.4 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testMeCircle1.cpp,v 1.5 2006-08-25 08:36:47 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,6 +59,7 @@
 
 #include <visp/vpMeEllipse.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"ci:h"
@@ -194,7 +195,7 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
   // Set the path location of the image sequence
-  dirname = ipath + "/ViSP-images/circle/";
+  dirname = ipath +  vpIoTools::path("/ViSP-images/circle/");
 
   // Build the name of the image file
   filename = dirname + "circle.pgm";

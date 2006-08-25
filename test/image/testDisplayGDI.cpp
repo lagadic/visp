@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisplayGDI.cpp,v 1.1 2006-07-18 14:46:40 brenier Exp $
+ * $Id: testDisplayGDI.cpp,v 1.2 2006-08-25 08:36:46 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -165,7 +165,7 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Set the default output path
-  opt_opath = "C:/temp";
+  opt_opath = "C:\\temp";
 
 
   // Get the user login name
@@ -184,7 +184,7 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  string dirname = opath + "/" + username;
+  string dirname = opath +  vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(dirname) == false) {
@@ -230,7 +230,7 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
   // Load a grey image from the disk
-  filename = ipath + "/ViSP-images/Klimt/Klimt.pgm";
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
   vpImageIo::readPGM(I, filename) ;
 
   // For this grey level image, open a GDI display at position 100,100
@@ -271,7 +271,7 @@ main(int argc, char ** argv)
   vpDisplay::getImage(I, Ioverlay) ;
 
   // Write the color image on the disk
-  filename = opath + "/Klimt_grey.overlay.ppm";
+  filename = opath +  vpIoTools::path("/Klimt_grey.overlay.ppm");
   vpImageIo::writePPM(Ioverlay, filename) ;
 
   // If click is allowed, wait for a mouse click to close the display
@@ -290,7 +290,7 @@ main(int argc, char ** argv)
   vpImage<vpRGBa> Irgba ;
 
   // Load a grey image from the disk and convert it to a color image
-  filename = ipath + "/ViSP-images/Klimt/Klimt.pgm";
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
   vpImageIo::readPGM(Irgba, filename) ;
 
   // For this color image, open a GDI display at position 100,100

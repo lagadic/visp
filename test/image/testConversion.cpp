@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.3 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testConversion.cpp,v 1.4 2006-08-25 08:36:46 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,7 +155,7 @@ main(int argc, char ** argv)
 #ifdef UNIX
   opt_opath = "/tmp";
 #elif WIN32
-  opt_opath = "C:/temp";
+  opt_opath = "C:\\temp";
 #endif
 
   // Get the user login name
@@ -173,7 +173,7 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  string dirname = opath + "/" + username;
+  string dirname = opath +  vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(dirname) == false) {
@@ -221,24 +221,24 @@ main(int argc, char ** argv)
   //-------------------- .pgm -> .ppm
   vpTRACE("Convert a grey image (.pgm) to a color image (.ppm)");
   // Load a grey image from the disk
-  filename = ipath + "/ViSP-images/Klimt/Klimt.pgm";
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
   vpCTRACE << "Load " <<  filename << endl;
   vpImageIo::readPGM(Ig, filename) ;
   // Create a color image from the grey
   vpImageConvert::convert(Ig, Ic);
-  filename = opath + "/Klimt_color.ppm";
+  filename = opath +  vpIoTools::path("/Klimt_color.ppm");
   vpCTRACE << "Write " << filename << endl;
   vpImageIo::writePPM(Ic, filename) ;
 
   //-------------------- .ppm -> .pgm
   vpTRACE("Convert a color image (.ppm) to a grey image (.pgm)");
   // Load a color image from the disk
-  filename = ipath + "/ViSP-images/Klimt/Klimt.ppm";
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpCTRACE << "Load " << filename << endl;
   vpImageIo::readPPM(Ic, filename) ;
   // Create a grey image from the color
   vpImageConvert::convert(Ic, Ig);
-  filename = opath + "/Klimt_grey.pgm";
+  filename = opath +  vpIoTools::path("/Klimt_grey.pgm");
   vpCTRACE << "Write " << filename << endl;
   vpImageIo::writePPM(Ig, filename) ;
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot2.cpp,v 1.6 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testTrackDot2.cpp,v 1.7 2006-08-25 08:36:47 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,6 +55,7 @@
 #include <visp/vpCameraParameters.h>
 #include <visp/vpFeatureBuilder.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
 
 /*!
   \example testTrackDot2.cpp
@@ -196,7 +197,7 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
   // Set the path location of the image sequence
-  dirname = ipath + "/ViSP-images/ellipse/";
+  dirname = ipath +  vpIoTools::path("/ViSP-images/ellipse/");
 
   // Build the name of the image file
   filename = dirname + "ellipse.pgm";

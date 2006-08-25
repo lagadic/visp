@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPGM.cpp,v 1.3 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testIoPGM.cpp,v 1.4 2006-08-25 08:36:46 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -154,7 +154,7 @@ main(int argc, char ** argv)
 #ifdef UNIX
   opt_opath = "/tmp";
 #elif WIN32
-  opt_opath = "C:/temp";
+  opt_opath = "C:\\temp";
 #endif
 
   // Get the user login name
@@ -172,7 +172,7 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  string dirname = opath + "/" + username;
+  string dirname = opath + vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(dirname) == false) {
@@ -218,17 +218,17 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
   // Load a grey image from the disk
-  filename = ipath + "/ViSP-images/Klimt/Klimt.pgm";
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
   vpImageIo::readPGM(I, filename);
   // Write the content of the image on the disk
-  filename = opath + "/Klimt_grey.pgm";
+  filename = opath +  vpIoTools::path("/Klimt_grey.pgm");
   vpImageIo::writePGM(I, filename) ;
 
   // Try to load a non existing image (test for exceptions)
   try
   {
     // Load a non existing grey image
-    filename = ipath + "/images/image-that-does-not-exist.pgm";
+    filename = ipath +  vpIoTools::path("/images/image-that-does-not-exist.pgm");
     vpImageIo::readPGM(I, filename) ;
   }
   catch(vpImageException e)
@@ -240,7 +240,7 @@ main(int argc, char ** argv)
   // Try to write an image to a non existing directory
   try
   {
-    filename = opath + "/directory-that-does-not-exist/Klimt.pgm";
+    filename = opath +  vpIoTools::path("/directory-that-does-not-exist/Klimt.pgm");
     vpImageIo::writePGM(I, filename) ;
   }
   catch(vpImageException e)
