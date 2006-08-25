@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPPM.cpp,v 1.3 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testIoPPM.cpp,v 1.4 2006-08-25 08:36:46 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,7 +155,7 @@ main(int argc, char ** argv)
 #ifdef UNIX
   opt_opath = "/tmp";
 #elif WIN32
-  opt_opath = "C:/temp";
+  opt_opath = "C:\\temp";
 #endif
 
   // Get the user login name
@@ -173,7 +173,7 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  string dirname = opath + "/" + username;
+  string dirname = opath + vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(dirname) == false) {
@@ -220,17 +220,17 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
   // Load a color image from the disk and convert it to a grey level one
-  filename = ipath + "/ViSP-images/Klimt/Klimt.ppm";
+  filename = ipath + vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpImageIo::readPPM(I, filename);
   // Write the content of the image on the disk
-  filename = opath + "/Klimt_grey.ppm";
+  filename = opath + vpIoTools::path("/Klimt_grey.ppm");
   vpImageIo::writePGM(I, filename) ;
 
   // Try to load a non existing image (test for exceptions)
   try
   {
     // Load a non existing grey image
-    filename = ipath + "/images/image-that-does-not-exist.ppm";
+    filename = ipath + vpIoTools::path("/images/image-that-does-not-exist.ppm");
     vpImageIo::readPPM(I, filename) ;
   }
   catch(vpImageException e)
@@ -242,7 +242,7 @@ main(int argc, char ** argv)
   // Try to write an image to a non existing directory
   try
   {
-    filename = opath + "/directory-that-does-not-exist/Klimt.ppm";
+    filename = opath + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
     vpImageIo::writePPM(I, filename) ;
   }
   catch(vpImageException e)
@@ -256,17 +256,17 @@ main(int argc, char ** argv)
   vpImage<vpRGBa> Irgba ;
 
   // Load a color image from the disk
-  filename = ipath + "/ViSP-images/Klimt/Klimt.ppm";
+  filename = ipath + vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpImageIo::readPPM(Irgba, filename);
   // Write the content of the color image on the disk
-  filename = opath + "/Klimt_color.ppm";
+  filename = opath + vpIoTools::path("/Klimt_color.ppm");
   vpImageIo::writePPM(Irgba, filename) ;
 
   // Try to load a non existing image (test for exceptions)
   try
   {
     // Load a non existing color image
-    filename = ipath + "/images/image-that-does-not-exist.ppm";
+    filename = ipath + vpIoTools::path("/images/image-that-does-not-exist.ppm");
     vpImageIo::readPPM(Irgba, filename) ;
   }
   catch(vpImageException e)
@@ -278,7 +278,7 @@ main(int argc, char ** argv)
   // Try to write a color image to a non existing directory
   try
   {
-    filename = opath + "/directory-that-does-not-exist/Klimt.ppm";
+    filename = opath + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
     vpImageIo::writePPM(Irgba, filename) ;
   }
   catch(vpImageException e)

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisplayX2.cpp,v 1.9 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testDisplayX2.cpp,v 1.10 2006-08-25 08:36:46 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -170,7 +170,7 @@ main(int argc, char ** argv)
 #ifdef UNIX
   opt_opath = "/tmp";
 #elif WIN32
-  opt_opath = "C:/temp";
+  opt_opath = "C:\\temp";
 #endif
 
   // Get the user login name
@@ -189,7 +189,7 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  string dirname = opath + "/" + username;
+  string dirname = opath +  vpIoTools::path("/") + username;
 
    // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(dirname) == false) {
@@ -236,7 +236,7 @@ main(int argc, char ** argv)
 
   try {
     // Load a grey image from the disk
-    filename = ipath + "/ViSP-images/Klimt/Klimt.pgm";
+    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
     vpImageIo::readPGM(I1, filename) ;
   }	
   catch(...)
@@ -251,7 +251,7 @@ main(int argc, char ** argv)
   }
   try {
     // Load a color image from the disk
-    filename = ipath + "/ViSP-images/Klimt/Klimt.ppm";
+    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
     vpImageIo::readPPM(I2, filename) ;
   }
   catch(...)
@@ -323,7 +323,7 @@ main(int argc, char ** argv)
   vpDisplay::getImage(I1, Ioverlay) ;
 
   // Write the color image on the disk
-  filename = opath + "/Klimt_grey.overlay.ppm";
+  filename = opath +  vpIoTools::path("/Klimt_grey.overlay.ppm");
   vpImageIo::writePPM(Ioverlay, filename) ;
 
   // If click is allowed, wait for a mouse click to close the display

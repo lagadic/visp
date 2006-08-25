@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testSequence.cpp,v 1.4 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testSequence.cpp,v 1.5 2006-08-25 08:36:46 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -217,7 +217,7 @@ main(int argc, char ** argv)
   //  in the download section. It is named "ViSP-images.tar.gz"
 
   // Set the path location of the image sequence
-  dirname = ipath + "/ViSP-images/cube/";
+  dirname = ipath + vpIoTools::path("/ViSP-images/cube/");
   
   // Build the name of the image file
   unsigned iter = 0;
