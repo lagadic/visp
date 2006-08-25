@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDirectShow.cpp,v 1.2 2006-07-10 16:44:44 fspindle Exp $
+ * $Id: testDirectShow.cpp,v 1.3 2006-08-25 07:58:54 brenier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -29,7 +29,7 @@
  *
  * Description:
  * Acquire images using DirectShow (under Windows only) and display it
- * using GTK.
+ * using GTK or GDI.
  *
  * Authors:
  * Bruno Renier
@@ -49,11 +49,10 @@
 
 #if defined (VISP_HAVE_DIRECTSHOW)
 
-#if defined (VISP_HAVE_GTK)
-
 #include <visp/vpDirectShowGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 #include <visp/vpParseArgv.h>
 
 // List of allowed command line options
@@ -146,7 +145,12 @@ main(int argc, char ** argv)
   cout << "Image size: " << I.getCols() << "  " << I.getRows() <<endl  ;
 
   // Creates a display
+#ifdef VISP_HAVE_GTK
   vpDisplayGTK display(I,100,100,"DirectShow Framegrabber");
+#else
+  vpDisplayGDI display(I,100,100,"DirectShow Framegrabber");
+#endif
+  
 
   try {
     // Loop for image acquisition and display
@@ -168,14 +172,6 @@ main(int argc, char ** argv)
   grabber.close();
 
 }
-
-#else
-int
-main()
-{
-  vpTRACE("GTK display is not available...") ;
-}
-#endif
 #else
 int
 main()
