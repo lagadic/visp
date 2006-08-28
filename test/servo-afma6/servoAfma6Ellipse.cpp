@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6Ellipse.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: servoAfma6Ellipse.cpp,v 1.4 2006-08-28 16:00:06 fspindle Exp $
  *
  * Description
  * ============
@@ -34,7 +34,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#ifdef VISP_HAVE_AFMA6
+#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_ICCOMP))
 
 #include <visp/vpIcCompGrabber.h>
 #include <visp/vpImage.h>
@@ -211,6 +211,6 @@ main()
 int
 main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot or an ICcomp framegrabber connected to your computer...");
 }
 #endif
