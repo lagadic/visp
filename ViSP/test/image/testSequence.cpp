@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testSequence.cpp,v 1.5 2006-08-25 08:36:46 brenier Exp $
+ * $Id: testSequence.cpp,v 1.6 2006-08-29 16:33:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,7 +66,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"i:hn:s:"
+#define GETOPTARGS	"di:hn:s:"
 
 /*!
 
@@ -87,7 +87,7 @@ to a PGM file.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-n <number of images> \n\
-   [-s <step>] [-h]\n", name);
+   [-s <step>] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -104,6 +104,11 @@ OPTIONS:                                               Default\n\
 \n\
   -s <step>                                            %u\n\
      Step between two images.\n\
+\n\
+  -d                                             \n\
+     Disable the image display. This can be usefull \n\
+     for automatic tests using crontab under Unix or \n\
+     using the task manager under Windows.\n\
 ", 
 	  ipath.c_str(), nimages, step);
 
@@ -113,18 +118,25 @@ OPTIONS:                                               Default\n\
   Set the program options.
 
   \param ipath : Input image path.
-  \param nimages : Number of images to display
+  \param nimages : Number of images to display.
+
+  \param display : Set as true, activates the image display. This is
+  the default configuration. When set to false, the display is
+  disabled. This can be usefull for automatic tests using crontab
+  under Unix or using the task manager under Windows.
+
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, string &ipath, 
-		unsigned &nimages, unsigned &step)
+		unsigned &nimages, unsigned &step, bool &display)
 {
   char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
+    case 'd': display = false; break;
     case 'i': ipath = optarg; break;
     case 'n': nimages = (unsigned) atoi(optarg); break;
     case 's': step = (unsigned) atoi(optarg); break;
@@ -156,6 +168,7 @@ main(int argc, char ** argv)
   string filename;
   unsigned opt_nimages = 79;
   unsigned opt_step = 1;
+  bool opt_display = true;
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -167,7 +180,7 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_nimages, opt_step) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_nimages, opt_step, opt_display) == false) {
     exit (-1);
   }
 
@@ -250,31 +263,33 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-  // We open a window using either X11 or GTK.
-  // Its size is automatically defined by the image (I) size
 #if defined VISP_HAVE_X11
-  vpDisplayX display(I, 100, 100,"Display X...") ;
+  vpDisplayX display;
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display(I, 100, 100,"Display GTK...") ;
+  vpDisplayGTK display;
 #endif
-
-  try{
-    // Display the image
-    // The image class has a member that specify a pointer toward
-    // the display that has been initialized in the display declaration
-    // therefore is is no longuer necessary to make a reference to the
-    // display variable.
-    vpDisplay::display(I) ;
+  if (opt_display) {
+    try {
+      // We open a window using either X11 or GTK.
+      // Its size is automatically defined by the image (I) size
+      display.init(I, 100, 100,"Display...") ;
+      
+      // Display the image
+      // The image class has a member that specify a pointer toward
+      // the display that has been initialized in the display declaration
+      // therefore is is no longuer necessary to make a reference to the
+      // display variable.
+      vpDisplay::display(I) ;
+      // flush the display buffer
+      vpDisplay::flush(I) ;
+    }
+    catch(...) {
+      vpERROR_TRACE("Error while displaying the image") ;
+      exit(-1);
+    }
   }
-  catch(...)
-  {
-    vpERROR_TRACE("Error while displaying the image") ;
-    exit(-1);
-  }
 
 
-  // flush the display buffer
-  vpDisplay::flush(I) ;
   
   unsigned niter=0 ;
   double totaltms =0 ;
@@ -289,10 +304,12 @@ main(int argc, char ** argv)
       filename = dirname + s.str();
       // read the image
       vpImageIo::readPGM(I, filename);
-      // Display the image
-      vpDisplay::display(I) ;
-      // Flush the display
-      vpDisplay::flush(I) ;
+      if (opt_display) {
+	// Display the image
+	vpDisplay::display(I) ;
+	// Flush the display
+	vpDisplay::flush(I) ;
+      }     
       // Synchronise the loop to 40 ms
       vpTime::wait(tms, 40) ;
       niter++ ;
