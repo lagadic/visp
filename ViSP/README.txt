@@ -131,7 +131,7 @@ HOWTO:
 
 2. Do a optimized build:
    --------------------
-   cmake -DCMAKE_BUILD_TYPE:STRING=Release <visp source dir>
+   cmake -DCMAKE_BUILD_TYPE=Release <visp source dir>
 
    or use ccmake <visp source dir> to set CMAKE_BUILD_TYPE.
 
@@ -146,7 +146,7 @@ HOWTO:
 
 3. Build shared libraries:
    -----------------------
-   cmake -DBUILD_SHARED_LIBS:STRING=ON <visp source dir>
+   cmake -DBUILD_SHARED_LIBS=ON <visp source dir>
 
    or use ccmake <visp source dir> to set BUILD_SHARED_LIBS.
 
@@ -155,7 +155,7 @@ HOWTO:
 
 4. Build static libraries:
    -----------------------
-   cmake -DBUILD_SHARED_LIBS:STRING=OFF <visp source dir>
+   cmake -DBUILD_SHARED_LIBS=OFF <visp source dir>
 
    or use ccmake <visp source dir> to set BUILD_SHARED_LIBS.
 
@@ -224,7 +224,7 @@ HOWTO:
   
 9. View compiler and linker options used:
    -------------------------------------
-   cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON <visp source dir>
+   cmake -DCMAKE_VERBOSE_MAKEFILE=ON <visp source dir>
 
    Generate more 'verbose' makefile including compiler calls instead of 
    default "SILENT" .
