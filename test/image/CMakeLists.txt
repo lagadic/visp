@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.6 2006-07-18 14:46:40 brenier Exp $
+# $Id: CMakeLists.txt,v 1.7 2006-08-29 16:34:57 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -73,7 +73,7 @@ ADD_TEST(testDisplayX1  testDisplayX1  -c)
 ADD_TEST(testDisplayX2  testDisplayX2  -c)
 ADD_TEST(testIoPGM      testIoPGM)
 ADD_TEST(testIoPPM      testIoPPM)
-ADD_TEST(testSequence   testSequence)
+ADD_TEST(testSequence   testSequence -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
