@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testOSXcfoxColor.cpp,v 1.4 2006-07-10 16:44:44 fspindle Exp $
+ * $Id: testOSXcfoxColor.cpp,v 1.5 2006-08-30 15:57:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,7 @@
 #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) )
 
 // List of allowed command line options
-#define GETOPTARGS	"h"
+#define GETOPTARGS	"dh"
 
 #include <visp/vpOSXcfoxGrabber.h>
 #include <visp/vpImage.h>
@@ -77,11 +77,14 @@ with cfox (under MAC OSX only) and display it using the GTK or \n\
 X11 display.\n\
 \n\
 SYNOPSIS\n\
-  %s [-h]\n", name);
+  %s [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
-  -h                                     %s\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -h \n\
      Print the help.\n\
 \n");
 
@@ -93,24 +96,25 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv)
+bool getOptions(int argc, char **argv, bool &display)
 {
   char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
+    case 'd': display = false; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
-      usage(argv[0], optarg); 
+      usage(argv[0], optarg);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL); 
+    usage(argv[0], NULL);
     cerr << "ERROR: " << endl;
     cerr << "  Bad argument " << optarg << endl << endl;
     return false;
@@ -122,8 +126,10 @@ bool getOptions(int argc, char **argv)
 int
 main(int argc, char ** argv)
 {
+  bool opt_display = true;
+
   // Read the command line options
-  if (getOptions(argc, argv) == false) {
+  if (getOptions(argc, argv, opt_display) == false) {
     exit (-1);
   }
 
@@ -141,7 +147,7 @@ main(int argc, char ** argv)
     g.setScale(vpOSXcfoxGrabber::DEFAULT_SCALE);
     g.setFramerate(vpOSXcfoxGrabber::framerate_30fps);
     // Open the framegrabber with the specified settings
-    g.open(I) ;    
+    g.open(I) ;
     // Acquire an image
     g.acquire(I) ;
   }
@@ -157,23 +163,26 @@ main(int argc, char ** argv)
   // We open a window using either GTK or X11.
   // Its size is automatically defined by the image (I) size
 #if defined VISP_HAVE_GTK
-  vpDisplayGTK display(I, 100, 100,"Cfox grabbing - Display GTK...") ;
+  vpDisplayGTK display;
 #elif defined VISP_HAVE_X11
-  vpDisplayX display(I, 100, 100,"Cfox grabbing - Display X...") ;
+  vpDisplayX display;
 #endif
 
-  try{
-    // Display the image
-    // The image class has a member that specify a pointer toward
-    // the display that has been initialized in the display declaration
-    // therefore is is no longuer necessary to make a reference to the
-    // display variable.
-     vpDisplay::display(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Cannot display the image... ") ;
-    exit(-1)
+  if (opt_display) {
+    try{
+      display.init(I, 100, 100, "Cfox Framegrabber") ;
+      // Display the image
+      // The image class has a member that specify a pointer toward
+      // the display that has been initialized in the display declaration
+      // therefore is is no longuer necessary to make a reference to the
+      // display variable.
+      vpDisplay::display(I) ;
+    }
+    catch(...)
+    {
+      vpERROR_TRACE("Cannot display the image... ") ;
+      exit(-1);
+    }
   }
 
   // Acquisition loop
@@ -184,10 +193,12 @@ main(int argc, char ** argv)
     double t = vpTime::measureTimeMs();
     // Acquire the image
     g.acquire(I) ;
-    // Display the image
-    vpDisplay::display(I) ;
-    // Flush the display
-    vpDisplay::flush(I) ;
+    if (opt_display) {
+      // Display the image
+      vpDisplay::display(I) ;
+      // Flush the display
+      vpDisplay::flush(I) ;
+    }
     // Print the iteration duration
     cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
  }

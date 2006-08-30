@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2006-06-30 09:48:23 brenier Exp $
+# $Id: CMakeLists.txt,v 1.4 2006-08-30 15:57:20 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -59,10 +59,19 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
-  # Add test
-  ADD_TEST(${binary} ${binary})
-
 ENDFOREACH(source)
+
+# Add test
+# To run these tests automaticaly using the crontab under Unix or the task
+# manager under windows, we have to add the -d option to turn off the display
+# of acquired images
+ADD_TEST(test1394         test1394 -d)
+ADD_TEST(testDisk         testDisk -d)
+ADD_TEST(testIcComp       testIcComp -d)
+ADD_TEST(testOSXcfoxColor testOSXcfoxColor -d)
+ADD_TEST(testV4l2Color    testV4l2Color -d)
+ADD_TEST(testV4l2Grey     testV4l2Grey -d)
+ADD_TEST(testDirectShow   testDirectShow -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

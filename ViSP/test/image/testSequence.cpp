@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testSequence.cpp,v 1.6 2006-08-29 16:33:54 fspindle Exp $
+ * $Id: testSequence.cpp,v 1.7 2006-08-30 15:56:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,8 +58,8 @@
 /*!
   \example testSequence.cpp
 
-  \brief Read an image sequence from the disk and display it.  
-  
+  \brief Read an image sequence from the disk and display it.
+
   The sequence is made of separate images. Each image corresponds to a
   PGM file.
 
@@ -77,7 +77,7 @@
   \param step : Step between two images.
 
  */
-void usage(char *name, char *badparam, string ipath, 
+void usage(char *name, char *badparam, string ipath,
 	   unsigned nimages, unsigned step)
 {
   fprintf(stdout, "\n\
@@ -109,7 +109,9 @@ OPTIONS:                                               Default\n\
      Disable the image display. This can be usefull \n\
      for automatic tests using crontab under Unix or \n\
      using the task manager under Windows.\n\
-", 
+\n\
+  -h\n\
+     Print the help.\n\n",
 	  ipath.c_str(), nimages, step);
 
 }
@@ -128,7 +130,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath, 
+bool getOptions(int argc, char **argv, string &ipath,
 		unsigned &nimages, unsigned &step, bool &display)
 {
   char *optarg;
@@ -180,12 +182,13 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_nimages, opt_step, opt_display) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_nimages, opt_step,
+		 opt_display) == false) {
     exit (-1);
   }
 
   // Get the option values
-  if (!opt_ipath.empty()) 
+  if (!opt_ipath.empty())
     ipath = opt_ipath;
 
   // Compare ipath and env_ipath. If they differ, we take into account
@@ -194,7 +197,7 @@ main(int argc, char ** argv)
     if (ipath != env_ipath) {
       cout << endl
 	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> " 
+      cout << "  Since -i <visp image path=" << ipath << "> "
 	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
 	   << "  we skip the environment variable." << endl;
     }
@@ -203,12 +206,12 @@ main(int argc, char ** argv)
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opt_nimages, opt_step);
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " 
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
 	 << endl
 	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl; 
+	 << "  image path where test images are located." << endl << endl;
     exit(-1);
   }
 
@@ -220,7 +223,7 @@ main(int argc, char ** argv)
   // Warning :
   // the image sequence is not provided with the ViSP package
   // therefore the program will return you an error :
-  //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file 
+  //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file
   //        ViSP-images/cube/image.0001.pgm
   //  !!    vpDotExample.cpp: main(#95) :Error while reading the image
   //  terminate called after throwing an instance of 'vpImageException'
@@ -231,7 +234,7 @@ main(int argc, char ** argv)
 
   // Set the path location of the image sequence
   dirname = ipath + vpIoTools::path("/ViSP-images/cube/");
-  
+
   // Build the name of the image file
   unsigned iter = 0;
   std::ostringstream s;
@@ -254,11 +257,11 @@ main(int argc, char ** argv)
     // here this will result in the end of the program
     // Note that another error message has been printed from readPGM
     // to give more information about the error
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
     cerr << "  Cannot read " << filename << endl;
     cerr << "  Check your -i " << ipath << " option " << endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable." 
+	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
 	 << endl;
     exit(-1);
   }
@@ -273,7 +276,7 @@ main(int argc, char ** argv)
       // We open a window using either X11 or GTK.
       // Its size is automatically defined by the image (I) size
       display.init(I, 100, 100,"Display...") ;
-      
+
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -290,7 +293,7 @@ main(int argc, char ** argv)
   }
 
 
-  
+
   unsigned niter=0 ;
   double totaltms =0 ;
   // this is the loop over the image sequence
@@ -309,7 +312,7 @@ main(int argc, char ** argv)
 	vpDisplay::display(I) ;
 	// Flush the display
 	vpDisplay::flush(I) ;
-      }     
+      }
       // Synchronise the loop to 40 ms
       vpTime::wait(tms, 40) ;
       niter++ ;
