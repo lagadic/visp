@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.9 2006-08-21 08:42:02 brenier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.10 2006-08-30 15:52:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,6 +86,9 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
 		       int _y,
 		       char *_title) : vpDisplay()
 {
+  col = NULL;
+  title = NULL ;
+  window = NULL ;
   init(I,_x,_y, _title) ;
 }
 
@@ -103,7 +106,9 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
 		     int _y,
 		     char *_title)
 {
+  col = NULL;
   title = NULL ;
+  window = NULL ;
   init(I,_x,_y, _title) ;
 }
 
@@ -117,11 +122,12 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
 */
 vpDisplayGTK::vpDisplayGTK(int _x, int _y, char *_title)
 {
-  displayHasBeenInitialized = false ;
   windowXPosition = _x ;
   windowYPosition = _y ;
 
+  col = NULL;
   title = NULL ;
+  window = NULL ;
 
   if (_title != NULL)
   {
@@ -129,9 +135,9 @@ vpDisplayGTK::vpDisplayGTK(int _x, int _y, char *_title)
     strcpy(title,_title) ;
   }
 
-
-
+  GTKinitialized = false ;
 }
+
 /*!
   \brief basic constructor
   \warning must an init member of the vpDisplayGTK function to be useful
@@ -139,10 +145,11 @@ vpDisplayGTK::vpDisplayGTK(int _x, int _y, char *_title)
 */
 vpDisplayGTK::vpDisplayGTK()
 {
-  displayHasBeenInitialized =false ;
   windowXPosition = windowYPosition = -1 ;
 
+  col = NULL;
   title = NULL ;
+  window = NULL ;
   if (title != NULL)
   {
     delete [] title ;
@@ -229,9 +236,6 @@ vpDisplayGTK::init(int _ncol, int _nrow,
 		   int _x, int _y,
 		   char *_title)
  {
-
-  displayHasBeenInitialized =true ;
-
   /* Initialisation of thegdk et gdk_rgb library */
   int *argc=NULL ;
   char **argv ;
