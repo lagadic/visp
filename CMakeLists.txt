@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.22 2006-08-24 08:27:25 brenier Exp $
+# $Id: CMakeLists.txt,v 1.23 2006-08-30 15:50:36 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -122,42 +122,42 @@ IF(UNIX)
   ENDIF(COIN_FOUND)
 
   #--------------------------------------------------------------------
-  # Qt lib
+  # Qt and SoQt libs
   #--------------------------------------------------------------------
   INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake)
-  IF(QT_FOUND)  
-    SET(VISP_HAVE_QT TRUE)  # for header vpConfig.h
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${QT_INCLUDE_DIR})
-    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY})
-    # Because in QT_DEFINITIONS defs are separated by ";", parse the
-    # QT_DEFINITIONS in order to build a space separated string
-    # SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
-    # in third party projects which use visp-config shell script (due to ";"
-    # separate char)
-    FOREACH(DEF ${QT_DEFINITIONS})
-      #MESSAGE("DEF: ${DEF}")
-      SET(VISP_DEFS "${VISP_DEFS} ${DEF}")
-    ENDFOREACH(DEF)
+  FIND_PACKAGE(SOQT)
+  IF(QT_FOUND)
+    IF (SOQT_FOUND)
+      # QT and SOQT are found
+      # We manage first QT
+      SET(VISP_HAVE_QT TRUE)  # for header vpConfig.h
+      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${QT_INCLUDE_DIR})
+      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY})
+      # Because in QT_DEFINITIONS defs are separated by ";", parse the
+      # QT_DEFINITIONS in order to build a space separated string
+      # SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
+      # in third party projects which use visp-config shell script (due to ";"
+      # separate char)
+      FOREACH(DEF ${QT_DEFINITIONS})
+	#MESSAGE("DEF: ${DEF}")
+	SET(VISP_DEFS "${VISP_DEFS} ${DEF}")
+      ENDFOREACH(DEF)
 
-    IF(WIN32)
-      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QTMAIN_LIBRARY})
-      SET(VISP_DEFS "${VISP_DEFS} -DQT_DLL")
-    ENDIF(WIN32)
+      IF(WIN32)
+	SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QTMAIN_LIBRARY})
+	SET(VISP_DEFS "${VISP_DEFS} -DQT_DLL")
+      ENDIF(WIN32)
+
+      # We manage now SOQT
+      SET(VISP_HAVE_SOQT TRUE)  # for header vpConfig.h
+      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARIES})
+      #MESSAGE(STATUS "SOQT_LIBRARIES = ${SOQT_LIBRARIES}")
+    ELSE(SOQT_FOUND)  
+      MESSAGE(STATUS "SOQT_LIBRARIES no found")
+    ENDIF(SOQT_FOUND)
   ELSE(QT_FOUND)  
     MESSAGE(STATUS "QT_LIBRARIES no found")
   ENDIF(QT_FOUND)
-
-  #--------------------------------------------------------------------
-  # SoQt lib
-  #--------------------------------------------------------------------
-  FIND_PACKAGE(SOQT)
-  IF(SOQT_FOUND)  
-    SET(VISP_HAVE_SOQT TRUE)  # for header vpConfig.h
-    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARIES})
-    #MESSAGE(STATUS "SOQT_LIBRARIES = ${SOQT_LIBRARIES}")
-  ELSE(SOQT_FOUND)  
-    MESSAGE(STATUS "SOQT_LIBRARIES no found")
-  ENDIF(SOQT_FOUND)
 
   #--------------------------------------------------------------------
   # X11 lib
