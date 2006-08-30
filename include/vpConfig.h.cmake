@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.9 2006-08-24 08:27:25 brenier Exp $
+ * $Id: vpConfig.h.cmake,v 1.10 2006-08-30 08:51:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,9 +37,6 @@
 
 #ifndef vpConfig_h
 #define vpConfig_h
-
-// ViSP major version.
-#cmakedefine VISP_TEST "${VISP_TEST}"
 
 // ViSP major version.
 #cmakedefine VISP_MAJOR_VERSION ${VISP_MAJOR_VERSION}
