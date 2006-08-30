@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisplayGDI.cpp,v 1.2 2006-08-25 08:36:46 brenier Exp $
+ * $Id: testDisplayGDI.cpp,v 1.3 2006-08-30 15:56:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) ) 
+#if ( defined(WIN32) )
 
 #include <visp/vpDisplayGDI.h>
 
@@ -57,7 +57,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"ci:o:h"
+#define GETOPTARGS	"cdi:o:h"
 
 /*
 
@@ -77,7 +77,7 @@ the image and the overlayed features in an image on the disk\n\
 \n\
 SYNOPSIS\n\
   %s [-p <input image path>] [-o <output image path>]\n\
-     [-c] [-h]\n						      \
+     [-c] [-d] [-h]\n						      \
 ", name);
 
   fprintf(stdout, "\n\
@@ -97,8 +97,16 @@ OPTIONS:                                               Default\n\
      Klimt_grey.overlay.ppm output image is written.\n\
 \n\
   -c\n\
-     Disable the mouse click. Usefull to automaze the \n\
-     execution of this program without humain intervention.\n\n",
+     Disable the mouse click. Usefull to automate the \n\
+     execution of this program without humain intervention.\n\
+\n\
+  -d                                             \n\
+     Disable the image display. This can be usefull \n\
+     for automatic tests using the task manager under \n\
+     Windows.\n\
+\n\
+  -h\n\
+     Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
 
 }
@@ -109,13 +117,18 @@ OPTIONS:                                               Default\n\
 
   \param ipath: Input image path.
   \param opath : Output image path.
-  \param click_allowed : Enable/disable mouse click. 
+  \param click_allowed : Enable/disable mouse click.
   \param user : Username.
+  \param display : Set as true, activates the image display. This is
+  the default configuration. When set to false, the display is
+  disabled. This can be usefull for automatic tests using
+  the task manager under Windows.
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv,
-		string &ipath, string &opath, bool &click_allowed, string user)
+		string &ipath, string &opath, bool &click_allowed,
+		string user, bool &display)
 {
   char *optarg;
   int	c;
@@ -123,6 +136,7 @@ bool getOptions(int argc, char **argv,
 
     switch (c) {
     case 'c': click_allowed = false; break;
+    case 'd': display = false; break;
     case 'i': ipath = optarg; break;
     case 'o': opath = optarg; break;
     case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
@@ -154,6 +168,7 @@ main(int argc, char ** argv)
   string filename;
   string username;
   bool opt_click_allowed = true;
+  bool opt_display = true;
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -172,13 +187,13 @@ main(int argc, char ** argv)
   vpIoTools::getUserName(username);
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_opath, 
-		 opt_click_allowed, username) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_opath,
+		 opt_click_allowed, username, opt_display) == false) {
     exit (-1);
   }
 
   // Get the option values
-  if (!opt_ipath.empty()) 
+  if (!opt_ipath.empty())
     ipath = opt_ipath;
   if (!opt_opath.empty())
     opath = opt_opath;
@@ -194,7 +209,7 @@ main(int argc, char ** argv)
     }
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
-      cerr << endl 
+      cerr << endl
 	   << "ERROR:" << endl;
       cerr << "  Cannot create " << dirname << endl;
       cerr << "  Check your -o " << opath << " option " << endl;
@@ -208,7 +223,7 @@ main(int argc, char ** argv)
     if (ipath != env_ipath) {
       cout << endl
 	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> " 
+      cout << "  Since -i <visp image path=" << ipath << "> "
 	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
 	   << "  we skip the environment variable." << endl;
     }
@@ -217,15 +232,15 @@ main(int argc, char ** argv)
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opath, username);
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " 
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
 	 << endl
 	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl; 
+	 << "  image path where test images are located." << endl << endl;
     exit(-1);
   }
-  
+
   // Create a grey level image
   vpImage<unsigned char> I ;
 
@@ -235,54 +250,60 @@ main(int argc, char ** argv)
 
   // For this grey level image, open a GDI display at position 100,100
   // in the screen, and with title "GDI display"
-  vpDisplayGDI display(I, 100, 100, "GDI display") ;
+  vpDisplayGDI display;
 
-  // Display the image
-  vpDisplay::display(I) ;
+  if (opt_display) {
+    // We open a window using GDI.
+    // Its size is automatically defined by the image (I) size
+    display.init(I, 100, 100, "GDI display") ;
 
-  // Display in overlay a red cross at position 10,10 in the
-  // image. The lines are 10 pixels long
-  vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
+    // Display the image
+    vpDisplay::display(I) ;
 
-  // Display in overlay horizontal red lines
-  for (int i=0 ; i < I.getRows() ; i+=20)
-    vpDisplay::displayLine(I,i,0,i,I.getCols(), vpColor::red) ;
+    // Display in overlay a red cross at position 10,10 in the
+    // image. The lines are 10 pixels long
+    vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
 
-  // Display in overlay vertical green dot lines
-  for (int i=0 ; i < I.getCols() ; i+=20)
-    vpDisplay::displayDotLine(I,0,i,I.getCols(), i,vpColor::green) ;
+    // Display in overlay horizontal red lines
+    for (int i=0 ; i < I.getRows() ; i+=20)
+      vpDisplay::displayLine(I,i,0,i,I.getCols(), vpColor::red) ;
 
-  // Display in overlay a blue arrow
-  vpDisplay::displayArrow(I,0,0,100,100,vpColor::blue) ;
+    // Display in overlay vertical green dot lines
+    for (int i=0 ; i < I.getCols() ; i+=20)
+      vpDisplay::displayDotLine(I,0,i,I.getCols(), i,vpColor::green) ;
 
-  // Display in overlay some circles. The position of the center is 200, 200
-  // the radius is increased by 20 pixels for each circle
-  for (int i=0 ; i < 100 ; i+=20)
-    vpDisplay::displayCircle(I,200,200,20+i,vpColor::yellow) ;
+    // Display in overlay a blue arrow
+    vpDisplay::displayArrow(I,0,0,100,100,vpColor::blue) ;
 
-  // Display in overlay a yellow string  
-  vpDisplay::displayCharString(I, 85, 100,
-			       "ViSP is a marvelous software",
-			       vpColor::yellow) ;
+    // Display in overlay some circles. The position of the center is 200, 200
+    // the radius is increased by 20 pixels for each circle
+    for (int i=0 ; i < 100 ; i+=20)
+      vpDisplay::displayCircle(I,200,200,20+i,vpColor::yellow) ;
 
-  // Create a color image
-  vpImage<vpRGBa> Ioverlay ; 
-  // Updates the color image with the original loaded image and the overlay
-  vpDisplay::getImage(I, Ioverlay) ;
+    // Display in overlay a yellow string
+    vpDisplay::displayCharString(I, 85, 100,
+				 "ViSP is a marvelous software",
+				 vpColor::yellow) ;
 
-  // Write the color image on the disk
-  filename = opath +  vpIoTools::path("/Klimt_grey.overlay.ppm");
-  vpImageIo::writePPM(Ioverlay, filename) ;
+    // Create a color image
+    vpImage<vpRGBa> Ioverlay ;
+    // Updates the color image with the original loaded image and the overlay
+    vpDisplay::getImage(I, Ioverlay) ;
 
-  // If click is allowed, wait for a mouse click to close the display
-  if (opt_click_allowed) {
-    cout << "\nA click to close the windows..." << endl;
-    // Wait for a blocking mouse click
-    vpDisplay::getClick(I) ;
+    // Write the color image on the disk
+    filename = opath +  vpIoTools::path("/Klimt_grey.overlay.ppm");
+    vpImageIo::writePPM(Ioverlay, filename) ;
+
+    // If click is allowed, wait for a mouse click to close the display
+    if (opt_click_allowed) {
+      cout << "\nA click to close the windows..." << endl;
+      // Wait for a blocking mouse click
+      vpDisplay::getClick(I) ;
+    }
+
+    // Close the display
+    vpDisplay::close(I);
   }
-
-  // Close the display
-  vpDisplay::close(I);
 
   vpTRACE("-------------------------------------");
 
@@ -295,37 +316,42 @@ main(int argc, char ** argv)
 
   // For this color image, open a GDI display at position 100,100
   // in the screen, and with title "GDI color display"
-  vpDisplayGDI displayRGBa(Irgba, 100, 100, "GDI color display");
+  vpDisplayGDI displayRGBa;
 
-  // Display the color image
-  vpDisplay::display(Irgba) ;
+  if (opt_display) {
+    // We open a window using GDI.
+    // Its size is automatically defined by the image (Irgba) size
+    displayRGBa.init(Irgba, 100, 100, "GDI color display");
 
-  // If click is allowed, wait for a blocking mouse click to display a cross at
-  // the clicked pixel position
-  if (opt_click_allowed) {
-    cout << "\nA click to display a cross..." << endl;
-    int i,j;
-    // Blocking wait for a click. Get the position of the selected pixel
-    // (i correspond to the row and j to the column coordinates in the image)
-    vpDisplay::getClick(Irgba, i, j);
-    // Display a red cross on the click pixel position
-    cout << "Cross position: " << i << ", " << j << endl;
-    vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
-  }
-  else {
-    int i=10,j=20;
-    // Display a red cross at position i, j (i correspond to the row
-    // and j to the column coordinates in the image)
-    cout << "Cross position: " << i << ", " << j << endl;
-    vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
+    // Display the color image
+    vpDisplay::display(Irgba) ;
 
-  }
+    // If click is allowed, wait for a blocking mouse click to display
+    // a cross at the clicked pixel position
+    if (opt_click_allowed) {
+      cout << "\nA click to display a cross..." << endl;
+      int i,j;
+      // Blocking wait for a click. Get the position of the selected pixel
+      // (i correspond to the row and j to the column coordinates in the image)
+      vpDisplay::getClick(Irgba, i, j);
+      // Display a red cross on the click pixel position
+      cout << "Cross position: " << i << ", " << j << endl;
+      vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
+    }
+    else {
+      int i=10,j=20;
+      // Display a red cross at position i, j (i correspond to the row
+      // and j to the column coordinates in the image)
+      cout << "Cross position: " << i << ", " << j << endl;
+      vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
 
-  // If click is allowed, wait for a blocking mouse click to exit.
-  if (opt_click_allowed) {
-    cout << "\nA click to exit the program..." << endl;
-    vpDisplay::getClick(Irgba) ;
-    cout << "Bye" << endl;
+    }
+    // If click is allowed, wait for a blocking mouse click to exit.
+    if (opt_click_allowed) {
+      cout << "\nA click to exit the program..." << endl;
+      vpDisplay::getClick(Irgba) ;
+      cout << "Bye" << endl;
+    }
   }
 }
 #else

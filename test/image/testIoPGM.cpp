@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPGM.cpp,v 1.4 2006-08-25 08:36:46 brenier Exp $
+ * $Id: testIoPGM.cpp,v 1.5 2006-08-30 15:56:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,7 +86,10 @@ OPTIONS:                                               Default\n\
      Set image output path.\n\
      From this directory, creates the \"%s\"\n\
      subdirectory depending on the username, where \n\
-     Klimt_grey.pgm output image is written.\n\n", 
+     Klimt_grey.pgm output image is written.\n\
+\n\
+  -h\n\
+     Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
 
 }
@@ -159,14 +162,14 @@ main(int argc, char ** argv)
 
   // Get the user login name
   vpIoTools::getUserName(username);
-  
+
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
     exit (-1);
   }
 
   // Get the option values
-  if (!opt_ipath.empty()) 
+  if (!opt_ipath.empty())
     ipath = opt_ipath;
   if (!opt_opath.empty())
     opath = opt_opath;
@@ -182,7 +185,7 @@ main(int argc, char ** argv)
     }
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
-      cerr << endl 
+      cerr << endl
 	   << "ERROR:" << endl;
       cerr << "  Cannot create " << dirname << endl;
       cerr << "  Check your -o " << opath << " option " << endl;
@@ -196,7 +199,7 @@ main(int argc, char ** argv)
     if (ipath != env_ipath) {
       cout << endl
 	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> " 
+      cout << "  Since -i <visp image path=" << ipath << "> "
 	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
 	   << "  we skip the environment variable." << endl;
     }
@@ -205,12 +208,12 @@ main(int argc, char ** argv)
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opath, username);
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " 
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
 	 << endl
 	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl; 
+	 << "  image path where test images are located." << endl << endl;
     exit(-1);
   }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisplayX2.cpp,v 1.10 2006-08-25 08:36:46 brenier Exp $
+ * $Id: testDisplayX2.cpp,v 1.11 2006-08-30 15:56:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,7 +58,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"ci:o:h"
+#define GETOPTARGS	"cdi:o:h"
 
 /*
 
@@ -98,8 +98,16 @@ OPTIONS:                                               Default\n\
      Klimt_grey.overlay.ppm output image is written.\n\
 \n\
   -c\n\
-     Disable the mouse click. Usefull to automaze the \n\
-     execution of this program without humain intervention.\n\n",
+     Disable the mouse click. Usefull to automate the \n\
+     execution of this program without humain intervention.\n\
+\n\
+  -d                                             \n\
+     Disable the image display. This can be usefull \n\
+     for automatic tests using crontab under Unix or \n\
+     using the task manager under Windows.\n\
+\n\
+  -h\n\
+     Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
 
 }
@@ -110,13 +118,18 @@ OPTIONS:                                               Default\n\
 
   \param ipath: Input image path.
   \param opath : Output image path.
-  \param click_allowed : Enable/disable mouse click. 
+  \param click_allowed : Enable/disable mouse click.
   \param user : Username.
+  \param display : Set as true, activates the image display. This is
+  the default configuration. When set to false, the display is
+  disabled. This can be usefull for automatic tests using crontab
+  under Unix or using the task manager under Windows.
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv,
-		string &ipath, string &opath, bool &click_allowed, string user)
+		string &ipath, string &opath, bool &click_allowed,
+		string user, bool &display)
 {
   char *optarg;
   int	c;
@@ -124,6 +137,7 @@ bool getOptions(int argc, char **argv,
 
     switch (c) {
     case 'c': click_allowed = false; break;
+    case 'd': display = false; break;
     case 'i': ipath = optarg; break;
     case 'o': opath = optarg; break;
     case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
@@ -155,6 +169,7 @@ main(int argc, char ** argv)
   string filename;
   string username;
   bool opt_click_allowed = true;
+  bool opt_display = true;
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -177,13 +192,13 @@ main(int argc, char ** argv)
   vpIoTools::getUserName(username);
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_opath, 
-		 opt_click_allowed, username) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_opath,
+		 opt_click_allowed, username, opt_display) == false) {
     exit (-1);
   }
 
   // Get the option values
-  if (!opt_ipath.empty()) 
+  if (!opt_ipath.empty())
     ipath = opt_ipath;
   if (!opt_opath.empty())
     opath = opt_opath;
@@ -199,7 +214,7 @@ main(int argc, char ** argv)
     }
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
-      cerr << endl 
+      cerr << endl
 	   << "ERROR:" << endl;
       cerr << "  Cannot create " << dirname << endl;
       cerr << "  Check your -o " << opath << " option " << endl;
@@ -213,7 +228,7 @@ main(int argc, char ** argv)
     if (ipath != env_ipath) {
       cout << endl
 	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> " 
+      cout << "  Since -i <visp image path=" << ipath << "> "
 	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
 	   << "  we skip the environment variable." << endl;
     }
@@ -222,12 +237,12 @@ main(int argc, char ** argv)
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opath, username);
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " 
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
 	 << endl
 	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl; 
+	 << "  image path where test images are located." << endl << endl;
     exit(-1);
   }
 
@@ -238,14 +253,14 @@ main(int argc, char ** argv)
     // Load a grey image from the disk
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
     vpImageIo::readPGM(I1, filename) ;
-  }	
+  }
   catch(...)
   {
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
     cerr << "  Cannot read " << filename << endl;
     cerr << "  Check your -i " << ipath << " option " << endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable." 
+	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
 	 << endl;
     exit(-1);
   }
@@ -256,81 +271,85 @@ main(int argc, char ** argv)
   }
   catch(...)
   {
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
     cerr << "  Cannot read " << filename << endl;
     cerr << "  Check your -i " << ipath << " option " << endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable." 
+	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
 	 << endl;
     exit(-1);
   }
 
-  // For each image, open a X11 display 
-  // Attach image 1 to display 1
-  vpDisplayX display1(I1, 0,     0,"X11 Display 1...") ;
-  // Attach image 2 to display 2
-  vpDisplayX display2(I2, 200, 200,"X11 Display 2...") ;
+  // For each image, open a X11 display
+  vpDisplayX display1;
+  vpDisplayX display2;
 
-  // Display the images
-  vpDisplay::display(I1) ;
-  vpDisplay::display(I2) ;
+  if (opt_display) {
+    // Attach image 1 to display 1
+    display1.init(I1, 0,     0,"X11 Display 1...") ;
+    // Attach image 2 to display 2
+    display2.init(I2, 200, 200,"X11 Display 2...") ;
+    // Display the images
+    vpDisplay::display(I1) ;
+    vpDisplay::display(I2) ;
 
-  // In the first display, display in overlay horizontal red lines
-  for (int i=0 ; i < I1.getRows() ; i+=20)
-    vpDisplay::displayLine(I1,i,0,i,I1.getCols(), vpColor::red) ;
+    // In the first display, display in overlay horizontal red lines
+    for (int i=0 ; i < I1.getRows() ; i+=20)
+      vpDisplay::displayLine(I1,i,0,i,I1.getCols(), vpColor::red) ;
 
-  // In the first display, display in overlay vertical green dot lines
-  for (int i=0 ; i < I1.getCols() ; i+=20)
-    vpDisplay::displayDotLine(I1,0,i,I1.getCols(), i,vpColor::green) ;
+    // In the first display, display in overlay vertical green dot lines
+    for (int i=0 ; i < I1.getCols() ; i+=20)
+      vpDisplay::displayDotLine(I1,0,i,I1.getCols(), i,vpColor::green) ;
 
-  // In the first display, display in overlay a blue arrow
-  vpDisplay::displayArrow(I1,0,0,100,100,vpColor::blue) ;
-  
-  // In the first display, display in overlay some circles. The
-  // position of the center is 200, 200 the radius is increased by 20
-  // pixels for each circle
-  for (int i=0 ; i < 100 ; i+=20)
-    vpDisplay::displayCircle(I1,200,200,20+i,vpColor::yellow) ;
+    // In the first display, display in overlay a blue arrow
+    vpDisplay::displayArrow(I1,0,0,100,100,vpColor::blue) ;
 
-  // In the first display, display in overlay a yellow string  
-  vpDisplay::displayCharString(I1,100,100,
-			       "ViSP is a marvelous software",
-			       vpColor::blue) ;
+    // In the first display, display in overlay some circles. The
+    // position of the center is 200, 200 the radius is increased by 20
+    // pixels for each circle
+    for (int i=0 ; i < 100 ; i+=20)
+      vpDisplay::displayCircle(I1,200,200,20+i,vpColor::yellow) ;
 
-  // If click is allowed, wait for a blocking mouse click in the first
-  // display, to display a cross at the clicked pixel position
-  if (opt_click_allowed) {
-    cout << "\nA click to display a cross..." << endl;
-    int i,j;
-    // Blocking wait for a click. Get the position of the selected pixel
-    // (i correspond to the row and j to the column coordinates in the image)
-    vpDisplay::getClick(I1, i, j);
-    // Display a red cross on the click pixel position
-    cout << "Cross position: " << i << ", " << j << endl;
-    vpDisplay::displayCross(I1,i,j,15,vpColor::red);
-  }
-  else {
-    int i=50,j=50;
-    // Display a red cross at position i, j (i correspond to the row
-    // and j to the column coordinates in the image) in the first display
-    cout << "Cross position: " << i << ", " << j << endl;
-    vpDisplay::displayCross(I1,i,j,15,vpColor::red);
-  }
+    // In the first display, display in overlay a yellow string
+    vpDisplay::displayCharString(I1,100,100,
+				 "ViSP is a marvelous software",
+				 vpColor::blue) ;
 
-  // Create a color image
-  vpImage<vpRGBa> Ioverlay ; 
-  // Updates the color image with the original loaded image 1 and the overlay
-  vpDisplay::getImage(I1, Ioverlay) ;
+    // If click is allowed, wait for a blocking mouse click in the first
+    // display, to display a cross at the clicked pixel position
+    if (opt_click_allowed) {
+      cout << "\nA click in the first display to draw a cross..." << endl;
+      int i,j;
+      // Blocking wait for a click. Get the position of the selected pixel
+      // (i correspond to the row and j to the column coordinates in the image)
+      vpDisplay::getClick(I1, i, j);
+      // Display a red cross on the click pixel position
+      cout << "Cross position: " << i << ", " << j << endl;
+      vpDisplay::displayCross(I1,i,j,15,vpColor::red);
+    }
+    else {
+      int i=50,j=50;
+      // Display a red cross at position i, j (i correspond to the row
+      // and j to the column coordinates in the image) in the first display
+      cout << "Cross position: " << i << ", " << j << endl;
+      vpDisplay::displayCross(I1,i,j,15,vpColor::red);
+    }
 
-  // Write the color image on the disk
-  filename = opath +  vpIoTools::path("/Klimt_grey.overlay.ppm");
-  vpImageIo::writePPM(Ioverlay, filename) ;
+    // Create a color image
+    vpImage<vpRGBa> Ioverlay ;
+    // Updates the color image with the original loaded image 1 and the overlay
+    vpDisplay::getImage(I1, Ioverlay) ;
 
-  // If click is allowed, wait for a mouse click to close the display
-  if (opt_click_allowed) {
-    cout << "\nA click in display 1 to close the windows..." << endl;
-    // Wait for a blocking mouse click
-    vpDisplay::getClick(I1) ;
+    // Write the color image on the disk
+    filename = opath +  vpIoTools::path("/Klimt_grey.overlay.ppm");
+    vpImageIo::writePPM(Ioverlay, filename) ;
+
+    // If click is allowed, wait for a mouse click to close the display
+    if (opt_click_allowed) {
+      cout << "\nA click in the second display to close the windows and exit..." << endl;
+      // Wait for a blocking mouse click
+      vpDisplay::getClick(I2) ;
+    }
   }
 }
 #else

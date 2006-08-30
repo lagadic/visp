@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDirectShow.cpp,v 1.3 2006-08-25 07:58:54 brenier Exp $
+ * $Id: testDirectShow.cpp,v 1.4 2006-08-30 15:57:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,7 @@
 #include <visp/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"h"
+#define GETOPTARGS	"dh"
 
 /*!
 
@@ -67,14 +67,17 @@ void usage(char *name, char *badparam)
 {
   fprintf(stdout, "\n\
 Acquire images using DirectShow (under Windows only) and display\n\
-it using GTK.\n\
+it using GTK or the windows GDI if GTK is not available.\n\
 \n\
 SYNOPSIS\n\
-  %s [-h]\n", name);
+  %s [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
-  -h                                     %s\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -h \n\
      Print the help.\n\
 \n");
 
@@ -86,24 +89,25 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv)
+bool getOptions(int argc, char **argv, bool &display)
 {
   char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
+    case 'd': display = false; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
-      usage(argv[0], optarg); 
+      usage(argv[0], optarg);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL); 
+    usage(argv[0], NULL);
     cerr << "ERROR: " << endl;
     cerr << "  Bad argument " << optarg << endl << endl;
     return false;
@@ -116,8 +120,10 @@ bool getOptions(int argc, char **argv)
 int
 main(int argc, char ** argv)
 {
+  bool opt_display = true;
+
   // Read the command line options
-  if (getOptions(argc, argv) == false) {
+  if (getOptions(argc, argv, opt_display) == false) {
     exit (-1);
   }
 
@@ -128,11 +134,11 @@ main(int argc, char ** argv)
 
   // Create the grabber
   vpDirectShowGrabber grabber;
-  
+
   try {
     // Initialize the grabber
     grabber.open(I);
-    
+
     // Acquire an RGBa image
     grabber.acquire(I);
   }
@@ -146,28 +152,32 @@ main(int argc, char ** argv)
 
   // Creates a display
 #ifdef VISP_HAVE_GTK
-  vpDisplayGTK display(I,100,100,"DirectShow Framegrabber");
+  vpDisplayGTK display;
 #else
-  vpDisplayGDI display(I,100,100,"DirectShow Framegrabber");
+  vpDisplayGDI display;
 #endif
-  
+
+  if (opt_display) {
+    display.init(I,100,100,"DirectShow Framegrabber");
+  }
 
   try {
     // Loop for image acquisition and display
     for(int i=0 ; i<100 ; i++)
-      {
-	//Acquires an RGBa image
-	grabber.acquire(I);
-	
+    {
+      //Acquires an RGBa image
+      grabber.acquire(I);
+
+      if (opt_display) {
 	//Displays the grabbed rgba image
 	vpDisplay::display(I);
       }
-    
+    }
   }
   catch(...)
-    {
-      exit(-1);
-    }
+  {
+    exit(-1);
+  }
 
   grabber.close();
 

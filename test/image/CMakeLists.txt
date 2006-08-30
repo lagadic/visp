@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.7 2006-08-29 16:34:57 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.8 2006-08-30 15:56:44 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -68,9 +68,10 @@ ENDFOREACH(source)
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
 ADD_TEST(testConversion testConversion)
-ADD_TEST(testDisplayGTK testDisplayGTK -c)
-ADD_TEST(testDisplayX1  testDisplayX1  -c)
-ADD_TEST(testDisplayX2  testDisplayX2  -c)
+ADD_TEST(testDisplayGTK testDisplayGTK -c -d)
+ADD_TEST(testDisplayGDI testDisplayGDI -c -d)
+ADD_TEST(testDisplayX1  testDisplayX1  -c -d)
+ADD_TEST(testDisplayX2  testDisplayX2  -c -d)
 ADD_TEST(testIoPGM      testIoPGM)
 ADD_TEST(testIoPPM      testIoPPM)
 ADD_TEST(testSequence   testSequence -d)

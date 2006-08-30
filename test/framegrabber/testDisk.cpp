@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisk.cpp,v 1.5 2006-07-10 16:44:44 fspindle Exp $
+ * $Id: testDisk.cpp,v 1.6 2006-08-30 15:57:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,7 +58,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"b:e:f:i:hn:s:z:"
+#define GETOPTARGS	"b:de:f:i:hn:s:z:"
 
 /*
 
@@ -81,7 +81,7 @@ to a PGM file.\n\
 SYNOPSIS\n\
   %s [-p <input image path>] [-b <base name>] [-e <extension>] \n\
    [-f <first frame>] [-n <number of images> [-s <step>] \n\
-   [-z <number of zero>] [-h]\n", name);
+   [-z <number of zero>] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -117,7 +117,12 @@ OPTIONS:                                               Default\n\
 \n\
   -z <number of zero>                                       %u\n\
      Number of digits to encode the image number.\n\
-", 
+\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -h \n\
+     Print the help.\n\n",
 	  ipath.c_str(), basename.c_str(), ext.c_str(), first,
 	  nimages, step, nzero);
 
@@ -132,8 +137,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, char **argv, string &ipath, string &basename,
-		string &ext, unsigned &first, unsigned &nimages, 
-		unsigned &step, unsigned &nzero)
+		string &ext, unsigned &first, unsigned &nimages,
+		unsigned &step, unsigned &nzero, bool &display)
 {
   char *optarg;
   int	c;
@@ -141,25 +146,26 @@ bool getOptions(int argc, char **argv, string &ipath, string &basename,
 
     switch (c) {
     case 'b': basename = optarg; break;
+    case 'd': display = false; break;
     case 'e': ext = optarg; break;
     case 'f': first = (unsigned) atoi(optarg); break;
     case 'i': ipath = optarg; break;
     case 'n': nimages = (unsigned) atoi(optarg); break;
     case 's': step = (unsigned) atoi(optarg); break;
     case 'z': nzero = (unsigned) atoi(optarg); break;
-    case 'h': usage(argv[0], NULL, ipath, basename, ext, first, nimages, 
+    case 'h': usage(argv[0], NULL, ipath, basename, ext, first, nimages,
 		    step, nzero); return false; break;
 
     default:
       usage(argv[0], optarg, ipath, basename, ext, first, nimages,
-	    step, nzero); 
+	    step, nzero);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, basename, ext, first, nimages, step, nzero); 
+    usage(argv[0], NULL, ipath, basename, ext, first, nimages, step, nzero);
     cerr << "ERROR: " << endl;
     cerr << "  Bad argument " << optarg << endl << endl;
     return false;
@@ -177,6 +183,7 @@ main(int argc, char ** argv)
   string ipath;
   string opt_basename = "ViSP-images/cube/image.";
   string opt_ext = ".pgm";
+  bool opt_display = true;
 
   unsigned opt_first = 5;
   unsigned opt_nimages = 70;
@@ -193,13 +200,13 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_basename, opt_ext, opt_first, 
-		 opt_nimages, opt_step, opt_nzero) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_basename, opt_ext, opt_first,
+		 opt_nimages, opt_step, opt_nzero, opt_display) == false) {
     exit (-1);
   }
 
   // Get the option values
-  if (!opt_ipath.empty()) 
+  if (!opt_ipath.empty())
     ipath = opt_ipath;
 
   // Compare ipath and env_ipath. If they differ, we take into account
@@ -208,7 +215,7 @@ main(int argc, char ** argv)
     if (ipath != env_ipath) {
       cout << endl
 	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> " 
+      cout << "  Since -i <visp image path=" << ipath << "> "
 	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
 	   << "  we skip the environment variable." << endl;
     }
@@ -216,14 +223,14 @@ main(int argc, char ** argv)
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first, 
+    usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first,
 		 opt_nimages, opt_step, opt_nzero);
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " 
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
 	 << endl
 	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl; 
+	 << "  image path where test images are located." << endl << endl;
     exit(-1);
   }
 
@@ -258,32 +265,34 @@ main(int argc, char ** argv)
     vpERROR_TRACE("Cannot open the first image of the sequence... ") ;
     exit(-1);
   }
-  
+
   cout << "Image size: " << I.getCols() << " " << I.getRows() <<endl  ;
 
   // We open a window using either X11 or GTK.
   // Its size is automatically defined by the image (I) size
 #if defined VISP_HAVE_X11
-  vpDisplayX display(I, 100, 100,"Display X...") ;
+  vpDisplayX display;
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display(I, 100, 100,"Display GTK...") ;
+  vpDisplayGTK display;
 #endif
 
+  if (opt_display) {
+    try {
+      display.init(I,100,100,"Disk Framegrabber");
 
-  try{
-    // display the image
-    // The image class has a member that specify a pointer toward
-    // the display that has been initialized in the display declaration
-    // therefore is is no longuer necessary to make a reference to the
-    // display variable.
-    vpDisplay::display(I) ;
+      // display the image
+      // The image class has a member that specify a pointer toward
+      // the display that has been initialized in the display declaration
+      // therefore is is no longuer necessary to make a reference to the
+      // display variable.
+      vpDisplay::display(I) ;
+    }
+    catch(...)
+    {
+      vpERROR_TRACE("Cannot display the image ") ;
+      exit(-1);
+    }
   }
-  catch(...)
-  {
-    vpERROR_TRACE("Cannot display the image ") ;
-    exit(-1);
-  }
-
 
   unsigned cpt = 1;
   // this is the loop over the image sequence
@@ -294,17 +303,19 @@ main(int argc, char ** argv)
 	// read the image and then increment the image counter so that the next
 	// call to acquire(I) will get the next image
 	g.acquire(I) ;
-	// Display the image
-	vpDisplay::display(I) ;
-	// Flush the display
-	vpDisplay::flush(I) ;
+	if (opt_display) {
+	  // Display the image
+	  vpDisplay::display(I) ;
+	  // Flush the display
+	  vpDisplay::flush(I) ;
+	}
 	// Synchronise the loop to 40 ms
 	vpTime::wait(tms, 40) ;
 
       }
   }
   catch(...) {
-    exit(-1) ;
+    vpERROR_TRACE("Error during the framegrabbing...");
   }
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test1394.cpp,v 1.9 2006-06-28 08:52:32 fspindle Exp $
+ * $Id: test1394.cpp,v 1.10 2006-08-30 15:57:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@ using namespace std;
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"c:d:f:g:m:n:r:s:t:h"
+#define GETOPTARGS	"c:df:g:m:n:r:s:t:h"
 
 /*
 
@@ -112,7 +112,7 @@ Test firewire 1394 framegrabbing.\n\
 SYNOPSIS\n\
   %s [-c <camera>] [-f <format>] [-m <mode>] \n\
   [-f <framerate>] [-s <shutter>] [-g <gain>] [-n <number>]\n\
-  [-d <display>] [-t <color>] [-h]\n\
+  [-d] [-t <color>] [-h]\n\
 ", name);
 
   fprintf(stdout, "\n\
@@ -188,17 +188,14 @@ ACQUISITION OPTIONS:\n\
   -n <number>                                        %ld\n\
      Number of frame to acquire.\n\
 \n\
-  -d <display>                                       %d\n\
-     Display the acquired frames. \n\
-     If 0, turn off the display,\n\
-     if 1, open a display to view the acquired\n\
-     frames\n\
+  -d \n\
+     Turn off the display.\n\
 \n\
   -t <color>                                         %d\n\
      Type of display (greylevel or color images).\n\
      If 0, convert acquired images into greylevel,\n\
      if 1, convert acquired images to color RGBa.\n",
-	  req_number, req_display, req_color);
+	  req_number, req_color);
 
 
   fprintf(stdout, "\n\
@@ -232,7 +229,7 @@ void getOptions(int argc, char **argv,
 
     switch (c) {
     case 'c': camera = (unsigned int) atoi(optarg); break;
-    case 'd': display = (bool) atoi(optarg); break;
+    case 'd': display = false; break;
     case 'f': format = atoi(optarg); break;
     case 'g': gain = (unsigned int) atoi(optarg); break;
     case 'm': mode = atoi(optarg); break;
