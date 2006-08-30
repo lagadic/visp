@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.cpp,v 1.3 2006-08-23 12:08:17 brenier Exp $
+ * $Id: vpDisplayGDI.cpp,v 1.4 2006-08-30 15:52:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,11 +37,11 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) ) 
+#if ( defined(WIN32) )
 
 #include <visp/vpDisplayGDI.h>
 
-//A vpDisplayGDI is just a vpDisplayWin23 which uses a vpGDIRenderer to do the drawing.
+//A vpDisplayGDI is just a vpDisplayWin32 which uses a vpGDIRenderer to do the drawing.
 
 /*!
   \brief Basic constructor.
@@ -60,7 +60,7 @@ vpDisplayGDI::vpDisplayGDI(): vpDisplayWin32(new vpGDIRenderer()){}
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
 			   int winx, int winy,
-			   char *_title) 
+			   char *_title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   init(I,winx,winy,_title);
