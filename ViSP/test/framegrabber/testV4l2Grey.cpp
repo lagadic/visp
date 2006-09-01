@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testV4l2Grey.cpp,v 1.10 2006-08-30 15:57:20 fspindle Exp $
+ * $Id: testV4l2Grey.cpp,v 1.11 2006-09-01 14:05:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,7 +85,7 @@ SYNOPSIS\n\
 OPTIONS:                                                  Default\n\
   -f <fps>                                                  %u\n\
      Framerate in term od number of images per second.\n\
-     Possible values are 25 (for 25Hz) or 50 (for %) Hz)\n\
+     Possible values are 25 (for 25Hz) or 50 (for %%) Hz)\n\
 \n\
   -i <input>                                                %u\n\
      Framegrabber active input. Values can be 0, 1, 2, 4\n\
