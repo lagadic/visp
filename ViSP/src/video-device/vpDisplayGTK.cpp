@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.10 2006-08-30 15:52:41 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.11 2006-09-01 15:32:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -318,8 +318,6 @@ vpDisplayGTK::init(int _ncol, int _nrow,
   /* Chargement des polices */
   Police1 = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");
   Police2 = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
-
-  title = NULL ;
 
   if (_title != NULL)
   {
