@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.2 2006-08-21 10:02:43 brenier Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.3 2006-09-05 14:12:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) ) 
+#if ( defined(WIN32) )
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -50,11 +50,11 @@
 vpGDIRenderer::vpGDIRenderer()
 {
   //if the screen depth is not 32bpp, throw an exception
-  if( GetDeviceCaps(GetDC(NULL),BITSPIXEL) != 32 ) 
+  if( GetDeviceCaps(GetDC(NULL),BITSPIXEL) != 32 )
     throw vpDisplayException(vpDisplayException::depthNotSupportedError, "Only works in 32bits mode!");
-  
+
   InitializeCriticalSection(&CriticalSection);
-  
+
   //initialize the palette
   colors[vpColor::black] =  RGB(0,0,0);
   colors[vpColor::blue]  =  RGB(0,0,0xFF);
@@ -63,6 +63,10 @@ vpGDIRenderer::vpGDIRenderer()
   colors[vpColor::red]   =  RGB(0xFF,0,0);
   colors[vpColor::white] =  RGB(0xFF,0xFF,0xFF);
   colors[vpColor::yellow]=  RGB(0xFF,0xFF,0);
+
+  nbCols = 0;
+  nbRows = 0;
+  bmp = NULL;
 }
 
 /*!
@@ -89,7 +93,7 @@ bool vpGDIRenderer::init(HWND hWindow, int width, int height)
   hWnd = hWindow;
   nbCols = width;
   nbRows = height;
-  
+
   //creates the font
   hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,
 		     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
@@ -102,7 +106,7 @@ bool vpGDIRenderer::init(HWND hWindow, int width, int height)
   \param im The rgba image to display.
 */
 void vpGDIRenderer::setImg(vpImage<vpRGBa>& im)
-{		
+{
   //converts the image into a HBITMAP
   convert(im, bmp);
   //updates the size of the image
@@ -115,7 +119,7 @@ void vpGDIRenderer::setImg(vpImage<vpRGBa>& im)
   \param im The grayscale image to display.
 */
 void vpGDIRenderer::setImg(vpImage<unsigned char>& im)
-{		
+{
 	//converts the image into a HBITMAP
 	convert(im, bmp);
 	//updates the size of the image
@@ -167,10 +171,10 @@ void vpGDIRenderer::convert(vpImage<vpRGBa> &I, HBITMAP& hBmp)
 
 	//in case of padding, the new width is width+1
 	newW = (needPad) ? (w+1) : w;
-	
+
 	//allocate the buffer
 	unsigned char * imBuffer = new unsigned char[newW * h * 4];
-	
+
 	//if we need padding (width needs to be a multiple of 2)
 	if(needPad)
 	  {
@@ -187,7 +191,7 @@ void vpGDIRenderer::convert(vpImage<vpRGBa> &I, HBITMAP& hBmp)
 		    j = w;
 		  }
 		else
-		  {	
+		  {
 		    //RGBA -> BGRA
 		    imBuffer[i+0] = I.bitmap[i>>2].B;
 		    imBuffer[i+1] = I.bitmap[i>>2].G;
@@ -208,12 +212,12 @@ void vpGDIRenderer::convert(vpImage<vpRGBa> &I, HBITMAP& hBmp)
 		imBuffer[i+3] = I.bitmap[i>>2].A;
 	      }
 	  }
-	
+
 	//updates the bitmap's pixel data
 	updateBitmap(hBmp,imBuffer, newW, h);
-	
+
 	//we don't need this buffer anymore
-	delete imBuffer;
+	delete [] imBuffer;
 }
 
 
@@ -255,7 +259,7 @@ void vpGDIRenderer::convert(vpImage<unsigned char> &I, HBITMAP& hBmp)
 		    j = w;
 		  }
 		else
-		  {	
+		  {
 		    imBuffer[i+0] = I.bitmap[i>>2];
 		    imBuffer[i+1] = I.bitmap[i>>2];
 		    imBuffer[i+2] = I.bitmap[i>>2];
@@ -275,12 +279,12 @@ void vpGDIRenderer::convert(vpImage<unsigned char> &I, HBITMAP& hBmp)
 		imBuffer[i+3] = I.bitmap[i>>2];
 	      }
 	}
-	
+
 	//updates the bitmap's pixel data
 	updateBitmap(hBmp,imBuffer, newW, h);
-	
+
 	//we don't need this buffer anymore
-	delete imBuffer;
+	delete [] imBuffer;
 }
 
 /*!
@@ -298,7 +302,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, int w,
   //the bitmap may only be accessed by one thread at the same time
   //that's why we enter critical section
   EnterCriticalSection(&CriticalSection);
-  
+
   //if the existing bitmap object is of the right size
   if( (nbCols==w) && (nbRows==h) )
     {
@@ -316,7 +320,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, int w,
       if( (hBmp = CreateBitmap(w,h,1,32,(void*)imBuffer)) == NULL)
 	return false;
     }
-  
+
   LeaveCriticalSection(&CriticalSection);
   return true;
 }
@@ -336,12 +340,12 @@ void vpGDIRenderer::setPixel(int y, int x, int color)
 	//select this bmp in memory
 	EnterCriticalSection(&CriticalSection);
 	SelectObject(hDCMem, bmp);
-	
+
 
 	SetPixel(hDCMem,x,y,colors[color]);
 	//display the result (flush)
 	BitBlt(hDCScreen, x, y, 1, 1, hDCMem, x, y, SRCCOPY);
-	
+
 	LeaveCriticalSection(&CriticalSection);
 
 	DeleteDC(hDCMem);
@@ -390,10 +394,10 @@ void vpGDIRenderer::drawLine(int i1, int j1, int i2, int j2, int col, int e, int
 
 	//display the result (flush)
 	BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
-	
+
 	LeaveCriticalSection(&CriticalSection);
 
-	DeleteObject(hPen); 
+	DeleteObject(hPen);
 	DeleteDC(hDCMem);
 	ReleaseDC(hWnd, hDCScreen);
 
@@ -442,11 +446,11 @@ void vpGDIRenderer::drawRect(int i, int j, int width, int height, int col, bool 
 
 	//display the result (flush)
 	BitBlt(hDCScreen, j, i, width, height, hDCMem, j, i, SRCCOPY);
-	
+
 	LeaveCriticalSection(&CriticalSection);
 
-	DeleteObject(hbrush); 
-	DeleteObject(hPen); 
+	DeleteObject(hbrush);
+	DeleteObject(hPen);
 	DeleteDC(hDCMem);
 	ReleaseDC(hWnd, hDCScreen);
 
@@ -489,11 +493,11 @@ void vpGDIRenderer::drawCircle(int i, int j, int r, int c)
 	int y1 = i-r;
 	int x2 = j+r;
 	int y2 = i+r;
-	
+
 	//select this bmp in memory
 	EnterCriticalSection(&CriticalSection);
 	SelectObject(hDCMem, bmp);
-	
+
 	//select the brush
 	SelectObject(hDCMem, hbrush);
 	//select the pen
@@ -504,11 +508,11 @@ void vpGDIRenderer::drawCircle(int i, int j, int r, int c)
 
 	//display the result (flush)
 	BitBlt(hDCScreen, x1, y1, x2-x1, y2-y1, hDCMem, x1, y1, SRCCOPY);
-	
+
 	LeaveCriticalSection(&CriticalSection);
 
-	DeleteObject(hbrush); 
-	DeleteObject(hPen); 
+	DeleteObject(hbrush);
+	DeleteObject(hPen);
 	DeleteDC(hDCMem);
 	ReleaseDC(hWnd, hDCScreen);
 }
@@ -530,28 +534,28 @@ void vpGDIRenderer::drawText(int i, int j, char * s, int c)
 	//select this bmp in memory
 	EnterCriticalSection(&CriticalSection);
 	SelectObject(hDCMem, bmp);
-	
+
 	//Select the font
 	SelectObject(hDCMem, hFont);
-	
+
 	//set the text color
 	SetTextColor(hDCMem, colors[c]);
 
 	//we don't use the bkColor
 	SetBkMode(hDCMem, TRANSPARENT);
-     
+
 	SIZE size;
 	int length = (int) strlen(s);
 
 	//get the displayed string dimensions
 	GetTextExtentPoint32(hDCMem, s, length, &size);
-    
+
 	//displays the string
-	TextOut(hDCMem, j, i, s, length); 
+	TextOut(hDCMem, j, i, s, length);
 
 	//display the result (flush)
 	BitBlt(hDCScreen, j, i, size.cx, size.cy, hDCMem, j, i, SRCCOPY);
-	
+
 	LeaveCriticalSection(&CriticalSection);
 
 	DeleteDC(hDCMem);
@@ -597,10 +601,10 @@ void vpGDIRenderer::drawCross(int i,int j, int size,int col, int e)
 
 	//display the result (flush)
 	BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size, hDCMem, j-(size/2), i-(size/2), SRCCOPY);
-	
+
 	LeaveCriticalSection(&CriticalSection);
 
-	DeleteObject(hPen); 
+	DeleteObject(hPen);
 	DeleteDC(hDCMem);
 	ReleaseDC(hWnd, hDCScreen);
 
@@ -667,7 +671,7 @@ void vpGDIRenderer::drawArrow(int i1,int j1, int i2, int j2, int col, int L,int 
 
 			MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
 			LineTo(hDCMem, (int)j4, (int)i4);
-			
+
 			t+=0.1 ;
 		}
 
@@ -687,13 +691,13 @@ void vpGDIRenderer::drawArrow(int i1,int j1, int i2, int j2, int col, int L,int 
 
 	}
 
-	
+
 	//display the result (flush)
 	BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
-	
+
 	LeaveCriticalSection(&CriticalSection);
 
-	DeleteObject(hPen); 
+	DeleteObject(hPen);
 	DeleteDC(hDCMem);
 	ReleaseDC(hWnd, hDCScreen);
 }
@@ -707,7 +711,7 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
 	//size of image buffer : nbCols*nbRows*4
 	long size = nbCols*nbRows*4;
 	unsigned char * imBuffer = new unsigned char[size];
-	
+
 	//gets the hbitmap's bitmap
 	GetBitmapBits(bmp, size, (void *)imBuffer);
 
@@ -723,7 +727,7 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
 		I.bitmap[i>>2].A =  0xFF; //255 = maximum opacity
 	}
 
-	delete imBuffer;
+	delete [] imBuffer;
 }
 #endif
 #endif
