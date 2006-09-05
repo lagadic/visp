@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.3 2006-09-05 08:02:01 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.4 2006-09-05 14:12:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,9 +76,9 @@ vpDisplayWin32::~vpDisplayWin32()
 /*!
   \brief Initialized the display of a gray level image
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param x, y The window is set at position x,y (column index, row index).
-  \param title  window  titled
+  \param I : Image to be displayed (note that image has to be initialized).
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void vpDisplayWin32::init(vpImage<unsigned char> &I,
@@ -105,9 +105,9 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
 /*!
   \brief Initialized the display of a RGBa  image
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param x, y The window is set at position x,y (column index, row index).
-  \param title  window  titled
+  \param I : Image to be displayed (note that image has to be initialized).
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void vpDisplayWin32::init(vpImage<vpRGBa> &I,
@@ -135,9 +135,9 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
   \brief actual member used to Initialize the display of a
   gray level or RGBa  image
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param x, y The window is set at position x,y (column index, row index).
-  \param title  window  titled
+  \param I : Image to be displayed (note that image has to be initialized)
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void vpDisplayWin32::init(int _ncol, int _nrow,
@@ -146,10 +146,19 @@ void vpDisplayWin32::init(int _ncol, int _nrow,
 {
 
 
-	if (title != NULL)//delete après init du thread.... ou destructeur
+	if (this->title != NULL)//delete après init du thread.... ou destructeur
 	{
-		title = new char[strlen(title) + 1] ;
-		strcpy(title,title) ;
+	  delete [] this->title;
+	  this->title = NULL;
+	}
+
+	if (title != NULL) {
+	  this->title = new char[strlen(title) + 1] ;
+	  strcpy(this->title, title) ;
+	}
+	else {
+	  this->title = new char [1] ;
+	  sprintf(title, '\0');
 	}
 
 	//we prepare the window's thread creation
@@ -159,7 +168,7 @@ void vpDisplayWin32::init(int _ncol, int _nrow,
 	param->w = _ncol;
 	param->h = _nrow;
 	param->vpDisp = this;
-	param->title = title;
+	param->title = this->title;
 
 	//creates the window in a separate thread
 	hThread = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)createWindow,param,0,&threadId);
@@ -500,6 +509,11 @@ void vpDisplayWin32::closeDisplay()
 		WaitForSingleObject(hThread, INFINITE);
 		CloseHandle(hThread);
 	};
+	if (this->title != NULL)
+	{
+	  delete [] this->title;
+	  this->title = NULL;
+	}
 }
 
 /*!
