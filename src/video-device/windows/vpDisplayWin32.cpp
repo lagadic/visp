@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.2 2006-08-21 10:02:43 brenier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.3 2006-09-05 08:02:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) ) 
+#if ( defined(WIN32) )
 
 #include <visp/vpDisplayWin32.h>
 #include <visp/vpDisplayException.h>
@@ -77,14 +77,14 @@ vpDisplayWin32::~vpDisplayWin32()
   \brief Initialized the display of a gray level image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param x, y The window is set at position x,y (column index, row index).
+  \param title  window  titled
 
 */
 void vpDisplayWin32::init(vpImage<unsigned char> &I,
-		   int _x,
-		   int _y,
-		   char *_title)
+		   int x,
+		   int y,
+		   char *title)
  {
 
    if ((I.getRows() == 0) || (I.getCols()==0))
@@ -96,7 +96,7 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
 
    window.renderer->setImg(I);
 
-   init (I.getCols(), I.getRows(), _x, _y, _title) ;
+   init (I.getCols(), I.getRows(), x, y, title) ;
    I.display = this ;
    I.initDisplay =  true ;
 
@@ -106,14 +106,14 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
   \brief Initialized the display of a RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param x, y The window is set at position x,y (column index, row index).
+  \param title  window  titled
 
 */
 void vpDisplayWin32::init(vpImage<vpRGBa> &I,
-		   int _x,
-		   int _y,
-		   char *_title)
+		   int x,
+		   int y,
+		   char *title)
 {
   if ((I.getRows() == 0) || (I.getCols()==0))
      {
@@ -124,7 +124,7 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
 
   window.renderer->setImg(I);
 
-  init (I.getCols(), I.getRows(), _x, _y, _title) ;
+  init (I.getCols(), I.getRows(), x, y, title) ;
   I.display = this ;
   I.initDisplay =  true ;
 
@@ -136,26 +136,26 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
   gray level or RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param x, y The window is set at position x,y (column index, row index).
+  \param title  window  titled
 
 */
 void vpDisplayWin32::init(int _ncol, int _nrow,
-		   int _x, int _y,
-		   char *_title)
+		   int x, int y,
+		   char *title)
 {
 
 
-	if (_title != NULL)//delete après init du thread.... ou destructeur
+	if (title != NULL)//delete après init du thread.... ou destructeur
 	{
-		title = new char[strlen(_title) + 1] ;
-		strcpy(title,_title) ;
+		title = new char[strlen(title) + 1] ;
+		strcpy(title,title) ;
 	}
 
 	//we prepare the window's thread creation
 	threadParam * param = new threadParam;
-	param->x = _x;
-	param->y = _y;
+	param->x = x;
+	param->y = y;
 	param->w = _ncol;
 	param->h = _nrow;
 	param->vpDisp = this;
@@ -192,13 +192,13 @@ void vpDisplayWin32::waitForInit()
 	\param I image to display
 */
 void vpDisplayWin32::displayImage(vpImage<vpRGBa> &I)
-{	
+{
 	//waits if the window is not initialized
 	waitForInit();
 
 	//sets the image to render
 	window.renderer->setImg(I);
-	//sends a message to the window 
+	//sends a message to the window
 	PostMessage(window.getHWnd(),vpWM_DISPLAY,NULL,NULL);
 }
 
@@ -210,10 +210,10 @@ void vpDisplayWin32::displayImage(vpImage<unsigned char> &I)
 {
 	//wait if the window is not initialized
 	waitForInit();
-	
+
 	//sets the image to render
 	window.renderer->setImg(I);
-	//sends a message to the window 
+	//sends a message to the window
 	PostMessage(window.getHWnd(), vpWM_DISPLAY, NULL, NULL);
 }
 
@@ -281,10 +281,10 @@ bool vpDisplayWin32::getClickUp(int& i, int& j, int& button)
 
 	//tells the window there has been a getclickup demand
 	PostMessage(window.getHWnd(), vpWM_GETCLICKUP, NULL, NULL);
-	
+
 	//waits for a click release
 	WaitForSingleObject(window.semaClick, INFINITE);
-	
+
 	j = window.clickX;
 	i = window.clickY;
 
@@ -303,7 +303,7 @@ void vpDisplayWin32::getClick()
 	window.clickButton = vpNO_BUTTON_QUERY;
 	//sends a message to the window
 	PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
-	
+
 	//waits for a button to be pressed
 	WaitForSingleObject(window.semaClick, INFINITE);
 }
@@ -482,7 +482,7 @@ void vpDisplayWin32::clearDisplay(int c)
 
 
 /*!
-	Closes the display. 
+	Closes the display.
 	Destroys the window.
 */
 void vpDisplayWin32::closeDisplay()
