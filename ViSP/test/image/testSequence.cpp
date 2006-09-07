@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testSequence.cpp,v 1.7 2006-08-30 15:56:44 fspindle Exp $
+ * $Id: testSequence.cpp,v 1.8 2006-09-07 09:25:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,12 +46,13 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(WIN32))
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 
 #include <visp/vpTime.h>
 
@@ -270,6 +271,8 @@ main(int argc, char ** argv)
   vpDisplayX display;
 #elif defined VISP_HAVE_GTK
   vpDisplayGTK display;
+#elif defined WIN32
+  vpDisplayGDI display;
 #endif
   if (opt_display) {
     try {
