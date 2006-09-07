@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.7 2006-08-23 10:25:55 brenier Exp $
+ * $Id: vpIoTools.cpp,v 1.8 2006-09-07 09:30:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,13 @@
 /*!
   Get the user name.
 
+  - Under unix, get the content of the LOGNAME environment variable.  For most
+    purposes (especially in conjunction with crontab), it is more useful to use
+    the environment variable LOGNAME to find out who the user is, rather than
+    the getlogin() function.  This is more flexible precisely because the user
+    can set LOGNAME arbitrarily.
+  - Under windows, uses the GetUserName() function.
+
   \param username : The user name.
 
   \exception ERRCantGetUserName : If this method cannot get the user name.
@@ -61,15 +68,20 @@ void
 vpIoTools::getUserName(string &username)
 {
 #if defined UNIX
-  // Get the user name. 
-  char *_username;
-  _username = getlogin();
+  // Get the user name.
+  char *_username = NULL;
+  _username = getenv("LOGNAME");
+  if (_username == NULL) {
+    vpERROR_TRACE( "Cannot get the username. Check your LOGNAME environment variable" );
+    throw(vpIoException(vpIoException::ERRCantGetUserName,
+			"Cannot get the username")) ;
+  }
   username = _username;
 #elif defined WIN32
   int info_buffer_size = 1024;
   TCHAR  *infoBuf = new TCHAR [info_buffer_size];
   DWORD  bufCharCount = info_buffer_size;
-  // Get the user name. 
+  // Get the user name.
   if( ! GetUserName( infoBuf, &bufCharCount ) ) {
     delete [] infoBuf;
     vpERROR_TRACE( "Cannot get the username" );
@@ -221,7 +233,7 @@ string
 vpIoTools::path(const char * _p)
 {
   string path(_p);
-  
+
 #ifdef WIN32
   for(unsigned int i=0 ; i<path.length() ; i++)
     if( path[i] == '/')	path[i] = '\\';
@@ -229,7 +241,7 @@ vpIoTools::path(const char * _p)
   for(unsigned int i=0 ; i<path.length() ; i++)
     if( path[i] == '\\')	path[i] = '/';
 #endif
-  
+
   return path;
 }
 
