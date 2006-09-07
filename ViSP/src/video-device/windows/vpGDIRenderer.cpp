@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.3 2006-09-05 14:12:21 fspindle Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.4 2006-09-07 09:26:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -178,38 +178,41 @@ void vpGDIRenderer::convert(vpImage<vpRGBa> &I, HBITMAP& hBmp)
 	//if we need padding (width needs to be a multiple of 2)
 	if(needPad)
 	  {
-	    int j = w;
-	    for(int i=0 ; i<newW * h ; i+=4)
+	    int j = 0;
+	    int k = 0;
+	    for(int i=0, k=0 ; i<newW * h * 4; i+=4, k++)
 	      {
 		//end of a line = padding = inserts 0s
-		if(j==0 && needPad)
+		if(j==w && needPad)
 		  {
 		    imBuffer[i+0] = 0;
 		    imBuffer[i+1] = 0;
 		    imBuffer[i+2] = 0;
 		    imBuffer[i+3] = 0;
-		    j = w;
+		    j = 0;
+		    k --;
 		  }
 		else
 		  {
 		    //RGBA -> BGRA
-		    imBuffer[i+0] = I.bitmap[i>>2].B;
-		    imBuffer[i+1] = I.bitmap[i>>2].G;
-		    imBuffer[i+2] = I.bitmap[i>>2].R;
-		    imBuffer[i+3] = I.bitmap[i>>2].A;
-		    j--;
+		    imBuffer[i+0] = I.bitmap[k].B;
+		    imBuffer[i+1] = I.bitmap[k].G;
+		    imBuffer[i+2] = I.bitmap[k].R;
+		    imBuffer[i+3] = I.bitmap[k].A;
+		    j++;
 		  }
 	      }
 	  }
 	else
 	  //Simple conversion (no padding)
 	  {
-	    for(int i=0 ; i<w * h * 4 ; i+=4)
+	    int k = 0;
+	    for(int i=0, k=0 ; i<w * h * 4 ; i+=4, k++)
 	      {
-		imBuffer[i+0] = I.bitmap[i>>2].B;
-		imBuffer[i+1] = I.bitmap[i>>2].G;
-		imBuffer[i+2] = I.bitmap[i>>2].R;
-		imBuffer[i+3] = I.bitmap[i>>2].A;
+		imBuffer[i+0] = I.bitmap[k].B;
+		imBuffer[i+1] = I.bitmap[k].G;
+		imBuffer[i+2] = I.bitmap[k].R;
+		imBuffer[i+3] = I.bitmap[k].A;
 	      }
 	  }
 
@@ -246,37 +249,40 @@ void vpGDIRenderer::convert(vpImage<unsigned char> &I, HBITMAP& hBmp)
 	//if we need padding
 	if(needPad)
 	  {
-	    int j = w;
-	    for(int i=0 ; i<newW * h * 4; i+=4)
+	    int j = 0;
+	    int k = 0;
+	    for(int i=0, k=0 ; i<newW * h * 4; i+=4, k++)
 	      {
 		//end of a line = padding = inserts 0s
-		if(j==0 && needPad)
+		if(j==w && needPad)
 		  {
 		    imBuffer[i+0] = 0;
 		    imBuffer[i+1] = 0;
 		    imBuffer[i+2] = 0;
 		    imBuffer[i+3] = 0;
-		    j = w;
+		    j = 0;
+		    k --;
 		  }
 		else
 		  {
-		    imBuffer[i+0] = I.bitmap[i>>2];
-		    imBuffer[i+1] = I.bitmap[i>>2];
-		    imBuffer[i+2] = I.bitmap[i>>2];
-		    imBuffer[i+3] = I.bitmap[i>>2];
-		    j--;
+		    imBuffer[i+0] = I.bitmap[k];
+		    imBuffer[i+1] = I.bitmap[k];
+		    imBuffer[i+2] = I.bitmap[k];
+		    imBuffer[i+3] = I.bitmap[k];
+		    j++;
 		  }
 	      }
 	  }
 	else
 	  //Simple conversion
 	  {
-	    for(int i=0 ; i<w * h * 4 ; i+=4)
+	    int k = 0;
+	    for(int i=0, k=0 ; i<w * h * 4 ; i+=4, k++)
 	      {
-		imBuffer[i+0] = I.bitmap[i>>2];
-		imBuffer[i+1] = I.bitmap[i>>2];
-		imBuffer[i+2] = I.bitmap[i>>2];
-		imBuffer[i+3] = I.bitmap[i>>2];
+		imBuffer[i+0] = I.bitmap[k];
+		imBuffer[i+1] = I.bitmap[k];
+		imBuffer[i+2] = I.bitmap[k];
+		imBuffer[i+3] = I.bitmap[k];
 	      }
 	}
 
