@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpMeLine.cpp,v 1.7 2006-09-08 16:01:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,10 +50,6 @@
 #include <visp/vpTrackingException.h>
 
 
-#define DEBUG_LEVEL1 0
-#define DEBUG_LEVEL2 0
-#define DEBUG_LEVEL3 0
-
 static void
 normalizeAngle(double &delta)
 {
@@ -77,20 +73,11 @@ computeDelta(double &delta, int i1, int j1, int i2, int j2)
 
 vpMeLine::vpMeLine():vpMeTracker()
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin vpMeLine::vpMeLine() " <<  endl ;
-
-  if (DEBUG_LEVEL1)
-    cout << "end vpMeLine::vpMeLine() " << endl ;
 }
 
 vpMeLine::~vpMeLine()
 {
-  if (DEBUG_LEVEL1) cout << "begin vpMeLine::~vpMeLine() " << endl ;
-
   list.kill();
-
-  if (DEBUG_LEVEL1) cout << "end vpMeLine::~vpMeLine() " << endl ;
 }
 
 
@@ -110,11 +97,6 @@ vpMeLine::~vpMeLine()
 void
 vpMeLine::sample(vpImage<unsigned char>& I)
 {
-  if(DEBUG_LEVEL1)
-  {
-    cout <<"begin vpMeLine::sample() : "<<endl ;
-  }
-
   int rows = I.getRows() ;
   int cols = I.getCols() ;
   double n_sample;
@@ -157,7 +139,7 @@ vpMeLine::sample(vpImage<unsigned char>& I)
       pix.init((int)is, (int)js, delta) ;
       pix.setDisplay(selectDisplay) ;
 
-      if(DEBUG_LEVEL3)
+      if(vpDEBUG_ENABLE(3))
       {
 	vpDisplay::displayCross(I,vpMath::round(is), vpMath::round(js), 2, vpColor::blue);
       }
@@ -169,11 +151,8 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 
   }
 
-  if(DEBUG_LEVEL1)
-  {
-    cout <<"end vpMeLine::sample() : " ;
-    cout << n_sample << " point inserted in the list " << endl  ;
-  }
+  vpCDEBUG(1) << "end vpMeLine::sample() : ";
+  vpCDEBUG(1) << n_sample << " point inserted in the list " << endl  ;
 }
 
 
@@ -183,8 +162,6 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 void
 vpMeLine::display(vpImage<unsigned char>&I, int col)
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin vpMeLine::Display(..)" << endl  ;
   list.front();
 
   while (!list.outside())
@@ -196,46 +173,44 @@ vpMeLine::display(vpImage<unsigned char>&I, int col)
     else
       vpDisplay::displayCross(I,vpMath::round(pix.ifloat), vpMath::round(pix.jfloat), 5, col);
 
+    vpDisplay::flush(I);
     list.next() ;
   }
 
-  //TRES LOURD
 
-  if (fabs(a) < fabs(b))
-  for (int i=0 ; i < I.getRows() ; i ++)
-  {
-    double  j = (-c - a*i)/b  ;
-    vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), col);
+  if (fabs(a) < fabs(b)) {
+    float i1, j1, i2, j2;
+    i1 = 0;
+    j1 = (-a*i1 -c) /b;
+    i2 = I.getRows() -1;
+    j2 = (-a*i2 -c) /b;
+    vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
+    vpDisplay::flush(I);
+
   }
-  else
-
-  for (int j=0 ; j < I.getCols() ; j++)
-  {
-    double  i = (-c - b*j)/a  ;
-    vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), col);
+  else {
+    float i1, j1, i2, j2;
+    j1 = 0;
+    i1 = -(b * j1 + c) / a;
+    j2 = I.getCols() -1;
+    i2 = -(b * j2 + c) / a;
+    vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
+    vpDisplay::flush(I);
   }
-
   vpDisplay::displayCross(I,vpMath::round(PExt[0].ifloat), vpMath::round(PExt[0].jfloat), 10, vpColor::green);
   vpDisplay::displayCross(I,vpMath::round(PExt[1].ifloat), vpMath::round(PExt[1].jfloat), 10, vpColor::green);
   vpDisplay::flush(I) ;
-
-  if (DEBUG_LEVEL1)
-    cout << "end vpMeLine::Display(..)" << endl  ;
-
 }
 
 
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I)
 {
-  if (DEBUG_LEVEL1)
-    cout<<" begin vpMeLine::initTracking()"<<endl ;
-
   int i1, j1, i2, j2 ;
 
-  cout << "Clicker le premier point de la droite " <<endl ;
+  cout << "Click on the line first point..." <<endl ;
   while (vpDisplay::getClick(I,i1,j1)!=true) ;
-  cout << "Clicker le second point de la droite " <<endl ;
+  cout << "Click on the line second point..." <<endl ;
   while (vpDisplay::getClick(I,i2,j2)!=true) ;
 
   try
@@ -247,9 +222,6 @@ vpMeLine::initTracking(vpImage<unsigned char> &I)
     vpERROR_TRACE(" ") ;
     throw ;
   }
-
-  if (DEBUG_LEVEL1)
-    cout<<" end vpMeLine::initTracking()"<<endl ;
 
 }
 
@@ -522,15 +494,12 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
   delta = atan2(a,b) ;
 
   normalizeAngle(delta) ;
-
-
 }
 
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I,int i1,int j1, int i2, int j2)
 {
-  if (DEBUG_LEVEL1)
-    cout<<" begin vpMeLine::initTracking()"<<endl ;
+  vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<endl ;
 
   try{
 
@@ -546,22 +515,29 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,int i1,int j1, int i2, int j2)
       a = cos(angle) ;
       b = sin(angle) ;
 
+      // Real values of a, b can have an other sign. So to get the good values
+      // of a and b in order to initialise then c, we call track(I) just below
+
       computeDelta(delta,i1,j1,i2,j2) ;
 
+      //      vpTRACE("a: %f b: %f c: %f -b/a: %f delta: %f", a, b, c, -(b/a), delta);
+
       sample(I) ;
+
     }
     //  2. On appelle ce qui n'est pas specifique
     {
       vpMeTracker::initTracking(I) ;
     }
+    // Call track(I) to give the good sign to a and b and to initialise c which can be used for the display
+    track(I);
   }
   catch(...)
   {
     vpERROR_TRACE(" ") ;
     throw ;
   }
-  if (DEBUG_LEVEL1)
-    cout<<" end vpMeLine::initTracking()"<<endl ;
+  vpCDEBUG(1) <<" end vpMeLine::initTracking()"<<endl ;
 }
 
 void
@@ -643,10 +619,7 @@ vpMeLine::setExtremities()
 void
 vpMeLine::seekExtremities(vpImage<unsigned char> &I)
 {
-  if(DEBUG_LEVEL1)
-  {
-    cout <<"begin vpMeLine::sample() : "<<endl ;
-  }
+  vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<endl ;
 
   int rows = I.getRows() ;
   int cols = I.getCols() ;
@@ -694,14 +667,11 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
       if (P.suppress ==0)
       {
 	list += P ;
-	if (DEBUG_LEVEL3) 	vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
+	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
       }
       else
-	if (DEBUG_LEVEL3) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::blue) ;
-
-
+	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::blue) ;
     }
-
   }
 
   P.init((int) PExt[1].ifloat, (int)PExt[1].jfloat, delta) ;
@@ -718,24 +688,17 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
       if (P.suppress ==0)
       {
 	list += P ;
-	if (DEBUG_LEVEL3) vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
+	if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
       }
       else
-	if (DEBUG_LEVEL3) vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::blue) ;
+	if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::blue) ;
     }
-
   }
-
 
   me->range = memory_range ;
 
-
-
-  if(DEBUG_LEVEL1)
-  {
-    cout <<"end vpMeLine::sample() : " ;
-    cout << n_sample << " point inserted in the list " << endl  ;
-  }
+  vpCDEBUG(1) <<"end vpMeLine::sample() : " ;
+  vpCDEBUG(1) << n_sample << " point inserted in the list " << endl  ;
 }
 
 static void
@@ -800,8 +763,7 @@ vpMeLine::updateDelta()
 void
 vpMeLine::track(vpImage<unsigned char> &I)
 {
-  if (DEBUG_LEVEL1)
-    cout<<"begin vpMeLine::track()"<<endl ;
+  vpCDEBUG(1) <<"begin vpMeLine::track()"<<endl ;
 
   //  1. On fait ce qui concerne les droites (peut etre vide)
   {
@@ -855,7 +817,7 @@ vpMeLine::track(vpImage<unsigned char> &I)
     updateDelta() ;
 
     // Remise a jour de delta dans la liste de site me
-    if (DEBUG_LEVEL2)
+    if (vpDEBUG_ENABLE(2))
       {
 	display(I,vpColor::red) ;
 	vpMeTracker::display(I) ;
@@ -867,8 +829,7 @@ vpMeLine::track(vpImage<unsigned char> &I)
 
   computeRhoTheta(I) ;
 
-  if (DEBUG_LEVEL1)
-    cout<<"end vpMeLine::track()"<<endl ;
+  vpCDEBUG(1) <<"end vpMeLine::track()"<<endl ;
 
 }
 
@@ -991,7 +952,7 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
   while (theta < -M_PI)    theta +=2*M_PI ;
      vpTRACE("%f %f", rho, theta) ;
 
-  //  if (DEBUG_LEVEL2)
+  if (vpDEBUG_ENABLE(2))
     vpDisplay::displayArrow(I,i,j,i3,j3, vpColor::green) ;
 
 }
@@ -1017,8 +978,4 @@ vpMeLine::getTheta() const
   //  double theta =  atan2(a,b) ;
   return theta ;
 }
-
-#undef DEBUG_LEVEL1
-#undef DEBUG_LEVEL2
-#undef DEBUG_LEVEL3
 
