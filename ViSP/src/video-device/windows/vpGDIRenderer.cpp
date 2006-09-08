@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.4 2006-09-07 09:26:54 fspindle Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.5 2006-09-08 15:54:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -580,39 +580,51 @@ void vpGDIRenderer::drawText(int i, int j, char * s, int c)
 */
 void vpGDIRenderer::drawCross(int i,int j, int size,int col, int e)
 {
-	//get the window's DC
-	HDC hDCScreen = GetDC(hWnd);
-	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+	int half_size = size / 2;
 
-	//create the pen
-	HPEN hPen = CreatePen(PS_SOLID, e, colors[col]);
+	// if half_size is equal to zero, nothing is displayed with the code
+	// just below. So, if half_size is equal to zero we just draw the
+	// pixel.
+	if (half_size) {
+	  //get the window's DC
+	  HDC hDCScreen = GetDC(hWnd);
+	  HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
-	//select this bmp in memory
-	EnterCriticalSection(&CriticalSection);
-	SelectObject(hDCMem, bmp);
+	  //create the pen
+	  HPEN hPen = CreatePen(PS_SOLID, e, colors[col]);
 
-	//select the pen
-	SelectObject(hDCMem, hPen);
+	  //select this bmp in memory
+	  EnterCriticalSection(&CriticalSection);
+	  SelectObject(hDCMem, bmp);
 
-	//move to the starting point
-	MoveToEx(hDCMem, j-(size/2), i, NULL);
-	//Draw the first line (horizontal)
-	LineTo(hDCMem, j+(size/2), i);
+	  //select the pen
+	  SelectObject(hDCMem, hPen);
 
-	//move to the starting point
-	MoveToEx(hDCMem, j, i-(size/2), NULL);
-	//Draw the second line (vertical)
-	LineTo(hDCMem, j, i+(size/2));
+	  //move to the starting point
+	  MoveToEx(hDCMem, j-half_size, i, NULL);
+	  //Draw the first line (horizontal)
+	  LineTo(hDCMem, j+half_size, i);
 
+	  //move to the starting point
+	  MoveToEx(hDCMem, j, i-half_size, NULL);
+	  //Draw the second line (vertical)
+	  LineTo(hDCMem, j, i+half_size);
 
-	//display the result (flush)
-	BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size, hDCMem, j-(size/2), i-(size/2), SRCCOPY);
+	  //display the result (flush)
+	  BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size,
+		 hDCMem, j-(size/2), i-(size/2), SRCCOPY);
 
-	LeaveCriticalSection(&CriticalSection);
+	  LeaveCriticalSection(&CriticalSection);
 
-	DeleteObject(hPen);
-	DeleteDC(hDCMem);
-	ReleaseDC(hWnd, hDCScreen);
+	  DeleteObject(hPen);
+	  DeleteDC(hDCMem);
+	  ReleaseDC(hWnd, hDCScreen);
+	}
+	else {
+	  setPixel(i, j, col);
+
+	}
+
 
 }
 
