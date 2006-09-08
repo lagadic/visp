@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpMeEllipse.cpp,v 1.7 2006-09-08 16:02:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,13 +42,7 @@
 #include <visp/vpMe.h>
 #include <visp/vpRobust.h>
 #include <visp/vpTrackingException.h>
-
-#define DEBUG_LEVEL1 0
-#define DEBUG_LEVEL2 0
-#define DEBUG_LEVEL3 3
-
-#define OK 0
-#define fatalError 1
+#include <visp/vpDebug.h>
 
 
 void
@@ -68,8 +62,7 @@ computeTheta(double &theta, vpColVector &K, double i, double j)
 
 vpMeEllipse::vpMeEllipse():vpMeTracker()
 {
-  if (DEBUG_LEVEL1)
-    cout << "begin vpMeEllipse::vpMeEllipse() " <<  endl ;
+  vpCDEBUG(1) << "begin vpMeEllipse::vpMeEllipse() " <<  endl ;
 
   // redimensionnement du vecteur de parametre
   // i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
@@ -79,17 +72,18 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
 
   alpha1 = 0 ;
   alpha2 = 2*M_PI ;
-  if (DEBUG_LEVEL1)
-    cout << "end vpMeEllipse::vpMeEllipse() " << endl ;
+
+  seek = 10.; // angle in degrees
+  vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << endl ;
 }
 
 vpMeEllipse::~vpMeEllipse()
 {
-  if (DEBUG_LEVEL1) cout << "begin vpMeEllipse::~vpMeEllipse() " << endl ;
+  vpCDEBUG(1) << "begin vpMeEllipse::~vpMeEllipse() " << endl ;
 
   list.kill();
 
-  if (DEBUG_LEVEL1) cout << "end vpMeEllipse::~vpMeEllipse() " << endl ;
+  vpCDEBUG(1) << "end vpMeEllipse::~vpMeEllipse() " << endl ;
 }
 
 
@@ -108,10 +102,7 @@ vpMeEllipse::~vpMeEllipse()
 void
 vpMeEllipse::sample(vpImage<unsigned char> & I)
 {
-  // if(DEBUG_LEVEL1)
-  {
-    cout <<"begin vpMeEllipse::sample() : "<<endl ;
-  }
+  vpCDEBUG(1) <<"begin vpMeEllipse::sample() : "<<endl ;
 
   int rows = I.getRows() ;
   int cols = I.getCols() ;
@@ -165,7 +156,7 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
       pix.setDisplay(selectDisplay) ;
       pix.suppress = 0 ;
 
-      if(DEBUG_LEVEL3)
+      if(vpDEBUG_ENABLE(3))
       {
 	vpDisplay::displayCross(I,vpMath::round(i11), vpMath::round(j11), 5, vpColor::blue);
       }
@@ -178,12 +169,8 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
 
   n_sample = list.nbElements() ;
 
-  //  if(DEBUG_LEVEL1)
-  {
-    cout <<"end vpMeEllipse::sample() : " ;
-    cout << n_sample << " point inserted in the list " << endl  ;
-  }
-
+  vpCDEBUG(1) << "end vpMeEllipse::sample() : " ;
+  vpCDEBUG(1) << n_sample << " point inserted in the list " << endl  ;
 }
 
 
@@ -297,8 +284,7 @@ vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
   if (alpha2 <alpha1) alpha2 += 2*M_PI ;
 
 
-  if (DEBUG_LEVEL1)
-    cout << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << endl ;
+  vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << endl ;
 
 }
 /*!
@@ -406,10 +392,10 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
       {
 	list.end() ;
 	list.addRight(P);
-	if (DEBUG_LEVEL3) 	vpDisplay::displayCross(I,P.i,P.j, 25, vpColor::green) ;
+	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 25, vpColor::green) ;
       }
       else
-	if (DEBUG_LEVEL3) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::red) ;
+	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::red) ;
 
     }
 
@@ -443,10 +429,10 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
 
 	list.front() ;
 	list.addLeft(P);
-	if (DEBUG_LEVEL3) 	vpDisplay::displayCross(I,P.i,P.j, 25, vpColor::green) ;
+	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 25, vpColor::green) ;
       }
       else
-	if (DEBUG_LEVEL3) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::red) ;
+	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::red) ;
 
 
     }
@@ -686,8 +672,7 @@ vpMeEllipse::display(vpImage<unsigned char> &I, int col)
 void
 vpMeEllipse::initTracking(vpImage<unsigned char> &I)
 {
-  if (DEBUG_LEVEL1)
-    cout<<" begin vpMeEllipse::initTracking()"<<endl ;
+  vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<endl ;
 
   int n=5 ;
   int *i, *j ;
@@ -718,8 +703,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
 void
 vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n, int *i,int *j)
 {
-  if (DEBUG_LEVEL1)
-    cout<<" begin vpMeEllipse::initTracking()"<<endl ;
+  vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<endl ;
 
   if (circle==false)
   {
@@ -798,8 +782,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n, int *i,int *j)
 void
 vpMeEllipse::track(vpImage<unsigned char> &I)
 {
-  if (DEBUG_LEVEL1)
-    cout<<"begin vpMeEllipse::track()"<<endl ;
+  vpCDEBUG(1) <<"begin vpMeEllipse::track()"<<endl ;
 
   static int iter =0 ;
   //  1. On fait ce qui concerne les ellipse (peut etre vide)
@@ -859,12 +842,6 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
   iter++ ;
 
 
-  if (DEBUG_LEVEL1)
-    cout<<"end vpMeEllipse::track()"<<endl ;
+  vpCDEBUG(1) << "end vpMeEllipse::track()"<<endl ;
 
 }
-
-#undef DEBUG_LEVEL1
-#undef DEBUG_LEVEL2
-#undef DEBUG_LEVEL3
-
