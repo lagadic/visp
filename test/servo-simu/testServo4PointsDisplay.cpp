@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: testServo4PointsDisplay.cpp,v 1.5 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: testServo4PointsDisplay.cpp,v 1.6 2006-09-08 16:29:02 fspindle Exp $
  *
  * Description
  * ============
@@ -38,7 +38,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_X11
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(WIN32))
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -53,19 +53,115 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpParseArgv.h>
+
+// List of allowed command line options
+#define GETOPTARGS	"cdh"
+
+/*!
+
+  Print the program options.
+
+  \param ipath: Input image path.
+
+*/
+void usage(char *name, char *badparam)
+{
+  fprintf(stdout, "\n\
+Tests a control law with the following characteristics:\n\
+- eye-in-hand control\n\
+- articular velocity are computed\n\
+- servo on 4 points.\n\
+\n\
+SYNOPSIS\n\
+  %s [-c] [-d] [-h]\n", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -c\n\
+     Disable the mouse click. Usefull to automaze the \n\
+     execution of this program without humain intervention.\n\
+\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -h\n\
+     Print the help.\n");
+
+}
+/*!
+
+  Set the program options.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv, bool &click_allowed, bool &display)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'c': click_allowed = false; break;
+    case 'd': display = false; break;
+    case 'h': usage(argv[0], NULL); return false; break;
+
+    default:
+      usage(argv[0], optarg);
+      return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
 
 int
-main()
+main(int argc, char ** argv)
 {
+
+  bool opt_click_allowed = true;
+  bool opt_display = true;
+
+  // Read the command line options
+  if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
+    exit (-1);
+  }
+
+  // We open two displays, one for the internal camera view, the other one for
+  // the external view, using either X11, GTK or GDI.
+#if defined VISP_HAVE_X11
+  vpDisplayX displayInt;
+  vpDisplayX displayExt;
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK displayInt;
+  vpDisplayGTK displayExt;
+#elif defined WIN32
+  vpDisplayGDI displayInt;
+  vpDisplayGDI displayExt;
+#endif
 
   // open a display for the visualization
 
-  vpImage<unsigned char> I(300,300,0) ;
-  vpDisplayX display(I,0,0, "Internal view") ;
-  vpImage<unsigned char> Iext(300,300,0) ;
-  vpDisplayX displayExt(Iext,330,000, "External view") ;
+  vpImage<unsigned char> Iint(300,300,200) ;
+  vpImage<unsigned char> Iext(300,300,200) ;
 
+  if (opt_display) {
+    displayInt.init(Iint,0,0, "Internal view") ;
+    displayExt.init(Iext,330,000, "External view") ;
+
+  }
   vpProjectionDisplay externalview ;
 
   vpCameraParameters cam ;
@@ -158,7 +254,7 @@ main()
 
   int iter=0 ;
   vpTRACE("\t loop") ;
-  while(iter++<200)
+  while(iter++<50)
   {
     cout << "---------------------------------------------" << iter <<endl ;
     vpColVector v ;
@@ -184,8 +280,10 @@ main()
 
     }
 
-    vpServoDisplay::display(task,cam,I) ;
-    externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
+    if (opt_display) {
+      vpServoDisplay::display(task,cam,Iint) ;
+      externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
+    }
 
     if (iter==1) vpTRACE("\t\t compute the control law ") ;
     v = task.computeControlLaw() ;
@@ -200,23 +298,23 @@ main()
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
     vpTRACE("\t\t || s - s* || ") ;
-    cout << task.error.sumSquare() <<endl ; ;
+    cout << task.error.sumSquare() <<endl ;
   }
 
   vpTRACE("Display task information " ) ;
   task.print() ;
 
-#if 0
-  // suppressed for automate test
-  vpTRACE("\n\nClick in the internal view window to end...");
-  vpDisplay::getClick(I) ;
-#endif
+  if (opt_display && opt_click_allowed) {
+    // suppressed for automate test
+    vpTRACE("\n\nClick in the internal view window to end...");
+    vpDisplay::getClick(Iint) ;
+  }
 }
 #else
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
 }
 
 #endif
