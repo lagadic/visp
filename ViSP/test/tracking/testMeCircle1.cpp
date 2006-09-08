@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMeCircle1.cpp,v 1.6 2006-08-30 15:56:10 fspindle Exp $
+ * $Id: testMeCircle1.cpp,v 1.7 2006-09-08 15:48:37 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -285,11 +285,11 @@ main(int argc, char ** argv)
     int *i, *j ;
     i = new int[n] ;
     j = new int[n] ;
-    i[0] = 71; j[0] = 196;
-    i[1] = 54; j[1] = 154;
-    i[2] = 84; j[2] = 105;
-    i[3] = 129; j[3] = 101;
-    i[4] = 158; j[4] = 125;
+    i[0] = 39; j[0] = 136;
+    i[1] = 42; j[1] = 83;
+    i[2] = 86; j[2] = 55;
+    i[3] = 132; j[3] = 72;
+    i[4] = 145; j[4] = 134;
     E1.initTracking(I, n, i, j) ;
     delete [] i ;
     delete [] j ;
@@ -299,7 +299,8 @@ main(int argc, char ** argv)
     E1.display(I, vpColor::green) ;
   }
 
-  vpERROR_TRACE("sample step %f ",E1.me->sample_step) ;
+  vpTRACE("sample step %f ",E1.me->sample_step) ;
+  cout << "Tracking on image: " << filename << endl;
   E1.track(I) ;
   if (opt_display && opt_click_allowed) {
     cout << "A click to exit..." << endl;
