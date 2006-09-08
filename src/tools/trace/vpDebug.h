@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDebug.h,v 1.5 2006-08-23 10:20:36 brenier Exp $
+ * $Id: vpDebug.h,v 1.6 2006-09-08 15:57:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,7 +32,7 @@
  *
  *   - TRACING:    vpTRACE and vpERROR_TRACE work like printf with carreer return at the end of the string.
  *                 vpCERROR et vpCTRACE work like the C++ output streams cout and cerr.
- *   - DEBUGING:   vpDEBUG_TRACE(niv,  and vpDERROR_TRACE(niv, work like printf, but print only if the 
+ *   - DEBUGING:   vpDEBUG_TRACE(niv,  and vpDERROR_TRACE(niv, work like printf, but print only if the
  *                 tracing level niv is greater than the debug level VP_DEBUG_MODE.
  *                 vpCDEBUG(niv) work like the C++ output stream cout.
  *                 vpDEBUG_ENABLE(niv) is equal to 1 if the debug level niv is greater than the debug mode
@@ -52,19 +52,21 @@
 #include <iostream>
 using namespace std;
 
-#ifndef __FUNCTION__
-#define __FUNCTION__ " "
+#ifdef WIN32
+#  ifndef __FUNCTION__
+#    define __FUNCTION__ " "
+#  endif
 #endif
 
 #ifndef VP_DEBUG_MODE
-#define VP_DEBUG_MODE 0
+#  define VP_DEBUG_MODE 0
 #endif
 
 
 /*!
 	\class vpTraceOutput
 	\brief This class is used to display debug or error messages.
-	       It needs to be initialized with the file name, function name and line, of 
+	       It needs to be initialized with the file name, function name and line, of
 	       the place where it is created.
 	       It is best used by first instanciating the object and directly calling the () operator.
 	       This is used to mimic variadic macros (not supported in MSVC prior to version 8)
@@ -75,7 +77,7 @@ class vpTraceOutput
     const char* currentFile; //Name of the file to use in the displays
     const char* currentFunc; //Name of the function to use in the displays
     int currentLine;		 //Line to use in the displays
-    
+
     //if true, output to cerr/stderr else cout/stdout
     bool err;
     //string to display before anything else
@@ -113,11 +115,11 @@ public:
 			va_list args;
 			va_start(args, format);
 
-                        cout << "(N" << niv << ") " ; 
+                        cout << "(N" << niv << ") " ;
 			//calls display with it
 			display(format, args);
 
-			va_end(args);	
+			va_end(args);
 		}
     }
 
@@ -138,7 +140,7 @@ public:
 		//calls display with it
 		display(format, args);
 
-		va_end(args);	
+		va_end(args);
 	}
 
 	/*!
@@ -157,7 +159,7 @@ public:
 			//then writes the recorded namefile, function and line
 			cerr << "!!\t" << currentFile << ": " <<currentFunc << "(#" << currentLine << ") :" ;
 			//and finally writes the message passed to () operator.
-			vfprintf (stderr, format, args); 
+			vfprintf (stderr, format, args);
 			fprintf (stderr, "\n");
 			//flushes the buffer
 			fflush (stderr);
@@ -169,7 +171,7 @@ public:
 			//then writes the recorded namefile, function and line
 			cout <<currentFile << ": " << currentFunc << "(#" << currentLine << ") :" ;
 			//and finally writes the message passed to () operator.
-			vprintf (format, args); 
+			vprintf (format, args);
 			printf ("\n");
 			//flushes the buffer
 			fflush (stdout);
@@ -224,14 +226,14 @@ public:
 #ifdef VP_DEBUG
 
 /*!
-  vpDERROR_TRACE works like printf, but prints only if the 
-  tracing level niv is greater than the debug level VP_DEBUG_MODE. 
+  vpDERROR_TRACE works like printf, but prints only if the
+  tracing level niv is greater than the debug level VP_DEBUG_MODE.
 */
 #define vpDERROR_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, true))
 
-/*! 
-  vpDEBUG_TRACE works like printf, but prints only if the 
-  tracing level niv is greater than the debug level VP_DEBUG_MODE. 
+/*!
+  vpDEBUG_TRACE works like printf, but prints only if the
+  tracing level niv is greater than the debug level VP_DEBUG_MODE.
 */
 #define vpDEBUG_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, false))
 
@@ -251,7 +253,7 @@ public:
 
 inline void vpDERROR_TRACE(int niv, char *a, ...){};
 inline void vpDEBUG_TRACE(int niv, char *a, ...){};
-#define vpCDEBUG(niv) if (1) ; else cout  
+#define vpCDEBUG(niv) if (1) ; else cout
 #define vpDEBUG_ENABLE(niv) (0)
 
 #endif
