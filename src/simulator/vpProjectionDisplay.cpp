@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpProjectionDisplay.cpp,v 1.6 2006-09-08 16:30:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,7 +42,7 @@
 */
 
 #include <visp/vpConfig.h>
-#ifdef VISP_HAVE_X11
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(WIN32))
 
 // Meter/pixel conversion
 #include <visp/vpCameraParameters.h>
@@ -181,6 +181,7 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
 			  vpMath::round(oy), vpMath::round(ox),
 			  vpMath::round(y1), vpMath::round(x1),
 			  vpColor::red) ;
+
 
 }
 

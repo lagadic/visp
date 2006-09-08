@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.h,v 1.4 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpProjectionDisplay.h,v 1.5 2006-09-08 16:30:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,7 +45,7 @@
 */
 
 #include <visp/vpConfig.h>
-#ifdef VISP_HAVE_X11
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(WIN32))
 
 #include <visp/vpConfig.h>
 // Meter/pixel conversion
@@ -55,6 +55,8 @@
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 #include <visp/vpForwardProjection.h>
 #include <visp/vpList.h>
 
@@ -68,8 +70,16 @@ private:
   vpImage<unsigned char> Icam ;
   vpImage<unsigned char> Iext ;
 
+#if defined VISP_HAVE_X11
   vpDisplayX dIcam ;
   vpDisplayX dIext ;
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK dIcam ;
+  vpDisplayGTK dIext ;
+#elif defined WIN32
+  vpDisplayGDI dIcam ;
+  vpDisplayGDI dIext ;
+#endif
 public:
   void init() ;
   void init(int select) ;
