@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMeEllipse1.cpp,v 1.5 2006-08-25 08:36:47 brenier Exp $
+ * $Id: testMeEllipse1.cpp,v 1.6 2006-09-08 15:52:33 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,12 +49,13 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(WIN32))
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 #include <visp/vpColor.h>
 
 #include <visp/vpMeEllipse.h>
@@ -93,6 +94,9 @@ OPTIONS:                                               Default\n\
      Disable the mouse click. Usefull to automaze the \n\
      execution of this program without humain intervention.\n\
 \n\
+  -d \n\
+     Turn off the display.\n\
+\n\
   -h\n\
      Print the help.\n",
 	  ipath.c_str());
@@ -106,7 +110,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath, bool &click_allowed)
+bool getOptions(int argc, char **argv, string &ipath, bool &click_allowed, bool &display)
 {
   char *optarg;
   int	c;
@@ -114,18 +118,19 @@ bool getOptions(int argc, char **argv, string &ipath, bool &click_allowed)
 
     switch (c) {
     case 'c': click_allowed = false; break;
+    case 'd': display = false; break;
     case 'i': ipath = optarg; break;
     case 'h': usage(argv[0], NULL, ipath); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath); 
+      usage(argv[0], optarg, ipath);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath); 
+    usage(argv[0], NULL, ipath);
     cerr << "ERROR: " << endl;
     cerr << "  Bad argument " << optarg << endl << endl;
     return false;
@@ -144,6 +149,7 @@ main(int argc, char ** argv)
   string dirname;
   string filename;
   bool opt_click_allowed = true;
+  bool opt_display = true;
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -156,12 +162,12 @@ main(int argc, char ** argv)
 
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_click_allowed) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
   // Get the option values
-  if (!opt_ipath.empty()) 
+  if (!opt_ipath.empty())
     ipath = opt_ipath;
 
   // Compare ipath and env_ipath. If they differ, we take into account
@@ -170,7 +176,7 @@ main(int argc, char ** argv)
     if (ipath != env_ipath) {
       cout << endl
 	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> " 
+      cout << "  Since -i <visp image path=" << ipath << "> "
 	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
 	   << "  we skip the environment variable." << endl;
     }
@@ -179,12 +185,12 @@ main(int argc, char ** argv)
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath);
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " 
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
 	 << endl
 	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl; 
+	 << "  image path where test images are located." << endl << endl;
     exit(-1);
   }
 
@@ -221,35 +227,40 @@ main(int argc, char ** argv)
     // here this will result in the end of the program
     // Note that another error message has been printed from readPGM
     // to give more information about the error
-    cerr << endl 
+    cerr << endl
 	 << "ERROR:" << endl;
     cerr << "  Cannot read " << filename << endl;
     cerr << "  Check your -i " << ipath << " option " << endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable." 
+	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
 	 << endl;
     exit(-1);
   }
 
-  // We open a window using either X11 or GTK.
-  // Its size is automatically defined by the image (I) size
+  // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
-  vpDisplayX display(I, 100, 100,"Display X...") ;
+  vpDisplayX display;
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display(I, 100, 100,"Display GTK...") ;
+  vpDisplayGTK display;
+#elif defined WIN32
+  vpDisplayGDI display;
 #endif
 
-  try{
-    // Display the image
-    // The image class has a member that specify a pointer toward
-    // the display that has been initialized in the display declaration
-    // therefore is is no longuer necessary to make a reference to the
-    // display variable.
-    vpDisplay::display(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error while displaying the image") ;
-    exit(-1);
+  if (opt_display) {
+    try{
+      // Display size is automatically defined by the image (I) size
+      display.init(I, 100, 100,"Display...") ;
+      // Display the image
+      // The image class has a member that specify a pointer toward
+      // the display that has been initialized in the display declaration
+      // therefore is is no longuer necessary to make a reference to the
+      // display variable.
+      vpDisplay::display(I) ;
+    }
+    catch(...)
+    {
+      vpERROR_TRACE("Error while displaying the image") ;
+      exit(-1);
+    }
   }
 
   vpMeEllipse E1 ;
@@ -264,11 +275,16 @@ main(int argc, char ** argv)
   E1.setMe(&me) ;
   E1.setDisplay(vpMeTracker::RANGE_RESULT) ;
   E1.initTracking(I) ;
-  E1.display(I, vpColor::green) ;
+  if (opt_display) {
+    E1.display(I, vpColor::green) ;
+  }
 
   vpERROR_TRACE("sample step %f ",E1.me->sample_step) ;
   E1.track(I) ;
-  vpDisplay::getClick(I) ;
+  if (opt_display && opt_click_allowed) {
+    cout << "A click to continue..." << endl;
+    vpDisplay::getClick(I) ;
+  }
   cout <<"------------------------------------------------------------"<<endl;
 
 
@@ -278,11 +294,13 @@ main(int argc, char ** argv)
     s.str("");
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
     filename = dirname + s.str();
+    cout << "Tracking on image: " << filename << endl;
     // read the image
     vpImageIo::readPGM(I, filename);
-    // Display the image
-    vpDisplay::display(I) ;
-
+    if (opt_display) {
+      // Display the image
+      vpDisplay::display(I) ;
+    }
     try
     {
       E1.track(I) ;
@@ -293,12 +311,13 @@ main(int argc, char ** argv)
       exit(1) ;
     }
 
-    E1.display(I,vpColor::green) ;
+    if (opt_display) {
+      E1.display(I,vpColor::green) ;
     vpDisplay::flush(I) ;
-
+    }
   }
-  if (opt_click_allowed) {
-    cout << "A click quit..." << endl;
+  if (opt_display && opt_click_allowed) {
+    cout << "A click to exit..." << endl;
     vpDisplay::getClick(I) ;
   }
 }
@@ -306,7 +325,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11 or GTK display functionalities...");
+  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
 }
 
 #endif
