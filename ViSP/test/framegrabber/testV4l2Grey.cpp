@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testV4l2Grey.cpp,v 1.12 2006-09-07 10:06:32 fspindle Exp $
+ * $Id: testV4l2Grey.cpp,v 1.13 2006-09-08 15:45:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -182,7 +182,7 @@ main(int argc, char ** argv)
   catch(...)
   {
     vpERROR_TRACE("Cannot acquire an image...") ;
-    return(-1);
+    return(0);
   }
 
   cout << "Image size: " << I.getCols() << "  " << I.getRows() <<endl  ;
