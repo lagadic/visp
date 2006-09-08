@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:21 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2006-09-08 16:27:58 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -68,10 +68,25 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
-  # Add test
-  ADD_TEST(${binary} ${binary})
-
 ENDFOREACH(source)
+
+# Add test
+ADD_TEST(test1ServoPoint              test1ServoPoint)
+ADD_TEST(test2Servo2D0.5              test2Servo2D0.5)
+ADD_TEST(test2ServoPoint              test2ServoPoint)
+ADD_TEST(test3ServoPoint              test3ServoPoint)
+ADD_TEST(testServo2D0.5               testServo2D0.5)
+ADD_TEST(testServo3D                  testServo3D)
+ADD_TEST(testServo3dPoint             testServo3dPoint)
+ADD_TEST(testServo4Points             testServo4Points)
+ADD_TEST(testServo4PointsDisplay      testServo4PointsDisplay -d)
+ADD_TEST(testServoCircle1             testServoCircle1)
+ADD_TEST(testServoCircle2             testServoCircle2)
+ADD_TEST(testServoCylinder1           testServoCylinder1)
+ADD_TEST(testServoLine1               testServoLine1)
+ADD_TEST(testServoSphere1             testServoSphere1)
+ADD_TEST(testServoSphereSecondaryTask testServoSphereSecondaryTask)
+ADD_TEST(testServoThetaU              testServoThetaU)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
