@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2006-08-30 15:56:10 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.6 2006-09-08 15:47:01 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -65,8 +65,8 @@ ENDFOREACH(source)
 # Add test
 ADD_TEST(testAutoDetectDot testAutoDetectDot -d -c)
 ADD_TEST(testMeCircle1     testMeCircle1 -d -c)
-ADD_TEST(testMeEllipse1    testMeEllipse1 -c)
-ADD_TEST(testMeLine1       testMeLine1 -c)
+ADD_TEST(testMeEllipse1    testMeEllipse1 -d -c)
+ADD_TEST(testMeLine1       testMeLine1 -d -c)
 ADD_TEST(testTrackDot2     testTrackDot2 -d -c)
 ADD_TEST(testTrackDot3     testTrackDot3 -d -c)
 ADD_TEST(testTrackDot      testTrackDot -d -c)
