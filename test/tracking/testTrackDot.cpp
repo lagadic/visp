@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot.cpp,v 1.9 2006-08-30 15:56:10 fspindle Exp $
+ * $Id: testTrackDot.cpp,v 1.10 2006-09-08 15:51:37 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -276,6 +276,7 @@ main(int argc, char ** argv)
 
   try {
     if (opt_display && opt_click_allowed) {
+      cout << "Click on a white dot you want to track..." << endl;
       d.initTracking(I) ;
     }
     else {
@@ -289,7 +290,7 @@ main(int argc, char ** argv)
   }
 
   try {
-    while (iter < 1500)
+    while (iter < 1200)
       {
 	// set the new image name
 	s.str("");
@@ -298,23 +299,27 @@ main(int argc, char ** argv)
 	// read the image
 	vpImageIo::readPGM(I, filename);
 
+	if (opt_display) {
+	  // Display the image
+	  vpDisplay::display(I) ;
+	  vpDisplay::flush(I) ;
+	}
 	d.track(I) ;
-
+	cout << "Tracking on image: " << filename << endl;
 	cout << "COG: " << endl;
 	cout << d.get_u() << " " << d.get_v()
 	     << " - "
 	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << endl;
-	cout << "Moments: \n" << endl;
+	cout << "Moments: " << endl;
 	cout << "m00: " << d.m00 << endl;
 	cout << "m11: " << d.m11 << endl;
 	cout << "m02: " << d.m02 << endl;
 	cout << "m20: " << d.m20 << endl;
 	cout << "m10: " << d.m10 << endl;
-	cout << "m01: " << d.m01 << endl;
+	cout << "m01: " << d.m01 << endl << endl;
 
 	if (opt_display) {
 	  // Display the image
-	  vpDisplay::display(I) ;
 	  vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),
 				  10,vpColor::red) ;
 	  vpDisplay::flush(I) ;
@@ -328,7 +333,7 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-  if (opt_click_allowed) {
+  if (opt_display && opt_click_allowed) {
     cout << "\nA click to exit..." << endl;
     // Wait for a blocking mouse click
     vpDisplay::getClick(I) ;
