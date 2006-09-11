@@ -1,31 +1,48 @@
 
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      testServo2D0.5.cpp
- * Project:   ViSP 2.0
- * Author:    Eric Marchand
+ * $Id: test2Servo2Dhalf.cpp,v 1.2 2006-09-11 16:14:58 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: test2Servo2Dhalf.cpp,v 1.1 2006-09-11 14:04:49 fspindle Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *   tests the control law
- *   eye-in-hand control
- *   velocity computed in the camera frame
- *   using theta U visual feature
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Simulation of a 2 1/2 D visual servoing using theta U visual features.
+ *
+ * Authors:
+ * Eric Marchand
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 /*!
-  \example testServo2D0.5.cpp
-  \brief  test 2 1/2 D visual servoing (x,y,log Z, theta U)
+  \example testServo2Dhalf.cpp
+  \brief Simulation of a 2 1/2 D visual servoing (x,y,log Z, theta U)
+  - eye-in-hand control law,
+  - velocity computed in the camera frame,
+  - no display.
 */
 
 
@@ -39,20 +56,80 @@
 #include <visp/vpRobotCamera.h>
 #include <visp/vpDebug.h>
 #include <visp/vpFeatureBuilder.h>
+#include <visp/vpParseArgv.h>
+
+// List of allowed command line options
+#define GETOPTARGS	"h"
+
+/*!
+
+  Print the program options.
+
+  \param ipath: Input image path.
+
+*/
+void usage(char *name, char *badparam)
+{
+  fprintf(stdout, "\n\
+Simulation of a 2 1/2 D visual servoing (x,y,log Z, theta U):\n\
+- eye-in-hand control law,\n\
+- velocity computed in the camera frame,\n\
+- without display.\n\
+\n\
+SYNOPSIS\n\
+  %s [-h]\n", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+\n\
+  -h\n\
+     Print the help.\n");
+
+}
+
+/*!
+
+  Set the program options.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'h': usage(argv[0], NULL); return false; break;
+
+    default:
+      usage(argv[0], optarg);
+      return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
 
 int
-main()
+main(int argc, char ** argv)
 {
+  // Read the command line options
+  if (getOptions(argc, argv) == false) {
+    exit (-1);
+  }
+
   vpServo task ;
   vpRobotCamera robot ;
-
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " task :  2 1/2 D visual servoing  (x,y,log Z, theta U)" << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
-
 
   vpTRACE("sets the initial camera location " ) ;
   vpPoseVector c_r_o(0.1,0.2,2,
