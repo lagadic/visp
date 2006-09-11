@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.7 2006-09-08 16:02:59 fspindle Exp $
+ * $Id: vpMeEllipse.cpp,v 1.8 2006-09-11 14:02:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,6 +73,7 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
   alpha1 = 0 ;
   alpha2 = 2*M_PI ;
 
+  j1 = j2 = i1 = i2 = 0 ;
   seek = 10.; // angle in degrees
   vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << endl ;
 }
@@ -282,7 +283,6 @@ vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
   }
 
   if (alpha2 <alpha1) alpha2 += 2*M_PI ;
-
 
   vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << endl ;
 
@@ -613,7 +613,7 @@ vpMeEllipse::display(vpImage<unsigned char> &I, int col)
 
   double j1, i1, j11, i11 ;
   double j2, i2, j22, i22 ;
-  j1 = j2 = i1 = i2 = 0.0 ;
+  j1 = j2 = i1 = i2 = 0 ;
 
   double incr = vpMath::rad(2) ; // angle increment
 
@@ -754,6 +754,11 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n, int *i,int *j)
 
     cout << K << endl;
   }
+  i1 = i[0] ;
+  j1 = j[0] ;
+  i2 = i[n-1] ;
+  j2 = j[n-1] ;
+
   getParameters() ;
   computeAngle(i1,j1, i2, j2) ;
   display(I, vpColor::green) ;
