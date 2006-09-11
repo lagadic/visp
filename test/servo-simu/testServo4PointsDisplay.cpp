@@ -1,37 +1,52 @@
-
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      testServo4Points.cpp
- * Project:   ViSP 2.0
- * Author:    Eric Marchand
+ * $Id: testServo4PointsDisplay.cpp,v 1.7 2006-09-11 16:14:58 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: testServo4PointsDisplay.cpp,v 1.6 2006-09-08 16:29:02 fspindle Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *   tests the control law
- *   eye-in-hand control
- *   articular velocity are computed
- *   servo on 4 points
- *   interaction computed as the mean of the current and desired interaction
- *   matrix
+ * This file is part of the ViSP toolkit
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Simulation of a 2D visual servoing using 4 points as visual feature.
+ *
+ * Authors:
+ * Eric Marchand
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 
 /*!
-  \example testServo4Points.cpp
-  \brief tests the control law, eye-in-hand control,  articular velocity are computed, servo on 4 points
+  \example testServo4PointsDisplay.cpp
+  \brief Simulation of a 2D visual servoing:
+  - servo on 4 points,
+  - eye-in-hand control law,
+  - articular velocity are computed,
+  - no display.
 
-  interaction computed as the mean of the current and desired interaction
-  matrix
+  Interaction matrix is computed as the mean of the current and desired
+  interaction matrix.
 
 */
 
@@ -74,7 +89,8 @@ void usage(char *name, char *badparam)
 Tests a control law with the following characteristics:\n\
 - eye-in-hand control\n\
 - articular velocity are computed\n\
-- servo on 4 points.\n\
+- servo on 4 points,\n\
+- internal and external camera view displays.\n\
 \n\
 SYNOPSIS\n\
   %s [-c] [-d] [-h]\n", name);
