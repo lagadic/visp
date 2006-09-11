@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test1394.cpp,v 1.10 2006-08-30 15:57:20 fspindle Exp $
+ * $Id: test1394.cpp,v 1.11 2006-09-11 09:34:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -274,7 +274,13 @@ main(int argc, char ** argv)
 
   vp1394Grabber g ;
 
-  g.open(I) ;
+  try {
+    g.open(I) ;
+  }
+  catch(...) {
+    cout << "The program was stopped..." << endl;
+    return 0;
+  }
 
   getOptions(argc, argv, g, req_camera, req_format, req_mode, req_framerate,
 	     req_shutter, req_gain, req_number, req_display, req_color);
