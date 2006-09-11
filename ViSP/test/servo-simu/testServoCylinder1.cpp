@@ -1,35 +1,54 @@
-
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      test1ServoCylinder.cpp
- * Project:   ViSP 2.0
- * Author:    Eric Marchand 20-3-2005
+ * $Id: testServoCylinder1.cpp,v 1.5 2006-09-11 16:11:08 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: testServoCylinder1.cpp,v 1.4 2006-06-23 14:45:07 brenier Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
- *   Servo a cylinder
+ * This file is part of the ViSP toolkit
  *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Simulation of a 2D visual servoing on a cylinder.
+ *
+ * Authors:
+ * Eric Marchand
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 /*!
   \example testServoCylinder1.cpp
-  \brief Servo a cylinder
+  \brief Servo a cylinder:
+  - eye-in-hand control law,
+  - velocity computed in the camera frame,
+  - display the camera view.
+
 */
 
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_X11
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(WIN32))
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -52,16 +71,124 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpParseArgv.h>
+
+// List of allowed command line options
+#define GETOPTARGS	"cdh"
+
+/*!
+
+  Print the program options.
+
+  \param ipath: Input image path.
+
+*/
+void usage(char *name, char *badparam)
+{
+  fprintf(stdout, "\n\
+Simulation of a 2D visual servoing on a cylinder:\n\
+- eye-in-hand control law,\n\
+- velocity computed in the camera frame,\n\
+- display the camera view.\n\
+\n\
+SYNOPSIS\n\
+  %s [-c] [-d] [-h]\n", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+\n\
+  -c\n\
+     Disable the mouse click. Usefull to automaze the \n\
+     execution of this program without humain intervention.\n\
+\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -h\n\
+     Print the help.\n");
+
+}
+
+/*!
+
+  Set the program options.
+
+  \param click_allowed : false if mouse click is not allowed.
+  \param display : false if the display is to turn off.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv, bool &click_allowed, bool &display)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'c': click_allowed = false; break;
+    case 'd': display = false; break;
+    case 'h': usage(argv[0], NULL); return false; break;
+
+    default:
+      usage(argv[0], optarg);
+      return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
+
 
 int
-main()
+main(int argc, char ** argv)
 {
+  bool opt_display = true;
+  bool opt_click_allowed = true;
 
-  // open a display for the visualization
+  // Read the command line options
+  if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
+    exit (-1);
+  }
 
   vpImage<unsigned char> I(512,512,255) ;
-  vpDisplayX display(I,100,100, "Camera view") ;
+
+  // We open a window using either X11, GTK or GDI.
+#if defined VISP_HAVE_X11
+  vpDisplayX display;
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK display;
+#elif defined WIN32
+  vpDisplayGDI display;
+#endif
+
+  if (opt_display) {
+    try{
+      // Display size is automatically defined by the image (I) size
+      display.init(I, 100, 100,"Camera view...") ;
+      // Display the image
+      // The image class has a member that specify a pointer toward
+      // the display that has been initialized in the display declaration
+      // therefore is is no longuer necessary to make a reference to the
+      // display variable.
+      vpDisplay::display(I) ;
+    }
+    catch(...)
+    {
+      vpERROR_TRACE("Error while displaying the image") ;
+      exit(-1);
+    }
+  }
 
   vpCameraParameters cam ;
   double px, py ; px = py = 600 ;
@@ -69,18 +196,8 @@ main()
 
   cam.init(px,py,u0,v0);
 
-
   vpServo task ;
   vpRobotCamera robot ;
-
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " Simulation " << endl ;
-  cout << " task : servo a cylinder " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
-
 
   vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo(-0.2,0.1,2,
@@ -143,10 +260,11 @@ main()
   vpTRACE("Display task information " ) ;
   task.print() ;
 
-#if 0
-  vpTRACE("\n\nClick in the camera view window to start...");
-  vpDisplay::getClick(I) ;
-#endif
+  if (opt_display && opt_click_allowed) {
+    cout << "\n\nClick in the camera view window to start..." << endl;
+    vpDisplay::getClick(I) ;
+  }
+
   vpTRACE("\t set the gain") ;
   task.setLambda(0.1) ;
 
@@ -174,10 +292,10 @@ main()
       //   l[i].print() ;
     }
 
-
-    vpDisplay::display(I) ;
-    vpServoDisplay::display(task,cam,I) ;
-
+    if (opt_display) {
+      vpDisplay::display(I) ;
+      vpServoDisplay::display(task,cam,I) ;
+    }
 
     if (iter==1) vpTRACE("\t\t compute the control law ") ;
     v = task.computeControlLaw() ;
@@ -191,10 +309,12 @@ main()
     //   vpDisplay::getClick(I) ;
   }
   while(task.error.sumSquare() >  1e-9) ;
-#if 0
-  vpTRACE("\n\nClick in the camera view window to end...");
-  vpDisplay::getClick(I) ;
-#endif
+
+  if (opt_display && opt_click_allowed) {
+    cout << "\nClick in the camera view window to end..." << endl;
+    vpDisplay::getClick(I) ;
+  }
+
   vpTRACE("Display task information " ) ;
   task.print() ;
 }
@@ -203,7 +323,7 @@ main()
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
 }
 
 #endif
