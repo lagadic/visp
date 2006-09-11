@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: test2Servo2D0.5.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: test2Servo2Dhalf.cpp,v 1.1 2006-09-11 14:04:49 fspindle Exp $
  *
  * Description
  * ============
