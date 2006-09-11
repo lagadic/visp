@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2006-09-11 14:07:21 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.5 2006-09-11 16:12:55 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -81,9 +81,9 @@ ADD_TEST(testServo3dPoint             testServo3dPoint)
 ADD_TEST(testServo4Points             testServo4Points)
 ADD_TEST(testServo4PointsDisplay      testServo4PointsDisplay -d)
 ADD_TEST(testServoCircle1             testServoCircle1)
-ADD_TEST(testServoCircle2             testServoCircle2)
-ADD_TEST(testServoCylinder1           testServoCylinder1)
-ADD_TEST(testServoLine1               testServoLine1)
+ADD_TEST(testServoCircle2             testServoCircle2 -d)
+ADD_TEST(testServoCylinder1           testServoCylinder1 -d)
+ADD_TEST(testServoLine1               testServoLine1 -d)
 ADD_TEST(testServoSphere1             testServoSphere1)
 ADD_TEST(testServoSphereSecondaryTask testServoSphereSecondaryTask)
 ADD_TEST(testServoThetaU              testServoThetaU)
