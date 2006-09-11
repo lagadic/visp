@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMeEllipse1.cpp,v 1.6 2006-09-08 15:52:33 fspindle Exp $
+ * $Id: testMeEllipse1.cpp,v 1.7 2006-09-11 16:15:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,7 +63,7 @@
 #include <visp/vpIoTools.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"ci:h"
+#define GETOPTARGS	"cdi:h"
 
 /*!
 
