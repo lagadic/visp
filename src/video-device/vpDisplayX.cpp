@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.14 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpDisplayX.cpp,v 1.15 2006-09-11 14:01:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -206,8 +206,8 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
   // setup X11 --------------------------------------------------
   ncols = I.getCols();
   nrows = I.getRows();
-
-  if ((display = XOpenDisplay (NULL)) == NULL)
+  display = XOpenDisplay (NULL);
+  if (display == NULL)
   {
     vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
     throw(vpDisplayException(vpDisplayException::connexionError,
@@ -1690,20 +1690,20 @@ vpDisplayX::getClickUp(int& i, int& j, int& button)
 */
 int vpDisplayX::getScreenDepth()
 {
-  Display	*display;
+  Display	*_display;
   int		screen;
   int		depth;
 
-  if ((display = XOpenDisplay(NULL)) == NULL) {
+  if ((_display = XOpenDisplay(NULL)) == NULL) {
     vpERROR_TRACE("Can't connect display on server %s.",
 	    XDisplayName(NULL));
     throw(vpDisplayException(vpDisplayException::connexionError,
 			     "Can't connect display on server.")) ;
   }
-  screen = DefaultScreen(display);
-  depth  = DefaultDepth(display, screen);
+  screen = DefaultScreen(_display);
+  depth  = DefaultDepth(_display, screen);
 
-  XCloseDisplay(display);
+  XCloseDisplay(_display);
 
   return (depth);
 }
@@ -1713,21 +1713,21 @@ int vpDisplayX::getScreenDepth()
  */
 void vpDisplayX::getScreenSize(int *xsize, int *ysize)
 {
-  Display	*display;
+  Display	*_display;
   int		screen;
 
-  if ((display = XOpenDisplay(NULL)) == NULL)
+  if ((_display = XOpenDisplay(NULL)) == NULL)
   {
     vpERROR_TRACE("Can't connect display on server %s.",
 		XDisplayName(NULL));
     throw(vpDisplayException(vpDisplayException::connexionError,
 			     "Can't connect display on server.")) ;
   }
-  screen = DefaultScreen(display);
-  *xsize = DisplayWidth (display, screen);
-  *ysize = DisplayHeight(display, screen);
+  screen = DefaultScreen(_display);
+  *xsize = DisplayWidth (_display, screen);
+  *ysize = DisplayHeight(_display, screen);
 
-  XCloseDisplay(display);
+  XCloseDisplay(_display);
 }
 
 
