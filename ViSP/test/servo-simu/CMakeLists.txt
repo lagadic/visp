@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2006-09-08 16:27:58 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.4 2006-09-11 14:07:21 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,10 +42,10 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   test1ServoPoint.cpp
-  test2Servo2D0.5.cpp
+  test2Servo2Dhalf.cpp
   test2ServoPoint.cpp
   test3ServoPoint.cpp
-  testServo2D0.5.cpp
+  testServo2Dhalf.cpp
   testServo3D.cpp
   testServo3dPoint.cpp
   testServo4Points.cpp
@@ -72,10 +72,10 @@ ENDFOREACH(source)
 
 # Add test
 ADD_TEST(test1ServoPoint              test1ServoPoint)
-ADD_TEST(test2Servo2D0.5              test2Servo2D0.5)
+ADD_TEST(test2Servo2Dhalf             test2Servo2Dhalf)
 ADD_TEST(test2ServoPoint              test2ServoPoint)
 ADD_TEST(test3ServoPoint              test3ServoPoint)
-ADD_TEST(testServo2D0.5               testServo2D0.5)
+ADD_TEST(testServo2Dhalf              testServo2Dhalf)
 ADD_TEST(testServo3D                  testServo3D)
 ADD_TEST(testServo3dPoint             testServo3dPoint)
 ADD_TEST(testServo4Points             testServo4Points)
