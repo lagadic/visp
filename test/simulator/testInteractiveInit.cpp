@@ -1,4 +1,46 @@
+/****************************************************************************
+ *
+ * $Id: testInteractiveInit.cpp,v 1.10 2006-09-15 11:29:25 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Simulation of a visual servoing with visualization.
+ *
+ * Authors:
+ * Eric Marchand
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
+/*!
+  \example testInteractiveInit.cpp
+  \brief Visual servoing experiment on 4 points with a visualization
+  from the camera and from an external view.
+*/
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
@@ -18,8 +60,79 @@
 #include <visp/vpServo.h>
 #include <visp/vpRobotCamera.h>
 #include <visp/vpFeatureBuilder.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
 
+#define GETOPTARGS	"i:h"
 #define SAVE 0
+
+/*
+
+  Print the program options.
+
+  \param ipath: Input image path.
+  \param opath : Output image path.
+  \param user : Username.
+
+ */
+void usage(char *name, char *badparam, string ipath)
+{
+  fprintf(stdout, "\n\
+Test image conversions.\n\
+\n\
+SYNOPSIS\n\
+  %s [-p <input image path>] [-h]\n\
+", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -i <input image path>                                %s\n\
+     Set image input path.\n\
+     From this path read \"ViSP-images/iv/4points.iv\"\n\
+     cad model.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment\n\
+     variable produces the same behaviour than using\n\
+     this option.\n\
+\n\
+  -h\n\
+     Print the help.\n\n",
+	  ipath.c_str());
+
+}
+
+/*!
+
+  Set the program options.
+
+  \param ipath: Input image path.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv, string &ipath)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'i': ipath = optarg; break;
+    case 'h': usage(argv[0], NULL, ipath); return false; break;
+
+    default:
+      usage(argv[0], optarg, ipath); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, ipath);
+    cerr << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
+    return false;
+  }
+
+  return true;
+}
 
 static
 void *mainLoop (void *_simu)
@@ -57,9 +170,6 @@ void *mainLoop (void *_simu)
     vpHomogeneousMatrix cMo(vcMo)  ;
     robot.setPosition(cMo) ;
     simu->setCameraPosition(cMo) ;
-
-    cout << "\nEnter a character to continue..." <<endl ;
-    {    int a ; cin >> a ; }
 
     simu->getCameraPosition(cMo) ;
     robot.setPosition(cMo) ;
@@ -119,9 +229,13 @@ void *mainLoop (void *_simu)
     vpTRACE("Display task information " ) ;
     task.print() ;
 
+    sleep(1);
+    cout << "\nEnter a character to continue or CTRL-C to quit... " <<endl ;
+    {    int a ; cin >> a ; }
+
     int iter=0 ;
     vpTRACE("\t loop") ;
-    while(iter++<150)
+    while(iter++<100)
     {
       vpColVector v ;
 
@@ -154,6 +268,8 @@ void *mainLoop (void *_simu)
 
   simu->closeMainApplication() ;
 
+  cout << "\nEnter CTRL-C to quit... " <<endl ;
+
   void *a=NULL ;
   return a ;
   // return (void *);
@@ -163,6 +279,54 @@ void *mainLoop (void *_simu)
 int
 main(int argc, char ** argv)
 {
+  string env_ipath;
+  string opt_ipath;
+  string ipath;
+  string filename;
+  string username;
+
+  // Get the VISP_IMAGE_PATH environment variable value
+  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+  if (ptenv != NULL)
+    env_ipath = ptenv;
+
+  // Set the default input path
+  if (! env_ipath.empty())
+    ipath = env_ipath;
+
+  // Read the command line options
+  if (getOptions(argc, argv, opt_ipath) == false) {
+    exit (-1);
+  }
+
+  // Get the option values
+  if (!opt_ipath.empty())
+    ipath = opt_ipath;
+
+  // Compare ipath and env_ipath. If they differ, we take into account
+  // the input path comming from the command line option
+  if (opt_ipath.empty()) {
+    if (ipath != env_ipath) {
+      cout << endl
+	   << "WARNING: " << endl;
+      cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
+	   << "  we skip the environment variable." << endl;
+    }
+  }
+
+  // Test if an input path is set
+  if (opt_ipath.empty() && env_ipath.empty()){
+    usage(argv[0], NULL, ipath);
+    cerr << endl
+	 << "ERROR:" << endl;
+    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << endl
+	 << "  environment variable to specify the location of the " << endl
+	 << "  image path where test images are located." << endl << endl;
+    exit(-1);
+  }
+
   vpCameraParameters cam ;
   vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
 
@@ -173,8 +337,9 @@ main(int argc, char ** argv)
   vpTime::wait(1000) ;
   simu.setZoomFactor(0.2) ;
 
-  simu.load("iv/4points.iv") ;
-
+  // Load the cad model
+  filename = ipath +  vpIoTools::path("/ViSP-images/iv/4points.iv");
+  simu.load(filename.c_str()) ;
 
   simu.setInternalCameraParameters(cam) ;
   simu.setExternalCameraParameters(cam) ;
