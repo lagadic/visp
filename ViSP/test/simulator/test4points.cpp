@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test4points.cpp,v 1.11 2006-09-15 11:29:25 fspindle Exp $
+ * $Id: test4points.cpp,v 1.12 2006-09-18 09:18:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -224,7 +224,7 @@ void *mainLoop (void *_simu)
     task.setLambda(0.051) ;
 
 
-    sleep(1);
+    vpTime::wait(1000); // Sleep 1s
     cout << "\nEnter a character to continue... " <<endl ;
     {    int a ; cin >> a ; }
 
