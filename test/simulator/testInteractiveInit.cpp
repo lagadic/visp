@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testInteractiveInit.cpp,v 1.10 2006-09-15 11:29:25 fspindle Exp $
+ * $Id: testInteractiveInit.cpp,v 1.11 2006-09-18 09:18:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -229,7 +229,7 @@ void *mainLoop (void *_simu)
     vpTRACE("Display task information " ) ;
     task.print() ;
 
-    sleep(1);
+    vpTime::wait(1000); // Sleep 1s
     cout << "\nEnter a character to continue or CTRL-C to quit... " <<endl ;
     {    int a ; cin >> a ; }
 
