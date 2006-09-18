@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoDisplay.cpp,v 1.2 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpServoDisplay.cpp,v 1.3 2006-09-18 16:23:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,6 +56,20 @@
 
 #include <visp/vpBasicFeature.h>
 
+/*!
+
+  Display the current and the desired features in the image I.
+
+  \param s : Visual servoing control law.
+  \param cam : Camera parameters.
+  \param I : Image on which features have to be displayed.
+
+  \param currentColor : Color for the current features. If vpColor::none,
+  current features display is turned off.
+
+  \param desiredColor : Color for the desired features. If vpColor::none,
+  desired features display is turned off.
+*/
 void
 vpServoDisplay::display(vpServo &s,
 			const vpCameraParameters &cam,
@@ -74,13 +88,16 @@ vpServoDisplay::display(vpServo &s,
   {
     vpBasicFeature *s_ptr = NULL;
 
-    // desired list
-    s_ptr=  s.desiredFeatureList.value() ;
-    s_ptr->display(cam, I, desiredColor ) ;
-
-    // current list
-    s_ptr =  s.featureList.value() ;
-    s_ptr->display(cam, I, currentColor ) ;
+    if (desiredColor != vpColor::none) {
+      // desired list
+      s_ptr=  s.desiredFeatureList.value() ;
+      s_ptr->display(cam, I, desiredColor ) ;
+    }
+    if (currentColor != vpColor::none) {
+      // current list
+      s_ptr =  s.featureList.value() ;
+      s_ptr->display(cam, I, currentColor ) ;
+    }
   }
 
 
