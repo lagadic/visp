@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.7 2006-09-08 16:01:25 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.8 2006-09-18 13:58:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -179,20 +179,20 @@ vpMeLine::display(vpImage<unsigned char>&I, int col)
 
 
   if (fabs(a) < fabs(b)) {
-    float i1, j1, i2, j2;
+    double i1, j1, i2, j2;
     i1 = 0;
-    j1 = (-a*i1 -c) /b;
-    i2 = I.getRows() -1;
-    j2 = (-a*i2 -c) /b;
+    j1 = (-a*i1 -c) / b;
+    i2 = I.getRows() - 1.0;
+    j2 = (-a*i2 -c) / b;
     vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
     vpDisplay::flush(I);
 
   }
   else {
-    float i1, j1, i2, j2;
+    double i1, j1, i2, j2;
     j1 = 0;
     i1 = -(b * j1 + c) / a;
-    j2 = I.getCols() -1;
+    j2 = I.getCols() - 1.0;
     i2 = -(b * j2 + c) / a;
     vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
     vpDisplay::flush(I);
