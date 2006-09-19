@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testV4l2Grey.cpp,v 1.13 2006-09-08 15:45:06 fspindle Exp $
+ * $Id: testV4l2Grey.cpp,v 1.14 2006-09-19 11:47:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,14 +83,14 @@ SYNOPSIS\n\
 
   fprintf(stdout, "\n\
 OPTIONS:                                                  Default\n\
-  -f <fps>                                                  %u\n\
+  -f <fps>                                                  %ud\n\
      Framerate in term od number of images per second.\n\
      Possible values are 25 (for 25Hz) or 50 (for %%) Hz)\n\
 \n\
-  -i <input>                                                %u\n\
+  -i <input>                                                %ud\n\
      Framegrabber active input. Values can be 0, 1, 2, 4\n\
 \n\
-  -s <scale>                                                %u\n\
+  -s <scale>                                                %ud\n\
      Framegrabber subsampling factor. \n\
      If 1, full resolution image acquisition 768x576.\n\
      If 2, half resolution acquisition 384x288. The \n\
