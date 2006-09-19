@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisk.cpp,v 1.6 2006-08-30 15:57:20 fspindle Exp $
+ * $Id: testDisk.cpp,v 1.7 2006-09-19 11:47:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -106,16 +106,16 @@ OPTIONS:                                               Default\n\
      Not taken into account for the moment. Will be a\n\
      future feature...\n\
 \n\
-  -f <first frame>                                          %u\n\
+  -f <first frame>                                          %ud\n\
      First frame number of the sequence\n\
 \n\
-  -n <number of images>                                     %u\n\
+  -n <number of images>                                     %ud\n\
      Number of images to load from the sequence.\n\
 \n\
-  -s <step>                                                 %u\n\
+  -s <step>                                                 %ud\n\
      Step between two images.\n\
 \n\
-  -z <number of zero>                                       %u\n\
+  -z <number of zero>                                       %ud\n\
      Number of digits to encode the image number.\n\
 \n\
   -d \n\
