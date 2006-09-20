@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.24 2006-09-20 08:53:45 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.25 2006-09-20 15:54:59 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -98,8 +98,6 @@ ENDIF(WIN32 AND NOT CYGWIN)
 IF(UNIX)
   SET(VISP_DEFS "${VISP_DEFS} -DUNIX")
   IF(APPLE)
-    # We will not use rpath support.  Tell CMake to skip it.
-    SET(CMAKE_SKIP_RPATH 1 CACHE INTERNAL "Whether to build with rpath." FORCE)
     SET(VISP_DEFS "${VISP_DEFS} -DAPPLE")
   ENDIF(APPLE)
 ENDIF(UNIX)
