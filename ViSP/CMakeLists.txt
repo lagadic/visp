@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.23 2006-08-30 15:50:36 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.24 2006-09-20 08:53:45 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -76,7 +76,6 @@ SET(VISP_DEFS "")
 SET(OS ${CMAKE_SYSTEM_NAME})
 
 ## where are user-specific cmake modules
-## make_dist.sh relies on $ENV{CMAKE_MODULES_PATH} (TODO, FIXME)
 SET(CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
 
 INCLUDE(CheckLibraryExists)
