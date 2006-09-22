@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDebug.h,v 1.6 2006-09-08 15:57:21 fspindle Exp $
+ * $Id: vpDebug.h,v 1.7 2006-09-22 14:13:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,16 +64,16 @@ using namespace std;
 
 
 /*!
-	\class vpTraceOutput
-	\brief This class is used to display debug or error messages.
-	       It needs to be initialized with the file name, function name and line, of
-	       the place where it is created.
-	       It is best used by first instanciating the object and directly calling the () operator.
-	       This is used to mimic variadic macros (not supported in MSVC prior to version 8)
+  \class vpTraceOutput
+  \brief This class is used to display debug or error messages.
+  It needs to be initialized with the file name, function name and line, of
+  the place where it is created.
+  It is best used by first instanciating the object and directly calling the () operator.
+  This is used to mimic variadic macros (not supported in MSVC prior to version 8)
 */
 class vpTraceOutput
 {
- private:
+private:
     const char* currentFile; //Name of the file to use in the displays
     const char* currentFunc; //Name of the function to use in the displays
     int currentLine;		 //Line to use in the displays
@@ -84,99 +84,102 @@ class vpTraceOutput
     const char* header;
 
 public:
-         /*!
-                Constructor.
-		\param file Should be the name of the file where this constructor was called.
-		\param line Should be the line in file where this constructor was called.
-		\param func Should be the name of the function where this constructor was called.
-		\param error If true, writes to the error stream.
-		\param s String to print before any other message (acts like a header).
-		\note Call the constructor with something like vpTraceOutput(__FILE__,__LINE__, __FUNCTION__).
-	*/
+    /*!
+      Constructor.
+      \param file Should be the name of the file where this constructor was called.
+      \param line Should be the line in file where this constructor was called.
+      \param func Should be the name of the function where this constructor was called.
+      \param error If true, writes to the error stream.
+      \param s String to print before any other message (acts like a header).
+      \note Call the constructor with something like vpTraceOutput(__FILE__,__LINE__, __FUNCTION__).
+    */
     vpTraceOutput(const char* file, int line, const char* func, bool error=false, const char * s=NULL) :
         currentFile(file),
-		currentLine(line),
-		currentFunc(func),
-		err(error),
-		header(s)
-		{}
+	currentFunc(func),
+	currentLine(line),
+	err(error),
+	header(s)
+    {}
 
-	/*!
-		Displays a string if the debug level is inferior to VP_DEBUG_MODE.
-		\param niv Level of this message.
-		\param format Formating string.
-	*/
-	 void operator()(int niv, const char* format, ...)
+    /*!
+      Displays a string if the debug level is inferior to VP_DEBUG_MODE.
+      \param niv Level of this message.
+      \param format Formating string.
+    */
+    void operator()(int niv, const char* format, ...)
     {
-		//if the niv level is inferior to VP_DEBUG_MODE
-		if(VP_DEBUG_MODE >= niv)
-		{
-			//gets the variable list of arguments
-			va_list args;
-			va_start(args, format);
+	//if the niv level is inferior to VP_DEBUG_MODE
+	if(VP_DEBUG_MODE >= niv)
+	{
+	    //gets the variable list of arguments
+	    va_list args;
+	    va_start(args, format);
 
-                        cout << "(N" << niv << ") " ;
-			//calls display with it
-			display(format, args);
+	    cout << "(N" << niv << ") " ;
+	    //calls display with it
+	    display(format, args);
 
-			va_end(args);
-		}
+	    va_end(args);
+	}
     }
 
-	/*!
-		Displays a string.
-		\param format Formating string.
-	*/
+    /*!
+      Displays a string.
+      \param format Formating string.
+    */
     void operator()(const char* format, ...)
     {
-		//gets the variable list of arguments
-		va_list args;
-		va_start(args, format);
+	//gets the variable list of arguments
+	va_list args;
+	va_start(args, format);
 
-		#ifdef VP_DEBUG
-		cout<<"(N0) ";
-		#endif
+#ifdef VP_DEBUG
+	cout<<"(N0) ";
+#endif
 
-		//calls display with it
-		display(format, args);
+	//calls display with it
+	display(format, args);
 
-		va_end(args);
-	}
+	va_end(args);
+    }
 
-	/*!
-		Displays a message to either stdout/cout or stderr/cerr (based on error boolean).
-		\param format Formating string.
-		\param args List of arguments.
+    /*!
 
-	*/
-	void display(const char* format, va_list args)
+      Displays a message to either stdout/cout or stderr/cerr (based on error
+      boolean).
+
+      \param format Formating string.
+      \param args List of arguments.
+
+    */
+    void display(const char* format, va_list args)
+    {
+	//if we want to write to cerr/stderr
+	if(err)
 	{
-		//if we want to write to cerr/stderr
-		if(err)
-		{
-			//first writes the header if there is one
-			if(header != NULL) cerr<<header;
-			//then writes the recorded namefile, function and line
-			cerr << "!!\t" << currentFile << ": " <<currentFunc << "(#" << currentLine << ") :" ;
-			//and finally writes the message passed to () operator.
-			vfprintf (stderr, format, args);
-			fprintf (stderr, "\n");
-			//flushes the buffer
-			fflush (stderr);
-		}
-		else
-		{
-			//first writes the header if there is one
-			if(header != NULL) cout<<header;
-			//then writes the recorded namefile, function and line
-			cout <<currentFile << ": " << currentFunc << "(#" << currentLine << ") :" ;
-			//and finally writes the message passed to () operator.
-			vprintf (format, args);
-			printf ("\n");
-			//flushes the buffer
-			fflush (stdout);
-		}
+	    //first writes the header if there is one
+	    if(header != NULL) cerr<<header;
+	    //then writes the recorded namefile, function and line
+	    cerr << "!!\t" << currentFile << ": " <<currentFunc << "(#" << currentLine << ") :" ;
+	    //and finally writes the message passed to () operator.
+	    vfprintf (stderr, format, args);
+	    fprintf (stderr, "\n");
+	    //flushes the buffer
+	    fflush (stderr);
 	}
+	else
+	{
+	    //first writes the header if there is one
+	    if(header != NULL) cout<<header;
+	    //then writes the recorded namefile, function and line
+	    cout <<currentFile << ": " << currentFunc << "(#" << currentLine << ") :" ;
+	    //and finally writes the message passed to () operator.
+	    vprintf (format, args);
+	    printf ("\n");
+	    //flushes the buffer
+	    fflush (stdout);
+	}
+    }
 
 };
 
@@ -201,20 +204,20 @@ public:
 #define vpCERROR cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 /*!
-	Used to display error messages on the error stream.
-	Prints the name of the file, the function name and the line where
-	it was used.
-	Use like this : vpERRORTRACE("my error message number %d", i);
-	with any "printf" string.
+  Used to display error messages on the error stream.
+  Prints the name of the file, the function name and the line where
+  it was used.
+  Use like this : vpERRORTRACE("my error message number %d", i);
+  with any "printf" string.
 */
 #define vpERROR_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, true))
 
 /*!
-	Used to display trace messages on the standard stream.
-	Prints the name of the file, the function name and the line where
-	it was used.
-	Use like this : vpTRACE("my debug message number %d", i);
-	with any "printf" string.
+  Used to display trace messages on the standard stream.
+  Prints the name of the file, the function name and the line where
+  it was used.
+  Use like this : vpTRACE("my debug message number %d", i);
+  with any "printf" string.
 */
 #define vpTRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, false))
 
@@ -244,8 +247,9 @@ public:
 		cout << "(N" << niv << ") "<<  __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 /*!
-  vpDEBUG_ENABLE(niv) is equal to 1 if the debug level niv is greater than the debug mode
-  VP_DEBUG_MODE, 0 else.
+
+  vpDEBUG_ENABLE(niv) is equal to 1 if the debug level niv is greater than
+  the debug mode VP_DEBUG_MODE, 0 else.
 */
 #define vpDEBUG_ENABLE(niv) (VP_DEBUG_MODE >= niv)
 
