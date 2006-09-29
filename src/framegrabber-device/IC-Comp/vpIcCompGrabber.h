@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.h,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpIcCompGrabber.h,v 1.5 2006-09-29 11:58:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,6 @@
 
 #include "ic-comp2x.h"
 
-#define DEFAULT_INPUT_BOARD 2
 
 /*!
   \class vpIcCompGrabber
