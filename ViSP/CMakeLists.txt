@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.25 2006-09-20 15:54:59 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.26 2006-09-29 12:49:44 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -216,6 +216,7 @@ IF (UNIX)
 #  OPTION(USE_DC1394  "Compile ViSP with firewire 1394 cameras usage" OFF)
 #  OPTION(USE_V4L2    "Compile ViSP with Video For Linux Two (V4L2) usage" OFF)
   OPTION(USE_ICCOMP  "Compile ViSP with ICcomp framegrabber usage" OFF)
+  OPTION(USE_ITIFG8  "Compile ViSP with itifg8 framegrabber usage" OFF)
   OPTION(USE_AFMA4   "Compile ViSP for Afma4 robot usage" OFF)
   OPTION(USE_AFMA6   "Compile ViSP for Afma6 robot usage" OFF)
   OPTION(USE_BICLOPS "Compile ViSP for Biclops head usage" OFF)
@@ -382,6 +383,23 @@ IF(USE_ICCOMP)
     # SET(USE_ICCOMP OFF)
   ENDIF(ICCOMP_FOUND)
 ENDIF(USE_ICCOMP)
+
+# library itifg8 framegrabber devices
+IF(USE_ITIFG8)
+  FIND_PACKAGE(ITIFG8)
+  IF(ITIFG8_FOUND)
+    SET(VISP_HAVE_ITIFG8 TRUE) # for header vpConfig.h
+     #MESSAGE("DBG VISP_HAVE_ITIFG8= ${VISP_HAVE_ITIFG8}")
+     #MESSAGE("DBG ITIFG8_INCLUDE_DIR=${ITIFG8_INCLUDE_DIR}")
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+      ${ITIFG8_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${ITIFG8_LIBRARIES} ${VISP_EXTERN_LIBS})
+     #MESSAGE("ITIFG8_LIBRARIES = ${ITIFG8_LIBRARIES}")
+  ELSE(ITIFG8_FOUND)
+    MESSAGE("itifg8 requested but not found.")
+    # SET(USE_ITIFG8 OFF)
+  ENDIF(ITIFG8_FOUND)
+ENDIF(USE_ITIFG8)
 
 # Under Windows, usage of Direct Show
 FIND_PACKAGE(DIRECTSHOW)
