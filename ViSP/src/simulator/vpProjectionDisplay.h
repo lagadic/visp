@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.h,v 1.5 2006-09-08 16:30:31 fspindle Exp $
+ * $Id: vpProjectionDisplay.h,v 1.6 2006-09-29 08:53:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,6 +59,11 @@
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpForwardProjection.h>
 #include <visp/vpList.h>
+
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT vpImage<unsigned char>;
+template class VISP_EXPORT vpList<vpForwardProjection *>;
+#endif
 
 /*!
   \class vpProjectionDisplay
