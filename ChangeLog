@@ -1,4 +1,13 @@
-ViSP 2.2.0 (Modification since ViSP 2.1.1)
+ViSP 2.2.1 (Modification since ViSP 2.1.0)
+  - New Feature
+	- add new framegrabber interface for itifg8 driver from Coreco 
+	  Imaging Technology (http://sourceforge.net/projects/itifg)
+	  Tested with AM-STD COMP framegrabber board on 2.4 and 2.6
+	  linux kernel
+  - Bug fix and improvement
+        - memory leaks suppression
+	- increase tests portability especially for windows
+ViSP 2.2.0 (released August 25, 2006)
   - Build
 	- To increase the code portability, especially under windows), 
 	  all the build process is now based on CMake 
@@ -19,7 +28,7 @@ ViSP 2.2.0 (Modification since ViSP 2.1.1)
 	- vpDot (Moment computation)
 	- some fixes in vpDisplayGTK
 ----------------------------------------------	
-ViSP 2.1.1 (released January, 6th 2006)
+ViSP 2.1.1 (released January 6th, 2006)
    - New examples 
 	- create an example directory
 	- add vpDotExample.cpp  

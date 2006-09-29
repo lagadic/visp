@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2006-08-30 15:57:20 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.5 2006-09-29 12:49:44 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -44,6 +44,8 @@ SET (SOURCE
   test1394.cpp
   testDisk.cpp
   testIcComp.cpp
+  testItifg8.cpp
+  testItifg8Multi.cpp
   testOSXcfoxColor.cpp
   testV4l2Color.cpp
   testV4l2Grey.cpp
@@ -68,6 +70,8 @@ ENDFOREACH(source)
 ADD_TEST(test1394         test1394 -d)
 ADD_TEST(testDisk         testDisk -d)
 ADD_TEST(testIcComp       testIcComp -d)
+ADD_TEST(testItifg8       testItifg8 -d)
+ADD_TEST(testItifg8Multi  testItifg8Multi -d)
 ADD_TEST(testOSXcfoxColor testOSXcfoxColor -d)
 ADD_TEST(testV4l2Color    testV4l2Color -d)
 ADD_TEST(testV4l2Grey     testV4l2Grey -d)

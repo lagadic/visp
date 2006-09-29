@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.6 2006-08-24 08:27:25 brenier Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.7 2006-09-29 12:49:44 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -70,6 +70,7 @@ SET (HEADER_FRAMEGRABBER_DEVICE
   framegrabber-device/generic-framegrabber/vpFrameGrabberException.h
   framegrabber-device/generic-framegrabber/vpFrameGrabber.h
   framegrabber-device/IC-Comp/vpIcCompGrabber.h
+  framegrabber-device/itifg8/vpItifg8Grabber.h
   framegrabber-device/OSX-cfox/vpOSXcfoxGrabber.h
   framegrabber-device/v4l2/vpV4l2Grabber.h
   framegrabber-device/directshow/vpDirectShowGrabber.h
