@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.6 2006-07-11 15:12:41 brenier Exp $
+ * $Id: vpImageConvert.cpp,v 1.7 2006-09-29 12:11:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -44,6 +45,12 @@
 
 // image
 #include <visp/vpImageConvert.h>
+
+bool vpImageConvert::YCbCrLUTcomputed = false;
+static int vpCrr[256];
+static int vpCgb[256];
+static int vpCgr[256];
+static int vpCbb[256];
 
 void
 vpImageConvert::convert(const vpImage<unsigned char> &src,
@@ -522,7 +529,7 @@ vpImageConvert::GreyToRGB(unsigned char* grey,
 	Flips the image verticaly if needed
 	assumes that rgba is already resized
 */
-void 
+void
 vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba, int cols, int rows, bool flip)
 {
 	//if we have to flip the image, we start from the end last scanline so the step is negative
@@ -570,14 +577,14 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey, int cols, i
 
   int j=0;
   int i=0;
-  
+
   for(i=0 ; i < rows ; i++)
     {
       line = src;
       for( j=0 ; j < cols ; j++)
 	{
 	  *grey++ = (unsigned char)( 0.2126 * *(line+2)
-				    + 0.7152 * *(line+1) 
+				    + 0.7152 * *(line+1)
 				    + 0.0722 * *(line+0)) ;
 	  line+=3;
 	}
@@ -585,6 +592,261 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey, int cols, i
       //go to the next line
       src+=lineStep;
     }
+}
+
+/*!
+
+  Compute the look up table useful for YCbCr conversions.
+
+*/
+void vpImageConvert::computeYCbCrLUT()
+{
+  if (YCbCrLUTcomputed == false) {
+    int index = 256, aux;
+
+    while (index-- ) {
+
+      aux = index - 128;
+      vpCrr[index] = (int)( 364.6610 * aux) >> 8;
+      vpCgb[index] = (int)( -89.8779 * aux) >> 8;
+      vpCgr[index] = (int)(-185.8154 * aux) >> 8;
+      vpCbb[index] = (int)( 460.5724 * aux) >> 8;
+    }
+
+    YCbCrLUTcomputed = true;
+  }
+}
+
+
+/*!
+
+  Convert an image from YCbCr to RGB format. Destination rgb memory area has to
+  be allocated before.
+
+  - In YCbCr (4:2:2) format  each pixel is coded using 16 bytes.
+    Byte 0: YO (Luma for Pixel 0)
+    Byte 1: Chroma Blue Cb (Blue Chroma for Pixel 0 and 1)
+    Byte 2: Y1 (Luma for Pixel 1)
+    Byte 3: Chroma Red Cr (Red Chroma for Pixel 0 and 1)
+    Byte 4: Y2 (Luma for Pixel 2)
+
+  - In RGB format, each pixel is coded using 24 bytes.
+    Byte 0: Red
+    Byte 1: Green
+    Byte 2: Blue
+
+
+*/
+void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
+				int size)
+{
+  unsigned char *cbv;
+  unsigned char *crv;
+  unsigned char *pt_ycbcr = ycbcr;
+  unsigned char *pt_rgb = rgb;
+  cbv = pt_ycbcr + 1;
+  crv = pt_ycbcr + 3;
+
+  vpImageConvert::computeYCbCrLUT();
+
+  int col = 0;
+
+  while (size--) {
+    register int val_r, val_g, val_b;
+    if (!(col++ % 2)) {
+      cbv = pt_ycbcr + 1;
+      crv = pt_ycbcr + 3;
+    }
+
+    val_r = *pt_ycbcr + vpCrr[*crv];
+    val_g = *pt_ycbcr + vpCgb[*cbv] + vpCgr[*crv];
+    val_b = *pt_ycbcr + vpCbb[*cbv];
+
+    vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
+
+    *pt_rgb++ = (val_r < 0) ? 0 :
+      ((val_r > 255) ? 255 : (unsigned char)val_r); // Red component.
+    *pt_rgb++ = (val_g < 0) ? 0 :
+      ((val_g > 255) ? 255 : (unsigned char)val_g); // Green component.
+    *pt_rgb++ = (val_b < 0) ? 0 :
+      ((val_b > 255) ? 255 : (unsigned char)val_b); // Blue component.
+
+    pt_ycbcr += 2;
+  }
+}
+
+/*!
+
+  Convert an image from YCbCr to RGBa format. Destination rgba memory area has
+  to be allocated before.
+
+  - In YCbCr (4:2:2) format  each pixel is coded using 16 bytes.
+    Byte 0: YO (Luma for Pixel 0)
+    Byte 1: Chroma Blue Cb (Blue Chroma for Pixel 0 and 1)
+    Byte 2: Y1 (Luma for Pixel 1)
+    Byte 3: Chroma Red Cr (Red Chroma for Pixel 0 and 1)
+    Byte 4: Y2 (Luma for Pixel 2)
+
+  - In RGBa format, each pixel is coded using 24 bytes.
+    Byte 0: Red
+    Byte 1: Green
+    Byte 2: Blue
+    Byte 3: -
+
+
+*/
+void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
+				 int size)
+{
+  unsigned char *cbv;
+  unsigned char *crv;
+  unsigned char *pt_ycbcr = ycbcr;
+  unsigned char *pt_rgba = rgba;
+  cbv = pt_ycbcr + 1;
+  crv = pt_ycbcr + 3;
+
+  vpImageConvert::computeYCbCrLUT();
+
+  int col = 0;
+
+  while (size--) {
+    register int val_r, val_g, val_b;
+    if (!(col++ % 2)) {
+      cbv = pt_ycbcr + 1;
+      crv = pt_ycbcr + 3;
+    }
+
+    val_r = *pt_ycbcr + vpCrr[*crv];
+    val_g = *pt_ycbcr + vpCgb[*cbv] + vpCgr[*crv];
+    val_b = *pt_ycbcr + vpCbb[*cbv];
+
+    vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
+
+    *pt_rgba++ = (val_r < 0) ? 0 :
+      ((val_r > 255) ? 255 : (unsigned char)val_r); // Red component.
+    *pt_rgba++ = (val_g < 0) ? 0 :
+      ((val_g > 255) ? 255 : (unsigned char)val_g); // Green component.
+    *pt_rgba++ = (val_b < 0) ? 0 :
+      ((val_b > 255) ? 255 : (unsigned char)val_b); // Blue component.
+    *pt_rgba++ = 0;
+
+    pt_ycbcr += 2;
+  }
+}
+
+/*!
+
+  Convert an image from YCrCb to RGB format. Destination rgb memory area has to
+  be allocated before.
+
+  - In YCrCb (4:2:2) format  each pixel is coded using 16 bytes.
+    Byte 0: YO (Luma for Pixel 0)
+    Byte 1: Chroma Red Cr (Red Chroma for Pixel 0 and 1)
+    Byte 2: Y1 (Luma for Pixel 1)
+    Byte 3: Chroma blue Cb (Blue Chroma for Pixel 0 and 1)
+    Byte 4: Y2 (Luma for Pixel 2)
+
+  - In RGB format, each pixel is coded using 24 bytes.
+    Byte 0: Red
+    Byte 1: Green
+    Byte 2: Blue
+
+
+*/
+void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
+				int size)
+{
+  unsigned char *cbv;
+  unsigned char *crv;
+  unsigned char *pt_ycbcr = ycrcb;
+  unsigned char *pt_rgb = rgb;
+  crv = pt_ycbcr + 1;
+  cbv = pt_ycbcr + 3;
+
+  vpImageConvert::computeYCbCrLUT();
+
+  int col = 0;
+
+  while (size--) {
+    register int val_r, val_g, val_b;
+    if (!(col++ % 2)) {
+      crv = pt_ycbcr + 1;
+      cbv = pt_ycbcr + 3;
+    }
+
+    val_r = *pt_ycbcr + vpCrr[*crv];
+    val_g = *pt_ycbcr + vpCgb[*cbv] + vpCgr[*crv];
+    val_b = *pt_ycbcr + vpCbb[*cbv];
+
+    vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
+
+    *pt_rgb++ = (val_r < 0) ? 0 :
+      ((val_r > 255) ? 255 : (unsigned char)val_r); // Red component.
+    *pt_rgb++ = (val_g < 0) ? 0 :
+      ((val_g > 255) ? 255 : (unsigned char)val_g); // Green component.
+    *pt_rgb++ = (val_b < 0) ? 0 :
+      ((val_b > 255) ? 255 : (unsigned char)val_b); // Blue component.
+
+    pt_ycbcr += 2;
+  }
+}
+/*!
+
+  Convert an image from YCrCb to RGBa format. Destination rgba memory area has
+  to be allocated before.
+
+  - In YCrCb (4:2:2) format  each pixel is coded using 16 bytes.
+    Byte 0: YO (Luma for Pixel 0)
+    Byte 1: Chroma Red Cr (Red Chroma for Pixel 0 and 1)
+    Byte 2: Y1 (Luma for Pixel 1)
+    Byte 3: Chroma blue Cb (Blue Chroma for Pixel 0 and 1)
+    Byte 4: Y2 (Luma for Pixel 2)
+
+  - In RGBa format, each pixel is coded using 24 bytes.
+    Byte 0: Red
+    Byte 1: Green
+    Byte 2: Blue
+    Byte 3: -
+
+
+*/
+void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
+				 int size)
+{
+  unsigned char *cbv;
+  unsigned char *crv;
+  unsigned char *pt_ycbcr = ycrcb;
+  unsigned char *pt_rgba = rgba;
+  crv = pt_ycbcr + 1;
+  cbv = pt_ycbcr + 3;
+
+  vpImageConvert::computeYCbCrLUT();
+
+  int col = 0;
+
+  while (size--) {
+    register int val_r, val_g, val_b;
+    if (!(col++ % 2)) {
+      crv = pt_ycbcr + 1;
+      cbv = pt_ycbcr + 3;
+    }
+
+    val_r = *pt_ycbcr + vpCrr[*crv];
+    val_g = *pt_ycbcr + vpCgb[*cbv] + vpCgr[*crv];
+    val_b = *pt_ycbcr + vpCbb[*cbv];
+
+    vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
+
+    *pt_rgba++ = (val_r < 0) ? 0 :
+      ((val_r > 255) ? 255 : (unsigned char)val_r); // Red component.
+    *pt_rgba++ = (val_g < 0) ? 0 :
+      ((val_g > 255) ? 255 : (unsigned char)val_g); // Green component.
+    *pt_rgba++ = (val_b < 0) ? 0 :
+      ((val_b > 255) ? 255 : (unsigned char)val_b); // Blue component.
+    *pt_rgba++ = 0;
+
+    pt_ycbcr += 2;
+  }
 }
 
 
