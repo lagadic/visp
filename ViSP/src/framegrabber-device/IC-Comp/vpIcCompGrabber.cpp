@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.cpp,v 1.7 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpIcCompGrabber.cpp,v 1.8 2006-09-29 11:56:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,6 @@ vpIcCompGrabber::vpIcCompGrabber()
   init = false ;
 
   framegrabber = new ICcomp2x ;
-  cout << "const------------------1" << endl;
 
   setInput     (vpIcCompGrabber::DEFAULT_INPUT);
   setScale     (vpIcCompGrabber::DEFAULT_SCALE) ;
@@ -90,7 +89,6 @@ vpIcCompGrabber::vpIcCompGrabber()
 vpIcCompGrabber::vpIcCompGrabber( unsigned _input, unsigned _scale)
 {
   init = false ;
-  cout << "const------------------2" << endl;
 
   framegrabber = new ICcomp2x ;
 
@@ -115,7 +113,6 @@ vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I,
 {
   framegrabber = new ICcomp2x ;
 
-  cout << "const------------------3" << endl;
   setInput(_input);
   setScale(_scale) ;
   setFramerate (vpIcCompGrabber::framerate_25fps);
@@ -140,7 +137,6 @@ vpIcCompGrabber::vpIcCompGrabber(vpImage<vpRGBa> &I,
 				 unsigned _input, unsigned _scale )
 {
   framegrabber = new ICcomp2x ;
-  cout << "const------------------4" << endl;
 
   setInput(_input);
   setScale(_scale) ;
