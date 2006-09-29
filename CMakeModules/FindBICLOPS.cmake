@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindBICLOPS.cmake,v 1.3 2006-08-23 10:41:55 brenier Exp $
+# $Id: FindBICLOPS.cmake,v 1.4 2006-09-29 12:18:14 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -90,19 +90,19 @@ ELSE(NOT UNIX AND NOT WIN32)
   IF(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
     SET(BICLOPS_LIBRARIES ${BICLOPS_LIBRARY} ${PMD_LIBRARY} ${UTILS_LIBRARY})
   ELSE(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
-    MESSAGE(SEND_ERROR "Biclops library not found.")
+    MESSAGE(SEND_ERROR "Biclops library not found. Set USE_BICLOPS option OFF")
   ENDIF(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
 
   IF(NOT BICLOPS_INCLUDE_DIR)
-    MESSAGE(SEND_ERROR "Biclops include dir not found.")
+    MESSAGE(SEND_ERROR "Biclops include dir not found. Set USE_BICLOPS option OFF")
   ENDIF(NOT BICLOPS_INCLUDE_DIR)
  
   IF(NOT PMD_INCLUDE_DIR)
-    MESSAGE(SEND_ERROR "PMD include dir not found.")
+    MESSAGE(SEND_ERROR "PMD include dir not found. Set USE_BICLOPS option OFF")
   ENDIF(NOT PMD_INCLUDE_DIR)
   
   IF(NOT UTILS_INCLUDE_DIR)
-    MESSAGE(SEND_ERROR "Utils include dir not found.")
+    MESSAGE(SEND_ERROR "Utils include dir not found. Set USE_BICLOPS option OFF ")
   ENDIF(NOT UTILS_INCLUDE_DIR)
 
   IF(BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
