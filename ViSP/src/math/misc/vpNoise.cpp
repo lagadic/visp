@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpNoise.cpp,v 1.2 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpNoise.cpp,v 1.3 2006-09-29 12:09:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,12 +50,6 @@
 */
 
 
-#define a  (unsigned long)16807
-#define m  (unsigned long)2147483647
-#define q  (unsigned long)127773
-#define r  (unsigned long)2836
-#define normalizer  (double)(2147484721.0)
-
 /*!  \brief Minimal random number generator of Park and Miller. Returns a
   uniform random deviate between 0.0 and 1.0.
 
@@ -84,14 +78,14 @@ vpUniRand::draw0()
 double
 vpUniRand::draw1()
 {
-  const unsigned char ntab = 33;  //we work on a 32 elements array.
+  const long ntab = 33;  //we work on a 32 elements array.
                                   //the 33rd one is actually the first value of y.
-  const unsigned char modulo = ntab-2;
+  const long modulo = ntab-2;
 
   static long y = 0;
   static long T[ntab];
 
-  unsigned char j; //index of T
+  long j; //index of T
 
   //step 0
   if (!y) { //first time
@@ -152,10 +146,4 @@ vpGaussRand::gaussianDraw()
   return v1*fac;
   }
 }
-#undef a
-#undef m
-#undef q
-#undef r
-#undef normalizer
-
 
