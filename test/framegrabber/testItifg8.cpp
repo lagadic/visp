@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testItifg8.cpp,v 1.1 2006-09-29 12:51:19 fspindle Exp $
+ * $Id: testItifg8.cpp,v 1.2 2006-10-02 14:50:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,8 +42,7 @@
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
-#include <vpItifg8Grabber.h>
-//#include <visp/vpItifg8Grabber.h>
+#include <visp/vpItifg8Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
