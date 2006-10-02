@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testItifg8Multi.cpp,v 1.1 2006-09-29 12:51:19 fspindle Exp $
+ * $Id: testItifg8Multi.cpp,v 1.2 2006-10-02 14:50:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,8 +42,7 @@
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
-#include <vpItifg8Grabber.h>
-//#include <visp/vpItifg8Grabber.h>
+#include <visp/vpItifg8Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplay.h>
@@ -241,21 +240,6 @@ main(int argc, char ** argv)
     }
   }
 
-  child = 0;
-  children[child] = getpid();
-  for (i = 1; i < boards; i++)
-    {
-      if ((children[i] = fork ()) < 0)
-	{
-	  perror ("Can't create child process");
-	  exit (EXIT_FAILURE);
-	}
-      if (children[i] == 0)
-	{
-	  child = i;
-	  break;
-	}
-    }
 
 //   cout << "A click to continue..." << endl;
 //   vpDisplay::getClick(I[0]);
