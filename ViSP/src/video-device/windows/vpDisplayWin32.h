@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.3 2006-09-05 08:02:01 fspindle Exp $
+ * $Id: vpDisplayWin32.h,v 1.4 2006-10-04 07:46:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,7 +47,7 @@
 #include <windows.h>
 #include <visp/vpWin32Window.h>
 
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
 	Used to pass parameters to the window's thread.
 */
@@ -71,7 +71,7 @@ struct threadParam
   //! Title of the window.
   char * title;
 };
-
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 /*!
   \class vpDisplayWin32
