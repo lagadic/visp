@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: cmake_uninstall.cmake.in,v 1.2 2006-05-30 08:35:02 fspindle Exp $
+# $Id: cmake_uninstall.cmake.in,v 1.3 2006-10-06 09:07:38 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -36,20 +36,26 @@
 #############################################################################
 
 IF(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
-  MESSAGE(FATAL_ERROR "Cannot find install manifest: \"@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt\"")
-ENDIF(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+  #MESSAGE("Cannot find install manifest: \"@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt\"")
+  MESSAGE("There is no files to uninstall")
+ELSE(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+  FILE(READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
+  STRING(REGEX REPLACE "\n" ";" files "${files}")
+  FOREACH(file ${files})
+    MESSAGE(STATUS "Uninstalling \"${file}\"")
+    IF(EXISTS "${file}")
+      EXEC_PROGRAM(
+        "@CMAKE_COMMAND@" ARGS "-E remove \"${file}\""
+        OUTPUT_VARIABLE rm_out
+        RETURN_VALUE rm_retval
+        )
+      IF("${rm_retval}" STREQUAL 0)
+      ELSE("${rm_retval}" STREQUAL 0)
+        MESSAGE(FATAL_ERROR "Problem when removing \"${file}\"")
+      ENDIF("${rm_retval}" STREQUAL 0)
+    ELSE(EXISTS "${file}")
+      MESSAGE(STATUS "File \"${file}\" does not exist.")
+    ENDIF(EXISTS "${file}")
+  ENDFOREACH(file)
 
-FILE(READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
-STRING(REGEX REPLACE "\n" ";" files "${files}")
-FOREACH(file ${files})
-  MESSAGE(STATUS "Uninstalling \"${file}\"")
-  IF(NOT EXISTS "${file}")
-    MESSAGE(FATAL_ERROR "File \"${file}\" does not exists.")
-  ENDIF(NOT EXISTS "${file}")
-  EXEC_PROGRAM("@CMAKE_COMMAND@" ARGS "-E remove \"${file}\""
-    OUTPUT_VARIABLE rm_out
-    RETURN_VARIABLE rm_retval)
-  IF("${rm_retval}" GREATER 0)
-    MESSAGE(FATAL_ERROR "Problem when removing \"${file}\"")
-  ENDIF("${rm_retval}" GREATER 0)
-ENDFOREACH(file)
+ENDIF(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
