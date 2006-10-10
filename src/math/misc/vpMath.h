@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.h,v 1.8 2006-08-21 10:18:21 brenier Exp $
+ * $Id: vpMath.h,v 1.9 2006-10-10 16:07:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -161,7 +161,12 @@ public:
 	a = tmp;
   }
 
+private:
+  static const double ang_min_sinc;
+  static const double ang_min_mc;
 };
+
+
 
 //Begining of the inline functions definition
 
@@ -191,6 +196,8 @@ double vpMath::comb(int n, int p)
 
 /*!
   Round x to the nearest integer.
+
+  \param x : Value to round.
 
   \return Nearest integer of x.
 
@@ -224,9 +231,10 @@ int vpMath::sign(double x)
 }
 
 /*!
-  Test if x is "null"
-  \param s tolerance threshold
-  \return true if the absolute value of x is inferior to s
+  Compares  \f$ | x | \f$ to \f$ s \f$.
+  \param x : Value to test.
+  \param s : Tolerance threshold
+  \return true if \f$ | x | < s \f$.
 
 */
 bool vpMath::nul(double x, double s)
@@ -235,35 +243,29 @@ bool vpMath::nul(double x, double s)
 }
 
 /*!
-  Compares x and y
-  \param s tolerance threshold
-  \return true if x is equal to y 
+  Compares  \f$ | x - y | \f$ to \f$ s \f$.
+  \param x : x value.
+  \param y : y value.
+  \param s : Tolerance threshold
+  \return true if \f$ | x - y | < s \f$.
 */
 bool vpMath::equal(double x, double y, double s)
 {
   return( nul(x-y, s) );
 }
 
-
-
-
-#ifdef vpANG_MIN_SINC // used also in vpRotationMatrix.cpp and vpThetaUVector.cpp
-#undef vpANG_MIN_SINC
-#endif
-#define vpANG_MIN_SINC 1e-8
-
 /*!
 
   Compute sinus cardinal \f$ \frac{sin(x)}{x} \f$.
 
-  \param x Value of x.
+  \param x : Value of x.
 
   \return Sinus cardinal.
 
 */
 double vpMath::sinc(double x)
 {
-  if (fabs(x) < vpANG_MIN_SINC) return 1.0 ;
+  if (fabs(x) < ang_min_sinc) return 1.0 ;
   else  return sin(x)/x ;
 }
 /*!
@@ -278,15 +280,10 @@ double vpMath::sinc(double x)
 */
 double vpMath::sinc(double sinx, double x)
 {
-  if (fabs(x) < vpANG_MIN_SINC) return 1.0 ;
+  if (fabs(x) < ang_min_sinc) return 1.0 ;
   else  return (sinx/x) ;
 }
-#undef vpANG_MIN_SINC
 
-#ifdef vpANG_MIN_MC // used also in vpRotationMatrix.cpp
-#undef vpANG_MIN_MC
-#endif
-#define vpANG_MIN_MC 2.5e-4
 /*!
   Compute \f$ (1-cos(x))/x^2 \f$
 
@@ -298,7 +295,7 @@ double vpMath::sinc(double sinx, double x)
 */
 double vpMath::mcosc(double cosx, double x)
 {
-  if (fabs(x) < vpANG_MIN_MC) return 0.5 ;
+  if (fabs(x) < ang_min_mc) return 0.5 ;
   else  return ((1.0-cosx)/x/x) ;
 }
 
@@ -314,10 +311,9 @@ double vpMath::mcosc(double cosx, double x)
 */
 double vpMath::msinc(double sinx, double x)
 {
-  if (fabs(x) < vpANG_MIN_MC) return (1./6.0) ;
+  if (fabs(x) < ang_min_mc) return (1./6.0) ;
   else  return ((1.0-sinx/x)/x/x) ;
 }
-#undef vpANG_MIN_MC
 
 
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.cpp,v 1.6 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpThetaUVector.cpp,v 1.7 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,13 +43,9 @@
 
 #include <visp/vpThetaUVector.h>
 
-#define DEBUG_LEVEL1 0
+#define vpDEBUG_LEVEL1 0
 
-/*!
-  \class vpThetaUVector
-  \brief class that consider the case of the Theta U parameterization for the
-  rotation
-*/
+const double vpThetaUVector::minimum = 0.0001;
 
 /*!
   \brief  affectation of two Theta U vector
@@ -80,11 +76,6 @@ vpThetaUVector::vpThetaUVector(const vpRotationMatrix& R)
     buildFrom(R) ;
 }
 
-#ifdef MINIMUM
-#undef MINIMUM
-#endif
-#define MINIMUM 0.0001
-
 
 //! convert a rotation matrix into Theta U vector
 vpThetaUVector
@@ -99,7 +90,7 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
     c = (R[0][0]+R[1][1]+R[2][2]-1.0)/2.0;
     theta=atan2(s,c);  /* theta in [0, PI] since s > 0 */
 
-    if ((s > MINIMUM) || (c > 0.0)) /* general case */
+    if ((s > minimum) || (c > 0.0)) /* general case */
     {
       sinc = vpMath::sinc(s,theta);
 
@@ -118,7 +109,7 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
     }
 
 
-    if (DEBUG_LEVEL1)  // test new version wrt old version
+    if (vpDEBUG_LEVEL1)  // test new version wrt old version
     {
       // old version
       int i;
@@ -132,9 +123,9 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
       s = sqrt(s)/2.0;
       c = (R[0][0]+R[1][1]+R[2][2]-1)/2.0;
       ang=atan2(s,c);
-      if (ang > MINIMUM)
+      if (ang > minimum)
       {
-  	if (s > MINIMUM)
+  	if (s > minimum)
 	{
 	    r2[0] = (R[2][1]-R[1][2])/(2*s);
 	    r2[1] = (R[0][2]-R[2][0])/(2*s);
@@ -175,9 +166,6 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
 
     return *this ;
 }
-#undef MINIMUM
-#undef vpANG_MIN_SINC
-#undef SINC
 
 vpThetaUVector
 vpThetaUVector::buildFrom(const vpRzyxVector& e)
@@ -215,7 +203,7 @@ vpThetaUVector::buildFrom(const vpRxyzVector& e)
     buildFrom(R) ;
     return *this ;
 }
-#undef DEBUG_LEVEL1
+#undef vpDEBUG_LEVEL1
 /*
  * Local variables:
  * c-basic-offset: 2

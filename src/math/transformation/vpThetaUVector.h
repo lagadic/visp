@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.h,v 1.5 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpThetaUVector.h,v 1.6 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,6 +75,8 @@ class VISP_EXPORT vpThetaUVector : public vpRotationVector
 private:
   //! initialize a size 3 vector
   void init() ;
+
+  static const double minimum;
 
 public:
 

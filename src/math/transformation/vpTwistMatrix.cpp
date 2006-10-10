@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTwistMatrix.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpTwistMatrix.cpp,v 1.6 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,9 +74,9 @@
 */
 
 /*!
-  \brief  affectation of two homogeneous matrix
+  \brief Copy operator.
 
-  \param vpTwistMatrix &m : *this = m
+  \param m : Twist matrix to copy
 */
 vpTwistMatrix &
 vpTwistMatrix::operator=(const vpTwistMatrix &m)

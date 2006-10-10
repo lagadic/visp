@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotPtu46.cpp,v 1.6 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpRobotPtu46.cpp,v 1.7 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -525,8 +525,8 @@ vpRobotPtu46::getPosition (const vpRobot::ControlFrameType frame,
   \warning In camera frame, we control only the rx and ry camera velocities;
   v dimension must be two: v[0] correspond to rx, and v[1] to ry
 
-  \waning In articular, we control the 2 dof, v[0] corresponds the pan velocity
-  and v[1] tilt velocity (in radians)
+  \warning In articular, we control the 2 dof, v[0] corresponds the pan
+  velocity and v[1] tilt velocity (in radians)
 
   \exception vpRobotException::wrongStateError : If a not supported frame type
   is given.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.cpp,v 1.7 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpMath.cpp,v 1.8 2006-10-10 16:07:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,3 +34,16 @@
  * Eric Marchand
  *
  *****************************************************************************/
+
+/*!
+  \file vpMath.cpp
+  \brief Provides simple Math computation that are not available in
+  the C mathematics library (math.h)
+*/
+
+#include <visp/vpMath.h>
+
+const double vpMath::ang_min_sinc = 1.0e-8;
+const double vpMath::ang_min_mc = 2.5e-4;
+
+

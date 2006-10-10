@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.10 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.11 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,10 @@
 // Debug trace
 #include <visp/vpDebug.h>
 
-#define DEBUG_LEVEL1 0
+const double vpRotationMatrix::threshold = 1e-6;
+const double vpRotationMatrix::minimum = 0.00001;
+
+#define vpDEBUG_LEVEL1 0
 
 /*!
   \class vpRotationMatrix
@@ -229,10 +232,6 @@ vpRotationMatrix::operator*(const vpTranslationVector &mat) const
 /*!
   \brief  test if the 3x3 rotational part of the  rotation matrix is really a   rotation matrix
 */
-#ifdef THRESHOLD
-#undef THRESHOLD
-#endif
-#define THRESHOLD 1e-6
 
 bool
 vpRotationMatrix::isARotationMatrix() const
@@ -246,11 +245,11 @@ vpRotationMatrix::isARotationMatrix() const
     for (j=0 ; j < 3 ; j++)
       if (i==j)
       {
-	if (fabs(RtR[i][j]-1) > THRESHOLD)  isRotation = false ;
+	if (fabs(RtR[i][j]-1) > threshold)  isRotation = false ;
       }
       else
       {
-	if (fabs(RtR[i][j]) > THRESHOLD)  isRotation = false ;
+	if (fabs(RtR[i][j]) > threshold)  isRotation = false ;
       }
 
   // test if it is a basis
@@ -258,13 +257,13 @@ vpRotationMatrix::isARotationMatrix() const
   for (i=0 ; i < 3 ; i++)
     if ((sqrt(vpMath::sqr(RtR[0][i]) +
 	      vpMath::sqr(RtR[1][i]) +
-	      vpMath::sqr(RtR[2][i])) - 1) > THRESHOLD)  isRotation = false ;
+	      vpMath::sqr(RtR[2][i])) - 1) > threshold)  isRotation = false ;
 
   // test || Ri || = 1
   for (i=0 ; i < 3 ; i++)
     if ((sqrt(vpMath::sqr(RtR[i][0]) +
 	      vpMath::sqr(RtR[i][1]) +
-	      vpMath::sqr(RtR[i][2])) - 1) > THRESHOLD)  isRotation = false ;
+	      vpMath::sqr(RtR[i][2])) - 1) > threshold)  isRotation = false ;
 
   //  test if the basis is orthogonal
   return isRotation ;
@@ -359,7 +358,7 @@ vpRotationMatrix::t() const
 /*!
   \brief inverse the rotation matrix
 
-  R^-1 = R^T
+  \f$ R^-1 = R^T \f$
 */
 vpRotationMatrix vpRotationMatrix::inverse() const
 {
@@ -371,7 +370,7 @@ vpRotationMatrix vpRotationMatrix::inverse() const
 /*!
   \brief inverse the rotation matrix
 
-  R^-1 = R^T
+  \f$ R^-1 = R^T \f$
 */
 void
 vpRotationMatrix::inverse(vpRotationMatrix &M) const
@@ -405,11 +404,6 @@ vpRotationMatrix::printVector()
   cout << endl ;
 }
 
-
-#ifdef MINIMUM
-#undef MINIMUM
-#endif
-#define MINIMUM 0.00001  // now useless
 
 /*
   \relates vpRotationMatrix
@@ -448,14 +442,14 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 
   for (i=0;i<3;i++) for (j=0;j<3;j++) (*this)[i][j] = R[i][j];
 
-  if (DEBUG_LEVEL1)  // test new version wrt old version
+  if (vpDEBUG_LEVEL1)  // test new version wrt old version
   {
     // old version
     vpRotationMatrix R_old; // has to be replaced by (*this) if good version
     double sinu,cosi,mcosi,u[3],ang;
 
     ang = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-    if (ang > MINIMUM)
+    if (ang > minimum)
     {
       for (i=0;i<3;i++) u[i] = v[i]/ang;
       sinu = sin(ang);
@@ -500,18 +494,12 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
   // end test
   return *this ;
 }
-#undef vpANG_MIN_SINC
-#undef vpANG_MIN_MC
-#undef SINC
-#undef MCOSC
-
-#undef MINIMUM  // now useless
 
 /*!
   \brief   Transform a vector reprensenting the euler angle
   into an rotation matrix
 
-  Rzyz = Rot(z,\Phi)Rot(y,\theta)Rot(z,\psi)
+  Rzyz = Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
 */
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpEulerVector &v)
@@ -541,7 +529,7 @@ vpRotationMatrix::buildFrom(const vpEulerVector &v)
 /*!
   \brief   Transform a vector reprensenting the euler angle
   into an rotation matrix
-  Rzyz =  Rot(z,\Phi)Rot(y,\theta)Rot(z,\psi)
+  Rzyz =  Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
 */
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpRzyzVector &v)
@@ -552,10 +540,13 @@ vpRotationMatrix::buildFrom(const vpRzyzVector &v)
 
 
 /*!
-  \brief   Transform a vector reprensenting the Rxyz angle
-  into an rotation matrix
 
-   Rxyz(\phi,\theta, \psy) = Rot(x,\Psy)Rot(y,\theta)Rot(z,\phi)
+  \brief Transform a vector reprensenting the Rxyz angle into an rotation
+  matrix
+
+  Rxyz(\f$ \phi,\theta, \psi \f$) = Rot(\f$ x, \psi \f$) Rot(\f$ y, \theta \f$
+  ) Rot(\f$ z,\phi \f$)
+
 */
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpRxyzVector &v)
@@ -588,8 +579,8 @@ vpRotationMatrix::buildFrom(const vpRxyzVector &v)
   \brief   Transform a vector reprensenting the Rzyx angle
   into an rotation matrix
 
-   Rxyz(\phi,\theta, \psy)
-   Rot(z,\Psy)Rot(y,\theta)Rot(x,\phi)
+   Rxyz(\f$ \phi, \theta , \psi \f$)
+   Rot(\f$ z, \psi \f$) Rot(\f$ y, \theta \f$)Rot(\f$ x, \phi \f$)
 */
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpRzyxVector &v)
@@ -633,7 +624,7 @@ vpRotationMatrix::buildFrom(const double tux,
 
 
 
-#undef DEBUG_LEVEL1
+#undef vpDEBUG_LEVEL1
 
 /*
  * Local variables:

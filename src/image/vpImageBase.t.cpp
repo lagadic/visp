@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageBase.t.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpImageBase.t.cpp,v 1.6 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -395,9 +395,9 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
 
 /*!
   \brief = operator : set   all the element of the bitmap to a given  value x
-   A = x <=> A[i][j] = x
+   \f$ A = x <=> A[i][j] = x \f$
 
-   \warning = must be defined for <Type>
+   \warning = must be defined for \f$ <\f$ Type \f$ > \f$
 */
 template<class Type>
 void vpImage<Type>::operator=(const Type &x)

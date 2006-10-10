@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageMorphology.h,v 1.2 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpImageMorphology.h,v 1.3 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,10 +96,10 @@ public:
   \param value_out : Value to set if erosion is done.
   \param connexity : Type of connexity: 4 or 8.
 
-  To erode a black area in an <unsigned char> image, set \e value to
+  To erode a black area in an unsigned char image, set \e value to
   0 and \e value_out to 255.
 
-  To erode a white area in an <unsigned char> image with one element mask, set
+  To erode a white area in an unsigned char image with one element mask, set
   \e value to 255 and \e value_out to 0.
 
   \sa dilatation()
@@ -160,10 +160,10 @@ void vpImageMorphology::erosion(vpImage<Type> &I,
   \param value_out : Value to set if dilatation is done.
   \param connexity : Type of connexity: 4 or 8.
 
-  To dilate a black area in an <unsigned char> image with one element mask, set
+  To dilate a black area in an unsigned char image with one element mask, set
   \e value to 0 and \e value_out to 255.
 
-  To dilate a white area in an <unsigned char> image with one element mask, set
+  To dilate a white area in an unsigned char image with one element mask, set
   \e value to 255 and \e value_out to 0.
 
   \sa erosion()
