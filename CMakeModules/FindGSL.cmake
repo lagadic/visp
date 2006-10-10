@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGSL.cmake,v 1.2 2006-05-30 08:35:00 fspindle Exp $
+# $Id: FindGSL.cmake,v 1.3 2006-10-10 16:02:37 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -37,9 +37,6 @@
 # GSL_LIBRARIES   = full path to the libraries
 #    on Unix/Linux with additional linker flags from "gsl-config --libs"
 # 
-# CMAKE_GSL_CXX_FLAGS  = Unix compiler flags for GSL, 
-# essentially "`gsl-config --cxxflags`"
-#
 # GSL_INCLUDE_DIR      = where to find headers 
 #
 # GSL_LINK_DIRECTORIES = link directories, useful for rpath on Unix
@@ -71,14 +68,25 @@
 	ARGS --prefix
 	OUTPUT_VARIABLE GSL_PREFIX)
       SET(GSL_INCLUDE_DIR ${GSL_PREFIX}/include CACHE STRING INTERNAL)
-
-      # set link libraries and link flags
-      SET(GSL_LIBRARIES "`${GSL_CONFIG} --libs`")
       
       ## extract link dirs for rpath  
       EXEC_PROGRAM(${GSL_CONFIG}
 	ARGS --libs
 	OUTPUT_VARIABLE GSL_CONFIG_LIBS )
+      #MESSAGE("GSL_CONFIG_LIBS: ${GSL_CONFIG_LIBS}")
+
+      ## use regular expression to match wildcard equivalent "-l*<endchar>"
+      ## with <endchar> is a space or a semicolon
+      STRING(REGEX MATCHALL "[-][l]([^ ;])+" 
+	GSL_LINK_LIBRARIES 
+	"${GSL_CONFIG_LIBS}" )
+      #MESSAGE("DBG  GSL_LINK_LIBRARIES=${GSL_LINK_LIBRARIES}")
+      # Because in GSL_LINK_LIBRARIES defs are separated by ";", parse the
+      # GSL_LINK_LIBRARIES in order to build a space separated string
+      FOREACH(libs ${GSL_LINK_LIBRARIES})
+	SET(GSL_LIBRARIES "${GSL_LIBRARIES} ${libs}")
+      ENDFOREACH(libs)
+      #MESSAGE("GSL_LIBRARIES: ${GSL_LIBRARIES}")
 
       ## split off the link dirs (for rpath)
       ## use regular expression to match wildcard equivalent "-L*<endchar>"
@@ -86,7 +94,7 @@
       STRING(REGEX MATCHALL "[-][L]([^ ;])+" 
 	GSL_LINK_DIRECTORIES_WITH_PREFIX 
 	"${GSL_CONFIG_LIBS}" )
-#      MESSAGE("DBG  GSL_LINK_DIRECTORIES_WITH_PREFIX=${GSL_LINK_DIRECTORIES_WITH_PREFIX}")
+      #MESSAGE("DBG  GSL_LINK_DIRECTORIES_WITH_PREFIX=${GSL_LINK_DIRECTORIES_WITH_PREFIX}")
       
       ## remove prefix -L because we need the pure directory for LINK_DIRECTORIES
      
@@ -96,8 +104,8 @@
       IF(NOT APPLE)
       	     SET(GSL_EXE_LINKER_FLAGS "-Wl,-rpath,${GSL_LINK_DIRECTORIES}" CACHE STRING INTERNAL)
       ENDIF(NOT APPLE)
-#      MESSAGE("DBG  GSL_LINK_DIRECTORIES=${GSL_LINK_DIRECTORIES}")
-#      MESSAGE("DBG  GSL_EXE_LINKER_FLAGS=${GSL_EXE_LINKER_FLAGS}")
+      #MESSAGE("DBG  GSL_LINK_DIRECTORIES=${GSL_LINK_DIRECTORIES}")
+      #MESSAGE("DBG  GSL_EXE_LINKER_FLAGS=${GSL_EXE_LINKER_FLAGS}")
 
 #      ADD_DEFINITIONS("-DHAVE_GSL")
 #      SET(GSL_DEFINITIONS "-DHAVE_GSL")
