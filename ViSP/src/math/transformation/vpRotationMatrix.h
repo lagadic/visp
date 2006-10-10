@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.h,v 1.4 2006-06-12 14:50:03 brenier Exp $
+ * $Id: vpRotationMatrix.h,v 1.5 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -131,6 +131,10 @@ public:
   vpRotationMatrix buildFrom(const double tux,
 			     const double tuy,
 			     const double tuz) ;
+
+private:
+  static const double threshold;
+  static const double minimum; // usefull only for debug
   };
 
 #endif

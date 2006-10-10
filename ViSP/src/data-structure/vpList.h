@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.5 2006-06-12 14:49:40 brenier Exp $
+ * $Id: vpList.h,v 1.6 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -183,7 +183,7 @@ class vpList
 
 
 /*!
-  \file $Source: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/data-structure/vpList.h,v $
+  \file vpList.h
   \brief Definition of the list managment class
 */
 

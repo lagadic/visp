@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpTranslationVector.cpp,v 1.4 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,7 +115,10 @@ vpTranslationVector & vpTranslationVector::operator=(double x)
   \end{array}\right)
   \f]
 
-  \param
+  \param v : Translation vector in input used to compute the skew symmetric
+  matrix M
+
+  \param M : Skew symmetric matrix of vector v.
 */
 void
 vpTranslationVector::skew(const vpTranslationVector &v,vpMatrix &M)

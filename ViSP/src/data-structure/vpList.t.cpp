@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.t.cpp,v 1.2 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpList.t.cpp,v 1.3 2006-10-10 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -556,7 +556,7 @@ void vpList<type>::display()
 #endif /* #ifndef VP_LIST_T_CPP */
 
 /*!
-  \file $Source: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/data-structure/vpList.t.cpp,v $
+  \file vpList.t.cpp
   \brief Implementation of the list managment class
 */
 
