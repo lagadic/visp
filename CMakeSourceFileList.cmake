@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.9 2006-09-29 12:49:44 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.10 2006-10-10 16:03:40 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -100,6 +100,7 @@ SET (SRC_MATH
   math/matrix/vpMatrixException.cpp
   math/matrix/vpRowVector.cpp
   math/misc/vpExponentialMap.cpp 
+  math/misc/vpMath.cpp 
   math/misc/vpNoise.cpp 
   math/robust/vpRobust.cpp
   math/robust/vpScale.cpp
