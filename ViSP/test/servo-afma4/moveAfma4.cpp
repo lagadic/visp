@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma4.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: moveAfma4.cpp,v 1.4 2006-10-11 09:08:54 mtallur Exp $
  *
  * Description
  * ============
@@ -163,7 +163,7 @@ main()
 int
 main()
 {
-  vpERROR_TRACE("You do not have an afma4 robot connected to your computer...");
+  vpTRACE("You do not have an afma4 robot connected to your computer...");
 }
 
 #endif
