@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDebug.h,v 1.7 2006-09-22 14:13:00 fspindle Exp $
+ * $Id: vpDebug.h,v 1.8 2006-10-13 12:07:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -255,8 +255,8 @@ public:
 
 #else
 
-inline void vpDERROR_TRACE(int niv, char *a, ...){};
-inline void vpDEBUG_TRACE(int niv, char *a, ...){};
+inline void vpDERROR_TRACE(int /* niv */, char * /* a */, ...){};
+inline void vpDEBUG_TRACE(int /* niv */, char * /* a */, ...){};
 #define vpCDEBUG(niv) if (1) ; else cout
 #define vpDEBUG_ENABLE(niv) (0)
 
