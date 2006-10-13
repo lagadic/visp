@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.h,v 1.1 2006-09-29 12:49:44 fspindle Exp $
+ * $Id: vpItifg8Grabber.h,v 1.2 2006-10-13 12:09:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,7 +35,7 @@
  *
  *****************************************************************************/
 /*!
-  \file vpItifgGrabber.h
+  \file vpItifg8Grabber.h
   \brief Class for the itifg-8.x (Coreco Imaging Technology) video device.
   \ingroup libdevice
 */
@@ -69,8 +69,11 @@
 
   #define CMP_BT829A_FIELD_MASK           0x20
   #define CMP_BT829A_FIELD_SHIFT          5
-  #define ODD_FIELD                       0x00
-  #define EVEN_FIELD                      0x20
+
+  introduced in the vpItifg8Grabber as static const variables:
+
+  vpCMP_BT829A_FIELD_MASK
+  vpCMP_BT829A_FIELD_SHIFT
 
 */
 
@@ -124,6 +127,11 @@
 
   For further information see http://itifg.sourceforge.net/
 
+  \warning In case of an AM-STD COMP board, the usage of getField() and
+  setFramerate(framerateEnum rate) needs a modification of the itifg-8.2.2.0
+  driver coming from sourceforge. See the documentation of these functions to
+  have a description of the driver's modifications.
+
 
 */
 
@@ -131,6 +139,21 @@
 
 class VISP_EXPORT vpItifg8Grabber : public vpFrameGrabber
 {
+private:
+  static const int vpCMP_BT829A_FIELD_MASK;
+  static const int vpCMP_BT829A_FIELD_SHIFT;
+
+public:
+  static const int DEFAULT_INPUT;
+  static const int DEFAULT_SCALE;
+
+  /*! Allowed framerates for AM-STD COMP board. */
+  enum framerateEnum
+    {
+      framerate_50fps, //!< 50 frames per second
+      framerate_25fps  //!< 25 frames per second
+    };
+
 public:
   typedef enum
     {
@@ -203,21 +226,13 @@ private:
     int hdec[ITI_BOARDS_MAX];
     int vdec[ITI_BOARDS_MAX];
     float rate[ITI_BOARDS_MAX];
+    framerateEnum amcmp_rate[ITI_BOARDS_MAX];
     vpItifg8Opmode_t opmode[ITI_BOARDS_MAX];
     vpItifg8Syncmd_t syncmd[ITI_BOARDS_MAX];
     int /*vpItifg8Sacqmd_t*/ sacqmd[ITI_BOARDS_MAX];
   };
 
 
-public:
-  static const int DEFAULT_INPUT;
-  static const int DEFAULT_SCALE;
-
-  enum framerateEnum
-    {
-      framerate_50fps, //!< 50 frames per second
-      framerate_25fps  //!< 25 frames per second
-    };
 
 private:
   unsigned input ; //!< video entry
@@ -227,20 +242,26 @@ private:
 
 public:
   vpItifg8Grabber();
+  vpItifg8Grabber(unsigned input, unsigned scale);
+  vpItifg8Grabber(vpImage<unsigned char> &I, unsigned input, unsigned scale);
+  vpItifg8Grabber(vpImage<vpRGBa> &I, unsigned _input, unsigned _scale);
   ~vpItifg8Grabber();
 
+  void open();
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);
 
-  u_char * acquire();
+  unsigned char * acquire();
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);
   bool getField();
   void close();
 
+  void setVerboseMode(bool activate=true);
   void setBoard(unsigned board = 0);
   unsigned getBoard();
   unsigned getNumBoards();
+  unsigned getModule();
   void setConfile(const char *filename);
   void setInput(unsigned input = vpItifg8Grabber::DEFAULT_INPUT);
   void setScale(unsigned scale = vpItifg8Grabber::DEFAULT_SCALE) ;
@@ -251,13 +272,14 @@ public:
   void setDepth(unsigned depth);
   void setBuffer(unsigned buffer);
   void setFramerate(float rate);
+  void setFramerate(framerateEnum rate);
   void setOpmode  (vpItifg8Opmode_t opmode);
   void setSyncmode(vpItifg8Syncmd_t synmode);
   void setAcqmode (vpItifg8Sacqmd_t sacqmode);
-  void open();
 
 private:
   void setupBufs();
+  void initialise();
 
 private:
   bool stop_it;
@@ -279,6 +301,8 @@ private:
   sigset_t local_set;
   vpItifg8Image_t image[ITI_BOARDS_MAX]; // we suppose one camera per board
 
+  bool ref_field;
+  bool first_acq;
   bool verbose;
 };
 
