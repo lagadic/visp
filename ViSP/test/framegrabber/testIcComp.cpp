@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIcComp.cpp,v 1.12 2006-09-29 09:35:29 fspindle Exp $
+ * $Id: testIcComp.cpp,v 1.13 2006-10-13 12:10:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -222,6 +222,8 @@ main(int argc, char ** argv)
       vpDisplay::display(I) ;
       // Flush the display
       vpDisplay::flush(I) ;
+      // Synchronize the loop to 1/fps ms
+      vpTime::wait(t, 1000.0/fps);
     }
     cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
   }
