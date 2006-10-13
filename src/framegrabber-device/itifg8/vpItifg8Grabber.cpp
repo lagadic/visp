@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.1 2006-09-29 12:49:44 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.2 2006-10-13 12:09:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,9 +63,9 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
-#undef ITIFG8_USE_POLL
+#undef vpITIFG8_USE_POLL
 
-/*
+/*!
   Warning:
 
   Because amcmpReg.h file is not installed with the itifg-8 driver, in
@@ -76,18 +76,18 @@
 
   #define CMP_BT829A_FIELD_MASK           0x20
   #define CMP_BT829A_FIELD_SHIFT          5
-  #define ODD_FIELD                       0x00
-  #define EVEN_FIELD                      0x20
+
+  introduced in the vpItifg8Grabber as static const variables:
+
+  vpCMP_BT829A_FIELD_MASK
+  vpCMP_BT829A_FIELD_SHIFT
 
 */
-#define CMP_BT829A_FIELD_MASK           0x20
-#define CMP_BT829A_FIELD_SHIFT          5
-#define ODD_FIELD                       0x00
-#define EVEN_FIELD                      0x20
-
 
 const int vpItifg8Grabber::DEFAULT_INPUT = 2;
 const int vpItifg8Grabber::DEFAULT_SCALE = 2;
+const int vpItifg8Grabber::vpCMP_BT829A_FIELD_MASK  = 0x20;
+const int vpItifg8Grabber::vpCMP_BT829A_FIELD_SHIFT = 5;
 
 static volatile int vpItifg8Timeout;
 
@@ -116,147 +116,64 @@ vpItifg8SigioCatcher (int num, siginfo_t *info, void */*ptr*/)
 vpItifg8Grabber::vpItifg8Grabber()
 {
   init = false ;
-  verbose = true;
+  initialise();
+}
+/*!
+  Constructor.
 
-  // private members initialisation
-  stop_it = false;
-  devdesc = -1;
-  rawdesc = -1;
-  zerodesc = -1;
-  dataptr = NULL;
-  mapsize = (size_t)0;
-  boards = 1;
-  vpItifg8Timeout = false;
+  \param input : Video input port for the first board.
+  \param scale : Decimation factor for the first board.
 
-  // Initialisation of opmode_name structure
-  opmode_name[0].number = READ_MODE;
-  sprintf(opmode_name[0].name, "read");
-  opmode_name[1].number = MMAP_MODE;
-  sprintf(opmode_name[1].name, "mmap");
+*/
+vpItifg8Grabber::vpItifg8Grabber( unsigned input, unsigned scale)
+{
+  init = false ;
+  initialise();
 
-  // Initialisation of syncmd structure
-  syncmd_name[0].number = BLOCK_MODE;
-  sprintf(syncmd_name[0].name, "block");
-  syncmd_name[1].number = SIGNAL_MODE;
-  sprintf(syncmd_name[1].name, "signal");
-  syncmd_name[2].number = SELECT_MODE;
-  sprintf(syncmd_name[2].name, "select");
-  syncmd_name[3].number = MANUAL_MODE;
-  sprintf(syncmd_name[3].name, "manual");
-  syncmd_name[4].number = POLL_MODE;
-  sprintf(syncmd_name[4].name, "poll");
+  setBoard(0);
+  setInput(input);
+  setScale(scale);
+}
 
-  // Initialisation of sacqmd structure
-  sacqmd_name[0].number = NORMAL_MODE;
-  sprintf(sacqmd_name[0].name, "normal");
-  sacqmd_name[1].number = LOCK_MODE;
-  sprintf(sacqmd_name[1].name, "lock");
-  sacqmd_name[2].number = SYNC_MODE;
-  sprintf(sacqmd_name[2].name, "sync");
-  sacqmd_name[3].number = APPEND_MODE;
-  sprintf(sacqmd_name[3].name, "append");
-  sacqmd_name[4].number = DELAY_MODE;
-  sprintf(sacqmd_name[4].name, "delay");
+/*!
+  Constructor. Initialise and open the device.
 
-  // Initialization of args structure
-  for (int i=0; i < ITI_BOARDS_MAX; i ++) {
-    setBoard(i);       // Default board
-    setConfile("/usr/share/itifg/conffiles/robot.cam");
-    setInput(vpItifg8Grabber::DEFAULT_INPUT);       // Default input
-    setScale(vpItifg8Grabber::DEFAULT_SCALE);       // Default decimation factor
-    setDepth(8);      // Default image depth
-    setBuffer(1);     // Default number of buffers
-    setFramerate(1.); // Default framerate
-    setOpmode(vpItifg8Grabber::MMAP_MODE);     // Default operation mode
-    setSyncmode(vpItifg8Grabber::SIGNAL_MODE); // Default synchronisation mode
-    setAcqmode(vpItifg8Grabber::NORMAL_MODE);  // Default special acq mode
-    // Initialisation of image structure
-    image[i].srcptr = NULL;
-    image[i].srcoff = 0;
-    image[i].raw_size = image[i].paged_size = 0;
-    image[i].width = image[i].height = 0;
-    image[i].srcbpp = image[i].srcbpl = 0;
-  }
+  \param I : Image data structure (8 bits image).
+  \param input : Video input port for the first board.
+  \param scale : Decimation factor for the first board.
 
-  setBoard(0);       // Default board
 
-  // comes from Parse_Args ()
+*/
+vpItifg8Grabber::vpItifg8Grabber(vpImage<unsigned char> &I,
+				 unsigned input, unsigned scale )
+{
+  init = false ;
+  initialise();
 
-  char file_name[PATH_MAX];
-  int error;
-  strcpy (file_name, ITI_PFS_PREFIX);
-  strcat (file_name, ITI_PFS_STRING);
-  if (verbose)
-    fprintf (stderr, "\n");
-  if ((error = iti_parse_info (file_name, &setup)))
-    {
-      switch (error)
-	{
-	case -ITI_EARG:
-	  vpERROR_TRACE("Wrong call argument\n"
-		   "(file_name:%s, setup%p).\n", file_name, &setup);
-	  throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-					 "Wrong call argument") );
-	  break;
-	case -ITI_EFMT:
-	  vpERROR_TRACE("Wrong data format (%s%s).\n",
-		   ITI_PFS_PREFIX, ITI_PFS_STRING);
-	  throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-					 "Wrong data format") );
-	  break;
-	case -ITI_EENT:
-	  vpERROR_TRACE("File not found (%s%s).\n",
-			ITI_PFS_PREFIX, ITI_PFS_STRING);
-	  throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-					 "File not found") );
-	  break;
-	case -ITI_ESYS:
-	  vpERROR_TRACE("Error while system call (%s).\n", strerror (errno));
-	  throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-					 "Error while system call") );
-	  break;
-	default:
-	  vpERROR_TRACE("Error not specified!\n");
-	  throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-					 "Error not specified!") );
-	}
-    }
+  setBoard(0);
+  setInput(input);
+  setScale(scale);
+  open(I);
+}
 
-  if (verbose) {
-    fprintf (stdout, "Driver version: %d.%d.%d-%d.\n",
-	     (setup.version & 0xFF000000) >> 24,
-	     (setup.version & 0x00FF0000) >> 16,
-	     (setup.version & 0x0000FF00) >> 8,
-	     setup.version & 0x000000FF);
-    fprintf (stdout, "Compilation Date: %s.\n", setup.date);
-    fprintf (stdout, "Boards detected: %d.\n", setup.boards);
-    for (int board = 0; board < setup.boards; board++)
-    {
-      switch (setup.modules[board])
-      {
-      case ICP_AMVS:
-	fprintf (stdout, "Module type board %d: AM-VS.\n", board);
-	break;
-      case ICP_AMDG:
-	fprintf (stdout, "Module type board %d: AM-DIG.\n", board);
-	break;
-      case ICP_AMPV:
-	fprintf (stdout, "Module type board %d: PCVision.\n", board);
-	break;
-      case ICP_AMCMP:
-	fprintf (stdout, "Module type board %d: AM-STD-COMP.\n", board);
-	break;
-      case ITI_PCDIG:
-	fprintf (stdout, "Module type board %d: PCDig.\n", board);
-	break;
-      case ITI_PCLNK:
-	fprintf (stdout, "Module type board %d: PCCamLink.\n", board);
-	break;
-      }
-    }
-  }
+/*!
+  Constructor. Initialise and open the device.
 
-  memcpy (&args.module, &setup.modules, sizeof(setup.modules));
+  \param I : Image data structure (32 bits image).
+  \param input : Video input port for the first board.
+  \param scale : Decimation factor for the first board.
+
+*/
+vpItifg8Grabber::vpItifg8Grabber(vpImage<vpRGBa> &I,
+				 unsigned input, unsigned scale)
+{
+  init = false ;
+  initialise();
+
+  setBoard(0);
+  setInput(input);
+  setScale(scale);
+  open(I);
 }
 
 /*!
@@ -267,6 +184,165 @@ vpItifg8Grabber::~vpItifg8Grabber()
 {
 
   close();
+}
+
+/*!
+  Internal initialisation.
+
+  Uses the default framegrabber settings for input, scale and framerate.
+
+  \exception vpFrameGrabberException::initializationError : If initialisation
+  failed.
+
+*/
+void vpItifg8Grabber::initialise()
+{
+  if (init == false) {
+    first_acq = false;
+    setVerboseMode(false);
+
+    // private members initialisation
+    stop_it = false;
+    devdesc = -1;
+    rawdesc = -1;
+    zerodesc = -1;
+    dataptr = NULL;
+    mapsize = (size_t)0;
+    boards = 1;
+    vpItifg8Timeout = false;
+
+    // Initialisation of opmode_name structure
+    opmode_name[0].number = READ_MODE;
+    sprintf(opmode_name[0].name, "read");
+    opmode_name[1].number = MMAP_MODE;
+    sprintf(opmode_name[1].name, "mmap");
+
+    // Initialisation of syncmd structure
+    syncmd_name[0].number = BLOCK_MODE;
+    sprintf(syncmd_name[0].name, "block");
+    syncmd_name[1].number = SIGNAL_MODE;
+    sprintf(syncmd_name[1].name, "signal");
+    syncmd_name[2].number = SELECT_MODE;
+    sprintf(syncmd_name[2].name, "select");
+    syncmd_name[3].number = MANUAL_MODE;
+    sprintf(syncmd_name[3].name, "manual");
+    syncmd_name[4].number = POLL_MODE;
+    sprintf(syncmd_name[4].name, "poll");
+
+    // Initialisation of sacqmd structure
+    sacqmd_name[0].number = NORMAL_MODE;
+    sprintf(sacqmd_name[0].name, "normal");
+    sacqmd_name[1].number = LOCK_MODE;
+    sprintf(sacqmd_name[1].name, "lock");
+    sacqmd_name[2].number = SYNC_MODE;
+    sprintf(sacqmd_name[2].name, "sync");
+    sacqmd_name[3].number = APPEND_MODE;
+    sprintf(sacqmd_name[3].name, "append");
+    sacqmd_name[4].number = DELAY_MODE;
+    sprintf(sacqmd_name[4].name, "delay");
+
+    // Initialization of args structure
+    for (int i=0; i < ITI_BOARDS_MAX; i ++) {
+      setBoard(i);       // Default board
+      setConfile("/usr/share/itifg/conffiles/robot.cam");
+      setInput(vpItifg8Grabber::DEFAULT_INPUT);       // Default input
+      setScale(vpItifg8Grabber::DEFAULT_SCALE);       // Default decimation factor
+      setDepth(8);      // Default image depth
+      setBuffer(1);     // Default number of buffers
+      setFramerate(1.); // Default framerate
+      setFramerate(vpItifg8Grabber::framerate_50fps);
+      setOpmode(vpItifg8Grabber::MMAP_MODE);     // Default operation mode
+      setSyncmode(vpItifg8Grabber::SIGNAL_MODE); // Default synchronisation mode
+      setAcqmode(vpItifg8Grabber::NORMAL_MODE);  // Default special acq mode
+      // Initialisation of image structure
+      image[i].srcptr = NULL;
+      image[i].srcoff = 0;
+      image[i].raw_size = image[i].paged_size = 0;
+      image[i].width = image[i].height = 0;
+      image[i].srcbpp = image[i].srcbpl = 0;
+    }
+
+    setBoard(0);       // Default board
+
+    // comes from Parse_Args ()
+
+    char file_name[PATH_MAX];
+    int error;
+    strcpy (file_name, ITI_PFS_PREFIX);
+    strcat (file_name, ITI_PFS_STRING);
+    if (verbose)
+      fprintf (stderr, "\n");
+    if ((error = iti_parse_info (file_name, &setup)))
+    {
+      switch (error)
+      {
+      case -ITI_EARG:
+	vpERROR_TRACE("Wrong call argument\n"
+		      "(file_name:%s, setup%p).\n", file_name, &setup);
+	throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				       "Wrong call argument") );
+	break;
+      case -ITI_EFMT:
+	vpERROR_TRACE("Wrong data format (%s%s).\n",
+		      ITI_PFS_PREFIX, ITI_PFS_STRING);
+	throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				       "Wrong data format") );
+	break;
+      case -ITI_EENT:
+	vpERROR_TRACE("File not found (%s%s).\n",
+		      ITI_PFS_PREFIX, ITI_PFS_STRING);
+	throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				       "File not found") );
+	break;
+      case -ITI_ESYS:
+	vpERROR_TRACE("Error while system call (%s).\n", strerror (errno));
+	throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				       "Error while system call") );
+	break;
+      default:
+	vpERROR_TRACE("Error not specified!\n");
+	throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				       "Error not specified!") );
+      }
+    }
+
+    if (verbose) {
+      fprintf (stdout, "Driver version: %d.%d.%d-%d.\n",
+	       (setup.version & 0xFF000000) >> 24,
+	       (setup.version & 0x00FF0000) >> 16,
+	       (setup.version & 0x0000FF00) >> 8,
+	       setup.version & 0x000000FF);
+      fprintf (stdout, "Compilation Date: %s.\n", setup.date);
+      fprintf (stdout, "Boards detected: %d.\n", setup.boards);
+      for (int board = 0; board < setup.boards; board++)
+      {
+	switch (setup.modules[board])
+	{
+	case ICP_AMVS:
+	  fprintf (stdout, "Module type board %d: AM-VS.\n", board);
+	  break;
+	case ICP_AMDG:
+	  fprintf (stdout, "Module type board %d: AM-DIG.\n", board);
+	  break;
+	case ICP_AMPV:
+	  fprintf (stdout, "Module type board %d: PCVision.\n", board);
+	  break;
+	case ICP_AMCMP:
+	  fprintf (stdout, "Module type board %d: AM-STD-COMP.\n", board);
+	  break;
+	case ITI_PCDIG:
+	  fprintf (stdout, "Module type board %d: PCDig.\n", board);
+	  break;
+	case ITI_PCLNK:
+	  fprintf (stdout, "Module type board %d: PCCamLink.\n", board);
+	  break;
+	}
+      }
+    }
+
+    memcpy (&args.module, &setup.modules, sizeof(setup.modules));
+    init = true;
+  }
 }
 
 /*!
@@ -368,6 +444,21 @@ void vpItifg8Grabber::close ()
     ::close (devdesc);
 
   init = false;
+
+  first_acq == false;
+}
+
+/*!
+
+  Set the verbose mode.
+
+  \param activate : Verbose mode; true to activate debug information, false to
+  turn off the debug mode.
+
+*/
+void vpItifg8Grabber::setVerboseMode(bool activate)
+{
+  verbose = activate;
 }
 
 /*!
@@ -399,7 +490,7 @@ void vpItifg8Grabber::setBoard(unsigned board)
 /*!
 
   In case of multiple Coreco Imaging boards connected on a same computer,
-  get the current board for image acquisition.
+  get the current board index for image acquisition.
 
   \return The Coreco Imaging board number.
 
@@ -425,6 +516,20 @@ unsigned vpItifg8Grabber::getNumBoards()
 {
   return setup.boards;
 }
+
+/*!
+
+  Get the name of the Coreco Imaging module board.
+
+  \return The name of the module: ICP_AMVS, ICP_AMDG, ICP_AMPV, ICP_AMCMP,
+  ITI_PCDIG, ITI_PCLNK, COR_X64CL
+
+*/
+unsigned vpItifg8Grabber::getModule()
+{
+  return args.module[args.board_i];
+}
+
 
 /*!
 
@@ -508,7 +613,7 @@ void vpItifg8Grabber::setHDecimation(unsigned scale)
 
   \return Horizontal decimation factor [1|2|4|8|16].
 
-  \sa getVDecimation()
+  \sa setHDecimation()
 */
 
 unsigned vpItifg8Grabber::getHDecimation()
@@ -517,11 +622,11 @@ unsigned vpItifg8Grabber::getHDecimation()
 }
 
 /*!
-  Get the vertictal decimation factor.
+  Get the vertical decimation factor.
 
   \return Vertical decimation factor [1|2|4|8|16].
 
-  \sa getHDecimation()
+  \sa setVDecimation()
 */
 
 unsigned vpItifg8Grabber::getVDecimation()
@@ -530,13 +635,13 @@ unsigned vpItifg8Grabber::getVDecimation()
 }
 
 /*!
-  Set the horizontal and vertical decimation factor.
+  Set the vertical decimation factor.
 
   \param scale : Decimation factor [1|2|4|8|16].
 
   \exception vpFrameGrabberException::settingError : Wrong decimation factor.
 
-  \sa setHDecimation(), setVDecimation()
+  \sa getVDecimation()
 */
 
 void vpItifg8Grabber::setVDecimation(unsigned scale)
@@ -590,7 +695,7 @@ void vpItifg8Grabber::setDepth(unsigned depth)
 /*!
   Set the number of buffers used for acquisition.
 
-  \param depth : Number of buffers [1-8].
+  \param buffer : Number of buffers [1-8].
 
   \exception vpFrameGrabberException::settingError : If number of buffers is
   invalid.
@@ -608,12 +713,16 @@ void vpItifg8Grabber::setBuffer(unsigned buffer)
 }
 
 /*!
-  Set the acquisition framerate.
+
+  Set the acquisition framerate. Did not work for AM-STD COMP framegrabber
+  board. For such a board, see setFramerate(framerateEnum rate).
 
   \param rate : Framerate [0.01-100.0].
 
   \exception vpFrameGrabberException::settingError : If framerate is
   invalid.
+
+  \sa setFramerate(framerateEnum rate)
 */
 void vpItifg8Grabber::setFramerate(float rate)
 {
@@ -625,6 +734,53 @@ void vpItifg8Grabber::setFramerate(float rate)
 				   "Wrong frames per second selected") );
   }
   args.rate[args.board_i] = rate;
+}
+
+/*!
+
+  Set the framerate of the acquisition.
+
+  \warning Dedicated AM-STD-COMP function member.
+
+  To be able to acquire frames at 50 fps, the itifg-8.x driver was modified
+  by replacing the original code in itifg-8.2.2-0/src/itifgIoctl.c
+
+  \code
+  int iti_frm_ioctl(...)
+  {
+    case GIOC_SET_VDEC:
+      ...
+      if ((error = iti_enable_irq (frm->osp, frm->brdif, ITI_FRM,
+                                   frm->fmt.ilace,
+                                   !!(iti_file_flags (file) & O_SYNC))))
+      ...
+  }
+  \endcode
+
+  by the modified code:
+
+  \code
+  int iti_frm_ioctl(...)
+  {
+    case GIOC_SET_VDEC:
+      ...
+      if ((error = iti_enable_irq (frm->osp, frm->brdif, ITI_FRM,
+                                   frm->fmt.ilace && inparam->set_vdec == 1,
+                                   !!(iti_file_flags (file) & O_SYNC))))
+      ...
+  }
+  \endcode
+
+
+  \param rate The framerate for the acquisition.
+
+  \sa getFramerate()
+
+*/
+void
+vpItifg8Grabber::setFramerate(vpItifg8Grabber::framerateEnum rate)
+{
+  args.amcmp_rate[args.board_i]  = rate;
 }
 
 /*!
@@ -815,7 +971,7 @@ void vpItifg8Grabber::open()
   }
 
   int cameras;
-  switch (args.module[args.board_i])
+  switch (getModule())
   {
   case ICP_AMVS:
     cameras = VS_CAMERAS_MAX;
@@ -1203,7 +1359,7 @@ void vpItifg8Grabber::setupBufs()
   acquired.
 
 */
-u_char * vpItifg8Grabber::acquire()
+unsigned char * vpItifg8Grabber::acquire()
 {
   int error;
 
@@ -1271,7 +1427,7 @@ u_char * vpItifg8Grabber::acquire()
     break;
   case SELECT_MODE:
     {
-#ifdef ITIFG8_USE_POLL
+#ifdef vpITIFG8_USE_POLL
       struct pollfd wait_fd;
 
       wait_fd.fd = devdesc;
@@ -1477,6 +1633,33 @@ vpItifg8Grabber::acquire(vpImage<unsigned char> &I)
 
     bitmap = acquire();
 
+    // Specific code for AM-STD COMP board to be able to acquire at 25 or 50
+    // fps
+    if (getModule() == ICP_AMCMP) {
+      bool field = getField(); // Field of the acquired frame (odd or even)
+      switch (args.amcmp_rate[args.board_i]) {
+      case framerate_25fps:
+	// If its the first acquisition, set the reference frame type to the
+	// last acquire frame type (odd, even)
+	if (first_acq == false) {
+	  ref_field = field;
+	  first_acq = true;
+	}
+	if (getVDecimation() != 1) {
+	  // If vertical subsampling, we get only the even frame
+	  while (field != ref_field) {
+	    // Last acquired field is odd, restart a new acquisition
+	    bitmap = acquire();
+	    field = getField(); // Field of the acquired frame (odd or even)
+	  }
+	}
+	break;
+      case framerate_50fps:
+      default:
+	break;
+      }
+    }
+
     if ((I.getCols() != width) || (I.getRows() != height))
       I.resize(height, width) ;
 
@@ -1500,8 +1683,6 @@ vpItifg8Grabber::acquire(vpImage<unsigned char> &I)
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't acquire an image") );
   }
-
-  cout << "field: " << getField() << endl;
 }
 
 /*!
@@ -1535,6 +1716,33 @@ vpItifg8Grabber::acquire(vpImage<vpRGBa> &I)
 
     bitmap = acquire();
 
+    // Specific code for AM-STD COMP board to be able to acquire at 25 or 50
+    // fps
+    if (getModule() == ICP_AMCMP) {
+      bool field = getField(); // Field of the acquired frame (odd or even)
+      switch (args.amcmp_rate[args.board_i]) {
+      case framerate_25fps:
+	// If its the first acquisition, set the reference frame type to the
+	// last acquire frame type (odd, even)
+	if (first_acq == false) {
+	  ref_field = field;
+	  first_acq = true;
+	}
+	if (getVDecimation() != 1) {
+	  // If vertical subsampling, we get only the even frame
+	  while (field != ref_field) {
+	    // Last acquired field is odd, restart a new acquisition
+	    bitmap = acquire();
+	    field = getField(); // Field of the acquired frame (odd or even)
+	  }
+	}
+	break;
+      case framerate_50fps:
+      default:
+	break;
+      }
+    }
+
     if ((I.getCols() != width) || (I.getRows() != height))
       I.resize(height, width) ;
 
@@ -1565,10 +1773,30 @@ vpItifg8Grabber::acquire(vpImage<vpRGBa> &I)
 
 /*!
 
-  \warning Dedicated AM-STD-COMP function member.
-
   In case of using an AM-STD-COMP board, get the field (odd or even) of the
   last acquired frame. For other boards, return always 0.
+
+  \warning Dedicated AM-STD-COMP function member.
+
+  To be able to get the type of the frames (odd or even), the itifg-8.x driver
+  was modified in itifg-8.2.2-0/src/module/amcmpIface.c like:
+
+  \code
+  static int
+  amcmp_copy_config (icp_mod_t *mod,
+		    union iti_cam_t *dstcnf, union iti_cam_t *srccnf)
+  {
+    int error;
+
+    if ((error = cmp_get_status (mod->c, &srccnf->cmp_cam.status)))
+      return error;
+    iti_memcpy (dstcnf, srccnf, sizeof(struct cmp_cam_t));
+
+    return OK;
+  }
+
+  \endcode
+
 
   \return 0: Even frame field.
   \return 1: Odd frame field.
@@ -1578,7 +1806,7 @@ bool
 vpItifg8Grabber::getField()
 {
 
-  if (args.module[args.board_i] != ICP_AMCMP)
+  if (getModule() != ICP_AMCMP)
     return 0;
 
   union iti_cam_t camconf;
@@ -1595,9 +1823,10 @@ vpItifg8Grabber::getField()
 
   status = camconf.cmp_cam.status;
 
-  field_status = (status &  CMP_BT829A_FIELD_MASK) >> CMP_BT829A_FIELD_SHIFT;
+  field_status = (status &  vpCMP_BT829A_FIELD_MASK) >> vpCMP_BT829A_FIELD_SHIFT;
 
-  //  printf("status: 0x%x field: 0x%x\n", status, field_status);
+  if (verbose)
+    fprintf(stdout, "status: 0x%x field: 0x%x\n", status, field_status);
   return field_status;
 }
 
