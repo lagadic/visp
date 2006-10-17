@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: moveAfma6.cpp,v 1.3 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: moveAfma6.cpp,v 1.4 2006-10-17 16:01:50 mtallur Exp $
  *
  * Description
  * ============
@@ -37,46 +37,47 @@
 int
 main()
 {
-  vpRobotAfma6 robot ;
+  try
+  {
+    vpRobotAfma6 robot ;
 
-  vpERROR_TRACE(" ") ;
+    robot.setPosition(vpRobot::REFERENCE_FRAME,
+   		      -0.1,0.2,0.1,
+		      vpMath::rad(10),vpMath::rad(20),vpMath::rad(30)) ;
 
+    vpColVector q(6) ;
+    robot.getPosition(vpRobot::REFERENCE_FRAME, q) ;
+    cout << "Position in the reference frame " << q.t() ;
 
-  robot.setPosition(vpRobot::REFERENCE_FRAME,
-		    -0.1,0.2,0.1,
-		    vpMath::rad(10),vpMath::rad(20),vpMath::rad(30)) ;
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
+    cout << "Position in the articular frame " << q.t() ;
 
-  vpColVector q(6) ;
-  robot.getPosition(vpRobot::REFERENCE_FRAME, q) ;
-  cout << "Position in the reference frame " << q.t() ;
-
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
-  cout << "Position in the articular frame " << q.t() ;
-
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-  vpERROR_TRACE(" ") ;
-  q =0 ;
-  q[2] = 0.01 ;
-
-
-  robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
-  sleep(5) ;
-
-  q = 0 ;
-  q[1] = 0.01 ;
-
-  robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
-  sleep(5) ;
-
-  q = 0 ;
-  q[5] = 0.01 ;
-
-  robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
-  sleep(5) ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    vpERROR_TRACE(" ") ;
+    q =0 ;
+    q[2] = 0.01 ;
 
 
+    robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+    sleep(5) ;
 
+    q = 0 ;
+    q[1] = 0.01 ;
 
+    robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+    sleep(5) ;
+
+    q = 0 ;
+    q[5] = 0.01 ;
+
+    robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+    sleep(5) ;
+  }
+  catch (...)
+  {
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
 }
 #else
 int
