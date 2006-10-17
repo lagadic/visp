@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testRobotAfma6.cpp,v 1.5 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: testRobotAfma6.cpp,v 1.6 2006-10-17 16:01:50 mtallur Exp $
  *
  * Description
  * ============
@@ -39,20 +39,28 @@ int main()
 {
   cout << "a test..." << endl;
 
-  vpAfma6 afma6;
-  vpCTRACE << afma6;
+  try 
+  {
+    vpAfma6 afma6;
+    vpCTRACE << afma6;
 
-  vpRobotAfma6 robotAfma6;
+    vpRobotAfma6 robotAfma6;
 
-  vpCTRACE << "------- set camera 1394 -------------------" << endl;
-  robotAfma6.init( vpAfma6::CAMERA_IEEE1394_12MM);
+    vpCTRACE << "------- set camera 1394 -------------------" << endl;
+    robotAfma6.init( vpAfma6::CAMERA_IEEE1394_12MM);
 
-  vpCTRACE << robotAfma6;
+    vpCTRACE << robotAfma6;
 
-  vpCTRACE << "------- set camera XC77 -------------------" << endl;
-  robotAfma6.init( vpAfma6::CAMERA_XC77_12MM);
-  vpCTRACE << robotAfma6;
-  return 1;
+    vpCTRACE << "------- set camera XC77 -------------------" << endl;
+    robotAfma6.init( vpAfma6::CAMERA_XC77_12MM);
+    vpCTRACE << robotAfma6;
+    return 1;
+  }
+  catch (...)
+  {
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
 }
 #else
 int main()
