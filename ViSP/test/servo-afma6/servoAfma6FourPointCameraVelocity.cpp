@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6FourPointCameraVelocity.cpp,v 1.4 2006-08-28 16:00:06 fspindle Exp $
+ *  $Id: servoAfma6FourPointCameraVelocity.cpp,v 1.5 2006-10-18 13:42:54 mtallur Exp $
  *
  * Description
  * ============
@@ -60,132 +60,119 @@
 int
 main()
 {
-  vpImage<unsigned char> I ;
-  int i ;
+  try 
+  {
+    vpImage<unsigned char> I ;
+    int i ;
 
-  vpIcCompGrabber g(2) ;
-  g.open(I) ;
+    vpIcCompGrabber g(2) ;
+    g.open(I) ;
 
-  try{
     g.acquire(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-  vpTRACE(" ") ;
+    vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+    vpTRACE(" ") ;
 
-  try{
     vpDisplay::display(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
 
-  vpServo task ;
+    vpServo task ;
 
-  vpRobotAfma6 robot ;
-
-
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
-  cout << " Simulation " << endl ;
-  cout << " task : servo a point " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
+    vpRobotAfma6 robot ;
 
 
-  vpDot dot[4] ;
+    cout << endl ;
+    cout << "-------------------------------------------------------" << endl ;
+    cout << " Test program for vpServo "  <<endl ;
+    cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
+    cout << " Simulation " << endl ;
+    cout << " task : servo a point " << endl ;
+    cout << "-------------------------------------------------------" << endl ;
+    cout << endl ;
 
-  try{
+
+    vpDot dot[4] ;
+
     for (i=0 ; i < 4 ; i++)
       dot[i].initTracking(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
-  vpCameraParameters cam ;
+    vpCameraParameters cam ;
 
-  vpTRACE("sets the current position of the visual feature ") ;
-  vpFeaturePoint p[4] ;
-  for (i=0 ; i < 4 ; i++)
-    vpFeatureBuilder::create(p[i],cam, dot[i])  ;  //retrieve x,y  of the vpFeaturePoint structure
+    vpTRACE("sets the current position of the visual feature ") ;
+    vpFeaturePoint p[4] ;
+    for (i=0 ; i < 4 ; i++)
+      vpFeatureBuilder::create(p[i],cam, dot[i])  ;  //retrieve x,y  of the vpFeaturePoint structure
 
-  vpTRACE("sets the desired position of the visual feature ") ;
-  vpFeaturePoint pd[4] ;
+    vpTRACE("sets the desired position of the visual feature ") ;
+    vpFeaturePoint pd[4] ;
 #define L 0.075
 #define D 0.5
-  pd[0].buildFrom(-L,-L,D) ;
-  pd[1].buildFrom(L,-L,D) ;
-  pd[2].buildFrom(L,L,D) ;
-  pd[3].buildFrom(-L,L,D) ;
+    pd[0].buildFrom(-L,-L,D) ;
+    pd[1].buildFrom(L,-L,D) ;
+    pd[2].buildFrom(L,L,D) ;
+    pd[3].buildFrom(-L,L,D) ;
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t robot is controlled in the camera frame") ;
-  task.setServo(vpServo::EYEINHAND_CAMERA) ;
-  task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
+    vpTRACE("define the task") ;
+    vpTRACE("\t we want an eye-in-hand control law") ;
+    vpTRACE("\t robot is controlled in the camera frame") ;
+    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
 
-  vpTRACE("\t we want to see a point on a point..") ;
-  cout << endl ;
-  for (i=0 ; i < 4 ; i++)
-    task.addFeature(p[i],pd[i]) ;
-
-  vpTRACE("\t set the gain") ;
-  task.setLambda(0.2) ;
-
-
-  vpTRACE("Display task information " ) ;
-  task.print() ;
-
-
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-
-  int iter=0 ;
-  vpTRACE("\t loop") ;
-  while(1)
-  {
-    cout << "---------------------------------------------" << iter <<endl ;
-
-    g.acquire(I) ;
-    vpDisplay::display(I) ;
-
+    vpTRACE("\t we want to see a point on a point..") ;
+    cout << endl ;
     for (i=0 ; i < 4 ; i++)
-      dot[i].track(I) ;
+      task.addFeature(p[i],pd[i]) ;
 
-    //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
-    //			   10,vpColor::green) ;
+    vpTRACE("\t set the gain") ;
+    task.setLambda(0.2) ;
 
+
+    vpTRACE("Display task information " ) ;
     task.print() ;
 
-    for (i=0 ; i < 4 ; i++)
-      vpFeatureBuilder::create(p[i],cam, dot[i]);
+
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+
+    int iter=0 ;
+    vpTRACE("\t loop") ;
+    while(1)
+    {
+      cout << "---------------------------------------------" << iter <<endl ;
+
+      g.acquire(I) ;
+      vpDisplay::display(I) ;
+
+      for (i=0 ; i < 4 ; i++)
+        dot[i].track(I) ;
+
+      //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
+      //			   10,vpColor::green) ;
+
+      task.print() ;
+
+      for (i=0 ; i < 4 ; i++)
+        vpFeatureBuilder::create(p[i],cam, dot[i]);
 
 
-    vpColVector v ;
-    v = task.computeControlLaw() ;
+      vpColVector v ;
+      v = task.computeControlLaw() ;
 
-    vpServoDisplay::display(task,cam,I) ;
-    cout << v.t() ;
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+      vpServoDisplay::display(task,cam,I) ;
+      cout << v.t() ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+      vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    }
+
+    vpTRACE("Display task information " ) ;
+    task.print() ;
   }
-
-  vpTRACE("Display task information " ) ;
-  task.print() ;
+  catch (...)
+  {
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
 }
 
 #else

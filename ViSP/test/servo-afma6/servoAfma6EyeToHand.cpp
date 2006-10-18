@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6EyeToHand.cpp,v 1.5 2006-08-28 16:00:06 fspindle Exp $
+ *  $Id: servoAfma6EyeToHand.cpp,v 1.6 2006-10-18 13:42:54 mtallur Exp $
  *
  * Description
  * ============
@@ -67,52 +67,38 @@
 int
 main()
 {
-  vpCameraParameters cam ;
-  vpImage<unsigned char> I ;
-  int i ;
+  try 
+  {
+    vpCameraParameters cam ;
+    vpImage<unsigned char> I ;
+    int i ;
 
-  vpIcCompGrabber g(0) ;
-  g.open(I) ;
+    vpIcCompGrabber g(0) ;
+    g.open(I) ;
 
-  try{
     g.acquire(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-  vpTRACE(" ") ;
+    vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+    vpTRACE(" ") ;
 
-  try{
     vpDisplay::display(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
 
 
+    cout << endl ;
+    cout << "-------------------------------------------------------" << endl ;
+    cout << " Test program for vpServo "  <<endl ;
+    cout << " Eye-to-hand task control" << endl ;
+    cout << " Simulation " << endl ;
+    cout << " task : servo a point " << endl ;
+    cout << "-------------------------------------------------------" << endl ;
+    cout << endl ;
 
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " Eye-to-hand task control" << endl ;
-  cout << " Simulation " << endl ;
-  cout << " task : servo a point " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
+    int nbPoint =7 ;
 
-  int nbPoint =7 ;
+    vpDot dot[nbPoint] ;
 
-  vpDot dot[nbPoint] ;
-
-  try{
     for (i=0 ; i < nbPoint ; i++)
       {
 	dot[i].initTracking(I) ;
@@ -121,29 +107,23 @@ main()
 	vpDisplay::flush(I) ;
  	dot[i].setGraphics(false) ;
      }
- }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
-  // Compute the pose 3D model
-  vpPoint point[nbPoint] ;
-  point[0].setWorldCoordinates(-2*L,D, -3*L) ;
-  point[1].setWorldCoordinates(0,D, -3*L) ;
-  point[2].setWorldCoordinates(2*L,D, -3*L) ;
+    // Compute the pose 3D model
+    vpPoint point[nbPoint] ;
+    point[0].setWorldCoordinates(-2*L,D, -3*L) ;
+    point[1].setWorldCoordinates(0,D, -3*L) ;
+    point[2].setWorldCoordinates(2*L,D, -3*L) ;
 
-  point[3].setWorldCoordinates(-L,D,-L) ;
-  point[4].setWorldCoordinates(L,D, -L) ;
-  point[5].setWorldCoordinates(L,D, L) ;
-  point[6].setWorldCoordinates(-L,D, L) ;
+    point[3].setWorldCoordinates(-L,D,-L) ;
+    point[4].setWorldCoordinates(L,D, -L) ;
+    point[5].setWorldCoordinates(L,D, L) ;
+    point[6].setWorldCoordinates(-L,D, L) ;
 
 
-  vpHomogeneousMatrix cMo, cdMo ;
-  vpPose pose ;
-  pose.clearPoint() ;
-  for (i=0 ; i < nbPoint ; i++)
+    vpHomogeneousMatrix cMo, cdMo ;
+    vpPose pose ;
+    pose.clearPoint() ;
+    for (i=0 ; i < nbPoint ; i++)
     {
       double x,y ;
       vpPixelMeterConversion::convertPoint(cam,
@@ -154,25 +134,25 @@ main()
       pose.addPoint(point[i]) ;
     }
 
-  // compute the initial pose using Dementhon method followed by a non linear
-  // minimisation method
-  pose.computePose(vpPose::DEMENTHON_LOWE, cMo) ;
+    // compute the initial pose using Dementhon method followed by a non linear
+    // minimisation method
+    pose.computePose(vpPose::DEMENTHON_LOWE, cMo) ;
 
 
-  cout << cMo << endl  ;
-  cMo.print() ;
+    cout << cMo << endl  ;
+    cMo.print() ;
 
-  /*------------------------------------------------------------------
-    --  Learning the desired position
-    --  or reading the desired position
-    ------------------------------------------------------------------
-  */
-  cout << " Learning 0/1 " <<endl ;
-  char name[FILENAME_MAX] ;
-  sprintf(name,"cdMo.dat") ;
-  int learning ;
-  cin >> learning ;
-  if (learning ==1)
+    /*------------------------------------------------------------------
+      --  Learning the desired position
+      --  or reading the desired position
+      ------------------------------------------------------------------
+    */
+    cout << " Learning 0/1 " <<endl ;
+    char name[FILENAME_MAX] ;
+    sprintf(name,"cdMo.dat") ;
+    int learning ;
+    cin >> learning ;
+    if (learning ==1)
     {
       // save the object position
       vpTRACE("Save the location of the object in a file cdMo.dat") ;
@@ -183,82 +163,82 @@ main()
     }
 
 
-  vpServo task ;
-  vpRobotAfma6 robot ;
+    vpServo task ;
+    vpRobotAfma6 robot ;
 
-  {
-    vpTRACE("Loading desired location from cdMo.dat") ;
-    ifstream f("cdMo.dat") ;
-    cdMo.load(f) ;
-    f.close() ;
-  }
-
-  vpFeaturePoint p[nbPoint], pd[nbPoint] ;
-
-  // set the desired position of the point by forward projection using
-  // the pose cdMo
-  for (i=0 ; i < nbPoint ; i++)
     {
-      vpColVector cP, p ;
-      point[i].changeFrame(cdMo, cP) ;
-      point[i].projection(cP, p) ;
-
-      pd[i].set_x(p[0]) ;
-      pd[i].set_y(p[1]) ;
+      vpTRACE("Loading desired location from cdMo.dat") ;
+      ifstream f("cdMo.dat") ;
+      cdMo.load(f) ;
+      f.close() ;
     }
 
+    vpFeaturePoint p[nbPoint], pd[nbPoint] ;
+
+    // set the desired position of the point by forward projection using
+    // the pose cdMo
+    for (i=0 ; i < nbPoint ; i++)
+      {
+        vpColVector cP, p ;
+        point[i].changeFrame(cdMo, cP) ;
+        point[i].projection(cP, p) ;
+
+        pd[i].set_x(p[0]) ;
+        pd[i].set_y(p[1]) ;
+      }
 
 
-  //------------------------------------------------------------------
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t robot is controlled in the camera frame") ;
-  task.setServo(vpServo::EYETOHAND_L_cVe_eJe) ;
-  task.setInteractionMatrixType(vpServo::CURRENT) ;
+    //------------------------------------------------------------------
+
+    vpTRACE("define the task") ;
+    vpTRACE("\t we want an eye-in-hand control law") ;
+    vpTRACE("\t robot is controlled in the camera frame") ;
+    task.setServo(vpServo::EYETOHAND_L_cVe_eJe) ;
+    task.setInteractionMatrixType(vpServo::CURRENT) ;
 
 
-  for (i=0 ; i < nbPoint ; i++)
+    for (i=0 ; i < nbPoint ; i++)
     {
       task.addFeature(p[i],pd[i]) ;
     }
 
 
-  vpTRACE("Display task information " ) ;
-  task.print() ;
+    vpTRACE("Display task information " ) ;
+    task.print() ;
 
 
-  //------------------------------------------------------------------
+    //------------------------------------------------------------------
 
 
-  double convergence_threshold = 0.00; //025 ;
-  vpDisplay::getClick(I) ;
+    double convergence_threshold = 0.00; //025 ;
+    vpDisplay::getClick(I) ;
 
-  //-------------------------------------------------------------
-  double error =1 ;
-  int iter=0 ;
-  vpTRACE("\t loop") ;
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-  vpColVector v ; // computed robot velocity
+    //-------------------------------------------------------------
+    double error =1 ;
+    int iter=0 ;
+    vpTRACE("\t loop") ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    vpColVector v ; // computed robot velocity
 
 
-  // position of the object in the effector frame
-  vpHomogeneousMatrix oMcamrobot ;
-  oMcamrobot[0][3] = -0.05 ;
+    // position of the object in the effector frame
+    vpHomogeneousMatrix oMcamrobot ;
+    oMcamrobot[0][3] = -0.05 ;
 
-  vpImage<vpRGBa> Ic ;
-  int it = 0 ;
+    vpImage<vpRGBa> Ic ;
+    int it = 0 ;
 
-  double lambda_av =0.1;
-  double alpha = 1 ; //1 ;
-  double beta =3 ; //3 ;
+    double lambda_av =0.1;
+    double alpha = 1 ; //1 ;
+    double beta =3 ; //3 ;
 
-  cout << "alpha 0.7" << endl;
-  cin >> alpha ;
-  cout << "beta 5" << endl;
- cin >> beta ;
-  vpList<double> Lu, Lv ;
-  while(error > convergence_threshold)
+    cout << "alpha 0.7" << endl;
+    cin >> alpha ;
+    cout << "beta 5" << endl;
+    cin >> beta ;
+    vpList<double> Lu, Lv ;
+    while(error > convergence_threshold)
     {
       cout << "---------------------------------------------" << iter++ <<endl ;
 
@@ -383,10 +363,15 @@ main()
 	  vpImageIo::writePPM(Ic,name) ;
 	}
     }
-  v = 0 ;
-  robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-  vpDisplay::getClick(I) ;
-
+    v = 0 ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    vpDisplay::getClick(I) ;
+  }
+  catch (...)
+  {
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
 }
 
 #else
