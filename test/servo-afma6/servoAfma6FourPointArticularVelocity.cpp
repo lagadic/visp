@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoAfma6FourPointArticularVelocity.cpp,v 1.4 2006-08-28 16:00:06 fspindle Exp $
+ *  $Id: servoAfma6FourPointArticularVelocity.cpp,v 1.5 2006-10-18 13:42:54 mtallur Exp $
  *
  * Description
  * ============
@@ -61,122 +61,102 @@
 int
 main()
 {
-  vpImage<unsigned char> I ;
-  int i ;
+  try
+  {
+    vpImage<unsigned char> I ;
+    int i ;
 
-  vpIcCompGrabber g(2) ;
-  g.open(I) ;
+    vpIcCompGrabber g(2) ;
+    g.open(I) ;
 
-  try{
     g.acquire(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
+    vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+    vpTRACE(" ") ;
 
-  vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-  vpTRACE(" ") ;
-
-  try{
     vpDisplay::display(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
 
-  vpServo task ;
+    vpServo task ;
 
-  vpRobotAfma6 robot ;
-
-
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
-  cout << " Simulation " << endl ;
-  cout << " task : servo a point " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
+    vpRobotAfma6 robot ;
 
 
-  vpDot dot[4] ;
+    cout << endl ;
+    cout << "-------------------------------------------------------" << endl ;
+    cout << " Test program for vpServo "  <<endl ;
+    cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
+    cout << " Simulation " << endl ;
+    cout << " task : servo a point " << endl ;
+    cout << "-------------------------------------------------------" << endl ;
+    cout << endl ;
 
-  try{
+
+    vpDot dot[4] ;
+
     for (i=0 ; i < 4 ; i++)
       dot[i].initTracking(I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
 
-  vpCameraParameters cam ;
+    vpCameraParameters cam ;
 
-  vpTRACE("sets the current position of the visual feature ") ;
-  vpFeaturePoint p[4] ;
-  for (i=0 ; i < 4 ; i++)
-    vpFeatureBuilder::create(p[i],cam, dot[i])  ;  //retrieve x,y and Z of the vpPoint structure
+    vpTRACE("sets the current position of the visual feature ") ;
+    vpFeaturePoint p[4] ;
+    for (i=0 ; i < 4 ; i++)
+      vpFeatureBuilder::create(p[i],cam, dot[i])  ;  //retrieve x,y and Z of the vpPoint structure
 
-  vpTRACE("sets the desired position of the visual feature ") ;
-  vpFeaturePoint pd[4] ;
+    vpTRACE("sets the desired position of the visual feature ") ;
+    vpFeaturePoint pd[4] ;
 
 #define L 0.075
 #define D 0.5
 
-  pd[0].buildFrom(-L,-L,D) ;
-  pd[1].buildFrom(L,-L,D) ;
-  pd[2].buildFrom(L,L,D) ;
-  pd[3].buildFrom(-L,L,D) ;
+    pd[0].buildFrom(-L,-L,D) ;
+    pd[1].buildFrom(L,-L,D) ;
+    pd[2].buildFrom(L,L,D) ;
+    pd[3].buildFrom(-L,L,D) ;
 
-  vpTRACE("\t we want to see a point on a point..") ;
-  cout << endl ;
-  for (i=0 ; i < 4 ; i++)
-    task.addFeature(p[i],pd[i]) ;
+    vpTRACE("\t we want to see a point on a point..") ;
+    cout << endl ;
+    for (i=0 ; i < 4 ; i++)
+      task.addFeature(p[i],pd[i]) ;
 
-  vpTRACE("\t set the gain") ;
-  task.setLambda(0.2) ;
+    vpTRACE("\t set the gain") ;
+    task.setLambda(0.2) ;
 
 
-  vpTRACE("Display task information " ) ;
-  task.print() ;
+    vpTRACE("Display task information " ) ;
+    task.print() ;
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t articular velocity are computed") ;
-  task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
-  task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
-  task.print() ;
+    vpTRACE("define the task") ;
+    vpTRACE("\t we want an eye-in-hand control law") ;
+    vpTRACE("\t articular velocity are computed") ;
+    task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
+    task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
+    task.print() ;
 
-  vpTwistMatrix cVe ;
-  robot.get_cVe(cVe) ;
-  task.set_cVe(cVe) ;
-  task.print() ;
+    vpTwistMatrix cVe ;
+    robot.get_cVe(cVe) ;
+    task.set_cVe(cVe) ;
+    task.print() ;
 
-  vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
-  vpMatrix eJe ;
-  robot.get_eJe(eJe) ;
-  task.set_eJe(eJe) ;
-  task.print() ;
+    vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+    vpMatrix eJe ;
+    robot.get_eJe(eJe) ;
+    task.set_eJe(eJe) ;
+    task.print() ;
 
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
-  int iter=0 ;
-  vpTRACE("\t loop") ;
-  while(1)
-  {
-    cout << "---------------------------------------------" << iter <<endl ;
+    int iter=0 ;
+    vpTRACE("\t loop") ;
+    while(1)
+    {
+      cout << "---------------------------------------------" << iter <<endl ;
 
-    g.acquire(I) ;
-    vpDisplay::display(I) ;
+      g.acquire(I) ;
+      vpDisplay::display(I) ;
 
-    try
+      try
       {
 	for (i=0 ; i < 4 ; i++)
 	  dot[i].track(I) ;
@@ -191,26 +171,32 @@ main()
     //			   10,vpColor::green) ;
 
 
-    for (i=0 ; i < 4 ; i++)
-      vpFeatureBuilder::create(p[i],cam, dot[i]);
+      for (i=0 ; i < 4 ; i++)
+        vpFeatureBuilder::create(p[i],cam, dot[i]);
 
 
-    // get the jacobian
-    robot.get_eJe(eJe) ;
-    task.set_eJe(eJe) ;
+      // get the jacobian
+      robot.get_eJe(eJe) ;
+      task.set_eJe(eJe) ;
 
-    vpColVector v ;
-    v = task.computeControlLaw() ;
+      vpColVector v ;
+      v = task.computeControlLaw() ;
 
-    vpServoDisplay::display(task,cam,I) ;
-    cout << v.t() ;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
+      vpServoDisplay::display(task,cam,I) ;
+      cout << v.t() ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
-    vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+      vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+    }
+
+    vpTRACE("Display task information " ) ;
+    task.print() ;
   }
-
-  vpTRACE("Display task information " ) ;
-  task.print() ;
+  catch (...)
+  {
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
 }
 
 #else

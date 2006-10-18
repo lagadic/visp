@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testRobotAfma6.cpp,v 1.6 2006-10-17 16:01:50 mtallur Exp $
+ *  $Id: testRobotAfma6.cpp,v 1.7 2006-10-18 13:42:54 mtallur Exp $
  *
  * Description
  * ============
@@ -54,7 +54,7 @@ int main()
     vpCTRACE << "------- set camera XC77 -------------------" << endl;
     robotAfma6.init( vpAfma6::CAMERA_XC77_12MM);
     vpCTRACE << robotAfma6;
-    return 1;
+    return 0;
   }
   catch (...)
   {
