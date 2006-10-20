@@ -9,7 +9,7 @@
  * Version control
  * ===============
  *
- *  $Id: testRobotAfma4.cpp,v 1.4 2006-06-23 14:45:07 brenier Exp $
+ *  $Id: testRobotAfma4.cpp,v 1.5 2006-10-20 14:04:39 mtallur Exp $
  *
  * Description
  * ============
@@ -38,14 +38,22 @@ int gsl_warnings_off;
 
 int main()
 {
-  cout << "a test..." << endl;
+  try 
+  {
+    cout << "a test..." << endl;
 
-  vpAfma4 afma4;
-  vpCTRACE << afma4;
+    vpAfma4 afma4;
+    vpCTRACE << afma4;
 
-  vpRobotAfma4 robotAfma4;
-  vpCTRACE << robotAfma4;
-  return 1;
+    vpRobotAfma4 robotAfma4;
+    vpCTRACE << robotAfma4;
+    return 1;
+  }
+  catch (...)
+  {
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
 }
 
 #else
