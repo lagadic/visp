@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testCircle.cpp,v 1.12 2006-09-18 09:18:59 fspindle Exp $
+ * $Id: testCircle.cpp,v 1.13 2006-10-30 15:50:37 mtallur Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,8 +68,11 @@
 #include <visp/vpIoTools.h>
 
 
-#define GETOPTARGS	"i:h"
+#define GETOPTARGS	"cdi:h"
 #define SAVE 0
+
+bool opt_click_allowed = true;
+bool opt_display = true;
 
 /*
 
@@ -86,7 +89,7 @@ void usage(char *name, char *badparam, string ipath)
 Test image conversions.\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] [-h]\n\
+  %s [-p <input image path>] [-c] [-d] [-h]\n\
 ", name);
 
   fprintf(stdout, "\n\
@@ -98,6 +101,15 @@ OPTIONS:                                               Default\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
+\n\
+  -c\n\
+     Disable keyboard input. Useful to automate the \n\
+     execution of this program without humain intervention.\n\
+\n\
+  -d                                             \n\
+     Disable the image display. This can be useful \n\
+     for automatic tests using crontab under Unix or \n\
+     using the task manager under Windows.\n\
 \n\
   -h\n\
      Print the help.\n\n",
@@ -113,13 +125,15 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath)
+bool getOptions(int argc, char **argv, string &ipath, bool &click_allowed, bool &display)
 {
   char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
+    case 'c': click_allowed = false; break;
+    case 'd': display = false; break;
     case 'i': ipath = optarg; break;
     case 'h': usage(argv[0], NULL, ipath); return false; break;
 
@@ -222,8 +236,10 @@ void *mainLoop (void *_simu)
   task.print() ;
 
   vpTime::wait(1000); // Sleep 1s
-  cout << "\nEnter a character to continue... " <<endl ;
-  {    int a ; cin >> a ; }
+  if (opt_click_allowed) {
+    cout << "\nEnter a character to continue... " <<endl ;
+    {    int a ; cin >> a ; }
+  }
 
   int iter=0 ;
   vpTRACE("\t loop") ;
@@ -299,7 +315,7 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
@@ -334,22 +350,25 @@ main(int argc, char ** argv)
   vpCameraParameters cam ;
   vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
 
-  vpSimulator simu ;
-  simu.initInternalViewer(300, 300) ;
-  simu.initExternalViewer(300, 300) ;
+  if (opt_display) {
+  
+    vpSimulator simu ;
+    simu.initInternalViewer(300, 300) ;
+    simu.initExternalViewer(300, 300) ;
 
-  vpTime::wait(1000) ;
-  simu.setZoomFactor(0.2) ;
-  simu.addAbsoluteFrame() ;
+    vpTime::wait(1000) ;
+    simu.setZoomFactor(0.2) ;
+    simu.addAbsoluteFrame() ;
 
-  // Load the cad model
-  filename = ipath +  vpIoTools::path("/ViSP-images/iv/circle.iv");
-  simu.load(filename.c_str(),fMo) ;
+    // Load the cad model
+    filename = ipath +  vpIoTools::path("/ViSP-images/iv/circle.iv");
+    simu.load(filename.c_str(),fMo) ;
 
-  simu.setInternalCameraParameters(cam) ;
-  simu.initApplication(&mainLoop) ;
+    simu.setInternalCameraParameters(cam) ;
+    simu.initApplication(&mainLoop) ;
 
-  simu.mainLoop() ;
+    simu.mainLoop() ;
+  }
 }
 
 
