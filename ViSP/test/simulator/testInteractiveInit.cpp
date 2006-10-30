@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testInteractiveInit.cpp,v 1.11 2006-09-18 09:18:59 fspindle Exp $
+ * $Id: testInteractiveInit.cpp,v 1.12 2006-10-30 15:50:37 mtallur Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,7 +63,7 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 
-#define GETOPTARGS	"i:h"
+#define GETOPTARGS	"di:h"
 #define SAVE 0
 
 /*
@@ -94,6 +94,11 @@ OPTIONS:                                               Default\n\
      variable produces the same behaviour than using\n\
      this option.\n\
 \n\
+  -d                                             \n\
+     Disable the image display. This can be useful \n\
+     for automatic tests using crontab under Unix or \n\
+     using the task manager under Windows.\n\
+\n\
   -h\n\
      Print the help.\n\n",
 	  ipath.c_str());
@@ -105,10 +110,15 @@ OPTIONS:                                               Default\n\
   Set the program options.
 
   \param ipath: Input image path.
+  \param display : Set as true, activates the image display. This is
+  the default configuration. When set to false, the display is
+  disabled. This can be usefull for automatic tests using crontab
+  under Unix or using the task manager under Windows.
+  
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath)
+bool getOptions(int argc, char **argv, string &ipath, bool &display)
 {
   char *optarg;
   int	c;
@@ -116,6 +126,7 @@ bool getOptions(int argc, char **argv, string &ipath)
 
     switch (c) {
     case 'i': ipath = optarg; break;
+    case 'd': display = false; break;
     case 'h': usage(argv[0], NULL, ipath); return false; break;
 
     default:
@@ -231,8 +242,8 @@ void *mainLoop (void *_simu)
 
     vpTime::wait(1000); // Sleep 1s
     cout << "\nEnter a character to continue or CTRL-C to quit... " <<endl ;
-    {    int a ; cin >> a ; }
-
+    {    char a ; cin >> a ; }
+        
     int iter=0 ;
     vpTRACE("\t loop") ;
     while(iter++<100)
@@ -262,8 +273,7 @@ void *mainLoop (void *_simu)
     vpTRACE("Display task information " ) ;
     task.print() ;
     cout << "\nEnter a character to continue..." <<endl ;
-    {    int a ; cin >> a ; }
-
+    {    char a ; cin >> a ; }
   }
 
   simu->closeMainApplication() ;
@@ -284,6 +294,7 @@ main(int argc, char ** argv)
   string ipath;
   string filename;
   string username;
+  bool opt_display = true;
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -295,7 +306,7 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_display) == false) {
     exit (-1);
   }
 
@@ -330,22 +341,25 @@ main(int argc, char ** argv)
   vpCameraParameters cam ;
   vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
 
-  vpSimulator simu ;
-  simu.initInternalViewer(300, 300) ;
-  simu.initExternalViewer(300, 300) ;
+  
+  if (opt_display) {
+    vpSimulator simu ;
+    simu.initInternalViewer(300, 300) ;
+    simu.initExternalViewer(300, 300) ;
 
-  vpTime::wait(1000) ;
-  simu.setZoomFactor(0.2) ;
+    vpTime::wait(1000) ;
+    simu.setZoomFactor(0.2) ;
 
-  // Load the cad model
-  filename = ipath +  vpIoTools::path("/ViSP-images/iv/4points.iv");
-  simu.load(filename.c_str()) ;
+    // Load the cad model
+    filename = ipath +  vpIoTools::path("/ViSP-images/iv/4points.iv");
+    simu.load(filename.c_str()) ;
 
-  simu.setInternalCameraParameters(cam) ;
-  simu.setExternalCameraParameters(cam) ;
-  simu.initApplication(&mainLoop) ;
+    simu.setInternalCameraParameters(cam) ;
+    simu.setExternalCameraParameters(cam) ;
+    simu.initApplication(&mainLoop) ;
 
-  simu.mainLoop() ;
+    simu.mainLoop() ;
+  }
 }
 
 #else
