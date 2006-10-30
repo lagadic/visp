@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpMeSite.cpp,v 1.6 2006-10-30 12:34:16 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,8 +62,8 @@
 #include <visp/vpMe.h>
 #include <visp/vpTrackingException.h>
 
-#define DEBUG_LEVEL2 1
-#define DEBUG_LEVEL3 1
+#define DEBUG_LEVEL2 0
+#define DEBUG_LEVEL3 0
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -220,7 +220,7 @@ vpMeSite::getQueryList(vpImage<unsigned char> &I, const int range)
     ii = (ifloat+k*salpha);
     jj = (jfloat+k*calpha);
 
-    if    ((selectDisplay==RANGE_RESULT)||(selectDisplay==RANGE))
+    //   if    ((selectDisplay==RANGE_RESULT)||(selectDisplay==RANGE))
       vpDisplay::displayCross(I,vpMath::round(ii),vpMath::round(jj),1,vpColor::blue) ;
 
     // Copy parent's convolution
@@ -355,9 +355,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
 
     //   convolution results
     convolution = list_query_pixels[n].convolution(I ,me) ;
-    //   cout << convlt << "  " << convolution <<"  " ;
 
-    //       cout << "convolution  = "<< convolution <<endl ;
     // luminance ratio of reference pixel to potential correspondent pixel
     // the luminance must be similar, hence the ratio value should
     // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
@@ -370,11 +368,10 @@ vpMeSite::track(vpImage<unsigned char>& I,
 	delete []list_query_pixels ;
 	delete []likelyhood;
 	throw(vpTrackingException(vpTrackingException::initializationError,
-				  "Division by zero")) ;//	return fatalError  ;
+				  "Division by zero")) ;
       }
-      //      vpERROR_TRACE(" %f %f",convolution,convlt)  ;
+
       contraste = fabs(convolution / convlt) ;
-      //      cout << "contraste " << contraste <<endl ;
       // likelihood ratios
       if((contraste > contraste_min) && (contraste < contraste_max))
 	likelyhood[n] = fabs(convolution + convlt ) ;
@@ -384,7 +381,6 @@ vpMeSite::track(vpImage<unsigned char>& I,
     else
       likelyhood[n] = fabs(2*convolution) ;
 
-    //   cout << i << "  " << j <<  "  " << likelyhood[n]  << "  " << contraste << endl ;
     // establishment of the maximal likelihood ratios's  rank
     // in the array, the value of the likelihood ratio can now be
     // referenced by its rank in the array
@@ -397,33 +393,15 @@ vpMeSite::track(vpImage<unsigned char>& I,
       max_rank1 = max_rank;
     }
 
-    //   cout << likelyhood[n] << " " << max << "   " <<  me->threshold <<endl ;
-    /*  if (0)
-    {
-    if(likelyhood[n] > threshold)
-    {
-
-      vpDisplay::displayPoint(I, list_query_pixels[n].i,list_query_pixels[n].j, vpColor::blue);
-      vpDisplay::flush(I) ;
-
-    }
-    else
-    {
-      vpDisplay::displayPoint(I, list_query_pixels[n].i,list_query_pixels[n].j, vpColor::green);
-      vpDisplay::flush(I) ;
-    }
-    }
-    */
   }
-  //  cout << "max " << max << endl ;
-
+  
   // test on the likelihood threshold if threshold==-1 then
   // the me->threshold is  selected
 
   //  if (test_contrast)
   if(max > threshold)
   {
-       if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
+    if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
     {
       vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::red);
       vpDisplay::flush(I) ;
@@ -432,8 +410,8 @@ vpMeSite::track(vpImage<unsigned char>& I,
     *this = list_query_pixels[max_rank] ;
 
     convlt = max_convolution;
-    i_1 = ii_1;//list_query_pixels[max_rank].i ;
-    j_1 = jj_1;//list_query_pixels[max_rank].j ;
+    i_1 = ii_1; //list_query_pixels[max_rank].i ;
+    j_1 = jj_1; //list_query_pixels[max_rank].j ;
     delete []list_query_pixels ;
     delete []likelyhood;
   }
@@ -453,11 +431,8 @@ vpMeSite::track(vpImage<unsigned char>& I,
     delete []list_query_pixels ;
     delete []likelyhood; // modif portage
   }
-
-  //  if( test_contraste )
-      //  vpDisplay::getClick(I) ;
-
 }
+
 int vpMeSite::operator!=(const vpMeSite &m)
 {
   return((m.i != i) || (m.j != j)) ;
