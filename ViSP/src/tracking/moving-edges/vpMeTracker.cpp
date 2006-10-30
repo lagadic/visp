@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpMeTracker.cpp,v 1.5 2006-10-30 12:34:37 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -321,7 +321,6 @@ vpMeTracker::display(vpImage<unsigned char>& I)
     cout <<"begin vpMeTracker::displayList() " << endl ;
     cout<<" There are "<<list.nbElement()<< " sites in the list " << endl ;
   }
-
   list.front();
 
   while (!list.outside())
