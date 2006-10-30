@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.7 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpSimulator.cpp,v 1.8 2006-10-30 15:52:24 mtallur Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -596,7 +596,7 @@ vpSimulator::mainLoop()
 {
   if (mainWindowInitialized==false)
   {
-    vpERROR_TRACE("main window is not openned ") ;
+    vpERROR_TRACE("main window is not opened ") ;
   }
 
   vpTime::wait(1000) ;
@@ -819,7 +819,8 @@ vpSimulator::initMainApplication()
 void
 vpSimulator::closeMainApplication()
 {
-  pthread_exit (NULL);
+  SoQt::exitMainLoop() ;
+  //pthread_exit (NULL);
 }
 
 
