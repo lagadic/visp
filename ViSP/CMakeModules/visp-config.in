@@ -2,7 +2,7 @@
 
 #############################################################################
 #
-# $Id: visp-config.in,v 1.4 2006-05-30 08:35:02 fspindle Exp $
+# $Id: visp-config.in,v 1.5 2006-11-06 15:52:39 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -50,15 +50,20 @@ VERSION="${VISP_CONFIG_SCRIPT_VERSION}"
 usage()
 {
     cat <<EOF
+
+ViSP $VERSION (Visual Servoing Platform)
+Copyright (C) 1998-2006 Inria. All rights reserved.
+
 Usage: $0 [--prefix] [--cflags] [--libs] [--version] [--help]
 
-  --prefix    Show ViSP-2 installation prefix.
-  --cflags    Print pre-processor and compiler flags including
-              third party includes we depend on.
-  --libs      Print library linking information with ViSP-2
-              including third party libraries we depend on.
-  --version   Output ViSP-2 version information.
-  --help      Display this help and exit.
+  --prefix      Show ViSP installation prefix.
+  --cflags      Print pre-processor and compiler flags including
+                third party includes we depend on.
+  --libs        Print library linking information with ViSP
+                including third party libraries we depend on.
+  --version     Output ViSP information.
+  --dumpversion Output ViSP version information.
+  --help        Display this help and exit.
 
 EOF
     exit $1
@@ -71,11 +76,15 @@ fi;
 
 for arg in $@; do
     case $arg in
-	--prefix) echo -n " $PREFIX";;
-	--cflags) echo -n " $CFLAGS";;
-	--libs) echo -n " $LIBS";;
-	--version) echo -n " $VERSION";;
+	--prefix) echo -n "$PREFIX";;
+	--cflags) echo -n "$CFLAGS";;
+	--libs) echo -n "$LIBS";;
+	--version) 
+	    echo -n "ViSP $VERSION (Visual Servoing Platform)"
+	    echo ""
+	    echo -n "Copyright (C) 1998-2006 Inria. All rights reserved.";;
+	--dumpversion) echo -n "$VERSION";;
 	*) usage; exit -1 ;;
     esac;
 done;
-echo -e "\n"
+echo ""

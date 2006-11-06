@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.27 2006-10-06 09:06:46 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.28 2006-11-06 15:52:39 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -48,7 +48,7 @@ SET(VISP_MAJOR_VERSION 2)
 SET(VISP_MINOR_VERSION 2)
 SET(VISP_PATCH_VERSION 0)
 SET(VISP_VERSION "${VISP_MAJOR_VERSION}.${VISP_MINOR_VERSION}")
-SET(VISP_VERSION_FULL "${VISP_VERSION}.${VISP_VERSION_PATCH}")      
+SET(VISP_VERSION_FULL "${VISP_VERSION}.${VISP_PATCH_VERSION}")      
 
 #SET(VISP_INCLUDE_DIR "${VISP_SOURCE_DIR}/include/visp-${VISP_VERSION_FULL}")
 SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")
