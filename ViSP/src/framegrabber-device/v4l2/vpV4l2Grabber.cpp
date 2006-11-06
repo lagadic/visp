@@ -1,21 +1,39 @@
-/*                                                                -*-c++-*-
-#----------------------------------------------------------------------------
-#  Copyright (C) 2005  IRISA-INRIA Rennes Vista Project
-#  All Rights Reserved.
-#
-#
-#    Contact:
-#       Fabien Spindler
-#       IRISA-INRIA Rennes
-#       Campus Universitaire de Beaulieu
-#       35042 Rennes Cedex
-#       France
-#
-#    email: fspindle@irisa.fr
-#    www  : http://www.irisa.fr/lagadic
-#
-#----------------------------------------------------------------------------
-*/
+/****************************************************************************
+ *
+ * $Id: vpV4l2Grabber.cpp,v 1.7 2006-11-06 16:15:47 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Framegrabber based on itifg-8.x (Coreco Imaging Technology) driver.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 /*!
   \file vpV4l2Grabber.cpp
@@ -70,22 +88,23 @@ const int vpV4l2Grabber::FRAME_SIZE    = 288;
   - Framerate acquisition: 25 fps. Use setFramerate() to set 25 fps or 50
     fps. These framerates are reachable only if enought buffers are set.
 
-  - Input board: vpV4l2Grabber::DEFAULT_INPUT. Use setInput() to change it.
+  - Input board: vpV4l2Grabber::DEFAULT_INPUT. Video input port. Use setInput()
+    to change it.
 
   - Image size acquisition: vpV4l2Grabber::DEFAULT_SCALE. Use either setScale()
     or setWidth() and setHeight to change it.
 
     \code
-    vpImage<unsigned char> I;
+    vpImage<unsigned char> I; // Grey level image
 
     vpV4l2Grabber g;
     g.setInput(2);    // Input 2 on the board
-    g.setWidth(384);  // Acquired images are 384 width
-    g.setHeight(288); // Acquired images are 288 height
+    g.setWidth(768);  // Acquired images are 768 width
+    g.setHeight(576); // Acquired images are 576 height
     g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
     g.open(I);        // Open the grabber
 
-    g.acquire(I);     // Acquire the first image
+    g.acquire(I);     // Acquire a 768x576 grey image
 
     \endcode
 
@@ -122,14 +141,34 @@ vpV4l2Grabber::vpV4l2Grabber()
 /*!
   Constructor.
 
-  \param _input : video port
-  \param _scale : decimation factor
+  Setup the Video For Linux Two (V4L2) driver in streaming mode.
 
-  By default the framerate is set to 25 fps.
+  \param input : Video input port.
+  \param scale : Decimation factor.
 
-  \sa setFramerate()
+  Default settings are:
+
+  - Device name: /dev/video0: To change it use setDevice()
+
+  - Number of ring buffers: 3. To change this value use setNBuffers(). For non
+    real-time applications the number of buffers should be set to 1. For
+    real-time applications to reach 25 fps or 50 fps a good compromise is to
+    set the number of buffers to 3.
+
+  - Framerate acquisition: 25 fps. Use setFramerate() to set 25 fps or 50
+    fps. These framerates are reachable only if enought buffers are set.
+
+    \code
+    vpImage<unsigned char> I; // Grey level image
+
+    vpV4l2Grabber g(1, 2); // Select input 1, and half full size resolution images.
+    g.open(I);             // Open the grabber
+
+    g.acquire(I);          // Acquire a 384x288 grey image
+
+    \endcode
 */
-vpV4l2Grabber::vpV4l2Grabber( unsigned _input, unsigned _scale)
+vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
 {
   fd        = -1;
   streaming = false;
@@ -151,8 +190,8 @@ vpV4l2Grabber::vpV4l2Grabber( unsigned _input, unsigned _scale)
   setDevice("/dev/video0");
   setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
-  setInput(_input);
-  setScale(_scale);
+  setInput(input);
+  setScale(scale);
 
   init = false;
 }
@@ -160,15 +199,36 @@ vpV4l2Grabber::vpV4l2Grabber( unsigned _input, unsigned _scale)
 /*!
   Constructor.
 
-  \param I : Image data structure (8 bits image)
-  \param _input : video port
-  \param _scale : decimation factor
+  Setup the Video For Linux Two (V4L2) driver in streaming mode.
 
-  By default the framerate is set to 25 fps.
+  \param I : Image data structure (grey 8 bits image)
+  \param input : Video input port.
+  \param scale : Decimation factor.
 
-  \sa setFramerate()
+  Default settings are:
+
+  - Device name: /dev/video0: To change it use setDevice()
+
+  - Number of ring buffers: 3. To change this value use setNBuffers(). For non
+    real-time applications the number of buffers should be set to 1. For
+    real-time applications to reach 25 fps or 50 fps a good compromise is to
+    set the number of buffers to 3.
+
+  - Framerate acquisition: 25 fps. Use setFramerate() to set 25 fps or 50
+    fps. These framerates are reachable only if enought buffers are set.
+
+    \code
+    vpImage<unsigned char> I; // Grey level image
+
+    vpV4l2Grabber g(I, 1, 2); // Select input 1, and half full size resolution
+                              // images and open the grabber
+
+    g.acquire(I);             // Acquire a 384x288 grey image
+
+    \endcode
 */
-vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned _input, unsigned _scale )
+vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I,
+			     unsigned input, unsigned scale )
 {
   fd        = -1;
   streaming = false;
@@ -190,8 +250,8 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned _input, unsigne
   setDevice("/dev/video0");
   setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
-  setInput(_input);
-  setScale(_scale);
+  setInput(input);
+  setScale(scale);
 
   init = false;
 
@@ -199,15 +259,36 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned _input, unsigne
 }
 
 /*!
-  Constructor. Not implemented yet.
+  Constructor.
 
-  \param I : Image data structure (32 bits image)
-  \param _input : video port
-  \param _scale : decimation factor
+  Setup the Video For Linux Two (V4L2) driver in streaming mode.
 
-  By default the framerate is set to 25 fps.
+  \param I : Image data structure (Color RGB32 bits image)
+  \param input : Video input port.
+  \param scale : Decimation factor.
 
-  \sa setFramerate()
+  Default settings are:
+
+  - Device name: /dev/video0: To change it use setDevice()
+
+  - Number of ring buffers: 3. To change this value use setNBuffers(). For non
+    real-time applications the number of buffers should be set to 1. For
+    real-time applications to reach 25 fps or 50 fps a good compromise is to
+    set the number of buffers to 3.
+
+  - Framerate acquisition: 25 fps. Use setFramerate() to set 25 fps or 50
+    fps. These framerates are reachable only if enought buffers are set.
+
+    \code
+    vpImage<vpRGBa> I;        // Color image
+
+    vpV4l2Grabber g(I, 1, 2); // Select input 1, and half full size resolution
+                              // images and open the grabber
+
+    g.acquire(I);             // Acquire a 384x288 color image
+
+    \endcode
+
 */
 vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned _input, unsigned _scale )
 {
@@ -242,7 +323,7 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned _input, unsigned _scal
 /*!
   Destructor.
 
-  \sa close() ;
+  \sa close()
 */
 vpV4l2Grabber::~vpV4l2Grabber()
 {
@@ -250,7 +331,7 @@ vpV4l2Grabber::~vpV4l2Grabber()
 }
 
 /*!
-  Set the video port
+  Set the video input port on the board.
 */
 void
 vpV4l2Grabber::setInput(unsigned input)
