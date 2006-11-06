@@ -54,19 +54,47 @@ const int vpV4l2Grabber::MAX_BUFFERS   = 32;
 const int vpV4l2Grabber::FRAME_SIZE    = 288;
 
 /*!
-  \brief constructor
+  Default constructor.
 
-  Setup the Video For Linux Two (V4L2) driver with 3 ring buffers
-  in streaming mode. The considered device is /dev/video0.
+  Setup the Video For Linux Two (V4L2) driver in streaming mode.
+
+  Default settings are:
+
+  - Device name: /dev/video0: To change it use setDevice()
+
+  - Number of ring buffers: 3. To change this value use setNBuffers(). For non
+    real-time applications the number of buffers should be set to 1. For
+    real-time applications to reach 25 fps or 50 fps a good compromise is to
+    set the number of buffers to 3.
+
+  - Framerate acquisition: 25 fps. Use setFramerate() to set 25 fps or 50
+    fps. These framerates are reachable only if enought buffers are set.
+
+  - Input board: vpV4l2Grabber::DEFAULT_INPUT. Use setInput() to change it.
+
+  - Image size acquisition: vpV4l2Grabber::DEFAULT_SCALE. Use either setScale()
+    or setWidth() and setHeight to change it.
+
+    \code
+    vpImage<unsigned char> I;
+
+    vpV4l2Grabber g;
+    g.setInput(2);    // Input 2 on the board
+    g.setWidth(384);  // Acquired images are 384 width
+    g.setHeight(288); // Acquired images are 288 height
+    g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
+    g.open(I);        // Open the grabber
+
+    g.acquire(I);     // Acquire the first image
+
+    \endcode
 
 */
 vpV4l2Grabber::vpV4l2Grabber()
 {
-  sprintf(device, "%s", "/dev/video0");
   fd        = -1;
   streaming = false;
   verbose   = false;
-  nbuffers  = 3;
   field     = 0;
   ncols     = 0;
   nrows     = 0;
@@ -81,6 +109,8 @@ vpV4l2Grabber::vpV4l2Grabber()
   buf_v4l2  = NULL;
   buf_me    = NULL;
 
+  setDevice("/dev/video0");
+  setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
   setInput(vpV4l2Grabber::DEFAULT_INPUT);
   setScale(vpV4l2Grabber::DEFAULT_SCALE);
@@ -101,11 +131,9 @@ vpV4l2Grabber::vpV4l2Grabber()
 */
 vpV4l2Grabber::vpV4l2Grabber( unsigned _input, unsigned _scale)
 {
-  sprintf(device, "%s", "/dev/video0");
   fd        = -1;
   streaming = false;
   verbose   = false;
-  nbuffers  = 3;
   field     = 0;
   ncols     = 0;
   nrows     = 0;
@@ -120,6 +148,8 @@ vpV4l2Grabber::vpV4l2Grabber( unsigned _input, unsigned _scale)
   buf_v4l2  = NULL;
   buf_me    = NULL;
 
+  setDevice("/dev/video0");
+  setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
   setInput(_input);
   setScale(_scale);
@@ -140,11 +170,9 @@ vpV4l2Grabber::vpV4l2Grabber( unsigned _input, unsigned _scale)
 */
 vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned _input, unsigned _scale )
 {
-  sprintf(device, "%s", "/dev/video0");
   fd        = -1;
   streaming = false;
   verbose   = false;
-  nbuffers  = 3;
   field     = 0;
   ncols     = 0;
   nrows     = 0;
@@ -159,14 +187,15 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned _input, unsigne
   buf_v4l2  = NULL;
   buf_me    = NULL;
 
+  setDevice("/dev/video0");
+  setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
   setInput(_input);
   setScale(_scale);
 
   init = false;
 
-  open(I) ;
-
+  open(I);
 }
 
 /*!
@@ -182,15 +211,32 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned _input, unsigne
 */
 vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned _input, unsigned _scale )
 {
+  fd        = -1;
+  streaming = false;
+  verbose   = false;
+  field     = 0;
+  ncols     = 0;
+  nrows     = 0;
+  queue     = 0;
+  waiton_cpt= 0;
+  index_buffer = 0;
 
-//   framerate = vpV4l2Grabber::framerate_25fps;
-//   framegrabber = new ICcomp2x ;
+  inp       = NULL;
+  std       = NULL;
+  fmt       = NULL;
+  ctl       = NULL;
+  buf_v4l2  = NULL;
+  buf_me    = NULL;
 
-//   setInput(_input);
-//   setScale(_scale) ;
+  setDevice("/dev/video0");
+  setNBuffers(3);
+  setFramerate(vpV4l2Grabber::framerate_25fps);
+  setInput(_input);
+  setScale(_scale);
 
-//   open(I) ;
+  init = false;
 
+  open(I);
 }
 
 /*!
@@ -213,11 +259,15 @@ vpV4l2Grabber::setInput(unsigned input)
 }
 
 /*!
-  Set the decimation factor.
+  Set the decimation factor applied to full resolution images (768x576).
 
   \exception settingError : Wrong scale (shoud be between 1 and 16).
 
-  \param scale : Decimation factor.
+  \param scale : Decimation factor. If scale is set to 2, 384x288 images will
+  be acquired.
+
+  An other way to specify the image size is to use setWidth() and setHeight().
+
 */
 void
 vpV4l2Grabber::setScale(unsigned scale)
@@ -231,13 +281,16 @@ vpV4l2Grabber::setScale(unsigned scale)
 				   "Wrong scale") );
   }
 
-  this->scale = scale ;
+  setWidth(768/scale);
+  setHeight(576/scale);
 }
 
 /*!
-  Initialize image acquisition.
+  Initialize image acquisition in grey format.
+  Set the pixel format acquisition to vpV4l2Grabber::V4L2_GREY_FORMAT.
 
-  \param I : Image data structure (8 bits image)
+  \param I : Image data structure (8 bits image). Once the device is open,
+  the image is resized to the current acquisition size.
 
   \exception settingError : Wrong input channel.
 
@@ -256,7 +309,9 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
 				   "Wrong input channel") );
   }
 
-  setFormat(768/scale, 576/scale, frameformat, V4L2_GREY_FORMAT);
+  setPixelFormat(V4L2_GREY_FORMAT);
+  vpCTRACE << width << "  " << height << endl;
+  setFormat();
 
   startStreaming();
 
@@ -266,9 +321,12 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
 }
 
 /*!
-  Initialize image acquisition
+  Initialize image acquisition in color RGB32 format.
+  Set the pixel format acquisition to vpV4l2Grabber::V4L2_RGB32_FORMAT.
 
-  \param I : Image data structure (32 bits image)
+
+  \param I : Image data structure (RGB32 bits image). Once the device is open,
+  the image is resized to the current acquisition size.
 
   \exception settingError : Wrong input channel.
 */
@@ -286,7 +344,8 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
 				   "Wrong input channel") );
   }
 
-  setFormat(768/scale, 576/scale, frameformat, V4L2_RGB32_FORMAT);
+  setPixelFormat(V4L2_RGB32_FORMAT);
+  setFormat();
 
   startStreaming();
 
@@ -395,11 +454,16 @@ vpV4l2Grabber::getField()
 }
 /*!
 
-  Set the framerate of the acquisition.
+  Set the frame format depending on the framerate acquisition.
 
-  \param framerate The framerate for the acquisition.
+  \param framerate : The framerate for the acquisition.
+  - If vpV4l2Grabber::framerate_25fps use vpV4l2Grabber::V4L2_IMAGE_FORMAT,
+  - else if vpV4l2Grabber::framerate_50fps use vpV4l2Grabber::V4L2_FRAME_FORMAT.
+  \warning If you want to acquire frames at 25 fps or 50 fps, you have to be
+  aware of the number of buffers required for the streaming. A typical value
+  could be 3 (see setNBuffers()).
 
-  \sa getFramerate()
+  \sa getFramerate(), setNBuffers()
 
 */
 void
@@ -408,9 +472,9 @@ vpV4l2Grabber::setFramerate(vpV4l2Grabber::framerateEnum framerate)
    this->framerate = framerate;
 
    if (framerate == vpV4l2Grabber::framerate_25fps)
-     frameformat = vpV4l2Grabber::V4L2_IMAGE_FORMAT;
+     setFrameFormat(V4L2_IMAGE_FORMAT);
    else
-     frameformat = vpV4l2Grabber::V4L2_FRAME_FORMAT;
+     setFrameFormat(V4L2_FRAME_FORMAT);
 }
 
 /*!
@@ -574,21 +638,16 @@ vpV4l2Grabber::getCapabilities()
 
 /*!
 
-  Set the capture format:
-  V4L2_PIX_FMT_RGB555, V4L2_PIX_FMT_RGB565, V4L2_PIX_FMT_BGR24,
-  V4L2_PIX_FMT_BGR32
-
-  If frame is set to true, capture alternate fields, else capture interlaced images.
-
-  By default the capture format is set to V4L2_PIX_FMT_BGR24.
+  Set the capture format using the settings:
+  - image size : specified by setWidth(), setHeight() or setScale()
+  - frame format : specified by setFrameFormat()
+  - pixel format : specified by setPixelFormat().
 
   \exception settingError : Bad format, probably do to a wrong scale.
   \exception otherError : Can't get video format.
 */
 void
-vpV4l2Grabber::setFormat(int width, int height,
-			 frameformatEnum frameformat,
-			 pixelformatEnum pixelformat)
+vpV4l2Grabber::setFormat()
 {
   fmt_me.width  = width;
   fmt_me.height = height;
