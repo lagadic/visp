@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testV4l2Grey.cpp,v 1.15 2006-09-29 09:35:29 fspindle Exp $
+ * $Id: testV4l2Grey.cpp,v 1.16 2006-11-06 15:54:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -169,7 +169,13 @@ main(int argc, char ** argv)
   try{
     // Initialize the grabber
     g.setInput(input);
-    g.setScale(scale);
+    if (1) {
+      g.setScale(scale);
+    }
+    else {
+      g.setWidth(768/scale);
+      g.setHeight(576/scale);
+    }
     if (fps == 25)
       g.setFramerate(vpV4l2Grabber::framerate_25fps);
     else

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.h,v 1.5 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpV4l2Grabber.h,v 1.6 2006-11-06 15:54:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -145,18 +145,83 @@ public:
   framerateEnum getFramerate();
   void close();
 
-
-
-  // fct pour changer le port d'entree
   void setInput(unsigned input = vpV4l2Grabber::DEFAULT_INPUT) ;
+
+  /*!
+    Set image width to acquire.
+
+  */
+  inline void setWidth(unsigned width)
+  {
+    this->width = width;
+  }
+  /*!
+    Set image height to acquire.
+
+  */
+  inline void setHeight(unsigned height)
+  {
+    this->height = height;
+  }
+
   void setScale(unsigned scale = vpV4l2Grabber::DEFAULT_SCALE) ;
+
+  /*!
+
+  Set the number of buffers required for streaming data.
+
+  For non real-time applications the number of buffers should be set to 1. For
+  real-time applications to reach 25 fps or 50 fps a good compromise is to set
+  the number of buffers to 3.
+
+  \param nbuffers : Number of ring buffers.
+
+  */
+  inline void setNBuffers(unsigned nbuffers)
+  {
+    this->nbuffers = nbuffers;
+  }
+
+  /*!
+    Set the device name.
+
+    \param devname : Device name (like /dev/video0).
+
+  */
+  inline void setDevice(const char *devname)
+  {
+    sprintf(device, "%s", devname);
+  }
 
 
 private:
+  /*!
+    Set the pixel format.
+
+    \param pixelformat :
+    - vpV4l2Grabber::V4L2_GREY_FORMAT,
+    - vpV4l2Grabber::V4L2_RGB24_FORMAT,
+    - vpV4l2Grabber::V4L2_RGB32_FORMAT,
+    - vpV4l2Grabber::V4L2_BGR24_FORMAT,
+    - vpV4l2Grabber::V4L2_BGR32_FORMAT.
+  */
+  inline void setPixelFormat(pixelformatEnum pixelformat)
+  {
+    this->pixelformat = pixelformat;
+  }
+  /*!
+    Set the frame format.
+
+    \param frameformat :
+    - vpV4l2Grabber::V4L2_FRAME_FORMAT: capture alternate fields (or frames),
+    - vpV4l2Grabber::V4L2_IMAGE_FORMAT: capture interlaced images.
+  */
+  inline void setFrameFormat(frameformatEnum frameformat)
+  {
+    this->frameformat = frameformat;
+  }
+  void setFormat();
   void open();
-  void setFormat(int width, int height,
-		 frameformatEnum frameformat,
-		 pixelformatEnum pixelformat);
   void getCapabilities();
   void startStreaming();
   void stopStreaming();
@@ -196,8 +261,10 @@ private:
 
   framerateEnum framerate;
   unsigned      input;
-  unsigned      scale;
+  unsigned      width;
+  unsigned      height;
   frameformatEnum frameformat;
+  pixelformatEnum pixelformat;
 } ;
 
 #endif
