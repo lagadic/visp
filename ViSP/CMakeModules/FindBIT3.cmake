@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindBIT3.cmake,v 1.2 2006-05-30 08:34:59 fspindle Exp $
+# $Id: FindBIT3.cmake,v 1.3 2006-11-07 14:13:09 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -48,7 +48,7 @@ ELSE(NOT UNIX)
   
   FIND_PATH(BIT3_INCLUDE_DIR btapi.h
     $ENV{BIT3_HOME}/include
-    /udd/fspindle/robot/driver/bit3-617/1003/current/include 
+    /local/driver/bit3-617/1003/current/include 
     )
   #MESSAGE("DBG BIT3_INCLUDE_DIR=${BIT3_INCLUDE_DIR}")  
   
@@ -56,7 +56,7 @@ ELSE(NOT UNIX)
     NAMES btp
     PATHS 
     $ENV{BIT3_HOME}/lib
-    /udd/fspindle/robot/driver/bit3-617/1003/current/include 
+    /local/driver/bit3-617/1003/current/include 
     )
 
   #MESSAGE("DBG BIT3_LIBRARY=${BIT3_LIBRARY}")
