@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: VISPConfig.cmake.in,v 1.7 2006-09-29 12:49:44 fspindle Exp $
+# $Id: VISPConfig.cmake.in,v 1.8 2006-11-08 14:08:25 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -97,7 +97,7 @@ SET(VISP_HAVE_DC1394    "@VISP_HAVE_DC1394@")
 SET(VISP_HAVE_CFOX      "@VISP_HAVE_CFOX@")
 SET(VISP_HAVE_V4L2      "@VISP_HAVE_V4L2@")
 SET(VISP_HAVE_ICCOMP    "@VISP_HAVE_ICCOMP@")
-SET(VISP_HAVE_ITIFG     "@VISP_HAVE_ITIFG@")
+SET(VISP_HAVE_ITIFG8    "@VISP_HAVE_ITIFG8@")
 SET(VISP_HAVE_DIRECTSHOW "@VISP_HAVE_DIRECTSHOW@")
 SET(VISP_HAVE_AFMA4     "@VISP_HAVE_AFMA4@")
 SET(VISP_HAVE_AFMA6     "@VISP_HAVE_AFMA6@")

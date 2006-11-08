@@ -2,7 +2,7 @@
 
 #############################################################################
 #
-# $Id: visp-config.in,v 1.5 2006-11-06 15:52:39 fspindle Exp $
+# $Id: visp-config.in,v 1.6 2006-11-08 14:08:25 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -45,7 +45,7 @@ CFLAGS="${VISP_CONFIG_SCRIPT_CFLAGS}"
 
 LIBS="${VISP_CONFIG_SCRIPT_EXTERN_LIBS}"
 
-VERSION="${VISP_CONFIG_SCRIPT_VERSION}"
+VERSION="${VISP_VERSION}"
 
 usage()
 {
