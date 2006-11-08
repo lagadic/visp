@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: GenerateConfigScript.cmake,v 1.12 2006-06-23 10:13:40 fspindle Exp $
+# $Id: GenerateConfigScript.cmake,v 1.13 2006-11-08 14:08:25 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -176,11 +176,6 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MA
       SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS  "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
     ENDIF(NOT APPLE)
   ENDIF(UNIX)
-
-  #---------------------------------------------------------------------
-  # Updates VISP_CONFIG_SCRIPT_VERSION
-  #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_VERSION "${VISP_VERSION_FULL}")
 
   #---------------------------------------------------------------------
   # Updates the visp-config shell script
