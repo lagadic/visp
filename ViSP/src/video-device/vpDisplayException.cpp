@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayException.cpp,v 1.2 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpDisplayException.cpp,v 1.3 2006-11-09 13:43:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,7 +41,20 @@
  */
 #include <visp/vpDisplayException.h>
 
+vpDisplayException::vpDisplayException(const int code, const char * msg)
+  : vpException(code, msg)
+{
+}
 
+vpDisplayException::vpDisplayException (const int code, const string & msg)
+  : vpException(code, msg)
+{
+}
+
+vpDisplayException::vpDisplayException (const int code)
+  : vpException(code)
+{
+}
 
 /*
  * Local variables:

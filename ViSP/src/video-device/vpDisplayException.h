@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayException.h,v 1.5 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpDisplayException.h,v 1.6 2006-11-09 13:43:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -82,12 +82,9 @@ public:
     } ;
 
 public:
-  vpDisplayException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpDisplayException (const int code, const string & msg)
-    : vpException(code, msg){ ; }
-  vpDisplayException (const int code)
-    : vpException(code){ ; }
+  vpDisplayException (const int code, const char * msg);
+  vpDisplayException (const int code, const string & msg);
+  vpDisplayException (const int code);
 
 };
 
