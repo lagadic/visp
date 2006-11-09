@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.29 2006-11-08 14:08:25 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.30 2006-11-09 16:00:10 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -44,12 +44,11 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.3)
 
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
-SET(VISP_MAJOR_VERSION "2")
-SET(VISP_MINOR_VERSION "2")
-SET(VISP_PATCH_VERSION "0")
-SET(VISP_VERSION "${VISP_MAJOR_VERSION}.${VISP_MINOR_VERSION}.${VISP_PATCH_VERSION}")      
+SET(VISP_VERSION_MAJOR "2")
+SET(VISP_VERSION_MINOR "2")
+SET(VISP_VERSION_PATCH "0")
+SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 
-#SET(VISP_INCLUDE_DIR "${VISP_SOURCE_DIR}/include/visp-${VISP_VERSION_FULL}")
 SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")
 SET(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
@@ -672,6 +671,53 @@ INCLUDE(Dart)
 IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
+
+#----------------------------------------------------------------------
+# For CPack packaging tool
+#----------------------------------------------------------------------
+
+# InstallRequiredSystemLibraries: Hack for Visual Studio support Search for
+# system runtime libraries based on the platform.
+INCLUDE(InstallRequiredSystemLibraries)
+
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ViSP: Visual Servoing Platform")
+SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+
+SET(CPACK_PACKAGE_VERSION ${VISP_VERSION})
+SET(CPACK_PACKAGE_VERSION_MAJOR ${VISP_VERSION_MAJOR})
+SET(CPACK_PACKAGE_VERSION_MINOR ${VISP_VERSION_MINOR})
+SET(CPACK_PACKAGE_VERSION_PATCH ${VISP_VERSION_PATCH})
+
+# The following components are regex's to match anywhere (unless anchored)
+# in absolute path + filename to find files or directories to be excluded
+# from source tarball.
+SET(CPACK_SOURCE_IGNORE_FILES
+"~$"
+"^${PROJECT_SOURCE_DIR}.*/CVS/"
+)
+
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
+IF(WIN32 AND NOT UNIX)
+  # There is a bug in NSI that does not handle full unix paths properly. Make
+  # sure there is at least one set of four (4) backlasshes.
+#  SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
+  # CPACK_NSIS_INSTALLED_ICON_NAME icon is the one that shows up in the 
+  # Add/Remove control panel
+  #SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\ViSP.exe")
+  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} My Famous Project")
+  SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.http://www.irisa.fr/lagadic/visp")
+  SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.http://www.irisa.fr/lagadic/visp/what.html")
+  SET(CPACK_NSIS_CONTACT "visp@irisa.fr")
+  SET(CPACK_NSIS_MODIFY_PATH ON)
+ELSE(WIN32 AND NOT UNIX)
+  SET(CPACK_STRIP_FILES "")
+  SET(CPACK_SOURCE_STRIP_FILES "")
+ENDIF(WIN32 AND NOT UNIX)
+SET(CPACK_PACKAGE_EXECUTABLES "ViSP" "ViSP")
+
+INCLUDE(CPack)
 
 #----------------------------------------------------------------------
 # Propagation in sub dirs
