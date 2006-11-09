@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.8 2006-11-08 14:08:26 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.9 2006-11-09 16:00:10 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -81,7 +81,7 @@ ADD_DEPENDENCIES(${VISP_INTERN_LIBS} header)
 # properties. 
 SET_TARGET_PROPERTIES(${VISP_INTERN_LIBS} PROPERTIES
   VERSION ${VISP_VERSION}
-  SOVERSION ${VISP_MAJOR_VERSION}
+  SOVERSION ${VISP_VERSION_MAJOR}
   )
 
 # Link with external libs especially under windows for winmm.lib
