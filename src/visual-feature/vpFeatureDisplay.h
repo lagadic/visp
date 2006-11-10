@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.h,v 1.2 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpFeatureDisplay.h,v 1.3 2006-11-10 09:13:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@
 //Color / image / display
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
+#include <visp/vpRGBa.h>
 
 /*!
   \class vpFeatureDisplay
@@ -79,6 +80,25 @@ public:
 			     double mu20, double mu11, double m02,
 			     const vpCameraParameters &cam,
 			     vpImage<unsigned char> &I,
+			     int color = vpColor::green) ;
+
+  static void displayPoint(double x,double y,
+			   const vpCameraParameters &cam,
+			   vpImage<vpRGBa> &I,
+			   int color = vpColor::green) ;
+  static void displayLine(double rho,double theta,
+			  const vpCameraParameters &cam,
+			  vpImage<vpRGBa> &I,
+			  int color = vpColor::green) ;
+  static void displayCylinder(double rho1,double theta1,
+			      double rho2,double theta2,
+			      const vpCameraParameters &cam,
+			      vpImage<vpRGBa> &I,
+			      int color = vpColor::green) ;
+  static void displayEllipse(double x,double y,
+			     double mu20, double mu11, double m02,
+			     const vpCameraParameters &cam,
+			     vpImage<vpRGBa> &I,
 			     int color = vpColor::green) ;
 
 
