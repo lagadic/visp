@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.2 2006-10-13 12:09:54 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.3 2006-11-14 17:19:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -389,7 +389,7 @@ void vpItifg8Grabber::close ()
 
   if (devdesc != -1)
   {
-    if (stop_it)
+    if (stop_it) {
       if (ioctl (devdesc, GIOC_SET_STOP, NULL) < 0)
       {
 	perror ("GIOC_SET_STOP");
@@ -397,6 +397,7 @@ void vpItifg8Grabber::close ()
 	throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				       "GIOC_SET_STOP") );
       }
+    }
 
     if (verbose) {
       if (ioctl (devdesc, GIOC_GET_STATS, &acctinfo) < 0)
@@ -444,6 +445,8 @@ void vpItifg8Grabber::close ()
     ::close (devdesc);
 
   init = false;
+  stop_it = false;
+  devdesc = -1;
 
   first_acq == false;
 }
