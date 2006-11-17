@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.30 2006-11-09 16:00:10 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.31 2006-11-17 15:01:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -663,15 +663,6 @@ ENABLE_TESTING()
 INCLUDE(DartConfig.cmake)
 INCLUDE(Dart)
 
-# Add build options for test coverage. Currently coverage is only supported on
-# gcc compiler 
-# Because using -fprofile-arcs with shared lib can cause problems like:
-# hidden symbol `__bb_init_func', we add this option only for static library
-# build
-IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
-ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
-
 #----------------------------------------------------------------------
 # For CPack packaging tool
 #----------------------------------------------------------------------
@@ -727,5 +718,24 @@ IF(BUILD_EXAMPLES)
   SUBDIRS(example)
 ENDIF(BUILD_EXAMPLES)
 IF(BUILD_TESTING)
+
+  #
+  # Test coverage specific code
+  #
+  IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
+
+    OPTION(BUILD_TEST_COVERAGE "Enable test coverage." OFF)
+  ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
+
+  IF(BUILD_TEST_COVERAGE)
+    # Add build options for test coverage. Currently coverage is only supported
+    # on gcc compiler 
+    # Because using -fprofile-arcs with shared lib can cause problems like:
+    # hidden symbol `__bb_init_func', we add this option only for static 
+    # library build
+    MESSAGE("Add -ftest-coverage -fprofile-arcs ")  
+    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+  ENDIF(BUILD_TEST_COVERAGE)
+
   SUBDIRS(test)
 ENDIF(BUILD_TESTING)

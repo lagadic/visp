@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: GenerateConfigScript.cmake,v 1.13 2006-11-08 14:08:25 fspindle Exp $
+# $Id: GenerateConfigScript.cmake,v 1.14 2006-11-17 15:01:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -60,15 +60,15 @@ IF (UNIX)
     SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -DBT1003")
   ENDIF(BIT3_FOUND)
 
-  # Add build options for test coverage. Currently coverage is only supported
-  # on gcc compiler 
-  # Because using -fprofile-arcs with shared lib can cause problems like:
-  # hidden symbol `__bb_init_func', we add this option only for static library
-  # build
-  IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
-  SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
-ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
+  IF(BUILD_TEST_COVERAGE)
+    # Add build options for test coverage. Currently coverage is only supported
+    # on gcc compiler 
+    # Because using -fprofile-arcs with shared lib can cause problems like:
+    # hidden symbol `__bb_init_func', we add this option only for static 
+    # library build
+    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+  ENDIF(BUILD_TEST_COVERAGE)
+
 
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_EXTERN_LIBS
