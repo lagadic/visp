@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMeEllipse1.cpp,v 1.7 2006-09-11 16:15:52 fspindle Exp $
+ * $Id: testMeEllipse1.cpp,v 1.8 2006-11-20 08:59:40 mtallur Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -196,7 +196,7 @@ main(int argc, char ** argv)
 
 
   // Declare an image, this is a gray level image (unsigned char)
-  // it size is not defined yet, it will be defined when the image will
+  // it size is not defined yet, it will be defined when the image is
   // read on the disk
   vpImage<unsigned char> I ;
 
@@ -223,7 +223,7 @@ main(int argc, char ** argv)
   }
   catch(...)
   {
-    // an exception is throwned if an exception from readPGM has been catched
+    // an exception is thrown if an exception from readPGM has been caught
     // here this will result in the end of the program
     // Note that another error message has been printed from readPGM
     // to give more information about the error
@@ -274,7 +274,13 @@ main(int argc, char ** argv)
 
   E1.setMe(&me) ;
   E1.setDisplay(vpMeTracker::RANGE_RESULT) ;
-  E1.initTracking(I) ;
+  if (opt_click_allowed)
+    E1.initTracking(I) ;
+  else {
+    int i[5] = {30, 62, 212, 234, 178};
+    int j[5] = {331, 171, 50, 196, 353};
+    E1.initTracking(I, 5, i, j);
+  }
   if (opt_display) {
     E1.display(I, vpColor::green) ;
   }
@@ -288,7 +294,7 @@ main(int argc, char ** argv)
   cout <<"------------------------------------------------------------"<<endl;
 
 
-  for (int iter = 1 ; iter < 1500 ; iter++)
+  for (int iter = 1 ; iter < 51 ; iter++) // initially : iter < 1500
   {
     // set the new image name
     s.str("");
@@ -313,7 +319,7 @@ main(int argc, char ** argv)
 
     if (opt_display) {
       E1.display(I,vpColor::green) ;
-    vpDisplay::flush(I) ;
+      vpDisplay::flush(I) ;
     }
   }
   if (opt_display && opt_click_allowed) {
