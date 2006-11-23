@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDC1394.cmake,v 1.3 2006-06-27 10:14:23 fspindle Exp $
+# $Id: FindDC1394.cmake,v 1.4 2006-11-23 17:25:41 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -48,7 +48,7 @@ IF(NOT UNIX)
 ELSE(NOT UNIX)
   
   # Search for libdc1394-2.x
-  FIND_PATH(DC1394_2_INCLUDE_DIR dc1394/dc1394_control.h
+  FIND_PATH(DC1394_2_INCLUDE_DIR dc1394/control.h
     $ENV{DC1394_HOME}/include
     /usr/include )
   #MESSAGE("DBG DC1394_2_INCLUDE_DIR=${DC1394_2_INCLUDE_DIR}")  

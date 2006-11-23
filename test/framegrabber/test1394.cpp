@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test1394.cpp,v 1.11 2006-09-11 09:34:12 fspindle Exp $
+ * $Id: test1394.cpp,v 1.12 2006-11-23 17:25:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,14 +38,14 @@
 
 /*!
   \file test1394.cpp
-  \brief Test firewire cameras video capture
+  \brief Test firewire cameras video capture using vp1394Grabber.
 
   \warning This class needs at least libdc1394-1.0.0 and
   libraw1394-1.1.0. These libraries are available from
   http://sourceforge.net/projects/libdc1394 and
   http://sourceforge.net/projects/libraw1394 .
 
-  vp1394Grabber was tested with MF-033C, F-131B Marlin cameras.
+  vp1394Grabber was tested with MF-033C and F-131B Marlin cameras.
 */
 
 #include <iostream>
@@ -56,7 +56,7 @@ using namespace std;
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if defined(VISP_HAVE_DC1394) && (VISP_HAVE_DC1394_VERSION == 1)
+#if defined(VISP_HAVE_DC1394_1)
 
 #include <visp/vp1394Grabber.h>
 #include <visp/vpImage.h>
@@ -477,7 +477,8 @@ main(int argc, char ** argv)
 int
 main()
 {
-  vpTRACE("Ieee 1394 grabber capabilities are not available...") ;
+  vpTRACE("Ieee 1394 grabber capabilities are not available..."
+	  "You should install libdc1394-1 to use this example.") ;
 }
 #endif
 
