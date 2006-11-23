@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.10 2006-10-10 16:03:40 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.11 2006-11-23 17:28:19 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -69,6 +69,7 @@ SET (SRC_EXCEPTION
 
 SET (SRC_FRAMEGRABBER_DEVICE
   framegrabber-device/1394/vp1394Grabber.cpp
+  framegrabber-device/1394/vp1394TwoGrabber.cpp
   framegrabber-device/disk/vpDiskGrabber.cpp
   framegrabber-device/generic-framegrabber/vpFrameGrabberException.cpp
   framegrabber-device/IC-Comp/vpIcCompGrabber.cpp
