@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.13 2006-11-09 16:00:10 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.14 2006-11-23 17:26:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,11 +81,11 @@
 // Defined if SoQt library available.
 #cmakedefine VISP_HAVE_SOQT
 
-// Defined if dc1394_control and raw1394 libraries available.
-#cmakedefine VISP_HAVE_DC1394
+// Defined if raw1394 and dc1394-1.x libraries available.
+#cmakedefine VISP_HAVE_DC1394_1
 
-// Version of libdc1394_control (1 or 2)
-#cmakedefine VISP_HAVE_DC1394_VERSION ${DC1394_VERSION}
+// Defined if raw1394 and dc1394-2.x libraries available.
+#cmakedefine VISP_HAVE_DC1394_2
 
 // Defined if cfox library is available (only under MAC OS X).
 #cmakedefine VISP_HAVE_CFOX
