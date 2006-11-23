@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2006-09-29 12:49:44 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.6 2006-11-23 17:29:07 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   test1394.cpp
+  test1394Two.cpp
   testDisk.cpp
   testIcComp.cpp
   testItifg8.cpp
