@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.7 2006-08-23 10:43:57 brenier Exp $
+ *  $Id: servoBiclopsPointArticularVelocity.cpp,v 1.8 2006-11-23 17:28:19 fspindle Exp $
  *
  * Description
  * ============
@@ -39,7 +39,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if ( defined (VISP_HAVE_BICLOPS) & (defined (VISP_HAVE_DC1394) | defined(VISP_HAVE_DIRECTSHOW)) )
+#if ( defined (VISP_HAVE_BICLOPS) & (defined (VISP_HAVE_DC1394_2) | defined (VISP_HAVE_DC1394_1) | defined(VISP_HAVE_DIRECTSHOW)) )
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>
@@ -170,14 +170,14 @@ main(int argc, char ** argv)
     pthread_mutex_lock( &mutexEndLoop );
 #endif
     signal( SIGINT,&signalCtrC );
-    
+
     //default unix configuration file path
     string opt_conf = "/usr/share/BiclopsDefault.cfg";
 
     string username;
     string debugdir;
     string opt_debugdir;
-    
+
   // Set the default output path
 #ifdef UNIX
   opt_debugdir = "/tmp";
@@ -187,7 +187,7 @@ main(int argc, char ** argv)
 
   // Get the user login name
   vpIoTools::getUserName(username);
-  
+
   // Read the command line options
   if (getOptions(argc, argv, opt_conf, opt_debugdir , username) == false) {
     exit (-1);
@@ -208,7 +208,7 @@ main(int argc, char ** argv)
     }
     catch (...) {
       usage(argv[0], NULL, opt_conf, debugdir, username);
-      cerr << endl 
+      cerr << endl
 	   << "ERROR:" << endl;
       cerr << "  Cannot create " << dirname << endl;
       cerr << "  Check your -d " << debugdir << " option " << endl;
@@ -230,7 +230,9 @@ main(int argc, char ** argv)
 
   vpImage<unsigned char> I ;
 
-#if defined VISP_HAVE_DC1394
+#if defined VISP_HAVE_DC1394_2
+  vp1394TwoGrabber g;
+#elif defined VISP_HAVE_DC1394_1
   vp1394Grabber g;
 #elif defined VISP_HAVE_DIRECTSHOW
   vpDirectShowGrabber g;
@@ -370,7 +372,7 @@ main(int argc, char ** argv)
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
     vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
-    
+
     {
       vpColVector s_minus_sStar(2);
       s_minus_sStar = task.s - task.sStar;

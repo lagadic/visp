@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.7 2006-09-29 12:49:44 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.8 2006-11-23 17:28:19 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -66,6 +66,7 @@ SET (HEADER_EXCEPTION
 
 SET (HEADER_FRAMEGRABBER_DEVICE
   framegrabber-device/1394/vp1394Grabber.h
+  framegrabber-device/1394/vp1394TwoGrabber.h
   framegrabber-device/disk/vpDiskGrabber.h
   framegrabber-device/generic-framegrabber/vpFrameGrabberException.h
   framegrabber-device/generic-framegrabber/vpFrameGrabber.h
