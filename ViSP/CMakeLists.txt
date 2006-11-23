@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.31 2006-11-17 15:01:53 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.32 2006-11-23 17:25:40 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -333,9 +333,13 @@ IF(USE_DC1394)
   FIND_PACKAGE(RAW1394)
   FIND_PACKAGE(DC1394)
   IF(RAW1394_FOUND AND DC1394_FOUND)
-    SET(VISP_HAVE_DC1394 TRUE) # for header vpConfig.h
-    SET(VISP_HAVE_DC1394_VERSION ${DC1394_VERSION}) # for header vpConfig.h
-    #MESSAGE("DBG VISP_HAVE_DC1394= ${VISP_HAVE_DC1394}")
+    IF(DC1394_VERSION EQUAL 2)
+      SET(VISP_HAVE_DC1394_2 TRUE) # for header vpConfig.h
+      #MESSAGE("DBG VISP_HAVE_DC1394_2= ${VISP_HAVE_DC1394_2}")
+    ELSE(DC1394_VERSION EQUAL 2)
+      SET(VISP_HAVE_DC1394_1 TRUE) # for header vpConfig.h
+      #MESSAGE("DBG VISP_HAVE_DC1394_1= ${VISP_HAVE_DC1394_1}")
+    ENDIF(DC1394_VERSION EQUAL 2)
     #MESSAGE("DBG DC1394_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
     #MESSAGE("DBG RAW1394_INCLUDE_DIR=${RAW1394_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 

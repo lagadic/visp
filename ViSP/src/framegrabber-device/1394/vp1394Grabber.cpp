@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.12 2006-06-28 08:52:32 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.13 2006-11-23 17:25:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,7 +45,7 @@
 
 #include <visp/vpConfig.h>
 
-#if defined(VISP_HAVE_DC1394) && (VISP_HAVE_DC1394_VERSION == 1)
+#if defined(VISP_HAVE_DC1394_1)
 
 
 

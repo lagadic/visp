@@ -999,8 +999,8 @@ PREDEFINED             = \
 		       VISP_HAVE_COIN \
 		       VISP_HAVE_QT \
 		       VISP_HAVE_SOQT \
-		       VISP_HAVE_DC1394 \
-                       VISP_HAVE_DC1394_VERSION=1 \ 
+                       VISP_HAVE_DC1394_1 \ 
+                       VISP_HAVE_DC1394_2 \ 
 		       VISP_HAVE_CFOX \
 		       VISP_HAVE_V4L2 \
 		       VISP_HAVE_ICCOMP \
