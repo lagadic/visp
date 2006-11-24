@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.6 2006-11-23 17:29:07 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.7 2006-11-24 15:38:15 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -69,6 +69,7 @@ ENDFOREACH(source)
 # manager under windows, we have to add the -d option to turn off the display
 # of acquired images
 ADD_TEST(test1394         test1394 -d)
+ADD_TEST(test1394Two      test1394Two -d)
 ADD_TEST(testDisk         testDisk -d)
 ADD_TEST(testIcComp       testIcComp -d)
 ADD_TEST(testItifg8       testItifg8 -d)
