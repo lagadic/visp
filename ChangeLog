@@ -4,6 +4,11 @@ ViSP 2.2.1 (Modification since ViSP 2.1.0)
 	  Imaging Technology (http://sourceforge.net/projects/itifg)
 	  Tested with AM-STD COMP framegrabber board on 2.4 and 2.6
 	  linux kernel (see vpItifg8Grabber). 
+	- add new framegrabber interface and test for firewire 1394 
+	  cameras using libdc1394-2.x. Need a newer version than 
+	  libdc1394-2.0.0-rc4.
+	  Tested with the svn version of libdc1394-2 and Marlin F033C and
+          F131B cameras (see vp1394TwoGrabber).
   - Bug fix and improvement
 	- tests and examples
 	- Video For Linux Two grabber (see vpV4l2Grabber)
