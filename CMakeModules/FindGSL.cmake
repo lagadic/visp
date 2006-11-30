@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGSL.cmake,v 1.3 2006-10-10 16:02:37 fspindle Exp $
+# $Id: FindGSL.cmake,v 1.4 2006-11-30 10:44:31 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -55,7 +55,8 @@
   SET(GSL_CONFIG_PREFER_PATH "$ENV{GSL_HOME}/bin" CACHE STRING "preferred path to OpenSG (osg-config)")
     FIND_PROGRAM(GSL_CONFIG gsl-config
       ${GSL_CONFIG_PREFER_PATH}
-      /usr/bin/
+      /usr/bin
+      /usr/local/bin
       )
     # MESSAGE("DBG GSL_CONFIG ${GSL_CONFIG}")
     
@@ -128,9 +129,9 @@
 
 IF(GSL_LIBRARIES)
   IF(GSL_INCLUDE_DIR OR GSL_CXX_FLAGS)
-
-    SET(GSL_FOUND 1)
-    
+    SET(GSL_FOUND TRUE)
+  ELSE(GSL_INCLUDE_DIR OR GSL_CXX_FLAGS)
+    SET(GSL_FOUND FALSE)    
   ENDIF(GSL_INCLUDE_DIR OR GSL_CXX_FLAGS)
 ENDIF(GSL_LIBRARIES)
 
