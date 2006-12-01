@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: GenerateConfigScript.cmake,v 1.15 2006-11-30 10:44:31 fspindle Exp $
+# $Id: GenerateConfigScript.cmake,v 1.16 2006-12-01 11:01:36 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -78,8 +78,8 @@ IF (UNIX)
   # skip *.so  and *.a
   #
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS ${VISP_EXTERN_LINK_DIR})
-  SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS "")
+  SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS)
+  SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS ${VISP_EXTERN_LINK_DIR})
   SET(VISP_CONFIG_SCRIPT_TMP_LIBS "")
   FOREACH(lib ${VISP_EXTERN_LIBS})
     #MESSAGE("library to process: ${lib}")

@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.33 2006-11-30 10:44:31 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.34 2006-12-01 11:01:36 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -247,9 +247,9 @@ IF(USE_GSL)
   FIND_PACKAGE(GSL)
   IF(GSL_FOUND)
     SET(VISP_HAVE_GSL  TRUE)  # for header vpConfig.h
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GSL_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GSL_INCLUDE_DIR})
-    SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR} -L${GSL_LINK_DIRECTORIES})
+    SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR} 
+      ${GSL_EXE_LINKER_FLAGS} -L${GSL_LINK_DIRECTORIES})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${GSL_LIBRARIES})
     LINK_DIRECTORIES(${GSL_LINK_DIRECTORIES})
     #MESSAGE("GSL_INCLUDE_DIR = ${GSL_INCLUDE_DIR}")
