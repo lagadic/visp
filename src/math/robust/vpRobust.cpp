@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpRobust.cpp,v 1.4 2006-12-04 14:53:22 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -143,6 +143,7 @@ vpRobust::MEstimator(const int method,
   //med = median(residues);
   med = select(sorted_residues, 0, n_data-1, (int)n_data/2);
 
+  residualMedian = med ;
 
   // Normalize residues
   for(int i=0; i<n_data; i++)
@@ -159,7 +160,7 @@ vpRobust::MEstimator(const int method,
   //normmedian = median(normres, weights);
   //normmedian = median(normres);
   normmedian = select(sorted_normres, 0, n_data-1, n_data/2);
-
+  normalizedResidualMedian = normmedian ;
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   sigma = 1.4826*normmedian; // median Absolute Deviation
 
@@ -403,88 +404,6 @@ vpRobust::SimultMEstimator(vpColVector &residues)
 
   return w;
 }
-/*
-//! Copy of the previous function for the meantime.
-vpColVector
-vpRobust::vpMEstimator(int method, vpColVector &residues)
-{
-
-double med=0;
-double normmedian=0; 	// Normalized Median
-double sigma=0;
-
-int n_data = residues.getRows();
-vpColVector normres(n_data); // Normalized Residue
-
-if(DEBUG_LEVEL2)
-cout << "vpRobust vpMEstimator reached. No. data = " << n_data << endl;
-
-// Calculate MAD
-med = median(residues);
-
-// Normalize residues
-for(int i=0; i<n_data; i++)
-normres[i] = (fabs(residues[i]- med));
-
-if(it==0)
-{
-  normmedian = median(normres);
-  // 1.48 keeps scale estimate consistent for a normal probability dist.
-  sigma = 1.4826*normmedian; // Median Absolute Deviation
-}
- else
- {
-   sigma = scale(method, residues);
- }
-
-// Set a minimum threshold for sigma
-// (when sigma reaches the level of noise in the image)
- if(sigma < NoiseThreshold)
- {
-   sigma= NoiseThreshold;
- }
-
- if(DEBUG_LEVEL2)
- {
-   cout << "MAD and C computed" << endl;
- }
-
- switch (method)
- {
- case TUKEY :
-   {
-     psiTukey(sigma, normres);
-
-     if(DEBUG_LEVEL2)
-       cout << "Tukey's function computed" << endl;
-     break ;
-
-   }
- case CAUCHY :
-   {
-     psiCauchy(sigma, normres);
-     break ;
-   }
- case MCLURE :
-   {
-     psiMcLure(sigma, normres);
-     break ;
-   }
- case HUBER :
-   {
-     psiHuber(sigma, normres);
-     break ;
-   }
-
-
- };
-
- sig_prev = sigma;
-
- return w;
-}
-*/
-
 double
 vpRobust::scale(int method, vpColVector &x)
 {

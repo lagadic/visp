@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.h,v 1.2 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpRobust.h,v 1.3 2006-12-04 14:53:22 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -99,8 +99,11 @@ public:
   void setIteration(const int x);
   void setThreshold(const double x);
 
-private:
-
+ public : 
+  double residualMedian ;
+  double normalizedResidualMedian ;
+ private:
+  
   double median(vpColVector &x);
   double median(vpColVector &x, vpColVector &weights);
 
