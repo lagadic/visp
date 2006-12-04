@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGSL.cmake,v 1.4 2006-11-30 10:44:31 fspindle Exp $
+# $Id: FindGSL.cmake,v 1.5 2006-12-04 16:10:34 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -52,25 +52,22 @@
   
 #ELSE(WIN32)
   IF(UNIX) 
-  SET(GSL_CONFIG_PREFER_PATH "$ENV{GSL_HOME}/bin" CACHE STRING "preferred path to OpenSG (osg-config)")
     FIND_PROGRAM(GSL_CONFIG gsl-config
-      ${GSL_CONFIG_PREFER_PATH}
+      $ENV{GSL_HOME}/bin
       /usr/bin
       /usr/local/bin
       )
     # MESSAGE("DBG GSL_CONFIG ${GSL_CONFIG}")
     
     IF (GSL_CONFIG) 
-      # set CXXFLAGS to be fed into CXX_FLAGS by the user:
-      SET(GSL_CXX_FLAGS "`${GSL_CONFIG} --cflags`")
-      
       # set INCLUDE_DIRS to prefix+include
       EXEC_PROGRAM(${GSL_CONFIG}
 	ARGS --prefix
 	OUTPUT_VARIABLE GSL_PREFIX)
-      SET(GSL_INCLUDE_DIR ${GSL_PREFIX}/include CACHE STRING INTERNAL)
-      
-      ## extract link dirs for rpath  
+      SET(GSL_INCLUDE_DIR ${GSL_PREFIX}/include)
+      #MESSAGE(STATUS "Using GSL from ${GSL_PREFIX}")
+     
+      ## extract link lib path and name  for rpath  
       EXEC_PROGRAM(${GSL_CONFIG}
 	ARGS --libs
 	OUTPUT_VARIABLE GSL_CONFIG_LIBS )
@@ -102,36 +99,36 @@
       IF (GSL_LINK_DIRECTORIES_WITH_PREFIX)
 	STRING(REGEX REPLACE "[-][L]" "" GSL_LINK_DIRECTORIES ${GSL_LINK_DIRECTORIES_WITH_PREFIX} )
       ENDIF (GSL_LINK_DIRECTORIES_WITH_PREFIX)
-      IF(NOT APPLE)
-      	     SET(GSL_EXE_LINKER_FLAGS "-Wl,-rpath,${GSL_LINK_DIRECTORIES}" CACHE STRING INTERNAL)
-      ENDIF(NOT APPLE)
-      #MESSAGE("DBG  GSL_LINK_DIRECTORIES=${GSL_LINK_DIRECTORIES}")
-      #MESSAGE("DBG  GSL_EXE_LINKER_FLAGS=${GSL_EXE_LINKER_FLAGS}")
+      ## Check if link directory is empty. This can occur with GSL-1.6
+      ## In that case we force the link directory to be ${GSL_PREFIX}/lib
+      IF(GSL_LINK_DIRECTORIES EQUAL "")
+        #MESSAGE("DBG GSL_LINK_DIRECTORIES is empty")
+        SET(GSL_LINK_DIRECTORIES "${GSL_PREFIX}/lib")
+      ENDIF(GSL_LINK_DIRECTORIES EQUAL "")
 
-#      ADD_DEFINITIONS("-DHAVE_GSL")
-#      SET(GSL_DEFINITIONS "-DHAVE_GSL")
-      MARK_AS_ADVANCED(
-	GSL_CXX_FLAGS
-	GSL_INCLUDE_DIR
-	GSL_LIBRARIES
-	GSL_LINK_DIRECTORIES
-	GSL_DEFINITIONS
-	)
-      #MESSAGE(STATUS "Using GSL from ${GSL_PREFIX}")
+      #MESSAGE("DBG GSL_LINK_DIRECTORIES=${GSL_LINK_DIRECTORIES}")
+      IF(NOT APPLE)
+      	SET(GSL_EXE_LINKER_FLAGS "-Wl,-rpath,${GSL_LINK_DIRECTORIES}")
+      ENDIF(NOT APPLE)
+      #MESSAGE("DBG GSL_EXE_LINKER_FLAGS=${GSL_EXE_LINKER_FLAGS}")
+
       
     #ELSE(GSL_CONFIG)
     #  MESSAGE("FindGSL.cmake: gsl-config not found. Please set it manually. GSL_CONFIG=${GSL_CONFIG}")
     ENDIF(GSL_CONFIG)
 
+  IF(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
+    SET(GSL_FOUND TRUE)
+  ELSE(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
+    SET(GSL_FOUND FALSE) 
+  ENDIF(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
+
+  MARK_AS_ADVANCED(
+    GSL_INCLUDE_DIR
+    GSL_LIBRARIES
+    GSL_LINK_DIRECTORIES
+  )
+
   ENDIF(UNIX)
 #ENDIF(WIN32)
-
-
-IF(GSL_LIBRARIES)
-  IF(GSL_INCLUDE_DIR OR GSL_CXX_FLAGS)
-    SET(GSL_FOUND TRUE)
-  ELSE(GSL_INCLUDE_DIR OR GSL_CXX_FLAGS)
-    SET(GSL_FOUND FALSE)    
-  ENDIF(GSL_INCLUDE_DIR OR GSL_CXX_FLAGS)
-ENDIF(GSL_LIBRARIES)
 
