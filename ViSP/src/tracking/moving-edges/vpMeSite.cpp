@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.6 2006-10-30 12:34:16 marchand Exp $
+ * $Id: vpMeSite.cpp,v 1.7 2006-12-04 14:52:21 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -220,8 +220,8 @@ vpMeSite::getQueryList(vpImage<unsigned char> &I, const int range)
     ii = (ifloat+k*salpha);
     jj = (jfloat+k*calpha);
 
-    //   if    ((selectDisplay==RANGE_RESULT)||(selectDisplay==RANGE))
-      vpDisplay::displayCross(I,vpMath::round(ii),vpMath::round(jj),1,vpColor::blue) ;
+    if    ((selectDisplay==RANGE_RESULT)||(selectDisplay==RANGE))
+      vpDisplay::displayCross(I,vpMath::round(ii),vpMath::round(jj),1,vpColor::yellow) ;
 
     // Copy parent's convolution
     vpMeSite pel ;
@@ -294,14 +294,19 @@ vpMeSite::convolution(vpImage<unsigned char>&ima, const  vpMe *me)
 
     index_mask = (int)(thetadeg/(double)me->anglestep);
 
-    for(int a = 0 ; a < me->mask_size ; a++ )
+    int ihalf = i-half ;
+    int jhalf = j-half ;
+    int ihalfa ;
+    int a ;
+    int b ;
+    for( a = 0 ; a < me->mask_size ; a++ )
     {
-      for(int b = 0 ; b < me->mask_size ; b++ )
+      ihalfa = ihalf+a ;
+      for( b = 0 ; b < me->mask_size ; b++ )
       {
-	// Removed mask_sign !!NO (EM)
 	conv += mask_sign* me->mask[index_mask][a][b] *
-	  ima(i-half+a,j-half+b) ;
-
+	  //	  ima(i-half+a,j-half+b) ;
+	  ima(ihalfa,jhalf+b) ;
       }
     }
 
