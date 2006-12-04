@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.1 2006-11-23 17:28:19 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.2 2006-12-04 09:25:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -131,6 +131,7 @@ const char * vp1394TwoGrabber::strFramerate[DC1394_FRAMERATE_NUM]= {
 */
 vp1394TwoGrabber::vp1394TwoGrabber( )
 {
+  num_cameras = 0;
   cameras = NULL;
   camera_id = 0;
   verbose = false;//true;
