@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.28 2006-08-23 16:37:20 fspindle Exp $
+ * $Id: vpMatrix.cpp,v 1.29 2006-12-05 10:28:48 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -271,8 +271,10 @@ vpMatrix::init(const vpMatrix &m,int r, int c, int nrows, int ncols)
     throw ;
   }
 
-  for (int i=r ; i < r+nrows; i++)
-    for (int j=c ; j < c+ncols; j++)
+  int rnrows = r+nrows ;
+  int cncols = c+ncols ;
+  for (int i=r ; i < rnrows; i++)
+    for (int j=c ; j < cncols; j++)
       (*this)[i-r][j-c] = m[i][j] ;
 }
 
@@ -314,7 +316,8 @@ vpMatrix::operator=(const vpMatrix &B)
 {
   try {
     resize(B.rowNum, B.colNum) ;
-    *this = 0;
+    // suppress by em 5/12/06
+    //    *this = 0;
   }
   catch(vpException me)
   {
@@ -323,16 +326,7 @@ vpMatrix::operator=(const vpMatrix &B)
     throw ;
   }
 
-
-
-  // Modif EM 16/6/03
-    memcpy(data,B.data,dsize*sizeof(double)) ;
-    /*  for (int i=0; i<rowNum; i++) {
-      for (int j=0; j<colNum; j++) {
-      rowPtrs[i][j] = B.rowPtrs[i][j];
-      }
-      }
-  */
+  memcpy(data,B.data,dsize*sizeof(double)) ;
 
   return *this;
 }
@@ -392,13 +386,23 @@ vpMatrix::operator*(const vpMatrix &B) const
 			    "\n\t\tvpMatrix mismatch in "
 			    "vpMatrix/vpMatrix multiply")) ;
   }
-  for (int i=0;i<rowNum;i++)
-    for (int j=0;j<B.colNum;j++)
+
+  // 5/12/06 some "very" simple optimization to avoid indexation
+  int BcolNum = B.colNum ;
+  int BrowNum = B.rowNum ;
+  int i,j,k ;
+  double **BrowPtrs = B.rowPtrs;
+  for (i=0;i<rowNum;i++)  
     {
-      double s =0 ;
-      for (int k=0;k<B.rowNum;k++)
-	s +=rowPtrs[i][k] * B.rowPtrs[k][j];
-      p[i][j] = s ;
+      double *rowptri = rowPtrs[i] ;
+      double *pi = p[i] ;
+      for (j=0;j<BcolNum;j++)
+	{
+	  double s =0 ;
+	  for (k=0;k<BrowNum;k++)
+	    s +=rowptri[k] * BrowPtrs[k][j];
+	  pi[j] = s ;
+	}
     }
   return p;
 }
@@ -584,13 +588,20 @@ vpMatrix::sumSquare() const
   double x ;
 
 
-
+  double *d = data ;
+  double *n = data+dsize ;
+  while (d < n ) 
+  {
+    x = *d++ ;
+    sum += x*x ;
+  }
+/*
   for (int i=0;i<dsize;i++)
   {
     x = *(data + i) ;
     sum += x*x ;
   }
-  /*
+  
     for (int i=0; i<rowNum; i++)
     for (int j=0; j<colNum; j++)
     sum += rowPtrs[i][j]*rowPtrs[i][j];
@@ -623,8 +634,9 @@ vpMatrix::operator*(const vpColVector &b) const
 
   for (int j=0;j<colNum;j++) {
     {
+      double bj = b[j] ; // optimization em 5/12/2006
       for (int i=0;i<rowNum;i++) {
-	c[i]+=rowPtrs[i][j] * b[j];
+	c[i]+=rowPtrs[i][j] * bj;
       }
     }
   }
@@ -641,9 +653,10 @@ vpMatrix::operator*(const vpTranslationVector &b) const
   for (int j=0;j<3;j++) c[j]=0 ;
 
   for (int j=0;j<3;j++) {
-    {
+    {   
+      double bj = b[j] ; // optimization em 5/12/2006
       for (int i=0;i<3;i++) {
-	c[i]+=rowPtrs[i][j] * b[j];
+	c[i]+=rowPtrs[i][j] * bj;
       }
     }
   }
@@ -673,9 +686,15 @@ vpMatrix operator*(const double &x,const vpMatrix &B)
     throw ;
   }
 
-  for (int i=0;i<B.getRows(); i++)
-    for (int j=0 ; j < B.getCols();j++)
-      v[i][j] = B[i][j]*x;
+  int Brow = B.getRows() ;
+  int Bcol = B.getCols() ;
+  for (int i=0;i<Brow; i++)
+    {
+      double *vi = v[i] ;
+      double *Bi = B[i] ;
+      for (int j=0 ; j < Bcol;j++)
+	vi[j] = Bi[j]*x;
+    }
   return v ;
 }
 
@@ -725,15 +744,11 @@ vpMatrix  vpMatrix::operator/(double x) const
   }
 
 
+  double  xinv = 1/x ;
 
   for (int i=0;i<dsize;i++)
-    *(v.data+i) = *(data+i)/x;
-  /*
-    int i;int j;
-    for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)
-    v.rowPtrs[i][j] = rowPtrs[i][j]/x;
-  */
+    *(v.data+i) = *(data+i)*xinv ;
+  
   return v;
 }
 
@@ -745,12 +760,7 @@ vpMatrix & vpMatrix::operator+=(double x)
 
   for (int i=0;i<dsize;i++)
     *(data+i) += x;
-  /*
-    int i;int j;
-    for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)
-    rowPtrs[i][j] += x;
-  */
+
   return *this;
 }
 
@@ -790,9 +800,9 @@ vpMatrix & vpMatrix::operator*=(double x)
 vpMatrix & vpMatrix::operator/=(double x)
 {
 
-
+  double xinv = 1/x ;
   for (int i=0;i<dsize;i++)
-    *(data+i) /= x;
+    *(data+i) *= xinv;
   /*
     int i;int j;
     for (i=0;i<rowNum;i++)
@@ -898,9 +908,11 @@ vpMatrix vpMatrix::t() const
 
   int i,j;
   for (i=0;i<rowNum;i++)
-    for (j=0;j<colNum;j++)
-      At[j][i] = (*this)[i][j];
-
+    {
+      double *coli = (*this)[i] ;
+      for (j=0;j<colNum;j++)
+	At[j][i] = coli[j];
+    }
   return At;
 }
 
@@ -1649,12 +1661,12 @@ vpMatrix::det33(const vpMatrix &M)
   double detint ;
 
   detint = 0.0 ;
-  detint =          M[0][0]*M[1][1]*M[2][2]/2 ;
-  detint = detint + M[2][0]*M[0][1]*M[1][2]/2 ;
-  detint = detint + M[0][2]*M[2][1]*M[1][0]/2 ;
-  detint = detint - M[0][2]*M[1][1]*M[2][0]/2 ;
-  detint = detint - M[0][0]*M[2][1]*M[1][2]/2 ;
-  detint = detint - M[2][2]*M[1][0]*M[0][1]/2 ;
+  detint =          M[0][0]*M[1][1]*M[2][2]*0.5 ;
+  detint = detint + M[2][0]*M[0][1]*M[1][2]*0.5 ;
+  detint = detint + M[0][2]*M[2][1]*M[1][0]*0.5 ;
+  detint = detint - M[0][2]*M[1][1]*M[2][0]*0.5 ;
+  detint = detint - M[0][0]*M[2][1]*M[1][2]*0.5 ;
+  detint = detint - M[2][2]*M[1][0]*M[0][1]*0.5 ;
   return(detint);
 
 }
