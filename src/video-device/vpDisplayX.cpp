@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.15 2006-09-11 14:01:35 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.16 2006-12-05 10:27:59 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -947,15 +947,13 @@ void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
 */
 void vpDisplayX::displayImage(vpImage<unsigned char> &I)
 {
-  unsigned char       *src_8  = NULL;
-  unsigned char       *dst_8  = NULL;
-  unsigned short      *dst_16 = NULL;
-  unsigned char       *dst_32 = NULL;
 
   if (Xinitialise)
   {
     switch (screen_depth) {
     case 8: {
+      unsigned char       *src_8  = NULL;
+      unsigned char       *dst_8  = NULL;
       src_8 = (unsigned char *) I.bitmap;
       dst_8 = (unsigned char *) Ximage->data;
       // Correction de l'image de facon a liberer les niveaux de gris
@@ -980,6 +978,7 @@ void vpDisplayX::displayImage(vpImage<unsigned char> &I)
       break;
     }
     case 16: {
+      unsigned short      *dst_16 = NULL;
       dst_16 = (unsigned short*)Ximage->data;
 
       for (int i = 0; i < nrows ; i++) {
@@ -995,14 +994,20 @@ void vpDisplayX::displayImage(vpImage<unsigned char> &I)
 
     case 24:
     default: {
+      unsigned char       *dst_32 = NULL;
+      int ncolsnrows = ncols * nrows ;
       dst_32 = (unsigned char*)Ximage->data;
-      for (int i = 0; i < ncols * nrows; i++) {
-	char val = I.bitmap[i];
-	*(dst_32 ++) = val;	// Composante Rouge.
-	*(dst_32 ++) = val;	// Composante Verte.
-	*(dst_32 ++) = val;	// Composante Bleue.
-	*(dst_32 ++) = val;
-      }
+      unsigned char *bitmap = I.bitmap ;
+      unsigned char *n = I.bitmap + ncolsnrows;
+      //for (int i = 0; i < ncolsnrows; i++) // suppression de l'iterateur i
+      while (bitmap < n)  
+	{
+	  char val = *(bitmap++);
+	  *(dst_32 ++) = val;	// Composante Rouge.
+	  *(dst_32 ++) = val;	// Composante Verte.
+	  *(dst_32 ++) = val;	// Composante Bleue.
+	  *(dst_32 ++) = val;
+	}
 
       // Creation de la Pixmap.
       pixmap = XCreatePixmap(display, window, ncols, nrows, screen_depth);
