@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.6 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpList.h,v 1.7 2006-12-05 10:29:38 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -134,16 +134,16 @@ class vpList
   vpList() ;                  // constr.
   vpList(vpList& Liste);       // cloning
   ~vpList();                  // destr.
-  void next(void) ;           // current element's successor ( cur = cur->next )
-  void previous(void) ;       // current element's predecessor ( cur = cur->pred )
-  void front(void) ;          // go to the front of the List (cur = first)
-  void end(void) ;            // go back to the end of the List ( cur = last )
-  bool outside(void) const;         // test whether we are outside the List
+  inline void next(void) ;           // current element's successor ( cur = cur->next )
+  inline void previous(void) ;       // current element's predecessor ( cur = cur->pred )
+  inline void front(void) ;          // go to the front of the List (cur = first)
+  inline void end(void) ;            // go back to the end of the List ( cur = last )
+  inline bool outside(void) const;         // test whether we are outside the List
 
   bool empty(void) const;       // tests whether the List is empty
 
-  type& value(void);         // returns the current element value
-  const type& value(void) const;         // returns the current element value
+  inline type& value(void);         // returns the current element value
+  inline const type& value(void) const;         // returns the current element value
 
   void suppress(void);       // deletes the current item
   void kill();              // empties the List
@@ -152,15 +152,15 @@ class vpList
   void print() {display() ;}           // displays the content of the list
 
 
-  void addRight(const type& el);   // inserts an element on the right
-  void addLeft(const type& el);    // inserts an element on the left
-  void modify(const type& el);     // modifies thevalue field of the curr. el.
-  int nbElement(void);       // returns the number of items currently in the list
-  int nbElements(void);       // returns the number of items currently in the list
+  inline void addRight(const type& el);   // inserts an element on the right
+  inline void addLeft(const type& el);    // inserts an element on the left
+  inline void modify(const type& el);     // modifies thevalue field of the curr. el.
+  inline int nbElement(void);       // returns the number of items currently in the list
+  inline int nbElements(void);       // returns the number of items currently in the list
 
   void operator=(vpList<type>& Liste);
-  void operator+=(vpList<type>& Liste);
-  void operator+=(const type& l);
+  inline void operator+=(vpList<type>& Liste);
+  inline void operator+=(const type& l);
 
   // Other non fundamental member (may be somehow usefull)
   bool nextOutside(void) const;     // test whether we are outside the List
