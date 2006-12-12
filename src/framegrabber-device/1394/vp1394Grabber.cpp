@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.13 2006-11-23 17:25:41 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.14 2006-12-12 17:04:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1451,11 +1451,11 @@ void vp1394Grabber::getWidth(int &width)
 
 /*!
 
-  get the image height. It depends on the camera format setFormat() and mode
+  Get the image height. It depends on the camera format setFormat() and mode
   setMode(). The height of the images is only available after a call to
   open().
 
-  \param height The image width.
+  \param height The image height.
   \param camera A camera. The value must be comprised between 0 and the
   number of cameras found on the bus and returned by getNumCameras().
 
