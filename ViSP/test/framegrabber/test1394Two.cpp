@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test1394Two.cpp,v 1.1 2006-11-23 17:29:07 fspindle Exp $
+ * $Id: test1394Two.cpp,v 1.2 2006-12-12 17:04:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -282,10 +282,10 @@ main(int argc, char ** argv)
 	    // Parse the list of supported modes
 	    vp1394TwoGrabber::vp1394TwoVideoMode supmode = lmode.value();
 	    if (curmode == supmode)
-	      cout << " * " << vp1394TwoGrabber::videoMode2str(supmode)
+	      cout << " * " << vp1394TwoGrabber::videoMode2string(supmode)
 		   << " (" << supmode << ")" << endl;
 	    else
-	      cout << "   " << vp1394TwoGrabber::videoMode2str(supmode)
+	      cout << "   " << vp1394TwoGrabber::videoMode2string(supmode)
 		   << " (" << supmode << ")" << endl;
 
 	    // Parse the list of supported framerates for a supported mode
@@ -295,10 +295,10 @@ main(int argc, char ** argv)
 	    while (! lfps.outside() ) {
 	      vp1394TwoGrabber::vp1394TwoFramerate supfps = lfps.value();
 	      if ( (curmode == supmode) && (supfps == curfps) )
-		cout << "    * " << vp1394TwoGrabber::framerate2str(supfps)
+		cout << "    * " << vp1394TwoGrabber::framerate2string(supfps)
 		     << " (" << supfps << ")" << endl;
 	      else
-		cout << "      " << vp1394TwoGrabber::framerate2str(supfps)
+		cout << "      " << vp1394TwoGrabber::framerate2string(supfps)
 		     << " (" << supfps << ")" << endl;
 	      lfps.next();
 	    }
