@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.2 2006-12-04 09:25:51 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.3 2006-12-12 17:04:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -131,6 +131,10 @@ const char * vp1394TwoGrabber::strFramerate[DC1394_FRAMERATE_NUM]= {
 */
 vp1394TwoGrabber::vp1394TwoGrabber( )
 {
+  // protected members
+  ncols = nrows = 0;
+
+  // private members
   num_cameras = 0;
   cameras = NULL;
   camera_id = 0;
@@ -786,20 +790,32 @@ vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
 }
 
 /*!
-  Acquire a grey level image from the active camera.
 
-  \param I : Image data structure (8 bits image).
+  Get an image from the active camera frame buffer. This buffer neads to be
+  released by enqueue().
+
+  \return Pointer to the libdc1394-2.x image data structure.
 
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
-  \exception vpFrameGrabberException::otherError : If format
-  conversion to return a 8 bits image is not implemented.
+  \code
+  vp1394TwoGrabber g;
+  dc1394video_frame_t *frame;
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+  while(1) {
+    frame = g.dequeue();
+    // Current image is now in frame structure
+    g.enqueue(frame);
+  }
 
-  \sa setCamera(), setVideoMode(), setFramerate()
+  \endcode
+
+  \sa enqueue()
 */
-void
-vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
+dc1394video_frame_t *
+vp1394TwoGrabber::dequeue()
 {
 
   if (! num_cameras) {
@@ -827,43 +843,80 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
   unsigned width  = frame->size[0];
   unsigned height = frame->size[1];
   unsigned size   = width * height;
+}
+
+/*!
+  Release the frame buffer used by the active camera.
+
+  \param frame : Pointer to the libdc1394-2.x image data structure.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \sa dequeue()
+*/
+void
+vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
+{
+
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No camera found") );
+  }
+
+  if (frame)
+    dc1394_capture_enqueue(camera, frame);
+
+}
+
+/*!
+  Acquire a grey level image from the active camera.
+
+  \param I : Image data structure (8 bits image).
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::otherError : If format
+  conversion to return a 8 bits image is not implemented.
+
+  \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
+*/
+void
+vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
+{
+  dc1394video_frame_t *frame;
+  unsigned width, height, size;
+
+  frame = dequeue();
+
+  getWidth(width);
+  getHeight(height);
+
+  size = width * height;
 
   if ((I.getCols() != width)||(I.getRows() != height))
     I.resize(height, width);
 
-  vp1394TwoVideoMode videomode = vpVIDEO_MODE_320x240_YUV422;
-  getVideoMode(videomode);
-
-  switch(videomode) {
-  case vpVIDEO_MODE_640x480_MONO8:
-  case vpVIDEO_MODE_800x600_MONO8:
-  case vpVIDEO_MODE_1024x768_MONO8:
-  case vpVIDEO_MODE_1280x960_MONO8:
-  case vpVIDEO_MODE_1600x1200_MONO8:
+  switch(frame->color_coding) {
+  case DC1394_COLOR_CODING_MONO8:
     memcpy(I.bitmap, (unsigned char *) frame->image,
 	   size*sizeof(unsigned char));
     break;
 
-  case vpVIDEO_MODE_640x480_YUV411:
+  case DC1394_COLOR_CODING_YUV411:
     vpImageConvert::YUV411ToGrey( (unsigned char *) frame->image,
 				  I.bitmap, size);
     break;
 
-  case vpVIDEO_MODE_320x240_YUV422:
-  case vpVIDEO_MODE_640x480_YUV422:
-  case vpVIDEO_MODE_800x600_YUV422:
-  case vpVIDEO_MODE_1024x768_YUV422:
-  case vpVIDEO_MODE_1280x960_YUV422:
-  case vpVIDEO_MODE_1600x1200_YUV422:
+  case DC1394_COLOR_CODING_YUV422:
     vpImageConvert::YUV422ToGrey( (unsigned char *) frame->image,
 				  I.bitmap, size);
     break;
 
-  case vpVIDEO_MODE_640x480_RGB8:
-  case vpVIDEO_MODE_800x600_RGB8:
-  case vpVIDEO_MODE_1024x768_RGB8:
-  case vpVIDEO_MODE_1280x960_RGB8:
-  case vpVIDEO_MODE_1600x1200_RGB8:
+  case DC1394_COLOR_CODING_RGB8:
     vpImageConvert::RGBToGrey((unsigned char *) frame->image, I.bitmap, size);
     break;
 
@@ -877,9 +930,7 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
     break;
   };
 
-  if (frame)
-    dc1394_capture_enqueue(camera, frame);
-
+  enqueue(frame);
 }
 
 /*!
@@ -893,74 +944,41 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
   \exception vpFrameGrabberException::otherError : If format
   conversion to return a RGBa bits image is not implemented.
 
-  \sa setCamera(), setVideoMode(), setFramerate()
+  \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
 */
 void
 vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 {
-
-  if (! num_cameras) {
-    close();
-    vpERROR_TRACE("No camera found");
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-				   "No camera found") );
-  }
-
-  if (camera->is_iso_on == DC1394_OFF) {
-    setTransmission(DC1394_ON);
-  }
-
-  // Start dma capture if halted
-  if (! camera->capture_is_set)
-    setCapture(DC1394_ON);
-
   dc1394video_frame_t *frame;
+  unsigned width, height, size;
 
-  if (dc1394_capture_dequeue(camera, DC1394_CAPTURE_POLICY_WAIT, &frame)
-      !=DC1394_SUCCESS) {
-    vpERROR_TRACE ("Error: Failed to capture from camera %d\n", camera_id);
-  }
+  frame = dequeue();
 
-  unsigned width  = frame->size[0];
-  unsigned height = frame->size[1];
-  unsigned size   = width * height;
+  getWidth(width);
+  getHeight(height);
+
+  size = width * height;
 
   if ((I.getCols() != width)||(I.getRows() != height))
     I.resize(height, width);
 
-  vp1394TwoVideoMode videomode = vpVIDEO_MODE_320x240_YUV422;
-  getVideoMode(videomode);
-
-  switch(videomode) {
-  case vpVIDEO_MODE_640x480_MONO8:
-  case vpVIDEO_MODE_800x600_MONO8:
-  case vpVIDEO_MODE_1024x768_MONO8:
-  case vpVIDEO_MODE_1280x960_MONO8:
-  case vpVIDEO_MODE_1600x1200_MONO8:
+  switch(frame->color_coding) {
+  case DC1394_COLOR_CODING_MONO8:
     vpImageConvert::GreyToRGBa((unsigned char *) frame->image,
 			       (unsigned char *) I.bitmap, size);
     break;
 
-  case vpVIDEO_MODE_640x480_YUV411:
+  case DC1394_COLOR_CODING_YUV411:
     vpImageConvert::YUV411ToRGBa( (unsigned char *) frame->image,
 				  (unsigned char *) I.bitmap, size);
     break;
 
-  case vpVIDEO_MODE_320x240_YUV422:
-  case vpVIDEO_MODE_640x480_YUV422:
-  case vpVIDEO_MODE_800x600_YUV422:
-  case vpVIDEO_MODE_1024x768_YUV422:
-  case vpVIDEO_MODE_1280x960_YUV422:
-  case vpVIDEO_MODE_1600x1200_YUV422:
+  case DC1394_COLOR_CODING_YUV422:
     vpImageConvert::YUV422ToRGBa( (unsigned char *) frame->image,
 				  (unsigned char *) I.bitmap, size);
     break;
 
-  case vpVIDEO_MODE_640x480_RGB8:
-  case vpVIDEO_MODE_800x600_RGB8:
-  case vpVIDEO_MODE_1024x768_RGB8:
-  case vpVIDEO_MODE_1280x960_RGB8:
-  case vpVIDEO_MODE_1600x1200_RGB8:
+  case DC1394_COLOR_CODING_RGB8:
     vpImageConvert::RGBToRGBa((unsigned char *) frame->image,
 			      (unsigned char *) I.bitmap, size);
     break;
@@ -975,9 +993,66 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
     break;
   };
 
-  if (frame)
-    dc1394_capture_enqueue(camera, frame);
+  enqueue(frame);
 
+}
+
+/*!
+
+  Get the image width. It depends on the camera video mode setVideoMode(). The
+  image size is only available after a call to open() or acquire().
+
+  \param width : The image width, zero if the required camera is not avalaible.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \warning Has to be called after open() or acquire() to be sure that camera
+  settings are send to the camera.
+
+  \sa getHeight(), open(), acquire()
+
+*/
+void vp1394TwoGrabber::getWidth(unsigned &width)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No camera found") );
+  }
+
+  width = ncols;
+
+}
+
+/*!
+
+  Get the image height. It depends on the camera vide mode
+  setVideoMode(). The image size is only available after a call to
+  open() or acquire().
+
+  \param height : The image width.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \warning Has to be called after open() or acquire() to be sure that camera
+  settings are send to the camera.
+
+  \sa getWidth()
+
+*/
+void vp1394TwoGrabber::getHeight(unsigned &height)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No camera found") );
+  }
+
+  height = ncols;
 }
 
 /*!
@@ -1018,8 +1093,10 @@ vp1394TwoGrabber::printCameraInfo()
 
   \return A string describing the mode, an empty string if the mode is not
   supported.
+
+  \sa string2videoMode()
 */
-string vp1394TwoGrabber::videoMode2str(vp1394TwoVideoMode videomode)
+string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoMode videomode)
 {
   string _str = "";
   dc1394video_mode_t _videomode = (dc1394video_mode_t) videomode;
@@ -1083,8 +1160,10 @@ string vp1394TwoGrabber::videoMode2str(vp1394TwoVideoMode videomode)
 
   \return A string describing the framerate, an empty string if the framerate
   is not supported.
+
+  \sa string2framerate()
 */
-string vp1394TwoGrabber::framerate2str(vp1394TwoFramerate fps)
+string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
 {
   string _str = "";
   dc1394framerate_t _fps = (dc1394framerate_t) fps;
@@ -1113,6 +1192,75 @@ string vp1394TwoGrabber::framerate2str(vp1394TwoFramerate fps)
   }
 
   return _str;
+}
+
+/*!
+
+  Converts the string containing the description of the vide mode into the
+ video mode identifier.
+
+  \param videomode : The string describing the video mode.
+
+  \return The camera capture video mode identifier.
+
+  \exception vpFrameGrabberException::settingError : If the required videomode
+  is not valid.
+
+  This method returns 0 if the string does not match to a video mode string.
+
+  \sa videoMode2string()
+
+*/
+vp1394TwoGrabber::vp1394TwoVideoMode
+vp1394TwoGrabber::string2videoMode(string videomode)
+{
+  vp1394TwoVideoMode _id;
+
+  for (int i = DC1394_VIDEO_MODE_MIN; i <= DC1394_VIDEO_MODE_MAX; i ++) {
+    _id = (vp1394TwoVideoMode) i;
+    if (videomode.compare(videoMode2string(_id)) == 0)
+      return _id;
+  };
+
+  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				 "The required videomode is not valid") );
+
+  return (vp1394TwoVideoMode) 0;
+}
+
+
+/*!
+
+  Converts the string containing the description of the framerate into the
+  framerate identifier.
+
+  \param framerate : The string describing the framerate.
+
+  \return The camera capture framerate identifier.
+
+  \exception vpFrameGrabberException::settingError : If the required framerate
+  is not valid.
+
+  This method returns 0 if the string does not match to a framerate string.
+
+  \sa framerate2string()
+
+*/
+vp1394TwoGrabber::vp1394TwoFramerate
+vp1394TwoGrabber::string2framerate(string framerate)
+{
+  vp1394TwoFramerate _id;
+
+  for (int i = DC1394_FRAMERATE_MIN; i <= DC1394_FRAMERATE_MAX; i ++) {
+    _id = (vp1394TwoFramerate) i;
+    if (framerate.compare(framerate2string(_id)) == 0)
+      return _id;
+  };
+
+  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				 "The required framerate is not valid") );
+
+  return (vp1394TwoFramerate) 0;
 }
 
 #endif

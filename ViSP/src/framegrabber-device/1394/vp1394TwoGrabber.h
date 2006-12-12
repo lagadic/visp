@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.1 2006-11-23 17:28:19 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.2 2006-12-12 17:04:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -171,14 +171,22 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);
 
+  dc1394video_frame_t *dequeue();
+  void enqueue(dc1394video_frame_t *frame);
+
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);
+
+  void getWidth(unsigned &width);
+  void getHeight(unsigned &height);
 
   void close();
 
 public:
-  static string videoMode2str(vp1394TwoVideoMode videomode);
-  static string framerate2str(vp1394TwoFramerate fps);
+  static string videoMode2string(vp1394TwoVideoMode videomode);
+  static string framerate2string(vp1394TwoFramerate fps);
+  static vp1394TwoVideoMode string2videoMode(string videomode);
+  static vp1394TwoFramerate string2framerate(string fps);
 
  private:
   void open();
