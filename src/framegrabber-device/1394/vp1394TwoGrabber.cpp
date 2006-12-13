@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.4 2006-12-13 17:02:55 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.5 2006-12-13 17:19:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -317,6 +317,10 @@ vp1394TwoGrabber::setVideoMode(vp1394TwoVideoMode videomode)
 				   "No camera found") );
   }
 
+   // Stop dma capture if started
+  if (camera->capture_is_set)
+    setCapture(DC1394_OFF);
+
   if (dc1394_video_set_mode(camera, (dc1394video_mode_t) videomode) != DC1394_SUCCESS) {
 
     close();
@@ -446,6 +450,10 @@ vp1394TwoGrabber::setFramerate(vp1394TwoFramerate fps)
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "No camera found") );
   }
+  // Stop dma capture if started
+  if (camera->capture_is_set)
+    setCapture(DC1394_OFF);
+
   if (dc1394_video_set_framerate(camera, (dc1394framerate_t) fps) != DC1394_SUCCESS) {
 
     close();
