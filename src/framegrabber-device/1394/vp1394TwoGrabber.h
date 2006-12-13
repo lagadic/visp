@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.2 2006-12-12 17:04:34 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.3 2006-12-13 17:02:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,7 +44,11 @@
   http://sourceforge.net/projects/libdc1394 and
   http://sourceforge.net/projects/libraw1394 .
 
-  vp1394TwoGrabber was tested with a Marlin F033C camera with libdc1394-2.0.0.
+  vp1394TwoGrabber was tested with libdc1394-2.0.0 (svn version) and
+  with the following cameras:
+  - Marlin F033C
+  - Marlin F131B
+  - APPLE iSight extern webcam
 
   \ingroup libdevice
 */
