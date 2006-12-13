@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test1394Two.cpp,v 1.2 2006-12-12 17:04:56 fspindle Exp $
+ * $Id: test1394Two.cpp,v 1.3 2006-12-13 17:00:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,6 +65,9 @@ using namespace std;
 #include <visp/vpDisplayX.h>
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpRGBa.h>
+
+//#define GRAB_COLOR
 
 /*!
   \example test1394.cpp
@@ -113,8 +116,8 @@ OPTIONS                                                    Default\n\
 \n\
     -i      : Flag to print camera informations.\n\
 \n\
-    -s      : Flag to print camera settings capabilities\n\
-              such as video mode and framerates available.\n\
+    -s      : Print camera settings capabilities such as \n\
+              video mode and framerates available and exit.\n\
 \n\
     -d      : Flag to turn off image display.\n\
 \n\
@@ -191,10 +194,14 @@ main(int argc, char ** argv)
     bool framerate_is_set = false;
     vp1394TwoGrabber::vp1394TwoFramerate framerate;
     bool save = false;
-    string opath = "/tmp/I%d-%04d.pgm";
 
-
+#ifdef GRAB_COLOR
+    vpImage<vpRGBa> *I;
+    string opath = "/tmp/I%d-%04d.ppm";
+#else
     vpImage<unsigned char> *I;
+    string opath = "/tmp/I%d-%04d.pgm";
+#endif
     vpDisplayX *d;
     vp1394TwoGrabber g ;
 
@@ -242,8 +249,11 @@ main(int argc, char ** argv)
     offset = camera;
 
     // allocate an image and display for each camera to consider
+#ifdef GRAB_COLOR
+    I = new vpImage<vpRGBa> [ncameras];
+#else
     I = new vpImage<unsigned char> [ncameras];
-
+#endif
     if (display)
       d = new vpDisplayX [ncameras];
 
@@ -310,6 +320,7 @@ main(int argc, char ** argv)
 
 	}
       }
+      return 0;
     }
 
     // If required modify camera settings
@@ -361,7 +372,11 @@ main(int argc, char ** argv)
 	  sprintf(buf, opath.c_str(), c+offset, i);
 	  string filename(buf);
 	  cout << "Write: " << filename << endl;
+#ifdef GRAB_COLOR
+	  vpImageIo::writePPM(I[c], filename);
+#else
 	  vpImageIo::writePGM(I[c], filename);
+#endif
 	}
       }
       tend = vpTime::measureTimeMs();
