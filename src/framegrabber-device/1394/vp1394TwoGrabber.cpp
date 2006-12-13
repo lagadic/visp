@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.3 2006-12-12 17:04:34 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.4 2006-12-13 17:02:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -840,9 +840,10 @@ vp1394TwoGrabber::dequeue()
     vpERROR_TRACE ("Error: Failed to capture from camera %d\n", camera_id);
   }
 
-  unsigned width  = frame->size[0];
-  unsigned height = frame->size[1];
-  unsigned size   = width * height;
+  ncols = frame->size[0];
+  nrows = frame->size[1];
+
+  return frame;
 }
 
 /*!
@@ -877,7 +878,7 @@ vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
   \param I : Image data structure (8 bits image).
 
   \exception vpFrameGrabberException::initializationError : If no
-  camera found on the bus.
+  camera found on the bus or if can't get camera settings.
 
   \exception vpFrameGrabberException::otherError : If format
   conversion to return a 8 bits image is not implemented.
@@ -1052,7 +1053,7 @@ void vp1394TwoGrabber::getHeight(unsigned &height)
 				   "No camera found") );
   }
 
-  height = ncols;
+  height = nrows;
 }
 
 /*!
