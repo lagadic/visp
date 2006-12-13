@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyMalis.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpHomographyMalis.cpp,v 1.6 2006-12-13 13:35:27 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,6 +75,7 @@
 */
 #include <visp/vpHomography.h>
 #include <visp/vpDebug.h>
+#include <visp/vpMatrixException.h>
 
 
 
@@ -293,7 +294,8 @@ HLM2D(int nb_pts,
   /** cas d'erreur : plus de 2 valeurs singulières =0 **/
   if (contZeros > 2) {
     vpERROR_TRACE("matrix is rank deficient");
-    throw ;
+    throw (vpMatrixException(vpMatrixException::matrixError,
+			     "matrix is rank deficient"));
   }
 
   H.resize(3,3) ;
@@ -391,7 +393,8 @@ HLM3D(int nb_pts,
   if (cont_pts < 5)
   {
     vpERROR_TRACE(" not enough point to compute the homography ... ");
-    throw ;
+    throw (vpMatrixException(vpMatrixException::matrixError,
+			     "Not enough point to compute the homography"));
   }
 
   nl = cont_pts*(cont_pts-1)*(cont_pts-2)/6 ;
