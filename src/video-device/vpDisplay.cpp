@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.11 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpDisplay.cpp,v 1.12 2007-01-11 15:31:43 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,7 @@
 vpDisplay::vpDisplay()
 {
   title = NULL ;
+  displayHasBeenInitialized = false ;
 }
 
 /*!
