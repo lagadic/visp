@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.4 2006-09-05 14:12:21 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.5 2007-01-11 15:39:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -176,7 +176,7 @@ void vpDisplayWin32::init(int _ncol, int _nrow,
 	//the initialization worked
 	iStatus = (hThread != (HANDLE)NULL);
 
-	displayHasBeenInitialized =true;
+	displayHasBeenInitialized = true;
 }
 
 /*!
@@ -496,24 +496,22 @@ void vpDisplayWin32::clearDisplay(int c)
 */
 void vpDisplayWin32::closeDisplay()
 {
-	//wait if the window is not initialized
-	waitForInit();
-
-	//tells the window that it has to close
-	PostMessage(window.getHWnd(), vpWM_CLOSEDISPLAY, NULL, NULL);
-
-	//if the destructor is called for a reason different than a problem in the thread creation
-	if (iStatus)
-	{
-		//waits for the thread to end
-		WaitForSingleObject(hThread, INFINITE);
-		CloseHandle(hThread);
-	};
-	if (this->title != NULL)
-	{
-	  delete [] this->title;
-	  this->title = NULL;
-	}
+  if (displayHasBeenInitialized) {
+    waitForInit();
+    PostMessage(window.getHWnd(), vpWM_CLOSEDISPLAY, NULL, NULL);
+    //if the destructor is called for a reason different than a
+    //problem in the thread creation
+    if (iStatus) {
+      //waits for the thread to end
+      WaitForSingleObject(hThread, INFINITE);
+      CloseHandle(hThread);
+    }
+    displayHasBeenInitialized = false ; 
+  }
+  if (this->title != NULL) {
+    delete [] this->title;
+    this->title = NULL;
+  }
 }
 
 /*!
