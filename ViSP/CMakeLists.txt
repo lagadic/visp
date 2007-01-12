@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.34 2006-12-01 11:01:36 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.35 2007-01-12 16:43:26 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -558,13 +558,13 @@ INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config
   DESTINATION bin
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
   OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-  )
+  OWNER_WRITE   )
 ENDIF (UNIX)
 
 # install rule for vpConfig.h
 INSTALL(FILES ${VISP_BINARY_DIR}/include/visp/vpConfig.h
   DESTINATION include/visp 
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
   )
 #----------------------------------------------------------------------
 # add distclean target 
@@ -656,7 +656,7 @@ INSTALL(FILES
   ${LIBRARY_OUTPUT_PATH}/VISPBuildSettings.cmake
   ${LIBRARY_OUTPUT_PATH}/VISPLibraryDepends.cmake
   DESTINATION lib
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
   )
   
 
