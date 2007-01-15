@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.9 2006-11-09 16:00:10 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.10 2007-01-15 10:32:51 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -98,10 +98,10 @@ TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 # install rule for the library
 INSTALL(TARGETS ${VISP_INTERN_LIBS}
   DESTINATION lib
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
   )
 # install rule for all the headers
 INSTALL(FILES ${HEADER_ALL}
   DESTINATION include/visp
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
   )
