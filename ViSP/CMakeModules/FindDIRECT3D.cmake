@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECT3D.cmake,v 1.1 2006-08-24 08:29:51 brenier Exp $
+# $Id: FindDIRECT3D.cmake,v 1.2 2007-01-15 15:03:41 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -47,28 +47,24 @@ SET(DIRECT3D_FOUND "NO")
 IF(WIN32)
   # Find Direct3D Include Directory
   FIND_PATH(DIRECT3D_INCLUDE_DIR d3dx9.h
-    "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
-    "C:/Program Files/Microsoft DirectX SDK (February 2006)/Include"
-    "C:/Program Files/Microsoft DirectX 9.0 SDK (June 2005)/Include"
-    "C:/Program Files/Microsoft DirectX SDK (June 2006)/Include"
+    "C:/Program Files/Microsoft DirectX SDK/Include"
     "C:/DXSDK/Include"
+    $ENV{DXSDK_DIR}/Include
     DOC "What is the path where the file d3dx9.h can be found"
   )
 
     # if Direct3D include dir found, then find Direct3D libraries
     IF(DIRECT3D_INCLUDE_DIR)
       FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
-        "C:/Program Files/Microsoft DirectX SDK (February 2006)/Lib/x86"
-        "C:/Program Files/Microsoft DirectX 9.0 SDK (June 2005)/Lib/x86"
-        "C:/Program Files/Microsoft DirectX SDK (June 2006)/Lib/x86"
-        "C:/DXSDK/Include/Lib"
+	"C:/Program Files/Microsoft DirectX SDK/Lib/x86"
+        "C:/DXSDK/Include/Lib/x86"
+        $ENV{DXSDK_DIR}/Lib/x86
         DOC "Where can the Direct3D d3d9 library be found"
       )
       FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
-        "C:/Program Files/Microsoft DirectX SDK (February 2006)/Lib/x86"
-        "C:/Program Files/Microsoft DirectX 9.0 SDK (June 2005)/Lib/x86"
-        "C:/Program Files/Microsoft DirectX SDK (June 2006)/Lib/x86"
-        "C:/DXSDK/Include/Lib"
+	"C:/Program Files/Microsoft DirectX SDK/Lib/x86"
+        "C:/DXSDK/Include/Lib/x86"
+        $ENV{DXSDK_DIR}/Lib/x86
         DOC "Where can the Direct3D d3dx9 library be found"
       )
 
