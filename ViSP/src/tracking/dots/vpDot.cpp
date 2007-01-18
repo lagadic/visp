@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.14 2006-06-23 15:40:17 fspindle Exp $
+ * $Id: vpDot.cpp,v 1.15 2007-01-18 16:02:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,7 @@ void vpDot::init()
   cog_ufloat = 0 ;
   cog_vfloat = 0 ;
 
-  seuil_min = 200 ;
+  threshold_min = 200 ;
   compute_moment = false ;
   graphics = false ;
   nbMaxPoint = 10000 ;
@@ -158,7 +158,7 @@ vpDot::operator=(const vpDot& pt)
   cog_vfloat = pt.cog_vfloat ;
 
   graphics = pt.graphics ;
-  seuil = pt.seuil ;
+  threshold = pt.threshold ;
   compute_moment = pt.compute_moment ;
 
   m00 = pt.m00;
@@ -185,18 +185,23 @@ vpDot::operator==(const vpDot& m)
 /*!
   Perform the tracking of a dot by connex components.
 
+  \param mean_value : Threshold to use for the next call to track()
+  and corresponding to the mean value of the dot intensity.
+
+  \warning The content of the image is modified.
+
   \return vpDot::out if an error occurs, vpDot::in otherwise.
 */
 int
-vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
-	       double &u_cog, double &v_cog,  double &n)
+vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int threshold,
+	       double &mean_value, double &u_cog, double &v_cog, double &n)
 {
 
   // Test if we are in the image
   if ( (u < 0) || (v < 0) || (u >= I.getCols()) || (v >= I.getRows()) ) {
     return  vpDot::out ;
   }
-  if (I[v][u] >=seuil)
+  if (I[v][u] >= threshold)
   {
     if (graphics==true)
     {
@@ -207,6 +212,8 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
     u_cog += u ;
     v_cog += v ;
     n+=1 ;
+    // Mean value of the dot intensities
+    mean_value = (mean_value *(n-1) + I[v][u]) / n;
     if (compute_moment==true)
     {
       m00++ ;
@@ -224,59 +231,74 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
   }
   if ( u-1 >= 0)
   {
-    if (I[v][u-1] >=seuil)
-      connexe(I,u-1,v,seuil,u_cog,v_cog,n) ;
+    if (I[v][u-1] >= threshold)
+      connexe(I,u-1,v, threshold, mean_value, u_cog,v_cog, n) ;
   }
 
   if (u+1 <  I.getCols())
   {
-    if (I[v][u+1] >=seuil)
-      connexe(I,u+1,v,seuil,u_cog,v_cog,n) ;
+    if (I[v][u+1] >= threshold)
+      connexe(I,u+1,v,threshold, mean_value, u_cog, v_cog, n) ;
   }
   if  (v-1 >= 0)
   {
-    if (I[v-1][u] >=seuil)
-      connexe(I,u, v-1,seuil,u_cog,v_cog,n) ;
+    if (I[v-1][u] >=threshold)
+      connexe(I,u, v-1,threshold, mean_value, u_cog, v_cog, n) ;
   }
   if  (v+1 < I.getRows())
   {
-    if (I[v+1][u] >=seuil)
-      connexe(I,u,v+1,seuil,u_cog,v_cog,n) ;
+    if (I[v+1][u] >=threshold)
+      connexe(I,u,v+1,threshold, mean_value, u_cog, v_cog, n) ;
   }
 
   if (connexity == CONNEXITY_8) {
     if ( (u-1 >= 0) && (v-1 >= 0) )
     {
 
-      if (I[v-1][u-1] >=seuil)
-	connexe(I,u-1,v-1,seuil,u_cog,v_cog,n) ;
+      if (I[v-1][u-1] >=threshold)
+	connexe(I,u-1,v-1,threshold, mean_value, u_cog, v_cog, n) ;
     }
 
     if ( (u+1 <  I.getCols()) && (v-1 >= 0 ) )
     {
 
-      if (I[v-1][u+1] >=seuil)
-	connexe(I,u+1,v-1,seuil,u_cog,v_cog,n) ;
+      if (I[v-1][u+1] >=threshold)
+	connexe(I,u+1,v-1,threshold, mean_value, u_cog, v_cog, n) ;
     }
     if  ( (v+1 < I.getRows()) && (u-1 >= 0) )
     {
 
-      if (I[v+1][u-1] >=seuil)
-	connexe(I,u-1,v+1,seuil,u_cog,v_cog,n) ;
+      if (I[v+1][u-1] >=threshold)
+	connexe(I,u-1,v+1,threshold, mean_value, u_cog, v_cog, n) ;
     }
     if  ( (v+1 < I.getRows()) && (u+1 < I.getCols()) )
     {
 
-      if (I[v+1][u+1] >=seuil)
-	connexe(I,u+1,v+1,seuil,u_cog,v_cog,n) ;
+      if (I[v+1][u+1] >=threshold)
+	connexe(I,u+1,v+1,threshold, mean_value, u_cog, v_cog, n) ;
     }
   }
-
-
 
   return vpDot::in ;
 }
 
+/*!
+
+  Compute the center of gravity (COG) of the dot using connex
+  components.  We assume the origin pixel (u, v) is in the dot. If
+  not, the dot is seach arround this origin using a spiral search.
+
+  \param I : Image to process.
+  \param u : Starting pixel coordinate along the columns from where the
+  dot is searched .
+
+  \param v : Starting pixel coordinate along the rows from where the
+  dot is searched .
+
+  \warning The content of the image is modified.
+
+  \sa connexe()
+*/
 void
 vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 {
@@ -287,13 +309,15 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 
   double u_cog = 0 ;
   double v_cog = 0 ;
-  double npoint =0 ;
+  double npoint = 0 ;
+  double mean_value = 0 ;
   Lu.kill() ;
   Lv.kill() ;
 
 #if 0
   // Original version
-  if (  connexe(I,(int)u,(int)v,seuil,u_cog, v_cog, npoint) == vpDot::out)
+  if (  connexe(I, (int)u, (int)v, threshold, mean_value,
+		u_cog, v_cog, npoint) == vpDot::out)
   {
     bool sol = false ;
     int pas  ;
@@ -306,9 +330,9 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	  v_cog = 0 ;
 	  Lu.kill() ;
 	  Lv.kill() ;
-	  if (connexe(I,
-		      (int)(u+k*pas),(int)(v+l*pas),
-		      seuil,u_cog, v_cog, npoint)     != vpDot::out)
+	  mean_value = 0;
+	  if (connexe(I, (int)(u+k*pas),(int)(v+l*pas), threshold,
+		      mean_value,u_cog, v_cog, npoint) != vpDot::out)
 	  {
 	    sol = true ; u += k*pas ; v += l*pas ;
 	  }
@@ -323,7 +347,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   }
 #else
   // If the dot is not found, search around using a spiral
-  if (  connexe(I,(int)u,(int)v,seuil,u_cog, v_cog, npoint) == vpDot::out)
+  if (  connexe(I,(int)u,(int)v, threshold, mean_value,
+		u_cog, v_cog, npoint) == vpDot::out)
   {
 
     bool sol = false ;
@@ -343,9 +368,9 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	v_cog = 0 ;
 	Lu.kill() ;
 	Lv.kill() ;
-
-	if (connexe(I, (int)u_+k, (int)(v_), seuil, u_cog, v_cog, npoint)
-	    != vpDot::out) {
+	mean_value = 0;
+	if (connexe(I, (int)u_+k, (int)(v_), threshold, mean_value,
+		    u_cog, v_cog, npoint) != vpDot::out) {
 	  sol = true; u = u_+k; v = v_;
 	}
       }
@@ -357,8 +382,10 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	v_cog = 0 ;
 	Lu.kill() ;
 	Lv.kill() ;
+	mean_value = 0;
 
-	if (connexe(I, (int)(u_), (int)(v_+k), seuil, u_cog, v_cog, npoint)
+	if (connexe(I, (int)(u_), (int)(v_+k), threshold, mean_value,
+		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true; u = u_; v = v_+k;
 	}
@@ -371,8 +398,10 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	v_cog = 0 ;
 	Lu.kill() ;
 	Lv.kill() ;
+	mean_value = 0;
 
-	if (connexe(I, (int)(u_-k), (int)(v_), seuil, u_cog, v_cog, npoint)
+	if (connexe(I, (int)(u_-k), (int)(v_), threshold, mean_value,
+		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true ; u = u_-k; v = v_;
 	}
@@ -385,8 +414,10 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	v_cog = 0 ;
 	Lu.kill() ;
 	Lv.kill() ;
+	mean_value = 0;
 
-	if (connexe(I, (int)(u_), (int)(v_-k), seuil, u_cog, v_cog, npoint)
+	if (connexe(I, (int)(u_), (int)(v_-k), threshold, mean_value,
+		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true ; u = u_; v = v_-k;
 	}
@@ -420,6 +451,12 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   u = u_cog ;
   v = v_cog ;
 
+  // Initialize the threshold for the next call to track()
+  threshold = (int) (mean_value * 0.8);
+  threshold_min = (int) ( mean_value * 0.6);
+
+  //vpCTRACE << "threshold: " << threshold << endl;
+
   if (npoint < 5)
   {
     vpERROR_TRACE("Dot has been lost") ;
@@ -447,13 +484,20 @@ vpDot::setNbMaxPoint(double nb)
   Initialize the tracking with a mouse click and update the dot
   characteristics (center of gravity, moments).
 
-  Wait a user click in a white area in the image. The clicked pixel
+  Wait a user click in a white area in the image I. The clicked pixel
   will be the starting point from which the dot will be tracked.
 
-  To get center of gravity of the dot, see get_u() and get_v(). To compute the
-  moments see setComputeMoments().
+  The sub pixel coordinates of the dot are updated. To get the center
+  of gravity coordinates of the dot, use get_u() and get_v(). To
+  compute the moments use setComputeMoments(true) before a call to
+  initTracking().
 
-  \sa track()
+  \warning The content of the image modified since we call track() to
+  compute the dot characteristics.
+
+  \param I : Image to process.
+
+  \sa track(), get_u(), get_v()
 */
 void
 vpDot::initTracking(vpImage<unsigned char>& I)
@@ -462,10 +506,8 @@ vpDot::initTracking(vpImage<unsigned char>& I)
 
   while (vpDisplay::getClick(I,i1,j1)!=true) ;
 
-  seuil = (int) (I[i1][j1] * 0.8);
-  seuil_min = (int) (I[i1][j1] * 0.6);
-  if (seuil <seuil_min) seuil = seuil_min ;
-
+  threshold = (int) (I[i1][j1] * 0.8);
+  threshold_min = (int) (I[i1][j1] * 0.6);
 
   double u,v ;
   u = j1 ;
@@ -490,15 +532,25 @@ vpDot::initTracking(vpImage<unsigned char>& I)
 /*!
 
   Initialize the tracking for a dot supposed to be located at (u,v) and
-  update the dot characteristics (center of gravity, moments).
+  updates the dot characteristics (center of gravity, moments).
 
-  \param I : image
-  \param u : dot location (column)
-  \param v : dot location (row)
+  The sub pixel coordinates of the dot are updated. To get the center
+  of gravity coordinates of the dot, use get_u() and get_v(). To
+  compute the moments use setComputeMoments(true) before a call to
+  initTracking().
 
-  To get center of gravity of the dot, see get_u() and get_v(). To compute the
-  moments see setComputeMoments().
+  \warning The content of the image modified since we call track() to
+  compute the dot characteristics.
 
+  \param I : Image to process.
+
+  \param u : Dot location or starting point (column pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param v : Dot location or starting point (row pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \sa track(), get_u(), get_v()
 */
 void
 vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
@@ -509,6 +561,9 @@ vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
 
   cog_u = u ;
   cog_v = v ;
+
+  threshold = (int) (I[cog_v][cog_u] * 0.8);
+  threshold_min = (int) (I[cog_v][cog_u] * 0.6);
 
   try {
     track( I );
@@ -522,19 +577,22 @@ vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
 
 
 /*!
-  track and get the new dot coordinates
+  Track and compute the dot characteristics.
 
-  \warning the image is modified (all the pixel that belong to the point
-  are set to black.
+  To get the center of gravity coordinates of the dot, use get_u() and
+  get_v(). To compute the moments use setComputeMoments(true) before a
+  call to initTracking().
 
+  \warning The image is modified (all the pixels that belong to the point
+  are set to white (ie to 255).
+
+  \param I : Image to process.
+
+  \sa get_u(), get_v()
 */
 void
 vpDot::track(vpImage<unsigned char> &I)
 {
-  seuil = (int) (I[cog_v][cog_u] * 0.8);
-  seuil_min = (int) (I[cog_v][cog_u] * 0.6);
-  if (seuil < seuil_min) seuil = seuil_min ;
-
   double u = cog_ufloat ;
   double v = cog_vfloat ;
 
@@ -556,11 +614,18 @@ vpDot::track(vpImage<unsigned char> &I)
 }
 
 /*!
-  track and get the new dot coordinates
+  Track and updates the new dot coordinates
 
-  \param I : image
-  \param u : dot location (column)
-  \param v : dot location (row)
+  To compute the moments use setComputeMoments(true) before a call to
+  initTracking() or track().
+
+  \warning The image is modified (all the pixels that belong to the point
+  are set to white (ie to 255).
+
+  \param I : Image to process.
+
+  \param u : Sub pixel coordinate (along the columns) of the tracked dot.
+  \param v : Sub pixel coordinate (along the rows) of the tracked dot.
 */
 void
 vpDot::track(vpImage<unsigned char> &I, double &u, double &v)

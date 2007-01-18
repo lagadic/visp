@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.10 2006-06-12 14:50:04 brenier Exp $
+ * $Id: vpDot.h,v 1.11 2007-01-18 16:02:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,7 +61,7 @@ template class VISP_EXPORT vpList<int>;
 
 /*
   \class vpDot
-  \brief Track a white dot
+  \brief Track a white dot.
 
   \sa vpDotExample.cpp
 */
@@ -216,17 +216,16 @@ private:
       out
     } ;
   double nbMaxPoint ;
-  int connexe(vpImage<unsigned char>& I, int u, int v, int seuil,
-	       double &u_cog, double &v_cog,  double &n) ;
+  int connexe(vpImage<unsigned char>& I, int u, int v, int threshold, 
+	      double &mean_value, double &u_cog, double &v_cog, double &n);
   void COG(vpImage<unsigned char> &I,double& u, double& v) ;
 
-  int seuil ;
-  int seuil_min ;
-public:
-  void setSeuil(int n) { seuil_min = n ; } ;
-private:
+  int threshold ;
+  int threshold_min ;
+
   //! flag : true moment are computed
   bool compute_moment ;
+
 public:
   /*!
 
@@ -243,14 +242,9 @@ public:
 
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
-public:
-  //! init the traking with a mouse click
   void initTracking(vpImage<unsigned char> &I) ;
-  //! init the tracking for a dot supposed to be located at (u,v)
   void initTracking(vpImage<unsigned char> &I, int u, int v) ;
-  //! track and get the new dot coordinates
   void track(vpImage<unsigned char> & I) ;
-  //! track and get the new dot coordinates
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
   //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels)
   void setNbMaxPoint(double nb) ;
