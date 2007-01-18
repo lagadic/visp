@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.12 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpDot2.cpp,v 1.13 2007-01-18 15:59:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,7 +35,7 @@
  *
  *****************************************************************************/
 
-/*
+/*!
   \file vpDot2.cpp
   \brief Track a white dot
 */
@@ -834,6 +834,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
   (\e area_u, \e area_v). The size of the rectangle is given by \e area_w and
   \e area_h.
 
+  \param I : Image to process.
   \param area_u : Coordinate (column) of the upper-left area corner.
   \param area_v : Coordinate (row) of the upper-left area corner.
 
