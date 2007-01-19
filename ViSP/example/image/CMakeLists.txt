@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-01-19 16:49:32 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.4 2007-01-19 17:26:14 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -62,7 +62,7 @@ ENDFOREACH(source)
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
 ADD_TEST(vpImageIoExample vpImageIoExample)
-ADD_TEST(displaySequence displaySequence)
+ADD_TEST(displaySequence displaySequence -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
