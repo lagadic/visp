@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:22 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-01-19 16:49:32 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   vpImageIoExample.cpp
+  displaySequence.cpp
 )
 
 # rule for binary build
@@ -54,6 +55,14 @@ FOREACH(source ${SOURCE})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
 ENDFOREACH(source)
+
+# Add test
+# To run some of these tests don't forget to set VISP_INPUT_IMAGE_PATH
+# environment variable to the ViSP test sequences location.
+# To get these sequence download ViSP-images.tar.gz from
+# http://www.irisa.fr/lagadic/visp/visp.html
+ADD_TEST(vpImageIoExample vpImageIoExample)
+ADD_TEST(displaySequence displaySequence)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
