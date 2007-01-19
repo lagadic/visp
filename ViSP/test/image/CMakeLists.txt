@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.8 2006-08-30 15:56:44 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.9 2007-01-19 17:22:47 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -48,7 +48,6 @@ SET (SOURCE
   testDisplayX2.cpp
   testIoPGM.cpp
   testIoPPM.cpp
-  testSequence.cpp
 )
 
 # rule for binary build
@@ -74,7 +73,6 @@ ADD_TEST(testDisplayX1  testDisplayX1  -c -d)
 ADD_TEST(testDisplayX2  testDisplayX2  -c -d)
 ADD_TEST(testIoPGM      testIoPGM)
 ADD_TEST(testIoPPM      testIoPPM)
-ADD_TEST(testSequence   testSequence -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
