@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDirectShow.cpp,v 1.5 2007-01-19 17:28:35 fspindle Exp $
+ * $Id: testDirectShow.cpp,v 1.6 2007-01-22 14:56:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -137,21 +137,25 @@ main(int argc, char ** argv)
   unsigned nframes = 50;
   bool save = false;
 
+  // Declare an image. It size is not defined yet. It will be defined when the image will
+  // acquired the first time.
+#ifdef GRAB_COLOR
+  vpImage<vpRGBa> I; // This is a color image (in RGBa format)
+#else
+  vpImage<unsigned char> I; // This is a B&W image
+#endif
+
+  // Set default output image name for saving
+#ifdef GRAB_COLOR
+  string opath = "C:/temp/I%04d.ppm"; // Color images will be saved in PGM P6 format
+#else
+  string opath = "C:/temp/I%04d.pgm"; // B&W images will be saved in PGM P5 format
+#endif
+
   // Read the command line options
   if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
     exit (-1);
   }
-
-  // Declare an image, this is a color image (in RGBa format). It
-  // size is not defined yet. It will be defined when the image will
-  // acquired the first time.
-#ifdef GRAB_COLOR
-  vpImage<vpRGBa> I ;
-  string opath = "C:/temp/I%04d.ppm";
-#else
-  vpImage<unsigned char> I ;
-  string opath = "C:/temp/I%04d.pgm";
-#endif
 
   // Create the grabber
   vpDirectShowGrabber grabber;
