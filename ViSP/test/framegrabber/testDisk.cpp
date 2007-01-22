@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisk.cpp,v 1.8 2006-09-29 09:35:29 fspindle Exp $
+ * $Id: testDisk.cpp,v 1.9 2007-01-22 15:10:55 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -79,7 +79,7 @@ The sequence is made of separate images. Each image corresponds\n\
 to a PGM file.\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] [-b <base name>] [-e <extension>] \n\
+  %s [-i <input image path>] [-b <base name>] [-e <extension>] \n\
    [-f <first frame>] [-n <number of images> [-s <step>] \n\
    [-z <number of zero>] [-d] [-h]\n", name);
 
