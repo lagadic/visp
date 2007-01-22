@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.9 2007-01-19 17:22:47 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.10 2007-01-22 14:08:36 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,10 +42,6 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   testConversion.cpp
-  testDisplayGTK.cpp
-  testDisplayGDI.cpp
-  testDisplayX1.cpp
-  testDisplayX2.cpp
   testIoPGM.cpp
   testIoPPM.cpp
 )
@@ -67,10 +63,6 @@ ENDFOREACH(source)
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
 ADD_TEST(testConversion testConversion)
-ADD_TEST(testDisplayGTK testDisplayGTK -c -d)
-ADD_TEST(testDisplayGDI testDisplayGDI -c -d)
-ADD_TEST(testDisplayX1  testDisplayX1  -c -d)
-ADD_TEST(testDisplayX2  testDisplayX2  -c -d)
 ADD_TEST(testIoPGM      testIoPGM)
 ADD_TEST(testIoPPM      testIoPPM)
 
