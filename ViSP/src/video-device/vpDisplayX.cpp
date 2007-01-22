@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.16 2006-12-05 10:27:59 marchand Exp $
+ * $Id: vpDisplayX.cpp,v 1.17 2007-01-22 16:52:09 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1000,7 +1000,7 @@ void vpDisplayX::displayImage(vpImage<unsigned char> &I)
       unsigned char *bitmap = I.bitmap ;
       unsigned char *n = I.bitmap + ncolsnrows;
       //for (int i = 0; i < ncolsnrows; i++) // suppression de l'iterateur i
-      while (bitmap < n)  
+      while (bitmap < n)
 	{
 	  char val = *(bitmap++);
 	  *(dst_32 ++) = val;	// Composante Rouge.
@@ -1624,45 +1624,48 @@ bool
 vpDisplayX::getClick(int& i, int& j, int& button)
 {
 
+  bool ret = false;
   if (Xinitialise)
   {
     int x,y ;
-    Window	rootwin, childwin ;
-    int		root_x, root_y, win_x, win_y ;
-    unsigned int	modifier ;
+    while (ret==false)
+    {
+      Window	rootwin, childwin ;
+      int		root_x, root_y, win_x, win_y ;
+      unsigned int	modifier ;
 
-    // Test d'évènements.
-    if ( XPending(display) )  {
+      // Test d'évènements.
+      if ( XPending(display) )  {
 
-      XNextEvent(display, &event);
+	XNextEvent(display, &event);
 
-      /* Detection de l'appui sur l'un des bouton de la souris. */
-      switch(event.type) {
+	/* Detection de l'appui sur l'un des bouton de la souris. */
+	switch(event.type) {
 
-      case ButtonPress: {
-	/* Recuperation de la coordonnee du pixel cliqué.	*/
-	if(XQueryPointer(display,
-			 window,
-			 &rootwin, &childwin,
-			 &root_x, &root_y,
-			 &win_x, &win_y,
-			 &modifier)) {
-	  x = event.xbutton.x;
-	  y = event.xbutton.y;
-	  i = y ;
-	  j = x ;
-	  switch(event.xbutton.button)
-	  {
-	  case Button1: button = vpDisplay::button1; break;
-	  case Button2: button = vpDisplay::button2; break;
-	  case Button3: button = vpDisplay::button3; break;
+	case ButtonPress: {
+	  /* Recuperation de la coordonnee du pixel cliqué.	*/
+	  if(XQueryPointer(display,
+			   window,
+			   &rootwin, &childwin,
+			   &root_x, &root_y,
+			   &win_x, &win_y,
+			   &modifier)) {
+	    x = event.xbutton.x;
+	    y = event.xbutton.y;
+	    i = y ;
+	    j = x ;
+	    switch(event.xbutton.button)
+	    {
+	    case Button1: button = vpDisplay::button1; break;
+	    case Button2: button = vpDisplay::button2; break;
+	    case Button3: button = vpDisplay::button3; break;
+	    }
+	    ret = true ;
+	    break;
 	  }
-	}
-	return true;
-	break;
-
-      } /* Fin case ButtonPress	*/
-      } /* Fin switch type d'evenement.	*/
+	} /* Fin case ButtonPress	*/
+	} /* Fin switch type d'evenement.	*/
+      }
     }
   }
   else
@@ -1671,7 +1674,7 @@ vpDisplayX::getClick(int& i, int& j, int& button)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "X not initialized")) ;
   }
-  return  false;
+  return ret ;
 }
 
 /*!
