@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2007-01-23 11:04:00 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.5 2007-01-23 13:19:37 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,9 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  simu4points.cpp
-  simuCircle.cpp
-  
+test4points.txt  
 )
 
 # rule for binary build
@@ -58,8 +56,6 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(simu4points             simu4points -d)
-ADD_TEST(simuCircle              simuCircle -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
