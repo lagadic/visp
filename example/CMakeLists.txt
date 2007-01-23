@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:22 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-01-23 13:37:00 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -43,6 +43,7 @@ SET (SRC_SUBDIRS
   image
   pose-estimation
   simulation
+  simulator
   tracking
 )
 
