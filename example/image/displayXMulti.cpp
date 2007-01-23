@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayXMulti.cpp,v 1.1 2007-01-23 08:44:10 asaunier Exp $
+ * $Id: displayXMulti.cpp,v 1.2 2007-01-23 11:22:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,8 +77,8 @@ features (line, circle, caracters) in overlay and finaly write \n\
 the image and the overlayed features in an image on the disk.\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] [-o <output image path>]\n\
-     [-c] [-h]\n						      \
+  %s [-i <input image path>] [-o <output image path>]\n\
+     [-c] [-d] [-h]\n						      \
 ", name);
 
   fprintf(stdout, "\n\
