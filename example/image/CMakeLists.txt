@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2007-01-22 13:45:14 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.6 2007-01-23 08:39:43 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -45,8 +45,8 @@ SET (SOURCE
   displaySequence.cpp
   displayGDI.cpp
   displayGTK.cpp
-  displayX1.cpp
-  displayX2.cpp
+  displayX.cpp
+  displayXMulti.cpp
 )
 
 # rule for binary build
@@ -69,8 +69,8 @@ ADD_TEST(vpImageIoExample vpImageIoExample)
 ADD_TEST(displaySequence displaySequence -d)
 ADD_TEST(displayGDI displayGDI -d)
 ADD_TEST(displayGTK displayGTK -d)
-ADD_TEST(displayX1 displayX1 -d)
-ADD_TEST(displayX2 displayX2 -d)
+ADD_TEST(displayX displayX -d)
+ADD_TEST(displayXMulti displayXMulti -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
