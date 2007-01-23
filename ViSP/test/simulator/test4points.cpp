@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test4points.cpp,v 1.13 2006-10-30 15:50:37 mtallur Exp $
+ * $Id: test4points.cpp,v 1.14 2007-01-23 11:15:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -288,10 +288,6 @@ void *mainLoop (void *_simu)
   }
 
   simu->closeMainApplication() ;
-
-  if (opt_click_allowed) {
-    cout << "\nEnter CTRL-C to quit... " <<endl ;
-  }
 
   void *a=NULL ;
   return a ;
