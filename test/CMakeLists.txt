@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:21 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-01-24 16:21:18 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,7 +41,6 @@
 # If you add/remove a directory, modify here
 SET (SRC_SUBDIRS
   feature
-  framegrabber
   homography
   image
   math
