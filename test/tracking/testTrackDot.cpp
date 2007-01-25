@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot.cpp,v 1.10 2006-09-08 15:51:37 fspindle Exp $
+ * $Id: testTrackDot.cpp,v 1.11 2007-01-25 11:29:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Test dot tracking.
+ * Test auto detection of dots.
  *
  * Authors:
  * Eric Marchand
@@ -36,12 +36,6 @@
  *
  *****************************************************************************/
 
-
-/*!
-  \example testTrackDot.cpp
-
-  \brief   test dot tracking on an image sequence
-*/
 
 #include <stdio.h>
 #include <sstream>
@@ -58,8 +52,17 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDot.h>
+#include <visp/vpFeatureEllipse.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpFeatureBuilder.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
+
+/*!
+  \example testTrackDot2.cpp
+
+  \brief   Test dot tracking on an image sequence by using vpDot.
+*/
 
 // List of allowed command line options
 #define GETOPTARGS	"cdi:h"
@@ -83,8 +86,8 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read images \n\
-     \"ViSP-images/mire-2/image.%%04d.pgm\"\n\
+     From this path read image \n\
+     \"ViSP-images/ellipse/ellipse.pgm\"\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -162,8 +165,8 @@ main(int argc, char ** argv)
 
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_click_allowed,
-		 opt_display) == false) {
+  if (getOptions(argc, argv, opt_ipath,
+		 opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
@@ -202,14 +205,10 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
   // Set the path location of the image sequence
-  dirname = ipath +  vpIoTools::path("/ViSP-images/mire-2/");
+  dirname = ipath +  vpIoTools::path("/ViSP-images/ellipse/");
 
   // Build the name of the image file
-  unsigned iter = 1; // Image number
-  std::ostringstream s;
-  s.setf(ios::right, ios::adjustfield);
-  s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-  filename = dirname + s.str();
+  filename = dirname + "ellipse.pgm";
 
   // Read the PGM image named "filename" on the disk, and put the
   // bitmap into the image structure I.  I is initialized to the
@@ -264,79 +263,28 @@ main(int argc, char ** argv)
     }
   }
 
-  vpDot d ;
+  vpDot dot ;
+  dot.setNbMaxPoint(8000);
+  dot.initTracking(I, 140, 140) ;
   if (opt_display) {
-    d.setGraphics(true) ;
+    dot.setGraphics(true) ;
   }
   else {
-    d.setGraphics(false) ;
+    dot.setGraphics(false) ;
   }
-  d.setComputeMoments(true);
-  d.setConnexity(vpDot::CONNEXITY_8);
+  dot.setComputeMoments(true) ;
+  dot.track(I) ;
 
-  try {
-    if (opt_display && opt_click_allowed) {
-      cout << "Click on a white dot you want to track..." << endl;
-      d.initTracking(I) ;
+  vpFeatureEllipse e ;
+
+  vpCameraParameters cam ;
+  vpFeatureBuilder::create(e,cam,dot) ;
+  if (opt_display) {
+    e.display(cam, I, vpColor::red) ;
+    if (opt_click_allowed) {
+      cout << "A click to exit..." << endl;
+      vpDisplay::getClick(I) ;
     }
-    else {
-      d.initTracking(I, 160, 212) ;
-    }
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Cannot initialise the tracking... ") ;
-    exit(-1);
-  }
-
-  try {
-    while (iter < 1200)
-      {
-	// set the new image name
-	s.str("");
-	s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-	filename = dirname + s.str();
-	// read the image
-	vpImageIo::readPGM(I, filename);
-
-	if (opt_display) {
-	  // Display the image
-	  vpDisplay::display(I) ;
-	  vpDisplay::flush(I) ;
-	}
-	d.track(I) ;
-	cout << "Tracking on image: " << filename << endl;
-	cout << "COG: " << endl;
-	cout << d.get_u() << " " << d.get_v()
-	     << " - "
-	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << endl;
-	cout << "Moments: " << endl;
-	cout << "m00: " << d.m00 << endl;
-	cout << "m11: " << d.m11 << endl;
-	cout << "m02: " << d.m02 << endl;
-	cout << "m20: " << d.m20 << endl;
-	cout << "m10: " << d.m10 << endl;
-	cout << "m01: " << d.m01 << endl << endl;
-
-	if (opt_display) {
-	  // Display the image
-	  vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),
-				  10,vpColor::red) ;
-	  vpDisplay::flush(I) ;
-	}
-	iter ++;
-      }
-  }
-  catch (...) {
-    cerr << "Error during the tracking..." << endl;
-    cerr << "The progam was stopped." << endl;
-    exit(-1);
-  }
-
-  if (opt_display && opt_click_allowed) {
-    cout << "\nA click to exit..." << endl;
-    // Wait for a blocking mouse click
-    vpDisplay::getClick(I) ;
   }
 }
 #else
