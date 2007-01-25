@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.6 2006-09-08 15:47:01 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.7 2007-01-25 11:23:05 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,12 +41,6 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  testAutoDetectDot.cpp
-  testMeCircle1.cpp
-  testMeEllipse1.cpp
-  testMeLine1.cpp
-  testTrackDot2.cpp
-  testTrackDot3.cpp
   testTrackDot.cpp
 )
 
@@ -63,12 +57,6 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(testAutoDetectDot testAutoDetectDot -d -c)
-ADD_TEST(testMeCircle1     testMeCircle1 -d -c)
-ADD_TEST(testMeEllipse1    testMeEllipse1 -d -c)
-ADD_TEST(testMeLine1       testMeLine1 -d -c)
-ADD_TEST(testTrackDot2     testTrackDot2 -d -c)
-ADD_TEST(testTrackDot3     testTrackDot3 -d -c)
 ADD_TEST(testTrackDot      testTrackDot -d -c)
 
 # customize clean target 
