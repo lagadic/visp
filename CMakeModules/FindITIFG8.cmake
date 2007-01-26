@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindITIFG8.cmake,v 1.1 2006-09-29 12:49:44 fspindle Exp $
+# $Id: FindITIFG8.cmake,v 1.2 2007-01-26 17:26:28 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -34,6 +34,7 @@
 # ITIFG8_FOUND
 # ITIFG8_INCLUDE_DIR
 # ITIFG8_LIBRARIES
+# ITIFG8_VERSION
 #
 # Authors:
 # Fabien Spindler
@@ -85,11 +86,42 @@ ELSE(NOT UNIX)
   ELSE(ITIFG8_LIBRARIES AND ITIFG8_INCLUDE_DIR)
     SET(ITIFG8_FOUND FALSE)
   ENDIF(ITIFG8_LIBRARIES AND ITIFG8_INCLUDE_DIR)
-  
+
+  # If library found, check for the version number
+  IF(ITIFG8_FOUND)
+    #MESSAGE("DBG ITIFG8_LIBRARIES=${ITIFG8_LIBRARIES}")
+    # CMake is giving me problems using TRY_COMPILE with the CMAKE_FLAGS
+    # for the :STRING syntax if I have multiple values contained in a
+    # single variable. This is a problem for the ITIFG8_LIBRARIES variable
+    # because it does just that. When I feed this variable to the command,
+    # only the first value gets the appropriate modifier and the rest 
+    # get dropped. To get multiple single variables to work, I must 
+    # separate them with a "\;"
+    TRY_RUN(ITIFG8_VERSION_RUN_RESULT ITIFG8_VERSION_COMPILE_RESULT
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_MODULE_PATH}/checkForItifg8Version.cpp
+      CMAKE_FLAGS 
+        -DINCLUDE_DIRECTORIES=${ITIFG8_INCLUDE_DIR}
+        -DLINK_DIRECTORIES=${ITIFG8_LIBRARY}
+        -DLINK_LIBRARIES=${ITIFG8_LIBRARY}
+#        -DLINK_LIBRARIES=${ITIFG8_LIBRARY}\;${FL_LIBRARY}
+      OUTPUT_VARIABLE ITIFG8_VERSION_OUTPUT)
+    #MESSAGE("DBG ITIFG8_VERSION_COMPILE_RESULT=${ITIFG8_VERSION_COMPILE_RESULT}")  
+    #MESSAGE("DBG ITIFG8_VERSION_RUN_RESULT=${ITIFG8_VERSION_RUN_RESULT}")  
+    #MESSAGE("DBG ITIFG8_VERSION_OUTPUT=${ITIFG8_VERSION_OUTPUT}")
+    IF(ITIFG8_VERSION_COMPILE_RESULT)
+      SET(ITIFG8_VERSION ${ITIFG8_VERSION_RUN_RESULT})
+    ELSE(ITIFG8_VERSION_COMPILE_RESULT)
+      MESSAGE(SEND_ERROR "itifg8 driver was found, but it's version cannot be retrieved. Please turn USE_ITIFG8 off.")
+      SET(ITIFG8_FOUND FALSE)
+    ENDIF(ITIFG8_VERSION_COMPILE_RESULT)
+  ENDIF(ITIFG8_FOUND)
+
   MARK_AS_ADVANCED(
     ITIFG8_INCLUDE_DIR
     ITIFG8_LIBRARIES
     ITIFG8_LIBRARY
+    ITIFG8_VERSION
     FL_LIBRARY
     )
 ENDIF(NOT UNIX)
