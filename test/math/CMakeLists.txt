@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:21 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-01-26 16:28:07 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,13 +41,13 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  test_colvector.cpp
-  test_matrix.cpp
-  test_matrix_exception.cpp
-  test_robust.cpp
-  test_rotation.cpp
-  test_svd.cpp
-  test_twistmatrix.cpp
+  testColvector.cpp
+  testMatrix.cpp
+  testMatrix_exception.cpp
+  testRobust.cpp
+  testRotation.cpp
+  testSvd.cpp
+  testTwistmatrix.cpp
 )
 
 # rule for binary build
