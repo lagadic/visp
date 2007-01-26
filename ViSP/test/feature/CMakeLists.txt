@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:22 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-01-26 16:30:42 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,7 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  test_point.cpp
+  testPoint.cpp
 )
 
 # rule for binary build
