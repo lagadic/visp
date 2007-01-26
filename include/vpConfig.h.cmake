@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.14 2006-11-23 17:26:35 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.15 2007-01-26 17:40:33 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,6 +95,7 @@
 
 // Defined if itifg-8.x (Coreco Imaging) framegraber driver available.
 #cmakedefine VISP_HAVE_ITIFG8
+#cmakedefine VISP_HAVE_ITIFG8_VERSION ${VISP_HAVE_ITIFG8_VERSION}
 
 // Defined if Irisa's ICcomp framegraber available.
 #cmakedefine VISP_HAVE_ICCOMP
