@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8Multi.cpp,v 1.1 2007-01-24 15:07:33 asaunier Exp $
+ * $Id: grabItifg8Multi.cpp,v 1.2 2007-01-26 17:51:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,7 +193,11 @@ main(int argc, char ** argv)
       g.setDepth(8);
       g.setBuffer(buffer); //
       g.setFramerate(1.); // Default framerate
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
       g.setOpmode(vpItifg8Grabber::MMAP_MODE);     // operation mode
+#else
+
+#endif
       g.setSyncmode(vpItifg8Grabber::SIGNAL_MODE); // synchronisation mode
       g.setAcqmode(vpItifg8Grabber::NORMAL_MODE);  // special acq mode
       unsigned module  = g.getModule();
