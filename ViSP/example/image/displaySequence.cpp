@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.1 2007-01-19 16:46:49 asaunier Exp $
+ * $Id: displaySequence.cpp,v 1.2 2007-01-26 10:29:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,9 +51,14 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
+
+#if defined VISP_HAVE_X11
 #include <visp/vpDisplayX.h>
+#elif defined VISP_HAVE_GTK
 #include <visp/vpDisplayGTK.h>
+#elif defined WIN32
 #include <visp/vpDisplayGDI.h>
+#endif
 
 #include <visp/vpTime.h>
 
@@ -143,9 +148,10 @@ SYNOPSIS\n\
   Set the program options.
 
   \param ipath : Input image path.
-  \param first : First image.
   \param ppath : Personal image path.
+  \param first : First image.
   \param nimages : Number of images to display.
+  \param step : Step between two images.
   \param display : Set as true, activates the image display. This is
   the default configuration. When set to false, the display is
   disabled. This can be usefull for automatic tests using crontab
@@ -211,8 +217,7 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages, opt_step,
-		 opt_display) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages, opt_step, opt_display) == false) {
     exit (-1);
   }
 
@@ -320,7 +325,7 @@ main(int argc, char ** argv)
 #endif
   if (opt_display) {
     try {
-      // We open a window using either X11 or GTK.
+      // We open a window using either X11 or GTK or GDI.
       // Its size is automatically defined by the image (I) size
       display.init(I, 100, 100,"Display...") ;
 
