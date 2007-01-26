@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8.cpp,v 1.1 2007-01-24 15:07:04 asaunier Exp $
+ * $Id: grabItifg8.cpp,v 1.2 2007-01-26 17:52:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,6 +44,7 @@
 
 #include <visp/vpItifg8Grabber.h>
 #include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
@@ -58,7 +59,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"b:df:hi:n:s:"
+#define GETOPTARGS	"b:df:hi:n:o:p:s:"
 
 /*!
 
@@ -72,15 +73,17 @@
 
  */
 void usage(char *name, char *badparam, unsigned board, float fps,
-	   unsigned input, unsigned scale, unsigned buffer)
+	   unsigned input, unsigned scale, unsigned buffer,
+	   unsigned &nframes, string opath)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the itifg-8.x framegrabber device from\n\
 Coreco Imaging. Display these images using X11 or GTK.\n\
 \n\
 SYNOPSIS\n\
-  %s [-b <board=[0-7]>] [-f <fps=0.01-100.0>] [-i <input=0|1|2|3> \n\
-   [-s <scale=1|2|4>] [-n <buffer=1-8>] [-d] [-h]\n", name);
+  %s [-b <board=[0-7]>] [-f <fps=0.01-100.0>] \n\
+   [-i <input=0|1|2|3>] [-s <scale=1|2|4>] [-p <buffer=1-8>]\n\
+   [-n <nframes>] [-d] [-o <filename>] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                                  Default\n\
@@ -104,15 +107,22 @@ OPTIONS:                                                  Default\n\
      If 2, half resolution acquisition. The \n\
      subsampling is achieved by the hardware.\n\
 \n\
-  -n <buffer>                                               %u\n\
+  -p <buffer>                                               %u\n\
      Number of buffers for the acquisition [1-8].\n\
+\n\
+  -n <nframes>                                              %u\n\
+     Number of frames to acquire.\n\
+\n\
+  -o <filename> : Filename for image saving.                     \n\
+     Example: -o %s \n\
+     where %%04d is for the image numbering.\n\
 \n\
   -d \n\
      Turn off the display.\n\
 \n\
   -h \n\
      Print the help.\n\n",
-	  fps, input, scale, buffer);
+	  fps, input, scale, buffer, nframes, opath.c_str());
 
 }
 
@@ -129,8 +139,8 @@ OPTIONS:                                                  Default\n\
 
 */
 bool getOptions(int argc, char **argv, unsigned &board, float &fps,
-		unsigned &input, unsigned &scale,
-		unsigned &buffer, bool &display)
+		unsigned &input, unsigned &scale, unsigned &buffer,
+		bool &display, unsigned &nframes, bool &save, string &opath)
 {
   char *optarg;
   int	c;
@@ -141,20 +151,25 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
     case 'd': display = false; break;
     case 'f': fps = atof(optarg); break;
     case 'i': input = (unsigned) atoi(optarg); break;
-    case 'n': buffer = (unsigned) atoi(optarg); break;
+    case 'n': nframes = atoi(optarg); break;
+    case 'p': buffer = (unsigned) atoi(optarg); break;
+    case 'o': save = true; opath = optarg; break;
     case 's': scale = (unsigned) atoi(optarg); break;
-    case 'h': usage(argv[0], NULL, board, fps, input, scale, buffer);
+    case 'h': usage(argv[0], NULL, board, fps, input, scale, buffer,
+		    nframes, opath);
       return false; break;
 
     default:
-      usage(argv[0], optarg, board, fps, input, scale, buffer);
+      usage(argv[0], optarg, board, fps, input, scale, buffer,
+	    nframes, opath);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, board, fps, input, scale, buffer);
+    usage(argv[0], NULL, board, fps, input, scale, buffer,
+	  nframes, opath);
     cerr << "ERROR: " << endl;
     cerr << "  Bad argument " << optarg << endl << endl;
     return false;
@@ -168,22 +183,33 @@ main(int argc, char ** argv)
 {
   unsigned board = 0;
   float fps = 25.;
+  unsigned nframes = 50;
   unsigned input = vpItifg8Grabber::DEFAULT_INPUT;
   unsigned scale = vpItifg8Grabber::DEFAULT_SCALE;
   unsigned buffer = 2;
   bool opt_display = true;
+  bool save = false;
+
+  // Declare an image. It size is not defined yet. It will be defined when the
+  // image will acquired the first time.
+#ifdef GRAB_COLOR
+  vpImage<vpRGBa> I; // This is a color image (in RGBa format)
+#else
+  vpImage<unsigned char> I; // This is a B&W image
+#endif
+
+  // Set default output image name for saving
+#ifdef GRAB_COLOR
+  string opath = "/tmp/I%04d.ppm"; // Color images will be saved in PGM P6 format
+#else
+  string opath = "/tmp/I%04d.pgm"; // B&W images will be saved in PGM P5 format
+#endif
 
   // Read the command line options
   if (getOptions(argc, argv, board, fps, input, scale, buffer,
-		 opt_display) == false) {
+		 opt_display, nframes, save, opath) == false) {
     exit (-1);
   }
-
-  // Declare an image, this is a gray level image (unsigned char)
-  // it size is not defined yet, it will be defined when the image will
-  // read on the disk
-  vpImage<unsigned char> I ;
-  //vpImage<vpRGBa> I ;
 
   // Declare a framegrabber to acquire images with the IC-comp framegrabber
   // card (Imaging Technology)
@@ -194,7 +220,7 @@ main(int argc, char ** argv)
     // Initialize the grabber board
     g.setBoard(board);
     g.setConfile("/udd/fspindle/robot/driver/itifg/itifg-8.2.2-0-irisa/conffiles/robot.cam");
-    g.setVerboseMode(true);
+    g.setVerboseMode(false);
     g.setScale(scale);
     g.setInput(input);
     g.setBuffer(buffer); //
@@ -249,21 +275,48 @@ main(int argc, char ** argv)
     }
   }
 
-  long cpt = 1;
-  // Loop to acquire 100 images
-  while(cpt ++ < 100)
-  {
-    double t = vpTime::measureTimeMs();
-    // read the image
-    g.acquire(I) ;
-    if (opt_display) {
-      // Display the image
-      vpDisplay::display(I) ;
-      // Flush the display
-      vpDisplay::flush(I) ;
-    }
-    vpTime::wait(t, 1000./fps);
-    cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
+  try {
+    double tbegin=0, tend=0, tloop=0, ttotal=0;
+
+    // Loop to acquire images
+    for (unsigned i = 0; i < nframes; i++) {
+
+	tbegin = vpTime::measureTimeMs();
+
+	// Grab the image
+	g.acquire(I) ;
+
+	if (opt_display) {
+	  // Display the image
+	  vpDisplay::display(I) ;
+	  // Flush the display
+	  vpDisplay::flush(I) ;
+	}
+
+	if (save) {
+	  char buf[FILENAME_MAX];
+	  sprintf(buf, opath.c_str(), i);
+	  string filename(buf);
+	  cout << "Write: " << filename << endl;
+#ifdef GRAB_COLOR
+	  vpImageIo::writePPM(I, filename);
+#else
+	  vpImageIo::writePGM(I, filename);
+#endif
+	}
+	vpTime::wait(tbegin, 1000./fps);
+	tend = vpTime::measureTimeMs();
+	tloop = tend - tbegin;
+	tbegin = tend;
+	cout << "loop time: " << tloop << " ms" << endl;
+	ttotal += tloop;
+
+      }
+      cout << "Mean loop time: " << ttotal / nframes << " ms" << endl;
+      cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << endl;
+  }
+  catch(...)  {
+    vpCERROR << "Failure: exit" << endl;
   }
 }
 #else
