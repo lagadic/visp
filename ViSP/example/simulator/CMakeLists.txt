@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.1 2007-01-23 13:13:57 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.2 2007-01-26 16:41:20 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,8 +41,8 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  simu4points.cpp
-  simuCircle.cpp
+  simulateFourPoints2DCamVelocity.cpp
+  simulateCircle2DCamVelocity.cpp
   
 )
 
@@ -58,8 +58,8 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(simu4points             simu4points -d)
-ADD_TEST(simuCircle              simuCircle -d)
+ADD_TEST(simulateFourPoints2DCamVelocity	simulateFourPoints2DCamVelocity -d)
+ADD_TEST(simulateCircle2DCamVelocity		simulateCircle2DCamVelocity -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

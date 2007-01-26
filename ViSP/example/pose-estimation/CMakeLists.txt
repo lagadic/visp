@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-01-26 12:29:58 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.4 2007-01-26 16:44:09 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,7 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  vpPoseExample.cpp
+ poseExample.cpp
 )
 
 # rule for binary build
@@ -61,7 +61,7 @@ ENDFOREACH(source)
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
 
-ADD_TEST(vpPoseExample vpPoseExample -c -d)
+ADD_TEST(poseExample poseExample -c -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
