@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.h,v 1.2 2006-10-13 12:09:54 fspindle Exp $
+ * $Id: vpItifg8Grabber.h,v 1.3 2007-01-26 17:50:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,6 +37,13 @@
 /*!
   \file vpItifg8Grabber.h
   \brief Class for the itifg-8.x (Coreco Imaging Technology) video device.
+
+  This class is an interface for itifg framegrabber driver; see
+  http://itifg.sourceforge.net/
+
+  This class is interfaced with itifg-8.2.2-0 and itifg-8.3.1-12 driver. You
+  can download these drivers from http://sourceforge.net/projects/itifg/
+
   \ingroup libdevice
 */
 
@@ -58,12 +65,13 @@
 #include <itifgExt.h>
 #include <libitifg.h>
 
+
 /*
-  Warning:
+  Warning 1:
 
   Because amcmpReg.h file is not installed with the itifg-8.x driver, in
   vpItifg8Grabber.cpp you will find specific code comming from
-  itifg-8.2.2-0/include/amcmpReg.h file
+  itifg-8.2.2-0/include/amcmpReg.h or itifg-8.3.1-12/include/amcmpReg.hfile
 
   u_int8_t    field         Field Status R/W
 
@@ -87,9 +95,9 @@
 
   \author  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 
-  Was tested with driver itifg-8.2.2.0 coming from sourceforge
-  (http://sourceforge.net/projects/itifg/) with an IC-COMP Coreco Imaging frame
-  grabber board.
+  Was tested with driver itifg-8.2.2.0 and itifg-8.3.1-12 coming from
+  sourceforge (http://sourceforge.net/projects/itifg/) with an IC-COMP Coreco
+  Imaging frame grabber board.
 
   This driver should support three generations of Coreco Imaging Technology
   frame grabber boards:
@@ -128,9 +136,9 @@
   For further information see http://itifg.sourceforge.net/
 
   \warning In case of an AM-STD COMP board, the usage of getField() and
-  setFramerate(framerateEnum rate) needs a modification of the itifg-8.2.2.0
-  driver coming from sourceforge. See the documentation of these functions to
-  have a description of the driver's modifications.
+  setFramerate(framerateEnum rate) needs a modification of the itifg-8.2.2.0 or
+  itifg-8.3.1-12 driver coming from sourceforge. See the documentation of these
+  functions to have a description of the driver's modifications.
 
 
 */
@@ -154,6 +162,7 @@ public:
       framerate_25fps  //!< 25 frames per second
     };
 
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
 public:
   typedef enum
     {
@@ -167,6 +176,7 @@ private:
     vpItifg8Opmode_t number;
     char name[8];
   };
+#endif
 
 public:
   typedef enum
@@ -186,6 +196,7 @@ private:
   };
 
 public:
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   typedef enum
     {
       NORMAL_MODE = 0x0,
@@ -194,7 +205,17 @@ public:
       APPEND_MODE = 0x4,
       DELAY_MODE = 0x8
     } vpItifg8Sacqmd_t;
+#else
+  typedef enum
+    {
+      NORMAL_MODE = 0x0,
+      LOCK_MODE = 0x1,
+      NODMA_MODE = 0x2,
+      NOSYNC_MODE = 0x4,
+      NOAPPEND_MODE = 0x8
+    } vpItifg8Sacqmd_t;
 
+#endif
 private:
   struct vpItifg8SacqmdName_t
   {
@@ -227,9 +248,15 @@ private:
     int vdec[ITI_BOARDS_MAX];
     float rate[ITI_BOARDS_MAX];
     framerateEnum amcmp_rate[ITI_BOARDS_MAX];
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
     vpItifg8Opmode_t opmode[ITI_BOARDS_MAX];
+#else
+    bool other[ITI_BOARDS_MAX];
+    int window[ITI_BOARDS_MAX];
+    int contig[ITI_BOARDS_MAX];
+#endif
     vpItifg8Syncmd_t syncmd[ITI_BOARDS_MAX];
-    int /*vpItifg8Sacqmd_t*/ sacqmd[ITI_BOARDS_MAX];
+    vpItifg8Sacqmd_t sacqmd[ITI_BOARDS_MAX];
   };
 
 
@@ -273,7 +300,11 @@ public:
   void setBuffer(unsigned buffer);
   void setFramerate(float rate);
   void setFramerate(framerateEnum rate);
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   void setOpmode  (vpItifg8Opmode_t opmode);
+#else
+  void setContigmode(bool contig);
+#endif
   void setSyncmode(vpItifg8Syncmd_t synmode);
   void setAcqmode (vpItifg8Sacqmd_t sacqmode);
 
@@ -290,7 +321,12 @@ private:
   size_t mapsize;
   int boards; // number of boards
   vpItifg8Args_t args;
+#if VISP_HAVE_ITIFG8_VERSION >= 83 // 8.3.1-12
+  char *ringptr;
+  size_t winsize;
+#else
   vpItifg8OpmodeName_t opmode_name[2];
+#endif
   vpItifg8SyncmdName_t syncmd_name[5];
   vpItifg8SacqmdName_t sacqmd_name[5];
 

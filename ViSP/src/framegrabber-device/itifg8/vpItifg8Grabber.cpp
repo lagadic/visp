@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.3 2006-11-14 17:19:13 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.4 2007-01-26 17:50:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,7 @@
 
   Because amcmpReg.h file is not installed with the itifg-8 driver, in
   vpItifg8Grabber.cpp you will find specific code comming from
-  itifg-8.2.2-0/include/amcmpReg.h file
+  itifg-8.2.2-0/include/amcmpReg.h or itifg-8.3.1-12/include/amcmpReg.h file
 
   u_int8_t    field         Field Status R/W
 
@@ -208,15 +208,20 @@ void vpItifg8Grabber::initialise()
     zerodesc = -1;
     dataptr = NULL;
     mapsize = (size_t)0;
+#if VISP_HAVE_ITIFG8_VERSION >= 83 // 8.3.1-12
+    ringptr = NULL;
+    winsize = (size_t)0;
+#endif
     boards = 1;
     vpItifg8Timeout = false;
 
-    // Initialisation of opmode_name structure
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
+    // Initialisation of opmode_name structure only for itifg-8.2.x
     opmode_name[0].number = READ_MODE;
     sprintf(opmode_name[0].name, "read");
     opmode_name[1].number = MMAP_MODE;
     sprintf(opmode_name[1].name, "mmap");
-
+#endif
     // Initialisation of syncmd structure
     syncmd_name[0].number = BLOCK_MODE;
     sprintf(syncmd_name[0].name, "block");
@@ -234,12 +239,22 @@ void vpItifg8Grabber::initialise()
     sprintf(sacqmd_name[0].name, "normal");
     sacqmd_name[1].number = LOCK_MODE;
     sprintf(sacqmd_name[1].name, "lock");
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
     sacqmd_name[2].number = SYNC_MODE;
     sprintf(sacqmd_name[2].name, "sync");
     sacqmd_name[3].number = APPEND_MODE;
     sprintf(sacqmd_name[3].name, "append");
     sacqmd_name[4].number = DELAY_MODE;
     sprintf(sacqmd_name[4].name, "delay");
+#else
+    sacqmd_name[2].number = NODMA_MODE;
+    sprintf(sacqmd_name[2].name, "noappend");
+    sacqmd_name[3].number = NOSYNC_MODE;
+    sprintf(sacqmd_name[3].name, "nosync");
+    sacqmd_name[4].number = NOAPPEND_MODE;
+    sprintf(sacqmd_name[4].name, "noappend");
+
+#endif
 
     // Initialization of args structure
     for (int i=0; i < ITI_BOARDS_MAX; i ++) {
@@ -251,7 +266,13 @@ void vpItifg8Grabber::initialise()
       setBuffer(1);     // Default number of buffers
       setFramerate(1.); // Default framerate
       setFramerate(vpItifg8Grabber::framerate_50fps);
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
       setOpmode(vpItifg8Grabber::MMAP_MODE);     // Default operation mode
+#else
+      args.other[i] = false;
+      args.window[i] = 4;
+      setContigmode(false);                      // Default contiguous grab mode
+#endif
       setSyncmode(vpItifg8Grabber::SIGNAL_MODE); // Default synchronisation mode
       setAcqmode(vpItifg8Grabber::NORMAL_MODE);  // Default special acq mode
       // Initialisation of image structure
@@ -385,6 +406,8 @@ vpItifg8Grabber::open(vpImage<vpRGBa> &I)
 */
 void vpItifg8Grabber::close ()
 {
+
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   struct iti_acc_t acctinfo;
 
   if (devdesc != -1)
@@ -437,6 +460,28 @@ void vpItifg8Grabber::close ()
       munmap (dataptr, mapsize);
     ::close (zerodesc);
   }
+#else
+  if (ringptr != NULL && winsize != (size_t)0)
+    munmap (ringptr, winsize);
+
+  if (devdesc != -1)
+    {
+      if (stop_it)
+	lseek (devdesc, -(off_t)LONG_MAX, SEEK_END);
+    }
+
+  if (zerodesc != -1)
+    {
+      if (dataptr != NULL && mapsize != (size_t)0)
+	munmap (dataptr, mapsize);
+      ::close (zerodesc);
+    }
+  else
+    {
+      if (dataptr != NULL && dataptr != ringptr)
+	free (dataptr);
+    }
+#endif
 
   if (rawdesc != -1)
     ::close (rawdesc);
@@ -786,6 +831,7 @@ vpItifg8Grabber::setFramerate(vpItifg8Grabber::framerateEnum rate)
   args.amcmp_rate[args.board_i]  = rate;
 }
 
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
 /*!
   Set the acquisition operation mode.
 
@@ -808,6 +854,21 @@ void vpItifg8Grabber::setOpmode(vpItifg8Opmode_t opmode)
   }
   args.opmode[args.board_i] = opmode;
 }
+#endif
+
+#if VISP_HAVE_ITIFG8_VERSION >= 83 // 8.3.1-12
+/*!
+  Set contiguous (grab) mode.
+
+  \param contig : Contiguous (grab) mode mode.
+
+*/
+void vpItifg8Grabber::setContigmode(bool contig)
+{
+  args.contig[args.board_i] = contig;
+}
+#endif
+
 /*!
   Set the acquisition synchronisation mode.
 
@@ -848,9 +909,15 @@ void vpItifg8Grabber::setAcqmode(vpItifg8Sacqmd_t sacqmode)
   switch(sacqmode) {
   case NORMAL_MODE:
   case LOCK_MODE:
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   case SYNC_MODE:
   case APPEND_MODE:
   case DELAY_MODE:
+#else
+  case NODMA_MODE:
+  case NOSYNC_MODE:
+  case NOAPPEND_MODE:
+#endif
     break;
   default:
     fprintf (stderr, "Wrong special acqisition mode selected (%d).\n", sacqmode);
@@ -878,6 +945,7 @@ void vpItifg8Grabber::open()
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "Wrong board selected") );
   }
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   if (args.opmode[args.board_i] == MMAP_MODE &&
       args.syncmd[args.board_i] == BLOCK_MODE)
   {
@@ -885,7 +953,6 @@ void vpItifg8Grabber::open()
     fprintf (stderr, " useful. Switching to 'signal' mode.\n");
     args.syncmd[args.board_i] = SIGNAL_MODE;
   }
-
   if (args.sacqmd[args.board_i] == DELAY_MODE &&
       args.syncmd[args.board_i] != MANUAL_MODE)
   {
@@ -904,6 +971,59 @@ void vpItifg8Grabber::open()
     fprintf (stderr, " Disable locking.");
     args.sacqmd[args.board_i] &= ~LOCK_MODE;
    }
+#else
+  if (args.buffer[args.board_i] > 1 && args.contig[args.board_i])
+    {
+      fprintf (stderr, "If using 'contig' mode, more than one buffer");
+      fprintf (stderr, "doesn't make sense. Ignoring buffer number.\n");
+      args.buffer[args.board_i] = 1;
+    }
+
+  if (args.syncmd[args.board_i] == BLOCK_MODE)
+    {
+      if (args.contig[args.board_i])
+	{
+	  fprintf (stderr, "If using 'contig' mode, 'blocking' mode is not");
+	  fprintf (stderr, " useful. Switching to 'signal' mode.\n");
+	  args.syncmd[args.board_i] = SIGNAL_MODE;
+	}
+      if (args.other[args.board_i])
+	{
+	  fprintf (stderr, "If using 'mmap' mode, 'blocking' mode is not");
+	  fprintf (stderr, " useful. Switching to 'signal' mode.\n");
+	  args.syncmd[args.board_i] = SIGNAL_MODE;
+	}
+    }
+  if (args.sacqmd[args.board_i] & LOCK_MODE)
+    {
+      if (args.other[args.board_i])
+	fprintf (stderr, "If using 'mmap' mode, locking is useless.");
+
+      if (geteuid())
+	{
+	  fprintf (stderr, "One have to be root to lock the read buffer.");
+	  fprintf (stderr, " Disable locking.");
+	  //	  args.sacqmd[args.board_i] &= (vpItifg8Sacqmd_t) (~LOCK_MODE);
+	  int tmpval = args.sacqmd[args.board_i];
+	  tmpval  &= (~LOCK_MODE);
+	  args.sacqmd[args.board_i] = (vpItifg8Sacqmd_t) tmpval;
+	}
+    }
+  if (args.sacqmd[args.board_i] & NODMA_MODE)
+    {
+      if (args.window[args.board_i])
+      fprintf (stderr, "If using 'nodma' mode, window adjustment is useless.");
+
+      if (args.other[args.board_i])
+	{
+	  fprintf (stderr, "If using 'nodma' mode, 'mmap' mode isn't possible.");
+	  close();
+	  throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+					 "If using 'nodma' mode, 'mmap' mode isn't possible.") );
+	}
+    }
+ #endif
+
 
   if (verbose) {
     fprintf (stdout, "\n");
@@ -918,8 +1038,13 @@ void vpItifg8Grabber::open()
     fprintf (stdout, "%d - hdec:   %d\n", args.board_i, args.hdec[args.board_i]);
     fprintf (stdout, "%d - vdec:   %d\n", args.board_i, args.vdec[args.board_i]);
     fprintf (stdout, "%d - rate:   %.2f\n", args.board_i, args.rate[args.board_i]);
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
     fprintf (stdout, "%d - opmode: %s\n", args.board_i,
 	     opmode_name[args.opmode[args.board_i]].name);
+#else
+    fprintf (stdout, "%d - contig: %g\n", args.board_i,
+	     args.contig[args.board_i]);
+#endif
     fprintf (stdout, "%d - syncmd: %s\n", args.board_i,
 	     syncmd_name[args.syncmd[args.board_i]].name);
     fprintf (stdout, "%d - sacqmd: %s\n", args.board_i,
@@ -930,15 +1055,28 @@ void vpItifg8Grabber::open()
   char device_name[PATH_MAX];
 
   /* FIXME: perhaps use snprintf */
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   sprintf (device_name, "%s%d%s", ITI_NAME_PREFIX,
 	   args.board_i, ITI_NAME_FRM_POSTFIX);
-
   flags = O_RDWR;
 
   if (args.sacqmd[args.board_i] & SYNC_MODE)
     flags |= O_SYNC;
   if (args.sacqmd[args.board_i] & APPEND_MODE)
     flags |= O_APPEND;
+#else
+  sprintf (device_name, "%s%d%s", ITI_NAME_PREFIX, args.board_i,
+	   args.sacqmd[args.board_i] & NODMA_MODE ?
+	   ITI_NAME_ACQ_POSTFIX :ITI_NAME_DMA_POSTFIX);
+
+  flags = O_RDWR | O_SYNC | O_APPEND;
+
+  if (args.sacqmd[args.board_i] & NOSYNC_MODE)
+    flags &= ~O_SYNC;
+  if (args.sacqmd[args.board_i] & NOAPPEND_MODE)
+    flags &= ~O_APPEND;
+#endif
+
 
 #ifdef __NetBSD__ /* fcntl does not work here!? */
   if (args.syncmd[args.board_i] != BLOCK_MODE)
@@ -1219,6 +1357,7 @@ void vpItifg8Grabber::open()
   }
 #endif
 
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   if (args.opmode[args.board_i] == MMAP_MODE)
   {
     if (ioctl (devdesc, GIOC_SET_STRT, NULL) < 0)
@@ -1230,6 +1369,19 @@ void vpItifg8Grabber::open()
     }
     stop_it = true;
   }
+#else // VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
+  if (args.contig[args.board_i])
+    {
+      if (lseek (devdesc, +(off_t)LONG_MAX, SEEK_END) < 0)
+	{
+	  perror ("lseek strt acq");
+	  close();
+	  throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+					 "lseek strt acq") );
+	}
+      stop_it = true;
+    }
+#endif // VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
 
   init = true;
 
@@ -1273,6 +1425,7 @@ void vpItifg8Grabber::setupBufs()
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "GIOC_GET_RAWSIZE") );
   }
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   if (ioctl (devdesc, GIOC_GET_PAGEDSIZE, &image[args.board_i].paged_size) < 0)
   {
     perror ("GIOC_GET_PAGEDSIZE");
@@ -1280,6 +1433,19 @@ void vpItifg8Grabber::setupBufs()
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "GIOC_GET_PAGESIZE") );
   }
+#else
+  if (args.sacqmd[args.board_i] & NODMA_MODE)
+    image[args.board_i].paged_size = image[args.board_i].raw_size;
+  else
+    if (ioctl (devdesc, GIOC_GET_PAGEDSIZE, &image[args.board_i].paged_size) < 0)
+      {
+	perror ("GIOC_GET_PAGEDSIZE");
+	close();
+	throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				       "GIOC_GET_PAGESIZE") );
+      }
+
+#endif
 
   if (verbose) {
     fprintf (stdout, "\n");
@@ -1287,6 +1453,8 @@ void vpItifg8Grabber::setupBufs()
     fprintf (stdout, "Image height: %d.\n", image[args.board_i].height);
     fprintf (stdout, "Image depth: %d.\n", image[args.board_i].srcbpp);
   }
+
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
   mapsize = args.buffer[args.board_i] * image[args.board_i].paged_size;
   switch (args.opmode[args.board_i])
   {
@@ -1307,7 +1475,7 @@ void vpItifg8Grabber::setupBufs()
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				     "Can't map anonymous device") );
     }
-#else
+#else // 1
     if (!(dataptr = malloc(mapsize)))
     {
       perror ("Can't allocate save buffer");
@@ -1315,7 +1483,7 @@ void vpItifg8Grabber::setupBufs()
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				     "Can't allocate save buffer") );
     }
-#endif
+#endif // 1
     memset (dataptr, 0x00, mapsize);
     /* if you want some realtime beahivior, locking is useful */
     if (args.sacqmd[args.board_i] & LOCK_MODE)
@@ -1338,6 +1506,67 @@ void vpItifg8Grabber::setupBufs()
     }
     break;
   }
+#else // VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
+  if (!(args.sacqmd[args.board_i] & NODMA_MODE))
+    {
+      winsize = args.window[args.board_i] << 20; /* Megabytes */
+
+      if ((ringptr = (char *)mmap (0, winsize, PROT_READ | PROT_WRITE,
+				  MAP_SHARED, devdesc, 0)) == (void*)-1)
+	{
+	  perror ("Can't map camera device");
+	  close();
+	  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+					 "Can't map camera device") );
+	}
+    }
+
+  if (args.other[args.board_i])
+    dataptr = ringptr;
+  else
+    {
+      mapsize = args.buffer[args.board_i] * image[args.board_i].paged_size;
+
+#if (1)
+      if ((zerodesc = ::open ("/dev/zero", O_RDONLY)) < 0)
+	{
+	  perror ("Open anonymous mapping device");
+	  close();
+	  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+					 "Open anonymous mapping device") );
+
+	}
+
+      if ((dataptr = (char*)mmap (0, mapsize, PROT_READ | PROT_WRITE,
+				  MAP_PRIVATE, zerodesc, 0)) == (void*)-1)
+	{
+	  perror ("Can't map anonymous device");
+	  close();
+	  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+					 "Can't map anonymous device") );
+
+	}
+#else // 1
+      if (!(dataptr = malloc(mapsize)))
+	{
+	  perror ("Can't allocate save buffer");
+	  close();
+	  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+					 "Can't allocate save buffer") );
+	}
+#endif // 1
+      memset (dataptr, 0x00, mapsize);
+      /* if you want some realtime beahivior, locking is useful */
+      if (args.sacqmd[args.board_i] & LOCK_MODE)
+	if (mlock (dataptr, mapsize) < 0)
+	  {
+	    perror ("Can't lock anonymous device");
+	    close();
+	    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+					   "Can't lock anonymous device") );
+	  }
+    }
+#endif // VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
 
   image[args.board_i].srcbpl = image[args.board_i].width * ((image[args.board_i].srcbpp + 7) / 8);
 
@@ -1362,6 +1591,7 @@ void vpItifg8Grabber::setupBufs()
   acquired.
 
 */
+#if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
 unsigned char * vpItifg8Grabber::acquire()
 {
   int error;
@@ -1603,6 +1833,278 @@ unsigned char * vpItifg8Grabber::acquire()
   return((u_char *)(image[args.board_i].srcptr + image[args.board_i].srcoff));
 
 }
+#else // VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
+unsigned char * vpItifg8Grabber::acquire()
+{
+  int error;
+  int srcidx;
+  loff_t srcoff[FILENAME_MAX];
+  loff_t todo, thisone, nextone, done;
+
+  todo = args.buffer[args.board_i] * image[args.board_i].paged_size;
+  done = (size_t)0;
+
+  /* 1. initiate acquisition */
+  vpItifg8Timeout = false;
+
+  if (!args.contig[args.board_i])
+    {
+      if (lseek (devdesc, todo, SEEK_END) < 0)
+	{
+	  perror ("lseek strt acq");
+	  close();
+	  throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+					 "lseek strt acq") );
+	}
+      if (verbose) fprintf(stdout,"+");
+    }
+
+  /* 2. wait for acquisition */
+  if (!args.contig[args.board_i]) stop_it = true;
+  srcidx = 0;
+  do
+    {
+      switch (args.syncmd[args.board_i])
+	{
+	case BLOCK_MODE:
+	  break;
+	case SIGNAL_MODE:
+	  if (verbose) fprintf(stdout,"i");
+	  if (sigaction (SIGIO, &copyact, NULL) < 0)
+	    {
+	      perror ("Can't install SIGIO handler");
+	      close();
+	      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+					     "Can't install SIGIO handler") );
+	    }
+	  sigemptyset (&local_set);
+	  if (sigsuspend (&local_set) < 0)
+	    {
+	      if (errno != EINTR)
+		{
+		  perror ("Can't call sigsuspend");
+		  close();
+		  throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+						 "Can't call sigsuspend") );
+		}
+	    }
+	  if (sigaction (SIGIO, &ignore, NULL) < 0)
+	    {
+	      perror ("Can't install IGNORE handler");
+	      close();
+	      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+					     "Can't install IGNORE handler") );
+	    }
+	  break;
+	case SELECT_MODE:
+	  {
+#ifdef vpITIFG8_USE_POLL
+	    struct pollfd wait_fd;
+
+	  retry:
+	    if (verbose) fprintf(stdout,"p");
+	    wait_fd.fd = devdesc;
+	    wait_fd.events = POLLIN | POLLPRI;
+	    error = poll (&wait_fd, 1, -1);
+	    switch (error)
+	      {
+	      case -1:
+	      case 0:
+		if (errno == EINTR) goto retry;
+		perror ("Some error during poll occured");
+		close();
+		throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+					       "Some error during poll occured") );
+		break;
+	      case 1:
+		if (wait_fd.revents & POLLIN)
+		  ;
+		if (wait_fd.revents & POLLPRI)
+		  vpItifg8Timeout = true;
+		break;
+	      default:
+		perror ("unexpected poll return value");
+		close();
+		throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+					       "unexpected poll return value") );
+	      }
+#else /* USE_SELECT */
+	    fd_set in_fdset, ex_fdset;
+
+	  retry:
+	    if (verbose) fprintf(stdout,"s");
+	    FD_ZERO (&in_fdset);
+	    FD_ZERO (&ex_fdset);
+	    FD_SET (devdesc, &in_fdset);
+	    FD_SET (devdesc, &ex_fdset);
+	    error = select (getdtablesize (),
+			    &in_fdset, NULL, &ex_fdset, NULL);
+	    switch (error)
+	      {
+	      case -1:
+	      case 0:
+		if (errno == EINTR) goto retry;
+		perror ("Some error during select occured");
+		close();
+		throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+					       "Some error during select occured") );
+		break;
+	      case 1:
+	      case 2:
+		if (FD_ISSET (devdesc, &in_fdset))
+		  ;
+		if (FD_ISSET (devdesc, &ex_fdset))
+		  vpItifg8Timeout = true;
+		break;
+	      default:
+		perror ("unexpected select return value");
+		close();
+		throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+					       "unexpected select return value") );
+	      }
+#endif
+	  }
+	  break;
+	case MANUAL_MODE:
+	  if (verbose) fprintf(stdout,"m");
+	  getchar ();
+	  break;
+	case POLL_MODE:
+	  {
+	    off_t start, current;
+
+	    if (verbose) fprintf(stdout,"m");
+	    if ((start = lseek (devdesc, 0L, SEEK_END)) < 0)
+	      {
+		perror ("lseek 0/SEEK_END");
+		close();
+		throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+					       "lseek 0/SEEK_END") );
+	      }
+
+	    current = start;
+	    while (current == start)
+	      {
+		if ((current = lseek (devdesc, 0L, SEEK_END)) < 0)
+		  {
+		    perror ("lseek 0/SEEK_END");
+		    close();
+		    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+						   "lseek 0/SEEK_END") );
+		  }
+		usleep (10000L);
+	      }
+	  }
+	  break;
+	}
+
+      /* 3. confirm acquisition */
+      if (args.other[args.board_i])
+	{
+	  do
+	    if ((nextone = lseek (devdesc, (loff_t)0, SEEK_END)) < 0)
+	      {
+		if (errno != EINTR)
+		  {
+		    perror ("lseek query SEEK_END");
+		    close();
+		    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+						   "lseek query SEEK_END") );
+		  }
+	      }
+	    else
+	      break;
+	  while (true);
+	  do
+	    if ((thisone = lseek (devdesc, (loff_t)0, SEEK_CUR)) < 0)
+	      {
+		if (errno != EINTR)
+		  {
+		    perror ("lseek query SEEK_CUR");
+		    close();
+		    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+						   "lseek query SEEK_CUR") );
+		  }
+	      }
+	    else
+	      break;
+	  while (true);
+	  nextone -= thisone;
+
+	  if (vpItifg8Timeout) break;
+
+	  for (int count = 0; count < nextone / image[args.board_i].paged_size; count++)
+	    {
+	      if (args.contig[args.board_i])
+		srcoff[srcidx] = thisone;
+	      else
+		srcoff[srcidx] = done;
+	      /* avoid window overflow, so use wraparound */
+	      srcoff[srcidx] %= ((winsize / (loff_t)image[args.board_i].paged_size) *
+				 (loff_t)image[args.board_i].paged_size);
+	      if (verbose)
+		fprintf(stdout, "%ld",srcoff[srcidx] / image[args.board_i].paged_size);
+	      srcidx++;
+	    }
+
+	  do
+	    if ((thisone = lseek (devdesc, nextone, SEEK_CUR)) < 0)
+	      {
+		if (errno != EINTR)
+		  {
+		    perror ("lseek accept SEEK_CUR");
+		    close();
+		    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+						   "lseek accept SEEK_CUR") );
+		  }
+	      }
+	    else
+	      break;
+	  while (TRUE);
+
+	  done += nextone;
+	}
+      else
+	{
+	  if ((nextone = read (devdesc, image[args.board_i].srcptr + done, todo - done)) < 0)
+	    {
+	      if (errno == ETIME)
+		vpItifg8Timeout = TRUE;
+	      else
+		{
+// 		  if (errno == EINTR)
+// 		    goto done;
+// 		  else
+//		    {
+		      perror ("Can't read image");
+		      close();
+		      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+						     "Can't read image") );
+// 		    }
+		}
+	    }
+
+	  if (vpItifg8Timeout) break;
+
+	  for (int count = 0; count < nextone / image[args.board_i].paged_size; count++)
+	    {
+	      if (verbose) fprintf(stdout,"-");
+	      srcoff[srcidx] = done;
+	      srcidx++;
+	    }
+
+	  done += nextone;
+	}
+    }
+  while (done < todo);
+  if (!args.contig[args.board_i]) stop_it = false;
+
+
+
+  return((u_char *)(image[args.board_i].srcptr + image[args.board_i].srcoff));
+}
+#endif
+
 
 /*!
   Acquire a grey level image.
@@ -1782,7 +2284,8 @@ vpItifg8Grabber::acquire(vpImage<vpRGBa> &I)
   \warning Dedicated AM-STD-COMP function member.
 
   To be able to get the type of the frames (odd or even), the itifg-8.x driver
-  was modified in itifg-8.2.2-0/src/module/amcmpIface.c like:
+  was modified in itifg-8.2.2-0/src/module/amcmpIface.c or
+  itifg-8.3.1-12/include/amcmpReg.h like:
 
   \code
   static int
