@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.35 2007-01-12 16:43:26 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.36 2007-01-26 17:26:28 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -391,6 +391,7 @@ IF(USE_ITIFG8)
   FIND_PACKAGE(ITIFG8)
   IF(ITIFG8_FOUND)
     SET(VISP_HAVE_ITIFG8 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_ITIFG8_VERSION ${ITIFG8_VERSION}) # for header vpConfig.h
      #MESSAGE("DBG VISP_HAVE_ITIFG8= ${VISP_HAVE_ITIFG8}")
      #MESSAGE("DBG ITIFG8_INCLUDE_DIR=${ITIFG8_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
