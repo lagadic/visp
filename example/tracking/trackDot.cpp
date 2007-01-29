@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot.cpp,v 1.1 2007-01-25 11:16:29 asaunier Exp $
+ * $Id: trackDot.cpp,v 1.2 2007-01-29 15:57:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,9 +66,9 @@
 
 /*!
 
-  Print the program options.
+Print the program options.
 
-  \param ipath: Input image path.
+\param ipath: Input image path.
 
 */
 void usage(char *name, char *badparam, string ipath)
@@ -103,10 +103,10 @@ OPTIONS:                                               Default\n\
 }
 /*!
 
-  Set the program options.
+Set the program options.
 
-  \param ipath : Input image path.
-  \return false if the program has to be stopped, true otherwise.
+\param ipath : Input image path.
+\return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, string &ipath,
@@ -223,19 +223,19 @@ main(int argc, char ** argv)
     vpImageIo::readPGM(I, filename) ;
   }
   catch(...)
-  {
-    // an exception is throwned if an exception from readPGM has been catched
-    // here this will result in the end of the program
-    // Note that another error message has been printed from readPGM
-    // to give more information about the error
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Cannot read " << filename << endl;
-    cerr << "  Check your -i " << ipath << " option " << endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << endl;
-    exit(-1);
-  }
+    {
+      // an exception is throwned if an exception from readPGM has been catched
+      // here this will result in the end of the program
+      // Note that another error message has been printed from readPGM
+      // to give more information about the error
+      cerr << endl
+	   << "ERROR:" << endl;
+      cerr << "  Cannot read " << filename << endl;
+      cerr << "  Check your -i " << ipath << " option " << endl
+	   << "  or VISP_INPUT_IMAGE_PATH environment variable."
+	   << endl;
+      exit(-1);
+    }
 
   // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
@@ -258,36 +258,48 @@ main(int argc, char ** argv)
       vpDisplay::display(I) ;
     }
     catch(...)
-    {
-      vpERROR_TRACE("Error while displaying the image") ;
-      exit(-1);
-    }
+      {
+	vpERROR_TRACE("Error while displaying the image") ;
+	exit(-1);
+      }
   }
 
+  // by using setGraphics, we request to see the all the pixel of the dot
   vpDot d ;
   if (opt_display) {
+    // by using setGraphics, we request to see the all the pixel of the dot
+    // in green on the screen.
+    // It uses the overlay image plane.
+    // The default of this setting is that it is time consumming
     d.setGraphics(true) ;
   }
   else {
     d.setGraphics(false) ;
   }
+  // we also request to compute the dot moment m00, m10, m01, m11, m20, m02
   d.setComputeMoments(true);
   d.setConnexity(vpDot::CONNEXITY_8);
 
   try {
     if (opt_display && opt_click_allowed) {
+      // tracking is initalized
+      // if no other parameters are given to the iniTracking(..) method
+      // a right mouse click on the dot is expected
       cout << "Click on a white dot you want to track..." << endl;
       d.initTracking(I) ;
     }
     else {
+      // dot location can also be specified explicitely in the initTracking
+      // method  : d.initTracking(I,u,v)  where u is the column index and v is
+      // the row index
       d.initTracking(I, 160, 212) ;
     }
   }
   catch(...)
-  {
-    vpERROR_TRACE("Cannot initialise the tracking... ") ;
-    exit(-1);
-  }
+    {
+      vpERROR_TRACE("Cannot initialise the tracking... ") ;
+      exit(-1);
+    }
 
   try {
     while (iter < 1200)
@@ -321,8 +333,23 @@ main(int argc, char ** argv)
 
 	if (opt_display) {
 	  // Display the image
-	  vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),
-				  10,vpColor::red) ;
+
+	  // display a red cross (size 10) in the image at the dot center
+	  // of gravity location
+	  //
+	  // WARNING
+	  // in the vpDisplay class member's when pixel coordinates
+	  // are considered the first element is the row index and the second
+	  // is the column index:
+	  //   vpDisplay::displayCross(Image, row index, column index, size, color)
+	  //   therefore u and v are inverted wrt to the vpDot specification
+	  // Alternatively, to avoid this problem another set of member have
+	  // been defined in the vpDisplay class.
+	  // If the method name is postfixe with _uv the specification is :
+	  //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
+
+	  vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),10,vpColor::red) ;
+	  // flush the X11 buffer
 	  vpDisplay::flush(I) ;
 	}
 	iter ++;
