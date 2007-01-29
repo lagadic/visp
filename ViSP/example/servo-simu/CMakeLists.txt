@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.1 2007-01-29 13:26:15 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.2 2007-01-29 16:48:54 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -74,11 +74,11 @@ ENDFOREACH(source)
 # Add test
 ADD_TEST(servoSimu3DCamVelocity				servoSimu3DCamVelocity				)	
 ADD_TEST(servoSimuCircle2DCamVelocity			servoSimuCircle2DCamVelocity			)
-ADD_TEST(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay		)
-ADD_TEST(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay -d	)
+ADD_TEST(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-d	)
+ADD_TEST(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-d	)
 ADD_TEST(servoSimuFourPoints2DCamVelocity		servoSimuFourPoints2DCamVelocity		)
 ADD_TEST(servoSimuFourPoints2DCamVelocityDisplay	servoSimuFourPoints2DCamVelocityDisplay -d	)
-ADD_TEST(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay -d		)
+ADD_TEST(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay	-d	)
 ADD_TEST(servoSimuPoint2DCamVelocity1			servoSimuPoint2DCamVelocity1			)
 ADD_TEST(servoSimuPoint2DCamVelocity2			servoSimuPoint2DCamVelocity2			)
 ADD_TEST(servoSimuPoint2DCamVelocity3			servoSimuPoint2DCamVelocity3			)
