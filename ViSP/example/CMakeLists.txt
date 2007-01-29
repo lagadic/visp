@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2007-01-25 12:49:16 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.6 2007-01-29 14:09:26 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -44,7 +44,10 @@ SET (SRC_SUBDIRS
   framegrabber
   pose-estimation
   servo-afma4
-  simulation
+  servo-afma6
+  servo-biclops
+  servo-ptu46
+  servo-simu
   simulator
   tracking
 )
