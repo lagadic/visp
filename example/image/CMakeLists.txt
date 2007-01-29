@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.6 2007-01-23 08:39:43 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.7 2007-01-29 15:42:01 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,7 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  vpImageIoExample.cpp
+  imageIoExample.cpp
   displaySequence.cpp
   displayGDI.cpp
   displayGTK.cpp
@@ -65,7 +65,7 @@ ENDFOREACH(source)
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
-ADD_TEST(vpImageIoExample vpImageIoExample)
+ADD_TEST(imageIoExample imageIoExample)
 ADD_TEST(displaySequence displaySequence -d)
 ADD_TEST(displayGDI displayGDI -d)
 ADD_TEST(displayGTK displayGTK -d)
