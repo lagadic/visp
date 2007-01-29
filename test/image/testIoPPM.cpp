@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPPM.cpp,v 1.5 2006-08-30 15:56:44 fspindle Exp $
+ * $Id: testIoPPM.cpp,v 1.6 2007-01-29 14:37:53 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -233,7 +233,7 @@ main(int argc, char ** argv)
   try
   {
     // Load a non existing grey image
-    filename = ipath + vpIoTools::path("/images/image-that-does-not-exist.ppm");
+    filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
     vpImageIo::readPPM(I, filename) ;
   }
   catch(vpImageException e)
@@ -269,7 +269,7 @@ main(int argc, char ** argv)
   try
   {
     // Load a non existing color image
-    filename = ipath + vpIoTools::path("/images/image-that-does-not-exist.ppm");
+    filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
     vpImageIo::readPPM(Irgba, filename) ;
   }
   catch(vpImageException e)

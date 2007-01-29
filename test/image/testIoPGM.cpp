@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPGM.cpp,v 1.5 2006-08-30 15:56:44 fspindle Exp $
+ * $Id: testIoPGM.cpp,v 1.6 2007-01-29 14:38:03 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,7 +68,7 @@ void usage(char *name, char *badparam, string ipath, string opath, string user)
 Read and write PGM images on the disk. Also test exceptions.\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] [-o <output image path>]\n\
+  %s [-i <input image path>] [-o <output image path>]\n\
      [-h]\n						      \
 ", name);
 
@@ -231,7 +231,7 @@ main(int argc, char ** argv)
   try
   {
     // Load a non existing grey image
-    filename = ipath +  vpIoTools::path("/images/image-that-does-not-exist.pgm");
+    filename = ipath +  vpIoTools::path("/ViSP-images/image-that-does-not-exist.pgm");
     vpImageIo::readPGM(I, filename) ;
   }
   catch(vpImageException e)
