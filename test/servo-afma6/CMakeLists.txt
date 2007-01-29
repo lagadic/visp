@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-01-29 09:50:39 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.4 2007-01-29 10:20:46 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,17 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  moveAfma6.cpp
-  servoAfma6Ellipse2DCamVelocity.cpp
-  servoAfma6FourPoints2DArtVelocity.cpp
-  servoAfma6FourPoints2DCamVelocity.cpp
-  servoAfma6Line2DCamVelocity.cpp
-  servoAfma6Point2DArtVelocity.cpp
-  servoAfma6Point2DCamVelocity.cpp
-  servoAfma6Points2DCamVelocityEyeToHand.cpp
-  servoAfma6SquareLines2DCamVelocity.cpp
-  servoAfma6TwoLines2DCamVelocity.cpp
-
+  testRobotAfma6.cpp
 )
 
 # rule for binary build
