@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.1 2007-01-25 11:17:14 asaunier Exp $
+ * $Id: trackDot2.cpp,v 1.2 2007-01-29 16:45:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,9 +68,9 @@
 
 /*!
 
-  Print the program options.
+Print the program options.
 
-  \param ipath: Input image path.
+\param ipath: Input image path.
 
 */
 void usage(char *name, char *badparam, string ipath)
@@ -105,10 +105,10 @@ OPTIONS:                                               Default\n\
 }
 /*!
 
-  Set the program options.
+Set the program options.
 
-  \param ipath : Input image path.
-  \return false if the program has to be stopped, true otherwise.
+\param ipath : Input image path.
+\return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, string &ipath,
@@ -225,19 +225,19 @@ main(int argc, char ** argv)
     vpImageIo::readPGM(I, filename) ;
   }
   catch(...)
-  {
-    // an exception is throwned if an exception from readPGM has been catched
-    // here this will result in the end of the program
-    // Note that another error message has been printed from readPGM
-    // to give more information about the error
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Cannot read " << filename << endl;
-    cerr << "  Check your -i " << ipath << " option " << endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << endl;
-    exit(-1);
-  }
+    {
+      // an exception is throwned if an exception from readPGM has been catched
+      // here this will result in the end of the program
+      // Note that another error message has been printed from readPGM
+      // to give more information about the error
+      cerr << endl
+	   << "ERROR:" << endl;
+      cerr << "  Cannot read " << filename << endl;
+      cerr << "  Check your -i " << ipath << " option " << endl
+	   << "  or VISP_INPUT_IMAGE_PATH environment variable."
+	   << endl;
+      exit(-1);
+    }
 
   // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
@@ -260,22 +260,46 @@ main(int argc, char ** argv)
       vpDisplay::display(I) ;
     }
     catch(...)
-    {
-      vpERROR_TRACE("Error while displaying the image") ;
-      exit(-1);
-    }
+      {
+	// an exception is throwned if an exception from readPGM has been catched
+	// here this will result in the end of the program
+	// Note that another error message has been printed from readPGM
+	// to give more information about the error
+
+	vpERROR_TRACE("Error while displaying the image") ;
+	exit(-1);
+      }
   }
+  // define the vpDot structure.
+
+  // vpDot and vpDot2 correspond to two different algorithms designed to track
+  // a dot. vpDot is based on recurse connex componants (all the pixels of the
+  // dot are parsed), while vpDot2 is based on freeman chain code (only the
+  // contour of the dot is parsed)
 
   vpDot2 d ;
 
   if (opt_display) {
+    // by using setGraphics, we request to see the all the pixel of the dot
+    // in green on the screen.
+    // It uses the overlay image plane.
+    // The default of this setting is that it is time consumming
+
     d.setGraphics(true) ;
   }
   else {
+
     d.setGraphics(false) ;
   }
+  // we also request to compute the dot moment m00, m10, m01, m11, m20, m02
   d.setComputeMoments(true);
 
+  // tracking is initalized
+  // if no other parameters are given to the iniTracking(..) method
+  // a right mouse click on the dot is expected
+  // dot location can also be specified explicitely in the initTracking
+  // method  : d.initTracking(I,u,v)  where u is the column index and v is
+  // the row index
 
   try{
     if (opt_display && opt_click_allowed) {
@@ -301,10 +325,10 @@ main(int argc, char ** argv)
     }
   }
   catch(...)
-  {
-    vpERROR_TRACE("Cannot initialise the tracking... ") ;
-    exit(-1);
-  }
+    {
+      vpERROR_TRACE("Cannot initialise the tracking... ") ;
+      exit(-1);
+    }
 
   try {
     while (iter < 1500)
@@ -315,6 +339,16 @@ main(int argc, char ** argv)
 	filename = dirname + s.str();
 	// read the image
 	vpImageIo::readPGM(I, filename);
+
+	// track the dot and returns its coordinates in the image
+	// results are given in float since many many are usually considered
+	//
+	// an expcetion is thrown by the track method if
+	//  - dot is lost
+	//  - the number of pixel is too small
+	//  - too many pixels are detected (this is usual when a "big" specularity
+	//    occurs. The threshold can be modified using the
+	//    setNbMaxPoint(int) method
 
 	d.track(I) ;
 
@@ -334,8 +368,24 @@ main(int argc, char ** argv)
 	if (opt_display) {
 	  // Display the image
 	  vpDisplay::display(I) ;
-	  vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),
-				     10,vpColor::green) ;
+
+	  // display a red cross (size 10) in the image at the dot center
+	  // of gravity location
+	  //
+	  // WARNING
+	  // in the vpDisplay class member's when pixel coordinates
+	  // are considered the first element is the row index and the second
+	  // is the column index:
+	  //   vpDisplay::displayCross(Image, row index, column index, size, color)
+	  //   therefore u and v are inverted wrt to the vpDot specification
+	  // Alternatively, to avoid this problem another set of member have
+	  // been defined in the vpDisplay class.
+	  // If the method name is postfixe with _uv the specification is :
+	  //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
+
+	  vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),10,vpColor::green) ;
+	  // flush the X11 buffer
+
 	  vpDisplay::flush(I) ;
 	}
 	iter ++;
