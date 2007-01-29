@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-01-24 16:21:18 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.4 2007-01-29 14:36:09 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -47,10 +47,6 @@ SET (SRC_SUBDIRS
   pose
   servo-afma4
   servo-afma6
-  servo-biclops
-  servo-ptu46
-  servo-simu
-  simulator
   time
   tracking
 )
