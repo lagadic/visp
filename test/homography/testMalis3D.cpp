@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMalis3D.cpp,v 1.5 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testMalis3D.cpp,v 1.6 2007-01-29 14:40:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Test Malis the homography estimation algorithm.
+ * Test the Malis homography estimation algorithm with a 3D object.
  *
  * Authors:
  * Eric Marchand
@@ -38,7 +38,7 @@
 /*!
   \example testMalis3D.cpp
 
-  Test the Malis homography estimation algorithm with a 3D object.
+  \brief Test the Malis homography estimation algorithm with a 3D object.
 
 */
 
