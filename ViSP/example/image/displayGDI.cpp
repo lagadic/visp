@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGDI.cpp,v 1.2 2007-01-30 16:21:58 asaunier Exp $
+ * $Id: displayGDI.cpp,v 1.3 2007-01-30 17:11:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 /*!
   \file displayGDI.cpp
 
-  Read an image on the disk, display it using vpDisplayGDI class, display some
+  \brief Read an image on the disk, display it using vpDisplayGDI class, display some
   features (line, circle, caracters) in overlay and finaly write the image and
   the overlayed features in an image on the disk.
 

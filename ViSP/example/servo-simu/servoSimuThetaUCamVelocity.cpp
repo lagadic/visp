@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuThetaUCamVelocity.cpp,v 1.1 2007-01-29 13:25:26 asaunier Exp $
+ * $Id: servoSimuThetaUCamVelocity.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,8 +42,16 @@
 
 
 /*!
-  \example servoSimuThetaUCamVelocity.cpp
+  \file servoSimuThetaUCamVelocity.cpp
   \brief Simulation of a visual servoing using theta U visual features:
+  - eye-in-hand control law,
+  - velocity computed in the camera frame,
+  - no display.
+*/
+
+/*!
+  \example servoSimuThetaUCamVelocity.cpp
+  Simulation of a visual servoing using theta U visual features:
   - eye-in-hand control law,
   - velocity computed in the camera frame,
   - no display.
@@ -66,7 +74,8 @@
 
 Print the program options.
 
-\param ipath: Input image path.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
 
 */
 void usage(char *name, char *badparam)
@@ -92,7 +101,10 @@ OPTIONS:                                               Default\n\
 
 Set the program options.
 
-\return false if the program has to be stopped, true otherwise.
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+
+  \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv)

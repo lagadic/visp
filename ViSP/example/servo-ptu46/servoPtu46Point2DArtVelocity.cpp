@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoPtu46Point2DArtVelocity.cpp,v 1.1 2007-01-29 10:52:52 asaunier Exp $
+ * $Id: servoPtu46Point2DArtVelocity.cpp,v 1.2 2007-01-30 17:18:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,12 +37,21 @@
  *
  *****************************************************************************/
 
+/*!
+  \file servoPtu46Point2DArtVelocity.cpp
+
+  \brief Example of eye-in-hand control law. We control here a real robot, the ptu-46
+  robot (pan-tilt head provided by Directed Perception). The velocity is
+  computed in articular. The visual feature is the center of gravity of a
+  point.
+
+*/
 
 
 /*!
   \example servoPtu46Point2DArtVelocity.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the ptu-46
+  Example of eye-in-hand control law. We control here a real robot, the ptu-46
   robot (pan-tilt head provided by Directed Perception). The velocity is
   computed in articular. The visual feature is the center of gravity of a
   point.

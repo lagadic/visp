@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.1 2007-01-29 11:11:35 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,10 +38,14 @@
 
 
 /*!
-  \example servoSimuPoint2DhalfCamVelocity3.cpp
+  \file servoSimuPoint2DhalfCamVelocity3.cpp
   \brief  Simulation of a 2 1/2 D visual servoing control law
 */
 
+/*!
+  \example servoSimuPoint2DhalfCamVelocity3.cpp
+  Simulation of a 2 1/2 D visual servoing control law
+*/
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
