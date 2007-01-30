@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma4.cpp,v 1.4 2007-01-29 14:11:49 asaunier Exp $
+ * $Id: moveAfma4.cpp,v 1.5 2007-01-30 16:28:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,11 +34,18 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+/*!
+  \file moveAfma4.cpp
 
+  \brief Example of a real robot control, the Afma4 robot (cylindrical robot, with 4
+  degrees of freedom). The robot is controlled first in position, then in
+  velocity.
+
+*/
 /*!
   \example moveAfma4.cpp
 
-  \brief Example of a real robot control, the Afma4 robot (cylindrical robot, with 4
+  Example of a real robot control, the Afma4 robot (cylindrical robot, with 4
   degrees of freedom). The robot is controlled first in position, then in
   velocity.
 
