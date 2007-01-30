@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotPtu46.cpp,v 1.7 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpRobotPtu46.cpp,v 1.8 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -128,9 +128,8 @@ vpRobotPtu46::~vpRobotPtu46 (void)
 
   Open the serial port.
 
-  \param device : Serial port.
 
-  \exception vpRobotException::constructionError If the device cannot be
+  \exception vpRobotException::constructionError : If the device cannot be
   oppened.
 
 */

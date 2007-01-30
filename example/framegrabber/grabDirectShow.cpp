@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.1 2007-01-24 15:05:42 asaunier Exp $
+ * $Id: grabDirectShow.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,10 +41,10 @@
 #include <visp/vpDebug.h>
 
 /*!
-  \example grabDirectShow.cpp
+  \file grabDirectShow.cpp
 
-  Test frame grabbing capabilities using DirectShow video device. Display the
-  images using the GTK display.
+  \brief Example of framegrabbing using vpDirectShowGrabber class.
+
 */
 
 #if defined (VISP_HAVE_DIRECTSHOW)
@@ -64,7 +64,12 @@
 
   Print the program options.
 
- */
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param nframes : Number of frames to acquire.
+  \param opath : Image filename when saving.
+
+*/
 void usage(char *name, char *badparam, unsigned &nframes, string &opath)
 {
   fprintf(stdout, "\n\
@@ -92,6 +97,15 @@ OPTIONS:                                               Default\n\
 /*!
 
   Set the program options.
+
+  Print the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param display : Display activation.
+  \param nframes : Number of frames to acquire.
+  \param save : Image saving activation.
+  \param opath : Image filename when saving.
 
   \return false if the program has to be stopped, true otherwise.
 
@@ -130,6 +144,14 @@ bool getOptions(int argc, char **argv, bool &display,
 }
 
 
+/*!
+  \example grabDirectShow.cpp
+
+  Example of framegrabbing using vpDirectShowGrabber class.
+
+  Grab grey level images using DirectShow frame grabbing capabilities. Display the
+  images using the GTK or GDI display.
+*/
 int
 main(int argc, char ** argv)
 {

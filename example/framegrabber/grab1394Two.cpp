@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.1 2007-01-24 15:05:07 asaunier Exp $
+ * $Id: grab1394Two.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,8 @@
 
 /*!
   \file grab1394Two.cpp
-  \brief Test firewire cameras video capture using vp1394TwoGrabber.
+
+  \brief Example of framegrabbing using vp1394TwoGrabber class.
 
   \warning This class needs at least libdc1394-2.0.0-rc4 and
   libraw1394-1.1.0. These libraries are available from
@@ -69,17 +70,25 @@ using namespace std;
 
 //#define GRAB_COLOR
 
-/*!
-  \example grab1394.cpp
-
-  Test frame grabbing capabilities using ieee 1394 video device.
-*/
 
 // List of allowed command line options
 #define GETOPTARGS	"c:df:hmn:io:sv:?"
 
 
 #define DUAL_ACQ
+
+
+/*!
+
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param camera : Active camera identifier.
+  \param nframes : Number of frames to acquire.
+  \param opath : Image filename when saving.
+
+*/
 void usage(char *name, char *badparam, unsigned camera, unsigned &nframes,
 	   string &opath)
 {
@@ -130,6 +139,30 @@ OPTIONS                                                    Default\n\
   exit(0);
 }
 
+/*!
+
+  Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param multi : Multi camera framegrabbing activation.
+  \param camera : Active camera identifier.
+  \param nframes : Number of frames to acquire.
+
+  \param verbose_info : Camera informations printing.
+  \param verbose_settings : Camera settings printing.
+
+  \param videomode_is_set : New video mode setting.
+  \param videomode : Video mode setting.
+
+  \param framerate_is_set : New framerate setting.
+  \param framerate : Framerate setting.
+
+  \param display : Display activation.
+  \param save : Image saving activation.
+  \param opath : Image filename when saving.
+
+*/
 void read_options(int argc, char **argv, bool &multi, unsigned &camera,
 		  unsigned &nframes, bool &verbose_info,
 		  bool &verbose_settings,
@@ -178,6 +211,15 @@ void read_options(int argc, char **argv, bool &multi, unsigned &camera,
   }
 }
 
+/*!
+  \example grab1394Two.cpp
+
+  Example of framegrabbing using vp1394TwoGrabber class.
+
+  Grab images from a firewire camera using vp1394TwoGrabber, an interface for
+  the libdc1394-2.0.0 driver. Display these images using X11 or GTK.
+
+*/
 int
 main(int argc, char ** argv)
 {
@@ -410,7 +452,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  vpTRACE("Ieee 1394 grabber capabilities are not available..."
+  vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
 	  "You should install libdc1394-2 to use this example.") ;
 }
 

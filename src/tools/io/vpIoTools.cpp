@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.8 2006-09-07 09:30:02 fspindle Exp $
+ * $Id: vpIoTools.cpp,v 1.9 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,8 @@
 
   \param username : The user name.
 
-  \exception ERRCantGetUserName : If this method cannot get the user name.
+  \exception vpIoException::ERRCantGetUserName : If this method cannot get the
+  user name.
 */
 void
 vpIoTools::getUserName(string &username)
@@ -163,7 +164,8 @@ vpIoTools::checkDirectory(const string dirname )
 
   \param dirname : Directory to create.
 
-  \exception ERRInvalidDirectoryName : If the directory cannot be created.
+  \exception vpIoException::ERRCantCreateDirectory : If the directory cannot be
+  created.
 */
 void
 vpIoTools::makeDirectory(const  char *dirname )
@@ -211,7 +213,8 @@ vpIoTools::makeDirectory(const  char *dirname )
 
   \param dirname : Directory to create.
 
-  \exception ERRInvalidDirectoryName : If the directory cannot be created.
+  \exception vpIoException::ERRCantCreateDirectory : If the directory cannot be
+  created.
 */
 void
 vpIoTools::makeDirectory(const string dirname )
@@ -225,14 +228,78 @@ vpIoTools::makeDirectory(const string dirname )
 }
 
 /*!
+
+  Check if a file exists.
+
+  \param filename : Filename to test if it exists.
+
+  \return true : If the filename exists and is accessible with read access.
+
+  \return false : If filename string is null, or is not a filename, or
+  has no read access.
+
+*/
+bool
+vpIoTools::checkFilename(const char *filename)
+{
+#if defined UNIX
+  struct stat stbuf;
+#elif defined WIN32
+  struct _stat stbuf;
+#endif
+
+  if ( filename == NULL || filename[0] == '\0' ) {
+    return false;
+  }
+
+#if defined UNIX
+  if ( stat( filename, &stbuf ) != 0 )
+#elif defined WIN32
+  if ( _stat( filename, &stbuf ) != 0 )
+#endif
+  {
+    return false;
+  }
+  if ( (stbuf.st_mode & S_IFREG) == 0 ) {
+    return false;
+  }
+#if defined UNIX
+  if ( (stbuf.st_mode & S_IRUSR) == 0 )
+#elif defined WIN32
+  if ( (stbuf.st_mode & S_IREAD) == 0 )
+#endif
+  {
+    return false;
+  }
+  return true;
+}
+
+/*!
+  Check if a file exists.
+
+  \param filename : Filename to test if it exists.
+
+  \return true : If the filename exists and is accessible with read access.
+
+  \return false : If filename string is null, or is not a filename, or
+  has no read access.
+
+*/
+bool
+vpIoTools::checkFilename(const string filename)
+{
+  return vpIoTools::checkFilename(filename.c_str());
+}
+
+/*!
   Converts a pathname to the current system's format.
-  \param _p Pathname to convert.
+  \param pathname : Pathname to convert.
   \return The converted pathname.
 */
 string
-vpIoTools::path(const char * _p)
+vpIoTools::path(const char * pathname)
 {
-  string path(_p);
+  string path(pathname);
 
 #ifdef WIN32
   for(unsigned int i=0 ; i<path.length() ; i++)
@@ -248,11 +315,11 @@ vpIoTools::path(const char * _p)
 
 /*!
   Converts a pathname to the current system's format.
-  \param _p Pathname to convert.
+  \param pathname : Pathname to convert.
   \return The converted pathname.
 */
 string
-vpIoTools::path(const string& _p)
+vpIoTools::path(const string& pathname)
 {
-  return path(_p.c_str());
+  return path(pathname.c_str());
 }

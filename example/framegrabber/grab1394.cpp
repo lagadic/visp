@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.1 2007-01-24 15:04:20 asaunier Exp $
+ * $Id: grab1394.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 /*!
   \file grab1394.cpp
-  \brief Test firewire cameras video capture using vp1394Grabber.
+  \brief Example of framegrabbing using vp1394TwoGrabber class.
 
   \warning This class needs at least libdc1394-1.0.0 and
   libraw1394-1.1.0. These libraries are available from
@@ -65,20 +65,22 @@ using namespace std;
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
 
-/*!
-  \example grab1394.cpp
-
-  Test frame grabbing capabilities using ieee 1394 video device.
-*/
 
 // List of allowed command line options
 #define GETOPTARGS	"c:df:g:m:n:r:s:t:h"
 
-/*
+/*!
 
   Print the program options.
 
- */
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param g : Framegrabber instance.
+  \param req_number : Requested number of images to grab.
+  \param req_display : Requested display activation.
+  \param req_color: Requested color image display activation.
+
+*/
 void usage(char *name, char *badparam, vp1394Grabber &g, long &req_number,
 	   bool &req_display, bool &req_color)
 {
@@ -211,9 +213,24 @@ OTHER OPTIONS:\n\
 
 }
 
-/*
+/*!
 
   Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param g : Framegrabber instance.
+  \param camera : Active camera identifier.
+
+  \param format : Video format setting.
+  \param mode : Video mode setting.
+  \param framerate : Framerate setting.
+  \param shutter : Shutter setting.
+  \param gain : Gain setting.
+
+  \param number : Number of images to grab.
+  \param display : Display activation.
+  \param color: Color image display activation.
 
 */
 void getOptions(int argc, char **argv,
@@ -255,6 +272,15 @@ void getOptions(int argc, char **argv,
 }
 
 
+/*!
+  \example grab1394.cpp
+
+  Example of framegrabbing using vp1394TwoGrabber class.
+
+  Grab images from a firewire camera using vp1394Grabber, an interface for the
+  libdc1394-1.x driver. Display these images using X11 or GTK.
+
+*/
 int
 main(int argc, char ** argv)
 {
@@ -477,7 +503,7 @@ main(int argc, char ** argv)
 int
 main()
 {
-  vpTRACE("Ieee 1394 grabber capabilities are not available..."
+  vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
 	  "You should install libdc1394-1 to use this example.") ;
 }
 #endif

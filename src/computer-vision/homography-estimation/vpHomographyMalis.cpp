@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyMalis.cpp,v 1.7 2006-12-13 14:01:03 fspindle Exp $
+ * $Id: vpHomographyMalis.cpp,v 1.8 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -728,12 +728,13 @@ HLM(int q_cible,
   This function implements the fonctions related with the homography
   estimation from non coplanar points using the Malis algorithm
 
-  references
+  References:
 
   E. Malis, F. Chaumette. 2 1/2 D visual servoing with respect to unknown
   objects through a new estimation scheme of camera displacement. Int. Journal
   of Computer Vision, 37(1):79-97, Juin 2000.
 
+  \code
   @article{Malis00b,
   Author = {Malis, E. and Chaumette, F.},
   Title = {2 1/2 D visual servoing with respect to unknown objects
@@ -745,6 +746,7 @@ HLM(int q_cible,
   Month = {June},
   Year = {2000}
   }
+  \endcode
 
   paper can be obtained at this url :
   http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html

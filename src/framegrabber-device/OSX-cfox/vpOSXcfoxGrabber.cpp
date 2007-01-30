@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.cpp,v 1.5 2006-06-27 10:11:25 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.cpp,v 1.6 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 
 /*!
-  \file vpV4l2Grabber.cpp
+  \file vpOSXcfoxGrabber.cpp
   \brief class for the Video For Linux 2 video device
   \ingroup libdevice
 */
@@ -106,7 +106,8 @@ vpOSXcfoxGrabber::setInput(unsigned input)
 /*!
   Set the decimation factor.
 
-  \exception settingError : Wrong scale (shoud be between 1 and 16).
+  \exception vpFrameGrabberException::settingError : Wrong scale (shoud be
+  between 1 and 16).
 
   \param scale : Decimation factor.
 */
@@ -130,7 +131,7 @@ vpOSXcfoxGrabber::setScale(unsigned scale)
 
   \param I : Image data structure (8 bits image)
 
-  \exception settingError : Wrong input channel.
+  \exception vpFrameGrabberException::settingError : Wrong input channel.
 
 */
 void
@@ -165,7 +166,8 @@ vpOSXcfoxGrabber::open(vpImage<vpRGBa> &I)
 
   \param I : Image data structure (8 bits image)
 
-  \exception initializationError : Frame grabber not initialized.
+  \exception vpFrameGrabberException::initializationError : Frame grabber not
+  initialized.
 
   \sa getField()
 */
@@ -196,7 +198,8 @@ vpOSXcfoxGrabber::acquire(vpImage<unsigned char> &I)
 
   \param I : Image data structure (32 bits image)
 
-  \exception initializationError : Frame grabber not initialized.
+  \exception vpFrameGrabberException::initializationError : Frame grabber not
+  initialized.
 
   \sa getField()
 */
@@ -226,7 +229,7 @@ vpOSXcfoxGrabber::acquire(vpImage<vpRGBa> &I)
 
   Set the framerate of the acquisition.
 
-  \param framerate The framerate for the acquisition.
+  \param _framerate : The framerate for the acquisition.
 
   \sa getFramerate()
 
@@ -268,8 +271,11 @@ vpOSXcfoxGrabber::close()
 
   Open the Video For Linux Two device.
 
-  \exception initializationError : Can't access to video device.
-  \exception otherError : Can't query video capabilities.
+  \exception vpFrameGrabberException::initializationError : Can't access to
+  video device.
+
+  \exception vpFrameGrabberException::otherError : Can't query video
+  capabilities.
 
 */
 void

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.8 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpPose.cpp,v 1.9 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -116,8 +116,8 @@ vpPose::clearPoint()
 }
 
 /*!
-  \brief  Add a new point in the array of point
-  \param  vpPoint& newP, this new point
+  \brief  Add a new point in the array of point.
+  \param  newP : New point to add  in the array of point.
   \warning Considering a point from the class vpPoint, X, Y, and Z will
   represent the 3D information and x and y its 2D informations.
   These 5 fields must be initialized to be used within this library

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.t.cpp,v 1.6 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpRansac.t.cpp,v 1.7 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,6 +51,9 @@
   \brief
   RANSAC - Robustly fits a model to data with the RANSAC algorithm
 
+  \param npts
+  Number of points.
+
   \param  x
   Data sets to which we are seeking to fit a model M
   It is assumed that x is of size [d x Npts]
@@ -60,6 +63,7 @@
   \param  s
   The minimum number of samples from x required by
   fittingfn to fit a model.
+
   \param   t
   The distance threshold between data point and the model
   used to decide whether a point is an inlier or not.
@@ -70,6 +74,9 @@
   \param    inliers
   An array of indices of the elements of x that were
   the inliers for the best model.
+
+  \param consensus
+  Score consencus used to choose the solution.
 
   References:
   M.A. Fishler and  R.C. Boles. "Random sample concensus: A paradigm

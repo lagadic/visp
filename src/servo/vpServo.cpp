@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.11 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpServo.cpp,v 1.12 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -405,8 +405,11 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
 }
 
 
-/*! \brief compute the interaction matrix related to the set of visual features
-  \param return Ls
+/*!
+
+  Compute the interaction matrix related to the set of visual features.
+
+  \return Ls
 */
 vpMatrix
 vpServo::computeInteractionMatrix()

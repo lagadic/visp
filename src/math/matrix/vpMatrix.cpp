@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.29 2006-12-05 10:28:48 marchand Exp $
+ * $Id: vpMatrix.cpp,v 1.30 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,11 +102,12 @@ vpMatrix::vpMatrix()
 
 
 /*!
-  \brief   constructor
-  initialize a rr x cc matrix with 0
+  Constructor.
 
-  \param int rr : number of rows
-  \param int cc number of columns
+  Initialize a matrix with 0.
+
+  \param r : Matrix number of rows.
+  \param c : Matrix number of columns.
 */
 vpMatrix::vpMatrix(int r,int c)
 {
@@ -309,7 +310,7 @@ vpMatrix::~vpMatrix()
   \brief Copy operator.
   Allow operation such as A = B
 
-  \param m : matrix to be copied.
+  \param B : matrix to be copied.
 */
 vpMatrix &
 vpMatrix::operator=(const vpMatrix &B)
@@ -392,7 +393,7 @@ vpMatrix::operator*(const vpMatrix &B) const
   int BrowNum = B.rowNum ;
   int i,j,k ;
   double **BrowPtrs = B.rowPtrs;
-  for (i=0;i<rowNum;i++)  
+  for (i=0;i<rowNum;i++)
     {
       double *rowptri = rowPtrs[i] ;
       double *pi = p[i] ;
@@ -590,7 +591,7 @@ vpMatrix::sumSquare() const
 
   double *d = data ;
   double *n = data+dsize ;
-  while (d < n ) 
+  while (d < n )
   {
     x = *d++ ;
     sum += x*x ;
@@ -601,7 +602,7 @@ vpMatrix::sumSquare() const
     x = *(data + i) ;
     sum += x*x ;
   }
-  
+
     for (int i=0; i<rowNum; i++)
     for (int j=0; j<colNum; j++)
     sum += rowPtrs[i][j]*rowPtrs[i][j];
@@ -653,7 +654,7 @@ vpMatrix::operator*(const vpTranslationVector &b) const
   for (int j=0;j<3;j++) c[j]=0 ;
 
   for (int j=0;j<3;j++) {
-    {   
+    {
       double bj = b[j] ; // optimization em 5/12/2006
       for (int i=0;i<3;i++) {
 	c[i]+=rowPtrs[i][j] * bj;
@@ -748,7 +749,7 @@ vpMatrix  vpMatrix::operator/(double x) const
 
   for (int i=0;i<dsize;i++)
     *(v.data+i) = *(data+i)*xinv ;
-  
+
   return v;
 }
 
@@ -1018,15 +1019,17 @@ vpMatrix::pseudoInverse(vpMatrix &Ap, double th) const
 }
 
 /*!
-  \brief retourne la pseudo d'un matrice C = A^+
-  \param th threshold used to test the singular values
+  \brief Compute and return the pseudo inverse of the matrix : \f$ A^+ \f$
+  \param svThreshold : Threshold used to test the singular values.
+
+  \return Pseudo inverse of the matrix
 */
 vpMatrix
-vpMatrix::pseudoInverse(double seuilvp) const
+vpMatrix::pseudoInverse(double svThreshold) const
 {
   vpMatrix Ap ;
   vpColVector sv ;
-  pseudoInverse(Ap,sv,seuilvp) ;
+  pseudoInverse(Ap, sv, svThreshold) ;
   return   Ap ;
 }
 
@@ -1254,16 +1257,15 @@ vpMatrix::column(const int j)
 
 
 /*!
-  \relates vpMatrix
-  \brief StackMatrices. "Stack" two matrices  C = [ A B ]^T
+  \brief Stack matrices. "Stack" two matrices  C = [ A B ]^T
 
   \f$ C = \left( \begin{array}{c} A \\ B \end{array}\right)    \f$
 
-  \param vpMatrix A
-  \param vpMatrix B
-  \return  vpMatrix C = [ A B ]^T
+  \param A : Upper matrix.
+  \param B : Lower matrix.
+  \return Stacked matrix C = [ A B ]^T
 
-  \warning A and B must have the same number of column
+  \warning A and B must have the same number of column.
 */
 vpMatrix
 vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
@@ -1288,9 +1290,9 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
 
   \f$ C = \left( \begin{array}{c} A \\ B \end{array}\right)    \f$
 
-  \param  A
-  \param  B
-  \param  C = [ A B ]^T
+  \param  A : Upper matrix.
+  \param  B : Lower matrix.
+  \param  C : Stacked matrix C = [ A B ]^T
 
   \warning A and B must have the same number of column
 */
@@ -1334,14 +1336,13 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 
 }
 /*!
-  \relates vpMatrix
-  \brief juxtaposeMatrices. "juxtapos" two matrices  C = [ A B ]
+  \brief Juxtapose matrices. "juxtapos" two matrices  C = [ A B ]
 
   \f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
 
-  \param vpMatrix A
-  \param vpMatrix B
-  \return  vpMatrix C = [ A B ]
+  \param A : Left matrix.
+  \param B : Right matrix.
+  \return Juxtaposed matrix C = [ A B ]
 
   \warning A and B must have the same number of column
 */
@@ -1368,9 +1369,9 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
 
   \f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
 
-  \param  A
-  \param  B
-  \param  C = [ A B ]
+  \param A : Left matrix.
+  \param B : Right matrix.
+  \param C : Juxtaposed matrix C = [ A B ]
 
   \warning A and B must have the same number of column
 */
@@ -1413,13 +1414,14 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 
 }
 /*!
-  \relates vpMatrix
-  \brief Create a diagonal matrix with the element of a vector DAii = Ai
 
-  \param  DA  = Ai
-  \param  A
+  Create a diagonal matrix with the element of a vector \f$ DA_{ii} = A_i \f$.
+
+  \param  A : Vector which element will be put in the diagonal.
+
+  \param  DA : Diagonal matrix DA[i][i]  = A[i]
 */
-//! Create a diagonal matrix with the element of a vector DAii = Ai
+
 void
 vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 {
@@ -1464,6 +1466,9 @@ ostream &operator <<(ostream &s,const vpMatrix &m)
   Pretty print a matrix. The data are tabulated.
   The common widths before and after the decimal point
   are set with respect to the parameter maxlen.
+
+  \param s
+    Stream used for the printing.
 
   \param length
     The suggested width of each matrix element.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.8 2006-10-30 15:52:24 mtallur Exp $
+ * $Id: vpSimulator.cpp,v 1.9 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -656,8 +656,9 @@ vpSimulator::save(const char *name,bool binary)
 }
 
 /*!
-   Add the representation of a frame
-  \param fMo       : desired position of the frame
+  Add the representation of a frame.
+  \param fMo : desired position of the frame
+  \param zoom : Zoom factor.
 */
 void
 vpSimulator::addFrame (const vpHomogeneousMatrix &fMo, double zoom)

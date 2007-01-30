@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageMorphology.h,v 1.3 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpImageMorphology.h,v 1.4 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,6 +92,7 @@ public:
 
   Erode a binary image using a structuring element of size one.
 
+  \param I : Image to process.
   \param value : Values of the pixels to erode.
   \param value_out : Value to set if erosion is done.
   \param connexity : Type of connexity: 4 or 8.
@@ -156,6 +157,7 @@ void vpImageMorphology::erosion(vpImage<Type> &I,
 
   Dilate a binary image using a structuring element of size one.
 
+  \param I : Image to process.
   \param value : Values of the pixels to dilate.
   \param value_out : Value to set if dilatation is done.
   \param connexity : Type of connexity: 4 or 8.
