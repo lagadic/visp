@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: movePtu46.cpp,v 1.1 2007-01-29 10:51:57 asaunier Exp $
+ * $Id: movePtu46.cpp,v 1.2 2007-01-30 17:18:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,12 +34,19 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+/*!
+  \file movePtu46.cpp
+
+  \brief Example of a real robot control, the ptu-46 robot (pan-tilt turret). The
+  robot is controlled first in position, then in velocity.
+
+*/
 
 
 /*!
   \example movePtu46.cpp
 
-  \brief Example of a real robot control, the ptu-46 robot (pan-tilt turret). The
+  Example of a real robot control, the ptu-46 robot (pan-tilt turret). The
   robot is controlled first in position, then in velocity.
 
 */

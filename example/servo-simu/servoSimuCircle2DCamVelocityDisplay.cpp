@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuCircle2DCamVelocityDisplay.cpp,v 1.1 2007-01-29 11:04:30 asaunier Exp $
+ * $Id: servoSimuCircle2DCamVelocityDisplay.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,11 +36,18 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+/*!
+  \file servoSimuCircle2DCamVelocityDisplay.cpp
+  \brief Servo a circle:
+  - eye-in-hand control law,
+  - velocity computed in the camera frame,
+  - display the camera view.
+*/
 
 
 /*!
   \example servoSimuCircle2DCamVelocityDisplay.cpp
-  \brief Servo a circle:
+  Servo a circle:
   - eye-in-hand control law,
   - velocity computed in the camera frame,
   - display the camera view.
@@ -83,7 +90,8 @@
 
 Print the program options.
 
-\param ipath: Input image path.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
 
 */
 void usage(char *name, char *badparam)
@@ -116,9 +124,12 @@ OPTIONS:                                               Default\n\
 
 Set the program options.
 
-\param click_allowed : false if mouse click is not allowed.
-\param display : false if the display is to turn off.
-\return false if the program has to be stopped, true otherwise.
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param click_allowed : false if mouse click is not allowed.
+  \param display : false if the display is to turn off.
+  
+  \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, bool &click_allowed, bool &display)

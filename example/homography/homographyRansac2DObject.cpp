@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: homographyRansac2DObject.cpp,v 1.1 2007-01-30 16:15:05 asaunier Exp $
+ * $Id: homographyRansac2DObject.cpp,v 1.2 2007-01-30 17:14:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 /*!
   \file homographyRansac2DObject.cpp
 
-  Example of the Ransac homography estimation algorithm using vpHomography class.
+  \brief Example of the Ransac homography estimation algorithm using vpHomography class.
 
 */
 

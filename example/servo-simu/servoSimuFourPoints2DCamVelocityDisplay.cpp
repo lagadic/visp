@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuFourPoints2DCamVelocityDisplay.cpp,v 1.1 2007-01-29 11:06:29 asaunier Exp $
+ * $Id: servoSimuFourPoints2DCamVelocityDisplay.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,11 +35,22 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+/*!
+  \file servoSimuFourPoints2DCamVelocityDisplay.cpp
+  \brief Simulation of a 2D visual servoing:
+  - servo on 4 points,
+  - eye-in-hand control law,
+  - articular velocity are computed,
+  - no display.
 
+  Interaction matrix is computed as the mean of the current and desired
+  interaction matrix.
+
+*/
 
 /*!
   \example servoSimuFourPoints2DCamVelocityDisplay.cpp
-  \brief Simulation of a 2D visual servoing:
+  Simulation of a 2D visual servoing:
   - servo on 4 points,
   - eye-in-hand control law,
   - articular velocity are computed,
@@ -80,7 +91,8 @@
 
 Print the program options.
 
-\param ipath: Input image path.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
 
 */
 void usage(char *name, char *badparam)
@@ -112,7 +124,12 @@ OPTIONS:                                               Default\n\
 
 Set the program options.
 
-\return false if the program has to be stopped, true otherwise.
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param display : Display activation.
+  \param click_allowed : Click activation.
+
+  \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, bool &click_allowed, bool &display)

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: homographyHLM2DObject.cpp,v 1.1 2007-01-30 16:15:05 asaunier Exp $
+ * $Id: homographyHLM2DObject.cpp,v 1.2 2007-01-30 17:14:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 /*!
   \file homographyHLM2DObject.cpp
 
-  Example of the HLM (Malis) homography estimation algorithm with a planar object using vpHomography class.
+  \brief Example of the HLM (Malis) homography estimation algorithm with a planar object using vpHomography class.
 
 */
 
