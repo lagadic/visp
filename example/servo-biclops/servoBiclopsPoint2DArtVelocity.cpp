@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.1 2007-01-29 10:47:40 asaunier Exp $
+ * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.2 2007-01-30 17:29:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,12 +37,21 @@
  *
  *****************************************************************************/
 
+/*!
+  \file servoBiclopsPoint2DArtVelocity.cpp
+
+  \brief Example of eye-in-hand control law. We control here a real robot, the biclops
+  robot (pan-tilt head provided by Traclabs). The velocity is
+  computed in articular. The visual feature is the center of gravity of a
+  point.
+
+*/
 
 
 /*!
   \example servoBiclopsPoint2DArtVelocity.cpp
 
-  \ brief Example of eye-in-hand control law. We control here a real robot, the biclops
+  Example of eye-in-hand control law. We control here a real robot, the biclops
   robot (pan-tilt head provided by Traclabs). The velocity is
   computed in articular. The visual feature is the center of gravity of a
   point.
@@ -108,7 +117,12 @@ void signalCtrC( int signumber )
 
   Print the program options.
 
-  \param ipath : Input image path.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param conf : Robot configuration file.
+  \param debugdir : Debug file directory.
+  \param user : Username.
+
  */
 void usage(char *name, char *badparam, string& conf, string& debugdir, string& user)
 {
@@ -136,8 +150,13 @@ OPTIONS:                                               Default\n\
 
 Set the program options.
 
-\param ipath : Input image path.
-\return false if the program has to be stopped, true otherwise.
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param conf : Robot configuration file.
+  \param debugdir : Debug file directory.
+  \param user : Username.
+
+  \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, string& conf, string &debugdir, string& user)

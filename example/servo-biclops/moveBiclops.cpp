@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveBiclops.cpp,v 1.1 2007-01-29 10:46:26 asaunier Exp $
+ * $Id: moveBiclops.cpp,v 1.2 2007-01-30 17:29:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -33,12 +33,20 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+/*!
+  \file moveBiclops.cpp
+
+  \brief Example of a real robot control, the biclops robot (pan-tilt turret) by
+  Traclabs. The robot is controlled first in position, then in velocity.
+
+  See http://www.traclabs.com/tracbiclops.htm for more details.
+*/
 
 
 /*!
   \example moveBiclops.cpp
 
-  \ brief Example of a real robot control, the biclops robot (pan-tilt turret) by
+  Example of a real robot control, the biclops robot (pan-tilt turret) by
   Traclabs. The robot is controlled first in position, then in velocity.
 
   See http://www.traclabs.com/tracbiclops.htm for more details.
@@ -61,7 +69,9 @@
 
 Print the program options.
 
-\param conf : Biclops configuration file.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param conf : Biclops configuration file.
 
 */
 void usage(char *name, char *badparam, string conf)
@@ -85,8 +95,11 @@ OPTIONS:                                               Default\n\
 
 Set the program options.
 
-\param conf : Biclops configuration file.
-\return false if the program has to be stopped, true otherwise.
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param conf : Biclops configuration file.
+  
+  \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, string& conf)
