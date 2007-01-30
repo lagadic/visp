@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.11 2006-09-01 15:32:17 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.12 2007-01-30 17:31:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,19 +40,6 @@
 /*!
   \file vpDisplayGTK.cpp
   \brief Define the GTK console to display images
-*/
-
-/*!
-  \class vpDisplayGTK
-
-  \brief The  vpDisplayGTK allows to display image using the GTK+ library
-  version 1.2.
-
-  \author Christophe Collewet (Christophe.Collewet@irisa.fr),
-  imported in ViSP by Eric Marchand (Eric.Marchand@irisa.fr)
-  Irisa / Inria Rennes
-
-  The GTK+ 1.2 library has to be available on the system
 */
 
 #include <visp/vpConfig.h>

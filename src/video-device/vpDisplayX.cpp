@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.17 2007-01-22 16:52:09 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.18 2007-01-30 17:31:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,13 +40,6 @@
   \brief Define the X11 console to display images
 */
 
-/*!
-  \class vpDisplayX
-
-  \brief The  vpDisplayX allows to display image using the X11 library.
-
-
-*/
 
 #include <visp/vpConfig.h>
 #ifdef VISP_HAVE_X11
