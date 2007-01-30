@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8.cpp,v 1.3 2007-01-30 10:02:22 fspindle Exp $
+ * $Id: grabItifg8.cpp,v 1.4 2007-01-30 10:57:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,16 +58,6 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpRGBa.h>
 
-/*!
-  \example grabItifg8.cpp
-
-  \brief Example of framegrabbing using vpItifg8Grabber class.
-
-  Grab grey level images using vpItifg8Grabber, an interface for the itifg-8.x
-  framegrabber driver from Coreco Imaging. Display these images using X11 or
-  GTK.
-
-*/
 
 // List of allowed command line options
 #define GETOPTARGS	"b:c:df:hi:n:o:p:s:"
@@ -87,7 +77,7 @@
   \param opath : Image filename when saving.
   \param conffile : Camera configuration file.
 
- */
+*/
 void usage(char *name, char *badparam, unsigned board, float fps,
 	   unsigned input, unsigned scale, unsigned buffer,
 	   unsigned &nframes, string opath, string conffile)
@@ -207,6 +197,8 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
     // standalone param or error
     usage(argv[0], optarg, board, fps, input, scale, buffer,
 	  nframes, opath, conffile);
+    cerr << endl << "ERROR: " << endl;
+    cerr << "  Bad argument " << optarg << endl << endl;
     return false;
   }
 
@@ -214,6 +206,9 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
 }
 
 /*!
+  \example grabItifg8.cpp
+
+  \brief Example of framegrabbing using vpItifg8Grabber class.
 
   Grab grey level images using vpItifg8Grabber, an interface for the itifg-8.x
   framegrabber driver from Coreco Imaging. Display these images using X11 or
