@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.2 2007-01-26 10:29:25 asaunier Exp $
+ * $Id: displaySequence.cpp,v 1.3 2007-01-30 16:21:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,7 +36,15 @@
  * Anthony Saunier
  *
  *****************************************************************************/
+/*!
+  \file displaySequence.cpp
 
+  \brief Read an image sequence from the disk and display it.
+
+  The sequence is made of separate images. Each image corresponds to a
+  PGM file.
+
+*/
 
 #include <stdio.h>
 #include <sstream>
@@ -65,7 +73,7 @@
 /*!
   \example displaySequence.cpp
 
-  \brief Read an image sequence from the disk and display it.
+  Read an image sequence from the disk and display it.
 
   The sequence is made of separate images. Each image corresponds to a
   PGM file.
@@ -79,15 +87,13 @@
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param ipath : Input image path.
   \param ppath : Personal image path.
   \param first : First image.
   \param nimages : Number of images to manipulate.
   \param step : Step between two images.
-  \param display : Set as true, activates the image display. This is
-  the default configuration. When set to false, the display is
-  disabled. This can be usefull for automatic tests using crontab
-  under Unix or using the task manager under Windows.
 
  */
 void usage(char *name, char *badparam, string ipath, string ppath,
@@ -147,6 +153,8 @@ SYNOPSIS\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath : Input image path.
   \param ppath : Personal image path.
   \param first : First image.
