@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.1 2007-01-29 10:37:50 asaunier Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.2 2007-01-30 16:39:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,11 +38,20 @@
  *****************************************************************************/
 
 
+/*!
+  \file servoAfma6Ellipse2DCamVelocity.cpp
+
+  \brief Example of eye-in-hand control law. We control here a real robot, the Afma6
+  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
+  in the camera frame. The used visual feature is a circle.
+
+*/
+
 
 /*!
   \example servoAfma6Ellipse2DCamVelocity.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the Afma6
+  Example of eye-in-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
   in the camera frame. The used visual feature is a circle.
 
@@ -72,6 +81,8 @@
 #include <visp/vpServoDisplay.h>
 
 #include <visp/vpDot.h>
+
+
 
 int
 main()

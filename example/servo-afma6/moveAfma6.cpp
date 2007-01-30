@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma6.cpp,v 1.6 2007-01-29 10:37:11 asaunier Exp $
+ * $Id: moveAfma6.cpp,v 1.7 2007-01-30 16:39:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,11 +36,19 @@
  * Eric Marchand
  *
  ****************************************************************************/
+/*!
+  \file moveAfma6.cpp
+
+  \brief Example of a real robot control, the Afma6 robot (cartesian robot, with 6
+  degrees of freedom). The robot is controlled first in position, then in
+  velocity.
+
+*/
 
 /*!
   \example moveAfma6.cpp
 
-  \brief Example of a real robot control, the Afma6 robot (cartesian robot, with 6
+  Example of a real robot control, the Afma6 robot (cartesian robot, with 6
   degrees of freedom). The robot is controlled first in position, then in
   velocity.
 
