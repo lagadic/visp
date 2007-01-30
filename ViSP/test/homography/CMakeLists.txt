@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2006-05-30 08:31:21 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-01-30 16:09:29 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,10 +42,6 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   testDisplacement.cpp
-  testDLT.cpp
-  testHomographyRansac.cpp
-  testMalis3D.cpp
-  testMalis.cpp
 )
 
 # rule for binary build
