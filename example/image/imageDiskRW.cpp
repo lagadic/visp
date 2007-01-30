@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: imageDiskRW.cpp,v 1.1 2007-01-30 11:16:12 asaunier Exp $
+ * $Id: imageDiskRW.cpp,v 1.2 2007-01-30 16:21:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,13 +63,15 @@
 // List of allowed command line options
 #define GETOPTARGS	"i:o:h"
 
-/*
+/*!
 
-  Print the program options.
+Print the program options.
 
-  \param ipath : Input image path.
-  \param opath : Output image path.
-  \param user : Username.
+\param name : Program name.
+\param badparam : Bad parameter name.
+\param ipath : Input image path.
+\param opath : Output image path.
+\param user : Username.
 
  */
 void usage(char *name, char *badparam, string ipath, string opath, string user)
@@ -78,7 +80,7 @@ void usage(char *name, char *badparam, string ipath, string opath, string user)
 Read and write PGM images on the disk. Also test exceptions.\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] [-o <output image path>]\n\
+  %s [-i <input image path>] [-o <output image path>]\n\
      [-h]\n						      \
 ", name);
 
@@ -107,6 +109,8 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath : Input image path.
   \param opath : Output image path.
   \param user : Username.

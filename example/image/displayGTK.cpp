@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGTK.cpp,v 1.1 2007-01-22 14:17:46 asaunier Exp $
+ * $Id: displayGTK.cpp,v 1.2 2007-01-30 16:21:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,6 +35,14 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+/*!
+  \file displayGTK.cpp
+
+  \brief Read an image on the disk, display it using vpDisplayGTK class, display some
+  features (line, circle, caracters) in overlay and finaly write the image and
+  the overlayed features in an image on the disk.
+
+*/
 
 
 #include <visp/vpDebug.h>
@@ -51,7 +59,7 @@
 /*!
   \example displayGTK.cpp
 
-  \brief Read an image on the disk, display it using GTK, display some
+  Read an image on the disk, display it using vpDisplayGTK class, display some
   features (line, circle, caracters) in overlay and finaly write the image and
   the overlayed features in an image on the disk.
 
@@ -60,10 +68,12 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:o:h"
 
-/*
+/*!
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
@@ -116,6 +126,8 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath: Input image path.
   \param opath : Output image path.
   \param click_allowed : Enable/disable mouse click.
