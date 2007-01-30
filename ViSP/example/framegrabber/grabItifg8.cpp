@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8.cpp,v 1.2 2007-01-26 17:52:24 fspindle Exp $
+ * $Id: grabItifg8.cpp,v 1.3 2007-01-30 10:02:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,6 +35,12 @@
  *
  *****************************************************************************/
 
+/*!
+  \file grabItifg8.cpp
+  \brief Example of framegrabbing using vpItifg8Grabber class.
+
+*/
+
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
@@ -53,43 +59,63 @@
 #include <visp/vpRGBa.h>
 
 /*!
-  \example grabIcComp.cpp
+  \example grabItifg8.cpp
 
-  \brief   Test framegrabbing using Imaging Technology IC-comp framegrabber.
+  \brief Example of framegrabbing using vpItifg8Grabber class.
+
+  Grab grey level images using vpItifg8Grabber, an interface for the itifg-8.x
+  framegrabber driver from Coreco Imaging. Display these images using X11 or
+  GTK.
+
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"b:df:hi:n:o:p:s:"
+#define GETOPTARGS	"b:c:df:hi:n:o:p:s:"
 
 /*!
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param board : Board number
   \param fps : Framerate.
   \param input : Camera port number.
   \param scale : Subsampling factor.
   \param buffer : Number of buffers.
+  \param nframes : Number of frames to acquire.
+  \param opath : Image filename when saving.
+  \param conffile : Camera configuration file.
 
  */
 void usage(char *name, char *badparam, unsigned board, float fps,
 	   unsigned input, unsigned scale, unsigned buffer,
-	   unsigned &nframes, string opath)
+	   unsigned &nframes, string opath, string conffile)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the itifg-8.x framegrabber device from\n\
 Coreco Imaging. Display these images using X11 or GTK.\n\
 \n\
 SYNOPSIS\n\
-  %s [-b <board=[0-7]>] [-f <fps=0.01-100.0>] \n\
-   [-i <input=0|1|2|3>] [-s <scale=1|2|4>] [-p <buffer=1-8>]\n\
-   [-n <nframes>] [-d] [-o <filename>] [-h]\n", name);
+  %s [-b <board=[0-7]>] [-c <conffile>]  \n\
+   [-f <fps=0.01-100.0>] [-i <input=0|1|2|3>] [-s <scale=1|2|4>] \n\
+   [-p <buffer=1-8>] [-n <nframes>] [-d] [-o <filename>] [-h]\n", name);
+
+  if (badparam != NULL)
+  fprintf(stdout, "\n\
+ERROR:\n\
+     Bad parameter: %s\n\
+     Check program usage below.\n", badparam);
+
 
   fprintf(stdout, "\n\
 OPTIONS:                                                  Default\n\
   -b <board>                                                \n\
      Board number [0-7]. Useful only if multiple boards \n\
      are connected to the computer.\n\
+\n\
+  -c <conffile>                  %s\n\
+     Camera configuration file.\n\
 \n\
   -f <fps>                                                  %f\n\
      Framerate in term of number of images per second.\n\
@@ -113,7 +139,8 @@ OPTIONS:                                                  Default\n\
   -n <nframes>                                              %u\n\
      Number of frames to acquire.\n\
 \n\
-  -o <filename> : Filename for image saving.                     \n\
+  -o <filename> \n\
+     Generic filename for image saving.                     \n\
      Example: -o %s \n\
      where %%04d is for the image numbering.\n\
 \n\
@@ -122,7 +149,7 @@ OPTIONS:                                                  Default\n\
 \n\
   -h \n\
      Print the help.\n\n",
-	  fps, input, scale, buffer, nframes, opath.c_str());
+	  conffile.c_str(), fps, input, scale, buffer, nframes, opath.c_str());
 
 }
 
@@ -130,17 +157,26 @@ OPTIONS:                                                  Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param board : Selected board number.
   \param fps : Framerate.
   \param input : Camera port number.
   \param scale : Subsampling factor.
   \param buffer : Number of buffers.
+  \param display : Display activation.
+  \param nframes : Number of frames to acquire.
+  \param save : Image saving activation.
+  \param opath : Image filename when saving.
+  \param conffile : Camera configuration file.
+
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, unsigned &board, float &fps,
 		unsigned &input, unsigned &scale, unsigned &buffer,
-		bool &display, unsigned &nframes, bool &save, string &opath)
+		bool &display, unsigned &nframes, bool &save,
+		string &opath, string &conffile)
 {
   char *optarg;
   int	c;
@@ -148,6 +184,7 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
 
     switch (c) {
     case 'b': board = atoi(optarg); break;
+    case 'c': conffile = optarg; break;
     case 'd': display = false; break;
     case 'f': fps = atof(optarg); break;
     case 'i': input = (unsigned) atoi(optarg); break;
@@ -156,28 +193,33 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
     case 'o': save = true; opath = optarg; break;
     case 's': scale = (unsigned) atoi(optarg); break;
     case 'h': usage(argv[0], NULL, board, fps, input, scale, buffer,
-		    nframes, opath);
+		    nframes, opath, conffile);
       return false; break;
 
     default:
       usage(argv[0], optarg, board, fps, input, scale, buffer,
-	    nframes, opath);
+	    nframes, opath, conffile);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, board, fps, input, scale, buffer,
-	  nframes, opath);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    usage(argv[0], optarg, board, fps, input, scale, buffer,
+	  nframes, opath, conffile);
     return false;
   }
 
   return true;
 }
 
+/*!
+
+  Grab grey level images using vpItifg8Grabber, an interface for the itifg-8.x
+  framegrabber driver from Coreco Imaging. Display these images using X11 or
+  GTK.
+
+*/
 int
 main(int argc, char ** argv)
 {
@@ -189,6 +231,7 @@ main(int argc, char ** argv)
   unsigned buffer = 2;
   bool opt_display = true;
   bool save = false;
+  string conffile = "/usr/share/itifg/conffiles/robot.cam";
 
   // Declare an image. It size is not defined yet. It will be defined when the
   // image will acquired the first time.
@@ -207,7 +250,7 @@ main(int argc, char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, board, fps, input, scale, buffer,
-		 opt_display, nframes, save, opath) == false) {
+		 opt_display, nframes, save, opath, conffile) == false) {
     exit (-1);
   }
 
@@ -219,7 +262,7 @@ main(int argc, char ** argv)
   try{
     // Initialize the grabber board
     g.setBoard(board);
-    g.setConfile("/udd/fspindle/robot/driver/itifg/itifg-8.2.2-0-irisa/conffiles/robot.cam");
+    g.setConfFile(conffile);
     g.setVerboseMode(false);
     g.setScale(scale);
     g.setInput(input);
