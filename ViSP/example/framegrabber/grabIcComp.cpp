@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabIcComp.cpp,v 1.1 2007-01-24 15:06:40 asaunier Exp $
+ * $Id: grabIcComp.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,9 +51,9 @@
 #include <visp/vpParseArgv.h>
 
 /*!
-  \example grabIcComp.cpp
+  \file grabIcComp.cpp
+  \brief Example of framegrabbing using vpIcCompGrabber class.
 
-  \brief   Test framegrabbing using Imaging Technology IC-comp framegrabber.
 */
 
 // List of allowed command line options
@@ -63,6 +63,8 @@
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param fps : Framerate.
   \param input : Card input number.
   \param scale : Subsampling factor.
@@ -107,9 +109,13 @@ OPTIONS:                                                  Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param fps : Framerate.
   \param input : Card input.
   \param scale : Subsampling factor.
+  \param display : Display activation.
+
   \return false if the program has to be stopped, true otherwise.
 
 */
@@ -143,6 +149,14 @@ bool getOptions(int argc, char **argv, unsigned &fps, unsigned &input,
   return true;
 }
 
+/*!
+  \example grabIcComp.cpp
+  Example of framegrabbing using vpIcCompGrabber class.
+
+  Grab grey level images using vpIcCompGrabber, an interface for the itifg-7.x
+  framegrabber driver from Coreco Imaging. Display these images using X11 or
+  GTK.
+*/
 int
 main(int argc, char ** argv)
 {

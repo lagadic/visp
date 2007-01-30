@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDisk.cpp,v 1.1 2007-01-24 15:06:20 asaunier Exp $
+ * $Id: grabDisk.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,10 +51,12 @@
 #include <visp/vpParseArgv.h>
 
 /*!
-  \example grabDisk.cpp
+  \file grabDisk.cpp
 
-  \brief Read an image sequence from the disk. The sequence is made of
-  separate images. Each image corresponds to a PGM file.
+  \brief Example of image sequence reading from the disk using vpDiskGrabber class.
+
+  The sequence is made of separate images. Each image corresponds to a PGM
+  file.
 */
 
 // List of allowed command line options
@@ -64,9 +66,15 @@
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param ipath : Input image path.
-  \param nimages : Number of images to manipulate.
-  \param step : Step between two images.
+  \param basename : Input image base name.
+  \param ext : Input image extension.
+  \param first : First image number to read.
+  \param nimages : Number of images to read.
+  \param step : Step between two successive images to read.
+  \param nzero : Number of zero for the image number coding.
 
  */
 void usage(char *name, char *badparam, string ipath, string basename,
@@ -131,8 +139,17 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath : Input image path.
-  \param nimages : Number of images to display
+  \param basename : Input image base name.
+  \param ext : Input image extension.
+  \param first : First image number to read.
+  \param nimages : Number of images to read.
+  \param step : Step between two successive images to read.
+  \param nzero : Number of zero for the image number coding.
+  \param display : Display activation.
+
   \return false if the program has to be stopped, true otherwise.
 
 */
@@ -175,6 +192,15 @@ bool getOptions(int argc, char **argv, string &ipath, string &basename,
 }
 
 
+/*!
+  \example grabDisk.cpp
+
+  Example of image sequence reading from the disk using vpDiskGrabber class.
+
+  Read an image sequence from the disk. The sequence is made of separate
+  images. Each image corresponds to a PGM file. Display these images using X11
+  or GTK.
+*/
 int
 main(int argc, char ** argv)
 {

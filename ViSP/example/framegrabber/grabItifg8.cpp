@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8.cpp,v 1.4 2007-01-30 10:57:42 fspindle Exp $
+ * $Id: grabItifg8.cpp,v 1.5 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -208,7 +208,7 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
 /*!
   \example grabItifg8.cpp
 
-  \brief Example of framegrabbing using vpItifg8Grabber class.
+  Example of framegrabbing using vpItifg8Grabber class.
 
   Grab grey level images using vpItifg8Grabber, an interface for the itifg-8.x
   framegrabber driver from Coreco Imaging. Display these images using X11 or

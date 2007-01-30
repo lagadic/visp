@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOSXcfoxColor.cpp,v 1.1 2007-01-24 15:08:17 asaunier Exp $
+ * $Id: grabOSXcfoxColor.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,10 +41,10 @@
 #include <visp/vpDebug.h>
 
 /*!
-  \example grabOSXcfoxColor.cpp
+  \file grabOSXcfoxColor.cpp
 
-  Test frame grabbing capabilities using 1394 device with cfox.
-  Only grabbing of color level images is tested.
+  \brief Example of framegrabbing using vpOSXcfoxGrabber class.
+
 */
 
 #if ( defined(APPLE) && defined(VISP_HAVE_CFOX) )
@@ -68,7 +68,10 @@
 
   Print the program options.
 
- */
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+
+*/
 void usage(char *name, char *badparam)
 {
   fprintf(stdout, "\n\
@@ -92,6 +95,10 @@ OPTIONS:                                               Default\n\
 /*!
 
   Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param display : Display activation.
 
   \return false if the program has to be stopped, true otherwise.
 
@@ -123,6 +130,15 @@ bool getOptions(int argc, char **argv, bool &display)
   return true;
 }
 
+/*!
+  \example grabOSXcfoxColor.cpp
+
+  Example of framegrabbing using vpOSXcfoxGrabber class.
+
+  Handle frame grabbing capabilities using 1394 device with cfox.  Only
+  grabbing of grey level images is tested. Display these images using X11 or
+  GTK.
+*/
 int
 main(int argc, char ** argv)
 {

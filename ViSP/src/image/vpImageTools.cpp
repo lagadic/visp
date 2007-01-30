@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.cpp,v 1.5 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpImageTools.cpp,v 1.6 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,6 +48,7 @@
   - else if v \f$ \in \f$ [B, inf[ set v to newB
   - else set v to newA + (newB-newA)/(B-A)*(v-A)
 
+  \param I : Image to process.
   \param A : Low value of the range to consider.
   \param newA : New value to attribute to pixel who's value was A
   \param B : Height value of the range to consider.

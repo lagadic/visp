@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.cpp,v 1.5 2006-10-30 12:34:37 marchand Exp $
+ * $Id: vpMeTracker.cpp,v 1.6 2007-01-30 15:25:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -230,20 +230,7 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
 
 }
 
-// ===================================================================
-/*!
- * \note Track
- * \pre -CList<CPixel> liste : the list of pixel to track
- * \n  	-CImage& im : image t+1
- * \n	  -vpMe *me : me tracking process parameters
- * \n	  -int test_contrast : 1 if you want to test the contrast (using mu1 and mu2)
- *				also to test temporal component of the hypothesis. i.e. log liklihood ratio
- * \post modification of the liste of pixel
- * 				Return value : OK : all is ok, fatalError : ususaly a division by 0
- * \author Andrew Comport
- * \date 2002
- */
-// ===================================================================
+
 void
 vpMeTracker::track(vpImage<unsigned char>& I)
 {

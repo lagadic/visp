@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.h,v 1.6 2006-11-06 15:54:15 fspindle Exp $
+ * $Id: vpV4l2Grabber.h,v 1.7 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 /*!
   \file vpV4l2Grabber.h
-  \brief class for the Video For Linux 2 video device
+  \brief class for the Video For Linux 2 video device framegrabbing.
   \ingroup libdevice
 */
 

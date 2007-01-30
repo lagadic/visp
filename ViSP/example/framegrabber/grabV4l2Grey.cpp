@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabV4l2Grey.cpp,v 1.1 2007-01-24 15:09:11 asaunier Exp $
+ * $Id: grabV4l2Grey.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,10 +40,10 @@
 #include <visp/vpDebug.h>
 
 /*!
-  \example grabV4l2Grey.cpp
+  \file grabV4l2Grey.cpp
 
-  Test frame grabbing capabilities using video for linux two video device.
-  Only grabbing of grey level images is tested.
+  \brief Example of grey level image framegrabbing using vpV4l2Grabber class.
+
 */
 
 #ifdef VISP_HAVE_V4L2
@@ -65,11 +65,13 @@
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param fps : Framerate.
   \param input : Card input number.
   \param scale : Subsampling factor.
 
- */
+*/
 void usage(char *name, char *badparam, unsigned fps, unsigned input,
 	   unsigned scale)
 {
@@ -109,9 +111,13 @@ OPTIONS:                                                  Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param fps : Framerate.
   \param input : Card input.
   \param scale : Subsampling factor.
+  \param display : Display activation.
+
   \return false if the program has to be stopped, true otherwise.
 
 */
@@ -145,6 +151,15 @@ bool getOptions(int argc, char **argv, unsigned &fps, unsigned &input,
   return true;
 }
 
+/*!
+  \example grabV4l2Grey.cpp
+
+  Example of grey level images framegrabbing using vpV4l2Grabber class.
+
+  Test frame grabbing capabilities using video for linux two (V4L2) video
+  device.  Only grabbing of grey level images is possible in this
+  example. Display these images using X11 or GTK.
+*/
 int
 main(int argc, char ** argv)
 {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.4 2007-01-26 17:50:23 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.5 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,6 +62,7 @@
 #include <visp/vpFrameGrabberException.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
+#include <visp/vpIoTools.h>
 
 #undef vpITIFG8_USE_POLL
 
@@ -72,15 +73,17 @@
   vpItifg8Grabber.cpp you will find specific code comming from
   itifg-8.2.2-0/include/amcmpReg.h or itifg-8.3.1-12/include/amcmpReg.h file
 
+  \code
   u_int8_t    field         Field Status R/W
 
   #define CMP_BT829A_FIELD_MASK           0x20
   #define CMP_BT829A_FIELD_SHIFT          5
+  \endcode
 
   introduced in the vpItifg8Grabber as static const variables:
 
-  vpCMP_BT829A_FIELD_MASK
-  vpCMP_BT829A_FIELD_SHIFT
+  - vpItifg8Grabber::vpCMP_BT829A_FIELD_MASK
+  - vpItifg8Grabber::vpCMP_BT829A_FIELD_SHIFT
 
 */
 
@@ -259,7 +262,7 @@ void vpItifg8Grabber::initialise()
     // Initialization of args structure
     for (int i=0; i < ITI_BOARDS_MAX; i ++) {
       setBoard(i);       // Default board
-      setConfile("/usr/share/itifg/conffiles/robot.cam");
+      setConfFile("/usr/share/itifg/conffiles/robot.cam");
       setInput(vpItifg8Grabber::DEFAULT_INPUT);       // Default input
       setScale(vpItifg8Grabber::DEFAULT_SCALE);       // Default decimation factor
       setDepth(8);      // Default image depth
@@ -586,11 +589,36 @@ unsigned vpItifg8Grabber::getModule()
 
   \param filename : Configuration filename with extension .cam.
 
+  \exception vpFrameGrabberException::settingError : If camera configuration file is
+  inexistant.
+
   \sa setBoard(), getBoard()
 */
-void vpItifg8Grabber::setConfile(const char *filename)
+void vpItifg8Grabber::setConfFile(const char *filename)
 {
   sprintf(args.conffile[args.board_i], "%s", filename);
+
+  if (vpIoTools::checkFilename(filename) == false) {
+    vpERROR_TRACE("Inexistant camera configuration file: %s", filename) ;
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Inexistant camera configuration file") );
+
+  }
+}
+
+/*!
+
+  Set the camera configuration filename for the current board which number is
+  given by a getBoard().
+
+  \param filename : Configuration filename with extension .cam.
+
+  \sa setBoard(), getBoard()
+*/
+void vpItifg8Grabber::setConfFile(string filename)
+{
+  setConfFile(filename.c_str());
 }
 
 /*!

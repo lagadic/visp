@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpPoseVector.cpp,v 1.5 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -189,7 +189,7 @@ vpPoseVector::save(ofstream &f) const
   Read an homogeneous matrix in a file, verify if it is really an homogeneous
   matrix
 
-  \param ifstream &f : the file
+  \param f : The file stream.
 */
 void
 vpPoseVector::load(ifstream &f)

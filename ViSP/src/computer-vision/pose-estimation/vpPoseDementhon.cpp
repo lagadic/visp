@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseDementhon.cpp,v 1.6 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpPoseDementhon.cpp,v 1.7 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -727,9 +727,11 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
 
 /*!
-  \brief Compute and return the residual expressed in meter for
-         the pose matrix 'pose'
-  \param input CMatrix &pose : the matrix that defines the pose to be tested
+  \brief Compute and return the residual expressed in meter for the pose matrix
+  'pose'.
+
+  \param cMo : the matrix that defines the pose to be tested.
+
   \return the value of he residual in meter
 */
 double vpPose::computeResidualDementhon(vpHomogeneousMatrix &cMo)

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.14 2006-12-12 17:04:16 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.15 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -205,7 +205,7 @@ vp1394Grabber::vp1394Grabber( )
 
   Constructor which initialize the grabber and call the open() method.
 
-  \param I  Image data structure (8 bits image)
+  \param I : Image data structure (8 bits image)
 
   By default:
   - the camera is the first found on the bus,
@@ -286,12 +286,13 @@ vp1394Grabber::~vp1394Grabber()
   If multiples cameras are connected on the bus, select the camero to dial
   with.
 
-  \param camera A camera. The value must be comprised between 0 (the first
+  \param camera : A camera. The value must be comprised between 0 (the first
   camera) and the number of cameras found on the bus and returned by
   getNumCameras(). If two cameras are connected on the bus, setting \e camera
   to one allows to communicate with the second one.
 
-  \exception settingError If the required camera is not reachable.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not reachable.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -325,7 +326,7 @@ vp1394Grabber::setCamera(unsigned int camera)
 
   Get the active camera on the bus.
 
-  \param camera A camera id. The value is comprised between 0 (the first
+  \param camera : A camera id. The value is comprised between 0 (the first
   camera) and the number of cameras found on the bus and returned by
   getNumCameras().
 
@@ -343,7 +344,7 @@ vp1394Grabber::getCamera(unsigned int &camera)
   Set the capture format for a given camera on the bus. To set the format for a
   specific camera, call setCamera() before.
 
-  \param format The camera image format. The current camera format is given by
+  \param format : The camera image format. The current camera format is given by
   getFormat(). The camera supported formats are given by
   getFormatSupported(). The allowed values given in
   libdc1394/dc1394_control.h are:
@@ -356,7 +357,8 @@ vp1394Grabber::getCamera(unsigned int &camera)
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -389,7 +391,7 @@ vp1394Grabber::setFormat(int format)
   \warning Before requerying the actual format a handle must
   be created by calling open(), and a camera must be connected.
 
-  \param format The camera capture format (see file
+  \param format : The camera capture format (see file
   libdc1394/dc1394_control.h), either :
 
   - FORMAT_VGA_NONCOMPRESSED for the Format_0
@@ -398,7 +400,8 @@ vp1394Grabber::setFormat(int format)
   - FORMAT_STILL_IMAGE for the Format_6
   - FORMAT_SCALABLE_IMAGE_SIZE for the  Format_7
 
-  \exception settingError If the required camera is not present or if an error occurs.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present or if an error occurs.
 
   \sa setFormat(), getFormatSupported(), open(), setCamera(), getNumCameras()
 
@@ -437,11 +440,12 @@ vp1394Grabber::getFormat(int & format)
   \warning Before requerying supported formats a handle must be created by
   calling open(), and a camera must be connected.
 
-  \param  formats The list of supported camera image formats.
+  \param formats : The list of supported camera image formats.
 
   \return The number of supported camera image formats, 0 if an error occurs.
 
-  \exception settingError If the required camera is not present or if an error occurs.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present or if an error occurs.
 
   \sa getModeSupported(), getFramerateSupported(), open(),
   getFormat(), setCamera()
@@ -505,7 +509,7 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats)
 
   Set the camera capture mode for a given camera on the bus.
 
-  \param mode The camera capture mode. The current camera mode is
+  \param mode : The camera capture mode. The current camera mode is
   given by getMode(). The camera supported modes are given by
   getSupportedModes(). The allowed values are given in
   libdc1394/dc1394_control.h file:
@@ -527,7 +531,8 @@ vp1394Grabber::getFormatSupported(vpList<int> & formats)
   \warning The requested format is sent to the camera only after a call to
   close(). Depending on the format and the camera mode, image size can differ.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -560,9 +565,10 @@ vp1394Grabber::setMode(int mode)
   \warning Before requerying the actual mode a handle must
   be created by calling open(), and a camera must be connected.
 
-  \param mode The camera capture mode.
+  \param mode : The camera capture mode.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \sa setMode(), getModeSupported(), open(), setCamera()
 
@@ -601,7 +607,7 @@ vp1394Grabber::getMode(int & mode)
   \warning Before requerying supported modes for a given format a handle must
   be created by calling open(), and a camera must be connected.
 
-  \param format Camera image format. Values for format are parts of the list
+  \param format : Camera image format. Values for format are parts of the list
   (see file libdc1394/dc1394_control.h):
 
   - FORMAT_VGA_NONCOMPRESSED = 384 for the Format_0
@@ -610,11 +616,12 @@ vp1394Grabber::getMode(int & mode)
   - FORMAT_STILL_IMAGE = 390 for the Format_6
   - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
 
-  \param modes The list of supported camera modes.
+  \param modes : The list of supported camera modes.
 
   \return The number of supported camera modes, 0 if an error occurs.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \sa getMode(), getFramerateSupported(), open(), setCamera()
 */
@@ -702,10 +709,11 @@ vp1394Grabber::getModeSupported(int format, vpList<int> & modes)
 
   Set the capture framerate for a given camera on the bus.
 
-  \param framerate The camera framerate. The current framerate of the camera is
-  given by getFramerate(). The camera supported framerates are given by
+  \param framerate : The camera framerate. The current framerate of the camera
+  is given by getFramerate(). The camera supported framerates are given by
   getFramerateSupported(). The allowed values given in
   libdc1394/dc1394_control.h are:
+
   - FRAMERATE_1_875 = 32 for 1.875 fps,
   - FRAMERATE_3_75 for 3.75 fps,
   - FRAMERATE_7_5 for 7.5 fps,
@@ -715,7 +723,8 @@ vp1394Grabber::getModeSupported(int format, vpList<int> & modes)
   - FRAMERATE_120 for 120 fps,
   - FRAMERATE_240 for 240 fps.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -748,11 +757,12 @@ vp1394Grabber::setFramerate(int framerate)
   \warning Before requerying the actual framerate a handle must
   be created by calling open(), and a camera must be connected.
 
-  \param framerate The camera capture framerate.
+  \param framerate : The camera capture framerate.
 
   \return true if the framerate was obtained, false if an error occurs.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \sa setFramerate(), getFramerateSupported(), open(), getNumCameras(),
   setCamera()
@@ -798,14 +808,15 @@ vp1394Grabber::getFramerate(int & framerate)
   \warning Before requerying supported framerates for a given format and mode a
   handle must be created by calling open(), and a camera must be connected.
 
-  \param format Camera image format.
-  \param mode Camera mode.
-  \param framerates The list of supported camera framerates.
+  \param format : Camera image format.
+  \param mode : Camera mode.
+  \param framerates ; The list of supported camera framerates.
 
   \return The number of supported camera image framerates, 0 if an error
   occurs.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \sa getFormatSupported(), getModeSupported(), open(), getFramerate(),
   setCamera()
@@ -872,7 +883,7 @@ vp1394Grabber::getFramerateSupported(int format, int mode,
   Converts the string containing the description of the format into the format
   dentifier.
 
-  \param format The string describing the format given by Format(int)
+  \param format : The string describing the format given by Format(int)
 
   \return The camera capture format identifier, either :
   - FORMAT_VGA_NONCOMPRESSED for the Format_0
@@ -902,7 +913,7 @@ int vp1394Grabber::convertFormat(string format)
   Converts the string containing the description of the mode into the mode
   dentifier.
 
-  \param mode The string describing the mode given by Mode(int)
+  \param mode : The string describing the mode given by Mode(int)
 
   \return The camera capture mode identifier.
 
@@ -945,7 +956,8 @@ int vp1394Grabber::convertMode(string mode)
   Converts the string containing the description of the framerate into the
   framerate dentifier.
 
-  \param framerate The string describing the framerate given by Framerate(int)
+  \param framerate : The string describing the framerate given by
+  Framerate(int).
 
   \return The camera capture framerate identifier.
 
@@ -970,7 +982,7 @@ int vp1394Grabber::convertFramerate(string framerate)
   Converts the format identifier into a string containing the description of
   the format.
 
-  \param format The camera capture format, either :
+  \param format : The camera capture format, either :
   - FORMAT_VGA_NONCOMPRESSED for the Format_0
   - FORMAT_SVGA_NONCOMPRESSED_1 for the Format_1
   - FORMAT_SVGA_NONCOMPRESSED_2 for the Format_2
@@ -1015,7 +1027,7 @@ string vp1394Grabber::convertFormat(int format)
   Converts the mode identifier into a string containing the description of the
   mode.
 
-  \param mode The camera capture mode.
+  \param mode : The camera capture mode.
 
   \return A string describing the mode, an empty string if the mode is not
   supported.
@@ -1109,7 +1121,7 @@ string vp1394Grabber::convertMode(int mode)
   Converts the framerate identifier into a string
   containing the description of the framerate.
 
-  \param framerate The camera capture framerate.
+  \param framerate : The camera capture framerate.
 
   \return A string describing the framerate, an empty string if the framerate
   is not supported.
@@ -1146,11 +1158,11 @@ string vp1394Grabber::convertFramerate(int framerate)
 
   Set the shutter for a given camera.
 
-  \param shutter The shutter value to apply to the camera.
+  \param shutter : The shutter value to apply to the camera.
 
 
-  \exception settingError If the required camera is not present or if an error
-  occurs.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present or if an error occurs.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -1219,15 +1231,16 @@ vp1394Grabber::setShutter(unsigned int shutter)
   \warning Before requerying the shutter a handle must
   be created by calling open(), and a camera must be connected.
 
-  \param min_shutter Minimal autorized shutter value.
+  \param min_shutter : Minimal autorized shutter value.
 
-  \param shutter The current camera shutter value. This value is comprised
+  \param shutter : The current camera shutter value. This value is comprised
   between \e min_shutter and \e max_shutter.
 
-  \param max_shutter Maximal autorized shutter value.
+  \param max_shutter : Maximal autorized shutter value.
 
 
-  \exception settingError If the required camera is not present or if an error occurs.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present or if an error occurs.
 
   \sa setShutter(), open(), getNumCameras(), setCamera()
 
@@ -1291,7 +1304,7 @@ vp1394Grabber::getShutter(unsigned int &min_shutter,
 
   \param gain The gain value to apply to the camera.
 
-  \exception settingError If the required camera is not present or if an error occurs.
+  \exception vpFrameGrabberException::settingError : If the required camera is not present or if an error occurs.
 
   \sa getGain(), getNumCameras(), setCamera()
 */
@@ -1357,15 +1370,15 @@ vp1394Grabber::setGain(unsigned int gain)
   \warning Before requerying the gain a handle must
   be created by calling open(), and a camera must be connected.
 
-  \param min_gain Minimal autorized gain value.
+  \param min_gain : Minimal autorized gain value.
 
-  \param gain The current camera gain value. This value is comprised
+  \param gain : The current camera gain value. This value is comprised
   between \e min_gain and \e max_gain.
 
-  \param max_gain Maximal autorized gain value.
+  \param max_gain : Maximal autorized gain value.
 
-  \exception settingError If the required camera is not present or if an error
-  occurs.
+  \exception vpFrameGrabberException::settingError :If the required camera is
+  not present or if an error occurs.
 
   \sa setGain(), open(), getNumCameras(), setCamera()
 
@@ -1427,9 +1440,10 @@ vp1394Grabber::getGain(unsigned int &min_gain,
   Get the image width. It depends on the camera format setFormat() and mode
   setMode(). The width of the images is only available after a call to open().
 
-  \param width The image width, zero if the required camera is not avalaible.
+  \param width : The image width, zero if the required camera is not avalaible.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -1455,11 +1469,10 @@ void vp1394Grabber::getWidth(int &width)
   setMode(). The height of the images is only available after a call to
   open().
 
-  \param height The image height.
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
+  \param height : The image height.
 
-  \exception settingError If the required camera is not present.
+  \exception vpFrameGrabberException::settingError : If the required camera is
+  not present.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -1483,7 +1496,7 @@ void vp1394Grabber::getHeight(int &height)
 
   Query the number of cameras on the bus.
 
-  \param cameras The number of cameras found on the bus.
+  \param cameras : The number of cameras found on the bus.
 
 
 */
@@ -1566,11 +1579,10 @@ vp1394Grabber::open(vpImage<vpRGBa> &I)
 /*!
   Acquire a grey level image from a given camera.
 
-  \param I  Image data structure (8 bits image)
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
+  \param I : Image data structure (8 bits image)
 
-  \exception initializationError If the device is not openned.
+  \exception vpFrameGrabberException::initializationError : If the device is
+  not openned.
 
   \sa getField(), setCamera()
 */
@@ -1630,11 +1642,10 @@ vp1394Grabber::acquire(vpImage<unsigned char> &I)
 /*!
   Acquire a color image from a given camera.
 
-  \param I  Image data structure (RGBa image)
-  \param camera A camera. The value must be comprised between 0 and the
-  number of cameras found on the bus and returned by getNumCameras().
+  \param I : Image data structure (RGBa image)
 
-  \exception initializationError If the device is not openned.
+  \exception vpFrameGrabberException::initializationError : If the device is
+  not openned.
 
   \sa getField(), setCamera()
 */
@@ -1701,7 +1712,8 @@ vp1394Grabber::acquire(vpImage<vpRGBa> &I)
   Open ohci and asign handle to it and get the camera nodes and
   describe them as we find them.
 
-  \exception initializationError If a raw1394 handle can't be aquired.
+  \exception vpFrameGrabberException::initializationError : If a raw1394 handle
+  can't be aquired.
 
   \sa close()
 */
@@ -1812,7 +1824,8 @@ vp1394Grabber::open()
   framerate setFramerate(). Considering the camera format and mode, updates
   the captured image size.
 
-  \exception otherError If unable to get feature set or setup the camera.
+  \exception vpFrameGrabberException::otherError : If unable to get feature set
+  or setup the camera.
 
   \sa setFormat(), setMode(), setFramerate(), getWidth(), getHeight()
 
@@ -1930,18 +1943,19 @@ vp1394Grabber::setup()
   Gets the image size and coding format, depending on the camera image format
   and the camera mode.
 
-  \param _format The camera capture format.
-  \param _mode The camera capture mode.
-  \param width Width of the image for the given camera capture format and mode.
+  \param _format : The camera capture format.
+  \param _mode : The camera capture mode.
+  \param width : Width of the image for the given camera capture format
+  and mode.
 
-  \param height Height of the image for the given camera capture format and
+  \param height : Height of the image for the given camera capture format and
   mode.
 
-  \param image_format Coding image format for the given camera capture
+  \param image_format : Coding image format for the given camera capture
   format and mode.
 
-  \exception otherError If camera mode (see setMode()) and the image format
-  (see setFormat()) are incompatible.
+  \exception vpFrameGrabberException::otherError : If camera mode (see
+  setMode()) and the image format (see setFormat()) are incompatible.
 
   \sa setFormat(), setMode(), getWidth(), getHeight(), setCamera()
 */
@@ -2163,13 +2177,13 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
   After you have finished with the frame, you must return the buffer to the
   pool by calling dmaDoneWithBuffer().
 
-  \param waiting Capture mode; true if you want to wait for an available image
-  (waiting mode), false to activate the polling mode.
+  \param waiting : Capture mode; true if you want to wait for an available
+  image (waiting mode), false to activate the polling mode.
 
   \return NULL if no frame is available, the address of the image buffer
   otherwise.
 
-  \exception otherError If no frame is available.
+  \exception vpFrameGrabberException::otherError : If no frame is available.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -2240,8 +2254,11 @@ vp1394Grabber::dmaCapture(bool waiting)
   Return the buffer to the pool for the given camera. This allows the driver to
   use the buffer previously handed to the user.
 
-  \exception settingError If the required camera is not present.
-  \exception otherError If can't stop the dma access.
+  \exception vpFrameGrabberException::settingError :If the required camera is
+  not present.
+
+  \exception vpFrameGrabberException::otherError : If can't stop the dma
+  access.
 
   \warning Has to be called after open() to be sure that a camera is detected.
 
@@ -2311,7 +2328,8 @@ vp1394Grabber::close()
 /*!
   Start the transmission of the images for all the cameras on the bus.
 
-  \exception otherError If Unable to start camera iso transmission.
+  \exception vpFrameGrabberException::otherError : If Unable to start camera
+  iso transmission.
 
   \sa stopIsoTransmission()
 

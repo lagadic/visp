@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.11 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.12 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -109,9 +109,9 @@ vpRotationMatrix::setIdentity()
 }
 
 /*!
-  \brief  affectation of two rotation matrix
+  Affectation of two rotation matrix.
 
-  \param vpRotationMatrix &m : *this = m
+  \param m : *this = m
 */
 vpRotationMatrix &
 vpRotationMatrix::operator=(const vpRotationMatrix &m)
@@ -128,9 +128,9 @@ vpRotationMatrix::operator=(const vpRotationMatrix &m)
 }
 
 /*!
-  \brief  affectation of two rotation matrix
+  Affectation of two rotation matrix
 
-  \param vpRotationMatrix &m : *this = m
+  \param m : *this = m
 */
 vpRotationMatrix &
 vpRotationMatrix::operator=(const vpMatrix &m)

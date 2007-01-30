@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.7 2006-11-06 16:15:47 fspindle Exp $
+ * $Id: vpV4l2Grabber.cpp,v 1.8 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 
 /*!
   \file vpV4l2Grabber.cpp
-  \brief class for the Video For Linux 2 video device
+  \brief class for the Video For Linux 2 video device framegrabbing.
   \ingroup libdevice
 */
 
@@ -264,8 +264,8 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I,
   Setup the Video For Linux Two (V4L2) driver in streaming mode.
 
   \param I : Image data structure (Color RGB32 bits image)
-  \param input : Video input port.
-  \param scale : Decimation factor.
+  \param _input : Video input port.
+  \param _scale : Decimation factor.
 
   Default settings are:
 
@@ -342,7 +342,8 @@ vpV4l2Grabber::setInput(unsigned input)
 /*!
   Set the decimation factor applied to full resolution images (768x576).
 
-  \exception settingError : Wrong scale (shoud be between 1 and 16).
+  \exception vpFrameGrabberException::settingError : Wrong scale (shoud be
+  between 1 and 16).
 
   \param scale : Decimation factor. If scale is set to 2, 384x288 images will
   be acquired.
@@ -373,7 +374,7 @@ vpV4l2Grabber::setScale(unsigned scale)
   \param I : Image data structure (8 bits image). Once the device is open,
   the image is resized to the current acquisition size.
 
-  \exception settingError : Wrong input channel.
+  \exception vpFrameGrabberException::settingError : Wrong input channel.
 
 */
 void
@@ -409,7 +410,7 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
   \param I : Image data structure (RGB32 bits image). Once the device is open,
   the image is resized to the current acquisition size.
 
-  \exception settingError : Wrong input channel.
+  \exception vpFrameGrabberException::settingError : Wrong input channel.
 */
 void
 vpV4l2Grabber::open(vpImage<vpRGBa> &I)
@@ -442,7 +443,8 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
 
   \param I : Image data structure (8 bits image)
 
-  \exception initializationError : Frame grabber not initialized.
+  \exception vpFrameGrabberException::initializationError : Frame grabber not
+  initialized.
 
   \sa getField()
 */
@@ -475,7 +477,8 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
 
   \param I : Image data structure (32 bits image)
 
-  \exception initializationError : Frame grabber not initialized.
+  \exception vpFrameGrabberException::initializationError : Frame grabber not
+  initialized.
 
   \sa getField()
 */
@@ -515,7 +518,8 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
 
   \return Field of the acquired frame (0 if odd field, 1 if even field).
 
-  \exception otherError : Video device returns a bad frame field.
+  \exception vpFrameGrabberException::otherError : Video device returns a bad
+  frame field.
 
   \sa acquire(), setFramerate()
 
@@ -601,8 +605,11 @@ vpV4l2Grabber::close()
 
   Open the Video For Linux Two device.
 
-  \exception initializationError : Can't access to video device.
-  \exception otherError : Can't query video capabilities.
+  \exception vpFrameGrabberException::initializationError : Can't access to
+  video device.
+
+  \exception vpFrameGrabberException::otherError : Can't query video
+  capabilities.
 
 */
 void
@@ -682,7 +689,7 @@ vpV4l2Grabber::open()
 
   Get device capabilities.
 
-  \exception otherError : Can't get video parameters.
+  \exception vpFrameGrabberException::otherError : Can't get video parameters.
 */
 void
 vpV4l2Grabber::getCapabilities()
@@ -724,8 +731,10 @@ vpV4l2Grabber::getCapabilities()
   - frame format : specified by setFrameFormat()
   - pixel format : specified by setPixelFormat().
 
-  \exception settingError : Bad format, probably do to a wrong scale.
-  \exception otherError : Can't get video format.
+  \exception vpFrameGrabberException::settingError : Bad format, probably do to
+  a wrong scale.
+
+  \exception vpFrameGrabberException::otherError : Can't get video format.
 */
 void
 vpV4l2Grabber::setFormat()
@@ -812,7 +821,7 @@ vpV4l2Grabber::setFormat()
   Launch the streaming capture mode and map device memory into application
   address space.
 
-  \exception otherError : If a problem occurs.
+  \exception vpFrameGrabberException::otherError : If a problem occurs.
 
 */
 void
@@ -898,7 +907,7 @@ vpV4l2Grabber::startStreaming()
 
   Stops the streaming capture mode and ummap the device memory.
 
-  \exception otherError : if can't stop streaming.
+  \exception vpFrameGrabberException::otherError : if can't stop streaming.
 */
 void
 vpV4l2Grabber::stopStreaming()
@@ -938,7 +947,8 @@ vpV4l2Grabber::stopStreaming()
 
   Update the buffer index. If all the buffers are filled index is set to -1.
 
-  \exception otherError : If can't access to the frame.
+  \exception vpFrameGrabberException::otherError : If can't access to the
+  frame.
 */
 unsigned char *
 vpV4l2Grabber::waiton(int &index)

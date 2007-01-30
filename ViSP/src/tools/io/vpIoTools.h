@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.h,v 1.5 2006-08-23 10:25:55 brenier Exp $
+ * $Id: vpIoTools.h,v 1.6 2007-01-30 15:25:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,10 +60,12 @@ class VISP_EXPORT vpIoTools
 
 public:
   static void getUserName(string &username);
-  static bool checkDirectory(const char *dirname );
-  static bool checkDirectory(const string dirname );
-  static void makeDirectory(const char *dirname );
-  static void makeDirectory(const string dirname );
+  static bool checkDirectory(const char *dirname);
+  static bool checkDirectory(const string dirname);
+  static void makeDirectory(const char *dirname);
+  static void makeDirectory(const string dirname);
+  static bool checkFilename(const char *filename);
+  static bool checkFilename(const string filename);
 
   static string path(const char * _p);
   static string path(const string& _p);
