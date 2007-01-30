@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.6 2007-01-29 14:09:26 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.7 2007-01-30 16:10:50 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,6 +42,7 @@
 SET (SRC_SUBDIRS
   image
   framegrabber
+  homography
   pose-estimation
   servo-afma4
   servo-afma6
