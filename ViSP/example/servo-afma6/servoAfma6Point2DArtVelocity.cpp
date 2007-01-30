@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.1 2007-01-29 10:40:20 asaunier Exp $
+ * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.2 2007-01-30 16:39:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,11 +37,20 @@
  *
  *****************************************************************************/
 
+/*!
+  \file servoAfma6Point2DArtVelocity.cpp
+
+  \brief Example of eye-in-hand control law. We control here a real robot, the Afma6
+  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
+  in articular. The visual feature is the center of gravity of a point.
+
+*/
+
 
 /*!
   \example servoAfma6Point2DArtVelocity.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the Afma6
+  Example of eye-in-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
   in articular. The visual feature is the center of gravity of a point.
 

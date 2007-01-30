@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.1 2007-01-29 10:41:17 asaunier Exp $
+ * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.2 2007-01-30 16:39:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,12 +36,20 @@
  * Eric Marchand
  *
  *****************************************************************************/
+/*!
+  \file servoAfma6Points2DCamVelocityEyeToHand.cpp
+
+  \brief Example of a eye-to-hand control law. We control here a real robot, the Afma6
+  robot (cartesian robot, with 6 degrees of freedom). The robot is controlled
+  in the camera frame.
+
+*/
 
 
 /*!
   \example servoAfma6Points2DCamVelocityEyeToHand.cpp
 
-  \brief Example of a eye-to-hand control law. We control here a real robot, the Afma6
+  Example of a eye-to-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The robot is controlled
   in the camera frame.
 

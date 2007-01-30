@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6TwoLines2DCamVelocity.cpp,v 1.1 2007-01-29 10:42:04 asaunier Exp $
+ * $Id: servoAfma6TwoLines2DCamVelocity.cpp,v 1.2 2007-01-30 16:39:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,13 +37,22 @@
  *
  *****************************************************************************/
 
+/*!
+
+\file servoAfma6TwoLines2DCamVelocity.cpp
+
+\brief Example of eye-in-hand control law. We control here a real robot, the Afma6
+robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
+in the camera frame. Visual features are the two lines.
+
+*/
 
 
 /*!
 
 \example servoAfma6TwoLines2DCamVelocity.cpp
 
-\brief Example of eye-in-hand control law. We control here a real robot, the Afma6
+Example of eye-in-hand control law. We control here a real robot, the Afma6
 robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
 in the camera frame. Visual features are the two lines.
 
