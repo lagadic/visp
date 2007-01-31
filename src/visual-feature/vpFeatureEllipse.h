@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.h,v 1.4 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpFeatureEllipse.h,v 1.5 2007-01-31 11:31:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,7 @@ class VISP_EXPORT vpFeatureEllipse : public vpBasicFeature
 {
   /*
     attributes and members directly related to the vpBasicFeature needs
-    other functionalities ar usefull but not mandatory
+    other functionalities are usefull but not mandatory
   */
 private:
   //! FeatureEllipse depth (required to compute the interaction matrix)
@@ -77,8 +77,8 @@ public:
   ~vpFeatureEllipse() { ; }
 
 public:
-  /*
-    /section Set coordinates
+  /*!
+    \section Set coordinates
   */
  //! basic constructor
   vpFeatureEllipse(const double x, const double y,
@@ -92,10 +92,10 @@ public:
 		 const double A, const double B, const double C) ;
   void setABC(const double A, const double B, const double C) ;
   void setMu(const double mu20, const double mu11, const double mu02) ;
-  //@}
+  
 
 public:
-  /*
+  /*!
     vpBasicFeature method instantiation
   */
 
