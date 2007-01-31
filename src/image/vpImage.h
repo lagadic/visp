@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.5 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpImage.h,v 1.6 2007-01-31 15:40:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,7 +39,6 @@
 /*!
   \file vpImage.h
   \brief  image handling
-  \ingroup
 */
 
 #ifndef vpImage_H
