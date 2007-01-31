@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.8 2006-09-18 13:58:57 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.9 2007-01-31 15:26:00 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 /*!
   \file vpMeLine.cpp
-  \name
+  \brief Moving edges
 */
 
 

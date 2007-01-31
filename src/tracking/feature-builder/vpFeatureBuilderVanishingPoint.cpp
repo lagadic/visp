@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderVanishingPoint.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpFeatureBuilderVanishingPoint.cpp,v 1.5 2007-01-31 15:25:59 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 
 
 /*!
-  \file vpFeatureBuilderPoint.cpp
+  \file vpFeatureBuilderVanishingPoint.cpp
   \brief  conversion between vpPoint
   and visual feature vanishing point.
 */

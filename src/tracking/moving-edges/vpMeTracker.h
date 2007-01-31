@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.h,v 1.3 2006-06-12 14:50:04 brenier Exp $
+ * $Id: vpMeTracker.h,v 1.4 2007-01-31 15:26:00 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,9 +37,16 @@
 
 /*!
   \file vpMeTracker.h
-  \name Distance
+  \brief Contains abstract elements for a Distance to Feature type feature.
 */
 
+// ===================================================================
+/*!
+ *\class vpMeTracker
+ *\brief 2D state = list of points, 3D state = feature
+ *\n Contains abstract elements for a Distance to Feature type feature.
+ */
+// ===================================================================
 
 #ifndef vpMeTracker_HH
 #define vpMeTracker_HH

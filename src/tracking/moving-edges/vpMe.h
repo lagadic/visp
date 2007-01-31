@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMe.h,v 1.3 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMe.h,v 1.4 2007-01-31 15:25:59 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 /*!
 	\file vpMe.h
-	\name Element de Contour en Mouvement
+	\brief Moving edges
 */
 
 // ====================================================================
