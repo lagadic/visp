@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.h,v 1.3 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobotCamera.h,v 1.4 2007-01-31 14:59:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,7 +40,7 @@
 #define vpRobotCamera_H
 
 /*!
-  \file vpRobotCamera
+  \file vpRobotCamera.h
   \brief class that defines the simplest robot : a free flying  a camera
 */
 
@@ -51,7 +51,7 @@
 #include <visp/vpHomogeneousMatrix.h>
 
 /*!
-  \class vpRobotCamera.h
+  \class vpRobotCamera
   \brief class that defines the simplest robot :  a free flying a camera
 */
 class VISP_EXPORT vpRobotCamera : public vpRobot

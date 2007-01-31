@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma4.h,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpAfma4.h,v 1.4 2007-01-31 14:59:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -188,13 +188,8 @@ public: /* Methodes publiques */
   /** @name Valeurs des butees */
   //@{
 
-  /** \brief Renvoie les butees basses du robot.   */
-  void getJointLimitsMin (double jointMin[4]) const;
-  //void getJointLimitsMin (double jointMin[articulationsNb]) const;
-
-  /** \brief Renvoie les butees hautes du robot.    */
-  void getJointLimitsMax (double jointMax[4]) const;
-  //  void getJointLimitsMax (double jointMax[articulationsNb]) const;
+  void getJointLimitsMin (vpColVector &qmin) const;
+  void getJointLimitsMax (vpColVector &qmax) const;
 
   //@}
 
@@ -211,9 +206,7 @@ public: /* Methodes publiques */
 
   /** \brief Renvoie la position courrante relative aux butees.    */
   void getPositionInJointInterval (const vpColVector &q,
-				   double jointPos[4]) const;
-  //void getPositionInJointInterval (const vpColVector &q,
-  //                                 double jointPos[articulationsNb]) const;
+				   vpColVector &jointPos) const;
 
   //@}
 
