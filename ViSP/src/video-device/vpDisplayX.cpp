@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.18 2007-01-30 17:31:01 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.19 2007-01-31 17:08:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,8 +65,8 @@
   (8 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 
 */
 vpDisplayX::vpDisplayX(vpImage<unsigned char> &I,
@@ -85,8 +85,8 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I,
   (32 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 */
 vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I,
 		     int _x,
@@ -100,8 +100,8 @@ vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I,
 /*!
   \brief constructor
 
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 */
 vpDisplayX::vpDisplayX(int _x, int _y, char *_title)
 {
@@ -156,8 +156,8 @@ vpDisplayX::~vpDisplayX()
   \brief Initialized the display of a gray level image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 
 */
 void
@@ -416,8 +416,8 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
   \brief Initialized the display of a RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  title
 
 */
 void
@@ -674,9 +674,9 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   \brief actual member used to Initialize the display of a
   gray level or RGBa  image
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param cols, rows : width, height of the window
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  title
 
 */
 void vpDisplayX::init(int cols, int rows, int _x, int _y, char *_title)
@@ -1084,6 +1084,7 @@ void vpDisplayX::displayImage(vpImage<vpRGBa> &I)
 /*
   \brief gets the displayed image (including the overlay plane)
   and returns an RGBa image
+  \param I : Image to get
 */
 void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 {
@@ -1123,7 +1124,8 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 }
 
 /*!
-
+\brief Display an image
+\param I : image to display
 
 */
 void vpDisplayX::displayImage(unsigned char *I)
@@ -1244,8 +1246,8 @@ void vpDisplayX::clearDisplay(int c)
 
 /*!
   \brief display a point
-  \param i,j (row,colum indexes)
-  \param color (see vpColor)
+  \param i,j : (row,colum indexes)
+  \param col : color (see vpColor)
 */
 void vpDisplayX::displayPoint(int i, int j, int col)
 {
@@ -1265,9 +1267,9 @@ void vpDisplayX::displayPoint(int i, int j, int col)
 
 /*!
   \brief display a line
-  \param i1,j1 (row,colum indexes) initial coordinates
-  \param i2,j2 (row,colum indexes) final coordinates
-  \param color (see vpColor)
+  \param i1,j1 : (row,colum indexes) initial coordinates
+  \param i2,j2 : (row,colum indexes) final coordinates
+  \param col : color (see vpColor)
   \param e : line_width
 */
 void vpDisplayX::displayLine(int i1, int j1, int i2, int j2, int col, int e)
@@ -1292,9 +1294,9 @@ void vpDisplayX::displayLine(int i1, int j1, int i2, int j2, int col, int e)
 
 /*!
   \brief display a dashed line
-  \param i1,j1 (row,colum indexes) initial coordinates
-  \param i2,j2 (row,colum indexes) final coordinates
-  \param color (see vpColor)
+  \param i1,j1 : (row,colum indexes) initial coordinates
+  \param i2,j2 : (row,colum indexes) final coordinates
+  \param col : color (see vpColor)
   \param e : line_width
 */
 void vpDisplayX::displayDotLine(int i1, int j1, int i2, int j2, int col, int e)
@@ -1320,9 +1322,9 @@ void vpDisplayX::displayDotLine(int i1, int j1, int i2, int j2, int col, int e)
 
 /*!
   \brief display a cross
-  \param i,j (row,colum indexes)
-  \param size of the cross
-  \param color (see vpColor)
+  \param i,j : (row,colum indexes)
+  \param size : Size of the cross
+  \param col : Color (see vpColor)
 */
 void vpDisplayX::displayCross(int i,int j, int size,int col)
 {
@@ -1351,9 +1353,9 @@ void vpDisplayX::displayCross(int i,int j, int size,int col)
 
 /*!
   \brief display a "large" cross
-  \param i,j (row,colum indexes)
-  \param size of the cross
-  \param color (see vpColor)
+  \param i,j : (row,colum indexes)
+  \param size : Size of the cross
+  \param col : Color (see vpColor)
 */
 void vpDisplayX::displayCrossLarge(int i,int j, int size,int col)
 {
@@ -1380,9 +1382,9 @@ void vpDisplayX::displayCrossLarge(int i,int j, int size,int col)
 
 /*!
   \brief display an arrow
-  \param i1,j1 (row,colum indexes) initial coordinates
-  \param i2,j2 (row,colum indexes) final coordinates
-  \param color (see vpColor)
+  \param i1,j1 : (row,colum indexes) initial coordinates
+  \param i2,j2 : (row,colum indexes) final coordinates
+  \param col : Color (see vpColor)
   \param L,l : width and height of the arrow
 */
 void vpDisplayX::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int l)
@@ -1449,10 +1451,10 @@ void vpDisplayX::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int 
 
 /*!
   \brief display a rectangle
-  \param i,j (row,colum indexes) up left corner
+  \param i,j : (row,colum indexes) up left corner
   \param width
   \param height
-  \param color (see vpColor)
+  \param col : Color (see vpColor)
 */
 void
 vpDisplayX::displayRectangle(int i, int j, int width, int height, int col)
@@ -1477,9 +1479,9 @@ vpDisplayX::displayRectangle(int i, int j, int width, int height, int col)
 
 /*!
   \brief display a string
-  \param i,j (row,colum indexes)
+  \param i,j : (row,colum indexes)
   \param string
-  \param color (see vpColor)
+  \param col : Color (see vpColor)
 */
 void vpDisplayX::displayCharString(int i, int j, char *string, int col)
 {
@@ -1498,7 +1500,7 @@ void vpDisplayX::displayCharString(int i, int j, char *string, int col)
 
 /*!
   \brief wait for and get the position of the click
-  \param i,j (row,colum indexes)
+  \param i,j : (row,colum indexes)
 
 */
 
@@ -1610,7 +1612,8 @@ vpDisplayX::getClick()
 /*!
   \brief wait for and get the position of the click of the button specified
   by "button"
-  \param i,j (row,colum indexes)
+  \param i,j : (row,colum indexes)
+  \param button : Button to use.
 
 */
 bool
@@ -1673,7 +1676,8 @@ vpDisplayX::getClick(int& i, int& j, int& button)
 /*!
   \brief wait for and get the position of the click release of the
   button specified by "button". Same method as getClick(int&, int&, int&).
-  \param i,j (row,colum indexes)
+  \param i,j : (row,colum indexes)
+  \param button : Button to use.
 
   \sa getClick(int&, int&, int&)
 
@@ -1711,6 +1715,7 @@ int vpDisplayX::getScreenDepth()
 
 /*!
   \brief get the window size
+  \param xsize, ysize : Size of the display.
  */
 void vpDisplayX::getScreenSize(int *xsize, int *ysize)
 {
@@ -1736,6 +1741,7 @@ void vpDisplayX::getScreenSize(int *xsize, int *ysize)
 
 /*!
   \brief set the window title
+  \param windowtitle 
  */
 void
 vpDisplayX::flushTitle(const char *windowtitle)
@@ -1757,7 +1763,7 @@ vpDisplayX::flushTitle(const char *windowtitle)
   \brief Display a circle
   \param i,j : circle center position (row,column)
   \param r : radius
-  \param color
+  \param c : Color
 */
 void vpDisplayX::displayCircle(int i, int j, int r, int c)
 {

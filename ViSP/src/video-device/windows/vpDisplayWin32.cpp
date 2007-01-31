@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.5 2007-01-11 15:39:51 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.6 2007-01-31 17:08:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -135,7 +135,7 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
   \brief actual member used to Initialize the display of a
   gray level or RGBa  image
 
-  \param I : Image to be displayed (note that image has to be initialized)
+  \param _ncol, _nrow : weight, height of the window
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -198,7 +198,7 @@ void vpDisplayWin32::waitForInit()
 
 /*!
 	Displays an RGBa image in the window.
-	\param I image to display
+	\param I : image to display
 */
 void vpDisplayWin32::displayImage(vpImage<vpRGBa> &I)
 {
@@ -213,7 +213,7 @@ void vpDisplayWin32::displayImage(vpImage<vpRGBa> &I)
 
 /*!
 	Displays a grayscale image in the window.
-	\param I image to display
+	\param I : image to display
 */
 void vpDisplayWin32::displayImage(vpImage<unsigned char> &I)
 {
@@ -228,8 +228,8 @@ void vpDisplayWin32::displayImage(vpImage<unsigned char> &I)
 
 /*!
 	Waits for a click and returns its coordinates.
-	\param i first coordinate of the click position
-	\param j second coordinate of the click position
+	\param i : first coordinate of the click position
+	\param j : second coordinate of the click position
 	\return true
 */
 bool vpDisplayWin32::getClick(int& i, int& j)
@@ -251,9 +251,9 @@ bool vpDisplayWin32::getClick(int& i, int& j)
 
 /*!
 	Waits for a click from a certain button and returns its coordinates.
-	\param i first coordinate of the click position
-	\param j second coordinate of the click position
-	\param button button to use for the click
+	\param i : first coordinate of the click position
+	\param j : second coordinate of the click position
+	\param button : button to use for the click
 	\return true
 */
 bool vpDisplayWin32::getClick(int& i, int& j, int& button)
@@ -275,9 +275,9 @@ bool vpDisplayWin32::getClick(int& i, int& j, int& button)
 
 /*!
 	Waits for a click "up" from a certain button and returns its coordinates.
-	\param i first coordinate of the click position
-	\param j second coordinate of the click position
-	\param button button to use for the click
+	\param i : first coordinate of the click position
+	\param j : second coordinate of the click position
+	\param button : button to use for the click
 	\return true
 */
 bool vpDisplayWin32::getClickUp(int& i, int& j, int& button)
@@ -319,8 +319,8 @@ void vpDisplayWin32::getClick()
 
 /*!
 	Changes the window's position
-	\param _winx its first new coordinate
-	\param _winy its second new coordinate
+	\param _winx : its first new coordinate
+	\param _winy : its second new coordinate
 */
 void vpDisplayWin32::setWindowPosition(int _winx, int _winy)
 {
@@ -346,9 +346,9 @@ void vpDisplayWin32::flushTitle(const char *string)
 
 /*!
 	Displays a point.
-	\param i its first coordinate
-	\param j its second coordinate
-	\param col The point's color
+	\param i : its first coordinate
+	\param j : its second coordinate
+	\param col : The point's color
 */
 void vpDisplayWin32::displayPoint(int i,int j,int col)
 {
@@ -359,12 +359,12 @@ void vpDisplayWin32::displayPoint(int i,int j,int col)
 
 /*!
 	Displays a line.
-	\param i1 its starting point's first coordinate
-	\param j1 its starting point's second coordinate
-	\param i2 its ending point's first coordinate
-	\param j2 its ending point's second coordinate
-	\param e width of the line
-	\param col The point's color
+	\param i1 : its starting point's first coordinate
+	\param j1 : its starting point's second coordinate
+	\param i2 : its ending point's first coordinate
+	\param j2 : its ending point's second coordinate
+	\param e : width of the line
+	\param col : The point's color
 */
 void vpDisplayWin32::displayLine(int i1, int j1, int i2, int j2, int col, int e)
 {
@@ -375,12 +375,12 @@ void vpDisplayWin32::displayLine(int i1, int j1, int i2, int j2, int col, int e)
 
 /*!
 	Displays a dotted line.
-	\param i1 its starting point's first coordinate
-	\param j1 its starting point's second coordinate
-	\param i2 its ending point's first coordinate
-	\param j2 its ending point's second coordinate
-	\param e width of the line
-	\param col The line's color
+	\param i1 : its starting point's first coordinate
+	\param j1 : its starting point's second coordinate
+	\param i2 : its ending point's first coordinate
+	\param j2 : its ending point's second coordinate
+	\param e : width of the line
+	\param col : The line's color
 */
 void vpDisplayWin32::displayDotLine(int i1, int j1, int i2, int j2, int col, int e)
 {
@@ -391,11 +391,11 @@ void vpDisplayWin32::displayDotLine(int i1, int j1, int i2, int j2, int col, int
 
 /*!
 	Displays a rectangle.
-	\param i its top left point's first coordinate
-	\param j its top left point's second coordinate
-	\param width width of the rectangle
-	\param height height of the rectangle
-	\param col The rectangle's color
+	\param i : its top left point's first coordinate
+	\param j : its top left point's second coordinate
+	\param width : width of the rectangle
+	\param height : height of the rectangle
+	\param col : The rectangle's color
 */
 void vpDisplayWin32::displayRectangle(int i, int j, int width, int height, int col)
 {
@@ -406,10 +406,10 @@ void vpDisplayWin32::displayRectangle(int i, int j, int width, int height, int c
 
 /*!
 	Displays a circle.
-	\param i its center point's first coordinate
-	\param j its center point's second coordinate
-	\param r The circle's radius
-	\param col The circle's color
+	\param i : its center point's first coordinate
+	\param j : its center point's second coordinate
+	\param r : The circle's radius
+	\param c : The circle's color
 */
 void vpDisplayWin32::displayCircle(int i, int j, int r, int c)
 {
@@ -420,10 +420,10 @@ void vpDisplayWin32::displayCircle(int i, int j, int r, int c)
 
 /*!
 	Displays a string.
-	\param i its top left point's first coordinate
-	\param j its top left point's second coordinate
-	\param s The string to display
-	\param col The text's color
+	\param i : its top left point's first coordinate
+	\param j : its top left point's second coordinate
+	\param s : The string to display
+	\param c : The text's color
 */
 void vpDisplayWin32::displayCharString(int i,int j,char *s, int c)
 {
@@ -434,10 +434,10 @@ void vpDisplayWin32::displayCharString(int i,int j,char *s, int c)
 
 /*!
 	Displays a cross.
-	\param i its center point's first coordinate
-	\param j its center point's second coordinate
-	\param size Size of the cross
-	\param col The cross' color
+	\param i : its center point's first coordinate
+	\param j : its center point's second coordinate
+	\param size : Size of the cross
+	\param col : The cross' color
 */
 void vpDisplayWin32::displayCross(int i,int j, int size,int col)
 {
@@ -448,10 +448,10 @@ void vpDisplayWin32::displayCross(int i,int j, int size,int col)
 
 /*!
 	Displays a large cross.
-	\param i its center point's first coordinate
-	\param j its center point's second coordinate
-	\param size Size of the cross
-	\param col The cross' color
+	\param i : its center point's first coordinate
+	\param j : its center point's second coordinate
+	\param size : Size of the cross
+	\param col : The cross' color
 */
 void vpDisplayWin32::displayCrossLarge(int i,int j, int size,int col)
 {
@@ -462,13 +462,13 @@ void vpDisplayWin32::displayCrossLarge(int i,int j, int size,int col)
 
 /*!
 	Displays an arrow.
-	\param i1 its starting point's first coordinate
-	\param j1 its starting point's second coordinate
-	\param i2 its ending point's first coordinate
-	\param j2 its ending point's second coordinate
-	\param col The line's color
-	\param L ...
-	\param l ...
+	\param i1 : its starting point's first coordinate
+	\param j1 : its starting point's second coordinate
+	\param i2 : its ending point's first coordinate
+	\param j2 : its ending point's second coordinate
+	\param col : The line's color
+	\param L : ...
+	\param l : ...
 */
 void vpDisplayWin32::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int l)
 {
@@ -480,7 +480,7 @@ void vpDisplayWin32::displayArrow(int i1,int j1, int i2, int j2, int col, int L,
 
 /*!
 	Clears the display.
-	\param c the color to fill the display with
+	\param c : the color to fill the display with
 */
 void vpDisplayWin32::clearDisplay(int c)
 {
@@ -516,7 +516,7 @@ void vpDisplayWin32::closeDisplay()
 
 /*!
 	Gets the displayed image (if overlay, if any).
-	\param I Image to fill.
+	\param I : Image to fill.
 */
 void vpDisplayWin32::getImage(vpImage<vpRGBa> &I)
 {

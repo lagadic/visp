@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.12 2007-01-30 17:31:01 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.13 2007-01-31 17:08:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,8 +85,8 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
   (32 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 */
 vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
 		     int _x,
@@ -104,8 +104,8 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
 /*!
   \brief constructor
 
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 */
 vpDisplayGTK::vpDisplayGTK(int _x, int _y, char *_title)
 {
@@ -160,8 +160,8 @@ vpDisplayGTK::~vpDisplayGTK()
   \brief Initialized the display of a gray level image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 
 */
 void
@@ -187,8 +187,8 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
   \brief Initialized the display of a RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 
 */
 void
@@ -213,9 +213,9 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
   \brief actual member used to Initialize the display of a
   gray level or RGBa  image
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y The window is set at position x,y (column index, row index).
-  \param _title  window  titled
+  \param _ncol, _nrow : width, height of the window
+  \param _x, _y : The window is set at position x,y (column index, row index).
+  \param _title : window  titled
 
 */
 void
@@ -417,7 +417,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 
 
   // shoudl certainly be optimized.
-  // marche pas
+  // doesn't work
   if (GTKinitialized)
   {
 
@@ -591,9 +591,9 @@ vpDisplayGTK::displayLine(int i1, int j1,
 
 /*!
   \brief display a dashed line
-  \param i1,j1 (row,colum indexes) initial coordinates
-  \param i2,j2 (row,colum indexes) final coordinates
-  \param color (see vpColor)
+  \param i1,j1 : (row,colum indexes) initial coordinates
+  \param i2,j2 : (row,colum indexes) final coordinates
+  \param color : (see vpColor)
   \param e : line_width
 */
 void
@@ -628,9 +628,9 @@ vpDisplayGTK::displayDotLine(int i1, int j1,
 
 /*!
   \brief display a cross
-  \param i,j (row,colum indexes)
-  \param size of the cross
-  \param color (see vpColor)
+  \param i,j : (row,colum indexes)
+  \param size : size of the cross
+  \param col : color (see vpColor)
 */
 void
 vpDisplayGTK::displayCross(int i,int j,
@@ -662,9 +662,9 @@ vpDisplayGTK::displayCross(int i,int j,
 
 /*!
   \brief display a "large" cross
-  \param i,j (row,colum indexes)
-  \param size of the cross
-  \param color (see vpColor)
+  \param i,j : (row,colum indexes)
+  \param size : size of the cross
+  \param col : color (see vpColor)
 */
 void vpDisplayGTK::displayCrossLarge(int i,int j, int size,int col)
 {
@@ -692,9 +692,9 @@ void vpDisplayGTK::displayCrossLarge(int i,int j, int size,int col)
 
 /*!
   \brief display an arrow
-  \param i1,j1 (row,colum indexes) initial coordinates
-  \param i2,j2 (row,colum indexes) final coordinates
-  \param color (see vpColor)
+  \param i1,j1 : (row,colum indexes) initial coordinates
+  \param i2,j2 : (row,colum indexes) final coordinates
+  \param col : color (see vpColor)
   \param L,l : width and height of the arrow
 */
 void
@@ -902,7 +902,8 @@ vpDisplayGTK::getClick(int& i, int& j)
 /*!
   \brief wait for and get the position of the click of the button specified
   by "button"
-  \param i,j (row,colum indexes)
+  \param i,j : (row,colum indexes)
+  \param button 
 
 */
 bool
@@ -951,7 +952,8 @@ vpDisplayGTK::getClick(int& i, int& j, int& button)
 /*!
   \brief wait for and get the position of the click release of the
   button specified by "button"
-  \param i,j (row,colum indexes)
+  \param i,j : (row,colum indexes)
+  \param button
 
 */
 bool
