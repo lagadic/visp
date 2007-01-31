@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.1 2007-01-30 13:46:09 asaunier Exp $
+ * $Id: poseVirtualVS.cpp,v 1.2 2007-01-31 09:59:41 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,11 +92,13 @@
 
 Print the program options.
 
-\param ipath : Input image path.
-\param ppath : Personal image path.
-\param first : First image.
-\param nimages : Number of images to manipulate.
-\param step : Step between two images.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ipath : Input image path.
+  \param ppath : Personal image path.
+  \param first : First image.
+  \param nimages : Number of images to manipulate.
+  \param step : Step between two images.
 
  */
 void usage(char *name, char *badparam, string ipath, string ppath,
@@ -154,16 +156,18 @@ OPTIONS:                                               Default\n\
 
 Set the program options.
 
-\param ipath : Input image path.
-\param ppath : Personal image path.
-\param first : First image.
-\param nimages : Number of images to display.
-\param step : Step between two images.
-\param display : Set as true, activates the image display. This is
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param ipath : Input image path.
+  \param ppath : Personal image path.
+  \param first : First image.
+  \param nimages : Number of images to display.
+  \param step : Step between two images.
+  \param display : Set as true, activates the image display. This is
 the default configuration. When set to false, the display is
 disabled. This can be usefull for automatic tests using crontab
 under Unix or using the task manager under Windows.
-\param click_allowed : set to false, disable the mouse click 
+\param click_allowed : set to false, disable the mouse click.
 
 \return false if the program has to be stopped, true otherwise.
 
