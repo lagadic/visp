@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.h,v 1.2 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMeLine.h,v 1.3 2007-01-31 15:26:00 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,6 +34,11 @@
  * Eric Marchand
  *
  *****************************************************************************/
+
+/*!
+\file vpMeLine.h
+\brief Moving edges
+*/
 
 #ifndef vpMeLine_HH
 #define vpMeLine_HH

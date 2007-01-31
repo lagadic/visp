@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.h,v 1.4 2006-06-12 14:50:04 brenier Exp $
+ * $Id: vpMeSite.h,v 1.5 2007-01-31 15:26:00 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 /*!
 	\file vpMeSite.h
-	\name Element de Contour en Mouvement
+	\brief Moving edges
 */
 
 
@@ -51,6 +51,23 @@
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpMe.h>
+
+// ====================================================================
+/*!
+ * \class vpMeSite
+ * \brief Performs search in a given direction(normal) for a given distance(pixels)
+ * \n for a given 'site'. Gives the most likely site given the probablility
+ * \n from an ME mask
+ * \n
+ * \n - Bug fix rewrote application of masks to use the temporal information
+ * \n instead of applying both temporal masks to the same image.
+ * \n ie: spacial -> spatio/temporal
+ * \n - Added new tracking function to choose the most similar edge amongst
+ * \n - all edges found.
+ * \n sample step.
+ */
+// ====================================================================
+
 
 class VISP_EXPORT vpMeSite
 {

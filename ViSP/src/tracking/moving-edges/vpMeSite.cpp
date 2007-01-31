@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.7 2006-12-04 14:52:21 marchand Exp $
+ * $Id: vpMeSite.cpp,v 1.8 2007-01-31 15:26:00 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,24 +38,9 @@
 
 /*!
   \file vpMeSite.cpp
-  \name Element de Contour en Mouvement
+  \brief Moving edges
 */
 
-// ====================================================================
-/*!
- * \class vpMeSite
- * \brief Performs search in a given direction(normal) for a given distance(pixels)
- * \n for a given 'site'. Gives the most likely site given the probablility
- * \n from an ME mask
- * \n
- * \n - Bug fix rewrote application of masks to use the temporal information
- * \n instead of applying both temporal masks to the same image.
- * \n ie: spacial -> spatio/temporal
- * \n - Added new tracking function to choose the most similar edge amongst
- * \n - all edges found.
- * \n sample step.
- */
-// ====================================================================
 
 
 #include <visp/vpMeSite.h>

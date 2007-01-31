@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMe.cpp,v 1.3 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpMe.cpp,v 1.4 2007-01-31 15:25:59 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,20 +38,8 @@
 
 /*!
 	\file vpMe.cpp
-	\name Elements de Contour en Mouvement
+	\brief Moving edges
 */
-
-// ====================================================================
-/*!
- * \class vpMe
- * \brief Contains predetermined masks for sites, holds ecm
- * \n			tracking parameters
- * \author Adapted from vpMe ViSP,
- * \n Andrew Comport added functionality - replaced points_to_track with
- * \n sample step.
- * \date 4/7/03
-*/
-// ====================================================================
 
 #include <visp/vpMe.h>
 #include <visp/vpColVector.h>
