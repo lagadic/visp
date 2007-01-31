@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot.cpp,v 1.2 2007-01-29 15:57:17 asaunier Exp $
+ * $Id: trackDot.cpp,v 1.3 2007-01-31 09:59:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Test dot tracking.
+ * Example of dot tracking.
  *
  * Authors:
  * Eric Marchand
@@ -36,11 +36,17 @@
  *
  *****************************************************************************/
 
+/*!
+  \file trackDot.cpp
+
+  \brief   test dot tracking on an image sequence using vpDOt.
+*/
+
 
 /*!
   \example trackDot.cpp
 
-  \brief   test dot tracking on an image sequence
+  Example of dot tracking on an image sequence using vpDot.
 */
 
 #include <stdio.h>
@@ -68,7 +74,9 @@
 
 Print the program options.
 
-\param ipath: Input image path.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ipath : Input image path.
 
 */
 void usage(char *name, char *badparam, string ipath)
@@ -105,8 +113,13 @@ OPTIONS:                                               Default\n\
 
 Set the program options.
 
-\param ipath : Input image path.
-\return false if the program has to be stopped, true otherwise.
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param ipath : Input image path.
+  \param click_allowed : Mouse click activation.
+  \param display : Display activation.
+
+  \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, string &ipath,
