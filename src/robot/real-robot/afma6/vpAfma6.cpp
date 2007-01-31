@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.10 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpAfma6.cpp,v 1.11 2007-01-31 14:59:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -431,19 +431,22 @@ computeInverseJacobian (const vpColVector & q)
 /* --- VALEURS ----------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-/* Renvoie les butees basses du robot.
- * Le resultat est place dans le tableau donne en entree.
- * OUTPUT:
- *  - jointMin: valeurs des butees basses utilisees.
- */
-void vpAfma6::
-getJointLimitsMin (double __jointMin[articulationsNb]) const
+/*!
+   Get articular lower joint limits.
+
+   \param qmin : Articular lower joint limits.
+
+*/
+void 
+vpAfma6::getJointLimitsMin (vpColVector &qmin) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
 
+    qmin.resize(vpAfma6::articulationsNb);
+
     for (int i = 0; i < vpAfma6::articulationsNb ; ++ i)
 	{
-	    __jointMin [i] = jointMin [i] ;
+	    qmin [i] = jointMin [i] ;
 	}
 
 
@@ -451,19 +454,22 @@ getJointLimitsMin (double __jointMin[articulationsNb]) const
     return ;
 }
 
-/* Renvoie les butees hautes du robot.
- * Le resultat est place dans le tableau donne en entree.
- * OUTPUT:
- *  -  jointMin: valeurs des butees hautes utilisees.
- */
-void vpAfma6::
-getJointLimitsMax (double __jointMax[articulationsNb]) const
+/*!
+   Get articular upper joint limits.
+
+   \param qmax : Articular upper joint limits.
+
+*/
+void
+vpAfma6::getJointLimitsMax (vpColVector &qmax) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
 
+    qmax.resize(vpAfma6::articulationsNb);
+
     for (int i = 0; i < vpAfma6::articulationsNb ; ++ i)
 	{
-	    __jointMax [i] = jointMax [i] ;
+	    qmax [i] = jointMax [i] ;
 	}
 
     vpDEBUG_TRACE (6, "# Sortie.");
@@ -536,11 +542,13 @@ areJointLimitsrespected (const vpColVector & q) const
  * OUTPUT:
  *   - jointPos: position courrante relative aux butees.
  */
-void vpAfma6::
-getPositionInJointInterval (const vpColVector &q,
-			    double jointPos[articulationsNb]) const
+void
+vpAfma6::getPositionInJointInterval (const vpColVector &q,
+				     vpColVector &jointPos) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
+    
+    jointPos.resize(vpAfma6::articulationsNb);
 
     for (int i = 0 ; i < vpAfma6::articulationsNb ; ++ i)
 	{

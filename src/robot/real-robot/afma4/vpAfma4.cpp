@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma4.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpAfma4.cpp,v 1.5 2007-01-31 14:59:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -265,19 +265,22 @@ vpAfma4::computeInverseJacobian (const vpColVector & q)
 /* --- VALEURS ----------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-/* Renvoie les butees basses du robot.
- * Le resultat est place dans le tableau donne en entree.
- * OUTPUT:
- *  - jointMin: valeurs des butees basses utilisees.
- */
+/*!
+   Get articular lower joint limits.
+
+   \param qmin : Articular lower joint limits.
+
+*/
 void
-vpAfma4::getJointLimitsMin (double __jointMin[articulationsNb]) const
+vpAfma4::getJointLimitsMin (vpColVector &qmin) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
 
+    qmin.resize(vpAfma4::articulationsNb);
+
     for (int i = 0; i < vpAfma4::articulationsNb ; ++ i)
 	{
-	    __jointMin [i] = jointMin [i] ;
+	    qmin [i] = jointMin [i] ;
 	}
 
 
@@ -285,19 +288,22 @@ vpAfma4::getJointLimitsMin (double __jointMin[articulationsNb]) const
     return ;
 }
 
-/* Renvoie les butees hautes du robot.
- * Le resultat est place dans le tableau donne en entree.
- * OUTPUT:
- *  -  jointMin: valeurs des butees hautes utilisees.
- */
+/*!
+   Get articular upper joint limits.
+
+   \param qmax : Articular upper joint limits.
+
+*/
 void
-vpAfma4::getJointLimitsMax (double __jointMax[articulationsNb]) const
+vpAfma4::getJointLimitsMax (vpColVector &qmax) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
 
+    qmax.resize(vpAfma4::articulationsNb);
+
     for (int i = 0; i < vpAfma4::articulationsNb ; ++ i)
 	{
-	    __jointMax [i] = jointMax [i] ;
+	    qmax [i] = jointMax [i] ;
 	}
 
     vpDEBUG_TRACE (6, "# Sortie.");
@@ -360,7 +366,7 @@ vpAfma4::areJointLimitsrespected (const vpColVector & q) const
   return res;
 }
 
-/* Renvoie la position courrante relative aux butees.
+/*! Renvoie la position courrante relative aux butees.
  * Donne un pourcentage pour chaque axe donnant la position dans
  * l'intervalle des valeurs possibles. On obtient pour chaque axe
  * une valeur r tq r * DeltaQ + JointMin = q.
@@ -372,9 +378,11 @@ vpAfma4::areJointLimitsrespected (const vpColVector & q) const
  */
 void
 vpAfma4::getPositionInJointInterval (const vpColVector &q,
-			    double jointPos[articulationsNb]) const
+				     vpColVector &jointPos) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
+    
+    jointPos.resize(vpAfma4::articulationsNb);
 
     for (int i = 0 ; i < vpAfma4::articulationsNb ; ++ i)
 	{
@@ -835,14 +843,14 @@ ostream & operator << (ostream & os,
     << "\t" << constant.rpi[3][3]
     << "\t" << endl
 
-    << "Joint Limit Sup:"
+    << "Joint Limit Max:"
     << "\t" << constant.jointMax[0]
     << "\t" << constant.jointMax[1]
     << "\t" << constant.jointMax[2]
     << "\t" << constant.jointMax[3]
     << "\t" << endl
 
-    << "Joint Limit Max:"
+    << "Joint Limit Min:"
     << "\t" << constant.jointMin[0]
     << "\t" << constant.jointMin[1]
     << "\t" << constant.jointMin[2]

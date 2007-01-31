@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotTemplate.h,v 1.2 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobotTemplate.h,v 1.3 2007-01-31 14:59:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,9 +48,8 @@
 #include <visp/vpConfig.h>
 #include <visp/vpRobot.h>
 
-
 /*!
-  \file vpRobotTemplate
+  \class vpRobotTemplate
   \brief class that defines a robot just to show which function you must
   implement
 */
