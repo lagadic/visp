@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAdaptativeGain.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpAdaptativeGain.cpp,v 1.6 2007-01-31 15:13:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,6 +34,9 @@
  * Nicolas Mansard
  *
  *****************************************************************************/
+/*!
+\file vpAdaptativeGain.cpp
+*/
 
 #include <iostream>
 
@@ -269,7 +272,7 @@ operator<< (ostream &os, const vpAdaptativeGain& lambda)
 }
 
 
-/** \file $Source: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/servo/vpAdaptativeGain.cpp,v $ */
+
 /*
  * Local variables:
  * c-basic-offset: 4

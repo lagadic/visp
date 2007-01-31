@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.12 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.13 2007-01-31 15:13:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,14 +49,6 @@
 /*!
   \file vpServo.cpp
   \brief  Class required to compute the visual servoing control law
-*/
-
-/*!
-  \class vpServo
-
-  \brief Class required to compute the visual servoing control law
-
-  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */
 
 void

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAdaptativeGain.h,v 1.3 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpAdaptativeGain.h,v 1.4 2007-01-31 15:13:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,7 +34,10 @@
  * Nicolas Mansard
  *
  *****************************************************************************/
-
+/*!
+\file vpAdaptativeGain.h
+\brief Adaptative gain
+*/
 
 #ifndef __VP_ADAPTATIVE_GAIN_H
 #define __VP_ADAPTATIVE_GAIN_H
@@ -45,6 +48,10 @@
 #include <visp/vpConfig.h>
 
 class vpColVector;
+/*!
+\class vpAdaptativeGain
+\brief adaptative gain
+*/
 
 class VISP_EXPORT vpAdaptativeGain
 {
@@ -165,7 +172,6 @@ public:  /* Methodes*/
 
 
 
-/** \file $Source: /udd/fspindle/poub/cvs2svn/ViSP/cvsroot/visp/ViSP/src/servo/vpAdaptativeGain.h,v $ */
 /*
  * Local variables:
  * c-basic-offset: 4
