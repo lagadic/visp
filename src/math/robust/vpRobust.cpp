@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.4 2006-12-04 14:53:22 marchand Exp $
+ * $Id: vpRobust.cpp,v 1.5 2007-01-31 13:21:02 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,17 +38,6 @@
 /*!
   \file vpRobust.cpp
 */
-
-// ===================================================================
-/*!
- * \class vpRobust
- * \brief Contains an M-Estimator and various
- * influence function.
- * \n Methods of M-estimation, Tukey, Cauchy, Mclure and Huber
- * \author Andrew Comport
- * \date 29/1/02
- */
-// ===================================================================
 
 
 #include <stdio.h>
