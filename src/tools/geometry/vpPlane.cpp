@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPlane.cpp,v 1.3 2006-06-27 10:09:28 fspindle Exp $
+ * $Id: vpPlane.cpp,v 1.4 2007-01-31 15:47:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,21 +42,6 @@
   \ingroup libtools
 */
 
-/*!
-  \class vpPlane
-
-  \brief  definition of the vpPlane class member functions
-
-  \author Eric Marchand  (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
-
-  This class defines the container for a plane geometrical structure
-
-  A plane is given by the equation
-  ax + by + cz + d = 0
-  where
-  (x,y,z) is a point of R^3
-
-*/
 
 #ifndef vpPlane_hh
 #include <visp/vpPlane.h>

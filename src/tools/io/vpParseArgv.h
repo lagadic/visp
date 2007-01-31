@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.h,v 1.3 2006-06-27 10:10:27 fspindle Exp $
+ * $Id: vpParseArgv.h,v 1.4 2007-01-31 15:47:37 asaunier Exp $
  *
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.
@@ -42,7 +42,8 @@
 
 */
 
-/*! \enum ArgvType
+/*! 
+  ArgvType
   Legal values for the type field of a ArgvInfo: see the user
   documentation for details.
  */
