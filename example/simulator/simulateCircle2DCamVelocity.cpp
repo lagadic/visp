@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateCircle2DCamVelocity.cpp,v 1.1 2007-01-26 16:40:35 asaunier Exp $
+ * $Id: simulateCircle2DCamVelocity.cpp,v 1.2 2007-01-31 10:00:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,9 +37,15 @@
  *****************************************************************************/
 
 /*!
-  \example simulateCircle2DCamVelocity.cpp
+  \file simulateCircle2DCamVelocity.cpp
   \brief Visual servoing experiment on a circle with a visualization
-  from the camera and from an external view
+  from the camera and from an external view using vpSimulator.
+*/
+
+/*!
+  \example simulateCircle2DCamVelocity.cpp
+  Visual servoing experiment on a circle with a visualization
+  from the camera and from an external view using vpSimulator.
 */
 
 
@@ -72,13 +78,13 @@
 #define SAVE 0
 
 
-/*
+/*!
 
 Print the program options.
 
-\param ipath: Input image path.
-
-\param user : Username.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ipath : Input image path.
 
 */
 void usage(char *name, char *badparam, string ipath)
@@ -116,13 +122,15 @@ OPTIONS:                                               Default\n\
 
 Set the program options.
 
-\param ipath: Input image path.
-\param display : Set as true, activates the image display. This is
-the default configuration. When set to false, the display is
-disabled. This can be usefull for automatic tests using crontab
-under Unix or using the task manager under Windows.
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param ipath : Input image path.
+  \param display : Set as true, activates the image display. This is
+  the default configuration. When set to false, the display is
+  disabled. This can be usefull for automatic tests using crontab
+  under Unix or using the task manager under Windows.
   
-\return false if the program has to be stopped, true otherwise.
+  \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, string &ipath, bool &display)
