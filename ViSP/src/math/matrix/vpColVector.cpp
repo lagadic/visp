@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpColVector.cpp,v 1.6 2007-01-31 13:36:52 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -582,7 +582,7 @@ vpColVector::median(const vpColVector &v)
   \end{array}\right)
   \f]
 
-  \param
+  \param v : vpColVector
 */
 vpMatrix
 vpColVector::skew(const vpColVector &v)
@@ -610,6 +610,9 @@ vpColVector::skew(const vpColVector &v)
 
 /*!
   \brief Compute the cross product of two vectors C = a x b
+
+  \param a : vpColVector
+  \param b : vpColVector
 */
 vpColVector vpColVector::cross(const vpColVector &a, const vpColVector &b)
 {

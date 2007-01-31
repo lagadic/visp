@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpNoise.cpp,v 1.3 2006-09-29 12:09:00 fspindle Exp $
+ * $Id: vpNoise.cpp,v 1.4 2007-01-31 13:37:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,7 +39,7 @@
 #include <math.h>
 
 /*!
-  \file noise.cpp
+  \file vpNoise.cpp
   \brief Classe for generating random number
   with uniform and normal probability density
 
