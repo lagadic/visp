@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.cpp,v 1.4 2006-08-30 15:52:03 fspindle Exp $
+ * $Id: vpDisplayGDI.cpp,v 1.5 2007-01-31 17:08:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,6 +34,10 @@
  * Bruno Renier
  *
  *****************************************************************************/
+/*!
+\file vpDisplayGDI.cpp
+\brief GDI based Display for windows 32.
+*/
 
 #include <visp/vpConfig.h>
 
@@ -54,7 +58,7 @@ vpDisplayGDI::vpDisplayGDI(): vpDisplayWin32(new vpGDIRenderer()){}
   (32 bits).
 
   \param I : image to be displayed (note that image has to be initialized).
-  \param _x, _y The window is set at position x,y (column index, row index).
+  \param winx, winy The window is set at position x,y (column index, row index).
   \param _title  Window's title.
 
 */
@@ -72,7 +76,7 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
   (8 bits).
 
   \param I Image to be displayed (note that image has to be initialized).
-  \param _x, _y The window is set at position x,y (column index, row index).
+  \param winx, winy The window is set at position x,y (column index, row index).
   \param _title  Window's title.
 
 */
