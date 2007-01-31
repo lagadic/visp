@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeEllipse.cpp,v 1.1 2007-01-25 11:19:25 asaunier Exp $
+ * $Id: trackMeEllipse.cpp,v 1.2 2007-01-31 09:59:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,9 +37,15 @@
  *****************************************************************************/
 
 /*!
+  \file trackMeEllipse.cpp
+
+  \brief Tracking of an ellipse using vpMe.
+*/
+
+/*!
   \example trackMeEllipse.cpp
 
-  \brief Tracking of an ellipse.
+  Tracking of an ellipse using vpMe.
 */
 
 #include <stdio.h>
@@ -69,7 +75,9 @@
 
   Print the program options.
 
-  \param ipath: Input image path.
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ipath : Input image path.
 
 */
 void usage(char *name, char *badparam, string ipath)
@@ -106,7 +114,12 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath : Input image path.
+  \param click_allowed : Mouse click activation.
+  \param display : Display activation.
+
   \return false if the program has to be stopped, true otherwise.
 
 */

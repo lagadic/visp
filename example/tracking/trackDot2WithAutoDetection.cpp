@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.1 2007-01-25 11:18:14 asaunier Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.2 2007-01-31 09:59:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,11 +34,16 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+/*!
+  \file trackDot2WithAutoDetection.cpp
+
+  \brief Example of auto detection of dots using vpDot2.
+*/
 
 /*!
   \example trackDot2WithAutoDetection.cpp
 
-  \brief Test auto detection of dots using vpDot2.
+  Example of auto detection of dots using vpDot2.
 */
 
 #include <stdio.h>
@@ -69,6 +74,8 @@
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param ipath: Input image path.
 
 */
@@ -106,7 +113,12 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath : Input image path.
+  \param click_allowed : Mouse click activation.
+  \param display : Display activation.
+
   \return false if the program has to be stopped, true otherwise.
 
 */
