@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.36 2007-01-26 17:26:28 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.37 2007-01-31 11:22:56 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -402,6 +402,8 @@ IF(USE_ITIFG8)
     MESSAGE("itifg8 requested but not found.")
     # SET(USE_ITIFG8 OFF)
   ENDIF(ITIFG8_FOUND)
+ELSE(USE_ITIFG8)
+  SET(VISP_HAVE_ITIFG8_VERSION_DOXY 0) # for doxygen file doc/config-doxygen
 ENDIF(USE_ITIFG8)
 
 # Under Windows, usage of Direct Show
