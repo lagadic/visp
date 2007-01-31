@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.9 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpPose.cpp,v 1.10 2007-01-31 13:12:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 
 /*!
-  \file vpPose.h
+  \file vpPose.cpp
   \brief Fichier contenant la classe vpPose (tout ce qui est necessaire
   pour faire du calcul de pose par difference methode
 */

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpHomography.cpp,v 1.6 2007-01-31 13:12:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -278,11 +278,11 @@ vpHomography::inverse() const
 }
 
 /*!
-  \relates  vpHomography
+  \relates vpHomography
   \brief invert the homography
 
 
-  \param Hi  [H]^-1
+  \param bHa : [H]^-1
 */
 void
 vpHomography::inverse(vpHomography &bHa) const
@@ -308,9 +308,9 @@ vpHomography::save(ofstream &f) const
 
 /*!
   Read an homography in a file, verify if it is really an homogeneous
-  matrix
+  matrix.
 
-  \param ifstream &f : the file
+  \param f : the file.
 */
 void
 vpHomography::load(ifstream &f)

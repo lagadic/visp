@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyExtract.cpp,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpHomographyExtract.cpp,v 1.5 2007-01-31 13:12:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -336,10 +336,10 @@ vpHomography::computeDisplacement (const vpHomography &H,
   Compute the camera displacement aMb associated with an homography aHb
 
 
-  implicit parameter: Homography aHb (this)
-  \param Rotation matrix aRb
-  \param Translation vector aTb
-  \param Normale: n
+  implicit parameter: Homography aHb (this).
+  \param aRb : Rotation matrix.
+  \param aTb : Translation vector.
+  \param n : Normale. 
 */
 
 void
