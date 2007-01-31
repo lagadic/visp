@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyMalis.cpp,v 1.8 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpHomographyMalis.cpp,v 1.9 2007-01-31 13:12:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,7 +49,7 @@
   objects through a new estimation scheme of camera displacement. Int. Journal
   of Computer Vision, 37(1):79-97, Juin 2000.
 
-  @article{Malis00b,
+  \@article{Malis00b,
   Author = {Malis, E. and Chaumette, F.},
   Title = {2 1/2 D visual servoing with respect to unknown objects
   through a new estimation scheme of camera displacement},
