@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPixelMeterConversion.cpp,v 1.8 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpPixelMeterConversion.cpp,v 1.9 2007-01-31 11:34:43 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,7 +36,7 @@
  *****************************************************************************/
 
 /*!
-  \file vpPixelMeterConversion.h
+  \file vpPixelMeterConversion.cpp
   \brief Pixel to meter conversion.
 
 */

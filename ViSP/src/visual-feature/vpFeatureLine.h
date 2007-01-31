@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureLine.h,v 1.4 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpFeatureLine.h,v 1.5 2007-01-31 11:31:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,7 +58,7 @@
 */
 class VISP_EXPORT vpFeatureLine : public vpBasicFeature
 {
-  /*
+  /*!
     attributes and members directly related to the vpBasicFeature needs
     other functionalities ar usefull but not mandatory
   */
@@ -76,8 +76,8 @@ public:
   ~vpFeatureLine() { ; }
 
 public:
-  /*
-    /section Set coordinates
+  /*!
+    \section Set coordinates
   */
 
   //! set the point xy and Z-coordinates
@@ -92,16 +92,16 @@ public:
 		 const double A, const double B,
 		 const double C, const double D) ;
 
-  //@}
+  //! Get feature
 
   double getRho() const  { return s[0] ; }
   double getTheta() const { return s[1] ; }
 public:
-  /*
+  /*!
     vpBasicFeature method instantiation
   */
 
-  // feature selection
+  //! feature selection
   inline static int selectRho()  { return FEATURE_LINE[0] ; }
   inline static int selectTheta()  { return FEATURE_LINE[1] ; }
   //! compute the interaction matrix from a subset a the possible features
