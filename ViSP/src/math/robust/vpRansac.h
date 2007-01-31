@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.h,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpRansac.h,v 1.4 2007-01-31 13:21:02 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 
 
 /*!
-  \file vpRansac.cpp
+  \file vpRansac.h
 
   template class for
 */
