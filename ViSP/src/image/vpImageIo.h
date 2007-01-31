@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.h,v 1.4 2006-07-10 16:40:04 fspindle Exp $
+ * $Id: vpImageIo.h,v 1.5 2007-01-31 15:40:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -93,7 +93,7 @@ public:
   //! Write PGM images
   static
   void writePGM(const vpImage<vpRGBa> &I,
-		const char *filename) ;
+		const char filename[FILENAME_MAX]) ;
 
 
   //! Read PGM images
@@ -135,7 +135,7 @@ public:
   //! Write PPM images
   static
   void writePPM(const vpImage<vpRGBa> &I,
-		const char *filename) ;
+		const char filename[FILENAME_MAX]) ;
 
   //! Read PPM images
   static

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRGBa.cpp,v 1.2 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpRGBa.cpp,v 1.3 2007-01-31 15:40:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,18 +44,6 @@
 
 #include <visp/vpRGBa.h>
 #include <visp/vpColor.h>
-
-/*!
-  \class vpRGBa
-
-  \author Eric Marchand (Eric.Marchand@irisa.fr), Irisa / Inria Rennes
-
-
-  Define the object vpRGBa that is used to build color
-  images (it define a RGB 32 bits structure, fourth byte is not used)
-
-  \sa vpImage
-*/
 
 /*!
   \brief basic constructor

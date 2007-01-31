@@ -11,7 +11,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpImageIoPnm.cpp,v 1.6 2006-08-23 12:05:18 brenier Exp $
+ *  $Id: vpImageIoPnm.cpp,v 1.7 2007-01-31 15:40:13 asaunier Exp $
  *
  * Description
  * ============
@@ -46,7 +46,7 @@ const int vpImageIo::vpMAX_LEN = 100;
 
 void
 vpImageIo::writePGM(const vpImage<unsigned char> &I,
-		    const char *filename)
+		    const char filename[FILENAME_MAX])
 {
 
   FILE* fd;
@@ -96,7 +96,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
 
 void
 vpImageIo::writePGM(const vpImage<short> &I,
-		    const char *filename)
+		    const char filename[FILENAME_MAX])
 {
   vpImage<unsigned char> Iuc ;
   int nrows = I.getRows();
@@ -120,7 +120,7 @@ vpImageIo::writePGM(const vpImage<short> &I,
 
 void
 vpImageIo::writePGM(const vpImage<vpRGBa> &I,
-		    const char *filename)
+		    const char filename[FILENAME_MAX])
 {
 
   FILE* fd;
@@ -185,7 +185,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
 
 void
 vpImageIo::readPGM(vpImage<unsigned char> &I,
-		   const char *filename)
+		   const char filename[FILENAME_MAX])
 {
   FILE* fd = NULL; // File descriptor
   int   ierr;
@@ -335,7 +335,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
 
 void
 vpImageIo::readPGM(vpImage<vpRGBa> &I,
-		   const char *filename)
+		   const char filename[FILENAME_MAX])
 {
 
   try
@@ -377,7 +377,7 @@ vpImageIo::readPGM(vpImage<vpRGBa> &I,
 
 */
 void
-vpImageIo::readPPM(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::readPPM(vpImage<unsigned char> &I, const char filename[FILENAME_MAX])
 {
 
   try
@@ -404,7 +404,7 @@ vpImageIo::readPPM(vpImage<unsigned char> &I, const char *filename)
   memory space.
 */
 void
-vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::readPPM(vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 {
 
   FILE* fd = NULL; // File descriptor
@@ -555,7 +555,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 */
 
 void
-vpImageIo::writePPM(const vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writePPM(const vpImage<unsigned char> &I, const char filename[FILENAME_MAX])
 {
 
   try
@@ -580,7 +580,7 @@ vpImageIo::writePPM(const vpImage<unsigned char> &I, const char *filename)
   filename. This function writes a portable gray pixmap (PPM P6) file.
 */
 void
-vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 {
 
   FILE* f;
