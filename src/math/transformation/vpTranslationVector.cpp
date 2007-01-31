@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp,v 1.4 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpTranslationVector.cpp,v 1.5 2007-01-31 13:29:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,14 +39,10 @@
 #include <visp/vpTranslationVector.h>
 
 /*!
-  \file vpTranslationVector.h
+  \file vpTranslationVector.cpp
   \brief class that consider the case of a translation vector
 */
 
-/*!
-  \class vpTranslationVector
-  \brief class that consider the case of a translation vector
-*/
 //! initialize a size 3 vector
 void vpTranslationVector::init()
 {

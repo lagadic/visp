@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.cpp,v 1.8 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpHomogeneousMatrix.cpp,v 1.9 2007-01-31 13:29:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -182,9 +182,9 @@ vpHomogeneousMatrix::buildFrom(const double Tx,
 }
 
 /*!
-  \brief  affectation of two homogeneous matrix
+  \brief affectation of two homogeneous matrix
 
-  \param vpHomogeneousMatrix &m : *this = m
+  \param m : *this = m
 */
 vpHomogeneousMatrix &
 vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &m)
@@ -362,7 +362,7 @@ vpHomogeneousMatrix::inverse() const
 
   [R T]^-1 = [R^T  -R^T T]
 
-  \param Mi  [R T]^-1
+  \param M : [R T]^-1
 */
 void
 vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const
@@ -390,7 +390,7 @@ vpHomogeneousMatrix::save(ofstream &f) const
   Read an homogeneous matrix in a file, verify if it is really an homogeneous
   matrix
 
-  \param ifstream &f : the file
+  \param f : the file
 */
 void
 vpHomogeneousMatrix::load(ifstream &f)
