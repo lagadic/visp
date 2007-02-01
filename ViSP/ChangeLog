@@ -1,4 +1,4 @@
-ViSP 2.2.1 (Modification since ViSP 2.1.0)
+ViSP 2.2.1 (released February ??, 2007)
   - New Feature
 	- add new framegrabber interface for itifg8 driver from Coreco 
 	  Imaging Technology (http://sourceforge.net/projects/itifg)
@@ -8,12 +8,16 @@ ViSP 2.2.1 (Modification since ViSP 2.1.0)
 	  cameras using libdc1394-2.x. Need a newer version than 
 	  libdc1394-2.0.0-rc4.
 	  Tested with the svn version of libdc1394-2 and Marlin F033C and
-          F131B cameras (see vp1394TwoGrabber).
+          F131B cameras (see vp1394TwoGrabber). Format 7 is supported
+	  in vp1394TwoGrabber.
+	  vp1394Grabber will be obsolete soon.
   - Bug fix and improvement
 	- tests and examples
 	- Video For Linux Two grabber (see vpV4l2Grabber)
         - memory leaks suppression
-	- increase tests portability especially for windows
+	- works fully under windows
+	- doxygen documentation
+----------------------------------------------	
 ViSP 2.2.0 (released August 25, 2006)
   - Build
 	- To increase the code portability, especially under windows), 
