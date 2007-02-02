@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.3 2007-02-02 10:50:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@ using namespace std;
 
 
 // List of allowed command line options
-#define GETOPTARGS	"c:df:hmn:io:sv:?"
+#define GETOPTARGS	"c:df:g:hmn:io:sv:?"
 
 
 #define DUAL_ACQ
@@ -98,21 +98,28 @@ void usage(char *name, char *badparam, unsigned camera, unsigned &nframes,
   fprintf(stderr, "\n\
 SYNOPTIQUE\n\
     %s [-v <video mode>] [-f <framerate>] \n\
-    [-c <camera id>] [-m] [-n <frames>] [-i] [-s] [-d] [-?]\n\
+    [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
+    [-i] [-s] [-d] [-o <filename>] [-?]\n\
 \n\
 DESCRIPTION\n\
     Test for firewire camera image acquisition.\n\
 \n\
 OPTIONS                                                    Default\n\
     -v [%%u] : Video mode to set for the active camera.\n\
-               Use -s option so see which are the supported \n\
-               video modes. You can select the active \n\
-               camera using -c option.\n\
+              Use -s option so see which are the supported \n\
+              video modes. You can select the active \n\
+              camera using -c option.\n\
 \n\
     -f [%%u] : Framerate to set for the active camera.\n\
-               Use -s option so see which are the supported \n\
-               framerates. You can select the active \n\
-               camera using -c option.\n\
+              Use -s option so see which are the supported \n\
+              framerates. You can select the active \n\
+              camera using -c option.\n\
+\n\
+    -g [%%u] : Color coding to set for the active camera\n\
+              in format 7 video mode. Use -s option so see if \n\
+              format 7 is supported by the camera and if so, \n\
+              which are the supported color codings. You can \n\
+              select the active camera using -c option.\n\
 \n\
     -c [%%u] : Active camera identifier.                      %u\n\
               Zero is for the first camera found on the bus.\n\
@@ -130,7 +137,8 @@ OPTIONS                                                    Default\n\
 \n\
     -d      : Flag to turn off image display.\n\
 \n\
-    -o [%%s] : Filename for image saving.                     %s\n\
+    -o [%%s] : Filename for image saving.                     \n\
+              Example: -o %s\n\
               The first %%d is for the camera id, %%04d\n\
               is for the image numbering.\n\
 \n",
@@ -158,6 +166,9 @@ OPTIONS                                                    Default\n\
   \param framerate_is_set : New framerate setting.
   \param framerate : Framerate setting.
 
+  \param colorcoding_is_set : New color coding setting.
+  \param colorcoding : Color coding setting (usefull only for format 7).
+
   \param display : Display activation.
   \param save : Image saving activation.
   \param opath : Image filename when saving.
@@ -170,6 +181,8 @@ void read_options(int argc, char **argv, bool &multi, unsigned &camera,
 		  vp1394TwoGrabber::vp1394TwoVideoMode &videomode,
 		  bool &framerate_is_set,
 		  vp1394TwoGrabber::vp1394TwoFramerate &framerate,
+		  bool &colorcoding_is_set,
+		  vp1394TwoGrabber::vp1394TwoColorCoding &colorcoding,
 		  bool &display, bool &save, string &opath)
 {
   int	c;
@@ -186,6 +199,9 @@ void read_options(int argc, char **argv, bool &multi, unsigned &camera,
     case 'f':
       framerate_is_set = true;
       framerate = (vp1394TwoGrabber::vp1394TwoFramerate) atoi(optarg); break;
+    case 'g':
+      colorcoding_is_set = true;
+      colorcoding = (vp1394TwoGrabber::vp1394TwoColorCoding) atoi(optarg); break;
     case 'i':
       verbose_info = true; break;
     case 'm':
@@ -235,6 +251,8 @@ main(int argc, char ** argv)
     vp1394TwoGrabber::vp1394TwoVideoMode videomode;
     bool framerate_is_set = false;
     vp1394TwoGrabber::vp1394TwoFramerate framerate;
+    bool colorcoding_is_set = false;
+    vp1394TwoGrabber::vp1394TwoColorCoding colorcoding;
     bool save = false;
 
 #ifdef GRAB_COLOR
@@ -250,7 +268,9 @@ main(int argc, char ** argv)
     read_options(argc, argv, multi, camera, nframes,
 		 verbose_info, verbose_settings,
 		 videomode_is_set, videomode,
-		 framerate_is_set, framerate, display, save, opath);
+		 framerate_is_set, framerate,
+		 colorcoding_is_set, colorcoding,
+		 display, save, opath);
 
     // Number of cameras connected on the bus
     unsigned ncameras = 0;
@@ -311,11 +331,14 @@ main(int argc, char ** argv)
 	if (verbose_settings) {
 	  vp1394TwoGrabber::vp1394TwoVideoMode curmode;
 	  vp1394TwoGrabber::vp1394TwoFramerate curfps;
+	  vp1394TwoGrabber::vp1394TwoColorCoding curcoding;
 	  vpList<vp1394TwoGrabber::vp1394TwoVideoMode> lmode;
 	  vpList<vp1394TwoGrabber::vp1394TwoFramerate> lfps;
+	  vpList<vp1394TwoGrabber::vp1394TwoColorCoding> lcoding;
 
 	  g.getVideoMode(curmode);
 	  g.getFramerate(curfps);
+	  g.getColorCoding(curcoding);
 	  g.getVideoModeSupported(lmode);
 
 	  cout << "----------------------------------------------------------"
@@ -342,19 +365,38 @@ main(int argc, char ** argv)
 	      cout << "   " << vp1394TwoGrabber::videoMode2string(supmode)
 		   << " (-v " << supmode << ")" << endl;
 
-	    // Parse the list of supported framerates for a supported mode
-	    lfps.kill();
-	    g.getFramerateSupported(supmode, lfps);
-	    lfps.front();
-	    while (! lfps.outside() ) {
-	      vp1394TwoGrabber::vp1394TwoFramerate supfps = lfps.value();
-	      if ( (curmode == supmode) && (supfps == curfps) )
-		cout << "    * " << vp1394TwoGrabber::framerate2string(supfps)
-		     << " (-f " << supfps << ")" << endl;
-	      else
-		cout << "      " << vp1394TwoGrabber::framerate2string(supfps)
-		     << " (-f " << supfps << ")" << endl;
-	      lfps.next();
+	    if (g.isVideoModeFormat7(supmode)){
+	      // Format 7 video mode; no framerate setting, but color coding setting
+	      lcoding.kill();
+	      g.getColorCodingSupported(supmode, lcoding);
+	      lcoding.front();
+	      while (! lcoding.outside() ) {
+		vp1394TwoGrabber::vp1394TwoColorCoding supcoding = lcoding.value();
+		if ( (curmode == supmode) && (supcoding == curcoding) )
+		  cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding)
+		       << " (-g " << supcoding << ")" << endl;
+		else
+		  cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding)
+		       << " (-g " << supcoding << ")" << endl;
+		lcoding.next();
+	      }
+	    }
+	    else {
+
+	      // Parse the list of supported framerates for a supported mode
+	      lfps.kill();
+	      g.getFramerateSupported(supmode, lfps);
+	      lfps.front();
+	      while (! lfps.outside() ) {
+		vp1394TwoGrabber::vp1394TwoFramerate supfps = lfps.value();
+		if ( (curmode == supmode) && (supfps == curfps) )
+		  cout << "    * " << vp1394TwoGrabber::framerate2string(supfps)
+		       << " (-f " << supfps << ")" << endl;
+		else
+		  cout << "      " << vp1394TwoGrabber::framerate2string(supfps)
+		       << " (-f " << supfps << ")" << endl;
+		lfps.next();
+	      }
 	    }
 
 	    lmode.next();
@@ -372,10 +414,22 @@ main(int argc, char ** argv)
       g.setCamera(camera);
       g.setVideoMode(videomode);
     }
+    else {
+      // get The actual video mode
+      g.getVideoMode(videomode);
+    }
     if (framerate_is_set) {
       g.setCamera(camera);
       g.setFramerate(framerate);
     }
+    if (colorcoding_is_set) {
+      g.setCamera(camera);
+      g.setColorCoding(colorcoding);
+    }
+
+    // In format 7 set roi to the hole image
+    if (g.isVideoModeFormat7(videomode))
+      g.setFormat7ROI();
 
     // Do a first acquisition to initialise the display
     for (unsigned i=0; i < ncameras; i ++) {
