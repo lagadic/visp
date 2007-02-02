@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.5 2006-12-13 17:19:51 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.6 2007-02-02 10:50:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,6 +101,20 @@ const char * vp1394TwoGrabber::strFramerate[DC1394_FRAMERATE_NUM]= {
   "FRAMERATE_60",
   "FRAMERATE_120",
   "FRAMERATE_240"
+};
+
+const char * vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM]= {
+  "COLOR_CODING_MONO8",
+  "COLOR_CODING_YUV411",
+  "COLOR_CODING_YUV422",
+  "COLOR_CODING_YUV444",
+  "COLOR_CODING_RGB8",
+  "COLOR_CODING_MONO16",
+  "COLOR_CODING_RGB16",
+  "COLOR_CODING_MONO16S",
+  "COLOR_CODING_RGB16S",
+  "COLOR_CODING_RAW8",
+  "COLOR_CODING_RAW16",
 };
 
 
@@ -425,6 +439,26 @@ vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoMode> & videomodes)
 
 /*!
 
+  Indicates if the video mode is format 7.
+
+  \return true : If the video mode is scalable (Format 7).
+  \return false : If the video mode is not Format 7 like.
+
+  \sa setVideoMode(), getVideoModeSupported(), setCamera()
+
+*/
+bool
+vp1394TwoGrabber::isVideoModeFormat7(vp1394TwoVideoMode  videomode)
+{
+
+  if (dc1394_is_video_mode_scalable((dc1394video_mode_t) videomode))
+    return true;
+
+  return false;
+}
+
+/*!
+
   Set the active camera framerate.
 
   \param fps : The camera framerate. The current framerate of the camera is
@@ -502,7 +536,7 @@ vp1394TwoGrabber::getFramerate(vp1394TwoFramerate & fps)
 
 /*!
 
-  Query the available framerates for the given camera image mode (see
+  Query the available framerates for the given camera video mode (see
   file dc1394/control.h). No framerate is associated to the following
   camera modes :
 
@@ -529,7 +563,7 @@ vp1394TwoGrabber::getFramerate(vp1394TwoFramerate & fps)
   \exception vpFrameGrabberException::settingError : If we can't get
   the supported framerates.
 
-  \sa getVideoModeSupported(), setCamera()
+  \sa setFramerate(), getFramerate(), setCamera()
 */
 int
 vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoMode mode,
@@ -583,6 +617,299 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoMode mode,
       return _fps.num;
     }
     break;
+  }
+}
+
+/*!
+
+  Set the active camera Format 7 color coding.
+
+  \warning Setting color coding for non format 7 video mode will be
+  without effect.
+
+  \param coding : The camera color coding for Format 7 video mode. The
+  current color coding of the camera is given by getColorCoding(). The
+  camera supported color codings are given by
+  getColorCodingSupported().
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If we can't set
+  the color coding for Format 7 video mode.
+
+  \sa getColorCoding(), getColorCodingSupported() , setCamera()
+
+*/
+void
+vp1394TwoGrabber::setColorCoding(vp1394TwoColorCoding coding)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No camera found") );
+  }
+
+  dc1394video_mode_t _videomode;
+  if (dc1394_video_get_mode(camera, &_videomode) != DC1394_SUCCESS) {
+
+    close();
+    vpERROR_TRACE("Can't get current video mode");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Can't get current video mode") );
+  }
+
+  if (dc1394_is_video_mode_scalable(_videomode)) {
+    // Format 7 video mode
+
+    // Stop dma capture if started
+    if (camera->capture_is_set)
+    setCapture(DC1394_OFF);
+
+    if (dc1394_format7_set_color_coding(camera, _videomode,
+				      (dc1394color_coding_t) coding)
+	!= DC1394_SUCCESS) {
+
+      close();
+      vpERROR_TRACE("Can't set color coding");
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Can't set color coding") );
+    }
+  }
+}
+
+/*!
+
+  Query the actual color coding of the active camera. The camera supported
+  color codings are given by getColorCodingSupported().
+
+  \param coding : The camera capture color coding.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If we can't get
+  the actual color coding. Occurs if current video mode is
+  vp1394TwoGrabber::vpVIDEO_MODE_EXIF (format 6).
+
+  \sa setColorCoding(), getColorCodingSupported(), setCamera()
+
+*/
+void
+vp1394TwoGrabber::getColorCoding(vp1394TwoColorCoding & coding)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No camera found") );
+  }
+  dc1394video_mode_t _videomode;
+  if (dc1394_video_get_mode(camera, &_videomode) != DC1394_SUCCESS) {
+
+    close();
+    vpERROR_TRACE("Can't get current video mode");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Can't get current video mode") );
+  }
+
+  dc1394color_coding_t _coding;
+  if (dc1394_is_video_mode_scalable(_videomode)) {
+    // Format 7 video mode
+    if (dc1394_format7_get_color_coding(camera, _videomode, &_coding)
+	!= DC1394_SUCCESS) {
+
+      close();
+      vpERROR_TRACE("Can't get current color coding");
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Can't query current color coding") );
+    }
+  }
+  else if (dc1394_is_video_mode_still_image((dc1394video_mode_t)_videomode)) {
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "No color coding for format 6 video mode"));
+  }
+  else {
+    // Not Format 7 and not Format 6 video modes
+    if (dc1394_get_color_coding_from_video_mode(camera,
+						 (dc1394video_mode_t)_videomode,
+						 &_coding) != DC1394_SUCCESS) {
+      close();
+      vpERROR_TRACE("Could not query supported color coding for mode %d\n",
+		    _videomode);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Can't query current color coding"));
+    }
+  }
+  coding = (vp1394TwoColorCoding) _coding;
+}
+
+/*!
+
+  Query the available color codings for the given camera video mode (see
+  file dc1394/control.h).
+
+  \param mode : Camera video mode.
+
+  \param codings : The list of supported color codings for the given camera
+  video mode.
+
+  \return The number of supported color codings, 0 if no color codings
+  is available.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If we can't get
+  the color codingss.
+
+  \sa setColorCoding(), getColorCoding(), setCamera()
+*/
+int
+vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoMode mode,
+					  vpList<vp1394TwoColorCoding> & codings)
+{
+  int nb = 0; // Number of supported framerates
+
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No camera found") );
+  }
+
+  // Refresh the list of supported framerates
+  codings.kill();
+
+  if (dc1394_is_video_mode_scalable((dc1394video_mode_t)mode)) {
+    // Format 7 video mode
+    dc1394color_codings_t _codings;
+    if (dc1394_format7_get_color_codings(camera,
+					 (dc1394video_mode_t)mode,
+					 &_codings) != DC1394_SUCCESS) {
+      close();
+      vpERROR_TRACE("Could not query supported color codings for mode %d\n",
+		    mode);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Could not query supported color codings") );
+    }
+    if (_codings.num == 0)
+      return 0;
+
+    for (int i = 0; i < _codings.num; i ++)
+      codings.addRight((vp1394TwoColorCoding)_codings.codings[i]);
+
+    return _codings.num;
+  }
+  else if (dc1394_is_video_mode_still_image((dc1394video_mode_t)mode)) {
+    // Format 6 video mode
+    return 0;
+  }
+  else  {
+    // Not Format 7 and not Format 6 video modes
+    dc1394color_coding_t _coding;
+    if (dc1394_get_color_coding_from_video_mode(camera,
+						(dc1394video_mode_t)mode,
+						&_coding) != DC1394_SUCCESS) {
+      close();
+      vpERROR_TRACE("Could not query supported color coding for mode %d\n",
+		    mode);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Could not query supported color coding") );
+    }
+    codings.addRight((vp1394TwoColorCoding)_coding);
+    return 1;
+  }
+}
+
+
+/*!
+
+  Set the grabbed region of interest position and size for format 7
+  video mode.
+
+  \warning Setting format 7 roi takes only effect if video mode is
+  format 7 like.
+
+  \param left : Position of the upper left roi corner.
+
+  \param top : Position of the upper left roi corner.
+
+  \param width : Roi width. If width is set to 0, uses the maximum
+  allowed image width.
+
+  \param height : Roi height. If width is set to 0, uses the maximum
+  allowed image height.
+
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If we can't set
+  roi.
+
+  \sa isVideoModeFormat7()
+*/
+void
+vp1394TwoGrabber::setFormat7ROI(unsigned left, unsigned top,
+				unsigned width, unsigned height)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No camera found") );
+  }
+  // Stop dma capture if started
+  if (camera->capture_is_set)
+    setCapture(DC1394_OFF);
+
+  dc1394video_mode_t _videomode;
+  if (dc1394_video_get_mode(camera, &_videomode) != DC1394_SUCCESS) {
+
+    close();
+    vpERROR_TRACE("Can't get current video mode");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Can't get current video mode") );
+  }
+  if (dc1394_is_video_mode_scalable(_videomode)) {
+    // Format 7 video mode
+    unsigned max_width, max_height;
+    if (dc1394_format7_get_max_image_size(camera, _videomode,
+					  &max_width, &max_height)
+	!= DC1394_SUCCESS) {
+
+      close();
+      vpERROR_TRACE("Can't get format7 max image size");
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Can't get format7 max image size") );
+    }
+#if 0
+    vpTRACE("left: %d top: %d width: %d height: %d", left, top,
+	    width == 0 ? DC1394_USE_MAX_AVAIL: width,
+	    height == 0 ? DC1394_USE_MAX_AVAIL : height);
+    vpTRACE("max_width: %d max_height: %d", max_width, max_height);
+#endif
+
+    if (dc1394_format7_set_roi(camera, _videomode,
+			       (dc1394color_coding_t) DC1394_QUERY_FROM_CAMERA, // color_coding
+			       DC1394_QUERY_FROM_CAMERA, // bytes_per_packet
+			       left, // left
+			       top, // top
+#if 0
+			       max_width - left, // width
+			       max_height - top) // height
+#else
+			       width == 0 ? DC1394_USE_MAX_AVAIL: width - left,
+			       height == 0 ? DC1394_USE_MAX_AVAIL : height - top)
+#endif
+	!= DC1394_SUCCESS) {
+      close();
+      vpERROR_TRACE("Can't set format7 roi");
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Can't get current video mode") );
+    }
   }
 }
 
@@ -1112,46 +1439,8 @@ string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoMode videomode)
 
   if ((_videomode >= DC1394_VIDEO_MODE_MIN)
       && (_videomode <= DC1394_VIDEO_MODE_MAX)) {
-    switch (_videomode) {
-    case DC1394_VIDEO_MODE_160x120_YUV444: _str = strVideoMode[0]; break;
-    case DC1394_VIDEO_MODE_320x240_YUV422: _str = strVideoMode[1]; break;
-    case DC1394_VIDEO_MODE_640x480_YUV411: _str = strVideoMode[2]; break;
-    case DC1394_VIDEO_MODE_640x480_YUV422: _str = strVideoMode[3]; break;
-    case DC1394_VIDEO_MODE_640x480_RGB8: _str = strVideoMode[4]; break;
-    case DC1394_VIDEO_MODE_640x480_MONO8: _str = strVideoMode[5]; break;
-    case DC1394_VIDEO_MODE_640x480_MONO16: _str = strVideoMode[6]; break;
-    case DC1394_VIDEO_MODE_800x600_YUV422: _str = strVideoMode[7]; break;
-    case DC1394_VIDEO_MODE_800x600_RGB8: _str = strVideoMode[8]; break;
-    case DC1394_VIDEO_MODE_800x600_MONO8: _str = strVideoMode[9]; break;
-    case DC1394_VIDEO_MODE_1024x768_YUV422: _str = strVideoMode[10]; break;
-    case DC1394_VIDEO_MODE_1024x768_RGB8: _str = strVideoMode[11]; break;
-    case DC1394_VIDEO_MODE_1024x768_MONO8: _str = strVideoMode[12]; break;
-    case DC1394_VIDEO_MODE_800x600_MONO16: _str = strVideoMode[13]; break;
-    case DC1394_VIDEO_MODE_1024x768_MONO16: _str = strVideoMode[14]; break;
-    case DC1394_VIDEO_MODE_1280x960_YUV422: _str = strVideoMode[15]; break;
-    case DC1394_VIDEO_MODE_1280x960_RGB8: _str = strVideoMode[16]; break;
-    case DC1394_VIDEO_MODE_1280x960_MONO8: _str = strVideoMode[17]; break;
-    case DC1394_VIDEO_MODE_1600x1200_YUV422: _str = strVideoMode[17]; break;
-    case DC1394_VIDEO_MODE_1600x1200_RGB8: _str = strVideoMode[19]; break;
-    case DC1394_VIDEO_MODE_1600x1200_MONO8: _str = strVideoMode[20]; break;
-    case DC1394_VIDEO_MODE_1280x960_MONO16: _str = strVideoMode[21]; break;
-    case DC1394_VIDEO_MODE_1600x1200_MONO16: _str = strVideoMode[22]; break;
-    case DC1394_VIDEO_MODE_EXIF: _str = strVideoMode[23]; break;
-    case DC1394_VIDEO_MODE_FORMAT7_0: _str = strVideoMode[24]; break;
-    case DC1394_VIDEO_MODE_FORMAT7_1: _str = strVideoMode[25]; break;
-    case DC1394_VIDEO_MODE_FORMAT7_2: _str = strVideoMode[26]; break;
-    case DC1394_VIDEO_MODE_FORMAT7_3: _str = strVideoMode[27]; break;
-    case DC1394_VIDEO_MODE_FORMAT7_4: _str = strVideoMode[28]; break;
-    case DC1394_VIDEO_MODE_FORMAT7_5: _str = strVideoMode[29]; break;
-    case DC1394_VIDEO_MODE_FORMAT7_6: _str = strVideoMode[30]; break;
-    case DC1394_VIDEO_MODE_FORMAT7_7: _str = strVideoMode[31]; break;
-
-    default:
-      vpCERROR << "The video mode " << videomode
-	       << " is not supported by the camera" << endl;
-      break;
-    }
-  }
+    _str = strVideoMode[_videomode - DC1394_VIDEO_MODE_MIN];
+   }
   else {
     vpCERROR << "The video mode " << videomode
 	 << " is not supported by the camera" << endl;
@@ -1179,21 +1468,7 @@ string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
 
   if ((_fps >= DC1394_FRAMERATE_MIN)
       && (_fps <= DC1394_FRAMERATE_MAX)) {
-    switch (_fps) {
-    case DC1394_FRAMERATE_1_875: _str = strFramerate[0]; break;
-    case DC1394_FRAMERATE_3_75: _str = strFramerate[1]; break;
-    case DC1394_FRAMERATE_7_5: _str = strFramerate[2]; break;
-    case DC1394_FRAMERATE_15: _str = strFramerate[3]; break;
-    case DC1394_FRAMERATE_30: _str = strFramerate[4]; break;
-    case DC1394_FRAMERATE_60: _str = strFramerate[5]; break;
-    case DC1394_FRAMERATE_120: _str = strFramerate[6]; break;
-    case DC1394_FRAMERATE_240: _str = strFramerate[7]; break;
-
-    default:
-      vpCERROR << "The framerate " << fps
-	       << " is not supported by the camera" << endl;
-      break;
-    }
+    _str = strFramerate[_fps - DC1394_FRAMERATE_MIN];
   }
   else {
     vpCERROR << "The framerate " << fps
@@ -1205,8 +1480,38 @@ string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
 
 /*!
 
-  Converts the string containing the description of the vide mode into the
- video mode identifier.
+  Converts the color coding identifier into a string containing the description
+  of the color coding.
+
+  \param colorcoding : The color coding format.
+
+  \return A string describing the color coding, an empty string if the
+  color coding is not supported.
+
+  \sa string2colorCoding()
+*/
+string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCoding colorcoding)
+{
+  string _str = "";
+  dc1394color_coding_t _coding = (dc1394color_coding_t) colorcoding;
+
+  if ((_coding >= DC1394_COLOR_CODING_MIN)
+      && (_coding <= DC1394_COLOR_CODING_MAX)) {
+    _str = strColorCoding[_coding - DC1394_COLOR_CODING_MIN];
+
+  }
+  else {
+    vpCERROR << "The color coding " << colorcoding
+	     << " is not supported by the camera" << endl;
+  }
+
+  return _str;
+}
+
+/*!
+
+  Converts the string containing the description of the vide mode into
+  the video mode identifier.
 
   \param videomode : The string describing the video mode.
 
@@ -1270,6 +1575,40 @@ vp1394TwoGrabber::string2framerate(string framerate)
 				 "The required framerate is not valid") );
 
   return (vp1394TwoFramerate) 0;
+}
+
+/*!
+
+  Converts the string containing the description of the color coding into the
+  color coding identifier.
+
+  \param colorcoding : The string describing the color coding format.
+
+  \return The camera capture color coding identifier.
+
+  \exception vpFrameGrabberException::settingError : If the required
+  color coding is not valid.
+
+  This method returns 0 if the string does not match to a color coding string.
+
+  \sa colorCoding2string()
+
+*/
+vp1394TwoGrabber::vp1394TwoColorCoding
+vp1394TwoGrabber::string2colorCoding(string colorcoding)
+{
+  vp1394TwoColorCoding _id;
+
+  for (int i = DC1394_COLOR_CODING_MIN; i <= DC1394_COLOR_CODING_MAX; i ++) {
+    _id = (vp1394TwoColorCoding) i;
+    if (colorcoding.compare(colorCoding2string(_id)) == 0)
+      return _id;
+  };
+
+  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				 "The required color coding is not valid") );
+
+  return (vp1394TwoColorCoding) 0;
 }
 
 #endif
