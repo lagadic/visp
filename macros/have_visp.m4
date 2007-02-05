@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: have_visp2.m4,v 1.4 2006-05-30 08:35:43 fspindle Exp $
+# $Id: have_visp.m4,v 1.3 2007-02-05 16:31:30 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -28,10 +28,10 @@
 # not clear to you.
 #
 # Description:
-#   M4 macro for ViSP-2 detection with configure tool.
+#   M4 macro for ViSP detection with configure tool.
 #
 # Usage:
-#   AC_HAVE_VISP2_IFELSE( IF-FOUND, IF-NOT-FOUND )
+#   AC_HAVE_VISP_IFELSE( IF-FOUND, IF-NOT-FOUND )
 #
 # Description:
 #   This macro locates the ViSP2 development system.  If it is found,
@@ -39,11 +39,11 @@
 #   available to the configure script.
 #
 # Autoconf Variables:
-# > $ac_visp2_desired     true | false (defaults to true)
-# < $ac_visp2_avail       true | false
-# < $ac_visp2_cxxflags    (extra flags the C++ compiler needs)
-# < $ac_visp2_ldflags     (extra flags the linker needs)
-# < $ac_visp2_libs        (link library flags the linker needs)
+# > $ac_visp_desired     true | false (defaults to true)
+# < $ac_visp_avail       true | false
+# < $ac_visp_cxxflags    (extra flags the C++ compiler needs)
+# < $ac_visp_ldflags     (extra flags the linker needs)
+# < $ac_visp_libs        (link library flags the linker needs)
 #
 # Authors:
 #   Fabien Spindler, <Fabien.Spindler@irisa.fr>
@@ -52,46 +52,46 @@
 
 
 
-AC_DEFUN([AC_HAVE_VISP2_IFELSE], [
+AC_DEFUN([AC_HAVE_VISP_IFELSE], [
 AC_PREREQ([2.14a])
 
 # official variables
-ac_visp2_avail=false
-ac_visp2_cppflags=
-ac_visp2_cflags=
-ac_visp2_cxxflags=
-ac_visp2_ldflags=
-ac_visp2_libs=
+ac_visp_avail=false
+ac_visp_cppflags=
+ac_visp_cflags=
+ac_visp_cxxflags=
+ac_visp_ldflags=
+ac_visp_libs=
 
 # internal variables
-ac_visp2_desired=true
-ac_visp2_extrapath="/usr/bin"
+ac_visp_desired=true
+ac_visp_extrapath="/usr/bin"
 
 AC_ARG_WITH([visp-install-bin],
-AC_HELP_STRING([--with-visp-install-bin], [enable use of ViSP2 [[default=yes]]])
+AC_HELP_STRING([--with-visp-install-bin], [enable use of ViSP [[default=yes]]])
 AC_HELP_STRING([--with-visp-install-bin=DIR], [give location of visp-config shell script (/usr/bin by default)]),
   [ case $withval in
-    no)  ac_visp2_desired=false ;;
-    yes) ac_visp2_desired=true ;;
-    *)   ac_visp2_desired=true
-         ac_visp2_extrapath=$withval ;;
+    no)  ac_visp_desired=false ;;
+    yes) ac_visp_desired=true ;;
+    *)   ac_visp_desired=true
+         ac_visp_extrapath=$withval ;;
     esac],
   [])
 
-if $ac_visp2_desired; then
-  ac_visp2_config_script="$ac_visp2_extrapath/visp-config"
+if $ac_visp_desired; then
+  ac_visp_config_script="$ac_visp_extrapath/visp-config"
 
-  AC_CHECK_FILE($ac_visp2_config_script,[cv_visp2_avail=true],
-                 [cv_visp2_avail=false])
-  ac_visp2_avail=$cv_visp2_avail
+  AC_CHECK_FILE($ac_visp_config_script,[cv_visp_avail=true],
+                 [cv_visp_avail=false])
+  ac_visp_avail=$cv_visp_avail
 fi
 
-if $ac_visp2_avail; then
-  ac_visp2_cflags="`$ac_visp2_config_script --cflags`"
-  ac_visp2_libs="`$ac_visp2_config_script --libs`"
+if $ac_visp_avail; then
+  ac_visp_cflags="`$ac_visp_config_script --cflags`"
+  ac_visp_libs="`$ac_visp_config_script --libs`"
   ifelse([$1], , :, [$1])
 else
   ifelse([$2], , :, [$2])
 fi
-]) # AC_HAVE_VISP2_IFELSE()
+]) # AC_HAVE_VISP_IFELSE()
 
