@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.1.1.1 2007-02-06 10:47:23 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.2 2007-02-06 15:23:30 fspindle Exp $
 #
 # Copyright (C) 2007 Inria. All rights reserved.
 #
@@ -127,7 +127,7 @@ ENDIF(UNIX)
 #----------------------------------------------------------------------
 # Third party libraries
 #----------------------------------------------------------------------
-# ViSP-2
+# ViSP
 FIND_PACKAGE(VISP REQUIRED)
 IF(VISP_FOUND)
   INCLUDE(${VISP_USE_FILE})

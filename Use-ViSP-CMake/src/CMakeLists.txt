@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.1.1.1 2007-02-06 10:47:23 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.2 2007-02-06 15:23:30 fspindle Exp $
 #
 # Copyright (C) 2007 Inria. All rights reserved.
 #
@@ -52,7 +52,7 @@ ENDFOREACH(header)
 # Create a top level rule to copy all the headers from src to 
 # include/PROJECT_NAME_LOWER
 #----------------------------------------------------------------------
-ADD_CUSTOM_TARGET(header
+ADD_CUSTOM_TARGET(header ALL
   DEPENDS ${HEADER_IN_INCLUDE_DIR}
   )
 
@@ -67,16 +67,21 @@ ADD_DEPENDENCIES(${PROJECT_INTERN_LIBS} header)
 
 # Append the library version information to the library target
 # properties. 
-SET_TARGET_PROPERTIES(${PROJECT_INTERN_LIBS}
-  PROPERTIES
-  VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-  SOVERSION ${PROJECT_VERSION_PATCH}
+SET_TARGET_PROPERTIES(${PROJECT_INTERN_LIBS} PROPERTIES
+  VERSION ${PROJECT_VERSION_MAJOR}
+  SOVERSION ${PROJECT_VERSION_MAJOR}
   )
 
 #----------------------------------------------------------------------
 # customize install target 
 #----------------------------------------------------------------------
 # install rule for the library
-INSTALL_TARGETS(/lib ${PROJECT_INTERN_LIBS})
+INSTALL(TARGETS ${PROJECT_INTERN_LIBS}
+  DESTINATION lib
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+  )
 # install rule for all the headers
-INSTALL_FILES(/include/${PROJECT_NAME_LOWER} FILES ${HEADER_ALL})
+INSTALL(FILES ${HEADER_ALL}
+  DESTINATION include/${PROJECT_NAME_LOWER}
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+  )
