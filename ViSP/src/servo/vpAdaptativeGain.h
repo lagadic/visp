@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAdaptativeGain.h,v 1.4 2007-01-31 15:13:38 asaunier Exp $
+ * $Id: vpAdaptativeGain.h,v 1.5 2007-02-06 15:13:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -130,7 +130,7 @@ public:  /* Methodes*/
      * resultat.
      *
      * La fonction calcule la valeur de lambda d'apres la valeur de la norme
-     * de l'erreur, comme le fait la fonction #valeur_const.
+     * de l'erreur, comme le fait la fonction valeur_const.
      * La fonction non constante stocke de plus le resultat dans this ->lambda.
      * \param val_e: valeur de la norme de l'erreur.
      * \return: valeur de gain au point courrant.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.6 2007-01-31 15:40:13 asaunier Exp $
+ * $Id: vpImage.h,v 1.7 2007-02-06 15:13:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,23 +70,6 @@ class vpDisplay;
 
   \image html image-data-structure.gif
   \image latex image-data-structure.ps  width=10cm
-
-  \if 0
-  bitmap --------------------|
-                             v
-               -----         --------------------------------------------
-  row -------> | x-|-------->| | | | | | | | |  ...     | | | | | | | | |
-               -----         --------------------------------------------
-	       | x-|-------->| | | | | | | | |  ...     | | | | | | | | |
-               -----         --------------------------------------------
-	       |   |
-               -----
-	       |   |
-               -----
-	       |   |
-               -----
-                 :
-  \endif
 
   Such a structure allows a fast acces to each element of the image.
   if i is the ith rows and j the jth columns the value of this pixel
