@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2007-02-06 15:23:30 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-02-06 15:34:30 fspindle Exp $
 #
 # Copyright (C) 2007 Inria. All rights reserved.
 #
@@ -187,3 +187,50 @@ CONFIGURE_FILE(
 
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
+#----------------------------------------------------------------------
+# For CPack packaging tool
+#----------------------------------------------------------------------
+
+# InstallRequiredSystemLibraries: Hack for Visual Studio support Search for
+# system runtime libraries based on the platform.
+INCLUDE(InstallRequiredSystemLibraries)
+
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_NAME}: An example of CMake project using ViSP as a third party library")
+SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+
+SET(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+SET(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+SET(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+SET(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+
+# The following components are regex's to match anywhere (unless anchored)
+# in absolute path + filename to find files or directories to be excluded
+# from source tarball.
+SET(CPACK_SOURCE_IGNORE_FILES
+"~$"
+"^${PROJECT_SOURCE_DIR}.*/CVS/"
+)
+
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+IF(WIN32 AND NOT UNIX)
+  # There is a bug in NSI that does not handle full unix paths properly. Make
+  # sure there is at least one set of four (4) backlasshes.
+#  SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
+  # CPACK_NSIS_INSTALLED_ICON_NAME icon is the one that shows up in the 
+  # Add/Remove control panel
+  #SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\ViSP.exe")
+  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} My Famous Project")
+  SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.http://www.irisa.fr/lagadic/visp")
+  SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.http://www.irisa.fr/lagadic/visp/what.html")
+  SET(CPACK_NSIS_CONTACT "visp@irisa.fr")
+  SET(CPACK_NSIS_MODIFY_PATH ON)
+ELSE(WIN32 AND NOT UNIX)
+  SET(CPACK_STRIP_FILES "")
+  SET(CPACK_SOURCE_STRIP_FILES "")
+ENDIF(WIN32 AND NOT UNIX)
+SET(CPACK_PACKAGE_EXECUTABLES ${PROJECT_NAME} ${PROJECT_NAME})
+
+INCLUDE(CPack)
