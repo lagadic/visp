@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-02-06 15:34:30 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.4 2007-02-06 15:37:09 fspindle Exp $
 #
 # Copyright (C) 2007 Inria. All rights reserved.
 #
@@ -12,6 +12,14 @@
 # http://www.irisa.fr/lagadic
 #
 # This file is part of the ViSP software.
+#
+# This file may be distributed under the terms of the Q Public License
+# as defined by Trolltech AS of Norway and appearing in the file
+# LICENSE included in the packaging of this file.
+#
+# Licensees holding valid ViSP Professional Edition licenses may
+# use this file in accordance with the ViSP Commercial License
+# Agreement provided with the Software.
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
