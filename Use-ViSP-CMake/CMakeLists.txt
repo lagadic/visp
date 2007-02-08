@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2007-02-06 15:37:09 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.5 2007-02-08 16:58:07 fspindle Exp $
 #
 # Copyright (C) 2007 Inria. All rights reserved.
 #
@@ -239,6 +239,5 @@ ELSE(WIN32 AND NOT UNIX)
   SET(CPACK_STRIP_FILES "")
   SET(CPACK_SOURCE_STRIP_FILES "")
 ENDIF(WIN32 AND NOT UNIX)
-SET(CPACK_PACKAGE_EXECUTABLES ${PROJECT_NAME} ${PROJECT_NAME})
 
 INCLUDE(CPack)
