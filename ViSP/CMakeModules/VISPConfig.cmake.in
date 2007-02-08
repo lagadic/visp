@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: VISPConfig.cmake.in,v 1.12 2007-02-06 14:57:56 fspindle Exp $
+# $Id: VISPConfig.cmake.in,v 1.13 2007-02-08 17:01:47 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,8 +41,9 @@
 #
 #############################################################################
 
-# Tells the user project where to find ViSP headers and third party
-SET(VISP_INCLUDE_DIR "@CMAKE_INSTALL_PREFIX@/include")
+# Tells the user project where to find ViSP headers
+SET(VISP_INCLUDE_DIR "${VISP_DIR}/../include" CACHE FILEPATH "Location of ViSP includes")
+#MESSAGE("VISP_INCLUDE_DIR: ${VISP_INCLUDE_DIR}")
 
 # Tells the user project where to find ViSP third party headers used
 # to compile ViSP. These locations are concatenate to VISP_INCLUDE_DIR
@@ -55,7 +56,7 @@ ENDFOREACH(val ${VISP_EXTERN_INCLUDE_DIR})
 #MESSAGE("VISP_INCLUDE_DIR: ${VISP_INCLUDE_DIR}")
 
 # Tells the user project where to find ViSP library
-SET(VISP_LINK_DIRECTORIES "@CMAKE_INSTALL_PREFIX@/lib")
+SET(VISP_LINK_DIRECTORIES "${VISP_DIR}" CACHE FILEPATH "Location of ViSP library")
 
 # Tells the user project where to find third party libraries used to
 # compile ViSP
@@ -67,14 +68,12 @@ ENDFOREACH(val ${VISP_EXTERN_LINK_DIR})
 #MESSAGE("VISP_LINK_DIRECTORIES: ${VISP_LINK_DIRECTORIES}")
 
 # Tells the user project where to find ViSP build settings
-SET(VISP_BUILD_SETTINGS_FILE 
-  "@CMAKE_INSTALL_PREFIX@/lib/VISPBuildSettings.cmake"
-  )
+SET(VISP_BUILD_SETTINGS_FILE "${VISP_DIR}/VISPBuildSettings.cmake")
 
 # Tell the user project where to find ViSP dependencies
-INCLUDE("@CMAKE_INSTALL_PREFIX@/lib/VISPLibraryDepends.cmake")
+INCLUDE("${VISP_DIR}/VISPLibraryDepends.cmake")
 
-# export source dir for doxygen
+# export source dir for doxygen eventually
 SET(VISP_SOURCE_DIR "@VISP_SOURCE_DIR@")
 
 # Tells the user project ViSP library name
@@ -89,9 +88,7 @@ ENDFOREACH(val ${VISP_EXTERN_LIBS})
 #MESSAGE("VISP_LIBRARIES: ${VISP_LIBRARIES}")
 
 # where to find the USE file to be used by user project
-SET(VISP_USE_FILE
-  "@CMAKE_INSTALL_PREFIX@/lib/VISPUse.cmake"
-  )
+SET(VISP_USE_FILE "${VISP_DIR}/VISPUse.cmake")
 
 IF(BUILD_TEST_COVERAGE)
   # Add build options for test coverage. Currently coverage is only supported
