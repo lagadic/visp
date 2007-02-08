@@ -1,4 +1,13 @@
-ViSP 2.2.1 (released February 5, 2007)
+ViSP 2.4.x 
+  - New Feature
+	- ViSP as a third party library in an other CMake project.
+	  It is now possible to use ViSP as a third party project without
+	  installing ViSP by make install. ViSP can now be used
+	  directly from the build dir, or from the install dir, or
+	  from a package (NSIS, ...)
+	
+----------------------------------------------	
+ViSP 2.4.0 (released February 6, 2007)
   - New Feature
 	- add new framegrabber interface for itifg8 driver from Coreco 
 	  Imaging Technology (http://sourceforge.net/projects/itifg)
