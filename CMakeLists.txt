@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.38 2007-02-01 09:32:55 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.39 2007-02-08 16:59:01 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -713,7 +713,6 @@ ELSE(WIN32 AND NOT UNIX)
   SET(CPACK_STRIP_FILES "")
   SET(CPACK_SOURCE_STRIP_FILES "")
 ENDIF(WIN32 AND NOT UNIX)
-SET(CPACK_PACKAGE_EXECUTABLES "ViSP" "ViSP")
 
 INCLUDE(CPack)
 
