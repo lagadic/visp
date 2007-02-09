@@ -444,8 +444,8 @@ WARN_LOGFILE           =  warning.log
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @VISP_SOURCE_DIR@/src \
-		         @VISP_SOURCE_DIR@/example
+INPUT                  = "@VISP_SOURCE_DIR@/src" \
+		         "@VISP_SOURCE_DIR@/example"
 
 
 # If the value of the INPUT tag contains directories, you can use the 
@@ -480,19 +480,13 @@ EXCLUDE_SYMLINKS       = NO
 # EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude 
 # certain files from those directories.
 
-EXCLUDE_PATTERNS       = *v0* \
-                         *v1* \
-                         *v2* \
-                         *old* \
-                         *klt* \
-                         *new* \
-			 C*
+EXCLUDE_PATTERNS       =
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = @VISP_SOURCE_DIR@/example
+EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example"
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -512,7 +506,7 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see 
 # the \image command).
 
-IMAGE_PATH             = @VISP_SOURCE_DIR@/doc/image
+IMAGE_PATH             = "@VISP_SOURCE_DIR@/doc/image"
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should 
 # invoke to filter for each input file. Doxygen will invoke the filter program 
@@ -642,7 +636,7 @@ HTML_FOOTER            =
 # the style sheet file to the HTML output directory, so don't put your own 
 # stylesheet in the HTML output directory as well, or it will be erased!
 
-HTML_STYLESHEET        = @VISP_SOURCE_DIR@/doc/doxygen.css
+HTML_STYLESHEET        = "@VISP_SOURCE_DIR@/doc/doxygen.css"
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
