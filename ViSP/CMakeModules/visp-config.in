@@ -2,7 +2,7 @@
 
 #############################################################################
 #
-# $Id: visp-config.in,v 1.6 2006-11-08 14:08:25 fspindle Exp $
+# $Id: visp-config.in,v 1.7 2007-02-09 17:33:31 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -39,7 +39,10 @@
 #############################################################################
 
 
-PREFIX="${VISP_CONFIG_SCRIPT_PREFIX}"
+relpath=`dirname $0`
+relpath=`(cd $relpath/..; pwd)`
+
+PREFIX=$relpath
 
 CFLAGS="${VISP_CONFIG_SCRIPT_CFLAGS}"
 
@@ -82,7 +85,7 @@ for arg in $@; do
 	--version) 
 	    echo -n "ViSP $VERSION (Visual Servoing Platform)"
 	    echo ""
-	    echo -n "Copyright (C) 1998-2006 Inria. All rights reserved.";;
+	    echo -n "Copyright (C) 1998-2007 Inria. All rights reserved.";;
 	--dumpversion) echo -n "$VERSION";;
 	*) usage; exit -1 ;;
     esac;
