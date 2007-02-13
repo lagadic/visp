@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma6.cpp,v 1.9 2007-01-29 14:04:36 asaunier Exp $
+ * $Id: testRobotAfma6.cpp,v 1.10 2007-02-13 08:57:52 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,11 +73,11 @@ int main()
     vpCTRACE << "------- set camera XC77 -------------------" << endl;
     robotAfma6.init( vpAfma6::CAMERA_XC77_12MM);
     vpCTRACE << robotAfma6;
-    return 1;
+    return 0;
   }
   catch(...) {
     vpERROR_TRACE(" Test failed");
-    return 0;
+    return -1;
   }
 
 }
