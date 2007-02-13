@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma4.cpp,v 1.6 2006-11-08 08:53:51 fspindle Exp $
+ * $Id: testRobotAfma4.cpp,v 1.7 2007-02-13 08:57:52 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,12 +66,12 @@ int main()
 
     vpRobotAfma4 robotAfma4;
     vpCTRACE << robotAfma4;
-    return 1;
+    return 0;
   }
   catch (...)
   {
     vpERROR_TRACE(" Test failed") ;
-    return 0;
+    return -1;
   }
 }
 
