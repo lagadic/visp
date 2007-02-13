@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.15 2007-01-26 17:40:33 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.16 2007-02-13 09:17:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,6 +65,9 @@
 
 // Defined if GTK library available (either gtk or gtk2).
 #cmakedefine VISP_HAVE_GTK
+
+// Defined if GDI (Graphics Device Interface) library available
+#cmakedefine VISP_HAVE_GDI
 
 // Defined if Direct3D9 library available
 #cmakedefine VISP_HAVE_D3D9

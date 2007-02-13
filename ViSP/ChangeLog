@@ -1,5 +1,6 @@
 ViSP 2.4.x 
   - New Feature
+        - MinGW supported
 	- ViSP as a third party library in an other project.
 	  It is now possible to use ViSP as a third party project without
 	  installing ViSP by make install. ViSP can now be used

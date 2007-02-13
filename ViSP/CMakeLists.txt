@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.39 2007-02-08 16:59:01 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.40 2007-02-13 09:17:41 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -322,6 +322,14 @@ IF(DIRECT3D_FOUND)
   #MESSAGE("DIRECT3D_LIBRARIES = ${DIRECT3D_LIBRARIES}")
 ENDIF(DIRECT3D_FOUND)
 
+# Under Windows, usage of GDI (Graphics Device Interface)
+FIND_PACKAGE(GDI)
+IF(GDI_FOUND)
+  SET(VISP_HAVE_GDI TRUE) # for header vpConfig.h
+  #MESSAGE("DBG VISP_HAVE_GDI= ${VISP_HAVE_GDI}")
+  SET(VISP_EXTERN_LIBS ${GDI_LIBRARIES} ${VISP_EXTERN_LIBS})
+  #MESSAGE("GDI_LIBRARIES = ${GDI_LIBRARIES}")
+ENDIF(GDI_FOUND)
 
 
 #----------------------------------------------------------------------
@@ -713,6 +721,7 @@ ELSE(WIN32 AND NOT UNIX)
   SET(CPACK_STRIP_FILES "")
   SET(CPACK_SOURCE_STRIP_FILES "")
 ENDIF(WIN32 AND NOT UNIX)
+SET(CPACK_PACKAGE_EXECUTABLES "ViSP" "ViSP")
 
 INCLUDE(CPack)
 
