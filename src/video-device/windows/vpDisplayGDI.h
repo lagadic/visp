@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.h,v 1.3 2006-08-23 12:08:17 brenier Exp $
+ * $Id: vpDisplayGDI.h,v 1.4 2007-02-13 09:17:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,7 +36,7 @@
  *****************************************************************************/
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) ) 
+#if ( defined(VISP_HAVE_GDI) )
 
 #ifndef vpDisplayGDI_HH
 #define vpDisplayGDI_HH
@@ -55,21 +55,21 @@
 class VISP_EXPORT vpDisplayGDI : public vpDisplayWin32
 {
 public:
-	
+
 
   vpDisplayGDI();
-  
+
   vpDisplayGDI(vpImage<vpRGBa> &I,
 	       int winx=-1, int winy=-1,
 	       char *_title=NULL);
-  
-  
+
+
   vpDisplayGDI(vpImage<unsigned char> &I,
 	       int winx=-1, int winy=-1,
 	       char *_title=NULL);
-  
+
   ~vpDisplayGDI();
-  
+
 };
 
 #endif

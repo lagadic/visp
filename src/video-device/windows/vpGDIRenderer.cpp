@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.5 2006-09-08 15:54:12 fspindle Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.6 2007-02-13 09:17:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) )
+#if ( defined(VISP_HAVE_GDI) )
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

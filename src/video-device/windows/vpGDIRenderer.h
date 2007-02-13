@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.h,v 1.2 2006-08-21 10:02:43 brenier Exp $
+ * $Id: vpGDIRenderer.h,v 1.3 2007-02-13 09:17:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) ) 
+#if ( defined(VISP_HAVE_GDI) )
 #ifndef vpGDIRenderer_HH
 #define vpGDIRenderer_HH
 
@@ -65,7 +65,7 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 	COLORREF colors[8];
 
 	//font used to draw text
-	HFONT hFont; 
+	HFONT hFont;
 
 	//used to ensure that only one thread at a time is accessing bmp
 	CRITICAL_SECTION CriticalSection;
@@ -74,7 +74,7 @@ public:
 	vpGDIRenderer();
 	~vpGDIRenderer();
 
-	//inits the display. 
+	//inits the display.
 	bool init(HWND hWnd, int width, int height);
 
 	//renders on the window's DC.
