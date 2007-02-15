@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.3 2007-01-30 16:21:58 asaunier Exp $
+ * $Id: displaySequence.cpp,v 1.4 2007-02-15 13:52:37 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -357,7 +357,7 @@ main(int argc, char ** argv)
   unsigned niter=0 ;
   double totaltms =0 ;
   // this is the loop over the image sequence
-  while (iter < opt_nimages)
+  while (iter <= opt_nimages)
     {
       try {
 	double tms = vpTime::measureTimeMs() ;
