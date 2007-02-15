@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.4 2007-02-15 13:52:37 fspindle Exp $
+ * $Id: displaySequence.cpp,v 1.5 2007-02-15 14:02:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"di:p:hf:n:s:"
+#define GETOPTARGS	"di:p:hf:n:s:w"
 
 /*!
 
@@ -106,7 +106,8 @@ to a PGM file.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-p <personal image path>]\n\
- [-f <first image>] [-n <number of images>] [-s <step>] [-d] [-h]\n\
+     [-f <first image>] [-n <number of images>] [-s <step>] \n\
+     [-w] [-d] [-h]\n						      \
  ", name);
 
  fprintf(stdout, "\n\
@@ -144,6 +145,11 @@ SYNOPSIS\n\
      for automatic tests using crontab under Unix or \n\
      using the task manager under Windows.\n\
 \n\
+  -w\n\
+     Wait for a mouse click between two images.\n\
+     If the image display is disabled (using -d)\n\
+     this option is without effect.\n\
+\n\
   -h\n\
      Print the help.\n\n",
 	  ipath.c_str(),ppath.c_str(), first, nimages, step);
@@ -165,12 +171,14 @@ SYNOPSIS\n\
   disabled. This can be usefull for automatic tests using crontab
   under Unix or using the task manager under Windows.
 
+  \param wait : Boolean for waiting a mouse click between two images.
+
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv, string &ipath, string &ppath, 
 		unsigned &first, unsigned &nimages, unsigned &step, 
-		bool &display)
+		bool &display, bool &wait)
 {
   char *optarg;
   int	c;
@@ -183,10 +191,13 @@ bool getOptions(int argc, char **argv, string &ipath, string &ppath,
     case 'f': first = (unsigned) atoi(optarg); break;
     case 'n': nimages = (unsigned) atoi(optarg); break;
     case 's': step = (unsigned) atoi(optarg); break;
-    case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step); return false; break;
+    case 'w': wait = true; break;
+    case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step); 
+      return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, ppath, first, nimages, step); return false; break;
+      usage(argv[0], optarg, ipath, ppath, first, nimages, step); 
+      return false; break;
     }
   }
 
@@ -214,6 +225,7 @@ main(int argc, char ** argv)
   unsigned opt_nimages = 80;
   unsigned opt_step = 1;
   bool opt_display = true;
+  bool opt_wait = false;
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -225,9 +237,13 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages, opt_step, opt_display) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages, 
+		 opt_step, opt_display, opt_wait) == false) {
     exit (-1);
   }
+
+  if ( ! opt_display )
+    opt_wait = false; // turn off the waiting
 
   // Get the option values
   if (!opt_ipath.empty())
@@ -352,45 +368,50 @@ main(int argc, char ** argv)
     }
   }
 
-
-
   unsigned niter=0 ;
   double totaltms =0 ;
   // this is the loop over the image sequence
-  while (iter <= opt_nimages)
-    {
-      try {
-	double tms = vpTime::measureTimeMs() ;
+  while (iter < opt_first + opt_nimages*opt_step) {
+    try {
+      double tms = vpTime::measureTimeMs() ;
 	
-	  // set the new image name
+      // set the new image name
 	 
-	  if (opt_ppath.empty()){
-	     s.str("");
-	     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-	     filename = dirname + s.str();
-	  }
-	  else {
-	   sprintf(cfilename, opt_ppath.c_str(), iter) ;
-	    filename = cfilename;
-	  }
-
-	// read the image
-	vpImageIo::readPGM(I, filename);
-	if (opt_display) {
-	  // Display the image
-	  vpDisplay::display(I) ;
-	  // Flush the display
-	  vpDisplay::flush(I) ;
-	}
+      if (opt_ppath.empty()){
+	s.str("");
+	s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+	filename = dirname + s.str();
+      }
+      else {
+	sprintf(cfilename, opt_ppath.c_str(), iter) ;
+	filename = cfilename;
+      }
+	  
+      cout << "read : " << filename << endl;
+      // read the image
+      vpImageIo::readPGM(I, filename);
+      if (opt_display) {
+	// Display the image
+	vpDisplay::display(I) ;
+	// Flush the display
+	vpDisplay::flush(I) ;
+      }
+      if (opt_wait) {
+	cout << "A click in the image to continue..." << endl;
+	// Wait for a blocking mouse click
+	vpDisplay::getClick(I) ;
+      }
+      else {
 	// Synchronise the loop to 40 ms
 	vpTime::wait(tms, 40) ;
-	niter++ ;
       }
-      catch(...) {
-	exit(-1) ;
-      }
-      iter += opt_step ;
+      niter++ ;
     }
+    catch(...) {
+      exit(-1) ;
+    }
+    iter += opt_step ;
+  }
 }
 #else
 int
