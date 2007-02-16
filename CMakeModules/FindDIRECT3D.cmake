@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECT3D.cmake,v 1.2 2007-01-15 15:03:41 asaunier Exp $
+# $Id: FindDIRECT3D.cmake,v 1.3 2007-02-16 16:18:20 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -47,24 +47,40 @@ SET(DIRECT3D_FOUND "NO")
 IF(WIN32)
   # Find Direct3D Include Directory
   FIND_PATH(DIRECT3D_INCLUDE_DIR d3dx9.h
-    "C:/Program Files/Microsoft DirectX SDK/Include"
-    "C:/DXSDK/Include"
-    $ENV{DXSDK_DIR}/Include
-    DOC "What is the path where the file d3dx9.h can be found"
+ 	"$ENV{DXSDK_DIR}/Include"
+    	"C:/Program Files/Microsoft DirectX SDK/Include"
+    	"C:/DXSDK/Include"
+   	NO_DEFAULT_PATH
+   	DOC "What is the path where the file d3dx9.h can be found"
+  )
+  FIND_PATH(DIRECT3D_INCLUDE_DIR d3dx9.h
+   	NO_DEFAULT_PATH
+   	DOC "What is the path where the file d3dx9.h can be found"
   )
 
     # if Direct3D include dir found, then find Direct3D libraries
     IF(DIRECT3D_INCLUDE_DIR)
       FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
+	"$ENV{DXSDK_DIR}/Lib"	
+	"$ENV{DXSDK_DIR}/Lib/x86"
 	"C:/Program Files/Microsoft DirectX SDK/Lib/x86"
         "C:/DXSDK/Include/Lib/x86"
-        $ENV{DXSDK_DIR}/Lib/x86
+        NO_DEFAULT_PATH
         DOC "Where can the Direct3D d3d9 library be found"
       )
+      FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
+        DOC "Where can the Direct3D d3d9 library be found"
+      )
+
       FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
+	"$ENV{DXSDK_DIR}/Lib/x86"
+	"$ENV{DXSDK_DIR}/Lib/"
 	"C:/Program Files/Microsoft DirectX SDK/Lib/x86"
         "C:/DXSDK/Include/Lib/x86"
-        $ENV{DXSDK_DIR}/Lib/x86
+        NO_DEFAULT_PATH
+        DOC "Where can the Direct3D d3dx9 library be found"
+      )
+      FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
         DOC "Where can the Direct3D d3dx9 library be found"
       )
 
@@ -91,8 +107,8 @@ ENDIF(WIN32)
 IF(DIRECT3D_FOUND)
 
   SET(DIRECT3D_LIBRARIES
-    ${DIRECT3D_d3d9_LIBRARY}
-    ${DIRECT3D_d3dx9_LIBRARY}
+    "${DIRECT3D_d3d9_LIBRARY}"
+    "${DIRECT3D_d3dx9_LIBRARY}"
   )
 ELSE(DIRECT3D_FOUND)
   # make FIND_PACKAGE friendly
