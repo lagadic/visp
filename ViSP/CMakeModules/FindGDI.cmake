@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGDI.cmake,v 1.1 2007-02-13 09:17:41 fspindle Exp $
+# $Id: FindGDI.cmake,v 1.2 2007-02-16 16:18:20 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -51,6 +51,8 @@ IF(WIN32)
     )
   ELSE(MINGW)
     FIND_LIBRARY(GDI_LIBRARY gdi32
+      "$ENV{DXSDK_DIR}/Lib"
+      "C:/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/Lib"
       "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
       "C:/Program Files/Microsoft Platform SDK/Lib"
       "C:/DXSDK/Include/Lib"

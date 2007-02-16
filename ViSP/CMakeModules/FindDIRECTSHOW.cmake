@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECTSHOW.cmake,v 1.2 2007-02-13 09:17:41 fspindle Exp $
+# $Id: FindDIRECTSHOW.cmake,v 1.3 2007-02-16 16:18:20 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -47,34 +47,57 @@ SET(DIRECTSHOW_FOUND "NO")
 IF(WIN32 AND NOT MINGW)
   # Find DirectX Include Directory
   FIND_PATH(DIRECTX_INCLUDE_DIR ddraw.h
-    "C:/DXSDK/include"
-    "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
-    "C:/Program Files/Microsoft DirectX SDK (February 2006)/Include"
-    "C:/Program Files/Microsoft DirectX 9.0 SDK (June 2005)/Include"
-    DOC "What is the path where the file ddraw.h can be found"
+ 	"$ENV{DXSDK_DIR}/Include"
+    	"C:/DXSDK/include"
+    	"C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
+    	"C:/Program Files/Microsoft DirectX SDK (February 2006)/Include"
+    	"C:/Program Files/Microsoft DirectX 9.0 SDK (June 2005)/Include"
+    	DOC "What is the path where the file ddraw.h can be found"
   )
 
   # if DirectX found, then find DirectShow include directory
   IF(DIRECTX_INCLUDE_DIR)
     FIND_PATH(DIRECTSHOW_INCLUDE_DIR dshow.h
-      "C:/DXSDK/include"
-      "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
-      "C:/Program Files/Microsoft Platform SDK/Include"
+	"$ENV{WINSDK_HOME}/Include"
+      	"$ENV{DXSDK_DIR}/Include"
+	"C:/Microsoft SDKs/windows/v6.0/Include"
+      	"C:/DXSDK/include"
+      	"C:/Program Files/Microsoft Platform SDK/Include"
+      	"C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
+     NO_DEFAULT_PATH
+      DOC "What is the path where the file dshow.h can be found"
+    )
+    FIND_PATH(DIRECTSHOW_INCLUDE_DIR dshow.h
       DOC "What is the path where the file dshow.h can be found"
     )
 
     # if DirectShow include dir found, then find DirectShow libraries
     IF(DIRECTSHOW_INCLUDE_DIR)
       FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY strmiids
-        "C:/DXSDK/lib"
+        "$ENV{WINSDK_HOME}/Lib"
+	"$ENV{DXSDK_DIR}/Lib"
+	"C:/Microsoft SDKs/windows/v6.0/Lib"
+	"C:/DXSDK/lib"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
         "C:/Program Files/Microsoft Platform SDK/Lib"
+	NO_DEFAULT_PATH
         DOC "Where can the DirectShow strmiids library be found"
       )
+      FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY strmiids
+        DOC "Where can the DirectShow strmiids library be found"
+      )
+
       FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY quartz
+	"$ENV{WINSDK_HOME}/Lib"
+	"$ENV{DXSDK_DIR}/Lib"
         "C:/DXSDK/lib"
+	"C:/Microsoft SDKs/windows/v6.0/Lib"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
         "C:/Program Files/Microsoft Platform SDK/Lib"
+        DOC "Where can the DirectShow quartz library be found"
+	NO_DEFAULT_PATH
+      )
+      FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY quartz
         DOC "Where can the DirectShow quartz library be found"
       )
 
