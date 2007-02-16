@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.16 2007-02-16 09:28:32 fspindle Exp $
+ * $Id: vpDot.cpp,v 1.17 2007-02-16 15:03:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -198,7 +198,7 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v,
 {
 
   // Test if we are in the image
-  if ( (u < 0) || (v < 0) || (u >= I.getCols()) || (v >= I.getRows()) ) {
+  if ( (u < 0) || (v < 0) || (u >= I.getWidth()) || (v >= I.getHeight()) ) {
     return  vpDot::out ;
   }
   if (I[v][u] >= threshold)
@@ -235,7 +235,7 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v,
       connexe(I,u-1,v, threshold, mean_value, u_cog,v_cog, n) ;
   }
 
-  if (u+1 <  I.getCols())
+  if (u+1 <  I.getWidth())
   {
     if (I[v][u+1] >= threshold)
       connexe(I,u+1,v,threshold, mean_value, u_cog, v_cog, n) ;
@@ -245,7 +245,7 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v,
     if (I[v-1][u] >=threshold)
       connexe(I,u, v-1,threshold, mean_value, u_cog, v_cog, n) ;
   }
-  if  (v+1 < I.getRows())
+  if  (v+1 < I.getHeight())
   {
     if (I[v+1][u] >=threshold)
       connexe(I,u,v+1,threshold, mean_value, u_cog, v_cog, n) ;
@@ -259,19 +259,19 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v,
 	connexe(I,u-1,v-1,threshold, mean_value, u_cog, v_cog, n) ;
     }
 
-    if ( (u+1 <  I.getCols()) && (v-1 >= 0 ) )
+    if ( (u+1 <  I.getWidth()) && (v-1 >= 0 ) )
     {
 
       if (I[v-1][u+1] >=threshold)
 	connexe(I,u+1,v-1,threshold, mean_value, u_cog, v_cog, n) ;
     }
-    if  ( (v+1 < I.getRows()) && (u-1 >= 0) )
+    if  ( (v+1 < I.getHeight()) && (u-1 >= 0) )
     {
 
       if (I[v+1][u-1] >=threshold)
 	connexe(I,u-1,v+1,threshold, mean_value, u_cog, v_cog, n) ;
     }
-    if  ( (v+1 < I.getRows()) && (u+1 < I.getCols()) )
+    if  ( (v+1 < I.getHeight()) && (u+1 < I.getWidth()) )
     {
 
       if (I[v+1][u+1] >=threshold)
