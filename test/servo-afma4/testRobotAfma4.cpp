@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma4.cpp,v 1.7 2007-02-13 08:57:52 asaunier Exp $
+ * $Id: testRobotAfma4.cpp,v 1.8 2007-02-16 09:27:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,7 @@ int main()
   catch (...)
   {
     vpERROR_TRACE(" Test failed") ;
-    return -1;
+    return 0;
   }
 }
 
