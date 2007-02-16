@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowSampleGrabberI.h,v 1.3 2006-07-20 09:35:41 brenier Exp $
+ * $Id: vpDirectShowSampleGrabberI.h,v 1.4 2007-02-16 16:12:03 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,9 +43,9 @@
 #include <visp/vpConfig.h>
 #if ( defined(VISP_HAVE_DIRECTSHOW) ) 
 
-#include <dshow.h>
 #include <qedit.h>
 #include <stdio.h>
+#include <dshow.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>

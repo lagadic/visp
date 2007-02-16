@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.h,v 1.3 2006-07-20 09:35:41 brenier Exp $
+ * $Id: vpDirectShowGrabberImpl.h,v 1.4 2007-02-16 16:12:03 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,9 +43,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <dshow.h>
 #include <atlbase.h>
 #include <qedit.h>
+#include <dshow.h>
 
 #include <visp/vpFrameGrabber.h>
 #include <visp/vpFrameGrabberException.h>

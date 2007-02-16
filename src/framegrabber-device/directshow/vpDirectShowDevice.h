@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowDevice.h,v 1.1 2006-06-22 15:00:30 brenier Exp $
+ * $Id: vpDirectShowDevice.h,v 1.2 2007-02-16 16:12:03 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,10 +43,10 @@
 #include <visp/vpConfig.h>
 #if ( defined(VISP_HAVE_DIRECTSHOW) ) 
 
-#include <dshow.h>
 #include <atlbase.h>
 #include <iostream>
 #include <string>
+#include <dshow.h>
 
 using namespace std;
 
