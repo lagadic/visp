@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.1 2006-08-24 08:29:52 brenier Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.2 2007-02-16 16:15:00 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -379,8 +379,14 @@ bool vpD3DRenderer::render()
   pd3dDevice->UpdateTexture(pd3dText,pd3dVideoText);
 
   //Displays this texture as a sprite
+  
+#if (D3DX_SDK_VERSION <= 9)
+  pSprite->Begin(); //
+  pSprite->Draw(pd3dVideoText, &r, NULL, NULL, NULL, NULL, 0xFFFFFFFF );
+#else
   pSprite->Begin(0);
   pSprite->Draw(pd3dVideoText, &r, NULL, NULL, 0xFFFFFFFF );
+#endif
   pSprite->End();
 
   //Ends the scene.
