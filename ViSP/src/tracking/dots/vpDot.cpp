@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.15 2007-01-18 16:02:07 fspindle Exp $
+ * $Id: vpDot.cpp,v 1.16 2007-02-16 09:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,6 @@ void vpDot::init()
   cog_ufloat = 0 ;
   cog_vfloat = 0 ;
 
-  threshold_min = 200 ;
   compute_moment = false ;
   graphics = false ;
   nbMaxPoint = 10000 ;
@@ -91,7 +90,7 @@ vpDot::vpDot() : vpTracker()
   \param u : dot location (column)
   \param v : dot location (row)
  */
-vpDot::vpDot(const int u, const int v) : vpTracker()
+vpDot::vpDot(const unsigned u, const unsigned v) : vpTracker()
 {
   init() ;
 
@@ -114,8 +113,8 @@ vpDot::vpDot(const double u,const  double v) : vpTracker()
 
   init() ;
 
-  cog_u = (int)u ;
-  cog_v = (int)v ;
+  cog_u = (unsigned)u ;
+  cog_v = (unsigned)v ;
 
   cog_ufloat = u ;
   cog_vfloat = v ;
@@ -170,13 +169,13 @@ vpDot::operator=(const vpDot& pt)
   return *this ;
 }
 
-int
+bool
 vpDot::operator!=(const vpDot& m)
 {
   return ((cog_u!=m.cog_v) || (cog_v!=m.cog_v)) ;
 }
 
-int
+bool
 vpDot::operator==(const vpDot& m)
 {
   return ((cog_u==m.cog_u) && (cog_v==m.cog_v)) ;
@@ -193,7 +192,8 @@ vpDot::operator==(const vpDot& m)
   \return vpDot::out if an error occurs, vpDot::in otherwise.
 */
 int
-vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int threshold,
+vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v, 
+	       unsigned char threshold,
 	       double &mean_value, double &u_cog, double &v_cog, double &n)
 {
 
@@ -297,6 +297,8 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v, int threshold,
 
   \warning The content of the image is modified.
 
+  \exception vpTrackingException::featureLostError : If the tracking fails.
+
   \sa connexe()
 */
 void
@@ -316,11 +318,11 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 
 #if 0
   // Original version
-  if (  connexe(I, (int)u, (int)v, threshold, mean_value,
+  if (  connexe(I, (unsigned)u, (unsigned)v, threshold, mean_value,
 		u_cog, v_cog, npoint) == vpDot::out)
   {
     bool sol = false ;
-    int pas  ;
+    unsigned pas  ;
     for (pas = 2 ; pas <= 25 ; pas ++ )if (sol==false)
     {
       for (int k=-1 ; k <=1 ; k++) if (sol==false)
@@ -331,7 +333,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	  Lu.kill() ;
 	  Lv.kill() ;
 	  mean_value = 0;
-	  if (connexe(I, (int)(u+k*pas),(int)(v+l*pas), threshold,
+	  if (connexe(I, (unsigned)(u+k*pas),(unsigned)(v+l*pas), threshold,
 		      mean_value,u_cog, v_cog, npoint) != vpDot::out)
 	  {
 	    sol = true ; u += k*pas ; v += l*pas ;
@@ -347,18 +349,18 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   }
 #else
   // If the dot is not found, search around using a spiral
-  if (  connexe(I,(int)u,(int)v, threshold, mean_value,
+  if (  connexe(I,(unsigned)u,(unsigned)v, threshold, mean_value,
 		u_cog, v_cog, npoint) == vpDot::out)
   {
 
     bool sol = false ;
 
-    int right = 1;
-    int botom = 1;
-    int left = 2;
-    int up = 2;
+    unsigned right = 1;
+    unsigned botom = 1;
+    unsigned left = 2;
+    unsigned up = 2;
     double u_ = u, v_ = v;
-    int k;
+    unsigned k;
 
     // balayage en spiral à partir du centre pour trouver le point le plus proche
 
@@ -369,7 +371,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lu.kill() ;
 	Lv.kill() ;
 	mean_value = 0;
-	if (connexe(I, (int)u_+k, (int)(v_), threshold, mean_value,
+	if (connexe(I, (unsigned)u_+k, (unsigned)(v_), threshold, mean_value,
 		    u_cog, v_cog, npoint) != vpDot::out) {
 	  sol = true; u = u_+k; v = v_;
 	}
@@ -384,7 +386,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (int)(u_), (int)(v_+k), threshold, mean_value,
+	if (connexe(I, (unsigned)(u_), (unsigned)(v_+k), threshold, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true; u = u_; v = v_+k;
@@ -400,7 +402,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (int)(u_-k), (int)(v_), threshold, mean_value,
+	if (connexe(I, (unsigned)(u_-k), (unsigned)(v_), threshold, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true ; u = u_-k; v = v_;
@@ -416,7 +418,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (int)(u_), (int)(v_-k), threshold, mean_value,
+	if (connexe(I, (unsigned)(u_), (unsigned)(v_-k), threshold, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true ; u = u_; v = v_-k;
@@ -437,7 +439,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   Lu.front() ; Lv.front() ;
   while (!Lu.outside())
   {
-    int u,v ;
+    unsigned u,v ;
     u = Lu.value() ; v = Lv.value() ;
     I[v][u] = 255 ;
     Lu.next() ;
@@ -452,8 +454,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   v = v_cog ;
 
   // Initialize the threshold for the next call to track()
-  threshold = (int) (mean_value * 0.8);
-  threshold_min = (int) ( mean_value * 0.6);
+  threshold = (unsigned char) (mean_value * 0.8);
 
   //vpCTRACE << "threshold: " << threshold << endl;
 
@@ -487,6 +488,9 @@ vpDot::setNbMaxPoint(double nb)
   Wait a user click in a white area in the image I. The clicked pixel
   will be the starting point from which the dot will be tracked.
 
+  The threshold used to segment the dot is set to 80 percent of the
+  gray level of clicked pixel.
+
   The sub pixel coordinates of the dot are updated. To get the center
   of gravity coordinates of the dot, use get_u() and get_v(). To
   compute the moments use setComputeMoments(true) before a call to
@@ -506,8 +510,7 @@ vpDot::initTracking(vpImage<unsigned char>& I)
 
   while (vpDisplay::getClick(I,i1,j1)!=true) ;
 
-  threshold = (int) (I[i1][j1] * 0.8);
-  threshold_min = (int) (I[i1][j1] * 0.6);
+  threshold = (unsigned char) (I[i1][j1] * 0.8);
 
   double u,v ;
   u = j1 ;
@@ -516,8 +519,8 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   cog_ufloat = u ;
   cog_vfloat = v ;
 
-  if ((u-(int)u) < 0.5)   cog_u = (int)u ; else  cog_u = (int)u+1 ;
-  if ((v-(int)v) < 0.5)   cog_v = (int)v ; else  cog_v = (int)v+1 ;
+  if ((u-(unsigned)u) < 0.5)   cog_u = (unsigned)u ; else  cog_u = (unsigned)u+1 ;
+  if ((v-(unsigned)v) < 0.5)   cog_v = (unsigned)v ; else  cog_v = (unsigned)v+1 ;
 
   try {
     track( I );
@@ -533,6 +536,9 @@ vpDot::initTracking(vpImage<unsigned char>& I)
 
   Initialize the tracking for a dot supposed to be located at (u,v) and
   updates the dot characteristics (center of gravity, moments).
+
+  The threshold used to segment the dot is set to 80 percent of the
+  gray level of the pixel (u,v).
 
   The sub pixel coordinates of the dot are updated. To get the center
   of gravity coordinates of the dot, use get_u() and get_v(). To
@@ -553,7 +559,7 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   \sa track(), get_u(), get_v()
 */
 void
-vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
+vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v)
 {
 
   cog_ufloat = u ;
@@ -562,8 +568,56 @@ vpDot::initTracking(vpImage<unsigned char>& I, int u, int v)
   cog_u = u ;
   cog_v = v ;
 
-  threshold = (int) (I[cog_v][cog_u] * 0.8);
-  threshold_min = (int) (I[cog_v][cog_u] * 0.6);
+  threshold = (unsigned char) (I[cog_v][cog_u] * 0.8);
+
+  try {
+    track( I );
+  }
+  catch(...)
+  {
+    vpERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*!
+
+  Initialize the tracking for a dot supposed to be located at (u,v) and
+  updates the dot characteristics (center of gravity, moments).
+
+
+  The sub pixel coordinates of the dot are updated. To get the center
+  of gravity coordinates of the dot, use get_u() and get_v(). To
+  compute the moments use setComputeMoments(true) before a call to
+  initTracking().
+
+  \warning The content of the image modified since we call track() to
+  compute the dot characteristics.
+
+  \param I : Image to process.
+
+  \param u : Dot location or starting point (column pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param v : Dot location or starting point (row pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param threshold : Gray level threshold used to segment the dot;
+  value comprised between 0 and 255.
+
+  \sa track(), get_u(), get_v()
+*/
+void
+vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v, 
+		    unsigned char threshold)
+{
+
+  cog_ufloat = u ;
+  cog_vfloat = v ;
+
+  cog_u = u ;
+  cog_v = v ;
+  this->threshold = threshold;
 
   try {
     track( I );
@@ -609,8 +663,8 @@ vpDot::track(vpImage<unsigned char> &I)
   cog_ufloat = u ;
   cog_vfloat = v ;
 
-  if ((u-(int)u) < 0.5)   cog_u = (int)u ; else  cog_u = (int)u+1 ;
-  if ((v-(int)v) < 0.5)   cog_v = (int)v ; else  cog_v = (int)v+1 ;
+  if ((u-(unsigned)u) < 0.5)   cog_u = (unsigned)u ; else  cog_u = (unsigned)u+1 ;
+  if ((v-(unsigned)v) < 0.5)   cog_v = (unsigned)v ; else  cog_v = (unsigned)v+1 ;
 }
 
 /*!

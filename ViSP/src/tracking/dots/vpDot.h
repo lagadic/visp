@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.11 2007-01-18 16:02:07 fspindle Exp $
+ * $Id: vpDot.h,v 1.12 2007-02-16 09:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -82,13 +82,13 @@ public:
 private:
 
   //! internal use only
-  vpList<int> Lu, Lv ;
+  vpList<unsigned> Lu, Lv ;
 
   //! Type of connexity
   ConnexityEnum connexity;
 
   //! coordinates of the point center of gravity
-  int cog_u, cog_v ;
+  unsigned cog_u, cog_v ;
   //! coordinates (float) of the point center of gravity
   double cog_ufloat, cog_vfloat ;
 
@@ -145,15 +145,15 @@ public :
 public:
   void init() ;
   vpDot() ;
-  vpDot(const int u, const int v) ;
+  vpDot(const unsigned u, const unsigned v) ;
   vpDot(const double u, const double v) ;
   vpDot(const vpDot& c) ;
   ~vpDot() ;
 
 public:
   vpDot& operator =(const vpDot& f) ;
-  int  operator ==(const vpDot& m);
-  int  operator !=(const vpDot& m);
+  bool operator ==(const vpDot& m);
+  bool operator !=(const vpDot& m);
 
 
 public:
@@ -180,7 +180,7 @@ public:
 
 
   */
-  void   get_u(vpList<int> & u_list) { u_list = Lu; };
+  void   get_u(vpList<unsigned> & u_list) { u_list = Lu; };
   /*!
 
   Return the list of the "v" coordinates (column) of all the pixels on the dot
@@ -190,10 +190,10 @@ public:
   is update after a call to track().
 
   */
-  void   get_v(vpList<int> & v_list) { v_list = Lv; };
+  void   get_v(vpList<unsigned> & v_list) { v_list = Lv; };
 
-  void set_u(double u) { cog_ufloat = u ; cog_u = (int)u ; }
-  void set_v(double v) { cog_vfloat = v ; cog_v = (int)v ; }
+  void set_u(double u) { cog_ufloat = u ; cog_u = (unsigned)u ; }
+  void set_v(double v) { cog_vfloat = v ; cog_v = (unsigned)v ; }
 
   /*!
     Set the type of connexity: 4 or 8.
@@ -216,12 +216,12 @@ private:
       out
     } ;
   double nbMaxPoint ;
-  int connexe(vpImage<unsigned char>& I, int u, int v, int threshold, 
+  int connexe(vpImage<unsigned char>& I, unsigned u, unsigned v, 
+	      unsigned char threshold, 
 	      double &mean_value, double &u_cog, double &v_cog, double &n);
   void COG(vpImage<unsigned char> &I,double& u, double& v) ;
 
-  int threshold ;
-  int threshold_min ;
+  unsigned char threshold ;
 
   //! flag : true moment are computed
   bool compute_moment ;
@@ -243,7 +243,9 @@ public:
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
   void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, int u, int v) ;
+  void initTracking(vpImage<unsigned char> &I, unsigned u, unsigned v) ;
+  void initTracking(vpImage<unsigned char> &I, unsigned u, unsigned v, 
+		    unsigned char threshold) ;
   void track(vpImage<unsigned char> & I) ;
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
   //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels)
