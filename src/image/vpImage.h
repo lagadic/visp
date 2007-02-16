@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.7 2007-02-06 15:13:26 fspindle Exp $
+ * $Id: vpImage.h,v 1.8 2007-02-16 15:02:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,6 +98,10 @@ public:
   inline  int getRows() const { return nrows ; }
   //! get the number of columns in the image
   inline  int getCols() const { return ncols ; }
+  //! get the image height.
+  inline  unsigned getHeight() const { return ((unsigned) nrows); }
+  //! get the image width.
+  inline  unsigned getWidth() const { return ((unsigned) ncols); }
 
   inline int getNumberOfPixel() const{ return npixels; }
 
