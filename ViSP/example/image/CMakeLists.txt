@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.8 2007-01-30 16:21:58 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.9 2007-02-22 16:35:36 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -44,6 +44,7 @@ SET (SOURCE
   imageDiskRW.cpp
   displaySequence.cpp
   displayGDI.cpp
+  displayD3D.cpp
   displayGTK.cpp
   displayX.cpp
   displayXMulti.cpp
@@ -68,6 +69,7 @@ ENDFOREACH(source)
 ADD_TEST(imageDiskRW imageDiskRW)
 ADD_TEST(displaySequence displaySequence -d)
 ADD_TEST(displayGDI displayGDI -d)
+ADD_TEST(displayD3D displayD3D -d)
 ADD_TEST(displayGTK displayGTK -d)
 ADD_TEST(displayX displayX -d)
 ADD_TEST(displayXMulti displayXMulti -d)
