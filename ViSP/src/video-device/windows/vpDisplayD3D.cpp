@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayD3D.cpp,v 1.3 2007-02-26 17:26:44 fspindle Exp $
+ * $Id: vpDisplayD3D.cpp,v 1.4 2007-02-26 18:34:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,7 +61,7 @@ vpDisplayD3D::vpDisplayD3D(): vpDisplayWin32(new vpD3DRenderer()){}
 \param _title : Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(const vpImage<vpRGBa> &I,
+vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I,
 			   int winx, int winy,
 			   char *_title)
   : vpDisplayWin32(new vpD3DRenderer())
@@ -79,7 +79,7 @@ vpDisplayD3D::vpDisplayD3D(const vpImage<vpRGBa> &I,
 \param _title  Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(const vpImage<unsigned char> &I,
+vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I,
 			   int winx, int winy,
 			   char *_title)
   : vpDisplayWin32(new vpD3DRenderer())

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.3 2007-02-26 17:26:44 fspindle Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.4 2007-02-26 18:34:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -247,7 +247,7 @@ void vpD3DRenderer::initView(float WindowWidth, float WindowHeight)
   \param imBuffer Destination buffer.
   \param pitch Pitch of the destination texture.
 */
-void RGBaToTexture(vpImage<vpRGBa>& I, unsigned char * imBuffer, 
+void vpRGBaToTexture(const vpImage<vpRGBa>& I, unsigned char * imBuffer, 
 		   unsigned pitch)
 {
   unsigned j = I.getWidth();
@@ -275,7 +275,7 @@ void RGBaToTexture(vpImage<vpRGBa>& I, unsigned char * imBuffer,
   \param imBuffer Destination buffer.
   \param pitch Pitch of the destination texture.
 */
-void GreyToTexture(vpImage<unsigned char>& I, unsigned char * imBuffer, 
+void vpGreyToTexture(const vpImage<unsigned char>& I, unsigned char * imBuffer, 
 		   unsigned pitch)
 {
   unsigned j = I.getWidth();
@@ -323,7 +323,7 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa>& im)
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this texture with the image data (converted to bgra)
-      RGBaToTexture(im, buf, pitch);		
+      vpRGBaToTexture(im, buf, pitch);		
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
@@ -360,7 +360,7 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char>& im)
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this texture with the image data (converted to bgra)
-      GreyToTexture(im, buf, pitch);		
+      vpGreyToTexture(im, buf, pitch);		
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
@@ -468,7 +468,7 @@ void vpD3DRenderer::setPixel(unsigned i, unsigned j,
 */
 void vpD3DRenderer::drawLine(unsigned i1, unsigned j1, 
 			     unsigned i2, unsigned j2, 
-			     vpColor::vpColorType col, unsigned e, int style)
+			     vpColor::vpColorType col, unsigned e, unsigned style)
 {
   if(i1<0 || j1<0 || i2<0 || j2<0 || e<0)
     {
@@ -559,8 +559,8 @@ void vpD3DRenderer::drawRect(unsigned i, unsigned j,
       unsigned pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
-      long x=0;
-      long y=0;
+      unsigned x=0;
+      unsigned y=0;
 
       //draws the top horizontal line
       for(x; x<width ; x++)
@@ -612,7 +612,7 @@ void vpD3DRenderer::clear(vpColor::vpColorType c)
       unsigned pitch = d3dLRect.Pitch;
       long * buf = (long *) d3dLRect.pBits;
 
-      vpColor::vpColorType color = colors[c];
+      long color = colors[(int) c];
       long * end = (long*)((long)buf + (pitch * nbRows));
       
       //fills the whole image
@@ -826,10 +826,10 @@ void vpD3DRenderer::drawCross(unsigned i,unsigned j, unsigned size,
       unsigned pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
-      int x;         //xpos
+      unsigned x;         //xpos
 
       //y-coordinate of the line in the locked rectangle base
-      int y =( i < (size/2) ) ?
+      unsigned y =( i < (size/2) ) ?
 	i
 	: (size/2);
 
@@ -899,6 +899,7 @@ void vpD3DRenderer::drawArrow(unsigned i1,unsigned j1,
   double a = j2 - j1 ;
   double b = i2 - i1 ;
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
+  int _l = l;
 
   //Will contain the texture's surface drawing context
   HDC hDCMem;
@@ -934,7 +935,7 @@ void vpD3DRenderer::drawArrow(unsigned i1,unsigned j1,
       double i4,j4 ;
 
       double t = 0 ;
-      while (t<=l)
+      while (t<=_l)
 	{
 	  i4 = i3 - b*t ;
 	  j4 = j3 + a*t ;
@@ -946,7 +947,7 @@ void vpD3DRenderer::drawArrow(unsigned i1,unsigned j1,
 	}
 
       t = 0 ;
-      while (t>= -l)
+      while (t>= -_l)
 	{
 	  i4 = i3 - b*t ;
 	  j4 = j3 + a*t ;
