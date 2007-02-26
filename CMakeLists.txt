@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.40 2007-02-13 09:17:41 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.41 2007-02-26 14:30:36 marchand Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -238,9 +238,26 @@ SET(USE_V4L2   ON)
 SET(USE_GSL    ON)
 SET(USE_GTK2   ON)
 
+
+SET(USE_OPENCV   ON)
+
 #----------------------------------------------------------------------
 # Third party software : 
 #----------------------------------------------------------------------
+
+# open CV  
+IF(USE_OPENCV)
+  FIND_PACKAGE(OpenCV)
+  IF(OpenCV_FOUND)
+    SET(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OpenCV_INCLUDE_DIR})
+    SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR} 
+      ${OpenCV_EXE_LINKER_FLAGS} -L${OpenCV_LINK_DIRECTORIES})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OpenCV_LIBRARIES})
+    LINK_DIRECTORIES(${OpenCV_LINK_DIRECTORIES})
+  ENDIF(OpenCV_FOUND)
+ENDIF(USE_OPENCV)
+
 
 # gnu scientific library
 IF(USE_GSL)
