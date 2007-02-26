@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayD3D.cpp,v 1.2 2007-01-31 17:08:18 asaunier Exp $
+ * $Id: vpDisplayD3D.cpp,v 1.3 2007-02-26 17:26:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 /*! 
 \file vpDisplayD3D.cpp
 \brief windows 32 display using D3D
- */ 
+*/ 
 
 #include <visp/vpConfig.h>
 #if ( defined(WIN32) & defined(VISP_HAVE_D3D9) ) 
@@ -53,17 +53,17 @@ vpDisplayD3D::vpDisplayD3D(): vpDisplayWin32(new vpD3DRenderer()){}
 
 /*!
 
-  \brief Constructor : initialize a display to visualize a RGBa image
-  (32 bits).
+\brief Constructor : initialize a display to visualize a RGBa image
+(32 bits).
 
-  \param I : Image to be displayed (note that image has to be initialized).
-  \param winx, winy : The window is set at position x,y (column index, row index).
-  \param _title : Window's title.
+\param I : Image to be displayed (note that image has to be initialized).
+\param winx, winy : The window is set at position x,y (column index, row index).
+\param _title : Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I,
-		  int winx, int winy,
-		  char *_title)
+vpDisplayD3D::vpDisplayD3D(const vpImage<vpRGBa> &I,
+			   int winx, int winy,
+			   char *_title)
   : vpDisplayWin32(new vpD3DRenderer())
 {
   init(I,winx,winy,_title);
@@ -71,17 +71,17 @@ vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I,
 
 /*!
 
-  \brief Constructor : initialize a display to visualize a grayscale image
-  (8 bits).
+\brief Constructor : initialize a display to visualize a grayscale image
+(8 bits).
 
-  \param I  Image to be displayed (note that image has to be initialized).
-  \param winx, winy The window is set at position x,y (column index, row index).
-  \param _title  Window's title.
+\param I  Image to be displayed (note that image has to be initialized).
+\param winx, winy The window is set at position x,y (column index, row index).
+\param _title  Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I,
-		  int winx, int winy,
-		  char *_title)
+vpDisplayD3D::vpDisplayD3D(const vpImage<unsigned char> &I,
+			   int winx, int winy,
+			   char *_title)
   : vpDisplayWin32(new vpD3DRenderer())
 {
   init(I,winx,winy,_title);

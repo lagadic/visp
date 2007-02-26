@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.h,v 1.1 2006-07-18 14:43:30 brenier Exp $
+ * $Id: vpWin32Window.h,v 1.2 2007-02-26 17:26:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,62 +63,63 @@ class vpWin32Display;
 class VISP_EXPORT vpWin32Window
 {
 
-	HINSTANCE hInst;
+  HINSTANCE hInst;
 
-	//! Window's handle
-	HWND hWnd;
+  //! Window's handle
+  HWND hWnd;
 
-	//! Window is initialized
-	bool initialized;
-	//! Handle for the initialization semaphore
-	HANDLE semaInit;
+  //! Window is initialized
+  bool initialized;
+  //! Handle for the initialization semaphore
+  HANDLE semaInit;
 
-	//! Handle for the getClick semaphore
-	HANDLE semaClick;
+  //! Handle for the getClick semaphore
+  HANDLE semaClick;
 
-	//! If there is a getClick demand
-	bool waitForClick;
-	//! If there is a getClickUp demand
-	bool waitForClickUp;
-	//! X coordinate of the click
-	int clickX;
-	//! Y coordinate of the click
-	int clickY;
-	//! Button used for the click
-	int clickButton;
+  //! If there is a getClick demand
+  bool waitForClick;
+  //! If there is a getClickUp demand
+  bool waitForClickUp;
+  //! X coordinate of the click
+  int clickX;
+  //! Y coordinate of the click
+  int clickY;
+  //! Button used for the click
+  int clickButton;
 	
-	//! True if the window's class has already been registered
-	static bool registered;
+  //! True if the window's class has already been registered
+  static bool registered;
 
-	//! The renderer used by the window
-	vpWin32Renderer * renderer;
+  //! The renderer used by the window
+  vpWin32Renderer * renderer;
 
 
-public:
+ public:
 
-	vpWin32Window(vpWin32Renderer * rend = NULL);
-	~vpWin32Window();
+  vpWin32Window(vpWin32Renderer * rend = NULL);
+  ~vpWin32Window();
 
-	//! Returns the displayed image's width
-	int getImageWidth(){ return renderer->getImageWidth(); }
-	//! Returns the displayed image's height
-	int getImageHeight(){ return renderer->getImageHeight(); }
-	//! Returns the window's handle
-	HWND getHWnd(){ return hWnd;}
+  //! Returns the displayed image's width
+  int getImageWidth(){ return renderer->getImageWidth(); }
+  //! Returns the displayed image's height
+  int getImageHeight(){ return renderer->getImageHeight(); }
+  //! Returns the window's handle
+  HWND getHWnd(){ return hWnd;}
 
-	//! Returns true if the window is initialized
-	bool isInitialized(){ return initialized; }
+  //! Returns true if the window is initialized
+  bool isInitialized(){ return initialized; }
 
-	//! Initialize the window
-	void initWindow(string title, int posx, int posy, int w, int h);
+  //! Initialize the window
+  void initWindow(string title, int posx, int posy, int w, int h);
 
-	// Friend classes
-	friend class vpDisplayWin32;
-	friend class vpDirect3DDisplay;
-	friend class vpDisplayGDI;
+  // Friend classes
+  friend class vpDisplayWin32;
+  friend class vpDirect3DDisplay;
+  friend class vpDisplayGDI;
 
-	//! The message loop
-	friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+  //! The message loop
+  friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, 
+				  WPARAM wParam, LPARAM lParam);
 };
 
 #endif

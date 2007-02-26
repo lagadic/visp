@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.4 2006-10-04 07:46:07 fspindle Exp $
+ * $Id: vpDisplayWin32.h,v 1.5 2007-02-26 17:26:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,7 +49,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
-	Used to pass parameters to the window's thread.
+  Used to pass parameters to the window's thread.
 */
 struct threadParam
 {
@@ -63,10 +63,10 @@ struct threadParam
   int y;
 
   //! Width of the window's client area.
-  int w;
+  unsigned w;
 
   //! Height of the window's client area.
-  int h;
+  unsigned h;
 
   //! Title of the window.
   char * title;
@@ -87,124 +87,133 @@ struct threadParam
 */
 class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 {
-protected:
-	//! Maximum delay for window initialization
-	static const int MAX_INIT_DELAY = 5000;
+ protected:
+  //! Maximum delay for window initialization
+  static const int MAX_INIT_DELAY = 5000;
 
-	//! Handle of the window's thread.
-	HANDLE hThread;
+  //! Handle of the window's thread.
+  HANDLE hThread;
 
-	//! Id of the window's thread.
-	DWORD threadId;
+  //! Id of the window's thread.
+  DWORD threadId;
 
-	//! Initialization status.
-	bool iStatus;
+  //! Initialization status.
+  bool iStatus;
 
-	//! The window.
-	vpWin32Window window;
+  //! The window.
+  vpWin32Window window;
 
-	//! Function used to launch the window in a thread.
-	friend void createWindow(threadParam * param);
+  //! Function used to launch the window in a thread.
+  friend void vpCreateWindow(threadParam * param);
 
-public:
+ public:
 
-	vpDisplayWin32(vpWin32Renderer * rend = NULL);
+  vpDisplayWin32(vpWin32Renderer * rend = NULL);
 
-	vpDisplayWin32(vpImage<vpRGBa> &I,
-		int winx=-1, int winy=-1,
-		char *title=NULL);
+  vpDisplayWin32(vpImage<vpRGBa> &I,
+		 int winx=-1, int winy=-1,
+		 char *title=NULL);
 
-	vpDisplayWin32(vpImage<unsigned char> &I,
-		int winx=-1, int winy=-1,
-		char *title=NULL);
+  vpDisplayWin32(vpImage<unsigned char> &I,
+		 int winx=-1, int winy=-1,
+		 char *title=NULL);
 
-	virtual ~vpDisplayWin32();
-
-
-
-	//! Initialization function
-	void init(vpImage<unsigned char> &I,
-		int winx=-1, int winy=-1,
-		char *title=NULL)  ;
-
-	//! Initialization function
-	void init(vpImage<vpRGBa> &I,
-		int winx=-1, int winy=-1,
-		char *title=NULL)  ;
-
-	//! Initialization function
-	void init(int cols, int rows,
-		int winx=-1, int winy=-1 ,
-		char *title=NULL) ;
-
-	//! Sets the window's position
-	void setWindowPosition(int _winx, int _winy);
-
-	//! Changes the window's title
-	void flushTitle(const char *string);
-
-	//! Displays a 8bits image
-	void displayImage(vpImage<vpRGBa> &I);
-	//! Displays a 32 bits image
-	void displayImage(vpImage<unsigned char> &I);
-
-	//! Closes the display
-	void closeDisplay();
-
-	//! Not used by this Display
-	void flushDisplay(){}
-
-	//! Clears the whole window
-	void clearDisplay(int c=vpColor::white);
-
-	//! Gets the window pixmap and put it in vpRGBa image
-	void getImage(vpImage<vpRGBa> &I);
-
-protected:
-	//! Used to wait for the window to be initialized
-	void waitForInit();
-
-	//! Display a point at coordinates (i,j) in the display window
-	void displayPoint(int i,int j,int col);
-
-	//! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
-	void displayLine(int i1, int j1, int i2, int j2, int col, int e=1);
-
-	void displayRectangle(int i, int j, int width, int height, int col);
-
-	//! Display a circle at coordinates (i,j) in the display window.
-	void displayCircle(int i, int j, int r, int c);
-
-	//! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
-	//! window.
-	void displayDotLine(int i1, int j1, int i2, int j2, int col, int e=1);
+  virtual ~vpDisplayWin32();
 
 
 
+  //! Initialization function
+  void init(vpImage<unsigned char> &I,
+	    int winx=-1, int winy=-1,
+	    char *title=NULL)  ;
 
-	//! Display a cross at coordinates (i,j) in the display window
-	void displayCross(int i,int j, int size,int col);
-	//! Display a large cross at coordinates (i,j) in the display window
-	void displayCrossLarge(int i,int j, int size,int col);
+  //! Initialization function
+  void init(vpImage<vpRGBa> &I,
+	    int winx=-1, int winy=-1,
+	    char *title=NULL)  ;
 
-	//! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
-	//! window
-	void displayArrow(int i1,int j1, int i2, int j2, int col=1, int L=4,int l=2);
+  //! Initialization function
+  void init(unsigned width, unsigned height,
+	    int winx=-1, int winy=-1 ,
+	    char *title=NULL) ;
 
-	void displayCharString(int i,int j,char *s, int c=vpColor::green);
+  //! Sets the window's position
+  void setWindowPosition(int _winx, int _winy);
+
+  //! Changes the window's title
+  void flushTitle(const char *string);
+
+  //! Displays a 8bits image
+  void displayImage(const vpImage<vpRGBa> &I);
+  //! Displays a 32 bits image
+  void displayImage(const vpImage<unsigned char> &I);
+
+  //! Closes the display
+  void closeDisplay();
+
+  //! Not used by this Display
+  void flushDisplay(){}
+
+  //! Clears the whole window
+  void clearDisplay(vpColor::vpColorType c=vpColor::white);
+
+  //! Gets the window pixmap and put it in vpRGBa image
+  void getImage(vpImage<vpRGBa> &I);
+
+ protected:
+  //! Used to wait for the window to be initialized
+  void waitForInit();
+
+  //! Display a point at coordinates (i,j) in the display window
+  void displayPoint(unsigned i,unsigned j, vpColor::vpColorType col);
+
+  //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
+  void displayLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
+		   vpColor::vpColorType col, unsigned e=1);
+
+  void displayRectangle(unsigned i, unsigned j, 
+			unsigned width, unsigned height, 
+			vpColor::vpColorType col);
+
+  //! Display a circle at coordinates (i,j) in the display window.
+  void displayCircle(unsigned i, unsigned j, unsigned r,
+		     vpColor::vpColorType c);
+
+  //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
+  //! window.
+  void displayDotLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
+		      vpColor::vpColorType col, unsigned e=1);
+
+  //! Display a cross at coordinates (i,j) in the display window
+  void displayCross(unsigned i,unsigned j, unsigned size,
+		    vpColor::vpColorType col);
+  //! Display a large cross at coordinates (i,j) in the display window
+  void displayCrossLarge(unsigned i,unsigned j, unsigned size,
+			 vpColor::vpColorType col);
+
+  //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
+  //! window
+  void displayArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2, 
+		    vpColor::vpColorType col=vpColor::white,
+		    unsigned L=4,unsigned l=2);
+
+  void displayCharString(unsigned i,unsigned j,char *s, 
+			 vpColor::vpColorType c=vpColor::green);
 
 
 
-	bool  getClick(int& i, int& j);
+  bool  getClick(unsigned& i, unsigned& j);
 
-	//!  return true when button is pressed
-	bool  getClick(int& i, int& j, int& button);
+  //!  return true when button is pressed
+  bool  getClick(unsigned& i, unsigned& j, 
+		 vpMouseButton::vpMouseButtonType& button);
 
-	//! return true when  button is released
-	bool  getClickUp(int& i, int& j, int& button);
+  //! return true when  button is released
+  bool  getClickUp(unsigned& i, unsigned& j, 
+		   vpMouseButton::vpMouseButtonType& button);
 
-	//! wait for a click
-	void  getClick();
+  //! wait for a click
+  void  getClick();
 
 };
 #endif

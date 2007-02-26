@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.h,v 1.1 2006-08-24 08:29:52 brenier Exp $
+ * $Id: vpD3DRenderer.h,v 1.2 2007-02-26 17:26:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,7 @@
   \class vpD3DRenderer.h
   
   \brief Display under windows using Direct3D9.
-         Is used by vpD3DDisplay to do the drawing.
+  Is used by vpD3DDisplay to do the drawing.
 
 */
 class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
@@ -93,31 +93,35 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
  public:
 
-  bool init(HWND hwnd, int width, int height);
+  bool init(HWND hwnd, unsigned width, unsigned height);
   bool render();
 
   vpD3DRenderer();
   ~vpD3DRenderer();
 
-  void setImg(vpImage<vpRGBa>& im);
+  void setImg(const vpImage<vpRGBa>& im);
 
-  void setImg(vpImage<unsigned char>& im);
+  void setImg(const vpImage<unsigned char>& im);
 
-  void setPixel(int x, int y, int color);
+  void setPixel(unsigned x, unsigned y, vpColor::vpColorType color);
 
-  void drawLine(int i1, int j1, int i2, int j2, int col, int e, int style=PS_SOLID);
+  void drawLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
+		vpColor::vpColorType col, unsigned e, unsigned style=PS_SOLID);
 
-  void drawRect(int i, int j, int width, int height, int col, bool fill=false);
+  void drawRect(unsigned i, unsigned j, unsigned width, unsigned height, 
+		vpColor::vpColorType col, bool fill=false);
 
-  void clear(int c);
+  void clear(vpColor::vpColorType c);
 
-  void drawCircle(int i, int j, int r, int c);
+  void drawCircle(unsigned i, unsigned j, unsigned r, vpColor::vpColorType c);
 
-  void drawText(int i, int j, char * s, int c);
+  void drawText(unsigned i, unsigned j, char * s, vpColor::vpColorType c);
 
-  void drawCross(int i,int j, int size, int col, int e=1);
+  void drawCross(unsigned i,unsigned j, unsigned size, 
+		 vpColor::vpColorType col, unsigned e=1);
 
-  void drawArrow(int i1,int j1, int i2, int j2, int col, int L,int l);
+  void drawArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2, 
+		 vpColor::vpColorType col, unsigned L,unsigned l);
 
   void getImage(vpImage<vpRGBa> &I);
 
@@ -131,7 +135,9 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
     Sub function for circle drawing.
     Circle drawing is based on Bresenham 's circle algorithm.
   */
-  void subDrawCircle(int i, int j, int x, int y, int col, unsigned char* buf, int pitch, int maxX, int maxY);
+  void subDrawCircle(unsigned i, unsigned j, unsigned x, unsigned y, 
+		     vpColor::vpColorType col, unsigned char* buf, 
+		     unsigned pitch, unsigned maxX, unsigned maxY);
 
 
   /*!
@@ -145,7 +151,10 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
     \param maxY The maximum y value (equals to the height of the locked rectangle).
 
   */
-  inline void setBufferPixel(unsigned char* buf, int pitch, int x, int y, int color, int maxX, int maxY)
+  inline void setBufferPixel(unsigned char* buf, unsigned pitch, 
+			     unsigned x, unsigned y, 
+			     vpColor::vpColorType color, 
+			     unsigned maxX, unsigned maxY)
     {
       if(x>=0 && y>=0 && x<=maxX && y<=maxY)
 	*(long*)(buf + (y*pitch) + (x<<2)) = colors[color];	

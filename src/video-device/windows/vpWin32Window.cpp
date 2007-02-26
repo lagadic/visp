@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.cpp,v 1.2 2006-08-21 10:02:43 brenier Exp $
+ * $Id: vpWin32Window.cpp,v 1.3 2007-02-26 17:26:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,243 +59,249 @@ _declspec(thread) vpWin32Window * window;
 bool vpWin32Window::registered = false;
 
 /*!
-	The message callback
+  The message callback
 */
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	//the first time this callback is executed, put the window in initialized state
-	if(window != NULL)
+  //the first time this callback is executed, put the window in initialized state
+  if(window != NULL)
+    {
+      if(!window->isInitialized())
 	{
-		if(!window->isInitialized())
-		{
-			window->initialized = true;
-			ReleaseSemaphore(window->semaInit,1,NULL);
-		}
+	  window->initialized = true;
+	  ReleaseSemaphore(window->semaInit,1,NULL);
 	}
+    }
 
-	switch (message) 
-	{
-		case vpWM_DISPLAY:
-			//redraw the whole window
-			InvalidateRect(window->getHWnd(), NULL, true);
-			UpdateWindow(window->getHWnd());
-			break;
+  switch (message) 
+    {
+    case vpWM_DISPLAY:
+      //redraw the whole window
+      InvalidateRect(window->getHWnd(), NULL, true);
+      UpdateWindow(window->getHWnd());
+      break;
 
 
-		//Beginning of mouse input handlers
+      //Beginning of mouse input handlers
 
-		case vpWM_GETCLICK:
-			window->waitForClick = true;
-			break;
+    case vpWM_GETCLICK:
+      window->waitForClick = true;
+      break;
 
-		case vpWM_GETCLICKUP:
-			window->waitForClickUp = true;
-			break;
+    case vpWM_GETCLICKUP:
+      window->waitForClickUp = true;
+      break;
 		
 		
-		case WM_LBUTTONDOWN:
-			//if there has been a "click demand"
-			if(window->waitForClick) 
-			{	
-					window->clickX = GET_X_LPARAM(lParam);
-					window->clickY = GET_Y_LPARAM(lParam);
+    case WM_LBUTTONDOWN:
+      //if there has been a "click demand"
+      if(window->waitForClick) 
+	{	
+	  window->clickX = GET_X_LPARAM(lParam);
+	  window->clickY = GET_Y_LPARAM(lParam);
 					
-					//if the demand was for the left button or any button
-					if( (window->clickButton == vpNO_BUTTON_QUERY) || (window->clickButton == vpDisplay::button1))
-					{
-						ReleaseSemaphore(window->semaClick,1,NULL);
-						window->waitForClick = false;
-					}
-			}
-			break;
+	  //if the demand was for the left button or any button
+	  if( (window->clickButton == vpNO_BUTTON_QUERY) ||
+	      (window->clickButton == vpMouseButton::button1))
+	    {
+	      ReleaseSemaphore(window->semaClick,1,NULL);
+	      window->waitForClick = false;
+	    }
+	}
+      break;
 
-		case WM_RBUTTONDOWN:
-			//if there has been a "click demand"
-			if(window->waitForClick) 
-			{	
-				window->clickX = GET_X_LPARAM(lParam);
-				window->clickY = GET_Y_LPARAM(lParam);
+    case WM_RBUTTONDOWN:
+      //if there has been a "click demand"
+      if(window->waitForClick) 
+	{	
+	  window->clickX = GET_X_LPARAM(lParam);
+	  window->clickY = GET_Y_LPARAM(lParam);
 
-				//if the demand was for the right button or any button
-				if( (window->clickButton == vpNO_BUTTON_QUERY) || (window->clickButton == vpDisplay::button2))
-				{
-					ReleaseSemaphore(window->semaClick,1,NULL);
-					window->waitForClick = false;
-				}
-			}
-			break;
+	  //if the demand was for the right button or any button
+	  if( (window->clickButton == vpNO_BUTTON_QUERY) 
+	      || (window->clickButton == vpMouseButton::button2))
+	    {
+	      ReleaseSemaphore(window->semaClick,1,NULL);
+	      window->waitForClick = false;
+	    }
+	}
+      break;
 
-		case WM_LBUTTONUP:
-			if(window->waitForClickUp) 
-			{	
-					window->clickX = GET_X_LPARAM(lParam);
-					window->clickY = GET_Y_LPARAM(lParam);
+    case WM_LBUTTONUP:
+      if(window->waitForClickUp) 
+	{	
+	  window->clickX = GET_X_LPARAM(lParam);
+	  window->clickY = GET_Y_LPARAM(lParam);
 					
-					if( (window->clickButton == vpNO_BUTTON_QUERY) || (window->clickButton == vpDisplay::button1))
-					{
-						ReleaseSemaphore(window->semaClick,1,NULL);
-						window->waitForClick = false;
-					}
-			}
-			break;
+	  if( (window->clickButton == vpNO_BUTTON_QUERY) 
+	      || (window->clickButton == vpMouseButton::button1))
+	    {
+	      ReleaseSemaphore(window->semaClick,1,NULL);
+	      window->waitForClick = false;
+	    }
+	}
+      break;
 
-		case WM_RBUTTONUP:
-			if(window->waitForClickUp) 
-			{	
-				window->clickX = GET_X_LPARAM(lParam);
-				window->clickY = GET_Y_LPARAM(lParam);
+    case WM_RBUTTONUP:
+      if(window->waitForClickUp) 
+	{	
+	  window->clickX = GET_X_LPARAM(lParam);
+	  window->clickY = GET_Y_LPARAM(lParam);
 
-				if( (window->clickButton == vpNO_BUTTON_QUERY) || (window->clickButton == vpDisplay::button2))
-				{
-					ReleaseSemaphore(window->semaClick,1,NULL);
-					window->waitForClick = false;
-				}
-			}
-			break;
+	  if( (window->clickButton == vpNO_BUTTON_QUERY) 
+	      || (window->clickButton == vpMouseButton::button2))
+	    {
+	      ReleaseSemaphore(window->semaClick,1,NULL);
+	      window->waitForClick = false;
+	    }
+	}
+      break;
 
 
-		case WM_COMMAND:
+    case WM_COMMAND:
 			
-			break;
+      break;
 
-			//we must prevent the window from erasing the background each time a repaint is needed
-		case WM_ERASEBKGND:
-			return (LRESULT)1; 
+      //we must prevent the window from erasing the background each time a
+      //repaint is needed
+    case WM_ERASEBKGND:
+      return (LRESULT)1; 
 
-		case WM_PAINT:
-				//render the display
-				window->renderer->render();
-			break;
+    case WM_PAINT:
+      //render the display
+      window->renderer->render();
+      break;
 
-		case vpWM_CLOSEDISPLAY:
-			//cleanup code here, if needed
-			//destroys the window
-			DestroyWindow(hWnd);
-			break;
+    case vpWM_CLOSEDISPLAY:
+      //cleanup code here, if needed
+      //destroys the window
+      DestroyWindow(hWnd);
+      break;
 
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	return 0;
+    case WM_DESTROY:
+      PostQuitMessage(0);
+      break;
+    default:
+      return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+  return 0;
 }
 
 /*!
-	Constructor.
+  Constructor.
 */
 vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
 {
-	renderer = rend;
+  renderer = rend;
 
-	//creates the semaphores
-	semaInit = CreateSemaphore(NULL,0,1,NULL);
-	semaClick = CreateSemaphore(NULL,0,1,NULL);
+  //creates the semaphores
+  semaInit = CreateSemaphore(NULL,0,1,NULL);
+  semaClick = CreateSemaphore(NULL,0,1,NULL);
 
-	//no queries directly after initialization
-	waitForClick = false;
-	waitForClickUp = false;
-	clickButton = vpNO_BUTTON_QUERY; 
+  //no queries directly after initialization
+  waitForClick = false;
+  waitForClickUp = false;
+  clickButton = vpNO_BUTTON_QUERY; 
 }
 
 /*!
-	Destructor.
+  Destructor.
 */
 vpWin32Window::~vpWin32Window()
 {
-	delete renderer;
-	CloseHandle(semaInit);
-	CloseHandle(semaClick);
+  delete renderer;
+  CloseHandle(semaInit);
+  CloseHandle(semaClick);
 }
 
 
 /*!
-	A standard window creation procedure.
-	Initialize the renderer and associate it with this thread
-	\param title String to display in the window's titlebar
-	\param posx Initial window X position
-	\param posy Initial window Y position
-	\param w Initial window's width
-	\param h Initial window's height
+  A standard window creation procedure.
+  Initialize the renderer and associate it with this thread
+  \param title String to display in the window's titlebar
+  \param posx Initial window X position
+  \param posy Initial window Y position
+  \param w Initial window's width
+  \param h Initial window's height
 
 */
 void vpWin32Window::initWindow(string title, int posx, int posy, int w, int h)
 {
-	//the window's style
-	DWORD style = WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX |WS_MAXIMIZEBOX;
-	const char g_szClassName[] = "ViSPWindowClass";
+  //the window's style
+  DWORD style = WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX |WS_MAXIMIZEBOX;
+  const char g_szClassName[] = "ViSPWindowClass";
 	
-	RECT rect;
-	rect.left=0;
-	rect.right=w;
-	rect.top=0;
-	rect.bottom=h;
+  RECT rect;
+  rect.left=0;
+  rect.right=w;
+  rect.top=0;
+  rect.bottom=h;
 
-	AdjustWindowRectEx(&rect, style, false, 0);
+  AdjustWindowRectEx(&rect, style, false, 0);
 
-	//the window's required dimensions to have a client area of w*h
-	int windowW = rect.right - rect.left - 4;
-	int windowH = rect.bottom - rect.top - 4;
+  //the window's required dimensions to have a client area of w*h
+  int windowW = rect.right - rect.left - 4;
+  int windowH = rect.bottom - rect.top - 4;
 
-	//now we register the window's class
-	WNDCLASSEX wcex;
+  //now we register the window's class
+  WNDCLASSEX wcex;
 
-	wcex.cbSize = sizeof(WNDCLASSEX); 
+  wcex.cbSize = sizeof(WNDCLASSEX); 
 
-	wcex.style			= CS_HREDRAW | CS_VREDRAW | CS_NOCLOSE;
-	wcex.lpfnWndProc	= (WNDPROC)WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInst;
-	wcex.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
-	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= NULL;
-	wcex.lpszClassName	= g_szClassName;
-	wcex.hIconSm		= LoadIcon(NULL, IDI_APPLICATION);
+  wcex.style			= CS_HREDRAW | CS_VREDRAW | CS_NOCLOSE;
+  wcex.lpfnWndProc	= (WNDPROC)WndProc;
+  wcex.cbClsExtra		= 0;
+  wcex.cbWndExtra		= 0;
+  wcex.hInstance		= hInst;
+  wcex.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
+  wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+  wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+  wcex.lpszMenuName	= NULL;
+  wcex.lpszClassName	= g_szClassName;
+  wcex.hIconSm		= LoadIcon(NULL, IDI_APPLICATION);
 
-	//we register it only if it is not yet registered
-	if(!registered)
+  //we register it only if it is not yet registered
+  if(!registered)
+    {
+      if(!RegisterClassEx(&wcex))
 	{
-		if(!RegisterClassEx(&wcex))
-		{
-			throw vpDisplayException(vpDisplayException::cannotOpenWindowError,
-				"Can't register the window's class!");
-		}
-		else{ registered = true; }
+	  throw vpDisplayException(vpDisplayException::cannotOpenWindowError,
+				   "Can't register the window's class!");
 	}
+      else{ registered = true; }
+    }
 	
-	//creates the window
-	hWnd = CreateWindow(g_szClassName, title.c_str(), style,
-						posx, posy, windowW, windowH, NULL, NULL, hInst, NULL);
+  //creates the window
+  hWnd = CreateWindow(g_szClassName, title.c_str(), style,
+		      posx, posy, windowW, windowH, NULL, NULL, hInst, NULL);
 
-	if (hWnd == NULL)
+  if (hWnd == NULL)
+    {
+      throw vpDisplayException(vpDisplayException::cannotOpenWindowError, 
+			       "Can't create the window!");
+    }
+
+  //needed if we want to access it from the callback method (message handler)
+  window = this;
+
+  //initialize the renderer
+  renderer->init(hWnd, w, h);
+
+  //displays the window
+  ShowWindow(hWnd, SW_SHOWDEFAULT);
+  UpdateWindow(hWnd);
+
+  MSG msg;
+
+  //starts the message loop
+  while (GetMessage(&msg, NULL, 0, 0)) 
+    {
+      if (!TranslateAccelerator(msg.hwnd, NULL, &msg)) 
 	{
-		throw vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create the window!");
+	  TranslateMessage(&msg);
+	  DispatchMessage(&msg);
 	}
-
-	//needed if we want to access it from the callback method (message handler)
-	window = this;
-
-	//initialize the renderer
-	renderer->init(hWnd, w, h);
-
-	//displays the window
-	ShowWindow(hWnd, SW_SHOWDEFAULT);
-	UpdateWindow(hWnd);
-
-	MSG msg;
-
-	//starts the message loop
-	while (GetMessage(&msg, NULL, 0, 0)) 
-	{
-		if (!TranslateAccelerator(msg.hwnd, NULL, &msg)) 
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
+    }
 }
 
 #endif
