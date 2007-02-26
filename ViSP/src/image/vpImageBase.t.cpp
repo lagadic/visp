@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageBase.t.cpp,v 1.6 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpImageBase.t.cpp,v 1.7 2007-02-26 16:39:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,21 +54,21 @@
 /*!
   \brief Image initialisation
 
-  Allocate memory for an [_nrows x _ncols] image
+  Allocate memory for an [height x width] image
 
   Set all the element of the bitmap to value
 
   \exception vpException::memoryAllocationError
 
-  \sa vpImage::init(_nrows, _ncols)
+  \sa vpImage::init(height, width)
 */
 template<class Type>
 void
-vpImage<Type>::init(int _nrows, int _ncols, Type value)
+vpImage<Type>::init(unsigned height, unsigned width, Type value)
 {
   try
   {
-    init(_nrows,_ncols) ;
+    init(height,width) ;
   }
   catch(vpException me)
   {
@@ -76,7 +76,7 @@ vpImage<Type>::init(int _nrows, int _ncols, Type value)
     throw ;
   }
 
-  for (int i=0  ; i < npixels ;  i++)
+  for (unsigned i=0  ; i < npixels ;  i++)
     bitmap[i] = value ;
 }
 
@@ -84,7 +84,7 @@ vpImage<Type>::init(int _nrows, int _ncols, Type value)
 /*!
   \brief Image initialization
 
-  Allocate memory for an [_nrows x _ncols] image
+  Allocate memory for an [height x width] image
 
   Element of the bitmap are not initialized
 
@@ -97,10 +97,10 @@ vpImage<Type>::init(int _nrows, int _ncols, Type value)
 */
 template<class Type>
 void
-vpImage<Type>::init(int _nrows, int _ncols)
+vpImage<Type>::init(unsigned height, unsigned width)
 {
 
-  if (_nrows != nrows) {
+  if (height != this->height) {
     if (row != NULL)  {
       vpDEBUG_TRACE(10,"Destruction row[]");
       delete [] row;
@@ -108,7 +108,7 @@ vpImage<Type>::init(int _nrows, int _ncols)
     }
   }
 
-  if ((_nrows != nrows) || (_ncols != ncols))
+  if ((height != this->height) || (width != this->width))
   {
     if (bitmap != NULL) {
       vpDEBUG_TRACE(10,"Destruction bitmap[]") ;
@@ -119,10 +119,10 @@ vpImage<Type>::init(int _nrows, int _ncols)
 
 
 
-  ncols = _ncols ;
-  nrows = _nrows ;
+  this->width = width ;
+  this->height = height ;
 
-  npixels=ncols*nrows;
+  npixels=width*height;
 
 
   if (bitmap == NULL)  bitmap = new  Type[npixels] ;
@@ -135,7 +135,7 @@ vpImage<Type>::init(int _nrows, int _ncols)
 		      "cannot allocate bitmap ")) ;
   }
 
-  if (row == NULL)  row = new  Type*[nrows] ;
+  if (row == NULL)  row = new  Type*[height] ;
 //  vpERROR_TRACE("Allocate row %p",row) ;
   if (row == NULL)
   {
@@ -144,15 +144,15 @@ vpImage<Type>::init(int _nrows, int _ncols)
 		      "cannot allocate row ")) ;
   }
 
-  int i ;
-  for ( i =0  ; i < nrows ; i++)
-    row[i] = bitmap + i*ncols ;
+  unsigned i ;
+  for ( i =0  ; i < height ; i++)
+    row[i] = bitmap + i*width ;
 }
 
 /*!
   \brief Constructor
 
-  Allocate memory for an [_nrows x _ncols] image
+  Allocate memory for an [height x width] image
 
   Element of the bitmap are set to zero
 
@@ -162,21 +162,21 @@ vpImage<Type>::init(int _nrows, int _ncols)
 
   \exception vpException::memoryAllocationError
 
-  \sa vpImage::init(_nrows, _ncols)
+  \sa vpImage::init(height, width)
 */
 template<class Type>
-vpImage<Type>::vpImage(int _nrows, int _ncols)
+vpImage<Type>::vpImage(unsigned height, unsigned width)
 {
   bitmap = NULL ;
   row = NULL ;
 
   display =  NULL ;
-  nrows = ncols = 0 ;
+  this->height = this->width = 0 ;
   initDisplay = false;
 
   try
   {
-    init(_nrows,_ncols,0) ;
+    init(height,width,0) ;
   }
   catch(vpException me)
   {
@@ -188,7 +188,7 @@ vpImage<Type>::vpImage(int _nrows, int _ncols)
 /*!
   \brief Constructor
 
-  Allocate memory for an [_nrows x _ncols] image
+  Allocate memory for an [height x width] image
 
   set all the element of the bitmap to value
 
@@ -198,20 +198,20 @@ vpImage<Type>::vpImage(int _nrows, int _ncols)
 
   \return MEMORY_FAULT if memory allocation is impossible, else OK
 
-  \sa vpImage::init(_nrows, _ncols, value)
+  \sa vpImage::init(height, width, value)
 */
 template<class Type>
-vpImage<Type>::vpImage (int _nrows, int _ncols, Type value)
+vpImage<Type>::vpImage (unsigned height, unsigned width, Type value)
 {
   bitmap = NULL ;
   row = NULL ;
 
   display =  NULL ;
-  nrows = ncols = 0 ;
+  this->height = this->width = 0 ;
   initDisplay = false;
   try
   {
-    init(_nrows,_ncols,value) ;
+    init(height,width,value) ;
   }
   catch(vpException me)
   {
@@ -227,7 +227,7 @@ vpImage<Type>::vpImage (int _nrows, int _ncols, Type value)
 
   set all the element of the bitmap to value
 
-  \sa vpImage::resize(_nrows, _ncols) for memory allocation
+  \sa vpImage::resize(height, width) for memory allocation
 */
 template<class Type>
 vpImage<Type>::vpImage()
@@ -237,7 +237,7 @@ vpImage<Type>::vpImage()
 
   display =  NULL ;
 
-  nrows = ncols = 0 ;
+  this->height = this->width = 0 ;
 
   initDisplay = false;
 
@@ -246,7 +246,7 @@ vpImage<Type>::vpImage()
 /*!
   \brief resize the image : Image initialization
 
-  Allocate memory for an [_nrows x _ncols] image
+  Allocate memory for an [height x width] image
 
   Element of the bitmap are not initialized
 
@@ -256,15 +256,15 @@ vpImage<Type>::vpImage()
 
   \exception vpException::memoryAllocationError
 
-  \sa vpImage::init(_nrows, _ncols)
+  \sa init(unsigned, unsigned)
 */
 template<class Type>
 void
-vpImage<Type>::resize(int n_rows, int n_cols)
+vpImage<Type>::resize(unsigned height, unsigned width)
 {
   try
   {
-    init(n_rows,n_cols) ;
+    init(height, width) ;
   }
   catch(vpException me)
   {
@@ -332,10 +332,10 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
   {
     if (I.bitmap!=NULL)
     {
-      resize(I.getRows(),I.getCols());
-      int i;
+      resize(I.getHeight(),I.getWidth());
+      unsigned i;
       memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
-      for (i =0  ; i < nrows ; i++) row[i] = bitmap + i*ncols ;
+      for (i =0  ; i < this->height ; i++) row[i] = bitmap + i*this->width ;
     }
   }
   catch(vpException me)
@@ -352,7 +352,7 @@ template<class Type>
 Type vpImage<Type>::maxValue() const
 {
   Type m = bitmap[0] ;
-  for (int i=0 ; i < npixels ; i++)
+  for (unsigned i=0 ; i < npixels ; i++)
   {
     if (bitmap[i]>m) m = bitmap[i] ;
   }
@@ -366,7 +366,7 @@ template<class Type>
 Type vpImage<Type>::minValue() const
 {
   Type m =  bitmap[0];
-  for (int i=0 ; i < npixels ; i++)
+  for (unsigned i=0 ; i < npixels ; i++)
     if (bitmap[i]<m) m = bitmap[i] ;
   return m ;
 }
@@ -379,11 +379,11 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
 {
   try
   {
-    resize(m.getRows(),m.getCols()) ;
+    resize(m.getHeight(),m.getWidth()) ;
 
     memcpy(bitmap, m.bitmap, m.npixels*sizeof(Type)) ;
 
-    //  for (int i=0; i<nrows; i++) row[i]   = bitmap + i*ncols ;
+    //for (unsigned i=0; i<this->height; i++) row[i] = bitmap + i*this->width;
   }
   catch(vpException me)
   {
@@ -402,24 +402,27 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
 template<class Type>
 void vpImage<Type>::operator=(const Type &x)
 {
-  for (int i=0 ; i < npixels ; i++)
+  for (unsigned i=0 ; i < npixels ; i++)
     bitmap[i] = x ;
 }
 
 
 /*!
-  \brief get the value of pixel at coordinates [i][j] using a biliner interpolation
+
+  \brief Get the value of pixel at coordinates [i][j] using a bilinear
+  interpolation.
 
   \param i,j : There are float value
 
-  \return value of the pixel obtained by bilinear interpolation
+  \return Value of the pixel obtained by bilinear interpolation.
 
-  Bilinear interpolation explores four points neighboring the point (i, j), and
-  assumes that the brightness function is bilinear in this neighborhood
+  Bilinear interpolation explores four points neighboring the point
+  (i, j), and assumes that the brightness function is bilinear in this
+  neighborhood
 
-   bilinear interpolation is given by
+  Bilinear interpolation is given by:
 
-   f[i][j] = (1-t)(1-u)I[l][k] + t(1-u)I[l+1][k] + u(1-t)I[l][k+1] + t u I[l+1][k+1]
+  f[i][j] = (1-t)(1-u)I[l][k] + t(1-u)I[l+1][k] + u(1-t)I[l][k+1] + t u I[l+1][k+1]
 
    where
       l < i < l+1 and k < j < k+1
@@ -437,8 +440,8 @@ template<class Type>
 double
 vpImage<Type>::get(double i, double j)  // bilinear interpolation
 {
-  int l = (int) i ;
-  int k = (int) j ;
+  unsigned l = (unsigned) i ;
+  unsigned k = (unsigned) j ;
 
   double t =  i - l ;
   double u =  j - k ;
