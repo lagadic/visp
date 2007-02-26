@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.10 2007-01-31 13:12:13 asaunier Exp $
+ * $Id: vpPose.cpp,v 1.11 2007-02-26 17:35:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -453,7 +453,7 @@ vpPose::display(vpImage<unsigned char> &I,
 		vpHomogeneousMatrix &cMo,
 		vpCameraParameters &cam,
 		double size,
-		int col)
+		vpColor::vpColorType col)
 {
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }
