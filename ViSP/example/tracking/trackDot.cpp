@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot.cpp,v 1.3 2007-01-31 09:59:14 asaunier Exp $
+ * $Id: trackDot.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,7 +39,7 @@
 /*!
   \file trackDot.cpp
 
-  \brief   test dot tracking on an image sequence using vpDOt.
+  \brief   test dot tracking on an image sequence using vpDot.
 */
 
 

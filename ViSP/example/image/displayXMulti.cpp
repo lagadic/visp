@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayXMulti.cpp,v 1.3 2007-01-30 16:21:58 asaunier Exp $
+ * $Id: displayXMulti.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -307,12 +307,12 @@ main(int argc, char ** argv)
     vpDisplay::display(I2) ;
 
     // In the first display, display in overlay horizontal red lines
-    for (int i=0 ; i < I1.getRows() ; i+=20)
-      vpDisplay::displayLine(I1,i,0,i,I1.getCols(), vpColor::red) ;
+    for (int i=0 ; i < I1.getHeight() ; i+=20)
+      vpDisplay::displayLine(I1,i,0,i,I1.getWidth(), vpColor::red) ;
 
     // In the first display, display in overlay vertical green dot lines
-    for (int i=0 ; i < I1.getCols() ; i+=20)
-      vpDisplay::displayDotLine(I1,0,i,I1.getCols(), i,vpColor::green) ;
+    for (int i=0 ; i < I1.getWidth() ; i+=20)
+      vpDisplay::displayDotLine(I1,0,i,I1.getWidth(), i,vpColor::green) ;
 
     // In the first display, display in overlay a blue arrow
     vpDisplay::displayArrow(I1,0,0,100,100,vpColor::blue) ;
@@ -332,7 +332,7 @@ main(int argc, char ** argv)
     // display, to display a cross at the clicked pixel position
     if (opt_click_allowed) {
       cout << "\nA click in the first display to draw a cross..." << endl;
-      int i,j;
+      unsigned i,j;
       // Blocking wait for a click. Get the position of the selected pixel
       // (i correspond to the row and j to the column coordinates in the image)
       vpDisplay::getClick(I1, i, j);
@@ -341,7 +341,7 @@ main(int argc, char ** argv)
       vpDisplay::displayCross(I1,i,j,15,vpColor::red);
     }
     else {
-      int i=50,j=50;
+      unsigned i=50,j=50;
       // Display a red cross at position i, j (i correspond to the row
       // and j to the column coordinates in the image) in the first display
       cout << "Cross position: " << i << ", " << j << endl;

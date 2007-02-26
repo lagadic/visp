@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeCircle.cpp,v 1.2 2007-01-31 09:59:14 asaunier Exp $
+ * $Id: trackMeCircle.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -294,9 +294,9 @@ main(int argc, char ** argv)
   else {
     // Create a list of points to automate the test
     int n=5 ;
-    int *i, *j ;
-    i = new int[n] ;
-    j = new int[n] ;
+    unsigned *i, *j ;
+    i = new unsigned[n] ;
+    j = new unsigned[n] ;
     i[0] = 39; j[0] = 136;
     i[1] = 42; j[1] = 83;
     i[2] = 86; j[2] = 55;

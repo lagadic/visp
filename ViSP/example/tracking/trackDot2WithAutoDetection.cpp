@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.2 2007-01-31 09:59:14 asaunier Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -321,7 +321,7 @@ main(int argc, char ** argv)
     }
 
     vpList<vpDot2> * list_d;
-    list_d = d.searchDotsInArea(I, 0, 0, I.getCols(), I.getRows()) ;
+    list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
 
     if( list_d->nbElement() == 0 ) {
       cout << "Dot auto detection did not work, "

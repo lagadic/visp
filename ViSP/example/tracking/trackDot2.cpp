@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.3 2007-01-31 09:59:14 asaunier Exp $
+ * $Id: trackDot2.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -362,6 +362,7 @@ main(int argc, char ** argv)
 
 	d.track(I) ;
 
+	cout << "Tracking on image: " << filename << endl;
 	cout << "COG: " << endl;
 	cout << d.get_u() << " " << d.get_v()
 	     << " - "

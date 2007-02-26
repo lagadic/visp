@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: grab1394.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -447,8 +447,8 @@ main(int argc, char ** argv)
   }
 
   cout << endl;
-  cout << "Image size: " << I.getCols() <<  " cols "
-       << I.getRows() << " rows" << endl;
+  cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << endl;
 
   vpDisplayX d;
 
