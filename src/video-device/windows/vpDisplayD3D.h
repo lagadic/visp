@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayD3D.h,v 1.2 2007-02-26 17:26:45 fspindle Exp $
+ * $Id: vpDisplayD3D.h,v 1.3 2007-02-26 18:34:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,11 +57,11 @@ class VISP_EXPORT vpDisplayD3D : public vpDisplayWin32
 public:
   vpDisplayD3D();
   
-  vpDisplayD3D(const vpImage<vpRGBa> &I,
+  vpDisplayD3D(vpImage<vpRGBa> &I,
 		    int winx=-1, int winy=-1,
 		    char *_title=NULL);
   
-  vpDisplayD3D(const vpImage<unsigned char> &I,
+  vpDisplayD3D(vpImage<unsigned char> &I,
 		    int winx=-1, int winy=-1,
 		    char *_title=NULL);
   
