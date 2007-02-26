@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpFeatureEllipse.cpp,v 1.6 2007-02-26 17:13:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -335,7 +335,7 @@ vpFeatureEllipse::setMu(const double mu20, const double mu11,
 void
 vpFeatureEllipse::display(const vpCameraParameters &cam,
 			  vpImage<unsigned char> &I,
-			  int color ) const
+			  vpColor::vpColorType color ) const
 {
   try{
       double x = s[0] ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureLine.h,v 1.5 2007-01-31 11:31:36 asaunier Exp $
+ * $Id: vpFeatureLine.h,v 1.6 2007-02-26 17:13:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -122,7 +122,7 @@ public:
 public:
   void display(const vpCameraParameters &cam,
 	       vpImage<unsigned char> &I,
-	       int color=vpColor::green) const ;
+	       vpColor::vpColorType color=vpColor::green) const ;
 
 } ;
 

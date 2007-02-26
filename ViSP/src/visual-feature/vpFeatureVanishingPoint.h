@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.h,v 1.3 2007-01-31 15:49:56 asaunier Exp $
+ * $Id: vpFeatureVanishingPoint.h,v 1.4 2007-02-26 17:13:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -130,7 +130,7 @@ public:
 public:
   void display(const vpCameraParameters &cam,
 	       vpImage<unsigned char> &I,
-	       int color=vpColor::green) const ;
+	       vpColor::vpColorType color=vpColor::green) const ;
 
 } ;
 
