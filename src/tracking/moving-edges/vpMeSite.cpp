@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.8 2007-01-31 15:26:00 asaunier Exp $
+ * $Id: vpMeSite.cpp,v 1.9 2007-02-26 16:42:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -255,7 +255,7 @@ vpMeSite::convolution(vpImage<unsigned char>&ima, const  vpMe *me)
   double conv = 0.0 ;
   half = (me->mask_size - 1) >> 1 ;
 
-  if(horsImage( i , j , half + me->strip , ima.getRows(), ima.getCols()))
+  if(horsImage( i , j , half + me->strip , ima.getHeight(), ima.getWidth()))
   {
     conv = 0.0 ;
     i =0 ; j = 0 ;

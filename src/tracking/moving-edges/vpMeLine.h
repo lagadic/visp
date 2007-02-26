@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.h,v 1.3 2007-01-31 15:26:00 asaunier Exp $
+ * $Id: vpMeLine.h,v 1.4 2007-02-26 16:42:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,7 @@ public:
   vpMeLine() ;
   ~vpMeLine() ;
 
-  void display(vpImage<unsigned char>& I,  int col) ;
+  void display(vpImage<unsigned char>& I, vpColor::vpColorType col) ;
 
   void track(vpImage<unsigned char>& Im);
 
@@ -84,7 +84,9 @@ public:
   void suppressPoints() ;
 
   void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, int i1,int j1, int i2, int j2) ;
+  void initTracking(vpImage<unsigned char> &I, 
+		    unsigned i1,unsigned j1, 
+		    unsigned i2, unsigned j2) ;
 
   void computeRhoTheta(vpImage<unsigned char> &I) ;
   double getRho() const ;

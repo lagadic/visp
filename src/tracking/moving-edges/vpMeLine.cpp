@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.9 2007-01-31 15:26:00 asaunier Exp $
+ * $Id: vpMeLine.cpp,v 1.10 2007-02-26 16:42:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@ normalizeAngle(double &delta)
 }
 
 void
-computeDelta(double &delta, int i1, int j1, int i2, int j2)
+computeDelta(double &delta, unsigned i1, unsigned j1, unsigned i2, unsigned j2)
 {
 
   double B = i1-i2 ;
@@ -97,8 +97,8 @@ vpMeLine::~vpMeLine()
 void
 vpMeLine::sample(vpImage<unsigned char>& I)
 {
-  int rows = I.getRows() ;
-  int cols = I.getCols() ;
+  int rows = I.getHeight() ;
+  int cols = I.getWidth() ;
   double n_sample;
 
   if (me->sample_step==0)
@@ -160,7 +160,7 @@ vpMeLine::sample(vpImage<unsigned char>& I)
  * \brief Display line
  */
 void
-vpMeLine::display(vpImage<unsigned char>&I, int col)
+vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
 {
   list.front();
 
@@ -182,7 +182,7 @@ vpMeLine::display(vpImage<unsigned char>&I, int col)
     double i1, j1, i2, j2;
     i1 = 0;
     j1 = (-a*i1 -c) / b;
-    i2 = I.getRows() - 1.0;
+    i2 = I.getHeight() - 1.0;
     j2 = (-a*i2 -c) / b;
     vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
     vpDisplay::flush(I);
@@ -192,7 +192,7 @@ vpMeLine::display(vpImage<unsigned char>&I, int col)
     double i1, j1, i2, j2;
     j1 = 0;
     i1 = -(b * j1 + c) / a;
-    j2 = I.getCols() - 1.0;
+    j2 = I.getWidth() - 1.0;
     i2 = -(b * j2 + c) / a;
     vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
     vpDisplay::flush(I);
@@ -206,7 +206,7 @@ vpMeLine::display(vpImage<unsigned char>&I, int col)
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I)
 {
-  int i1, j1, i2, j2 ;
+  unsigned i1, j1, i2, j2 ;
 
   cout << "Click on the line first point..." <<endl ;
   while (vpDisplay::getClick(I,i1,j1)!=true) ;
@@ -497,7 +497,9 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
 }
 
 void
-vpMeLine::initTracking(vpImage<unsigned char> &I,int i1,int j1, int i2, int j2)
+vpMeLine::initTracking(vpImage<unsigned char> &I, 
+		       unsigned i1,unsigned j1, 
+		       unsigned i2, unsigned j2)
 {
   vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<endl ;
 
@@ -621,8 +623,8 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<endl ;
 
-  int rows = I.getRows() ;
-  int cols = I.getCols() ;
+  int rows = I.getHeight() ;
+  int cols = I.getWidth() ;
   double n_sample;
 
   if (me->sample_step==0)

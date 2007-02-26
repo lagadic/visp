@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.8 2006-09-11 14:02:35 fspindle Exp $
+ * $Id: vpMeEllipse.cpp,v 1.9 2007-02-26 16:42:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -105,8 +105,8 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
 {
   vpCDEBUG(1) <<"begin vpMeEllipse::sample() : "<<endl ;
 
-  int rows = I.getRows() ;
-  int cols = I.getCols() ;
+  unsigned height = I.getHeight() ;
+  unsigned width = I.getWidth() ;
 
   double n_sample;
 
@@ -121,7 +121,7 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
   j = i = 0.0 ;
 
   double incr = vpMath::rad(me->sample_step) ; // angle increment en degree
-  int col = vpColor::red ;
+  vpColor::vpColorType col = vpColor::red ;
   getParameters() ;
 
 
@@ -144,13 +144,13 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
     j11 = jc + ce *j - se *i ;
     i11 = ic -( se *j + ce *i) ;
 
-    vpDisplay::displayCross(I, (int)i11,  (int)j11,  5, col) ;
+    vpDisplay::displayCross(I, (unsigned)i11,  (unsigned)j11,  5, col) ;
 
     double theta ;
     computeTheta(theta, K,  i11,  j11)  ;
 
     // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 0, rows, cols))
+    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 0, height, width))
     {
       vpMeSite pix ;
       pix.init((int)i11, (int)j11, theta) ;
@@ -344,9 +344,8 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
 {
   double k;
 
-
-  int rows = I.getRows() ;
-  int cols = I.getCols() ;
+  unsigned height = I.getHeight() ;
+  unsigned width  = I.getWidth() ;
 
   int  memory_range = me->range ;
   me->range = 2 ;
@@ -378,7 +377,7 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
     computeTheta(theta, K,  i11,  j11)  ;
 
     // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 2, rows, cols))
+    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 2, height, width))
     {
       vpMeSite P ;
       P = Plast ;
@@ -416,7 +415,7 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
     computeTheta(theta, K,  i11,  j11)  ;
 
     // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 2, rows, cols))
+    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 2, height, width))
     {
       vpMeSite P ; P = Pfirst ;
       P.init((int)i11, (int)j11, theta) ;
@@ -608,7 +607,7 @@ vpMeEllipse::leastSquare(vpImage<unsigned char>  &I)
  * \brief Display Ellipse
  */
 void
-vpMeEllipse::display(vpImage<unsigned char> &I, int col)
+vpMeEllipse::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
 {
 
   double j1, i1, j11, i11 ;
@@ -675,9 +674,9 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<endl ;
 
   int n=5 ;
-  int *i, *j ;
-  i = new int[n] ;
-  j = new int[n] ;
+  unsigned *i, *j ;
+  i = new unsigned[n] ;
+  j = new unsigned[n] ;
 
    for (int k =0 ; k < n ; k++)
   {
@@ -701,7 +700,8 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
 }
 
 void
-vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n, int *i,int *j)
+vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n, 
+			  unsigned *i, unsigned *j)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<endl ;
 

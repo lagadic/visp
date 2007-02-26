@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.8 2006-06-12 14:50:04 brenier Exp $
+ * $Id: vpPoint.h,v 1.9 2007-02-26 16:42:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -134,11 +134,11 @@ public:
 
   void display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
-	       const int color=vpColor::green) ;
+	       const vpColor::vpColorType color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const int color=vpColor::green) ;
+	       const vpColor::vpColorType color=vpColor::green) ;
   vpPoint *duplicate() const ;
 
   friend ostream& operator<<(ostream& os, vpPoint& vpp);

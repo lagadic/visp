@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.cpp,v 1.3 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpCylinder.cpp,v 1.4 2007-02-26 16:42:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -261,7 +261,7 @@ void
 vpCylinder::display(vpImage<unsigned char> &I,
 		    const vpHomogeneousMatrix &cMo,
 		    const vpCameraParameters &cam,
-		    const int color)
+		    const vpColor::vpColorType color)
 {
 
   vpColVector _cP, _p ;
@@ -276,7 +276,7 @@ vpCylinder::display(vpImage<unsigned char> &I,
 void
 vpCylinder::display(vpImage<unsigned char> &I,
 		 const vpCameraParameters &cam,
-		 const int color)
+		 const vpColor::vpColorType color)
 {
   vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[4], cam, I, color) ;
 }

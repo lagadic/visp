@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.h,v 1.4 2007-01-31 15:26:00 asaunier Exp $
+ * $Id: vpMeTracker.h,v 1.5 2007-02-26 16:42:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -106,7 +106,7 @@ public:
   //! Feature dependent functions
 
   //!display contour
-  virtual void display(vpImage<unsigned char> &I,  int col)=0;
+  virtual void display(vpImage<unsigned char> &I, vpColor::vpColorType col)=0;
   //!Sample pixels at a given interval
   virtual void sample(vpImage<unsigned char> &image)=0;
 

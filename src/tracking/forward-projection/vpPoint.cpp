@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.cpp,v 1.4 2006-06-12 14:50:04 brenier Exp $
+ * $Id: vpPoint.cpp,v 1.5 2007-02-26 16:42:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -223,7 +223,7 @@ void
 vpPoint::display(vpImage<unsigned char> &I,
 		 const vpHomogeneousMatrix &cMo,
 		 const vpCameraParameters &cam,
-		 const int color)
+		 const vpColor::vpColorType color)
 {
 
   vpColVector _cP, _p ;
@@ -241,7 +241,7 @@ ostream& operator<<(ostream& os, vpPoint& vpp)
 void
 vpPoint::display(vpImage<unsigned char> &I,
 		 const vpCameraParameters &cam,
-		 const int color)
+		 const vpColor::vpColorType color)
 {
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color) ;
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.h,v 1.2 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpMeEllipse.h,v 1.3 2007-02-26 16:42:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,7 +83,7 @@ public:
 
 
   void setSeekExtremities(double _seek) {seek = _seek ; }
-  void display(vpImage<unsigned char>&I,  int col) ;
+  void display(vpImage<unsigned char>&I, vpColor::vpColorType col) ;
 
 private:
   void computeAngle(int ip1, int jp1,int ip2, int jp2) ;
@@ -105,7 +105,8 @@ public:
   void track(vpImage<unsigned char>& Im);
 
   void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, int n, int *i, int *j) ;
+  void initTracking(vpImage<unsigned char> &I, int n, 
+		    unsigned *i, unsigned *j) ;
 
 private:
   bool circle ;
