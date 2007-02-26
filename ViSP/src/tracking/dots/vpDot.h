@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.12 2007-02-16 09:28:32 fspindle Exp $
+ * $Id: vpDot.h,v 1.13 2007-02-26 17:38:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -217,11 +217,12 @@ private:
     } ;
   double nbMaxPoint ;
   int connexe(vpImage<unsigned char>& I, unsigned u, unsigned v, 
-	      unsigned char threshold, 
+	      unsigned char threshold_l, unsigned char threshold_r,
 	      double &mean_value, double &u_cog, double &v_cog, double &n);
   void COG(vpImage<unsigned char> &I,double& u, double& v) ;
 
-  unsigned char threshold ;
+  unsigned char threshold_l; // left threshold for binarisation
+  unsigned char threshold_r; // right threshold for binarisation
 
   //! flag : true moment are computed
   bool compute_moment ;
@@ -245,7 +246,7 @@ public:
   void initTracking(vpImage<unsigned char> &I) ;
   void initTracking(vpImage<unsigned char> &I, unsigned u, unsigned v) ;
   void initTracking(vpImage<unsigned char> &I, unsigned u, unsigned v, 
-		    unsigned char threshold) ;
+		    unsigned char threshold_l, unsigned char threshold_r);
   void track(vpImage<unsigned char> & I) ;
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
   //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels)
