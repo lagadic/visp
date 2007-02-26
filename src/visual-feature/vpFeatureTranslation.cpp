@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpFeatureTranslation.cpp,v 1.5 2007-02-26 17:13:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -219,7 +219,7 @@ vpFeatureTranslation *vpFeatureTranslation::duplicate() const
 void
 vpFeatureTranslation::display(const vpCameraParameters &cam,
 			      vpImage<unsigned char> &I,
-			      int color) const
+			      vpColor::vpColorType color) const
 {
   static int firsttime =0 ;
 

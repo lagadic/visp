@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.cpp,v 1.6 2006-11-10 09:13:30 fspindle Exp $
+ * $Id: vpFeatureDisplay.cpp,v 1.7 2007-02-26 17:13:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,13 +55,13 @@
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<unsigned char> &I,
-				    int color)
+				    vpColor::vpColorType color)
 {
   try{
     double uf,vf ; // pixel coordinates in float
     vpMeterPixelConversion::convertPoint(cam,x,y,uf,vf) ;
 
-    int u,v ;
+    unsigned u,v ;
     u = vpMath::round(uf) ;
     v = vpMath::round(vf) ;
 
@@ -77,7 +77,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
 				   vpImage<unsigned char> &I,
-				   int color )
+				   vpColor::vpColorType color )
 {
 
 
@@ -100,14 +100,14 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
     double b = co ;
 
   if (fabs(a) < fabs(b))
-  for (int i=0 ; i < I.getRows() ; i ++)
+  for (unsigned i=0 ; i < I.getHeight() ; i ++)
   {
     double  j = (-c - a*i)/b  ;
     vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
   }
   else
 
-  for (int j=0 ; j < I.getCols() ; j++)
+  for (unsigned j=0 ; j < I.getWidth() ; j++)
   {
     double  i = (-c - b*j)/a  ;
     vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
@@ -122,7 +122,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
       v1 = 0.0 ;
       u1 = c/co ;
 
-      v2 = I.getRows()-1 ;
+      v2 = I.getHeight()-1 ;
       u2 = c/co ;
       //       vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
     }
@@ -132,7 +132,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 	v1 =c/si ;
 	u1 = 0 ;
 	v2 =c/si ;
-	u2 = I.getCols()-1 ;
+	u2 = I.getWidth()-1 ;
 	//	  vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
       }
       else
@@ -143,7 +143,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 	  v1 = 0 ;
 	  u1 = c/co ;
 
-	  v2 = I.getRows()-1 ;
+	  v2 = I.getHeight()-1 ;
 	  u2 = (c - v2*si)/co ;
 	}
 	else
@@ -151,7 +151,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 	  u1 = 0 ;
 	  v1 = c/si ;
 
-	  u2 = v2 = I.getCols()-1 ;
+	  u2 = v2 = I.getWidth()-1 ;
 	  v2 = (c-u2*co)/si ;
 	}
 
@@ -175,7 +175,7 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
 				       double rho2,double theta2,
 				       const vpCameraParameters &cam,
 				       vpImage<unsigned char> &I,
-				       int color)
+				       vpColor::vpColorType color)
 {
   try
   {
@@ -192,7 +192,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
 				      vpImage<unsigned char> &I,
-				      int color)
+				      vpColor::vpColorType color)
 {
 
 
@@ -239,8 +239,8 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 	y1=y11*cam.get_py() + cam.get_v0() ;
 
 	if (i>1) vpDisplay::displayLine(I,
-					(int)y1, (int)x1,
-					(int)y2, (int)x2,
+					(unsigned)y1, (unsigned)x1,
+					(unsigned)y2, (unsigned)x2,
 					color) ;
 
 	x2 = x1 ;
@@ -260,13 +260,13 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<vpRGBa> &I,
-				    int color)
+				    vpColor::vpColorType color)
 {
   try{
     double uf,vf ; // pixel coordinates in float
     vpMeterPixelConversion::convertPoint(cam,x,y,uf,vf) ;
 
-    int u,v ;
+    unsigned u,v ;
     u = vpMath::round(uf) ;
     v = vpMath::round(vf) ;
 
@@ -282,7 +282,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
 				   vpImage<vpRGBa> &I,
-				   int color )
+				   vpColor::vpColorType color )
 {
 
 
@@ -305,14 +305,14 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
     double b = co ;
 
   if (fabs(a) < fabs(b))
-  for (int i=0 ; i < I.getRows() ; i ++)
+  for (unsigned i=0 ; i < I.getHeight() ; i ++)
   {
     double  j = (-c - a*i)/b  ;
     vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
   }
   else
 
-  for (int j=0 ; j < I.getCols() ; j++)
+  for (unsigned j=0 ; j < I.getWidth() ; j++)
   {
     double  i = (-c - b*j)/a  ;
     vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
@@ -327,7 +327,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
       v1 = 0.0 ;
       u1 = c/co ;
 
-      v2 = I.getRows()-1 ;
+      v2 = I.getHeight()-1 ;
       u2 = c/co ;
       //       vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
     }
@@ -337,7 +337,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 	v1 =c/si ;
 	u1 = 0 ;
 	v2 =c/si ;
-	u2 = I.getCols()-1 ;
+	u2 = I.getWidth()-1 ;
 	//	  vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
       }
       else
@@ -348,7 +348,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 	  v1 = 0 ;
 	  u1 = c/co ;
 
-	  v2 = I.getRows()-1 ;
+	  v2 = I.getHeight()-1 ;
 	  u2 = (c - v2*si)/co ;
 	}
 	else
@@ -356,7 +356,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 	  u1 = 0 ;
 	  v1 = c/si ;
 
-	  u2 = v2 = I.getCols()-1 ;
+	  u2 = v2 = I.getWidth()-1 ;
 	  v2 = (c-u2*co)/si ;
 	}
 
@@ -380,7 +380,7 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
 				       double rho2,double theta2,
 				       const vpCameraParameters &cam,
 				       vpImage<vpRGBa> &I,
-				       int color)
+				       vpColor::vpColorType color)
 {
   try
   {
@@ -397,7 +397,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
 				      vpImage<vpRGBa> &I,
-				      int color)
+				      vpColor::vpColorType color)
 {
 
 
@@ -444,8 +444,8 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 	y1=y11*cam.get_py() + cam.get_v0() ;
 
 	if (i>1) vpDisplay::displayLine(I,
-					(int)y1, (int)x1,
-					(int)y2, (int)x2,
+					(unsigned)y1, (unsigned)x1,
+					(unsigned)y2, (unsigned)x2,
 					color) ;
 
 	x2 = x1 ;

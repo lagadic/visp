@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBasicFeature.h,v 1.4 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpBasicFeature.h,v 1.5 2007-02-26 17:13:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -125,7 +125,7 @@ public:
 public:
   virtual void display(const vpCameraParameters &cam,
 		       vpImage<unsigned char> &I,
-		       int color=vpColor::green) const = 0 ;
+		       vpColor::vpColorType color=vpColor::green) const = 0 ;
 
 
   // memory issue (used by the vpServo class)
