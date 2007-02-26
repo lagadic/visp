@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8.cpp,v 1.5 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: grabItifg8.cpp,v 1.6 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -287,7 +287,8 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-  cout << "Image size: " << I.getCols() << "  " << I.getRows() <<endl  ;
+  cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << endl;
 
   // We open a window using either X11 or GTK.
   // Its size is automatically defined by the image (I) size

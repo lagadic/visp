@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.3 2007-02-02 10:50:59 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -437,8 +437,8 @@ main(int argc, char ** argv)
       g.setCamera(i+offset);
       // Acquire the first image
       g.acquire(I[i]);
-      cout << "Image size for camera " << i+offset << " : "
-	   << I[i].getCols() << " " << I[i].getRows() << endl;
+      cout << "Image size for camera " << i+offset << " : width: "
+	   << I[i].getWidth() << " height: " << I[i].getHeight() << endl;
 
       if (display) {
 	// Initialise the display

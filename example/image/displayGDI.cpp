@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGDI.cpp,v 1.3 2007-01-30 17:11:19 asaunier Exp $
+ * $Id: displayGDI.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -277,19 +277,19 @@ main(int argc, char ** argv)
     vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
 
     // Display in overlay horizontal red lines
-    for (int i=0 ; i < I.getRows() ; i+=20)
-      vpDisplay::displayLine(I,i,0,i,I.getCols(), vpColor::red) ;
+    for (unsigned i=0 ; i < I.getHeight() ; i+=20)
+      vpDisplay::displayLine(I,i,0,i,I.getWidth(), vpColor::red) ;
 
     // Display in overlay vertical green dot lines
-    for (int i=0 ; i < I.getCols() ; i+=20)
-      vpDisplay::displayDotLine(I,0,i,I.getCols(), i,vpColor::green) ;
+    for (unsigned i=0 ; i < I.getWidth() ; i+=20)
+      vpDisplay::displayDotLine(I,0,i,I.getWidth(), i,vpColor::green) ;
 
     // Display in overlay a blue arrow
     vpDisplay::displayArrow(I,0,0,100,100,vpColor::blue) ;
 
     // Display in overlay some circles. The position of the center is 200, 200
     // the radius is increased by 20 pixels for each circle
-    for (int i=0 ; i < 100 ; i+=20)
+    for (unsigned i=0 ; i < 100 ; i+=20)
       vpDisplay::displayCircle(I,200,200,20+i,vpColor::yellow) ;
 
     // Display in overlay a yellow string
@@ -342,7 +342,7 @@ main(int argc, char ** argv)
     // a cross at the clicked pixel position
     if (opt_click_allowed) {
       cout << "\nA click to display a cross..." << endl;
-      int i,j;
+      unsigned i,j;
       // Blocking wait for a click. Get the position of the selected pixel
       // (i correspond to the row and j to the column coordinates in the image)
       vpDisplay::getClick(Irgba, i, j);
@@ -351,7 +351,7 @@ main(int argc, char ** argv)
       vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
     }
     else {
-      int i=10,j=20;
+      unsigned i=10,j=20;
       // Display a red cross at position i, j (i correspond to the row
       // and j to the column coordinates in the image)
       cout << "Cross position: " << i << ", " << j << endl;

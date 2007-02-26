@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayX.cpp,v 1.2 2007-01-30 16:21:58 asaunier Exp $
+ * $Id: displayX.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -281,12 +281,12 @@ main(int argc, char ** argv)
     vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
 
     // Display in overlay horizontal red lines
-    for (int i=0 ; i < I.getRows() ; i+=20)
-      vpDisplay::displayLine(I,i,0,i,I.getCols(), vpColor::red) ;
+    for (int i=0 ; i < I.getHeight() ; i+=20)
+      vpDisplay::displayLine(I,i,0,i,I.getWidth(), vpColor::red) ;
 
     // Display in overlay vertical green dot lines
-    for (int i=0 ; i < I.getCols() ; i+=20)
-      vpDisplay::displayDotLine(I,0,i,I.getCols(), i,vpColor::green) ;
+    for (int i=0 ; i < I.getWidth() ; i+=20)
+      vpDisplay::displayDotLine(I,0,i,I.getWidth(), i,vpColor::green) ;
 
     // Display in overlay a blue arrow
     vpDisplay::displayArrow(I,0,0,100,100,vpColor::blue) ;
@@ -345,7 +345,7 @@ main(int argc, char ** argv)
     // at the clicked pixel position
     if (opt_click_allowed) {
       cout << "\nA click to display a cross..." << endl;
-      int i,j;
+      unsigned i,j;
       // Blocking wait for a click. Get the position of the selected pixel
       // (i correspond to the row and j to the column coordinates in the image)
       vpDisplay::getClick(Irgba, i, j);
@@ -354,7 +354,7 @@ main(int argc, char ** argv)
       vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
     }
     else {
-      int i=10,j=20;
+      unsigned i=10,j=20;
       // Display a red cross at position i, j (i correspond to the row
       // and j to the column coordinates in the image)
       cout << "Cross position: " << i << ", " << j << endl;

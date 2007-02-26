@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.2 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: grabDirectShow.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -195,7 +195,8 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-  cout << "Image size: " << I.getCols() << "  " << I.getRows() <<endl  ;
+  cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << endl;
 
   // Creates a display
 #ifdef VISP_HAVE_GTK

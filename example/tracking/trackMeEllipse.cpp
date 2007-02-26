@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeEllipse.cpp,v 1.2 2007-01-31 09:59:14 asaunier Exp $
+ * $Id: trackMeEllipse.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -290,8 +290,8 @@ main(int argc, char ** argv)
   if (opt_click_allowed)
     E1.initTracking(I) ;
   else {
-    int i[5] = {30, 62, 212, 234, 178};
-    int j[5] = {331, 171, 50, 196, 353};
+    unsigned i[5] = {30, 62, 212, 234, 178};
+    unsigned j[5] = {331, 171, 50, 196, 353};
     E1.initTracking(I, 5, i, j);
   }
   if (opt_display) {
