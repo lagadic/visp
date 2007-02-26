@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.8 2006-11-23 17:28:19 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.9 2007-02-26 16:33:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -183,6 +183,7 @@ SET (HEADER_VIDEO_DEVICE
   video-device/vpDisplayGTK.h
   video-device/vpDisplay.h
   video-device/vpDisplayX.h
+  video-device/vpMouseButton.h
   video-device/windows/vpDisplayGDI.h
   video-device/windows/vpDisplayWin32.h
   video-device/windows/vpGDIRenderer.h
