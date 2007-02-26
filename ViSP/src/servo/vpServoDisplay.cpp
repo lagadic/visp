@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoDisplay.cpp,v 1.3 2006-09-18 16:23:57 fspindle Exp $
+ * $Id: vpServoDisplay.cpp,v 1.4 2007-02-26 17:29:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,8 +74,8 @@ void
 vpServoDisplay::display(vpServo &s,
 			const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			int currentColor,
-			int desiredColor)
+			vpColor::vpColorType currentColor,
+			vpColor::vpColorType desiredColor)
 {
 
 

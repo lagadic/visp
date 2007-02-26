@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.h,v 1.6 2006-09-29 08:53:06 fspindle Exp $
+ * $Id: vpProjectionDisplay.h,v 1.7 2007-02-26 17:34:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -104,14 +104,14 @@ public:
   void display(const vpHomogeneousMatrix &cextMo,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const int color,
+	       const vpColor::vpColorType color,
 	       const int select) ;
 
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cextMo,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const int color ) ;
+	       const vpColor::vpColorType color ) ;
 
 
 private:

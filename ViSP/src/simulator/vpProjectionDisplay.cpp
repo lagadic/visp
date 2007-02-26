@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.cpp,v 1.6 2006-09-08 16:30:31 fspindle Exp $
+ * $Id: vpProjectionDisplay.cpp,v 1.7 2007-02-26 17:34:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,7 +108,7 @@ void
 vpProjectionDisplay::display(const vpHomogeneousMatrix &cextMo,
 			     const vpHomogeneousMatrix &cMo,
 			     const vpCameraParameters &cam,
-			     const int color,
+			     const vpColor::vpColorType color,
 			     const int select)
 {
   if (select & vpProjectionDisplay::internalView())
@@ -131,7 +131,7 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
 			     const vpHomogeneousMatrix &cextMo,
 			     const vpHomogeneousMatrix &cMo,
 			     const vpCameraParameters &cam,
-			     const int color )
+			     const vpColor::vpColorType color )
 {
 
     for (listFp.front() ; !listFp.outside() ; listFp.next() )

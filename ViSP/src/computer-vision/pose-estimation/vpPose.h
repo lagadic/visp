@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.4 2006-06-12 14:49:23 brenier Exp $
+ * $Id: vpPose.h,v 1.5 2007-02-26 17:35:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -147,7 +147,9 @@ public:
   //! compute the pose for a given method
   void computePose(poseMethodEnum methode, vpHomogeneousMatrix &cMo) ;
   void printPoint() ;
-  void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size, int col=vpColor::none) ;
+  void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, 
+	       vpCameraParameters &cam, double size, 
+	       vpColor::vpColorType col=vpColor::none) ;
 
 
 public:
