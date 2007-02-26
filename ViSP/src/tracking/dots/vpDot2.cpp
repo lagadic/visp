@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.13 2007-01-18 15:59:05 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.14 2007-02-26 16:43:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -236,8 +236,8 @@ vpDot2::~vpDot2(){}
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I)
 {
-  int u = 0;
-  int v = 0;
+  unsigned u = 0;
+  unsigned v = 0;
 
   while ( vpDisplay::getClick(I, v, u) != true) ;
 
@@ -708,7 +708,7 @@ void
 vpDot2::setArea(vpImage<unsigned char> &I)
 {
 
-  setArea(I, 0, 0, I.getCols(), I.getRows());
+  setArea(I, 0, 0, I.getWidth(), I.getHeight());
 }
 
 /*!
@@ -725,8 +725,8 @@ vpDot2::setArea(vpImage<unsigned char> &I)
 void
 vpDot2::setArea(vpImage<unsigned char> &I, int u, int v, int w, int h)
 {
-  int image_w = I.getCols();
-  int image_h = I.getRows();
+  int image_w = I.getWidth();
+  int image_h = I.getHeight();
 
   // Bounds the area to the image
   if (u < 0) u = 0;
@@ -791,7 +791,7 @@ vpDot2::setArea(const vpAreaType & a)
   To search dots in the whole image:
   \code
   vpList<vpDot2> * list_d;
-  list_d = d.searchDotsInArea(I, 0, 0, I.getCols(), I.getRows()) ;
+  list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
   \endcode
 
   The number of dots found in the area is given by:
@@ -821,7 +821,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
   vpList<vpDot2>* niceDotsVector = new vpList<vpDot2>();
 
   niceDotsVector = searchDotsInArea( I, 0, 0,
-				     I.getCols()-1, I.getRows()-1 );
+				     I.getWidth()-1, I.getHeight()-1 );
 
   return niceDotsVector;
 
@@ -1295,9 +1295,9 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     return false;
   }
 
-  int u_min = I.getCols();
+  int u_min = I.getWidth();
   int u_max = 0;
-  int v_min = I.getRows();
+  int v_min = I.getHeight();
   int v_max = 0;
 
   // if the first point doesn't have the right level then there's no point to
@@ -1318,7 +1318,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   int firstBorder_u = (int) est_u;
   int firstBorder_v = (int) est_v;
   while( hasGoodLevel( I, firstBorder_u+1, firstBorder_v ) &&
-	 firstBorder_u < area.u_max/*I.getCols()*/ )
+	 firstBorder_u < area.u_max/*I.getWidth()*/ )
   {
     // if the width of this dot was initialised and we already crossed the dot
     // on more than the max possible width, no need to continue, return an
@@ -1777,10 +1777,10 @@ bool vpDot2::isInImage( vpImage<unsigned char> &I) const
 bool vpDot2::isInImage( vpImage<unsigned char> &I,
 			const int &u, const int &v) const
 {
-  int nbRows = I.getRows();
-  int nbCols = I.getCols();
-  if( u < 0 || u >= nbCols ) return false;
-  if( v < 0 || v >= nbRows ) return false;
+  int height = I.getHeight();
+  int width = I.getWidth();
+  if( u < 0 || u >= width ) return false;
+  if( v < 0 || v >= height ) return false;
   return true;
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpForwardProjection.h,v 1.2 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpForwardProjection.h,v 1.3 2007-02-26 16:42:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,11 +85,11 @@ public:
 
   virtual void display(vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
-		       const int color=vpColor::green) =0;
+		       const vpColor::vpColorType color=vpColor::green) =0;
   virtual void display(vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
-		       const int color=vpColor::green) =0;
+		       const vpColor::vpColorType color=vpColor::green) =0;
 
   virtual void print() const ;
 

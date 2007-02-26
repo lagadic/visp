@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLine.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpLine.cpp,v 1.5 2007-02-26 16:42:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -284,7 +284,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 
 void vpLine::display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
-	       const int color)
+	       const vpColor::vpColorType color)
 {
   vpFeatureDisplay::displayLine(p[0],p[1],
 				cam, I,color) ;
@@ -294,7 +294,7 @@ void vpLine::display(vpImage<unsigned char> &I,
 void vpLine::display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const int color)
+	       const vpColor::vpColorType color)
 {
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;

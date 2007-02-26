@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.11 2006-06-12 14:50:04 brenier Exp $
+ * $Id: vpDot2.h,v 1.12 2007-02-26 16:43:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -251,8 +251,8 @@ private:
   double width;
   double height;
   double surface;
-  int inLevel;
-  int outLevel;
+  unsigned inLevel;
+  unsigned outLevel;
   double accuracy;
 
   // Area where the dot is to search
