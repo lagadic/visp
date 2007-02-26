@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.12 2007-01-11 15:31:43 asaunier Exp $
+ * $Id: vpDisplay.cpp,v 1.13 2007-02-26 17:26:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,131 +59,133 @@ vpDisplay::vpDisplay()
   Display the windows title.
 */
 void
-vpDisplay::displayTitle(vpImage<unsigned char> &I, const char *windowtitle)
+vpDisplay::displayTitle(const vpImage<unsigned char> &I, 
+			const char *windowtitle)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->flushTitle(windowtitle) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->flushTitle(windowtitle) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
   Display a 8bits image in the display window
 */
 void
-vpDisplay::display(vpImage<unsigned char> &I)
+vpDisplay::display(const vpImage<unsigned char> &I)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayImage(I) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayImage(I) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
   \brief get the window pixmap and put it in vpRGBa image
 */
 void
-vpDisplay::getImage(vpImage<unsigned  char> &Isrc, vpImage<vpRGBa> &Idest)
+vpDisplay::getImage(const vpImage<unsigned  char> &Isrc, 
+		    vpImage<vpRGBa> &Idest)
 {
 
   try
-  {
-    if (Isrc.display != NULL)
     {
-      (Isrc.display)->getImage(Idest) ;
+      if (Isrc.display != NULL)
+	{
+	  (Isrc.display)->getImage(Idest) ;
+	}
+      else
+	{
+	  vpERROR_TRACE("Display not initialized") ;
+	  throw(vpDisplayException(vpDisplayException::notInitializedError,
+				   "Display not initialized")) ;
+	}
     }
-    else
-    {
-      vpERROR_TRACE("Display not initialized") ;
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-			       "Display not initialized")) ;
-    }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
   Display a point at coordinates (i,j) in the display window
 */
-void vpDisplay::displayPoint(vpImage<unsigned char> &I,
-			     int i,int j,int col)
+void vpDisplay::displayPoint(const vpImage<unsigned char> &I,
+			     unsigned i,unsigned j,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayPoint(i,j,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayPoint(i,j,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 
 }
 /*!
   Display a cross at coordinates (i,j) in the display window
 */
-void vpDisplay::displayCross(vpImage<unsigned char> &I,
-		  int i,int j,
-		  int size,int col)
+void vpDisplay::displayCross(const vpImage<unsigned char> &I,
+			     unsigned i,unsigned j,
+			     unsigned size,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCross(i,j,size,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCross(i,j,size,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*!
   Display a large cross at coordinates (i,j) in the display window
 */
 void
-vpDisplay::displayCrossLarge(vpImage<unsigned char> &I,
-			     int i,int j,
-			     int size,int col)
+vpDisplay::displayCrossLarge(const vpImage<unsigned char> &I,
+			     unsigned i,unsigned j,
+			     unsigned size,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCrossLarge(i,j,size,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCrossLarge(i,j,size,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
@@ -191,73 +193,76 @@ vpDisplay::displayCrossLarge(vpImage<unsigned char> &I,
   circle radius is given in pixel by paramter r
 */
 void
-vpDisplay::displayCircle(vpImage<unsigned char> &I,
-			 int i, int j, int r, int col)
+vpDisplay::displayCircle(const vpImage<unsigned char> &I,
+			 unsigned i, unsigned j, unsigned r, 
+			 vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCircle(i,j,r,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCircle(i,j,r,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*!
   Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
 */
-void vpDisplay::displayLine(vpImage<unsigned char> &I,
-			    int i1, int j1, int i2, int j2,
-			    int col, int e)
+void vpDisplay::displayLine(const vpImage<unsigned char> &I,
+			    unsigned i1, unsigned j1, 
+			    unsigned i2, unsigned j2,
+			    vpColor::vpColorType col, unsigned e)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayLine(i1,j1,i2,j2,col,e) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayLine(i1,j1,i2,j2,col,e) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 /*!  Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
   window.  circle radius is given in pixel by paramter r
 */
-void vpDisplay::displayDotLine(vpImage<unsigned char> &I,
-		    int i1, int j1, int i2, int j2,
-		    int col, int e2)
+void vpDisplay::displayDotLine(const vpImage<unsigned char> &I,
+			       unsigned i1, unsigned j1, 
+			       unsigned i2, unsigned j2,
+			       vpColor::vpColorType col, unsigned e2)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayDotLine(i1,j1,i2,j2,col,e2) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayDotLine(i1,j1,i2,j2,col,e2) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 void
-vpDisplay::displayFrame(vpImage<unsigned char> &I,
-			vpHomogeneousMatrix &cMo,
-			vpCameraParameters &cam,
-			double size, int col)
+vpDisplay::displayFrame(const vpImage<unsigned char> &I,
+			const vpHomogeneousMatrix &cMo,
+			const vpCameraParameters &cam,
+			double size, vpColor::vpColorType col)
 {
- // used by display
+  // used by display
   vpPoint o; o.setWorldCoordinates(0.0,0.0,0.0) ;
   vpPoint x; x.setWorldCoordinates(size,0.0,0.0) ;
   vpPoint y; y.setWorldCoordinates(0.0,size,0.0) ;
@@ -293,7 +298,7 @@ vpDisplay::displayFrame(vpImage<unsigned char> &I,
 			      vpColor::red) ;
     }
   else
-     {
+    {
       vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
 
       vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
@@ -321,199 +326,204 @@ vpDisplay::displayFrame(vpImage<unsigned char> &I,
   window
 */
 void
-vpDisplay::displayArrow(vpImage<unsigned char> &I,
-			int i1,int j1, int i2, int j2,
-			int col, int L,int l)
+vpDisplay::displayArrow(const vpImage<unsigned char> &I,
+			unsigned i1,unsigned j1, unsigned i2, unsigned j2,
+			vpColor::vpColorType col, unsigned L,unsigned l)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayArrow(i1,j1,i2,j2,col,L,l) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayArrow(i1,j1,i2,j2,col,L,l) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
 
-  Display a rectangle in the display window.  The rectangle upper left corner
-  has coordinates (i,j). The size of the rectangle is fixed by \e width and \e
-  height.
+Display a rectangle in the display window.  The rectangle upper left corner
+has coordinates (i,j). The size of the rectangle is fixed by \e width and \e
+height.
 
-  \param i Row number of the rectangle upper corner
-  \param j Column number of the rectangle upper corner
-  \param width Width of the rectangle.
-  \param height Height of the rectangle.
-  \param col Color of the rectangle.
+\param i Row number of the rectangle upper corner
+\param j Column number of the rectangle upper corner
+\param width Width of the rectangle.
+\param height Height of the rectangle.
+\param col Color of the rectangle.
 
 */
 void
-vpDisplay::displayRectangle(vpImage<unsigned char> &I, int i, int j,
-			    int width, int height, int col)
+vpDisplay::displayRectangle(const vpImage<unsigned char> &I, 
+			    unsigned i, unsigned j,
+			    unsigned width, unsigned height,
+			    vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayRectangle(i,j,width,height,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayRectangle(i,j,width,height,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*! display a string at coordinates (i,j) to (i2,j2) in the display
   window
 */
 void
-vpDisplay::displayCharString(vpImage<unsigned char> &I,
-			     int i,int j,char *s, int c)
+vpDisplay::displayCharString(const vpImage<unsigned char> &I,
+			     unsigned i,unsigned j,char *s, 
+			     vpColor::vpColorType c)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCharString(i,j,s,c) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCharString(i,j,s,c) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 /*!
-   flushes the output buffer and then waits until all
+  flushes the output buffer and then waits until all
   requests have been received and processed by the server
 */
-void vpDisplay::flush(vpImage<unsigned char> &I)
+void vpDisplay::flush(const vpImage<unsigned char> &I)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->flushDisplay() ;
+      if (I.display != NULL)
+	{
+	  (I.display)->flushDisplay() ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
-   Close the display attached to I.
+  Close the display attached to I.
 */
-void vpDisplay::close(vpImage<unsigned char> &I)
+void vpDisplay::close(const vpImage<unsigned char> &I)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->closeDisplay() ;
+      if (I.display != NULL)
+	{
+	  (I.display)->closeDisplay() ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 /*!
   return true way a button is pressed
- */
-bool  vpDisplay::getClick(vpImage<unsigned char> &I,
-	       int& i, int& j)
+*/
+bool  vpDisplay::getClick(const vpImage<unsigned char> &I,
+			  unsigned& i, unsigned& j)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClick(i,j) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClick(i,j) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
 /*!
   return true way button is pressed
- */
-bool  vpDisplay::getClick(vpImage<unsigned char> &I,
-	       int& i, int& j, int& button)
+*/
+bool  vpDisplay::getClick(const vpImage<unsigned char> &I,
+			  unsigned& i, unsigned& j, 
+			  vpMouseButton::vpMouseButtonType& button)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClick(i,j,button) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClick(i,j,button) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
 /*!
   wait for a click
- */
-void  vpDisplay::getClick(vpImage<unsigned char> &I)
+*/
+void  vpDisplay::getClick(const vpImage<unsigned char> &I)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->getClick() ;
+      if (I.display != NULL)
+	{
+	  (I.display)->getClick() ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 /*!
   return true way  button is released
- */
+*/
 bool
-vpDisplay::getClickUp(vpImage<unsigned char> &I,
-		      int& i, int& j, int& button)
+vpDisplay::getClickUp(const vpImage<unsigned char> &I,
+		      unsigned& i, unsigned& j, 
+		      vpMouseButton::vpMouseButtonType& button)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClickUp(i,j,button) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClickUp(i,j,button) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
@@ -522,21 +532,21 @@ vpDisplay::getClickUp(vpImage<unsigned char> &I,
   Display the windows title.
 */
 void
-vpDisplay::displayTitle(vpImage<vpRGBa> &I, const char *windowtitle)
+vpDisplay::displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->flushTitle(windowtitle) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->flushTitle(windowtitle) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
@@ -544,27 +554,27 @@ vpDisplay::displayTitle(vpImage<vpRGBa> &I, const char *windowtitle)
   Display a 32bits image in the display window
 */
 void
-vpDisplay::display(vpImage<vpRGBa> &I)
+vpDisplay::display(const vpImage<vpRGBa> &I)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayImage(I) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayImage(I) ;
+	}
+      else
+	{
+	  vpERROR_TRACE("Display not initialized") ;
+	  throw(vpDisplayException(vpDisplayException::notInitializedError,
+				   "Display not initialized")) ;
+	}
     }
-    else
-    {
-      vpERROR_TRACE("Display not initialized") ;
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-			       "Display not initialized")) ;
-    }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
@@ -572,27 +582,27 @@ vpDisplay::display(vpImage<vpRGBa> &I)
   \brief get the window pixmap and put it in vpRGBa image
 */
 void
-vpDisplay::getImage(vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
+vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 {
 
   try
-  {
-    if (Isrc.display != NULL)
     {
-      (Isrc.display)->getImage(Idest) ;
+      if (Isrc.display != NULL)
+	{
+	  (Isrc.display)->getImage(Idest) ;
+	}
+      else
+	{
+	  vpERROR_TRACE("Display not initialized") ;
+	  throw(vpDisplayException(vpDisplayException::notInitializedError,
+				   "Display not initialized")) ;
+	}
     }
-    else
-    {
-      vpERROR_TRACE("Display not initialized") ;
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-			       "Display not initialized")) ;
-    }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
@@ -600,63 +610,63 @@ vpDisplay::getImage(vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 */
 
 
-void vpDisplay::displayPoint(vpImage<vpRGBa> &I,
-			     int i,int j,int col)
+void vpDisplay::displayPoint(const vpImage<vpRGBa> &I,
+			     unsigned i,unsigned j,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayPoint(i,j,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayPoint(i,j,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 
 }
 /*!
   Display a cross at coordinates (i,j) in the display window
 */
-void vpDisplay::displayCross(vpImage<vpRGBa> &I,
-		  int i,int j,
-		  int size,int col)
+void vpDisplay::displayCross(const vpImage<vpRGBa> &I,
+			     unsigned i,unsigned j,
+			     unsigned size,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCross(i,j,size,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCross(i,j,size,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*!
   Display a large cross at coordinates (i,j) in the display window
 */
 void
-vpDisplay::displayCrossLarge(vpImage<vpRGBa> &I,
-			     int i,int j,
-			     int size,int col)
+vpDisplay::displayCrossLarge(const vpImage<vpRGBa> &I,
+			     unsigned i,unsigned j,
+			     unsigned size,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCrossLarge(i,j,size,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCrossLarge(i,j,size,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
@@ -664,231 +674,237 @@ vpDisplay::displayCrossLarge(vpImage<vpRGBa> &I,
   circle radius is given in pixel by paramter r
 */
 void
-vpDisplay::displayCircle(vpImage<vpRGBa> &I,
-			 int i, int j, int r, int col)
+vpDisplay::displayCircle(const vpImage<vpRGBa> &I,
+			 unsigned i, unsigned j, unsigned r,
+			 vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
-    {(I.display)->displayCircle(i,j,r,col) ;
+    {
+      if (I.display != NULL)
+	{(I.display)->displayCircle(i,j,r,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*!
   Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
 */
-void vpDisplay::displayLine(vpImage<vpRGBa> &I,
-		 int i1, int j1, int i2, int j2,
-		 int col, int e)
+void vpDisplay::displayLine(const vpImage<vpRGBa> &I,
+			    unsigned i1, unsigned j1, 
+			    unsigned i2, unsigned j2,
+			    vpColor::vpColorType col, unsigned e)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayLine(i1,j1,i2,j2,col,e) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayLine(i1,j1,i2,j2,col,e) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!  Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
   window.  circle radius is given in pixel by paramter r
 */
-void vpDisplay::displayDotLine(vpImage<vpRGBa> &I,
-		    int i1, int j1, int i2, int j2,
-		    int col, int e2)
+void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I,
+			       unsigned i1, unsigned j1,
+			       unsigned i2, unsigned j2,
+			       vpColor::vpColorType col, unsigned e2)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayDotLine(i1,j1,i2,j2,col,e2) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayDotLine(i1,j1,i2,j2,col,e2) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   window
 */
 void
-vpDisplay::displayArrow(vpImage<vpRGBa> &I,
-			int i1,int j1, int i2, int j2,
-			int col, int L,int l)
+vpDisplay::displayArrow(const vpImage<vpRGBa> &I,
+			unsigned i1,unsigned j1, unsigned i2, unsigned j2,
+			vpColor::vpColorType col, unsigned L,unsigned l)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayArrow(i1,j1,i2,j2,col,L,l) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayArrow(i1,j1,i2,j2,col,L,l) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*! display a string at coordinates (i,j) to (i2,j2) in the display
   window
 */
 void
-vpDisplay::displayCharString(vpImage<vpRGBa> &I,
-			     int i,int j,char *s, int c)
+vpDisplay::displayCharString(const vpImage<vpRGBa> &I,
+			     unsigned i,unsigned j,char *s, 
+			     vpColor::vpColorType c)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCharString(i,j,s,c) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCharString(i,j,s,c) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 /*!
-   flushes the output buffer and then waits until all
+  flushes the output buffer and then waits until all
   requests have been received and processed by the server
 */
-void vpDisplay::flush(vpImage<vpRGBa> &I)
+void vpDisplay::flush(const vpImage<vpRGBa> &I)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->flushDisplay() ;
+      if (I.display != NULL)
+	{
+	  (I.display)->flushDisplay() ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
-   Close the display attached to I.
+  Close the display attached to I.
 */
-void vpDisplay::close(vpImage<vpRGBa> &I)
+void vpDisplay::close(const vpImage<vpRGBa> &I)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->closeDisplay() ;
+      if (I.display != NULL)
+	{
+	  (I.display)->closeDisplay() ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
   return true way a button is pressed
- */
-bool  vpDisplay::getClick(vpImage<vpRGBa> &I,
-	       int& i, int& j)
+*/
+bool  vpDisplay::getClick(const vpImage<vpRGBa> &I,
+			  unsigned& i, unsigned& j)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClick(i,j) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClick(i,j) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
 /*!
   return true way button is pressed
- */
-bool  vpDisplay::getClick(vpImage<vpRGBa> &I,
-	       int& i, int& j, int& button)
+*/
+bool  vpDisplay::getClick(const vpImage<vpRGBa> &I,
+			  unsigned& i, unsigned& j,
+			  vpMouseButton::vpMouseButtonType& button)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClick(i,j,button) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClick(i,j,button) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
 /*!
   wait for a click
- */
-void  vpDisplay::getClick(vpImage<vpRGBa> &I)
+*/
+void  vpDisplay::getClick(const vpImage<vpRGBa> &I)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->getClick() ;
+      if (I.display != NULL)
+	{
+	  (I.display)->getClick() ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 
 /*!
   return true way  button is released
- */
+*/
 bool
-vpDisplay::getClickUp(vpImage<vpRGBa> &I,
-		      int& i, int& j, int& button)
+vpDisplay::getClickUp(const vpImage<vpRGBa> &I,
+		      unsigned& i, unsigned& j, 
+		      vpMouseButton::vpMouseButtonType& button)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClickUp(i,j,button) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClickUp(i,j,button) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
@@ -899,63 +915,63 @@ vpDisplay::getClickUp(vpImage<vpRGBa> &I,
 /*!
   Display a point at coordinates (u,v) in the display window
 */
-void vpDisplay::displayPoint_uv(vpImage<unsigned char> &I,
-			     int u,int v,int col)
+void vpDisplay::displayPoint_uv(const vpImage<unsigned char> &I,
+				unsigned u,unsigned v,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayPoint(v,u,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayPoint(v,u,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 
 }
 /*!
   Display a cross at coordinates (u,v) in the display window
 */
-void vpDisplay::displayCross_uv(vpImage<unsigned char> &I,
-		  int u,int v,
-		  int size,int col)
+void vpDisplay::displayCross_uv(const vpImage<unsigned char> &I,
+				unsigned u,unsigned v,
+				unsigned size,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCross(v,u,size,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCross(v,u,size,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*!
   Display a large cross at coordinates (u,v) in the display window
 */
 void
-vpDisplay::displayCrossLarge_uv(vpImage<unsigned char> &I,
-			     int u,int v,
-			     int size,int col)
+vpDisplay::displayCrossLarge_uv(const vpImage<unsigned char> &I,
+				unsigned u,unsigned v,
+				unsigned size,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCrossLarge(v,u,size,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCrossLarge(v,u,size,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
@@ -963,64 +979,67 @@ vpDisplay::displayCrossLarge_uv(vpImage<unsigned char> &I,
   circle radius is given in pixel by paramter r
 */
 void
-vpDisplay::displayCircle_uv(vpImage<unsigned char> &I,
-			 int u, int v, int r, int col)
+vpDisplay::displayCircle_uv(const vpImage<unsigned char> &I,
+			    unsigned u, unsigned v, unsigned r, 
+			    vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCircle(v,u,r,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCircle(v,u,r,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*!
   Display a line from coordinates (u1,v1) to (u2,v2) in the display window.
 */
-void vpDisplay::displayLine_uv(vpImage<unsigned char> &I,
-			    int u1, int v1, int u2, int v2,
-			    int col, int e)
+void vpDisplay::displayLine_uv(const vpImage<unsigned char> &I,
+			       unsigned u1, unsigned v1, 
+			       unsigned u2, unsigned v2,
+			       vpColor::vpColorType col, unsigned e)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayLine(v1,u1,v2,u2,col,e) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayLine(v1,u1,v2,u2,col,e) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 /*!  Display a dotted line from coordinates (u1,v1) to (u2,v2) in the display
   window.  circle radius is given in pixel by paramter r
 */
-void vpDisplay::displayDotLine_uv(vpImage<unsigned char> &I,
-		    int u1, int v1, int u2, int v2,
-		    int col, int e2)
+void vpDisplay::displayDotLine_uv(const vpImage<unsigned char> &I,
+				  unsigned u1, unsigned v1, 
+				  unsigned u2, unsigned v2,
+				  vpColor::vpColorType col, unsigned e2)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayDotLine(v1,u1,v2,u2,col,e2) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayDotLine(v1,u1,v2,u2,col,e2) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
@@ -1028,138 +1047,145 @@ void vpDisplay::displayDotLine_uv(vpImage<unsigned char> &I,
   window
 */
 void
-vpDisplay::displayArrow_uv(vpImage<unsigned char> &I,
-			int u1,int v1, int u2, int v2,
-			int col, int L,int l)
+vpDisplay::displayArrow_uv(const vpImage<unsigned char> &I,
+			   unsigned u1,unsigned v1, 
+			   unsigned u2, unsigned v2,
+			   vpColor::vpColorType col, 
+			   unsigned L,unsigned l)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayArrow(v1,u1,v2,u2,col,L,l) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayArrow(v1,u1,v2,u2,col,L,l) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
 
-  Display a rectangle in the display window.  The rectangle upper left corner
-  has coordinates (u,v). The size of the rectangle is fixed by \e width and \e
-  height.
+Display a rectangle in the display window.  The rectangle upper left corner
+has coordinates (u,v). The size of the rectangle is fixed by \e width and \e
+height.
 
-  \param i Row number of the rectangle upper corner
-  \param j Column number of the rectangle upper corner
-  \param width Width of the rectangle.
-  \param height Height of the rectangle.
-  \param col Color of the rectangle.
+\param i Row number of the rectangle upper corner
+\param j Column number of the rectangle upper corner
+\param width Width of the rectangle.
+\param height Height of the rectangle.
+\param col Color of the rectangle.
 
 */
 void
-vpDisplay::displayRectangle_uv(vpImage<unsigned char> &I, int u, int v,
-			    int width, int height, int col)
+vpDisplay::displayRectangle_uv(const vpImage<unsigned char> &I,
+			       unsigned u, unsigned v,
+			       unsigned width, unsigned height, 
+			       vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayRectangle(v,u,width,height,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayRectangle(v,u,width,height,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*! display a string at coordinates (u,v) in the display
   window
 */
 void
-vpDisplay::displayCharString_uv(vpImage<unsigned char> &I,
-			     int u,int v,char *s, int c)
+vpDisplay::displayCharString_uv(const vpImage<unsigned char> &I,
+				unsigned u,unsigned v,char *s, 
+				vpColor::vpColorType c)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCharString(v,u,s,c) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCharString(v,u,s,c) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 /*!
   return true way a button is pressed
- */
-bool  vpDisplay::getClick_uv(vpImage<unsigned char> &I,
-	       int& u, int& v)
+*/
+bool  vpDisplay::getClick_uv(const vpImage<unsigned char> &I,
+			     unsigned& u, unsigned& v)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClick(v,u) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClick(v,u) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
 /*!
   return true way button is pressed
- */
-bool  vpDisplay::getClick_uv(vpImage<unsigned char> &I,
-	       int& u, int& v, int& button)
+*/
+bool  vpDisplay::getClick_uv(const vpImage<unsigned char> &I,
+			     unsigned& u, unsigned& v, 
+			     vpMouseButton::vpMouseButtonType& button)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClick(v,u,button) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClick(v,u,button) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
 
 /*!
   return true way  button is released
- */
+*/
 bool
-vpDisplay::getClickUp_uv(vpImage<unsigned char> &I,
-		      int& u, int& v, int& button)
+vpDisplay::getClickUp_uv(const vpImage<unsigned char> &I,
+			 unsigned& u, unsigned& v, 
+			 vpMouseButton::vpMouseButtonType& button)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClickUp(v,u,button) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClickUp(v,u,button) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
@@ -1169,63 +1195,64 @@ vpDisplay::getClickUp_uv(vpImage<unsigned char> &I,
 */
 
 
-void vpDisplay::displayPoint_uv(vpImage<vpRGBa> &I,
-			     int u,int v,int col)
+void vpDisplay::displayPoint_uv(const vpImage<vpRGBa> &I,
+				unsigned u,unsigned v,
+				vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayPoint(v,u,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayPoint(v,u,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 
 }
 /*!
   Display a cross at coordinates (u,v) in the display window
 */
-void vpDisplay::displayCross_uv(vpImage<vpRGBa> &I,
-		  int u,int v,
-		  int size,int col)
+void vpDisplay::displayCross_uv(const vpImage<vpRGBa> &I,
+				unsigned u,unsigned v,
+				unsigned size,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCross(v,u,size,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCross(v,u,size,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*!
   Display a large cross at coordinates (u,v) in the display window
 */
 void
-vpDisplay::displayCrossLarge_uv(vpImage<vpRGBa> &I,
-			     int u,int v,
-			     int size,int col)
+vpDisplay::displayCrossLarge_uv(const vpImage<vpRGBa> &I,
+				unsigned u,unsigned v,
+				unsigned size,vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCrossLarge(v,u,size,col) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCrossLarge(v,u,size,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!
@@ -1233,170 +1260,176 @@ vpDisplay::displayCrossLarge_uv(vpImage<vpRGBa> &I,
   circle radius is given in pixel by paramter r
 */
 void
-vpDisplay::displayCircle_uv(vpImage<vpRGBa> &I,
-			 int u, int v, int r, int col)
+vpDisplay::displayCircle_uv(const vpImage<vpRGBa> &I,
+			    unsigned u, unsigned v, unsigned r, 
+			    vpColor::vpColorType col)
 {
   try
-  {
-    if (I.display != NULL)
-    {(I.display)->displayCircle(v,u,r,col) ;
+    {
+      if (I.display != NULL)
+	{(I.display)->displayCircle(v,u,r,col) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 /*!
   Display a line from coordinates (u1,v1) to (u2,v2) in the display window.
 */
-void vpDisplay::displayLine_uv(vpImage<vpRGBa> &I,
-		 int u1, int v1, int u2, int v2,
-		 int col, int e)
+void vpDisplay::displayLine_uv(const vpImage<vpRGBa> &I,
+			       unsigned u1, unsigned v1, 
+			       unsigned u2, unsigned v2,
+			       vpColor::vpColorType col, unsigned e)
 {
 
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayLine(v1,u1,v2,u2,col,e) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayLine(v1,u1,v2,u2,col,e) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*!  Display a dotted line from coordinates  (u1,v1) to (u2,v2) in the display
   window.  circle radius is given in pixel by paramter r
 */
-void vpDisplay::displayDotLine_uv(vpImage<vpRGBa> &I,
-		    int u1, int v1, int u2, int v2,
-		    int col, int e2)
+void vpDisplay::displayDotLine_uv(const vpImage<vpRGBa> &I,
+				  unsigned u1, unsigned v1, 
+				  unsigned u2, unsigned v2,
+				  vpColor::vpColorType col, unsigned e2)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayDotLine(v1,u1,v2,u2,col,e2) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayDotLine(v1,u1,v2,u2,col,e2) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*! Display an arrow from coordinates  (u1,v1) to (u2,v2) in the display
   window
 */
 void
-vpDisplay::displayArrow_uv(vpImage<vpRGBa> &I,
-			int u1,int v1, int u2, int v2,
-			int col, int L,int l)
+vpDisplay::displayArrow_uv(const vpImage<vpRGBa> &I,
+			   unsigned u1,unsigned v1, unsigned u2, unsigned v2,
+			   vpColor::vpColorType col, unsigned L,unsigned l)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayArrow(v1,u1,v2,u2,col,L,l) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayArrow(v1,u1,v2,u2,col,L,l) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 /*! display a string at coordinates (u,v) to (i2,j2) in the display
   window
 */
 void
-vpDisplay::displayCharString_uv(vpImage<vpRGBa> &I,
-			     int u,int v,char *s, int c)
+vpDisplay::displayCharString_uv(const vpImage<vpRGBa> &I,
+				unsigned u,unsigned v,char *s, 
+				vpColor::vpColorType c)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      (I.display)->displayCharString(v,u,s,c) ;
+      if (I.display != NULL)
+	{
+	  (I.display)->displayCharString(v,u,s,c) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
 }
 
 
 
 /*!
   return true way a button is pressed
- */
-bool  vpDisplay::getClick_uv(vpImage<vpRGBa> &I,
-	       int& u, int& v)
+*/
+bool  vpDisplay::getClick_uv(const vpImage<vpRGBa> &I,
+			     unsigned& u, unsigned& v)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClick(v,u) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClick(v,u) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
 /*!
   return true way button is pressed
- */
-bool  vpDisplay::getClick_uv(vpImage<vpRGBa> &I,
-	       int& u, int& v, int& button)
+*/
+bool  vpDisplay::getClick_uv(const vpImage<vpRGBa> &I,
+			     unsigned& u, unsigned& v,
+			     vpMouseButton::vpMouseButtonType& button)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClick(v,u,button) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClick(v,u,button) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }
 
 
 /*!
   return true way  button is released
- */
+*/
 bool
-vpDisplay::getClickUp_uv(vpImage<vpRGBa> &I,
-		      int& u, int& v, int& button)
+vpDisplay::getClickUp_uv(const vpImage<vpRGBa> &I,
+			 unsigned& u, unsigned& v, 
+			 vpMouseButton::vpMouseButtonType& button)
 {
   try
-  {
-    if (I.display != NULL)
     {
-      return (I.display)->getClickUp(v,u,button) ;
+      if (I.display != NULL)
+	{
+	  return (I.display)->getClickUp(v,u,button) ;
+	}
     }
-  }
   catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
   return false ;
 }

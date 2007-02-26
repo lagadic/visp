@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.4 2007-01-30 17:31:01 asaunier Exp $
+ * $Id: vpDisplayGTK.h,v 1.5 2007-02-26 17:26:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -90,26 +90,26 @@ private:
 
 protected:
   void setWindowPosition(int _winx, int _winy) { ; }
-  inline  int getRows() { return nrows ; }
-  inline  int getCols() { return ncols ; }
+  inline  unsigned getWidth() const  { return width ; }
+  inline  unsigned getHeight() const { return height ; }
 
 public:
-
-
   void init(vpImage<unsigned char> &I,
 	    int winx=-1, int winy=-1,
 	    char *_title=NULL)  ;
   void init(vpImage<vpRGBa> &I,
-	   int winx=-1, int winy=-1,
-	   char *_title=NULL)  ;
+	    int winx=-1, int winy=-1,
+	    char *_title=NULL)  ;
 
-  void init(int cols, int rows,
-	   int winx=-1, int winy=-1 ,
-	   char *_title=NULL) ;
+  void init(unsigned width, unsigned height,
+	    int winx=-1, int winy=-1 ,
+	    char *_title=NULL) ;
   // only the constructor/destructor are public
 public:
-  vpDisplayGTK(vpImage<unsigned char> &I, int _winx=-1, int _winy=-1, char *title=NULL) ;
-  vpDisplayGTK(vpImage<vpRGBa> &I, int _winx=-1, int _winy=-1, char *title=NULL) ;
+  vpDisplayGTK(vpImage<unsigned char> &I, int _winx=-1, int _winy=-1, 
+	       char *title=NULL) ;
+  vpDisplayGTK(vpImage<vpRGBa> &I, int _winx=-1, int _winy=-1,
+	       char *title=NULL) ;
 
   vpDisplayGTK(int _winx, int _winy, char *title=NULL) ;
 
@@ -117,39 +117,50 @@ public:
   ~vpDisplayGTK() ;
 
 protected:
-  void displayImage(vpImage<vpRGBa> &I) ;
-  void displayImage(vpImage<unsigned char> &I) ;
-  void displayImage(unsigned char *I) ;
+  void displayImage(const vpImage<vpRGBa> &I) ;
+  void displayImage(const vpImage<unsigned char> &I) ;
+  void displayImage(const unsigned char *I) ;
 
   void closeDisplay() ;
   void flushDisplay() ;
   void flushTitle(const char *string) ;
 
-  void clearDisplay(int c=vpColor::white) ;
+  void clearDisplay(vpColor::vpColorType c=vpColor::white) ;
 
-  void displayPoint(int x,int y,int col) ;
-  void displayCross(int x,int y, int size,int col) ;
-  void displayCrossLarge(int x,int y, int size,int col) ;
-  void displayCircle(int i, int j, int r, int c);
-  void displayLine(int x1, int y1, int x2, int y2, int col, int e=1) ;
-  void displayDotLine(int x1, int y1, int x2, int y2, int col, int e=1) ;
+  void displayPoint(unsigned x,unsigned y,vpColor::vpColorType col) ;
+  void displayCross(unsigned x,unsigned y, unsigned size,
+		    vpColor::vpColorType col) ;
+  void displayCrossLarge(unsigned x,unsigned y, unsigned size,
+			 vpColor::vpColorType col) ;
+  void displayCircle(unsigned i, unsigned j, unsigned r, 
+		     vpColor::vpColorType c);
+  void displayLine(unsigned x1, unsigned y1, unsigned x2, unsigned y2,
+		   vpColor::vpColorType col, unsigned e=1) ;
+  void displayDotLine(unsigned x1, unsigned y1, unsigned x2, unsigned y2, 
+		      vpColor::vpColorType col, unsigned e=1) ;
 
 
-  void displayArrow(int i1,int j1, int i2, int j2,
-		    int col=1, int L=4,int l=2) ;
+  void displayArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2,
+		    vpColor::vpColorType col=vpColor::white, unsigned L=4,
+		    unsigned l=2) ;
 
-  void displayRectangle(int i, int j, int width, int height, int col);
-  void displayCharString(int i,int j,char *s, int c=vpColor::green) ;
+  void displayRectangle(unsigned i, unsigned j, 
+			unsigned width, unsigned height, 
+			vpColor::vpColorType col);
+  void displayCharString(unsigned i,unsigned j,char *s, 
+			 vpColor::vpColorType c=vpColor::green) ;
 
-  bool  getClick(int& i, int& j) ;
-  bool  getClick(int& i, int& j, int& button) ;
+  bool  getClick(unsigned& i, unsigned& j) ;
+  bool  getClick(unsigned& i, unsigned& j, 
+		 vpMouseButton::vpMouseButtonType& button) ;
   void  getClick() ;
-  bool  getClickUp(int& i, int& j, int& button) ;
+  bool  getClickUp(unsigned& i, unsigned& j, 
+		   vpMouseButton::vpMouseButtonType& button) ;
 
 public:
 
-  int  getScreenDepth();
-  void getScreenSize(int *xsize, int *ysize);
+  unsigned  getScreenDepth();
+  void getScreenSize(unsigned &width, unsigned &height);
 
 
 

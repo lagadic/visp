@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Renderer.h,v 1.2 2006-08-21 10:02:43 brenier Exp $
+ * $Id: vpWin32Renderer.h,v 1.3 2007-02-26 17:26:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,117 +51,125 @@
 class VISP_EXPORT vpWin32Renderer
 {
 
-protected:
-	//the size of the display
-	int nbCols;
-	int nbRows;
+ protected:
+  //the size of the display
+  unsigned nbCols;
+  unsigned nbRows;
 
-public:
-	//! Destructor.
-	virtual~vpWin32Renderer() {};
+ public:
+  //! Destructor.
+  virtual~vpWin32Renderer() {};
 
-	//! Returns the image dimensions.
-	int getImageWidth(){ return nbCols; }
-	int getImageHeight(){ return nbRows; }
+  //! Returns the image dimensions.
+  unsigned getImageWidth(){ return nbCols; }
+  unsigned getImageHeight(){ return nbRows; }
 
 
 
-	//! Inits the display .
-	virtual bool init(HWND hWnd, int w, int h) =0;
+  //! Inits the display .
+  virtual bool init(HWND hWnd, unsigned w, unsigned h) =0;
 
-	//! Renders the image.
-	virtual bool render() =0;
+  //! Renders the image.
+  virtual bool render() =0;
 
 	
-	/*!
-	  Sets the image to display.
-	  \param im The image to display.
-	*/
-	virtual void setImg(vpImage<vpRGBa>& im) =0;
-	virtual void setImg(vpImage<unsigned char>& im) =0;
+  /*!
+    Sets the image to display.
+    \param im The image to display.
+  */
+  virtual void setImg(const vpImage<vpRGBa>& im) =0;
+  virtual void setImg(const vpImage<unsigned char>& im) =0;
 
-	/*!
-	  Sets the pixel at (x,y).
-	  \param y The y coordinate of the pixel.
-	  \param x The x coordinate of the pixel.
-	  \param color The color of the pixel.
-	*/
-	virtual void setPixel(int y, int x, int color) =0;
+  /*!
+    Sets the pixel at (x,y).
+    \param y The y coordinate of the pixel.
+    \param x The x coordinate of the pixel.
+    \param color The color of the pixel.
+  */
+  virtual void setPixel(unsigned y, unsigned x, vpColor::vpColorType color) =0;
 
-	/*!
-	  Draws a line.
-	  \param i1 its starting point's first coordinate
-	  \param j1 its starting point's second coordinate
-	  \param i2 its ending point's first coordinate
-	  \param j2 its ending point's second coordinate
-	  \param e width of the line
-	  \param col the line's color
-	  \param style style of the line
-	*/
-	virtual void drawLine(int i1, int j1, int i2, int j2, int col, int e, int style=PS_SOLID) =0;
+  /*!
+    Draws a line.
+    \param i1 its starting point's first coordinate
+    \param j1 its starting point's second coordinate
+    \param i2 its ending point's first coordinate
+    \param j2 its ending point's second coordinate
+    \param e width of the line
+    \param col the line's color
+    \param style style of the line
+  */
+  virtual void drawLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
+			vpColor::vpColorType col, unsigned e, 
+			int style=PS_SOLID) =0;
 
-	/*!
-	  Draws a rectangle.
-	  \param i its top left point's first coordinate
-	  \param j its top left point's second coordinate
-	  \param width width of the rectangle
-	  \param height height of the rectangle
-	  \param col The rectangle's color
-	  \param fill True if it is a filled rectangle
-	*/
-	virtual void drawRect(int i, int j, int width, int height, int col, bool fill=false) =0;
+  /*!
+    Draws a rectangle.
+    \param i its top left point's first coordinate
+    \param j its top left point's second coordinate
+    \param width width of the rectangle
+    \param height height of the rectangle
+    \param col The rectangle's color
+    \param fill True if it is a filled rectangle
+  */
+  virtual void drawRect(unsigned i, unsigned j, 
+			unsigned width, unsigned height, 
+			vpColor::vpColorType col, bool fill=false) =0;
 
-	/*!
-	  Clears the image to color c.
-	  \param c The color used to fill the image.
-	*/
-	virtual void clear(int c) =0;
+  /*!
+    Clears the image to color c.
+    \param c The color used to fill the image.
+  */
+  virtual void clear(vpColor::vpColorType c) =0;
 
-	/*!
-	  Draws a circle.
-	  \param i its center point's first coordinate
-	  \param j its center point's second coordinate
-	  \param r The circle's radius
-	  \param col The circle's color
-	*/
-	virtual void drawCircle(int i, int j, int r, int c) =0;
+  /*!
+    Draws a circle.
+    \param i its center point's first coordinate
+    \param j its center point's second coordinate
+    \param r The circle's radius
+    \param col The circle's color
+  */
+  virtual void drawCircle(unsigned i, unsigned j, unsigned r, 
+			  vpColor::vpColorType c) =0;
 
-	/*!
-	  Draws some text.
-	  \param i its top left point's first coordinate
-	  \param j its top left point's second coordinate
-	  \param s The string to display
-	  \param col The text's color
-	*/
-	virtual void drawText(int i, int j, char * s, int c) =0;
+  /*!
+    Draws some text.
+    \param i its top left point's first coordinate
+    \param j its top left point's second coordinate
+    \param s The string to display
+    \param col The text's color
+  */
+  virtual void drawText(unsigned i, unsigned j, char * s, 
+			vpColor::vpColorType c) =0;
 
-	/*!
-	  Draws a cross.
-	  \param i its center point's first coordinate
-	  \param j its center point's second coordinate
-	  \param size Size of the cross
-	  \param col The cross' color
-	  \param e width of the cross
-	*/
-	virtual void drawCross(int i,int j, int size, int col, int e=1) =0;
+  /*!
+    Draws a cross.
+    \param i its center point's first coordinate
+    \param j its center point's second coordinate
+    \param size Size of the cross
+    \param col The cross' color
+    \param e width of the cross
+  */
+  virtual void drawCross(unsigned i,unsigned j, unsigned size, 
+			 vpColor::vpColorType col, unsigned e=1) =0;
 
-	/*!
-	  Draws an arrow.
-	  \param i1 its starting point's first coordinate
-	  \param j1 its starting point's second coordinate
-	  \param i2 its ending point's first coordinate
-	  \param j2 its ending point's second coordinate
-	  \param col The line's color
-	  \param L ...
-	  \param l ...
-	*/
-	virtual void drawArrow(int i1,int j1, int i2, int j2, int col, int L,int l) =0;
+  /*!
+    Draws an arrow.
+    \param i1 its starting point's first coordinate
+    \param j1 its starting point's second coordinate
+    \param i2 its ending point's first coordinate
+    \param j2 its ending point's second coordinate
+    \param col The line's color
+    \param L ...
+    \param l ...
+  */
+  virtual void drawArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2,
+			 vpColor::vpColorType col, unsigned L,unsigned l) =0;
 
-	/*!
-	  Gets the currently displayed image.
-	  \param I Image returned.
-	*/
-	virtual void getImage(vpImage<vpRGBa> &I) =0;
+  /*!
+    Gets the currently displayed image.
+    \param I Image returned.
+  */
+  virtual void getImage(vpImage<vpRGBa> &I) =0;
 };
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.h,v 1.3 2007-02-13 09:17:41 fspindle Exp $
+ * $Id: vpGDIRenderer.h,v 1.4 2007-02-26 17:26:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,73 +55,78 @@
 
 class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 {
-	//the handle of the associated window
-	HWND hWnd;
+  //the handle of the associated window
+  HWND hWnd;
 
-	//the bitmap object to display
-	HBITMAP bmp;
+  //the bitmap object to display
+  HBITMAP bmp;
 
-	//colors for overlay
-	COLORREF colors[8];
+  //colors for overlay
+  COLORREF colors[8];
 
-	//font used to draw text
-	HFONT hFont;
+  //font used to draw text
+  HFONT hFont;
 
-	//used to ensure that only one thread at a time is accessing bmp
-	CRITICAL_SECTION CriticalSection;
+  //used to ensure that only one thread at a time is accessing bmp
+  CRITICAL_SECTION CriticalSection;
 
-public:
-	vpGDIRenderer();
-	~vpGDIRenderer();
+ public:
+  vpGDIRenderer();
+  ~vpGDIRenderer();
 
-	//inits the display.
-	bool init(HWND hWnd, int width, int height);
+  //inits the display.
+  bool init(HWND hWnd, unsigned width, unsigned height);
 
-	//renders on the window's DC.
-	bool render();
+  //renders on the window's DC.
+  bool render();
 
-	// gets the image's width.
-	int getImageWidth(){ return nbCols; }
+  // gets the image's width.
+  unsigned getImageWidth(){ return nbCols; }
 
-	// gets the image's height.
-	int getImageHeight(){ return nbRows; }
+  // gets the image's height.
+  unsigned getImageHeight(){ return nbRows; }
 
-	// sets the image to display.
-	void setImg(vpImage<vpRGBa>& im);
-	void setImg(vpImage<unsigned char>& im);
+  // sets the image to display.
+  void setImg(const vpImage<vpRGBa>& im);
+  void setImg(const vpImage<unsigned char>& im);
 
-	//Draws a pixel of color color at (x,y).
-	void setPixel(int y, int x, int color);
+  //Draws a pixel of color color at (x,y).
+  void setPixel(unsigned y, unsigned x, vpColor::vpColorType color);
 
-	//other drawing methods
-	void drawLine(int i1, int j1, int i2, int j2, int col, int e, int style=PS_SOLID);
+  //other drawing methods
+  void drawLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
+		vpColor::vpColorType col, unsigned e, int style=PS_SOLID);
 
-	void drawRect(int i, int j, int width, int height, int col, bool fill=false);
+  void drawRect(unsigned i, unsigned j, unsigned width, unsigned height, 
+		vpColor::vpColorType col, bool fill=false);
 
-	void clear(int c);
+  void clear(vpColor::vpColorType c);
 
-	void drawCircle(int i, int j, int r, int c);
+  void drawCircle(unsigned i, unsigned j, unsigned r, vpColor::vpColorType c);
 
-	void drawText(int i, int j, char * s, int c);
+  void drawText(unsigned i, unsigned j, char * s, vpColor::vpColorType c);
 
-	void drawCross(int i,int j, int size, int col, int e=1);
+  void drawCross(unsigned i,unsigned j, unsigned size, 
+		 vpColor::vpColorType col, unsigned e=1);
 
-	void drawArrow(int i1,int j1, int i2, int j2, int col, int L,int l);
+  void drawArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2, 
+		 vpColor::vpColorType col, unsigned L,unsigned l);
 
 
-	// returns the currently displayed image.
-	void getImage(vpImage<vpRGBa> &I);
+  // returns the currently displayed image.
+  void getImage(vpImage<vpRGBa> &I);
 
-private:
+ private:
 
-	//updates the renderer hbitmaps.
-	bool updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, int w, int h);
+  //updates the renderer hbitmaps.
+  bool updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, 
+		    unsigned w, unsigned h);
 
-	//converts a vpImage<vpRGBa> into a HBITMAP .
-	void convert(vpImage<vpRGBa> &I, HBITMAP& hBmp);
+  //converts a vpImage<vpRGBa> into a HBITMAP .
+  void convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp);
 
-	//converst a vpImage<unsigned char> into a HBITMAP .
-	void convert(vpImage<unsigned char> &I, HBITMAP& hBmp);
+  //converst a vpImage<unsigned char> into a HBITMAP .
+  void convert(const vpImage<unsigned char> &I, HBITMAP& hBmp);
 
 };
 #endif

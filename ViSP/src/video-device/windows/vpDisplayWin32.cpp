@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.6 2007-01-31 17:08:18 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.7 2007-02-26 17:26:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,30 +45,32 @@
 
 
 /*!
-	Thread entry point.
-	Used as a detour to initWindow.
+  Thread entry point.
+  Used as a detour to initWindow.
 */
-void createWindow(threadParam * param)
+void vpCreateWindow(threadParam * param)
 {
-	string title = param->title;
-	(param->vpDisp)->window.initWindow(title, param->x, param->y, param->w, param->h);
-	delete param;
+  string title = param->title;
+  (param->vpDisp)->window.initWindow(title, param->x, param->y,
+				     param->w, param->h);
+  delete param;
 }
 
 /*!
-	Constructor.
+  Constructor.
 */
-vpDisplayWin32::vpDisplayWin32(vpWin32Renderer * rend) : iStatus(false), window(rend)
+vpDisplayWin32::vpDisplayWin32(vpWin32Renderer * rend) : 
+  iStatus(false), window(rend)
 {
 }
 
 
 /*!
-	Destructor.
+  Destructor.
 */
 vpDisplayWin32::~vpDisplayWin32()
 {
-	closeDisplay();
+  closeDisplay();
 }
 
 
@@ -82,25 +84,23 @@ vpDisplayWin32::~vpDisplayWin32()
 
 */
 void vpDisplayWin32::init(vpImage<unsigned char> &I,
-		   int x,
-		   int y,
-		   char *title)
- {
+			  int x,
+			  int y,
+			  char *title)
+{
+	if ((I.getHeight() == 0) || (I.getWidth()==0))
+    {
+      vpERROR_TRACE("Image not initialized " ) ;
+      throw(vpDisplayException(vpDisplayException::notInitializedError,
+			       "Image not initialized")) ;
+    }
 
-   if ((I.getRows() == 0) || (I.getCols()==0))
-     {
-       vpERROR_TRACE("Image not initialized " ) ;
-       throw(vpDisplayException(vpDisplayException::notInitializedError,
-				"Image not initialized")) ;
-     }
+  window.renderer->setImg(I);
 
-   window.renderer->setImg(I);
-
-   init (I.getCols(), I.getRows(), x, y, title) ;
-   I.display = this ;
-   I.initDisplay =  true ;
-
- }
+  init (I.getWidth(), I.getHeight(), x, y, title) ;
+  I.display = this ;
+  I.initDisplay =  true ;
+}
 
 /*!
   \brief Initialized the display of a RGBa  image
@@ -111,20 +111,20 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
 
 */
 void vpDisplayWin32::init(vpImage<vpRGBa> &I,
-		   int x,
-		   int y,
-		   char *title)
+			  int x,
+			  int y,
+			  char *title)
 {
-  if ((I.getRows() == 0) || (I.getCols()==0))
-     {
-       vpERROR_TRACE("Image not initialized " ) ;
-       throw(vpDisplayException(vpDisplayException::notInitializedError,
-				"Image not initialized")) ;
-     }
+  if ((I.getHeight() == 0) || (I.getWidth()==0))
+    {
+      vpERROR_TRACE("Image not initialized " ) ;
+      throw(vpDisplayException(vpDisplayException::notInitializedError,
+			       "Image not initialized")) ;
+    }
 
   window.renderer->setImg(I);
 
-  init (I.getCols(), I.getRows(), x, y, title) ;
+  init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
   I.initDisplay =  true ;
 
@@ -135,364 +135,381 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
   \brief actual member used to Initialize the display of a
   gray level or RGBa  image
 
-  \param _ncol, _nrow : weight, height of the window
+  \param width, height : weight, height of the window
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
 */
-void vpDisplayWin32::init(int _ncol, int _nrow,
-		   int x, int y,
-		   char *title)
+void vpDisplayWin32::init(unsigned width, unsigned height,
+			  int x, int y,
+			  char *title)
 {
 
 
-	if (this->title != NULL)//delete après init du thread.... ou destructeur
-	{
-	  delete [] this->title;
-	  this->title = NULL;
-	}
+  if (this->title != NULL)//delete après init du thread.... ou destructeur
+    {
+      delete [] this->title;
+      this->title = NULL;
+    }
 
-	if (title != NULL) {
-	  this->title = new char[strlen(title) + 1] ;
-	  strcpy(this->title, title) ;
-	}
-	else {
-	  this->title = new char [1] ;
-	  sprintf(title, '\0');
-	}
+  if (title != NULL) {
+    this->title = new char[strlen(title) + 1] ;
+    strcpy(this->title, title) ;
+  }
+  else {
+    this->title = new char [1] ;
+    sprintf(title, '\0');
+  }
 
-	//we prepare the window's thread creation
-	threadParam * param = new threadParam;
-	param->x = x;
-	param->y = y;
-	param->w = _ncol;
-	param->h = _nrow;
-	param->vpDisp = this;
-	param->title = this->title;
+  //we prepare the window's thread creation
+  threadParam * param = new threadParam;
+  param->x = x;
+  param->y = y;
+  param->w = width;
+  param->h = height;
+  param->vpDisp = this;
+  param->title = this->title;
 
-	//creates the window in a separate thread
-	hThread = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)createWindow,param,0,&threadId);
+  //creates the window in a separate thread
+  hThread = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)vpCreateWindow,
+			 param,0,&threadId);
 
-	//the initialization worked
-	iStatus = (hThread != (HANDLE)NULL);
+  //the initialization worked
+  iStatus = (hThread != (HANDLE)NULL);
 
-	displayHasBeenInitialized = true;
+  displayHasBeenInitialized = true;
 }
 
 /*!
-	If the window is not initialized yet, wait a little (MAX_INIT_DELAY).
-	\exception notInitializedError : the window isn't initialized
+  If the window is not initialized yet, wait a little (MAX_INIT_DELAY).
+  \exception notInitializedError : the window isn't initialized
 */
 void vpDisplayWin32::waitForInit()
 {
-	//if the window is not initialized yet
-	if(!window.isInitialized())
-	{
-		//wait
-		if( WAIT_OBJECT_0 != WaitForSingleObject(window.semaInit, MAX_INIT_DELAY) )
-			 throw(vpDisplayException(vpDisplayException::notInitializedError,
-				"Window not initialized")) ;
-				//problem : the window is not initialized
-	}
+  //if the window is not initialized yet
+  if(!window.isInitialized())
+    {
+      //wait
+      if( WAIT_OBJECT_0 != WaitForSingleObject(window.semaInit,MAX_INIT_DELAY))
+	throw(vpDisplayException(vpDisplayException::notInitializedError,
+				 "Window not initialized")) ;
+      //problem : the window is not initialized
+    }
 }
 
 /*!
-	Displays an RGBa image in the window.
-	\param I : image to display
+  Displays an RGBa image in the window.
+  \param I : image to display
 */
-void vpDisplayWin32::displayImage(vpImage<vpRGBa> &I)
+void vpDisplayWin32::displayImage(const vpImage<vpRGBa> &I)
 {
-	//waits if the window is not initialized
-	waitForInit();
+  //waits if the window is not initialized
+  waitForInit();
 
-	//sets the image to render
-	window.renderer->setImg(I);
-	//sends a message to the window
-	PostMessage(window.getHWnd(),vpWM_DISPLAY,NULL,NULL);
+  //sets the image to render
+  window.renderer->setImg(I);
+  //sends a message to the window
+  PostMessage(window.getHWnd(),vpWM_DISPLAY,NULL,NULL);
 }
 
 /*!
-	Displays a grayscale image in the window.
-	\param I : image to display
+  Displays a grayscale image in the window.
+  \param I : image to display
 */
-void vpDisplayWin32::displayImage(vpImage<unsigned char> &I)
+void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
 {
-	//wait if the window is not initialized
-	waitForInit();
+  //wait if the window is not initialized
+  waitForInit();
 
-	//sets the image to render
-	window.renderer->setImg(I);
-	//sends a message to the window
-	PostMessage(window.getHWnd(), vpWM_DISPLAY, NULL, NULL);
+  //sets the image to render
+  window.renderer->setImg(I);
+  //sends a message to the window
+  PostMessage(window.getHWnd(), vpWM_DISPLAY, NULL, NULL);
 }
 
 /*!
-	Waits for a click and returns its coordinates.
-	\param i : first coordinate of the click position
-	\param j : second coordinate of the click position
-	\return true
+  Waits for a click and returns its coordinates.
+  \param i : first coordinate of the click position
+  \param j : second coordinate of the click position
+  \return true
 */
-bool vpDisplayWin32::getClick(int& i, int& j)
+bool vpDisplayWin32::getClick(unsigned& i, unsigned& j)
 {
-	//wait if the window is not initialized
-	waitForInit();
+  //wait if the window is not initialized
+  waitForInit();
 
-	//we don't care about which button is pressed
-	window.clickButton = vpNO_BUTTON_QUERY;
-	//tells the window there has been a getclickup demand
-	PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
-	//waits for a click
-	WaitForSingleObject(window.semaClick,INFINITE);
+  //we don't care about which button is pressed
+  window.clickButton = vpNO_BUTTON_QUERY;
+  //tells the window there has been a getclickup demand
+  PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
+  //waits for a click
+  WaitForSingleObject(window.semaClick,INFINITE);
 
-	j = window.clickX;
-	i = window.clickY;
-	return true;
+  j = window.clickX;
+  i = window.clickY;
+  return true;
 }
 
 /*!
-	Waits for a click from a certain button and returns its coordinates.
-	\param i : first coordinate of the click position
-	\param j : second coordinate of the click position
-	\param button : button to use for the click
-	\return true
+  Waits for a click from a certain button and returns its coordinates.
+  \param i : first coordinate of the click position
+  \param j : second coordinate of the click position
+  \param button : button to use for the click
+  \return true
 */
-bool vpDisplayWin32::getClick(int& i, int& j, int& button)
+bool vpDisplayWin32::getClick(unsigned& i, unsigned& j,
+			      vpMouseButton::vpMouseButtonType& button)
 {
-	//wait if the window is not initialized
-	waitForInit();
+  //wait if the window is not initialized
+  waitForInit();
 
-	//we want a click from a specific button
-	window.clickButton = button;
-	//tells the window there has been a getclickup demand
-	PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
-	//waits for a click
-	WaitForSingleObject(window.semaClick, INFINITE);
+  //we want a click from a specific button
+  window.clickButton = button;
+  //tells the window there has been a getclickup demand
+  PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
+  //waits for a click
+  WaitForSingleObject(window.semaClick, INFINITE);
 
-	j = window.clickX;
-	i = window.clickY;
-	return true;
+  j = window.clickX;
+  i = window.clickY;
+  return true;
 }
 
 /*!
-	Waits for a click "up" from a certain button and returns its coordinates.
-	\param i : first coordinate of the click position
-	\param j : second coordinate of the click position
-	\param button : button to use for the click
-	\return true
+  Waits for a click "up" from a certain button and returns its coordinates.
+  \param i : first coordinate of the click position
+  \param j : second coordinate of the click position
+  \param button : button to use for the click
+  \return true
 */
-bool vpDisplayWin32::getClickUp(int& i, int& j, int& button)
+bool vpDisplayWin32::getClickUp(unsigned& i, unsigned& j, 
+				vpMouseButton::vpMouseButtonType& button)
 {
-	//wait if the window is not initialized
-	waitForInit();
+  //wait if the window is not initialized
+  waitForInit();
 
-	//we want a click from a specific button
-	window.clickButton = button;
+  //we want a click from a specific button
+  window.clickButton = button;
 
-	//tells the window there has been a getclickup demand
-	PostMessage(window.getHWnd(), vpWM_GETCLICKUP, NULL, NULL);
+  //tells the window there has been a getclickup demand
+  PostMessage(window.getHWnd(), vpWM_GETCLICKUP, NULL, NULL);
 
-	//waits for a click release
-	WaitForSingleObject(window.semaClick, INFINITE);
+  //waits for a click release
+  WaitForSingleObject(window.semaClick, INFINITE);
 
-	j = window.clickX;
-	i = window.clickY;
+  j = window.clickX;
+  i = window.clickY;
 
-	return true;
+  return true;
 }
 
 /*!
-	Waits for a click.
+  Waits for a click.
 */
 void vpDisplayWin32::getClick()
 {
-	//wait if the window is not initialized
-	waitForInit();
+  //wait if the window is not initialized
+  waitForInit();
 
-	//we don't care about which button is pressed
-	window.clickButton = vpNO_BUTTON_QUERY;
-	//sends a message to the window
-	PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
+  //we don't care about which button is pressed
+  window.clickButton = vpNO_BUTTON_QUERY;
+  //sends a message to the window
+  PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
 
-	//waits for a button to be pressed
-	WaitForSingleObject(window.semaClick, INFINITE);
+  //waits for a button to be pressed
+  WaitForSingleObject(window.semaClick, INFINITE);
 }
 
 /*!
-	Changes the window's position
-	\param _winx : its first new coordinate
-	\param _winy : its second new coordinate
+  Changes the window's position
+  \param _winx : its first new coordinate
+  \param _winy : its second new coordinate
 */
 void vpDisplayWin32::setWindowPosition(int _winx, int _winy)
 {
-	//wait if the window is not initialized
-	waitForInit();
+  //wait if the window is not initialized
+  waitForInit();
 
-	//cahange the window position only
-	SetWindowPos(window.hWnd,HWND_TOP,_winx,_winy, 0, 0,
-		SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER |SWP_NOSIZE);
+  //cahange the window position only
+  SetWindowPos(window.hWnd,HWND_TOP,_winx,_winy, 0, 0,
+	       SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER |SWP_NOSIZE);
 
 }
 
 /*!
-	Changes the window's titlebar text
-	\param string The new text to display
+  Changes the window's titlebar text
+  \param string The new text to display
 */
 void vpDisplayWin32::flushTitle(const char *string)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	SetWindowText(window.hWnd,string);
+  //wait if the window is not initialized
+  waitForInit();
+  SetWindowText(window.hWnd,string);
 }
 
 /*!
-	Displays a point.
-	\param i : its first coordinate
-	\param j : its second coordinate
-	\param col : The point's color
+  Displays a point.
+  \param i : its first coordinate
+  \param j : its second coordinate
+  \param col : The point's color
 */
-void vpDisplayWin32::displayPoint(int i,int j,int col)
+void vpDisplayWin32::displayPoint(unsigned i,unsigned j,
+				  vpColor::vpColorType col)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->setPixel(i,j,col);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->setPixel(i,j,col);
 }
 
 /*!
-	Displays a line.
-	\param i1 : its starting point's first coordinate
-	\param j1 : its starting point's second coordinate
-	\param i2 : its ending point's first coordinate
-	\param j2 : its ending point's second coordinate
-	\param e : width of the line
-	\param col : The point's color
+  Displays a line.
+  \param i1 : its starting point's first coordinate
+  \param j1 : its starting point's second coordinate
+  \param i2 : its ending point's first coordinate
+  \param j2 : its ending point's second coordinate
+  \param e : width of the line
+  \param col : The point's color
 */
-void vpDisplayWin32::displayLine(int i1, int j1, int i2, int j2, int col, int e)
+void vpDisplayWin32::displayLine(unsigned i1, unsigned j1,
+				 unsigned i2, unsigned j2,
+				 vpColor::vpColorType col, unsigned e)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->drawLine(i1,j1,i2,j2,col,e);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawLine(i1,j1,i2,j2,col,e);
 }
 
 /*!
-	Displays a dotted line.
-	\param i1 : its starting point's first coordinate
-	\param j1 : its starting point's second coordinate
-	\param i2 : its ending point's first coordinate
-	\param j2 : its ending point's second coordinate
-	\param e : width of the line
-	\param col : The line's color
+  Displays a dotted line.
+  \param i1 : its starting point's first coordinate
+  \param j1 : its starting point's second coordinate
+  \param i2 : its ending point's first coordinate
+  \param j2 : its ending point's second coordinate
+  \param e : width of the line
+  \param col : The line's color
 */
-void vpDisplayWin32::displayDotLine(int i1, int j1, int i2, int j2, int col, int e)
+void vpDisplayWin32::displayDotLine(unsigned i1, unsigned j1, 
+				    unsigned i2, unsigned j2, 
+				    vpColor::vpColorType col, unsigned e)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->drawLine(i1,j1,i2,j2,col,e,PS_DASHDOT);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawLine(i1,j1,i2,j2,col,e,PS_DASHDOT);
 }
 
 /*!
-	Displays a rectangle.
-	\param i : its top left point's first coordinate
-	\param j : its top left point's second coordinate
-	\param width : width of the rectangle
-	\param height : height of the rectangle
-	\param col : The rectangle's color
+  Displays a rectangle.
+  \param i : its top left point's first coordinate
+  \param j : its top left point's second coordinate
+  \param width : width of the rectangle
+  \param height : height of the rectangle
+  \param col : The rectangle's color
 */
-void vpDisplayWin32::displayRectangle(int i, int j, int width, int height, int col)
+void vpDisplayWin32::displayRectangle(unsigned i, unsigned j, 
+				      unsigned width, unsigned height, 
+				      vpColor::vpColorType col)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->drawRect(i,j,width,height,col);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawRect(i,j,width,height,col);
 }
 
 /*!
-	Displays a circle.
-	\param i : its center point's first coordinate
-	\param j : its center point's second coordinate
-	\param r : The circle's radius
-	\param c : The circle's color
+  Displays a circle.
+  \param i : its center point's first coordinate
+  \param j : its center point's second coordinate
+  \param r : The circle's radius
+  \param c : The circle's color
 */
-void vpDisplayWin32::displayCircle(int i, int j, int r, int c)
+void vpDisplayWin32::displayCircle(unsigned i, unsigned j, unsigned r, 
+				   vpColor::vpColorType c)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->drawCircle(i,j,r,c);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawCircle(i,j,r,c);
 }
 
 /*!
-	Displays a string.
-	\param i : its top left point's first coordinate
-	\param j : its top left point's second coordinate
-	\param s : The string to display
-	\param c : The text's color
+  Displays a string.
+  \param i : its top left point's first coordinate
+  \param j : its top left point's second coordinate
+  \param s : The string to display
+  \param c : The text's color
 */
-void vpDisplayWin32::displayCharString(int i,int j,char *s, int c)
+void vpDisplayWin32::displayCharString(unsigned i,unsigned j,char *s, 
+				       vpColor::vpColorType c)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->drawText(i,j,s,c);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawText(i,j,s,c);
 }
 
 /*!
-	Displays a cross.
-	\param i : its center point's first coordinate
-	\param j : its center point's second coordinate
-	\param size : Size of the cross
-	\param col : The cross' color
+  Displays a cross.
+  \param i : its center point's first coordinate
+  \param j : its center point's second coordinate
+  \param size : Size of the cross
+  \param col : The cross' color
 */
-void vpDisplayWin32::displayCross(int i,int j, int size,int col)
+void vpDisplayWin32::displayCross(unsigned i,unsigned j, unsigned size,
+				  vpColor::vpColorType col)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->drawCross(i, j, size, col);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawCross(i, j, size, col);
 }
 
 /*!
-	Displays a large cross.
-	\param i : its center point's first coordinate
-	\param j : its center point's second coordinate
-	\param size : Size of the cross
-	\param col : The cross' color
+  Displays a large cross.
+  \param i : its center point's first coordinate
+  \param j : its center point's second coordinate
+  \param size : Size of the cross
+  \param col : The cross' color
 */
-void vpDisplayWin32::displayCrossLarge(int i,int j, int size,int col)
+void vpDisplayWin32::displayCrossLarge(unsigned i,unsigned j, unsigned size,
+				       vpColor::vpColorType col)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->drawCross(i, j, size, col, 3);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawCross(i, j, size, col, 3);
 }
 
 /*!
-	Displays an arrow.
-	\param i1 : its starting point's first coordinate
-	\param j1 : its starting point's second coordinate
-	\param i2 : its ending point's first coordinate
-	\param j2 : its ending point's second coordinate
-	\param col : The line's color
-	\param L : ...
-	\param l : ...
+  Displays an arrow.
+  \param i1 : its starting point's first coordinate
+  \param j1 : its starting point's second coordinate
+  \param i2 : its ending point's first coordinate
+  \param j2 : its ending point's second coordinate
+  \param col : The line's color
+  \param L : ...
+  \param l : ...
 */
-void vpDisplayWin32::displayArrow(int i1,int j1, int i2, int j2, int col, int L,int l)
+void vpDisplayWin32::displayArrow(unsigned i1,unsigned j1, 
+				  unsigned i2, unsigned j2, 
+				  vpColor::vpColorType col, 
+				  unsigned L,unsigned l)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->drawArrow(i1, j1, i2, j2, col, L, l);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawArrow(i1, j1, i2, j2, col, L, l);
 }
 
 
 /*!
-	Clears the display.
-	\param c : the color to fill the display with
+  Clears the display.
+  \param c : the color to fill the display with
 */
-void vpDisplayWin32::clearDisplay(int c)
+void vpDisplayWin32::clearDisplay(vpColor::vpColorType c)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->clear(c);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->clear(c);
 }
 
 
 /*!
-	Closes the display.
-	Destroys the window.
+  Closes the display.
+  Destroys the window.
 */
 void vpDisplayWin32::closeDisplay()
 {
@@ -515,14 +532,14 @@ void vpDisplayWin32::closeDisplay()
 }
 
 /*!
-	Gets the displayed image (if overlay, if any).
-	\param I : Image to fill.
+  Gets the displayed image (if overlay, if any).
+  \param I : Image to fill.
 */
 void vpDisplayWin32::getImage(vpImage<vpRGBa> &I)
 {
-	//wait if the window is not initialized
-	waitForInit();
-	window.renderer->getImage(I);
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->getImage(I);
 }
 
 #endif
