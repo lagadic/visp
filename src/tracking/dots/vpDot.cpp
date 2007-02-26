@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.17 2007-02-16 15:03:32 asaunier Exp $
+ * $Id: vpDot.cpp,v 1.18 2007-02-26 17:38:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,6 +73,9 @@ void vpDot::init()
   compute_moment = false ;
   graphics = false ;
   nbMaxPoint = 10000 ;
+  threshold_l = 128;
+  threshold_r = 255;
+  
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
@@ -157,7 +160,8 @@ vpDot::operator=(const vpDot& pt)
   cog_vfloat = pt.cog_vfloat ;
 
   graphics = pt.graphics ;
-  threshold = pt.threshold ;
+  threshold_l = pt.threshold_l ;
+  threshold_r = pt.threshold_r ;
   compute_moment = pt.compute_moment ;
 
   m00 = pt.m00;
@@ -193,7 +197,7 @@ vpDot::operator==(const vpDot& m)
 */
 int
 vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v, 
-	       unsigned char threshold,
+	       unsigned char threshold_l, unsigned char threshold_r,
 	       double &mean_value, double &u_cog, double &v_cog, double &n)
 {
 
@@ -201,7 +205,7 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v,
   if ( (u < 0) || (v < 0) || (u >= I.getWidth()) || (v >= I.getHeight()) ) {
     return  vpDot::out ;
   }
-  if (I[v][u] >= threshold)
+  if (I[v][u] >= threshold_l && I[v][u] <= threshold_r)
   {
     if (graphics==true)
     {
@@ -231,51 +235,55 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v,
   }
   if ( u-1 >= 0)
   {
-    if (I[v][u-1] >= threshold)
-      connexe(I,u-1,v, threshold, mean_value, u_cog,v_cog, n) ;
+    if (I[v][u-1] >= threshold_l && I[v][u-1] <= threshold_r)
+      connexe(I,u-1,v, threshold_l, threshold_r, mean_value, u_cog,v_cog, n) ;
   }
 
   if (u+1 <  I.getWidth())
   {
-    if (I[v][u+1] >= threshold)
-      connexe(I,u+1,v,threshold, mean_value, u_cog, v_cog, n) ;
+    if (I[v][u+1] >= threshold_l && I[v][u+1] <= threshold_r)
+      connexe(I,u+1,v,threshold_l, threshold_r, mean_value, u_cog, v_cog, n) ;
   }
   if  (v-1 >= 0)
   {
-    if (I[v-1][u] >=threshold)
-      connexe(I,u, v-1,threshold, mean_value, u_cog, v_cog, n) ;
+    if (I[v-1][u] >=threshold_l && I[v-1][u] <= threshold_r)
+      connexe(I,u, v-1,threshold_l, threshold_r, mean_value, u_cog, v_cog, n) ;
   }
   if  (v+1 < I.getHeight())
   {
-    if (I[v+1][u] >=threshold)
-      connexe(I,u,v+1,threshold, mean_value, u_cog, v_cog, n) ;
+    if (I[v+1][u] >=threshold_l && I[v+1][u] <= threshold_r)
+      connexe(I,u,v+1,threshold_l, threshold_r, mean_value, u_cog, v_cog, n) ;
   }
 
   if (connexity == CONNEXITY_8) {
     if ( (u-1 >= 0) && (v-1 >= 0) )
     {
 
-      if (I[v-1][u-1] >=threshold)
-	connexe(I,u-1,v-1,threshold, mean_value, u_cog, v_cog, n) ;
+      if (I[v-1][u-1] >=threshold_l && I[v-1][u-1] <= threshold_r)
+	connexe(I,u-1,v-1,threshold_l, threshold_r, mean_value, 
+		u_cog, v_cog, n) ;
     }
 
     if ( (u+1 <  I.getWidth()) && (v-1 >= 0 ) )
     {
 
-      if (I[v-1][u+1] >=threshold)
-	connexe(I,u+1,v-1,threshold, mean_value, u_cog, v_cog, n) ;
+      if (I[v-1][u+1] >=threshold_l && I[v-1][u+1] <= threshold_r)
+	connexe(I,u+1,v-1,threshold_l, threshold_r, mean_value, 
+		u_cog, v_cog, n) ;
     }
     if  ( (v+1 < I.getHeight()) && (u-1 >= 0) )
     {
 
-      if (I[v+1][u-1] >=threshold)
-	connexe(I,u-1,v+1,threshold, mean_value, u_cog, v_cog, n) ;
+      if (I[v+1][u-1] >=threshold_l && I[v+1][u-1] <= threshold_r)
+	connexe(I,u-1,v+1,threshold_l, threshold_r, mean_value, 
+		u_cog, v_cog, n) ;
     }
     if  ( (v+1 < I.getHeight()) && (u+1 < I.getWidth()) )
     {
 
-      if (I[v+1][u+1] >=threshold)
-	connexe(I,u+1,v+1,threshold, mean_value, u_cog, v_cog, n) ;
+      if (I[v+1][u+1] >=threshold_l && I[v+1][u+1] <= threshold_r)
+	connexe(I,u+1,v+1,threshold_l, threshold_r, mean_value, 
+		u_cog, v_cog, n) ;
     }
   }
 
@@ -318,8 +326,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 
 #if 0
   // Original version
-  if (  connexe(I, (unsigned)u, (unsigned)v, threshold, mean_value,
-		u_cog, v_cog, npoint) == vpDot::out)
+  if (  connexe(I, (unsigned)u, (unsigned)v, threshold_l, threshold_r,
+		mean_value, u_cog, v_cog, npoint) == vpDot::out)
   {
     bool sol = false ;
     unsigned pas  ;
@@ -333,7 +341,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	  Lu.kill() ;
 	  Lv.kill() ;
 	  mean_value = 0;
-	  if (connexe(I, (unsigned)(u+k*pas),(unsigned)(v+l*pas), threshold,
+	  if (connexe(I, (unsigned)(u+k*pas),(unsigned)(v+l*pas), 
+		      threshold_l, threshold_r,		
 		      mean_value,u_cog, v_cog, npoint) != vpDot::out)
 	  {
 	    sol = true ; u += k*pas ; v += l*pas ;
@@ -349,8 +358,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   }
 #else
   // If the dot is not found, search around using a spiral
-  if (  connexe(I,(unsigned)u,(unsigned)v, threshold, mean_value,
-		u_cog, v_cog, npoint) == vpDot::out)
+  if (  connexe(I,(unsigned)u,(unsigned)v, threshold_l, threshold_r, 
+		mean_value, u_cog, v_cog, npoint) == vpDot::out)
   {
 
     bool sol = false ;
@@ -362,8 +371,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
     double u_ = u, v_ = v;
     unsigned k;
 
-    // balayage en spiral à partir du centre pour trouver le point le plus proche
-
+    // Spiral search from the center to find the nearest dot
     while( (right < SPIRAL_SEARCH_SIZE) && (sol == false) ) {
       for (k=1; k <= right; k++) if(sol==false) {
 	u_cog = 0 ;
@@ -371,7 +379,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lu.kill() ;
 	Lv.kill() ;
 	mean_value = 0;
-	if (connexe(I, (unsigned)u_+k, (unsigned)(v_), threshold, mean_value,
+	if (connexe(I, (unsigned)u_+k, (unsigned)(v_), 
+		    threshold_l, threshold_r, mean_value,
 		    u_cog, v_cog, npoint) != vpDot::out) {
 	  sol = true; u = u_+k; v = v_;
 	}
@@ -386,7 +395,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (unsigned)(u_), (unsigned)(v_+k), threshold, mean_value,
+	if (connexe(I, (unsigned)(u_), (unsigned)(v_+k), 
+		    threshold_l, threshold_r, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true; u = u_; v = v_+k;
@@ -402,7 +412,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (unsigned)(u_-k), (unsigned)(v_), threshold, mean_value,
+	if (connexe(I, (unsigned)(u_-k), (unsigned)(v_), 
+		    threshold_l,  threshold_r, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true ; u = u_-k; v = v_;
@@ -418,7 +429,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (unsigned)(u_), (unsigned)(v_-k), threshold, mean_value,
+	if (connexe(I, (unsigned)(u_), (unsigned)(v_-k), 
+		    threshold_l, threshold_r, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true ; u = u_; v = v_-k;
@@ -454,9 +466,15 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   v = v_cog ;
 
   // Initialize the threshold for the next call to track()
-  threshold = (unsigned char) (mean_value * 0.8);
+  threshold_l = (unsigned char) (mean_value * 0.8);
+  int _threshold_r = (int) (mean_value * 1.2);
+  if (_threshold_r > 255) 
+    threshold_r = 255;
+  else 
+    threshold_r = _threshold_r;
 
-  //vpCTRACE << "threshold: " << threshold << endl;
+  //vpCTRACE << "threshold_l: " << threshold_l << endl;
+  //vpCTRACE << "threshold_r: " << threshold_r << endl;
 
   if (npoint < 5)
   {
@@ -506,11 +524,16 @@ vpDot::setNbMaxPoint(double nb)
 void
 vpDot::initTracking(vpImage<unsigned char>& I)
 {
-  int i1,j1;
+  unsigned i1,j1;
 
   while (vpDisplay::getClick(I,i1,j1)!=true) ;
 
-  threshold = (unsigned char) (I[i1][j1] * 0.8);
+  threshold_l = (unsigned char) (I[i1][j1] * 0.8);
+  int _threshold_r = (int) (I[i1][j1] * 1.2);
+  if (_threshold_r > 255) 
+    threshold_r = 255;
+  else 
+    threshold_r = _threshold_r;
 
   double u,v ;
   u = j1 ;
@@ -519,8 +542,15 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   cog_ufloat = u ;
   cog_vfloat = v ;
 
-  if ((u-(unsigned)u) < 0.5)   cog_u = (unsigned)u ; else  cog_u = (unsigned)u+1 ;
-  if ((v-(unsigned)v) < 0.5)   cog_v = (unsigned)v ; else  cog_v = (unsigned)v+1 ;
+  if ((u-(unsigned)u) < 0.5) 
+    cog_u = (unsigned)u ; 
+  else  
+    cog_u = (unsigned)u+1 ;
+
+  if ((v-(unsigned)v) < 0.5)
+    cog_v = (unsigned)v ; 
+  else 
+    cog_v = (unsigned)v+1 ;
 
   try {
     track( I );
@@ -568,7 +598,12 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v)
   cog_u = u ;
   cog_v = v ;
 
-  threshold = (unsigned char) (I[cog_v][cog_u] * 0.8);
+  threshold_l = (unsigned char) (I[cog_v][cog_u] * 0.8);
+  int _threshold_r = (int) (I[cog_v][cog_u] * 1.2);
+  if (_threshold_r > 255) 
+    threshold_r = 255;
+  else 
+    threshold_r = _threshold_r;
 
   try {
     track( I );
@@ -602,14 +637,18 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v)
   \param v : Dot location or starting point (row pixel coordinate)
   from which the dot will be tracked in the image.
 
-  \param threshold : Gray level threshold used to segment the dot;
+  \param threshold_l : Left gray level threshold used to segment the dot;
   value comprised between 0 and 255.
+
+  \param threshold_r : Right gray level threshold used to segment the
+  dot; value comprised between 0 and 255. \e threshold_r should be
+  greater than \e threshold_l.
 
   \sa track(), get_u(), get_v()
 */
 void
 vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v, 
-		    unsigned char threshold)
+		    unsigned char threshold_l, unsigned char threshold_r)
 {
 
   cog_ufloat = u ;
@@ -617,7 +656,8 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v,
 
   cog_u = u ;
   cog_v = v ;
-  this->threshold = threshold;
+  this->threshold_l = threshold_l;
+  this->threshold_r = threshold_r;
 
   try {
     track( I );
