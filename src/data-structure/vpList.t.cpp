@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.t.cpp,v 1.3 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpList.t.cpp,v 1.4 2007-02-26 17:44:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -461,10 +461,10 @@ template<class type>
 void vpList<type>::operator=(vpList<type>& l)
 {
   type x ;
-  vpListElement<type> *ecm ;
+  vpListElement<type> *e ;
 
   kill() ;
-  ecm = l.cur ;
+  e = l.cur ;
   l.front() ;
   front() ;
   while (!l.outside())
@@ -476,7 +476,7 @@ void vpList<type>::operator=(vpList<type>& l)
 
   nb = l.nb ;
   cur = first->next ;
-  l.cur = ecm ;
+  l.cur = e ;
 }
 
 /*!
