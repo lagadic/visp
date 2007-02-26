@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.6 2007-02-02 10:50:59 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.7 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -146,7 +146,7 @@ const char * vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM]= {
 vp1394TwoGrabber::vp1394TwoGrabber( )
 {
   // protected members
-  ncols = nrows = 0;
+  width = height = 0;
 
   // private members
   num_cameras = 0;
@@ -1175,8 +1175,8 @@ vp1394TwoGrabber::dequeue()
     vpERROR_TRACE ("Error: Failed to capture from camera %d\n", camera_id);
   }
 
-  ncols = frame->size[0];
-  nrows = frame->size[1];
+  width = frame->size[0];
+  height = frame->size[1];
 
   return frame;
 }
@@ -1233,7 +1233,7 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 
   size = width * height;
 
-  if ((I.getCols() != width)||(I.getRows() != height))
+  if ((I.getWidth() != width)||(I.getHeight() != height))
     I.resize(height, width);
 
   switch(frame->color_coding) {
@@ -1295,7 +1295,7 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 
   size = width * height;
 
-  if ((I.getCols() != width)||(I.getRows() != height))
+  if ((I.getWidth() != width)||(I.getHeight() != height))
     I.resize(height, width);
 
   switch(frame->color_coding) {
@@ -1358,7 +1358,7 @@ void vp1394TwoGrabber::getWidth(unsigned &width)
 				   "No camera found") );
   }
 
-  width = ncols;
+  width = this->width;
 
 }
 
@@ -1388,7 +1388,7 @@ void vp1394TwoGrabber::getHeight(unsigned &height)
 				   "No camera found") );
   }
 
-  height = nrows;
+  height = this->height;
 }
 
 /*!

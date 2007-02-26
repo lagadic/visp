@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.15 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.16 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -172,8 +172,8 @@ vp1394Grabber::vp1394Grabber( )
   pformat      = new int [vp1394Grabber::MAX_CAMERAS];
   pmode        = new int [vp1394Grabber::MAX_CAMERAS];
   pframerate   = new int [vp1394Grabber::MAX_CAMERAS];
-  width        = new int [vp1394Grabber::MAX_CAMERAS];
-  height       = new int [vp1394Grabber::MAX_CAMERAS];
+  _width        = new int [vp1394Grabber::MAX_CAMERAS];
+  _height       = new int [vp1394Grabber::MAX_CAMERAS];
   image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
 
   // Camera settings initialisation
@@ -193,8 +193,8 @@ vp1394Grabber::vp1394Grabber( )
 
   // Image settings
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
-    width[i]        = 0;
-    height[i]       = 0;
+    _width[i]        = 0;
+    _height[i]       = 0;
     image_format[i] = RGB;
   }
 
@@ -237,8 +237,8 @@ vp1394Grabber::vp1394Grabber(vpImage<unsigned char> &I)
   pformat      = new int [vp1394Grabber::MAX_CAMERAS];
   pmode        = new int [vp1394Grabber::MAX_CAMERAS];
   pframerate   = new int [vp1394Grabber::MAX_CAMERAS];
-  width        = new int [vp1394Grabber::MAX_CAMERAS];
-  height       = new int [vp1394Grabber::MAX_CAMERAS];
+  _width        = new int [vp1394Grabber::MAX_CAMERAS];
+  _height       = new int [vp1394Grabber::MAX_CAMERAS];
   image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
 
   // Camera settings
@@ -257,8 +257,8 @@ vp1394Grabber::vp1394Grabber(vpImage<unsigned char> &I)
 
   // Image settings
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
-    width[i]        = 0;
-    height[i]       = 0;
+    _width[i]        = 0;
+    _height[i]       = 0;
     image_format[i] = RGB;
   }
 
@@ -1459,8 +1459,8 @@ void vp1394Grabber::getWidth(int &width)
 				   "The required camera is not present") );
   }
 
-  width = this->width[camera];
-  nrows = width;
+  width = this->_width[camera];
+  this->width = width;
 }
 
 /*!
@@ -1479,7 +1479,7 @@ void vp1394Grabber::getWidth(int &width)
   \sa getWidth(), getImageFormat(), close(), getNumCameras(), setCamera()
 
 */
-void vp1394Grabber::getHeight(int &height)
+void vp1394Grabber::getHeight(unsigned &height)
 {
   if (camera >= num_cameras) {
     height = 0;
@@ -1488,8 +1488,8 @@ void vp1394Grabber::getHeight(int &height)
 				   "The required camera is not present") );
   }
 
-  height = this->height[camera];
-  ncols = height;
+  height = this->_height[camera];
+  this->height = height;
 }
 
 /*!
@@ -1532,13 +1532,13 @@ vp1394Grabber::open(vpImage<unsigned char> &I)
   setup();
   startIsoTransmission();
 
-  int _ncols, _nrows;
-  getWidth(_ncols) ;
-  getHeight(_nrows) ;
+  unsigned w, h;
+  getWidth( w ) ;
+  getHeight( h ) ;
 
-  vpDEBUG_TRACE(10, "%d %d", _nrows, _ncols ) ;
+  vpDEBUG_TRACE(10, "%d %d", h, w ) ;
 
-  I.resize(_nrows, _ncols) ;
+  I.resize(h, w) ;
 
   init = true ;
 
@@ -1564,13 +1564,13 @@ vp1394Grabber::open(vpImage<vpRGBa> &I)
   setup();
   startIsoTransmission();
 
-  int _ncols, _nrows;
-  getWidth(_ncols) ;
-  getHeight(_nrows) ;
+  unsigned w, h;
+  getWidth( w ) ;
+  getHeight( h ) ;
 
-  vpERROR_TRACE("%d %d", _nrows, _ncols ) ;
+  vpDEBUG_TRACE(10, "%d %d", h, w ) ;
 
-  I.resize(_nrows, _ncols) ;
+  I.resize(h, w) ;
 
   init = true ;
 
@@ -1600,14 +1600,14 @@ vp1394Grabber::acquire(vpImage<unsigned char> &I)
   int  *bitmap = NULL ;
   bitmap = dmaCapture();
 
-  int _ncols, _nrows;
-  getWidth(_ncols) ;
-  getHeight(_nrows) ;
+  unsigned w, h;
+  getWidth( w ) ;
+  getHeight( h ) ;
 
-  if ((I.getCols() != _ncols)||(I.getRows() != _nrows))
-    I.resize(_nrows, _ncols) ;
+  if ((I.getWidth() != w)||(I.getHeight() != h))
+    I.resize(h, w) ;
 
-  int size  = I.getRows()*I.getCols();
+  int size  = I.getHeight()*I.getWidth();
   switch (image_format[camera])
   {
   case MONO:
@@ -1663,14 +1663,14 @@ vp1394Grabber::acquire(vpImage<vpRGBa> &I)
   int  *bitmap = NULL ;
   bitmap = dmaCapture();
 
-  int _ncols, _nrows;
-  getWidth(_ncols) ;
-  getHeight(_nrows) ;
+  unsigned w, h;
+  getWidth( w ) ;
+  getHeight( h ) ;
 
-  if ((I.getCols() != _ncols)||(I.getRows() != _nrows))
-    I.resize(_nrows, _ncols) ;
+  if ((I.getWidth() != w)||(I.getHeight() != h))
+    I.resize(h, w) ;
 
-  int size  = I.getRows()*I.getCols();
+  int size  = I.getHeight()*I.getWidth();
   switch (image_format[camera])
   {
   case MONO:
@@ -1737,10 +1737,10 @@ vp1394Grabber::open()
     pmode        = new int [vp1394Grabber::MAX_CAMERAS];
   if (pframerate == NULL)
     pframerate   = new int [vp1394Grabber::MAX_CAMERAS];
-  if (width == NULL)
-    width        = new int [vp1394Grabber::MAX_CAMERAS];
-  if (height == NULL)
-    height       = new int [vp1394Grabber::MAX_CAMERAS];
+  if (_width == NULL)
+    _width        = new int [vp1394Grabber::MAX_CAMERAS];
+  if (_height == NULL)
+    _height       = new int [vp1394Grabber::MAX_CAMERAS];
   if (image_format == NULL)
     image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
 
@@ -1858,8 +1858,8 @@ vp1394Grabber::setup()
       // After setting the camera format and mode we update the image size
       getImageCharacteristics(pformat[i],
 			      pmode[i],
-			      width[i],
-			      height[i],
+			      _width[i],
+			      _height[i],
 			      image_format[i]);
 
       if (dc1394_get_iso_channel_and_speed(handles[i],
@@ -1879,8 +1879,8 @@ vp1394Grabber::setup()
 					     speed,
 					     USE_MAX_AVAIL, /*max packet size*/
 					     0, 0, /* left, top */
-					     width[i],
-					     height[i],
+					     _width[i],
+					     _height[i],
 					     vp1394Grabber::NUM_BUFFERS,
 					     vp1394Grabber::DROP_FRAMES,
 					     device_name,
@@ -1961,7 +1961,7 @@ vp1394Grabber::setup()
 */
 void
 vp1394Grabber::getImageCharacteristics(int _format, int _mode,
-				       int &_width, int &_height,
+				       int &width, int &height,
 				       ImageFormatEnum &_image_format)
 {
   switch(_format)
@@ -1970,31 +1970,31 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
     switch(_mode)
     {
     case MODE_160x120_YUV444:
-      _width = 160; _height = 120;
+      width = 160; height = 120;
       _image_format = YUV444;
       break;
     case MODE_320x240_YUV422:
-      _width = 320; _height = 240;
+      width = 320; height = 240;
       _image_format = YUV422;
       break;
     case MODE_640x480_YUV411:
-      _width = 640; _height = 480;
+      width = 640; height = 480;
       _image_format = YUV411;
       break;
     case MODE_640x480_YUV422:
-      _width = 640; _height = 480;
+      width = 640; height = 480;
       _image_format = YUV422;
       break;
     case MODE_640x480_RGB:
-      _width = 640; _height = 480;
+      width = 640; height = 480;
       _image_format = RGB;
       break;
     case MODE_640x480_MONO:
-      _width = 640; _height = 480;
+      width = 640; height = 480;
       _image_format = MONO;
       break;
     case MODE_640x480_MONO16:
-      _width = 640; _height = 480;
+      width = 640; height = 480;
       _image_format = MONO;
       break;
     default:
@@ -2010,35 +2010,35 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
     switch(_mode)
     {
     case MODE_800x600_YUV422:
-      _width = 800; _height = 600;
+      width = 800; height = 600;
       _image_format = YUV422;
       break;
     case MODE_800x600_RGB:
-      _width = 800; _height = 600;
+      width = 800; height = 600;
       _image_format = RGB;
       break;
     case MODE_800x600_MONO:
-      _width = 800; _height = 600;
+      width = 800; height = 600;
       _image_format = MONO;
       break;
     case MODE_800x600_MONO16:
-      _width = 800; _height = 600;
+      width = 800; height = 600;
       _image_format = MONO16;
       break;
     case MODE_1024x768_YUV422:
-      _width = 1024; _height = 768;
+      width = 1024; height = 768;
       _image_format = YUV422;
       break;
     case MODE_1024x768_RGB:
-      _width = 1024; _height = 768;
+      width = 1024; height = 768;
       _image_format = RGB;
       break;
     case MODE_1024x768_MONO:
-      _width = 1024; _height = 768;
+      width = 1024; height = 768;
       _image_format = MONO;
       break;
     case MODE_1024x768_MONO16:
-      _width = 1024; _height = 768;
+      width = 1024; height = 768;
       _image_format = MONO16;
       break;
     default:
@@ -2054,35 +2054,35 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
     switch(_mode)
     {
     case MODE_1280x960_YUV422:
-      _width = 1280; _height = 960;
+      width = 1280; height = 960;
       _image_format = YUV422;
       break;
     case MODE_1280x960_RGB:
-      _width = 1280; _height = 960;
+      width = 1280; height = 960;
       _image_format = RGB;
       break;
     case MODE_1280x960_MONO:
-      _width = 1280; _height = 960;
+      width = 1280; height = 960;
       _image_format = MONO;
       break;
    case MODE_1280x960_MONO16:
-      _width = 1280; _height = 960;
+      width = 1280; height = 960;
       _image_format = MONO16;
       break;
     case MODE_1600x1200_YUV422:
-      _width = 1600; _height = 1200;
+      width = 1600; height = 1200;
       _image_format = YUV422;
       break;
     case MODE_1600x1200_RGB:
-      _width = 1600; _height = 1200;
+      width = 1600; height = 1200;
       _image_format = RGB;
       break;
     case MODE_1600x1200_MONO:
-      _width = 1600; _height = 1200;
+      width = 1600; height = 1200;
       _image_format = MONO;
       break;
     case MODE_1600x1200_MONO16:
-      _width = 1600; _height = 1200;
+      width = 1600; height = 1200;
       _image_format = MONO16;
      break;
     default:
@@ -2099,16 +2099,16 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
     switch(_mode)
     {
     case MODE_FORMAT7_0:
-      _width = 656; _height = 492;
+      width = 656; height = 492;
       _image_format = YUV422;
      break;
 
     case MODE_FORMAT7_1:
-      _width = 328; _height = 492;
+      width = 328; height = 492;
       _image_format = MONO;
      break;
     case MODE_FORMAT7_2:
-      _width = 656; _height = 244;
+      width = 656; height = 244;
       _image_format = MONO;
      break;
     case MODE_FORMAT7_3:
@@ -2116,7 +2116,7 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
     case MODE_FORMAT7_5:
     case MODE_FORMAT7_6:
     case MODE_FORMAT7_7:
-      _width = 656; _height = 244;
+      width = 656; height = 244;
       _image_format = MONO;
      break;
     }
@@ -2146,14 +2146,14 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
     if (dc1394_query_format7_max_image_size(handles[camera],
 					    cameras[camera].node,
 					    _mode,
-					    &_width,
-					    &_height) != DC1394_SUCCESS) {
+					    &width,
+					    &_eight) != DC1394_SUCCESS) {
       close();
       vpERROR_TRACE("Unable to get maximal image size for format 7\n");
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				     "Unable to get maximal image size for format 7 ") );
     }
-    cout << "max width=" << _width << " height: " << _height << endl;
+    cout << "max width=" << width << " height: " << height << endl;
 #endif
 
     break;
@@ -2317,11 +2317,11 @@ vp1394Grabber::close()
   if (handles != NULL)      { delete [] handles;      handles = NULL;      }
   if (cameras != NULL)      { delete [] cameras;      cameras = NULL;      }
   if (cam_count != NULL)    { delete [] cam_count;    cam_count = NULL;    }
-  if (pformat != NULL)      { delete [] pformat;      pformat = NULL;       }
-  if (pmode != NULL)        { delete [] pmode;        pmode = NULL;         }
-  if (pframerate != NULL)   { delete [] pframerate;   pframerate = NULL;    }
-  if (width != NULL)        { delete [] width;        width = NULL;        }
-  if (height != NULL)       { delete [] height;       height = NULL;       }
+  if (pformat != NULL)      { delete [] pformat;      pformat = NULL;      }
+  if (pmode != NULL)        { delete [] pmode;        pmode = NULL;        }
+  if (pframerate != NULL)   { delete [] pframerate;   pframerate = NULL;   }
+  if (_width != NULL)       { delete [] _width;       _width = NULL;       }
+  if (_height != NULL)      { delete [] _height;      _height = NULL;      }
   if (image_format != NULL) { delete [] image_format; image_format = NULL; }
 
 }

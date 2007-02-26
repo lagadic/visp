@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.cpp,v 1.6 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.cpp,v 1.7 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -186,7 +186,7 @@ vpOSXcfoxGrabber::acquire(vpImage<unsigned char> &I)
     {
       CFRunLoopRunInMode(kCFRunLoopDefaultMode,1, true);
        Camera::Frame  img = cam.getFrame(MODE_FRAME,0,0) ;
-       vpImageConvert::YUV422ToGrey(img,(unsigned char *)I.bitmap,I.getRows()*I.getCols()) ;
+       vpImageConvert::YUV422ToGrey(img,(unsigned char *)I.bitmap,I.getWidth()*I.getHeight()) ;
 
     }
 
@@ -219,7 +219,7 @@ vpOSXcfoxGrabber::acquire(vpImage<vpRGBa> &I)
     {
       CFRunLoopRunInMode(kCFRunLoopDefaultMode,1, true);
       Camera::Frame  img = cam.getFrame(MODE_FRAME,0,0) ;
-      vpImageConvert::YUV422ToRGBa(img,(unsigned char *)I.bitmap,I.getRows()*I.getCols()) ;
+      vpImageConvert::YUV422ToRGBa(img,(unsigned char *)I.bitmap,I.getWidth()*I.getHeight()) ;
 
     }
 

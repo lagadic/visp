@@ -588,8 +588,8 @@ void vpDirectShowGrabberImpl::acquire(vpImage<vpRGBa> &I)
 	long ev;
 	hr = pEvent->WaitForCompletion(MAX_DELAY, &ev);
 
-	ncols = I.getCols();
-	nrows = I.getRows();
+	width = I.getWidth();
+	height = I.getHeight();
 
 	//wait for the end of the next callback (copy)
 	if( WaitForSingleObject(sgCB.copySem,MAX_DELAY) != WAIT_OBJECT_0)
@@ -628,8 +628,8 @@ void vpDirectShowGrabberImpl::acquire(vpImage<unsigned char> &I)
 	long ev;
 	hr = pEvent->WaitForCompletion(MAX_DELAY, &ev);
 
-	ncols = I.getCols();
-	nrows = I.getRows();
+	width = I.getWidth();
+	height = I.getHeight();
 
 	//wait for the end of the next callback (copy)
 	if( WaitForSingleObject(sgCB.copySem,MAX_DELAY) != WAIT_OBJECT_0)

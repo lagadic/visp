@@ -84,7 +84,7 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
 					rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
 					//copy and convert the image
 					vpImageConvert::BGRToRGBa(pBuffer,(unsigned char*) rgbaIm->bitmap,
-								  rgbaIm->getCols() , rgbaIm->getRows(), flip);
+								  rgbaIm->getWidth() , rgbaIm->getHeight(), flip);
 					//reset the demand boolean
 					acqRGBaDemand = false;
 				}
@@ -94,7 +94,7 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
 					grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
 					//copy and convert the image
 					vpImageConvert::BGRToGrey(pBuffer, grayIm->bitmap,
-								  grayIm->getCols(), grayIm->getRows(), flip);
+								  grayIm->getWidth(), grayIm->getHeight(), flip);
 					//reset the demand boolean
 					acqGrayDemand = false;
 				}

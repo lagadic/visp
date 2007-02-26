@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.8 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpV4l2Grabber.cpp,v 1.9 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,8 +115,8 @@ vpV4l2Grabber::vpV4l2Grabber()
   streaming = false;
   verbose   = false;
   field     = 0;
-  ncols     = 0;
-  nrows     = 0;
+  width     = 0;
+  height    = 0;
   queue     = 0;
   waiton_cpt= 0;
   index_buffer = 0;
@@ -174,8 +174,8 @@ vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
   streaming = false;
   verbose   = false;
   field     = 0;
-  ncols     = 0;
-  nrows     = 0;
+  width     = 0;
+  height    = 0;
   queue     = 0;
   waiton_cpt= 0;
   index_buffer = 0;
@@ -234,8 +234,8 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I,
   streaming = false;
   verbose   = false;
   field     = 0;
-  ncols     = 0;
-  nrows     = 0;
+  width     = 0;
+  height    = 0;
   queue     = 0;
   waiton_cpt= 0;
   index_buffer = 0;
@@ -296,8 +296,8 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned _input, unsigned _scal
   streaming = false;
   verbose   = false;
   field     = 0;
-  ncols     = 0;
-  nrows     = 0;
+  width     = 0;
+  height    = 0;
   queue     = 0;
   waiton_cpt= 0;
   index_buffer = 0;
@@ -392,12 +392,12 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
   }
 
   setPixelFormat(V4L2_GREY_FORMAT);
-  vpCTRACE << width << "  " << height << endl;
+  //vpCTRACE << _width << "  " << _height << endl;
   setFormat();
 
   startStreaming();
 
-  I.resize(nrows, ncols) ;
+  I.resize(height, width) ;
 
   init = true;
 }
@@ -431,7 +431,7 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
 
   startStreaming();
 
-  I.resize(nrows, ncols) ;
+  I.resize(height, width) ;
 
   init = true;
 }
@@ -463,11 +463,10 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
   unsigned  char *bitmap ;
   bitmap = waiton(index_buffer);
 
-  if ((I.getCols() != ncols)||(I.getRows() != nrows))
-    I.resize(nrows,ncols) ;
+  if ((I.getWidth() != width)||(I.getHeight() != height))
+    I.resize(height, width) ;
 
-  memcpy(I.bitmap, bitmap,
-	 ncols*nrows*sizeof(unsigned char));
+  memcpy(I.bitmap, bitmap, height * width*sizeof(unsigned char));
 
   queueAll();
 }
@@ -497,14 +496,13 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
   unsigned  char *bitmap ;
   bitmap = waiton(index_buffer);
 
-  if ((I.getCols() != ncols)||(I.getRows() != nrows))
-    I.resize(nrows,ncols) ;
+  if ((I.getWidth() != width)||(I.getHeight() != height))
+    I.resize(height, width) ;
 
   // The framegrabber acquire aRGB format. We just shift the data from 1 byte all the data and initialize the last byte
 
-  memcpy(I.bitmap, bitmap + 1,
-	 ncols*nrows*sizeof(vpRGBa) - 1);
-  I[nrows-1][ncols-1].A = 0;
+  memcpy(I.bitmap, bitmap + 1, height * width * sizeof(vpRGBa) - 1);
+  I[height-1][width-1].A = 0;
 
   queueAll();
 }
@@ -739,9 +737,9 @@ vpV4l2Grabber::getCapabilities()
 void
 vpV4l2Grabber::setFormat()
 {
-  fmt_me.width  = width;
-  fmt_me.height = height;
-  fmt_me.bytesperline = width; // bad (normally width * depth / 8), but works
+  fmt_me.width  = _width;
+  fmt_me.height = _height;
+  fmt_me.bytesperline = _width; // bad (normally _width * depth / 8), but works
   // because initialized later by an ioctl call to VIDIOC_S_FMT
 
   switch(pixelformat) {
@@ -785,11 +783,11 @@ vpV4l2Grabber::setFormat()
   }
 
   //height and width of the captured image or frame
-  ncols = width;
-  nrows = height;
+  width = _width;
+  height = _height;
   if( frameformat == V4L2_FRAME_FORMAT && height > FRAME_SIZE )
   {
-    nrows = FRAME_SIZE;
+    height = FRAME_SIZE;
   }
 
 
