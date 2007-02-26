@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColor.h,v 1.2 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpColor.h,v 1.3 2007-02-26 16:35:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,17 +45,16 @@
 class VISP_EXPORT vpColor
 {
 public:
-  enum colorEnum
-    {
-      black,
-      white,
-      red,
-      green,
-      blue,
-      yellow,
-      cyan,
-      none
-    } ;
+  typedef enum {
+    black,
+    white,
+    red,
+    green,
+    blue,
+    yellow,
+    cyan,
+    none
+  } vpColorType;
 } ;
 
 #endif
