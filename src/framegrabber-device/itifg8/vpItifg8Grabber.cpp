@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.5 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.6 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -2193,7 +2193,7 @@ vpItifg8Grabber::acquire(vpImage<unsigned char> &I)
       }
     }
 
-    if ((I.getCols() != width) || (I.getRows() != height))
+    if ((I.getWidth() != width) || (I.getHeight() != height))
       I.resize(height, width) ;
 
     switch (image[args.board_i].srcbpp) {
@@ -2276,7 +2276,7 @@ vpItifg8Grabber::acquire(vpImage<vpRGBa> &I)
       }
     }
 
-    if ((I.getCols() != width) || (I.getRows() != height))
+    if ((I.getWidth() != width) || (I.getHeight() != height))
       I.resize(height, width) ;
 
     switch (image[args.board_i].srcbpp) {

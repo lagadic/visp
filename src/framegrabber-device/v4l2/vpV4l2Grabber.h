@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.h,v 1.7 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpV4l2Grabber.h,v 1.8 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -153,7 +153,7 @@ public:
   */
   inline void setWidth(unsigned width)
   {
-    this->width = width;
+    this->_width = width;
   }
   /*!
     Set image height to acquire.
@@ -161,7 +161,7 @@ public:
   */
   inline void setHeight(unsigned height)
   {
-    this->height = height;
+    this->_height = height;
   }
 
   void setScale(unsigned scale = vpV4l2Grabber::DEFAULT_SCALE) ;
@@ -256,13 +256,11 @@ private:
   unsigned	nbuffers;
   int           field;
   bool		streaming;
-  int		ncols;
-  int		nrows;
 
   framerateEnum framerate;
   unsigned      input;
-  unsigned      width;
-  unsigned      height;
+  unsigned      _width;
+  unsigned      _height;
   frameformatEnum frameformat;
   pixelformatEnum pixelformat;
 } ;

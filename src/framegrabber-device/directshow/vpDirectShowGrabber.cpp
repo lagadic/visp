@@ -8,12 +8,12 @@
 /*!
 	Returns the number of rows in the grabbed image
 */
-int vpDirectShowGrabber::getRows(){ return grabber->getRows(); }
+unsigned vpDirectShowGrabber::getHeight(){ return grabber->getHeight(); }
 
 /*!
-	Returns the number of colonnes in the grabbed image
+	Returns the number of colunms in the grabbed image
 */
-int vpDirectShowGrabber::getCols(){ return grabber->getCols(); }
+unsigned vpDirectShowGrabber::getWidth(){ return grabber->getWidth(); }
 
 
 /*!

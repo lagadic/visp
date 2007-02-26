@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.cpp,v 1.8 2006-09-29 11:56:56 fspindle Exp $
+ * $Id: vpIcCompGrabber.cpp,v 1.9 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -273,7 +273,7 @@ vpIcCompGrabber::acquire(vpImage<vpRGBa> &I)
   unsigned  char *bitmap ;
   bitmap = framegrabber->Acquire(field, framebuffer) ;
 
-  if ((I.getCols() != ncols)||(I.getRows() != nrows))
+  if ((I.getWidth() != ncols)||(I.getHeight() != nrows))
     I.resize(nrows,ncols) ;
 
 
@@ -288,9 +288,9 @@ vpIcCompGrabber::acquire(vpImage<vpRGBa> &I)
 				     framegrabber->GetWidth()) ;
 
     unsigned char *ptr = bitmaprgba ;
-    for (int i=0 ; i < I.getRows() ; i++)
+    for (int i=0 ; i < I.getHeight() ; i++)
     {
-      for (int j=0 ; j < I.getCols() ; j++)
+      for (int j=0 ; j < I.getWidth() ; j++)
       {
 	I[i][j].B = *(ptr ) ;
 	I[i][j].G = *(ptr +1 ) ;
@@ -349,7 +349,7 @@ vpIcCompGrabber::acquire(vpImage<unsigned char> &I)
     break;
   }
 
-  if ((I.getCols() != ncols)||(I.getRows() != nrows))
+  if ((I.getWidth() != ncols)||(I.getHeight() != nrows))
     I.resize(nrows,ncols) ;
 
   memcpy(I.bitmap,bitmap,nrows*ncols)  ;

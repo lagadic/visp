@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFrameGrabber.h,v 1.2 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpFrameGrabber.h,v 1.3 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,15 +67,15 @@ class VISP_EXPORT vpFrameGrabber
 public :
   bool   init ;  //!< bit 1 if the frame grabber has been initialized
 protected:
-  int ncols ;  //!< number of rows in the image
-  int nrows ;  //!< number of columns in the image
+  unsigned height ;  //!< number of rows in the image
+  unsigned width ;  //!< number of columns in the image
 
 
 public:
   //! return the number of rows in the image
-  inline  int getRows() { return nrows ; }
+  inline  unsigned getHeight() { return height ; }
   //! return the number of columns in the image
-  inline  int getCols() { return ncols ; }
+  inline  unsigned getWidth() { return width ; }
 
 public:
   virtual ~vpFrameGrabber() { ; }

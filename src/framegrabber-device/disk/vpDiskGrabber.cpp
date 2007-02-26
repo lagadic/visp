@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.cpp,v 1.5 2006-06-23 15:35:44 brenier Exp $
+ * $Id: vpDiskGrabber.cpp,v 1.6 2007-02-26 17:33:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,6 +91,9 @@ vpDiskGrabber::open(vpImage<unsigned char> &I)
 
   setImageNumber(first_number);
 
+  width = I.getWidth();
+  height = I.getHeight();
+
   init = true;
 }
 
@@ -110,6 +113,9 @@ vpDiskGrabber::open(vpImage<vpRGBa> &I)
   acquire(I);
 
   setImageNumber(first_number);
+
+  width = I.getWidth();
+  height = I.getHeight();
 
   init = true;
 }
@@ -135,12 +141,32 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I)
 
   vpImageIo::readPGM(I, name) ;
 
+  width = I.getWidth();
+  height = I.getHeight();
 }
 
+/*!
+  Acquire an image: read a ppm image from the disk.
+  After this call, the image number is incremented considering the step.
+
+  \param I the read image
+ */
 void
 vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
 {
 
+  char name[FILENAME_MAX] ;
+
+  sprintf(name,"%s/%s%0*ld.ppm",directory,base_name,number_of_zero,image_number) ;
+
+  image_number += image_step ;
+
+  vpDEBUG_TRACE(2, "load: %s\n", name);
+
+  vpImageIo::readPGM(I, name) ;
+
+  width = I.getWidth();
+  height = I.getHeight();
 
 }
 /*!

@@ -31,8 +31,8 @@ class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber
 	vpDirectShowGrabberImpl * grabber;
 
 	public:
-		int getRows();
-		int getCols();
+		unsigned getHeight();
+		unsigned getWidth();
 		
 		vpDirectShowGrabber();
 		~vpDirectShowGrabber();
