@@ -1,23 +1,40 @@
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005
- * www  : http://www.irisa.fr/lagadic
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/****************************************************************************
  *
- * File:      vpImageIoPnm.cpp
- * Project:   ViSP2
- * Author:    Eric Marchand, Fabien Spindler
+ * $Id: vpImageIoPnm.cpp,v 1.8 2007-02-26 16:39:17 fspindle Exp $
  *
- * Version control
- * ===============
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
- *  $Id: vpImageIoPnm.cpp,v 1.7 2007-01-31 15:40:13 asaunier Exp $
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
  *
- * Description
- * ============
+ * This file is part of the ViSP toolkit.
  *
- * Read/write pnm images
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Read/write pnm images.
+ *
+ * Authors:
+ * Eric Marchand
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 /*!
   \file vpImageIoPnm.cpp
@@ -68,12 +85,12 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
 
   // Write the head
   fprintf(fd, "P5\n");					// Magic number
-  fprintf(fd, "%d %d\n", I.getCols(), I.getRows());	// Image size
+  fprintf(fd, "%d %d\n", I.getWidth(), I.getHeight());	// Image size
   fprintf(fd, "255\n");					// Max level
 
   // Write the bitmap
   int ierr;
-  unsigned nbyte = I.getCols()*I.getRows();
+  unsigned nbyte = I.getWidth()*I.getHeight();
 
   ierr = fwrite(I.bitmap, sizeof(unsigned char), nbyte, fd) ;
   if (ierr == ! nbyte) {
@@ -99,8 +116,8 @@ vpImageIo::writePGM(const vpImage<short> &I,
 		    const char filename[FILENAME_MAX])
 {
   vpImage<unsigned char> Iuc ;
-  int nrows = I.getRows();
-  int ncols = I.getCols();
+  int nrows = I.getHeight();
+  int ncols = I.getWidth();
 
   Iuc.resize(nrows, ncols);
 
@@ -142,12 +159,12 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
 
   // Write the head
   fprintf(fd, "P5\n");					// Magic number
-  fprintf(fd, "%d %d\n", I.getCols(), I.getRows());	// Image size
+  fprintf(fd, "%d %d\n", I.getWidth(), I.getHeight());	// Image size
   fprintf(fd, "255\n");					// Max level
 
   // Write the bitmap
   int ierr;
-  unsigned nbyte = I.getCols()*I.getRows();
+  unsigned nbyte = I.getWidth()*I.getHeight();
 
 
   vpImage<unsigned char> Itmp ;
@@ -263,7 +280,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
 			    "couldn't read file")) ;
   }
 
-  if ((h != I.getRows())||( w != I.getCols()))
+  if ((h != I.getHeight())||( w != I.getWidth()))
   {
 
     try
@@ -303,7 +320,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
 			    "error reading pgm file")) ;
   }
 
-  unsigned int nbyte = I.getRows()*I.getCols();
+  unsigned int nbyte = I.getHeight()*I.getWidth();
   if (fread (I.bitmap, sizeof(unsigned char), nbyte, fd ) != nbyte)
   {
     fclose (fd);
@@ -483,7 +500,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 			    "couldn't read file")) ;
   }
 
-  if ((h != I.getRows())||( w != I.getCols()))
+  if ((h != I.getHeight())||( w != I.getWidth()))
   {
 
     try
@@ -523,11 +540,9 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 			    "error reading ppm file")) ;
   }
 
-
-  int i,j ;
-  for(i=0;i<I.getRows();i++)
+  for(unsigned i=0;i<I.getHeight();i++)
   {
-    for(j=0;j<I.getCols();j++)
+    for(unsigned j=0;j<I.getWidth();j++)
     {
       vpRGBa v ;
       int res = fread(&v.R,sizeof(v.R),1,fd) ;
@@ -604,13 +619,12 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 
 
   fprintf(f,"P6\n");			         // Magic number
-  fprintf(f,"%d %d\n", I.getCols(), I.getRows());	// Image size
+  fprintf(f,"%d %d\n", I.getWidth(), I.getHeight());	// Image size
   fprintf(f,"%d\n",255);	        	// Max level
 
-  int i,j ;
-  for(i=0;i<I.getRows();i++)
+  for(unsigned i=0;i<I.getHeight();i++)
   {
-    for(j=0;j<I.getCols();j++)
+    for(unsigned j=0;j<I.getWidth();j++)
     {
       vpRGBa P ;
       int res ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.8 2007-02-16 15:02:18 asaunier Exp $
+ * $Id: vpImage.h,v 1.9 2007-02-26 16:39:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,9 +64,9 @@ class vpDisplay;
   <h3> Data structure </h3>
 
   Each image is build using two structure (an array bitmap which size
-  is [ncol*nrow]) and an array of pointer row (which size is [nrow])
+  is [width*height]) and an array of pointer row (which size is [nrow])
   the ith element in the row array row[i] is pointer toward the ith
-  "line" of the image (ie, bitmap +i*bcol )
+  "line" of the image (ie, bitmap +i*width )
 
   \image html image-data-structure.gif
   \image latex image-data-structure.ps  width=10cm
@@ -85,43 +85,106 @@ class vpImage
 {
 
 private:
-  int npixels ; //<! number of pixel in the image
-  int ncols ;   //<! number of columns
-  int nrows ;   //<! number of rows
+  unsigned npixels ; //<! number of pixel in the image
+  unsigned width ;   //<! number of columns
+  unsigned height ;   //<! number of rows
 
 public:
   Type *bitmap ;  //!< points toward the bitmap
 private:
   Type **row ;    //!< points the row pointer array
 public:
-  //! get the number of rows in the image
-  inline  int getRows() const { return nrows ; }
-  //! get the number of columns in the image
-  inline  int getCols() const { return ncols ; }
-  //! get the image height.
-  inline  unsigned getHeight() const { return ((unsigned) nrows); }
-  //! get the image width.
-  inline  unsigned getWidth() const { return ((unsigned) ncols); }
+  /*!
+    Get the number of rows in the image.
 
-  inline int getNumberOfPixel() const{ return npixels; }
+    \return The image number of rows, or image height.
+
+    \warning getRows() is obsolete and preserved for the moment for
+    compatibility with previous releases. You should use getHeight()
+    instead.
+
+    \sa getHeight()
+  */
+  inline  unsigned getRows() const { return height ; }
+
+  /*! 
+    Get the number of columns in the image.
+
+    \return The image number of column, or image width.
+
+    \warning getCols() is obsolete and preserved for the moment for
+    compatibility with previous releases. You should use getWidth()
+    instead.
+
+    \sa getHeight()
+   */
+  inline  unsigned getCols() const { return width ; }
+  /*! 
+    Get the image height.
+
+    \return The image height.
+
+    \sa getWidth()
+
+  */
+  inline  unsigned getHeight() const { return height; }
+  /*!
+    Get the image width.
+
+    \return The image width.
+
+    \sa getHeight()
+    
+  */
+  inline  unsigned getWidth() const { return width; }
+
+  /*! 
+
+    Get the image number of pixels which corresponds to the image
+    width multiplied by the image height.
+
+    \return The image number of pixels or image size.
+
+
+    \sa getWidth(), getHeight()
+   */
+  inline unsigned getNumberOfPixel() const{ return npixels; }
 
   //------------------------------------------------------------------
   //         Acces to the image
 
 
   //! operator[] allows operation like I[i] = x
-  inline Type *operator[]( const int n)   { return row[n];}
+  inline Type *operator[]( const unsigned n)   { return row[n];}
 
-  //! operator[] allows operation likex = I[i]
-  inline const  Type *operator[](int n) const { return row[n];}
+  //! operator[] allows operation like x = I[i]
+  inline const  Type *operator[](unsigned n) const { return row[n];}
 
-  inline  Type operator()(const int i, const  int j)
+  /*!
+    Get a pixel value.
+
+    \param i, j: Pixel coordinates; i for the row position, j for the
+    column position.
+
+    \return Pixel value for pixel (i, j)
+
+  */
+  inline  Type operator()(const unsigned i, const  unsigned j)
   {
-    return bitmap[i*ncols+j] ;
+    return bitmap[i*width+j] ;
   }
-  inline  void  operator()(const int i, const  int j, const Type &a)
+  /*!
+    Set a pixel value.
+
+    \param i, j: Pixel coordinates; i for the row position, j for the
+    column position.
+
+    \param v : Value to set for pixel (i, j)
+
+  */
+  inline  void  operator()(const unsigned i, const  unsigned j, const Type &v)
   {
-    bitmap[i*ncols+j] = a ;
+    bitmap[i*width+j] = v ;
   }
 
   //! bilinear interpolation acces
@@ -131,17 +194,17 @@ public:
   //         build the image
 
   //! set the size of the image
-  void  resize(const int nbl, const int nbc) ;
+  void  resize(const unsigned height, const unsigned width) ;
 
   //! set the size of the image
-  void init(int nbl, int nbc) ;
+  void init(unsigned height, unsigned width) ;
   //! set the size of the image
-  void init(int nbl, int nbc, Type value) ;
+  void init(unsigned height, unsigned width, Type value) ;
 
   //! constructor  set the size of the image
-  vpImage(int nbl, int nbc) ;
+  vpImage(unsigned height, unsigned width) ;
   //! constructor  set the size of the image and init all the pixel
-  vpImage(int nbl, int nbc, Type value) ;
+  vpImage(unsigned height, unsigned width, Type value) ;
   //! constructor
   vpImage() ;
   //! destructor

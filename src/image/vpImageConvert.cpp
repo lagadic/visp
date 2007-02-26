@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.7 2006-09-29 12:11:38 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.8 2007-02-26 16:39:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,20 +56,20 @@ void
 vpImageConvert::convert(const vpImage<unsigned char> &src,
 			vpImage<vpRGBa> & dest)
 {
-  dest.resize(src.getRows(), src.getCols()) ;
+  dest.resize(src.getHeight(), src.getWidth()) ;
 
   GreyToRGBa(src.bitmap, (unsigned char *)dest.bitmap,
-	     src.getRows() * src.getCols() );
+	     src.getHeight() * src.getWidth() );
 }
 
 void
 vpImageConvert::convert(const vpImage<vpRGBa> &src,
 			vpImage<unsigned char> & dest)
 {
-  dest.resize(src.getRows(), src.getCols()) ;
+  dest.resize(src.getHeight(), src.getWidth()) ;
 
   RGBaToGrey((unsigned char *)src.bitmap, dest.bitmap,
-	     src.getRows() * src.getCols() );
+	     src.getHeight() * src.getWidth() );
 }
 
 
