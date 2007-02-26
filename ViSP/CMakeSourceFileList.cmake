@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.11 2006-11-23 17:28:19 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.12 2007-02-26 10:45:34 marchand Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -50,6 +50,7 @@ SET (SRC_CAMERA
 SET (SRC_COMPUTER_VISION
   computer-vision/homography-estimation/vpHomography.cpp
   computer-vision/homography-estimation/vpHomographyDLT.cpp
+  computer-vision/homography-estimation/vpHomographyVVS.cpp
   computer-vision/homography-estimation/vpHomographyExtract.cpp
   computer-vision/homography-estimation/vpHomographyMalis.cpp
   computer-vision/homography-estimation/vpHomographyRansac.cpp
