@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.4 2007-02-26 18:34:10 fspindle Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.5 2007-02-27 08:42:27 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -468,7 +468,7 @@ void vpD3DRenderer::setPixel(unsigned i, unsigned j,
 */
 void vpD3DRenderer::drawLine(unsigned i1, unsigned j1, 
 			     unsigned i2, unsigned j2, 
-			     vpColor::vpColorType col, unsigned e, unsigned style)
+			     vpColor::vpColorType col, unsigned e, int style)
 {
   if(i1<0 || j1<0 || i2<0 || j2<0 || e<0)
     {

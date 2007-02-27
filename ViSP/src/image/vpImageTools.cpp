@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.cpp,v 1.6 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpImageTools.cpp,v 1.7 2007-02-27 08:42:27 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,12 @@ void vpImageTools::changeLUT(vpImage<unsigned char>& I,
 			     unsigned char newB)
 {
   unsigned char v;
-  double factor = (double)(newB-newA)/(double)(B-A);
+  double _A = A;
+  double _B = B;
+  double _newA = newA;
+  double _newB = newB;
+
+  double factor = (_newB-_newA)/(_B-_A);
 
   for (int i=0 ; i < I.getRows(); i++)
     for (int j=0 ; j < I.getCols(); j++) {

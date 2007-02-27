@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayD3D.cpp,v 1.1 2007-02-22 16:37:23 asaunier Exp $
+ * $Id: displayD3D.cpp,v 1.2 2007-02-27 08:42:27 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -278,11 +278,11 @@ main(int argc, char ** argv)
     vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
 
     // Display in overlay horizontal red lines
-    for (int i=0 ; i < I.getRows() ; i+=20)
+    for (unsigned i=0 ; i < I.getRows() ; i+=20)
       vpDisplay::displayLine(I,i,0,i,I.getCols(), vpColor::red) ;
 
     // Display in overlay vertical green dot lines
-    for (int i=0 ; i < I.getCols() ; i+=20)
+    for (unsigned i=0 ; i < I.getCols() ; i+=20)
       vpDisplay::displayDotLine(I,0,i,I.getCols(), i,vpColor::green) ;
 
     // Display in overlay a blue arrow
@@ -343,7 +343,7 @@ main(int argc, char ** argv)
     // a cross at the clicked pixel position
     if (opt_click_allowed) {
       cout << "\nA click to display a cross..." << endl;
-      int i,j;
+      unsigned i,j;
       // Blocking wait for a click. Get the position of the selected pixel
       // (i correspond to the row and j to the column coordinates in the image)
       vpDisplay::getClick(Irgba, i, j);
@@ -352,7 +352,7 @@ main(int argc, char ** argv)
       vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
     }
     else {
-      int i=10,j=20;
+      unsigned i=10,j=20;
       // Display a red cross at position i, j (i correspond to the row
       // and j to the column coordinates in the image)
       cout << "Cross position: " << i << ", " << j << endl;
