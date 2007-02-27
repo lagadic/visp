@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.20 2007-02-26 17:26:58 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.21 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -232,7 +232,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
 			  DefaultVisual(display, screen), AllocAll) ;
     colval.flags = DoRed | DoGreen | DoBlue ;
 
-    for(unsigned i = 0 ; i < 256 ; i++) {
+    for(unsigned int i = 0 ; i < 256 ; i++) {
       colval.pixel = i ;
       colval.red = 256 * i;
       colval.green = 256 * i;
@@ -245,7 +245,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
   }
 
   else if (screen_depth == 16) {
-    for (unsigned i = 0; i < 256; i ++ ) {
+    for (unsigned int i = 0; i < 256; i ++ ) {
       color.pad = 0;
       color.red = color.green = color.blue = 256 * i;
       if (XAllocColor (display, lut, &color) == 0) {
@@ -472,7 +472,8 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   vpDEBUG_TRACE(1, "Screen depth: %d\n", screen_depth);
 
   if ((window = XCreateSimpleWindow (display, RootWindow (display, screen),
-				     windowXPosition, windowYPosition, width, height, 1,
+				     windowXPosition, windowYPosition,
+				     width, height, 1,
 				     BlackPixel (display, screen),
 				     WhitePixel (display, screen))) == 0)
   {
@@ -491,7 +492,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
 			  DefaultVisual(display, screen), AllocAll) ;
     colval.flags = DoRed | DoGreen | DoBlue ;
 
-    for(unsigned i = 0 ; i < 256 ; i++) {
+    for(unsigned int i = 0 ; i < 256 ; i++) {
       colval.pixel = i ;
       colval.red = 256 * i;
       colval.green = 256 * i;
@@ -504,7 +505,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   }
 
   else if (screen_depth == 16) {
-    for (unsigned i = 0; i < 256; i ++ ) {
+    for (unsigned int i = 0; i < 256; i ++ ) {
       color.pad = 0;
       color.red = color.green = color.blue = 256 * i;
       if (XAllocColor (display, lut, &color) == 0) {
@@ -656,7 +657,8 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
 			 I.getWidth() , I.getHeight(), XBitmapPad(display), 0);
 
 
-    Ximage->data = (char *) malloc (I.getWidth() * I.getHeight() * Ximage->bits_per_pixel / 8);
+    Ximage->data = (char *) malloc (I.getWidth() * I.getHeight()
+				    * Ximage->bits_per_pixel / 8);
     ximage_data_init = true;
 
   }
@@ -679,7 +681,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   \param _title : window  title
 
 */
-void vpDisplayX::init(unsigned width, unsigned height, 
+void vpDisplayX::init(unsigned int width, unsigned int height,
 		      int _x, int _y, char *_title)
 {
 
@@ -754,7 +756,7 @@ void vpDisplayX::init(unsigned width, unsigned height,
 			  DefaultVisual(display, screen), AllocAll) ;
     colval.flags = DoRed | DoGreen | DoBlue ;
 
-    for(unsigned i = 0 ; i < 256 ; i++) {
+    for(unsigned int i = 0 ; i < 256 ; i++) {
       colval.pixel = i ;
       colval.red = 256 * i;
       colval.green = 256 * i;
@@ -767,7 +769,7 @@ void vpDisplayX::init(unsigned width, unsigned height,
   }
 
   else if (screen_depth == 16) {
-    for (unsigned i = 0; i < 256; i ++ ) {
+    for (unsigned int i = 0; i < 256; i ++ ) {
       color.pad = 0;
       color.red = color.green = color.blue = 256 * i;
       if (XAllocColor (display, lut, &color) == 0) {
@@ -919,7 +921,8 @@ void vpDisplayX::init(unsigned width, unsigned height,
 			 screen_depth, ZPixmap, 0, NULL,
 			 width, height, XBitmapPad(display), 0);
 
-    Ximage->data = (char *) malloc (width * height * Ximage->bits_per_pixel / 8);
+    Ximage->data = (char *) malloc (width * height
+				    * Ximage->bits_per_pixel / 8);
     ximage_data_init = true;
   }
   Xinitialise = true ;
@@ -975,8 +978,8 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
       unsigned short      *dst_16 = NULL;
       dst_16 = (unsigned short*)Ximage->data;
 
-      for (unsigned i = 0; i < height ; i++) {
-	for (unsigned j=0 ; j < width; j++){
+      for (unsigned int i = 0; i < height ; i++) {
+	for (unsigned int j=0 ; j < width; j++){
 	  *(dst_16+(i*width+j)) = (unsigned short)colortable[I[i][j]] ;
 	}
       }
@@ -989,11 +992,11 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
     case 24:
     default: {
       unsigned char       *dst_32 = NULL;
-      unsigned widthheight = width * height ;
+      unsigned int size = width * height ;
       dst_32 = (unsigned char*)Ximage->data;
       unsigned char *bitmap = I.bitmap ;
-      unsigned char *n = I.bitmap + widthheight;
-      //for (unsigned i = 0; i < widthheight; i++) // suppression de l'iterateur i
+      unsigned char *n = I.bitmap + size;
+      //for (unsigned int i = 0; i < size; i++) // suppression de l'iterateur i
       while (bitmap < n)
 	{
 	  char val = *(bitmap++);
@@ -1048,14 +1051,14 @@ void vpDisplayX::displayImage(const vpImage<vpRGBa> &I)
       dst_32 = (unsigned char*)Ximage->data;
 #ifdef APPLE
       // little indian/big indian
-      for (unsigned i = 0; i < I.getWidth() * I.getHeight() ; i++) {
+      for (unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++) {
 	dst_32[i*4] = I.bitmap[i].A;
 	dst_32[i*4 + 1] = I.bitmap[i].R;
 	dst_32[i*4 + 2] = I.bitmap[i].G;
 	dst_32[i*4 + 3] = I.bitmap[i].B;
       }
 #else
-      for (unsigned i = 0; i < I.getWidth() * I.getHeight() ; i++) {
+      for (unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++) {
 	dst_32[i*4] = I.bitmap[i].B;
 	dst_32[i*4 + 1] = I.bitmap[i].G;
 	dst_32[i*4 + 2] = I.bitmap[i].R;
@@ -1095,7 +1098,8 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 
 
     XImage *xi ;
-    xi= XGetImage(display,window, 0,0, getWidth(), getHeight(), AllPlanes, ZPixmap) ;
+    xi= XGetImage(display,window, 0,0, getWidth(), getHeight(),
+		  AllPlanes, ZPixmap) ;
     try{
       I.resize(getHeight(), getWidth()) ;
     }
@@ -1107,7 +1111,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 
     unsigned char       *src_24 = NULL;
     src_24 = (unsigned char*)xi->data;
-    for (unsigned i = 0; i < I.getWidth() * I.getHeight() ; i++)
+    for (unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++)
     {
       I.bitmap[i].B = src_24[i*4]  ;
       I.bitmap[i].G = src_24[i*4 + 1]  ;
@@ -1141,7 +1145,7 @@ void vpDisplayX::displayImage(const unsigned char *I)
 
     dst_32 = (unsigned char*)Ximage->data;
 
-    for (unsigned i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; i++) {
       char val = I[i];
       *(dst_32 ++) = val;	// Composante Rouge.
       *(dst_32 ++) = val;	// Composante Vertee.
@@ -1250,7 +1254,8 @@ void vpDisplayX::clearDisplay(vpColor::vpColorType c)
   \param i,j : (row,colum indexes)
   \param col : color (see vpColor)
 */
-void vpDisplayX::displayPoint(unsigned i, unsigned j, vpColor::vpColorType col)
+void vpDisplayX::displayPoint(unsigned int i, unsigned int j,
+			      vpColor::vpColorType col)
 {
   if (Xinitialise)
   {
@@ -1273,9 +1278,9 @@ void vpDisplayX::displayPoint(unsigned i, unsigned j, vpColor::vpColorType col)
   \param col : color (see vpColor)
   \param e : line_width
 */
-void vpDisplayX::displayLine(unsigned i1, unsigned j1, 
-			     unsigned i2, unsigned j2, 
-			     vpColor::vpColorType col, unsigned e)
+void vpDisplayX::displayLine(unsigned int i1, unsigned int j1,
+			     unsigned int i2, unsigned int j2,
+			     vpColor::vpColorType col, unsigned int e)
 {
   if (Xinitialise)
   {
@@ -1302,9 +1307,9 @@ void vpDisplayX::displayLine(unsigned i1, unsigned j1,
   \param col : color (see vpColor)
   \param e : line_width
 */
-void vpDisplayX::displayDotLine(unsigned i1, unsigned j1, 
-				unsigned i2, unsigned j2, 
-				vpColor::vpColorType col, unsigned e)
+void vpDisplayX::displayDotLine(unsigned int i1, unsigned int j1,
+				unsigned int i2, unsigned int j2,
+				vpColor::vpColorType col, unsigned int e)
 {
 
   if (Xinitialise)
@@ -1331,8 +1336,8 @@ void vpDisplayX::displayDotLine(unsigned i1, unsigned j1,
   \param size : Size of the cross
   \param col : Color (see vpColor)
 */
-void vpDisplayX::displayCross(unsigned i,unsigned j, 
-			      unsigned size, vpColor::vpColorType col)
+void vpDisplayX::displayCross(unsigned int i,unsigned int j,
+			      unsigned int size, vpColor::vpColorType col)
 {
   if (Xinitialise)
   {
@@ -1363,8 +1368,8 @@ void vpDisplayX::displayCross(unsigned i,unsigned j,
   \param size : Size of the cross
   \param col : Color (see vpColor)
 */
-void vpDisplayX::displayCrossLarge(unsigned i,unsigned j, 
-				   unsigned size, vpColor::vpColorType col)
+void vpDisplayX::displayCrossLarge(unsigned int i,unsigned int j,
+				   unsigned int size, vpColor::vpColorType col)
 {
   if (Xinitialise)
   {
@@ -1394,10 +1399,10 @@ void vpDisplayX::displayCrossLarge(unsigned i,unsigned j,
   \param col : Color (see vpColor)
   \param L,l : width and height of the arrow
 */
-void vpDisplayX::displayArrow(unsigned i1,unsigned j1, 
-			      unsigned i2, unsigned j2, 
-			      vpColor::vpColorType col, 
-			      unsigned L, unsigned l)
+void vpDisplayX::displayArrow(unsigned int i1,unsigned int j1,
+			      unsigned int i2, unsigned int j2,
+			      vpColor::vpColorType col,
+			      unsigned int L, unsigned int l)
 {
   if (Xinitialise)
   {
@@ -1467,8 +1472,8 @@ void vpDisplayX::displayArrow(unsigned i1,unsigned j1,
   \param col : Color (see vpColor)
 */
 void
-vpDisplayX::displayRectangle(unsigned i, unsigned j, 
-			     unsigned width, unsigned height,
+vpDisplayX::displayRectangle(unsigned int i, unsigned int j,
+			     unsigned int width, unsigned int height,
 			     vpColor::vpColorType col)
 {
   if (Xinitialise)
@@ -1495,7 +1500,7 @@ vpDisplayX::displayRectangle(unsigned i, unsigned j,
   \param string
   \param col : Color (see vpColor)
 */
-void vpDisplayX::displayCharString(unsigned i, unsigned j, 
+void vpDisplayX::displayCharString(unsigned int i, unsigned int j,
 				   char *string, vpColor::vpColorType col)
 {
   if (Xinitialise)
@@ -1518,13 +1523,13 @@ void vpDisplayX::displayCharString(unsigned i, unsigned j,
 */
 
 bool
-vpDisplayX::getClick(unsigned& i, unsigned& j)
+vpDisplayX::getClick(unsigned int& i, unsigned int& j)
 {
 
   bool ret = false;
   if (Xinitialise)
   {
-    unsigned x,y ;
+    unsigned int x,y ;
     while (ret==false)
     {
       Window	rootwin, childwin ;
@@ -1630,14 +1635,14 @@ vpDisplayX::getClick()
 
 */
 bool
-vpDisplayX::getClick(unsigned& i, unsigned& j, 
+vpDisplayX::getClick(unsigned int& i, unsigned int& j,
 		     vpMouseButton::vpMouseButtonType &button)
 {
 
   bool ret = false;
   if (Xinitialise)
   {
-    unsigned x,y ;
+    unsigned int x,y ;
     while (ret==false)
     {
       Window	rootwin, childwin ;
@@ -1697,7 +1702,7 @@ vpDisplayX::getClick(unsigned& i, unsigned& j,
 
 */
 bool
-vpDisplayX::getClickUp(unsigned& i, unsigned& j, 
+vpDisplayX::getClickUp(unsigned int& i, unsigned int& j,
 		       vpMouseButton::vpMouseButtonType &button)
 {
   return getClick(i, j, button);
@@ -1708,11 +1713,11 @@ vpDisplayX::getClickUp(unsigned& i, unsigned& j,
 
   usualy it 24 bits now...
 */
-unsigned vpDisplayX::getScreenDepth()
+unsigned int vpDisplayX::getScreenDepth()
 {
   Display	*_display;
-  unsigned	screen;
-  unsigned	depth;
+  unsigned int	screen;
+  unsigned int	depth;
 
   if ((_display = XOpenDisplay(NULL)) == NULL) {
     vpERROR_TRACE("Can't connect display on server %s.",
@@ -1732,10 +1737,10 @@ unsigned vpDisplayX::getScreenDepth()
   \brief get the window size
   \param width, height : Size of the display.
  */
-void vpDisplayX::getScreenSize(unsigned &width, unsigned &height)
+void vpDisplayX::getScreenSize(unsigned int &width, unsigned int &height)
 {
   Display	*_display;
-  unsigned	screen;
+  unsigned int	screen;
 
   if ((_display = XOpenDisplay(NULL)) == NULL)
   {
@@ -1756,7 +1761,7 @@ void vpDisplayX::getScreenSize(unsigned &width, unsigned &height)
 
 /*!
   \brief set the window title
-  \param windowtitle 
+  \param windowtitle
  */
 void
 vpDisplayX::flushTitle(const char *windowtitle)
@@ -1780,7 +1785,7 @@ vpDisplayX::flushTitle(const char *windowtitle)
   \param r : radius
   \param c : Color
 */
-void vpDisplayX::displayCircle(unsigned i, unsigned j, unsigned r, 
+void vpDisplayX::displayCircle(unsigned int i, unsigned int j, unsigned int r,
 			       vpColor::vpColorType c)
 {
    if (Xinitialise)

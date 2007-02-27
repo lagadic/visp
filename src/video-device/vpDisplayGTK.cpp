@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.14 2007-02-26 17:26:58 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.15 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -220,7 +220,7 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
 
 */
 void
-vpDisplayGTK::init(unsigned width, unsigned height,
+vpDisplayGTK::init(unsigned int width, unsigned int height,
 		   int _x, int _y,
 		   char *_title)
 {
@@ -538,7 +538,7 @@ void vpDisplayGTK::clearDisplay(vpColor::vpColorType c)
   \param i,j (row,colum indexes)
   \param color (see vpColor)
 */
-void vpDisplayGTK::displayPoint(unsigned i, unsigned j, 
+void vpDisplayGTK::displayPoint(unsigned int i, unsigned int j,
 				vpColor::vpColorType color)
 {
   if (GTKinitialized)
@@ -562,10 +562,10 @@ void vpDisplayGTK::displayPoint(unsigned i, unsigned j,
   \param e : line_width
 */
 void
-vpDisplayGTK::displayLine(unsigned i1, unsigned j1,
-			  unsigned i2, unsigned j2,
+vpDisplayGTK::displayLine(unsigned int i1, unsigned int j1,
+			  unsigned int i2, unsigned int j2,
 			  vpColor::vpColorType color,
-			  unsigned e)
+			  unsigned int e)
 {
   if (GTKinitialized)
     {
@@ -598,10 +598,10 @@ vpDisplayGTK::displayLine(unsigned i1, unsigned j1,
   \param e : line_width
 */
 void
-vpDisplayGTK::displayDotLine(unsigned i1, unsigned j1,
-			     unsigned i2, unsigned j2,
+vpDisplayGTK::displayDotLine(unsigned int i1, unsigned int j1,
+			     unsigned int i2, unsigned int j2,
 			     vpColor::vpColorType color,
-			     unsigned e)
+			     unsigned int e)
 {
 
   if (GTKinitialized)
@@ -634,8 +634,8 @@ vpDisplayGTK::displayDotLine(unsigned i1, unsigned j1,
   \param col : color (see vpColor)
 */
 void
-vpDisplayGTK::displayCross(unsigned i,unsigned j,
-			   unsigned size,
+vpDisplayGTK::displayCross(unsigned int i,unsigned int j,
+			   unsigned int size,
 			   vpColor::vpColorType col)
 {
   if (GTKinitialized)
@@ -667,8 +667,9 @@ vpDisplayGTK::displayCross(unsigned i,unsigned j,
   \param size : size of the cross
   \param col : color (see vpColor)
 */
-void vpDisplayGTK::displayCrossLarge(unsigned i,unsigned j,
-				     unsigned size,vpColor::vpColorType col)
+void vpDisplayGTK::displayCrossLarge(unsigned int i,unsigned int j,
+				     unsigned int size,
+				     vpColor::vpColorType col)
 {
   if (GTKinitialized)
     {
@@ -700,10 +701,10 @@ void vpDisplayGTK::displayCrossLarge(unsigned i,unsigned j,
   \param L,l : width and height of the arrow
 */
 void
-vpDisplayGTK::displayArrow(unsigned i1,unsigned j1,
-			   unsigned i2, unsigned j2,
+vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
+			   unsigned int i2, unsigned int j2,
 			   vpColor::vpColorType col,
-			   unsigned L,unsigned l)
+			   unsigned int L,unsigned int l)
 {
   if (GTKinitialized)
     {
@@ -735,7 +736,8 @@ vpDisplayGTK::displayArrow(unsigned i1,unsigned j1,
 		i4 = i3 - b*t ;
 		j4 = j3 + a*t ;
 
-		displayLine(i2, j2, (unsigned) i4, (unsigned) j4, col) ;
+		displayLine(i2, j2, (unsigned int) i4,
+			    (unsigned int) j4, col) ;
 		t+=0.1 ;
 	      }
 	    t = 0 ;
@@ -744,7 +746,8 @@ vpDisplayGTK::displayArrow(unsigned i1,unsigned j1,
 		i4 = i3 - b*t ;
 		j4 = j3 + a*t ;
 
-		displayLine(i2, j2, (unsigned) i4, (unsigned) j4, col) ;
+		displayLine(i2, j2, (unsigned int) i4,
+			    (unsigned int) j4, col) ;
 		t-=0.1 ;
 	      }
 	    displayLine(i1,j1,i2,j2,col) ;
@@ -774,8 +777,8 @@ vpDisplayGTK::displayArrow(unsigned i1,unsigned j1,
   \param color (see vpColor)
 */
 void
-vpDisplayGTK::displayRectangle(unsigned i, unsigned j,
-			       unsigned width, unsigned height,
+vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
+			       unsigned int width, unsigned int height,
 			       vpColor::vpColorType color)
 {
   if (GTKinitialized)
@@ -797,7 +800,7 @@ vpDisplayGTK::displayRectangle(unsigned i, unsigned j,
   \param string
   \param color (see vpColor)
 */
-void vpDisplayGTK::displayCharString(unsigned i, unsigned j, 
+void vpDisplayGTK::displayCharString(unsigned int i, unsigned int j,
 				     char *string, vpColor::vpColorType color)
 {
   if (GTKinitialized)
@@ -860,7 +863,7 @@ vpDisplayGTK::getClick()
 
 */
 bool
-vpDisplayGTK::getClick(unsigned& i, unsigned& j)
+vpDisplayGTK::getClick(unsigned int& i, unsigned int& j)
 {
   bool end = false ;
 
@@ -880,8 +883,8 @@ vpDisplayGTK::getClick(unsigned& i, unsigned& j)
 		case GDK_BUTTON_PRESS :
 		  if(ev->any.window == window)
 		    {
-		      i = (unsigned)((GdkEventButton *)ev)->y ;
-		      j = (unsigned)((GdkEventButton *)ev)->x ;
+		      i = (unsigned int)((GdkEventButton *)ev)->y ;
+		      j = (unsigned int)((GdkEventButton *)ev)->x ;
 		      end = true ;
 		    }
 		  break ;
@@ -907,11 +910,11 @@ vpDisplayGTK::getClick(unsigned& i, unsigned& j)
   \brief wait for and get the position of the click of the button specified
   by "button"
   \param i,j : (row,colum indexes)
-  \param button 
+  \param button
 
 */
 bool
-vpDisplayGTK::getClick(unsigned& i, unsigned& j, 
+vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
 		       vpMouseButton::vpMouseButtonType& button)
 {
   bool end = false ;
@@ -933,8 +936,8 @@ vpDisplayGTK::getClick(unsigned& i, unsigned& j,
 		  if(ev->any.window == window){
 		    if ((int)((GdkEventButton *)ev)->button==button)
 		      {
-			i = (unsigned)((GdkEventButton *)ev)->y ;
-			j = (unsigned)((GdkEventButton *)ev)->x ;
+			i = (unsigned int)((GdkEventButton *)ev)->y ;
+			j = (unsigned int)((GdkEventButton *)ev)->x ;
 			end = true ;
 		      }
 		  }
@@ -962,7 +965,7 @@ vpDisplayGTK::getClick(unsigned& i, unsigned& j,
 
 */
 bool
-vpDisplayGTK::getClickUp(unsigned& i, unsigned& j, 
+vpDisplayGTK::getClickUp(unsigned int& i, unsigned int& j,
 			 vpMouseButton::vpMouseButtonType& button)
 {
   bool end = false ;
@@ -985,8 +988,8 @@ vpDisplayGTK::getClickUp(unsigned& i, unsigned& j,
 		    {
 		      if ((int)((GdkEventButton *)ev)->button==button)
 			{
-			  i = (unsigned)((GdkEventButton *)ev)->y ;
-			  j = (unsigned)((GdkEventButton *)ev)->x ;
+			  i = (unsigned int)((GdkEventButton *)ev)->y ;
+			  j = (unsigned int)((GdkEventButton *)ev)->x ;
 			  end = true ;
 			}
 		    }
@@ -1011,10 +1014,10 @@ vpDisplayGTK::getClickUp(unsigned& i, unsigned& j,
 
   usualy it 24 bits now...
 */
-unsigned vpDisplayGTK::getScreenDepth()
+unsigned int vpDisplayGTK::getScreenDepth()
 {
 
-  unsigned depth;
+  unsigned int depth;
 
   depth = gdk_window_get_visual(window)->depth ;
 
@@ -1026,7 +1029,7 @@ unsigned vpDisplayGTK::getScreenDepth()
 
   \warning Not implemented
 */
-void vpDisplayGTK::getScreenSize(unsigned &width, unsigned &height)
+void vpDisplayGTK::getScreenSize(unsigned int &width, unsigned int &height)
 {
   vpTRACE("Not implemented") ;
   width = 0;
@@ -1061,7 +1064,8 @@ vpDisplayGTK::flushTitle(const char *windowtitle)
   \param r : radius
   \param color
 */
-void vpDisplayGTK::displayCircle(unsigned i, unsigned j, unsigned r, 
+void vpDisplayGTK::displayCircle(unsigned int i, unsigned int j,
+				 unsigned int r,
 				 vpColor::vpColorType color)
 {
   if (GTKinitialized)

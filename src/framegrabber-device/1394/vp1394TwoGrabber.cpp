@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.7 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.8 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -198,7 +198,7 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
 
   Here an example of single capture from the last camera found on the bus:
   \code
-  unsigned ncameras; // Number of cameras on the bus
+  unsigned int ncameras; // Number of cameras on the bus
   vpImage<unsigned char> I;
   vp1394TwoGrabber g;
   g.getNumCameras(ncameras);
@@ -209,7 +209,7 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
 
   Here an example of multi camera capture:
   \code
-  unsigned ncameras; // Number of cameras on the bus
+  unsigned int ncameras; // Number of cameras on the bus
   vp1394TwoGrabber g;
   g.getNumCameras(ncameras);
   vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
@@ -223,7 +223,7 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
 
   while(1) {
-    for (unsigned camera=0; camera < ncameras; camera ++) {
+    for (unsigned int camera=0; camera < ncameras; camera ++) {
       g.setCamera(camera);
       g.acquire(I[camera]);
     }
@@ -236,7 +236,7 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
 
 */
 void
-vp1394TwoGrabber::setCamera(unsigned camera_id)
+vp1394TwoGrabber::setCamera(unsigned int camera_id)
 {
   if (camera_id >= num_cameras) {
     close();
@@ -272,7 +272,7 @@ vp1394TwoGrabber::setCamera(unsigned camera_id)
 
 */
 void
-vp1394TwoGrabber::getCamera(unsigned &camera_id)
+vp1394TwoGrabber::getCamera(unsigned int &camera_id)
 {
   if (! num_cameras) {
     camera_id = this->camera_id;
@@ -294,7 +294,7 @@ vp1394TwoGrabber::getCamera(unsigned &camera_id)
 
 */
 void
-vp1394TwoGrabber::getNumCameras(unsigned &cameras)
+vp1394TwoGrabber::getNumCameras(unsigned int &cameras)
 {
   if (! num_cameras) {
     vpCTRACE << "No camera found..."<< endl;
@@ -852,8 +852,8 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoMode mode,
   \sa isVideoModeFormat7()
 */
 void
-vp1394TwoGrabber::setFormat7ROI(unsigned left, unsigned top,
-				unsigned width, unsigned height)
+vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
+				unsigned int width, unsigned int height)
 {
   if (! num_cameras) {
     close();
@@ -875,7 +875,7 @@ vp1394TwoGrabber::setFormat7ROI(unsigned left, unsigned top,
   }
   if (dc1394_is_video_mode_scalable(_videomode)) {
     // Format 7 video mode
-    unsigned max_width, max_height;
+    unsigned int max_width, max_height;
     if (dc1394_format7_get_max_image_size(camera, _videomode,
 					  &max_width, &max_height)
 	!= DC1394_SUCCESS) {
@@ -980,7 +980,7 @@ void
 vp1394TwoGrabber::close()
 {
   if (num_cameras) {
-    for (unsigned i = 0; i < num_cameras;i++) {
+    for (unsigned int i = 0; i < num_cameras;i++) {
       if (camInUse[i]) {
 	camera = cameras[i];
 
@@ -1224,7 +1224,7 @@ void
 vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 {
   dc1394video_frame_t *frame;
-  unsigned width, height, size;
+  unsigned int width, height, size;
 
   frame = dequeue();
 
@@ -1286,7 +1286,7 @@ void
 vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 {
   dc1394video_frame_t *frame;
-  unsigned width, height, size;
+  unsigned int width, height, size;
 
   frame = dequeue();
 
@@ -1349,7 +1349,7 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
   \sa getHeight(), open(), acquire()
 
 */
-void vp1394TwoGrabber::getWidth(unsigned &width)
+void vp1394TwoGrabber::getWidth(unsigned int &width)
 {
   if (! num_cameras) {
     close();
@@ -1379,7 +1379,7 @@ void vp1394TwoGrabber::getWidth(unsigned &width)
   \sa getWidth()
 
 */
-void vp1394TwoGrabber::getHeight(unsigned &height)
+void vp1394TwoGrabber::getHeight(unsigned int &height)
 {
   if (! num_cameras) {
     close();

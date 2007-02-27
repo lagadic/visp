@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.5 2007-02-27 08:42:27 fspindle Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.6 2007-02-27 17:08:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpConfig.h>
-#if ( defined(WIN32) & defined(VISP_HAVE_D3D9) ) 
+#if ( defined(WIN32) & defined(VISP_HAVE_D3D9) )
 
 #include <visp/vpD3DRenderer.h>
 #include <visp/vpColor.h>
@@ -59,7 +59,7 @@
   coordinates system.
 
   Moreover, when directly writing to a texture's surface,
-  you musn't forget to take the pitch of this texture 
+  you musn't forget to take the pitch of this texture
   into account (see Direct3D documentation).
 
 */
@@ -84,7 +84,7 @@ vpD3DRenderer::vpD3DRenderer()
   colors[vpColor::white] = D3DCOLOR_ARGB(0xFF,0xFF,0xFF,0xFF);
   colors[vpColor::yellow]= D3DCOLOR_ARGB(0xFF,0xFF,0xFF,0);
 
-	
+
   //initialize the GDI palette
   colorsGDI[vpColor::black] =  RGB(0,0,0);
   colorsGDI[vpColor::blue]  =  RGB(0,0,0xFF);
@@ -96,7 +96,7 @@ vpD3DRenderer::vpD3DRenderer()
 
   //Creates a logical font
   hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,
-		     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 
+		     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
 		     CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 		     DEFAULT_PITCH | FF_DONTCARE, NULL);
 }
@@ -142,7 +142,7 @@ int vpD3DRenderer::supPowerOf2(int n)
   \param height The window's height.
 
 */
-bool vpD3DRenderer::init(HWND hwnd, unsigned width, unsigned height)
+bool vpD3DRenderer::init(HWND hwnd, unsigned int width, unsigned int height)
 {
   //simple stuff
   nbCols = width;
@@ -151,16 +151,16 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned width, unsigned height)
 
   //D3D initialize
   if(NULL == (pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
-    throw vpDisplayException(vpDisplayException::notInitializedError, 
+    throw vpDisplayException(vpDisplayException::notInitializedError,
 			     "Can't initialize D3D!");
 
   D3DDISPLAYMODE d3ddm;
   if(FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &d3ddm)))
-    throw vpDisplayException(vpDisplayException::notInitializedError, 
+    throw vpDisplayException(vpDisplayException::notInitializedError,
 			     "Can't get the adapter's display mode!");
 
 
-  D3DPRESENT_PARAMETERS d3dpp; 
+  D3DPRESENT_PARAMETERS d3dpp;
   ZeroMemory(&d3dpp, sizeof(d3dpp));
   d3dpp.BackBufferCount=1;
   d3dpp.Windowed   = TRUE;
@@ -172,7 +172,7 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned width, unsigned height)
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING |
 				D3DCREATE_MULTITHREADED,
 				&d3dpp, &pd3dDevice )))
-    throw vpDisplayException(vpDisplayException::notInitializedError, 
+    throw vpDisplayException(vpDisplayException::notInitializedError,
 			     "Can't create the Direct3D device!");
 
 
@@ -182,34 +182,35 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned width, unsigned height)
 
   //inits the direct3D view (for 2D rendering)
   initView((float)nbCols,(float)nbRows);
-	
+
 
   //computes texture size (needs to be a power-of-2 large square)
   textWidth = supPowerOf2( (nbCols>nbRows) ? nbCols : nbRows );
 
   //creates the system memory texture (the one we will directly modify)
-  //unfortunately, needs to be X8R8G8B8 in order to be able to use GDI drawing functions
-  if( D3DXCreateTexture(pd3dDevice, textWidth, textWidth, D3DX_DEFAULT, 0, 
+  //unfortunately, needs to be X8R8G8B8 in order to be able to use GDI drawing
+  //functions
+  if( D3DXCreateTexture(pd3dDevice, textWidth, textWidth, D3DX_DEFAULT, 0,
 			D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM , &pd3dText)
       != D3D_OK)
     {
-      throw vpDisplayException(vpDisplayException::notInitializedError, 
+      throw vpDisplayException(vpDisplayException::notInitializedError,
 			       "Can't create memory texture!");
     }
 
-  //creates the video memory texture (the one we will display) - 
-  if( D3DXCreateTexture(pd3dDevice, textWidth, textWidth, D3DX_DEFAULT, 
-			D3DUSAGE_DYNAMIC , 
+  //creates the video memory texture (the one we will display) -
+  if( D3DXCreateTexture(pd3dDevice, textWidth, textWidth, D3DX_DEFAULT,
+			D3DUSAGE_DYNAMIC ,
 			D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &pd3dVideoText)
       != D3D_OK)
     {
-      throw vpDisplayException(vpDisplayException::notInitializedError, 
+      throw vpDisplayException(vpDisplayException::notInitializedError,
 			       "Can't create video texture!");
     }
 
   //creates the sprite used to render the texture
   if(D3DXCreateSprite(pd3dDevice, &pSprite) != S_OK)
-    throw vpDisplayException(vpDisplayException::notInitializedError, 
+    throw vpDisplayException(vpDisplayException::notInitializedError,
 			     "Can't create the texture's sprite!");
 
 
@@ -227,7 +228,7 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned width, unsigned height)
 */
 void vpD3DRenderer::initView(float WindowWidth, float WindowHeight)
 {
-  D3DXMATRIX Ortho2D;	
+  D3DXMATRIX Ortho2D;
   D3DXMATRIX Identity;
 
   D3DXMatrixOrthoLH(&Ortho2D, WindowWidth, WindowHeight, 0.0f, 1.0f);
@@ -236,7 +237,7 @@ void vpD3DRenderer::initView(float WindowWidth, float WindowHeight)
   if( pd3dDevice->SetTransform(D3DTS_PROJECTION, &Ortho2D) != D3D_OK
       || pd3dDevice->SetTransform(D3DTS_WORLD, &Identity) != D3D_OK
       || pd3dDevice->SetTransform(D3DTS_VIEW, &Identity) != D3D_OK)
-    throw vpDisplayException(vpDisplayException::notInitializedError, 
+    throw vpDisplayException(vpDisplayException::notInitializedError,
 			     "Can't set the view!");
 }
 
@@ -247,13 +248,13 @@ void vpD3DRenderer::initView(float WindowWidth, float WindowHeight)
   \param imBuffer Destination buffer.
   \param pitch Pitch of the destination texture.
 */
-void vpRGBaToTexture(const vpImage<vpRGBa>& I, unsigned char * imBuffer, 
-		   unsigned pitch)
+void vpRGBaToTexture(const vpImage<vpRGBa>& I, unsigned char * imBuffer,
+		   unsigned int pitch)
 {
-  unsigned j = I.getWidth();
+  unsigned int j = I.getWidth();
 
-  unsigned k=0;
-  for(unsigned i=0; i<I.getHeight()* I.getWidth(); i++)
+  unsigned int k=0;
+  for(unsigned int i=0; i<I.getHeight()* I.getWidth(); i++)
     {
       if(j==0){
 	k += pitch - (I.getWidth() * 4);
@@ -275,13 +276,14 @@ void vpRGBaToTexture(const vpImage<vpRGBa>& I, unsigned char * imBuffer,
   \param imBuffer Destination buffer.
   \param pitch Pitch of the destination texture.
 */
-void vpGreyToTexture(const vpImage<unsigned char>& I, unsigned char * imBuffer, 
-		   unsigned pitch)
+void vpGreyToTexture(const vpImage<unsigned char>& I,
+		     unsigned char * imBuffer,
+		     unsigned int pitch)
 {
-  unsigned j = I.getWidth();
+  unsigned int j = I.getWidth();
 
-  unsigned k=0;
-  for(unsigned i=0; i<I.getHeight()* I.getWidth(); i++)
+  unsigned int k=0;
+  for(unsigned int i=0; i<I.getHeight()* I.getWidth(); i++)
     {
       if(j==0){
 	k += pitch - (I.getWidth() * 4);
@@ -310,7 +312,7 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa>& im)
       RECT r;
       r.top=0; r.left=0;
       r.bottom=nbRows; r.right=nbCols;
-		
+
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
 	{
@@ -319,16 +321,16 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa>& im)
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned pitch = d3dLRect.Pitch;
+      unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this texture with the image data (converted to bgra)
-      vpRGBaToTexture(im, buf, pitch);		
+      vpRGBaToTexture(im, buf, pitch);
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
 	vpCERROR<<"D3D : Couldn't unlock the texture!"<<endl;
-    
+
     }
 }
 
@@ -356,11 +358,11 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char>& im)
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned pitch = d3dLRect.Pitch;
+      unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this texture with the image data (converted to bgra)
-      vpGreyToTexture(im, buf, pitch);		
+      vpGreyToTexture(im, buf, pitch);
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
@@ -378,7 +380,7 @@ bool vpD3DRenderer::render()
 {
   // Clears the back buffer to a blue color
   //pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0,0,255), 1.0f, 0 );
-	
+
   //Begins the scene.
   pd3dDevice->BeginScene();
 
@@ -386,13 +388,13 @@ bool vpD3DRenderer::render()
   RECT r;
   r.top=0; r.left=0;
   r.bottom=nbRows; r.right=nbCols;
-			
+
   //Updates the video memory texture with the content of the system
   //memory texture
   pd3dDevice->UpdateTexture(pd3dText,pd3dVideoText);
 
   //Displays this texture as a sprite
-  
+
 #if (D3DX_SDK_VERSION <= 9)
   pSprite->Begin(); //
   pSprite->Draw(pd3dVideoText, &r, NULL, NULL, NULL, NULL, 0xFFFFFFFF );
@@ -414,7 +416,7 @@ bool vpD3DRenderer::render()
 /*!
   Sets a pixel to color at position (j,i).
 */
-void vpD3DRenderer::setPixel(unsigned i, unsigned j, 
+void vpD3DRenderer::setPixel(unsigned int i, unsigned int j,
 			     vpColor::vpColorType color)
 {
   if(i<0 || j<0 || i>=nbRows || j>=nbCols)
@@ -430,9 +432,9 @@ void vpD3DRenderer::setPixel(unsigned i, unsigned j,
 
       RECT r;
 
-      r.top=i; 
+      r.top=i;
       r.left=j;
-      r.bottom=i+1; 
+      r.bottom=i+1;
       r.right=j+1;
 
       //locks the texture to directly access it
@@ -443,7 +445,7 @@ void vpD3DRenderer::setPixel(unsigned i, unsigned j,
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned pitch = d3dLRect.Pitch;
+      unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //the coordinates are in the locked area base
@@ -466,45 +468,46 @@ void vpD3DRenderer::setPixel(unsigned i, unsigned j,
   \param col the line's color
   \param style style of the line
 */
-void vpD3DRenderer::drawLine(unsigned i1, unsigned j1, 
-			     unsigned i2, unsigned j2, 
-			     vpColor::vpColorType col, unsigned e, int style)
+void vpD3DRenderer::drawLine(unsigned int i1, unsigned int j1,
+			     unsigned int i2, unsigned int j2,
+			     vpColor::vpColorType col,
+			     unsigned int e, int style)
 {
   if(i1<0 || j1<0 || i2<0 || j2<0 || e<0)
     {
       vpCERROR<<"Invalid parameters!"<<endl;
       return;
     }
-  
+
   //if the device has been initialized
   if(pd3dDevice != NULL)
     {
-      
+
       //Will contain the texture's surface drawing context
       HDC hDCMem;
-      
+
       //The texture's surface
       IDirect3DSurface9 * pd3dSurf;
       pd3dText->GetSurfaceLevel(0, &pd3dSurf);
-      
+
       //We get its DC
       pd3dSurf->GetDC(&hDCMem);
-      
+
       //create the pen
       HPEN hPen = CreatePen(style, e, colorsGDI[col]);
-      
+
       //we don't use the bkColor
       SetBkMode(hDCMem, TRANSPARENT);
-      
+
       //select the pen
       SelectObject(hDCMem, hPen);
-      
+
       //move to the starting point
       MoveToEx(hDCMem, j1, i1, NULL);
       //Draw the line
       LineTo(hDCMem, j2, i2);
-      
-      
+
+
       //Releases the DC
       pd3dSurf->ReleaseDC(hDCMem);
       //Releases the surface's interface
@@ -524,8 +527,8 @@ void vpD3DRenderer::drawLine(unsigned i1, unsigned j1,
   \param col The rectangle's color
   \param fill Ignored
 */
-void vpD3DRenderer::drawRect(unsigned i, unsigned j,
-			     unsigned width, unsigned height, 
+void vpD3DRenderer::drawRect(unsigned int i, unsigned int j,
+			     unsigned int width, unsigned int height,
 			     vpColor::vpColorType col, bool fill)
 {
   if(i<0 || j<0 || i>nbRows || j>nbCols || width<0 || height<0)
@@ -538,15 +541,15 @@ void vpD3DRenderer::drawRect(unsigned i, unsigned j,
   if(pd3dDevice != NULL)
     {
       D3DLOCKED_RECT d3dLRect;
-		
+
       RECT r;
       r.top=i;
       r.left=j;
       r.bottom=(i+height < nbRows) ? i+height : nbRows-1;
       r.right=(j+width < nbCols) ? j+width : nbCols-1;
 
-      unsigned rectW = r.right - j;
-      unsigned rectH = r.bottom - i;
+      unsigned int rectW = r.right - j;
+      unsigned int rectH = r.bottom - i;
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -556,11 +559,11 @@ void vpD3DRenderer::drawRect(unsigned i, unsigned j,
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned pitch = d3dLRect.Pitch;
+      unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
-      unsigned x=0;
-      unsigned y=0;
+      unsigned int x=0;
+      unsigned int y=0;
 
       //draws the top horizontal line
       for(x; x<width ; x++)
@@ -594,7 +597,7 @@ void vpD3DRenderer::clear(vpColor::vpColorType c)
   if(pd3dDevice != NULL)
     {
       D3DLOCKED_RECT d3dLRect;
-      
+
       RECT r;
       r.top = 0;
       r.left = 0;
@@ -609,12 +612,12 @@ void vpD3DRenderer::clear(vpColor::vpColorType c)
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned pitch = d3dLRect.Pitch;
+      unsigned int pitch = d3dLRect.Pitch;
       long * buf = (long *) d3dLRect.pBits;
 
       long color = colors[(int) c];
       long * end = (long*)((long)buf + (pitch * nbRows));
-      
+
       //fills the whole image
       while (buf < end)
 	*buf++ = color;
@@ -628,24 +631,24 @@ void vpD3DRenderer::clear(vpColor::vpColorType c)
 
 
 //writes current circle pixels using symetry to reduce the algorithm's complexity
-void vpD3DRenderer::subDrawCircle(unsigned i, unsigned j, 
-				  unsigned x, unsigned y, 
-				  vpColor::vpColorType col, 
-				  unsigned char* buf, unsigned pitch, 
-				  unsigned maxX, unsigned maxY)
-{      
+void vpD3DRenderer::subDrawCircle(unsigned int i, unsigned int j,
+				  unsigned int x, unsigned int y,
+				  vpColor::vpColorType col,
+				  unsigned char* buf, unsigned int pitch,
+				  unsigned int maxX, unsigned int maxY)
+{
   if (x == 0) {
     setBufferPixel(buf, pitch, i  , j+y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i  , j-y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i+y, j, col, maxX, maxY);
     setBufferPixel(buf, pitch, i-y, j, col, maxX, maxY);
-  } else 
+  } else
     if (x == y) {
       setBufferPixel(buf, pitch, i+x,j+y,col, maxX, maxY);
       setBufferPixel(buf, pitch, i-x,j+y,col, maxX, maxY);
       setBufferPixel(buf, pitch, i+x,j-y,col, maxX, maxY);
       setBufferPixel(buf, pitch, i-x,j-y,col, maxX, maxY);
-    } else 
+    } else
       if (x < y) {
 	setBufferPixel(buf, pitch, i+x,j+y,col, maxX, maxY);
 	setBufferPixel(buf, pitch, i-x,j+y,col, maxX, maxY);
@@ -666,7 +669,7 @@ void vpD3DRenderer::subDrawCircle(unsigned i, unsigned j,
   \param r The circle's radius
   \param col The circle's color
 */
-void vpD3DRenderer::drawCircle(unsigned i, unsigned j, unsigned r, 
+void vpD3DRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
 			       vpColor::vpColorType c)
 {
   if(r<1)
@@ -676,7 +679,7 @@ void vpD3DRenderer::drawCircle(unsigned i, unsigned j, unsigned r,
   if(pd3dDevice != NULL)
     {
       D3DLOCKED_RECT d3dLRect;
-		
+
       RECT rec;
 
       int rleft = (j-r >=0) ? j-r : 0;
@@ -697,9 +700,9 @@ void vpD3DRenderer::drawCircle(unsigned i, unsigned j, unsigned r,
 	  vpCERROR<<"D3D : Couldn't lock the texture!"<<endl;
 	  return;
 	}
-      
+
       //gets the buffer and pitch of the texture
-      unsigned pitch = d3dLRect.Pitch;
+      unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       // Bresenham 's circle algorithm
@@ -711,11 +714,11 @@ void vpD3DRenderer::drawCircle(unsigned i, unsigned j, unsigned r,
       subDrawCircle(j-rleft, i-rtop, x, y, c, buf, pitch, rectW, rectH);
       while(x < y){
 	x++;
-	if (p < 0) 
+	if (p < 0)
 	  {
 	    p += (x+1)<<1;
 	  }
-	else 
+	else
 	  {
 	    y--;
 	    p += ((x-y)<<1)+1;
@@ -740,12 +743,12 @@ void vpD3DRenderer::drawCircle(unsigned i, unsigned j, unsigned r,
   \param s The string to display
   \param col The text's color
 */
-void vpD3DRenderer::drawText(unsigned i, unsigned j, char * s, 
+void vpD3DRenderer::drawText(unsigned int i, unsigned int j, char * s,
 			     vpColor::vpColorType c)
 {
   //Will contain the texture's surface drawing context
   HDC hDCMem;
-  
+
   //The texture's surface
   IDirect3DSurface9 * pd3dSurf;
   pd3dText->GetSurfaceLevel(0, &pd3dSurf);
@@ -755,21 +758,21 @@ void vpD3DRenderer::drawText(unsigned i, unsigned j, char * s,
 
   //Select the font
   SelectObject(hDCMem, hFont);
-  
+
   //set the text color
   SetTextColor(hDCMem, colorsGDI[c]);
-  
+
   //we don't use the bkColor
   SetBkMode(hDCMem, TRANSPARENT);
-  
+
   SIZE size;
   int length = (int) strlen(s);
-  
+
   //get the displayed string dimensions
   GetTextExtentPoint32(hDCMem, s, length, &size);
-    
+
   //displays the string
-  TextOut(hDCMem, j, i, s, length); 
+  TextOut(hDCMem, j, i, s, length);
 
   //Releases the DC
   pd3dSurf->ReleaseDC(hDCMem);
@@ -788,8 +791,9 @@ void vpD3DRenderer::drawText(unsigned i, unsigned j, char * s,
   \param col The cross' color
   \param e width of the cross
 */
-void vpD3DRenderer::drawCross(unsigned i,unsigned j, unsigned size, 
-			      vpColor::vpColorType col, unsigned e)
+void vpD3DRenderer::drawCross(unsigned int i,unsigned int j,
+			      unsigned int size,
+			      vpColor::vpColorType col, unsigned int e)
 {
   if(i<0 || j<0 || e<=0)
     return;
@@ -798,16 +802,16 @@ void vpD3DRenderer::drawCross(unsigned i,unsigned j, unsigned size,
   if(pd3dDevice != NULL)
     {
       D3DLOCKED_RECT d3dLRect;
-      
+
       RECT rec;
-      
+
       //if j-size/2 is inferior to 0, use 0
-      int rleft = ( (j - (size/2)) < 0 ) ? 
-	0 
+      int rleft = ( (j - (size/2)) < 0 ) ?
+	0
 	: j - (size/2);
       //if j-size/2 is inferior to 0, use 0
-      int rtop  = ( (i - (size/2)) < 0 ) ? 
-	0 
+      int rtop  = ( (i - (size/2)) < 0 ) ?
+	0
 	: i - (size/2);
 
       rec.top   = rtop;
@@ -823,13 +827,13 @@ void vpD3DRenderer::drawCross(unsigned i,unsigned j, unsigned size,
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned pitch = d3dLRect.Pitch;
+      unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
-      unsigned x;         //xpos
+      unsigned int x;         //xpos
 
       //y-coordinate of the line in the locked rectangle base
-      unsigned y =( i < (size/2) ) ?
+      unsigned int y =( i < (size/2) ) ?
 	i
 	: (size/2);
 
@@ -846,12 +850,12 @@ void vpD3DRenderer::drawCross(unsigned i,unsigned j, unsigned size,
 
 	  re--;
 	  cpt++;
-	  
+
 	  //write alternatively a line at the top and a line at the bottom
 	  //eg : y=4 -> y=5 -> y=3 -> y=6
 	  y += ( (re&1) != 0) ? cpt : -cpt;
-	}		       
-      
+	}
+
       cpt = 0;
       re = e;
 
@@ -866,7 +870,7 @@ void vpD3DRenderer::drawCross(unsigned i,unsigned j, unsigned size,
 	  //draws a vertical line
 	  for(y=0; y<size; y++)
 	    setBufferPixel(buf, pitch, x, y, col, size, size);
-	  
+
 	  re--;
 	  cpt++;
 
@@ -892,9 +896,10 @@ void vpD3DRenderer::drawCross(unsigned i,unsigned j, unsigned size,
   \param L ...
   \param l ...
 */
-void vpD3DRenderer::drawArrow(unsigned i1,unsigned j1, 
-			      unsigned i2, unsigned j2, 
-			      vpColor::vpColorType col, unsigned L,unsigned l)
+void vpD3DRenderer::drawArrow(unsigned int i1,unsigned int j1,
+			      unsigned int i2, unsigned int j2,
+			      vpColor::vpColorType col,
+			      unsigned int L,unsigned int l)
 {
   double a = j2 - j1 ;
   double b = i2 - i1 ;
@@ -903,7 +908,7 @@ void vpD3DRenderer::drawArrow(unsigned i1,unsigned j1,
 
   //Will contain the texture's surface drawing context
   HDC hDCMem;
-  
+
   //The texture's surface
   IDirect3DSurface9 * pd3dSurf;
   pd3dText->GetSurfaceLevel(0, &pd3dSurf);
@@ -942,7 +947,7 @@ void vpD3DRenderer::drawArrow(unsigned i1,unsigned j1,
 
 	  MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
 	  LineTo(hDCMem, (int)j4, (int)i4);
-			
+
 	  t+=0.1 ;
 	}
 
@@ -963,7 +968,7 @@ void vpD3DRenderer::drawArrow(unsigned i1,unsigned j1,
     }
 
   //Deletes the pen
-  DeleteObject(hPen); 
+  DeleteObject(hPen);
   //Releases the DC
   pd3dSurf->ReleaseDC(hDCMem);
   //Releases the surface's interface
@@ -978,20 +983,20 @@ void vpD3DRenderer::drawArrow(unsigned i1,unsigned j1,
   \param imBuffer The texture's data.
   \param pitch The texture's pitch.
 */
-void TextureToRGBa(vpImage<vpRGBa>& I, unsigned char * imBuffer, 
-		   unsigned pitch)
+void TextureToRGBa(vpImage<vpRGBa>& I, unsigned char * imBuffer,
+		   unsigned int pitch)
 {
-  unsigned j = I.getWidth();
+  unsigned int j = I.getWidth();
 
-  unsigned k=0;
-  for(unsigned i=0; i<I.getHeight()* I.getWidth(); i++)
+  unsigned int k=0;
+  for(unsigned int i=0; i<I.getHeight()* I.getWidth(); i++)
     {
       //go to the next line
       if(j==0){
 	k += pitch - (I.getWidth() * 4);
 	j = I.getWidth();
       }
-      
+
       //simple conversion from bgra to rgba
       I.bitmap[i].B = imBuffer[k+0];
       I.bitmap[i].G = imBuffer[k+1];
@@ -1012,7 +1017,7 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
   //if the device has been initialized
   if(pd3dDevice != NULL)
     {
-      
+
       //resize the destination image as needed
       I.resize(nbRows, nbCols);
 
@@ -1030,11 +1035,11 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned pitch = d3dLRect.Pitch;
+      unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this image with the texture's data
-      TextureToRGBa(I,buf, pitch);		
+      TextureToRGBa(I,buf, pitch);
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)

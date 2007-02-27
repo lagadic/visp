@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.9 2007-02-26 16:39:17 fspindle Exp $
+ * $Id: vpImage.h,v 1.10 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,9 +85,9 @@ class vpImage
 {
 
 private:
-  unsigned npixels ; //<! number of pixel in the image
-  unsigned width ;   //<! number of columns
-  unsigned height ;   //<! number of rows
+  unsigned int npixels ; //<! number of pixel in the image
+  unsigned int width ;   //<! number of columns
+  unsigned int height ;   //<! number of rows
 
 public:
   Type *bitmap ;  //!< points toward the bitmap
@@ -105,9 +105,9 @@ public:
 
     \sa getHeight()
   */
-  inline  unsigned getRows() const { return height ; }
+  inline  unsigned int getRows() const { return height ; }
 
-  /*! 
+  /*!
     Get the number of columns in the image.
 
     \return The image number of column, or image width.
@@ -118,8 +118,8 @@ public:
 
     \sa getHeight()
    */
-  inline  unsigned getCols() const { return width ; }
-  /*! 
+  inline  unsigned int getCols() const { return width ; }
+  /*!
     Get the image height.
 
     \return The image height.
@@ -127,18 +127,18 @@ public:
     \sa getWidth()
 
   */
-  inline  unsigned getHeight() const { return height; }
+  inline  unsigned int getHeight() const { return height; }
   /*!
     Get the image width.
 
     \return The image width.
 
     \sa getHeight()
-    
-  */
-  inline  unsigned getWidth() const { return width; }
 
-  /*! 
+  */
+  inline  unsigned int getWidth() const { return width; }
+
+  /*!
 
     Get the image number of pixels which corresponds to the image
     width multiplied by the image height.
@@ -148,17 +148,17 @@ public:
 
     \sa getWidth(), getHeight()
    */
-  inline unsigned getNumberOfPixel() const{ return npixels; }
+  inline unsigned int getNumberOfPixel() const{ return npixels; }
 
   //------------------------------------------------------------------
   //         Acces to the image
 
 
   //! operator[] allows operation like I[i] = x
-  inline Type *operator[]( const unsigned n)   { return row[n];}
+  inline Type *operator[]( const unsigned int n)   { return row[n];}
 
   //! operator[] allows operation like x = I[i]
-  inline const  Type *operator[](unsigned n) const { return row[n];}
+  inline const  Type *operator[](unsigned int n) const { return row[n];}
 
   /*!
     Get a pixel value.
@@ -169,7 +169,7 @@ public:
     \return Pixel value for pixel (i, j)
 
   */
-  inline  Type operator()(const unsigned i, const  unsigned j)
+  inline  Type operator()(const unsigned int i, const  unsigned int j)
   {
     return bitmap[i*width+j] ;
   }
@@ -182,7 +182,8 @@ public:
     \param v : Value to set for pixel (i, j)
 
   */
-  inline  void  operator()(const unsigned i, const  unsigned j, const Type &v)
+  inline  void  operator()(const unsigned int i, const  unsigned int j,
+			   const Type &v)
   {
     bitmap[i*width+j] = v ;
   }
@@ -194,17 +195,17 @@ public:
   //         build the image
 
   //! set the size of the image
-  void  resize(const unsigned height, const unsigned width) ;
+  void  resize(const unsigned int height, const unsigned int width) ;
 
   //! set the size of the image
-  void init(unsigned height, unsigned width) ;
+  void init(unsigned int height, unsigned int width) ;
   //! set the size of the image
-  void init(unsigned height, unsigned width, Type value) ;
+  void init(unsigned int height, unsigned int width, Type value) ;
 
   //! constructor  set the size of the image
-  vpImage(unsigned height, unsigned width) ;
+  vpImage(unsigned int height, unsigned int width) ;
   //! constructor  set the size of the image and init all the pixel
-  vpImage(unsigned height, unsigned width, Type value) ;
+  vpImage(unsigned int height, unsigned int width, Type value) ;
   //! constructor
   vpImage() ;
   //! destructor

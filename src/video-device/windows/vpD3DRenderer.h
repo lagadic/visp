@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.h,v 1.3 2007-02-27 08:42:27 fspindle Exp $
+ * $Id: vpD3DRenderer.h,v 1.4 2007-02-27 17:08:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpConfig.h>
-#if ( defined(VISP_HAVE_D3D9) ) 
+#if ( defined(VISP_HAVE_D3D9) )
 
 #ifndef VPD3DRENDERER_HH
 #define VPD3DRENDERER_HH
@@ -52,14 +52,14 @@
 
 /*!
   \class vpD3DRenderer.h
-  
+
   \brief Display under windows using Direct3D9.
   Is used by vpD3DDisplay to do the drawing.
 
 */
 class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 {
-  
+
   IDirect3D9 * pD3D;
 
   //The d3d device we will be working with.
@@ -87,13 +87,13 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   //Colors for overlay drawn with GDI.
   COLORREF colorsGDI[8];
-  
+
   //Font used for text drawing.
   HFONT hFont;
 
  public:
 
-  bool init(HWND hwnd, unsigned width, unsigned height);
+  bool init(HWND hwnd, unsigned int width, unsigned int height);
   bool render();
 
   vpD3DRenderer();
@@ -103,25 +103,30 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   void setImg(const vpImage<unsigned char>& im);
 
-  void setPixel(unsigned x, unsigned y, vpColor::vpColorType color);
+  void setPixel(unsigned int x, unsigned int y, vpColor::vpColorType color);
 
-  void drawLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
-		vpColor::vpColorType col, unsigned e, int style=PS_SOLID);
+  void drawLine(unsigned int i1, unsigned int j1,
+		unsigned int i2, unsigned int j2,
+		vpColor::vpColorType col, unsigned int e, int style=PS_SOLID);
 
-  void drawRect(unsigned i, unsigned j, unsigned width, unsigned height, 
+  void drawRect(unsigned int i, unsigned int j,
+		unsigned int width, unsigned int height,
 		vpColor::vpColorType col, bool fill=false);
 
   void clear(vpColor::vpColorType c);
 
-  void drawCircle(unsigned i, unsigned j, unsigned r, vpColor::vpColorType c);
+  void drawCircle(unsigned int i, unsigned int j, unsigned int r,
+		  vpColor::vpColorType c);
 
-  void drawText(unsigned i, unsigned j, char * s, vpColor::vpColorType c);
+  void drawText(unsigned int i, unsigned int j, char * s,
+		vpColor::vpColorType c);
 
-  void drawCross(unsigned i,unsigned j, unsigned size, 
-		 vpColor::vpColorType col, unsigned e=1);
+  void drawCross(unsigned int i,unsigned int j, unsigned int size,
+		 vpColor::vpColorType col, unsigned int e=1);
 
-  void drawArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2, 
-		 vpColor::vpColorType col, unsigned L,unsigned l);
+  void drawArrow(unsigned int i1,unsigned int j1,
+		 unsigned int i2, unsigned int j2,
+		 vpColor::vpColorType col, unsigned int L,unsigned int l);
 
   void getImage(vpImage<vpRGBa> &I);
 
@@ -130,14 +135,15 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
  private:
 
   void initView(float, float);
-	
+
   /*!
     Sub function for circle drawing.
     Circle drawing is based on Bresenham 's circle algorithm.
   */
-  void subDrawCircle(unsigned i, unsigned j, unsigned x, unsigned y, 
-		     vpColor::vpColorType col, unsigned char* buf, 
-		     unsigned pitch, unsigned maxX, unsigned maxY);
+  void subDrawCircle(unsigned int i, unsigned int j,
+		     unsigned int x, unsigned int y,
+		     vpColor::vpColorType col, unsigned char* buf,
+		     unsigned int pitch, unsigned int maxX, unsigned int maxY);
 
 
   /*!
@@ -151,13 +157,13 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
     \param maxY The maximum y value (equals to the height of the locked rectangle).
 
   */
-  inline void setBufferPixel(unsigned char* buf, unsigned pitch, 
-			     unsigned x, unsigned y, 
-			     vpColor::vpColorType color, 
-			     unsigned maxX, unsigned maxY)
+  inline void setBufferPixel(unsigned char* buf, unsigned int pitch,
+			     unsigned int x, unsigned int y,
+			     vpColor::vpColorType color,
+			     unsigned int maxX, unsigned int maxY)
     {
       if(x>=0 && y>=0 && x<=maxX && y<=maxY)
-	*(long*)(buf + (y*pitch) + (x<<2)) = colors[color];	
+	*(long*)(buf + (y*pitch) + (x<<2)) = colors[color];
     }
 
   int supPowerOf2(int n);

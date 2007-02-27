@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.11 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vp1394Grabber.h,v 1.12 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -159,8 +159,8 @@ public:
   void acquire(vpImage<vpRGBa> &I);
   void close();
 
-  void getWidth (unsigned &width);
-  void getHeight(unsigned &height);
+  void getWidth (unsigned int &width);
+  void getHeight(unsigned int &height);
   void getNumCameras(unsigned int &cameras);
 
 

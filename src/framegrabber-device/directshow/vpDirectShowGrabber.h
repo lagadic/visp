@@ -4,7 +4,7 @@
 #define vpDirectShowGrabber_hh
 
 #include <visp/vpConfig.h>
-#if ( defined(VISP_HAVE_DIRECTSHOW) ) 
+#if ( defined(VISP_HAVE_DIRECTSHOW) )
 
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
@@ -16,7 +16,7 @@ class vpDirectShowGrabberImpl;
 	This class' goal is to totally hide the implementation of the framegrabber from
 	the rest of the application. This is necessary to avoid conflicts between dshow's
 	Qedit.h and Direct3D's includes.
-	
+
 */
 
 /*!
@@ -31,9 +31,9 @@ class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber
 	vpDirectShowGrabberImpl * grabber;
 
 	public:
-		unsigned getHeight();
-		unsigned getWidth();
-		
+		unsigned int getHeight();
+		unsigned int getWidth();
+
 		vpDirectShowGrabber();
 		~vpDirectShowGrabber();
 
@@ -44,7 +44,7 @@ class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber
 		void acquire(vpImage<vpRGBa> &I);
 
 		void close();
-			
+
 		//get the number of capture devices
 		int getDeviceNumber();
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.8 2007-02-26 16:39:17 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.9 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,13 +81,13 @@ yuv411 : u y1 y2 v y3 y4
 */
 void vpImageConvert::YUV411ToRGBa(unsigned char* yuv,
 				  unsigned char* rgba,
-				  int size)
+				  unsigned int size)
 {
 #if 1
   //  cout << "call optimized ConvertYUV411ToRGBa()" << endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3;
-  for(int i = size / 4; i; i--) {
+  for(unsigned int i = size / 4; i; i--) {
     U   = (int)((*yuv++ - 128) * 0.354);
     U5  = 5*U;
     Y0  = *yuv++;
@@ -163,7 +163,7 @@ void vpImageConvert::YUV411ToRGBa(unsigned char* yuv,
   }
 #else
   // tres tres lent ....
-  int i=0,j=0;
+  unsigned int i=0,j=0;
   unsigned char r, g, b;
   while( j < numpixels*3/2)
   {
@@ -210,14 +210,14 @@ yuv422 : u y1 v y2 u y3 v y4
 */
 void vpImageConvert::YUV422ToRGBa(unsigned char* yuv,
 				  unsigned char* rgba,
-				  int size)
+				  unsigned int size)
 {
 
 #if 1
   //  cout << "call optimized convertYUV422ToRGBa()" << endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1;
-  for( int i = size / 2; i; i-- ) {
+  for( unsigned int i = size / 2; i; i-- ) {
     U   = (int)((*yuv++ - 128) * 0.354);
     U5  = 5*U;
     Y0  = *yuv++;
@@ -259,7 +259,7 @@ void vpImageConvert::YUV422ToRGBa(unsigned char* yuv,
 
 #else
   // tres tres lent ....
- int i=0,j=0;
+ unsigned int i=0,j=0;
  unsigned char r, g, b;
 
  while( j < size*2)
@@ -292,10 +292,10 @@ yuv411 : u y1 y2 v y3 y4
 */
 void vpImageConvert::YUV411ToGrey(unsigned char* yuv,
 				  unsigned char* grey,
-				  int size)
+				  unsigned int size)
 {
 
-  int i=0,j=0;
+  unsigned int i=0,j=0;
   while( j < size*3/2)
   {
 
@@ -318,9 +318,9 @@ yuv422 : u y1 v y2 u y3 v y4
 */
 void vpImageConvert::YUV422ToRGB(unsigned char* yuv,
 				 unsigned char* rgb,
-				 int size)
+				 unsigned int size)
 {
- int i=0,j=0;
+ unsigned int i=0,j=0;
  unsigned char r, g, b;
 
  while( j < size*2)
@@ -350,7 +350,7 @@ yuv422 : u y1 v y2 u y3 v y4
 */
 void vpImageConvert::YUV422ToGrey(unsigned char* yuv,
 				  unsigned char* grey,
-				  int size)
+				  unsigned int size)
 {
  int i=0,j=0;
 
@@ -370,10 +370,10 @@ yuv411 : u y1 y2 v y3 y4
 */
 void vpImageConvert::YUV411ToRGB(unsigned char* yuv,
 				 unsigned char* rgb,
-				 int size)
+				 unsigned int size)
 {
 
-  int i=0,j=0;
+  unsigned int i=0,j=0;
   unsigned char r, g, b;
 
   while( j < size*3/2)
@@ -416,9 +416,9 @@ yuv422 : u y1 v y2 u y3 v y4
 
 */
 void vpImageConvert::RGBToRGBa(unsigned char* rgb, unsigned char* rgba,
-			       int size)
+			       unsigned int size)
 {
- int i=0, j=0;
+ unsigned int i=0, j=0;
 
  while( i < size*3)
  {
@@ -440,7 +440,7 @@ void vpImageConvert::RGBToRGBa(unsigned char* rgb, unsigned char* rgba,
 
 */
 void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey,
-			       int size)
+			       unsigned int size)
 {
   unsigned char *pt_input = rgb;
   unsigned char* pt_end = rgb + size*3;
@@ -461,7 +461,7 @@ void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey,
 
 */
 void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey,
-				int size)
+				unsigned int size)
 {
   unsigned char *pt_input = rgba;
   unsigned char* pt_end = rgba + size*4;
@@ -482,7 +482,7 @@ void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey,
 */
 void
 vpImageConvert::GreyToRGBa(unsigned char* grey,
-			   unsigned char* rgba, int size)
+			   unsigned char* rgba, unsigned int size)
 {
   unsigned char *pt_input = grey;
   unsigned char *pt_end = grey + size;
@@ -506,7 +506,7 @@ vpImageConvert::GreyToRGBa(unsigned char* grey,
 */
 void
 vpImageConvert::GreyToRGB(unsigned char* grey,
-			  unsigned char* rgb, int size)
+			  unsigned char* rgb, unsigned int size)
 {
   unsigned char *pt_input = grey;
   unsigned char* pt_end = grey + size;
@@ -530,22 +530,23 @@ vpImageConvert::GreyToRGB(unsigned char* grey,
 	assumes that rgba is already resized
 */
 void
-vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba, int cols, int rows, bool flip)
+vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
+			  unsigned int width, unsigned int height, bool flip)
 {
 	//if we have to flip the image, we start from the end last scanline so the step is negative
-	int lineStep = (flip) ? -(cols*3) : (cols*3);
+	int lineStep = (flip) ? -(width*3) : (width*3);
 
 	//starting source address = last line if we need to flip the image
-	unsigned char * src = (flip) ? (bgr+(cols*rows*3)+lineStep) : bgr;
+	unsigned char * src = (flip) ? (bgr+(width*height*3)+lineStep) : bgr;
 	unsigned char * line;
 
-	int j=0;
-	int i=0;
+	unsigned int j=0;
+	unsigned int i=0;
 
-	for(i=0 ; i < rows ; i++)
+	for(i=0 ; i < height ; i++)
 	{
 	  line = src;
-	  for( j=0 ; j < cols ; j++)
+	  for( j=0 ; j < width ; j++)
 	    {
    		*rgba++ = *(line+2);
 		*rgba++ = *(line+1);
@@ -566,22 +567,23 @@ vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba, int cols, i
 	assumes that grey is already resized
 */
 void
-vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey, int cols, int rows, bool flip)
+vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
+			  unsigned int width, unsigned int height, bool flip)
 {
   //if we have to flip the image, we start from the end last scanline so the step is negative
-  int lineStep = (flip) ? -(cols*3) : (cols*3);
+  int lineStep = (flip) ? -(width*3) : (width*3);
 
   //starting source address = last line if we need to flip the image
-  unsigned char * src = (flip) ? bgr+(cols*rows*3)+lineStep : bgr;
+  unsigned char * src = (flip) ? bgr+(width*height*3)+lineStep : bgr;
   unsigned char * line;
 
-  int j=0;
-  int i=0;
+  unsigned int j=0;
+  unsigned int i=0;
 
-  for(i=0 ; i < rows ; i++)
+  for(i=0 ; i < height ; i++)
     {
       line = src;
-      for( j=0 ; j < cols ; j++)
+      for( j=0 ; j < width ; j++)
 	{
 	  *grey++ = (unsigned char)( 0.2126 * *(line+2)
 				    + 0.7152 * *(line+1)
@@ -638,7 +640,7 @@ void vpImageConvert::computeYCbCrLUT()
 
 */
 void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
-				int size)
+				unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -696,7 +698,7 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
 
 */
 void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
-				 int size)
+				 unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -754,7 +756,7 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
 
 */
 void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
-				int size)
+				unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -811,7 +813,7 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
 
 */
 void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
-				 int size)
+				 unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.5 2007-02-26 17:26:45 fspindle Exp $
+ * $Id: vpDisplayWin32.h,v 1.6 2007-02-27 17:08:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,10 +63,10 @@ struct threadParam
   int y;
 
   //! Width of the window's client area.
-  unsigned w;
+  unsigned int w;
 
   //! Height of the window's client area.
-  unsigned h;
+  unsigned int h;
 
   //! Title of the window.
   char * title;
@@ -133,7 +133,7 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 	    char *title=NULL)  ;
 
   //! Initialization function
-  void init(unsigned width, unsigned height,
+  void init(unsigned int width, unsigned int height,
 	    int winx=-1, int winy=-1 ,
 	    char *title=NULL) ;
 
@@ -165,51 +165,54 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   void waitForInit();
 
   //! Display a point at coordinates (i,j) in the display window
-  void displayPoint(unsigned i,unsigned j, vpColor::vpColorType col);
+  void displayPoint(unsigned int i,unsigned int j, vpColor::vpColorType col);
 
   //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
-  void displayLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
-		   vpColor::vpColorType col, unsigned e=1);
+  void displayLine(unsigned int i1, unsigned int j1,
+		   unsigned int i2, unsigned int j2,
+		   vpColor::vpColorType col, unsigned int e=1);
 
-  void displayRectangle(unsigned i, unsigned j, 
-			unsigned width, unsigned height, 
+  void displayRectangle(unsigned int i, unsigned int j,
+			unsigned int width, unsigned int height,
 			vpColor::vpColorType col);
 
   //! Display a circle at coordinates (i,j) in the display window.
-  void displayCircle(unsigned i, unsigned j, unsigned r,
+  void displayCircle(unsigned int i, unsigned int j, unsigned int r,
 		     vpColor::vpColorType c);
 
   //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
   //! window.
-  void displayDotLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
-		      vpColor::vpColorType col, unsigned e=1);
+  void displayDotLine(unsigned int i1, unsigned int j1,
+		      unsigned int i2, unsigned int j2,
+		      vpColor::vpColorType col, unsigned int e=1);
 
   //! Display a cross at coordinates (i,j) in the display window
-  void displayCross(unsigned i,unsigned j, unsigned size,
+  void displayCross(unsigned int i,unsigned int j, unsigned int size,
 		    vpColor::vpColorType col);
   //! Display a large cross at coordinates (i,j) in the display window
-  void displayCrossLarge(unsigned i,unsigned j, unsigned size,
+  void displayCrossLarge(unsigned int i,unsigned int j, unsigned int size,
 			 vpColor::vpColorType col);
 
   //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   //! window
-  void displayArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2, 
+  void displayArrow(unsigned int i1,unsigned int j1,
+		    unsigned int i2, unsigned int j2,
 		    vpColor::vpColorType col=vpColor::white,
-		    unsigned L=4,unsigned l=2);
+		    unsigned int L=4,unsigned int l=2);
 
-  void displayCharString(unsigned i,unsigned j,char *s, 
+  void displayCharString(unsigned int i,unsigned int j,char *s,
 			 vpColor::vpColorType c=vpColor::green);
 
 
 
-  bool  getClick(unsigned& i, unsigned& j);
+  bool  getClick(unsigned int& i, unsigned int& j);
 
   //!  return true when button is pressed
-  bool  getClick(unsigned& i, unsigned& j, 
+  bool  getClick(unsigned int& i, unsigned int& j,
 		 vpMouseButton::vpMouseButtonType& button);
 
   //! return true when  button is released
-  bool  getClickUp(unsigned& i, unsigned& j, 
+  bool  getClickUp(unsigned int& i, unsigned int& j,
 		   vpMouseButton::vpMouseButtonType& button);
 
   //! wait for a click

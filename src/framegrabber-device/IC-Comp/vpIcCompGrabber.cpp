@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.cpp,v 1.9 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vpIcCompGrabber.cpp,v 1.10 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,7 +86,7 @@ vpIcCompGrabber::vpIcCompGrabber()
 
   \sa setFramerate()
 */
-vpIcCompGrabber::vpIcCompGrabber( unsigned _input, unsigned _scale)
+vpIcCompGrabber::vpIcCompGrabber( unsigned int _input, unsigned int _scale)
 {
   init = false ;
 
@@ -109,7 +109,7 @@ vpIcCompGrabber::vpIcCompGrabber( unsigned _input, unsigned _scale)
   \sa setFramerate()
 */
 vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I,
-				 unsigned _input, unsigned _scale )
+				 unsigned int _input, unsigned int _scale )
 {
   framegrabber = new ICcomp2x ;
 
@@ -134,7 +134,7 @@ vpIcCompGrabber::vpIcCompGrabber(vpImage<unsigned char> &I,
   \sa setFramerate()
 */
 vpIcCompGrabber::vpIcCompGrabber(vpImage<vpRGBa> &I,
-				 unsigned _input, unsigned _scale )
+				 unsigned int _input, unsigned int _scale )
 {
   framegrabber = new ICcomp2x ;
 
@@ -151,7 +151,7 @@ vpIcCompGrabber::vpIcCompGrabber(vpImage<vpRGBa> &I,
   \exception settingError : Wrong input (shoud be between 0 and 3).
 */
 void
-vpIcCompGrabber::setInput(unsigned _input)
+vpIcCompGrabber::setInput(unsigned int _input)
 {
   if (_input >3)
   {
@@ -174,7 +174,7 @@ vpIcCompGrabber::setInput(unsigned _input)
   \exception settingError : Wrong scale (shoud be between 1 and 16).
 */
 void
-vpIcCompGrabber::setScale(unsigned scale)
+vpIcCompGrabber::setScale(unsigned int scale)
 {
   if ((scale <1) || (scale >16))
   {

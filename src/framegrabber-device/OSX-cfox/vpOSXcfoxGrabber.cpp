@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.cpp,v 1.7 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.cpp,v 1.8 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,7 +98,7 @@ vpOSXcfoxGrabber::~vpOSXcfoxGrabber()
   Set the video port
 */
 void
-vpOSXcfoxGrabber::setInput(unsigned input)
+vpOSXcfoxGrabber::setInput(unsigned int input)
 {
   this->input = input;
 }
@@ -112,7 +112,7 @@ vpOSXcfoxGrabber::setInput(unsigned input)
   \param scale : Decimation factor.
 */
 void
-vpOSXcfoxGrabber::setScale(unsigned scale)
+vpOSXcfoxGrabber::setScale(unsigned int scale)
 {
   if ((scale <1) || (scale >2))
   {

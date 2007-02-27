@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.h,v 1.3 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.h,v 1.4 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -109,8 +109,8 @@ public:
 
 
   // fct pour changer le port d'entree
-  void setInput(unsigned input = vpOSXcfoxGrabber::DEFAULT_INPUT) ;
-  void setScale(unsigned scale = vpOSXcfoxGrabber::DEFAULT_SCALE) ;
+  void setInput(unsigned int input = vpOSXcfoxGrabber::DEFAULT_INPUT) ;
+  void setScale(unsigned int scale = vpOSXcfoxGrabber::DEFAULT_SCALE) ;
 
 
 private:

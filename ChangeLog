@@ -10,7 +10,7 @@ ViSP 2.4.x
 	- vpImage: getWidth() and getHeight() replace getCols() and getRows() 
 	  which are now obsolete.
 	- More restrictive types in vpImage, vpDisplay..., and vp...Grabber 
-	  classes: const are added, unsigned replace int for pixel 
+	  classes: const are added, unsigned int replace int for pixel 
 	  manipulations and image or display size.
 	- In vpDisplay classes:	
 	  . vpMouseButton::vpMouseButtonType was introduced to handle
