@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.8 2007-01-31 15:40:13 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.9 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -104,36 +104,42 @@ public:
       b = (unsigned char) db;
     };
   static void YUV411ToRGBa(unsigned char* yuv,
-			   unsigned char* rgba, int size);
+			   unsigned char* rgba, unsigned int size);
   static void YUV411ToRGB(unsigned char* yuv,
-			  unsigned char* rgb, int size);
+			  unsigned char* rgb, unsigned int size);
   static void YUV411ToGrey(unsigned char* yuv,
-			  unsigned char* grey, int size);
+			  unsigned char* grey, unsigned int size);
   static void YUV422ToRGBa(unsigned char* yuv,
-			   unsigned char* rgba, int size);
+			   unsigned char* rgba, unsigned int size);
   static void YUV422ToRGB(unsigned char* yuv,
-			  unsigned char* rgb, int size);
+			  unsigned char* rgb, unsigned int size);
   static void YUV422ToGrey(unsigned char* yuv,
-			   unsigned char* grey, int size);
+			   unsigned char* grey, unsigned int size);
   static void RGBToRGBa(unsigned char* rgb,
-			unsigned char* rgba, int size);
+			unsigned char* rgba, unsigned int size);
   static void RGBToGrey(unsigned char* rgb,
-			unsigned char* grey, int size);
+			unsigned char* grey, unsigned int size);
   static void RGBaToGrey(unsigned char* rgba,
-			 unsigned char* grey, int size);
+			 unsigned char* grey, unsigned int size);
   static void GreyToRGBa(unsigned char* grey,
-			 unsigned char* rgba, int size);
+			 unsigned char* rgba, unsigned int size);
   static void GreyToRGB(unsigned char* grey,
-			unsigned char* rgb, int size);
+			unsigned char* rgb, unsigned int size);
 
-  static void BGRToRGBa(unsigned char * bgr, unsigned char * rgba, int cols, int rows, bool flip);
+  static void BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
+			unsigned int width, unsigned int height, bool flip);
 
-  static void BGRToGrey(unsigned char * bgr, unsigned char * grey, int cols, int rows, bool flip);
+  static void BGRToGrey(unsigned char * bgr, unsigned char * grey,
+			unsigned int width, unsigned int height, bool flip);
 
-  static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, int size);
-  static void YCbCrToRGBa (unsigned char *ycbcr, unsigned char *rgb, int size);
-  static void YCrCbToRGB(unsigned char *ycbcr, unsigned char *rgb, int size);
-  static void YCrCbToRGBa(unsigned char *ycbcr, unsigned char *rgb, int size);
+  static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
+			 unsigned int size);
+  static void YCbCrToRGBa (unsigned char *ycbcr, unsigned char *rgb,
+			   unsigned int size);
+  static void YCrCbToRGB(unsigned char *ycbcr, unsigned char *rgb,
+			 unsigned int size);
+  static void YCrCbToRGBa(unsigned char *ycbcr, unsigned char *rgb,
+			  unsigned int size);
 
 private:
   static void computeYCbCrLUT();

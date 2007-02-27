@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageBase.t.cpp,v 1.7 2007-02-26 16:39:17 fspindle Exp $
+ * $Id: vpImageBase.t.cpp,v 1.8 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,7 +64,7 @@
 */
 template<class Type>
 void
-vpImage<Type>::init(unsigned height, unsigned width, Type value)
+vpImage<Type>::init(unsigned int height, unsigned int width, Type value)
 {
   try
   {
@@ -76,7 +76,7 @@ vpImage<Type>::init(unsigned height, unsigned width, Type value)
     throw ;
   }
 
-  for (unsigned i=0  ; i < npixels ;  i++)
+  for (unsigned int i=0  ; i < npixels ;  i++)
     bitmap[i] = value ;
 }
 
@@ -97,7 +97,7 @@ vpImage<Type>::init(unsigned height, unsigned width, Type value)
 */
 template<class Type>
 void
-vpImage<Type>::init(unsigned height, unsigned width)
+vpImage<Type>::init(unsigned int height, unsigned int width)
 {
 
   if (height != this->height) {
@@ -144,7 +144,7 @@ vpImage<Type>::init(unsigned height, unsigned width)
 		      "cannot allocate row ")) ;
   }
 
-  unsigned i ;
+  unsigned int i ;
   for ( i =0  ; i < height ; i++)
     row[i] = bitmap + i*width ;
 }
@@ -165,7 +165,7 @@ vpImage<Type>::init(unsigned height, unsigned width)
   \sa vpImage::init(height, width)
 */
 template<class Type>
-vpImage<Type>::vpImage(unsigned height, unsigned width)
+vpImage<Type>::vpImage(unsigned int height, unsigned int width)
 {
   bitmap = NULL ;
   row = NULL ;
@@ -201,7 +201,7 @@ vpImage<Type>::vpImage(unsigned height, unsigned width)
   \sa vpImage::init(height, width, value)
 */
 template<class Type>
-vpImage<Type>::vpImage (unsigned height, unsigned width, Type value)
+vpImage<Type>::vpImage (unsigned int height, unsigned int width, Type value)
 {
   bitmap = NULL ;
   row = NULL ;
@@ -256,11 +256,11 @@ vpImage<Type>::vpImage()
 
   \exception vpException::memoryAllocationError
 
-  \sa init(unsigned, unsigned)
+  \sa init(unsigned int, unsigned int)
 */
 template<class Type>
 void
-vpImage<Type>::resize(unsigned height, unsigned width)
+vpImage<Type>::resize(unsigned int height, unsigned int width)
 {
   try
   {
@@ -333,7 +333,7 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
     if (I.bitmap!=NULL)
     {
       resize(I.getHeight(),I.getWidth());
-      unsigned i;
+      unsigned int i;
       memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
       for (i =0  ; i < this->height ; i++) row[i] = bitmap + i*this->width ;
     }
@@ -352,7 +352,7 @@ template<class Type>
 Type vpImage<Type>::maxValue() const
 {
   Type m = bitmap[0] ;
-  for (unsigned i=0 ; i < npixels ; i++)
+  for (unsigned int i=0 ; i < npixels ; i++)
   {
     if (bitmap[i]>m) m = bitmap[i] ;
   }
@@ -366,7 +366,7 @@ template<class Type>
 Type vpImage<Type>::minValue() const
 {
   Type m =  bitmap[0];
-  for (unsigned i=0 ; i < npixels ; i++)
+  for (unsigned int i=0 ; i < npixels ; i++)
     if (bitmap[i]<m) m = bitmap[i] ;
   return m ;
 }
@@ -383,7 +383,7 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
 
     memcpy(bitmap, m.bitmap, m.npixels*sizeof(Type)) ;
 
-    //for (unsigned i=0; i<this->height; i++) row[i] = bitmap + i*this->width;
+    //for (unsigned int i=0; i<this->height; i++) row[i] = bitmap + i*this->width;
   }
   catch(vpException me)
   {
@@ -402,7 +402,7 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
 template<class Type>
 void vpImage<Type>::operator=(const Type &x)
 {
-  for (unsigned i=0 ; i < npixels ; i++)
+  for (unsigned int i=0 ; i < npixels ; i++)
     bitmap[i] = x ;
 }
 
@@ -440,8 +440,8 @@ template<class Type>
 double
 vpImage<Type>::get(double i, double j)  // bilinear interpolation
 {
-  unsigned l = (unsigned) i ;
-  unsigned k = (unsigned) j ;
+  unsigned int l = (unsigned int) i ;
+  unsigned int k = (unsigned int) j ;
 
   double t =  i - l ;
   double u =  j - k ;

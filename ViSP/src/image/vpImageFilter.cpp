@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageFilter.cpp,v 1.5 2007-02-26 16:39:17 fspindle Exp $
+ * $Id: vpImageFilter.cpp,v 1.6 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,21 +51,21 @@ vpImageFilter::filter(const vpImage<unsigned char> &I,
 		      const vpMatrix& M)
 {
 
-  unsigned size = M.getRows() ;
-  unsigned half_size = size/2 ;
+  unsigned int size = M.getRows() ;
+  unsigned int half_size = size/2 ;
 
   If.resize(I.getHeight(),I.getWidth()) ;
 
   If = 0 ;
 
-  for (unsigned i=half_size ; i < I.getHeight()-half_size ; i++)
+  for (unsigned int i=half_size ; i < I.getHeight()-half_size ; i++)
   {
-    for (unsigned j=half_size ; j < I.getWidth()-half_size ; j++)
+    for (unsigned int j=half_size ; j < I.getWidth()-half_size ; j++)
     {
       double   conv_x = 0 ;
 
-      for(unsigned a = 0 ; a < size ; a++ )
-        for(unsigned b = 0 ; b < size ; b++ )
+      for(unsigned int a = 0 ; a < size ; a++ )
+        for(unsigned int b = 0 ; b < size ; b++ )
 	{
 	  double val =  I[i-half_size+a][j-half_size+b] ;
 	  conv_x += M[a][b] * val ;
@@ -92,23 +92,23 @@ vpImageFilter::filter(const vpImage<double> &I,
 		      const vpMatrix& M)
 {
 
-  unsigned size = M.getRows() ;
-  unsigned half_size = size/2 ;
+  unsigned int size = M.getRows() ;
+  unsigned int half_size = size/2 ;
 
   Iu.resize(I.getHeight(),I.getWidth()) ;
   Iv.resize(I.getHeight(),I.getWidth()) ;
 
   Iu = 0 ;
   Iv = 0 ;
-  for (unsigned v=half_size ; v < I.getHeight()-half_size ; v++)
+  for (unsigned int v=half_size ; v < I.getHeight()-half_size ; v++)
   {
-    for (unsigned u=half_size ; u < I.getWidth()-half_size ; u++)
+    for (unsigned int u=half_size ; u < I.getWidth()-half_size ; u++)
     {
       double   conv_u = 0 ;
       double   conv_v = 0 ;
 
-      for(unsigned a = 0 ; a < size ; a++ )
-        for(unsigned b = 0 ; b < size ; b++ )
+      for(unsigned int a = 0 ; a < size ; a++ )
+        for(unsigned int b = 0 ; b < size ; b++ )
 	{
 	  double val =  I[v-half_size+a][u-half_size+b] ;
 	  conv_u += M[a][b] * val ;

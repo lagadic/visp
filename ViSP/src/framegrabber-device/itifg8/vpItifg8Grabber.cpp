@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.6 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.7 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -128,7 +128,7 @@ vpItifg8Grabber::vpItifg8Grabber()
   \param scale : Decimation factor for the first board.
 
 */
-vpItifg8Grabber::vpItifg8Grabber( unsigned input, unsigned scale)
+vpItifg8Grabber::vpItifg8Grabber( unsigned int input, unsigned int scale)
 {
   init = false ;
   initialise();
@@ -148,7 +148,7 @@ vpItifg8Grabber::vpItifg8Grabber( unsigned input, unsigned scale)
 
 */
 vpItifg8Grabber::vpItifg8Grabber(vpImage<unsigned char> &I,
-				 unsigned input, unsigned scale )
+				 unsigned int input, unsigned int scale )
 {
   init = false ;
   initialise();
@@ -168,7 +168,7 @@ vpItifg8Grabber::vpItifg8Grabber(vpImage<unsigned char> &I,
 
 */
 vpItifg8Grabber::vpItifg8Grabber(vpImage<vpRGBa> &I,
-				 unsigned input, unsigned scale)
+				 unsigned int input, unsigned int scale)
 {
   init = false ;
   initialise();
@@ -526,7 +526,7 @@ void vpItifg8Grabber::setVerboseMode(bool activate)
   \sa getBoard()
 
 */
-void vpItifg8Grabber::setBoard(unsigned board)
+void vpItifg8Grabber::setBoard(unsigned int board)
 {
   if (board >= ITI_BOARDS_MAX)	{
     vpERROR_TRACE("Wrong board selected (%ud).\n", board);
@@ -548,7 +548,7 @@ void vpItifg8Grabber::setBoard(unsigned board)
   \sa setBoard()
 
 */
-unsigned vpItifg8Grabber::getBoard()
+unsigned int vpItifg8Grabber::getBoard()
 {
   return args.board_i;
 }
@@ -563,7 +563,7 @@ unsigned vpItifg8Grabber::getBoard()
   \sa setBoard()
 
 */
-unsigned vpItifg8Grabber::getNumBoards()
+unsigned int vpItifg8Grabber::getNumBoards()
 {
   return setup.boards;
 }
@@ -576,7 +576,7 @@ unsigned vpItifg8Grabber::getNumBoards()
   ITI_PCDIG, ITI_PCLNK, COR_X64CL
 
 */
-unsigned vpItifg8Grabber::getModule()
+unsigned int vpItifg8Grabber::getModule()
 {
   return args.module[args.board_i];
 }
@@ -627,7 +627,7 @@ void vpItifg8Grabber::setConfFile(string filename)
   \exception vpFrameGrabberException::settingError : If camera number is
   invalid.
 */
-void vpItifg8Grabber::setInput(unsigned input)
+void vpItifg8Grabber::setInput(unsigned int input)
 {
   if (input > ITI_CAMERAS_MAX)
   {
@@ -650,7 +650,7 @@ void vpItifg8Grabber::setInput(unsigned input)
   \sa setHDecimation(), setVDecimation()
 */
 
-void vpItifg8Grabber::setScale(unsigned scale)
+void vpItifg8Grabber::setScale(unsigned int scale)
 {
   setHDecimation(scale);
   setVDecimation(scale);
@@ -666,7 +666,7 @@ void vpItifg8Grabber::setScale(unsigned scale)
   \sa setVDecimation()
 */
 
-void vpItifg8Grabber::setHDecimation(unsigned scale)
+void vpItifg8Grabber::setHDecimation(unsigned int scale)
 {
   switch (scale) {
   case 1:
@@ -692,7 +692,7 @@ void vpItifg8Grabber::setHDecimation(unsigned scale)
   \sa setHDecimation()
 */
 
-unsigned vpItifg8Grabber::getHDecimation()
+unsigned int vpItifg8Grabber::getHDecimation()
 {
   return args.hdec[args.board_i];
 }
@@ -705,7 +705,7 @@ unsigned vpItifg8Grabber::getHDecimation()
   \sa setVDecimation()
 */
 
-unsigned vpItifg8Grabber::getVDecimation()
+unsigned int vpItifg8Grabber::getVDecimation()
 {
   return args.vdec[args.board_i];
 }
@@ -720,7 +720,7 @@ unsigned vpItifg8Grabber::getVDecimation()
   \sa getVDecimation()
 */
 
-void vpItifg8Grabber::setVDecimation(unsigned scale)
+void vpItifg8Grabber::setVDecimation(unsigned int scale)
 {
   switch (scale) {
   case 1:
@@ -746,7 +746,7 @@ void vpItifg8Grabber::setVDecimation(unsigned scale)
   \exception vpFrameGrabberException::settingError : If image depth is
   invalid.
 */
-void vpItifg8Grabber::setDepth(unsigned depth)
+void vpItifg8Grabber::setDepth(unsigned int depth)
 {
   switch(depth) {
   case 0:
@@ -776,7 +776,7 @@ void vpItifg8Grabber::setDepth(unsigned depth)
   \exception vpFrameGrabberException::settingError : If number of buffers is
   invalid.
 */
-void vpItifg8Grabber::setBuffer(unsigned buffer)
+void vpItifg8Grabber::setBuffer(unsigned int buffer)
 {
   if (buffer < 1 || buffer > ITI_SNAPS_MAX)
   {
@@ -2160,9 +2160,9 @@ vpItifg8Grabber::acquire(vpImage<unsigned char> &I)
   unsigned char *bitmap = NULL ;
 
   try {
-    unsigned width = image[args.board_i].width;
-    unsigned height = image[args.board_i].height;
-    unsigned size = height * width;
+    unsigned int width = image[args.board_i].width;
+    unsigned int height = image[args.board_i].height;
+    unsigned int size = height * width;
 
     bitmap = acquire();
 
@@ -2243,9 +2243,9 @@ vpItifg8Grabber::acquire(vpImage<vpRGBa> &I)
   unsigned char *bitmap = NULL ;
 
   try {
-    unsigned width = image[args.board_i].width;
-    unsigned height = image[args.board_i].height;
-    unsigned size = height * width;
+    unsigned int width = image[args.board_i].width;
+    unsigned int height = image[args.board_i].height;
+    unsigned int size = height * width;
 
     bitmap = acquire();
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.5 2007-02-26 17:26:58 fspindle Exp $
+ * $Id: vpDisplayGTK.h,v 1.6 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -90,8 +90,8 @@ private:
 
 protected:
   void setWindowPosition(int _winx, int _winy) { ; }
-  inline  unsigned getWidth() const  { return width ; }
-  inline  unsigned getHeight() const { return height ; }
+  inline  unsigned int getWidth() const  { return width ; }
+  inline  unsigned int getHeight() const { return height ; }
 
 public:
   void init(vpImage<unsigned char> &I,
@@ -101,12 +101,12 @@ public:
 	    int winx=-1, int winy=-1,
 	    char *_title=NULL)  ;
 
-  void init(unsigned width, unsigned height,
+  void init(unsigned int width, unsigned int height,
 	    int winx=-1, int winy=-1 ,
 	    char *_title=NULL) ;
   // only the constructor/destructor are public
 public:
-  vpDisplayGTK(vpImage<unsigned char> &I, int _winx=-1, int _winy=-1, 
+  vpDisplayGTK(vpImage<unsigned char> &I, int _winx=-1, int _winy=-1,
 	       char *title=NULL) ;
   vpDisplayGTK(vpImage<vpRGBa> &I, int _winx=-1, int _winy=-1,
 	       char *title=NULL) ;
@@ -127,40 +127,42 @@ protected:
 
   void clearDisplay(vpColor::vpColorType c=vpColor::white) ;
 
-  void displayPoint(unsigned x,unsigned y,vpColor::vpColorType col) ;
-  void displayCross(unsigned x,unsigned y, unsigned size,
+  void displayPoint(unsigned int x,unsigned int y,vpColor::vpColorType col) ;
+  void displayCross(unsigned int x,unsigned int y, unsigned int size,
 		    vpColor::vpColorType col) ;
-  void displayCrossLarge(unsigned x,unsigned y, unsigned size,
+  void displayCrossLarge(unsigned int x,unsigned int y, unsigned int size,
 			 vpColor::vpColorType col) ;
-  void displayCircle(unsigned i, unsigned j, unsigned r, 
+  void displayCircle(unsigned int i, unsigned int j, unsigned int r,
 		     vpColor::vpColorType c);
-  void displayLine(unsigned x1, unsigned y1, unsigned x2, unsigned y2,
-		   vpColor::vpColorType col, unsigned e=1) ;
-  void displayDotLine(unsigned x1, unsigned y1, unsigned x2, unsigned y2, 
-		      vpColor::vpColorType col, unsigned e=1) ;
+  void displayLine(unsigned int x1, unsigned int y1,
+		   unsigned int x2, unsigned int y2,
+		   vpColor::vpColorType col, unsigned int e=1) ;
+  void displayDotLine(unsigned int x1, unsigned int y1,
+		      unsigned int x2, unsigned int y2,
+		      vpColor::vpColorType col, unsigned int e=1) ;
 
+  void displayArrow(unsigned int i1,unsigned int j1,
+		    unsigned int i2, unsigned int j2,
+		    vpColor::vpColorType col=vpColor::white,
+		    unsigned int L=4, unsigned int l=2) ;
 
-  void displayArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2,
-		    vpColor::vpColorType col=vpColor::white, unsigned L=4,
-		    unsigned l=2) ;
-
-  void displayRectangle(unsigned i, unsigned j, 
-			unsigned width, unsigned height, 
+  void displayRectangle(unsigned int i, unsigned int j,
+			unsigned int width, unsigned int height,
 			vpColor::vpColorType col);
-  void displayCharString(unsigned i,unsigned j,char *s, 
+  void displayCharString(unsigned int i,unsigned int j,char *s,
 			 vpColor::vpColorType c=vpColor::green) ;
 
-  bool  getClick(unsigned& i, unsigned& j) ;
-  bool  getClick(unsigned& i, unsigned& j, 
+  bool  getClick(unsigned int& i, unsigned int& j) ;
+  bool  getClick(unsigned int& i, unsigned int& j,
 		 vpMouseButton::vpMouseButtonType& button) ;
   void  getClick() ;
-  bool  getClickUp(unsigned& i, unsigned& j, 
+  bool  getClickUp(unsigned int& i, unsigned int& j,
 		   vpMouseButton::vpMouseButtonType& button) ;
 
 public:
 
-  unsigned  getScreenDepth();
-  void getScreenSize(unsigned &width, unsigned &height);
+  unsigned int  getScreenDepth();
+  void getScreenSize(unsigned int &width, unsigned int &height);
 
 
 

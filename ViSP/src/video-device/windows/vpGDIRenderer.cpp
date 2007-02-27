@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.7 2007-02-26 17:26:45 fspindle Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.8 2007-02-27 17:08:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,7 @@ vpGDIRenderer::vpGDIRenderer()
 {
   //if the screen depth is not 32bpp, throw an exception
   if( GetDeviceCaps(GetDC(NULL),BITSPIXEL) != 32 )
-    throw vpDisplayException(vpDisplayException::depthNotSupportedError, 
+    throw vpDisplayException(vpDisplayException::depthNotSupportedError,
 			     "Only works in 32bits mode!");
 
   InitializeCriticalSection(&CriticalSection);
@@ -89,7 +89,7 @@ vpGDIRenderer::~vpGDIRenderer()
   \param width largeur de la fenêtre
   \param height hauteur de la fenêtre
 */
-bool vpGDIRenderer::init(HWND hWindow, unsigned width, unsigned height)
+bool vpGDIRenderer::init(HWND hWindow, unsigned int width, unsigned int height)
 {
   hWnd = hWindow;
   nbCols = width;
@@ -97,7 +97,7 @@ bool vpGDIRenderer::init(HWND hWindow, unsigned width, unsigned height)
 
   //creates the font
   hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,
-		     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 
+		     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
 		     CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 		     DEFAULT_PITCH | FF_DONTCARE, NULL);
   return true;
@@ -163,13 +163,13 @@ bool vpGDIRenderer::render()
 void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
 {
   //get the image's width and height
-  unsigned w = I.getWidth();
-  unsigned h = I.getHeight();
+  unsigned int w = I.getWidth();
+  unsigned int h = I.getHeight();
 
   //each line of a HBITMAP needs to be word aligned
   //we need padding if the width is an odd number
   bool needPad = ((w%2) == 0) ? false : true;
-  unsigned newW = w;
+  unsigned int newW = w;
 
   //in case of padding, the new width is width+1
   newW = (needPad) ? (w+1) : w;
@@ -180,9 +180,9 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
   //if we need padding (width needs to be a multiple of 2)
   if(needPad)
     {
-      unsigned j = 0;
-      unsigned k = 0;
-      for(unsigned i=0, k=0 ; i<newW * h * 4; i+=4, k++)
+      unsigned int j = 0;
+      unsigned int k = 0;
+      for(unsigned int i=0, k=0 ; i<newW * h * 4; i+=4, k++)
 	{
 	  //end of a line = padding = inserts 0s
 	  if(j==w && needPad)
@@ -208,8 +208,8 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
   else
     //Simple conversion (no padding)
     {
-      unsigned k = 0;
-      for(unsigned i=0, k=0 ; i<w * h * 4 ; i+=4, k++)
+      unsigned int k = 0;
+      for(unsigned int i=0, k=0 ; i<w * h * 4 ; i+=4, k++)
 	{
 	  imBuffer[i+0] = I.bitmap[k].B;
 	  imBuffer[i+1] = I.bitmap[k].G;
@@ -234,13 +234,13 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
 void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
 {
   //get the image's width and height
-  unsigned w = I.getWidth();
-  unsigned h = I.getHeight();
+  unsigned int w = I.getWidth();
+  unsigned int h = I.getHeight();
 
   //each line of a HBITMAP needs to be word aligned
   //we need padding if the width is an odd number
   bool needPad = ((w%2) == 0) ? false : true;
-  unsigned newW = w;
+  unsigned int newW = w;
 
   //in case of padding, the new width is width+1
   newW = (needPad) ? (w+1) : w;
@@ -251,9 +251,9 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
   //if we need padding
   if(needPad)
     {
-      unsigned j = 0;
-      unsigned k = 0;
-      for(unsigned i=0, k=0 ; i<newW * h * 4; i+=4, k++)
+      unsigned int j = 0;
+      unsigned int k = 0;
+      for(unsigned int i=0, k=0 ; i<newW * h * 4; i+=4, k++)
 	{
 	  //end of a line = padding = inserts 0s
 	  if(j==w && needPad)
@@ -278,8 +278,8 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
   else
     //Simple conversion
     {
-      unsigned k = 0;
-      for(unsigned i=0, k=0 ; i<w * h * 4 ; i+=4, k++)
+      unsigned int k = 0;
+      for(unsigned int i=0, k=0 ; i<w * h * 4 ; i+=4, k++)
 	{
 	  imBuffer[i+0] = I.bitmap[k];
 	  imBuffer[i+1] = I.bitmap[k];
@@ -305,8 +305,8 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
 
   \return the operation succefulness
 */
-bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, 
-				 unsigned w, unsigned h)
+bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
+				 unsigned int w, unsigned int h)
 {
   //the bitmap may only be accessed by one thread at the same time
   //that's why we enter critical section
@@ -340,7 +340,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
   \param x The x coordinate of the pixel.
   \param color The color of the pixel.
 */
-void vpGDIRenderer::setPixel(unsigned y, unsigned x,
+void vpGDIRenderer::setPixel(unsigned int y, unsigned int x,
 			     vpColor::vpColorType color)
 {
   //get the window's DC
@@ -372,9 +372,10 @@ void vpGDIRenderer::setPixel(unsigned y, unsigned x,
   \param col the line's color
   \param style style of the line
 */
-void vpGDIRenderer::drawLine(unsigned i1, unsigned j1, 
-			     unsigned i2, unsigned j2, 
-			     vpColor::vpColorType col, unsigned e, int style)
+void vpGDIRenderer::drawLine(unsigned int i1, unsigned int j1,
+			     unsigned int i2, unsigned int j2,
+			     vpColor::vpColorType col,
+			     unsigned int e, int style)
 {
 
   //get the window's DC
@@ -399,10 +400,10 @@ void vpGDIRenderer::drawLine(unsigned i1, unsigned j1,
   LineTo(hDCMem, j2, i2);
 
   //computes the coordinates of the rectangle to blit
-  unsigned x = (j2 >= j1) ? j1 : j2;
-  unsigned y = (i2 >= i1) ? i1 : i2;
-  unsigned w = (j2 >= j1) ? j2-j1 : j1-j2;
-  unsigned h = (i2 >= i1) ? i2-i1 : i1-i2;
+  unsigned int x = (j2 >= j1) ? j1 : j2;
+  unsigned int y = (i2 >= i1) ? i1 : i2;
+  unsigned int w = (j2 >= j1) ? j2-j1 : j1-j2;
+  unsigned int h = (i2 >= i1) ? i2-i1 : i1-i2;
 
   //display the result (flush)
   BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
@@ -424,8 +425,8 @@ void vpGDIRenderer::drawLine(unsigned i1, unsigned j1,
   \param col The rectangle's color
   \param fill True if it is a filled rectangle
 */
-void vpGDIRenderer::drawRect(unsigned i, unsigned j, 
-			     unsigned width, unsigned height, 
+void vpGDIRenderer::drawRect(unsigned int i, unsigned int j,
+			     unsigned int width, unsigned int height,
 			     vpColor::vpColorType col, bool fill)
 {
 
@@ -487,7 +488,7 @@ void vpGDIRenderer::clear(vpColor::vpColorType c)
   \param r The circle's radius
   \param col The circle's color
 */
-void vpGDIRenderer::drawCircle(unsigned i, unsigned j, unsigned r, 
+void vpGDIRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
 			       vpColor::vpColorType c)
 {
 
@@ -504,10 +505,10 @@ void vpGDIRenderer::drawCircle(unsigned i, unsigned j, unsigned r,
   HBRUSH hbrush = CreateBrushIndirect(&lBrush);
 
   //computes bounding rectangle
-  unsigned x1 = j-r;
-  unsigned y1 = i-r;
-  unsigned x2 = j+r;
-  unsigned y2 = i+r;
+  unsigned int x1 = j-r;
+  unsigned int y1 = i-r;
+  unsigned int x2 = j+r;
+  unsigned int y2 = i+r;
 
   //select this bmp in memory
   EnterCriticalSection(&CriticalSection);
@@ -540,7 +541,7 @@ void vpGDIRenderer::drawCircle(unsigned i, unsigned j, unsigned r,
   \param s The string to display
   \param col The text's color
 */
-void vpGDIRenderer::drawText(unsigned i, unsigned j, char * s, 
+void vpGDIRenderer::drawText(unsigned int i, unsigned int j, char * s,
 			     vpColor::vpColorType c)
 {
   //get the window's DC
@@ -588,10 +589,10 @@ void vpGDIRenderer::drawText(unsigned i, unsigned j, char * s,
   \param col The cross' color
   \param e width of the cross
 */
-void vpGDIRenderer::drawCross(unsigned i,unsigned j, unsigned size,
-			      vpColor::vpColorType col, unsigned e)
+void vpGDIRenderer::drawCross(unsigned int i,unsigned int j, unsigned int size,
+			      vpColor::vpColorType col, unsigned int e)
 {
-  unsigned half_size = size / 2;
+  unsigned int half_size = size / 2;
 
   // if half_size is equal to zero, nothing is displayed with the code
   // just below. So, if half_size is equal to zero we just draw the
@@ -649,9 +650,10 @@ void vpGDIRenderer::drawCross(unsigned i,unsigned j, unsigned size,
   \param L ...
   \param l ...
 */
-void vpGDIRenderer::drawArrow(unsigned i1,unsigned j1, 
-			      unsigned i2, unsigned j2, 
-			      vpColor::vpColorType col, unsigned L,unsigned l)
+void vpGDIRenderer::drawArrow(unsigned int i1,unsigned int j1,
+			      unsigned int i2, unsigned int j2,
+			      vpColor::vpColorType col,
+			      unsigned int L,unsigned int l)
 {
   int _l = l;
   double a = j2 - j1 ;
@@ -659,10 +661,10 @@ void vpGDIRenderer::drawArrow(unsigned i1,unsigned j1,
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
   //computes the coordinates of the rectangle to blit later
-  unsigned x = (j2 >= j1) ? j1 : j2;
-  unsigned y = (i2 >= i1) ? i1 : i2;
-  unsigned w = (j2 >= j1) ? j2-j1 : j1-j2;
-  unsigned h = (i2 >= i1) ? i2-i1 : i1-i2;
+  unsigned int x = (j2 >= j1) ? j1 : j2;
+  unsigned int y = (i2 >= i1) ? i1 : i2;
+  unsigned int w = (j2 >= j1) ? j2-j1 : j1-j2;
+  unsigned int h = (i2 >= i1) ? i2-i1 : i1-i2;
 
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
@@ -741,7 +743,7 @@ void vpGDIRenderer::drawArrow(unsigned i1,unsigned j1,
 void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
 {
   //size of image buffer : nbCols*nbRows*4
-  unsigned size = nbCols*nbRows*4;
+  unsigned int size = nbCols*nbRows*4;
   unsigned char * imBuffer = new unsigned char[size];
 
   //gets the hbitmap's bitmap
@@ -751,7 +753,7 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
   I.resize(nbRows, nbCols);
 
   //copy the content
-  for(unsigned i=0 ; i<size ; i+=4)
+  for(unsigned int i=0 ; i<size ; i+=4)
     {
       I.bitmap[i>>2].R = imBuffer[i+2];
       I.bitmap[i>>2].G = imBuffer[i+1];

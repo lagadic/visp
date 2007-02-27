@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIoPnm.cpp,v 1.8 2007-02-26 16:39:17 fspindle Exp $
+ * $Id: vpImageIoPnm.cpp,v 1.9 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -90,7 +90,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
 
   // Write the bitmap
   int ierr;
-  unsigned nbyte = I.getWidth()*I.getHeight();
+  unsigned int nbyte = I.getWidth()*I.getHeight();
 
   ierr = fwrite(I.bitmap, sizeof(unsigned char), nbyte, fd) ;
   if (ierr == ! nbyte) {
@@ -116,12 +116,12 @@ vpImageIo::writePGM(const vpImage<short> &I,
 		    const char filename[FILENAME_MAX])
 {
   vpImage<unsigned char> Iuc ;
-  int nrows = I.getHeight();
-  int ncols = I.getWidth();
+  unsigned int nrows = I.getHeight();
+  unsigned int ncols = I.getWidth();
 
   Iuc.resize(nrows, ncols);
 
-  for (int i=0 ; i < nrows * ncols ; i++)
+  for (unsigned int i=0 ; i < nrows * ncols ; i++)
     Iuc.bitmap[i] =  (unsigned char)I.bitmap[i] ;
 
   vpImageIo::writePGM(Iuc, filename) ;
@@ -164,7 +164,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
 
   // Write the bitmap
   int ierr;
-  unsigned nbyte = I.getWidth()*I.getHeight();
+  unsigned int nbyte = I.getWidth()*I.getHeight();
 
 
   vpImage<unsigned char> Itmp ;
@@ -210,7 +210,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
   int   is255;
   char* err ;
   char  str[vpMAX_LEN];
-  int   w, h;
+  unsigned int   w, h;
 
   // Test the filename
   if (filename == '\0')
@@ -242,7 +242,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
     throw (vpImageException(vpImageException::ioError,
 			    "couldn't read file")) ;
   }
-  
+
   if (strlen(str) < 3)
   {
     fclose (fd);
@@ -430,7 +430,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
   int   is255;
   char* err ;
   char  str[vpMAX_LEN];
-  int   w, h;
+  unsigned int   w, h;
 
   // Test the filename
   if (filename == '\0')
@@ -540,9 +540,9 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 			    "error reading ppm file")) ;
   }
 
-  for(unsigned i=0;i<I.getHeight();i++)
+  for(unsigned int i=0;i<I.getHeight();i++)
   {
-    for(unsigned j=0;j<I.getWidth();j++)
+    for(unsigned int j=0;j<I.getWidth();j++)
     {
       vpRGBa v ;
       int res = fread(&v.R,sizeof(v.R),1,fd) ;
@@ -622,9 +622,9 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
   fprintf(f,"%d %d\n", I.getWidth(), I.getHeight());	// Image size
   fprintf(f,"%d\n",255);	        	// Max level
 
-  for(unsigned i=0;i<I.getHeight();i++)
+  for(unsigned int i=0;i<I.getHeight();i++)
   {
-    for(unsigned j=0;j<I.getWidth();j++)
+    for(unsigned int j=0;j<I.getWidth();j++)
     {
       vpRGBa P ;
       int res ;

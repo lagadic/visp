@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.h,v 1.4 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpItifg8Grabber.h,v 1.5 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -262,16 +262,18 @@ private:
 
 
 private:
-  unsigned input ; //!< video entry
-  unsigned scale ;
+  unsigned int input ; //!< video entry
+  unsigned int scale ;
   framerateEnum framerate;
   bool field; // The type of the acquired frame (0 if odd, 1 if even).
 
 public:
   vpItifg8Grabber();
-  vpItifg8Grabber(unsigned input, unsigned scale);
-  vpItifg8Grabber(vpImage<unsigned char> &I, unsigned input, unsigned scale);
-  vpItifg8Grabber(vpImage<vpRGBa> &I, unsigned _input, unsigned _scale);
+  vpItifg8Grabber(unsigned int input, unsigned int scale);
+  vpItifg8Grabber(vpImage<unsigned char> &I,
+		  unsigned int input, int unsigned scale);
+  vpItifg8Grabber(vpImage<vpRGBa> &I,
+		  unsigned int _input, unsigned int _scale);
   ~vpItifg8Grabber();
 
   void open();
@@ -285,20 +287,20 @@ public:
   void close();
 
   void setVerboseMode(bool activate=true);
-  void setBoard(unsigned board = 0);
-  unsigned getBoard();
-  unsigned getNumBoards();
-  unsigned getModule();
+  void setBoard(unsigned int board = 0);
+  unsigned int getBoard();
+  unsigned int getNumBoards();
+  unsigned int getModule();
   void setConfFile(const char *filename);
   void setConfFile(string filename);
-  void setInput(unsigned input = vpItifg8Grabber::DEFAULT_INPUT);
-  void setScale(unsigned scale = vpItifg8Grabber::DEFAULT_SCALE) ;
-  void setHDecimation(unsigned scale = vpItifg8Grabber::DEFAULT_SCALE) ;
-  void setVDecimation(unsigned scale = vpItifg8Grabber::DEFAULT_SCALE) ;
-  unsigned getHDecimation();
-  unsigned getVDecimation();
-  void setDepth(unsigned depth);
-  void setBuffer(unsigned buffer);
+  void setInput(unsigned int input = vpItifg8Grabber::DEFAULT_INPUT);
+  void setScale(unsigned int scale = vpItifg8Grabber::DEFAULT_SCALE) ;
+  void setHDecimation(unsigned int scale = vpItifg8Grabber::DEFAULT_SCALE) ;
+  void setVDecimation(unsigned int scale = vpItifg8Grabber::DEFAULT_SCALE) ;
+  unsigned int getHDecimation();
+  unsigned int getVDecimation();
+  void setDepth(unsigned int depth);
+  void setBuffer(unsigned int buffer);
   void setFramerate(float rate);
   void setFramerate(framerateEnum rate);
 #if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12

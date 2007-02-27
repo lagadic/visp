@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.4 2007-02-02 10:50:59 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.5 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -177,9 +177,9 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   vp1394TwoGrabber();
   ~vp1394TwoGrabber();
 
-  void setCamera(unsigned camera);
-  void getCamera(unsigned &camera);
-  void getNumCameras(unsigned &cameras);
+  void setCamera(unsigned int camera);
+  void getCamera(unsigned int &camera);
+  void getNumCameras(unsigned int &cameras);
 
   void setVideoMode(vp1394TwoVideoMode videomode);
   void getVideoMode(vp1394TwoVideoMode & videomode);
@@ -196,8 +196,8 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   int  getColorCodingSupported(vp1394TwoVideoMode videomode,
 			       vpList<vp1394TwoColorCoding> & codings);
 
-  void setFormat7ROI(unsigned left=0, unsigned top=0, 
-		     unsigned width=0, unsigned height=0);
+  void setFormat7ROI(unsigned int left=0, unsigned int top=0,
+		     unsigned int width=0, unsigned int height=0);
 
   void printCameraInfo();
 
@@ -210,8 +210,8 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);
 
-  void getWidth(unsigned &width);
-  void getHeight(unsigned &height);
+  void getWidth(unsigned int &width);
+  void getHeight(unsigned int &height);
 
   void close();
 
@@ -230,8 +230,8 @@ public:
 
  private:
   dc1394camera_t *camera, **cameras;
-  unsigned num_cameras;
-  unsigned camera_id;
+  unsigned int num_cameras;
+  unsigned int camera_id;
 
 private:
   bool verbose;

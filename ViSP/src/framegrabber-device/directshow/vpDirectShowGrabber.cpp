@@ -1,6 +1,6 @@
 
 #include <visp/vpConfig.h>
-#if ( defined(VISP_HAVE_DIRECTSHOW) ) 
+#if ( defined(VISP_HAVE_DIRECTSHOW) )
 
 #include <visp/vpDirectShowGrabber.h>
 #include <visp/vpDirectShowGrabberImpl.h>
@@ -8,12 +8,12 @@
 /*!
 	Returns the number of rows in the grabbed image
 */
-unsigned vpDirectShowGrabber::getHeight(){ return grabber->getHeight(); }
+unsigned int vpDirectShowGrabber::getHeight(){ return grabber->getHeight(); }
 
 /*!
 	Returns the number of colunms in the grabbed image
 */
-unsigned vpDirectShowGrabber::getWidth(){ return grabber->getWidth(); }
+unsigned int vpDirectShowGrabber::getWidth(){ return grabber->getWidth(); }
 
 
 /*!
@@ -83,13 +83,13 @@ void vpDirectShowGrabber::acquire(vpImage<vpRGBa> &I)
 	Stops the framegrabber
 */
 void vpDirectShowGrabber::close() { grabber->close(); }
-	
+
 /*!
 	Gets the number of capture devices
 */
 int vpDirectShowGrabber::getDeviceNumber()
 {
-	return grabber->getDeviceNumber(); 
+	return grabber->getDeviceNumber();
 }
 
 /*!

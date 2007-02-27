@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.h,v 1.2 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpDiskGrabber.h,v 1.3 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,7 +61,7 @@ class VISP_EXPORT vpDiskGrabber  : public vpFrameGrabber
 private:
   unsigned long image_number ; //!< id of the next image to be read
   int image_step ;    //!< increment between two image id
-  int number_of_zero ; //!< number of zero in the image name (image.00000.pgm)
+  unsigned int number_of_zero ; //!< number of zero in the image name (image.00000.pgm)
 
   char directory[FILENAME_MAX] ; //!< image location
   char base_name[FILENAME_MAX] ; //!< image base name
@@ -84,7 +84,7 @@ public:
   void setBaseName(const char *name);
   void setImageNumber(unsigned long number) ;
   void setStep(int a);
-  void setNumberOfZero(unsigned noz);
+  void setNumberOfZero(unsigned int noz);
 
   /*!
     Return the current image number.

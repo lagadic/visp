@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.16 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.17 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1450,7 +1450,7 @@ vp1394Grabber::getGain(unsigned int &min_gain,
   \sa getHeight(), setCamera()
 
 */
-void vp1394Grabber::getWidth(int &width)
+void vp1394Grabber::getWidth(unsigned int &width)
 {
   if (camera >= num_cameras) {
     width = 0;
@@ -1479,7 +1479,7 @@ void vp1394Grabber::getWidth(int &width)
   \sa getWidth(), getImageFormat(), close(), getNumCameras(), setCamera()
 
 */
-void vp1394Grabber::getHeight(unsigned &height)
+void vp1394Grabber::getHeight(unsigned int &height)
 {
   if (camera >= num_cameras) {
     height = 0;
@@ -1532,7 +1532,7 @@ vp1394Grabber::open(vpImage<unsigned char> &I)
   setup();
   startIsoTransmission();
 
-  unsigned w, h;
+  unsigned int w, h;
   getWidth( w ) ;
   getHeight( h ) ;
 
@@ -1564,7 +1564,7 @@ vp1394Grabber::open(vpImage<vpRGBa> &I)
   setup();
   startIsoTransmission();
 
-  unsigned w, h;
+  unsigned int w, h;
   getWidth( w ) ;
   getHeight( h ) ;
 
@@ -1600,7 +1600,7 @@ vp1394Grabber::acquire(vpImage<unsigned char> &I)
   int  *bitmap = NULL ;
   bitmap = dmaCapture();
 
-  unsigned w, h;
+  unsigned int w, h;
   getWidth( w ) ;
   getHeight( h ) ;
 
@@ -1663,7 +1663,7 @@ vp1394Grabber::acquire(vpImage<vpRGBa> &I)
   int  *bitmap = NULL ;
   bitmap = dmaCapture();
 
-  unsigned w, h;
+  unsigned int w, h;
   getWidth( w ) ;
   getHeight( h ) ;
 

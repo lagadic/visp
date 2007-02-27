@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.h,v 1.5 2006-09-29 11:58:23 fspindle Exp $
+ * $Id: vpIcCompGrabber.h,v 1.6 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,21 +83,21 @@ public:
   int ncols, nrows ;
   ICcomp2x *framegrabber ; //!< pointeur sur l'objet ICcomp
 private:
-   unsigned input ; //!< video entry
-  unsigned scale ;
+  unsigned int input ; //!< video entry
+  unsigned int scale ;
   framerateEnum framerate;
   bool field; // The type of the acquired frame (0 if odd, 1 if even).
 
 public:
   vpIcCompGrabber();
-  vpIcCompGrabber(unsigned input,
-		  unsigned scale = vpIcCompGrabber::DEFAULT_SCALE);
+  vpIcCompGrabber(unsigned int input,
+		  unsigned int scale = vpIcCompGrabber::DEFAULT_SCALE);
   vpIcCompGrabber(vpImage<unsigned char> &I,
-		  unsigned input,
-		  unsigned scale = vpIcCompGrabber::DEFAULT_SCALE);
+		  unsigned int input,
+		  unsigned int scale = vpIcCompGrabber::DEFAULT_SCALE);
   vpIcCompGrabber(vpImage<vpRGBa> &I,
-		  unsigned input,
-		  unsigned scale = vpIcCompGrabber::DEFAULT_SCALE);
+		  unsigned int input,
+		  unsigned int scale = vpIcCompGrabber::DEFAULT_SCALE);
   ~vpIcCompGrabber() ;
 public:
 
@@ -114,8 +114,8 @@ public:
 
 
   // fct pour changer le port d'entree
-  void setInput(unsigned input = vpIcCompGrabber::DEFAULT_INPUT) ;
-  void setScale(unsigned scale = vpIcCompGrabber::DEFAULT_SCALE) ;
+  void setInput(unsigned int input = vpIcCompGrabber::DEFAULT_INPUT) ;
+  void setScale(unsigned int scale = vpIcCompGrabber::DEFAULT_SCALE) ;
 } ;
 
 #endif

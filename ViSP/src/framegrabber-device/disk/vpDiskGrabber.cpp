@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.cpp,v 1.6 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vpDiskGrabber.cpp,v 1.7 2007-02-27 17:08:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -232,7 +232,7 @@ vpDiskGrabber::setStep(int step)
   Set the step between two images.
 */
 void
-vpDiskGrabber::setNumberOfZero(unsigned noz)
+vpDiskGrabber::setNumberOfZero(unsigned int noz)
 {
   number_of_zero = noz ;
 }

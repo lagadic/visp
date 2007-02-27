@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.7 2007-02-26 17:26:45 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.8 2007-02-27 17:08:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@ void vpCreateWindow(threadParam * param)
 /*!
   Constructor.
 */
-vpDisplayWin32::vpDisplayWin32(vpWin32Renderer * rend) : 
+vpDisplayWin32::vpDisplayWin32(vpWin32Renderer * rend) :
   iStatus(false), window(rend)
 {
 }
@@ -140,7 +140,7 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
   \param title : Window title.
 
 */
-void vpDisplayWin32::init(unsigned width, unsigned height,
+void vpDisplayWin32::init(unsigned int width, unsigned int height,
 			  int x, int y,
 			  char *title)
 {
@@ -233,7 +233,7 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
   \param j : second coordinate of the click position
   \return true
 */
-bool vpDisplayWin32::getClick(unsigned& i, unsigned& j)
+bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j)
 {
   //wait if the window is not initialized
   waitForInit();
@@ -257,7 +257,7 @@ bool vpDisplayWin32::getClick(unsigned& i, unsigned& j)
   \param button : button to use for the click
   \return true
 */
-bool vpDisplayWin32::getClick(unsigned& i, unsigned& j,
+bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j,
 			      vpMouseButton::vpMouseButtonType& button)
 {
   //wait if the window is not initialized
@@ -282,7 +282,7 @@ bool vpDisplayWin32::getClick(unsigned& i, unsigned& j,
   \param button : button to use for the click
   \return true
 */
-bool vpDisplayWin32::getClickUp(unsigned& i, unsigned& j, 
+bool vpDisplayWin32::getClickUp(unsigned int& i, unsigned int& j,
 				vpMouseButton::vpMouseButtonType& button)
 {
   //wait if the window is not initialized
@@ -353,7 +353,7 @@ void vpDisplayWin32::flushTitle(const char *string)
   \param j : its second coordinate
   \param col : The point's color
 */
-void vpDisplayWin32::displayPoint(unsigned i,unsigned j,
+void vpDisplayWin32::displayPoint(unsigned int i,unsigned int j,
 				  vpColor::vpColorType col)
 {
   //wait if the window is not initialized
@@ -370,9 +370,9 @@ void vpDisplayWin32::displayPoint(unsigned i,unsigned j,
   \param e : width of the line
   \param col : The point's color
 */
-void vpDisplayWin32::displayLine(unsigned i1, unsigned j1,
-				 unsigned i2, unsigned j2,
-				 vpColor::vpColorType col, unsigned e)
+void vpDisplayWin32::displayLine(unsigned int i1, unsigned int j1,
+				 unsigned int i2, unsigned int j2,
+				 vpColor::vpColorType col, unsigned int e)
 {
   //wait if the window is not initialized
   waitForInit();
@@ -388,9 +388,9 @@ void vpDisplayWin32::displayLine(unsigned i1, unsigned j1,
   \param e : width of the line
   \param col : The line's color
 */
-void vpDisplayWin32::displayDotLine(unsigned i1, unsigned j1, 
-				    unsigned i2, unsigned j2, 
-				    vpColor::vpColorType col, unsigned e)
+void vpDisplayWin32::displayDotLine(unsigned int i1, unsigned int j1,
+				    unsigned int i2, unsigned int j2,
+				    vpColor::vpColorType col, unsigned int e)
 {
   //wait if the window is not initialized
   waitForInit();
@@ -405,8 +405,8 @@ void vpDisplayWin32::displayDotLine(unsigned i1, unsigned j1,
   \param height : height of the rectangle
   \param col : The rectangle's color
 */
-void vpDisplayWin32::displayRectangle(unsigned i, unsigned j, 
-				      unsigned width, unsigned height, 
+void vpDisplayWin32::displayRectangle(unsigned int i, unsigned int j,
+				      unsigned int width, unsigned int height,
 				      vpColor::vpColorType col)
 {
   //wait if the window is not initialized
@@ -421,7 +421,8 @@ void vpDisplayWin32::displayRectangle(unsigned i, unsigned j,
   \param r : The circle's radius
   \param c : The circle's color
 */
-void vpDisplayWin32::displayCircle(unsigned i, unsigned j, unsigned r, 
+void vpDisplayWin32::displayCircle(unsigned int i, unsigned int j,
+				   unsigned int r,
 				   vpColor::vpColorType c)
 {
   //wait if the window is not initialized
@@ -436,7 +437,7 @@ void vpDisplayWin32::displayCircle(unsigned i, unsigned j, unsigned r,
   \param s : The string to display
   \param c : The text's color
 */
-void vpDisplayWin32::displayCharString(unsigned i,unsigned j,char *s, 
+void vpDisplayWin32::displayCharString(unsigned int i,unsigned int j,char *s,
 				       vpColor::vpColorType c)
 {
   //wait if the window is not initialized
@@ -451,7 +452,8 @@ void vpDisplayWin32::displayCharString(unsigned i,unsigned j,char *s,
   \param size : Size of the cross
   \param col : The cross' color
 */
-void vpDisplayWin32::displayCross(unsigned i,unsigned j, unsigned size,
+void vpDisplayWin32::displayCross(unsigned int i,unsigned int j,
+				  unsigned int size,
 				  vpColor::vpColorType col)
 {
   //wait if the window is not initialized
@@ -466,7 +468,8 @@ void vpDisplayWin32::displayCross(unsigned i,unsigned j, unsigned size,
   \param size : Size of the cross
   \param col : The cross' color
 */
-void vpDisplayWin32::displayCrossLarge(unsigned i,unsigned j, unsigned size,
+void vpDisplayWin32::displayCrossLarge(unsigned int i,unsigned int j,
+				       unsigned int size,
 				       vpColor::vpColorType col)
 {
   //wait if the window is not initialized
@@ -484,10 +487,10 @@ void vpDisplayWin32::displayCrossLarge(unsigned i,unsigned j, unsigned size,
   \param L : ...
   \param l : ...
 */
-void vpDisplayWin32::displayArrow(unsigned i1,unsigned j1, 
-				  unsigned i2, unsigned j2, 
-				  vpColor::vpColorType col, 
-				  unsigned L,unsigned l)
+void vpDisplayWin32::displayArrow(unsigned int i1, unsigned int j1,
+				  unsigned int i2, unsigned int j2,
+				  vpColor::vpColorType col,
+				  unsigned int L, unsigned int l)
 {
   //wait if the window is not initialized
   waitForInit();
@@ -523,7 +526,7 @@ void vpDisplayWin32::closeDisplay()
       WaitForSingleObject(hThread, INFINITE);
       CloseHandle(hThread);
     }
-    displayHasBeenInitialized = false ; 
+    displayHasBeenInitialized = false ;
   }
   if (this->title != NULL) {
     delete [] this->title;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.h,v 1.4 2007-02-26 17:26:45 fspindle Exp $
+ * $Id: vpGDIRenderer.h,v 1.5 2007-02-27 17:08:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,42 +75,47 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   ~vpGDIRenderer();
 
   //inits the display.
-  bool init(HWND hWnd, unsigned width, unsigned height);
+  bool init(HWND hWnd, unsigned int width, unsigned int height);
 
   //renders on the window's DC.
   bool render();
 
   // gets the image's width.
-  unsigned getImageWidth(){ return nbCols; }
+  unsigned int getImageWidth(){ return nbCols; }
 
   // gets the image's height.
-  unsigned getImageHeight(){ return nbRows; }
+  unsigned int getImageHeight(){ return nbRows; }
 
   // sets the image to display.
   void setImg(const vpImage<vpRGBa>& im);
   void setImg(const vpImage<unsigned char>& im);
 
   //Draws a pixel of color color at (x,y).
-  void setPixel(unsigned y, unsigned x, vpColor::vpColorType color);
+  void setPixel(unsigned int y, unsigned int x, vpColor::vpColorType color);
 
   //other drawing methods
-  void drawLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
-		vpColor::vpColorType col, unsigned e, int style=PS_SOLID);
+  void drawLine(unsigned int i1, unsigned int j1,
+		unsigned int i2, unsigned int j2,
+		vpColor::vpColorType col, unsigned int e, int style=PS_SOLID);
 
-  void drawRect(unsigned i, unsigned j, unsigned width, unsigned height, 
+  void drawRect(unsigned int i, unsigned int j,
+		unsigned int width, unsigned int height,
 		vpColor::vpColorType col, bool fill=false);
 
   void clear(vpColor::vpColorType c);
 
-  void drawCircle(unsigned i, unsigned j, unsigned r, vpColor::vpColorType c);
+  void drawCircle(unsigned int i, unsigned int j, unsigned int r,
+		  vpColor::vpColorType c);
 
-  void drawText(unsigned i, unsigned j, char * s, vpColor::vpColorType c);
+  void drawText(unsigned int i, unsigned int j, char * s,
+		vpColor::vpColorType c);
 
-  void drawCross(unsigned i,unsigned j, unsigned size, 
-		 vpColor::vpColorType col, unsigned e=1);
+  void drawCross(unsigned int i,unsigned int j, unsigned int size,
+		 vpColor::vpColorType col, unsigned int e=1);
 
-  void drawArrow(unsigned i1,unsigned j1, unsigned i2, unsigned j2, 
-		 vpColor::vpColorType col, unsigned L,unsigned l);
+  void drawArrow(unsigned int i1,unsigned int j1,
+		 unsigned int i2, unsigned int j2,
+		 vpColor::vpColorType col, unsigned int L,unsigned int l);
 
 
   // returns the currently displayed image.
@@ -119,8 +124,8 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
  private:
 
   //updates the renderer hbitmaps.
-  bool updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer, 
-		    unsigned w, unsigned h);
+  bool updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
+		    unsigned int w, unsigned int h);
 
   //converts a vpImage<vpRGBa> into a HBITMAP .
   void convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp);
