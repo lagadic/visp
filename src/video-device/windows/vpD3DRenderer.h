@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.h,v 1.2 2007-02-26 17:26:44 fspindle Exp $
+ * $Id: vpD3DRenderer.h,v 1.3 2007-02-27 08:42:27 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -106,7 +106,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   void setPixel(unsigned x, unsigned y, vpColor::vpColorType color);
 
   void drawLine(unsigned i1, unsigned j1, unsigned i2, unsigned j2, 
-		vpColor::vpColorType col, unsigned e, unsigned style=PS_SOLID);
+		vpColor::vpColorType col, unsigned e, int style=PS_SOLID);
 
   void drawRect(unsigned i, unsigned j, unsigned width, unsigned height, 
 		vpColor::vpColorType col, bool fill=false);
