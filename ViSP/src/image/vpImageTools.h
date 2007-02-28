@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.5 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.6 2007-02-28 16:27:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,6 +54,7 @@
 #include <visp/vpImageException.h>
 #include <visp/vpImage.h>
 #include <visp/vpMatrix.h>
+#include <visp/vpRect.h>
 
 /*!
   \class vpImageTools
@@ -72,8 +73,12 @@ public:
   static void createSubImage(const vpImage<Type> &I,
 			     int i_sub, int j_sub,
 			     int nrow_sub, int ncol_sub,
-			     vpImage<Type> &SI);
+			     vpImage<Type> &S);
 
+  template<class Type>
+  static void createSubImage(const vpImage<Type> &I,
+			     const vpRect &rect,
+			     vpImage<Type> &S);
   static void changeLUT(vpImage<unsigned char>& I,
 			unsigned char A,
 			unsigned char newA,
@@ -88,36 +93,83 @@ public:
   \param I : Input image from which a sub image will be extracted.
   \param i_sub, j_sub : coordinates of the upper left point of the sub image
   \param nrow_sub, ncol_sub : number of row, column of the sub image
-  \param SI : new sub-image
+  \param S : Sub-image.
 */
 template<class Type>
 void vpImageTools::createSubImage(const vpImage<Type> &I,
 				  int i_sub, int j_sub,
 				  int nrow_sub, int ncol_sub,
-				  vpImage<Type> &SI)
+				  vpImage<Type> &S)
 {
   int i,j ;
   int  imax = i_sub + nrow_sub ;
   int  jmax = j_sub + ncol_sub ;
 
-  if (imax > I.getRows())
+  if (imax > I.getHeight())
   {
-    imax = I.getRows() -1 ;
+    imax = I.getHeight() -1 ;
     nrow_sub = imax-i_sub ;
   }
-  if (jmax > I.getCols())
+  if (jmax > I.getWidth())
   {
-    jmax = I.getCols() -1 ;
+    jmax = I.getWidth() -1 ;
     ncol_sub = jmax -j_sub ;
   }
 
-  SI.resize(nrow_sub, ncol_sub) ;
+  S.resize(nrow_sub, ncol_sub) ;
   for (i=i_sub ; i < imax ; i++)
     for (j=j_sub ; j < jmax ; j++)
     {
-      SI[i-i_sub][j-j_sub] = I[i][j] ;
+      S[i-i_sub][j-j_sub] = I[i][j] ;
     }
 }
+/*
+  Extract a sub part of an image
+
+  \param I : Input image from which a sub image will be extracted.
+
+  \param rect : Rectangle area in the image \e I corresponding to the
+  sub part of the image to extract.
+
+  \param S : Sub-image.
+*/
+template<class Type>
+void vpImageTools::createSubImage(const vpImage<Type> &I,
+				  const vpRect &rect,
+				  vpImage<Type> &S)
+{
+
+  vpRect r = rect;
+
+  if (r.getLeft() >= I.getWidth()) {
+    r.setLeft(I.getWidth() - 1);
+  }
+  if (r.getRight() >= I.getWidth()) {
+    r.setRight(I.getWidth() - 1);
+  }
+  if (r.getTop() >= I.getHeight()) {
+    r.setTop(I.getHeight() - 1);
+  }
+  if (r.getBottom() >= I.getHeight()) {
+    r.setBottom(I.getHeight() - 1);
+  }
+  unsigned int width  = (unsigned int) r.getWidth();
+  unsigned int height = (unsigned int) r.getHeight();
+  unsigned int left   = (unsigned int) r.getLeft() ;
+  unsigned int top    = (unsigned int) r.getTop() ;
+  
+  unsigned int bottom = (unsigned int) r.getBottom() ;
+  unsigned int right  = (unsigned int) r.getRight() ;
+
+
+  S.resize(height, width) ;
+  for (unsigned int i=top ; i <= bottom ; i++) {
+    for (unsigned int j=left ; j <= right ; j++) {
+      S[i-top][j-left] = I[i][j] ;
+    }
+  }
+}
+
 
 
 #endif
