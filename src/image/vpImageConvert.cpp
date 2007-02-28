@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.10 2007-02-28 08:52:36 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.11 2007-02-28 09:03:56 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -352,7 +352,7 @@ void vpImageConvert::YUV422ToGrey(unsigned char* yuv,
 				  unsigned char* grey,
 				  unsigned int size)
 {
- int i=0,j=0;
+ unsigned int i=0,j=0;
 
  while( j < size*2)
  {
