@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.13 2007-02-26 17:26:58 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.14 2007-02-28 11:35:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -130,7 +130,8 @@ vpDisplay::getImage(const vpImage<unsigned  char> &Isrc,
   Display a point at coordinates (i,j) in the display window
 */
 void vpDisplay::displayPoint(const vpImage<unsigned char> &I,
-			     unsigned i,unsigned j,vpColor::vpColorType col)
+			     unsigned int i,unsigned int j,
+			     vpColor::vpColorType col)
 {
   try
     {
@@ -150,8 +151,8 @@ void vpDisplay::displayPoint(const vpImage<unsigned char> &I,
   Display a cross at coordinates (i,j) in the display window
 */
 void vpDisplay::displayCross(const vpImage<unsigned char> &I,
-			     unsigned i,unsigned j,
-			     unsigned size,vpColor::vpColorType col)
+			     unsigned int i,unsigned int j,
+			     unsigned int size,vpColor::vpColorType col)
 {
   try
     {
@@ -171,8 +172,8 @@ void vpDisplay::displayCross(const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayCrossLarge(const vpImage<unsigned char> &I,
-			     unsigned i,unsigned j,
-			     unsigned size,vpColor::vpColorType col)
+			     unsigned int i,unsigned int j,
+			     unsigned int size,vpColor::vpColorType col)
 {
   try
     {
@@ -194,7 +195,7 @@ vpDisplay::displayCrossLarge(const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayCircle(const vpImage<unsigned char> &I,
-			 unsigned i, unsigned j, unsigned r, 
+			 unsigned int i, unsigned int j, unsigned int r, 
 			 vpColor::vpColorType col)
 {
   try
@@ -214,9 +215,9 @@ vpDisplay::displayCircle(const vpImage<unsigned char> &I,
   Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
 */
 void vpDisplay::displayLine(const vpImage<unsigned char> &I,
-			    unsigned i1, unsigned j1, 
-			    unsigned i2, unsigned j2,
-			    vpColor::vpColorType col, unsigned e)
+			    unsigned int i1, unsigned int j1, 
+			    unsigned int i2, unsigned int j2,
+			    vpColor::vpColorType col, unsigned int e)
 {
 
   try
@@ -238,9 +239,9 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I,
   window.  circle radius is given in pixel by paramter r
 */
 void vpDisplay::displayDotLine(const vpImage<unsigned char> &I,
-			       unsigned i1, unsigned j1, 
-			       unsigned i2, unsigned j2,
-			       vpColor::vpColorType col, unsigned e2)
+			       unsigned int i1, unsigned int j1, 
+			       unsigned int i2, unsigned int j2,
+			       vpColor::vpColorType col, unsigned int e2)
 {
   try
     {
@@ -327,8 +328,10 @@ vpDisplay::displayFrame(const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayArrow(const vpImage<unsigned char> &I,
-			unsigned i1,unsigned j1, unsigned i2, unsigned j2,
-			vpColor::vpColorType col, unsigned L,unsigned l)
+			unsigned int i1,unsigned int j1, 
+			unsigned int i2, unsigned int j2,
+			vpColor::vpColorType col, 
+			unsigned int L,unsigned int l)
 {
   try
     {
@@ -359,8 +362,8 @@ height.
 */
 void
 vpDisplay::displayRectangle(const vpImage<unsigned char> &I, 
-			    unsigned i, unsigned j,
-			    unsigned width, unsigned height,
+			    unsigned int i, unsigned int j,
+			    unsigned int width, unsigned int height,
 			    vpColor::vpColorType col)
 {
   try
@@ -376,12 +379,38 @@ vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
       throw ;
     }
 }
+/*!
+
+Display a rectangle in the display window.  
+
+\param rect : The rectangle characteristics
+\param col  : Color of the rectangle.
+
+*/
+void
+vpDisplay::displayRectangle(const vpImage<unsigned char> &I, 
+			    vpRect rect,
+			    vpColor::vpColorType col)
+{
+  try
+    {
+      if (I.display != NULL)
+	{
+	  (I.display)->displayRectangle(rect, col) ;
+	}
+    }
+  catch(...)
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
+}
 /*! display a string at coordinates (i,j) to (i2,j2) in the display
   window
 */
 void
 vpDisplay::displayCharString(const vpImage<unsigned char> &I,
-			     unsigned i,unsigned j,char *s, 
+			     unsigned int i,unsigned int j,char *s, 
 			     vpColor::vpColorType c)
 {
   try
@@ -445,7 +474,7 @@ void vpDisplay::close(const vpImage<unsigned char> &I)
   return true way a button is pressed
 */
 bool  vpDisplay::getClick(const vpImage<unsigned char> &I,
-			  unsigned& i, unsigned& j)
+			  unsigned int& i, unsigned int& j)
 {
   try
     {
@@ -466,7 +495,7 @@ bool  vpDisplay::getClick(const vpImage<unsigned char> &I,
   return true way button is pressed
 */
 bool  vpDisplay::getClick(const vpImage<unsigned char> &I,
-			  unsigned& i, unsigned& j, 
+			  unsigned int& i, unsigned int& j, 
 			  vpMouseButton::vpMouseButtonType& button)
 {
   try
@@ -509,7 +538,7 @@ void  vpDisplay::getClick(const vpImage<unsigned char> &I)
 */
 bool
 vpDisplay::getClickUp(const vpImage<unsigned char> &I,
-		      unsigned& i, unsigned& j, 
+		      unsigned int& i, unsigned int& j, 
 		      vpMouseButton::vpMouseButtonType& button)
 {
   try
@@ -611,7 +640,8 @@ vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 
 
 void vpDisplay::displayPoint(const vpImage<vpRGBa> &I,
-			     unsigned i,unsigned j,vpColor::vpColorType col)
+			     unsigned int i,unsigned int j,
+			     vpColor::vpColorType col)
 {
   try
     {
@@ -631,8 +661,8 @@ void vpDisplay::displayPoint(const vpImage<vpRGBa> &I,
   Display a cross at coordinates (i,j) in the display window
 */
 void vpDisplay::displayCross(const vpImage<vpRGBa> &I,
-			     unsigned i,unsigned j,
-			     unsigned size,vpColor::vpColorType col)
+			     unsigned int i,unsigned int j,
+			     unsigned int size,vpColor::vpColorType col)
 {
   try
     {
@@ -652,8 +682,8 @@ void vpDisplay::displayCross(const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayCrossLarge(const vpImage<vpRGBa> &I,
-			     unsigned i,unsigned j,
-			     unsigned size,vpColor::vpColorType col)
+			     unsigned int i,unsigned int j,
+			     unsigned int size,vpColor::vpColorType col)
 {
   try
     {
@@ -675,7 +705,7 @@ vpDisplay::displayCrossLarge(const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayCircle(const vpImage<vpRGBa> &I,
-			 unsigned i, unsigned j, unsigned r,
+			 unsigned int i, unsigned int j, unsigned int r,
 			 vpColor::vpColorType col)
 {
   try
@@ -694,9 +724,9 @@ vpDisplay::displayCircle(const vpImage<vpRGBa> &I,
   Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
 */
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I,
-			    unsigned i1, unsigned j1, 
-			    unsigned i2, unsigned j2,
-			    vpColor::vpColorType col, unsigned e)
+			    unsigned int i1, unsigned int j1, 
+			    unsigned int i2, unsigned int j2,
+			    vpColor::vpColorType col, unsigned int e)
 {
 
   try
@@ -717,9 +747,9 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I,
   window.  circle radius is given in pixel by paramter r
 */
 void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I,
-			       unsigned i1, unsigned j1,
-			       unsigned i2, unsigned j2,
-			       vpColor::vpColorType col, unsigned e2)
+			       unsigned int i1, unsigned int j1,
+			       unsigned int i2, unsigned int j2,
+			       vpColor::vpColorType col, unsigned int e2)
 {
   try
     {
@@ -740,8 +770,10 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayArrow(const vpImage<vpRGBa> &I,
-			unsigned i1,unsigned j1, unsigned i2, unsigned j2,
-			vpColor::vpColorType col, unsigned L,unsigned l)
+			unsigned int i1,unsigned int j1,
+			unsigned int i2, unsigned int j2,
+			vpColor::vpColorType col, 
+			unsigned int L,unsigned int l)
 {
   try
     {
@@ -762,7 +794,7 @@ vpDisplay::displayArrow(const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayCharString(const vpImage<vpRGBa> &I,
-			     unsigned i,unsigned j,char *s, 
+			     unsigned int i,unsigned int j,char *s, 
 			     vpColor::vpColorType c)
 {
   try
@@ -825,7 +857,7 @@ void vpDisplay::close(const vpImage<vpRGBa> &I)
   return true way a button is pressed
 */
 bool  vpDisplay::getClick(const vpImage<vpRGBa> &I,
-			  unsigned& i, unsigned& j)
+			  unsigned int& i, unsigned int& j)
 {
   try
     {
@@ -846,7 +878,7 @@ bool  vpDisplay::getClick(const vpImage<vpRGBa> &I,
   return true way button is pressed
 */
 bool  vpDisplay::getClick(const vpImage<vpRGBa> &I,
-			  unsigned& i, unsigned& j,
+			  unsigned int& i, unsigned int& j,
 			  vpMouseButton::vpMouseButtonType& button)
 {
   try
@@ -890,7 +922,7 @@ void  vpDisplay::getClick(const vpImage<vpRGBa> &I)
 */
 bool
 vpDisplay::getClickUp(const vpImage<vpRGBa> &I,
-		      unsigned& i, unsigned& j, 
+		      unsigned int& i, unsigned int& j, 
 		      vpMouseButton::vpMouseButtonType& button)
 {
   try
@@ -916,7 +948,8 @@ vpDisplay::getClickUp(const vpImage<vpRGBa> &I,
   Display a point at coordinates (u,v) in the display window
 */
 void vpDisplay::displayPoint_uv(const vpImage<unsigned char> &I,
-				unsigned u,unsigned v,vpColor::vpColorType col)
+				unsigned int u,unsigned int v,
+				vpColor::vpColorType col)
 {
   try
     {
@@ -936,8 +969,8 @@ void vpDisplay::displayPoint_uv(const vpImage<unsigned char> &I,
   Display a cross at coordinates (u,v) in the display window
 */
 void vpDisplay::displayCross_uv(const vpImage<unsigned char> &I,
-				unsigned u,unsigned v,
-				unsigned size,vpColor::vpColorType col)
+				unsigned int u,unsigned int v,
+				unsigned int size,vpColor::vpColorType col)
 {
   try
     {
@@ -957,8 +990,8 @@ void vpDisplay::displayCross_uv(const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayCrossLarge_uv(const vpImage<unsigned char> &I,
-				unsigned u,unsigned v,
-				unsigned size,vpColor::vpColorType col)
+				unsigned int u,unsigned int v,
+				unsigned int size,vpColor::vpColorType col)
 {
   try
     {
@@ -980,7 +1013,7 @@ vpDisplay::displayCrossLarge_uv(const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayCircle_uv(const vpImage<unsigned char> &I,
-			    unsigned u, unsigned v, unsigned r, 
+			    unsigned int u, unsigned int v, unsigned int r, 
 			    vpColor::vpColorType col)
 {
   try
@@ -1000,9 +1033,9 @@ vpDisplay::displayCircle_uv(const vpImage<unsigned char> &I,
   Display a line from coordinates (u1,v1) to (u2,v2) in the display window.
 */
 void vpDisplay::displayLine_uv(const vpImage<unsigned char> &I,
-			       unsigned u1, unsigned v1, 
-			       unsigned u2, unsigned v2,
-			       vpColor::vpColorType col, unsigned e)
+			       unsigned int u1, unsigned int v1, 
+			       unsigned int u2, unsigned int v2,
+			       vpColor::vpColorType col, unsigned int e)
 {
 
   try
@@ -1024,9 +1057,9 @@ void vpDisplay::displayLine_uv(const vpImage<unsigned char> &I,
   window.  circle radius is given in pixel by paramter r
 */
 void vpDisplay::displayDotLine_uv(const vpImage<unsigned char> &I,
-				  unsigned u1, unsigned v1, 
-				  unsigned u2, unsigned v2,
-				  vpColor::vpColorType col, unsigned e2)
+				  unsigned int u1, unsigned int v1, 
+				  unsigned int u2, unsigned int v2,
+				  vpColor::vpColorType col, unsigned int e2)
 {
   try
     {
@@ -1048,10 +1081,10 @@ void vpDisplay::displayDotLine_uv(const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayArrow_uv(const vpImage<unsigned char> &I,
-			   unsigned u1,unsigned v1, 
-			   unsigned u2, unsigned v2,
+			   unsigned int u1,unsigned int v1, 
+			   unsigned int u2, unsigned int v2,
 			   vpColor::vpColorType col, 
-			   unsigned L,unsigned l)
+			   unsigned int L,unsigned int l)
 {
   try
     {
@@ -1073,8 +1106,8 @@ Display a rectangle in the display window.  The rectangle upper left corner
 has coordinates (u,v). The size of the rectangle is fixed by \e width and \e
 height.
 
-\param i Row number of the rectangle upper corner
-\param j Column number of the rectangle upper corner
+\param v Row number of the rectangle upper corner
+\param u Column number of the rectangle upper corner
 \param width Width of the rectangle.
 \param height Height of the rectangle.
 \param col Color of the rectangle.
@@ -1082,8 +1115,8 @@ height.
 */
 void
 vpDisplay::displayRectangle_uv(const vpImage<unsigned char> &I,
-			       unsigned u, unsigned v,
-			       unsigned width, unsigned height, 
+			       unsigned int u, unsigned int v,
+			       unsigned int width, unsigned int height, 
 			       vpColor::vpColorType col)
 {
   try
@@ -1104,7 +1137,7 @@ vpDisplay::displayRectangle_uv(const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayCharString_uv(const vpImage<unsigned char> &I,
-				unsigned u,unsigned v,char *s, 
+				unsigned int u,unsigned int v,char *s, 
 				vpColor::vpColorType c)
 {
   try
@@ -1126,7 +1159,7 @@ vpDisplay::displayCharString_uv(const vpImage<unsigned char> &I,
   return true way a button is pressed
 */
 bool  vpDisplay::getClick_uv(const vpImage<unsigned char> &I,
-			     unsigned& u, unsigned& v)
+			     unsigned int& u, unsigned int& v)
 {
   try
     {
@@ -1147,7 +1180,7 @@ bool  vpDisplay::getClick_uv(const vpImage<unsigned char> &I,
   return true way button is pressed
 */
 bool  vpDisplay::getClick_uv(const vpImage<unsigned char> &I,
-			     unsigned& u, unsigned& v, 
+			     unsigned int& u, unsigned int& v, 
 			     vpMouseButton::vpMouseButtonType& button)
 {
   try
@@ -1171,7 +1204,7 @@ bool  vpDisplay::getClick_uv(const vpImage<unsigned char> &I,
 */
 bool
 vpDisplay::getClickUp_uv(const vpImage<unsigned char> &I,
-			 unsigned& u, unsigned& v, 
+			 unsigned int& u, unsigned int& v, 
 			 vpMouseButton::vpMouseButtonType& button)
 {
   try
@@ -1196,7 +1229,7 @@ vpDisplay::getClickUp_uv(const vpImage<unsigned char> &I,
 
 
 void vpDisplay::displayPoint_uv(const vpImage<vpRGBa> &I,
-				unsigned u,unsigned v,
+				unsigned int u,unsigned int v,
 				vpColor::vpColorType col)
 {
   try
@@ -1217,8 +1250,8 @@ void vpDisplay::displayPoint_uv(const vpImage<vpRGBa> &I,
   Display a cross at coordinates (u,v) in the display window
 */
 void vpDisplay::displayCross_uv(const vpImage<vpRGBa> &I,
-				unsigned u,unsigned v,
-				unsigned size,vpColor::vpColorType col)
+				unsigned int u,unsigned int v,
+				unsigned int size,vpColor::vpColorType col)
 {
   try
     {
@@ -1238,8 +1271,8 @@ void vpDisplay::displayCross_uv(const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayCrossLarge_uv(const vpImage<vpRGBa> &I,
-				unsigned u,unsigned v,
-				unsigned size,vpColor::vpColorType col)
+				unsigned int u,unsigned int v,
+				unsigned int size,vpColor::vpColorType col)
 {
   try
     {
@@ -1261,7 +1294,7 @@ vpDisplay::displayCrossLarge_uv(const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayCircle_uv(const vpImage<vpRGBa> &I,
-			    unsigned u, unsigned v, unsigned r, 
+			    unsigned int u, unsigned int v, unsigned int r, 
 			    vpColor::vpColorType col)
 {
   try
@@ -1280,9 +1313,9 @@ vpDisplay::displayCircle_uv(const vpImage<vpRGBa> &I,
   Display a line from coordinates (u1,v1) to (u2,v2) in the display window.
 */
 void vpDisplay::displayLine_uv(const vpImage<vpRGBa> &I,
-			       unsigned u1, unsigned v1, 
-			       unsigned u2, unsigned v2,
-			       vpColor::vpColorType col, unsigned e)
+			       unsigned int u1, unsigned int v1, 
+			       unsigned int u2, unsigned int v2,
+			       vpColor::vpColorType col, unsigned int e)
 {
 
   try
@@ -1303,9 +1336,9 @@ void vpDisplay::displayLine_uv(const vpImage<vpRGBa> &I,
   window.  circle radius is given in pixel by paramter r
 */
 void vpDisplay::displayDotLine_uv(const vpImage<vpRGBa> &I,
-				  unsigned u1, unsigned v1, 
-				  unsigned u2, unsigned v2,
-				  vpColor::vpColorType col, unsigned e2)
+				  unsigned int u1, unsigned int v1, 
+				  unsigned int u2, unsigned int v2,
+				  vpColor::vpColorType col, unsigned int e2)
 {
   try
     {
@@ -1326,8 +1359,10 @@ void vpDisplay::displayDotLine_uv(const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayArrow_uv(const vpImage<vpRGBa> &I,
-			   unsigned u1,unsigned v1, unsigned u2, unsigned v2,
-			   vpColor::vpColorType col, unsigned L,unsigned l)
+			   unsigned int u1,unsigned int v1, 
+			   unsigned int u2, unsigned int v2,
+			   vpColor::vpColorType col,
+			   unsigned int L,unsigned int l)
 {
   try
     {
@@ -1348,7 +1383,7 @@ vpDisplay::displayArrow_uv(const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayCharString_uv(const vpImage<vpRGBa> &I,
-				unsigned u,unsigned v,char *s, 
+				unsigned int u,unsigned int v,char *s, 
 				vpColor::vpColorType c)
 {
   try
@@ -1371,7 +1406,7 @@ vpDisplay::displayCharString_uv(const vpImage<vpRGBa> &I,
   return true way a button is pressed
 */
 bool  vpDisplay::getClick_uv(const vpImage<vpRGBa> &I,
-			     unsigned& u, unsigned& v)
+			     unsigned int& u, unsigned int& v)
 {
   try
     {
@@ -1392,7 +1427,7 @@ bool  vpDisplay::getClick_uv(const vpImage<vpRGBa> &I,
   return true way button is pressed
 */
 bool  vpDisplay::getClick_uv(const vpImage<vpRGBa> &I,
-			     unsigned& u, unsigned& v,
+			     unsigned int& u, unsigned int& v,
 			     vpMouseButton::vpMouseButtonType& button)
 {
   try
@@ -1416,7 +1451,7 @@ bool  vpDisplay::getClick_uv(const vpImage<vpRGBa> &I,
 */
 bool
 vpDisplay::getClickUp_uv(const vpImage<vpRGBa> &I,
-			 unsigned& u, unsigned& v, 
+			 unsigned int& u, unsigned int& v, 
 			 vpMouseButton::vpMouseButtonType& button)
 {
   try

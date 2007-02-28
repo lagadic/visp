@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.8 2007-02-27 17:08:06 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.9 2007-02-28 11:35:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -412,6 +412,19 @@ void vpDisplayWin32::displayRectangle(unsigned int i, unsigned int j,
   //wait if the window is not initialized
   waitForInit();
   window.renderer->drawRect(i,j,width,height,col);
+}
+/*!
+  Displays a rectangle.
+  \param rect : Rectangle characteristics.
+  \param col : The rectangle's color
+*/
+void vpDisplayWin32::displayRectangle(vpRect rect,
+				      vpColor::vpColorType col)
+{
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawRect((int)rect.getTop(),(int)rect.getLeft(),
+			    (int)rect.getWidth(),(int)rect.getHeight(),col);
 }
 
 /*!

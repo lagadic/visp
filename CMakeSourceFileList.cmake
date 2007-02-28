@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.12 2007-02-26 10:45:34 marchand Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.13 2007-02-28 11:35:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -152,6 +152,7 @@ SET (SRC_SIMULATOR
 
 SET (SRC_TOOLS
   tools/geometry/vpPlane.cpp
+  tools/geometry/vpRect.cpp
   tools/io/vpIoTools.cpp
   tools/io/vpIoException.cpp
   tools/io/vpParseArgv.cpp

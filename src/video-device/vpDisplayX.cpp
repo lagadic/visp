@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.21 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.22 2007-02-28 11:35:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1483,6 +1483,33 @@ vpDisplayX::displayRectangle(unsigned int i, unsigned int j,
 			LineSolid, CapButt, JoinBevel);
 
     XDrawRectangle (display, window, context,  j, i, width, height);
+  }
+ else
+  {
+    vpERROR_TRACE("X not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+			     "X not initialized")) ;
+  }
+}
+
+/*!
+  \brief display a rectangle
+  \param rect : Rectangle characteristics.
+  \param col : Color (see vpColor)
+*/
+void
+vpDisplayX::displayRectangle(vpRect rect,
+			     vpColor::vpColorType col)
+{
+  if (Xinitialise)
+  {
+    XSetForeground (display, context, x_color[col]);
+    XSetLineAttributes (display, context, 0,
+			LineSolid, CapButt, JoinBevel);
+
+    XDrawRectangle (display, window, context, 
+		    (int)rect.getLeft(), (int)rect.getTop(), 
+		    (int)rect.getWidth(), (int)rect.getHeight());
   }
  else
   {

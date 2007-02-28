@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.15 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.16 2007-02-28 11:35:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -785,6 +785,31 @@ vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
     {
       gdk_gc_set_foreground(gc,col[color]);
       gdk_draw_rectangle(background,gc,FALSE,j,i,width,height);
+    }
+  else
+    {
+      vpERROR_TRACE("GTK not initialized " ) ;
+      throw(vpDisplayException(vpDisplayException::notInitializedError,
+			       "GTK not initialized")) ;
+    }
+}
+
+/*!
+  \brief display a rectangle
+  \param rect : Rectangle characteristics.
+  \param col : Color (see vpColor)
+*/
+void
+vpDisplayGTK::displayRectangle(vpRect rect,
+			       vpColor::vpColorType color)
+{
+  if (GTKinitialized)
+    {
+      gdk_gc_set_foreground(gc,col[color]);
+      gdk_draw_rectangle(background,gc,FALSE,
+			 (int)rect.getLeft(), (int)rect.getTop(), 
+			 (int)rect.getWidth(), (int)rect.getHeight());
+
     }
   else
     {

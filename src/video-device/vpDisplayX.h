@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.10 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpDisplayX.h,v 1.11 2007-02-28 11:35:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
+#include <visp/vpRect.h>
 
 
 
@@ -165,6 +166,8 @@ protected:
 
   void displayRectangle(unsigned int i, unsigned int j,
 			unsigned int width, unsigned int height,
+			vpColor::vpColorType col);
+  void displayRectangle(vpRect rect,
 			vpColor::vpColorType col);
   void displayCharString(unsigned int i,unsigned int j,char *s,
 			 vpColor::vpColorType c=vpColor::green) ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.11 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.12 2007-02-28 11:35:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,10 +50,12 @@
 #include <visp/vpRGBa.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpRect.h>
 
 /*!
   \file vpDisplay.h
-  \brief Generic class for image display, also provide the interface with the image
+  \brief Generic class for image display, also provide the interface 
+  with the image.
 */
 
 
@@ -153,6 +155,8 @@ protected:
   virtual void displayRectangle(unsigned int i, unsigned int j,
 				unsigned int width, unsigned int height,
 				vpColor::vpColorType col)=0 ;
+  virtual void displayRectangle(vpRect rect,
+				vpColor::vpColorType col)=0 ;
   virtual void displayCharString(unsigned int i,unsigned int j,char *s,
 				 vpColor::vpColorType c=vpColor::green)=0 ;
 
@@ -202,11 +206,15 @@ protected:
 			   unsigned int i2, unsigned int j2,
 			   vpColor::vpColorType col=vpColor::white,
 			   unsigned int L=4,unsigned int l=2) ;
-  //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
-  //! window
+  //! Display a rectangle having (i,j) as top/left corner coordinates
+  //! and \e width and \e height.
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       unsigned int i, unsigned int j,
 			       unsigned int width, unsigned int height,
+			       vpColor::vpColorType col);
+  //! Display a rectangle.
+  static void displayRectangle(const vpImage<unsigned char> &I,
+			       vpRect rect,
 			       vpColor::vpColorType col);
   //! Display a string
   static void displayCharString(const vpImage<unsigned char> &I,
@@ -262,8 +270,8 @@ protected:
 			      unsigned int u2, unsigned int v2,
 			      vpColor::vpColorType col=vpColor::white,
 			      unsigned int L=4,unsigned int l=2) ;
-  //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
-  //! window
+  //! Display a rectangle having (u,v) as top/left corner coordinates,
+  //! \e width and \e height.
   static void displayRectangle_uv(const vpImage<unsigned char> &I,
 				  unsigned int u, unsigned int v,
 				  unsigned int width, unsigned int height,
