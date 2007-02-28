@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRect.cpp,v 1.1 2007-02-28 11:35:49 fspindle Exp $
+ * $Id: vpRect.cpp,v 1.2 2007-02-28 16:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,6 +43,7 @@
 
 
 #include <visp/vpRect.h>
+#include <visp/vpDebug.h>
 
 /*!
  

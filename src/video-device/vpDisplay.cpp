@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.14 2007-02-28 11:35:49 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.15 2007-02-28 16:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -389,7 +389,7 @@ Display a rectangle in the display window.
 */
 void
 vpDisplay::displayRectangle(const vpImage<unsigned char> &I, 
-			    vpRect rect,
+			    const vpRect &rect,
 			    vpColor::vpColorType col)
 {
   try

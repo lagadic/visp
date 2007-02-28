@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.22 2007-02-28 11:35:49 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.23 2007-02-28 16:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1498,7 +1498,7 @@ vpDisplayX::displayRectangle(unsigned int i, unsigned int j,
   \param col : Color (see vpColor)
 */
 void
-vpDisplayX::displayRectangle(vpRect rect,
+vpDisplayX::displayRectangle(const vpRect &rect,
 			     vpColor::vpColorType col)
 {
   if (Xinitialise)

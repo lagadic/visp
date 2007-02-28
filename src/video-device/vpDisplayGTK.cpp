@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.16 2007-02-28 11:35:49 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.17 2007-02-28 16:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -800,7 +800,7 @@ vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
   \param col : Color (see vpColor)
 */
 void
-vpDisplayGTK::displayRectangle(vpRect rect,
+vpDisplayGTK::displayRectangle(const vpRect &rect,
 			       vpColor::vpColorType color)
 {
   if (GTKinitialized)

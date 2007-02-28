@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRect.h,v 1.1 2007-02-28 11:35:49 fspindle Exp $
+ * $Id: vpRect.h,v 1.2 2007-02-28 16:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -88,35 +88,35 @@ public:
   /*!
     Returns the left coordinate of the rectangle. 
   */
-  inline double getLeft()   { return this->left;   };
+  inline double getLeft() const { return this->left;   };
 
   /*!
     Returns the right coordinate of the rectangle. 
   */
-  inline double getRight()  { return (this->left + this->width - 1.0); };
+  inline double getRight() const { return (this->left + this->width - 1.0); };
 
   /*!
     Returns the top coordinate of the rectangle. 
 
   */
-  inline double getTop()  { return this->top;  };
+  inline double getTop() const { return this->top;  };
   /*!
     Returns the bottom coordinate of the rectangle. 
   */
-  inline double getBottom()  { return (this->top + this->height - 1.0); };
+  inline double getBottom() const { return (this->top + this->height - 1.0); };
   /*!
    Returns the width of the rectangle. The width includes both the
    left and right edges, i.e. width = right - left + 1.
 
   */
-  inline double getWidth()  { return this->width;  };
+  inline double getWidth() const { return this->width;  };
   /*!
  
    Returns the height of the rectangle. The height includes both the
    top and bottom edges, i.e. height = bottom - top + 1.
 
   */
-  inline double getHeight() { return this->height; };
+  inline double getHeight() const { return this->height; };
 
   /*!
 
@@ -175,7 +175,7 @@ public:
     positive x axis is from left to right.
 
   */
-  inline void getCenter(double & x, double & y) { 
+  inline void getCenter(double & x, double & y) const { 
     x = this->left + this->width  / 2.0 + 0.5; 
     y = this->top  + this->height / 2.0 + 0.5; 
   };
