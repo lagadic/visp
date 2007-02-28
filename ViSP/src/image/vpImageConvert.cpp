@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.9 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.10 2007-02-28 08:52:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -534,7 +534,7 @@ vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
 			  unsigned int width, unsigned int height, bool flip)
 {
 	//if we have to flip the image, we start from the end last scanline so the step is negative
-	int lineStep = (flip) ? -(width*3) : (width*3);
+	int lineStep = (flip) ? -(int)(width*3) : (int)(width*3);
 
 	//starting source address = last line if we need to flip the image
 	unsigned char * src = (flip) ? (bgr+(width*height*3)+lineStep) : bgr;
@@ -571,7 +571,7 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
 			  unsigned int width, unsigned int height, bool flip)
 {
   //if we have to flip the image, we start from the end last scanline so the step is negative
-  int lineStep = (flip) ? -(width*3) : (width*3);
+  int lineStep = (flip) ? -(int)(width*3) : (int)(width*3);
 
   //starting source address = last line if we need to flip the image
   unsigned char * src = (flip) ? bgr+(width*height*3)+lineStep : bgr;
