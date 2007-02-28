@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.16 2007-02-13 09:17:41 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.17 2007-02-28 16:59:01 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,6 +62,9 @@
 
 // Defined if pthread library available.
 #cmakedefine VISP_HAVE_PTHREAD
+
+// Defined if OpenCV library available.
+#cmakedefine VISP_HAVE_OPENCV
 
 // Defined if GTK library available (either gtk or gtk2).
 #cmakedefine VISP_HAVE_GTK
