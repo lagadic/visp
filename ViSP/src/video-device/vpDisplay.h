@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.12 2007-02-28 11:35:49 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.13 2007-02-28 16:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,7 +155,7 @@ protected:
   virtual void displayRectangle(unsigned int i, unsigned int j,
 				unsigned int width, unsigned int height,
 				vpColor::vpColorType col)=0 ;
-  virtual void displayRectangle(vpRect rect,
+  virtual void displayRectangle(const vpRect &rect,
 				vpColor::vpColorType col)=0 ;
   virtual void displayCharString(unsigned int i,unsigned int j,char *s,
 				 vpColor::vpColorType c=vpColor::green)=0 ;
@@ -214,7 +214,7 @@ protected:
 			       vpColor::vpColorType col);
   //! Display a rectangle.
   static void displayRectangle(const vpImage<unsigned char> &I,
-			       vpRect rect,
+			       const vpRect &rect,
 			       vpColor::vpColorType col);
   //! Display a string
   static void displayCharString(const vpImage<unsigned char> &I,

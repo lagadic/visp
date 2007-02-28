@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.7 2007-02-28 11:35:49 fspindle Exp $
+ * $Id: vpDisplayGTK.h,v 1.8 2007-02-28 16:28:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -149,7 +149,7 @@ protected:
   void displayRectangle(unsigned int i, unsigned int j,
 			unsigned int width, unsigned int height,
 			vpColor::vpColorType col);
-  void displayRectangle(vpRect rect,
+  void displayRectangle(const vpRect &rect,
 			vpColor::vpColorType col);
   void displayCharString(unsigned int i,unsigned int j,char *s,
 			 vpColor::vpColorType c=vpColor::green) ;
