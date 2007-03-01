@@ -2,6 +2,7 @@
 //#include <utilsHomography.h>
 #include <visp/vpRobust.h>
 #include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpHomography.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpPoint.h>
 #include <iostream>
@@ -9,8 +10,8 @@
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 
-void
-UpdatePoseRotation(vpColVector& dx,vpHomogeneousMatrix&  mati)
+static void
+updatePoseRotation(vpColVector& dx,vpHomogeneousMatrix&  mati)
 {
   int i,j;
 
@@ -53,14 +54,11 @@ UpdatePoseRotation(vpColVector& dx,vpHomogeneousMatrix&  mati)
 }
 
 double
-computeRotation(int nbpoint,
+vpHomography::computeRotation(int nbpoint,
 		vpPoint *c1P,
 		vpPoint *c2P,
 		vpHomogeneousMatrix &c2Mc1,
-		int display,
-		vpImage<unsigned char> &I,
-		vpCameraParameters &cam,
-		int userobust, int save
+		int userobust
 		)
 {
   vpColVector e(2) ;
@@ -184,20 +182,6 @@ computeRotation(int nbpoint,
 	    e =  vpMatrix::stackMatrices(e,e1) ;
 	  }
 
-	/*
-	if (display==1)
-	{
-	if (only_2==1)
-	  displayPoint(I, p1, Hp2,cam, vpColor::blue, 0) ;
-	else
-	  if (only_1==1)
-	    displayPoint(I, p2, Hp1,cam, vpColor::green, 0) ;
-	  else
-	  {
-	    displayPoint(I, p2, Hp1,cam, vpColor::green, 0) ;
-	    displayPoint(I, p1, Hp2,cam, vpColor::blue, 0) ;
-	  }
-	  }*/
 	k++ ;
       }
 
@@ -210,10 +194,6 @@ computeRotation(int nbpoint,
 	res[k] = vpMath::sqr(e[2*k]) + vpMath::sqr(e[2*k+1]) ;
       }
       robust.MEstimator(vpRobust::TUKEY, res, w);
-
-      //  cout << e.t() ;
-
-      // cout << "----------------------------------" << endl ;
 
 
       // compute the pseudo inverse of the interaction matrix
@@ -230,13 +210,14 @@ computeRotation(int nbpoint,
     // CreateDiagonalMatrix(w, W) ;
     (L).pseudoInverse(Lp, 1e-6) ;
     // Compute the camera velocity
-    vpColVector c2Tc1 ;
+    vpColVector c2Rc1, v(6) ;
 
-    c2Tc1 = -2*Lp*W*e  ;
+    c2Rc1 = -2*Lp*W*e  ;
+    for (int i=0 ; i < 3 ; i++) v[i+3] = c2Rc1[i] ;
 
     // only for simulation
 
-    UpdatePoseRotation(c2Tc1, c2Mc1) ;
+    updatePoseRotation(c2Rc1, c2Mc1) ;
     r =e.sumSquare() ;
 
     if ((W*e).sumSquare() < 1e-10) break ;
@@ -244,7 +225,7 @@ computeRotation(int nbpoint,
     iter++ ;    cout <<  iter <<"  e=" <<(e).sumSquare() <<"  e=" <<(W*e).sumSquare() <<endl ;
 
   }
-  return (W*e).sumSquare() ;
+   return (W*e).sumSquare() ;
 }
 
 #undef DEBUG_LEVEL1
