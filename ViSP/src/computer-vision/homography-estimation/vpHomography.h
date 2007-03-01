@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpHomography.h,v 1.5 2007-03-01 11:19:05 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -225,7 +225,16 @@ public:
 		     double *xb, double *yb,
 		     double *xa, double *ya ,
 		     vpHomography &aHb) ;
-} ;
+
+public: // VVS
+  static double computeRotation(int nbpoint,
+			      vpPoint *c1P,
+			      vpPoint *c2P,
+			      vpHomogeneousMatrix &c2Mc1,
+			      int userobust
+			      ) ;
+
+  } ;
 
 
 
