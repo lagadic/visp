@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.13 2007-02-26 17:38:40 fspindle Exp $
+ * $Id: vpDot.h,v 1.14 2007-03-02 18:17:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,6 +54,7 @@
 #include <visp/vpDisplay.h>
 
 #include <visp/vpTracker.h>
+#include <visp/vpRect.h>
 
 #if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
 template class VISP_EXPORT vpList<int>;
@@ -91,6 +92,12 @@ private:
   unsigned cog_u, cog_v ;
   //! coordinates (float) of the point center of gravity
   double cog_ufloat, cog_vfloat ;
+
+  // Bounding box
+  unsigned int u_min, u_max, v_min, v_max;
+
+  // Flag used to allow display
+  bool graphics ;
 
 
 public :
@@ -217,12 +224,12 @@ private:
     } ;
   double nbMaxPoint ;
   int connexe(vpImage<unsigned char>& I, unsigned u, unsigned v, 
-	      unsigned char threshold_l, unsigned char threshold_r,
+	      unsigned char gray_level_min, unsigned char gray_level_max,
 	      double &mean_value, double &u_cog, double &v_cog, double &n);
   void COG(vpImage<unsigned char> &I,double& u, double& v) ;
 
-  unsigned char threshold_l; // left threshold for binarisation
-  unsigned char threshold_r; // right threshold for binarisation
+  unsigned char gray_level_min; // left threshold for binarisation
+  unsigned char gray_level_max; // right threshold for binarisation
 
   //! flag : true moment are computed
   bool compute_moment ;
@@ -246,15 +253,14 @@ public:
   void initTracking(vpImage<unsigned char> &I) ;
   void initTracking(vpImage<unsigned char> &I, unsigned u, unsigned v) ;
   void initTracking(vpImage<unsigned char> &I, unsigned u, unsigned v, 
-		    unsigned char threshold_l, unsigned char threshold_r);
+		    unsigned char gray_level_min, 
+		    unsigned char gray_level_max);
   void track(vpImage<unsigned char> & I) ;
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
   //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels)
   void setNbMaxPoint(double nb) ;
 
-private:
-  bool graphics ;
-public:
+
   /*!
     Activates the display of all the pixels of the dot during the tracking.
 
@@ -263,6 +269,45 @@ public:
   */
   void setGraphics(const bool activate) { graphics = activate ; }
 
+  /*!
+
+    Return the width of the dot.
+
+    \sa getHeight()
+
+  */
+  inline unsigned int getWidth() const { 
+    return (this->u_max - this->u_min + 1);
+  };
+
+  /*!
+
+    Return the width of the dot.
+
+    \sa getHeight()
+
+  */
+  inline unsigned int getHeight() const { 
+    return (this->v_max - this->v_min + 1);
+  };
+
+  /*!
+
+    Return the dot bounding box.
+
+    \sa getWidth(), getHeight()
+
+  */
+  inline vpRect getBBox() { 
+    vpRect bbox;
+
+    bbox.setRect(this->u_min, 
+		 this->v_min,
+		 this->u_max - this->u_min + 1,
+		 this->v_max - this->v_min + 1);
+
+    return (bbox);
+  };
 } ;
 
 
