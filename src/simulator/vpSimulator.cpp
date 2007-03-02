@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.9 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpSimulator.cpp,v 1.10 2007-03-02 10:47:00 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -561,6 +561,7 @@ vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
 void
 vpSimulator::redraw()
 {
+
   //  if (this->cameraPositionInitialized==true)
   {
     if (this->externalView != NULL)
@@ -578,7 +579,7 @@ vpSimulator::redraw()
     }
   }
 
-  // vpTRACE(" ") ;
+
 
 }
 
@@ -587,7 +588,9 @@ static void
 timerSensorCallback(void *data , SoSensor *)
 {
     vpSimulator * simulator = (vpSimulator *)data ;
+
     simulator->redraw() ;
+
 }
 
 

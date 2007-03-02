@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.6 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpSimulator.h,v 1.7 2007-03-02 10:47:00 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -82,7 +82,7 @@
 
 class VISP_EXPORT vpSimulator
 {
-private:
+protected:
   //! perform some initialization
   void init() ;
   //! perform some destruction
@@ -93,7 +93,7 @@ public:
   vpSimulator() ;
   ~vpSimulator() ;
 
-private:
+protected:
   //! main Widget
   QWidget * mainWindow ;
   bool mainWindowInitialized ;
@@ -102,10 +102,11 @@ private:
   void initSoQt() ;
 
 public:
+  GLubyte * image_background;
   //! activate the mainloop
-  void mainLoop() ;
+  virtual   void mainLoop() ;
 
-private:
+protected:
   //! view from the camera
   vpViewer *internalView ;
   //! view from an external camera
@@ -113,11 +114,11 @@ private:
 
 public:
   //! initialize the camera view
-  void initInternalViewer(int nlig, int ncol) ;
+  virtual void initInternalViewer(int nlig, int ncol) ;
   //! initialize the external view
   void initExternalViewer(int nlig, int ncol) ;
 
-private:
+protected:
   //! thread with the main program
   pthread_t mainThread;
 
@@ -130,12 +131,17 @@ public:
 
   //----------------------------------------------------
   // scene description
-private:
+protected:
   int internal_width;
   int internal_height;
   int external_width;
   int external_height;
 
+public:
+  int getInternalWidth() { return internal_width; }
+  int getInternalHeight() { return internal_height; }
+
+protected:
   //! root node of the scene : contains everything except stuff specific to
   //! each view
   SoSeparator *scene;
@@ -182,11 +188,11 @@ public:
   //! set the size of the camera/frame
   void setZoomFactor (const double zoom) ;
 
-private:
+protected:
   double zoomFactor ;
   //---------------------------------------------------
   //  camera description
-private:
+protected:
   bool cameraPositionInitialized ;
   //! internal camera position
   vpHomogeneousMatrix cMf ;
@@ -212,13 +218,13 @@ public:
 public:
   enum viewEnum { INTERNAL, EXTERNAL } ;
   void  write(viewEnum view, const char * fileName);
-private:
+protected:
   SbTime * realtime ;
   SoOffscreenRenderer * offScreenRenderer ;
   void offScreenRendering (viewEnum view=vpSimulator::EXTERNAL,
 			   int * width = NULL,
 			   int * height = NULL);
-private:
+protected:
   //! image of the internal view
   unsigned char * bufferView;
 
