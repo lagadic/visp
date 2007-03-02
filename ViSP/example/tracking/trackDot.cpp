@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: trackDot.cpp,v 1.5 2007-03-02 18:17:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -336,6 +336,8 @@ main(int argc, char ** argv)
 	cout << d.get_u() << " " << d.get_v()
 	     << " - "
 	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << endl;
+	cout << "Size:" << endl;
+	cout << "w: " << d.getWidth() << " h: " << d.getHeight() << endl;
 	cout << "Moments: " << endl;
 	cout << "m00: " << d.m00 << endl;
 	cout << "m11: " << d.m11 << endl;
