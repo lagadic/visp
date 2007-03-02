@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRect.cpp,v 1.2 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpRect.cpp,v 1.3 2007-03-02 18:16:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -93,9 +93,9 @@ vpRect::vpRect(const vpRect& r)
 */  
 vpRect &vpRect::operator=(const vpRect& r) 
 {
-  this->left   = left;
-  this->top    = top;
-  this->width  = width;
-  this->height = height;
+  this->left   = r.left;
+  this->top    = r.top;
+  this->width  = r.width;
+  this->height = r.height;
   return *this;
 };
