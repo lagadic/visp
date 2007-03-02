@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.10 2007-02-28 11:35:49 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.11 2007-03-02 13:05:11 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -153,6 +153,9 @@ SET (HEADER_SIMULATOR
 SET (HEADER_TOOLS
   tools/geometry/vpPlane.h
   tools/geometry/vpRect.h
+  tools/histogram/vpHistogram.h
+  tools/histogram/vpHistogramPeak.h
+  tools/histogram/vpHistogramValey.h
   tools/io/vpIoException.h
   tools/io/vpIoTools.h
   tools/io/vpParseArgv.h

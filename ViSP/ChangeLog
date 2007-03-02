@@ -6,7 +6,8 @@ ViSP 2.4.x
 	  installing ViSP by make install. ViSP can now be used
 	  directly from the build dir, or from the install dir, or
 	  from a package (NSIS, ...)
-        - vpRect class
+        - vpRect class for rectangle manipulations, display
+        - vpHistogram class to handle gray level image histogram
   - Bug fix and improvement
 	- vpImage: getWidth() and getHeight() replace getCols() and getRows() 
 	  which are now obsolete.
