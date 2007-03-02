@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRect.h,v 1.2 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpRect.h,v 1.3 2007-03-02 18:16:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -118,6 +118,18 @@ public:
   */
   inline double getHeight() const { return this->height; };
 
+  /*!
+
+    Sets the coordinates of the rectangle's top left corner to
+    (left, top), and its size to (width, height).
+
+  */
+  inline void setRect(double left, double top, double width, double height) {
+     this->left   = left; 
+     this->top    = top; 
+     this->width  = width;
+     this->height = height;
+  };
   /*!
 
     Sets the left edge position of the rectangle to pos. May change the right
