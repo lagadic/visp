@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.6 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpViewer.cpp,v 1.7 2007-03-05 10:21:40 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,6 +40,7 @@
 #ifdef VISP_HAVE_SOQT
 #include <visp/vpViewer.h>
 #include <visp/vpSimulator.h>
+#include <visp/vpRA.h>
 
 
 #include <Inventor/events/SoKeyboardEvent.h>
@@ -61,6 +62,7 @@ vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu)
 
 }
 
+
 vpViewer::~vpViewer()
 {
 
@@ -79,6 +81,26 @@ vpViewer::actualRedraw(void)
    glClearColor(col[0], col[1], col[2], 0.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+   // this should be used only with the vpRA:vpSimulator
+   // to diplay an image background
+   if (simu->image_background != NULL)
+   {
+     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+     if (simu->typeImage == vpSimulator::grayImage)
+       glDrawPixels(simu->getInternalWidth(), simu->getInternalHeight(),
+		    (GLenum)GL_LUMINANCE,
+		    GL_UNSIGNED_BYTE,
+		    simu->image_background );
+     else
+       glDrawPixels(simu->getInternalWidth(), simu->getInternalHeight(),
+		    (GLenum)GL_RGB,
+		    GL_UNSIGNED_BYTE,
+		    simu->image_background );
+
+     glEnable(GL_DEPTH_TEST);
+     glClear(GL_DEPTH_BUFFER_BIT);     // clear the z-buffer
+     glClearDepth(100.0);              // Profondeur du Z-Buf
+   }
 
    // Render normal scenegraph.
    SoQtExaminerViewer::actualRedraw();

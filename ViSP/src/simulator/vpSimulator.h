@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.7 2007-03-02 10:47:00 marchand Exp $
+ * $Id: vpSimulator.h,v 1.8 2007-03-05 10:21:40 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,6 +102,9 @@ protected:
   void initSoQt() ;
 
 public:
+  typedef enum  {grayImage, colorImage} vpImageType ;
+  vpImageType typeImage ;
+
   GLubyte * image_background;
   //! activate the mainloop
   virtual   void mainLoop() ;
