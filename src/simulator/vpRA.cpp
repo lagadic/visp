@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.cpp,v 1.1 2007-03-02 10:45:38 marchand Exp $
+ * $Id: vpRA.cpp,v 1.2 2007-03-05 10:21:40 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,37 +68,11 @@ vpRA::~vpRA()
 }
 
 void
-vpRA::initInternalViewer(int width, int height)
+vpRA::initInternalViewer(int width, int height,  vpImageType type)
 {
 
   vpSimulator::initInternalViewer(width,height) ;
-  /*internal_width = width;
-  internal_height = height;
 
-  if (mainWindowInitialized==false)
-  {
-    initSoQt() ;
-    initSceneGraph() ;
-  }
-
-  internalView = new vpViewerRA(mainWindow, this);
-
-  // set the scene to render from this view
-  internalView->setSceneGraph(internalRoot);
-
-  // set the title
-  internalView->setTitle("Internal camera view") ;
-
-  //If the view mode is on, user events will be caught and used to influence
-  //the camera position / orientation. in this viewer we do not want that,
-  //we set it to false
-  internalView->setViewing(false);
-
-  // Turn the viewer decorations
-  internalView->setDecoration(false) ;
-
-  internalView->resize(width, height) ;
-  */
 
   // no image is loaded
   background = false ;
@@ -110,11 +84,13 @@ vpRA::initInternalViewer(int width, int height)
     image_background = NULL ;
   }
 
-  image_background =(GLubyte *)
-    malloc(internal_width*internal_height*sizeof(GLubyte)) ;
-
-  // open the window
-  // internalView->show();
+  typeImage = type;
+  if (typeImage == grayImage)
+    image_background =(GLubyte *)
+      malloc(internal_width*internal_height*sizeof(GLubyte)) ;
+  else
+    image_background =(GLubyte *)
+      malloc(3*internal_width*internal_height*sizeof(GLubyte)) ;
 
 }
 
@@ -124,14 +100,12 @@ vpRA::initInternalViewer(int width, int height)
 void
 vpRA::setImage(vpImage<unsigned char> &I)
 {
-  typeImage= vpRA::grayImage ;
 
   if ((internal_width != I.getWidth()) ||
       (internal_height != I.getHeight()))
 	{
 	  cout << "The image size is different from the view size " << endl ;
-	  cout << "return an ERROR -1 " << endl ;
-	  //	  return ERROR ;
+	  throw ;
 	}
 
 
@@ -142,6 +116,37 @@ vpRA::setImage(vpImage<unsigned char> &I)
     for (int j=0 ; j < I.getWidth() ; j++)
       //le repere image open GL est en bas a gauche donc l'image serait inverse
       image_background[i*I.getWidth()+j] = I[I.getHeight()-i-1][j] ;
+
+}
+
+// Grey pictures SetBackGroundImage
+void
+vpRA::setImage(vpImage<vpRGBa> &I)
+{
+
+  if ((internal_width != I.getWidth()) ||
+      (internal_height != I.getHeight()))
+	{
+	  cout << "The image size is different from the view size " << endl ;
+	  throw ;
+	}
+
+
+  background = true ;
+
+  int k =0 ;
+  for (int i=0 ; i <I.getHeight()  ; i++)
+    {
+      k=0;
+      for (int j=0 ; j <I.getWidth()   ; j++)
+	//le repere image open GL est en bas a gauche donc l'image serait inverse
+	{
+	  image_background[i*I.getWidth()*3+k+0]=I[I.getHeight()-i-1][j].R ;
+	  image_background[i*I.getWidth()*3+k+1]=I[I.getHeight()-i-1][j].G ;
+	  image_background[i*I.getWidth()*3+k+2]=I[I.getHeight()-i-1][j].B ;
+	  k+=3;
+      }
+    }
 
 }
 

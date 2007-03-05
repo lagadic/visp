@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.h,v 1.1 2007-03-02 10:45:38 marchand Exp $
+ * $Id: vpRA.h,v 1.2 2007-03-05 10:21:40 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -88,19 +88,15 @@
 class VISP_EXPORT vpRA : public vpSimulator
 {
 
-public:
-  typedef enum  {grayImage, colorImage} vpRAImageType ;
-
 private:
 
-  vpRAImageType typeImage ;
   bool background ;
 
  public:
 
 
   ~vpRA() ;
-  void initInternalViewer(int width, int height) ;
+  void initInternalViewer(int width, int height, vpImageType type = grayImage) ;
   void setImage(vpImage<unsigned char> &I) ;
   void setImage(vpImage<vpRGBa> &I) ;
 
