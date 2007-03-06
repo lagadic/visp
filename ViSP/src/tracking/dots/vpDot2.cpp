@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.14 2007-02-26 16:43:48 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.15 2007-03-06 15:44:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,15 +70,6 @@
 
 #include <visp/vpDot2.h>
 
-//! minumum level for the dot, pixel with lower level
-//! don't belong to this dot.
-const int vpDot2::MIN_IN_LEVEL = 70;
-
-//! Default level for the pixels inside the dot
-const int vpDot2::DEFAULT_IN_LEVEL = 220;
-
-//! Default level for the pixels surrounding the dot
-const int vpDot2::DEFAULT_OUT_LEVEL = 140;
 
 /******************************************************************************
  *
@@ -97,11 +88,16 @@ vpDot2::vpDot2() : vpTracker()
   width = 0;
   height = 0;
   surface = 0;
-  inLevel = 210;
-  outLevel = 150;
+  gray_level_min = 128;
+  gray_level_max = 255;
   accuracy = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+
+  bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
+
+  firstBorder_u = 0;
+  firstBorder_v = 0;
 
   compute_moment = false ;
   graphics = false;
@@ -119,7 +115,7 @@ vpDot2::vpDot2() : vpTracker()
   image.
 
 */
-vpDot2::vpDot2(const int u, const int v ) : vpTracker()
+vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
 {
   cog_ufloat = u ;
   cog_vfloat = v ;
@@ -127,11 +123,16 @@ vpDot2::vpDot2(const int u, const int v ) : vpTracker()
   width = 0;
   height = 0;
   surface = 0;
-  inLevel = 210;
-  outLevel = 150;
+  gray_level_min = 128;
+  gray_level_max = 255;
   accuracy = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+
+  bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
+
+  firstBorder_u = 0;
+  firstBorder_v = 0;
 
   compute_moment = false ;
   graphics = false;
@@ -157,11 +158,16 @@ vpDot2::vpDot2(const double u, const double v ) : vpTracker()
   width = 0;
   height = 0;
   surface = 0;
-  inLevel = 210;
-  outLevel = 150;
+  gray_level_min = 128;
+  gray_level_max = 255;
   accuracy = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+
+  bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
+
+  firstBorder_u = 0;
+  firstBorder_v = 0;
 
   compute_moment = false ;
   graphics = false;
@@ -187,8 +193,8 @@ void vpDot2::operator=( const vpDot2& twinDot )
   width    = twinDot.width;
   height   = twinDot.height;
   surface  = twinDot.surface;
-  inLevel  = twinDot.inLevel;
-  outLevel = twinDot.outLevel;
+  gray_level_min = twinDot.gray_level_min;
+  gray_level_max = twinDot.gray_level_max;
   accuracy = twinDot.accuracy;
 
   area = twinDot.area;
@@ -199,6 +205,14 @@ void vpDot2::operator=( const vpDot2& twinDot )
   m10 = twinDot.m10;
   m02 = twinDot.m02;
   m20 = twinDot.m20;
+
+  bbox_u_min = twinDot.bbox_u_min;
+  bbox_u_max = twinDot.bbox_u_max;
+  bbox_v_min = twinDot.bbox_v_min;
+  bbox_v_max = twinDot.bbox_v_max;
+
+  firstBorder_u = twinDot.firstBorder_u;
+  firstBorder_v = twinDot.firstBorder_v;
 
   compute_moment = twinDot.compute_moment;
   graphics = twinDot.graphics;
@@ -244,10 +258,13 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   cog_ufloat = (double) u ;
   cog_vfloat = (double) v ;
 
-  inLevel  = (int) (I[v][u] * accuracy);
-  outLevel = (int) (I[v][u] * accuracy);
+  gray_level_min = (unsigned int) (I[v][u] * accuracy);
+  if (gray_level_min > 255) 
+    gray_level_min = 255;
 
-  if ( inLevel < MIN_IN_LEVEL ) inLevel = MIN_IN_LEVEL;
+  gray_level_max = (unsigned int) (I[v][u] * (2 - accuracy));
+  if (gray_level_max > 255) 
+    gray_level_max = 255;
 
   setWidth(0);
 
@@ -274,15 +291,70 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   moments see setComputeMoments().
 
 */
-void vpDot2::initTracking(vpImage<unsigned char>& I, int u, int v)
+void vpDot2::initTracking(vpImage<unsigned char>& I, 
+			  unsigned int u, unsigned int v)
 {
   cog_ufloat = (double) u ;
   cog_vfloat = (double) v ;
 
-  inLevel  = (int) (I[v][u] * accuracy);
-  outLevel = (int) (I[v][u] * accuracy);
+  gray_level_min = (unsigned int) (I[v][u] * accuracy);
+  if (gray_level_min > 255) 
+    gray_level_min = 255;
 
-  if ( inLevel < MIN_IN_LEVEL ) inLevel = MIN_IN_LEVEL;
+  gray_level_max = (unsigned int) (I[v][u] * (2 - accuracy));
+  if (gray_level_max > 255) 
+    gray_level_max = 255;
+
+  setWidth(0);
+
+  try {
+    track( I );
+  }
+  catch(...)
+  {
+    vpERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*!
+
+  Initialize the tracking for a dot supposed to be located at (u,v) and update
+  the dot characteristics (center of gravity, moments) by a call to track().
+
+  The sub pixel coordinates of the dot are updated. To get the center
+  of gravity coordinates of the dot, use get_u() and get_v(). To
+  compute the moments use setComputeMoments(true) before a call to
+  initTracking().
+
+  \param I : Image to process.
+
+  \param u : Dot location or starting point (column pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param v : Dot location or starting point (row pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param gray_level_min : Minimum gray level threshold used to segment the dot;
+  value comprised between 0 and 255.
+
+  \param gray_level_max : Maximum gray level threshold used to segment the
+  dot; value comprised between 0 and 255. \e gray_level_max should be
+  greater than \e gray_level_min.
+
+  \sa track(), get_u(), get_v()
+
+*/
+void vpDot2::initTracking(vpImage<unsigned char>& I, 
+			  unsigned int u, unsigned int v, 
+			  unsigned int gray_level_min, 
+			  unsigned int gray_level_max)
+{
+  cog_ufloat = (double) u ;
+  cog_vfloat = (double) v ;
+
+  this->gray_level_min = gray_level_min;
+  this->gray_level_max = gray_level_max;
 
   setWidth(0);
 
@@ -414,16 +486,23 @@ void vpDot2::track(vpImage<unsigned char> &I)
 			      "No dot was found")) ;
   }
 
-  // Updates the in and out levels for the next iteration
-  setInLevel ( (int) (I[(int)get_v()][(int)get_u()] * accuracy) );
-  //setOutLevel( (int) (I[(int)this->I()][(int)this->J()] / accuracy) );
-  setOutLevel( (int) (I[(int)get_v()][(int)get_u()] * accuracy) );
+  // Get dots center of gravity
+  unsigned int u = (unsigned int) this->get_u();
+  unsigned int v = (unsigned int) this->get_v();
+
+  // Updates the min and max gray levels for the next iteration
+  gray_level_min = (unsigned int) (I[v][u] * accuracy);
+  if (gray_level_min > 255) 
+    gray_level_min = 255;
+
+  gray_level_max = (unsigned int) (I[v][u] * (2 - accuracy));
+  if (gray_level_max > 255) 
+    gray_level_max = 255;
 
   if (graphics) {
     // display a red cross at the center of gravity's location in the image.
 
-    vpDisplay::displayCross_uv(I, (int)get_u(), (int) get_v(), 15,
-			       vpColor::red) ;
+    vpDisplay::displayCross_uv(I, u,v, 15, vpColor::red);
     vpDisplay::flush(I);
   }
 }
@@ -510,26 +589,6 @@ double vpDot2::getHeight() const
 double vpDot2::getSurface() const
 {
   return surface;
-}
-
-/*!
-  Return the color level of pixels inside the dot.
-
-  \sa getOutLevel()
-*/
-int vpDot2::getInLevel() const
-{
-  return inLevel;
-}
-
-/*!
-  Return the color level of pixels outside the dot.
-
-  \sa getInLevel()
-*/
-int vpDot2::getOutLevel() const
-{
-  return outLevel;
 }
 
 /*!
@@ -633,44 +692,6 @@ void vpDot2::setSurface( const double & surface )
 
 /*!
 
-  Set the color level of the dot to search a dot in an area. This level will be
-  used to know if a pixel in the image belongs to the dot or not. Only pixels
-  with higher level can belong to the dot.  If the level is lower than the
-  minimum level for a dot, set the level to MIN_IN_LEVEL.
-
-  \param inLevel : Color level of a dot to search in an area.
-
-  \sa setWidth(), setHeight(), setSurface(), setOutLevel(), setAccuracy()
-
-*/
-void vpDot2::setInLevel( const int & inLevel )
-{
-  if (inLevel > MIN_IN_LEVEL) {
-    this->inLevel = inLevel;
-  }
-  else {
-    this->inLevel = MIN_IN_LEVEL;
-  }
-}
-
-
-/*!
-
-  Set the color level of pixels surrounding the dot. This is meant to be used
-  to search a dot in an area.
-
-  \param outLevel : Intensity level of a dot to search in an area.
-
-  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setAccuracy()
-*/
-void vpDot2::setOutLevel( const int & outLevel )
-{
-  this->outLevel = outLevel;
-}
-
-
-/*!
-
   Set the level of accuracy of informations about the dot.
 
   \param accuracy : It is an double precision float which value is in ]0,1]:
@@ -699,7 +720,8 @@ void vpDot2::setAccuracy( const double & accuracy )
 
 /*!
 
-  Set the parameters of an area to the image dimension.
+  Set the parameters of the area in which a dot is search to the image
+  dimension.
 
   \param I : Image.
 
@@ -723,7 +745,9 @@ vpDot2::setArea(vpImage<unsigned char> &I)
 
 */
 void
-vpDot2::setArea(vpImage<unsigned char> &I, int u, int v, int w, int h)
+vpDot2::setArea(vpImage<unsigned char> &I, 
+		int u, int v,
+		int w, int h)
 {
   int image_w = I.getWidth();
   int image_h = I.getHeight();
@@ -737,15 +761,7 @@ vpDot2::setArea(vpImage<unsigned char> &I, int u, int v, int w, int h)
   if ((u + w) > image_w) w = image_w - u - 1;
   if ((v + h) > image_h) h = image_h - v - 1;
 
-  area.u_min = u;
-  area.v_min = v;
-  area.u_max = u + w - 1;
-  area.v_max = v + h - 1;
-  area.w = w;
-  area.h = h;
-  // compute the area center, we need it later in the loop
-  area.cog_u = u + w / 2.;
-  area.cog_v = v + h / 2.;
+  area.setRect(u, v, w, h);
 }
 
 /*!
@@ -756,7 +772,7 @@ vpDot2::setArea(vpImage<unsigned char> &I, int u, int v, int w, int h)
 
 */
 void
-vpDot2::setArea(const vpAreaType & a)
+vpDot2::setArea(const vpRect & a)
 {
   area = a;
 }
@@ -847,20 +863,21 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
   \sa searchDotsInArea(vpImage<unsigned char>& I)
 */
 vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
-					  int area_u, int area_v,
-					  int area_w, int area_h)
+					  int area_u, 
+					  int area_v,
+					  int area_w, 
+					  int area_h)
 {
   setArea(I, area_u, area_v, area_w, area_h);
 
   // compute the size of the search grid
-  int gridWidth = 1;
-  int gridHeight = 1;
+  unsigned int gridWidth = 1;
+  unsigned int gridHeight = 1;
   getGridSize( gridWidth, gridHeight );
 
   if (graphics) {
     // Display the area were the dot is search
-    vpDisplay::displayRectangle_uv(I, area.u_min, area.v_min,
-				   area.w, area.h, vpColor::blue);
+    vpDisplay::displayRectangle(I, area, vpColor::blue);
     vpDisplay::flush(I);
   }
 
@@ -871,9 +888,16 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
   vpList<vpDot2>* badDotsVector  = new vpList<vpDot2>();
 
   vpDot2* dotToTest = NULL;
-  for( int v=area.v_min ; v<area.v_max ; v=v+gridHeight )
+
+  unsigned int area_u_min = (unsigned int) area.getLeft();
+  unsigned int area_u_max = (unsigned int) area.getRight();
+  unsigned int area_v_min = (unsigned int) area.getTop();
+  unsigned int area_v_max = (unsigned int) area.getBottom();
+
+  unsigned int u, v;
+  for( v=area_v_min ; v<area_v_max ; v=v+gridHeight )
   {
-    for( int u=area.u_min ; u<area.u_max ; u=u+gridWidth )
+    for( u=area_u_min ; u<area_u_max ; u=u+gridWidth )
     {
       // if the pixel we're in doesn't have the right color (not white enough),
       // no need to check futher, just get to the next grid intersection.
@@ -927,24 +951,29 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       dotToTest = getInstance();
       dotToTest->set_u(u);
       dotToTest->set_v(v);
-      dotToTest->setInLevel ( (int) getInLevel()  );
-      dotToTest->setOutLevel( (int) getOutLevel() );
+      dotToTest->setGrayLevelMin ( getGrayLevelMin()  );
+      dotToTest->setGrayLevelMax ( getGrayLevelMax()  );
       dotToTest->setGraphics( graphics );
       dotToTest->setComputeMoments( true );
       dotToTest->setArea( area );
 
-      // first comput the parameters of the dot.
+      // first compute the parameters of the dot.
       // if for some reasons this caused an error tracking
       // (dot partially out of the image...), check the next intersection
       if( dotToTest->computeParameters( I ) == false ) {
+	// Jump all the pixels between v,u and v, dotToTest->getFirstBorder_u()
+	u = dotToTest->getFirstBorder_u();
+	v = dotToTest->getFirstBorder_v();
 	continue;
       }
       // if the dot to test is valid,
       if( dotToTest->isValid( I, *this ) )
       {
 	// compute the distance to the center
-	double thisDiff_u = dotToTest->get_u() - area.cog_u;
-	double thisDiff_v = dotToTest->get_v() - area.cog_v;
+	double area_center_u, area_center_v;
+	area.getCenter(area_center_u, area_center_v);
+	double thisDiff_u = dotToTest->get_u() - area_center_u;
+	double thisDiff_v = dotToTest->get_v() - area_center_v;
 	double thisDist = sqrt( thisDiff_u*thisDiff_u + thisDiff_v*thisDiff_v);
 
 	bool stopLoop = false;
@@ -961,11 +990,14 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 	      fabs( tmpDot.get_v() - dotToTest->get_v() ) < epsilon )
 	  {
 	    stopLoop = true;
+	    // Jump all the pixels between v,u and v, tmpDot->getFirstBorder_u()
+	    u = tmpDot.getFirstBorder_u();
+	    v = tmpDot.getFirstBorder_v();
 	    continue;
 	  }
 
-	  double otherDiff_u = tmpDot.get_u() - area.cog_u;
-	  double otherDiff_v = tmpDot.get_v() - area.cog_v;
+	  double otherDiff_u = tmpDot.get_u() - area_center_u;
+	  double otherDiff_v = tmpDot.get_v() - area_center_v;
 	  double otherDist = sqrt( otherDiff_u*otherDiff_u +
 				   otherDiff_v*otherDiff_v );
 
@@ -978,6 +1010,9 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 	    niceDotsVector->addLeft( *dotToTest );
 	    niceDotsVector->next();
 	    stopLoop = true;
+	    // Jump all the pixels between v,u and v, tmpDot->getFirstBorder_u()
+	    u = tmpDot.getFirstBorder_u();
+	    v = tmpDot.getFirstBorder_v();
 	    continue;
 	  }
 	  niceDotsVector->next();
@@ -1062,7 +1097,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
 
 
   //
-  // Now we can procede to more advanced (and costy) checks.
+  // Now we can proceed to more advanced (and costy) checks.
   // First check ther is a white (>level) elipse within dot
   // Then check the dot is surrounded by a black elipse.
   //
@@ -1095,7 +1130,8 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
       vpDisplay::flush(I);
     }
     // If outside the area, continue
-    if (u < area.u_min || u >= area.u_max || v < area.v_min || v >= area.v_max)
+    if (u < area.getLeft() || u > area.getRight() 
+	|| v < area.getTop() || v > area.getBottom())
       continue;
     if( !wantedDot.hasReverseLevel( I, u, v ) )
     {
@@ -1125,12 +1161,13 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
 
 */
 bool vpDot2::hasGoodLevel(const vpImage<unsigned char>& I,
-			  const int &u, const int &v) const
+			  const unsigned int &u, 
+			  const unsigned int &v) const
 {
   if( !isInArea( I, u, v ) )
     return false;
 
-  if( I[v][u] > inLevel )
+  if( I[v][u] >= gray_level_min &&  I[v][u] <= gray_level_max)
   {
     return true;
   }
@@ -1152,13 +1189,13 @@ bool vpDot2::hasGoodLevel(const vpImage<unsigned char>& I,
 
   \return true if it is so, and false otherwise.
 
-  \sa setOutLevel()
 */
 bool vpDot2::hasReverseLevel(vpImage<unsigned char>& I,
-			     const int &u, const int &v) const
+			     const unsigned int &u, 
+			     const unsigned int &v) const
 {
 
-  if( I[v][u] < outLevel )
+  if( I[v][u] < gray_level_min ||  I[v][u] > gray_level_max)
   {
     return true;
   }
@@ -1210,7 +1247,7 @@ vpList<int> vpDot2::getListFreemanElement()
   \return List of u coodinates of all the pixels on the dot boundary.
 
 */
-vpList<int> vpDot2::getList_u()
+vpList<unsigned int> vpDot2::getList_u()
 {
   return u_list;
 }
@@ -1220,7 +1257,7 @@ vpList<int> vpDot2::getList_u()
 
   \return List of v coodinates of all the pixels on the dot boundary.
 */
-vpList<int> vpDot2::getList_v()
+vpList<unsigned int> vpDot2::getList_v()
 {
   return v_list;
 }
@@ -1262,6 +1299,8 @@ vpList<int> vpDot2::getList_v()
 
   \retunn true : If a dot was found.
 
+  \sa getFirstBorder_u(), getFirstBorder_v()
+
 */
 bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 				const double &_u,
@@ -1295,14 +1334,14 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     return false;
   }
 
-  int u_min = I.getWidth();
-  int u_max = 0;
-  int v_min = I.getHeight();
-  int v_max = 0;
+  bbox_u_min = I.getWidth();
+  bbox_u_max = 0;
+  bbox_v_min = I.getHeight();
+  bbox_v_max = 0;
 
   // if the first point doesn't have the right level then there's no point to
   // continue.
-  if( !hasGoodLevel( I, (int) est_u, (int) est_v ) )
+  if( !hasGoodLevel( I, (unsigned int) est_u, (unsigned int) est_v ) )
   {
     vpDEBUG_TRACE(3, "Can't find a dot from pixel (%d, %d) coordinates",
 		(int) est_u, (int) est_v) ;
@@ -1315,48 +1354,48 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // from here we use int and not double. This is because we don't have
   // rounding problems and it's actually more a trouble than smth else to
   // work with double when navigating around the dot.
-  int firstBorder_u = (int) est_u;
-  int firstBorder_v = (int) est_v;
-  while( hasGoodLevel( I, firstBorder_u+1, firstBorder_v ) &&
-	 firstBorder_u < area.u_max/*I.getWidth()*/ )
+  this->firstBorder_u = (unsigned int) est_u;
+  this->firstBorder_v = (unsigned int) est_v;
+  while( hasGoodLevel( I, this->firstBorder_u+1, this->firstBorder_v ) &&
+	 firstBorder_u < area.getRight()/*I.getWidth()*/ )
   {
     // if the width of this dot was initialised and we already crossed the dot
     // on more than the max possible width, no need to continue, return an
     // error tracking
-    if( getWidth() > 0 && fabs( est_u - firstBorder_u )> getWidth()/getAccuracy() )
+    if( getWidth() > 0 && fabs( est_u - this->firstBorder_u )> getWidth()/getAccuracy() )
     {
       vpDEBUG_TRACE(3, "The found dot has a greater with than the required one") ;
       return false;
     }
 
-    firstBorder_u++;
+    this->firstBorder_u++;
   }
 
-  int dir = 6;
+  unsigned int dir = 6;
 
   // Determine the first element of the Freeman chain
-  computeFreemanChainElement(I, firstBorder_u, firstBorder_v, dir);
+  computeFreemanChainElement(I, this->firstBorder_u, this->firstBorder_v, dir);
   int firstDir = dir;
 
   // if we are now out of the image, return an error tracking
-  if( !isInArea( I, firstBorder_u, firstBorder_v ) )
+  if( !isInArea( I, this->firstBorder_u, this->firstBorder_v ) )
   {
     vpDEBUG_TRACE(3, "Border pixel coordinates (%d, %d) of the dot are not in the area",
-		firstBorder_u, firstBorder_v);
+		  this->firstBorder_u, this->firstBorder_v);
     return false;
   }
 
   // store the new direction and dot border coordinates.
   direction_list.addRight( dir );
-  u_list.addRight( firstBorder_u );
-  v_list.addRight( firstBorder_v );
+  u_list.addRight( this->firstBorder_u );
+  v_list.addRight( this->firstBorder_v );
 
-  int border_u = firstBorder_u;
-  int border_v = firstBorder_v;
+  unsigned int border_u = this->firstBorder_u;
+  unsigned int border_v = this->firstBorder_v;
 
 //   vpTRACE("-----------------------------------------");
 //   vpTRACE("first border_u: %d border_v: %d dir: %d",
-// 	firstBorder_u, firstBorder_v,firstDir);
+// 	this->firstBorder_u, this->firstBorder_v,firstDir);
   int du, dv;
   float dS, dMu, dMv, dMuv, dMu2, dMv2;
   m00 = 0.0;
@@ -1404,10 +1443,10 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // vpDisplay::getClick(I);
 
     // update the extreme point of the dot.
-    if( border_v < v_min ) v_min = border_v;
-    if( border_v > v_max ) v_max = border_v;
-    if( border_u < u_min ) u_min = border_u;
-    if( border_u > u_max ) u_max = border_u;
+    if( border_v < bbox_v_min ) bbox_v_min = border_v;
+    if( border_v > bbox_v_max ) bbox_v_max = border_v;
+    if( border_u < bbox_u_min ) bbox_u_min = border_u;
+    if( border_u > bbox_u_max ) bbox_u_max = border_u;
 
     // move around the tracked entity by following the border.
     if (computeFreemanChainElement(I, border_u, border_v, dir) == false)
@@ -1416,8 +1455,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 //     vpTRACE("border_u: %d border_v: %d dir: %d", border_u, border_v, dir);
 
   }
-  while( (firstBorder_u != border_u
-	  || firstBorder_v != border_v
+  while( (this->firstBorder_u != border_u
+	  || this->firstBorder_v != border_v
 	  || firstDir != dir) &&
 	 isInArea( I, border_u, border_v ) );
 
@@ -1436,7 +1475,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     double tmpCenter_v = m01 / m00;
 
     // check the center is in the image... never know...
-    if( !hasGoodLevel( I, (int)tmpCenter_u, (int)tmpCenter_v ) )
+    if( !hasGoodLevel( I, (unsigned int)tmpCenter_u,
+		       (unsigned int)tmpCenter_v ) )
     {
       vpDEBUG_TRACE(3, "The center of gravity of the dot has not a good in level");
       return false;
@@ -1446,8 +1486,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     cog_vfloat = tmpCenter_v;
   }
 
-  width   = u_max - u_min;
-  height  = v_max - v_min;
+  width   = bbox_u_max - bbox_u_min + 1;
+  height  = bbox_v_max - bbox_v_min + 1;
   surface = m00;
 
   return true;
@@ -1472,68 +1512,70 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 */
 bool
 vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I,
-				   const int &u, const int &v, int &element)
+				   const unsigned int &u, 
+				   const unsigned int &v, 
+				   unsigned int &element)
 {
 
   if (hasGoodLevel( I, u, v )) {
-    int _u = u;
-    int _v = v;
+    unsigned int _u = u;
+    unsigned int _v = v;
     // get the point on the right of the point passed in
     updateFreemanPosition( _u, _v, (element + 2) %8 );
     if (hasGoodLevel( I, _u, _v )) {
       element = (element + 2) % 8;      // turn right
     }
     else {
-      int _u = u;
-      int _v = v;
+      unsigned int _u = u;
+      unsigned int _v = v;
       updateFreemanPosition( _u, _v, (element + 1) %8 );
 
       if ( hasGoodLevel( I, _u, _v )) {
 	element = (element + 1) % 8;      // turn diag right
       }
       else {
-	int _u = u;
-	int _v = v;
+	unsigned int _u = u;
+	unsigned int _v = v;
 	updateFreemanPosition( _u, _v, element ); // same direction
 
 	if ( hasGoodLevel( I, _u, _v )) {
 	  element = element;      // keep same dir
 	}
 	else {
-	  int _u = u;
-	  int _v = v;
+	  unsigned int _u = u;
+	  unsigned int _v = v;
 	  updateFreemanPosition( _u, _v, (element + 7) %8 ); // diag left
 
 	  if ( hasGoodLevel( I, _u, _v )) {
 	    element = (element + 7) %8;      // turn diag left
 	  }
 	  else {
-	    int _u = u;
-	    int _v = v;
+	    unsigned int _u = u;
+	    unsigned int _v = v;
 	    updateFreemanPosition( _u, _v, (element + 6) %8 ); // left
 
 	    if ( hasGoodLevel( I, _u, _v )) {
 	      element = (element + 6) %8 ;      // turn left
 	    }
 	    else {
-	      int _u = u;
-	      int _v = v;
+	      unsigned int _u = u;
+	      unsigned int _v = v;
 	      updateFreemanPosition( _u, _v, (element + 5) %8 ); // left
 
 	      if ( hasGoodLevel( I, _u, _v )) {
 		element = (element + 5) %8 ;      // turn diag down
 	      }
 	      else {
-		int _u = u;
-		int _v = v;
+		unsigned int _u = u;
+		unsigned int _v = v;
 		updateFreemanPosition( _u, _v, (element + 4) %8 ); // left
 
 		if ( hasGoodLevel( I, _u, _v )) {
 		  element = (element + 4) %8 ;      // turn down
 		}
 		else {
-		  int _u = u;
-		  int _v = v;
+		  unsigned int _u = u;
+		  unsigned int _v = v;
 		  updateFreemanPosition( _u, _v, (element + 3) %8 ); // diag
 
 		  if ( hasGoodLevel( I, _u, _v )) {
@@ -1595,7 +1637,9 @@ vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I,
 */
 void
 vpDot2::computeFreemanParameters(const vpImage<unsigned char> &I,
-				 const int &u_p, const int &v_p, int &element,
+				 const int &u_p, 
+				 const int &v_p, 
+				 unsigned int &element,
 				 int &du, int &dv,
 				 float &dS,
 				 float &dMu, float &dMv,
@@ -1729,7 +1773,8 @@ vpDot2::computeFreemanParameters(const vpImage<unsigned char> &I,
   6=up and 7.
 
 */
-void vpDot2::updateFreemanPosition( int& u, int& v, const int &dir )
+void vpDot2::updateFreemanPosition( unsigned int& u, unsigned int& v, 
+				    const unsigned int &dir )
 {
   switch(dir) {
   case 0: u += 1;         break;
@@ -1817,10 +1862,15 @@ bool vpDot2::isInArea( const vpImage<unsigned char> &I) const
   otherwise.
 */
 bool vpDot2::isInArea( const vpImage<unsigned char> &I,
-		       const int &u, const int &v) const
+		       const unsigned int &u, const unsigned int &v) const
 {
-  if( u < area.u_min || u > area.u_max ) return false;
-  if( v < area.v_min || v > area.v_max ) return false;
+  unsigned int area_u_min = (unsigned int) area.getLeft();
+  unsigned int area_u_max = (unsigned int) area.getRight();
+  unsigned int area_v_min = (unsigned int) area.getTop();
+  unsigned int area_v_max = (unsigned int) area.getBottom();
+
+  if( u < area_u_min || u > area_u_max ) return false;
+  if( v < area_v_min || v > area_v_max ) return false;
   return true;
 }
 
@@ -1836,15 +1886,15 @@ bool vpDot2::isInArea( const vpImage<unsigned char> &I,
 
 
 */
-void vpDot2::getGridSize( int &gridWidth, int &gridHeight )
+void vpDot2::getGridSize( unsigned int &gridWidth, unsigned int &gridHeight )
 {
   // first get the research grid width and height Note that
   // 1/sqrt(2)=cos(pi/4). The grid squares should be small enough to be
   // contained in the dot. We gent this here if the dot is a perfect disc.
   // More accurate criterium to define the grid should be implemented if
   // necessary
-  gridWidth = (int) (getWidth() * getAccuracy() / sqrt(2.));
-  gridHeight = (int) (getHeight() * getAccuracy() / sqrt(2.0));
+  gridWidth = (unsigned int) (getWidth() * getAccuracy() / sqrt(2.));
+  gridHeight = (unsigned int) (getHeight() * getAccuracy() / sqrt(2.0));
 
   if( gridWidth == 0 ) gridWidth = 1;
   if( gridHeight == 0 ) gridHeight = 1;
