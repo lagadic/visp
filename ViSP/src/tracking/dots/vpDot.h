@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.14 2007-03-02 18:17:48 fspindle Exp $
+ * $Id: vpDot.h,v 1.15 2007-03-06 15:42:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,13 +83,13 @@ public:
 private:
 
   //! internal use only
-  vpList<unsigned> Lu, Lv ;
+  vpList<unsigned int> Lu, Lv ;
 
   //! Type of connexity
   ConnexityEnum connexity;
 
   //! coordinates of the point center of gravity
-  unsigned cog_u, cog_v ;
+  unsigned int cog_u, cog_v ;
   //! coordinates (float) of the point center of gravity
   double cog_ufloat, cog_vfloat ;
 
@@ -152,7 +152,7 @@ public :
 public:
   void init() ;
   vpDot() ;
-  vpDot(const unsigned u, const unsigned v) ;
+  vpDot(const unsigned int u, const unsigned int v) ;
   vpDot(const double u, const double v) ;
   vpDot(const vpDot& c) ;
   ~vpDot() ;
@@ -187,7 +187,7 @@ public:
 
 
   */
-  void   get_u(vpList<unsigned> & u_list) { u_list = Lu; };
+  void   get_u(vpList<unsigned int> & u_list) { u_list = Lu; };
   /*!
 
   Return the list of the "v" coordinates (column) of all the pixels on the dot
@@ -197,10 +197,10 @@ public:
   is update after a call to track().
 
   */
-  void   get_v(vpList<unsigned> & v_list) { v_list = Lv; };
+  void   get_v(vpList<unsigned int> & v_list) { v_list = Lv; };
 
-  void set_u(double u) { cog_ufloat = u ; cog_u = (unsigned)u ; }
-  void set_v(double v) { cog_vfloat = v ; cog_v = (unsigned)v ; }
+  void set_u(double u) { cog_ufloat = u ; cog_u = (unsigned int)u ; }
+  void set_v(double v) { cog_vfloat = v ; cog_v = (unsigned int)v ; }
 
   /*!
     Set the type of connexity: 4 or 8.
@@ -213,7 +213,9 @@ public:
     Print the coordinates of the point center of gravity
     in the stream.
   */
-  friend ostream& operator<< (ostream& os, vpDot& p) { return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ; } ;
+  friend ostream& operator<< (ostream& os, vpDot& p) { 
+    return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ; 
+  } ;
   void print(ostream& os) { os << *this << endl ; }
 
 private:
@@ -223,13 +225,13 @@ private:
       out
     } ;
   double nbMaxPoint ;
-  int connexe(vpImage<unsigned char>& I, unsigned u, unsigned v, 
-	      unsigned char gray_level_min, unsigned char gray_level_max,
+  int connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v, 
+	      unsigned int gray_level_min, unsigned int gray_level_max,
 	      double &mean_value, double &u_cog, double &v_cog, double &n);
   void COG(vpImage<unsigned char> &I,double& u, double& v) ;
 
-  unsigned char gray_level_min; // left threshold for binarisation
-  unsigned char gray_level_max; // right threshold for binarisation
+  unsigned int gray_level_min; // left threshold for binarisation
+  unsigned int gray_level_max; // right threshold for binarisation
 
   //! flag : true moment are computed
   bool compute_moment ;
@@ -251,10 +253,10 @@ public:
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
   void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, unsigned u, unsigned v) ;
-  void initTracking(vpImage<unsigned char> &I, unsigned u, unsigned v, 
-		    unsigned char gray_level_min, 
-		    unsigned char gray_level_max);
+  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v);
+  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v, 
+		    unsigned int gray_level_min, 
+		    unsigned int gray_level_max);
   void track(vpImage<unsigned char> & I) ;
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
   //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels)

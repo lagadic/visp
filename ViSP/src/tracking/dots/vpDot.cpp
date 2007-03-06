@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.19 2007-03-02 18:17:48 fspindle Exp $
+ * $Id: vpDot.cpp,v 1.20 2007-03-06 15:42:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,7 +95,7 @@ vpDot::vpDot() : vpTracker()
   \param u : dot location (column)
   \param v : dot location (row)
  */
-vpDot::vpDot(const unsigned u, const unsigned v) : vpTracker()
+vpDot::vpDot(const unsigned int u, const unsigned int v) : vpTracker()
 {
   init() ;
 
@@ -118,8 +118,8 @@ vpDot::vpDot(const double u,const  double v) : vpTracker()
 
   init() ;
 
-  cog_u = (unsigned)u ;
-  cog_v = (unsigned)v ;
+  cog_u = (unsigned int)u ;
+  cog_v = (unsigned int)v ;
 
   cog_ufloat = u ;
   cog_vfloat = v ;
@@ -203,8 +203,8 @@ vpDot::operator==(const vpDot& m)
   \return vpDot::out if an error occurs, vpDot::in otherwise.
 */
 int
-vpDot::connexe(vpImage<unsigned char>& I, unsigned u, unsigned v, 
-	       unsigned char gray_level_min, unsigned char gray_level_max,
+vpDot::connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v, 
+	       unsigned int gray_level_min, unsigned int gray_level_max,
 	       double &mean_value, double &u_cog, double &v_cog, double &n)
 {
 
@@ -356,11 +356,12 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 
 #if 0
   // Original version
-  if (  connexe(I, (unsigned)u, (unsigned)v, gray_level_min, gray_level_max,
+  if (  connexe(I, (unsigned int)u, (unsigned int)v, 
+		ray_level_min, gray_level_max,
 		mean_value, u_cog, v_cog, npoint) == vpDot::out)
   {
     bool sol = false ;
-    unsigned pas  ;
+    unsigned int pas  ;
     for (pas = 2 ; pas <= 25 ; pas ++ )if (sol==false)
     {
       for (int k=-1 ; k <=1 ; k++) if (sol==false)
@@ -371,7 +372,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	  Lu.kill() ;
 	  Lv.kill() ;
 	  mean_value = 0;
-	  if (connexe(I, (unsigned)(u+k*pas),(unsigned)(v+l*pas), 
+	  if (connexe(I, (unsigned int)(u+k*pas),(unsigned int)(v+l*pas), 
 		      gray_level_min, gray_level_max,		
 		      mean_value,u_cog, v_cog, npoint) != vpDot::out)
 	  {
@@ -388,18 +389,19 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   }
 #else
   // If the dot is not found, search around using a spiral
-  if (  connexe(I,(unsigned)u,(unsigned)v, gray_level_min, gray_level_max, 
+  if (  connexe(I,(unsigned int)u,(unsigned int)v,
+		gray_level_min, gray_level_max, 
 		mean_value, u_cog, v_cog, npoint) == vpDot::out)
   {
 
     bool sol = false ;
 
-    unsigned right = 1;
-    unsigned botom = 1;
-    unsigned left = 2;
-    unsigned up = 2;
+    unsigned int right = 1;
+    unsigned int botom = 1;
+    unsigned int left = 2;
+    unsigned int up = 2;
     double u_ = u, v_ = v;
-    unsigned k;
+    unsigned int k;
 
     // Spiral search from the center to find the nearest dot
     while( (right < SPIRAL_SEARCH_SIZE) && (sol == false) ) {
@@ -409,7 +411,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lu.kill() ;
 	Lv.kill() ;
 	mean_value = 0;
-	if (connexe(I, (unsigned)u_+k, (unsigned)(v_), 
+	if (connexe(I, (unsigned int)u_+k, (unsigned int)(v_), 
 		    gray_level_min, gray_level_max, mean_value,
 		    u_cog, v_cog, npoint) != vpDot::out) {
 	  sol = true; u = u_+k; v = v_;
@@ -425,7 +427,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (unsigned)(u_), (unsigned)(v_+k), 
+	if (connexe(I, (unsigned int)(u_), (unsigned int)(v_+k), 
 		    gray_level_min, gray_level_max, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
@@ -442,7 +444,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (unsigned)(u_-k), (unsigned)(v_), 
+	if (connexe(I, (unsigned int)(u_-k), (unsigned int)(v_), 
 		    gray_level_min,  gray_level_max, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
@@ -459,7 +461,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	Lv.kill() ;
 	mean_value = 0;
 
-	if (connexe(I, (unsigned)(u_), (unsigned)(v_-k), 
+	if (connexe(I, (unsigned int)(u_), (unsigned int)(v_-k), 
 		    gray_level_min, gray_level_max, mean_value,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
@@ -481,7 +483,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   Lu.front() ; Lv.front() ;
   while (!Lu.outside())
   {
-    unsigned u,v ;
+    unsigned int u,v ;
     u = Lu.value() ; v = Lv.value() ;
     I[v][u] = 255 ;
     Lu.next() ;
@@ -496,12 +498,12 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   v = v_cog ;
 
   // Initialize the threshold for the next call to track()
-  gray_level_min = (unsigned char) (mean_value * 0.8);
-  int _gray_level_max = (int) (mean_value * 1.2);
-  if (_gray_level_max > 255) 
+  gray_level_min = (unsigned int) (mean_value * 0.8);
+  if (gray_level_min > 255) 
+    gray_level_min = 255;
+  gray_level_max = (unsigned int) (mean_value * 1.2);
+  if (gray_level_max > 255) 
     gray_level_max = 255;
-  else 
-    gray_level_max = _gray_level_max;
 
   //vpCTRACE << "gray_level_min: " << gray_level_min << endl;
   //vpCTRACE << "gray_level_max: " << gray_level_max << endl;
@@ -554,16 +556,16 @@ vpDot::setNbMaxPoint(double nb)
 void
 vpDot::initTracking(vpImage<unsigned char>& I)
 {
-  unsigned i1,j1;
+  unsigned int i1,j1;
 
   while (vpDisplay::getClick(I,i1,j1)!=true) ;
 
-  gray_level_min = (unsigned char) (I[i1][j1] * 0.8);
-  int _gray_level_max = (int) (I[i1][j1] * 1.2);
-  if (_gray_level_max > 255) 
+  gray_level_min = (unsigned int) (I[i1][j1] * 0.8);
+  if (gray_level_min > 255) 
+    gray_level_min = 255;
+  gray_level_max = (unsigned int) (I[i1][j1] * 1.2);
+  if (gray_level_max > 255) 
     gray_level_max = 255;
-  else 
-    gray_level_max = _gray_level_max;
 
   double u,v ;
   u = j1 ;
@@ -572,15 +574,15 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   cog_ufloat = u ;
   cog_vfloat = v ;
 
-  if ((u-(unsigned)u) < 0.5) 
-    cog_u = (unsigned)u ; 
+  if ((u-(unsigned int)u) < 0.5) 
+    cog_u = (unsigned int)u ; 
   else  
-    cog_u = (unsigned)u+1 ;
+    cog_u = (unsigned int)u+1 ;
 
-  if ((v-(unsigned)v) < 0.5)
-    cog_v = (unsigned)v ; 
+  if ((v-(unsigned int)v) < 0.5)
+    cog_v = (unsigned int)v ; 
   else 
-    cog_v = (unsigned)v+1 ;
+    cog_v = (unsigned int)v+1 ;
 
   try {
     track( I );
@@ -619,7 +621,7 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   \sa track(), get_u(), get_v()
 */
 void
-vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v)
+vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
 {
 
   cog_ufloat = u ;
@@ -628,12 +630,12 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v)
   cog_u = u ;
   cog_v = v ;
 
-  gray_level_min = (unsigned char) (I[cog_v][cog_u] * 0.8);
-  int _gray_level_max = (int) (I[cog_v][cog_u] * 1.2);
-  if (_gray_level_max > 255) 
+  gray_level_min = (unsigned int) (I[cog_v][cog_u] * 0.8);
+  if (gray_level_min > 255) 
+    gray_level_min = 255;
+  gray_level_max = (unsigned int) (I[cog_v][cog_u] * 1.2);
+  if (gray_level_max > 255) 
     gray_level_max = 255;
-  else 
-    gray_level_max = _gray_level_max;
 
   try {
     track( I );
@@ -677,8 +679,8 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v)
   \sa track(), get_u(), get_v()
 */
 void
-vpDot::initTracking(vpImage<unsigned char>& I, unsigned u, unsigned v, 
-		    unsigned char gray_level_min, unsigned char gray_level_max)
+vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v, 
+		    unsigned int gray_level_min, unsigned int gray_level_max)
 {
 
   cog_ufloat = u ;
@@ -733,8 +735,13 @@ vpDot::track(vpImage<unsigned char> &I)
   cog_ufloat = u ;
   cog_vfloat = v ;
 
-  if ((u-(unsigned)u) < 0.5)   cog_u = (unsigned)u ; else  cog_u = (unsigned)u+1 ;
-  if ((v-(unsigned)v) < 0.5)   cog_v = (unsigned)v ; else  cog_v = (unsigned)v+1 ;
+  if ((u-(unsigned int)u) < 0.5)   
+    cog_u = (unsigned int)u ; 
+  else  cog_u = (unsigned int)u+1 ;
+  
+  if ((v-(unsigned int)v) < 0.5) 
+    cog_v = (unsigned int)v ; 
+  else  cog_v = (unsigned int)v+1 ;
 }
 
 /*!
