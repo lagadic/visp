@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.7 2007-03-05 10:21:40 marchand Exp $
+ * $Id: vpViewer.cpp,v 1.8 2007-03-06 16:44:48 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,7 +40,6 @@
 #ifdef VISP_HAVE_SOQT
 #include <visp/vpViewer.h>
 #include <visp/vpSimulator.h>
-#include <visp/vpRA.h>
 
 
 #include <Inventor/events/SoKeyboardEvent.h>
