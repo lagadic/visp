@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.4 2007-03-06 15:45:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -280,30 +280,31 @@ main(int argc, char ** argv)
 
   // Dot declaration
   vpDot2 d ;
-  try{
-//     d.initTracking(I) ;
-//     cout << "Dot characteristics: " << endl;
-//     cout << d.getWidth() << endl;
-//     cout << d.getHeight()<< endl;
-//     cout << d.getSurface()<< endl;
-//     cout << d.getInLevel()<< endl;
-//     cout << d.getOutLevel()<< endl;
-//     cout << d.getAccuracy()<< endl;
+  if (0) {
+    try{
+      d.initTracking(I) ;
+      printf("Dot characteristics: \n");
+      printf("  width : %lf\n", d.getWidth());
+      printf("  height: %lf\n", d.getHeight());
+      printf("  surface: %lf\n", d.getSurface());
+      printf("  gray level min: %d\n", d.getGrayLevelMin());
+      printf("  gray level max: %d\n", d.getGrayLevelMax());
+      printf("  accuracy: %lf\n", d.getAccuracy());
+    }
+    catch(...)
+      {
+	cerr << "Cannot initialise the tracking and get default dot features..." << endl;
+	exit(-1);
+      }
   }
-  catch(...)
-  {
-    cerr << "Cannot initialise the tracking and get default dot features..." << endl;
-    exit(-1);
-  }
-
 
   // Set dot characteristics for the auto detection
   d.setGraphics(true);
   d.setWidth(15.0);
   d.setHeight(12.0);
   d.setSurface(124);
-  d.setInLevel(164);
-  d.setOutLevel(164);
+  d.setGrayLevelMin(164);
+  d.setGrayLevelMax(255);
   d.setAccuracy(0.65);
 
   while (iter < 10)
@@ -315,11 +316,13 @@ main(int argc, char ** argv)
     filename = dirname + s.str();
     // read the image
     vpImageIo::readPGM(I, filename);
+
     if (opt_display) {
       // Display the image
       vpDisplay::display(I) ;
     }
 
+    cout << "Search dots in image" << filename << endl;
     vpList<vpDot2> * list_d;
     list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
 
