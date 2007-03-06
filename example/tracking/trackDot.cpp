@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot.cpp,v 1.5 2007-03-02 18:17:48 fspindle Exp $
+ * $Id: trackDot.cpp,v 1.6 2007-03-06 15:35:09 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -329,9 +329,11 @@ main(int argc, char ** argv)
 	  vpDisplay::display(I) ;
 	  vpDisplay::flush(I) ;
 	}
+	cout << "Tracking on image: " << filename << endl;
+
 	// track the dot
 	d.track(I) ;
-	cout << "Tracking on image: " << filename << endl;
+
 	cout << "COG: " << endl;
 	cout << d.get_u() << " " << d.get_v()
 	     << " - "
