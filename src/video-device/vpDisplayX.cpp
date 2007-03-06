@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.23 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.24 2007-03-06 15:33:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1482,7 +1482,7 @@ vpDisplayX::displayRectangle(unsigned int i, unsigned int j,
     XSetLineAttributes (display, context, 0,
 			LineSolid, CapButt, JoinBevel);
 
-    XDrawRectangle (display, window, context,  j, i, width, height);
+    XDrawRectangle (display, window, context,  j, i, width-1, height-1);
   }
  else
   {
@@ -1509,7 +1509,7 @@ vpDisplayX::displayRectangle(const vpRect &rect,
 
     XDrawRectangle (display, window, context, 
 		    (int)rect.getLeft(), (int)rect.getTop(), 
-		    (int)rect.getWidth(), (int)rect.getHeight());
+		    (int)rect.getWidth()-1, (int)rect.getHeight()-1);
   }
  else
   {
