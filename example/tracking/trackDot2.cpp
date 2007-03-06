@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: trackDot2.cpp,v 1.5 2007-03-06 15:38:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -360,9 +360,14 @@ main(int argc, char ** argv)
 	//    occurs. The threshold can be modified using the
 	//    setNbMaxPoint(int) method
 
-	d.track(I) ;
+	if (opt_display) {
+	  // Display the image
+	  vpDisplay::display(I) ;
+	}
 
 	cout << "Tracking on image: " << filename << endl;
+	d.track(I) ;
+
 	cout << "COG: " << endl;
 	cout << d.get_u() << " " << d.get_v()
 	     << " - "
@@ -377,9 +382,6 @@ main(int argc, char ** argv)
 	cout << "m10: " << d.m10 << endl;
 	cout << "m01: " << d.m01 << endl;
 	if (opt_display) {
-	  // Display the image
-	  vpDisplay::display(I) ;
-
 	  // display a red cross (size 10) in the image at the dot center
 	  // of gravity location
 	  //
