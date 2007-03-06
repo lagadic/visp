@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.6 2007-02-28 16:27:46 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.7 2007-03-06 15:34:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,8 +71,8 @@ class VISP_EXPORT vpImageTools
 public:
   template<class Type>
   static void createSubImage(const vpImage<Type> &I,
-			     int i_sub, int j_sub,
-			     int nrow_sub, int ncol_sub,
+			     unsigned int i_sub, unsigned int j_sub,
+			     unsigned int nrow_sub, unsigned int ncol_sub,
 			     vpImage<Type> &S);
 
   template<class Type>
@@ -97,13 +97,13 @@ public:
 */
 template<class Type>
 void vpImageTools::createSubImage(const vpImage<Type> &I,
-				  int i_sub, int j_sub,
-				  int nrow_sub, int ncol_sub,
+				  unsigned int i_sub, unsigned int j_sub,
+				  unsigned int nrow_sub, unsigned int ncol_sub,
 				  vpImage<Type> &S)
 {
-  int i,j ;
-  int  imax = i_sub + nrow_sub ;
-  int  jmax = j_sub + ncol_sub ;
+  unsigned int i,j ;
+  unsigned int imax = i_sub + nrow_sub ;
+  unsigned int jmax = j_sub + ncol_sub ;
 
   if (imax > I.getHeight())
   {
