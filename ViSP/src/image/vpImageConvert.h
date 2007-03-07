@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.9 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpImageConvert.h,v 1.10 2007-03-07 17:53:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,6 +115,20 @@ public:
 			  unsigned char* rgb, unsigned int size);
   static void YUV422ToGrey(unsigned char* yuv,
 			   unsigned char* grey, unsigned int size);
+  static void YUV420ToRGBa(unsigned char* yuv,
+			   unsigned char* rgba, unsigned int width, unsigned int height);
+  static void YUV420ToRGB(unsigned char* yuv,
+			  unsigned char* rgb, unsigned int width, unsigned int height);
+  static void YUV420ToGrey(unsigned char* yuv,
+			   unsigned char* grey, unsigned int size);
+  static void YV12ToRGBa(unsigned char* yuv,
+			   unsigned char* rgba, unsigned int width, unsigned int height);
+  static void YV12ToRGB(unsigned char* yuv,
+			  unsigned char* rgb, unsigned int width, unsigned int height);
+  static void YVU9ToRGBa(unsigned char* yuv,
+			   unsigned char* rgba, unsigned int width, unsigned int height);
+  static void YVU9ToRGB(unsigned char* yuv,
+			  unsigned char* rgb, unsigned int width, unsigned int height);
   static void RGBToRGBa(unsigned char* rgb,
 			unsigned char* rgba, unsigned int size);
   static void RGBToGrey(unsigned char* rgb,
@@ -140,6 +154,8 @@ public:
 			 unsigned int size);
   static void YCrCbToRGBa(unsigned char *ycbcr, unsigned char *rgb,
 			  unsigned int size);
+  static void YCbCrToGrey(unsigned char *ycbcr, unsigned char *grey,
+			 unsigned int size);
 
 private:
   static void computeYCbCrLUT();
