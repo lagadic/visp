@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.1 2007-01-24 15:03:39 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.2 2007-03-07 17:48:19 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -51,6 +51,7 @@ SET (SOURCE
   grabV4l2Color.cpp
   grabV4l2Grey.cpp
   grabDirectShow.cpp
+  grabDirectShowMulti.cpp
 )
 
 # rule for binary build
