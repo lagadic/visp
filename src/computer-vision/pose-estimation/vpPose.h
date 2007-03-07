@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.5 2007-02-26 17:35:25 fspindle Exp $
+ * $Id: vpPose.h,v 1.6 2007-03-07 15:45:08 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@
 
 #include <math.h>
 #include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpHomography.h>
 
 #include <visp/vpPoint.h>
 #include <visp/vpList.h>
@@ -191,6 +192,11 @@ public:
 		     int &ninliers,
 		     vpList<vpPoint> &lPi,
 		     vpHomogeneousMatrix &cMo) ;
+
+  static void poseFromRectangle(vpPoint &p1,vpPoint &p2,
+				vpPoint &p3,vpPoint &p4,
+				double lx, vpCameraParameters & cam,
+				vpHomogeneousMatrix & cMo) ;
 } ;
 
 

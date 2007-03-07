@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.11 2007-02-26 17:35:25 fspindle Exp $
+ * $Id: vpPose.cpp,v 1.12 2007-03-07 15:45:59 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -458,3 +458,100 @@ vpPose::display(vpImage<unsigned char> &I,
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }
 
+
+
+/*!
+    \brief Carries out the camera pose the image of a rectangle and
+    the intrinsec parameters, the length on x axis is known but the
+    proprtion of the rectangle are unknown.
+
+    This method is taken from "Markerless Tracking using Planar Structures
+    in the Scene" by Gilles Simon. The idea is to compute the homography H
+    giving the image point of the rectangle by associating them with the
+    coordinates (0,0)(1,0)(1,1/s)(0,1/s) (the rectangle is on the Z=0 plane).
+    If K is the intrinsec parameters matrix, we have  s = ||Kh1||/ ||Kh2||. s
+    gives us the proportion of the rectangle
+
+    \param p1,p2,p3,p4: the image of the corners of the rectangle
+    (respectively the image of  (0,0),(lx,0),(lx,lx/s) and (0,lx/s)) (input)
+    \Param cam: the camera used (input)
+    \param lx: the rectangle size on the x axis (input)
+    \param cMo: the camera pose (output)
+    \return int : OK if no pb occurs
+  */
+void
+vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
+			  vpPoint &p3,vpPoint &p4,
+			  double lx, vpCameraParameters & cam,
+			  vpHomogeneousMatrix & cMo)
+{
+
+  double rectx[4] ;
+  double recty[4] ;
+  rectx[0]= 0 ;
+  recty[0]=0 ;
+  rectx[1]=1 ;
+  recty[1]=0 ;
+  rectx[2]=1 ;
+  recty[2]=1 ;
+  rectx[3]=0 ;
+  recty[3]=1 ;
+  double irectx[4] ;
+  double irecty[4] ;
+  irectx[0]=(p1.get_x()) ;
+  irecty[0]=(p1.get_y()) ;
+  irectx[1]=(p2.get_x()) ;
+  irecty[1]=(p2.get_y()) ;
+  irectx[2]=(p3.get_x()) ;
+  irecty[2]=(p3.get_y()) ;
+  irectx[3]=(p4.get_x()) ;
+  irecty[3]=(p4.get_y()) ;
+
+  //calcul de l'homographie
+  vpMatrix H(3,3);
+  vpHomography hom;
+
+  //  vpHomography::HartleyDLT(4,rectx,recty,irectx,irecty,hom);
+  vpHomography::HLM(4,rectx,recty,irectx,irecty,1,hom);
+  for (int i=0 ; i < 3 ; i++)
+    for(int j=0 ; j < 3 ; j++)
+      H[i][j] = hom[i][j] ;
+  //calcul de s =  ||Kh1||/ ||Kh2|| =ratio (length on x axis/ length on y axis)
+  vpColVector kh1(3);
+  vpColVector kh2(3);
+  vpMatrix K(3,3);
+  K=cam.K;
+  K.setIdentity();
+  vpMatrix Kinv =K.pseudoInverse();  
+
+  vpMatrix KinvH =Kinv*H;
+  kh1=KinvH.column(1);
+  kh2=KinvH.column(2);
+
+
+  double s= sqrt(kh1.sumSquare())/sqrt(kh2.sumSquare());
+
+ 
+
+  vpMatrix D(3,3);
+  D.setIdentity();
+  D[1][1]=1/s;
+  vpMatrix cHo=H*D;
+
+  //Calcul de la rotation et de la translation
+  //  PoseFromRectangle(p1,p2,p3,p4,1/s,lx,cam,cMo );
+  p1.setWorldCoordinates(0,0,0) ;
+  p2.setWorldCoordinates(lx,0,0) ;
+  p3.setWorldCoordinates(lx,lx/s,0) ;
+  p4.setWorldCoordinates(0,lx/s,0) ;
+
+  vpPose P ;
+  P.addPoint(p1) ;
+  P.addPoint(p2) ;
+  P.addPoint(p3) ;
+  P.addPoint(p4) ;
+
+
+  P.computePose(vpPose::DEMENTHON_LOWE,cMo) ;
+
+}
