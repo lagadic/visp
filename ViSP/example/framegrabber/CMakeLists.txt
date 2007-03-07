@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2007-03-07 17:48:19 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-03-07 17:49:32 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -79,6 +79,7 @@ ADD_TEST(grabOSXcfoxColor grabOSXcfoxColor -d)
 ADD_TEST(grabV4l2Color    grabV4l2Color -d)
 ADD_TEST(grabV4l2Grey     grabV4l2Grey -d)
 ADD_TEST(grabDirectShow   grabDirectShow -d)
+ADD_TEST(grabDirectShowMulti   grabDirectShowMulti -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
