@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.5 2007-03-07 17:10:44 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,11 +89,11 @@ using namespace std;
   \param opath : Image filename when saving.
 
 */
-void usage(char *name, char *badparam, unsigned camera, unsigned &nframes,
+void usage(char *name, char *badparam, unsigned int camera, unsigned int &nframes,
 	   string &opath)
 {
   if (badparam)
-    fprintf(stderr, "\nERREUR: Mauvais paramètre [%s]\n", badparam);
+    fprintf(stderr, "\nERREUR: Bad parameter [%s]\n", badparam);
 
   fprintf(stderr, "\n\
 SYNOPTIQUE\n\
@@ -174,8 +174,8 @@ OPTIONS                                                    Default\n\
   \param opath : Image filename when saving.
 
 */
-void read_options(int argc, char **argv, bool &multi, unsigned &camera,
-		  unsigned &nframes, bool &verbose_info,
+void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
+		  unsigned int &nframes, bool &verbose_info,
 		  bool &verbose_settings,
 		  bool &videomode_is_set,
 		  vp1394TwoGrabber::vp1394TwoVideoMode &videomode,
@@ -240,13 +240,13 @@ int
 main(int argc, char ** argv)
 {
   try  {
-    unsigned camera = 0;
+    unsigned int camera = 0;
     bool multi = false;
     bool verbose_info = false;
     bool verbose_settings = false;
     bool display = true;
-    unsigned nframes = 50;
-    unsigned offset;
+    unsigned int nframes = 50;
+    unsigned int offset;
     bool videomode_is_set = false;
     vp1394TwoGrabber::vp1394TwoVideoMode videomode;
     bool framerate_is_set = false;
@@ -273,7 +273,7 @@ main(int argc, char ** argv)
 		 display, save, opath);
 
     // Number of cameras connected on the bus
-    unsigned ncameras = 0;
+    unsigned int ncameras = 0;
     g.getNumCameras(ncameras);
 
     cout << "Number of cameras on the bus: " << ncameras << endl;
@@ -281,7 +281,7 @@ main(int argc, char ** argv)
     // Check the consistancy of the options
     if (multi) {
       // ckeck if two cameras are connected
-      if (ncameras != 2) {
+      if (ncameras < 2) {
 	cout << "You have only " << ncameras << " camera connected on the bus." << endl;
 	cout << "It is not possible to active multi-camera acquisition." << endl;
 	cout << "Disable -m command line option, or connect an other " << endl;
@@ -321,7 +321,7 @@ main(int argc, char ** argv)
 
     // Display information for each camera
     if (verbose_info || verbose_settings) {
-      for (unsigned i=0; i < ncameras; i ++) {
+      for (unsigned int i=0; i < ncameras; i ++) {
 
 	g.setCamera(i+offset);
 
@@ -432,7 +432,7 @@ main(int argc, char ** argv)
       g.setFormat7ROI();
 
     // Do a first acquisition to initialise the display
-    for (unsigned i=0; i < ncameras; i ++) {
+    for (unsigned int i=0; i < ncameras; i ++) {
       // Set the active camera on the bus
       g.setCamera(i+offset);
       // Acquire the first image
@@ -455,8 +455,8 @@ main(int argc, char ** argv)
 
     ttotal = 0;
     tbegin = vpTime::measureTimeMs();
-    for (unsigned i = 0; i < nframes; i++) {
-      for (unsigned c = 0; c < ncameras; c++) {
+    for (unsigned int i = 0; i < nframes; i++) {
+      for (unsigned int c = 0; c < ncameras; c++) {
 	// Set the active camera on the bus
 	g.setCamera(c+offset);
 	// Acquire an image
