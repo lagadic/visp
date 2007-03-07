@@ -32,6 +32,14 @@ vpDirectShowGrabber::~vpDirectShowGrabber()
 {
 	delete grabber;
 }
+/*!
+	Creates the filter graph and select the first available device.
+	\exception initializationError
+*/
+void vpDirectShowGrabber::open()
+{
+	grabber->open();
+}
 
 /*!
 	Creates the filter graph and select the first available device.
@@ -39,7 +47,7 @@ vpDirectShowGrabber::~vpDirectShowGrabber()
 */
 void vpDirectShowGrabber::open(vpImage<unsigned char> &I)
 {
-	grabber->open(I);
+	grabber->open();
 }
 
 /*!
@@ -48,7 +56,7 @@ void vpDirectShowGrabber::open(vpImage<unsigned char> &I)
 */
 void vpDirectShowGrabber::open(vpImage<vpRGBa> &I)
 {
-	grabber->open(I);
+	grabber->open();
 }
 
 
@@ -86,6 +94,7 @@ void vpDirectShowGrabber::close() { grabber->close(); }
 
 /*!
 	Gets the number of capture devices
+	\return the number of capture devices
 */
 int vpDirectShowGrabber::getDeviceNumber()
 {
@@ -98,9 +107,9 @@ int vpDirectShowGrabber::getDeviceNumber()
 
 	\return true was the change successful
 */
-bool vpDirectShowGrabber::setInput(unsigned int n)
+bool vpDirectShowGrabber::setDevice(unsigned int n)
 {
-	return grabber->setInput(n);
+	return grabber->setDevice(n);
 }
 
 /*!
@@ -110,6 +119,81 @@ void vpDirectShowGrabber::displayDevices()
 {
 	grabber->displayDevices();
 }
+/*!
+	Set image Size
+	\param width : Image width
+	\param height : Image height
+
+	\return true if successful
+*/
+bool vpDirectShowGrabber::setImageSize(unsigned int _width,unsigned int _height)
+{
+	return grabber->setImageSize(_width, _height);
+}
+/*!
+	Set capture framerate
+	\param width : Framerate in fps
+	
+	\return true if successful
+*/
+bool vpDirectShowGrabber::setFramerate(double _framerate)
+{
+	return grabber->setFramerate(_framerate);
+}
+/*!
+	Set capture format
+	\param _width : Image width in pixel
+	\param _height : Image height in pixel
+	\param _framerate : Framerate in fps
+
+	\return true if successful
+*/
+bool vpDirectShowGrabber::setFormat(unsigned int _width,unsigned int _height,double _framerate)
+{
+	return grabber->setFormat(_width, _height, _framerate);
+}
+/*
+	Get capture format
+	\param width : Pointer to a variable that receives the width in pixel
+	\param height : Pointer to a variable that receives the height in pixel
+	\param framerate : Pointer to a variable that receives the framerate in fps
+*/
+void vpDirectShowGrabber::getFormat(unsigned int* pWidth,unsigned int* pHeight, double* pFramerate)
+{
+	grabber->getFormat(pWidth,pHeight,pFramerate);
+}
+
+/*!
+	Get the available capture formats
+
+	\return true if successful
+*/
+bool vpDirectShowGrabber::getStreamCapabilities()
+{
+	return grabber->getStreamCapabilities();
+}
+
+/*!
+	Set capture MediaType
+	\param mediaTypeID : mediaTypeID (available in calling getStreamCapabilities)
+
+	\return true if successful
+*/
+bool vpDirectShowGrabber::setMediaType(int mediaTypeID)
+{
+	return grabber->setMediaType(mediaTypeID);
+}
+
+/*
+	Get current capture MediaType
+
+	\return the current mediaTypeID
+*/
+int vpDirectShowGrabber::getMediaType()
+{
+	return grabber->getMediaType();
+}
+
 
 #endif
 

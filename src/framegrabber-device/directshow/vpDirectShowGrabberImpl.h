@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.h,v 1.4 2007-02-16 16:12:03 asaunier Exp $
+ * $Id: vpDirectShowGrabberImpl.h,v 1.5 2007-03-07 17:51:46 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,10 +28,11 @@
  * not clear to you.
  *
  * Description:
- * DirectShow framegrabber.
+ * DirectShow framegrabber Implementation.
  *
  * Authors:
  * Bruno Renier
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -83,11 +84,42 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 	static const int MAX_DEVICES = 10;
 
 
-	public:
+ 	public:
+
+		/*!
+    Enumeration of video subtypes.
+*/
+/*	
+  typedef enum {
+	  //Known RGB formats
+	  vpMEDIASUBTYPE_ARGB32 = MEDIASUBTYPE_ARGB32,
+	  vpMEDIASUBTYPE_RGB32 = MEDIASUBTYPE_RGB32,
+	  vpMEDIASUBTYPE_RGB24 = MEDIASUBTYPE_RGB24,
+	  vpMEDIASUBTYPE_RGB555 = MEDIASUBTYPE_RGB555,
+	  vpMEDIASUBTYPE_RGB565 = MEDIASUBTYPE_RGB565,
+	  vpMEDIASUBTYPE_RGB8 = MEDIASUBTYPE_RGB8,
+	  vpMEDIASUBTYPE_RGB4 = MEDIASUBTYPE_RGB4,
+	  vpMEDIASUBTYPE_RGB1 = MEDIASUBTYPE_RGB1,
+	  //Known YUV formats
+	  vpMEDIASUBTYPE_AYUV = MEDIASUBTYPE_AYUV,
+	  vpMEDIASUBTYPE_UYVY = MEDIASUBTYPE_UYVY,
+	  vpMEDIASUBTYPE_Y411 = MEDIASUBTYPE_Y411,
+	  vpMEDIASUBTYPE_Y41P = MEDIASUBTYPE_Y41P,
+	  vpMEDIASUBTYPE_Y211 = MEDIASUBTYPE_Y211,
+	  vpMEDIASUBTYPE_YUY2 = MEDIASUBTYPE_YUY2,
+	  vpMEDIASUBTYPE_YVYU = MEDIASUBTYPE_YVYU,
+	  vpMEDIASUBTYPE_YUYV = MEDIASUBTYPE_YUYV,
+	  vpMEDIASUBTYPE_IF09 = MEDIASUBTYPE_IF09,
+	  vpMEDIASUBTYPE_IYUV = MEDIASUBTYPE_IYUV,
+	  vpMEDIASUBTYPE_YV12 = MEDIASUBTYPE_YV12,	
+	  vpMEDIASUBTYPE_YVU9 = MEDIASUBTYPE_YVU9
+  } vpDirectShowMediaSubtype;
+*/
 
 		vpDirectShowGrabberImpl();
 		~vpDirectShowGrabberImpl();
 
+		void open();
 		void open(vpImage<unsigned char> &I);
 		void open(vpImage<vpRGBa> &I);
 
@@ -99,13 +131,34 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		/*!
 			Gets the number of capture devices
 		*/
-		int getDeviceNumber() {return (int)nbDevices;}
+		unsigned int getDeviceNumber() {return nbDevices;}
 
 		//change the capture device
-		bool setInput(unsigned int n);
+		bool setDevice(unsigned int n);
 
 		//displays a list of available devices
 		void displayDevices();
+
+		//set image size
+		bool setImageSize(unsigned int _width,unsigned int _height);
+
+		//set capture framerate
+		bool setFramerate(double _framerate);
+
+		//set capture format
+		bool setFormat(unsigned int _width,unsigned int _height, double _framerate);
+
+		//get capture format
+		void getFormat(unsigned int* pWidth,unsigned int* pHeight, double* pFramerate);
+
+		//set capture MediaType
+		bool setMediaType(int mediaTypeID);	
+
+		//get current capture MediaType
+		int getMediaType();
+
+		//Get the available capture formats
+		bool getStreamCapabilities();
 
 
 	private:
@@ -122,7 +175,7 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		
 		CComPtr<IMediaControl> pControl; 		//The DS filter graph control interface
 		CComPtr<IMediaEvent> pEvent;			//The DS filter graph event interface
-		
+
 		vpDirectShowSampleGrabberI sgCB;		//Interface used to implement the frame grabber callback
 
 		HRESULT hr;								//contains the result of the last operation
@@ -130,9 +183,11 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		static vpDirectShowDevice * deviceList;	//This contains the list of the available capture devices
 												//it is shared by all the DirectShow Grabbers
 		
-		unsigned long nbDevices;				//the number of available devices
+		static unsigned int nbDevices;			//the number of available devices
 		int currentDevice;						//the number of the current device
-
+		
+		// flag to manage CoInitialize() and CoUnInitialze()
+		bool initCo ; 
 		//setup the directshow filtergraph with the first available device
 		bool initDirectShow();
 
@@ -155,7 +210,7 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		bool connectSourceToGrabber(CComPtr<IBaseFilter>& pCapSource, CComPtr<IBaseFilter>& pGrabberFilter);
 
 		//used to convert HRESULT-associated error message to a string
-		void HRtoStr(string& str);
+		void HRtoStr(string str);
 		
 		//create the list of the available devices
 		bool createDeviceList(CComPtr<IEnumMoniker>& ppVideoInputEnum);
@@ -164,10 +219,16 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		bool getDevice(unsigned int n, CComPtr<IBaseFilter>& ppCapSource);
 
 		//get the first available device if any
-		bool getFirstUnusedDevice(CComPtr<IBaseFilter>& ppDevice);
+		unsigned int getFirstUnusedDevice(CComPtr<IBaseFilter>& ppDevice);
 
 		//removes all the filters in the graph
 		bool removeAll();
+
+		//Deletes an allocated AM_MEDIA_TYPE structure, including the format block
+		void MyDeleteMediaType(AM_MEDIA_TYPE *pmt);
+		
+		//Frees the format block in an AM_MEDIA_TYPE structure
+		void MyFreeMediaType(AM_MEDIA_TYPE& mt);
 
 };
 
