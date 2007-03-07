@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.cpp,v 1.1 2007-03-02 13:05:11 fspindle Exp $
+ * $Id: vpHistogram.cpp,v 1.2 2007-03-07 09:32:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,6 @@ vpHistogram::vpHistogram(const vpHistogram &h)
 {
   //  vpTRACE("copy");
   histogram = NULL;
-  size = 256;
   init(h.size);
   memcpy(histogram, h.histogram, size * sizeof(unsigned));
 }
@@ -115,7 +114,6 @@ vpHistogram::~vpHistogram()
 vpHistogram &
 vpHistogram::operator=(const vpHistogram &h)
 {
-  histogram = NULL;
   init(h.size);
   memcpy(histogram, h.histogram, size * sizeof(unsigned));
 
