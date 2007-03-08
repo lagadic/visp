@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: grabDirectShow.cpp,v 1.4 2007-03-08 10:25:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,10 +84,13 @@ OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
 \n\
-  -n [%%u] : Number of frames to acquire.                   %u\n\
+  -n [%%u]                                               %u\n\
+     Number of frames to acquire.               \n\
 \n\
-  -o [%%s] : Filename for image saving.                     %s\n\
-            The %%d is for the image numbering.\n\
+  -o [%%s] \n\
+     Filename for image saving.                    \n\
+     Example: -o %s\n\
+     The %%d is for the image numbering.\n\
 \n\
   -h \n\
      Print the help.\n\
