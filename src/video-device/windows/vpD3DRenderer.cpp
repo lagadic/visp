@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.6 2007-02-27 17:08:06 fspindle Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.7 2007-03-08 15:12:59 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -901,8 +901,8 @@ void vpD3DRenderer::drawArrow(unsigned int i1,unsigned int j1,
 			      vpColor::vpColorType col,
 			      unsigned int L,unsigned int l)
 {
-  double a = j2 - j1 ;
-  double b = i2 - i1 ;
+  double a = (int)j2 - (int)j1 ;
+  double b = (int)i2 - (int)i1 ;
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
   int _l = l;
 

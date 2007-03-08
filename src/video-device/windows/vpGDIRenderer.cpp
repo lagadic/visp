@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.8 2007-02-27 17:08:06 fspindle Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.9 2007-03-08 15:13:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -656,8 +656,8 @@ void vpGDIRenderer::drawArrow(unsigned int i1,unsigned int j1,
 			      unsigned int L,unsigned int l)
 {
   int _l = l;
-  double a = j2 - j1 ;
-  double b = i2 - i1 ;
+  double a = (int)j2 - (int)j1 ;
+  double b = (int)i2 - (int)i1 ;
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
   //computes the coordinates of the rectangle to blit later
