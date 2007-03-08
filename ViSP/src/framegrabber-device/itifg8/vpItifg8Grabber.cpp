@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.7 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.8 2007-03-08 16:45:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -274,7 +274,7 @@ void vpItifg8Grabber::initialise()
 #else
       args.other[i] = false;
       args.window[i] = 4;
-      setContigmode(false);                      // Default contiguous grab mode
+      setContigmode(true);                      // Default contiguous grab mode
 #endif
       setSyncmode(vpItifg8Grabber::SIGNAL_MODE); // Default synchronisation mode
       setAcqmode(vpItifg8Grabber::NORMAL_MODE);  // Default special acq mode
@@ -1892,6 +1892,7 @@ unsigned char * vpItifg8Grabber::acquire()
   srcidx = 0;
   do
     {
+
       switch (args.syncmd[args.board_i])
 	{
 	case BLOCK_MODE:
@@ -2126,8 +2127,6 @@ unsigned char * vpItifg8Grabber::acquire()
     }
   while (done < todo);
   if (!args.contig[args.board_i]) stop_it = false;
-
-
 
   return((u_char *)(image[args.board_i].srcptr + image[args.board_i].srcoff));
 }
