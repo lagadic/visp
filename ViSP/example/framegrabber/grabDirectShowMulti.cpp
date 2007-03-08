@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-* $Id: grabDirectShowMulti.cpp,v 1.1 2007-03-07 17:47:49 asaunier Exp $
+* $Id: grabDirectShowMulti.cpp,v 1.2 2007-03-08 10:25:44 fspindle Exp $
 *
 * Copyright (C) 1998-2006 Inria. All rights reserved.
 *
@@ -88,47 +88,63 @@ void usage(char *name, char *badparam, unsigned int camera, unsigned int &nframe
 	if (badparam)
 		fprintf(stderr, "\nERREUR: Bad parameter [%s]\n", badparam);
 
-	fprintf(stderr, "\n\
-	SYNOPTIQUE\n\
-	%s [-t <mediatype>] [-f <framerate>] \n\
-	[-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
-	[-i] [-s] [-d] [-o <filename>] [-?]\n\
+	fprintf(stdout, "\n\
+Acquire images using DirectShow (under Windows only) and display\n\
+it using GTK or the windows GDI if GTK is not available.\n\
+For a given camera, mediatype (or video mode) as well as framerate\n\
+can be set.\n\
+If more than one camera is connected, this example allows also to \n\
+acquire images from all the cameras.\n\
+\n\
+SYNOPSIS\n\
+%s [-t <mediatype>] [-f <framerate>] \n\
+  [-c <camera id>] [-m] [-n <frames>] [-i] [-s] [-d] \n\
+  [-o <filename>] [-h]\n\
 	\n\
-	DESCRIPTION\n\
-	Test for firewire camera image acquisition.\n\
-	\n\
-	OPTIONS                                                    Default\n\
-	-t [%%u] : MediaType(video mode) to set for \n\
-	the active camera. Use -s option so see which \n\
-	are the supported Mediatypes. You can select \n\
-	the active camera using -c option.\n\
-	\n\
-	-f [%%d] : Framerate to set for the active camera.\n\
-	You can select the active \n\
-	camera using -c option.\n\
-	\n\
-	-c [%%u] : Active camera identifier.                      %u\n\
-	Zero is for the first camera found on the bus.\n\
-	\n\
-	-m      : Flag to active multi camera acquisition.       \n\
-	You need at least two cameras connected on \n\
-	the bus.\n\
-	\n\
-	-n [%%u] : Number of frames to acquire.                   %u\n\
-	\n\
-	-i      : Flag to print camera informations.\n\
-	\n\
-	-s      : Print camera settings capabilities such \n\
-	as MediaType and sizes available and exit.\n\
-	\n\
-	-d      : Flag to turn off image display.\n\
-	\n\
-	-o [%%s] : Filename for image saving.                     \n\
-	Example: -o %s\n\
-	The first %%d is for the camera id, %%04d\n\
-	is for the image numbering.\n\
-	\n",
-					name, camera, nframes, opath.c_str());
+OPTIONS                                                    Default\n\
+  -t [%%u] \n\
+     MediaType (or video mode) to set for the active \n\
+     camera. Use -s option so see which are the supported \n\
+     Mediatypes. You can select the active camera \n\
+     using -c option.\n\
+\n\
+  -f [%%d] \n\
+     Framerate to set for the active camera.\n\
+     You can select the active camera using -c option.\n",
+		name);
+
+	fprintf(stdout, "\n\
+  -c [%%u]                                                    %u\n\
+     Active camera identifier.\n\
+     Zero is for the first camera found on the bus.\n\
+\n\
+  -m      \n\
+     Flag to active multi camera acquisition.       \n\
+     You need at least two cameras connected on the bus.\n\
+\n\
+  -n [%%u]                                                    %u\n\
+     Number of frames to acquire.\n\
+\n\
+  -i      \n\
+     Flag to print camera informations.\n\
+\n\
+  -s      \n\
+     Print camera settings capabilities such as MediaType \n\
+     and sizes available and exit.\n\
+\n\
+  -d      \n\
+     Flag to turn off image display.\n\
+\n\
+  -o [%%s] \n\
+     Filename for image saving.                     \n\
+     Example: -o %s\n\
+     The first %%d is for the camera id, %%04d\n\
+     is for the image numbering.\n\
+\n\
+  -h \n\
+     Print the help.\n\
+\n",
+		camera, nframes, opath.c_str());
 
 	exit(0);
 }
@@ -320,8 +336,9 @@ main(int argc, char ** argv)
 		// Display information for each camera
 		if (verbose_info || verbose_settings) {
 			
-			
-			cout << "Device List : " << endl;
+			cout << "----------------------------------------------------------" << endl;
+			cout << "---- Device List : " << endl;
+			cout << "----------------------------------------------------------" << endl;
 			g[0].displayDevices();
 			for (unsigned i=0; i < ncameras; i ++) {
 				unsigned int c;
@@ -331,20 +348,19 @@ main(int argc, char ** argv)
 				if (verbose_info)
 					cout << "----------------------------------------------------------"
 						<< endl
-						<< "---- MediaType and framerate currently used by camera "
-						<< c << " ----" << endl
-						<< "Current MediaType : "<<g[i].getMediaType()<<" ----"
-						<< endl;
+						<< "---- MediaType and framerate currently used by device " << endl
+						<< "---- (or camera) " << c <<  endl
+						<< "---- Current MediaType : " << g[i].getMediaType() << endl
+						<< "---- ";
 						g[i].getFormat(&pWIdth,&pHeight,&pframerate);
 					
 				if (verbose_settings) {
 					cout << "----------------------------------------------------------"
 						   << endl
-						   << "---- MediaTypes supported by camera "
-						   << c << " ----" << endl
-						   << "---- the MediaType is the corresponding option    ----"
-						   << endl
-						   << "---- to use (-t).                                          ----"
+						   << "---- MediaTypes supported by device (or camera) "
+						   << c << endl
+						   << "---- One of the MediaType below can be set using " << endl
+						   << "---- option -t <mediatype>."
 						   << endl
 						   << "----------------------------------------------------------"
 						   << endl;
