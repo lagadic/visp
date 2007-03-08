@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabber.h,v 1.5 2007-03-07 17:51:46 asaunier Exp $
+ * $Id: vpDirectShowGrabber.h,v 1.6 2007-03-08 13:35:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,25 +49,22 @@
 
 class vpDirectShowGrabberImpl;
 
-/*
-	This class' goal is to totally hide the implementation of the framegrabber from
-	the rest of the application. This is necessary to avoid conflicts between dshow's
-	Qedit.h and Direct3D's includes.
-
-*/
-
 /*!
-	\class vpDirectShowGrabber
-	\brief class for windows direct show devices
+  \class vpDirectShowGrabber
+  \brief class for windows direct show devices
 
-	\ingroup libdevice
+  This class' goal is to totally hide the implementation of the framegrabber
+  from the rest of the application. This is necessary to avoid conflicts
+  between dshow's Qedit.h and Direct3D's includes.
+
+  \ingroup libdevice
 */
 
 class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber
 {
 	vpDirectShowGrabberImpl * grabber;
 
-	
+
 	public:
 
 		unsigned int getHeight();
@@ -89,23 +86,23 @@ class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber
 		int getDeviceNumber();
 
 		//change the capture device
-		bool setDevice(unsigned int n);
+		bool setDevice(unsigned int id);
 
 		//displays a list of available devices
 		void displayDevices();
 
 		//set image size
-		bool setImageSize(unsigned int _width,unsigned int _height);
+		bool setImageSize(unsigned int width,unsigned int height);
 
 		//set source framerate
-		bool setFramerate(double _framerate);
+		bool setFramerate(double framerate);
 
 
 		//set capture format
-		bool setFormat(unsigned int _width,unsigned int _height, double _framerate);
+		bool setFormat(unsigned int width,unsigned int height, double framerate);
 
 		//get capture format
-		void getFormat(unsigned int* pWidth,unsigned int* pHeight, double* pFramerate);
+		void getFormat(unsigned int &width,unsigned int &height, double &framerate);
 
 		//Get the available capture formats
 		bool getStreamCapabilities();
@@ -114,7 +111,7 @@ class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber
 		bool setMediaType(int mediaTypeID);
 
 		//Get current capture MediaType
-		int getMediaType();	
+		int getMediaType();
 
 };
 #endif

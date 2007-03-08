@@ -1,3 +1,41 @@
+/****************************************************************************
+ *
+ * $Id: vpDirectShowGrabber.cpp,v 1.6 2007-03-08 13:35:43 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * DirectShow framegrabber.
+ *
+ * Authors:
+ * Bruno Renier
+ * Anthony Saunier
+ *
+ *****************************************************************************/
+
 
 #include <visp/vpConfig.h>
 #if ( defined(VISP_HAVE_DIRECTSHOW) )
@@ -102,14 +140,14 @@ int vpDirectShowGrabber::getDeviceNumber()
 }
 
 /*!
-	Change the input device of the grabber
-	\param n number of the device to use
+	Set the device (or camera) from which images will be grabbed.
+	\param id : Identifier of the device to use.
 
-	\return true was the change successful
+	\return true if the device is set successfully, false otherwise.
 */
-bool vpDirectShowGrabber::setDevice(unsigned int n)
+bool vpDirectShowGrabber::setDevice(unsigned int id)
 {
-	return grabber->setDevice(n);
+	return grabber->setDevice(id);
 }
 
 /*!
@@ -126,19 +164,19 @@ void vpDirectShowGrabber::displayDevices()
 
 	\return true if successful
 */
-bool vpDirectShowGrabber::setImageSize(unsigned int _width,unsigned int _height)
+bool vpDirectShowGrabber::setImageSize(unsigned int width,unsigned int height)
 {
-	return grabber->setImageSize(_width, _height);
+	return grabber->setImageSize(width, height);
 }
 /*!
 	Set capture framerate
 	\param width : Framerate in fps
-	
+
 	\return true if successful
 */
-bool vpDirectShowGrabber::setFramerate(double _framerate)
+bool vpDirectShowGrabber::setFramerate(double framerate)
 {
-	return grabber->setFramerate(_framerate);
+	return grabber->setFramerate(framerate);
 }
 /*!
 	Set capture format
@@ -148,9 +186,9 @@ bool vpDirectShowGrabber::setFramerate(double _framerate)
 
 	\return true if successful
 */
-bool vpDirectShowGrabber::setFormat(unsigned int _width,unsigned int _height,double _framerate)
+bool vpDirectShowGrabber::setFormat(unsigned int width,unsigned int height,double framerate)
 {
-	return grabber->setFormat(_width, _height, _framerate);
+	return grabber->setFormat(width, height, framerate);
 }
 /*
 	Get capture format
@@ -158,9 +196,9 @@ bool vpDirectShowGrabber::setFormat(unsigned int _width,unsigned int _height,dou
 	\param height : Pointer to a variable that receives the height in pixel
 	\param framerate : Pointer to a variable that receives the framerate in fps
 */
-void vpDirectShowGrabber::getFormat(unsigned int* pWidth,unsigned int* pHeight, double* pFramerate)
+void vpDirectShowGrabber::getFormat(unsigned int &width,unsigned int &height, double &framerate)
 {
-	grabber->getFormat(pWidth,pHeight,pFramerate);
+	grabber->getFormat(width, height, framerate);
 }
 
 /*!

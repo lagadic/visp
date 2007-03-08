@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.cpp,v 1.5 2007-03-07 17:51:46 asaunier Exp $
+ * $Id: vpDirectShowGrabberImpl.cpp,v 1.6 2007-03-08 13:35:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,8 +36,10 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <visp/vpConfig.h>
-#if ( defined(VISP_HAVE_DIRECTSHOW) ) 
+#if ( defined(VISP_HAVE_DIRECTSHOW) )
 
 #include <visp/vpDirectShowGrabberImpl.h>
 
@@ -53,9 +55,9 @@ void vpDirectShowGrabberImpl::HRtoStr(string str)
 {
 	TCHAR szErr[MAX_ERROR_TEXT_LEN];
 	DWORD res = AMGetErrorText(hr, szErr, MAX_ERROR_TEXT_LEN);
-    
+
 	if (res == 0) str = "Unknown Error: 0x%2x";
-	
+
 	char msg[MAX_ERROR_TEXT_LEN];
 	sprintf(msg,"%s",szErr);
 	str = msg;
@@ -114,7 +116,7 @@ void vpDirectShowGrabberImpl::open()
 		HRtoStr(err);
 		throw (vpFrameGrabberException(
 			  vpFrameGrabberException::initializationError, err));
-	}	
+	}
 }
 /*!
 	Creates the filter graph and select the first available device.
@@ -131,7 +133,7 @@ void vpDirectShowGrabberImpl::open(vpImage<unsigned char> &I)
 */
 void vpDirectShowGrabberImpl::open(vpImage<vpRGBa> &I)
 {
-	open();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+	open();
 }
 
 /*!
@@ -141,14 +143,14 @@ void vpDirectShowGrabberImpl::open(vpImage<vpRGBa> &I)
 */
 bool vpDirectShowGrabberImpl::initDirectShow()
 {
-	
+
 
 	//get the first working device's filter (unused and getdevice works on it)
 	currentDevice = getFirstUnusedDevice(pCapSource);
-	
+
 	if(currentDevice == nbDevices)
 		return false;
-	
+
 	//create the filter graph
 	if(!createGraph())
 		return false;
@@ -164,7 +166,7 @@ bool vpDirectShowGrabberImpl::initDirectShow()
 	//we add the grabber to the filter graph
 	if(FAILED(hr = pGraph->AddFilter(pGrabberFilter, L"SampleGrabber")))
 		return false;
-	
+
 	//we connect the pins
 	if(!connectSourceToGrabber(pCapSource, pGrabberFilter))
 		return false;
@@ -173,7 +175,7 @@ bool vpDirectShowGrabberImpl::initDirectShow()
 	//get the current connected media type (needed by the callback)
 	if(FAILED(hr = pGrabberI->GetConnectedMediaType(&(sgCB.connectedMediaType))))
 		return false;
-	
+
 	//Gets the various graph's interfaces
 	CComPtr<IMediaFilter> pMediaFilter;
 
@@ -181,7 +183,7 @@ bool vpDirectShowGrabberImpl::initDirectShow()
 	pGraph->QueryInterface(IID_IMediaControl, reinterpret_cast<void**>(&pControl));
 	pGraph->QueryInterface(IID_IMediaEvent, (void **)&pEvent);
 
-	pMediaFilter->SetSyncSource(NULL); 
+	pMediaFilter->SetSyncSource(NULL);
 	pMediaFilter.Release();
 
 	return true;
@@ -204,8 +206,8 @@ bool vpDirectShowGrabberImpl::enumerate(CComPtr<IEnumMoniker>& ppVideoInputEnum)
 {
 	CComPtr<ICreateDevEnum> pDevEnum = NULL;
 	bool res = false;
-	
-	//Enumerate system devices 
+
+	//Enumerate system devices
 	hr = pDevEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER);
 
 	//if it is a success
@@ -215,11 +217,11 @@ bool vpDirectShowGrabberImpl::enumerate(CComPtr<IEnumMoniker>& ppVideoInputEnum)
 		hr = pDevEnum->CreateClassEnumerator(
 			CLSID_VideoInputDeviceCategory,
 			&ppVideoInputEnum, 0);
-		
+
 		if(hr == S_OK) res = true;
 	}
-	
-	
+
+
 	pDevEnum.Release();
 	return res;
 }
@@ -227,7 +229,7 @@ bool vpDirectShowGrabberImpl::enumerate(CComPtr<IEnumMoniker>& ppVideoInputEnum)
 
 /*!
 	Create the device list by enumerating the video input devices
-	\param ppVideoInputEnum A video device enumerator 
+	\param ppVideoInputEnum A video device enumerator
 	\return Was the operation successful
 */
 bool vpDirectShowGrabberImpl::createDeviceList(CComPtr<IEnumMoniker>& ppVideoInputEnum)
@@ -247,7 +249,7 @@ bool vpDirectShowGrabberImpl::createDeviceList(CComPtr<IEnumMoniker>& ppVideoInp
 
 	nbDevices = (unsigned int)nbMoniker;
 
-	//we try to get the properties of each moniker, if it fails, we skip to the next one and 
+	//we try to get the properties of each moniker, if it fails, we skip to the next one and
 	//decrement the number of valid devices
 	unsigned int i=0;
 	unsigned int j=0;
@@ -255,7 +257,7 @@ bool vpDirectShowGrabberImpl::createDeviceList(CComPtr<IEnumMoniker>& ppVideoInp
 	{
 		if(!deviceList[i].init(pMoniker[j]))
 		{
-			//if we can't get the device properties, skip to the next device		
+			//if we can't get the device properties, skip to the next device
 			j++;
 			nbDevices--;
 		}
@@ -265,7 +267,7 @@ bool vpDirectShowGrabberImpl::createDeviceList(CComPtr<IEnumMoniker>& ppVideoInp
 			j++;
 		}
 	}
-	
+
 	//if no working input device
 	if(nbDevices == 0) return false;
 
@@ -304,7 +306,7 @@ bool vpDirectShowGrabberImpl::getDevice(unsigned int n, CComPtr<IBaseFilter>& pp
 	bool deviceFound = false;
 
 	//Enumerates the different inputs
-	while (pVideoInputEnum->Next(1, &pMoniker, NULL) == S_OK 
+	while (pVideoInputEnum->Next(1, &pMoniker, NULL) == S_OK
 		&& !deviceFound)
 	{
 		//implicit conversion should work ...
@@ -404,7 +406,7 @@ bool vpDirectShowGrabberImpl::createSampleGrabber(CComPtr<IBaseFilter>& ppGrabbe
 	//configure the grabber
 	AM_MEDIA_TYPE mt;
 	ZeroMemory(&mt, sizeof(AM_MEDIA_TYPE));
-	
+
 	mt.majortype = MEDIATYPE_Video;
 
 	//ask for a connection
@@ -412,7 +414,7 @@ bool vpDirectShowGrabberImpl::createSampleGrabber(CComPtr<IBaseFilter>& ppGrabbe
 
 	if(FAILED(hr = pGrabberI->SetMediaType(&mt)))
 		return false;
-	
+
 	//configure the callback of the grabber
 	pGrabberI->SetCallback(&sgCB,1);
 
@@ -443,7 +445,7 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin>& pCapSourcePin)
 
 	if(mt.majortype != MEDIATYPE_Video)
 		return false;
-		
+
 	//Known RGB formats
 	if(mt.subtype == MEDIASUBTYPE_ARGB32 ||
 	   mt.subtype == MEDIASUBTYPE_RGB32  ||
@@ -468,7 +470,7 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin>& pCapSourcePin)
 		mt.subtype == MEDIASUBTYPE_YUYV ||
 		mt.subtype == MEDIASUBTYPE_IF09 ||
 		mt.subtype == MEDIASUBTYPE_IYUV ||
-		mt.subtype == MEDIASUBTYPE_YV12 ||	
+		mt.subtype == MEDIASUBTYPE_YV12 ||
 		mt.subtype == MEDIASUBTYPE_YVU9 )
 	  {
 	    //image orientation will be handled "automatically"
@@ -476,15 +478,15 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin>& pCapSourcePin)
 	  }
 	//FOURCC formats
 	else
-	  {  
+	  {
 	    //invertedSource boolean will decide the bitmap orientation
 	    sgCB.specialMediaType = true;
 
 	    DWORD format;
 	    VIDEOINFOHEADER *pVih = reinterpret_cast<VIDEOINFOHEADER*>(mt.pbFormat);
 	    BITMAPINFOHEADER bmpInfo = pVih->bmiHeader;
-	    
-	    //get the fourcc code 
+
+	    //get the fourcc code
 	    format = ((bmpInfo.biCompression&0xFF000000)>>24) |
 	      ((bmpInfo.biCompression&0x00FF0000)>>8) |
 	      ((bmpInfo.biCompression&0x0000FF00)<<8) |
@@ -493,8 +495,8 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin>& pCapSourcePin)
 	    cout<<"This format is not one of the standard YUV or RGB format supported by DirectShow.\n"
 		<<"FourCC : "
 		<<(char)(bmpInfo.biCompression&0x000000FF)
-		<<(char)((bmpInfo.biCompression&0x0000FF00)>>8) 
-		<<(char)((bmpInfo.biCompression&0x00FF0000)>>16) 
+		<<(char)((bmpInfo.biCompression&0x0000FF00)>>8)
+		<<(char)((bmpInfo.biCompression&0x00FF0000)>>16)
 		<<(char)((bmpInfo.biCompression&0xFF000000)>>24)<<endl;
 
 	    //Y800 is top-down oriented so the image doesn't have to be flipped vertically
@@ -532,7 +534,7 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& _pCap
 	CComPtr<IPin> pCapSourcePin;
 	if(FAILED(pBuild->FindPin(_pCapSource, PINDIR_OUTPUT, NULL, NULL, false, 0, &pCapSourcePin)))
 		return false;
-	
+
 	//get the grabber's input pin
 	CComPtr<IPin> pGrabberInputPin;
 	if(FAILED(pBuild->FindPin(_pGrabberFilter, PINDIR_INPUT, NULL, NULL, false, 0, &pGrabberInputPin)))
@@ -585,7 +587,7 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& _pCap
 
 	//release the remaining interfaces
 	pCapSourcePin.Release();
-	pNull.Release();	
+	pNull.Release();
 //	pGrabberOutputPin.Release();
 //	pNullInputPin.Release();
 
@@ -595,10 +597,10 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter>& _pCap
 
 /*!
 	Removes all the filters from the filter graph
-	
+
 	\return Was the operation successful
 */
-bool vpDirectShowGrabberImpl::removeAll() 
+bool vpDirectShowGrabberImpl::removeAll()
 {
     CComPtr<IEnumFilters> pEnum = NULL;
     CComPtr<IBaseFilter> pFilter;
@@ -634,7 +636,7 @@ void vpDirectShowGrabberImpl::acquire(vpImage<vpRGBa> &I)
       close();
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
-    }  
+    }
 
 	//set the rgbaIm pointer on I (will be filled on the next framegrabber callback)
 	sgCB.rgbaIm = &I;
@@ -642,8 +644,8 @@ void vpDirectShowGrabberImpl::acquire(vpImage<vpRGBa> &I)
 	sgCB.acqRGBaDemand = true;
 
 	//Run the graph to grab a frame
-	pControl->Run(); 
-	
+	pControl->Run();
+
 	// Wait untill it's done
 	long ev;
 	hr = pEvent->WaitForCompletion(MAX_DELAY, &ev);
@@ -655,8 +657,8 @@ void vpDirectShowGrabberImpl::acquire(vpImage<vpRGBa> &I)
 	if( WaitForSingleObject(sgCB.copySem,MAX_DELAY) != WAIT_OBJECT_0)
 		throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				"Can't grab the frame, callback timeout") );
-  
-  
+
+
 }
 
 /*!
@@ -682,7 +684,7 @@ void vpDirectShowGrabberImpl::acquire(vpImage<unsigned char> &I)
 	sgCB.acqGrayDemand = true;
 
 	//Run the graph to grab a frame
-	pControl->Run(); 
+	pControl->Run();
 
 	// Wait untill it's done
 	long ev;
@@ -698,12 +700,12 @@ void vpDirectShowGrabberImpl::acquire(vpImage<unsigned char> &I)
 }
 
 /*!
-	Change the input device of the grabber
-	\param n number of the device to use
+	Set the device (or camera) used by the grabber
+	\param id : Identifier of the device to use.
 
-	\return true was the change successful
+	\return true id the device is set successfully, false otherwise.
 */
-bool vpDirectShowGrabberImpl::setDevice(unsigned int n)
+bool vpDirectShowGrabberImpl::setDevice(unsigned int id)
 {
   if (init==false)
     {
@@ -712,14 +714,14 @@ bool vpDirectShowGrabberImpl::setDevice(unsigned int n)
 				   "Initialization not done") );
     }
 
-   
+
 	//if n is invalid, or the device is already in use, quit
-        if(n>=nbDevices || deviceList[n].getState()==true)
+        if(id>=nbDevices || deviceList[id].getState()==true)
 	  return false;
-	  
+
 	//we stop the graph
 	pControl->Stop();
-	
+
 	//then we can safely remove all the filters
 	if(!removeAll()) return false;
 
@@ -734,7 +736,7 @@ bool vpDirectShowGrabberImpl::setDevice(unsigned int n)
 	pGraph->AddFilter(pGrabberFilter,L"SampleGrabber");
 
 	//get the n-th device's filter
-	if(!getDevice(n,pCapSource))
+	if(!getDevice(id, pCapSource))
 		return false;
 
 	//we add the capture source to the filter graph
@@ -748,13 +750,13 @@ bool vpDirectShowGrabberImpl::setDevice(unsigned int n)
 
 	//get the current connected media type (needed by the callback)
 	if(FAILED(hr = pGrabberI->GetConnectedMediaType(&(sgCB.connectedMediaType))))
-	{	
+	{
 		return false;
 	}
 
 	//the device is now in use
-	deviceList[n].setInUse();
-	currentDevice=n;
+	deviceList[id].setInUse();
+	currentDevice=id;
 
 	return true;
 }
@@ -772,7 +774,7 @@ void vpDirectShowGrabberImpl::displayDevices()
 
 	for(unsigned int i=0 ; i<nbDevices ; i++)
 		cout<<i<<" : "<<deviceList[i].getName()<<endl;
-	
+
 	cout<<"Current device : "<<currentDevice<<endl<<endl;
 }
 
@@ -782,7 +784,7 @@ void vpDirectShowGrabberImpl::displayDevices()
 */
 
 void vpDirectShowGrabberImpl::close()
-{	
+{
   //the current device isn't being used anymore
 	if (init) {
 		deviceList[currentDevice].resetInUse();
@@ -797,46 +799,46 @@ void vpDirectShowGrabberImpl::close()
 /*!
 	Set image size
 */
-bool vpDirectShowGrabberImpl::setImageSize(unsigned int _width,unsigned int _height)
+bool vpDirectShowGrabberImpl::setImageSize(unsigned int width,unsigned int height)
 {
 	if (init==false)
     {
       close();
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
-    }  
-	
-	return setFormat(_width, _height,NULL);
-	
+    }
+
+	return setFormat(width, height,NULL);
+
 }
 
 /*!
 	Set capture framerate
 */
-bool vpDirectShowGrabberImpl::setFramerate(double _framerate)
+bool vpDirectShowGrabberImpl::setFramerate(double framerate)
 {
 	if (init==false)
     {
       close();
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
-    }  
-	
+    }
+
 	VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)sgCB.connectedMediaType.pbFormat;
-	return setFormat(pVih->bmiHeader.biWidth,pVih->bmiHeader.biHeight,_framerate);
-	
+	return setFormat(pVih->bmiHeader.biWidth,pVih->bmiHeader.biHeight,framerate);
+
 }
 /*!
 	Set the capture format
 */
-bool vpDirectShowGrabberImpl::setFormat(unsigned int _width,unsigned int _height, double _framerate)
+bool vpDirectShowGrabberImpl::setFormat(unsigned int width,unsigned int height, double framerate)
 {
 	if (init==false)
     {
       close();
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
-    }  
+    }
 
 	bool found=false;
 
@@ -849,7 +851,7 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int _width,unsigned int _height
 		pGrabberFilter, // Pointer to the grabber filter.
 		IID_IAMStreamConfig, (void**)&pConfig)))
 		return false;
-	
+
 	//gets the video control interface
 	IAMVideoControl *pVideoControl = NULL;
 
@@ -899,12 +901,12 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int _width,unsigned int _height
 
 					LONG lWidth = pVih->bmiHeader.biWidth;
 					LONG lHeight = pVih->bmiHeader.biHeight;
-					if(_framerate != NULL)
+					if(framerate != NULL)
 					{
-						if((unsigned int)lWidth == _width && (unsigned int)lHeight == _height)
+						if((unsigned int)lWidth == width && (unsigned int)lHeight == height)
 						{
 							
-							pVih->AvgTimePerFrame = (LONGLONG)(10000000 / _framerate);
+							pVih->AvgTimePerFrame = (LONGLONG)(10000000 / framerate);
 							//set the capture media type and the grabber media type
 							if(FAILED(hr = pConfig->SetFormat(pmtConfig))||			
 								FAILED(hr = pGrabberI->SetMediaType(pmtConfig)))
@@ -915,14 +917,14 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int _width,unsigned int _height
 							pVih = (VIDEOINFOHEADER*)sgCB.connectedMediaType.pbFormat;
 							LONGLONG ActualFrameDuration; 
 							if(FAILED(hr = pVideoControl->GetCurrentActualFrameRate(pCapSourcePin,&ActualFrameDuration)))
-								cout<<"Current format (not sure): "<<_width <<" x "<< _height <<" at "<< 10000000/pVih->AvgTimePerFrame <<" fps"<<endl<<endl;
-							else cout<<"Current format : "<<_width <<" x "<< _height <<" at "<< 10000000/ActualFrameDuration <<" fps"<<endl<<endl;
+								cout<<"Current format (not sure): "<<width <<" x "<< height <<" at "<< 10000000/pVih->AvgTimePerFrame <<" fps"<<endl<<endl;
+							else cout<<"Current format : "<<width <<" x "<< height <<" at "<< 10000000/ActualFrameDuration <<" fps"<<endl<<endl;
 							found=true;
 						}
 					}
 					else
 					{
-						if((unsigned int)lWidth == _width && (unsigned int)lHeight == _height)
+						if((unsigned int)lWidth == width && (unsigned int)lHeight == height)
 						{
 							pVih->AvgTimePerFrame = scc.MinFrameInterval;
 							//set the capture media type and the grabber media type
@@ -934,7 +936,7 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int _width,unsigned int _height
 								return false;
 							pVih = (VIDEOINFOHEADER*)sgCB.connectedMediaType.pbFormat;
 							found=true;
-							cout<<"Current format : "<<_width <<" x "<< _height <<" at "<<(10000000 /pVih->AvgTimePerFrame) <<" fps"<<endl<<endl;
+							cout<<"Current format : "<<width <<" x "<< height <<" at "<<(10000000 /pVih->AvgTimePerFrame) <<" fps"<<endl<<endl;
 						}
 
 					}
@@ -945,17 +947,20 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int _width,unsigned int _height
 		}
 	}
 	if(!found)
-		if(_framerate != NULL)
-			cout << "The "<<_width <<" x "<< _height <<" at " <<_framerate<<" fps source image format is not available. "<<endl<<endl;
+		if(framerate != NULL)
+			cout << "The "<<width <<" x "<< height <<" at " <<framerate<<" fps source image format is not available. "<<endl<<endl;
 		else
-			cout << "The "<<_width <<" x "<< _height <<"source image size is not available. "<<endl<<endl;
+			cout << "The "<<width <<" x "<< height <<"source image size is not available. "<<endl<<endl;
 
 	return found;
 }
-/*
-	Get the current capture format
+/*!
+	Get the current capture format and framerate.
+	\param width : Image width.
+	\param height : Image height.
+	\param framerate : Framerate acquisition.
 */
-void vpDirectShowGrabberImpl::getFormat(unsigned int* pWidth,unsigned int* pHeight, double* pFramerate)
+void vpDirectShowGrabberImpl::getFormat(unsigned int &width,unsigned int &height, double &framerate)
 {
 	if (init==false)
     {
@@ -964,11 +969,10 @@ void vpDirectShowGrabberImpl::getFormat(unsigned int* pWidth,unsigned int* pHeig
 				     "Initialization not done") );
     }
 	VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)sgCB.connectedMediaType.pbFormat;
-	*pWidth = (unsigned int)pVih->bmiHeader.biWidth;
-	*pHeight = (unsigned int)pVih->bmiHeader.biHeight;
-	*pFramerate = (double)(10000000/pVih->AvgTimePerFrame);
-	cout<<"Current format : "<<*pWidth <<" x "<< *pHeight <<" at "<< *pFramerate <<" fps"<<endl<<endl;
-						
+	width = (unsigned int)pVih->bmiHeader.biWidth;
+	height = (unsigned int)pVih->bmiHeader.biHeight;
+	framerate = (double)(10000000/pVih->AvgTimePerFrame);
+
 }
 /*!
 	Get the available capture formats
@@ -980,7 +984,7 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
       close();
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
-    }  
+    }
 
 	//gets the stream config interface
 	IAMStreamConfig *pConfig = NULL;
@@ -1055,13 +1059,13 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
 					cout<<"subtype : I420"<<endl;
 				else cout<<"subtype (not supported) :"
 					<<(char)(pVih->bmiHeader.biCompression&0x000000FF)
-					<<(char)((pVih->bmiHeader.biCompression&0x0000FF00)>>8) 
-					<<(char)((pVih->bmiHeader.biCompression&0x00FF0000)>>16) 
+					<<(char)((pVih->bmiHeader.biCompression&0x0000FF00)>>8)
+					<<(char)((pVih->bmiHeader.biCompression&0x00FF0000)>>16)
 					<<(char)((pVih->bmiHeader.biCompression&0xFF000000)>>24)<<endl;
 
 				cout<<"image size : "<<pVih->bmiHeader.biWidth<<" x "<<pVih->bmiHeader.biHeight<<endl;
 				cout<<"framerate range: ["<< 10000000/scc.MaxFrameInterval<<","<<10000000/scc.MinFrameInterval<<"]"<<endl<<endl;
-				
+
 /*
 				long frameRateNum;
 				LONGLONG *frameRateList;
@@ -1092,7 +1096,7 @@ bool vpDirectShowGrabberImpl::setMediaType(int mediaTypeID)
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
 	  return false;
-    }  
+    }
 
 	//gets the stream config interface
 	IAMStreamConfig *pConfig = NULL;
@@ -1138,7 +1142,7 @@ int vpDirectShowGrabberImpl::getMediaType()
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
 	  return -1;
-    }  
+    }
 
 	int mediaTypeID = -1;
 	VIDEOINFOHEADER *pVihConnected = (VIDEOINFOHEADER*)sgCB.connectedMediaType.pbFormat;
@@ -1224,4 +1228,4 @@ void vpDirectShowGrabberImpl::MyFreeMediaType(AM_MEDIA_TYPE& mt)
 
 #endif
 #endif
-
+#endif
