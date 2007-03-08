@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.24 2007-03-06 15:33:30 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.25 2007-03-08 14:18:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1407,8 +1407,8 @@ void vpDisplayX::displayArrow(unsigned int i1,unsigned int j1,
   if (Xinitialise)
   {
     try{
-      double a = i2 - i1 ;
-      double b = j2 - j1 ;
+      double a = (int)i2 - (int)i1 ;
+      double b = (int)j2 - (int)j1 ;
       double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
       if ((a==0)&&(b==0))
