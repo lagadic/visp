@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.17 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.18 2007-03-08 15:02:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -710,8 +710,8 @@ vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
     {
       try{
 	int _l = l;
-	double a = i2 - i1 ;
-	double b = j2 - j1 ;
+	double a = (int)i2 - (int)i1 ;
+	double b = (int)j2 - (int)j1 ;
 	double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
 	if ((a==0)&&(b==0))
