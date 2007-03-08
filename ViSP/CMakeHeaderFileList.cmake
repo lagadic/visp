@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.11 2007-03-02 13:05:11 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.12 2007-03-08 13:05:54 hatran Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -145,6 +145,7 @@ SET (HEADER_SERVO
 
 SET (HEADER_SIMULATOR
   simulator/vpProjectionDisplay.h
+  simulator/vpRA.h
   simulator/vpSimulatorException.h
   simulator/vpSimulator.h
   simulator/vpViewer.h
