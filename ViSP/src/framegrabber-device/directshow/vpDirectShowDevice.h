@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowDevice.h,v 1.2 2007-02-16 16:12:03 asaunier Exp $
+ * $Id: vpDirectShowDevice.h,v 1.3 2007-03-08 13:35:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,7 +41,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpConfig.h>
-#if ( defined(VISP_HAVE_DIRECTSHOW) ) 
+#if ( defined(VISP_HAVE_DIRECTSHOW) )
 
 #include <atlbase.h>
 #include <iostream>
@@ -56,7 +56,7 @@ class VISP_EXPORT vpDirectShowDevice
 	string name;		//the device's name
 	string desc;		//the device's description
 	string devPath;		//the device's device path (unique)
-	
+
 	bool inUse;			//true if the device is already used by a grabber
 
 public:

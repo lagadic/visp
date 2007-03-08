@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.h,v 1.5 2007-03-07 17:51:46 asaunier Exp $
+ * $Id: vpDirectShowGrabberImpl.h,v 1.6 2007-03-08 13:35:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,10 +39,10 @@
 #ifndef vpDirectShowGrabberImpl_hh
 #define vpDirectShowGrabberImpl_hh
 
-#include <visp/vpConfig.h>
-#if ( defined(VISP_HAVE_DIRECTSHOW) ) 
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#include <visp/vpConfig.h>
+#if ( defined(VISP_HAVE_DIRECTSHOW) )
 
 #include <atlbase.h>
 #include <qedit.h>
@@ -71,8 +71,9 @@ template class VISP_EXPORT CComPtr<IMediaControl>;
 template class VISP_EXPORT CComPtr<IMediaEvent>;
 #endif
 
-/*
-	This code uses CComPtr which is the best way to be sure that all the interfaces
+/*!
+	\class vpDirectShowGrabberImpl
+	This class uses CComPtr which is the best way to be sure that all the interfaces
 	are released sooner or later.
 	Since this class may be exported, it may be necessary to explicitely instantiate
 	each instance of CComPtr.
@@ -89,7 +90,7 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		/*!
     Enumeration of video subtypes.
 */
-/*	
+/*
   typedef enum {
 	  //Known RGB formats
 	  vpMEDIASUBTYPE_ARGB32 = MEDIASUBTYPE_ARGB32,
@@ -111,7 +112,7 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 	  vpMEDIASUBTYPE_YUYV = MEDIASUBTYPE_YUYV,
 	  vpMEDIASUBTYPE_IF09 = MEDIASUBTYPE_IF09,
 	  vpMEDIASUBTYPE_IYUV = MEDIASUBTYPE_IYUV,
-	  vpMEDIASUBTYPE_YV12 = MEDIASUBTYPE_YV12,	
+	  vpMEDIASUBTYPE_YV12 = MEDIASUBTYPE_YV12,
 	  vpMEDIASUBTYPE_YVU9 = MEDIASUBTYPE_YVU9
   } vpDirectShowMediaSubtype;
 */
@@ -127,32 +128,32 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		void acquire(vpImage<vpRGBa> &I);
 
 		void close();
-			
+
 		/*!
 			Gets the number of capture devices
 		*/
 		unsigned int getDeviceNumber() {return nbDevices;}
 
 		//change the capture device
-		bool setDevice(unsigned int n);
+		bool setDevice(unsigned int id);
 
 		//displays a list of available devices
 		void displayDevices();
 
 		//set image size
-		bool setImageSize(unsigned int _width,unsigned int _height);
+		bool setImageSize(unsigned int width,unsigned int height);
 
 		//set capture framerate
-		bool setFramerate(double _framerate);
+		bool setFramerate(double framerate);
 
 		//set capture format
-		bool setFormat(unsigned int _width,unsigned int _height, double _framerate);
+		bool setFormat(unsigned int width,unsigned int height, double framerate);
 
 		//get capture format
-		void getFormat(unsigned int* pWidth,unsigned int* pHeight, double* pFramerate);
+		void getFormat(unsigned int &width,unsigned int &height, double &framerate);
 
 		//set capture MediaType
-		bool setMediaType(int mediaTypeID);	
+		bool setMediaType(int mediaTypeID);
 
 		//get current capture MediaType
 		int getMediaType();
@@ -162,32 +163,32 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 
 
 	private:
-		
+
 		CComPtr<IGraphBuilder> pGraph;			//our DS filter graph
-		
-		CComPtr<ICaptureGraphBuilder2> pBuild;	//the interface to the capture graph builder 
+
+		CComPtr<ICaptureGraphBuilder2> pBuild;	//the interface to the capture graph builder
 												//used to build the filter graph
 
 		CComPtr<IBaseFilter> pCapSource;		//the capture source filter
-		
+
 		CComPtr<ISampleGrabber> pGrabberI;		//the sample grabber's interface and filter
 		CComPtr<IBaseFilter> pGrabberFilter;
-		
+
 		CComPtr<IMediaControl> pControl; 		//The DS filter graph control interface
 		CComPtr<IMediaEvent> pEvent;			//The DS filter graph event interface
 
 		vpDirectShowSampleGrabberI sgCB;		//Interface used to implement the frame grabber callback
 
 		HRESULT hr;								//contains the result of the last operation
-	
+
 		static vpDirectShowDevice * deviceList;	//This contains the list of the available capture devices
 												//it is shared by all the DirectShow Grabbers
-		
+
 		static unsigned int nbDevices;			//the number of available devices
 		int currentDevice;						//the number of the current device
-		
+
 		// flag to manage CoInitialize() and CoUnInitialze()
-		bool initCo ; 
+		bool initCo ;
 		//setup the directshow filtergraph with the first available device
 		bool initDirectShow();
 
@@ -211,7 +212,7 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 
 		//used to convert HRESULT-associated error message to a string
 		void HRtoStr(string str);
-		
+
 		//create the list of the available devices
 		bool createDeviceList(CComPtr<IEnumMoniker>& ppVideoInputEnum);
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-* $Id: grabDirectShowMulti.cpp,v 1.2 2007-03-08 10:25:44 fspindle Exp $
+* $Id: grabDirectShowMulti.cpp,v 1.3 2007-03-08 13:35:43 fspindle Exp $
 *
 * Copyright (C) 1998-2006 Inria. All rights reserved.
 *
@@ -178,7 +178,7 @@ Set the program options.
 */
 
 void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
-				  unsigned int &nframes, bool &verbose_info, 
+				  unsigned int &nframes, bool &verbose_info,
 				  bool &verbose_settings,
 				  bool &mediatype_is_set,
 				  unsigned int &mediatypeID,
@@ -302,10 +302,10 @@ main(int argc, char ** argv)
 			delete g;
 			g = new vpDirectShowGrabber[ncameras];
 			for(unsigned int i=0; i<ncameras ; i++)
-			{				
+			{
 				g[i].open();
 			}
-						
+
 		}
 		else {
 			ncameras = 1; // acquisition from only one camera
@@ -313,7 +313,7 @@ main(int argc, char ** argv)
 			g = new vpDirectShowGrabber[1];
 			g[0].open();
 			g[0].setDevice(camera);
-			
+
 		}
 
 		// allocate an image and display for each camera to consider
@@ -330,12 +330,11 @@ main(int argc, char ** argv)
 			d = new vpDisplayGDI [ncameras];
 #endif
 
-		unsigned int pWIdth;
-		unsigned int pHeight;
-		double pframerate;
+		unsigned int width;
+		unsigned int height;
 		// Display information for each camera
 		if (verbose_info || verbose_settings) {
-			
+
 			cout << "----------------------------------------------------------" << endl;
 			cout << "---- Device List : " << endl;
 			cout << "----------------------------------------------------------" << endl;
@@ -346,14 +345,15 @@ main(int argc, char ** argv)
 				else c = camera;
 
 				if (verbose_info)
+					g[i].getFormat(width, height, framerate);
 					cout << "----------------------------------------------------------"
 						<< endl
 						<< "---- MediaType and framerate currently used by device " << endl
 						<< "---- (or camera) " << c <<  endl
 						<< "---- Current MediaType : " << g[i].getMediaType() << endl
-						<< "---- ";
-						g[i].getFormat(&pWIdth,&pHeight,&pframerate);
-					
+						<< "---- Current format : " << width <<" x "<< height <<" at "<< framerate << " fps" << endl
+						<< "----------------------------------------------------------" << endl;
+
 				if (verbose_settings) {
 					cout << "----------------------------------------------------------"
 						   << endl
@@ -366,7 +366,7 @@ main(int argc, char ** argv)
 						   << endl;
 					g[i].getStreamCapabilities();
 				}
-					
+
 			}
 			return 0;
 		}
@@ -391,7 +391,7 @@ main(int argc, char ** argv)
 					cout << "Set Framerate failed !!" <<endl<<endl;
 			}
 		}
-		
+
 		// Do a first acquisition to initialise the display
 		for (unsigned int i=0; i < ncameras; i ++) {
 			// Acquire the first image
