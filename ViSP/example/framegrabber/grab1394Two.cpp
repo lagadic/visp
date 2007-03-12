@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.5 2007-03-07 17:10:44 asaunier Exp $
+ * $Id: grab1394Two.cpp,v 1.6 2007-03-12 14:35:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@ using namespace std;
 
 
 // List of allowed command line options
-#define GETOPTARGS	"c:df:g:hmn:io:sv:?"
+#define GETOPTARGS	"c:df:g:h:l:mn:io:t:sv:w:?"
 
 
 #define DUAL_ACQ
@@ -89,8 +89,10 @@ using namespace std;
   \param opath : Image filename when saving.
 
 */
-void usage(char *name, char *badparam, unsigned int camera, unsigned int &nframes,
-	   string &opath)
+void usage(char *name, char *badparam, unsigned int camera,
+	   unsigned int &nframes, string &opath,
+	   unsigned int &roi_left, unsigned int &roi_top,
+	   unsigned int &roi_width, unsigned int &roi_height)
 {
   if (badparam)
     fprintf(stderr, "\nERREUR: Bad parameter [%s]\n", badparam);
@@ -99,7 +101,9 @@ void usage(char *name, char *badparam, unsigned int camera, unsigned int &nframe
 SYNOPTIQUE\n\
     %s [-v <video mode>] [-f <framerate>] \n\
     [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
-    [-i] [-s] [-d] [-o <filename>] [-?]\n\
+    [-i] [-s] [-d] [-o <filename>] [-l <format 7 roi left position>] \n\
+    [-t <format 7 roi top position>] [-w <format 7 roi width>] \n\
+    [-h <format 7 roi height>] [-?]\n\
 \n\
 DESCRIPTION\n\
     Test for firewire camera image acquisition.\n\
@@ -120,6 +124,24 @@ OPTIONS                                                    Default\n\
               format 7 is supported by the camera and if so, \n\
               which are the supported color codings. You can \n\
               select the active camera using -c option.\n\
+              See -t <top>, -l <left>, -w <width>, \n\
+              -h <height> option to set format 7 roi.\n\
+\n\
+    -l [%%u] : Format 7 region of interest (roi) left         %u\n\
+              position. This option is only used if video\n\
+              mode is format 7.\n\
+\n\
+    -t [%%u] : Format 7 region of interest (roi) top          %u\n\
+              position. This option is only used if video\n\
+              mode is format 7.\n\
+\n\
+    -w [%%u] : Format 7 region of interest (roi) width.       %u\n\
+              Is set to zero, use the maximum width. This\n\
+              option is only used if video mode is format 7.\n\
+\n\
+    -h [%%u] : Format 7 region of interest (roi) height.      %u\n\
+              Is set to zero, use the maximum height. This\n\
+              option is only used if video mode is format 7.\n\
 \n\
     -c [%%u] : Active camera identifier.                      %u\n\
               Zero is for the first camera found on the bus.\n\
@@ -141,8 +163,11 @@ OPTIONS                                                    Default\n\
               Example: -o %s\n\
               The first %%d is for the camera id, %%04d\n\
               is for the image numbering.\n\
+\n\
+    -?      : Print this help.\n\
 \n",
-	  name, camera, nframes, opath.c_str());
+	  name, roi_left, roi_top, roi_width, roi_height,
+	  camera, nframes, opath.c_str());
 
   exit(0);
 }
@@ -183,7 +208,9 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
 		  vp1394TwoGrabber::vp1394TwoFramerate &framerate,
 		  bool &colorcoding_is_set,
 		  vp1394TwoGrabber::vp1394TwoColorCoding &colorcoding,
-		  bool &display, bool &save, string &opath)
+		  bool &display, bool &save, string &opath,
+		  unsigned int &roi_left, unsigned int &roi_top,
+		  unsigned int &roi_width, unsigned int &roi_height)
 {
   int	c;
   /*
@@ -202,8 +229,12 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
     case 'g':
       colorcoding_is_set = true;
       colorcoding = (vp1394TwoGrabber::vp1394TwoColorCoding) atoi(optarg); break;
+    case 'h':
+      roi_height = (unsigned int) atoi(optarg); break;
     case 'i':
       verbose_info = true; break;
+    case 'l':
+      roi_left = (unsigned int) atoi(optarg); break;
     case 'm':
       multi = true; break;
     case 'n':
@@ -213,17 +244,23 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
       opath = optarg; break;
     case 's':
       verbose_settings = true; break;
+    case 't':
+      roi_top = (unsigned int) atoi(optarg); break;
     case 'v':
       videomode_is_set = true;
       videomode = (vp1394TwoGrabber::vp1394TwoVideoMode) atoi(optarg); break;
+    case 'w':
+      roi_width = (unsigned int) atoi(optarg); break;
     default:
-      usage(argv[0], NULL, camera, nframes, opath);
+      usage(argv[0], NULL, camera, nframes, opath,
+	    roi_left, roi_top, roi_width, roi_height);
       break;
     }
 
   /* expect no args left over */
   if (argv[optind]) {
-    usage(argv[0], argv[optind], camera, nframes, opath);
+    usage(argv[0], argv[optind], camera, nframes, opath,
+	  roi_left, roi_top, roi_width, roi_height);
   }
 }
 
@@ -255,6 +292,9 @@ main(int argc, char ** argv)
     vp1394TwoGrabber::vp1394TwoColorCoding colorcoding;
     bool save = false;
 
+    // Format 7 roi
+    unsigned int roi_left=0, roi_top=0, roi_width=0, roi_height=0;
+
 #ifdef GRAB_COLOR
     vpImage<vpRGBa> *I;
     string opath = "/tmp/I%d-%04d.ppm";
@@ -270,7 +310,8 @@ main(int argc, char ** argv)
 		 videomode_is_set, videomode,
 		 framerate_is_set, framerate,
 		 colorcoding_is_set, colorcoding,
-		 display, save, opath);
+		 display, save, opath,
+		 roi_left, roi_top, roi_width, roi_height);
 
     // Number of cameras connected on the bus
     unsigned int ncameras = 0;
@@ -429,7 +470,7 @@ main(int argc, char ** argv)
 
     // In format 7 set roi to the hole image
     if (g.isVideoModeFormat7(videomode))
-      g.setFormat7ROI();
+      g.setFormat7ROI(roi_left, roi_top, roi_width, roi_height);
 
     // Do a first acquisition to initialise the display
     for (unsigned int i=0; i < ncameras; i ++) {
