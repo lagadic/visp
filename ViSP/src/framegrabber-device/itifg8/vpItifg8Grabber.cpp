@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.8 2007-03-08 16:45:36 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.9 2007-03-12 13:08:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,6 +193,7 @@ vpItifg8Grabber::~vpItifg8Grabber()
   Internal initialisation.
 
   Uses the default framegrabber settings for input, scale and framerate.
+  Contiguous grab mode is set by default.
 
   \exception vpFrameGrabberException::initializationError : If initialisation
   failed.
