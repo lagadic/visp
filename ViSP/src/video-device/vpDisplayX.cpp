@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.25 2007-03-08 14:18:13 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.26 2007-03-13 15:29:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Fabien Spindler
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -371,9 +372,9 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
   XMapWindow(display, window) ;
   // Selection des evenements.
   XSelectInput(display, window,
-	       ExposureMask | ButtonPressMask | ButtonReleaseMask);
+	       ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
 
-  // Creation du contexte graphique
+  // graphic context creation
   values.plane_mask = AllPlanes;
   values.fill_style = FillSolid;
   values.foreground = WhitePixel(display, screen);
@@ -389,6 +390,9 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
 			     "Can't create graphics context")) ;
 
   }
+  
+  // Pixmap creation.
+  pixmap = XCreatePixmap(display, window, width, height, screen_depth);
 
   do
     XNextEvent(display, &event);
@@ -629,7 +633,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   XMapWindow(display, window) ;
   // Selection des evenements.
   XSelectInput(display, window,
-	       ExposureMask | ButtonPressMask | ButtonReleaseMask);
+	       ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
 
   // Creation du contexte graphique
   values.plane_mask = AllPlanes;
@@ -645,6 +649,9 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
     throw(vpDisplayException(vpDisplayException::XWindowsError,
 			     "Can't create graphics context")) ;
   }
+
+  // Pixmap creation.
+  pixmap = XCreatePixmap(display, window, width, height, screen_depth);
 
   do
     XNextEvent(display, &event);
@@ -895,7 +902,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
   XMapWindow(display, window) ;
   // Selection des evenements.
   XSelectInput(display, window,
-	       ExposureMask | ButtonPressMask | ButtonReleaseMask);
+	       ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
 
   /* Creation du contexte graphique */
   values.plane_mask = AllPlanes;
@@ -911,6 +918,9 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     throw(vpDisplayException(vpDisplayException::XWindowsError,
 			     "Can't create graphics context")) ;
   }
+  
+  // Pixmap creation.
+  pixmap = XCreatePixmap(display, window, width, height, screen_depth);
 
   do
     XNextEvent(display, &event);
@@ -971,7 +981,11 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
 	}
       }
 
-      XPutImage (display, window, context, Ximage, 0, 0, 0, 0, width, height);
+     // Affichage de l'image dans la Pixmap.
+      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, width, height);
+      XSetWindowBackgroundPixmap(display, window, pixmap);
+      XClearWindow(display, window);
+      XSync(display,1);
       break;
     }
     case 16: {
@@ -984,9 +998,12 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
 	}
       }
 
-      XPutImage (display, window, context, Ximage, 0, 0, 0, 0, width, height);
-
-      break;
+      // Affichage de l'image dans la Pixmap.
+      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, width, height);
+      XSetWindowBackgroundPixmap(display, window, pixmap);
+      XClearWindow(display, window);
+      XSync(display,1);
+     break;
     }
 
     case 24:
@@ -1006,14 +1023,11 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
 	  *(dst_32 ++) = val;
 	}
 
-      // Creation de la Pixmap.
-      pixmap = XCreatePixmap(display, window, width, height, screen_depth);
       // Affichage de l'image dans la Pixmap.
       XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, width, height);
       XSetWindowBackgroundPixmap(display, window, pixmap);
-
       XClearWindow(display, window);
-      XFreePixmap(display, pixmap);
+      XSync(display,1);
       break;
     }
     }
@@ -1065,7 +1079,13 @@ void vpDisplayX::displayImage(const vpImage<vpRGBa> &I)
 	dst_32[i*4 + 3] = I.bitmap[i].A;
       }
 #endif
+      // Affichage de l'image dans la Pixmap.
+      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, width, height);
+      XSetWindowBackgroundPixmap(display, window, pixmap);
+      XClearWindow(display, window);
+      XSync(display,1);
       break;
+ 
     }
     default:
       vpERROR_TRACE("Unsupported depth (%d bpp) for color display",
@@ -1074,8 +1094,7 @@ void vpDisplayX::displayImage(const vpImage<vpRGBa> &I)
 			       "Unsupported depth for color display")) ;
     }
 
-    XPutImage (display, window, context, Ximage, 0, 0, 0, 0,
-	       I.getWidth(), I.getHeight());
+  
 
   }
   else
@@ -1153,14 +1172,11 @@ void vpDisplayX::displayImage(const unsigned char *I)
       *(dst_32 ++) = val;	// Composante Bleue.
     }
 
-    // Creation de la Pixmap.
-    pixmap = XCreatePixmap(display, window, width, height, screen_depth);
     // Affichage de l'image dans la Pixmap.
     XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, width, height);
     XSetWindowBackgroundPixmap(display, window, pixmap);
-
     XClearWindow(display, window);
-    XFreePixmap(display, pixmap);
+    XSync(display,1);
   }
   else
   {
@@ -1186,6 +1202,8 @@ void vpDisplayX::closeDisplay()
 
     Ximage->data = NULL;
     XDestroyImage(Ximage);
+	
+    XFreePixmap(display, pixmap);
 
     XFreeGC(display, context);
     XDestroyWindow(display, window);
@@ -1219,6 +1237,8 @@ void vpDisplayX::flushDisplay()
 {
   if (Xinitialise)
   {
+    XSetWindowBackgroundPixmap(display, window, pixmap);
+    XClearWindow(display, window);
     XFlush(display);
     XSync(display,1);
   }
@@ -1238,8 +1258,13 @@ void vpDisplayX::clearDisplay(vpColor::vpColorType c)
 {
   if (Xinitialise)
   {
+  	
     XSetWindowBackground (display, window, x_color[c]);
     XClearWindow(display, window);
+	
+    XFreePixmap(display, pixmap);
+    // Pixmap creation.
+    pixmap = XCreatePixmap(display, window, width, height, screen_depth);
   }
   else
   {
@@ -1259,8 +1284,9 @@ void vpDisplayX::displayPoint(unsigned int i, unsigned int j,
 {
   if (Xinitialise)
   {
-    XSetForeground (display, context, x_color[col]);
-    XDrawPoint(display, window,context, j, i) ;
+	XSetForeground (display, context, x_color[col]);
+    XDrawPoint(display, pixmap, context, j, i) ;
+ 
   }
  else
   {
@@ -1285,12 +1311,13 @@ void vpDisplayX::displayLine(unsigned int i1, unsigned int j1,
   if (Xinitialise)
   {
     if (e == 1) e = 0;
-
+	
     XSetForeground (display, context, x_color[col]);
     XSetLineAttributes (display, context, e,
 			LineSolid, CapButt, JoinBevel);
 
-    XDrawLine (display, window,context, j1, i1, j2, i2);
+    XDrawLine (display, pixmap, context, j1, i1, j2, i2);
+	
   }
   else
   {
@@ -1320,7 +1347,7 @@ void vpDisplayX::displayDotLine(unsigned int i1, unsigned int j1,
     XSetLineAttributes (display, context, e,
 			LineOnOffDash, CapButt, JoinBevel);
 
-    XDrawLine (display, window,context, j1, i1, j2, i2);
+    XDrawLine (display, pixmap,context, j1, i1, j2, i2);
   }
   else
   {
@@ -1427,23 +1454,23 @@ void vpDisplayX::displayArrow(unsigned int i1,unsigned int j1,
 
 	double i4,j4 ;
 
-	double t = 0 ;
-	while (t<=l)
+	//double t = 0 ;
+	//while (t<=l)
 	{
-	  i4 = i3 - b*t ;
-	  j4 = j3 + a*t ;
+	  i4 = i3 - b*l ;
+	  j4 = j3 + a*l ;
 
 	  displayLine((int)i2,(int)j2,(int)i4,(int)j4,col) ;
-	  t+=0.1 ;
+	  //t+=0.1 ;
 	}
-	t = 0 ;
-	while (t>= -l)
+	//t = 0 ;
+	//while (t>= -l)
 	{
-	  i4 = i3 - b*t ;
-	  j4 = j3 + a*t ;
+	  i4 = i3 + b*l ;
+	  j4 = j3 - a*l ;
 
 	  displayLine((int)i2,(int)j2,(int)i4,(int)j4,col) ;
-	  t-=0.1 ;
+	  //t-=0.1 ;
 	}
 	displayLine(i1,j1,i2,j2,col) ;
 
@@ -1507,9 +1534,10 @@ vpDisplayX::displayRectangle(const vpRect &rect,
     XSetLineAttributes (display, context, 0,
 			LineSolid, CapButt, JoinBevel);
 
-    XDrawRectangle (display, window, context, 
+    XDrawRectangle (display, pixmap, context, 
 		    (int)rect.getLeft(), (int)rect.getTop(), 
 		    (int)rect.getWidth()-1, (int)rect.getHeight()-1);
+			
   }
  else
   {
@@ -1533,7 +1561,7 @@ void vpDisplayX::displayCharString(unsigned int i, unsigned int j,
   if (Xinitialise)
   {
     XSetForeground (display, context, x_color[col]);
-    XDrawString( display, window, context, j, i, string, strlen(string) );
+    XDrawString( display, pixmap, context, j, i, string, strlen(string) );
   }
   else
   {
@@ -1821,7 +1849,7 @@ void vpDisplayX::displayCircle(unsigned int i, unsigned int j, unsigned int r,
      XSetLineAttributes (display, context, 0,
                         LineSolid, CapButt, JoinBevel);
 
-     XDrawArc (display, window, context,  j-r, i-r, r*2, r*2, 0, 360*64);
+     XDrawArc (display, pixmap, context,  j-r, i-r, r*2, r*2, 0, 360*64);
    }
   else
    {
