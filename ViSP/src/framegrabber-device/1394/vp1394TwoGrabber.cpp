@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.8 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.9 2007-03-13 10:42:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -892,18 +892,34 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
     vpTRACE("max_width: %d max_height: %d", max_width, max_height);
 #endif
 
+    if (left > max_width) {
+      vpERROR_TRACE("Can't set format7 ROI");
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Can't set format7 ROI") );
+    }
+    if (top > max_height) {
+      vpERROR_TRACE("Can't set format7 ROI");
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Can't set format7 ROI") );
+    }
+    if (width != 0) {
+      // Check if roi width is acceptable (ie roi is contained in the image)
+      if (width > (max_width - left))
+	width = (max_width - left);
+    }
+    if (height != 0) {
+      // Check if roi height is acceptable (ie roi is contained in the image)
+      if (width > (max_height - top))
+	width = (max_height - top);
+    }
+
     if (dc1394_format7_set_roi(camera, _videomode,
 			       (dc1394color_coding_t) DC1394_QUERY_FROM_CAMERA, // color_coding
-			       DC1394_QUERY_FROM_CAMERA, // bytes_per_packet
+			       DC1394_USE_MAX_AVAIL/*DC1394_QUERY_FROM_CAMERA*/, // bytes_per_packet
 			       left, // left
 			       top, // top
-#if 0
-			       max_width - left, // width
-			       max_height - top) // height
-#else
-			       width == 0 ? DC1394_USE_MAX_AVAIL: width - left,
-			       height == 0 ? DC1394_USE_MAX_AVAIL : height - top)
-#endif
+			       width == 0 ? DC1394_USE_MAX_AVAIL: width,
+			       height == 0 ? DC1394_USE_MAX_AVAIL : height)
 	!= DC1394_SUCCESS) {
       close();
       vpERROR_TRACE("Can't set format7 roi");
@@ -984,9 +1000,8 @@ vp1394TwoGrabber::close()
       if (camInUse[i]) {
 	camera = cameras[i];
 
-	setCapture(DC1394_OFF);
 	setTransmission(DC1394_OFF);
-	dc1394_cleanup_iso_channels_and_bandwidth(camera);
+	setCapture(DC1394_OFF);
 
 	dc1394_free_camera(camera);
       }
@@ -1030,7 +1045,10 @@ vp1394TwoGrabber::setCapture(dc1394switch_t _switch)
   }
 
   if (_switch == DC1394_ON) {
-    if (dc1394_capture_setup(camera, NUM_BUFFERS) != DC1394_SUCCESS) {
+    //    if (dc1394_capture_setup(camera, NUM_BUFFERS) != DC1394_SUCCESS) {
+    // To be compatible with libdc1394 svn 382 version
+    if (dc1394_capture_setup(camera, NUM_BUFFERS,
+			     DC1394_CAPTURE_FLAGS_DEFAULT) != DC1394_SUCCESS) {
       vpERROR_TRACE("Unable to setup camera capture-\n"
 		    "make sure that the video mode and framerate are "
 		    "supported by your camera.\n");
@@ -1089,6 +1107,21 @@ vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
 				   "Could not setup dma capture") );
   }
 
+  if (_switch == DC1394_ON) {
+    dc1394switch_t status = DC1394_OFF;
+
+    int i = 0;
+    while( status == DC1394_OFF && i++ < 5 ) {
+      usleep(50000);
+      if (dc1394_video_get_transmission(camera, &status)!=DC1394_SUCCESS) {
+	vpERROR_TRACE("Unable to get transmision status");
+	close();
+	throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				       "Could not setup dma capture") );
+       }
+    }
+
+  }
 }
 
 
@@ -1160,13 +1193,13 @@ vp1394TwoGrabber::dequeue()
 				   "No camera found") );
   }
 
-  if (camera->is_iso_on == DC1394_OFF) {
-    setTransmission(DC1394_ON);
-  }
-
   // Start dma capture if halted
   if (! camera->capture_is_set)
     setCapture(DC1394_ON);
+
+  if (camera->is_iso_on == DC1394_OFF) {
+    setTransmission(DC1394_ON);
+  }
 
   dc1394video_frame_t *frame;
 
