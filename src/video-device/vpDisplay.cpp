@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.15 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.16 2007-03-13 15:22:47 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,7 +46,7 @@
 /*!
   \file vpDisplay.cpp
   \brief  generic class for image display
-
+  
 */
 
 vpDisplay::vpDisplay()
@@ -430,7 +430,10 @@ vpDisplay::displayCharString(const vpImage<unsigned char> &I,
 
 /*!
   flushes the output buffer and then waits until all
-  requests have been received and processed by the server
+  requests have been received and processed by the server.
+
+  \warning In vpDisplayX class this function is particular and must be called 
+  to show the overlay. Because it's time spending, use it parcimoniously.  
 */
 void vpDisplay::flush(const vpImage<unsigned char> &I)
 {
