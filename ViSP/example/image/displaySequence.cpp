@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.5 2007-02-15 14:02:44 fspindle Exp $
+ * $Id: displaySequence.cpp,v 1.6 2007-03-13 15:34:33 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,15 +55,15 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(WIN32))
+#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(WIN32))
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 
-#if defined VISP_HAVE_X11
-#include <visp/vpDisplayX.h>
-#elif defined VISP_HAVE_GTK
+#if defined VISP_HAVE_GTK
 #include <visp/vpDisplayGTK.h>
+#elif defined VISP_HAVE_X11
+#include <visp/vpDisplayX.h>
 #elif defined WIN32
 #include <visp/vpDisplayGDI.h>
 #endif
@@ -340,10 +340,10 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-#if defined VISP_HAVE_X11
-  vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#if defined VISP_HAVE_GTK
   vpDisplayGTK display;
+#elif defined VISP_HAVE_X11
+  vpDisplayX11 display;
 #elif defined WIN32
   vpDisplayGDI display;
 #endif
@@ -359,8 +359,6 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
-      // flush the display buffer
-      vpDisplay::flush(I) ;
     }
     catch(...) {
       vpERROR_TRACE("Error while displaying the image") ;
@@ -368,6 +366,7 @@ main(int argc, char ** argv)
     }
   }
 
+//  double tms_1 = vpTime::measureTimeMs() ;
   unsigned niter=0 ;
   double totaltms =0 ;
   // this is the loop over the image sequence
@@ -393,8 +392,6 @@ main(int argc, char ** argv)
       if (opt_display) {
 	// Display the image
 	vpDisplay::display(I) ;
-	// Flush the display
-	vpDisplay::flush(I) ;
       }
       if (opt_wait) {
 	cout << "A click in the image to continue..." << endl;
@@ -412,6 +409,10 @@ main(int argc, char ** argv)
     }
     iter += opt_step ;
   }
+//  double tms_2 = vpTime::measureTimeMs() ;
+//  double tms_total = tms_2 - tms_1 ;
+//  cout << "Total Time : "<< tms_total<<endl;
+
 }
 #else
 int

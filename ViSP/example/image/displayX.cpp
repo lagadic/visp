@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayX.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: displayX.cpp,v 1.4 2007-03-13 15:34:33 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,6 +54,8 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
+
+#include <visp/vpTime.h>
 
 /*!
   \example displayX.cpp
@@ -265,6 +267,9 @@ main(int argc, char ** argv)
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
   vpImageIo::readPGM(I, filename) ;
 
+
+
+
   // Create a display using X11
   vpDisplayX display;
 
@@ -300,6 +305,9 @@ main(int argc, char ** argv)
     vpDisplay::displayCharString(I, 85, 100,
 				 "ViSP is a marvelous software",
 				 vpColor::yellow) ;
+    // Show the overlay. The display must be flushed to show the overlay.
+    //without this line, nothing else than the image will be displayed. 
+    vpDisplay::flush(I);
 
     // Create a color image
     vpImage<vpRGBa> Ioverlay ;
@@ -361,8 +369,8 @@ main(int argc, char ** argv)
       vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
 
     }
-    // Flush the display. Sometimes the display content is
-    // bufferized. Force to display the content that has been bufferized.
+    //Flush the display. The display must be flushed to show the overlay.
+    //without this line, nothing else than the image will be displayed. 
     vpDisplay::flush(Irgba);
 
     // If click is allowed, wait for a blocking mouse click to exit.
