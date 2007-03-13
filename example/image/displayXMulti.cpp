@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayXMulti.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: displayXMulti.cpp,v 1.5 2007-03-13 15:34:33 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -327,6 +327,11 @@ main(int argc, char ** argv)
     vpDisplay::displayCharString(I1,100,100,
 				 "ViSP is a marvelous software",
 				 vpColor::blue) ;
+	
+	//Flush displays. The displays must be flushed to show the overlay.
+    //without this line, nothing else than the image will be displayed. 
+	vpDisplay::flush(I1);
+	vpDisplay::flush(I2);
 
     // If click is allowed, wait for a blocking mouse click in the first
     // display, to display a cross at the clicked pixel position
@@ -339,6 +344,7 @@ main(int argc, char ** argv)
       // Display a red cross on the click pixel position
       cout << "Cross position: " << i << ", " << j << endl;
       vpDisplay::displayCross(I1,i,j,15,vpColor::red);
+      vpDisplay::flush(I1);
     }
     else {
       unsigned i=50,j=50;
@@ -346,6 +352,7 @@ main(int argc, char ** argv)
       // and j to the column coordinates in the image) in the first display
       cout << "Cross position: " << i << ", " << j << endl;
       vpDisplay::displayCross(I1,i,j,15,vpColor::red);
+      vpDisplay::flush(I1);
     }
 
     // Create a color image
