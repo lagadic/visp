@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.18 2007-03-08 15:02:16 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.19 2007-03-13 15:23:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -730,25 +730,25 @@ vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
 
 	    double i4,j4 ;
 
-	    double t = 0 ;
-	    while (t<=_l)
+	    //double t = 0 ;
+	    //while (t<=_l)
 	      {
-		i4 = i3 - b*t ;
-		j4 = j3 + a*t ;
+		i4 = i3 - b*_l ;
+		j4 = j3 + a*_l ;
 
 		displayLine(i2, j2, (unsigned int) i4,
 			    (unsigned int) j4, col) ;
-		t+=0.1 ;
+		//t+=0.1 ;
 	      }
-	    t = 0 ;
-	    while (t>= -_l)
+	      //t = 0 ;
+	      //while (t>= -_l)
 	      {
-		i4 = i3 - b*t ;
-		j4 = j3 + a*t ;
+		i4 = i3 + b*_l ;
+		j4 = j3 - a*_l ;
 
 		displayLine(i2, j2, (unsigned int) i4,
 			    (unsigned int) j4, col) ;
-		t-=0.1 ;
+		//t-=0.1 ;
 	      }
 	    displayLine(i1,j1,i2,j2,col) ;
 
