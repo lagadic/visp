@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.9 2007-02-26 16:42:18 fspindle Exp $
+ * $Id: vpPoint.h,v 1.10 2007-03-13 14:55:17 mpressig Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -127,9 +127,17 @@ public:
   vpColVector getWorldCoordinates(void) ;
   //@}
 
-  //! projection
+  //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p. 
   void projection(const vpColVector &_cP, vpColVector &_p) ;
+
+  //! Projection onto the image plane of the point. Update the object attribute p (2D homogeneous coordinates) according to object attribute cP (current 3D coordinates in the camera frame).
+  void projection();
+
+  //!Compute the 3D coordinates _cP  (camera frame)
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) ;
+
+  //!Update the object attribute cP  (3D coordinates in the camera frame)
+  void changeFrame(const vpHomogeneousMatrix &cMo) ;
 
 
   void display(vpImage<unsigned char> &I,

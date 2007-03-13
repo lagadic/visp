@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.cpp,v 1.5 2007-02-26 16:42:18 fspindle Exp $
+ * $Id: vpPoint.cpp,v 1.6 2007-03-13 14:55:17 mpressig Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -122,7 +122,7 @@ vpPoint::getWorldCoordinates(void)
 
 
 
-//! perspective projection of the point
+//! perspective projection of a point
 void
 vpPoint::projection(const vpColVector &_cP, vpColVector &_p)
 {
@@ -133,9 +133,19 @@ vpPoint::projection(const vpColVector &_cP, vpColVector &_p)
   _p[2] = 1 ;
 }
 
-
-
 //! perspective projection of the point
+void
+vpPoint::projection()
+{
+
+  p[0] = cP[0]/cP[2] ;
+  p[1] = cP[1]/cP[2] ;
+  p[2] = 1 ;
+}
+
+
+
+//! Compute the new 3D coordinates of the point in the new camera frame.
 void
 vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 {
@@ -149,6 +159,22 @@ vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 
   _cP /= _cP[3] ;
 }
+
+
+//! Update the 3D coordinates of the point (camera frame).
+void
+vpPoint::changeFrame(const vpHomogeneousMatrix &cMo)
+{
+  cP[0] = cMo[0][0]*oP[0]+ cMo[0][1]*oP[1]+ cMo[0][2]*oP[2]+ cMo[0][3]*oP[3] ;
+  cP[1] = cMo[1][0]*oP[0]+ cMo[1][1]*oP[1]+ cMo[1][2]*oP[2]+ cMo[1][3]*oP[3] ;
+  cP[2] = cMo[2][0]*oP[0]+ cMo[2][1]*oP[1]+ cMo[2][2]*oP[2]+ cMo[2][3]*oP[3] ;
+  cP[3] = cMo[3][0]*oP[0]+ cMo[3][1]*oP[1]+ cMo[3][2]*oP[2]+ cMo[3][3]*oP[3] ;
+
+  cP /= cP[3] ;
+}
+
+
+
 
 /*! \brief change frame
  */
