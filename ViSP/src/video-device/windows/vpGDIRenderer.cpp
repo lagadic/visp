@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.9 2007-03-08 15:13:32 asaunier Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.10 2007-03-13 15:30:43 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -697,28 +697,28 @@ void vpGDIRenderer::drawArrow(unsigned int i1,unsigned int j1,
 
       double i4,j4 ;
 
-      double t = 0 ;
-      while (t<=_l)
+      //double t = 0 ;
+      //while (t<=_l)
 	{
-	  i4 = i3 - b*t ;
-	  j4 = j3 + a*t ;
+	  i4 = i3 - b*_l ;
+	  j4 = j3 + a*_l ;
 
 	  MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
 	  LineTo(hDCMem, (int)j4, (int)i4);
 
-	  t+=0.1 ;
+	  // t+=0.1 ;
 	}
 
-      t = 0 ;
-      while (t>= -_l)
+	//t = 0 ;
+	//while (t>= -_l)
 	{
-	  i4 = i3 - b*t ;
-	  j4 = j3 + a*t ;
+	  i4 = i3 + b*_l ;
+	  j4 = j3 - a*_l ;
 
 	  MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
 	  LineTo(hDCMem, (int)j4, (int)i4);
 
-	  t-=0.1 ;
+	  // t-=0.1 ;
 	}
       MoveToEx(hDCMem, j1, i1, NULL);
       LineTo(hDCMem, j2, i2);
