@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.9 2007-02-26 16:42:39 fspindle Exp $
+ * $Id: vpMeSite.cpp,v 1.10 2007-03-14 08:58:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -301,11 +301,18 @@ vpMeSite::convolution(vpImage<unsigned char>&ima, const  vpMe *me)
 }
 
 
-// Specific function for ME
+/*!
+
+  Specific function for ME.
+
+  \warning To display the moving edges graphics a call to vpDisplay::flush()
+  is needed.
+
+*/
 void
 vpMeSite::track(vpImage<unsigned char>& I,
-		 const vpMe *me,
-		 const bool test_contraste)
+		const vpMe *me,
+		const bool test_contraste)
 {
   vpMeSite  *list_query_pixels ;
   int  max_rank =0 ;
@@ -394,7 +401,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
     if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
     {
       vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::red);
-      vpDisplay::flush(I) ;
+      //vpDisplay::flush(I) ;
     }
 
     *this = list_query_pixels[max_rank] ;
@@ -410,7 +417,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
        if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
     {
       vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::green);
-      vpDisplay::flush(I) ;
+      //vpDisplay::flush(I) ;
     }
 
     if(max == 0)

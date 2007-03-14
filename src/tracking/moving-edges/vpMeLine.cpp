@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.10 2007-02-26 16:42:39 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.11 2007-03-14 08:58:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -157,7 +157,11 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 
 
 /*!
- * \brief Display line
+  Display line.
+
+  \warning To effectively display the line a call to
+  vpDisplay::flush() is needed.
+
  */
 void
 vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
@@ -173,7 +177,7 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
     else
       vpDisplay::displayCross(I,vpMath::round(pix.ifloat), vpMath::round(pix.jfloat), 5, col);
 
-    vpDisplay::flush(I);
+    //vpDisplay::flush(I);
     list.next() ;
   }
 
@@ -185,7 +189,7 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
     i2 = I.getHeight() - 1.0;
     j2 = (-a*i2 -c) / b;
     vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
-    vpDisplay::flush(I);
+    //vpDisplay::flush(I);
 
   }
   else {
@@ -195,11 +199,11 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
     j2 = I.getWidth() - 1.0;
     i2 = -(b * j2 + c) / a;
     vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
-    vpDisplay::flush(I);
+    //vpDisplay::flush(I);
   }
   vpDisplay::displayCross(I,vpMath::round(PExt[0].ifloat), vpMath::round(PExt[0].jfloat), 10, vpColor::green);
   vpDisplay::displayCross(I,vpMath::round(PExt[1].ifloat), vpMath::round(PExt[1].jfloat), 10, vpColor::green);
-  vpDisplay::flush(I) ;
+  //vpDisplay::flush(I) ;
 }
 
 
