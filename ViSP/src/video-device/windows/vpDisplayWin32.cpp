@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.10 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.11 2007-03-14 08:50:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,6 +43,9 @@
 #include <visp/vpDisplayException.h>
 #include <string>
 
+
+
+const int vpDisplayWin32::MAX_INIT_DELAY  = 5000;
 
 /*!
   Thread entry point.
