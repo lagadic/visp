@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoDisplay.cpp,v 1.4 2007-02-26 17:29:47 fspindle Exp $
+ * $Id: vpServoDisplay.cpp,v 1.5 2007-03-14 08:58:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,6 +60,9 @@
 
   Display the current and the desired features in the image I.
 
+  \warning To effectively display the dot graphics a call to
+  vpDisplay::flush() is needed.
+
   \param s : Visual servoing control law.
   \param cam : Camera parameters.
   \param I : Image on which features have to be displayed.
@@ -101,7 +104,7 @@ vpServoDisplay::display(vpServo &s,
   }
 
 
-  vpDisplay::flush(I) ;
+  //  vpDisplay::flush(I) ;
 }
 
 

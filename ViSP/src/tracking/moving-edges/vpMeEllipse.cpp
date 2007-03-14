@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.9 2007-02-26 16:42:39 fspindle Exp $
+ * $Id: vpMeEllipse.cpp,v 1.10 2007-03-14 08:58:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -784,6 +784,12 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
 
 }
 
+/*!
+
+  \warning To display the ellipse graphics a call to vpDisplay::flush()
+  is needed.
+
+*/
 void
 vpMeEllipse::track(vpImage<unsigned char> &I)
 {
@@ -837,7 +843,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
     seekExtremities(I) ;
 
     vpMeTracker::display(I) ;
-    vpDisplay::flush(I) ;
+    // vpDisplay::flush(I) ;
 
     // remet a jour l'angle theta pour chaque  point de la liste
     updateTheta() ;
