@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.15 2007-03-06 15:44:23 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.16 2007-03-14 08:54:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -503,7 +503,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
     // display a red cross at the center of gravity's location in the image.
 
     vpDisplay::displayCross_uv(I, u,v, 15, vpColor::red);
-    vpDisplay::flush(I);
+    //vpDisplay::flush(I);
   }
 }
 
@@ -878,7 +878,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
   if (graphics) {
     // Display the area were the dot is search
     vpDisplay::displayRectangle(I, area, vpColor::blue);
-    vpDisplay::flush(I);
+    //vpDisplay::flush(I);
   }
 
   // start the search loop; for all points of the search grid,
@@ -1111,7 +1111,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     v = (int) ( (this->get_v() + cos( alpha )*innerCoef*getHeight()/2) );
     if (graphics) {
       vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
-      vpDisplay::flush(I);
+      //vpDisplay::flush(I);
     }
     if( !wantedDot.hasGoodLevel( I, u, v ) )
     {
@@ -1127,7 +1127,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     v = (int) ( (this->get_v() + cos( alpha )*outCoef*getHeight()/2) );
     if (graphics) {
       vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
-      vpDisplay::flush(I);
+      //vpDisplay::flush(I);
     }
     // If outside the area, continue
     if (u < area.getLeft() || u > area.getRight() 
@@ -1390,8 +1390,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   u_list.addRight( this->firstBorder_u );
   v_list.addRight( this->firstBorder_v );
 
-  unsigned int border_u = this->firstBorder_u;
-  unsigned int border_v = this->firstBorder_v;
+  int border_u = this->firstBorder_u;
+  int border_v = this->firstBorder_v;
 
 //   vpTRACE("-----------------------------------------");
 //   vpTRACE("first border_u: %d border_v: %d dir: %d",
@@ -1409,7 +1409,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // if it was asked, show the border
     if (graphics) {
       vpDisplay::displayPoint_uv(I, border_u, border_v, vpColor::red) ;
-      vpDisplay::flush(I);
+      //vpDisplay::flush(I);
     }
     // Determine the increments for the parameters
     computeFreemanParameters(I, border_u, border_v, dir, du, dv,
@@ -1431,7 +1431,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // if we are now out of the image, return an error tracking
     if( !isInArea( I, border_u, border_v ) )  {
 
-      vpERROR_TRACE("Not in area: Should not occur");
+      // Can Occur on a single pixel dot located on the top border
+      return false;
     }
 
     // store the new direction and dot border coordinates.
