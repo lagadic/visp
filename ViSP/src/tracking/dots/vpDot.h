@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.15 2007-03-06 15:42:43 fspindle Exp $
+ * $Id: vpDot.h,v 1.16 2007-03-14 08:52:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -265,6 +265,9 @@ public:
 
   /*!
     Activates the display of all the pixels of the dot during the tracking.
+
+    \warning To effectively display the dot graphics a call to
+    vpDisplay::flush() is needed.
 
     \param activate true to activate the display of dot pixels, false to turn
     off the display

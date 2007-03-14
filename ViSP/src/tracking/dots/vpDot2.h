@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.13 2007-03-06 15:44:23 fspindle Exp $
+ * $Id: vpDot2.h,v 1.14 2007-03-14 08:53:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,6 +115,9 @@ public:
 
    /*!
     Activates the display of the border of the dot during the tracking.
+
+    \warning To effectively display the dot graphics a call to
+    vpDisplay::flush() is needed.
 
     \param activate If true, the border of the dot will be painted. false to
     turn off border painting.
