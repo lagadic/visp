@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.8 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpDisplayWin32.h,v 1.9 2007-03-14 08:50:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -90,7 +90,7 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 {
  protected:
   //! Maximum delay for window initialization
-  static const int MAX_INIT_DELAY = 5000;
+  static const int MAX_INIT_DELAY;
 
   //! Handle of the window's thread.
   HANDLE hThread;
