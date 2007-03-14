@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeLine.cpp,v 1.2 2007-01-31 09:59:14 asaunier Exp $
+ * $Id: trackMeLine.cpp,v 1.3 2007-03-14 09:00:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -324,7 +324,6 @@ main(int argc, char ** argv)
     if (opt_display) {
       // Display the image
       vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
     }
 
     try

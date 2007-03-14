@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeCircle.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: trackMeCircle.cpp,v 1.4 2007-03-14 09:00:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -309,11 +309,16 @@ main(int argc, char ** argv)
 
   if (opt_display) {
     E1.display(I, vpColor::green) ;
+    vpDisplay::flush(I);
   }
 
   vpTRACE("sample step %f ",E1.me->sample_step) ;
   cout << "Tracking on image: " << filename << endl;
   E1.track(I) ;
+  if (opt_display) {
+    vpDisplay::flush(I);
+  }
+
   if (opt_display && opt_click_allowed) {
     cout << "A click to exit..." << endl;
     vpDisplay::getClick(I) ;
