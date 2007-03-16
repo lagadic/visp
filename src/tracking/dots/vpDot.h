@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.16 2007-03-14 08:52:44 fspindle Exp $
+ * $Id: vpDot.h,v 1.17 2007-03-16 14:47:31 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,6 +58,7 @@
 
 #if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
 template class VISP_EXPORT vpList<int>;
+template class VISP_EXPORT vpList<unsigned int>;
 #endif
 
 /*
