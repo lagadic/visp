@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.9 2007-03-13 10:42:18 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.10 2007-03-16 16:02:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -164,6 +164,21 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   setCamera(0);
   setCapture(DC1394_OFF);
 
+  // Set the image size from the current video mode
+  vp1394TwoVideoMode cur_videomode;
+  getVideoMode(cur_videomode);
+  // Updates image size from new video mode
+  if (dc1394_get_image_size_from_video_mode(camera,
+					    (dc1394video_mode_t) cur_videomode,
+					    &this->width, &this->height)
+      != DC1394_SUCCESS) {
+
+    close();
+    vpERROR_TRACE("Can't set video mode");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Can't get image size") );
+  }
+
   init = true;
 }
 
@@ -306,7 +321,8 @@ vp1394TwoGrabber::getNumCameras(unsigned int &cameras)
 
 /*!
 
-  Set the camera video capture mode.
+  Set the camera video capture mode. Image size is than updated with respect to
+  the new video capture mode.
 
   \param videomode : The camera video capture mode. The current camera mode is
   given by getVideoMode(). The camera supported modes are given by
@@ -343,6 +359,17 @@ vp1394TwoGrabber::setVideoMode(vp1394TwoVideoMode videomode)
 				   "Can't set video mode") );
     }
 
+  // Updates image size from new video mode
+  if (dc1394_get_image_size_from_video_mode(camera,
+					    (dc1394video_mode_t) videomode,
+					    &this->width, &this->height)
+      != DC1394_SUCCESS) {
+
+    close();
+    vpERROR_TRACE("Can't set video mode");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Can't get image size") );
+  }
 }
 
 /*!
@@ -459,7 +486,10 @@ vp1394TwoGrabber::isVideoModeFormat7(vp1394TwoVideoMode  videomode)
 
 /*!
 
-  Set the active camera framerate.
+  Set the active camera framerate for non scalable video modes.
+
+  If the current video mode is scalable (Format 7), this function is without
+  effect.
 
   \param fps : The camera framerate. The current framerate of the camera is
   given by getFramerate(). The camera supported framerates are given by
@@ -484,6 +514,12 @@ vp1394TwoGrabber::setFramerate(vp1394TwoFramerate fps)
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "No camera found") );
   }
+
+  vp1394TwoVideoMode cur_videomode;
+  getVideoMode(cur_videomode);
+  if (isVideoModeFormat7(cur_videomode))
+    return;
+
   // Stop dma capture if started
   if (camera->capture_is_set)
     setCapture(DC1394_OFF);
