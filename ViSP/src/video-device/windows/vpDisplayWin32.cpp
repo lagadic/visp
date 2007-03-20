@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.11 2007-03-14 08:50:38 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.12 2007-03-20 13:21:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -212,7 +212,7 @@ void vpDisplayWin32::displayImage(const vpImage<vpRGBa> &I)
   //sets the image to render
   window.renderer->setImg(I);
   //sends a message to the window
-  PostMessage(window.getHWnd(),vpWM_DISPLAY,NULL,NULL);
+  PostMessage(window.getHWnd(),vpWM_DISPLAY,0,0);
 }
 
 /*!
@@ -227,7 +227,7 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
   //sets the image to render
   window.renderer->setImg(I);
   //sends a message to the window
-  PostMessage(window.getHWnd(), vpWM_DISPLAY, NULL, NULL);
+  PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
 }
 
 /*!
@@ -244,7 +244,7 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j)
   //we don't care about which button is pressed
   window.clickButton = vpNO_BUTTON_QUERY;
   //tells the window there has been a getclickup demand
-  PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
+  PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
   WaitForSingleObject(window.semaClick,INFINITE);
 
@@ -269,7 +269,7 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j,
   //we want a click from a specific button
   window.clickButton = button;
   //tells the window there has been a getclickup demand
-  PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
+  PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
   WaitForSingleObject(window.semaClick, INFINITE);
 
@@ -295,7 +295,7 @@ bool vpDisplayWin32::getClickUp(unsigned int& i, unsigned int& j,
   window.clickButton = button;
 
   //tells the window there has been a getclickup demand
-  PostMessage(window.getHWnd(), vpWM_GETCLICKUP, NULL, NULL);
+  PostMessage(window.getHWnd(), vpWM_GETCLICKUP, 0,0);
 
   //waits for a click release
   WaitForSingleObject(window.semaClick, INFINITE);
@@ -317,7 +317,7 @@ void vpDisplayWin32::getClick()
   //we don't care about which button is pressed
   window.clickButton = vpNO_BUTTON_QUERY;
   //sends a message to the window
-  PostMessage(window.getHWnd(), vpWM_GETCLICK, NULL, NULL);
+  PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
 
   //waits for a button to be pressed
   WaitForSingleObject(window.semaClick, INFINITE);
@@ -534,7 +534,7 @@ void vpDisplayWin32::closeDisplay()
 {
   if (displayHasBeenInitialized) {
     waitForInit();
-    PostMessage(window.getHWnd(), vpWM_CLOSEDISPLAY, NULL, NULL);
+    PostMessage(window.getHWnd(), vpWM_CLOSEDISPLAY, 0,0);
     //if the destructor is called for a reason different than a
     //problem in the thread creation
     if (iStatus) {
