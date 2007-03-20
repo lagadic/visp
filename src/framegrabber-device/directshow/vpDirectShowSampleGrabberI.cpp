@@ -260,7 +260,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
 						//first, resizes the image as needed
 						rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
 						//copy and convert the image
-						copy(pBuffer ,pBuffer + 4*rgbaIm->getWidth()*rgbaIm->getHeight(),rgbaIm->bitmap);
+						//copy(pBuffer ,pBuffer + 4*rgbaIm->getWidth()*rgbaIm->getHeight(),rgbaIm->bitmap);
+						memcpy(rgbaIm->bitmap,pBuffer ,4*rgbaIm->getWidth()*rgbaIm->getHeight());
 						//reset the demand boolean
 						acqRGBaDemand = false;
 					}
