@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIoPnm.cpp,v 1.9 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpImageIoPnm.cpp,v 1.10 2007-03-20 17:35:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,8 +89,8 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
   fprintf(fd, "255\n");					// Max level
 
   // Write the bitmap
-  int ierr;
-  unsigned int nbyte = I.getWidth()*I.getHeight();
+  size_t ierr;
+  size_t nbyte = I.getWidth()*I.getHeight();
 
   ierr = fwrite(I.bitmap, sizeof(unsigned char), nbyte, fd) ;
   if (ierr == ! nbyte) {
@@ -163,8 +163,8 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
   fprintf(fd, "255\n");					// Max level
 
   // Write the bitmap
-  int ierr;
-  unsigned int nbyte = I.getWidth()*I.getHeight();
+  size_t ierr;
+  size_t nbyte = I.getWidth()*I.getHeight();
 
 
   vpImage<unsigned char> Itmp ;
@@ -545,7 +545,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
     for(unsigned int j=0;j<I.getWidth();j++)
     {
       vpRGBa v ;
-      int res = fread(&v.R,sizeof(v.R),1,fd) ;
+      size_t res = fread(&v.R,sizeof(v.R),1,fd) ;
       res |= fread(&v.G,sizeof(v.G),1,fd) ;
       res |= fread(&v.B,sizeof(v.B),1,fd) ;
       if (res==0)
@@ -627,7 +627,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
     for(unsigned int j=0;j<I.getWidth();j++)
     {
       vpRGBa P ;
-      int res ;
+      size_t res ;
       P = I[i][j] ;
       unsigned char   tmp ;
       tmp = P.R ;

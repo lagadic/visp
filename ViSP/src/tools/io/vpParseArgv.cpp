@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.3 2006-07-13 06:59:17 fspindle Exp $
+ * $Id: vpParseArgv.cpp,v 1.4 2007-03-20 17:34:08 fspindle Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -88,7 +88,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
 				 * argument should be copied (never greater
 				 * than srcIndex). */
    int argc;			/* # arguments in argv still to process. */
-   int length;			/* Number of characters in current argument. */
+   size_t length;			/* Number of characters in current argument. */
    int nargs;                   /* Number of following arguments to get. */
    int i;
 
@@ -304,7 +304,9 @@ void
 vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
 {
    register vpArgvInfo *infoPtr;
-   int width, i, j, numSpaces;
+   size_t width;
+   int i, j;
+   size_t numSpaces;
 #define NUM_SPACES 20
    static char spaces[] = "                    ";
 /*   char tmp[30]; */
@@ -322,7 +324,7 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
    for (i = 0; i < 2; i++) {
       for (infoPtr = i ? defaultTable : argTable;
            infoPtr->type != ARGV_END; infoPtr++) {
-         int length;
+         size_t length;
          if (infoPtr->key == NULL) {
             continue;
          }
