@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.15 2007-03-16 14:47:31 asaunier Exp $
+ * $Id: vpDot2.h,v 1.16 2007-03-20 13:30:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,8 +67,8 @@ public:
 
   void initTracking(vpImage<unsigned char>& I);
   void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v);
-  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v, 
-		    unsigned int gray_level_min, 
+  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+		    unsigned int gray_level_min,
 		    unsigned int gray_level_max);
 
   void track(vpImage<unsigned char> &I);
@@ -86,10 +86,10 @@ public:
     \sa getWidth(), getHeight()
 
   */
-  inline vpRect getBBox() { 
+  inline vpRect getBBox() {
     vpRect bbox;
 
-    bbox.setRect(this->bbox_u_min, 
+    bbox.setRect(this->bbox_u_min,
 		 this->bbox_v_min,
 		 this->bbox_u_max - this->bbox_u_min + 1,
 		 this->bbox_v_max - this->bbox_v_min + 1);
@@ -158,7 +158,7 @@ public:
 
   */
   inline void setGrayLevelMin( const unsigned int & min ) {
-    if (min > 255) 
+    if (min > 255)
       this->gray_level_min = 255;
     else
       this->gray_level_min = min;
@@ -174,9 +174,9 @@ public:
   \sa setWidth(), setHeight(), setSurface(), setInLevel(), setAccuracy()
   */
   inline void setGrayLevelMax( const unsigned int & max ) {
-    if (max > 255) 
+    if (max > 255)
       this->gray_level_max = 255;
-    else    
+    else
       this->gray_level_max = max;
   };
   void setAccuracy( const double & accuracy );
@@ -194,10 +194,10 @@ public:
   virtual bool isValid(vpImage<unsigned char>& I, const vpDot2& wantedDot);
 
   virtual bool hasGoodLevel(const vpImage<unsigned char>& I,
-			    const unsigned int &u, 
+			    const unsigned int &u,
 			    const unsigned int &v) const;
   virtual bool hasReverseLevel(vpImage<unsigned char>& I,
-			       const unsigned int &u, 
+			       const unsigned int &u,
 			       const unsigned int &v) const;
 
   virtual vpDot2* getInstance();
@@ -207,7 +207,7 @@ public:
     Print the coordinates of the point center of gravity
     in the stream.
   */
-  friend ostream& operator<< (ostream& os, vpDot2& p) { 
+  friend ostream& operator<< (ostream& os, vpDot2& p) {
     return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ;
   } ;
 
@@ -274,7 +274,7 @@ private:
 			  const double &u = -1.0,
 			  const double &v = -1.0);
 
-  /*! 
+  /*!
 
   Get the starting point on a dot border. The dot is border is
   computed from this point.
@@ -285,7 +285,7 @@ private:
   unsigned int getFirstBorder_u() const {
     return this->firstBorder_u;
   }
-  /*! 
+  /*!
 
   Get the starting point on a dot border. The dot is border is
   computed from this point.
@@ -298,17 +298,17 @@ private:
   }
 
   bool computeFreemanChainElement(const vpImage<unsigned char> &I,
-				  const unsigned int &u, 
-				  const unsigned int &v, 
+				  const unsigned int &u,
+				  const unsigned int &v,
 				  unsigned int &element);
   void computeFreemanParameters(const vpImage<unsigned char> &I,
-				const int &u_p, 
+				const int &u_p,
 				const int &v_p, unsigned int &element,
 				int &du, int &dv, float &dS,
 				float &dMu, float &dMv,
 				float &dMuv,
 				float &dMu2, float &dMv2);
-  void updateFreemanPosition( unsigned int& u, unsigned int& v, 
+  void updateFreemanPosition( unsigned int& u, unsigned int& v,
 			      const unsigned int &dir );
 
 
@@ -316,7 +316,7 @@ private:
   bool isInImage( vpImage<unsigned char> &I, const int &u, const int &v) const;
 
   bool isInArea(const vpImage<unsigned char> &I) const;
-  bool isInArea(const vpImage<unsigned char> &I, 
+  bool isInArea(const vpImage<unsigned char> &I,
 		const unsigned int &u, const unsigned int &v) const;
 
   void getGridSize( unsigned int &gridWidth, unsigned int &gridHeight );
@@ -331,7 +331,7 @@ private:
   double width;
   double height;
   double surface;
-  unsigned int gray_level_min;  // minumum gray level for the dot. 
+  unsigned int gray_level_min;  // minumum gray level for the dot.
 				// pixel with lower level don't belong
 				// to this dot.
 
@@ -353,11 +353,11 @@ private:
   bool graphics ; // true for graphic overlay display
 
   // Bounding box
-  unsigned int bbox_u_min, bbox_u_max, bbox_v_min, bbox_v_max;
-  
+  int bbox_u_min, bbox_u_max, bbox_v_min, bbox_v_max;
+
   // The first point coodinate on the dot border
-  unsigned int firstBorder_u;
-  unsigned int firstBorder_v;
+  int firstBorder_u;
+  int firstBorder_v;
 
 };
 
