@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.16 2007-03-14 08:54:51 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.17 2007-03-20 13:30:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -259,11 +259,11 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   cog_vfloat = (double) v ;
 
   gray_level_min = (unsigned int) (I[v][u] * accuracy);
-  if (gray_level_min > 255) 
+  if (gray_level_min > 255)
     gray_level_min = 255;
 
   gray_level_max = (unsigned int) (I[v][u] * (2 - accuracy));
-  if (gray_level_max > 255) 
+  if (gray_level_max > 255)
     gray_level_max = 255;
 
   setWidth(0);
@@ -291,18 +291,18 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   moments see setComputeMoments().
 
 */
-void vpDot2::initTracking(vpImage<unsigned char>& I, 
+void vpDot2::initTracking(vpImage<unsigned char>& I,
 			  unsigned int u, unsigned int v)
 {
   cog_ufloat = (double) u ;
   cog_vfloat = (double) v ;
 
   gray_level_min = (unsigned int) (I[v][u] * accuracy);
-  if (gray_level_min > 255) 
+  if (gray_level_min > 255)
     gray_level_min = 255;
 
   gray_level_max = (unsigned int) (I[v][u] * (2 - accuracy));
-  if (gray_level_max > 255) 
+  if (gray_level_max > 255)
     gray_level_max = 255;
 
   setWidth(0);
@@ -345,9 +345,9 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   \sa track(), get_u(), get_v()
 
 */
-void vpDot2::initTracking(vpImage<unsigned char>& I, 
-			  unsigned int u, unsigned int v, 
-			  unsigned int gray_level_min, 
+void vpDot2::initTracking(vpImage<unsigned char>& I,
+			  unsigned int u, unsigned int v,
+			  unsigned int gray_level_min,
 			  unsigned int gray_level_max)
 {
   cog_ufloat = (double) u ;
@@ -492,11 +492,11 @@ void vpDot2::track(vpImage<unsigned char> &I)
 
   // Updates the min and max gray levels for the next iteration
   gray_level_min = (unsigned int) (I[v][u] * accuracy);
-  if (gray_level_min > 255) 
+  if (gray_level_min > 255)
     gray_level_min = 255;
 
   gray_level_max = (unsigned int) (I[v][u] * (2 - accuracy));
-  if (gray_level_max > 255) 
+  if (gray_level_max > 255)
     gray_level_max = 255;
 
   if (graphics) {
@@ -745,7 +745,7 @@ vpDot2::setArea(vpImage<unsigned char> &I)
 
 */
 void
-vpDot2::setArea(vpImage<unsigned char> &I, 
+vpDot2::setArea(vpImage<unsigned char> &I,
 		int u, int v,
 		int w, int h)
 {
@@ -863,9 +863,9 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
   \sa searchDotsInArea(vpImage<unsigned char>& I)
 */
 vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
-					  int area_u, 
+					  int area_u,
 					  int area_v,
-					  int area_w, 
+					  int area_w,
 					  int area_h)
 {
   setArea(I, area_u, area_v, area_w, area_h);
@@ -1130,7 +1130,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
       //vpDisplay::flush(I);
     }
     // If outside the area, continue
-    if (u < area.getLeft() || u > area.getRight() 
+    if (u < area.getLeft() || u > area.getRight()
 	|| v < area.getTop() || v > area.getBottom())
       continue;
     if( !wantedDot.hasReverseLevel( I, u, v ) )
@@ -1161,7 +1161,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
 
 */
 bool vpDot2::hasGoodLevel(const vpImage<unsigned char>& I,
-			  const unsigned int &u, 
+			  const unsigned int &u,
 			  const unsigned int &v) const
 {
   if( !isInArea( I, u, v ) )
@@ -1191,7 +1191,7 @@ bool vpDot2::hasGoodLevel(const vpImage<unsigned char>& I,
 
 */
 bool vpDot2::hasReverseLevel(vpImage<unsigned char>& I,
-			     const unsigned int &u, 
+			     const unsigned int &u,
 			     const unsigned int &v) const
 {
 
@@ -1513,8 +1513,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 */
 bool
 vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I,
-				   const unsigned int &u, 
-				   const unsigned int &v, 
+				   const unsigned int &u,
+				   const unsigned int &v,
 				   unsigned int &element)
 {
 
@@ -1638,8 +1638,8 @@ vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I,
 */
 void
 vpDot2::computeFreemanParameters(const vpImage<unsigned char> &I,
-				 const int &u_p, 
-				 const int &v_p, 
+				 const int &u_p,
+				 const int &v_p,
 				 unsigned int &element,
 				 int &du, int &dv,
 				 float &dS,
@@ -1774,7 +1774,7 @@ vpDot2::computeFreemanParameters(const vpImage<unsigned char> &I,
   6=up and 7.
 
 */
-void vpDot2::updateFreemanPosition( unsigned int& u, unsigned int& v, 
+void vpDot2::updateFreemanPosition( unsigned int& u, unsigned int& v,
 				    const unsigned int &dir )
 {
   switch(dir) {
