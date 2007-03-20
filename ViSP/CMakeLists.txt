@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.41 2007-02-26 14:30:36 marchand Exp $
+# $Id: CMakeLists.txt,v 1.42 2007-03-20 13:26:31 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -250,10 +250,8 @@ IF(USE_OPENCV)
   FIND_PACKAGE(OpenCV)
   IF(OpenCV_FOUND)
     SET(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OpenCV_INCLUDE_DIR})
-    SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR} 
-      ${OpenCV_EXE_LINKER_FLAGS} -L${OpenCV_LINK_DIRECTORIES})
-    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OpenCV_LIBRARIES})
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OPENCV_LIBRARIES})
     LINK_DIRECTORIES(${OpenCV_LINK_DIRECTORIES})
   ENDIF(OpenCV_FOUND)
 ENDIF(USE_OPENCV)
