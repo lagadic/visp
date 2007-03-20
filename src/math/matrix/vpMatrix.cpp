@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.30 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpMatrix.cpp,v 1.31 2007-03-20 17:35:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1563,7 +1563,7 @@ vpMatrix::print(std::ostream& s, unsigned length, char const* intro)
     s <<std::endl;
   }
 
-  return maxBefore+maxAfter;
+  return (int)(maxBefore+maxAfter);
 }
 
 
