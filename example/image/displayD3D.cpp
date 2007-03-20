@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayD3D.cpp,v 1.2 2007-02-27 08:42:27 fspindle Exp $
+ * $Id: displayD3D.cpp,v 1.3 2007-03-20 13:24:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,7 +47,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) )
+#if ( defined(VISP_HAVE_D3D9) )
 
 #include <visp/vpDisplayD3D.h>
 
@@ -371,6 +371,6 @@ main(int argc, char ** argv)
 int
 main()
 {
-  vpERROR_TRACE("D3D display only works under windows...");
+  vpERROR_TRACE("Direct 3D library is not available...");
 }
 #endif
