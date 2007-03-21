@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGDI.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: displayGDI.cpp,v 1.5 2007-03-21 14:10:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,7 +46,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) )
+#if ( defined(WIN32) && defined(VISP_HAVE_GDI) )
 
 #include <visp/vpDisplayGDI.h>
 
