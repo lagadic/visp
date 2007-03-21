@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.10 2007-03-02 10:47:00 marchand Exp $
+ * $Id: vpSimulator.cpp,v 1.11 2007-03-21 09:24:55 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,12 +66,12 @@
 //
 static float pyramidVertexes [5][3] =
 {
-    {0.33, 0.33, 0},
-    {-0.33, 0.33, 0},
-    {-0.33, -0.33, 0},
-    {0.33, -0.33, 0},
+    {0.33f, 0.33f, 0.f},
+    {-0.33f, 0.33f, 0.f},
+    {-0.33f, -0.33f, 0.f},
+    {0.33f, -0.33f, 0.f},
 
-    {0, 0, -1.0}
+    {0.f, 0.f, -1.0f}
 };
 
 
@@ -170,15 +170,15 @@ createFrame (double longueurFleche = LONGUEUR_FLECHE    ,
 
   SoRotationXYZ *rotationY_X = new SoRotationXYZ;
   rotationY_X->axis = SoRotationXYZ::Z;
-  rotationY_X->angle.setValue (- M_PI / 2);
+  rotationY_X->angle.setValue ((float)(- M_PI / 2));
 
   SoRotationXYZ *rotationX_Y = new SoRotationXYZ;
   rotationX_Y->axis = SoRotationXYZ::Z;
-  rotationX_Y->angle.setValue (M_PI / 2);
+  rotationX_Y->angle.setValue ((float)(M_PI / 2));
 
   SoRotationXYZ *rotationY_Z = new SoRotationXYZ;
   rotationY_Z->axis = SoRotationXYZ::X;
-  rotationY_Z->angle.setValue (M_PI / 2);
+  rotationY_Z->angle.setValue ((float)(M_PI / 2));
 
   SoMaterial *rouge = new SoMaterial;
   rouge->diffuseColor.setValue(1.0, 0.0, 0.0);
@@ -268,6 +268,7 @@ vpSimulator::init()
   mainWindowInitialized = false ;
   internalView = NULL ;
   externalView = NULL ;
+  image_background = NULL ;
 
   zoomFactor = 1 ;
   cameraPositionInitialized = false ;
@@ -283,6 +284,11 @@ vpSimulator::kill()
   if (internalView !=NULL) delete internalView ;
   if (externalView !=NULL) delete externalView ;
   if (bufferView!=NULL) delete[] bufferView ;
+  if (image_background != NULL) {
+	  free (image_background);
+	  image_background = NULL;
+  }
+
 }
 
 vpSimulator::vpSimulator()
@@ -317,7 +323,7 @@ vpSimulator::initSceneGraph()
   this->internalCameraObject = createCameraObject(zoomFactor);
 
   internalCamera->farDistance.setValue(100);
-  internalCamera->nearDistance.setValue(0.0001);
+  internalCamera->nearDistance.setValue(0.0001f);
 
 
 
@@ -338,14 +344,11 @@ vpSimulator::initSceneGraph()
   //this->externalRoot->addChild (internalCameraPosition);
   //  this->externalRoot->addChild (internalCameraObject);
   SoCube *cube = new SoCube ;
-  cube->width=0.01 ;
-  cube->depth=0.01 ;
-  cube->height=0.01 ;
+  cube->width=0.01f ;
+  cube->depth=0.01f ;
+  cube->height=0.01f ;
 
   this->externalRoot->addChild (cube);
-
-
-
 
   if (realtime==NULL)
   {
@@ -456,7 +459,7 @@ vpSimulator::setInternalCameraParameters(vpCameraParameters &_cam)
   internalCamera->ref() ;
   internalCamera->heightAngle = 2*atan(v);
   internalCamera->aspectRatio=(internal_width/internal_height)*(px/py);
-  internalCamera->nearDistance = 0.001 ;
+  internalCamera->nearDistance = 0.001f ;
 
   internalCamera->farDistance = 1000;
   internalCamera->unrefNoDelete() ;
@@ -475,8 +478,7 @@ vpSimulator::setExternalCameraParameters(vpCameraParameters &_cam)
   camera->ref() ;
   camera->heightAngle = 2*atan(v);
   camera->aspectRatio=(external_width/external_height)*(px/py);
-  camera->nearDistance = 0.001 ;
-
+  camera->nearDistance = 0.001f ;
   camera->farDistance = 1000;
   camera->unrefNoDelete() ;
 
