@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindPTHREAD.cmake,v 1.4 2006-08-23 10:41:55 brenier Exp $
+# $Id: FindPTHREAD.cmake,v 1.5 2007-03-21 13:59:33 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -46,8 +46,9 @@
   
   FIND_PATH(PTHREAD_INCLUDE_DIR pthread.h
     /usr/include
-    $ENV{PTHREAD_INCLUDE_PATH}
-    )
+    "$ENV{PTHREAD_INCLUDE_PATH}"
+    "$ENV{PTHREAD_HOME}/include"
+	)
   #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")  
   
   # pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2 are comming from web
@@ -57,7 +58,8 @@
     /usr/lib
     /usr/local/lib
     /lib    
-    $ENV{PTHREAD_LIBRARY_PATH}
+    "$ENV{PTHREAD_LIBRARY_PATH}"
+    "$ENV{PTHREAD_HOME}/lib"
     )
 
   #MESSAGE(STATUS "DBG PTHREAD_LIBRARY=${PTHREAD_LIBRARY}")
