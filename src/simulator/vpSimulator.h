@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.8 2007-03-05 10:21:40 marchand Exp $
+ * $Id: vpSimulator.h,v 1.9 2007-03-21 13:48:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,8 +67,9 @@
 #include <Inventor/fields/SoSFTime.h>
 
 // open GL
-#include <GL/gl.h>
-
+//#include <GL/gl.h>
+//#include <QtOpenGL/qgl.h>
+#include <qgl.h>
 // thread
 #include <pthread.h>
 
