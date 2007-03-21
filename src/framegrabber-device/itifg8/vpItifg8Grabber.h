@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.h,v 1.6 2007-02-28 11:34:27 fspindle Exp $
+ * $Id: vpItifg8Grabber.h,v 1.7 2007-03-21 16:00:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -269,11 +269,14 @@ private:
 
 public:
   vpItifg8Grabber();
-  vpItifg8Grabber(unsigned int input, unsigned int scale);
+  vpItifg8Grabber(unsigned int input,
+		  unsigned int scale = vpItifg8Grabber::DEFAULT_SCALE);
   vpItifg8Grabber(vpImage<unsigned char> &I,
-		  unsigned int input, unsigned int scale);
+		  unsigned int input,
+		  unsigned int scale = vpItifg8Grabber::DEFAULT_SCALE);
   vpItifg8Grabber(vpImage<vpRGBa> &I,
-		  unsigned int input, unsigned int scale);
+		  unsigned int input,
+		  unsigned int scale = vpItifg8Grabber::DEFAULT_SCALE);
   ~vpItifg8Grabber();
 
   void open();
