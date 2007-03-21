@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.17 2007-02-28 16:59:01 marchand Exp $
+ * $Id: vpConfig.h.cmake,v 1.18 2007-03-21 14:03:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,6 +80,9 @@
 
 // Defined if Coin library available.
 #cmakedefine VISP_HAVE_COIN
+
+// Defined if OpenGL library available.
+#cmakedefine VISP_HAVE_OPENGL
 
 // Defined if Qt library available (either Qt-3 or Qt-4).
 #cmakedefine VISP_HAVE_QT
