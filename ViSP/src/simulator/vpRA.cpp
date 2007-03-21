@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.cpp,v 1.3 2007-03-21 09:19:15 asaunier Exp $
+ * $Id: vpRA.cpp,v 1.4 2007-03-21 13:46:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -111,8 +111,8 @@ vpRA::setImage(vpImage<unsigned char> &I)
   background = true ;
 
 
-  for (int i=0 ; i < I.getHeight() ; i++)
-    for (int j=0 ; j < I.getWidth() ; j++)
+  for (unsigned int i=0 ; i < I.getHeight() ; i++)
+    for (unsigned int j=0 ; j < I.getWidth() ; j++)
       //le repere image open GL est en bas a gauche donc l'image serait inverse
       image_background[i*I.getWidth()+j] = I[I.getHeight()-i-1][j] ;
 
@@ -133,11 +133,11 @@ vpRA::setImage(vpImage<vpRGBa> &I)
 
   background = true ;
 
-  int k =0 ;
-  for (int i=0 ; i <I.getHeight()  ; i++)
+  unsigned int k =0 ;
+  for (unsigned int i=0 ; i <I.getHeight()  ; i++)
     {
       k=0;
-      for (int j=0 ; j <I.getWidth()   ; j++)
+      for (unsigned int j=0 ; j <I.getWidth()   ; j++)
 	//le repere image open GL est en bas a gauche donc l'image serait inverse
 	{
 	  image_background[i*I.getWidth()*3+k+0]=I[I.getHeight()-i-1][j].R ;
