@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.cpp,v 1.2 2007-03-05 10:21:40 marchand Exp $
+ * $Id: vpRA.cpp,v 1.3 2007-03-21 09:19:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,7 +76,6 @@ vpRA::initInternalViewer(int width, int height,  vpImageType type)
 
   // no image is loaded
   background = false ;
-  image_background = NULL ;
 
   if ( image_background != NULL)
   {
