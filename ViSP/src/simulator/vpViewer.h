@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.h,v 1.4 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpViewer.h,v 1.5 2007-03-21 13:48:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,8 +59,9 @@
 #include <Inventor/sensors/SoTimerSensor.h>
 
 // open GL
-#include <GL/gl.h>
-
+//#include <GL/gl.h>
+//#include <QtOpenGL/qgl.h>
+#include <qgl.h>
 // thread
 #include <pthread.h>
 
