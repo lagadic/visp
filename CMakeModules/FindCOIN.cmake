@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindCOIN.cmake,v 1.3 2007-03-21 13:54:39 asaunier Exp $
+# $Id: FindCOIN.cmake,v 1.4 2007-03-22 09:24:04 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -55,15 +55,20 @@ IF(WIN32)
     PATHS
     "$ENV{COINDIR}/lib"	  
     )
+ MARK_AS_ADVANCED(
+      COIN_LIBRARY_RELEASE
+      COIN_LIBRARY_DEBUG
+ )
 
-ENDIF(WIN32)
+ELSE(WIN32)
   FIND_LIBRARY(COIN_LIBRARY
     NAMES Coin #only shared libraries under windows
     PATHS
      "$ENV{COINDIR}/lib"	  
     )
-
+  
   #MESSAGE(STATUS "DBG COIN_LIBRARY=${COIN_LIBRARY}")
+ENDIF(WIN32)
   
   ## --------------------------------
   
@@ -81,18 +86,18 @@ ENDIF(WIN32)
 		ENDIF(COIN_LIBRARY_RELEASE AND COIN_LIBRARY_DEBUG)
 	ELSE(WIN32)
 		SET(COIN_LIBRARIES ${COIN_LIBRARY})
+	    MARK_AS_ADVANCED(
+	        COIN_LIBRARIES
+     		COIN_LIBRARY
+    	    )
+
 	ENDIF(WIN32)
     SET(COIN_FOUND TRUE)
   ELSE(COIN_LIBRARY OR COIN_LIBRARY_RELEASE OR COIN_LIBRARY_DEBUG)
     SET(COIN_FOUND FALSE)
     #MESSAGE("Coin library not found.")
   ENDIF(COIN_LIBRARY OR COIN_LIBRARY_RELEASE OR COIN_LIBRARY_DEBUG)
-    
-  MARK_AS_ADVANCED(
-    COIN_LIBRARIES
-    COIN_LIBRARY_RELEASE
-    COIN_LIBRARY_DEBUG
-    )
+
   #MESSAGE(STATUS "COIN_FOUND : ${COIN_FOUND}")
 
 ELSE(UNIX OR WIN32)
