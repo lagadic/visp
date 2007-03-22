@@ -18,6 +18,8 @@ ViSP 2.4.x
 	  . vpMouseButton::vpMouseButtonType was introduced to handle
 	    mouse clicks 
 	  . vpColor::vpColorType was introduced to handle colors to display
+	- Coin functiunalities are now available under windows. It allows 
+	  the use of vpSimulator class under this platform
 	
 ----------------------------------------------	
 ViSP 2.4.0 (released February 6, 2007)
