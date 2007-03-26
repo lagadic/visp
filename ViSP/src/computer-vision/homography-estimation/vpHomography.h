@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.5 2007-03-01 11:19:05 marchand Exp $
+ * $Id: vpHomography.h,v 1.6 2007-03-26 13:00:20 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -31,7 +31,7 @@
  * Homography transformation.
  *
  * Authors:
- * Muriel Pressigout
+ * Eric Marchand
  *
  *****************************************************************************/
 
@@ -234,7 +234,15 @@ public: // VVS
 			      int userobust
 			      ) ;
 
-  } ;
+  static double  computeDisplacement(int nbpoint,
+				   vpPoint *c1P,
+				   vpPoint *c2P,
+				   vpHomogeneousMatrix &c2Mc1,
+				   vpHomogeneousMatrix &c1Mo,
+				   vpPlane &oN,
+				   int userobust
+				   ) ;
+} ;
 
 
 
