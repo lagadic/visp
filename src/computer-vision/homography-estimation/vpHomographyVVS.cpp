@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyVVS.cpp,v 1.3 2007-03-26 13:00:20 marchand Exp $
+ * $Id: vpHomographyVVS.cpp,v 1.4 2007-03-26 14:21:58 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -221,7 +221,6 @@ vpHomography::computeRotation(int nbpoint,
 	    e =  vpMatrix::stackMatrices(e,e1) ;
 	  }
 	
-	//cout << e.t() ;
 	k++ ;
       }
 
@@ -266,31 +265,17 @@ vpHomography::computeRotation(int nbpoint,
 
   }
 
-  cout << c2Mc1 <<endl ;
+  //  cout << c2Mc1 <<endl ;
    return (W*e).sumSquare() ;
 }
 
-static void
-planeChangeFrame(vpPlane &oN, vpHomogeneousMatrix &cMo, vpPlane &cN)
-{
-    double A1 = cMo[0][0]*oN.getA() + cMo[0][1]*oN.getB() + cMo[0][2]*oN.getC();
-    double B1 = cMo[1][0]*oN.getA() + cMo[1][1]*oN.getB() + cMo[1][2]*oN.getC();
-    double C1 = cMo[2][0]*oN.getA() + cMo[2][1]*oN.getB() + cMo[2][2]*oN.getC();
-    double D1 = oN.getD()  - (cMo[0][3]*A1 + cMo[1][3]*B1  + cMo[2][3]*C1);
-
-    cN.setA(A1) ;
-    cN.setB(B1) ;
-    cN.setC(C1) ;
-    cN.setD(D1) ;
-
-}
 
 static void
 getPlaneInfo(vpPlane &oN, vpHomogeneousMatrix &cMo, vpColVector &cN, double &cd)
 {
-    double A1 = cMo[0][0]*oN.getA() + cMo[0][1]*oN.getB() + cMo[0][2]*oN.getC();
-    double B1 = cMo[1][0]*oN.getA() + cMo[1][1]*oN.getB() + cMo[1][2]*oN.getC();
-    double C1 = cMo[2][0]*oN.getA() + cMo[2][1]*oN.getB() + cMo[2][2]*oN.getC();
+    double A1 = cMo[0][0]*oN.getA()+ cMo[0][1]*oN.getB() + cMo[0][2]*oN.getC();
+    double B1 = cMo[1][0]*oN.getA()+ cMo[1][1]*oN.getB() + cMo[1][2]*oN.getC();
+    double C1 = cMo[2][0]*oN.getA()+ cMo[2][1]*oN.getB() + cMo[2][2]*oN.getC();
     double D1 = oN.getD()  - (cMo[0][3]*A1 + cMo[1][3]*B1  + cMo[2][3]*C1);
 
     cN.resize(3) ;
@@ -328,18 +313,12 @@ vpHomography::computeDisplacement(int nbpoint,
   vpColVector e1(2) ;
 
 
-  int only_1 = 0 ;
+  int only_1 = 1 ;
   int only_2 = 0 ;
   int iter = 0 ;
   int i ;
   int n=0 ;
-  for (i=0 ; i < nbpoint ; i++)
-    if ((c2P[i].get_x() !=-1) && (c1P[i].get_x() !=-1))
-    {
-      n++ ;
-    }
-
-
+  n = nbpoint ;
   if ((only_1==1) || (only_2==1))  ; else n *=2 ;
 
   vpRobust robust(n);
@@ -377,18 +356,10 @@ vpHomography::computeDisplacement(int nbpoint,
     getPlaneInfo(oN, c1Mo, N1, d1) ;
     getPlaneInfo(oN, c2Mo, N2, d2) ;
 
-    /*
-    if (DEBUG_LEVEL2)    cout << " N1 " << N1.t() ;
-    if (DEBUG_LEVEL2)   cout << " N2 " << N2.t() ;
-
-    if (DEBUG_LEVEL2)   cout << " d1 " << d1 << endl ; ;
-    if (DEBUG_LEVEL2)   cout << " d2 " << d2 << endl ;;
-    */
 
     vpMatrix L(2,3), Lp ;
     int k =0 ;
     for (i=0 ; i < nbpoint ; i++)
-      if ((c2P[i].get_x() !=-1) && (c1P[i].get_x() !=-1))
       {
 	p2[0] = c2P[i].get_x() ;
 	p2[1] = c2P[i].get_y() ;
@@ -399,8 +370,8 @@ vpHomography::computeDisplacement(int nbpoint,
 
 	vpMatrix H(3,3) ;
 
-	Hp2 = ((vpMatrix)c1Rc2 + ((vpMatrix)c1Tc2*N2.t())/d2)*p2 ;     // p2 = Hp1
-	Hp1 = ((vpMatrix)c2Rc1 + ((vpMatrix)c2Tc1*N1.t())/d1)*p1 ;     // p1 = Hp2
+	Hp2 = ((vpMatrix)c1Rc2 + ((vpMatrix)c1Tc2*N2.t())/d2)*p2 ;  // p2 = Hp1
+	Hp1 = ((vpMatrix)c2Rc1 + ((vpMatrix)c2Tc1*N1.t())/d1)*p1 ;  // p1 = Hp2
 
 	Hp2 /= Hp2[2] ;  // normalisation
 	Hp1 /= Hp1[2] ;
@@ -439,7 +410,6 @@ vpHomography::computeDisplacement(int nbpoint,
 	e2[0] = Hp2[0] - c1P[i].get_x() ;
 	e2[1] = Hp2[1] - c1P[i].get_y() ;
 
-	// set up the interaction matrix
 	x = Hp1[0] ;
 	y = Hp1[1] ;
 
@@ -453,6 +423,7 @@ vpHomography::computeDisplacement(int nbpoint,
 	// Set up the error vector
 	e1[0] = Hp1[0] - c2P[i].get_x() ;
 	e1[1] = Hp1[1] - c2P[i].get_y() ;
+
 
 	if (only_2==1)
 	{
@@ -523,12 +494,10 @@ vpHomography::computeDisplacement(int nbpoint,
     r =(W*e).sumSquare() ;
 
 
-    cout <<  iter <<"  e=" <<r <<endl ;
-    //    cout <<w.t();
 
     if (r < 1e-15)  {break ; }
     if (iter>1000){break ; }
-    if (r>r_1) {  break ; }
+       if (r>r_1) {  break ; }
     iter++ ;
   }
 
