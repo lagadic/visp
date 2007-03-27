@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECT3D.cmake,v 1.3 2007-02-16 16:18:20 asaunier Exp $
+# $Id: FindDIRECT3D.cmake,v 1.4 2007-03-27 10:02:35 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -60,26 +60,48 @@ IF(WIN32)
 
     # if Direct3D include dir found, then find Direct3D libraries
     IF(DIRECT3D_INCLUDE_DIR)
-      FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
-	"$ENV{DXSDK_DIR}/Lib"	
-	"$ENV{DXSDK_DIR}/Lib/x86"
-	"C:/Program Files/Microsoft DirectX SDK/Lib/x86"
-        "C:/DXSDK/Include/Lib/x86"
-        NO_DEFAULT_PATH
+      IF(CMAKE_CL_64)
+	FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
+	  "$ENV{DXSDK_DIR}/Lib"	
+	  "$ENV{DXSDK_DIR}/Lib/x64"
+	  "C:/Program Files/Microsoft DirectX SDK/Lib/x64"
+        "C:/DXSDK/Include/Lib/x64"
+	  NO_DEFAULT_PATH
         DOC "Where can the Direct3D d3d9 library be found"
       )
+	ELSE(CMAKE_CL_64)
+	FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
+	  "$ENV{DXSDK_DIR}/Lib"	
+	  "$ENV{DXSDK_DIR}/Lib/x86"
+	  "C:/Program Files/Microsoft DirectX SDK/Lib/x86"
+        "C:/DXSDK/Include/Lib/x86"
+	  NO_DEFAULT_PATH
+        DOC "Where can the Direct3D d3d9 library be found"
+      )
+	ENDIF(CMAKE_CL_64)
       FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
         DOC "Where can the Direct3D d3d9 library be found"
       )
 
+	IF(CMAKE_CL_64)
       FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
-	"$ENV{DXSDK_DIR}/Lib/x86"
-	"$ENV{DXSDK_DIR}/Lib/"
-	"C:/Program Files/Microsoft DirectX SDK/Lib/x86"
-        "C:/DXSDK/Include/Lib/x86"
-        NO_DEFAULT_PATH
+	  "$ENV{DXSDK_DIR}/Lib/"
+	  "$ENV{DXSDK_DIR}/Lib/x64"
+	  "C:/Program Files/Microsoft DirectX SDK/Lib/x64"
+        "C:/DXSDK/Include/Lib/x64"
+	  NO_DEFAULT_PATH
         DOC "Where can the Direct3D d3dx9 library be found"
       )
+	ELSE(CMAKE_CL_64)
+      FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
+	  "$ENV{DXSDK_DIR}/Lib/"
+	  "$ENV{DXSDK_DIR}/Lib/x86"
+	  "C:/Program Files/Microsoft DirectX SDK/Lib/x86"
+        "C:/DXSDK/Include/Lib/x86"
+	  NO_DEFAULT_PATH
+        DOC "Where can the Direct3D d3dx9 library be found"
+      )
+	ENDIF(CMAKE_CL_64)	 
       FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
         DOC "Where can the Direct3D d3dx9 library be found"
       )

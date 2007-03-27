@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGDI.cmake,v 1.2 2007-02-16 16:18:20 asaunier Exp $
+# $Id: FindGDI.cmake,v 1.3 2007-03-27 10:02:36 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -50,15 +50,28 @@ IF(WIN32)
       NO_DEFAULT_PATH
     )
   ELSE(MINGW)
-    FIND_LIBRARY(GDI_LIBRARY gdi32
-      "$ENV{DXSDK_DIR}/Lib"
-      "C:/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/Lib"
-      "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
-      "C:/Program Files/Microsoft Platform SDK/Lib"
-      "C:/DXSDK/Include/Lib"
-      "C:/MinGW/lib"
-      DOC "Where can the GDI (Graphics Device Interface) library be found"
-    )
+	IF(CMAKE_CL_64)
+	    FIND_LIBRARY(GDI_LIBRARY gdi32
+		"$ENV{WINSDK_HOME}/Lib/x64"
+      	"$ENV{DXSDK_DIR}/Lib/x64"
+		"C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
+      	"C:/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/Lib/AMD64"
+      	"C:/Program Files/Microsoft Platform SDK/Lib/x64"
+      	"C:/DXSDK/Include/Lib/x64"
+      	DOC "Where can the GDI (Graphics Device Interface) library be found"
+    		)
+	ELSE(CMAKE_CL_64)
+	    FIND_LIBRARY(GDI_LIBRARY gdi32
+		"$ENV{WINSDK_HOME}/Lib"
+      	"$ENV{DXSDK_DIR}/Lib"
+		"C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
+      	"C:/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/Lib"
+      	"C:/Program Files/Microsoft Platform SDK/Lib"
+      	"C:/DXSDK/Include/Lib"
+      	"C:/MinGW/lib"
+      	DOC "Where can the GDI (Graphics Device Interface) library be found"
+    		)
+  	ENDIF(CMAKE_CL_64)
   ENDIF(MINGW)
   # if GDI libraries found, then we're ok
   IF(GDI_LIBRARY)
