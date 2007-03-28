@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.6 2007-03-26 13:00:20 marchand Exp $
+ * $Id: vpHomography.h,v 1.7 2007-03-28 13:44:32 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -237,11 +237,19 @@ public: // VVS
   static double  computeDisplacement(int nbpoint,
 				   vpPoint *c1P,
 				   vpPoint *c2P,
+				   vpPlane &oN,
 				   vpHomogeneousMatrix &c2Mc1,
 				   vpHomogeneousMatrix &c1Mo,
-				   vpPlane &oN,
 				   int userobust
 				   ) ;
+  static double computeDisplacement(int nbpoint,
+				    vpPoint *c1P,
+				    vpPoint *c2P,
+				    vpPlane *oN,
+				    vpHomogeneousMatrix &c2Mc1,
+				    vpHomogeneousMatrix &c1Mo,
+				    int userobust
+				    ) ;
 } ;
 
 
