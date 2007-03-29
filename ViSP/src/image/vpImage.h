@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.10 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpImage.h,v 1.11 2007-03-29 13:49:02 hatran Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -227,6 +227,23 @@ public:
   //! Return the minumum value within the bitmap
   Type minValue() const ;
 
+  //! Returns a new image that's half size of the current image
+  void halfSizeImage(vpImage<Type>* res);
+
+  //! Returns a new image that's double size of the current image
+  void doubleSizeImage(vpImage<Type>* res);
+
+  //! Substract two images: dst = this - im2;
+  void sub(vpImage<Type>* im2, vpImage<Type>* dst);
+
+  /** Gets the value of a pixel at a location with bilinear interpolation.
+   * If location is out of bounds, then return value of closest pixel.
+   *
+   * @param x x pixel location
+   * @param y y pixel location
+   * @return pixel value
+   */
+  Type getPixelBI(float x, float y);
 
   vpDisplay *display ;
   bool initDisplay  ;

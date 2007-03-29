@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.h,v 1.4 2007-01-31 13:21:02 asaunier Exp $
+ * $Id: vpRansac.h,v 1.5 2007-03-29 13:49:02 hatran Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,12 +84,13 @@ template <class vpTransformation>
 class vpRansac
 {
 public:
-  static  void ransac(int n,
+  static  bool ransac(int n,
 		      vpColVector &x,
 		      int s, double t,
 		      vpColVector &model,
 		      vpColVector &inliers,
-		      int consensus = 1000) ;
+		      int consensus = 1000,
+		      double areaThreshold = 0.0);
 };
 
 
