@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.t.cpp,v 1.7 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpRansac.t.cpp,v 1.8 2007-03-29 13:49:02 hatran Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,9 +51,6 @@
   \brief
   RANSAC - Robustly fits a model to data with the RANSAC algorithm
 
-  \param npts
-  Number of points.
-
   \param  x
   Data sets to which we are seeking to fit a model M
   It is assumed that x is of size [d x Npts]
@@ -62,7 +59,7 @@
 
   \param  s
   The minimum number of samples from x required by
-  fittingfn to fit a model.
+  fitting fn to fit a model.
 
   \param   t
   The distance threshold between data point and the model
@@ -74,9 +71,6 @@
   \param    inliers
   An array of indices of the elements of x that were
   the inliers for the best model.
-
-  \param consensus
-  Score consencus used to choose the solution.
 
   References:
   M.A. Fishler and  R.C. Boles. "Random sample concensus: A paradigm
@@ -96,23 +90,28 @@
 */
 
 template <class vpTransformation>
-void
+bool
 vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
 				   int s, double t,
 				   vpColVector &M,
 				   vpColVector &inliers,
-				   int consensus)
+				   int consensus,
+				   double areaThreshold
+				   )
 {
 
+
+  bool isplanar;
+  if (s == 4) isplanar = true;
+  else isplanar = false;
+
   double eps = 1e-6 ;
-  //  [rows, npts] = size(x);
-
   double p = 0.99;    // Desired probability of choosing at least one sample
-  // free from outliers
+					  // free from outliers
 
-  int maxTrials = 10000;    // Maximum number of trials before we give up.
-  int  maxDataTrials = 1000; // Max number of attempts to select a non-degenerate
-  // data set.
+  int maxTrials = 10000;      // Maximum number of trials before we give up.
+  int  maxDataTrials = 1000;  // Max number of attempts to select a non-degenerate
+							  // data set.
 
   // Sentinel value allowing detection of solution failure.
   bool solutionFind = false ;
@@ -122,28 +121,26 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
   double   N = 1;            // Dummy initialisation for number of trials.
 
   vpUniRand random ;
-
-  //  cout << "random " << random() <<endl ;
-  // index of the detected inliers
   vpColVector bestinliers ;
   int *ind;
   ind = new int [s] ;
+  int numiter = 0;
+  int ninliers;
+  double residual;
   while(( N > trialcount) && (consensus > bestscore))
   {
     // Select at random s datapoints to form a trial model, M.
     // In selecting these points we have to check that they are not in
     // a degenerate configuration.
+
     bool degenerate = true;
     int count = 1;
+
     while ( degenerate == true)
     {
       // Generate s random indicies in the range 1..npts
       for  (int i=0 ; i < s ; i++)
-      {
 	ind[i] = (int)ceil(random()*npts) -1;
-	//	cout <<ind[i] << "  " ;
-      }
-      //	cout <<endl ;
 
       // Test that these points are not a degenerate configuration.
       degenerate = vpTransformation::degenerateConfiguration(x,ind) ;
@@ -151,28 +148,36 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
 
       // Safeguard against being stuck in this loop forever
       count = count + 1;
+
       if (count > maxDataTrials)
       {
-		  delete [] ind;
+	delete [] ind;
 	vpERROR_TRACE("Unable to select a nondegenerate data set");
-	throw ;
+	return false;
+	//throw ;
       }
-
     }
-
     // Fit model to this random selection of data points.
-    vpTransformation::computeTransformation(x,ind, M) ;
+    vpTransformation::computeTransformation(x,ind, M);
 
     vpColVector d ;
     // Evaluate distances between points and model.
     vpTransformation::computeResidual(x, M, d) ;
 
     // Find the indices of points that are inliers to this model.
-
-    int ninliers =0 ;
+    residual = 0.0;
+    ninliers =0 ;
     for (int i=0 ; i < npts ; i++)
-      if (fabs(d[i])<t) { inliers[i] = 1 ; ninliers++ ; }
-      else inliers[i] = 0 ;
+    {
+      double resid = fabs(d[i]);
+      if (resid < t)
+      {
+	inliers[i] = 1 ;
+	ninliers++ ;
+	residual += fabs(d[i]);
+      }
+      else inliers[i] = 0;
+    }
 
     if (ninliers > bestscore)    // Largest set of inliers so far...
     {
@@ -180,27 +185,27 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
       bestinliers = inliers;
       bestM = M;
       solutionFind = true ;
+
       // Update estimate of N, the number of trials to ensure we pick,
       // with probability p, a data set with no outliers.
-      double fracinliers =  (double)ninliers/(double)npts;
+
+      double fracinliers =  (double)ninliers / (double)npts;
+
       double pNoOutliers = 1 -  pow(fracinliers,s);
 
       pNoOutliers = vpMath::maximum(eps, pNoOutliers);  // Avoid division by -Inf
       pNoOutliers = vpMath::minimum(1-eps, pNoOutliers);// Avoid division by 0.
       N = (log(1-p)/log(pNoOutliers));
-
     }
 
     trialcount = trialcount+1;
-    //       if (trialcount%20==0) printf("trial %d out of %d         \n",trialcount, (int)ceil((double)N));
-    //    cout <<trialcount << "\n"  ;
-
     // Safeguard against being stuck in this loop forever
     if (trialcount > maxTrials)
     {
       vpTRACE("ransac reached the maximum number of %d trials",   maxTrials);
       break ;
     }
+    numiter++;
   }
 
   if (solutionFind==true)   // We got a solution
@@ -213,6 +218,10 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
     vpTRACE("ransac was unable to find a useful solution");
     M = 0;
   }
-  delete [] ind;
-}
 
+  if(ninliers > 0)
+    residual /= ninliers;
+  delete [] ind;
+
+  return true;
+}

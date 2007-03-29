@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.7 2007-03-28 13:44:32 marchand Exp $
+ * $Id: vpHomography.h,v 1.8 2007-03-29 13:49:02 hatran Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -31,7 +31,7 @@
  * Homography transformation.
  *
  * Authors:
- * Eric Marchand
+ * Muriel Pressigout
  *
  *****************************************************************************/
 
@@ -80,6 +80,7 @@ class VISP_EXPORT vpHomography : public vpMatrix
 
 private:
   vpHomogeneousMatrix aMb ;
+  //  bool isplanar;
   //! reference plane coordinates  expressed in Rb
   vpPlane bP ;
   void init() ;
@@ -87,6 +88,7 @@ private:
 
 public:
   vpHomography() ;
+  //vpHomography(bool planar);
   ~vpHomography() { ; }
 
 private:
@@ -170,7 +172,20 @@ public:
   void computeDisplacement(vpRotationMatrix &aRb,
 			   vpTranslationVector &aTb,
 			   vpColVector &n) ;
+
+  void computeDisplacement(const vpColVector& nd,
+			   vpRotationMatrix &aRb,
+			   vpTranslationVector &aTb,
+			   vpColVector &n) ;
+
+
   //! compute camera displacement from an homography H
+  static void computeDisplacement(const vpHomography &aHb,
+				  const vpColVector& nd,
+				  vpRotationMatrix &aRb,
+				  vpTranslationVector &aTb,
+				  vpColVector &n) ;
+
   static void computeDisplacement (const vpHomography &aHb,
 				   vpRotationMatrix &aRb,
 				   vpTranslationVector &aTb,
@@ -214,19 +229,36 @@ public:
 
 private:
   static void  initRansac(int n,
-		   double *xb, double *yb,
-		   double *xa, double *ya,
-		   vpColVector &x  ) ;
+			  double *xb, double *yb,
+			  double *xa, double *ya,
+			  vpColVector &x
+			  ) ;
 public:
   static bool degenerateConfiguration(vpColVector &x,int *ind) ;
+  static bool degenerateConfiguration(vpColVector &x,int *ind, double threshold_area);
+
   static void computeTransformation(vpColVector &x,int *ind, vpColVector &M) ;
-  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d) ;
-  static void ransac(int n,
+  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d);
+
+  static bool ransac(int n,
 		     double *xb, double *yb,
 		     double *xa, double *ya ,
-		     vpHomography &aHb) ;
+		     vpHomography &aHb,
+		     int consensus = 1000,
+		     double threshold = 1e-6
+		     ) ;
 
-public: // VVS
+  static  bool ransac(int n,
+		      double *xb, double *yb,
+		      double *xa, double *ya ,
+		      vpHomography &aHb,
+		      vpColVector& inliers,
+		      double& residual,
+		      int consensus = 1000,
+		      double epsilon = 1e-6,
+		      double areaThreshold = 0.0);
+
+  public: // VVS
   static double computeRotation(int nbpoint,
 			      vpPoint *c1P,
 			      vpPoint *c2P,
@@ -234,14 +266,14 @@ public: // VVS
 			      int userobust
 			      ) ;
 
-  static double  computeDisplacement(int nbpoint,
-				   vpPoint *c1P,
-				   vpPoint *c2P,
-				   vpPlane &oN,
-				   vpHomogeneousMatrix &c2Mc1,
-				   vpHomogeneousMatrix &c1Mo,
-				   int userobust
-				   ) ;
+   static double  computeDisplacement(int nbpoint,
+				      vpPoint *c1P,
+				      vpPoint *c2P,
+				      vpPlane &oN,
+				      vpHomogeneousMatrix &c2Mc1,
+				      vpHomogeneousMatrix &c1Mo,
+				      int userobust
+				      ) ;
   static double computeDisplacement(int nbpoint,
 				    vpPoint *c1P,
 				    vpPoint *c2P,
@@ -250,6 +282,7 @@ public: // VVS
 				    vpHomogeneousMatrix &c1Mo,
 				    int userobust
 				    ) ;
+
 } ;
 
 

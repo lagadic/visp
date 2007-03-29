@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.cpp,v 1.6 2007-01-31 13:12:13 asaunier Exp $
+ * $Id: vpHomography.cpp,v 1.7 2007-03-29 13:49:02 hatran Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -372,6 +372,7 @@ vpHomography::build()
   \f[  ^a{\bf H}_b = ^a{\bf R}_b + \frac{^a{\bf t}_b}{^bd}
   { ^b{\bf n}^T}
   \f]
+  //note d => -d verifier
 */
 void
 vpHomography::build(vpHomography &aHb,

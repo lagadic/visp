@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageBase.t.cpp,v 1.8 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpImageBase.t.cpp,v 1.9 2007-03-29 13:49:02 hatran Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -452,7 +452,135 @@ vpImage<Type>::get(double i, double j)  // bilinear interpolation
 
 
 
+/*!
+  used for building pyramid of the image
+   \warning = must be defined for <Type>
+ */
 
+template<class Type>
+void
+vpImage<Type>::halfSizeImage(vpImage<Type>* res)
+{
+  int r = height/2;
+  int c = width/2;
+  if(res == NULL)
+    res = new vpImage<Type>(r, c);
+  else if((res->getCols() != c) || (res->getRows()!= r))
+    res->resize(r,c);
+  for(int y = 0; y < r; y++)
+    for(int x = 0; x < c; x++)
+      (*res)[y][x] = (*this)[y*2][x*2];
+}
+
+/*!
+  used (eg. in case of keypoints extraction, we might
+  double size of the image in order to have more keypoints)
+   \warning = must be defined for <Type>
+ */
+template<class Type>
+void
+vpImage<Type>::doubleSizeImage(vpImage<Type>* res)
+{
+  int h = height*2;
+  int w = width*2;
+
+  if(res == NULL)
+    res = new vpImage<Type>(h, w);
+  else if((res->getCols() != w) || (res->getRows()!= h))
+    res->resize(h, w);
+
+  for(int j = 0; j < h; j++)
+    for(int i = 0; i < w; i++)
+      (*res)[j][i] = (*this)[j/2][i/2];
+
+  /*
+    A B C
+    E F G
+    H I J
+    A C H J are pixels from original image
+    B E G I are interpolated pixels
+  */
+
+  //interpolate pixels B and I
+  for(int j = 0; j < h; j += 2)
+    for(int i = 1; i < w - 1; i += 2)
+      (*res)[j][i] = (Type)(0.5 * ((*this)[j/2][i/2] + (*this)[j/2][i/2 + 1]));
+
+  //interpolate pixels E and G
+  for(int j = 1; j < h - 1; j += 2)
+    for(int i = 0; i < w; i += 2)
+      (*res)[j][i] = (Type)(0.5 * ((*this)[j/2][i/2] + (*this)[j/2+1][i/2]));
+
+  //interpolate pixel F
+  for(int j = 1; j < h - 1; j += 2)
+    for(int i = 1; i < w - 1; i += 2)
+      (*res)[j][i] = (Type)(0.25 * ((*this)[j/2][i/2] + (*this)[j/2][i/2+1] +
+			     (*this)[j/2+1][i/2] + (*this)[j/2+1][i/2+1]));
+}
+
+template<class Type>
+void
+vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
+{
+  if(dst == NULL)
+    dst = new vpImage<Type>(height, width);
+  else if((dst->getRows()!=height) || (dst->getCols()!=width))
+    dst->resize(height, width);
+
+  for(int i  = 0; i < height * width; i++)
+    dst->bitmap[i] = this->bitmap[i] - im2->bitmap[i];
+}
+
+/*!
+  used (eg. to make keypoint patch (normalization)
+   \warning = must be defined for <Type>
+ */
+
+template<class Type>
+Type vpImage<Type>::getPixelBI(float col0, float row0)
+{
+  int irow, icol;
+  float rfrac, cfrac;
+  Type row1 = 0, row2 = 0;
+
+  irow = (int) row0;
+  icol = (int) col0;
+
+  if (irow < 0 || irow >= height
+      || icol < 0 || icol >= width)
+    return 0;
+
+  if (row0 > height - 1)
+    row0 = height - 1;
+
+  if (col0 > width - 1)
+    col0 = width - 1;
+
+  rfrac = 1.0 - (row0 - (float) irow);
+  cfrac = 1.0 - (col0 - (float) icol);
+
+  if (cfrac < 1)
+  {
+    row1 = cfrac * row[irow][icol] + (1.0 - cfrac) * row[irow][icol + 1];
+  }
+  else
+  {
+    row1 = row[irow][icol];
+  }
+
+  if (rfrac < 1)
+  {
+    if (cfrac < 1)
+    {
+      row2 = cfrac * row[irow+1][icol] + (1.0 - cfrac) * row[irow+1][icol + 1];
+    }
+    else
+    {
+      row2 = row[irow+1][icol];
+    }
+  }
+  return (Type)(rfrac * row1 + (1.0 - rfrac) * row2);
+}
 
 /*
  * Local variables:
