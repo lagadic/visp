@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.8 2007-03-29 13:49:02 hatran Exp $
+ * $Id: vpHomography.h,v 1.9 2007-04-03 15:59:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,7 +89,7 @@ private:
 public:
   vpHomography() ;
   //vpHomography(bool planar);
-  ~vpHomography() { ; }
+  virtual ~vpHomography() { }
 
 private:
   virtual void resize(int , int ) { ; }
