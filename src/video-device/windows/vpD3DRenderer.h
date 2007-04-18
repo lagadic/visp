@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.h,v 1.4 2007-02-27 17:08:06 fspindle Exp $
+ * $Id: vpD3DRenderer.h,v 1.5 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,6 +47,7 @@
 #include <d3dx9.h>
 #include <visp/vpWin32Renderer.h>
 #include <visp/vpDisplayException.h>
+
 
 #include <iostream>
 

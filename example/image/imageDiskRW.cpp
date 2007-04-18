@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: imageDiskRW.cpp,v 1.2 2007-01-30 16:21:58 asaunier Exp $
+ * $Id: imageDiskRW.cpp,v 1.3 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,7 +58,7 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
-
+#include <visp/vpDebug.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"i:o:h"

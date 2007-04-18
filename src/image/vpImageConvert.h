@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.10 2007-03-07 17:53:06 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.11 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,8 +44,10 @@
 #define vpIMAGECONVERT_H
 
 
-// image
+
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
+// image
 #include <visp/vpImage.h>
 
 // color

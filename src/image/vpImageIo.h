@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.h,v 1.5 2007-01-31 15:40:13 asaunier Exp $
+ * $Id: vpImageIo.h,v 1.6 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,6 +48,8 @@
 #include <iostream>
 
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h
+
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 

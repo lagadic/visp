@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.h,v 1.4 2007-02-26 16:42:18 fspindle Exp $
+ * $Id: vpCircle.h,v 1.5 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,6 +46,8 @@
 
 #include <math.h>
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
+
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
 

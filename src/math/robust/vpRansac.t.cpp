@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.t.cpp,v 1.8 2007-03-29 13:49:02 hatran Exp $
+ * $Id: vpRansac.t.cpp,v 1.9 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,7 +34,8 @@
  * Eric Marchand
  *
  *****************************************************************************/
-
+#ifndef VP_RANSAC_T_CPP
+#define VP_RANSAC_T_CPP
 
 #include <visp/vpRansac.h>
 
@@ -225,3 +226,4 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
 
   return true;
 }
+#endif // #ifndef VP_RANSAC_T_CPP

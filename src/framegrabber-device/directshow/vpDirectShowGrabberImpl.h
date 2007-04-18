@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.h,v 1.6 2007-03-08 13:35:43 fspindle Exp $
+ * $Id: vpDirectShowGrabberImpl.h,v 1.7 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,7 @@
 
 #include <visp/vpDirectShowSampleGrabberI.h>
 #include <visp/vpDirectShowDevice.h>
-
+#include <visp/vpDebug.h>
 /*!
 	\class vpDirectShowGrabberImpl
 	\brief class for windows direct show devices - implementation
