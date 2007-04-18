@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.13 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.14 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,6 +41,7 @@
 #define vpDisplay_h
 
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 // image
 #include <visp/vpImage.h>
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.h,v 1.3 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpDiskGrabber.h,v 1.4 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,6 +47,7 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpFrameGrabber.h>
 #include <visp/vpRGBa.h>
+#include <visp/vpDebug.h>
 
 /*!
   \class vpDiskGrabber

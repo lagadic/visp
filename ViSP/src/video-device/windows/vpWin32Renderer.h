@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Renderer.h,v 1.4 2007-02-27 17:08:06 fspindle Exp $
+ * $Id: vpWin32Renderer.h,v 1.5 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,6 +47,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 #include <windows.h>
+#include <visp/vpDebug.h>
 
 class VISP_EXPORT vpWin32Renderer
 {
@@ -58,7 +59,7 @@ class VISP_EXPORT vpWin32Renderer
 
  public:
   //! Destructor.
-  virtual~vpWin32Renderer() {};
+  virtual ~vpWin32Renderer() {};
 
   //! Returns the image dimensions.
   unsigned int getImageWidth(){ return nbCols; }

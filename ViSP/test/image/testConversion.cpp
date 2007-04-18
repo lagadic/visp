@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.5 2006-08-30 15:56:44 fspindle Exp $
+ * $Id: testConversion.cpp,v 1.6 2007-04-18 12:13:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,7 +42,7 @@
 #include <visp/vpImageConvert.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
-
+#include <visp/vpDebug.h>
 /*!
   \example testConversion.cpp
 
