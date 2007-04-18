@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.cpp,v 1.6 2007-01-31 13:36:52 asaunier Exp $
+ * $Id: vpColVector.cpp,v 1.7 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,7 +193,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &m)
   if (m.getCols() !=1)
   {
     vpTRACE(" m should be a 1 cols matrix ") ;
-    throw ;
+    throw (vpException(vpException::dimensionError)," m should be a 1 cols matrix ");
   }
 
   try {

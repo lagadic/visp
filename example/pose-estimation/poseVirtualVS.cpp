@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.2 2007-01-31 09:59:41 asaunier Exp $
+ * $Id: poseVirtualVS.cpp,v 1.3 2007-04-18 16:14:27 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -396,7 +396,7 @@ main(int argc, char** argv)
     catch(...)
       {
 	vpERROR_TRACE("Error while displaying the image") ;
-	throw ;
+	return(-1) ;
       }
   }
 
@@ -443,7 +443,7 @@ main(int argc, char** argv)
   catch(...)
     {
       vpERROR_TRACE("Error in tracking initialization ") ;
-      throw ;
+      return(-1) ;
     }
   
   if (opt_display)
@@ -610,7 +610,7 @@ main(int argc, char** argv)
       }
       catch(...){
 	vpERROR_TRACE("Error in tracking loop") ;
-	throw ;
+	return(-1) ;
       }
       iter += opt_step ;
     }

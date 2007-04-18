@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureLine.cpp,v 1.6 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpFeatureLine.cpp,v 1.7 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -294,7 +294,7 @@ vpFeatureLine::display( const vpCameraParameters &cam,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }

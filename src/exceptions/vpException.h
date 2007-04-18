@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpException.h,v 1.5 2006-06-12 14:49:52 brenier Exp $
+ * $Id: vpException.h,v 1.6 2007-04-18 16:14:27 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,7 +91,8 @@ public:
       ioError,
       cannotUseConstructorError,
       notImplementedError,
-      divideByZeroError
+      divideByZeroError,
+	  dimensionError 
     } ;
   // ~vpException() throw() {;}
 

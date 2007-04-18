@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPtu46.cpp,v 1.8 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpPtu46.cpp,v 1.9 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@ vpPtu46::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
 {
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw;
+    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
   }
 
   double            q1 = q[0]; // pan
@@ -284,7 +284,7 @@ vpPtu46::get_eJe(const vpColVector &q, vpMatrix &eJe)
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw;
+    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
   }
 
   double s2 = sin(q[1]) ;
@@ -313,7 +313,7 @@ vpPtu46::get_fJe(const vpColVector &q, vpMatrix &fJe)
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw;
+    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
   }
 
   fJe.resize(6,2) ;

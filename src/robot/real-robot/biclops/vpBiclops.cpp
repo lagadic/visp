@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBiclops.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpBiclops.cpp,v 1.6 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,7 +74,7 @@ vpBiclops::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
 {
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw;
+    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
   }
 
   double            q1 = q[0]; // pan
@@ -276,7 +276,7 @@ vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe)
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw;
+    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
   }
 
   double s2 = sin(q[1]) ;
@@ -305,7 +305,7 @@ vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe)
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw;
+    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
   }
 
   fJe.resize(6,2) ;

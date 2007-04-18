@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.11 2007-03-14 08:58:11 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.12 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -223,7 +223,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -540,7 +540,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
   vpCDEBUG(1) <<" end vpMeLine::initTracking()"<<endl ;
@@ -793,7 +793,8 @@ vpMeLine::track(vpImage<unsigned char> &I)
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ; throw ;
+      vpERROR_TRACE("Error caught") ;
+	  throw ;
     }
 
 
@@ -808,7 +809,8 @@ vpMeLine::track(vpImage<unsigned char> &I)
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ; throw ;
+      vpERROR_TRACE("Error caught") ;
+	  throw ;
     }
 
     // suppression des points rejetes par la regression robuste

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: grab1394.cpp,v 1.4 2007-04-18 16:14:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -442,8 +442,8 @@ main(int argc, char ** argv)
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
-    throw ;
+    vpERROR_TRACE(" Error caught during acquiring") ;
+    return(-1) ;
   }
 
   cout << endl;
@@ -467,8 +467,8 @@ main(int argc, char ** argv)
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
-      throw ;
+      vpERROR_TRACE(" Error caught during initializing") ;
+      return(-1) ;
     }
   }
 

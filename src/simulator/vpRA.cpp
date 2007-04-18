@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.cpp,v 1.4 2007-03-21 13:46:45 asaunier Exp $
+ * $Id: vpRA.cpp,v 1.5 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,8 +103,8 @@ vpRA::setImage(vpImage<unsigned char> &I)
   if ((internal_width != I.getWidth()) ||
       (internal_height != I.getHeight()))
 	{
-	  cout << "The image size is different from the view size " << endl ;
-	  throw ;
+	  vpERROR_TRACE("The image size is different from the view size ");
+	  throw(vpException(vpException::dimensionError),"The image size is different from the view size") ;
 	}
 
 
@@ -126,8 +126,8 @@ vpRA::setImage(vpImage<vpRGBa> &I)
   if ((internal_width != I.getWidth()) ||
       (internal_height != I.getHeight()))
 	{
-	  cout << "The image size is different from the view size " << endl ;
-	  throw ;
+	  vpERROR_TRACE("The image size is different from the view size ");
+	  throw(vpException(vpException::dimensionError),"The image size is different from the view size") ;
 	}
 
 

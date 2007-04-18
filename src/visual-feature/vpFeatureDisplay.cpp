@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.cpp,v 1.7 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpFeatureDisplay.cpp,v 1.8 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,7 +69,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -167,7 +167,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -184,7 +184,7 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -252,7 +252,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -274,7 +274,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -372,7 +372,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -389,7 +389,7 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -457,7 +457,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }

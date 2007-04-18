@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.9 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpIoTools.cpp,v 1.10 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -223,7 +223,9 @@ vpIoTools::makeDirectory(const string dirname )
     vpIoTools::makeDirectory(dirname.c_str());
   }
   catch (...) {
-    throw;
+    vpERROR_TRACE("unable to create directory '%s'\n",dirname.c_str());
+    throw(vpIoException(vpIoException::ERRCantCreateDirectory,
+			"unable to create directory")) ;
   }
 }
 

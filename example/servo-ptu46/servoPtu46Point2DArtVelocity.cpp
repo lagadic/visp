@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoPtu46Point2DArtVelocity.cpp,v 1.2 2007-01-30 17:18:35 asaunier Exp $
+ * $Id: servoPtu46Point2DArtVelocity.cpp,v 1.3 2007-04-18 16:14:27 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -144,8 +144,8 @@ main()
     }
     catch(...)
       {
-	vpERROR_TRACE(" ") ;
-	throw ;
+		vpERROR_TRACE(" Error caught") ;
+		return(-1) ;
       }
 
 
@@ -157,8 +157,8 @@ main()
     }
     catch(...)
       {
-	vpERROR_TRACE(" ") ;
-	throw ;
+		vpERROR_TRACE(" Error caught") ;
+		return(-1) ;
       }
 
 
@@ -179,8 +179,8 @@ main()
     }
     catch(...)
       {
-	vpERROR_TRACE(" ") ;
-	throw ;
+		vpERROR_TRACE(" Error caught ") ;
+		return(-1) ;
       }
 
     vpCameraParameters cam ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.11 2007-01-31 14:59:50 asaunier Exp $
+ * $Id: vpAfma6.cpp,v 1.12 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1359,7 +1359,7 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
   }
   catch(...)
   {
-    vpERROR_TRACE("catch exception ") ;
+    vpERROR_TRACE("catch exception") ;
     throw ;
   }
 }
@@ -1413,6 +1413,7 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
   }
   catch(...)
   {
+  	vpERROR_TRACE("Error caught")
     throw ;
   }
 

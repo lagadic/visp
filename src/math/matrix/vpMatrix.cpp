@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.31 2007-03-20 17:35:01 fspindle Exp $
+ * $Id: vpMatrix.cpp,v 1.32 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -740,7 +740,7 @@ vpMatrix  vpMatrix::operator/(double x) const
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    vpCERROR << me << std::endl ;
     throw ;
   }
 
@@ -855,7 +855,7 @@ vpMatrix::eye(int n)
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    vpCERROR << me << std::endl ;
     throw ;
   }
 }
@@ -874,7 +874,7 @@ vpMatrix::eye(int m, int n)
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    vpCERROR << me << std::endl ;
     throw ;
   }
 
@@ -901,7 +901,7 @@ vpMatrix vpMatrix::t() const
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    vpCERROR << me << std::endl ;
     throw ;
   }
 
@@ -1273,11 +1273,11 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
   vpMatrix C ;
 
   try{
-  stackMatrices(A,B, C) ;
+  	stackMatrices(A,B, C) ;
   }
   catch(vpMatrixException me)
   {
-    vpCERROR ;
+    vpCERROR << me << std::endl;
     throw ;
   }
 
@@ -1316,7 +1316,7 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    vpCERROR << me << std::endl ;
     throw ;
   }
 
@@ -1356,7 +1356,7 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
   }
   catch(vpMatrixException me)
   {
-    vpCERROR ;
+    vpCERROR << me << std::endl ;
     throw ;
   }
 
@@ -1395,7 +1395,7 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    vpCERROR << me << std::endl ;
     throw ;
   }
 
@@ -1432,7 +1432,7 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    vpCERROR << me << std::endl ;
     throw ;
   }
   DA =0 ;
