@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.19 2007-03-13 15:23:58 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.20 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -646,7 +646,7 @@ vpDisplayGTK::displayCross(unsigned int i,unsigned int j,
       }
       catch(...)
 	{
-	  vpERROR_TRACE(" ") ;
+	  vpERROR_TRACE("Error caught") ;
 	  throw ;
 	}
     }
@@ -679,7 +679,7 @@ void vpDisplayGTK::displayCrossLarge(unsigned int i,unsigned int j,
       }
       catch(...)
 	{
-	  vpERROR_TRACE(" ") ;
+	  vpERROR_TRACE("Error caught") ;
 	  throw ;
 	}
     }
@@ -756,7 +756,7 @@ vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
       }
       catch(...)
 	{
-	  vpERROR_TRACE(" ") ;
+	  vpERROR_TRACE("Error caught") ;
 	  throw ;
 	}
     }

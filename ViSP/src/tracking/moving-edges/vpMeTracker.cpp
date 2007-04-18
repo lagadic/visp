@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.cpp,v 1.7 2007-01-31 15:26:00 asaunier Exp $
+ * $Id: vpMeTracker.cpp,v 1.8 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -170,9 +170,9 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
       }
       catch(...)
       {
-	// EM verifier quel signal est de sortie !!!
-	vpERROR_TRACE(" ") ;
-	throw ;
+		// EM verifier quel signal est de sortie !!!
+		vpERROR_TRACE("Error caught") ;
+		throw ;
       }
       if(refp.suppress==0) nGoodElement++;
     }

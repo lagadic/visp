@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.10 2007-03-14 08:58:11 fspindle Exp $
+ * $Id: vpMeEllipse.cpp,v 1.11 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -776,7 +776,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
   vpMeTracker::display(I) ;
@@ -809,7 +809,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
     //    cout << "number of signals " << numberOfSignal() << endl ;
@@ -823,7 +823,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
       leastSquare(I) ;  }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
     computeAngle(i1,j1, i2, j2) ;
@@ -835,7 +835,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
 	leastSquare(I) ;  }
       catch(...)
       {
-	vpERROR_TRACE(" ") ;
+	vpERROR_TRACE("Error caught") ;
 	throw ;
       }
       computeAngle(i1,j1, i2, j2) ;

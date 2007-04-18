@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.12 2007-03-07 15:45:59 marchand Exp $
+ * $Id: vpPose.cpp,v 1.13 2007-04-18 16:14:27 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -397,12 +397,12 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
     {
       try
       {
-	poseVirtualVS(cMo);
+		poseVirtualVS(cMo);
       }
       catch(...)
       {
-	vpERROR_TRACE(" ") ;
-	throw ;
+		vpERROR_TRACE(" ") ;
+		throw ;
       }
     }
     break ;
@@ -412,12 +412,12 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
     {
       try
       {
-	poseLowe(cMo);
+		poseLowe(cMo);
       }
       catch(...)
       {
-	vpERROR_TRACE(" ") ;
-	throw ;
+		vpERROR_TRACE(" ") ;
+		throw ;
       }
     }
     break ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.t.cpp,v 1.9 2007-04-18 12:13:13 asaunier Exp $
+ * $Id: vpRansac.t.cpp,v 1.10 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,7 +155,6 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
 	delete [] ind;
 	vpERROR_TRACE("Unable to select a nondegenerate data set");
 	return false;
-	//throw ;
       }
     }
     // Fit model to this random selection of data points.

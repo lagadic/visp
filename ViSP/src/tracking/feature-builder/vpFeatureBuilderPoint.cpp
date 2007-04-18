@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderPoint.cpp,v 1.8 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpFeatureBuilderPoint.cpp,v 1.9 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,7 +63,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -85,7 +85,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -124,7 +124,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -154,7 +154,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }

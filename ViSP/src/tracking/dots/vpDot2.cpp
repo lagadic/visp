@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.17 2007-03-20 13:30:03 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.18 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -273,7 +273,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -312,7 +312,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }
@@ -363,7 +363,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }

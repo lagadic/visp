@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.16 2007-03-13 15:22:47 asaunier Exp $
+ * $Id: vpDisplay.cpp,v 1.17 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@ vpDisplay::displayTitle(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -93,7 +93,7 @@ vpDisplay::display(const vpImage<unsigned char> &I)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -121,7 +121,7 @@ vpDisplay::getImage(const vpImage<unsigned  char> &Isrc,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -142,7 +142,7 @@ void vpDisplay::displayPoint(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 
@@ -163,7 +163,7 @@ void vpDisplay::displayCross(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -184,7 +184,7 @@ vpDisplay::displayCrossLarge(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -207,7 +207,7 @@ vpDisplay::displayCircle(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -229,7 +229,7 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -252,7 +252,7 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -342,7 +342,7 @@ vpDisplay::displayArrow(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -375,7 +375,7 @@ vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -401,7 +401,7 @@ vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -422,7 +422,7 @@ vpDisplay::displayCharString(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -447,7 +447,7 @@ void vpDisplay::flush(const vpImage<unsigned char> &I)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -467,7 +467,7 @@ void vpDisplay::close(const vpImage<unsigned char> &I)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -488,7 +488,7 @@ bool  vpDisplay::getClick(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -510,7 +510,7 @@ bool  vpDisplay::getClick(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -530,7 +530,7 @@ void  vpDisplay::getClick(const vpImage<unsigned char> &I)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -553,7 +553,7 @@ vpDisplay::getClickUp(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -576,7 +576,7 @@ vpDisplay::displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -604,7 +604,7 @@ vpDisplay::display(const vpImage<vpRGBa> &I)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -632,7 +632,7 @@ vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -655,7 +655,7 @@ void vpDisplay::displayPoint(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 
@@ -676,7 +676,7 @@ void vpDisplay::displayCross(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -697,7 +697,7 @@ vpDisplay::displayCrossLarge(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -719,7 +719,7 @@ vpDisplay::displayCircle(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -741,7 +741,7 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -763,7 +763,7 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -787,7 +787,7 @@ vpDisplay::displayArrow(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -809,7 +809,7 @@ vpDisplay::displayCharString(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -831,7 +831,7 @@ void vpDisplay::flush(const vpImage<vpRGBa> &I)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -851,7 +851,7 @@ void vpDisplay::close(const vpImage<vpRGBa> &I)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -871,7 +871,7 @@ bool  vpDisplay::getClick(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -893,7 +893,7 @@ bool  vpDisplay::getClick(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -913,7 +913,7 @@ void  vpDisplay::getClick(const vpImage<vpRGBa> &I)
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -937,7 +937,7 @@ vpDisplay::getClickUp(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -963,7 +963,7 @@ void vpDisplay::displayPoint_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 
@@ -984,7 +984,7 @@ void vpDisplay::displayCross_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1005,7 +1005,7 @@ vpDisplay::displayCrossLarge_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1028,7 +1028,7 @@ vpDisplay::displayCircle_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1050,7 +1050,7 @@ void vpDisplay::displayLine_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1073,7 +1073,7 @@ void vpDisplay::displayDotLine_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1098,7 +1098,7 @@ vpDisplay::displayArrow_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1131,7 +1131,7 @@ vpDisplay::displayRectangle_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1152,7 +1152,7 @@ vpDisplay::displayCharString_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1173,7 +1173,7 @@ bool  vpDisplay::getClick_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -1195,7 +1195,7 @@ bool  vpDisplay::getClick_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -1219,7 +1219,7 @@ vpDisplay::getClickUp_uv(const vpImage<unsigned char> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -1244,7 +1244,7 @@ void vpDisplay::displayPoint_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 
@@ -1265,7 +1265,7 @@ void vpDisplay::displayCross_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1286,7 +1286,7 @@ vpDisplay::displayCrossLarge_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1308,7 +1308,7 @@ vpDisplay::displayCircle_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1330,7 +1330,7 @@ void vpDisplay::displayLine_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1352,7 +1352,7 @@ void vpDisplay::displayDotLine_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1376,7 +1376,7 @@ vpDisplay::displayArrow_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1398,7 +1398,7 @@ vpDisplay::displayCharString_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 }
@@ -1420,7 +1420,7 @@ bool  vpDisplay::getClick_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -1442,7 +1442,7 @@ bool  vpDisplay::getClick_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;
@@ -1466,7 +1466,7 @@ vpDisplay::getClickUp_uv(const vpImage<vpRGBa> &I,
     }
   catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   return false ;

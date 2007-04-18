@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderPoint3D.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpFeatureBuilderPoint3D.cpp,v 1.5 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@ vpFeatureBuilder::create(vpFeaturePoint3D &s, const vpPoint &t )
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 }

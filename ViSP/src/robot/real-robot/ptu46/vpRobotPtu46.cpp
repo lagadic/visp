@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotPtu46.cpp,v 1.8 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpRobotPtu46.cpp,v 1.9 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,7 +85,7 @@ vpRobotPtu46::vpRobotPtu46 (const char *device)
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
   positioningVelocity = defaultPositioningVelocity ;
@@ -290,6 +290,7 @@ vpRobotPtu46::get_fJe(vpMatrix &fJe)
   }
   catch(...)
   {
+  	vpERROR_TRACE("Error caught")
     throw ;
   }
 
@@ -421,6 +422,7 @@ vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
   }
   catch(...)
   {
+  	vpERROR_TRACE("Error caught")
     throw ;
   }
 }

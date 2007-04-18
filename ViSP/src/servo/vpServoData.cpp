@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoData.cpp,v 1.5 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpServoData.cpp,v 1.6 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,15 +73,14 @@ vpServoData::open(const char *directory)
     sprintf(s,"%s/s.dat",directory) ;
     sFile.open(s)  ;
     sprintf(s,"%s/sStar.dat",directory) ;
-    sStarFile.open(s)  ;
+    sStarFile.open(s) ;
 
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
-
 }
 
 void vpServoData::setCmDeg()

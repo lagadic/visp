@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.2 2007-01-30 17:29:01 asaunier Exp $
+ * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.3 2007-04-18 16:14:27 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -281,8 +281,8 @@ main(int argc, char ** argv)
     }
     catch(...)
       {
-	vpERROR_TRACE(" ") ;
-	throw ;
+		vpERROR_TRACE(" Error caught") ;
+		return(-1) ;
       }
 
     // We open a window using either X11 or GTK or GDI.
@@ -295,15 +295,14 @@ main(int argc, char ** argv)
     vpDisplayGDI display(I, 100, 100,"Display GDI...") ;
 #endif
 
-    vpTRACE(" ") ;
-
+    
     try{
       vpDisplay::display(I) ;
     }
     catch(...)
       {
-	vpERROR_TRACE(" ") ;
-	throw ;
+		vpERROR_TRACE(" Error caught") ;
+		return(-1) ;
       }
 
 
@@ -320,8 +319,8 @@ main(int argc, char ** argv)
     }
     catch(...)
       {
-	vpERROR_TRACE(" ") ;
-	throw ;
+		vpERROR_TRACE(" Error caught") ;
+		return(-1) ;
       }
 
     vpCameraParameters cam ;

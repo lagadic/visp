@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.cpp,v 1.6 2006-08-23 10:41:55 brenier Exp $
+ * $Id: vpRobotBiclops.cpp,v 1.7 2007-04-18 16:14:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,7 +101,7 @@ vpRobotBiclops::vpRobotBiclops (const char * filename)
   }
   catch(...)
   {
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE("Error caught") ;
     throw ;
   }
 
@@ -647,6 +647,7 @@ vpRobotBiclops::get_fJe(vpMatrix &fJe)
   }
   catch(...)
   {
+  	vpERROR_TRACE("Error caught")
     throw ;
   }
 
@@ -780,6 +781,7 @@ void vpRobotBiclops::setPosition (const vpRobot::ControlFrameType frame,
   }
   catch(...)
   {
+  	vpERROR_TRACE("Error caught")
     throw ;
   }
 }

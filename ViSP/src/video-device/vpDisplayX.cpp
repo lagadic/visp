@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.26 2007-03-13 15:29:13 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.27 2007-04-18 16:14:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1124,7 +1124,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
 
@@ -1374,7 +1374,7 @@ void vpDisplayX::displayCross(unsigned int i,unsigned int j,
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   }
@@ -1406,7 +1406,7 @@ void vpDisplayX::displayCrossLarge(unsigned int i,unsigned int j,
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   }
@@ -1478,7 +1478,7 @@ void vpDisplayX::displayArrow(unsigned int i1,unsigned int j1,
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
+      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   }
