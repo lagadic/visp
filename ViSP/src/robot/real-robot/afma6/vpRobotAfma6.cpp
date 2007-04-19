@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.13 2007-04-18 16:14:28 asaunier Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.14 2007-04-19 07:50:02 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -412,7 +412,7 @@ vpRobotAfma6::get_fJe(vpMatrix &fJe)
   }
   catch(...)
   {
-  	vpERROR_TRACE("Error caught")
+    vpERROR_TRACE("Error caught");
     throw ;
   }
 
@@ -529,7 +529,7 @@ void vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
   }
   catch(...)
   {
-  	vpERROR_TRACE("Error caught")
+    vpERROR_TRACE("Error caught");
     throw ;
   }
 }
