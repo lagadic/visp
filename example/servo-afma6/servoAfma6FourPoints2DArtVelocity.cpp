@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DArtVelocity.cpp,v 1.2 2007-01-30 16:39:22 asaunier Exp $
+ * $Id: servoAfma6FourPoints2DArtVelocity.cpp,v 1.3 2007-04-19 14:19:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,9 +59,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_ICCOMP))
+#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_ITIFG8))
 
-#include <visp/vpIcCompGrabber.h>
+#include <visp/vpItifg8Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -90,7 +90,7 @@ main()
       vpImage<unsigned char> I ;
       int i ;
 
-      vpIcCompGrabber g(2) ;
+      vpItifg8Grabber g(2) ;
       g.open(I) ;
 
       g.acquire(I) ;
@@ -227,7 +227,7 @@ main()
 int
 main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot or an ICcomp framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot or an Itifg8 framegrabber connected to your computer...");
 
 }
 
