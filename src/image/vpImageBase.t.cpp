@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageBase.t.cpp,v 1.9 2007-03-29 13:49:02 hatran Exp $
+ * $Id: vpImageBase.t.cpp,v 1.10 2007-04-19 08:50:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,6 +35,8 @@
  *
  *****************************************************************************/
 
+#ifndef VP_IMAGEBASE_T_CPP
+#define VP_IMAGEBASE_T_CPP
 
 /*!
   \file vpImageBase.t.cpp
@@ -581,6 +583,8 @@ Type vpImage<Type>::getPixelBI(float col0, float row0)
   }
   return (Type)(rfrac * row1 + (1.0 - rfrac) * row2);
 }
+
+#endif
 
 /*
  * Local variables:
