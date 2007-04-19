@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.2 2007-01-30 16:39:22 asaunier Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.3 2007-04-19 14:19:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,9 +60,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_ICCOMP))
+#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_ITIFG8))
 
-#include <visp/vpIcCompGrabber.h>
+#include <visp/vpItifg8Grabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -86,22 +86,19 @@
 int
 main()
 {
-  try 
+  try
     {
       vpImage<unsigned char> I ;
       int i ;
 
-      vpIcCompGrabber g(2) ;
+      vpItifg8Grabber g(2) ;
       g.open(I) ;
+
+      vpDisplayX display(I,100,100,"Current image") ;
 
       g.acquire(I) ;
 
-
-      vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-      vpTRACE(" ") ;
-
       vpDisplay::display(I) ;
-
 
       vpServo task ;
 
@@ -120,8 +117,16 @@ main()
 
       vpDot dot[4] ;
 
-      for (i=0 ; i < 4 ; i++)
+      cout << "Click on the 4 dots clockwise starting from upper/left dot..."
+	   << endl;
+      for (i=0 ; i < 4 ; i++) {
 	dot[i].initTracking(I) ;
+	vpDisplay::displayCross(I,
+				(unsigned int)dot[i].get_v(),
+				(unsigned int)dot[i].get_u(),
+				10, vpColor::blue) ;
+	vpDisplay::flush(I);
+      }
 
       vpCameraParameters cam ;
 
@@ -132,7 +137,7 @@ main()
 
       vpTRACE("sets the desired position of the visual feature ") ;
       vpFeaturePoint pd[4] ;
-#define L 0.075
+#define L 0.105
 #define D 0.5
       pd[0].buildFrom(-L,-L,D) ;
       pd[1].buildFrom(L,-L,D) ;
@@ -169,11 +174,14 @@ main()
 	  g.acquire(I) ;
 	  vpDisplay::display(I) ;
 
-	  for (i=0 ; i < 4 ; i++)
+	  for (i=0 ; i < 4 ; i++) {
 	    dot[i].track(I) ;
+	    vpDisplay::displayCross(I,
+				    (unsigned int)dot[i].get_v(),
+				    (unsigned int)dot[i].get_u(),
+				    10, vpColor::green) ;
+	  }
 
-	  //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
-	  //			   10,vpColor::green) ;
 
 	  task.print() ;
 
@@ -187,6 +195,8 @@ main()
 	  vpServoDisplay::display(task,cam,I) ;
 	  cout << v.t() ;
 	  robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+	  vpDisplay::flush(I) ;
 
 	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
 	}
@@ -205,7 +215,7 @@ main()
 int
 main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot or an ICcomp framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot or an Itifg8 framegrabber connected to your computer...");
 
 }
 
