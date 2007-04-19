@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.5 2007-04-18 16:10:25 asaunier Exp $
+ * $Id: grabDirectShow.cpp,v 1.6 2007-04-19 09:01:05 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -185,19 +185,20 @@ main(int argc, char ** argv)
 		}
 		vpDirectShowGrabber* grabber ;
 		try {
-		// Create the grabber
-		grabber = new vpDirectShowGrabber();
+		    // Create the grabber
+		    grabber = new vpDirectShowGrabber();
 
-		// Initialize the grabber
-		grabber->open(I);
+		    // Initialize the grabber
+		    grabber->open(I);
 
-		// Acquire an RGBa image
-		grabber->acquire(I);
+		    // Acquire an RGBa image
+		    grabber->acquire(I);
 		}
 		catch(...)
 		{
-		vpERROR_TRACE("Cannot acquire an image...") ;
-		exit(-1);
+		    vpERROR_TRACE("Cannot acquire an image...") ;
+		    delete grabber;
+		    exit(-1);
 		}
 
 		cout << "Image size: width : " << I.getWidth() <<  " height: "
@@ -255,13 +256,16 @@ main(int argc, char ** argv)
 		}
 		catch(...)
 		{
-			vpCERROR << "Failure: exit" << std::endl;
+		  vpCERROR << "Failure: exit" << std::endl;
+		  delete grabber;
+		  return(-1);
 		}
 	}
 	catch(...)
 	{
-		vpERROR_TRACE("Error caught");
-		return(-1);
+	  vpERROR_TRACE("Error caught");
+	  delete grabber;
+	  return(-1);
 	}
 }
 #else
