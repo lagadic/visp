@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.3 2007-04-19 14:19:18 fspindle Exp $
+ * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,14 +110,14 @@ main()
 
 
 
-      cout << endl ;
-      cout << "-------------------------------------------------------" << endl ;
-      cout << " Test program for vpServo "  <<endl ;
-      cout << " Eye-to-hand task control" << endl ;
-      cout << " Simulation " << endl ;
-      cout << " task : servo a point " << endl ;
-      cout << "-------------------------------------------------------" << endl ;
-      cout << endl ;
+      std::cout << std::endl ;
+      std::cout << "-------------------------------------------------------" << std::endl ;
+      std::cout << " Test program for vpServo "  <<std::endl ;
+      std::cout << " Eye-to-hand task control" << std::endl ;
+      std::cout << " Simulation " << std::endl ;
+      std::cout << " task : servo a point " << std::endl ;
+      std::cout << "-------------------------------------------------------" << std::endl ;
+      std::cout << std::endl ;
 
       int nbPoint =7 ;
 
@@ -163,7 +163,7 @@ main()
       pose.computePose(vpPose::DEMENTHON_LOWE, cMo) ;
 
 
-      cout << cMo << endl  ;
+      std::cout << cMo << std::endl  ;
       cMo.print() ;
 
       /*------------------------------------------------------------------
@@ -171,16 +171,16 @@ main()
 	--  or reading the desired position
 	------------------------------------------------------------------
       */
-      cout << " Learning 0/1 " <<endl ;
+      std::cout << " Learning 0/1 " <<std::endl ;
       char name[FILENAME_MAX] ;
       sprintf(name,"cdMo.dat") ;
       int learning ;
-      cin >> learning ;
+      std::cin >> learning ;
       if (learning ==1)
 	{
 	  // save the object position
 	  vpTRACE("Save the location of the object in a file cdMo.dat") ;
-	  ofstream f(name) ;
+	  std::ofstream f(name) ;
 	  cMo.save(f) ;
 	  f.close() ;
 	  exit(1) ;
@@ -192,7 +192,7 @@ main()
 
       {
 	vpTRACE("Loading desired location from cdMo.dat") ;
-	ifstream f("cdMo.dat") ;
+	std::ifstream f("cdMo.dat") ;
 	cdMo.load(f) ;
 	f.close() ;
       }
@@ -257,14 +257,14 @@ main()
       double alpha = 1 ; //1 ;
       double beta =3 ; //3 ;
 
-      cout << "alpha 0.7" << endl;
-      cin >> alpha ;
-      cout << "beta 5" << endl;
-      cin >> beta ;
+      std::cout << "alpha 0.7" << std::endl;
+      std::cin >> alpha ;
+      std::cout << "beta 5" << std::endl;
+      std::cin >> beta ;
       vpList<double> Lu, Lv ;
       while(error > convergence_threshold)
 	{
-	  cout << "---------------------------------------------" << iter++ <<endl ;
+	  std::cout << "---------------------------------------------" << iter++ <<std::endl ;
 
 	  g.acquire(I) ;
 	  vpDisplay::display(I) ;
@@ -366,7 +366,7 @@ main()
 	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
 	  error = task.error.sumSquare() ;
-	  cout << "|| s - s* || = "<< error<<endl ;
+	  std::cout << "|| s - s* || = "<< error<<std::endl ;
 
 	  if (error>7)
 	    {

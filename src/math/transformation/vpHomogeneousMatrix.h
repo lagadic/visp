@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.h,v 1.7 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpHomogeneousMatrix.h,v 1.8 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -163,12 +163,12 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   void extract(vpTranslationVector &T) const;
 
   //! Load an homogeneous matrix from a file
-  void load(ifstream &f) ;
+  void load(std::ifstream &f) ;
   //! Load an homogeneous matrix from a file
   //! proposed for compatibilty issue
-  void loadMatrix34(ifstream &f) ;
+  void loadMatrix34(std::ifstream &f) ;
   //! Save an homogeneous matrix in a file
-  void save(ofstream &f) const ;
+  void save(std::ofstream &f) const ;
 
   //! Print the matrix as a vector [T thetaU]
   void print() ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderPoint.cpp,v 1.9 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpFeatureBuilderPoint.cpp,v 1.10 2007-04-20 14:22:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -106,7 +106,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
     if (s.get_Z() < 0)
     {
       vpERROR_TRACE("Point is behind the camera ") ;
-      cout <<"Z = " << s.get_Z() << endl ;
+      std::cout <<"Z = " << s.get_Z() << std::endl ;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
 			       "Point is behind the camera ")) ;
@@ -115,7 +115,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
     if (fabs(s.get_Z()) < 1e-6)
     {
       vpERROR_TRACE("Point Z coordinates is null ") ;
-      cout <<"Z = " << s.get_Z() << endl ;
+      std::cout <<"Z = " << s.get_Z() << std::endl ;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
 			       "Point Z coordinates is null")) ;

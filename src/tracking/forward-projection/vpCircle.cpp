@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.cpp,v 1.6 2007-02-26 16:42:18 fspindle Exp $
+ * $Id: vpCircle.cpp,v 1.7 2007-04-20 14:22:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -223,7 +223,7 @@ vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 
   cP[6] = R ;
 
-  // vpTRACE("_cP :") ; cout << _cP.t() ;
+  // vpTRACE("_cP :") ; std::cout << _cP.t() ;
 
 }
 

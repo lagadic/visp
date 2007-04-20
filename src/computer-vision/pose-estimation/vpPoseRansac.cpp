@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseRansac.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpPoseRansac.cpp,v 1.6 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -113,7 +113,7 @@ vpPose::computeTransformation(vpColVector &x,int *ind, vpColVector &M)
   vpHomogeneousMatrix cMo ;
   try {
     pose.computePose(vpPose::DEMENTHON, cMo) ;
-    //    cout << cMo << endl ;
+    //    std::cout << cMo << std::endl ;
   }
   catch(...)
   {
@@ -272,7 +272,7 @@ vpPose::ransac(const int n,
       cMo.data[i] = M[i];
   }
 
-  cout << vpTime::measureTimeMs() - tms << "ms" << endl ;
+  std::cout << vpTime::measureTimeMs() - tms << "ms" << std::endl ;
 
 }
 

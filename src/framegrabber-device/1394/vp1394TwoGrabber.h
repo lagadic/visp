@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.6 2007-03-12 14:33:56 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.7 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -216,12 +216,12 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void close();
 
 public:
-  static string videoMode2string(vp1394TwoVideoMode videomode);
-  static string framerate2string(vp1394TwoFramerate fps);
-  static string colorCoding2string(vp1394TwoColorCoding colorcoding);
-  static vp1394TwoVideoMode string2videoMode(string videomode);
-  static vp1394TwoFramerate string2framerate(string fps);
-  static vp1394TwoColorCoding string2colorCoding(string colorcoding);
+  static std::string videoMode2string(vp1394TwoVideoMode videomode);
+  static std::string framerate2string(vp1394TwoFramerate fps);
+  static std::string colorCoding2string(vp1394TwoColorCoding colorcoding);
+  static vp1394TwoVideoMode string2videoMode(std::string videomode);
+  static vp1394TwoFramerate string2framerate(std::string fps);
+  static vp1394TwoColorCoding string2colorCoding(std::string colorcoding);
 
  private:
   void open();

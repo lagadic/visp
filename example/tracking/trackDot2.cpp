@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.5 2007-03-06 15:38:04 fspindle Exp $
+ * $Id: trackDot2.cpp,v 1.6 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -79,7 +79,7 @@ Print the program options.
   \param ipath : Input image path.
 
 */
-void usage(char *name, char *badparam, string ipath)
+void usage(char *name, char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
 Test dot tracking using vpDot2 class.\n\
@@ -121,7 +121,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath,
+bool getOptions(int argc, char **argv, std::string &ipath,
 		bool &click_allowed, bool &display)
 {
   char *optarg;
@@ -143,8 +143,8 @@ bool getOptions(int argc, char **argv, string &ipath,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -155,11 +155,11 @@ bool getOptions(int argc, char **argv, string &ipath,
 int
 main(int argc, char ** argv)
 {
-  string env_ipath;
-  string opt_ipath;
-  string ipath;
-  string dirname;
-  string filename;
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string ipath;
+  std::string dirname;
+  std::string filename;
   bool opt_click_allowed = true;
   bool opt_display = true;
 
@@ -187,23 +187,23 @@ main(int argc, char ** argv)
   // the input path comming from the command line option
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
-      cout << endl
-	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
-	   << "  we skip the environment variable." << endl;
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
     }
   }
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath);
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << endl
-	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl;
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -219,7 +219,7 @@ main(int argc, char ** argv)
   // Build the name of the image file
   unsigned iter = 1; // Image number
   std::ostringstream s;
-  s.setf(ios::right, ios::adjustfield);
+  s.setf(std::ios::right, std::ios::adjustfield);
   s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
   filename = dirname + s.str();
 
@@ -230,7 +230,7 @@ main(int argc, char ** argv)
   // exception readPGM may throw various exception if, for example,
   // the file does not exist, or if the memory cannot be allocated
   try{
-    vpCTRACE << "Load: " << filename << endl;
+    vpCTRACE << "Load: " << filename << std::endl;
 
     vpImageIo::readPGM(I, filename) ;
   }
@@ -240,12 +240,12 @@ main(int argc, char ** argv)
       // here this will result in the end of the program
       // Note that another error message has been printed from readPGM
       // to give more information about the error
-      cerr << endl
-	   << "ERROR:" << endl;
-      cerr << "  Cannot read " << filename << endl;
-      cerr << "  Check your -i " << ipath << " option " << endl
+      std::cerr << std::endl
+	   << "ERROR:" << std::endl;
+      std::cerr << "  Cannot read " << filename << std::endl;
+      std::cerr << "  Check your -i " << ipath << " option " << std::endl
 	   << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	   << endl;
+	   << std::endl;
       exit(-1);
     }
 
@@ -319,19 +319,19 @@ main(int argc, char ** argv)
       d.initTracking(I, 160, 212) ;
     }
     if (1) {
-      cout << "COG: " << endl;
-      cout << d.get_u() << " " << d.get_v()
+      std::cout << "COG: " << std::endl;
+      std::cout << d.get_u() << " " << d.get_v()
 	   << " - "
-	   << d.m10 / d.m00 << " " << d.m01 / d.m00 << endl;
-      cout << "Size:" << endl;
-      cout << "w: " << d.getWidth() << " h: " << d.getHeight() << endl;
-      cout << "Moments:" << endl;
-      cout << "m00: " << d.m00 << endl;
-      cout << "m11: " << d.m11 << endl;
-      cout << "m02: " << d.m02 << endl;
-      cout << "m20: " << d.m20 << endl;
-      cout << "m10: " << d.m10 << endl;
-      cout << "m01: " << d.m01 << endl;
+	   << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
+      std::cout << "Size:" << std::endl;
+      std::cout << "w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
+      std::cout << "Moments:" << std::endl;
+      std::cout << "m00: " << d.m00 << std::endl;
+      std::cout << "m11: " << d.m11 << std::endl;
+      std::cout << "m02: " << d.m02 << std::endl;
+      std::cout << "m20: " << d.m20 << std::endl;
+      std::cout << "m10: " << d.m10 << std::endl;
+      std::cout << "m01: " << d.m01 << std::endl;
     }
   }
   catch(...)
@@ -365,22 +365,22 @@ main(int argc, char ** argv)
 	  vpDisplay::display(I) ;
 	}
 
-	cout << "Tracking on image: " << filename << endl;
+	std::cout << "Tracking on image: " << filename << std::endl;
 	d.track(I) ;
 
-	cout << "COG: " << endl;
-	cout << d.get_u() << " " << d.get_v()
+	std::cout << "COG: " << std::endl;
+	std::cout << d.get_u() << " " << d.get_v()
 	     << " - "
-	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << endl;
-	cout << "Size:" << endl;
-	cout << "w: " << d.getWidth() << " h: " << d.getHeight() << endl;
-	cout << "Moments:" << endl;
-	cout << "m00: " << d.m00 << endl;
-	cout << "m11: " << d.m11 << endl;
-	cout << "m02: " << d.m02 << endl;
-	cout << "m20: " << d.m20 << endl;
-	cout << "m10: " << d.m10 << endl;
-	cout << "m01: " << d.m01 << endl;
+	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
+	std::cout << "Size:" << std::endl;
+	std::cout << "w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
+	std::cout << "Moments:" << std::endl;
+	std::cout << "m00: " << d.m00 << std::endl;
+	std::cout << "m11: " << d.m11 << std::endl;
+	std::cout << "m02: " << d.m02 << std::endl;
+	std::cout << "m20: " << d.m20 << std::endl;
+	std::cout << "m10: " << d.m10 << std::endl;
+	std::cout << "m01: " << d.m01 << std::endl;
 	if (opt_display) {
 	  // display a red cross (size 10) in the image at the dot center
 	  // of gravity location
@@ -405,12 +405,12 @@ main(int argc, char ** argv)
       }
   }
   catch (...) {
-    cerr << "Error during the tracking..." << endl;
-    cerr << "The progam was stopped." << endl;
+    std::cerr << "Error during the tracking..." << std::endl;
+    std::cerr << "The progam was stopped." << std::endl;
     exit(-1);
   }
   if (opt_display && opt_click_allowed) {
-    cout << "\nA click to exit..." << endl;
+    std::cout << "\nA click to exit..." << std::endl;
     // Wait for a blocking mouse click
     vpDisplay::getClick(I) ;
   }

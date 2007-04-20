@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoData.cpp,v 1.6 2007-04-18 16:14:28 asaunier Exp $
+ * $Id: vpServoData.cpp,v 1.7 2007-04-20 14:22:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,11 +100,11 @@ void vpServoData::save(const vpServo &task)
       velocityFile <<  task.q_dot[i]*100 <<" " ;
     for (int i=4 ; i < 6 ; i++)
       velocityFile <<  vpMath::deg(task.q_dot[i]) <<" " ;
-    velocityFile << endl ;
+    velocityFile << std::endl ;
   }
   errorFile << task.error.t() ;
-  errorNormFile << task.error.sumSquare() << endl ;
-  vNormFile << task.q_dot.sumSquare() << endl ;
+  errorNormFile << task.error.sumSquare() << std::endl ;
+  vNormFile << task.q_dot.sumSquare() << std::endl ;
 
   sFile <<task.s.t() ;
   sStarFile << task.sStar.t();

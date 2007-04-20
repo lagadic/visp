@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.h,v 1.7 2007-04-18 12:13:13 asaunier Exp $
+ * $Id: vpDirectShowGrabberImpl.h,v 1.8 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -211,7 +211,7 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 		bool connectSourceToGrabber(CComPtr<IBaseFilter>& pCapSource, CComPtr<IBaseFilter>& pGrabberFilter);
 
 		//used to convert HRESULT-associated error message to a string
-		void HRtoStr(string str);
+		void HRtoStr(std::string str);
 
 		//create the list of the available devices
 		bool createDeviceList(CComPtr<IEnumMoniker>& ppVideoInputEnum);

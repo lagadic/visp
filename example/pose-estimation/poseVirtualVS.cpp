@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.3 2007-04-18 16:14:27 asaunier Exp $
+ * $Id: poseVirtualVS.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,7 +101,7 @@ Print the program options.
   \param step : Step between two images.
 
  */
-void usage(char *name, char *badparam, string ipath, string ppath,
+void usage(char *name, char *badparam, std::string ipath, std::string ppath,
 	   unsigned first, unsigned nimages, unsigned step)
 {
   fprintf(stdout, "\n\
@@ -172,7 +172,7 @@ under Unix or using the task manager under Windows.
 \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath, string &ppath,
+bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
 		unsigned &first, unsigned &nimages, unsigned &step,
 		bool &click_allowed, bool &display)
 {
@@ -199,8 +199,8 @@ bool getOptions(int argc, char **argv, string &ipath, string &ppath,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath, ppath, first, nimages, step);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -213,12 +213,12 @@ bool getOptions(int argc, char **argv, string &ipath, string &ppath,
 int
 main(int argc, char** argv)
 {
-  string env_ipath;
-  string opt_ipath;
-  string ipath;
-  string opt_ppath;
-  string dirname;
-  string filename;
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string ipath;
+  std::string opt_ppath;
+  std::string dirname;
+  std::string filename;
   unsigned opt_first = 0;
   unsigned opt_nimages = 80;
   unsigned opt_step = 1;
@@ -228,12 +228,12 @@ main(int argc, char** argv)
 
   int i ;
 
-  cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  "  poseVirtualVS.cpp" <<endl << endl ;
+  std::cout <<  "-------------------------------------------------------" << std::endl ;
+  std::cout <<  "  poseVirtualVS.cpp" <<std::endl << std::endl ;
 
-  cout <<  "  Example of dots tracking in an image sequence and pose computation" << endl ;
-  cout <<  "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  std::cout <<  "  Example of dots tracking in an image sequence and pose computation" << std::endl ;
+  std::cout <<  "-------------------------------------------------------" << std::endl ;
+  std::cout << std::endl ;
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -258,24 +258,24 @@ main(int argc, char** argv)
   // the input path comming from the command line option
   if (opt_ipath.empty() && opt_ppath.empty()) {
     if (ipath != env_ipath) {
-      cout << endl
-	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
-	   << "  we skip the environment variable." << endl;
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
     }
   }
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()){
     usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << endl
-	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl 
-	 << "  Use -p <personal image path> option if you want to "<< endl
-	 << "  use personal images" <<endl << endl;
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl 
+	 << "  Use -p <personal image path> option if you want to "<< std::endl
+	 << "  use personal images" <<std::endl << std::endl;
     exit(-1);
   }
 
@@ -310,7 +310,7 @@ main(int argc, char** argv)
 
     // Build the name of the image file
 
-    s.setf(ios::right, ios::adjustfield);
+    s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
     filename = dirname + s.str();
   }
@@ -354,19 +354,19 @@ main(int argc, char** argv)
       // Note that another error message has been printed from readPGM
       // to give more information about the error
       if (opt_ppath.empty()) {
-	cerr << endl
-	     << "ERROR:" << endl;
-	cerr << "  Cannot read " << filename << endl;
-	cerr << "  Check your -i " << ipath << " option, " << endl
+	std::cerr << std::endl
+	     << "ERROR:" << std::endl;
+	std::cerr << "  Cannot read " << filename << std::endl;
+	std::cerr << "  Check your -i " << ipath << " option, " << std::endl
 	     << "  or VISP_INPUT_IMAGE_PATH environment variable"
-	     << endl;
+	     << std::endl;
       }
       else {
-	cerr << endl
-	     << "ERROR:" << endl;
-	cerr << "  Cannot read " << filename << endl;
-	cerr << "  or your -p " << opt_ppath << " option " <<endl
-	     << endl;
+	std::cerr << std::endl
+	     << "ERROR:" << std::endl;
+	std::cerr << "  Cannot read " << filename << std::endl;
+	std::cerr << "  or your -p " << opt_ppath << " option " <<std::endl
+	     << std::endl;
       }
       exit(-1);
 
@@ -406,7 +406,7 @@ main(int argc, char** argv)
   try{
     if (opt_display && opt_click_allowed) {
       // dot coordinates (u,v) = (column,row)
-      cout << "Click the four white  on the object corner clockwise" <<endl  ;
+      std::cout << "Click the four white  on the object corner clockwise" <<std::endl  ;
       for (i=0 ; i < 4 ; i++)
 	{
 	  // tracking is initalized

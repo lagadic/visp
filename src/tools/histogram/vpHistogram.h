@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.h,v 1.1 2007-03-02 13:05:11 fspindle Exp $
+ * $Id: vpHistogram.h,v 1.2 2007-04-20 14:22:18 asaunier Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -187,7 +187,7 @@ public:
 		    vpHistogramValey & valeyr);
   unsigned sort(vpList<vpHistogramPeak> & peaks);
 
-  bool     write(const string &filename);
+  bool     write(const std::string &filename);
   bool     write(const char *filename);
 
   /*!

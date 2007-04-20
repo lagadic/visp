@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.17 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.18 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -894,10 +894,10 @@ vp1394Grabber::getFramerateSupported(int format, int mode,
   .
   This method returns 0 if the string does not match to a format string.
 
-  \sa convertFormat(int), convertMode(string), convertFramerate(string&)
+  \sa convertFormat(int), convertMode(std::string), convertFramerate(std::string&)
 
 */
-int vp1394Grabber::convertFormat(string format)
+int vp1394Grabber::convertFormat(std::string format)
 {
   for (int i = FORMAT_MIN; i <= FORMAT_MAX; i ++) {
     //    if (format.compare(0, format(i).length(), format(i)) == 0) {
@@ -919,10 +919,10 @@ int vp1394Grabber::convertFormat(string format)
 
   This method returns 0 if the string does not match to a mode string.
 
-  \sa convertMode(int), convertFormat(string), convertFramerate(string)
+  \sa convertMode(int), convertFormat(std::string), convertFramerate(std::string)
 
 */
-int vp1394Grabber::convertMode(string mode)
+int vp1394Grabber::convertMode(std::string mode)
 {
   for (int i = MODE_FORMAT0_MIN; i <= MODE_FORMAT0_MAX; i ++) {
     if (mode.compare(convertMode(i)) == 0)
@@ -963,10 +963,10 @@ int vp1394Grabber::convertMode(string mode)
 
   This method returns 0 if the string does not match to a framerate string.
 
-  \sa convertFramerate(int), convertFormat(string &), convertMode(string)
+  \sa convertFramerate(int), convertFormat(std::string &), convertMode(std::string)
 
 */
-int vp1394Grabber::convertFramerate(string framerate)
+int vp1394Grabber::convertFramerate(std::string framerate)
 {
   for (int i = FRAMERATE_MIN; i <= FRAMERATE_MAX; i ++) {
     if (framerate.compare(convertFramerate(i)) == 0)
@@ -995,9 +995,9 @@ int vp1394Grabber::convertFramerate(string framerate)
   \sa convertMode(), convertFramerate()
 
 */
-string vp1394Grabber::convertFormat(int format)
+std::string vp1394Grabber::convertFormat(int format)
 {
-  string _format;
+  std::string _format;
   if ((format >= FORMAT_MIN) && (format <= FORMAT_MAX)) {
     switch (format) {
     case FORMAT_VGA_NONCOMPRESSED:    _format = strFormats[0]; break;
@@ -1015,8 +1015,8 @@ string vp1394Grabber::convertFormat(int format)
     }
   }
   else {
-    cout << "The format " << format
-	 << " is not supported by the camera" << endl;
+    std::cout << "The format " << format
+	 << " is not supported by the camera" << std::endl;
     _format = "Not Valid";
   }
 
@@ -1035,9 +1035,9 @@ string vp1394Grabber::convertFormat(int format)
   \sa convertFormat(), convertFramerate()
 
 */
-string vp1394Grabber::convertMode(int mode)
+std::string vp1394Grabber::convertMode(int mode)
 {
-  string _mode;
+  std::string _mode;
 
   if ((mode >= MODE_FORMAT0_MIN) && (mode <= MODE_FORMAT0_MAX)) {
     switch (mode) {
@@ -1109,7 +1109,7 @@ string vp1394Grabber::convertMode(int mode)
     }
   }
   else {
-    cout << "The mode " << mode << " is not supported by the camera" << endl;
+    std::cout << "The mode " << mode << " is not supported by the camera" << std::endl;
     _mode = "Not valid";
   }
 
@@ -1129,9 +1129,9 @@ string vp1394Grabber::convertMode(int mode)
   \sa convertFormat(), convertMode()
 
 */
-string vp1394Grabber::convertFramerate(int framerate)
+std::string vp1394Grabber::convertFramerate(int framerate)
 {
-  string _framerate;
+  std::string _framerate;
 
   if ((framerate >= FRAMERATE_MIN) && (framerate <= FRAMERATE_MAX)) {
     switch (framerate) {
@@ -1145,8 +1145,8 @@ string vp1394Grabber::convertFramerate(int framerate)
     }
   }
   else {
-    cout << "The framerate " << framerate
-	 << " is not supported by the camera" << endl;
+    std::cout << "The framerate " << framerate
+	 << " is not supported by the camera" << std::endl;
     _framerate = "Not valid";
   }
 
@@ -1209,7 +1209,7 @@ vp1394Grabber::setShutter(unsigned int shutter)
   if (shutter < min_shutter || shutter > max_shutter) {
     vpCERROR << "The requested shutter " << shutter
 	   << " must be comprised between " << min_shutter
-	   << " and " << max_shutter << endl;
+	   << " and " << max_shutter << std::endl;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Cannot set shutter: bad value") );
   }
@@ -1348,7 +1348,7 @@ vp1394Grabber::setGain(unsigned int gain)
   if (gain < min_gain || gain > max_gain) {
     vpCERROR << "The requested gain " << gain
 	   << " must be comprised between " << min_gain
-	   << " and " << max_gain << endl;
+	   << " and " << max_gain << std::endl;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Cannot set shutter: bad value") );
   }
@@ -1504,7 +1504,7 @@ void
 vp1394Grabber::getNumCameras(unsigned int &cameras)
 {
   if (camera_found == false) {
-    vpCTRACE << "No camera found..."<< endl;
+    vpCTRACE << "No camera found..."<< std::endl;
     cameras = 0;
   }
 
@@ -1908,7 +1908,7 @@ vp1394Grabber::setup()
 	    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 					   "Unable to query format7 byte_per_packet ") );
 	  }
-	  //cout << "Format 7: byte per packet : " << qpp << endl;
+	  //std::cout << "Format 7: byte per packet : " << qpp << std::endl;
 	}
 
       } else {
@@ -2153,7 +2153,7 @@ vp1394Grabber::getImageCharacteristics(int _format, int _mode,
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				     "Unable to get maximal image size for format 7 ") );
     }
-    cout << "max width=" << width << " height: " << height << endl;
+    std::cout << "max width=" << width << " height: " << height << std::endl;
 #endif
 
     break;
@@ -2195,8 +2195,8 @@ vp1394Grabber::dmaCapture(bool waiting)
 {
 
   if (camera >= num_cameras) {
-    cout << "The required camera is not present..."
-	 << endl;
+    std::cout << "The required camera is not present..."
+	 << std::endl;
     return NULL;
   }
 
@@ -2219,7 +2219,7 @@ vp1394Grabber::dmaCapture(bool waiting)
 					 "No frame is available...") );
 	  return NULL;
 	}
-	//	cout << "-";
+	//	std::cout << "-";
       }
     }
     else {

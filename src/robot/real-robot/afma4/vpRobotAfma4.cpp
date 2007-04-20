@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.cpp,v 1.8 2007-04-19 07:40:04 asaunier Exp $
+ * $Id: vpRobotAfma4.cpp,v 1.9 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,23 +66,23 @@ const int          vpRobotAfma4::nbArticulations = 4;
 
 void emergencyStopAfma4(int signo)
 {
-  cout << "Arret de la tache par : SIGNAL= " << (char)7  ;
+  std::cout << "Arret de la tache par : SIGNAL= " << (char)7  ;
   switch(signo)
   {
   case  SIGINT:
-    cout << "SIGINT (arret par ^C) " << endl ; break ;
+    std::cout << "SIGINT (arret par ^C) " << std::endl ; break ;
   case SIGSEGV:
-    cout <<"SIGSEGV (arret par segmentation fault) " << endl ; break ;
+    std::cout <<"SIGSEGV (arret par segmentation fault) " << std::endl ; break ;
   case SIGBUS:
-    cout <<"SIGBUS (arret par bus error) " << endl ; break ;
+    std::cout <<"SIGBUS (arret par bus error) " << std::endl ; break ;
   default :
-    cout << signo << endl ;
+    std::cout << signo << std::endl ;
   }
   stop_mouvement_Afma4() ;
   vmeClose_Afma4();
   close_rs232_servolens();
 
-  cout << "exit(1)" <<endl ;
+  std::cout << "exit(1)" <<std::endl ;
   exit(1) ;
 }
 
@@ -778,7 +778,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
 
   }
 
-  vpCDEBUG(12) << "v: " << v.t() << endl;
+  vpCDEBUG(12) << "v: " << v.t() << std::endl;
   active_mouvement_Afma4(& (communicationVelocity) );
   return;
 }

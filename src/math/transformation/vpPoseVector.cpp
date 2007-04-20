@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.cpp,v 1.5 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpPoseVector.cpp,v 1.6 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -165,13 +165,13 @@ void
 vpPoseVector::print()
 {
     for(int i =0  ; i < 6 ; i++)
-	if (i<3) cout << (*this)[i] <<" " ;
-	else  cout << vpMath::deg((*this)[i]) <<" " ;
-    cout <<endl ;
+	if (i<3) std::cout << (*this)[i] <<" " ;
+	else  std::cout << vpMath::deg((*this)[i]) <<" " ;
+    std::cout <<std::endl ;
 
 }
 void
-vpPoseVector::save(ofstream &f) const
+vpPoseVector::save(std::ofstream &f) const
 {
   if (f != NULL)
   {
@@ -192,7 +192,7 @@ vpPoseVector::save(ofstream &f) const
   \param f : The file stream.
 */
 void
-vpPoseVector::load(ifstream &f)
+vpPoseVector::load(std::ifstream &f)
 {
   if (f != NULL)
   {

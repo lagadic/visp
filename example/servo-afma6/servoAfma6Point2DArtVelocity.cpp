@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.4 2007-04-20 14:07:00 fspindle Exp $
+ * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.5 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -107,14 +107,14 @@ main()
 
     // exit(1) ;
 
-    cout << endl ;
-    cout << "-------------------------------------------------------" << endl ;
-    cout << " Test program for vpServo "  <<endl ;
-    cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
-    cout << " Simulation " << endl ;
-    cout << " task : servo a point " << endl ;
-    cout << "-------------------------------------------------------" << endl ;
-    cout << endl ;
+    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << " Test program for vpServo "  <<std::endl ;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
+    std::cout << " Simulation " << std::endl ;
+    std::cout << " task : servo a point " << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << std::endl ;
 
 
     vpDot dot ;
@@ -151,7 +151,7 @@ main()
 
     vpTwistMatrix cVe ;
     robot.get_cVe(cVe) ;
-    cout << cVe <<endl ;
+    std::cout << cVe <<std::endl ;
     task.set_cVe(cVe) ;
 
     vpDisplay::getClick(I) ;
@@ -162,7 +162,7 @@ main()
 
 
     vpTRACE("\t we want to see a point on a point..") ;
-    cout << endl ;
+    std::cout << std::endl ;
     task.addFeature(p,pd) ;
 
     vpTRACE("\t set the gain") ;
@@ -179,7 +179,7 @@ main()
     vpTRACE("\t loop") ;
     while(1)
     {
-      cout << "---------------------------------------------" << iter <<endl ;
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
 
       g.acquire(I) ;
       vpDisplay::display(I) ;
@@ -198,13 +198,13 @@ main()
       robot.get_eJe(eJe) ;
       task.set_eJe(eJe) ;
 
-      //  cout << (vpMatrix)cVe*eJe << endl ;
+      //  std::cout << (vpMatrix)cVe*eJe << std::endl ;
 
       vpColVector v ;
       v = task.computeControlLaw() ;
 
       vpServoDisplay::display(task,cam,I) ;
-      cout << v.t() ;
+      std::cout << v.t() ;
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
       vpDisplay::flush(I) ;

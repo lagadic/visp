@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.3 2007-04-19 14:19:18 fspindle Exp $
+ * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -105,14 +105,14 @@ main()
       vpServo task ;
 
 
-      cout << endl ;
-      cout << "-------------------------------------------------------" << endl ;
-      cout << " Test program for vpServo "  <<endl ;
-      cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
-      cout << " Simulation " << endl ;
-      cout << " task : servo a line " << endl ;
-      cout << "-------------------------------------------------------" << endl ;
-      cout << endl ;
+      std::cout << std::endl ;
+      std::cout << "-------------------------------------------------------" << std::endl ;
+      std::cout << " Test program for vpServo "  <<std::endl ;
+      std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
+      std::cout << " Simulation " << std::endl ;
+      std::cout << " task : servo a line " << std::endl ;
+      std::cout << "-------------------------------------------------------" << std::endl ;
+      std::cout << std::endl ;
 
 
       vpMeLine line ;
@@ -146,7 +146,7 @@ main()
       task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
       vpTRACE("\t we want to see a point on a point..") ;
-      cout << endl ;
+      std::cout << std::endl ;
       task.addFeature(p,pd) ;
 
       vpTRACE("\t set the gain") ;
@@ -164,7 +164,7 @@ main()
       vpColVector v ;
       while(1)
 	{
-	  cout << "---------------------------------------------" << iter <<endl ;
+	  std::cout << "---------------------------------------------" << iter <<std::endl ;
 
 	  try {
 	    g.acquire(I) ;
@@ -183,7 +183,7 @@ main()
 	    v = task.computeControlLaw() ;
 
 	    vpServoDisplay::display(task,cam,I) ;
-	    //  cout << v.t() ;
+	    //  std::cout << v.t() ;
 	    if (iter==0)  vpDisplay::getClick(I) ;
 	    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 	  }

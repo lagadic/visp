@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix_svd.cpp,v 1.11 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpMatrix_svd.cpp,v 1.12 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -265,7 +265,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 	for (i=0;i<n;i++) W[i] = w[i+1];
 
 	vpERROR_TRACE("\n\t\t No convergence in  SVDcmp ") ;
-	cout << *this <<endl ;
+	std::cout << *this <<std::endl ;
 	//	throw(vpMatrixException(vpMatrixException::matrixError,
 	//				"\n\t\t No convergence in  SVDcmp ")) ;
       }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.t.cpp,v 1.4 2007-02-26 17:44:21 fspindle Exp $
+ * $Id: vpList.t.cpp,v 1.5 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -336,7 +336,7 @@ void vpList<type>::addRight(const type& v)
   }
   else
   {
-    if (outside()) cout << "vpList: outside with addRight " << endl ;
+    if (outside()) std::cout << "vpList: outside with addRight " << std::endl ;
   }
   cur->next->prev = x ;
   x->next = cur->next ;
@@ -371,7 +371,7 @@ void vpList<type>::addLeft(const type& v)
   }
   else
   {
-    if (outside()) cout << "vpList: outside with addLeft " << endl ;
+    if (outside()) std::cout << "vpList: outside with addLeft " << std::endl ;
   }
   x->next = cur ;
   x->prev = cur->prev ;
@@ -537,7 +537,7 @@ vpList<type>::vpList(vpList<type>& liste)
 }
 
 /*!
-  \brief Print (cout) all the element of the list
+  \brief Print (std::cout) all the element of the list
  */
 template<class type>
 void vpList<type>::display()
@@ -545,11 +545,11 @@ void vpList<type>::display()
   int k = 1 ;
   front() ;
   while(!outside()) {
-    cout<<k<<" ---> "<<value()<<endl ;
+    std::cout<<k<<" ---> "<<value()<<std::endl ;
     next() ;
     k++ ;
   }
-  cout<< endl << endl ;
+  std::cout<< std::endl << std::endl ;
 }
 
 

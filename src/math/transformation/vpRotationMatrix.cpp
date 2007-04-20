@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.12 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.13 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -379,14 +379,14 @@ vpRotationMatrix::inverse(vpRotationMatrix &M) const
 }
 
 
-//! cout an rotation matrix [thetaU]
-ostream &operator <<(ostream &s,const vpRotationMatrix &R)
+//! std::cout an rotation matrix [thetaU]
+std::ostream &operator <<(std::ostream &s,const vpRotationMatrix &R)
 {
   for (int i=0; i<3; i++)
   {
     for (int j=0; j<3; j++)
-      cout << R[i][j] << "  " ;
-    cout << endl ;
+      std::cout << R[i][j] << "  " ;
+    std::cout << std::endl ;
   }
 
   return (s);
@@ -399,9 +399,9 @@ vpRotationMatrix::printVector()
   vpThetaUVector tu(*this) ;
 
   for (int i=0; i<3; i++)
-    cout << tu[i] << "  " ;
+    std::cout << tu[i] << "  " ;
 
-  cout << endl ;
+  std::cout << std::endl ;
 }
 
 
@@ -485,9 +485,9 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
     if (pb == 1)
     {
       printf("vpRotationMatrix::buildFrom(const vpThetaUVector &v)\n");
-      cout << " theta " << theta << endl;
-      cout << " R : " << endl << R << endl;
-      cout << " R_old : " << endl << R_old << endl;
+      std::cout << " theta " << theta << std::endl;
+      std::cout << " R : " << std::endl << R << std::endl;
+      std::cout << " R_old : " << std::endl << R_old << std::endl;
     }
 
   }

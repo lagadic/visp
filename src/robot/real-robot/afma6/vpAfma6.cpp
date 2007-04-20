@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.13 2007-04-19 07:42:59 asaunier Exp $
+ * $Id: vpAfma6.cpp,v 1.14 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,7 +110,7 @@ computeMGD (const vpColVector & q,
   oMc[3][2] = 0;
   oMc[3][3] = 1;
 
-  vpCDEBUG (6) << "Position de l'effecteur: " << endl << oMc;
+  vpCDEBUG (6) << "Position de l'effecteur: " << std::endl << oMc;
 
   /* Multiplication par rapport poignee-image. */
   double            t [3];
@@ -195,7 +195,7 @@ computeMGD (const vpColVector & q,
 
   vpDEBUG_TRACE (9, "Appel du calcul de oMc.");
   computeMGD (q, fMc);
-  vpCDEBUG (15) << "fMc: " << endl << fMc;
+  vpCDEBUG (15) << "fMc: " << std::endl << fMc;
 
   vpDEBUG_TRACE (9, "Conversion du cMf en vecteur.");
   r.buildFrom(fMc.inverse());
@@ -257,7 +257,7 @@ computeInverseJacobian (const vpColVector & pos,
   //translation du passage effecteur/camera
   vpColVector        effcamT(3);
 
-  //  cout << rpi << endl;
+  //  std::cout << rpi << std::endl;
   for(i=0;i<3;i++)
   {
     // translation entre camera et effecteur en metre
@@ -313,7 +313,7 @@ computeInverseJacobian (const vpColVector & pos,
 
     if(sing == 0)
     {
-      cerr << "Singularite : q5" << c2 << endl;
+      std::cerr << "Singularite : q5" << c2 << std::endl;
       sing = 1;
     }
     t2 = 0.0;
@@ -325,7 +325,7 @@ computeInverseJacobian (const vpColVector & pos,
   {
     if(sing == 1)
     {
-      cerr << "Sortie de singularite : q5" << c2 << endl;
+      std::cerr << "Sortie de singularite : q5" << c2 << std::endl;
       sing = 0;
     }
     t2 = tan(pos[4]) ;
@@ -1089,7 +1089,7 @@ init (void)
 
 
 
-ostream & operator << (ostream & os,
+std::ostream & operator << (std::ostream & os,
 		       const vpAfma6 & constant)
 {
 
@@ -1101,7 +1101,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.Kp[3]
     << "\t" << constant.Kp[4]
     << "\t" << constant.Kp[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Kd: "
     << "\t" << constant.Kd[0]
@@ -1110,7 +1110,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.Kd[3]
     << "\t" << constant.Kd[4]
     << "\t" << constant.Kd[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
 
     << "Ki: "
@@ -1120,7 +1120,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.Ki[3]
     << "\t" << constant.Ki[4]
     << "\t" << constant.Ki[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "QMax"
     << "\t" << constant.QMax[0]
@@ -1129,7 +1129,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.QMax[3]
     << "\t" << constant.QMax[4]
     << "\t" << constant.QMax[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "QMin: "
     << "\t" << constant.QMin[0]
@@ -1138,7 +1138,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.QMin[3]
     << "\t" << constant.QMin[4]
     << "\t" << constant.QMin[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "RstQm: "
     << "\t" << constant.RstQm[0]
@@ -1147,7 +1147,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.RstQm[3]
     << "\t" << constant.RstQm[4]
     << "\t" << constant.RstQm[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "SensDep: "
     << "\t" << constant.SensDep[0]
@@ -1156,7 +1156,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.SensDep[3]
     << "\t" << constant.SensDep[4]
     << "\t" << constant.SensDep[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "EpsMax: "
     << "\t" << constant.EpsMax[0]
@@ -1165,7 +1165,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.EpsMax[3]
     << "\t" << constant.EpsMax[4]
     << "\t" << constant.EpsMax[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "TiMax: "
     << "\t" << constant.TiMax[0]
@@ -1174,7 +1174,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.TiMax[3]
     << "\t" << constant.TiMax[4]
     << "\t" << constant.TiMax[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "AccMax: "
     << "\t" << constant.AccMax[0]
@@ -1183,7 +1183,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.AccMax[3]
     << "\t" << constant.AccMax[4]
     << "\t" << constant.AccMax[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "VitMax: "
     << "\t" << constant.VitMax[0]
@@ -1192,7 +1192,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.VitMax[3]
     << "\t" << constant.VitMax[4]
     << "\t" << constant.VitMax[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "ErrTMax: "
     << "\t" << constant.ErrTMax[0]
@@ -1201,7 +1201,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.ErrTMax[3]
     << "\t" << constant.ErrTMax[4]
     << "\t" << constant.ErrTMax[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "top:"
     << "\t" <<  constant.top[0]
@@ -1210,51 +1210,51 @@ ostream & operator << (ostream & os,
     << "\t" << constant.top[3]
     << "\t" << constant.top[4]
     << "\t" << constant.top[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "l:"
     << "\t" << constant.l
-    << "\t" << endl
+    << "\t" << std::endl
     << "co: "
     << "\t" << constant.coupl
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "rrpi: "
     << "\t" << vpMath::deg(constant.rrpi[0])
     << "\t" << vpMath::deg(constant.rrpi[1])
     << "\t" << vpMath::deg(constant.rrpi[2])
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "trpi: "
     << "\t" << constant.trpi[0]
     << "\t" << constant.trpi[1]
     << "\t" << constant.trpi[2]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "mat1: "
     << "\t" << constant.rpi[0][0]
     << "\t" << constant.rpi[0][1]
     << "\t" << constant.rpi[0][2]
     << "\t" << constant.rpi[0][3]
-    << "\t" << endl
+    << "\t" << std::endl
     << "mat2: "
     << "\t" << constant.rpi[1][0]
     << "\t" << constant.rpi[1][1]
     << "\t" << constant.rpi[1][2]
     << "\t" << constant.rpi[1][3]
-    << "\t" << endl
+    << "\t" << std::endl
     << "mat3:"
     << "\t" << constant.rpi[2][0]
     << "\t" << constant.rpi[2][1]
     << "\t" << constant.rpi[2][2]
     << "\t" << constant.rpi[2][3]
-    << "\t" << endl
+    << "\t" << std::endl
     << "mat4:"
     << "\t" << constant.rpi[3][0]
     << "\t" << constant.rpi[3][1]
     << "\t" << constant.rpi[3][2]
     << "\t" << constant.rpi[3][3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Joint Limit Sup:"
     << "\t" << constant.jointMax[0]
@@ -1263,7 +1263,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.jointMax[3]
     << "\t" << constant.jointMax[4]
     << "\t" << constant.jointMax[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Joint Limit Max:"
     << "\t" << constant.jointMin[0]
@@ -1272,7 +1272,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.jointMin[3]
     << "\t" << constant.jointMin[4]
     << "\t" << constant.jointMin[5]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Joint Limit Middle:"
     << "\t" << constant.jointMiddle[0]
@@ -1281,7 +1281,7 @@ ostream & operator << (ostream & os,
     << "\t" << constant.jointMiddle[3]
     << "\t" << constant.jointMiddle[4]
     << "\t" << constant.jointMiddle[5]
-    << "\t" << endl ;
+    << "\t" << std::endl ;
 
   return os;
 }

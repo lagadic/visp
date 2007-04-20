@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMe.cpp,v 1.4 2007-01-31 15:25:59 asaunier Exp $
+ * $Id: vpMe.cpp,v 1.5 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -363,19 +363,19 @@ void
 vpMe::print( )
 {
 
-  cout<< endl ;
-  cout<<"Moving edges settings " <<endl  ;
-  cout<< endl ;
-  cout<<" Size of the convolution masks...."<<mask_size<<"x"<<mask_size<<" pixels"<<endl ;
-  cout<<" Number of masks.................."<<n_mask<<"        "<<endl ;
-  cout<<" Query range +/- J................"<<range<<" pixels  "<<endl ;
-  cout<<" Likelyhood test ratio............"<<threshold<<endl ;
-  cout<<" Contrast tolerance +/-..........."<< mu1 * 100<<"% and "<<mu2 * 100<<"%     "<<endl ;
-  cout<<" Sample step......................"<<sample_step<<" pixels"<<endl ;
-  cout<<" Strip............................"<<strip<<" pixels  "<<endl ;
-  cout<<" Min_Samplestep..................."<<min_samplestep<<" pixels  "<<endl ;
-  cout<<" Aberration......................."<<aberration<< endl ;
-  cout<<" init_aberration.................."<<init_aberration<<endl ;
+  std::cout<< std::endl ;
+  std::cout<<"Moving edges settings " <<std::endl  ;
+  std::cout<< std::endl ;
+  std::cout<<" Size of the convolution masks...."<<mask_size<<"x"<<mask_size<<" pixels"<<std::endl ;
+  std::cout<<" Number of masks.................."<<n_mask<<"        "<<std::endl ;
+  std::cout<<" Query range +/- J................"<<range<<" pixels  "<<std::endl ;
+  std::cout<<" Likelyhood test ratio............"<<threshold<<std::endl ;
+  std::cout<<" Contrast tolerance +/-..........."<< mu1 * 100<<"% and "<<mu2 * 100<<"%     "<<std::endl ;
+  std::cout<<" Sample step......................"<<sample_step<<" pixels"<<std::endl ;
+  std::cout<<" Strip............................"<<strip<<" pixels  "<<std::endl ;
+  std::cout<<" Min_Samplestep..................."<<min_samplestep<<" pixels  "<<std::endl ;
+  std::cout<<" Aberration......................."<<aberration<< std::endl ;
+  std::cout<<" init_aberration.................."<<init_aberration<<std::endl ;
 
 }
 

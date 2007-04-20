@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotException.h,v 1.5 2006-11-17 14:59:48 fspindle Exp $
+ * $Id: vpRobotException.h,v 1.6 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,12 +49,12 @@
    \brief error that can be emited by the vpRobot class and its derivates
  */
 /* Classes standards. */
-#include <iostream>                /* Classe ostream.    */
+#include <iostream>                /* Classe std::ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
 
-using namespace std;
+
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */
@@ -117,7 +117,7 @@ public:
 
 public:
   vpRobotException (const int code, const char * msg);
-  vpRobotException (const int code, const string & msg);
+  vpRobotException (const int code, const std::string & msg);
   vpRobotException (const int code);
 
 };

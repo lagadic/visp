@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOSXcfoxColor.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: grabOSXcfoxColor.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -122,8 +122,8 @@ bool getOptions(int argc, char **argv, bool &display)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -173,8 +173,8 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-  cout << "Image size: width : " << I.getWidth() <<  " height: "
-       << I.getHeight() << endl;
+  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << std::endl;
 
   // We open a window using either GTK or X11.
   // Its size is automatically defined by the image (I) size
@@ -216,7 +216,7 @@ main(int argc, char ** argv)
       vpDisplay::flush(I) ;
     }
     // Print the iteration duration
-    cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
+    std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << std::endl;
  }
 
   g.close();

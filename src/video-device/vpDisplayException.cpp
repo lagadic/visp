@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayException.cpp,v 1.3 2006-11-09 13:43:35 fspindle Exp $
+ * $Id: vpDisplayException.cpp,v 1.4 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,7 +46,7 @@ vpDisplayException::vpDisplayException(const int code, const char * msg)
 {
 }
 
-vpDisplayException::vpDisplayException (const int code, const string & msg)
+vpDisplayException::vpDisplayException (const int code, const std::string & msg)
   : vpException(code, msg)
 {
 }

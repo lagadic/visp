@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.2 2007-01-31 10:00:14 asaunier Exp $
+ * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@ Print the program options.
   \param ipath : Input image path.
 
 */
-void usage(char *name, char *badparam, string ipath)
+void usage(char *name, char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
 Simulation Servo 4points.\n\
@@ -126,7 +126,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath, bool &display)
+bool getOptions(int argc, char **argv, std::string &ipath, bool &display)
 {
   char *optarg;
   int	c;
@@ -145,8 +145,8 @@ bool getOptions(int argc, char **argv, string &ipath, bool &display)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -166,14 +166,14 @@ void *mainLoop (void *_simu)
     vpRobotCamera robot ;
 
 
-    cout << endl ;
-    cout << "-------------------------------------------------------" << endl ;
-    cout << " Test program for vpServo "  <<endl ;
-    cout << " Eye-in-hand task control,  articular velocity are computed" << endl ;
-    cout << " Simulation " << endl ;
-    cout << " task : servo 4 points " << endl ;
-    cout << "-------------------------------------------------------" << endl ;
-    cout << endl ;
+    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << " Test program for vpServo "  <<std::endl ;
+    std::cout << " Eye-in-hand task control,  articular velocity are computed" << std::endl ;
+    std::cout << " Simulation " << std::endl ;
+    std::cout << " task : servo 4 points " << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << std::endl ;
 
 
     vpTRACE("sets the initial camera location " ) ;
@@ -249,8 +249,8 @@ void *mainLoop (void *_simu)
     task.print() ;
 
     vpTime::wait(1000); // Sleep 1s
-    cout << "\nEnter a character to continue or CTRL-C to quit... " <<endl ;
-    {    char a ; cin >> a ; }
+    std::cout << "\nEnter a character to continue or CTRL-C to quit... " <<std::endl ;
+    {    char a ; std::cin >> a ; }
 
 
     char name[FILENAME_MAX];
@@ -281,7 +281,7 @@ void *mainLoop (void *_simu)
 	if(SAVE==1)
 	  {
 	    sprintf(name,"/tmp/image.%04d.external.png",iter) ;
-	    cout << name << endl ;
+	    std::cout << name << std::endl ;
 	    simu->write(vpSimulator::EXTERNAL,name) ;
 	    sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
 	    simu->write(vpSimulator::INTERNAL,name) ;
@@ -292,8 +292,8 @@ void *mainLoop (void *_simu)
       }
     vpTRACE("Display task information " ) ;
     task.print() ;
-    cout << "\nEnter a character to continue..." <<endl ;
-    {    char a ; cin >> a ; }
+    std::cout << "\nEnter a character to continue..." <<std::endl ;
+    {    char a ; std::cin >> a ; }
     }
 
   simu->closeMainApplication() ;
@@ -308,11 +308,11 @@ void *mainLoop (void *_simu)
 int
 main(int argc, char ** argv)
 {
-  string env_ipath;
-  string opt_ipath;
-  string ipath;
-  string filename;
-  string username;
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string ipath;
+  std::string filename;
+  std::string username;
   bool opt_display = true;
 
   // Get the VISP_IMAGE_PATH environment variable value
@@ -337,23 +337,23 @@ main(int argc, char ** argv)
   // the input path comming from the command line option
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
-      cout << endl
-	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
-	   << "  we skip the environment variable." << endl;
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
     }
   }
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath);
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << endl
-	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl;
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 

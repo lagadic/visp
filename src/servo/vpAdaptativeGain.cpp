@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAdaptativeGain.cpp,v 1.6 2007-01-31 15:13:38 asaunier Exp $
+ * $Id: vpAdaptativeGain.cpp,v 1.7 2007-04-20 14:22:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -259,10 +259,10 @@ operator()  (const vpColVector & e) const
 /* -------------------------------------------------------------------------- */
 
 
-using namespace std;
 
-ostream&
-operator<< (ostream &os, const vpAdaptativeGain& lambda)
+
+std::ostream&
+operator<< (std::ostream &os, const vpAdaptativeGain& lambda)
 {
   os << "Zero= " << lambda .coeff_a + lambda .coeff_c
      << "\tInf= " << lambda .coeff_c

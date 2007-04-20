@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrixException.h,v 1.4 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpMatrixException.h,v 1.5 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,12 +45,12 @@
 
 
 /* Classes standards. */
-//using namespace std;
-#include <iostream>                /* Classe ostream.    */
+//
+#include <iostream>                /* Classe std::ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
-using namespace std;
+
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */
@@ -86,7 +86,7 @@ public:
 public:
   vpMatrixException (const int code, const char * msg)
     : vpException(code, msg){ ; }
-  vpMatrixException (const int code, const string & msg)
+  vpMatrixException (const int code, const std::string & msg)
     : vpException(code, msg){ ; }
   vpMatrixException (const int code)
     : vpException(code){ ; }

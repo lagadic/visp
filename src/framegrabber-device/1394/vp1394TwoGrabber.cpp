@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.11 2007-04-20 14:05:44 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.12 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -312,7 +312,7 @@ void
 vp1394TwoGrabber::getNumCameras(unsigned int &cameras)
 {
   if (! num_cameras) {
-    vpCTRACE << "No camera found..."<< endl;
+    vpCTRACE << "No camera found..."<< std::endl;
     cameras = 0;
   }
 
@@ -500,7 +500,6 @@ vp1394TwoGrabber::isVideoModeFormat7(vp1394TwoVideoMode  videomode)
 
   \exception vpFrameGrabberException::settingError : If we can't set
   the framerate.
-
 
   \sa getFramerate(), getFramerateSupported() , setCamera()
 
@@ -1014,9 +1013,9 @@ vp1394TwoGrabber::open()
   }
 
   if (verbose) {
-    cout << "------ Bus information ------" << endl;
-    cout << "Number of camera(s) on the bus : " << num_cameras <<endl;
-    cout << "-----------------------------" << endl;
+    std::cout << "------ Bus information ------" << std::endl;
+    std::cout << "Number of camera(s) on the bus : " << num_cameras <<std::endl;
+    std::cout << "-----------------------------" << std::endl;
   }
 }
 
@@ -1468,11 +1467,11 @@ void vp1394TwoGrabber::getHeight(unsigned int &height)
 void
 vp1394TwoGrabber::printCameraInfo()
 {
-  cout << "----------------------------------------------------------"
-       << endl
+  std::cout << "----------------------------------------------------------"
+       << std::endl
        << "-----            Information for camera " << camera_id
-       << "            -----" << endl
-       << "----------------------------------------------------------" << endl;
+       << "            -----" << std::endl
+       << "----------------------------------------------------------" << std::endl;
 
   dc1394_print_camera_info( camera);
 
@@ -1486,7 +1485,7 @@ vp1394TwoGrabber::printCameraInfo()
   } else {
     dc1394_print_feature_set(&features);
   }
-  cout << "----------------------------------------------------------" << endl;
+  std::cout << "----------------------------------------------------------" << std::endl;
 }
 
 /*!
@@ -1501,9 +1500,9 @@ vp1394TwoGrabber::printCameraInfo()
 
   \sa string2videoMode()
 */
-string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoMode videomode)
+std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoMode videomode)
 {
-  string _str = "";
+  std::string _str = "";
   dc1394video_mode_t _videomode = (dc1394video_mode_t) videomode;
 
   if ((_videomode >= DC1394_VIDEO_MODE_MIN)
@@ -1512,7 +1511,7 @@ string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoMode videomode)
    }
   else {
     vpCERROR << "The video mode " << videomode
-	 << " is not supported by the camera" << endl;
+	 << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -1530,9 +1529,9 @@ string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoMode videomode)
 
   \sa string2framerate()
 */
-string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
+std::string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
 {
-  string _str = "";
+  std::string _str = "";
   dc1394framerate_t _fps = (dc1394framerate_t) fps;
 
   if ((_fps >= DC1394_FRAMERATE_MIN)
@@ -1541,7 +1540,7 @@ string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
   }
   else {
     vpCERROR << "The framerate " << fps
-	     << " is not supported by the camera" << endl;
+	     << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -1559,9 +1558,9 @@ string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
 
   \sa string2colorCoding()
 */
-string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCoding colorcoding)
+std::string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCoding colorcoding)
 {
-  string _str = "";
+  std::string _str = "";
   dc1394color_coding_t _coding = (dc1394color_coding_t) colorcoding;
 
   if ((_coding >= DC1394_COLOR_CODING_MIN)
@@ -1571,7 +1570,7 @@ string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCoding colorcoding)
   }
   else {
     vpCERROR << "The color coding " << colorcoding
-	     << " is not supported by the camera" << endl;
+	     << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -1595,7 +1594,7 @@ string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCoding colorcoding)
 
 */
 vp1394TwoGrabber::vp1394TwoVideoMode
-vp1394TwoGrabber::string2videoMode(string videomode)
+vp1394TwoGrabber::string2videoMode(std::string videomode)
 {
   vp1394TwoVideoMode _id;
 
@@ -1630,7 +1629,7 @@ vp1394TwoGrabber::string2videoMode(string videomode)
 
 */
 vp1394TwoGrabber::vp1394TwoFramerate
-vp1394TwoGrabber::string2framerate(string framerate)
+vp1394TwoGrabber::string2framerate(std::string framerate)
 {
   vp1394TwoFramerate _id;
 
@@ -1664,7 +1663,7 @@ vp1394TwoGrabber::string2framerate(string framerate)
 
 */
 vp1394TwoGrabber::vp1394TwoColorCoding
-vp1394TwoGrabber::string2colorCoding(string colorcoding)
+vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
 {
   vp1394TwoColorCoding _id;
 

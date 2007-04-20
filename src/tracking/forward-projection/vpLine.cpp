@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLine.cpp,v 1.5 2007-02-26 16:42:18 fspindle Exp $
+ * $Id: vpLine.cpp,v 1.6 2007-04-20 14:22:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -210,7 +210,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 
     //   vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
 
-    //cout <<"--> "<< A1 << "  " << B1 << "  " << C1<< "  " << D1 <<endl ;
+    //std::cout <<"--> "<< A1 << "  " << B1 << "  " << C1<< "  " << D1 <<std::endl ;
 
     // ajout de la contrainte a1 a2 + b1 b2 + c1 c2 = 0
     double x1,y1 ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma4.h,v 1.4 2007-01-31 14:59:50 asaunier Exp $
+ * $Id: vpAfma4.h,v 1.5 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,7 +49,7 @@
 /* --------------------------------------------------------------------- */
 
 /* --- GENERAL --- */
-#include <iostream>                /* Definition class ostream.               */
+#include <iostream>                /* Definition class std::ostream.               */
 
 /* --- ViSP --- */
 #include <visp/vpHomogeneousMatrix.h>
@@ -151,7 +151,7 @@ public: /* Methodes publiques */
    *
    * Affichage de tous les champs de la classe en mode texte.
    */
-  friend ostream & operator << (ostream & os,
+  friend std::ostream & operator << (std::ostream & os,
 				const vpAfma4 & constant);
 
 private: /* Methodes privees. */

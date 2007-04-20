@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.8 2007-03-06 16:44:48 marchand Exp $
+ * $Id: vpViewer.cpp,v 1.9 2007-04-20 14:22:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -132,11 +132,11 @@ vpViewer::processSoEvent(const SoEvent * const event)
     case SoKeyboardEvent::H:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	cout << "H : this help "<<endl ;
-	cout << "M : get and save the external camera location (matrix)"<<endl;
-	cout << "V : get and save the external camera location (vector)"<<endl;
-	cout << "M : load camera location (vector)"<<endl;
-	cout << "P : get external camera location and set the internal one"<<endl;
+	std::cout << "H : this help "<<std::endl ;
+	std::cout << "M : get and save the external camera location (matrix)"<<std::endl;
+	std::cout << "V : get and save the external camera location (vector)"<<std::endl;
+	std::cout << "M : load camera location (vector)"<<std::endl;
+	std::cout << "P : get external camera location and set the internal one"<<std::endl;
       }
       return TRUE;
 
@@ -145,7 +145,7 @@ vpViewer::processSoEvent(const SoEvent * const event)
       {
 	vpHomogeneousMatrix cMf ;
 	simu->getExternalCameraPosition(cMf) ;
-	ofstream f("cMf.dat") ;
+	std::ofstream f("cMf.dat") ;
 	cMf.save(f) ;
 	f.close() ;
       }
@@ -156,7 +156,7 @@ vpViewer::processSoEvent(const SoEvent * const event)
 	vpHomogeneousMatrix cMf ;
 	simu->getExternalCameraPosition(cMf) ;
 	vpPoseVector vcMf(cMf) ;
-	ofstream f("vcMf.dat") ;
+	std::ofstream f("vcMf.dat") ;
 	vcMf.save(f) ;
 	f.close() ;
       }
@@ -165,7 +165,7 @@ vpViewer::processSoEvent(const SoEvent * const event)
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
 	vpPoseVector vcMf;
-	ifstream f("vcMf.dat") ;
+	std::ifstream f("vcMf.dat") ;
 	vcMf.load(f) ;
 	f.close() ;
 	vpHomogeneousMatrix cMf(vcMf) ;

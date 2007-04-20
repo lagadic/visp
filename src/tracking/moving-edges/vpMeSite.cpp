@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.10 2007-03-14 08:58:11 fspindle Exp $
+ * $Id: vpMeSite.cpp,v 1.11 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -330,7 +330,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
   // of the current pixel will be sought
   int range  = me->range ;
 
-  //  cout << i << "  " << j<<"  " << range << "  " << suppress  << endl ;
+  //  std::cout << i << "  " << j<<"  " << range << "  " << suppress  << std::endl ;
   list_query_pixels = getQueryList(I, range) ;
 
   double  contraste_max = 1 + me->mu2 ;
@@ -346,7 +346,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
   double threshold;
   threshold = me->threshold ;
 
-  //    cout <<"---------------------"<<endl ;
+  //    std::cout <<"---------------------"<<std::endl ;
   for(int n = 0 ; n < 2 * range + 1 ; n++)
   {
 
@@ -361,7 +361,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
       // Include this to eliminate temporal calulation
       if (convlt==0)
       {
-	cout << "vpMeSite::track : Division by zero  convlt = 0" << endl ;
+	std::cout << "vpMeSite::track : Division by zero  convlt = 0" << std::endl ;
 	delete []list_query_pixels ;
 	delete []likelyhood;
 	throw(vpTrackingException(vpTrackingException::initializationError,
@@ -436,7 +436,7 @@ int vpMeSite::operator!=(const vpMeSite &m)
 
 }
 
-ostream& operator<<(ostream& os, vpMeSite& vpMeS)
+std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS)
     {
       return (os<<"Alpha: "<<vpMeS.alpha<<"  Convolution: "<<vpMeS.convlt<<"  Flag: "<<vpMeS.suppress<<"  Weight: "<<vpMeS.weight );
     }

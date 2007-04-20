@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testPoint.cpp,v 1.1 2007-01-26 16:29:48 asaunier Exp $
+ * $Id: testPoint.cpp,v 1.2 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,8 +98,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -125,19 +125,19 @@ main(int argc, char ** argv)
   point.setWorldCoordinates(0,0,0) ;
 
 
-  cout <<"------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------"<<std::endl ;
   vpTRACE("test the projection ") ;
   point.track(cMo) ;
 
   vpTRACE("coordinates in the world frame ") ;
-  cout << point.oP.t() << endl ;
+  std::cout << point.oP.t() << std::endl ;
   vpTRACE("coordinates in the camera frame  ") ;
-  cout << point.cP.t() << endl ;
+  std::cout << point.cP.t() << std::endl ;
 
   vpTRACE("2D coordinates ") ;
-  cout<< point.get_x() << "  " << point.get_y() << endl ;
+  std::cout<< point.get_x() << "  " << point.get_y() << std::endl ;
 
-  cout <<"------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------"<<std::endl ;
   vpTRACE("test the interaction matrix ") ;
 
   vpFeaturePoint p ;
@@ -145,27 +145,27 @@ main(int argc, char ** argv)
 
   vpMatrix L ;
   L = p.interaction() ;
-  cout << L << endl ;
+  std::cout << L << std::endl ;
 
   vpTRACE("test the interaction matrix select") ;
   vpTRACE("\t only X") ;
   L = p.interaction(vpFeaturePoint::selectX()) ;
-  cout << L << endl ;
+  std::cout << L << std::endl ;
 
   vpTRACE("\t only Y") ;
   L = p.interaction(vpFeaturePoint::selectY()) ;
-  cout << L << endl ;
+  std::cout << L << std::endl ;
 
   vpTRACE("\t X & Y") ;
   L = p.interaction(vpFeaturePoint::selectX() |
 		    vpFeaturePoint::selectY()) ;
-  cout << L << endl ;
+  std::cout << L << std::endl ;
 
   vpTRACE("\t selectAll") ;
   L = p.interaction(vpFeaturePoint::selectAll() ) ;
-  cout << L << endl ;
+  std::cout << L << std::endl ;
 
-  cout <<"------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------"<<std::endl ;
   vpTRACE("test the error ") ;
 
   try{
@@ -173,51 +173,51 @@ main(int argc, char ** argv)
   pd.set_x(0) ;
   pd.set_y(0) ;
 
-  pd.print() ; cout << endl ;
+  pd.print() ; std::cout << std::endl ;
   vpColVector e ;
   e = p.error(pd) ;
-  cout << e << endl ;
+  std::cout << e << std::endl ;
 
   vpTRACE("test the interaction matrix select") ;
   vpTRACE("\t only X") ;
   e = p.error(pd,vpFeaturePoint::selectX()) ;
-  cout << e << endl ;
+  std::cout << e << std::endl ;
 
   vpTRACE("\t only Y") ;
   e = p.error(pd,vpFeaturePoint::selectY()) ;
-  cout << e << endl ;
+  std::cout << e << std::endl ;
 
   vpTRACE("\t X & Y") ;
   e = p.error(pd,vpFeaturePoint::selectX() | vpFeaturePoint::selectY()) ;
-  cout << e << endl ;
+  std::cout << e << std::endl ;
 
   vpTRACE("\t selectAll") ;
   e = p.error(pd,vpFeaturePoint::selectAll() ) ;
-  cout << e << endl ;
+  std::cout << e << std::endl ;
   }
-  catch(vpFeatureException me){ cout << me << endl ; }
-  catch(vpException me){ cout << me << endl ; }
-  cout <<"------------------------------------------------------"<<endl ;
+  catch(vpFeatureException me){ std::cout << me << std::endl ; }
+  catch(vpException me){ std::cout << me << std::endl ; }
+  std::cout <<"------------------------------------------------------"<<std::endl ;
   vpTRACE("test the  dimension") ;
   int dim ;
   dim = p.getDimension() ;
-  cout << "Dimension = " << dim << endl ;
+  std::cout << "Dimension = " << dim << std::endl ;
 
   vpTRACE("test the dimension with  select") ;
   vpTRACE("\t only X") ;
   dim = p.getDimension(vpFeaturePoint::selectX()) ;
-  cout << "Dimension = " << dim << endl ;
+  std::cout << "Dimension = " << dim << std::endl ;
 
   vpTRACE("\t only Y") ;
   dim = p.getDimension(vpFeaturePoint::selectY()) ;
-  cout << "Dimension = " << dim << endl ;
+  std::cout << "Dimension = " << dim << std::endl ;
 
   vpTRACE("\t X & Y") ;
   dim = p.getDimension(vpFeaturePoint::selectX() | vpFeaturePoint::selectY()) ;
-  cout << "Dimension = " << dim << endl ;
+  std::cout << "Dimension = " << dim << std::endl ;
 
   vpTRACE("\t selectAll") ;
   dim = p.getDimension(vpFeaturePoint::selectAll() ) ;
-  cout << "Dimension = " << dim << endl ;
+  std::cout << "Dimension = " << dim << std::endl ;
 
 }

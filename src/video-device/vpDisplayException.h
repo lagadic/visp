@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayException.h,v 1.6 2006-11-09 13:43:35 fspindle Exp $
+ * $Id: vpDisplayException.h,v 1.7 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,12 +50,12 @@
    \brief error that can be emited by the vpDisplay class and its derivates
  */
 /* Classes standards. */
-#include <iostream>                /* Classe ostream.    */
+#include <iostream>                /* Classe std::ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
 
-using namespace std;
+
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */
@@ -83,7 +83,7 @@ public:
 
 public:
   vpDisplayException (const int code, const char * msg);
-  vpDisplayException (const int code, const string & msg);
+  vpDisplayException (const int code, const std::string & msg);
   vpDisplayException (const int code);
 
 };

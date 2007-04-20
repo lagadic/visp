@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8.cpp,v 1.6 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: grabItifg8.cpp,v 1.7 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@
 */
 void usage(char *name, char *badparam, unsigned board, float fps,
 	   unsigned input, unsigned scale, unsigned buffer,
-	   unsigned &nframes, string opath, string conffile)
+	   unsigned &nframes, std::string opath, std::string conffile)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the itifg-8.x framegrabber device from\n\
@@ -166,7 +166,7 @@ OPTIONS:                                                  Default\n\
 bool getOptions(int argc, char **argv, unsigned &board, float &fps,
 		unsigned &input, unsigned &scale, unsigned &buffer,
 		bool &display, unsigned &nframes, bool &save,
-		string &opath, string &conffile)
+		std::string &opath, std::string &conffile)
 {
   char *optarg;
   int	c;
@@ -197,8 +197,8 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
     // standalone param or error
     usage(argv[0], optarg, board, fps, input, scale, buffer,
 	  nframes, opath, conffile);
-    cerr << endl << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << std::endl << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -226,7 +226,7 @@ main(int argc, char ** argv)
   unsigned buffer = 2;
   bool opt_display = true;
   bool save = false;
-  string conffile = "/usr/share/itifg/conffiles/robot.cam";
+  std::string conffile = "/usr/share/itifg/conffiles/robot.cam";
 
   // Declare an image. It size is not defined yet. It will be defined when the
   // image will acquired the first time.
@@ -238,9 +238,9 @@ main(int argc, char ** argv)
 
   // Set default output image name for saving
 #ifdef GRAB_COLOR
-  string opath = "/tmp/I%04d.ppm"; // Color images will be saved in PGM P6 format
+  std::string opath = "/tmp/I%04d.ppm"; // Color images will be saved in PGM P6 format
 #else
-  string opath = "/tmp/I%04d.pgm"; // B&W images will be saved in PGM P5 format
+  std::string opath = "/tmp/I%04d.pgm"; // B&W images will be saved in PGM P5 format
 #endif
 
   // Read the command line options
@@ -287,8 +287,8 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-  cout << "Image size: width : " << I.getWidth() <<  " height: "
-       << I.getHeight() << endl;
+  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << std::endl;
 
   // We open a window using either X11 or GTK.
   // Its size is automatically defined by the image (I) size
@@ -335,8 +335,8 @@ main(int argc, char ** argv)
 	if (save) {
 	  char buf[FILENAME_MAX];
 	  sprintf(buf, opath.c_str(), i);
-	  string filename(buf);
-	  cout << "Write: " << filename << endl;
+	  std::string filename(buf);
+	  std::cout << "Write: " << filename << std::endl;
 #ifdef GRAB_COLOR
 	  vpImageIo::writePPM(I, filename);
 #else
@@ -347,15 +347,15 @@ main(int argc, char ** argv)
 	tend = vpTime::measureTimeMs();
 	tloop = tend - tbegin;
 	tbegin = tend;
-	cout << "loop time: " << tloop << " ms" << endl;
+	std::cout << "loop time: " << tloop << " ms" << std::endl;
 	ttotal += tloop;
 
       }
-      cout << "Mean loop time: " << ttotal / nframes << " ms" << endl;
-      cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << endl;
+      std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
+      std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
   }
   catch(...)  {
-    vpCERROR << "Failure: exit" << endl;
+    vpCERROR << "Failure: exit" << std::endl;
   }
 }
 #else

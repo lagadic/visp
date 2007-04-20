@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationVector.cpp,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpRotationVector.cpp,v 1.4 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,9 +57,9 @@ vpRotationVector::vpRotationVector(const double phi,
 
 
 /*!
-  \brief cout a rotation vector
+  \brief std::cout a rotation vector
 */
-ostream &operator <<(ostream &s,const vpRotationVector &m)
+std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
 {
   int i;
 
@@ -70,7 +70,7 @@ ostream &operator <<(ostream &s,const vpRotationVector &m)
   for (i=0;i<3;i++)       s <<  m.
 			    r[i] << "  ";
 
-  s << endl;
+  s << std::endl;
 
   return s;
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.7 2007-04-20 08:21:47 fspindle Exp $
+ * $Id: grabDirectShow.cpp,v 1.8 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,7 @@
   \param opath : Image filename when saving.
 
 */
-void usage(char *name, char *badparam, unsigned &nframes, string &opath)
+void usage(char *name, char *badparam, unsigned &nframes, std::string &opath)
 {
   fprintf(stdout, "\n\
 Acquire images using DirectShow (under Windows only) and display\n\
@@ -114,7 +114,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, char **argv, bool &display,
-		unsigned &nframes, bool &save, string &opath)
+		unsigned &nframes, bool &save, std::string &opath)
 {
   char *optarg;
   int	c;
@@ -138,8 +138,8 @@ bool getOptions(int argc, char **argv, bool &display,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, nframes, opath);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -173,10 +173,10 @@ main(int argc, char ** argv)
   // Set default output image name for saving
 #ifdef GRAB_COLOR
   // Color images will be saved in PGM P6 format
-  string opath = "C:/temp/I%04d.ppm";
+  std::string opath = "C:/temp/I%04d.ppm";
 #else
   // B&W images will be saved in PGM P5 format
-  string opath = "C:/temp/I%04d.pgm";
+  std::string opath = "C:/temp/I%04d.pgm";
 #endif
 
   // Read the command line options
@@ -201,8 +201,8 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-  cout << "Image size: width : " << I.getWidth() <<  " height: "
-       << I.getHeight() << endl;
+  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << std::endl;
 
   // Creates a display
 #ifdef VISP_HAVE_GTK
@@ -233,8 +233,8 @@ main(int argc, char ** argv)
       if (save) {
 	char buf[FILENAME_MAX];
 	sprintf(buf, opath.c_str(), i);
-	string filename(buf);
-	cout << "Write: " << filename << endl;
+	std::string filename(buf);
+	std::cout << "Write: " << filename << std::endl;
 #ifdef GRAB_COLOR
 	vpImageIo::writePPM(I, filename);
 #else
@@ -244,11 +244,11 @@ main(int argc, char ** argv)
       tend = vpTime::measureTimeMs();
       tloop = tend - tbegin;
       tbegin = tend;
-      cout << "loop time: " << tloop << " ms" << endl;
+      std::cout << "loop time: " << tloop << " ms" << std::endl;
       ttotal += tloop;
     }
-    cout << "Mean loop time: " << ttotal / nframes << " ms" << endl;
-    cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << endl;
+    std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
+    std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
 
     // Release the framegrabber
     delete grabber;

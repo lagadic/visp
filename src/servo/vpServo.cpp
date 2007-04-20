@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.13 2007-01-31 15:13:38 asaunier Exp $
+ * $Id: vpServo.cpp,v 1.14 2007-04-20 14:22:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -152,7 +152,7 @@ vpServo::vpServo(servoEnum _servoType)
 }
 
 void
-vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
+vpServo::print(const vpServo::printEnum displayLevel, std::ostream &os)
 {
   switch (displayLevel)
     {
@@ -161,37 +161,37 @@ vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
 
       {
 
-	os << "Visual servoing task: " <<endl ;
+	os << "Visual servoing task: " <<std::endl ;
 
-	os << "Type of control law " <<endl ;
+	os << "Type of control law " <<std::endl ;
 	switch( servoType )
 	  {
 	  case NONE :
-	    os << "Type of task have not been chosen yet ! " << endl ;
+	    os << "Type of task have not been chosen yet ! " << std::endl ;
 	    break ;
 	  case EYEINHAND_CAMERA :
-	    os << "Eye-in-hand configuration " << endl ;
-	    os << "Control in the camera frame " << endl ;
+	    os << "Eye-in-hand configuration " << std::endl ;
+	    os << "Control in the camera frame " << std::endl ;
 	    break ;
 	  case EYEINHAND_L_cVe_eJe :
-	    os << "Eye-in-hand configuration " << endl ;
-	    os << "Control in the articular frame " << endl ;
+	    os << "Eye-in-hand configuration " << std::endl ;
+	    os << "Control in the articular frame " << std::endl ;
 	    break ;
 	  case EYETOHAND_L_cVe_eJe :
-	    os << "Eye-to-hand configuration " << endl ;
-	    os << "s_dot = _L_cVe_eJe q_dot " << endl ;
+	    os << "Eye-to-hand configuration " << std::endl ;
+	    os << "s_dot = _L_cVe_eJe q_dot " << std::endl ;
 	    break ;
 	  case EYETOHAND_L_cVf_fVe_eJe :
-	    os << "Eye-to-hand configuration " << endl ;
-	    os << "s_dot = _L_cVe_fVe_eJe q_dot " << endl ;
+	    os << "Eye-to-hand configuration " << std::endl ;
+	    os << "s_dot = _L_cVe_fVe_eJe q_dot " << std::endl ;
 	    break ;
 	  case EYETOHAND_L_cVf_fJe :
-	    os << "Eye-to-hand configuration " << endl ;
-	    os << "s_dot = _L_cVf_fJe q_dot " << endl ;
+	    os << "Eye-to-hand configuration " << std::endl ;
+	    os << "s_dot = _L_cVf_fJe q_dot " << std::endl ;
 	    break ;
 	  }
 
-	os << "List of visual features : s" <<endl ;
+	os << "List of visual features : s" <<std::endl ;
 	for (featureList.front(),
 	       featureSelectionList.front() ;
 	     !featureList.outside() ;
@@ -205,7 +205,7 @@ vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
 	  }
 
 
-	os << "List of desired visual features : s*" <<endl ;
+	os << "List of desired visual features : s*" <<std::endl ;
 	for (desiredFeatureList.front(),
 	       featureSelectionList.front() ;
 	     !desiredFeatureList.outside() ;
@@ -218,23 +218,23 @@ vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
 	    s->print(featureSelectionList.value()) ;
 	  }
 
-	os <<"Interaction Matrix Ls "<<endl  ;
+	os <<"Interaction Matrix Ls "<<std::endl  ;
 	if (interactionMatrixComputed)
 	  {
 	    os << L;
 	  }
 	else
-	  {os << "not yet computed "<<endl ;}
+	  {os << "not yet computed "<<std::endl ;}
 
-	os <<"Error vector (s-s*) "<<endl  ;
+	os <<"Error vector (s-s*) "<<std::endl  ;
 	if (errorComputed)
 	  {
 	    os << error.t() ;
 	  }
 	else
-	  {os << "not yet computed "<<endl ;}
+	  {os << "not yet computed "<<std::endl ;}
 
-	os << "Gain : " << lambda <<endl ;
+	os << "Gain : " << lambda <<std::endl ;
 
 	break;
       }
@@ -246,7 +246,7 @@ vpServo::print(const vpServo::printEnum displayLevel, ostream &os)
 	if (errorComputed)
 	  {  os << error.t() ;  }
 	else
-	  {os << "not yet computed "<<endl ;}
+	  {os << "not yet computed "<<std::endl ;}
 
       }
 
@@ -704,7 +704,7 @@ vpServo::computeControlLaw()
 	}
       if (testUpdated() == true)
 	{
-	  //  os << " Init OK " << endl ;
+	  //  os << " Init OK " << std::endl ;
 	}
       else
 	{
@@ -789,13 +789,13 @@ vpServo::computeControlLaw()
 	  WpW = imJ1t*imJ1t.t() ;
 
 #ifdef DEBUG
-	  cout << "rank J1 " << rankJ1 <<endl ;
-	  cout << "imJ1t"<<endl  << imJ1t ;
-	  cout << "imJ1"<<endl  << imJ1 ;
+	  std::cout << "rank J1 " << rankJ1 <<std::endl ;
+	  std::cout << "imJ1t"<<std::endl  << imJ1t ;
+	  std::cout << "imJ1"<<std::endl  << imJ1 ;
 
-	  cout << "WpW" <<endl <<WpW  ;
-	  cout << "J1" <<endl <<J1  ;
-	  cout << "J1p" <<endl <<J1p  ;
+	  std::cout << "WpW" <<std::endl <<WpW  ;
+	  std::cout << "J1" <<std::endl <<J1  ;
+	  std::cout << "J1p" <<std::endl <<J1p  ;
 #endif
 	  e1 = WpW*J1p*error ;
 	}
@@ -805,13 +805,13 @@ vpServo::computeControlLaw()
   catch(vpMatrixException me)
     {
       vpERROR_TRACE("Caught a matrix related error") ;
-      cout << me << endl ;
+      std::cout << me << std::endl ;
       throw me;
     }
   catch(vpException me)
     {
       vpERROR_TRACE("Error caught") ;
-      cout << me << endl ;
+      std::cout << me << std::endl ;
       throw me ;
     }
 
@@ -858,7 +858,7 @@ vpServo::secondaryTask(vpColVector &de2dt)
       I.setIdentity() ;
       I_WpW = (I - WpW) ;
 
-      //    cout << "I-WpW" << endl << I_WpW <<endl ;
+      //    std::cout << "I-WpW" << std::endl << I_WpW <<std::endl ;
       sec = I_WpW*de2dt ;
 
       return sec ;

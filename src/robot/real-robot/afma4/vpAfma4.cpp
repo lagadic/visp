@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma4.cpp,v 1.7 2007-04-19 07:33:27 asaunier Exp $
+ * $Id: vpAfma4.cpp,v 1.8 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,7 +103,7 @@ vpAfma4::computeMGD (const vpColVector & q, vpHomogeneousMatrix & oMc)
   oMc[3][2] = 0.f;
   oMc[3][3] = 1;
 
-  vpCDEBUG (6) << "Position de l'effecteur: " << endl << oMc;
+  vpCDEBUG (6) << "Position de l'effecteur: " << std::endl << oMc;
 
   /* Multiplication par rapport poignee-image. */
   double            t [3];
@@ -184,7 +184,7 @@ vpAfma4::computeMGD (const vpColVector & q, vpPoseVector & r)
 
   vpDEBUG_TRACE (9, "Appel du calcul de oMc.");
   computeMGD (q, fMc);
-  vpCDEBUG (15) << "fMc: " << endl << fMc;
+  vpCDEBUG (15) << "fMc: " << std::endl << fMc;
 
   vpDEBUG_TRACE (9, "Conversion du cMf en vecteur.");
   r.buildFrom(fMc.inverse());
@@ -693,7 +693,7 @@ vpAfma4::init (void)
 
 
 
-ostream & operator << (ostream & os,
+std::ostream & operator << (std::ostream & os,
 		       const vpAfma4 & constant)
 {
   os
@@ -702,14 +702,14 @@ ostream & operator << (ostream & os,
     << "\t" << constant.Kp[1]
     << "\t" << constant.Kp[2]
     << "\t" << constant.Kp[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Kd: "
     << "\t" << constant.Kd[0]
     << "\t" << constant.Kd[1]
     << "\t" << constant.Kd[2]
     << "\t" << constant.Kd[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
 
     << "Ki: "
@@ -717,152 +717,152 @@ ostream & operator << (ostream & os,
     << "\t" << constant.Ki[1]
     << "\t" << constant.Ki[2]
     << "\t" << constant.Ki[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "QMax"
     << "\t" << constant.QMax[0]
     << "\t" << constant.QMax[1]
     << "\t" << constant.QMax[2]
     << "\t" << constant.QMax[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "QMin: "
     << "\t" << constant.QMin[0]
     << "\t" << constant.QMin[1]
     << "\t" << constant.QMin[2]
     << "\t" << constant.QMin[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Unit: "
     << "\t" << constant.Unit[0]
     << "\t" << constant.Unit[1]
     << "\t" << constant.Unit[2]
     << "\t" << constant.Unit[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "top: "
     << "\t" << constant.top[0]
     << "\t" << constant.top[1]
     << "\t" << constant.top[2]
     << "\t" << constant.top[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "RstQm: "
     << "\t" << constant.RstQm[0]
     << "\t" << constant.RstQm[1]
     << "\t" << constant.RstQm[2]
     << "\t" << constant.RstQm[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "SensDep: "
     << "\t" << constant.SensDep[0]
     << "\t" << constant.SensDep[1]
     << "\t" << constant.SensDep[2]
     << "\t" << constant.SensDep[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "EpsMax: "
     << "\t" << constant.EpsMax[0]
     << "\t" << constant.EpsMax[1]
     << "\t" << constant.EpsMax[2]
     << "\t" << constant.EpsMax[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "TiMax: "
     << "\t" << constant.TiMax[0]
     << "\t" << constant.TiMax[1]
     << "\t" << constant.TiMax[2]
     << "\t" << constant.TiMax[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "AccMax: "
     << "\t" << constant.AccMax[0]
     << "\t" << constant.AccMax[1]
     << "\t" << constant.AccMax[2]
     << "\t" << constant.AccMax[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "VitMax: "
     << "\t" << constant.VitMax[0]
     << "\t" << constant.VitMax[1]
     << "\t" << constant.VitMax[2]
     << "\t" << constant.VitMax[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "ErrTMax: "
     << "\t" << constant.ErrTMax[0]
     << "\t" << constant.ErrTMax[1]
     << "\t" << constant.ErrTMax[2]
     << "\t" << constant.ErrTMax[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "l:"
     << "\t" << constant.l
-    << "\t" << endl
+    << "\t" << std::endl
     << "L: "
     << "\t" << constant.L
-    << "\t" << endl
+    << "\t" << std::endl
     << "regle: "
     << "\t" << constant.regle
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "rrpi: "
     << "\t" << vpMath::deg(constant.rrpi[0])
     << "\t" << vpMath::deg(constant.rrpi[1])
     << "\t" << vpMath::deg(constant.rrpi[2])
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "trpi: "
     << "\t" << constant.trpi[0]
     << "\t" << constant.trpi[1]
     << "\t" << constant.trpi[2]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "mat1: "
     << "\t" << constant.rpi[0][0]
     << "\t" << constant.rpi[0][1]
     << "\t" << constant.rpi[0][2]
     << "\t" << constant.rpi[0][3]
-    << "\t" << endl
+    << "\t" << std::endl
     << "mat2: "
     << "\t" << constant.rpi[1][0]
     << "\t" << constant.rpi[1][1]
     << "\t" << constant.rpi[1][2]
     << "\t" << constant.rpi[1][3]
-    << "\t" << endl
+    << "\t" << std::endl
     << "mat3:"
     << "\t" << constant.rpi[2][0]
     << "\t" << constant.rpi[2][1]
     << "\t" << constant.rpi[2][2]
     << "\t" << constant.rpi[2][3]
-    << "\t" << endl
+    << "\t" << std::endl
     << "mat4:"
     << "\t" << constant.rpi[3][0]
     << "\t" << constant.rpi[3][1]
     << "\t" << constant.rpi[3][2]
     << "\t" << constant.rpi[3][3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Joint Limit Max:"
     << "\t" << constant.jointMax[0]
     << "\t" << constant.jointMax[1]
     << "\t" << constant.jointMax[2]
     << "\t" << constant.jointMax[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Joint Limit Min:"
     << "\t" << constant.jointMin[0]
     << "\t" << constant.jointMin[1]
     << "\t" << constant.jointMin[2]
     << "\t" << constant.jointMin[3]
-    << "\t" << endl
+    << "\t" << std::endl
 
     << "Joint Limit Middle:"
     << "\t" << constant.jointMiddle[0]
     << "\t" << constant.jointMiddle[1]
     << "\t" << constant.jointMiddle[2]
     << "\t" << constant.jointMiddle[3]
-    << "\t" << endl ;
+    << "\t" << std::endl ;
 
   return os;
 }

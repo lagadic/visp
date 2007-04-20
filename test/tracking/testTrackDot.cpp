@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot.cpp,v 1.11 2007-01-25 11:29:04 asaunier Exp $
+ * $Id: testTrackDot.cpp,v 1.12 2007-04-20 14:22:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,7 +74,7 @@
   \param ipath: Input image path.
 
 */
-void usage(char *name, char *badparam, string ipath)
+void usage(char *name, char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
 Test dot tracking.\n\
@@ -112,7 +112,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath,
+bool getOptions(int argc, char **argv, std::string &ipath,
 		bool &click_allowed, bool &display)
 {
   char *optarg;
@@ -134,8 +134,8 @@ bool getOptions(int argc, char **argv, string &ipath,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -146,11 +146,11 @@ bool getOptions(int argc, char **argv, string &ipath,
 int
 main(int argc, char ** argv)
 {
-  string env_ipath;
-  string opt_ipath;
-  string ipath;
-  string dirname;
-  string filename;
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string ipath;
+  std::string dirname;
+  std::string filename;
   bool opt_click_allowed = true;
   bool opt_display = true;
 
@@ -178,23 +178,23 @@ main(int argc, char ** argv)
   // the input path comming from the command line option
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
-      cout << endl
-	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
-	   << "  we skip the environment variable." << endl;
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
     }
   }
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath);
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << endl
-	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl;
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -217,7 +217,7 @@ main(int argc, char ** argv)
   // exception readPGM may throw various exception if, for example,
   // the file does not exist, or if the memory cannot be allocated
   try{
-    vpCTRACE << "Load: " << filename << endl;
+    vpCTRACE << "Load: " << filename << std::endl;
 
     vpImageIo::readPGM(I, filename) ;
   }
@@ -227,12 +227,12 @@ main(int argc, char ** argv)
     // here this will result in the end of the program
     // Note that another error message has been printed from readPGM
     // to give more information about the error
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Cannot read " << filename << endl;
-    cerr << "  Check your -i " << ipath << " option " << endl
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Cannot read " << filename << std::endl;
+    std::cerr << "  Check your -i " << ipath << " option " << std::endl
 	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << endl;
+	 << std::endl;
     exit(-1);
   }
 
@@ -282,7 +282,7 @@ main(int argc, char ** argv)
   if (opt_display) {
     e.display(cam, I, vpColor::red) ;
     if (opt_click_allowed) {
-      cout << "A click to exit..." << endl;
+      std::cout << "A click to exit..." << std::endl;
       vpDisplay::getClick(I) ;
     }
   }

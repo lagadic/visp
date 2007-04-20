@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuCircle2DCamVelocityDisplay.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
+ * $Id: servoSimuCircle2DCamVelocityDisplay.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -152,8 +152,8 @@ bool getOptions(int argc, char **argv, bool &click_allowed, bool &display)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -245,7 +245,7 @@ main(int argc, char ** argv)
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
   task.setInteractionMatrixType(vpServo::DESIRED) ;
   vpTRACE("\t we want to see a circle on a circle..") ;
-  cout << endl ;
+  std::cout << std::endl ;
   task.addFeature(p,pd) ;
 
   vpTRACE("\t set the gain") ;
@@ -259,7 +259,7 @@ main(int argc, char ** argv)
   vpTRACE("\t loop") ;
   while(iter++<100)
     {
-      cout << "---------------------------------------------" << iter <<endl ;
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;
 
       if (iter==1) vpTRACE("\t\t get the robot position ") ;
@@ -279,7 +279,7 @@ main(int argc, char ** argv)
       if (iter==1) vpTRACE("\t\t compute the control law ") ;
       v = task.computeControlLaw() ;
       //  vpTRACE("computeControlLaw" ) ;
-      cout << task.rankJ1 <<endl ;
+      std::cout << task.rankJ1 <<std::endl ;
       if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
     }
@@ -288,7 +288,7 @@ main(int argc, char ** argv)
   task.print() ;
 
   if (opt_display && opt_click_allowed) {
-    cout << "Click in the camera view window to end..." << endl;
+    std::cout << "Click in the camera view window to end..." << std::endl;
     vpDisplay::getClick(I) ;
   }
 

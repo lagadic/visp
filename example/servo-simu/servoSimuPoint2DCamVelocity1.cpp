@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DCamVelocity1.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
+ * $Id: servoSimuPoint2DCamVelocity1.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -127,8 +127,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -175,7 +175,7 @@ main(int argc, char ** argv)
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
   vpTRACE("\t we want to see a point on a point..") ;
-  cout << endl ;
+  std::cout << std::endl ;
   task.addFeature(p,pd) ;
 
   vpTRACE("\t set the gain") ;
@@ -189,7 +189,7 @@ main(int argc, char ** argv)
   vpTRACE("\t loop") ;
   while(iter++<100)
     {
-      cout << "---------------------------------------------" << iter <<endl ;
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;
 
       if (iter==1) vpTRACE("\t\t get the robot position ") ;
@@ -208,7 +208,7 @@ main(int argc, char ** argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
       vpTRACE("\t\t || s - s* || ") ;
-      cout << task.error.sumSquare() <<endl ; ;
+      std::cout << task.error.sumSquare() <<std::endl ; ;
     }
 
   vpTRACE("Display task information " ) ;

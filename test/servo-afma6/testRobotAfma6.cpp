@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma6.cpp,v 1.11 2007-02-16 09:27:23 fspindle Exp $
+ * $Id: testRobotAfma6.cpp,v 1.12 2007-04-20 14:22:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,7 +43,7 @@
 */
 
 #include <iostream>
-using namespace std;
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpRobotAfma6.h>
@@ -58,19 +58,19 @@ int main()
 {
   try {
 
-    cout << "a test..." << endl;
+    std::cout << "a test..." << std::endl;
 
     vpAfma6 afma6;
     vpCTRACE << afma6;
 
     vpRobotAfma6 robotAfma6;
 
-    vpCTRACE << "------- set camera 1394 -------------------" << endl;
+    vpCTRACE << "------- set camera 1394 -------------------" << std::endl;
     robotAfma6.init( vpAfma6::CAMERA_IEEE1394_12MM);
 
     vpCTRACE << robotAfma6;
 
-    vpCTRACE << "------- set camera XC77 -------------------" << endl;
+    vpCTRACE << "------- set camera XC77 -------------------" << std::endl;
     robotAfma6.init( vpAfma6::CAMERA_XC77_12MM);
     vpCTRACE << robotAfma6;
     return 0;
@@ -84,7 +84,7 @@ int main()
 #else
 int main()
 {
-  cout << "a test..." << endl;
+  std::cout << "a test..." << std::endl;
 }
 
 #endif

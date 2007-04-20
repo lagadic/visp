@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.6 2007-03-12 14:35:35 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.7 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,7 @@
 #include <iostream>
 #include <sstream>
 
-using namespace std;
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
@@ -90,7 +90,7 @@ using namespace std;
 
 */
 void usage(char *name, char *badparam, unsigned int camera,
-	   unsigned int &nframes, string &opath,
+	   unsigned int &nframes, std::string &opath,
 	   unsigned int &roi_left, unsigned int &roi_top,
 	   unsigned int &roi_width, unsigned int &roi_height)
 {
@@ -208,7 +208,7 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
 		  vp1394TwoGrabber::vp1394TwoFramerate &framerate,
 		  bool &colorcoding_is_set,
 		  vp1394TwoGrabber::vp1394TwoColorCoding &colorcoding,
-		  bool &display, bool &save, string &opath,
+		  bool &display, bool &save, std::string &opath,
 		  unsigned int &roi_left, unsigned int &roi_top,
 		  unsigned int &roi_width, unsigned int &roi_height)
 {
@@ -297,10 +297,10 @@ main(int argc, char ** argv)
 
 #ifdef GRAB_COLOR
     vpImage<vpRGBa> *I;
-    string opath = "/tmp/I%d-%04d.ppm";
+    std::string opath = "/tmp/I%d-%04d.ppm";
 #else
     vpImage<unsigned char> *I;
-    string opath = "/tmp/I%d-%04d.pgm";
+    std::string opath = "/tmp/I%d-%04d.pgm";
 #endif
     vpDisplayX *d;
     vp1394TwoGrabber g ;
@@ -317,25 +317,25 @@ main(int argc, char ** argv)
     unsigned int ncameras = 0;
     g.getNumCameras(ncameras);
 
-    cout << "Number of cameras on the bus: " << ncameras << endl;
+    std::cout << "Number of cameras on the bus: " << ncameras << std::endl;
 
     // Check the consistancy of the options
     if (multi) {
       // ckeck if two cameras are connected
       if (ncameras < 2) {
-	cout << "You have only " << ncameras << " camera connected on the bus." << endl;
-	cout << "It is not possible to active multi-camera acquisition." << endl;
-	cout << "Disable -m command line option, or connect an other " << endl;
-	cout << "cameras on the bus." << endl;
+	std::cout << "You have only " << ncameras << " camera connected on the bus." << std::endl;
+	std::cout << "It is not possible to active multi-camera acquisition." << std::endl;
+	std::cout << "Disable -m command line option, or connect an other " << std::endl;
+	std::cout << "cameras on the bus." << std::endl;
 	g.close();
 	return(0);
       }
     }
     if (camera >= ncameras) {
-      cout << "You have only " << ncameras;
-      cout << " camera connected on the bus." << endl;
-      cout << "It is not possible to select camera " << camera << endl;
-      cout << "Check your -c <camera> command line option." << endl;
+      std::cout << "You have only " << ncameras;
+      std::cout << " camera connected on the bus." << std::endl;
+      std::cout << "It is not possible to select camera " << camera << std::endl;
+      std::cout << "Check your -c <camera> command line option." << std::endl;
       g.close();
       return(0);
     }
@@ -382,29 +382,29 @@ main(int argc, char ** argv)
 	  g.getColorCoding(curcoding);
 	  g.getVideoModeSupported(lmode);
 
-	  cout << "----------------------------------------------------------"
-	       << endl
+	  std::cout << "----------------------------------------------------------"
+	       << std::endl
 	       << "---- Video modes and framerates supported by camera "
-	       << camera << " ----" << endl
+	       << camera << " ----" << std::endl
 	       << "---- * is for the current settings                    ----"
-	       << endl
+	       << std::endl
 	       << "---- between ( ) you have the corresponding option    ----"
-	       << endl
+	       << std::endl
 	       << "---- to use.                                          ----"
-	       << endl
+	       << std::endl
 	       << "----------------------------------------------------------"
-	       << endl;
+	       << std::endl;
 	  lmode.front();
 	  while (! lmode.outside() ) {
 
 	    // Parse the list of supported modes
 	    vp1394TwoGrabber::vp1394TwoVideoMode supmode = lmode.value();
 	    if (curmode == supmode)
-	      cout << " * " << vp1394TwoGrabber::videoMode2string(supmode)
-		   << " (-v " << supmode << ")" << endl;
+	      std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode)
+		   << " (-v " << supmode << ")" << std::endl;
 	    else
-	      cout << "   " << vp1394TwoGrabber::videoMode2string(supmode)
-		   << " (-v " << supmode << ")" << endl;
+	      std::cout << "   " << vp1394TwoGrabber::videoMode2string(supmode)
+		   << " (-v " << supmode << ")" << std::endl;
 
 	    if (g.isVideoModeFormat7(supmode)){
 	      // Format 7 video mode; no framerate setting, but color coding setting
@@ -414,11 +414,11 @@ main(int argc, char ** argv)
 	      while (! lcoding.outside() ) {
 		vp1394TwoGrabber::vp1394TwoColorCoding supcoding = lcoding.value();
 		if ( (curmode == supmode) && (supcoding == curcoding) )
-		  cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding)
-		       << " (-g " << supcoding << ")" << endl;
+		  std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding)
+		       << " (-g " << supcoding << ")" << std::endl;
 		else
-		  cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding)
-		       << " (-g " << supcoding << ")" << endl;
+		  std::cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding)
+		       << " (-g " << supcoding << ")" << std::endl;
 		lcoding.next();
 	      }
 	    }
@@ -431,19 +431,19 @@ main(int argc, char ** argv)
 	      while (! lfps.outside() ) {
 		vp1394TwoGrabber::vp1394TwoFramerate supfps = lfps.value();
 		if ( (curmode == supmode) && (supfps == curfps) )
-		  cout << "    * " << vp1394TwoGrabber::framerate2string(supfps)
-		       << " (-f " << supfps << ")" << endl;
+		  std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps)
+		       << " (-f " << supfps << ")" << std::endl;
 		else
-		  cout << "      " << vp1394TwoGrabber::framerate2string(supfps)
-		       << " (-f " << supfps << ")" << endl;
+		  std::cout << "      " << vp1394TwoGrabber::framerate2string(supfps)
+		       << " (-f " << supfps << ")" << std::endl;
 		lfps.next();
 	      }
 	    }
 
 	    lmode.next();
 	  }
-	  cout << "----------------------------------------------------------"
-	       << endl;
+	  std::cout << "----------------------------------------------------------"
+	       << std::endl;
 
 	}
       }
@@ -478,8 +478,8 @@ main(int argc, char ** argv)
       g.setCamera(i+offset);
       // Acquire the first image
       g.acquire(I[i]);
-      cout << "Image size for camera " << i+offset << " : width: "
-	   << I[i].getWidth() << " height: " << I[i].getHeight() << endl;
+      std::cout << "Image size for camera " << i+offset << " : width: "
+	   << I[i].getWidth() << " height: " << I[i].getHeight() << std::endl;
 
       if (display) {
 	// Initialise the display
@@ -490,7 +490,7 @@ main(int argc, char ** argv)
     }
 
     // Main loop for single or multi-camera acquisition and display
-    cout << "Capture in process..." << endl;
+    std::cout << "Capture in process..." << std::endl;
 
     double tbegin=0, tend=0, tloop=0, ttotal=0;
 
@@ -509,8 +509,8 @@ main(int argc, char ** argv)
 	if (save) {
 	  char buf[FILENAME_MAX];
 	  sprintf(buf, opath.c_str(), c+offset, i);
-	  string filename(buf);
-	  cout << "Write: " << filename << endl;
+	  std::string filename(buf);
+	  std::cout << "Write: " << filename << std::endl;
 #ifdef GRAB_COLOR
 	  vpImageIo::writePPM(I[c], filename);
 #else
@@ -521,12 +521,12 @@ main(int argc, char ** argv)
       tend = vpTime::measureTimeMs();
       tloop = tend - tbegin;
       tbegin = tend;
-      cout << "loop time: " << tloop << " ms" << endl;
+      std::cout << "loop time: " << tloop << " ms" << std::endl;
       ttotal += tloop;
     }
 
-    cout << "Mean loop time: " << ttotal / nframes << " ms" << endl;
-    cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << endl;
+    std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
+    std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
 
     // Release the framegrabber
     g.close();
@@ -538,10 +538,10 @@ main(int argc, char ** argv)
 
   }
   catch (...) {
-    vpCERROR << "Failure: exit" << endl;
+    vpCERROR << "Failure: exit" << std::endl;
   }
 
-  cout << " the end" << endl;
+  std::cout << " the end" << std::endl;
 }
 #else
 int

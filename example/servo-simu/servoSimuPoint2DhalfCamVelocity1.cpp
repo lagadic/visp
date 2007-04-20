@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity1.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity1.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -125,8 +125,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -144,12 +144,12 @@ main(int argc, char ** argv)
   vpServo task ;
   vpRobotCamera robot ;
 
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " task :  2 1/2 D visual servoing " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  std::cout << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << " Test program for vpServo "  <<std::endl ;
+  std::cout << " task :  2 1/2 D visual servoing " << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << std::endl ;
 
 
   vpTRACE("sets the initial camera location " ) ;
@@ -157,11 +157,11 @@ main(int argc, char ** argv)
 		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
 		     ) ;
 
-  vpCTRACE ; cout << endl ;
+  vpCTRACE ; std::cout << std::endl ;
   vpHomogeneousMatrix cMo(c_r_o) ;
-  vpCTRACE ; cout << endl ;
+  vpCTRACE ; std::cout << std::endl ;
   robot.setPosition(cMo) ;
-  vpCTRACE ; cout << endl ;
+  vpCTRACE ; std::cout << std::endl ;
 
   vpTRACE("sets the desired camera location " ) ;
   vpPoseVector cd_r_o(0,0,1,
@@ -237,7 +237,7 @@ main(int argc, char ** argv)
   vpTRACE("\t loop") ;
   while(iter++<200)
     {
-      cout << "---------------------------------------------" << iter <<endl ;
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;
 
       if (iter==1) vpTRACE("\t\t get the robot position ") ;
@@ -260,12 +260,12 @@ main(int argc, char ** argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
 
-      cout << task.error.sumSquare() <<endl ; ;
+      std::cout << task.error.sumSquare() <<std::endl ; ;
     }
 
   vpTRACE("Display task information " ) ;
   task.print() ;
   vpTRACE("Final camera location " ) ;
-  cout << cMo << endl ;
+  std::cout << cMo << std::endl ;
 }
 

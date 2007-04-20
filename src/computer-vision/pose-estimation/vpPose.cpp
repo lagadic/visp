@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.13 2007-04-18 16:14:27 asaunier Exp $
+ * $Id: vpPose.cpp,v 1.14 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@ void
 vpPose::init()
 {
   if (DEBUG_LEVEL1)
-    cout << "begin vpPose::Init() " << endl ;
+    std::cout << "begin vpPose::Init() " << std::endl ;
   npt = 0 ;
   listP.kill() ;
 
@@ -72,18 +72,18 @@ vpPose::init()
 
 
   if (DEBUG_LEVEL1)
-    cout << "end vpPose::Init() " << endl ;
+    std::cout << "end vpPose::Init() " << std::endl ;
 }
 
 vpPose::vpPose()
 {
   if (DEBUG_LEVEL1)
-    cout << "begin vpPose::vpPose() " << endl ;
+    std::cout << "begin vpPose::vpPose() " << std::endl ;
 
   init() ;
 
   if (DEBUG_LEVEL1)
-    cout << "end vpPose::vpPose() " << endl ;
+    std::cout << "end vpPose::vpPose() " << std::endl ;
 }
 
 /*!
@@ -92,12 +92,12 @@ vpPose::vpPose()
 vpPose::~vpPose()
 {
   if (DEBUG_LEVEL1)
-    cout << "begin vpPose::~vpPose() " << endl ;
+    std::cout << "begin vpPose::~vpPose() " << std::endl ;
 
   listP.kill() ;
 
   if (DEBUG_LEVEL1)
-    cout << "end vpPose::~vpPose() " << endl ;
+    std::cout << "end vpPose::~vpPose() " << std::endl ;
 }
 /*!
   \brief  delete the array of point
@@ -106,13 +106,13 @@ void
 vpPose::clearPoint()
 {
   if (DEBUG_LEVEL1)
-    cout << "begin vpPose::ClearPoint() " << endl ;
+    std::cout << "begin vpPose::ClearPoint() " << std::endl ;
 
   listP.kill() ;
   npt = 0 ;
 
   if (DEBUG_LEVEL1)
-    cout << "end vpPose::ClearPoint() " << endl ;
+    std::cout << "end vpPose::ClearPoint() " << std::endl ;
 }
 
 /*!
@@ -127,13 +127,13 @@ vpPose::addPoint(const vpPoint& newP)
 {
 
   if (DEBUG_LEVEL1)
-    cout << "begin vpPose::AddPoint(Dot) " << endl ;
+    std::cout << "begin vpPose::AddPoint(Dot) " << std::endl ;
 
   listP+= newP ;
   npt ++ ;
 
   if (DEBUG_LEVEL1)
-    cout << "end vpPose::AddPoint(Dot) " << endl ;
+    std::cout << "end vpPose::AddPoint(Dot) " << std::endl ;
 }
 
 /*!
@@ -195,9 +195,9 @@ vpPose::coplanaire()
 
 	 }
 
-	 cout << x1 <<" " << y1 << " "<< z1 << endl ;
-	 cout << x2 <<" " << y2 << " "<< z2 << endl ;
-	 cout << x3 <<" " << y3 << " "<< z3 << endl ;
+	 std::cout << x1 <<" " << y1 << " "<< z1 << std::endl ;
+	 std::cout << x2 <<" " << y2 << " "<< z2 << std::endl ;
+	 std::cout << x3 <<" " << y3 << " "<< z3 << std::endl ;
 	 vpERROR_TRACE("division by zero  ") ;*/
     // throw(vpException(vpException::divideByZeroError,
     //		      "division by zero  ")) ;
@@ -281,7 +281,7 @@ void
 vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
 {
   if (DEBUG_LEVEL1)
-    cout << "begin vpPose::ComputePose()" << endl ;
+    std::cout << "begin vpPose::ComputePose()" << std::endl ;
   if (npt <4)
   {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
@@ -424,7 +424,7 @@ vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
   }
 
   if (DEBUG_LEVEL1)
-    cout << "end vpPose::ComputePose()" << endl ;
+    std::cout << "end vpPose::ComputePose()" << std::endl ;
 }
 
 
@@ -439,9 +439,9 @@ vpPose::printPoint()
   {
     P = listP.value() ;
 
-    cout << "3D oP " << P.oP.t() ;
-    cout << "3D cP " << P.cP.t() ;
-    cout << "2D    " << P.p.t() ;
+    std::cout << "3D oP " << P.oP.t() ;
+    std::cout << "3D cP " << P.cP.t() ;
+    std::cout << "2D    " << P.p.t() ;
 
     listP.next() ;
   }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.12 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpMeLine.cpp,v 1.13 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -152,7 +152,7 @@ vpMeLine::sample(vpImage<unsigned char>& I)
   }
 
   vpCDEBUG(1) << "end vpMeLine::sample() : ";
-  vpCDEBUG(1) << n_sample << " point inserted in the list " << endl  ;
+  vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;
 }
 
 
@@ -212,9 +212,9 @@ vpMeLine::initTracking(vpImage<unsigned char> &I)
 {
   unsigned i1, j1, i2, j2 ;
 
-  cout << "Click on the line first point..." <<endl ;
+  std::cout << "Click on the line first point..." <<std::endl ;
   while (vpDisplay::getClick(I,i1,j1)!=true) ;
-  cout << "Click on the line second point..." <<endl ;
+  std::cout << "Click on the line second point..." <<std::endl ;
   while (vpDisplay::getClick(I,i2,j2)!=true) ;
 
   try
@@ -323,7 +323,7 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
   b = x[1] ;
   c = x[2] ;
 
-  cout << "x "<< x.t() ;
+  std::cout << "x "<< x.t() ;
 
   // mise a jour du delta
   delta = atan2(a,b) ;
@@ -505,7 +505,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
 		       unsigned i1,unsigned j1, 
 		       unsigned i2, unsigned j2)
 {
-  vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<endl ;
+  vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<std::endl ;
 
   try{
 
@@ -543,7 +543,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
     vpERROR_TRACE("Error caught") ;
     throw ;
   }
-  vpCDEBUG(1) <<" end vpMeLine::initTracking()"<<endl ;
+  vpCDEBUG(1) <<" end vpMeLine::initTracking()"<<std::endl ;
 }
 
 void
@@ -625,7 +625,7 @@ vpMeLine::setExtremities()
 void
 vpMeLine::seekExtremities(vpImage<unsigned char> &I)
 {
-  vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<endl ;
+  vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<std::endl ;
 
   int rows = I.getHeight() ;
   int cols = I.getWidth() ;
@@ -704,7 +704,7 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
   me->range = memory_range ;
 
   vpCDEBUG(1) <<"end vpMeLine::sample() : " ;
-  vpCDEBUG(1) << n_sample << " point inserted in the list " << endl  ;
+  vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;
 }
 
 static void
@@ -769,7 +769,7 @@ vpMeLine::updateDelta()
 void
 vpMeLine::track(vpImage<unsigned char> &I)
 {
-  vpCDEBUG(1) <<"begin vpMeLine::track()"<<endl ;
+  vpCDEBUG(1) <<"begin vpMeLine::track()"<<std::endl ;
 
   //  1. On fait ce qui concerne les droites (peut etre vide)
   {
@@ -837,7 +837,7 @@ vpMeLine::track(vpImage<unsigned char> &I)
 
   computeRhoTheta(I) ;
 
-  vpCDEBUG(1) <<"end vpMeLine::track()"<<endl ;
+  vpCDEBUG(1) <<"end vpMeLine::track()"<<std::endl ;
 
 }
 
@@ -896,8 +896,8 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
 	end = false ;
 	if (incr==1)
 	{
-	  cout << "In CStraightLine::GetParameters() " ;
-	  cout << " Error Tracking " << abs(v1-v2) << endl ;
+	  std::cout << "In CStraightLine::GetParameters() " ;
+	  std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
 	}
       }
     }

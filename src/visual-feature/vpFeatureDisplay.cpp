@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.cpp,v 1.8 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpFeatureDisplay.cpp,v 1.9 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -116,7 +116,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
      //  vpERROR_TRACE("********* %f %f %f %f ",si, co, theta, rho) ;
     //      vpERROR_TRACE("********* %f %f %f %f ",si, co, thetap, rhop) ;
 
-    // cout << co <<  "  " << si << endl ;
+    // std::cout << co <<  "  " << si << std::endl ;
     if (fabs(si) < 1e-5)
     {
       v1 = 0.0 ;
@@ -204,7 +204,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 
 
 
-      //	 cout << s.t() ;
+      //	 std::cout << s.t() ;
       double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
       double e ;
 
@@ -321,7 +321,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
      //  vpERROR_TRACE("********* %f %f %f %f ",si, co, theta, rho) ;
     //      vpERROR_TRACE("********* %f %f %f %f ",si, co, thetap, rhop) ;
 
-    // cout << co <<  "  " << si << endl ;
+    // std::cout << co <<  "  " << si << std::endl ;
     if (fabs(si) < 1e-5)
     {
       v1 = 0.0 ;
@@ -409,7 +409,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 
 
 
-      //	 cout << s.t() ;
+      //	 std::cout << s.t() ;
       double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
       double e ;
 

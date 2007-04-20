@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpException.h,v 1.6 2007-04-18 16:14:27 asaunier Exp $
+ * $Id: vpException.h,v 1.7 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,12 +50,12 @@
 
 
 /* Classes standards. */
-#include <iostream>                /* Classe ostream.    */
+#include <iostream>                /* Classe std::ostream.    */
 #include <string>                  /* Classe string.     */
 
 #include <visp/vpConfig.h>
 
-using namespace std;
+
 
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
@@ -74,7 +74,7 @@ private:
   int code;
 
   //! Contains an error message (can be empty)
-  string message;
+  std::string message;
 
 private:
 
@@ -97,20 +97,20 @@ public:
   // ~vpException() throw() {;}
 
   vpException (const int code, const char * msg);
-  vpException (const int code, const string & msg);
+  vpException (const int code, const std::string & msg);
   vpException (const int code);
 
   //!  send the object code
   int getCode (void);
 
   //! send a reference (constant) related the error message (can be empty)
-  const string &getStringMessage (void);
+  const std::string &getStringMessage (void);
   //! send a pointer on the array of  \e char related to the error string.
   //!Cannot be  \e NULL.
   const char *getMessage (void);
 
   //! print the error structure
-  friend VISP_EXPORT ostream & operator << (ostream & os,
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
 				const vpException & art);
 
 };

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseException.h,v 1.3 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpPoseException.h,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,8 +46,8 @@
 
 
 /* Classes standards. */
-using namespace std;
-#include <iostream>                /* Classe ostream.    */
+
+#include <iostream>                /* Classe std::ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
@@ -80,7 +80,7 @@ public:
 public:
   vpPoseException (const int code, const char * msg)
     : vpException(code, msg){ ; }
-  vpPoseException (const int code, const string & msg)
+  vpPoseException (const int code, const std::string & msg)
     : vpException(code, msg){ ; }
   vpPoseException (const int code)
     : vpException(code){ ; }

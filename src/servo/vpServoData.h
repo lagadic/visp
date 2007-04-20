@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoData.h,v 1.3 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpServoData.h,v 1.4 2007-04-20 14:22:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,12 +59,12 @@ class VISP_EXPORT vpServoData
 private:
   char baseDirectory[FILENAME_MAX] ;
 
-  ofstream velocityFile ;
-  ofstream errorFile ;
-  ofstream errorNormFile ;
-  ofstream sFile ;
-  ofstream sStarFile ;
-  ofstream vNormFile ;
+  std::ofstream velocityFile ;
+  std::ofstream errorFile ;
+  std::ofstream errorNormFile ;
+  std::ofstream sFile ;
+  std::ofstream sStarFile ;
+  std::ofstream vNormFile ;
 
   //! flag to known if velocity should be output in cm and degrees (true)
   //! or in m/rad

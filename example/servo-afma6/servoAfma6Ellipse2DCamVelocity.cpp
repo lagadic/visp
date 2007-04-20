@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.3 2007-04-19 14:19:18 fspindle Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,14 +103,14 @@ main()
     vpRobotAfma6 robot ;
 
     
-    cout << endl ;
-    cout << "-------------------------------------------------------" << endl ;
-    cout << " Test program for vpServo "  <<endl ;
-    cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
-    cout << " Simulation " << endl ;
-    cout << " task : servo a point " << endl ;
-    cout << "-------------------------------------------------------" << endl ;
-    cout << endl ;
+    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << " Test program for vpServo "  <<std::endl ;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
+    std::cout << " Simulation " << std::endl ;
+    std::cout << " task : servo a point " << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << std::endl ;
 
 
     vpDot dot ;
@@ -128,16 +128,16 @@ main()
     vpFeatureBuilder::create(c,cam, dot)  ;
 
 
-    cout << " Learning 0/1 " <<endl ;
+    std::cout << " Learning 0/1 " <<std::endl ;
     int learning ;
-    cin >> learning ;
+    std::cin >> learning ;
     char name[FILENAME_MAX] ;
     sprintf(name,"dat/ellipse.dat") ;
     if (learning ==1)
     {
       // save the object position
       vpTRACE("Save the location of the object in a file dat/ellipse.dat") ;
-      ofstream f(name) ;
+      std::ofstream f(name) ;
       f << c.get_s().t() ;
       f.close() ;
       exit(1) ;
@@ -146,7 +146,7 @@ main()
 
     vpTRACE("sets the desired position of the visual feature ") ;
     vpFeatureEllipse cd ;
-    ifstream f("dat/ellipse.dat") ;
+    std::ifstream f("dat/ellipse.dat") ;
     double x,y,mu20,mu11,mu02 ;
     f >> x ;   f >> y ;  f >> mu20 ;  f >> mu11 ;  f >> mu02 ;
     f.close() ;
@@ -166,13 +166,13 @@ main()
     double alpha = 0.1 ; //1 ;
     double beta =3 ; //3 ;
 
-    cout << "alpha 0.7" << endl;
-    cin >> alpha ;
-    cout << "beta 5" << endl;
-    cin >> beta ;
+    std::cout << "alpha 0.7" << std::endl;
+    std::cin >> alpha ;
+    std::cout << "beta 5" << std::endl;
+    std::cin >> beta ;
     while(1)
     {
-      cout << "---------------------------------------------" << iter++ <<endl ;
+      std::cout << "---------------------------------------------" << iter++ <<std::endl ;
 
       g.acquire(I) ;
       vpDisplay::display(I) ;
@@ -197,9 +197,9 @@ main()
       task.setLambda(gain) ;
       vpColVector v ;
       v = task.computeControlLaw() ;
-      cout <<"rank " << task.rankJ1 << endl ;
+      std::cout <<"rank " << task.rankJ1 << std::endl ;
       vpServoDisplay::display(task,cam,I) ;
-      cout << v.t() ;
+      std::cout << v.t() ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
       vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;

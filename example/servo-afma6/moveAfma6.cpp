@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma6.cpp,v 1.7 2007-01-30 16:39:22 asaunier Exp $
+ * $Id: moveAfma6.cpp,v 1.8 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,10 +74,10 @@ main()
 
       vpColVector q(6) ;
       robot.getPosition(vpRobot::REFERENCE_FRAME, q) ;
-      cout << "Position in the reference frame " << q.t() ;
+      std::cout << "Position in the reference frame " << q.t() ;
 
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
-      cout << "Position in the articular frame " << q.t() ;
+      std::cout << "Position in the articular frame " << q.t() ;
 
       robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
       vpERROR_TRACE(" ") ;

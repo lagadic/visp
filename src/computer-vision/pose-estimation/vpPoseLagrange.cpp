@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseLagrange.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpPoseLagrange.cpp,v 1.6 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -82,9 +82,9 @@ calculTranslation (vpMatrix &a, vpMatrix &b, int nl, int nc1,
 
     if (DEBUG_LEVEL2)
     {
-      cout <<"ctc " << endl << ctc ;
-      cout <<"cta " << endl << cta ;
-      cout <<"ctb " << endl << ctb ;
+      std::cout <<"ctc " << std::endl << ctc ;
+      std::cout <<"cta " << std::endl << cta ;
+      std::cout <<"ctb " << std::endl << ctb ;
     }
 
 
@@ -104,12 +104,12 @@ calculTranslation (vpMatrix &a, vpMatrix &b, int nl, int nc1,
     sv = cta*x1 + CTB*X2 ;// C^T A X1 + C^T B X2)
 
     if (DEBUG_LEVEL2)
-      cout << "sv " << sv.t() ;
+      std::cout << "sv " << sv.t() ;
     vpColVector X3 ; /* X3 = - (C^T C )^{-1} C^T (A X1 + B X2) */
     X3 = -ctc1*sv ;
 
     if (DEBUG_LEVEL2)
-      cout << "x3 " << X3.t()  ;
+      std::cout << "x3 " << X3.t()  ;
     for (i=0 ; i < nc1 ; i++)
       x2[i+nc3] = X3[i] ;
   }
@@ -141,7 +141,7 @@ void
 lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 {
   if (DEBUG_LEVEL1)
-    cout << "begin (CLagrange.cc)Lagrange(...) " << endl;
+    std::cout << "begin (CLagrange.cc)Lagrange(...) " << std::endl;
 
   try{
     int i,imin;
@@ -161,8 +161,8 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 
     if (DEBUG_LEVEL1)
     {
-      cout << " BTB1 * BTB : " << endl << btb1*btb << endl;
-      cout << " BTB * BTB1 : " << endl << btb*btb1 << endl;
+      std::cout << " BTB1 * BTB : " << std::endl << btb1*btb << std::endl;
+      std::cout << " BTB * BTB1 : " << std::endl << btb*btb1 << std::endl;
    }
 
     vpMatrix r ;  // (B^T B)^(-1) B^T A
@@ -175,7 +175,7 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 
     if (DEBUG_LEVEL1)
     {
-      cout << " E :" << endl << e << endl;
+      std::cout << " E :" << std::endl << e << std::endl;
     }
 
     //   vpColVector sv ;
@@ -199,7 +199,7 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     if (DEBUG_LEVEL1)
     {
       printf("SV(E) : %.15lf %.15lf %.15lf\n",x1[0],x1[1],x1[2]);
-      cout << " i_min " << imin << endl;
+      std::cout << " i_min " << imin << std::endl;
     }
 
     for (i=0;i<x1.getRows();i++)
@@ -209,8 +209,8 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 
     if (DEBUG_LEVEL1)
     {
-      cout << " X1 : " <<  x1.t() << endl;
-      cout << " V : " << endl << ata << endl;
+      std::cout << " X1 : " <<  x1.t() << std::endl;
+      std::cout << " V : " << std::endl << ata << std::endl;
     }
   }
   catch(...)
@@ -219,7 +219,7 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     throw ;
   }
   if (DEBUG_LEVEL1)
-    cout << "end (CLagrange.cc)Lagrange(...) " << endl;
+    std::cout << "end (CLagrange.cc)Lagrange(...) " << std::endl;
 
 }
 
@@ -233,7 +233,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 {
 
   if (DEBUG_LEVEL1)
-    cout << "begin CPose::PoseLagrange(...) " << endl ;
+    std::cout << "begin CPose::PoseLagrange(...) " << std::endl ;
   try
   {
     double s;
@@ -281,8 +281,8 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 
     if (DEBUG_LEVEL2)
     {
-      cout <<"a " << a << endl ;
-      cout <<"b " << b << endl ;
+      std::cout <<"a " << a << std::endl ;
+      std::cout <<"b " << b << std::endl ;
     }
 
 
@@ -292,8 +292,8 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 
     if (DEBUG_LEVEL2)
     {
-      cout << "ax1+bx2 (devrait etre 0) " << (a*X1 + b*X2).t() << endl ;
-      cout << "norme X1 " << X1.sumSquare() << endl ;;
+      std::cout << "ax1+bx2 (devrait etre 0) " << (a*X1 + b*X2).t() << std::endl ;
+      std::cout << "norme X1 " << X1.sumSquare() << std::endl ;;
     }
     if (X2[5] < 0.0)
     {		/* car Zo > 0	*/
@@ -322,7 +322,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 
     // if (err != OK)
     {
-      // cout << "in (vpCalculPose_plan.cc)CalculTranslation returns " ;
+      // std::cout << "in (vpCalculPose_plan.cc)CalculTranslation returns " ;
       // PrintError(err) ;
       //    return err ;
     }
@@ -346,7 +346,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 
 
   if (DEBUG_LEVEL1)
-    cout << "end vpCalculPose::PoseLagrange(...) " << endl ;
+    std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl ;
   //  return(OK);
 }
 
@@ -356,7 +356,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 {
 
   if (DEBUG_LEVEL1)
-    cout << "begin CPose::PoseLagrange(...) " << endl ;
+    std::cout << "begin CPose::PoseLagrange(...) " << std::endl ;
 
   try{
     double s;
@@ -417,14 +417,14 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     if (DEBUG_LEVEL2)
     {
-      cout <<"a " << a << endl ;
-      cout <<"b " << b << endl ;
+      std::cout <<"a " << a << std::endl ;
+      std::cout <<"b " << b << std::endl ;
     }
 
     lagrange(a,b,X1,X2);
     //  if (err != OK)
     {
-      //      cout << "in (CLagrange.cc)Lagrange returns " ;
+      //      std::cout << "in (CLagrange.cc)Lagrange returns " ;
       //    PrintError(err) ;
       //    return err ;
     }
@@ -432,8 +432,8 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     if (DEBUG_LEVEL2)
     {
-      cout << "ax1+bx2 (devrait etre 0) " << (a*X1 + b*X2).t() << endl ;
-      cout << "norme X1 " << X1.sumSquare() << endl ;;
+      std::cout << "ax1+bx2 (devrait etre 0) " << (a*X1 + b*X2).t() << std::endl ;
+      std::cout << "norme X1 " << X1.sumSquare() << std::endl ;;
     }
 
     if (X2[8] < 0.0)
@@ -482,7 +482,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
   }
 
   if (DEBUG_LEVEL1)
-    cout << "end vpCalculPose::PoseLagrange(...) " << endl ;
+    std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl ;
 }
 
 

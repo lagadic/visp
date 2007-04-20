@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpScale.cpp,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpScale.cpp,v 1.4 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,14 +71,14 @@
 vpScale::vpScale()
 {
   if(DEBUG_LEVEL2)
-    cout << "vpScale constructor reached" << endl;
+    std::cout << "vpScale constructor reached" << std::endl;
 
   bandwidth = 0.02;
   dimension = 1;
   kernel_type = EPANECHNIKOV;
 
   if(DEBUG_LEVEL2)
-    cout << "vpScale constructor finished" << endl;
+    std::cout << "vpScale constructor finished" << std::endl;
 
 }
 
@@ -87,14 +87,14 @@ vpScale::vpScale(double kernel_bandwidth,
 		 int dimension=1, int kernel_type=EPANECHNIKOV)
 {
   if(DEBUG_LEVEL2)
-    cout << "vpScale constructor reached" << endl;
+    std::cout << "vpScale constructor reached" << std::endl;
 
   bandwidth = kernel_bandwidth;
   dimension = dimension;
   kernel_type = kernel_type;
 
   if(DEBUG_LEVEL2)
-    cout << "vpScale constructor finished" << endl;
+    std::cout << "vpScale constructor finished" << std::endl;
 
 }
 
@@ -277,7 +277,7 @@ vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
     c = 4*M_PI/3;
     break;
   default:
-    cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension" << endl;
+    std::cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension" << std::endl;
     exit(1);
   }
 
@@ -308,7 +308,7 @@ vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, int n)
     c = 4*M_PI/3;
     break;
   default:
-    cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension" << endl;
+    std::cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension" << std::endl;
     exit(1);
   }
 

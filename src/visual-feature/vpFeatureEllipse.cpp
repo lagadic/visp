@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.cpp,v 1.7 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpFeatureEllipse.cpp,v 1.8 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -241,13 +241,13 @@ vpFeatureEllipse::error(const vpBasicFeature &s_star,
   catch(vpMatrixException me)
   {
     vpERROR_TRACE("caught a Matrix related error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
     vpERROR_TRACE("caught another error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
 
@@ -261,18 +261,18 @@ void
 vpFeatureEllipse::print(const int select ) const
 {
 
-  cout <<"Ellipse:  " << endl ;
+  std::cout <<"Ellipse:  " << std::endl ;
   if (vpFeatureEllipse::selectX() & select )
-    cout << " x=" << s[0] <<endl ;;
+    std::cout << " x=" << s[0] <<std::endl ;;
   if (vpFeatureEllipse::selectY() & select )
-    cout << " y=" << s[1] <<endl ;
+    std::cout << " y=" << s[1] <<std::endl ;
   if (vpFeatureEllipse::selectMu20() & select )
-    cout << " mu20=" << s[2] <<endl ;
+    std::cout << " mu20=" << s[2] <<std::endl ;
   if (vpFeatureEllipse::selectMu11() & select )
-    cout << " mu11=" << s[3] <<endl ;
+    std::cout << " mu11=" << s[3] <<std::endl ;
   if (vpFeatureEllipse::selectMu02() & select )
-    cout << " mu02=" << s[4] <<endl ;
-  cout << "A = "<<A <<" B = "<<B <<" C = "<<C << endl ;
+    std::cout << " mu02=" << s[4] <<std::endl ;
+  std::cout << "A = "<<A <<" B = "<<B <<" C = "<<C << std::endl ;
 }
 
 

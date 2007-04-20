@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.cpp,v 1.4 2007-02-26 16:42:18 fspindle Exp $
+ * $Id: vpCylinder.cpp,v 1.5 2007-04-20 14:22:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,7 +155,7 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   while (p[3] > M_PI/2)  { p[3] -= M_PI ; p[2] *= -1 ; }
   while (p[3] < -M_PI/2) { p[3] += M_PI ; p[2] *= -1 ; }
 
-//  cout << p.t() << endl ;
+//  std::cout << p.t() << std::endl ;
 }
 
 //! perspective projection of the cylinder

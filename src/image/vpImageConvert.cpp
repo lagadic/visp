@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.12 2007-03-07 17:53:06 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.13 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,7 +84,7 @@ void vpImageConvert::YUV411ToRGBa(unsigned char* yuv,
 				  unsigned int size)
 {
 #if 1
-  //  cout << "call optimized ConvertYUV411ToRGBa()" << endl;
+  //  std::cout << "call optimized ConvertYUV411ToRGBa()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3;
   for(unsigned int i = size / 4; i; i--) {
@@ -214,7 +214,7 @@ void vpImageConvert::YUV422ToRGBa(unsigned char* yuv,
 {
 
 #if 1
-  //  cout << "call optimized convertYUV422ToRGBa()" << endl;
+  //  std::cout << "call optimized convertYUV422ToRGBa()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1;
   for( unsigned int i = size / 2; i; i-- ) {
@@ -322,7 +322,7 @@ void vpImageConvert::YUV422ToRGB(unsigned char* yuv,
 				 unsigned int size)
 {
 #if 1
-  //  cout << "call optimized convertYUV422ToRGB()" << endl;
+  //  std::cout << "call optimized convertYUV422ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1;
   for( unsigned int i = size / 2; i; i-- ) {
@@ -420,7 +420,7 @@ void vpImageConvert::YUV411ToRGB(unsigned char* yuv,
 				 unsigned int size)
 {
 #if 1
-  //  cout << "call optimized ConvertYUV411ToRGB()" << endl;
+  //  std::cout << "call optimized ConvertYUV411ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3;
   for(unsigned int i = size / 4; i; i--) {
@@ -544,7 +544,7 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
 				 unsigned char* rgba,
 				 unsigned int width, unsigned int height)
 {
-  //  cout << "call optimized ConvertYUV420ToRGBa()" << endl;
+  //  std::cout << "call optimized ConvertYUV420ToRGBa()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3;
   unsigned int size = width*height;
@@ -645,7 +645,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
 				 unsigned char* rgb,
 				 unsigned int height, unsigned int width)
 {
-  //  cout << "call optimized ConvertYUV420ToRGB()" << endl;
+  //  std::cout << "call optimized ConvertYUV420ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3;
   unsigned int size = width*height;
@@ -760,7 +760,7 @@ void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
 				 unsigned char* rgba,
 				 unsigned int width, unsigned int height)
 {
-  //  cout << "call optimized ConvertYV12ToRGBa()" << endl;
+  //  std::cout << "call optimized ConvertYV12ToRGBa()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3;
   unsigned int size = width*height;
@@ -861,7 +861,7 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
 				 unsigned char* rgb,
 				 unsigned int height, unsigned int width)
 {
-  //  cout << "call optimized ConvertYV12ToRGB()" << endl;
+  //  std::cout << "call optimized ConvertYV12ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3;
   unsigned int size = width*height;
@@ -959,7 +959,7 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 				 unsigned char* rgba,
 				 unsigned int width, unsigned int height)
 {
-  //  cout << "call optimized ConvertYVU9ToRGBa()" << endl;
+  //  std::cout << "call optimized ConvertYVU9ToRGBa()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3,Y4, Y5, Y6, Y7,Y8, Y9, Y10, Y11,Y12, Y13, Y14, Y15;
   unsigned int size = width*height;
@@ -1253,7 +1253,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 				 unsigned char* rgb,
 				 unsigned int height, unsigned int width)
 {
-  //  cout << "call optimized ConvertYVU9ToRGB()" << endl;
+  //  std::cout << "call optimized ConvertYVU9ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8, Y9, Y10, Y11, Y12, Y13, Y14, Y15;
   unsigned int size = width*height;

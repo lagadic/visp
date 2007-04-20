@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint.cpp,v 1.7 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpFeaturePoint.cpp,v 1.8 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -160,7 +160,7 @@ vpFeaturePoint::interaction(const int select) const
   if (Z < 0)
   {
     vpERROR_TRACE("Point is behind the camera ") ;
-    cout <<"Z = " << Z << endl ;
+    std::cout <<"Z = " << Z << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
@@ -169,7 +169,7 @@ vpFeaturePoint::interaction(const int select) const
   if (fabs(Z) < 1e-6)
   {
     vpERROR_TRACE("Point Z coordinates is null ") ;
-    cout <<"Z = " << Z << endl ;
+    std::cout <<"Z = " << Z << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
@@ -232,13 +232,13 @@ vpFeaturePoint::error(const vpBasicFeature &s_star,
   catch(vpMatrixException me)
   {
     vpERROR_TRACE("caught a Matrix related error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
     vpERROR_TRACE("caught another error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
 
@@ -252,12 +252,12 @@ void
 vpFeaturePoint::print(const int select ) const
 {
 
-  cout <<"Point:  Z=" << get_Z() ;
+  std::cout <<"Point:  Z=" << get_Z() ;
   if (vpFeaturePoint::selectX() & select )
-    cout << " x=" << get_x() ;
+    std::cout << " x=" << get_x() ;
   if (vpFeaturePoint::selectY() & select )
-    cout << " y=" << get_y() ;
-  cout <<endl ;
+    std::cout << " y=" << get_y() ;
+  std::cout <<std::endl ;
 }
 
 
@@ -273,7 +273,7 @@ vpFeaturePoint::buildFrom(const double _x, const double _y, const double _Z)
   if (Z < 0)
   {
     vpERROR_TRACE("Point is behind the camera ") ;
-    cout <<"Z = " << Z << endl ;
+    std::cout <<"Z = " << Z << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
@@ -282,7 +282,7 @@ vpFeaturePoint::buildFrom(const double _x, const double _y, const double _Z)
   if (fabs(Z) < 1e-6)
   {
     vpERROR_TRACE("Point Z coordinates is null ") ;
-    cout <<"Z = " << Z << endl ;
+    std::cout <<"Z = " << Z << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;

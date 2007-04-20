@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFrameGrabberException.h,v 1.4 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpFrameGrabberException.h,v 1.5 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,12 +49,12 @@
    \brief error that can be emited by the vpFrameGrabber class and its derivates
  */
 /* Classes standards. */
-#include <iostream>                /* Classe ostream.    */
+#include <iostream>                /* Classe std::ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
 
-using namespace std;
+
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */
@@ -79,7 +79,7 @@ public:
 public:
   vpFrameGrabberException (const int code, const char * msg)
     : vpException(code, msg){ ; }
-  vpFrameGrabberException (const int code, const string & msg)
+  vpFrameGrabberException (const int code, const std::string & msg)
     : vpException(code, msg){ ; }
   vpFrameGrabberException (const int code)
     : vpException(code){ ; }

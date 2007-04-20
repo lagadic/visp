@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma4.cpp,v 1.5 2007-01-30 16:28:23 asaunier Exp $
+ * $Id: moveAfma4.cpp,v 1.6 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@ main()
       qd[3] = vpMath::rad(-10);
 
       vpTRACE("Position control: in articular...") ;
-      vpCTRACE << "  position to reach: " << qd.t() << endl ;
+      vpCTRACE << "  position to reach: " << qd.t() << std::endl ;
       robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
       robot.setPosition(vpRobot::ARTICULAR_FRAME, qd) ;
       sleep(1) ;
@@ -153,13 +153,13 @@ main()
       zoom = robot.getZoom() ;
       iris = robot.getIris() ;
       focus = robot.getFocus() ;
-      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
+      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << std::endl;
 
       vpTRACE("Set camera settings...") ;
       zoom = 3000;
       focus = 400;
       iris = 900;
-      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
+      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << std::endl;
       robot.setZoom(zoom);
       robot.setIris(iris);
       robot.setFocus(focus);
@@ -168,19 +168,19 @@ main()
       zoom = robot.getZoom() ;
       iris = robot.getIris() ;
       focus = robot.getFocus() ;
-      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << endl;
+      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << std::endl;
 
       vpTRACE("Set camera auto iris on...") ;
       robot.setAutoIris(true);
       sleep(2);
       iris = robot.getIris() ;
-      vpCTRACE << "Actual iris: " << iris << endl;
+      vpCTRACE << "Actual iris: " << iris << std::endl;
 
       vpTRACE("Set camera auto iris off...") ;
       robot.setAutoIris(false);
       robot.setIris(400);
       iris = robot.getIris() ;
-      vpCTRACE << "Actual iris: " << iris << endl;
+      vpCTRACE << "Actual iris: " << iris << std::endl;
     }
   catch (...)
     {

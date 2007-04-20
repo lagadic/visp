@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.cpp,v 1.9 2006-05-30 08:40:46 fspindle Exp $
+ * $Id: vpTime.cpp,v 1.10 2007-04-20 14:22:20 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,7 +41,7 @@
 #include <visp/vpTime.h>
 #include <visp/vpDebug.h>
 
-using namespace std;
+
 
 /*!
   \file vpTime.cpp

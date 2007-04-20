@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.5 2007-01-31 13:21:02 asaunier Exp $
+ * $Id: vpRobust.cpp,v 1.6 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,7 +64,7 @@
 vpRobust::vpRobust(int n_data)
 {
   if(DEBUG_LEVEL2)
-    cout << "vpRobust constructor reached" << endl;
+    std::cout << "vpRobust constructor reached" << std::endl;
 
   w.resize(n_data);
   w=1;
@@ -123,7 +123,7 @@ vpRobust::MEstimator(const int method,
   w = weights;
 
   if(DEBUG_LEVEL2)
-    cout << "vpRobust MEstimator reached. No. data = " << n_data << endl;
+    std::cout << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
 
   // Calculate median
   // Be careful to not use the rejected residues for the
@@ -168,7 +168,7 @@ vpRobust::MEstimator(const int method,
       psiTukey(sigma, normres);
 
       if(DEBUG_LEVEL2)
-	cout << "Tukey's function computed" << endl;
+	std::cout << "Tukey's function computed" << std::endl;
       break ;
 
     }
@@ -241,7 +241,7 @@ vpRobust::MEstimator(const int method,
       psiTukey(sigma, all_normres);
 
       if(DEBUG_LEVEL2)
-	cout << "Tukey's function computed" << endl;
+	std::cout << "Tukey's function computed" << std::endl;
       break ;
 
     }
@@ -301,7 +301,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
   n_data=index;
 
   if(DEBUG_LEVEL2)
-    cout << "vpRobust MEstimator reached. No. data = " << n_data << endl;
+    std::cout << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
 
   // Calculate Median
   // Be careful to not use the rejected residues for the
@@ -350,7 +350,7 @@ vpRobust::SimultMEstimator(vpColVector &residues)
   vpColVector normres(n_data); // Normalized Residue
 
   if(DEBUG_LEVEL2)
-    cout << "vpRobust MEstimator reached. No. data = " << n_data << endl;
+    std::cout << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
 
   // Calculate Median
   med = median(residues);
@@ -384,7 +384,7 @@ vpRobust::SimultMEstimator(vpColVector &residues)
 
   if(DEBUG_LEVEL2)
   {
-    cout << "MAD and C computed" << endl;
+    std::cout << "MAD and C computed" << std::endl;
   }
 
   psiHuber(sigma, normres);
@@ -413,11 +413,11 @@ vpRobust::scale(int method, vpColVector &x)
 
     //if(DEBUG_LEVEL3)
     {
-      cout << "erf = " << 1-erf(chiTmp) << endl;
-      cout << "x[i] = " << x[i] <<endl;
-      cout << "chi = " << chiTmp << endl;
-      cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << endl;
-      cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << endl;
+      std::cout << "erf = " << 1-erf(chiTmp) << std::endl;
+      std::cout << "x[i] = " << x[i] <<std::endl;
+      std::cout << "chi = " << chiTmp << std::endl;
+      std::cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << std::endl;
+      std::cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << std::endl;
       getchar();
     }
   }
@@ -427,10 +427,10 @@ vpRobust::scale(int method, vpColVector &x)
 
   //if(DEBUG_LEVEL3)
   {
-    cout << "Expectation = " << Expectation << endl;
-    cout << "Sum chi = " << Sum_chi << endl;
-    cout << "sig_prev" << sig_prev << endl;
-    cout << "sig_out" << sqrt(fabs(sigma2)) << endl;
+    std::cout << "Expectation = " << Expectation << std::endl;
+    std::cout << "Sum chi = " << Sum_chi << std::endl;
+    std::cout << "sig_prev" << sig_prev << std::endl;
+    std::cout << "sig_out" << sqrt(fabs(sigma2)) << std::endl;
   }
 
   return sqrt(fabs(sigma2));
@@ -458,11 +458,11 @@ vpRobust::simultscale(vpColVector &x)
 
     if(DEBUG_LEVEL3)
     {
-      cout << "erf = " << 1-erf(chiTmp) << endl;
-      cout << "x[i] = " << x[i] <<endl;
-      cout << "chi = " << chiTmp << endl;
-      cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << endl;
-      cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << endl;
+      std::cout << "erf = " << 1-erf(chiTmp) << std::endl;
+      std::cout << "x[i] = " << x[i] <<std::endl;
+      std::cout << "chi = " << chiTmp << std::endl;
+      std::cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << std::endl;
+      std::cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << std::endl;
       getchar();
     }
   }
@@ -472,10 +472,10 @@ vpRobust::simultscale(vpColVector &x)
 
   if(DEBUG_LEVEL3)
   {
-    cout << "Expectation = " << Expectation << endl;
-    cout << "Sum chi = " << Sum_chi << endl;
-    cout << "sig_prev" << sig_prev << endl;
-    cout << "sig_out" << sqrt(fabs(sigma2)) << endl;
+    std::cout << "Expectation = " << Expectation << std::endl;
+    std::cout << "Sum chi = " << Sum_chi << std::endl;
+    std::cout << "sig_prev" << sig_prev << std::endl;
+    std::cout << "sig_out" << sqrt(fabs(sigma2)) << std::endl;
   }
 
   return sqrt(fabs(sigma2));
@@ -576,7 +576,7 @@ vpRobust::psiTukey(double sig, vpColVector &x)
 {
 
   if(DEBUG_LEVEL3)
-    cout << "Tukey reached. No" << endl;
+    std::cout << "Tukey reached. No" << std::endl;
 
   int n_data = x.getRows();
 
@@ -600,9 +600,9 @@ vpRobust::psiTukey(double sig, vpColVector &x)
 
   if(DEBUG_LEVEL3)
   {
-    cout << "Tukey computed." << endl;
-    cout << "w= " << w << endl;
-    cout << "r= " << x << endl;
+    std::cout << "Tukey computed." << std::endl;
+    std::cout << "w= " << w << std::endl;
+    std::cout << "r= " << x << std::endl;
     getchar();
   }
 
@@ -618,7 +618,7 @@ vpRobust::psiHuber(double sig, vpColVector &x)
   //c = 1.345;
 
   if(DEBUG_LEVEL3)
-    cout << "Huber reached. No" << endl;
+    std::cout << "Huber reached. No" << std::endl;
 
   int n_data = x.getRows();
 
@@ -635,9 +635,9 @@ vpRobust::psiHuber(double sig, vpColVector &x)
 
   if(DEBUG_LEVEL3)
   {
-    cout << "Huber computed." << endl;
-    cout << "w= " << w << endl;
-    cout << "r= " << x << endl;
+    std::cout << "Huber computed." << std::endl;
+    std::cout << "w= " << w << std::endl;
+    std::cout << "r= " << x << std::endl;
     getchar();
   }
 
@@ -891,7 +891,7 @@ vpRobust::gammp(double a, double x)
   double gamser,gammcf,gln;
 
   if (x < 0.0 || a <= 0.0)
-    cout << "Invalid arguments in routine GAMMP";
+    std::cout << "Invalid arguments in routine GAMMP";
   if (x < (a+1.0))
   {
     gser(&gamser,a,x,&gln);
@@ -913,7 +913,7 @@ vpRobust::gser(double *gamser, double a, double x, double *gln)
   if (x <= 0.0)
   {
     if (x < 0.0)
-      cout << "x less than 0 in routine GSER";
+      std::cout << "x less than 0 in routine GSER";
     *gamser=0.0;
     return;
   }
@@ -932,7 +932,7 @@ vpRobust::gser(double *gamser, double a, double x, double *gln)
 	return;
       }
     }
-    cout << "a too large, ITMAX too small in routine GSER";
+    std::cout << "a too large, ITMAX too small in routine GSER";
     return;
   }
 }
@@ -966,7 +966,7 @@ vpRobust::gcf(double *gammcf, double a, double x, double *gln)
       gold=g;
     }
   }
-  cout << "a too large, ITMAX too small in routine GCF";
+  std::cout << "a too large, ITMAX too small in routine GCF";
 }
 
 double

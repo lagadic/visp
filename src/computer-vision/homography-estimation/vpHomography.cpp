@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.cpp,v 1.7 2007-03-29 13:49:02 hatran Exp $
+ * $Id: vpHomography.cpp,v 1.8 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -292,7 +292,7 @@ vpHomography::inverse(vpHomography &bHa) const
 
 
 void
-vpHomography::save(ofstream &f) const
+vpHomography::save(std::ofstream &f) const
 {
   if (f != NULL)
   {
@@ -313,7 +313,7 @@ vpHomography::save(ofstream &f) const
   \param f : the file.
 */
 void
-vpHomography::load(ifstream &f)
+vpHomography::load(std::ifstream &f)
 {
   if (f != NULL)
   {
@@ -336,7 +336,7 @@ vpHomography::load(ifstream &f)
 void
 vpHomography::print()
 {
-  cout <<*this << endl ;
+  std::cout <<*this << std::endl ;
 }
 
 /*!

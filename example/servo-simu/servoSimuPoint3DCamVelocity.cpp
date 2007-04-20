@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint3DCamVelocity.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
+ * $Id: servoSimuPoint3DCamVelocity.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -123,8 +123,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -142,14 +142,14 @@ main(int argc, char ** argv)
   vpServo task ;
   vpRobotCamera robot ;
 
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
-  cout << " Simulation " << endl ;
-  cout << " task : servo a 3D point " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  std::cout << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << " Test program for vpServo "  <<std::endl ;
+  std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
+  std::cout << " Simulation " << std::endl ;
+  std::cout << " task : servo a 3D point " << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << std::endl ;
 
 
   vpTRACE("sets the initial camera location " ) ;
@@ -168,7 +168,7 @@ main(int argc, char ** argv)
   vpTRACE("project : computes  the point coordinates in the camera frame "  ) ;
   point.track(cMo) ;
 
-  cout << point.cP.t() ;
+  std::cout << point.cP.t() ;
 
   vpFeaturePoint3D p ;
   p.buildFrom(point) ;
@@ -185,7 +185,7 @@ main(int argc, char ** argv)
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
   vpTRACE("\t we want to see a point on a point..") ;
-  cout << endl ;
+  std::cout << std::endl ;
   task.addFeature(p,pd) ;
 
   vpTRACE("\t set the gain") ;
@@ -199,7 +199,7 @@ main(int argc, char ** argv)
   vpTRACE("\t loop") ;
   while(iter++<200)
     {
-      cout << "---------------------------------------------" << iter <<endl ;
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;
 
       if (iter==1) vpTRACE("\t\t get the robot position ") ;
@@ -207,8 +207,8 @@ main(int argc, char ** argv)
       if (iter==1) vpTRACE("\t\t new point position ") ;
       point.track(cMo) ;
       p.buildFrom(point) ;
-      //   cout << p.cP.t() ;
-      //   cout << (p.get_s()).t() ;
+      //   std::cout << p.cP.t() ;
+      //   std::cout << (p.get_s()).t() ;
 
 
       if (iter==1) vpTRACE("\t\t compute the control law ") ;
@@ -219,7 +219,7 @@ main(int argc, char ** argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
       //   vpTRACE("\t\t || s - s* || ") ;
-      cout << task.error.sumSquare() <<endl ; ;
+      std::cout << task.error.sumSquare() <<std::endl ; ;
     }
 
   vpTRACE("Display task information " ) ;

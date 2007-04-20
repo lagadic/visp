@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8Multi.cpp,v 1.4 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: grabItifg8Multi.cpp,v 1.5 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@
  */
 void usage(char *name, char *badparam,
 	   float fps, unsigned input, unsigned scale, unsigned buffer,
-	   unsigned &nframes, string opath, string conffile)
+	   unsigned &nframes, std::string opath, std::string conffile)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the itifg-8.x framegrabber device from\n\
@@ -154,7 +154,7 @@ OPTIONS:                                                  Default\n\
 bool getOptions(int argc, char **argv, float &fps, unsigned &input,
 		unsigned &scale, unsigned &buffer, bool &display,
 		unsigned &nframes, bool &save,
-		string &opath, string &conffile)
+		std::string &opath, std::string &conffile)
 {
   char *optarg;
   int	c;
@@ -183,8 +183,8 @@ bool getOptions(int argc, char **argv, float &fps, unsigned &input,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, fps, input, scale, buffer, nframes, opath, conffile);
-    cerr << endl << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << std::endl << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -211,8 +211,8 @@ main(int argc, char ** argv)
   unsigned buffer = 2;
   bool opt_display = true;
   bool save = false;
-  string conffile = "/usr/share/itifg/conffiles/robot.cam";
-  string opath = "/tmp/I%d-%04d.pgm"; // B&W images will be saved in PGM P5 format
+  std::string conffile = "/usr/share/itifg/conffiles/robot.cam";
+  std::string opath = "/tmp/I%d-%04d.pgm"; // B&W images will be saved in PGM P5 format
 
 
   // Read the command line options
@@ -225,7 +225,7 @@ main(int argc, char ** argv)
   vpItifg8Grabber g;
   unsigned nboards = g.getNumBoards();
 
-  cout << "Number of detected boards: " << nboards << endl;
+  std::cout << "Number of detected boards: " << nboards << std::endl;
 
   // Declare an image pointer, this is a gray level image (unsigned char)
   // it size is not defined yet, it will be defined when the image will
@@ -273,8 +273,8 @@ main(int argc, char ** argv)
       // Acquire an image
       g.acquire(I[i]) ;
 
-      cout << "Image size: width : " << I[i].getWidth() <<  " height: "
-	   << I[i].getHeight() << endl;
+      std::cout << "Image size: width : " << I[i].getWidth() <<  " height: "
+	   << I[i].getHeight() << std::endl;
     }
   }
   catch(...)
@@ -338,8 +338,8 @@ main(int argc, char ** argv)
 	if (save) {
 	  char buf[FILENAME_MAX];
 	  sprintf(buf, opath.c_str(), i, cpt);
-	  string filename(buf);
-	  cout << "Write: " << filename << endl;
+	  std::string filename(buf);
+	  std::cout << "Write: " << filename << std::endl;
 	  vpImageIo::writePGM(I[i], filename);
 	}
       }
@@ -347,14 +347,14 @@ main(int argc, char ** argv)
       tend = vpTime::measureTimeMs();
       tloop = tend - tbegin;
       tbegin = tend;
-      cout << "loop time: " << tloop << " ms" << endl;
+      std::cout << "loop time: " << tloop << " ms" << std::endl;
       ttotal += tloop;
     }
-    cout << "Mean loop time: " << ttotal / nframes << " ms" << endl;
-    cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << endl;
+    std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
+    std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
   }
   catch(...)  {
-    vpCERROR << "Failure: exit" << endl;
+    vpCERROR << "Failure: exit" << std::endl;
   }
 
   delete [] I;

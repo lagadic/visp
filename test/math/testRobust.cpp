@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobust.cpp,v 1.1 2007-01-26 16:25:53 asaunier Exp $
+ * $Id: testRobust.cpp,v 1.2 2007-04-20 14:22:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,7 @@
   Print the program options.
 
 */
-void usage(char *name, char *badparam, string ofilename)
+void usage(char *name, char *badparam, std::string ofilename)
 {
   fprintf(stdout, "\n\
 Test some vpMath functionalities. Compute weights and print\n\
@@ -92,7 +92,7 @@ OPTIONS:                                              Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ofilename)
+bool getOptions(int argc, char **argv, std::string &ofilename)
 {
   char *optarg;
   int	c;
@@ -111,8 +111,8 @@ bool getOptions(int argc, char **argv, string &ofilename)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ofilename); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -124,8 +124,8 @@ bool getOptions(int argc, char **argv, string &ofilename)
 int
 main(int argc, char ** argv)
 {
-  string ofilename;
-  string username;
+  std::string ofilename;
+  std::string username;
 
   // Set the default output filename
 #ifdef UNIX
@@ -148,10 +148,10 @@ main(int argc, char ** argv)
     }
     catch (...) {
       usage(argv[0], NULL, ofilename);
-      cerr << endl 
-	   << "ERROR:" << endl;
-      cerr << "  Cannot create " << ofilename << endl;
-      cerr << "  Check your -o " << ofilename << " option " << endl;
+      std::cerr << std::endl 
+	   << "ERROR:" << std::endl;
+      std::cerr << "  Cannot create " << ofilename << std::endl;
+      std::cerr << "  Check your -o " << ofilename << " option " << std::endl;
       exit(-1);
     }
   }
@@ -167,15 +167,15 @@ main(int argc, char ** argv)
   double sig = 1 ;
 
   double w ;
-  ofstream f;
-  cout << "Create file: " << ofilename << endl;
+  std::ofstream f;
+  std::cout << "Create file: " << ofilename << std::endl;
   f.open(ofilename.c_str());
   if (f == NULL) {
     usage(argv[0], NULL, ofilename);
-    cerr << endl 
-	 << "ERROR:" << endl;
-    cerr << "  Cannot create the file: " << ofilename << endl;
-    cerr << "  Check your -o " << ofilename << " option " << endl;
+    std::cerr << std::endl 
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Cannot create the file: " << ofilename << std::endl;
+    std::cerr << "  Check your -o " << ofilename << " option " << std::endl;
     exit(-1);
 
   }
@@ -190,7 +190,7 @@ main(int argc, char ** argv)
     {
       w = 0;
     }
-    f << x <<"  "<<w <<endl ;
+    f << x <<"  "<<w <<std::endl ;
     x+= 0.01 ;
   }
 }

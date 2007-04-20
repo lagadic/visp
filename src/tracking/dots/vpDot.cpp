@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.21 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpDot.cpp,v 1.22 2007-04-20 14:22:21 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -505,8 +505,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   if (gray_level_max > 255) 
     gray_level_max = 255;
 
-  //vpCTRACE << "gray_level_min: " << gray_level_min << endl;
-  //vpCTRACE << "gray_level_max: " << gray_level_max << endl;
+  //vpCTRACE << "gray_level_min: " << gray_level_min << std::endl;
+  //vpCTRACE << "gray_level_max: " << gray_level_max << std::endl;
 
   if (npoint < 5)
   {

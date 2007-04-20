@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testSvd.cpp,v 1.1 2007-01-26 16:27:00 asaunier Exp $
+ * $Id: testSvd.cpp,v 1.2 2007-04-20 14:22:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,8 +96,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -118,9 +118,9 @@ main(int argc, char ** argv)
   for (i=0 ; i < L.getRows() ; i++)
     for  (j=0 ; j < L.getCols() ; j++)
       L[i][j] = 2*i+j + cos((double)(i+j))+((double)(i)) ;
-  //  cout << L << endl ;
+  //  std::cout << L << std::endl ;
   Ls = L ;
-  cout << "--------------------------------------"<<endl ;
+  std::cout << "--------------------------------------"<<std::endl ;
 
   vpColVector W(L.getCols()) ;
   vpMatrix V(L.getCols(), L.getCols()) ;
@@ -129,27 +129,27 @@ main(int argc, char ** argv)
   L.svdNr(W,V) ;
   t = vpTime::measureTimeMs() -t ;
 
-  cout <<"svdNr Numerical recipes \n time " <<t << endl;
-    cout << W.t() ;
-  cout << "--------------------------------------"<<endl ;
+  std::cout <<"svdNr Numerical recipes \n time " <<t << std::endl;
+    std::cout << W.t() ;
+  std::cout << "--------------------------------------"<<std::endl ;
 
 #ifdef VISP_HAVE_GSL
   L = Ls ;
   t = vpTime::measureTimeMs() ;
   L.svdGsl(W,V) ;
   t = vpTime::measureTimeMs() -t ;
-  cout <<"svdGsl_mod \n time " <<t << endl;
-    cout << W.t() ;
+  std::cout <<"svdGsl_mod \n time " <<t << std::endl;
+    std::cout << W.t() ;
 
-  cout << "--------------------------------------"<<endl ;
+  std::cout << "--------------------------------------"<<std::endl ;
 #endif
 
   L = Ls ;
   t = vpTime::measureTimeMs() ;
   L.svdFlake(W,V) ;
   t = vpTime::measureTimeMs() -t ;
-  cout <<"svdFlake\n time " <<t << endl;
-    cout << W.t() ;
+  std::cout <<"svdFlake\n time " <<t << std::endl;
+    std::cout << W.t() ;
 
 
 

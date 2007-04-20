@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.cpp,v 1.9 2007-01-31 13:29:51 asaunier Exp $
+ * $Id: vpHomogeneousMatrix.cpp,v 1.10 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -372,7 +372,7 @@ vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const
 
 
 void
-vpHomogeneousMatrix::save(ofstream &f) const
+vpHomogeneousMatrix::save(std::ofstream &f) const
 {
   if (f != NULL)
   {
@@ -393,7 +393,7 @@ vpHomogeneousMatrix::save(ofstream &f) const
   \param f : the file
 */
 void
-vpHomogeneousMatrix::load(ifstream &f)
+vpHomogeneousMatrix::load(std::ifstream &f)
 {
   if (f != NULL)
   {
@@ -414,10 +414,10 @@ vpHomogeneousMatrix::load(ifstream &f)
   Read an homogeneous matrix in a file, verify if it is really an homogeneous
   matrix
 
-  \param ifstream &f : the file
+  \param std::ifstream &f : the file
 */
 void
-vpHomogeneousMatrix::loadMatrix34(ifstream &f)
+vpHomogeneousMatrix::loadMatrix34(std::ifstream &f)
 {
   if (f != NULL)
   {
@@ -441,7 +441,7 @@ void
 vpHomogeneousMatrix::print()
 {
   vpPoseVector r(*this) ;
-  cout << r.t() ;
+  std::cout << r.t() ;
 }
 //! Basic initialisation (identity)
 void

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.cpp,v 1.5 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpFeatureTranslation.cpp,v 1.6 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -205,7 +205,7 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
 void
 vpFeatureTranslation::print(const int select) const
 {
-  cout <<"Translation 3D: " << s.t() ;
+  std::cout <<"Translation 3D: " << s.t() ;
 }
 
 vpFeatureTranslation *vpFeatureTranslation::duplicate() const

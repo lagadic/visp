@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIoPnm.cpp,v 1.11 2007-04-03 15:58:47 fspindle Exp $
+ * $Id: vpImageIoPnm.cpp,v 1.12 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -682,7 +682,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 
 void
 vpImageIo::readPGM(vpImage<unsigned char> &I,
-		   const string filename)
+		   const std::string filename)
 {
   vpImageIo::readPGM(I, filename.c_str());
 }
@@ -704,7 +704,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
 
 void
 vpImageIo::readPGM(vpImage<vpRGBa> &I,
-		   const  string filename)
+		   const  std::string filename)
 {
   vpImageIo::readPGM(I, filename.c_str());
 }
@@ -717,7 +717,7 @@ vpImageIo::readPGM(vpImage<vpRGBa> &I,
 
 void
 vpImageIo::writePGM(const vpImage<unsigned char> &I,
-		    const string filename)
+		    const std::string filename)
 {
   vpImageIo::writePGM(I, filename.c_str());
 }
@@ -730,7 +730,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
 
 void
 vpImageIo::writePGM(const vpImage<short> &I,
-		    const string filename)
+		    const std::string filename)
 {
 
   vpImageIo::writePGM(I, filename.c_str());
@@ -745,7 +745,7 @@ vpImageIo::writePGM(const vpImage<short> &I,
 
 void
 vpImageIo::writePGM(const vpImage<vpRGBa> &I,
-		    const string filename)
+		    const std::string filename)
 {
   vpImageIo::writePGM(I, filename.c_str());
 }
@@ -771,7 +771,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
 
 */
 void
-vpImageIo::readPPM(vpImage<unsigned char> &I, const string filename)
+vpImageIo::readPPM(vpImage<unsigned char> &I, const std::string filename)
 {
   vpImageIo::readPPM(I, filename.c_str());
 }
@@ -784,7 +784,7 @@ vpImageIo::readPPM(vpImage<unsigned char> &I, const string filename)
   memory space.
 */
 void
-vpImageIo::readPPM(vpImage<vpRGBa> &I, const string filename)
+vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string filename)
 {
   vpImageIo::readPPM(I, filename.c_str());
 }
@@ -797,7 +797,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const string filename)
 */
 
 void
-vpImageIo::writePPM(const vpImage<unsigned char> &I, const string filename)
+vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string filename)
 {
   vpImageIo::writePPM(I, filename.c_str());
 }
@@ -808,7 +808,7 @@ vpImageIo::writePPM(const vpImage<unsigned char> &I, const string filename)
   filename. This function writes a portable gray pixmap (PPM P6) file.
 */
 void
-vpImageIo::writePPM(const vpImage<vpRGBa> &I, const string filename)
+vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
 {
 
   vpImageIo::writePPM(I, filename.c_str());

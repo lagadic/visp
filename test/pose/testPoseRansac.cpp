@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testPoseRansac.cpp,v 1.3 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testPoseRansac.cpp,v 1.4 2007-04-20 14:22:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -105,8 +105,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -173,7 +173,7 @@ main(int argc, char ** argv)
     Pi.print() ;
   }
 
-  cout << cMo << endl ;
+  std::cout << cMo << std::endl ;
 
   }
 
@@ -225,7 +225,7 @@ main(int argc, char ** argv)
     Pi.print() ;
   }
 
-  cout << cMo << endl ;
+  std::cout << cMo << std::endl ;
 
   }
 

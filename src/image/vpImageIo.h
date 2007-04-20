@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.h,v 1.7 2007-04-19 07:31:14 asaunier Exp $
+ * $Id: vpImageIo.h,v 1.8 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,8 +69,8 @@ private:
   static FILE * openFileWrite(const char filename[FILENAME_MAX],
 			      const char *mode="w") ;
 
-  static FILE * openFileRead(const string filename) ;
-  static FILE * openFileWrite(const string filename, const string mode="w") ;
+  static FILE * openFileRead(const std::string filename) ;
+  static FILE * openFileWrite(const std::string filename, const std::string mode="w") ;
 
 public:
 
@@ -101,24 +101,24 @@ public:
   //! Read PGM images
   static
   void readPGM(vpImage<unsigned char> &I,
-	       const string filename) ;
+	       const std::string filename) ;
 
   //! Read PGM images
   static
   void readPGM(vpImage<vpRGBa> &I,
-	       const string filename) ;
+	       const std::string filename) ;
   //! Write PGM images
   static
   void writePGM(const vpImage<unsigned char> &I,
-		const string filename) ;
+		const std::string filename) ;
   //! Write PGM images
   static
   void writePGM(const vpImage<short> &I,
-		const string filename) ;
+		const std::string filename) ;
   //! Write PGM images
   static
   void writePGM(const vpImage<vpRGBa> &I,
-		const string filename) ;
+		const std::string filename) ;
 
 
 
@@ -142,19 +142,19 @@ public:
   //! Read PPM images
   static
   void readPPM(vpImage<unsigned char> &I,
-	       const string filename) ;
+	       const std::string filename) ;
   //! Read PPM images
   static
   void readPPM(vpImage<vpRGBa> &I,
-	       const string filename) ;
+	       const std::string filename) ;
   //! Write PPM images
   static
   void writePPM(const vpImage<unsigned char> &I,
-		const string filename) ;
+		const std::string filename) ;
   //! Write PPM images
   static
   void writePPM(const vpImage<vpRGBa> &I,
-		const string filename) ;
+		const std::string filename) ;
 
   } ;
 #endif

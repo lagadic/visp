@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.12 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vp1394Grabber.h,v 1.13 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,7 @@
 #if defined(VISP_HAVE_DC1394_1)
 
 #include <string>
-using namespace std;
+
 
 
 #include <libraw1394/raw1394.h>
@@ -135,13 +135,13 @@ public:
   void getFramerate(int & framerate);
   int  getFramerateSupported(int format, int mode, vpList<int> & framerates);
 
-  int  convertFormat   (string format);
-  int  convertMode     (string mode);
-  int  convertFramerate(string framerate);
+  int  convertFormat   (std::string format);
+  int  convertMode     (std::string mode);
+  int  convertFramerate(std::string framerate);
 
-  string convertFormat   (int format);
-  string convertMode     (int mode);
-  string convertFramerate(int framerate);
+  std::string convertFormat   (int format);
+  std::string convertMode     (int mode);
+  std::string convertFramerate(int framerate);
 
   void setShutter(unsigned int shutter);
   void getShutter(unsigned int &min_shutter,

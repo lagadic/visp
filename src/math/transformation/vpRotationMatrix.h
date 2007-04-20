@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.h,v 1.5 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpRotationMatrix.h,v 1.6 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -113,7 +113,7 @@ public:
 
   //! Print the matrix as a vector [T thetaU]
   void printVector() ;
-  friend VISP_EXPORT ostream &operator << (ostream &s, const vpRotationMatrix &m);
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s, const vpRotationMatrix &m);
 
   //! Transform a vector vpThetaUVector into an rotation matrix
   vpRotationMatrix buildFrom(const vpThetaUVector &v) ;

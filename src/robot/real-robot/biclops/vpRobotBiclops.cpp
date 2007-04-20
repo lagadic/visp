@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.cpp,v 1.7 2007-04-18 16:14:28 asaunier Exp $
+ * $Id: vpRobotBiclops.cpp,v 1.8 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -145,7 +145,7 @@ vpRobotBiclops::~vpRobotBiclops (void)
       vpCERROR << "Cannot terminate the control thread: " << code
 	     << " strErr=" << strerror(errno)
 	     << " strCode=" << strerror(code)
-	     << endl;
+	     << std::endl;
     }
   }
 
@@ -190,7 +190,7 @@ vpRobotBiclops::init (void)
   // test if the config file exists
   FILE *fd = fopen(configfile, "r");
   if (fd == NULL) {
-    vpCERROR << "Cannot open biclops config file: " << configfile << endl;
+    vpCERROR << "Cannot open biclops config file: " << configfile << std::endl;
     throw vpRobotException (vpRobotException::constructionError,
  			    "Cannot open connexion with biclops");
   }
@@ -534,7 +534,7 @@ vpRobotBiclops::setRobotState(vpRobot::RobotStateType newState)
 	  vpCERROR << "Cannot create speed biclops control thread: " << code
 		 << " strErr=" << strerror(errno)
 		 << " strCode=" << strerror(code)
-		 << endl;
+		 << std::endl;
 	}
 
 	controlThreadCreated = true;
@@ -994,7 +994,7 @@ vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
 
   vpColVector q_dot_sat = q_dot * max;
 
-  vpCDEBUG(12) << "send velocity: " << q_dot_sat.t() << endl;
+  vpCDEBUG(12) << "send velocity: " << q_dot_sat.t() << std::endl;
 
   vpRobotBiclopsController::shmType shm;
 
