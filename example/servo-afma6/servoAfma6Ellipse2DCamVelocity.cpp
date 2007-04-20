@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.5 2007-04-20 15:30:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -87,22 +87,21 @@
 int
 main()
 {
-  try 
+  try
   {
+    vpRobotAfma6 robot ;
+
+    vpServo task ;
+
     vpImage<unsigned char> I ;
     vpItifg8Grabber g(2) ;
     g.open(I) ;
     g.acquire(I) ;
-    
+
     vpDisplayX display(I,0,0,"testServoEllipse.cpp ") ;
     vpTRACE(" ") ;
     vpDisplay::display(I) ;
 
-    vpServo task ;
-
-    vpRobotAfma6 robot ;
-
-    
     std::cout << std::endl ;
     std::cout << "-------------------------------------------------------" << std::endl ;
     std::cout << " Test program for vpServo "  <<std::endl ;
@@ -118,7 +117,14 @@ main()
     dot.setNbMaxPoint(1e6) ;
     // dot.setGraphics(true) ;
     dot.setComputeMoments(true) ;
+    std::cout << "Click on an ellipse..." << endl;
     dot.initTracking(I) ;
+    vpDisplay::displayCross(I,
+			    (unsigned int)dot.get_v(),
+			    (unsigned int)dot.get_u(),
+			    10, vpColor::blue) ;
+    vpDisplay::flush(I);
+
     dot.track(I) ;
 
     vpCameraParameters cam ;
@@ -178,6 +184,10 @@ main()
       vpDisplay::display(I) ;
 
       dot.track(I) ;
+      vpDisplay::displayCross(I,
+			      (unsigned int)dot.get_v(),
+			      (unsigned int)dot.get_u(),
+			      10, vpColor::green) ;
 
       vpFeatureBuilder::create(c,cam, dot);
       // Compute the adaptative gain (speed up the convergence)
@@ -202,6 +212,7 @@ main()
       std::cout << v.t() ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
+      vpDisplay::flush(I) ;
       vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
     }
 
@@ -211,7 +222,7 @@ main()
   catch (...)
   {
     vpERROR_TRACE(" Test failed") ;
-    return 0;  
+    return 0;
   }
 }
 
