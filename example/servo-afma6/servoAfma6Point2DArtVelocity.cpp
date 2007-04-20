@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.3 2007-04-19 14:19:18 fspindle Exp $
+ * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.4 2007-04-20 14:07:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,9 +40,10 @@
 /*!
   \file servoAfma6Point2DArtVelocity.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in articular. The visual feature is the center of gravity of a point.
+  \brief Example of eye-in-hand control law. We control here a real robot, the
+  Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
+  computed in articular. The visual feature is the center of gravity of a
+  point.
 
 */
 
@@ -88,24 +89,21 @@ main()
 {
   try
   {
-    vpImage<unsigned char> I ;
+    vpRobotAfma6 robot ;
 
+    vpServo task ;
+
+    vpImage<unsigned char> I ;
 
     vpItifg8Grabber g(2) ;
     g.open(I) ;
 
     g.acquire(I) ;
 
-
     vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
     vpTRACE(" ") ;
 
     vpDisplay::display(I) ;
-
-
-    vpServo task ;
-
-    vpRobotAfma6 robot ;
 
     // exit(1) ;
 
@@ -121,7 +119,13 @@ main()
 
     vpDot dot ;
 
+    std::cout << "Click on a dot..." << endl;
     dot.initTracking(I) ;
+    vpDisplay::displayCross(I,
+			    (unsigned int)dot.get_v(),
+			    (unsigned int)dot.get_u(),
+			    10, vpColor::blue) ;
+    vpDisplay::flush(I);
 
     vpCameraParameters cam ;
 
@@ -182,8 +186,10 @@ main()
 
       dot.track(I) ;
 
-      //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
-      //			   10,vpColor::green) ;
+      vpDisplay::displayCross(I,
+			      (unsigned int)dot.get_v(),
+			      (unsigned int)dot.get_u(),
+			      10, vpColor::green) ;
 
 
       vpFeatureBuilder::create(p,cam, dot);
@@ -201,6 +207,8 @@ main()
       cout << v.t() ;
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
+      vpDisplay::flush(I) ;
+
       vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
     }
 
@@ -211,7 +219,7 @@ main()
   {
     vpERROR_TRACE(" Test failed") ;
     return 0;
-  }  
+  }
 }
 
 
