@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.6 2007-04-19 09:01:05 asaunier Exp $
+ * $Id: grabDirectShow.cpp,v 1.7 2007-04-20 08:21:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -158,115 +158,108 @@ bool getOptions(int argc, char **argv, bool &display,
 int
 main(int argc, char ** argv)
 {
-	try 
-	{
-		bool opt_display = true;
-		unsigned nframes = 50;
-		bool save = false;
+  bool opt_display = true;
+  unsigned nframes = 50;
+  bool save = false;
 
-		// Declare an image. It size is not defined yet. It will be defined when the image will
-		// acquired the first time.
-		#ifdef GRAB_COLOR
-		vpImage<vpRGBa> I; // This is a color image (in RGBa format)
-		#else
-		vpImage<unsigned char> I; // This is a B&W image
-		#endif
+  // Declare an image. It size is not defined yet. It will be defined when the
+  // image will acquired the first time.
+#ifdef GRAB_COLOR
+  vpImage<vpRGBa> I; // This is a color image (in RGBa format)
+#else
+  vpImage<unsigned char> I; // This is a B&W image
+#endif
 
-		// Set default output image name for saving
-		#ifdef GRAB_COLOR
-		string opath = "C:/temp/I%04d.ppm"; // Color images will be saved in PGM P6 format
-		#else
-		string opath = "C:/temp/I%04d.pgm"; // B&W images will be saved in PGM P5 format
-		#endif
+  // Set default output image name for saving
+#ifdef GRAB_COLOR
+  // Color images will be saved in PGM P6 format
+  string opath = "C:/temp/I%04d.ppm";
+#else
+  // B&W images will be saved in PGM P5 format
+  string opath = "C:/temp/I%04d.pgm";
+#endif
 
-		// Read the command line options
-		if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
-		exit (-1);
-		}
-		vpDirectShowGrabber* grabber ;
-		try {
-		    // Create the grabber
-		    grabber = new vpDirectShowGrabber();
+  // Read the command line options
+  if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
+    exit (-1);
+  }
+  vpDirectShowGrabber* grabber ;
+  try {
+    // Create the grabber
+    grabber = new vpDirectShowGrabber();
 
-		    // Initialize the grabber
-		    grabber->open(I);
+    // Initialize the grabber
+    grabber->open(I);
 
-		    // Acquire an RGBa image
-		    grabber->acquire(I);
-		}
-		catch(...)
-		{
-		    vpERROR_TRACE("Cannot acquire an image...") ;
-		    delete grabber;
-		    exit(-1);
-		}
+    // Acquire an RGBa image
+    grabber->acquire(I);
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Cannot acquire an image...") ;
+    delete grabber;
+    exit(-1);
+  }
 
-		cout << "Image size: width : " << I.getWidth() <<  " height: "
-		   << I.getHeight() << endl;
+  cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << endl;
 
-		// Creates a display
-		#ifdef VISP_HAVE_GTK
-		vpDisplayGTK display;
-		#else
-		vpDisplayGDI display;
-		#endif
+  // Creates a display
+#ifdef VISP_HAVE_GTK
+  vpDisplayGTK display;
+#else
+  vpDisplayGDI display;
+#endif
 
-		if (opt_display) {
-		display.init(I,100,100,"DirectShow Framegrabber");
-		}
+  if (opt_display) {
+    display.init(I,100,100,"DirectShow Framegrabber");
+  }
 
-		try {
-		double tbegin=0, tend=0, tloop=0, ttotal=0;
+  try {
+    double tbegin=0, tend=0, tloop=0, ttotal=0;
 
-		ttotal = 0;
-		tbegin = vpTime::measureTimeMs();
-		// Loop for image acquisition and display
-		for (unsigned i = 0; i < nframes; i++) {
-		  //Acquires an RGBa image
-		  grabber->acquire(I);
+    ttotal = 0;
+    tbegin = vpTime::measureTimeMs();
+    // Loop for image acquisition and display
+    for (unsigned i = 0; i < nframes; i++) {
+      //Acquires an RGBa image
+      grabber->acquire(I);
 
-		  if (opt_display) {
-		//Displays the grabbed rgba image
-		vpDisplay::display(I);
-		  }
+      if (opt_display) {
+	//Displays the grabbed rgba image
+	vpDisplay::display(I);
+      }
 
-		  if (save) {
-		char buf[FILENAME_MAX];
-		sprintf(buf, opath.c_str(), i);
-		string filename(buf);
-		cout << "Write: " << filename << endl;
-		#ifdef GRAB_COLOR
-		vpImageIo::writePPM(I, filename);
-		#else
-		vpImageIo::writePGM(I, filename);
-		#endif
-		  }
-		  tend = vpTime::measureTimeMs();
-		  tloop = tend - tbegin;
-		  tbegin = tend;
-		  cout << "loop time: " << tloop << " ms" << endl;
-		  ttotal += tloop;
-		}
-		cout << "Mean loop time: " << ttotal / nframes << " ms" << endl;
-		cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << endl;
+      if (save) {
+	char buf[FILENAME_MAX];
+	sprintf(buf, opath.c_str(), i);
+	string filename(buf);
+	cout << "Write: " << filename << endl;
+#ifdef GRAB_COLOR
+	vpImageIo::writePPM(I, filename);
+#else
+	vpImageIo::writePGM(I, filename);
+#endif
+      }
+      tend = vpTime::measureTimeMs();
+      tloop = tend - tbegin;
+      tbegin = tend;
+      cout << "loop time: " << tloop << " ms" << endl;
+      ttotal += tloop;
+    }
+    cout << "Mean loop time: " << ttotal / nframes << " ms" << endl;
+    cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << endl;
 
-		// Release the framegrabber
-		delete grabber;
+    // Release the framegrabber
+    delete grabber;
 
-		}
-		catch(...)
-		{
-		  vpCERROR << "Failure: exit" << std::endl;
-		  delete grabber;
-		  return(-1);
-		}
-	}
-	catch(...)
-	{
-	  vpERROR_TRACE("Error caught");
-	  delete grabber;
-	  return(-1);
-	}
+  }
+  catch(...)
+  {
+    vpCERROR << "Failure: exit" << std::endl;
+    delete grabber;
+    return(-1);
+  }
 }
 #else
 int
