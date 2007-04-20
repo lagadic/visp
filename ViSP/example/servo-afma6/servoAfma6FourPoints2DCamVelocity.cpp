@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.3 2007-04-19 14:19:18 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.4 2007-04-20 08:59:09 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -88,6 +88,10 @@ main()
 {
   try
     {
+      vpRobotAfma6 robot ;
+
+      vpServo task ;
+
       vpImage<unsigned char> I ;
       int i ;
 
@@ -100,9 +104,6 @@ main()
 
       vpDisplay::display(I) ;
 
-      vpServo task ;
-
-      vpRobotAfma6 robot ;
 
 
       cout << endl ;
