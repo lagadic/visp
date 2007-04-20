@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.10 2007-03-16 16:02:11 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.11 2007-04-20 14:05:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1237,7 +1237,7 @@ vp1394TwoGrabber::dequeue()
     setTransmission(DC1394_ON);
   }
 
-  dc1394video_frame_t *frame;
+  dc1394video_frame_t *frame = NULL;
 
   if (dc1394_capture_dequeue(camera, DC1394_CAPTURE_POLICY_WAIT, &frame)
       !=DC1394_SUCCESS) {
