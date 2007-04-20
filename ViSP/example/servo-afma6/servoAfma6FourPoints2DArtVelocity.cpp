@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DArtVelocity.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: servoAfma6FourPoints2DArtVelocity.cpp,v 1.5 2007-04-20 16:00:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -87,6 +87,10 @@ main()
 {
   try
     {
+      vpRobotAfma6 robot ;
+
+      vpServo task ;
+
       vpImage<unsigned char> I ;
       int i ;
 
@@ -100,12 +104,6 @@ main()
 
       vpDisplay::display(I) ;
 
-
-      vpServo task ;
-
-      vpRobotAfma6 robot ;
-
-
       std::cout << std::endl ;
       std::cout << "-------------------------------------------------------" << std::endl ;
       std::cout << " Test program for vpServo "  <<std::endl ;
@@ -118,8 +116,17 @@ main()
 
       vpDot dot[4] ;
 
-      for (i=0 ; i < 4 ; i++)
+      std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
+		<< std::endl;
+
+      for (i=0 ; i < 4 ; i++) {
 	dot[i].initTracking(I) ;
+	vpDisplay::displayCross(I,
+				(unsigned int)dot[i].get_v(),
+				(unsigned int)dot[i].get_u(),
+				10, vpColor::blue) ;
+	vpDisplay::flush(I);
+      }
 
       vpCameraParameters cam ;
 
@@ -182,8 +189,13 @@ main()
 
 	  try
 	    {
-	      for (i=0 ; i < 4 ; i++)
+	      for (i=0 ; i < 4 ; i++) {
 		dot[i].track(I) ;
+		vpDisplay::displayCross(I,
+					(unsigned int)dot[i].get_v(),
+					(unsigned int)dot[i].get_u(),
+					10, vpColor::green) ;
+	      }
 	    }
 	  catch(...)
 	    {
@@ -191,9 +203,6 @@ main()
 	      robot.stopMotion() ;
 	      exit(1) ;
 	    }
-	  //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
-	  //			   10,vpColor::green) ;
-
 
 	  for (i=0 ; i < 4 ; i++)
 	    vpFeatureBuilder::create(p[i],cam, dot[i]);
@@ -209,6 +218,8 @@ main()
 	  vpServoDisplay::display(task,cam,I) ;
 	  std::cout << v.t() ;
 	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
+
+	  vpDisplay::flush(I) ;
 
 	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
 	}
