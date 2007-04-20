@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.9 2007-03-12 13:08:51 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.10 2007-04-20 13:26:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1071,7 +1071,7 @@ void vpItifg8Grabber::open()
     fprintf (stdout, "%d - opmode: %s\n", args.board_i,
 	     opmode_name[args.opmode[args.board_i]].name);
 #else
-    fprintf (stdout, "%d - contig: %g\n", args.board_i,
+    fprintf (stdout, "%d - contig: %d\n", args.board_i,
 	     args.contig[args.board_i]);
 #endif
     fprintf (stdout, "%d - syncmd: %s\n", args.board_i,
