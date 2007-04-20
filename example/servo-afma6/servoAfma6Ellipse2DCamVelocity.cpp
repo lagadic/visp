@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.5 2007-04-20 15:30:41 fspindle Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.6 2007-04-20 15:56:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -117,7 +117,7 @@ main()
     dot.setNbMaxPoint(1e6) ;
     // dot.setGraphics(true) ;
     dot.setComputeMoments(true) ;
-    std::cout << "Click on an ellipse..." << endl;
+    std::cout << "Click on an ellipse..." << std::endl;
     dot.initTracking(I) ;
     vpDisplay::displayCross(I,
 			    (unsigned int)dot.get_v(),
