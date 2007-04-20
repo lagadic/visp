@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.5 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.6 2007-04-20 15:56:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -119,7 +119,7 @@ main()
 
     vpDot dot ;
 
-    std::cout << "Click on a dot..." << endl;
+    std::cout << "Click on a dot..." << std::endl;
     dot.initTracking(I) ;
     vpDisplay::displayCross(I,
 			    (unsigned int)dot.get_v(),
