@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowDevice.h,v 1.3 2007-03-08 13:35:43 fspindle Exp $
+ * $Id: vpDirectShowDevice.h,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,14 +48,14 @@
 #include <string>
 #include <dshow.h>
 
-using namespace std;
+
 
 class VISP_EXPORT vpDirectShowDevice
 {
 
-	string name;		//the device's name
-	string desc;		//the device's description
-	string devPath;		//the device's device path (unique)
+	std::string name;		//the device's name
+	std::string desc;		//the device's description
+	std::string devPath;		//the device's device path (unique)
 
 	bool inUse;			//true if the device is already used by a grabber
 
@@ -69,15 +69,15 @@ public:
 	void setInUse(){ inUse=true; }
 	void resetInUse() { inUse=false; }
 
-	string& getName(){ return name; }
-	string& getDesc(){ return desc; }
-	string& getDevPath(){ return devPath; }
+	std::string& getName(){ return name; }
+	std::string& getDesc(){ return desc; }
+	std::string& getDevPath(){ return devPath; }
 
 	bool operator==(vpDirectShowDevice& dev);
 
-	friend ostream& operator<<(ostream& os, vpDirectShowDevice& dev)
+	friend std::ostream& operator<<(std::ostream& os, vpDirectShowDevice& dev)
 	{
-		return os<<dev.name<<endl<<dev.desc<<endl<<dev.devPath;
+		return os<<dev.name<<std::endl<<dev.desc<<std::endl<<dev.devPath;
 	}
 };
 #endif

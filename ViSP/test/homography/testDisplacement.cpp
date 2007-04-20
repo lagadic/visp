@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisplacement.cpp,v 1.5 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testDisplacement.cpp,v 1.6 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,8 +100,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -120,11 +120,11 @@ main(int argc, char ** argv)
   {
     vpThetaUVector tu(vpMath::rad(90), vpMath::rad(120), vpMath::rad(45)) ;
 
-    cout << "Initialization " <<endl ;
-    // cout << tu << endl ;
+    std::cout << "Initialization " <<std::endl ;
+    // std::cout << tu << std::endl ;
 
 
-    cout << "From vpThetaUVector to vpRotationMatrix " << endl ;
+    std::cout << "From vpThetaUVector to vpRotationMatrix " << std::endl ;
     vpRotationMatrix R(tu)  ;
 
 
@@ -134,13 +134,13 @@ main(int argc, char ** argv)
 
 
 
-    cout << "M" <<endl <<M << endl ;
+    std::cout << "M" <<std::endl <<M << std::endl ;
     vpPlane p(0,0,1,1) ;
 
     vpHomography H(M,p) ;
 
     vpTRACE(" ") ;
-    cout << "H" <<endl <<H << endl ;
+    std::cout << "H" <<std::endl <<H << std::endl ;
 
 
     vpTRACE(" ") ;
@@ -150,22 +150,22 @@ main(int argc, char ** argv)
 
     H.computeDisplacement(R,T,n) ;
 
-    cout << "R" <<endl << R ;
-    cout << "T" <<endl << T.t()  ;
-    cout << "n" <<endl << n.t()  ;
+    std::cout << "R" <<std::endl << R ;
+    std::cout << "T" <<std::endl << T.t()  ;
+    std::cout << "n" <<std::endl << n.t()  ;
     vpTRACE(" ") ;
     vpTRACE(" ") ;
   }
-  cout <<"------------------------------------------------------" << endl ;
+  std::cout <<"------------------------------------------------------" << std::endl ;
 
   {
     vpThetaUVector tu(vpMath::rad(90), vpMath::rad(120), vpMath::rad(45)) ;
 
-    cout << "Initialization " <<endl ;
-    // cout << tu << endl ;
+    std::cout << "Initialization " <<std::endl ;
+    // std::cout << tu << std::endl ;
 
 
-    cout << "From vpThetaUVector to vpRotationMatrix " << endl ;
+    std::cout << "From vpThetaUVector to vpRotationMatrix " << std::endl ;
     vpRotationMatrix R(tu)  ;
 
 
@@ -179,13 +179,13 @@ main(int argc, char ** argv)
     M[2][3] = 0.5 ;
 
 
-    cout << "M" <<endl <<M << endl ;
+    std::cout << "M" <<std::endl <<M << std::endl ;
     vpPlane p(0,0,1,1) ;
 
     vpHomography H(M,p) ;
 
     vpTRACE(" ") ;
-    cout << "H" <<endl <<H << endl ;
+    std::cout << "H" <<std::endl <<H << std::endl ;
 
 
     vpTRACE(" ") ;
@@ -195,14 +195,14 @@ main(int argc, char ** argv)
 
     H.computeDisplacement(R,T,n) ;
 
-    cout << "R" <<endl << R ;
-    cout << "T" <<endl << T.t()  ;
-    cout << "n" <<endl << n.t()  ;
+    std::cout << "R" <<std::endl << R ;
+    std::cout << "T" <<std::endl << T.t()  ;
+    std::cout << "n" <<std::endl << n.t()  ;
     vpTRACE(" ") ;
     vpTRACE(" ") ;
   }
 
-  cout <<"------------------------------------------------------" << endl ;
+  std::cout <<"------------------------------------------------------" << std::endl ;
   {
     vpThetaUVector  tu(vpMath::rad(-190), vpMath::rad(12), vpMath::rad(-45)) ;
 
@@ -217,26 +217,26 @@ main(int argc, char ** argv)
     M[1][3] =- 0.31 ;
     M[2][3] = 0.5 ;
 
-    cout << "M" <<endl <<M << endl ;
+    std::cout << "M" <<std::endl <<M << std::endl ;
     vpPlane p(0.4,-0.5,0.5,1) ;
 
     vpHomography H(M,p) ;
 
     vpTRACE(" ") ;
-    cout << "H" <<endl <<H << endl ;
+    std::cout << "H" <<std::endl <<H << std::endl ;
 
     vpTRACE(" ") ;
     vpColVector n ;
     vpTranslationVector T ;
     H.computeDisplacement(R,T,n) ;
 
-    cout << "R" <<endl << R ;
-    cout << "T" <<endl << T.t()  ;
-    cout << "n" <<endl << n.t()  ;
+    std::cout << "R" <<std::endl << R ;
+    std::cout << "T" <<std::endl << T.t()  ;
+    std::cout << "n" <<std::endl << n.t()  ;
 
     vpPlane p1(n[0],n[1],n[2],1.0) ;
     H.buildFrom(R,T,p1) ;
-    cout << "H" <<endl <<H << endl ;
+    std::cout << "H" <<std::endl <<H << std::endl ;
 
     vpTRACE(" ") ;
 

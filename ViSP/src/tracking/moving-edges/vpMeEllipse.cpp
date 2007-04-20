@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.11 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpMeEllipse.cpp,v 1.12 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@ computeTheta(double &theta, vpColVector &K, double i, double j)
 
 vpMeEllipse::vpMeEllipse():vpMeTracker()
 {
-  vpCDEBUG(1) << "begin vpMeEllipse::vpMeEllipse() " <<  endl ;
+  vpCDEBUG(1) << "begin vpMeEllipse::vpMeEllipse() " <<  std::endl ;
 
   // redimensionnement du vecteur de parametre
   // i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
@@ -75,16 +75,16 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
 
   j1 = j2 = i1 = i2 = 0 ;
   seek = 10.; // angle in degrees
-  vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << endl ;
+  vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << std::endl ;
 }
 
 vpMeEllipse::~vpMeEllipse()
 {
-  vpCDEBUG(1) << "begin vpMeEllipse::~vpMeEllipse() " << endl ;
+  vpCDEBUG(1) << "begin vpMeEllipse::~vpMeEllipse() " << std::endl ;
 
   list.kill();
 
-  vpCDEBUG(1) << "end vpMeEllipse::~vpMeEllipse() " << endl ;
+  vpCDEBUG(1) << "end vpMeEllipse::~vpMeEllipse() " << std::endl ;
 }
 
 
@@ -103,7 +103,7 @@ vpMeEllipse::~vpMeEllipse()
 void
 vpMeEllipse::sample(vpImage<unsigned char> & I)
 {
-  vpCDEBUG(1) <<"begin vpMeEllipse::sample() : "<<endl ;
+  vpCDEBUG(1) <<"begin vpMeEllipse::sample() : "<<std::endl ;
 
   unsigned height = I.getHeight() ;
   unsigned width = I.getWidth() ;
@@ -112,8 +112,8 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
 
   if (me->sample_step==0)
   {
-    cout << "In vpMeEllipse::sample: " ;
-    cout << "function called with sample step = 0" ;
+    std::cout << "In vpMeEllipse::sample: " ;
+    std::cout << "function called with sample step = 0" ;
     //return fatalError ;
   }
 
@@ -171,7 +171,7 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
   n_sample = list.nbElements() ;
 
   vpCDEBUG(1) << "end vpMeEllipse::sample() : " ;
-  vpCDEBUG(1) << n_sample << " point inserted in the list " << endl  ;
+  vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;
 }
 
 
@@ -230,9 +230,9 @@ vpMeEllipse::getParameters()
 void
 vpMeEllipse::printParameters()
 {
-  cout << "K" << endl ;
-  cout << K.t() ;
-  cout << ic << "  " << jc << endl ;
+  std::cout << "K" << std::endl ;
+  std::cout << K.t() ;
+  std::cout << ic << "  " << jc << std::endl ;
 }
 
 /*!
@@ -284,7 +284,7 @@ vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
 
   if (alpha2 <alpha1) alpha2 += 2*M_PI ;
 
-  vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << endl ;
+  vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;
 
 }
 /*!
@@ -671,7 +671,7 @@ vpMeEllipse::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
 void
 vpMeEllipse::initTracking(vpImage<unsigned char> &I)
 {
-  vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<endl ;
+  vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
 
   int n=5 ;
   unsigned *i, *j ;
@@ -680,10 +680,10 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
 
    for (int k =0 ; k < n ; k++)
   {
-    cout << "Click points "<< k+1 <<"/" << n ;
-    cout << " on the ellipse in the trigonometric order" <<endl ;
+    std::cout << "Click points "<< k+1 <<"/" << n ;
+    std::cout << " on the ellipse in the trigonometric order" <<std::endl ;
     while (vpDisplay::getClick(I,i[k],j[k])!=true) ;
-    cout << i[k] <<" " <<j[k] << endl;
+    std::cout << i[k] <<" " <<j[k] << std::endl;
     }
 
 
@@ -703,7 +703,7 @@ void
 vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n, 
 			  unsigned *i, unsigned *j)
 {
-  vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<endl ;
+  vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
 
   if (circle==false)
   {
@@ -727,7 +727,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
     }
 
     K = A.pseudoInverse(1e-26)*b ;
-    cout << K << endl;
+    std::cout << K << std::endl;
   }
   else
   {
@@ -752,7 +752,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
     K[3] = Kc[1] ;
     K[4] = Kc[2] ;
 
-    cout << K << endl;
+    std::cout << K << std::endl;
   }
   i1 = i[0] ;
   j1 = j[0] ;
@@ -793,7 +793,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
 void
 vpMeEllipse::track(vpImage<unsigned char> &I)
 {
-  vpCDEBUG(1) <<"begin vpMeEllipse::track()"<<endl ;
+  vpCDEBUG(1) <<"begin vpMeEllipse::track()"<<std::endl ;
 
   static int iter =0 ;
   //  1. On fait ce qui concerne les ellipse (peut etre vide)
@@ -812,7 +812,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
     vpERROR_TRACE("Error caught") ;
     throw ;
   }
-    //    cout << "number of signals " << numberOfSignal() << endl ;
+    //    std::cout << "number of signals " << numberOfSignal() << std::endl ;
   }
 
   // 3. On revient aux ellipses
@@ -853,6 +853,6 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
   iter++ ;
 
 
-  vpCDEBUG(1) << "end vpMeEllipse::track()"<<endl ;
+  vpCDEBUG(1) << "end vpMeEllipse::track()"<<std::endl ;
 
 }

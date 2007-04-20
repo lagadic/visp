@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.14 2006-06-12 14:50:03 brenier Exp $
+ * $Id: vpMatrix.h,v 1.15 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,7 +55,7 @@ class vpColVector;
 class vpTranslationVector;
 class vpRowVector;
 
-using namespace std ;
+
 
 /*!
   \file vpMatrix.h
@@ -133,13 +133,13 @@ public:
   //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT ostream &operator << (ostream &s,const vpMatrix &m);
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,const vpMatrix &m);
 
   int print(std::ostream& s, unsigned lenght, char const* intro=0);
   //! Affichage pour reinsertion dans matlab
-  ostream & matlabPrint(ostream & os);
+  std::ostream & matlabPrint(std::ostream & os);
   //! Affichage pour reinsertion dans ViSP
-  ostream & cppPrint(ostream & os, const char * matrixName = NULL, bool octet = false);
+  std::ostream & cppPrint(std::ostream & os, const char * matrixName = NULL, bool octet = false);
 
   //---------------------------------
   // Copy / assigment
@@ -298,7 +298,7 @@ public:
 
   //! test if the matrix is a rotation matrix ( R^T R = Id 3x3 )
   //  int isARotationMatrix() const ;
-  void printSize() { cout << getRows() <<" x " << getCols() <<"  " ; }
+  void printSize() { std::cout << getRows() <<" x " << getCols() <<"  " ; }
 
 
   //! Stack two Matrices C = [ A B ]^T

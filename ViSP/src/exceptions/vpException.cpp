@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpException.cpp,v 1.3 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpException.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@ vpException::vpException (int _code)
 
 
 vpException::vpException (int _code,
-	     const string & _msg)
+	     const std::string & _msg)
     :
     code (_code),
     message (_msg)
@@ -98,7 +98,7 @@ const char *vpException::getMessage (void)
     return (this->message) .c_str();
 }
 
-const string &vpException::getStringMessage (void)
+const std::string &vpException::getStringMessage (void)
 {
     return this->message;
 }
@@ -118,11 +118,11 @@ vpException::getCode (void)
 /* --- OP << --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-ostream &
-operator << (ostream & os,
+std::ostream &
+operator << (std::ostream & os,
 	     const vpException & error)
 {
-  os << "Error [" << error.code << "]:\t" << error.message << endl;
+  os << "Error [" << error.code << "]:\t" << error.message << std::endl;
 
     return os;
 }

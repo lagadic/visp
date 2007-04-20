@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyVVS.cpp,v 1.5 2007-03-28 13:57:16 marchand Exp $
+ * $Id: vpHomographyVVS.cpp,v 1.6 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -261,11 +261,11 @@ vpHomography::computeRotation(int nbpoint,
 
     if ((W*e).sumSquare() < 1e-10) break ;
     if (iter>25) break ;
-    iter++ ;   // cout <<  iter <<"  e=" <<(e).sumSquare() <<"  e=" <<(W*e).sumSquare() <<endl ;
+    iter++ ;   // std::cout <<  iter <<"  e=" <<(e).sumSquare() <<"  e=" <<(W*e).sumSquare() <<std::endl ;
 
   }
 
-  //  cout << c2Mc1 <<endl ;
+  //  std::cout << c2Mc1 <<std::endl ;
    return (W*e).sumSquare() ;
 }
 

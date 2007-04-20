@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.cpp,v 1.6 2007-03-08 13:35:43 fspindle Exp $
+ * $Id: vpDirectShowGrabberImpl.cpp,v 1.7 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,7 @@ unsigned int vpDirectShowGrabberImpl::nbDevices ;
 /*!
 	Converts a HRESULT into the corresponding error message
 */
-void vpDirectShowGrabberImpl::HRtoStr(string str)
+void vpDirectShowGrabberImpl::HRtoStr(std::string str)
 {
 	TCHAR szErr[MAX_ERROR_TEXT_LEN];
 	DWORD res = AMGetErrorText(hr, szErr, MAX_ERROR_TEXT_LEN);
@@ -75,7 +75,7 @@ vpDirectShowGrabberImpl::vpDirectShowGrabberImpl()
 	//COM initialization
 	if (FAILED(hr = CoInitialize(NULL)))
 	{
-		string err;
+		std::string err;
 		HRtoStr(err);
 		throw(vpFrameGrabberException(
 			  vpFrameGrabberException::initializationError,
@@ -87,7 +87,7 @@ vpDirectShowGrabberImpl::vpDirectShowGrabberImpl()
 
 	if(!enumerate(pVideoInputEnum))
 	{
-		string err;
+		std::string err;
 		HRtoStr(err);
 		throw(vpFrameGrabberException(
 			  vpFrameGrabberException::initializationError,
@@ -112,7 +112,7 @@ void vpDirectShowGrabberImpl::open()
 {
 	if(! (init = initDirectShow()) )
 	{
-		string err;
+		std::string err;
 		HRtoStr(err);
 		throw (vpFrameGrabberException(
 			  vpFrameGrabberException::initializationError, err));
@@ -492,12 +492,12 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin>& pCapSourcePin)
 	      ((bmpInfo.biCompression&0x0000FF00)<<8) |
 	      (bmpInfo.biCompression&0x000000FF)<<24;
 
-	    cout<<"This format is not one of the standard YUV or RGB format supported by DirectShow.\n"
+	    std::cout<<"This format is not one of the standard YUV or RGB format supported by DirectShow.\n"
 		<<"FourCC : "
 		<<(char)(bmpInfo.biCompression&0x000000FF)
 		<<(char)((bmpInfo.biCompression&0x0000FF00)>>8)
 		<<(char)((bmpInfo.biCompression&0x00FF0000)>>16)
-		<<(char)((bmpInfo.biCompression&0xFF000000)>>24)<<endl;
+		<<(char)((bmpInfo.biCompression&0xFF000000)>>24)<<std::endl;
 
 	    //Y800 is top-down oriented so the image doesn't have to be flipped vertically
 	    if(format == 'Y800')
@@ -513,7 +513,7 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin>& pCapSourcePin)
 	    //see fourcc.org to know which format is bottom-up oriented and thus needs invertedSource sets to true
 	    else
 	      {
-		cout<<"Unknown FourCC compression type, assuming top-down orientation. Image may be inverted."<<endl;
+		std::cout<<"Unknown FourCC compression type, assuming top-down orientation. Image may be inverted."<<std::endl;
 		sgCB.invertedSource = false; //consider that the image is topdown oriented by default
 	      }
 	  }
@@ -773,9 +773,9 @@ void vpDirectShowGrabberImpl::displayDevices()
     }
 
 	for(unsigned int i=0 ; i<nbDevices ; i++)
-		cout<<i<<" : "<<deviceList[i].getName()<<endl;
+		std::cout<<i<<" : "<<deviceList[i].getName()<<std::endl;
 
-	cout<<"Current device : "<<currentDevice<<endl<<endl;
+	std::cout<<"Current device : "<<currentDevice<<std::endl<<std::endl;
 }
 
 
@@ -886,8 +886,8 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width,unsigned int height, 
 //			pVih->bmiHeader.biWidth;
 //			pVih->bmiHeader.biHeight;
 //			10000000 /pVih->AvgTimePerFrame;
-//			cout<<"available image size : "<<pVih->bmiHeader.biWidth<<" x "<<pVih->bmiHeader.biHeight<<" at "<<10000000 /pVih->AvgTimePerFrame<<endl;
-//			cout<<"compression : "<<pVih->bmiHeader.biCompression<<endl;
+//			std::cout<<"available image size : "<<pVih->bmiHeader.biWidth<<" x "<<pVih->bmiHeader.biHeight<<" at "<<10000000 /pVih->AvgTimePerFrame<<std::endl;
+//			std::cout<<"compression : "<<pVih->bmiHeader.biCompression<<std::endl;
 			if (SUCCEEDED(hr)&& found==false)
 			{
 				/* Examine the format, and possibly use it. */
@@ -917,8 +917,8 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width,unsigned int height, 
 							pVih = (VIDEOINFOHEADER*)sgCB.connectedMediaType.pbFormat;
 							LONGLONG ActualFrameDuration; 
 							if(FAILED(hr = pVideoControl->GetCurrentActualFrameRate(pCapSourcePin,&ActualFrameDuration)))
-								cout<<"Current format (not sure): "<<width <<" x "<< height <<" at "<< 10000000/pVih->AvgTimePerFrame <<" fps"<<endl<<endl;
-							else cout<<"Current format : "<<width <<" x "<< height <<" at "<< 10000000/ActualFrameDuration <<" fps"<<endl<<endl;
+								std::cout<<"Current format (not sure): "<<width <<" x "<< height <<" at "<< 10000000/pVih->AvgTimePerFrame <<" fps"<<std::endl<<std::endl;
+							else std::cout<<"Current format : "<<width <<" x "<< height <<" at "<< 10000000/ActualFrameDuration <<" fps"<<std::endl<<std::endl;
 							found=true;
 						}
 					}
@@ -936,7 +936,7 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width,unsigned int height, 
 								return false;
 							pVih = (VIDEOINFOHEADER*)sgCB.connectedMediaType.pbFormat;
 							found=true;
-							cout<<"Current format : "<<width <<" x "<< height <<" at "<<(10000000 /pVih->AvgTimePerFrame) <<" fps"<<endl<<endl;
+							std::cout<<"Current format : "<<width <<" x "<< height <<" at "<<(10000000 /pVih->AvgTimePerFrame) <<" fps"<<std::endl<<std::endl;
 						}
 
 					}
@@ -948,9 +948,9 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width,unsigned int height, 
 	}
 	if(!found)
 		if(framerate != NULL)
-			cout << "The "<<width <<" x "<< height <<" at " <<framerate<<" fps source image format is not available. "<<endl<<endl;
+			std::cout << "The "<<width <<" x "<< height <<" at " <<framerate<<" fps source image format is not available. "<<std::endl<<std::endl;
 		else
-			cout << "The "<<width <<" x "<< height <<"source image size is not available. "<<endl<<endl;
+			std::cout << "The "<<width <<" x "<< height <<"source image size is not available. "<<std::endl<<std::endl;
 
 	return found;
 }
@@ -1003,7 +1003,7 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
 	// Check the size to make sure we pass in the correct structure.
 	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
 	{
-		cout<<"Available MediaTypes : "<<endl<<endl; 
+		std::cout<<"Available MediaTypes : "<<std::endl<<std::endl; 
 		// Use the video capabilities structure.
 		for (int iFormat = 0; iFormat < iCount; iFormat++)
 		{
@@ -1020,51 +1020,51 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
 				LONG lHeight = pVih->bmiHeader.biHeight;
 //				SIZE dimensions={lWidth,lHeight};
 				LONGLONG lAvgTimePerFrame = pVih->AvgTimePerFrame;
-				cout<<"MediaType : "<<iFormat<<endl;
+				std::cout<<"MediaType : "<<iFormat<<std::endl;
    
 				if(pmtConfig->subtype==MEDIASUBTYPE_ARGB32) 
-					cout<<"subtype (not supported): MEDIASUBTYPE_ARGB32"<<endl;
+					std::cout<<"subtype (not supported): MEDIASUBTYPE_ARGB32"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_RGB32)
-					cout<<"subtype : MEDIASUBTYPE_RGB32"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_RGB32"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_RGB24)
-					cout<<"subtype : MEDIASUBTYPE_RGB24"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_RGB24"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_RGB555)
-					cout<<"subtype (not supported): MEDIASUBTYPE_RGB555"<<endl;
+					std::cout<<"subtype (not supported): MEDIASUBTYPE_RGB555"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_RGB565)
-					cout<<"subtype (not supported): MEDIASUBTYPE_RGB565"<<endl;
+					std::cout<<"subtype (not supported): MEDIASUBTYPE_RGB565"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_RGB8)
-					cout<<"subtype (not supported): MEDIASUBTYPE_RGB8"<<endl;
+					std::cout<<"subtype (not supported): MEDIASUBTYPE_RGB8"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_RGB4)
-					cout<<"subtype (not supported): MEDIASUBTYPE_RGB4"<<endl;
+					std::cout<<"subtype (not supported): MEDIASUBTYPE_RGB4"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_RGB1)
-					cout<<"subtype (not supported): MEDIASUBTYPE_RGB1"<<endl;
+					std::cout<<"subtype (not supported): MEDIASUBTYPE_RGB1"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_YV12)
-					cout<<"subtype : MEDIASUBTYPE_YV12"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_YV12"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_YVU9)
-					cout<<"subtype : MEDIASUBTYPE_YVU9"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_YVU9"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_YUY2)
-					cout<<"subtype : MEDIASUBTYPE_YUY2"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_YUY2"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_YUYV)
-					cout<<"subtype : MEDIASUBTYPE_YUYV"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_YUYV"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_YVYU)
-					cout<<"subtype : MEDIASUBTYPE_YVYU"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_YVYU"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_IYUV)
-					cout<<"subtype : MEDIASUBTYPE_IYUV"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_IYUV"<<std::endl;
 				else if(pmtConfig->subtype==MEDIASUBTYPE_UYVY)
-					cout<<"subtype : MEDIASUBTYPE_UYVY"<<endl;
+					std::cout<<"subtype : MEDIASUBTYPE_UYVY"<<std::endl;
 				else if((((pVih->bmiHeader.biCompression&0xFF000000)>>24) |
 							((pVih->bmiHeader.biCompression&0x00FF0000)>>8) |
 							((pVih->bmiHeader.biCompression&0x0000FF00)<<8) |
 							((pVih->bmiHeader.biCompression&0x000000FF)<<24)) == 'I420')
-					cout<<"subtype : I420"<<endl;
-				else cout<<"subtype (not supported) :"
+					std::cout<<"subtype : I420"<<std::endl;
+				else std::cout<<"subtype (not supported) :"
 					<<(char)(pVih->bmiHeader.biCompression&0x000000FF)
 					<<(char)((pVih->bmiHeader.biCompression&0x0000FF00)>>8)
 					<<(char)((pVih->bmiHeader.biCompression&0x00FF0000)>>16)
-					<<(char)((pVih->bmiHeader.biCompression&0xFF000000)>>24)<<endl;
+					<<(char)((pVih->bmiHeader.biCompression&0xFF000000)>>24)<<std::endl;
 
-				cout<<"image size : "<<pVih->bmiHeader.biWidth<<" x "<<pVih->bmiHeader.biHeight<<endl;
-				cout<<"framerate range: ["<< 10000000/scc.MaxFrameInterval<<","<<10000000/scc.MinFrameInterval<<"]"<<endl<<endl;
+				std::cout<<"image size : "<<pVih->bmiHeader.biWidth<<" x "<<pVih->bmiHeader.biHeight<<std::endl;
+				std::cout<<"framerate range: ["<< 10000000/scc.MaxFrameInterval<<","<<10000000/scc.MinFrameInterval<<"]"<<std::endl<<std::endl;
 
 /*
 				long frameRateNum;
@@ -1074,9 +1074,9 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
 					return false;
 				for(int i=0; i<(int)frameRateNum ; i++)
 				{
-					cout<<(float)(10000000/frameRateList[i])<<" fps"<<endl;
+					std::cout<<(float)(10000000/frameRateList[i])<<" fps"<<std::endl;
 				}
-				cout<<endl;
+				std::cout<<std::endl;
 */				
 			}
 			// Delete the media type when you are done.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.9 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vpV4l2Grabber.cpp,v 1.10 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -392,7 +392,7 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
   }
 
   setPixelFormat(V4L2_GREY_FORMAT);
-  //vpCTRACE << _width << "  " << _height << endl;
+  //vpCTRACE << _width << "  " << _height << std::endl;
   setFormat();
 
   startStreaming();
@@ -854,9 +854,9 @@ vpV4l2Grabber::startStreaming()
     buf_me[i].size = buf_me[i].fmt.bytesperline * buf_me[i].fmt.height;
 
 //     if (verbose)
-//       cout << "1: buf_v4l2[" << i << "].length: " << buf_v4l2[i].length
+//       std::cout << "1: buf_v4l2[" << i << "].length: " << buf_v4l2[i].length
 // 	   << " buf_v4l2[" << i << "].offset: " <<  buf_v4l2[i].m.offset
-// 	   << endl;
+// 	   << std::endl;
 
 
     buf_me[i].data = (unsigned char *) mmap(NULL, buf_v4l2[i].length,
@@ -873,10 +873,10 @@ vpV4l2Grabber::startStreaming()
 
 //     if (verbose)
 //     {
-//       cout << "2: buf_v4l2[" << i << "].length: " << buf_v4l2[i].length
+//       std::cout << "2: buf_v4l2[" << i << "].length: " << buf_v4l2[i].length
 // 	   << " buf_v4l2[" << i << "].offset: " <<  buf_v4l2[i].m.offset
-// 	   << endl;
-//       cout << "2: buf_me[" << i << "].size: " << buf_me[i].size << endl;
+// 	   << std::endl;
+//       std::cout << "2: buf_me[" << i << "].size: " << buf_me[i].size << std::endl;
 //     }
 
     if (verbose)
@@ -925,7 +925,7 @@ vpV4l2Grabber::stopStreaming()
     for (i = 0; i < reqbufs.count; i++) {
       if (0 != buf_me[i].refcount) {
 	// ng_waiton_video_buf(&buf_me[i]);
-	cout << "Normalement call ng_waiton_video_buf(&buf_me[i]); --------\n";
+	std::cout << "Normalement call ng_waiton_video_buf(&buf_me[i]); --------\n";
       }
       if (verbose)
 	printBufInfo(buf_v4l2[i]);
@@ -1037,10 +1037,10 @@ vpV4l2Grabber::queueBuffer()
       return -1;
     fprintf(stderr,"v4l2: waiting for a free buffer..............\n");
     //ng_waiton_video_buf(h->buf_me+frame);
-    cout << "Normalement call ng_waiton_video_buf(buf_me+frame); --------\n";
+    std::cout << "Normalement call ng_waiton_video_buf(buf_me+frame); --------\n";
   }
 
-  //    cout << "frame: " << frame << endl;
+  //    std::cout << "frame: " << frame << std::endl;
   rc = ioctl(fd, VIDIOC_QBUF, &buf_v4l2[frame]);
   if (0 == rc)
     queue++;

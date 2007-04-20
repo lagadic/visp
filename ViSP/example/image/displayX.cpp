@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayX.cpp,v 1.4 2007-03-13 15:34:33 asaunier Exp $
+ * $Id: displayX.cpp,v 1.5 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@
   \param user : Username.
 
  */
-void usage(char *name, char *badparam, string ipath, string opath, string user)
+void usage(char *name, char *badparam, std::string ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using X11, display some\n\
@@ -142,8 +142,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, char **argv,
-		string &ipath, string &opath, bool &click_allowed,
-		string user, bool &display)
+		std::string &ipath, std::string &opath, bool &click_allowed,
+		std::string user, bool &display)
 {
   char *optarg;
   int	c;
@@ -164,8 +164,8 @@ bool getOptions(int argc, char **argv,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath, opath, user);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -175,13 +175,13 @@ bool getOptions(int argc, char **argv,
 int
 main(int argc, char ** argv)
 {
-  string env_ipath;
-  string opt_ipath;
-  string opt_opath;
-  string ipath;
-  string opath;
-  string filename;
-  string username;
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string opt_opath;
+  std::string ipath;
+  std::string opath;
+  std::string filename;
+  std::string username;
   bool opt_click_allowed = true;
   bool opt_display = true;
 
@@ -189,7 +189,7 @@ main(int argc, char ** argv)
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
   if (ptenv != NULL)
     env_ipath = ptenv;
-  //  cout << "env_ipath: " << env_ipath << endl;
+  //  std::cout << "env_ipath: " << env_ipath << std::endl;
 
   // Set the default input path
   if (! env_ipath.empty())
@@ -218,7 +218,7 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  string dirname = opath +  vpIoTools::path("/") + username;
+  std::string dirname = opath +  vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(dirname) == false) {
@@ -228,10 +228,10 @@ main(int argc, char ** argv)
     }
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
-      cerr << endl
-	   << "ERROR:" << endl;
-      cerr << "  Cannot create " << dirname << endl;
-      cerr << "  Check your -o " << opath << " option " << endl;
+      std::cerr << std::endl
+	   << "ERROR:" << std::endl;
+      std::cerr << "  Cannot create " << dirname << std::endl;
+      std::cerr << "  Check your -o " << opath << " option " << std::endl;
       exit(-1);
     }
   }
@@ -240,23 +240,23 @@ main(int argc, char ** argv)
   // the input path comming from the command line option
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
-      cout << endl
-	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
-	   << "  we skip the environment variable." << endl;
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
     }
   }
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opath, username);
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << endl
-	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl;
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -320,7 +320,7 @@ main(int argc, char ** argv)
 
     // If click is allowed, wait for a mouse click to close the display
     if (opt_click_allowed) {
-      cout << "\nA click to close the windows..." << endl;
+      std::cout << "\nA click to close the windows..." << std::endl;
       // Wait for a blocking mouse click
       vpDisplay::getClick(I) ;
     }
@@ -352,20 +352,20 @@ main(int argc, char ** argv)
     // If click is allowed, wait for a blocking mouse click to display a cross
     // at the clicked pixel position
     if (opt_click_allowed) {
-      cout << "\nA click to display a cross..." << endl;
+      std::cout << "\nA click to display a cross..." << std::endl;
       unsigned i,j;
       // Blocking wait for a click. Get the position of the selected pixel
       // (i correspond to the row and j to the column coordinates in the image)
       vpDisplay::getClick(Irgba, i, j);
       // Display a red cross on the click pixel position
-      cout << "Cross position: " << i << ", " << j << endl;
+      std::cout << "Cross position: " << i << ", " << j << std::endl;
       vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
     }
     else {
       unsigned i=10,j=20;
       // Display a red cross at position i, j (i correspond to the row
       // and j to the column coordinates in the image)
-      cout << "Cross position: " << i << ", " << j << endl;
+      std::cout << "Cross position: " << i << ", " << j << std::endl;
       vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
 
     }
@@ -375,9 +375,9 @@ main(int argc, char ** argv)
 
     // If click is allowed, wait for a blocking mouse click to exit.
     if (opt_click_allowed) {
-      cout << "\nA click to exit the program..." << endl;
+      std::cout << "\nA click to exit the program..." << std::endl;
       vpDisplay::getClick(Irgba) ;
-      cout << "Bye" << endl;
+      std::cout << "Bye" << std::endl;
     }
   }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDisk.cpp,v 1.3 2007-02-26 17:39:42 fspindle Exp $
+ * $Id: grabDisk.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,8 +77,8 @@
   \param nzero : Number of zero for the image number coding.
 
  */
-void usage(char *name, char *badparam, string ipath, string basename,
-	   string ext, unsigned first, unsigned nimages, unsigned step,
+void usage(char *name, char *badparam, std::string ipath, std::string basename,
+	   std::string ext, unsigned first, unsigned nimages, unsigned step,
 	   unsigned nzero)
 {
   fprintf(stdout, "\n\
@@ -153,8 +153,8 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath, string &basename,
-		string &ext, unsigned &first, unsigned &nimages,
+bool getOptions(int argc, char **argv, std::string &ipath, std::string &basename,
+		std::string &ext, unsigned &first, unsigned &nimages,
 		unsigned &step, unsigned &nzero, bool &display)
 {
   char *optarg;
@@ -183,8 +183,8 @@ bool getOptions(int argc, char **argv, string &ipath, string &basename,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath, basename, ext, first, nimages, step, nzero);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -204,11 +204,11 @@ bool getOptions(int argc, char **argv, string &ipath, string &basename,
 int
 main(int argc, char ** argv)
 {
-  string env_ipath;
-  string opt_ipath;
-  string ipath;
-  string opt_basename = "ViSP-images/cube/image.";
-  string opt_ext = ".pgm";
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string ipath;
+  std::string opt_basename = "ViSP-images/cube/image.";
+  std::string opt_ext = ".pgm";
   bool opt_display = true;
 
   unsigned opt_first = 5;
@@ -239,11 +239,11 @@ main(int argc, char ** argv)
   // the input path comming from the command line option
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
-      cout << endl
-	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
-	   << "  we skip the environment variable." << endl;
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -251,12 +251,12 @@ main(int argc, char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first,
 		 opt_nimages, opt_step, opt_nzero);
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << endl
-	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl;
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -292,8 +292,8 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
-  cout << "Image size: width : " << I.getWidth() <<  " height: "
-       << I.getHeight() << endl;
+  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << std::endl;
 
   // We open a window using either X11 or GTK.
   // Its size is automatically defined by the image (I) size

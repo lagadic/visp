@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.4 2007-04-18 16:14:26 asaunier Exp $
+ * $Id: grab1394.cpp,v 1.5 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,7 @@
 #include <iostream>
 #include <sstream>
 
-using namespace std;
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
@@ -131,7 +131,7 @@ CAMERA OPTIONS:                                   Default\n\
   l_formats.front();
   while (! l_formats.outside()) {
     int value = l_formats.value();
-    string _value = g.convertFormat(value);
+    std::string _value = g.convertFormat(value);
     fprintf(stdout, "       %d (%s)\n", value, _value.c_str());
     l_formats.next();
   }
@@ -148,7 +148,7 @@ CAMERA OPTIONS:                                   Default\n\
   l_modes.front();
   while (! l_modes.outside()) {
     int value = l_modes.value();
-    string _value = g.convertMode(value);
+    std::string _value = g.convertMode(value);
     fprintf(stdout, "       %d (%s)\n", value, _value.c_str());
     l_modes.next();
   }
@@ -168,7 +168,7 @@ CAMERA OPTIONS:                                   Default\n\
   l_framerates.front();
   while (! l_framerates.outside()) {
     int value = l_framerates.value();
-    string _value = g.convertFramerate(value);
+    std::string _value = g.convertFramerate(value);
     fprintf(stdout, "       %d (%s)\n", value, _value.c_str());
     l_framerates.next();
   }
@@ -304,7 +304,7 @@ main(int argc, char ** argv)
     g.open(I) ;
   }
   catch(...) {
-    cout << "The program was stopped..." << endl;
+    std::cout << "The program was stopped..." << std::endl;
     return 0;
   }
 
@@ -314,9 +314,9 @@ main(int argc, char ** argv)
   unsigned int cameras;
   g.getNumCameras(cameras);
 
-  cout << endl;
-  cout << "Number of cameras on the bus: " << cameras << endl;
-  cout << endl;
+  std::cout << std::endl;
+  std::cout << "Number of cameras on the bus: " << cameras << std::endl;
+  std::cout << std::endl;
 
   int act_format;
   int act_mode;
@@ -333,26 +333,26 @@ main(int argc, char ** argv)
     g.getShutter(min_shutter, act_shutter, max_shutter);
     g.getGain(min_gain, act_gain, max_gain);
 
-    cout << "Actual camera settings for camera: " << i << endl;
-    cout << "  Format: " << act_format
-	 << " (" << g.convertFormat(act_format) << ")" << endl;
-    cout << "  Mode: " << act_mode
-	 << " (" << g.convertMode(act_mode) << ")" << endl;
-    cout << "  Framerate: " << act_framerate
-	 << " (" << g.convertFramerate(act_framerate) << ")" << endl;
-    cout << "  Shutter: " << act_shutter << endl;
-    cout << "  Min shutter: " << min_shutter << endl;
-    cout << "  Max shutter: " << max_shutter << endl;
-    cout << "  Gain: " << act_gain << endl;
-    cout << "  Min gain: " << min_gain << endl;
-    cout << "  Max gain: " << max_gain << endl;
-    cout << endl;
+    std::cout << "Actual camera settings for camera: " << i << std::endl;
+    std::cout << "  Format: " << act_format
+	 << " (" << g.convertFormat(act_format) << ")" << std::endl;
+    std::cout << "  Mode: " << act_mode
+	 << " (" << g.convertMode(act_mode) << ")" << std::endl;
+    std::cout << "  Framerate: " << act_framerate
+	 << " (" << g.convertFramerate(act_framerate) << ")" << std::endl;
+    std::cout << "  Shutter: " << act_shutter << std::endl;
+    std::cout << "  Min shutter: " << min_shutter << std::endl;
+    std::cout << "  Max shutter: " << max_shutter << std::endl;
+    std::cout << "  Gain: " << act_gain << std::endl;
+    std::cout << "  Min gain: " << min_gain << std::endl;
+    std::cout << "  Max gain: " << max_gain << std::endl;
+    std::cout << std::endl;
   }
-  cout << endl;
+  std::cout << std::endl;
 
   if (req_camera) {
     try {
-      cout << "Set active camera: " << req_camera << endl;
+      std::cout << "Set active camera: " << req_camera << std::endl;
       g.setCamera(req_camera);
     }
     catch(...) {
@@ -365,8 +365,8 @@ main(int argc, char ** argv)
 
   if (req_format) {
     try {
-      cout << "Set format to: " << req_format
-	   << " (" << g.convertFormat(req_format) << ")" << endl;
+      std::cout << "Set format to: " << req_format
+	   << " (" << g.convertFormat(req_format) << ")" << std::endl;
       g.setFormat(req_format);
     }
     catch(...) {
@@ -379,8 +379,8 @@ main(int argc, char ** argv)
 
   if (req_mode) {
     try {
-      cout << "Set mode to: " << req_mode
-	   << " (" << g.convertMode(req_mode) << ")" << endl;
+      std::cout << "Set mode to: " << req_mode
+	   << " (" << g.convertMode(req_mode) << ")" << std::endl;
       g.setMode(req_mode);
     }
     catch(...) {
@@ -393,8 +393,8 @@ main(int argc, char ** argv)
 
   if (req_framerate) {
     try {
-      cout << "Set framerate to: " << req_framerate
-	   << " (" << g.convertFramerate(req_framerate) << ")" << endl;
+      std::cout << "Set framerate to: " << req_framerate
+	   << " (" << g.convertFramerate(req_framerate) << ")" << std::endl;
       g.setFramerate(req_framerate);
     }
     catch(...) {
@@ -408,7 +408,7 @@ main(int argc, char ** argv)
 
   if (req_shutter) {
     try {
-      cout << "Set shutter to: " << req_shutter << endl;
+      std::cout << "Set shutter to: " << req_shutter << std::endl;
       g.setShutter(req_shutter);
     }
     catch(...) {
@@ -422,7 +422,7 @@ main(int argc, char ** argv)
 
   if (req_gain) {
     try {
-      cout << "Set gain to: " << req_gain << endl;
+      std::cout << "Set gain to: " << req_gain << std::endl;
       g.setGain(req_gain);
     }
     catch(...) {
@@ -446,9 +446,9 @@ main(int argc, char ** argv)
     return(-1) ;
   }
 
-  cout << endl;
-  cout << "Image size: width : " << I.getWidth() <<  " height: "
-       << I.getHeight() << endl;
+  std::cout << std::endl;
+  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
+       << I.getHeight() << std::endl;
 
   vpDisplayX d;
 
@@ -492,12 +492,12 @@ main(int argc, char ** argv)
 	vpDisplay::flush(I) ;
       }
     }
-    cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << endl;
+    std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << std::endl;
     cpt ++;
   }
   tend = vpTime::measureTimeMs();
-  cout << "Mean acq time: " << (tend - t0) / cpt << " (ms) " << endl ;
-  cout << "Mean fps: " << cpt / (tend - t0) * 1000 << " (Hz) " << endl ;
+  std::cout << "Mean acq time: " << (tend - t0) / cpt << " (ms) " << std::endl ;
+  std::cout << "Mean fps: " << cpt / (tend - t0) * 1000 << " (Hz) " << std::endl ;
 }
 #else
 int

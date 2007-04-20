@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.12 2007-03-20 13:21:52 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.13 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,7 @@ const int vpDisplayWin32::MAX_INIT_DELAY  = 5000;
 */
 void vpCreateWindow(threadParam * param)
 {
-  string title = param->title;
+  std::string title = param->title;
   (param->vpDisp)->window.initWindow(title, param->x, param->y,
 				     param->w, param->h);
   delete param;

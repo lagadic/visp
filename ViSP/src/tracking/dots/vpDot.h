@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.17 2007-03-16 14:47:31 asaunier Exp $
+ * $Id: vpDot.h,v 1.18 2007-04-20 14:22:21 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -214,10 +214,10 @@ public:
     Print the coordinates of the point center of gravity
     in the stream.
   */
-  friend ostream& operator<< (ostream& os, vpDot& p) { 
+  friend std::ostream& operator<< (std::ostream& os, vpDot& p) { 
     return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ; 
   } ;
-  void print(ostream& os) { os << *this << endl ; }
+  void print(std::ostream& os) { os << *this << std::endl ; }
 
 private:
   enum pixelInDot

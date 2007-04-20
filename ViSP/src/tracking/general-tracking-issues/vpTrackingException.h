@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTrackingException.h,v 1.3 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpTrackingException.h,v 1.4 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,8 +49,8 @@
    \brief error that can be emited by the vpTracking class and its derivates
  */
 /* Classes standards. */
-using namespace std;
-#include <iostream>                /* Classe ostream.    */
+
+#include <iostream>                /* Classe std::ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
@@ -81,7 +81,7 @@ public:
 public:
   vpTrackingException (const int code, const char * msg)
     : vpException(code, msg){ ; }
-  vpTrackingException (const int code, const string & msg)
+  vpTrackingException (const int code, const std::string & msg)
     : vpException(code, msg){ ; }
   vpTrackingException (const int code)
     : vpException(code){ ; }

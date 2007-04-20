@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.h,v 1.4 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpPoseVector.h,v 1.5 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -116,9 +116,9 @@ public:
     inline const double &operator [](int n) const { return *(data+n);  }
 
   //! Load an homogeneous matrix from a file
-  void load(ifstream &f) ;
+  void load(std::ifstream &f) ;
   //! Save an homogeneous matrix in a file
-  void save(ofstream &f) const ;
+  void save(std::ofstream &f) const ;
 
   //! Print  a vector [T thetaU] thetaU in degree
   void print() ;

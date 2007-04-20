@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.h,v 1.2 2007-02-26 17:26:45 fspindle Exp $
+ * $Id: vpWin32Window.h,v 1.3 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,7 +110,7 @@ class VISP_EXPORT vpWin32Window
   bool isInitialized(){ return initialized; }
 
   //! Initialize the window
-  void initWindow(string title, int posx, int posy, int w, int h);
+  void initWindow(std::string title, int posx, int posy, int w, int h);
 
   // Friend classes
   friend class vpDisplayWin32;

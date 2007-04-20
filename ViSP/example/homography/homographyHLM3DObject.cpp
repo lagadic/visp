@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: homographyHLM3DObject.cpp,v 1.1 2007-01-30 16:15:05 asaunier Exp $
+ * $Id: homographyHLM3DObject.cpp,v 1.2 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -118,8 +118,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -181,56 +181,56 @@ main(int argc, char ** argv)
   vpRotationMatrix aRb  ;
   vpTranslationVector aTb ;
   vpColVector n ;
-  cout << "-------------------------------" <<endl ;
+  std::cout << "-------------------------------" <<std::endl ;
   vpTRACE("Compare with built homography H = R + t/d n ") ;
   vpPlane bp(0,0,1,1) ;
   vpHomography aHb_built(aMb,bp) ;
   vpTRACE( "aHb built from the displacement ") ;
-  cout <<  endl <<aHb_built/aHb_built[2][2] <<  endl ;
+  std::cout <<  std::endl <<aHb_built/aHb_built[2][2] << std::endl ;
 
   aHb_built.computeDisplacement(aRb, aTb, n) ;
-  cout << "Rotation: aRb" <<endl ;
-  cout << aRb << endl ;
-  cout << "Translation: aTb" <<endl;
-  cout << (aTb).t() <<endl ;
-  cout << "Normal to the plane: n" <<endl;
-  cout << (n).t() <<endl ;
+  std::cout << "Rotation: aRb" <<std::endl ;
+  std::cout << aRb << std::endl ;
+  std::cout << "Translation: aTb" <<std::endl;
+  std::cout << (aTb).t() <<std::endl ;
+  std::cout << "Normal to the plane: n" <<std::endl;
+  std::cout << (n).t() <<std::endl ;
 
-  cout << "-------------------------------" <<endl ;
-  cout << "aMb "<<endl <<aMb << endl ;
-  cout << "-------------------------------" <<endl ;
+  std::cout << "-------------------------------" <<std::endl ;
+  std::cout << "aMb "<<std::endl <<aMb << std::endl ;
+  std::cout << "-------------------------------" <<std::endl ;
   vpHomography aHb ;
 
   vpHomography::HLM(nbpt,xb,yb,xa,ya,false, aHb) ;
 
   vpTRACE("aHb computed using the Malis paralax  algorithm") ;
     aHb /= aHb[2][2] ;
-  cout << endl << aHb<<  endl ;
+  std::cout << std::endl << aHb<< std::endl ;
 
 
-  cout << "-------------------------------" <<endl ;
+  std::cout << "-------------------------------" <<std::endl ;
   vpTRACE("extract R, T and n ") ;
   aHb.computeDisplacement(aRb, aTb, n) ;
-  cout << "Rotation: aRb" <<endl ;
-  cout << aRb << endl ;
-  cout << "Translation: aTb" <<endl;
-  cout << (aTb).t() <<endl   ;
-  cout << "Normal to the plane: n" <<endl;
-  cout << (n).t() <<endl ;
+  std::cout << "Rotation: aRb" <<std::endl ;
+  std::cout << aRb << std::endl ;
+  std::cout << "Translation: aTb" <<std::endl;
+  std::cout << (aTb).t() <<std::endl   ;
+  std::cout << "Normal to the plane: n" <<std::endl;
+  std::cout << (n).t() <<std::endl ;
 
 
-  cout << "-------------------------------" <<endl ;
+  std::cout << "-------------------------------" <<std::endl ;
   vpTRACE("test if ap = aHb bp") ;
 
   for(i=0 ; i < nbpt ; i++)
   {
-    cout << "Point "<< i<< endl ;
+    std::cout << "Point "<< i<< std::endl ;
     vpPoint p ;
-    cout << "(" ;
-    cout << aP[i].get_x()/aP[i].get_w()<<", "<< aP[i].get_y()/aP[i].get_w() ;
-    cout <<") =  (" ;
+    std::cout << "(" ;
+    std::cout << aP[i].get_x()/aP[i].get_w()<<", "<< aP[i].get_y()/aP[i].get_w() ;
+    std::cout <<") =  (" ;
     p = aHb*bP[i] ;
-    cout << p.get_x() /p.get_w()<<",  "<< p.get_y()/ p.get_w() <<")"<<endl ;
+    std::cout << p.get_x() /p.get_w()<<",  "<< p.get_y()/ p.get_w() <<")"<<std::endl ;
   }
 
 

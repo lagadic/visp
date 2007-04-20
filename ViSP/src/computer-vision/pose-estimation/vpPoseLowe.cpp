@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseLowe.cpp,v 1.3 2006-05-30 08:40:42 fspindle Exp $
+ * $Id: vpPoseLowe.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,7 +110,7 @@ void eval_function(int npt,double *xc,double *f)
     z = rd[2][0]*XO[i] + rd[2][1]*YO[i] + rd[2][2]*ZO[i] + xc[2];
     f[i] = x/z - XI[i];
     f[npt+i] = y/z - YI[i];
-   //    cout << f[i] << "   " << f[i+1] << endl ;
+   //    std::cout << f[i] << "   " << f[i+1] << std::endl ;
   }
 }
 
@@ -288,7 +288,7 @@ void
 vpPose::poseLowe(vpHomogeneousMatrix & cMo)
 {
   if (DEBUG_LEVEL1)
-    cout << "begin CCalcuvpPose::PoseLowe(...) " << endl;
+    std::cout << "begin CCalcuvpPose::PoseLowe(...) " << std::endl;
   int	n, m;	/* nombre d'elements dans la matrice jac */
   int	lwa;	/* taille du vecteur wa */
   int	ldfjac;	/* taille maximum d'une ligne de jac */
@@ -336,8 +336,8 @@ vpPose::poseLowe(vpHomogeneousMatrix & cMo)
 		      ipvt, lwa, wa);
   if (tst_lmder == -1)
   {
-    cout <<  " in CCalculPose::PoseLowe(...) : " ;
-    cout << "pb de minimisation,  returns FATAL_ERROR";
+    std::cout <<  " in CCalculPose::PoseLowe(...) : " ;
+    std::cout << "pb de minimisation,  returns FATAL_ERROR";
     // return FATAL_ERROR ;
   }
 
@@ -356,7 +356,7 @@ vpPose::poseLowe(vpHomogeneousMatrix & cMo)
   //  for (i=0;i<3;i++) for (j=0;j<3;j++) cMo[i][j] = rd[i][j];
 
   if (DEBUG_LEVEL1)
-    cout << "end CCalculPose::PoseLowe(...) " << endl;
+    std::cout << "end CCalculPose::PoseLowe(...) " << std::endl;
   //  return OK ;
 }
 

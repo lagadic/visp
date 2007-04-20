@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuFourPoints2DCamVelocity.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
+ * $Id: servoSimuFourPoints2DCamVelocity.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -133,8 +133,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -154,14 +154,14 @@ main(int argc, char ** argv)
   vpRobotCamera robot ;
 
 
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " Eye-in-hand task control,  articular velocity are computed" << endl ;
-  cout << " Simulation " << endl ;
-  cout << " task : servo 4 points " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  std::cout << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << " Test program for vpServo "  <<std::endl ;
+  std::cout << " Eye-in-hand task control,  articular velocity are computed" << std::endl ;
+  std::cout << " Simulation " << std::endl ;
+  std::cout << " task : servo 4 points " << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << std::endl ;
 
 
   vpTRACE("sets the initial camera location " ) ;
@@ -229,7 +229,7 @@ main(int argc, char ** argv)
   vpTRACE("\t loop") ;
   while(iter++<200)
     {
-      cout << "---------------------------------------------" << iter <<endl ;
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;
 
 

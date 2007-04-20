@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.cpp,v 1.7 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpRobotCamera.cpp,v 1.8 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -87,7 +87,7 @@ vpRobotCamera::get_eJe(vpMatrix &_eJe)
 void
 vpRobotCamera::get_fJe(vpMatrix &_fJe)
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 
@@ -173,7 +173,7 @@ vpRobotCamera::setPosition(const vpHomogeneousMatrix &_cMo)
 //! get a position expressed in the articular frame
 void
 vpRobotCamera::getArticularPosition(vpColVector &q) const
-{ cout << "Not implemented ! " << endl;
+{ std::cout << "Not implemented ! " << std::endl;
 }
 
 //! get a displacement (frame as to ve specified)
@@ -181,21 +181,21 @@ void
 vpRobotCamera::getPosition(const vpRobot::ControlFrameType repere,
 			   vpColVector &q)
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 //! get a displacement expressed in the camera frame
 void
 vpRobotCamera::getCameraDisplacement(vpColVector &v)
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 //! get a displacement expressed  in the articular frame
 void
 vpRobotCamera::getArticularDisplacement(vpColVector &qdot)
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 //! get a displacement (frame as to ve specified)
@@ -203,7 +203,7 @@ void
 vpRobotCamera::getDisplacement(const vpRobot::ControlFrameType repere,
 			       vpColVector &q)
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 

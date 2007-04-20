@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGenericFeature.cpp,v 1.11 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpGenericFeature.cpp,v 1.12 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -173,13 +173,13 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
   catch(vpMatrixException me)
   {
     vpERROR_TRACE("caught a Matric related error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
     vpERROR_TRACE("caught another error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   return e ;
@@ -234,13 +234,13 @@ vpGenericFeature::error( const int select)
   catch(vpMatrixException me)
   {
     vpERROR_TRACE("caught a Matric related error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
     vpERROR_TRACE("caught another error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
 
@@ -255,11 +255,11 @@ vpGenericFeature::interaction(const int select) const
 {
   if (L.getRows() == 0)
   {
-    cout << "interaction matrix " << L << endl ;
+    std::cout << "interaction matrix " << L << std::endl ;
     vpERROR_TRACE("Interaction has not been initialized");
-    cout << "A possible reason (may be) is that you have set" << endl ;
-    cout << "the interaction matrix for s and compute a control " << endl ;
-    cout << "with Ls=s* (default) or vice versa" << endl ;
+    std::cout << "A possible reason (may be) is that you have set" << std::endl ;
+    std::cout << "the interaction matrix for s and compute a control " << std::endl ;
+    std::cout << "with Ls=s* (default) or vice versa" << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::notInitializedError,
 			     "size mismatch between s* dimension "
@@ -297,7 +297,7 @@ vpGenericFeature::setInteractionMatrix(const vpMatrix &L)
 
   if (L.getRows() != dim_s)
   {
-    cout << L.getRows() <<"  " << dim_s << endl ;;
+    std::cout << L.getRows() <<"  " << dim_s << std::endl ;;
     vpERROR_TRACE("size mismatch between interaction matrix size "
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
@@ -403,14 +403,14 @@ void
 vpGenericFeature::print(const int select) const
 {
 
-  cout <<"Generic Feature: "  ;
+  std::cout <<"Generic Feature: "  ;
   for (int i=0 ; i < dim_s ; i++)
     if (FEATURE_LINE[i] & select )
     {
-      cout << " s["<<i << "]=" << s[i] ;
+      std::cout << " s["<<i << "]=" << s[i] ;
     }
 
-  cout <<endl ;
+  std::cout <<std::endl ;
 }
 
 vpGenericFeature *vpGenericFeature::duplicate() const

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.cpp,v 1.8 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpMeTracker.cpp,v 1.9 2007-04-20 14:22:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,20 +58,20 @@ void
 vpMeTracker::init()
 {
   if (DEBUG_LEVEL1)
-    cout << "begin vpMeTracker::init() " <<  endl ;
+    std::cout << "begin vpMeTracker::init() " <<  std::endl ;
 
   vpTracker::init()  ;
   p.resize(2) ;
   selectDisplay = NONE ;
 
   if (DEBUG_LEVEL1)
-    cout << "end vpMeTracker::init() " <<  endl ;
+    std::cout << "end vpMeTracker::init() " <<  std::endl ;
 }
 
 vpMeTracker::vpMeTracker()
 {
   if (DEBUG_LEVEL1)
-    cout << "begin vpMeTracker::vpMeTracker() " <<  endl ;
+    std::cout << "begin vpMeTracker::vpMeTracker() " <<  std::endl ;
 
   init();
   me = NULL ;
@@ -79,29 +79,29 @@ vpMeTracker::vpMeTracker()
   nGoodElement = 0;
 
   if (DEBUG_LEVEL1)
-    cout << "end vpMeTracker::vpMeTracker() " << endl ;
+    std::cout << "end vpMeTracker::vpMeTracker() " << std::endl ;
 }
 
 vpMeTracker::~vpMeTracker()
 {
-  if (DEBUG_LEVEL1) cout << "begin vpMeTracker::~vpMeTracker() " << endl ;
+  if (DEBUG_LEVEL1) std::cout << "begin vpMeTracker::~vpMeTracker() " << std::endl ;
 
   if(!(list.empty()))
     list.kill();
 
-  if (DEBUG_LEVEL1) cout << "end vpMeTracker::~vpMeTracker() " << endl ;
+  if (DEBUG_LEVEL1) std::cout << "end vpMeTracker::~vpMeTracker() " << std::endl ;
 }
 
 vpMeTracker&
 vpMeTracker::operator = (vpMeTracker& p)
 {
-  if (DEBUG_LEVEL1) cout << "begin vpMeTracker::operator=" << endl ;
+  if (DEBUG_LEVEL1) std::cout << "begin vpMeTracker::operator=" << std::endl ;
 
   list = p.list;
   me = p.me;
   selectDisplay = p.selectDisplay ;
 
-  if (DEBUG_LEVEL1) cout << "end vpMeTracker::operator=" << endl ;
+  if (DEBUG_LEVEL1) std::cout << "end vpMeTracker::operator=" << std::endl ;
   return *this;
 }
 
@@ -145,7 +145,7 @@ void
 vpMeTracker::initTracking(vpImage<unsigned char>& I)
 {
   if (DEBUG_LEVEL1)
-    cout << "begin vpMeTracker::initTracking() " << endl ;
+    std::cout << "begin vpMeTracker::initTracking() " << std::endl ;
 
 
   // Must set range to 0
@@ -197,17 +197,17 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
   /*
   if (res != OK)
   {
-    cout<< "In vpMeTracker::initTracking(): " ;
+    std::cout<< "In vpMeTracker::initTracking(): " ;
     switch (res)
     {
     case  ERR_TRACKING:
-      cout << "vpMeTracker::initTracking:Track return ERR_TRACKING " << endl ;
+      std::cout << "vpMeTracker::initTracking:Track return ERR_TRACKING " << std::endl ;
       break ;
     case fatalError:
-      cout << "vpMeTracker::initTracking:Track return fatalError" << endl ;
+      std::cout << "vpMeTracker::initTracking:Track return fatalError" << std::endl ;
       break ;
     default:
-      cout << "vpMeTracker::initTracking:Track return error " << res << endl ;
+      std::cout << "vpMeTracker::initTracking:Track return error " << res << std::endl ;
     }
     return res ;
   }
@@ -217,7 +217,7 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
 
 
   if (DEBUG_LEVEL1)
-  cout << "end vpMeTracker::initTracking() " << endl ;
+  std::cout << "end vpMeTracker::initTracking() " << std::endl ;
 
 }
 
@@ -226,7 +226,7 @@ void
 vpMeTracker::track(vpImage<unsigned char>& I)
 {
   if (DEBUG_LEVEL1)
-    cout << "begin  vpMeTracker::Track():" << endl ;
+    std::cout << "begin  vpMeTracker::Track():" << std::endl ;
 
   if (list.nbElement()==0)
   {
@@ -286,7 +286,7 @@ vpMeTracker::track(vpImage<unsigned char>& I)
   }
 
   if (DEBUG_LEVEL1)
-    cout << "end  vpMeTracker::Track()" <<nGoodElement << endl ;
+    std::cout << "end  vpMeTracker::Track()" <<nGoodElement << std::endl ;
 
 }
 
@@ -296,8 +296,8 @@ vpMeTracker::display(vpImage<unsigned char>& I)
 {
   if (DEBUG_LEVEL1)
   {
-    cout <<"begin vpMeTracker::displayList() " << endl ;
-    cout<<" There are "<<list.nbElement()<< " sites in the list " << endl ;
+    std::cout <<"begin vpMeTracker::displayList() " << std::endl ;
+    std::cout<<" There are "<<list.nbElement()<< " sites in the list " << std::endl ;
   }
   list.front();
 
@@ -321,7 +321,7 @@ vpMeTracker::display(vpImage<unsigned char>& I)
 
   if (DEBUG_LEVEL1)
   {
-    cout <<"end vpMeTracker::displayList() " << endl ;
+    std::cout <<"end vpMeTracker::displayList() " << std::endl ;
   }
 }
 

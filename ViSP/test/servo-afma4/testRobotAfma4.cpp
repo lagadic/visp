@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma4.cpp,v 1.8 2007-02-16 09:27:23 fspindle Exp $
+ * $Id: testRobotAfma4.cpp,v 1.9 2007-04-20 14:22:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,7 +43,7 @@
 */
 
 #include <iostream>
-using namespace std;
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpRobotAfma4.h>
@@ -59,7 +59,7 @@ int main()
 {
   try
   {
-    cout << "a test..." << endl;
+    std::cout << "a test..." << std::endl;
 
     vpAfma4 afma4;
     vpCTRACE << afma4;
@@ -78,7 +78,7 @@ int main()
 #else
 int main()
 {
-  cout << "a test..." << endl;
+  std::cout << "a test..." << std::endl;
 }
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: histogram.cpp,v 1.1 2007-03-02 13:05:11 fspindle Exp $
+ * $Id: histogram.cpp,v 1.2 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -88,7 +88,7 @@ main(int argc, char ** argv)
   h.calculate(I);
 
   if (1){
-    cout << "Histogram image: " << endl;
+    std::cout << "Histogram image: " << std::endl;
     for (unsigned int i=0; i < h.getSize(); i ++)
       printf("%d: %d\n", i, h[i]);
   }
@@ -97,7 +97,7 @@ main(int argc, char ** argv)
   h.smooth();
 
   if (1){
-    cout << "Smoothed histogram image: " << endl;
+    std::cout << "Smoothed histogram image: " << std::endl;
     unsigned *values = h.getValues();
     for (unsigned int i=0; i < h.getSize(); i ++)
       printf("%d: %d\n", i, values[i]);
@@ -141,7 +141,7 @@ main(int argc, char ** argv)
   vpHistogramPeak peak1, peak2;
   nbpeaks = h.getPeaks(distance, peak1, peak2);
   if (nbpeaks != 2) {
-    cout << "Not a bimodal histogram..." << endl;
+    std::cout << "Not a bimodal histogram..." << std::endl;
   }
   else {
     vpTRACE("Bimodal histogram: main peak1: %d-%d second peak2: %d-%d", 
@@ -211,7 +211,7 @@ main(int argc, char ** argv)
   // which of peakl or peakr is the highest.
   vpHistogramPeak peakl, peakr;
   if (h.getPeaks(distance, peakl, peakr, valey) == false) {
-    cout << "Not a bimodal histogram..." << endl;
+    std::cout << "Not a bimodal histogram..." << std::endl;
   }
   else {
     vpTRACE("Bimodal histogram: valey %d-%d for peakl: %d-%d peakr: %d-%d", 

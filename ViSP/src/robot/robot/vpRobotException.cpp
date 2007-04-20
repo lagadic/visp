@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotException.cpp,v 1.3 2006-11-17 14:59:48 fspindle Exp $
+ * $Id: vpRobotException.cpp,v 1.4 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,7 +45,7 @@ vpRobotException::vpRobotException (const int code, const char * msg)
     : vpException(code, msg)
 {
 }
-vpRobotException::vpRobotException (const int code, const string & msg)
+vpRobotException::vpRobotException (const int code, const std::string & msg)
   : vpException(code, msg)
 {
 }

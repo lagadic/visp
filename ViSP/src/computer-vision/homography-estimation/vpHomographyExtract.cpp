@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyExtract.cpp,v 1.6 2007-03-29 13:49:02 hatran Exp $
+ * $Id: vpHomographyExtract.cpp,v 1.7 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -141,9 +141,9 @@ vpHomography::computeDisplacement (const vpHomography &H,
   }
 
 #ifdef DEBUG_Homographie
-  printf("U : \n") ; cout << mU << endl ;
-  printf("V : \n") ; cout << mV << endl ;
-  printf("Valeurs singulieres : ") ; cout << sv.t() ;
+  printf("U : \n") ; std::cout << mU << std::endl ;
+  printf("V : \n") ; std::cout << mV << std::endl ;
+  printf("Valeurs singulieres : ") ; std::cout << sv.t() ;
 #endif
 
   /* A verifier si necessaire!!! */
@@ -268,9 +268,9 @@ vpHomography::computeDisplacement (const vpHomography &H,
 
 
 #ifdef DEBUG_Homographie
-  printf("t' : ") ; cout << aTbp.t() ;
-  printf("t/d : ") ; cout << aTb.t() ;
-  printf("n : ") ; cout << n.t() ;
+  printf("t' : ") ; std::cout << aTbp.t() ;
+  printf("t/d : ") ; std::cout << aTb.t() ;
+  printf("n : ") ; std::cout << n.t() ;
 #endif
 
 
@@ -315,7 +315,7 @@ vpHomography::computeDisplacement (const vpHomography &H,
   }
   /*transpose_carre(aRb,3); */
 #ifdef DEBUG_Homographie
-  printf("R : %d\n",aRb.isARotationMatrix() ) ; cout << aRb << endl ;
+  printf("R : %d\n",aRb.isARotationMatrix() ) ; std::cout << aRb << std::endl ;
 #endif
 
 }
@@ -451,9 +451,9 @@ vpHomography::computeDisplacement (const vpHomography &H,
   }
 
 #ifdef DEBUG_Homographie
-  printf("U : \n") ; cout << mU << endl ;
-  printf("V : \n") ; cout << mV << endl ;
-  printf("Valeurs singulieres : ") ; cout << sv.t() ;
+  printf("U : \n") ; std::cout << mU << std::endl ;
+  printf("V : \n") ; std::cout << mV << std::endl ;
+  printf("Valeurs singulieres : ") ; std::cout << sv.t() ;
 #endif
 
   /* A verifier si necessaire!!! */
@@ -578,9 +578,9 @@ vpHomography::computeDisplacement (const vpHomography &H,
 
 
 #ifdef DEBUG_Homographie
-  printf("t' : ") ; cout << aTbp.t() ;
-  printf("t/d : ") ; cout << aTb.t() ;
-  printf("n : ") ; cout << n.t() ;
+  printf("t' : ") ; std::cout << aTbp.t() ;
+  printf("t/d : ") ; std::cout << aTb.t() ;
+  printf("n : ") ; std::cout << n.t() ;
 #endif
 
 
@@ -625,7 +625,7 @@ vpHomography::computeDisplacement (const vpHomography &H,
   }
   /*transpose_carre(aRb,3); */
 #ifdef DEBUG_Homographie
-  printf("R : %d\n",aRb.isARotationMatrix() ) ; cout << aRb << endl ;
+  printf("R : %d\n",aRb.isARotationMatrix() ) ; std::cout << aRb << std::endl ;
 #endif
 
 }
@@ -1284,24 +1284,24 @@ vpHomography::computeDisplacement(const vpMatrix H,
   }
   else
   {
-    cout << "On tombe dans le cas particulier ou le mouvement n'est pas estimable!" << endl;
+    std::cout << "On tombe dans le cas particulier ou le mouvement n'est pas estimable!" << std::endl;
   }
 
   // on peut ensuite afficher les resultats...
-  /* cout << "Analyse des resultats : "<< endl; */
+  /* std::cout << "Analyse des resultats : "<< std::endl; */
   /* if (cas==cas1) */
-  /* cout << "On est dans le cas 1" << endl; */
+  /* std::cout << "On est dans le cas 1" << std::endl; */
   /* if (cas==cas2) */
-  /* cout << "On est dans le cas 2" << endl; */
+  /* std::cout << "On est dans le cas 2" << std::endl; */
   /* if (cas==cas3) */
-  /* cout << "On est dans le cas 3" << endl; */
+  /* std::cout << "On est dans le cas 3" << std::endl; */
   /* if (cas==cas4) */
-  /* cout << "On est dans le cas 4" << endl; */
+  /* std::cout << "On est dans le cas 4" << std::endl; */
 
   /* if (distanceFictive < 0) */
-  /* cout << "d'<0" << endl; */
+  /* std::cout << "d'<0" << std::endl; */
   /* else */
-  /* cout << "d'>0" << endl; */
+  /* std::cout << "d'>0" << std::endl; */
 
 #ifdef DEBUG_Homographie
   printf("fin : Homographie_EstimationDeplacementCamera\n");

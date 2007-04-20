@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.14 2007-04-19 07:50:02 asaunier Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.15 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,22 +63,22 @@ const int          vpRobotAfma6::nbArticulations = 6;
 
 void emergencyStop(int signo)
 {
-  cout << "Arret de la tache par : SIGNAL= " << (char)7  ;
+  std::cout << "Arret de la tache par : SIGNAL= " << (char)7  ;
   switch(signo)
   {
   case  SIGINT:
-    cout << "SIGINT (arret par ^C) " << endl ; break ;
+    std::cout << "SIGINT (arret par ^C) " << std::endl ; break ;
   case SIGSEGV:
-    cout <<"SIGSEGV (arret par segmentation fault) " << endl ; break ;
+    std::cout <<"SIGSEGV (arret par segmentation fault) " << std::endl ; break ;
   case SIGBUS:
-    cout <<"SIGBUS (arret par bus error) " << endl ; break ;
+    std::cout <<"SIGBUS (arret par bus error) " << std::endl ; break ;
   default :
-    cout << signo << endl ;
+    std::cout << signo << std::endl ;
   }
   stop_mouvement_Afma6() ;
   vmeClose_Afma6();
 
-  cout << "exit(1)" <<endl ;
+  std::cout << "exit(1)" <<std::endl ;
   exit(1) ;
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDebug.h,v 1.8 2006-10-13 12:07:12 fspindle Exp $
+ * $Id: vpDebug.h,v 1.9 2007-04-20 14:22:21 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -31,10 +31,10 @@
  * Debug and trace macro.
  *
  *   - TRACING:    vpTRACE and vpERROR_TRACE work like printf with carreer return at the end of the string.
- *                 vpCERROR et vpCTRACE work like the C++ output streams cout and cerr.
+ *                 vpCERROR et vpCTRACE work like the C++ output streams std::cout and std::cerr.
  *   - DEBUGING:   vpDEBUG_TRACE(niv,  and vpDERROR_TRACE(niv, work like printf, but print only if the
  *                 tracing level niv is greater than the debug level VP_DEBUG_MODE.
- *                 vpCDEBUG(niv) work like the C++ output stream cout.
+ *                 vpCDEBUG(niv) work like the C++ output stream std::cout.
  *                 vpDEBUG_ENABLE(niv) is equal to 1 if the debug level niv is greater than the debug mode
  *                 VP_DEBUG_MODE, 0 else.
  *   - PROG DEFENSIVE: DEFENSIF(a) is equal to a if defensive mode is active, 0 else.
@@ -50,7 +50,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <iostream>
-using namespace std;
+
 
 #ifdef WIN32
 #  ifndef __FUNCTION__
@@ -78,7 +78,7 @@ private:
     const char* currentFunc; //Name of the function to use in the displays
     int currentLine;		 //Line to use in the displays
 
-    //if true, output to cerr/stderr else cout/stdout
+    //if true, output to std::cerr/stderr else std::cout/stdout
     bool err;
     //string to display before anything else
     const char* header;
@@ -115,7 +115,7 @@ public:
 	    va_list args;
 	    va_start(args, format);
 
-	    cout << "(N" << niv << ") " ;
+	    std::cout << "(N" << niv << ") " ;
 	    //calls display with it
 	    display(format, args);
 
@@ -134,7 +134,7 @@ public:
 	va_start(args, format);
 
 #ifdef VP_DEBUG
-	cout<<"(N0) ";
+	std::cout<<"(N0) ";
 #endif
 
 	//calls display with it
@@ -145,7 +145,7 @@ public:
 
     /*!
 
-      Displays a message to either stdout/cout or stderr/cerr (based on error
+      Displays a message to either stdout/std::cout or stderr/std::cerr (based on error
       boolean).
 
       \param format Formating string.
@@ -154,13 +154,13 @@ public:
     */
     void display(const char* format, va_list args)
     {
-	//if we want to write to cerr/stderr
+	//if we want to write to std::cerr/stderr
 	if(err)
 	{
 	    //first writes the header if there is one
-	    if(header != NULL) cerr<<header;
+	    if(header != NULL) std::cerr<<header;
 	    //then writes the recorded namefile, function and line
-	    cerr << "!!\t" << currentFile << ": " <<currentFunc << "(#" << currentLine << ") :" ;
+	    std::cerr << "!!\t" << currentFile << ": " <<currentFunc << "(#" << currentLine << ") :" ;
 	    //and finally writes the message passed to () operator.
 	    vfprintf (stderr, format, args);
 	    fprintf (stderr, "\n");
@@ -170,9 +170,9 @@ public:
 	else
 	{
 	    //first writes the header if there is one
-	    if(header != NULL) cout<<header;
+	    if(header != NULL) std::cout<<header;
 	    //then writes the recorded namefile, function and line
-	    cout <<currentFile << ": " << currentFunc << "(#" << currentLine << ") :" ;
+	    std::cout <<currentFile << ": " << currentFunc << "(#" << currentLine << ") :" ;
 	    //and finally writes the message passed to () operator.
 	    vprintf (format, args);
 	    printf ("\n");
@@ -192,16 +192,16 @@ public:
 
 /*!
   Used to display trace messages on the standard stream (C++).
-  Use like this : vpCTRACE<<"my message"<<endl;
+  Use like this : vpCTRACE<<"my message"<<std::endl;
 */
-#define vpCTRACE cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#define vpCTRACE std::cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 
 /*!
   Used to display error messages on the error stream (C++).
-  Use like this : vpCERROR<<"my message"<<endl;
+  Use like this : vpCERROR<<"my message"<<std::endl;
 */
-#define vpCERROR cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#define vpCERROR std::cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 /*!
   Used to display error messages on the error stream.
@@ -241,10 +241,10 @@ public:
 #define vpDEBUG_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, false))
 
 /*!
-  vpCDEBUG(niv) work like the C++ output stream cout.
+  vpCDEBUG(niv) work like the C++ output stream std::cout.
 */
 #define vpCDEBUG(niv) if (VP_DEBUG_MODE < niv) ; else \
-		cout << "(N" << niv << ") "<<  __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+		std::cout << "(N" << niv << ") "<<  __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 /*!
 
@@ -257,7 +257,7 @@ public:
 
 inline void vpDERROR_TRACE(int /* niv */, char * /* a */, ...){};
 inline void vpDEBUG_TRACE(int /* niv */, char * /* a */, ...){};
-#define vpCDEBUG(niv) if (1) ; else cout
+#define vpCDEBUG(niv) if (1) ; else std::cout
 #define vpDEBUG_ENABLE(niv) (0)
 
 #endif

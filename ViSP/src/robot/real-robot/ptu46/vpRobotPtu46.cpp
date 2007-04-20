@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotPtu46.cpp,v 1.10 2007-04-19 08:16:51 asaunier Exp $
+ * $Id: vpRobotPtu46.cpp,v 1.11 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -632,7 +632,7 @@ vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
   }
 
   vpCDEBUG(12) << "v: " << ptuSpeedInterface[0]
-	     << " " << ptuSpeedInterface[1] << endl;
+	     << " " << ptuSpeedInterface[1] << std::endl;
   ptu.move(ptuSpeedInterface, ptuFrameInterface);
   return;
 }

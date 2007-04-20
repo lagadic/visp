@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotTemplate.cpp,v 1.3 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpRobotTemplate.cpp,v 1.4 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,7 +50,7 @@
 void vpRobotTemplate::init()
 {
   vpTRACE(" Get the joint limits " ) ;
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 //! constructor
@@ -63,7 +63,7 @@ vpRobotTemplate::vpRobotTemplate()
 //! constructor
 vpRobotTemplate::~vpRobotTemplate()
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 /*
@@ -79,14 +79,14 @@ get_fJe
 void
 vpRobotTemplate::get_eJe(vpMatrix &_eJe) const
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 //! get the robot Jacobian expressed in the robot reference frame
 void
 vpRobotTemplate::get_fJe(vpMatrix &_fJe) const
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 
@@ -102,25 +102,25 @@ sendArticularVelocity
 //! send to the controller a velocity expressed in the camera frame
 void vpRobotTemplate::sendCameraVelocity(const vpColVector &v)
 {
-  cout << "Not implemented ! " << endl;
-  cout << "To implement me you need : " << endl ;
-  cout << "\t to known the robot jacobian expressed in " ;
-  cout << "the end-effector frame (eJe) " <<endl ;
-  cout << "\t the frame transformation  between camera frame " ;
-  cout << "and end-effector frame (cMe)" << endl ;
+  std::cout << "Not implemented ! " << std::endl;
+  std::cout << "To implement me you need : " << std::endl ;
+  std::cout << "\t to known the robot jacobian expressed in " ;
+  std::cout << "the end-effector frame (eJe) " <<std::endl ;
+  std::cout << "\t the frame transformation  between camera frame " ;
+  std::cout << "and end-effector frame (cMe)" << std::endl ;
 }
 
 //! send to the controller a velocity expressed in the articular frame
 void
 vpRobotTemplate::sendArticularVelocity(const  vpColVector &qdot)
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 //! send to the controller a velocity (frame as to ve specified)
 void
 vpRobotTemplate::setVelocity(const int frame, const vpColVector &vel)
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 
@@ -134,36 +134,36 @@ THESE FUNCTIONS ARE NOT MENDATORY BUT ARE USUALLY USEFUL
 void
 vpRobotTemplate::getPosition(vpPoseVector &q) const
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 //! get a position expressed in the articular frame
 void
 vpRobotTemplate::getArticularPosition(vpColVector &q) const
-{ cout << "Not implemented ! " << endl;
+{ std::cout << "Not implemented ! " << std::endl;
 }
 //! get a displacement (frame as to ve specified)
 void
 vpRobotTemplate::getPosition( const  int frame, vpColVector &q) const
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 //! get a displacement expressed in the camera frame
 void
 vpRobotTemplate::getCameraDisplacement(vpColVector &v)  const
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 //! get a displacement expressed  in the articular frame
 void
 vpRobotTemplate::getArticularDisplacement(vpColVector &qdot) const
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 //! get a displacement (frame as to ve specified)
 void
 vpRobotTemplate::getDisplacement( const  int frame, vpColVector &q) const
 {
-  cout << "Not implemented ! " << endl;
+  std::cout << "Not implemented ! " << std::endl;
 }
 
 

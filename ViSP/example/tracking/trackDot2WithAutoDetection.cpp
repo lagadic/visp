@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.4 2007-03-06 15:45:44 fspindle Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.5 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -79,7 +79,7 @@
   \param ipath: Input image path.
 
 */
-void usage(char *name, char *badparam, string ipath)
+void usage(char *name, char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
 Test auto detection of dots using vpDot2.\n\
@@ -122,7 +122,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string &ipath,
+bool getOptions(int argc, char **argv, std::string &ipath,
 		bool &click_allowed, bool &display)
 {
   char *optarg;
@@ -144,8 +144,8 @@ bool getOptions(int argc, char **argv, string &ipath,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -156,11 +156,11 @@ bool getOptions(int argc, char **argv, string &ipath,
 int
 main(int argc, char ** argv)
 {
-  string env_ipath;
-  string opt_ipath;
-  string ipath;
-  string dirname;
-  string filename;
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string ipath;
+  std::string dirname;
+  std::string filename;
   bool opt_click_allowed = true;
   bool opt_display = true;
 
@@ -188,23 +188,23 @@ main(int argc, char ** argv)
   // the input path comming from the command line option
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
-      cout << endl
-	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
-	   << "  we skip the environment variable." << endl;
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
     }
   }
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath);
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << endl
-	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl;
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -220,7 +220,7 @@ main(int argc, char ** argv)
   // Build the name of the image file
   unsigned iter = 1; // Image number
   std::ostringstream s;
-  s.setf(ios::right, ios::adjustfield);
+  s.setf(std::ios::right, std::ios::adjustfield);
   s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
   filename = dirname + s.str();
 
@@ -231,7 +231,7 @@ main(int argc, char ** argv)
   // exception readPGM may throw various exception if, for example,
   // the file does not exist, or if the memory cannot be allocated
   try{
-    vpCTRACE << "Load: " << filename << endl;
+    vpCTRACE << "Load: " << filename << std::endl;
 
     vpImageIo::readPGM(I, filename) ;
   }
@@ -241,12 +241,12 @@ main(int argc, char ** argv)
     // here this will result in the end of the program
     // Note that another error message has been printed from readPGM
     // to give more information about the error
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Cannot read " << filename << endl;
-    cerr << "  Check your -i " << ipath << " option " << endl
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Cannot read " << filename << std::endl;
+    std::cerr << "  Check your -i " << ipath << " option " << std::endl
 	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << endl;
+	 << std::endl;
     exit(-1);
   }
 
@@ -293,7 +293,7 @@ main(int argc, char ** argv)
     }
     catch(...)
       {
-	cerr << "Cannot initialise the tracking and get default dot features..." << endl;
+	std::cerr << "Cannot initialise the tracking and get default dot features..." << std::endl;
 	exit(-1);
       }
   }
@@ -322,14 +322,14 @@ main(int argc, char ** argv)
       vpDisplay::display(I) ;
     }
 
-    cout << "Search dots in image" << filename << endl;
+    std::cout << "Search dots in image" << filename << std::endl;
     vpList<vpDot2> * list_d;
     list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
 
     if( list_d->nbElement() == 0 ) {
-      cout << "Dot auto detection did not work, "
+      std::cout << "Dot auto detection did not work, "
 	   << "Please click on a dot to perform a manual detection"
-	   << endl;
+	   << std::endl;
 
       d.initTracking( I );
       if (opt_display) {
@@ -339,7 +339,7 @@ main(int argc, char ** argv)
       }
     }
     else {
-      cout << endl << list_d->nbElement() << " dots are detected" << endl;
+      std::cout << std::endl << list_d->nbElement() << " dots are detected" << std::endl;
 
       if (opt_display) {
 	// Parse all founded dots for display
@@ -361,7 +361,7 @@ main(int argc, char ** argv)
 
     // If click is allowed, wait for a mouse click to launch the next iteration
     if (opt_display && opt_click_allowed) {
-      cout << "\nA click to continue..." << endl;
+      std::cout << "\nA click to continue..." << std::endl;
       // Wait for a blocking mouse click
       vpDisplay::getClick(I) ;
     }
@@ -369,7 +369,7 @@ main(int argc, char ** argv)
     iter ++;
   }
   if (opt_display && opt_click_allowed) {
-    cout << "\nA click to exit..." << endl;
+    std::cout << "\nA click to exit..." << std::endl;
     // Wait for a blocking mouse click
     vpDisplay::getClick(I) ;
   }

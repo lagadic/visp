@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoException.h,v 1.5 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpServoException.h,v 1.6 2007-04-20 14:22:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,12 +45,12 @@
 
 
 
-#include <iostream>                /* Classe ostream.    */
+#include <iostream>                /* Classe std::ostream.    */
 #include <string>                  /* Classe string.     */
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
 
-using namespace std;
+
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */
@@ -81,7 +81,7 @@ public:
 public:
   vpServoException (const int code, const char * msg)
     : vpException(code, msg){ ; }
-  vpServoException (const int code, const string & msg)
+  vpServoException (const int code, const std::string & msg)
     : vpException(code, msg){ ; }
   vpServoException (const int code)
     : vpException(code){ ; }

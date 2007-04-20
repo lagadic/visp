@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPtu46.cpp,v 1.9 2007-04-18 16:14:28 asaunier Exp $
+ * $Id: vpPtu46.cpp,v 1.10 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -112,7 +112,7 @@ vpPtu46::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
   fMc[3][2] = 0;
   fMc[3][3] = 1;
 
-  vpCDEBUG (6) << "Position de la camera: " << endl << fMc;
+  vpCDEBUG (6) << "Position de la camera: " << std::endl << fMc;
 
   return ;
 }
@@ -192,16 +192,16 @@ vpPtu46::init ()
 /* --- DISPLAY ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
-ostream & operator << (ostream & os,
+std::ostream & operator << (std::ostream & os,
 		       const vpPtu46 & constant)
 {
 
   os
-    << "Geometric parameters: " << endl
+    << "Geometric parameters: " << std::endl
     << "L: "
-    << "\t" << vpPtu46::L << endl
+    << "\t" << vpPtu46::L << std::endl
     << "h: "
-    << "\t" << vpPtu46::h << endl;
+    << "\t" << vpPtu46::h << std::endl;
 
   return os;
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.3 2007-04-18 16:14:27 asaunier Exp $
+ * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -124,7 +124,7 @@ void signalCtrC( int signumber )
   \param user : Username.
 
  */
-void usage(char *name, char *badparam, string& conf, string& debugdir, string& user)
+void usage(char *name, char *badparam, std::string& conf, std::string& debugdir, std::string& user)
 {
   fprintf(stdout, "\n\
   Example of eye-in-hand control law. We control here a real robot, the biclops\n\
@@ -159,7 +159,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, string& conf, string &debugdir, string& user)
+bool getOptions(int argc, char **argv, std::string& conf, std::string &debugdir, std::string& user)
 {
   char *optarg;
   int	c;
@@ -178,8 +178,8 @@ bool getOptions(int argc, char **argv, string& conf, string &debugdir, string& u
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, conf, debugdir, user);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -191,14 +191,14 @@ bool getOptions(int argc, char **argv, string& conf, string &debugdir, string& u
 int
 main(int argc, char ** argv)
 {
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " Test program for vpServo "  <<endl ;
-  cout << " Eye-in-hand task control, velocity computed in the camera frame" << endl ;
-  cout << " Simulation " << endl ;
-  cout << " task : servo a point " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  std::cout << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << " Test program for vpServo "  <<std::endl ;
+  std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
+  std::cout << " Simulation " << std::endl ;
+  std::cout << " task : servo a point " << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << std::endl ;
 
   try{
 
@@ -208,11 +208,11 @@ main(int argc, char ** argv)
     signal( SIGINT,&signalCtrC );
 
     //default unix configuration file path
-    string opt_conf = "/usr/share/BiclopsDefault.cfg";
+    std::string opt_conf = "/usr/share/BiclopsDefault.cfg";
 
-    string username;
-    string debugdir;
-    string opt_debugdir;
+    std::string username;
+    std::string debugdir;
+    std::string opt_debugdir;
 
     // Set the default output path
 #ifdef UNIX
@@ -234,7 +234,7 @@ main(int argc, char ** argv)
       debugdir = opt_debugdir;
 
     // Append to the output path string, the login name of the user
-    string dirname = debugdir + "/" + username;
+    std::string dirname = debugdir + "/" + username;
 
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(dirname) == false) {
@@ -244,10 +244,10 @@ main(int argc, char ** argv)
       }
       catch (...) {
 	usage(argv[0], NULL, opt_conf, debugdir, username);
-	cerr << endl
-	     << "ERROR:" << endl;
-	cerr << "  Cannot create " << dirname << endl;
-	cerr << "  Check your -d " << debugdir << " option " << endl;
+	std::cerr << std::endl
+	     << "ERROR:" << std::endl;
+	std::cerr << "  Cannot create " << dirname << std::endl;
+	std::cerr << "  Check your -d " << debugdir << " option " << std::endl;
 	exit(-1);
       }
     }
@@ -311,7 +311,7 @@ main(int argc, char ** argv)
     vpDot dot ;
 
     try{
-      cout << "Click on a dot to initialize the tracking..." << endl;
+      std::cout << "Click on a dot to initialize the tracking..." << std::endl;
       dot.setGraphics(true);
       dot.initTracking(I) ;
       dot.track(I);
@@ -347,10 +347,10 @@ main(int argc, char ** argv)
 
     vpTwistMatrix cVe ;
     robot.get_cVe(cVe) ;
-    cout << cVe <<endl ;
+    std::cout << cVe <<std::endl ;
     task.set_cVe(cVe) ;
 
-    cout << "Click in the image to start the servoing..." << endl;
+    std::cout << "Click in the image to start the servoing..." << std::endl;
     vpDisplay::getClick(I) ;
     vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
     vpMatrix eJe ;
@@ -359,7 +359,7 @@ main(int argc, char ** argv)
 
 
     vpTRACE("\t we want to see a point on a point..") ;
-    cout << endl ;
+    std::cout << std::endl ;
     task.addFeature(p,pd) ;
 
     vpTRACE("\t set the gain") ;
@@ -380,7 +380,7 @@ main(int argc, char ** argv)
       while (1)
 #endif
 	{
-	  cout << "---------------------------------------------" << iter <<endl ;
+	  std::cout << "---------------------------------------------" << iter <<std::endl ;
 
 	  g.acquire(I) ;
 	  vpDisplay::display(I) ;
@@ -397,13 +397,13 @@ main(int argc, char ** argv)
 	  robot.get_eJe(eJe) ;
 	  task.set_eJe(eJe) ;
 
-	  //  cout << (vpMatrix)cVe*eJe << endl ;
+	  //  std::cout << (vpMatrix)cVe*eJe << std::endl ;
 
 	  vpColVector v ;
 	  v = task.computeControlLaw() ;
 
 	  vpServoDisplay::display(task,cam,I) ;
-	  cout << v.t() ;
+	  std::cout << v.t() ;
 	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
 	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;

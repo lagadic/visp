@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMatrix.cpp,v 1.1 2007-01-26 16:24:38 asaunier Exp $
+ * $Id: testMatrix.cpp,v 1.2 2007-04-20 14:22:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -97,8 +97,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -121,7 +121,7 @@ main(int argc, char ** argv)
   M.eye(4);
 
   vpTRACE("call std::cout << M;");
-  std::cout << M << endl;
+  std::cout << M << std::endl;
 
   vpTRACE("call M.print (std::cout, 4);");
   M.print (std::cout, 4);
@@ -168,15 +168,15 @@ main(int argc, char ** argv)
   vpTRACE("------------------------");
   vpTRACE("--- TEST RESIZE --------");
   vpTRACE("------------------------");
-  vpCTRACE  << "5x5" << endl;
+  vpCTRACE  << "5x5" << std::endl;
   M.resize(5,5,false);
-  vpCTRACE << endl<< M;
-  vpCTRACE  << "3x2" << endl;
+  vpCTRACE << std::endl<< M;
+  vpCTRACE  << "3x2" << std::endl;
   M.resize(3,2,false);
-  vpCTRACE <<endl<< M;
-  vpCTRACE  << "2x2" << endl;
+  vpCTRACE <<std::endl<< M;
+  vpCTRACE  << "2x2" << std::endl;
   M.resize(2,2,false);
-  vpCTRACE << endl<<M;
+  vpCTRACE << std::endl<<M;
   vpTRACE("------------------------");
 
 
@@ -204,7 +204,7 @@ main(int argc, char ** argv)
 
   r.print(std::cout, 2, "r");
   c.print(std::cout, 2, "c");
-  cout << "r * c = " << rc << endl;
+  std::cout << "r * c = " << rc << std::endl;
 
 
 }

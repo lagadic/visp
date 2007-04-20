@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint3D.cpp,v 1.7 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpFeaturePoint3D.cpp,v 1.8 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -225,13 +225,13 @@ vpFeaturePoint3D::error(const vpBasicFeature &s_star,
   catch(vpMatrixException me)
   {
     vpERROR_TRACE("caught a Matric related error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
     vpERROR_TRACE("caught another error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
 
@@ -269,7 +269,7 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
   if (Z < 0)
   {
     vpERROR_TRACE("Point is behind the camera ") ;
-    cout <<"Z = " << Z << endl ;
+    std::cout <<"Z = " << Z << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
@@ -278,7 +278,7 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
   if (fabs(Z) < 1e-6)
   {
     vpERROR_TRACE("Point Z coordinates is null ") ;
-    cout <<"Z = " << Z << endl ;
+    std::cout <<"Z = " << Z << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
@@ -297,7 +297,7 @@ vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
   if (Z < 0)
   {
     vpERROR_TRACE("Point is behind the camera ") ;
-    cout <<"Z = " << Z << endl ;
+    std::cout <<"Z = " << Z << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
@@ -306,7 +306,7 @@ vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
   if (fabs(Z) < 1e-6)
   {
     vpERROR_TRACE("Point Z coordinates is null ") ;
-    cout <<"Z = " << Z << endl ;
+    std::cout <<"Z = " << Z << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
@@ -319,14 +319,14 @@ void
 vpFeaturePoint3D::print(const int select ) const
 {
 
-  cout <<"Point3D:  "  ;
+  std::cout <<"Point3D:  "  ;
   if (vpFeaturePoint3D::selectX() & select )
-    cout << " X=" << get_X() ;
+    std::cout << " X=" << get_X() ;
   if (vpFeaturePoint3D::selectY() & select )
-    cout << " Y=" << get_Y() ;
+    std::cout << " Y=" << get_Y() ;
   if (vpFeaturePoint3D::selectZ() & select )
-    cout << " Z=" << get_Z() ;
-  cout <<endl ;
+    std::cout << " Z=" << get_Z() ;
+  std::cout <<std::endl ;
 }
 
 

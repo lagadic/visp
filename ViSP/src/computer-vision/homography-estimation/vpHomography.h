@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.9 2007-04-03 15:59:39 fspindle Exp $
+ * $Id: vpHomography.h,v 1.10 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -152,9 +152,9 @@ public:
   void extract( vpHomogeneousMatrix &aRb) const;
 
   //! Load an homography from a file
-  void load(ifstream &f) ;
+  void load(std::ifstream &f) ;
   //! Save an homography in a file
-  void save(ofstream &f) const ;
+  void save(std::ofstream &f) const ;
 
   //! Print the matrix
   void print() ;

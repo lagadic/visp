@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.cpp,v 1.6 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpFeatureVanishingPoint.cpp,v 1.7 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -182,13 +182,13 @@ vpFeatureVanishingPoint::error(const vpBasicFeature &s_star,
   catch(vpMatrixException me)
   {
     vpERROR_TRACE("caught a Matrix related error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
     vpERROR_TRACE("caught another error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   return e ;
@@ -200,12 +200,12 @@ void
 vpFeatureVanishingPoint::print(const int select ) const
 {
 
-  cout <<"Point: " <<endl;
+  std::cout <<"Point: " <<std::endl;
   if (vpFeatureVanishingPoint::selectX() & select )
-    cout << " x=" << get_x() ;
+    std::cout << " x=" << get_x() ;
   if (vpFeatureVanishingPoint::selectY() & select )
-    cout << " y=" << get_y() ;
-  cout <<endl ;
+    std::cout << " y=" << get_y() ;
+  std::cout <<std::endl ;
 }
 
 

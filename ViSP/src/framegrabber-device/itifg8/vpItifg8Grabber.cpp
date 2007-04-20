@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.10 2007-04-20 13:26:59 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.11 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -617,7 +617,7 @@ void vpItifg8Grabber::setConfFile(const char *filename)
 
   \sa setBoard(), getBoard()
 */
-void vpItifg8Grabber::setConfFile(string filename)
+void vpItifg8Grabber::setConfFile(std::string filename)
 {
   setConfFile(filename.c_str());
 }

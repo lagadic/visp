@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testPose.cpp,v 1.7 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testPose.cpp,v 1.8 2007-04-20 14:22:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,8 +108,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -150,58 +150,58 @@ main(int argc, char ** argv)
   // Let's go ...
   vpHomogeneousMatrix cMo ;
 
-  cout <<"------------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LAGRANGE, cMo) ;
   vpTRACE("LAGRANGE pose : ") ;
-  cout << cMo << endl ;
-  cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<endl ;
+  std::cout << cMo << std::endl ;
+  std::cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<std::endl ;
 
 
-  cout <<"------------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
   vpTRACE( "LOWE pose :" ) ;
-  cout <<  cMo << endl ;
-  cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<endl ;
+  std::cout <<  cMo << std::endl ;
+  std::cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<std::endl ;
 
-  cout <<"------------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
   vpTRACE(  "DEMENTHON pose :" ) ;
-  cout <<  cMo << endl ;
-  cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<endl ;
+  std::cout <<  cMo << std::endl ;
+  std::cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<std::endl ;
 
-  cout <<"------------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
-  cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<endl ;
+  std::cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<std::endl ;
   //  vpTRACE(  "Pose LOWE"  ) ;
-  //  cout <<  cMo << endl ;
-  //  cout << "residu Lowe " << pose.computeResidual(cMo) <<endl ;
+  //  std::cout <<  cMo << std::endl ;
+  //  std::cout << "residu Lowe " << pose.computeResidual(cMo) <<std::endl ;
 
 
-  cout <<endl <<endl ;
-  cout <<"------------------------------------------------------------"<<endl ;
-  cout << "Virtual Visual servoing " << endl ;
+  std::cout <<std::endl << std::endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  std::cout << "Virtual Visual servoing " << std::endl ;
 
-  cout <<"------------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LAGRANGE, cMo) ;
   vpTRACE("LAGRANGE pose : ") ;
-  cout << cMo << endl ;
-  cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<endl ;
+  std::cout << cMo << std::endl ;
+  std::cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<std::endl ;
 
 
-  cout <<"------------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
   vpTRACE( "VIRTUAL_VS pose :" ) ;
-  cout <<  cMo << endl ;
-  cout << "vvs residual term: " <<pose.computeResidual(cMo) <<endl ;
+  std::cout <<  cMo << std::endl ;
+  std::cout << "vvs residual term: " <<pose.computeResidual(cMo) <<std::endl ;
 
-  cout <<"------------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
   vpTRACE(  "DEMENTHON pose :" ) ;
-  cout <<  cMo << endl ;
-  cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<endl ;
+  std::cout <<  cMo << std::endl ;
+  std::cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<std::endl ;
 
-  cout <<"------------------------------------------------------------"<<endl ;
+  std::cout <<"------------------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
-  cout << "vvs residual term: " <<pose.computeResidual(cMo) <<endl ;
+  std::cout << "vvs residual term: " <<pose.computeResidual(cMo) <<std::endl ;
 
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.h,v 1.6 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpIoTools.h,v 1.7 2007-04-20 14:22:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,7 +47,7 @@
 #include <iostream>
 #include <visp/vpConfig.h>
 
-using namespace std;
+
 
 /*!
   \class vpIoTools
@@ -59,16 +59,16 @@ class VISP_EXPORT vpIoTools
 {
 
 public:
-  static void getUserName(string &username);
+  static void getUserName(std::string &username);
   static bool checkDirectory(const char *dirname);
-  static bool checkDirectory(const string dirname);
+  static bool checkDirectory(const std::string dirname);
   static void makeDirectory(const char *dirname);
-  static void makeDirectory(const string dirname);
+  static void makeDirectory(const std::string dirname);
   static bool checkFilename(const char *filename);
-  static bool checkFilename(const string filename);
+  static bool checkFilename(const std::string filename);
 
-  static string path(const char * _p);
-  static string path(const string& _p);
+  static std::string path(const char * _p);
+  static std::string path(const std::string& _p);
 } ;
 
 

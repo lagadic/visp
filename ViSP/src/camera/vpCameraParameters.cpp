@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.3 2006-05-30 08:40:35 fspindle Exp $
+ * $Id: vpCameraParameters.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -227,21 +227,21 @@ vpCameraParameters::printParameters(int version)
 {
   if(version==1)
   {
-    cout << "Center : (" << u0<<","<<v0<<")" << endl ;
-    cout << "px = " << px <<"\t py = "<<py<< endl ;
-    cout << "Kd = " << kd << endl ;
+    std::cout << "Center : (" << u0<<","<<v0<<")" << std::endl ;
+    std::cout << "px = " << px <<"\t py = "<<py<< std::endl ;
+    std::cout << "Kd = " << kd << std::endl ;
   }
   else
   {
     if (version==2)
     {
-      cout << "Center : (" << u0 <<","<<v0<<")" << endl ;
-      cout << "px = " << px <<"\t py = "<<py<< endl ;
+      std::cout << "Center : (" << u0 <<","<<v0<<")" << std::endl ;
+      std::cout << "px = " << px <<"\t py = "<<py<< std::endl ;
 
     }
     else
     {
-      cout << "Center : (" << u0 <<","<<v0<<")" << endl ;
+      std::cout << "Center : (" << u0 <<","<<v0<<")" << std::endl ;
     }
   }
 }

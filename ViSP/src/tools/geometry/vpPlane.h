@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPlane.h,v 1.3 2006-06-27 10:09:28 fspindle Exp $
+ * $Id: vpPlane.h,v 1.4 2007-04-20 14:22:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,11 +103,11 @@ public:
   void getNormal(vpColVector &n) const;
 
 public: // Display, Print Member function
-  friend ostream& operator<< (ostream& os, vpPlane& p)
+  friend std::ostream& operator<< (std::ostream& os, vpPlane& p)
   {
     return (os  << "("<<p.getA() << ","<<p.getB()<< ","<<p.getC()<< ","<<p.getD() <<") ") ;
   } ;
-  void Print(ostream& os) { os << *this << endl ; }
+  void Print(std::ostream& os) { os << *this << std::endl ; }
 
 
 public: // Operation with  Plane

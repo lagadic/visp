@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.10 2007-03-13 14:55:17 mpressig Exp $
+ * $Id: vpPoint.h,v 1.11 2007-04-20 14:22:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -149,7 +149,7 @@ public:
 	       const vpColor::vpColorType color=vpColor::green) ;
   vpPoint *duplicate() const ;
 
-  friend ostream& operator<<(ostream& os, vpPoint& vpp);
+  friend std::ostream& operator<<(std::ostream& os, vpPoint& vpp);
 } ;
 
 

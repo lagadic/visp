@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.cpp,v 1.6 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpFeatureThetaU.cpp,v 1.7 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -262,7 +262,7 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
 void
 vpFeatureThetaU::print(const int select) const
 {
-  cout <<"ThetaU: " << s.t() ;
+  std::cout <<"ThetaU: " << s.t() ;
 }
 
 vpFeatureThetaU *vpFeatureThetaU::duplicate() const

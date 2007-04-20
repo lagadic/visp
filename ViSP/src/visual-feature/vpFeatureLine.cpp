@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureLine.cpp,v 1.7 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpFeatureLine.cpp,v 1.8 2007-04-20 14:22:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -223,13 +223,13 @@ vpFeatureLine::error(const vpBasicFeature &s_star,
   catch(vpMatrixException me)
   {
     vpERROR_TRACE("caught a Matric related error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
   catch(vpException me)
   {
     vpERROR_TRACE("caught another error") ;
-    cout <<endl << me << endl ;
+    std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
 
@@ -243,12 +243,12 @@ void
 vpFeatureLine::print(const int select ) const
 {
 
-  cout <<"Line:\t  " << A <<"X+" << B <<"Y+" << C <<"Z +" << D <<"=0" <<endl ;;
+  std::cout <<"Line:\t  " << A <<"X+" << B <<"Y+" << C <<"Z +" << D <<"=0" <<std::endl ;;
   if (vpFeatureLine::selectRho() & select )
-    cout << "     \trho=" << s[0] ;
+    std::cout << "     \trho=" << s[0] ;
   if (vpFeatureLine::selectTheta() & select )
-    cout << "     \ttheta=" << s[1] ;
-  cout <<endl ;
+    std::cout << "     \ttheta=" << s[1] ;
+  std::cout <<std::endl ;
 }
 
 void

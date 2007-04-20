@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpExponentialMap.cpp,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpExponentialMap.cpp,v 1.4 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,8 +155,8 @@ vpExponentialMap::direct(const vpColVector &v)
     if (pb == 1)
     {
       printf("pb vpHomogeneousMatrix::expMap\n");
-      cout << " Delta : " << endl << Delta << endl;
-      cout << " Delta_old : " << endl << Delta_old << endl;
+      std::cout << " Delta : " << std::endl << Delta << std::endl;
+      std::cout << " Delta_old : " << std::endl << Delta_old << std::endl;
     }
     // end of the test
   }

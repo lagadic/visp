@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.2 2007-01-30 17:19:08 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,11 +62,11 @@ int
 main()
 {
 
-  cout << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << " simulation of a 2 1/2 D visual servoing " << endl ;
-  cout << "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  std::cout << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << " simulation of a 2 1/2 D visual servoing " << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << std::endl ;
 
   // In this example we will simulate a visual servoing task.
   // In simulation, we have to define the scene frane Ro and the
@@ -268,7 +268,7 @@ main()
     vpColVector v ;
     vpTRACE(" ") ;
 
-    cout << logZ.getInteractionMatrix() ;
+    std::cout << logZ.getInteractionMatrix() ;
     // compute v = -lambda L^+(s-sd)
     v = task.computeControlLaw() ;
     vpTRACE(" ") ;
@@ -284,6 +284,6 @@ main()
   vpTRACE("Display task information " ) ;
   task.print() ;
   vpTRACE("Final camera location " ) ;
-  cout << cMo << endl ;
+  std::cout << cMo << std::endl ;
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTwistMatrix.cpp,v 1.1 2007-01-26 16:27:33 asaunier Exp $
+ * $Id: testTwistMatrix.cpp,v 1.2 2007-04-20 14:22:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,8 +103,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 

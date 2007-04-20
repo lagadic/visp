@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTime.cpp,v 1.4 2006-07-10 16:44:45 fspindle Exp $
+ * $Id: testTime.cpp,v 1.5 2007-04-20 14:22:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,7 @@
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
 
-using namespace std;
+
 
 // List of allowed command line options
 #define GETOPTARGS	"h"
@@ -103,8 +103,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -161,14 +161,14 @@ main(int argc, char ** argv)
 
   double t7 = vpTime::measureTimeMs();
 
-  cout << "t1-t0: computation: " << t1 - t0 << endl;
-  cout << "t2-t0: wait(t, 40 ms): " << t2 - t0 << endl;
-  cout << "t2-t1: waiting time(t, 40): " << t2 - t1 << endl;
-  cout << "t3-t2: sleep(10 ms): " << t3 - t2 << endl;
-  cout << "t4-t3: sleep(2 ms): " << t4 - t3 << endl;
-  cout << "t5-t4: wait(t, 19 ms): " << t5 - t4 << endl;
-  cout << "t6-t5: wait(5 ms): " << t6 - t5 << endl;
-  cout << "t7-t7: wait(21 ms): " << t7 - t6 << endl;
+  std::cout << "t1-t0: computation: " << t1 - t0 << std::endl;
+  std::cout << "t2-t0: wait(t, 40 ms): " << t2 - t0 << std::endl;
+  std::cout << "t2-t1: waiting time(t, 40): " << t2 - t1 << std::endl;
+  std::cout << "t3-t2: sleep(10 ms): " << t3 - t2 << std::endl;
+  std::cout << "t4-t3: sleep(2 ms): " << t4 - t3 << std::endl;
+  std::cout << "t5-t4: wait(t, 19 ms): " << t5 - t4 << std::endl;
+  std::cout << "t6-t5: wait(5 ms): " << t6 - t5 << std::endl;
+  std::cout << "t7-t7: wait(21 ms): " << t7 - t6 << std::endl;
 
   return 0;
 }

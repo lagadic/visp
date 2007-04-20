@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: imageDiskRW.cpp,v 1.3 2007-04-18 12:13:13 asaunier Exp $
+ * $Id: imageDiskRW.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,7 +74,7 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(char *name, char *badparam, string ipath, string opath, string user)
+void usage(char *name, char *badparam, std::string ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read and write PGM images on the disk. Also test exceptions.\n\
@@ -118,7 +118,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, char **argv,
-		string &ipath, string &opath, string user)
+		std::string &ipath, std::string &opath, std::string user)
 {
   char *optarg;
   int	c;
@@ -137,8 +137,8 @@ bool getOptions(int argc, char **argv,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath, opath, user);
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -151,22 +151,22 @@ int
 main(int argc, char ** argv)
 {
 
-  string env_ipath;
-  string opt_ipath;
-  string opt_opath;
-  string ipath;
-  string opath;
-  string filename;
-  string username;
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string opt_opath;
+  std::string ipath;
+  std::string opath;
+  std::string filename;
+  std::string username;
 
-  cout <<  "-------------------------------------------------------" << endl ;
-  cout <<  "  imageDiskRW.cpp" <<endl << endl ;
+  std::cout <<  "-------------------------------------------------------" << std::endl ;
+  std::cout <<  "  imageDiskRW.cpp" <<std::endl << std::endl ;
 
-  cout <<  "  reading and writting of PPM image" << endl ;
-  cout <<  "  read an image that does not exist" << endl ;
-  cout <<  "  write in a directory that does no exist" << endl ;
-  cout <<  "-------------------------------------------------------" << endl ;
-  cout << endl ;
+  std::cout <<  "  reading and writting of PPM image" << std::endl ;
+  std::cout <<  "  read an image that does not exist" << std::endl ;
+  std::cout <<  "  write in a directory that does no exist" << std::endl ;
+  std::cout <<  "-------------------------------------------------------" << std::endl ;
+  std::cout << std::endl ;
 
 
 // Get the VISP_IMAGE_PATH environment variable value
@@ -200,7 +200,7 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  string dirname = opath + vpIoTools::path("/") + username;
+  std::string dirname = opath + vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(dirname) == false) {
@@ -210,10 +210,10 @@ main(int argc, char ** argv)
     }
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
-      cerr << endl
-	   << "ERROR:" << endl;
-      cerr << "  Cannot create " << dirname << endl;
-      cerr << "  Check your -o " << opath << " option " << endl;
+      std::cerr << std::endl
+	   << "ERROR:" << std::endl;
+      std::cerr << "  Cannot create " << dirname << std::endl;
+      std::cerr << "  Check your -o " << opath << " option " << std::endl;
       exit(-1);
     }
   }
@@ -222,23 +222,23 @@ main(int argc, char ** argv)
   // the input path comming from the command line option
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
-      cout << endl
-	   << "WARNING: " << endl;
-      cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << endl
-	   << "  we skip the environment variable." << endl;
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
     }
   }
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opath, username);
-    cerr << endl
-	 << "ERROR:" << endl;
-    cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << endl
-	 << "  environment variable to specify the location of the " << endl
-	 << "  image path where test images are located." << endl << endl;
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -274,7 +274,7 @@ main(int argc, char ** argv)
   catch(vpImageException e)
   {
     vpERROR_TRACE("at main level");
-    cout << e << endl ;
+    std::cout << e << std::endl ;
   }
 
   // same thing if you to write in a directory that does not exist
@@ -287,10 +287,10 @@ main(int argc, char ** argv)
   catch(vpImageException e)
   {
     vpERROR_TRACE("at main level");
-    cout << e << endl ;
+    std::cout << e << std::endl ;
   }
 
-  cout << "----------------------------------------------------" << endl ;
+  std::cout << "----------------------------------------------------" << std::endl ;
 
  // Let's consider that the image is now a color image (32 bits RGBa)
   vpImage<vpRGBa> Irgba ;
@@ -314,7 +314,7 @@ main(int argc, char ** argv)
   catch(vpImageException e)
   {
     vpERROR_TRACE("at main level");
-    cout << e << endl ;
+    std::cout << e << std::endl ;
   }
 
  // test io error
@@ -326,7 +326,7 @@ main(int argc, char ** argv)
   catch(vpImageException e)
   {
     vpERROR_TRACE("at main level");
-    cout << e << endl ;
+    std::cout << e << std::endl ;
   }
 
 

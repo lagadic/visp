@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.cpp,v 1.2 2007-03-07 09:32:19 fspindle Exp $
+ * $Id: vpHistogram.cpp,v 1.3 2007-04-20 14:22:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -828,7 +828,7 @@ unsigned vpHistogram::sort(vpList<vpHistogramPeak> & peaks)
 */
 
 bool
-vpHistogram::write(const string &filename)
+vpHistogram::write(const std::string &filename)
 {
   return ( this->write(filename.c_str()) );
 }
@@ -848,7 +848,7 @@ vpHistogram::write(const string &filename)
 bool
 vpHistogram::write(const char *filename)
 {
-  string opath;
+  std::string opath;
 
   FILE *fd = fopen(filename, "w");
   if (fd == NULL)

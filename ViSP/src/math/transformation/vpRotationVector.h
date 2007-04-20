@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationVector.h,v 1.3 2006-06-12 14:50:04 brenier Exp $
+ * $Id: vpRotationVector.h,v 1.4 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,7 +47,7 @@
 
 #include <stdio.h>
 #include <iostream>
-using namespace std;
+
 
 #include <math.h>
 
@@ -91,7 +91,7 @@ public:
  //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT ostream &operator << (ostream &s,const vpRotationVector &m);
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,const vpRotationVector &m);
 
 } ;
 

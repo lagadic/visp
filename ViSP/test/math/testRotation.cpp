@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRotation.cpp,v 1.1 2007-01-26 16:26:32 asaunier Exp $
+ * $Id: testRotation.cpp,v 1.2 2007-04-20 14:22:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,8 +95,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -114,59 +114,59 @@ main(int argc, char ** argv)
 
   vpThetaUVector tu(vpMath::rad(90), vpMath::rad(120), vpMath::rad(45)) ;
 
-  cout << "Initialization " <<endl ;
-  cout << tu << endl ;
+  std::cout << "Initialization " <<std::endl ;
+  std::cout << tu << std::endl ;
 
 
-  cout << "From vpThetaUVector to vpRotationMatrix " << endl ;
+  std::cout << "From vpThetaUVector to vpRotationMatrix " << std::endl ;
   vpRotationMatrix R(tu)  ;
 
-  cout << "Matrix R" ;
-  if (R.isARotationMatrix()==1) cout <<" is a rotation matrix " << endl ;
-  else cout <<" is not a rotation matrix " << endl ;
+  std::cout << "Matrix R" ;
+  if (R.isARotationMatrix()==1) std::cout <<" is a rotation matrix " << std::endl ;
+  else std::cout <<" is not a rotation matrix " << std::endl ;
 
-  cout << R << endl ;
+  std::cout << R << std::endl ;
 
-  cout << "From vpRotationMatrix to vpRxyzVector " << endl ;
+  std::cout << "From vpRotationMatrix to vpRxyzVector " << std::endl ;
   vpRxyzVector RxyzBuildFromR(R) ;
-  cout <<  RxyzBuildFromR <<endl ;
+  std::cout <<  RxyzBuildFromR <<std::endl ;
 
 
 
-  cout << "From vpRxyzVector to vpThetaUVector " << endl ;
-  cout << "  use From vpRxyzVector to vpRotationMatrix " << endl ;
-  cout << "  use From vpRotationMatrix to vpThetaUVector " << endl ;
+  std::cout << "From vpRxyzVector to vpThetaUVector " << std::endl ;
+  std::cout << "  use From vpRxyzVector to vpRotationMatrix " << std::endl ;
+  std::cout << "  use From vpRotationMatrix to vpThetaUVector " << std::endl ;
 
 
   vpThetaUVector tuBuildFromEu ;
   tuBuildFromEu.buildFrom(RxyzBuildFromR) ;
 
-  cout << endl ;
-  cout <<  "result : should equivalent to the first one " << endl ;
-  cout << tuBuildFromEu << endl ;
+  std::cout << std::endl ;
+  std::cout <<  "result : should equivalent to the first one " << std::endl ;
+  std::cout << tuBuildFromEu << std::endl ;
 
 
   vpRzyzVector rzyz(vpMath::rad(180), vpMath::rad(120), vpMath::rad(45)) ;
-  cout << "Initialization vpRzyzVector " <<endl ;
-  cout << rzyz << endl ;
-  cout << "From vpRzyzVector to vpRotationMatrix  " << endl ;
+  std::cout << "Initialization vpRzyzVector " <<std::endl ;
+  std::cout << rzyz << std::endl ;
+  std::cout << "From vpRzyzVector to vpRotationMatrix  " << std::endl ;
   R.buildFrom(rzyz) ;
-  cout << "From vpRotationMatrix to vpRzyzVector " << endl ;
+  std::cout << "From vpRotationMatrix to vpRzyzVector " << std::endl ;
   vpRzyzVector rzyz_final ;
   rzyz_final.buildFrom(R) ;
-  cout << rzyz_final << endl ;
+  std::cout << rzyz_final << std::endl ;
 
 
   vpRzyxVector rzyx(vpMath::rad(180), vpMath::rad(120), vpMath::rad(45)) ;
-  cout << "Initialization vpRzyxVector " <<endl ;
-  cout << rzyx << endl ;
-  cout << "From vpRzyxVector to vpRotationMatrix  " << endl ;
+  std::cout << "Initialization vpRzyxVector " <<std::endl ;
+  std::cout << rzyx << std::endl ;
+  std::cout << "From vpRzyxVector to vpRotationMatrix  " << std::endl ;
   R.buildFrom(rzyx) ;
-  cout << R << endl ;
-  cout << "From vpRotationMatrix to vpRzyxVector " << endl ;
+  std::cout << R << std::endl ;
+  std::cout << "From vpRotationMatrix to vpRzyxVector " << std::endl ;
   vpRzyxVector rzyx_final ;
   rzyx_final.buildFrom(R) ;
-  cout << rzyx_final << endl ;
+  std::cout << rzyx_final << std::endl ;
 
 
 }

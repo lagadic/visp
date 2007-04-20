@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclopsController.cpp,v 1.4 2006-06-23 14:45:06 brenier Exp $
+ * $Id: vpRobotBiclopsController.cpp,v 1.5 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -199,8 +199,8 @@ vpRobotBiclopsController::setPosition(const vpColVector & q,
 	      vpBiclops::speedLimit * percentVelocity / 100.);
 
   panAxis -> ProfileToCounts(panProfile, desired_profile);
-  vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << endl;
-  vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << endl;
+  vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << std::endl;
+  vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << std::endl;
 
   panAxis -> SetProfile(desired_profile);
 
@@ -212,8 +212,8 @@ vpRobotBiclopsController::setPosition(const vpColVector & q,
 					* percentVelocity / 100.);
 
   tiltAxis -> ProfileToCounts(tiltProfile, desired_profile);
-  vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << endl;
-  vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << endl;
+  vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << std::endl;
+  vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << std::endl;
 
   tiltAxis -> SetProfile(desired_profile);
 

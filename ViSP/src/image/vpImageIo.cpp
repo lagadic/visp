@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.cpp,v 1.5 2006-07-10 16:40:04 fspindle Exp $
+ * $Id: vpImageIo.cpp,v 1.6 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,7 +91,7 @@ vpImageIo::openFileWrite(const char filename[FILENAME_MAX],
 }
 
 FILE *
-vpImageIo::openFileRead(const string filename)
+vpImageIo::openFileRead(const std::string filename)
 {
 
   FILE *fd ;
@@ -114,8 +114,8 @@ vpImageIo::openFileRead(const string filename)
 }
 
 FILE *
-vpImageIo::openFileWrite(const string filename,
-			 const string mode)
+vpImageIo::openFileWrite(const std::string filename,
+			 const std::string mode)
 {
   FILE *fd ;
 

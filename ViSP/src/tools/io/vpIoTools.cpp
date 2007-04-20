@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.10 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpIoTools.cpp,v 1.11 2007-04-20 14:22:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,7 +66,7 @@
   user name.
 */
 void
-vpIoTools::getUserName(string &username)
+vpIoTools::getUserName(std::string &username)
 {
 #if defined UNIX
   // Get the user name.
@@ -154,7 +154,7 @@ vpIoTools::checkDirectory(const char *dirname )
 
 */
 bool
-vpIoTools::checkDirectory(const string dirname )
+vpIoTools::checkDirectory(const std::string dirname )
 {
   return vpIoTools::checkDirectory(dirname.c_str());
 }
@@ -217,7 +217,7 @@ vpIoTools::makeDirectory(const  char *dirname )
   created.
 */
 void
-vpIoTools::makeDirectory(const string dirname )
+vpIoTools::makeDirectory(const std::string dirname )
 {
   try {
     vpIoTools::makeDirectory(dirname.c_str());
@@ -288,7 +288,7 @@ vpIoTools::checkFilename(const char *filename)
 
 */
 bool
-vpIoTools::checkFilename(const string filename)
+vpIoTools::checkFilename(const std::string filename)
 {
   return vpIoTools::checkFilename(filename.c_str());
 }
@@ -298,10 +298,10 @@ vpIoTools::checkFilename(const string filename)
   \param pathname : Pathname to convert.
   \return The converted pathname.
 */
-string
+std::string
 vpIoTools::path(const char * pathname)
 {
-  string path(pathname);
+  std::string path(pathname);
 
 #ifdef WIN32
   for(unsigned int i=0 ; i<path.length() ; i++)
@@ -320,8 +320,8 @@ vpIoTools::path(const char * pathname)
   \param pathname : Pathname to convert.
   \return The converted pathname.
 */
-string
-vpIoTools::path(const string& pathname)
+std::string
+vpIoTools::path(const std::string& pathname)
 {
   return path(pathname.c_str());
 }

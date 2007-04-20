@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.18 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.19 2007-04-20 14:22:21 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -812,7 +812,7 @@ vpDot2::setArea(const vpRect & a)
 
   The number of dots found in the area is given by:
   \code
-  cout << list_d->nbElement();
+  std::cout << list_d->nbElement();
   \endcode
 
   To parse all the dots:

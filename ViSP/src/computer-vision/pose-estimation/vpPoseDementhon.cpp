@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseDementhon.cpp,v 1.7 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpPoseDementhon.cpp,v 1.8 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,7 +115,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   }
 
 
-  //cout << a << endl ;
+  //std::cout << a << std::endl ;
   // calcul a^T a
   vpMatrix ata ;
   ata = a.t()*a ;
@@ -131,11 +131,11 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
   if (DEBUG_LEVEL2)
   {
-    cout << "a" << endl <<a<<endl ;
-    cout << "ata" << endl <<ata<<endl ;
-    cout << "ata1" << endl <<ata1<<endl ;
-    cout<< " ata*ata1"  << endl <<  ata*ata1 ;
-    cout<< " b"  << endl <<  (a*ata1).t() ;
+    std::cout << "a" << std::endl <<a<<std::endl ;
+    std::cout << "ata" << std::endl <<ata<<std::endl ;
+    std::cout << "ata1" << std::endl <<ata1<<std::endl ;
+    std::cout<< " ata*ata1"  << std::endl <<  ata*ata1 ;
+    std::cout<< " b"  << std::endl <<  (a*ata1).t() ;
 
   }
 
@@ -285,7 +285,7 @@ void calculSolutionDementhon(double xi0, double yi0,
 {
 
   if (DEBUG_LEVEL1)
-    cout << "begin (Dementhon.cc)CalculSolutionDementhon() " << endl;
+    std::cout << "begin (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
 
   double normI, normJ, normk, Z0;
   vpColVector  k(3);
@@ -325,7 +325,7 @@ void calculSolutionDementhon(double xi0, double yi0,
 
 
   if (DEBUG_LEVEL1)
-    cout << "end (Dementhon.cc)CalculSolutionDementhon() " << endl;
+    std::cout << "end (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
 
 }
 
@@ -335,7 +335,7 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
 {
 
   if (DEBUG_LEVEL1)
-    cout << "begin vpPose::CalculArbreDementhon() " << endl;
+    std::cout << "begin vpPose::CalculArbreDementhon() " << std::endl;
 
   int i, k;
   int erreur = 0;
@@ -393,9 +393,9 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
     {
       if (DEBUG_LEVEL2)
       {
-	cout << "cpt " << cpt << endl ;
-	cout << "smin_old " << smin_old << endl ;
-	cout << "smin " << smin << endl ;
+	std::cout << "cpt " << cpt << std::endl ;
+	std::cout << "smin_old " << smin_old << std::endl ;
+	std::cout << "smin " << smin << std::endl ;
       }
 
       smin_old = smin;
@@ -429,28 +429,28 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
 
       if (DEBUG_LEVEL3)
       {
-	cout << "I " << I.t() ;
-	cout << "J " << J.t() ;
+	std::cout << "I " << I.t() ;
+	std::cout << "J " << J.t() ;
       }
 
       calculSolutionDementhon(xi[0],yi[0],I,J,cMo1);
       s1 =  sqrt(computeResidualDementhon(cMo1)/npt)  ;
       if (DEBUG_LEVEL3)
-	cout << "cMo1 "<< endl << cMo1 << endl ;
+	std::cout << "cMo1 "<< std::endl << cMo1 << std::endl ;
 
       /* 2eme branche	*/
       I = I0 - U*r*co ;
       J = J0 - U*r*si ;
       if (DEBUG_LEVEL3)
       {
-	cout << "I " << I.t() ;
-	cout << "J " << J.t() ;
+	std::cout << "I " << I.t() ;
+	std::cout << "J " << J.t() ;
       }
 
       calculSolutionDementhon(xi[0],yi[0],I,J,cMo2);
       s2 =  sqrt(computeResidualDementhon(cMo2)/npt)  ;
       if (DEBUG_LEVEL3)
-	cout << "cMo2 "<< endl << cMo2 << endl ;
+	std::cout << "cMo2 "<< std::endl << cMo2 << std::endl ;
 
       cpt ++;
       if (s1 <= s2)
@@ -484,20 +484,20 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
 
       if (smin > smin_old)
       {
-	if (DEBUG_LEVEL2) cout << "Divergence "  <<  endl ;
+	if (DEBUG_LEVEL2) std::cout << "Divergence "  <<  std::endl ;
 	cMo = cMo_old ;
       }
       if (DEBUG_LEVEL2)
       {
-	cout << "s1 = " << s1 << endl ;
-	cout << "s2 = " << s2 << endl ;
-	cout << "smin = " << smin << endl ;
-	cout << "smin_old = " << smin_old << endl ;
+	std::cout << "s1 = " << s1 << std::endl ;
+	std::cout << "s2 = " << s2 << std::endl ;
+	std::cout << "smin = " << smin << std::endl ;
+	std::cout << "smin_old = " << smin_old << std::endl ;
       }
     }
   }
   if (DEBUG_LEVEL1)
-    cout << "end vpPose::CalculArbreDementhon() return "<< erreur  << endl;
+    std::cout << "end vpPose::CalculArbreDementhon() return "<< erreur  << std::endl;
 
   return erreur ;
 }
@@ -513,7 +513,7 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
 void
 vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 {  if (DEBUG_LEVEL1)
-    cout << "begin CCalculPose::PoseDementhonPlan()" << endl ;
+    std::cout << "begin CCalculPose::PoseDementhonPlan()" << std::endl ;
 
   int i,j,k ;
 
@@ -577,8 +577,8 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   if (DEBUG_LEVEL2)
   {
-    cout << "a" << endl <<a<<endl ;
-    cout << "ata" << endl <<ata<<endl ;
+    std::cout << "a" << std::endl <<a<<std::endl ;
+    std::cout << "ata" << std::endl <<ata<<std::endl ;
   }
 
   // calcul (a^T a)^-1
@@ -607,9 +607,9 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   if (DEBUG_LEVEL2)
   {
-    cout << "rang: " << irank << endl ;;
-    cout <<"imin = " << imin << endl ;
-    cout << "sv " << sv.t() << endl ;
+    std::cout << "rang: " << irank << std::endl ;;
+    std::cout <<"imin = " << imin << std::endl ;
+    std::cout << "sv " << sv.t() << std::endl ;
   }
 
 
@@ -633,12 +633,12 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   if (DEBUG_LEVEL2)
   {
-    cout << "a" << endl <<a<<endl ;
-    cout << "ata" << endl <<ata_sav<<endl ;
-    cout << "ata1" << endl <<ata1<<endl ;
-    cout << "ata1*ata"  << endl <<  ata1*ata_sav ;
-    cout << "b"  << endl <<  b ;
-    cout << "U " << U.t()  << endl ;
+    std::cout << "a" << std::endl <<a<<std::endl ;
+    std::cout << "ata" << std::endl <<ata_sav<<std::endl ;
+    std::cout << "ata1" << std::endl <<ata1<<std::endl ;
+    std::cout << "ata1*ata"  << std::endl <<  ata1*ata_sav ;
+    std::cout << "b"  << std::endl <<  b ;
+    std::cout << "U " << U.t()  << std::endl ;
 
   }
 
@@ -671,8 +671,8 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   if (DEBUG_LEVEL2)
   {
-    cout << "I0 "<<I0.t() ;
-    cout << "J0 "<<J0.t() ;
+    std::cout << "I0 "<<I0.t() ;
+    std::cout << "J0 "<<J0.t() ;
   }
 
   s = -2.0*vpColVector::dotProd(I0,J0);
@@ -718,7 +718,7 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   delete [] c3d ; c3d = NULL ;
   if (DEBUG_LEVEL1)
-    cout << "end CCalculPose::PoseDementhonPlan()" << endl ;
+    std::cout << "end CCalculPose::PoseDementhonPlan()" << std::endl ;
 }
 
 #undef DMIN

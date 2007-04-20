@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: homographyRansac2DObject.cpp,v 1.2 2007-01-30 17:14:38 asaunier Exp $
+ * $Id: homographyRansac2DObject.cpp,v 1.3 2007-04-20 14:22:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -120,8 +120,8 @@ bool getOptions(int argc, char **argv)
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL); 
-    cerr << "ERROR: " << endl;
-    cerr << "  Bad argument " << optarg << endl << endl;
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
   }
 
@@ -179,7 +179,7 @@ main(int argc, char ** argv)
     xb[i] = P[i].get_x() ;
     yb[i] = P[i].get_y() ;
   }
-  cout << "-------------------------------" <<endl ;
+  std::cout << "-------------------------------" <<std::endl ;
 
   vpRotationMatrix aRb  ;
   vpTranslationVector aTb ;
@@ -188,22 +188,22 @@ main(int argc, char ** argv)
   vpPlane bp(0,0,1,1) ;
   vpHomography aHb_built(aMb,bp) ;
   vpTRACE( "aHb built from the displacement ") ;
-  cout <<  endl <<aHb_built/aHb_built[2][2] <<  endl ;
+  std::cout <<  std::endl <<aHb_built/aHb_built[2][2] << std::endl ;
 
   aHb_built.computeDisplacement(aRb, aTb, n) ;
-  cout << "Rotation aRb: " <<endl ;
-  cout << aRb << endl ;
-  cout << "Translation: aTb" <<endl;
-  cout << (aTb).t() <<endl ;
-  cout << "Normal to the plane: n" <<endl;
-  cout << (n).t() <<endl ;
+  std::cout << "Rotation aRb: " <<std::endl ;
+  std::cout << aRb << std::endl ;
+  std::cout << "Translation: aTb" <<std::endl;
+  std::cout << (aTb).t() <<std::endl ;
+  std::cout << "Normal to the plane: n" <<std::endl;
+  std::cout << (n).t() <<std::endl ;
 
-  cout << "-------------------------------" <<endl ;
+  std::cout << "-------------------------------" <<std::endl ;
   vpTRACE(" ") ;
   vpHomography aHb ;
   vpHomography::ransac(nbpt,xb,yb,xa,ya, aHb) ;
 
-  cout << aHb << endl ;
+  std::cout << aHb << std::endl ;
 
 
 }

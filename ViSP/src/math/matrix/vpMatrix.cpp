@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.32 2007-04-18 16:14:28 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.33 2007-04-20 14:22:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -245,7 +245,7 @@ vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
 		    {
 		      (*this)[i][j] = copyTmp [i*colTmp+j];
 		      vpCDEBUG (25) << i << "x" << j << "<- " << i*colTmp+j
-				  << "=" << copyTmp [i*colTmp+j] << endl;
+				  << "=" << copyTmp [i*colTmp+j] << std::endl;
 		    }
 		  else {(*this)[i][j] = 0;}
 		}
@@ -268,7 +268,7 @@ vpMatrix::init(const vpMatrix &m,int r, int c, int nrows, int ncols)
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    std::cout << me << std::endl ;
     throw ;
   }
 
@@ -323,7 +323,7 @@ vpMatrix::operator=(const vpMatrix &B)
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    std::cout << me << std::endl ;
     throw ;
   }
 
@@ -376,7 +376,7 @@ vpMatrix::operator*(const vpMatrix &B) const
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    std::cout << me << std::endl ;
     throw ;
   }
 
@@ -421,7 +421,7 @@ vpMatrix::operator+(const vpMatrix &B) const
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    std::cout << me << std::endl ;
     throw ;
   }
 
@@ -460,7 +460,7 @@ vpMatrix::operator-(const vpMatrix &B) const
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    std::cout << me << std::endl ;
     throw ;
   }
 
@@ -564,7 +564,7 @@ vpMatrix vpMatrix::operator-() const //negate
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    std::cout << me << std::endl ;
     throw ;
   }
 
@@ -683,7 +683,7 @@ vpMatrix operator*(const double &x,const vpMatrix &B)
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    std::cout << me << std::endl ;
     throw ;
   }
 
@@ -710,7 +710,7 @@ vpMatrix vpMatrix::operator*(double x) const
   catch(vpException me)
   {
     vpERROR_TRACE("Error caught") ;
-    cout << me << endl ;
+    std::cout << me << std::endl ;
     throw ;
   }
 
@@ -998,8 +998,8 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
     if (pb == 1)
     {
       printf("pb in SVD\n");
-      cout << " A : " << endl << A << endl;
-      cout << " Asvd : " << endl << Asvd << endl;
+      std::cout << " A : " << std::endl << A << std::endl;
+      std::cout << " Asvd : " << std::endl << Asvd << std::endl;
     }
     //    else printf("SVD ok ;-)\n");  /* It's so good... */
   }
@@ -1207,19 +1207,19 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
     if (pb == 1)
     {
       printf("pb in pseudo inverse\n");
-      cout << " A : " << endl << A << endl;
-      cout << " Ap : " << endl << Ap << endl;
-      cout << " A - AApA : " << endl << A - AApA << endl;
-      cout << " Ap - ApAAp : " << endl << Ap - ApAAp << endl;
-      cout << " AAp - (AAp)^T : " << endl << AAp - AAp.t() << endl;
-      cout << " ApA - (ApA)^T : " << endl << ApA - ApA.t() << endl;
+      std::cout << " A : " << std::endl << A << std::endl;
+      std::cout << " Ap : " << std::endl << Ap << std::endl;
+      std::cout << " A - AApA : " << std::endl << A - AApA << std::endl;
+      std::cout << " Ap - ApAAp : " << std::endl << Ap - ApAAp << std::endl;
+      std::cout << " AAp - (AAp)^T : " << std::endl << AAp - AAp.t() << std::endl;
+      std::cout << " ApA - (ApA)^T : " << std::endl << ApA - ApA.t() << std::endl;
     }
     //    else printf("Ap OK ;-) \n");
 
   }
 
 
-  // cout << v << endl ;
+  // std::cout << v << std::endl ;
   return rank ;
 }
 
@@ -1446,9 +1446,9 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 
 
 /*!
-  \brief cout a matrix
+  \brief std::cout a matrix
 */
-ostream &operator <<(ostream &s,const vpMatrix &m)
+std::ostream &operator <<(std::ostream &s,const vpMatrix &m)
 {
   s.precision(10) ;
   for (int i=0;i<m.getRows();i++) {
@@ -1482,7 +1482,7 @@ ostream &operator <<(ostream &s,const vpMatrix &m)
     \return
     Returns the common total width for all matrix elements
 
-  \sa ostream &operator <<(ostream &s,const vpMatrix &m)
+  \sa std::ostream &operator <<(ostream &s,const vpMatrix &m)
 */
 int
 vpMatrix::print(std::ostream& s, unsigned length, char const* intro)
@@ -1575,8 +1575,8 @@ vpMatrix::print(std::ostream& s, unsigned length, char const* intro)
        d,e,f;
        g,h,i]
 */
-ostream & vpMatrix::
-matlabPrint(ostream & os)
+std::ostream & vpMatrix::
+matlabPrint(std::ostream & os)
 {
 
   int i,j;
@@ -1588,8 +1588,8 @@ matlabPrint(ostream & os)
 	{
 	  os <<  (*this)[i][j] << ", ";
 	}
-      if (this ->getRows() != i+1) { os << ";" << endl; }
-      else { os << "]" << endl; }
+      if (this ->getRows() != i+1) { os << ";" << std::endl; }
+      else { os << "]" << std::endl; }
     }
   return os;
 };
@@ -1608,8 +1608,8 @@ matlabPrint(ostream & os)
   \param octet: if false, print using double, if true, print byte per byte
   each bytes of the double array.
 */
-ostream & vpMatrix::
-cppPrint(ostream & os, const char * matrixName, bool octet)
+std::ostream & vpMatrix::
+cppPrint(std::ostream & os, const char * matrixName, bool octet)
 {
 
   int i,j;
@@ -1620,7 +1620,7 @@ cppPrint(ostream & os, const char * matrixName, bool octet)
     }
   os << "vpMatrix " << defaultName
      << " (" << this ->getRows ()
-     << ", " << this ->getCols () << "); " <<endl;
+     << ", " << this ->getCols () << "); " <<std::endl;
 
   for (i=0; i < this->getRows(); ++ i)
     {
@@ -1629,7 +1629,7 @@ cppPrint(ostream & os, const char * matrixName, bool octet)
  	  if (! octet)
 	    {
 	      os << defaultName << "[" << i << "][" << j
-		 << "] = " << (*this)[i][j] << "; " << endl;
+		 << "] = " << (*this)[i][j] << "; " << std::endl;
 	    }
 	  else
 	    {
@@ -1637,13 +1637,13 @@ cppPrint(ostream & os, const char * matrixName, bool octet)
 		{
 		  os << "((unsigned char*)&(" << defaultName
 		     << "[" << i << "][" << j << "]) )[" << k
-		     <<"] = 0x" <<hex<<
+		     <<"] = 0x" <<std::hex<<
 		    (unsigned int)((unsigned char*)& ((*this)[i][j])) [k]
-		     << "; " << endl;
+		     << "; " << std::endl;
 		}
 	    }
 	}
-      os << endl;
+      os << std::endl;
     }
   return os;
 };

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.h,v 1.7 2007-03-21 16:00:42 fspindle Exp $
+ * $Id: vpItifg8Grabber.h,v 1.8 2007-04-20 14:22:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -295,7 +295,7 @@ public:
   unsigned int getNumBoards();
   unsigned int getModule();
   void setConfFile(const char *filename);
-  void setConfFile(string filename);
+  void setConfFile(std::string filename);
   void setInput(unsigned int input = vpItifg8Grabber::DEFAULT_INPUT);
   void setScale(unsigned int scale = vpItifg8Grabber::DEFAULT_SCALE) ;
   void setHDecimation(unsigned int scale = vpItifg8Grabber::DEFAULT_SCALE) ;
