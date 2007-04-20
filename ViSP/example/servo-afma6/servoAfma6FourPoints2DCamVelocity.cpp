@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.4 2007-04-20 08:59:09 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.5 2007-04-20 14:08:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,9 +40,10 @@
 /*!
   \file servoAfma6FourPoints2DCamVelocity.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame.  Visual features are the image coordinates of 4 vpdot points.
+  \brief Example of eye-in-hand control law. We control here a real robot, the
+  Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
+  computed in the camera frame.  Visual features are the image coordinates of 4
+  vpdot points.
 
 */
 
@@ -52,7 +53,8 @@
 
   Example of eye-in-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame.  Visual features are the image coordinates of 4 vpdot points.
+  in the camera frame.  Visual features are the image coordinates of 4 vpdot
+  points.
 
 */
 
