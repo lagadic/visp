@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.h,v 1.8 2007-02-26 17:33:13 fspindle Exp $
+ * $Id: vpV4l2Grabber.h,v 1.9 2007-04-23 14:06:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,28 @@
 
 /*!
   \class vpV4l2Grabber
-  \brief class for the Video For Linux 2 video device
+
+  \brief Class for the Video4Linux2 video device.
+
+  Information about Video4Linux can be found on
+  http://linuxtv.org/v4lwiki/index.php/Main_Page
+
+  This class was tested with a Pinnacle PCTV Studio/Rave board.
+
+  If the grabbing fails, it means potentially that
+  you have not configured the linux bttv kernel module according to your board.
+  For that, depending on your linux distribution check the card id in
+  - /usr/share/doc/kernel-doc-2.4.20/video4linux/bttv/CARDLIST
+  - or /usr/share/doc/kernel-doc-2.6.20/Documentation/video4linux/CARDLIST.bttv
+
+  For example, the card id of a Pinnacle PCTV Studio/Rave board is 39.
+  Once this id is determined, you have to set the bttv driver with, by adding
+  \verbatim
+  options bttv card=39
+  \endverbatim
+  in one of theses files :
+  - /etc/modules.conf
+  - or /etc/modprobe.conf
 
   \ingroup libdevice
 
