@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageBase.t.cpp,v 1.10 2007-04-19 08:50:47 fspindle Exp $
+ * $Id: vpImageBase.t.cpp,v 1.11 2007-04-23 14:30:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -455,8 +455,8 @@ vpImage<Type>::get(double i, double j)  // bilinear interpolation
 
 
 /*!
-  used for building pyramid of the image
-   \warning = must be defined for <Type>
+  Used for building pyramid of the image.
+  \warning Operator = must be defined for Type.
  */
 
 template<class Type>
@@ -475,9 +475,9 @@ vpImage<Type>::halfSizeImage(vpImage<Type>* res)
 }
 
 /*!
-  used (eg. in case of keypoints extraction, we might
+  Used (eg. in case of keypoints extraction, we might
   double size of the image in order to have more keypoints)
-   \warning = must be defined for <Type>
+  \warning Operator = must be defined for Type.
  */
 template<class Type>
 void

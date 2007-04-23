@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.7 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: grab1394Two.cpp,v 1.8 2007-04-23 14:30:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -87,6 +87,8 @@
   \param camera : Active camera identifier.
   \param nframes : Number of frames to acquire.
   \param opath : Image filename when saving.
+  \param roi_left, roi_top, roi_width, roi_height : Region of interest in
+  format 7.
 
 */
 void usage(char *name, char *badparam, unsigned int camera,
@@ -197,6 +199,9 @@ OPTIONS                                                    Default\n\
   \param display : Display activation.
   \param save : Image saving activation.
   \param opath : Image filename when saving.
+
+  \param roi_left, roi_top, roi_width, roi_height : Region of interest in
+  format 7.
 
 */
 void read_options(int argc, char **argv, bool &multi, unsigned int &camera,

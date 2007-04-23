@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-* $Id: grabDirectShowMulti.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
+* $Id: grabDirectShowMulti.cpp,v 1.5 2007-04-23 14:30:39 fspindle Exp $
 *
 * Copyright (C) 1998-2006 Inria. All rights reserved.
 *
@@ -167,9 +167,6 @@ Set the program options.
 
 \param framerate_is_set : New framerate setting.
 \param framerate : Framerate setting.
-
-\param colorcoding_is_set : New color coding setting.
-\param colorcoding : Color coding setting (usefull only for format 7).
 
 \param display : Display activation.
 \param save : Image saving activation.
