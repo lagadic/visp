@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageMorphology.h,v 1.4 2007-01-30 15:25:03 fspindle Exp $
+ * $Id: vpImageMorphology.h,v 1.5 2007-04-23 15:54:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,8 +115,8 @@ void vpImageMorphology::erosion(vpImage<Type> &I,
   J = I;
 
   if (connexity == CONNEXITY_4) {
-    for (int i=1 ; i < I.getRows()-1   ; i++)
-      for (int j=1 ; j < I.getCols()-1   ; j++)
+    for (unsigned int i=1 ; i < I.getRows()-1   ; i++)
+      for (unsigned int j=1 ; j < I.getCols()-1   ; j++)
       {
 	if (I[i][j] == value)
 	{
@@ -130,8 +130,8 @@ void vpImageMorphology::erosion(vpImage<Type> &I,
       }
   }
   else {
-    for (int i=1 ; i < I.getRows()-1   ; i++)
-      for (int j=1 ; j < I.getCols()-1   ; j++)
+    for (unsigned int i=1 ; i < I.getRows()-1   ; i++)
+      for (unsigned int j=1 ; j < I.getCols()-1   ; j++)
       {
 	if (I[i][j] == value)
 	{
@@ -179,8 +179,8 @@ void vpImageMorphology::dilatation(vpImage<Type> &I,
   vpImage<Type> J(I.getRows(), I.getCols()) ;
   J = I;
   if (connexity == CONNEXITY_4) {
-    for (int i=1 ; i < I.getRows()-1   ; i++)
-      for (int j=1 ; j < I.getCols()-1   ; j++)
+    for (unsigned int i=1 ; i < I.getRows()-1   ; i++)
+      for (unsigned int j=1 ; j < I.getCols()-1   ; j++)
       {
 	if (I[i][j] == value_out)
 	{
@@ -194,8 +194,8 @@ void vpImageMorphology::dilatation(vpImage<Type> &I,
       }
   }
   else {
-    for (int i=1 ; i < I.getRows()-1   ; i++)
-      for (int j=1 ; j < I.getCols()-1   ; j++)
+    for (unsigned int i=1 ; i < I.getRows()-1   ; i++)
+      for (unsigned int j=1 ; j < I.getCols()-1   ; j++)
       {
 	if (I[i][j] == value_out)
 	{
