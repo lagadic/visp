@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabber.cpp,v 1.6 2007-03-08 13:35:43 fspindle Exp $
+ * $Id: vpDirectShowGrabber.cpp,v 1.7 2007-04-23 14:30:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -170,7 +170,7 @@ bool vpDirectShowGrabber::setImageSize(unsigned int width,unsigned int height)
 }
 /*!
 	Set capture framerate
-	\param width : Framerate in fps
+	\param framerate : Framerate in fps
 
 	\return true if successful
 */
@@ -180,9 +180,9 @@ bool vpDirectShowGrabber::setFramerate(double framerate)
 }
 /*!
 	Set capture format
-	\param _width : Image width in pixel
-	\param _height : Image height in pixel
-	\param _framerate : Framerate in fps
+	\param width : Image width in pixel
+	\param height : Image height in pixel
+	\param framerate : Framerate in fps
 
 	\return true if successful
 */

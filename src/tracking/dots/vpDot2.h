@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.17 2007-04-20 14:22:21 asaunier Exp $
+ * $Id: vpDot2.h,v 1.18 2007-04-23 14:30:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -152,7 +152,7 @@ public:
   with higher level can belong to the dot.  If the level is lower than the
   minimum level for a dot, set the level to MIN_IN_LEVEL.
 
-  \param inLevel : Color level of a dot to search in an area.
+  \param min : Color level of a dot to search in an area.
 
   \sa setWidth(), setHeight(), setSurface(), setOutLevel(), setAccuracy()
 
@@ -169,7 +169,7 @@ public:
   Set the color level of pixels surrounding the dot. This is meant to be used
   to search a dot in an area.
 
-  \param outLevel : Intensity level of a dot to search in an area.
+  \param max : Intensity level of a dot to search in an area.
 
   \sa setWidth(), setHeight(), setSurface(), setInLevel(), setAccuracy()
   */

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.20 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.21 2007-04-23 14:30:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -797,7 +797,7 @@ vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
 /*!
   \brief display a rectangle
   \param rect : Rectangle characteristics.
-  \param col : Color (see vpColor)
+  \param color : Color (see vpColor)
 */
 void
 vpDisplayGTK::displayRectangle(const vpRect &rect,
@@ -807,7 +807,7 @@ vpDisplayGTK::displayRectangle(const vpRect &rect,
     {
       gdk_gc_set_foreground(gc,col[color]);
       gdk_draw_rectangle(background,gc,FALSE,
-			 (int)rect.getLeft(), (int)rect.getTop(), 
+			 (int)rect.getLeft(), (int)rect.getTop(),
 			 (int)rect.getWidth(), (int)rect.getHeight());
 
     }
