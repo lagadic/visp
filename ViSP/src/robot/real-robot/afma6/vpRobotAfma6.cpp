@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.15 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.16 2007-04-25 09:27:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -649,24 +649,40 @@ vpRobotAfma6::VD6_mrad_mmrad (const vpColVector & input, double * output)
   output [5] = input [5];
 }
 
+/*!
+  Apply a velocity to the robot.
 
+  \param frame : Control frame in which the velocity is expressed. Velocities
+  could be expressed in articular, camera frame, reference frame or mixt frame.
 
+  \param r_dot : Velocity vector \f$ \dot {r} \f$. For translation speed \f$v,
+  \dot{q}_1, \dot{q}_2, \dot{q}_3 \f$, units are m/s, for rotations speed \f$
+  \omega, \dot{q}_4, \dot{q}_5, \dot{q}_6 \f$ rad/s. The size of this vector is
+  always 6.
 
+  - In articular, \f$ \dot {r} = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4,
+    \dot{q}_5, \dot{q}_6]^t \f$.
 
+  - In camera frame, \f$ \dot {r} = [^{c} v_x, ^{c} v_y, ^{c} v_z, ^{c}
+    \omega_x, ^{c} \omega_y, ^{c} \omega_z]^t \f$.
 
+  - In reference frame, \f$ \dot {r} = [^{r} v_x, ^{r} v_y, ^{r} v_z, ^{r}
+    \omega_x, ^{r} \omega_y, ^{r} \omega_z]^t \f$.
 
+  - In mixt frame, \f$ \dot {r} = [^{r} v_x, ^{r} v_y, ^{r} v_z, ^{c} \omega_x,
+    ^{c} \omega_y, ^{c} \omega_z]^t \f$.  In mixt frame, translations \f$ v_x,
+    v_y, v_z \f$ are expressed in the reference frame and rotations \f$
+    \omega_x, \omega_y, \omega_z \f$ in the camera frame.
 
-/* Envoye une commande en vitesse au robot.
- *
- * Envoye une commande en vitesse au robot, exprime dans le repere
- * donne par l'argument \a repere. Le robot doit etre dans l'etat
- * ETAT_ROBOT_COMMANDE_VITESSE.
- * INPUT:
- *   - r_dot: vitesse envoyee au robot (mm/s et rad/s).
- *   - repere: repere de travail dans lequel est exprime le resultat.
- * ERROR:
- *   - ERRMauvaisEtatRobot si le robot n'est pas dans l'etat
- * ETAT_ROBOT_COMMANDE_VITESSE.
+  \exception vpRobotException::wrongStateError : If a the robot is not
+  configured to handle a velocity. The robot can handle a velocity only if the
+  velocity control mode is set. For that, call setRobotState(
+  vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
+
+  \warning Velocities could be saturated if one of them exceed the maximal
+  autorized speed (see vpRobot::maxTranslationVelocity and
+  vpRobot::maxRotationVelocity).
+
  */
 void
 vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
@@ -676,7 +692,7 @@ vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
   {
     vpERROR_TRACE ("Cannot send a velocity to the robot "
-		 "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+		   "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
     throw vpRobotException (vpRobotException::wrongStateError,
 			    "Cannot send a velocity to the robot "
 			    "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
@@ -707,44 +723,49 @@ vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
   default:
     {
       vpERROR_TRACE ("Error in spec of vpRobot. "
-		   "Case not taken in account.");
+		     "Case not taken in account.");
     }
   }
 
 
   vpDEBUG_TRACE (12, "Velocity limitation.");
+  bool norm = false; // Flag to indicate when velocities need to be nomalized
   double max = this ->maxTranslationVelocity;
   vpColVector v(6);
-  for (int i = 0 ; i < 3; ++ i)
-    {
-      if (fabs (r_dot[i]) > max)
-	{
-	  max = fabs (r_dot[i]);
-	  vpERROR_TRACE ("Excess velocity %g: TRANSLATION "
-		       "(axe nr.%d).", r_dot[i], i);
-	}
+  for (int i = 0 ; i < 3; ++ i) {
+    if (fabs (r_dot[i]) > max) {
+      norm = true;
+      max = fabs (r_dot[i]);
+      vpERROR_TRACE ("Excess velocity %g: TRANSLATION "
+		     "(axe nr.%d).", r_dot[i], i);
     }
-  max =  this ->maxTranslationVelocity / max;
-  for (int i = 0 ; i < 3; ++ i)
-    { v [i] = r_dot[i]*max;	}
+  }
+
+  // Translations velocities normalisation
+  if (norm == true)  {
+    max =  this ->maxTranslationVelocity / max;
+    for (int i = 0 ; i < 6; ++ i)
+    { v [i] = r_dot[i]*max; }
+  }
+
 
   max = this ->maxRotationVelocity;
-  for (int i = 3 ; i < 6; ++ i)
-    {
-      if (fabs (r_dot[i]) > max)
-	{
-	  max = fabs (r_dot[i]);
-	  vpERROR_TRACE ("Excess velocity %g: ROTATION "
-		       "(axe nr.%d).", r_dot[i], i);
-	}
+  for (int i = 3 ; i < 6; ++ i) {
+    if (fabs (r_dot[i]) > max) {
+      norm = true;
+      max = fabs (r_dot[i]);
+      vpERROR_TRACE ("Excess velocity %g: ROTATION "
+		     "(axe nr.%d).", r_dot[i], i);
     }
-  max =  this ->maxRotationVelocity / max;
-  for (int i = 3 ; i < 6; ++ i)
+  }
+  // Rotations velocities normalisation
+  if (norm == true) {
+    max =  this ->maxRotationVelocity / max;
+    for (int i = 3 ; i < 6; ++ i)
     { v [i] = r_dot[i]*max; }
+  }
 
-
-  for (int i = 0; i < 6; ++ i)
-  {
+  for (int i = 0; i < 6; ++ i) {
     communicationVelocity.aserv[i] = VITESSE;
     communicationVelocity.mvt[i] = v[i] ;
   }

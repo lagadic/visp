@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.cpp,v 1.8 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRobotBiclops.cpp,v 1.9 2007-04-25 09:27:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -903,12 +903,26 @@ vpRobotBiclops::getPosition (const vpRobot::ControlFrameType frame,
   Send a velocity on each axis.
 
   \param frame : Control frame. This biclops head can only be controlled in
-  articular.
+  articular. Be aware, the camera frame (vpRobot::CAMERA_FRAME), the reference
+  frame (vpRobot::REFERENCE_FRAME) and the mixt frame (vpRobot::MIXT_FRAME) are
+  not implemented.
 
-  \param q_dot : The desired velocity of the axis in radians.
+  \param q_dot : The desired articular velocity of the axis in rad/s. \f$ \dot
+  {r} = [\dot{q}_1, \dot{q}_2]^t \f$ with \f$ \dot{q}_1 \f$ the pan of the
+  camera and \f$ \dot{q}_2\f$ the tilt of the camera.
+
+  \exception vpRobotException::wrongStateError : If a the robot is not
+  configured to handle a velocity. The robot can handle a velocity only if the
+  velocity control mode is set. For that, call setRobotState(
+  vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
   \exception vpRobotException::wrongStateError : If a not supported frame type
-  is given.
+  (vpRobot::CAMERA_FRAME, vpRobot::REFERENCE_FRAME or vpRobot::MIXT_FRAME) is
+  given.
+
+  \warning Velocities could be saturated if one of them exceed the maximal
+  autorized speed (see vpRobot::maxRotationVelocity).
+
 */
 void
 vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
@@ -978,6 +992,7 @@ vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
   }
 
   vpDEBUG_TRACE (12, "Velocity limitation.");
+  bool norm = false; // Flag to indicate when velocities need to be nomalized
 
   // Saturate articular speed
   double max = vpBiclops::speedLimit;
@@ -985,14 +1000,17 @@ vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
   {
     if (fabs (q_dot[i]) > max)
     {
+      norm = true;
       max = fabs (q_dot[i]);
       vpERROR_TRACE ("Excess velocity: ROTATION "
 		     "(axe nr.%d).", i);
     }
   }
-  max = vpBiclops::speedLimit / max;
-
-  vpColVector q_dot_sat = q_dot * max;
+  // Rotations velocities normalisation
+  if (norm == true) {
+    max = vpBiclops::speedLimit / max;
+    vpColVector q_dot_sat = q_dot * max;
+  }
 
   vpCDEBUG(12) << "send velocity: " << q_dot_sat.t() << std::endl;
 
