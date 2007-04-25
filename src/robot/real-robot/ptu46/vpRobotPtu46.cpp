@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotPtu46.cpp,v 1.11 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRobotPtu46.cpp,v 1.12 2007-04-25 09:27:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -518,19 +518,28 @@ vpRobotPtu46::getPosition (const vpRobot::ControlFrameType frame,
   Send a velocity on each axis.
 
   \param frame : Control frame. This head can only be controlled in articular
-  and camera frame. Be aware, the reference frame and the mixt frame are not
-  implemented
+  and camera frame. Be aware, the reference frame (vpRobot::REFERENCE_FRAME)
+  and the mixt frame (vpRobot::MIXT_FRAME) are not implemented.
 
-  \param v : The desired velocity of the axis.
+  \param v : The desired velocity of the axis. The size of this vector is
+  always 2. Velocitoes are expressed in rad/s.
 
-  \warning In camera frame, we control only the rx and ry camera velocities;
-  v dimension must be two: v[0] correspond to rx, and v[1] to ry
+  - In camera frame, \f$ v = [\omega_x, \omega_y]^t \f$.
 
-  \warning In articular, we control the 2 dof, v[0] corresponds the pan
-  velocity and v[1] tilt velocity (in radians)
+  - In articular, we control the 2 dof, \f$ v = [\dot{q}_1, \dot{q}_2]^t \f$
+  with \f$ \dot{q}_1 \f$ the pan of the camera and \f$ \dot{q}_2\f$ the tilt of
+  the camera.
+
+  \exception vpRobotException::wrongStateError : If a the robot is not
+  configured to handle a velocity. The robot can handle a velocity only if the
+  velocity control mode is set. For that, call setRobotState(
+  vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
   \exception vpRobotException::wrongStateError : If a not supported frame type
-  is given.
+  (vpRobot::REFERENCE_FRAME, vpRobot::MIXT_FRAME) is given.
+
+  \warning Velocities could be saturated if one of them exceed the maximal
+  autorized speed (see vpRobot::maxRotationVelocity).
 */
 
 void
@@ -604,6 +613,7 @@ vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
   }
 
   vpDEBUG_TRACE (12, "Velocity limitation.");
+  bool norm = false; // Flag to indicate when velocities need to be nomalized
   double ptuSpeedInterface[2];
 
   switch(frame) {
@@ -614,15 +624,18 @@ vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
     {
       if (fabs (v[i]) > max)
       {
+	norm = true;
 	max = fabs (v[i]);
 	vpERROR_TRACE ("Excess velocity: ROTATION "
 		     "(axe nr.%d).", i);
       }
     }
-    max =  this ->maxRotationVelocity / max;
-    for (int i = 0 ; i < 2; ++ i)
-     ptuSpeedInterface [i] = v[i]*max;
-
+    // Rotations velocities normalisation
+    if (norm == true) {
+      max =  this ->maxRotationVelocity / max;
+      for (int i = 0 ; i < 2; ++ i)
+	ptuSpeedInterface [i] = v[i]*max;
+    }
     break;
   }
   default:

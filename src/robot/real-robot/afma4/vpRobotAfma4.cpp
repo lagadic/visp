@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.cpp,v 1.9 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRobotAfma4.cpp,v 1.10 2007-04-25 09:27:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -603,31 +603,37 @@ vpRobotAfma4::VD4_mrad_mmrad (const vpColVector & input, double * output)
 
 
 
+/*!
+  Apply a velocity to the robot.
 
+  \param frame : Frame in which the velocity is expressed. Velocities could be
+  expressed in articular or camera frame. The vpRobot::REFERENCE_FRAME and
+  vpRobot::MIXT_FRAME are not implemented.
 
+  \param r_dot : Velocity vector \f$ \dot {r} \f$. For translation speed \f$
+  \dot{q}_2 \f$, units are m/s, for rotations speed \f$ \omega, \dot{q}_1,
+  \dot{q}_3, \dot{q}_4 \f$ rad/s. The size of this vector is either 2 in camera
+  frame, either 4 in articular.
 
-/* Envoye une commande en vitesse au robot.
- *
- * Envoye une commande en vitesse au robot, exprime dans le repere
- * donne par l'argument \a repere. Le robot doit etre dans l'etat
- * ETAT_ROBOT_COMMANDE_VITESSE.
- * INPUT:
- *   - r_dot: vitesse envoyee au robot (mm/s et rad/s).
- *   - repere: repere de travail dans lequel est exprime le resultat.
- * ERROR:
- *   - ERRMauvaisEtatRobot si le robot n'est pas dans l'etat
- * ETAT_ROBOT_COMMANDE_VITESSE.
+  - In articular, \f$ \dot {r} = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4]^t
+ \f$ with \f$ \dot{q}_1 \f$ the turret rotation, \f$ \dot{q}_2 \f$ the vertical
+ translation, \f$ \dot{q}_3 \f$ the pan of the camera and \f$ \dot{q}_4\f$ the
+ tilt of the camera.
 
- \param frame Speed control frame type. Be aware, the REFERENCE_FRAME and
- MIXT_FRAME are not implemented
+  - In camera frame, \f$ \dot {r} = [^{c} v_x, ^{c} v_y]^t \f$.
 
- \warning In CAMERA_FRAME, we control only the rx and ry camera velocities;
- r_dot dimension must be two: r_dot[0] correspond to rx, and r_dot[1] to ry
+  \exception vpRobotException::wrongStateError : If a the robot is not
+  configured to handle a velocity. The robot can handle a velocity only if the
+  velocity control mode is set. For that, call setRobotState(
+  vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
- \waning In ARTICULAR_FRAME, we control the 4 dof, r_dot dimension is
- 4. r_dot[0] corresponds to the turret rotation (in radians), r_dot[1] to the
- vertical translation (in meters), r_dot[2] to the pan of the camera (in
- radians) and r_dot[3] to the tilt of the camera (in radians)
+  \exception vpRobotException::wrongStateError : If a not supported frame type
+  (vpRobot::REFERENCE_FRAME or vpRobot::MIXT_FRAME) is given.
+
+  \warning Velocities could be saturated if one of them exceed the maximal
+  autorized speed (see vpRobot::maxTranslationVelocity and
+  vpRobot::maxRotationVelocity).
+
 */
 void
 vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
@@ -706,6 +712,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
   }
 
   vpDEBUG_TRACE (12, "Velocity limitation.");
+  bool norm = false; // Flag to indicate when velocities need to be nomalized
   vpColVector v(6);
 
   switch(frame) {
@@ -715,14 +722,19 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     {
       if (fabs (r_dot[i]) > max)
       {
+	norm = true;
 	max = fabs (r_dot[i]);
 	vpERROR_TRACE ("Excess velocity: ROTATION "
 		     "(axe nr.%d).", i);
       }
     }
-    max =  this ->maxRotationVelocity / max;
-    for (int i = 0 ; i < 2; ++ i)
-    { v [i] = r_dot[i]*max; }
+
+    // Rotations velocities normalisation
+    if (norm == true) {
+      max =  this ->maxRotationVelocity / max;
+      for (int i = 0 ; i < 2; ++ i)
+      { v [i] = r_dot[i]*max; }
+    }
 
     for (int i = 0; i < 2; ++ i)
     {
@@ -736,6 +748,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     double max = this ->maxRotationVelocity;
     if (fabs (r_dot[0]) > max) // turret rotation
     {
+      norm = true;
       max = fabs (r_dot[0]);
       vpERROR_TRACE ("Excess velocity: ROTATION "
 		   "(axe nr.%d).", 0);
@@ -744,24 +757,33 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     {
       if (fabs (r_dot[i]) > max)
       {
+	norm = true;
 	max = fabs (r_dot[i]);
 	vpERROR_TRACE ("Excess velocity: ROTATION "
 		     "(axe nr.%d).", i);
       }
     }
-    max =  this ->maxRotationVelocity / max;
-    v [0] = r_dot[0]*max;
-    v [2] = r_dot[2]*max;
-    v [3] = r_dot[3]*max;
+    // Rotations velocities normalisation
+    if (norm == true) {
+      max =  this ->maxRotationVelocity / max;
+      v [0] = r_dot[0]*max;
+      v [2] = r_dot[2]*max;
+      v [3] = r_dot[3]*max;
+    }
 
     max = this ->maxTranslationVelocity;
     if (fabs (r_dot[1]) > max)
     {
+      norm = true;
       max = fabs (r_dot[1]);
       vpERROR_TRACE ("Excess velocity: TRANSLATION "
 		   "(axe nr.%d).", 1);
     }
-    v [1] = r_dot[1]*max;
+    // Translations velocities normalisation
+    if (norm == true)  {
+      max = this ->maxTranslationVelocity * max;
+      v [1] = r_dot[1]*max;
+    }
 
     for (int i = 0; i < 4; ++ i)
     {
