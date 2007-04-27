@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomographyRansac.cpp,v 1.4 2007-03-29 13:49:02 hatran Exp $
+ *  $Id: vpHomographyRansac.cpp,v 1.5 2007-04-27 16:40:14 fspindle Exp $
  * optimized by Tran to improve speed.
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -47,11 +47,14 @@ iscolinear(double *x1, double *x2, double *x3)
 
 
 bool
-vpHomography::degenerateConfiguration(vpColVector &x,int *ind, double threshold_area)
+vpHomography::degenerateConfiguration(vpColVector &x,int *ind,
+				      double threshold_area)
 {
 
-  for (int i=1 ; i < 4 ; i++)
-    for (int j=0 ; j<i ; j++)
+  int i, j, k;
+
+  for (i=1 ; i < 4 ; i++)
+    for (j=0 ; j<i ; j++)
       if (ind[i]==ind[j]) return true ;
 
   int n = x.getRows()/4 ;
@@ -60,7 +63,7 @@ vpHomography::degenerateConfiguration(vpColVector &x,int *ind, double threshold_
 
 
 
-  for(int i = 0 ; i < 4 ; i++)
+  for(i = 0 ; i < 4 ; i++)
   {
     pb[i][0] = x[2*ind[i]] ;
     pb[i][1] = x[2*ind[i]+1] ;
@@ -71,11 +74,7 @@ vpHomography::degenerateConfiguration(vpColVector &x,int *ind, double threshold_
     pa[i][2] = 1;
   }
 
-  double area2 = (-pa[1][0]*pa[0][1] + pa[2][0]*pa[0][1] +
-		  pa[0][0]*pa[1][1] - pa[2][0]*pa[1][1] +
-		  -pa[0][0]*pa[2][1] + pa[1][0]*pa[2][1]);
-
-  int i = 0, j = 1, k = 2;
+  i = 0, j = 1, k = 2;
 
   double area012 = (-pa[j][0]*pa[i][1] + pa[k][0]*pa[i][1] +
 		    pa[i][0]*pa[j][1] - pa[k][0]*pa[j][1] +
@@ -307,7 +306,7 @@ vpHomography::ransac(int n,
   (value 1.0) or an outlier (value 0). Matches are stocked in inliers vector
   column.
 
-  \param residual : Residual.
+  \param residual : Residual. Not used.
 
   \param consensus : Minimal number of points (less than n) fitting the model.
 
@@ -326,7 +325,7 @@ bool vpHomography::ransac(int n,
 			  double *xa, double *ya ,
 			  vpHomography &bHa,
 			  vpColVector &inliers,
-			  double& residual,
+			  double& /* residual */,
 			  int consensus,
 			  double threshold,
 			  double areaThreshold)

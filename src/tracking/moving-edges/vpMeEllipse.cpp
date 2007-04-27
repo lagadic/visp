@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.12 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpMeEllipse.cpp,v 1.13 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -446,7 +446,7 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
 }
 
 void
-vpMeEllipse::leastSquare(vpImage<unsigned char>  &I)
+vpMeEllipse::leastSquare()
 {
 
 
@@ -700,7 +700,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
 }
 
 void
-vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n, 
+vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
 			  unsigned *i, unsigned *j)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
@@ -820,7 +820,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
     // Estimation des parametres de la droite aux moindres carre
     suppressPoints() ;
     try{
-      leastSquare(I) ;  }
+      leastSquare() ;  }
     catch(...)
     {
       vpERROR_TRACE("Error caught") ;
@@ -832,7 +832,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
     {
       sample(I) ;
       try{
-	leastSquare(I) ;  }
+	leastSquare() ;  }
       catch(...)
       {
 	vpERROR_TRACE("Error caught") ;

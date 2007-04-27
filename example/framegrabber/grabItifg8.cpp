@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8.cpp,v 1.7 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: grabItifg8.cpp,v 1.8 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,7 +100,7 @@ ERROR:\n\
 
   fprintf(stdout, "\n\
 OPTIONS:                                                  Default\n\
-  -b <board>                                                \n\
+  -b <board>                                                %d\n\
      Board number [0-7]. Useful only if multiple boards \n\
      are connected to the computer.\n\
 \n\
@@ -139,8 +139,8 @@ OPTIONS:                                                  Default\n\
 \n\
   -h \n\
      Print the help.\n\n",
-	  conffile.c_str(), fps, input, scale, buffer, nframes, opath.c_str());
-
+	  board, conffile.c_str(), fps, input, scale, buffer,
+	  nframes, opath.c_str());
 }
 
 /*!
@@ -252,7 +252,6 @@ main(int argc, char ** argv)
   // Declare a framegrabber to acquire images with the IC-comp framegrabber
   // card (Imaging Technology)
   vpItifg8Grabber g;
-  unsigned nboards = g.getNumBoards();
 
   try{
     // Initialize the grabber board

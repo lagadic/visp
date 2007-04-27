@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPPM.cpp,v 1.8 2007-04-20 14:22:24 asaunier Exp $
+ * $Id: testIoPPM.cpp,v 1.9 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -94,6 +94,8 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!

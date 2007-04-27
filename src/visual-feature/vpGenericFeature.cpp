@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGenericFeature.cpp,v 1.12 2007-04-20 14:22:24 asaunier Exp $
+ * $Id: vpGenericFeature.cpp,v 1.13 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -421,10 +421,13 @@ vpGenericFeature *vpGenericFeature::duplicate() const
   return feature ;
 }
 
+/*!
+  Not implemented.
+*/
 void
-vpGenericFeature::display(const vpCameraParameters &cam,
-			  vpImage<unsigned char> &I,
-			  vpColor::vpColorType color) const
+vpGenericFeature::display(const vpCameraParameters &/* cam */,
+			  vpImage<unsigned char> &/* I */,
+			  vpColor::vpColorType /* color */) const
 {
   static int firsttime =0 ;
 

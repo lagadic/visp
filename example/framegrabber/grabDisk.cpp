@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDisk.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: grabDisk.cpp,v 1.5 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -134,6 +134,8 @@ OPTIONS:                                               Default\n\
 	  ipath.c_str(), basename.c_str(), ext.c_str(), first,
 	  nimages, step, nzero);
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 

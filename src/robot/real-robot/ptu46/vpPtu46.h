@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPtu46.h,v 1.5 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpPtu46.h,v 1.6 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,7 +98,7 @@ public: /* Methodes publiques */
   void get_fJe(const vpColVector &q, vpMatrix &fJe);
 
   friend std::ostream & operator << (std::ostream & os,
-				const vpPtu46 & constant);
+				     const vpPtu46 & constant);
 };
 
 

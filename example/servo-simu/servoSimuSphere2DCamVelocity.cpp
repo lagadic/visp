@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuSphere2DCamVelocity.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: servoSimuSphere2DCamVelocity.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,6 +102,8 @@ OPTIONS:                                               Default\n\
   -h\n\
      Print the help.\n");
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -110,7 +112,7 @@ Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  
+
   \return false if the program has to be stopped, true otherwise.
 
 */

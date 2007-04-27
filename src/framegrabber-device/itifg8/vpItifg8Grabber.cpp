@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.11 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.12 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,7 +98,7 @@ void
 vpItifg8SigioCatcher (int num, siginfo_t *info, void */*ptr*/);
 
 void
-vpItifg8SigioCatcher (int num, siginfo_t *info, void */*ptr*/)
+vpItifg8SigioCatcher (int /* num */, siginfo_t *info, void */*ptr*/)
 {
   if (info->si_band & POLLIN)
     vpItifg8Timeout = false;
@@ -497,7 +497,7 @@ void vpItifg8Grabber::close ()
   stop_it = false;
   devdesc = -1;
 
-  first_acq == false;
+  first_acq = false;
 }
 
 /*!
@@ -2073,7 +2073,7 @@ unsigned char * vpItifg8Grabber::acquire()
 	      srcoff[srcidx] %= ((winsize / (loff_t)image[args.board_i].paged_size) *
 				 (loff_t)image[args.board_i].paged_size);
 	      if (verbose)
-		fprintf(stdout, "%ld",srcoff[srcidx] / image[args.board_i].paged_size);
+		fprintf(stdout, "%Ld",srcoff[srcidx] / image[args.board_i].paged_size);
 	      srcidx++;
 	    }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLevenbergMarquartd.cpp,v 1.3 2006-06-30 10:06:43 brenier Exp $
+ * $Id: vpLevenbergMarquartd.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -229,7 +229,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
   const double	tol1 = 0.1, tol001 = 0.001;	/* tolerance a 0.1 et a 0.001	*/
 
   long		i, j, jm1, jp1, k, l;	/* compteur de boucle */
-  unsigned int	iter;		/* compteur d'iteration */
+  int	iter;		/* compteur d'iteration */
   int		nsing;		/* nombre de singularite de la matrice */
   double		dxnorm, fp, gnorm, parc;
   double		parl, paru;		/* borne inf et sup de par		*/
@@ -546,7 +546,7 @@ double pythag (double a, double b)
  *
  */
 int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
-	      int lipvt, double *rdiag, double *acnorm, double *wa)
+	      int /* lipvt */, double *rdiag, double *acnorm, double *wa)
 {
   const double	tolerance = 0.05;
 

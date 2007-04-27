@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.cpp,v 1.6 2007-04-20 14:22:24 asaunier Exp $
+ * $Id: vpFeatureTranslation.cpp,v 1.7 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -203,7 +203,7 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
 }
 
 void
-vpFeatureTranslation::print(const int select) const
+vpFeatureTranslation::print(const int /* select */) const
 {
   std::cout <<"Translation 3D: " << s.t() ;
 }
@@ -215,11 +215,14 @@ vpFeatureTranslation *vpFeatureTranslation::duplicate() const
 }
 
 
+/*!
 
+Not implemented.
+*/
 void
-vpFeatureTranslation::display(const vpCameraParameters &cam,
-			      vpImage<unsigned char> &I,
-			      vpColor::vpColorType color) const
+vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
+			      vpImage<unsigned char> &/* I */,
+			      vpColor::vpColorType /* color */) const
 {
   static int firsttime =0 ;
 

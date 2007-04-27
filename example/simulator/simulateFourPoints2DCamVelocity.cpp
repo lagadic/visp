@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -109,6 +109,8 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n",
 	  ipath.c_str());
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -122,7 +124,7 @@ Set the program options.
   the default configuration. When set to false, the display is
   disabled. This can be usefull for automatic tests using crontab
   under Unix or using the task manager under Windows.
-  
+
   \return false if the program has to be stopped, true otherwise.
 
 */
@@ -276,7 +278,7 @@ void *mainLoop (void *_simu)
 	vpTime::wait(100) ;
 
 	simu->setCameraPosition(cMo) ;
-     
+
 
 	if(SAVE==1)
 	  {
@@ -360,7 +362,7 @@ main(int argc, char ** argv)
   vpCameraParameters cam ;
   vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
 
-  
+
   if (opt_display) {
     vpSimulator simu ;
     simu.initInternalViewer(300, 300) ;

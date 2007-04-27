@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: poseVirtualVS.cpp,v 1.5 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -30,7 +30,7 @@
  * Description:
  * Pose computation on an object made of dots.
  *   reading of PGM image
- *   Display image using either the X11 or GTK or GDI display 
+ *   Display image using either the X11 or GTK or GDI display
  *   track 4 dots (vpDots) in the image
  *   compute the pose
  *
@@ -151,6 +151,8 @@ OPTIONS:                                               Default\n\
      Print the help.\n",
 	  ipath.c_str(),ppath.c_str(), first, nimages, step);
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 
@@ -273,7 +275,7 @@ main(int argc, char** argv)
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
 	 << std::endl
 	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl 
+	 << "  image path where test images are located." << std::endl
 	 << "  Use -p <personal image path> option if you want to "<< std::endl
 	 << "  use personal images" <<std::endl << std::endl;
     exit(-1);
@@ -329,7 +331,7 @@ main(int argc, char** argv)
       // in green on the screen.
       // It uses the overlay image plane.
       // The default of this setting is that it is time consumming
-     
+
       if (opt_display) {
 	d[i].setGraphics(true) ;
       }
@@ -401,7 +403,7 @@ main(int argc, char** argv)
   }
 
 
- 
+
   double u[4],v[4] ;
   try{
     if (opt_display && opt_click_allowed) {
@@ -445,7 +447,7 @@ main(int argc, char** argv)
       vpERROR_TRACE("Error in tracking initialization ") ;
       return(-1) ;
     }
-  
+
   if (opt_display)
     {
 
@@ -603,7 +605,7 @@ main(int argc, char** argv)
 	if (opt_display) {
 	  // display the compute pose
 	  pose.display(I,cMo,cam, 0.05, vpColor::red) ;
-      
+
 	  vpDisplay::flush(I) ;
 	}
 	niter++ ;

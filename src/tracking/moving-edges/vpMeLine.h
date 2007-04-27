@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.h,v 1.4 2007-02-26 16:42:39 fspindle Exp $
+ * $Id: vpMeLine.h,v 1.5 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,15 +77,15 @@ public:
 
   void sample(vpImage<unsigned char>&image);
   void reSample(vpImage<unsigned char> &I) ;
-  void leastSquare(vpImage<unsigned char> &I) ;
+  void leastSquare() ;
   void updateDelta();
   void setExtremities() ;
   void seekExtremities(vpImage<unsigned char> &I) ;
   void suppressPoints() ;
 
   void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, 
-		    unsigned i1,unsigned j1, 
+  void initTracking(vpImage<unsigned char> &I,
+		    unsigned i1,unsigned j1,
 		    unsigned i2, unsigned j2) ;
 
   void computeRhoTheta(vpImage<unsigned char> &I) ;

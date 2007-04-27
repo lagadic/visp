@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationVector.cpp,v 1.4 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRotationVector.cpp,v 1.5 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,8 +47,8 @@
 
 //! constructor from 3 angles (in radian)
 vpRotationVector::vpRotationVector(const double phi,
-			     const double theta,
-			     const double psi)
+				   const double theta,
+				   const double psi)
 {
     r[0] = phi ;
     r[1] = theta ;

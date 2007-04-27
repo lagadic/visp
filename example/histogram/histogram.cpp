@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: histogram.cpp,v 1.2 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: histogram.cpp,v 1.3 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,10 +62,10 @@
 
 
 int
-main(int argc, char ** argv)
+main()
 {
   // Create a test image.
-  // 3 areas were defines; 
+  // 3 areas were defines;
   // - one is the background with gray level bg
   // - another for a big rectangle with gray level fg
   // - the last one for a small rectangle with gray level mg
@@ -108,7 +108,7 @@ main(int argc, char ** argv)
 
   // get all the histogram peaks
   nbpeaks = h.getPeaks(peaks);
-	
+
   vpTRACE("List of peaks");
   vpTRACE("Nb peaks: %d", nbpeaks);
   if (nbpeaks) {
@@ -124,7 +124,7 @@ main(int argc, char ** argv)
   // sort all the histogram peaks list to have the highest peak at the
   // beginning of the list, the smallest at the end.
   nbpeaks = h.sort(peaks);
-	
+
   vpTRACE("Sorted list of peaks");
   vpTRACE("Nb peaks: %d", nbpeaks);
   if (nbpeaks) {
@@ -144,7 +144,7 @@ main(int argc, char ** argv)
     std::cout << "Not a bimodal histogram..." << std::endl;
   }
   else {
-    vpTRACE("Bimodal histogram: main peak1: %d-%d second peak2: %d-%d", 
+    vpTRACE("Bimodal histogram: main peak1: %d-%d second peak2: %d-%d",
 	    peak1.getLevel(), peak1.getValue(),
 	    peak2.getLevel(), peak2.getValue());
   }
@@ -214,7 +214,7 @@ main(int argc, char ** argv)
     std::cout << "Not a bimodal histogram..." << std::endl;
   }
   else {
-    vpTRACE("Bimodal histogram: valey %d-%d for peakl: %d-%d peakr: %d-%d", 
+    vpTRACE("Bimodal histogram: valey %d-%d for peakl: %d-%d peakr: %d-%d",
 	    valey.getLevel(), valey.getValue(),
 	    peakl.getLevel(), peakl.getValue(),
 	    peakr.getLevel(), peakr.getValue());

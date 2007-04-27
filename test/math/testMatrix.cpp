@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMatrix.cpp,v 1.2 2007-04-20 14:22:25 asaunier Exp $
+ * $Id: testMatrix.cpp,v 1.3 2007-04-27 16:40:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,6 +71,8 @@ OPTIONS:                                               Default\n\
   -h\n\
      Print the help.\n");
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 
@@ -89,14 +91,14 @@ bool getOptions(int argc, char **argv)
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
-      usage(argv[0], optarg); 
+      usage(argv[0], optarg);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL); 
+    usage(argv[0], NULL);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;

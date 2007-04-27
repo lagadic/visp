@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot.cpp,v 1.12 2007-04-20 14:22:26 asaunier Exp $
+ * $Id: testTrackDot.cpp,v 1.13 2007-04-27 16:40:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,6 +102,9 @@ OPTIONS:                                               Default\n\
   -h\n\
      Print the help.\n",
 	  ipath.c_str());
+
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 
 }
 /*!

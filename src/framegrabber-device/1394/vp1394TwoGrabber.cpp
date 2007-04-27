@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.12 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.13 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -158,7 +158,7 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   getNumCameras(num_cameras);
 
   camInUse = new bool [num_cameras];
-  for (int i=0; i < num_cameras; i ++)
+  for (unsigned i=0; i < num_cameras; i ++)
     camInUse[i] = false;
 
   setCamera(0);
@@ -432,8 +432,6 @@ vp1394TwoGrabber::getVideoMode(vp1394TwoVideoMode & videomode)
 int
 vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoMode> & videomodes)
 {
-  int nb = 0; // Number of supported modes
-
   // Refresh the list of supported modes
   videomodes.kill();
 
@@ -455,7 +453,7 @@ vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoMode> & videomodes)
   }
 
   // parse the video modes to add in the list
-  for (int i=0; i < _videomodes.num; i++) {
+  for (unsigned i=0; i < _videomodes.num; i++) {
     vp1394TwoVideoMode _mode = (vp1394TwoVideoMode) _videomodes.modes[i];
     videomodes.addRight( _mode );
   }
@@ -604,8 +602,6 @@ int
 vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoMode mode,
 					vpList<vp1394TwoFramerate> & fps)
 {
-  int nb = 0; // Number of supported framerates
-
   if (! num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
@@ -646,7 +642,7 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoMode mode,
       if (_fps.num == 0)
 	return 0;
 
-      for (int i = 0; i < _fps.num; i ++)
+      for (unsigned int i = 0; i < _fps.num; i ++)
 	fps.addRight((vp1394TwoFramerate)_fps.framerates[i]);
 
       return _fps.num;
@@ -805,8 +801,6 @@ int
 vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoMode mode,
 					  vpList<vp1394TwoColorCoding> & codings)
 {
-  int nb = 0; // Number of supported framerates
-
   if (! num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
@@ -832,7 +826,7 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoMode mode,
     if (_codings.num == 0)
       return 0;
 
-    for (int i = 0; i < _codings.num; i ++)
+    for (unsigned int i = 0; i < _codings.num; i ++)
       codings.addRight((vp1394TwoColorCoding)_codings.codings[i]);
 
     return _codings.num;

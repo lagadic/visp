@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.cpp,v 1.7 2007-04-20 14:22:24 asaunier Exp $
+ * $Id: vpFeatureThetaU.cpp,v 1.8 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -260,7 +260,7 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
 
 
 void
-vpFeatureThetaU::print(const int select) const
+vpFeatureThetaU::print(const int /* select */) const
 {
   std::cout <<"ThetaU: " << s.t() ;
 }
@@ -271,10 +271,15 @@ vpFeatureThetaU *vpFeatureThetaU::duplicate() const
   return feature ;
 }
 
+/*!
+
+  Not implemented.
+
+*/
 void
-vpFeatureThetaU::display(const vpCameraParameters &cam,
-			 vpImage<unsigned char> &I,
-			 vpColor::vpColorType color) const
+vpFeatureThetaU::display(const vpCameraParameters &/* cam */,
+			 vpImage<unsigned char> &/* I */,
+			 vpColor::vpColorType /* color */) const
 {
   static int firsttime =0 ;
 

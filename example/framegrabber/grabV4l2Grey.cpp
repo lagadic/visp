@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabV4l2Grey.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: grabV4l2Grey.cpp,v 1.5 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -105,6 +105,8 @@ OPTIONS:                                                  Default\n\
      Print the help.\n\n",
 	  fps, input, scale);
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!

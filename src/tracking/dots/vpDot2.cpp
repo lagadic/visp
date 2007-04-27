@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.19 2007-04-20 14:22:21 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.20 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1164,7 +1164,7 @@ bool vpDot2::hasGoodLevel(const vpImage<unsigned char>& I,
 			  const unsigned int &u,
 			  const unsigned int &v) const
 {
-  if( !isInArea( I, u, v ) )
+  if( !isInArea( u, v ) )
     return false;
 
   if( I[v][u] >= gray_level_min &&  I[v][u] <= gray_level_max)
@@ -1327,7 +1327,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 
   // if the estimated position of the dot is out of the image, not need to continue,
   // return an error tracking
-  if( !isInArea( I, (int) est_u, (int) est_v ) )
+  if( !isInArea( (int) est_u, (int) est_v ) )
   {
     vpDEBUG_TRACE(3, "Initial pixel coordinates (%d, %d) for dot tracking are not in the area",
 		(int) est_u, (int) est_v) ;
@@ -1375,10 +1375,10 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 
   // Determine the first element of the Freeman chain
   computeFreemanChainElement(I, this->firstBorder_u, this->firstBorder_v, dir);
-  int firstDir = dir;
+  unsigned int firstDir = dir;
 
   // if we are now out of the image, return an error tracking
-  if( !isInArea( I, this->firstBorder_u, this->firstBorder_v ) )
+  if( !isInArea( this->firstBorder_u, this->firstBorder_v ) )
   {
     vpDEBUG_TRACE(3, "Border pixel coordinates (%d, %d) of the dot are not in the area",
 		  this->firstBorder_u, this->firstBorder_v);
@@ -1412,7 +1412,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
       //vpDisplay::flush(I);
     }
     // Determine the increments for the parameters
-    computeFreemanParameters(I, border_u, border_v, dir, du, dv,
+    computeFreemanParameters(border_u, border_v, dir, du, dv,
 			     dS, // surface
 			     dMu, dMv, // first order moments
 			     dMuv, dMu2, dMv2); // second order moment
@@ -1429,7 +1429,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
       m02 += dMv2; // Second order moment along u axis
     }
     // if we are now out of the image, return an error tracking
-    if( !isInArea( I, border_u, border_v ) )  {
+    if( !isInArea( border_u, border_v ) )  {
 
       // Can Occur on a single pixel dot located on the top border
       return false;
@@ -1459,7 +1459,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   while( (this->firstBorder_u != border_u
 	  || this->firstBorder_v != border_v
 	  || firstDir != dir) &&
-	 isInArea( I, border_u, border_v ) );
+	 isInArea( border_u, border_v ) );
 
 
   // if the surface is one or zero , the center of gravity wasn't properly
@@ -1609,7 +1609,6 @@ vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I,
   Given the previous position of a pixel (u_p, v_p) on the dot border and the
   direction to reach the next pixel on the border, compute Freeman parameters.
 
-  \param I : The image.
   \param u_p : Previous value of the row coordinate of a pixel on a border.
   \param v_p : Previous value of the column coordinate of a pixel on a border.
   \param du : Increment to go from previous to next pixel on the dot border.
@@ -1637,8 +1636,7 @@ vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I,
 
 */
 void
-vpDot2::computeFreemanParameters(const vpImage<unsigned char> &I,
-				 const int &u_p,
+vpDot2::computeFreemanParameters(const int &u_p,
 				 const int &v_p,
 				 unsigned int &element,
 				 int &du, int &dv,
@@ -1830,40 +1828,18 @@ bool vpDot2::isInImage( vpImage<unsigned char> &I,
   return true;
 }
 
-
-/*!
-
-  Test if a pixel is in the image. Points of the border are not considered to
-  be in the area.  Call the isInArea( vpImage<unsigned char> &I, int u, int
-  v) method.
-
-  \param I : The image.
-
-
-  \return true if the pixel of coordinates (posI, posJ) is in the image and
-  false otherwise.
-*/
-bool vpDot2::isInArea( const vpImage<unsigned char> &I) const
-{
-  return isInArea( I, (int)this->get_u(), (int)this->get_v());
-}
-
-
-
 /*!
 
   Test if a pixel is in an area. Points of the border are not considered to
   be in the area.
 
-  \param I : The image.
   \param u : The column coordinate of the pixel.
   \param v : The row coordinate of the pixel .
 
   \return true if the pixel of coordinates (u, v) is in the image and false
   otherwise.
 */
-bool vpDot2::isInArea( const vpImage<unsigned char> &I,
-		       const unsigned int &u, const unsigned int &v) const
+bool vpDot2::isInArea( const unsigned int &u, const unsigned int &v) const
 {
   unsigned int area_u_min = (unsigned int) area.getLeft();
   unsigned int area_u_max = (unsigned int) area.getRight();

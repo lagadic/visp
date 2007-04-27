@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8Multi.cpp,v 1.5 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: grabItifg8Multi.cpp,v 1.6 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -130,6 +130,8 @@ OPTIONS:                                                  Default\n\
      Print the help.\n\n",
 	  conffile.c_str(), fps, input, scale, buffer, nframes, opath.c_str());
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -236,7 +238,7 @@ main(int argc, char ** argv)
   I = new vpImage<unsigned char> [nboards];
 
   try{
-    for (int i=0; i < nboards; i ++) {
+    for (unsigned i=0; i < nboards; i ++) {
       // Initialize each grabber
       g.setBoard(i);
       g.setConfFile(conffile);
@@ -295,7 +297,7 @@ main(int argc, char ** argv)
 #endif
   if (opt_display) {
     try{
-      for (int i=0; i < nboards; i ++) {
+      for (unsigned i=0; i < nboards; i ++) {
 	char title[100];
 	sprintf(title, "Itifg-8.x Framegrabber: board %d", i);
 	display[i].init(I[i], 100+30*i, 100+30*i, title) ;
@@ -323,7 +325,7 @@ main(int argc, char ** argv)
     for (unsigned cpt = 0; cpt < nframes; cpt++) {
       tbegin = vpTime::measureTimeMs();
 
-      for (int i=0; i < nboards; i ++) {
+      for (unsigned i=0; i < nboards; i ++) {
 	g.setBoard(i);
 	// read the image
 	g.acquire(I[i]) ;

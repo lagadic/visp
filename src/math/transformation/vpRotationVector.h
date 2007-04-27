@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationVector.h,v 1.4 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRotationVector.h,v 1.5 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,24 +74,19 @@ protected:
 public:
   //! constructor
   vpRotationVector() { ; }
-
-
   //! constructor from 3 angles (in radian)
   vpRotationVector(const double phi, const double theta, const double psi) ;
-
-  //! convert a rotation matrix into Ryp vector
-  //  virtual vpRotationVector buildFrom(const vpRotationMatrix& R) =0 ;
-
 
   //! Access  r[i] = x
   inline double &operator [](int n) {  return *(r + n);  }
   //! Access x = r[i]
   inline const double &operator [](int n) const { return *(r+n);  }
 
- //---------------------------------
+  //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,const vpRotationVector &m);
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
+						const vpRotationVector &m);
 
 } ;
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.h,v 1.4 2007-01-31 14:59:50 asaunier Exp $
+ * $Id: vpRobotCamera.h,v 1.5 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,15 +92,15 @@ public:
   //! get a position expressed in the articular frame
   void getArticularPosition(vpColVector &q)  const  ;
   //! get a displacement (frame as to ve specified)
-  void getPosition(const vpRobot::ControlFrameType repere,
+  void getPosition(const vpRobot::ControlFrameType frame,
 		   vpColVector &q)  ;
  //! get a displacement (frame as to ve specified)
-  void setPosition(const vpRobot::ControlFrameType repere,
-		   const vpColVector &q)  { ; }
+  void setPosition(const vpRobot::ControlFrameType /* frame */,
+		   const vpColVector & /* q */)  { ; }
 
 
   void setPosition(const vpHomogeneousMatrix &_cMo) ;
-  void setPosition(const vpColVector &q) { ;}
+  void setPosition(const vpColVector & /* q */) { ;}
 
   //! get a displacement expressed in the camera frame
   void getCameraDisplacement(vpColVector &v)  ;

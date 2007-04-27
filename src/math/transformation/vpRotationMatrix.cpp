@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.13 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.14 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -185,13 +185,11 @@ vpRotationMatrix::operator*(const vpRotationMatrix &B) const
   vpMatrixException::forbiddenOperatorError
  */
 vpRotationMatrix
-vpRotationMatrix::operator+(const vpRotationMatrix &B) const
+vpRotationMatrix::operator+(const vpRotationMatrix &/* B*/) const
 {
  vpERROR_TRACE("Cannot add two rotation matrices !!!!! ") ;
   throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "Cannot add two rotation matrices !!!!!"));
-
-  return vpRotationMatrix();
 }
 
 /*! overload - operator (to say it forbidden operation, throw exception)
@@ -201,13 +199,11 @@ vpRotationMatrix::operator+(const vpRotationMatrix &B) const
   vpMatrixException::forbiddenOperatorError
  */
 vpRotationMatrix
-vpRotationMatrix::operator-(const vpRotationMatrix &B) const
+vpRotationMatrix::operator-(const vpRotationMatrix &/* B */) const
 {
   vpERROR_TRACE("Cannot substract two rotation matrices !!!!! ") ;
   throw(vpMatrixException(vpMatrixException::forbiddenOperatorError,
 			  "Cannot substract two rotation matrices !!!!!"));
-
-  return vpRotationMatrix();
 }
 
 //! operation c = A * b (A is unchanged)

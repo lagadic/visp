@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateCircle2DCamVelocity.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: simulateCircle2DCamVelocity.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -116,6 +116,8 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n",
 	  ipath.c_str());
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -129,7 +131,7 @@ Set the program options.
   the default configuration. When set to false, the display is
   disabled. This can be usefull for automatic tests using crontab
   under Unix or using the task manager under Windows.
-  
+
   \return false if the program has to be stopped, true otherwise.
 
 */
@@ -243,10 +245,10 @@ void *mainLoop (void *_simu)
       task.print() ;
 
       vpTime::wait(1000); // Sleep 1s
- 
+
       std::cout << "\nEnter a character to continue... " <<std::endl ;
       {    int a ; std::cin >> a ; }
- 
+
 
       int iter=0 ;
       vpTRACE("\t loop") ;
@@ -357,7 +359,7 @@ main(int argc, char ** argv)
   vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
 
   if (opt_display) {
-  
+
     vpSimulator simu ;
     simu.initInternalViewer(300, 300) ;
     simu.initExternalViewer(300, 300) ;
