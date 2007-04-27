@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTwistMatrix.cpp,v 1.6 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpTwistMatrix.cpp,v 1.7 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -164,19 +164,20 @@ vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &T,
   buildFrom(T,R) ;
 }
 
-
-vpTwistMatrix::vpTwistMatrix(const double Rx,
-			     const double Ry,
-			     const double Rz,
-			     const double Tx,
-			     const double Ty,
-			     const double Tz) : vpMatrix()
+/*!
+  \warning Not implemented.
+ */
+vpTwistMatrix::vpTwistMatrix(const double /* Rx */,
+			     const double /* Ry */,
+			     const double /* Rz */,
+			     const double /* Tx */,
+			     const double /* Ty */,
+			     const double /* Tz */) : vpMatrix()
 {
   init() ;
 
   vpERROR_TRACE("function not implemented") ;
   throw(vpException(vpException::functionNotImplementedError)) ;
-
 }
 
 //! Basic initialisation (identity)

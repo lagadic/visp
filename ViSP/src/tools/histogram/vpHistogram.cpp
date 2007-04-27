@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.cpp,v 1.3 2007-04-20 14:22:18 asaunier Exp $
+ * $Id: vpHistogram.cpp,v 1.4 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@ vpHistogram::vpHistogram(const vpImage<unsigned char> &I)
   histogram = NULL;
   size = 256;
   init();
- 
+
   calculate(I);
 }
 
@@ -132,7 +132,7 @@ vpHistogram::init(unsigned size)
     delete [] histogram;
     histogram = NULL;
   }
-  
+
   this->size = size;
   histogram = new unsigned [size];
 
@@ -169,7 +169,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I)
 
   \f[h(i) = \sum_{j=i-\frac{fsize}{2}}^{i+\frac{fsize}{2}} h(j) \f]
 
-  \param fsize : Filter size. Corresponds to the number of values 
+  \param fsize : Filter size. Corresponds to the number of values
   around each point used to compute the mean value.
 
   \return Smoothed histogram.
@@ -200,7 +200,7 @@ vpHistogram::smooth(unsigned fsize)
     sum = 0;
     nb = 0;
     for (int j=-hsize; j <= hsize; j ++) {
-      if ( (i + j) >= 0 && (i + j) < size ) {
+      if ( /*(i + j) >= 0 &&*/ (i + j) < size ) {
 	sum += h.histogram[i + j];
 	nb ++;
       }
@@ -210,7 +210,7 @@ vpHistogram::smooth(unsigned fsize)
 
 }
 
-/*!  
+/*!
 
   Build a list of all histogram peaks. This peak list is gray level
   sorted from 0 to 255. That mean that the first peak has a gray level
@@ -268,7 +268,7 @@ unsigned vpHistogram::getPeaks(vpList<vpHistogramPeak> & peaks)
     if ( (prev_slope > 0) && (next_slope < 0) ) {
       sum_level += i;
       cpt ++;
-      
+
       unsigned level = sum_level / cpt;
       p.set(level, histogram[level]);
       //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
@@ -277,8 +277,8 @@ unsigned vpHistogram::getPeaks(vpList<vpHistogramPeak> & peaks)
       nbpeaks ++;
 
     }
-   
-    prev_slope = next_slope;   
+
+    prev_slope = next_slope;
     sum_level = 0;
     cpt = 0;
   }
@@ -292,7 +292,7 @@ unsigned vpHistogram::getPeaks(vpList<vpHistogramPeak> & peaks)
   return nbpeaks;
 }
 
-/*!  
+/*!
 
   Find the two highest peaks in the histogram. Usually, the first
   one correspond to the image background, the second one to
@@ -309,8 +309,8 @@ unsigned vpHistogram::getPeaks(vpList<vpHistogramPeak> & peaks)
   - 0: if no peaks were found.
 
 */
-unsigned vpHistogram::getPeaks(unsigned char dist, 
-			       vpHistogramPeak & peak1, 
+unsigned vpHistogram::getPeaks(unsigned char dist,
+			       vpHistogramPeak & peak1,
 			       vpHistogramPeak & peak2)
 {
   vpList<vpHistogramPeak> peaks;
@@ -319,7 +319,7 @@ unsigned vpHistogram::getPeaks(unsigned char dist,
   nbpeaks = getPeaks(peaks);
   sort(peaks);
   peaks.front();
-  
+
   if (nbpeaks == 0) {
     peak1.set(0, 0);
     peak2.set(0, 0);
@@ -369,28 +369,28 @@ unsigned vpHistogram::getPeaks(unsigned char dist,
 */
 
 bool
-vpHistogram::getPeaks(unsigned char dist, 
+vpHistogram::getPeaks(unsigned char dist,
 		      vpHistogramPeak & peakl,
-		      vpHistogramPeak & peakr, 
+		      vpHistogramPeak & peakr,
 		      vpHistogramValey & valey)
 {
   unsigned char *peak;              // Local maxima values
   int prev_slope;              // Previous histogram inclination
   int next_slope;              // Next histogram inclination
-  unsigned index_highest_peak; // Index in peak[] array of the highest peak 
-  unsigned index_second_peak;  // Index in peak[] array of the second peak 
+  unsigned index_highest_peak; // Index in peak[] array of the highest peak
+  unsigned index_second_peak;  // Index in peak[] array of the second peak
 
-  unsigned int prof;             
+  unsigned int prof;
   unsigned int maxprof;       	       // Nb pixels difference between 2 maxi peaks
   unsigned int nbmini;             // Minimum numbers
-  unsigned int sumindmini;         // Sum 
+  unsigned int sumindmini;         // Sum
   unsigned int mini;                    // current minimum
   unsigned int nbpeaks; // Number of peaks in the histogram (ie local maxima)
 
   // Init the valey
   valey.set(0, 0);
 
-  // Allocation for the 
+  // Allocation for the
   peak = new unsigned char [size];
 
   // Parse the histogram to get the local maxima
@@ -398,13 +398,13 @@ vpHistogram::getPeaks(unsigned char dist,
   prev_slope = 1;
   for (unsigned i = 0; i < size-1; i++) {
     next_slope = histogram[i+1] - histogram[i];
-    if (next_slope == 0) 
+    if (next_slope == 0)
       continue;
     // Peak detection
     if ( (prev_slope > 0) && (next_slope < 0) )
       peak[nbpeaks ++] = i;
-    
-    prev_slope = next_slope;   
+
+    prev_slope = next_slope;
   }
   if (prev_slope > 0)
     peak[nbpeaks ++] = size-1;
@@ -412,7 +412,7 @@ vpHistogram::getPeaks(unsigned char dist,
 //   vpTRACE("nb peaks: %d", nbpeaks);
 //   for (unsigned i=0; i < nbpeaks; i ++)
 //     vpTRACE("peak %d: pos %d value: %d", i, peak[i], histogram[ peak[i] ]);
-  
+
   // Get the global maximum
   index_highest_peak = 0;
   for (unsigned int i=0; i < nbpeaks; i++) {
@@ -421,7 +421,7 @@ vpHistogram::getPeaks(unsigned char dist,
     }
   }
 
-//   vpTRACE("highest peak index: %d pos: %d value: %d", 
+//   vpTRACE("highest peak index: %d pos: %d value: %d",
 // 	  index_highest_peak, peak[index_highest_peak],
 // 	  histogram[ peak[index_highest_peak] ]);
 
@@ -433,7 +433,7 @@ vpHistogram::getPeaks(unsigned char dist,
     if (peak[index_highest_peak] - peak[i] > dist) {
       prof=0;
       for (int j=peak[i]; j <= peak[index_highest_peak]-dist; j++)
-	if((histogram[peak[i]] - histogram[j]) > prof) 
+	if((histogram[peak[i]] - histogram[j]) > prof)
 	  prof = histogram[peak[i]] - histogram[j];
 
       if (prof > maxprof) {
@@ -457,10 +457,10 @@ vpHistogram::getPeaks(unsigned char dist,
       }
     }
   }
-//   vpTRACE("second peak index: %d pos: %d value: %d", 
-// 	  index_second_peak, peak[index_second_peak], 
+//   vpTRACE("second peak index: %d pos: %d value: %d",
+// 	  index_second_peak, peak[index_second_peak],
 // 	  histogram[ peak[index_second_peak] ]);
- 
+
   // Determine position of the first and second highest peaks
   if (peak[index_highest_peak] < peak[index_second_peak])
   {
@@ -470,7 +470,7 @@ vpHistogram::getPeaks(unsigned char dist,
   else
   {
     peakl.set(peak[index_second_peak],  histogram[ peak[index_second_peak] ]);
-    peakr.set(peak[index_highest_peak], histogram[ peak[index_highest_peak]]); 
+    peakr.set(peak[index_highest_peak], histogram[ peak[index_highest_peak]]);
   }
 
   if (peakl == peakr) {
@@ -502,23 +502,23 @@ vpHistogram::getPeaks(unsigned char dist,
 
   if (nbmini == 0) {
     // no valey found
-    valey.set(0, 0); 
+    valey.set(0, 0);
 
     delete [] peak;
-  
+
     return false;
   }
   else {
     mini = sumindmini/nbmini; // mean
-    valey.set(mini, histogram[mini]); 
+    valey.set(mini, histogram[mini]);
 
     delete [] peak;
-  
+
     return (true);
   }
 }
 
-/*!  
+/*!
 
   Find the valey between two peaks. It starts at the lowest peak and
   works its way up to the highest peak. Along the way, it looks at
@@ -533,7 +533,7 @@ vpHistogram::getPeaks(unsigned char dist,
   \return true if a valey was found, false otherwise.
 */
 bool
-vpHistogram::getValey(const vpHistogramPeak & peak1, 
+vpHistogram::getValey(const vpHistogramPeak & peak1,
 		      const vpHistogramPeak & peak2,
 		      vpHistogramValey & valey)
 {
@@ -551,7 +551,7 @@ vpHistogram::getValey(const vpHistogramPeak & peak1,
 
   // Search the valey
   unsigned int nbmini;             // Minimum numbers
-  unsigned int sumindmini;         // Sum 
+  unsigned int sumindmini;         // Sum
   unsigned int mini;                    // current minimum
 
   mini = peakl.getValue();
@@ -573,17 +573,17 @@ vpHistogram::getValey(const vpHistogramPeak & peak1,
   if (nbmini == 0) {
     // no valey found
     valey.set(0, 0);
-  
+
     return false;
   }
   else {
     unsigned char minipos = sumindmini/nbmini; // position of the minimum
-    
+
     valey.set(minipos, histogram[minipos]);
     return true;
   }
 }
-/*!  
+/*!
 
   Find the two valey around an histogram peak. It starts at the peak
   position and works its way down and up to find the left and right
@@ -601,19 +601,19 @@ vpHistogram::getValey(const vpHistogramPeak & peak1,
   \return 0x11 : If two valeys around the peak were found.
 
 */
-unsigned    
+unsigned
 vpHistogram::getValey(unsigned char dist,
-		      const vpHistogramPeak & peak, 
-		      vpHistogramValey & valeyl, 
+		      const vpHistogramPeak & peak,
+		      vpHistogramValey & valeyl,
 		      vpHistogramValey & valeyr)
 {
   unsigned int ret = 0x11;
   unsigned int nbmini;             // Minimum numbers
-  unsigned int sumindmini;         // Sum 
+  unsigned int sumindmini;         // Sum
   unsigned int mini;                    // current minimum
   vpHistogramPeak peakr, peakl; // Left and right peaks of peak
   vpList<vpHistogramPeak> peaks; // list of histogram peaks
-  unsigned int nbpeaks; // Number of peaks in the histogram (ie local maxima)
+  unsigned int nbpeaks=0; // Number of peaks in the histogram (ie local maxima)
 
   if (peak.getLevel() == 0) {
     valeyl.set(0, 0);
@@ -635,7 +635,7 @@ vpHistogram::getValey(unsigned char dist,
       peaks.front();
       for (unsigned i=0; i < nbpeaks; i ++) {
 	vpHistogramPeak p = peaks.value();
-// 	vpTRACE("peak index %d: pos %d value: %d", 
+// 	vpTRACE("peak index %d: pos %d value: %d",
 // 		i, p.getLevel(), p.getValue());
 	peaks.next();
       }
@@ -655,7 +655,7 @@ vpHistogram::getValey(unsigned char dist,
 
     bool found = false;
     if (index == 0) {
-      // No chance to get a peak on the left 
+      // No chance to get a peak on the left
       // should not occur !
       peakl.set(0,0);
     }
@@ -673,7 +673,7 @@ vpHistogram::getValey(unsigned char dist,
     if ( ! found)
       peakl.set(0,0);
 
-    // Search the valey on the left 
+    // Search the valey on the left
     mini = peak.getValue();
     sumindmini=0;
     nbmini=0;
@@ -727,7 +727,7 @@ vpHistogram::getValey(unsigned char dist,
       }
       peaks.next();
     }
-    
+
     if ( ! found)
       peakr.set(size-1,0);
 
@@ -806,10 +806,10 @@ unsigned vpHistogram::sort(vpList<vpHistogramPeak> & peaks)
 	nbpeaks ++;
 	break;
       }
-	
+
       peaks.next();
     }
-    
+
     _peaks.next();
   }
   return nbpeaks;
@@ -823,7 +823,7 @@ unsigned vpHistogram::sort(vpList<vpHistogramPeak> & peaks)
   than the number of pixels which have this gray level.
 
   \param filename : File name to write with histogram values.
-  
+
   \return true if the file could be written, false otherwise.
 */
 
@@ -841,7 +841,7 @@ vpHistogram::write(const std::string &filename)
   than the number of pixels which have this gray level.
 
   \param filename : File name to write with histogram values.
-  
+
   \return true if the file could be written, false otherwise.
 */
 

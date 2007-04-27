@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.h,v 1.3 2007-02-26 16:42:39 fspindle Exp $
+ * $Id: vpMeEllipse.h,v 1.4 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,7 +92,7 @@ private:
 
   void sample(vpImage<unsigned char>&image);
   void reSample(vpImage<unsigned char> &I) ;
-  void leastSquare(vpImage<unsigned char> &I) ;
+  void leastSquare() ;
   void updateTheta();
   void suppressPoints() ;
   void seekExtremities(vpImage<unsigned char> &I) ;
@@ -105,7 +105,7 @@ public:
   void track(vpImage<unsigned char>& Im);
 
   void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, int n, 
+  void initTracking(vpImage<unsigned char> &I, int n,
 		    unsigned *i, unsigned *j) ;
 
 private:

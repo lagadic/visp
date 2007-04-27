@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobust.cpp,v 1.2 2007-04-20 14:22:25 asaunier Exp $
+ * $Id: testRobust.cpp,v 1.3 2007-04-27 16:40:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,6 +83,8 @@ OPTIONS:                                              Default\n\
      Print the help.\n",
 	  ofilename.c_str());
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 
@@ -103,14 +105,14 @@ bool getOptions(int argc, char **argv, std::string &ofilename)
     case 'h': usage(argv[0], NULL, ofilename); return false; break;
 
     default:
-      usage(argv[0], optarg, ofilename); 
+      usage(argv[0], optarg, ofilename);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ofilename); 
+    usage(argv[0], NULL, ofilename);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -148,7 +150,7 @@ main(int argc, char ** argv)
     }
     catch (...) {
       usage(argv[0], NULL, ofilename);
-      std::cerr << std::endl 
+      std::cerr << std::endl
 	   << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << ofilename << std::endl;
       std::cerr << "  Check your -o " << ofilename << " option " << std::endl;
@@ -172,7 +174,7 @@ main(int argc, char ** argv)
   f.open(ofilename.c_str());
   if (f == NULL) {
     usage(argv[0], NULL, ofilename);
-    std::cerr << std::endl 
+    std::cerr << std::endl
 	 << "ERROR:" << std::endl;
     std::cerr << "  Cannot create the file: " << ofilename << std::endl;
     std::cerr << "  Check your -o " << ofilename << " option " << std::endl;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpEulerVector.cpp,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpEulerVector.cpp,v 1.4 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,9 +65,9 @@ vpEulerVector::operator=(const vpEulerVector &m)
 
 
 //! copy constructor
-vpEulerVector::vpEulerVector(const vpEulerVector &m)
+vpEulerVector::vpEulerVector(const vpEulerVector &m) : vpRotationVector()
 {
-    *this = m ;
+  *this = m ;
 }
 
 //! initialize a Euler vector from a rotation matrix

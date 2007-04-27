@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayX.cpp,v 1.5 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: displayX.cpp,v 1.6 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,8 +38,8 @@
 /*!
   \file displayX.cpp
 
-  \brief Read an image on the disk, display it using vpDisplayX class, 
-  display some features (line, circle, caracters) in overlay and finaly 
+  \brief Read an image on the disk, display it using vpDisplayX class,
+  display some features (line, circle, caracters) in overlay and finaly
   write the image and the overlayed features in an image on the disk.
 
 */
@@ -60,8 +60,8 @@
 /*!
   \example displayX.cpp
 
-  Read an image on the disk, display it using vpDisplayX class, 
-  display some features (line, circle, caracters) in overlay and finaly 
+  Read an image on the disk, display it using vpDisplayX class,
+  display some features (line, circle, caracters) in overlay and finaly
   write the image and the overlayed features in an image on the disk.
 
 */
@@ -80,7 +80,8 @@
   \param user : Username.
 
  */
-void usage(char *name, char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(char *name, char *badparam, std::string ipath,
+	   std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using X11, display some\n\
@@ -120,6 +121,11 @@ OPTIONS:                                               Default\n\
   -h\n\
      Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
+
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 
 }
 
@@ -286,11 +292,11 @@ main(int argc, char ** argv)
     vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
 
     // Display in overlay horizontal red lines
-    for (int i=0 ; i < I.getHeight() ; i+=20)
+    for (unsigned int i=0 ; i < I.getHeight() ; i+=20)
       vpDisplay::displayLine(I,i,0,i,I.getWidth(), vpColor::red) ;
 
     // Display in overlay vertical green dot lines
-    for (int i=0 ; i < I.getWidth() ; i+=20)
+    for (unsigned int i=0 ; i < I.getWidth() ; i+=20)
       vpDisplay::displayDotLine(I,0,i,I.getWidth(), i,vpColor::green) ;
 
     // Display in overlay a blue arrow
@@ -298,7 +304,7 @@ main(int argc, char ** argv)
 
     // Display in overlay some circles. The position of the center is 200, 200
     // the radius is increased by 20 pixels for each circle
-    for (int i=0 ; i < 100 ; i+=20)
+    for (unsigned int i=0 ; i < 100 ; i+=20)
       vpDisplay::displayCircle(I,200,200,20+i,vpColor::yellow) ;
 
     // Display in overlay a yellow string
@@ -306,7 +312,7 @@ main(int argc, char ** argv)
 				 "ViSP is a marvelous software",
 				 vpColor::yellow) ;
     // Show the overlay. The display must be flushed to show the overlay.
-    //without this line, nothing else than the image will be displayed. 
+    //without this line, nothing else than the image will be displayed.
     vpDisplay::flush(I);
 
     // Create a color image
@@ -370,7 +376,7 @@ main(int argc, char ** argv)
 
     }
     //Flush the display. The display must be flushed to show the overlay.
-    //without this line, nothing else than the image will be displayed. 
+    //without this line, nothing else than the image will be displayed.
     vpDisplay::flush(Irgba);
 
     // If click is allowed, wait for a blocking mouse click to exit.

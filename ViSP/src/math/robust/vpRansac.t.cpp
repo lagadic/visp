@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.t.cpp,v 1.10 2007-04-18 16:14:28 asaunier Exp $
+ * $Id: vpRansac.t.cpp,v 1.11 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,6 +73,8 @@
   An array of indices of the elements of x that were
   the inliers for the best model.
 
+  \param areaThreshold : Not used.
+
   References:
   M.A. Fishler and  R.C. Boles. "Random sample concensus: A paradigm
   for model fitting with applications to image analysis and automated
@@ -97,7 +99,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
 				   vpColVector &M,
 				   vpColVector &inliers,
 				   int consensus,
-				   double areaThreshold
+				   double /* areaThreshold */
 				   )
 {
 
@@ -127,7 +129,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
   ind = new int [s] ;
   int numiter = 0;
   int ninliers;
-  double residual;
+  double residual = 0.0;
   while(( N > trialcount) && (consensus > bestscore))
   {
     // Select at random s datapoints to form a trial model, M.

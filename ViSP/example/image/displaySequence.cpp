@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.7 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: displaySequence.cpp,v 1.8 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -154,6 +154,8 @@ SYNOPSIS\n\
      Print the help.\n\n",
 	  ipath.c_str(),ppath.c_str(), first, nimages, step);
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 
@@ -176,8 +178,8 @@ SYNOPSIS\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath, 
-		unsigned &first, unsigned &nimages, unsigned &step, 
+bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
+		unsigned &first, unsigned &nimages, unsigned &step,
 		bool &display, bool &wait)
 {
   char *optarg;
@@ -192,11 +194,11 @@ bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
     case 'n': nimages = (unsigned) atoi(optarg); break;
     case 's': step = (unsigned) atoi(optarg); break;
     case 'w': wait = true; break;
-    case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step); 
+    case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step);
       return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, ppath, first, nimages, step); 
+      usage(argv[0], optarg, ipath, ppath, first, nimages, step);
       return false; break;
     }
   }
@@ -237,7 +239,7 @@ main(int argc, char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages, 
+  if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
 		 opt_step, opt_display, opt_wait) == false) {
     exit (-1);
   }
@@ -269,11 +271,11 @@ main(int argc, char ** argv)
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
 	 << std::endl
 	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl 
+	 << "  image path where test images are located." << std::endl
 	 << "  Use -p <personal image path> option if you want to "<<std::endl
 	 << "  use personal images." << std::endl
          << std::endl;
-    
+
     exit(-1);
   }
 
@@ -283,12 +285,12 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
   unsigned iter = opt_first;
-  std::ostringstream s; 
+  std::ostringstream s;
   char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()){
-  
-    
+
+
   // Warning :
   // the image sequence is not provided with the ViSP package
   // therefore the program will return you an error :
@@ -368,14 +370,13 @@ main(int argc, char ** argv)
 
 //  double tms_1 = vpTime::measureTimeMs() ;
   unsigned niter=0 ;
-  double totaltms =0 ;
   // this is the loop over the image sequence
   while (iter < opt_first + opt_nimages*opt_step) {
     try {
       double tms = vpTime::measureTimeMs() ;
-	
+
       // set the new image name
-	 
+
       if (opt_ppath.empty()){
 	s.str("");
 	s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
@@ -385,7 +386,7 @@ main(int argc, char ** argv)
 	sprintf(cfilename, opt_ppath.c_str(), iter) ;
 	filename = cfilename;
       }
-	  
+
       std::cout << "read : " << filename << std::endl;
       // read the image
       vpImageIo::readPGM(I, filename);

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.18 2007-04-20 14:22:21 asaunier Exp $
+ * $Id: vpDot.h,v 1.19 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,8 @@ public:
 		  right, up, down, and the 4 pixels located on the diagonal) */
   } ConnexityEnum;
 
-  static const int SPIRAL_SEARCH_SIZE; /*!< spiral size for the dot search */
+  static const unsigned int SPIRAL_SEARCH_SIZE; /*!< Spiral size for the dot
+						  search. */
 private:
 
   //! internal use only
@@ -95,7 +96,7 @@ private:
   double cog_ufloat, cog_vfloat ;
 
   // Bounding box
-  unsigned int u_min, u_max, v_min, v_max;
+  int u_min, u_max, v_min, v_max;
 
   // Flag used to allow display
   bool graphics ;
@@ -214,8 +215,8 @@ public:
     Print the coordinates of the point center of gravity
     in the stream.
   */
-  friend std::ostream& operator<< (std::ostream& os, vpDot& p) { 
-    return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ; 
+  friend std::ostream& operator<< (std::ostream& os, vpDot& p) {
+    return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ;
   } ;
   void print(std::ostream& os) { os << *this << std::endl ; }
 
@@ -226,7 +227,7 @@ private:
       out
     } ;
   double nbMaxPoint ;
-  int connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v, 
+  int connexe(vpImage<unsigned char>& I, int u, int v,
 	      unsigned int gray_level_min, unsigned int gray_level_max,
 	      double &mean_value, double &u_cog, double &v_cog, double &n);
   void COG(vpImage<unsigned char> &I,double& u, double& v) ;
@@ -255,8 +256,8 @@ public:
   void setComputeMoments(const bool activate) { compute_moment = activate; }
   void initTracking(vpImage<unsigned char> &I) ;
   void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v);
-  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v, 
-		    unsigned int gray_level_min, 
+  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v,
+		    unsigned int gray_level_min,
 		    unsigned int gray_level_max);
   void track(vpImage<unsigned char> & I) ;
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
@@ -282,7 +283,7 @@ public:
     \sa getHeight()
 
   */
-  inline unsigned int getWidth() const { 
+  inline unsigned int getWidth() const {
     return (this->u_max - this->u_min + 1);
   };
 
@@ -293,7 +294,7 @@ public:
     \sa getHeight()
 
   */
-  inline unsigned int getHeight() const { 
+  inline unsigned int getHeight() const {
     return (this->v_max - this->v_min + 1);
   };
 
@@ -304,10 +305,10 @@ public:
     \sa getWidth(), getHeight()
 
   */
-  inline vpRect getBBox() { 
+  inline vpRect getBBox() {
     vpRect bbox;
 
-    bbox.setRect(this->u_min, 
+    bbox.setRect(this->u_min,
 		 this->v_min,
 		 this->u_max - this->u_min + 1,
 		 this->v_max - this->v_min + 1);

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.9 2007-03-21 13:48:40 asaunier Exp $
+ * $Id: vpSimulator.h,v 1.10 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,7 +92,7 @@ protected:
 public:
   //! constructor
   vpSimulator() ;
-  ~vpSimulator() ;
+  virtual ~vpSimulator() ;
 
 protected:
   //! main Widget

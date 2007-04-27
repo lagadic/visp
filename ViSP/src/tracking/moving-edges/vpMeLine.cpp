@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.13 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpMeLine.cpp,v 1.14 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -333,7 +333,7 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
 }
 */
 void
-vpMeLine::leastSquare(vpImage<unsigned char> &I)
+vpMeLine::leastSquare()
 {
   vpMatrix A(numberOfSignal(),2) ;
   vpColVector x(3) ;
@@ -501,8 +501,8 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
 }
 
 void
-vpMeLine::initTracking(vpImage<unsigned char> &I, 
-		       unsigned i1,unsigned j1, 
+vpMeLine::initTracking(vpImage<unsigned char> &I,
+		       unsigned i1,unsigned j1,
 		       unsigned i2, unsigned j2)
 {
   vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<std::endl ;
@@ -789,7 +789,7 @@ vpMeLine::track(vpImage<unsigned char> &I)
     // Estimation des parametres de la droite aux moindres carre
     try
     {
-      leastSquare(I) ;
+      leastSquare() ;
     }
     catch(...)
     {
@@ -805,7 +805,7 @@ vpMeLine::track(vpImage<unsigned char> &I)
     setExtremities() ;
     try
     {
-      leastSquare(I) ;
+      leastSquare() ;
     }
     catch(...)
     {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBiclops.cpp,v 1.7 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpBiclops.cpp,v 1.8 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -187,7 +187,7 @@ vpBiclops::init ()
 /* ----------------------------------------------------------------------- */
 
 std::ostream & operator << (std::ostream & os,
-		       const vpBiclops & constant)
+			    const vpBiclops & /*constant*/)
 {
 
   os

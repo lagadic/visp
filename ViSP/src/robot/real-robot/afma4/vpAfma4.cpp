@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma4.cpp,v 1.8 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpAfma4.cpp,v 1.9 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -216,8 +216,8 @@ vpAfma4::computeMGD (const vpColVector & q, vpPoseVector & r)
  */
 
 void
-vpAfma4::computeInverseJacobian (const vpColVector & pos,
-				 vpMatrix & Jinverse)
+vpAfma4::computeInverseJacobian (const vpColVector & /* pos */,
+				 vpMatrix & /* Jinverse */)
 {
 
   vpERROR_TRACE ("Inverse jacobian non implemented");
@@ -381,7 +381,7 @@ vpAfma4::getPositionInJointInterval (const vpColVector &q,
 				     vpColVector &jointPos) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
-    
+
     jointPos.resize(vpAfma4::articulationsNb);
 
     for (int i = 0 ; i < vpAfma4::articulationsNb ; ++ i)
@@ -891,13 +891,13 @@ vpAfma4::get_cMe(vpHomogeneousMatrix &cMe)
 /*!
   \brief get the robot Jacobian expressed in the end-effector frame
 
-  Not implemneted
+  Not implemented.
 
   \warning Re is not the embedded camera  frame (see also get_cMe)
 
 */
 void
-vpAfma4::get_eJe(const vpColVector &q, vpMatrix &eJe)
+vpAfma4::get_eJe(const vpColVector &/*q*/, vpMatrix &eJe)
 {
 
   eJe = 0;

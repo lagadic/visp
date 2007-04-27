@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIoPnm.cpp,v 1.12 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpImageIoPnm.cpp,v 1.13 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -93,7 +93,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
   size_t nbyte = I.getWidth()*I.getHeight();
 
   ierr = fwrite(I.bitmap, sizeof(unsigned char), nbyte, fd) ;
-  if (ierr == ! nbyte) {
+  if (ierr != nbyte) {
     fclose(fd);
     vpERROR_TRACE("couldn't write %d bytes to file \"%s\"\n",
 	    nbyte, filename) ;
@@ -171,7 +171,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
   vpImageConvert::convert(I,Itmp) ;
 
   ierr = fwrite(Itmp.bitmap, sizeof(unsigned char), nbyte, fd) ;
-  if (ierr == ! nbyte) {
+  if (ierr != nbyte) {
     fclose(fd);
     vpERROR_TRACE("couldn't write %d bytes to file \"%s\"\n",
 	    nbyte, filename) ;

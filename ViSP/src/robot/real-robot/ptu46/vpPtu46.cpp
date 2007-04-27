@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPtu46.cpp,v 1.10 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpPtu46.cpp,v 1.11 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,7 +193,7 @@ vpPtu46::init ()
 /* ----------------------------------------------------------------------- */
 
 std::ostream & operator << (std::ostream & os,
-		       const vpPtu46 & constant)
+			    const vpPtu46 & /* constant */)
 {
 
   os

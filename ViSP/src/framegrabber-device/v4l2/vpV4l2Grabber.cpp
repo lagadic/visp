@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.10 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpV4l2Grabber.cpp,v 1.11 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -785,7 +785,7 @@ vpV4l2Grabber::setFormat()
   //height and width of the captured image or frame
   width = _width;
   height = _height;
-  if( frameformat == V4L2_FRAME_FORMAT && height > FRAME_SIZE )
+  if( frameformat == V4L2_FRAME_FORMAT && (int)height > FRAME_SIZE )
   {
     height = FRAME_SIZE;
   }

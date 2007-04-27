@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.cpp,v 1.7 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpThetaUVector.cpp,v 1.8 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,10 +63,9 @@ vpThetaUVector::operator=(const vpThetaUVector &m)
 
 
 //! copy constructor
-vpThetaUVector::vpThetaUVector(const vpThetaUVector &m)
+vpThetaUVector::vpThetaUVector(const vpThetaUVector &m) : vpRotationVector()
 {
-
-    *this = m ;
+  *this = m ;
 }
 
 //! initialize a Theta U vector from a rotation matrix

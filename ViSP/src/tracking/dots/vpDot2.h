@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.18 2007-04-23 14:30:39 fspindle Exp $
+ * $Id: vpDot2.h,v 1.19 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -282,7 +282,7 @@ private:
   \sa getFirstBorder_v()
 
   */
-  unsigned int getFirstBorder_u() const {
+  int getFirstBorder_u() const {
     return this->firstBorder_u;
   }
   /*!
@@ -293,7 +293,7 @@ private:
   \sa getFirstBorder_u()
 
   */
-  unsigned int getFirstBorder_v() const {
+  int getFirstBorder_v() const {
     return this->firstBorder_v;
   }
 
@@ -301,8 +301,7 @@ private:
 				  const unsigned int &u,
 				  const unsigned int &v,
 				  unsigned int &element);
-  void computeFreemanParameters(const vpImage<unsigned char> &I,
-				const int &u_p,
+  void computeFreemanParameters(const int &u_p,
 				const int &v_p, unsigned int &element,
 				int &du, int &dv, float &dS,
 				float &dMu, float &dMv,
@@ -315,9 +314,7 @@ private:
   bool isInImage( vpImage<unsigned char> &I ) const;
   bool isInImage( vpImage<unsigned char> &I, const int &u, const int &v) const;
 
-  bool isInArea(const vpImage<unsigned char> &I) const;
-  bool isInArea(const vpImage<unsigned char> &I,
-		const unsigned int &u, const unsigned int &v) const;
+  bool isInArea(const unsigned int &u, const unsigned int &v) const;
 
   void getGridSize( unsigned int &gridWidth, unsigned int &gridHeight );
   void setArea(vpImage<unsigned char> &I,

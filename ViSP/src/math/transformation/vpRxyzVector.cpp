@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRxyzVector.cpp,v 1.6 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpRxyzVector.cpp,v 1.7 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,9 +63,8 @@ vpRxyzVector::operator=(const vpRxyzVector &m)
 
 
 //! copy constructor
-vpRxyzVector::vpRxyzVector(const vpRxyzVector &m)
+vpRxyzVector::vpRxyzVector(const vpRxyzVector &m) : vpRotationVector()
 {
-
     *this = m ;
 }
 

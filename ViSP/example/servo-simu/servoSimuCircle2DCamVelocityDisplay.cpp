@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuCircle2DCamVelocityDisplay.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: servoSimuCircle2DCamVelocityDisplay.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -118,6 +118,10 @@ OPTIONS:                                               Default\n\
   -h\n\
      Print the help.\n");
 
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -128,7 +132,7 @@ Set the program options.
   \param argv : Array of command line parameters.
   \param click_allowed : false if mouse click is not allowed.
   \param display : false if the display is to turn off.
-  
+
   \return false if the program has to be stopped, true otherwise.
 
 */

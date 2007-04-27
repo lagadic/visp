@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBiclops.h,v 1.3 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpBiclops.h,v 1.4 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,7 +103,7 @@ public:
   void get_fJe(const vpColVector &q, vpMatrix &fJe);
 
   friend std::ostream & operator << (std::ostream & os,
-				const vpBiclops & constant);
+				     const vpBiclops & constant);
 };
 
 

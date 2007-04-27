@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: imageDiskRW.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: imageDiskRW.cpp,v 1.5 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -104,6 +104,10 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
 
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 /*!
 
@@ -253,7 +257,7 @@ main(int argc, char ** argv)
 
   // Although I is a gray level image you can read and write
   // color image. Obviously the color will be translated as a gray level
- 
+
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpImageIo::readPPM(I, filename);
 
@@ -268,7 +272,7 @@ main(int argc, char ** argv)
   {
     //Try to load a non existing image
     filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
-     
+
     vpImageIo::readPPM(I,filename) ;
   }
   catch(vpImageException e)

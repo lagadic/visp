@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.14 2007-04-20 14:22:17 asaunier Exp $
+ * $Id: vpServo.cpp,v 1.15 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -590,14 +590,12 @@ vpServo::computeError()
 bool
 vpServo::testInitialization()
 {
-  bool test = false ;
   switch (servoType)
     {
     case NONE:
       vpERROR_TRACE("No control law have been yet defined") ;
       throw(vpServoException(vpServoException::servoError,
 			     "No control law have been yet defined")) ;
-      test = true ;
       break ;
     case EYEINHAND_CAMERA:
       return true ;
@@ -627,14 +625,12 @@ vpServo::testInitialization()
 bool
 vpServo::testUpdated()
 {
-  bool test = false ;
   switch (servoType)
     {
     case NONE:
       vpERROR_TRACE("No control law have been yet defined") ;
       throw(vpServoException(vpServoException::servoError,
 			     "No control law have been yet defined")) ;
-      test = true ;
       break ;
     case EYEINHAND_CAMERA:
       return true ;

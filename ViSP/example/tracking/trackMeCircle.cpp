@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeCircle.cpp,v 1.5 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: trackMeCircle.cpp,v 1.6 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,6 +108,8 @@ OPTIONS:                                               Default\n\
      Print the help.\n",
 	  ipath.c_str());
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 

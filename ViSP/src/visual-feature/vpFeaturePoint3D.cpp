@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint3D.cpp,v 1.8 2007-04-20 14:22:24 asaunier Exp $
+ * $Id: vpFeaturePoint3D.cpp,v 1.9 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -239,10 +239,15 @@ vpFeaturePoint3D::error(const vpBasicFeature &s_star,
 
 }
 
-//! compute the error between two visual features from a subset
-//! a the possible features
+/*!
+  This function has no meaning related to 3D point. It is not implemented.
+
+  \exception vpException::notImplementedError : This function has no meaning
+  related to 3D point.
+
+*/
 vpColVector
-vpFeaturePoint3D::error(const int select)
+vpFeaturePoint3D::error(const int /* select */)
 {
 
   vpERROR_TRACE("This function has no meaning related to 3D point ") ;
@@ -336,11 +341,14 @@ vpFeaturePoint3D *vpFeaturePoint3D::duplicate() const
   return feature ;
 }
 
+/*!
 
+  Not implemented.
+*/
 void
-vpFeaturePoint3D::display(const vpCameraParameters &cam,
-			  vpImage<unsigned char> &I,
-			  vpColor::vpColorType color) const
+vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
+			  vpImage<unsigned char> &/* I */,
+			  vpColor::vpColorType /* color */) const
 {
   static int firsttime =0 ;
 

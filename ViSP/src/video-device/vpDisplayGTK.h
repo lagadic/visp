@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.8 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpDisplayGTK.h,v 1.9 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,7 +89,7 @@ private:
   int ncol, nrow ;
 
 protected:
-  void setWindowPosition(int _winx, int _winy) { ; }
+  void setWindowPosition(int /* winx */, int /* winy */) { ; }
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.cpp,v 1.7 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpDirectShowGrabberImpl.cpp,v 1.8 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,7 +110,8 @@ vpDirectShowGrabberImpl::vpDirectShowGrabberImpl()
 */
 void vpDirectShowGrabberImpl::open()
 {
-	if(! (init = initDirectShow()) )
+  init = initDirectShow();
+	if(! init )
 	{
 		std::string err;
 		HRtoStr(err);
@@ -1095,7 +1096,6 @@ bool vpDirectShowGrabberImpl::setMediaType(int mediaTypeID)
       close();
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
-	  return false;
     }
 
 	//gets the stream config interface
@@ -1141,7 +1141,6 @@ int vpDirectShowGrabberImpl::getMediaType()
       close();
       throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				     "Initialization not done") );
-	  return -1;
     }
 
 	int mediaTypeID = -1;

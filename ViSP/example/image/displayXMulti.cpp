@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayXMulti.cpp,v 1.6 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: displayXMulti.cpp,v 1.7 2007-04-27 16:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 /*!
   \file displayXMulti.cpp
 
-  \brief Read a grey level image and a color image on the disk. 
+  \brief Read a grey level image and a color image on the disk.
   Display these two images using vpDisplayX class, display some
   features (line, circle, caracters) in overlay and finaly write the image and
   the overlayed features in an image on the disk.
@@ -59,7 +59,7 @@
 /*!
   \example displayXMulti.cpp
 
-  Read a grey level image and a color image on the disk. 
+  Read a grey level image and a color image on the disk.
   Display these two images using vpDisplayX class, display some
   features (line, circle, caracters) in overlay and finaly write the image and
   the overlayed features in an image on the disk.
@@ -121,6 +121,10 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
 
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -307,11 +311,11 @@ main(int argc, char ** argv)
     vpDisplay::display(I2) ;
 
     // In the first display, display in overlay horizontal red lines
-    for (int i=0 ; i < I1.getHeight() ; i+=20)
+    for (unsigned int i=0 ; i < I1.getHeight() ; i+=20)
       vpDisplay::displayLine(I1,i,0,i,I1.getWidth(), vpColor::red) ;
 
     // In the first display, display in overlay vertical green dot lines
-    for (int i=0 ; i < I1.getWidth() ; i+=20)
+    for (unsigned int i=0 ; i < I1.getWidth() ; i+=20)
       vpDisplay::displayDotLine(I1,0,i,I1.getWidth(), i,vpColor::green) ;
 
     // In the first display, display in overlay a blue arrow
@@ -320,16 +324,16 @@ main(int argc, char ** argv)
     // In the first display, display in overlay some circles. The
     // position of the center is 200, 200 the radius is increased by 20
     // pixels for each circle
-    for (int i=0 ; i < 100 ; i+=20)
+    for (unsigned int i=0 ; i < 100 ; i+=20)
       vpDisplay::displayCircle(I1,200,200,20+i,vpColor::yellow) ;
 
     // In the first display, display in overlay a yellow string
     vpDisplay::displayCharString(I1,100,100,
 				 "ViSP is a marvelous software",
 				 vpColor::blue) ;
-	
+
 	//Flush displays. The displays must be flushed to show the overlay.
-    //without this line, nothing else than the image will be displayed. 
+    //without this line, nothing else than the image will be displayed.
 	vpDisplay::flush(I1);
 	vpDisplay::flush(I2);
 

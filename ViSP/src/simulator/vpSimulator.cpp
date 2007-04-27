@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.11 2007-03-21 09:24:55 asaunier Exp $
+ * $Id: vpSimulator.cpp,v 1.12 2007-04-27 16:40:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -684,7 +684,7 @@ vpSimulator::addFrame (const vpHomogeneousMatrix &fMo, double zoom)
   \brief Add the representation of the absolute frame
 */
 void
-vpSimulator::addAbsoluteFrame (double zoom)
+vpSimulator::addAbsoluteFrame (double /*zoom*/)
 {
   scene->addChild(createFrame ()) ;
 }
