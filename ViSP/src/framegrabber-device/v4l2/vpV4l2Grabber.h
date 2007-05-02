@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.h,v 1.9 2007-04-23 14:06:14 fspindle Exp $
+ * $Id: vpV4l2Grabber.h,v 1.10 2007-05-02 13:29:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -153,7 +153,7 @@ public:
 		unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
   vpV4l2Grabber(vpImage<vpRGBa> &I,
 		unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
-  ~vpV4l2Grabber() ;
+  virtual ~vpV4l2Grabber() ;
 
 public:
   void open(vpImage<unsigned char> &I) ;

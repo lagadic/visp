@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.12 2007-02-28 16:28:32 fspindle Exp $
+ * $Id: vpDisplayX.h,v 1.13 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -131,7 +131,7 @@ public:
   vpDisplayX(int _winx, int _winy, char *title=NULL) ;
 
   vpDisplayX() ;
-  ~vpDisplayX() ;
+  virtual ~vpDisplayX() ;
 
 protected:
   void displayImage(const vpImage<vpRGBa> &I) ;

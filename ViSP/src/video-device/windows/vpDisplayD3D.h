@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayD3D.h,v 1.3 2007-02-26 18:34:10 fspindle Exp $
+ * $Id: vpDisplayD3D.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,7 @@ public:
 		    int winx=-1, int winy=-1,
 		    char *_title=NULL);
   
-  ~vpDisplayD3D();
+  virtual ~vpDisplayD3D();
   
 };
 #endif

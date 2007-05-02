@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpScale.h,v 1.2 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpScale.h,v 1.3 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,7 +73,7 @@ public:
   vpScale();
   vpScale(double, int, int);
   //! Destructor
-  ~vpScale(void);
+  virtual ~vpScale(void);
 
   double MeanShift(vpColVector &error);
   double KernelDensity(vpColVector &error, int position);

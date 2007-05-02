@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.h,v 1.3 2007-03-21 13:48:40 asaunier Exp $
+ * $Id: vpRA.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -97,7 +97,7 @@ private:
  public:
 
 
-  ~vpRA() ;
+  virtual ~vpRA() ;
   void initInternalViewer(int width, int height, vpImageType type = grayImage) ;
   void setImage(vpImage<unsigned char> &I) ;
   void setImage(vpImage<vpRGBa> &I) ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.h,v 1.3 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpWin32Window.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -97,7 +97,7 @@ class VISP_EXPORT vpWin32Window
  public:
 
   vpWin32Window(vpWin32Renderer * rend = NULL);
-  ~vpWin32Window();
+  virtual ~vpWin32Window();
 
   //! Returns the displayed image's width
   int getImageWidth(){ return renderer->getImageWidth(); }

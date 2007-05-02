@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.9 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpDisplayGTK.h,v 1.10 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -114,7 +114,7 @@ public:
   vpDisplayGTK(int _winx, int _winy, char *title=NULL) ;
 
   vpDisplayGTK() ;
-  ~vpDisplayGTK() ;
+  virtual ~vpDisplayGTK() ;
 
 protected:
   void displayImage(const vpImage<vpRGBa> &I) ;

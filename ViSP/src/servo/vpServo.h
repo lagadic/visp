@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.9 2007-04-20 14:22:17 asaunier Exp $
+ * $Id: vpServo.h,v 1.10 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,7 +78,7 @@ public:
   //! constructor
   vpServo() { init() ; }
   //! destructor
-  ~vpServo() ;
+  virtual ~vpServo() ;
   //! destruction (memory deallocation if required)
   void kill() ;
 public:

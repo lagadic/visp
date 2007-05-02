@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.h,v 1.5 2007-04-18 12:13:13 asaunier Exp $
+ * $Id: vpCircle.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@ class VISP_EXPORT vpCircle : public vpForwardProjection
 public:
   void init() ;
   vpCircle() ;
-  ~vpCircle() ;
+  virtual ~vpCircle() ;
 
 public:
   enum lineCircleEnum

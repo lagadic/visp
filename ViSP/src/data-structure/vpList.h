@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.8 2007-05-02 12:43:34 fspindle Exp $
+ * $Id: vpList.h,v 1.9 2007-05-02 13:29:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -133,7 +133,7 @@ class vpList
  public:
   vpList() ;                  // constr.
   vpList(vpList& Liste);       // cloning
-  ~vpList();                  // destr.
+  virtual ~vpList();                  // destr.
   inline void next(void) ;           // current element's successor ( cur = cur->next )
   inline void previous(void) ;       // current element's predecessor ( cur = cur->pred )
   inline void front(void) ;          // go to the front of the List (cur = first)

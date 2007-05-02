@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.11 2007-04-20 14:22:22 asaunier Exp $
+ * $Id: vpPoint.h,v 1.12 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,7 +67,7 @@ public:
   //! basic constructor
   vpPoint() ;
   //! destructor
-  ~vpPoint() { ; }
+  virtual ~vpPoint() { ; }
 
 public:
   /*
