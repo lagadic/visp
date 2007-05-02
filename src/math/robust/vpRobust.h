@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.h,v 1.3 2006-12-04 14:53:22 marchand Exp $
+ * $Id: vpRobust.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -82,7 +82,7 @@ public:
   //! Constructor
   vpRobust(int);
   //! Destructor
-  ~vpRobust(void);
+  virtual ~vpRobust(void);
 
   int MEstimator(const int method,
 		 const vpColVector &residues,

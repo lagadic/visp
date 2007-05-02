@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint3D.h,v 1.5 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpFeaturePoint3D.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,7 @@ public:
   //! basic constructor
   vpFeaturePoint3D() ;
   //! destructor
-  ~vpFeaturePoint3D() { ; }
+  virtual ~vpFeaturePoint3D() { ; }
 
 public:
   /*

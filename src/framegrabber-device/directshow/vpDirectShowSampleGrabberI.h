@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowSampleGrabberI.h,v 1.4 2007-02-16 16:12:03 asaunier Exp $
+ * $Id: vpDirectShowSampleGrabberI.h,v 1.5 2007-05-02 13:29:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,7 @@
 class VISP_EXPORT vpDirectShowSampleGrabberI : public ISampleGrabberCB
 {
 	vpDirectShowSampleGrabberI();
-	~vpDirectShowSampleGrabberI();
+	virtual ~vpDirectShowSampleGrabberI();
 
 	//needed by the interface
 	STDMETHODIMP_(ULONG) AddRef() { return 1; }

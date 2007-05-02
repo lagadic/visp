@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.h,v 1.2 2007-04-20 14:22:18 asaunier Exp $
+ * $Id: vpHistogram.h,v 1.3 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -113,7 +113,7 @@ public:
   vpHistogram();
   vpHistogram(const vpHistogram &h);
   vpHistogram(const vpImage<unsigned char> &I);
-  ~vpHistogram();
+  virtual ~vpHistogram();
 
   vpHistogram & operator=(const vpHistogram &h);
 

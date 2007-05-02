@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.3 2006-05-30 08:40:35 fspindle Exp $
+ * $Id: vpCameraParameters.h,v 1.4 2007-05-02 13:29:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -129,7 +129,7 @@ public:
 	   const double _kd = vpCameraParameters::DEFAULT_KD_PARAMETER) ;
 
 
-  ~vpCameraParameters() ;
+  virtual ~vpCameraParameters() ;
 
 
   vpMatrix K ; //<! camera projection matrix

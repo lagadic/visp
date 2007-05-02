@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.19 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpDot.h,v 1.20 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -157,7 +157,7 @@ public:
   vpDot(const unsigned int u, const unsigned int v) ;
   vpDot(const double u, const double v) ;
   vpDot(const vpDot& c) ;
-  ~vpDot() ;
+  virtual ~vpDot() ;
 
 public:
   vpDot& operator =(const vpDot& f) ;

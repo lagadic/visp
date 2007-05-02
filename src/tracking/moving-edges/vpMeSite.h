@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.h,v 1.6 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpMeSite.h,v 1.7 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -99,7 +99,7 @@ public:
 
   vpMeSite () ;
   vpMeSite(double ip, double jp) ;
-  ~vpMeSite() {} ;
+  virtual ~vpMeSite() {} ;
 
   vpMeSite &operator=(const vpMeSite &m) ;
   int operator!=(const vpMeSite  &m) ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabber.h,v 1.6 2007-03-08 13:35:43 fspindle Exp $
+ * $Id: vpDirectShowGrabber.h,v 1.7 2007-05-02 13:29:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,7 @@ class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber
 		unsigned int getWidth();
 
 		vpDirectShowGrabber();
-		~vpDirectShowGrabber();
+		virtual ~vpDirectShowGrabber();
 
 		void open();
 		void open(vpImage<unsigned char> &I);

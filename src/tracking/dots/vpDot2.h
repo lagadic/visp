@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.19 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpDot2.h,v 1.20 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@ public:
   vpDot2(const unsigned int u, const unsigned int v) ;
   vpDot2(const double u, const double v) ;
   vpDot2( const vpDot2& twinDot );
-  ~vpDot2();
+  virtual ~vpDot2();
   void operator=( const vpDot2& twinDot );
 
   void initTracking(vpImage<unsigned char>& I);

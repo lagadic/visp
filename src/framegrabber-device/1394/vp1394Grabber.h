@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.13 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vp1394Grabber.h,v 1.14 2007-05-02 13:29:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -118,7 +118,7 @@ public:
 public:
   vp1394Grabber();
   vp1394Grabber(vpImage<unsigned char> &I);
-  ~vp1394Grabber();
+  virtual ~vp1394Grabber();
 
   void setCamera(unsigned int camera);
   void getCamera(unsigned int &camera);

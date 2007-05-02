@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.h,v 1.4 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpFeatureTranslation.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,7 +77,7 @@ public:
   //! cdMc is the displacement that the camera has to  realize
   vpFeatureTranslation(vpHomogeneousMatrix &cdMc) ;
   //! destructor
-  ~vpFeatureTranslation() { ; }
+  virtual ~vpFeatureTranslation() { ; }
 
 private:
   //! displacement that the camera has to realize

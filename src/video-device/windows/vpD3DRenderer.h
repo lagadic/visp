@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.h,v 1.5 2007-04-18 12:13:13 asaunier Exp $
+ * $Id: vpD3DRenderer.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,7 +98,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   bool render();
 
   vpD3DRenderer();
-  ~vpD3DRenderer();
+  virtual ~vpD3DRenderer();
 
   void setImg(const vpImage<vpRGBa>& im);
 

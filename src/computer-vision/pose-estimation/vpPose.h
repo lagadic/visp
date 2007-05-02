@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.6 2007-03-07 15:45:08 marchand Exp $
+ * $Id: vpPose.h,v 1.7 2007-05-02 13:29:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -112,7 +112,7 @@ public:
   //! constructor
   vpPose() ;
   //! destructor
-  ~vpPose() ;
+  virtual ~vpPose() ;
 
   //! compute the residual (i.e., the quality of the result)
   //! compute the residual (in meter for pose M)

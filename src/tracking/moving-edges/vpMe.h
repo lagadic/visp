@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMe.h,v 1.4 2007-01-31 15:25:59 asaunier Exp $
+ * $Id: vpMe.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,7 +92,7 @@ public:
   vpMatrix *mask ;
 
   vpMe() ;
-  ~vpMe() ;
+  virtual ~vpMe() ;
 
   void initMask() ;// convolution masks - offset computation
   void print( ) ;

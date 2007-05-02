@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotTemplate.h,v 1.3 2007-01-31 14:59:50 asaunier Exp $
+ * $Id: vpRobotTemplate.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,7 @@ public:
   //! constructor
   vpRobotTemplate() ;
   //! destructor
-  ~vpRobotTemplate() ;
+  virtual ~vpRobotTemplate() ;
 
 
   //! get the robot Jacobian expressed in the end-effector frame

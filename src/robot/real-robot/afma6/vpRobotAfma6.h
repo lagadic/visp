@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.8 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.9 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -174,7 +174,7 @@ public:  /* Methode publiques */
    * \throw ERRMauvaisEtatRobot si le robot n'etait pas arrete au moment de
    * la destruction de l'objet. Dans ce cas le robot est arrete et les
    * communications sont fermee, avant le lancement de l'erreur. */
-  ~vpRobotAfma6 (void);
+  virtual ~vpRobotAfma6 (void);
 
 
   /* --- ETAT ------------------------------------------------------------- */

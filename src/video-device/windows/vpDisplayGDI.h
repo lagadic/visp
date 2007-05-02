@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.h,v 1.4 2007-02-13 09:17:41 fspindle Exp $
+ * $Id: vpDisplayGDI.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,7 +68,7 @@ public:
 	       int winx=-1, int winy=-1,
 	       char *_title=NULL);
 
-  ~vpDisplayGDI();
+  virtual ~vpDisplayGDI();
 
 };
 

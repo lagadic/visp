@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.h,v 1.5 2007-02-27 17:08:06 fspindle Exp $
+ * $Id: vpGDIRenderer.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 
  public:
   vpGDIRenderer();
-  ~vpGDIRenderer();
+  virtual ~vpGDIRenderer();
 
   //inits the display.
   bool init(HWND hWnd, unsigned int width, unsigned int height);
