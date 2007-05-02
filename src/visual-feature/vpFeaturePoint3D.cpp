@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint3D.cpp,v 1.9 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpFeaturePoint3D.cpp,v 1.10 2007-05-02 16:43:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -255,9 +255,6 @@ vpFeaturePoint3D::error(const int /* select */)
 
   throw(vpException(vpException::notImplementedError,
 			   "This function has no meaning related to 3D point")) ;
-
-  return vpColVector() ;
-
 }
 
 void

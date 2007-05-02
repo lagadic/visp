@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.14 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.15 2007-05-02 16:43:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -874,8 +874,8 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
   int  end = false ;
   double incr = 10 ;
 
-  int i1,i2,j1,j2 ;
-  unsigned char v1,v2 ;
+  int i1=0,i2=0,j1=0,j2=0 ;
+  unsigned char v1=0,v2=0 ;
   while (!end)
     {
       end = true;

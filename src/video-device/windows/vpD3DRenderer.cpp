@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.8 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.9 2007-05-02 16:43:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -529,7 +529,7 @@ void vpD3DRenderer::drawLine(unsigned int i1, unsigned int j1,
 */
 void vpD3DRenderer::drawRect(unsigned int i, unsigned int j,
 			     unsigned int width, unsigned int height,
-			     vpColor::vpColorType col, bool fill)
+			     vpColor::vpColorType col, bool /* fill */)
 {
   if(i<0 || j<0 || i>nbRows || j>nbCols || width<0 || height<0)
     {
