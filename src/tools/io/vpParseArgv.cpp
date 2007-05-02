@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.4 2007-03-20 17:34:08 fspindle Exp $
+ * $Id: vpParseArgv.cpp,v 1.5 2007-05-02 16:41:43 fspindle Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -167,7 +167,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
       infoPtr = matchPtr;
       switch (infoPtr->type) {
       case ARGV_CONSTANT:
-         *((int *) infoPtr->dst) = (int) infoPtr->src;
+	*((int *) infoPtr->dst) = (int) infoPtr->src;
          break;
       case ARGV_INT:
          nargs = (int) infoPtr->src;
@@ -176,13 +176,13 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
             if (argc == 0) {
                goto missingArg;
             } else {
-               char *endPtr;
+               char *endPtr=NULL;
 
                *(((int *) infoPtr->dst)+i) =
                   strtol(argv[srcIndex], &endPtr, 0);
                if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
                   FPRINTF(stderr,
-                  "expected integer argument for \"%s\" but got \"%s\"",
+                  "expected integer argument for \"%s\" but got \"%s\"\n",
                           infoPtr->key, argv[srcIndex]);
                   return true;
                }
@@ -214,13 +214,35 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
             if (argc == 0) {
                goto missingArg;
             } else {
-               char *endPtr;
+	      char *endPtr;
+
+               *(((float *) infoPtr->dst)+i) =
+                  strtod(argv[srcIndex], &endPtr);
+               if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
+                  FPRINTF(stderr,
+       "expected floating-point argument for \"%s\" but got\"%s\"\n",
+                          infoPtr->key, argv[srcIndex]);
+                  return true;
+               }
+               srcIndex++;
+               argc--;
+            }
+         }
+         break;
+      case ARGV_DOUBLE:
+         nargs = (int) infoPtr->src;
+         if (nargs<1) nargs=1;
+         for (i=0; i<nargs; i++) {
+            if (argc == 0) {
+               goto missingArg;
+            } else {
+	      char *endPtr;
 
                *(((double *) infoPtr->dst)+i) =
                   strtod(argv[srcIndex], &endPtr);
                if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
                   FPRINTF(stderr,
-       "expected floating-point argument for \"%s\" but got\"%s\"\n",
+       "expected double-point argument for \"%s\" but got\"%s\"\n",
                           infoPtr->key, argv[srcIndex]);
                   return true;
                }
@@ -306,7 +328,7 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
    register vpArgvInfo *infoPtr;
    size_t width;
    int i, j;
-   size_t numSpaces;
+   int numSpaces;
 #define NUM_SPACES 20
    static char spaces[] = "                    ";
 /*   char tmp[30]; */
@@ -365,6 +387,15 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
             break;
          }
          case ARGV_FLOAT: {
+            FPRINTF(stderr, "\n\t\tDefault value:");
+            nargs = (int) infoPtr->src;
+            if (nargs<1) nargs=1;
+            for (j=0; j<nargs; j++) {
+               FPRINTF(stderr, " %f", *(((float *) infoPtr->dst)+j));
+            }
+            break;
+         }
+         case ARGV_DOUBLE: {
             FPRINTF(stderr, "\n\t\tDefault value:");
             nargs = (int) infoPtr->src;
             if (nargs<1) nargs=1;
