@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.12 2007-03-08 13:05:54 hatran Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.13 2007-05-02 12:43:33 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -57,7 +57,6 @@ SET (HEADER_COMPUTER_VISION
 
 SET (HEADER_DATA_STRUCTURE
   data-structure/vpList.h
-  data-structure/vpList.t.cpp
   )
 
 SET (HEADER_EXCEPTION
@@ -86,7 +85,6 @@ SET (HEADER_IMAGE
   image/vpImageException.h
   image/vpImageFilter.h
   image/vpImage.h
-  image/vpImageBase.t.cpp
   image/vpImageIo.h
   image/vpImageMorphology.h
   image/vpImageTools.h
@@ -102,7 +100,6 @@ SET (HEADER_MATH
   math/misc/vpMath.h
   math/misc/vpNoise.h
   math/robust/vpRansac.h
-  math/robust/vpRansac.t.cpp
   math/robust/vpRobust.h
   math/robust/vpScale.h
   math/transformation/vpEulerVector.h
