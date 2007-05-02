@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.h,v 1.6 2007-05-02 12:43:34 fspindle Exp $
+ * $Id: vpRansac.h,v 1.7 2007-05-02 16:43:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -176,7 +176,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
   int *ind;
   ind = new int [s] ;
   int numiter = 0;
-  int ninliers;
+  int ninliers = 0;
   double residual = 0.0;
   while(( N > trialcount) && (consensus > bestscore))
   {

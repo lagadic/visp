@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.10 2007-03-13 15:30:43 asaunier Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.11 2007-05-02 16:43:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -181,8 +181,7 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
   if(needPad)
     {
       unsigned int j = 0;
-      unsigned int k = 0;
-      for(unsigned int i=0, k=0 ; i<newW * h * 4; i+=4, k++)
+      for(unsigned int i=0, unsigned int k=0 ; i<newW * h * 4; i+=4, k++)
 	{
 	  //end of a line = padding = inserts 0s
 	  if(j==w && needPad)
@@ -208,8 +207,7 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
   else
     //Simple conversion (no padding)
     {
-      unsigned int k = 0;
-      for(unsigned int i=0, k=0 ; i<w * h * 4 ; i+=4, k++)
+      for(unsigned int i=0, unsigned int k=0 ; i<w * h * 4 ; i+=4, k++)
 	{
 	  imBuffer[i+0] = I.bitmap[k].B;
 	  imBuffer[i+1] = I.bitmap[k].G;
@@ -252,8 +250,7 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
   if(needPad)
     {
       unsigned int j = 0;
-      unsigned int k = 0;
-      for(unsigned int i=0, k=0 ; i<newW * h * 4; i+=4, k++)
+      for(unsigned int i=0, unsigned int k=0 ; i<newW * h * 4; i+=4, k++)
 	{
 	  //end of a line = padding = inserts 0s
 	  if(j==w && needPad)
@@ -278,8 +275,7 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
   else
     //Simple conversion
     {
-      unsigned int k = 0;
-      for(unsigned int i=0, k=0 ; i<w * h * 4 ; i+=4, k++)
+      for(unsigned int i=0, unsigned int k=0 ; i<w * h * 4 ; i+=4, k++)
 	{
 	  imBuffer[i+0] = I.bitmap[k];
 	  imBuffer[i+1] = I.bitmap[k];

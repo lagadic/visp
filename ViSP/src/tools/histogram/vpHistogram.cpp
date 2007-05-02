@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.cpp,v 1.4 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpHistogram.cpp,v 1.5 2007-05-02 16:43:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -269,8 +269,8 @@ unsigned vpHistogram::getPeaks(vpList<vpHistogramPeak> & peaks)
       sum_level += i;
       cpt ++;
 
-      unsigned level = sum_level / cpt;
-      p.set(level, histogram[level]);
+      unsigned int level = sum_level / cpt;
+      p.set((unsigned char)level, histogram[level]);
       //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
       peaks.addRight(p);
 
@@ -283,7 +283,7 @@ unsigned vpHistogram::getPeaks(vpList<vpHistogramPeak> & peaks)
     cpt = 0;
   }
   if (prev_slope > 0) {
-    p.set(size-1, histogram[size-1]);
+    p.set((unsigned char)size-1, histogram[size-1]);
     //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     peaks.addRight(p);
     nbpeaks ++;
@@ -402,12 +402,12 @@ vpHistogram::getPeaks(unsigned char dist,
       continue;
     // Peak detection
     if ( (prev_slope > 0) && (next_slope < 0) )
-      peak[nbpeaks ++] = i;
+      peak[nbpeaks ++] = (unsigned char)i;
 
     prev_slope = next_slope;
   }
   if (prev_slope > 0)
-    peak[nbpeaks ++] = size-1;
+    peak[nbpeaks ++] = (unsigned char)(size-1);
 
 //   vpTRACE("nb peaks: %d", nbpeaks);
 //   for (unsigned i=0; i < nbpeaks; i ++)
@@ -510,7 +510,7 @@ vpHistogram::getPeaks(unsigned char dist,
   }
   else {
     mini = sumindmini/nbmini; // mean
-    valey.set(mini, histogram[mini]);
+    valey.set((unsigned char)mini, histogram[mini]);
 
     delete [] peak;
 
@@ -577,9 +577,9 @@ vpHistogram::getValey(const vpHistogramPeak & peak1,
     return false;
   }
   else {
-    unsigned char minipos = sumindmini/nbmini; // position of the minimum
+    unsigned int minipos = sumindmini/nbmini; // position of the minimum
 
-    valey.set(minipos, histogram[minipos]);
+    valey.set((unsigned char)minipos, histogram[minipos]);
     return true;
   }
 }
@@ -620,7 +620,7 @@ vpHistogram::getValey(unsigned char dist,
     ret &= 0x01;
   }
   if (peak.getLevel() == size -1) {
-    valeyr.set(size-1, 0);
+    valeyr.set((unsigned char)(size-1), 0);
     ret &= 0x10;
   }
 
@@ -694,8 +694,8 @@ vpHistogram::getValey(unsigned char dist,
       ret &= 0x01;
     }
     else {
-      unsigned char minipos = sumindmini/nbmini; // position of the minimum
-      valeyl.set(minipos, histogram[minipos]);
+      unsigned int minipos = sumindmini/nbmini; // position of the minimum
+      valeyl.set((unsigned char)minipos, histogram[minipos]);
       ret &= 0x11;
     }
   }
@@ -729,7 +729,7 @@ vpHistogram::getValey(unsigned char dist,
     }
 
     if ( ! found)
-      peakr.set(size-1,0);
+      peakr.set((unsigned char)(size-1),0);
 
     // Search the valey on the right
     mini = peak.getValue();
@@ -748,12 +748,12 @@ vpHistogram::getValey(unsigned char dist,
       }
     }
     if (nbmini == 0) {
-      valeyr.set(size-1, 0);
+      valeyr.set((unsigned char)(size-1), 0);
       ret &= 0x10;
     }
     else {
-      unsigned char minipos = sumindmini/nbmini; // position of the minimum
-      valeyr.set(minipos, histogram[minipos]);
+      unsigned int minipos = sumindmini/nbmini; // position of the minimum
+      valeyr.set((unsigned char)minipos, histogram[minipos]);
       ret &= 0x11;
     }
   }
