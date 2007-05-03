@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.22 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.23 2007-05-03 12:00:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -467,7 +467,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImage(const unsigned char */* I */)
+void vpDisplayGTK::displayImage(const unsigned char * /* I */)
 {
   vpTRACE(" not implemented ") ;
 }
