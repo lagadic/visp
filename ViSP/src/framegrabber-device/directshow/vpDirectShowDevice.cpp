@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowDevice.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpDirectShowDevice.cpp,v 1.4 2007-05-03 16:16:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,7 +64,7 @@ bool vpDirectShowDevice::init(const CComPtr<IMoniker>& pMoniker)
 	VariantInit(&varName);
 	VariantInit(&varDesc);
 	VariantInit(&varDevPath);
-	char tmp[300];
+	char tmp[255];
 
 	hr = pPropBag->Read(L"Fristd::endlyName", &varName, 0);
 
