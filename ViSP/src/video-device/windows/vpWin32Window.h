@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpWin32Window.h,v 1.5 2007-05-03 16:00:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,7 +37,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) ) 
+#if ( defined(WIN32) )
 #ifndef vpWin32Window_HH
 #define vpWin32Window_HH
 
@@ -45,8 +45,10 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <windows.h>
+#include <visp/vpWin32Renderer.h>
 #include <visp/vpGDIRenderer.h>
 #include <visp/vpDisplay.h>
+#include <visp/vpDisplayException.h>
 
 
 //ViSP-defined messages for window's callback function
@@ -55,7 +57,7 @@
 #define vpWM_GETCLICKUP WM_USER+3
 #define vpWM_CLOSEDISPLAY WM_USER+4
 
-//No specific mouse button query 
+//No specific mouse button query
 #define vpNO_BUTTON_QUERY -1
 
 class vpWin32Display;
@@ -86,7 +88,7 @@ class VISP_EXPORT vpWin32Window
   int clickY;
   //! Button used for the click
   int clickButton;
-	
+
   //! True if the window's class has already been registered
   static bool registered;
 
@@ -118,7 +120,7 @@ class VISP_EXPORT vpWin32Window
   friend class vpDisplayGDI;
 
   //! The message loop
-  friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, 
+  friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 				  WPARAM wParam, LPARAM lParam);
 };
 

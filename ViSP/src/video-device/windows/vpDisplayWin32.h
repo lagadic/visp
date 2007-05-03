@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.9 2007-03-14 08:50:38 fspindle Exp $
+ * $Id: vpDisplayWin32.h,v 1.10 2007-05-03 16:00:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,6 +46,7 @@
 #include <visp/vpDisplay.h>
 #include <windows.h>
 #include <visp/vpWin32Window.h>
+#include <visp/vpWin32Renderer.h>
 #include <visp/vpRect.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

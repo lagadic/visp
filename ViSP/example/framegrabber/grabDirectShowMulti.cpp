@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-* $Id: grabDirectShowMulti.cpp,v 1.5 2007-04-23 14:30:39 fspindle Exp $
+* $Id: grabDirectShowMulti.cpp,v 1.6 2007-05-03 16:00:17 fspindle Exp $
 *
 * Copyright (C) 1998-2006 Inria. All rights reserved.
 *
@@ -55,6 +55,7 @@
 
 
 #if defined (VISP_HAVE_DIRECTSHOW)
+#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
 #include <visp/vpDirectShowGrabber.h>
 #include <visp/vpImage.h>
@@ -260,7 +261,7 @@ main(int argc, char ** argv)
 #endif
 #ifdef VISP_HAVE_GTK
 		vpDisplayGTK *d;
-#else
+#elif VISP_HAVE_GDI
 		vpDisplayGDI *d;
 #endif
 		read_options(argc, argv, multi, camera, nframes,
@@ -460,15 +461,21 @@ main(int argc, char ** argv)
 
 	std::cout << " the end" << std::endl;
 }
-#else
+#else // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+
 int
 main()
 {
-	vpTRACE("DirectShow grabber capabilities are not available...\n"
-		"You should install DirectShow to use this example.") ;
+  vpTRACE("GDI or GTK is not available...") ;
 }
-
-#endif
+#endif // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#else // defined (VISP_HAVE_DIRECTSHOW) 
+int
+main()
+{
+  vpTRACE("DirectShow is not available...") ;
+}
+#endif // defined (VISP_HAVE_DIRECTSHOW) 
 
 /*
 * Local variables:
