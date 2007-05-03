@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayD3D.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: displayD3D.cpp,v 1.5 2007-05-03 12:07:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -121,7 +121,10 @@ OPTIONS:                                               Default\n\
   -h\n\
      Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
-
+	if (badparam) {
+		fprintf(stderr, "ERROR: \n" );
+		fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+	}
 }
 
 /*!
