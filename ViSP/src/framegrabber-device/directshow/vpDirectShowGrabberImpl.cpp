@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.cpp,v 1.8 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: vpDirectShowGrabberImpl.cpp,v 1.9 2007-05-03 12:08:20 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -311,7 +311,7 @@ bool vpDirectShowGrabberImpl::getDevice(unsigned int n, CComPtr<IBaseFilter>& pp
 		&& !deviceFound)
 	{
 		//implicit conversion should work ...
-		if(deviceList[n]==vpDirectShowDevice(pMoniker))
+		if(deviceList[n] == vpDirectShowDevice(pMoniker))
 		{
 			//we get the filter
 			if(SUCCEEDED(pMoniker->BindToObject(0, 0, IID_IBaseFilter, (void**)&ppDevice)))
@@ -882,7 +882,7 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width,unsigned int height, 
 			VIDEO_STREAM_CONFIG_CAPS scc;
 			AM_MEDIA_TYPE *pmtConfig;
 			hr = pConfig->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
-			VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
+//			VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
 
 //			pVih->bmiHeader.biWidth;
 //			pVih->bmiHeader.biHeight;
@@ -1017,10 +1017,10 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
 				/* Examine the format, and possibly use it. */
 				VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
 
-				LONG lWidth = pVih->bmiHeader.biWidth;
-				LONG lHeight = pVih->bmiHeader.biHeight;
+//				LONG lWidth = pVih->bmiHeader.biWidth;
+//				LONG lHeight = pVih->bmiHeader.biHeight;
 //				SIZE dimensions={lWidth,lHeight};
-				LONGLONG lAvgTimePerFrame = pVih->AvgTimePerFrame;
+//				LONGLONG lAvgTimePerFrame = pVih->AvgTimePerFrame;
 				std::cout<<"MediaType : "<<iFormat<<std::endl;
    
 				if(pmtConfig->subtype==MEDIASUBTYPE_ARGB32) 
