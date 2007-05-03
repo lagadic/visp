@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.46 2007-05-03 09:02:41 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.47 2007-05-03 12:22:13 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -84,7 +84,7 @@ INCLUDE(CheckLibraryExists)
 IF(WIN32 AND NOT CYGWIN)
   SET(VISP_DEFS "${VISP_DEFS} -DWIN32")
   SET(VISP_DEFS "${VISP_DEFS} -DGX") # To support exceptions
-  CHECK_LIBRARY_EXISTS("winmm"  getch "" HAVE_LIBWINMM) # for timeGetTime()
+  CHECK_LIBRARY_EXISTS("winmm" timeGetTime "" HAVE_LIBWINMM) # for timeGetTime()
   IF(HAVE_LIBWINMM)
     #MESSAGE("have winmm.lib")
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} "winmm")
