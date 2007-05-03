@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: parse-argv2.cpp,v 1.1 2007-05-02 16:40:13 fspindle Exp $
+ * $Id: parse-argv2.cpp,v 1.2 2007-05-03 11:36:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,7 +63,7 @@ main(int argc, char ** argv)
   using ::std::endl;
 
   int    i_val = 3;
-  float  f_val = 3.14;
+  float  f_val = 3.14f;
   double d_val = 3.1415;
 
   vpArgvInfo argTable[] =

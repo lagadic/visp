@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.5 2007-05-02 16:41:43 fspindle Exp $
+ * $Id: vpParseArgv.cpp,v 1.6 2007-05-03 11:36:34 fspindle Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -217,7 +217,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
 	      char *endPtr;
 
                *(((float *) infoPtr->dst)+i) =
-                  strtod(argv[srcIndex], &endPtr);
+                  (float)strtod(argv[srcIndex], &endPtr); // Here we use strtod
                if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
                   FPRINTF(stderr,
        "expected floating-point argument for \"%s\" but got\"%s\"\n",
