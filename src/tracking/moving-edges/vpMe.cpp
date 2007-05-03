@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMe.cpp,v 1.5 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpMe.cpp,v 1.6 2007-05-03 12:09:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -259,9 +259,7 @@ S_relative(point P, point Q,
 
  	printf("utils_ecm: ERREUR dans S_relative (%f,%f) (%f,%f) %f %f %f %f\n",
         P.x,P.y,Q.x,Q.y,Xmin,Ymin,Xmax,Ymax);
-  exit(-1);
-  return(0);  // DEBUG Stoppe net l'execution
-
+  exit(-1);	// DEBUG Stoppe net l'execution  
 }
 
 
