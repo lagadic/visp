@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.23 2007-05-03 12:00:59 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.24 2007-05-03 12:10:41 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -441,9 +441,9 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 	  for(x=0;x<width;x++)
 	    {
 	      pixel = gdk_image_get_pixel(ImageGtk,x,y);
-	      OctetBleu  = pixel & mask;
-	      OctetVert  = (pixel>>8) & mask;
-	      OctetRouge = (pixel>>16) & mask;
+	      OctetBleu  = (guchar)pixel & mask;
+	      OctetVert  = (guchar)(pixel>>8) & mask;
+	      OctetRouge = (guchar)(pixel>>16) & mask;
 	      *pos++ = OctetRouge;
 	      *pos++ = OctetVert;
 	      *pos++ = OctetBleu;
