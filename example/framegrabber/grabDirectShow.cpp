@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.10 2007-05-03 16:00:17 fspindle Exp $
+ * $Id: grabDirectShow.cpp,v 1.11 2007-05-03 16:16:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -201,7 +201,8 @@ main(int argc, char ** argv)
   }
   catch(...)
   {
-    vpERROR_TRACE("Cannot acquire an image...") ;
+    vpCERROR << "Cannot acquire an image... "
+	     << "Check if a camera is pluged to your computer." << std::endl ;
     delete grabber;
     exit(-1);
   }

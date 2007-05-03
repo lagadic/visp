@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.cpp,v 1.9 2007-05-03 12:08:20 asaunier Exp $
+ * $Id: vpDirectShowGrabberImpl.cpp,v 1.10 2007-05-03 16:16:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,46 +70,48 @@ void vpDirectShowGrabberImpl::HRtoStr(std::string str)
 */
 vpDirectShowGrabberImpl::vpDirectShowGrabberImpl()
 {
-	init = false ;
-	initCo = false ;
-	//COM initialization
-	if (FAILED(hr = CoInitialize(NULL)))
-	{
-		std::string err;
-		HRtoStr(err);
-		throw(vpFrameGrabberException(
-			  vpFrameGrabberException::initializationError,
-			  "Can't initialize COM\n"+ err));
+  init = false ;
+  initCo = false ;
+  //COM initialization
+  if (FAILED(hr = CoInitialize(NULL)))
+    {
+      std::string err;
+      HRtoStr(err);
+      throw(vpFrameGrabberException(
+				    vpFrameGrabberException::initializationError,
+				    "Can't initialize COM\n"+ err));
     }
-	initCo = true ;
+  initCo = true ;
 
-	CComPtr<IEnumMoniker> pVideoInputEnum = NULL;
+  //create the device list
+  if(deviceList == NULL) {
+    CComPtr<IEnumMoniker> pVideoInputEnum = NULL;
 
-	if(!enumerate(pVideoInputEnum))
-	{
-		std::string err;
-		HRtoStr(err);
-		throw(vpFrameGrabberException(
-			  vpFrameGrabberException::initializationError,
-			  "Can't enumerate video input\n"+ err));
-	}
-
-	//create the device list
-	if(deviceList == NULL)
-	{
-		createDeviceList(pVideoInputEnum);
-	}
-
-	//not used anymore, so we release it
-	pVideoInputEnum.Release();
-
+    if(enumerate(pVideoInputEnum)) {
+      createDeviceList(pVideoInputEnum);
+    }
+  //not used anymore, so we release it
+  pVideoInputEnum.Release();
+  }
 }
+
 /*!
 	Creates the filter graph and select the first available device.
 	\exception initializationError
 */
 void vpDirectShowGrabberImpl::open()
 {
+  //create the device list
+  if(deviceList == NULL) {
+    CComPtr<IEnumMoniker> pVideoInputEnum = NULL;
+
+    if(enumerate(pVideoInputEnum)) {
+      createDeviceList(pVideoInputEnum);
+    }
+	  //not used anymore, so we release it
+      pVideoInputEnum.Release();
+  }
+
   init = initDirectShow();
 	if(! init )
 	{
