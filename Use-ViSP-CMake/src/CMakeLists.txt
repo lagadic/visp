@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-02-06 15:37:09 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.4 2007-05-03 09:31:32 fspindle Exp $
 #
 # Copyright (C) 2007 Inria. All rights reserved.
 #
@@ -68,7 +68,7 @@ ADD_CUSTOM_TARGET(header ALL
 #----------------------------------------------------------------------
 # build rule for the library
 #----------------------------------------------------------------------
-ADD_LIBRARY (${PROJECT_INTERN_LIBS} ${SRC_ALL}) 
+ADD_LIBRARY (${PROJECT_INTERN_LIBS} ${SRC_ALL} ${HEADER_ALL}) 
 
 # create the headers in include/PROJECT_NAME_LOWER before compiling the lib
 ADD_DEPENDENCIES(${PROJECT_INTERN_LIBS} header)
