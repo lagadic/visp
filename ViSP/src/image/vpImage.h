@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.13 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpImage.h,v 1.14 2007-05-03 11:36:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -728,7 +728,7 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
   else if((dst->getRows()!=height) || (dst->getCols()!=width))
     dst->resize(height, width);
 
-  for(int i  = 0; i < height * width; i++)
+  for(unsigned int i  = 0; i < height * width; i++)
     dst->bitmap[i] = this->bitmap[i] - im2->bitmap[i];
 }
 
@@ -740,29 +740,29 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
 template<class Type>
 Type vpImage<Type>::getPixelBI(float col0, float row0)
 {
-  int irow, icol;
+  unsigned int irow, icol;
   float rfrac, cfrac;
   Type row1 = 0, row2 = 0;
 
   irow = (int) row0;
   icol = (int) col0;
 
-  if (irow < 0 || irow >= height
-      || icol < 0 || icol >= width)
+  if (/*irow < 0 || */ irow >= height
+	  /* || icol < 0 */ || icol >= width)
     return 0;
 
   if (row0 > height - 1)
-    row0 = height - 1;
+    row0 = (float)(height - 1);
 
   if (col0 > width - 1)
-    col0 = width - 1;
+    col0 = (float)(width - 1);
 
-  rfrac = 1.0 - (row0 - (float) irow);
-  cfrac = 1.0 - (col0 - (float) icol);
+  rfrac = 1.0f - (row0 - (float) irow);
+  cfrac = 1.0f - (col0 - (float) icol);
 
   if (cfrac < 1)
   {
-    row1 = cfrac * row[irow][icol] + (1.0 - cfrac) * row[irow][icol + 1];
+    row1 = (Type)(cfrac * row[irow][icol] + (1.0 - cfrac) * row[irow][icol + 1]);
   }
   else
   {
@@ -773,7 +773,7 @@ Type vpImage<Type>::getPixelBI(float col0, float row0)
   {
     if (cfrac < 1)
     {
-      row2 = cfrac * row[irow+1][icol] + (1.0 - cfrac) * row[irow+1][icol + 1];
+      row2 = (Type)(cfrac * row[irow+1][icol] + (1.0 - cfrac) * row[irow+1][icol + 1]);
     }
     else
     {

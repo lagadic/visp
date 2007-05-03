@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: parse-argv1.cpp,v 1.1 2007-05-02 16:40:13 fspindle Exp $
+ * $Id: parse-argv1.cpp,v 1.2 2007-05-03 11:36:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -119,7 +119,7 @@ bool getOptions(int argc, char **argv, int &i_val, float &f_val, double &d_val)
 
     switch (c) {
     case 'd': d_val = atof(optarg); break;
-    case 'f': f_val = atof(optarg); break;
+    case 'f': f_val = (float) atof(optarg); break;
     case 'i': i_val = atoi(optarg); break;
     case 'h': usage(argv[0], NULL, i_val, f_val, d_val); return false; break;
 
@@ -146,7 +146,7 @@ main(int argc, char ** argv)
   using ::std::endl;
 
   int    i_val = 3;
-  float  f_val = 3.14;
+  float  f_val = 3.14f;
   double d_val = 3.1415;
 
     // Read the command line options

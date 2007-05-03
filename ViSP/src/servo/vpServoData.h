@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoData.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpServoData.h,v 1.6 2007-05-03 11:36:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,7 +75,7 @@ private:
 public:
 
 
-  virtual ~vpServoData() ;
+  virtual ~vpServoData() { ; }
 
   //! velocity output in cm and deg
   void setCmDeg() ;
