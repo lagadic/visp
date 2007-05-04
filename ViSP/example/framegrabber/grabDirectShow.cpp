@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.12 2007-05-04 08:35:46 fspindle Exp $
+ * $Id: grabDirectShow.cpp,v 1.13 2007-05-04 09:38:07 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,6 +193,13 @@ main(int argc, char ** argv)
     // Create the grabber
     grabber = new vpDirectShowGrabber();
 
+	//test if a camera is connected
+	if(grabber->getDeviceNumber() == 0)
+	{
+		vpCTRACE << "there is no camera detected on your computer." << std::endl ;
+		grabber->close();
+		exit(0);
+	}
     // Initialize the grabber
     grabber->open(I);
 
@@ -201,8 +208,7 @@ main(int argc, char ** argv)
   }
   catch(...)
   {
-    vpCERROR << "Cannot acquire an image... "
-	     << "Check if a camera is pluged to your computer." << std::endl ;
+    vpCTRACE << "Cannot acquire an image... " << std::endl ;
     delete grabber;
     exit(-1);
   }
