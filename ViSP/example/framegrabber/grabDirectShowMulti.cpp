@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-* $Id: grabDirectShowMulti.cpp,v 1.6 2007-05-03 16:00:17 fspindle Exp $
+* $Id: grabDirectShowMulti.cpp,v 1.7 2007-05-04 08:35:46 fspindle Exp $
 *
 * Copyright (C) 1998-2006 Inria. All rights reserved.
 *
@@ -259,9 +259,9 @@ main(int argc, char ** argv)
 		vpImage<unsigned char> *I;
 		std::string opath = "C:/temp/I%d-%04d.pgm";
 #endif
-#ifdef VISP_HAVE_GTK
+#if defined VISP_HAVE_GTK
 		vpDisplayGTK *d;
-#elif VISP_HAVE_GDI
+#elif defined VISP_HAVE_GDI
 		vpDisplayGDI *d;
 #endif
 		read_options(argc, argv, multi, camera, nframes,

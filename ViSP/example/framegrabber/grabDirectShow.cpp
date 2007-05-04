@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.11 2007-05-03 16:16:14 asaunier Exp $
+ * $Id: grabDirectShow.cpp,v 1.12 2007-05-04 08:35:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -211,9 +211,9 @@ main(int argc, char ** argv)
        << I.getHeight() << std::endl;
 
   // Creates a display
-#ifdef VISP_HAVE_GTK
+#if defined VISP_HAVE_GTK
   vpDisplayGTK display;
-#elif VISP_HAVE_GDI
+#elif defined VISP_HAVE_GDI
   vpDisplayGDI display;
 #endif
 
