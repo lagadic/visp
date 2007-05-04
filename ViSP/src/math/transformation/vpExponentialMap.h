@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpExponentialMap.h,v 1.1 2007-05-04 10:12:06 fspindle Exp $
+ * $Id: vpExponentialMap.h,v 1.2 2007-05-04 16:32:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,17 +43,29 @@
 
 
 
-#ifndef vpExponentialMap_HH
-#define vpExponentialMap_HH
+#ifndef vpExponentialMap_h
+#define vpExponentialMap_h
 
 #include <visp/vpConfig.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpColVector.h>
 
-/*
+/*!
   \class vpExponentialMap
 
   \brief Direct or inverse exponential map computation.
+
+  - The direct exponential map allows to determine a displacement from a
+    velocity vector applied during a sampling time. With direct() the sampling
+    time is set to 1 second. With direct(const vpColVector &, const float &)
+    the sampling time can be set to an other value.
+
+  - The inverse exponential map allows to compute a velocity vector from a
+    displacement.
+
+  The displacement is represented as an homogeneous matrix
+  (vpHomogeneousMatrix). Velocities are represented as a \f$ [t, \theta u ]^t
+  \f$ vector.
 
 */
 class VISP_EXPORT vpExponentialMap
@@ -61,6 +73,8 @@ class VISP_EXPORT vpExponentialMap
 
 public:
   static vpHomogeneousMatrix direct(const vpColVector &v);
+  static vpHomogeneousMatrix direct(const vpColVector &v,
+				    const float &sampling_time);
   static vpColVector inverse(const vpHomogeneousMatrix &M);
 
 };
