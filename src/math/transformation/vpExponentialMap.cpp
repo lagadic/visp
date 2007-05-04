@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpExponentialMap.cpp,v 1.1 2007-05-04 10:12:06 fspindle Exp $
+ * $Id: vpExponentialMap.cpp,v 1.2 2007-05-04 16:32:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,32 +38,61 @@
 
 #include <visp/vpExponentialMap.h>
 
-#define DEBUG_LEVEL1 0
 
 /*!
 
-  Compute the exponential map. The inverse function is inverse().
+  Compute the exponential map. The inverse function is inverse().  The sampling
+  time is here set to 1 second. To use an other value you shoud use
+  direct(const vpColVector &, const float &).
 
-  \param v : Instantaneous velocity represented by a 6 dimension vector
-  [t,tu]^T where tu is a rotation vector (theta u representation see
-  vpThetaUVector) and t is a translation vector: [Tx, Ty, Tz, Tux, Tuy, Tuz]
+  \param v : Instantaneous velocity represented by a 6 dimension vector \f$ [t,
+  \theta u]^t \f$ where \f$ \theta u \f$ is a rotation vector (see
+  vpThetaUVector) and \f$ t \f$ is a translation vector: \f$ [t_x, t_y, t_z,
+  {\theta u}_x, {\theta u}_y, {\theta u}_z] \f$ (see vpTranslationVector and
+  vpThetaUVector).
 
   \return An homogeneous matrix M computed from an instantaneous velocity v. If
-  v is expressed in frame c, M = cMc_new
+  v is expressed in frame c, \f$ M = {^c}M_{c_{new}} \f$.
 
   \sa inverse()
 */
 vpHomogeneousMatrix
 vpExponentialMap::direct(const vpColVector &v)
 {
+  return vpExponentialMap::direct(v, 1.0f);
+}
+
+/*!
+
+  Compute the exponential map. The inverse function is inverse().
+
+  \param v : Instantaneous velocity represented by a 6 dimension vector \f$ [t,
+  \theta u]^t \f$ where \f$ \theta u \f$ is a rotation vector (see
+  vpThetaUVector) and \f$ t \f$ is a translation vector: \f$ [t_x, t_y, t_z,
+  {\theta u}_x, {\theta u}_y, {\theta u}_z] \f$ (see vpTranslationVector and
+  vpThetaUVector).
+
+  \param sampling_time : Sampling time \f$ \Delta t \f$. Time during which the
+  velocity v is applied.
+
+  \return An homogeneous matrix M computed from an instantaneous velocity v. If
+  v is expressed in frame c, \f$ M = {^c}M_{c_{new}} \f$.
+
+  \sa inverse()
+*/
+vpHomogeneousMatrix
+vpExponentialMap::direct(const vpColVector &v, const float &sampling_time)
+{
   double theta,si,co,sinc,mcosc,msinc;
   vpThetaUVector u ;
   vpRotationMatrix rd ;
   vpTranslationVector dt ;
 
-  u[0] = v[3];
-  u[1] = v[4];
-  u[2] = v[5];
+  vpColVector v_dt = v * sampling_time;
+
+  u[0] = v_dt[3];
+  u[1] = v_dt[4];
+  u[2] = v_dt[5];
   rd.buildFrom(u);
 
   theta = sqrt(u[0]*u[0] + u[1]*u[1] + u[2]*u[2]);
@@ -73,17 +102,17 @@ vpExponentialMap::direct(const vpColVector &v)
   mcosc = vpMath::mcosc(co,theta);
   msinc = vpMath::msinc(si,theta);
 
-  dt[0] = v[0]*(sinc + u[0]*u[0]*msinc)
-        + v[1]*(u[0]*u[1]*msinc - u[2]*mcosc)
-        + v[2]*(u[0]*u[2]*msinc + u[1]*mcosc);
+  dt[0] = v_dt[0]*(sinc + u[0]*u[0]*msinc)
+        + v_dt[1]*(u[0]*u[1]*msinc - u[2]*mcosc)
+        + v_dt[2]*(u[0]*u[2]*msinc + u[1]*mcosc);
 
-  dt[1] = v[0]*(u[0]*u[1]*msinc + u[2]*mcosc)
-        + v[1]*(sinc + u[1]*u[1]*msinc)
-        + v[2]*(u[1]*u[2]*msinc - u[0]*mcosc);
+  dt[1] = v_dt[0]*(u[0]*u[1]*msinc + u[2]*mcosc)
+        + v_dt[1]*(sinc + u[1]*u[1]*msinc)
+        + v_dt[2]*(u[1]*u[2]*msinc - u[0]*mcosc);
 
-  dt[2] = v[0]*(u[0]*u[2]*msinc - u[1]*mcosc)
-        + v[1]*(u[1]*u[2]*msinc + u[0]*mcosc)
-        + v[2]*(sinc + u[2]*u[2]*msinc);
+  dt[2] = v_dt[0]*(u[0]*u[2]*msinc - u[1]*mcosc)
+        + v_dt[1]*(u[1]*u[2]*msinc + u[0]*mcosc)
+        + v_dt[2]*(sinc + u[2]*u[2]*msinc);
 
   vpHomogeneousMatrix Delta ;
   Delta.insert(rd) ;
@@ -91,7 +120,7 @@ vpExponentialMap::direct(const vpColVector &v)
 
 
 
-  if (DEBUG_LEVEL1)  // test new version wrt old version
+  if (0)  // test new version wrt old version
   {
     // old version
     int i,j;
@@ -101,10 +130,10 @@ vpExponentialMap::direct(const vpColVector &v)
     //  vpRotationMatrix rd ;
     //  vpTranslationVector dt ;
 
-    s = sqrt(v[3]*v[3] + v[4]*v[4] + v[5]*v[5]);
+    s = sqrt(v_dt[3]*v_dt[3] + v_dt[4]*v_dt[4] + v_dt[5]*v_dt[5]);
     if (s > 1.e-15)
     {
-      for (i=0;i<3;i++) u[i] = v[3+i]/s;
+      for (i=0;i<3;i++) u[i] = v_dt[3+i]/s;
       sinu = sin(s);
       cosi = cos(s);
       mcosi = 1-cosi;
@@ -118,17 +147,17 @@ vpExponentialMap::direct(const vpColVector &v)
       rd[2][1] = sinu*u[0] + mcosi*u[2]*u[1];
       rd[2][2] = cosi + mcosi*u[2]*u[2];
 
-      dt[0] = v[0]*(sinu/s + u[0]*u[0]*(1-sinu/s))
-            + v[1]*(u[0]*u[1]*(1-sinu/s)-u[2]*mcosi/s)
-            + v[2]*(u[0]*u[2]*(1-sinu/s)+u[1]*mcosi/s);
+      dt[0] = v_dt[0]*(sinu/s + u[0]*u[0]*(1-sinu/s))
+            + v_dt[1]*(u[0]*u[1]*(1-sinu/s)-u[2]*mcosi/s)
+            + v_dt[2]*(u[0]*u[2]*(1-sinu/s)+u[1]*mcosi/s);
 
-      dt[1] = v[0]*(u[0]*u[1]*(1-sinu/s)+u[2]*mcosi/s)
-            + v[1]*(sinu/s + u[1]*u[1]*(1-sinu/s))
-            + v[2]*(u[1]*u[2]*(1-sinu/s)-u[0]*mcosi/s);
+      dt[1] = v_dt[0]*(u[0]*u[1]*(1-sinu/s)+u[2]*mcosi/s)
+            + v_dt[1]*(sinu/s + u[1]*u[1]*(1-sinu/s))
+            + v_dt[2]*(u[1]*u[2]*(1-sinu/s)-u[0]*mcosi/s);
 
-      dt[2] = v[0]*(u[0]*u[2]*(1-sinu/s)-u[1]*mcosi/s)
-            + v[1]*(u[1]*u[2]*(1-sinu/s)+u[0]*mcosi/s)
-            + v[2]*(sinu/s + u[2]*u[2]*(1-sinu/s));
+      dt[2] = v_dt[0]*(u[0]*u[2]*(1-sinu/s)-u[1]*mcosi/s)
+            + v_dt[1]*(u[1]*u[2]*(1-sinu/s)+u[0]*mcosi/s)
+            + v_dt[2]*(sinu/s + u[2]*u[2]*(1-sinu/s));
     }
     else
     {
@@ -136,7 +165,7 @@ vpExponentialMap::direct(const vpColVector &v)
       {
         for(j=0;j<3;j++) rd[i][j] = 0.0;
         rd[i][i] = 1.0;
-        dt[i] = v[i];
+        dt[i] = v_dt[i];
       }
     }
     // end old version
@@ -173,8 +202,10 @@ vpExponentialMap::direct(const vpColVector &v)
   \param M : An homogeneous matrix corresponding to a displacement.
 
   \return v : Instantaneous velocity represented by a 6 dimension vector
-  [t,tu]^T where tu is a rotation vector (theta u representation see
-  vpThetaUVector) and t is a translation vector: [Tx, Ty, Tz, Tux, Tuy, Tuz]
+  \f$ [t, \theta u]^t \f$ where \f$ \theta u \f$ is a rotation vector (see
+  vpThetaUVector) and \t$ t \f$ is a translation vector:  \f$ [t_x, t_y, t_z,
+  {\theta u}_x, {\theta u}_y, {\theta u}_z] \f$ (see vpTranslationVector and
+  vpThetaUVector).
 
   \sa direct()
 */
