@@ -1,5 +1,5 @@
                             Use-ViSP-CMake
-			    Release  1.0.0
+			    Release  1.0.1
 
          Copyright Projet Lagadic / IRISA-INRIA Rennes, 2007
                   www: http://www.irisa.fr/lagadic
@@ -18,11 +18,18 @@ USAGE:
 =====
 
 1. Install the newest cmake from www.cmake.org
-2. Check out/install Use-ViSP-CMake source code from ViSP web site
+2. Check out/install ViSP
+   See http://www.irisa.fr/lagadic/visp/download.html
+   See http://www.irisa.fr/lagadic/visp/install.html
+3. Check out Use-ViSP-CMake source code from Inria's forge web site
+   http://gforge.inria.fr/frs/?group_id=397
+4. Build Use-ViSP-CMake
 
---- Unix ---
+--- Build for Unix platforms ---
 cd <Use-ViSP-CMake source dir>
-ccmake .  
+mkdir ../Use-ViSP-CMake-build
+cd ../Use-ViSP-CMake-build
+ccmake ../Use-ViSP-CMake-build 
 
   Set ViSP_DIR variable to the location where ViSP library was
   installed. If you don't have change it while ViSP configuration, VISP_DIR
@@ -31,9 +38,31 @@ ccmake .
 make
 make html-doc
 
---- WIN32 --- 
-Use CMakeSetup.exe to set environment variables and proceed as
-described for Linux.  The GUI is self-explaining.
+--- Build for WIN32 platforms --- 
+Start CMake GUI.
+Set "Where is the source code:" to C:/<Use-ViSP-CMake source dir>
+Set "Where to build the binaries:" to C:/Use-ViSP-CMake-build
+
+Press "Configure" button.
+
+Select your configurator; for example "Visual Studio 7 .NET 2003".
+
+An error message appears saying that ViSP is required to build the
+project and inviting you to set ViSP location. On your convenience
+press "OK" or "Cancel".
+
+Set VISP_DIR (actually set to VISP_DIR-NOTFOUND) to the path where
+libvisp.dll or libvisp.lib was build; for example to C:/ViSP/ViSP-build/lib
+
+Press "Configure" button.
+Press "Configure" button.
+Press "OK" button.
+
+CMake GUI exits automaticaly after this stage.
+
+Now Use-ViSP-CMake is configured. To build the project you have to start Visual
+Studio and open C:/Use-ViSP-CMake-build/VISP.sln solution.
+
 
 Project building
 ================
