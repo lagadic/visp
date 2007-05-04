@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpExponentialMap.h,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpExponentialMap.h,v 1.1 2007-05-04 10:12:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

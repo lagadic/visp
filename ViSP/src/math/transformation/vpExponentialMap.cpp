@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpExponentialMap.cpp,v 1.4 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpExponentialMap.cpp,v 1.1 2007-05-04 10:12:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
