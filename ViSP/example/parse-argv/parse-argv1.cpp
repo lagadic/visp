@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: parse-argv1.cpp,v 1.2 2007-05-03 11:36:34 fspindle Exp $
+ * $Id: parse-argv1.cpp,v 1.3 2007-05-04 16:06:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,14 +36,14 @@
  *****************************************************************************/
 
 /*!
-  \file parse-argv.cpp
+  \file parse-argv1.cpp
 
   \brief Parsing command line arguments.
 */
 
 
 /*!
-  \example parse-argv.cpp
+  \example parse-argv1.cpp
 
   Example of command line parsing.
 */
