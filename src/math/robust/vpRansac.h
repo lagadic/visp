@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.h,v 1.7 2007-05-02 16:43:22 fspindle Exp $
+ * $Id: vpRansac.h,v 1.8 2007-05-04 16:06:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,12 +54,12 @@
 /*!
   \class vpRansac
 
-  \brief this class is a generic implementation of the Ransac algorithm.
-  it cannot be used alone.
+  \brief This class is a generic implementation of the Ransac algorithm.
+  It cannot be used alone.
 
   Creation: june, 15 2005
 
-  RANSAC is described in
+  RANSAC is described in :
 
   M.A. Fishler and  R.C. Boles. "Random sample concensus: A paradigm
   for model fitting with applications to image analysis and automated
@@ -68,7 +68,7 @@
   Richard Hartley and Andrew Zisserman. "Multiple View Geometry in
   Computer Vision". pp 101-113. Cambridge University Press, 2001
 
-  the code of this class is inspired by :
+  The code of this class is inspired by :
   Peter Kovesi
   School of Computer Science & Software Engineering
   The University of Western Australia
@@ -87,7 +87,7 @@ template <class vpTransformation>
 class vpRansac
 {
 public:
-  static  bool ransac(int n,
+  static  bool ransac(int npts,
 		      vpColVector &x,
 		      int s, double t,
 		      vpColVector &model,
@@ -100,43 +100,26 @@ public:
   \brief
   RANSAC - Robustly fits a model to data with the RANSAC algorithm
 
-  \param  x
-  Data sets to which we are seeking to fit a model M
-  It is assumed that x is of size [d x Npts]
-  where d is the dimensionality of the data and Npts is
-  the number of data points.
+  \param npts : The number of data points.
 
-  \param  s
-  The minimum number of samples from x required by
-  fitting fn to fit a model.
+  \param x : Data sets to which we are seeking to fit a model M It is assumed
+  that x is of size [d x Npts] where d is the dimensionality of the data and
+  npts is the number of data points.
 
-  \param   t
-  The distance threshold between data point and the model
-  used to decide whether a point is an inlier or not.
+  \param s : The minimum number of samples from x required by fitting fn to
+  fit a model.
 
-  \param M
-  The model having the greatest number of inliers.
+  \param t : The distance threshold between data point and the model used to
+  decide whether a point is an inlier or not.
 
-  \param    inliers
-  An array of indices of the elements of x that were
-  the inliers for the best model.
+  \param M : The model having the greatest number of inliers.
+
+  \param inliers :  An array of indices of the elements of x that were the
+  inliers for the best model.
+
+  \param consensus :  Consensus
 
   \param areaThreshold : Not used.
-
-  References:
-  M.A. Fishler and  R.C. Boles. "Random sample concensus: A paradigm
-  for model fitting with applications to image analysis and automated
-  cartography". Comm. Assoc. Comp, Mach., Vol 24, No 6, pp 381-395, 1981
-
-  Richard Hartley and Andrew Zisserman. "Multiple View Geometry in
-  Computer Vision". pp 101-113. Cambridge University Press, 2001
-
-  this code is inspired by :
-  Peter Kovesi
-  School of Computer Science & Software Engineering
-  The University of Western Australia
-  pk at csse uwa edu au
-  http://www.csse.uwa.edu.au/~pk
 
 */
 
