@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.15 2007-03-08 13:05:54 hatran Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.16 2007-05-04 10:12:05 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -101,12 +101,12 @@ SET (SRC_MATH
   math/matrix/vpMatrix_svd.cpp
   math/matrix/vpMatrixException.cpp
   math/matrix/vpRowVector.cpp
-  math/misc/vpExponentialMap.cpp 
   math/misc/vpMath.cpp 
   math/misc/vpNoise.cpp 
   math/robust/vpRobust.cpp
   math/robust/vpScale.cpp
   math/transformation/vpEulerVector.cpp
+  math/transformation/vpExponentialMap.cpp 
   math/transformation/vpHomogeneousMatrix.cpp
   math/transformation/vpPoseVector.cpp
   math/transformation/vpRotationMatrix.cpp

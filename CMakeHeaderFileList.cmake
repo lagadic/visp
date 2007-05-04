@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.13 2007-05-02 12:43:33 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.14 2007-05-04 10:12:05 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -96,13 +96,13 @@ SET (HEADER_MATH
   math/matrix/vpMatrixException.h
   math/matrix/vpMatrix.h
   math/matrix/vpRowVector.h
-  math/misc/vpExponentialMap.h
   math/misc/vpMath.h
   math/misc/vpNoise.h
   math/robust/vpRansac.h
   math/robust/vpRobust.h
   math/robust/vpScale.h
   math/transformation/vpEulerVector.h
+  math/transformation/vpExponentialMap.h
   math/transformation/vpHomogeneousMatrix.h
   math/transformation/vpPoseVector.h
   math/transformation/vpRotationMatrix.h
