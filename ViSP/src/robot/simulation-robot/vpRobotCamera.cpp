@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.cpp,v 1.9 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpRobotCamera.cpp,v 1.10 2007-05-10 14:45:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,21 +47,53 @@
 #include <visp/vpDebug.h>
 #include <visp/vpExponentialMap.h>
 
-//! basic initialization
-void vpRobotCamera::init()
-{
-  eJe.resize(6,6) ;
-  eJe.setIdentity() ;
-}
 
-//! constructor
+/*!
+  Constructor.
+
+  Initialise the robot by a call to init().
+
+  Sampling time is set to 40 ms. To change it you should call
+  setSamplingTime().
+
+  Robot jacobian expressed in the end-effector frame \f$ {^e}{\bf J}_e \f$
+  is set to identity (see get_eJe()).
+
+  \code
+  vpRobotCamera robot;
+
+  robot.setSamplingTime(0.020); // Set the sampling time to 20 ms.
+
+  \endcode
+
+*/
 vpRobotCamera::vpRobotCamera()
 {
   init() ;
 }
 
+/*!
+  Robot initialisation.
 
-//! constructor
+  Sampling time is set to 40 ms. To change it you should call
+  setSamplingTime().
+
+  Robot jacobian expressed in the end-effector frame \f$ {^e}{\bf J}_e \f$
+  is set to identity (see get_eJe()).
+
+*/
+void vpRobotCamera::init()
+{
+  eJe.resize(6,6) ;
+  eJe.setIdentity() ;
+  setSamplingTime(0.040f);
+}
+
+
+/*!
+  Destructor.
+
+*/
 vpRobotCamera::~vpRobotCamera()
 {
 }
@@ -75,17 +107,26 @@ get_fJe
 
 */
 
-//! get the robot Jacobian expressed in the end-effector frame
-//! for that simple robot the Jacobian is the identity
+/*!
+  Get the robot jacobian expressed in the end-effector frame.
+  For that simple robot the Jacobian is the identity.
+
+  \param eJe : A 6 by 6 matrix representing the robot jacobian \f$ {^e}{\bf
+  J}_e\f$ expressed in the end-effector frame.
+*/
 void
-vpRobotCamera::get_eJe(vpMatrix &_eJe)
+vpRobotCamera::get_eJe(vpMatrix &eJe)
 {
-  _eJe = eJe ;
+  eJe = this->eJe ;
 }
 
-//! get the robot Jacobian expressed in the robot reference frame
+/*!
+  Get the robot Jacobian expressed in the robot reference frame.
+
+  \warning Not implemented.
+*/
 void
-vpRobotCamera::get_fJe(vpMatrix & /* _fJe */)
+vpRobotCamera::get_fJe(vpMatrix & /* fJe */)
 {
   std::cout << "Not implemented ! " << std::endl;
 }
@@ -101,41 +142,101 @@ sendArticularVelocity
 
 */
 
-//! send to the controller a velocity expressed in the camera frame
-//! we use the exponential map to update the camera location
+/*!
+  Send to the controller a velocity expressed in the camera frame.
+
+  \param v : Camera velocity represented by a 6 dimension vector \f$ {\bf v} =
+  [{\bf t}, {\bf \theta u }]^t \f$ where \f$ \bf t \f$ is a translation vector
+  and \f$ {\bf \theta u} \f$ is a rotation vector (see vpThetaUVector): \f$
+  {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y, {\theta u}_z] \f$ (see
+  vpTranslationVector and vpThetaUVector).
+
+  We use the exponential map (vpExponentialMap) to update the camera location.
+  Sampling time can be set using setSamplingTime().
+
+  \sa setSamplingTime()
+*/
 void
 vpRobotCamera::setCameraVelocity(const vpColVector &v)
 {
-  cMo = vpExponentialMap::direct(v).inverse()*cMo ;
+  cMo = vpExponentialMap::direct(v, delta_t).inverse()*cMo ;
 }
 
-//! send to the controller a velocity expressed in the articular frame
+/*!
+
+  Send to the controller a velocity expressed in the articular frame.
+
+  \param qdot : Articular velocity represented by a 6 dimension vector \f$
+  \dot{{\bf q}} = [{\bf t}, {\bf \theta u}]^t \f$ where \f$ \bf t \f$ is a
+  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
+  vpThetaUVector): \f$ \dot{{\bf q}} = [t_x, t_y, t_z, {\theta u}_x, {\theta
+  u}_y, {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector). The
+  robot jacobian \f$ {^e}{\bf J}_e\f$ expressed in the end-effector frame is
+  here set to identity.
+
+  We use the exponential map (vpExponentialMap) to update the camera location.
+  Sampling time can be set using setSamplingTime().
+
+  \sa setSamplingTime()
+*/
 void
 vpRobotCamera::setArticularVelocity(const vpColVector &qdot)
 {
-  cMo = vpExponentialMap::direct(qdot).inverse()*cMo ;
+  cMo = vpExponentialMap::direct(qdot, delta_t).inverse()*cMo ;
 }
 
-//! send to the controller a velocity (frame as to ve specified)
+/*!
+  Send to the controller a velocity.
+
+  \param frame : Control frame type. Only articular (vpRobot::ARTICULAR_FRAME)
+  and camera frame (vpRobot::CAMERA_FRAME) are implemented.
+
+  \param v : Velocity to apply to the robot.
+
+  - In the camera drame, this velocity is represented by a 6 dimension vector
+  \f$ {\bf v} = [{\bf t}, {\bf \theta u }]^t \f$ where \f$ \bf t \f$ is a
+  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
+  vpThetaUVector): \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y,
+  {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
+
+  - In articular, this velocity is represented by a 6 dimension vector \f$
+  \dot{{\bf q}} = [{\bf t}, {\bf \theta u}]^t \f$ where \f$ \bf t \f$ is a
+  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
+  vpThetaUVector): \f$ \dot{{\bf q}} = [t_x, t_y, t_z, {\theta u}_x, {\theta
+  u}_y, {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector). The
+  robot jacobian \f$ {^e}{\bf J}_e\f$ expressed in the end-effector frame is
+  here set to identity.
+
+  We use the exponential map (vpExponentialMap) to update the camera location.
+  Sampling time can be set using setSamplingTime().
+
+  \sa setSamplingTime()
+
+*/
 void
 vpRobotCamera::setVelocity(const vpRobot::ControlFrameType frame,
-			   const vpColVector &vel)
+			   const vpColVector &v)
 {
   switch (frame)
   {
-  case vpRobot::REFERENCE_FRAME:
+  case vpRobot::ARTICULAR_FRAME:
+    setArticularVelocity(v) ;
     break ;
   case vpRobot::CAMERA_FRAME:
-    setCameraVelocity(vel) ;
+    setCameraVelocity(v) ;
     break ;
-  case vpRobot::ARTICULAR_FRAME:
-    setArticularVelocity(vel) ;
+  case vpRobot::REFERENCE_FRAME:
+    vpERROR_TRACE ("Cannot set a velocity in the reference frame: "
+		   "functionality not implemented");
+    throw vpRobotException (vpRobotException::wrongStateError,
+			    "Cannot set a velocity in the reference frame:"
+			    "functionality not implemented");
     break ;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE ("Cannot set a velocity in the mixt frame: "
 		 "functionality not implemented");
     throw vpRobotException (vpRobotException::wrongStateError,
-			    "Cannot get a velocity in the reference frame:"
+			    "Cannot set a velocity in the mixt frame:"
 			    "functionality not implemented");
 
     break ;
@@ -149,36 +250,55 @@ THESE FUNCTIONS ARE NOT MENDATORY BUT ARE USUALLY USEFUL
 
 */
 
-//! get a position expressed in the robot reference frame
-//! we consider that the "robot" reference frame is the world reference
-//! so we return cMo (or at least the corresponding vpPoseVector)
+/*!
+
+  Get a position expressed in the robot reference frame.  We consider that the
+  "robot" reference frame is the world reference so we return \f$ {^c}{\bf M}_o
+  \f$ (or at least the corresponding vpPoseVector)
+
+  \warning Not implemented.
+*/
 void
 vpRobotCamera::getPosition(vpColVector & /*cpo*/)
 {
   std::cout << "Not implemented ! " << std::endl;
   //  cpo.buildFrom(cMo) ;
 }
-//! get a position expressed in the robot reference frame
+
+/*!
+  Get a position expressed in the robot reference frame.
+
+*/
 void
-vpRobotCamera::getPosition(vpHomogeneousMatrix &_cMo) const
+vpRobotCamera::getPosition(vpHomogeneousMatrix &cMo) const
 {
-  _cMo = cMo ;
+  cMo = this->cMo ;
 }
-//! get a position expressed in the robot reference frame
+/*!
+  Set a position expressed in the robot reference frame.
+*/
 void
-vpRobotCamera::setPosition(const vpHomogeneousMatrix &_cMo)
+vpRobotCamera::setPosition(const vpHomogeneousMatrix &cMo)
 {
-   cMo = _cMo ;
+   this->cMo = cMo ;
 }
 
-//! get a position expressed in the articular frame
+/*!
+  Get a position expressed in the articular frame.
+
+  \warning Not implemented.
+*/
 void
 vpRobotCamera::getArticularPosition(vpColVector &/* q */) const
 {
   std::cout << "Not implemented ! " << std::endl;
 }
 
-//! get a displacement (frame as to ve specified)
+/*!
+  Get a displacement (frame as to ve specified).
+
+  \warning Not implemented.
+*/
 void
 vpRobotCamera::getPosition(const vpRobot::ControlFrameType /* frame */,
 			   vpColVector & /* q */)
@@ -186,21 +306,33 @@ vpRobotCamera::getPosition(const vpRobot::ControlFrameType /* frame */,
   std::cout << "Not implemented ! " << std::endl;
 }
 
-//! get a displacement expressed in the camera frame
+/*!
+  Get a displacement expressed in the camera frame.
+
+  \warning Not implemented.
+*/
 void
 vpRobotCamera::getCameraDisplacement(vpColVector & /* v */)
 {
   std::cout << "Not implemented ! " << std::endl;
 }
 
-//! get a displacement expressed  in the articular frame
+/*!
+  Get a displacement expressed  in the articular frame.
+
+  \warning Not implemented.
+*/
 void
 vpRobotCamera::getArticularDisplacement(vpColVector & /* qdot */)
 {
   std::cout << "Not implemented ! " << std::endl;
 }
 
-//! get a displacement (frame as to ve specified)
+/*!
+  Get a displacement depending on the control frame type.
+
+  \warning Not implemented.
+*/
 void
 vpRobotCamera::getDisplacement(const vpRobot::ControlFrameType /* frame */,
 			       vpColVector &/* q */)
