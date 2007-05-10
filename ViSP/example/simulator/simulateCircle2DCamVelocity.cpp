@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateCircle2DCamVelocity.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: simulateCircle2DCamVelocity.cpp,v 1.5 2007-05-10 14:56:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -192,6 +192,9 @@ void *mainLoop (void *_simu)
       vpServo task ;
       vpRobotCamera robot ;
 
+      float sampling_time = 0.040f; // Sampling period in second
+      robot.setSamplingTime(sampling_time);
+
       std::cout << std::endl ;
       std::cout << "-------------------------------------------------------" << std::endl ;
       std::cout << " Test program for vpServo "  <<std::endl ;
@@ -237,8 +240,12 @@ void *mainLoop (void *_simu)
       task.addFeature(p,pd) ;
 
       vpTRACE("\t set the gain") ;
-      if (pos==2)  task.setLambda(0.0251) ;
-      else task.setLambda(0.0251) ;
+
+      task.setLambda(1.0) ;
+//       if (pos==2)
+// 	task.setLambda(0.0251) ;
+//       else
+// 	task.setLambda(0.0251) ;
 
 
       vpTRACE("Display task information " ) ;
@@ -257,7 +264,9 @@ void *mainLoop (void *_simu)
       char name[FILENAME_MAX] ;
       while(iter++<itermax)
 	{
-	  std::cout << "---------------------------------------------" << iter <<std::endl ;
+	  double t = vpTime::measureTimeMs();
+	  std::cout << "---------------------------------------------"
+		    << iter <<std::endl ;
 	  vpColVector v ;
 
 	  if (iter==1) vpTRACE("\t\t get the robot position ") ;
@@ -272,11 +281,11 @@ void *mainLoop (void *_simu)
 	  v = task.computeControlLaw() ;
 	  //  vpTRACE("computeControlLaw" ) ;
 	  std::cout << "Task rank: " << task.rankJ1 <<std::endl ;
-	  if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+	  if (iter==1)
+	    vpTRACE("\t\t send the camera velocity to the controller ") ;
 	  robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
 	  simu->setCameraPosition(cMo) ;
-	  vpTime::wait(40) ;
 
 	  if(SAVE==1)
 	    {
@@ -290,6 +299,8 @@ void *mainLoop (void *_simu)
 	    }
 	  //  vpTRACE("\t\t || s - s* || ") ;
 	  //  std::cout << task.error.sumSquare() <<std::endl ; ;
+	  vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
+
 	}
       pos-- ;
     }
