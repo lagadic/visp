@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.50 2007-05-04 08:00:20 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.51 2007-05-10 16:34:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -84,59 +84,36 @@ MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
 # Option management
 #--------------------------------------------------------------------
 
-# Default 
-SET(USE_X11       ON) # For Linux/OSX display
-SET(USE_CFOX      OFF) # For firewire grabber under OSX
-SET(USE_COIN      ON) # For the simulator
-SET(USE_PTHREAD   ON) # For Biclops/Simulator
-SET(USE_OPENCV    ON) # For Intel opencv 
-SET(USE_GSL       ON) # For matrix manipulations
-SET(USE_GTK1      ON) # For Linux/OSX/Windows display
-SET(USE_GTK2      ON) # For Linux/OSX/Windows display
-SET(USE_DIRECT3D  ON) # For Windows display
-SET(USE_GDI       ON) # For Windows display
-SET(USE_DC1394    ON) # For firewire grabber under Linux and OSX ?
-SET(USE_V4L2      ON) # For Video 4 Linux 2 grabber under Linux
-SET(USE_ICCOMP    OFF) # For Imaging Technology Grabber based on itifg-7 driver
-SET(USE_ITIFG8    OFF) # For Imaging Technology Grabber based on itifg-8 driver
-SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
-SET(USE_AFMA4     OFF) # For Irisa's Afma4 robot
-SET(USE_AFMA6     OFF) # For Irisa's Afma6 robot
-SET(USE_BICLOPS   OFF) # For Biclops pan-tilt robot
-SET(USE_PTU46     OFF) # For Ptu-46 pan-tilt robot
-
 # Choose static or shared libraries.
 OPTION(BUILD_SHARED_LIBS "Build ViSP with shared libraries." OFF)
 # Build examples as an option.
 OPTION(BUILD_EXAMPLES "Build ViSP examples." ON)
 
-#OPTION(USE_COIN  "Compile ViSP with Simulator capabilities" OFF)
-#OPTION(USE_PTHREAD "Compile ViSP with pthread (usefull for Biclops/Simulator)" OFF)
-#OPTION(USE_OPENCV "Compile ViSP with Intel opencv library" OFF)
-#OPTION(USE_GSL     "Compile ViSP with gnu scientific library (GSL) usage" OFF)
-#OPTION(USE_GTK1    "Compile ViSP with GTK 1.0 usage ?" OFF)
-#OPTION(USE_GTK2    "Compile ViSP with GTK 2.x usage ?" OFF)
-
 IF (UNIX)
-#  OPTION(USE_X11  "Compile ViSP with X11" OFF)
-#  OPTION(USE_DC1394  "Compile ViSP with firewire 1394 cameras usage" OFF)
-#  OPTION(USE_V4L2    "Compile ViSP with Video For Linux Two (V4L2) usage" OFF)
   OPTION(USE_ICCOMP  "Compile ViSP with ICcomp framegrabber usage" OFF)
   OPTION(USE_ITIFG8  "Compile ViSP with itifg8 framegrabber usage" OFF)
   OPTION(USE_AFMA4   "Compile ViSP for Afma4 robot usage" OFF)
   OPTION(USE_AFMA6   "Compile ViSP for Afma6 robot usage" OFF)
   OPTION(USE_BICLOPS "Compile ViSP for Biclops head usage" OFF)
   OPTION(USE_PTU46   "Compile ViSP for Ptu-46 head usage" OFF)
-   IF(APPLE)
-     OPTION(USE_CFOX   "Compile ViSP with cfox usage" OFF)
-   ENDIF(APPLE)
-ELSE(UNIX)
-  IF(WIN32)
-#    OPTION(USE_DIRECT3D  "Compile ViSP with Direct3D" OFF)
-#    OPTION(USE_GDI  "Compile ViSP with GDI" OFF)
-#    OPTION(USE_DIRECTSHOW  "Compile ViSP with direct show" OFF)
-  ENDIF(WIN32)
+  IF(APPLE)
+    OPTION(USE_CFOX   "Compile ViSP with cfox usage" OFF)
+  ENDIF(APPLE)
 ENDIF(UNIX)
+
+# Set other options to default value
+SET(USE_X11       ON) # For Linux/OSX display
+SET(USE_COIN      ON) # For the simulator
+SET(USE_PTHREAD   ON) # For Biclops/Simulator
+SET(USE_OPENCV    ON) # For Intel opencv 
+SET(USE_GSL       ON) # For matrix manipulations
+SET(USE_GTK1      ON) # For Linux/OSX/Windows display with gtk-1.x
+SET(USE_GTK2      ON) # For Linux/OSX/Windows display with gtk-2.x
+SET(USE_DIRECT3D  ON) # For Windows display
+SET(USE_GDI       ON) # For Windows display
+SET(USE_DC1394    ON) # For firewire grabber under Linux and OSX ?
+SET(USE_V4L2      ON) # For Video 4 Linux 2 grabber under Linux
+SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
 
 IF(BUILD_SHARED_LIBS)
   SET(VISP_BUILD_SHARED_LIBS TRUE)  # for header vpConfig.h
@@ -180,6 +157,8 @@ IF(UNIX)
     FIND_PACKAGE(X11)
     IF(X11_FOUND)
       SET(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
+      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+	${X11_INCLUDE_DIR})
       SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${X11_LIBRARIES} -lm)
       #MESSAGE("X11: ${X11_LIBRARIES}")
     ENDIF(X11_FOUND)
