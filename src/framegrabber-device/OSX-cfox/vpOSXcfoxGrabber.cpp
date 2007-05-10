@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.cpp,v 1.8 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.cpp,v 1.9 2007-05-10 16:32:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -139,7 +139,7 @@ vpOSXcfoxGrabber::open(vpImage<unsigned char> &I)
 {
   open();
 
-  I.resize(nrows, ncols) ;
+  I.resize(height, width) ;
 
 }
 
@@ -155,7 +155,7 @@ vpOSXcfoxGrabber::open(vpImage<vpRGBa> &I)
 {
   open();
 
-  I.resize(nrows, ncols) ;
+  I.resize(height, width) ;
 
 }
 
@@ -179,14 +179,15 @@ vpOSXcfoxGrabber::acquire(vpImage<unsigned char> &I)
     close();
 
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-				   "V4l2 frame grabber not initialized") );
+				   "CFox frame grabber not initialized") );
   }
 
   else
     {
       CFRunLoopRunInMode(kCFRunLoopDefaultMode,1, true);
-       Camera::Frame  img = cam.getFrame(MODE_FRAME,0,0) ;
-       vpImageConvert::YUV422ToGrey(img,(unsigned char *)I.bitmap,I.getWidth()*I.getHeight()) ;
+      cfox::Camera::Frame  img = cam.getFrame(cfox::MODE_FRAME,0,0) ;
+      vpImageConvert::YUV422ToGrey(img,(unsigned char *)I.bitmap,
+				   I.getWidth()*I.getHeight()) ;
 
     }
 
@@ -212,14 +213,15 @@ vpOSXcfoxGrabber::acquire(vpImage<vpRGBa> &I)
     close();
 
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-				   "V4l2 frame grabber not initialized") );
+				   "CFox frame grabber not initialized") );
   }
 
   else
     {
       CFRunLoopRunInMode(kCFRunLoopDefaultMode,1, true);
-      Camera::Frame  img = cam.getFrame(MODE_FRAME,0,0) ;
-      vpImageConvert::YUV422ToRGBa(img,(unsigned char *)I.bitmap,I.getWidth()*I.getHeight()) ;
+      cfox::Camera::Frame  img = cam.getFrame(cfox::MODE_FRAME,0,0) ;
+      vpImageConvert::YUV422ToRGBa(img,(unsigned char *)I.bitmap,
+				   I.getWidth()*I.getHeight()) ;
 
     }
 
@@ -286,31 +288,32 @@ vpOSXcfoxGrabber::open()
     close() ;
 
 
-  Spec sp = BasicCamera ;
-  Mode mode ;
-  FPS fps ;
+  cfox::Spec sp = cfox::BasicCamera ;
+  cfox::Mode mode ;
+  cfox::FPS fps ;
 
   if (framerate == framerate_30fps)
-    fps = FPS_30 ;
+    fps = cfox::FPS_30 ;
   else
-    fps = FPS_15 ;
+    fps = cfox::FPS_15 ;
 
   if  (scale == 2)
   {
-      nrows = 240 ; ncols = 320 ;
-    mode =       Mode_320x240_YUV422 ;
+      height = 240 ; width = 320 ;
+    mode =       cfox::Mode_320x240_YUV422 ;
   }
   else
     //    if (scale ==1)
     {
-      mode =       Mode_640x480_YUV422 ;
-      nrows = 480 ; ncols = 640 ;
+      mode =       cfox::Mode_640x480_YUV422 ;
+      height = 480 ; width = 640 ;
     }
 
+  // Set camera settings
+  cfox::Settings settings(mode, fps, input, sp);
 
-  //  cam = new Camera ;
-  cam.open(mode,fps,input, sp)  ;
-
+  // Apply settings to the camera
+  cam << settings;
 
   init=true ;
 

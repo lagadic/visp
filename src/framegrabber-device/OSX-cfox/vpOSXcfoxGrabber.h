@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.h,v 1.5 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.h,v 1.6 2007-05-10 16:32:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,7 +68,6 @@
 #include <cfox/cfox.h>
 #include <cfox/camera/Camera.h>
 
-using namespace cfox ;
 
 /*!
   \class vpOSXcfoxGrabber
@@ -116,7 +115,7 @@ public:
 private:
   void open();
 
-  Camera cam ;
+  cfox::Camera cam ;
   // Camera::Frame img;
   int input ;
   int scale ;
