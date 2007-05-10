@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: exponentialMap.cpp,v 1.1 2007-05-04 16:34:31 fspindle Exp $
+ * $Id: exponentialMap.cpp,v 1.2 2007-05-10 14:55:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,14 +56,14 @@ main()
 {
 
   vpTranslationVector t;
-  t[0] = 0.1; // t_x in m/s
+  t[0] = 0.1;  // t_x in m/s
   t[1] = 0.2f; // t_y in m/s
-  t[2] = 0.f; // t_z in m/s
+  t[2] = 0.f;  // t_z in m/s
 
   vpRxyzVector rxyz;
-  rxyz[0] = vpMath::rad(0.f); // r_x in rad/s
-  rxyz[1] = 0.f; // r_y in rad/s
-  rxyz[2] = 0.f; // r_z in rad/s
+  rxyz[0] = vpMath::rad(0.f);  // r_x in rad/s
+  rxyz[1] = vpMath::rad(0.f);  // r_y in rad/s
+  rxyz[2] = vpMath::rad(90.f); // r_z in rad/s
 
   // Build a ThetaU rotation vector from a Rxyz vector
   vpThetaUVector tu;
@@ -99,7 +99,7 @@ main()
 	      << dt << " " << drxyz << std::endl;
   }
 
-  // Compute the displacement from the velocity applied during 2 second
+  // Compute the displacement from the velocity applied during 2 seconds
   M = vpExponentialMap::direct(v, 2.f);
 
   {
@@ -112,7 +112,14 @@ main()
     M.extract(R);
     vpRxyzVector drxyz(R); // rotational displacement
 
-    std::cout << "Displacement if velocity is applied during 2 s : \n "
+    std::cout << "Displacement if velocity is applied during 2 s : \n"
 	      << dt << " " << drxyz << std::endl;
   }
+
+  // Compute the velocity from the displacement observed during 2 seconds
+  v = vpExponentialMap::inverse(M, 2.f);
+
+  std::cout << "Velocity from displacement observed during 2 s: \n"
+	    << v << std::endl;
+
 }
