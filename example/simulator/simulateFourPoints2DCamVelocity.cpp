@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.5 2007-05-10 14:56:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -161,12 +161,14 @@ void *mainLoop (void *_simu)
   vpSimulator *simu = (vpSimulator *)_simu ;
   simu->initMainApplication() ;
 
-  while (1)
-    {int i ;
+  while (1) {
+    int i ;
 
     vpServo task ;
     vpRobotCamera robot ;
 
+    float sampling_time = 0.040f; // Sampling period in second
+    robot.setSamplingTime(sampling_time);
 
     std::cout << std::endl ;
     std::cout << "-------------------------------------------------------" << std::endl ;
@@ -244,54 +246,57 @@ void *mainLoop (void *_simu)
       task.addFeature(p[i],pd[i]) ;
 
     vpTRACE("\t set the gain") ;
-    task.setLambda(0.05) ;
+    task.setLambda(1.0) ;
 
 
     vpTRACE("Display task information " ) ;
     task.print() ;
 
     vpTime::wait(1000); // Sleep 1s
-    std::cout << "\nEnter a character to continue or CTRL-C to quit... " <<std::endl ;
+    std::cout << "\nEnter a character to continue or CTRL-C to quit... "
+	      << std::endl ;
     {    char a ; std::cin >> a ; }
 
 
     char name[FILENAME_MAX];
     int iter=0 ;
     vpTRACE("\t loop") ;
-    while(iter++<100)
+    while(iter++ < 100) {
+      double t = vpTime::measureTimeMs();
+
+      vpColVector v ;
+
+      robot.get_eJe(eJe) ;
+      task.set_eJe(eJe) ;
+
+      robot.getPosition(cMo) ;
+      for (i = 0 ; i < 4 ; i++)
       {
-	vpColVector v ;
-
-	robot.get_eJe(eJe) ;
-	task.set_eJe(eJe) ;
-
-	robot.getPosition(cMo) ;
-	for (i = 0 ; i < 4 ; i++)
-	  {
-	    point[i].track(cMo) ;
-	    vpFeatureBuilder::create(p[i],point[i])  ;
-	  }
-
-	v = task.computeControlLaw() ;
-	robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-	vpTime::wait(100) ;
-
-	simu->setCameraPosition(cMo) ;
-
-
-	if(SAVE==1)
-	  {
-	    sprintf(name,"/tmp/image.%04d.external.png",iter) ;
-	    std::cout << name << std::endl ;
-	    simu->write(vpSimulator::EXTERNAL,name) ;
-	    sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
-	    simu->write(vpSimulator::INTERNAL,name) ;
-	  }
-
-
-
+	point[i].track(cMo) ;
+	vpFeatureBuilder::create(p[i],point[i])  ;
       }
+
+      v = task.computeControlLaw() ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+      //vpTime::wait(100) ;
+
+
+      simu->setCameraPosition(cMo) ;
+
+
+      if(SAVE==1)
+      {
+	sprintf(name,"/tmp/image.%04d.external.png",iter) ;
+	std::cout << name << std::endl ;
+	simu->write(vpSimulator::EXTERNAL,name) ;
+	sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
+	simu->write(vpSimulator::INTERNAL,name) ;
+      }
+
+      vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
+
+    }
     vpTRACE("Display task information " ) ;
     task.print() ;
     std::cout << "\nEnter a character to continue..." <<std::endl ;
