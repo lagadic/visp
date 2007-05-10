@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: exExample.h,v 1.2 2007-02-06 15:37:09 fspindle Exp $
+ * $Id: exExample.h,v 1.3 2007-05-10 11:43:03 fspindle Exp $
  *
  * Copyright (C) 2007 Inria. All rights reserved.
  *
@@ -32,11 +32,12 @@
 #ifndef exExample_h
 #define exExample_h
 
+#include "example/exConfig.h"
 
 /*!
   \file exExample.h
 */
-class exExample
+class EXAMPLE_EXPORT exExample
 {
 public:
   exExample();
