@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindCFOX.cmake,v 1.2 2006-05-30 08:34:59 fspindle Exp $
+# $Id: FindCFOX.cmake,v 1.3 2007-05-10 16:33:23 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -28,7 +28,7 @@
 # not clear to you.
 #
 # Description:
-# Try to find cfox library for Apple OS X.
+# Try to find cfox library for Apple OS X (http://cfox.sourceforge.net/).
 # Once run this will define: 
 #
 # CFOX_FOUND
@@ -44,8 +44,9 @@ IF(NOT APPLE)
   SET(CFOX_FOUND FALSE)
 ELSE(NOT APPLE)
   
-  FIND_PATH(CFOX_INCLUDE_DIR cfox.h
+  FIND_PATH(CFOX_INCLUDE_DIR cfox/cfox.h
     /sw/include/cfox
+    /sw/include
     )
   #MESSAGE(STATUS "DBG CFOX_INCLUDE_DIR=${CFOX_INCLUDE_DIR}")  
   
