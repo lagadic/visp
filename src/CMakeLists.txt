@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.11 2007-05-02 12:43:33 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.12 2007-05-10 12:11:10 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -72,7 +72,9 @@ ADD_CUSTOM_TARGET(header ALL
 #----------------------------------------------------------------------
 # build rule for the library
 #----------------------------------------------------------------------
-ADD_LIBRARY (${VISP_INTERN_LIBS} ${SRC_ALL} ${HEADER_ALL}) 
+ADD_LIBRARY (${VISP_INTERN_LIBS} 
+  ${SRC_ALL} 
+  ${HEADER_ALL} ${VISP_INCLUDE_DIR}/vpConfig.h) 
 
 # create the headers in include/visp before compiling the lib
 ADD_DEPENDENCIES(${VISP_INTERN_LIBS} header)
