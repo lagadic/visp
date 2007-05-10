@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2007-02-08 16:58:07 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.6 2007-05-10 11:43:46 fspindle Exp $
 #
 # Copyright (C) 2007 Inria. All rights reserved.
 #
@@ -50,7 +50,7 @@
 SET(PROJECT_NAME "EXAMPLE")
 SET(PROJECT_VERSION_MAJOR 1)
 SET(PROJECT_VERSION_MINOR 0)
-SET(PROJECT_VERSION_PATCH 0)
+SET(PROJECT_VERSION_PATCH 1)
 
 #-----------------------------------------------------------------------------
 # Set the project name
@@ -122,6 +122,9 @@ IF(WIN32 AND NOT CYGWIN)
   IF(HAVE_LIBWINMM)
     SET(PROJECT_EXTERN_LIBS ${PROJECT_EXTERN_LIBS} "winmm")
   ENDIF(HAVE_LIBWINMM)
+  IF(MSVC) #check if MSVC is the compiler and set EXAMPLE_USE_MSVC accordingly
+    SET(EXAMPLE_USE_MSVC TRUE) # for exConfig.h
+  ENDIF(MSVC)
 ENDIF(WIN32 AND NOT CYGWIN)
 IF(UNIX)
   SET(PROJECT_DEFS "${PROJECT_DEFS} -DUNIX")
@@ -180,10 +183,35 @@ ENDIF(DOXYGEN_FOUND)
 ADD_DEFINITIONS(${PROJECT_DEFS})
 
 #----------------------------------------------------------------------
+# Generate the package dependent file include/example/exConfig.h
+#----------------------------------------------------------------------
+# tune content of exConfig.h
+IF(BUILD_SHARED_LIBS)
+  SET(EXAMPLE_BUILD_SHARED_LIBS TRUE)  # for header exConfig.h
+ENDIF(BUILD_SHARED_LIBS)
+SET(EXAMPLE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+SET(EXAMPLE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+SET(EXAMPLE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+SET(EXAMPLE_VERSION       ${PROJECT_VERSION})
+
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/include/exConfig.h.cmake 
+  ${PROJECT_INCLUDE_DIR}/exConfig.h
+)
+
+#----------------------------------------------------------------------
 # Propagation in sub dirs
 #----------------------------------------------------------------------
 SUBDIRS(src)
 SUBDIRS(example)
+
+#----------------------------------------------------------------------
+# customize install target 
+#----------------------------------------------------------------------
+# install rule for exConfig.h
+INSTALL(FILES ${PROJECT_BINARY_DIR}/include/example/exConfig.h
+  DESTINATION include/example
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+  )
 
 #----------------------------------------------------------------------
 # customize uninstall target 
