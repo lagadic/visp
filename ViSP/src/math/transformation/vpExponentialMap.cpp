@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpExponentialMap.cpp,v 1.2 2007-05-04 16:32:38 fspindle Exp $
+ * $Id: vpExponentialMap.cpp,v 1.3 2007-05-10 14:44:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,16 +45,17 @@
   time is here set to 1 second. To use an other value you shoud use
   direct(const vpColVector &, const float &).
 
-  \param v : Instantaneous velocity represented by a 6 dimension vector \f$ [t,
-  \theta u]^t \f$ where \f$ \theta u \f$ is a rotation vector (see
-  vpThetaUVector) and \f$ t \f$ is a translation vector: \f$ [t_x, t_y, t_z,
-  {\theta u}_x, {\theta u}_y, {\theta u}_z] \f$ (see vpTranslationVector and
-  vpThetaUVector).
+  \param v : Instantaneous velocity represented by a 6 dimension
+  vector \f$ [{\bf t}, {\bf \theta u}]^t \f$ where \f$ {\bf t} \f$ is a
+  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
+  vpThetaUVector).  \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y,
+  {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
 
-  \return An homogeneous matrix M computed from an instantaneous velocity v. If
-  v is expressed in frame c, \f$ M = {^c}M_{c_{new}} \f$.
+  \return An homogeneous matrix \f$ \bf M \f$ computed from an instantaneous
+  velocity \f$ \bf v \f$. If \f$ \bf v \f$ is expressed in frame c, \f$ {\bf M}
+  = {^c}{\bf M}_{c_{new}} \f$.
 
-  \sa inverse()
+  \sa inverse(const vpHomogeneousMatrix &)
 */
 vpHomogeneousMatrix
 vpExponentialMap::direct(const vpColVector &v)
@@ -66,29 +67,30 @@ vpExponentialMap::direct(const vpColVector &v)
 
   Compute the exponential map. The inverse function is inverse().
 
-  \param v : Instantaneous velocity represented by a 6 dimension vector \f$ [t,
-  \theta u]^t \f$ where \f$ \theta u \f$ is a rotation vector (see
-  vpThetaUVector) and \f$ t \f$ is a translation vector: \f$ [t_x, t_y, t_z,
-  {\theta u}_x, {\theta u}_y, {\theta u}_z] \f$ (see vpTranslationVector and
-  vpThetaUVector).
+  \param v : Instantaneous velocity represented by a 6 dimension
+  vector \f$ [{\bf t}, {\bf \theta u}]^t \f$ where \f$ {\bf t} \f$ is a
+  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
+  vpThetaUVector).  \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y,
+  {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
 
-  \param sampling_time : Sampling time \f$ \Delta t \f$. Time during which the
+  \param delta_t : Sampling time \f$ \Delta t \f$. Time during which the
   velocity v is applied.
 
-  \return An homogeneous matrix M computed from an instantaneous velocity v. If
-  v is expressed in frame c, \f$ M = {^c}M_{c_{new}} \f$.
+  \return An homogeneous matrix \f$ \bf M \f$ computed from an instantaneous
+  velocity \f$ \bf v \f$. If \f$ \bf v \f$ is expressed in frame c, \f$ {\bf M}
+  = {^c}{\bf M}_{c_{new}} \f$.
 
-  \sa inverse()
+  \sa inverse(const vpHomogeneousMatrix &, const float &)
 */
 vpHomogeneousMatrix
-vpExponentialMap::direct(const vpColVector &v, const float &sampling_time)
+vpExponentialMap::direct(const vpColVector &v, const float &delta_t)
 {
   double theta,si,co,sinc,mcosc,msinc;
   vpThetaUVector u ;
   vpRotationMatrix rd ;
   vpTranslationVector dt ;
 
-  vpColVector v_dt = v * sampling_time;
+  vpColVector v_dt = v * delta_t;
 
   u[0] = v_dt[3];
   u[1] = v_dt[4];
@@ -190,7 +192,6 @@ vpExponentialMap::direct(const vpColVector &v, const float &sampling_time)
     // end of the test
   }
 
-
   return Delta ;
 }
 
@@ -201,16 +202,40 @@ vpExponentialMap::direct(const vpColVector &v, const float &sampling_time)
 
   \param M : An homogeneous matrix corresponding to a displacement.
 
-  \return v : Instantaneous velocity represented by a 6 dimension vector
-  \f$ [t, \theta u]^t \f$ where \f$ \theta u \f$ is a rotation vector (see
-  vpThetaUVector) and \t$ t \f$ is a translation vector:  \f$ [t_x, t_y, t_z,
-  {\theta u}_x, {\theta u}_y, {\theta u}_z] \f$ (see vpTranslationVector and
-  vpThetaUVector).
+  \return Instantaneous velocity \f$ \bf v \f$ represented by a 6 dimension
+  vector \f$ [{\bf t}, {\bf \theta u}]^t \f$ where \f$ {\bf \theta u} \f$ is a
+  rotation vector (see vpThetaUVector) and \f$ \bf t \f$ is a translation
+  vector:  \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y, {\theta
+  u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
 
-  \sa direct()
+  \sa direct(const vpColVector &)
 */
 vpColVector
 vpExponentialMap::inverse(const vpHomogeneousMatrix &M)
+{
+  return vpExponentialMap::inverse(M, 1.0f);
+}
+
+/*!
+
+  Compute an instantaneous velocity from an homogeneous matrix. The inverse
+  function is the exponential map, see direct().
+
+  \param M : An homogeneous matrix corresponding to a displacement.
+
+  \param delta_t : Sampling time \f$ \Delta t \f$. Time during which the
+  displacement is applied.
+
+  \return Instantaneous velocity \f$ \bf v \f$ represented by a 6 dimension
+  vector \f$ [{\bf t}, {\bf \theta u}]^t \f$ where \f$ {\bf \theta u} \f$ is a
+  rotation vector (see vpThetaUVector) and \f$ \bf t \f$ is a translation
+  vector:  \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y, {\theta
+  u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
+
+  \sa direct(const vpColVector &, const float &)
+*/
+vpColVector
+vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const float &delta_t)
 {
   vpColVector v(6);
   int i;
@@ -277,12 +302,13 @@ vpExponentialMap::inverse(const vpHomogeneousMatrix &M)
      v[1] = M[1][3];
      v[2] = M[2][3];
   }
-  return(v);
 
+  // Apply the sampling time to the computed velocity
+  v /= delta_t;
+
+  return(v);
 }
 
-
-#undef DEBUG_LEVEL1
 
 /*
  * Local variables:
