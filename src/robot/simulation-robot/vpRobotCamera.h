@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpRobotCamera.h,v 1.7 2007-05-10 14:45:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,9 @@
 
 /*!
   \class vpRobotCamera
-  \brief class that defines the simplest robot :  a free flying a camera
+  \brief Class that defines the simplest robot: a free flying camera.
+
+
 */
 class VISP_EXPORT vpRobotCamera : public vpRobot
 {
@@ -60,41 +62,36 @@ class VISP_EXPORT vpRobotCamera : public vpRobot
 private:
   //! robot / camera location in the world frame
   vpHomogeneousMatrix cMo ;
-
+  float delta_t; // sampling time
 
 public:
-
-  //! basic initialization
-  void init() ;
-
-  //! constructor
   vpRobotCamera() ;
-  //! destructor
   virtual ~vpRobotCamera() ;
 
-  //! get the robot Jacobian expressed in the end-effector frame
+  void init() ;
   void get_eJe(vpMatrix &_eJe)    ;
-  //! get the robot Jacobian expressed in the robot reference frame
   void get_fJe(vpMatrix &_fJe)    ;
 
-  //! send to the controller a velocity expressed in the camera frame
+  /*!
+    Set the sampling time.
+
+    \param delta_t : Sampling time used to compute the robot displacement from
+    the velocity applied to the robot during this time.
+  */
+  inline void setSamplingTime(const float &delta_t)
+  {
+    this->delta_t = delta_t;
+  }
   void setCameraVelocity(const vpColVector &v)   ;
-  //! send to the controller a velocity expressed in the articular frame
   void setArticularVelocity(const vpColVector &qdot)  ;
-  //! send to the controller a velocity (frame as to ve specified)
   void setVelocity(const vpRobot::ControlFrameType frame,
 		   const  vpColVector &vel)  ;
 
-  //! get a position expressed in the robot reference frame
   void getPosition(vpColVector &q)    ;
-  //! get a position expressed in the robot reference frame
   void getPosition(vpHomogeneousMatrix &cMo) const   ;
-  //! get a position expressed in the articular frame
   void getArticularPosition(vpColVector &q)  const  ;
-  //! get a displacement (frame as to ve specified)
   void getPosition(const vpRobot::ControlFrameType frame,
 		   vpColVector &q)  ;
- //! get a displacement (frame as to ve specified)
   void setPosition(const vpRobot::ControlFrameType /* frame */,
 		   const vpColVector & /* q */)  { ; }
 
@@ -102,11 +99,8 @@ public:
   void setPosition(const vpHomogeneousMatrix &_cMo) ;
   void setPosition(const vpColVector & /* q */) { ;}
 
-  //! get a displacement expressed in the camera frame
   void getCameraDisplacement(vpColVector &v)  ;
-  //! get a displacement expressed  in the articular frame
   void getArticularDisplacement(vpColVector &qdot) ;
-  //! get a displacement (frame as to ve specified)
   void getDisplacement(const vpRobot::ControlFrameType repere,
 		       vpColVector &q) ;
 
