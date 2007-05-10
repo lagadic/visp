@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpExponentialMap.h,v 1.2 2007-05-04 16:32:38 fspindle Exp $
+ * $Id: vpExponentialMap.h,v 1.3 2007-05-10 14:44:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,11 +61,16 @@
     the sampling time can be set to an other value.
 
   - The inverse exponential map allows to compute a velocity vector from a
-    displacement.
+    displacement measured during a time interval. With inverse() the time
+    interval also called sampling time is set to 1 second. With
+    inverse(const vpHomogeneousMatrix &, const float &) the sampling time
+    can be set to an other value.
 
   The displacement is represented as an homogeneous matrix
-  (vpHomogeneousMatrix). Velocities are represented as a \f$ [t, \theta u ]^t
-  \f$ vector.
+  (vpHomogeneousMatrix). Velocities are represented as a \f$ [{\bf t}, {\bf
+  \theta u} ]^t \f$ 6 dimension vector where \f$ t \f$ is a translation vector
+  (see vpTranslationVector) and \f$ \theta u \f$ a rotation vector (see
+  vpThetaUVector).
 
 */
 class VISP_EXPORT vpExponentialMap
@@ -74,8 +79,10 @@ class VISP_EXPORT vpExponentialMap
 public:
   static vpHomogeneousMatrix direct(const vpColVector &v);
   static vpHomogeneousMatrix direct(const vpColVector &v,
-				    const float &sampling_time);
+				    const float &delta_t);
   static vpColVector inverse(const vpHomogeneousMatrix &M);
+  static vpColVector inverse(const vpHomogeneousMatrix &M,
+			     const float &delta_t);
 
 };
 #endif
