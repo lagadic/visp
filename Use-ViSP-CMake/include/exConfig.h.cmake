@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: exConfig.h.cmake,v 1.1 2007-05-10 11:41:36 fspindle Exp $
+ * $Id: exConfig.h.cmake,v 1.2 2007-05-10 12:08:59 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -59,10 +59,10 @@
 
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
-// We exploit here the fact that cmake auto set xxx_EXPORTS (with S) on 
+// We exploit here the fact that cmake auto set example_EXPORTS (with S) on 
 // compilation.
 #if defined (WIN32) && defined(EXAMPLE_BUILD_SHARED_LIBS) 
-#  ifdef tarot_EXPORTS 
+#  ifdef example_EXPORTS 
 #    define EXAMPLE_EXPORT __declspec(dllexport)
 #  else  
 #    define EXAMPLE_EXPORT __declspec(dllimport)
