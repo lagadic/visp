@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.7 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpPose.h,v 1.8 2007-05-11 16:53:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,9 +69,6 @@
   \date   April, 6 1999 (first issue)
 */
 
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpList<vpPoint>;
-#endif
 
 class VISP_EXPORT vpPose
 {
@@ -148,8 +145,8 @@ public:
   //! compute the pose for a given method
   void computePose(poseMethodEnum methode, vpHomogeneousMatrix &cMo) ;
   void printPoint() ;
-  void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, 
-	       vpCameraParameters &cam, double size, 
+  void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
+	       vpCameraParameters &cam, double size,
 	       vpColor::vpColorType col=vpColor::none) ;
 
 

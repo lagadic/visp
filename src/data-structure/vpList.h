@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.9 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpList.h,v 1.10 2007-05-11 16:53:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,9 +41,16 @@
 #define VP_LIST_H
 
 
+/*!
+  \file vpList.h
+  \brief Definition of the list managment class
+*/
+
 #include <stdio.h>
 
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -689,14 +696,25 @@ void vpList<type>::display()
   std::cout<< std::endl << std::endl ;
 }
 
+// For template instantiation with Visual Studio
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+#include <visp/vpPoint.h>
+#include <visp/vpMeSite.h>
+#include <visp/vpBasicFeature.h>
+#include <visp/vpForwardProjection.h>
+
+template class VISP_EXPORT vpList<int>;
+template class VISP_EXPORT vpList<unsigned int>;
+template class VISP_EXPORT vpList<vpBasicFeature *>;
+template class VISP_EXPORT vpList<vpForwardProjection *>;
+template class VISP_EXPORT vpList<vpPoint>;
+template class VISP_EXPORT vpList<vpMeSite>;
+#endif
+
 
 #endif  /* #ifndef VP_LIST_H */
 
 
-/*!
-  \file vpList.h
-  \brief Definition of the list managment class
-*/
 
 /*
  * Local variables:
