@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.20 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpDot2.h,v 1.21 2007-05-11 16:53:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,10 +50,6 @@
 #include <visp/vpRect.h>
 #include <visp/vpTracker.h>
 
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpList<int>;
-template class VISP_EXPORT vpList<unsigned int>;
-#endif
 
 class VISP_EXPORT vpDot2 : public vpTracker
 {

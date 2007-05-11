@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.14 2007-05-03 11:36:34 fspindle Exp $
+ * $Id: vpImage.h,v 1.15 2007-05-11 16:53:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
 #include <visp/vpImageException.h>
+
 
 class vpDisplay;
 
@@ -782,6 +783,11 @@ Type vpImage<Type>::getPixelBI(float col0, float row0)
   }
   return (Type)(rfrac * row1 + (1.0 - rfrac) * row2);
 }
+
+// For template instantiation with Visual Studio
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT vpImage<unsigned char>; 
+#endif
 
 #endif
 

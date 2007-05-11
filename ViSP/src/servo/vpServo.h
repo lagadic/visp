@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.10 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpServo.h,v 1.11 2007-05-11 16:53:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,12 +53,6 @@
 
 #include <visp/vpList.h>
 #include <visp/vpAdaptativeGain.h>
-
-
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpList<vpBasicFeature *>;
-template class VISP_EXPORT vpList<int>;
-#endif
 
 
 /*!

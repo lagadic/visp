@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.h,v 1.5 2007-02-26 16:42:39 fspindle Exp $
+ * $Id: vpMeTracker.h,v 1.6 2007-05-11 16:53:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,9 +62,6 @@
 #include <visp/vpList.h>
 #include <visp/vpTracker.h>
 
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpList<vpMeSite>;
-#endif
 
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
