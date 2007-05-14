@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.14 2007-05-04 10:12:05 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.15 2007-05-14 08:37:20 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -57,6 +57,7 @@ SET (HEADER_COMPUTER_VISION
 
 SET (HEADER_DATA_STRUCTURE
   data-structure/vpList.h
+  data-structure/vpSubPixel.h
   )
 
 SET (HEADER_EXCEPTION

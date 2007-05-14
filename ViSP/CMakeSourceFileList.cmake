@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.16 2007-05-04 10:12:05 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.17 2007-05-14 08:37:20 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -62,6 +62,10 @@ SET (SRC_COMPUTER_VISION
   computer-vision/pose-estimation/vpPoseLowe.cpp
   computer-vision/pose-estimation/vpPoseRansac.cpp
   computer-vision/pose-estimation/vpPoseVirtualVisualServoing.cpp  
+  )
+
+SET (SRC_DATA_STRUCTURE
+  data-structure/vpSubPixel.cpp
   )
 
 SET (SRC_EXCEPTION
@@ -216,6 +220,7 @@ SET (SRC_VISUAL_FEATURE
 SET (SRC_ALL
   ${SRC_CAMERA}
   ${SRC_COMPUTER_VISION}
+  ${SRC_DATA_STRUCTURE}
   ${SRC_EXCEPTION}
   ${SRC_FRAMEGRABBER_DEVICE}
   ${SRC_IMAGE}
