@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.5 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: grab1394.cpp,v 1.6 2007-05-14 08:36:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,7 +96,6 @@ void usage(char *name, char *badparam, vp1394Grabber &g, long &req_number,
   vpList<int> l_formats; // list of supported formats
   vpList<int> l_modes; // list of supported modes
   int n_formats; // number of supported formats
-  int n_modes; // number of supported mode for this format
   int n_framerates; // number of supported framerates
 
   g.getCamera(act_camera);
@@ -325,7 +324,7 @@ main(int argc, char ** argv)
   unsigned int min_shutter, max_shutter;
   unsigned int act_gain;
   unsigned int min_gain, max_gain;
-  for (int i=0; i < cameras; i++) {
+  for (unsigned int i=0; i < cameras; i++) {
     g.setCamera(i);
     g.getFormat(act_format);
     g.getMode(act_mode);
