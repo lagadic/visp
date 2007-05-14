@@ -1,13 +1,17 @@
-ViSP 2.4.x 
-  - New Feature
+ViSP 2.4.1 
+  - New classes
+        - vpRect class for rectangle manipulations, display	
+        - vpHistogram,vpHistogramPeak and vpHistogramValey classes to
+	  handle gray level image histogram
+	- vpSubPixel for sub-pixel manipulations	
+	- vpMouseButton for mouse click identifation	
+  - New Features
         - MinGW supported
 	- ViSP as a third party library in an other project.
 	  It is now possible to use ViSP as a third party project without
 	  installing ViSP by make install. ViSP can now be used
 	  directly from the build dir, or from the install dir, or
 	  from a package (NSIS, ...)
-        - vpRect class for rectangle manipulations, display
-        - vpHistogram class to handle gray level image histogram
   - Bug fix and improvement
 	- vpImage: getWidth() and getHeight() replace getCols() and getRows() 
 	  which are now obsolete.
@@ -18,8 +22,10 @@ ViSP 2.4.x
 	  . vpMouseButton::vpMouseButtonType was introduced to handle
 	    mouse clicks 
 	  . vpColor::vpColorType was introduced to handle colors to display
-	- Coin functiunalities are now available under windows. It allows 
-	  the use of vpSimulator class under this platform
+	- Simulator functionality based on Coin usage is now available
+	  under windows. It allows the use of vpSimulator class under this
+	  platform.
+	- Compatibility with Windows platform.
 	
 ----------------------------------------------	
 ViSP 2.4.0 (released February 6, 2007)
