@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.13 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.14 2007-05-15 14:23:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1074,7 +1074,7 @@ vp1394TwoGrabber::setCapture(dc1394switch_t _switch)
   }
 
   if (_switch == DC1394_ON) {
-    //    if (dc1394_capture_setup(camera, NUM_BUFFERS) != DC1394_SUCCESS) {
+    //if (dc1394_capture_setup(camera, NUM_BUFFERS) != DC1394_SUCCESS) {
     // To be compatible with libdc1394 svn 382 version
     if (dc1394_capture_setup(camera, NUM_BUFFERS,
 			     DC1394_CAPTURE_FLAGS_DEFAULT) != DC1394_SUCCESS) {

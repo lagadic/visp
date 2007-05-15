@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.8 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.9 2007-05-15 14:23:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -82,7 +82,6 @@
  * Interface with libdc1394 2.x
  */
 
-#include <libraw1394/raw1394.h>
 #include <dc1394/control.h>
 #include <dc1394/utils.h>
 
