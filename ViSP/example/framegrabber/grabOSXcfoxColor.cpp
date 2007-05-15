@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOSXcfoxColor.cpp,v 1.4 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: grabOSXcfoxColor.cpp,v 1.5 2007-05-15 09:30:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@
 #include <visp/vpDisplay.h>
 
 #include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayX11.h>
+#include <visp/vpDisplayX.h>
 
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
