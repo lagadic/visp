@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.9 2007-05-03 16:00:17 fspindle Exp $
+ * $Id: displaySequence.cpp,v 1.10 2007-05-15 09:30:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -341,7 +341,7 @@ main(int argc, char ** argv)
 #if defined VISP_HAVE_GTK
   vpDisplayGTK display;
 #elif defined VISP_HAVE_X11
-  vpDisplayX11 display;
+  vpDisplayX display;
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI display;
 #endif
