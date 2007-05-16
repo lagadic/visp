@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.cpp,v 1.8 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpHomography.cpp,v 1.9 2007-05-16 09:20:13 mpressig Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -362,7 +362,7 @@ vpHomography::build()
   bP.getNormal(n) ;
 
   double d = bP.getD() ;
-  *this += aTb*n.t()/d ;
+  *this -= aTb*n.t()/d ; // the d used in the equation is such as nX=d is the plane equation. So if the plane is described by Ax+By+Cz+D=0, d=-D
 
 }
 
@@ -392,7 +392,7 @@ vpHomography::build(vpHomography &aHb,
   bP.getNormal(n) ;
 
   double d = bP.getD() ;
-  aHb += aTb*n.t()/d ;
+  aHb -= aTb*n.t()/d ; // the d used in the equation is such as nX=d is the plane equation. So if the plane is described by Ax+By+Cz+D=0, d=-D
 
 }
 
