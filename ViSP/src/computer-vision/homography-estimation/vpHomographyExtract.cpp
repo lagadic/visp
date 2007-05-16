@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyExtract.cpp,v 1.8 2007-04-23 14:30:39 fspindle Exp $
+ * $Id: vpHomographyExtract.cpp,v 1.9 2007-05-16 13:02:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,20 +42,38 @@
 
 //#define DEBUG_Homographie 0
 
-
-#define SEUIL_SING 0.0001
+/* ---------------------------------------------------------------------- */
+/* --- STATIC ------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+const double vpHomography::sing_threshold = 0.0001;
 
 /*!
+
+  Compute the camera displacement between two images from the homography \f$
+  {^a}{\bf H}_b \f$.
+
+  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
+  represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
+  vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
+  (vpHomogeneousMatrix).
+
+  \param aHb : Input homography \f$ {^a}{\bf H}_b \f$.
 
   \param nd : Input normal vector to the plane used to compar with the normal
   vector \e n extracted from the homography.
 
+  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
+
+  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
+
+  \param n : Normal vector to the plane as an output.
 */
+
 void
-vpHomography::computeDisplacement (const vpHomography &H,
-				   const vpColVector& nd,
+vpHomography::computeDisplacement (const vpHomography &aHb,
+				   const vpColVector &nd,
 				   vpRotationMatrix &aRb,
-				   vpTranslationVector &aTb,
+				   vpTranslationVector &atb,
 				   vpColVector &n)
 {
   /**** Déclarations des variables ****/
@@ -90,7 +108,7 @@ vpHomography::computeDisplacement (const vpHomography &H,
 
   vpMatrix mH(3,3) ;
   for (i=0 ; i < 3 ; i++)
-    for (j=0 ; j < 3 ; j++) mH[i][j] = H[i][j];
+    for (j=0 ; j < 3 ; j++) mH[i][j] = aHb[i][j];
 
   /* Preparation au calcul de la SVD */
   mTempU = mH ;
@@ -165,7 +183,7 @@ vpHomography::computeDisplacement (const vpHomography &H,
 #endif
   n.resize(3) ;
 
-  if (((sv[0] - sv[1]) < SEUIL_SING) && (sv[0] - sv[2]) < SEUIL_SING)
+  if (((sv[0] - sv[1]) < sing_threshold) && (sv[0] - sv[2]) < sing_threshold)
   {
     //#ifdef DEBUG_Homographie
     //   printf ("\nPure  rotation\n");
@@ -259,17 +277,17 @@ vpHomography::computeDisplacement (const vpHomography &H,
 
   /* Calcul du vecteur de translation qui est retourner : t = (U * t') / d */
   for (i = 0; i < 3; i++) {
-    aTb[i] = 0.0;
+    atb[i] = 0.0;
     for (j = 0; j < 3; j++) {
-      aTb[i] += mU[i][j] * aTbp[j];
+      atb[i] += mU[i][j] * aTbp[j];
     }
-    aTb[i] /= distanceFictive;
+    atb[i] /= distanceFictive;
   }
 
 
 #ifdef DEBUG_Homographie
   printf("t' : ") ; std::cout << aTbp.t() ;
-  printf("t/d : ") ; std::cout << aTb.t() ;
+  printf("t/d : ") ; std::cout << atb.t() ;
   printf("n : ") ; std::cout << n.t() ;
 #endif
 
@@ -320,53 +338,58 @@ vpHomography::computeDisplacement (const vpHomography &H,
 
 }
 
+/*!
+
+  Compute the camera displacement between two images from the homography \f$
+  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
+
+  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
+  represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
+  vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
+  (vpHomogeneousMatrix).
+
+  \param nd : Input normal vector to the plane used to compar with the normal
+  vector \e n extracted from the homography.
+
+  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
+
+  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
+
+  \param n : Normal vector to the plane as an output.
+
+  \sa computeDisplacement (const vpHomography &, const vpColVector &,
+  vpRotationMatrix &, vpTranslationVector &, vpColVector &)
+*/
 void
 vpHomography::computeDisplacement(const vpColVector& nd,
 				  vpRotationMatrix &aRb,
-				  vpTranslationVector &aTb,
+				  vpTranslationVector &atb,
 				  vpColVector &n)
 {
-
-
-  //vpColVector nd(3) ;
-  //nd[0]=0;nd[1]=0;nd[2]=1;
-
-  computeDisplacement(*this,nd, aRb,aTb,n);
-
+  computeDisplacement(*this,nd, aRb,atb,n);
 }
 /*!
-  Compute the camera displacement aMb associated with an homography aHb
 
+  Compute the camera displacement between two images from the homography \f$
+  {^a}{\bf H}_b \f$.
 
-  implicit parameter: Homography aHb (this).
-  \param aRb : Rotation matrix.
-  \param aTb : Translation vector.
-  \param n : Normal vector to the plane.
+  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
+  represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
+  vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
+  (vpHomogeneousMatrix).
+
+  \param aHb : Input homography \f$ {^a}{\bf H}_b \f$.
+
+  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
+
+  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
+
+  \param n : Normal vector to the plane as an output.
 */
-
-/**********************************************************************
- * Nom : Homographie_EstimationDeplacementCamera
- * Description : Estimation du deplacement de la camera entre 2 images
- *
- * H = U * D * V^T
- *	 D = d' * R' + t' * n'^T
- *
- * avec R = s.U * R' * V^T
- * r = U * t'
- *	 n = V * n'
- *	 d = s * d'
- *	 s = det(U)*det(V)
- ***********************************************************************
- * Entres : Matrice d'homographie : H[3x3]
- * Vecteur de la normale desiree : normaleDesiree
- * Sortie : Matrice de rotation : aRb
- * Vecteur de translation : aTb
- *	 Vecteur de normale : n
- **********************************************************************/
 void
-vpHomography::computeDisplacement (const vpHomography &H,
+vpHomography::computeDisplacement (const vpHomography &aHb,
 				   vpRotationMatrix &aRb,
-				   vpTranslationVector &aTb,
+				   vpTranslationVector &atb,
 				   vpColVector &n)
 {
   /**** Déclarations des variables ****/
@@ -400,7 +423,7 @@ vpHomography::computeDisplacement (const vpHomography &H,
 
   vpMatrix mH(3,3) ;
   for (i=0 ; i < 3 ; i++)
-    for (j=0 ; j < 3 ; j++) mH[i][j] = H[i][j];
+    for (j=0 ; j < 3 ; j++) mH[i][j] = aHb[i][j];
 
   /* Preparation au calcul de la SVD */
   mTempU = mH ;
@@ -475,7 +498,7 @@ vpHomography::computeDisplacement (const vpHomography &H,
 #endif
   n.resize(3) ;
 
-  if (((sv[0] - sv[1]) < SEUIL_SING) && (sv[0] - sv[2]) < SEUIL_SING)
+  if (((sv[0] - sv[1]) < sing_threshold) && (sv[0] - sv[2]) < sing_threshold)
   {
     //#ifdef DEBUG_Homographie
     //   printf ("\nPure  rotation\n");
@@ -569,17 +592,17 @@ vpHomography::computeDisplacement (const vpHomography &H,
 
   /* Calcul du vecteur de translation qui est retourner : t = (U * t') / d */
   for (i = 0; i < 3; i++) {
-    aTb[i] = 0.0;
+    atb[i] = 0.0;
     for (j = 0; j < 3; j++) {
-      aTb[i] += mU[i][j] * aTbp[j];
+      atb[i] += mU[i][j] * aTbp[j];
     }
-    aTb[i] /= distanceFictive;
+    atb[i] /= distanceFictive;
   }
 
 
 #ifdef DEBUG_Homographie
   printf("t' : ") ; std::cout << aTbp.t() ;
-  printf("t/d : ") ; std::cout << aTb.t() ;
+  printf("t/d : ") ; std::cout << atb.t() ;
   printf("n : ") ; std::cout << n.t() ;
 #endif
 
@@ -632,17 +655,22 @@ vpHomography::computeDisplacement (const vpHomography &H,
 
 
 /*!
-  Compute the camera displacement aMb associated with an homography aHb
+  Compute the camera displacement between two images from the homography \f$
+  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
 
-  Implicit parameter: Homography aHb (this).
-  \param aRb : Rotation matrix.
-  \param aTb : Translation vector.
-  \param n : Normal vector.
+  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
+
+  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
+
+  \param n : Normal vector to the plane as an output.
+
+  \sa computeDisplacement (const vpHomography &, vpRotationMatrix &,
+  vpTranslationVector &, vpColVector &)
 */
 
 void
 vpHomography::computeDisplacement(vpRotationMatrix &aRb,
-				  vpTranslationVector &aTb,
+				  vpTranslationVector &atb,
 				  vpColVector &n)
 {
 
@@ -650,7 +678,7 @@ vpHomography::computeDisplacement(vpRotationMatrix &aRb,
   vpColVector nd(3) ;
   nd[0]=0;nd[1]=0;nd[2]=1;
 
-  computeDisplacement(*this,aRb,aTb,n);
+  computeDisplacement(*this,aRb,atb,n);
 
 }
 
@@ -794,16 +822,16 @@ vpHomography::computeDisplacement(const vpMatrix H,
   // 3eme cas : d1 <>d2 =d3
   // 4eme cas : d1 =d2=d3
 
-  if ((sv[0] - sv[1]) < SEUIL_SING)
+  if ((sv[0] - sv[1]) < sing_threshold)
   {
-    if ((sv[1] - sv[2]) < SEUIL_SING)
+    if ((sv[1] - sv[2]) < sing_threshold)
       cas = cas4;
     else
       cas = cas2;
   }
   else
   {
-    if ((sv[1] - sv[2]) < SEUIL_SING)
+    if ((sv[1] - sv[2]) < sing_threshold)
       cas = cas3;
     else
       cas = cas1;
