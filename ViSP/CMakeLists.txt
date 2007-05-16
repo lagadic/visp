@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.53 2007-05-16 09:56:50 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.54 2007-05-16 14:04:25 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -467,6 +467,7 @@ IF(USE_ITIFG8)
   IF(ITIFG8_FOUND)
     SET(VISP_HAVE_ITIFG8 TRUE) # for header vpConfig.h
     SET(VISP_HAVE_ITIFG8_VERSION ${ITIFG8_VERSION}) # for header vpConfig.h
+    SET(VISP_HAVE_ITIFG8_VERSION_DOXY ${ITIFG8_VERSION}) # for doxygen file doc/config-doxygen
      #MESSAGE("DBG VISP_HAVE_ITIFG8= ${VISP_HAVE_ITIFG8}")
      #MESSAGE("DBG ITIFG8_INCLUDE_DIR=${ITIFG8_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
@@ -478,7 +479,7 @@ IF(USE_ITIFG8)
     # SET(USE_ITIFG8 OFF)
   ENDIF(ITIFG8_FOUND)
 ELSE(USE_ITIFG8)
-  SET(VISP_HAVE_ITIFG8_VERSION_DOXY 0) # for doxygen file doc/config-doxygen
+  SET(VISP_HAVE_ITIFG8_VERSION_DOXY 83) # for doxygen file doc/config-doxygen
 ENDIF(USE_ITIFG8)
 
 # Under Windows, usage of Direct Show
