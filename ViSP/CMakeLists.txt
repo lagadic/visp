@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.52 2007-05-15 14:23:46 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.53 2007-05-16 09:56:50 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -176,7 +176,7 @@ IF(UNIX)
 	SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
 	  ${CFOX_INCLUDE_DIR})
 	SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} 
-	  ${CFOX_LIBRARIES} -framework IOKit -framework Carbon)
+	  ${CFOX_LIBRARIES} -lIOKit "-framework Carbon")
 	#MESSAGE("CFOX_LIBRARIES = ${CFOX_LIBRARIES}")
       ELSE(CFOX_FOUND)
 	MESSAGE("cfox not found.")
@@ -419,6 +419,9 @@ IF(USE_DC1394)
       ${DC1394_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} 
       ${DC1394_LIBRARIES})
+    IF(APPLE)
+      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} IOkit "-framework Carbon")
+    ENDIF(APPLE)
      #MESSAGE("DC1394_LIBRARIES = ${DC1394_LIBRARIES}")
   ELSE(DC1394_FOUND)
     #MESSAGE("Firewire dc1394 requested but not found. Turn off USE_DC1394!")
