@@ -4,7 +4,7 @@ ViSP 2.4.1
         - vpHistogram,vpHistogramPeak and vpHistogramValey classes to
 	  handle gray level image histogram
 	- vpSubPixel for sub-pixel manipulations	
-	- vpMouseButton for mouse click identifation	
+	- vpMouseButton for mouse click identification	
   - New Features
         - MinGW supported
 	- ViSP as a third party library in an other project.
@@ -26,6 +26,7 @@ ViSP 2.4.1
 	  under windows. It allows the use of vpSimulator class under this
 	  platform.
 	- Compatibility with Windows platform.
+	- Reference documentation improvement
 	
 ----------------------------------------------	
 ViSP 2.4.0 (released February 6, 2007)
