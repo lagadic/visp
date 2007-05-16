@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.cpp,v 1.9 2007-04-25 09:27:46 fspindle Exp $
+ * $Id: vpRobotBiclops.cpp,v 1.10 2007-05-16 15:21:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -269,6 +269,9 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
   // Initialize actual position and velocity
   mes_q     = controller->getActualPosition();
   mes_q_dot = controller->getActualVelocity();
+
+  vpDEBUG_TRACE (12, "Lock mutex vpShm_mutex");
+  pthread_mutex_lock(&vpShm_mutex);
 
   shm = controller->readShm();
   // Updates the shm
