@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.cpp,v 1.9 2007-05-16 09:20:13 mpressig Exp $
+ * $Id: vpHomography.cpp,v 1.10 2007-05-16 13:02:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -121,19 +121,19 @@ vpHomography::vpHomography(const vpHomogeneousMatrix &aMb,
 }
 
 vpHomography::vpHomography(const vpThetaUVector &tu,
-			   const vpTranslationVector &aTb,
+			   const vpTranslationVector &atb,
 			   const vpPlane &_bP) : vpMatrix()
 {
   init() ;
-  buildFrom(tu,aTb,_bP) ;
+  buildFrom(tu,atb,_bP) ;
 }
 
 vpHomography::vpHomography(const vpRotationMatrix &aRb,
-			   const vpTranslationVector &aTb,
+			   const vpTranslationVector &atb,
 			   const vpPlane &_bP) : vpMatrix()
 {
   init() ;
-  buildFrom(aRb,aTb,_bP) ;
+  buildFrom(aRb,atb,_bP) ;
  }
 
 vpHomography::vpHomography(const vpPoseVector &arb,
@@ -161,24 +161,24 @@ vpHomography::buildFrom(const vpHomogeneousMatrix &aMb,
 
 void
 vpHomography::buildFrom(const vpThetaUVector &tu,
-			const vpTranslationVector &aTb,
+			const vpTranslationVector &atb,
 			const vpPlane &_bP)
 {
 
   insert(tu) ;
-  insert(aTb) ;
+  insert(atb) ;
   insert(_bP) ;
   build() ;
 }
 
 void
 vpHomography::buildFrom(const vpRotationMatrix &aRb,
-			const vpTranslationVector &aTb,
+			const vpTranslationVector &atb,
 			const vpPlane &_bP)
 {
   init() ;
   insert(aRb) ;
-  insert(aTb) ;
+  insert(atb) ;
   insert(_bP) ;
   build() ;
 }
@@ -240,9 +240,9 @@ vpHomography::insert(const vpThetaUVector &tu)
   recompute the homography
 */
 void
-vpHomography::insert(const vpTranslationVector &aTb)
+vpHomography::insert(const vpTranslationVector &atb)
 {
-  aMb.insert(aTb) ;
+  aMb.insert(atb) ;
   build() ;
 }
 
@@ -352,17 +352,19 @@ vpHomography::build()
   int i,j ;
 
   vpColVector n(3) ;
-  vpColVector aTb(3) ;
+  vpColVector atb(3) ;
   for (i=0 ; i < 3 ; i++)
   {
-    aTb[i] = aMb[i][3] ;
+    atb[i] = aMb[i][3] ;
     for (j=0 ; j < 3 ; j++) (*this)[i][j] = aMb[i][j];
   }
 
   bP.getNormal(n) ;
 
   double d = bP.getD() ;
-  *this -= aTb*n.t()/d ; // the d used in the equation is such as nX=d is the plane equation. So if the plane is described by Ax+By+Cz+D=0, d=-D
+  *this -= atb*n.t()/d ; // the d used in the equation is such as nX=d is the
+			 // plane equation. So if the plane is described by
+			 // Ax+By+Cz+D=0, d=-D
 
 }
 
@@ -382,25 +384,21 @@ vpHomography::build(vpHomography &aHb,
   int i,j ;
 
   vpColVector n(3) ;
-  vpColVector aTb(3) ;
+  vpColVector atb(3) ;
   for (i=0 ; i < 3 ; i++)
   {
-    aTb[i] = aMb[i][3] ;
+    atb[i] = aMb[i][3] ;
     for (j=0 ; j < 3 ; j++) aHb[i][j] = aMb[i][j];
   }
 
   bP.getNormal(n) ;
 
   double d = bP.getD() ;
-  aHb -= aTb*n.t()/d ; // the d used in the equation is such as nX=d is the plane equation. So if the plane is described by Ax+By+Cz+D=0, d=-D
+  aHb -= atb*n.t()/d ; // the d used in the equation is such as nX=d is the
+		       // plane equation. So if the plane is described by
+		       // Ax+By+Cz+D=0, d=-D
 
 }
-
-
-
-
-
-#undef DEBUG_LEVEL1
 
 /*
  * Local variables:

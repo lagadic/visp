@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.10 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpHomography.h,v 1.11 2007-05-16 13:02:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,7 @@ tools for homography computation.
 
 /*!  \class vpHomography
 
-\brief This class aims to compute the homography wrt. 2
+  \brief This class aims to compute the homography wrt. 2
   images, which are both described by a set of points. The 2 sets (one per
   image) are sets of corresponding points : for a point in a image, there is
   the corresponding point (image of the same 3D point) in the other image
@@ -65,7 +65,7 @@ tools for homography computation.
   result.
 
 
-  store and compute the homography such that
+  Store and compute the homography such that
   \f[
   ^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}
   \f]
@@ -79,6 +79,7 @@ class VISP_EXPORT vpHomography : public vpMatrix
 {
 
 private:
+  static const double sing_threshold; // = 0.0001;
   vpHomogeneousMatrix aMb ;
   //  bool isplanar;
   //! reference plane coordinates  expressed in Rb
@@ -103,11 +104,11 @@ public:
 	       const vpPlane &bP) ;
   //! Construction from Translation and rotation and a plane
   vpHomography(const vpRotationMatrix &aRb,
-	       const vpTranslationVector &aTb,
+	       const vpTranslationVector &atb,
 	       const vpPlane &bP) ;
    //! Construction from Translation and rotation and a plane
   vpHomography(const vpThetaUVector &tu,
-	       const vpTranslationVector &aTb,
+	       const vpTranslationVector &atb,
 	       const vpPlane &bP) ;
   //! Construction from Translation and rotation and a plane
   vpHomography(const vpPoseVector &arb,
@@ -115,11 +116,11 @@ public:
 
   //! Construction from Translation and rotation and a plane
   void buildFrom(const vpRotationMatrix &aRb,
-		 const vpTranslationVector &aTb,
+		 const vpTranslationVector &atb,
 		 const vpPlane &bP) ;
    //! Construction from Translation and rotation and a plane
   void buildFrom(const vpThetaUVector &tu,
-		 const vpTranslationVector &aTb,
+		 const vpTranslationVector &atb,
 		 const vpPlane &bP) ;
   //! Construction from Translation and rotation  and a plane
   void buildFrom(const vpPoseVector &arb,
@@ -140,12 +141,12 @@ public:
   //! insert a theta u vector (transformation into a rotation matrix)
   void insert(const vpThetaUVector &tu) ;
   //! insert a translation vector
-  void insert(const vpTranslationVector &aTb) ;
+  void insert(const vpTranslationVector &atb) ;
   //! insert a translation vector
   void insert(const vpPlane &bP) ;
 
   //! extract the homogeneous matrix from the homography
-  void extract( vpRotationMatrix &aRb, vpTranslationVector &aTb) const;
+  void extract( vpRotationMatrix &aRb, vpTranslationVector &atb) const;
 
   //! extract the rotational matrix and translational vector
   //! from the homography
@@ -168,27 +169,24 @@ public:
 		    const vpPlane &bP) ;
 
 
-  //! compute camera displacement from an homography
   void computeDisplacement(vpRotationMatrix &aRb,
-			   vpTranslationVector &aTb,
+			   vpTranslationVector &atb,
 			   vpColVector &n) ;
 
   void computeDisplacement(const vpColVector& nd,
 			   vpRotationMatrix &aRb,
-			   vpTranslationVector &aTb,
+			   vpTranslationVector &atb,
 			   vpColVector &n) ;
 
-
-  //! compute camera displacement from an homography H
   static void computeDisplacement(const vpHomography &aHb,
 				  const vpColVector& nd,
 				  vpRotationMatrix &aRb,
-				  vpTranslationVector &aTb,
+				  vpTranslationVector &atb,
 				  vpColVector &n) ;
 
   static void computeDisplacement (const vpHomography &aHb,
 				   vpRotationMatrix &aRb,
-				   vpTranslationVector &aTb,
+				   vpTranslationVector &atb,
 				   vpColVector &n) ;
 
   static void computeDisplacement(const vpMatrix H,
