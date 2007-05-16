@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.h,v 1.9 2006-10-10 16:07:35 fspindle Exp $
+ * $Id: vpMath.h,v 1.10 2007-05-16 09:20:13 mpressig Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -141,6 +141,17 @@ public:
   {
 	return (a < b) ? a : b;
   }
+
+  /*!
+    Find the absolute value of a number (or other)
+    \param x  the number
+    \return The absolute value of x
+  */
+  template <class Type> static Type abs(const Type& x)
+  {
+	return (x < 0) ? -x : x;
+  }
+
 
   // sinus cardinal
   static inline double sinc(double x) ;
