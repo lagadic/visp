@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.27 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.28 2007-05-21 16:34:57 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1041,10 +1041,8 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
 }
 /*!
   \brief display the RGBa level image (32bits)
-
-  GTK has to be initialized
-
-  \warning suppres the overlay drawing
+  
+  \warning suppress the overlay drawing
 
   \sa init(), closeDisplay()
 */
@@ -1113,43 +1111,56 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 {
 
   if (Xinitialise)
-  {
-
-
-    XImage *xi ;
-    xi= XGetImage(display,window, 0,0, getWidth(), getHeight(),
-		  AllPlanes, ZPixmap) ;
-    try{
-      I.resize(getHeight(), getWidth()) ;
-    }
-    catch(...)
     {
-      vpERROR_TRACE("Error caught") ;
-      throw ;
-    }
 
-    unsigned char       *src_24 = NULL;
-    src_24 = (unsigned char*)xi->data;
-    for (unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++)
-    {
-      I.bitmap[i].B = src_24[i*4]  ;
-      I.bitmap[i].G = src_24[i*4 + 1]  ;
-      I.bitmap[i].R = src_24[i*4 + 2]  ;
-    }
-    XDestroyImage(xi) ;
 
-  }
+      XImage *xi ;
+      xi= XGetImage(display,window, 0,0, getWidth(), getHeight(),
+		    AllPlanes, ZPixmap) ;
+      try{
+	I.resize(getHeight(), getWidth()) ;
+      }
+      catch(...)
+	{
+	  vpERROR_TRACE("Error caught") ;
+	  throw ;
+	}
+
+      unsigned char       *src_32 = NULL;
+      src_32 = (unsigned char*)xi->data;
+
+#ifdef APPLE
+      // little indian/big indian
+      for (unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++) {
+	I.bitmap[i].A = src_32[i*4] ;
+	I.bitmap[i].R = src_32[i*4 + 1] ;
+	I.bitmap[i].G = src_32[i*4 + 2] ;
+        I.bitmap[i].B = src_32[i*4 + 3] ;
+      }
+#else
+      for (unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++){
+	I.bitmap[i].B = src_32[i*4] ;
+	I.bitmap[i].G = src_32[i*4 + 1] ;
+	I.bitmap[i].R = src_32[i*4 + 2] ;
+	I.bitmap[i].A = src_32[i*4 + 3] ;
+      }
+#endif
+
+    
+      XDestroyImage(xi) ;
+
+    }
   else
-  {
-    vpERROR_TRACE("X not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-			     "X not initialized")) ;
-  }
+    {
+      vpERROR_TRACE("X not initialized " ) ;
+      throw(vpDisplayException(vpDisplayException::notInitializedError,
+			       "X not initialized")) ;
+    }
 }
 
 /*!
-\brief Display an image
-\param I : image to display
+  \brief Display an image
+  \param I : image to display
 
 */
 void vpDisplayX::displayImage(const unsigned char *I)
