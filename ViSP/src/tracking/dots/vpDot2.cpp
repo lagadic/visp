@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.20 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.21 2007-05-23 11:58:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -738,6 +738,7 @@ vpDot2::setArea(vpImage<unsigned char> &I)
   Set the parameters of an area by setting the upper-left corner coordinates
   (u, v), width and height.
 
+  \param I : The image we are working with.
   \param u : Area horizontal left coordinate.
   \param v : Area vertical top coordinate.
   \param w : Area width.
@@ -1297,7 +1298,7 @@ vpList<unsigned int> vpDot2::getList_v()
   \return false : If a dot can't be found around pixel coordinates given as
   parameter
 
-  \retunn true : If a dot was found.
+  \return true : If a dot was found.
 
   \sa getFirstBorder_u(), getFirstBorder_v()
 
@@ -1503,6 +1504,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   the next element of the chain in order to turn around the dot
   counterclockwise.
 
+  \param I : The image we are working with.
   \param v : The row coordinate of a pixel on a border.
   \param u : The column coordinate of the pixel on a border.
   \param element : The next freeman element chain code (0, 1, 2, 3, 4, 5, 6, 7)
