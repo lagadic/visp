@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.6 2007-05-03 11:36:34 fspindle Exp $
+ * $Id: vpParseArgv.cpp,v 1.7 2007-05-23 11:58:55 fspindle Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -316,7 +316,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
  *
  \param argTable: Array of command-specific argument.descriptions.
 
- \param flgas: If the ARGV_NO_DEFAULTS bit is set in this word, then
+ \param flags: If the ARGV_NO_DEFAULTS bit is set in this word, then
  don't generate information for default options.
 
 
