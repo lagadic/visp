@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.8 2007-05-11 16:53:34 fspindle Exp $
+ * $Id: vpPose.h,v 1.9 2007-05-23 09:41:41 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -128,6 +128,7 @@ protected:
 
   // method used in poseDementhonPlan()
   int calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo) ;
+public:
   //! compute the pose using Dementhon approach (planar object)
   void poseDementhonPlan(vpHomogeneousMatrix &cMo) ;
   //! compute the pose using Dementhon approach (non planar object)
@@ -139,9 +140,10 @@ protected:
   //! compute the pose using the Lowe approach (i.e., using the
   //! Levenberg Marquartd non linear minimization approach)
   void poseLowe(vpHomogeneousMatrix & cMo) ;
+  //! compute the pose using a robust virtual visual servoing approach
+  void poseVirtualVSrobust(vpHomogeneousMatrix & cMo) ;
   //! compute the pose using virtual visual servoing approach
   void poseVirtualVS(vpHomogeneousMatrix & cMo) ;
-public:
   //! compute the pose for a given method
   void computePose(poseMethodEnum methode, vpHomogeneousMatrix &cMo) ;
   void printPoint() ;

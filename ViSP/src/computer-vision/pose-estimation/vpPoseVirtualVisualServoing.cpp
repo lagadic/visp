@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVirtualVisualServoing.cpp,v 1.7 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpPoseVirtualVisualServoing.cpp,v 1.8 2007-05-23 09:41:41 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,6 +45,7 @@
 #include <visp/vpFeatureBuilder.h>
 #include <visp/vpFeaturePoint.h>
 #include <visp/vpExponentialMap.h>
+#include <visp/vpRobust.h>
 
 // define the maximum number of iteration
 #ifdef VVS_NB_ITER_MAX
@@ -138,6 +139,131 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 
 
       //std::cout << "r=" << r <<std::endl ;
+      // update the pose
+
+      cMo = vpExponentialMap::direct(v).inverse()*cMo ; ;
+      if (iter++>VVS_NB_ITER_MAX) break ;
+    }
+  }
+  catch(...)
+  {
+    vpERROR_TRACE(" ") ;
+    throw ;
+  }
+
+}
+
+/*!
+  \brief Compute the pose using virtual visual servoing approach and
+  a robust cotrol law
+
+  This approach is described in
+
+  A.I. Comport, E. Marchand, M. Pressigout, F. Chaumette. Real-time
+  markerless tracking for augmented reality: the virtual visual servoing
+  framework. IEEE Trans. on Visualization and Computer Graphics,
+  12(4):615-628, Juillet 2006.
+
+*/
+
+void
+vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
+{
+  try{
+
+    double  residu_1 = 1e8 ;
+    double r =1e8-1;
+
+    // we stop the minimization when the error is bellow 1e-8
+    vpMatrix W ;
+    vpRobust robust(2*listP.nbElement()) ;
+    vpColVector w,res ;
+    
+    int iter = 0 ;
+    while((int)((residu_1 - r)*1e12) !=0)
+    {
+
+      residu_1 = r ;
+      vpMatrix L;  // interaction matrix
+      vpColVector error ; // error vector
+
+      // Compute the interaction matrix and the error
+      vpPoint P ;
+      listP.front() ;
+      while (!listP.outside())
+      {
+
+	double xi,yi,xp,yp;
+	vpColVector err(2);
+
+       	vpFeaturePoint point ;
+	P = listP.value() ;
+	vpFeatureBuilder::create(point,P) ;
+
+	//	P.print() ;
+	xi = point.get_x();  /* point measured in the image */
+	yi = point.get_y();
+
+
+	// forward projection of the 3D model for a given pose
+	// change frame coordinates
+	// perspective projection
+	P.track(cMo) ;
+
+	xp = P.get_x();  /* point projected from cMo */
+	yp = P.get_y();
+
+
+	err[0] = xp-xi;
+	err[1] = yp-yi;
+
+	point.set_xyZ(xp,yp,P.get_Z());
+	// compute the interaction matrix
+	vpMatrix H ;
+	H = point.interaction() ;
+
+	// stack the interaction matrix and the errir vector
+
+	L =  vpMatrix::stackMatrices(L,H) ;
+	error = vpMatrix::stackMatrices(error, err) ;
+
+	listP.next() ;
+
+      }
+
+      // compute the residual
+      r = error.sumSquare() ;
+
+      robust.setIteration(0);
+      w.resize(error.getRows()/2) ;
+      res.resize(error.getRows()/2) ;
+
+      for(int k=0 ; k <error.getRows()/2 ; k++)
+      {
+	res[k] = vpMath::sqr(error[2*k]) + vpMath::sqr(error[2*k+1]) ;
+      }
+      robust.MEstimator(vpRobust::TUKEY, res, w);
+      // vpTRACE(" ") ;
+
+      W.resize(error.getRows(), error.getRows()) ;
+      // compute the pseudo inverse of the interaction matrix
+      for (int k=0 ; k < error.getRows()/2 ; k++)
+      {
+	W[2*k][2*k] = w[k] ;
+	W[2*k+1][2*k+1] = w[k] ;
+      }
+       vpTRACE(" ") ;
+     // compute the pseudo inverse of the interaction matrix
+      vpMatrix Lp ;
+      (W*L).pseudoInverse(Lp,1e-16) ;
+      vpTRACE(" ") ;
+
+      // compute the VVS control law
+      vpColVector v ;
+      v = -lambda*Lp*W*error ;
+
+
+      //cout << "r=" << r <<endl ;
       // update the pose
 
       cMo = vpExponentialMap::direct(v).inverse()*cMo ; ;
