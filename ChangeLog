@@ -12,6 +12,10 @@ ViSP 2.4.1
 	  installing ViSP by make install. ViSP can now be used
 	  directly from the build dir, or from the install dir, or
 	  from a package (NSIS, ...)
+	- vpRobotCamera It is now possible to add a sampling time so that
+          the behavior of this simulated camera is quite realistic. This 
+	  sampling time is set by default to 40 ms.
+	- vpExponentialMap A sampling time was introduced.	
   - Bug fix and improvement
 	- vpImage: getWidth() and getHeight() replace getCols() and getRows() 
 	  which are now obsolete.
@@ -27,7 +31,8 @@ ViSP 2.4.1
 	  platform.
 	- Compatibility with Windows platform.
 	- Reference documentation improvement
-	
+	- cfox and std namespace were removed. To use cout you need to call 
+	  std::cout, std::endl, std::cin ...
 ----------------------------------------------	
 ViSP 2.4.0 (released February 6, 2007)
   - New Feature
