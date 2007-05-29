@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.cpp,v 1.10 2007-04-20 14:22:20 asaunier Exp $
+ * $Id: vpTime.cpp,v 1.11 2007-05-29 15:15:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,6 @@
 #  include <unistd.h>
 #elif defined WIN32
 #  include <windows.h>
-#  include <mmsystem.h>
 #  include <winbase.h>
 #endif
 
