@@ -1,4 +1,9 @@
-ViSP 2.4.1 
+ViSP 2.4.x
+  - New classes
+  - New Features
+  - Bug fix and improvement
+----------------------------------------------	
+ViSP 2.4.1 (released May 16, 2007)
   - New classes
         - vpRect class for rectangle manipulations, display	
         - vpHistogram,vpHistogramPeak and vpHistogramValey classes to
