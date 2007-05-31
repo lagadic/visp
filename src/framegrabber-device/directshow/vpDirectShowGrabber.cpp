@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabber.cpp,v 1.7 2007-04-23 14:30:39 fspindle Exp $
+ * $Id: vpDirectShowGrabber.cpp,v 1.8 2007-05-31 13:04:41 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -134,7 +134,7 @@ void vpDirectShowGrabber::close() { grabber->close(); }
 	Gets the number of capture devices
 	\return the number of capture devices
 */
-int vpDirectShowGrabber::getDeviceNumber()
+unsigned int vpDirectShowGrabber::getDeviceNumber()
 {
 	return grabber->getDeviceNumber();
 }
