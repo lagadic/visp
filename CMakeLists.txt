@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.54 2007-05-16 14:04:25 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.55 2007-05-31 12:53:54 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -40,7 +40,7 @@ PROJECT(VISP)
 #-----------------------------------------------------------------------------
 # CMake 2.3 is required for INSTALL command functionnality 
 # ccmake --help-command INSTALL to kwow more are INSTALL command 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.3) 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.6) 
 
 #----------------------------------------------------------------------------- 
 # VISP version number.  An even minor number corresponds to releases. 
@@ -144,6 +144,13 @@ IF(UNIX)
     SET(VISP_DEFS "${VISP_DEFS} -DAPPLE")
   ENDIF(APPLE)
 ENDIF(UNIX)
+
+INCLUDE(TestBigEndian)
+TEST_BIG_ENDIAN(BIGENDIAN)
+
+IF(BIGENDIAN)
+  SET(VISP_DEFS "${VISP_DEFS} -DBIGENDIAN")
+ENDIF(BIGENDIAN)
 
 #----------------------------------------------------------------------
 # Unix libraries :  X11, pthread, cfox (MAC OS X) 
@@ -594,7 +601,7 @@ IF (DOXYGEN_FOUND)
   ## we need latex for doxygen because of the formulas
   FIND_PACKAGE(LATEX)
   IF    (NOT LATEX_COMPILER)
-    MESSAGE(STATUS "latex command LATEX_COMPILER not found but usually required. You will probably get warnings and user inetraction on doxy run.")
+    MESSAGE(STATUS "latex command LATEX_COMPILER not found but usually required. You will probably get warnings and user interaction on doxy run.")
   ENDIF (NOT LATEX_COMPILER)
   IF    (NOT MAKEINDEX_COMPILER)
     MESSAGE(STATUS "makeindex command MAKEINDEX_COMPILER not found but usually required.")
