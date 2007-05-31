@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.13 2007-05-04 09:38:07 asaunier Exp $
+ * $Id: grabDirectShow.cpp,v 1.14 2007-05-31 13:12:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -203,7 +203,7 @@ main(int argc, char ** argv)
     // Initialize the grabber
     grabber->open(I);
 
-    // Acquire an RGBa image
+    // Acquire an image
     grabber->acquire(I);
   }
   catch(...)
