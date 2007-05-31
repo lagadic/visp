@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLevenbergMarquartd.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: vpLevenbergMarquartd.cpp,v 1.5 2007-05-31 13:10:48 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1336,7 +1336,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
       actred = - 1.0;
 
-      if (tol1 * fnorm1 < fnorm)
+      if ((tol1 * fnorm1) < fnorm)
 	actred = 1.0 - ((fnorm1 / fnorm) * (fnorm1 / fnorm));
 
       /*
