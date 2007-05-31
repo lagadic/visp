@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.28 2007-05-21 16:34:57 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.29 2007-05-31 12:50:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1061,7 +1061,7 @@ void vpDisplayX::displayImage(const vpImage<vpRGBa> &I)
 
       unsigned char       *dst_32 = NULL;
       dst_32 = (unsigned char*)Ximage->data;
-#ifdef APPLE
+#ifdef BIGENDIAN
       // little indian/big indian
       for (unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++) {
 	dst_32[i*4] = I.bitmap[i].A;
@@ -1129,7 +1129,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
       unsigned char       *src_32 = NULL;
       src_32 = (unsigned char*)xi->data;
 
-#ifdef APPLE
+#ifdef BIGENDIAN
       // little indian/big indian
       for (unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++) {
 	I.bitmap[i].A = src_32[i*4] ;
