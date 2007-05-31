@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.21 2007-05-11 16:53:35 fspindle Exp $
+ * $Id: vpDot2.h,v 1.22 2007-05-31 12:27:43 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -109,8 +109,10 @@ public:
     return gray_level_max;
   };
   double getAccuracy() const;
+  double getGrayLevelPrecision() const;
+  double getSizePrecision() const;
 
-   /*!
+  /*!
     Activates the display of the border of the dot during the tracking.
 
     \warning To effectively display the dot graphics a call to
@@ -176,6 +178,8 @@ public:
       this->gray_level_max = max;
   };
   void setAccuracy( const double & accuracy );
+  void setGrayLevelPrecision( const double & grayLevelPrecision );
+  void setSizePrecision( const double & sizePrecision );
 
   double getDistance( const vpDot2& distantDot ) const;
 
@@ -266,13 +270,20 @@ protected:
   vpList<unsigned int> getList_v() ;
 
 private:
-  bool computeParameters( vpImage<unsigned char> &I,
-			  const double &u = -1.0,
-			  const double &v = -1.0);
+  bool computeParameters(vpImage<unsigned char> &I,
+                              const double &u = -1.0,
+                              const double &v = -1.0);
+        
+  
 
+  bool findFirstBorder(const vpImage<unsigned char> &I, const unsigned int &u,
+                        const unsigned int &v, unsigned int &border_u,
+                        unsigned int &border_v);
+  
+  
   /*!
 
-  Get the starting point on a dot border. The dot is border is
+  Get the starting point on a dot border. The dot border is
   computed from this point.
 
   \sa getFirstBorder_v()
@@ -283,7 +294,7 @@ private:
   }
   /*!
 
-  Get the starting point on a dot border. The dot is border is
+  Get the starting point on a dot border. The dot border is
   computed from this point.
 
   \sa getFirstBorder_u()
@@ -331,7 +342,8 @@ private:
   unsigned int gray_level_max;  // maximum gray level for the dot.
 				// pixel with higher level don't belong
 				// to this dot.
-  double accuracy;
+  double grayLevelPrecision ;
+  double sizePrecision ;
 
   // Area where the dot is to search
   vpRect area;
@@ -349,8 +361,8 @@ private:
   int bbox_u_min, bbox_u_max, bbox_v_min, bbox_v_max;
 
   // The first point coodinate on the dot border
-  int firstBorder_u;
-  int firstBorder_v;
+  unsigned int firstBorder_u;
+  unsigned int firstBorder_v;
 
 };
 
