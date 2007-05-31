@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.23 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpDot.cpp,v 1.24 2007-05-31 12:17:46 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,6 +76,7 @@ void vpDot::init()
   nbMaxPoint = 10000 ;
   gray_level_min = 128;
   gray_level_max = 255;
+  grayLevelPrecision = 0.65;
 
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
@@ -165,6 +166,7 @@ vpDot::operator=(const vpDot& pt)
   graphics = pt.graphics ;
   gray_level_min = pt.gray_level_min ;
   gray_level_max = pt.gray_level_max ;
+  grayLevelPrecision = pt.grayLevelPrecision;
   compute_moment = pt.compute_moment ;
 
   m00 = pt.m00;
@@ -361,7 +363,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 #if 0
   // Original version
   if (  connexe(I, (unsigned int)u, (unsigned int)v,
-		ray_level_min, gray_level_max,
+		gray_level_min, gray_level_max,
 		mean_value, u_cog, v_cog, npoint) == vpDot::out)
   {
     bool sol = false ;
@@ -634,10 +636,10 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
   cog_u = u ;
   cog_v = v ;
 
-  gray_level_min = (unsigned int) (I[cog_v][cog_u] * 0.8);
+  gray_level_min = (unsigned int) (I[cog_v][cog_u] * grayLevelPrecision);
   if (gray_level_min > 255)
     gray_level_min = 255;
-  gray_level_max = (unsigned int) (I[cog_v][cog_u] * 1.2);
+  gray_level_max = (unsigned int) (I[cog_v][cog_u] * (2 - grayLevelPrecision));
   if (gray_level_max > 255)
     gray_level_max = 255;
 
