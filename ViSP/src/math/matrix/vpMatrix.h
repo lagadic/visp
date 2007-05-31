@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.15 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpMatrix.h,v 1.16 2007-05-31 15:12:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -336,10 +336,10 @@ public:
 
 
 //! multiplication by a scalar C = x*A
-vpMatrix operator*(const double &x, const vpMatrix &A) ;
+VISP_EXPORT vpMatrix operator*(const double &x, const vpMatrix &A) ;
 
   //! multiplication by a scalar C = x*A
-vpColVector operator*(const double &x, const vpColVector &A) ;
+VISP_EXPORT vpColVector operator*(const double &x, const vpColVector &A) ;
 
 
 
