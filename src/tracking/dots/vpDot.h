@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.21 2007-05-11 16:53:35 fspindle Exp $
+ * $Id: vpDot.h,v 1.22 2007-05-31 12:15:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -230,6 +230,9 @@ private:
 
   unsigned int gray_level_min; // left threshold for binarisation
   unsigned int gray_level_max; // right threshold for binarisation
+  double grayLevelPrecision;  //precision of the gray level of the dot.
+  //It is a double precision float witch value is in ]0,1].
+  //1 means full precision, whereas values close to 0 show a very bad precision
 
   //! flag : true moment are computed
   bool compute_moment ;
