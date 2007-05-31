@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVirtualVisualServoing.cpp,v 1.8 2007-05-23 09:41:41 marchand Exp $
+ * $Id: vpPoseVirtualVisualServoing.cpp,v 1.9 2007-05-31 13:08:20 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -141,7 +141,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       //std::cout << "r=" << r <<std::endl ;
       // update the pose
 
-      cMo = vpExponentialMap::direct(v).inverse()*cMo ; ;
+      cMo = vpExponentialMap::direct(v).inverse()*cMo ;
       if (iter++>VVS_NB_ITER_MAX) break ;
     }
   }
