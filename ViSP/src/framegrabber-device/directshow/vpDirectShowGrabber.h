@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabber.h,v 1.7 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpDirectShowGrabber.h,v 1.8 2007-05-31 13:04:41 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,7 +83,7 @@ class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber
 		void close();
 
 		//get the number of capture devices
-		int getDeviceNumber();
+		unsigned int getDeviceNumber();
 
 		//change the capture device
 		bool setDevice(unsigned int id);
