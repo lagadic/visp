@@ -8,8 +8,14 @@ ViSP 2.4.x
 	  Split accuracy private variable into grayLevelPrecision and 
 	  sizePrecision.
 	- vpDisplayX : better management of endianness
+	- vpDisplayGTK : 
+	  . getClick(..., button) : The button used to click is now an output
+	  . getClickUp(..., button) : The button used to click is now an output
+  - Testing:
+	- test/video-device/testClick.cpp was added
   - Documentation improvement
 	- vpRobotAfma6: example usage of getPosition() was updated
+	- vpDisplayGDI is included in the doxygen documentation
 ----------------------------------------------	
 ViSP 2.4.1 (released May 16, 2007)
   - New classes

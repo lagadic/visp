@@ -1,0 +1,363 @@
+/****************************************************************************
+ *
+ * $Id: testClick.cpp,v 1.1 2007-06-01 14:17:25 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Test for image conversions.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
+
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+
+#include <visp/vpConfig.h>
+
+#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
+
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
+#include <visp/vpDebug.h>
+
+
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayD3D.h>
+
+/*!
+  \example testClick.cpp
+
+  \brief Mouse click manipulations.
+
+*/
+
+// List of allowed command line options
+#define GETOPTARGS	"i:hlt:"
+
+typedef enum {
+  vpX11,
+  vpGTK,
+  vpGDI,
+  vpD3D,
+  vpNone
+} vpDisplayType;
+
+/*
+
+  Print the program options.
+
+  \param ipath: Input image path.
+
+ */
+void usage(char *name, char *badparam, std::string ipath)
+{
+  fprintf(stdout, "\n\
+Test click functionnalities in video devices or display.\n\
+\n\
+SYNOPSIS\n\
+  %s [-p <input image path>] \n\
+     [-t <type of video device>] [-l] [-h]\n\
+", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -i <input image path>                                %s\n\
+     Set image input path.\n\
+     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     and \"ViSP-images/Klimt/Klimt.ppm\" images.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment\n\
+     variable produces the same behaviour than using\n\
+     this option.\n\
+\n\
+  -t <type of video device>\n\
+     String specifying the video device to use.\n\
+     Possible values:\n\
+       \"X11\": only on UNIX platforms,\n\
+       \"GTK\": on all plaforms,\n\
+       \"GDI\": only on Windows platform (Graphics Device Interface),\n\
+       \"D3D\": only on Windows platform (Direct3D).\n\
+\n\
+  -l\n\
+     Print the list of video-devices available and exit.\n\
+\n\
+  -h\n\
+     Print the help.\n\n",
+	  ipath.c_str());
+
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+}
+
+/*!
+
+  Set the program options.
+
+  \param ipath: Input image path.
+  \param opath : Output image path.
+  \param user : Username.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv,
+		std::string &ipath, vpDisplayType &dtype, bool &list)
+{
+  char *optarg;
+  int	c;
+  std::string sDisplayType;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'i': ipath = optarg; break;
+    case 'l': list = true; break;
+    case 't': sDisplayType = optarg;
+      // Parse the display type option
+      if (sDisplayType.compare("X11") == 0) {
+	dtype = vpX11;
+      }
+      else if (sDisplayType.compare("GTK") == 0) {
+	dtype = vpGTK;
+      }
+      else if (sDisplayType.compare("GDI") == 0) {
+	dtype = vpGDI;
+      }
+      else if (sDisplayType.compare("D3D") == 0) {
+	dtype = vpD3D;
+      }
+
+      break;
+    case 'h': usage(argv[0], NULL, ipath); return false; break;
+
+    default:
+      usage(argv[0], optarg, ipath); return false; break;
+    }
+  }
+
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, ipath);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+int
+main(int argc, char ** argv)
+{
+
+  std::string env_ipath;
+  std::string opt_ipath;
+  bool opt_list = false; // To print the list of video devices
+  vpDisplayType opt_dtype = vpX11; // Type of display to use
+  std::string ipath;
+  std::string filename;
+
+  // Get the VISP_IMAGE_PATH environment variable value
+  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+  if (ptenv != NULL)
+    env_ipath = ptenv;
+
+  // Set the default input path
+  if (! env_ipath.empty())
+    ipath = env_ipath;
+
+  // Read the command line options
+  if (getOptions(argc, argv, opt_ipath, opt_dtype, opt_list) == false) {
+    exit (-1);
+  }
+
+  // Print the list of video-devices available
+  if (opt_list) {
+    unsigned nbDevices = 0;
+    std::cout << "List of video-devices available: \n";
+#if defined VISP_HAVE_GTK
+    std::cout << "  GTK (use \"-t GTK\" option to use it)\n";
+    nbDevices ++;
+#endif
+#if defined VISP_HAVE_X11
+    std::cout << "  X11 (use \"-t X11\" option to use it)\n";
+    nbDevices ++;
+#endif
+#if defined VISP_HAVE_GDI
+    std::cout << "  GDI (use \"-t GDI\" option to use it)\n";
+    nbDevices ++;
+#endif
+#if defined VISP_HAVE_D3D9
+    std::cout << "  D3D (use \"-t D3D\" option to use it)\n";
+    nbDevices ++;
+#endif
+    if (!nbDevices) {
+      std::cout << "  No display is available\n";   
+    }
+    return (0); 
+  }
+  
+
+  // Get the option values
+  if (!opt_ipath.empty())
+    ipath = opt_ipath;
+
+  // Compare ipath and env_ipath. If they differ, we take into account
+  // the input path comming from the command line option
+  if (opt_ipath.empty()) {
+    if (ipath != env_ipath) {
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
+    }
+  }
+
+  // Test if an input path is set
+  if (opt_ipath.empty() && env_ipath.empty()){
+    usage(argv[0], NULL, ipath);
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
+    exit(-1);
+  }
+
+  // Create a grey level image
+  vpImage<unsigned char> I ; 
+
+  // Load a grey image from the disk
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+  vpCTRACE << "Load " <<  filename << std::endl;
+  vpImageIo::readPGM(I, filename) ;
+
+  // Create a display for the image
+  vpDisplay *display;
+
+  switch(opt_dtype) {
+  case vpX11: 
+    std::cout << "Requested X11 display functionnalities..." << std::endl;
+#if defined VISP_HAVE_X11
+    display = new vpDisplayX;
+#else
+    std::cout << "  Sorry, X11 video device is not available.\n";
+    std::cout << "Use \"" << argv[0] 
+	      << " -l\" to print the list of available devices.\n";
+    return 0;
+#endif
+    break;
+  case vpGTK: 
+    std::cout << "Requested GTK display functionnalities..." << std::endl;
+#if defined VISP_HAVE_GTK
+    display = new vpDisplayGTK;
+#else
+    std::cout << "  Sorry, GTK video device is not available.\n";
+    std::cout << "Use \"" << argv[0] 
+	      << " -l\" to print the list of available devices.\n";
+    return 0;
+#endif
+    break;
+  case vpGDI: 
+    std::cout << "Requested GDI display functionnalities..." << std::endl;
+#if defined VISP_HAVE_GDI
+    display = new vpDisplayGDI;
+#else
+    std::cout << "  Sorry, GDI video device is not available.\n";
+    std::cout << "Use \"" << argv[0] 
+	      << " -l\" to print the list of available devices.\n";
+    return 0;
+#endif
+    break;
+  case vpD3D: 
+    std::cout << "Requested D3D display functionnalities..." << std::endl;
+#if defined VISP_HAVE_D3D9
+    display = new vpDisplayD3D;
+#else
+    std::cout << "  Sorry, D3D video device is not available.\n";
+    std::cout << "Use \"" << argv[0] 
+	      << " -l\" to print the list of available devices.\n";
+    return 0;
+#endif
+    break;
+  }
+
+  try {
+    // We open a window using either X11 or GTK or GDI.
+    // Its size is automatically defined by the image (I) size
+    display->init(I, 100, 100,"Display...") ;
+    
+    // Display the image
+    // The image class has a member that specify a pointer toward
+    // the display that has been initialized in the display declaration
+    // therefore is is no longuer necessary to make a reference to the
+    // display variable.
+    vpDisplay::display(I) ;
+
+    std::cout << "Click on a pixel to get his coordinates...\n";
+    unsigned u, v;
+    vpMouseButton::vpMouseButtonType button;
+    vpDisplay::getClick(I, v, u, button);
+    //   vpDisplay::getClick(I, v, u);
+    std::cout << "  You click on pixel (" << u << ", " << v <<") ";
+    switch(button) {
+    case vpMouseButton::button1: std::cout << "with left button.\n"; break;
+    case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
+    case vpMouseButton::button3: std::cout << "with right button.\n"; break;
+    }
+    
+    std::cout << "A click to exit...\n";
+    vpDisplay::getClick(I) ;
+
+    delete display;
+  }
+  catch(...) {
+    vpERROR_TRACE("Error while displaying the image") ;
+    exit(-1);
+  }
+}
+
+#else
+int
+main()
+{
+  vpERROR_TRACE("You do not have display functionalities...");
+}
+
+#endif
+/*
+ * Local variables:
+ * c-basic-offset: 2
+ * End:
+ */

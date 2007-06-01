@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2007-06-01 14:17:25 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.1 2007-06-01 14:17:25 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -28,32 +28,43 @@
 # not clear to you.
 #
 # Description:
-# ViSP overall configuration file. 
+# ViSP configuration file. 
 #
 # Authors:
 # Fabien Spindler
 #
 #############################################################################
 
-# Set SRC_SUBDIRS variable to all the sub directories we want to parse during
-# the build process. 
+# SOURCE variable corresponds to the list of all the sources to build binaries.
+# The generate binary comes by removing the .cpp extension to
+# the source name.
 #
-# If you add/remove a directory, modify here
-SET (SRC_SUBDIRS
-  feature
-  homography
-  image
-  math
-  pose
-  servo-afma4
-  servo-afma6
-  time
-  tracking
-  video-device
+# If you want to add/remove a source, modify here
+SET (SOURCE
+  testClick.cpp
 )
 
-# Build process propagation in the sub directories
-SUBDIRS(${SRC_SUBDIRS})
+# rule for binary build
+FOREACH(source ${SOURCE})
+  # Compute the name of the binary to create
+  GET_FILENAME_COMPONENT(binary ${source} NAME_WE)
+
+  # From source compile the binary and add link rules
+  ADD_EXECUTABLE(${binary} ${source})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+
+ENDFOREACH(source)
+
+# Add test
+# To run some of these tests don't forget to set VISP_INPUT_IMAGE_PATH
+# environment variable to the ViSP test sequences location.
+# To get these sequence download ViSP-images.tar.gz from
+# http://www.irisa.fr/lagadic/visp/visp.html
+ADD_TEST(testConversion testConversion)
+ADD_TEST(testIoPGM      testIoPGM)
+ADD_TEST(testIoPPM      testIoPPM)
+# testClick cannot be added in the test list since an interaction is requested
+#ADD_TEST(testClick      testClick) 
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
