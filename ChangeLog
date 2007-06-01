@@ -2,12 +2,14 @@ ViSP 2.4.x
   - New classes
   - New Features
   - Bug fix and improvement
-	- vpDot2: Changes in searchDotsInArea :
+	- vpDot2: Changes in searchDotsInArea() :
 	    the algorithm search now in the boundingboxes of the bad dots.
 	    bug fixed : we could fall in an infinite loop.
 	  Split accuracy private variable into grayLevelPrecision and 
 	  sizePrecision.
 	- vpDisplayX : better management of endianness
+  - Documentation improvement
+	- vpRobotAfma6: example usage of getPosition() was updated
 ----------------------------------------------	
 ViSP 2.4.1 (released May 16, 2007)
   - New classes
