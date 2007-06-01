@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.22 2007-05-31 12:38:17 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.23 2007-06-01 15:47:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -129,7 +129,7 @@ vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
   gray_level_max = 255;
   grayLevelPrecision = 0.65;
   sizePrecision = 0.65;
-  
+
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
   bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
@@ -305,7 +305,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
 {
   cog_ufloat = (double) u ;
   cog_vfloat = (double) v ;
-  
+
   if((I[v][u] - 255*(1 - grayLevelPrecision))<0){
     gray_level_min = 0 ;
   }
@@ -963,7 +963,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
     vpDisplay::displayRectangle(I, area, vpColor::blue);
     //vpDisplay::flush(I);
   }
-  
+
   // start the search loop; for all points of the search grid,
   // test if the pixel belongs to a valid dot.
   // if it is so eventually add it to the vector of valid dots.
@@ -983,8 +983,8 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
   {
     for( u=area_u_min ; u<area_u_max ; u=u+gridWidth )
     {
-      // if the pixel we're in doesn't have the right color (outside the 
-      // graylevel interval), no need to check futher, just get to the 
+      // if the pixel we're in doesn't have the right color (outside the
+      // graylevel interval), no need to check futher, just get to the
       // next grid intersection.
       if( !hasGoodLevel(I, u, v) ) continue;
 
@@ -998,7 +998,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
         double v0 = tmpDot.get_v();
         double half_w = tmpDot.getWidth()  / 2.;
         double half_h = tmpDot.getHeight() / 2.;
-    
+
         if ( u >= (u0-half_w) && u <= (u0+half_w) &&
             v >= (v0-half_h) && v <= (v0+half_h) ) {
           // Germ is in a previously detected dot
@@ -1012,18 +1012,18 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 
       badDotsVector->front();
       while( !badDotsVector->outside() && good_germ == true) {
-        tmpDot = badDotsVector->value();        
+        tmpDot = badDotsVector->value();
         if( (double)u >= tmpDot.bbox_u_min && (double)u <= tmpDot.bbox_u_max &&
             (double)v >= tmpDot.bbox_v_min && (double)v <= tmpDot.bbox_v_max){
           tmpDot.u_list.front();
           tmpDot.v_list.front();
           unsigned int border_u;
           unsigned int border_v;
-          if(findFirstBorder(I,u,v,border_u,border_v)){            
+          if(findFirstBorder(I,u,v,border_u,border_v)){
             while (!tmpDot.u_list.outside() && good_germ == true){
               if( border_u == tmpDot.u_list.value() &&
               v == tmpDot.v_list.value())
-                good_germ = false;            
+                good_germ = false;
               tmpDot.u_list.next();
               tmpDot.v_list.next();
             }
@@ -1071,13 +1071,13 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
         double thisDiff_u = dotToTest->get_u() - area_center_u;
         double thisDiff_v = dotToTest->get_v() - area_center_v;
         double thisDist = sqrt( thisDiff_u*thisDiff_u + thisDiff_v*thisDiff_v);
-    
+
         bool stopLoop = false;
         niceDotsVector->front();
         while( !niceDotsVector->outside() &&  stopLoop == false )
         {
           vpDot2 tmpDot = niceDotsVector->value();
-    
+
           //double epsilon = 0.001; // detecte +sieurs points
           double epsilon = 3.0;
           // if the center of the dot is the same than the current
@@ -1091,13 +1091,13 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
             //v = tmpDot.getFirstBorder_v();
             continue;
           }
-    
+
           double otherDiff_u = tmpDot.get_u() - area_center_u;
           double otherDiff_v = tmpDot.get_v() - area_center_v;
           double otherDist = sqrt( otherDiff_u*otherDiff_u +
                       otherDiff_v*otherDiff_v );
-    
-    
+
+
           // if the distance of the curent vector element to the center
           // is greater than the distance of this dot to the center,
           // then add this dot before the current vector element.
@@ -1113,7 +1113,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
           }
           niceDotsVector->next();
         }
-    
+
         // if we reached the end of the vector without finding the dot
         // or inserting it, insert it now.
         if( niceDotsVector->outside() && stopLoop == false )
@@ -1198,7 +1198,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   //
 
   double innerCoef =  sizePrecision ;           //0.4;
-      
+
   int u, v;
   u_list.front();
   v_list.front();
@@ -1451,7 +1451,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   }
 
   // find the border
-    
+
   if(!findFirstBorder(I, (unsigned int) est_u, (unsigned int) est_v,
                         this->firstBorder_u, this->firstBorder_v))
     return false;
@@ -1541,8 +1541,8 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 //     vpTRACE("border_u: %d border_v: %d dir: %d", border_u, border_v, dir);
 
   }
-  while( (this->firstBorder_u != border_u
-	  || this->firstBorder_v != border_v
+  while( (getFirstBorder_u() != border_u
+	  || getFirstBorder_v() != border_v
 	  || firstDir != dir) &&
 	 isInArea( border_u, border_v ) );
 
@@ -1581,18 +1581,18 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 
 
 /*!
-  Find the starting point on a dot border from an other point in the dot. 
-  the dot border is computed from this point.  
-  
+  Find the starting point on a dot border from an other point in the dot.
+  the dot border is computed from this point.
+
   \param I : Image.
   \param u : The row coordinate of a pixel in the dot.
   \param v : The column coordinate of a pixel in the dot.
   \param border_u : The row coordinate of the found starting point.
   \param border_v : The column coordinate of the found starting point.
-  
+
   \return false if the width of this dot was initialised and we already crossed
 the dot on more than the max possible width. Return true if success.
-    
+
   \sa computeParameters()
 */
 bool
@@ -1603,14 +1603,14 @@ vpDot2::findFirstBorder(const vpImage<unsigned char> &I,
                         unsigned int &border_v)
 {
  // find the border
-  
+
   // NOTE:
   // from here we use int and not double. This is because we don't have
   // rounding problems and it's actually more a trouble than smth else to
   // work with double when navigating around the dot.
   border_u = u;
   border_v = v;
-  while( hasGoodLevel( I, border_u+1, border_v ) && 
+  while( hasGoodLevel( I, border_u+1, border_v ) &&
     border_u < area.getRight()/*I.getWidth()*/ )
   {
     // if the width of this dot was initialised and we already crossed the dot
