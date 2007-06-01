@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.24 2007-05-03 12:10:41 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.25 2007-06-01 14:15:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -843,7 +843,7 @@ void vpDisplayGTK::displayCharString(unsigned int i, unsigned int j,
 }
 
 /*!
-  wait for a click
+  Wait for a click from one of the mouse button.
 */
 void
 vpDisplayGTK::getClick()
@@ -883,8 +883,11 @@ vpDisplayGTK::getClick()
 }
 
 /*!
-  \brief wait for and get the position of the click
-  \param i,j (row,colum indexes)
+  Wait for and get the position of the click. 
+
+  \param i,j : Position of the clicked pixel (row,colum indexes)
+
+  \return Always true
 
 */
 bool
@@ -929,13 +932,14 @@ vpDisplayGTK::getClick(unsigned int& i, unsigned int& j)
 }
 
 
-
-
 /*!
-  \brief wait for and get the position of the click of the button specified
-  by "button"
-  \param i,j : (row,colum indexes)
-  \param button
+  Wait for and get the position of the click. The button used
+  to click is also set.
+
+  \param i,j : Position of the clicked pixel (row,colum indexes)
+  \param button : Button used to click.
+
+  \return Always true.
 
 */
 bool
@@ -944,49 +948,53 @@ vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
 {
   bool end = false ;
 
-  if (GTKinitialized)
-    {
+  if (GTKinitialized) {
 
-      flushDisplay() ;
-      GdkEvent *ev ;
+    flushDisplay() ;
+    GdkEvent *ev ;
 
-      while (!end)
-	{
-	  ev = gdk_event_get() ;
-	  if (ev)
-	    {
-	      switch(ev->type)
-		{
-		case GDK_BUTTON_PRESS :
-		  if(ev->any.window == window){
-		    if ((int)((GdkEventButton *)ev)->button==button)
-		      {
-			i = (unsigned int)((GdkEventButton *)ev)->y ;
-			j = (unsigned int)((GdkEventButton *)ev)->x ;
-			end = true ;
-		      }
-		  }
-		  break ;
-		default :;
-		}
+    while (!end) {
+      ev = gdk_event_get() ;
+      if (ev) {
+	switch(ev->type) {
+	case GDK_BUTTON_PRESS :
+	  if(ev->any.window == window){
+
+	    i = (unsigned int)((GdkEventButton *)ev)->y ;
+	    j = (unsigned int)((GdkEventButton *)ev)->x ;
+
+	    switch((int)((GdkEventButton *)ev)->button) {
+	    case 1: button = vpMouseButton::button1; break;
+	    case 2: button = vpMouseButton::button2; break;
+	    case 3: button = vpMouseButton::button3; break;
 	    }
+
+	    end = true ;
+	  }
+	  break ;
+	default :;
 	}
-      gdk_event_free(ev) ;
+      }
     }
-  else
-    {
-      vpERROR_TRACE("GTK not initialized " ) ;
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-			       "GTK not initialized")) ;
-    }
+    gdk_event_free(ev) ;
+  }
+  else {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+			     "GTK not initialized")) ;
+  }
   return end;
 }
 
 /*!
-  \brief wait for and get the position of the click release of the
-  button specified by "button"
-  \param i,j : (row,colum indexes)
-  \param button
+
+  Wait for and get the position of the click release.
+
+  \param i,j : Position of the clicked pixel (row,colum indexes)
+  \param button : Button used to click.
+
+
+  \return Always true.
 
 */
 bool
@@ -995,42 +1003,41 @@ vpDisplayGTK::getClickUp(unsigned int& i, unsigned int& j,
 {
   bool end = false ;
 
-  if (GTKinitialized)
-    {
+  if (GTKinitialized)  {
 
-      flushDisplay() ;
-      GdkEvent *ev ;
+    flushDisplay() ;
+    GdkEvent *ev ;
 
-      while (!end)
-	{
-	  ev = gdk_event_get() ;
-	  if (ev)
-	    {
-	      switch(ev->type)
-		{
-		case GDK_BUTTON_RELEASE :
-		  if(ev->any.window == window)
-		    {
-		      if ((int)((GdkEventButton *)ev)->button==button)
-			{
-			  i = (unsigned int)((GdkEventButton *)ev)->y ;
-			  j = (unsigned int)((GdkEventButton *)ev)->x ;
-			  end = true ;
-			}
-		    }
-		  break ;
-		default :;
-		}
+    while (!end)	{
+      ev = gdk_event_get() ;
+      if (ev) {
+	switch(ev->type)	{
+	case GDK_BUTTON_RELEASE :
+
+	  if(ev->any.window == window) {
+	    i = (unsigned int)((GdkEventButton *)ev)->y ;
+	    j = (unsigned int)((GdkEventButton *)ev)->x ;
+
+	    switch((int)((GdkEventButton *)ev)->button) {
+	    case 1: button = vpMouseButton::button1; break;
+	    case 2: button = vpMouseButton::button2; break;
+	    case 3: button = vpMouseButton::button3; break;
 	    }
+
+	    end = true ;
+	  }
+	  break ;
+	default :;
 	}
-      gdk_event_free(ev) ;
+      }
     }
-  else
-    {
-      vpERROR_TRACE("GTK not initialized " ) ;
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-			       "GTK not initialized")) ;
-    }
+    gdk_event_free(ev) ;
+  }
+  else  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+			     "GTK not initialized")) ;
+  }
   return end ;
 }
 
