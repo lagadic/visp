@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.29 2007-05-31 12:50:35 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.30 2007-06-01 14:14:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1583,8 +1583,11 @@ void vpDisplayX::displayCharString(unsigned int i, unsigned int j,
 }
 
 /*!
-  \brief wait for and get the position of the click
-  \param i,j : (row,colum indexes)
+  Wait for and get the position of the click. 
+
+  \param i,j : Position of the clicked pixel (row,colum indexes)
+
+  \return Always true
 
 */
 
@@ -1641,7 +1644,8 @@ vpDisplayX::getClick(unsigned int& i, unsigned int& j)
 
 
 /*!
-  wait for a click
+  Wait for a click from one of the mouse button.
+
 */
 void
 vpDisplayX::getClick()
@@ -1694,10 +1698,14 @@ vpDisplayX::getClick()
 }
 
 /*!
-  \brief wait for and get the position of the click of the button specified
-  by "button"
-  \param i,j : (row,colum indexes)
-  \param button : Button to use.
+
+  Wait for and get the position of the click. The button used
+  to click is also set.
+
+  \param i,j : Position of the clicked pixel (row,colum indexes)
+  \param button : Button used to click.
+
+  \return Always true
 
 */
 bool
@@ -1759,13 +1767,19 @@ vpDisplayX::getClick(unsigned int& i, unsigned int& j,
 }
 
 /*!
-  \brief wait for and get the position of the click release of the
-  button specified by "button". Same method as getClick(int&, int&, int&).
-  \param i,j : (row,colum indexes)
-  \param button : Button to use.
 
-  \sa getClick(int&, int&, int&)
+  Wait for and get the position of the click release. Same method as
+  getClick(unsigned int&, unsigned int& ,
+  vpMouseButton::vpMouseButtonType &). The button used to click is
+  also set.
 
+  \param i,j : Position of the clicked pixel (row,colum indexes)
+  \param button : Button used to click.
+
+  \sa getClick(unsigned int&, unsigned int& ,
+  vpMouseButton::vpMouseButtonType &)
+
+  \return Always true.
 */
 bool
 vpDisplayX::getClickUp(unsigned int& i, unsigned int& j,
