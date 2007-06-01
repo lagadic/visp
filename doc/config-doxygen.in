@@ -988,6 +988,7 @@ PREDEFINED             = \
 		       VISP_HAVE_X11 \
 		       VISP_HAVE_PTHREAD \
 		       VISP_HAVE_GTK \
+		       VISP_HAVE_GDI \
                        VISP_HAVE_D3D9 \
 		       VISP_HAVE_GSL \
 		       VISP_HAVE_COIN \
