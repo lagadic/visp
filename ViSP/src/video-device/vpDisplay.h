@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.14 2007-04-18 12:13:13 asaunier Exp $
+ * $Id: vpDisplay.h,v 1.15 2007-06-01 14:13:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,6 @@ protected :
   int windowYPosition ;
   //! display title
   char *title ;
-protected:
   unsigned int width ;
   unsigned int height ;
 
@@ -84,7 +83,7 @@ protected:
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
 
- protected:
+ public:
   //! initialization
   virtual void init(vpImage<unsigned char> &I,
 		    int winx=-1, int winy=-1,
