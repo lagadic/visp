@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.12 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpSimulator.cpp,v 1.13 2007-06-01 09:15:09 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,6 +42,8 @@
 #include <visp/vpSimulator.h>
 #include <visp/vpTime.h>
 
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 
 /* Objets OIV. */
 #include <Inventor/nodes/SoCone.h> /* Objet cone.                            */
@@ -277,6 +279,7 @@ vpSimulator::init()
   realtime=NULL ;
   offScreenRenderer = NULL ;
   bufferView = NULL;
+  get = 1 ;
 }
 void
 vpSimulator::kill()
@@ -410,6 +413,8 @@ vpSimulator::initInternalViewer(int width, int height)
 
   // open the window
   internalView->show();
+
+  bufferView = new unsigned char[3*width*height] ;
 
 }
 
@@ -876,8 +881,6 @@ vpSimulator::offScreenRendering(viewEnum view, int * width, int * height)
     this ->offScreenRenderer ->setViewportRegion (myViewPort);
   }
 
-
-
   // Rendu offscreen
   if (! this ->offScreenRenderer ->render(thisroot))
   {
@@ -887,19 +890,24 @@ vpSimulator::offScreenRendering(viewEnum view, int * width, int * height)
   }
   else
   {
+
+
+    /*
     if (view==vpSimulator::INTERNAL)
     {
       //Recopie du buffer contenant l'image, dans bufferView
       int length = 3*size [0]*size[1];
-      delete bufferView;
+      delete [] bufferView;
       bufferView = new unsigned char [length];
       for(int i=0; i<length; i++)
       {
 	bufferView[i] = this ->offScreenRenderer->getBuffer()[i];
       }
-    }
+      }*/
+
   }
 
+  //  exit(1) ;
   if (NULL != width) { * width = size [0]; }
   if (NULL != height) { * height = size [1]; }
 
@@ -915,17 +923,36 @@ vpSimulator::offScreenRendering(viewEnum view, int * width, int * height)
  * OUTPUT
  *   - RETURN : Code d'erreur CODE_OK si tout s'est bien passe.
  */
+
+using namespace std ;
 void
 vpSimulator::write (viewEnum view,
 		    const char * fileName)
 {
-  this->offScreenRendering(view);
-  FILE *fp = fopen(fileName, "w");
-  this->offScreenRenderer->writeToFile(fileName,"png");
-  fclose (fp);
-  this->realtime->setValue(realtime->getValue() + 1/24.0);
-  delete offScreenRenderer ;
-  this->offScreenRenderer = NULL ;
+
+    while (get==0) {  vpTRACE("%d ",get); }
+  get =2 ;
+  /*  FILE *fp = fopen(fileName, "w");
+  fprintf(fp,"P6 \n %d %d \n 255",internal_width,internal_height) ;
+  fwrite(bufferView, sizeof(unsigned char), internal_width*internal_height*3, fp) ;*/
+  vpImage<vpRGBa> I(internal_height,internal_width) ;
+
+
+  for(int i=0 ; i < internal_height ; i++)
+    for(int j=0 ; j < internal_width ; j++)
+      {
+	unsigned char r,g,b ;
+	int index = 3*((internal_height-i-1)* internal_width + j );
+	r = *(bufferView+index);
+	g = *(bufferView+index+1);
+	b = *(bufferView+index+2);
+	I[i][j].R =r ;
+	I[i][j].G =g ;
+	I[i][j].B =b ;
+      }
+  vpImageIo::writePPM(I,fileName) ;
+    // fclose (fp);
+  get =1 ;
 }
 
 void

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.10 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpSimulator.h,v 1.11 2007-06-01 09:15:09 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -228,10 +228,10 @@ protected:
   void offScreenRendering (viewEnum view=vpSimulator::EXTERNAL,
 			   int * width = NULL,
 			   int * height = NULL);
-protected:
+public:
   //! image of the internal view
   unsigned char * bufferView;
-
+  int get ;
 public:
   //! get the image corresponding to the internal view
   unsigned char* getBufferedOffScreenRenderer()
