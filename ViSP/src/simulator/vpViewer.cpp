@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.9 2007-04-20 14:22:17 asaunier Exp $
+ * $Id: vpViewer.cpp,v 1.10 2007-06-01 09:15:09 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,6 +71,8 @@ void
 vpViewer::actualRedraw(void)
 {
 
+  if(simu->get !=2) ;
+  {
    const SbViewportRegion vp = this->getViewportRegion();
    SbVec2s origin = vp.getViewportOriginPixels();
    SbVec2s size = vp.getViewportSizePixels();
@@ -103,7 +105,17 @@ vpViewer::actualRedraw(void)
 
    // Render normal scenegraph.
    SoQtExaminerViewer::actualRedraw();
+
    glSwapBuffers() ;
+
+   simu->get = 0 ;
+   glReadPixels(0,0,simu->getInternalWidth(), simu->getInternalHeight(),
+		  (GLenum)GL_RGB,
+		  GL_UNSIGNED_BYTE,
+		  simu->bufferView ) ;
+   simu-> get =1 ;
+
+  }
 
 }
 
