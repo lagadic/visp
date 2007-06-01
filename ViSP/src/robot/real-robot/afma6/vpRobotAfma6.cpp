@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.16 2007-04-25 09:27:46 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.17 2007-06-01 08:50:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -549,7 +549,9 @@ void vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
   \param r : Measured position of the robot:
   - in camera cartesien frame, a 6 dimension vector, set to 0,
 
-  - in articular, a 6 dimension vector corresponding to the articular position of each dof, first the 3 translations, then the 3 articular rotation positions.
+  - in articular, a 6 dimension vector corresponding to the articular
+    position of each dof, first the 3 translations, then the 3
+    articular rotation positions.
 
   - in reference frame, a 6 dimension vector, the first 3 values correspond to
     the translation tx, ty, tz in meters (like a vpTranslationVector), and the
@@ -560,17 +562,20 @@ void vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
     vpRobotAfma6 robot;
     vpColVector r;
     robot.getPosition(vpRobot::REFERENCE_FRAME, r);
-    vpTranslationVector ftc; // camera to fix frame translation
-    vpRxyzVector frc; // camera to fix frame rotation
+    vpTranslationVector rtc; // reference frame to camera frame translations
+    vpRxyzVector rrc; // reference frame to camera frame rotations
 
-    // Update the transformation between  camera to fix frame
+    // Update the transformation between reference frame and camera frame
     for (int i=0; i < 3; i++) {
-      ftc[i] = r[i];
-      frc[i] = r[i+3];
+      rtc[i] = r[i];   // tx, ty, tz
+      rrc[i] = r[i+3]; // ry, ry, rz
     }
 
+    // Create a rotation matrix from the Rxyz rotation angles
+    vpRotationMatrix rRc(rrc); // reference frame to camera frame rotation matrix
+
     // Create the camera to fix frame pose in terms of a homogenous matrix
-    vpHomogenousMatrix fMc(frc, ftc);
+    vpHomogeneousMatrix fMc(rRc, rtc);
 
     \endcode
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.9 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.10 2007-06-01 08:50:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -186,10 +186,10 @@ public:  /* Methode publiques */
   //! set a displacement (frame as to ve specified)
   void setPosition(const vpRobot::ControlFrameType frame,
 		   const vpColVector &q) ;
-  void setPosition (const vpRobot::ControlFrameType repere,
+  void setPosition (const vpRobot::ControlFrameType frame,
 		    const double x, const double y, const double z,
 		    const double rx, const double ry, const double rz ) ;
-  void getPosition (const vpRobot::ControlFrameType repere,
+  void getPosition (const vpRobot::ControlFrameType frame,
 		    vpColVector &r);
 
 
@@ -198,14 +198,14 @@ public:  /* Methode publiques */
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity (const vpRobot::ControlFrameType repere,
+  void setVelocity (const vpRobot::ControlFrameType frame,
 		    const vpColVector & r_dot);
 
 
-  void getVelocity (const vpRobot::ControlFrameType repere,
+  void getVelocity (const vpRobot::ControlFrameType frame,
 		    vpColVector & r_dot);
 
-  vpColVector getVelocity (const vpRobot::ControlFrameType repere);
+  vpColVector getVelocity (const vpRobot::ControlFrameType frame);
 
 private:
   int velocityMeasureTempo ;
