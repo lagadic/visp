@@ -8,9 +8,12 @@ ViSP 2.4.x
 	  Split accuracy private variable into grayLevelPrecision and 
 	  sizePrecision.
 	- vpDisplayX : better management of endianness
-	- vpDisplayGTK : 
+	- vpDisplayGTK, vpDisplayGDI, vpDisplayD3D : 
+	  The behavior of the following methods change to be similar
+	  to vpDisplayX:
 	  . getClick(..., button) : The button used to click is now an output
 	  . getClickUp(..., button) : The button used to click is now an output
+	  Moreover, in vpDisplayGDI, vpDisplayD3D middle button is now managed
   - Testing:
 	- test/video-device/testClick.cpp was added
   - Documentation improvement
