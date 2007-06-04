@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2007-06-04 08:23:19 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.3 2007-06-04 08:53:02 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,9 +41,6 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  testConversion.cpp
-  testIoPGM.cpp
-  testIoPPM.cpp
   testClick.cpp
 )
 
@@ -63,9 +60,7 @@ ENDFOREACH(source)
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
-ADD_TEST(testConversion testConversion)
-ADD_TEST(testIoPGM      testIoPGM)
-ADD_TEST(testIoPPM      testIoPPM)
+
 # testClick cannot be added in the test list since an interaction is requested
 #ADD_TEST(testClick      testClick) 
 
