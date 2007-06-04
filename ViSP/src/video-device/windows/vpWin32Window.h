@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.h,v 1.5 2007-05-03 16:00:17 fspindle Exp $
+ * $Id: vpWin32Window.h,v 1.6 2007-06-04 09:12:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,13 +52,11 @@
 
 
 //ViSP-defined messages for window's callback function
-#define vpWM_GETCLICK WM_USER+1
-#define vpWM_DISPLAY WM_USER+2
-#define vpWM_GETCLICKUP WM_USER+3
-#define vpWM_CLOSEDISPLAY WM_USER+4
+#define vpWM_GETCLICK     (WM_USER+1)
+#define vpWM_DISPLAY      (WM_USER+2)
+#define vpWM_GETCLICKUP   (WM_USER+3)
+#define vpWM_CLOSEDISPLAY (WM_USER+4)
 
-//No specific mouse button query
-#define vpNO_BUTTON_QUERY -1
 
 class vpWin32Display;
 
@@ -87,7 +85,7 @@ class VISP_EXPORT vpWin32Window
   //! Y coordinate of the click
   int clickY;
   //! Button used for the click
-  int clickButton;
+  vpMouseButton::vpMouseButtonType clickButton;
 
   //! True if the window's class has already been registered
   static bool registered;

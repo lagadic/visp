@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.cpp,v 1.4 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpWin32Window.cpp,v 1.5 2007-06-04 09:12:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -99,14 +99,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{	
 	  window->clickX = GET_X_LPARAM(lParam);
 	  window->clickY = GET_Y_LPARAM(lParam);
-					
-	  //if the demand was for the left button or any button
-	  if( (window->clickButton == vpNO_BUTTON_QUERY) ||
-	      (window->clickButton == vpMouseButton::button1))
-	    {
-	      ReleaseSemaphore(window->semaClick,1,NULL);
-	      window->waitForClick = false;
-	    }
+
+	  window->clickButton = vpMouseButton::button1;
+	  ReleaseSemaphore(window->semaClick,1,NULL);
+	  window->waitForClick = false;
+	}
+      break;
+
+    case WM_MBUTTONDOWN:
+      //if there has been a "click demand"
+      if(window->waitForClick) 
+	{	
+	  window->clickX = GET_X_LPARAM(lParam);
+	  window->clickY = GET_Y_LPARAM(lParam);
+
+	  window->clickButton = vpMouseButton::button2;
+	  ReleaseSemaphore(window->semaClick,1,NULL);
+	  window->waitForClick = false;
 	}
       break;
 
@@ -117,13 +126,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	  window->clickX = GET_X_LPARAM(lParam);
 	  window->clickY = GET_Y_LPARAM(lParam);
 
-	  //if the demand was for the right button or any button
-	  if( (window->clickButton == vpNO_BUTTON_QUERY) 
-	      || (window->clickButton == vpMouseButton::button2))
-	    {
-	      ReleaseSemaphore(window->semaClick,1,NULL);
-	      window->waitForClick = false;
-	    }
+	  window->clickButton = vpMouseButton::button3;
+	  ReleaseSemaphore(window->semaClick,1,NULL);
+	  window->waitForClick = false;
 	}
       break;
 
@@ -133,12 +138,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	  window->clickX = GET_X_LPARAM(lParam);
 	  window->clickY = GET_Y_LPARAM(lParam);
 					
-	  if( (window->clickButton == vpNO_BUTTON_QUERY) 
-	      || (window->clickButton == vpMouseButton::button1))
-	    {
-	      ReleaseSemaphore(window->semaClick,1,NULL);
-	      window->waitForClick = false;
-	    }
+	  window->clickButton = vpMouseButton::button1;
+	  ReleaseSemaphore(window->semaClick,1,NULL);
+	  window->waitForClickUp = false;
+	}
+      break;
+
+    case WM_MBUTTONUP:
+      if(window->waitForClickUp) 
+	{	
+	  window->clickX = GET_X_LPARAM(lParam);
+	  window->clickY = GET_Y_LPARAM(lParam);
+
+	  window->clickButton = vpMouseButton::button2;
+	  ReleaseSemaphore(window->semaClick,1,NULL);
+	  window->waitForClickUp = false;
 	}
       break;
 
@@ -148,12 +162,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	  window->clickX = GET_X_LPARAM(lParam);
 	  window->clickY = GET_Y_LPARAM(lParam);
 
-	  if( (window->clickButton == vpNO_BUTTON_QUERY) 
-	      || (window->clickButton == vpMouseButton::button2))
-	    {
-	      ReleaseSemaphore(window->semaClick,1,NULL);
-	      window->waitForClick = false;
-	    }
+	  window->clickButton = vpMouseButton::button3;
+	  ReleaseSemaphore(window->semaClick,1,NULL);
+	  window->waitForClickUp = false;
 	}
       break;
 
@@ -201,7 +212,6 @@ vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
   //no queries directly after initialization
   waitForClick = false;
   waitForClickUp = false;
-  clickButton = vpNO_BUTTON_QUERY; 
 }
 
 /*!

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.13 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.14 2007-06-04 09:12:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -241,8 +241,6 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j)
   //wait if the window is not initialized
   waitForInit();
 
-  //we don't care about which button is pressed
-  window.clickButton = vpNO_BUTTON_QUERY;
   //tells the window there has been a getclickup demand
   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
@@ -250,6 +248,7 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j)
 
   j = window.clickX;
   i = window.clickY;
+
   return true;
 }
 
@@ -266,8 +265,6 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j,
   //wait if the window is not initialized
   waitForInit();
 
-  //we want a click from a specific button
-  window.clickButton = button;
   //tells the window there has been a getclickup demand
   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
@@ -275,6 +272,8 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j,
 
   j = window.clickX;
   i = window.clickY;
+  button = window.clickButton;
+
   return true;
 }
 
@@ -291,9 +290,6 @@ bool vpDisplayWin32::getClickUp(unsigned int& i, unsigned int& j,
   //wait if the window is not initialized
   waitForInit();
 
-  //we want a click from a specific button
-  window.clickButton = button;
-
   //tells the window there has been a getclickup demand
   PostMessage(window.getHWnd(), vpWM_GETCLICKUP, 0,0);
 
@@ -302,6 +298,7 @@ bool vpDisplayWin32::getClickUp(unsigned int& i, unsigned int& j,
 
   j = window.clickX;
   i = window.clickY;
+  button = window.clickButton;
 
   return true;
 }
@@ -314,8 +311,6 @@ void vpDisplayWin32::getClick()
   //wait if the window is not initialized
   waitForInit();
 
-  //we don't care about which button is pressed
-  window.clickButton = vpNO_BUTTON_QUERY;
   //sends a message to the window
   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
 
