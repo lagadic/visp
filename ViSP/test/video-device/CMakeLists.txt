@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.1 2007-06-01 14:17:25 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.2 2007-06-04 08:23:19 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,6 +41,9 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
+  testConversion.cpp
+  testIoPGM.cpp
+  testIoPPM.cpp
   testClick.cpp
 )
 
