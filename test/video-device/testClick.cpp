@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testClick.cpp,v 1.1 2007-06-01 14:17:25 fspindle Exp $
+ * $Id: testClick.cpp,v 1.2 2007-06-04 08:52:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,6 @@ typedef enum {
   vpGTK,
   vpGDI,
   vpD3D,
-  vpNone
 } vpDisplayType;
 
 /*
@@ -80,7 +79,7 @@ typedef enum {
   \param ipath: Input image path.
 
  */
-void usage(char *name, char *badparam, std::string ipath)
+void usage(char *name, char *badparam, std::string ipath, vpDisplayType &dtype)
 {
   fprintf(stdout, "\n\
 Test click functionnalities in video devices or display.\n\
@@ -89,6 +88,14 @@ SYNOPSIS\n\
   %s [-p <input image path>] \n\
      [-t <type of video device>] [-l] [-h]\n\
 ", name);
+
+  std::string display;
+  switch(dtype) {
+  case vpX11: display = "X11"; break;
+  case vpGTK: display = "GTK"; break;
+  case vpGDI: display = "GDI"; break;
+  case vpD3D: display = "D3D"; break;
+  }
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -100,7 +107,7 @@ OPTIONS:                                               Default\n\
      variable produces the same behaviour than using\n\
      this option.\n\
 \n\
-  -t <type of video device>\n\
+  -t <type of video device>                            \"%s\"\n\
      String specifying the video device to use.\n\
      Possible values:\n\
        \"X11\": only on UNIX platforms,\n\
@@ -113,7 +120,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str());
+	  ipath.c_str(), display.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -156,17 +163,17 @@ bool getOptions(int argc, char **argv,
       }
 
       break;
-    case 'h': usage(argv[0], NULL, ipath); return false; break;
+    case 'h': usage(argv[0], NULL, ipath, dtype); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath); return false; break;
+      usage(argv[0], optarg, ipath, dtype); return false; break;
     }
   }
 
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath);
+    usage(argv[0], NULL, ipath, dtype);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -182,9 +189,20 @@ main(int argc, char ** argv)
   std::string env_ipath;
   std::string opt_ipath;
   bool opt_list = false; // To print the list of video devices
-  vpDisplayType opt_dtype = vpX11; // Type of display to use
+  vpDisplayType opt_dtype; // Type of display to use
   std::string ipath;
   std::string filename;
+
+  // Default display is one available
+#if defined VISP_HAVE_GTK
+  opt_dtype = vpGTK;
+#elif defined VISP_HAVE_X11
+  opt_dtype = vpX11;
+#elif defined VISP_HAVE_GDI
+  opt_dtype = vpGDI;
+#elif defined VISP_HAVE_D3D9
+  opt_dtype = vpD3D;
+#endif
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -221,11 +239,11 @@ main(int argc, char ** argv)
     nbDevices ++;
 #endif
     if (!nbDevices) {
-      std::cout << "  No display is available\n";   
+      std::cout << "  No display is available\n";
     }
-    return (0); 
+    return (0);
   }
-  
+
 
   // Get the option values
   if (!opt_ipath.empty())
@@ -245,7 +263,7 @@ main(int argc, char ** argv)
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL, ipath);
+    usage(argv[0], NULL, ipath, opt_dtype);
     std::cerr << std::endl
 	 << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -256,7 +274,7 @@ main(int argc, char ** argv)
   }
 
   // Create a grey level image
-  vpImage<unsigned char> I ; 
+  vpImage<unsigned char> I ;
 
   // Load a grey image from the disk
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
@@ -267,46 +285,46 @@ main(int argc, char ** argv)
   vpDisplay *display;
 
   switch(opt_dtype) {
-  case vpX11: 
+  case vpX11:
     std::cout << "Requested X11 display functionnalities..." << std::endl;
 #if defined VISP_HAVE_X11
     display = new vpDisplayX;
 #else
     std::cout << "  Sorry, X11 video device is not available.\n";
-    std::cout << "Use \"" << argv[0] 
+    std::cout << "Use \"" << argv[0]
 	      << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
     break;
-  case vpGTK: 
+  case vpGTK:
     std::cout << "Requested GTK display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GTK
     display = new vpDisplayGTK;
 #else
     std::cout << "  Sorry, GTK video device is not available.\n";
-    std::cout << "Use \"" << argv[0] 
+    std::cout << "Use \"" << argv[0]
 	      << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
     break;
-  case vpGDI: 
+  case vpGDI:
     std::cout << "Requested GDI display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GDI
     display = new vpDisplayGDI;
 #else
     std::cout << "  Sorry, GDI video device is not available.\n";
-    std::cout << "Use \"" << argv[0] 
+    std::cout << "Use \"" << argv[0]
 	      << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
     break;
-  case vpD3D: 
+  case vpD3D:
     std::cout << "Requested D3D display functionnalities..." << std::endl;
 #if defined VISP_HAVE_D3D9
     display = new vpDisplayD3D;
 #else
     std::cout << "  Sorry, D3D video device is not available.\n";
-    std::cout << "Use \"" << argv[0] 
+    std::cout << "Use \"" << argv[0]
 	      << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
@@ -317,7 +335,7 @@ main(int argc, char ** argv)
     // We open a window using either X11 or GTK or GDI.
     // Its size is automatically defined by the image (I) size
     display->init(I, 100, 100,"Display...") ;
-    
+
     // Display the image
     // The image class has a member that specify a pointer toward
     // the display that has been initialized in the display declaration
@@ -336,7 +354,7 @@ main(int argc, char ** argv)
     case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
     case vpMouseButton::button3: std::cout << "with right button.\n"; break;
     }
-    
+
     std::cout << "A click to exit...\n";
     vpDisplay::getClick(I) ;
 
