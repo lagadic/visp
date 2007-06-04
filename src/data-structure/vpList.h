@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.10 2007-05-11 16:53:34 fspindle Exp $
+ * $Id: vpList.h,v 1.11 2007-06-04 13:41:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -704,11 +704,14 @@ void vpList<type>::display()
 #include <visp/vpForwardProjection.h>
 
 template class VISP_EXPORT vpList<int>;
+template class VISP_EXPORT vpList<double>;
+template class VISP_EXPORT vpList<float>;
 template class VISP_EXPORT vpList<unsigned int>;
 template class VISP_EXPORT vpList<vpBasicFeature *>;
 template class VISP_EXPORT vpList<vpForwardProjection *>;
 template class VISP_EXPORT vpList<vpPoint>;
 template class VISP_EXPORT vpList<vpMeSite>;
+template class VISP_EXPORT vpList<vpColVector>;
 #endif
 
 
