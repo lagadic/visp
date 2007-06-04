@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.25 2007-06-01 14:15:43 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.26 2007-06-04 14:12:21 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -307,20 +307,17 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   Police2 = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
 
   if (_title != NULL)
+  {
+    if (title != NULL)
     {
-      if (title != NULL)
-	{
-	  delete [] title ;
-	  title = NULL ;
-	}
-      title = new char[strlen(_title) + 1] ;
-      strcpy(title,_title) ;
-    }
-
+	    delete [] title ;
+	    title = NULL ;
+	  }
+    title = new char[strlen(_title) + 1] ;
+    strcpy(title,_title) ;
+  }
   GTKinitialized = true ;
   flushTitle(title) ;
-
-
 }
 
 
@@ -1080,7 +1077,8 @@ vpDisplayGTK::flushTitle(const char *windowtitle)
 {
   if (GTKinitialized)
     {
-      gdk_window_set_title(window,(char *)windowtitle);
+      if (windowtitle != NULL)
+        gdk_window_set_title(window,(char *)windowtitle);
     }
   else
     {
