@@ -17,6 +17,11 @@ ViSP 2.4.x
 	  . getClick(..., button) : The button used to click is now an output
 	  . getClickUp(..., button) : The button used to click is now an output
 	  Moreover, in vpDisplayGDI, vpDisplayD3D middle button is now managed
+	- vpDisplayGTK, vpDisplayGDI, vpDisplayD3D :
+	  The usage of display->init(vpImage, int, int); returned a 
+	  segmentation fault : bug fixed
+	- vpDisplayD3D : we couldn't re-use a display after the call of the 
+	  function close(vpImage). We had a black image : bug fixed.
   - Testing:
 	- test/video-device/testClick.cpp was added
   - Documentation improvement
