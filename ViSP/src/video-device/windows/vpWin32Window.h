@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.h,v 1.6 2007-06-04 09:12:28 fspindle Exp $
+ * $Id: vpWin32Window.h,v 1.7 2007-06-05 13:49:02 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,13 +52,15 @@
 
 
 //ViSP-defined messages for window's callback function
-#define vpWM_GETCLICK     (WM_USER+1)
-#define vpWM_DISPLAY      (WM_USER+2)
-#define vpWM_GETCLICKUP   (WM_USER+3)
-#define vpWM_CLOSEDISPLAY (WM_USER+4)
+#define vpWM_GETCLICK WM_USER+1
+#define vpWM_DISPLAY WM_USER+2
+#define vpWM_GETCLICKUP WM_USER+3
+#define vpWM_CLOSEDISPLAY WM_USER+4
 
+//No specific mouse button query
+#define vpNO_BUTTON_QUERY -1
 
-class vpWin32Display;
+class vpDisplayWin32;
 
 class VISP_EXPORT vpWin32Window
 {
@@ -110,11 +112,11 @@ class VISP_EXPORT vpWin32Window
   bool isInitialized(){ return initialized; }
 
   //! Initialize the window
-  void initWindow(std::string title, int posx, int posy, int w, int h);
+  void initWindow(char* title, int posx, int posy, int w, int h);
 
   // Friend classes
   friend class vpDisplayWin32;
-  friend class vpDirect3DDisplay;
+  friend class vpDisplayD3D;
   friend class vpDisplayGDI;
 
   //! The message loop
