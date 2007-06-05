@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.24 2007-05-31 12:17:46 asaunier Exp $
+ * $Id: vpDot.cpp,v 1.25 2007-06-05 12:44:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,7 +61,7 @@ const unsigned int vpDot::SPIRAL_SEARCH_SIZE = 50;
 
   Initialize the tracker with default parameters.
   - connexity is set to 4 (see setConnexity())
-  - dot maximal number of pixels is set to 10000 (see setNbMaxPoint())
+  - dot maximal size is set to 25% of the image size (see setMaxDotSize())
 */
 void vpDot::init()
 {
@@ -73,11 +73,11 @@ void vpDot::init()
 
   compute_moment = false ;
   graphics = false ;
-  nbMaxPoint = 10000 ;
+  maxDotSizePercentage = 0.25 ; // 25 % of the image size
+  
   gray_level_min = 128;
   gray_level_max = 255;
   grayLevelPrecision = 0.65;
-
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
@@ -156,7 +156,6 @@ vpDot::~vpDot()
 vpDot&
 vpDot::operator=(const vpDot& pt)
 {
-
   cog_u = pt.cog_u ;
   cog_v = pt.cog_v ;
 
@@ -168,6 +167,8 @@ vpDot::operator=(const vpDot& pt)
   gray_level_max = pt.gray_level_max ;
   grayLevelPrecision = pt.grayLevelPrecision;
   compute_moment = pt.compute_moment ;
+
+  maxDotSizePercentage = pt.maxDotSizePercentage;
 
   m00 = pt.m00;
   m01 = pt.m01;
@@ -341,6 +342,10 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
 void
 vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 {
+  // Set the maximal number of points considering the maximal dot size
+  // image percentage
+  double nbMaxPoint = (I.getWidth() * I.getHeight()) *  maxDotSizePercentage;
+
   // segmentation de l'image apres seuillage
   // (etiquetage des composante connexe)
   if (compute_moment)
@@ -516,25 +521,46 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 
   if (npoint < 5)
   {
-    vpERROR_TRACE("Dot has been lost") ;
+    vpERROR_TRACE("Dot to small") ;
     throw(vpTrackingException(vpTrackingException::featureLostError,
-			      "Dot has been lost")) ;
+			      "Dot to small")) ;
   }
+
   if (npoint > nbMaxPoint)
   {
-    vpERROR_TRACE("Too many point %f (max allowed is %f)", npoint, nbMaxPoint) ;
-    vpERROR_TRACE("This threshold can be modified using the setNbMaxPoint(int) method") ;
+    vpERROR_TRACE("Too many point %lf (%lf%%). Max allowed is %lf (%lf%%). This threshold can be modified using the setMaxDotSize() method.",
+		  npoint, npoint / (I.getWidth() * I.getHeight()),
+		  nbMaxPoint, maxDotSizePercentage) ;
 
-    throw(vpTrackingException(vpTrackingException::featureLostError,
-			      "Dot has been lost")) ;
+   throw(vpTrackingException(vpTrackingException::featureLostError,
+			      "Dot to big")) ;
   }
 }
 
+/*!
+  Maximal size of the region to track in terms of image size percentage.
 
+  \param percentage : Image size percentage corresponding to the dot
+  maximal size. Values should be in ]0 : 1]. If 1, that means that the
+  dot to track could take up the whole image.
+
+  During the tracking, if the dot size if bigger than the maximal size
+  allowed an exception is throwed :
+  vpTrackingException::featureLostError.
+
+*/
 void
-vpDot::setNbMaxPoint(double nb)
+vpDot::setMaxDotSize(double percentage)
 {
-  nbMaxPoint = nb ;
+  if (percentage <= 0.0 || percentage > 1.0) {
+    // print a warning. We keep the default percentage
+    vpTRACE("Max dot size percentage is requested to be set to %lf.",
+	    "Value should be in ]0:1]. Value will be set to %lf.", 
+	    percentage, maxDotSizePercentage);
+  }
+  else {
+    maxDotSizePercentage = percentage;
+  }
 }
 /*!
 

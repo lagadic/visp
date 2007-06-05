@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.22 2007-05-31 12:15:04 asaunier Exp $
+ * $Id: vpDot.h,v 1.23 2007-06-05 12:44:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -222,7 +222,7 @@ private:
       in,
       out
     } ;
-  double nbMaxPoint ;
+  double maxDotSizePercentage;
   int connexe(vpImage<unsigned char>& I, int u, int v,
 	      unsigned int gray_level_min, unsigned int gray_level_max,
 	      double &mean_value, double &u_cog, double &v_cog, double &n);
@@ -260,8 +260,8 @@ public:
 		    unsigned int gray_level_max);
   void track(vpImage<unsigned char> & I) ;
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
-  //! the maximum in pixel of a dot (default 5000 that is a radius of 40pixels)
-  void setNbMaxPoint(double nb) ;
+
+  void setMaxDotSize(double percentage) ;
 
 
   /*!
