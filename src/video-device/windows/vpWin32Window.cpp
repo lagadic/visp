@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.cpp,v 1.5 2007-06-04 09:12:28 fspindle Exp $
+ * $Id: vpWin32Window.cpp,v 1.6 2007-06-05 13:47:39 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -234,8 +234,8 @@ vpWin32Window::~vpWin32Window()
   \param w Initial window's width
   \param h Initial window's height
 
-*/
-void vpWin32Window::initWindow(std::string title, int posx, int posy, int w, int h)
+*/ 
+void vpWin32Window::initWindow(char* title, int posx, int posy, int w, int h)
 {
   //the window's style
   DWORD style = WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX |WS_MAXIMIZEBOX;
@@ -282,7 +282,7 @@ void vpWin32Window::initWindow(std::string title, int posx, int posy, int w, int
     }
 	
   //creates the window
-  hWnd = CreateWindow(g_szClassName, title.c_str(), style,
+  hWnd = CreateWindow(g_szClassName, title, style,
 		      posx, posy, windowW, windowH, NULL, NULL, hInst, NULL);
 
   if (hWnd == NULL)
