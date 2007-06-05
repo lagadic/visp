@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.10 2007-05-15 09:30:58 fspindle Exp $
+ * $Id: displaySequence.cpp,v 1.11 2007-06-05 13:36:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -285,28 +285,28 @@ main(int argc, char ** argv)
   char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()){
-
-
-  // Warning :
-  // the image sequence is not provided with the ViSP package
-  // therefore the program will return you an error :
-  //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file
-  //        ViSP-images/cube/image.0001.pgm
-  //  !!    vpDotExample.cpp: main(#95) :Error while reading the image
-  //  terminate called after throwing an instance of 'vpImageException'
-  //
-  //  The sequence is available on the visp www site
-  //  http://www.irisa.fr/lagadic/visp/visp.html
-  //  in the download section. It is named "ViSP-images.tar.gz"
-
-  // Set the path location of the image sequence
-  dirname = ipath + vpIoTools::path("/ViSP-images/cube/");
-
-  // Build the name of the image file
-
-  s.setf(std::ios::right, std::ios::adjustfield);
-  s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-  filename = dirname + s.str();
+  
+  
+    // Warning :
+    // the image sequence is not provided with the ViSP package
+    // therefore the program will return you an error :
+    //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file
+    //        ViSP-images/cube/image.0001.pgm
+    //  !!    vpDotExample.cpp: main(#95) :Error while reading the image
+    //  terminate called after throwing an instance of 'vpImageException'
+    //
+    //  The sequence is available on the visp www site
+    //  http://www.irisa.fr/lagadic/visp/visp.html
+    //  in the download section. It is named "ViSP-images.tar.gz"
+  
+    // Set the path location of the image sequence
+    dirname = ipath + vpIoTools::path("/ViSP-images/cube/");
+  
+    // Build the name of the image file
+  
+    s.setf(std::ios::right, std::ios::adjustfield);
+    s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+    filename = dirname + s.str();
   }
   else {
 
@@ -374,30 +374,30 @@ main(int argc, char ** argv)
       // set the new image name
 
       if (opt_ppath.empty()){
-	s.str("");
-	s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-	filename = dirname + s.str();
+        s.str("");
+        s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+        filename = dirname + s.str();
       }
       else {
-	sprintf(cfilename, opt_ppath.c_str(), iter) ;
-	filename = cfilename;
+        sprintf(cfilename, opt_ppath.c_str(), iter) ;
+        filename = cfilename;
       }
 
       std::cout << "read : " << filename << std::endl;
       // read the image
       vpImageIo::readPGM(I, filename);
       if (opt_display) {
-	// Display the image
-	vpDisplay::display(I) ;
+        // Display the image
+        vpDisplay::display(I) ;
       }
       if (opt_wait) {
-	std::cout << "A click in the image to continue..." << std::endl;
-	// Wait for a blocking mouse click
-	vpDisplay::getClick(I) ;
+        std::cout << "A click in the image to continue..." << std::endl;
+        // Wait for a blocking mouse click
+        vpDisplay::getClick(I) ;
       }
       else {
-	// Synchronise the loop to 40 ms
-	vpTime::wait(tms, 40) ;
+        // Synchronise the loop to 40 ms
+        vpTime::wait(tms, 40) ;
       }
       niter++ ;
     }
