@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.14 2007-06-04 09:12:28 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.15 2007-06-05 13:46:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,7 @@ const int vpDisplayWin32::MAX_INIT_DELAY  = 5000;
 */
 void vpCreateWindow(threadParam * param)
 {
-  std::string title = param->title;
+  char* title = param->title;
   (param->vpDisp)->window.initWindow(title, param->x, param->y,
 				     param->w, param->h);
   delete param;
@@ -102,7 +102,6 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
 
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
-  I.initDisplay =  true ;
 }
 
 /*!
@@ -129,8 +128,6 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
 
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
-  I.initDisplay =  true ;
-
 }
 
 
@@ -158,10 +155,6 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height,
   if (title != NULL) {
     this->title = new char[strlen(title) + 1] ;
     strcpy(this->title, title) ;
-  }
-  else {
-    this->title = new char [1] ;
-    sprintf(title, '\0');
   }
 
   //we prepare the window's thread creation
@@ -538,6 +531,7 @@ void vpDisplayWin32::closeDisplay()
       CloseHandle(hThread);
     }
     displayHasBeenInitialized = false ;
+	window.initialized = false ;
   }
   if (this->title != NULL) {
     delete [] this->title;
