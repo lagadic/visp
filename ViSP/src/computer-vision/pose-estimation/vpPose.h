@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.9 2007-05-23 09:41:41 marchand Exp $
+ * $Id: vpPose.h,v 1.10 2007-06-05 13:38:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,6 @@
 #include <math.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpHomography.h>
-
 #include <visp/vpPoint.h>
 #include <visp/vpList.h>
 
@@ -87,7 +86,7 @@ public:
     } vpPoseMethodEnum;
 public:
   int npt ;       //!< number of point used in pose computation
-  vpList<vpPoint> listP ;     //!< array of point (use here class CPoint)
+  vpList<vpPoint> listP ;     //!< array of point (use here class vpPoint)
 
   double residual ;     //!< compute the residual in meter
 public:
