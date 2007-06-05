@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.26 2007-06-04 14:12:21 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.27 2007-06-05 13:42:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -180,7 +180,6 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
     }
   init (I.getWidth(), I.getHeight(), _x, _y, _title) ;
   I.display = this ;
-  I.initDisplay =  true ;
   GTKinitialized = true ;
 }
 
@@ -207,7 +206,6 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
 
   init (I.getWidth(), I.getHeight(), _x, _y, _title) ;
   I.display = this ;
-  I.initDisplay =  true ;
   GTKinitialized = true ;
 }
 /*!

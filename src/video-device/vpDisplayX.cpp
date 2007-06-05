@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.30 2007-06-01 14:14:29 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.31 2007-06-05 13:43:09 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -412,8 +412,6 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
   XSync (display, 1);
 
   I.display = this ;
-  I.initDisplay =  true ;
-
 }
 
 /*!
@@ -675,7 +673,6 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   flushTitle(title) ;
 
   I.display = this ;
-  I.initDisplay =  true ;
 }
 
 
