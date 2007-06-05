@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.15 2007-05-11 16:53:34 fspindle Exp $
+ * $Id: vpImage.h,v 1.16 2007-06-05 13:40:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -249,8 +249,7 @@ public:
   Type getPixelBI(float x, float y);
 
   vpDisplay *display ;
-  bool initDisplay  ;
-} ;
+  } ;
 
 
 /*!
@@ -374,8 +373,6 @@ vpImage<Type>::vpImage(unsigned int height, unsigned int width)
 
   display =  NULL ;
   this->height = this->width = 0 ;
-  initDisplay = false;
-
   try
   {
     init(height,width,0) ;
@@ -410,7 +407,6 @@ vpImage<Type>::vpImage (unsigned int height, unsigned int width, Type value)
 
   display =  NULL ;
   this->height = this->width = 0 ;
-  initDisplay = false;
   try
   {
     init(height,width,value) ;
@@ -440,8 +436,6 @@ vpImage<Type>::vpImage()
   display =  NULL ;
 
   this->height = this->width = 0 ;
-
-  initDisplay = false;
 
 }
 
@@ -529,7 +523,6 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
 {
   bitmap = NULL ;
   row = NULL ;
-  initDisplay = false;
   try
   {
     if (I.bitmap!=NULL)
