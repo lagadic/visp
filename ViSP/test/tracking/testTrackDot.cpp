@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot.cpp,v 1.14 2007-05-03 16:00:17 fspindle Exp $
+ * $Id: testTrackDot.cpp,v 1.15 2007-06-05 12:44:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -267,7 +267,7 @@ main(int argc, char ** argv)
   }
 
   vpDot dot ;
-  dot.setNbMaxPoint(8000);
+  dot.setMaxDotSize(0.50); // dot max size = 50% of the image size
   dot.initTracking(I, 140, 140) ;
   if (opt_display) {
     dot.setGraphics(true) ;

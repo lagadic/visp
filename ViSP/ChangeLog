@@ -2,6 +2,9 @@ ViSP 2.4.x
   - New classes
   - New Features
   - Bug fix and improvement
+	- vpDot: setMaxDotSize(double percentage) replace 
+	  setNbMaxPoint(double nb) to be less image size dependent.
+	  The maximal dot size is set by default to 0.25% (quarter image size)
 	- vpDot2: Changes in searchDotsInArea() :
 	    the algorithm search now in the boundingboxes of the bad dots.
 	    bug fixed : we could fall in an infinite loop.
