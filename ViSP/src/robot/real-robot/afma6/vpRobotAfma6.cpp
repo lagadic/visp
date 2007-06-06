@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.17 2007-06-01 08:50:55 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.18 2007-06-06 12:51:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -752,7 +752,11 @@ vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
     for (int i = 0 ; i < 6; ++ i)
     { v [i] = r_dot[i]*max; }
   }
-
+  else {
+    for (int i = 0 ; i < 6; ++ i) {
+      v [i] = r_dot[i];
+    }
+  }
 
   max = this ->maxRotationVelocity;
   for (int i = 3 ; i < 6; ++ i) {
