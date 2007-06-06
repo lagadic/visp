@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testClick.cpp,v 1.4 2007-06-06 12:58:45 asaunier Exp $
+ * $Id: testClick.cpp,v 1.5 2007-06-06 13:11:53 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -88,7 +88,7 @@ void usage(char *name, char *badparam, std::string ipath, vpDisplayType &dtype)
 Test click functionnalities in video devices or display.\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] \n\
+  %s [-i <input image path>] \n\
      [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
 ", name);
 
