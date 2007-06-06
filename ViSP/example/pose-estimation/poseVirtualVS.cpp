@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.6 2007-05-03 16:00:17 fspindle Exp $
+ * $Id: poseVirtualVS.cpp,v 1.7 2007-06-06 08:25:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -423,7 +423,7 @@ main(int argc, char** argv)
 	  //  - the number of pixel is too small
 	  //  - too many pixels are detected (this is usual when a "big" specularity
 	  //    occurs. The threshold can be modified using the
-	  //    setNbMaxPoint(int) method
+	  //    setMaxDotSize() method
 	  d[i].track(I,u[i],v[i]) ;
 	}
     }
