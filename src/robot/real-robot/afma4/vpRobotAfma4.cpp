@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.cpp,v 1.10 2007-04-25 09:27:46 fspindle Exp $
+ * $Id: vpRobotAfma4.cpp,v 1.11 2007-06-06 12:51:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -734,6 +734,11 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
       max =  this ->maxRotationVelocity / max;
       for (int i = 0 ; i < 2; ++ i)
       { v [i] = r_dot[i]*max; }
+    }
+    else {
+      for (int i = 0 ; i < 2; ++ i) {
+	v [i] = r_dot[i];
+      }
     }
 
     for (int i = 0; i < 2; ++ i)
