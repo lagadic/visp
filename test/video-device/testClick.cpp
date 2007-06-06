@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testClick.cpp,v 1.3 2007-06-05 12:41:09 asaunier Exp $
+ * $Id: testClick.cpp,v 1.4 2007-06-06 12:58:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Test for image conversions.
+ * Test for mouse click manipulations.
  *
  * Authors:
  * Fabien Spindler
@@ -72,12 +72,15 @@ typedef enum {
   vpD3D,
 } vpDisplayType;
 
-/*
+/*!
 
   Print the program options.
-
+  
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param ipath: Input image path.
-
+  \param dtype : Type of video device.
+  
  */
 void usage(char *name, char *badparam, std::string ipath, vpDisplayType &dtype)
 {
@@ -137,9 +140,17 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath: Input image path.
-  \param opath : Output image path.
-  \param user : Username.
+  \param dtype : Type of video device.
+  \param list : Set as true,list the available video-devices.
+  \param click_allowed : Enable/disable mouse click.
+  \param display : Set as true, activates the image display. This is
+  the default configuration. When set to false, the display is
+  disabled. This can be usefull for automatic tests using crontab
+  under Unix or using the task manager under Windows.
+  
   \return false if the program has to be stopped, true otherwise.
 
 */
