@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testVideoDevice.cpp,v 1.1 2007-06-06 13:00:18 asaunier Exp $
+ * $Id: testVideoDevice.cpp,v 1.2 2007-06-06 13:11:53 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,7 +89,7 @@ void usage(char *name, char *badparam, std::string ipath, vpDisplayType &dtype)
 Test video devices or display.\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] \n\
+  %s [-i <input image path>] \n\
      [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
 ", name);
   
