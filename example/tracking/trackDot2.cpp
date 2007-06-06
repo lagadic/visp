@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.8 2007-05-03 16:00:17 fspindle Exp $
+ * $Id: trackDot2.cpp,v 1.9 2007-06-06 08:25:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -357,10 +357,6 @@ main(int argc, char ** argv)
 	//
 	// an expcetion is thrown by the track method if
 	//  - dot is lost
-	//  - the number of pixel is too small
-	//  - too many pixels are detected (this is usual when a "big" specularity
-	//    occurs. The threshold can be modified using the
-	//    setNbMaxPoint(int) method
 
 	if (opt_display) {
 	  // Display the image

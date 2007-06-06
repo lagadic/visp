@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.6 2007-04-20 15:56:14 fspindle Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.7 2007-06-06 08:25:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -114,7 +114,7 @@ main()
 
     vpDot dot ;
 
-    dot.setNbMaxPoint(1e6) ;
+    dot.setMaxDotSize(0.30) ; // Max dot size is 30 % of the image size
     // dot.setGraphics(true) ;
     dot.setComputeMoments(true) ;
     std::cout << "Click on an ellipse..." << std::endl;
