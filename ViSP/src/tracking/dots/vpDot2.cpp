@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.23 2007-06-01 15:47:32 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.24 2007-06-06 14:21:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -630,17 +630,6 @@ double vpDot2::getSizePrecision() const
   return sizePrecision;
 }
 
-/*!
-
-  Return the level of accuracy of informations about the dot. It is a double
-  precision float witch value is in ]0,1]. 1 means full precision, whereas
-  values close to 0 show a very bad accuracy.
-*/
-double vpDot2::getAccuracy() const
-{
-  return sizePrecision;
-}
-
 
 /*!
   Return the distance between the two center of dots.
@@ -729,22 +718,6 @@ void vpDot2::setSurface( const double & surface )
   this->surface = surface;
 }
 
-/*!
-
-  Set the level of accuracy of informations about the dot.
-
-  \param accuracy : It is an double precision float which value is in ]0,1]:
-  - 1 means full precision, wereas values close to 0 show a very bad accuracy.
-  - Values lower or equal to 0 are brought back to an epsion>0
-  - Values higher than  1 are brought back to 1
-
-  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setOutLevel()
-*/
-void vpDot2::setAccuracy( const double & accuracy )
-{
-  setSizePrecision(accuracy);
-  setGrayLevelPrecision(accuracy);
-}
 /*!
 
   Set the precision of the gray level of the dot.
@@ -1616,7 +1589,7 @@ vpDot2::findFirstBorder(const vpImage<unsigned char> &I,
     // if the width of this dot was initialised and we already crossed the dot
     // on more than the max possible width, no need to continue, return an
     // error tracking
-    if( getWidth() > 0 && ( border_u - u ) > getWidth()/getAccuracy() )
+    if( getWidth() > 0 && ( border_u - u ) > getWidth()/getSizePrecision() )
     {
       vpDEBUG_TRACE(3, "The found dot has a greater with than the required one")
 ;
@@ -2006,8 +1979,8 @@ void vpDot2::getGridSize( unsigned int &gridWidth, unsigned int &gridHeight )
   // contained in the dot. We gent this here if the dot is a perfect disc.
   // More accurate criterium to define the grid should be implemented if
   // necessary
-  gridWidth = (unsigned int) (getWidth() * getAccuracy() / sqrt(2.));
-  gridHeight = (unsigned int) (getHeight() * getAccuracy() / sqrt(2.0));
+  gridWidth = (unsigned int) (getWidth() * getSizePrecision() / sqrt(2.));
+  gridHeight = (unsigned int) (getHeight() * getSizePrecision() / sqrt(2.0));
 
   if( gridWidth == 0 ) gridWidth = 1;
   if( gridHeight == 0 ) gridHeight = 1;

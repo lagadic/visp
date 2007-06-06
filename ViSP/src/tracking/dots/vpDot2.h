@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.22 2007-05-31 12:27:43 asaunier Exp $
+ * $Id: vpDot2.h,v 1.23 2007-06-06 14:21:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,7 +108,6 @@ public:
   inline unsigned int getGrayLevelMax() const {
     return gray_level_max;
   };
-  double getAccuracy() const;
   double getGrayLevelPrecision() const;
   double getSizePrecision() const;
 
@@ -177,7 +176,6 @@ public:
     else
       this->gray_level_max = max;
   };
-  void setAccuracy( const double & accuracy );
   void setGrayLevelPrecision( const double & grayLevelPrecision );
   void setSizePrecision( const double & sizePrecision );
 
