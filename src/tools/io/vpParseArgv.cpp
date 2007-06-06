@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.7 2007-05-23 11:58:55 fspindle Exp $
+ * $Id: vpParseArgv.cpp,v 1.8 2007-06-06 12:11:19 asaunier Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -89,7 +89,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
 				 * than srcIndex). */
    int argc;			/* # arguments in argv still to process. */
    size_t length;			/* Number of characters in current argument. */
-   int nargs;                   /* Number of following arguments to get. */
+   long nargs;                   /* Number of following arguments to get. */
    int i;
 
 /* Macro to optionally print errors */
@@ -167,10 +167,10 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
       infoPtr = matchPtr;
       switch (infoPtr->type) {
       case ARGV_CONSTANT:
-	*((int *) infoPtr->dst) = (int) infoPtr->src;
+	*((int *) infoPtr->dst) = (long) infoPtr->src;
          break;
       case ARGV_INT:
-         nargs = (int) infoPtr->src;
+         nargs = (long) infoPtr->src;
          if (nargs<1) nargs=1;
          for (i=0; i<nargs; i++) {
             if (argc == 0) {
@@ -191,8 +191,30 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
             }
          }
          break;
+      case ARGV_LONG:
+         nargs = (long) infoPtr->src;
+         if (nargs<1) nargs=1;
+         for (i=0; i<nargs; i++) {
+            if (argc == 0) {
+               goto missingArg;
+            } else {
+               char *endPtr=NULL;
+
+               *(((long *) infoPtr->dst)+i) =
+                  strtol(argv[srcIndex], &endPtr, 0);
+               if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
+                  FPRINTF(stderr,
+                  "expected long argument for \"%s\" but got \"%s\"\n",
+                          infoPtr->key, argv[srcIndex]);
+                  return true;
+               }
+               srcIndex++;
+               argc--;
+            }
+         }
+         break;
       case ARGV_STRING:
-         nargs = (int) infoPtr->src;
+         nargs = (long) infoPtr->src;
          if (nargs<1) nargs=1;
          for (i=0; i<nargs; i++) {
             if (argc == 0) {
@@ -208,7 +230,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
          *((int *) infoPtr->dst) = dstIndex;
          goto argsDone;
       case ARGV_FLOAT:
-         nargs = (int) infoPtr->src;
+         nargs = (long) infoPtr->src;
          if (nargs<1) nargs=1;
          for (i=0; i<nargs; i++) {
             if (argc == 0) {
@@ -230,7 +252,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
          }
          break;
       case ARGV_DOUBLE:
-         nargs = (int) infoPtr->src;
+         nargs = (long) infoPtr->src;
          if (nargs<1) nargs=1;
          for (i=0; i<nargs; i++) {
             if (argc == 0) {
@@ -332,7 +354,7 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
 #define NUM_SPACES 20
    static char spaces[] = "                    ";
 /*   char tmp[30]; */
-   int nargs;
+   long nargs;
 
 /* Macro to optionally print errors */
 #define FPRINTF if (!(flags&ARGV_NO_PRINT)) (void) fprintf
@@ -379,16 +401,25 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
          switch (infoPtr->type) {
          case ARGV_INT: {
             FPRINTF(stderr, "\n\t\tDefault value:");
-            nargs = (int) infoPtr->src;
+            nargs = (long) infoPtr->src;
             if (nargs<1) nargs=1;
             for (j=0; j<nargs; j++) {
                FPRINTF(stderr, " %d", *(((int *) infoPtr->dst)+j));
             }
             break;
          }
+         case ARGV_LONG: {
+            FPRINTF(stderr, "\n\t\tDefault value:");
+            nargs = (long) infoPtr->src;
+            if (nargs<1) nargs=1;
+            for (j=0; j<nargs; j++) {
+               FPRINTF(stderr, " %d", *(((long *) infoPtr->dst)+j));
+            }
+            break;
+         }
          case ARGV_FLOAT: {
             FPRINTF(stderr, "\n\t\tDefault value:");
-            nargs = (int) infoPtr->src;
+            nargs = (long) infoPtr->src;
             if (nargs<1) nargs=1;
             for (j=0; j<nargs; j++) {
                FPRINTF(stderr, " %f", *(((float *) infoPtr->dst)+j));
@@ -397,7 +428,7 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
          }
          case ARGV_DOUBLE: {
             FPRINTF(stderr, "\n\t\tDefault value:");
-            nargs = (int) infoPtr->src;
+            nargs = (long) infoPtr->src;
             if (nargs<1) nargs=1;
             for (j=0; j<nargs; j++) {
                FPRINTF(stderr, " %g", *(((double *) infoPtr->dst)+j));
@@ -407,7 +438,7 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
          case ARGV_STRING: {
             char *string;
 
-            nargs = (int) infoPtr->src;
+            nargs = (long) infoPtr->src;
             if (nargs<1) nargs=1;
             string = *((char **) infoPtr->dst);
             if ((nargs==1) && (string == NULL)) break;

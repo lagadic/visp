@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.h,v 1.5 2007-05-02 16:41:43 fspindle Exp $
+ * $Id: vpParseArgv.h,v 1.6 2007-06-06 12:11:19 asaunier Exp $
  *
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.
@@ -50,6 +50,7 @@
 typedef enum  {
   ARGV_CONSTANT,
   ARGV_INT,
+  ARGV_LONG,
   ARGV_STRING,
   ARGV_REST,
   ARGV_FLOAT,
