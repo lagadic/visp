@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.8 2007-06-06 12:11:19 asaunier Exp $
+ * $Id: vpParseArgv.cpp,v 1.9 2007-06-07 10:35:29 fspindle Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -413,7 +413,7 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
             nargs = (long) infoPtr->src;
             if (nargs<1) nargs=1;
             for (j=0; j<nargs; j++) {
-               FPRINTF(stderr, " %d", *(((long *) infoPtr->dst)+j));
+               FPRINTF(stderr, " %ld", *(((long *) infoPtr->dst)+j));
             }
             break;
          }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testVideoDevice.cpp,v 1.2 2007-06-06 13:11:53 asaunier Exp $
+ * $Id: testVideoDevice.cpp,v 1.3 2007-06-07 10:35:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,6 @@ typedef enum {
   vpGTK,
   vpGDI,
   vpD3D,
-  vpNone
 } vpDisplayType;
 
 /*!
@@ -111,7 +110,7 @@ OPTIONS:                                               Default\n\
      variable produces the same behaviour than using\n\
      this option.\n\
 \n\
-  -t <type of video device>\n\
+  -t <type of video device>                            \"%s\"\n\
      String specifying the video device to use.\n\
      Possible values:\n\
        \"X11\": only on UNIX platforms,\n\
