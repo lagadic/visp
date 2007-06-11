@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.31 2007-06-05 13:43:09 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.32 2007-06-11 15:52:34 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -943,7 +943,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
 /*!
   \brief display the gray level image (8bits)
 
-  GTK has to be initialized
+  Display has to be initialized
 
   \warning suppres the overlay drawing
 
@@ -1162,10 +1162,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 */
 void vpDisplayX::displayImage(const unsigned char *I)
 {
-
   unsigned char       *dst_32 = NULL;
-
-
 
   if (Xinitialise)
   {
@@ -1173,11 +1170,11 @@ void vpDisplayX::displayImage(const unsigned char *I)
     dst_32 = (unsigned char*)Ximage->data;
 
     for (unsigned int i = 0; i < width * height; i++) {
-      char val = I[i];
-      *(dst_32 ++) = val;	// Composante Rouge.
-      *(dst_32 ++) = val;	// Composante Vertee.
-      *(dst_32 ++) = val;	// Composante Bleue.
-      *(dst_32 ++) = val;	// Composante Bleue.
+      *(dst_32 ++) = *I;	// red component.
+      *(dst_32 ++) = *I;	// green component.
+      *(dst_32 ++) = *I;	// blue component.
+      *(dst_32 ++) = *I;	// luminance component.
+      I++;
     }
 
     // Affichage de l'image dans la Pixmap.
@@ -1509,15 +1506,17 @@ void vpDisplayX::displayArrow(unsigned int i1,unsigned int j1,
 void
 vpDisplayX::displayRectangle(unsigned int i, unsigned int j,
 			     unsigned int width, unsigned int height,
-			     vpColor::vpColorType col)
+			     vpColor::vpColorType col, bool fill)
 {
   if (Xinitialise)
   {
     XSetForeground (display, context, x_color[col]);
     XSetLineAttributes (display, context, 0,
 			LineSolid, CapButt, JoinBevel);
-
-    XDrawRectangle (display, window, context,  j, i, width-1, height-1);
+    if(fill == false)
+      XDrawRectangle (display, pixmap, context,  j, i, width-1, height-1);
+    else
+      XFillRectangle (display, pixmap, context,  j, i, width, height);
   }
  else
   {
@@ -1534,7 +1533,7 @@ vpDisplayX::displayRectangle(unsigned int i, unsigned int j,
 */
 void
 vpDisplayX::displayRectangle(const vpRect &rect,
-			     vpColor::vpColorType col)
+			     vpColor::vpColorType col, bool fill)
 {
   if (Xinitialise)
   {
@@ -1545,6 +1544,14 @@ vpDisplayX::displayRectangle(const vpRect &rect,
     XDrawRectangle (display, pixmap, context, 
 		    (int)rect.getLeft(), (int)rect.getTop(), 
 		    (int)rect.getWidth()-1, (int)rect.getHeight()-1);
+    if(fill == false)
+      XDrawRectangle (display, pixmap, context, 
+        (int)rect.getLeft(), (int)rect.getTop(), 
+        (int)rect.getWidth()-1, (int)rect.getHeight()-1);
+    else
+      XFillRectangle (display, pixmap, context,
+        (int)rect.getLeft(), (int)rect.getTop(), 
+        (int)rect.getWidth(), (int)rect.getHeight());
 			
   }
  else

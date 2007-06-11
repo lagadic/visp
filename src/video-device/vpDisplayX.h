@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.13 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpDisplayX.h,v 1.14 2007-06-11 15:52:34 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -166,9 +166,9 @@ protected:
 
   void displayRectangle(unsigned int i, unsigned int j,
 			unsigned int width, unsigned int height,
-			vpColor::vpColorType col);
+			vpColor::vpColorType col, bool fill = false);
   void displayRectangle(const vpRect &rect,
-			vpColor::vpColorType col);
+			vpColor::vpColorType col, bool fill = false);
   void displayCharString(unsigned int i,unsigned int j,char *s,
 			 vpColor::vpColorType c=vpColor::green) ;
 

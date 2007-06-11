@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.15 2007-06-05 13:46:19 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.16 2007-06-11 15:52:34 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -398,11 +398,11 @@ void vpDisplayWin32::displayDotLine(unsigned int i1, unsigned int j1,
 */
 void vpDisplayWin32::displayRectangle(unsigned int i, unsigned int j,
 				      unsigned int width, unsigned int height,
-				      vpColor::vpColorType col)
+				      vpColor::vpColorType col, bool fill)
 {
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->drawRect(i,j,width,height,col);
+  window.renderer->drawRect(i,j,width,height,col, fill);
 }
 /*!
   Displays a rectangle.
@@ -410,12 +410,12 @@ void vpDisplayWin32::displayRectangle(unsigned int i, unsigned int j,
   \param col : The rectangle's color
 */
 void vpDisplayWin32::displayRectangle(const vpRect &rect,
-				      vpColor::vpColorType col)
+				      vpColor::vpColorType col, bool fill)
 {
   //wait if the window is not initialized
   waitForInit();
   window.renderer->drawRect((int)rect.getTop(),(int)rect.getLeft(),
-			    (int)rect.getWidth(),(int)rect.getHeight(),col);
+			    (int)rect.getWidth(),(int)rect.getHeight(),col, fill);
 }
 
 /*!

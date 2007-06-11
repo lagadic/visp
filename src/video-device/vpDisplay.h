@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.15 2007-06-01 14:13:54 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.16 2007-06-11 15:52:34 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -154,9 +154,9 @@ protected :
 
   virtual void displayRectangle(unsigned int i, unsigned int j,
 				unsigned int width, unsigned int height,
-				vpColor::vpColorType col)=0 ;
+				vpColor::vpColorType col, bool fill = false)=0 ;
   virtual void displayRectangle(const vpRect &rect,
-				vpColor::vpColorType col)=0 ;
+				vpColor::vpColorType col, bool fill = false)=0 ;
   virtual void displayCharString(unsigned int i,unsigned int j,char *s,
 				 vpColor::vpColorType c=vpColor::green)=0 ;
 
@@ -211,11 +211,11 @@ protected :
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       unsigned int i, unsigned int j,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType col);
+			       vpColor::vpColorType col, bool fill = false);
   //! Display a rectangle.
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       const vpRect &rect,
-			       vpColor::vpColorType col);
+			       vpColor::vpColorType col, bool fill = false);
   //! Display a string
   static void displayCharString(const vpImage<unsigned char> &I,
 				unsigned int i,unsigned int j,char *s,
@@ -275,7 +275,7 @@ protected :
   static void displayRectangle_uv(const vpImage<unsigned char> &I,
 				  unsigned int u, unsigned int v,
 				  unsigned int width, unsigned int height,
-				  vpColor::vpColorType col);
+				  vpColor::vpColorType col, bool fill = false);
   //! Display a string
   static void displayCharString_uv(const vpImage<unsigned char> &I,
 				   unsigned int u,unsigned int v,char *s,

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.27 2007-06-05 13:42:18 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.28 2007-06-11 15:52:34 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -774,12 +774,15 @@ vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
 void
 vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color)
+			       vpColor::vpColorType color, bool fill)
 {
   if (GTKinitialized)
     {
       gdk_gc_set_foreground(gc,col[color]);
-      gdk_draw_rectangle(background,gc,FALSE,j,i,width,height);
+      if (fill = false)
+        gdk_draw_rectangle(background,gc,FALSE,j,i,width-1,height-1);
+      else
+        gdk_draw_rectangle(background,gc,TRUE,j,i,width,height);
     }
   else
     {
@@ -796,15 +799,19 @@ vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
 */
 void
 vpDisplayGTK::displayRectangle(const vpRect &rect,
-			       vpColor::vpColorType color)
+			       vpColor::vpColorType color, bool fill)
 {
   if (GTKinitialized)
     {
       gdk_gc_set_foreground(gc,col[color]);
-      gdk_draw_rectangle(background,gc,FALSE,
-			 (int)rect.getLeft(), (int)rect.getTop(),
-			 (int)rect.getWidth(), (int)rect.getHeight());
-
+      if (fill = false)
+        gdk_draw_rectangle(background,gc,FALSE,
+			   (int)rect.getLeft(), (int)rect.getTop(),
+			   (int)rect.getWidth()-1, (int)rect.getHeight()-1);
+      else
+        gdk_draw_rectangle(background,gc,TRUE,
+          (int)rect.getLeft(), (int)rect.getTop(),
+          (int)rect.getWidth(), (int)rect.getHeight());
     }
   else
     {
