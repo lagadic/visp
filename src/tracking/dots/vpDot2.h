@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.23 2007-06-06 14:21:45 asaunier Exp $
+ * $Id: vpDot2.h,v 1.24 2007-06-11 08:34:56 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -151,7 +151,7 @@ public:
 
   \param min : Color level of a dot to search in an area.
 
-  \sa setWidth(), setHeight(), setSurface(), setOutLevel(), setAccuracy()
+  \sa setWidth(), setHeight(), setSurface(), setOutLevel(), setGrayLevelPrecision()
 
   */
   inline void setGrayLevelMin( const unsigned int & min ) {
@@ -168,7 +168,7 @@ public:
 
   \param max : Intensity level of a dot to search in an area.
 
-  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setAccuracy()
+  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setGrayLevelPrecision()
   */
   inline void setGrayLevelMax( const unsigned int & max ) {
     if (max > 255)
@@ -341,6 +341,7 @@ private:
 				// pixel with higher level don't belong
 				// to this dot.
   double grayLevelPrecision ;
+  double gamma ;
   double sizePrecision ;
 
   // Area where the dot is to search
