@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.28 2007-06-11 15:52:34 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.29 2007-06-11 16:00:54 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -770,6 +770,7 @@ vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
   \param width
   \param height
   \param color (see vpColor)
+  \param fill : set as true to fill the rectangle.
 */
 void
 vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
@@ -796,6 +797,7 @@ vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
   \brief display a rectangle
   \param rect : Rectangle characteristics.
   \param color : Color (see vpColor)
+  \param fill : set as true to fill the rectangle.
 */
 void
 vpDisplayGTK::displayRectangle(const vpRect &rect,

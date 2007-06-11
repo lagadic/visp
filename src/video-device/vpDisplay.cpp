@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.19 2007-06-11 15:52:34 asaunier Exp $
+ * $Id: vpDisplay.cpp,v 1.20 2007-06-11 16:00:54 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -359,6 +359,7 @@ height.
 \param width : Width of the rectangle.
 \param height : Height of the rectangle.
 \param col : Color of the rectangle.
+\param fill : set as true to fill the rectangle.
 
 */
 void
@@ -387,7 +388,7 @@ Display a rectangle in the display window.
 \param I : Image associated to the display.
 \param rect : The rectangle characteristics
 \param col  : Color of the rectangle.
-
+\param fill : set as true to fill the rectangle.
 */
 void
 vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
@@ -1116,6 +1117,7 @@ height.
 \param width Width of the rectangle.
 \param height Height of the rectangle.
 \param col Color of the rectangle.
+\param fill : set as true to fill the rectangle.
 
 */
 void
