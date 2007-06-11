@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.18 2007-04-23 14:30:39 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.19 2007-06-11 15:52:34 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -365,13 +365,13 @@ void
 vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
 			    unsigned int i, unsigned int j,
 			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType col)
+			    vpColor::vpColorType col, bool fill)
 {
   try
     {
       if (I.display != NULL)
 	{
-	  (I.display)->displayRectangle(i,j,width,height,col) ;
+	  (I.display)->displayRectangle(i,j,width,height,col, fill) ;
 	}
     }
   catch(...)
@@ -392,13 +392,13 @@ Display a rectangle in the display window.
 void
 vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
 			    const vpRect &rect,
-			    vpColor::vpColorType col)
+			    vpColor::vpColorType col, bool fill)
 {
   try
     {
       if (I.display != NULL)
 	{
-	  (I.display)->displayRectangle(rect, col) ;
+	  (I.display)->displayRectangle(rect, col , fill) ;
 	}
     }
   catch(...)
@@ -1122,13 +1122,13 @@ void
 vpDisplay::displayRectangle_uv(const vpImage<unsigned char> &I,
 			       unsigned int u, unsigned int v,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType col)
+			       vpColor::vpColorType col, bool fill)
 {
   try
     {
       if (I.display != NULL)
 	{
-	  (I.display)->displayRectangle(v,u,width,height,col) ;
+	  (I.display)->displayRectangle(v,u,width,height,col,fill) ;
 	}
     }
   catch(...)
