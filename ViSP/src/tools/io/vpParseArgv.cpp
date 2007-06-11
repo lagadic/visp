@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.9 2007-06-07 10:35:29 fspindle Exp $
+ * $Id: vpParseArgv.cpp,v 1.10 2007-06-11 08:38:01 asaunier Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -42,10 +42,10 @@
  * in every application.
  */
 
-vpArgvInfo vpParseArgv::defaultTable[2] = {
-    {"-help",	ARGV_HELP,	(char *) NULL,	(char *) NULL,
+vpParseArgv::vpArgvInfo vpParseArgv::defaultTable[2] = {
+    {"-help", ARGV_HELP, (char *) NULL, (char *) NULL,
 	"Print summary of command-line options and abort.\n"},
-    {NULL,	ARGV_END,	(char *) NULL,	(char *) NULL,
+    {NULL, ARGV_END, (char *) NULL, (char *) NULL,
 	(char *) NULL}
 };
 
