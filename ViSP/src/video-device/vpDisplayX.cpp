@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.32 2007-06-11 15:52:34 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.33 2007-06-11 16:00:54 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1502,6 +1502,7 @@ void vpDisplayX::displayArrow(unsigned int i1,unsigned int j1,
   \param width
   \param height
   \param col : Color (see vpColor)
+  \param fill : set as true to fill the rectangle.
 */
 void
 vpDisplayX::displayRectangle(unsigned int i, unsigned int j,
@@ -1530,6 +1531,7 @@ vpDisplayX::displayRectangle(unsigned int i, unsigned int j,
   \brief display a rectangle
   \param rect : Rectangle characteristics.
   \param col : Color (see vpColor)
+  \param fill : set as true to fill the rectangle.
 */
 void
 vpDisplayX::displayRectangle(const vpRect &rect,

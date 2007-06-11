@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.16 2007-06-11 15:52:34 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.17 2007-06-11 16:00:54 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -395,6 +395,7 @@ void vpDisplayWin32::displayDotLine(unsigned int i1, unsigned int j1,
   \param width : width of the rectangle
   \param height : height of the rectangle
   \param col : The rectangle's color
+  \param fill : set as true to fill the rectangle.
 */
 void vpDisplayWin32::displayRectangle(unsigned int i, unsigned int j,
 				      unsigned int width, unsigned int height,
@@ -408,6 +409,7 @@ void vpDisplayWin32::displayRectangle(unsigned int i, unsigned int j,
   Displays a rectangle.
   \param rect : Rectangle characteristics.
   \param col : The rectangle's color
+  \param fill : set as true to fill the rectangle.
 */
 void vpDisplayWin32::displayRectangle(const vpRect &rect,
 				      vpColor::vpColorType col, bool fill)
