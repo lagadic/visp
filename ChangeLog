@@ -6,10 +6,11 @@ ViSP 2.4.x
 	  setNbMaxPoint(double nb) to be less image size dependent.
 	  The maximal dot size is set by default to 0.25% (quarter image size)
 	- vpDot2: Changes in searchDotsInArea() :
-	    the algorithm search now in the boundingboxes of the bad dots.
-	    bug fixed : we could fall in an infinite loop.
-	  Split accuracy private variable into grayLevelPrecision and 
-	  sizePrecision.
+	    The algorithm search now in the boundingboxes of the bad dots.
+	    Bug fixed : we could fall in an infinite loop.
+	    Split accuracy private variable into grayLevelPrecision and 
+	  sizePrecision. The gray level min and max are well calculated for 
+	  white and black dots.
 	- vpDisplayX : better management of endianness
 	- vpDisplayGTK, vpDisplayGDI, vpDisplayD3D : 
 	  The behavior of the following methods change to be similar
@@ -22,6 +23,9 @@ ViSP 2.4.x
 	  segmentation fault : bug fixed
 	- vpDisplayD3D : we couldn't re-use a display after the call of the 
 	  function close(vpImage). We had a black image : bug fixed.
+	- vpDisplay : changes in displayRectangle():an option parameter 
+	  fill has been had to precise if the displayed rectangle is filled 
+	  or not. 
   - Testing:
 	- test/video-device/testClick.cpp was added
   - Documentation improvement
