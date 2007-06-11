@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.8 2007-05-31 13:01:43 asaunier Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.9 2007-06-11 08:40:12 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -350,12 +350,17 @@ main(int argc, char ** argv)
   d.setGraphics(true);
   if (opt_click_allowed & opt_display) {
     try{
-      d.setGrayLevelPrecision(0.5);
+      d.setGrayLevelPrecision(0.8);
       
       std::cout << "Please click on a dot to initialize detection"
                 << std::endl;
       
       d.initTracking(I) ;
+      if (opt_display) {
+          vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),
+                        10,vpColor::green) ;
+          vpDisplay::flush(I) ;
+      }
       d.setSizePrecision(0.65);
       printf("Dot characteristics: \n");
       printf("  width : %lf\n", d.getWidth());
@@ -368,8 +373,7 @@ main(int argc, char ** argv)
     }
     catch(...)
     {
-      std::cerr << "Cannot initialise the tracking and" 
-                << "get default dot features..."<< std::endl;
+      std::cerr << "Cannot initialize the tracking..."<< std::endl;
       exit(-1);
     }
   }
@@ -381,7 +385,7 @@ main(int argc, char ** argv)
     d.setSurface(124);
     d.setGrayLevelMin(164);
     d.setGrayLevelMax(255);
-    d.setGrayLevelPrecision(0.5);
+    d.setGrayLevelPrecision(0.8);
     d.setSizePrecision(0.65);
   }
     
@@ -411,25 +415,25 @@ main(int argc, char ** argv)
     std::cout << "Search dots in image" << filename << std::endl;
     vpList<vpDot2> * list_d;
     list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
-    if(opt_click_allowed){
-      if( list_d->nbElement() == 0 ) {
-        std::cout << "Dot auto detection did not work, "
-	      << "Please click on a dot to perform a manual detection"
-	      << std::endl;
-
-        d.initTracking( I );
-        if (opt_display) {
-          vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),
-                        10,vpColor::green) ;
-          vpDisplay::flush(I) ;
-        }
-        list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
-      }
-    }
+//     if(opt_click_allowed){
+//       if( list_d->nbElement() == 0 ) {
+//         std::cout << "Dot auto detection did not work, "
+// 	      << "Please click on a dot to perform a manual detection"
+// 	      << std::endl;
+// 
+//         d.initTracking( I );
+//         if (opt_display) {
+//           vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),
+//                         10,vpColor::green) ;
+//           vpDisplay::flush(I) ;
+//         }
+//         list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
+//       }
+//     }
     if( list_d->nbElement() == 0 ) {
     std::cout << "Dot auto detection did not work."
     << std::endl;
-    continue ; 
+    exit(-1) ;
     }
     else {
       std::cout << std::endl << list_d->nbElement() << " dots are detected" << std::endl;
