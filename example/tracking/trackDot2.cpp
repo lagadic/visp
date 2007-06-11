@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.10 2007-06-06 08:58:16 fspindle Exp $
+ * $Id: trackDot2.cpp,v 1.11 2007-06-11 08:39:09 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,6 +76,11 @@ Print the program options.
   \param name : Program name.
   \param badparam : Bad parameter name.
   \param ipath : Input image path.
+  \param ppath : Personal image path.
+  \param first : First image.
+  \param nimages : Number of images to manipulate.
+  \param step : Step between two images.
+
 
 */
 void usage(char *name, char *badparam, std::string ipath, std::string ppath,
@@ -379,6 +384,7 @@ main(int argc, char ** argv)
 
   try{
     if (opt_display && opt_click_allowed) {
+      std::cout << "Click on a dot to track it."<< std::endl;
       d.initTracking(I) ;
     }
     else {
