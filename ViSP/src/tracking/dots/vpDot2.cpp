@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.24 2007-06-06 14:21:45 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.25 2007-06-11 08:36:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,7 +91,9 @@ vpDot2::vpDot2() : vpTracker()
   surface = 0;
   gray_level_min = 128;
   gray_level_max = 255;
-  grayLevelPrecision = 0.65;
+  grayLevelPrecision = 0.85;
+  gamma = 1.5 ;
+  
   sizePrecision = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
@@ -127,7 +129,8 @@ vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
   surface = 0;
   gray_level_min = 128;
   gray_level_max = 255;
-  grayLevelPrecision = 0.65;
+  grayLevelPrecision = 0.85;
+  gamma = 1.5 ;
   sizePrecision = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
@@ -163,7 +166,8 @@ vpDot2::vpDot2(const double u, const double v ) : vpTracker()
   surface = 0;
   gray_level_min = 128;
   gray_level_max = 255;
-  grayLevelPrecision = 0.65;
+  grayLevelPrecision = 0.85;
+  gamma = 1.5 ;
   sizePrecision = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
@@ -200,6 +204,7 @@ void vpDot2::operator=( const vpDot2& twinDot )
   gray_level_min = twinDot.gray_level_min;
   gray_level_max = twinDot.gray_level_max;
   grayLevelPrecision = twinDot.grayLevelPrecision;
+  gamma = twinDot.gamma; ;
   sizePrecision = twinDot.sizePrecision;
 
   area = twinDot.area;
@@ -263,15 +268,17 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   cog_ufloat = (double) u ;
   cog_vfloat = (double) v ;
 
-  if((I[v][u] - 255*(1 - grayLevelPrecision))<0){
+  double Ip = pow((double)I[v][u]/255,1/gamma);
+
+  if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
   }
   else{
-    gray_level_min = (unsigned int) (I[v][u] - 255*(1 - grayLevelPrecision));
+    gray_level_min = (unsigned int) (255*pow(Ip - (1 - grayLevelPrecision),gamma));
     if (gray_level_min > 255)
       gray_level_min = 255;
   }
-  gray_level_max = (unsigned int) (I[v][u] + 255*(1 - grayLevelPrecision));
+  gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
 
@@ -305,16 +312,17 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
 {
   cog_ufloat = (double) u ;
   cog_vfloat = (double) v ;
+  double Ip = pow((double)I[v][u]/255,1/gamma);
 
-  if((I[v][u] - 255*(1 - grayLevelPrecision))<0){
+  if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
   }
   else{
-    gray_level_min = (unsigned int) (I[v][u] - 255*(1 - grayLevelPrecision));
+    gray_level_min = (unsigned int) (255*pow(Ip - (1 - grayLevelPrecision),gamma));
     if (gray_level_min > 255)
       gray_level_min = 255;
   }
-  gray_level_max = (unsigned int) (I[v][u] + 255*(1 - grayLevelPrecision));
+  gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
 
@@ -502,17 +510,18 @@ void vpDot2::track(vpImage<unsigned char> &I)
   // Get dots center of gravity
   unsigned int u = (unsigned int) this->get_u();
   unsigned int v = (unsigned int) this->get_v();
-
   // Updates the min and max gray levels for the next iteration
-  if((I[v][u] - 255*(1 - grayLevelPrecision))<0){
+  double Ip = pow((double)I[v][u]/255,1/gamma);
+
+  if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
   }
   else{
-    gray_level_min = (unsigned int) (I[v][u] - 255*(1 - grayLevelPrecision));
+    gray_level_min = (unsigned int) (255*pow(Ip - (1 - grayLevelPrecision),gamma));
     if (gray_level_min > 255)
       gray_level_min = 255;
   }
-  gray_level_max = (unsigned int) (I[v][u] + 255*(1 - grayLevelPrecision));
+  gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
 
@@ -613,6 +622,7 @@ double vpDot2::getSurface() const
   Return the precision of the gray level of the dot. It is a double
   precision float witch value is in ]0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
+
 */
 double vpDot2::getGrayLevelPrecision() const
 {
@@ -710,7 +720,7 @@ void vpDot2::setHeight( const double & height )
 
   \param surface : Surface of a dot to search in an area.
 
-  \sa setWidth(), setHeight(), setInLevel(), setOutLevel(), setAccuracy()
+  \sa setWidth(), setHeight(), setInLevel(), setOutLevel()
 
 */
 void vpDot2::setSurface( const double & surface )
@@ -722,10 +732,15 @@ void vpDot2::setSurface( const double & surface )
 
   Set the precision of the gray level of the dot.
 
-  \param accuracy : It is an double precision float which value is in ]0,1]:
+  \param grayLevelPrecision : It is a double precision float which value is in ]0,1]:
   - 1 means full precision, whereas values close to 0 show a very bad accuracy.
   - Values lower or equal to 0 are brought back to an epsion>0
   - Values higher than  1 are brought back to 1
+  If the initial gray level is I, the gray levels of the dot will be between :
+  \f$Imin=255*\big((\frac{I}{255})^{{\gamma}^{-1}}-(1-grayLevelPrecision)\big)^{\gamma}\f$
+  and
+  \f$Imax=255*\big((\frac{I}{255})^{{\gamma}^{-1}}+(1-grayLevelPrecision)\big)^{\gamma}\f$
+  with \f$\gamma=1.5\f$ .
 
   \sa setWidth(), setHeight(), setSurface(), setInLevel(), setOutLevel()
 */
@@ -749,7 +764,7 @@ void vpDot2::setGrayLevelPrecision( const double & grayLevelPrecision )
 
   Set the precision of the size of the dot.
 
-  \param accuracy : It is an double precision float which value is in ]0,1]:
+  \param sizePrecision : It is a double precision float which value is in ]0,1]:
   - 1 means full precision, whereas values close to 0 show a very bad accuracy.
   - Values lower or equal to 0 are brought back to an epsion>0
   - Values higher than  1 are brought back to 1
