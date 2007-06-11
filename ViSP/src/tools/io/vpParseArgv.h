@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.h,v 1.6 2007-06-06 12:11:19 asaunier Exp $
+ * $Id: vpParseArgv.h,v 1.7 2007-06-11 08:37:36 asaunier Exp $
  *
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.
@@ -42,30 +42,34 @@
 
 */
 
-/*!
+
+class VISP_EXPORT vpParseArgv
+{
+ public:
+  /*!
   ArgvType
   Legal values for the type field of a ArgvInfo: see the user
   documentation for details.
  */
-typedef enum  {
-  ARGV_CONSTANT,
-  ARGV_INT,
-  ARGV_LONG,
-  ARGV_STRING,
-  ARGV_REST,
-  ARGV_FLOAT,
-  ARGV_DOUBLE,
-  ARGV_FUNC,
-  ARGV_GENFUNC,
-  ARGV_HELP,
-  ARGV_END
-} vpArgvType;
+  typedef enum  {
+    ARGV_CONSTANT,
+    ARGV_INT,
+    ARGV_LONG,
+    ARGV_STRING,
+    ARGV_REST,
+    ARGV_FLOAT,
+    ARGV_DOUBLE,
+    ARGV_FUNC,
+    ARGV_GENFUNC,
+    ARGV_HELP,
+    ARGV_END
+  } vpArgvType;
 
-/*!
+ /*!
 
-  Structure used to specify how to handle argv options.
-*/
-typedef struct {
+   Structure used to specify how to handle argv options.
+ */
+  typedef struct {
     char *key;		/*!< The key string that flags the option in the
 			 * argv array. */
     vpArgvType type;	/*!< Indicates option type;  see below. */
@@ -74,13 +78,9 @@ typedef struct {
     char *dst;		/*!< Address of value to be modified;  usage
 			 * depends on type. */
     char *help;		/*!< Documentation message describing this option. */
-} vpArgvInfo;
+  } vpArgvInfo;
 
-
-class VISP_EXPORT vpParseArgv
-{
-
- public:
+public:
   static vpArgvInfo defaultTable[2];
   static bool parse(int *argcPtr, char **argv,
 		    vpArgvInfo *argTable, int flags);
@@ -90,7 +90,7 @@ class VISP_EXPORT vpParseArgv
   static void printUsage (vpArgvInfo *argTable, int flags);
 
 
-  /* \enum ArgvFlags
+  /*! \enum ArgvFlags
     Flag bits for passing to vpParseArgv:
    */
   enum ArgvFlags {
