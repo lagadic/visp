@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.23 2007-06-05 12:44:04 fspindle Exp $
+ * $Id: vpDot.h,v 1.24 2007-06-12 14:50:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,11 +57,11 @@
 #include <visp/vpRect.h>
 
 
-/*
+/*!
   \class vpDot
-  \brief Track a white dot.
+  \brief Track a dot.
 
-  \sa vpDotExample.cpp
+  \sa trackDot.cpp
 */
 class VISP_EXPORT vpDot : public vpTracker
 {
@@ -233,7 +233,7 @@ private:
   double grayLevelPrecision;  //precision of the gray level of the dot.
   //It is a double precision float witch value is in ]0,1].
   //1 means full precision, whereas values close to 0 show a very bad precision
-
+  double gamma ;
   //! flag : true moment are computed
   bool compute_moment ;
 
@@ -262,7 +262,16 @@ public:
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
 
   void setMaxDotSize(double percentage) ;
+  void setGrayLevelPrecision( const double & grayLevelPrecision );
+  
+  /*!
 
+    Return the precision of the gray level of the dot. It is a double
+    precision float witch value is in ]0,1]. 1 means full precision, whereas
+    values close to 0 show a very bad precision.
+
+  */
+double getGrayLevelPrecision() const {return grayLevelPrecision;}
 
   /*!
     Activates the display of all the pixels of the dot during the tracking.
