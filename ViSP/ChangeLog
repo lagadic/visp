@@ -5,6 +5,8 @@ ViSP 2.4.x
 	- vpDot: setMaxDotSize(double percentage) replace 
 	  setNbMaxPoint(double nb) to be less image size dependent.
 	  The maximal dot size is set by default to 0.25% (quarter image size)
+	         setGrayLevelPrecision(double grayLevelPrecision) has been 
+          added for a better management of gray dots detection.
 	- vpDot2: Changes in searchDotsInArea() :
 	    The algorithm search now in the boundingboxes of the bad dots.
 	    Bug fixed : we could fall in an infinite loop.
@@ -28,6 +30,7 @@ ViSP 2.4.x
 	  or not. 
   - Testing:
 	- test/video-device/testClick.cpp was added
+	- test/video-device/testVideoDevice.cpp was added
   - Documentation improvement
 	- vpRobotAfma6: example usage of getPosition() was updated
 	- vpDisplayGDI is included in the doxygen documentation
