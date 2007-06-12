@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.26 2007-06-12 13:47:38 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.27 2007-06-12 14:50:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -423,7 +423,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
 {
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
-  // First, we will estimate the potition of the tracked point
+  // First, we will estimate the position of the tracked point
 
   double estimated_u = get_u();
   double estimated_v = get_v();

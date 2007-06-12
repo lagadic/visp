@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.25 2007-06-05 12:44:04 fspindle Exp $
+ * $Id: vpDot.cpp,v 1.26 2007-06-12 14:50:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,7 +77,8 @@ void vpDot::init()
   
   gray_level_min = 128;
   gray_level_max = 255;
-  grayLevelPrecision = 0.65;
+  grayLevelPrecision = 0.85;
+  gamma = 1.5 ;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
@@ -509,10 +510,17 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   v = v_cog ;
 
   // Initialize the threshold for the next call to track()
-  gray_level_min = (unsigned int) (mean_value * 0.8);
-  if (gray_level_min > 255)
-    gray_level_min = 255;
-  gray_level_max = (unsigned int) (mean_value * 1.2);
+  double Ip = pow((double)mean_value/255,1/gamma);
+
+  if(Ip - (1 - grayLevelPrecision)<0){
+    gray_level_min = 0 ;
+  }
+  else{
+    gray_level_min = (unsigned int) (255*pow(Ip - (1 - grayLevelPrecision),gamma));
+    if (gray_level_min > 255)
+      gray_level_min = 255;
+  }
+  gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
 
@@ -567,11 +575,11 @@ vpDot::setMaxDotSize(double percentage)
   Initialize the tracking with a mouse click and update the dot
   characteristics (center of gravity, moments).
 
-  Wait a user click in a white area in the image I. The clicked pixel
+  Wait a user click in a gray area in the image I. The clicked pixel
   will be the starting point from which the dot will be tracked.
 
-  The threshold used to segment the dot is set to 80 percent of the
-  gray level of clicked pixel.
+  The threshold used to segment the dot is set with the grayLevelPrecision
+  parameter. See the formula in setGrayLevelPrecision() function.
 
   The sub pixel coordinates of the dot are updated. To get the center
   of gravity coordinates of the dot, use get_u() and get_v(). To
@@ -592,13 +600,22 @@ vpDot::initTracking(vpImage<unsigned char>& I)
 
   while (vpDisplay::getClick(I,i1,j1)!=true) ;
 
-  gray_level_min = (unsigned int) (I[i1][j1] * 0.8);
-  if (gray_level_min > 255)
-    gray_level_min = 255;
-  gray_level_max = (unsigned int) (I[i1][j1] * 1.2);
+
+  double Ip = pow((double)I[i1][j1]/255,1/gamma);
+
+  if(Ip - (1 - grayLevelPrecision)<0){
+    gray_level_min = 0 ;
+  }
+  else{
+    gray_level_min = (unsigned int) (255*pow(Ip - (1 - grayLevelPrecision),gamma));
+    if (gray_level_min > 255)
+      gray_level_min = 255;
+  }
+  gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
 
+    
   double u,v ;
   u = j1 ;
   v = i1 ;
@@ -662,13 +679,19 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
   cog_u = u ;
   cog_v = v ;
 
-  gray_level_min = (unsigned int) (I[cog_v][cog_u] * grayLevelPrecision);
-  if (gray_level_min > 255)
-    gray_level_min = 255;
-  gray_level_max = (unsigned int) (I[cog_v][cog_u] * (2 - grayLevelPrecision));
+  double Ip = pow((double)I[cog_v][cog_u]/255,1/gamma);
+
+  if(Ip - (1 - grayLevelPrecision)<0){
+    gray_level_min = 0 ;
+  }
+  else{
+    gray_level_min = (unsigned int) (255*pow(Ip - (1 - grayLevelPrecision),gamma));
+    if (gray_level_min > 255)
+      gray_level_min = 255;
+  }
+  gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
-
   try {
     track( I );
   }
@@ -798,6 +821,38 @@ vpDot::track(vpImage<unsigned char> &I, double &u, double &v)
   v = vpDot::get_v() ;
 }
 
+/*!
+
+  Set the precision of the gray level of the dot.
+
+  \param grayLevelPrecision : It is a double precision float which value is in ]0,1]:
+  - 1 means full precision, whereas values close to 0 show a very bad accuracy.
+  - Values lower or equal to 0 are brought back to an epsion>0
+  - Values higher than  1 are brought back to 1
+  If the initial gray level is I, the gray levels of the dot will be between :
+  \f$Imin=255*\big((\frac{I}{255})^{{\gamma}^{-1}}-(1-grayLevelPrecision)\big)^{\gamma}\f$
+  and
+  \f$Imax=255*\big((\frac{I}{255})^{{\gamma}^{-1}}+(1-grayLevelPrecision)\big)^{\gamma}\f$
+  with \f$\gamma=1.5\f$ .
+
+  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setOutLevel()
+*/
+void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
+{
+  double epsilon = 0.05;
+  if( grayLevelPrecision<epsilon )
+  {
+    this->grayLevelPrecision = epsilon;
+  }
+  else if( grayLevelPrecision>1 )
+  {
+    this->grayLevelPrecision = 1.0;
+  }
+  else
+  {
+    this->grayLevelPrecision = grayLevelPrecision;
+  }
+}
 
 /*
  * Local variables:
