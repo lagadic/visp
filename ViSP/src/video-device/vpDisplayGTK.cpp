@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.29 2007-06-11 16:00:54 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.30 2007-06-12 13:39:07 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -780,7 +780,7 @@ vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
   if (GTKinitialized)
     {
       gdk_gc_set_foreground(gc,col[color]);
-      if (fill = false)
+      if (fill == false)
         gdk_draw_rectangle(background,gc,FALSE,j,i,width-1,height-1);
       else
         gdk_draw_rectangle(background,gc,TRUE,j,i,width,height);
@@ -806,7 +806,7 @@ vpDisplayGTK::displayRectangle(const vpRect &rect,
   if (GTKinitialized)
     {
       gdk_gc_set_foreground(gc,col[color]);
-      if (fill = false)
+      if (fill == false)
         gdk_draw_rectangle(background,gc,FALSE,
 			   (int)rect.getLeft(), (int)rect.getTop(),
 			   (int)rect.getWidth()-1, (int)rect.getHeight()-1);
