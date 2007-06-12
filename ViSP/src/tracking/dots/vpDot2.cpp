@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.25 2007-06-11 08:36:11 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.26 2007-06-12 13:47:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,7 +91,7 @@ vpDot2::vpDot2() : vpTracker()
   surface = 0;
   gray_level_min = 128;
   gray_level_max = 255;
-  grayLevelPrecision = 0.85;
+  grayLevelPrecision = 0.80;
   gamma = 1.5 ;
   
   sizePrecision = 0.65;
@@ -129,7 +129,7 @@ vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
   surface = 0;
   gray_level_min = 128;
   gray_level_max = 255;
-  grayLevelPrecision = 0.85;
+  grayLevelPrecision = 0.80;
   gamma = 1.5 ;
   sizePrecision = 0.65;
 
@@ -166,7 +166,7 @@ vpDot2::vpDot2(const double u, const double v ) : vpTracker()
   surface = 0;
   gray_level_min = 128;
   gray_level_max = 255;
-  grayLevelPrecision = 0.85;
+  grayLevelPrecision = 0.80;
   gamma = 1.5 ;
   sizePrecision = 0.65;
 
