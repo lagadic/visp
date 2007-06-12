@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: parse-argv2.cpp,v 1.3 2007-05-04 16:06:44 fspindle Exp $
+ * $Id: parse-argv2.cpp,v 1.4 2007-06-12 07:30:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,15 +66,15 @@ main(int argc, char ** argv)
   float  f_val = 3.14f;
   double d_val = 3.1415;
 
-  vpArgvInfo argTable[] =
+  vpParseArgv::vpArgvInfo argTable[] =
     {
-      {"-integer", ARGV_INT, (char*) NULL, (char *) &i_val,
+      {"-integer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &i_val,
 	 "An integer value."},
-      {"-float", ARGV_FLOAT, (char*) NULL, (char *) &f_val,
+      {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &f_val,
        "A float value."},
-      {"-double", ARGV_DOUBLE, (char*) NULL, (char *) &d_val,
+      {"-double", vpParseArgv::ARGV_DOUBLE, (char*) NULL, (char *) &d_val,
        "A double value."},
-      {(char*) NULL, ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
+      {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
     } ;
 
   // Read the command line options
