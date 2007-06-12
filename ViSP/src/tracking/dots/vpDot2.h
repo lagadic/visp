@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.24 2007-06-11 08:34:56 asaunier Exp $
+ * $Id: vpDot2.h,v 1.25 2007-06-12 13:46:55 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -188,6 +188,7 @@ public:
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
 
+private :
 
   virtual bool isValid(vpImage<unsigned char>& I, const vpDot2& wantedDot);
 
