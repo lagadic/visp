@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.34 2007-06-13 08:56:36 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.35 2007-06-13 09:55:20 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1342,7 +1342,7 @@ void vpDisplayX::closeDisplay()
 
 
 /*!
-  \brief flush the GTK buffer
+  \brief flush the X buffer
   It's necessary to use this function to see the results of any drawing
 
 */
@@ -1350,7 +1350,6 @@ void vpDisplayX::flushDisplay()
 {
   if (Xinitialise)
   {
-    XSetWindowBackgroundPixmap(display, window, pixmap);
     XClearWindow(display, window);
     XFlush(display);
     XSync(display,1);
@@ -1397,7 +1396,7 @@ void vpDisplayX::displayPoint(unsigned int i, unsigned int j,
 {
   if (Xinitialise)
   {
-	XSetForeground (display, context, x_color[col]);
+	  XSetForeground (display, context, x_color[col]);
     XDrawPoint(display, pixmap, context, j, i) ;
  
   }
