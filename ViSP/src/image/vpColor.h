@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColor.h,v 1.3 2007-02-26 16:35:11 fspindle Exp $
+ * $Id: vpColor.h,v 1.4 2007-06-13 08:57:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@ public:
     blue,
     yellow,
     cyan,
+    orange,
     none
   } vpColorType;
 } ;
