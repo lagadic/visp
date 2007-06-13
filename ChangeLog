@@ -28,6 +28,7 @@ ViSP 2.4.x
 	- vpDisplay : changes in displayRectangle():an option parameter 
 	  fill has been had to precise if the displayed rectangle is filled 
 	  or not. 
+	- vpColor : Add orange
   - Testing:
 	- test/video-device/testClick.cpp was added
 	- test/video-device/testVideoDevice.cpp was added
