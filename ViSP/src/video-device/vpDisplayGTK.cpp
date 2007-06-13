@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.30 2007-06-12 13:39:07 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.31 2007-06-13 08:56:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -261,7 +261,7 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   colormap = gdk_window_get_colormap(window);
 
 
-  col = new GdkColor *[10] ;
+  col = new GdkColor *[vpColor::none] ;
 
   /* Create color */
   gdk_color_parse("blue",&blue);
@@ -295,10 +295,15 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
 
   gdk_color_parse("orange",&orange);
   gdk_colormap_alloc_color(colormap,&orange,FALSE,TRUE);
-
+  col[vpColor::orange] = &orange ;
+  
   gdk_color_parse("white",&white);
   gdk_colormap_alloc_color(colormap,&white,FALSE,TRUE);
   col[vpColor::white] = &white ;
+
+  gdk_color_parse("black",&black);
+  gdk_colormap_alloc_color(colormap,&black,FALSE,TRUE);
+  col[vpColor::black] = &black ;
 
   /* Chargement des polices */
   Police1 = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");

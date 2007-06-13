@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.33 2007-06-11 16:00:54 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.34 2007-06-13 08:56:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -270,13 +270,13 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
   case 8:
     XColor colval ;
 
-    // Couleur NOIR.
+    // Couleur BLACK.
     x_color[vpColor::black] = 0;
 
-    // Couleur BLANC.
+    // Color WHITE.
     x_color[vpColor::white] = 255;
 
-    // Couleur ROUGE.
+    // Color RED.
     x_color[vpColor::red]= 254;
     colval.pixel  = x_color[vpColor::red] ;
     colval.red    = 256 * 255;
@@ -284,7 +284,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
 
-    // Couleur VERT.
+    // Color GREEN.
     x_color[vpColor::green] = 253;
     colval.pixel  = x_color[vpColor::green];
     colval.red    = 0;
@@ -292,7 +292,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
 
-    // Couleur BLEU.
+    // Color BLUE.
     x_color[vpColor::blue] = 252;
     colval.pixel  = x_color[vpColor::blue];
     colval.red    = 0;
@@ -300,13 +300,30 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     colval.blue   = 256 * 255;
     XStoreColor(display, lut, &colval);
 
-    // Couleur JAUNE.
+    // Color YELLOW.
     x_color[vpColor::yellow] = 251;
     colval.pixel  = x_color[vpColor::yellow];
     colval.red    = 256 * 255;
     colval.green  = 256 * 255;
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
+
+    // Color ORANGE.
+    x_color[vpColor::orange] = 250;
+    colval.pixel  = x_color[vpColor::orange];
+    colval.red    = 256 * 255;
+    colval.green  = 256 * 165;
+    colval.blue   = 0;
+    XStoreColor(display, lut, &colval);
+
+    // Color CYAN.
+    x_color[vpColor::cyan] = 249;
+    colval.pixel  = x_color[vpColor::cyan];
+    colval.red    = 0;
+    colval.green  = 256 * 255;
+    colval.blue   = 256 * 255;
+    XStoreColor(display, lut, &colval);
+    
     break;
 
   case 16:
@@ -314,7 +331,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     {
     color.flags = DoRed | DoGreen | DoBlue ;
 
-    // Couleur NOIR.
+    // Couleur BLACK.
     color.pad   = 0;
     color.red   = 0;
     color.green = 0;
@@ -323,7 +340,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
 
     x_color[vpColor::black] = color.pixel;
 
-    // Couleur BLANC.
+    // Couleur WHITE.
     color.pad   = 0;
     color.red   = 256* 255;
     color.green = 256* 255;
@@ -331,7 +348,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
     x_color[vpColor::white] = color.pixel;
 
-    // Couleur ROUGE.
+    // Couleur RED.
     color.pad   = 0;
     color.red   = 256* 255;
     color.green = 0;
@@ -339,7 +356,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
     x_color[vpColor::red] = color.pixel;
 
-    // Couleur VERT.
+    // Couleur GREEN.
     color.pad   = 0;
     color.red   = 0;
     color.green = 256*255;
@@ -347,7 +364,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
     x_color[vpColor::green] = color.pixel;
 
-    // Couleur BLEU.
+    // Couleur BLUE.
     color.pad = 0;
     color.red = 0;
     color.green = 0;
@@ -355,7 +372,7 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
     x_color[vpColor::blue] = color.pixel;
 
-    // Couleur JAUNE.
+    // Couleur YELLOW.
     color.pad = 0;
     color.red = 256 * 255;
     color.green = 256 * 255;
@@ -363,6 +380,24 @@ vpDisplayX::init(vpImage<unsigned char> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
 
     x_color[vpColor::yellow] = color.pixel;
+
+    // Couleur ORANGE.
+    color.pad = 0;
+    color.red = 256 * 255;
+    color.green = 256 * 165;
+    color.blue  = 0;
+    XAllocColor (display, lut, &color);
+
+    x_color[vpColor::orange] = color.pixel;
+
+    // Couleur CYAN.
+    color.pad = 0;
+    color.red = 0;
+    color.green = 256 * 255;
+    color.blue  = 256 * 255;
+    XAllocColor (display, lut, &color);
+
+    x_color[vpColor::cyan] = color.pixel;
     break;
     }
   }
@@ -527,18 +562,18 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
   //
   // Create colors for overlay
   //
-  switch (screen_depth) {
+switch (screen_depth) {
 
   case 8:
     XColor colval ;
 
-    // Couleur NOIR.
+    // Couleur BLACK.
     x_color[vpColor::black] = 0;
 
-    // Couleur BLANC.
+    // Color WHITE.
     x_color[vpColor::white] = 255;
 
-    // Couleur ROUGE.
+    // Color RED.
     x_color[vpColor::red]= 254;
     colval.pixel  = x_color[vpColor::red] ;
     colval.red    = 256 * 255;
@@ -546,7 +581,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
 
-    // Couleur VERT.
+    // Color GREEN.
     x_color[vpColor::green] = 253;
     colval.pixel  = x_color[vpColor::green];
     colval.red    = 0;
@@ -554,7 +589,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
 
-    // Couleur BLEU.
+    // Color BLUE.
     x_color[vpColor::blue] = 252;
     colval.pixel  = x_color[vpColor::blue];
     colval.red    = 0;
@@ -562,30 +597,47 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
     colval.blue   = 256 * 255;
     XStoreColor(display, lut, &colval);
 
-    // Couleur JAUNE.
+    // Color YELLOW.
     x_color[vpColor::yellow] = 251;
     colval.pixel  = x_color[vpColor::yellow];
     colval.red    = 256 * 255;
     colval.green  = 256 * 255;
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
+
+    // Color ORANGE.
+    x_color[vpColor::orange] = 250;
+    colval.pixel  = x_color[vpColor::orange];
+    colval.red    = 256 * 255;
+    colval.green  = 256 * 165;
+    colval.blue   = 0;
+    XStoreColor(display, lut, &colval);
+
+    // Color CYAN.
+    x_color[vpColor::cyan] = 249;
+    colval.pixel  = x_color[vpColor::cyan];
+    colval.red    = 0;
+    colval.green  = 256 * 255;
+    colval.blue   = 256 * 255;
+    XStoreColor(display, lut, &colval);
+    
     break;
 
   case 16:
   case 24:
     {
-
     color.flags = DoRed | DoGreen | DoBlue ;
 
-    // Couleur NOIR.
+    // Couleur BLACK.
     color.pad   = 0;
     color.red   = 0;
     color.green = 0;
     color.blue  = 0;
     XAllocColor (display, lut, &color);
+
     x_color[vpColor::black] = color.pixel;
 
-    // Couleur BLANC.
+    // Couleur WHITE.
     color.pad   = 0;
     color.red   = 256* 255;
     color.green = 256* 255;
@@ -593,7 +645,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
     x_color[vpColor::white] = color.pixel;
 
-    // Couleur ROUGE.
+    // Couleur RED.
     color.pad   = 0;
     color.red   = 256* 255;
     color.green = 0;
@@ -601,7 +653,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
     x_color[vpColor::red] = color.pixel;
 
-    // Couleur VERT.
+    // Couleur GREEN.
     color.pad   = 0;
     color.red   = 0;
     color.green = 256*255;
@@ -609,7 +661,7 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
     x_color[vpColor::green] = color.pixel;
 
-    // Couleur BLEU.
+    // Couleur BLUE.
     color.pad = 0;
     color.red = 0;
     color.green = 0;
@@ -617,16 +669,36 @@ vpDisplayX::init(vpImage<vpRGBa> &I, int _x, int _y, char *_title)
     XAllocColor (display, lut, &color);
     x_color[vpColor::blue] = color.pixel;
 
-    // Couleur JAUNE.
+    // Couleur YELLOW.
     color.pad = 0;
     color.red = 256 * 255;
     color.green = 256 * 255;
     color.blue  = 0;
     XAllocColor (display, lut, &color);
+
     x_color[vpColor::yellow] = color.pixel;
+
+    // Couleur ORANGE.
+    color.pad = 0;
+    color.red = 256 * 255;
+    color.green = 256 * 165;
+    color.blue  = 0;
+    XAllocColor (display, lut, &color);
+
+    x_color[vpColor::orange] = color.pixel;
+
+    // Couleur CYAN.
+    color.pad = 0;
+    color.red = 0;
+    color.green = 256 * 255;
+    color.blue  = 256 * 255;
+    XAllocColor (display, lut, &color);
+
+    x_color[vpColor::cyan] = color.pixel;
     break;
     }
   }
+
   XSetStandardProperties(display, window, title, title, None, 0, 0, &hints);
   XMapWindow(display, window) ;
   // Selection des evenements.
@@ -793,18 +865,18 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
   //
   // Create colors for overlay
   //
-  switch (screen_depth) {
+switch (screen_depth) {
 
   case 8:
     XColor colval ;
 
-    // Couleur NOIR.
+    // Couleur BLACK.
     x_color[vpColor::black] = 0;
 
-    // Couleur BLANC.
+    // Color WHITE.
     x_color[vpColor::white] = 255;
 
-    // Couleur ROUGE.
+    // Color RED.
     x_color[vpColor::red]= 254;
     colval.pixel  = x_color[vpColor::red] ;
     colval.red    = 256 * 255;
@@ -812,7 +884,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
 
-    // Couleur VERT.
+    // Color GREEN.
     x_color[vpColor::green] = 253;
     colval.pixel  = x_color[vpColor::green];
     colval.red    = 0;
@@ -820,7 +892,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
 
-    // Couleur BLEU.
+    // Color BLUE.
     x_color[vpColor::blue] = 252;
     colval.pixel  = x_color[vpColor::blue];
     colval.red    = 0;
@@ -828,13 +900,30 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     colval.blue   = 256 * 255;
     XStoreColor(display, lut, &colval);
 
-    // Couleur JAUNE.
+    // Color YELLOW.
     x_color[vpColor::yellow] = 251;
     colval.pixel  = x_color[vpColor::yellow];
     colval.red    = 256 * 255;
     colval.green  = 256 * 255;
     colval.blue   = 0;
     XStoreColor(display, lut, &colval);
+
+    // Color ORANGE.
+    x_color[vpColor::orange] = 250;
+    colval.pixel  = x_color[vpColor::orange];
+    colval.red    = 256 * 255;
+    colval.green  = 256 * 165;
+    colval.blue   = 0;
+    XStoreColor(display, lut, &colval);
+
+    // Color CYAN.
+    x_color[vpColor::cyan] = 249;
+    colval.pixel  = x_color[vpColor::cyan];
+    colval.red    = 0;
+    colval.green  = 256 * 255;
+    colval.blue   = 256 * 255;
+    XStoreColor(display, lut, &colval);
+    
     break;
 
   case 16:
@@ -842,7 +931,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     {
     color.flags = DoRed | DoGreen | DoBlue ;
 
-    // Couleur NOIR.
+    // Couleur BLACK.
     color.pad   = 0;
     color.red   = 0;
     color.green = 0;
@@ -851,7 +940,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
 
     x_color[vpColor::black] = color.pixel;
 
-    // Couleur BLANC.
+    // Couleur WHITE.
     color.pad   = 0;
     color.red   = 256* 255;
     color.green = 256* 255;
@@ -859,7 +948,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     XAllocColor (display, lut, &color);
     x_color[vpColor::white] = color.pixel;
 
-    // Couleur ROUGE.
+    // Couleur RED.
     color.pad   = 0;
     color.red   = 256* 255;
     color.green = 0;
@@ -867,7 +956,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     XAllocColor (display, lut, &color);
     x_color[vpColor::red] = color.pixel;
 
-    // Couleur VERT.
+    // Couleur GREEN.
     color.pad   = 0;
     color.red   = 0;
     color.green = 256*255;
@@ -875,7 +964,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     XAllocColor (display, lut, &color);
     x_color[vpColor::green] = color.pixel;
 
-    // Couleur BLEU.
+    // Couleur BLUE.
     color.pad = 0;
     color.red = 0;
     color.green = 0;
@@ -883,7 +972,7 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     XAllocColor (display, lut, &color);
     x_color[vpColor::blue] = color.pixel;
 
-    // Couleur JAUNE.
+    // Couleur YELLOW.
     color.pad = 0;
     color.red = 256 * 255;
     color.green = 256 * 255;
@@ -891,9 +980,28 @@ void vpDisplayX::init(unsigned int width, unsigned int height,
     XAllocColor (display, lut, &color);
 
     x_color[vpColor::yellow] = color.pixel;
+
+    // Couleur ORANGE.
+    color.pad = 0;
+    color.red = 256 * 255;
+    color.green = 256 * 165;
+    color.blue  = 0;
+    XAllocColor (display, lut, &color);
+
+    x_color[vpColor::orange] = color.pixel;
+
+    // Couleur CYAN.
+    color.pad = 0;
+    color.red = 0;
+    color.green = 256 * 255;
+    color.blue  = 256 * 255;
+    XAllocColor (display, lut, &color);
+
+    x_color[vpColor::cyan] = color.pixel;
     break;
     }
   }
+
 
   XSetStandardProperties(display, window, title, title, None, 0, 0, &hints);
   XMapWindow(display, window) ;
