@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpGDIRenderer.h,v 1.7 2007-06-13 08:56:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   HBITMAP bmp;
 
   //colors for overlay
-  COLORREF colors[8];
+  COLORREF colors[vpColor::none];
 
   //font used to draw text
   HFONT hFont;

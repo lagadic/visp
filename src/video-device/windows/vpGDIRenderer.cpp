@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.12 2007-05-03 11:36:34 fspindle Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.13 2007-06-13 08:56:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,6 +64,7 @@ vpGDIRenderer::vpGDIRenderer()
   colors[vpColor::red]   =  RGB(0xFF,0,0);
   colors[vpColor::white] =  RGB(0xFF,0xFF,0xFF);
   colors[vpColor::yellow]=  RGB(0xFF,0xFF,0);
+  colors[vpColor::orange]=  RGB(0xFF,0xA5,0);
 
   nbCols = 0;
   nbRows = 0;

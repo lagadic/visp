@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.11 2007-06-11 15:52:34 asaunier Exp $
+ * $Id: vpDisplayGTK.h,v 1.12 2007-06-13 08:56:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@ private:
   GdkWindow *window;
   GdkPixmap *background;
   GdkGC *gc;
-  GdkColor blue,red,yellow,green,cyan,magenta,goldenrod,coral,orange,white;
+  GdkColor blue,red,yellow,green,cyan,magenta,goldenrod,coral,orange,white, black;
   GdkFont *Police1,*Police2;
   guchar  *vectgtk;
   int windowXPosition ; int  windowYPosition ;

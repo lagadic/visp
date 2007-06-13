@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.9 2007-05-02 16:43:23 fspindle Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.10 2007-06-13 08:56:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,7 +83,7 @@ vpD3DRenderer::vpD3DRenderer()
   colors[vpColor::red]   = D3DCOLOR_ARGB(0xFF,0xFF,0,0);
   colors[vpColor::white] = D3DCOLOR_ARGB(0xFF,0xFF,0xFF,0xFF);
   colors[vpColor::yellow]= D3DCOLOR_ARGB(0xFF,0xFF,0xFF,0);
-
+  colors[vpColor::orange]= D3DCOLOR_ARGB(0xFF,0xFF,0xA5,0);
 
   //initialize the GDI palette
   colorsGDI[vpColor::black] =  RGB(0,0,0);
@@ -93,6 +93,7 @@ vpD3DRenderer::vpD3DRenderer()
   colorsGDI[vpColor::red]   =  RGB(0xFF,0,0);
   colorsGDI[vpColor::white] =  RGB(0xFF,0xFF,0xFF);
   colorsGDI[vpColor::yellow]=  RGB(0xFF,0xFF,0);
+  colorsGDI[vpColor::orange]=  RGB(0xFF,0xA5,0);
 
   //Creates a logical font
   hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,

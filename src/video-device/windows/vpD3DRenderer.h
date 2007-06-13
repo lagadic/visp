@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpD3DRenderer.h,v 1.7 2007-06-13 08:56:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,10 +84,10 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   HWND hWnd;
 
   //Colors  for overlay drawn with d3d directly.
-  long colors[8];
+  long colors[vpColor::none];
 
   //Colors for overlay drawn with GDI.
-  COLORREF colorsGDI[8];
+  COLORREF colorsGDI[vpColor::none];
 
   //Font used for text drawing.
   HFONT hFont;
