@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.h,v 1.7 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpMeSite.h,v 1.8 2007-06-14 12:04:22 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,6 +83,8 @@ public:
 
   // Convolution of Site in previous image
   double convlt ;
+ // Convolution of Site in previous image
+  double normGradient ;
 
   //! Flag to indicate whether point is rejected or not
   //! 1 = contrast, 2 = threshold, 3 = M-estimator, 0 = nosupp
