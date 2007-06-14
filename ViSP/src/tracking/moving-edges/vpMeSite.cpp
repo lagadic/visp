@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.11 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpMeSite.cpp,v 1.12 2007-06-14 12:04:22 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -377,6 +377,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
     }
     else
       likelyhood[n] = fabs(2*convolution) ;
+  
 
     // establishment of the maximal likelihood ratios's  rank
     // in the array, the value of the likelihood ratio can now be
@@ -395,16 +396,17 @@ vpMeSite::track(vpImage<unsigned char>& I,
   // test on the likelihood threshold if threshold==-1 then
   // the me->threshold is  selected
 
+
   //  if (test_contrast)
   if(max > threshold)
   {
     if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
     {
       vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::red);
-      //vpDisplay::flush(I) ;
     }
 
     *this = list_query_pixels[max_rank] ;
+    normGradient =  vpMath::sqr(max_convolution);
 
     convlt = max_convolution;
     i_1 = ii_1; //list_query_pixels[max_rank].i ;
@@ -414,12 +416,11 @@ vpMeSite::track(vpImage<unsigned char>& I,
   }
   else
   {
-       if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
+    if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
     {
       vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::green);
-      //vpDisplay::flush(I) ;
     }
-
+    normGradient = 0 ;
     if(max == 0)
       suppress = 1; // contrast suppression
     else
