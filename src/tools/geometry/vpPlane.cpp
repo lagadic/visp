@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPlane.cpp,v 1.4 2007-01-31 15:47:37 asaunier Exp $
+ * $Id: vpPlane.cpp,v 1.5 2007-06-14 12:05:48 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -148,7 +148,6 @@ vpPlane::init(vpPoint &P, vpPoint &Q, vpPoint &R)
   vpColVector a(3);
   vpColVector b(3);
   vpColVector n(3);
-
   //Calculate vector corresponding to PQ
   a[0]=P.get_X()-Q.get_X();
   a[1]=P.get_Y()-Q.get_Y();
@@ -167,6 +166,12 @@ vpPlane::init(vpPoint &P, vpPoint &Q, vpPoint &R)
   B = n[1];
   C = n[2];
   D=-(A*P.get_X()+B*P.get_Y()+C*P.get_Z());
+
+  double norm =  sqrt(A*A+B*B+C*C) ;
+  A /= norm ;
+  B /= norm ;
+  C /= norm ;
+  D /= norm ;
 }
 
 
