@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPlane.h,v 1.4 2007-04-20 14:22:17 asaunier Exp $
+ * $Id: vpPlane.h,v 1.5 2007-06-14 12:05:48 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -107,7 +107,6 @@ public: // Display, Print Member function
   {
     return (os  << "("<<p.getA() << ","<<p.getB()<< ","<<p.getC()<< ","<<p.getD() <<") ") ;
   } ;
-  void Print(std::ostream& os) { os << *this << std::endl ; }
 
 
 public: // Operation with  Plane
