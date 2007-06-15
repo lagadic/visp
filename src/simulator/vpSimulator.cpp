@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.13 2007-06-01 09:15:09 marchand Exp $
+ * $Id: vpSimulator.cpp,v 1.14 2007-06-15 16:28:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,7 +77,7 @@ static float pyramidVertexes [5][3] =
 };
 
 
-static long pyramidFaces[] =
+static int32_t pyramidFaces[] =
 {
    0, 1, 2, 3, SO_END_FACE_INDEX, // top face
 

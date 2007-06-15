@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testClick.cpp,v 1.5 2007-06-06 13:11:53 asaunier Exp $
+ * $Id: testClick.cpp,v 1.6 2007-06-15 16:28:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,12 +75,12 @@ typedef enum {
 /*!
 
   Print the program options.
-  
+
   \param name : Program name.
   \param badparam : Bad parameter name.
   \param ipath: Input image path.
   \param dtype : Type of video device.
-  
+
  */
 void usage(char *name, char *badparam, std::string ipath, vpDisplayType &dtype)
 {
@@ -150,7 +150,7 @@ OPTIONS:                                               Default\n\
   the default configuration. When set to false, the display is
   disabled. This can be usefull for automatic tests using crontab
   under Unix or using the task manager under Windows.
-  
+
   \return false if the program has to be stopped, true otherwise.
 
 */
@@ -306,7 +306,7 @@ main(int argc, char ** argv)
     vpImageIo::readPGM(I, filename) ;
 
     // Create a display for the image
-    vpDisplay *display;
+    vpDisplay *display = NULL;
 
     switch(opt_dtype) {
       case vpX11:
@@ -324,7 +324,7 @@ main(int argc, char ** argv)
         std::cout << "Requested GTK display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GTK
         display = new vpDisplayGTK;
-#else 
+#else
         std::cout << "  Sorry, GTK video device is not available.\n";
         std::cout << "Use \"" << argv[0]
 	       << " -l\" to print the list of available devices.\n";
@@ -356,7 +356,7 @@ main(int argc, char ** argv)
       }
 
       if (opt_display){
-    
+
         // We open a window using either X11 or GTK or GDI.
         // Its size is automatically defined by the image (I) size
         display->init(I, 100, 100,"Display...") ;
@@ -390,7 +390,7 @@ main(int argc, char ** argv)
       vpERROR_TRACE("Error while displaying the image") ;
       exit(-1);
     }
-  
+
 }
 
 #else
