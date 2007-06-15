@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.8 2007-04-23 14:30:39 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.9 2007-06-15 16:28:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -307,7 +307,7 @@ main(int argc, char ** argv)
     vpImage<unsigned char> *I;
     std::string opath = "/tmp/I%d-%04d.pgm";
 #endif
-    vpDisplayX *d;
+    vpDisplayX *d = NULL;
     vp1394TwoGrabber g ;
 
     read_options(argc, argv, multi, camera, nframes,
