@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.11 2007-06-11 08:39:09 asaunier Exp $
+ * $Id: trackDot2.cpp,v 1.12 2007-06-18 15:01:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -157,7 +157,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
-		unsigned &first, unsigned &nimages, unsigned &step, 
+		unsigned &first, unsigned &nimages, unsigned &step,
 		bool &click_allowed, bool &display)
 {
   char *optarg;
@@ -265,8 +265,8 @@ main(int argc, char ** argv)
   char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()){
-  
-  
+
+
     // Warning :
     // the image sequence is not provided with the ViSP package
     // therefore the program will return you an error :
@@ -278,12 +278,12 @@ main(int argc, char ** argv)
     //  The sequence is available on the visp www site
     //  http://www.irisa.fr/lagadic/visp/visp.html
     //  in the download section. It is named "ViSP-images.tar.gz"
-  
+
     // Set the path location of the image sequence
     dirname = ipath + vpIoTools::path("/ViSP-images/mire-2/");
-  
+
     // Build the name of the image file
-  
+
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
     filename = dirname + s.str();
@@ -374,6 +374,7 @@ main(int argc, char ** argv)
   }
   // we also request to compute the dot moment m00, m10, m01, m11, m20, m02
   d.setComputeMoments(true);
+  d.setGrayLevelPrecision(0.90);
 
   // tracking is initalized
   // if no other parameters are given to the iniTracking(..) method
