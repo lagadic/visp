@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobot.cpp,v 1.5 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobot.cpp,v 1.6 2007-06-18 15:01:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,7 @@ vpRobot::vpRobot (void)
   maxTranslationVelocity (maxTranslationVelocityDefault),
   maxRotationVelocity (maxRotationVelocityDefault)
 {
-  return ;
+  stateRobot = vpRobot::STATE_STOP ;
 }
 
 
