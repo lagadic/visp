@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testVideoDevice.cpp,v 1.3 2007-06-07 10:35:29 fspindle Exp $
+ * $Id: testVideoDevice.cpp,v 1.4 2007-06-18 08:29:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@ typedef enum {
   \param badparam : Bad parameter name.
   \param ipath: Input image path.
   \param dtype : Type of video device.
- 
+
  */
 void usage(char *name, char *badparam, std::string ipath, vpDisplayType &dtype)
 {
@@ -91,7 +91,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] \n\
      [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
 ", name);
-  
+
   std::string display;
   switch(dtype) {
   case vpX11: display = "X11"; break;
@@ -207,7 +207,7 @@ main(int argc, char ** argv)
     std::string filename;
     bool opt_click_allowed = true;
     bool opt_display = true;
-    
+
     // Default display is one available
 #if defined VISP_HAVE_GTK
     opt_dtype = vpGTK;
@@ -259,7 +259,7 @@ main(int argc, char ** argv)
       }
       return (0);
     }
-  
+
 
     // Get the option values
     if (!opt_ipath.empty())
@@ -293,7 +293,7 @@ main(int argc, char ** argv)
     vpImage<unsigned char> I ;
     // Create a color image
     vpImage<vpRGBa> Irgba ;
-    
+
     // Load a grey image from the disk
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
     vpCTRACE << "Load " <<  filename << std::endl;
@@ -306,7 +306,7 @@ main(int argc, char ** argv)
 
 
     // Create a display for the image
-    vpDisplay *display;
+    vpDisplay *display = NULL;
 
     switch(opt_dtype) {
     case vpX11:
@@ -355,11 +355,11 @@ main(int argc, char ** argv)
       break;
     }
     if (opt_display){
-      
+
       // We open a window using either X11 or GTK or GDI or D3D.
       // Its size is automatically defined by the image (I) size
       display->init(I, 100, 100,"Display...") ;
-      
+
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -372,13 +372,13 @@ main(int argc, char ** argv)
         vpDisplay::getClick(I) ;
 
       display->close(I);
-      
+
       // We open a window using either X11 or GTK or GDI or D3D
       // but using anothe function who doesn't take title.
       // Its size is automatically defined by the image (I) size
-    
+
       display->init(I, 100, 100);
-      
+
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -390,12 +390,12 @@ main(int argc, char ** argv)
         vpDisplay::getClick(I) ;
 
       display->close(I);
-      
+
       // We open a window using either X11 or GTK or GDI or D3D.
       // Its size is automatically defined by the image (I) size
-    
+
       display->init(Irgba, 100, 100,"Color display...");
-      
+
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -408,20 +408,20 @@ main(int argc, char ** argv)
         vpDisplay::getClick(Irgba) ;
 
       display->close(Irgba);
-      
+
       // We open a window using either X11 or GTK or GDI or D3D
       // but using anothe function who doesn't take title.
       // Its size is automatically defined by the image (I) size
-    
+
       display->init(Irgba, 100, 100);
-      
+
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(Irgba) ;
-      
+
       std::cout << "A click to exit...\n";
       if ( opt_click_allowed )
         vpDisplay::getClick(Irgba) ;
