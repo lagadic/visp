@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.17 2007-05-14 08:37:20 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.18 2007-06-19 08:59:01 marchand Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -107,6 +107,7 @@ SET (SRC_MATH
   math/matrix/vpRowVector.cpp
   math/misc/vpMath.cpp 
   math/misc/vpNoise.cpp 
+  math/misc/vpHinkley.cpp 
   math/robust/vpRobust.cpp
   math/robust/vpScale.cpp
   math/transformation/vpEulerVector.cpp
