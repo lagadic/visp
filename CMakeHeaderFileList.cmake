@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.15 2007-05-14 08:37:20 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.16 2007-06-19 08:59:01 marchand Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -98,6 +98,7 @@ SET (HEADER_MATH
   math/matrix/vpMatrix.h
   math/matrix/vpRowVector.h
   math/misc/vpMath.h
+  math/misc/vpHinkley.h
   math/misc/vpNoise.h
   math/robust/vpRansac.h
   math/robust/vpRobust.h
