@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2007-06-01 14:17:25 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.6 2007-06-19 14:16:10 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -50,6 +50,7 @@ SET (SRC_SUBDIRS
   time
   tracking
   video-device
+  visual-feature
 )
 
 # Build process propagation in the sub directories
