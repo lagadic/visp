@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testFeature.cpp,v 1.1 2007-06-19 14:18:06 fspindle Exp $
+ * $Id: testFeature.cpp,v 1.2 2007-06-20 15:55:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,7 +77,7 @@ int main()
   //task.addFeature(logZ);
   task.addFeature(tu);
   task.print() ;
-  double task_error_square = task.error.sumSquare() ;
+  //  double task_error_square = task.error.sumSquare() ;
   double gain = 1.0;
   task.setLambda(gain) ;
 
