@@ -60,11 +60,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <unistd.h>
 
-using namespace std;
-
-#include "vpHinkley.h"
+#include <visp/vpHinkley.h>
 #include <visp/vpDebug.h>
 #include <visp/vpIoTools.h>
 
@@ -360,7 +357,7 @@ hinkleyJump vpHinkley::testDownUpwardJump(double data)
 
   vpCDEBUG(2) << "alpha: " << alpha << "dmin2: " << dmin2 << " data: " << data
 	    << " Sk: " << Sk << " Mk: " << Mk
-	    << " Tk: " << Tk << " Nk: " << Nk << endl;
+		<< " Tk: " << Tk << " Nk: " << Nk << std::endl;
 
   // teste si les variables cumulées excèdent le seuil
   if ((Mk - Sk) > alpha)
