@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp,v 1.5 2007-01-31 13:29:51 asaunier Exp $
+ * $Id: vpTranslationVector.cpp,v 1.6 2007-06-25 12:30:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,6 +38,13 @@
 
 #include <visp/vpTranslationVector.h>
 
+// Exception
+#include <visp/vpException.h>
+#include <visp/vpMatrixException.h>
+
+// Debug trace
+#include <visp/vpDebug.h>
+
 /*!
   \file vpTranslationVector.cpp
   \brief class that consider the case of a translation vector
@@ -60,6 +67,10 @@ vpTranslationVector::vpTranslationVector(const double tx,
     (*this)[2] = tz ;
 }
 
+//!copy constructor
+vpTranslationVector::vpTranslationVector (const vpTranslationVector &v) : vpColVector(v)
+{
+}
 //! operator addition of two translation vectors
 vpTranslationVector
 vpTranslationVector::operator+(const vpTranslationVector &_v) const
@@ -82,6 +93,32 @@ vpTranslationVector vpTranslationVector::operator-() const //negate
     }
 
     return t;
+}
+
+/*!
+Copy operator.   Allow operation such as A = v
+\param v : Translation vector to copy
+\return A copy of v.
+*/
+vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &v)
+{
+
+  int k = v.rowNum ;
+  if (rowNum != k){
+    try {
+      resize(k);
+    }
+    catch(vpException me)
+    {
+      vpERROR_TRACE("Error caught") ;
+      throw ;
+    }
+  }
+  //
+
+  memcpy(data, v.data, rowNum*sizeof(double)) ;
+
+  return *this;
 }
 
 //! initialisation each element of the vector is x

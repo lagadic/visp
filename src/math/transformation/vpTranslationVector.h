@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.h,v 1.4 2006-05-31 10:19:24 fspindle Exp $
+ * $Id: vpTranslationVector.h,v 1.5 2007-06-25 12:30:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,6 +63,8 @@ public:
     vpTranslationVector() { init() ; }
     //! constructor from double in meter
     vpTranslationVector(const double tx, const double ty, const double tz) ;
+    //! copy constructor
+    vpTranslationVector(const vpTranslationVector &v);
 
     // operators
 
@@ -70,6 +72,9 @@ public:
     vpTranslationVector operator+(const vpTranslationVector &b) const ;
     //! negate t = -a  (t is unchanged)
     vpTranslationVector operator-() const ;
+    
+    //! Copy operator.   Allow operation such as A = v
+    vpTranslationVector &operator=(const vpTranslationVector &v);
 
     vpTranslationVector &operator=(double x) ;
 
