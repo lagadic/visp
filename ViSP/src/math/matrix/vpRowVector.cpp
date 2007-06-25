@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRowVector.cpp,v 1.4 2006-06-29 15:09:19 fspindle Exp $
+ * $Id: vpRowVector.cpp,v 1.5 2007-06-25 11:57:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -107,7 +107,7 @@ vpRowVector & vpRowVector::operator=(double x)
   \return A scalar.
 
 */
-double vpRowVector::operator*(const vpColVector &x)
+double vpRowVector::operator*(const vpColVector &x) const
 {
   int nelements = x.getRows();
   if (getCols() != nelements ) {
@@ -122,6 +122,46 @@ double vpRowVector::operator*(const vpColVector &x)
     scalar += (*this)[i] * x[i];
   }
   return scalar;
+}
+/*!
+
+  Multiply a row vector by a Matrix.
+
+  \param A : Matrix.
+
+  \warning The number of elements of the rowVector must be equal to the number
+  of rows of the matrix.
+
+  \exception vpMatrixException::matrixError : If the number of elements of the
+  rowVector is not equal to the number of rows of the matrix.
+
+  \return A vpRowVector.
+
+*/
+vpRowVector vpRowVector::operator*(const vpMatrix &A) const
+{
+
+  vpRowVector c(A.getCols());
+
+
+  if (colNum != A.getRows())
+  {
+    vpERROR_TRACE("vpMatrix mismatch in vpRowVector/matrix multiply") ;
+    throw(vpMatrixException::incorrectMatrixSizeError) ;
+  }
+
+  c = 0.0;
+
+  for (int i=0;i<colNum;i++) {
+    {
+      double bi = data[i] ; // optimization em 5/12/2006
+      for (int j=0;j<A.getRows();j++) {
+        c[i]+=bi*A[i][j];
+      }
+    }
+  }
+
+  return c ;
 }
 
 /*
