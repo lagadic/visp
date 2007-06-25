@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRowVector.h,v 1.4 2006-06-29 15:09:19 fspindle Exp $
+ * $Id: vpRowVector.h,v 1.5 2007-06-25 11:57:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,10 +96,13 @@ public:
   //! copy from a matrix
   vpRowVector & operator=(const vpMatrix &m) ;
 
-  double  operator*(const vpColVector &x);
-
+  //!operator dot product
+  double  operator*(const vpColVector &x) const;
+  //!operator dot product
+  vpRowVector operator*(const vpMatrix &A) const;
+  
   //! initialisation each element of the vector is x
-  vpRowVector &operator=(const double x);
+  vpRowVector& operator=(const double x);
 
   //! Transpose the vector
   vpColVector t() const;
