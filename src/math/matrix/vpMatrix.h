@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.16 2007-05-31 15:12:52 fspindle Exp $
+ * $Id: vpMatrix.h,v 1.17 2007-06-26 09:23:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,6 +44,7 @@
 #include <iostream>
 #include <math.h>
 
+#include <visp/vpTime.h>
 #include <visp/vpConfig.h>
 
 class vpRowVector;
@@ -237,6 +238,8 @@ public:
   //! Initialize an identity matrix m-by-n
    void eye(int m, int n) ;
 
+  //! Compute the AtA operation B = A^T*A
+  vpMatrix AtA() const;
 
   //-------------------------------------------------
   // LU decomposition

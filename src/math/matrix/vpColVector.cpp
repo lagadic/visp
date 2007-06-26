@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.cpp,v 1.7 2007-04-18 16:14:28 asaunier Exp $
+ * $Id: vpColVector.cpp,v 1.8 2007-06-26 09:23:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,7 +43,6 @@
 */
 
 
-#include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
 
 
