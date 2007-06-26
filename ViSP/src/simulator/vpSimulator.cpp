@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.14 2007-06-15 16:28:39 fspindle Exp $
+ * $Id: vpSimulator.cpp,v 1.15 2007-06-26 13:10:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -924,7 +924,6 @@ vpSimulator::offScreenRendering(viewEnum view, int * width, int * height)
  *   - RETURN : Code d'erreur CODE_OK si tout s'est bien passe.
  */
 
-using namespace std ;
 void
 vpSimulator::write (viewEnum view,
 		    const char * fileName)
