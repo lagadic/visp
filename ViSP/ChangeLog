@@ -1,5 +1,6 @@
 ViSP 2.4.x
   - New classes
+	- vpHinkley class for Hinkley's cumulative sum test computation
   - New Features
   - Bug fix and improvement
 	- vpDot: setMaxDotSize(double percentage) replace 
