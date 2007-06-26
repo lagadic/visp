@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.33 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.34 2007-06-26 09:23:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -394,17 +394,17 @@ vpMatrix::operator*(const vpMatrix &B) const
   int i,j,k ;
   double **BrowPtrs = B.rowPtrs;
   for (i=0;i<rowNum;i++)
-    {
-      double *rowptri = rowPtrs[i] ;
-      double *pi = p[i] ;
-      for (j=0;j<BcolNum;j++)
-	{
-	  double s =0 ;
-	  for (k=0;k<BrowNum;k++)
-	    s +=rowptri[k] * BrowPtrs[k][j];
-	  pi[j] = s ;
-	}
-    }
+  {
+    double *rowptri = rowPtrs[i] ;
+    double *pi = p[i] ;
+    for (j=0;j<BcolNum;j++)
+	  {
+	    double s =0 ;
+	    for (k=0;k<BrowNum;k++)
+	      s +=rowptri[k] * BrowPtrs[k][j];
+	    pi[j] = s ;
+	  }
+  }
   return p;
 }
 
@@ -859,7 +859,7 @@ vpMatrix::eye(int n)
     throw ;
   }
 }
-/*
+/*!
   \brief eye(m,n) is an m-by-n matrix with ones on the diagonal and zeros
   elsewhere
 
@@ -887,7 +887,7 @@ vpMatrix::eye(int m, int n)
 }
 
 
-/*
+/*!
   \brief Transpose the matrix C = A^T
   \return  A^T
 */
@@ -909,12 +909,62 @@ vpMatrix vpMatrix::t() const
 
   int i,j;
   for (i=0;i<rowNum;i++)
-    {
-      double *coli = (*this)[i] ;
-      for (j=0;j<colNum;j++)
-	At[j][i] = coli[j];
-    }
+  {
+    double *coli = (*this)[i] ;
+    for (j=0;j<colNum;j++)
+      At[j][i] = coli[j];
+  }
   return At;
+}
+
+
+/*!
+  \brief Compute the AtA operation B = A^T*A
+  \return  A^T*A
+*/
+vpMatrix vpMatrix::AtA() const
+{
+  vpMatrix AtA ;
+  try {
+    AtA.resize(colNum,colNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    vpCERROR << me << std::endl ;
+    throw ;
+  }
+
+  int i,j,k;
+  double s;
+  double *ptr;
+  double *AtAi;
+  for (i=0;i<colNum;i++)
+  {
+    AtAi = AtA[i] ;
+    for (j=0;j<i;j++)
+    {
+      ptr=data;
+      s = 0 ;
+      for (k=0;k<rowNum;k++)
+      {
+        s +=(*(ptr+i)) * (*(ptr+j));
+        ptr+=colNum;
+      } 
+      *AtAi++ = s ;
+      AtA[j][i] = s;
+    }
+    ptr=data;
+    s = 0 ;
+    for (k=0;k<rowNum;k++)
+    {
+      s +=(*(ptr+i)) * (*(ptr+i));
+      ptr+=colNum;
+    }
+    *AtAi = s ;
+  }
+  
+  return AtA;
 }
 
 /*!
