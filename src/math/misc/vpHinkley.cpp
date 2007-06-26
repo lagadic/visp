@@ -1,13 +1,39 @@
 /****************************************************************************
  *
- *       Copyright (c) 1999 by IRISA/INRIA Rennes.
- *       All Rights Reserved.
+ * $Id: vpHinkley.cpp,v 1.3 2007-06-26 13:15:49 fspindle Exp $
  *
- *       IRISA/INRIA Rennes
- *       Campus Universitaire de Beaulieu
- *       35042 Rennes Cedex
+ * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
- ****************************************************************************/
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Hinkley's cumulative sum test implementation.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 /*!
 
@@ -25,31 +51,41 @@
 
   \author Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 
-  The Hinkley's cumulative sum test is designed to detect jump in mean of an
-  observed signal. It is known to be robust (by taking into account all the
-  past of the observed quantity), efficient, and inducing a very low
-  computational load. The other attractive features of this test are
-  two-fold. First, it can straightforwardly and accurately provide the jump
-  instant. Secondly, due to its formulation (cumulative sum test), it can
-  simultaneously handle both very abrupt and important changes, and gradual
-  smaller ones without adapting the involved thresholds.
+  The Hinkley's cumulative sum test is designed to detect jump in mean
+  of an observed signal \f$ s(t) \f$. It is known to be robust (by
+  taking into account all the past of the observed quantity),
+  efficient, and inducing a very low computational load. The other
+  attractive features of this test are two-fold. First, it can
+  straightforwardly and accurately provide the jump instant. Secondly,
+  due to its formulation (cumulative sum test), it can simultaneously
+  handle both very abrupt and important changes, and gradual smaller
+  ones without adapting the involved thresholds.
 
-  Two tests are performed in parallel to look for downwards or upwards jumps,
-  respectively defined by:
+  Two tests are performed in parallel to look for downwards or upwards
+  jumps in \f$ s(t) \f$, respectively defined by:
 
-  \f[ S_k = \sum_{t=0}^{k} (data_t - m_0 + \frac{\delta}{2}) \f]
+  \f[ S_k = \sum_{t=0}^{k} (s(t) - m_0 + \frac{\delta}{2}) \f]
   \f[ M_k = \max_{0 \leq i \leq k} S_i\f]
-  \f[ T_k = \sum_{t=0}^{k} (data_t - m_0 - \frac{\delta}{2}) \f]
+  \f[ T_k = \sum_{t=0}^{k} (s(t) - m_0 - \frac{\delta}{2}) \f]
   \f[ N_k = \max_{0 \leq i \leq k} T_i\f]
 
 
-  In which \f$m_o\f$ is computed on-line and corresponds to the mean of the
-  signal \f$data_t\f$ we want to detect a jump. \f$m_o\f$ is re-initialized at
-  zero after each jump detection. \f$\delta\f$ denotes the jump minimal
-  magnitude that we want to detect, and \f$\alpha\f$ is a predefined threshold.
+  In which \f$m_o\f$ is computed on-line and corresponds to the mean
+  of the signal \f$ s(t) \f$ we want to detect a jump. \f$m_o\f$ is
+  re-initialized at zero after each jump detection. \f$\delta\f$
+  denotes the jump minimal magnitude that we want to detect and
+  \f$\alpha\f$ is a predefined threshold. These values are set by
+  default to 0.2 in the default constructor vpHinkley(). To modify the
+  default values use setAlpha() and setDelta() or the
+  vpHinkley(double alpha, double delta) constructor.
 
   A downward jump is detected if \f$ M_k - S_k > \alpha \f$.
-  A upward jump is detected if \f$ T_k - S_k > \alpha \f$.
+  A upward jump is detected if \f$ T_k - S_k > \alpha \f$. 
+
+  To detect only downward jumps in \f$ s(t) \f$ use
+  testDownwardJump().To detect only upward jumps in \f$ s(t) \f$ use
+  testUpwardJump(). To detect both, downard and upward jumps use
+  testDownUpwardJump().
 
   If a jump is detected, the jump location is given by the last instant
   \f$k^{'}\f$ when \f$ M_{k^{'}} - S_{k^{'}} = 0 \f$, or \f$ T_{k^{'}} -
@@ -81,6 +117,12 @@ static FILE * f_hinkley;
 /*!
 
   Constructor.
+
+  Call init() to initialise the Hinkley's test and set \f$\alpha\f$
+  and \f$\delta\f$ to default values.
+
+  By default \f$ \delta = 0.2 \f$ and \f$ \alpha = 0.2\f$. Use
+  setDelta() and setAlpha() to modify these values.
 
 */
 vpHinkley::vpHinkley()
@@ -133,6 +175,16 @@ vpHinkley::vpHinkley()
 
   Constructor.
 
+  Call init() to initialise the Hinkley's test and set \f$\alpha\f$
+  and \f$\delta\f$ thresholds.
+
+  \param alpha : \f$\alpha\f$ is a predefined threshold.
+
+  \param delta : \f$\delta\f$ denotes the jump minimal magnitude that
+  we want to detect.
+
+  \sa setAlpha(), setDelta()
+  
 */
 
 vpHinkley::vpHinkley(double alpha, double delta)
@@ -146,6 +198,19 @@ vpHinkley::vpHinkley(double alpha, double delta)
 
 }
 
+/*!
+
+  Call init() to initialise the Hinkley's test and set \f$\alpha\f$
+  and \f$\delta\f$ thresholds.
+
+  \param alpha : \f$\alpha\f$ is a predefined threshold.
+
+  \param delta : \f$\delta\f$ denotes the jump minimal magnitude that
+  we want to detect.
+
+  \sa setAlpha(), setDelta()
+
+*/
 void
 vpHinkley::init(double alpha, double delta)
 {
@@ -154,12 +219,12 @@ vpHinkley::init(double alpha, double delta)
   setAlpha(alpha);
   setDelta(delta);
   setIter(0);
-
-
 }
+
 /*!
 
   Destructor.
+  
 */
 vpHinkley::~vpHinkley()
 {
@@ -172,13 +237,13 @@ vpHinkley::~vpHinkley()
 
 /*!
 
-  initialise le test de Hinkley en positionnant la moyenne \f$m_0\f$ du signal
-  et \f$S_k, M_k, T_k, N_k\f$ à zéro.
+  Initialise the Hinkley's test by setting the mean signal value
+  \f$m_0\f$ to zero as well as \f$S_k, M_k, T_k, N_k\f$.
 
 */
 void vpHinkley::init()
 {
-  ndata	= 0;
+  nsignal = 0;
   mean  = 0.0;
 
   Sk = 0;
@@ -190,8 +255,10 @@ void vpHinkley::init()
 
 /*!
 
-  set the value of \f$\delta\f$, the jump minimal magnetude that we want to
+  Set the value of \f$\delta\f$, the jump minimal magnetude that we want to
   detect.
+
+  \sa setAlpha()
 
 */
 void vpHinkley::setDelta(double delta)
@@ -201,7 +268,9 @@ void vpHinkley::setDelta(double delta)
 
 /*!
 
-  set the value of \f$\alpha\f$, a predefined threshold.
+  Set the value of \f$\alpha\f$, a predefined threshold.
+
+  \sa setDelta()
 
 */
 void vpHinkley::setAlpha(double alpha)
@@ -211,7 +280,7 @@ void vpHinkley::setAlpha(double alpha)
 
 /*!
 
-  set an iteration value, only used to output debug information. Not used
+  Set an iteration value, only used to output debug information. Not used
   in the internal Hinkley test.
 
 */
@@ -225,25 +294,27 @@ void vpHinkley::setIter(int iter)
   Perform the Hinkley test. A downward jump is detected if
   \f$ M_k - S_k > \alpha \f$.
 
-  \sa setDelta(), setAlpha(), testUpWardJump()
+  \param signal : Observed signal \f$ s(t) \f$.
+
+  \sa setDelta(), setAlpha(), testUpwardJump()
 
 */
-hinkleyJump vpHinkley::testDownwardJump(double data)
+vpHinkley::vpHinkleyJump vpHinkley::testDownwardJump(double signal)
 {
 
-  hinkleyJump jump = noJump;
+  vpHinkleyJump jump = noJump;
 
-  ndata ++; // Signal lenght
+  nsignal ++; // Signal lenght
 
-  if (ndata == 1) mean = data;
+  if (nsignal == 1) mean = signal;
 
   // Calcul des variables cumulées
-  computeSk(data);
+  computeSk(signal);
 
   computeMk();
 
   vpCDEBUG(2) << "alpha: " << alpha << "dmin2: " << dmin2
-	    << " data: " << data << " Sk: " << Sk << " Mk: " << Mk;
+	    << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk;
 
   // teste si les variables cumulées excèdent le seuil
   if ((Mk - Sk) > alpha)
@@ -265,12 +336,12 @@ hinkleyJump vpHinkley::testDownwardJump(double data)
   }
 #endif
 
-  computeMean(data);
+  computeMean(signal);
 
   if (jump == downwardJump)  {
     vpCDEBUG(2) << "\n*** DECROCHAGE  ***\n";
 
-    Sk = 0; Mk = 0;  ndata = 0;
+    Sk = 0; Mk = 0;  nsignal = 0;
   }
 
   return (jump);
@@ -281,25 +352,27 @@ hinkleyJump vpHinkley::testDownwardJump(double data)
   Perform the Hinkley test. An upward jump is detected if \f$ T_k - N_k >
   \alpha \f$.
 
-  \sa setDelta(), setAlpha(), testDownWardJump()
+  \param signal : Observed signal \f$ s(t) \f$.
+
+  \sa setDelta(), setAlpha(), testDownwardJump()
 
 */
-hinkleyJump vpHinkley::testUpwardJump(double data)
+vpHinkley::vpHinkleyJump vpHinkley::testUpwardJump(double signal)
 {
 
-  hinkleyJump jump = noJump;
+  vpHinkleyJump jump = noJump;
 
-  ndata ++; // Signal lenght
+  nsignal ++; // Signal lenght
 
-  if (ndata == 1) mean = data;
+  if (nsignal == 1) mean = signal;
 
   // Calcul des variables cumulées
-  computeTk(data);
+  computeTk(signal);
 
   computeNk();
 
   vpCDEBUG(2) << "alpha: " << alpha << "dmin2: " << dmin2
-	    << " data: " << data << " Tk: " << Tk << " Nk: " << Nk;
+	    << " signal: " << signal << " Tk: " << Tk << " Nk: " << Nk;
 
   // teste si les variables cumulées excèdent le seuil
   if ((Tk - Nk) > alpha)
@@ -320,12 +393,12 @@ hinkleyJump vpHinkley::testUpwardJump(double data)
     }
   }
 #endif
-  computeMean(data);
+  computeMean(signal);
 
   if (jump == upwardJump)  {
     vpCDEBUG(2) << "\n*** DECROCHAGE  ***\n";
 
-    Tk = 0; Nk = 0;  ndata = 0;
+    Tk = 0; Nk = 0;  nsignal = 0;
   }
 
   return (jump);
@@ -336,26 +409,28 @@ hinkleyJump vpHinkley::testUpwardJump(double data)
   Perform the Hinkley test. A downward jump is detected if \f$ M_k - S_k >
   \alpha \f$. An upward jump is detected if \f$ T_k - S_k > \alpha \f$.
 
-  \sa setDelta(), setAlpha(), testDownWardJump(), testUpWardJump()
+  \param signal : Observed signal \f$ s(t) \f$.
+
+  \sa setDelta(), setAlpha(), testDownwardJump(), testUpwardJump()
 
 */
-hinkleyJump vpHinkley::testDownUpwardJump(double data)
+vpHinkley::vpHinkleyJump vpHinkley::testDownUpwardJump(double signal)
 {
 
-  hinkleyJump jump = noJump;
+  vpHinkleyJump jump = noJump;
 
-  ndata ++; // Signal lenght
+  nsignal ++; // Signal lenght
 
-  if (ndata == 1) mean = data;
+  if (nsignal == 1) mean = signal;
 
   // Calcul des variables cumulées
-  computeSk(data);
-  computeTk(data);
+  computeSk(signal);
+  computeTk(signal);
 
   computeMk();
   computeNk();
 
-  vpCDEBUG(2) << "alpha: " << alpha << "dmin2: " << dmin2 << " data: " << data
+  vpCDEBUG(2) << "alpha: " << alpha << "dmin2: " << dmin2 << " signal: " << signal
 	    << " Sk: " << Sk << " Mk: " << Mk
 		<< " Tk: " << Tk << " Nk: " << Nk << std::endl;
 
@@ -382,18 +457,18 @@ hinkleyJump vpHinkley::testDownUpwardJump(double data)
 
 #  if (VP_DEBUG_MODE >= 3)
   fprintf(f_hinkley, "%d %f %f %f %f %f %f %f %d\n",
-	  iter, data, Sk, Mk, Mk-Sk, Tk, Nk, Tk-Nk, jump);
+	  iter, signal, Sk, Mk, Mk-Sk, Tk, Nk, Tk-Nk, jump);
   fflush(f_hinkley);
 #  endif
 #endif
-  computeMean(data);
+  computeMean(signal);
 
   if ((jump == upwardJump) || (jump == downwardJump)) {
     vpCDEBUG(2) << "\n*** DECROCHAGE  ***\n";
 
-    Sk = 0; Mk = 0; Tk = 0; Nk = 0;  ndata = 0;
+    Sk = 0; Mk = 0; Tk = 0; Nk = 0;  nsignal = 0;
     // Debut modif FS le 03/09/2003
-    mean = data;
+    mean = signal;
     // Fin modif FS le 03/09/2003
   }
 
@@ -402,11 +477,13 @@ hinkleyJump vpHinkley::testDownUpwardJump(double data)
 
 /*!
 
-  compute the mean value \f$m_0\f$ of the signal. The mean value must be
+  Compute the mean value \f$m_0\f$ of the signal. The mean value must be
   computed before the jump is estimated on-line.
 
+  \param signal : Observed signal \f$ s(t) \f$.
+
 */
-void vpHinkley::computeMean(double data)
+void vpHinkley::computeMean(double signal)
 {
   // Debut modif FS le 03/09/2003
   // Lors d'une chute ou d'une remontée lente du signal, pariculièrement
@@ -417,23 +494,25 @@ void vpHinkley::computeMean(double data)
   // Fin modif FS le 03/09/2003
 
   // Mise a jour de la moyenne.
-    mean = (mean * (ndata - 1) + data) / (ndata);
+    mean = (mean * (nsignal - 1) + signal) / (nsignal);
 
 }
 /*!
 
-  compute \f$S_k = \sum_{t=0}^{k} (data_t - m_0 + \frac{\delta}{2})\f$
+  Compute \f$S_k = \sum_{t=0}^{k} (s(t) - m_0 + \frac{\delta}{2})\f$
+
+  \param signal : Observed signal \f$ s(t) \f$.
 
 */
-void vpHinkley::computeSk(double data)
+void vpHinkley::computeSk(double signal)
 {
 
   // Calcul des variables cumulées
-  Sk += data - mean + dmin2;
+  Sk += signal - mean + dmin2;
 }
 /*!
 
-  compute \f$M_k\f$, the maximum value of \f$S_k\f$.
+  Compute \f$M_k\f$, the maximum value of \f$S_k\f$.
 
 */
 void vpHinkley::computeMk()
@@ -442,18 +521,19 @@ void vpHinkley::computeMk()
 }
 /*!
 
-  compute \f$T_k = \sum_{t=0}^{k} (data_t - m_0 - \frac{\delta}{2})\f$
+  Compute \f$T_k = \sum_{t=0}^{k} (s(t) - m_0 - \frac{\delta}{2})\f$
 
+  \param signal : Observed signal \f$ s(t) \f$.
 */
-void vpHinkley::computeTk(double data)
+void vpHinkley::computeTk(double signal)
 {
 
   // Calcul des variables cumulées
-  Tk += data - mean - dmin2;
+  Tk += signal - mean - dmin2;
 }
 /*!
 
-  compute \f$N_k\f$, the minimum value of \f$T_k\f$.
+  Compute \f$N_k\f$, the minimum value of \f$T_k\f$.
 
 */
 void vpHinkley::computeNk()
@@ -461,7 +541,7 @@ void vpHinkley::computeNk()
   if (Tk < Nk) Nk = Tk;
 }
 
-void vpHinkley::print(hinkleyJump jump) 
+void vpHinkley::print(vpHinkley::vpHinkleyJump jump) 
 {
   switch(jump)
     {
