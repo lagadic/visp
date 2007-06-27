@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testFeature.cpp,v 1.2 2007-06-20 15:55:11 fspindle Exp $
+ * $Id: testFeature.cpp,v 1.3 2007-06-27 14:39:37 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,35 +52,29 @@
 
 int main()
 {
-  vpServo task ;
-  vpColVector v ; // computed robot velocity
+  try {
+    for (int i=0; i < 3; i++) {
+      vpServo task ;
 
-  vpFeaturePoint p, pd;
-  vpDot2 dot(100.0, 200.0);
-  vpCameraParameters cam;
-  vpFeatureBuilder::create(p, cam, dot)  ;
-  p.set_Z(1.0);
-  vpRotationMatrix R;
-  R.setIdentity();
-  vpTranslationVector td(1, 0, 0);
-  vpTranslationVector t (0.5, 0, 0);
-  vpHomogeneousMatrix cdMo(R, td);
-  vpHomogeneousMatrix cMo(R, t);
-  vpHomogeneousMatrix cdMc ;
-  cdMc = cdMo*cMo.inverse() ;
-  vpFeatureThetaU tu ;
-  tu.buildFrom(cdMc) ;
+      vpThetaUVector tuv;
+      tuv[0] =0.1;
+      tuv[1] =0.2;
+      tuv[2] =0.3;
 
-  task.setServo(vpServo::EYEINHAND_CAMERA);
-  task.setInteractionMatrixType(vpServo::CURRENT) ;
-  //  task.addFeature(p, pd);
-  //task.addFeature(logZ);
-  task.addFeature(tu);
-  task.print() ;
-  //  double task_error_square = task.error.sumSquare() ;
-  double gain = 1.0;
-  task.setLambda(gain) ;
+      vpFeatureThetaU tu;
+      tu.buildFrom(tuv);
 
-  v = task.computeControlLaw() ;
+      task.addFeature(tu);
 
+      task.kill();
+
+      tu.print();
+      vpTRACE("End, call destructors...");
+    }
+    return 0;
+  }
+  catch(vpServoException e) {
+    std::cout << e << std::endl;
+    return -1;
+  }
 }
