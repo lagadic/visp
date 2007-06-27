@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBasicFeature.cpp,v 1.4 2006-05-30 08:40:47 fspindle Exp $
+ * $Id: vpBasicFeature.cpp,v 1.5 2007-06-27 14:38:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,7 +68,7 @@ vpBasicFeature::vpBasicFeature()
 //     featureLine[5] = 0x20 ;
 //     featureLine[6] = 0x40 ;
 //     featureLine[7] = 0x80 ;
-
+    //vpTRACE("0x%x", this);
     deallocate = vpBasicFeature::user ;
 }
 

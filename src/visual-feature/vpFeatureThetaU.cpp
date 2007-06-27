@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.cpp,v 1.8 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpFeatureThetaU.cpp,v 1.9 2007-06-27 14:38:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,7 @@
 /*
 
 attributes and members directly related to the vpBasicFeature needs
-other functionalities ar usefull but not mandatory
+other functionalities are usefull but not mandatory
 
 */
 
@@ -73,7 +73,8 @@ vpFeatureThetaU::init()
 
 vpFeatureThetaU::vpFeatureThetaU() : vpBasicFeature()
 {
-    init() ;
+  //vpTRACE("0x%x", this);
+  init() ;
 }
 
 vpFeatureThetaU::vpFeatureThetaU(vpRotationMatrix &cdRc) : vpBasicFeature()
