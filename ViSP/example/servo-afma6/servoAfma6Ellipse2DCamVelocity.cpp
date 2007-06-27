@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.7 2007-06-06 08:25:56 fspindle Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.8 2007-06-27 14:44:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -218,6 +218,7 @@ main()
 
     vpTRACE("Display task information " ) ;
     task.print() ;
+    task.kill();
   }
   catch (...)
   {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.5 2007-04-20 15:30:41 fspindle Exp $
+ * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.6 2007-06-27 14:44:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -390,6 +390,7 @@ main()
       v = 0 ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
       vpDisplay::getClick(I) ;
+      task.kill();
     }
   catch (...)
     {

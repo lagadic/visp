@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.5 2007-05-10 14:56:21 fspindle Exp $
+ * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.6 2007-06-27 14:44:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -271,10 +271,10 @@ void *mainLoop (void *_simu)
 
       robot.getPosition(cMo) ;
       for (i = 0 ; i < 4 ; i++)
-      {
-	point[i].track(cMo) ;
-	vpFeatureBuilder::create(p[i],point[i])  ;
-      }
+	{
+	  point[i].track(cMo) ;
+	  vpFeatureBuilder::create(p[i],point[i])  ;
+	}
 
       v = task.computeControlLaw() ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
@@ -286,22 +286,23 @@ void *mainLoop (void *_simu)
 
 
       if(SAVE==1)
-      {
-	sprintf(name,"/tmp/image.%04d.external.png",iter) ;
-	std::cout << name << std::endl ;
-	simu->write(vpSimulator::EXTERNAL,name) ;
-	sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
-	simu->write(vpSimulator::INTERNAL,name) ;
-      }
+	{
+	  sprintf(name,"/tmp/image.%04d.external.png",iter) ;
+	  std::cout << name << std::endl ;
+	  simu->write(vpSimulator::EXTERNAL,name) ;
+	  sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
+	  simu->write(vpSimulator::INTERNAL,name) ;
+	}
 
       vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
 
     }
     vpTRACE("Display task information " ) ;
     task.print() ;
+    task.kill() ;
     std::cout << "\nEnter a character to continue..." <<std::endl ;
     {    char a ; std::cin >> a ; }
-    }
+  }
 
   simu->closeMainApplication() ;
 
