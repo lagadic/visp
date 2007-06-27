@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpFeatureThetaU.h,v 1.7 2007-06-27 14:38:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@ public:
   vpFeatureThetaU(vpHomogeneousMatrix &cdMc) ;
   void buildFrom(vpThetaUVector &tu) ;
   //! destructor
-  virtual ~vpFeatureThetaU() { ; }
+  virtual ~vpFeatureThetaU() { /*vpTRACE("0x%x", this)*/ ;}
 
 public:
 

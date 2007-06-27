@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBasicFeature.h,v 1.5 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpBasicFeature.h,v 1.6 2007-06-27 14:38:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,26 +77,26 @@
 */
 class VISP_EXPORT vpBasicFeature
 {
-public: // Public constantes
+ public: // Public constantes
   static const int FEATURE_LINE [32];
   static const int FEATURE_ALL;
 
-protected:
+ protected:
   //! state of the visual feature
   vpColVector s ;
   //! dimension of the visual feature
   int dim_s ;
   //int featureLine[8] ;
 
-public:
+ public:
   int dimension_s() { return dim_s ; }
 
-public:
+ public:
 
   virtual void init() = 0 ;
 
   vpBasicFeature() ;
-  virtual ~vpBasicFeature() { ; }
+  virtual ~vpBasicFeature() { /*vpTRACE("0x%x", this)*/; }
   //! write element in the state vector (usage : A[i] = x )
   virtual inline double operator[](const int n) {  return s[n]; }
   //! read element in the state vector  (usage : x = A[i] )
@@ -122,23 +122,23 @@ public:
   virtual vpBasicFeature *duplicate() const = 0 ;
 
 
-public:
+ public:
   virtual void display(const vpCameraParameters &cam,
 		       vpImage<unsigned char> &I,
 		       vpColor::vpColorType color=vpColor::green) const = 0 ;
 
 
   // memory issue (used by the vpServo class)
-public:
+ public:
   enum whoShouldDeallocateEnum
     {
       user,
       vpServo
     } ;
 
-private:
+ private:
   int deallocate ;
-public:
+ public:
   void setDeallocate(int d) { deallocate = d ; }
   int getDeallocate() { return deallocate ; }
 } ;
