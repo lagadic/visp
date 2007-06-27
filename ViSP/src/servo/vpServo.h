@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.11 2007-05-11 16:53:34 fspindle Exp $
+ * $Id: vpServo.h,v 1.12 2007-06-27 14:37:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,13 +55,6 @@
 #include <visp/vpAdaptativeGain.h>
 
 
-/*!
-  \class vpServo
-
-  \brief Class required to compute the visual servoing control law
-
-  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
-*/
 
 class VISP_EXPORT vpServo
 {
@@ -169,6 +162,7 @@ private:
   bool interactionMatrixComputed ;
   //! dimension of the task
   int dim_task ;
+  bool taskWasKilled; // flag to indicate if the task was killed
 public:
   //! rank of the task Jacobian
   int rankJ1 ;
