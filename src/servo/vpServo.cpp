@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.15 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.16 2007-06-27 14:37:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,6 +51,38 @@
   \brief  Class required to compute the visual servoing control law
 */
 
+/*!
+  \class vpServo
+
+  \brief Class required to compute the visual servoing control law.
+
+  \warning To avoid potential memory leaks, it is mendatory to call
+  explicitly the kill() function to destroy the task. Otherwise, the
+  destructor ~vpServo() launch an exception
+  vpServoException::notKilledProperly.
+
+  \code
+  vpServo task ;
+
+  vpThetaUVector tuv;
+  tuv[0] =0.1;
+  tuv[1] =0.2;
+  tuv[2] =0.3;
+
+  vpFeatureThetaU tu;
+  tu.buildFrom(tuv);
+  ...  
+  task.addFeature(tu); // Add current ThetaU feature
+  
+  // A call to kill() is requested here to destroy properly the current 
+  // and desired feature lists.
+  task.kill(); 
+  \endcode
+
+
+  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+*/
+
 void
 vpServo::init()
 {
@@ -78,41 +110,60 @@ vpServo::init()
   interactionMatrixComputed = false ;
   errorComputed = false ;
 
-
+  taskWasKilled = false;
 }
 
-//! destruction (memory deallocation if required)
+/*!
+  Task destruction. Kill the current and desired visual feature lists.
+
+  It is mendatory to call explicitly this function to avoid potential
+  memory leaks.
+
+  \code
+  vpServo task ;
+  vpFeatureThetaU tu;
+  ...  
+  task.addFeature(tu); // Add current ThetaU feature
+  
+  task.kill(); // A call to kill() is requested here
+  \endcode
+
+*/
 void
 vpServo::kill()
-{ featureList.front() ;
- desiredFeatureList.front() ;
+{ 
+  if (taskWasKilled == false) {
+    // kill the current and desired feature lists
+    featureList.front() ;
+    desiredFeatureList.front() ;
+    
+    while (!featureList.outside()) {
+	vpBasicFeature *s_ptr = NULL;
 
+	// current list
+	s_ptr=  featureList.value() ;
+	if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
+	  {
+	    delete s_ptr ;
+	    s_ptr = NULL ;
+	  }
 
- while (!featureList.outside())
-   {
-     vpBasicFeature *s_ptr = NULL;
+	//desired list
+	s_ptr=  desiredFeatureList.value() ;
+	if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
+	  {
+	    s_ptr->print() ;
+	    delete s_ptr ;
+	    s_ptr = NULL ;
+	  }
 
-     // current list
-     s_ptr=  featureList.value() ;
-     if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
-       {
-	 delete s_ptr ;
-	 s_ptr = NULL ;
-       }
-
-     //desired list
-     s_ptr=  desiredFeatureList.value() ;
-     if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
-       {
-	 s_ptr->print() ;
-	 delete s_ptr ;
-	 s_ptr = NULL ;
-       }
-
-     desiredFeatureList.next() ;
-     featureList.next() ;
-   }
-
+	desiredFeatureList.next() ;
+	featureList.next() ;
+      }
+    featureList.kill() ;
+    desiredFeatureList.kill() ;
+    taskWasKilled = true;
+  }
 }
 
 void
@@ -140,10 +191,26 @@ vpServo::setServo(servoEnum _servoType)
     };
 
 }
-//! destructor
+/*! 
+  Destructor.
+  
+  In fact, it does nothing. You have to call kill() to destroy the
+  current and desired feature lists.
+  
+  \exception vpServoException::notKilledProperly : Task was not killed
+  properly. That means that you should explitly call kill().
+
+  \sa kill()
+*/
 vpServo::~vpServo()
 {
-  kill() ;
+  if (taskWasKilled == false) {
+    vpERROR_TRACE("--- Begin Warning Warning Warning Warning Warning ---");
+    vpERROR_TRACE("--- You should explicitly call vpServo.kill()...  ---");
+    vpERROR_TRACE("--- End Warning Warning Warning Warning Warning   ---");
+    throw(vpServoException(vpServoException::notKilledProperly, 
+			   "Task was not killed properly"));
+  }
 }
 
 vpServo::vpServo(servoEnum _servoType)
