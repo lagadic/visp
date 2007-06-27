@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.h,v 1.8 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpImageIo.h,v 1.9 2007-06-27 08:26:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,96 +65,55 @@ class VISP_EXPORT vpImageIo
 private:
   static const int vpMAX_LEN;
 
-  static FILE * openFileRead(const char filename[FILENAME_MAX]) ;
-  static FILE * openFileWrite(const char filename[FILENAME_MAX],
-			      const char *mode="w") ;
+  static FILE * openFileRead(const char *filename) ;
+  static FILE * openFileWrite(const char *filename, const char *mode="w") ;
 
   static FILE * openFileRead(const std::string filename) ;
-  static FILE * openFileWrite(const std::string filename, const std::string mode="w") ;
+  static FILE * openFileWrite(const std::string filename, 
+			      const std::string mode="w") ;
 
 public:
 
 
-  //! Read PGM images
   static
-  void readPGM(vpImage<unsigned char> &I,
-	       const char filename[FILENAME_MAX]) ;
+  void readPGM(vpImage<unsigned char> &I, const char *filename) ;
+  static
+  void readPGM(vpImage<unsigned char> &I, const std::string filename) ;
+  static
+  void readPGM(vpImage<vpRGBa> &I, const char *filename) ;
+  static
+  void readPGM(vpImage<vpRGBa> &I, const std::string filename) ;
 
-  //! Read PGM images
   static
-  void readPGM(vpImage<vpRGBa> &I,
-	       const char filename[FILENAME_MAX]) ;
-  //! Write PGM images
+  void readPPM(vpImage<unsigned char> &I, const char *filename) ;
   static
-  void writePGM(const vpImage<unsigned char> &I,
-		const char filename[FILENAME_MAX]) ;
-  //! Write PGM images
+  void readPPM(vpImage<unsigned char> &I, const std::string filename) ;
   static
-  void writePGM(const vpImage<short> &I,
-		const char filename[FILENAME_MAX]) ;
-  //! Write PGM images
+  void readPPM(vpImage<vpRGBa> &I, const char *filename) ;
   static
-  void writePGM(const vpImage<vpRGBa> &I,
-		const char filename[FILENAME_MAX]) ;
+  void readPPM(vpImage<vpRGBa> &I, const std::string filename) ;
 
+  static
+  void writePGM(const vpImage<unsigned char> &I, const char *filename) ;
+  static
+  void writePGM(const vpImage<unsigned char> &I, const std::string filename) ;
+  static
+  void writePGM(const vpImage<short> &I, const char *filename) ;
+  static
+  void writePGM(const vpImage<short> &I, const std::string filename) ;
+  static
+  void writePGM(const vpImage<vpRGBa> &I, const char *filename) ;
+  static
+  void writePGM(const vpImage<vpRGBa> &I, const std::string filename) ;
 
-  //! Read PGM images
   static
-  void readPGM(vpImage<unsigned char> &I,
-	       const std::string filename) ;
-
-  //! Read PGM images
+  void writePPM(const vpImage<unsigned char> &I, const char *filename) ;
   static
-  void readPGM(vpImage<vpRGBa> &I,
-	       const std::string filename) ;
-  //! Write PGM images
+  void writePPM(const vpImage<unsigned char> &I, const std::string filename) ;
   static
-  void writePGM(const vpImage<unsigned char> &I,
-		const std::string filename) ;
-  //! Write PGM images
+  void writePPM(const vpImage<vpRGBa> &I, const char *filename) ;
   static
-  void writePGM(const vpImage<short> &I,
-		const std::string filename) ;
-  //! Write PGM images
-  static
-  void writePGM(const vpImage<vpRGBa> &I,
-		const std::string filename) ;
-
-
-
-  //! Read PPM images
-  static
-  void readPPM(vpImage<unsigned char> &I,
-	       const char filename[FILENAME_MAX]) ;
-  //! Read PPM images
-  static
-  void readPPM(vpImage<vpRGBa> &I,
-	       const char filename[FILENAME_MAX]) ;
-  //! Write PPM images
-  static
-  void writePPM(const vpImage<unsigned char> &I,
-		const char filename[FILENAME_MAX]) ;
-  //! Write PPM images
-  static
-  void writePPM(const vpImage<vpRGBa> &I,
-		const char filename[FILENAME_MAX]) ;
-
-  //! Read PPM images
-  static
-  void readPPM(vpImage<unsigned char> &I,
-	       const std::string filename) ;
-  //! Read PPM images
-  static
-  void readPPM(vpImage<vpRGBa> &I,
-	       const std::string filename) ;
-  //! Write PPM images
-  static
-  void writePPM(const vpImage<unsigned char> &I,
-		const std::string filename) ;
-  //! Write PPM images
-  static
-  void writePPM(const vpImage<vpRGBa> &I,
-		const std::string filename) ;
+  void writePPM(const vpImage<vpRGBa> &I, const std::string filename) ;
 
   } ;
 #endif
