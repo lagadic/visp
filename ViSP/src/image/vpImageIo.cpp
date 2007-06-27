@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.cpp,v 1.6 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpImageIo.cpp,v 1.7 2007-06-27 08:26:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,9 +42,16 @@
 
 #include <visp/vpImageIo.h>
 
+/*!
 
+  Open a file with read access.
+
+  \param filename : Name of the file to open.
+
+  \return File descriptor.
+*/
 FILE *
-vpImageIo::openFileRead(const char filename[FILENAME_MAX])
+vpImageIo::openFileRead(const char *filename)
 {
 
   FILE *fd ;
@@ -66,9 +73,20 @@ vpImageIo::openFileRead(const char filename[FILENAME_MAX])
   return fd ;
 }
 
+/*!
+
+  Open a file with write access.
+
+  \param filename : Name of the file to open.
+
+  \param mode : Access mode. By default set to "w" for write
+  access. Could be changed to set for example the access mode to "wa"
+  to append data in the file.
+
+  \return File descriptor.
+*/
 FILE *
-vpImageIo::openFileWrite(const char filename[FILENAME_MAX],
-			 const char *mode)
+vpImageIo::openFileWrite(const char *filename, const char *mode)
 {
   FILE *fd ;
 
@@ -90,6 +108,14 @@ vpImageIo::openFileWrite(const char filename[FILENAME_MAX],
   return fd ;
 }
 
+/*!
+
+  Open a file with read access.
+
+  \param filename : Name of the file to open.
+
+  \return File descriptor.
+*/
 FILE *
 vpImageIo::openFileRead(const std::string filename)
 {
@@ -113,6 +139,18 @@ vpImageIo::openFileRead(const std::string filename)
   return fd ;
 }
 
+/*!
+
+  Open a file with write access.
+
+  \param filename : Name of the file to open.
+
+  \param mode : Access mode. By default set to "w" for write
+  access. Could be changed to set for example the access mode to "wa"
+  to append data in the file.
+
+  \return File descriptor.
+*/
 FILE *
 vpImageIo::openFileWrite(const std::string filename,
 			 const std::string mode)

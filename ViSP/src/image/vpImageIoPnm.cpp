@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIoPnm.cpp,v 1.13 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: vpImageIoPnm.cpp,v 1.14 2007-06-27 08:26:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,14 +56,16 @@ const int vpImageIo::vpMAX_LEN = 100;
 //--------------------------------------------------------------------------
 
 /*!
-  \brief
-  Write the content of the bitmap in the file which name is given by \e
+  Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PGM P5) file.
+
+  \param I : Image to save as a (PGM P5) file.
+  \param filename : Name of the file containing the image.
 */
 
 void
 vpImageIo::writePGM(const vpImage<unsigned char> &I,
-		    const char filename[FILENAME_MAX])
+		    const char *filename)
 {
 
   FILE* fd;
@@ -106,14 +108,14 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
 
 }
 /*!
-  \brief
-  Write the content of the bitmap in the file which name is given by \e
+  Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PGM P5) file.
-*/
 
+  \param I : Image to save as a (PGM P5) file.
+  \param filename : Name of the file containing the image.
+*/
 void
-vpImageIo::writePGM(const vpImage<short> &I,
-		    const char filename[FILENAME_MAX])
+vpImageIo::writePGM(const vpImage<short> &I, const char *filename)
 {
   vpImage<unsigned char> Iuc ;
   unsigned int nrows = I.getHeight();
@@ -129,15 +131,16 @@ vpImageIo::writePGM(const vpImage<short> &I,
 
 }
 /*!
-  \brief
-  Write the content of the bitmap in the file which name is given by \e
+  Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PGM P5) file.
   Color image is converted into a grayscale image.
+
+  \param I : Image to save as a (PGM P5) file.
+  \param filename : Name of the file containing the image.
 */
 
 void
-vpImageIo::writePGM(const vpImage<vpRGBa> &I,
-		    const char filename[FILENAME_MAX])
+vpImageIo::writePGM(const vpImage<vpRGBa> &I, const char *filename)
 {
 
   FILE* fd;
@@ -186,23 +189,23 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
 
 
 /*!
-  \brief read a PGM file and initialize  a scalar image
-
+  Read a PGM P5 file and initialize a scalar image.
 
   Read the contents of the portable gray pixmap (PGM P5) filename, allocate
   memory for the corresponding image, and set the bitmap whith the content of
   the file.
 
-
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
 
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+
 */
 
 void
-vpImageIo::readPGM(vpImage<unsigned char> &I,
-		   const char filename[FILENAME_MAX])
+vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
 {
   FILE* fd = NULL; // File descriptor
   int   ierr;
@@ -336,23 +339,25 @@ vpImageIo::readPGM(vpImage<unsigned char> &I,
 
 
 /*!
-  \brief read a PGM file and initialize  a scalar image
-
+  Read a PGM P5 file and initialize a scalar image.
 
   Read the contents of the portable gray pixmap (PGM P5) filename, allocate
   memory for the corresponding image, and set the bitmap whith the content of
   the file.
 
-
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
 
+  The gray level image contained in the \e filename is converted in a
+  color image in \e I.
+
+  \param I : Color image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
 */
 
 void
-vpImageIo::readPGM(vpImage<vpRGBa> &I,
-		   const char filename[FILENAME_MAX])
+vpImageIo::readPGM(vpImage<vpRGBa> &I, const char *filename)
 {
 
   try
@@ -378,7 +383,6 @@ vpImageIo::readPGM(vpImage<vpRGBa> &I,
 //--------------------------------------------------------------------------
 
 /*!
-  \brief
   Read the contents of the portable pixmap (PPM P6) filename, allocate memory
   for the corresponding gray level image, convert the data in gray level, and
   set the bitmap whith the gray level data. That means that the image \e I is a
@@ -386,15 +390,16 @@ vpImageIo::readPGM(vpImage<vpRGBa> &I,
   black and white photograph. The quantization formula used is \f$0,299 r +
   0,587 g + 0,114 b\f$.
 
-
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
 
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
 
 */
 void
-vpImageIo::readPPM(vpImage<unsigned char> &I, const char filename[FILENAME_MAX])
+vpImageIo::readPPM(vpImage<unsigned char> &I, const char *filename)
 {
 
   try
@@ -413,15 +418,19 @@ vpImageIo::readPPM(vpImage<unsigned char> &I, const char filename[FILENAME_MAX])
 }
 
 
-/*!  \brief Read the contents of the portable pixmap (PPM P6) filename,
+/*!  
+  Read the contents of the portable pixmap (PPM P6) filename,
   allocate memory for the corresponding vpRGBa image.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::readPPM(vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
+vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 {
 
   FILE* fd = NULL; // File descriptor
@@ -563,14 +572,17 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 }
 
 /*!
-  \brief
   Write the content of the bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PPM P6) file.
   grayscale image is converted into a color image vpRGBa.
+
+  \param I : Image to save as a (PPM P6) file.
+  \param filename : Name of the file containing the image.
+ 
 */
 
 void
-vpImageIo::writePPM(const vpImage<unsigned char> &I, const char filename[FILENAME_MAX])
+vpImageIo::writePPM(const vpImage<unsigned char> &I, const char *filename)
 {
 
   try
@@ -590,12 +602,14 @@ vpImageIo::writePPM(const vpImage<unsigned char> &I, const char filename[FILENAM
 
 
 /*!
-  \brief
   Write the content of the bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PPM P6) file.
+
+  \param I : Image to save as a (PPM P6) file.
+  \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
+vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
 {
 
   FILE* f;
@@ -666,53 +680,54 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char filename[FILENAME_MAX])
 
 
 /*!
-  \brief read a PGM file and initialize  a scalar image
-
-
-  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
-  memory for the corresponding image, and set the bitmap whith the content of
-  the file.
-
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-*/
-
-void
-vpImageIo::readPGM(vpImage<unsigned char> &I,
-		   const std::string filename)
-{
-  vpImageIo::readPGM(I, filename.c_str());
-}
-
-/*!
-  \brief read a PGM file and initialize  a scalar image
-
+  Read a PGM P5 file and initialize a scalar image.
 
   Read the contents of the portable gray pixmap (PGM P5) filename, allocate
   memory for the corresponding image, and set the bitmap whith the content of
   the file.
 
-
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
 
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
 */
 
 void
-vpImageIo::readPGM(vpImage<vpRGBa> &I,
-		   const  std::string filename)
+vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string filename)
 {
   vpImageIo::readPGM(I, filename.c_str());
 }
 
 /*!
-  \brief
+  Read a PGM P5 file and initialize a scalar image.
+
+  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
+  memory for the corresponding image, and set the bitmap whith the content of
+  the file.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
+
+void
+vpImageIo::readPGM(vpImage<vpRGBa> &I, const  std::string filename)
+{
+  vpImageIo::readPGM(I, filename.c_str());
+}
+
+/*!
   Write the content of the bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PGM P5) file.
+
+  \param I : Image to save as a (PGM P5) file.
+  \param filename : Name of the file containing the image.
+
 */
 
 void
@@ -723,29 +738,32 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
 }
 
 /*!
-  \brief
   Write the content of the bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PGM P5) file.
+
+  \param I : Image to save as a (PGM P5) file.
+  \param filename : Name of the file containing the image.
 */
 
 void
-vpImageIo::writePGM(const vpImage<short> &I,
-		    const std::string filename)
+vpImageIo::writePGM(const vpImage<short> &I, const std::string filename)
 {
 
   vpImageIo::writePGM(I, filename.c_str());
 }
 
 /*!
-  \brief
   Write the content of the bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PGM P5) file.
   Color image is converted into a grayscale image.
+
+  \param I : Image to save as a (PGM P5) file.
+  \param filename : Name of the file containing the image.
+ 
 */
 
 void
-vpImageIo::writePGM(const vpImage<vpRGBa> &I,
-		    const std::string filename)
+vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string filename)
 {
   vpImageIo::writePGM(I, filename.c_str());
 }
@@ -755,7 +773,6 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
 //--------------------------------------------------------------------------
 
 /*!
-  \brief
   Read the contents of the portable pixmap (PPM P6) filename, allocate memory
   for the corresponding gray level image, convert the data in gray level, and
   set the bitmap whith the gray level data. That means that the image \e I is a
@@ -763,11 +780,12 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I,
   black and white photograph. The quantization formula used is \f$0,299 r +
   0,587 g + 0,114 b\f$.
 
-
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
 
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
 
 */
 void
@@ -776,12 +794,16 @@ vpImageIo::readPPM(vpImage<unsigned char> &I, const std::string filename)
   vpImageIo::readPPM(I, filename.c_str());
 }
 
-/*!  \brief Read the contents of the portable pixmap (PPM P6) filename,
+/*!  
+  Read the contents of the portable pixmap (PPM P6) filename,
   allocate memory for the corresponding vpRGBa image.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
 */
 void
 vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string filename)
@@ -790,10 +812,13 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string filename)
 }
 
 /*!
-  \brief
   Write the content of the bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PPM P6) file.
   grayscale image is converted into a color image vpRGBa.
+
+  \param I : Image to save as a (PPM P6) file.
+  \param filename : Name of the file containing the image.
+ 
 */
 
 void
@@ -803,9 +828,12 @@ vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string filename)
 }
 
 /*!
-  \brief
   Write the content of the bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PPM P6) file.
+
+  \param I : Image to save as a (PPM P6) file.
+  \param filename : Name of the file containing the image.
+ 
 */
 void
 vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
@@ -814,9 +842,6 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
   vpImageIo::writePPM(I, filename.c_str());
 }
 
-
-
-#undef vpMAX_LEN
 /*
  * Local variables:
  * c-basic-offset: 2
