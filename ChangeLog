@@ -29,10 +29,15 @@ ViSP 2.4.x
 	- vpDisplay : changes in displayRectangle():an option parameter 
 	  fill has been had to precise if the displayed rectangle is filled 
 	  or not. 
-	- vpColor : Add orange
+	- vpColor : Add orange color.
+	- vpServo : To fix bug #3528 you should explicitly call vpServo::kill()
+	  in your programs. Otherwise an exception 
+	  vpServoException::notKilledProperly is launched by 
+	  vpServo::~vpServo() destructor.
   - Testing:
 	- test/video-device/testClick.cpp was added
 	- test/video-device/testVideoDevice.cpp was added
+	- test/visual-feature/testFeature.cpp was added
   - Documentation improvement
 	- vpRobotAfma6: example usage of getPosition() was updated
 	- vpDisplayGDI is included in the doxygen documentation

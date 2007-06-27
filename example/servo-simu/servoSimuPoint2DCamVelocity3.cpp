@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DCamVelocity3.cpp,v 1.4 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: servoSimuPoint2DCamVelocity3.cpp,v 1.5 2007-06-27 14:44:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -261,5 +261,6 @@ main(int argc, char ** argv)
 
   vpTRACE("Display task information " ) ;
   task.print() ;
+  task.kill();
 }
 

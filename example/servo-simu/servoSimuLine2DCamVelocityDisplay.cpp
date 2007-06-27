@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuLine2DCamVelocityDisplay.cpp,v 1.5 2007-05-03 16:00:17 fspindle Exp $
+ * $Id: servoSimuLine2DCamVelocityDisplay.cpp,v 1.6 2007-06-27 14:44:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -322,6 +322,7 @@ main(int argc, char ** argv)
 
   vpTRACE("Display task information " ) ;
   task.print() ;
+  task.kill();
 }
 
 #else

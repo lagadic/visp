@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Point2DCamVelocity.cpp,v 1.6 2007-04-20 15:56:14 fspindle Exp $
+ * $Id: servoAfma6Point2DCamVelocity.cpp,v 1.7 2007-06-27 14:44:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -187,7 +187,8 @@ main()
 
       vpTRACE("Display task information " ) ;
       task.print() ;
-    }
+      task.kill();
+   }
   catch (...)
     {
       vpERROR_TRACE(" Test failed") ;
