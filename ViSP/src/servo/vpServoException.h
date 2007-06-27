@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoException.h,v 1.6 2007-04-20 14:22:17 asaunier Exp $
+ * $Id: vpServoException.h,v 1.7 2007-06-27 14:36:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,11 +70,13 @@ public:
    */
   enum errorServoCodeEnum
     {
-      //! feature list or desired feature list is empty
+      //! Current or desired feature list is empty
       noFeatureError,
-      //! no degree of freedom is available (secondary task)
+      //! No degree of freedom is available to achieve the secondary task.
       noDofFree,
-      //! other exception
+      //! Task was not killed properly
+      notKilledProperly,
+      //! Other exception
       servoError
     } ;
 
