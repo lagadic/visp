@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.4 2007-06-27 16:30:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -283,6 +283,7 @@ main()
 
   vpTRACE("Display task information " ) ;
   task.print() ;
+  task.kill();
   vpTRACE("Final camera location " ) ;
   std::cout << cMo << std::endl ;
 }
