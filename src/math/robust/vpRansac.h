@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.h,v 1.8 2007-05-04 16:06:00 fspindle Exp $
+ * $Id: vpRansac.h,v 1.9 2007-06-28 11:53:21 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -187,6 +187,8 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
       {
 	delete [] ind;
 	vpERROR_TRACE("Unable to select a nondegenerate data set");
+	throw(vpException(vpException::fatalError,
+			  "Unable to select a nondegenerate data set")) ;
 	return false;
       }
     }
