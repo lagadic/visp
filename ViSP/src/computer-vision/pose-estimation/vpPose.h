@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.10 2007-06-05 13:38:01 asaunier Exp $
+ * $Id: vpPose.h,v 1.11 2007-06-28 11:52:04 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -146,11 +146,15 @@ public:
   //! compute the pose for a given method
   void computePose(poseMethodEnum methode, vpHomogeneousMatrix &cMo) ;
   void printPoint() ;
-  void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
+
+  static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
 	       vpCameraParameters &cam, double size,
 	       vpColor::vpColorType col=vpColor::none) ;
 
-
+private:
+  int vvsIterMax ; //! define the maximum number of iteration in VVS
+public:
+  void setVvsIterMax(int nb) { vvsIterMax = nb ; }
 public:
   static bool degenerateConfiguration(vpColVector &x,int *ind) ;
   static void computeTransformation(vpColVector &x,int *ind, vpColVector &M) ;

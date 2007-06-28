@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.14 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpPose.cpp,v 1.15 2007-06-28 11:52:04 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,6 +70,7 @@ vpPose::init()
 
   c3d = NULL ;
 
+  vvsIterMax = 200 ;
 
   if (DEBUG_LEVEL1)
     std::cout << "end vpPose::Init() " << std::endl ;
@@ -522,7 +523,7 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   vpMatrix K(3,3);
   K=cam.K;
   K.setIdentity();
-  vpMatrix Kinv =K.pseudoInverse();  
+  vpMatrix Kinv =K.pseudoInverse();
 
   vpMatrix KinvH =Kinv*H;
   kh1=KinvH.column(1);
@@ -531,7 +532,7 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
 
   double s= sqrt(kh1.sumSquare())/sqrt(kh2.sumSquare());
 
- 
+
 
   vpMatrix D(3,3);
   D.setIdentity();
