@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpException.h,v 1.8 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpException.h,v 1.9 2007-06-28 11:54:13 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,7 +92,8 @@ public:
       cannotUseConstructorError,
       notImplementedError,
       divideByZeroError,
-	  dimensionError
+      dimensionError,
+      fatalError
     } ;
 
   vpException (const int code, const char * msg);
