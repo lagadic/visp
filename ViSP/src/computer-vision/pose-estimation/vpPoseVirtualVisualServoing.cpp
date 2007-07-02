@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVirtualVisualServoing.cpp,v 1.10 2007-06-28 11:52:04 marchand Exp $
+ * $Id: vpPoseVirtualVisualServoing.cpp,v 1.11 2007-07-02 13:41:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,9 +102,6 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       lP.front() ;
       while (!lP.outside())
       {
-	double xi,yi,xp,yp;
-
-
 	P = lP.value() ;
 	// forward projection of the 3D model for a given pose
 	// change frame coordinates
