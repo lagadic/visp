@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRect.h,v 1.3 2007-03-02 18:16:24 fspindle Exp $
+ * $Id: vpRect.h,v 1.4 2007-07-02 16:35:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -188,8 +188,8 @@ public:
 
   */
   inline void getCenter(double & x, double & y) const { 
-    x = this->left + this->width  / 2.0 + 0.5; 
-    y = this->top  + this->height / 2.0 + 0.5; 
+    x = this->left + this->width  / 2.0 - 0.5; 
+    y = this->top  + this->height / 2.0 - 0.5; 
   };
  
   /*!

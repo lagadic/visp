@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.h,v 1.3 2007-07-02 13:41:25 fspindle Exp $
+ * $Id: vpHinkley.h,v 1.4 2007-07-02 16:35:02 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -78,6 +78,28 @@ class vpHinkley
 
   */
   inline double getMean() {return mean;}
+  /*!
+    \return The value of \f$S_k = \sum_{t=0}^{k} (s(t) - m_0 + \frac{\delta}{2})\f$
+
+  */
+  inline double getSk() {return Sk;}
+  /*!
+    \return The value of \f$M_k\f$, the maximum value of \f$S_k\f$.
+
+  */
+  inline double getMk() {return Mk;}
+  /*!
+
+    \return The value of \f$T_k = \sum_{t=0}^{k} (s(t) - m_0 -
+    \frac{\delta}{2})\f$
+
+  */
+  inline double getTk() {return Tk;}
+  /*!
+    \return The value of \f$N_k\f$, the maximum value of \f$T_k\f$.
+
+  */
+  inline double getNk() {return Nk;}
  private:
   void computeMean(double signal);
   void computeSk(double signal);

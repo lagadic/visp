@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.cpp,v 1.3 2007-06-26 13:15:49 fspindle Exp $
+ * $Id: vpHinkley.cpp,v 1.4 2007-07-02 16:35:02 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@
   vpHinkley(double alpha, double delta) constructor.
 
   A downward jump is detected if \f$ M_k - S_k > \alpha \f$.
-  A upward jump is detected if \f$ T_k - S_k > \alpha \f$. 
+  A upward jump is detected if \f$ T_k - N_k > \alpha \f$. 
 
   To detect only downward jumps in \f$ s(t) \f$ use
   testDownwardJump().To detect only upward jumps in \f$ s(t) \f$ use
@@ -407,7 +407,7 @@ vpHinkley::vpHinkleyJump vpHinkley::testUpwardJump(double signal)
 /*!
 
   Perform the Hinkley test. A downward jump is detected if \f$ M_k - S_k >
-  \alpha \f$. An upward jump is detected if \f$ T_k - S_k > \alpha \f$.
+  \alpha \f$. An upward jump is detected if \f$ T_k - N_k > \alpha \f$.
 
   \param signal : Observed signal \f$ s(t) \f$.
 
