@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.h,v 1.2 2007-06-26 13:15:49 fspindle Exp $
+ * $Id: vpHinkley.h,v 1.3 2007-07-02 13:41:25 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -72,6 +72,12 @@ class vpHinkley
   void setIter(int iter); // For debug only
 
   static void print(vpHinkleyJump jump) ;
+
+  /*!
+    \return The mean value \f$m_0\f$ of the signal \f$ s(t) \f$.
+
+  */
+  inline double getMean() {return mean;}
  private:
   void computeMean(double signal);
   void computeSk(double signal);
