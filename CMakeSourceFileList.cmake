@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.18 2007-06-19 08:59:01 marchand Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.19 2007-07-06 15:46:37 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -187,6 +187,7 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMe.cpp
   tracking/moving-edges/vpMeEllipse.cpp
   tracking/moving-edges/vpMeLine.cpp
+  tracking/moving-edges/vpMePath.cpp
   tracking/moving-edges/vpMeSite.cpp
   tracking/moving-edges/vpMeTracker.cpp
   )
