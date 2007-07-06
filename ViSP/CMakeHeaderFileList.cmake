@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.16 2007-06-19 08:59:01 marchand Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.17 2007-07-06 15:46:37 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -178,6 +178,7 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMeEllipse.h
   tracking/moving-edges/vpMe.h
   tracking/moving-edges/vpMeLine.h
+  tracking/moving-edges/vpMePath.h
   tracking/moving-edges/vpMeSite.h
   tracking/moving-edges/vpMeTracker.h
   )

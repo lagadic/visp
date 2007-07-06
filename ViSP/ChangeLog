@@ -1,6 +1,7 @@
 ViSP 2.4.x
   - New classes
 	- vpHinkley class for Hinkley's cumulative sum test computation
+	- vpMePath Tracking of a white curve by using line and parabola tracker
   - New Features
   - Bug fix and improvement
 	- vpDot: setMaxDotSize(double percentage) replace 
