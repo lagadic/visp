@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.1 2007-07-06 15:46:37 fspindle Exp $
+ * $Id: vpMePath.h,v 1.2 2007-07-09 15:39:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,66 +61,62 @@ class VISP_EXPORT vpMePath : public vpMeTracker
 
 public:
 
-  vpMePath() ;
-  virtual ~vpMePath() ;
-  void display(vpImage<unsigned char>&I, vpColor::vpColorType col) ;
+  vpMePath();
+  virtual ~vpMePath();
+  void display(vpImage<unsigned char>&I, vpColor::vpColorType col);
   void track(vpImage<unsigned char>& Im);
-  void initTracking(vpImage<unsigned char> &I) ;
+  void initTracking(vpImage<unsigned char> &I);
   void initTracking(vpImage<unsigned char> &I, int n,
-		    unsigned *i, unsigned *j) ;
-  
-  inline void setVerboseMode(bool on=true) {this->verbose = on;};
+		    unsigned *i, unsigned *j);
+  inline void setVerboseMode(bool on=false) {this->verbose = on;};
+
 private:
 
-  void getParameters() ;
+  void getParameters();
   void sample(vpImage<unsigned char>&image);
-  void leastSquare() ;
+  void leastSquare();
   void leastSquareParabola();
-  //given K0 and K1, find the three others
-  void leastSquareParabolaGivenOrientation() ;
-  void leastSquareLine() ;//andrea: find parameters in the case of a line
+  void leastSquareParabolaGivenOrientation();
+  void leastSquareLine();        
   void updateNormAng();
   void suppressPoints();
   void seekExtremities(vpImage<unsigned char> &I);
-  void getCirclePoints();
+  void getParabolaPoints();
   void displayList(vpImage<unsigned char> &I);
   void computeNormAng(double &norm_ang, vpColVector &K, 
 		      double i, double j, bool isLine);
 
 public:
   
-  double aFin, bFin, cFin, thetaFin;//line OR parabola params andrea
+  double aFin, bFin, cFin, thetaFin; //line OR parabola parameters
   int dataSet; //indicates which data set is being used
-  bool line; //indicates that parabola degenerates into line
-  double i1,j1, i2, j2 ;
-  double *i_cir, *j_cir;
-  static const int numPointCir = 100;	//points used to find circle
-  
+  bool line; //indicates that the path is a straight line
+  double i1, j1, i2, j2; //extremity coordinates
+  double *i_par, *j_par; //parabola point coordinates used to find circle
+  int numPointPar; //parabola points used to find circle
+  int numPoints; // initial points used to find parabola
+  unsigned *i_ref, *j_ref; //reference parabola point coordinates
+    
 private:
   
-  //! vecteur de parametres de la quadrique
-  //! i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
-  vpColVector K, K_line, K_par ;
-  vpColVector w_line, w_par;
-  double aPar, bPar, cPar, thetaPar;
-  unsigned *i_ref, *j_ref;//ref parabola point coords andrea
-
-  //flag for leastSquareParabola(): at first iter only use 5 points,
-  //then numberOfSignal() points
+  vpColVector K, K_line, K_par; //conic parameters
+  double aPar, bPar, cPar, thetaPar; //parabola parameters
   bool firstIter;
   double line_error, parab_error, parab_errorTot;
   int lineGoodPoints, parGoodPoints, parGoodPointsTot;
-  //flag indicating that sampling is currently being done, hence
-  //previous curve should be kept
-  bool sampling;
-  //sampling is currently being done, hence previous curve should be kept
-  bool keepLine;
+  bool verbose;// verbose mode
 
-  // verbose mode
-  bool verbose;
-
-  // parameters
-  int numPoints; // initial points used to find parabola
+  //parameters
+  int LSiter;  //least square iterations 
+  double good_point_thresh; //threshold on least square line error
+  int sampleIter; //every sampleIter iterations sample the curve
+  double pointPercentageWithinExtremes; //percent of samples within extremities
+  int seekLoops; //number of times extremities are seeked at each iteration
+  int numExtr; //number of points seeked after each extremity
+  int goodPointGain; //gain for considering good points when selecing curve
+  int maxLineScore; //max error tolerated on line before parabola selection
+  double par_det_threshold; //parabola det threshold for selecting a line
+  double aParThreshold;	//aPar threshold for selecting a line
 };
 
 
