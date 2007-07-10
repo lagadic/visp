@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.2 2007-07-09 15:39:38 fspindle Exp $
+ * $Id: vpMePath.h,v 1.3 2007-07-10 18:45:48 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,7 +89,6 @@ private:
 public:
   
   double aFin, bFin, cFin, thetaFin; //line OR parabola parameters
-  int dataSet; //indicates which data set is being used
   bool line; //indicates that the path is a straight line
   double i1, j1, i2, j2; //extremity coordinates
   double *i_par, *j_par; //parabola point coordinates used to find circle
