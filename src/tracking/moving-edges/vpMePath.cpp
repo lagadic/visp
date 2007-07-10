@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.2 2007-07-09 15:39:38 fspindle Exp $
+ * $Id: vpMePath.cpp,v 1.3 2007-07-10 18:46:52 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,8 +72,10 @@ vpMePath::computeNormAng(double &norm_ang, vpColVector &K,
 */
 vpMePath::vpMePath():vpMeTracker()
 {
-  std::printf ("\e[32m 9 july 2007 \e[30m \n");
   setVerboseMode(false);
+  if (verbose)
+  	std::printf ("\e[32m vpMePath::vpMePath() 10 july 2007 \e[30m \n");
+
   // conic parameters
   // i^2 + K0 j^2 + K1 i j + K2 i + K3 j + K4 = 0
   K.resize(5) ;
@@ -141,14 +143,14 @@ void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
   double st = sin(thetaFin);
   //display parabola vertex
   if (!line) vpDisplay::displayCross(I,(int)(x_v*ct + y_v*st),
-				     (int)(-x_v*st + y_v*ct),50,vpColor::cyan);
+				     (int)(-x_v*st + y_v*ct),20,vpColor::cyan);
   //display segment oriented along parabola symetric axis
   vpDisplay::displayLine(I, (int) i_ref [2], (int) j_ref [2],
 			 (int)(i_ref [2] + 70*sin (thetaFin)), 
 			 (int)(j_ref [2] + 70*cos (thetaFin)), 
 			 vpColor::blue, 1) ;
   //display initial points
-  if (firstIter)
+  //if (firstIter)
     for (int k = 0; k < numPoints; k++)
       vpDisplay::displayCross(I, (int) i_ref[k], (int) j_ref[k],10,
 			      vpColor::green);
@@ -422,7 +424,7 @@ void vpMePath::displayList(vpImage<unsigned char> &I)
     {
       vpMeSite s = list.value() ;//current reference pixel
       list.next() ;
-      vpDisplay::displayCross(I, s.i, s.j, 1, vpColor::green);
+      vpDisplay::displayCross(I, s.i, s.j, 1, vpColor::red);
     }
 }
 /*
@@ -705,7 +707,7 @@ vpMePath::getParameters()
         - K_par[1]*K_par[1]*K_par[4] - K_par[0]*K_par[2]*K_par[2]) < 0.000001) {	
     parab_error = 10000;//ensures that the line is chosen
     if (verbose)
-    std::printf ("\e[31m DETERMINANT CONDITION **** -> LINE \n");
+    	std::printf ("\e[31m DETERMINANT CONDITION **** -> LINE \n");
   } else {
     //compute given K0 and K1 two possible values for theta
     if (fabs(K_par[0]-1) != 0) theta1 = atan (K_par[1]/(K_par[0]-1));
@@ -805,7 +807,8 @@ vpMePath::getParameters()
       for (int i=0 ; i < 5 ; i++) {
 	K_par[i] = K_par_first[i];
       }	
-      std::printf("\e[31mPICK 1ST->aPar %f bPar %f cPar %f theta %f\e[30m  \n",
+      if (verbose)	
+      	std::printf("\e[31mPICK 1ST->aPar %f bPar %f cPar %f theta %f\e[30m\n",
       			aPar , bPar, cPar, thetaPar); 		
     } else {
       if (parab_error1 < parab_error2)
@@ -817,7 +820,8 @@ vpMePath::getParameters()
       aPar = aPar2;
       bPar = bPar2;
       cPar = cPar2;
-      std::printf("\e[31m PICK 2ND->aPar %f bPar %f cPar %f theta %f\e[30m  \n",
+      if (verbose)
+         std::printf("\e[31mPICK 2ND->aPar %f bPar %f cPar %f theta %f\e[30m\n",
       			aPar , bPar, cPar, thetaPar); 	
     } 
   }
@@ -1063,7 +1067,8 @@ void vpMePath::initTracking(vpImage<unsigned char> &I)
   for (int k =0 ; k < numPoints ; k++) {
     i_ref [k] = i[k];
     j_ref [k] = j[k];
-    std::printf("init tracking ref --> i %d j %d \n",i_ref[k], j_ref[k]);
+    if (verbose)
+    	std::printf("init tracking ref --> i %d j %d \n",i_ref[k], j_ref[k]);
   }
   i1 = i[0] ;
   j1 = j[0] ;
@@ -1196,6 +1201,7 @@ void vpMePath::track(vpImage<unsigned char> &I)
 	    throw ;
 	}
       	suppressPoints() ;
+	displayList(I);
       	try {
           //pick line or parabola and compute its parameters
 	  leastSquare() ;
