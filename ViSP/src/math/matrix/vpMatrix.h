@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.17 2007-06-26 09:23:22 asaunier Exp $
+ * $Id: vpMatrix.h,v 1.18 2007-07-10 10:30:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -167,6 +167,16 @@ public:
   inline double *operator[](int n) const {return rowPtrs[n];}
 
   //---------------------------------
+  // Matrix operations (Static).
+  //---------------------------------
+
+  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
+  static void add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
+  static void sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
+  static void negateMatrix(const vpMatrix &A, vpMatrix &C);
+  static void multMatrixVector(const vpMatrix &A, const vpColVector &b, vpColVector &c);
+
+  //---------------------------------
   // Matrix operations.
   //---------------------------------
 
@@ -174,13 +184,10 @@ public:
    vpMatrix &operator+=(const vpMatrix &B);
   //! operation A = A - B
    vpMatrix &operator-=(const vpMatrix &B);
-  //! operation C = A * B (A is unchanged)
-   vpMatrix operator*(const vpMatrix &B) const  ;
-  //! operation C = A + B (A is unchanged)
+
+   vpMatrix operator*(const vpMatrix &B) const;
    vpMatrix operator+(const vpMatrix &B) const;
-  //! operation C = A - B (A is unchanged)
    vpMatrix operator-(const vpMatrix &B) const;
-  //! C = -A  (A is unchanged)
    vpMatrix operator-() const;
 
   //!return sum of the Aij^2 (for all i, for all j)
@@ -189,8 +196,6 @@ public:
   //---------------------------------
   // Matrix/vector operations.
   //---------------------------------
-
-  //! operation c = A * b (A is unchanged, c and b are vectors)
     vpColVector operator*(const vpColVector &b) const;
     //! operation c = A * b (A is unchanged, c and b are translation vectors)
     vpTranslationVector operator*(const vpTranslationVector  &b) const;
@@ -328,7 +333,6 @@ public:
   double euclidianNorm () const;
   //! Infinity norm ||x||=max(fabs(x_i))
   double infinityNorm () const;
-
 };
 
 
