@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.34 2007-06-26 09:23:22 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.35 2007-07-10 10:30:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -173,8 +173,7 @@ vpMatrix::vpMatrix(const vpMatrix& m)
   \return OK or MEMORY_FAULT if memory cannot be allocated
 */
 
-void
-vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
+void vpMatrix::resize(const int nrows, const int ncols, const bool flagNullify)
 {
 
   if ((nrows == rowNum) && (ncols == colNum))
@@ -363,130 +362,171 @@ vpMatrix::operator<<( double *x )
 // Matrix operations.
 //---------------------------------
 
-//! operation C = A * B (A is unchanged)
-vpMatrix
-vpMatrix::operator*(const vpMatrix &B) const
+/*!
+	operation C = A * B. 
+	
+	The Result is placed in the third parameter C and not returned.
+	A new matrix won't be allocated for every use of the function 
+	(Speed gain if used many times with the same result matrix size).
+
+	\sa operator*()
+*/
+void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  vpMatrix p ;
+	try 
+	{
+		if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+	}
+	catch(vpException me)
+	{
+		vpERROR_TRACE("Error caught") ;
+		std::cout << me << std::endl ;
+		throw ;
+	}
 
-
-  try {
-    p.resize(rowNum,B.colNum) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
-  }
-
-  if (colNum != B.rowNum)
-  {
-    vpERROR_TRACE("\n\t\tvpMatrix mismatch in vpMatrix/vpMatrix multiply") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+	if (A.colNum != B.rowNum)
+	{
+		vpERROR_TRACE("\n\t\tvpMatrix mismatch in vpMatrix/vpMatrix multiply") ;
+		throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\tvpMatrix mismatch in "
 			    "vpMatrix/vpMatrix multiply")) ;
-  }
+	}
 
-  // 5/12/06 some "very" simple optimization to avoid indexation
-  int BcolNum = B.colNum ;
-  int BrowNum = B.rowNum ;
-  int i,j,k ;
-  double **BrowPtrs = B.rowPtrs;
-  for (i=0;i<rowNum;i++)
-  {
-    double *rowptri = rowPtrs[i] ;
-    double *pi = p[i] ;
-    for (j=0;j<BcolNum;j++)
-	  {
-	    double s =0 ;
-	    for (k=0;k<BrowNum;k++)
-	      s +=rowptri[k] * BrowPtrs[k][j];
-	    pi[j] = s ;
-	  }
-  }
-  return p;
+	// 5/12/06 some "very" simple optimization to avoid indexation
+	int BcolNum = B.colNum;
+	int BrowNum = B.rowNum;
+	int i,j,k;
+	double **BrowPtrs = B.rowPtrs;
+	for (i=0;i<A.rowNum;i++)
+	{
+		double *rowptri = A.rowPtrs[i];
+		double *ci = C[i];
+		for (j=0;j<BcolNum;j++)
+		{
+			double s = 0;
+			for (k=0;k<BrowNum;k++) s += rowptri[k] * BrowPtrs[k][j];
+			ci[j] = s;
+		}
+	}
 }
 
-//! operation C = A + B (A is unchanged)
-vpMatrix
-vpMatrix::operator+(const vpMatrix &B) const
+/*!
+	operation C = A * B (A is unchanged).
+	\sa mult2Matrices() to avoid matrix allocation for each use.
+*/
+vpMatrix vpMatrix::operator*(const vpMatrix &B) const
 {
-  vpMatrix v ;
+  vpMatrix C;
 
+  vpMatrix::mult2Matrices(*this,B,C);
 
-  try {
-    v.resize(rowNum,colNum) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
-  }
+  return C;
+}
 
-  if ( (colNum != B.getCols())||(rowNum != B.getRows()))
-  {
-    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+/*!
+	operation C = A + B. 
+	
+	The Result is placed in the third parameter C and not returned.
+	A new matrix won't be allocated for every use of the function 
+	(Speed gain if used many times with the same result matrix size).
+
+	\sa operator+()
+*/
+void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
+{  
+	try 
+	{
+		if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+	}
+	catch(vpException me)
+	{
+		vpERROR_TRACE("Error caught") ;
+		std::cout << me << std::endl ;
+		throw ;
+	}
+
+	if ((A.colNum != B.getCols())||(A.rowNum != B.getRows()))
+	{
+		vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
+		throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix/vpMatrix addition")) ;
+	}
 
-  }
-  int i;
-  // MODIF EM 16/6/03
-  /*int j;
+	int i;
+	// MODIF EM 16/6/03
+	/*int j;
     for (i=0;i<rowNum;i++)
     for(j=0;j<colNum;j++)
     {
     v.rowPtrs[i][j] = B.rowPtrs[i][j]+rowPtrs[i][j];
     }
-  */
-  for (i=0;i<dsize;i++)
-  {
-    *(v.data + i) = *(B.data + i) + *(data + i) ;
-  }
-  return v;
+	*/
+
+	for (i=0;i<A.dsize;i++)
+	{
+		*(C.data + i) = *(B.data + i) + *(A.data + i) ;
+	}
 }
 
-//! operation C = A - B (A is unchanged)
-vpMatrix
-vpMatrix::operator-(const vpMatrix &B) const
+/*!
+	operation C = A + B (A is unchanged).
+	\sa add2Matrices() to avoid matrix allocation for each use.
+*/
+vpMatrix vpMatrix::operator+(const vpMatrix &B) const
 {
-  vpMatrix v ;
-  try {
-    v.resize(rowNum,colNum) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
-  }
+	vpMatrix C;
+	vpMatrix::add2Matrices(*this,B,C);
+	return C;
+}
 
-  if ( (colNum != B.getCols())||(rowNum != B.getRows()))
-  {
-    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix substraction") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+/*!
+	operation C = A - B. 
+	
+	The Result is placed in the third parameter C and not returned.
+	A new matrix won't be allocated for every use of the function 
+	(Speed gain if used many times with the same result matrix size).
+
+	\sa operator-()
+*/
+void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
+{
+	try 
+	{
+		if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
+	}
+	catch(vpException me)
+	{
+		vpERROR_TRACE("Error caught") ;
+		std::cout << me << std::endl ;
+		throw ;
+	}
+
+	if ( (A.colNum != B.getCols())||(A.rowNum != B.getRows()))
+	{
+		vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix substraction") ;
+		throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
 			    "\n\t\t vpMatrix mismatch in "
 			    "vpMatrix/vpMatrix substraction")) ;
+	}
 
-  }
+	int i;
+	// MODIF EM 16/6/03
+	for (i=0;i<A.dsize;i++)
+	{
+		*(C.data + i) = *(A.data + i) - *(B.data + i) ;
+	}
+}
 
-  int i;
-
-  // MODIF EM 16/6/03
-  for (i=0;i<dsize;i++)
-  {
-    *(v.data + i) = *(data + i) - *(B.data + i) ;
-  }
-  /*
-    int j;
-    for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)
-    v.rowPtrs[i][j] = rowPtrs[i][j]-B.rowPtrs[i][j];
-  */
-  return v;
+/*!
+	operation C = A - B (A is unchanged).
+	\sa sub2Matrices() to avoid matrix allocation for each use.
+*/
+vpMatrix vpMatrix::operator-(const vpMatrix &B) const
+{
+	vpMatrix C;
+	vpMatrix::sub2Matrices(*this,B,C);
+	return C;
 }
 
 //! operation A = A + B
@@ -501,9 +541,6 @@ vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
 			    "vpMatrix += addition")) ;
 
   }
-
-
-
 
   int i;
 
@@ -550,35 +587,43 @@ vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
   return *this;
 }
 
-//! C = -A  (A is unchanged)
+/*!
+	operation C = -A. 
+	
+	The Result is placed in the second parameter C and not returned.
+	A new matrix won't be allocated for every use of the function 
+	(Speed gain if used many times with the same result matrix size).
 
+	\sa operator-(void)
+*/
+void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
+{
+	try 
+	{
+		if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
+	}
+	catch(vpException me)
+	{
+		vpERROR_TRACE("Error caught") ;
+		std::cout << me << std::endl ;
+		throw ;
+	}
+
+	for (int i=0;i<A.dsize;i++)
+	{
+		*(C.data + i) = -*(A.data + i) ;
+	}
+}
+
+/*!
+	operation C = -A (A is unchanged).
+	\sa negateMatrix() to avoid matrix allocation for each use.
+*/
 vpMatrix vpMatrix::operator-() const //negate
 {
-  vpMatrix C ;
-
-
-
-  try {
-    C.resize(rowNum, colNum) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
-  }
-
-
-  for (int i=0;i<dsize;i++)
-  {
-    *(C.data + i) = -*(data + i) ;
-  }
-  /*
-    for (int i=0; i<rowNum; i++)
-    for (int j=0; j<colNum; j++)
-    C[i][j] = - rowPtrs[i][j];
-  */
-  return C;
+	vpMatrix C;
+	vpMatrix::negateMatrix(*this,C);
+	return C;
 }
 
 //!return sum of the Aij^2 (for all i, for all j)
@@ -615,34 +660,55 @@ vpMatrix::sumSquare() const
 // Matrix/vector operations.
 //---------------------------------
 
-//! operation c = A * b (A is unchanged, c and b are vectors)
+/*!
+	operation c = A * b (c and b are vectors). 
+	
+	The Result is placed in the second parameter C and not returned.
+	A new matrix won't be allocated for every use of the function 
+	(Speed gain if used many times with the same result matrix size).
+
+	\sa operator*(const vpColVector &b) const
+*/
+void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &b, vpColVector &c)
+{
+	if (A.colNum != b.getRows())
+	{
+		vpERROR_TRACE("vpMatrix mismatch in vpMatrix/vector multiply") ;
+		throw(vpMatrixException::incorrectMatrixSizeError) ;
+	}
+
+	try 
+	{
+		if (A.rowNum != c.rowNum) c.resize(A.rowNum);
+	}
+	catch(vpException me)
+	{
+		vpERROR_TRACE("Error caught") ;
+		std::cout << me << std::endl ;
+		throw ;
+	}
+
+	c = 0.0;
+	for (int j=0;j<A.colNum;j++) 
+	{
+		double bj = b[j] ; // optimization em 5/12/2006
+		for (int i=0;i<A.rowNum;i++) 
+		{
+			c[i]+=A.rowPtrs[i][j] * bj;
+		}
+    }
+}
+
+/*!
+	operation c = A * b (A is unchanged, c and b are vectors).
+	\sa multMatrixVector() to avoid matrix allocation for each use.
+*/
 vpColVector
 vpMatrix::operator*(const vpColVector &b) const
 {
-
-  vpColVector c(rowNum);
-
-
-  if (colNum != b.getRows())
-  {
-    vpERROR_TRACE("vpMatrix mismatch in vpMatrix/vector multiply") ;
-    throw(vpMatrixException::incorrectMatrixSizeError) ;
-  }
-
-
-
-  c = 0.0;
-
-  for (int j=0;j<colNum;j++) {
-    {
-      double bj = b[j] ; // optimization em 5/12/2006
-      for (int i=0;i<rowNum;i++) {
-	c[i]+=rowPtrs[i][j] * bj;
-      }
-    }
-  }
-
-  return c ;
+	vpColVector c;
+	vpMatrix::multMatrixVector(*this,b,c);
+	return c;
 }
 
 //! operation c = A * b (A is unchanged, c and b are translation vectors)
@@ -1766,8 +1832,6 @@ vpMatrix::infinityNorm () const
 
   return norm;
 }
-
-
 
 
 #undef DEBUG_LEVEL1
