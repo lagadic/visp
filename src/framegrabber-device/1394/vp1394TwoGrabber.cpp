@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.14 2007-05-15 14:23:46 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.15 2007-07-10 08:28:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -931,24 +931,47 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				     "Can't set format7 ROI") );
     }
+
+    int roi_width;
+    int roi_height;
+
     if (width != 0) {
       // Check if roi width is acceptable (ie roi is contained in the image)
       if (width > (max_width - left))
 	width = (max_width - left);
+      roi_width = width;
     }
+    else {
+      roi_width = DC1394_USE_MAX_AVAIL;
+    }
+
     if (height != 0) {
       // Check if roi height is acceptable (ie roi is contained in the image)
-      if (width > (max_height - top))
-	width = (max_height - top);
+      if (height > (max_height - top))
+	height = (max_height - top);
+      roi_height = height;
     }
+    else {
+      roi_height = DC1394_USE_MAX_AVAIL;
+    }
+
 
     if (dc1394_format7_set_roi(camera, _videomode,
 			       (dc1394color_coding_t) DC1394_QUERY_FROM_CAMERA, // color_coding
 			       DC1394_USE_MAX_AVAIL/*DC1394_QUERY_FROM_CAMERA*/, // bytes_per_packet
 			       left, // left
 			       top, // top
+#if 0
+			       // This code generates a warning:
+			       // converting of negative value
+			       // `-0x000000002' to `unsigned int'
 			       width == 0 ? DC1394_USE_MAX_AVAIL: width,
 			       height == 0 ? DC1394_USE_MAX_AVAIL : height)
+#else
+	// Modification to suppress the warning
+	roi_width,
+	roi_height)
+#endif
 	!= DC1394_SUCCESS) {
       close();
       vpERROR_TRACE("Can't set format7 roi");
