@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.3 2007-07-10 18:46:52 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.4 2007-07-11 07:42:34 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,6 +72,7 @@ vpMePath::computeNormAng(double &norm_ang, vpColVector &K,
 */
 vpMePath::vpMePath():vpMeTracker()
 {
+  std::printf ("\e[32m 9 july 2007 CO \e[30m \n");
   setVerboseMode(false);
   if (verbose)
   	std::printf ("\e[32m vpMePath::vpMePath() 10 july 2007 \e[30m \n");
