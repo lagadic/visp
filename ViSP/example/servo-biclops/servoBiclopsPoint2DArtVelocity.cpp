@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.5 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.6 2007-07-11 16:28:23 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,6 +72,7 @@
 #endif
 
 #include <visp/vp1394Grabber.h>
+#include <visp/vp1394TwoGrabber.h>
 #include <visp/vpDirectShowGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
