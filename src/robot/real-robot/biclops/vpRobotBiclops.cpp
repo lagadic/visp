@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.cpp,v 1.10 2007-05-16 15:21:04 fspindle Exp $
+ * $Id: vpRobotBiclops.cpp,v 1.11 2007-07-11 16:28:23 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -650,7 +650,7 @@ vpRobotBiclops::get_fJe(vpMatrix &fJe)
   }
   catch(...)
   {
-  	vpERROR_TRACE("Error caught")
+    vpERROR_TRACE("Error caught");
     throw ;
   }
 
@@ -784,7 +784,7 @@ void vpRobotBiclops::setPosition (const vpRobot::ControlFrameType frame,
   }
   catch(...)
   {
-  	vpERROR_TRACE("Error caught")
+    vpERROR_TRACE("Error caught");
     throw ;
   }
 }
@@ -999,6 +999,11 @@ vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
 
   // Saturate articular speed
   double max = vpBiclops::speedLimit;
+  vpColVector q_dot_sat(vpBiclops::ndof);
+
+  // init q_dot_saturated
+  q_dot_sat = q_dot;
+
   for (int i = 0 ; i < vpBiclops::ndof; ++ i) // q1 and q2
   {
     if (fabs (q_dot[i]) > max)
@@ -1012,7 +1017,7 @@ vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
   // Rotations velocities normalisation
   if (norm == true) {
     max = vpBiclops::speedLimit / max;
-    vpColVector q_dot_sat = q_dot * max;
+    q_dot_sat = q_dot * max;
   }
 
   vpCDEBUG(12) << "send velocity: " << q_dot_sat.t() << std::endl;
@@ -1025,7 +1030,7 @@ vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
   shm = controller.readShm();
 
   for (int i=0; i < vpBiclops::ndof; i ++)
-    shm.q_dot[i] = q_dot_sat[i];
+    shm.q_dot[i] = q_dot[i];
 
   controller.writeShm(shm);
 
