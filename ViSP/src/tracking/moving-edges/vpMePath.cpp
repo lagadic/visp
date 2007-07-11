@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.4 2007-07-11 07:42:34 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.5 2007-07-11 12:10:23 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1108,7 +1108,7 @@ void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
   sample(I);
   display(I, vpColor::green);
   firstIter = false;
-  vpDisplay::getClick(I) ;
+  //vpDisplay::getClick(I) ;
   {
     vpMeTracker::initTracking(I) ;
   }
