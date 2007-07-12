@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.5 2007-07-11 12:10:23 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.6 2007-07-12 13:12:45 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -529,15 +529,25 @@ void vpMePath::leastSquare()
   //scores used to pick the most likely curve
   double lineScore;
   double parScore;
-  if (firstIter) {
-    lineScore=line_error+(double)(goodPointGain * numPoints / lineGoodPoints);
-    parScore=parab_error+(double)(goodPointGain * numPoints / parGoodPoints);
-  } else {
-    lineScore = line_error + (double)(goodPointGain * list.nbElement()
-    		/ lineGoodPoints);
-    parScore = parab_error + (double) (goodPointGain * list.nbElement() 
-    		/ parGoodPoints);
+  int nPoints;
+  if (firstIter)
+	nPoints = numPoints;
+  else 
+	nPoints = list.nbElement();
+  if ((lineGoodPoints == 0) && (parGoodPoints == 0)) {
+      vpERROR_TRACE("Not enough line and par good points") ;
+      std::printf("vpMePath::Exception Not enough line and par good points\n");
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
+      				"Not enough line and par good points")) ;
   }
+  if (lineGoodPoints != 0)
+  	lineScore = line_error+(double)(goodPointGain * nPoints / lineGoodPoints);
+  else 
+	lineScore = 10000; 
+  if (parGoodPoints != 0)
+  	parScore = parab_error+(double)(goodPointGain * nPoints / parGoodPoints);
+  else parScore = 10000;
+
   if (verbose)
     std::printf("\e[36mline score %f par score %f \e[30m\n", 
     	lineScore, parScore);
