@@ -1,6 +1,6 @@
-/****************************************************************************
+ /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.25 2007-06-12 13:46:55 asaunier Exp $
+ * $Id: vpDot2.h,v 1.26 2007-07-19 15:40:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,11 +61,12 @@ public:
   virtual ~vpDot2();
   void operator=( const vpDot2& twinDot );
 
-  void initTracking(vpImage<unsigned char>& I);
-  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v);
+  void initTracking(vpImage<unsigned char>& I, unsigned int size = 0);
   void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
-		    unsigned int gray_level_min,
-		    unsigned int gray_level_max);
+                     unsigned int size = 0);
+  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+		    unsigned int gray_level_min, unsigned int gray_level_max,
+        unsigned int size = 0 );
 
   void track(vpImage<unsigned char> &I);
   void track(vpImage<unsigned char> &I, double &u, double &v);
@@ -122,6 +123,9 @@ public:
 
   */
   void setGraphics(const bool activate) { graphics = activate ; }
+
+  void display(vpImage<unsigned char>& I,vpColor::vpColorType c = vpColor::red);
+  
   /*!
 
     Activates the dot's moments computation.
@@ -187,6 +191,7 @@ public:
 				    int area_w, int area_h );
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
+
 
 private :
 
