@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.3 2007-07-10 18:45:48 acherubi Exp $
+ * $Id: vpMePath.h,v 1.4 2007-07-19 09:08:50 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,6 +85,7 @@ private:
   void displayList(vpImage<unsigned char> &I);
   void computeNormAng(double &norm_ang, vpColVector &K, 
 		      double i, double j, bool isLine);
+  void reduceList(vpList<vpMeSite> &list, int newSize); 
 
 public:
   
