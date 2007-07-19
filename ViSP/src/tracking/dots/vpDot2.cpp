@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.27 2007-06-12 14:50:06 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.28 2007-07-19 15:40:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,6 +70,8 @@
 #include <visp/vpTrackingException.h>
 
 #include <visp/vpDot2.h>
+#include <visp/vpMath.h>
+#include <math.h>
 
 
 /******************************************************************************
@@ -239,7 +241,22 @@ vpDot2::~vpDot2(){}
  *      PUBLIC METHODS
  *****************************************************************************/
 
-
+/*!
+  Display the dot contour and center of gravity
+  \param I : Image.
+*/
+void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
+{
+  vpDisplay::displayCross(I,(unsigned int)cog_vfloat,(unsigned int)cog_ufloat,
+                          10,c);
+  u_list.front();
+  v_list.front();
+  while(!(u_list.outside())){
+    vpDisplay::displayPoint(I,v_list.value(),u_list.value(),c);
+    u_list.next();
+    v_list.next();
+  }
+}
 
 
 /*!
@@ -254,11 +271,12 @@ vpDot2::~vpDot2(){}
   moments see setComputeMoments().
 
   \param I : Image.
+  \param size : Size of the dot to track.
 
   \sa track()
 
 */
-void vpDot2::initTracking(vpImage<unsigned char>& I)
+void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
 {
   unsigned u = 0;
   unsigned v = 0;
@@ -282,8 +300,9 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   if (gray_level_max > 255)
     gray_level_max = 255;
 
-  setWidth(0);
-
+  setWidth(size);
+  setHeight(size);
+  
   try {
     track( I );
   }
@@ -302,13 +321,13 @@ void vpDot2::initTracking(vpImage<unsigned char>& I)
   \param I : Image.
   \param u : Dot location (column).
   \param v : Dot location (row).
-
+  \param size : Size of the dot to track.
   To get center of gravity of the dot, see get_u() and get_v(). To compute the
   moments see setComputeMoments().
 
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I,
-			  unsigned int u, unsigned int v)
+			  unsigned int u, unsigned int v,unsigned int size)
 {
   cog_ufloat = (double) u ;
   cog_vfloat = (double) v ;
@@ -326,8 +345,9 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   if (gray_level_max > 255)
     gray_level_max = 255;
 
-  setWidth(0);
-
+  setWidth(size);
+  setHeight(size);
+  
   try {
     track( I );
   }
@@ -363,13 +383,15 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   dot; value comprised between 0 and 255. \e gray_level_max should be
   greater than \e gray_level_min.
 
+  \param size : Size of the dot to track.
   \sa track(), get_u(), get_v()
 
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I,
 			  unsigned int u, unsigned int v,
 			  unsigned int gray_level_min,
-			  unsigned int gray_level_max)
+			  unsigned int gray_level_max,
+        unsigned int size)
 {
   cog_ufloat = (double) u ;
   cog_vfloat = (double) v ;
@@ -377,7 +399,8 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   this->gray_level_min = gray_level_min;
   this->gray_level_max = gray_level_max;
 
-  setWidth(0);
+  setWidth(size);
+  setHeight(size);
 
   try {
     track( I );
@@ -942,8 +965,8 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
   setArea(I, area_u, area_v, area_w, area_h);
 
   // compute the size of the search grid
-  unsigned int gridWidth = 1;
-  unsigned int gridHeight = 1;
+  unsigned int gridWidth;
+  unsigned int gridHeight;
   getGridSize( gridWidth, gridHeight );
 
   if (graphics) {
@@ -1185,20 +1208,20 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // Then check the dot is surrounded by a black elipse.
   //
 
+  //we compute parameters of the estimated ellipse
+  double Sqrt = sqrt(pow((m01*m01 -m10*m10)/(m00*m00)+(m20-m02)/m00,2)
+                  +4*pow(m11/m00-m10*m01/(m00*m00),2));
+  double a1 = sqrt(2*((m20+m02)/m00-(m10*m10+m01*m01)/(m00*m00)+Sqrt));
+  double a2 = sqrt(2*((m20+m02)/m00-(m10*m10+m01*m01)/(m00*m00)-Sqrt));
+  double alpha = 0.5*atan2(2*(m11*m00-m10*m01),((m20-m02)*m00-m10*m10+m01*m01));
+  
   double innerCoef =  sizePrecision ;           //0.4;
-
   int u, v;
-  u_list.front();
-  v_list.front();
-  while(u_list.value()!=(unsigned int)bbox_u_max) {
-    u_list.next();
-    v_list.next();
-  }
-  double theta = asin((v_list.value()-get_v())/getHeight());
-  for( double alpha=0. ; alpha<2*M_PI ; alpha+= 0.4 )
+  
+  for( double theta = 0. ; theta<2*M_PI ; theta+= 0.4 )
   {
-    u = (int) ( (this->get_u() + cos( alpha )*innerCoef*getWidth()/2) );
-    v = (int) ( (this->get_v() + sin( alpha + theta )*innerCoef*getHeight()/2) );
+    u = (int) (this->get_u() + innerCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
+    v = (int) (this->get_v() + innerCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
     if (graphics) {
       vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
       //vpDisplay::flush(I);
@@ -1207,14 +1230,13 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     {
       return false;
     }
-
   }
 
   double outCoef =  2-sizePrecision;           //1.6;
-  for( double alpha=0. ; alpha<2*M_PI ; alpha+= 0.3 )
+  for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 )
   {
-    u = (int) ( (this->get_u() + cos( alpha )*outCoef*getWidth()/2) );
-    v = (int) ( (this->get_v() + sin( alpha + theta )*outCoef*getHeight()/2) );
+    u = (int) (this->get_u() + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
+    v = (int) (this->get_v() + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
     if (graphics) {
       vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
       //vpDisplay::flush(I);
