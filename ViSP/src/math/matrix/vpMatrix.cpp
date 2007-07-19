@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.35 2007-07-10 10:30:32 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.36 2007-07-19 15:49:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -985,52 +985,68 @@ vpMatrix vpMatrix::t() const
 
 
 /*!
-  \brief Compute the AtA operation B = A^T*A
-  \return  A^T*A
+ \brief Compute the AtA operation B = A^T*A
+  The Result is placed in the parameter B and not returned.
+   A new matrix won't be allocated for every use of the function
+   (Speed gain if used many times with the same result matrix size).
+
+   \sa AtA()
+*/
+void vpMatrix::AtA(vpMatrix &B) const
+{
+   try {
+       if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
+   }
+   catch(vpException me)
+   {
+       vpERROR_TRACE("Error caught") ;
+       vpCERROR << me << std::endl ;
+       throw ;
+   }
+
+   int i,j,k;
+   double s;
+   double *ptr;
+   double *Bi;
+        for (i=0;i<colNum;i++)
+   {
+       Bi = B[i] ;
+       for (j=0;j<i;j++)
+       {
+           ptr=data;
+           s = 0 ;
+           for (k=0;k<rowNum;k++)
+           {
+               s +=(*(ptr+i)) * (*(ptr+j));
+               ptr+=colNum;
+           }
+           *Bi++ = s ;
+           B[j][i] = s;
+       }
+       ptr=data;
+       s = 0 ;
+       for (k=0;k<rowNum;k++)
+       {
+           s +=(*(ptr+i)) * (*(ptr+i));
+           ptr+=colNum;
+       }
+       *Bi = s;
+   }
+}
+
+
+/*!
+ \brief Compute the AtA operation B = A^T*A
+ \return  A^T*A
+ \sa AtA(vpMatrix &) const
 */
 vpMatrix vpMatrix::AtA() const
 {
-  vpMatrix AtA ;
-  try {
-    AtA.resize(colNum,colNum);
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
-    throw ;
-  }
+ vpMatrix B;
 
-  int i,j,k;
-  double s;
-  double *ptr;
-  double *AtAi;
-  for (i=0;i<colNum;i++)
-  {
-    AtAi = AtA[i] ;
-    for (j=0;j<i;j++)
-    {
-      ptr=data;
-      s = 0 ;
-      for (k=0;k<rowNum;k++)
-      {
-        s +=(*(ptr+i)) * (*(ptr+j));
-        ptr+=colNum;
-      } 
-      *AtAi++ = s ;
-      AtA[j][i] = s;
-    }
-    ptr=data;
-    s = 0 ;
-    for (k=0;k<rowNum;k++)
-    {
-      s +=(*(ptr+i)) * (*(ptr+i));
-      ptr+=colNum;
-    }
-    *AtAi = s ;
-  }
-  
-  return AtA;
+ AtA(B);
+
+ return B;
 }
 
 /*!
