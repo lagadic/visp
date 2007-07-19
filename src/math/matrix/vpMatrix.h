@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.18 2007-07-10 10:30:32 asaunier Exp $
+ * $Id: vpMatrix.h,v 1.19 2007-07-19 15:49:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -245,6 +245,7 @@ public:
 
   //! Compute the AtA operation B = A^T*A
   vpMatrix AtA() const;
+  void AtA(vpMatrix &B) const;
 
   //-------------------------------------------------
   // LU decomposition
