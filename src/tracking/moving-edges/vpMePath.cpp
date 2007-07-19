@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.7 2007-07-19 09:08:50 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.8 2007-07-19 10:28:17 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -161,9 +161,10 @@ void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
 			 vpColor::blue, 1) ;
   //display initial points
   //if (firstIter)
-    for (int k = 0; k < numPoints; k++)
-      vpDisplay::displayCross(I, (int) i_ref[k], (int) j_ref[k],10,
-			      vpColor::green);
+  //  for (int k = 0; k < numPoints; k++)
+  //    vpDisplay::displayCross(I, (int) i_ref[k], (int) j_ref[k],10,
+  //			      vpColor::green);
+  
   //image coords of top and bottom point
   double i_1;
   double j_1;
@@ -357,7 +358,7 @@ void vpMePath::sample(vpImage<unsigned char> & I)
     j_2 = (double) j_ref[4];
     num_samples = (int) (0.7 * sqrt (vpMath::sqr(i_2-i_1) + 
     					vpMath::sqr(j_2-j_1)));//was 2.0 instead of 0.7
-    std::printf("firstIter samples %d\n",num_samples);
+    //std::printf("firstIter samples %d\n",num_samples);
     //150;//					
   } else {
     i_1 = (double) i1;
@@ -660,11 +661,10 @@ vpMePath::leastSquareParabola()
   vpColVector DAx ;
   vpColVector w(pointsForLs) ;
   w =1 ;
-  while (iter < LSiter)
-  {
-      list.front() ;
-      int k = 0;
-      if (firstIter) {
+  
+  list.front() ;
+  int k = 0;
+  if (firstIter) {
 	for (int i=0 ; i < pointsForLs ; i++) {
 	    A[i][0] = (double) vpMath::sqr(j_ref[i]) ;
 	    A[i][1] = (double) (i_ref[i] * j_ref[i]) ;
@@ -673,7 +673,7 @@ vpMePath::leastSquareParabola()
 	    A[i][4] = 1 ;
 	    b[i] = - (double) vpMath::sqr(i_ref[i]) ;
 	}
-      } else {
+  } else {
 	for (int i = 0; i < list.nbElement() ; i++) {
 	    p = list.value() ;
 	    if ((p.suppress==0) && (k < pointsForLs)){
@@ -687,7 +687,10 @@ vpMePath::leastSquareParabola()
 	    }
 	    list.next() ;
 	}
-      }
+  }
+  
+  while (iter < LSiter)
+  {
       DA = D*A ;
       vpMatrix DAp ;
       K_par = DA.pseudoInverse(1e-26) *D*b ;
@@ -909,10 +912,10 @@ void vpMePath::leastSquareParabolaGivenOrientation()
   vpColVector DAx ;
   vpColVector w(pointsForLs) ;
   w = 1;
-  while (iter < LSiter) {
-      list.front() ;
-      int k = 0;
-      if (firstIter) {
+  
+  list.front() ;
+  int k = 0;
+  if (firstIter) {
 	for (i=0 ; i < pointsForLs ; i++) {
 	    A[i][0] = (double) i_ref[i];
 	    A[i][1] = (double) j_ref[i];
@@ -920,7 +923,7 @@ void vpMePath::leastSquareParabolaGivenOrientation()
 	    b[i] = - (double) (vpMath::sqr(i_ref[i]) + 
 	    	K_par[0]*vpMath::sqr(j_ref[i]) + K_par[1]* i_ref[i] * j_ref[i]);
 	}
-      } else {
+  } else {
 	for (i = 0; i < list.nbElement() ; i++) {
 	    p = list.value() ;
 	    if (p.suppress==0) {
@@ -933,7 +936,9 @@ void vpMePath::leastSquareParabolaGivenOrientation()
 	    }
 	    list.next() ;
 	}
-      }
+  }
+  
+  while (iter < LSiter) {
       DA = D*A ;
       vpMatrix DAp ;
       P = DA.pseudoInverse(1e-26) *D*b ;
@@ -1014,16 +1019,15 @@ void vpMePath::leastSquareLine()
   vpColVector DAx ;
   vpColVector w(pointsForLs) ;
   w =1 ;
-  while (iter < LSiter) {
-      list.front();
-      int k = 0;
-      if (firstIter) {
-	for (int i=0 ; i < pointsForLs ; i++) {
+  list.front();
+  int k = 0;
+  if (firstIter) {
+      for (int i=0 ; i < pointsForLs ; i++) {
 	    A[i][0] = (double) i_ref[i];
 	    A[i][1] = 1;
 	    b[i] = - (double) j_ref[i];
 	}
-      } else {
+  } else {
 	for (int i = 0; i < list.nbElement() ; i++) {
 	    p = list.value() ;
 	    if (p.suppress==0) {
@@ -1034,7 +1038,8 @@ void vpMePath::leastSquareLine()
 	    }
 	    list.next() ;
 	}
-      }
+  }
+  while (iter < LSiter) {
       DA = D*A ;
       vpMatrix DAp ;
       P = DA.pseudoInverse(1e-26) *D*b ;
@@ -1151,7 +1156,7 @@ void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
     std::printf("vpMePath::initTracking parameters computed\n");
   //vpDisplay::getClick(I) ;
   sample(I);
-  std::printf("1-initTracking numPts %d \n", list.nbElement());
+  //std::printf("1-initTracking numPts %d \n", list.nbElement());
   display(I, vpColor::green);
   firstIter = false;
   //vpDisplay::getClick(I) ;
@@ -1164,11 +1169,11 @@ void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
       vpERROR_TRACE("Error caught") ;
       throw ;
   }
-  std::printf("2-initTracking numPts %d \n", list.nbElement());
+  //std::printf("2-initTracking numPts %d \n", list.nbElement());
   vpMeTracker::display(I) ;
   vpDisplay::flush(I);
   display(I, vpColor::green);
-  std::printf("3-initTracking numPts %d \n", list.nbElement());
+  //std::printf("3-initTracking numPts %d \n", list.nbElement());
   if (verbose)
     std::printf("vpMePath::initTracking(I,n,i,j) finshed\n");
 }
