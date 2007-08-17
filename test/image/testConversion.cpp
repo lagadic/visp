@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.8 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: testConversion.cpp,v 1.9 2007-08-17 13:46:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,8 @@
   \param user : Username.
 
  */
-void usage(char *name, char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(char *name, char *badparam, std::string ipath, 
+	   std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Test image conversions.\n\
@@ -178,20 +179,20 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  std::string dirname = opath +  vpIoTools::path("/") + username;
+  opath += vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
-  if (vpIoTools::checkDirectory(dirname) == false) {
+  if (vpIoTools::checkDirectory(opath) == false) {
     try {
       // Create the dirname
-      vpIoTools::makeDirectory(dirname);
+      vpIoTools::makeDirectory(opath);
     }
     catch (...) {
-      usage(argv[0], NULL, ipath, opath, username);
+      usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl
 	   << "ERROR:" << std::endl;
-      std::cerr << "  Cannot create " << dirname << std::endl;
-      std::cerr << "  Check your -o " << opath << " option " << std::endl;
+      std::cerr << "  Cannot create " << opath << std::endl;
+      std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
       exit(-1);
     }
   }
@@ -210,7 +211,7 @@ main(int argc, char ** argv)
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL, ipath, opath, username);
+    usage(argv[0], NULL, ipath, opt_opath, username);
     std::cerr << std::endl
 	 << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -219,6 +220,10 @@ main(int argc, char ** argv)
 	 << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
+
+  // 
+  // Here starts really the test
+  // 
 
   vpImage<unsigned char> Ig ; // Grey image
   vpImage<vpRGBa> Ic ; // Color image

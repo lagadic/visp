@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPPM.cpp,v 1.9 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: testIoPPM.cpp,v 1.10 2007-08-17 13:46:03 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -179,20 +179,20 @@ main(int argc, char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  std::string dirname = opath + vpIoTools::path("/") + username;
+  opath += vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
-  if (vpIoTools::checkDirectory(dirname) == false) {
+  if (vpIoTools::checkDirectory(opath) == false) {
     try {
       // Create the dirname
-      vpIoTools::makeDirectory(dirname);
+      vpIoTools::makeDirectory(opath);
     }
     catch (...) {
-      usage(argv[0], NULL, ipath, opath, username);
+      usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl
 	   << "ERROR:" << std::endl;
-      std::cerr << "  Cannot create " << dirname << std::endl;
-      std::cerr << "  Check your -o " << opath << " option " << std::endl;
+      std::cerr << "  Cannot create " << opath << std::endl;
+      std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
       exit(-1);
     }
   }
@@ -211,7 +211,7 @@ main(int argc, char ** argv)
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL, ipath, opath, username);
+    usage(argv[0], NULL, ipath, opt_opath, username);
     std::cerr << std::endl
 	 << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -221,15 +221,21 @@ main(int argc, char ** argv)
     exit(-1);
   }
 
+  // 
+  // Here starts really the test
+  // 
+
   /////////////////////////////////////////////////////////////////////
   // Create a grey level image
   vpImage<unsigned char> I ;
 
   // Load a color image from the disk and convert it to a grey level one
   filename = ipath + vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+  std::cout << "Read image: " << filename << std::endl;
   vpImageIo::readPPM(I, filename);
   // Write the content of the image on the disk
   filename = opath + vpIoTools::path("/Klimt_grey.ppm");
+  std::cout << "Write image: " << filename << std::endl;
   vpImageIo::writePGM(I, filename) ;
 
   // Try to load a non existing image (test for exceptions)
@@ -237,6 +243,7 @@ main(int argc, char ** argv)
   {
     // Load a non existing grey image
     filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
+    std::cout << "Read image: " << filename << std::endl;
     vpImageIo::readPPM(I, filename) ;
   }
   catch(vpImageException e)
@@ -249,6 +256,7 @@ main(int argc, char ** argv)
   try
   {
     filename = opath + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
+    std::cout << "Write image: " << filename << std::endl;
     vpImageIo::writePPM(I, filename) ;
   }
   catch(vpImageException e)
@@ -263,9 +271,11 @@ main(int argc, char ** argv)
 
   // Load a color image from the disk
   filename = ipath + vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+  std::cout << "Read image: " << filename << std::endl;
   vpImageIo::readPPM(Irgba, filename);
   // Write the content of the color image on the disk
   filename = opath + vpIoTools::path("/Klimt_color.ppm");
+  std::cout << "Write image: " << filename << std::endl;
   vpImageIo::writePPM(Irgba, filename) ;
 
   // Try to load a non existing image (test for exceptions)
@@ -273,6 +283,7 @@ main(int argc, char ** argv)
   {
     // Load a non existing color image
     filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
+    std::cout << "Read image: " << filename << std::endl;
     vpImageIo::readPPM(Irgba, filename) ;
   }
   catch(vpImageException e)
@@ -285,6 +296,7 @@ main(int argc, char ** argv)
   try
   {
     filename = opath + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
+    std::cout << "Write image: " << filename << std::endl;
     vpImageIo::writePPM(Irgba, filename) ;
   }
   catch(vpImageException e)
