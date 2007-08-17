@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.7 2007-03-06 15:34:26 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.8 2007-08-17 15:10:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -138,29 +138,31 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
 				  const vpRect &rect,
 				  vpImage<Type> &S)
 {
+  double dleft   = rect.getLeft();
+  double dtop    = rect.getTop();
+  double dright  = ceil( rect.getRight() );
+  double dbottom = ceil( rect.getBottom() );
 
-  vpRect r = rect;
+  if (dleft < 0.0)                   dleft = 0.0;
+  else if (dleft >= I.getWidth())    dleft = I.getWidth() - 1;
 
-  if (r.getLeft() >= I.getWidth()) {
-    r.setLeft(I.getWidth() - 1);
-  }
-  if (r.getRight() >= I.getWidth()) {
-    r.setRight(I.getWidth() - 1);
-  }
-  if (r.getTop() >= I.getHeight()) {
-    r.setTop(I.getHeight() - 1);
-  }
-  if (r.getBottom() >= I.getHeight()) {
-    r.setBottom(I.getHeight() - 1);
-  }
-  unsigned int width  = (unsigned int) r.getWidth();
-  unsigned int height = (unsigned int) r.getHeight();
-  unsigned int left   = (unsigned int) r.getLeft() ;
-  unsigned int top    = (unsigned int) r.getTop() ;
-  
-  unsigned int bottom = (unsigned int) r.getBottom() ;
-  unsigned int right  = (unsigned int) r.getRight() ;
+  if (dright < 0.0)                  dright = 0.0;
+  else if (dright >= I.getWidth())   dright = I.getWidth() - 1;
 
+  if (dtop < 0.0)                    dtop = 0.0;
+  else if (dtop >= I.getHeight())    dtop = I.getHeight() - 1;
+
+  if (dbottom < 0.0)                 dbottom = 0.0;
+  else if (dbottom >= I.getHeight()) dbottom = I.getHeight() - 1;
+
+  // Convert the double-precision rectangle coordinates into integer positions
+  unsigned int left   = (unsigned int) dleft;
+  unsigned int top    = (unsigned int) dtop;
+  unsigned int bottom = (unsigned int) dbottom;
+  unsigned int right  = (unsigned int) dright;
+
+  unsigned int width  = right - left + 1;;
+  unsigned int height = bottom - top + 1;
 
   S.resize(height, width) ;
   for (unsigned int i=top ; i <= bottom ; i++) {
