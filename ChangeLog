@@ -41,6 +41,7 @@ ViSP 2.4.x
 	- test/video-device/testClick.cpp was added
 	- test/video-device/testVideoDevice.cpp was added
 	- test/visual-feature/testFeature.cpp was added
+	- test/image/testCreateSubImage.cpp was added
   - Documentation improvement
 	- vpRobotAfma6: example usage of getPosition() was updated
 	- vpDisplayGDI is included in the doxygen documentation

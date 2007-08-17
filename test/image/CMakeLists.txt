@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.10 2007-01-22 14:08:36 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.11 2007-08-17 13:44:09 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   testConversion.cpp
+  testCreateSubImage.cpp
   testIoPGM.cpp
   testIoPPM.cpp
 )
@@ -62,9 +63,10 @@ ENDFOREACH(source)
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
-ADD_TEST(testConversion testConversion)
-ADD_TEST(testIoPGM      testIoPGM)
-ADD_TEST(testIoPPM      testIoPPM)
+ADD_TEST(testConversion     testConversion)
+ADD_TEST(testCreateSubImage testCreateSubImage)
+ADD_TEST(testIoPGM          testIoPGM)
+ADD_TEST(testIoPPM          testIoPPM)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
