@@ -35,6 +35,8 @@ ViSP 2.4.x
 	  in your programs. Otherwise an exception 
 	  vpServoException::notKilledProperly is launched by 
 	  vpServo::~vpServo() destructor.
+	- vpMatrix : Change Infinity Norm formula to match with the standard 
+	  matrix infinity norm definition.
   - Testing:
 	- test/video-device/testClick.cpp was added
 	- test/video-device/testVideoDevice.cpp was added
