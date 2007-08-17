@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.36 2007-07-19 15:49:11 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.37 2007-08-17 09:04:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1815,6 +1815,7 @@ vpMatrix::det33(const vpMatrix &M)
 
 
 /*!
+  Euclidian norm ||x||=sqrt(sum(x_i^2))
   \return the norm if the matrix is initialized, 0 otherwise
   \sa infinityNorm
 */
@@ -1832,6 +1833,7 @@ vpMatrix::euclidianNorm () const
 
 
 /*!
+  Infinity norm ||x||=max(sum(fabs(x_i)))
   \return the norm if the matrix is initialized, 0 otherwise
   \sa euclidianNorm
 */
@@ -1840,12 +1842,13 @@ vpMatrix::infinityNorm () const
 {
   double norm=0.0;
   double x ;
-  for (int i=0;i<dsize;i++)
-    {
-      x = fabs (*(data + i)) ;
-      if (x > norm) { norm = x; }
+  for (int i=0;i<rowNum;i++){
+    x = 0;
+    for (int j=0; j<colNum;j++){
+      x += fabs (*(*(rowPtrs + i)+j)) ;
     }
-
+      if (x > norm) { norm = x; }
+  }
   return norm;
 }
 
