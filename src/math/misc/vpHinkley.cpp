@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.cpp,v 1.4 2007-07-02 16:35:02 fspindle Exp $
+ * $Id: vpHinkley.cpp,v 1.5 2007-08-17 15:24:45 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@
   vpHinkley(double alpha, double delta) constructor.
 
   A downward jump is detected if \f$ M_k - S_k > \alpha \f$.
-  A upward jump is detected if \f$ T_k - N_k > \alpha \f$. 
+  A upward jump is detected if \f$ T_k - N_k > \alpha \f$.
 
   To detect only downward jumps in \f$ s(t) \f$ use
   testDownwardJump().To detect only upward jumps in \f$ s(t) \f$ use
@@ -102,17 +102,12 @@
 #include <visp/vpIoTools.h>
 
 
-/* __DEBUG_LEVEL_ fixed by configure:
+/* VP_DEBUG_MODE fixed by configure:
    1:
    2:
-   3: Creation d'un fichier de donnees
+   3: Print data
 */
 
-#ifdef VP_DEBUG
-#  if (VP_DEBUG_MODE >= 3)
-static FILE * f_hinkley;
-#  endif
-#endif
 
 /*!
 
@@ -131,44 +126,6 @@ vpHinkley::vpHinkley()
 
   setAlpha(0.2);
   setDelta(0.2);
-  setIter(0);
-
-#ifdef VP_DEBUG
-#  if (VP_DEBUG_MODE >= 3)
-  char* dir,*file;
-  dir = new char[FILENAME_MAX];
-  file = new char[FILENAME_MAX];
-
-  string user;
-  vpIoTools::getUserName(user);
-
-  sprintf(dir,"/tmp/%s", user.c_str());
-
-  if (vpIoTools::checkDirectory(dir) == false)
-    vpIoTools::makeDirectory(dir);
-
-
-  sprintf(file, "%s/hinkley.dat", dir);
-
-  f_hinkley = fopen(file, "w");
-  fprintf(f_hinkley, "%s%s%s%s%s%s%s%s%s%s%s",
-	  "# Contient des infos relatives au test de Hinkley\n",
-	  "# avec dans l'ordre:\n",
-	  "# colonne 1: iteration\n",
-	  "# colonne 2: support\n",
-	  "# colonne 3: Sk\n",
-	  "# colonne 4: Mk\n",
-	  "# colonne 5: Mk-Sk\n",
-	  "# colonne 6: Tk\n",
-	  "# colonne 7: Nk\n",
-	  "# colonne 8: Tk-Nk\n",
-	  "# colonne 9: jump\n");
-
-  delete [] dir;
-  delete [] file;
-
-#  endif
-#endif
 }
 
 /*!
@@ -184,7 +141,7 @@ vpHinkley::vpHinkley()
   we want to detect.
 
   \sa setAlpha(), setDelta()
-  
+
 */
 
 vpHinkley::vpHinkley(double alpha, double delta)
@@ -193,9 +150,6 @@ vpHinkley::vpHinkley(double alpha, double delta)
 
   setAlpha(alpha);
   setDelta(delta);
-  setIter(0);
-
-
 }
 
 /*!
@@ -218,21 +172,15 @@ vpHinkley::init(double alpha, double delta)
 
   setAlpha(alpha);
   setDelta(delta);
-  setIter(0);
 }
 
 /*!
 
   Destructor.
-  
+
 */
 vpHinkley::~vpHinkley()
 {
-#ifdef VP_DEBUG
-#  if (VP_DEBUG_MODE >= 3)
-  fclose(f_hinkley);
-#  endif
-#endif
 }
 
 /*!
@@ -280,17 +228,6 @@ void vpHinkley::setAlpha(double alpha)
 
 /*!
 
-  Set an iteration value, only used to output debug information. Not used
-  in the internal Hinkley test.
-
-*/
-void vpHinkley::setIter(int iter)
-{
-  this->iter = iter;
-}
-
-/*!
-
   Perform the Hinkley test. A downward jump is detected if
   \f$ M_k - S_k > \alpha \f$.
 
@@ -313,7 +250,7 @@ vpHinkley::vpHinkleyJump vpHinkley::testDownwardJump(double signal)
 
   computeMk();
 
-  vpCDEBUG(2) << "alpha: " << alpha << "dmin2: " << dmin2
+  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
 	    << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk;
 
   // teste si les variables cumulées excèdent le seuil
@@ -324,13 +261,13 @@ vpHinkley::vpHinkleyJump vpHinkley::testDownwardJump(double signal)
   if (VP_DEBUG_MODE >=2) {
     switch(jump) {
     case noJump:
-      cout << "noJump " << endl;
+      std::cout << "noJump " << std::endl;
      break;
     case downwardJump:
-      cout << "downWardJump " << endl;
+      std::cout << "downWardJump " << std::endl;
       break;
     case upwardJump:
-      cout << "upwardJump " << endl;
+      std::cout << "upwardJump " << std::endl;
       break;
     }
   }
@@ -339,7 +276,7 @@ vpHinkley::vpHinkleyJump vpHinkley::testDownwardJump(double signal)
   computeMean(signal);
 
   if (jump == downwardJump)  {
-    vpCDEBUG(2) << "\n*** DECROCHAGE  ***\n";
+    vpCDEBUG(2) << "\n*** Reset the Hinkley test  ***\n";
 
     Sk = 0; Mk = 0;  nsignal = 0;
   }
@@ -371,7 +308,7 @@ vpHinkley::vpHinkleyJump vpHinkley::testUpwardJump(double signal)
 
   computeNk();
 
-  vpCDEBUG(2) << "alpha: " << alpha << "dmin2: " << dmin2
+  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
 	    << " signal: " << signal << " Tk: " << Tk << " Nk: " << Nk;
 
   // teste si les variables cumulées excèdent le seuil
@@ -382,13 +319,13 @@ vpHinkley::vpHinkleyJump vpHinkley::testUpwardJump(double signal)
   if (VP_DEBUG_MODE >= 2) {
     switch(jump) {
     case noJump:
-      cout << "noJump " << endl;
+      std::cout << "noJump " << std::endl;
      break;
     case downwardJump:
-      cout << "downWardJump " << endl;
+      std::cout << "downWardJump " << std::endl;
       break;
     case upwardJump:
-      cout << "upWardJump " << endl;
+      std::cout << "upWardJump " << std::endl;
       break;
     }
   }
@@ -396,7 +333,7 @@ vpHinkley::vpHinkleyJump vpHinkley::testUpwardJump(double signal)
   computeMean(signal);
 
   if (jump == upwardJump)  {
-    vpCDEBUG(2) << "\n*** DECROCHAGE  ***\n";
+    vpCDEBUG(2) << "\n*** Reset the Hinkley test  ***\n";
 
     Tk = 0; Nk = 0;  nsignal = 0;
   }
@@ -430,9 +367,10 @@ vpHinkley::vpHinkleyJump vpHinkley::testDownUpwardJump(double signal)
   computeMk();
   computeNk();
 
-  vpCDEBUG(2) << "alpha: " << alpha << "dmin2: " << dmin2 << " signal: " << signal
-	    << " Sk: " << Sk << " Mk: " << Mk
-		<< " Tk: " << Tk << " Nk: " << Nk << std::endl;
+  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
+	      << " signal: " << signal
+	      << " Sk: " << Sk << " Mk: " << Mk
+	      << " Tk: " << Tk << " Nk: " << Nk << std::endl;
 
   // teste si les variables cumulées excèdent le seuil
   if ((Mk - Sk) > alpha)
@@ -444,27 +382,22 @@ vpHinkley::vpHinkleyJump vpHinkley::testDownUpwardJump(double signal)
   if (VP_DEBUG_MODE >= 2) {
     switch(jump) {
     case noJump:
-      cout << "noJump " << endl;
+      std::cout << "noJump " << std::endl;
      break;
     case downwardJump:
-      cout << "downWardJump " << endl;
+      std::cout << "downWardJump " << std::endl;
       break;
     case upwardJump:
-      cout << "upwardJump " << endl;
+      std::cout << "upwardJump " << std::endl;
       break;
     }
   }
-
-#  if (VP_DEBUG_MODE >= 3)
-  fprintf(f_hinkley, "%d %f %f %f %f %f %f %f %d\n",
-	  iter, signal, Sk, Mk, Mk-Sk, Tk, Nk, Tk-Nk, jump);
-  fflush(f_hinkley);
-#  endif
 #endif
+
   computeMean(signal);
 
   if ((jump == upwardJump) || (jump == downwardJump)) {
-    vpCDEBUG(2) << "\n*** DECROCHAGE  ***\n";
+    vpCDEBUG(2) << "\n*** Reset the Hinkley test  ***\n";
 
     Sk = 0; Mk = 0; Tk = 0; Nk = 0;  nsignal = 0;
     // Debut modif FS le 03/09/2003
@@ -541,7 +474,7 @@ void vpHinkley::computeNk()
   if (Tk < Nk) Nk = Tk;
 }
 
-void vpHinkley::print(vpHinkley::vpHinkleyJump jump) 
+void vpHinkley::print(vpHinkley::vpHinkleyJump jump)
 {
   switch(jump)
     {
@@ -550,13 +483,13 @@ void vpHinkley::print(vpHinkley::vpHinkleyJump jump)
       break ;
     case downwardJump :
       std::cout << " Jump downward detected " << std::endl ;
-      break ; 
+      break ;
     case upwardJump :
       std::cout << " Jump upward detected " << std::endl ;
-      break ;  
+      break ;
     default:
       std::cout << " Jump  detected " << std::endl ;
-      break ;  
+      break ;
 
   }
 }
