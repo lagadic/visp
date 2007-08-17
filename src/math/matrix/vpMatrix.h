@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.19 2007-07-19 15:49:11 asaunier Exp $
+ * $Id: vpMatrix.h,v 1.20 2007-08-17 09:04:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -330,9 +330,9 @@ public:
   // Norms
   // -------------------------
 
-  //! Euclidian norm ||x||=sqrt(sum(x_i))
+  // Euclidian norm ||x||=sqrt(sum(x_i^2))
   double euclidianNorm () const;
-  //! Infinity norm ||x||=max(fabs(x_i))
+  // Infinity norm ||x||=max(sum(fabs(x_i)))
   double infinityNorm () const;
 };
 
