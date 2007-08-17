@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.h,v 1.4 2007-07-02 16:35:02 fspindle Exp $
+ * $Id: vpHinkley.h,v 1.5 2007-08-17 15:24:45 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -69,7 +69,6 @@ class vpHinkley
   vpHinkleyJump testDownwardJump(double signal);
   vpHinkleyJump testUpwardJump(double signal);
   vpHinkleyJump testDownUpwardJump(double signal);
-  void setIter(int iter); // For debug only
 
   static void print(vpHinkleyJump jump) ;
 
@@ -116,8 +115,6 @@ class vpHinkley
   double Mk;
   double Tk;
   double Nk;
-
-  int iter; // for debug only
 };
 
 #endif
