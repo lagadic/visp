@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRowVector.cpp,v 1.5 2007-06-25 11:57:45 asaunier Exp $
+ * $Id: vpRowVector.cpp,v 1.6 2007-08-20 06:52:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,7 +155,7 @@ vpRowVector vpRowVector::operator*(const vpMatrix &A) const
   for (int i=0;i<colNum;i++) {
     {
       double bi = data[i] ; // optimization em 5/12/2006
-      for (int j=0;j<A.getRows();j++) {
+      for (int j=0;j<A.getCols();j++) {
         c[i]+=bi*A[i][j];
       }
     }
