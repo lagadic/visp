@@ -1007,7 +1007,8 @@ PREDEFINED             = \
 		       VISP_HAVE_BICLOPS \
 		       VISP_HAVE_PTU46 \
                        WIN32 \
-		       APPLE
+		       APPLE \
+		       UNIX
 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
