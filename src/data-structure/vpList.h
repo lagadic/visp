@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.11 2007-06-04 13:41:07 fspindle Exp $
+ * $Id: vpList.h,v 1.12 2007-08-21 13:06:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -162,6 +162,8 @@ class vpList
   inline void addRight(const type& el);   // inserts an element on the right
   inline void addLeft(const type& el);    // inserts an element on the left
   inline void modify(const type& el);     // modifies thevalue field of the curr. el.
+  inline void addRight(type& el);   // inserts an element on the right
+  inline void addLeft(type& el);    // inserts an element on the left
   inline int nbElement(void);       // returns the number of items currently in the list
   inline int nbElements(void);       // returns the number of items currently in the list
 
@@ -488,7 +490,6 @@ void vpList<type>::addRight(const type& v)
   cur->next = x ;
   cur = x ;
   nb++ ;
-
 }
 
 
@@ -504,6 +505,73 @@ void vpList<type>::addRight(const type& v)
  */
 template<class type>
 void vpList<type>::addLeft(const type& v)
+{
+  vpListElement<type> *x=new  vpListElement<type>;
+
+  x->val = v ;
+
+  if (empty())
+  {
+    cur = last ;
+  }
+  else
+  {
+    if (outside()) std::cout << "vpList: outside with addLeft " << std::endl ;
+  }
+  x->next = cur ;
+  x->prev = cur->prev ;
+  cur->prev->next = x ;
+  cur->prev = x ;
+  cur = x ;
+  nb++ ;
+
+}
+
+/*!
+  \brief add a new element in the list, at the right of the current one
+
+  \warning the new element becomes the current one
+
+  \verbatim
+  [*, a, b, c, *]  --> addRight(i) -->   [*, a, b, i, c, *]
+         ^                                         ^
+  \endverbatim
+ */
+template<class type>
+void vpList<type>::addRight(type& v)
+{
+  vpListElement<type> *x=new  vpListElement<type>;
+
+  x->val = v ;
+  if (empty())
+  {
+    cur = first ;
+  }
+  else
+  {
+    if (outside()) std::cout << "vpList: outside with addRight " << std::endl ;
+  }
+  cur->next->prev = x ;
+  x->next = cur->next ;
+  x->prev = cur ;
+  cur->next = x ;
+  cur = x ;
+  nb++ ;
+}
+
+
+/*!
+  \brief add a new element in the list, at the left of the current one
+
+  \warning the new element becomes the current one
+
+  \verbatim
+  [*, a, b, c, *]  --> addLeft(i) -->   [*, a, i, b, c, *]
+         ^                                     ^
+  \endverbatim
+ */
+template<class type>
+void vpList<type>::addLeft(type& v)
 {
   vpListElement<type> *x=new  vpListElement<type>;
 
