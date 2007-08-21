@@ -8,15 +8,18 @@ ViSP 2.4.x
   - Bug fix and improvement
 	- vpDot: setMaxDotSize(double percentage) replace 
 	  setNbMaxPoint(double nb) to be less image size dependent.
-	  The maximal dot size is set by default to 0.25% (quarter image size)
-	         setGrayLevelPrecision(double grayLevelPrecision) has been 
+	  The maximal dot size is set by default to 0.25% (quarter image size).
+	  setGrayLevelPrecision(double grayLevelPrecision) has been 
           added for a better management of gray dots detection.
-	- vpDot2: Changes in searchDotsInArea() :
-	    The algorithm search now in the boundingboxes of the bad dots.
+	- vpDot2: 
+	  Changes in searchDotsInArea() :
+	    The algorithm search now in the bounding boxes of the bad dots.
 	    Bug fixed : we could fall in an infinite loop.
 	    Split accuracy private variable into grayLevelPrecision and 
-	  sizePrecision. The gray level min and max are well calculated for 
-	  white and black dots.
+	    sizePrecision. The gray level min and max are well calculated for 
+	    white and black dots.
+	  Add setEllipsoidForm() to turn on/off the test related of the 
+	  ellipsoid form of the shape
 	- vpDisplayX : better management of endianness
 	- vpDisplayGTK, vpDisplayGDI, vpDisplayD3D : 
 	  The behavior of the following methods change to be similar
