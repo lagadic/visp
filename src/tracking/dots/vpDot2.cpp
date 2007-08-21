@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.28 2007-07-19 15:40:40 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.29 2007-08-21 15:19:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,18 +60,17 @@
     is used when there was a problem performing basic tracking of the dot, but
     can also be used to find a certain type of dots in the full image.
 */
+#include <math.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
-#include <visp/vpList.h>
 #include <visp/vpColor.h>
 
 // exception handling
 #include <visp/vpTrackingException.h>
+#include <visp/vpMath.h>
 
 #include <visp/vpDot2.h>
-#include <visp/vpMath.h>
-#include <math.h>
 
 
 /******************************************************************************
@@ -95,7 +94,7 @@ vpDot2::vpDot2() : vpTracker()
   gray_level_max = 255;
   grayLevelPrecision = 0.80;
   gamma = 1.5 ;
-  
+
   sizePrecision = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
@@ -107,6 +106,7 @@ vpDot2::vpDot2() : vpTracker()
 
   compute_moment = false ;
   graphics = false;
+  isEllipsoid = true;
 }
 
 /*!
@@ -144,6 +144,7 @@ vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
 
   compute_moment = false ;
   graphics = false;
+  isEllipsoid = true;
 }
 
 /*!
@@ -181,13 +182,14 @@ vpDot2::vpDot2(const double u, const double v ) : vpTracker()
 
   compute_moment = false ;
   graphics = false;
+  isEllipsoid = true;
 }
 
 
 /*!
   Copy contructor.
 */
-vpDot2::vpDot2( const vpDot2& twinDot ) : vpTracker()
+vpDot2::vpDot2( vpDot2& twinDot ) : vpTracker()
 {
   *this = twinDot;
 }
@@ -195,7 +197,7 @@ vpDot2::vpDot2( const vpDot2& twinDot ) : vpTracker()
 /*!
   = operator.
 */
-void vpDot2::operator=( const vpDot2& twinDot )
+void vpDot2::operator=( vpDot2& twinDot )
 {
   cog_ufloat = twinDot.cog_ufloat;
   cog_vfloat = twinDot.cog_vfloat;
@@ -228,6 +230,13 @@ void vpDot2::operator=( const vpDot2& twinDot )
 
   compute_moment = twinDot.compute_moment;
   graphics = twinDot.graphics;
+
+  direction_list = twinDot.direction_list;
+  u_list =  twinDot.u_list;
+  v_list =  twinDot.v_list;
+
+  isEllipsoid = twinDot.isEllipsoid;
+
 }
 
 /*!
@@ -302,7 +311,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
 
   setWidth(size);
   setHeight(size);
-  
+
   try {
     track( I );
   }
@@ -347,7 +356,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
 
   setWidth(size);
   setHeight(size);
-  
+
   try {
     track( I );
   }
@@ -481,7 +490,6 @@ void vpDot2::track(vpImage<unsigned char> &I)
       searchWindowWidth  = getWidth() * 5;
       searchWindowHeight = getHeight() * 5;
     }
-
     vpList<vpDot2>* candidates =
       searchDotsInArea( I,
 			(int)(this->get_u()-searchWindowWidth /2.0),
@@ -509,6 +517,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
     setSurface( movingDot.getSurface() );
     setWidth( movingDot.getWidth() );
     setHeight( movingDot.getHeight() );
+
     // Update the moments
     m00 = movingDot.m00;
     m01 = movingDot.m01;
@@ -516,6 +525,12 @@ void vpDot2::track(vpImage<unsigned char> &I)
     m11 = movingDot.m11;
     m20 = movingDot.m20;
     m02 = movingDot.m02;
+
+    // Update the bounding box
+    bbox_u_min = movingDot.bbox_u_min;
+    bbox_u_max = movingDot.bbox_u_max;
+    bbox_v_min = movingDot.bbox_v_min;
+    bbox_v_max = movingDot.bbox_v_max;
 
     // desallocation
     candidates->kill();
@@ -930,13 +945,11 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
 {
   vpList<vpDot2>* niceDotsVector = new vpList<vpDot2>();
 
-  niceDotsVector = searchDotsInArea( I, 0, 0,
-				     I.getWidth()-1, I.getHeight()-1 );
+  niceDotsVector = searchDotsInArea( I, 0, 0, I.getWidth(), I.getHeight());
 
   return niceDotsVector;
 
 }
-
 /*!
 
   Look for a list of dot matching this dot parameters within a rectangle
@@ -957,11 +970,15 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
   \sa searchDotsInArea(vpImage<unsigned char>& I)
 */
 vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
-					  int area_u,
-					  int area_v,
-					  int area_w,
-					  int area_h)
+					    int area_u,
+					    int area_v,
+					    int area_w,
+					    int area_h)
+
 {
+
+  // Fit the input area in the image; we keep only the common part between this
+  // area and the image.
   setArea(I, area_u, area_v, area_w, area_h);
 
   // compute the size of the search grid
@@ -1021,35 +1038,50 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       if (! good_germ)
         continue;
 
+      // Compute the right border position for this possible germ
+      unsigned int border_u;
+      unsigned int border_v;
+      if(findFirstBorder(I, u, v, border_u, border_v) == false){
+	// germ is not good.
+	// Jump all the pixels between v,u and v, dotToTest->getFirstBorder_u()
+        u = border_u;
+        v = border_v;
+	continue;
+      }
+
       badDotsVector->front();
+#define vpBAD_DOT_VALUE (badDotsVector->value())
       while( !badDotsVector->outside() && good_germ == true) {
-        tmpDot = badDotsVector->value();
-        if( (double)u >= tmpDot.bbox_u_min && (double)u <= tmpDot.bbox_u_max &&
-            (double)v >= tmpDot.bbox_v_min && (double)v <= tmpDot.bbox_v_max){
-          tmpDot.u_list.front();
-          tmpDot.v_list.front();
-          unsigned int border_u;
-          unsigned int border_v;
-          if(findFirstBorder(I,u,v,border_u,border_v)){
-            while (!tmpDot.u_list.outside() && good_germ == true){
-              if( border_u == tmpDot.u_list.value() &&
-              v == tmpDot.v_list.value())
-                good_germ = false;
-              tmpDot.u_list.next();
-              tmpDot.v_list.next();
-            }
-          }
-          else{
-            good_germ = false;
-          }
+        if( (double)u >= vpBAD_DOT_VALUE.bbox_u_min
+	    && (double)u <= vpBAD_DOT_VALUE.bbox_u_max &&
+            (double)v >= vpBAD_DOT_VALUE.bbox_v_min
+	    && (double)v <= vpBAD_DOT_VALUE.bbox_v_max){
+          vpBAD_DOT_VALUE.u_list.front();
+          vpBAD_DOT_VALUE.v_list.front();
+	  while (!vpBAD_DOT_VALUE.u_list.outside() && good_germ == true){
+	    // Test if the germ belong to a previously detected dot:
+	    // - from the germ go right to the border and compare this
+	    //   position to the list of pixels of previously detected dots
+	    if( border_u == vpBAD_DOT_VALUE.u_list.value() &&
+		v == vpBAD_DOT_VALUE.v_list.value()) {
+	      good_germ = false;
+	    }
+	    vpBAD_DOT_VALUE.u_list.next();
+	    vpBAD_DOT_VALUE.v_list.next();
+	  }
         }
         badDotsVector->next();
       }
+#undef vpBAD_DOT_VALUE
 
-      if (! good_germ)
+      if (! good_germ) {
+	// Jump all the pixels between v,u and v, dotToTest->getFirstBorder_u()
+        u = border_u;
+        v = border_v;
         continue;
+      }
 
-
+      vpTRACE(4, "Try germ (%d, %d)", u, v);
       // otherwise estimate the width, height and surface of the dot we
       // created, and test it.
       if( dotToTest != NULL ) delete dotToTest;
@@ -1063,22 +1095,28 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       dotToTest->setGraphics( graphics );
       dotToTest->setComputeMoments( true );
       dotToTest->setArea( area );
+      dotToTest->setEllipsoidForm( isEllipsoid );
 
       // first compute the parameters of the dot.
       // if for some reasons this caused an error tracking
       // (dot partially out of the image...), check the next intersection
       if( dotToTest->computeParameters( I ) == false ) {
         // Jump all the pixels between v,u and v, dotToTest->getFirstBorder_u()
-        u = dotToTest->getFirstBorder_u();
-        v = dotToTest->getFirstBorder_v();
+        u = border_u;
+        v = border_v;
         continue;
       }
       // if the dot to test is valid,
       if( dotToTest->isValid( I, *this ) )
       {
-        // compute the distance to the center
-        double area_center_u, area_center_v;
-        area.getCenter(area_center_u, area_center_v);
+        // Compute the distance to the center. The center used here is not the
+	// area center avalaible by area.getCenter(area_center_u,
+	// area_center_v) but the center of the input area which may be
+	// partially outside the image.
+
+        double area_center_u = area_u + area_w/2.0 - 0.5;
+	double area_center_v = area_v + area_h/2.0 - 0.5;
+
         double thisDiff_u = dotToTest->get_u() - area_center_u;
         double thisDiff_v = dotToTest->get_v() - area_center_v;
         double thisDist = sqrt( thisDiff_u*thisDiff_u + thisDiff_v*thisDiff_v);
@@ -1098,8 +1136,8 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
           {
             stopLoop = true;
             // Jump all the pixels between v,u and v, tmpDot->getFirstBorder_u()
-            u = tmpDot.getFirstBorder_u();
-            //v = tmpDot.getFirstBorder_v();
+	    u = border_u;
+	    v = border_v;
             continue;
           }
 
@@ -1118,12 +1156,13 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
             niceDotsVector->next();
             stopLoop = true;
             // Jump all the pixels between v,u and v, tmpDot->getFirstBorder_u()
-            u = tmpDot.getFirstBorder_u();
-            v = tmpDot.getFirstBorder_v();
+	    u = border_u;
+	    v = border_v;
             continue;
           }
           niceDotsVector->next();
         }
+	vpTRACE(4, "End while (%d, %d)", u, v);
 
         // if we reached the end of the vector without finding the dot
         // or inserting it, insert it now.
@@ -1173,81 +1212,93 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   //
   if( ( wantedDot.getWidth()*sizePrecision-epsilon < getWidth() ) == false )
   {
+    vpDEBUG_TRACE(3, "Bad width < for dot (%g, %g)", get_u(), get_v());
     return false;
   }
 
   if( ( getWidth() < wantedDot.getWidth()/sizePrecision+epsilon ) == false )
   {
+    vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", get_u(), get_v());
     return false;
   }
 
   if( ( wantedDot.getHeight()*sizePrecision-epsilon < getHeight() ) == false )
   {
+    vpDEBUG_TRACE(3, "Bad height < for dot (%g, %g)", get_u(), get_v());
     return false;
   }
 
   if( ( getHeight() < wantedDot.getHeight()/sizePrecision+epsilon ) == false )
   {
+    vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", get_u(), get_v());
     return false;
   }
 
   if( ( wantedDot.getSurface()*(sizePrecision*sizePrecision)-epsilon < getSurface() ) == false )
   {
+    vpDEBUG_TRACE(3, "Bad surface < for dot (%g, %g)", get_u(), get_v());
     return false;
   }
 
   if( ( getSurface() < wantedDot.getSurface()/(sizePrecision*sizePrecision)+epsilon ) == false )
   {
+    vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", get_u(), get_v());
     return false;
   }
-
 
   //
   // Now we can proceed to more advanced (and costy) checks.
   // First check there is a white (>level) elipse within dot
   // Then check the dot is surrounded by a black elipse.
   //
+  if (isEllipsoid) {
 
-  //we compute parameters of the estimated ellipse
-  double Sqrt = sqrt(pow((m01*m01 -m10*m10)/(m00*m00)+(m20-m02)/m00,2)
-                  +4*pow(m11/m00-m10*m01/(m00*m00),2));
-  double a1 = sqrt(2*((m20+m02)/m00-(m10*m10+m01*m01)/(m00*m00)+Sqrt));
-  double a2 = sqrt(2*((m20+m02)/m00-(m10*m10+m01*m01)/(m00*m00)-Sqrt));
-  double alpha = 0.5*atan2(2*(m11*m00-m10*m01),((m20-m02)*m00-m10*m10+m01*m01));
-  
-  double innerCoef =  sizePrecision ;           //0.4;
-  int u, v;
-  
-  for( double theta = 0. ; theta<2*M_PI ; theta+= 0.4 )
-  {
-    u = (int) (this->get_u() + innerCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
-    v = (int) (this->get_v() + innerCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
-    if (graphics) {
-      vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
-      //vpDisplay::flush(I);
-    }
-    if( !wantedDot.hasGoodLevel( I, u, v ) )
-    {
-      return false;
-    }
-  }
+    //we compute parameters of the estimated ellipse
+    double Sqrt = sqrt(pow((m01*m01 -m10*m10)/(m00*m00)+(m20-m02)/m00,2)
+		       +4*pow(m11/m00-m10*m01/(m00*m00),2));
+    double a1 = sqrt(2*((m20+m02)/m00-(m10*m10+m01*m01)/(m00*m00)+Sqrt));
+    double a2 = sqrt(2*((m20+m02)/m00-(m10*m10+m01*m01)/(m00*m00)-Sqrt));
+    double alpha = 0.5*atan2(2*(m11*m00-m10*m01),((m20-m02)*m00-m10*m10+m01*m01));
 
-  double outCoef =  2-sizePrecision;           //1.6;
-  for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 )
-  {
-    u = (int) (this->get_u() + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
-    v = (int) (this->get_v() + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
-    if (graphics) {
-      vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
-      //vpDisplay::flush(I);
-    }
-    // If outside the area, continue
-    if ((double)u < area.getLeft() || (double)u > area.getRight()
-    	|| (double)v < area.getTop() || (double)v > area.getBottom())
-      continue;
-    if( !wantedDot.hasReverseLevel( I, u, v ) )
+    double innerCoef =  sizePrecision ;           //0.4;
+    int u, v;
+    for( double theta = 0. ; theta<2*M_PI ; theta+= 0.4 )
     {
-      return false;
+      u = (int) (this->get_u() + innerCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
+      v = (int) (this->get_v() + innerCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
+      if( !wantedDot.hasGoodLevel( I, u, v ) )
+      {
+	vpDEBUG_TRACE(3, "Inner cercle pixel (%d, %d) has bad level for dot (%g, %g)",
+		      u, v, wantedDot.get_u(), wantedDot.get_v());
+	return false;
+      }
+      if (graphics) {
+	vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
+	//vpDisplay::flush(I);
+      }
+    }
+
+    double outCoef =  2-sizePrecision;           //1.6;
+    for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 )
+    {
+      u = (int) (this->get_u() + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
+      v = (int) (this->get_v() + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
+      // If outside the area, continue
+      if ((double)u < area.getLeft() || (double)u > area.getRight()
+	  || (double)v < area.getTop() || (double)v > area.getBottom()) {
+	continue;
+      }
+      if( !wantedDot.hasReverseLevel( I, u, v ) )
+      {
+	vpDEBUG_TRACE(3, "Outside cercle pixel (%d, %d) has bad level for dot (%g, %g)",
+		      u, v, wantedDot.get_u(), wantedDot.get_v());
+	return false;
+      }
+      if (graphics) {
+	vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
+	//vpDisplay::flush(I);
+      }
+
     }
   }
 
@@ -1306,6 +1357,9 @@ bool vpDot2::hasReverseLevel(vpImage<unsigned char>& I,
 			     const unsigned int &u,
 			     const unsigned int &v) const
 {
+
+  if( !isInArea( u, v ) )
+    return false;
 
   if( I[v][u] < gray_level_min ||  I[v][u] > gray_level_max)
   {
@@ -1463,8 +1517,12 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   // find the border
 
   if(!findFirstBorder(I, (unsigned int) est_u, (unsigned int) est_v,
-                        this->firstBorder_u, this->firstBorder_v))
+		      this->firstBorder_u, this->firstBorder_v)) {
+
+    vpDEBUG_TRACE(3, "Can't find first border (%d, %d) coordinates",
+		(int) est_u, (int) est_v) ;
     return false;
+  }
 
   unsigned int dir = 6;
 
@@ -1526,6 +1584,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     // if we are now out of the image, return an error tracking
     if( !isInArea( border_u, border_v ) )  {
 
+      vpDEBUG_TRACE(3, "Dot (%d, %d) is not in the area", border_u, border_v);
       // Can Occur on a single pixel dot located on the top border
       return false;
     }
@@ -1545,8 +1604,11 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     if( border_u > bbox_u_max ) bbox_u_max = border_u;
 
     // move around the tracked entity by following the border.
-    if (computeFreemanChainElement(I, border_u, border_v, dir) == false)
+    if (computeFreemanChainElement(I, border_u, border_v, dir) == false) {
+      vpDEBUG_TRACE(3, "Can't compute Freeman chain for dot (%d, %d)",
+		    border_u, border_v);
       return false;
+    }
 
 //     vpTRACE("border_u: %d border_v: %d dir: %d", border_u, border_v, dir);
 
@@ -1556,6 +1618,11 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
 	  || firstDir != dir) &&
 	 isInArea( border_u, border_v ) );
 
+#ifdef VP_DEBUG
+  #if VP_DEBUG_MODE == 3
+  vpDisplay::flush(I);
+  #endif
+#endif
 
   // if the surface is one or zero , the center of gravity wasn't properly
   // detected. Return an error tracking.
@@ -1574,7 +1641,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     if( !hasGoodLevel( I, (unsigned int)tmpCenter_u,
 		       (unsigned int)tmpCenter_v ) )
     {
-      vpDEBUG_TRACE(3, "The center of gravity of the dot has not a good in level");
+      vpDEBUG_TRACE(3, "The center of gravity of the dot (%g, %g) has not a good in level", tmpCenter_u, tmpCenter_v);
       return false;
     }
 
@@ -1621,15 +1688,12 @@ vpDot2::findFirstBorder(const vpImage<unsigned char> &I,
   border_u = u;
   border_v = v;
   while( hasGoodLevel( I, border_u+1, border_v ) &&
-    border_u < area.getRight()/*I.getWidth()*/ )
-  {
+    border_u < area.getRight()/*I.getWidth()*/ )  {
     // if the width of this dot was initialised and we already crossed the dot
     // on more than the max possible width, no need to continue, return an
     // error tracking
-    if( getWidth() > 0 && ( border_u - u ) > getWidth()/getSizePrecision() )
-    {
-      vpDEBUG_TRACE(3, "The found dot has a greater with than the required one")
-;
+    if( getWidth() > 0 && ( border_u - u ) > getWidth()/getSizePrecision() ) {
+      vpDEBUG_TRACE(3, "The found dot (%d, %d, %d) has a greater width than the required one", u, v, border_u);
       return false;
     }
 
