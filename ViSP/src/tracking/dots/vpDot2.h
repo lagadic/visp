@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.26 2007-07-19 15:40:40 asaunier Exp $
+ * $Id: vpDot2.h,v 1.27 2007-08-21 15:18:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,6 +44,7 @@
 #ifndef vpDot2_hh
 #define vpDot2_hh
 
+
 #include <visp/vpConfig.h>
 #include <visp/vpList.h>
 #include <visp/vpImage.h>
@@ -57,9 +58,9 @@ public:
   vpDot2();
   vpDot2(const unsigned int u, const unsigned int v) ;
   vpDot2(const double u, const double v) ;
-  vpDot2( const vpDot2& twinDot );
+  vpDot2( vpDot2& twinDot );
   virtual ~vpDot2();
-  void operator=( const vpDot2& twinDot );
+  void operator=( vpDot2& twinDot );
 
   void initTracking(vpImage<unsigned char>& I, unsigned int size = 0);
   void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
@@ -125,7 +126,7 @@ public:
   void setGraphics(const bool activate) { graphics = activate ; }
 
   void display(vpImage<unsigned char>& I,vpColor::vpColorType c = vpColor::red);
-  
+
   /*!
 
     Activates the dot's moments computation.
@@ -182,16 +183,22 @@ public:
   };
   void setGrayLevelPrecision( const double & grayLevelPrecision );
   void setSizePrecision( const double & sizePrecision );
+  /*!
+    Indicates if the dot should have an ellipsoid form to be valid.
+    To track a non ellipsoid shape use setEllipsoidForm(false).
+
+  */
+  inline void setEllipsoidForm(bool isEllipsoid = true) {
+    this->isEllipsoid = isEllipsoid;
+  }
 
   double getDistance( const vpDot2& distantDot ) const;
-
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
 				    int area_u, int area_v,
 				    int area_w, int area_h );
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
-
 
 private :
 
@@ -277,14 +284,14 @@ private:
   bool computeParameters(vpImage<unsigned char> &I,
                               const double &u = -1.0,
                               const double &v = -1.0);
-        
-  
+
+
 
   bool findFirstBorder(const vpImage<unsigned char> &I, const unsigned int &u,
                         const unsigned int &v, unsigned int &border_u,
                         unsigned int &border_v);
-  
-  
+
+
   /*!
 
   Get the starting point on a dot border. The dot border is
@@ -368,6 +375,9 @@ private:
   // The first point coodinate on the dot border
   unsigned int firstBorder_u;
   unsigned int firstBorder_v;
+
+  // Test if the shape is ellipsoid
+  bool isEllipsoid;
 
 };
 
