@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.19 2007-07-06 15:46:37 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.20 2007-08-21 14:01:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -164,6 +164,7 @@ SET (SRC_TOOLS
   tools/histogram/vpHistogramValey.cpp
   tools/io/vpIoTools.cpp
   tools/io/vpIoException.cpp
+  tools/io/vpKeyboard.cpp
   tools/io/vpParseArgv.cpp
   tools/time/vpTime.cpp
   )

@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.17 2007-07-06 15:46:37 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.18 2007-08-21 14:01:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -158,6 +158,7 @@ SET (HEADER_TOOLS
   tools/histogram/vpHistogramValey.h
   tools/io/vpIoException.h
   tools/io/vpIoTools.h
+  tools/io/vpKeyboard.h
   tools/io/vpParseArgv.h
   tools/time/vpTime.h
   tools/trace/vpDebug.h
