@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.27 2007-08-21 15:18:10 fspindle Exp $
+ * $Id: vpDot2.h,v 1.28 2007-08-22 16:10:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -185,10 +185,10 @@ public:
   void setSizePrecision( const double & sizePrecision );
   /*!
     Indicates if the dot should have an ellipsoid form to be valid.
-    To track a non ellipsoid shape use setEllipsoidForm(false).
+    To track a non ellipsoid shape use setEllipsoidShape(false).
 
   */
-  inline void setEllipsoidForm(bool isEllipsoid = true) {
+  inline void setEllipsoidShape(bool isEllipsoid = true) {
     this->isEllipsoid = isEllipsoid;
   }
 
