@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.8 2007-07-19 10:28:17 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.9 2007-08-22 14:00:13 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,7 +95,9 @@ vpMePath::vpMePath():vpMeTracker()
   
   // parameters
   firstIter = true;//first iteration
+  horLine = false;//initialize to false
   numPoints = 5; //initial points used to find parabola
+  n_points = numPoints; //points used for tracking at every iteration 
   numPointPar = 100; //parabola points used to find circle
   LSiter = 2; //least square iterations 
   good_point_thresh = 0.75; //threshold on least square line error
@@ -436,22 +438,26 @@ void vpMePath::displayList(vpImage<unsigned char> &I)
   while(!list.outside())
     {
       vpMeSite s = list.value() ;//current reference pixel
-      list.next() ;
       vpDisplay::displayCross(I, s.i, s.j, 1, vpColor::red);
+      s.setDisplay(RESULT);
+      list.next();
     }
 }
 void vpMePath::reduceList(vpList<vpMeSite> &list, int newSize) {
+  std::printf("5 list.nbElement() %d newSize %d\n", list.nbElement(), newSize);
   int ratio = (int) (list.nbElement() / newSize);
   vpList<vpMeSite> tempList ;
   list.front();
   tempList.front();
+  std::printf("6 ratio %d\n", ratio);
   while(!list.outside()) {
 	tempList.value() = list.value();
 	tempList.next() ;
-	for (int i=0 ; i < ratio ; i++) {
+	for (int i=0 ; i <= ratio ; i++) {
   		list.next() ;
   	}
   }
+  std::printf("7\n");
   list.kill();
   list.front();
   tempList.front();
@@ -460,6 +466,7 @@ void vpMePath::reduceList(vpList<vpMeSite> &list, int newSize) {
 	tempList.next() ;
 	list.next() ;
   }
+  std::printf("8\n");
 }
 
 /*
@@ -551,13 +558,26 @@ void vpMePath::getParabolaPoints() {
   compute the parameters.
 
 */
-void vpMePath::leastSquare()
+void vpMePath::leastSquare (vpImage<unsigned char> &I)
 {
-  leastSquareLine();
-  leastSquareParabola();
+/*  std::printf("1 list.nbElement() %d\n", list.nbElement()); 
+  if (!firstIter) {
+  	std::printf("2\n"); 
+	if (list.nbElement() > 100) {
+  		std::printf("3\n");
+		reduceList(list, 100);//22agosto
+		std::printf("9\n");
+	}
+  }
+  */
+  leastSquareLine(I);
+  leastSquareParabola(I);
   vpMeSite p;
 //  std::printf("leastSquare() numPts %d \n", list.nbElement());
 
+//  std::printf("numPts %d lineGoodPts %d parGoodPts %d\n", 
+//	list.nbElement(), lineGoodPoints, parGoodPoints);
+	
   if (verbose)
     std::printf("numPts %d l_err %f lineGoodPts %d p_err %f parGoodPts %d\n", 
 	list.nbElement(), line_error, lineGoodPoints, parab_error, 
@@ -571,6 +591,10 @@ void vpMePath::leastSquare()
   else 
 	nPoints = list.nbElement();
   if ((lineGoodPoints == 0) && (parGoodPoints == 0)) {
+      vpDisplay::flush(I);
+      static char s[30];
+      sprintf(s,"/tmp/acherubi/NoPointImage.pgm");
+      vpImageIo::writePGM(I,s);
       vpERROR_TRACE("Not enough line and par good points") ;
       std::printf("vpMePath::Exception Not enough line and par good points\n");
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
@@ -589,6 +613,7 @@ void vpMePath::leastSquare()
     	lineScore, parScore);
   //pick the line as most likely curve
   if ((lineScore < maxLineScore) || (lineScore < parScore)) {
+    n_points = lineGoodPoints;
     for (int i = 0 ; i < 5 ; i++) {
     	K[i] = K_line[i];
     }
@@ -596,10 +621,13 @@ void vpMePath::leastSquare()
     aFin = 0;
     if (fabs (K_line[4]) > 800) {
       //if line is parallel to the j axis (i.e., horizontal) change reference
+      //std::printf("\n\nHORIZONTAL\n\n");
+      horLine = true;
       thetaFin = M_PI / 2;
       bFin = 1 / K_line[2];
       cFin = - K_line[4] / K_line[2];
     } else {
+      horLine = false;
       thetaFin = 0;
       bFin = -K_line[2];
       cFin = -K_line[4];
@@ -609,6 +637,7 @@ void vpMePath::leastSquare()
       std::printf("\e[36mleastSquare()line a %f b %f c %f theta %f \e[30m \n",
        aFin, bFin, cFin, thetaFin);
   } else {
+    n_points = parGoodPoints;
     //pick the parabola as most likely curve
     for (int i = 0 ; i < 5 ; i++) {
     	K[i] = K_par[i];
@@ -637,7 +666,7 @@ void vpMePath::leastSquare()
 
 */
 void 
-vpMePath::leastSquareParabola()
+vpMePath::leastSquareParabola(vpImage<unsigned char> &I)
 {
   vpMeSite p ;
   int iter = 0 ;
@@ -647,6 +676,11 @@ vpMePath::leastSquareParabola()
   else pointsForLs = numberOfSignal();
   if (((firstIter) && (numPoints < 3)) || 
   	((!firstIter) && (list.nbElement() < 3))) {
+      vpDisplay::flush(I);
+      static char s[30];
+      sprintf(s,"/tmp/acherubi/NoPointImage.pgm");
+      vpImageIo::writePGM(I,s);
+				
       vpERROR_TRACE("Not enough point") ;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
       				"not enough point")) ;
@@ -719,7 +753,7 @@ vpMePath::leastSquareParabola()
   }
   //given the five parabola parameters, find parabola equation of the form
   //y = a x^2 + b x + c in a reference frame rotated by theta
-  getParameters() ;
+  getParameters(I) ;
 }
 
 /*!
@@ -734,7 +768,7 @@ vpMePath::leastSquareParabola()
 */
 
 void
-vpMePath::getParameters()
+vpMePath::getParameters(vpImage<unsigned char> &I)
 {
   double aPar1;
   double bPar1;
@@ -772,7 +806,7 @@ vpMePath::getParameters()
     K_par[0] = tan (theta1)*tan (theta1);
     K_par[1] = -2*tan (theta1);
     //compute K2 K3 K4 again having fixed theta = theta1
-    leastSquareParabolaGivenOrientation();
+    leastSquareParabolaGivenOrientation(I);
     parab_error1 = parab_error;
     parGoodPoints1 = parGoodPoints;
     bPar1 = (-(K_par[2]/K_par[3])*cos (theta1) + sin (theta1)) / 
@@ -810,7 +844,7 @@ vpMePath::getParameters()
     K_par[0] = tan (theta2)*tan (theta2);
     K_par[1] = -2*tan (theta2);
     //compute K2 K3 K4 again having fixed theta = theta1
-    leastSquareParabolaGivenOrientation();//todo cambia a list bla bla
+    leastSquareParabolaGivenOrientation(I);//todo cambia a list bla bla
     parab_error2 = parab_error;
     parGoodPoints2 = parGoodPoints;
     bPar2 = (-(K_par[2]/K_par[3])*cos (theta2) + sin (theta2)) / 
@@ -887,7 +921,7 @@ vpMePath::getParameters()
   point to compute the parameters.
 
 */
-void vpMePath::leastSquareParabolaGivenOrientation()
+void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
 {
   int i ;
   vpMeSite p ;
@@ -897,6 +931,11 @@ void vpMePath::leastSquareParabolaGivenOrientation()
   else pointsForLs = numberOfSignal();
   if (((firstIter) && (numPoints < 1)) || 
   	((!firstIter) && (list.nbElement() < 1))) {
+      vpDisplay::flush(I);
+      static char s[30];
+      sprintf(s,"/tmp/acherubi/NoPointImage.pgm");
+      vpImageIo::writePGM(I,s);
+	
       vpERROR_TRACE("Not enough point") ;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
       		"not enough point")) ;
@@ -995,7 +1034,7 @@ void vpMePath::leastSquareParabolaGivenOrientation()
   point to compute the parameters.
 
 */
-void vpMePath::leastSquareLine()
+void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
 {
   vpMeSite p ;
   int iter = 0 ;
@@ -1004,6 +1043,11 @@ void vpMePath::leastSquareLine()
   else pointsForLs = numberOfSignal();
   if (((firstIter) && (numPoints < 1)) || 
   	((!firstIter) && (list.nbElement() < 1))) {
+      vpDisplay::flush(I);
+      static char s[30];
+      sprintf(s,"/tmp/acherubi/NoPointImage.pgm");
+      vpImageIo::writePGM(I,s);
+      
       vpERROR_TRACE("Not enough point") ;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
       		"not enough point")) ;
@@ -1151,7 +1195,7 @@ void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
     }
   }
   //pick line or parabola and compute its parameters
-  leastSquare();
+  leastSquare(I);
   if (verbose)
     std::printf("vpMePath::initTracking parameters computed\n");
   //vpDisplay::getClick(I) ;
@@ -1206,8 +1250,8 @@ void vpMePath::track(vpImage<unsigned char> &I)
 //    std::printf("2-track numPts %d \n", list.nbElement());
     try{
       //pick line or parabola and compute its parameters
-      leastSquare() ;  }
-    catch(...)
+      leastSquare (I);  
+    } catch(...)
       {
 	vpERROR_TRACE("Error caught") ;
 	throw ;
@@ -1236,7 +1280,7 @@ void vpMePath::track(vpImage<unsigned char> &I)
 	  //std::printf("5-track numPts %d \n", list.nbElement());
           displayList(I);
 	  //pick line or parabola and compute its parameters
-	  leastSquare();
+	  leastSquare (I);
 	}
       }
     }
@@ -1260,7 +1304,7 @@ void vpMePath::track(vpImage<unsigned char> &I)
 	//std::printf("8-track numPts %d \n", list.nbElement());
 	try {
           //pick line or parabola and compute its parameters
-	  leastSquare() ;
+	  leastSquare (I);
       	} catch(...) {
 	    vpERROR_TRACE("Error caught") ;
 	    throw ;

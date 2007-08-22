@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.4 2007-07-19 09:08:50 acherubi Exp $
+ * $Id: vpMePath.h,v 1.5 2007-08-22 14:00:13 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,7 @@
 #include <visp/vpMeSite.h>
 
 #include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpColor.h>
 
 
@@ -72,12 +73,12 @@ public:
 
 private:
 
-  void getParameters();
+  void getParameters(vpImage<unsigned char> &I);
   void sample(vpImage<unsigned char>&image);
-  void leastSquare();
-  void leastSquareParabola();
-  void leastSquareParabolaGivenOrientation();
-  void leastSquareLine();        
+  void leastSquare(vpImage<unsigned char> &I);
+  void leastSquareParabola(vpImage<unsigned char> &I);
+  void leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I);
+  void leastSquareLine(vpImage<unsigned char> &I);        
   void updateNormAng();
   void suppressPoints();
   void seekExtremities(vpImage<unsigned char> &I);
@@ -91,10 +92,12 @@ public:
   
   double aFin, bFin, cFin, thetaFin; //line OR parabola parameters
   bool line; //indicates that the path is a straight line
+  bool horLine; //indicates that the line si horizontal
   double i1, j1, i2, j2; //extremity coordinates
   double *i_par, *j_par; //parabola point coordinates used to find circle
   int numPointPar; //parabola points used to find circle
   int numPoints; // initial points used to find parabola
+  int n_points; //points used for tracking at every iteration 
   unsigned *i_ref, *j_ref; //reference parabola point coordinates
     
 private:
