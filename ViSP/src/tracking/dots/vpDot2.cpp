@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.29 2007-08-21 15:19:35 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.30 2007-08-22 16:15:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,8 +47,15 @@
 
   \brief This vpTracker is meant to track some white zones on a vpImage.
 
-  The center of gravity of a vpDot2 white zone have to be of the right color
-  level. track() and searchDotsInArea() are the most important features
+  The center of gravity of a vpDot2 zone have to be of the right color
+  level. You can specify these color levels by setGrayLevelMin() and
+  setGrayLevelMax(). This allows to track white objects on a black background
+  and vice versa.
+
+  The geometry of a vpDot2 zone is by default ellipsoid. If you want to track a
+  non ellipsoid shape, you have to call setEllipsoidShape(false).
+
+  track() and searchDotsInArea() are the most important features
   of this class.
 
   - track() estimate the current position of the dot using it's previous
@@ -282,6 +289,21 @@ void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
   \param I : Image.
   \param size : Size of the dot to track.
 
+  If no valid dot was found in the window, return an exception.
+
+  \exception vpTrackingException::featureLostError : If the dot initialisation
+  failed. The initialisation can failed if the following characteristics are
+  not valid;
+  - The gray level is between gray level min and gray level max.
+
+  - The shape should be ellipsoid if setEllipsoidShape(true) is used. This is
+    the default case. To track a non ellipsoid shape use
+    setEllipsoidShape(false).
+
+  To get the center of gravity of the dot, call get_u() and get_v(). To get the
+  with or hight of the dot, call getWidth() and getHeight(). The surface of the
+  dot is given by getSurface().
+
   \sa track()
 
 */
@@ -331,9 +353,20 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
   \param u : Dot location (column).
   \param v : Dot location (row).
   \param size : Size of the dot to track.
+
   To get center of gravity of the dot, see get_u() and get_v(). To compute the
   moments see setComputeMoments().
 
+  If no valid dot was found in the window, return an exception.
+
+  \exception vpTrackingException::featureLostError : If the dot initialisation
+  failed. The initialisation can failed if the following characteristics are
+  not valid;
+  - The gray level is between gray level min and gray level max.
+
+  - The shape should be ellipsoid if setEllipsoidShape(true) is used. This is
+    the default case. To track a non ellipsoid shape use
+    setEllipsoidShape(false).
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I,
 			  unsigned int u, unsigned int v,unsigned int size)
@@ -393,6 +426,18 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   greater than \e gray_level_min.
 
   \param size : Size of the dot to track.
+
+  If no valid dot was found in the window, return an exception.
+
+  \exception vpTrackingException::featureLostError : If the dot initialisation
+  failed. The initialisation can failed if the following characteristics are
+  not valid;
+  - The gray level is between gray level min and gray level max.
+
+  - The shape should be ellipsoid if setEllipsoidShape(true) is used. This is
+    the default case. To track a non ellipsoid shape use
+    setEllipsoidShape(false).
+
   \sa track(), get_u(), get_v()
 
 */
@@ -437,7 +482,17 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   \param I : Image.
 
   \exception vpTrackingException::featureLostError : If the dot tracking
-  failed.
+  failed. The tracking can failed if the following characteristics are not
+  valid;
+  - The gray level is between gray level min and gray level max.
+
+  - The size (width or height)
+
+  - and the surface (in terms f number of pixels) should not differ to much
+    with the previous dot.
+
+  - The shape should be ellipsoid if setEllipsoidShape(true) is used. This is
+    the default case.
 
   To get the center of gravity of the dot, call get_u() and get_v(). To get the
   with or hight of the dot, call getWidth() and getHeight(). The surface of the
@@ -466,8 +521,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
 //   vpDEBUG_TRACE(0, "Previous dot: ");
 //   vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
 //   vpDEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
-  if (computeParameters(I, estimated_u, estimated_v) == false)
-  {
+  if (computeParameters(I, estimated_u, estimated_v) == false) {
 //     vpDEBUG_TRACE(0, "Search the dot in a bigest window around the last position");
 //     vpDEBUG_TRACE(0, "Bad computed dot: ");
 //     vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
@@ -536,6 +590,20 @@ void vpDot2::track(vpImage<unsigned char> &I)
     candidates->kill();
     delete candidates;
   }
+  else {
+    // test if the found dot is valid,
+    if( ! isValid( I, *this ) ) {
+      vpERROR_TRACE("The found dot is invalid:",
+		    "- could be a problem of size (width or height) or "
+		    "  surface (number of pixels) which differ too much "
+		    "  to the previous one "
+		    "- or a problem of the shape which is not ellipsoid if "
+		    "  use setEllipsoidShape(true) which is the default case. "
+		    "  To track a non ellipsoid shape use setEllipsoidShape(false)") ;
+      throw(vpTrackingException(vpTrackingException::featureLostError,
+				"The found dot is invalid")) ;
+    }
+  }
 
   // if this dot is partially out of the image, return an error tracking.
   if( !isInImage( I ) )
@@ -572,7 +640,9 @@ void vpDot2::track(vpImage<unsigned char> &I)
 }
 
 /*!
-  Track and get the new dot coordinates.
+
+  Track and get the new dot coordinates. See track() for a more complete
+  description
 
   \param I : Image
   \param u : Dot location (column)
@@ -585,7 +655,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
   v = get_v();
   \endcode
 
-  \sa track()
+  \sa track().
 */
 void
 vpDot2::track(vpImage<unsigned char> &I, double &u, double &v)
@@ -1095,7 +1165,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       dotToTest->setGraphics( graphics );
       dotToTest->setComputeMoments( true );
       dotToTest->setArea( area );
-      dotToTest->setEllipsoidForm( isEllipsoid );
+      dotToTest->setEllipsoidShape( isEllipsoid );
 
       // first compute the parameters of the dot.
       // if for some reasons this caused an error tracking
@@ -1189,7 +1259,13 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 
 /*!
 
-  Check if the this dot is "like" the wanted dot passed in.
+  Check if the dot is "like" the wanted dot passed in.
+
+  Compare the following characteristics of the dot to the wanted dot;
+  - the size (width or height)
+  - the surface (number of pixels)
+  - the geometry; the shape should be ellipsoid if setEllipsoidShape(true)
+    is used.
 
   \return If it is so, return true, otherwise return false.
 
@@ -1252,13 +1328,33 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // Then check the dot is surrounded by a black elipse.
   //
   if (isEllipsoid) {
+    // See F. Chaumette. Image moments: a general and useful set of features
+    // for visual servoing. IEEE Trans. on Robotics, 20(4):713-723, Août 2004.
+
+    // mu11 = m11 - m00 * xg * yg = m11 - m00 * m10/m00 * m01/m00
+    //      = m11 - m10 * m01 / m00
+    // mu20 = m20 - m00 * xg^2 = m20 - m00 * m10/m00 * m10/m00
+    //      = m20 - m10^2 / m00
+    // mu02 = m02 - m01^2 / m00
+    // alpha = 1/2 arctan( 2 * mu11 / (mu20 - mu02) )
+    //
+    // a1^2 = 2 / m00 * (mu02 + mu20 + sqrt( (mu20 - mu02)^2 + 4mu11^2) )
+    //
+    // a2^2 = 2 / m00 * (mu02 + mu20 - sqrt( (mu20 - mu02)^2 + 4mu11^2) )
 
     //we compute parameters of the estimated ellipse
-    double Sqrt = sqrt(pow((m01*m01 -m10*m10)/(m00*m00)+(m20-m02)/m00,2)
-		       +4*pow(m11/m00-m10*m01/(m00*m00),2));
-    double a1 = sqrt(2*((m20+m02)/m00-(m10*m10+m01*m01)/(m00*m00)+Sqrt));
-    double a2 = sqrt(2*((m20+m02)/m00-(m10*m10+m01*m01)/(m00*m00)-Sqrt));
-    double alpha = 0.5*atan2(2*(m11*m00-m10*m01),((m20-m02)*m00-m10*m10+m01*m01));
+    double tmp1 = (m01*m01 -m10*m10)/m00+(m20-m02);
+    double tmp2 = m11 -m10*m01/m00 ;
+    double Sqrt = sqrt(tmp1*tmp1 + 4*tmp2*tmp2);
+    double a1 = sqrt(2/m00*((m20+m02)-(m10*m10+m01*m01)/m00 + Sqrt));
+    double a2 = sqrt(2/m00*((m20+m02)-(m10*m10+m01*m01)/m00 - Sqrt));
+    double alpha = 0.5*atan2(2*(m11*m00-m10*m01),
+			     ((m20-m02)*m00-m10*m10+m01*m01));
+
+    // to be able to track small dots, minorize the ellipsoid radius for the
+    // inner test
+    a1 -= 1.0;
+    a2 -= 1.0;
 
     double innerCoef =  sizePrecision ;           //0.4;
     int u, v;
@@ -1274,9 +1370,18 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
       }
       if (graphics) {
 	vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
-	//vpDisplay::flush(I);
+#ifdef VP_DEBUG
+  #if VP_DEBUG_MODE == 3
+	vpDisplay::flush(I);
+  #endif
+#endif
       }
     }
+
+    // to be able to track small dots, maximize the ellipsoid radius for the
+    // inner test
+    a1 += 2.0;
+    a2 += 2.0;
 
     double outCoef =  2-sizePrecision;           //1.6;
     for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 )
@@ -1296,7 +1401,11 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
       }
       if (graphics) {
 	vpDisplay::displayCross( I, v, u, 1, vpColor::green ) ;
-	//vpDisplay::flush(I);
+#ifdef VP_DEBUG
+  #if VP_DEBUG_MODE == 3
+	vpDisplay::flush(I);
+  #endif
+#endif
       }
 
     }
