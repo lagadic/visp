@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.12 2007-06-18 15:01:05 fspindle Exp $
+ * $Id: trackDot2.cpp,v 1.13 2007-08-22 16:16:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -372,6 +372,9 @@ main(int argc, char ** argv)
 
     d.setGraphics(false) ;
   }
+  // We want to track an ellipsoid shape. If you want to track a non ellipsoid
+  // object, use d.setEllipsoidShape(false);
+  d.setEllipsoidShape(true);
   // we also request to compute the dot moment m00, m10, m01, m11, m20, m02
   d.setComputeMoments(true);
   d.setGrayLevelPrecision(0.90);
@@ -441,9 +444,11 @@ main(int argc, char ** argv)
 	}
 
 	std::cout << "Tracking on image: " << filename << std::endl;
+	double time = vpTime::measureTimeMs();
 	d.track(I) ;
 
-	std::cout << "COG: " << std::endl;
+	std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): "
+		  << std::endl;
 	std::cout << d.get_u() << " " << d.get_v()
 	     << " - "
 	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
