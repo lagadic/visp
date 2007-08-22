@@ -18,8 +18,8 @@ ViSP 2.4.x
 	    Split accuracy private variable into grayLevelPrecision and 
 	    sizePrecision. The gray level min and max are well calculated for 
 	    white and black dots.
-	  Add setEllipsoidForm() to turn on/off the test related of the 
-	  ellipsoid form of the shape
+	  Add setEllipsoidShape() to turn on/off the test related of the 
+	  geometry of the shape
 	- vpDisplayX : better management of endianness
 	- vpDisplayGTK, vpDisplayGDI, vpDisplayD3D : 
 	  The behavior of the following methods change to be similar
