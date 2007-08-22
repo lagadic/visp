@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot.cpp,v 1.10 2007-06-06 08:58:16 fspindle Exp $
+ * $Id: trackDot.cpp,v 1.11 2007-08-22 16:16:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -157,7 +157,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
-		unsigned &first, unsigned &nimages, unsigned &step, 
+		unsigned &first, unsigned &nimages, unsigned &step,
 		bool &click_allowed, bool &display)
 {
   char *optarg;
@@ -265,8 +265,8 @@ main(int argc, char ** argv)
   char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()){
-  
-  
+
+
     // Warning :
     // the image sequence is not provided with the ViSP package
     // therefore the program will return you an error :
@@ -278,12 +278,12 @@ main(int argc, char ** argv)
     //  The sequence is available on the visp www site
     //  http://www.irisa.fr/lagadic/visp/visp.html
     //  in the download section. It is named "ViSP-images.tar.gz"
-  
+
     // Set the path location of the image sequence
     dirname = ipath + vpIoTools::path("/ViSP-images/mire-2/");
-  
+
     // Build the name of the image file
-  
+
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
     filename = dirname + s.str();
@@ -408,9 +408,11 @@ main(int argc, char ** argv)
 	std::cout << "Tracking on image: " << filename << std::endl;
 
 	// track the dot
+	double time = vpTime::measureTimeMs();
 	d.track(I) ;
 
-	std::cout << "COG: " << std::endl;
+	std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): "
+		  << std::endl;
 	std::cout << d.get_u() << " " << d.get_v()
 	     << " - "
 	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
