@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.cpp,v 1.8 2007-06-26 09:23:22 asaunier Exp $
+ * $Id: vpColVector.cpp,v 1.9 2007-08-23 10:05:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -613,7 +613,7 @@ vpColVector::skew(const vpColVector &v)
   \param a : vpColVector
   \param b : vpColVector
 */
-vpColVector vpColVector::cross(const vpColVector &a, const vpColVector &b)
+vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 {
 
   if (a.getRows() != 3)
