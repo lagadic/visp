@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.h,v 1.5 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpColVector.h,v 1.6 2007-08-23 10:05:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -127,14 +127,19 @@ public:
   //  vpColVector &normalize(vpColVector &x) const ;
 
   //! compute the cross product of two vectors C = a x b
-  static vpColVector cross(const vpColVector &a, const vpColVector &b)  ;
+  static vpColVector crossProd(const vpColVector &a, const vpColVector &b)  ;
+  
+  // compute the cross product of two vectors C = a x b
+  inline static vpColVector cross(const vpColVector &a, const vpColVector &b){
+                                  return crossProd(a,b);}
+  
   //! compute the skew matrix [a]x
-  static vpMatrix skew(const vpColVector &a)  ;
-
+  static vpMatrix skew(const vpColVector &a);
   //! Dot Product
+  
   static double dotProd(const vpColVector &a, const vpColVector &b)  ;
-
-  //! sort the elements of vector v
+ 
+ //! sort the elements of vector v
    static vpColVector  sort(const vpColVector &v)  ;
   //! reverse sorting of the elements of vector v
    static vpColVector invSort(const vpColVector &v)  ;
