@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.28 2007-08-22 16:10:53 fspindle Exp $
+ * $Id: vpDot2.h,v 1.29 2007-08-24 12:08:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,6 +50,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpRect.h>
 #include <visp/vpTracker.h>
+#include <visp/vpColor.h>
 
 
 class VISP_EXPORT vpDot2 : public vpTracker

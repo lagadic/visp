@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.30 2007-08-22 16:15:19 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.31 2007-08-24 12:08:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,9 +69,7 @@
 */
 #include <math.h>
 
-#include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
-#include <visp/vpColor.h>
 
 // exception handling
 #include <visp/vpTrackingException.h>
