@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.31 2007-08-24 12:08:06 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.32 2007-08-24 14:59:21 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1325,7 +1325,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // First check there is a white (>level) elipse within dot
   // Then check the dot is surrounded by a black elipse.
   //
-  if (isEllipsoid) {
+  if (isEllipsoid & compute_moment) {
     // See F. Chaumette. Image moments: a general and useful set of features
     // for visual servoing. IEEE Trans. on Robotics, 20(4):713-723, Août 2004.
 
