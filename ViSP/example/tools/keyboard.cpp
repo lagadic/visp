@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: keyboard.cpp,v 1.1 2007-08-21 14:01:49 fspindle Exp $
+ * $Id: keyboard.cpp,v 1.2 2007-08-27 07:18:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,15 +41,15 @@
   Keybord example.
 */
 
+#include <visp/vpConfig.h>
+
 #if defined UNIX
 #include <stdio.h>
 #include <iostream>
 #include <signal.h>
 
-#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpKeyboard.h>
-
 
 
 int
