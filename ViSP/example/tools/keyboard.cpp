@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: keyboard.cpp,v 1.2 2007-08-27 07:18:53 fspindle Exp $
+ * $Id: keyboard.cpp,v 1.3 2007-08-27 10:27:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,13 +42,13 @@
 */
 
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 
 #if defined UNIX
 #include <stdio.h>
 #include <iostream>
 #include <signal.h>
 
-#include <visp/vpDebug.h>
 #include <visp/vpKeyboard.h>
 
 
