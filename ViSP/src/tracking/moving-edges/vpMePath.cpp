@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.9 2007-08-22 14:00:13 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.10 2007-08-28 16:46:43 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,15 +100,15 @@ vpMePath::vpMePath():vpMeTracker()
   n_points = numPoints; //points used for tracking at every iteration 
   numPointPar = 100; //parabola points used to find circle
   LSiter = 2; //least square iterations 
-  good_point_thresh = 0.75; //threshold on least square line error
+  good_point_thresh = 0.75; //threshold on least square line and par error
   sampleIter = 5; //every sampleIter iterations sample the curve
   pointPercentageWithinExtremes = 1.0; //percent of samples within extremities
   seekLoops = 5; //number of times extremities are seeked at each iteration
   numExtr = 8; //number of points seeked after each extremity
   goodPointGain = 115; //gain for considering good points when selecing curve
-  maxLineScore = 195; //max error tolerated on line before parabola selection  
-  par_det_threshold = 0.00006; //parabola det threshold for selecting a line
-  aParThreshold	= 0.0009; //aPar threshold for selecting a line
+  maxLineScore = 170;//180;//195; //max error tolerated on line before parabola selection  
+  par_det_threshold = 0.00001;//0.00003;//0.00006; //parabola det threshold for selecting a line
+  aParThreshold	= 0.0004;//0.0006;//0.0009; //aPar threshold for selecting a line
   
   i_par = new double[numPointPar] ;
   j_par = new double[numPointPar] ;
@@ -155,7 +155,7 @@ void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
   double st = sin(thetaFin);
   //display parabola vertex
   if (!line) vpDisplay::displayCross(I,(int)(x_v*ct + y_v*st),
-				     (int)(-x_v*st + y_v*ct),20,vpColor::cyan);
+				     (int)(-x_v*st + y_v*ct),20, col);
   //display segment oriented along parabola symetric axis
   vpDisplay::displayLine(I, (int) i_ref [2], (int) j_ref [2],
 			 (int)(i_ref [2] + 70*sin (thetaFin)), 
@@ -232,8 +232,6 @@ void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
     i_1 = x_1*ct + y_1*st;
     j_1 = -x_1*st + y_1*ct;
     //display the curve (line or parabola)
-    //vpDisplay::displayLine(I, (int) i_1o, (int) j_1o, (int) i_1, 
-    	//		(int) j_1, col, 1) ;
   }
 }
 /*
@@ -1201,7 +1199,7 @@ void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
   //vpDisplay::getClick(I) ;
   sample(I);
   //std::printf("1-initTracking numPts %d \n", list.nbElement());
-  display(I, vpColor::green);
+  display(I, vpColor::green) ;
   firstIter = false;
   //vpDisplay::getClick(I) ;
   vpMeTracker::initTracking(I) ;
@@ -1256,7 +1254,7 @@ void vpMePath::track(vpImage<unsigned char> &I)
 	vpERROR_TRACE("Error caught") ;
 	throw ;
       }
-    display(I, vpColor::green) ; 
+    display(I, vpColor::green); 
     //std::printf("3-track numPts %d \n", list.nbElement());
     //for non horizontal lines sample every sampleIter iterations
     //TODO do it also for parabolas and horizontal lines
@@ -1309,7 +1307,7 @@ void vpMePath::track(vpImage<unsigned char> &I)
 	    vpERROR_TRACE("Error caught") ;
 	    throw ;
 	}
-      	display(I, vpColor::green) ; 
+      	display(I, vpColor::green); 
 	//std::printf("9-track numPts %d \n", list.nbElement());
       	vpDisplay::flush(I);
     }

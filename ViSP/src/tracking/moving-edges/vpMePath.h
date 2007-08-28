@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.5 2007-08-22 14:00:13 acherubi Exp $
+ * $Id: vpMePath.h,v 1.6 2007-08-28 16:46:28 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,7 +64,7 @@ public:
 
   vpMePath();
   virtual ~vpMePath();
-  void display(vpImage<unsigned char>&I, vpColor::vpColorType col);
+  void display(vpImage<unsigned char> &I, vpColor::vpColorType col);
   void track(vpImage<unsigned char>& Im);
   void initTracking(vpImage<unsigned char> &I);
   void initTracking(vpImage<unsigned char> &I, int n,
