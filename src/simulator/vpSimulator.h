@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.11 2007-06-01 09:15:09 marchand Exp $
+ * $Id: vpSimulator.h,v 1.12 2007-08-28 16:19:44 megautie Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -221,7 +221,7 @@ public:
   /* --- Off screen rendering  --- */
 public:
   enum viewEnum { INTERNAL, EXTERNAL } ;
-  void  write(viewEnum view, const char * fileName);
+  void  write(const char * fileName);
 protected:
   SbTime * realtime ;
   SoOffscreenRenderer * offScreenRenderer ;
