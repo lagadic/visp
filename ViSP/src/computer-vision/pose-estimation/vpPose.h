@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.11 2007-06-28 11:52:04 marchand Exp $
+ * $Id: vpPose.h,v 1.12 2007-08-29 08:27:53 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -195,7 +195,7 @@ public:
 		     vpList<vpPoint> &lPi,
 		     vpHomogeneousMatrix &cMo) ;
 
-  static void poseFromRectangle(vpPoint &p1,vpPoint &p2,
+  static double poseFromRectangle(vpPoint &p1,vpPoint &p2,
 				vpPoint &p3,vpPoint &p4,
 				double lx, vpCameraParameters & cam,
 				vpHomogeneousMatrix & cMo) ;

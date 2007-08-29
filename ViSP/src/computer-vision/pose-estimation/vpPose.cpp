@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.15 2007-06-28 11:52:04 marchand Exp $
+ * $Id: vpPose.cpp,v 1.16 2007-08-29 08:27:53 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -480,7 +480,7 @@ vpPose::display(vpImage<unsigned char> &I,
     \param cMo: the camera pose (output)
     \return int : OK if no pb occurs
   */
-void
+double
 vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
 			  vpPoint &p3,vpPoint &p4,
 			  double lx, vpCameraParameters & cam,
@@ -533,7 +533,6 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   double s= sqrt(kh1.sumSquare())/sqrt(kh2.sumSquare());
 
 
-
   vpMatrix D(3,3);
   D.setIdentity();
   D[1][1]=1/s;
@@ -546,6 +545,7 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   p3.setWorldCoordinates(lx,lx/s,0) ;
   p4.setWorldCoordinates(0,lx/s,0) ;
 
+
   vpPose P ;
   P.addPoint(p1) ;
   P.addPoint(p2) ;
@@ -554,5 +554,6 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
 
 
   P.computePose(vpPose::DEMENTHON_LOWE,cMo) ;
+  return lx/s ;
 
 }
