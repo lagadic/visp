@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.13 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.14 2007-08-29 15:31:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -33,6 +33,7 @@
  * Authors:
  * Eric Marchand
  * Fabien Spindler
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -52,6 +53,11 @@ static int vpCgb[256];
 static int vpCgr[256];
 static int vpCbb[256];
 
+/*!
+Convert a vpImage\<vpRGBa\> to a vpImage\<unsigned char\>
+\param src : source image
+\param dest : destination image 
+*/
 void
 vpImageConvert::convert(const vpImage<unsigned char> &src,
 			vpImage<vpRGBa> & dest)
@@ -62,6 +68,11 @@ vpImageConvert::convert(const vpImage<unsigned char> &src,
 	     src.getHeight() * src.getWidth() );
 }
 
+/*!
+Convert a vpImage\<unsigned char\> to a vpImage\<vpRGBa\>
+\param src : source image
+\param dest : destination image 
+*/
 void
 vpImageConvert::convert(const vpImage<vpRGBa> &src,
 			vpImage<unsigned char> & dest)
@@ -72,6 +83,102 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
 	     src.getHeight() * src.getWidth() );
 }
 
+/*!
+Convert a IplImage to a vpImage\<vpRGBa\>
+\param src : source image
+\param dest : destination image 
+*/
+void
+vpImageConvert::convert(const IplImage* src,
+      vpImage<vpRGBa> & dest)
+{
+  int nChannel = src->nChannels;
+  int depth = src->depth;
+  int height = src->height;
+  int width = src->width;
+  int widthStep = src->widthStep;
+  if(widthStep == width){
+    if(nChannel == 3 && src->depth == 8){
+      dest.resize(height,width);
+      BGRToRGBa((unsigned char*)src->imageData, (unsigned char*)dest.bitmap,width,height,false);
+    }
+    else if(nChannel == 1 && src->depth == 8 ){
+      dest.resize(height,width);
+      GreyToRGBa((unsigned char*)src->imageData, (unsigned char*)dest.bitmap,width*height);
+    }
+  }
+  else{
+    if(nChannel == 3 && src->depth == 8){
+      dest.resize(height,width);
+      unsigned char* row = NULL;
+      for (unsigned int i =0  ; i < height ; i++){
+        row = (unsigned char*)(src->imageData + i*src->widthStep) ;
+        for(unsigned int j=0; j<width; j++){
+          dest[i][j].B=row[3*j];
+          dest[i][j].G=row[3*j+1];
+          dest[i][j].R=row[3*j+2];
+        }
+      }
+    }
+    else if(nChannel == 1 && src->depth == 8 ){
+      dest.resize(height,width);
+      unsigned char* row = NULL;
+      for (unsigned int i =0  ; i < height ; i++){
+        row = (unsigned char*)(src->imageData + i*src->widthStep) ;
+        for(unsigned int j=0; j<width; j++){
+          dest[i][j].B=row[j];
+          dest[i][j].G=row[j];
+          dest[i][j].R=row[j];
+          dest[i][j].A=row[j];
+        }
+      }
+    }
+  }
+}
+
+/*!
+Convert a vpImage\<unsigned char\> to a vpImage\<unsigned char\>
+\param src : source image
+\param dest : destination image 
+*/
+void
+vpImageConvert::convert(const IplImage* src,
+      vpImage<unsigned char> & dest)
+{
+  int nChannel = src->nChannels;
+  int depth = src->depth;
+  int height = src->height;
+  int width = src->width;
+  int widthStep = src->widthStep;
+
+  if(widthStep == width){
+    if(nChannel == 1 && depth == 8){
+      dest.resize(height,width) ;
+      memcpy(dest.bitmap, src->imageData,
+              height*width);
+    }
+    if(nChannel == 3 && depth == 8){
+      dest.resize(height,width) ;
+      BGRToGrey((unsigned char*)src->imageData,dest.bitmap,width,height,false);
+    }
+  }
+  else{
+    if(nChannel == 1 && depth == 8){
+      dest.resize(height,width) ;
+      for (unsigned int i =0  ; i < height ; i++){
+        memcpy(dest.bitmap, src->imageData + i*widthStep,
+              width);
+      }
+    }
+    if(nChannel == 3 && depth == 8){
+      dest.resize(height,width) ;
+      for (unsigned int i = 0  ; i < height ; i++){
+        BGRToGrey((unsigned char*)src->imageData + i*widthStep,
+                    dest.bitmap + i*width,width,1,false);
+      }
+    }
+  }
+}
 
 /*!
 

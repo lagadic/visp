@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.16 2007-06-05 13:40:19 asaunier Exp $
+ * $Id: vpImage.h,v 1.17 2007-08-29 15:31:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,7 +86,7 @@ class vpDisplay;
 template<class Type>
 class vpImage
 {
-
+friend class vpImageConvert;
 private:
   unsigned int npixels ; //<! number of pixel in the image
   unsigned int width ;   //<! number of columns
