@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.6 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.7 2007-08-29 13:41:49 megautie Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -289,9 +289,9 @@ void *mainLoop (void *_simu)
 	{
 	  sprintf(name,"/tmp/image.%04d.external.png",iter) ;
 	  std::cout << name << std::endl ;
-	  simu->write(vpSimulator::EXTERNAL,name) ;
+	  simu->write(name) ;
 	  sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
-	  simu->write(vpSimulator::INTERNAL,name) ;
+	  simu->write(name) ;
 	}
 
       vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
