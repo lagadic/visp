@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.11 2007-04-18 12:13:13 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.12 2007-08-29 15:31:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,8 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -49,9 +51,13 @@
 #include <visp/vpDebug.h>
 // image
 #include <visp/vpImage.h>
-
 // color
 #include <visp/vpRGBa.h>
+
+#ifdef VISP_HAVE_OPENCV
+#include <highgui.h> // for opencv
+#endif
+
 
 /*!
   \class vpImageConvert
@@ -65,6 +71,12 @@ public:
 		      vpImage<vpRGBa> & dest) ;
   static void convert(const vpImage<vpRGBa> &src,
 		      vpImage<unsigned char> & dest) ;
+          
+  static void convert(const IplImage* src,
+          vpImage<vpRGBa> & dest) ;
+  static void convert(const IplImage* src,
+          vpImage<unsigned char> & dest) ;
+  
   /*!
     Converts a yuv pixel value in rgb format.
 
