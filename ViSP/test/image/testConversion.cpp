@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.9 2007-08-17 13:46:02 fspindle Exp $
+ * $Id: testConversion.cpp,v 1.10 2007-08-29 15:32:21 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,7 +69,7 @@ void usage(char *name, char *badparam, std::string ipath,
 Test image conversions.\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] [-o <output image path>]\n\
+  %s [-i <input image path>] [-o <output image path>]\n\
      [-h]\n						      \
 ", name);
 
@@ -259,6 +259,82 @@ main(int argc, char ** argv)
   // Convert a YUV pixel value to a RGB value
   vpImageConvert::YUVToRGB(y, u, v, r, g, b);
   vpTRACE("y(%d) u(%d) v(%d) = r(%d) g(%d) b(%d)", y, u, v, r, g, b);
+
+#ifdef VISP_HAVE_OPENCV
+  // Convert a IplImage to a vpimage<vpRGBa>
+  IplImage* image = NULL; /*!< The image read / acquired */
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+
+  /* Read the color image */
+
+  vpCTRACE << "Reading the color image with opencv: "<< std::endl
+           << filename << std::endl;
+  if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
+    vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    return (-1);
+  }
+  vpImageConvert::convert(image, Ic);
+  filename = opath +  vpIoTools::path("/Klimt_color_cv.ppm");
+  /* Save the the current image */
+    vpImageIo::writePPM(Ic, filename) ;
+
+    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+    
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+
+  /* Read the pgm image */
+
+  vpCTRACE << "Reading the greyscale image with opencv: "<< std::endl
+           << filename << std::endl;
+  if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE)) == NULL) {
+    vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    return (-1);
+  }
+  vpImageConvert::convert(image, Ic);
+  filename = opath +  vpIoTools::path("/Klimt_grey_cv.ppm");
+  /* Save the the current image */
+    vpImageIo::writePPM(Ic, filename) ;
+
+    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+  // Convert a IplImage to a vpImage<unsigned char>
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+
+  /* Read the color image */
+
+  vpCTRACE << "Reading the color image with opencv: "<< std::endl
+           << filename << std::endl;
+  if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
+    vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    return (-1);
+  }
+  vpImageConvert::convert(image, Ig);
+  filename = opath +  vpIoTools::path("/Klimt_color_cv.pgm");
+  /* Save the the current image */
+    vpImageIo::writePGM(Ig, filename) ;
+
+    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+    
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+
+  /* Read the pgm image */
+
+  vpCTRACE << "Reading the greyscale image with opencv: "<< std::endl
+           << filename << std::endl;
+  if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE)) == NULL) {
+    vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    return (-1);
+  }
+  vpImageConvert::convert(image, Ig);
+  filename = opath +  vpIoTools::path("/Klimt_grey_cv.pgm");
+  /* Save the the current image */
+    vpImageIo::writePGM(Ig, filename) ;
+
+    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+
+#endif
+  
 
 }
 
