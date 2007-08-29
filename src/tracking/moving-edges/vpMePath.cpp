@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.10 2007-08-28 16:46:43 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.11 2007-08-29 12:25:21 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,10 +81,10 @@ vpMePath::computeNormAng(double &norm_ang, vpColVector &K,
 */
 vpMePath::vpMePath():vpMeTracker()
 {
-  std::printf ("\e[32m 9 july 2007 CO \e[30m \n");
+  std::printf ("\033[32m 9 july 2007 CO \033[30m \n");
   setVerboseMode(false);
   if (verbose)
-  	std::printf ("\e[32m vpMePath::vpMePath() 10 july 2007 \e[30m \n");
+  	std::printf ("\033[32m vpMePath::vpMePath() 10 july 2007 \033[30m \n");
 
   // conic parameters
   // i^2 + K0 j^2 + K1 i j + K2 i + K3 j + K4 = 0
@@ -253,7 +253,7 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
   i2 = p2.ifloat;
   j2 = p2.jfloat;
   if (verbose)
-    std::printf ("\e[32m 2-seekExtremities i1 %f j1 %f i2 %f j2 %f \e[30m \n",
+    std::printf ("\033[32m 2-seekExtremities i1 %f j1 %f i2 %f j2 %f \033[30m \n",
 		 i1, j1, i2, j2);
   // sample positions
   double ct = cos(thetaFin);
@@ -607,7 +607,7 @@ void vpMePath::leastSquare (vpImage<unsigned char> &I)
   else parScore = 10000;
 
   if (verbose)
-    std::printf("\e[36mline score %f par score %f \e[30m\n", 
+    std::printf("\033[36mline score %f par score %f \033[30m\n", 
     	lineScore, parScore);
   //pick the line as most likely curve
   if ((lineScore < maxLineScore) || (lineScore < parScore)) {
@@ -632,7 +632,7 @@ void vpMePath::leastSquare (vpImage<unsigned char> &I)
     }
     suppressPoints();
     if (verbose)
-      std::printf("\e[36mleastSquare()line a %f b %f c %f theta %f \e[30m \n",
+      std::printf("\033[36mleastSquare()line a %f b %f c %f theta %f \033[30m \n",
        aFin, bFin, cFin, thetaFin);
   } else {
     n_points = parGoodPoints;
@@ -648,7 +648,7 @@ void vpMePath::leastSquare (vpImage<unsigned char> &I)
     getParabolaPoints();
     suppressPoints();
     if (verbose)
-      std::printf("\e[36mleastSquare()parabola a %f b %f c %f th %f \e[30m \n",
+      std::printf("\033[36mleastSquare()parabola a %f b %f c %f th %f \033[30m \n",
        aFin, bFin, cFin, thetaFin);
   }
   updateNormAng();
@@ -788,7 +788,7 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
         - K_par[1]*K_par[1]*K_par[4] - K_par[0]*K_par[2]*K_par[2]) < 0.000001) {	
     parab_error = 10000;//ensures that the line is chosen
     if (verbose)
-    	std::printf ("\e[31m DETERMINANT CONDITION **** -> LINE \n");
+    	std::printf ("\033[31m DETERMINANT CONDITION **** -> LINE \n");
   } else {
     //compute given K0 and K1 two possible values for theta
     if (fabs(K_par[0]-1) != 0) theta1 = atan (K_par[1]/(K_par[0]-1));
@@ -826,11 +826,11 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
       line1 = true;
       parab_error1 = 10000;//ensures that the line is chosen
       if (verbose) 
-      	std::printf ("\e[31m FIRST ****** -> LINE \e[30m\n");
+      	std::printf ("\033[31m FIRST ****** -> LINE \033[30m\n");
     } else {
       line1 = false;
       if (verbose)
-        std::printf ("\e[31m FIRST -> PAR a %f b %f c %f th %f \e[30m \n", 
+        std::printf ("\033[31m FIRST -> PAR a %f b %f c %f th %f \033[30m \n", 
 			aPar1, bPar1, cPar1, theta1);
       //teporarily save K_par values to be used in case theta1 is chosen
       for (int i=0 ; i < 5 ; i++) {
@@ -864,11 +864,11 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
       line2 = true;
       parab_error2 = 10000;//ensures that the line is chosen
       if (verbose)
-	std::printf ("\e[31m SECOND ****** -> LINE  \n");
+	std::printf ("\033[31m SECOND ****** -> LINE  \n");
     } else {
       line2 = false;
       if (verbose)
-      	std::printf ("\e[31m SECOND -> PAR a %f b %f c %f th %f \e[30m \n", 
+      	std::printf ("\033[31m SECOND -> PAR a %f b %f c %f th %f \033[30m \n", 
 			aPar2, bPar2, cPar2, theta2);
     }
 		
@@ -889,7 +889,7 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
 	K_par[i] = K_par_first[i];
       }	
       if (verbose)	
-      	std::printf("\e[31mPICK 1ST->aPar %f bPar %f cPar %f theta %f\e[30m\n",
+      	std::printf("\033[31mPICK 1ST->aPar %f bPar %f cPar %f theta %f\033[30m\n",
       			aPar , bPar, cPar, thetaPar); 		
     } else {
       if (parab_error1 < parab_error2)
@@ -902,7 +902,7 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
       bPar = bPar2;
       cPar = cPar2;
       if (verbose)
-         std::printf("\e[31mPICK 2ND->aPar %f bPar %f cPar %f theta %f\e[30m\n",
+         std::printf("\033[31mPICK 2ND->aPar %f bPar %f cPar %f theta %f\033[30m\n",
       			aPar , bPar, cPar, thetaPar); 	
     } 
   }
@@ -1017,7 +1017,7 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
   err_vec = DAx-D*b;
   parab_error = (double) (sqrt(err_vec.sumSquare()) / parGoodPoints);
   if (verbose)
-    std::printf("\e[31mvpMePath::leastSquareParabola() error %f \e[30m \n", 
+    std::printf("\033[31mvpMePath::leastSquareParabola() error %f \033[30m \n", 
     		parab_error);
   for (i=0 ; i < 3 ; i++) {
     K_par[i+2] = P[i];
@@ -1126,7 +1126,7 @@ void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
   }
   line_error = (double) (sqrt(err_vec.sumSquare()) / lineGoodPoints);
   if (verbose)
-    std::printf("\e[31mvpMePath::leastSquareLine() line error %f \e[30m \n", 
+    std::printf("\033[31mvpMePath::leastSquareLine() line error %f \033[30m \n", 
     		line_error);
   K_line[0] = 0;
   K_line[1] = 0;
@@ -1134,7 +1134,7 @@ void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
   K_line[3] = 1;
   K_line[4] = P[1];
   if (verbose)
-    std::printf ("\e[31mvpMePath::leastSquareLine() a 0 b %f c %f th 0\e[30m\n",
+    std::printf ("\033[31mvpMePath::leastSquareLine() a 0 b %f c %f th 0\033[30m\n",
     		 -K_line[2], -K_line[4]);
 }
 /*!
@@ -1285,7 +1285,7 @@ void vpMePath::track(vpImage<unsigned char> &I)
     //for seekLoops times seek curve extremities
     for (int k =0 ; k < seekLoops ; k++) {
 	if (verbose)
-	  std::printf ("\e[34m  iteration %d k %d \e[30m  \n ", iter, k);
+	  std::printf ("\033[34m  iteration %d k %d \033[30m  \n ", iter, k);
   	if (!firstIter) seekExtremities(I);
   	//std::printf("6-track numPts %d \n", list.nbElement());
 	try{
@@ -1312,7 +1312,7 @@ void vpMePath::track(vpImage<unsigned char> &I)
       	vpDisplay::flush(I);
     }
     if (verbose)
-      std::printf("\e[34m IMAGE %d --------> done \e[30m \n\n", iter);
+      std::printf("\033[34m IMAGE %d --------> done \033[30m \n\n", iter);
   }
   iter++ ;
 }
