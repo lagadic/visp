@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.9 2007-06-11 08:40:12 asaunier Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.10 2007-08-30 09:58:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,7 +66,7 @@
 #include <visp/vpIoTools.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:p:f:n:s:h"
+#define GETOPTARGS	"cdi:p:f:n:s:S:G:h"
 
 /*!
 
@@ -79,11 +79,14 @@
   \param first : First image.
   \param nimages : Number of images to manipulate.
   \param step : Step between two images.
+  \param sizePrecision : precision of the size of dots.
+  \param grayLevelPrecision : precision of the gray level of dots.
 
 
 */
 void usage(char *name, char *badparam, std::string ipath, std::string ppath,
-	   unsigned first, unsigned nimages, unsigned step)
+	   unsigned first, unsigned nimages, unsigned step, double sizePrecision,
+     double grayLevelPrecision )
 {
   fprintf(stdout, "\n\
 Test auto detection of dots using vpDot2.\n\
@@ -91,6 +94,7 @@ Test auto detection of dots using vpDot2.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
      [-f <first image>] [-n <number of images>] [-s <step>] \n\
+     [-S <size precision>] [-G <gray level precision>]\n\
      [-c] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
@@ -121,7 +125,19 @@ OPTIONS:                                               Default\n\
  \n\
   -s <step>                                            %u\n\
      Step between two images.\n\
-\n\
+ \n\
+  -S <size precision>                                 %f\n\
+     Precision of the size of the dot. \n\
+     It is a double precision float witch value is in ]0,1].\n\
+     1 means full precision, whereas values close to 0 \n\
+     show a very bad precision.\n\
+ \n\
+  -G <gray level precision>                           %f\n\
+     Precision of the gray level of the dot. \n\
+     It is a double precision float witch value is in ]0,1].\n\
+     1 means full precision, whereas values close to 0 \n\
+     show a very bad precision.\n\
+ \n\
   -c\n\
      Disable the mouse click. Usefull to automaze the \n\
      execution of this program without humain intervention.\n\
@@ -131,7 +147,8 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n",
-	  ipath.c_str(),ppath.c_str(), first, nimages, step);
+	  ipath.c_str(),ppath.c_str(), first, nimages, step, sizePrecision,
+    grayLevelPrecision );
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -147,6 +164,8 @@ OPTIONS:                                               Default\n\
   \param first : First image.
   \param nimages : Number of images to display.
   \param step : Step between two images.
+  \param sizePrecision : Precision of the size of dots.
+  \param grayLevelPrecision : Precision of the gray level of dots.
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
 
@@ -155,7 +174,8 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, char **argv, std::string &ipath,
         std::string &ppath,unsigned &first, unsigned &nimages, 
-        unsigned &step, bool &click_allowed, bool &display)
+        unsigned &step, double &sizePrecision, double &grayLevelPrecision,
+        bool &click_allowed, bool &display)
 {
   char *optarg;
   int	c;
@@ -169,17 +189,22 @@ bool getOptions(int argc, char **argv, std::string &ipath,
     case 'f': first = (unsigned) atoi(optarg); break;
     case 'n': nimages = (unsigned) atoi(optarg); break;
     case 's': step = (unsigned) atoi(optarg); break;
-    case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step); return false; break;
+    case 'S': sizePrecision = atof(optarg);break;
+    case 'G': grayLevelPrecision = atof(optarg);break;
+    case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step,
+                    sizePrecision,grayLevelPrecision); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, ppath, first, nimages, step);
+      usage(argv[0], optarg, ipath, ppath, first, nimages, step,
+                    sizePrecision,grayLevelPrecision);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, ppath, first, nimages, step);
+    usage(argv[0], NULL, ipath, ppath, first, nimages, step,
+                    sizePrecision,grayLevelPrecision);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -201,6 +226,8 @@ main(int argc, char ** argv)
   unsigned opt_first = 1;
   unsigned opt_nimages = 10;
   unsigned opt_step = 1;
+  double opt_sizePrecision = 0.65;
+  double opt_grayLevelPrecision = 0.85;
   bool opt_click_allowed = true;
   bool opt_display = true;
 
@@ -216,7 +243,7 @@ main(int argc, char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
-		 opt_step, opt_click_allowed,
+		 opt_step,opt_sizePrecision,opt_grayLevelPrecision, opt_click_allowed,
 		 opt_display) == false) {
     exit (-1);
   }
@@ -239,7 +266,8 @@ main(int argc, char ** argv)
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
+    usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages,
+     opt_step,opt_sizePrecision,opt_grayLevelPrecision);
     std::cerr << std::endl
 	 << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -348,9 +376,10 @@ main(int argc, char ** argv)
   vpDot2 d ;
   
   d.setGraphics(true);
+  d.setEllipsoidShape(true);
   if (opt_click_allowed & opt_display) {
     try{
-      d.setGrayLevelPrecision(0.8);
+      d.setGrayLevelPrecision(opt_grayLevelPrecision);
       
       std::cout << "Please click on a dot to initialize detection"
                 << std::endl;
@@ -361,7 +390,7 @@ main(int argc, char ** argv)
                         10,vpColor::green) ;
           vpDisplay::flush(I) ;
       }
-      d.setSizePrecision(0.65);
+      d.setSizePrecision(opt_sizePrecision);
       printf("Dot characteristics: \n");
       printf("  width : %lf\n", d.getWidth());
       printf("  height: %lf\n", d.getHeight());
@@ -385,8 +414,8 @@ main(int argc, char ** argv)
     d.setSurface(124);
     d.setGrayLevelMin(164);
     d.setGrayLevelMax(255);
-    d.setGrayLevelPrecision(0.8);
-    d.setSizePrecision(0.65);
+    d.setGrayLevelPrecision(opt_grayLevelPrecision);
+    d.setSizePrecision(opt_sizePrecision);
   }
     
   while (iter < opt_first + opt_nimages*opt_step)
