@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.14 2007-08-29 15:31:40 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.15 2007-08-30 12:56:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,6 +83,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
 	     src.getHeight() * src.getWidth() );
 }
 
+#ifdef VISP_HAVE_OPENCV
 /*!
 Convert a IplImage to a vpImage\<vpRGBa\>
 \param src : source image
@@ -179,7 +180,7 @@ vpImageConvert::convert(const IplImage* src,
     }
   }
 }
-
+#endif
 /*!
 
 Convert YUV411 into RGBa

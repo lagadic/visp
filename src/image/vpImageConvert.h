@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.12 2007-08-29 15:31:40 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.13 2007-08-30 12:56:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,11 +71,12 @@ public:
 		      vpImage<vpRGBa> & dest) ;
   static void convert(const vpImage<vpRGBa> &src,
 		      vpImage<unsigned char> & dest) ;
-          
+#ifdef VISP_HAVE_OPENCV        
   static void convert(const IplImage* src,
           vpImage<vpRGBa> & dest) ;
   static void convert(const IplImage* src,
           vpImage<unsigned char> & dest) ;
+#endif
   
   /*!
     Converts a yuv pixel value in rgb format.
