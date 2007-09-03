@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.29 2007-08-24 12:08:06 asaunier Exp $
+ * $Id: vpDot2.h,v 1.30 2007-09-03 13:43:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -113,6 +113,7 @@ public:
   };
   double getGrayLevelPrecision() const;
   double getSizePrecision() const;
+  double getEllipsoidShapePrecision() const;
 
   /*!
     Activates the display of the border of the dot during the tracking.
@@ -157,7 +158,7 @@ public:
 
   \param min : Color level of a dot to search in an area.
 
-  \sa setWidth(), setHeight(), setSurface(), setOutLevel(), setGrayLevelPrecision()
+  \sa setGrayLevelMax(), setGrayLevelPrecision()
 
   */
   inline void setGrayLevelMin( const unsigned int & min ) {
@@ -174,7 +175,7 @@ public:
 
   \param max : Intensity level of a dot to search in an area.
 
-  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setGrayLevelPrecision()
+  \sa  setGrayLevelMin(), setGrayLevelPrecision()
   */
   inline void setGrayLevelMax( const unsigned int & max ) {
     if (max > 255)
@@ -184,20 +185,13 @@ public:
   };
   void setGrayLevelPrecision( const double & grayLevelPrecision );
   void setSizePrecision( const double & sizePrecision );
-  /*!
-    Indicates if the dot should have an ellipsoid form to be valid.
-    To track a non ellipsoid shape use setEllipsoidShape(false).
-
-  */
-  inline void setEllipsoidShape(bool isEllipsoid = true) {
-    this->isEllipsoid = isEllipsoid;
-  }
+  void setEllipsoidShapePrecision(const double & ellipsoidShapePrecision);
 
   double getDistance( const vpDot2& distantDot ) const;
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
-				    int area_u, int area_v,
-				    int area_w, int area_h );
+            int area_u, int area_v,
+            int area_w, int area_h );
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
 
@@ -213,6 +207,8 @@ private :
 			       const unsigned int &v) const;
 
   virtual vpDot2* getInstance();
+
+  
 
 public:
   /*!
@@ -354,9 +350,10 @@ private:
   unsigned int gray_level_max;  // maximum gray level for the dot.
 				// pixel with higher level don't belong
 				// to this dot.
-  double grayLevelPrecision ;
+  double grayLevelPrecision ; 
   double gamma ;
-  double sizePrecision ;
+  double sizePrecision ; 
+  double ellipsoidShapePrecision; 
 
   // Area where the dot is to search
   vpRect area;
@@ -376,9 +373,6 @@ private:
   // The first point coodinate on the dot border
   unsigned int firstBorder_u;
   unsigned int firstBorder_v;
-
-  // Test if the shape is ellipsoid
-  bool isEllipsoid;
 
 };
 
