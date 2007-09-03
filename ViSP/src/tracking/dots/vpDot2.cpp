@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.32 2007-08-24 14:59:21 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.33 2007-09-03 13:43:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,7 @@
   and vice versa.
 
   The geometry of a vpDot2 zone is by default ellipsoid. If you want to track a
-  non ellipsoid shape, you have to call setEllipsoidShape(false).
+  non ellipsoid shape, you have to call setEllipsoidShapePrecision(0).
 
   track() and searchDotsInArea() are the most important features
   of this class.
@@ -101,6 +101,7 @@ vpDot2::vpDot2() : vpTracker()
   gamma = 1.5 ;
 
   sizePrecision = 0.65;
+  ellipsoidShapePrecision = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
@@ -111,7 +112,6 @@ vpDot2::vpDot2() : vpTracker()
 
   compute_moment = false ;
   graphics = false;
-  isEllipsoid = true;
 }
 
 /*!
@@ -139,7 +139,8 @@ vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
   grayLevelPrecision = 0.80;
   gamma = 1.5 ;
   sizePrecision = 0.65;
-
+  ellipsoidShapePrecision = 0.65;
+  
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
   bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
@@ -149,7 +150,6 @@ vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
 
   compute_moment = false ;
   graphics = false;
-  isEllipsoid = true;
 }
 
 /*!
@@ -177,6 +177,7 @@ vpDot2::vpDot2(const double u, const double v ) : vpTracker()
   grayLevelPrecision = 0.80;
   gamma = 1.5 ;
   sizePrecision = 0.65;
+  ellipsoidShapePrecision = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
@@ -187,7 +188,6 @@ vpDot2::vpDot2(const double u, const double v ) : vpTracker()
 
   compute_moment = false ;
   graphics = false;
-  isEllipsoid = true;
 }
 
 
@@ -215,6 +215,7 @@ void vpDot2::operator=( vpDot2& twinDot )
   grayLevelPrecision = twinDot.grayLevelPrecision;
   gamma = twinDot.gamma; ;
   sizePrecision = twinDot.sizePrecision;
+  ellipsoidShapePrecision = twinDot.ellipsoidShapePrecision ;
 
   area = twinDot.area;
 
@@ -240,7 +241,6 @@ void vpDot2::operator=( vpDot2& twinDot )
   u_list =  twinDot.u_list;
   v_list =  twinDot.v_list;
 
-  isEllipsoid = twinDot.isEllipsoid;
 
 }
 
@@ -294,9 +294,10 @@ void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
   not valid;
   - The gray level is between gray level min and gray level max.
 
-  - The shape should be ellipsoid if setEllipsoidShape(true) is used. This is
-    the default case. To track a non ellipsoid shape use
-    setEllipsoidShape(false).
+  - The shape should be ellipsoid if
+    setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
+    This is the default case. To track a non ellipsoid shape use
+    setEllipsoidShape(0).
 
   To get the center of gravity of the dot, call get_u() and get_v(). To get the
   with or hight of the dot, call getWidth() and getHeight(). The surface of the
@@ -362,9 +363,10 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
   not valid;
   - The gray level is between gray level min and gray level max.
 
-  - The shape should be ellipsoid if setEllipsoidShape(true) is used. This is
-    the default case. To track a non ellipsoid shape use
-    setEllipsoidShape(false).
+  - The shape should be ellipsoid if
+    setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
+    This is the default case. To track a non ellipsoid shape use
+    setEllipsoidShape(0).
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I,
 			  unsigned int u, unsigned int v,unsigned int size)
@@ -432,9 +434,10 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   not valid;
   - The gray level is between gray level min and gray level max.
 
-  - The shape should be ellipsoid if setEllipsoidShape(true) is used. This is
-    the default case. To track a non ellipsoid shape use
-    setEllipsoidShape(false).
+  - The shape should be ellipsoid if
+    setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
+    This is the default case. To track a non ellipsoid shape use
+    setEllipsoidShape(0).
 
   \sa track(), get_u(), get_v()
 
@@ -489,8 +492,10 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   - and the surface (in terms f number of pixels) should not differ to much
     with the previous dot.
 
-  - The shape should be ellipsoid if setEllipsoidShape(true) is used. This is
-    the default case.
+  - The shape should be ellipsoid if
+    setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
+    This is the default case. To track a non ellipsoid shape use
+    setEllipsoidShape(0).
 
   To get the center of gravity of the dot, call get_u() and get_v(). To get the
   with or hight of the dot, call getWidth() and getHeight(). The surface of the
@@ -596,8 +601,9 @@ void vpDot2::track(vpImage<unsigned char> &I)
 		    "  surface (number of pixels) which differ too much "
 		    "  to the previous one "
 		    "- or a problem of the shape which is not ellipsoid if "
-		    "  use setEllipsoidShape(true) which is the default case. "
-		    "  To track a non ellipsoid shape use setEllipsoidShape(false)") ;
+		    "  use setEllipsoidShape(double ellipsoidShapePrecision) "
+        "  which is the default case. "
+		    "  To track a non ellipsoid shape use setEllipsoidShape(0)") ;
       throw(vpTrackingException(vpTrackingException::featureLostError,
 				"The found dot is invalid")) ;
     }
@@ -724,11 +730,9 @@ double vpDot2::getSurface() const
 }
 
 /*!
-
   Return the precision of the gray level of the dot. It is a double
   precision float witch value is in ]0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
-
 */
 double vpDot2::getGrayLevelPrecision() const
 {
@@ -736,7 +740,6 @@ double vpDot2::getGrayLevelPrecision() const
 }
 
 /*!
-
   Return the precision of the size of the dot. It is a double
   precision float witch value is in ]0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
@@ -744,6 +747,16 @@ double vpDot2::getGrayLevelPrecision() const
 double vpDot2::getSizePrecision() const
 {
   return sizePrecision;
+}
+
+/*!
+  Return the precision of the ellipsoid shape of the dot. It is a double
+  precision float witch value is in [0,1]. 1 means full precision, whereas
+  values close to 0 show a very bad precision.
+*/
+double vpDot2::getEllipsoidShapePrecision() const
+{
+  return ellipsoidShapePrecision;
 }
 
 
@@ -797,7 +810,7 @@ void vpDot2::set_v( const double & v )
 
   \param width : Width of a dot to search in an area.
 
-  \sa setHeight(), setSurface(), setInLevel(), setOutLevel(), setAccuracy()
+  \sa setHeight(), setSurface(), setSizePrecision()
 */
 void vpDot2::setWidth( const double & width )
 {
@@ -811,7 +824,7 @@ void vpDot2::setWidth( const double & width )
 
   \param height : Height of a dot to search in an area.
 
-  \sa setWidth(), setSurface(), setInLevel(), setOutLevel(), setAccuracy()
+  \sa setWidth(), setSurface(), , setSizePrecision()
 
 */
 void vpDot2::setHeight( const double & height )
@@ -826,7 +839,7 @@ void vpDot2::setHeight( const double & height )
 
   \param surface : Surface of a dot to search in an area.
 
-  \sa setWidth(), setHeight(), setInLevel(), setOutLevel()
+  \sa setWidth(), setHeight(), setSizePrecision()
 
 */
 void vpDot2::setSurface( const double & surface )
@@ -848,7 +861,7 @@ void vpDot2::setSurface( const double & surface )
   \f$Imax=255*\big((\frac{I}{255})^{{\gamma}^{-1}}+(1-grayLevelPrecision)\big)^{\gamma}\f$
   with \f$\gamma=1.5\f$ .
 
-  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setOutLevel()
+  \sa setGrayLevelMin(), setGrayLevelMax()
 */
 void vpDot2::setGrayLevelPrecision( const double & grayLevelPrecision )
 {
@@ -871,11 +884,13 @@ void vpDot2::setGrayLevelPrecision( const double & grayLevelPrecision )
   Set the precision of the size of the dot.
 
   \param sizePrecision : It is a double precision float which value is in ]0,1]:
+  - this is the limit ratio between the tested parameter and the measured one.
+    minSize = sizePrecision*originalSize ; maxSize = originalSize/sizePrecision ;
   - 1 means full precision, whereas values close to 0 show a very bad accuracy.
-  - Values lower or equal to 0 are brought back to an epsion>0
-  - Values higher than  1 are brought back to 1
+  - Values lower or equal to 0 are brought back to an epsion>0.
+  - Values higher than  1 are brought back to 1.
 
-  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setOutLevel()
+  \sa setWidth(), setHeight(), setSurface()
 */
 void vpDot2::setSizePrecision( const double & sizePrecision )
 {
@@ -895,6 +910,31 @@ void vpDot2::setSizePrecision( const double & sizePrecision )
 }
 
 /*!
+  Indicates if the dot should have an ellipsoid shape to be valid.
+  \param ellipsoidShapePrecision : It is a double precision float which value is in [0,1]:
+
+  - 1 means full precision, whereas values close to 0 show a very bad accuracy.
+  - Values lower or equal to 0 are brought back to 0.
+  - Values higher than  1 are brought back to 1.
+  To track a non ellipsoid shape use setEllipsoidShapePrecision(0).
+*/
+void vpDot2::setEllipsoidShapePrecision(const double & ellipsoidShapePrecision) {
+
+  if( ellipsoidShapePrecision<0 )
+  {
+    this->ellipsoidShapePrecision = 0;
+  }
+  else if( ellipsoidShapePrecision>1 )
+  {
+    this->ellipsoidShapePrecision = 1.0;
+  }
+  else
+  {
+    this->ellipsoidShapePrecision = ellipsoidShapePrecision;
+  }  
+}
+
+/*!
 
   Set the parameters of the area in which a dot is search to the image
   dimension.
@@ -905,7 +945,6 @@ void vpDot2::setSizePrecision( const double & sizePrecision )
 void
 vpDot2::setArea(vpImage<unsigned char> &I)
 {
-
   setArea(I, 0, 0, I.getWidth(), I.getHeight());
 }
 
@@ -1163,7 +1202,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       dotToTest->setGraphics( graphics );
       dotToTest->setComputeMoments( true );
       dotToTest->setArea( area );
-      dotToTest->setEllipsoidShape( isEllipsoid );
+      dotToTest->setEllipsoidShapePrecision( ellipsoidShapePrecision );
 
       // first compute the parameters of the dot.
       // if for some reasons this caused an error tracking
@@ -1262,8 +1301,8 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
   Compare the following characteristics of the dot to the wanted dot;
   - the size (width or height)
   - the surface (number of pixels)
-  - the geometry; the shape should be ellipsoid if setEllipsoidShape(true)
-    is used.
+  - the geometry; the shape should be ellipsoid if
+    setEllipsoidShapePrecision(double ellispoidShapePrecision) is used.
 
   \return If it is so, return true, otherwise return false.
 
@@ -1278,6 +1317,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
 {
   double sizePrecision = wantedDot.getSizePrecision();
+  double ellipsoidShapePrecision = wantedDot.getEllipsoidShapePrecision();
   double epsilon = 0.001;
 
   //
@@ -1290,7 +1330,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     return false;
   }
 
-  if( ( getWidth() < wantedDot.getWidth()/sizePrecision+epsilon ) == false )
+  if( ( getWidth() < wantedDot.getWidth()/(sizePrecision+epsilon ) )== false )
   {
     vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", get_u(), get_v());
     return false;
@@ -1302,7 +1342,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     return false;
   }
 
-  if( ( getHeight() < wantedDot.getHeight()/sizePrecision+epsilon ) == false )
+  if( ( getHeight() < wantedDot.getHeight()/(sizePrecision+epsilon )) == false )
   {
     vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", get_u(), get_v());
     return false;
@@ -1314,7 +1354,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     return false;
   }
 
-  if( ( getSurface() < wantedDot.getSurface()/(sizePrecision*sizePrecision)+epsilon ) == false )
+  if( ( getSurface() < wantedDot.getSurface()/(sizePrecision*sizePrecision+epsilon )) == false )
   {
     vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", get_u(), get_v());
     return false;
@@ -1325,7 +1365,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // First check there is a white (>level) elipse within dot
   // Then check the dot is surrounded by a black elipse.
   //
-  if (isEllipsoid & compute_moment) {
+  if (ellipsoidShapePrecision != 0 & compute_moment) {
     // See F. Chaumette. Image moments: a general and useful set of features
     // for visual servoing. IEEE Trans. on Robotics, 20(4):713-723, Août 2004.
 
@@ -1354,7 +1394,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     a1 -= 1.0;
     a2 -= 1.0;
 
-    double innerCoef =  sizePrecision ;           //0.4;
+    double innerCoef =  ellipsoidShapePrecision ;
     int u, v;
     for( double theta = 0. ; theta<2*M_PI ; theta+= 0.4 )
     {
@@ -1381,7 +1421,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     a1 += 2.0;
     a2 += 2.0;
 
-    double outCoef =  2-sizePrecision;           //1.6;
+    double outCoef =  2-ellipsoidShapePrecision;           //1.6;
     for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 )
     {
       u = (int) (this->get_u() + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
