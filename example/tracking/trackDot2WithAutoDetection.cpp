@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.10 2007-08-30 09:58:25 asaunier Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.11 2007-09-03 13:44:47 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,7 +66,7 @@
 #include <visp/vpIoTools.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:p:f:n:s:S:G:h"
+#define GETOPTARGS	"cdi:p:f:n:s:S:G:E:h"
 
 /*!
 
@@ -81,12 +81,13 @@
   \param step : Step between two images.
   \param sizePrecision : precision of the size of dots.
   \param grayLevelPrecision : precision of the gray level of dots.
+  \param ellipsoidShapePrecision : precision of the ellipsoid shape of dots.
 
 
 */
 void usage(char *name, char *badparam, std::string ipath, std::string ppath,
 	   unsigned first, unsigned nimages, unsigned step, double sizePrecision,
-     double grayLevelPrecision )
+     double grayLevelPrecision, double ellipsoidShapePrecision )
 {
   fprintf(stdout, "\n\
 Test auto detection of dots using vpDot2.\n\
@@ -95,7 +96,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
      [-f <first image>] [-n <number of images>] [-s <step>] \n\
      [-S <size precision>] [-G <gray level precision>]\n\
-     [-c] [-d] [-h]\n", name);
+     [-E <ellipsoid shape precision>] [-c] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -126,17 +127,26 @@ OPTIONS:                                               Default\n\
   -s <step>                                            %u\n\
      Step between two images.\n\
  \n\
-  -S <size precision>                                 %f\n\
+  -S <size precision>                                  %f\n\
      Precision of the size of the dot. \n\
      It is a double precision float witch value is in ]0,1].\n\
-     1 means full precision, whereas values close to 0 \n\
+     1 means full precision, the sizes (width, heigth, surface) \n\
+     of the dots must the same, whereas values close to 0 \n\
      show a very bad precision.\n\
  \n\
-  -G <gray level precision>                           %f\n\
+  -G <gray level precision>                            %f\n\
      Precision of the gray level of the dot. \n\
      It is a double precision float witch value is in ]0,1].\n\
-     1 means full precision, whereas values close to 0 \n\
+     1 means full precision, the gray level must the same in \n\
+     the wall dot, whereas values close to 0 \n\
      show a very bad precision.\n\
+ \n\
+  -E <ellipsoid shape precision>                       %f\n\
+     Precision of the ellipsoid shape of the dot. \n\
+     It is a double precision float witch value is in [0,1].\n\
+     1 means full precision, the shape should be a perfect ellipsoid,\n\
+     whereas values close to 0 show a very bad precision.\n\
+     0 means the shape of dots is not tested \n\
  \n\
   -c\n\
      Disable the mouse click. Usefull to automaze the \n\
@@ -148,7 +158,7 @@ OPTIONS:                                               Default\n\
   -h\n\
      Print the help.\n",
 	  ipath.c_str(),ppath.c_str(), first, nimages, step, sizePrecision,
-    grayLevelPrecision );
+    grayLevelPrecision, ellipsoidShapePrecision );
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -166,6 +176,7 @@ OPTIONS:                                               Default\n\
   \param step : Step between two images.
   \param sizePrecision : Precision of the size of dots.
   \param grayLevelPrecision : Precision of the gray level of dots.
+  \param ellipsoidShapePrecision : Precision of the ellipsoid shape.
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
 
@@ -175,7 +186,7 @@ OPTIONS:                                               Default\n\
 bool getOptions(int argc, char **argv, std::string &ipath,
         std::string &ppath,unsigned &first, unsigned &nimages, 
         unsigned &step, double &sizePrecision, double &grayLevelPrecision,
-        bool &click_allowed, bool &display)
+        double &ellipsoidShapePrecision, bool &click_allowed, bool &display)
 {
   char *optarg;
   int	c;
@@ -191,12 +202,14 @@ bool getOptions(int argc, char **argv, std::string &ipath,
     case 's': step = (unsigned) atoi(optarg); break;
     case 'S': sizePrecision = atof(optarg);break;
     case 'G': grayLevelPrecision = atof(optarg);break;
+    case 'E': ellipsoidShapePrecision = atof(optarg);break;
     case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step,
-                    sizePrecision,grayLevelPrecision); return false; break;
+                    sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
+              return false; break;
 
     default:
       usage(argv[0], optarg, ipath, ppath, first, nimages, step,
-                    sizePrecision,grayLevelPrecision);
+                    sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
       return false; break;
     }
   }
@@ -204,7 +217,7 @@ bool getOptions(int argc, char **argv, std::string &ipath,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath, ppath, first, nimages, step,
-                    sizePrecision,grayLevelPrecision);
+                    sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -228,6 +241,7 @@ main(int argc, char ** argv)
   unsigned opt_step = 1;
   double opt_sizePrecision = 0.65;
   double opt_grayLevelPrecision = 0.85;
+  double opt_ellipsoidShapePrecision = 0.8;
   bool opt_click_allowed = true;
   bool opt_display = true;
 
@@ -243,8 +257,8 @@ main(int argc, char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
-		 opt_step,opt_sizePrecision,opt_grayLevelPrecision, opt_click_allowed,
-		 opt_display) == false) {
+		 opt_step,opt_sizePrecision,opt_grayLevelPrecision,
+     opt_ellipsoidShapePrecision, opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
@@ -267,7 +281,7 @@ main(int argc, char ** argv)
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages,
-     opt_step,opt_sizePrecision,opt_grayLevelPrecision);
+     opt_step,opt_sizePrecision,opt_grayLevelPrecision, opt_ellipsoidShapePrecision);
     std::cerr << std::endl
 	 << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -376,7 +390,6 @@ main(int argc, char ** argv)
   vpDot2 d ;
   
   d.setGraphics(true);
-  d.setEllipsoidShape(true);
   if (opt_click_allowed & opt_display) {
     try{
       d.setGrayLevelPrecision(opt_grayLevelPrecision);
@@ -391,6 +404,7 @@ main(int argc, char ** argv)
           vpDisplay::flush(I) ;
       }
       d.setSizePrecision(opt_sizePrecision);
+      d.setEllipsoidShapePrecision(opt_ellipsoidShapePrecision);
       printf("Dot characteristics: \n");
       printf("  width : %lf\n", d.getWidth());
       printf("  height: %lf\n", d.getHeight());
@@ -399,6 +413,7 @@ main(int argc, char ** argv)
       printf("  gray level max: %d\n", d.getGrayLevelMax());
       printf("  grayLevelPrecision: %lf\n", d.getGrayLevelPrecision());
       printf("  sizePrecision: %lf\n", d.getSizePrecision());
+      printf("  ellipsoidShapePrecision: %lf\n", d.getEllipsoidShapePrecision());
     }
     catch(...)
     {
@@ -416,6 +431,7 @@ main(int argc, char ** argv)
     d.setGrayLevelMax(255);
     d.setGrayLevelPrecision(opt_grayLevelPrecision);
     d.setSizePrecision(opt_sizePrecision);
+    d.setEllipsoidShapePrecision(opt_ellipsoidShapePrecision);
   }
     
   while (iter < opt_first + opt_nimages*opt_step)
