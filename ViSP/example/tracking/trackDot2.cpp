@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.13 2007-08-22 16:16:43 fspindle Exp $
+ * $Id: trackDot2.cpp,v 1.14 2007-09-03 13:44:47 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -373,8 +373,7 @@ main(int argc, char ** argv)
     d.setGraphics(false) ;
   }
   // We want to track an ellipsoid shape. If you want to track a non ellipsoid
-  // object, use d.setEllipsoidShape(false);
-  d.setEllipsoidShape(true);
+  // object, use d.setEllipsoidShape(0);
   // we also request to compute the dot moment m00, m10, m01, m11, m20, m02
   d.setComputeMoments(true);
   d.setGrayLevelPrecision(0.90);
