@@ -1,9 +1,12 @@
 ViSP 2.4.x
   - New classes
-	- vpHinkley class for Hinkley's cumulative sum test computation
-	- vpMePath Tracking of a white curve by using line and parabola tracker
-	- vpKeyboard Gets a key from the keyboard without waiting for the 
+	- vpHinkley : Hinkley's cumulative sum test computation.
+	- vpMePath  : Tracking of a white curve by using line and parabola 
+	  tracker.
+	- vpKeyboard : Gets a key from the keyboard without waiting for the 
 	  enter key.
+	- vpParallelPort : Parallel port management under unix.
+	- vpRingLight : Irisa's ring light controller.
   - New Features
   - Bug fix and improvement
 	- vpDot: setMaxDotSize(double percentage) replace 
@@ -43,12 +46,15 @@ ViSP 2.4.x
 	- vpMatrix : Change Infinity Norm formula to match with the standard 
 	  matrix infinity norm definition.
 	- vpImageConvert : Add IplImage to vpImage conversion tool.
-  - Testing:
+  - Testing and examples:
+	- example/light/ringLight.cpp was added
+	- example/tools/parallelPort.cpp was added
 	- test/video-device/testClick.cpp was added
 	- test/video-device/testVideoDevice.cpp was added
 	- test/visual-feature/testFeature.cpp was added
 	- test/image/testCreateSubImage.cpp was added
   - Documentation improvement
+	- vpRobust::MEstimator()
 	- vpRobotAfma6: example usage of getPosition() was updated
 	- vpDisplayGDI is included in the doxygen documentation
 ----------------------------------------------	
