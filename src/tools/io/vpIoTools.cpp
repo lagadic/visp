@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.11 2007-04-20 14:22:19 asaunier Exp $
+ * $Id: vpIoTools.cpp,v 1.12 2007-09-04 09:15:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@
 
   \param username : The user name.
 
-  \exception vpIoException::ERRCantGetUserName : If this method cannot get the
+  \exception vpIoException::cantGetUserName : If this method cannot get the
   user name.
 */
 void
@@ -74,7 +74,7 @@ vpIoTools::getUserName(std::string &username)
   _username = getenv("LOGNAME");
   if (_username == NULL) {
     vpERROR_TRACE( "Cannot get the username. Check your LOGNAME environment variable" );
-    throw(vpIoException(vpIoException::ERRCantGetUserName,
+    throw(vpIoException(vpIoException::cantGetUserName,
 			"Cannot get the username")) ;
   }
   username = _username;
@@ -86,7 +86,7 @@ vpIoTools::getUserName(std::string &username)
   if( ! GetUserName( infoBuf, &bufCharCount ) ) {
     delete [] infoBuf;
     vpERROR_TRACE( "Cannot get the username" );
-    throw(vpIoException(vpIoException::ERRCantGetUserName,
+    throw(vpIoException(vpIoException::cantGetUserName,
 			"Cannot get the username")) ;
 
   }
@@ -164,7 +164,9 @@ vpIoTools::checkDirectory(const std::string dirname )
 
   \param dirname : Directory to create.
 
-  \exception vpIoException::ERRCantCreateDirectory : If the directory cannot be
+  \exception vpIoException::invalidDirectoryName : The \e dirname is invalid.
+
+  \exception vpIoException::cantCreateDirectory : If the directory cannot be
   created.
 */
 void
@@ -178,7 +180,7 @@ vpIoTools::makeDirectory(const  char *dirname )
 
   if ( dirname == NULL || dirname[0] == '\0' ) {
     vpERROR_TRACE( "invalid directory name\n");
-    throw(vpIoException(vpIoException::ERRInvalidDirectoryName,
+    throw(vpIoException(vpIoException::invalidDirectoryName,
 			"invalid directory name")) ;
   }
 #if defined UNIX
@@ -194,7 +196,7 @@ vpIoTools::makeDirectory(const  char *dirname )
 #endif
 	{
       vpERROR_TRACE("unable to create directory '%s'\n",  dirname );
-      throw(vpIoException(vpIoException::ERRCantCreateDirectory,
+      throw(vpIoException(vpIoException::cantCreateDirectory,
 			  "unable to create directory")) ;
     }
     vpDEBUG_TRACE(2,"has created directory '%s'\n", dirname );
@@ -202,7 +204,7 @@ vpIoTools::makeDirectory(const  char *dirname )
 
   if ( checkDirectory( dirname ) == false) {
     vpERROR_TRACE("unable to create directory '%s'\n",  dirname );
-    throw(vpIoException(vpIoException::ERRCantCreateDirectory,
+    throw(vpIoException(vpIoException::cantCreateDirectory,
 			"unable to create directory")) ;
   }
 }
@@ -213,7 +215,7 @@ vpIoTools::makeDirectory(const  char *dirname )
 
   \param dirname : Directory to create.
 
-  \exception vpIoException::ERRCantCreateDirectory : If the directory cannot be
+  \exception vpIoException::cantCreateDirectory : If the directory cannot be
   created.
 */
 void
@@ -224,7 +226,7 @@ vpIoTools::makeDirectory(const std::string dirname )
   }
   catch (...) {
     vpERROR_TRACE("unable to create directory '%s'\n",dirname.c_str());
-    throw(vpIoException(vpIoException::ERRCantCreateDirectory,
+    throw(vpIoException(vpIoException::cantCreateDirectory,
 			"unable to create directory")) ;
   }
 }
