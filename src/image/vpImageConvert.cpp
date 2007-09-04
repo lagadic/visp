@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.15 2007-08-30 12:56:49 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.16 2007-09-04 09:19:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,7 @@ static int vpCbb[256];
 /*!
 Convert a vpImage\<vpRGBa\> to a vpImage\<unsigned char\>
 \param src : source image
-\param dest : destination image 
+\param dest : destination image
 */
 void
 vpImageConvert::convert(const vpImage<unsigned char> &src,
@@ -71,7 +71,7 @@ vpImageConvert::convert(const vpImage<unsigned char> &src,
 /*!
 Convert a vpImage\<unsigned char\> to a vpImage\<vpRGBa\>
 \param src : source image
-\param dest : destination image 
+\param dest : destination image
 */
 void
 vpImageConvert::convert(const vpImage<vpRGBa> &src,
@@ -87,7 +87,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
 /*!
 Convert a IplImage to a vpImage\<vpRGBa\>
 \param src : source image
-\param dest : destination image 
+\param dest : destination image
 */
 void
 vpImageConvert::convert(const IplImage* src,
@@ -99,34 +99,34 @@ vpImageConvert::convert(const IplImage* src,
   int width = src->width;
   int widthStep = src->widthStep;
   if(widthStep == width){
-    if(nChannel == 3 && src->depth == 8){
+    if(nChannel == 3 && depth == 8){
       dest.resize(height,width);
       BGRToRGBa((unsigned char*)src->imageData, (unsigned char*)dest.bitmap,width,height,false);
     }
-    else if(nChannel == 1 && src->depth == 8 ){
+    else if(nChannel == 1 && depth == 8 ){
       dest.resize(height,width);
       GreyToRGBa((unsigned char*)src->imageData, (unsigned char*)dest.bitmap,width*height);
     }
   }
   else{
-    if(nChannel == 3 && src->depth == 8){
+    if(nChannel == 3 && depth == 8){
       dest.resize(height,width);
       unsigned char* row = NULL;
-      for (unsigned int i =0  ; i < height ; i++){
+      for (int i =0  ; i < height ; i++){
         row = (unsigned char*)(src->imageData + i*src->widthStep) ;
-        for(unsigned int j=0; j<width; j++){
+        for(int j=0; j<width; j++){
           dest[i][j].B=row[3*j];
           dest[i][j].G=row[3*j+1];
           dest[i][j].R=row[3*j+2];
         }
       }
     }
-    else if(nChannel == 1 && src->depth == 8 ){
+    else if(nChannel == 1 && depth == 8 ){
       dest.resize(height,width);
       unsigned char* row = NULL;
-      for (unsigned int i =0  ; i < height ; i++){
+      for (int i =0  ; i < height ; i++){
         row = (unsigned char*)(src->imageData + i*src->widthStep) ;
-        for(unsigned int j=0; j<width; j++){
+        for(int j=0; j<width; j++){
           dest[i][j].B=row[j];
           dest[i][j].G=row[j];
           dest[i][j].R=row[j];
@@ -140,7 +140,7 @@ vpImageConvert::convert(const IplImage* src,
 /*!
 Convert a vpImage\<unsigned char\> to a vpImage\<unsigned char\>
 \param src : source image
-\param dest : destination image 
+\param dest : destination image
 */
 void
 vpImageConvert::convert(const IplImage* src,
@@ -166,14 +166,14 @@ vpImageConvert::convert(const IplImage* src,
   else{
     if(nChannel == 1 && depth == 8){
       dest.resize(height,width) ;
-      for (unsigned int i =0  ; i < height ; i++){
+      for (int i =0  ; i < height ; i++){
         memcpy(dest.bitmap, src->imageData + i*widthStep,
               width);
       }
     }
     if(nChannel == 3 && depth == 8){
       dest.resize(height,width) ;
-      for (unsigned int i = 0  ; i < height ; i++){
+      for (int i = 0  ; i < height ; i++){
         BGRToGrey((unsigned char*)src->imageData + i*widthStep,
                     dest.bitmap + i*width,width,1,false);
       }
@@ -455,7 +455,7 @@ void vpImageConvert::YUV422ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-	   
+
 		//---
 		R = Y1 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -469,7 +469,7 @@ void vpImageConvert::YUV422ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-	    
+
   }
 
 #else
@@ -658,10 +658,10 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
   unsigned int size = width*height;
   unsigned char* iU = yuv + size;
   unsigned char* iV = yuv + 5*size/4;
-  for(unsigned int i = 0; i<height/2; i++) 
+  for(unsigned int i = 0; i<height/2; i++)
   {
 	for(unsigned int j = 0; j < width/2 ; j++)
-	  {		  
+	  {
 		U   = (int)((*iU++ - 128) * 0.354);
 		U5  = 5*U;
 		V   = (int)((*iV++ - 128) * 0.707);
@@ -673,7 +673,7 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
 		Y2  = *yuv++;
 		Y3  = *yuv;
 		yuv = yuv-width+1;
-		    
+
 		// Original equations
 		// R = Y           + 1.402 V
 		// G = Y - 0.344 U - 0.714 V
@@ -741,7 +741,7 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
 	  }
 	yuv+=width;
 	rgba+=4*width;
-  }  
+  }
 }
 /*!
 
@@ -759,10 +759,10 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
   unsigned int size = width*height;
   unsigned char* iU = yuv + size;
   unsigned char* iV = yuv + 5*size/4;
-  for(unsigned int i = 0; i<height/2; i++) 
+  for(unsigned int i = 0; i<height/2; i++)
   {
 	for(unsigned int j = 0; j < width/2 ; j++)
-	  {		  
+	  {
 		U   = (int)((*iU++ - 128) * 0.354);
 		U5  = 5*U;
 		V   = (int)((*iV++ - 128) * 0.707);
@@ -774,7 +774,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
 		Y2  = *yuv++;
 		Y3  = *yuv;
 		yuv = yuv-width+1;
-		    
+
 		// Original equations
 		// R = Y           + 1.402 V
 		// G = Y - 0.344 U - 0.714 V
@@ -791,7 +791,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y1 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -820,7 +820,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y3 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -838,7 +838,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
 	  }
 	yuv+=width;
 	rgb+=3*width;
-  }  
+  }
 }
 
 /*!
@@ -874,10 +874,10 @@ void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
   unsigned int size = width*height;
   unsigned char* iV = yuv + size;
   unsigned char* iU = yuv + 5*size/4;
-  for(unsigned int i = 0; i<height/2; i++) 
+  for(unsigned int i = 0; i<height/2; i++)
   {
 	for(unsigned int j = 0; j < width/2 ; j++)
-	  {		  
+	  {
 		U   = (int)((*iU++ - 128) * 0.354);
 		U5  = 5*U;
 		V   = (int)((*iV++ - 128) * 0.707);
@@ -889,7 +889,7 @@ void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
 		Y2  = *yuv++;
 		Y3  = *yuv;
 		yuv = yuv-width+1;
-		    
+
 		// Original equations
 		// R = Y           + 1.402 V
 		// G = Y - 0.344 U - 0.714 V
@@ -957,7 +957,7 @@ void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
 	  }
 	yuv+=width;
 	rgba+=4*width;
-  }  
+  }
 }
 /*!
 
@@ -975,10 +975,10 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
   unsigned int size = width*height;
   unsigned char* iV = yuv + size;
   unsigned char* iU = yuv + 5*size/4;
-  for(unsigned int i = 0; i<height/2; i++) 
+  for(unsigned int i = 0; i<height/2; i++)
   {
 	for(unsigned int j = 0; j < width/2 ; j++)
-	  {		  
+	  {
 		U   = (int)((*iU++ - 128) * 0.354);
 		U5  = 5*U;
 		V   = (int)((*iV++ - 128) * 0.707);
@@ -990,7 +990,7 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
 		Y2  = *yuv++;
 		Y3  = *yuv;
 		yuv = yuv-width+1;
-		    
+
 		// Original equations
 		// R = Y           + 1.402 V
 		// G = Y - 0.344 U - 0.714 V
@@ -1007,7 +1007,7 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y1 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1036,7 +1036,7 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y3 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1054,7 +1054,7 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
 	  }
 	yuv+=width;
 	rgb+=3*width;
-  }  
+  }
 }
 
 /*!
@@ -1073,10 +1073,10 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
   unsigned int size = width*height;
   unsigned char* iV = yuv + size;
   unsigned char* iU = yuv + 17*size/16;
-  for(unsigned int i = 0; i<height/4; i++) 
+  for(unsigned int i = 0; i<height/4; i++)
   {
 	for(unsigned int j = 0; j < width/4 ; j++)
-	  {		  
+	  {
 		U   = (int)((*iU++ - 128) * 0.354);
 		U5  = 5*U;
 		V   = (int)((*iV++ - 128) * 0.707);
@@ -1102,7 +1102,7 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 		Y14  = *yuv++;
 		Y15  = *yuv;
 		yuv = yuv-3*width+1;
-		    
+
 		// Original equations
 		// R = Y           + 1.402 V
 		// G = Y - 0.344 U - 0.714 V
@@ -1135,7 +1135,7 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 		*rgba++ = (unsigned char)G;
 		*rgba++ = (unsigned char)B;
 		*rgba++ = 0;
-		
+
 		//---
 		R = Y2 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1195,7 +1195,7 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 		*rgba++ = (unsigned char)G;
 		*rgba++ = (unsigned char)B;
 		*rgba++ = 0;
-		
+
 		//---
 		R = Y6 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1255,7 +1255,7 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 		*rgba++ = (unsigned char)G;
 		*rgba++ = (unsigned char)B;
 		*rgba++ = 0;
-		
+
 		//---
 		R = Y10 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1315,7 +1315,7 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 		*rgba++ = (unsigned char)G;
 		*rgba++ = (unsigned char)B;
 		*rgba++ = 0;
-		
+
 		//---
 		R = Y14 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1349,7 +1349,7 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 	  }
 	yuv+=3*width;
 	rgba+=12*width;
-  }  
+  }
 }
 /*!
 
@@ -1367,10 +1367,10 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
   unsigned int size = width*height;
   unsigned char* iV = yuv + size;
   unsigned char* iU = yuv + 17*size/16;
-  for(unsigned int i = 0; i<height/4; i++) 
+  for(unsigned int i = 0; i<height/4; i++)
   {
 	for(unsigned int j = 0; j < width/4 ; j++)
-	  {		  
+	  {
 		U   = (int)((*iU++ - 128) * 0.354);
 		U5  = 5*U;
 		V   = (int)((*iV++ - 128) * 0.707);
@@ -1396,7 +1396,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		Y14  = *yuv++;
 		Y15  = *yuv;
 		yuv = yuv-3*width+1;
-		    
+
 		// Original equations
 		// R = Y           + 1.402 V
 		// G = Y - 0.344 U - 0.714 V
@@ -1413,7 +1413,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y1 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1427,7 +1427,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y2 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1441,7 +1441,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y3 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1469,7 +1469,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y5 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1483,7 +1483,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y6 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1497,7 +1497,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y7 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1525,7 +1525,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y9 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1539,7 +1539,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y10 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1553,7 +1553,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y11 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1581,7 +1581,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y13 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1595,7 +1595,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y14 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1609,7 +1609,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 		*rgb++ = (unsigned char)R;
 		*rgb++ = (unsigned char)G;
 		*rgb++ = (unsigned char)B;
-		
+
 		//---
 		R = Y15 + V2;
 		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
@@ -1627,7 +1627,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 	  }
 	yuv+=3*width;
 	rgb+=9*width;
-  } 
+  }
 }
 
 /*!
