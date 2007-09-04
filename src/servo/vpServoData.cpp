@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoData.cpp,v 1.7 2007-04-20 14:22:17 asaunier Exp $
+ * $Id: vpServoData.cpp,v 1.8 2007-09-04 09:17:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,14 +53,8 @@ vpServoData::open(const char *directory)
 {
   try
   {
-    try{
-      vpIoTools::checkDirectory(directory);
-    }
-    catch(vpIoException me)
-    {
-      if (me.getCode() == vpIoException::ERRCantStatDirectory)
-	vpIoTools::makeDirectory(directory) ;
-    }
+    if (vpIoTools::checkDirectory(directory) == false)
+      vpIoTools::makeDirectory(directory);
 
     char s[FILENAME_MAX] ;
 
