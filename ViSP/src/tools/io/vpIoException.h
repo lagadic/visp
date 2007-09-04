@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoException.h,v 1.5 2007-04-20 14:22:19 asaunier Exp $
+ * $Id: vpIoException.h,v 1.6 2007-09-04 09:15:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,12 +45,14 @@
 /* ------------------------------------------------------------------------- */
 
 
-/* \file vpIoException.h
-   \brief error that can be emited by the vpIo class and its derivates
- */
-/* Classes standards. */
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
+/*!
+  \file vpIoException.h
+  \brief Error that can be emited by the vpIo class and its derivates
+*/
+
+#include <iostream>
+#include <string>
+
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
 
@@ -60,24 +62,22 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpIo class and its derivates
+/*!
+  \class vpIoException
+  \brief Error that can be emited by the vpIo class and its derivates.
  */
 class VISP_EXPORT vpIoException : public vpException
 {
 public:
   /*!
     \brief Lists the possible error than can be emmited while calling
-    vpIo member
+    vpIo member.
    */
-  enum errorIoCodeEnum
+  enum error
     {
-      //! feature list or desired feature list is empty
-      ERRInvalidDirectoryName,
-      ERRCantStatDirectory,
-      ERRNotADirectory,
-      ERRNotWritable,
-      ERRCantCreateDirectory,
-      ERRCantGetUserName
+      invalidDirectoryName, /*! Directory name is invalid. */
+      cantCreateDirectory,  /*! Unable to create a directory. */
+      cantGetUserName       /*! User name is not available. */
     } ;
 
 public:
