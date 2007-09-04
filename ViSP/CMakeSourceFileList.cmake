@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.20 2007-08-21 14:01:49 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.21 2007-09-04 09:31:35 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -98,6 +98,10 @@ SET (SRC_IMAGE
   image/vpRGBa.cpp
   )
 
+SET (SRC_LIGHT
+  light/vpRingLight.cpp
+  )
+
 SET (SRC_MATH
   math/matrix/vpColVector.cpp
   math/matrix/vpMatrix.cpp
@@ -165,6 +169,8 @@ SET (SRC_TOOLS
   tools/io/vpIoTools.cpp
   tools/io/vpIoException.cpp
   tools/io/vpKeyboard.cpp
+  tools/io/vpParallelPort.cpp
+  tools/io/vpParallelPortException.cpp
   tools/io/vpParseArgv.cpp
   tools/time/vpTime.cpp
   )
@@ -227,6 +233,7 @@ SET (SRC_ALL
   ${SRC_EXCEPTION}
   ${SRC_FRAMEGRABBER_DEVICE}
   ${SRC_IMAGE}
+  ${SRC_LIGHT}
   ${SRC_MATH}
   ${SRC_ROBOT}
   ${SRC_SERVO}

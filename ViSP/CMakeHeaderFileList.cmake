@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.18 2007-08-21 14:01:49 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.19 2007-09-04 09:31:35 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -92,6 +92,10 @@ SET (HEADER_IMAGE
   image/vpRGBa.h
   )
 
+SET (HEADER_LIGHT
+  light/vpRingLight.h
+  )
+
 SET (HEADER_MATH
   math/matrix/vpColVector.h
   math/matrix/vpMatrixException.h
@@ -159,6 +163,8 @@ SET (HEADER_TOOLS
   tools/io/vpIoException.h
   tools/io/vpIoTools.h
   tools/io/vpKeyboard.h
+  tools/io/vpParallelPort.h
+  tools/io/vpParallelPortException.h
   tools/io/vpParseArgv.h
   tools/time/vpTime.h
   tools/trace/vpDebug.h
@@ -220,6 +226,7 @@ SET (HEADER_ALL
   ${HEADER_EXCEPTION}
   ${HEADER_FRAMEGRABBER_DEVICE}
   ${HEADER_IMAGE}
+  ${HEADER_LIGHT}
   ${HEADER_MATH}
   ${HEADER_ROBOT}
   ${HEADER_SIMULATOR}
