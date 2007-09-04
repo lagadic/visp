@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.6 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRobust.cpp,v 1.7 2007-09-04 09:09:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,28 +43,24 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <visp/vpDebug.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
 
 #include <visp/vpRobust.h>
 
 
-#define ITMAX 100
-#define EPS 3.0e-7
+#define vpITMAX 100
+#define vpEPS 3.0e-7
 
-#define CST 1
-
-#define DEBUG_LEVEL1 0
-#define DEBUG_LEVEL2 0
-#define DEBUG_LEVEL3 0
-
+#define vpCST 1
 
 
 //! Constructor
 vpRobust::vpRobust(int n_data)
 {
-  if(DEBUG_LEVEL2)
-    std::cout << "vpRobust constructor reached" << std::endl;
+  vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
 
   w.resize(n_data);
   w=1;
@@ -92,15 +88,40 @@ vpRobust::setThreshold(const double x)
 }
 
 // ===================================================================
+/*
+  - TUKEY : \f$ \rho(r, C) = \begin{array}{ll} \frac{r^6}{6} - \frac{C^2r^4}{2} +\frac{C^4}r^2}{2} & \mbox{if} |r| < C \\ \frac{1}{6} C^6 & \mbox{else} \end{array} \f$
+
+*/
 /*!
- * =====================================================================
- * \brief Calculate an Mestimate given a particular loss function using
- *			  MAD as a scale estimate at each iteration.
- * \pre Requires a column vector of residues
- * \post Keeps a copy of the weights so that rejected points are kept at zero
- * 			 weight.
- * \return Returns a Column Vector of weights associated to each residue
+
+  \brief Calculate an Mestimate given a particular loss function using MAD
+  (Median Absolute Deviation) as a scale estimate at each iteration.
+
+  \pre Requires a column vector of residues.
+
+  \post Keeps a copy of the weights so that rejected points are kept at zero
+  weight.
+
+  \param method : Type of M-Estimator \f$\rho(r_i)\f$:
+
+  - TUKEY : \f$ \rho(r_i, C) = \left\{
+  \begin{array}{ll} \frac{r_i^6}{6} - \frac{C^2r_i^4}{2} +\frac{C^4r_i^2}{2} & \mbox{if} |r_i| < C \\ \frac{1}{6} C^6 & \mbox{else} \end{array} \f$ with influence function \f$ \psi(r_i, C) = \left\{
+  \begin{array}{ll} r_i(r_i^2-C^2)^2 & \mbox{if} |r_i| < C \\ 0 & \mbox{else} \end{array} \right. \f$ where \f$C=4.7 \hat{\sigma} \f$ and with \f$ \hat{\sigma} = 1.48{Med}_i(|r_i - {Med}_j(r_j)|) \f$
+
+  - CAUCHY :
+
+  - MCLURE :
+
+  - HUBER :
+
+  \param residues : Residues \f$ r_i \f$ used in the previous formula.
+
+  \param weights : Vector of weights \f$w_i = \frac{\psi(r_i)}{r_i}}\f$. Values are in [0, 1]. A value near zero
+  means that the data is an outlier.
+
+  \return Returns a Column Vector of weights associated to each residue.
  */
+
 // ===================================================================
 int
 vpRobust::MEstimator(const int method,
@@ -122,8 +143,8 @@ vpRobust::MEstimator(const int method,
   w.resize(n_data);
   w = weights;
 
-  if(DEBUG_LEVEL2)
-    std::cout << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
+  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data =" << n_data
+	      << std::endl;
 
   // Calculate median
   // Be careful to not use the rejected residues for the
@@ -167,8 +188,7 @@ vpRobust::MEstimator(const int method,
     {
       psiTukey(sigma, normres);
 
-      if(DEBUG_LEVEL2)
-	std::cout << "Tukey's function computed" << std::endl;
+      vpCDEBUG(2) << "Tukey's function computed" << std::endl;
       break ;
 
     }
@@ -240,8 +260,7 @@ vpRobust::MEstimator(const int method,
     {
       psiTukey(sigma, all_normres);
 
-      if(DEBUG_LEVEL2)
-	std::cout << "Tukey's function computed" << std::endl;
+      vpCDEBUG(2) << "Tukey's function computed" << std::endl;
       break ;
 
     }
@@ -300,8 +319,8 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
   memcpy(sorted_residues.data,no_null_weight_residues.data,index*sizeof(double));
   n_data=index;
 
-  if(DEBUG_LEVEL2)
-    std::cout << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
+  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data
+	      << std::endl;
 
   // Calculate Median
   // Be careful to not use the rejected residues for the
@@ -349,8 +368,8 @@ vpRobust::SimultMEstimator(vpColVector &residues)
   int n_data = residues.getRows();
   vpColVector normres(n_data); // Normalized Residue
 
-  if(DEBUG_LEVEL2)
-    std::cout << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
+  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data
+	      << std::endl;
 
   // Calculate Median
   med = median(residues);
@@ -382,10 +401,7 @@ vpRobust::SimultMEstimator(vpColVector &residues)
   }
 
 
-  if(DEBUG_LEVEL2)
-  {
-    std::cout << "MAD and C computed" << std::endl;
-  }
+  vpCDEBUG(2) << "MAD and C computed" << std::endl;
 
   psiHuber(sigma, normres);
 
@@ -411,27 +427,33 @@ vpRobust::scale(int method, vpColVector &x)
     Expectation += chiTmp*(1-erf(chiTmp));
     Sum_chi += chiTmp;
 
-    //if(DEBUG_LEVEL3)
+#ifdef VP_DEBUG
+#if VP_DEBUG_MODE == 3
     {
       std::cout << "erf = " << 1-erf(chiTmp) << std::endl;
       std::cout << "x[i] = " << x[i] <<std::endl;
       std::cout << "chi = " << chiTmp << std::endl;
       std::cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << std::endl;
       std::cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << std::endl;
-      getchar();
+      //getchar();
     }
+#endif
+#endif
   }
 
 
   sigma2 = Sum_chi*vpMath::sqr(sig_prev)/((n-p)*Expectation);
 
-  //if(DEBUG_LEVEL3)
+#ifdef VP_DEBUG
+#if VP_DEBUG_MODE == 3
   {
     std::cout << "Expectation = " << Expectation << std::endl;
     std::cout << "Sum chi = " << Sum_chi << std::endl;
     std::cout << "sig_prev" << sig_prev << std::endl;
     std::cout << "sig_out" << sqrt(fabs(sigma2)) << std::endl;
   }
+#endif
+#endif
 
   return sqrt(fabs(sigma2));
 
@@ -456,27 +478,33 @@ vpRobust::simultscale(vpColVector &x)
     Expectation += chiTmp*(1-erf(chiTmp));
     Sum_chi += chiTmp;
 
-    if(DEBUG_LEVEL3)
+#ifdef VP_DEBUG
+#if VP_DEBUG_MODE == 3
     {
       std::cout << "erf = " << 1-erf(chiTmp) << std::endl;
       std::cout << "x[i] = " << x[i] <<std::endl;
       std::cout << "chi = " << chiTmp << std::endl;
       std::cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << std::endl;
       std::cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << std::endl;
-      getchar();
+      //getchar();
     }
+#endif
+#endif
   }
 
 
   sigma2 = Sum_chi*vpMath::sqr(sig_prev)/((n-p)*Expectation);
 
-  if(DEBUG_LEVEL3)
+#ifdef VP_DEBUG
+#if VP_DEBUG_MODE == 3
   {
     std::cout << "Expectation = " << Expectation << std::endl;
     std::cout << "Sum chi = " << Sum_chi << std::endl;
     std::cout << "sig_prev" << sig_prev << std::endl;
     std::cout << "sig_out" << sqrt(fabs(sigma2)) << std::endl;
   }
+#endif
+#endif
 
   return sqrt(fabs(sigma2));
 
@@ -575,20 +603,24 @@ int
 vpRobust::psiTukey(double sig, vpColVector &x)
 {
 
-  if(DEBUG_LEVEL3)
-    std::cout << "Tukey reached. No" << std::endl;
+  vpCDEBUG(3) << "Tukey reached. No" << std::endl;
 
   int n_data = x.getRows();
+  double cst_const = vpCST*4.6851;
 
   for(int i=0; i<n_data; i++)
   {
     if(sig==0 && w[i]!=0)
     {
       w[i]=1;
+      continue;
     }
-    else if((fabs(x[i]/sig)<=(CST*4.6851)) && w[i]!=0)
+
+    double xi_sig = x[i]/sig;
+
+    if((fabs(xi_sig)<=(cst_const)) && w[i]!=0)
     {
-      w[i] = vpMath::sqr(1-vpMath::sqr(x[i]/(sig*CST*4.6851)));
+      w[i] = vpMath::sqr(1-vpMath::sqr(xi_sig/cst_const));
       //w[i] = vpMath::sqr(1-vpMath::sqr(x[i]/sig/4.7));
     }
     else
@@ -598,13 +630,16 @@ vpRobust::psiTukey(double sig, vpColVector &x)
     }
   }
 
-  if(DEBUG_LEVEL3)
+#ifdef VP_DEBUG
+#if VP_DEBUG_MODE == 3
   {
     std::cout << "Tukey computed." << std::endl;
     std::cout << "w= " << w << std::endl;
     std::cout << "r= " << x << std::endl;
-    getchar();
+    //getchar();
   }
+#endif
+#endif
 
   return 1;
 }
@@ -617,8 +652,7 @@ vpRobust::psiHuber(double sig, vpColVector &x)
   double c = 1.2107; //1.345;
   //c = 1.345;
 
-  if(DEBUG_LEVEL3)
-    std::cout << "Huber reached. No" << std::endl;
+  vpCDEBUG(3) << "Huber reached. No" << std::endl;
 
   int n_data = x.getRows();
 
@@ -626,20 +660,24 @@ vpRobust::psiHuber(double sig, vpColVector &x)
   {
     if(w[i]!=0)
     {
-      if(fabs(x[i]/sig)<=c)
+      double xi_sig = x[i]/sig;
+      if(fabs(xi_sig)<=c)
 	w[i] = 1;
       else
-	w[i] = c/fabs(x[i]/sig);
+	w[i] = c/fabs(xi_sig);
     }
   }
 
-  if(DEBUG_LEVEL3)
+#ifdef VP_DEBUG
+#if VP_DEBUG_MODE == 3
   {
     std::cout << "Huber computed." << std::endl;
     std::cout << "w= " << w << std::endl;
     std::cout << "r= " << x << std::endl;
-    getchar();
+    //getchar();
   }
+#endif
+#endif
 
   return 1;
 }
@@ -652,10 +690,12 @@ vpRobust::psiCauchy(double sig, vpColVector &x)
 {
   int n_data = x.getRows();
 
+  double const_sig = 2.3849*sig;
+
   //Calculate Cauchy's equation
   for(int i=0; i<n_data; i++)
   {
-    w[i] = 1/(1+vpMath::sqr(x[i]/(2.3849*sig)));
+    w[i] = 1/(1+vpMath::sqr(x[i]/(const_sig)));
 
     // If one coordinate is an outlier the other is too!
     // w[i] < 0.01 is a threshold to be set
@@ -921,18 +961,18 @@ vpRobust::gser(double *gamser, double a, double x, double *gln)
   {
     ap=a;
     del=sum=1.0/a;
-    for (int n=1; n<=ITMAX; n++)
+    for (int n=1; n<=vpITMAX; n++)
     {
       ap += 1.0;
       del *= x/ap;
       sum += del;
-      if (fabs(del) < fabs(sum)*EPS)
+      if (fabs(del) < fabs(sum)*vpEPS)
       {
 	*gamser=sum*exp(-x+a*log(x)-(*gln));
 	return;
       }
     }
-    std::cout << "a too large, ITMAX too small in routine GSER";
+    std::cout << "a too large, vpITMAX too small in routine GSER";
     return;
   }
 }
@@ -945,7 +985,7 @@ vpRobust::gcf(double *gammcf, double a, double x, double *gln)
 
   *gln=gammln(a);
   a1=x;
-  for (int n=1; n<=ITMAX; n++)
+  for (int n=1; n<=vpITMAX; n++)
   {
     an=(double) n;
     ana=an-a;
@@ -958,7 +998,7 @@ vpRobust::gcf(double *gammcf, double a, double x, double *gln)
     {
       fac=1.0/a1;
       g=b1*fac;
-      if (fabs((g-gold)/g) < EPS)
+      if (fabs((g-gold)/g) < vpEPS)
       {
 	*gammcf=exp(-x+a*log(x)-(*gln))*g;
 	return;
@@ -966,7 +1006,7 @@ vpRobust::gcf(double *gammcf, double a, double x, double *gln)
       gold=g;
     }
   }
-  std::cout << "a too large, ITMAX too small in routine GCF";
+  std::cout << "a too large, vpITMAX too small in routine GCF";
 }
 
 double
@@ -991,5 +1031,6 @@ vpRobust::gammln(double xx)
 
 
 
-#undef ITMAX
-#undef EPS
+#undef vpITMAX
+#undef vpEPS
+#undef vpCST
