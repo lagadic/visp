@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.17 2007-08-29 15:31:40 asaunier Exp $
+ * $Id: vpImage.h,v 1.18 2007-09-05 07:29:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -656,14 +656,14 @@ template<class Type>
 void
 vpImage<Type>::halfSizeImage(vpImage<Type>* res)
 {
-  int r = height/2;
-  int c = width/2;
+  unsigned int r = height/2;
+  unsigned int c = width/2;
   if(res == NULL)
     res = new vpImage<Type>(r, c);
   else if((res->getCols() != c) || (res->getRows()!= r))
     res->resize(r,c);
-  for(int y = 0; y < r; y++)
-    for(int x = 0; x < c; x++)
+  for(unsigned int y = 0; y < r; y++)
+    for(unsigned int x = 0; x < c; x++)
       (*res)[y][x] = (*this)[y*2][x*2];
 }
 
