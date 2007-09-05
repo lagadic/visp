@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.18 2007-09-05 07:29:13 fspindle Exp $
+ * $Id: vpImage.h,v 1.19 2007-09-05 08:34:46 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -232,6 +232,9 @@ public:
 
   //! Returns a new image that's half size of the current image
   void halfSizeImage(vpImage<Type>* res);
+
+  //! Returns a new image that's a quarter size of the current image
+  void quarterSizeImage(vpImage<Type>* res);
 
   //! Returns a new image that's double size of the current image
   void doubleSizeImage(vpImage<Type>* res);
@@ -668,6 +671,26 @@ vpImage<Type>::halfSizeImage(vpImage<Type>* res)
 }
 
 /*!
+  Used for building a quarter of the image.
+  \warning Operator = must be defined for Type.
+ */
+
+template<class Type>
+void
+vpImage<Type>::quarterSizeImage(vpImage<Type>* res)
+{
+  unsigned int r = height/4;
+  unsigned int c = width/4;
+  if(res == NULL)
+    res = new vpImage<Type>(r, c);
+  else if((res->getCols() != c) || (res->getRows()!= r))
+    res->resize(r,c);
+  for(unsigned int y = 0; y < r; y++)
+    for(unsigned int x = 0; x < c; x++)
+      (*res)[y][x] = (*this)[y*4][x*4];
+}
+
+/*!
   Used (eg. in case of keypoints extraction, we might
   double size of the image in order to have more keypoints)
   \warning Operator = must be defined for Type.
@@ -779,7 +802,7 @@ Type vpImage<Type>::getPixelBI(float col0, float row0)
 
 // For template instantiation with Visual Studio
 #if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpImage<unsigned char>; 
+template class VISP_EXPORT vpImage<unsigned char>;
 #endif
 
 #endif
