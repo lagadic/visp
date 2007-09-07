@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.30 2007-09-03 13:43:35 asaunier Exp $
+ * $Id: vpDot2.h,v 1.31 2007-09-07 15:32:50 megautie Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -114,7 +114,7 @@ public:
   double getGrayLevelPrecision() const;
   double getSizePrecision() const;
   double getEllipsoidShapePrecision() const;
-
+  double getMaxSizeSearchDistancePrecision() const;
   /*!
     Activates the display of the border of the dot during the tracking.
 
@@ -186,7 +186,7 @@ public:
   void setGrayLevelPrecision( const double & grayLevelPrecision );
   void setSizePrecision( const double & sizePrecision );
   void setEllipsoidShapePrecision(const double & ellipsoidShapePrecision);
-
+  void setMaxSizeSearchDistancePrecision(const double & maxSizeSearchDistancePrecision);
   double getDistance( const vpDot2& distantDot ) const;
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
@@ -208,7 +208,7 @@ private :
 
   virtual vpDot2* getInstance();
 
-  
+
 
 public:
   /*!
@@ -337,6 +337,7 @@ private:
   void setArea(vpImage<unsigned char> &I);
   void setArea(const vpRect & a);
 
+  unsigned char getMeanGrayLevel(vpImage<unsigned char>& I) const;
   //! coordinates (float) of the point center of gravity
   double cog_ufloat, cog_vfloat ;
 
@@ -350,11 +351,11 @@ private:
   unsigned int gray_level_max;  // maximum gray level for the dot.
 				// pixel with higher level don't belong
 				// to this dot.
-  double grayLevelPrecision ; 
+  double grayLevelPrecision ;
   double gamma ;
-  double sizePrecision ; 
-  double ellipsoidShapePrecision; 
-
+  double sizePrecision ;
+  double ellipsoidShapePrecision;
+  double maxSizeSearchDistancePrecision;
   // Area where the dot is to search
   vpRect area;
 
