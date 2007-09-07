@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.7 2007-09-04 09:09:00 fspindle Exp $
+ * $Id: vpRobust.cpp,v 1.8 2007-09-07 08:17:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -88,10 +88,6 @@ vpRobust::setThreshold(const double x)
 }
 
 // ===================================================================
-/*
-  - TUKEY : \f$ \rho(r, C) = \begin{array}{ll} \frac{r^6}{6} - \frac{C^2r^4}{2} +\frac{C^4}r^2}{2} & \mbox{if} |r| < C \\ \frac{1}{6} C^6 & \mbox{else} \end{array} \f$
-
-*/
 /*!
 
   \brief Calculate an Mestimate given a particular loss function using MAD
@@ -116,7 +112,8 @@ vpRobust::setThreshold(const double x)
 
   \param residues : Residues \f$ r_i \f$ used in the previous formula.
 
-  \param weights : Vector of weights \f$w_i = \frac{\psi(r_i)}{r_i}}\f$. Values are in [0, 1]. A value near zero
+  \param weights : Vector of weights \f$w_i =
+  \frac{\psi(r_i)}{r_i}}\f$. Values are in [0, 1]. A value near zero
   means that the data is an outlier.
 
   \return Returns a Column Vector of weights associated to each residue.
