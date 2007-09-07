@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.33 2007-09-03 13:43:35 asaunier Exp $
+ * $Id: vpDot2.cpp,v 1.34 2007-09-07 15:32:50 megautie Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,7 +102,7 @@ vpDot2::vpDot2() : vpTracker()
 
   sizePrecision = 0.65;
   ellipsoidShapePrecision = 0.65;
-
+  maxSizeSearchDistancePrecision = 0.65;
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
   bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
@@ -140,7 +140,8 @@ vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
   gamma = 1.5 ;
   sizePrecision = 0.65;
   ellipsoidShapePrecision = 0.65;
-  
+  maxSizeSearchDistancePrecision = 0.65;
+
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
   bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
@@ -178,6 +179,7 @@ vpDot2::vpDot2(const double u, const double v ) : vpTracker()
   gamma = 1.5 ;
   sizePrecision = 0.65;
   ellipsoidShapePrecision = 0.65;
+  maxSizeSearchDistancePrecision = 0.65;
 
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
@@ -216,7 +218,7 @@ void vpDot2::operator=( vpDot2& twinDot )
   gamma = twinDot.gamma; ;
   sizePrecision = twinDot.sizePrecision;
   ellipsoidShapePrecision = twinDot.ellipsoidShapePrecision ;
-
+  maxSizeSearchDistancePrecision = twinDot.maxSizeSearchDistancePrecision;
   area = twinDot.area;
 
   m00 = twinDot.m00;
@@ -621,8 +623,11 @@ void vpDot2::track(vpImage<unsigned char> &I)
   unsigned int u = (unsigned int) this->get_u();
   unsigned int v = (unsigned int) this->get_v();
   // Updates the min and max gray levels for the next iteration
-  double Ip = pow((double)I[v][u]/255,1/gamma);
+  // double Ip = pow((double)I[v][u]/255,1/gamma);
+  double Ip = pow((double)getMeanGrayLevel(I)/255,1/gamma);
+  //printf("current value of gray level center : %i\n", I[v][u]);
 
+   //getMeanGrayLevel(I);
   if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
   }
@@ -635,6 +640,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
   if (gray_level_max > 255)
     gray_level_max = 255;
 
+  //printf("%i %i \n",gray_level_max,gray_level_min);
   if (graphics) {
     // display a red cross at the center of gravity's location in the image.
 
@@ -759,6 +765,14 @@ double vpDot2::getEllipsoidShapePrecision() const
   return ellipsoidShapePrecision;
 }
 
+/*!
+  Return the precision of the search maximum distance to get the starting point on a dot border. It is a double
+  precision float witch value is in [0.05,1]. 1 means full precision, whereas
+  values close to 0 show a very bad precision.
+*/
+double vpDot2::getMaxSizeSearchDistancePrecision() const{
+  return maxSizeSearchDistancePrecision;
+}
 
 /*!
   Return the distance between the two center of dots.
@@ -881,23 +895,23 @@ void vpDot2::setGrayLevelPrecision( const double & grayLevelPrecision )
 }
 /*!
 
-  Set the precision of the size of the dot.
+  Set the precision of the size of the dot. Used to test the validity of the dot
 
-  \param sizePrecision : It is a double precision float which value is in ]0,1]:
+  \param sizePrecision : It is a double precision float which value is in [0,1]:
   - this is the limit ratio between the tested parameter and the measured one.
     minSize = sizePrecision*originalSize ; maxSize = originalSize/sizePrecision ;
   - 1 means full precision, whereas values close to 0 show a very bad accuracy.
-  - Values lower or equal to 0 are brought back to an epsion>0.
-  - Values higher than  1 are brought back to 1.
+  - Values lower or equal to 0 are brought back to 0.
+  - Values higher than 1 are brought back to 1.
+  - To desactivate validity test set sizePrecision to 0
 
   \sa setWidth(), setHeight(), setSurface()
 */
 void vpDot2::setSizePrecision( const double & sizePrecision )
 {
-  double epsilon = 0.05;
-  if( sizePrecision<epsilon )
+  if( sizePrecision<0 )
   {
-    this->sizePrecision = epsilon;
+    this->sizePrecision = 0;
   }
   else if( sizePrecision>1 )
   {
@@ -931,7 +945,37 @@ void vpDot2::setEllipsoidShapePrecision(const double & ellipsoidShapePrecision) 
   else
   {
     this->ellipsoidShapePrecision = ellipsoidShapePrecision;
-  }  
+  }
+}
+
+/*!
+
+  Set the precision of the search maximum distance to get the starting point on a dot border. A too low value
+  mean a large search area.
+
+  \param maxSizeSearchDistancePercision : It is a double precision float which value is in [0.05,1]:
+  - this is the limit ratio between the tested parameter and the measured one.
+     distance < getWidth()/(getSizePrecision()+epsilon);
+  - 1 means full precision, whereas values close to 0 show a very bad accuracy.
+  - Values lower or equal to 0.05 are brought back to 0.05
+  - Values higher than 1 are brought back to 1.
+
+*/
+void vpDot2::setMaxSizeSearchDistancePrecision( const double & maxSizeSearchDistancePrecision )
+{
+  double epsilon = 0.05;
+  if( maxSizeSearchDistancePrecision<epsilon )
+  {
+    this-> maxSizeSearchDistancePrecision = epsilon;
+  }
+  else if( maxSizeSearchDistancePrecision >1 )
+  {
+    this->maxSizeSearchDistancePrecision = 1.0;
+  }
+  else
+  {
+    this->maxSizeSearchDistancePrecision = maxSizeSearchDistancePrecision;
+  }
 }
 
 /*!
@@ -1324,42 +1368,43 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // First, check the width, height and surface of the dot. Those parameters
   // must be the same.
   //
-  if( ( wantedDot.getWidth()*sizePrecision-epsilon < getWidth() ) == false )
-  {
-    vpDEBUG_TRACE(3, "Bad width < for dot (%g, %g)", get_u(), get_v());
-    return false;
-  }
+  if(sizePrecision!=0){
+    if( ( wantedDot.getWidth()*sizePrecision-epsilon < getWidth() ) == false )
+    {
+      vpDEBUG_TRACE(3, "Bad width < for dot (%g, %g)", get_u(), get_v());
+      return false;
+    }
 
-  if( ( getWidth() < wantedDot.getWidth()/(sizePrecision+epsilon ) )== false )
-  {
-    vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", get_u(), get_v());
-    return false;
-  }
+    if( ( getWidth() < wantedDot.getWidth()/(sizePrecision+epsilon ) )== false )
+    {
+      vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", get_u(), get_v());
+      return false;
+    }
 
-  if( ( wantedDot.getHeight()*sizePrecision-epsilon < getHeight() ) == false )
-  {
-    vpDEBUG_TRACE(3, "Bad height < for dot (%g, %g)", get_u(), get_v());
-    return false;
-  }
+    if( ( wantedDot.getHeight()*sizePrecision-epsilon < getHeight() ) == false )
+    {
+      vpDEBUG_TRACE(3, "Bad height < for dot (%g, %g)", get_u(), get_v());
+      return false;
+    }
 
-  if( ( getHeight() < wantedDot.getHeight()/(sizePrecision+epsilon )) == false )
-  {
-    vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", get_u(), get_v());
-    return false;
-  }
+    if( ( getHeight() < wantedDot.getHeight()/(sizePrecision+epsilon )) == false )
+    {
+      vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", get_u(), get_v());
+      return false;
+    }
 
-  if( ( wantedDot.getSurface()*(sizePrecision*sizePrecision)-epsilon < getSurface() ) == false )
-  {
-    vpDEBUG_TRACE(3, "Bad surface < for dot (%g, %g)", get_u(), get_v());
-    return false;
-  }
+    if( ( wantedDot.getSurface()*(sizePrecision*sizePrecision)-epsilon < getSurface() ) == false )
+    {
+      vpDEBUG_TRACE(3, "Bad surface < for dot (%g, %g)", get_u(), get_v());
+      return false;
+    }
 
-  if( ( getSurface() < wantedDot.getSurface()/(sizePrecision*sizePrecision+epsilon )) == false )
-  {
-    vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", get_u(), get_v());
-    return false;
+    if( ( getSurface() < wantedDot.getSurface()/(sizePrecision*sizePrecision+epsilon )) == false )
+    {
+      vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", get_u(), get_v());
+      return false;
+    }
   }
-
   //
   // Now we can proceed to more advanced (and costy) checks.
   // First check there is a white (>level) elipse within dot
@@ -1784,13 +1829,14 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
     double tmpCenter_u = m10 / m00;
     double tmpCenter_v = m01 / m00;
 
+
     // check the center is in the image... never know...
-    if( !hasGoodLevel( I, (unsigned int)tmpCenter_u,
-		       (unsigned int)tmpCenter_v ) )
-    {
-      vpDEBUG_TRACE(3, "The center of gravity of the dot (%g, %g) has not a good in level", tmpCenter_u, tmpCenter_v);
-      return false;
-    }
+//     if( !hasGoodLevel( I, (unsigned int)tmpCenter_u,
+// 		       (unsigned int)tmpCenter_v ) )
+//     {
+//       vpDEBUG_TRACE(3, "The center of gravity of the dot (%g, %g) has not a good in level", tmpCenter_u, tmpCenter_v);
+//       return false;
+//     }
 
     cog_ufloat = tmpCenter_u;
     cog_vfloat = tmpCenter_v;
@@ -1834,12 +1880,13 @@ vpDot2::findFirstBorder(const vpImage<unsigned char> &I,
   // work with double when navigating around the dot.
   border_u = u;
   border_v = v;
+  double epsilon =0.001;
   while( hasGoodLevel( I, border_u+1, border_v ) &&
     border_u < area.getRight()/*I.getWidth()*/ )  {
     // if the width of this dot was initialised and we already crossed the dot
     // on more than the max possible width, no need to continue, return an
     // error tracking
-    if( getWidth() > 0 && ( border_u - u ) > getWidth()/getSizePrecision() ) {
+    if( getWidth() > 0 && ( border_u - u ) > getWidth()/(getMaxSizeSearchDistancePrecision()+epsilon) ) {
       vpDEBUG_TRACE(3, "The found dot (%d, %d, %d) has a greater width than the required one", u, v, border_u);
       return false;
     }
@@ -2227,14 +2274,94 @@ void vpDot2::getGridSize( unsigned int &gridWidth, unsigned int &gridHeight )
   // contained in the dot. We gent this here if the dot is a perfect disc.
   // More accurate criterium to define the grid should be implemented if
   // necessary
-  gridWidth = (unsigned int) (getWidth() * getSizePrecision() / sqrt(2.));
-  gridHeight = (unsigned int) (getHeight() * getSizePrecision() / sqrt(2.0));
+  gridWidth = (unsigned int) (getWidth() * getMaxSizeSearchDistancePrecision() / sqrt(2.));
+  gridHeight = (unsigned int) (getHeight() * getMaxSizeSearchDistancePrecision() / sqrt(2.0));
 
   if( gridWidth == 0 ) gridWidth = 1;
   if( gridHeight == 0 ) gridHeight = 1;
 }
 
 
+
+/*!
+
+  Get an approximation of  mean gray level of the dot.
+  We compute it by searching the mean of vertical and diagonal points
+  which gray is between min and max gray level.
+
+  \param I: The image.
+
+  \return the mean gray level
+
+
+*/
+unsigned char vpDot2::getMeanGrayLevel(vpImage<unsigned char>& I) const{
+  unsigned int cog_u = (unsigned int)get_u();
+  unsigned int cog_v = (unsigned int)get_v();
+
+  unsigned int sum_value =0;
+  unsigned int nb_pixels =0;
+
+  for(int i=this->bbox_u_min; i <=this->bbox_u_max ; i++){
+    unsigned int pixel_gray =(unsigned int) I[cog_v][i];
+    if (pixel_gray > getGrayLevelMin()  && pixel_gray < getGrayLevelMax()){
+      sum_value += pixel_gray;
+      nb_pixels ++;
+    }
+  }
+  for(int i=this->bbox_v_min; i <=this->bbox_v_max ; i++){
+    unsigned char pixel_gray =I[i][cog_u];
+    if (pixel_gray > getGrayLevelMin()  && pixel_gray < getGrayLevelMax()){
+      sum_value += pixel_gray;
+      nb_pixels ++;
+    }
+  }
+  if(nb_pixels < 10){ //could be good to choose the min nb points from area of dot
+    //add diagonals points to have enough point
+    int imin,imax;
+    if( (cog_u - bbox_u_min) > (cog_v - bbox_v_min)){
+      imin=cog_v - bbox_v_min;
+    }
+    else{ imin = cog_u - bbox_u_min;}
+    if( (bbox_u_max - cog_u) > (bbox_v_max - cog_v)){
+      imax=bbox_v_max - cog_v;
+    }
+    else{ imax = bbox_u_max - cog_u;}
+    for(int i=-imin; i <=imax ; i++){
+      unsigned int pixel_gray =(unsigned int) I[cog_v + i][cog_u + i];
+      if (pixel_gray > getGrayLevelMin()  && pixel_gray < getGrayLevelMax()){
+	sum_value += pixel_gray;
+	nb_pixels ++;
+      }
+    }
+
+    if( (cog_u - bbox_u_min) > (bbox_v_max - cog_v)){
+      imin = bbox_v_max - cog_v;
+    }
+    else{ imin = cog_u - bbox_u_min;}
+    if( (bbox_u_max - cog_u) > (cog_v - bbox_v_min)){
+      imax = cog_v - bbox_v_min;
+    }
+    else{ imax = bbox_u_max - cog_u;}
+
+    for(int i=-imin; i <=imax ; i++){
+      unsigned char pixel_gray =I[cog_v - i][cog_u + i];
+      if (pixel_gray > getGrayLevelMin()  && pixel_gray < getGrayLevelMax()){
+	sum_value += pixel_gray;
+	nb_pixels ++;
+      }
+    }
+  }
+
+  if(nb_pixels== 0){
+    //should never happen
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError,"No point was found"));
+  }
+  else{
+    unsigned int mean_gray_level =  sum_value/nb_pixels;
+    return mean_gray_level;
+  }
+}
 /*
  * Local variables:
  * c-basic-offset: 2
