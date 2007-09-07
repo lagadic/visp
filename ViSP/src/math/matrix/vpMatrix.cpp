@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.37 2007-08-17 09:04:04 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.38 2007-09-07 08:24:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1266,10 +1266,10 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
       a1[i][j] = 0.0;
 
       for (k=0 ; k < ncols ; k++)
-    	if (fabs(sv[k]) > maxsv*seuilvp)
-  	{
-	    a1[i][j] += v[i][k]*a[j][k]/sv[k];
-        }
+    	 if (fabs(sv[k]) > maxsv*seuilvp)
+  	   {
+	       a1[i][j] += v[i][k]*a[j][k]/sv[k];
+       }
     }
   }
   if (nrows_orig >=  ncols_orig) Ap = a1;
@@ -1781,8 +1781,14 @@ cppPrint(std::ostream & os, const char * matrixName, bool octet)
 };
 
 
+/*!
+  \brief Compute determinant of a 3x3 matrix.
 
+  \param M : the matrix used to compute determinant.
+  \return determinant of the matrix.
 
+  \warning M must be a 3x3 matrix. 
+*/
 
 double
 vpMatrix::det33(const vpMatrix &M)
@@ -1798,12 +1804,12 @@ vpMatrix::det33(const vpMatrix &M)
   double detint ;
 
   detint = 0.0 ;
-  detint =          M[0][0]*M[1][1]*M[2][2]*0.5 ;
-  detint = detint + M[2][0]*M[0][1]*M[1][2]*0.5 ;
-  detint = detint + M[0][2]*M[2][1]*M[1][0]*0.5 ;
-  detint = detint - M[0][2]*M[1][1]*M[2][0]*0.5 ;
-  detint = detint - M[0][0]*M[2][1]*M[1][2]*0.5 ;
-  detint = detint - M[2][2]*M[1][0]*M[0][1]*0.5 ;
+  detint =          M[0][0]*M[1][1]*M[2][2] ;
+  detint = detint + M[2][0]*M[0][1]*M[1][2] ;
+  detint = detint + M[0][2]*M[2][1]*M[1][0] ;
+  detint = detint - M[0][2]*M[1][1]*M[2][0] ;
+  detint = detint - M[0][0]*M[2][1]*M[1][2] ;
+  detint = detint - M[2][2]*M[1][0]*M[0][1] ;
   return(detint);
 
 }
