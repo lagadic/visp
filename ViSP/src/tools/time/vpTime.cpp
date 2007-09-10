@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.cpp,v 1.11 2007-05-29 15:15:36 fspindle Exp $
+ * $Id: vpTime.cpp,v 1.12 2007-09-10 14:13:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,7 +75,15 @@ double
 vpTime::measureTimeMs()
 {
 #if defined WIN32
-  return(timeGetTime());
+  LARGE_INTEGER time, frequency;
+  QueryPerformanceFrequency(&frequency);
+  if(frequency.LowPart == 0){
+    return(timeGetTime());
+  }
+  else{
+  QueryPerformanceCounter(&time);
+  return (double)(1000.0*time.LowPart/frequency.LowPart);
+  }
 #elif defined UNIX
   struct timeval tp;
   gettimeofday(&tp,0);
@@ -93,7 +101,15 @@ double
 vpTime::measureTimeMicros()
 {
 #ifdef WIN32
-  return(1000.0 * timeGetTime());
+  LARGE_INTEGER time, frequency;
+  QueryPerformanceFrequency(&frequency);
+  if(frequency.LowPart == 0){
+    return(timeGetTime());
+  }
+  else{
+  QueryPerformanceCounter(&time);
+  return (double)(1000000.0*time.LowPart/frequency.LowPart);
+  }
 #else
 
   struct timeval tp;
