@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.32 2007-09-10 08:43:13 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.33 2007-09-10 14:35:33 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -356,7 +356,6 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 
       /* Affichage */
       gdk_window_clear(window);
-      gdk_window_show(window);
       gdk_flush();
     }
   else
@@ -397,6 +396,7 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
       gdk_window_set_back_pixmap(window, background, FALSE);
 
       /* Affichage */
+      gdk_window_clear(window);
       flushDisplay() ;
 
     }
@@ -512,9 +512,7 @@ void vpDisplayGTK::flushDisplay()
   if (GTKinitialized)
     {
       gdk_window_clear(window);
-      gdk_window_show(window);
       gdk_flush();
-
     }
   else
     {
@@ -571,12 +569,12 @@ vpDisplayGTK::displayLine(unsigned int i1, unsigned int j1,
     {
       gdk_gc_set_foreground(gc,col[color]);
       if (e>1)
-	gdk_gc_set_line_attributes(gc,e,
+	       gdk_gc_set_line_attributes(gc,e,
 				   GDK_LINE_SOLID,GDK_CAP_BUTT,
 				   GDK_JOIN_BEVEL) ;
       gdk_draw_line(background,gc,j1,i1,j2,i2) ;
       if (e>1)
-	gdk_gc_set_line_attributes(gc,0,
+	       gdk_gc_set_line_attributes(gc,0,
 				   GDK_LINE_SOLID,GDK_CAP_BUTT,
 				   GDK_JOIN_BEVEL) ;
 
