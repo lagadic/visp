@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.17 2007-06-11 16:00:54 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.18 2007-09-10 08:43:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -234,7 +234,7 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j)
   //wait if the window is not initialized
   waitForInit();
 
-  //tells the window there has been a getclickup demand
+  //tells the window there has been a getclick demand
   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
   WaitForSingleObject(window.semaClick,INFINITE);
