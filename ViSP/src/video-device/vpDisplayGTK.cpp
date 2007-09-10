@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.31 2007-06-13 08:56:36 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.32 2007-09-10 08:43:13 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1009,43 +1009,54 @@ vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
 bool
 vpDisplayGTK::getClickUp(unsigned int& i, unsigned int& j,
 			 vpMouseButton::vpMouseButtonType& button)
+
+
+
+
 {
   bool end = false ;
 
-  if (GTKinitialized)  {
+  if ( GTKinitialized )
+  {
 
     flushDisplay() ;
     GdkEvent *ev ;
 
-    while (!end)	{
+    while ( !end )
+    {
       ev = gdk_event_get() ;
-      if (ev) {
-	switch(ev->type)	{
-	case GDK_BUTTON_RELEASE :
+      if ( ev )
+      {
+        switch ( ev->type )
+        {
+          case GDK_BUTTON_RELEASE :
 
-	  if(ev->any.window == window) {
-	    i = (unsigned int)((GdkEventButton *)ev)->y ;
-	    j = (unsigned int)((GdkEventButton *)ev)->x ;
+            if ( ev->any.window == window )
+            {
+              i = ( unsigned int ) ( ( GdkEventButton * ) ev )->y ;
+              j = ( unsigned int ) ( ( GdkEventButton * ) ev )->x ;
 
-	    switch((int)((GdkEventButton *)ev)->button) {
-	    case 1: button = vpMouseButton::button1; break;
-	    case 2: button = vpMouseButton::button2; break;
-	    case 3: button = vpMouseButton::button3; break;
-	    }
+              switch ( ( int ) ( ( GdkEventButton * ) ev )->button )
+              {
+                case 1: button = vpMouseButton::button1; break;
+                case 2: button = vpMouseButton::button2; break;
+                case 3: button = vpMouseButton::button3; break;
+              }
 
-	    end = true ;
-	  }
-	  break ;
-	default :;
-	}
+              end = true ;
+            }
+            break ;
+          default :;
+        }
       }
     }
-    gdk_event_free(ev) ;
+    gdk_event_free ( ev ) ;
   }
-  else  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-			     "GTK not initialized")) ;
+  else
+  {
+    vpERROR_TRACE ( "GTK not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "GTK not initialized" ) ) ;
   }
   return end ;
 }
