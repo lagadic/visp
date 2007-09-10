@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.h,v 1.3 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpHistogram.h,v 1.4 2007-09-10 09:07:29 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -137,7 +137,7 @@ public:
     \endcode
 
   */
-  inline unsigned operator[](const unsigned char level)
+  inline unsigned operator[](const unsigned char level) const
     {
       return histogram[level];
 
@@ -158,15 +158,63 @@ public:
 
     // Print the histogram values
     for (int i=0; i < h.getSize(); i ++)
-      printf("%d: %d\n", i, h[i]);
+      printf("%d: %d\n", i, h(i));
     \endcode
 
   */
-  inline unsigned operator()(const unsigned char level)
+  inline unsigned operator()(const unsigned char level) const
+    {
+      return histogram[level];
+    };
+  /*!
+
+    Return the number of pixels having the gray \e level.
+
+    \param level : Gray level in the histogram.
+
+    \return Number of pixels having the gray level.
+
+    \code
+    vpImage<unsigned char> I; // A gray level image
+    
+    vpHistogram h; 
+    h.calculate(I); // Histogram of the gray level image
+
+    // Print the histogram values
+    for (int i=0; i < h.getSize(); i ++)
+      printf("%d: %d\n", i, h.get(i));
+    \endcode
+
+  */
+  inline unsigned get(const unsigned char level) const
     {
       return histogram[level];
     };
 
+  /*!
+
+    Set the number of pixels having the gray \e level.
+
+    \param level : Gray level in the histogram. Level is in [0:255]
+
+    \return value : Number of pixels having the gray level.
+
+    \code
+    vpImage<unsigned char> I; // A gray level image
+    
+    vpHistogram h; 
+    h.calculate(I); // Histogram of the gray level image
+
+    // Print the histogram values
+    for (int i=0; i < h.getSize(); i ++)
+      printf("%d: %d\n", i, h[i]);
+    \endcode
+
+  */
+  inline void set(const unsigned char level, unsigned int value)
+    {
+      histogram[level] = value;
+    };
 
   void     calculate(const vpImage<unsigned char> &I);
   void     smooth(unsigned fsize = 3);
