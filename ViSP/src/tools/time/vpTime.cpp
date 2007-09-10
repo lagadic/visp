@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.cpp,v 1.12 2007-09-10 14:13:36 asaunier Exp $
+ * $Id: vpTime.cpp,v 1.13 2007-09-10 16:10:54 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,12 +77,12 @@ vpTime::measureTimeMs()
 #if defined WIN32
   LARGE_INTEGER time, frequency;
   QueryPerformanceFrequency(&frequency);
-  if(frequency.LowPart == 0){
+  if(frequency.QuadPart == 0){
     return(timeGetTime());
   }
   else{
   QueryPerformanceCounter(&time);
-  return (double)(1000.0*time.LowPart/frequency.LowPart);
+  return (double)(1000.0*time.QuadPart/frequency.QuadPart);
   }
 #elif defined UNIX
   struct timeval tp;
@@ -103,12 +103,12 @@ vpTime::measureTimeMicros()
 #ifdef WIN32
   LARGE_INTEGER time, frequency;
   QueryPerformanceFrequency(&frequency);
-  if(frequency.LowPart == 0){
+  if(frequency.QuadPart == 0){
     return(timeGetTime());
   }
   else{
   QueryPerformanceCounter(&time);
-  return (double)(1000000.0*time.LowPart/frequency.LowPart);
+  return (double)(1000000.0*time.QuadPart/frequency.QuadPart);
   }
 #else
 
@@ -151,7 +151,7 @@ vpTime::wait(double t0, double t)
     }
 #elif defined WIN32
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      Sleep((long )(timeToWait-vpTime::minTimeForUsleepCall));
+      Sleep((long)(timeToWait-vpTime::minTimeForUsleepCall));
     }
 #endif
     // Blocking loop to have an accurate waiting
