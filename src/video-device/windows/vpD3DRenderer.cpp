@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.10 2007-06-13 08:56:36 asaunier Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.11 2007-09-12 07:33:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -527,10 +527,12 @@ void vpD3DRenderer::drawLine(unsigned int i1, unsigned int j1,
   \param height height of the rectangle
   \param col The rectangle's color
   \param fill Ignored
+  \param e : Line thickness
 */
 void vpD3DRenderer::drawRect(unsigned int i, unsigned int j,
 			     unsigned int width, unsigned int height,
-			     vpColor::vpColorType col, bool /* fill */)
+			     vpColor::vpColorType col, bool /* fill */,
+			     unsigned int /*e*/)
 {
   if(i<0 || j<0 || i>nbRows || j>nbCols || width<0 || height<0)
     {

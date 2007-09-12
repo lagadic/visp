@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.h,v 1.7 2007-06-13 08:56:36 asaunier Exp $
+ * $Id: vpGDIRenderer.h,v 1.8 2007-09-12 07:33:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,7 +100,8 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 
   void drawRect(unsigned int i, unsigned int j,
 		unsigned int width, unsigned int height,
-		vpColor::vpColorType col, bool fill=false);
+		vpColor::vpColorType col, bool fill=false,
+		unsigned int e=1);
 
   void clear(vpColor::vpColorType c);
 

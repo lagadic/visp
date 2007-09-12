@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.33 2007-09-10 14:35:33 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.34 2007-09-12 07:33:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -557,7 +557,7 @@ void vpDisplayGTK::displayPoint(unsigned int i, unsigned int j,
   \param i1,j1 (row,colum indexes) initial coordinates
   \param i2,j2 (row,colum indexes) final coordinates
   \param color (see vpColor)
-  \param e : line_width
+  \param e : line thick
 */
 void
 vpDisplayGTK::displayLine(unsigned int i1, unsigned int j1,
@@ -593,7 +593,7 @@ vpDisplayGTK::displayLine(unsigned int i1, unsigned int j1,
   \param i1,j1 : (row,colum indexes) initial coordinates
   \param i2,j2 : (row,colum indexes) final coordinates
   \param color : (see vpColor)
-  \param e : line_width
+  \param e : line thick
 */
 void
 vpDisplayGTK::displayDotLine(unsigned int i1, unsigned int j1,
@@ -774,19 +774,28 @@ vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
   \param height
   \param color (see vpColor)
   \param fill : set as true to fill the rectangle.
+  \param e : line thick
 */
 void
 vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color, bool fill)
+			       vpColor::vpColorType color, bool fill,
+			       unsigned int e)
 {
   if (GTKinitialized)
     {
+      if (e == 1) e = 0;
       gdk_gc_set_foreground(gc,col[color]);
+      gdk_gc_set_line_attributes(gc, e, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT,
+				 GDK_JOIN_BEVEL) ;
+
       if (fill == false)
         gdk_draw_rectangle(background,gc,FALSE,j,i,width-1,height-1);
       else
         gdk_draw_rectangle(background,gc,TRUE,j,i,width,height);
+
+      gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
+				 GDK_JOIN_BEVEL) ;
     }
   else
     {
@@ -801,14 +810,20 @@ vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
   \param rect : Rectangle characteristics.
   \param color : Color (see vpColor)
   \param fill : set as true to fill the rectangle.
+  \param e : line thick
 */
 void
 vpDisplayGTK::displayRectangle(const vpRect &rect,
-			       vpColor::vpColorType color, bool fill)
+			       vpColor::vpColorType color, bool fill,
+			       unsigned int e)
 {
   if (GTKinitialized)
     {
+      if (e == 1) e = 0;
       gdk_gc_set_foreground(gc,col[color]);
+      gdk_gc_set_line_attributes(gc, e, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT,
+				 GDK_JOIN_BEVEL) ;
+
       if (fill == false)
         gdk_draw_rectangle(background,gc,FALSE,
 			   (int)rect.getLeft(), (int)rect.getTop(),
@@ -817,6 +832,9 @@ vpDisplayGTK::displayRectangle(const vpRect &rect,
         gdk_draw_rectangle(background,gc,TRUE,
           (int)rect.getLeft(), (int)rect.getTop(),
           (int)rect.getWidth(), (int)rect.getHeight());
+
+      gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
+				 GDK_JOIN_BEVEL) ;
     }
   else
     {
