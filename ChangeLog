@@ -7,6 +7,8 @@ ViSP 2.4.x
 	  enter key.
 	- vpParallelPort : Parallel port management under unix.
 	- vpRingLight : Irisa's ring light controller.
+	- vpKltOpencv : Interface for the KLT (Kanade-Lucas-Tomasi) feature 
+	  tracker implemented with opencv.
   - New Features
   - Bug fix and improvement
 	- vpDot: setMaxDotSize(double percentage) replace 
@@ -49,6 +51,7 @@ ViSP 2.4.x
 	  the standard determinant definition.
 	- vpImageConvert : Add IplImage to vpImage conversion tool.
   - Testing and examples:
+	- example/tracking/trackKltOpencv.cpp was added
 	- example/light/ringLight.cpp was added
 	- example/tools/parallelPort.cpp was added
 	- test/video-device/testClick.cpp was added

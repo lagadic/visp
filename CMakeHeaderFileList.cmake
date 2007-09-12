@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.19 2007-09-04 09:31:35 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.20 2007-09-12 07:32:18 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -182,6 +182,7 @@ SET (HEADER_TRACKING
   tracking/forward-projection/vpSphere.h
   tracking/general-tracking-issues/vpTracker.h
   tracking/general-tracking-issues/vpTrackingException.h
+  tracking/klt/vpKltOpencv.h
   tracking/moving-edges/vpMeEllipse.h
   tracking/moving-edges/vpMe.h
   tracking/moving-edges/vpMeLine.h
