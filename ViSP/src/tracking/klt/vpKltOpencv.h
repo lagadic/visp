@@ -12,6 +12,7 @@
 #include <ctype.h>
 #endif
 
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplay.h>
@@ -28,7 +29,7 @@ typedef void (*funcevent)(int);
 /**
    Wrapper for OpenCV Implementation of the KLT tracker
 */
-class vpKltOpencv
+class VISP_EXPORT vpKltOpencv
 {
  private:
   int initialized; //Is the tracker ready ?
@@ -123,9 +124,9 @@ class vpKltOpencv
   //! Get Max number of features
   int getMaxFeatures() {return maxFeatures;}
 
-  void getFeature(int index, int &id, double &x, double &y);
-  void getPrevFeature(int index, int &id, double &x, double &y);
-  void addFeature(const int &id, const double &x, const double &y);
+  void getFeature(int index, int &id, float &x, float &y);
+  void getPrevFeature(int index, int &id, float &x, float &y);
+  void addFeature(const int &id, const float &x, const float &y);
   void suppressFeature(int index);
 };
 

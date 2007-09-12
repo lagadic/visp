@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.11 2007-08-29 12:25:21 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.12 2007-09-12 16:00:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1003,7 +1003,7 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
     }
   //Compute good parabola points
   int j = 0;
-  for (int i=0 ; i < pointsForLs ; i++) {
+  for (i=0 ; i < pointsForLs ; i++) {
     if (w[i] > good_point_thresh) {
       j++;
     }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.11 2007-09-03 13:44:47 asaunier Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.12 2007-09-12 16:00:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -147,7 +147,11 @@ OPTIONS:                                               Default\n\
      1 means full precision, the shape should be a perfect ellipsoid,\n\
      whereas values close to 0 show a very bad precision.\n\
      0 means the shape of dots is not tested \n\
- \n\
+ \n",
+	  ipath.c_str(),ppath.c_str(), first, nimages, step, sizePrecision,
+	  grayLevelPrecision, ellipsoidShapePrecision );
+
+fprintf(stdout, "\
   -c\n\
      Disable the mouse click. Usefull to automaze the \n\
      execution of this program without humain intervention.\n\
@@ -156,9 +160,7 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h\n\
-     Print the help.\n",
-	  ipath.c_str(),ppath.c_str(), first, nimages, step, sizePrecision,
-    grayLevelPrecision, ellipsoidShapePrecision );
+     Print the help.\n");
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -184,7 +186,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, char **argv, std::string &ipath,
-        std::string &ppath,unsigned &first, unsigned &nimages, 
+        std::string &ppath,unsigned &first, unsigned &nimages,
         unsigned &step, double &sizePrecision, double &grayLevelPrecision,
         double &ellipsoidShapePrecision, bool &click_allowed, bool &display)
 {
@@ -301,10 +303,10 @@ main(int argc, char ** argv)
   std::ostringstream s;
   char cfilename[FILENAME_MAX];
   unsigned iter = opt_first; // Image number
-  
+
   if (opt_ppath.empty()){
-  
-  
+
+
     // Warning :
     // the image sequence is not provided with the ViSP package
     // therefore the program will return you an error :
@@ -316,12 +318,12 @@ main(int argc, char ** argv)
     //  The sequence is available on the visp www site
     //  http://www.irisa.fr/lagadic/visp/visp.html
     //  in the download section. It is named "ViSP-images.tar.gz"
-  
+
     // Set the path location of the image sequence
     dirname = ipath + vpIoTools::path("/ViSP-images/mire-2/");
-  
+
     // Build the name of the image file
-    
+
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
     filename = dirname + s.str();
@@ -388,15 +390,15 @@ main(int argc, char ** argv)
 
   // Dot declaration
   vpDot2 d ;
-  
+
   d.setGraphics(true);
   if (opt_click_allowed & opt_display) {
     try{
       d.setGrayLevelPrecision(opt_grayLevelPrecision);
-      
+
       std::cout << "Please click on a dot to initialize detection"
                 << std::endl;
-      
+
       d.initTracking(I) ;
       if (opt_display) {
           vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),
@@ -433,14 +435,14 @@ main(int argc, char ** argv)
     d.setSizePrecision(opt_sizePrecision);
     d.setEllipsoidShapePrecision(opt_ellipsoidShapePrecision);
   }
-    
+
   while (iter < opt_first + opt_nimages*opt_step)
   {
 
     // set the new image name
-    
+
     if (opt_ppath.empty()){
-      
+
       s.str("");
       s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
       filename = dirname + s.str();
@@ -465,7 +467,7 @@ main(int argc, char ** argv)
 //         std::cout << "Dot auto detection did not work, "
 // 	      << "Please click on a dot to perform a manual detection"
 // 	      << std::endl;
-// 
+//
 //         d.initTracking( I );
 //         if (opt_display) {
 //           vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),

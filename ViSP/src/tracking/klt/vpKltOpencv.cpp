@@ -336,7 +336,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
   shifted in the array).
 
 */
-void vpKltOpencv::getFeature(int index, int &id, double &x, double &y)
+void vpKltOpencv::getFeature(int index, int &id, float &x, float &y)
 {
   if (index >= countFeatures)
     { 
@@ -357,7 +357,7 @@ void vpKltOpencv::getFeature(int index, int &id, double &x, double &y)
   shifted in the array).
 
 */
-void vpKltOpencv::getPrevFeature(int index, int &id, double &x, double &y)
+void vpKltOpencv::getPrevFeature(int index, int &id, float &x, float &y)
 {
   if (index >= countPrevFeatures)
     { 
@@ -377,7 +377,7 @@ Add at the end of the feauture list.
 If there is no space left, the feature is not added (just return)
 */
 void vpKltOpencv::addFeature(const int &id, 
-			     const double &x, const double &y)
+			     const float &x, const float &y)
 {
   if (maxFeatures == countFeatures)
     { 
