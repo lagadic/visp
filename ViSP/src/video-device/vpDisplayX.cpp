@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.36 2007-09-10 08:43:13 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.37 2007-09-12 07:33:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1459,7 +1459,7 @@ void vpDisplayX::displayPoint ( unsigned int i, unsigned int j,
   \param i1,j1 : (row,colum indexes) initial coordinates
   \param i2,j2 : (row,colum indexes) final coordinates
   \param col : color (see vpColor)
-  \param e : line_width
+  \param e : line thick
 */
 void vpDisplayX::displayLine ( unsigned int i1, unsigned int j1,
                                unsigned int i2, unsigned int j2,
@@ -1658,16 +1658,19 @@ void vpDisplayX::displayArrow ( unsigned int i1,unsigned int j1,
   \param height
   \param col : Color (see vpColor)
   \param fill : set as true to fill the rectangle.
+  \param e : line thick
 */
 void
 vpDisplayX::displayRectangle ( unsigned int i, unsigned int j,
                                unsigned int width, unsigned int height,
-                               vpColor::vpColorType col, bool fill )
+                               vpColor::vpColorType col, bool fill,
+			       unsigned int e )
 {
   if ( Xinitialise )
   {
+    if ( e == 1 ) e = 0;
     XSetForeground ( display, context, x_color[col] );
-    XSetLineAttributes ( display, context, 0,
+    XSetLineAttributes ( display, context, e,
                          LineSolid, CapButt, JoinBevel );
     if ( fill == false )
       XDrawRectangle ( display, pixmap, context,  j, i, width-1, height-1 );
@@ -1687,15 +1690,18 @@ vpDisplayX::displayRectangle ( unsigned int i, unsigned int j,
   \param rect : Rectangle characteristics.
   \param col : Color (see vpColor)
   \param fill : set as true to fill the rectangle.
+  \param e : line thick
 */
 void
 vpDisplayX::displayRectangle ( const vpRect &rect,
-                               vpColor::vpColorType col, bool fill )
+                               vpColor::vpColorType col, bool fill,
+			       unsigned int e )
 {
   if ( Xinitialise )
   {
+    if ( e == 1 ) e = 0;
     XSetForeground ( display, context, x_color[col] );
-    XSetLineAttributes ( display, context, 0,
+    XSetLineAttributes ( display, context, e,
                          LineSolid, CapButt, JoinBevel );
 
     XDrawRectangle ( display, pixmap, context,

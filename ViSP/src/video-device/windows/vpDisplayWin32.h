@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.11 2007-06-11 15:52:34 asaunier Exp $
+ * $Id: vpDisplayWin32.h,v 1.12 2007-09-12 07:33:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -176,9 +176,11 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   void displayRectangle(unsigned int i, unsigned int j,
 			unsigned int width, unsigned int height,
-			vpColor::vpColorType col, bool fill = false);
+			vpColor::vpColorType col, bool fill = false,
+			unsigned int e=1);
   void displayRectangle(const vpRect &rect,
-			vpColor::vpColorType col, bool fill = false);
+			vpColor::vpColorType col, bool fill = false,
+			unsigned int e=1);
 
   //! Display a circle at coordinates (i,j) in the display window.
   void displayCircle(unsigned int i, unsigned int j, unsigned int r,

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Renderer.h,v 1.5 2007-04-18 12:13:13 asaunier Exp $
+ * $Id: vpWin32Renderer.h,v 1.6 2007-09-12 07:33:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,7 +96,7 @@ class VISP_EXPORT vpWin32Renderer
     \param j1 its starting point's second coordinate
     \param i2 its ending point's first coordinate
     \param j2 its ending point's second coordinate
-    \param e width of the line
+    \param e line thickness
     \param col the line's color
     \param style style of the line
   */
@@ -113,10 +113,12 @@ class VISP_EXPORT vpWin32Renderer
     \param height height of the rectangle
     \param col The rectangle's color
     \param fill True if it is a filled rectangle
+    \param e line thickness
   */
   virtual void drawRect(unsigned int i, unsigned int j,
 			unsigned int width, unsigned int height,
-			vpColor::vpColorType col, bool fill=false) =0;
+			vpColor::vpColorType col, bool fill=false,
+			unsigned int e=1) =0;
 
   /*!
     Clears the image to color c.

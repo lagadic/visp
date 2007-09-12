@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.13 2007-06-13 08:56:36 asaunier Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.14 2007-09-12 07:33:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -421,18 +421,20 @@ void vpGDIRenderer::drawLine(unsigned int i1, unsigned int j1,
   \param height height of the rectangle
   \param col The rectangle's color
   \param fill True if it is a filled rectangle
+  \param e : Line thickness
 */
 void vpGDIRenderer::drawRect(unsigned int i, unsigned int j,
 			     unsigned int width, unsigned int height,
-			     vpColor::vpColorType col, bool fill)
+			     vpColor::vpColorType col, bool fill,
+			     unsigned int e)
 {
-
+  if (e == 0) e = 1;
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, 1, colors[col]);
+  HPEN hPen = CreatePen(PS_SOLID, e, colors[col]);
 
   //create an hollow or solid brush (depends on boolean fill)
   LOGBRUSH lBrush;
@@ -474,7 +476,7 @@ void vpGDIRenderer::drawRect(unsigned int i, unsigned int j,
 */
 void vpGDIRenderer::clear(vpColor::vpColorType c)
 {
-  drawRect(0, 0, nbCols, nbRows, c, true);
+  drawRect(0, 0, nbCols, nbRows, c, true, 0);
 }
 
 

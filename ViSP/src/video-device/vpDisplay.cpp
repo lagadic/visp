@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.21 2007-09-10 08:43:13 asaunier Exp $
+ * $Id: vpDisplay.cpp,v 1.22 2007-09-12 07:33:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -360,19 +360,21 @@ height.
 \param height : Height of the rectangle.
 \param col : Color of the rectangle.
 \param fill : set as true to fill the rectangle.
+\param e : Line thickness
 
 */
 void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               unsigned int i, unsigned int j,
                               unsigned int width, unsigned int height,
-                              vpColor::vpColorType col, bool fill )
+                              vpColor::vpColorType col, bool fill,
+			      unsigned int e)
 {
   try
   {
     if ( I.display != NULL )
     {
-      ( I.display )->displayRectangle ( i,j,width,height,col, fill ) ;
+      ( I.display )->displayRectangle ( i,j,width,height,col, fill, e ) ;
     }
   }
   catch ( ... )
@@ -389,17 +391,19 @@ Display a rectangle in the display window.
 \param rect : The rectangle characteristics
 \param col  : Color of the rectangle.
 \param fill : set as true to fill the rectangle.
+\param e : Line thickness
 */
 void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               const vpRect &rect,
-                              vpColor::vpColorType col, bool fill )
+                              vpColor::vpColorType col, bool fill,
+			      unsigned int e )
 {
   try
   {
     if ( I.display != NULL )
     {
-      ( I.display )->displayRectangle ( rect, col , fill ) ;
+      ( I.display )->displayRectangle ( rect, col , fill, e ) ;
     }
   }
   catch ( ... )
@@ -1119,19 +1123,21 @@ height.
 \param height Height of the rectangle.
 \param col Color of the rectangle.
 \param fill : set as true to fill the rectangle.
+\param e : Line thickness
 
 */
 void
 vpDisplay::displayRectangle_uv ( const vpImage<unsigned char> &I,
                                  unsigned int u, unsigned int v,
                                  unsigned int width, unsigned int height,
-                                 vpColor::vpColorType col, bool fill )
+                                 vpColor::vpColorType col, bool fill,
+				 unsigned int e )
 {
   try
   {
     if ( I.display != NULL )
     {
-      ( I.display )->displayRectangle ( v,u,width,height,col,fill ) ;
+      ( I.display )->displayRectangle ( v,u,width,height,col,fill, e ) ;
     }
   }
   catch ( ... )
