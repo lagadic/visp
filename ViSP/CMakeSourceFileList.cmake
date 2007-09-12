@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.21 2007-09-04 09:31:35 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.22 2007-09-12 07:32:18 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -191,6 +191,7 @@ SET (SRC_TRACKING
   tracking/forward-projection/vpSphere.cpp
   tracking/general-tracking-issues/vpTracker.cpp
   tracking/general-tracking-issues/vpTrackingException.cpp
+  tracking/klt/vpKltOpencv.cpp
   tracking/moving-edges/vpMe.cpp
   tracking/moving-edges/vpMeEllipse.cpp
   tracking/moving-edges/vpMeLine.cpp

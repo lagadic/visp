@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-01-25 11:14:54 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.4 2007-09-12 07:32:18 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -47,6 +47,7 @@ SET (SOURCE
   trackMeLine.cpp
   trackDot.cpp
   trackDot2.cpp
+  trackKltOpencv.cpp
 )
 
 # rule for binary build
