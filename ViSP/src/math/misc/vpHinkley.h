@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.h,v 1.5 2007-08-17 15:24:45 fspindle Exp $
+ * $Id: vpHinkley.h,v 1.6 2007-09-13 14:17:52 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -42,9 +42,10 @@
   \file vpHinkley.h
   \brief class for Hinkley's cumulative test computation.
 */
+#include <visp/vpConfig.h>
 
 
-class vpHinkley
+class VISP_EXPORT vpHinkley
 {
  public:
   /*! \enum vpHinkleyJump
