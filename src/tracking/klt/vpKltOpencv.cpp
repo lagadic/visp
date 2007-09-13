@@ -227,7 +227,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
   if (OnInitialize)
     OnInitialize(_tid);
 	
-  printf("Number of features at init: %d\n", countFeatures);
+  //printf("Number of features at init: %d\n", countFeatures);
   for (int boucle=0; boucle<countFeatures;boucle++)  {
     featuresid[boucle] = globalcountFeatures;
     globalcountFeatures++;
