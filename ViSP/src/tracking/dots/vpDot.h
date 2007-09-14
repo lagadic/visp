@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.24 2007-06-12 14:50:06 asaunier Exp $
+ * $Id: vpDot.h,v 1.25 2007-09-14 08:26:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -262,8 +262,16 @@ public:
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
 
   void setMaxDotSize(double percentage) ;
+  void setGrayLevelMin( const unsigned int &gray_level_min ) {
+    this->gray_level_min = gray_level_min;
+  };
+  void setGrayLevelMax( const unsigned int &gray_level_max ) {
+    this->gray_level_max = gray_level_max;
+  };
+
   void setGrayLevelPrecision( const double & grayLevelPrecision );
   
+  inline double getGamma() {return this->gamma;};
   /*!
 
     Return the precision of the gray level of the dot. It is a double
@@ -271,7 +279,7 @@ public:
     values close to 0 show a very bad precision.
 
   */
-double getGrayLevelPrecision() const {return grayLevelPrecision;}
+  double getGrayLevelPrecision() const {return grayLevelPrecision;}
 
   /*!
     Activates the display of all the pixels of the dot during the tracking.
