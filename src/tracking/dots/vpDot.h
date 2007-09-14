@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.25 2007-09-14 08:26:10 fspindle Exp $
+ * $Id: vpDot.h,v 1.26 2007-09-14 11:55:07 megautie Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -262,6 +262,9 @@ public:
   void track(vpImage<unsigned char> & I, double &u, double &v) ;
 
   void setMaxDotSize(double percentage) ;
+  double getMaxDotSize(){
+    return this->maxDotSizePercentage;
+  }
   void setGrayLevelMin( const unsigned int &gray_level_min ) {
     this->gray_level_min = gray_level_min;
   };
@@ -270,7 +273,7 @@ public:
   };
 
   void setGrayLevelPrecision( const double & grayLevelPrecision );
-  
+
   inline double getGamma() {return this->gamma;};
   /*!
 
