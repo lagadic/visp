@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.8 2007-08-17 15:10:38 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.9 2007-09-14 08:42:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,7 +41,9 @@
 
 /*!
   \file vpImageTools.h
-  \brief Various image tools...
+
+  \brief Various image tools; sub-image extraction, modification of
+  the look up table, binarisation...
 
 */
 
@@ -59,10 +61,8 @@
 /*!
   \class vpImageTools
 
-  \brief  Various image tools...
-
-  \author Fabien Spindler  (Fabien.Spindler@irisa.fr) Irisa / Inria Rennes
-
+  \brief Various image tools; sub-image extraction, modification of
+  the look up table, binarisation...
 
 */
 class VISP_EXPORT vpImageTools
@@ -79,6 +79,10 @@ public:
   static void createSubImage(const vpImage<Type> &I,
 			     const vpRect &rect,
 			     vpImage<Type> &S);
+  template<class Type>
+  static void binarise(vpImage<Type> &I,
+		       Type threshold1, Type threshold2, 
+		       Type value1, Type value2, Type value3);
   static void changeLUT(vpImage<unsigned char>& I,
 			unsigned char A,
 			unsigned char newA,
@@ -87,7 +91,7 @@ public:
 
 } ;
 
-/*
+/*!
   Extract a sub part of an image
 
   \param I : Input image from which a sub image will be extracted.
@@ -123,7 +127,7 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
       S[i-i_sub][j-j_sub] = I[i][j] ;
     }
 }
-/*
+/*!
   Extract a sub part of an image
 
   \param I : Input image from which a sub image will be extracted.
@@ -171,7 +175,34 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
     }
   }
 }
+/*!
 
+  Binarise an image.
+
+  - Pixels whose walues are less than \e threshold1 are set to \e value1
+
+  - Pixels whose walues are greater then or equal to \e threshold1 and
+    less then or equal to \e threshold2 are set to \e value2
+
+  - Pixels whose walues are greater than \e threshold2 are set to \e value3
+  
+*/
+template<class Type>
+void vpImageTools::binarise(vpImage<Type> &I,
+			    Type threshold1, Type threshold2, 
+			    Type value1, Type value2, Type value3)
+{
+  unsigned char v;
+  unsigned char *p = I.bitmap;
+  unsigned char *pend = I.bitmap + I.getWidth()*I.getHeight();
+  for (; p < pend; p ++) {
+    v = *p;
+    if (v < threshold1) *p = value1;
+    else if (v > threshold2) *p = value3;
+    else *p = value2;
+  }
+
+}
 
 
 #endif

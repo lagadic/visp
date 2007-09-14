@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.cpp,v 1.10 2007-05-10 16:31:36 fspindle Exp $
+ * $Id: vpImageTools.cpp,v 1.11 2007-09-14 08:42:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,19 +40,24 @@
 
 /*!
 
-  Change the look up table (LUT) of an image. Considering image values
-   v in the range [A, B], rescale this values in [newA, newB] by linear
-  interpolation.
+  Change the look up table (LUT) of an image. Considering pixel values
+  \f$ v \f$ in the range \f$[A, B]\f$, rescale this values in
+  \f$[A^*, B^*]\f$ by linear interpolation:
 
-  - if v \f$ \in \f$ ]-inf, A], set v to newA
-  - else if v \f$ \in \f$ [B, inf[ set v to newB
-  - else set v to newA + (newB-newA)/(B-A)*(v-A)
+  \f$
+  \left\{ \begin{array}{ll}
+  v \in ]-\infty, A] \mbox{, } &  v = A^* \\
+  v \in  [B, \infty[ \mbox{, } &  v = B^* \\
+  v \in ]A, B[ \mbox{, }       &  v = A^* + (v-A) * \frac{B^*-A^*}{B-A}
+  \end{array} 
+  \right.
+  \f$
 
   \param I : Image to process.
   \param A : Low value of the range to consider.
-  \param newA : New value to attribute to pixel who's value was A
+  \param A_star : New value \f$ A^*\f$ to attribute to pixel who's value was A
   \param B : Height value of the range to consider.
-  \param newB : New value to attribute to pixel who's value was B
+  \param B_star : New value \f$ B^*\f$ to attribute to pixel who's value was B
 
   This method can be used to binarize an image. For an unsigned char image
   (in the range 0-255), thresholding this image at level 128 can be done by:
@@ -67,28 +72,24 @@
 */
 void vpImageTools::changeLUT(vpImage<unsigned char>& I,
 			     unsigned char A,
-			     unsigned char newA,
+			     unsigned char A_star,
 			     unsigned char B,
-			     unsigned char newB)
+			     unsigned char B_star)
 {
   unsigned char v;
-  double A_ = A;
-  double B_ = B;
-  double newA_ = newA;
-  double newB_ = newB;
 
-  double factor = (newB_ - newA_)/(B_ - A_);
+  double factor = (B_star - A_star)/(B - A);
 
   for (unsigned int i=0 ; i < I.getHeight(); i++)
     for (unsigned int j=0 ; j < I.getWidth(); j++) {
       v = I[i][j];
 
       if (v <= A)
-	I[i][j] = newA;
+	I[i][j] = A_star;
       else if (v >= B)
-	I[i][j] = newB;
+	I[i][j] = B_star;
       else
-	I[i][j] = (unsigned char)(newA + factor*(v-A));
+	I[i][j] = (unsigned char)(A_star + factor*(v-A));
   }
 }
 
