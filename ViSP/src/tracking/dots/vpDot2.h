@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.31 2007-09-07 15:32:50 megautie Exp $
+ * $Id: vpDot2.h,v 1.32 2007-09-14 09:30:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,6 +75,28 @@ public:
 
   double get_u() const;
   double get_v() const;
+  /*!
+
+  Return the list of the "u" coordinates (row) of all the pixels on the dot
+  border.
+
+  \param u_list The "u" coordinate of the pixels on the dot border. This list
+  is update after a call to track().
+
+
+  */
+  void   get_u(vpList<unsigned int> & u_list) { u_list = this->u_list; };
+  /*!
+
+  Return the list of the "v" coordinates (column) of all the pixels on the dot
+  border.
+
+  \param v_list The "v" coordinate of the pixels on the dot border. This list
+  is update after a call to track().
+
+  */
+  void   get_v(vpList<unsigned int> & v_list) { v_list = this->v_list; };
+
   double getWidth() const;
   double getHeight() const;
   double getSurface() const;
@@ -115,6 +137,7 @@ public:
   double getSizePrecision() const;
   double getEllipsoidShapePrecision() const;
   double getMaxSizeSearchDistancePrecision() const;
+  inline double getGamma() {return this->gamma;};
   /*!
     Activates the display of the border of the dot during the tracking.
 
