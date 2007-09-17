@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogramPeak.cpp,v 1.1 2007-03-02 13:05:11 fspindle Exp $
+ * $Id: vpHistogramPeak.cpp,v 1.2 2007-09-17 09:15:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,6 +101,17 @@ bool
 vpHistogramPeak::operator==(const vpHistogramPeak &p) const
 {
   return ( (level == p.level) && (value == p.value) );
+}
+
+/*!
+  \brief std::cout a peak
+*/
+std::ostream &operator <<(std::ostream &s,const vpHistogramPeak &p)
+{
+  
+  s << (int)p.getLevel() << " " << p.getValue();
+
+  return s;
 }
 
 /*
