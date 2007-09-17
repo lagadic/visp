@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.h,v 1.4 2007-09-10 09:07:29 fspindle Exp $
+ * $Id: vpHistogram.h,v 1.5 2007-09-17 09:15:06 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -226,6 +226,7 @@ public:
 		    vpHistogramPeak & peakl,
 		    vpHistogramPeak & peakr, 
 		    vpHistogramValey & valey);
+  unsigned getValey(vpList<vpHistogramValey> & valey);
   bool     getValey(const vpHistogramPeak & peak1, 
 		    const vpHistogramPeak & peak2,
 		    vpHistogramValey & valey);

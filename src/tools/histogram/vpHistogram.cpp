@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.cpp,v 1.5 2007-05-02 16:43:22 fspindle Exp $
+ * $Id: vpHistogram.cpp,v 1.6 2007-09-17 09:15:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -356,7 +356,7 @@ unsigned vpHistogram::getPeaks(unsigned char dist,
 /*!
 
   Determine the two highest peaks in the histogram and compute a
-  threshold to separate the two objects. Here we dont now which is the
+  threshold to separate the two objects. Here we dont know which is the
   highest peak. It could be \e peakl or \e peakr.
 
   \param dist  : Distance between two significative histogram maxima
@@ -516,6 +516,78 @@ vpHistogram::getPeaks(unsigned char dist,
 
     return (true);
   }
+}
+
+/*!
+
+  Build a list of all histogram valey. This valey list is gray level
+  sorted from 0 to 255. That mean that the first valey has a gray level
+  less than the second one, etc.
+
+  \param valey :  List of valey.
+  \return The number of valey in the histogram.
+
+  \sa sort()
+*/
+unsigned vpHistogram::getValey(vpList<vpHistogramValey> & valey)
+{
+  if (histogram == NULL) {
+    vpERROR_TRACE("Histogram array not initialised\n");
+    throw (vpImageException(vpImageException::notInitializedError,
+			    "Histogram array not initialised")) ;
+  }
+
+  int prev_slope;              // Previous histogram inclination
+  int next_slope;              // Next histogram inclination
+  vpHistogramValey p;           // An histogram valey
+  unsigned nbvaley; // Number of valey in the histogram (ie local minima)
+
+  if ( ! valey.empty() )
+    valey.kill();
+
+  valey.front();
+
+  // Parse the histogram to get the local minima
+  unsigned cpt = 0;
+  unsigned sum_level = 0;
+  nbvaley = 0;
+  prev_slope = -1;
+
+  for (unsigned i = 0; i < size-1; i++) {
+    next_slope = histogram[i+1] - histogram[i];
+
+    if ((prev_slope < 0) && (next_slope == 0) ) {
+      sum_level += i + 1;
+      cpt ++;
+      continue;
+    }
+
+    // Valey detection
+    if ( (prev_slope < 0) && (next_slope > 0) ) {
+      sum_level += i;
+      cpt ++;
+
+      unsigned int level = sum_level / cpt;
+      p.set((unsigned char)level, histogram[level]);
+      //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
+      valey.addRight(p);
+
+      nbvaley ++;
+
+    }
+
+    prev_slope = next_slope;
+    sum_level = 0;
+    cpt = 0;
+  }
+  if (prev_slope < 0) {
+    p.set((unsigned char)size-1, histogram[size-1]);
+    //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
+    valey.addRight(p);
+    nbvaley ++;
+  }
+
+  return nbvaley;
 }
 
 /*!
