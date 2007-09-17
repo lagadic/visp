@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogramValey.h,v 1.1 2007-03-02 13:05:11 fspindle Exp $
+ * $Id: vpHistogramValey.h,v 1.2 2007-09-17 09:16:13 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -149,6 +149,11 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
       return value;
     };
 
+  //---------------------------------
+  // Printing
+  //---------------------------------
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
+						const vpHistogramValey &v);
 };
 
 /*

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogramValey.cpp,v 1.1 2007-03-02 13:05:11 fspindle Exp $
+ * $Id: vpHistogramValey.cpp,v 1.2 2007-09-17 09:16:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,6 +74,17 @@ bool
 vpHistogramValey::operator==(const vpHistogramValey &v) const
 {
   return ( (level == v.level) && (value == v.value) );
+}
+
+/*!
+  \brief std::cout a valey
+*/
+std::ostream &operator <<(std::ostream &s,const vpHistogramValey &v)
+{
+  
+  s << (int)v.getLevel() << " " << v.getValue();
+
+  return s;
 }
 
 
