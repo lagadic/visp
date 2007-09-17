@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.26 2007-06-12 14:50:06 asaunier Exp $
+ * $Id: vpDot.cpp,v 1.27 2007-09-17 09:18:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,6 +75,7 @@ void vpDot::init()
   graphics = false ;
   maxDotSizePercentage = 0.25 ; // 25 % of the image size
   
+  mean_gray_level = 0;
   gray_level_min = 128;
   gray_level_max = 255;
   grayLevelPrecision = 0.85;
@@ -85,6 +86,9 @@ void vpDot::init()
   connexity = CONNEXITY_4;
 
   u_min = u_max = v_min = v_max = 0;
+
+  gray_level_out = 0;
+  nbMaxPoint = 0;
 }
 
 vpDot::vpDot() : vpTracker()
@@ -164,6 +168,7 @@ vpDot::operator=(const vpDot& pt)
   cog_vfloat = pt.cog_vfloat ;
 
   graphics = pt.graphics ;
+  mean_gray_level = pt.mean_gray_level ;
   gray_level_min = pt.gray_level_min ;
   gray_level_max = pt.gray_level_max ;
   grayLevelPrecision = pt.grayLevelPrecision;
@@ -182,6 +187,10 @@ vpDot::operator=(const vpDot& pt)
   u_max = pt.u_max;
   v_max = pt.v_max;
 
+  gray_level_out = pt.gray_level_out;
+
+  nbMaxPoint = pt.nbMaxPoint;
+
   return *this ;
 }
 
@@ -198,14 +207,45 @@ vpDot::operator==(const vpDot& m)
 }
 
 /*!
+
+  This method choose a gray level (default is 0) used to modify the
+  "in" dot level in "out" dot level. This gray level is here needed to
+  stop the recursivity . The pixels of the dot are set to this new
+  gray level "\out\" when connexe() is called.
+
+  \exception vpTrackingException::initializationError : No valid gray
+  level "out" can be found. This means that the min gray level is set to 0
+  and the max gray level to 255. This should not occur
+*/
+void 
+vpDot::setGrayLevelOut()
+{
+  if (gray_level_min == 0) {
+    if (gray_level_max == 255) {
+      // gray_level_min = 0 and gray_level_max = 255: this should not occur
+      vpERROR_TRACE("Unable to choose a good \"out\" level") ;
+      throw(vpTrackingException(vpTrackingException::initializationError,
+				"Unable to choose a good \"out\" level")) ;
+    }
+    gray_level_out = gray_level_max + 1;
+  }
+}
+
+/*!
   Perform the tracking of a dot by connex components.
 
   \param mean_value : Threshold to use for the next call to track()
   and corresponding to the mean value of the dot intensity.
 
-  \warning The content of the image is modified.
+  \warning The content of the image is modified thanks to
+  setGrayLevelOut() called before. This method choose a gray level
+  (default is 0) used to modify the "in" dot level in "out" dot
+  level. This gray level is here needed to stop the recursivity . The
+  pixels of the dot are set to this new gray level "\out\".
 
   \return vpDot::out if an error occurs, vpDot::in otherwise.
+
+  \sa setGrayLevelOut()
 */
 int
 vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
@@ -224,13 +264,27 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
   {
     if (graphics==true)
     {
+      //      printf("u %d v %d\n", u, v);
       vpDisplay::displayPoint(I,v,u,vpColor::green) ;
+      //vpDisplay::flush(I);
     }
     Lu += u ;
     Lv += v ;
     u_cog += u ;
     v_cog += v ;
     n+=1 ;
+
+    if (n > nbMaxPoint) {
+      vpERROR_TRACE("Too many point %lf (%lf%% of image size). "
+		    "This threshold can be modified using the setMaxDotSize() "
+		    "method.",
+		    n, n / (I.getWidth() * I.getHeight()),
+		    nbMaxPoint, maxDotSizePercentage) ;
+
+      throw(vpTrackingException(vpTrackingException::featureLostError,
+				"Dot to big")) ;
+    }
+
     // Bounding box update
     if (u < this->u_min) this->u_min = u;
     if (u > this->u_max) this->u_max = u;
@@ -254,7 +308,7 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
       m20 += u*u ;
       m02 += v*v ;
     }
-    I[v][u] = 0 ;
+    I[v][u] = this->gray_level_out ;
   }
   else
   {
@@ -345,7 +399,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 {
   // Set the maximal number of points considering the maximal dot size
   // image percentage
-  double nbMaxPoint = (I.getWidth() * I.getHeight()) *  maxDotSizePercentage;
+  nbMaxPoint = (I.getWidth() * I.getHeight()) *  maxDotSizePercentage;
 
   // segmentation de l'image apres seuillage
   // (etiquetage des composante connexe)
@@ -355,7 +409,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   double u_cog = 0 ;
   double v_cog = 0 ;
   double npoint = 0 ;
-  double mean_value = 0 ;
+  this->mean_gray_level = 0 ;
 
   Lu.kill() ;
   Lv.kill() ;
@@ -370,7 +424,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   // Original version
   if (  connexe(I, (unsigned int)u, (unsigned int)v,
 		gray_level_min, gray_level_max,
-		mean_value, u_cog, v_cog, npoint) == vpDot::out)
+		mean_gray_level, u_cog, v_cog, npoint) == vpDot::out)
   {
     bool sol = false ;
     unsigned int pas  ;
@@ -383,10 +437,10 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	  v_cog = 0 ;
 	  Lu.kill() ;
 	  Lv.kill() ;
-	  mean_value = 0;
+	  this->mean_gray_level = 0 ;
 	  if (connexe(I, (unsigned int)(u+k*pas),(unsigned int)(v+l*pas),
 		      gray_level_min, gray_level_max,
-		      mean_value,u_cog, v_cog, npoint) != vpDot::out)
+		      mean_gray_level, u_cog, v_cog, npoint) != vpDot::out)
 	  {
 	    sol = true ; u += k*pas ; v += l*pas ;
 	  }
@@ -403,7 +457,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   // If the dot is not found, search around using a spiral
   if (  connexe(I,(unsigned int)u,(unsigned int)v,
 		gray_level_min, gray_level_max,
-		mean_value, u_cog, v_cog, npoint) == vpDot::out)
+		mean_gray_level, u_cog, v_cog, npoint) == vpDot::out)
   {
 
     bool sol = false ;
@@ -422,9 +476,9 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	v_cog = 0 ;
 	Lu.kill() ;
 	Lv.kill() ;
-	mean_value = 0;
+	this->mean_gray_level = 0 ;
 	if (connexe(I, (unsigned int)u_+k, (unsigned int)(v_),
-		    gray_level_min, gray_level_max, mean_value,
+		    gray_level_min, gray_level_max, mean_gray_level,
 		    u_cog, v_cog, npoint) != vpDot::out) {
 	  sol = true; u = u_+k; v = v_;
 	}
@@ -437,10 +491,10 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	v_cog = 0 ;
 	Lu.kill() ;
 	Lv.kill() ;
-	mean_value = 0;
-
+	this->mean_gray_level = 0 ;
+	
 	if (connexe(I, (unsigned int)(u_), (unsigned int)(v_+k),
-		    gray_level_min, gray_level_max, mean_value,
+		    gray_level_min, gray_level_max, mean_gray_level,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true; u = u_; v = v_+k;
@@ -454,10 +508,10 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	v_cog = 0 ;
 	Lu.kill() ;
 	Lv.kill() ;
-	mean_value = 0;
+	this->mean_gray_level = 0 ;
 
 	if (connexe(I, (unsigned int)(u_-k), (unsigned int)(v_),
-		    gray_level_min,  gray_level_max, mean_value,
+		    gray_level_min,  gray_level_max, mean_gray_level,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true ; u = u_-k; v = v_;
@@ -471,10 +525,10 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	v_cog = 0 ;
 	Lu.kill() ;
 	Lv.kill() ;
-	mean_value = 0;
+	this->mean_gray_level = 0 ;
 
 	if (connexe(I, (unsigned int)(u_), (unsigned int)(v_-k),
-		    gray_level_min, gray_level_max, mean_value,
+		    gray_level_min, gray_level_max, mean_gray_level,
 		    u_cog, v_cog, npoint)
 	    != vpDot::out) {
 	  sol = true ; u = u_; v = v_-k;
@@ -510,7 +564,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   v = v_cog ;
 
   // Initialize the threshold for the next call to track()
-  double Ip = pow((double)mean_value/255,1/gamma);
+  double Ip = pow((double)this->mean_gray_level/255,1/gamma);
 
   if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
@@ -778,7 +832,7 @@ vpDot::track(vpImage<unsigned char> &I)
   double v = cog_vfloat ;
 
   try{
-
+    setGrayLevelOut();
     COG(I,u,v) ;
   }
   catch(...)
