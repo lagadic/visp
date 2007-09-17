@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.26 2007-09-14 11:55:07 megautie Exp $
+ * $Id: vpDot.h,v 1.27 2007-09-17 09:18:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,7 +96,6 @@ private:
 
   // Flag used to allow display
   bool graphics ;
-
 
 public :
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
@@ -223,11 +222,15 @@ private:
       out
     } ;
   double maxDotSizePercentage;
+  unsigned char gray_level_out;
+  void setGrayLevelOut();
+
   int connexe(vpImage<unsigned char>& I, int u, int v,
 	      unsigned int gray_level_min, unsigned int gray_level_max,
 	      double &mean_value, double &u_cog, double &v_cog, double &n);
   void COG(vpImage<unsigned char> &I,double& u, double& v) ;
 
+  double mean_gray_level; // Mean gray level of the dot
   unsigned int gray_level_min; // left threshold for binarisation
   unsigned int gray_level_max; // right threshold for binarisation
   double grayLevelPrecision;  //precision of the gray level of the dot.
@@ -236,6 +239,7 @@ private:
   double gamma ;
   //! flag : true moment are computed
   bool compute_moment ;
+  double nbMaxPoint;
 
 public:
   /*!
@@ -271,7 +275,14 @@ public:
   void setGrayLevelMax( const unsigned int &gray_level_max ) {
     this->gray_level_max = gray_level_max;
   };
+  /*!
 
+  \return The mean gray level value of the dot.
+
+  */
+  double getMeanGrayLevel() {
+    return (this->mean_gray_level);
+  };
   void setGrayLevelPrecision( const double & grayLevelPrecision );
 
   inline double getGamma() {return this->gamma;};
