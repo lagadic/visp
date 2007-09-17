@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.14 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.15 2007-09-17 13:03:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -145,10 +145,12 @@ bool vpGDIRenderer::render()
   //selects this bmp in memory
   EnterCriticalSection(&CriticalSection);
   SelectObject(hDCMem, bmp);
-  LeaveCriticalSection(&CriticalSection);
+  
 
   //blits it on the window's DC
   BitBlt(hDCScreen, 0, 0, nbCols, nbRows, hDCMem, 0, 0, SRCCOPY);
+
+  LeaveCriticalSection(&CriticalSection);
   DeleteDC(hDCMem);
 
   EndPaint(hWnd, &ps);
@@ -351,7 +353,7 @@ void vpGDIRenderer::setPixel(unsigned int y, unsigned int x,
 
   SetPixel(hDCMem,x,y,colors[color]);
   //display the result (flush)
-  BitBlt(hDCScreen, x, y, 1, 1, hDCMem, x, y, SRCCOPY);
+ // BitBlt(hDCScreen, x, y, 1, 1, hDCMem, x, y, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
 
@@ -403,7 +405,7 @@ void vpGDIRenderer::drawLine(unsigned int i1, unsigned int j1,
   unsigned int h = (i2 >= i1) ? i2-i1 : i1-i2;
 
   //display the result (flush)
-  BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
+ // BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
 
@@ -459,7 +461,7 @@ void vpGDIRenderer::drawRect(unsigned int i, unsigned int j,
   Rectangle(hDCMem, j, i, j+width, i+height);
 
   //display the result (flush)
-  BitBlt(hDCScreen, j, i, width, height, hDCMem, j, i, SRCCOPY);
+//  BitBlt(hDCScreen, j, i, width, height, hDCMem, j, i, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
 
@@ -522,7 +524,7 @@ void vpGDIRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
   Ellipse(hDCMem, x1, y1, x2, y2),
 
     //display the result (flush)
-    BitBlt(hDCScreen, x1, y1, x2-x1, y2-y1, hDCMem, x1, y1, SRCCOPY);
+   // BitBlt(hDCScreen, x1, y1, x2-x1, y2-y1, hDCMem, x1, y1, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
 
@@ -570,7 +572,7 @@ void vpGDIRenderer::drawText(unsigned int i, unsigned int j, char * s,
   TextOut(hDCMem, j, i, s, length);
 
   //display the result (flush)
-  BitBlt(hDCScreen, j, i, size.cx, size.cy, hDCMem, j, i, SRCCOPY);
+ // BitBlt(hDCScreen, j, i, size.cx, size.cy, hDCMem, j, i, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
 
@@ -622,8 +624,8 @@ void vpGDIRenderer::drawCross(unsigned int i,unsigned int j, unsigned int size,
     LineTo(hDCMem, j, i+half_size);
 
     //display the result (flush)
-    BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size,
-	   hDCMem, j-(size/2), i-(size/2), SRCCOPY);
+  //  BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size,
+//	   hDCMem, j-(size/2), i-(size/2), SRCCOPY);
 
     LeaveCriticalSection(&CriticalSection);
 
@@ -726,7 +728,7 @@ void vpGDIRenderer::drawArrow(unsigned int i1,unsigned int j1,
 
 
   //display the result (flush)
-  BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
+//  BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
 
