@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.12 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpDisplayWin32.h,v 1.13 2007-09-17 13:03:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -144,6 +144,10 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   //! Changes the window's title
   void flushTitle(const char *string);
+
+  //! Flush the Display
+  void flushDisplay();
+
 
   //! Displays a 8bits image
   void displayImage(const vpImage<vpRGBa> &I);

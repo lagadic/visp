@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.19 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.20 2007-09-17 13:03:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -336,6 +336,19 @@ void vpDisplayWin32::flushTitle(const char *string)
   //wait if the window is not initialized
   waitForInit();
   SetWindowText(window.hWnd,string);
+}
+/*!
+  \brief flush the Win32 buffer
+  It's necessary to use this function to see the results of any drawing
+
+*/
+void vpDisplayWin32::flushDisplay()
+{
+  //waits if the window is not initialized
+  waitForInit();
+
+  //sends a message to the window
+  PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
 }
 
 /*!

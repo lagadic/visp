@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.cpp,v 1.6 2007-06-05 13:47:39 asaunier Exp $
+ * $Id: vpWin32Window.cpp,v 1.7 2007-09-17 13:03:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -258,7 +258,7 @@ void vpWin32Window::initWindow(char* title, int posx, int posy, int w, int h)
 
   wcex.cbSize = sizeof(WNDCLASSEX); 
 
-  wcex.style			= CS_HREDRAW | CS_VREDRAW | CS_NOCLOSE;
+  wcex.style			= CS_HREDRAW | CS_VREDRAW | CS_NOCLOSE ;
   wcex.lpfnWndProc	= (WNDPROC)WndProc;
   wcex.cbClsExtra		= 0;
   wcex.cbWndExtra		= 0;
