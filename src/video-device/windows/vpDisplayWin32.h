@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.14 2007-09-17 13:32:45 asaunier Exp $
+ * $Id: vpDisplayWin32.h,v 1.15 2007-09-17 13:34:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -156,9 +156,6 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   //! Closes the display
   void closeDisplay();
-
-  //! Not used by this Display
-  void flushDisplay();
 
   //! Clears the whole window
   void clearDisplay(vpColor::vpColorType c=vpColor::white);
