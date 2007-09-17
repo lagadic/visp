@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogramPeak.h,v 1.1 2007-03-02 13:05:11 fspindle Exp $
+ * $Id: vpHistogramPeak.h,v 1.2 2007-09-17 09:15:57 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -46,6 +46,8 @@
 
 #ifndef vpHistogramPeak_h
 #define vpHistogramPeak_h
+
+#include <ostream>
 
 #include <visp/vpConfig.h>
 
@@ -142,6 +144,13 @@ public :
     {
       return value;
     };
+
+  //---------------------------------
+  // Printing
+  //---------------------------------
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
+						const vpHistogramPeak &p);
+
 
 protected :
   unsigned char level; //! Gray level ot the peak.
