@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.35 2007-09-12 16:00:29 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.36 2007-09-17 09:20:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,6 +95,7 @@ vpDot2::vpDot2() : vpTracker()
   width = 0;
   height = 0;
   surface = 0;
+  mean_gray_level = 0;
   gray_level_min = 128;
   gray_level_max = 255;
   grayLevelPrecision = 0.80;
@@ -134,6 +135,7 @@ vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
   width = 0;
   height = 0;
   surface = 0;
+  mean_gray_level = 0;
   gray_level_min = 128;
   gray_level_max = 255;
   grayLevelPrecision = 0.80;
@@ -173,6 +175,7 @@ vpDot2::vpDot2(const double u, const double v ) : vpTracker()
   width = 0;
   height = 0;
   surface = 0;
+  mean_gray_level = 0;
   gray_level_min = 128;
   gray_level_max = 255;
   grayLevelPrecision = 0.80;
@@ -212,6 +215,7 @@ void vpDot2::operator=( vpDot2& twinDot )
   width    = twinDot.width;
   height   = twinDot.height;
   surface  = twinDot.surface;
+  mean_gray_level = twinDot.mean_gray_level;
   gray_level_min = twinDot.gray_level_min;
   gray_level_max = twinDot.gray_level_max;
   grayLevelPrecision = twinDot.grayLevelPrecision;
@@ -624,7 +628,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
   unsigned int v = (unsigned int) this->get_v();
   // Updates the min and max gray levels for the next iteration
   // double Ip = pow((double)I[v][u]/255,1/gamma);
-  double Ip = pow((double)getMeanGrayLevel(I)/255,1/gamma);
+  double Ip = pow(getMeanGrayLevel()/255,1/gamma);
   //printf("current value of gray level center : %i\n", I[v][u]);
 
    //getMeanGrayLevel(I);
@@ -1239,8 +1243,8 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       dotToTest = getInstance();
       dotToTest->set_u(u);
       dotToTest->set_v(v);
-      dotToTest->setGrayLevelMin ( getGrayLevelMin()  );
-      dotToTest->setGrayLevelMax ( getGrayLevelMax()  );
+      dotToTest->setGrayLevelMin ( getGrayLevelMin() );
+      dotToTest->setGrayLevelMax ( getGrayLevelMax() );
       dotToTest->setGrayLevelPrecision( getGrayLevelPrecision() );
       dotToTest->setSizePrecision( getSizePrecision() );
       dotToTest->setGraphics( graphics );
@@ -1660,9 +1664,9 @@ vpList<unsigned int> vpDot2::getList_v()
   \sa getFirstBorder_u(), getFirstBorder_v()
 
 */
-bool vpDot2::computeParameters( vpImage<unsigned char> &I,
-				const double &_u,
-				const double &_v)
+bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
+			       const double &_u,
+			       const double &_v)
 {
   direction_list.kill();
   u_list.kill();
@@ -1846,6 +1850,7 @@ bool vpDot2::computeParameters( vpImage<unsigned char> &I,
   height  = bbox_v_max - bbox_v_min + 1;
   surface = m00;
 
+  computeMeanGrayLevel(I);
   return true;
 }
 
@@ -2285,7 +2290,7 @@ void vpDot2::getGridSize( unsigned int &gridWidth, unsigned int &gridHeight )
 
 /*!
 
-  Get an approximation of  mean gray level of the dot.
+  Compute an approximation of  mean gray level of the dot.
   We compute it by searching the mean of vertical and diagonal points
   which gray is between min and max gray level.
 
@@ -2295,7 +2300,8 @@ void vpDot2::getGridSize( unsigned int &gridWidth, unsigned int &gridHeight )
 
 
 */
-unsigned char vpDot2::getMeanGrayLevel(vpImage<unsigned char>& I) const{
+void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char>& I) 
+{
   unsigned int cog_u = (unsigned int)get_u();
   unsigned int cog_v = (unsigned int)get_v();
 
@@ -2304,14 +2310,14 @@ unsigned char vpDot2::getMeanGrayLevel(vpImage<unsigned char>& I) const{
 
   for(int i=this->bbox_u_min; i <=this->bbox_u_max ; i++){
     unsigned int pixel_gray =(unsigned int) I[cog_v][i];
-    if (pixel_gray > getGrayLevelMin()  && pixel_gray < getGrayLevelMax()){
+    if (pixel_gray >= getGrayLevelMin()  && pixel_gray <= getGrayLevelMax()){
       sum_value += pixel_gray;
       nb_pixels ++;
     }
   }
   for(int i=this->bbox_v_min; i <=this->bbox_v_max ; i++){
     unsigned char pixel_gray =I[i][cog_u];
-    if (pixel_gray > getGrayLevelMin()  && pixel_gray < getGrayLevelMax()){
+    if (pixel_gray >= getGrayLevelMin()  && pixel_gray <= getGrayLevelMax()){
       sum_value += pixel_gray;
       nb_pixels ++;
     }
@@ -2329,7 +2335,7 @@ unsigned char vpDot2::getMeanGrayLevel(vpImage<unsigned char>& I) const{
     else{ imax = bbox_u_max - cog_u;}
     for(int i=-imin; i <=imax ; i++){
       unsigned int pixel_gray =(unsigned int) I[cog_v + i][cog_u + i];
-      if (pixel_gray > getGrayLevelMin()  && pixel_gray < getGrayLevelMax()){
+      if (pixel_gray >= getGrayLevelMin()  && pixel_gray <= getGrayLevelMax()){
 	sum_value += pixel_gray;
 	nb_pixels ++;
       }
@@ -2346,7 +2352,7 @@ unsigned char vpDot2::getMeanGrayLevel(vpImage<unsigned char>& I) const{
 
     for(int i=-imin; i <=imax ; i++){
       unsigned char pixel_gray =I[cog_v - i][cog_u + i];
-      if (pixel_gray > getGrayLevelMin()  && pixel_gray < getGrayLevelMax()){
+      if (pixel_gray >= getGrayLevelMin()  && pixel_gray <= getGrayLevelMax()){
 	sum_value += pixel_gray;
 	nb_pixels ++;
       }
@@ -2358,8 +2364,7 @@ unsigned char vpDot2::getMeanGrayLevel(vpImage<unsigned char>& I) const{
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,"No point was found"));
   }
   else{
-    unsigned int mean_gray_level =  sum_value/nb_pixels;
-    return mean_gray_level;
+    mean_gray_level = sum_value/nb_pixels;
   }
 }
 /*

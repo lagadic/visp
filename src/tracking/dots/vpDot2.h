@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.32 2007-09-14 09:30:45 fspindle Exp $
+ * $Id: vpDot2.h,v 1.33 2007-09-17 09:20:43 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -132,6 +132,14 @@ public:
   */
   inline unsigned int getGrayLevelMax() const {
     return gray_level_max;
+  };
+  /*!
+
+  \return The mean gray level value of the dot.
+
+  */
+  double getMeanGrayLevel() {
+    return (this->mean_gray_level);
   };
   double getGrayLevelPrecision() const;
   double getSizePrecision() const;
@@ -301,16 +309,16 @@ protected:
   vpList<unsigned int> getList_v() ;
 
 private:
-  bool computeParameters(vpImage<unsigned char> &I,
-                              const double &u = -1.0,
-                              const double &v = -1.0);
+  bool computeParameters(const vpImage<unsigned char> &I,
+			 const double &u = -1.0,
+			 const double &v = -1.0);
 
 
 
   bool findFirstBorder(const vpImage<unsigned char> &I, const unsigned int &u,
                         const unsigned int &v, unsigned int &border_u,
                         unsigned int &border_v);
-
+  void computeMeanGrayLevel(const vpImage<unsigned char>& I);
 
   /*!
 
@@ -374,6 +382,7 @@ private:
   unsigned int gray_level_max;  // maximum gray level for the dot.
 				// pixel with higher level don't belong
 				// to this dot.
+  double mean_gray_level; // Mean gray level of the dot
   double grayLevelPrecision ;
   double gamma ;
   double sizePrecision ;
