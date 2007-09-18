@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.33 2007-09-17 09:20:43 fspindle Exp $
+ * $Id: vpDot2.h,v 1.34 2007-09-18 08:00:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,7 +85,7 @@ public:
 
 
   */
-  void   get_u(vpList<unsigned int> & u_list) { u_list = this->u_list; };
+  void get_u(vpList<unsigned int> & u_list) { u_list = this->u_list; };
   /*!
 
   Return the list of the "v" coordinates (column) of all the pixels on the dot
@@ -95,7 +95,8 @@ public:
   is update after a call to track().
 
   */
-  void   get_v(vpList<unsigned int> & v_list) { v_list = this->v_list; };
+  void get_v(vpList<unsigned int> & v_list) { v_list = this->v_list; };
+  void getFreemanChain(vpList<int> &freeman_chain) ;
 
   double getWidth() const;
   double getHeight() const;
@@ -303,10 +304,6 @@ public :
 		\sa setComputeMoments()
 	      */
 
-protected:
-  vpList<int> getListFreemanElement() ;
-  vpList<unsigned int> getList_u();
-  vpList<unsigned int> getList_v() ;
 
 private:
   bool computeParameters(const vpImage<unsigned char> &I,
