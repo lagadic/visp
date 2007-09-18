@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.36 2007-09-17 09:20:43 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.37 2007-09-18 08:00:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -733,10 +733,12 @@ double vpDot2::getHeight() const
 
 /*!
   Return the surface of the dot.
+
+  The surface of the dot is also given by \f$|m00|\f$. 
 */
 double vpDot2::getSurface() const
 {
-  return surface;
+  return fabs(surface);
 }
 
 /*!
@@ -1581,48 +1583,26 @@ vpDot2* vpDot2::getInstance()
 }
 
 
-
-/******************************************************************************
- *
- *      PROTECTED METHODS
- *
- ******************************************************************************/
-
-
-
 /*!
 
-  Returns the list of Freeman elements used to turn around the dot
+  Returns the list of Freeman chain code used to turn around the dot
   counterclockwise.
 
-  \return List of Freeman element list.
-
+  \return List of Freeman chain list [0, ..., 7]
+  - 0 : right
+  - 1 : top right
+  - 2 : top
+  - 3 : top left
+  - 4 : left
+  - 5 : down left
+  - 6 : down
+  - 7 : down right
 */
-vpList<int> vpDot2::getListFreemanElement()
+void vpDot2::getFreemanChain(vpList<int> &freeman_chain)
 {
-  return direction_list;
+  freeman_chain = direction_list;
 }
 
-/*!
-  Returns the list of u coordinates of the pixels on the dot border.
-
-  \return List of u coodinates of all the pixels on the dot boundary.
-
-*/
-vpList<unsigned int> vpDot2::getList_u()
-{
-  return u_list;
-}
-
-/*!
-  Returns the list v coordinates of the pixels on the dot border.
-
-  \return List of v coodinates of all the pixels on the dot boundary.
-*/
-vpList<unsigned int> vpDot2::getList_v()
-{
-  return v_list;
-}
 
 
 /******************************************************************************
@@ -2060,8 +2040,17 @@ vpDot2::computeFreemanParameters(const int &u_p,
   dMu2 = 0;
   dMv2 = 0;
 
+  /*
+           3  2  1
+            \ | /
+             \|/ 
+         4 ------- 0
+             /|\
+            / | \
+           5  6  7
+  */
   switch(element) {
-  case 0:
+  case 0: // go right
     du = 1;
     dS = (float) v_p;
     dMu = 0.0;
@@ -2073,7 +2062,7 @@ vpDot2::computeFreemanParameters(const int &u_p,
     }
     break;
 
-  case 1:
+  case 1: // go right top
     du = 1;
     dv = 1;
     dS = (float)(v_p + 0.5);
@@ -2087,7 +2076,7 @@ vpDot2::computeFreemanParameters(const int &u_p,
     }
     break;
 
-  case 2:
+  case 2: // go top
     dv = 1;
     dS = 0.0;
     dMu = (float)(- 0.5 * u_p *  u_p);
