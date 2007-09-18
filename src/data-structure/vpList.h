@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.12 2007-08-21 13:06:58 fspindle Exp $
+ * $Id: vpList.h,v 1.13 2007-09-18 07:58:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -139,8 +139,9 @@ class vpList
   vpListElement<type> *cur;       // the current element
  public:
   vpList() ;                  // constr.
-  vpList(vpList& Liste);       // cloning
+  vpList(vpList& l);       // cloning
   virtual ~vpList();                  // destr.
+
   inline void next(void) ;           // current element's successor ( cur = cur->next )
   inline void previous(void) ;       // current element's predecessor ( cur = cur->pred )
   inline void front(void) ;          // go to the front of the List (cur = first)
@@ -167,8 +168,8 @@ class vpList
   inline int nbElement(void);       // returns the number of items currently in the list
   inline int nbElements(void);       // returns the number of items currently in the list
 
-  void operator=(vpList<type>& Liste);
-  inline void operator+=(vpList<type>& Liste);
+  void operator=(vpList<type>& l);
+  inline void operator+=(vpList<type>& l);
   inline void operator+=(const type& l);
 
   // Other non fundamental member (may be somehow usefull)
@@ -664,8 +665,8 @@ void vpList<type>::suppress(void)
 
   \remarks Cannot define this function as usual, ie, :
    <tt>template<class type>
-   vpList<type>::vpList(const vpList<type>& liste)</tt>
-  since the liste is indeed modified (not the element but the position
+   vpList<type>::vpList(const vpList<type>& l)</tt>
+  since the list is indeed modified (not the element but the position
   of the current element.
  */
 
@@ -735,17 +736,17 @@ void vpList<type>::operator += (const type& l)
 
   \remarks Cannot define this function as usual, ie, :
    <tt>template<class type>
-   vpList<type>::vpList(const vpList<type>& liste)</tt>
-  since the liste is indeed modified (not the element but the position
+   vpList<type>::vpList(const vpList<type>& l)</tt>
+  since the list is indeed modified (not the element but the position
   of the current element.
 
-  \sa operator=(vpList<type>& liste)
+  \sa operator=(vpList<type>& l)
  */
 template<class type>
-vpList<type>::vpList(vpList<type>& liste)
+vpList<type>::vpList(vpList<type>& l)
 {
   init() ;
-  *this = liste ;
+  *this = l;
 }
 
 /*!
