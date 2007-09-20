@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowGrabberImpl.cpp,v 1.10 2007-05-03 16:16:14 asaunier Exp $
+ * $Id: vpDirectShowGrabberImpl.cpp,v 1.11 2007-09-20 09:50:54 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -776,7 +776,7 @@ void vpDirectShowGrabberImpl::displayDevices()
     }
 
 	for(unsigned int i=0 ; i<nbDevices ; i++)
-		std::cout<<i<<" : "<<deviceList[i].getName()<<std::endl;
+		std::cout<<i<<" : "<< deviceList[i].getName() <<std::endl;
 
 	std::cout<<"Current device : "<<currentDevice<<std::endl<<std::endl;
 }
@@ -914,6 +914,9 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width,unsigned int height, 
 							if(FAILED(hr = pConfig->SetFormat(pmtConfig))||			
 								FAILED(hr = pGrabberI->SetMediaType(pmtConfig)))
 								return false;
+              //Run the graph to grab a frame
+            	pControl->Run();
+
 							//get the current connected media type (needed by the callback)
 							if(FAILED(hr = pGrabberI->GetConnectedMediaType(&(sgCB.connectedMediaType))))
 								return false;
@@ -921,7 +924,10 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width,unsigned int height, 
 							LONGLONG ActualFrameDuration; 
 							if(FAILED(hr = pVideoControl->GetCurrentActualFrameRate(pCapSourcePin,&ActualFrameDuration)))
 								std::cout<<"Current format (not sure): "<<width <<" x "<< height <<" at "<< 10000000/pVih->AvgTimePerFrame <<" fps"<<std::endl<<std::endl;
-							else std::cout<<"Current format : "<<width <<" x "<< height <<" at "<< 10000000/ActualFrameDuration <<" fps"<<std::endl<<std::endl;
+              else {
+                std::cout<<"Current format : "<<width <<" x "<< height <<" at "<< 10000000/ActualFrameDuration <<" fps"<<std::endl<<std::endl;
+                pVih->AvgTimePerFrame = ActualFrameDuration;
+              }
 							found=true;
 						}
 					}
