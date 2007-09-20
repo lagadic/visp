@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-* $Id: grabDirectShowMulti.cpp,v 1.7 2007-05-04 08:35:46 fspindle Exp $
+* $Id: grabDirectShowMulti.cpp,v 1.8 2007-09-20 10:06:05 asaunier Exp $
 *
 * Copyright (C) 1998-2006 Inria. All rights reserved.
 *
@@ -259,10 +259,10 @@ main(int argc, char ** argv)
 		vpImage<unsigned char> *I;
 		std::string opath = "C:/temp/I%d-%04d.pgm";
 #endif
-#if defined VISP_HAVE_GTK
-		vpDisplayGTK *d;
-#elif defined VISP_HAVE_GDI
+#if defined VISP_HAVE_GDI
 		vpDisplayGDI *d;
+#elif defined VISP_HAVE_GTK
+		vpDisplayGTK *d;
 #endif
 		read_options(argc, argv, multi, camera, nframes,
 			verbose_info, verbose_settings,
@@ -322,54 +322,12 @@ main(int argc, char ** argv)
 #endif
 		if (display)
 
-#ifdef VISP_HAVE_GTK
-			d = new vpDisplayGTK [ncameras];
-#else
+#ifdef VISP_HAVE_GDI
 			d = new vpDisplayGDI [ncameras];
+#else
+			d = new vpDisplayGTK [ncameras];
 #endif
-
-		unsigned int width;
-		unsigned int height;
-		// Display information for each camera
-		if (verbose_info || verbose_settings) {
-
-			std::cout << "----------------------------------------------------------" << std::endl;
-			std::cout << "---- Device List : " << std::endl;
-			std::cout << "----------------------------------------------------------" << std::endl;
-			g[0].displayDevices();
-			for (unsigned i=0; i < ncameras; i ++) {
-				unsigned int c;
-				if (multi) c = i;
-				else c = camera;
-
-				if (verbose_info)
-					g[i].getFormat(width, height, framerate);
-					std::cout << "----------------------------------------------------------"
-						<< std::endl
-						<< "---- MediaType and framerate currently used by device " << std::endl
-						<< "---- (or camera) " << c <<  std::endl
-						<< "---- Current MediaType : " << g[i].getMediaType() << std::endl
-						<< "---- Current format : " << width <<" x "<< height <<" at "<< framerate << " fps" << std::endl
-						<< "----------------------------------------------------------" << std::endl;
-
-				if (verbose_settings) {
-					std::cout << "----------------------------------------------------------"
-						   << std::endl
-						   << "---- MediaTypes supported by device (or camera) "
-						   << c << std::endl
-						   << "---- One of the MediaType below can be set using " << std::endl
-						   << "---- option -t <mediatype>."
-						   << std::endl
-						   << "----------------------------------------------------------"
-						   << std::endl;
-					g[i].getStreamCapabilities();
-				}
-
-			}
-			return 0;
-		}
-
-		// If required modify camera settings
+    // If required modify camera settings
 
 		if (mediatype_is_set) {
 			g[0].setMediaType(mediatypeID);
@@ -390,6 +348,49 @@ main(int argc, char ** argv)
 			}
 		}
 
+
+		unsigned int width;
+		unsigned int height;
+		// Display information for each camera
+		if (verbose_info || verbose_settings) {
+
+			std::cout << "----------------------------------------------------------" << std::endl;
+			std::cout << "---- Device List : " << std::endl;
+			std::cout << "----------------------------------------------------------" << std::endl;
+			g[0].displayDevices();
+			for (unsigned i=0; i < ncameras; i ++) {
+				unsigned int c;
+				if (multi) c = i;
+				else c = camera;
+
+        if (verbose_info){
+					g[i].getFormat(width, height, framerate);
+					std::cout << "----------------------------------------------------------"
+						<< std::endl
+						<< "---- MediaType and framerate currently used by device " << std::endl
+						<< "---- (or camera) " << c <<  std::endl
+						<< "---- Current MediaType : " << g[i].getMediaType() << std::endl
+						<< "---- Current format : " << width <<" x "<< height <<" at "<< framerate << " fps" << std::endl
+						<< "----------------------------------------------------------" << std::endl;
+        }
+				if (verbose_settings) {
+					std::cout << "----------------------------------------------------------"
+						   << std::endl
+						   << "---- MediaTypes supported by device (or camera) "
+               << c << std::endl
+						   << "---- One of the MediaType below can be set using " << std::endl
+						   << "---- option -t <mediatype>."
+						   << std::endl
+						   << "----------------------------------------------------------"
+						   << std::endl;
+					g[i].getStreamCapabilities();
+				}
+
+			}
+			return 0;
+		}
+
+		
 		// Do a first acquisition to initialise the display
 		for (unsigned int i=0; i < ncameras; i ++) {
 			// Acquire the first image
