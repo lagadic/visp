@@ -984,31 +984,32 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 PREDEFINED             = \
-		       DOXYGEN_SHOULD_SKIP_THIS \
-		       VISP_HAVE_X11 \
-		       VISP_HAVE_PTHREAD \
-		       VISP_HAVE_GTK \
-		       VISP_HAVE_GDI \
-                       VISP_HAVE_D3D9 \
-		       VISP_HAVE_GSL \
-		       VISP_HAVE_COIN \
-		       VISP_HAVE_QT \
-		       VISP_HAVE_SOQT \
-                       VISP_HAVE_DC1394_1 \ 
-                       VISP_HAVE_DC1394_2 \ 
-		       VISP_HAVE_CFOX \
-		       VISP_HAVE_V4L2 \
-		       VISP_HAVE_ICCOMP \
-		       VISP_HAVE_ITIFG8 \
-		       VISP_HAVE_ITIFG8_VERSION=@VISP_HAVE_ITIFG8_VERSION_DOXY@ \
-                       VISP_HAVE_DIRECTSHOW \
-		       VISP_HAVE_AFMA4 \
-		       VISP_HAVE_AFMA6 \
-		       VISP_HAVE_BICLOPS \
-		       VISP_HAVE_PTU46 \
-                       WIN32 \
-		       APPLE \
-		       UNIX
+         DOXYGEN_SHOULD_SKIP_THIS \
+           VISP_HAVE_X11 \
+           VISP_HAVE_PTHREAD \
+           VISP_HAVE_GTK \
+           VISP_HAVE_GDI \
+           VISP_HAVE_D3D9 \
+           VISP_HAVE_GSL \
+           VISP_HAVE_OPENCV \
+           VISP_HAVE_COIN \
+           VISP_HAVE_QT \
+           VISP_HAVE_SOQT \
+           VISP_HAVE_DC1394_1 \ 
+           VISP_HAVE_DC1394_2 \ 
+           VISP_HAVE_CFOX \
+           VISP_HAVE_V4L2 \
+           VISP_HAVE_ICCOMP \
+           VISP_HAVE_ITIFG8 \
+           VISP_HAVE_ITIFG8_VERSION=@VISP_HAVE_ITIFG8_VERSION_DOXY@ \
+           VISP_HAVE_DIRECTSHOW \
+           VISP_HAVE_AFMA4 \
+           VISP_HAVE_AFMA6 \
+           VISP_HAVE_BICLOPS \
+           VISP_HAVE_PTU46 \
+           WIN32 \
+           APPLE \
+           UNIX
 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
