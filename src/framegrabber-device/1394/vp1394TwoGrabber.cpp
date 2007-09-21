@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.15 2007-07-10 08:28:19 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.16 2007-09-21 16:34:59 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,7 +55,7 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
-const int vp1394TwoGrabber::NUM_BUFFERS = 8; /*!< Number of buffers */
+const int vp1394TwoGrabber::NUM_BUFFERS = 1; /*!< Number of buffers */
 
 const char * vp1394TwoGrabber::strVideoMode[DC1394_VIDEO_MODE_NUM]= {
   "MODE_160x120_YUV444",
@@ -153,32 +153,10 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   cameras = NULL;
   camera_id = 0;
   verbose = false;//true;
+  camInUse = NULL;
 
   open();
-  getNumCameras(num_cameras);
-
-  camInUse = new bool [num_cameras];
-  for (unsigned i=0; i < num_cameras; i ++)
-    camInUse[i] = false;
-
-  setCamera(0);
-  setCapture(DC1394_OFF);
-
-  // Set the image size from the current video mode
-  vp1394TwoVideoMode cur_videomode;
-  getVideoMode(cur_videomode);
-  // Updates image size from new video mode
-  if (dc1394_get_image_size_from_video_mode(camera,
-					    (dc1394video_mode_t) cur_videomode,
-					    &this->width, &this->height)
-      != DC1394_SUCCESS) {
-
-    close();
-    vpERROR_TRACE("Can't set video mode");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "Can't get image size") );
-  }
-
+  
   init = true;
 }
 
@@ -998,6 +976,7 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
 void
 vp1394TwoGrabber::open()
 {
+   
   // Find cameras
   int err = dc1394_find_cameras(&cameras, &num_cameras);
   if (err!=DC1394_SUCCESS && err != DC1394_NO_CAMERA) {
@@ -1034,6 +1013,35 @@ vp1394TwoGrabber::open()
     std::cout << "Number of camera(s) on the bus : " << num_cameras <<std::endl;
     std::cout << "-----------------------------" << std::endl;
   }
+
+  if(camInUse != NULL) delete [] camInUse;
+  camInUse = new bool [num_cameras];
+  for (unsigned i=0; i < num_cameras; i ++){
+    dc1394_reset_bus(cameras[i]);
+    dc1394switch_t pwr;
+    dc1394_video_get_transmission(cameras[i], &pwr);
+    if(pwr != DC1394_OFF){
+      dc1394_video_set_transmission(cameras[i],DC1394_OFF);}
+    camInUse[i] = false;
+  }
+  setCamera(0);
+  setCapture(DC1394_OFF);
+
+  // Set the image size from the current video mode
+  vp1394TwoVideoMode cur_videomode;
+  getVideoMode(cur_videomode);
+  // Updates image size from new video mode
+  if (dc1394_get_image_size_from_video_mode(camera,
+              (dc1394video_mode_t) cur_videomode,
+              &this->width, &this->height)
+      != DC1394_SUCCESS) {
+
+    close();
+    vpERROR_TRACE("Can't set video mode");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+          "Can't get image size") );
+  }
+
 }
 
 /*!
@@ -1050,17 +1058,16 @@ vp1394TwoGrabber::close()
   if (num_cameras) {
     for (unsigned int i = 0; i < num_cameras;i++) {
       if (camInUse[i]) {
-	camera = cameras[i];
+        camera = cameras[i];
 
-	setTransmission(DC1394_OFF);
-	setCapture(DC1394_OFF);
-
-	dc1394_free_camera(camera);
+        setTransmission(DC1394_OFF);
+        setCapture(DC1394_OFF);
+       
+        dc1394_free_camera(camera);
       }
     }
     free(cameras);
-
-    delete [] camInUse;
+    if(camInUse != NULL) delete [] camInUse;
   }
 
   camInUse = NULL;
@@ -1310,7 +1317,6 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 {
   dc1394video_frame_t *frame;
   unsigned int width, height, size;
-
   frame = dequeue();
 
   getWidth(width);
@@ -1350,7 +1356,6 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 				   "Acquisition failed.") );
     break;
   };
-
   enqueue(frame);
 }
 
