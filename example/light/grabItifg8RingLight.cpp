@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8RingLight.cpp,v 1.1 2007-09-04 09:32:19 fspindle Exp $
+ * $Id: grabItifg8RingLight.cpp,v 1.2 2007-09-21 12:26:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,9 +35,12 @@
  *
  *****************************************************************************/
 
-/*!
-  \file grabItifg8.cpp
-  \brief Example of framegrabbing using vpItifg8Grabber class.
+/*!  
+
+  \file grabItifg8RingLight.cpp 
+
+  \brief Example of using vpItifg8Grabber class for image framegrabbing and
+  vpRingLight class for the lighting control.
 
 */
 
@@ -207,9 +210,10 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
 }
 
 /*!
-  \example grabItifg8.cpp
+  \example grabItifg8RingLight.cpp
 
-  Example of framegrabbing using vpItifg8Grabber class.
+  Example of using vpItifg8Grabber class for image framegrabbing and
+  vpRingLight class for the lighting control.
 
   Grab grey level images using vpItifg8Grabber, an interface for the itifg-8.x
   framegrabber driver from Coreco Imaging. Display these images using X11 or

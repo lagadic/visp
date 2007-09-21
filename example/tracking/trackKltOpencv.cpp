@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackKltOpencv.cpp,v 1.1 2007-09-12 07:32:18 fspindle Exp $
+ * $Id: trackKltOpencv.cpp,v 1.2 2007-09-21 12:26:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,8 +68,10 @@
 //int gsl_warnings_off;
 
 /*!
-  \example trackDot2.cpp
-  Example of KLT tracking using OpenCV library.
+  \example trackKltOpencv.cpp
+
+  Example of KLT tracking using OpenCV (Intel's Open source Computer
+  Vision library).
 */
 
 /*!

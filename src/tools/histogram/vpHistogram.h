@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.h,v 1.5 2007-09-17 09:15:06 fspindle Exp $
+ * $Id: vpHistogram.h,v 1.6 2007-09-21 12:26:15 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -197,17 +197,14 @@ public:
 
     \param level : Gray level in the histogram. Level is in [0:255]
 
-    \return value : Number of pixels having the gray level.
+    \param value : Number of pixels having the gray level.
 
     \code
-    vpImage<unsigned char> I; // A gray level image
-    
     vpHistogram h; 
-    h.calculate(I); // Histogram of the gray level image
 
-    // Print the histogram values
+    // Set histogram values
     for (int i=0; i < h.getSize(); i ++)
-      printf("%d: %d\n", i, h[i]);
+      h.set(i, i*2); // for each level i, set a value of 2*i
     \endcode
 
   */

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: keyboard.cpp,v 1.3 2007-08-27 10:27:16 fspindle Exp $
+ * $Id: keyboard.cpp,v 1.4 2007-09-21 12:26:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,7 +36,7 @@
  *****************************************************************************/
 
 /*!
-  \example keybord.cpp
+  \example keyboard.cpp
 
   Keybord example.
 */
