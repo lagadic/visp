@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: DartConfig.cmake,v 1.6 2006-09-20 15:57:34 fspindle Exp $
+# $Id: DartConfig.cmake,v 1.7 2007-09-21 10:05:20 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -37,6 +37,6 @@
 
 SET (DROP_METHOD "xmlrpc")
 SET (DROP_SITE "http://dart.irisa.fr")
-SET (DROP_LOCATION "ViSP2")
+SET (DROP_LOCATION "ViSP")
 SET (COMPRESS_SUBMISSION ON)
 SET (NIGHTLY_START_TIME "9:00PM")
