@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.9 2007-05-15 14:23:46 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.10 2007-09-21 16:34:59 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,6 +89,7 @@
 #include <visp/vpFrameGrabber.h>
 #include <visp/vpRGBa.h>
 #include <visp/vpList.h>
+
 
 class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 {
@@ -235,7 +236,9 @@ public:
 private:
   bool verbose;
   bool *camInUse;
-
+#ifdef MODIF_ANTHONY
+  dc1394video_frame_t *frame;
+#endif
 };
 
 
