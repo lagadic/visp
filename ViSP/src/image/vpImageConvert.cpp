@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.16 2007-09-04 09:19:08 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.17 2007-09-21 12:26:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,6 +86,15 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
 #ifdef VISP_HAVE_OPENCV
 /*!
 Convert a IplImage to a vpImage\<vpRGBa\>
+
+An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
+image structure. See http://opencvlibrary.sourceforge.net/ for general
+OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
+for the specific IplImage structure documentation.
+
+\warning This function is only available if OpenCV was detected during
+the configuration step.
+
 \param src : source image
 \param dest : destination image
 */
@@ -139,6 +148,15 @@ vpImageConvert::convert(const IplImage* src,
 
 /*!
 Convert a vpImage\<unsigned char\> to a vpImage\<unsigned char\>
+
+An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
+image structure. See http://opencvlibrary.sourceforge.net/ for general
+OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
+for the specific IplImage structure documentation.
+
+\warning This function is only available if OpenCV was detected during
+the configuration step.
+
 \param src : source image
 \param dest : destination image
 */

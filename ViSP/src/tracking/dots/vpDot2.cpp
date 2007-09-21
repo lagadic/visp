@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.37 2007-09-18 08:00:13 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.38 2007-09-21 12:26:15 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -262,8 +262,10 @@ vpDot2::~vpDot2(){}
  *****************************************************************************/
 
 /*!
-  Display the dot contour and center of gravity
+  Display in overlay the dot edges and center of gravity.
+
   \param I : Image.
+  \param c : The color used for the display
 */
 void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
 {
@@ -959,7 +961,7 @@ void vpDot2::setEllipsoidShapePrecision(const double & ellipsoidShapePrecision) 
   Set the precision of the search maximum distance to get the starting point on a dot border. A too low value
   mean a large search area.
 
-  \param maxSizeSearchDistancePercision : It is a double precision float which value is in [0.05,1]:
+  \param maxSizeSearchDistancePrecision : It is a double precision float which value is in [0.05,1]:
   - this is the limit ratio between the tested parameter and the measured one.
      distance < getWidth()/(getSizePrecision()+epsilon);
   - 1 means full precision, whereas values close to 0 show a very bad accuracy.
