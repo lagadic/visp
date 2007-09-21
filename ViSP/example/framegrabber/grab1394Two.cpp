@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.9 2007-06-15 16:28:39 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.10 2007-09-21 14:15:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -510,6 +510,7 @@ main(int argc, char ** argv)
 	if (display) {
 	  // Display the last image acquired
 	  vpDisplay::display(I[c]);
+	  vpDisplay::flush(I[c]);
 	}
 	if (save) {
 	  char buf[FILENAME_MAX];
