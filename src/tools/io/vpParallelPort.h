@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParallelPort.h,v 1.1 2007-09-04 09:26:51 fspindle Exp $
+ * $Id: vpParallelPort.h,v 1.2 2007-09-24 13:05:09 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,7 +48,7 @@
 
 #include <visp/vpConfig.h>
 
-#if defined UNIX
+#if ( (defined UNIX) && (! defined APPLE) ) // Only on Linux for the moment
 
 #  include <errno.h>
 #  include <linux/parport.h>
@@ -75,6 +75,6 @@ private:
   char device[FILENAME_MAX];
 } ;
 
-#endif // defined UNIX
+#endif
 
 #endif

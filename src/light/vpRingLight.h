@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.h,v 1.1 2007-09-04 09:32:19 fspindle Exp $
+ * $Id: vpRingLight.h,v 1.2 2007-09-24 13:05:09 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,7 +48,7 @@
 
 #include <visp/vpConfig.h>
 
-#if defined UNIX
+#if ( (defined UNIX) && (! defined APPLE) ) // Only on Linux for the moment
 
 #  include <visp/vpRingLight.h>
 #  include <visp/vpParallelPort.h>
@@ -67,6 +67,6 @@ private:
 
 } ;
 
-#endif // defined UNIX
+#endif
 
 #endif
