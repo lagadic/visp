@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.18 2007-09-26 08:49:00 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.19 2007-09-26 09:14:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -97,6 +97,25 @@ the configuration step.
 
 \param src : source image
 \param dest : destination image
+
+\code
+    #include <visp/vpImage.h>
+    #include <visp/vpImageIo.h>
+    #include <visp/vpImageConvert.h>
+    
+    vpImage<vpRGBa> Ic; // A color image
+    IplImage* Ip;
+
+    //Read an image on a disk with openCV library
+    Ip = cvLoadImage("image.ppm",CV_LOAD_IMAGE_COLOR);
+    //Convert the grayscale IplImage into vpImage<vpRGBa>
+    vpImageConvert::convert(Ip,Ic);
+    
+    //...
+    
+    //Release Ip header and data
+    cvReleaseImage(&Ip);
+\endcode
 */
 void
 vpImageConvert::convert(const IplImage* src,
@@ -176,6 +195,25 @@ the configuration step.
 
 \param src : source image
 \param dest : destination image
+
+\code
+    #include <visp/vpImage.h>
+    #include <visp/vpImageIo.h>
+    #include <visp/vpImageConvert.h>
+    
+    vpImage<unsigned char> Ig; // A grayscale image
+    IplImage* Ip;
+
+    //Read an image on a disk with openCV library
+    Ip = cvLoadImage("image.pgm",CV_LOAD_IMAGE_GRAYSCALE);
+    //Convert the grayscale IplImage into vpImage<unsigned char>
+    vpImageConvert::convert(Ip,Ig);
+    
+    //...
+    
+    //Release Ip header and data
+    cvReleaseImage(&Ip);
+\endcode
 */
 void
 vpImageConvert::convert(const IplImage* src,
@@ -229,6 +267,25 @@ the configuration step.
 
 \param src : source image
 \param dest : destination image
+
+\code
+    #include <visp/vpImage.h>
+    #include <visp/vpImageIo.h>
+    #include <visp/vpImageConvert.h>
+    
+    vpImage<vpRGBa> Ic; // A color image
+    IplImage* Ip;
+
+    //Read an image on a disk
+    vpImageIo::readPPM(Ic, "image.ppm");
+    //Convert the vpImage<vpRGBa> in to color IplImage
+    vpImageConvert::convert(Ic,Ip);
+    //Treatments on IplImage
+    //...
+    
+    //Release Ip header and data
+    cvReleaseImage(&Ip);
+\endcode
 */
 void
 vpImageConvert::convert(const vpImage<vpRGBa> & src,
@@ -283,6 +340,25 @@ the configuration step.
 
 \param src : source image
 \param dest : destination image
+
+\code
+    #include <visp/vpImage.h>
+    #include <visp/vpImageIo.h>
+    #include <visp/vpImageConvert.h>
+    
+    vpImage<unsigned char> Ig; // A greyscale image
+    IplImage* Ip;
+
+    //Read an image on a disk
+    vpImageIo::readPGM(Ig, "image.pgm");
+    //Convert the vpImage<unsigned char> in to greyscale IplImage
+    vpImageConvert::convert(Ig,Ip);
+    //Treatments on IplImage Ip
+    //...
+    
+    //Release Ip header and data
+    cvReleaseImage(&Ip);
+\endcode
 */
 void
 vpImageConvert::convert(const vpImage<unsigned char> & src,
