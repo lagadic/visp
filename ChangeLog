@@ -49,7 +49,7 @@ ViSP 2.4.x
 	  matrix infinity norm definition.
 	             Change determinant formula for 3x3 matrices to match with 
 	  the standard determinant definition.
-	- vpImageConvert : Add IplImage to vpImage conversion tool.
+	- vpImageConvert : Add IplImage to vpImage and vpImage to IplImage conversion tool.
   - Testing and examples:
 	- example/tracking/trackKltOpencv.cpp was added
 	- example/light/ringLight.cpp was added
