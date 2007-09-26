@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.17 2007-09-21 12:26:15 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.18 2007-09-26 08:49:00 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -107,47 +107,64 @@ vpImageConvert::convert(const IplImage* src,
   int height = src->height;
   int width = src->width;
   int widthStep = src->widthStep;
-  if(widthStep == width){
-    if(nChannel == 3 && depth == 8){
-      dest.resize(height,width);
-      BGRToRGBa((unsigned char*)src->imageData, (unsigned char*)dest.bitmap,width,height,false);
-    }
-    else if(nChannel == 1 && depth == 8 ){
-      dest.resize(height,width);
-      GreyToRGBa((unsigned char*)src->imageData, (unsigned char*)dest.bitmap,width*height);
+
+  if(nChannel == 3 && depth == 8){
+    dest.resize(height,width);
+
+    //starting source address
+    unsigned char* input = (unsigned char*)src->imageData;
+    unsigned char* line;
+    unsigned char* output = (unsigned char*)dest.bitmap;
+    
+    unsigned int j=0;
+    unsigned int i=0;
+
+    for(i=0 ; i < height ; i++)
+    {
+      line = input;
+      for( j=0 ; j < width ; j++)
+        {
+          *(output++) = *(line+2);
+          *(output++) = *(line+1);
+          *(output++) = *(line);
+          *(output++) = 0;
+
+          line+=3;
+        }
+      //go to the next line
+      input+=widthStep;
     }
   }
-  else{
-    if(nChannel == 3 && depth == 8){
-      dest.resize(height,width);
-      unsigned char* row = NULL;
-      for (int i =0  ; i < height ; i++){
-        row = (unsigned char*)(src->imageData + i*src->widthStep) ;
-        for(int j=0; j<width; j++){
-          dest[i][j].B=row[3*j];
-          dest[i][j].G=row[3*j+1];
-          dest[i][j].R=row[3*j+2];
+  else if(nChannel == 1 && depth == 8 ){
+    dest.resize(height,width);
+    //starting source address
+    unsigned char * input = (unsigned char*)src->imageData;
+    unsigned char * line;
+    unsigned char * output = (unsigned char*)dest.bitmap;
+    
+    unsigned int j=0;
+    unsigned int i=0;
+
+    for(i=0 ; i < height ; i++)
+    {
+      line = input;
+      for( j=0 ; j < width ; j++)
+        {
+          *output++ = *(line);
+          *output++ = *(line);
+          *output++ = *(line);
+          *output++ = *(line);;
+
+          line++;
         }
-      }
-    }
-    else if(nChannel == 1 && depth == 8 ){
-      dest.resize(height,width);
-      unsigned char* row = NULL;
-      for (int i =0  ; i < height ; i++){
-        row = (unsigned char*)(src->imageData + i*src->widthStep) ;
-        for(int j=0; j<width; j++){
-          dest[i][j].B=row[j];
-          dest[i][j].G=row[j];
-          dest[i][j].R=row[j];
-          dest[i][j].A=row[j];
-        }
-      }
+      //go to the next line
+      input+=widthStep;
     }
   }
 }
 
 /*!
-Convert a vpImage\<unsigned char\> to a vpImage\<unsigned char\>
+Convert a IplImage to a vpImage\<unsigned char\>
 
 An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
 image structure. See http://opencvlibrary.sourceforge.net/ for general
@@ -162,7 +179,7 @@ the configuration step.
 */
 void
 vpImageConvert::convert(const IplImage* src,
-      vpImage<unsigned char> & dest)
+      vpImage<unsigned char> &dest)
 {
   int nChannel = src->nChannels;
   int depth = src->depth;
@@ -198,6 +215,103 @@ vpImageConvert::convert(const IplImage* src,
     }
   }
 }
+
+/*!
+Convert a vpImage\<vpRGBa\> to a IplImage
+
+An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
+image structure. See http://opencvlibrary.sourceforge.net/ for general
+OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
+for the specific IplImage structure documentation.
+
+\warning This function is only available if OpenCV was detected during
+the configuration step.
+
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<vpRGBa> & src,
+       IplImage* &dest)
+{
+  unsigned int height = src.getHeight();
+  unsigned int width  = src.getWidth();
+  CvSize size = cvSize(width,height);
+  int depth = 8;
+  int channels = 3;
+  if(dest != NULL &&
+      (dest->nChannels!=3 || dest->depth!=8 || dest->height!=height || dest->width!=width))
+    cvReleaseImage(&dest);
+    
+  dest = cvCreateImage( size, depth, channels );
+  //starting source address
+  unsigned char * input = (unsigned char*)src.bitmap;//rgba image
+  unsigned char * line;
+  unsigned char * output = (unsigned char*)dest->imageData;//bgr image
+  
+  unsigned int j=0;
+  unsigned int i=0;
+  int widthStep = dest->widthStep;
+
+  for(i=0 ; i < height ; i++)
+  {
+    output = (unsigned char*)dest->imageData + i*widthStep;
+    line = input;
+    for( j=0 ; j < width ; j++)
+      {
+        *output++ = *(line+2);  //B
+        *output++ = *(line+1);  //G
+        *output++ = *(line);  //R
+
+        line+=4;
+      }
+    //go to the next line
+    input+=4*width;
+  }
+}
+
+/*!
+Convert a vpImage\<unsigned char\> to a IplImage
+
+An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
+image structure. See http://opencvlibrary.sourceforge.net/ for general
+OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
+for the specific IplImage structure documentation.
+
+\warning This function is only available if OpenCV was detected during
+the configuration step.
+
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<unsigned char> & src,
+      IplImage* &dest)
+{
+  unsigned int height = src.getHeight();
+  unsigned int width  = src.getWidth();
+  CvSize size = cvSize(width,height);
+  int depth = 8;
+  int channels = 1;
+  if(dest != NULL &&
+      (dest->nChannels!=1 || dest->depth!=8 || dest->height!=height || dest->width!=width))
+    cvReleaseImage(&dest);
+  dest = cvCreateImage( size, depth, channels );
+  int widthStep = dest->widthStep;
+
+  if(width == widthStep){
+    memcpy(dest->imageData,src.bitmap,
+                width*height);
+  }
+  else{
+    //copying each line taking account of the widthStep
+    for (int i =0  ; i < height ; i++){
+          memcpy(dest->imageData + i*widthStep,src.bitmap + i*width,
+                width);
+    }
+  }
+}
+
 #endif
 /*!
 
@@ -1656,21 +1770,38 @@ Convert RGB into RGBa
 void vpImageConvert::RGBToRGBa(unsigned char* rgb, unsigned char* rgba,
 			       unsigned int size)
 {
- unsigned int i=0, j=0;
+  unsigned char *pt_input = rgb;
+  unsigned char *pt_end = rgb + 3*size;
+  unsigned char *pt_output = rgba;
 
- while( i < size*3)
- {
-
-   rgba[j]   = (unsigned char)rgb[i];
-   rgba[j+1] = (unsigned char)rgb[i+1];
-   rgba[j+2] = (unsigned char)rgb[i+2];
-   rgba[j+3] = 0;
-   i+=3;
-   j+=4;
- }
+  while(pt_input != pt_end) {
+    *(pt_output++) = *(pt_input++) ; // R
+    *(pt_output++) = *(pt_input++) ; // G
+    *(pt_output++) = *(pt_input++) ; // B
+    *(pt_output++) = 0 ; // A
+  }
 }
+
 /*!
 
+Convert RGB into RGBa
+
+*/
+void vpImageConvert::RGBaToRGB(unsigned char* rgba, unsigned char* rgb,
+             unsigned int size)
+{
+  unsigned char *pt_input = rgba;
+  unsigned char *pt_end = rgba + 4*size;
+  unsigned char *pt_output = rgb;
+
+  while(pt_input != pt_end) {
+    *(pt_output++) = *(pt_input++) ; // R
+    *(pt_output++) = *(pt_input++) ; // G
+    *(pt_output++) = *(pt_input++) ; // B
+    pt_input++ ;
+  }
+}
+/*!
   Weights convert from linear RGB to CIE luminance assuming a
   modern monitor. See Charles Pontyon's Colour FAQ
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html

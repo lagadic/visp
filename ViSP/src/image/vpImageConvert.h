@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.13 2007-08-30 12:56:49 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.14 2007-09-26 08:49:00 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,6 +76,11 @@ public:
           vpImage<vpRGBa> & dest) ;
   static void convert(const IplImage* src,
           vpImage<unsigned char> & dest) ;
+  static void convert(const vpImage<vpRGBa> & src,
+          IplImage* &dest) ;
+  static void convert(const vpImage<unsigned char> & src,
+          IplImage* &dest) ;
+
 #endif
   
   /*!
@@ -146,6 +151,9 @@ public:
 			  unsigned char* rgb, unsigned int width, unsigned int height);
   static void RGBToRGBa(unsigned char* rgb,
 			unsigned char* rgba, unsigned int size);
+  static void RGBaToRGB(unsigned char* rgba,
+      unsigned char* rgb, unsigned int size);
+   
   static void RGBToGrey(unsigned char* rgb,
 			unsigned char* grey, unsigned int size);
   static void RGBaToGrey(unsigned char* rgba,
