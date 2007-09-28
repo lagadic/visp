@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot.cpp,v 1.15 2007-06-05 12:44:04 fspindle Exp $
+ * $Id: testTrackDot.cpp,v 1.16 2007-09-28 14:56:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -258,6 +258,8 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
+      //Flush the display
+      vpDisplay::flush(I) ;
     }
     catch(...)
     {
