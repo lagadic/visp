@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.22 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.23 2007-09-28 14:43:27 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,6 +46,57 @@
 /*!
   \file vpDisplay.cpp
   \brief  generic class for image display
+
+  Sample code :
+  \code
+
+    #include <visp/vpDebug.h>
+    #include <visp/vpConfig.h>
+    
+    #include <visp/vpImage.h>
+    #include <visp/vpImageIo.h>
+    #include <visp/vpDisplayX.h>
+    #include <visp/vpDisplayGTK.h>
+    #include <visp/vpDisplayGDI.h>
+    #include <visp/vpDisplayD3D.h>
+    
+    vpImage<vpRGBa> Ic; // A color image
+    
+    //Read an image on a disk
+    vpImageIo::readPPM(Ic, "image.ppm");
+
+    
+    #if defined VISP_HAVE_GTK
+      vpDisplayGTK display;
+    #elif defined VISP_HAVE_X11
+      vpDisplayX display;
+    #elif defined VISP_HAVE_GDI
+      vpDisplayGDI display;
+    #elif defined VISP_HAVE_D3D
+      vpDisplayD3D display;
+    #endif
+        
+    // We open a window using either X11 or GTK or GDI.
+    // Its size is automatically defined by the image (I) size
+    display.init(I, 100, 100,"Display...") ;
+
+    // Display the image
+    // The image class has a member that specify a pointer toward
+    // the display that has been initialized in the display declaration
+    // therefore is is no longuer necessary to make a reference to the
+    // display variable.
+    vpDisplay::display(I) ;
+
+    // Display in overlay a red cross at position 10,10 in the
+    // image. The lines are 10 pixels long
+    vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
+    // ...
+    
+    // The display is flushed; without this line, nothing will appear in
+    // the display.
+    vpDisplay::flush(I) ;
+
+  \endcode
 
 */
 
