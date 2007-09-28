@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOSXcfoxColor.cpp,v 1.5 2007-05-15 09:30:58 fspindle Exp $
+ * $Id: grabOSXcfoxColor.cpp,v 1.6 2007-09-28 14:45:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,6 +193,7 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
     }
     catch(...)
     {

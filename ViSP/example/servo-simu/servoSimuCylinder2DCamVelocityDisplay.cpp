@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuCylinder2DCamVelocityDisplay.cpp,v 1.6 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoSimuCylinder2DCamVelocityDisplay.cpp,v 1.7 2007-09-28 14:47:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -195,6 +195,7 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
     }
     catch(...)
       {
@@ -268,7 +269,7 @@ main(int argc, char ** argv)
   task.addFeature(l[1],ld[1]) ;
 
   vpServoDisplay::display(task,cam,I) ;
-
+  vpDisplay::flush(I) ;
 
   vpTRACE("Display task information " ) ;
   task.print() ;
@@ -306,8 +307,9 @@ main(int argc, char ** argv)
 	}
 
       if (opt_display) {
-	vpDisplay::display(I) ;
-	vpServoDisplay::display(task,cam,I) ;
+	      vpDisplay::display(I) ;
+	      vpServoDisplay::display(task,cam,I) ;
+        vpDisplay::flush(I) ; 
       }
 
       if (iter==1) vpTRACE("\t\t compute the control law ") ;

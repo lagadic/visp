@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayXMulti.cpp,v 1.7 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: displayXMulti.cpp,v 1.8 2007-09-28 14:45:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -333,7 +333,7 @@ main(int argc, char ** argv)
 				 vpColor::blue) ;
 
 	//Flush displays. The displays must be flushed to show the overlay.
-    //without this line, nothing else than the image will be displayed.
+    //without this line, nothing will be displayed.
 	vpDisplay::flush(I1);
 	vpDisplay::flush(I2);
 

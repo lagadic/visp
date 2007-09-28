@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayX.cpp,v 1.6 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: displayX.cpp,v 1.7 2007-09-28 14:45:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -311,8 +311,9 @@ main(int argc, char ** argv)
     vpDisplay::displayCharString(I, 85, 100,
 				 "ViSP is a marvelous software",
 				 vpColor::yellow) ;
-    // Show the overlay. The display must be flushed to show the overlay.
-    //without this line, nothing else than the image will be displayed.
+    // Show the overlay. The display must be flushed to show the overlay
+    // and the image.
+    //without this line, nothing will be displayed.
     vpDisplay::flush(I);
 
     // Create a color image
@@ -354,6 +355,7 @@ main(int argc, char ** argv)
 
     // Display the color image
     vpDisplay::display(Irgba) ;
+    vpDisplay::flush(Irgba) ;
 
     // If click is allowed, wait for a blocking mouse click to display a cross
     // at the clicked pixel position
@@ -375,8 +377,9 @@ main(int argc, char ** argv)
       vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
 
     }
-    //Flush the display. The display must be flushed to show the overlay.
-    //without this line, nothing else than the image will be displayed.
+    //Flush the display. The display must be flushed to show the overlay
+    //and the display.
+    //without this line, nothing will be displayed.
     vpDisplay::flush(Irgba);
 
     // If click is allowed, wait for a blocking mouse click to exit.

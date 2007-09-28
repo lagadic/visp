@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.11 2007-06-05 13:36:49 asaunier Exp $
+ * $Id: displaySequence.cpp,v 1.12 2007-09-28 14:45:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -357,6 +357,7 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
     }
     catch(...) {
       vpERROR_TRACE("Error while displaying the image") ;
@@ -389,6 +390,9 @@ main(int argc, char ** argv)
       if (opt_display) {
         // Display the image
         vpDisplay::display(I) ;
+        //Flush the display
+        vpDisplay::flush(I) ;
+
       }
       if (opt_wait) {
         std::cout << "A click in the image to continue..." << std::endl;

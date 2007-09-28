@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.5 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.6 2007-09-28 14:46:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,6 +100,7 @@ main()
       vpTRACE(" ") ;
 
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
 
 
       vpServo task ;
@@ -184,6 +185,8 @@ main()
 
 	    vpServoDisplay::display(task,cam,I) ;
 	    //  std::cout << v.t() ;
+      
+      vpDisplay::flush(I) ;
 	    if (iter==0)  vpDisplay::getClick(I) ;
 	    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 	  }

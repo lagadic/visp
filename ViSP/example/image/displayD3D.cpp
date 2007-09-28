@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayD3D.cpp,v 1.5 2007-05-03 12:07:24 asaunier Exp $
+ * $Id: displayD3D.cpp,v 1.6 2007-09-28 14:45:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -341,6 +341,7 @@ main(int argc, char ** argv)
 
     // Display the color image
     vpDisplay::display(Irgba) ;
+    vpDisplay::flush(Irgba) ;
 
     // If click is allowed, wait for a blocking mouse click to display
     // a cross at the clicked pixel position

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.7 2007-06-06 08:25:56 fspindle Exp $
+ * $Id: poseVirtualVS.cpp,v 1.8 2007-09-28 14:46:07 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -390,6 +390,9 @@ main(int argc, char** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
+      //Flush the display
+      vpDisplay::flush(I) ;
+
     }
     catch(...)
       {
@@ -540,6 +543,7 @@ main(int argc, char** argv)
   if( opt_display ){
     // display the compute pose
     pose.display(I,cMo,cam, 0.05, vpColor::red) ;
+    vpDisplay::flush(I) ;
   }
 
   unsigned niter = 0;
@@ -564,6 +568,9 @@ main(int argc, char** argv)
 	if (opt_display){
 	  // Display the image
 	  vpDisplay::display(I) ;
+     //Flush the display
+     vpDisplay::flush(I) ;
+ 
 	}
 	// kill the point list
 	pose.clearPoint() ;

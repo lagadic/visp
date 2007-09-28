@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.6 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.7 2007-09-28 14:46:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,6 +110,7 @@ main()
       vpTRACE(" ") ;
 
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
 
 
 
@@ -277,11 +278,11 @@ main()
 	  try
 	    {
 	      for (i=0 ; i < nbPoint ; i++)
-		{
-		  dot[i].track(I) ;
-		  Lu += dot[i].get_u() ;
-		  Lv += dot[i].get_v() ;
-		}
+		    {
+		      dot[i].track(I) ;
+		      Lu += dot[i].get_u() ;
+		      Lv += dot[i].get_v() ;
+		    }
 	    }
 	  catch(...)
 	    {
@@ -333,13 +334,13 @@ main()
 	  // Compute the adaptative gain (speed up the convergence)
 	  double gain ;
 	  if (iter>2)
-	    {
-	      if (alpha == 0) gain = lambda_av ;
-	      else
-		{
-		  gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av;
-		}
-	    }
+	  {
+	    if (alpha == 0) gain = lambda_av ;
+	    else
+		  {
+		    gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av;
+		  }
+	  }
 	  else gain = lambda_av ;
 	  if (SAVE==1)
 	    gain = gain/5 ;

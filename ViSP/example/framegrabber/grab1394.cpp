@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.6 2007-05-14 08:36:03 fspindle Exp $
+ * $Id: grab1394.cpp,v 1.7 2007-09-28 14:45:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -454,14 +454,14 @@ main(int argc, char ** argv)
   if (req_display) {
     try{
       if (req_color) {
-	d.init(Irgb, 100, 100, "1394 grabbing (color)... ") ;
-	vpDisplay::display(Irgb) ;
-	vpDisplay::flush(Irgb) ;
+	      d.init(Irgb, 100, 100, "1394 grabbing (color)... ") ;
+	      vpDisplay::display(Irgb) ;
+	      vpDisplay::flush(Irgb) ;
       }
       else {
-	d.init(I, 100, 100, "1394 grabbing (greylevel)... ") ;
-	vpDisplay::display(I) ;
-	vpDisplay::flush(I) ;
+	      d.init(I, 100, 100, "1394 grabbing (greylevel)... ") ;
+	      vpDisplay::display(I) ;
+	      vpDisplay::flush(I) ;
       }
     }
     catch(...)
@@ -480,15 +480,15 @@ main(int argc, char ** argv)
     if (req_color) {
       g.acquire(Irgb) ;
       if (req_display) {
-	vpDisplay::display(Irgb) ;
-	vpDisplay::flush(Irgb) ;
+	      vpDisplay::display(Irgb) ;
+	      vpDisplay::flush(Irgb) ;
       }
     }
     else {
       g.acquire(I) ;
       if (req_display) {
-	vpDisplay::display(I) ;
-	vpDisplay::flush(I) ;
+	      vpDisplay::display(I) ;
+	      vpDisplay::flush(I) ;
       }
     }
     std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << std::endl;

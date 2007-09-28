@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot.cpp,v 1.11 2007-08-22 16:16:54 fspindle Exp $
+ * $Id: trackDot.cpp,v 1.12 2007-09-28 14:47:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -339,6 +339,7 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
     }
     catch(...)
       {
@@ -386,69 +387,68 @@ main(int argc, char ** argv)
 
   try {
     while (iter < opt_first + opt_nimages*opt_step) {
-	// set the new image name
-	if (opt_ppath.empty()){
-	  s.str("");
-	  s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-	  filename = dirname + s.str();
-	}
-	else {
-	  sprintf(cfilename, opt_ppath.c_str(), iter) ;
-	  filename = cfilename;
-	}
-	// read the image
-	std::cout << "read : " << filename << std::endl;
-	vpImageIo::readPGM(I, filename);
+	    // set the new image name
+	    if (opt_ppath.empty()){
+	      s.str("");
+	      s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+	      filename = dirname + s.str();
+	    }
+	    else {
+	      sprintf(cfilename, opt_ppath.c_str(), iter) ;
+	      filename = cfilename;
+	    }
+	    // read the image
+	    std::cout << "read : " << filename << std::endl;
+	    vpImageIo::readPGM(I, filename);
 
-	if (opt_display) {
-	  // Display the image
-	  vpDisplay::display(I) ;
-	  vpDisplay::flush(I) ;
-	}
-	std::cout << "Tracking on image: " << filename << std::endl;
+	    if (opt_display) {
+	      // Display the image
+	      vpDisplay::display(I) ;
+	    }
+	    std::cout << "Tracking on image: " << filename << std::endl;
 
-	// track the dot
-	double time = vpTime::measureTimeMs();
-	d.track(I) ;
+	    // track the dot
+	    double time = vpTime::measureTimeMs();
+	    d.track(I) ;
 
-	std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): "
-		  << std::endl;
-	std::cout << d.get_u() << " " << d.get_v()
-	     << " - "
-	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
-	std::cout << "Size:" << std::endl;
-	std::cout << "w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
-	std::cout << "Moments: " << std::endl;
-	std::cout << "m00: " << d.m00 << std::endl;
-	std::cout << "m11: " << d.m11 << std::endl;
-	std::cout << "m02: " << d.m02 << std::endl;
-	std::cout << "m20: " << d.m20 << std::endl;
-	std::cout << "m10: " << d.m10 << std::endl;
-	std::cout << "m01: " << d.m01 << std::endl << std::endl;
+	    std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): "
+		      << std::endl;
+	    std::cout << d.get_u() << " " << d.get_v()
+	        << " - "
+	        << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
+	    std::cout << "Size:" << std::endl;
+	    std::cout << "w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
+	    std::cout << "Moments: " << std::endl;
+	    std::cout << "m00: " << d.m00 << std::endl;
+	    std::cout << "m11: " << d.m11 << std::endl;
+	    std::cout << "m02: " << d.m02 << std::endl;
+	    std::cout << "m20: " << d.m20 << std::endl;
+	    std::cout << "m10: " << d.m10 << std::endl;
+	    std::cout << "m01: " << d.m01 << std::endl << std::endl;
 
-	if (opt_display) {
-	  // Display the image
+	    if (opt_display) {
+	      // Display the image
 
-	  // display a red cross (size 10) in the image at the dot center
-	  // of gravity location
-	  //
-	  // WARNING
-	  // in the vpDisplay class member's when pixel coordinates
-	  // are considered the first element is the row index and the second
-	  // is the column index:
-	  //   vpDisplay::displayCross(Image, row index, column index, size, color)
-	  //   therefore u and v are inverted wrt to the vpDot specification
-	  // Alternatively, to avoid this problem another set of member have
-	  // been defined in the vpDisplay class.
-	  // If the method name is postfixe with _uv the specification is :
-	  //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
+	      // display a red cross (size 10) in the image at the dot center
+	      // of gravity location
+	      //
+	      // WARNING
+	      // in the vpDisplay class member's when pixel coordinates
+	      // are considered the first element is the row index and the second
+	      // is the column index:
+	      //   vpDisplay::displayCross(Image, row index, column index, size, color)
+	      //   therefore u and v are inverted wrt to the vpDot specification
+	      // Alternatively, to avoid this problem another set of member have
+	      // been defined in the vpDisplay class.
+	      // If the method name is postfixe with _uv the specification is :
+	      //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
 
-	  vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),10,vpColor::red) ;
-	  // flush the X11 buffer
-	  vpDisplay::flush(I) ;
-	}
-	iter ++;
-      }
+	      vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),10,vpColor::red) ;
+	      // flush the X11 buffer
+	      vpDisplay::flush(I) ;
+	    }
+	    iter ++;
+    }
   }
   catch (...) {
     std::cerr << "Error during the tracking..." << std::endl;

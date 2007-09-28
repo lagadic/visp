@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8Multi.cpp,v 1.6 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: grabItifg8Multi.cpp,v 1.7 2007-09-28 14:45:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -298,16 +298,16 @@ main(int argc, char ** argv)
   if (opt_display) {
     try{
       for (unsigned i=0; i < nboards; i ++) {
-	char title[100];
-	sprintf(title, "Itifg-8.x Framegrabber: board %d", i);
-	display[i].init(I[i], 100+30*i, 100+30*i, title) ;
-	// display the image
-	// The image class has a member that specify a pointer toward
-	// the display that has been initialized in the display declaration
-	// therefore is is no longuer necessary to make a reference to the
-	// display variable.
-	vpDisplay::display(I[i]) ;
-	vpDisplay::flush(I[i]) ;
+	      char title[100];
+	      sprintf(title, "Itifg-8.x Framegrabber: board %d", i);
+	      display[i].init(I[i], 100+30*i, 100+30*i, title) ;
+	      // display the image
+	      // The image class has a member that specify a pointer toward
+	      // the display that has been initialized in the display declaration
+	      // therefore is is no longuer necessary to make a reference to the
+	      // display variable.
+        vpDisplay::display(I[i]) ;
+        vpDisplay::flush(I[i]) ;
       }
     }
     catch(...)
