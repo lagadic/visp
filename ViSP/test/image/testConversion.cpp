@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.10 2007-08-29 15:32:21 asaunier Exp $
+ * $Id: testConversion.cpp,v 1.11 2007-09-28 14:55:46 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -261,7 +261,9 @@ main(int argc, char ** argv)
   vpTRACE("y(%d) u(%d) v(%d) = r(%d) g(%d) b(%d)", y, u, v, r, g, b);
 
 #ifdef VISP_HAVE_OPENCV
-  // Convert a IplImage to a vpimage<vpRGBa>
+/////////////////////////
+// Convert a IplImage to a vpImage<vpRGBa>
+////////////////////////
   IplImage* image = NULL; /*!< The image read / acquired */
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
@@ -280,7 +282,7 @@ main(int argc, char ** argv)
 
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
     
-  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
 
   /* Read the pgm image */
 
@@ -296,8 +298,10 @@ main(int argc, char ** argv)
     vpImageIo::writePPM(Ic, filename) ;
 
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
-
-  // Convert a IplImage to a vpImage<unsigned char>
+    
+///////////////////////////
+// Convert a IplImage to a vpImage<unsigned char>
+////////////////////////////
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
   /* Read the color image */
@@ -328,9 +332,52 @@ main(int argc, char ** argv)
   vpImageConvert::convert(image, Ig);
   filename = opath +  vpIoTools::path("/Klimt_grey_cv.pgm");
   /* Save the the current image */
-    vpImageIo::writePGM(Ig, filename) ;
+  vpImageIo::writePGM(Ig, filename) ;
 
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+////////////////////////////////////
+// Convert a vpImage<vpRGBa> to a IplImage
+////////////////////////////////////
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+
+  /* Read the color image */
+
+// Load a color image from the disk
+  vpCTRACE << "Load " << filename << std::endl;
+  vpImageIo::readPPM(Ic, filename) ;
+  vpImageConvert::convert(Ic, image);
+  filename = opath +  vpIoTools::path("/Klimt_ipl_color_cv.ppm");
+  /* Save the the current image */
+    vpCTRACE << "Write " << filename << std::endl;
+    if((cvSaveImage(filename.c_str(), image)) == 0) {
+      vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
+      return (-1);
+    }
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+////////////////////////////////////////
+// Convert a IplImage to a vpImage<unsigned char>
+////////////////////////////////////////
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+
+/* Read the grey image */
+
+// Load a color image from the disk
+  vpCTRACE << "Load " << filename << std::endl;
+  vpImageIo::readPGM(Ig, filename) ;
+  vpImageConvert::convert(Ig, image);
+  filename = opath +  vpIoTools::path("/Klimt_ipl_grey_cv.pgm");
+  /* Save the the current image */
+
+    vpCTRACE << "Write " << filename << std::endl;
+    if((cvSaveImage(filename.c_str(), image)) == 0) {
+      vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
+      return (-1);
+    }
+    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+  cvReleaseImage( &image );
 
 
 #endif
