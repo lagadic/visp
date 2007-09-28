@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.34 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.35 2007-09-28 14:10:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -355,8 +355,8 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
       gdk_window_set_back_pixmap(window, background, FALSE);
 
       /* Affichage */
-      gdk_window_clear(window);
-      gdk_flush();
+      //gdk_window_clear(window);
+      //gdk_flush();
     }
   else
     {
@@ -396,8 +396,8 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
       gdk_window_set_back_pixmap(window, background, FALSE);
 
       /* Affichage */
-      gdk_window_clear(window);
-      flushDisplay() ;
+      //gdk_window_clear(window);
+      //flushDisplay() ;
 
     }
   else

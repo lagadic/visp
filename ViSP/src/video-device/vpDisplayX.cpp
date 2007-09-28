@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.37 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.38 2007-09-28 14:10:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1120,8 +1120,8 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
         // Affichage de l'image dans la Pixmap.
         XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
         XSetWindowBackgroundPixmap ( display, window, pixmap );
-        XClearWindow ( display, window );
-        XSync ( display,1 );
+//        XClearWindow ( display, window );
+//        XSync ( display,1 );
         break;
       }
       case 16:
@@ -1140,8 +1140,8 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
         // Affichage de l'image dans la Pixmap.
         XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
         XSetWindowBackgroundPixmap ( display, window, pixmap );
-        XClearWindow ( display, window );
-        XSync ( display,1 );
+//        XClearWindow ( display, window );
+//        XSync ( display,1 );
         break;
       }
 
@@ -1166,8 +1166,8 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
         // Affichage de l'image dans la Pixmap.
         XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
         XSetWindowBackgroundPixmap ( display, window, pixmap );
-        XClearWindow ( display, window );
-        XSync ( display,1 );
+//        XClearWindow ( display, window );
+//        XSync ( display,1 );
         break;
       }
     }
@@ -1224,8 +1224,8 @@ void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
         // Affichage de l'image dans la Pixmap.
         XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
         XSetWindowBackgroundPixmap ( display, window, pixmap );
-        XClearWindow ( display, window );
-        XSync ( display,1 );
+//        XClearWindow ( display, window );
+//        XSync ( display,1 );
         break;
 
       }
@@ -1331,8 +1331,8 @@ void vpDisplayX::displayImage ( const unsigned char *I )
     // Affichage de l'image dans la Pixmap.
     XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
     XSetWindowBackgroundPixmap ( display, window, pixmap );
-    XClearWindow ( display, window );
-    XSync ( display,1 );
+//    XClearWindow ( display, window );
+//    XSync ( display,1 );
   }
   else
   {
