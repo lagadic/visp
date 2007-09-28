@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testClick.cpp,v 1.6 2007-06-15 16:28:39 fspindle Exp $
+ * $Id: testClick.cpp,v 1.7 2007-09-28 14:56:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -367,19 +367,28 @@ main(int argc, char ** argv)
         // therefore is is no longuer necessary to make a reference to the
         // display variable.
         vpDisplay::display(I) ;
+        //Flush the display
+        vpDisplay::flush(I) ;
         if ( opt_click_allowed ){
           std::cout << "Click on a pixel to get his coordinates...\n";
           unsigned u, v;
           vpMouseButton::vpMouseButtonType button;
           vpDisplay::getClick(I, v, u, button);
           //   vpDisplay::getClick(I, v, u);
-          std::cout << "  You click on pixel (" << u << ", " << v <<") ";
+          std::cout << "  You click down on pixel (" << u << ", " << v <<") ";
           switch(button) {
             case vpMouseButton::button1: std::cout << "with left button.\n"; break;
             case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
             case vpMouseButton::button3: std::cout << "with right button.\n"; break;
           }
-
+          vpDisplay::getClickUp(I, v, u, button);
+          //   vpDisplay::getClick(I, v, u);
+          std::cout << "  You click up on pixel (" << u << ", " << v <<") ";
+          switch(button) {
+            case vpMouseButton::button1: std::cout << "with left button.\n"; break;
+            case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
+            case vpMouseButton::button3: std::cout << "with right button.\n"; break;
+          }
           std::cout << "A click to exit...\n";
           vpDisplay::getClick(I) ;
         }

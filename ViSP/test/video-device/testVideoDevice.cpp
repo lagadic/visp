@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testVideoDevice.cpp,v 1.4 2007-06-18 08:29:08 fspindle Exp $
+ * $Id: testVideoDevice.cpp,v 1.5 2007-09-28 14:56:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -366,6 +366,8 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
+      //Flush the display
+      vpDisplay::flush(I) ;
 
       std::cout << "A click to continue...\n";
       if ( opt_click_allowed )
@@ -385,6 +387,8 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I) ;
+      //Flush the display
+      vpDisplay::flush(I) ;
 	    std::cout << "A click to continue...\n";
       if ( opt_click_allowed )
         vpDisplay::getClick(I) ;
@@ -402,6 +406,8 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(Irgba) ;
+      //Flush the display
+      vpDisplay::flush(Irgba) ;
 
       std::cout << "A click to continue...\n";
       if ( opt_click_allowed )
@@ -421,6 +427,8 @@ main(int argc, char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       vpDisplay::display(Irgba) ;
+      //Flush the display
+      vpDisplay::flush(Irgba) ;
 
       std::cout << "A click to exit...\n";
       if ( opt_click_allowed )
