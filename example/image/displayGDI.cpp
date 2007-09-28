@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGDI.cpp,v 1.6 2007-04-20 14:22:14 asaunier Exp $
+ * $Id: displayGDI.cpp,v 1.7 2007-09-28 14:45:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -296,6 +296,7 @@ main(int argc, char ** argv)
     vpDisplay::displayCharString(I, 85, 100,
 				 "ViSP is a marvelous software",
 				 vpColor::yellow) ;
+    vpDisplay::flush(I);
 
     // Create a color image
     vpImage<vpRGBa> Ioverlay ;
@@ -337,6 +338,8 @@ main(int argc, char ** argv)
 
     // Display the color image
     vpDisplay::display(Irgba) ;
+    vpDisplay::flush(Irgba) ;
+
 
     // If click is allowed, wait for a blocking mouse click to display
     // a cross at the clicked pixel position
@@ -358,6 +361,8 @@ main(int argc, char ** argv)
       vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
 
     }
+    vpDisplay::flush(Irgba);
+
     // If click is allowed, wait for a blocking mouse click to exit.
     if (opt_click_allowed) {
       std::cout << "\nA click to exit the program..." << std::endl;

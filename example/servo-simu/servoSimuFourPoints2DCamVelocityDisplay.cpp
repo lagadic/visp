@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuFourPoints2DCamVelocityDisplay.cpp,v 1.6 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoSimuFourPoints2DCamVelocityDisplay.cpp,v 1.7 2007-09-28 14:47:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -316,8 +316,8 @@ main(int argc, char ** argv)
 	}
 
       if (opt_display) {
-	vpServoDisplay::display(task,cam,Iint) ;
-	externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
+	      vpServoDisplay::display(task,cam,Iint) ;
+	      externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
       }
 
       if (iter==1) vpTRACE("\t\t compute the control law ") ;

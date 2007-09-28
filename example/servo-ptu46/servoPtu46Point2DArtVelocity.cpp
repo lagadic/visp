@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoPtu46Point2DArtVelocity.cpp,v 1.5 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoPtu46Point2DArtVelocity.cpp,v 1.6 2007-09-28 14:46:57 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -154,6 +154,7 @@ main()
 
     try{
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
     }
     catch(...)
       {
@@ -264,7 +265,8 @@ main()
 	  vpServoDisplay::display(task,cam,I) ;
 	  std::cout << v.t() ;
 	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
-
+    vpDisplay::flush(I) ;
+    
 	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
 	}
 

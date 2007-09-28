@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDirectShow.cpp,v 1.14 2007-05-31 13:12:16 asaunier Exp $
+ * $Id: grabDirectShow.cpp,v 1.15 2007-09-28 14:45:01 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -238,8 +238,9 @@ main(int argc, char ** argv)
       grabber->acquire(I);
 
       if (opt_display) {
-	//Displays the grabbed rgba image
-	vpDisplay::display(I);
+	      //Displays the grabbed rgba image
+	      vpDisplay::display(I);
+        vpDisplay::flush(I);
       }
 
       if (save) {

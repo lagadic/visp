@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6TwoLines2DCamVelocity.cpp,v 1.5 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoAfma6TwoLines2DCamVelocity.cpp,v 1.6 2007-09-28 14:46:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -106,6 +106,7 @@ main()
       vpTRACE(" ") ;
 
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
 
 
       vpServo task ;
@@ -130,20 +131,20 @@ main()
       me.setThreshold(15000) ;
 
       for (i=0 ; i < nbline ; i++)
-	{
-	  line[i].setDisplay(vpMeTracker::RANGE_RESULT) ;
-	  line[i].setMe(&me) ;
+	    {
+	      line[i].setDisplay(vpMeTracker::RANGE_RESULT) ;
+	      line[i].setMe(&me) ;
 
-	  line[i].initTracking(I) ;
-	  line[i].track(I) ;
-	}
+	      line[i].initTracking(I) ;
+	      line[i].track(I) ;
+	    }
 
       vpCameraParameters cam ;
 
       vpTRACE("sets the current position of the visual feature ") ;
       vpFeatureLine p[nbline] ;
       for (i=0 ; i < nbline ; i++)
-	vpFeatureBuilder::create(p[i],cam, line[i])  ;
+      	vpFeatureBuilder::create(p[i],cam, line[i])  ;
 
       vpTRACE("sets the desired position of the visual feature ") ;
       vpFeatureLine pd[nbline] ;
@@ -160,7 +161,7 @@ main()
       vpTRACE("\t we want to see a point on a point..") ;
       std::cout << std::endl ;
       for (i=0 ; i < nbline ; i++)
-	task.addFeature(p[i],pd[i]) ;
+      	task.addFeature(p[i],pd[i]) ;
 
       vpTRACE("\t set the gain") ;
       task.setLambda(0.032) ;
@@ -191,24 +192,25 @@ main()
 
 	    for (i=0 ; i < nbline ; i++)
 	      {
-		line[i].track(I) ;
-		line[i].display(I, vpColor::red) ;
+		      line[i].track(I) ;
+		      line[i].display(I, vpColor::red) ;
 
-		//    vpDisplay::displayCross(I,(int)line.I(), (int)line.J(),
-		//			   10,vpColor::green) ;
+		      //    vpDisplay::displayCross(I,(int)line.I(), (int)line.J(),
+		      //			   10,vpColor::green) ;
 
-		vpFeatureBuilder::create(p[i],cam,line[i]);
-		vpTRACE("%f %f ",line[i].getRho(), line[i].getTheta()) ;
+		      vpFeatureBuilder::create(p[i],cam,line[i]);
+		      vpTRACE("%f %f ",line[i].getRho(), line[i].getTheta()) ;
 
-		p[i].display(cam, I,  vpColor::red) ;
+		      p[i].display(cam, I,  vpColor::red) ;
 	      }
+      vpDisplay::flush(I) ;
 	    double gain ;
 	    {
 	      if (alpha == 0) gain = lambda_av ;
 	      else
-		{
-		  gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av ;
-		}
+		    {
+		      gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av ;
+		    }
 	    }  
 	    task.setLambda(gain) ;
 	    v = task.computeControlLaw() ;

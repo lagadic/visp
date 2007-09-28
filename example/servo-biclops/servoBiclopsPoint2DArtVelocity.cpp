@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.6 2007-07-11 16:28:23 acherubi Exp $
+ * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.7 2007-09-28 14:46:47 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -299,6 +299,7 @@ main(int argc, char ** argv)
     
     try{
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
     }
     catch(...)
       {
@@ -404,6 +405,8 @@ main(int argc, char ** argv)
 	  v = task.computeControlLaw() ;
 
 	  vpServoDisplay::display(task,cam,I) ;
+    vpDisplay::flush(I) ;
+     
 	  std::cout << v.t() ;
 	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 

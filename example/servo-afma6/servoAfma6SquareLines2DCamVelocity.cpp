@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6SquareLines2DCamVelocity.cpp,v 1.5 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoAfma6SquareLines2DCamVelocity.cpp,v 1.6 2007-09-28 14:46:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,7 +102,7 @@ main()
       vpTRACE(" ") ;
 
       vpDisplay::display(I) ;
-
+      vpDisplay::flush(I);
 
       vpServo task ;
 
@@ -199,24 +199,24 @@ main()
 	    //vpImageIo::writePGM(I,s) ;
 	    for (i=0 ; i < nbline ; i++)
 	      {
-		line[i].track(I) ;
-		line[i].display(I, vpColor::red) ;
+		      line[i].track(I) ;
+		      line[i].display(I, vpColor::red) ;
 
-		//    vpDisplay::displayCross(I,(int)line.I(), (int)line.J(),
-		//			   10,vpColor::green) ;
+		      //    vpDisplay::displayCross(I,(int)line.I(), (int)line.J(),
+		      //			   10,vpColor::green) ;
 
-		vpFeatureBuilder::create(p[i],cam,line[i]);
-		//  vpTRACE("%f %f ",p[i].getRho(), p[i].getTheta()) ;
+		      vpFeatureBuilder::create(p[i],cam,line[i]);
+		      //  vpTRACE("%f %f ",p[i].getRho(), p[i].getTheta()) ;
 
-		p[i].display(cam, I,  vpColor::red) ;
+		      p[i].display(cam, I,  vpColor::red) ;
 	      }
 	    double gain ;
 	    {
 	      if (alpha == 0) gain = lambda_av ;
 	      else
-		{
-		  gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av ;
-		}
+		    {
+		      gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av ;
+		    }
 	    }
 
 	    task.setLambda(gain) ;
@@ -225,14 +225,15 @@ main()
 	    //  std::cout << task.error.t() << std::endl ;
 
 	    vpServoDisplay::display(task,cam,I) ;
+      vpDisplay::flush(I) ;
 	    std::cout << v.sumSquare() <<std::endl  ;
 	    if (iter==0)  vpDisplay::getClick(I) ;
 	    if (v.sumSquare() > 0.5)
 	      {
-		v =0 ;
-		robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-		robot.stopMotion() ;
-		vpDisplay::getClick(I) ;
+		      v =0 ;
+		      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+		      robot.stopMotion() ;
+		      vpDisplay::getClick(I) ;
 	      }
 
 	    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;

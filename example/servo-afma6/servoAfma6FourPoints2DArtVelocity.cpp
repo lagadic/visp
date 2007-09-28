@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DArtVelocity.cpp,v 1.6 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DArtVelocity.cpp,v 1.7 2007-09-28 14:46:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,6 +103,7 @@ main()
       vpTRACE(" ") ;
 
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
 
       std::cout << std::endl ;
       std::cout << "-------------------------------------------------------" << std::endl ;
@@ -120,12 +121,12 @@ main()
 		<< std::endl;
 
       for (i=0 ; i < 4 ; i++) {
-	dot[i].initTracking(I) ;
-	vpDisplay::displayCross(I,
-				(unsigned int)dot[i].get_v(),
-				(unsigned int)dot[i].get_u(),
-				10, vpColor::blue) ;
-	vpDisplay::flush(I);
+	      dot[i].initTracking(I) ;
+	      vpDisplay::displayCross(I,
+				      (unsigned int)dot[i].get_v(),
+				      (unsigned int)dot[i].get_u(),
+				      10, vpColor::blue) ;
+	      vpDisplay::flush(I);
       }
 
       vpCameraParameters cam ;
@@ -190,11 +191,11 @@ main()
 	  try
 	    {
 	      for (i=0 ; i < 4 ; i++) {
-		dot[i].track(I) ;
-		vpDisplay::displayCross(I,
-					(unsigned int)dot[i].get_v(),
-					(unsigned int)dot[i].get_u(),
-					10, vpColor::green) ;
+		      dot[i].track(I) ;
+		      vpDisplay::displayCross(I,
+					      (unsigned int)dot[i].get_v(),
+					      (unsigned int)dot[i].get_u(),
+					      10, vpColor::green) ;
 	      }
 	    }
 	  catch(...)

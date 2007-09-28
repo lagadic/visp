@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.7 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.8 2007-09-28 14:46:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -105,6 +105,7 @@ main()
       g.acquire(I) ;
 
       vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
 
 
 

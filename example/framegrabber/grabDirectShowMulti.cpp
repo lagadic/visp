@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-* $Id: grabDirectShowMulti.cpp,v 1.8 2007-09-20 10:06:05 asaunier Exp $
+* $Id: grabDirectShowMulti.cpp,v 1.9 2007-09-28 14:45:01 asaunier Exp $
 *
 * Copyright (C) 1998-2006 Inria. All rights reserved.
 *
@@ -424,6 +424,7 @@ main(int argc, char ** argv)
 				if (display) {
 					// Display the last image acquired
 					vpDisplay::display(I[c]);
+          vpDisplay::flush(I[c]); 
 				}
 				if (save) {
 					char buf[FILENAME_MAX];

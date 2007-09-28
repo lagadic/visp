@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGTK.cpp,v 1.5 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: displayGTK.cpp,v 1.6 2007-09-28 14:45:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -301,6 +301,8 @@ main(int argc, char ** argv)
     vpDisplay::displayCharString(I, 85, 100,
 				 "ViSP is a marvelous software",
 				 vpColor::yellow) ;
+    //Flush the display    
+    vpDisplay::flush(I);
 
     // Create a color image
     vpImage<vpRGBa> Ioverlay ;
@@ -341,6 +343,7 @@ main(int argc, char ** argv)
 
     // Display the color image
     vpDisplay::display(Irgba) ;
+    vpDisplay::flush(Irgba) ;
 
     // If click is allowed, wait for a blocking mouse click to display a cross
     // at the clicked pixel position

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.8 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.9 2007-09-28 14:46:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,6 +101,7 @@ main()
     vpDisplayX display(I,0,0,"testServoEllipse.cpp ") ;
     vpTRACE(" ") ;
     vpDisplay::display(I) ;
+    vpDisplay::flush(I) ;
 
     std::cout << std::endl ;
     std::cout << "-------------------------------------------------------" << std::endl ;
