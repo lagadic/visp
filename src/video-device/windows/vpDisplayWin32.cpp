@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.20 2007-09-17 13:03:38 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.21 2007-09-28 14:10:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -205,7 +205,7 @@ void vpDisplayWin32::displayImage(const vpImage<vpRGBa> &I)
   //sets the image to render
   window.renderer->setImg(I);
   //sends a message to the window
-  PostMessage(window.getHWnd(),vpWM_DISPLAY,0,0);
+  //PostMessage(window.getHWnd(),vpWM_DISPLAY,0,0);
 }
 
 /*!
@@ -220,7 +220,7 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
   //sets the image to render
   window.renderer->setImg(I);
   //sends a message to the window
-  PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
+  //PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
 }
 
 /*!
