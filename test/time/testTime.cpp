@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTime.cpp,v 1.6 2007-04-27 16:40:16 fspindle Exp $
+ * $Id: testTime.cpp,v 1.7 2007-10-01 13:52:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -130,7 +130,7 @@ main(int argc, char ** argv)
       v = i * 2 / 3. + j;
 
   double t1 = vpTime::measureTimeMs();
-  vpTime::wait(t0, 40);
+  vpTime::wait(t1, 40);
 
   double t2 = vpTime::measureTimeMs();
 
@@ -163,14 +163,18 @@ main(int argc, char ** argv)
 
   double t7 = vpTime::measureTimeMs();
 
-  std::cout << "t1-t0: computation: " << t1 - t0 << std::endl;
-  std::cout << "t2-t0: wait(t, 40 ms): " << t2 - t0 << std::endl;
-  std::cout << "t2-t1: waiting time(t, 40): " << t2 - t1 << std::endl;
+  vpTime::wait(2);
+
+  double t8 = vpTime::measureTimeMs();
+
+  std::cout << "t1-t0: computation time: " << t1 - t0 << std::endl;
+  std::cout << "t2-t1: wait(t1, 40 ms): " << t2 - t1 << std::endl;
   std::cout << "t3-t2: sleep(10 ms): " << t3 - t2 << std::endl;
   std::cout << "t4-t3: sleep(2 ms): " << t4 - t3 << std::endl;
   std::cout << "t5-t4: wait(t, 19 ms): " << t5 - t4 << std::endl;
   std::cout << "t6-t5: wait(5 ms): " << t6 - t5 << std::endl;
-  std::cout << "t7-t7: wait(21 ms): " << t7 - t6 << std::endl;
+  std::cout << "t7-t6: wait(21 ms): " << t7 - t6 << std::endl;
+  std::cout << "t8-t7: wait(2 ms): " << t8 - t7 << std::endl;
 
   return 0;
 }
