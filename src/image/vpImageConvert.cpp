@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.19 2007-09-26 09:14:22 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.20 2007-10-01 13:03:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,7 +102,7 @@ the configuration step.
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpImageConvert.h>
-    
+
     vpImage<vpRGBa> Ic; // A color image
     IplImage* Ip;
 
@@ -110,9 +110,9 @@ the configuration step.
     Ip = cvLoadImage("image.ppm",CV_LOAD_IMAGE_COLOR);
     //Convert the grayscale IplImage into vpImage<vpRGBa>
     vpImageConvert::convert(Ip,Ic);
-    
+
     //...
-    
+
     //Release Ip header and data
     cvReleaseImage(&Ip);
 \endcode
@@ -134,14 +134,11 @@ vpImageConvert::convert(const IplImage* src,
     unsigned char* input = (unsigned char*)src->imageData;
     unsigned char* line;
     unsigned char* output = (unsigned char*)dest.bitmap;
-    
-    unsigned int j=0;
-    unsigned int i=0;
 
-    for(i=0 ; i < height ; i++)
+    for(int i=0 ; i < height ; i++)
     {
       line = input;
-      for( j=0 ; j < width ; j++)
+      for(int j=0 ; j < width ; j++)
         {
           *(output++) = *(line+2);
           *(output++) = *(line+1);
@@ -160,14 +157,11 @@ vpImageConvert::convert(const IplImage* src,
     unsigned char * input = (unsigned char*)src->imageData;
     unsigned char * line;
     unsigned char * output = (unsigned char*)dest.bitmap;
-    
-    unsigned int j=0;
-    unsigned int i=0;
 
-    for(i=0 ; i < height ; i++)
+    for(int i=0 ; i < height ; i++)
     {
       line = input;
-      for( j=0 ; j < width ; j++)
+      for(int j=0 ; j < width ; j++)
         {
           *output++ = *(line);
           *output++ = *(line);
@@ -200,7 +194,7 @@ the configuration step.
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpImageConvert.h>
-    
+
     vpImage<unsigned char> Ig; // A grayscale image
     IplImage* Ip;
 
@@ -208,9 +202,9 @@ the configuration step.
     Ip = cvLoadImage("image.pgm",CV_LOAD_IMAGE_GRAYSCALE);
     //Convert the grayscale IplImage into vpImage<unsigned char>
     vpImageConvert::convert(Ip,Ig);
-    
+
     //...
-    
+
     //Release Ip header and data
     cvReleaseImage(&Ip);
 \endcode
@@ -272,7 +266,7 @@ the configuration step.
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpImageConvert.h>
-    
+
     vpImage<vpRGBa> Ic; // A color image
     IplImage* Ip;
 
@@ -282,7 +276,7 @@ the configuration step.
     vpImageConvert::convert(Ic,Ip);
     //Treatments on IplImage
     //...
-    
+
     //Release Ip header and data
     cvReleaseImage(&Ip);
 \endcode
@@ -296,16 +290,17 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src,
   CvSize size = cvSize(width,height);
   int depth = 8;
   int channels = 3;
-  if(dest != NULL &&
-      (dest->nChannels!=3 || dest->depth!=8 || dest->height!=height || dest->width!=width))
+  if (dest != NULL &&
+      (dest->nChannels != 3 || dest->depth != 8
+       || dest->height != (int) height || dest->width != (int) width))
     cvReleaseImage(&dest);
-    
+
   dest = cvCreateImage( size, depth, channels );
   //starting source address
   unsigned char * input = (unsigned char*)src.bitmap;//rgba image
   unsigned char * line;
   unsigned char * output = (unsigned char*)dest->imageData;//bgr image
-  
+
   unsigned int j=0;
   unsigned int i=0;
   int widthStep = dest->widthStep;
@@ -345,7 +340,7 @@ the configuration step.
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpImageConvert.h>
-    
+
     vpImage<unsigned char> Ig; // A greyscale image
     IplImage* Ip;
 
@@ -355,7 +350,7 @@ the configuration step.
     vpImageConvert::convert(Ig,Ip);
     //Treatments on IplImage Ip
     //...
-    
+
     //Release Ip header and data
     cvReleaseImage(&Ip);
 \endcode
@@ -369,19 +364,19 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
   CvSize size = cvSize(width,height);
   int depth = 8;
   int channels = 1;
-  if(dest != NULL &&
-      (dest->nChannels!=1 || dest->depth!=8 || dest->height!=height || dest->width!=width))
+  if (dest != NULL &&
+      (dest->nChannels != 1 || dest->depth != 8
+       || dest->height != (int) height || dest->width != (int) width))
     cvReleaseImage(&dest);
   dest = cvCreateImage( size, depth, channels );
   int widthStep = dest->widthStep;
 
-  if(width == widthStep){
-    memcpy(dest->imageData,src.bitmap,
-                width*height);
+  if ((int) width == widthStep){
+    memcpy(dest->imageData,src.bitmap, width*height);
   }
   else{
     //copying each line taking account of the widthStep
-    for (int i =0  ; i < height ; i++){
+    for (unsigned int i =0  ; i < height ; i++){
           memcpy(dest->imageData + i*widthStep,src.bitmap + i*width,
                 width);
     }
