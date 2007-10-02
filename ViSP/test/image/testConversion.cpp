@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.11 2007-09-28 14:55:46 asaunier Exp $
+ * $Id: testConversion.cpp,v 1.12 2007-10-02 16:19:08 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -273,6 +273,7 @@ main(int argc, char ** argv)
            << filename << std::endl;
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    if(image!=NULL) cvReleaseImage( &image );
     return (-1);
   }
   vpImageConvert::convert(image, Ic);
@@ -290,6 +291,7 @@ main(int argc, char ** argv)
            << filename << std::endl;
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    if(image!=NULL) cvReleaseImage( &image );
     return (-1);
   }
   vpImageConvert::convert(image, Ic);
@@ -310,6 +312,7 @@ main(int argc, char ** argv)
            << filename << std::endl;
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    if(image!=NULL) cvReleaseImage( &image );
     return (-1);
   }
   vpImageConvert::convert(image, Ig);
@@ -327,6 +330,7 @@ main(int argc, char ** argv)
            << filename << std::endl;
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    if(image!=NULL) cvReleaseImage( &image );
     return (-1);
   }
   vpImageConvert::convert(image, Ig);
@@ -352,6 +356,7 @@ main(int argc, char ** argv)
     vpCTRACE << "Write " << filename << std::endl;
     if((cvSaveImage(filename.c_str(), image)) == 0) {
       vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
+      if(image!=NULL) cvReleaseImage( &image );
       return (-1);
     }
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
@@ -373,15 +378,15 @@ main(int argc, char ** argv)
     vpCTRACE << "Write " << filename << std::endl;
     if((cvSaveImage(filename.c_str(), image)) == 0) {
       vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
+      if(image!=NULL) cvReleaseImage( &image );
       return (-1);
     }
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
-  cvReleaseImage( &image );
-
+  if(image!=NULL) cvReleaseImage( &image );
 
 #endif
-  
+
 
 }
 
