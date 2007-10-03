@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGSL.cmake,v 1.7 2007-09-28 14:03:38 asaunier Exp $
+# $Id: FindGSL.cmake,v 1.8 2007-10-03 15:09:51 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -59,21 +59,39 @@ IF(WIN32)
      PATHS "$ENV{GSL_HOME}/lib"
      DOC "Where can the GSL (cblas.lib) library be found"
       )
-  SET(GSL_LIBRARIES ${GSL_cblas_LIBRARY} ${GSL_gsl_LIBRARY})
+ FIND_LIBRARY(GSL_gsl_LIBRARY_DEBUG
+     NAMES gsl_d
+     PATHS "$ENV{GSL_HOME}/lib"
+     DOC "Where can the GSL (gsl.lib) library be found"
+     )
+ FIND_LIBRARY(GSL_cblas_LIBRARY_DEBUG
+     NAMES cblas_d
+     PATHS "$ENV{GSL_HOME}/lib"
+     DOC "Where can the GSL (cblas.lib) library be found"
+      )
+  SET(GSL_LIBRARIES "optimized" ${GSL_cblas_LIBRARY}
+                    "optimized" ${GSL_gsl_LIBRARY}
+                    "debug" ${GSL_cblas_LIBRARY_DEBUG}
+                    "debug" ${GSL_gsl_LIBRARY_DEBUG})
 
   FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_linalg.h
       $ENV{GSL_HOME}/include
       )
 
-  IF(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
+  IF(GSL_INCLUDE_DIR AND GSL_gsl_LIBRARY AND GSL_cblas_LIBRARY
+      AND GSL_gsl_LIBRARY_DEBUG AND GSL_cblas_LIBRARY_DEBUG)
     SET(GSL_FOUND TRUE)
-  ELSE(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
+  ELSE(GSL_INCLUDE_DIR AND GSL_gsl_LIBRARY AND GSL_cblas_LIBRARY
+      AND GSL_gsl_LIBRARY_DEBUG AND GSL_cblas_LIBRARY_DEBUG)
     SET(GSL_FOUND FALSE) 
-  ENDIF(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
+  ENDIF(GSL_INCLUDE_DIR AND GSL_gsl_LIBRARY AND GSL_cblas_LIBRARY
+      AND GSL_gsl_LIBRARY_DEBUG AND GSL_cblas_LIBRARY_DEBUG)
 
   MARK_AS_ADVANCED(
     GSL_gsl_LIBRARY
     GSL_cblas_LIBRARY
+    GSL_gsl_LIBRARY_DEBUG
+    GSL_cblas_LIBRARY_DEBUG
     GSL_INCLUDE_DIR
     GSL_LIBRARIES
     GSL_LINK_DIRECTORIES
