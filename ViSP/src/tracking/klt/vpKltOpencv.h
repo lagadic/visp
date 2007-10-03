@@ -1,5 +1,55 @@
-#ifndef __VPKLTOPENCV__
-#define __VPKLTOPENCV__
+/****************************************************************************
+ *
+ * $Id: vpKltOpencv.h,v 1.3 2007-10-03 16:33:48 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit.
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker implemented
+ * with opencv.
+ *
+ * Authors:
+ * Fabien Servant
+ * Fabien Spindler
+ *
+ *****************************************************************************/
+
+/*!
+  \file vpKltOpencv.h
+
+  \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
+  implemented with opencv.
+*/
+
+#ifndef vpKltOpencv_h
+#define vpKltOpencv_h
+
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_OPENCV
 
 #ifdef _CH_
 #pragma package <opencv>
@@ -20,20 +70,22 @@
 #include <visp/vpException.h>
 #include <visp/vpTrackingException.h>
 
-#define DEBUG
-
 typedef int (*funccheck)(int,double,double);
 typedef void (*funcinfo)(int,int,int,double,double);
 typedef void (*funcevent)(int);
 
-/**
-   Wrapper for OpenCV Implementation of the KLT tracker
+/*!
+  \class vpKltOpencv
+
+  \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
+  implemented with opencv.
+
 */
 class VISP_EXPORT vpKltOpencv
 {
  private:
   int initialized; //Is the tracker ready ?
-	
+
   int maxFeatures; //Maximum number of features to track (Default 50)
   int countFeatures; //Currently tracked features
   int countPrevFeatures; //Previously tracked features
@@ -49,7 +101,7 @@ class VISP_EXPORT vpKltOpencv
   int use_harris; //0 use a simple Minimum EigenValue Detector, != 0  use Harris (default 1)
   int pyramid_level; //Number of level for the tracker's gaussian pyramid data (default 3)
   int _tid; //tracker id for multiple trackers
-	
+
   IplImage *image; //Image buffer
   IplImage *prev_image; //Image buffer for the previous iteration
   IplImage *pyramid; //Gaussian pyramid data
@@ -63,9 +115,9 @@ class VISP_EXPORT vpKltOpencv
 
   char *status; //Result of the tracker for every features : 0 = lost, 1 = found
 
-	
-	
-  //EVENT FUNCTION POINTERS 
+
+
+  //EVENT FUNCTION POINTERS
   funcevent OnInitialize;
   funcinfo OnFeatureLost;
   funcinfo OnNewFeature;
@@ -80,17 +132,17 @@ class VISP_EXPORT vpKltOpencv
 
  public:
   vpKltOpencv();
-  vpKltOpencv(const vpKltOpencv& copy);	
+  vpKltOpencv(const vpKltOpencv& copy);
   ~vpKltOpencv();
 
   //Detect corners in the image. Initialize the tracker
   void initTracking(const IplImage *I, const IplImage *mask = NULL);
 
-  //Track ! 
+  //Track !
   void track(const IplImage *I);
 
   //Draw the tracked features on the given image
-  void display(const vpImage<unsigned char> &I, 
+  void display(const vpImage<unsigned char> &I,
 	       vpColor::vpColorType color = vpColor::red);
 
   //Seters
@@ -103,11 +155,11 @@ class VISP_EXPORT vpKltOpencv
   void setUseHarris(unsigned int input) {initialized = 0; use_harris=input;}
   void setPyramidLevels(unsigned int input) {initialized = 0; pyramid_level=input;}
   void setTrackerId(int tid) {_tid = tid;}
-	
+
   //Functors
-	
+
   //Event when tracker is initialized -> event(id_tracker)
-  void setOnInitialize(funcevent input) {OnInitialize = input;} 
+  void setOnInitialize(funcevent input) {OnInitialize = input;}
   //Event when a feature is lost -> event(id_tracker, index, uid, x, y)
   void setOnFeatureLost(funcinfo input) {OnFeatureLost = input;}
   //Event when a new feature is found -> event(id_tracker, index, uid, x, y)
@@ -116,7 +168,7 @@ class VISP_EXPORT vpKltOpencv
   void setOnMeasureFeature(funcinfo input) {OnMeasureFeature = input;}
   //Is a feature valid (e.g. : test if not too close to borders) -> event(id_tracker, x, y)
   void setIsFeatureValid(funccheck input) {IsFeatureValid = input;}
-	
+
   //! Get the current number of features
   int getNbFeatures() { return countFeatures; }
   //! Get the previous number of features
@@ -130,4 +182,5 @@ class VISP_EXPORT vpKltOpencv
   void suppressFeature(int index);
 };
 
+#endif
 #endif
