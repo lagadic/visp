@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.8 2007-09-07 08:17:59 fspindle Exp $
+ * $Id: vpRobust.cpp,v 1.9 2007-10-03 16:35:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,7 +101,11 @@ vpRobust::setThreshold(const double x)
   \param method : Type of M-Estimator \f$\rho(r_i)\f$:
 
   - TUKEY : \f$ \rho(r_i, C) = \left\{
-  \begin{array}{ll} \frac{r_i^6}{6} - \frac{C^2r_i^4}{2} +\frac{C^4r_i^2}{2} & \mbox{if} |r_i| < C \\ \frac{1}{6} C^6 & \mbox{else} \end{array} \f$ with influence function \f$ \psi(r_i, C) = \left\{
+  \begin{array}{ll}
+  \frac{r_i^6}{6} - \frac{C^2r_i^4}{2} +\frac{C^4r_i^2}{2} & \mbox{if} |r_i| < C \\
+  \frac{1}{6} C^6 & \mbox{else} \end{array}
+  \f$
+  with influence function \f$ \psi(r_i, C) = \left\{
   \begin{array}{ll} r_i(r_i^2-C^2)^2 & \mbox{if} |r_i| < C \\ 0 & \mbox{else} \end{array} \right. \f$ where \f$C=4.7 \hat{\sigma} \f$ and with \f$ \hat{\sigma} = 1.48{Med}_i(|r_i - {Med}_j(r_j)|) \f$
 
   - CAUCHY :
