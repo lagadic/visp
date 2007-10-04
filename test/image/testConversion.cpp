@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.13 2007-10-04 12:36:29 asaunier Exp $
+ * $Id: testConversion.cpp,v 1.14 2007-10-04 12:39:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -271,7 +271,6 @@ main(int argc, char ** argv)
 
   vpCTRACE << "Reading the color image with opencv: "<< std::endl
            << filename << std::endl;
-  if(image!=NULL) cvReleaseImage( &image );
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
     return (-1);
