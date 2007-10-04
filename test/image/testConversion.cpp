@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.12 2007-10-02 16:19:08 asaunier Exp $
+ * $Id: testConversion.cpp,v 1.13 2007-10-04 12:36:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -271,9 +271,9 @@ main(int argc, char ** argv)
 
   vpCTRACE << "Reading the color image with opencv: "<< std::endl
            << filename << std::endl;
+  if(image!=NULL) cvReleaseImage( &image );
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
-    if(image!=NULL) cvReleaseImage( &image );
     return (-1);
   }
   vpImageConvert::convert(image, Ic);
@@ -289,9 +289,9 @@ main(int argc, char ** argv)
 
   vpCTRACE << "Reading the greyscale image with opencv: "<< std::endl
            << filename << std::endl;
+  if(image!=NULL) cvReleaseImage( &image );
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
-    if(image!=NULL) cvReleaseImage( &image );
     return (-1);
   }
   vpImageConvert::convert(image, Ic);
@@ -310,9 +310,9 @@ main(int argc, char ** argv)
 
   vpCTRACE << "Reading the color image with opencv: "<< std::endl
            << filename << std::endl;
+  if(image!=NULL) cvReleaseImage( &image );
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
-    if(image!=NULL) cvReleaseImage( &image );
     return (-1);
   }
   vpImageConvert::convert(image, Ig);
@@ -328,9 +328,10 @@ main(int argc, char ** argv)
 
   vpCTRACE << "Reading the greyscale image with opencv: "<< std::endl
            << filename << std::endl;
+  if(image!=NULL) cvReleaseImage( &image );
   if((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE)) == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
-    if(image!=NULL) cvReleaseImage( &image );
+    
     return (-1);
   }
   vpImageConvert::convert(image, Ig);
