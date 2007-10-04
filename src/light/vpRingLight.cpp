@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.cpp,v 1.2 2007-09-24 13:05:09 fspindle Exp $
+ * $Id: vpRingLight.cpp,v 1.3 2007-10-04 14:49:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,6 +100,8 @@ vpRingLight::~vpRingLight()
 /*!
   Activates the ring light by sending a pulse throw the parallel port.
 
+  The pulse width is 1 ms.
+
 
 */
 void vpRingLight::activate()
@@ -118,7 +120,8 @@ void vpRingLight::activate()
   //vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 0-1 pulse
 
-  vpTime::wait(10);
+  vpTime::wait(1);
+
   data = data & (~mask_d1);
   //vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 1-0 pulse
