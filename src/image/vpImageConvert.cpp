@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.20 2007-10-01 13:03:05 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.21 2007-10-04 09:00:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -290,12 +290,16 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src,
   CvSize size = cvSize(width,height);
   int depth = 8;
   int channels = 3;
-  if (dest != NULL &&
-      (dest->nChannels != 3 || dest->depth != 8
-       || dest->height != (int) height || dest->width != (int) width))
-    cvReleaseImage(&dest);
-
-  dest = cvCreateImage( size, depth, channels );
+  if (dest != NULL){
+    if(dest->nChannels != channels || dest->depth != depth
+       || dest->height != (int) height || dest->width != (int) width){
+      cvReleaseImage(&dest);
+      dest = cvCreateImage( size, depth, channels );
+    }
+  }
+  else dest = cvCreateImage( size, depth, channels );
+    
+  
   //starting source address
   unsigned char * input = (unsigned char*)src.bitmap;//rgba image
   unsigned char * line;
@@ -364,11 +368,15 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
   CvSize size = cvSize(width,height);
   int depth = 8;
   int channels = 1;
-  if (dest != NULL &&
-      (dest->nChannels != 1 || dest->depth != 8
-       || dest->height != (int) height || dest->width != (int) width))
-    cvReleaseImage(&dest);
-  dest = cvCreateImage( size, depth, channels );
+  if (dest != NULL){
+    if(dest->nChannels != channels || dest->depth != depth
+       || dest->height != (int) height || dest->width != (int) width){
+      cvReleaseImage(&dest);
+      dest = cvCreateImage( size, depth, channels );
+    }
+  }
+  else dest = cvCreateImage( size, depth, channels );
+  
   int widthStep = dest->widthStep;
 
   if ((int) width == widthStep){
