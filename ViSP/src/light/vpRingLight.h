@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.h,v 1.2 2007-09-24 13:05:09 fspindle Exp $
+ * $Id: vpRingLight.h,v 1.3 2007-10-09 11:54:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,9 @@ public:
   vpRingLight();
   ~vpRingLight();
 
-  void activate();
+  void pulse();
+  void on();
+  void off();
 
 private:
   vpParallelPort parport;

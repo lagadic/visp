@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8RingLight.cpp,v 1.3 2007-09-28 14:45:48 asaunier Exp $
+ * $Id: grabItifg8RingLight.cpp,v 1.4 2007-10-09 11:54:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,9 +35,9 @@
  *
  *****************************************************************************/
 
-/*!  
+/*!
 
-  \file grabItifg8RingLight.cpp 
+  \file grabItifg8RingLight.cpp
 
   \brief Example of using vpItifg8Grabber class for image framegrabbing and
   vpRingLight class for the lighting control.
@@ -285,7 +285,7 @@ main(int argc, char ** argv)
     // Open the framegrabber with the specified settings
     g.open(I) ;
     // Activates the ring light before image grabbing
-    light.activate();
+    light.pulse();
     // Acquire an image
     g.acquire(I) ;
   }
@@ -332,7 +332,7 @@ main(int argc, char ** argv)
 	tbegin = vpTime::measureTimeMs();
 
 	// Activates the ring light before image grabbing
-	light.activate();
+	light.pulse();
 
 	// Grab the image
 	g.acquire(I) ;

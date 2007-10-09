@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: ringLight.cpp,v 1.1 2007-09-04 09:32:19 fspindle Exp $
+ * $Id: ringLight.cpp,v 1.2 2007-10-09 11:54:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,9 +50,10 @@
 
 #include <visp/vpRingLight.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpTime.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"d:h"
+#define GETOPTARGS	"d:hn:o"
 
 /*!
 
@@ -62,20 +63,30 @@
   \param badparam : Bad parameter name.
 
 */
-void usage(char *name, char *badparam)
+void usage(char *name, char *badparam, int nsec)
 {
   fprintf(stdout, "\n\
-Send a pulse to activate the ring light.\n\
+Send a pulse to activate the ring light or turn onthe  ring light \n\
+during %d s.\n\
 \n\
 SYNOPSIS\n\
-  %s [-h]\n\
-", name);
+  %s [-o] [-n nsecond] [-h]\n\
+", nsec, name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
 \n\
+  -o\n\
+     Turn the ring light on during %d s.\n\
+     If this option is not set, send a short pulse\n\
+     to activate the light.\n\
+\n\
+  -n %%d                                                  %d\n\
+     Time in second while the ring light is turned on.\n\
+     This option is to make into realtion with option \"-o\".\n\
+\n\
   -h\n\
-     Print the help.\n\n");
+     Print the help.\n\n", nsec, nsec);
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n" );
@@ -94,7 +105,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv)
+bool getOptions(int argc, char **argv, bool &on, int &nsec)
 {
   char *optarg;
   int	c;
@@ -102,16 +113,18 @@ bool getOptions(int argc, char **argv)
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'o': on = true; break;
+    case 'n': nsec = atoi(optarg); break;
+    case 'h': usage(argv[0], NULL, nsec); return false; break;
 
     default:
-      usage(argv[0], optarg); return false; break;
+      usage(argv[0], optarg, nsec); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], NULL, nsec);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -128,17 +141,29 @@ bool getOptions(int argc, char **argv)
 int
 main(int argc, char **argv)
 {
+  bool on = false;
+  int nsec = 5; // Time while the ring light is turned on
 
   // Read the command line options
-  if (getOptions(argc, argv) == false) {
+  if (getOptions(argc, argv, on, nsec) == false) {
     exit (-1);
   }
   try {
 
     vpRingLight light;
 
-    printf("Activates the ring light\n");
-    light.activate();
+    light.pulse();
+
+    if (on) {
+      printf("Turn on ring light\n");
+      light.on(); // Turn the ring light on
+      vpTime::wait(nsec * 1000); // Wait 5 s
+      light.off(); // and then turn the ring light off
+    }
+    else {
+      printf("Send a pulse to activate the ring light\n");
+      light.pulse();
+    }
   }
   catch (vpParallelPortException e) {
     switch(e.getCode()) {
