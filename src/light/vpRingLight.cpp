@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.cpp,v 1.3 2007-10-04 14:49:23 fspindle Exp $
+ * $Id: vpRingLight.cpp,v 1.4 2007-10-09 11:54:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,6 +43,8 @@
 #  include <sys/stat.h>
 #  include <fcntl.h>
 #  include <sys/ioctl.h>
+#  include <sys/time.h>
+#  include <unistd.h>
 
 #  include <visp/vpRingLight.h>
 #  include <visp/vpDebug.h>
@@ -80,21 +82,24 @@
   the parallel port can't be opened. A possible reason is that you don't have
   write access.
 
+  Turn the ring light off.
 */
 vpRingLight::vpRingLight()
 {
-
+  off();
 }
 
 /*!
   Destructor to close the device.
+
+  Turn the ring light off.
 
   \exception vpParallelPortException::closing If the device used to access to
   the parallel port can't be closed.
 */
 vpRingLight::~vpRingLight()
 {
-
+  off();
 }
 
 /*!
@@ -104,7 +109,7 @@ vpRingLight::~vpRingLight()
 
 
 */
-void vpRingLight::activate()
+void vpRingLight::pulse()
 {
   // Output 1+,1- is connected to the D1 pin on the parallel port connector
   // Output 2+,2- is connected to the D2 pin on the parallel port connector
@@ -112,19 +117,80 @@ void vpRingLight::activate()
   // We want to control the ring light 1+,1- output
 
   // To activates the light we send a pulse
-  int mask_d1 = 0x02;
-  unsigned char data;
-  data = parport.getData(); // actual value of the data bus
+  int mask_mode_pulse_d2 = 0x00; // D2 is low
+  int mask_pulse_d1 = 0x02;      // we send a pulse on D1 : L, H, L
+  unsigned char data = 0x00;
+  //  data = parport.getData(); // actual value of the data bus
+  // vpTRACE("Actual data 0x%x = %d\n", data, data);
 
-  data = data | mask_d1;
+  data = data | mask_pulse_d1 | mask_mode_pulse_d2;
   //vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 0-1 pulse
 
-  vpTime::wait(1);
+  if (1) {
+    // Wait 500 micro seconds
+    int usTempo = 500;
+    struct timeval ti, tc; // Initial and current time
+    gettimeofday(&ti,0);
+    do {
+      gettimeofday(&tc,0);
+    } while (tc.tv_usec < ti.tv_usec + usTempo);
+  }
+  else {
+    vpTime::wait(1); // wait 1ms
+  }
 
-  data = data & (~mask_d1);
+  data = data & (~mask_pulse_d1);
   //vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 1-0 pulse
+}
+
+/*!
+  Turn the ring light on.
+
+  To turn the ring light off, see off().
+
+*/
+void vpRingLight::on()
+{
+  // Output 1+,1- is connected to the D1 pin on the parallel port connector
+  // Output 2+,2- is connected to the D2 pin on the parallel port connector
+
+  // We want to control the ring light 1+,1- output
+
+  // To activates the light we send a pulse
+  int mask_mode_onoff_d2 = 0x04; // D2 is Hight
+  int mask_on_d1 = 0x02;      // D1 is Hight to turn the light on
+  unsigned char data = 0x00;
+  //data = parport.getData(); // actual value of the data bus
+
+  data = data | mask_on_d1 | mask_mode_onoff_d2;
+  //vpTRACE("Send 0x%x = %d\n", data, data);
+  parport.sendData(data);
+}
+
+/*!
+  Turn the ring light off.
+
+  To turn the ring light on, see on().
+
+*/
+void vpRingLight::off()
+{
+  // Output 1+,1- is connected to the D1 pin on the parallel port connector
+  // Output 2+,2- is connected to the D2 pin on the parallel port connector
+
+  // We want to control the ring light 1+,1- output
+
+  // To activates the light we send a pulse
+  int mask_mode_onoff_d2 = 0x04; // D2 is Hight
+  int mask_off_d1 = 0x00;      // D1 is Low to turn the light off
+  unsigned char data = 0x00;
+  //data = parport.getData(); // actual value of the data bus
+
+  data = data | mask_off_d1 | mask_mode_onoff_d2;
+  //vpTRACE("Send 0x%x = %d\n", data, data);
+  parport.sendData(data);
 }
 
 
