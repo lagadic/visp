@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.12 2007-09-12 16:00:29 fspindle Exp $
+ * $Id: vpMePath.cpp,v 1.13 2007-10-10 17:13:55 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,6 +83,7 @@ vpMePath::vpMePath():vpMeTracker()
 {
   std::printf ("\033[32m 9 july 2007 CO \033[30m \n");
   setVerboseMode(false);
+  setTrackParabolas(true);
   if (verbose)
   	std::printf ("\033[32m vpMePath::vpMePath() 10 july 2007 \033[30m \n");
 
@@ -107,8 +108,8 @@ vpMePath::vpMePath():vpMeTracker()
   numExtr = 8; //number of points seeked after each extremity
   goodPointGain = 115; //gain for considering good points when selecing curve
   maxLineScore = 170;//180;//195; //max error tolerated on line before parabola selection  
-  par_det_threshold = 0.00001;//0.00003;//0.00006; //parabola det threshold for selecting a line
-  aParThreshold	= 0.0004;//0.0006;//0.0009; //aPar threshold for selecting a line
+  par_det_threshold = 0.00001;//0.00001; //parabola det threshold for selecting a line
+  aParThreshold	= 0.0004;//0.0004; //aPar threshold for selecting a line
   
   i_par = new double[numPointPar] ;
   j_par = new double[numPointPar] ;
@@ -151,88 +152,122 @@ void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
   //parabola vertex coordinates
   double x_v = -bFin / (2*aFin);
   double y_v = -bFin*bFin / (4*aFin) + cFin;
-  double ct = cos(thetaFin);
-  double st = sin(thetaFin);
-  //display parabola vertex
-  if (!line) vpDisplay::displayCross(I,(int)(x_v*ct + y_v*st),
-				     (int)(-x_v*st + y_v*ct),20, col);
-  //display segment oriented along parabola symetric axis
-  vpDisplay::displayLine(I, (int) i_ref [2], (int) j_ref [2],
+  if (1) {
+  	//display parabola vertex
+  	if (!line) vpDisplay::displayCross(I,(int)(x_v*ct + y_v*st),
+  				     (int)(-x_v*st + y_v*ct),20, col);
+  	//display segment oriented along parabola symetric axis
+  	vpDisplay::displayLine(I, (int) i_ref [2], (int) j_ref [2],
 			 (int)(i_ref [2] + 70*sin (thetaFin)), 
 			 (int)(j_ref [2] + 70*cos (thetaFin)), 
 			 vpColor::blue, 1) ;
-  //display initial points
-  //if (firstIter)
-  //  for (int k = 0; k < numPoints; k++)
-  //    vpDisplay::displayCross(I, (int) i_ref[k], (int) j_ref[k],10,
-  //			      vpColor::green);
-  
-  //image coords of top and bottom point
-  double i_1;
-  double j_1;
-  double i_2;
-  double j_2;
-  double i_1o;
-  double j_1o; 
-  if (firstIter) {
-    i_1 = (double) i_ref[0];
-    j_1 = (double) j_ref[0];
-    i_2 = (double) i_ref[4];
-    j_2 = (double) j_ref[4];
-  } else {
-    vpMeSite p = list.value() ;
-    list.front();//initial curve pixel
-    p = list.value() ;
-    i_1 = (double) p.i;
-    j_1 = (double) p.j;
-    list.end();//final curve pixel
-    p = list.value() ;
-    i_2 = (double) p.i;
-    j_2 = (double) p.j;
+	//display initial points
+  	if (firstIter)
+		for (int k = 0; k < numPoints; k++)
+			vpDisplay::displayCross(I,(int)i_ref[k], (int) j_ref[k],
+				10,vpColor::green);
   }
+  
+  if (0) {
+  //just for ICRA video - display circle in D
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 1, vpColor::red);	
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 2, vpColor::red);	
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 3, vpColor::red);	
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 4, vpColor::red);	
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 5, vpColor::red);	
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 6, vpColor::red);	
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 7, vpColor::red);	
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 8, vpColor::red);	
+  	
+  } else {
   //display initial and final curve pixels
-  vpDisplay::displayCross(I, (int) i1, (int) j1, 20, vpColor::red);	
-  vpDisplay::displayCross(I, (int) i2, (int) j2, 20, vpColor::yellow);
-  list.front();
-  //display all points in the list
-  double i_dis;
-  double j_dis;
-  while(!list.outside())
-    {
-      vpMeSite s = list.value() ;//current reference pixel
-      list.next() ;
-      i_dis = s.i ;
-      j_dis = s.j ;
-      vpDisplay::displayCross(I, (int) i_dis, (int) j_dis, 1, vpColor::red);
-    }
+    	vpDisplay::displayCross(I, (int) i1, (int) j1, 20, vpColor::cyan);
+	//std::printf("vpMePath::display red %d %d\n",(int)i1, (int)j1);
+    	vpDisplay::displayCross(I, (int) i2, (int) j2, 20, vpColor::yellow);
+  }  
+
   //convert coordinates to rotated reference frame
-  double x_2 = i_2*ct - j_2*st; 
-  double x_1 = i_1*ct - j_1*st;
-  double y_2 = i_2*st + j_2*ct; 
-  double y_1 = i_1*st + j_1*ct;
-  int disp_samples = (int) (0.5 * sqrt (vpMath::sqr(i_2-i_1) + 
-  				vpMath::sqr(j_2-j_1)));
-  double incr = (double) ((x_2 - x_1) / disp_samples);
+//  double x_2 = i2*ct - j2*st; 
+  double x_1 = i1*ct - j1*st;
+//  double y_2 = i2*st + j2*ct; 
+//  double y_1 = i1*st + j1*ct;
+ 
+  double tanOrient = atan (1 /(2*aFin*x_1 + bFin)) + thetaFin;//was -
+
+if (0) {  
   if (line) {
     //project first and last points abscissa to estimated line 
-    x_2 = (-x_2/bFin - y_2 + cFin) / (-bFin - 1/bFin);
-    x_1 = (-x_1/bFin - y_1 + cFin) / (-bFin - 1/bFin);
+    //x_2 = (-x_2/bFin - y_2 + cFin) / (-bFin - 1/bFin);
+    //x_1 = (-x_1/bFin - y_1 + cFin) / (-bFin - 1/bFin);
+    //display tangent
+    if (horLine) {
+    	std::printf("bFin %f atan (1/bFin) %f cFin %f atan (cFin) %f\n",
+		bFin, atan (1/bFin), cFin, atan (cFin));
+	vpDisplay::displayLine(I, 
+		(int)(i1 + 200*bFin*cos (atan (cFin))/fabs(bFin)), 
+		(int)(j1 - 200*fabs(sin (atan (cFin)))),
+		(int)(i1 - 200*bFin*cos (atan (cFin))/fabs(bFin)), 
+		(int)(j1 + 200*fabs(sin (atan (cFin)))), 
+		vpColor::red, 3) ;
+
+	/*if (j1 > 160)//initial point on right side
+		vpDisplay::displayLine(I, (int) i1, (int) j1,
+			 (int)(i1 + 200*cos (atan (1/bFin))), 
+			 (int)(j1 + 200*sin (atan (1/bFin))), 
+			 vpColor::green, 1) ;
+	else //initial point on left side
+		vpDisplay::displayLine(I, (int) i1, (int) j1,
+			 (int)(i1 - 200*cos (atan (1/bFin))), 
+			 (int)(j1 - 200*sin (atan (1/bFin))), 
+			 vpColor::green, 1) ;
+	*/
+    
+    } else {
+	//std::printf("atan (1 /(2*aFin*x_1 + bFin)) %f atan (1/bFin) %f\n",
+    	//	atan (1 /(2*aFin*x_1 + bFin)), atan (1/bFin)); 
+    
+	vpDisplay::displayLine(I, 
+		 (int)(i1 - 200*fabs(sin (atan (1/bFin)))), 
+		 (int)(j1 - 200*bFin*cos (atan (1/bFin))/fabs(bFin)),
+		 (int)(i1 + 200*fabs(sin (atan (1/bFin)))), 
+		 (int)(j1 + 200*bFin*cos (atan (1/bFin))/fabs(bFin)), 
+		 vpColor::red, 3) ;
+    }
   } else {//TODO
     //project first and last points abscissa to estimated parabola 
     //x_2 = (-x_2/bFin - y_2 + cFin) / (-bFin - 1/bFin);
     //x_1 = (-x_1/bFin - y_1 + cFin) / (-bFin - 1/bFin);
+    //std::printf("thetaFin %f atan (1 /(2*aFin*x_1 + bFin)) %f tanOrient %f\n",
+    //	thetaFin, atan (1 /(2*aFin*x_1 + bFin)), tanOrient); 
+    vpDisplay::displayLine(I, 
+		 (int)(i1 - 200*fabs(sin (tanOrient))), 
+		 (int)(j1 - 200*tanOrient*cos (tanOrient)/fabs(tanOrient)),
+		 (int)(i1 + 200*fabs(sin (tanOrient))), 
+		 (int)(j1 + 200*tanOrient*cos (tanOrient)/fabs(tanOrient)), 
+		 vpColor::red, 3);
   }
-  i_1 = x_1*ct + y_1*st;
-  j_1 = -x_1*st + y_1*ct;
+  
+  
+}  
+  //i_1 = x_1*ct + y_1*st;
+  //j_1 = -x_1*st + y_1*ct;
+  /*
+  int disp_samples=(int)(0.5 *sqrt(vpMath::sqr(i_2-i_1)+vpMath::sqr(j_2-j_1)));
+  double x_2 = i2*ct - j2*st; 
+  double x_1 = i1*ct - j1*st;
+  double incr = (double) ((x_2 - x_1) / disp_samples);
+  double i_1o;
+  double j_1o; 
   for (int m = 0; m < disp_samples; m++) {
-    i_1o = i_1;
-    j_1o = j_1;
+    i_1o = i1;
+    j_1o = j1;
     x_1 = x_1 + incr; 
     y_1 = aFin*x_1*x_1 + bFin*x_1 + cFin;
     i_1 = x_1*ct + y_1*st;
     j_1 = -x_1*st + y_1*ct;
     //display the curve (line or parabola)
   }
+  */
 }
 /*
   Search curve extra points outside extremities 
@@ -256,8 +291,6 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
     std::printf ("\033[32m 2-seekExtremities i1 %f j1 %f i2 %f j2 %f \033[30m \n",
 		 i1, j1, i2, j2);
   // sample positions
-  double ct = cos(thetaFin);
-  double st = sin(thetaFin);
   //convert coordinates to rotated reference frame
   double x_2 = i2*ct - j2*st;
   double x_1 = i1*ct - j1*st;
@@ -299,8 +332,8 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
 	//if point is tracked, add it to the list
 	if (pix.suppress == 0)
 	  {
-	    vpDisplay::displayCross(I, (unsigned)pix.i,  (unsigned)pix.j,  
-	    				2, vpColor::black) ;
+	    //vpDisplay::displayCross(I, (unsigned)pix.i,  (unsigned)pix.j,  
+	    //				2, vpColor::black) ;
 	    list.front();
 	    list.addLeft(pix);
 	  }
@@ -324,8 +357,8 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
 	//if point is tracked, add it to the list
 	if (pix.suppress == 0)
 	  {
-	    vpDisplay::displayCross(I, (unsigned)pix.i,  (unsigned)pix.j,  
-	    				2, vpColor::black) ;
+	    //vpDisplay::displayCross(I, (unsigned)pix.i,  (unsigned)pix.j,  
+	    //				2, vpColor::black) ;
 	    list.end();
 	    list.addRight(pix);
 	  }
@@ -379,8 +412,6 @@ void vpMePath::sample(vpImage<unsigned char> & I)
     list.kill();
   }
   //vpDisplay::getClick(I) ;
-  double ct = cos(thetaFin);
-  double st = sin(thetaFin);
   //convert coordinates to rotated frame
   double x_2 = i_2*ct - j_2*st; 
   double x_1 = i_1*ct - j_1*st;
@@ -530,8 +561,6 @@ void vpMePath::getParabolaPoints() {
     i_t = i2;
     j_t = j2;
   }
-  double ct = cos(thetaFin);
-  double st = sin(thetaFin);
   //convert to rotated reference frame coordinates
   double x_t = i_t*ct - j_t*st; 
   double x_b = i_b*ct - j_b*st;
@@ -556,7 +585,7 @@ void vpMePath::getParabolaPoints() {
   compute the parameters.
 
 */
-void vpMePath::leastSquare (vpImage<unsigned char> &I)
+void vpMePath::leastSquare(vpImage<unsigned char> &I)
 {
 /*  std::printf("1 list.nbElement() %d\n", list.nbElement()); 
   if (!firstIter) {
@@ -569,7 +598,10 @@ void vpMePath::leastSquare (vpImage<unsigned char> &I)
   }
   */
   leastSquareLine(I);
-  leastSquareParabola(I);
+  
+  if (trackParabolas) {
+	leastSquareParabola(I);
+  }
   vpMeSite p;
 //  std::printf("leastSquare() numPts %d \n", list.nbElement());
 
@@ -599,18 +631,19 @@ void vpMePath::leastSquare (vpImage<unsigned char> &I)
       				"Not enough line and par good points")) ;
   }
   if (lineGoodPoints != 0)
-  	lineScore = line_error+(double)(goodPointGain * nPoints / lineGoodPoints);
+  	lineScore = line_error + (double)(goodPointGain * nPoints / lineGoodPoints);
   else 
 	lineScore = 10000; 
   if (parGoodPoints != 0)
-  	parScore = parab_error+(double)(goodPointGain * nPoints / parGoodPoints);
+  	parScore = parab_error + (double)(goodPointGain * nPoints / parGoodPoints);
   else parScore = 10000;
 
   if (verbose)
     std::printf("\033[36mline score %f par score %f \033[30m\n", 
     	lineScore, parScore);
   //pick the line as most likely curve
-  if ((lineScore < maxLineScore) || (lineScore < parScore)) {
+  if ((!trackParabolas) || 
+     ((lineScore < maxLineScore) || (lineScore < parScore))) {
     n_points = lineGoodPoints;
     for (int i = 0 ; i < 5 ; i++) {
     	K[i] = K_line[i];
@@ -652,6 +685,10 @@ void vpMePath::leastSquare (vpImage<unsigned char> &I)
        aFin, bFin, cFin, thetaFin);
   }
   updateNormAng();
+  ct = cos(thetaFin);
+  st = sin(thetaFin);
+  
+
 }
 /*!
 
@@ -1199,7 +1236,7 @@ void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
   //vpDisplay::getClick(I) ;
   sample(I);
   //std::printf("1-initTracking numPts %d \n", list.nbElement());
-  display(I, vpColor::green) ;
+  //display(I, vpColor::green) ;
   firstIter = false;
   //vpDisplay::getClick(I) ;
   vpMeTracker::initTracking(I) ;
@@ -1214,7 +1251,7 @@ void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
   //std::printf("2-initTracking numPts %d \n", list.nbElement());
   vpMeTracker::display(I) ;
   vpDisplay::flush(I);
-  display(I, vpColor::green);
+  //display(I, vpColor::green);
   //std::printf("3-initTracking numPts %d \n", list.nbElement());
   if (verbose)
     std::printf("vpMePath::initTracking(I,n,i,j) finshed\n");
@@ -1298,7 +1335,7 @@ void vpMePath::track(vpImage<unsigned char> &I)
 	}
 	//std::printf("7-track numPts %d \n", list.nbElement());
 	suppressPoints() ;
-	displayList(I);
+	//displayList(I);
 	//std::printf("8-track numPts %d \n", list.nbElement());
 	try {
           //pick line or parabola and compute its parameters
@@ -1307,10 +1344,12 @@ void vpMePath::track(vpImage<unsigned char> &I)
 	    vpERROR_TRACE("Error caught") ;
 	    throw ;
 	}
-      	display(I, vpColor::green); 
+      	//display(I, vpColor::green); //remove after video
 	//std::printf("9-track numPts %d \n", list.nbElement());
       	vpDisplay::flush(I);
     }
+    display(I, vpColor::green); //remove after video
+    displayList(I);
     if (verbose)
       std::printf("\033[34m IMAGE %d --------> done \033[30m \n\n", iter);
   }

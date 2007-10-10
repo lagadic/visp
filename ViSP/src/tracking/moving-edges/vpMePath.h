@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.6 2007-08-28 16:46:28 acherubi Exp $
+ * $Id: vpMePath.h,v 1.7 2007-10-10 17:14:13 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,6 +70,7 @@ public:
   void initTracking(vpImage<unsigned char> &I, int n,
 		    unsigned *i, unsigned *j);
   inline void setVerboseMode(bool on=false) {this->verbose = on;};
+  inline void setTrackParabolas(bool on=true) {this->trackParabolas = on;};
 
 private:
 
@@ -86,7 +87,7 @@ private:
   void displayList(vpImage<unsigned char> &I);
   void computeNormAng(double &norm_ang, vpColVector &K, 
 		      double i, double j, bool isLine);
-  void reduceList(vpList<vpMeSite> &list, int newSize); 
+  void reduceList(vpList<vpMeSite> &list, int newSize);
 
 public:
   
@@ -101,14 +102,16 @@ public:
   unsigned *i_ref, *j_ref; //reference parabola point coordinates
     
 private:
-  
+  //fine temp for IB
   vpColVector K, K_line, K_par; //conic parameters
   double aPar, bPar, cPar, thetaPar; //parabola parameters
+  double ct, st;//cos and sine of thetaFin
   bool firstIter;
   double line_error, parab_error, parab_errorTot;
   int lineGoodPoints, parGoodPoints, parGoodPointsTot;
   bool verbose;// verbose mode
-
+  bool trackParabolas;
+  
   //parameters
   int LSiter;  //least square iterations 
   double good_point_thresh; //threshold on least square line error
