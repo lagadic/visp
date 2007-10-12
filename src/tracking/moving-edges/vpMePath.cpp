@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.13 2007-10-10 17:13:55 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.14 2007-10-12 12:32:44 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -623,8 +623,8 @@ void vpMePath::leastSquare(vpImage<unsigned char> &I)
   if ((lineGoodPoints == 0) && (parGoodPoints == 0)) {
       vpDisplay::flush(I);
       static char s[30];
-      sprintf(s,"/tmp/acherubi/NoPointImage.pgm");
-      vpImageIo::writePGM(I,s);
+      sprintf(s,"/tmp/acherubi/NoPointImage.ppm");
+      vpImageIo::writePPM(I,s);
       vpERROR_TRACE("Not enough line and par good points") ;
       std::printf("vpMePath::Exception Not enough line and par good points\n");
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
@@ -713,8 +713,8 @@ vpMePath::leastSquareParabola(vpImage<unsigned char> &I)
   	((!firstIter) && (list.nbElement() < 3))) {
       vpDisplay::flush(I);
       static char s[30];
-      sprintf(s,"/tmp/acherubi/NoPointImage.pgm");
-      vpImageIo::writePGM(I,s);
+      sprintf(s,"/tmp/acherubi/NoPointImage.ppm");
+      vpImageIo::writePPM(I,s);
 				
       vpERROR_TRACE("Not enough point") ;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
@@ -968,8 +968,8 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
   	((!firstIter) && (list.nbElement() < 1))) {
       vpDisplay::flush(I);
       static char s[30];
-      sprintf(s,"/tmp/acherubi/NoPointImage.pgm");
-      vpImageIo::writePGM(I,s);
+      sprintf(s,"/tmp/acherubi/NoPointImage.ppm");
+      vpImageIo::writePPM(I,s);
 	
       vpERROR_TRACE("Not enough point") ;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
@@ -1080,8 +1080,8 @@ void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
   	((!firstIter) && (list.nbElement() < 1))) {
       vpDisplay::flush(I);
       static char s[30];
-      sprintf(s,"/tmp/acherubi/NoPointImage.pgm");
-      vpImageIo::writePGM(I,s);
+      sprintf(s,"/tmp/acherubi/NoPointImage.ppm");
+      vpImageIo::writePPM(I,s);
       
       vpERROR_TRACE("Not enough point") ;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
