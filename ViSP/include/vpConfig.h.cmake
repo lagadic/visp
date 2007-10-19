@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.18 2007-03-21 14:03:13 asaunier Exp $
+ * $Id: vpConfig.h.cmake,v 1.19 2007-10-19 08:32:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -123,6 +123,9 @@
 
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46
+
+// Defined if linux/parport.h is available for parallel port usage.
+#cmakedefine VISP_HAVE_PARPORT
 
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).

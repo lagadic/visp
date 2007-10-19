@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParallelPort.cpp,v 1.2 2007-09-24 13:05:09 fspindle Exp $
+ * $Id: vpParallelPort.cpp,v 1.3 2007-10-19 08:32:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,8 +36,9 @@
  *****************************************************************************/
 
 
+#include <visp/vpConfig.h>
 
-#if ( (defined UNIX) && (! defined APPLE) ) // Only on Linux for the moment
+#ifdef VISP_HAVE_PARPORT
 
 #  include <sys/types.h>
 #  include <sys/stat.h>
@@ -191,3 +192,4 @@ void vpParallelPort::close()
 
 
 #endif
+

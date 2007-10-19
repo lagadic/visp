@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.56 2007-06-07 15:27:10 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.57 2007-10-19 08:32:28 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -288,7 +288,13 @@ IF(USE_PTHREAD)
   ENDIF(PTHREAD_FOUND)
 ENDIF(USE_PTHREAD)
 
-
+#--------------------------------------------------------------------
+# parallel port usage
+#--------------------------------------------------------------------
+FIND_PACKAGE(PARPORT)
+IF(PARPORT_FOUND) 
+  SET(VISP_HAVE_PARPORT TRUE)  # for header vpConfig.h
+ENDIF(PARPORT_FOUND)  
 
 #----------------------------------------------------------------------
 # Third party software : 
