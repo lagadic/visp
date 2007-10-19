@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.18 2007-06-06 12:51:12 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.19 2007-10-19 08:47:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1104,13 +1104,13 @@ vpRobotAfma6::move(char *name)
 void
 vpRobotAfma6::openGripper()
 {
-  system("sudo /local/driver/pince/Afma6_pince_root -s 1") ;
+  system("rsh japet sudo /local/driver/pince/Afma6_pince_root -s 1") ;
 }
 
 void
 vpRobotAfma6::closeGripper()
 {
-  system("sudo /local/driver/pince/Afma6_pince_root -s 0") ;
+  system("rsh japet sudo /local/driver/pince/Afma6_pince_root -s 0") ;
 }
 /*
  * Local variables:
