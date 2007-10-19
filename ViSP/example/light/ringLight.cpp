@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: ringLight.cpp,v 1.2 2007-10-09 11:54:28 fspindle Exp $
+ * $Id: ringLight.cpp,v 1.3 2007-10-19 08:47:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,6 +61,7 @@
 
   \param name : Program name.
   \param badparam : Bad parameter name.
+  \param nsec : Time to wait in seconds
 
 */
 void usage(char *name, char *badparam, int nsec)
@@ -101,6 +102,8 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
+  \param on : When true, turn on the light during nsec seconds.
+  \param nsec : Time to wait in seconds
 
   \return false if the program has to be stopped, true otherwise.
 

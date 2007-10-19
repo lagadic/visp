@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.9 2007-10-03 16:35:01 fspindle Exp $
+ * $Id: vpRobust.cpp,v 1.10 2007-10-19 08:47:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -104,6 +104,7 @@ vpRobust::setThreshold(const double x)
   \begin{array}{ll}
   \frac{r_i^6}{6} - \frac{C^2r_i^4}{2} +\frac{C^4r_i^2}{2} & \mbox{if} |r_i| < C \\
   \frac{1}{6} C^6 & \mbox{else} \end{array}
+  \right.
   \f$
   with influence function \f$ \psi(r_i, C) = \left\{
   \begin{array}{ll} r_i(r_i^2-C^2)^2 & \mbox{if} |r_i| < C \\ 0 & \mbox{else} \end{array} \right. \f$ where \f$C=4.7 \hat{\sigma} \f$ and with \f$ \hat{\sigma} = 1.48{Med}_i(|r_i - {Med}_j(r_j)|) \f$
@@ -117,7 +118,7 @@ vpRobust::setThreshold(const double x)
   \param residues : Residues \f$ r_i \f$ used in the previous formula.
 
   \param weights : Vector of weights \f$w_i =
-  \frac{\psi(r_i)}{r_i}}\f$. Values are in [0, 1]. A value near zero
+  \frac{\psi(r_i)}{r_i}\f$. Values are in [0, 1]. A value near zero
   means that the data is an outlier.
 
   \return Returns a Column Vector of weights associated to each residue.
