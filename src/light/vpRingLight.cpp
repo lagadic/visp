@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.cpp,v 1.4 2007-10-09 11:54:28 fspindle Exp $
+ * $Id: vpRingLight.cpp,v 1.5 2007-10-19 08:32:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,8 +36,9 @@
  *****************************************************************************/
 
 
+#  include <visp/vpConfig.h>
 
-#if ( (defined UNIX) && (! defined APPLE) ) // Only on Linux for the moment
+#ifdef VISP_HAVE_PARPORT
 
 #  include <sys/types.h>
 #  include <sys/stat.h>
@@ -62,12 +63,28 @@
 
   \warning This class works only at Irisa with the Edixia's ring light system.
 
+  Here is an example showing how to synchronise the framegrabbing with
+  the lighting system:
+ 
   \code
+  vpItifg8Grabber grabber;
+  vpImage<unsigned char> I;
+
   vpRingLight light; // Open the device to access to the ring light.
 
-  light.activate(); // Send a pulse to the lighting system
-
+  light.pulse(); // Send a pulse to the lighting system
+  grabber.acquire(I); // Acquire an image
   \endcode
+
+  Here is an example showing how to turn on the lighting during 10 seconds
+  \code
+  int nsec = 10; // Time to wait in seconds
+  light.on(); // Turn the ring light on
+  vpTime::wait(nsec * 1000); // Wait 10 s
+  light.off(); // and then turn the ring light off
+  \endcode
+
+
 
 */
 
@@ -193,6 +210,4 @@ void vpRingLight::off()
   parport.sendData(data);
 }
 
-
-
-#endif // defined UNIX
+#endif

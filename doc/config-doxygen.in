@@ -1007,6 +1007,7 @@ PREDEFINED             = \
            VISP_HAVE_AFMA6 \
            VISP_HAVE_BICLOPS \
            VISP_HAVE_PTU46 \
+           VISP_HAVE_PARPORT \
            WIN32 \
            APPLE \
            UNIX
