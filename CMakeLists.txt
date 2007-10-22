@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.57 2007-10-19 08:32:28 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.58 2007-10-22 14:39:34 ccollewe Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -375,7 +375,7 @@ IF(USE_GTK1)
       ## ignore gtk pedantic warnings by gcc specific -isystem : 
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK_gtk_INCLUDE_PATH}")
       # MESSAGE("DBG CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}")
-      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${GTK2_LIBRARIES})
+      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${GTK_LIBRARIES})
     ELSE(GTK_FOUND)
       #MESSAGE("GTK requested but not found.")
       # SET(USE_GTK OFF)
