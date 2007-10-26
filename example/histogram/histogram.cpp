@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: histogram.cpp,v 1.3 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: histogram.cpp,v 1.4 2007-10-26 08:35:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,31 +54,204 @@
 
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
-
-
 #include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpHistogram.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
 
+// List of allowed command line options
+#define GETOPTARGS	"i:o:h"
 
+/*!
+  \example histogram.cpp
+
+  Read a B&W image on the disk and compute the histogram.
+
+*/
+
+/*!
+
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ipath : Input image path.
+  \param opath : Output image path.
+  \param user : Username.
+
+ */
+void usage(char *name, char *badparam, std::string ipath,
+	   std::string opath, std::string user)
+{
+  fprintf(stdout, "\n\
+Read an image on the disk, display it using X11, display some\n\
+features (line, circle, caracters) in overlay and finaly write \n\
+the image and the overlayed features in an image on the disk.\n\
+\n\
+SYNOPSIS\n\
+  %s [-i <input image path>] [-o <output histogram path>]\n\
+     [-h]\n\
+", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -i <input image path>                                %s\n\
+     Set image input path.\n\
+     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     image.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment\n\
+     variable produces the same behaviour than using\n\
+     this option.\n\
+\n\
+  -o <output histogram path>                           %s\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     \"histogram.txt\" is saved.\n\
+\n\
+  -h\n\
+     Print the help.\n\n",
+	  ipath.c_str(), opath.c_str(), user.c_str());
+
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
+
+}
+/*!
+
+  Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param ipath : Input image path.
+  \param opath : Output image path.
+  \param user : Username.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv,
+		std::string &ipath, std::string &opath,
+		std::string user)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'i': ipath = optarg; break;
+    case 'o': opath = optarg; break;
+    case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+
+    default:
+      usage(argv[0], optarg, ipath, opath, user); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, ipath, opath, user);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
 
 int
-main()
+main(int argc, char ** argv)
 {
-  // Create a test image.
-  // 3 areas were defines;
-  // - one is the background with gray level bg
-  // - another for a big rectangle with gray level fg
-  // - the last one for a small rectangle with gray level mg
-  unsigned char fg = 255, bg = 0, mg = 128;
-  vpImage<unsigned char> I(384, 288);
-  I = bg;
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string opt_opath;
+  std::string ipath;
+  std::string opath;
+  std::string filename;
+  std::string username;
 
-  for (int i=100; i < 150; i ++)
-  for (int j=100; j < 150; j ++)
-    I[i][j] = fg;
-  for (int i=10; i < 15; i ++)
-  for (int j=10; j < 15; j ++)
-    I[i][j] = mg;
+  // Get the VISP_IMAGE_PATH environment variable value
+  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+  if (ptenv != NULL)
+    env_ipath = ptenv;
+  //  std::cout << "env_ipath: " << env_ipath << std::endl;
+
+  // Set the default input path
+  if (! env_ipath.empty())
+    ipath = env_ipath;
+
+  // Set the default output path
+#ifdef UNIX
+  opt_opath = "/tmp";
+#elif WIN32
+  opt_opath = "C:\\temp";
+#endif
+
+  // Get the user login name
+  vpIoTools::getUserName(username);
+
+  // Read the command line options
+  if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
+    exit (-1);
+  }
+
+  // Get the option values
+  if (!opt_ipath.empty())
+    ipath = opt_ipath;
+  if (!opt_opath.empty())
+    opath = opt_opath;
+
+  // Append to the output path string, the login name of the user
+  std::string dirname = opath +  vpIoTools::path("/") + username;
+
+  // Test if the output path exist. If no try to create it
+  if (vpIoTools::checkDirectory(dirname) == false) {
+    try {
+      // Create the dirname
+      vpIoTools::makeDirectory(dirname);
+    }
+    catch (...) {
+      usage(argv[0], NULL, ipath, opath, username);
+      std::cerr << std::endl
+	   << "ERROR:" << std::endl;
+      std::cerr << "  Cannot create " << dirname << std::endl;
+      std::cerr << "  Check your -o " << opath << " option " << std::endl;
+      exit(-1);
+    }
+  }
+
+  // Compare ipath and env_ipath. If they differ, we take into account
+  // the input path comming from the command line option
+  if (opt_ipath.empty()) {
+    if (ipath != env_ipath) {
+      std::cout << std::endl
+	   << "WARNING: " << std::endl;
+      std::cout << "  Since -i <visp image path=" << ipath << "> "
+	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  we skip the environment variable." << std::endl;
+    }
+  }
+
+  // Test if an input path is set
+  if (opt_ipath.empty() && env_ipath.empty()){
+    usage(argv[0], NULL, ipath, opath, username);
+    std::cerr << std::endl
+	 << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+	 << std::endl
+	 << "  environment variable to specify the location of the " << std::endl
+	 << "  image path where test images are located." << std::endl << std::endl;
+    exit(-1);
+  }
+
+  // Create a grey level image
+  vpImage<unsigned char> I ;
+
+  // Load a grey image from the disk
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::readPGM(I, filename) ;
 
 
   unsigned distance = 60;
@@ -87,21 +260,15 @@ main()
   // Computes the histogram from the image
   h.calculate(I);
 
-  if (1){
-    std::cout << "Histogram image: " << std::endl;
-    for (unsigned int i=0; i < h.getSize(); i ++)
-      printf("%d: %d\n", i, h[i]);
-  }
+  // Save the histogram
+  filename = dirname +  vpIoTools::path("/histogram.txt");
+  h.write(filename);
 
   // Smooth the histogram
   h.smooth();
-
-  if (1){
-    std::cout << "Smoothed histogram image: " << std::endl;
-    unsigned *values = h.getValues();
-    for (unsigned int i=0; i < h.getSize(); i ++)
-      printf("%d: %d\n", i, values[i]);
-  }
+  // Save the histogram
+  filename = dirname +  vpIoTools::path("/histogram_smoothed.txt");
+  h.write(filename);
 
   vpList<vpHistogramPeak> peaks;
   unsigned int nbpeaks = 0;
