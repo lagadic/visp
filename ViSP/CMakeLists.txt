@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.58 2007-10-22 14:39:34 ccollewe Exp $
+# $Id: CMakeLists.txt,v 1.59 2007-10-26 10:05:57 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -618,6 +618,9 @@ IF (DOXYGEN_FOUND)
    
   CONFIGURE_FILE(${VISP_SOURCE_DIR}/doc/config-doxygen.in
     ${VISP_DOC_DIR}/config-doxygen
+    @ONLY )
+  CONFIGURE_FILE(${VISP_SOURCE_DIR}/doc/mainpage.doc.in
+    ${VISP_SOURCE_DIR}/doc/mainpage.doc
     @ONLY )
   ADD_CUSTOM_TARGET(html-doc ${DOXYGEN_EXECUTABLE} ${VISP_DOC_DIR}/config-doxygen) 
 ENDIF(DOXYGEN_FOUND)
