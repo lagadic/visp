@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: histogram.cpp,v 1.4 2007-10-26 08:35:35 fspindle Exp $
+ * $Id: histogram.cpp,v 1.5 2007-10-26 10:18:37 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,12 +41,6 @@
   \brief Histogram manipulation.
 */
 
-
-/*!
-  \example histogram.cpp
-
-  Example of a gray level histogram manipulation.
-*/
 
 #include <stdio.h>
 #include <sstream>
