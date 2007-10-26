@@ -1,0 +1,43 @@
+/*! \mainpage Online documentation for ViSP @VISP_VERSION@
+ 
+  \section intro_sec Introduction
+ 
+  ViSP is a modular C++ library that allows fast development of visual
+servoing applications. ViSP is developped and maintained by the INRIA
+<a href="http://www.irisa.fr/lagadic">Lagadic</a> team at <a
+href="http://www.irisa.fr">IRISA</a> - <a
+href="http://www.inria.fr">INRIA</a> Rennes.
+
+ViSP official site is <a
+href="http://www.irisa.fr/lagadic/visp/visp.html">http://www.irisa.fr/lagadic/visp/visp.html</a>
+ 
+  \section download_sec Download
+
+From <a
+href="http://www.irisa.fr/lagadic/visp/download.html">http://www.irisa.fr/lagadic/visp/download.html</a>
+you can either download the latest stable release or the current
+development distribution using CVS.
+
+  \section install_sec Installation
+
+Because ViSP is a multi platform library that works under Linux, OSX
+and Windows, to install ViSP you need the CMake configuration tool
+available from <a
+href="http://www.cmake.org">http://www.cmake.org</a>. Furthermore,
+depending on your operation system and the capabilities (framegrabber,
+display, simulation, ...) you need, prior to install ViSP you may
+install third party libraries <a
+href="http://www.irisa.fr/lagadic/visp/libraries.html">http://www.irisa.fr/lagadic/visp/libraries.html</a>.
+
+ViSP full installation procedure using CMake is avalaible from <a
+href="http://www.irisa.fr/lagadic/visp/install.html">http://www.irisa.fr/lagadic/visp/install.html</a>.
+ 
+  \section Examples_sec Examples
+
+From the <a href="examples.html">example</a> page, you will find
+examples showing how to use the library to acquire and display an
+image, compute a camera pose, estimate an homography, servo a real
+robot or a simulated one using a 2D, 2D half or 3D visual servoing
+scheme, ...
+
+ */
