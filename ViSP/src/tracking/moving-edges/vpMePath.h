@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.7 2007-10-10 17:14:13 acherubi Exp $
+ * $Id: vpMePath.h,v 1.8 2007-10-26 17:06:40 acherubi Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -90,39 +90,67 @@ private:
   void reduceList(vpList<vpMeSite> &list, int newSize);
 
 public:
-  
-  double aFin, bFin, cFin, thetaFin; //line OR parabola parameters
-  bool line; //indicates that the path is a straight line
-  bool horLine; //indicates that the line si horizontal
-  double i1, j1, i2, j2; //extremity coordinates
-  double *i_par, *j_par; //parabola point coordinates used to find circle
-  int numPointPar; //parabola points used to find circle
-  int numPoints; // initial points used to find parabola
-  int n_points; //points used for tracking at every iteration 
-  unsigned *i_ref, *j_ref; //reference parabola point coordinates
+  //line OR parabola parameters y = ax^2+bx+c in frame (rotated by thetaFin)
+  double aFin, bFin, cFin, thetaFin; 
+  //indicates that the path is a straight line
+  bool line; 
+  //indicates that the line si horizontal
+  bool horLine; 
+  //image plane coordinates of curve extremity points
+  double i1, j1, i2, j2; 
+  //image plane parabola point coordinates used to find circle
+  double *i_par, *j_par;
+  //number of parabola points used to find circle 
+  int numPointPar;
+  //number of initial points used to find parabola 
+  int numPoints;
+  //image plane coordinates of initial points
+  unsigned *i_ref, *j_ref; 
+  //number of points used for tracking at every iteration  
+  int n_points; 
     
 private:
-  //fine temp for IB
-  vpColVector K, K_line, K_par; //conic parameters
-  double aPar, bPar, cPar, thetaPar; //parabola parameters
-  double ct, st;//cos and sine of thetaFin
+  //conic (parabola or line) parameters 
+  vpColVector K;
+  //line parameters 
+  vpColVector K_line;
+  //parabola parameters 
+  vpColVector K_par; 
+  //parabola parameters y = ax^2+bx+c in frame (rotated by thetaPar)
+  double aPar, bPar, cPar, thetaPar; 
+  //cos and sine of thetaFin
+  double ct, st;
+  //indicates that it is the first iteration
   bool firstIter;
+  //least square errors 
   double line_error, parab_error, parab_errorTot;
+  //number of points with small error in least squares
   int lineGoodPoints, parGoodPoints, parGoodPointsTot;
-  bool verbose;// verbose mode
+  //indicates verbose mode
+  bool verbose;
+  //indicates thta parabolas should be tracked
   bool trackParabolas;
   
-  //parameters
-  int LSiter;  //least square iterations 
-  double good_point_thresh; //threshold on least square line error
-  int sampleIter; //every sampleIter iterations sample the curve
-  double pointPercentageWithinExtremes; //percent of samples within extremities
-  int seekLoops; //number of times extremities are seeked at each iteration
-  int numExtr; //number of points seeked after each extremity
-  int goodPointGain; //gain for considering good points when selecing curve
-  int maxLineScore; //max error tolerated on line before parabola selection
-  double par_det_threshold; //parabola det threshold for selecting a line
-  double aParThreshold;	//aPar threshold for selecting a line
+  //number of least square iterations 
+  int LSiter;
+  //threshold on least square line error  
+  double good_point_thresh; 
+  //every sampleIter iterations sample the curve
+  int sampleIter; 
+  //percent of samples within extremities
+  double pointPercentageWithinExtremes; 
+  //number of times extremities are seeked at each iteration
+  int seekLoops; 
+  //number of points seeked outside each extremity
+  int numExtr; 
+  //gain for considering good points when selecting curve
+  int goodPointGain;
+  //max error tolerated on line before selecting parabola
+  int maxLineScore; 
+  //conic determinant threshold for selecting a line
+  double par_det_threshold; 
+  //aPar threshold (if below, select line)
+  double aParThreshold;	
 };
 
 
