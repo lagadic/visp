@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.16 2007-09-21 16:34:59 asaunier Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.17 2007-10-29 15:48:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -156,7 +156,7 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   camInUse = NULL;
 
   open();
-  
+
   init = true;
 }
 
@@ -976,7 +976,7 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
 void
 vp1394TwoGrabber::open()
 {
-   
+
   // Find cameras
   int err = dc1394_find_cameras(&cameras, &num_cameras);
   if (err!=DC1394_SUCCESS && err != DC1394_NO_CAMERA) {
@@ -1016,11 +1016,11 @@ vp1394TwoGrabber::open()
 
   if(camInUse != NULL) delete [] camInUse;
   camInUse = new bool [num_cameras];
+  dc1394switch_t status = DC1394_OFF;
   for (unsigned i=0; i < num_cameras; i ++){
     dc1394_reset_bus(cameras[i]);
-    dc1394switch_t pwr;
-    dc1394_video_get_transmission(cameras[i], &pwr);
-    if(pwr != DC1394_OFF){
+    dc1394_video_get_transmission(cameras[i], &status);
+    if (status != DC1394_OFF){
       dc1394_video_set_transmission(cameras[i],DC1394_OFF);}
     camInUse[i] = false;
   }
@@ -1062,7 +1062,7 @@ vp1394TwoGrabber::close()
 
         setTransmission(DC1394_OFF);
         setCapture(DC1394_OFF);
-       
+
         dc1394_free_camera(camera);
       }
     }
