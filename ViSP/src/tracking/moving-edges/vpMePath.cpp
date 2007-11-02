@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.15 2007-10-26 17:06:40 acherubi Exp $
+ * $Id: vpMePath.cpp,v 1.16 2007-11-02 15:21:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,7 +48,7 @@
   Compute normal angle to the curve at a given point
 */
 void
-vpMePath::computeNormAng(double &norm_ang, vpColVector &K, 
+vpMePath::computeNormAng(double &norm_ang, vpColVector &K,
 			 double i, double j, bool isLine)
 {
   //curve f(i,j) = i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4 = 0
@@ -61,13 +61,13 @@ vpMePath::computeNormAng(double &norm_ang, vpColVector &K,
     A = K[2] ;
     B = K[3] ;
   }
-  norm_ang = atan2(A,B) ; 
+  norm_ang = atan2(A,B) ;
   //normalize angle on ]-M_PI, M_PI]
   while (norm_ang > M_PI) { norm_ang -= M_PI ; }
   while (norm_ang < 0) { norm_ang += M_PI ; }
 }
 /*!
-  
+
   Constructor
 
 */
@@ -80,38 +80,38 @@ vpMePath::vpMePath():vpMeTracker()
   // conic parameters
   // i^2 + K0 j^2 + K1 i j + K2 i + K3 j + K4 = 0
   K.resize(5) ;
-  K_line.resize(5) ; 
+  K_line.resize(5) ;
   K_par.resize(5) ;
   j1 = j2 = i1 = i2 = 0 ;
-  
+
   // parameters
   firstIter = true;//first iteration
   horLine = false;//initialize to false
   numPoints = 5; //initial points used to find parabola
-  n_points = numPoints; //points used for tracking at every iteration 
+  n_points = numPoints; //points used for tracking at every iteration
   numPointPar = 100; //parabola points used to find circle
-  LSiter = 2; //least square iterations 
+  LSiter = 2; //least square iterations
   good_point_thresh = 0.75; //threshold on least square line and par error
   sampleIter = 5; //every sampleIter iterations sample the curve
   pointPercentageWithinExtremes = 1.0; //percent of samples within extremities
   seekLoops = 5; //number of times extremities are seeked at each iteration
   numExtr = 8; //number of points seeked after each extremity
   goodPointGain = 115; //gain for considering good points when selecing curve
-  maxLineScore = 170;//1max error tolerated on line before parabola selection  
+  maxLineScore = 170;//1max error tolerated on line before parabola selection
   par_det_threshold = 0.00001;//parabola det threshold for selecting a line
   aParThreshold	= 0.0004;//aPar threshold for selecting a line
-  
+
   i_par = new double[numPointPar] ;
   j_par = new double[numPointPar] ;
   i_ref = new unsigned[numPoints] ;
   j_ref = new unsigned[numPoints] ;
   for (int i = 0 ; i < numPointPar ; i++) {
     i_par [i] = -1000;
-    j_par [i] = -1000; 
+    j_par [i] = -1000;
   }
 }
 /*!
-  
+
   Destructor
 
 */
@@ -120,7 +120,7 @@ vpMePath::~vpMePath()
   list.kill();
 }
 /*!
-  
+
   Display some curve features
 
 */
@@ -137,13 +137,13 @@ void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
   double tanOrient = atan (1 /(2*aFin*x_1 + bFin)) + thetaFin;
   if (!video) {
   	//display parabola vertex
-  	if (!line) 
+  	if (!line)
 		vpDisplay::displayCross(I,(int)(x_v*ct + y_v*st),
   			(int)(-x_v*st + y_v*ct),20, col);
   	//display segment oriented along parabola symetric axis
   	vpDisplay::displayLine(I, (int) i_ref [2], (int) j_ref [2],
-			(int)(i_ref [2] + 70*sin (thetaFin)), 
-			(int)(j_ref [2] + 70*cos (thetaFin)), 
+			(int)(i_ref [2] + 70*sin (thetaFin)),
+			(int)(j_ref [2] + 70*cos (thetaFin)),
 			vpColor::blue, 1) ;
 	//display initial points
   	if (firstIter)
@@ -153,50 +153,50 @@ void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
   }
   if (video) {
   //just for capturing the image plane in video: display circle in D
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 1, vpColor::red);	
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 2, vpColor::red);	
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 3, vpColor::red);	
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 4, vpColor::red);	
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 5, vpColor::red);	
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 6, vpColor::red);	
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 7, vpColor::red);	
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 8, vpColor::red);	
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 1, vpColor::red);
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 2, vpColor::red);
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 3, vpColor::red);
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 4, vpColor::red);
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 5, vpColor::red);
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 6, vpColor::red);
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 7, vpColor::red);
+  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 8, vpColor::red);
 	if (line) {
     		//display tangent
     	  if (horLine) {
 	     if (verbose)
 		std::printf("bFin %f atan (1/bFin) %f cFin %f atan (cFin) %f\n",
 			bFin, atan (1/bFin), cFin, atan (cFin));
-	      vpDisplay::displayLine(I, 
-		(int)(i1 + 200*bFin*cos (atan (cFin))/fabs(bFin)), 
+	      vpDisplay::displayLine(I,
+		(int)(i1 + 200*bFin*cos (atan (cFin))/fabs(bFin)),
 		(int)(j1 - 200*fabs(sin (atan (cFin)))),
-		(int)(i1 - 200*bFin*cos (atan (cFin))/fabs(bFin)), 
-		(int)(j1 + 200*fabs(sin (atan (cFin)))), 
+		(int)(i1 - 200*bFin*cos (atan (cFin))/fabs(bFin)),
+		(int)(j1 + 200*fabs(sin (atan (cFin)))),
 		vpColor::red, 3) ;
     	  } else {
-	      vpDisplay::displayLine(I, 
-		 (int)(i1 - 200*fabs(sin (atan (1/bFin)))), 
+	      vpDisplay::displayLine(I,
+		 (int)(i1 - 200*fabs(sin (atan (1/bFin)))),
 		 (int)(j1 - 200*bFin*cos (atan (1/bFin))/fabs(bFin)),
-		 (int)(i1 + 200*fabs(sin (atan (1/bFin)))), 
-		 (int)(j1 + 200*bFin*cos (atan (1/bFin))/fabs(bFin)), 
+		 (int)(i1 + 200*fabs(sin (atan (1/bFin)))),
+		 (int)(j1 + 200*bFin*cos (atan (1/bFin))/fabs(bFin)),
 		 vpColor::red, 3) ;
     	  }
   	} else {
-    	     vpDisplay::displayLine(I, 
-		 (int)(i1 - 200*fabs(sin (tanOrient))), 
+    	     vpDisplay::displayLine(I,
+		 (int)(i1 - 200*fabs(sin (tanOrient))),
 		 (int)(j1 - 200*tanOrient*cos (tanOrient)/fabs(tanOrient)),
-		 (int)(i1 + 200*fabs(sin (tanOrient))), 
-		 (int)(j1 + 200*tanOrient*cos (tanOrient)/fabs(tanOrient)), 
+		 (int)(i1 + 200*fabs(sin (tanOrient))),
+		 (int)(j1 + 200*tanOrient*cos (tanOrient)/fabs(tanOrient)),
 		 vpColor::red, 3);
   	}
   } else {
   //display initial and final curve pixels
     	vpDisplay::displayCross(I, (int) i1, (int) j1, 20, vpColor::cyan);
 	vpDisplay::displayCross(I, (int) i2, (int) j2, 20, vpColor::yellow);
-  }  
+  }
 }
 /*
-  Search curve extra points outside extremities 
+  Search curve extra points outside extremities
 */
 void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
 {
@@ -220,12 +220,12 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
   //convert coordinates to rotated reference frame
   double x_2 = i2*ct - j2*st;
   double x_1 = i1*ct - j1*st;
-  double y_2 = i2*st + j2*ct; 
+  double y_2 = i2*st + j2*ct;
   double y_1 = i1*st + j1*ct;
   int samples = (int) (0.3 * sqrt (vpMath::sqr(i2-i1) + vpMath::sqr(j2-j1)));
   double incr = (double) ((x_2 - x_1) / samples);
   if (line) {
-    //project first and last points abscissa to estimated line 
+    //project first and last points abscissa to estimated line
     x_2 = (-x_2/bFin - y_2 + cFin) / (-bFin - 1/bFin);
     x_1 = (-x_1/bFin - y_1 + cFin) / (-bFin - 1/bFin);
   } else {
@@ -240,7 +240,7 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
   //move outside curve extremities to track and add extra points
   for (int m = 0; m < numExtr; m++) {
     //initial point
-    x_1 = x_1 - incr; 
+    x_1 = x_1 - incr;
     y_1 = aFin*x_1*x_1 + bFin*x_1 + cFin;
     i_1 = x_1*ct + y_1*st;
     j_1 = -x_1*st + y_1*ct;
@@ -261,7 +261,7 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
 	  }
     }
     //final point
-    x_2 = x_2 + incr; 
+    x_2 = x_2 + incr;
     y_2 = aFin*x_2*x_2 + bFin*x_2 + cFin;
     i_2 = x_2*ct + y_2*st;
     j_2 = -x_2*st + y_2*ct;
@@ -286,7 +286,7 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
 }
 /*!
 
-  Sample the curve     
+  Sample the curve
   \exception vpMeTracker::initTracking : cannot track points
 
 */
@@ -295,11 +295,11 @@ void vpMePath::sample(vpImage<unsigned char> & I)
   unsigned height = I.getHeight() ;
   unsigned width = I.getWidth() ;
   double incr ;
-  //image coordinates of first and last points 
-  double i_1; 
+  //image coordinates of first and last points
+  double i_1;
   double j_1;
   double i_2;
-  double j_2;	
+  double j_2;
   int num_samples;//number of sample points
   double conv [1000];//previous point convolutions: used to intialize new points
   int j = 0;
@@ -308,7 +308,7 @@ void vpMePath::sample(vpImage<unsigned char> & I)
     j_1 = (double) j_ref[0];
     i_2 = (double) i_ref[4];
     j_2 = (double) j_ref[4];
-    num_samples = (int) (0.7 * sqrt (vpMath::sqr(i_2-i_1) + 
+    num_samples = (int) (0.7 * sqrt (vpMath::sqr(i_2-i_1) +
     					vpMath::sqr(j_2-j_1)));
   } else {
     i_1 = (double) i1;
@@ -316,7 +316,7 @@ void vpMePath::sample(vpImage<unsigned char> & I)
     i_2 = (double) i2;
     j_2 = (double) j2;
     list.front();
-    // Loop through list of sites and store convolutions before deleting list 
+    // Loop through list of sites and store convolutions before deleting list
     while(!list.outside())
     {
 	vpMeSite s = list.value();
@@ -329,18 +329,18 @@ void vpMePath::sample(vpImage<unsigned char> & I)
     list.kill();
   }
   //convert coordinates to rotated frame
-  double x_2 = i_2*ct - j_2*st; 
+  double x_2 = i_2*ct - j_2*st;
   double x_1 = i_1*ct - j_1*st;
   double y_1 = i_1*st + j_1*ct;
   if (line) {
-    //project first point abscissa to estimated line 
+    //project first point abscissa to estimated line
     x_1 = (-x_1/bFin - y_1 + cFin) / (-bFin - 1/bFin);
   } else {
     //TODO project first point abscissa to estimated parabola
     //x_1 = (-x_1/bFin - y_1 + cFin) / (-bFin - 1/bFin);
   }
   incr = (double) ((x_2 - x_1) / (pointPercentageWithinExtremes *num_samples));
-  x_1 = (double) (x_1-((1-pointPercentageWithinExtremes)/2)*num_samples*incr); 
+  x_1 = (double) (x_1-((1-pointPercentageWithinExtremes)/2)*num_samples*incr);
   y_1 = aFin*x_1*x_1 + bFin*x_1 + cFin;
   //sample curve
   for (int m = 0; m < num_samples; m++) {
@@ -362,16 +362,16 @@ void vpMePath::sample(vpImage<unsigned char> & I)
       if ((firstIter) || (pix.suppress == 0))
 	list.addRight(pix);
     }
-    x_1 = x_1 + incr; 
+    x_1 = x_1 + incr;
     y_1 = aFin*x_1*x_1 + bFin*x_1 + cFin;
   }
-  //if it is the first iteration track points 
+  //if it is the first iteration track points
   if (firstIter) vpMeTracker::initTracking(I) ;
 }
 /*
   Display all points in the list
 */
-void vpMePath::displayList(vpImage<unsigned char> &I)
+void vpMePath::displayList(vpImage<unsigned char> &/* I */)
 {
   list.front();
   while(!list.outside())
@@ -448,7 +448,7 @@ void vpMePath::suppressPoints()
   j2 = s.jfloat;
 }
 /*
-  Sample parabola between extremities and store numPointPar image point 
+  Sample parabola between extremities and store numPointPar image point
   coordinates in i_par, j_par
 */
 void vpMePath::getParabolaPoints() {
@@ -456,7 +456,7 @@ void vpMePath::getParabolaPoints() {
   double i_t;
   double j_t;
   double i_b;
-  double j_b;	
+  double j_b;
   if (firstIter) {
     i_b = (double) i_ref[0];
     j_b = (double) j_ref[0];
@@ -469,12 +469,12 @@ void vpMePath::getParabolaPoints() {
     j_t = j2;
   }
   //convert to rotated reference frame coordinates
-  double x_t = i_t*ct - j_t*st; 
+  double x_t = i_t*ct - j_t*st;
   double x_b = i_b*ct - j_b*st;
   double y_t = i_t*st + j_t*ct;
   double incr = (double) ((x_b - x_t) / numPointPar);
   for (int m = 0; m < numPointPar; m++) {
-    x_t = x_t + incr; 
+    x_t = x_t + incr;
     y_t = aFin*x_t*x_t + bFin*x_t + cFin;
     i_t = x_t*ct + y_t*st;
     j_t = -x_t*st + y_t*ct;
@@ -487,8 +487,8 @@ void vpMePath::getParabolaPoints() {
   Compute line and parabola parameters given the tracked point list by using:
   leastSquareLine() and leastSquareParabola()
   Select the most likely among line and parabola and stores its parameters
-  
-  \exception vpTrackingException::notEnoughPointError : Not enough point to 
+
+  \exception vpTrackingException::notEnoughPointError : Not enough point to
   compute the parameters.
 
 */
@@ -500,8 +500,8 @@ void vpMePath::leastSquare(vpImage<unsigned char> &I)
   }
   vpMeSite p;
   if (verbose)
-    std::printf("numPts %d l_err %f lineGoodPts %d p_err %f parGoodPts %d\n", 
-	list.nbElement(), line_error, lineGoodPoints, parab_error, 
+    std::printf("numPts %d l_err %f lineGoodPts %d p_err %f parGoodPts %d\n",
+	list.nbElement(), line_error, lineGoodPoints, parab_error,
 	parGoodPoints);
   //scores used to pick the most likely curve
   double lineScore;
@@ -509,7 +509,7 @@ void vpMePath::leastSquare(vpImage<unsigned char> &I)
   int nPoints;
   if (firstIter)
 	nPoints = numPoints;
-  else 
+  else
 	nPoints = list.nbElement();
   //save first image where the curve is lost
   if ((lineGoodPoints == 0) && (parGoodPoints == 0)) {
@@ -520,22 +520,22 @@ void vpMePath::leastSquare(vpImage<unsigned char> &I)
       vpERROR_TRACE("Not enough line and par good points") ;
       if (verbose)
       	std::printf("vpMePath::Exception Not enough curve points\n");
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
       				"Not enough line and par good points")) ;
   }
   if (lineGoodPoints != 0)
   	lineScore = line_error + (double)(goodPointGain * nPoints / lineGoodPoints);
-  else 
-	lineScore = 10000; 
+  else
+	lineScore = 10000;
   if (parGoodPoints != 0)
   	parScore = parab_error + (double)(goodPointGain * nPoints / parGoodPoints);
   else parScore = 10000;
 
   if (verbose)
-    std::printf("\033[36mline score %f par score %f \033[30m\n", 
+    std::printf("\033[36mline score %f par score %f \033[30m\n",
     	lineScore, parScore);
   //pick the line as most likely curve
-  if ((!trackParabolas) || 
+  if ((!trackParabolas) ||
      ((lineScore < maxLineScore) || (lineScore < parScore))) {
     n_points = lineGoodPoints;
     for (int i = 0 ; i < 5 ; i++) {
@@ -583,31 +583,31 @@ void vpMePath::leastSquare(vpImage<unsigned char> &I)
 /*!
 
   Compute the five parabola parameters:
-  K0 j^2 + K1 ij + K2 i + K3 j + K4 = -i^2  
+  K0 j^2 + K1 ij + K2 i + K3 j + K4 = -i^2
   given tracked point coordinates using a least square method.
 
   \exception vpTrackingException::notEnoughPointError : Not enough
   point to compute the parameters.
 
 */
-void 
+void
 vpMePath::leastSquareParabola(vpImage<unsigned char> &I)
 {
   vpMeSite p ;
   int iter = 0 ;
   int pointsForLs;
-  if (firstIter) 
+  if (firstIter)
   	pointsForLs = numPoints;
   else pointsForLs = numberOfSignal();
-  if (((firstIter) && (numPoints < 3)) || 
+  if (((firstIter) && (numPoints < 3)) ||
   	((!firstIter) && (list.nbElement() < 3))) {
       vpDisplay::flush(I);
       static char s[30];
       sprintf(s,"/tmp/acherubi/NoPointImage.ppm");
       vpImageIo::writePPM(I,s);
-				
+
       vpERROR_TRACE("Not enough point") ;
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
       				"not enough point")) ;
   }
   vpMatrix A(pointsForLs,5) ;
@@ -660,10 +660,10 @@ vpMePath::leastSquareParabola(vpImage<unsigned char> &I)
 	    D[k][k] =w[k]  ;
 	    k++ ;
 	}
-      } else {      
+      } else {
 	for (int i=0 ; i < list.nbElement() ; i++) {
 	    p = list.value() ;
-	    if (p.suppress==0) 
+	    if (p.suppress==0)
 	      {
 		D[k][k] =w[k]  ;
 		k++ ;
@@ -680,7 +680,7 @@ vpMePath::leastSquareParabola(vpImage<unsigned char> &I)
 /*!
 
   Compute given the five parabola parameters, a parabola equation of the form
-  y = a x^2 + b x + c 
+  y = a x^2 + b x + c
   in a reference frame rotated by theta
 
   \exception vpTrackingException::notEnoughPointError : Not enough
@@ -707,7 +707,7 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
   double K_par_first[5];
   //check condition on determinant that makes the parabola degnerate into line
   if (fabs(4*K_par[0]*K_par[4] - K_par[3]*K_par[3] + K_par[1]*K_par[2]*K_par[3]
-        - K_par[1]*K_par[1]*K_par[4] - K_par[0]*K_par[2]*K_par[2]) < 0.000001) {	
+        - K_par[1]*K_par[1]*K_par[4] - K_par[0]*K_par[2]*K_par[2]) < 0.000001) {
     parab_error = 10000;//ensures that the line is chosen
     if (verbose)
     	std::printf ("\033[31m DETERMINANT CONDITION **** -> LINE \n");
@@ -716,10 +716,10 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
     if (fabs(K_par[0]-1) != 0) theta1 = atan (K_par[1]/(K_par[0]-1));
     else if (fabs(K_par[1]) > 0) theta1 = M_PI / 2;
     else theta1 = 0;
-    if (theta1 > 0) theta2 = theta1 - M_PI;	 else theta2 = M_PI + theta1;	
+    if (theta1 > 0) theta2 = theta1 - M_PI;	 else theta2 = M_PI + theta1;
     theta1 = 0.5*theta1;
     theta2 = 0.5*theta2;
-    
+
     //consider parabola with theta1
     K_par[0] = tan (theta1)*tan (theta1);
     K_par[1] = -2*tan (theta1);
@@ -727,37 +727,37 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
     leastSquareParabolaGivenOrientation(I);
     parab_error1 = parab_error;
     parGoodPoints1 = parGoodPoints;
-    bPar1 = (-(K_par[2]/K_par[3])*cos (theta1) + sin (theta1)) / 
-    	((K_par[2]/K_par[3])*sin(theta1) + cos (theta1)); 
+    bPar1 = (-(K_par[2]/K_par[3])*cos (theta1) + sin (theta1)) /
+    	((K_par[2]/K_par[3])*sin(theta1) + cos (theta1));
     cPar1 = (K_par[4]*(-cos (theta1) -bPar1*sin (theta1))) / (K_par[3]);
     aPar1 = cPar1 / (K_par[4]*cos (theta1)*cos (theta1));
-    if (verbose) {		
-      std::printf("\n\n det1 %f \n\n", fabs(4*K_par[0]*K_par[4] - 
-        K_par[3]*K_par[3] + K_par[1]*K_par[2]*K_par[3] - 
+    if (verbose) {
+      std::printf("\n\n det1 %f \n\n", fabs(4*K_par[0]*K_par[4] -
+        K_par[3]*K_par[3] + K_par[1]*K_par[2]*K_par[3] -
 	K_par[1]*K_par[1]*K_par[4] - K_par[0]*K_par[2]*K_par[2]));
       std::printf("\n\n fabs(aPar1) %f \n\n", fabs(aPar1));
-    }	
+    }
     //check condition on determinant that makes the parabola degnerate into line
     //and value of a in a x^2 + bx + c
-    if ((fabs(4*K_par[0]*K_par[4] - K_par[3]*K_par[3] + 
-    	K_par[1]*K_par[2]*K_par[3] - K_par[1]*K_par[1]*K_par[4] - 
+    if ((fabs(4*K_par[0]*K_par[4] - K_par[3]*K_par[3] +
+    	K_par[1]*K_par[2]*K_par[3] - K_par[1]*K_par[1]*K_par[4] -
 	K_par[0]*K_par[2]*K_par[2]) < par_det_threshold) ||
-	(fabs(aPar1) < aParThreshold)){	
+	(fabs(aPar1) < aParThreshold)){
       line1 = true;
       parab_error1 = 10000;//ensures that the line is chosen
-      if (verbose) 
+      if (verbose)
       	std::printf ("\033[31m FIRST ****** -> LINE \033[30m\n");
     } else {
       line1 = false;
       if (verbose)
-        std::printf ("\033[31m FIRST -> PAR a %f b %f c %f th %f \033[30m \n", 
+        std::printf ("\033[31m FIRST -> PAR a %f b %f c %f th %f \033[30m \n",
 			aPar1, bPar1, cPar1, theta1);
       //teporarily save K_par values to be used in case theta1 is chosen
       for (int i=0 ; i < 5 ; i++) {
       	K_par_first[i] = K_par[i] ;
       }
     }
-		
+
     //consider parabola with theta2
     K_par[0] = tan (theta2)*tan (theta2);
     K_par[1] = -2*tan (theta2);
@@ -765,22 +765,22 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
     leastSquareParabolaGivenOrientation(I);
     parab_error2 = parab_error;
     parGoodPoints2 = parGoodPoints;
-    bPar2 = (-(K_par[2]/K_par[3])*cos (theta2) + sin (theta2)) / 
-    	((K_par[2]/K_par[3])*sin (theta2) + cos (theta2)); 
+    bPar2 = (-(K_par[2]/K_par[3])*cos (theta2) + sin (theta2)) /
+    	((K_par[2]/K_par[3])*sin (theta2) + cos (theta2));
     cPar2 = (K_par[4]*(-cos (theta2) -bPar2*sin (theta2))) / (K_par[3]);
     aPar2 = cPar2 / (K_par[4]*cos (theta2)*cos (theta2));
     if (verbose) {
-      std::printf("\n\n det2 %f \n\n", fabs(4*K_par[0]*K_par[4] - 
-      	K_par[3]*K_par[3] + K_par[1]*K_par[2]*K_par[3] - 
+      std::printf("\n\n det2 %f \n\n", fabs(4*K_par[0]*K_par[4] -
+      	K_par[3]*K_par[3] + K_par[1]*K_par[2]*K_par[3] -
 	K_par[1]*K_par[1]*K_par[4] - K_par[0]*K_par[2]*K_par[2]));
       std::printf("\n\n fabs(aPar2) %f \n\n", fabs(aPar2));
     }
     //check condition on determinant that makes the parabola degnerate into line
     //and value of a in a x^2 + bx + c
-    if ((fabs(4*K_par[0]*K_par[4] - K_par[3]*K_par[3] + 
-    	K_par[1]*K_par[2]*K_par[3] - K_par[1]*K_par[1]*K_par[4] - 
+    if ((fabs(4*K_par[0]*K_par[4] - K_par[3]*K_par[3] +
+    	K_par[1]*K_par[2]*K_par[3] - K_par[1]*K_par[1]*K_par[4] -
 	K_par[0]*K_par[2]*K_par[2]) < par_det_threshold) ||
-	(fabs(aPar2) < aParThreshold))  {	
+	(fabs(aPar2) < aParThreshold))  {
       line2 = true;
       parab_error2 = 10000;//ensures that the line is chosen
       if (verbose)
@@ -788,12 +788,12 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
     } else {
       line2 = false;
       if (verbose)
-      	std::printf ("\033[31m SECOND -> PAR a %f b %f c %f th %f \033[30m \n", 
+      	std::printf ("\033[31m SECOND -> PAR a %f b %f c %f th %f \033[30m \n",
 			aPar2, bPar2, cPar2, theta2);
     }
     if (line1 && line2) parab_error = 10000;//ensures that the line is chosen
     //compare the two curves and pick the likeliest
-    else if ((line2 && !line1) || (!line2 && !line1 && 
+    else if ((line2 && !line1) || (!line2 && !line1 &&
     		(fabs(aPar1) < fabs(aPar2)))) {
       if (parab_error1 < parab_error2)
 	parab_error = parab_error1;
@@ -806,10 +806,10 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
       cPar = cPar1;
       for (int i=0 ; i < 5 ; i++) {
 	K_par[i] = K_par_first[i];
-      }	
-      if (verbose)	
+      }
+      if (verbose)
       	std::printf("\033[31m1ST->aPar %f bPar %f cPar %f theta %f\033[30m\n",
-      			aPar , bPar, cPar, thetaPar); 		
+      			aPar , bPar, cPar, thetaPar);
     } else {
       if (parab_error1 < parab_error2)
 	parab_error = parab_error1;
@@ -822,8 +822,8 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
       cPar = cPar2;
       if (verbose)
          std::printf("\033[31m2ND->aPar %f bPar %f cPar %f theta %f\033[30m\n",
-      			aPar , bPar, cPar, thetaPar); 	
-    } 
+      			aPar , bPar, cPar, thetaPar);
+    }
   }
 }
 
@@ -832,8 +832,8 @@ vpMePath::getParameters(vpImage<unsigned char> &I)
   Compute parabola parameters in the reference frame rotated by theta as:
   	y = a x^2 + bx + c
   given point coordinates and K0, K1 using a least square method on:
-	K2 i + K3 j + K4 = - i^2 - K0 j^2 - K1 i j   
-  
+	K2 i + K3 j + K4 = - i^2 - K0 j^2 - K1 i j
+
   \exception vpTrackingException::notEnoughPointError : Not enough
   point to compute the parameters.
 
@@ -847,14 +847,14 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
   if (firstIter) pointsForLs = numPoints;
   else pointsForLs = numberOfSignal();
   //save first image where the curve is lost
-  if (((firstIter) && (numPoints < 1)) || 
+  if (((firstIter) && (numPoints < 1)) ||
   	((!firstIter) && (list.nbElement() < 1))) {
       vpDisplay::flush(I);
       static char s[30];
       sprintf(s,"/tmp/acherubi/NoPointImage.ppm");
       vpImageIo::writePPM(I,s);
       vpERROR_TRACE("Not enough point") ;
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
       		"not enough point")) ;
   }
   vpMatrix A(pointsForLs, 3) ;
@@ -875,7 +875,7 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
 	    A[i][0] = (double) i_ref[i];
 	    A[i][1] = (double) j_ref[i];
 	    A[i][2] = 1;
-	    b[i] = - (double) (vpMath::sqr(i_ref[i]) + 
+	    b[i] = - (double) (vpMath::sqr(i_ref[i]) +
 	    	K_par[0]*vpMath::sqr(j_ref[i]) + K_par[1]* i_ref[i] * j_ref[i]);
 	}
   } else {
@@ -885,7 +885,7 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
 		A[k][0] = p.ifloat;
 		A[k][1] = p.jfloat;
 		A[k][2] = 1 ;
-		b[k] = -(vpMath::sqr(p.ifloat)+K_par[0]*vpMath::sqr(p.jfloat) + 
+		b[k] = -(vpMath::sqr(p.ifloat)+K_par[0]*vpMath::sqr(p.jfloat) +
 			K_par[1]* p.ifloat * p.jfloat);
 		k++ ;
 	    }
@@ -906,7 +906,7 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
 	    D[k][k] =w[k]  ;
 	    k++ ;
 	}
-      } else {      
+      } else {
 	for (i=0 ; i < list.nbElement() ; i++) {
 	    p = list.value() ;
 	    if (p.suppress==0) {
@@ -934,7 +934,7 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
   err_vec = DAx-D*b;
   parab_error = (double) (sqrt(err_vec.sumSquare()) / parGoodPoints);
   if (verbose)
-    std::printf("\033[31mvpMePath::leastSquareParabola() error %f \033[30m \n", 
+    std::printf("\033[31mvpMePath::leastSquareParabola() error %f \033[30m \n",
     		parab_error);
   for (i=0 ; i < 3 ; i++) {
     K_par[i+2] = P[i];
@@ -944,7 +944,7 @@ void vpMePath::leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I)
 
   Compute line parameters given point coordinates using a least
   square method on:
-  K2/K3 i + K4/K3 = -j 
+  K2/K3 i + K4/K3 = -j
   \exception vpTrackingException::notEnoughPointError : Not enough
   point to compute the parameters.
 
@@ -957,15 +957,15 @@ void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
   if (firstIter) pointsForLs = numPoints;
   else pointsForLs = numberOfSignal();
   //save first image where the curve is lost
-  if (((firstIter) && (numPoints < 1)) || 
+  if (((firstIter) && (numPoints < 1)) ||
   	((!firstIter) && (list.nbElement() < 1))) {
       vpDisplay::flush(I);
       static char s[30];
       sprintf(s,"/tmp/acherubi/NoPointImage.ppm");
       vpImageIo::writePPM(I,s);
-      
+
       vpERROR_TRACE("Not enough point") ;
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError, 
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
       		"not enough point")) ;
   }
   vpMatrix A(pointsForLs, 2) ;
@@ -1013,7 +1013,7 @@ void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
 	    D[k][k] =w[k]  ;
 	    k++ ;
 	}
-      } else {      
+      } else {
 	for (int i=0 ; i < list.nbElement() ; i++) {
 	    p = list.value() ;
 	    if (p.suppress==0) {
@@ -1044,7 +1044,7 @@ void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
   }
   line_error = (double) (sqrt(err_vec.sumSquare()) / lineGoodPoints);
   if (verbose)
-    std::printf("\033[31mvpMePath::leastSquareLine() line error %f \033[30m \n", 
+    std::printf("\033[31mvpMePath::leastSquareLine() line error %f \033[30m \n",
     		line_error);
   K_line[0] = 0;
   K_line[1] = 0;
@@ -1057,7 +1057,7 @@ void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
 }
 /*!
 
-  Initialise tracking by enabling the user to click 
+  Initialise tracking by enabling the user to click
   on five points on first image
 
 */
@@ -1099,7 +1099,7 @@ void vpMePath::initTracking(vpImage<unsigned char> &I)
   \exception vpMeTracker::initTracking : cannot track points
 
 
-*/ 
+*/
 void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
 		       unsigned *i, unsigned *j)
 {
@@ -1157,18 +1157,18 @@ void vpMePath::track(vpImage<unsigned char> &I)
     suppressPoints() ;
     try{
       //pick line or parabola and compute its parameters
-      leastSquare (I);  
+      leastSquare (I);
     } catch(...)
       {
 	vpERROR_TRACE("Error caught") ;
 	throw ;
       }
-    display(I, vpColor::green); 
+    display(I, vpColor::green);
     //for non horizontal lines sample every sampleIter iterations
     //TODO do it also for parabolas and horizontal lines
     if ((iter % sampleIter == 0) && (iter != 0)) {
-      if ((line) || (thetaFin != M_PI / 2)) { 
-	if (line) {	
+      if ((line) || (thetaFin != M_PI / 2)) {
+	if (line) {
 	  sample(I);
 	  if (firstIter) {
 	    try{
