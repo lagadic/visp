@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: histogram.cpp,v 1.5 2007-10-26 10:18:37 fspindle Exp $
+ * $Id: histogram.cpp,v 1.6 2007-11-02 16:05:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -244,9 +244,12 @@ main(int argc, char ** argv)
   vpImage<unsigned char> I ;
 
   // Load a grey image from the disk
-  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-  vpImageIo::readPGM(I, filename) ;
+  filename = ipath;
+  if (opt_ipath.empty())
+    filename +=  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
 
+  std::cout << "Read: " << filename << std::endl;
+  vpImageIo::readPGM(I, filename) ;
 
   unsigned distance = 60;
   vpHistogram h;
@@ -256,12 +259,14 @@ main(int argc, char ** argv)
 
   // Save the histogram
   filename = dirname +  vpIoTools::path("/histogram.txt");
+  std::cout << "Save the histogram in: " << filename << std::endl;
   h.write(filename);
 
   // Smooth the histogram
   h.smooth();
   // Save the histogram
   filename = dirname +  vpIoTools::path("/histogram_smoothed.txt");
+  std::cout << "Save the smoothed histogram in: " << filename << std::endl;
   h.write(filename);
 
   vpList<vpHistogramPeak> peaks;
