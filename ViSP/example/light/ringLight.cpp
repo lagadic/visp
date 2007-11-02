@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: ringLight.cpp,v 1.3 2007-10-19 08:47:05 fspindle Exp $
+ * $Id: ringLight.cpp,v 1.4 2007-11-02 16:06:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,7 @@
 #include <visp/vpTime.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"d:hn:o"
+#define GETOPTARGS	"d:hn:ot:"
 
 /*!
 
@@ -62,16 +62,22 @@
   \param name : Program name.
   \param badparam : Bad parameter name.
   \param nsec : Time to wait in seconds
+  \param nmsec : Pulse duration in ms
 
 */
-void usage(char *name, char *badparam, int nsec)
+void usage(char *name, char *badparam, int nsec, double nmsec)
 {
   fprintf(stdout, "\n\
-Send a pulse to activate the ring light or turn onthe  ring light \n\
+Send a pulse to activate the ring light or turn on the ring light \n\
 during %d s.\n\
 \n\
+By default, that means without parameters, send a pulse which duration\n\
+is fixed by the harware. To control the duration of the pulse, use \n\
+\"-t <pulse width in ms>\" option. To turn on the light permanently, \n\
+use \"-o -n <on duration in second>]\"\n			       \
+\n\
 SYNOPSIS\n\
-  %s [-o] [-n nsecond] [-h]\n\
+  %s [-o] [-n <on duration in second>] [-t <pulse width in ms>] [-h]\n\
 ", nsec, name);
 
   fprintf(stdout, "\n\
@@ -82,12 +88,18 @@ OPTIONS:                                               Default\n\
      If this option is not set, send a short pulse\n\
      to activate the light.\n\
 \n\
-  -n %%d                                                  %d\n\
+  -t %%g : <pulse width in ms>                              %g\n\
+     Pulse width in milli-second.\n\
+     Send a pulse which duration is fixed by this parameter.\n\
+     Without this option, the pulse width is fixed by the \n\
+     harware.\n\
+\n\
+  -n %%d : <on duration in second>                          %d\n\
      Time in second while the ring light is turned on.\n\
      This option is to make into realtion with option \"-o\".\n\
 \n\
   -h\n\
-     Print the help.\n\n", nsec, nsec);
+     Print the help.\n\n", nsec, nmsec, nsec);
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n" );
@@ -108,7 +120,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, bool &on, int &nsec)
+bool getOptions(int argc, char **argv, bool &on, int &nsec, double &nmsec)
 {
   char *optarg;
   int	c;
@@ -116,18 +128,19 @@ bool getOptions(int argc, char **argv, bool &on, int &nsec)
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
-    case 'o': on = true; break;
     case 'n': nsec = atoi(optarg); break;
-    case 'h': usage(argv[0], NULL, nsec); return false; break;
+    case 'o': on = true; break;
+    case 't': nmsec = atof(optarg); break;
+    case 'h': usage(argv[0], NULL, nsec, nmsec); return false; break;
 
     default:
-      usage(argv[0], optarg, nsec); return false; break;
+      usage(argv[0], optarg, nsec, nmsec); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, nsec);
+    usage(argv[0], NULL, nsec, nmsec);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -146,16 +159,20 @@ main(int argc, char **argv)
 {
   bool on = false;
   int nsec = 5; // Time while the ring light is turned on
+  double nmsec = 0; // Pulse duration
 
   // Read the command line options
-  if (getOptions(argc, argv, on, nsec) == false) {
+  if (getOptions(argc, argv, on, nsec, nmsec) == false) {
     exit (-1);
   }
   try {
 
     vpRingLight light;
 
-    light.pulse();
+    if (nmsec == 0.)
+      light.pulse();
+    else
+      light.pulse(nmsec);
 
     if (on) {
       printf("Turn on ring light\n");

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.cpp,v 1.5 2007-10-19 08:32:28 fspindle Exp $
+ * $Id: vpRingLight.cpp,v 1.6 2007-11-02 16:06:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,7 @@
 
   Here is an example showing how to synchronise the framegrabbing with
   the lighting system:
- 
+
   \code
   vpItifg8Grabber grabber;
   vpImage<unsigned char> I;
@@ -122,16 +122,18 @@ vpRingLight::~vpRingLight()
 /*!
   Activates the ring light by sending a pulse throw the parallel port.
 
-  The pulse width is 1 ms.
-
+  The pulse width is 500 us. This pulse activates a NE555 which turns on on the
+  light during 10ms.
 
 */
 void vpRingLight::pulse()
 {
-  // Output 1+,1- is connected to the D1 pin on the parallel port connector
-  // Output 2+,2- is connected to the D2 pin on the parallel port connector
-
-  // We want to control the ring light 1+,1- output
+  // Data set by the parallel port:
+  // - D1: need to send a 500us pulse width
+  // - D2: 0 }
+  // - D3: 0 } To control the light throw the NE555
+  // D2 and D3 are used to select the multiplexer output.
+  // Light must be connected to output 1+,1-
 
   // To activates the light we send a pulse
   int mask_mode_pulse_d2 = 0x00; // D2 is low
@@ -144,18 +146,54 @@ void vpRingLight::pulse()
   //vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 0-1 pulse
 
-  if (1) {
-    // Wait 500 micro seconds
-    int usTempo = 500;
-    struct timeval ti, tc; // Initial and current time
-    gettimeofday(&ti,0);
-    do {
-      gettimeofday(&tc,0);
-    } while (tc.tv_usec < ti.tv_usec + usTempo);
-  }
-  else {
-    vpTime::wait(1); // wait 1ms
-  }
+  // Wait 500 micro seconds
+  int usTempo = 500;
+  struct timeval ti, tc; // Initial and current time
+  gettimeofday(&ti,0);
+  do {
+    gettimeofday(&tc,0);
+  } while (tc.tv_usec < ti.tv_usec + usTempo);
+
+  data = data & (~mask_pulse_d1);
+  //vpTRACE("Send 0x%x = %d\n", data, data);
+  parport.sendData(data); // send a 1-0 pulse
+}
+
+/*!
+
+  Activates the ring light by sending a pulse throw the parallel port during a
+  specified duration.
+
+  \param time : Duration in milli-second (ms) during while the light is turned
+  on.
+
+*/
+void vpRingLight::pulse(double time)
+{
+  // Data set by the parallel port:
+  // - D1: a pulse with duration fixed by time
+  // - D2: 0 }
+  // - D3: 1 } To control the light directly throw the pulse comming from D1
+  // D2 and D3 are used to select the multiplexer output.
+  // Light must be connected to output 1+,1-
+
+  // To activates the light we send a pulse
+  int mask_mode_pulse_d3 = 0x08; // D3 is hight, D2 is low
+  int mask_pulse_d1 = 0x02;      // we send a pulse on D1 : L, H, L
+  unsigned char data = 0x00;
+  //  data = parport.getData(); // actual value of the data bus
+  // vpTRACE("Actual data 0x%x = %d\n", data, data);
+
+  data = data | mask_pulse_d1 | mask_mode_pulse_d3;
+  //vpTRACE("Send 0x%x = %d\n", data, data);
+  parport.sendData(data); // send a 0-1 pulse
+
+  // Wait 500 micro seconds
+  struct timeval ti, tc; // Initial and current time
+  gettimeofday(&ti,0);
+  do {
+    gettimeofday(&tc,0);
+  } while (tc.tv_usec < ti.tv_usec + time*1000);
 
   data = data & (~mask_pulse_d1);
   //vpTRACE("Send 0x%x = %d\n", data, data);
@@ -170,10 +208,12 @@ void vpRingLight::pulse()
 */
 void vpRingLight::on()
 {
-  // Output 1+,1- is connected to the D1 pin on the parallel port connector
-  // Output 2+,2- is connected to the D2 pin on the parallel port connector
-
-  // We want to control the ring light 1+,1- output
+  // Data set by the parallel port:
+  // - D1: 0 to turn OFF, 1 to turn ON
+  // - D2: 1 }
+  // - D3: 0 } To control the light throw D1
+  // D2 and D3 are used to select the multiplexer output.
+  // Light must be connected to output 1+,1-
 
   // To activates the light we send a pulse
   int mask_mode_onoff_d2 = 0x04; // D2 is Hight
@@ -194,10 +234,12 @@ void vpRingLight::on()
 */
 void vpRingLight::off()
 {
-  // Output 1+,1- is connected to the D1 pin on the parallel port connector
-  // Output 2+,2- is connected to the D2 pin on the parallel port connector
-
-  // We want to control the ring light 1+,1- output
+  // Data set by the parallel port:
+  // - D1: 0 to turn OFF, 1 to turn ON
+  // - D2: 1 }
+  // - D3: 0 } To control the light throw D1
+  // D2 and D3 are used to select the multiplexer output.
+  // Light must be connected to output 1+,1-
 
   // To activates the light we send a pulse
   int mask_mode_onoff_d2 = 0x04; // D2 is Hight
