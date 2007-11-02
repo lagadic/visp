@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.h,v 1.4 2007-10-19 08:32:28 fspindle Exp $
+ * $Id: vpRingLight.h,v 1.5 2007-11-02 16:06:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,6 +61,7 @@ public:
   ~vpRingLight();
 
   void pulse();
+  void pulse(double time);
   void on();
   void off();
 

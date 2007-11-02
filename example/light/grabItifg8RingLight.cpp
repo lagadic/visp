@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8RingLight.cpp,v 1.4 2007-10-09 11:54:28 fspindle Exp $
+ * $Id: grabItifg8RingLight.cpp,v 1.5 2007-11-02 16:06:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,7 +64,7 @@
 
 
 // List of allowed command line options
-#define GETOPTARGS	"b:c:df:hi:n:o:p:s:"
+#define GETOPTARGS	"b:c:df:hi:n:o:p:s:t:"
 
 /*!
 
@@ -80,11 +80,13 @@
   \param nframes : Number of frames to acquire.
   \param opath : Image filename when saving.
   \param conffile : Camera configuration file.
+  \param nmsec : Pulse duration in ms
 
 */
 void usage(char *name, char *badparam, unsigned board, float fps,
 	   unsigned input, unsigned scale, unsigned buffer,
-	   unsigned &nframes, std::string opath, std::string conffile)
+	   unsigned &nframes, std::string opath, std::string conffile,
+	   double nmsec)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the itifg-8.x framegrabber device from\n\
@@ -93,7 +95,8 @@ Coreco Imaging. Display these images using X11 or GTK.\n\
 SYNOPSIS\n\
   %s [-b <board=[0-7]>] [-c <conffile>]  \n\
    [-f <fps=0.01-100.0>] [-i <input=0|1|2|3>] [-s <scale=1|2|4>] \n\
-   [-p <buffer=1-8>] [-n <nframes>] [-d] [-o <filename>] [-h]\n", name);
+   [-p <buffer=1-8>] [-n <nframes>] [-d] [-o <filename>] \n\
+   [-t <light pulse width in ms>] [-h]\n", name);
 
   if (badparam != NULL)
   fprintf(stdout, "\n\
@@ -141,10 +144,16 @@ OPTIONS:                                                  Default\n\
   -d \n\
      Turn off the display.\n\
 \n\
+  -t <pulse width in ms>                                    %g\n\
+     Pulse width in milli-second.\n\
+     Send a pulse which duration is fixed by this parameter.\n\
+     Without this option, the pulse width is fixed by the \n\
+     harware.\n\
+\n\
   -h \n\
      Print the help.\n\n",
 	  board, conffile.c_str(), fps, input, scale, buffer,
-	  nframes, opath.c_str());
+	  nframes, opath.c_str(), nmsec);
 }
 
 /*!
@@ -170,7 +179,7 @@ OPTIONS:                                                  Default\n\
 bool getOptions(int argc, char **argv, unsigned &board, float &fps,
 		unsigned &input, unsigned &scale, unsigned &buffer,
 		bool &display, unsigned &nframes, bool &save,
-		std::string &opath, std::string &conffile)
+		std::string &opath, std::string &conffile, double &nmsec)
 {
   char *optarg;
   int	c;
@@ -183,16 +192,17 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
     case 'f': fps = atof(optarg); break;
     case 'i': input = (unsigned) atoi(optarg); break;
     case 'n': nframes = atoi(optarg); break;
-    case 'p': buffer = (unsigned) atoi(optarg); break;
     case 'o': save = true; opath = optarg; break;
+    case 'p': buffer = (unsigned) atoi(optarg); break;
     case 's': scale = (unsigned) atoi(optarg); break;
+    case 't': nmsec = atof(optarg); break;
     case 'h': usage(argv[0], NULL, board, fps, input, scale, buffer,
-		    nframes, opath, conffile);
+		    nframes, opath, conffile, nmsec);
       return false; break;
 
     default:
       usage(argv[0], optarg, board, fps, input, scale, buffer,
-	    nframes, opath, conffile);
+	    nframes, opath, conffile, nmsec);
       return false; break;
     }
   }
@@ -200,7 +210,7 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], optarg, board, fps, input, scale, buffer,
-	  nframes, opath, conffile);
+	  nframes, opath, conffile, nmsec);
     std::cerr << std::endl << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -248,9 +258,12 @@ main(int argc, char ** argv)
   std::string opath = "/tmp/I%04d.pgm"; // B&W images will be saved in PGM P5 format
 #endif
 
+  double nmsec = 0; // Pulse duration for the light flash
+
   // Read the command line options
   if (getOptions(argc, argv, board, fps, input, scale, buffer,
-		 opt_display, nframes, save, opath, conffile) == false) {
+		 opt_display, nframes, save, opath,
+		 conffile, nmsec) == false) {
     exit (-1);
   }
 
@@ -285,7 +298,10 @@ main(int argc, char ** argv)
     // Open the framegrabber with the specified settings
     g.open(I) ;
     // Activates the ring light before image grabbing
-    light.pulse();
+    if (nmsec == 0.)
+      light.pulse(); // pulse width fixed by hardware
+    else
+      light.pulse(nmsec); // pulse width fixed by software
     // Acquire an image
     g.acquire(I) ;
   }
@@ -332,7 +348,10 @@ main(int argc, char ** argv)
 	tbegin = vpTime::measureTimeMs();
 
 	// Activates the ring light before image grabbing
-	light.pulse();
+	if (nmsec == 0.)
+	  light.pulse(); // pulse width fixed by hardware
+	else
+	  light.pulse(nmsec); // pulse width fixed by software
 
 	// Grab the image
 	g.acquire(I) ;
