@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPGM.cpp,v 1.10 2007-08-17 13:46:03 fspindle Exp $
+ * $Id: testIoPGM.cpp,v 1.11 2007-11-07 15:01:47 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -197,7 +197,7 @@ main(int argc, char ** argv)
 
   // Compare ipath and env_ipath. If they differ, we take into account
   // the input path comming from the command line option
-  if (opt_ipath.empty()) {
+  if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
 	   << "WARNING: " << std::endl;
