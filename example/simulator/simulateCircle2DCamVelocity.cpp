@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateCircle2DCamVelocity.cpp,v 1.7 2007-08-29 13:41:49 megautie Exp $
+ * $Id: simulateCircle2DCamVelocity.cpp,v 1.8 2007-11-07 14:46:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,8 +54,7 @@
 #include <visp/vpDebug.h>
 
 
-#ifdef VISP_HAVE_SOQT
-
+#ifdef VISP_HAVE_COIN
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpTime.h>
@@ -195,14 +194,14 @@ void *mainLoop (void *_simu)
       float sampling_time = 0.040f; // Sampling period in second
       robot.setSamplingTime(sampling_time);
 
-      std::cout << std::endl ;
-      std::cout << "-------------------------------------------------------" << std::endl ;
+/*      std::cout << std::endl ;
+      std::cout << "-----------------------" << std::endl ;
       std::cout << " Test program for vpServo "  <<std::endl ;
       std::cout << " Simulation " << std::endl ;
       std::cout << " task : servo a circle " << std::endl ;
-      std::cout << "-------------------------------------------------------" << std::endl ;
+      std::cout << "-----------------------" << std::endl ;
       std::cout << std::endl ;
-
+*/
 
       vpTRACE("sets the initial camera location " ) ;
 
@@ -263,45 +262,45 @@ void *mainLoop (void *_simu)
       if (pos==2) itermax = 75 ; else itermax = 100 ;
       char name[FILENAME_MAX] ;
       while(iter++<itermax)
-	{
-	  double t = vpTime::measureTimeMs();
-	  std::cout << "---------------------------------------------"
-		    << iter <<std::endl ;
-	  vpColVector v ;
-
-	  if (iter==1) vpTRACE("\t\t get the robot position ") ;
-	  robot.getPosition(cMo) ;
-	  if (iter==1) vpTRACE("\t\t new circle position ") ;
-	  //retrieve x,y and Z of the vpCircle structure
-
-	  circle.track(cMo) ;
-	  vpFeatureBuilder::create(p,circle);
-
-	  if (iter==1) vpTRACE("\t\t compute the control law ") ;
-	  v = task.computeControlLaw() ;
-	  //  vpTRACE("computeControlLaw" ) ;
-	  std::cout << "Task rank: " << task.rankJ1 <<std::endl ;
-	  if (iter==1)
-	    vpTRACE("\t\t send the camera velocity to the controller ") ;
-	  robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-	  simu->setCameraPosition(cMo) ;
-
-	  if(SAVE==1)
 	    {
-	      sprintf(name,"/tmp/image.%04d.external.png",it) ;
-	      std::cout << "Save " << name << std::endl ;
-	      simu->write(name) ;
-	      sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
-	      std::cout << "Save " << name << std::endl ;
-	      simu->write(name) ;
-	      it++ ;
-	    }
-	  //  vpTRACE("\t\t || s - s* || ") ;
-	  //  std::cout << task.error.sumSquare() <<std::endl ; ;
-	  vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
+	      double t = vpTime::measureTimeMs();
+	      std::cout << "---------------------------------------------"
+		        << iter <<std::endl ;
+	      vpColVector v ;
 
-	}
+	      if (iter==1) vpTRACE("\t\t get the robot position ") ;
+	      robot.getPosition(cMo) ;
+	      if (iter==1) vpTRACE("\t\t new circle position ") ;
+	      //retrieve x,y and Z of the vpCircle structure
+
+	      circle.track(cMo) ;
+	      vpFeatureBuilder::create(p,circle);
+
+	      if (iter==1) vpTRACE("\t\t compute the control law ") ;
+	      v = task.computeControlLaw() ;
+	      //  vpTRACE("computeControlLaw" ) ;
+	      std::cout << "Task rank: " << task.rankJ1 <<std::endl ;
+	      if (iter==1)
+	        vpTRACE("\t\t send the camera velocity to the controller ") ;
+	      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+        
+	      simu->setCameraPosition(cMo) ;
+
+	      if(SAVE==1)
+	        {
+	          sprintf(name,"/tmp/image.%04d.external.png",it) ;
+	          std::cout << "Save " << name << std::endl ;
+	          simu->write(name) ;
+	          sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
+	          std::cout << "Save " << name << std::endl ;
+	          simu->write(name) ;
+	          it++ ;
+	        }
+	      //  vpTRACE("\t\t || s - s* || ") ;
+	      //  std::cout << task.error.sumSquare() <<std::endl ; ;
+	      vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
+
+	    }
       pos-- ;
       task.kill();
 
@@ -346,7 +345,7 @@ main(int argc, char ** argv)
 
   // Compare ipath and env_ipath. If they differ, we take into account
   // the input path comming from the command line option
-  if (opt_ipath.empty()) {
+  if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
 	   << "WARNING: " << std::endl;
@@ -386,9 +385,10 @@ main(int argc, char ** argv)
     simu.load(filename.c_str(),fMo) ;
 
     simu.setInternalCameraParameters(cam) ;
+     
     simu.initApplication(&mainLoop) ;
-
     simu.mainLoop() ;
+   
   }
 }
 
@@ -396,7 +396,7 @@ main(int argc, char ** argv)
 #else
 int
 main()
-{  vpTRACE("You should install Coin3D and SoQT") ;
+{  vpTRACE("You should install Coin3D and SoQT or SoWin or SoXt") ;
 
 }
 #endif
