@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayX.cpp,v 1.7 2007-09-28 14:45:36 asaunier Exp $
+ * $Id: displayX.cpp,v 1.8 2007-11-07 14:47:56 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -244,7 +244,7 @@ main(int argc, char ** argv)
 
   // Compare ipath and env_ipath. If they differ, we take into account
   // the input path comming from the command line option
-  if (opt_ipath.empty()) {
+  if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
 	   << "WARNING: " << std::endl;

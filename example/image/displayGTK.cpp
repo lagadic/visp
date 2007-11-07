@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGTK.cpp,v 1.6 2007-09-28 14:45:36 asaunier Exp $
+ * $Id: displayGTK.cpp,v 1.7 2007-11-07 14:47:56 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -87,7 +87,7 @@ features (line, circle, caracters) in overlay and finaly write \n\
 the image and the overlayed features in an image on the disk\n\
 \n\
 SYNOPSIS\n\
-  %s [-p <input image path>] [-o <output image path>]\n\
+  %s [-i <input image path>] [-o <output image path>]\n\
      [-c] [-d] [-h]\n						      \
 ", name);
 
@@ -237,7 +237,7 @@ main(int argc, char ** argv)
 
   // Compare ipath and env_ipath. If they differ, we take into account
   // the input path comming from the command line option
-  if (opt_ipath.empty()) {
+  if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
 	   << "WARNING: " << std::endl;
