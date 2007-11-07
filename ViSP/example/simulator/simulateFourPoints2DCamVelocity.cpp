@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.7 2007-08-29 13:41:49 megautie Exp $
+ * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.8 2007-11-07 14:46:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,7 @@
 #include <visp/vpDebug.h>
 
 
-#ifdef VISP_HAVE_SOQT
+#ifdef VISP_HAVE_COIN
 
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
@@ -286,13 +286,13 @@ void *mainLoop (void *_simu)
 
 
       if(SAVE==1)
-	{
-	  sprintf(name,"/tmp/image.%04d.external.png",iter) ;
-	  std::cout << name << std::endl ;
-	  simu->write(name) ;
-	  sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
-	  simu->write(name) ;
-	}
+	    {
+	      sprintf(name,"/tmp/image.%04d.external.png",iter) ;
+	      std::cout << name << std::endl ;
+	      simu->write(name) ;
+	      sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
+	      simu->write(name) ;
+	    }
 
       vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
 
@@ -343,7 +343,7 @@ main(int argc, char ** argv)
 
   // Compare ipath and env_ipath. If they differ, we take into account
   // the input path comming from the command line option
-  if (opt_ipath.empty()) {
+  if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
 	   << "WARNING: " << std::endl;
@@ -392,7 +392,7 @@ main(int argc, char ** argv)
 #else
 int
 main()
-{  vpTRACE("You should install Coin3D and SoQT") ;
+{  vpTRACE("You should install Coin3D and SoQT or SoWin or SoXt") ;
 
 }
 #endif
