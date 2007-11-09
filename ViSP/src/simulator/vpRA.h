@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpRA.h,v 1.5 2007-11-09 13:35:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,39 +41,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_SOQT
-
-/*   KNOWN ISSUE DEALING WITH X11 and QT
-     If you get a strange compiler error on the line with None,
-     it's probably because you're also including X11 headers,
-     which #define the symbol None. Put the X11 includes after
-     the Qt includes to solve this problem.
- */
-
-// Qt and Coin stuff
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/nodes/SoBaseColor.h>
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoCone.h>
-#include <Inventor/nodes/SoCube.h>
-#include <Inventor/nodes/SoImage.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoPerspectiveCamera.h>
-#include <Inventor/nodes/SoRotationXYZ.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoTranslation.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/SoOffscreenRenderer.h>
-#include <Inventor/fields/SoSFTime.h>
-
-// open GL
-//#include <GL/gl.h>
-//#include <QtOpenGL/qgl.h>
-#include <qgl.h>
-
-// thread
-#include <pthread.h>
+#ifdef VISP_HAVE_COIN
 
 // visp
 #include <visp/vpDebug.h>
