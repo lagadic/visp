@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.17 2007-11-09 13:35:11 asaunier Exp $
+ * $Id: vpSimulator.cpp,v 1.18 2007-11-09 15:21:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,6 +62,10 @@
 #include <Inventor/nodes/SoGroup.h> /* Groupement de noeuds (sans separation)*/
 #include <Inventor/actions/SoWriteAction.h>
 
+/*!
+  \class vpSimulator Implementation of a simulator based on Coin3d (www.coin3d.org).
+  The simulator uses the vpViewer class.
+*/
 
 
 // Positions of all of the vertices:
