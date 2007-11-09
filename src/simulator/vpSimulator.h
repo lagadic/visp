@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.12 2007-08-28 16:19:44 megautie Exp $
+ * $Id: vpSimulator.h,v 1.13 2007-11-09 13:35:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,10 +28,11 @@
  * not clear to you.
  *
  * Description:
- * Simulator based on SoQt.
+ * Simulator based on Coin3d.
  *
  * Authors:
  * Eric Marchand
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -40,7 +41,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_SOQT
+#ifdef VISP_HAVE_COIN
 
 /*   KNOWN ISSUE DEALING WITH X11 and QT
      If you get a strange compiler error on the line with None,
@@ -49,9 +50,6 @@
      the Qt includes to solve this problem.
  */
 
-// Qt and Coin stuff
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoCone.h>
@@ -66,12 +64,19 @@
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/fields/SoSFTime.h>
 
+#include <Inventor/threads/SbThread.h>
 // open GL
-//#include <GL/gl.h>
-//#include <QtOpenGL/qgl.h>
-#include <qgl.h>
+
+#if defined(VISP_HAVE_SOWIN)
+  #include <GL/gl.h>
+#elif defined(VISP_HAVE_SOQT)
+  #include <qgl.h>
+#elif defined(VISP_HAVE_SOXT)
+  #include <GL/gl.h>
+#endif
+
 // thread
-#include <pthread.h>
+//#include <pthread.h>
 
 // visp
 #include <visp/vpDebug.h>
@@ -96,11 +101,18 @@ public:
 
 protected:
   //! main Widget
+#if defined(VISP_HAVE_SOWIN)
+  HWND mainWindow ;
+#elif defined(VISP_HAVE_SOQT)
   QWidget * mainWindow ;
+#elif defined(VISP_HAVE_SOXT)
+  Widget mainWindow ;
+#endif
+  
   bool mainWindowInitialized ;
 
-  //! open the Qt application
-  void initSoQt() ;
+  //! open the SoGui application
+  void initSoApplication() ;
 
 public:
   typedef enum  {grayImage, colorImage} vpImageType ;
@@ -124,7 +136,8 @@ public:
 
 protected:
   //! thread with the main program
-  pthread_t mainThread;
+  SbThread * mainThread;
+  //pthread_t mainThread;
 
 public:
   //! begin the main program

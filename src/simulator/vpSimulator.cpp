@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.16 2007-08-28 16:19:44 megautie Exp $
+ * $Id: vpSimulator.cpp,v 1.17 2007-11-09 13:35:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Simulator based on SoQt.
+ * Simulator based on Coin3d.
  *
  * Authors:
  * Eric Marchand
@@ -37,7 +37,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_SOQT
+#ifdef VISP_HAVE_COIN
 
 #include <visp/vpSimulator.h>
 #include <visp/vpTime.h>
@@ -305,10 +305,10 @@ vpSimulator::~vpSimulator()
 }
 
 void
-vpSimulator::initSoQt()
+vpSimulator::initSoApplication()
 {
-    mainWindow = SoQt::init("");
-    mainWindowInitialized = true ;
+  mainWindow = vpViewer::init("");
+  mainWindowInitialized = true ;
 }
 
 void
@@ -318,7 +318,9 @@ vpSimulator::initSceneGraph()
   this->internalRoot = new SoSeparator;
   this->externalRoot = new SoSeparator;
 
-
+  this->scene->ref();
+  this->internalRoot->ref();
+  this->externalRoot->ref();
 
   // define the camera SoPerspectiveCamera
   this->internalCamera = new SoPerspectiveCamera ;
@@ -339,6 +341,7 @@ vpSimulator::initSceneGraph()
 
 
   SoSeparator * camera = new SoSeparator;
+  camera->ref();
   camera->addChild (this->internalCameraPosition);
   camera->addChild (this->internalCameraObject);
   this->externalRoot->addChild (camera);
@@ -389,7 +392,7 @@ vpSimulator::initInternalViewer(int width, int height)
 
   if (mainWindowInitialized==false)
   {
-    initSoQt() ;
+    initSoApplication() ;
     initSceneGraph() ;
   }
 
@@ -410,14 +413,13 @@ vpSimulator::initInternalViewer(int width, int height)
   internalView->setDecoration(false) ;
 
   internalView->resize(width, height) ;
-
+  
   // open the window
   internalView->show();
-
+  
   bufferView = new unsigned char[3*width*height] ;
 
 }
-
 
 void
 vpSimulator::initExternalViewer(int width, int height)
@@ -428,7 +430,7 @@ vpSimulator::initExternalViewer(int width, int height)
 
   if (mainWindowInitialized==false)
   {
-    initSoQt() ;
+    initSoApplication() ;
     initSceneGraph() ;
   }
 
@@ -441,15 +443,16 @@ vpSimulator::initExternalViewer(int width, int height)
   externalView->setTitle("External View") ;
 
   externalView->resize(width, height) ;
+  // the goal here is to see all the scene and not to determine
+  // a manual viewpoint
+  externalView->viewAll ();
 
   // open the window
   externalView->show();
 
-  // the goal here is to see all the scene and not to determine
-  // a manual viewpoint
-  externalView->viewAll ();
-}
 
+  
+}
 
 void
 vpSimulator::setInternalCameraParameters(vpCameraParameters &_cam)
@@ -573,21 +576,16 @@ vpSimulator::redraw()
   {
     if (this->externalView != NULL)
     {
-      this->externalView->render() ;
-      this->externalView->actualRedraw() ;
+      this->externalView->render() ; //call actualRedraw()
       //      vpHomogeneousMatrix c ;
       //      getExternalCameraPosition(c) ;
     }
     if (this->internalView != NULL)
     {
       this->moveInternalCamera(this->cMf) ;
-      this->internalView->render() ;
-      this->internalView->actualRedraw() ;
+      this->internalView->render() ; //call actualRedraw()
     }
   }
-
-
-
 }
 
 // This function is called 20 times each second.
@@ -610,15 +608,12 @@ vpSimulator::mainLoop()
   }
 
   vpTime::wait(1000) ;
-
+  
   // Timer sensor
   SoTimerSensor * timer = new SoTimerSensor(timerSensorCallback, (void *)this);
   timer->setInterval(0.01);
   timer->schedule();
-
-
-  //  SoQt::show(mainWindow);
-  SoQt::mainLoop() ;
+  vpViewer::mainLoop() ;
 }
 
 
@@ -812,7 +807,8 @@ vpSimulator::addObject(SoSeparator * object,
 void
 vpSimulator::initApplication(void *(*start_routine)(void *))
 {
-  pthread_create (&mainThread, NULL, start_routine, (void *)this);
+  //pthread_create (&mainThread, NULL, start_routine, (void *)this);
+  mainThread  = SbThread::create (start_routine, (void *)this);
 }
 
 
@@ -821,8 +817,8 @@ vpSimulator::initApplication(void *(*start_routine)(void *))
 void
 vpSimulator::initMainApplication()
 {
-  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL );
-  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+  //pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL );
+  //pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
   vpTime::wait(1000) ;
 }
 //! performed some thread destruction in the main program thread
@@ -830,7 +826,7 @@ vpSimulator::initMainApplication()
 void
 vpSimulator::closeMainApplication()
 {
-  SoQt::exitMainLoop() ;
+  vpViewer::exitMainLoop() ;
   //pthread_exit (NULL);
 }
 
@@ -928,7 +924,7 @@ void
 vpSimulator::write (const char * fileName)
 {
 
-    while (get==0) {  vpTRACE("%d ",get); }
+  while (get==0) {  vpTRACE("%d ",get); }
   get =2 ;
   /*  FILE *fp = fopen(fileName, "w");
   fprintf(fp,"P6 \n %d %d \n 255",internal_width,internal_height) ;
@@ -938,16 +934,16 @@ vpSimulator::write (const char * fileName)
 
   for(int i=0 ; i < internal_height ; i++)
     for(int j=0 ; j < internal_width ; j++)
-      {
-	unsigned char r,g,b ;
-	int index = 3*((internal_height-i-1)* internal_width + j );
-	r = *(bufferView+index);
-	g = *(bufferView+index+1);
-	b = *(bufferView+index+2);
-	I[i][j].R =r ;
-	I[i][j].G =g ;
-	I[i][j].B =b ;
-      }
+    {
+      unsigned char r,g,b ;
+      int index = 3*((internal_height-i-1)* internal_width + j );
+      r = *(bufferView+index);
+      g = *(bufferView+index+1);
+      b = *(bufferView+index+2);
+      I[i][j].R =r ;
+      I[i][j].G =g ;
+      I[i][j].B =b ;
+    }
   vpImageIo::writePPM(I,fileName) ;
     // fclose (fp);
   get =1 ;

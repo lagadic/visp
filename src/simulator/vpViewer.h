@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpViewer.h,v 1.7 2007-11-09 13:35:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Simulator based on SoQt.
+ * Simulator based on Coin3d.
  *
  * Authors:
  * Eric Marchand
@@ -41,12 +41,27 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_SOQT
+#ifdef VISP_HAVE_COIN
 
+#if defined(VISP_HAVE_SOWIN)
 
-// Qt and Coin stuff
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+  #include <Inventor/Win/SoWin.h>
+  #include <Inventor/Win/viewers/SoWinExaminerViewer.h>
+
+#elif defined(VISP_HAVE_SOQT)
+
+  #include <Inventor/Qt/SoQt.h>
+  #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+
+#elif defined(VISP_HAVE_SOXT)
+  
+  #include <Inventor/Xt/SoXt.h>
+  #include <Inventor/Xt/viewers/SoXtExaminerViewer.h>
+
+#endif
+
+// Coin stuff
+
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoCone.h>
 #include <Inventor/nodes/SoCube.h>
@@ -57,13 +72,19 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/sensors/SoTimerSensor.h>
-
 // open GL
 //#include <GL/gl.h>
 //#include <QtOpenGL/qgl.h>
+
+#if defined(VISP_HAVE_SOWIN)
+#include <GL/gl.h>
+#elif defined(VISP_HAVE_SOQT)
 #include <qgl.h>
+#elif defined(VISP_HAVE_SOXT)
+#include <GL/gl.h>
+#endif
 // thread
-#include <pthread.h>
+//#include <pthread.h>
 
 // visp
 #include <visp/vpDebug.h>
@@ -72,26 +93,52 @@
 
 class vpSimulator;
 
-class VISP_EXPORT vpViewer : public SoQtExaminerViewer {
+#if defined(VISP_HAVE_SOWIN)
+class VISP_EXPORT vpViewer : public SoWinExaminerViewer
+#elif defined(VISP_HAVE_SOQT)
+class VISP_EXPORT vpViewer : public SoQtExaminerViewer
+#elif defined(VISP_HAVE_SOXT)
+class VISP_EXPORT vpViewer : public SoXtExaminerViewer
+#endif
+{
 
   friend class vpSimulator ;
 
 public:
+#if defined(VISP_HAVE_SOWIN)
+  vpViewer(HWND parent,  vpSimulator *simu);
+#elif defined(VISP_HAVE_SOQT)
   vpViewer(QWidget * parent,  vpSimulator *simu);
+#elif defined(VISP_HAVE_SOXT)
+  vpViewer(Widget parent,  vpSimulator *simu);
+#endif
+
   virtual ~vpViewer();
   void  resize(int x, int y) ;
-
-
-public:
   virtual void actualRedraw(void);
 
 private:
+
   vpSimulator *simu ;
   SbBool processSoEvent(const SoEvent * const event) ;
+#if defined(VISP_HAVE_SOWIN)
+  static HWND init(const char * appname) {SoWin::init(appname);};
+  static void mainLoop() {SoWin::mainLoop();};
+  static void exitMainLoop() {SoWin::exitMainLoop();};
+#elif defined(VISP_HAVE_SOQT)
+  static QWidget * init(const char * appname) {SoQt::init(appname);};
+  static void mainLoop() { SoQt::mainLoop();};
+  static void exitMainLoop() {SoQt::exitMainLoop();};
+#elif defined(VISP_HAVE_SOXT)
+  static Widget init(const char * appname) {SoXt::init(appname);};
+  static void mainLoop() { SoXt::mainLoop();};
+  static void exitMainLoop() {SoXt::exitMainLoop();};
+#endif
 
+  
 
 };
 
+#endif //VISP_HAVE_COIN
 
-#endif
 #endif

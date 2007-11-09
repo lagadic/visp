@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.cpp,v 1.6 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpRA.cpp,v 1.7 2007-11-09 13:35:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,8 @@
  * not clear to you.
  *
  * Description:
- * Simulator based on SoQt.
+ * Use to display an image behind the internal view of the simulator
+ * used for augmented reality application
  *
  * Authors:
  * Eric Marchand
@@ -37,7 +38,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_SOQT
+#ifdef VISP_HAVE_COIN
 
 #include <visp/vpRA.h>
 #include <visp/vpTime.h>

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.10 2007-06-01 09:15:09 marchand Exp $
+ * $Id: vpViewer.cpp,v 1.11 2007-11-09 13:35:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Simulator based on SoQt.
+ * Simulator based on Coin3d.
  *
  * Authors:
  * Eric Marchand
@@ -37,7 +37,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_SOQT
+#ifdef VISP_HAVE_COIN
 #include <visp/vpViewer.h>
 #include <visp/vpSimulator.h>
 
@@ -45,22 +45,32 @@
 #include <Inventor/events/SoKeyboardEvent.h>
 #include <Inventor/nodes/SoEventCallback.h>
 
+/*!
 
+  \class vpViewer Viewer used by the simulator. Under Windows, the viewer is
+  based either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or SoXt.
+*/
 
-vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu)
+#if defined(VISP_HAVE_SOWIN)
+vpViewer::vpViewer(HWND parent,  vpSimulator *_simu):
+  SoWinExaminerViewer::SoWinExaminerViewer(parent,(char *)NULL,false)
+#elif defined(VISP_HAVE_SOQT)
+vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu) :
+  SoQtExaminerViewer::SoQtExaminerViewer(parent,(char *)NULL,false)
+#elif defined(VISP_HAVE_SOXT)
+vpViewer::vpViewer(Widget parent,  vpSimulator *_simu):
+  SoXtExaminerViewer::SoXtExaminerViewer(parent,(char *)NULL,false)
+#endif
 {
-
-  SoQtExaminerViewer::SoQtExaminerViewer(parent,(char *)NULL,false) ;
-
   this->simu = _simu ;
 
   // Coin should not clear the pixel-buffer, so the background image
   // is not removed.
+
   this->setClearBeforeRender(FALSE, TRUE);
   //  this->setAntialiasing(true, 2) ;
-
+  setAutoRedraw(false);
 }
-
 
 vpViewer::~vpViewer()
 {
@@ -70,8 +80,7 @@ vpViewer::~vpViewer()
 void
 vpViewer::actualRedraw(void)
 {
-
-  if(simu->get !=2) ;
+  
   {
    const SbViewportRegion vp = this->getViewportRegion();
    SbVec2s origin = vp.getViewportOriginPixels();
@@ -102,10 +111,14 @@ vpViewer::actualRedraw(void)
      glClear(GL_DEPTH_BUFFER_BIT);     // clear the z-buffer
      glClearDepth(100.0);              // Profondeur du Z-Buf
    }
-
    // Render normal scenegraph.
-   SoQtExaminerViewer::actualRedraw();
-
+#if defined(VISP_HAVE_SOWIN)
+    SoWinExaminerViewer::actualRedraw();
+#elif defined(VISP_HAVE_SOQT)
+    SoQtExaminerViewer::actualRedraw();
+#elif defined(VISP_HAVE_SOXT)
+    SoXtExaminerViewer::actualRedraw();
+#endif
    glSwapBuffers() ;
 
    simu->get = 0 ;
@@ -115,7 +128,7 @@ vpViewer::actualRedraw(void)
 		  simu->bufferView ) ;
    simu-> get =1 ;
 
-  }
+ }
 
 }
 
@@ -130,8 +143,16 @@ vpViewer::resize(int x, int y)
 {
   SbVec2s size(x,y) ;
   //  setGlxSize(size) ;
-  setSize(size) ;
+  setGLSize(size) ;
 }
+
+/*!
+\param left : left coordinate
+\param bottom : bottom coordinate
+\param x : width
+\param y : height
+
+*/
 
 SbBool
 vpViewer::processSoEvent(const SoEvent * const event)
@@ -144,63 +165,70 @@ vpViewer::processSoEvent(const SoEvent * const event)
     case SoKeyboardEvent::H:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	std::cout << "H : this help "<<std::endl ;
-	std::cout << "M : get and save the external camera location (matrix)"<<std::endl;
-	std::cout << "V : get and save the external camera location (vector)"<<std::endl;
-	std::cout << "M : load camera location (vector)"<<std::endl;
-	std::cout << "P : get external camera location and set the internal one"<<std::endl;
+	      std::cout << "H : this help "<<std::endl ;
+	      std::cout << "M : get and save the external camera location (matrix)"<<std::endl;
+	      std::cout << "V : get and save the external camera location (vector)"<<std::endl;
+	      std::cout << "M : load camera location (vector)"<<std::endl;
+	      std::cout << "P : get external camera location and set the internal one"<<std::endl;
       }
       return TRUE;
 
     case SoKeyboardEvent::M:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	vpHomogeneousMatrix cMf ;
-	simu->getExternalCameraPosition(cMf) ;
-	std::ofstream f("cMf.dat") ;
-	cMf.save(f) ;
-	f.close() ;
+	      vpHomogeneousMatrix cMf ;
+	      simu->getExternalCameraPosition(cMf) ;
+	      std::ofstream f("cMf.dat") ;
+	      cMf.save(f) ;
+	      f.close() ;
       }
       return TRUE;
     case SoKeyboardEvent::V:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	vpHomogeneousMatrix cMf ;
-	simu->getExternalCameraPosition(cMf) ;
-	vpPoseVector vcMf(cMf) ;
-	std::ofstream f("vcMf.dat") ;
-	vcMf.save(f) ;
-	f.close() ;
+	      vpHomogeneousMatrix cMf ;
+	      simu->getExternalCameraPosition(cMf) ;
+	      vpPoseVector vcMf(cMf) ;
+	      std::ofstream f("vcMf.dat") ;
+	      vcMf.save(f) ;
+	      f.close() ;
       }
       return TRUE;
     case SoKeyboardEvent::L:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	vpPoseVector vcMf;
-	std::ifstream f("vcMf.dat") ;
-	vcMf.load(f) ;
-	f.close() ;
-	vpHomogeneousMatrix cMf(vcMf) ;
-	simu->setCameraPosition(cMf) ;
-	simu->moveInternalCamera(cMf) ;
+	      vpPoseVector vcMf;
+	      std::ifstream f("vcMf.dat") ;
+	      vcMf.load(f) ;
+	      f.close() ;
+	      vpHomogeneousMatrix cMf(vcMf) ;
+	      simu->setCameraPosition(cMf) ;
+	      simu->moveInternalCamera(cMf) ;
       }
       return TRUE;
     case SoKeyboardEvent::P:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	vpHomogeneousMatrix cMf ;
-	simu->getExternalCameraPosition(cMf) ;
-	vpPoseVector vcMf(cMf) ;
-	vcMf.print() ;
-	simu->setCameraPosition(cMf) ;
-	simu->moveInternalCamera(cMf) ;
+	      vpHomogeneousMatrix cMf ;
+	      simu->getExternalCameraPosition(cMf) ;
+	      vpPoseVector vcMf(cMf) ;
+	      vcMf.print() ;
+	      simu->setCameraPosition(cMf) ;
+	      simu->moveInternalCamera(cMf) ;
       }
       return TRUE;
     default:
       break;
     }
   }
+#if defined(VISP_HAVE_SOWIN)
+  return  SoWinExaminerViewer::processSoEvent(event);
+#elif defined(VISP_HAVE_SOQT)
   return  SoQtExaminerViewer::processSoEvent(event);
+#elif defined(VISP_HAVE_SOXT)
+  return  SoXtExaminerViewer::processSoEvent(event);
+#endif
+  
 }
 
 #endif
