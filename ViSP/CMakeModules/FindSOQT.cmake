@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindSOQT.cmake,v 1.4 2007-03-22 09:24:04 asaunier Exp $
+# $Id: FindSOQT.cmake,v 1.5 2007-11-09 15:41:17 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -69,7 +69,7 @@ IF(WIN32)
 
 ELSE(WIN32)
 FIND_LIBRARY(SOQT_LIBRARY
-    NAMES SoQt #only shared libraries under windows
+    NAMES SoQt
     PATHS
     /usr/lib
     /usr/local/lib
@@ -100,7 +100,7 @@ ENDIF(WIN32)
 		SET(SOQT_LIBRARIES ${SOQT_LIBRARY})
 		MARK_AS_ADVANCED(
     			SOQT_LIBRARIES
-			SOQT_LIBRARY
+			    SOQT_LIBRARY
     		)
 	ENDIF(WIN32)
     SET(SOQT_FOUND TRUE)
