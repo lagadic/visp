@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateCircle2DCamVelocity.cpp,v 1.8 2007-11-07 14:46:38 asaunier Exp $
+ * $Id: simulateCircle2DCamVelocity.cpp,v 1.9 2007-11-09 13:38:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -350,7 +350,7 @@ main(int argc, char ** argv)
       std::cout << std::endl
 	   << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+	   << "  is different from VISP_INPUT_IMAGE_PATH=" << env_ipath << std::endl
 	   << "  we skip the environment variable." << std::endl;
     }
   }
