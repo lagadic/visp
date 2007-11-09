@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.59 2007-10-26 10:05:57 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.60 2007-11-09 15:39:12 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -38,16 +38,16 @@
 PROJECT(VISP)
 
 #-----------------------------------------------------------------------------
-# CMake 2.3 is required for INSTALL command functionnality 
-# ccmake --help-command INSTALL to kwow more are INSTALL command 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.6) 
+# CMake 2.3 is required for INSTALL command functionnality
+# ccmake --help-command INSTALL to kwow more are INSTALL command
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.6)
 
-#----------------------------------------------------------------------------- 
-# VISP version number.  An even minor number corresponds to releases. 
-SET(VISP_VERSION_MAJOR "2") 
-SET(VISP_VERSION_MINOR "4") 
-SET(VISP_VERSION_PATCH "2") 
-SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}") 
+#-----------------------------------------------------------------------------
+# VISP version number.  An even minor number corresponds to releases.
+SET(VISP_VERSION_MAJOR "2")
+SET(VISP_VERSION_MINOR "4")
+SET(VISP_VERSION_PATCH "2")
+SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 
 SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")
 SET(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
@@ -104,8 +104,11 @@ ENDIF(UNIX)
 # Set other options to default value
 SET(USE_X11       ON) # For Linux/OSX display
 SET(USE_COIN      ON) # For the simulator
+SET(USE_SOWIN     ON) # For the simulator viewer
+SET(USE_SOQT      ON) # For the simulator viewer
+SET(USE_SOXT      ON) # For the simulator viewer
 SET(USE_PTHREAD   ON) # For Biclops/Simulator
-SET(USE_OPENCV    ON) # For Intel opencv 
+SET(USE_OPENCV    ON) # For Intel opencv
 SET(USE_GSL       ON) # For matrix manipulations
 SET(USE_GTK1      ON) # For Linux/OSX/Windows display with gtk-1.x
 SET(USE_GTK2      ON) # For Linux/OSX/Windows display with gtk-2.x
@@ -123,7 +126,7 @@ ENDIF(BUILD_SHARED_LIBS)
 INCLUDE(CheckLibraryExists)
 
 #---------------------------------------------------------------------
-# Platform dependent 
+# Platform dependent
 #----------------------------------------------------------------------
 IF(WIN32 AND NOT CYGWIN)
   SET(VISP_DEFS "${VISP_DEFS} -DWIN32")
@@ -153,7 +156,7 @@ IF(BIGENDIAN)
 ENDIF(BIGENDIAN)
 
 #----------------------------------------------------------------------
-# Unix libraries :  X11, pthread, cfox (MAC OS X) 
+# Unix libraries :  X11, pthread, cfox (MAC OS X)
 #----------------------------------------------------------------------
 IF(UNIX)
 
@@ -164,14 +167,14 @@ IF(UNIX)
     FIND_PACKAGE(X11)
     IF(X11_FOUND)
       SET(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
-      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
 	${X11_INCLUDE_DIR})
       SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${X11_LIBRARIES} -lm)
       #MESSAGE("X11: ${X11_LIBRARIES}")
     ENDIF(X11_FOUND)
   ENDIF(USE_X11)
   #--------------------------------------------------------------------
-  # Apple MAC OS X cfox library 
+  # Apple MAC OS X cfox library
   #--------------------------------------------------------------------
   IF(APPLE AND USE_CFOX)
     IF(USE_CFOX)
@@ -180,9 +183,9 @@ IF(UNIX)
 	SET(VISP_HAVE_CFOX TRUE) # for header vpConfig.h
 	#MESSAGE("DBG VISP_HAVE_CFOX= ${VISP_HAVE_CFOX}")
 	#MESSAGE("DBG CFOX_INCLUDE_DIR=${CFOX_INCLUDE_DIR}")
-	SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+	SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
 	  ${CFOX_INCLUDE_DIR})
-	SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} 
+	SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS}
 	  ${CFOX_LIBRARIES} -lIOKit "-framework Carbon")
 	#MESSAGE("CFOX_LIBRARIES = ${CFOX_LIBRARIES}")
       ELSE(CFOX_FOUND)
@@ -197,74 +200,130 @@ ENDIF(UNIX)
 # OpenGL, Qt, SoQt and Coin libs
 #--------------------------------------------------------------------
 IF(USE_COIN)
-  INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake)
   INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
   IF(OPENGL_FOUND)
-    IF(QT_FOUND)
-      FIND_PACKAGE(COIN)
-      FIND_PACKAGE(SOQT)
-      IF (SOQT_FOUND AND COIN_FOUND)
-	# OPenGL, QT and SOQT are found
-	# We first manage OpenGL
-	SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
-	SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
-	SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OPENGL_gl_LIBRARY})
+    FIND_PACKAGE(COIN)
+    IF(WIN32 AND USE_SOWIN)
+      FIND_PACKAGE(SOWIN)
+    ENDIF(WIN32 AND USE_SOWIN)
+    IF (WIN32 AND SOWIN_FOUND AND COIN_FOUND)
+      # OPenGL and SoWin are found
+      # We first manage OpenGL
+      SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
+      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OPENGL_gl_LIBRARY})
 
-	# We manage QT
-	SET(VISP_HAVE_QT TRUE)  # for header vpConfig.h
-	SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${QT_INCLUDE_DIR} ${QT_INCLUDES})
-	#MESSAGE("QT_QT_LIB ${QT_QT_LIBRARY}")
-	#MESSAGE("QT_LIBS ${QT_LIBRARIES}")
-	#SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY} ${QT_LIBRARIES})
-	SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY})
-	# Because in QT_DEFINITIONS defs are separated by ";", parse the
-	# QT_DEFINITIONS in order to build a space separated string
-	#SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
-	# in third party projects which use visp-config shell script (due to ";"
-	# separate char)
-	FOREACH(DEF ${QT_DEFINITIONS})
-	  #MESSAGE("DEF: ${DEF}")
-	  SET(VISP_DEFS "${VISP_DEFS} ${DEF}")
-	ENDFOREACH(DEF)
+      # We manage SoWin and Coin
+      SET(VISP_HAVE_SOWIN TRUE)  # for header vpConfig.h
+      SET(VISP_HAVE_COIN TRUE)  # for header vpConfig.h
+      
+      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${SOWIN_INCLUDE_DIR})
+      #MESSAGE(STATUS "SOWIN_INCLUDE_DIR = ${SOWIN_INCLUDE_DIR}")
+      SET(VISP_DEFS "${VISP_DEFS} -DSOWIN_DLL")
+      SET(VISP_DEFS "${VISP_DEFS} -DCOIN_DLL")
+      IF(SOWIN_LIBRARY_RELEASE)
+        IF(COIN_LIBRARY_RELEASE)
+          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_RELEASE})
+          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOWIN_LIBRARY_RELEASE})
+        ENDIF(COIN_LIBRARY_RELEASE)
+      ELSE(SOWIN_LIBRARY_RELEASE)
+        IF(COIN_LIBRARY_DEBUG)
+          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_DEBUG})
+          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOWIN_LIBRARY_DEBUG})
+        ELSE(COIN_LIBRARY_DEBUG)
+          SET(VISP_HAVE_SOWIN FALSE)  # for header vpConfig.h
+          SET(VISP_HAVE_COIN FALSE)  # for header vpConfig.h
+        ENDIF(COIN_LIBRARY_DEBUG)
+      ENDIF(SOWIN_LIBRARY_RELEASE)
+    ENDIF(WIN32 AND SOWIN_FOUND AND COIN_FOUND)
 
-	IF(WIN32)
-	  SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QTMAIN_LIBRARY})
-	  SET(VISP_DEFS "${VISP_DEFS} -DQT_DLL")
-	ENDIF(WIN32)
+    IF(USE_SOQT AND NOT VISP_HAVE_COIN)
+      INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake)    
+      IF(QT_FOUND)
+        FIND_PACKAGE(SOQT)
+        IF (SOQT_FOUND AND COIN_FOUND)
+	        # OPenGL, QT and SOQT are found
+	        # We first manage OpenGL
+	        SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
+	        SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+	        SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OPENGL_gl_LIBRARY})
 
-	# We manage now SOQT and Coin
-	SET(VISP_HAVE_SOQT TRUE)  # for header vpConfig.h
-	SET(VISP_HAVE_COIN TRUE)  # for header vpConfig.h
-	IF(WIN32)
-	  SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR})      
-	  #MESSAGE(STATUS "SOQT_INCLUDE_DIR = ${SOQT_INCLUDE_DIR}")
-	  SET(VISP_DEFS "${VISP_DEFS} -DSOQT_DLL")
-	  SET(VISP_DEFS "${VISP_DEFS} -DCOIN_DLL")
-	  IF(SOQT_LIBRARY_RELEASE)
-	    IF(COIN_LIBRARY_RELEASE)
-	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_RELEASE})    
-	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARY_RELEASE})
-	    ENDIF(COIN_LIBRARY_RELEASE)
-	  ELSE(SOQT_LIBRARY_RELEASE)
-	    IF(COIN_LIBRARY_DEBUG)
-	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_DEBUG})    
-	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARY_DEBUG})
-	    ELSE(COIN_LIBRARY_DEBUG)
-	      SET(VISP_HAVE_SOQT FALSE)  # for header vpConfig.h
-	      SET(VISP_HAVE_COIN FALSE)  # for header vpConfig.h
-	    ENDIF(COIN_LIBRARY_DEBUG)    
-	  ENDIF(SOQT_LIBRARY_RELEASE)
-	ELSE(WIN32)              
-	  SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARIES})
-	  SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARIES})
-	  #MESSAGE(STATUS "SOQT_LIBRARIES = ${SOQT_LIBRARY_DEBUG}")
-	ENDIF(WIN32)
-      ELSE(SOQT_FOUND AND COIN_FOUND)  
-	MESSAGE(STATUS "SOQT_LIBRARIES OR COIN_LIBRARIES no found")
-      ENDIF(SOQT_FOUND AND COIN_FOUND)
-    ELSE(QT_FOUND)  
-      #MESSAGE(STATUS "QT_LIBRARIES no found")
-    ENDIF(QT_FOUND)
+	        # We manage QT
+	        SET(VISP_HAVE_QT TRUE)  # for header vpConfig.h
+	        SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${QT_INCLUDE_DIR} ${QT_INCLUDES})
+	        #MESSAGE("QT_QT_LIB ${QT_QT_LIBRARY}")
+	        #MESSAGE("QT_LIBS ${QT_LIBRARIES}")
+	        #SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY} ${QT_LIBRARIES})
+	        SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY})
+	        # Because in QT_DEFINITIONS defs are separated by ";", parse the
+	        # QT_DEFINITIONS in order to build a space separated string
+	        #SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
+	        # in third party projects which use visp-config shell script (due to ";"
+	        # separate char)
+	        FOREACH(DEF ${QT_DEFINITIONS})
+	          #MESSAGE("DEF: ${DEF}")
+	          SET(VISP_DEFS "${VISP_DEFS} ${DEF}")
+	        ENDFOREACH(DEF)
+
+	        IF(WIN32)
+	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QTMAIN_LIBRARY})
+	          SET(VISP_DEFS "${VISP_DEFS} -DQT_DLL")
+	        ENDIF(WIN32)
+
+	        # We manage now SOQT and Coin
+	        SET(VISP_HAVE_SOQT TRUE)  # for header vpConfig.h 
+          SET(VISP_HAVE_COIN TRUE)  # for header vpConfig.h
+	        IF(WIN32)
+	          SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR})
+	          #MESSAGE(STATUS "SOQT_INCLUDE_DIR = ${SOQT_INCLUDE_DIR}")
+	          SET(VISP_DEFS "${VISP_DEFS} -DSOQT_DLL")
+	          SET(VISP_DEFS "${VISP_DEFS} -DCOIN_DLL")
+	          IF(SOQT_LIBRARY_RELEASE)
+	            IF(COIN_LIBRARY_RELEASE)
+	              SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_RELEASE})
+	              SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARY_RELEASE})
+	            ENDIF(COIN_LIBRARY_RELEASE)
+	          ELSE(SOQT_LIBRARY_RELEASE)
+	            IF(COIN_LIBRARY_DEBUG)
+	              SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_DEBUG})
+	              SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARY_DEBUG})
+	            ELSE(COIN_LIBRARY_DEBUG)
+	              SET(VISP_HAVE_SOQT FALSE)  # for header vpConfig.h
+                SET(VISP_HAVE_COIN FALSE)  # for header vpConfig.h
+	            ENDIF(COIN_LIBRARY_DEBUG)
+	          ENDIF(SOQT_LIBRARY_RELEASE)
+	        ELSE(WIN32)
+	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARIES})
+	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARIES})
+	          #MESSAGE(STATUS "SOQT_LIBRARIES = ${SOQT_LIBRARY_DEBUG}")
+	        ENDIF(WIN32)
+        ENDIF (SOQT_FOUND AND COIN_FOUND)
+      ENDIF(QT_FOUND)
+    ENDIF(USE_SOQT AND NOT VISP_HAVE_COIN)
+  
+    #MESSAGE(STATUS "QT_LIBRARIES no found")
+    IF(USE_SOXT AND NOT VISP_HAVE_COIN)
+      FIND_PACKAGE(SOXT)
+    ENDIF(USE_SOXT AND NOT VISP_HAVE_COIN)
+
+    IF (UNIX AND SOXT_FOUND AND COIN_FOUND)
+      # OPenGL and SoXt are found
+      # We first manage OpenGL
+      SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
+      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OPENGL_gl_LIBRARY})
+
+      # We manage SoXt and Coin
+      SET(VISP_HAVE_SOXT TRUE)  # for header vpConfig.h
+      SET(VISP_HAVE_COIN TRUE)  # for header vpConfig.h
+      
+      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOXT_LIBRARIES})
+      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARIES})
+      
+    ENDIF(UNIX AND SOXT_FOUND AND COIN_FOUND)
+    IF(NOT VISP_HAVE_COIN)
+      MESSAGE(STATUS "COIN_LIBRARIES not found")
+    ENDIF(NOT VISP_HAVE_COIN)
   ELSE(OPENGL_FOUND)
     #MESSAGE(STATUS "OPENGL_LIBRARIES no found")
   ENDIF(OPENGL_FOUND)
@@ -276,14 +335,14 @@ ENDIF(USE_COIN)
 #--------------------------------------------------------------------
 IF(USE_PTHREAD)
   FIND_PACKAGE(PTHREAD)
-  IF(PTHREAD_FOUND)  
+  IF(PTHREAD_FOUND)
     SET(VISP_HAVE_PTHREAD TRUE)  # for header vpConfig.h
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${PTHREAD_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${PTHREAD_LIBRARIES})
     SET(VISP_HAVE_PTHREAD TRUE) # for header vpConfig.h
     #MESSAGE("PTHREAD_LIBRARIES = ${PTHREAD_LIBRARIES}")
-  ELSE(PTHREAD_FOUND)  
+  ELSE(PTHREAD_FOUND)
     #MESSAGE("PTHREAD_LIBRARIES no found")
   ENDIF(PTHREAD_FOUND)
 ENDIF(USE_PTHREAD)
@@ -297,17 +356,17 @@ IF(PARPORT_FOUND)
 ENDIF(PARPORT_FOUND)  
 
 #----------------------------------------------------------------------
-# Third party software : 
+# Third party software :
 #----------------------------------------------------------------------
 
-# open CV  
+# open CV
 IF(USE_OPENCV)
   SET(OpenCV_FIND_QUIETLY TRUE)
   FIND_PACKAGE(OpenCV)
   IF(OpenCV_FOUND)
     SET(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS})
-    SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR} 
+    SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR}
       ${OpenCV_EXE_LINKER_FLAGS} -L${OpenCV_LINK_DIRECTORIES})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OpenCV_LIBRARIES})
     LINK_DIRECTORIES(${OpenCV_LINK_DIRECTORIES})
@@ -324,7 +383,7 @@ IF(USE_GSL)
   IF(GSL_FOUND)
     SET(VISP_HAVE_GSL  TRUE)  # for header vpConfig.h
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GSL_INCLUDE_DIR})
-    SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR} 
+    SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR}
       ${GSL_EXE_LINKER_FLAGS} -L${GSL_LINK_DIRECTORIES})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${GSL_LIBRARIES})
     LINK_DIRECTORIES(${GSL_LINK_DIRECTORIES})
@@ -335,16 +394,16 @@ IF(USE_GSL)
 ENDIF(USE_GSL)
 
 # strategy for gtk: search first gtk2. If not found search gtk1
-# gtk-2 library: 
+# gtk-2 library:
 IF(USE_GTK2)
-   IF(UNIX OR WIN32) 
-    FIND_PACKAGE(GTK2) 
+   IF(UNIX OR WIN32)
+    FIND_PACKAGE(GTK2)
     IF(GTK2_FOUND)
       SET(VISP_HAVE_GTK TRUE)  # for header vpConfig.h
-      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GTK2_INCLUDE_DIR})      
+      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GTK2_INCLUDE_DIR})
       
       IF(UNIX)
-	## ignore gtk pedantic warnings by gcc specific -isystem : 
+	## ignore gtk pedantic warnings by gcc specific -isystem :
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK2_gtk_INCLUDE_PATH}")
       ENDIF(UNIX)
 
@@ -367,12 +426,12 @@ ENDIF(USE_GTK2)
 SET(USE_GTK2 OFF)
 #MESSAGE("USE_GTK1: ${USE_GTK1}")
 IF(USE_GTK1)
-  IF(UNIX) 
+  IF(UNIX)
     FIND_PACKAGE(GTK)
     IF(GTK_FOUND)
       SET(VISP_HAVE_GTK TRUE) # for header vpConfig.h
       SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GTK_INCLUDE_DIR})
-      ## ignore gtk pedantic warnings by gcc specific -isystem : 
+      ## ignore gtk pedantic warnings by gcc specific -isystem :
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK_gtk_INCLUDE_PATH}")
       # MESSAGE("DBG CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}")
       SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${GTK_LIBRARIES})
@@ -393,7 +452,7 @@ IF(USE_DIRECT3D)
     SET(VISP_HAVE_D3D9 TRUE) # for header vpConfig.h
     #MESSAGE("DBG VISP_HAVE_D3D9= ${VISP_HAVE_D3D9}")
     #MESSAGE("DBG DIRECT3D_INCLUDE_DIR=${DIRECT3D_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${DIRECT3D_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${DIRECT3D_LIBRARIES} ${VISP_EXTERN_LIBS})
     #MESSAGE("DIRECT3D_LIBRARIES = ${DIRECT3D_LIBRARIES}")
@@ -428,9 +487,9 @@ IF(USE_DC1394)
       #MESSAGE("DBG VISP_HAVE_DC1394_1= ${VISP_HAVE_DC1394_1}")
     ENDIF(DC1394_VERSION EQUAL 2)
     #MESSAGE("DBG DC1394_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${DC1394_INCLUDE_DIR})
-    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} 
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS}
       ${DC1394_LIBRARIES})
     IF(APPLE)
       SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} IOkit "-framework Carbon")
@@ -449,7 +508,7 @@ IF(USE_V4L2)
     SET(VISP_HAVE_V4L2 TRUE) # for header vpConfig.h
      #MESSAGE("DBG VISP_HAVE_V4L2= ${VISP_HAVE_V4L2}")
      #MESSAGE("DBG V4L2_INCLUDE_DIR=${V4L2_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${V4L2_INCLUDE_DIR})
   #ELSE(V4L2_FOUND)
     #MESSAGE("Video For Linux Two requested but not found.")
@@ -464,7 +523,7 @@ IF(USE_ICCOMP)
     SET(VISP_HAVE_ICCOMP TRUE) # for header vpConfig.h
      #MESSAGE("DBG VISP_HAVE_ICCOMP= ${VISP_HAVE_ICCOMP}")
      #MESSAGE("DBG ICCOMP_INCLUDE_DIR=${ICCOMP_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${ICCOMP_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${ICCOMP_LIBRARIES} ${VISP_EXTERN_LIBS})
      #MESSAGE("ICCOMP_LIBRARIES = ${ICCOMP_LIBRARIES}")
@@ -483,7 +542,7 @@ IF(USE_ITIFG8)
     SET(VISP_HAVE_ITIFG8_VERSION_DOXY ${ITIFG8_VERSION}) # for doxygen file doc/config-doxygen
      #MESSAGE("DBG VISP_HAVE_ITIFG8= ${VISP_HAVE_ITIFG8}")
      #MESSAGE("DBG ITIFG8_INCLUDE_DIR=${ITIFG8_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${ITIFG8_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${ITIFG8_LIBRARIES} ${VISP_EXTERN_LIBS})
      #MESSAGE("ITIFG8_LIBRARIES = ${ITIFG8_LIBRARIES}")
@@ -502,7 +561,7 @@ IF(USE_DIRECTSHOW)
     SET(VISP_HAVE_DIRECTSHOW TRUE) # for header vpConfig.h
     #MESSAGE("DBG VISP_HAVE_DIRECTSHOW= ${VISP_HAVE_PTU46}")
     #MESSAGE("DBG DIRECTSHOW_INCLUDE_DIR=${DIRECTSHOW_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${DIRECTSHOW_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${DIRECTSHOW_LIBRARIES} ${VISP_EXTERN_LIBS})
     #MESSAGE("DIRECTSHOW_LIBRARIES = ${DIRECTSHOW_LIBRARIES}")
@@ -561,7 +620,7 @@ IF(VISP_HAVE_AFMA4 OR VISP_HAVE_AFMA6)
   # of cross references problems with static libraries, we need to add
   # -lvisp-2 after Afma4 libs
   SET(AFMA_LIBS ${AFMA_LIBS} ${BIT3_LIBRARIES})
-  SET(VISP_EXTERN_LIBS ${AFMA_LIBS} 
+  SET(VISP_EXTERN_LIBS ${AFMA_LIBS}
     ${VISP_EXTERN_LIBS} -l${VISP_INTERN_LIBS} )
 ENDIF(VISP_HAVE_AFMA4 OR VISP_HAVE_AFMA6)
 
@@ -572,7 +631,7 @@ IF(USE_BICLOPS)
     SET(VISP_HAVE_BICLOPS TRUE) # for header vpConfig.h
      #MESSAGE("DBG VISP_HAVE_BICLOPS= ${VISP_HAVE_BICLOPS}")
      #MESSAGE("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${BICLOPS_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${BICLOPS_LIBRARIES} ${VISP_EXTERN_LIBS})
      #MESSAGE("BICLOPS_LIBRARIES = ${BICLOPS_LIBRARIES}")
@@ -589,7 +648,7 @@ IF(USE_PTU46)
     SET(VISP_HAVE_PTU46 TRUE) # for header vpConfig.h
      #MESSAGE("DBG VISP_HAVE_PTU46= ${VISP_HAVE_PTU46}")
      #MESSAGE("DBG PTU46_INCLUDE_DIR=${PTU46_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${PTU46_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${PTU46_LIBRARIES} ${VISP_EXTERN_LIBS})
      #MESSAGE("PTU46_LIBRARIES = ${PTU46_LIBRARIES}")
@@ -603,7 +662,7 @@ ENDIF(USE_PTU46)
 # add html-doc target for doxygen documentation building
 #----------------------------------------------------------------------
 FIND_PACKAGE(Doxygen)
-IF (DOXYGEN_FOUND)  
+IF (DOXYGEN_FOUND)
   ## we need latex for doxygen because of the formulas
   FIND_PACKAGE(LATEX)
   IF    (NOT LATEX_COMPILER)
@@ -619,10 +678,12 @@ IF (DOXYGEN_FOUND)
   CONFIGURE_FILE(${VISP_SOURCE_DIR}/doc/config-doxygen.in
     ${VISP_DOC_DIR}/config-doxygen
     @ONLY )
+
   CONFIGURE_FILE(${VISP_SOURCE_DIR}/doc/mainpage.doc.in
     ${VISP_SOURCE_DIR}/doc/mainpage.doc
     @ONLY )
   ADD_CUSTOM_TARGET(html-doc ${DOXYGEN_EXECUTABLE} ${VISP_DOC_DIR}/config-doxygen) 
+
 ENDIF(DOXYGEN_FOUND)
 
 #----------------------------------------------------------------------
@@ -633,57 +694,57 @@ INCLUDE_DIRECTORIES(${VISP_INTERN_INCLUDE_DIR} ${VISP_EXTERN_INCLUDE_DIR})
 #----------------------------------------------------------------------
 # Generate the package dependent file include/visp/vpConfig.h
 #----------------------------------------------------------------------
-CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake 
+CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
   ${VISP_INCLUDE_DIR}/vpConfig.h
 )
 
 #----------------------------------------------------------------------
 # Generate the package dependent visp-config shell script for projects which
 # are not using CMake:
-# Usage: 
+# Usage:
 #    visp-config --include ...
 #----------------------------------------------------------------------
 INCLUDE(${CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 
 #----------------------------------------------------------------------
-# customize install target 
+# customize install target
 #----------------------------------------------------------------------
 # install rule for visp-config shell script
 IF (UNIX)
-INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config 
+INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config
   DESTINATION bin
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
   OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
   OWNER_WRITE   )
 ENDIF (UNIX)
 
 # install rule for vpConfig.h
 INSTALL(FILES ${VISP_BINARY_DIR}/include/visp/vpConfig.h
-  DESTINATION include/visp 
+  DESTINATION include/visp
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
   )
 #----------------------------------------------------------------------
-# add distclean target 
+# add distclean target
 #----------------------------------------------------------------------
 INCLUDE(${CMAKE_MODULE_PATH}/TargetDistclean.cmake)
 
 #----------------------------------------------------------------------
-# customize clean target 
+# customize clean target
 #----------------------------------------------------------------------
 INCLUDE(${VISP_SOURCE_DIR}/CMakeHeaderFileList.cmake)
 
 SET(FILE_TO_CLEAN "core*;*~;gmon.out;DartTestfile.txt")
 FOREACH(header ${HEADER_ALL})
-  GET_FILENAME_COMPONENT(headerName ${header} NAME) 
+  GET_FILENAME_COMPONENT(headerName ${header} NAME)
   SET(FILE_TO_CLEAN ${FILE_TO_CLEAN} ${CMAKE_SOURCE_DIR}/include/visp/${headerName})
 ENDFOREACH(header)
 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
+SET_DIRECTORY_PROPERTIES(PROPERTIES
   ADDITIONAL_MAKE_CLEAN_FILES "${FILE_TO_CLEAN}"
 )
 
 #----------------------------------------------------------------------
-# customize uninstall target 
+# customize uninstall target
 #----------------------------------------------------------------------
 CONFIGURE_FILE(
   "${CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in"
@@ -705,7 +766,7 @@ ADD_DEFINITIONS(${VISP_DEFS})
 # warnings. To suppress it, we add the _CRT_SECURE_NO_DEPRECATE preprocessor
 # definition
 IF(WIN32 AND MSVC80)
-  #MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")  
+  #MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")
   ADD_DEFINITIONS("-D_CRT_SECURE_NO_DEPRECATE")
 ENDIF(WIN32 AND MSVC80)
 
@@ -715,8 +776,8 @@ ENDIF(WIN32 AND MSVC80)
 # is the main file configuring a CMake package.
 # . Exports build settings and dependencies for projects using ViSP as a
 #   third party project.
-# . Create and install files for simple use of FIND_PACKAGE(VISP) 
-#   by other cmakified "user" projects and libraries depending on ViSP. 
+# . Create and install files for simple use of FIND_PACKAGE(VISP)
+#   by other cmakified "user" projects and libraries depending on ViSP.
 #   (see "Mastering CMake", pp.72)
 # . To use ViSP in a third party project based on CMake:
 #   FIND_PACKAGE(VISP REQUIRED)
@@ -794,7 +855,7 @@ IF(WIN32 AND NOT UNIX)
   # There is a bug in NSI that does not handle full unix paths properly. Make
   # sure there is at least one set of four (4) backlasshes.
 #  SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
-  # CPACK_NSIS_INSTALLED_ICON_NAME icon is the one that shows up in the 
+  # CPACK_NSIS_INSTALLED_ICON_NAME icon is the one that shows up in the
   # Add/Remove control panel
   #SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\ViSP.exe")
   SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} My Famous Project")
@@ -829,11 +890,11 @@ IF(BUILD_TESTING)
 
   IF(BUILD_TEST_COVERAGE)
     # Add build options for test coverage. Currently coverage is only supported
-    # on gcc compiler 
+    # on gcc compiler
     # Because using -fprofile-arcs with shared lib can cause problems like:
-    # hidden symbol `__bb_init_func', we add this option only for static 
+    # hidden symbol `__bb_init_func', we add this option only for static
     # library build
-    MESSAGE("Add -ftest-coverage -fprofile-arcs ")  
+    MESSAGE("Add -ftest-coverage -fprofile-arcs ")
     SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
   ENDIF(BUILD_TEST_COVERAGE)
 
