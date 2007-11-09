@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.19 2007-10-19 08:32:28 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.20 2007-11-09 15:43:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,6 +89,12 @@
 
 // Defined if SoQt library available.
 #cmakedefine VISP_HAVE_SOQT
+
+// Defined if SoWin library available.
+#cmakedefine VISP_HAVE_SOWIN
+
+// Defined if SoXt library available.
+#cmakedefine VISP_HAVE_SOXT
 
 // Defined if raw1394 and dc1394-1.x libraries available.
 #cmakedefine VISP_HAVE_DC1394_1
