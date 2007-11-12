@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.11 2007-11-09 13:35:11 asaunier Exp $
+ * $Id: vpViewer.cpp,v 1.12 2007-11-12 10:16:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,20 +46,19 @@
 #include <Inventor/nodes/SoEventCallback.h>
 
 /*!
-
   \class vpViewer Viewer used by the simulator. Under Windows, the viewer is
   based either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or SoXt.
 */
 
 #if defined(VISP_HAVE_SOWIN)
 vpViewer::vpViewer(HWND parent,  vpSimulator *_simu):
-  SoWinExaminerViewer::SoWinExaminerViewer(parent,(char *)NULL,false)
+  SoWinExaminerViewer(parent,(char *)NULL,false)
 #elif defined(VISP_HAVE_SOQT)
 vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu) :
-  SoQtExaminerViewer::SoQtExaminerViewer(parent,(char *)NULL,false)
+  SoQtExaminerViewer(parent,(char *)NULL,false)
 #elif defined(VISP_HAVE_SOXT)
 vpViewer::vpViewer(Widget parent,  vpSimulator *_simu):
-  SoXtExaminerViewer::SoXtExaminerViewer(parent,(char *)NULL,false)
+  SoXtExaminerViewer(parent,(char *)NULL,false)
 #endif
 {
   this->simu = _simu ;
