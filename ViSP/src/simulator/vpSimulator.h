@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.13 2007-11-09 13:35:11 asaunier Exp $
+ * $Id: vpSimulator.h,v 1.14 2007-11-12 10:18:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,6 +43,8 @@
 
 #ifdef VISP_HAVE_COIN
 
+#include <visp/vpViewer.h>
+
 /*   KNOWN ISSUE DEALING WITH X11 and QT
      If you get a strange compiler error on the line with None,
      it's probably because you're also including X11 headers,
@@ -66,7 +68,7 @@
 
 #include <Inventor/threads/SbThread.h>
 // open GL
-
+/*
 #if defined(VISP_HAVE_SOWIN)
   #include <GL/gl.h>
 #elif defined(VISP_HAVE_SOQT)
@@ -74,7 +76,7 @@
 #elif defined(VISP_HAVE_SOXT)
   #include <GL/gl.h>
 #endif
-
+*/
 // thread
 //#include <pthread.h>
 
@@ -82,9 +84,6 @@
 #include <visp/vpDebug.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
-
-
-#include <visp/vpViewer.h>
 
 class VISP_EXPORT vpSimulator
 {
