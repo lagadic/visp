@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.h,v 1.7 2007-11-09 13:35:11 asaunier Exp $
+ * $Id: vpViewer.h,v 1.8 2007-11-12 10:14:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -122,21 +122,18 @@ private:
   vpSimulator *simu ;
   SbBool processSoEvent(const SoEvent * const event) ;
 #if defined(VISP_HAVE_SOWIN)
-  static HWND init(const char * appname) {SoWin::init(appname);};
+  static HWND init(const char * appname) {return SoWin::init(appname);};
   static void mainLoop() {SoWin::mainLoop();};
   static void exitMainLoop() {SoWin::exitMainLoop();};
 #elif defined(VISP_HAVE_SOQT)
-  static QWidget * init(const char * appname) {SoQt::init(appname);};
+  static QWidget * init(const char * appname) {return SoQt::init(appname);};
   static void mainLoop() { SoQt::mainLoop();};
   static void exitMainLoop() {SoQt::exitMainLoop();};
 #elif defined(VISP_HAVE_SOXT)
-  static Widget init(const char * appname) {SoXt::init(appname);};
+  static Widget init(const char * appname) {return SoXt::init(appname);};
   static void mainLoop() { SoXt::mainLoop();};
   static void exitMainLoop() {SoXt::exitMainLoop();};
 #endif
-
-  
-
 };
 
 #endif //VISP_HAVE_COIN
