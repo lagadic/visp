@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.15 2007-11-07 14:43:17 asaunier Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.16 2007-11-15 14:56:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -487,11 +487,16 @@ main(int argc, char ** argv)
       std::cout << std::endl << list_d->nbElement() << " dots are detected" << std::endl;
 
       if (opt_display) {
+	int i=0;
         // Parse all founded dots for display
         list_d->front();
         while (!list_d->outside()) {
           vpDot2 tmp_d;
           tmp_d = list_d->value() ;
+
+	  std::cout << "Dot " << i++ << " : " << tmp_d.get_u()
+		    << " " << tmp_d.get_v() << std::endl;
+
           list_d->next() ;
           vpDisplay::displayCross_uv(I,(int)tmp_d.get_u(), (int)tmp_d.get_v(),
                         10, vpColor::red) ;
