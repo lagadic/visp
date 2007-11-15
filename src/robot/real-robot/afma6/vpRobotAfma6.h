@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.10 2007-06-01 08:50:55 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.11 2007-11-15 14:47:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -253,7 +253,8 @@ public:
 
 
   void move(char *name) ;
-  int  readPosFile(char *name, vpColVector &v)  ;
+  static bool readPosFile(const char *filename, vpColVector &v)  ;
+  static bool savePosFile(const char *filename, const vpColVector &v)  ;
 
 
   void openGripper() ;

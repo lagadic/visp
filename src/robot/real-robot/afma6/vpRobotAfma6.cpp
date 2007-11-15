@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.19 2007-10-19 08:47:06 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.20 2007-11-15 14:47:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1026,56 +1026,53 @@ vpRobotAfma6::getDisplacement(vpRobot::ControlFrameType frame,
 }
 
 
-/*
- * PROCEDURE: 	lit_pos
- *
- * ENTREE:
- * pt_fich	Pointeur de fichier a lire.
- *
- * SORTIE:
- * position	Positions sauvegardees du robot et de la camera.
- *
- * RESUME:
- * La procedure recupere les positions sauvegardees du robot dans le fichier
- * ayant pour pointeur de fichier "pt_fich".  La procedure retourne "OK" en cas
- * de succes, et "NO_AFMA6_POSITION" en cas d'echec.
- */
+/*!
 
-int
-vpRobotAfma6::readPosFile(char *name, vpColVector &v)
-//FILE *pt_fich, st_position_Afma6 *position)
+  Read articular positions in a specific Afma6 file.
+
+  \param filename : Name of the position file to read.
+  \param v : articular positions
+
+  \return true if the positions were successfully readen in the file. false, if
+  an error occurs.
+*/
+
+bool
+vpRobotAfma6::readPosFile(const char *filename, vpColVector &v)
 {
 
-  FILE * pt_fich ;
-  pt_fich = fopen(name,"r") ;
+  FILE * fd ;
+  fd = fopen(filename, "r") ;
+  if (fd == NULL)
+    return false;
 
   char line[FILENAME_MAX];
   char head[] = "R:";
-  int  sortie = FALSE;
+  bool  sortie = false;
 
   do {
     // Saut des lignes commencant par #
-    if (fgets (line, 100, pt_fich) != NULL) {
+    if (fgets (line, 100, fd) != NULL) {
       if ( strncmp (line, "#", 1) != 0) {
 	// La ligne n'est pas un commentaire
-	if ( fscanf (pt_fich, "%s", line) != EOF)   {
+	if ( fscanf (fd, "%s", line) != EOF)   {
 	  if ( strcmp (line, head) == 0)
-	    sortie = TRUE; 	// Position robot trouvee.
+	    sortie = true; 	// Position robot trouvee.
 	}
 	else
-	  return (1); // fin fichier sans position robot.
+	  return (false); // fin fichier sans position robot.
       }
     }
     else {
-      return (1);		/* fin fichier 	*/
+      return (false);		/* fin fichier 	*/
     }
 
   }
-  while ( sortie != TRUE );
+  while ( sortie != true );
 
   double x,y,z,rx,ry,rz ;
   // Lecture des positions
-  fscanf(pt_fich, "%lf %lf %lf %lf %lf %lf",
+  fscanf(fd, "%lf %lf %lf %lf %lf %lf",
 	 &x, &y, &z,
 	 &rx, &ry, &rz);
   v.resize(6) ;
@@ -1087,8 +1084,52 @@ vpRobotAfma6::readPosFile(char *name, vpColVector &v)
   v[4] = vpMath::rad(ry) ;
   v[5] = vpMath::rad(rz) ;
 
-  fclose(pt_fich) ;
-  return (0);
+  fclose(fd) ;
+  return (true);
+}
+/*!
+
+  Save articular positions in a specific Afma6 file.
+
+  \param filename : Name of the position file to create.
+  \param v : articular positions
+
+  \return true if the positions were successfully saved in the file. false, if
+  an error occurs.
+*/
+
+bool
+vpRobotAfma6::savePosFile(const char *filename, const vpColVector &v)
+{
+
+  FILE * fd ;
+  fd = fopen(filename, "w") ;
+  if (fd == NULL)
+    return false;
+
+  fprintf(fd, "\
+#AFMA6 - Position - Version 2.01\n\
+#\n\
+# Septembre 2000 - Fabien SPINDLER\n\
+# Fichier de sauvegarde des positions du robot cartésien.\n\
+#\n\
+# Ordre des axes:\n\
+# R: axes du robot cartésien\n\
+#     - translation sur x\n\
+#     - translation sur y\n\
+#     - translation sur z\n\
+#     - rotation autour de x\n\
+#     - rotation autour de y\n\
+#     - rotation autour de z\n\
+#\n");
+
+  // Save positions in mm and deg
+  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n",
+	  v[0]*1000, v[1]*1000, v[2]*1000,
+	  vpMath::deg(v[3]), vpMath::deg(v[4]), vpMath::deg(v[5]));
+
+  fclose(fd) ;
+  return (true);
 }
 
 void
