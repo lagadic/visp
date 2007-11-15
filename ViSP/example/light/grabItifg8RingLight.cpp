@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8RingLight.cpp,v 1.5 2007-11-02 16:06:21 fspindle Exp $
+ * $Id: grabItifg8RingLight.cpp,v 1.6 2007-11-15 14:56:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -172,6 +172,7 @@ OPTIONS:                                                  Default\n\
   \param save : Image saving activation.
   \param opath : Image filename when saving.
   \param conffile : Camera configuration file.
+  \param nmsec : Pulse duration in milli-seconds.
 
   \return false if the program has to be stopped, true otherwise.
 

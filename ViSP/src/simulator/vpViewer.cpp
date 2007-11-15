@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.12 2007-11-12 10:16:17 asaunier Exp $
+ * $Id: vpViewer.cpp,v 1.13 2007-11-15 14:56:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,8 +46,10 @@
 #include <Inventor/nodes/SoEventCallback.h>
 
 /*!
-  \class vpViewer Viewer used by the simulator. Under Windows, the viewer is
-  based either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or SoXt.
+  \class vpViewer
+
+  Viewer used by the simulator. Under Windows, the viewer is based either on
+  SoWin or SoQt. Under Unix, the viewer is based on SoQt or SoXt.
 */
 
 #if defined(VISP_HAVE_SOWIN)
@@ -79,7 +81,7 @@ vpViewer::~vpViewer()
 void
 vpViewer::actualRedraw(void)
 {
-  
+
   {
    const SbViewportRegion vp = this->getViewportRegion();
    SbVec2s origin = vp.getViewportOriginPixels();
@@ -227,7 +229,7 @@ vpViewer::processSoEvent(const SoEvent * const event)
 #elif defined(VISP_HAVE_SOXT)
   return  SoXtExaminerViewer::processSoEvent(event);
 #endif
-  
+
 }
 
 #endif
