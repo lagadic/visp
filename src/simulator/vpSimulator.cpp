@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.18 2007-11-09 15:21:45 asaunier Exp $
+ * $Id: vpSimulator.cpp,v 1.19 2007-11-15 14:56:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,8 +63,10 @@
 #include <Inventor/actions/SoWriteAction.h>
 
 /*!
-  \class vpSimulator Implementation of a simulator based on Coin3d (www.coin3d.org).
-  The simulator uses the vpViewer class.
+  \class vpSimulator
+
+  Implementation of a simulator based on Coin3d (www.coin3d.org).  The
+  simulator uses the vpViewer class.
 */
 
 
@@ -417,10 +419,10 @@ vpSimulator::initInternalViewer(int width, int height)
   internalView->setDecoration(false) ;
 
   internalView->resize(width, height) ;
-  
+
   // open the window
   internalView->show();
-  
+
   bufferView = new unsigned char[3*width*height] ;
 
 }
@@ -455,7 +457,7 @@ vpSimulator::initExternalViewer(int width, int height)
   externalView->show();
 
 
-  
+
 }
 
 void
@@ -612,7 +614,7 @@ vpSimulator::mainLoop()
   }
 
   vpTime::wait(1000) ;
-  
+
   // Timer sensor
   SoTimerSensor * timer = new SoTimerSensor(timerSensorCallback, (void *)this);
   timer->setInterval(0.01);

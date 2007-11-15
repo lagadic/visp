@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: ringLight.cpp,v 1.4 2007-11-02 16:06:21 fspindle Exp $
+ * $Id: ringLight.cpp,v 1.5 2007-11-15 14:56:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,7 +115,8 @@ OPTIONS:                                               Default\n\
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param on : When true, turn on the light during nsec seconds.
-  \param nsec : Time to wait in seconds
+  \param nsec : Time to wait in seconds.
+  \param nmsec : Pulse duration in milli-seconds.
 
   \return false if the program has to be stopped, true otherwise.
 
