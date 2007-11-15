@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.12 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.13 2007-11-15 15:26:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -202,7 +202,6 @@ vpItifg8Grabber::~vpItifg8Grabber()
 void vpItifg8Grabber::initialise()
 {
   if (init == false) {
-    first_acq = false;
     setVerboseMode(false);
 
     // private members initialisation
@@ -496,8 +495,6 @@ void vpItifg8Grabber::close ()
   init = false;
   stop_it = false;
   devdesc = -1;
-
-  first_acq = false;
 }
 
 /*!
@@ -2139,6 +2136,11 @@ unsigned char * vpItifg8Grabber::acquire()
 
   \param I : Image data structure (8 bits image)
 
+  \warning If the acquisition framerate is set to 25 Hz (see setFramerate()),
+  and the subsampling factor is greater than 1 (see setScale() or
+  setVDecimation()), we acquire always even frames. If the acquisition
+  framerate is set to 50 Hz, we acquire alternatively even and odd frames.
+
   \exception vpFrameGrabberException::initializationError : Driver not
   initialized. You have to call open() before acquire().
 
@@ -2172,15 +2174,9 @@ vpItifg8Grabber::acquire(vpImage<unsigned char> &I)
       bool field = getField(); // Field of the acquired frame (odd or even)
       switch (args.amcmp_rate[args.board_i]) {
       case framerate_25fps:
-	// If its the first acquisition, set the reference frame type to the
-	// last acquire frame type (odd, even)
-	if (first_acq == false) {
-	  ref_field = field;
-	  first_acq = true;
-	}
 	if (getVDecimation() != 1) {
 	  // If vertical subsampling, we get only the even frame
-	  while (field != ref_field) {
+	  while (field != 0) { // field = 0 for Even frames
 	    // Last acquired field is odd, restart a new acquisition
 	    bitmap = acquire();
 	    field = getField(); // Field of the acquired frame (odd or even)
@@ -2223,6 +2219,11 @@ vpItifg8Grabber::acquire(vpImage<unsigned char> &I)
 
   \param I : Image data structure (32 bits image)
 
+  \warning If the acquisition framerate is set to 25 Hz (see setFramerate()),
+  and the subsampling factor is greater than 1 (see setScale() or
+  setVDecimation()), we acquire always even frames. If the acquisition
+  framerate is set to 50 Hz, we acquire alternatively even and odd frames.
+
   \exception vpFrameGrabberException::initializationError : Driver not
   initialized. You have to call open() before acquire().
 
@@ -2255,15 +2256,9 @@ vpItifg8Grabber::acquire(vpImage<vpRGBa> &I)
       bool field = getField(); // Field of the acquired frame (odd or even)
       switch (args.amcmp_rate[args.board_i]) {
       case framerate_25fps:
-	// If its the first acquisition, set the reference frame type to the
-	// last acquire frame type (odd, even)
-	if (first_acq == false) {
-	  ref_field = field;
-	  first_acq = true;
-	}
 	if (getVDecimation() != 1) {
 	  // If vertical subsampling, we get only the even frame
-	  while (field != ref_field) {
+	  while (field != 0) { // filed = 0 for even frames
 	    // Last acquired field is odd, restart a new acquisition
 	    bitmap = acquire();
 	    field = getField(); // Field of the acquired frame (odd or even)
