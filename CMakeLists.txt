@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.60 2007-11-09 15:39:12 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.61 2007-11-19 16:44:12 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -103,6 +103,7 @@ ENDIF(UNIX)
 
 # Set other options to default value
 SET(USE_X11       ON) # For Linux/OSX display
+SET(USE_XML2      ON) # For the Xml Parser (vpCameraParameters)
 SET(USE_COIN      ON) # For the simulator
 SET(USE_SOWIN     ON) # For the simulator viewer
 SET(USE_SOQT      ON) # For the simulator viewer
@@ -329,6 +330,21 @@ IF(USE_COIN)
   ENDIF(OPENGL_FOUND)
 ENDIF(USE_COIN)
 
+#---------------------------------------------------------------------
+# XML2
+#---------------------------------------------------------------------
+IF(USE_XML2)
+  FIND_PACKAGE(XML2)
+  IF(XML2_FOUND)
+    SET(VISP_HAVE_XML2 TRUE)
+  # MESSAGE("XML2 found")
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
+        ${XML2_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${XML2_LIBRARIES})
+  ELSE(XML2_FOUND)
+  # MESSAGE("XML2 requested but not found")
+  ENDIF(XML2_FOUND)
+ENDIF(USE_XML2)
 
 #--------------------------------------------------------------------
 # pthread lib
@@ -340,7 +356,6 @@ IF(USE_PTHREAD)
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${PTHREAD_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${PTHREAD_LIBRARIES})
-    SET(VISP_HAVE_PTHREAD TRUE) # for header vpConfig.h
     #MESSAGE("PTHREAD_LIBRARIES = ${PTHREAD_LIBRARIES}")
   ELSE(PTHREAD_FOUND)
     #MESSAGE("PTHREAD_LIBRARIES no found")
@@ -422,7 +437,7 @@ IF(USE_GTK2)
    ENDIF(UNIX OR WIN32)
 ENDIF(USE_GTK2)
 
-# gtk-1 library: is search only ig gtk-2 was not found
+# gtk-1 library: is search only if gtk-2 was not found
 SET(USE_GTK2 OFF)
 #MESSAGE("USE_GTK1: ${USE_GTK1}")
 IF(USE_GTK1)
