@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.h,v 1.4 2007-02-26 17:13:55 fspindle Exp $
+ * $Id: vpFeatureDisplay.h,v 1.5 2007-11-19 16:00:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,7 +66,8 @@ public:
   static void displayPoint(double x,double y,
 			   const vpCameraParameters &cam,
 			   vpImage<unsigned char> &I,
-			   vpColor::vpColorType color = vpColor::green) ;
+			   vpColor::vpColorType color = vpColor::green,
+         const bool usedistortion = false) ;
   static void displayLine(double rho,double theta,
 			  const vpCameraParameters &cam,
 			  vpImage<unsigned char> &I,
@@ -85,7 +86,8 @@ public:
   static void displayPoint(double x,double y,
 			   const vpCameraParameters &cam,
 			   vpImage<vpRGBa> &I,
-			   vpColor::vpColorType color = vpColor::green) ;
+			   vpColor::vpColorType color = vpColor::green,
+         const bool usedistortion = false) ;
   static void displayLine(double rho,double theta,
 			  const vpCameraParameters &cam,
 			  vpImage<vpRGBa> &I,
