@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.14 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpAfma6.cpp,v 1.15 2007-11-19 15:53:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,8 @@
 
 #include <visp/vpRobotException.h>/* Classe d'erreur de la lib robot.     */
 
-
+#include <visp/vpXmlParserCamera.h>/* Classe de la libxml2 pour lire les
+  parametres intrinsèques de camera*/ 
 /* Inclusion des fichiers standards.		*/
 #include <math.h>
 #include <visp/vpMath.h>
@@ -249,8 +250,8 @@ computeInverseJacobian (const vpColVector & pos,
 			    "la construction.");
   }
 
-  int               i;
-  int               j;
+  int i;
+  int j;
 
   //rotation du passage effecteur/camera
   vpMatrix           effcamR(3,3);
@@ -734,14 +735,27 @@ iterationsAvantButees (const vpColVector &q,
 const char * const vpAfma6::PARAMETRES_AFMA6_FILENAME
 = "/udd/fspindle/robot/Afma6/current/include/const_Afma6.cnf";
 
-const char * const vpAfma6::CONST_MPI_XC77
-= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_xc77_Afma6.cnf";
+const char * const vpAfma6::CONST_MPI_XC77_WITHOUT_DISTORTION
+= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_xc77_without_distortion_Afma6.cnf";
+const char * const vpAfma6::CONST_MPI_XC77_WITH_DISTORTION
+= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_xc77_with_distortion_Afma6.cnf";
 
 const char * const vpAfma6::CONST_MPI_HF
 = "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_hf_Afma6.cnf";
 
-const char * const vpAfma6::CONST_MPI_IEEE1394
-= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_ieee1394_Afma6.cnf";
+const char * const vpAfma6::CONST_MPI_F033C_WITHOUT_DISTORTION
+= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_f033c_without_distortion_Afma6.cnf";
+const char * const vpAfma6::CONST_MPI_F033C_WITH_DISTORTION
+= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_f033c_with_distortion_Afma6.cnf";
+
+const char * const vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME
+= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_Afma6_camera.xml";
+
+const char * const vpAfma6::CONST_LABEL_XC77 = "XC77_12MM";
+
+const char * const vpAfma6::CONST_LABEL_HF = "HF_8MM";
+
+const char * const vpAfma6::CONST_LABEL_F033C = "F033C_12_5MM";
 
 /* Declaration des variables statiques.		*/
 static char *opt_Afma6[] = {"KP","KD","KI","PMAX","PMIN","INIT","SENS",
@@ -1026,7 +1040,7 @@ init (const char * paramAfma6,
  * PARAMETRES_AFMA6_FILENAME en argument.
  */
 void vpAfma6::
-init (vpAfma6::CameraRobotType camera)
+init (vpAfma6::CameraRobotType camera, bool usedistortion)
 {
   char            filenameMPI [FILENAME_MAX];
 
@@ -1034,20 +1048,38 @@ init (vpAfma6::CameraRobotType camera)
   {
   case vpAfma6::CAMERA_XC77_12MM:
     {
-      snprintf(filenameMPI, 100, "%s",
-	       CONST_MPI_XC77);
+      if(usedistortion == false){
+        snprintf(filenameMPI, 100, "%s",
+	         CONST_MPI_XC77_WITHOUT_DISTORTION);
+      }
+      else{
+        snprintf(filenameMPI, 100, "%s",
+           CONST_MPI_XC77_WITH_DISTORTION);
+      } 
       break;
     }
   case vpAfma6::CAMERA_HF_8MM:
     {
-     snprintf(filenameMPI, 100, "%s",
-	       CONST_MPI_HF);
+      if(usedistortion == false){
+        snprintf(filenameMPI, 100, "%s",
+	         CONST_MPI_HF);
+      }
+      else{
+        snprintf(filenameMPI, 100, "%s",
+           CONST_MPI_HF);
+      } 
       break;
     }
-  case vpAfma6::CAMERA_IEEE1394_12MM:
+  case vpAfma6::CAMERA_F033C_12_5MM:
     {
+      if(usedistortion == false){
+        snprintf(filenameMPI, 100, "%s",
+	        CONST_MPI_F033C_WITHOUT_DISTORTION);
+      }
+      else{
       snprintf(filenameMPI, 100, "%s",
-	       CONST_MPI_IEEE1394);
+          CONST_MPI_F033C_WITH_DISTORTION);
+      }
       break;
     }
   default:
@@ -1067,6 +1099,8 @@ init (vpAfma6::CameraRobotType camera)
 
   this->init (vpAfma6::PARAMETRES_AFMA6_FILENAME,
 	      filenameMPI);
+        
+  setCameraRobotType(camera);
   return ;
 }
 
@@ -1419,6 +1453,74 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
 
 }
 
+/*!
+  \brief get the current intrinsic camera parameters
+  \param cam : output : camera parameters to fill.
+  \param image_width : image width used to compute camera calibration. 
+  \param image_height : image height used to compute camera calibration.
+*/
+
+void vpAfma6::
+getCameraParameters (vpCameraParameters &cam,
+                      const unsigned int image_width,
+                      const unsigned int image_height)
+{
+  vpXmlParserCamera parser;
+  switch (getCameraRobotType())
+  {
+  case vpAfma6::CAMERA_XC77_12MM:
+    {
+      parser.parse(cam,vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
+        vpAfma6::CONST_LABEL_XC77,image_width,image_height);
+      break;
+    }
+  case vpAfma6::CAMERA_HF_8MM:
+    {
+      parser.parse(cam,vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
+        vpAfma6::CONST_LABEL_HF,image_width,image_height);
+      break;
+    }
+  case vpAfma6::CAMERA_F033C_12_5MM:
+    {
+      parser.parse(cam,vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
+        vpAfma6::CONST_LABEL_F033C,image_width,image_height);
+      break;
+    }
+  default:
+    {
+      vpERROR_TRACE ("Cette erreur ne peut pas arriver.");
+      vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
+       "que les specs de la classe ont ete modifiee, "
+       "et que le code n'a pas ete mis a jour "
+       "correctement.");
+      vpERROR_TRACE ("Verifiez les valeurs possibles du type "
+       "vpAfma6::CameraRobotType, et controlez que "
+       "tous les cas ont ete pris en compte dans la "
+       "fonction init(camera).");
+      break;
+    }
+  }
+}
+/*!
+  \brief get the current intrinsic camera parameters
+  \param cam : output : camera parameters to fill.
+  \param I : image send by the current used camera.
+*/
+void vpAfma6::
+getCameraParameters (vpCameraParameters &cam, const vpImage<unsigned char> &I)
+{
+  getCameraParameters(cam,I.getWidth(),I.getHeight());
+}
+/*!
+  \brief get the current intrinsic camera parameters
+  \param cam : output : camera parameters to fill.
+  \param I : image send by the current used camera.
+*/
+void vpAfma6::
+getCameraParameters (vpCameraParameters &cam, const vpImage<vpRGBa> &I)
+{
+  getCameraParameters(cam,I.getWidth(),I.getHeight());
+}
 
 /*
  * Local variables:

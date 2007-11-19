@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.8 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpAfma6.h,v 1.9 2007-11-19 15:53:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,6 +60,9 @@
 #include <visp/vpRxyzVector.h>
 #include <visp/vpTranslationVector.h>
 #include <visp/vpTwistMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpRGBa.h>
+#include <visp/vpCameraParameters.h>
 
 
 /* ----------------------------------------------------------------------- */
@@ -83,20 +86,34 @@ public: /* Constantes */
   static const char * const PARAMETRES_AFMA6_FILENAME ;
 
   /** Nom du fichier de parametres MPI de la cam XC77. */
-  static const char * const CONST_MPI_XC77 ;
+  static const char * const CONST_MPI_XC77_WITHOUT_DISTORTION ;
+  static const char * const CONST_MPI_XC77_WITH_DISTORTION ;
 
   /** Nom du fichier de parametres MPI de la cam HF. */
   static const char * const CONST_MPI_HF ;
 
-  /** Nom du fichier de parametres MPI de la cam IEEE1394. */
-  static const char * const CONST_MPI_IEEE1394 ;
+  /** Nom du fichier de parametres MPI de la cam F033C. */
+  static const char * const CONST_MPI_F033C_WITHOUT_DISTORTION ;
+  static const char * const CONST_MPI_F033C_WITH_DISTORTION ;
+
+  /** Nom du fichier ou est rangee la liste de parametres intrinsèque de camera.*/
+  static const char * const PARAMETRES_CAMERA_AFMA6_FILENAME ;
+  
+  /** Nom de la cam XC77. */
+  static const char * const CONST_LABEL_XC77 ;
+
+  /** Nom de la cam HF. */
+  static const char * const CONST_LABEL_HF ;
+
+  /** Nom de la cam IEEE1394. */
+  static const char * const CONST_LABEL_F033C ;
 
   /** Differentes cameras installees sur l'afma6. */
   enum CameraRobotType
     {
       CAMERA_XC77_12MM,
       CAMERA_HF_8MM,
-      CAMERA_IEEE1394_12MM,
+      CAMERA_F033C_12_5MM,
     } ;
   /** Camera utilisee par default. */
   static const CameraRobotType defaultCameraRobot;// = CAMERA_XC77_12MM;
@@ -162,14 +179,14 @@ public: /* Methodes publiques */
   vpAfma6 (void);
 
   /** \brief Lecture des fichiers de configuration.   */
-  void                        init (const char * filename,
+  void init (const char * filename,
 				    const char * filenameMPI);
 
   /* \brief Lecture des fichiers de configuration.   */
-  void                        init (vpAfma6::CameraRobotType camera);
+  void init (vpAfma6::CameraRobotType camera, bool usedistortion = false);
 
   /** \brief Initialisation a l'aide du fichier par default.    */
-  void                        init (void);
+  void init (void);
 
   /** \brief Affichage.
    *
@@ -192,7 +209,7 @@ private: /* Methodes privees. */
    */
   void                        initRpi (void);
 
-  /* Lecture d'un fichier de config. */
+  /** Lecture d'un fichier de config. */
   void parseConfigFile (const char * filename);
 public:
 
@@ -212,7 +229,9 @@ public: /* Constantes publiques */
 protected: /* Attributs prives */
 
   /** Seuil d'activation de l'evitement de butees (en pourcentage).   */
-  double          rho;
+  double  rho;
+  /** Camera courante utilisée */
+  CameraRobotType camera_current;
 
 public: /* Methodes publiques */
 
@@ -286,6 +305,17 @@ public:
   void get_eJe(const vpColVector &q, vpMatrix &_eJe)  ;
   //! get the robot Jacobian expressed in the robot reference frame
   void get_fJe(const vpColVector &q, vpMatrix &_fJe)  ;
+  //!get the current used camera
+  CameraRobotType getCameraRobotType(){return camera_current;};
+  /** Place the current used camera*/
+  void setCameraRobotType(vpAfma6::CameraRobotType camera){camera_current = camera;};
+  
+  void getCameraParameters(vpCameraParameters &cam,
+        const unsigned int image_width,
+        const unsigned int image_height);
+  void getCameraParameters(vpCameraParameters &cam,
+        const vpImage<unsigned char> &I);
+  void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I);
 };
 
 

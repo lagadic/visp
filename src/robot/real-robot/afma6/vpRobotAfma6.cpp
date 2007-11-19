@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.20 2007-11-15 14:47:29 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.21 2007-11-19 15:53:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,6 @@ bool vpRobotAfma6::robotAlreadyCreated = false;
 const double       vpRobotAfma6::defaultPositioningVelocity = 20.0;
 const int          vpRobotAfma6::defaultVelocityMeasureTempo = 10;
 const int          vpRobotAfma6::nbArticulations = 6;
-
 /* ----------------------------------------------------------------------- */
 /* --- CONSTRUCTOR ------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
@@ -171,23 +170,35 @@ vpRobotAfma6::init (void)
 /*!
 
   Charge la matrice-pince camera associee à la camera
+  \param camera : camera utilisée
+  \param usedistortion : placé à true si on veut utiliser la matrice calibrée
+  en tenant compte des distortion de l'optique de la camera.
 
 */
 void
-vpRobotAfma6::init (vpAfma6::CameraRobotType camera)
+vpRobotAfma6::init (vpAfma6::CameraRobotType camera, bool usedistortion)
 {
   ECameraAfma6 api_camera; // Interface with low level Afma6 api
 
   switch (camera)
   {
   case vpAfma6::CAMERA_XC77_12MM:
-    api_camera = CAMERA_XC77;
+    if(usedistortion == false)
+      api_camera = CAMERA_XC77/*_WITHOUT_DISTORTION*/;
+    else
+      api_camera = CAMERA_XC77/*_WITH_DISTORTION*/; 
     break;
   case vpAfma6::CAMERA_HF_8MM:
-    api_camera = CAMERA_HF;
+    if(usedistortion == false)
+      api_camera = CAMERA_HF;
+    else
+      api_camera = CAMERA_HF;
     break;
-  case vpAfma6::CAMERA_IEEE1394_12MM:
-    api_camera = CAMERA_IEEE1394;
+  case vpAfma6::CAMERA_F033C_12_5MM:
+    if(usedistortion == false)
+      api_camera = CAMERA_IEEE1394/*F033C_WITHOUT_DISTORTION*/;
+    else
+      api_camera = CAMERA_IEEE1394/*_F033C_WITH_DISTORTION*/;
     break;
   default:
     {
@@ -204,8 +215,7 @@ vpRobotAfma6::init (vpAfma6::CameraRobotType camera)
       break;
     }
   }
-
-
+  setCameraRobotType(camera);
   update_mpi_Afma6(api_camera);
 
 
