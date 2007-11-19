@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeterPixelConversion.h,v 1.3 2006-05-30 08:40:36 fspindle Exp $
+ * $Id: vpMeterPixelConversion.h,v 1.4 2007-11-19 15:40:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -48,7 +49,8 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpCameraParameters.h>
-
+#include<visp/vpException.h>
+#include<visp/vpMath.h>
 
 /*!
   \class vpMeterPixelConversion
@@ -59,13 +61,68 @@ class VISP_EXPORT vpMeterPixelConversion
 {
 public:
 
-  //! point coordinates conversion (u,v)->(x,y)
-  static void convertPoint(const vpCameraParameters &cam,
-			   const double x, const double y,
-			   double &u, double &v) ;
+/*!
+  \brief point coordinates conversion (x,y)->(u,v)
+  \param cam : camera parameters.
+  \param x,y : input coordinates in meter.
+  \param u,v : output coordinates in pixels.
+  \param usedistortion : set as true if it is needed to use camera parameters
+  with distortion.
+
+  \f$ u = x*p_x*(1+k_d*r^2)+u_0 \f$ and  \f$ v = y*p_y*(1+k_d*r^2)+v_0  \f$
+      with \f$ r^2 = x^2+y^2 \f$
+*/
+
+  inline static void
+  convertPoint(const vpCameraParameters &cam,
+              const double &x, const double &y,
+              double &u, double &v, bool usedistortion = false)
+
+  {
+    if(usedistortion == false)
+      convertPointWithoutDistortion(cam,x,y,u,v);
+    else
+      convertPointWithDistortion(cam,x,y,u,v);
+  }
+  
+  /*!
+    \brief point coordinates conversion without distortion (x,y)->(u,v)
+
+    \f$ u = x*p_x+u_0 \f$ and  \f$ v = y*p_y+v_0  \f$
+  */
+
+  inline static void
+  convertPointWithoutDistortion(const vpCameraParameters &cam,
+              const double &x, const double &y,
+              double &u, double &v)
+
+  {
+      u = x * cam.get_px_mp() + cam.get_u0_mp() ;
+      v = y * cam.get_py_mp() + cam.get_v0_mp() ;
+  }
+  /*!
+    \brief point coordinates conversion with distortion (x,y)->(u,v)
+    \param cam : camera parameters.
+    \param x,y : input coordinates in meter.
+    \param u,v : output coordinates in pixels.
+
+    \f$ u = x*p_x*(1+k_d*r^2)+u_0 \f$ and  \f$ v = y*p_y*(1+k_d*r^2)+v_0  \f$
+        with \f$ r^2 = x^2+y^2 \f$
+  */
+  inline static void
+  convertPointWithDistortion(const vpCameraParameters &cam,
+              const double &x, const double &y,
+              double &u, double &v)
+
+  {
+      u = x * cam.get_px_mp()*(1+cam.get_kd_mp()*(vpMath::sqr(x)+vpMath::sqr(y)))
+          + cam.get_u0_mp() ;
+      v = y * cam.get_py_mp()*(1+cam.get_kd_mp()*(vpMath::sqr(x)+vpMath::sqr(y)))
+          + cam.get_v0_mp() ;
+  }
   //! line coordinates conversion (rho,theta)
   static void convertLine(const vpCameraParameters &cam,
-			  const double rho_m, const double theta_m,
+			  const double &rho_m, const double &theta_m,
 			  double &rho_p, double &theta_p) ;
 } ;
 

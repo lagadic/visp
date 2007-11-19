@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeterPixelConversion.cpp,v 1.7 2007-01-31 11:34:43 asaunier Exp $
+ * $Id: vpMeterPixelConversion.cpp,v 1.8 2007-11-19 15:40:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,13 +32,13 @@
  *
  * Authors:
  * Eric Marchand
+ * Anthony Saunier
  *
  *****************************************************************************/
 
 /*!
   \file vpMeterPixelConversion.cpp
-  \brief meter to pixel  conversion
-
+  \brief meter to pixel conversion
 */
 
 #include <visp/vpMeterPixelConversion.h>
@@ -47,20 +47,10 @@
 #include <visp/vpMath.h>
 #include <visp/vpDebug.h>
 
-  //! point coordinates conversion (u,v)->(x,y)
-void
-vpMeterPixelConversion::convertPoint(const vpCameraParameters &cam,
-				     const double x, const double y,
-				     double &u, double &v)
-
-{
-  u = x * cam.get_px() + cam.get_u0() ;
-  v = y * cam.get_py() + cam.get_v0() ;
-}
 //! line coordinates conversion (rho,theta)
 void
 vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
-				    const double rho_m, const double theta_m,
+				    const double &rho_m, const double &theta_m,
 				    double &rho_p, double &theta_p)
 {
 

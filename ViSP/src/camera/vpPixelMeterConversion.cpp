@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPixelMeterConversion.cpp,v 1.9 2007-01-31 11:34:43 asaunier Exp $
+ * $Id: vpPixelMeterConversion.cpp,v 1.10 2007-11-19 15:40:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,13 +32,13 @@
  *
  * Authors:
  * Eric Marchand
+ * Anthony Saunier
  *
  *****************************************************************************/
 
 /*!
   \file vpPixelMeterConversion.cpp
   \brief Pixel to meter conversion.
-
 */
 #include<visp/vpPixelMeterConversion.h>
 #include<visp/vpCameraParameters.h>
@@ -47,36 +47,10 @@
 #include<visp/vpDebug.h>
 
 
-/*!
-  \brief point coordinates conversion (u,v)->(x,y)
-
-  \f$ x = (u-u_0)/px \f$ and  \f$ y = (v-v_0)/p_y  \f$
-*/
-void
-vpPixelMeterConversion::convertPoint(const vpCameraParameters &cam,
-				     const double u, const double v,
-				     double &x, double &y)
-{
-
-  if (fabs(cam.get_px())<1e-6)
-  {
-    vpERROR_TRACE("Camera parameter px = 0") ;
-    throw(vpException(vpException::divideByZeroError,
-		      "Camera parameter px = 0")) ;
-  }
-  if (fabs(cam.get_py())<1e-6)
-  {
-    vpERROR_TRACE("Camera parameter py = 0") ;
-    throw(vpException(vpException::divideByZeroError,
-		      "Camera parameter px = 0")) ;
-  }
-  x = (u - cam.get_u0() )/cam.get_px() ;
-  y = (v - cam.get_v0() )/cam.get_py() ;
-}
 //! line coordinates conversion (rho,theta)
 void
 vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
-				    const double rho_p, const double theta_p,
+				    const double &rho_p, const double &theta_p,
 				    double &rho_m, double &theta_m)
 {
 
