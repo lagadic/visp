@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.23 2007-09-28 14:43:27 asaunier Exp $
+ * $Id: vpDisplay.cpp,v 1.24 2007-11-19 16:00:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -312,7 +312,8 @@ void
 vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
-                          double size, vpColor::vpColorType col )
+                          double size, vpColor::vpColorType col,
+                          const bool usedistortion )
 {
   // used by display
   vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
@@ -329,21 +330,21 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
 
   if ( col == vpColor::none )
   {
-    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy ) ;
+    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy,usedistortion ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1 ) ;
+    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1,usedistortion ) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
                               vpColor::green ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1 ) ;
+    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1,usedistortion ) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
                               vpColor::blue ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1 ) ;
+    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1,usedistortion ) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
@@ -351,21 +352,21 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
   }
   else
   {
-    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy ) ;
+    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy,usedistortion ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1 ) ;
+    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1,usedistortion ) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
                               col ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1 ) ;
+    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1,usedistortion ) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
                               col ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1 ) ;
+    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1,usedistortion ) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
