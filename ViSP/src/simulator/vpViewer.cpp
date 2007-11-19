@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.13 2007-11-15 14:56:38 fspindle Exp $
+ * $Id: vpViewer.cpp,v 1.14 2007-11-19 15:54:55 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,6 +34,11 @@
  * Eric Marchand
  *
  *****************************************************************************/
+/*!
+  \file vpViewer.cpp
+  Viewer used by the simulator. Under Windows, the viewer is
+  based either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or SoXt.
+*/
 
 #include <visp/vpConfig.h>
 
@@ -45,12 +50,14 @@
 #include <Inventor/events/SoKeyboardEvent.h>
 #include <Inventor/nodes/SoEventCallback.h>
 
+
 /*!
   \class vpViewer
 
   Viewer used by the simulator. Under Windows, the viewer is based either on
   SoWin or SoQt. Under Unix, the viewer is based on SoQt or SoXt.
 */
+
 
 #if defined(VISP_HAVE_SOWIN)
 vpViewer::vpViewer(HWND parent,  vpSimulator *_simu):

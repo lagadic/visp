@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.19 2007-11-15 14:56:38 fspindle Exp $
+ * $Id: vpSimulator.cpp,v 1.20 2007-11-19 15:54:55 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,8 +32,14 @@
  *
  * Authors:
  * Eric Marchand
+ * Anthony Saunier
  *
  *****************************************************************************/
+/*!
+  \file vpSimulator.cpp
+  \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
+  The simulator uses the vpViewer class.
+*/
 
 #include <visp/vpConfig.h>
 
@@ -62,12 +68,14 @@
 #include <Inventor/nodes/SoGroup.h> /* Groupement de noeuds (sans separation)*/
 #include <Inventor/actions/SoWriteAction.h>
 
+
 /*!
   \class vpSimulator
 
   Implementation of a simulator based on Coin3d (www.coin3d.org).  The
   simulator uses the vpViewer class.
 */
+
 
 
 // Positions of all of the vertices:

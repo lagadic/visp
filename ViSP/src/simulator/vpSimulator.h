@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.14 2007-11-12 10:18:16 asaunier Exp $
+ * $Id: vpSimulator.h,v 1.15 2007-11-19 15:54:55 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,11 @@
 
 #ifndef vpSimulator_HH
 #define vpSimulator_HH
-
+/*!
+  \file vpSimulator.h
+  \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
+  The simulator uses the vpViewer class.
+*/
 #include <visp/vpConfig.h>
 
 #ifdef VISP_HAVE_COIN
@@ -84,6 +88,11 @@
 #include <visp/vpDebug.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
+/*!
+  \class vpSimulator
+  \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
+  The simulator uses the vpViewer class.
+*/
 
 class VISP_EXPORT vpSimulator
 {
