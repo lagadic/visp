@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.h,v 1.9 2007-05-11 16:53:35 fspindle Exp $
+ * $Id: vpProjectionDisplay.h,v 1.10 2007-11-19 15:55:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,18 +95,20 @@ public:
   void insert( vpForwardProjection &fp) ;
 
 public:
-
+/*
   void display(const vpHomogeneousMatrix &cextMo,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
 	       const vpColor::vpColorType color,
-	       const int select) ;
-
+	       const int select ,
+         const bool usedistortion = false ) ;
+*/
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cextMo,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color ) ;
+	       const vpColor::vpColorType color ,
+         const bool usedistortion = false ) ;
 
 
 private:
@@ -119,7 +121,8 @@ public:
   void displayCamera(vpImage<unsigned char> &I,
 		     const vpHomogeneousMatrix &cextMo,
 		     const vpHomogeneousMatrix &cMo,
-		     const vpCameraParameters &cam) ;
+		     const vpCameraParameters &cam,
+         const bool usedistortion = false) ;
 } ;
 
 
