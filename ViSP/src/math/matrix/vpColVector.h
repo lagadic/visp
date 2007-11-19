@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.h,v 1.6 2007-08-23 10:05:08 asaunier Exp $
+ * $Id: vpColVector.h,v 1.7 2007-11-19 15:47:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,6 +44,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpRowVector.h>
+#include <visp/vpRotationVector.h>
 
 class vpMatrix;
 
@@ -81,6 +82,8 @@ public:
   vpColVector(int nn) : vpMatrix(nn,1){};
   //! copy constructor
   vpColVector (const vpColVector &v);
+  //! constructor initialize a vpColVector from a vpRotationVector
+  vpColVector (const vpRotationVector &v);
 
   //! Set the size of the Column vector
   void resize(const int i, const bool flagNullify = true)
