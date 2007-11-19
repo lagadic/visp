@@ -19,7 +19,7 @@
 # 
 # 2004/05 Jan Woetzel, Friso, Daniel Grest 
 # 2006/01 complete rewrite by Jan Woetzel
-# 1006/09 2nd rewrite introducing ROOT_DIR and PATH_SUFFIXES 
+# 2006/09 2nd rewrite introducing ROOT_DIR and PATH_SUFFIXES 
 #   to handle multiple installed versions gracefully by Jan Woetzel
 #
 # tested with:
