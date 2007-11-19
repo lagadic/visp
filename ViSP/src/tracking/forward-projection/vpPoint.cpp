@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.cpp,v 1.8 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpPoint.cpp,v 1.9 2007-11-19 15:59:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -259,6 +259,21 @@ vpPoint::display(vpImage<unsigned char> &I,
 
 }
 
+void
+vpPoint::display(vpImage<unsigned char> &I,
+     const vpHomogeneousMatrix &cMo,
+     const vpCameraParameters &cam,
+     const bool usedistortion,
+     const vpColor::vpColorType color)
+{
+
+  vpColVector _cP, _p ;
+  changeFrame(cMo,_cP) ;
+  vpPoint::projection(_cP,_p) ;
+  vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color,usedistortion) ;
+
+}
+
 std::ostream& operator<<(std::ostream& os, vpPoint& /* vpp */)
 {
   return( os<<"vpPoint" );
@@ -270,6 +285,15 @@ vpPoint::display(vpImage<unsigned char> &I,
 		 const vpColor::vpColorType color)
 {
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color) ;
+}
+
+void
+vpPoint::display(vpImage<unsigned char> &I,
+     const vpCameraParameters &cam,
+     const bool usedistortion,
+     const vpColor::vpColorType color)
+{
+  vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color,usedistortion) ;
 }
 /*
  * Local variables:
