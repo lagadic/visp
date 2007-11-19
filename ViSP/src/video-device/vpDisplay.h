@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.17 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.18 2007-11-19 16:00:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -228,7 +228,8 @@ protected :
   static void displayFrame(const vpImage<unsigned char> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
-			   double size, vpColor::vpColorType col)  ;
+			   double size, vpColor::vpColorType col,
+         const bool usedistortion = false )  ;
 
   //! flushes the output buffer
   static void flush(const vpImage<unsigned char> &I) ;
