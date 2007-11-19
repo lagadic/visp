@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.20 2007-09-12 07:32:18 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.21 2007-11-19 16:47:02 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -12,7 +12,7 @@
 # http://www.irisa.fr/lagadic
 #
 # This file is part of the ViSP toolkit
-#
+# 
 # This file may be distributed under the terms of the Q Public License
 # as defined by Trolltech AS of Norway and appearing in the file
 # LICENSE included in the packaging of this file.
@@ -46,6 +46,9 @@ SET (HEADER_CAMERA
   camera/vpCameraParameters.h
   camera/vpMeterPixelConversion.h 
   camera/vpPixelMeterConversion.h
+  camera/vpXmlParserCamera.h
+  camera/calibration/vpCalibration.h
+  camera/calibration/vpCalibrationException.h
   )
 
 SET (HEADER_COMPUTER_VISION
