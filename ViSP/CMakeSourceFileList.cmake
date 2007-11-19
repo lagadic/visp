@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.22 2007-09-12 07:32:18 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.23 2007-11-19 16:47:36 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -45,6 +45,9 @@ SET (SRC_CAMERA
   camera/vpCameraParameters.cpp 
   camera/vpMeterPixelConversion.cpp 
   camera/vpPixelMeterConversion.cpp
+  camera/vpXmlParserCamera.cpp
+  camera/calibration/vpCalibration.cpp
+  camera/calibration/vpCalibrationTools.cpp
   )
 
 SET (SRC_COMPUTER_VISION
