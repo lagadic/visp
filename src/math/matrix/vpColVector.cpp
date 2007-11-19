@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.cpp,v 1.9 2007-08-23 10:05:08 asaunier Exp $
+ * $Id: vpColVector.cpp,v 1.10 2007-11-19 15:47:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -137,6 +137,13 @@ vpColVector::vpColVector (vpColVector &m, int r, int nrows)
   init(m, r, 0, nrows, 1);
 }
 
+
+vpColVector::vpColVector (const vpRotationVector &v){
+    resize(3);
+    memcpy(data, v.r, 3*sizeof(double)) ;
+}
+
+  
  //! operator A = -A
 vpColVector vpColVector::operator-()
 {

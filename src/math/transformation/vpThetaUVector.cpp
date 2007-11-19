@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.cpp,v 1.8 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpThetaUVector.cpp,v 1.9 2007-11-19 15:47:07 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -124,26 +124,26 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
       ang=atan2(s,c);
       if (ang > minimum)
       {
-  	if (s > minimum)
-	{
-	    r2[0] = (R[2][1]-R[1][2])/(2*s);
-	    r2[1] = (R[0][2]-R[2][0])/(2*s);
-	    r2[2] = (R[1][0]-R[0][1])/(2*s);
-	}
-	else
-	{
-	    r2[0] = (sqrt((R[0][0]-c)/(1-c)));
-	    if ((R[2][1]-R[1][2]) < 0) r2[0] = -r2[0];
-	    r2[1] = (sqrt((R[1][1]-c)/(1-c)));
-	    if ((R[0][2]-R[2][0]) < 0) r2[1] = -r2[1];
-	    r2[2] = (sqrt((R[2][2]-c)/(1-c)));
-	    if ((R[1][0]-R[0][1]) < 0) r2[2] = -r2[2];
-	}
-	for (i=0;i<3;i++) r2[i] = r2[i]*ang;
+        if (s > minimum)
+	      {
+	          r2[0] = (R[2][1]-R[1][2])/(2*s);
+	          r2[1] = (R[0][2]-R[2][0])/(2*s);
+	          r2[2] = (R[1][0]-R[0][1])/(2*s);
+	      }
+	      else
+	      {
+	          r2[0] = (sqrt((R[0][0]-c)/(1-c)));
+	          if ((R[2][1]-R[1][2]) < 0) r2[0] = -r2[0];
+	          r2[1] = (sqrt((R[1][1]-c)/(1-c)));
+	          if ((R[0][2]-R[2][0]) < 0) r2[1] = -r2[1];
+	          r2[2] = (sqrt((R[2][2]-c)/(1-c)));
+	          if ((R[1][0]-R[0][1]) < 0) r2[2] = -r2[2];
+	      }
+	      for (i=0;i<3;i++) r2[i] = r2[i]*ang;
       }
       else
       {
-	r2[0] =   r2[1] =   r2[2] = 0.0;
+        r2[0] =   r2[1] =   r2[2] = 0.0;
       }
       // end old version
       // verification of the new version
@@ -155,10 +155,10 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
       }
       if (pb == 1)
       {
-	printf("vpThetaUVector::buildFrom(const vpRotationMatrix& R)\n");
-	printf(" r      : %lf %lf %lf\n",r[0],r[1],r[2]);
- 	printf(" r2     : %lf %lf %lf\n",r2[0],r2[1],r2[2]);
-  	printf(" r - r2 : %lf %lf %lf\n",r[0]-r2[0],r[1]-r2[1],r[2]-r2[2]);
+	      printf("vpThetaUVector::buildFrom(const vpRotationMatrix& R)\n");
+	      printf(" r      : %lf %lf %lf\n",r[0],r[1],r[2]);
+        printf(" r2     : %lf %lf %lf\n",r2[0],r2[1],r2[2]);
+        printf(" r - r2 : %lf %lf %lf\n",r[0]-r2[0],r[1]-r2[1],r[2]-r2[2]);
       }
     // end of the verification
     }

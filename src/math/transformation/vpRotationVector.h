@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationVector.h,v 1.5 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpRotationVector.h,v 1.6 2007-11-19 15:47:07 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,7 +66,7 @@
 class VISP_EXPORT vpRotationVector
 {
   friend class vpRotationMatrix;
-
+  friend class vpColVector;
 protected:
   double r[3] ;
 
