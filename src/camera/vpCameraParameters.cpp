@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.4 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpCameraParameters.cpp,v 1.5 2007-11-19 15:40:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -75,37 +76,87 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
 void
 vpCameraParameters::init()
 {
+  u0    = DEFAULT_U0_PARAMETER ;
+  u0_mp = DEFAULT_U0_PARAMETER ;
+  u0_pm = DEFAULT_U0_PARAMETER ;
 
-  u0 = DEFAULT_U0_PARAMETER ;
-  v0 = DEFAULT_V0_PARAMETER ;
+  v0    = DEFAULT_V0_PARAMETER ;
+  v0_mp = DEFAULT_V0_PARAMETER ;
+  v0_pm = DEFAULT_V0_PARAMETER ;
+  
+  px    = DEFAULT_PX_PARAMETER ;
+  px_mp = DEFAULT_PX_PARAMETER ;
+  px_pm = DEFAULT_PX_PARAMETER ;
 
-  px = DEFAULT_PX_PARAMETER ;
-  py = DEFAULT_PY_PARAMETER ;
+  py    = DEFAULT_PY_PARAMETER ;
+  py_mp = DEFAULT_PY_PARAMETER ;
+  py_pm = DEFAULT_PY_PARAMETER ;
 
-  kd = DEFAULT_KD_PARAMETER ;
+  kd_mp = DEFAULT_KD_PARAMETER ;
+  kd_pm = DEFAULT_KD_PARAMETER ;
 
   computeMatrix()  ;
 }
 
 
-vpCameraParameters::vpCameraParameters(const double _px, const double _py,
-		     const double _u0, const double _v0,
-		     const double _kd)
+vpCameraParameters::vpCameraParameters(const double px, const double py,
+		     const double u0, const double v0)
 {
-  init(_px,_py,_u0, _v0, _kd) ;
+  init(px,py,u0, v0) ;
 }
 
+/*!
+  initialization with specific parameters
+  \param px,py : pixel size
+  \param u0,v0 : principal points
+*/
 void
-vpCameraParameters::init(const double _px, const double _py,
-			 const double _u0, const double _v0,
-			 const double _kd )
+vpCameraParameters::init(const double px, const double py,
+			 const double u0, const double v0)
 {
-  setPrincipalPoint(_u0, _v0) ;
-  setPixelRatio(_px,_py) ;
-  setKd(_kd) ;
+  setPrincipalPoint(u0, v0) ;
+  setPixelRatio(px,py) ;
+
+  setPrincipalPoint_mp(u0, v0) ;
+  setPixelRatio_mp(px,py) ;
+  setKd_mp(0);
+
+  setPixelRatio_pm(px,py) ;
+  setPrincipalPoint_pm(u0, v0) ;
+  setKd_pm(0);
+    
   computeMatrix() ;
 }
 
+/*!
+  initialization of the meter based model part with specific parameters
+  \param px,py : pixel size
+  \param u0,v0 : principal points
+  \param kd : radial distortion
+*/
+void
+vpCameraParameters::init_mp(const double px, const double py,
+       const double u0, const double v0, const double kd)
+{
+  setPrincipalPoint_mp(u0, v0) ;
+  setPixelRatio_mp(px,py) ;
+  setKd_mp(kd);
+}
+
+/*!
+  initialization of the pixel based model part with specific parameters
+  \param px,py : pixel size
+  \param u0,v0 : principal points
+  \param kd : radial distortion
+*/
+void
+vpCameraParameters::init_pm(const double px, const double py,
+       const double u0, const double v0, const double kd)
+{
+  setPrincipalPoint_pm(u0, v0) ;
+  setPixelRatio_pm(px,py) ;
+  setKd_pm(kd);
+}
 
 /*!
   destructor
@@ -159,15 +210,23 @@ vpCameraParameters::computeMatrix()
 vpCameraParameters&
 vpCameraParameters::operator=(const vpCameraParameters& cam)
 {
-
   u0 = cam.u0 ;
   v0 = cam.v0 ;
-
   px = cam.px ;
   py = cam.py ;
+  
+  u0_mp = cam.u0_mp ;
+  v0_mp = cam.v0_mp ;
+  px_mp = cam.px_mp ;
+  py_mp = cam.py_mp ;
+  kd_mp = cam.kd_mp ;
 
-  kd = cam.kd ;
-
+  u0_pm = cam.u0_pm ;
+  v0_pm = cam.v0_pm ;
+  px_pm = cam.px_pm ;
+  py_pm = cam.py_pm ;
+  kd_pm = cam.kd_pm ;
+  
   computeMatrix()  ;
 
   return *this ;
@@ -176,42 +235,122 @@ vpCameraParameters::operator=(const vpCameraParameters& cam)
 /*!
   set the principal point
 
-  \sa vpCameraParameters::u0, vpCameraParameters::v0
+  \sa vpCameraParameters::u0_mp, vpCameraParameters::v0_mp,
+      vpCameraParameters::u0_pm, vpCameraParameters::v0_pm
 */
 void
 vpCameraParameters::setPrincipalPoint(double x, double y)
 {
-  u0 = x ;
-  v0 = y ;
-
-  computeMatrix()  ;
-}
-
-
-/*!
-  set the radial distortion value
-
-  \sa vpCameraParameters::kd
-*/
-void
-vpCameraParameters::setKd(double k)
-{
-  kd = k ;
+  u0    = x ;
+  v0    = y ;
+  
+  if(kd_mp == 0){
+    u0_mp = x ;
+    v0_mp = y ;  
+  }
+  
+  if(kd_pm == 0){
+    u0_pm = x ;
+    v0_pm = y ;
+  }
+  
   computeMatrix()  ;
 }
 
 /*!
   set the pixel size
 
-  \sa vpCameraParameters::px,  vpCameraParameters::py
+  \sa vpCameraParameters::px_mp,  vpCameraParameters::py_mp,
+      vpCameraParameters::px_pm,  vpCameraParameters::py_pm
 */
 void
 vpCameraParameters::setPixelRatio(double Px,double Py)
 {
-  px = Px ;
-  py = Py ;
+  px    = Px ;
+  py    = Py ;
 
+  if(kd_mp == 0){
+    px_mp = Px ;
+    py_mp = Py ;
+  }
+
+  if(kd_pm == 0){
+    px_pm = Px ;
+    py_pm = Py ;
+  }
   computeMatrix() ;
+}
+
+/*!
+  set the principal point of the meter based distortion model
+
+  \sa vpCameraParameters::u0_mp, vpCameraParameters::v0_mp
+*/
+void
+vpCameraParameters::setPrincipalPoint_mp(double x, double y)
+{
+  u0_mp = x ;
+  v0_mp = y ;
+}
+
+
+/*!
+  set the radial distortion value of the pixel based distortion model
+
+  \sa vpCameraParameters::kd_mp
+*/
+void
+vpCameraParameters::setKd_mp(double k)
+{
+  kd_mp = k ;
+}
+
+/*!
+  set the pixel size of the meter based distortion model
+
+  \sa vpCameraParameters::px_mp,  vpCameraParameters::py_mp
+*/
+void
+vpCameraParameters::setPixelRatio_mp(double Px,double Py)
+{
+  px_mp = Px ;
+  py_mp = Py ;
+}
+
+/*!
+  set the principal point of the pixel based distortion model
+
+  \sa vpCameraParameters::u0_pm, vpCameraParameters::v0_pm
+*/
+void
+vpCameraParameters::setPrincipalPoint_pm(double x, double y)
+{
+  u0_pm = x ;
+  v0_pm = y ;
+}
+
+
+/*!
+  set the radial distortion value of the pixel based distortion model
+
+  \sa vpCameraParameters::kd_pm
+*/
+void
+vpCameraParameters::setKd_pm(double k)
+{
+  kd_pm = k ;
+}
+
+/*!
+  set the pixel size of the pixel based distortion model
+
+  \sa vpCameraParameters::px_pm,  vpCameraParameters::py_pm
+*/
+void
+vpCameraParameters::setPixelRatio_pm(double Px,double Py)
+{
+  px_pm = Px ;
+  py_pm = Py ;
 }
 
 
@@ -225,25 +364,47 @@ vpCameraParameters::setPixelRatio(double Px,double Py)
 void
 vpCameraParameters::printParameters(int version)
 {
-  if(version==1)
-  {
-    std::cout << "Center : (" << u0<<","<<v0<<")" << std::endl ;
-    std::cout << "px = " << px <<"\t py = "<<py<< std::endl ;
-    std::cout << "Kd = " << kd << std::endl ;
+  std::cout.precision(10);
+  if(version==1){
+    std::cout << "Parameters for model without distortion :" << std::endl ;
+    std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
+    std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
+    std::cout << "Parameters for meter to pixel distortion model :" << std::endl ;
+    std::cout << "  u0 = " << u0_mp <<"\t v0 = "<< v0_mp << std::endl ;
+    std::cout << "  px = " << px_mp <<"\t py = "<<py_mp<< std::endl ;
+    std::cout << "  Kd = " << kd_mp << std::endl ;
+    std::cout << "Parameters for pixel to meter distortion model :" << std::endl ;
+    std::cout << "  u0 = " << u0_pm <<"\t v0 = "<< v0_pm << std::endl ;
+    std::cout << "  px = " << px_pm <<"\t py = "<< py_pm << std::endl ;
+    std::cout << "  Kd = " << kd_pm << std::endl ;
   }
-  else
-  {
-    if (version==2)
-    {
-      std::cout << "Center : (" << u0 <<","<<v0<<")" << std::endl ;
-      std::cout << "px = " << px <<"\t py = "<<py<< std::endl ;
-
+  else{
+    if (version==2){
+      std::cout << "Parameters for model without distortion :" << std::endl ;
+      std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
+      std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
+      std::cout << "Parameters for meter to pixel distortion model :" << std::endl ;
+      std::cout << "  u0 = " << u0_mp <<"\t v0 = "<<v0_mp<< std::endl ;
+      std::cout << "  px = " << px_mp <<"\t py = "<<py_mp<< std::endl ;
+      std::cout << "Parameters for pixel to meter distortion model :" << std::endl ;
+      std::cout << "  u0 = " << u0_pm <<"\t v0 = "<<v0_pm<< std::endl ;
+      std::cout << "  px = " << px_pm <<"\t py = "<<py_pm<< std::endl ;
     }
-    else
-    {
-      std::cout << "Center : (" << u0 <<","<<v0<<")" << std::endl ;
+    else {
+      std::cout << "Parameters for model without distortion :" << std::endl ;
+      std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
+      std::cout << "Parameters for meter to pixel distortion model :" << std::endl ;
+      std::cout << "  u0 = " << u0_mp <<"\t v0 = "<<v0_mp << std::endl ;
+      std::cout << "Parameters for pixel to meter distortion model :" << std::endl ;
+      std::cout << "  u0 = " << u0_pm <<"\t v0 = "<<v0_pm << std::endl ;
     }
   }
 }
 
+
+/*
+ * Local variables:
+ * c-basic-offset: 2
+ * End:
+ */
 

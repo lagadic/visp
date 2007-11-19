@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.4 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpCameraParameters.h,v 1.5 2007-11-19 15:40:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -50,15 +51,10 @@
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 
-
 /*!
   \class vpCameraParameters
   \brief Declaration of the vpCameraParameters class.
-  Class vpCameraParameters define the camera intrinsic parameters
-
-  \date 1999, Last modified May, 3 2002
-
-  \author Eric Marchand (Eric.Marchand@irisa.fr), Irisa / Inria Rennes
+  Generic class defining the camera intrinsic parameters
 
   The main parameters intrinsic that describe the camera are
   (px, py) the ratio between the focal length and the size of a pixel,
@@ -76,16 +72,35 @@
   \f]
 
   if a model with distortion is considered, we got:
+    -for the meter based model
   \f[
   \left\{ \begin{array}{l}
-  u = u_0 + p_x x +  \delta_u(u,v) \\
-  v = v_0 + p_y y + \delta_v(u,v)
+  u = u_0 + p_x x +  \delta_u(x,y) \\
+  v = v_0 + p_y y + \delta_v(x,y)
+  \end{array}\right.
+  \f]
+    -for the pixel based model
+  \f[
+  \left\{ \begin{array}{l}
+  u = u_0 + p_x x - \delta_u(u,v) \\
+  v = v_0 + p_y y - \delta_v(u,v)
   \end{array}\right.
   \f]
   where  \f$\delta_u\f$ and \f$\delta_v\f$ are
-  geometrical distortions introduced in  the camera model. These distotions are due to imperfections in the lenses design and assembly there usually are some
+  geometrical distortions introduced in  the camera model. These distortions are
+  due to imperfections in the lenses design and assembly there usually are some
   positional errors that have to be taken into account.
   \f$\delta_u\f$ and \f$\delta_v\f$  can be modeled as follow:
+    -for the meter based model
+  \f[
+  \left\{ \begin{array}{l}
+  \delta_u(x,y) = K_d \;r^2\; p_x x  \\
+  \\
+  \delta_v(x,y) = K_d\; r^2\; p_y y
+  \end{array}\right.
+  \f]
+  with \f$ r^2 = x^2 + y^2\f$.
+    -for the pixel based model
   \f[
   \left\{ \begin{array}{l}
   \delta_u(u,v) = K_d \;r^2\; \tilde u  \\
@@ -93,13 +108,10 @@
   \delta_v(u,v) = K_d\; r^2\; \tilde v
   \end{array}\right.
   \f]
-  with \f$\tilde u = u-u_0, \;\; \tilde v = (v-v_0)\f$ and  \f$r^2 = \tilde u^2 +  \tilde
-  v^2\f$.
-
+  with \f$\tilde u = u-u_0, \;\; \tilde v = (v-v_0)\f$ and
+  \f$ r^2 = \frac{\tilde u^2}{p_{x}^2} +  \frac{\tilde v^2}{p_{y}^2} \f$.
 
 */
-
-
 class VISP_EXPORT vpCameraParameters
 {
 public:
@@ -110,47 +122,71 @@ public:
   static const double DEFAULT_KD_PARAMETER;
 
 private:
+ //model without disortion
   double px, py ; //!< pixel size
+  double u0, v0 ; //!<  principal point
+ //meter to pixel distortion model
+  double px_mp, py_mp ; //!< pixel size
+  double u0_mp, v0_mp ; //!<  principal point
+  double kd_mp ; //!< radial distortion
+ //pixel to meter distortion model
+  double px_pm, py_pm ; //!< pixel size
+  double u0_pm, v0_pm ;  //!<  principal point
+  double kd_pm ; //!< radial distortion
 
-  double u0,v0 ;  //!<  principal point
-  double kd;	  //!<  Radial distortion
+  vpMatrix K ; //<! camera projection matrix
 
 public:
+  //generic functions
   vpCameraParameters() ;
-  vpCameraParameters(const vpCameraParameters &) ;
-  vpCameraParameters(const double _px, const double _py,
-		     const double _u0, const double _v0,
-		     const double _kd = vpCameraParameters::DEFAULT_KD_PARAMETER) ;
+  vpCameraParameters(const vpCameraParameters &c) ;
+  vpCameraParameters(const double px, const double py,
+		     const double u0, const double v0) ;
 
   void init() ;
   void init(const vpCameraParameters &c) ;
-  void init(const double _px, const double _py,
-	   const double _u0, const double _v0,
-	   const double _kd = vpCameraParameters::DEFAULT_KD_PARAMETER) ;
+  void init(const double px, const double py,
+	   const double u0, const double v0) ;
+  void init_mp(const double px, const double py,
+     const double u0, const double v0, const double kd=0) ;
+  void init_pm(const double px, const double py,
+     const double u0, const double v0, const double kd=0) ;
 
 
   virtual ~vpCameraParameters() ;
 
 
-  vpMatrix K ; //<! camera projection matrix
-
-  void setPrincipalPoint(const double _u0, const double _v0) ;
-  void setKd(const double _kd) ;
-  void setPixelRatio(const double _px,const double _py) ;
-
-
-  void computeMatrix() ;
-  void printParameters(int version=2) ;
-
+  
+  void printParameters(int version=1) ;
 
   vpCameraParameters& operator =(const vpCameraParameters& f) ;
 
-  inline double get_px() const { return px ; }
-  inline double get_py() const { return py ; }
-  inline double get_u0() const { return u0 ; }
-  inline double get_v0() const{ return v0 ; }
-  inline double get_kd() const{ return kd ; }
+  void setPrincipalPoint(const double u0, const double v0) ;
+  void setPixelRatio(const double px,const double py) ;
+  void computeMatrix() ;
+  inline double get_px() const { return px; }
+  inline double get_py() const { return py; }
+  inline double get_u0() const { return u0; }
+  inline double get_v0() const { return v0; }
+  inline vpMatrix get_K() const {return K;}
 
+  void setPrincipalPoint_mp(const double u0, const double v0) ;
+  void setPixelRatio_mp(const double px,const double py) ;
+  void setKd_mp(const double kd);
+  inline double get_px_mp() const { return px_mp; }
+  inline double get_py_mp() const { return py_mp; }
+  inline double get_u0_mp() const { return u0_mp; }
+  inline double get_v0_mp() const { return v0_mp; }
+  inline double get_kd_mp() const {return kd_mp;}
+
+  void setPrincipalPoint_pm(const double u0, const double v0) ;
+  void setPixelRatio_pm(const double px,const double py) ;
+  void setKd_pm(const double kd);
+  inline double get_px_pm() const { return px_pm; }
+  inline double get_py_pm() const { return py_pm; }
+  inline double get_u0_pm() const { return u0_pm; }
+  inline double get_v0_pm() const { return v0_pm; }
+  inline double get_kd_pm() const {return kd_pm;}
 } ;
 
 #endif
