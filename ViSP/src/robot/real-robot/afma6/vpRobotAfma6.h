@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.11 2007-11-15 14:47:29 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.12 2007-11-19 15:53:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -135,7 +135,7 @@ public: /* Methodes */
    * l'afma6.
    */
   void init (void);
-  void init (vpAfma6::CameraRobotType camera);
+  void init (vpAfma6::CameraRobotType camera, bool usedistortion = false);
 
 public:  /* Constantes */
 
@@ -210,8 +210,8 @@ public:  /* Methode publiques */
 private:
   int velocityMeasureTempo ;
 public:
-  void                      setVelocityMeasureTempo (const int tempo);
-  int                       getVelocityMeasureTempo (void);
+  void setVelocityMeasureTempo (const int tempo);
+  int getVelocityMeasureTempo (void);
 
 
   void get_cMe(vpHomogeneousMatrix &_cMe) ;
@@ -224,7 +224,7 @@ public:
   void stopMotion() ;
 
   /* --- Vecteur vers double --- */
-  static inline void          V6_mmrad_mrad(vpColVector& r);
+  static inline void V6_mmrad_mrad(vpColVector& r);
   /** Vecteur de dimension 6: de m et dg vers m et rad. */
   static inline void
   VD6_mdg_mrad (const vpColVector &input, double * output);
@@ -259,6 +259,7 @@ public:
 
   void openGripper() ;
   void closeGripper() ;
+
 };
 
 
