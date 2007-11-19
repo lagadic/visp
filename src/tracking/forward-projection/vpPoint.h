@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.12 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpPoint.h,v 1.13 2007-11-19 15:59:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -144,9 +144,18 @@ public:
 	       const vpCameraParameters &cam,
 	       const vpColor::vpColorType color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
+         const vpCameraParameters &cam,
+         const bool usedistortion,
+         const vpColor::vpColorType color=vpColor::green) ;
+  void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
 	       const vpColor::vpColorType color=vpColor::green) ;
+  void display(vpImage<unsigned char> &I,
+         const vpHomogeneousMatrix &cMo,
+         const vpCameraParameters &cam,
+         const bool usedistortion,
+         const vpColor::vpColorType color=vpColor::green) ;
   vpPoint *duplicate() const ;
 
   friend std::ostream& operator<<(std::ostream& os, vpPoint& vpp);

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderPoint.cpp,v 1.10 2007-04-20 14:22:22 asaunier Exp $
+ * $Id: vpFeatureBuilderPoint.cpp,v 1.11 2007-11-19 15:59:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,7 +47,8 @@
 
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
-			      const vpDot &t)
+			      const vpDot &t,
+            const bool usedistortion)
 {
   try
   {
@@ -56,7 +57,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
     double u = t.get_u() ;
     double v = t.get_v() ;
 
-    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam,u,v,x,y,usedistortion) ;
 
     s.set_x(x) ;
     s.set_y(y) ;
@@ -69,7 +70,8 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
 }
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
-			      const vpDot2 &t)
+			      const vpDot2 &t,
+            const bool usedistortion)
 {
   try
   {
@@ -78,7 +80,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
     double u = t.get_u() ;
     double v = t.get_v() ;
 
-    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam,u,v,x,y,usedistortion) ;
 
     s.set_x(x) ;
     s.set_y(y) ;
@@ -134,7 +136,8 @@ void
 vpFeatureBuilder::create(vpFeaturePoint &s,
 		     const vpCameraParameters &goodCam,
 		     const vpCameraParameters &wrongCam,
-		     const vpPoint &t)
+		     const vpPoint &t,
+         const bool usedistortion)
 {
   try
   {
@@ -145,8 +148,8 @@ vpFeatureBuilder::create(vpFeaturePoint &s,
 
 
     double u,v;
-    vpMeterPixelConversion::convertPoint(goodCam,x,y,u,v) ;
-    vpPixelMeterConversion::convertPoint(wrongCam,u,v,x,y) ;
+    vpMeterPixelConversion::convertPoint(goodCam,x,y,u,v,usedistortion) ;
+    vpPixelMeterConversion::convertPoint(wrongCam,u,v,x,y,usedistortion) ;
 
 
     s.set_x(x) ;
