@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint.cpp,v 1.8 2007-04-20 14:22:24 asaunier Exp $
+ * $Id: vpFeaturePoint.cpp,v 1.9 2007-11-19 16:00:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -295,7 +295,7 @@ vpFeaturePoint::buildFrom(const double _x, const double _y, const double _Z)
 void
 vpFeaturePoint::display(const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			vpColor::vpColorType color ) const
+			vpColor::vpColorType color) const
 {
   try{
     double x,y ;
@@ -303,6 +303,27 @@ vpFeaturePoint::display(const vpCameraParameters &cam,
     y = get_y() ;
 
     vpFeatureDisplay::displayPoint(x,y, cam, I, color) ;
+
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+}
+//! display point feature
+void
+vpFeaturePoint::display(const vpCameraParameters &cam,
+      vpImage<unsigned char> &I,
+      const bool usedistortion,
+      vpColor::vpColorType color) const
+{
+  try{
+    double x,y ;
+    x = get_x() ;
+    y = get_y() ;
+
+    vpFeatureDisplay::displayPoint(x,y, cam, I, color, usedistortion) ;
 
   }
   catch(...)

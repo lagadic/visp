@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.cpp,v 1.9 2007-04-20 14:22:24 asaunier Exp $
+ * $Id: vpFeatureDisplay.cpp,v 1.10 2007-11-19 16:00:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,11 +55,12 @@
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<unsigned char> &I,
-				    vpColor::vpColorType color)
+				    vpColor::vpColorType color,
+            const bool usedistortion)
 {
   try{
     double uf,vf ; // pixel coordinates in float
-    vpMeterPixelConversion::convertPoint(cam,x,y,uf,vf) ;
+    vpMeterPixelConversion::convertPoint(cam,x,y,uf,vf, usedistortion) ;
 
     unsigned u,v ;
     u = vpMath::round(uf) ;
@@ -260,11 +261,12 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<vpRGBa> &I,
-				    vpColor::vpColorType color)
+				    vpColor::vpColorType color,
+            const bool usedistortion)
 {
   try{
     double uf,vf ; // pixel coordinates in float
-    vpMeterPixelConversion::convertPoint(cam,x,y,uf,vf) ;
+    vpMeterPixelConversion::convertPoint(cam,x,y,uf,vf,usedistortion) ;
 
     unsigned u,v ;
     u = vpMath::round(uf) ;
