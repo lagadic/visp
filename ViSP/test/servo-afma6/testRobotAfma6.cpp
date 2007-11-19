@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma6.cpp,v 1.12 2007-04-20 14:22:26 asaunier Exp $
+ * $Id: testRobotAfma6.cpp,v 1.13 2007-11-19 16:50:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,8 +65,8 @@ int main()
 
     vpRobotAfma6 robotAfma6;
 
-    vpCTRACE << "------- set camera 1394 -------------------" << std::endl;
-    robotAfma6.init( vpAfma6::CAMERA_IEEE1394_12MM);
+    vpCTRACE << "------- set camera F033C -------------------" << std::endl;
+    robotAfma6.init( vpAfma6::CAMERA_F033C_12_5MM);
 
     vpCTRACE << robotAfma6;
 
