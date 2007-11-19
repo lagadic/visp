@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.16 2007-08-29 08:27:53 marchand Exp $
+ * $Id: vpPose.cpp,v 1.17 2007-11-19 15:43:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -454,9 +454,10 @@ vpPose::display(vpImage<unsigned char> &I,
 		vpHomogeneousMatrix &cMo,
 		vpCameraParameters &cam,
 		double size,
-		vpColor::vpColorType col)
+		vpColor::vpColorType col,
+    const bool usedistortion)
 {
-  vpDisplay::displayFrame(I,cMo,cam, size,col);
+  vpDisplay::displayFrame(I,cMo,cam, size,col,usedistortion);
 }
 
 
@@ -521,7 +522,7 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   vpColVector kh1(3);
   vpColVector kh2(3);
   vpMatrix K(3,3);
-  K=cam.K;
+  K = cam.get_K();
   K.setIdentity();
   vpMatrix Kinv =K.pseudoInverse();
 
