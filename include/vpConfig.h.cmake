@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.20 2007-11-09 15:43:04 asaunier Exp $
+ * $Id: vpConfig.h.cmake,v 1.21 2007-11-19 16:48:44 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,6 +59,9 @@
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
+
+// Defined if XML2 library available.
+#cmakedefine VISP_HAVE_XML2
 
 // Defined if pthread library available.
 #cmakedefine VISP_HAVE_PTHREAD
