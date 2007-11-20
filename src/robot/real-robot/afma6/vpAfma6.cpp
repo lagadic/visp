@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.15 2007-11-19 15:53:04 asaunier Exp $
+ * $Id: vpAfma6.cpp,v 1.16 2007-11-20 09:20:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -736,20 +736,20 @@ const char * const vpAfma6::PARAMETRES_AFMA6_FILENAME
 = "/udd/fspindle/robot/Afma6/current/include/const_Afma6.cnf";
 
 const char * const vpAfma6::CONST_MPI_XC77_WITHOUT_DISTORTION
-= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_xc77_without_distortion_Afma6.cnf";
+= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_xc77_without_distortion_Afma6.cnf";
 const char * const vpAfma6::CONST_MPI_XC77_WITH_DISTORTION
-= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_xc77_with_distortion_Afma6.cnf";
+= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_xc77_with_distortion_Afma6.cnf";
 
 const char * const vpAfma6::CONST_MPI_HF
-= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_hf_Afma6.cnf";
+= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_hf_Afma6.cnf";
 
 const char * const vpAfma6::CONST_MPI_F033C_WITHOUT_DISTORTION
-= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_f033c_without_distortion_Afma6.cnf";
+= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_f033c_without_distortion_Afma6.cnf";
 const char * const vpAfma6::CONST_MPI_F033C_WITH_DISTORTION
-= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_mpi_camera_f033c_with_distortion_Afma6.cnf";
+= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_f033c_with_distortion_Afma6.cnf";
 
 const char * const vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME
-= "/udd/fspindle/robot/Afma6/Afma6-dev/include/const_Afma6_camera.xml";
+= "/udd/fspindle/robot/Afma6/current/include/const_Afma6_camera.xml";
 
 const char * const vpAfma6::CONST_LABEL_XC77 = "XC77_12MM";
 
