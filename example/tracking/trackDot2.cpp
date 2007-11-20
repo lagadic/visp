@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2.cpp,v 1.17 2007-11-07 14:43:17 asaunier Exp $
+ * $Id: trackDot2.cpp,v 1.18 2007-11-20 17:40:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -396,18 +396,24 @@ main(int argc, char ** argv)
     }
     if (1) {
       std::cout << "COG: " << std::endl;
-      std::cout << d.get_u() << " " << d.get_v()
+      std::cout << "  u: " << d.get_u() << " v: " << d.get_v()
 	   << " - "
 	   << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
       std::cout << "Size:" << std::endl;
-      std::cout << "w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
+      std::cout << "  w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
+      std::cout << "Surface: " << d.getSurface() << std::endl;
       std::cout << "Moments:" << std::endl;
-      std::cout << "m00: " << d.m00 << std::endl;
-      std::cout << "m11: " << d.m11 << std::endl;
-      std::cout << "m02: " << d.m02 << std::endl;
-      std::cout << "m20: " << d.m20 << std::endl;
-      std::cout << "m10: " << d.m10 << std::endl;
-      std::cout << "m01: " << d.m01 << std::endl;
+      std::cout << "  m00: " << d.m00 << std::endl;
+      std::cout << "  m11: " << d.m11 << std::endl;
+      std::cout << "  m02: " << d.m02 << std::endl;
+      std::cout << "  m20: " << d.m20 << std::endl;
+      std::cout << "  m10: " << d.m10 << std::endl;
+      std::cout << "  m01: " << d.m01 << std::endl;
+      std::cout << "Settings:" << std::endl;
+      std::cout << "  gray level min: " << d.getGrayLevelMin() << std::endl;
+      std::cout << "  gray level max: " << d.getGrayLevelMax() << std::endl;
+      std::cout << "  size precision: " << d.getSizePrecision() << std::endl;
+      std::cout << "  gray level precision: " << d.getGrayLevelPrecision() << std::endl;
     }
   }
   catch(...)
@@ -449,18 +455,26 @@ main(int argc, char ** argv)
 
 	std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): "
 		  << std::endl;
-	std::cout << d.get_u() << " " << d.get_v()
-	     << " - "
-	     << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
+	std::cout << "  u: " << d.get_u() << " v: " << d.get_v()
+		  << " - "
+		  << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
 	std::cout << "Size:" << std::endl;
-	std::cout << "w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
+	std::cout << "  w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
+	std::cout << "Surface: " << d.getSurface() << std::endl;
 	std::cout << "Moments:" << std::endl;
-	std::cout << "m00: " << d.m00 << std::endl;
-	std::cout << "m11: " << d.m11 << std::endl;
-	std::cout << "m02: " << d.m02 << std::endl;
-	std::cout << "m20: " << d.m20 << std::endl;
-	std::cout << "m10: " << d.m10 << std::endl;
-	std::cout << "m01: " << d.m01 << std::endl;
+	std::cout << "  m00: " << d.m00 << std::endl;
+	std::cout << "  m11: " << d.m11 << std::endl;
+	std::cout << "  m02: " << d.m02 << std::endl;
+	std::cout << "  m20: " << d.m20 << std::endl;
+	std::cout << "  m10: " << d.m10 << std::endl;
+	std::cout << "  m01: " << d.m01 << std::endl;
+	std::cout << "Settings:" << std::endl;
+	std::cout << "  gray level min: " << d.getGrayLevelMin() << std::endl;
+	std::cout << "  gray level max: " << d.getGrayLevelMax() << std::endl;
+	std::cout << "  size precision: " << d.getSizePrecision() << std::endl;
+	std::cout << "  gray level precision: " << d.getGrayLevelPrecision()
+		  << std::endl;
+
 	if (opt_display) {
 	  // display a red cross (size 10) in the image at the dot center
 	  // of gravity location
