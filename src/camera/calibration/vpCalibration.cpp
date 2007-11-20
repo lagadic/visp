@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.1 2007-11-19 16:38:28 asaunier Exp $
+ * $Id: vpCalibration.cpp,v 1.2 2007-11-20 10:14:43 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -584,10 +584,10 @@ vpCalibration::computeCalibrationTsai(unsigned int nbPose,
                                       vpHomogeneousMatrix& eMc_mp,
                                       vpHomogeneousMatrix& eMc_pm)
 {
-  vpHomogeneousMatrix table_cMo[nbPose];
-  vpHomogeneousMatrix table_cMo_mp[nbPose];
-  vpHomogeneousMatrix table_cMo_pm[nbPose];
-  vpHomogeneousMatrix table_wMe[nbPose];
+  vpHomogeneousMatrix* table_cMo = new vpHomogeneousMatrix[nbPose];
+  vpHomogeneousMatrix* table_cMo_mp = new vpHomogeneousMatrix[nbPose];
+  vpHomogeneousMatrix* table_cMo_pm = new vpHomogeneousMatrix[nbPose];
+  vpHomogeneousMatrix* table_wMe = new vpHomogeneousMatrix[nbPose];
   try{
     if (nbPose > 2){
       for(unsigned int i=0;i<nbPose;i++){
@@ -599,15 +599,27 @@ vpCalibration::computeCalibrationTsai(unsigned int nbPose,
       calibrationTsai(nbPose,table_cMo,table_wMe,eMc);
       calibrationTsai(nbPose,table_cMo_mp,table_wMe,eMc_mp);
       calibrationTsai(nbPose,table_cMo_pm,table_wMe,eMc_pm);
+      delete [] table_cMo;
+      delete [] table_cMo_mp;
+      delete [] table_cMo_pm;
+      delete [] table_wMe;
       return 0;
     }
     else{
       vpERROR_TRACE("Three images are needed to compute Tsai calibration !\n");
+      delete [] table_cMo;
+      delete [] table_cMo_mp;
+      delete [] table_cMo_pm;
+      delete [] table_wMe;
       return -1;
     }
   }
   catch(...){
-   throw;
+    delete [] table_cMo;
+    delete [] table_cMo_mp;
+    delete [] table_cMo_pm;
+    delete [] table_wMe;
+    throw;
   }
 }
 
