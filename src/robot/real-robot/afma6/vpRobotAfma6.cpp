@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.21 2007-11-19 15:53:04 asaunier Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.22 2007-11-20 16:51:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -182,23 +182,11 @@ vpRobotAfma6::init (vpAfma6::CameraRobotType camera, bool usedistortion)
 
   switch (camera)
   {
-  case vpAfma6::CAMERA_XC77_12MM:
+  case vpAfma6::CAMERA_DRAGONFLY2_12MM:
     if(usedistortion == false)
-      api_camera = CAMERA_XC77/*_WITHOUT_DISTORTION*/;
+      api_camera = CAMERA_DRAGONFLY2_WITHOUT_DISTORTION;
     else
-      api_camera = CAMERA_XC77/*_WITH_DISTORTION*/; 
-    break;
-  case vpAfma6::CAMERA_HF_8MM:
-    if(usedistortion == false)
-      api_camera = CAMERA_HF;
-    else
-      api_camera = CAMERA_HF;
-    break;
-  case vpAfma6::CAMERA_F033C_12_5MM:
-    if(usedistortion == false)
-      api_camera = CAMERA_IEEE1394/*F033C_WITHOUT_DISTORTION*/;
-    else
-      api_camera = CAMERA_IEEE1394/*_F033C_WITH_DISTORTION*/;
+      api_camera = CAMERA_DRAGONFLY2_WITH_DISTORTION;
     break;
   default:
     {
