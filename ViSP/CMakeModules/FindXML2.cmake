@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindXML2.cmake,v 1.1 2007-11-19 15:35:48 asaunier Exp $
+# $Id: FindXML2.cmake,v 1.2 2007-11-20 09:39:29 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -71,13 +71,13 @@ ENDIF(WIN32)
 ## --------------------------------
 
 IF(NOT XML2_INCLUDE_DIR)
-  MESSAGE(SEND_ERROR "xml include dir not found.")
+  #MESSAGE(SEND_ERROR "xml include dir not found.")
 ENDIF(NOT XML2_INCLUDE_DIR)
 
 IF(XML2_LIBRARY)
   SET(XML2_LIBRARIES ${XML2_LIBRARY})
 ELSE(XML2_LIBRARY)
-  MESSAGE(SEND_ERROR "xml library not found.")
+  #MESSAGE(SEND_ERROR "xml library not found.")
 ENDIF(XML2_LIBRARY)
 
 
