@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.9 2007-11-19 15:53:04 asaunier Exp $
+ * $Id: vpAfma6.h,v 1.10 2007-11-20 16:51:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,38 +85,23 @@ public: /* Constantes */
   /** Nom du fichier ou est rangee la liste de parametres chez Fabien. */
   static const char * const PARAMETRES_AFMA6_FILENAME ;
 
-  /** Nom du fichier de parametres MPI de la cam XC77. */
-  static const char * const CONST_MPI_XC77_WITHOUT_DISTORTION ;
-  static const char * const CONST_MPI_XC77_WITH_DISTORTION ;
-
-  /** Nom du fichier de parametres MPI de la cam HF. */
-  static const char * const CONST_MPI_HF ;
-
-  /** Nom du fichier de parametres MPI de la cam F033C. */
-  static const char * const CONST_MPI_F033C_WITHOUT_DISTORTION ;
-  static const char * const CONST_MPI_F033C_WITH_DISTORTION ;
+  /** Nom du fichier de parametres MPI de la cam Dragonfly2 DR2-COL. */
+  static const char * const CONST_MPI_DRAGONFLY2_WITHOUT_DISTORTION ;
+  static const char * const CONST_MPI_DRAGONFLY2_WITH_DISTORTION ;
 
   /** Nom du fichier ou est rangee la liste de parametres intrinsèque de camera.*/
   static const char * const PARAMETRES_CAMERA_AFMA6_FILENAME ;
-  
-  /** Nom de la cam XC77. */
-  static const char * const CONST_LABEL_XC77 ;
-
-  /** Nom de la cam HF. */
-  static const char * const CONST_LABEL_HF ;
 
   /** Nom de la cam IEEE1394. */
-  static const char * const CONST_LABEL_F033C ;
+  static const char * const CONST_LABEL_DRAGONFLY2 ;
 
   /** Differentes cameras installees sur l'afma6. */
   enum CameraRobotType
     {
-      CAMERA_XC77_12MM,
-      CAMERA_HF_8MM,
-      CAMERA_F033C_12_5MM,
+      CAMERA_DRAGONFLY2_12MM,
     } ;
   /** Camera utilisee par default. */
-  static const CameraRobotType defaultCameraRobot;// = CAMERA_XC77_12MM;
+  static const CameraRobotType defaultCameraRobot;// = CAMERA_DRAGONFLY2_12MM;
 
 public: /* Attributs publiques */
 
@@ -242,7 +227,7 @@ public: /* Methodes publiques */
   void getJointLimitsMin (vpColVector &qmin) const;
   void getJointLimitsMax (vpColVector &qmax) const;
 
- 
+
   //@}
 
   /* --- POSITION --------------------------------------------------------- */
@@ -309,7 +294,7 @@ public:
   CameraRobotType getCameraRobotType(){return camera_current;};
   /** Place the current used camera*/
   void setCameraRobotType(vpAfma6::CameraRobotType camera){camera_current = camera;};
-  
+
   void getCameraParameters(vpCameraParameters &cam,
         const unsigned int image_width,
         const unsigned int image_height);

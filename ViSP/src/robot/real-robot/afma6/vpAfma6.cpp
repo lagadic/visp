@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.16 2007-11-20 09:20:25 asaunier Exp $
+ * $Id: vpAfma6.cpp,v 1.17 2007-11-20 16:51:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,7 @@
 #include <visp/vpRobotException.h>/* Classe d'erreur de la lib robot.     */
 
 #include <visp/vpXmlParserCamera.h>/* Classe de la libxml2 pour lire les
-  parametres intrinsèques de camera*/ 
+  parametres intrinsèques de camera*/
 /* Inclusion des fichiers standards.		*/
 #include <math.h>
 #include <visp/vpMath.h>
@@ -66,7 +66,7 @@
 /* ------------------------------------------------------------------------ */
 const double vpAfma6::rhoDefault = 0.1;
 const int    vpAfma6::articulationsNb = 6;
-const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_XC77_12MM;
+const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_12MM;
 
 
 
@@ -438,7 +438,7 @@ computeInverseJacobian (const vpColVector & q)
    \param qmin : Articular lower joint limits.
 
 */
-void 
+void
 vpAfma6::getJointLimitsMin (vpColVector &qmin) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
@@ -548,7 +548,7 @@ vpAfma6::getPositionInJointInterval (const vpColVector &q,
 				     vpColVector &jointPos) const
 {
     vpDEBUG_TRACE (6, "# Entree.");
-    
+
     jointPos.resize(vpAfma6::articulationsNb);
 
     for (int i = 0 ; i < vpAfma6::articulationsNb ; ++ i)
@@ -735,27 +735,16 @@ iterationsAvantButees (const vpColVector &q,
 const char * const vpAfma6::PARAMETRES_AFMA6_FILENAME
 = "/udd/fspindle/robot/Afma6/current/include/const_Afma6.cnf";
 
-const char * const vpAfma6::CONST_MPI_XC77_WITHOUT_DISTORTION
-= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_xc77_without_distortion_Afma6.cnf";
-const char * const vpAfma6::CONST_MPI_XC77_WITH_DISTORTION
-= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_xc77_with_distortion_Afma6.cnf";
 
-const char * const vpAfma6::CONST_MPI_HF
-= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_hf_Afma6.cnf";
-
-const char * const vpAfma6::CONST_MPI_F033C_WITHOUT_DISTORTION
-= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_f033c_without_distortion_Afma6.cnf";
-const char * const vpAfma6::CONST_MPI_F033C_WITH_DISTORTION
-= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_f033c_with_distortion_Afma6.cnf";
+const char * const vpAfma6::CONST_MPI_DRAGONFLY2_WITHOUT_DISTORTION
+= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_Dragonfly2_without_distortion_Afma6.cnf";
+const char * const vpAfma6::CONST_MPI_DRAGONFLY2_WITH_DISTORTION
+= "/udd/fspindle/robot/Afma6/current/include/const_mpi_camera_Dragonfly2_with_distortion_Afma6.cnf";
 
 const char * const vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME
-= "/udd/fspindle/robot/Afma6/current/include/const_Afma6_camera.xml";
+= "/udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml";
 
-const char * const vpAfma6::CONST_LABEL_XC77 = "XC77_12MM";
-
-const char * const vpAfma6::CONST_LABEL_HF = "HF_8MM";
-
-const char * const vpAfma6::CONST_LABEL_F033C = "F033C_12_5MM";
+const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2";
 
 /* Declaration des variables statiques.		*/
 static char *opt_Afma6[] = {"KP","KD","KI","PMAX","PMIN","INIT","SENS",
@@ -1046,39 +1035,15 @@ init (vpAfma6::CameraRobotType camera, bool usedistortion)
 
   switch (camera)
   {
-  case vpAfma6::CAMERA_XC77_12MM:
+  case vpAfma6::CAMERA_DRAGONFLY2_12MM:
     {
       if(usedistortion == false){
         snprintf(filenameMPI, 100, "%s",
-	         CONST_MPI_XC77_WITHOUT_DISTORTION);
+	         CONST_MPI_DRAGONFLY2_WITHOUT_DISTORTION);
       }
       else{
         snprintf(filenameMPI, 100, "%s",
-           CONST_MPI_XC77_WITH_DISTORTION);
-      } 
-      break;
-    }
-  case vpAfma6::CAMERA_HF_8MM:
-    {
-      if(usedistortion == false){
-        snprintf(filenameMPI, 100, "%s",
-	         CONST_MPI_HF);
-      }
-      else{
-        snprintf(filenameMPI, 100, "%s",
-           CONST_MPI_HF);
-      } 
-      break;
-    }
-  case vpAfma6::CAMERA_F033C_12_5MM:
-    {
-      if(usedistortion == false){
-        snprintf(filenameMPI, 100, "%s",
-	        CONST_MPI_F033C_WITHOUT_DISTORTION);
-      }
-      else{
-      snprintf(filenameMPI, 100, "%s",
-          CONST_MPI_F033C_WITH_DISTORTION);
+           CONST_MPI_DRAGONFLY2_WITH_DISTORTION);
       }
       break;
     }
@@ -1099,7 +1064,7 @@ init (vpAfma6::CameraRobotType camera, bool usedistortion)
 
   this->init (vpAfma6::PARAMETRES_AFMA6_FILENAME,
 	      filenameMPI);
-        
+
   setCameraRobotType(camera);
   return ;
 }
@@ -1456,7 +1421,7 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
 /*!
   \brief get the current intrinsic camera parameters
   \param cam : output : camera parameters to fill.
-  \param image_width : image width used to compute camera calibration. 
+  \param image_width : image width used to compute camera calibration.
   \param image_height : image height used to compute camera calibration.
 */
 
@@ -1468,22 +1433,12 @@ getCameraParameters (vpCameraParameters &cam,
   vpXmlParserCamera parser;
   switch (getCameraRobotType())
   {
-  case vpAfma6::CAMERA_XC77_12MM:
+  case vpAfma6::CAMERA_DRAGONFLY2_12MM:
     {
-      parser.parse(cam,vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
-        vpAfma6::CONST_LABEL_XC77,image_width,image_height);
-      break;
-    }
-  case vpAfma6::CAMERA_HF_8MM:
-    {
-      parser.parse(cam,vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
-        vpAfma6::CONST_LABEL_HF,image_width,image_height);
-      break;
-    }
-  case vpAfma6::CAMERA_F033C_12_5MM:
-    {
-      parser.parse(cam,vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
-        vpAfma6::CONST_LABEL_F033C,image_width,image_height);
+      parser.parse(cam,
+		   vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
+		   vpAfma6::CONST_LABEL_DRAGONFLY2,
+		   image_width, image_height);
       break;
     }
   default:
