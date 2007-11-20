@@ -585,7 +585,7 @@ vpCalibration::calibVVSWithDistortion_pm(
   }
 
   //  double lambda = 0.1 ;
-  int iter = 0 ;
+  unsigned int iter = 0 ;
   
   double  residu_1 = 1e12 ;
   double r =1e12-1;
@@ -753,7 +753,7 @@ vpCalibration::calibVVSWithDistortion_mp(
   }
 
   //  double lambda = 0.1 ;
-  int iter = 0 ;
+  unsigned int iter = 0 ;
   
   double  residu_1 = 1e12 ;
   double r =1e12-1;
@@ -930,7 +930,7 @@ vpCalibration::calibVVSWithDistortionMulti_pm(
     }
   }
   //  double lambda = 0.1 ;
-  int iter = 0 ;
+  unsigned int iter = 0 ;
   
   double  residu_1 = 1e12 ;
   double r =1e12-1;
@@ -1131,7 +1131,7 @@ vpCalibration::calibVVSWithDistortionMulti_mp(
     }
   }
   //  double lambda = 0.1 ;
-  int iter = 0 ;
+  unsigned int iter = 0 ;
   
   double  residu_1 = 1e12 ;
   double r =1e12-1;
