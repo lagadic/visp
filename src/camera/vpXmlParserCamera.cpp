@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.cpp,v 1.1 2007-11-19 15:37:53 asaunier Exp $
+ * $Id: vpXmlParserCamera.cpp,v 1.2 2007-11-20 12:38:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -210,7 +210,7 @@ save(const vpCameraParameters &cam, const char * filename,
   }
 
   this->camera = cam;
-  write(doc, node, camera_name, image_width, image_height);
+  write(node, camera_name, image_width, image_height);
   xmlSaveFormatFile(filename,doc,1);
   xmlFreeDoc(doc);
 
@@ -219,7 +219,7 @@ save(const vpCameraParameters &cam, const char * filename,
 
 /*!
   Read a place of the XML file in char*
- 
+
  \param doc : XML file.
  \param node : XML tree, pointing on a marker equipement.
  \param res : variable where to place the result.
@@ -242,7 +242,7 @@ myXmlReadCharChild (xmlDocPtr doc,
 
 /*!
   Read a place of the XML file in integer
- 
+
  \param doc : XML file.
  \param node : XML tree, pointing on a marker equipement.
  \param res : variable where to place the result.
@@ -284,7 +284,7 @@ myXmlReadIntChild (xmlDocPtr doc,
 
 /*!
   Read a place of the XML file in double
- 
+
  \param doc : XML file.
  \param node : XML tree, pointing on a marker equipement.
  \param res : variable where to place the result.
@@ -342,7 +342,7 @@ myXmlReadDoubleChild (xmlDocPtr doc,
     Set as 0 if not ambiguous.
   \param subsampling_height : subsampling of the image height sent by the camera.
     Set as 0 if not ambiguous.
-                   
+
   \return error code.
  */
 int vpXmlParserCamera::
@@ -390,7 +390,7 @@ read (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
                   << "with your specifications : "              << std::endl
                   << "precise your choice..."                   << std::endl;
   }
-  
+
   return back;
 }
 /*!
@@ -409,7 +409,7 @@ read (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
     Set as 0 if not ambiguous.
   \param subsampling_height : subsampling of the image height sent by the camera.
     Set as 0 if not ambiguous.
-                   
+
   \return number of available camera parameters corresponding with inputs.
  */
 int vpXmlParserCamera::
@@ -461,7 +461,7 @@ count (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
     Set as 0 if not ambiguous.
   \param subsampling_height : scale of the image height sent by the camera.
     Set as 0 if not ambiguous.
-                   
+
   \return error code.
 
  */
@@ -476,15 +476,13 @@ read_camera (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
   int prop;
   /* read value in the XML file. */
   int val;
-  double vald;
-
   std::string camera_name_tmp = "";
-  int image_height_tmp = 0 ;
-  int image_width_tmp = 0 ;
-  int subsampling_width_tmp = 0;
-  int subsampling_height_tmp = 0;
-  int full_width_tmp = 0;
-  int full_height_tmp = 0;
+  unsigned int image_height_tmp = 0 ;
+  unsigned int image_width_tmp = 0 ;
+  unsigned int subsampling_width_tmp = 0;
+  unsigned int subsampling_height_tmp = 0;
+  unsigned int full_width_tmp = 0;
+  unsigned int full_height_tmp = 0;
   vpCameraParameters cam_tmp;
   int back = SEQUENCE_OK;
 
@@ -499,7 +497,7 @@ read_camera (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
       back = SEQUENCE_ERROR;
     }
 
-    
+
     switch (prop)
     {
     case CODE_XML_CAMERA_NAME:
@@ -537,7 +535,7 @@ read_camera (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
     case CODE_XML_MODEL:
       back = read_camera_model(doc, node, cam_tmp);
       break;
-      
+
     default:
       back = SEQUENCE_ERROR;
       break;
@@ -571,7 +569,7 @@ read_camera (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
   \param doc : XML file.
   \param node : XML tree, pointing on a marker equipement.
   \param cam_tmp : camera parameters to fill with read data (output).
-                     
+
   \return error code.
 
  */
@@ -582,7 +580,6 @@ read_camera_model (xmlDocPtr doc, xmlNodePtr node, vpCameraParameters &cam_tmp)
   int nb = 0;
   int prop;
   /* read value in the XML file. */
-  int val;
   double vald;
   char* val_char=NULL;
 
@@ -642,7 +639,7 @@ read_camera_model (xmlDocPtr doc, xmlNodePtr node, vpCameraParameters &cam_tmp)
       break;
     }
   }
-  
+
   if( !strcmp(model_type,LABEL_XML_MODEL_WITHOUT_DISTORTION)){
     if (nb != 5)
     {
@@ -697,17 +694,17 @@ read_camera_model (xmlDocPtr doc, xmlNodePtr node, vpCameraParameters &cam_tmp)
     Set as 0 if not ambiguous.
   \param subsampling_height : subsampling of the image height sent by the camera.
     Set as 0 if not ambiguous.
-                   
+
   \return error code.
  */
 int vpXmlParserCamera::
-write (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
+write (xmlNodePtr node, const std::string& camera_name,
       const unsigned int image_width, const unsigned int image_height,
       const unsigned int subsampling_width,
       const unsigned int subsampling_height)
 {
   int back = SEQUENCE_OK;
-  
+
   xmlNodePtr node_tmp;
   xmlNodePtr node_model;
 
@@ -717,20 +714,20 @@ write (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
   node = node_tmp;
   {
     //<name>
-    
+
     if(!camera_name.empty()){
       node_tmp = xmlNewComment((xmlChar*)"Name of the camera");
       xmlAddChild(node,node_tmp);
       xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_CAMERA_NAME,
         (xmlChar*)camera_name.c_str());
     }
-    
+
     if(image_width != 0 || image_height != 0){
       char str[11];
       //<image_width>
       node_tmp = xmlNewComment((xmlChar*)"Size of the image on which camera calibration was performed");
       xmlAddChild(node,node_tmp);
-      
+
       sprintf(str,"%u",image_width);
       xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_WIDTH,(xmlChar*)str);
       //<image_height>
@@ -740,7 +737,7 @@ write (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
       if(subsampling_width != 0 || subsampling_height != 0){
         node_tmp = xmlNewComment((xmlChar*)"Subsampling used to obtain the current size of the image.");
         xmlAddChild(node,node_tmp);
-      
+
         //<subsampling_width>
         sprintf(str,"%u",subsampling_width);
         xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_SUBSAMPLING_WIDTH,(xmlChar*)str);
@@ -749,7 +746,7 @@ write (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
         xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_SUBSAMPLING_HEIGHT,(xmlChar*)str);
         node_tmp = xmlNewComment((xmlChar*)"The full size is the captor size actually used to grab the image. full_width = subsampling_width * image_width");
         xmlAddChild(node,node_tmp);
-      
+
         //<full_width>
         sprintf(str,"%u",image_width*subsampling_width);
         xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_FULL_WIDTH,(xmlChar*)str);
@@ -758,7 +755,7 @@ write (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
         xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_FULL_HEIGHT,(xmlChar*)str);
       }
     }
-    
+
     node_tmp = xmlNewComment((xmlChar*)"Intrinsic camera parameters computed for each distortion model");
     xmlAddChild(node,node_tmp);
     //<model>
@@ -768,14 +765,14 @@ write (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
       char str[21];
       node_tmp = xmlNewComment((xmlChar*)"Distortion model type");
       xmlAddChild(node_model,node_tmp);
-      
+
       //<type>without_distortion</type>
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_MODEL_TYPE,
                       (xmlChar*)LABEL_XML_MODEL_WITHOUT_DISTORTION);
-                      
+
       node_tmp = xmlNewComment((xmlChar*)"Principal point");
       xmlAddChild(node_model,node_tmp);
-      
+
       //<u0>
       sprintf(str,"%.10f",camera.get_u0());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_U0,(xmlChar*)str);
@@ -821,7 +818,7 @@ write (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
       //<kd>
       node_tmp = xmlNewComment((xmlChar*)"Pixel based distortion ");
       xmlAddChild(node_model,node_tmp);
-      
+
       sprintf(str,"%.10f",camera.get_kd_pm());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_KD,(xmlChar*)str);
     }
