@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.2 2007-11-20 10:14:43 asaunier Exp $
+ * $Id: vpCalibration.cpp,v 1.3 2007-11-20 10:50:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,11 +41,6 @@
 /*!
   \file vpCalibration.cpp
   \brief Tools for camera calibration.
-  
-  \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
-
-  \sa example in calibrate.cpp
-  \date   April, 6 1999 (first issue)
 */
 
 #include <visp/vpCalibration.h>
