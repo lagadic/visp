@@ -1,5 +1,7 @@
 ViSP 2.4.x
   - New classes
+    - vpCalibration : calibration toolkit for intrinsic and 
+        extrinsic parameters of perspective camera.
     - vpXmlParserCamera : Parser xml to read and save camera parameters 
         from vpCameraParameters class. 
     - vpHinkley : Hinkley's cumulative sum test computation.
