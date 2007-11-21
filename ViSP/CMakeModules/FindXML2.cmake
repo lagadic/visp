@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindXML2.cmake,v 1.2 2007-11-20 09:39:29 asaunier Exp $
+# $Id: FindXML2.cmake,v 1.3 2007-11-21 15:10:25 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,15 +42,18 @@
 
 
 IF(WIN32)
-  FIND_PATH(XML2_INCLUDE_DIR libxml/xmlmemory.h
-    $ENV{XML2_HOME}/include
-    )
-  FIND_LIBRARY(XML2_LIBRARY libxml2
-    $ENV{XML2_HOME}/lib
-    /usr/lib
-    /usr/local/lib
-    "c:/libxml2/lib"
-    )
+  FIND_PACKAGE(ICONV)
+  IF(ICONV_FOUND)
+    FIND_PATH(XML2_INCLUDE_DIR libxml/xmlmemory.h
+      $ENV{XML2_HOME}/include
+      )
+    FIND_LIBRARY(XML2_LIBRARY libxml2
+      $ENV{XML2_HOME}/lib
+      /usr/lib
+      /usr/local/lib
+      "c:/libxml2/lib"
+      )
+  ENDIF(ICONV_FOUND)  
 ELSE(WIN32) 
   FIND_PATH(XML2_INCLUDE_DIR libxml/xmlmemory.h
     $ENV{XML2_HOME}/include/libxml2
