@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.cpp,v 1.2 2007-11-20 12:38:00 fspindle Exp $
+ * $Id: vpXmlParserCamera.cpp,v 1.3 2007-11-21 11:27:47 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -682,7 +682,6 @@ read_camera_model (xmlDocPtr doc, xmlNodePtr node, vpCameraParameters &cam_tmp)
 /*!
   Write camera parameters in an XML Tree.
 
-  \param doc : XML file.
   \param node : XML tree, pointing on a marker equipement.
   \param camera_name : name of the camera : usefull if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
@@ -706,19 +705,19 @@ write (xmlNodePtr node, const std::string& camera_name,
   int back = SEQUENCE_OK;
 
   xmlNodePtr node_tmp;
+  xmlNodePtr node_camera;
   xmlNodePtr node_model;
 
   // <camera>
-  node_tmp = xmlNewNode(NULL,(xmlChar*)LABEL_XML_CAMERA);
-  xmlAddChild(node,node_tmp);
-  node = node_tmp;
+  node_camera = xmlNewNode(NULL,(xmlChar*)LABEL_XML_CAMERA);
+  xmlAddChild(node,node_camera);
   {
     //<name>
 
     if(!camera_name.empty()){
       node_tmp = xmlNewComment((xmlChar*)"Name of the camera");
-      xmlAddChild(node,node_tmp);
-      xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_CAMERA_NAME,
+      xmlAddChild(node_camera,node_tmp);
+      xmlNewTextChild(node_camera,NULL,(xmlChar*)LABEL_XML_CAMERA_NAME,
         (xmlChar*)camera_name.c_str());
     }
 
@@ -726,41 +725,45 @@ write (xmlNodePtr node, const std::string& camera_name,
       char str[11];
       //<image_width>
       node_tmp = xmlNewComment((xmlChar*)"Size of the image on which camera calibration was performed");
-      xmlAddChild(node,node_tmp);
+      xmlAddChild(node_camera,node_tmp);
 
       sprintf(str,"%u",image_width);
-      xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_WIDTH,(xmlChar*)str);
+      xmlNewTextChild(node_camera,NULL,(xmlChar*)LABEL_XML_WIDTH,(xmlChar*)str);
       //<image_height>
 
       sprintf(str,"%u",image_height);
-      xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_HEIGHT,(xmlChar*)str);
+      xmlNewTextChild(node_camera,NULL,(xmlChar*)LABEL_XML_HEIGHT,(xmlChar*)str);
       if(subsampling_width != 0 || subsampling_height != 0){
         node_tmp = xmlNewComment((xmlChar*)"Subsampling used to obtain the current size of the image.");
-        xmlAddChild(node,node_tmp);
+        xmlAddChild(node_camera,node_tmp);
 
         //<subsampling_width>
         sprintf(str,"%u",subsampling_width);
-        xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_SUBSAMPLING_WIDTH,(xmlChar*)str);
+        xmlNewTextChild(node_camera,NULL,(xmlChar*)LABEL_XML_SUBSAMPLING_WIDTH,
+                        (xmlChar*)str);
         //<subsampling_height>
         sprintf(str,"%u",subsampling_height);
-        xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_SUBSAMPLING_HEIGHT,(xmlChar*)str);
+        xmlNewTextChild(node_camera,NULL,(xmlChar*)LABEL_XML_SUBSAMPLING_HEIGHT,
+                        (xmlChar*)str);
         node_tmp = xmlNewComment((xmlChar*)"The full size is the captor size actually used to grab the image. full_width = subsampling_width * image_width");
-        xmlAddChild(node,node_tmp);
+        xmlAddChild(node_camera,node_tmp);
 
         //<full_width>
         sprintf(str,"%u",image_width*subsampling_width);
-        xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_FULL_WIDTH,(xmlChar*)str);
+        xmlNewTextChild(node_camera,NULL,(xmlChar*)LABEL_XML_FULL_WIDTH,
+                        (xmlChar*)str);
         //<full_height>
         sprintf(str,"%u",image_height*subsampling_height);
-        xmlNewTextChild(node,NULL,(xmlChar*)LABEL_XML_FULL_HEIGHT,(xmlChar*)str);
+        xmlNewTextChild(node_camera,NULL,(xmlChar*)LABEL_XML_FULL_HEIGHT,
+                        (xmlChar*)str);
       }
     }
 
     node_tmp = xmlNewComment((xmlChar*)"Intrinsic camera parameters computed for each distortion model");
-    xmlAddChild(node,node_tmp);
+    xmlAddChild(node_camera,node_tmp);
     //<model>
     node_model = xmlNewNode(NULL,(xmlChar*)LABEL_XML_MODEL);
-    xmlAddChild(node,node_model);
+    xmlAddChild(node_camera,node_model);
     {
       char str[21];
       node_tmp = xmlNewComment((xmlChar*)"Distortion model type");
@@ -791,7 +794,7 @@ write (xmlNodePtr node, const std::string& camera_name,
     }
     //<model>
     node_model = xmlNewNode(NULL,(xmlChar*)LABEL_XML_MODEL);
-    xmlAddChild(node,node_model);
+    xmlAddChild(node_camera,node_model);
     {
       char str[21];
       node_tmp = xmlNewComment((xmlChar*)"Distortion model type");
@@ -824,7 +827,7 @@ write (xmlNodePtr node, const std::string& camera_name,
     }
     //<model>
     node_model = xmlNewNode(NULL,(xmlChar*)LABEL_XML_MODEL);
-    xmlAddChild(node,node_model);
+    xmlAddChild(node_camera,node_model);
     {
       char str[21];
       //<type>with_meter_based_distortion</type>
