@@ -1,5 +1,7 @@
 ViSP 2.4.x
   - New classes
+    - vpXmlParserCamera : Parser xml to read and save camera parameters 
+        from vpCameraParameters class. 
     - vpHinkley : Hinkley's cumulative sum test computation.
     - vpMePath  : Tracking of a white curve by using line and parabola 
         tracker.
@@ -11,6 +13,8 @@ ViSP 2.4.x
         tracker implemented with opencv.
   - New Features
   - Bug fix and improvement
+    - vpCameraParameters : support for radial distortion camera model.
+    - vpAfma6 : Add a getCameraParameters functionnality
     - vpSimulator : either SoWin or SoQt or SoXt is needed to use 
         vpSimulator class.
     - vpDot: setMaxDotSize(double percentage) replace 
