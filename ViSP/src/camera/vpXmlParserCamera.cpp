@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.cpp,v 1.4 2007-11-22 08:57:12 asaunier Exp $
+ * $Id: vpXmlParserCamera.cpp,v 1.5 2007-11-22 14:10:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,26 +50,26 @@
 /* --- LABEL XML ------------------------------------------------------------ */
 /* -------------------------------------------------------------------------- */
 
-#define LABEL_XML_ROOT                                    "root"
-#define LABEL_XML_CAMERA                                  "camera"
-#define LABEL_XML_CAMERA_NAME                             "name"
-#define LABEL_XML_WIDTH                                   "image_width"
-#define LABEL_XML_HEIGHT                                  "image_height"
-#define LABEL_XML_SUBSAMPLING_WIDTH                                 "subsampling_width"
-#define LABEL_XML_SUBSAMPLING_HEIGHT                                 "subsampling_height"
-#define LABEL_XML_FULL_WIDTH                              "full_width"
-#define LABEL_XML_FULL_HEIGHT                             "full_height"
-#define LABEL_XML_MODEL                                   "model"
-#define LABEL_XML_MODEL_TYPE                              "type"
-#define LABEL_XML_U0                                      "u0"
-#define LABEL_XML_V0                                      "v0"
-#define LABEL_XML_PX                                      "px"
-#define LABEL_XML_PY                                      "py"
-#define LABEL_XML_KD                                      "kd"
+#define LABEL_XML_ROOT                               "root"
+#define LABEL_XML_CAMERA                             "camera"
+#define LABEL_XML_CAMERA_NAME                        "name"
+#define LABEL_XML_WIDTH                              "image_width"
+#define LABEL_XML_HEIGHT                             "image_height"
+#define LABEL_XML_SUBSAMPLING_WIDTH                  "subsampling_width"
+#define LABEL_XML_SUBSAMPLING_HEIGHT                 "subsampling_height"
+#define LABEL_XML_FULL_WIDTH                         "full_width"
+#define LABEL_XML_FULL_HEIGHT                        "full_height"
+#define LABEL_XML_MODEL                              "model"
+#define LABEL_XML_MODEL_TYPE                         "type"
+#define LABEL_XML_U0                                 "u0"
+#define LABEL_XML_V0                                 "v0"
+#define LABEL_XML_PX                                 "px"
+#define LABEL_XML_PY                                 "py"
+#define LABEL_XML_KD                                 "kd"
 
-#define LABEL_XML_MODEL_WITHOUT_DISTORTION                "without_distortion"
-#define LABEL_XML_MODEL_WITH_PIXEL_BASED_DISTORTION       "with_pixel_based_distortion"
-#define LABEL_XML_MODEL_WITH_METER_BASED_DISTORTION       "with_meter_based_distortion"
+#define LABEL_XML_MODEL_WITHOUT_DISTORTION           "without_distortion"
+#define LABEL_XML_MODEL_WITH_PIXEL_BASED_DISTORTION  "with_pixel_based_distortion"
+#define LABEL_XML_MODEL_WITH_METER_BASED_DISTORTION  "with_meter_based_distortion"
 /*!
   Default constructor
 */
@@ -772,7 +772,7 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<type>without_distortion</type>
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_MODEL_TYPE,
                       (xmlChar*)LABEL_XML_MODEL_WITHOUT_DISTORTION);
-      
+
       node_tmp = xmlNewComment((xmlChar*)"Pixel ratio");
       xmlAddChild(node_model,node_tmp);
       //<px>
@@ -812,7 +812,7 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<py>
       sprintf(str,"%.10f",camera.get_py_pm());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PY,(xmlChar*)str);
-      
+
       node_tmp = xmlNewComment((xmlChar*)"Principal point");
       xmlAddChild(node_model,node_tmp);
       //<u0>
@@ -821,7 +821,7 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<v0>
       sprintf(str,"%.10f",camera.get_v0_pm());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
-      
+
       //<kd>
       node_tmp = xmlNewComment((xmlChar*)"Pixel based distortion ");
       xmlAddChild(node_model,node_tmp);
@@ -848,7 +848,7 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<py>
       sprintf(str,"%.10f",camera.get_py_mp());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PY,(xmlChar*)str);
-      
+
       node_tmp = xmlNewComment((xmlChar*)"Principal point");
       xmlAddChild(node_model,node_tmp);
       //<u0>
@@ -857,7 +857,7 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<v0>
       sprintf(str,"%.10f",camera.get_v0_mp());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
-      
+
       //<kd>
       node_tmp = xmlNewComment((xmlChar*)"Meter based distortion ");
       xmlAddChild(node_model,node_tmp);
