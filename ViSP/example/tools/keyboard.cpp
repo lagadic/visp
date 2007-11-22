@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: keyboard.cpp,v 1.4 2007-09-21 12:26:15 fspindle Exp $
+ * $Id: keyboard.cpp,v 1.5 2007-11-22 15:52:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Example of keybord management.
+ * Example of keyboard management.
  *
  * Author:
  * Fabien Spindler
@@ -38,7 +38,7 @@
 /*!
   \example keyboard.cpp
 
-  Keybord example.
+  Keyboard example.
 */
 
 #include <visp/vpConfig.h>
@@ -57,15 +57,15 @@ main()
 {
   int c;
 
-  std::cout << "Push some characters on the keybord..." << std::endl;
+  std::cout << "Push some characters on the keyboard..." << std::endl;
   printf("Hit 'q' or 'Q' to stop the loop ...\n");
-  vpKeyboard keybord;
+  vpKeyboard keyboard;
 
-  std::cout << "Start the keybord scrutation..." << std::endl;
+  std::cout << "Start the keyboard scrutation..." << std::endl;
   while (1) {
 
-    if (keybord.kbhit()) {
-      c = keybord.getchar () ;
+    if (keyboard.kbhit()) {
+      c = keyboard.getchar () ;
       printf("You hit key: %d '%c'\n", c, c);
       if (c == 'q' || c == 'Q') {
 	printf("You hit key: %d %c we stop the loop\n", c, c);
@@ -82,7 +82,7 @@ main()
 int
 main()
 {
-  vpTRACE("Sorry, for the moment, vpKeybord class works only on unix...");
+  vpTRACE("Sorry, for the moment, vpKeyboard class works only on unix...");
   return 0;
 }
 #endif
