@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.10 2007-11-20 16:51:36 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.11 2007-11-22 09:22:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -275,6 +275,9 @@ public: /* Methodes publiques */
   //@}
 
 public:
+
+  int computeMGI (const vpHomogeneousMatrix & oMc, vpColVector & q, 
+		  bool nearest=true);
 
   //! \brief Calcul le MGD du robot.
   void  computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc);

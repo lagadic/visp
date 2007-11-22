@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.17 2007-11-20 16:51:36 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.18 2007-11-22 09:22:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,6 +36,8 @@
  *
  *****************************************************************************/
 
+#include <math.h>
+
 #include <visp/vpConfig.h>
 
 #ifdef VISP_HAVE_AFMA6
@@ -43,18 +45,12 @@
 /* --- INCLUDE ------------------------------------------------------------ */
 /* ----------------------------------------------------------------------- */
 
-
-//#include "vpRobotError.h"       /* Classe d'erreur de la lib robot.        */
 #include <visp/vpAfma6.h>      /* Header definissant la classe.           */
-
 #include <visp/vpDebug.h>     /* Macros de trace et debugage.            */
-
 #include <visp/vpRobotException.h>/* Classe d'erreur de la lib robot.     */
 
 #include <visp/vpXmlParserCamera.h>/* Classe de la libxml2 pour lire les
   parametres intrinsèques de camera*/
-/* Inclusion des fichiers standards.		*/
-#include <math.h>
 #include <visp/vpMath.h>
 
 
@@ -68,7 +64,201 @@ const double vpAfma6::rhoDefault = 0.1;
 const int    vpAfma6::articulationsNb = 6;
 const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_12MM;
 
+/*!
 
+  Compute the inverse geometric model \e q from the refrence frame to
+  camera frame pose.
+
+  \param rMc : Homogeneous matrix describing the transformation from
+  reference frame to the camera frame.
+
+  \param q : In input, the current articular position of the robot. In
+  output, the solution of the inverse geometric model. 
+
+  \param nearest : true to return the nearest solution to q. false to
+  return the farest.
+
+  \return The number of solutions (1 or 2) of the inverse geometric
+  model. O no solution can be found.
+
+  The code below shows how to compute the inverse geometric model:
+
+  \code
+  vpColVector q1(6), q2(6);
+  vpHomogeneousMatrix rMc;
+  
+  vpRobotAfma6 robot;
+
+  // Get the current articular position of the robot
+  robot.getPosition(vpRobot::ARTICULAR_FRAME, q1);
+
+  // Compute the pose of the camera in the reference frame using the
+  // direct geometric model
+  robot.computeMGD(q1, rMc);
+
+  // Compute the inverse geometric model
+  int nbsol; // number of solutions (0, 1 or 2) of the inverse geometric model
+  // get the nearest solution to the current articular position
+  nbsol = robot.computeMGI(rMc, q1); 
+  
+  if (nbsol == 0)
+    std::cout << "No solution of the inverse geometric model " << std::endl;
+  else if (nbsol >= 1)
+    std::cout << "First solution: " << q1 << std::endl;
+
+  if (nbsol == 2) {
+    // Compute the other solution of the inverse geometric model
+    q2 = q1;
+    robot.computeMGI(rMc, q2, false); 
+    std::cout << "Second solution: " << q2 << std::endl;
+  }
+  \endcode
+
+*/
+int vpAfma6::
+computeMGI (const vpHomogeneousMatrix & rMc, vpColVector & q, bool nearest)
+{
+  vpHomogeneousMatrix oMe;
+  float q_[2][6],d[2],t;
+  int ok[2];
+  float cord[6];
+
+  int nbsol = 0;
+
+  q.resize(6);
+
+  for(int i=0;i<3;i++) {
+    oMe[i][3] = rMc[i][3];
+    for(int j=0;j<3;j++) {
+      oMe[i][j] = 0.0;
+      for (int k=0;k<3;k++) oMe[i][j] += rMc[i][k]*rpi[j][k];
+      oMe[i][3] -= oMe[i][j]*rpi[j][3]/1000; // passage mm->metres
+    }
+  }
+
+
+  if (oMe[2][2] >= .99999)
+  {
+    vpTRACE("singularity\n");
+    q_[0][4] = q_[1][4] = M_PI/2;
+    t = atan2(oMe[0][0],oMe[0][1]);
+    q_[1][3] = q_[0][3] = q[3];
+    q_[1][5] = q_[0][5] = t - q_[0][3];
+
+    while  ((q_[1][5]+vpMath::rad(2)) >= this->jointMax[5])
+      /*			-> a cause du couplage 4/5	*/
+    {
+      q_[1][5] -= vpMath::rad(10);
+      q_[1][3] += vpMath::rad(10);
+    }
+    while  (q_[1][5] <= this->jointMin[5])
+    {
+      q_[1][5] += vpMath::rad(10);
+      q_[1][3] -= vpMath::rad(10);
+    }
+  }
+  else if (oMe[2][2] <= -.99999)
+  {
+    vpTRACE("singularity\n");
+    q_[0][4] = q_[1][4] = -M_PI/2;
+    t = atan2(oMe[1][1],oMe[1][0]);
+    q_[1][3] = q_[0][3] = q[3];
+    q_[1][5] = q_[0][5] = q_[0][3] - t;
+    while  ((q_[1][5]+vpMath::rad(2)) >= this->jointMax[5])
+      /*			-> a cause du couplage 4/5	*/
+    {
+      q_[1][5] -= vpMath::rad(10);
+      q_[1][3] -= vpMath::rad(10);
+    }
+    while  (q_[1][5] <= this->jointMin[5])
+    {
+      q_[1][5] += vpMath::rad(10);
+      q_[1][3] += vpMath::rad(10);
+    }
+  }
+  else
+  {
+    q_[0][3] = atan2(-oMe[0][2],oMe[1][2]);
+    if (q_[0][3] >= 0.0) q_[1][3] = q_[0][3] - M_PI;
+    else q_[1][3] = q_[0][3] + M_PI;
+
+    q_[0][4] = asin(oMe[2][2]);
+    if (q_[0][4] >= 0.0) q_[1][4] = M_PI - q_[0][4];
+    else q_[1][4] = -M_PI - q_[0][4];
+
+    q_[0][5] = atan2(-oMe[2][1],oMe[2][0]);
+    if (q_[0][5] >= 0.0) q_[1][5] = q_[0][5] - M_PI;
+    else q_[1][5] = q_[0][5] + M_PI;
+  }
+  q_[0][0] = oMe[0][3] - this->l/1000*cos(q_[0][3]);
+  q_[1][0] = oMe[0][3] - this->l/1000*cos(q_[1][3]);
+  q_[0][1] = oMe[1][3] - this->l/1000*sin(q_[0][3]);
+  q_[1][1] = oMe[1][3] - this->l/1000*sin(q_[1][3]);
+  q_[0][2] = q_[1][2] = oMe[2][3];
+
+  /* prise en compte du couplage axes 5/6	*/
+  q_[0][5] += this->coupl*q_[0][4];
+  q_[1][5] += this->coupl*q_[1][4];
+
+  for (int j=0;j<2;j++)
+  {
+    ok[j] = 1;
+    // test is position is reachable
+    for (int i=0;i<6;i++) {
+      if (q_[j][i] < this->jointMin[i] || q_[j][i] > this->jointMax[i])
+	ok[j] = 0;
+    }
+  }
+  if (ok[0] == 0)
+  {
+    if (ok[1] == 0) {
+      std::cout << "No solution..." << std::endl;
+      nbsol = 0;
+      return nbsol;
+    }
+    else if (ok[1] == 1) {
+      for (int i=0;i<6;i++) cord[i] = q_[1][i];
+      nbsol = 1;
+    }
+  }
+  else
+  {
+    if (ok[1] == 0) {
+      for (int i=0;i<6;i++) cord[i] = q_[0][i];
+      nbsol = 1;
+    }
+    else
+    {
+      nbsol = 2;
+      //vpTRACE("2 solutions\n");
+      for (int j=0;j<2;j++)
+      {
+	d[j] = 0.0;
+	for (int i=3;i<6;i++)
+	  d[j] += (q_[j][i] - q[i]) * (q_[j][i] - q[i]);
+      }
+      if (nearest == true)
+      {
+	if (d[0] <= d[1])
+	  for (int i=0;i<6;i++) cord[i] = q_[0][i];
+	else
+	  for (int i=0;i<6;i++) cord[i] = q_[1][i];
+      }
+      else
+      {
+	if (d[0] <= d[1])
+	  for (int i=0;i<6;i++) cord[i] = q_[1][i];
+	else
+	  for (int i=0;i<6;i++) cord[i] = q_[0][i];
+      }
+    }
+  }
+  for(int i=0; i<6; i++)
+    q[i] = cord[i] ;
+
+
+  return nbsol;
+}
 
 void vpAfma6::
 computeMGD (const vpColVector & q,
@@ -206,13 +396,6 @@ computeMGD (const vpColVector & q,
 }
 
 
-
-/* ---------------------------------------------------------------------- */
-/* --- STATIC ---------------------------------------------------------- */
-/* ------------------------------------------------------------------------ */
-
-#define CTE_L  -0.068825
-
 /* -------------------------------------------------------------------- */
 /* --- COMPUTE ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
@@ -339,13 +522,13 @@ computeInverseJacobian (const vpColVector & pos,
   /* Inverse Jacobian Matrix  Hand Frame */
 
 
-  J1[0][0] = CTE_L*s1*s1*t2;
-  J1[0][1] = -CTE_L*s1*c1*t2;
-  J1[0][2] = CTE_L*s1;
+  J1[0][0] = l/1000*s1*s1*t2;
+  J1[0][1] = -l/1000*s1*c1*t2;
+  J1[0][2] = l/1000*s1;
 
-  J1[1][0] = -CTE_L*s1*c1*t2;
-  J1[1][1] = CTE_L*c1*c1*t2;
-  J1[1][2] = -CTE_L*c1;
+  J1[1][0] = -l/1000*s1*c1*t2;
+  J1[1][1] = l/1000*c1*c1*t2;
+  J1[1][2] = -l/1000*c1;
 
   J2[0][0] = s1*t2;
   J2[0][1] = -c1*t2;
@@ -423,9 +606,6 @@ computeInverseJacobian (const vpColVector & q)
   vpDEBUG_TRACE (6, "# Sortie.");
   return Jp;
 }
-
-#undef CTE_L
-
 
 
 /* ----------------------------------------------------------------------- */
