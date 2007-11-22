@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.18 2007-11-22 09:22:23 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.19 2007-11-22 14:07:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,7 +73,7 @@ const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_1
   reference frame to the camera frame.
 
   \param q : In input, the current articular position of the robot. In
-  output, the solution of the inverse geometric model. 
+  output, the solution of the inverse geometric model.
 
   \param nearest : true to return the nearest solution to q. false to
   return the farest.
@@ -86,7 +86,7 @@ const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_1
   \code
   vpColVector q1(6), q2(6);
   vpHomogeneousMatrix rMc;
-  
+
   vpRobotAfma6 robot;
 
   // Get the current articular position of the robot
@@ -99,8 +99,8 @@ const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_1
   // Compute the inverse geometric model
   int nbsol; // number of solutions (0, 1 or 2) of the inverse geometric model
   // get the nearest solution to the current articular position
-  nbsol = robot.computeMGI(rMc, q1); 
-  
+  nbsol = robot.computeMGI(rMc, q1);
+
   if (nbsol == 0)
     std::cout << "No solution of the inverse geometric model " << std::endl;
   else if (nbsol >= 1)
@@ -109,7 +109,7 @@ const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_1
   if (nbsol == 2) {
     // Compute the other solution of the inverse geometric model
     q2 = q1;
-    robot.computeMGI(rMc, q2, false); 
+    robot.computeMGI(rMc, q2, false);
     std::cout << "Second solution: " << q2 << std::endl;
   }
   \endcode
@@ -924,7 +924,7 @@ const char * const vpAfma6::CONST_MPI_DRAGONFLY2_WITH_DISTORTION
 const char * const vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME
 = "/udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml";
 
-const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2";
+const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2-12mm";
 
 /* Declaration des variables statiques.		*/
 static char *opt_Afma6[] = {"KP","KD","KI","PMAX","PMIN","INIT","SENS",
