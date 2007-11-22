@@ -1012,6 +1012,7 @@ PREDEFINED             = \
            VISP_HAVE_BICLOPS \
            VISP_HAVE_PTU46 \
            VISP_HAVE_PARPORT \
+           VISP_HAVE_XML2 \
            WIN32 \
            APPLE \
            UNIX
