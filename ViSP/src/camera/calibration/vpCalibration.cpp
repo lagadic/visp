@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.4 2007-11-20 12:38:00 fspindle Exp $
+ * $Id: vpCalibration.cpp,v 1.5 2007-11-22 08:57:12 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -482,7 +482,7 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethod method,unsigned int n
     //Print camera parameters
     if(verbose){
       std::cout << "Camera parameters without distortion :" << std::endl;
-      cam.printParameters(1);
+      cam.printParameters();
     }
 
     switch (method)
@@ -512,7 +512,7 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethod method,unsigned int n
     //Print camera parameters
     if(verbose){
       std::cout << "Camera parameters :" << std::endl;
-      cam.printParameters(1);
+      cam.printParameters();
       std::cout<<std::endl;
     }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.5 2007-11-19 15:40:58 asaunier Exp $
+ * $Id: vpCameraParameters.h,v 1.6 2007-11-22 08:57:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,9 +155,7 @@ public:
 
   virtual ~vpCameraParameters() ;
 
-
-  
-  void printParameters(int version=1) ;
+  void printParameters() ;
 
   vpCameraParameters& operator =(const vpCameraParameters& f) ;
 

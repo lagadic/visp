@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.5 2007-11-19 15:40:58 asaunier Exp $
+ * $Id: vpCameraParameters.cpp,v 1.6 2007-11-22 08:57:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -357,48 +357,22 @@ vpCameraParameters::setPixelRatio_pm(double Px,double Py)
 
 /*!
   Print the camera parameters on the standard output
-
-  \param version (1: all the parameters, 2: only  u0, v0, px, py )
-
 */
 void
-vpCameraParameters::printParameters(int version)
+vpCameraParameters::printParameters()
 {
   std::cout.precision(10);
-  if(version==1){
-    std::cout << "Parameters for model without distortion :" << std::endl ;
-    std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
-    std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
-    std::cout << "Parameters for meter to pixel distortion model :" << std::endl ;
-    std::cout << "  u0 = " << u0_mp <<"\t v0 = "<< v0_mp << std::endl ;
-    std::cout << "  px = " << px_mp <<"\t py = "<<py_mp<< std::endl ;
-    std::cout << "  Kd = " << kd_mp << std::endl ;
-    std::cout << "Parameters for pixel to meter distortion model :" << std::endl ;
-    std::cout << "  u0 = " << u0_pm <<"\t v0 = "<< v0_pm << std::endl ;
-    std::cout << "  px = " << px_pm <<"\t py = "<< py_pm << std::endl ;
-    std::cout << "  Kd = " << kd_pm << std::endl ;
-  }
-  else{
-    if (version==2){
-      std::cout << "Parameters for model without distortion :" << std::endl ;
-      std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
-      std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
-      std::cout << "Parameters for meter to pixel distortion model :" << std::endl ;
-      std::cout << "  u0 = " << u0_mp <<"\t v0 = "<<v0_mp<< std::endl ;
-      std::cout << "  px = " << px_mp <<"\t py = "<<py_mp<< std::endl ;
-      std::cout << "Parameters for pixel to meter distortion model :" << std::endl ;
-      std::cout << "  u0 = " << u0_pm <<"\t v0 = "<<v0_pm<< std::endl ;
-      std::cout << "  px = " << px_pm <<"\t py = "<<py_pm<< std::endl ;
-    }
-    else {
-      std::cout << "Parameters for model without distortion :" << std::endl ;
-      std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
-      std::cout << "Parameters for meter to pixel distortion model :" << std::endl ;
-      std::cout << "  u0 = " << u0_mp <<"\t v0 = "<<v0_mp << std::endl ;
-      std::cout << "Parameters for pixel to meter distortion model :" << std::endl ;
-      std::cout << "  u0 = " << u0_pm <<"\t v0 = "<<v0_pm << std::endl ;
-    }
-  }
+  std::cout << "Parameters for model without distortion :" << std::endl ;
+  std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
+  std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
+  std::cout << "Parameters for meter to pixel distortion model :" << std::endl ;
+  std::cout << "  px = " << px_mp <<"\t py = "<<py_mp<< std::endl ;
+  std::cout << "  u0 = " << u0_mp <<"\t v0 = "<< v0_mp << std::endl ;
+  std::cout << "  Kd = " << kd_mp << std::endl ;
+  std::cout << "Parameters for pixel to meter distortion model :" << std::endl ;
+  std::cout << "  px = " << px_pm <<"\t py = "<< py_pm << std::endl ;
+  std::cout << "  u0 = " << u0_pm <<"\t v0 = "<< v0_pm << std::endl ;
+  std::cout << "  Kd = " << kd_pm << std::endl ;
 }
 
 
