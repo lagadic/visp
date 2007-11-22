@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.cpp,v 1.3 2007-11-21 11:27:47 asaunier Exp $
+ * $Id: vpXmlParserCamera.cpp,v 1.4 2007-11-22 08:57:12 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -772,6 +772,15 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<type>without_distortion</type>
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_MODEL_TYPE,
                       (xmlChar*)LABEL_XML_MODEL_WITHOUT_DISTORTION);
+      
+      node_tmp = xmlNewComment((xmlChar*)"Pixel ratio");
+      xmlAddChild(node_model,node_tmp);
+      //<px>
+      sprintf(str,"%.10f",camera.get_px());
+      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PX,(xmlChar*)str);
+      //<py>
+      sprintf(str,"%.10f",camera.get_py());
+      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PY,(xmlChar*)str);
 
       node_tmp = xmlNewComment((xmlChar*)"Principal point");
       xmlAddChild(node_model,node_tmp);
@@ -783,14 +792,6 @@ write (xmlNodePtr node, const std::string& camera_name,
       sprintf(str,"%.10f",camera.get_v0());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
 
-      node_tmp = xmlNewComment((xmlChar*)"Pixel ratio");
-      xmlAddChild(node_model,node_tmp);
-      //<px>
-      sprintf(str,"%.10f",camera.get_px());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PX,(xmlChar*)str);
-      //<py>
-      sprintf(str,"%.10f",camera.get_py());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PY,(xmlChar*)str);
     }
     //<model>
     node_model = xmlNewNode(NULL,(xmlChar*)LABEL_XML_MODEL);
@@ -802,14 +803,7 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<type>with_pixel_based_distortion</type>
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_MODEL_TYPE,
                       (xmlChar*)LABEL_XML_MODEL_WITH_PIXEL_BASED_DISTORTION);
-      node_tmp = xmlNewComment((xmlChar*)"Principal point");
-      xmlAddChild(node_model,node_tmp);
-      //<u0>
-      sprintf(str,"%.10f",camera.get_u0_pm());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_U0,(xmlChar*)str);
-      //<v0>
-      sprintf(str,"%.10f",camera.get_v0_pm());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
+
       node_tmp = xmlNewComment((xmlChar*)"Pixel ratio");
       xmlAddChild(node_model,node_tmp);
       //<px>
@@ -818,6 +812,16 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<py>
       sprintf(str,"%.10f",camera.get_py_pm());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PY,(xmlChar*)str);
+      
+      node_tmp = xmlNewComment((xmlChar*)"Principal point");
+      xmlAddChild(node_model,node_tmp);
+      //<u0>
+      sprintf(str,"%.10f",camera.get_u0_pm());
+      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_U0,(xmlChar*)str);
+      //<v0>
+      sprintf(str,"%.10f",camera.get_v0_pm());
+      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
+      
       //<kd>
       node_tmp = xmlNewComment((xmlChar*)"Pixel based distortion ");
       xmlAddChild(node_model,node_tmp);
@@ -835,14 +839,7 @@ write (xmlNodePtr node, const std::string& camera_name,
       xmlAddChild(node_model,node_tmp);
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_MODEL_TYPE,
                       (xmlChar*)LABEL_XML_MODEL_WITH_METER_BASED_DISTORTION);
-      node_tmp = xmlNewComment((xmlChar*)"Principal point");
-      xmlAddChild(node_model,node_tmp);
-      //<u0>
-      sprintf(str,"%.10f",camera.get_u0_mp());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_U0,(xmlChar*)str);
-      //<v0>
-      sprintf(str,"%.10f",camera.get_v0_mp());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
+
       node_tmp = xmlNewComment((xmlChar*)"Pixel ratio");
       xmlAddChild(node_model,node_tmp);
       //<px>
@@ -851,6 +848,16 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<py>
       sprintf(str,"%.10f",camera.get_py_mp());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PY,(xmlChar*)str);
+      
+      node_tmp = xmlNewComment((xmlChar*)"Principal point");
+      xmlAddChild(node_model,node_tmp);
+      //<u0>
+      sprintf(str,"%.10f",camera.get_u0_mp());
+      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_U0,(xmlChar*)str);
+      //<v0>
+      sprintf(str,"%.10f",camera.get_v0_mp());
+      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
+      
       //<kd>
       node_tmp = xmlNewComment((xmlChar*)"Meter based distortion ");
       xmlAddChild(node_model,node_tmp);
