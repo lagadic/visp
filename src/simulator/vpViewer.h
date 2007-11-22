@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.h,v 1.9 2007-11-19 15:54:55 asaunier Exp $
+ * $Id: vpViewer.h,v 1.10 2007-11-22 09:21:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,10 +95,13 @@
 #include <visp/vpDebug.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
+
 /*!
   \class vpViewer
-  Viewer used by the simulator. Under Windows, the viewer is
-  based either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or SoXt.
+
+  Viewer used by the simulator. Under Windows, the viewer is based
+  either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or
+  SoXt .
 */
 
 class vpSimulator;
