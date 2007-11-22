@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.22 2007-11-20 16:51:36 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.23 2007-11-22 14:09:27 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1119,7 +1119,7 @@ vpRobotAfma6::savePosFile(const char *filename, const vpColVector &v)
 #     - rotation autour de x\n\
 #     - rotation autour de y\n\
 #     - rotation autour de z\n\
-#\n");
+#\n\n");
 
   // Save positions in mm and deg
   fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n",
