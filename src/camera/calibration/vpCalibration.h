@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.h,v 1.1 2007-11-19 16:38:28 asaunier Exp $
+ * $Id: vpCalibration.h,v 1.2 2007-11-23 08:27:32 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,7 +110,7 @@ public:
   //! Destructor
   virtual ~vpCalibration() ;
   //! = operator
-  void VISP_EXPORT operator=(vpCalibration& twinCalibration );
+  void operator=(vpCalibration& twinCalibration );
 private:
   void calibLagrange( vpCameraParameters &cam , vpHomogeneousMatrix &cMo) ;
   
