@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.8 2007-09-28 14:46:32 asaunier Exp $
+ * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.9 2007-11-23 13:24:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,9 +61,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_ITIFG8))
+#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394_2))
 
-#include <visp/vpItifg8Grabber.h>
+#include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -95,7 +95,9 @@ main()
 
     vpImage<unsigned char> I ;
 
-    vpItifg8Grabber g(2) ;
+    vp1394TwoGrabber g;
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
     g.open(I) ;
 
     g.acquire(I) ;
@@ -128,6 +130,8 @@ main()
     vpDisplay::flush(I);
 
     vpCameraParameters cam ;
+    // Update camera parameters
+    robot.getCameraParameters (cam, I);
 
     vpTRACE("sets the current position of the visual feature ") ;
     vpFeaturePoint p ;
@@ -228,6 +232,6 @@ main()
 int
 main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot or an Itifg8 framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
 }
 #endif
