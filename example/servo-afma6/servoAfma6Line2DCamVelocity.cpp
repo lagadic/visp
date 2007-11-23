@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.6 2007-09-28 14:46:32 asaunier Exp $
+ * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.7 2007-11-23 13:24:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,9 +39,9 @@
 /*!
   \file servoAfma6Line2DCamVelocity.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame.  The visual feature is a line.
+  \brief Example of eye-in-hand control law. We control here a real robot, the
+  Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
+  computed in the camera frame.  The visual feature is a line.
 */
 
 
@@ -56,9 +56,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_ITIFG8))
+#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394_2))
 
-#include <visp/vpItifg8Grabber.h>
+#include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -82,15 +82,17 @@
 int
 main()
 {
-  try 
+  try
     {
       vpRobotAfma6 robot ;
       //  robot.move("pos-init.pos") ;
 
       vpImage<unsigned char> I ;
 
+      vp1394TwoGrabber g;
+      g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+      g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
 
-      vpItifg8Grabber g(2) ;
       g.open(I) ;
 
       g.acquire(I) ;
@@ -131,6 +133,8 @@ main()
       line.track(I) ;
 
       vpCameraParameters cam ;
+      // Update camera parameters
+      robot.getCameraParameters (cam, I);
 
       vpTRACE("sets the current position of the visual feature ") ;
       vpFeatureLine p ;
@@ -185,7 +189,7 @@ main()
 
 	    vpServoDisplay::display(task,cam,I) ;
 	    //  std::cout << v.t() ;
-      
+
       vpDisplay::flush(I) ;
 	    if (iter==0)  vpDisplay::getClick(I) ;
 	    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
@@ -217,7 +221,7 @@ main()
 int
 main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot or an Itifg8 framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
 }
 
 #endif
