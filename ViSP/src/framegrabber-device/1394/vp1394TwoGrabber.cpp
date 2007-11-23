@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.17 2007-10-29 15:48:14 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.18 2007-11-23 17:19:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,6 +54,7 @@
 #include <visp/vpFrameGrabberException.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
+#include <visp/vpTime.h>
 
 const int vp1394TwoGrabber::NUM_BUFFERS = 1; /*!< Number of buffers */
 
@@ -1017,6 +1018,8 @@ vp1394TwoGrabber::open()
   if(camInUse != NULL) delete [] camInUse;
   camInUse = new bool [num_cameras];
   dc1394switch_t status = DC1394_OFF;
+
+#if 0
   for (unsigned i=0; i < num_cameras; i ++){
     dc1394_reset_bus(cameras[i]);
     dc1394_video_get_transmission(cameras[i], &status);
@@ -1024,6 +1027,26 @@ vp1394TwoGrabber::open()
       dc1394_video_set_transmission(cameras[i],DC1394_OFF);}
     camInUse[i] = false;
   }
+#else
+  dc1394_reset_bus(cameras[0]);
+  for (unsigned i=0; i < num_cameras; i ++){
+    if (dc1394_video_set_transmission(cameras[i],DC1394_OFF)!=DC1394_SUCCESS)
+      vpTRACE("Could not stop ISO transmission");
+    else {
+      vpTime::wait(50);
+      if (dc1394_video_get_transmission(cameras[i], &status)!=DC1394_SUCCESS)
+	vpTRACE("Could get ISO status");
+      else {
+	if (status==DC1394_ON) {
+	  vpTRACE("ISO transmission refuses to stop");
+	}
+	cameras[i]->is_iso_on=status;
+      }
+    }
+    camInUse[i] = false;
+  }
+#endif
+
   setCamera(0);
   setCapture(DC1394_OFF);
 
