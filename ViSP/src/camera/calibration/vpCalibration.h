@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.h,v 1.2 2007-11-23 08:27:32 asaunier Exp $
+ * $Id: vpCalibration.h,v 1.3 2007-11-26 13:31:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,6 @@
   \class vpCalibration
   \brief Tools for perspective camera calibration.
 
-  \sa calibration.cpp
 */
 class VISP_EXPORT vpCalibration
 {

@@ -6,17 +6,10 @@
 #undef MAX
 #undef MIN
 
-#define DEBUG_LEVEL1 0
-#define DEBUG_LEVEL2 0
-
-
 void
 vpCalibration::calibLagrange(
 			     vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
-
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpCalculPose::calibLagrange(...) " << std::endl ;
 
   vpMatrix A(2*npt,3) ;
   vpMatrix B(2*npt,9) ;
@@ -73,10 +66,6 @@ vpCalibration::calibLagrange(
   }
 
 
-  if (DEBUG_LEVEL2) std::cout << "A" << std::endl << A ;
-
-  if (DEBUG_LEVEL2)   std::cout << "B" << std::endl << B ;
-
   vpMatrix BtB ;              /* compute B^T B	*/
   BtB = B.t() * B ;
 
@@ -87,7 +76,6 @@ vpCalibration::calibLagrange(
   vpMatrix BtBinv ;
   BtBinv = BtB.pseudoInverse(1e-16) ;
 
-  if (DEBUG_LEVEL2)   std::cout <<std::endl <<std::endl << BtBinv <<std::endl ;
   vpMatrix BtA ;
   BtA = B.t()*A ;       /* compute B^T A	*/
 
@@ -170,16 +158,12 @@ vpCalibration::calibLagrange(
   }
   for (int i=0 ; i < 3 ; i++) cMo[i][3] = resul[i+4] ;
 
-  if (DEBUG_LEVEL2)  std::cout << cMo << std::endl ;
-
   this->cMo = cMo ;
   this->cMo_mp = cMo;
   this->cMo_pm = cMo;
 
   double deviation,deviationPM,deviationMP;
   this->computeStdDeviation(deviation,deviationPM,deviationMP);
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpCalculPose::calibLagrange(...) " << std::endl ;
 
 }
 
