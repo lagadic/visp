@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeterPixelConversion.h,v 1.4 2007-11-19 15:40:58 asaunier Exp $
+ * $Id: vpMeterPixelConversion.h,v 1.5 2007-11-26 10:34:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,7 +84,7 @@ public:
     else
       convertPointWithDistortion(cam,x,y,u,v);
   }
-  
+
   /*!
     \brief point coordinates conversion without distortion (x,y)->(u,v)
 
@@ -97,8 +97,8 @@ public:
               double &u, double &v)
 
   {
-      u = x * cam.get_px_mp() + cam.get_u0_mp() ;
-      v = y * cam.get_py_mp() + cam.get_v0_mp() ;
+      u = x * cam.get_px() + cam.get_u0() ;
+      v = y * cam.get_py() + cam.get_v0() ;
   }
   /*!
     \brief point coordinates conversion with distortion (x,y)->(u,v)
