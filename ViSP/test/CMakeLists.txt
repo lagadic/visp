@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.6 2007-06-19 14:16:10 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.7 2007-11-26 16:52:01 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -40,6 +40,7 @@
 #
 # If you add/remove a directory, modify here
 SET (SRC_SUBDIRS
+  camera
   feature
   homography
   image
