@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.21 2007-10-04 09:00:18 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.22 2007-11-26 08:37:56 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1067,6 +1067,105 @@ void vpImageConvert::YUV420ToGrey(unsigned char* yuv,
     *grey++ = *yuv++;
   }
 
+}
+/*!
+
+Convert YUV444 into RGBa
+yuv444 :  u y v
+
+*/
+void vpImageConvert::YUV444ToRGBa(unsigned char* yuv,
+         unsigned char* rgba,
+         unsigned int size)
+{
+  register int U, V, R, G, B, V2, U5, UV;
+  register int Y;
+  for(unsigned int i = 0; i<size; i++)
+  {
+    U   = (int)((*yuv++ - 128) * 0.354);
+    U5  = 5*U;
+    Y   = *yuv++;
+    V   = (int)((*yuv++ - 128) * 0.707);
+    V2  = 2*V;
+    UV  = - U - V;
+   
+
+    // Original equations
+    // R = Y           + 1.402 V
+    // G = Y - 0.344 U - 0.714 V
+    // B = Y + 1.772 U
+    R = Y + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
+  }
+}
+/*!
+
+Convert YUV444 into RGB
+yuv444 : u y v
+
+*/
+void vpImageConvert::YUV444ToRGB(unsigned char* yuv,
+         unsigned char* rgb,
+         unsigned int size)
+{
+  register int U, V, R, G, B, V2, U5, UV;
+  register int Y;
+  for(unsigned int i = 0; i<size; i++)
+  {
+    
+    U   = (int)((*yuv++ - 128) * 0.354);
+    U5  = 5*U;
+    Y   = *yuv++;
+    V   = (int)((*yuv++ - 128) * 0.707);
+    V2  = 2*V;
+    UV  = - U - V;
+
+    // Original equations
+    // R = Y           + 1.402 V
+    // G = Y - 0.344 U - 0.714 V
+    // B = Y + 1.772 U
+    R = Y + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
+  }
+}
+
+/*!
+
+Convert YUV444 into Grey
+yuv444 : u y v
+
+*/
+void vpImageConvert::YUV444ToGrey(unsigned char* yuv,
+         unsigned char* grey,
+         unsigned int size)
+{
+  yuv++;
+  for(unsigned int i=0 ; i < size ; i++)
+  {
+    *grey++ = *yuv;
+    yuv = yuv + 3;
+  }
 }
 
 /*!
