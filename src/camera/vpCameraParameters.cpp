@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.6 2007-11-22 08:57:11 asaunier Exp $
+ * $Id: vpCameraParameters.cpp,v 1.7 2007-11-26 13:31:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -114,17 +114,9 @@ void
 vpCameraParameters::init(const double px, const double py,
 			 const double u0, const double v0)
 {
+  init();
   setPrincipalPoint(u0, v0) ;
   setPixelRatio(px,py) ;
-
-  setPrincipalPoint_mp(u0, v0) ;
-  setPixelRatio_mp(px,py) ;
-  setKd_mp(0);
-
-  setPixelRatio_pm(px,py) ;
-  setPrincipalPoint_pm(u0, v0) ;
-  setKd_pm(0);
-    
   computeMatrix() ;
 }
 
