@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.18 2007-11-23 17:19:39 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.19 2007-11-26 10:28:47 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1177,16 +1177,16 @@ vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
     close();
     vpERROR_TRACE("No camera found");
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-				   "No camera found") );
+              "No camera found") );
   }
 
   if (dc1394_video_set_transmission(camera, _switch) != DC1394_SUCCESS) {
     vpERROR_TRACE("Unable to setup camera capture-\n"
-		  "make sure that the video mode and framerate are "
-		  "supported by your camera.\n");
+                  "make sure that the video mode and framerate are "
+                  "supported by your camera.\n");
     close();
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "Could not setup dma capture") );
+                  "Could not setup dma capture") );
   }
 
   if (_switch == DC1394_ON) {
@@ -1196,13 +1196,12 @@ vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
     while( status == DC1394_OFF && i++ < 5 ) {
       usleep(50000);
       if (dc1394_video_get_transmission(camera, &status)!=DC1394_SUCCESS) {
-	vpERROR_TRACE("Unable to get transmision status");
-	close();
-	throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				       "Could not setup dma capture") );
-       }
+        vpERROR_TRACE("Unable to get transmision status");
+        close();
+        throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                "Could not setup dma capture") );
+      }
     }
-
   }
 }
 
@@ -1358,12 +1357,17 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 
   case DC1394_COLOR_CODING_YUV411:
     vpImageConvert::YUV411ToGrey( (unsigned char *) frame->image,
-				  I.bitmap, size);
+                                  I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV422:
     vpImageConvert::YUV422ToGrey( (unsigned char *) frame->image,
-				  I.bitmap, size);
+                                  I.bitmap, size);
+    break;
+
+  case DC1394_COLOR_CODING_YUV444:
+    vpImageConvert::YUV444ToGrey( (unsigned char *) frame->image,
+          I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_RGB8:
@@ -1414,22 +1418,27 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
   switch(frame->color_coding) {
   case DC1394_COLOR_CODING_MONO8:
     vpImageConvert::GreyToRGBa((unsigned char *) frame->image,
-			       (unsigned char *) I.bitmap, size);
+                                (unsigned char *) I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV411:
     vpImageConvert::YUV411ToRGBa( (unsigned char *) frame->image,
-				  (unsigned char *) I.bitmap, size);
+                                  (unsigned char *) I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV422:
     vpImageConvert::YUV422ToRGBa( (unsigned char *) frame->image,
-				  (unsigned char *) I.bitmap, size);
+                                  (unsigned char *) I.bitmap, size);
+    break;
+
+  case DC1394_COLOR_CODING_YUV444:
+    vpImageConvert::YUV444ToRGBa( (unsigned char *) frame->image,
+          (unsigned char *) I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_RGB8:
     vpImageConvert::RGBToRGBa((unsigned char *) frame->image,
-			      (unsigned char *) I.bitmap, size);
+                              (unsigned char *) I.bitmap, size);
     break;
 
 
