@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.14 2007-09-26 08:49:00 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.15 2007-11-26 08:37:56 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -141,6 +141,14 @@ public:
 			  unsigned char* rgb, unsigned int width, unsigned int height);
   static void YUV420ToGrey(unsigned char* yuv,
 			   unsigned char* grey, unsigned int size);
+  
+  static void YUV444ToRGBa(unsigned char* yuv,
+         unsigned char* rgba, unsigned int size);
+  static void YUV444ToRGB(unsigned char* yuv,
+        unsigned char* rgb, unsigned int size);
+  static void YUV444ToGrey(unsigned char* yuv,
+         unsigned char* grey, unsigned int size);
+   
   static void YV12ToRGBa(unsigned char* yuv,
 			   unsigned char* rgba, unsigned int width, unsigned int height);
   static void YV12ToRGB(unsigned char* yuv,
