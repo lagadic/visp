@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.38 2007-09-07 08:24:51 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.39 2007-11-27 09:06:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1832,8 +1832,8 @@ vpMatrix::euclidianNorm () const
   double x ;
   for (int i=0;i<dsize;i++)
     { x = *(data +i); norm += x*x;  }
-
-  return norm;
+    
+  return sqrt(norm);
 }
 
 
