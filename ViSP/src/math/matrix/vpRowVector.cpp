@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRowVector.cpp,v 1.7 2007-11-27 08:59:28 asaunier Exp $
+ * $Id: vpRowVector.cpp,v 1.8 2007-11-27 16:33:46 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -143,7 +143,6 @@ vpRowVector vpRowVector::operator*(const vpMatrix &A) const
 
   vpRowVector c(A.getCols());
 
-
   if (colNum != A.getRows())
   {
     vpERROR_TRACE("vpMatrix mismatch in vpRowVector/matrix multiply") ;
@@ -156,7 +155,7 @@ vpRowVector vpRowVector::operator*(const vpMatrix &A) const
     {
       double bi = data[i] ; // optimization em 5/12/2006
       for (int j=0;j<A.getCols();j++) {
-        c[i]+=bi*A[i][j];
+        c[j]+=bi*A[i][j];
       }
     }
   }
