@@ -56,12 +56,13 @@ ViSP 2.4.x
         in your programs. Otherwise an exception 
         vpServoException::notKilledProperly is launched by 
         vpServo::~vpServo() destructor.
-    - vpMatrix : Change Infinity Norm formula to match with the standard 
-        matrix infinity norm definition.
+    - vpMatrix : Change Infinity Norm and Euclidian Norm formula to match with 
+	the standard matrix norms definitions.
         Change determinant formula for 3x3 matrices to match with 
         the standard determinant definition.
-    - vpImageConvert : Add IplImage to vpImage and vpImage to IplImage conversion tool.
-    - Testing and examples:
+    - vpImageConvert : Add IplImage to vpImage and vpImage to IplImage 
+	conversion tool.
+  - Testing and examples:
     - example/tracking/trackKltOpencv.cpp was added
     - example/light/ringLight.cpp was added
     - example/tools/parallelPort.cpp was added
@@ -69,6 +70,7 @@ ViSP 2.4.x
     - test/video-device/testVideoDevice.cpp was added
     - test/visual-feature/testFeature.cpp was added
     - test/image/testCreateSubImage.cpp was added
+    - test/camera/testCameraParametersConversion.cpp was added
     - Documentation improvement
     - vpRobust::MEstimator()
     - vpRobotAfma6: example usage of getPosition() was updated
