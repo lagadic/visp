@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRowVector.cpp,v 1.6 2007-08-20 06:52:58 asaunier Exp $
+ * $Id: vpRowVector.cpp,v 1.7 2007-11-27 08:59:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -164,8 +164,8 @@ vpRowVector vpRowVector::operator*(const vpMatrix &A) const
   return c ;
 }
 
-/*
-  \brief Transpose the column vector A
+/*!
+  \brief Transpose the row vector A
 
   A is defined inside the class
 
@@ -174,7 +174,7 @@ vpRowVector vpRowVector::operator*(const vpMatrix &A) const
 vpColVector vpRowVector::t() const
 {
   vpColVector tmp(colNum);
-  memcpy(tmp.data, data, rowNum*sizeof(double)) ;
+  memcpy(tmp.data, data, colNum*sizeof(double)) ;
   /*
   for (int i=0;i<colNum;i++)
       tmp[i] = (*this)[i];
