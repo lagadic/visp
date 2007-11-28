@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuLine2DCamVelocityDisplay.cpp,v 1.7 2007-09-28 14:47:08 asaunier Exp $
+ * $Id: servoSimuLine2DCamVelocityDisplay.cpp,v 1.8 2007-11-28 10:54:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -271,10 +271,12 @@ main(int argc, char ** argv)
   vpTRACE("\t we want to see a line on a line..\n") ;
 
   task.addFeature(l,ld) ;
+  vpDisplay::display(I) ;
   vpServoDisplay::display(task,cam,I) ;
+  vpDisplay::flush(I) ; 
 
   vpTRACE("\t set the gain") ;
-  task.setLambda(0.1) ;
+  task.setLambda(1) ;
 
 
   vpTRACE("Display task information " ) ;
@@ -287,7 +289,7 @@ main(int argc, char ** argv)
 
   int iter=0 ;
   vpTRACE("\t loop") ;
-  while(iter++<100)
+  while(iter++<200)
     {
       std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;
@@ -301,8 +303,8 @@ main(int argc, char ** argv)
       vpFeatureBuilder::create(l,line);
 
       if (opt_display) {
-	      vpDisplay::display(I) ;
-	      vpServoDisplay::display(task,cam,I) ;
+	vpDisplay::display(I) ;
+	vpServoDisplay::display(task,cam,I) ;
         vpDisplay::flush(I) ; 
       }
 

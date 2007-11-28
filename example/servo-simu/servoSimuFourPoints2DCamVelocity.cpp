@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuFourPoints2DCamVelocity.cpp,v 1.5 2007-06-27 14:44:06 fspindle Exp $
+ * $Id: servoSimuFourPoints2DCamVelocity.cpp,v 1.6 2007-11-28 10:54:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -168,7 +168,7 @@ main(int argc, char ** argv)
   std::cout << std::endl ;
 
 
-  vpTRACE("sets the initial camera location " ) ;
+  vpTRACE("sets the initial camera location with respect to the object" ) ;
   vpHomogeneousMatrix cMo ;
   cMo[0][3] = 0.1 ;
   cMo[1][3] = 0.2 ;
@@ -176,7 +176,7 @@ main(int argc, char ** argv)
   robot.setPosition(cMo) ;
 
 
-  vpTRACE("sets the point coordinates in the world frame "  ) ;
+  vpTRACE("sets the point coordinates in the object frame "  ) ;
   vpPoint point[4] ;
   point[0].setWorldCoordinates(-1,-1,0) ;
   point[1].setWorldCoordinates(1,-1,0) ;
@@ -223,7 +223,7 @@ main(int argc, char ** argv)
     task.addFeature(p[i],pd[i]) ;
 
   vpTRACE("\t set the gain") ;
-  task.setLambda(0.1) ;
+  task.setLambda(1) ;
 
 
   vpTRACE("Display task information " ) ;
@@ -231,7 +231,7 @@ main(int argc, char ** argv)
 
   int iter=0 ;
   vpTRACE("\t loop") ;
-  while(iter++<200)
+  while(iter++<1500)
     {
       std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;
