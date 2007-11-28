@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuCircle2DCamVelocityDisplay.cpp,v 1.7 2007-09-28 14:47:08 asaunier Exp $
+ * $Id: servoSimuCircle2DCamVelocityDisplay.cpp,v 1.8 2007-11-28 10:54:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -254,7 +254,7 @@ main(int argc, char ** argv)
   task.addFeature(p,pd) ;
 
   vpTRACE("\t set the gain") ;
-  task.setLambda(0.1) ;
+  task.setLambda(1) ;
 
 
   vpTRACE("Display task information " ) ;
@@ -262,7 +262,7 @@ main(int argc, char ** argv)
 
   int iter=0 ;
   vpTRACE("\t loop") ;
-  while(iter++<100)
+  while(iter++<200)
     {
       std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;

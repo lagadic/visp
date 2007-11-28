@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuFourPoints2DCamVelocityDisplay.cpp,v 1.7 2007-09-28 14:47:08 asaunier Exp $
+ * $Id: servoSimuFourPoints2DCamVelocityDisplay.cpp,v 1.8 2007-11-28 10:54:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -189,8 +189,8 @@ main(int argc, char ** argv)
 
   // open a display for the visualization
 
-  vpImage<unsigned char> Iint(300,300,200) ;
-  vpImage<unsigned char> Iext(300,300,200) ;
+  vpImage<unsigned char> Iint(300, 300, 0) ;
+  vpImage<unsigned char> Iext(300, 300, 0) ;
 
   if (opt_display) {
     displayInt.init(Iint,0,0, "Internal view") ;
@@ -200,8 +200,8 @@ main(int argc, char ** argv)
   vpProjectionDisplay externalview ;
 
   vpCameraParameters cam ;
-  double px, py ; px = py = 600 ;
-  double u0, v0 ; u0 = v0 = 150 ;
+  double px, py ; px = py = 500 ;
+  double u0, v0 ; u0 = 150, v0 = 160 ;
 
   cam.init(px,py,u0,v0);
 
@@ -211,12 +211,13 @@ main(int argc, char ** argv)
 
 
   std::cout << std::endl ;
-  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << "----------------------------------------------" << std::endl ;
   std::cout << " Test program for vpServo "  <<std::endl ;
-  std::cout << " Eye-in-hand task control,  articular velocity are computed" << std::endl ;
+  std::cout << " Eye-in-hand task control, articular velocity are computed" 
+	    << std::endl ;
   std::cout << " Simulation " << std::endl ;
   std::cout << " task : servo 4 points " << std::endl ;
-  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << "----------------------------------------------" << std::endl ;
   std::cout << std::endl ;
 
 
@@ -230,7 +231,7 @@ main(int argc, char ** argv)
 			     0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
 
-  vpTRACE("sets the point coordinates in the world frame "  ) ;
+  vpTRACE("sets the point coordinates in the object frame "  ) ;
   vpPoint point[4] ;
   point[0].setWorldCoordinates(-0.1,-0.1,0) ;
   point[1].setWorldCoordinates(0.1,-0.1,0) ;
@@ -251,7 +252,7 @@ main(int argc, char ** argv)
     vpFeatureBuilder::create(p[i],point[i])  ;  //retrieve x,y and Z of the vpPoint structure
 
 
-  vpTRACE("sets the desired position of the point ") ;
+  vpTRACE("sets the desired position of the feature point s*") ;
   vpFeaturePoint pd[4] ;
 
   pd[0].buildFrom(-0.1,-0.1,1) ;
@@ -281,7 +282,7 @@ main(int argc, char ** argv)
     task.addFeature(p[i],pd[i]) ;
 
   vpTRACE("\t set the gain") ;
-  task.setLambda(0.1) ;
+  task.setLambda(1) ;
 
 
   vpTRACE("Display task information " ) ;
@@ -289,7 +290,7 @@ main(int argc, char ** argv)
 
   int iter=0 ;
   vpTRACE("\t loop") ;
-  while(iter++<50)
+  while(iter++<200)
     {
       std::cout << "---------------------------------------------" << iter <<std::endl ;
       vpColVector v ;
@@ -303,10 +304,14 @@ main(int argc, char ** argv)
       robot.get_eJe(eJe) ;
       task.set_eJe(eJe) ;
 
-
-      if (iter==1) vpTRACE("\t\t get the robot position ") ;
       robot.getPosition(cMo) ;
-      if (iter==1) vpTRACE("\t\t new point position ") ;
+
+      if (iter==1) {
+	std::cout <<"Initial robot position with respect to the object frame:\n";
+	cMo.print();
+      }
+
+      if (iter==1) vpTRACE("\t new point position ") ;
       for (i = 0 ; i < 4 ; i++)
 	{
 	  point[i].track(cMo) ;
@@ -316,8 +321,12 @@ main(int argc, char ** argv)
 	}
 
       if (opt_display) {
+	      vpDisplay::display(Iint) ;
+	      vpDisplay::display(Iext) ;
 	      vpServoDisplay::display(task,cam,Iint) ;
 	      externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
+	      vpDisplay::flush(Iint);
+	      vpDisplay::flush(Iext);
       }
 
       if (iter==1) vpTRACE("\t\t compute the control law ") ;
@@ -339,6 +348,10 @@ main(int argc, char ** argv)
   vpTRACE("Display task information " ) ;
   task.print() ;
   task.kill();
+
+
+  std::cout <<"Final robot position with respect to the object frame:\n";
+  cMo.print();
 
   if (opt_display && opt_click_allowed) {
     // suppressed for automate test

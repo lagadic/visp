@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimu3DCamVelocity.cpp,v 1.5 2007-06-27 16:30:43 fspindle Exp $
+ * $Id: servoSimu3DCamVelocity.cpp,v 1.6 2007-11-28 10:54:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -192,7 +192,7 @@ main(int argc, char ** argv)
   task.addFeature(tu,tud) ;
 
   vpTRACE("\t set the gain") ;
-  task.setLambda(0.1) ;
+  task.setLambda(1) ;
 
 
   vpTRACE("Display task information " ) ;
