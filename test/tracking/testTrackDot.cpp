@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot.cpp,v 1.17 2007-11-07 14:49:37 asaunier Exp $
+ * $Id: testTrackDot.cpp,v 1.18 2007-11-28 11:27:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@
 #include <visp/vpIoTools.h>
 
 /*!
-  \example testTrackDot2.cpp
+  \example testTrackDot.cpp
 
   \brief   Test dot tracking on an image sequence by using vpDot.
 */
@@ -71,6 +71,8 @@
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param ipath: Input image path.
 
 */
@@ -111,7 +113,11 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath : Input image path.
+  \param click_allowed : Mouse click activation.
+  \param display : Display activation.
   \return false if the program has to be stopped, true otherwise.
 
 */

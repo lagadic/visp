@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.14 2007-10-04 12:39:51 asaunier Exp $
+ * $Id: testConversion.cpp,v 1.15 2007-11-28 11:27:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,6 +57,8 @@
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
@@ -102,6 +104,8 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
