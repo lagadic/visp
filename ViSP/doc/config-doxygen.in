@@ -446,6 +446,7 @@ WARN_LOGFILE           =  warning.log
 
 INPUT                  = "@VISP_SOURCE_DIR@/src" \
 		         "@VISP_SOURCE_DIR@/example" \
+		         "@VISP_SOURCE_DIR@/test" \
 		         "@VISP_SOURCE_DIR@/doc"
 
 
@@ -488,7 +489,8 @@ EXCLUDE_PATTERNS       =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example"
+EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example" \
+			 "@VISP_SOURCE_DIR@/test"
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
