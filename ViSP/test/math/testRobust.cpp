@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobust.cpp,v 1.3 2007-04-27 16:40:16 fspindle Exp $
+ * $Id: testRobust.cpp,v 1.4 2007-11-28 11:27:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,6 +55,9 @@
 
   Print the program options.
 
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ofilename : Output filename.
 */
 void usage(char *name, char *badparam, std::string ofilename)
 {
@@ -90,6 +93,8 @@ OPTIONS:                                              Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ofilename : Output filename.
   \return false if the program has to be stopped, true otherwise.
 

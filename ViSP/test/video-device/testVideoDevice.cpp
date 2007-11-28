@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testVideoDevice.cpp,v 1.6 2007-11-07 14:50:05 asaunier Exp $
+ * $Id: testVideoDevice.cpp,v 1.7 2007-11-28 11:27:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -140,15 +140,19 @@ OPTIONS:                                               Default\n\
 
   Set the program options.
 
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
   \param ipath: Input image path.
-  \param opath : Output image path.
-  \param user : Username.
+  \param dtype : Type of display.
+  \param list : To get the list of available display.
+  \param click_allowed : Mouse click activation.
+  \param display : Display activation.
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, char **argv,
 		std::string &ipath, vpDisplayType &dtype, bool &list,
-    bool &click_allowed, bool &display )
+		bool &click_allowed, bool &display )
 {
   char *optarg;
   int	c;
