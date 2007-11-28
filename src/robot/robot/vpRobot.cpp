@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobot.cpp,v 1.6 2007-06-18 15:01:05 fspindle Exp $
+ * $Id: vpRobot.cpp,v 1.7 2007-11-28 11:32:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,9 +100,13 @@ vpRobot::getPosition (vpRobot::ControlFrameType repere)
 /* --- VELOCITY CONTROL ---------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/*! Set the maximal velocity that can be sent to the robot (in
- *translation).
- */
+/*! 
+
+  Set the maximal translation velocity that can be sent to the robot.
+
+  \param maxVt : Maximum translation velocity expressed in m/s.
+
+*/
 void
 vpRobot::setMaxTranslationVelocity (const double maxVt)
 {
@@ -111,17 +115,21 @@ vpRobot::setMaxTranslationVelocity (const double maxVt)
 }
 
 /*!
-  Get the maximal velocity that can be sent to the robot (in
-  translation).
+  Get the maximal translation velocity that can be sent to the robot.
+
+  \return Maximum translation velocity expressed in m/s.
 */
 double
 vpRobot::getMaxTranslationVelocity (void) const
 {
   return this ->maxTranslationVelocity;
 }
-/*! Set the maximal velocity that can be sent to the robot (in
- * rotation).
- */
+/*! 
+
+  Set the maximal rotation velocity that can be sent to the robot.
+
+  \param maxVr : Maximum rotation velocity expressed in rad/s.
+*/
 
 void
 vpRobot::setMaxRotationVelocity (const double maxVr)
@@ -130,9 +138,12 @@ vpRobot::setMaxRotationVelocity (const double maxVr)
   return;
 }
 
-/*! Get the maximal velocity that can be sent to the robot (in
- * rotation).
- */
+/*! 
+
+  Get the maximal rotation velocity that can be sent to the robot.
+
+  \return Maximum rotation velocity expressed in rad/s.
+*/
 double
 vpRobot::getMaxRotationVelocity (void) const
 {
