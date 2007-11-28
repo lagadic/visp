@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.23 2007-11-22 14:09:27 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.24 2007-11-28 11:31:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -682,9 +682,10 @@ vpRobotAfma6::VD6_mrad_mmrad (const vpColVector & input, double * output)
   velocity control mode is set. For that, call setRobotState(
   vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
-  \warning Velocities could be saturated if one of them exceed the maximal
-  autorized speed (see vpRobot::maxTranslationVelocity and
-  vpRobot::maxRotationVelocity).
+  \warning Velocities could be saturated if one of them exceed the
+  maximal autorized speed (see vpRobot::maxTranslationVelocity and
+  vpRobot::maxRotationVelocity). To change these values use
+  setMaxTranslationVelocity() and setMaxRotationVelocity().
 
  */
 void
@@ -733,7 +734,7 @@ vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
 
   vpDEBUG_TRACE (12, "Velocity limitation.");
   bool norm = false; // Flag to indicate when velocities need to be nomalized
-  double max = this ->maxTranslationVelocity;
+  double max = getMaxTranslationVelocity();
   vpColVector v(6);
   for (int i = 0 ; i < 3; ++ i) {
     if (fabs (r_dot[i]) > max) {
@@ -746,7 +747,7 @@ vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
 
   // Translations velocities normalisation
   if (norm == true)  {
-    max =  this ->maxTranslationVelocity / max;
+    max =  getMaxTranslationVelocity() / max;
     for (int i = 0 ; i < 6; ++ i)
     { v [i] = r_dot[i]*max; }
   }
@@ -756,7 +757,7 @@ vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
     }
   }
 
-  max = this ->maxRotationVelocity;
+  max = getMaxRotationVelocity();
   for (int i = 3 ; i < 6; ++ i) {
     if (fabs (r_dot[i]) > max) {
       norm = true;
@@ -767,7 +768,7 @@ vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
   }
   // Rotations velocities normalisation
   if (norm == true) {
-    max =  this ->maxRotationVelocity / max;
+    max = getMaxRotationVelocity() / max;
     for (int i = 3 ; i < 6; ++ i)
     { v [i] = r_dot[i]*max; }
   }

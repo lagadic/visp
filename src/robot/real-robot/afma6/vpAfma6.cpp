@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.19 2007-11-22 14:07:47 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.20 2007-11-28 11:31:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1599,10 +1599,32 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
 }
 
 /*!
-  \brief get the current intrinsic camera parameters
-  \param cam : output : camera parameters to fill.
-  \param image_width : image width used to compute camera calibration.
-  \param image_height : image height used to compute camera calibration.
+  \brief Get the current intrinsic camera parameters obtained by calibration.
+
+  Camera parameters are read from
+  /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
+
+  \param cam : In output, camera parameters to fill.
+  \param image_width : Image width used to compute camera calibration.
+  \param image_height : Image height used to compute camera calibration.
+
+  The code below shows how to get the camera parameters of the camera
+  attached to the robot.
+
+  \code
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g; 
+  
+  // Acquire an image to update image structure
+  g.acquire(I) ;
+  
+  vpRobotAfma6 robot;
+  vpCameraParameters cam ;
+  // Get the intrinsic camera parameters depending on the image size
+  // Camera parameters are read from
+  // /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
+  robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+  \endcode
 */
 
 void vpAfma6::
@@ -1637,9 +1659,27 @@ getCameraParameters (vpCameraParameters &cam,
   }
 }
 /*!
-  \brief get the current intrinsic camera parameters
-  \param cam : output : camera parameters to fill.
-  \param I : image send by the current used camera.
+  \brief Get the current intrinsic camera parameters obtained by calibration.
+
+  Camera parameters are read from
+  /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
+
+  \param cam : In output, camera parameters to fill.
+  \param I : A B&W image send by the current camera in use.
+
+  \code
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g; 
+  
+  // Acquire an image to update image structure
+  g.acquire(I) ;
+  
+  vpRobotAfma6 robot;
+  vpCameraParameters cam ;
+  // Get the intrinsic camera parameters depending on the image size
+  robot.getCameraParameters (cam, I);
+  \endcode
+
 */
 void vpAfma6::
 getCameraParameters (vpCameraParameters &cam, const vpImage<unsigned char> &I)
@@ -1647,9 +1687,26 @@ getCameraParameters (vpCameraParameters &cam, const vpImage<unsigned char> &I)
   getCameraParameters(cam,I.getWidth(),I.getHeight());
 }
 /*!
-  \brief get the current intrinsic camera parameters
-  \param cam : output : camera parameters to fill.
-  \param I : image send by the current used camera.
+  \brief Get the current intrinsic camera parameters obtained by calibration.
+
+  Camera parameters are read from
+  /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
+
+  \param cam : In output, camera parameters to fill.
+  \param I : A color image send by the current camera in use.
+
+  \code
+  vpImage<vpRGBa> I;
+  vp1394TwoGrabber g; 
+  
+  // Acquire a color image to update image structure
+  g.acquire(I) ;
+  
+  vpRobotAfma6 robot;
+  vpCameraParameters cam ;
+  // Get the intrinsic camera parameters depending on the image size
+  robot.getCameraParameters (cam, I);
+  \endcode
 */
 void vpAfma6::
 getCameraParameters (vpCameraParameters &cam, const vpImage<vpRGBa> &I)
