@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.cpp,v 1.11 2007-06-06 12:51:11 fspindle Exp $
+ * $Id: vpRobotAfma4.cpp,v 1.12 2007-11-28 11:31:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -632,7 +632,8 @@ vpRobotAfma4::VD4_mrad_mmrad (const vpColVector & input, double * output)
 
   \warning Velocities could be saturated if one of them exceed the maximal
   autorized speed (see vpRobot::maxTranslationVelocity and
-  vpRobot::maxRotationVelocity).
+  vpRobot::maxRotationVelocity). To change these values use
+  setMaxTranslationVelocity() and setMaxRotationVelocity().
 
 */
 void
@@ -717,7 +718,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
 
   switch(frame) {
   case vpRobot::CAMERA_FRAME : {
-    double max = this ->maxRotationVelocity;
+    double max = getMaxRotationVelocity();
     for (int i = 0 ; i < 2; ++ i) // rx and ry of the camera
     {
       if (fabs (r_dot[i]) > max)
@@ -731,7 +732,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
 
     // Rotations velocities normalisation
     if (norm == true) {
-      max =  this ->maxRotationVelocity / max;
+      max = getMaxRotationVelocity() / max;
       for (int i = 0 ; i < 2; ++ i)
       { v [i] = r_dot[i]*max; }
     }
@@ -750,7 +751,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     break;
   }
   case vpRobot::ARTICULAR_FRAME : {
-    double max = this ->maxRotationVelocity;
+    double max = getMaxRotationVelocity();
     if (fabs (r_dot[0]) > max) // turret rotation
     {
       norm = true;
@@ -770,13 +771,13 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
     }
     // Rotations velocities normalisation
     if (norm == true) {
-      max =  this ->maxRotationVelocity / max;
+      max = getMaxRotationVelocity() / max;
       v [0] = r_dot[0]*max;
       v [2] = r_dot[2]*max;
       v [3] = r_dot[3]*max;
     }
 
-    max = this ->maxTranslationVelocity;
+    max = getMaxTranslationVelocity();
     if (fabs (r_dot[1]) > max)
     {
       norm = true;
