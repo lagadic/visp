@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobot.h,v 1.6 2006-05-30 08:40:45 fspindle Exp $
+ * $Id: vpRobot.h,v 1.7 2007-11-28 11:32:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -131,17 +131,9 @@ public:
 			   const vpColVector &vel) = 0 ;
 
 
-  //! Set the maximal velocity that can be sent to the robot (in
-  // translation).
   void setMaxTranslationVelocity (const double maxVt);
-  //! Get the maximal velocity that can be sent to the robot (in
-  // translation).
   double getMaxTranslationVelocity (void) const ;
-  //! Set the maximal velocity that can be sent to the robot (in
-  // rotation).
   void setMaxRotationVelocity (const double maxVr);
-  //! Get the maximal velocity that can be sent to the robot (in
-  // rotation).
   double getMaxRotationVelocity (void) const;
 
   //---------- POSITION -----------------------------
