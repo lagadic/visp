@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.11 2007-11-29 16:01:42 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.12 2007-11-29 16:38:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,6 +60,8 @@
 
 #if defined(VISP_HAVE_DC1394_2)
 
+//#define DC1394_2_NEW_API // svn version (>= svn463) of libdc1394
+
 /*!
   \class vp1394TwoGrabber
   \brief class for firewire ieee1394 video devices.
@@ -75,6 +77,42 @@
   This grabber allows single or multi camera acquisition. An example
   of a single camera acquisition is given in vp1394TwoGrabber(). An
   example of multi camera acquisition is available in setCamera().
+
+  - Here an example of single capture from the first camera found on the bus::
+  \code
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g;
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
+  while(1)
+    g.acquire(I);
+  \endcode
+
+  - Here an example of multi camera capture:
+  \code
+  unsigned int ncameras; // Number of cameras on the bus
+  vp1394TwoGrabber g;
+  g.getNumCameras(ncameras);
+  vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
+
+  // If the first camera supports vpVIDEO_MODE_640x480_YUV422 video mode
+  g.setCamera(0);
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_YUV422);
+
+  // If the second camera support 30 fps acquisition
+  g.setCamera(1);
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+
+  while(1) {
+    for (unsigned int camera=0; camera < ncameras; camera ++) {
+      // Acquire alternatively images from camera 0 and from camera 1
+      g.setCamera(camera);
+      g.acquire(I[camera]);
+    }
+  }
+  delete [] I;
+  \endcode
+
 
   \author  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 
@@ -240,6 +278,11 @@ private:
   bool *camInUse;
 #ifdef MODIF_ANTHONY
   dc1394video_frame_t *frame;
+#endif
+
+#ifdef DC1394_2_NEW_API
+  dc1394_t * d;
+  dc1394camera_list_t * list;
 #endif
 };
 
