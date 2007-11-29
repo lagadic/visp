@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.10 2007-09-21 16:34:59 asaunier Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.11 2007-11-29 16:01:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,12 +67,14 @@
   Needs libraw1394-1.2.0 and libdc1394-2.0.0 or more recent versions
   available on http://sourceforge.net.
 
-  This class was tested with Marlin F033C and F131B cameras.
+  This class was tested with Marlin F033C and F131B cameras and with
+  Point Grey Dragonfly 2 camera.
 
   \ingroup libdevice
 
-  This grabber allows single or multi camera acquisition. Examples are given in
-  vp1394TwoGrabber() and setCamera() documentations.
+  This grabber allows single or multi camera acquisition. An example
+  of a single camera acquisition is given in vp1394TwoGrabber(). An
+  example of multi camera acquisition is available in setCamera().
 
   \author  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 
