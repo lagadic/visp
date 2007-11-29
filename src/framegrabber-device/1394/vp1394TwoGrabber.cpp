@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.19 2007-11-26 10:28:47 asaunier Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.20 2007-11-29 16:38:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,7 +155,10 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   camera_id = 0;
   verbose = false;//true;
   camInUse = NULL;
-
+  cameras = NULL;
+#ifdef DC1394_2_NEW_API
+  d = NULL;
+#endif
   open();
 
   init = true;
@@ -979,6 +982,39 @@ vp1394TwoGrabber::open()
 {
 
   // Find cameras
+#ifdef DC1394_2_NEW_API
+  if (d != NULL)
+    dc1394_free (d);
+
+  d = dc1394_new ();
+  if (dc1394_enumerate_cameras (d, &list) != DC1394_SUCCESS) {
+    close();
+    vpERROR_TRACE("Failed to enumerate cameras\n");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "Failed to enumerate cameras") );
+  }
+  num_cameras = list->num;
+
+  if (cameras != NULL)
+    delete [] cameras;
+
+  cameras = new dc1394camera_t * [num_cameras];
+
+  for (int i=0; i < num_cameras; i ++) {
+    cameras[i] = dc1394_camera_new (d, list->ids[i].guid);
+    if (!cameras[i]) {
+      vpERROR_TRACE ("Failed to initialize camera with guid \"%ld\"\n",
+		     list->ids[i].guid);
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				     "Unable to initialize cameras") );
+    }
+
+  }
+
+  dc1394_free_camera_list (list);
+
+#else
   int err = dc1394_find_cameras(&cameras, &num_cameras);
   if (err!=DC1394_SUCCESS && err != DC1394_NO_CAMERA) {
     close();
@@ -990,6 +1026,7 @@ vp1394TwoGrabber::open()
 				   "Unable to look for cameras") );
 
   }
+#endif
   /*-----------------------------------------------------------------------
    *  get the camera nodes and describe them as we find them
    *-----------------------------------------------------------------------*/
@@ -1030,6 +1067,10 @@ vp1394TwoGrabber::open()
 #else
   dc1394_reset_bus(cameras[0]);
   for (unsigned i=0; i < num_cameras; i ++){
+#ifdef DC1394_2_NEW_API
+    dc1394_video_get_transmission(cameras[i], &status);
+    if (status != DC1394_OFF){
+#endif
     if (dc1394_video_set_transmission(cameras[i],DC1394_OFF)!=DC1394_SUCCESS)
       vpTRACE("Could not stop ISO transmission");
     else {
@@ -1040,8 +1081,14 @@ vp1394TwoGrabber::open()
 	if (status==DC1394_ON) {
 	  vpTRACE("ISO transmission refuses to stop");
 	}
+#ifndef DC1394_2_NEW_API
+	// No yet in the new API
 	cameras[i]->is_iso_on=status;
+#endif
       }
+#ifdef DC1394_2_NEW_API
+    }
+#endif
     }
     camInUse[i] = false;
   }
@@ -1085,12 +1132,29 @@ vp1394TwoGrabber::close()
 
         setTransmission(DC1394_OFF);
         setCapture(DC1394_OFF);
-
+#ifdef DC1394_2_NEW_API
+        dc1394_camera_free(camera);
+#else
         dc1394_free_camera(camera);
+#endif
       }
     }
+#ifndef DC1394_2_NEW_API
+    // Not yest usefull in the new API
     free(cameras);
+#endif
     if(camInUse != NULL) delete [] camInUse;
+  }
+
+#ifdef DC1394_2_NEW_API
+  if (d != NULL) {
+    dc1394_free (d);
+    d = NULL;
+  }
+#endif
+  if (cameras != NULL) {
+    delete [] cameras;
+    cameras = NULL;
   }
 
   camInUse = NULL;
@@ -1278,10 +1342,13 @@ vp1394TwoGrabber::dequeue()
   if (! camera->capture_is_set)
     setCapture(DC1394_ON);
 
+#ifdef DC1394_2_NEW_API
+    setTransmission(DC1394_ON);
+#else
   if (camera->is_iso_on == DC1394_OFF) {
     setTransmission(DC1394_ON);
   }
-
+#endif
   dc1394video_frame_t *frame = NULL;
 
   if (dc1394_capture_dequeue(camera, DC1394_CAPTURE_POLICY_WAIT, &frame)
