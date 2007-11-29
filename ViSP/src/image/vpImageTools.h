@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.9 2007-09-14 08:42:47 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.10 2007-11-29 15:07:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,8 +55,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImageException.h>
 #include <visp/vpImage.h>
-#include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
 #include <visp/vpRect.h>
+#include <visp/vpCameraParameters.h>
 
 /*!
   \class vpImageTools
@@ -88,7 +89,10 @@ public:
 			unsigned char newA,
 			unsigned char B,
 			unsigned char newB);
-
+  template<class Type>
+  static void undistort(const vpImage<Type> &I,
+                        const vpCameraParameters &cam,
+                        vpImage<Type> &newI);
 } ;
 
 /*!
@@ -204,6 +208,89 @@ void vpImageTools::binarise(vpImage<Type> &I,
 
 }
 
+/*!
+  Undistort an image
+  \param I : Input image to undistort.
+  \param cam : Parameters of the camera causing distortion.
+  \param newI : Undistorted output image.
+
+  \warning This function works only with Types authorizing "+,-,
+   multiplication by a scalar" operators.
+*/
+template<class Type>
+void vpImageTools::undistort(const vpImage<Type> &I,
+                             const vpCameraParameters &cam,
+                             vpImage<Type> &newI)
+{
+#if 0 //not optimized version
+   
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+  newI.resize(height,width);
+  double u0 = cam.get_u0_mp();
+  double v0 = cam.get_v0_mp();
+  double px = cam.get_px_mp();
+  double py = cam.get_py_mp();
+  double kd = cam.get_kd_mp();
+  for(unsigned int i = 0;i < I.getWidth(); i++){
+    for(unsigned int j = 0 ; j < I.getHeight(); j++){
+      double r2 = vpMath::sqr(((double)i - u0)/px) +
+                  vpMath::sqr(((double)j-v0)/py);
+      double u = ((double)i - u0)*(1.0+kd*r2) + u0;
+      double v = ((double)j - v0)*(1.0+kd*r2) + v0;
+      newI[i][j] = I.getPixelBI((float)v,(float)u);
+    }
+  }
+  
+#else //optimized version
+   unsigned int width = I.getWidth();
+   unsigned int height = I.getHeight();
+   if (width != newI.getWidth() || height != newI.getHeight())
+     newI.resize(height, width);
+   double u0 = cam.get_u0_mp();
+   double v0 = cam.get_v0_mp();
+   double px = cam.get_px_mp();
+   double py = cam.get_py_mp();
+   double kd = cam.get_kd_mp();
+   Type *dst = &newI[0][0];
+
+   for (unsigned int i = 0;i < height ; i++) {
+     for (unsigned int j = 0 ; j < width ; j++) {
+       //computation of u,v : corresponding pixel coordinates in I.
+       double  deltau  = (double) (j) - u0;
+       double  deltav  = (double) (i) - v0;
+       double fr2 = 1.0 + kd * (vpMath::sqr(deltau / px) + vpMath::sqr(deltav / py));
+       double u = deltau * fr2 + u0;
+       double v = deltav * fr2 + v0;
+
+       //computation of the bilinear interpolation
+
+       //declarations
+       int _u  = (int) (u);
+       int _v  = (int) (v);
+       if (u < 0.f) _u = -1;
+       if (v < 0.f) _v = -1;
+       double  _du  = (u) - (double) _u;
+       double  _dv  = (v) - (double) _v;
+       Type  _v01;
+       Type  _v23;
+       if ( (0 <= _u) && (_u < ((width) - 1)) &&
+            (0 <= _v) && (_v < ((height) - 1)) ) {
+         //process interpolation
+         const Type* _mp = &I[_v][_u];
+         _v01 = (Type)(_mp[0] + (_du * (_mp[1] - _mp[0])));
+         _mp += width;
+         _v23 = (Type)(_mp[0] + (_du * (_mp[1] - _mp[0])));
+         *dst = (Type)(_v01 + (_dv * (_v23 - _v01)));
+       }
+       else {
+         *dst = 0;
+       }
+       dst++;
+     }
+   }
+#endif  
+}
 
 #endif
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.19 2007-09-05 08:34:46 acherubi Exp $
+ * $Id: vpImage.h,v 1.20 2007-11-29 15:07:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -166,7 +166,7 @@ public:
   /*!
     Get a pixel value.
 
-    \param i, j: Pixel coordinates; i for the row position, j for the
+    \param i,j : Pixel coordinates; i for the row position, j for the
     column position.
 
     \return Pixel value for pixel (i, j)
@@ -249,7 +249,7 @@ public:
    * @param y y pixel location
    * @return pixel value
    */
-  Type getPixelBI(float x, float y);
+  Type getPixelBI(float x, float y) const;
 
   vpDisplay *display ;
   } ;
@@ -607,7 +607,7 @@ void vpImage<Type>::operator=(const Type &x)
 
 /*!
 
-  \brief Get the value of pixel at coordinates [i][j] using a bilinear
+  Get the value of pixel at coordinates [i][j] using a bilinear
   interpolation.
 
   \param i,j : There are float value
@@ -755,7 +755,7 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
  */
 
 template<class Type>
-Type vpImage<Type>::getPixelBI(float col0, float row0)
+Type vpImage<Type>::getPixelBI(float col0, float row0) const
 {
   unsigned int irow, icol;
   float rfrac, cfrac;
