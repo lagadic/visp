@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.11 2007-08-17 13:44:09 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.12 2007-11-29 15:42:09 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -45,6 +45,7 @@ SET (SOURCE
   testCreateSubImage.cpp
   testIoPGM.cpp
   testIoPPM.cpp
+  testUndistortImage.cpp
 )
 
 # rule for binary build
