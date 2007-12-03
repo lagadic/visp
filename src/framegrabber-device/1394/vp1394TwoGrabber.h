@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.12 2007-11-29 16:38:51 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.13 2007-12-03 10:45:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -219,7 +219,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 
   void setCamera(unsigned int camera);
   void getCamera(unsigned int &camera);
-  void getNumCameras(unsigned int &cameras);
+  void getNumCameras(unsigned int &ncameras);
 
   void setVideoMode(vp1394TwoVideoMode videomode);
   void getVideoMode(vp1394TwoVideoMode & videomode);
