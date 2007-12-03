@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.20 2007-11-29 16:38:51 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.21 2007-12-03 10:45:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -286,19 +286,19 @@ vp1394TwoGrabber::getCamera(unsigned int &camera_id)
 
   Return the number of cameras connected on the bus.
 
-  \param cameras : The number of cameras found on the bus.
+  \param ncameras : The number of cameras found on the bus.
 
 
 */
 void
-vp1394TwoGrabber::getNumCameras(unsigned int &cameras)
+vp1394TwoGrabber::getNumCameras(unsigned int &ncameras)
 {
   if (! num_cameras) {
     vpCTRACE << "No camera found..."<< std::endl;
-    cameras = 0;
+    ncameras = 0;
   }
 
-  cameras = num_cameras;
+  ncameras = num_cameras;
 }
 
 /*!
@@ -1016,6 +1016,7 @@ vp1394TwoGrabber::open()
 
 #else
   int err = dc1394_find_cameras(&cameras, &num_cameras);
+
   if (err!=DC1394_SUCCESS && err != DC1394_NO_CAMERA) {
     close();
     vpERROR_TRACE("Unable to look for cameras\n\n"
