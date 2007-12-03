@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testCameraParametersConversion.cpp,v 1.1 2007-11-26 16:55:29 asaunier Exp $
+ * $Id: testCameraParametersConversion.cpp,v 1.2 2007-12-03 10:01:02 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -120,22 +120,22 @@ main(int argc, char ** argv)
 
   vpCameraParameters cam;
   double px,py,u0,v0;
-  px = 1657.4686029633;
-  py = 1658.8721388153;
-  u0 = 322.1349473852;
-  v0 = 231.1254084448;
+  px = 1657.429131;
+  py = 1658.818598;
+  u0 = 322.2437833;
+  v0 = 230.8012737;
   double px_mp,py_mp,u0_mp,v0_mp,kd_mp;
-  px_mp = 1625.1177398878;
-  py_mp = 1625.5769959452;
-  u0_mp = 323.8980532066;
-  v0_mp = 245.4230738551;
-  kd_mp = -0.1721425305;
+  px_mp = 1624.824731;
+  py_mp = 1625.263641;
+  u0_mp = 324.0923411;
+  v0_mp = 245.2421388;
+  kd_mp = -0.1741532338;
   double px_pm,py_pm,u0_pm,v0_pm,kd_pm;
-  px_pm = 1625.2140904668;
-  py_pm = 1625.6703202345;
-  u0_pm = 323.8538688646;
-  v0_pm = 245.3074694831;
-  kd_pm = 0.1763145408;
+  px_pm = 1624.824731;
+  py_pm = 1625.263641;
+  u0_pm = 324.0923411;
+  v0_pm = 245.2421388;
+  kd_pm = 0.1771165148;
   
   cam.init(px,py,u0,v0);
   cam.init_mp(px_mp,py_mp,u0_mp,v0_mp,kd_mp);
@@ -148,17 +148,25 @@ main(int argc, char ** argv)
   vpPixelMeterConversion::convertPoint(cam,u1,v1,x1,y1,false);
   vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2,false);
   if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
-    vpTRACE("Error in convertPoint without distortion");
+    vpTRACE("Error in convertPoint without distortion:\n"
+        "u1 = %f, u2 = %f\n"
+        "v1 = %f, v2 = %f\n",u1,u2,v1,v2);
     return -1;
   }
-
+  vpTRACE("convertPoint without distortion :\n"
+      "u1 - u2 = %.20f\n"
+      "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
+  
   vpPixelMeterConversion::convertPoint(cam,u1,v1,x1,y1,true);
   vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2,true);
-  if(!vpMath::equal(u1,u2,0.2) || !vpMath::equal(v1,v2,0.2)){
+  if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
     vpTRACE("Error in convertPoint with distortion :\n"
             "u1 = %f, u2 = %f\n"
             "v1 = %f, v2 = %f\n",u1,u2,v1,v2);
     return -1;
   }
+  vpTRACE("convertPoint with distortion :\n"
+      "u1 - u2 = %.20f\n"
+      "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
   return 0;
 }
