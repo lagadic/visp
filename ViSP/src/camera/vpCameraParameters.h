@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.6 2007-11-22 08:57:11 asaunier Exp $
+ * $Id: vpCameraParameters.h,v 1.7 2007-12-04 09:56:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,14 +72,14 @@
   \f]
 
   if a model with distortion is considered, we got:
-    -for the meter based model
+  - for the meter based model
   \f[
   \left\{ \begin{array}{l}
   u = u_0 + p_x x +  \delta_u(x,y) \\
   v = v_0 + p_y y + \delta_v(x,y)
   \end{array}\right.
   \f]
-    -for the pixel based model
+  - for the pixel based model
   \f[
   \left\{ \begin{array}{l}
   u = u_0 + p_x x - \delta_u(u,v) \\
@@ -91,7 +91,7 @@
   due to imperfections in the lenses design and assembly there usually are some
   positional errors that have to be taken into account.
   \f$\delta_u\f$ and \f$\delta_v\f$  can be modeled as follow:
-    -for the meter based model
+  - for the meter based model
   \f[
   \left\{ \begin{array}{l}
   \delta_u(x,y) = K_d \;r^2\; p_x x  \\
@@ -100,7 +100,7 @@
   \end{array}\right.
   \f]
   with \f$ r^2 = x^2 + y^2\f$.
-    -for the pixel based model
+  - for the pixel based model
   \f[
   \left\{ \begin{array}{l}
   \delta_u(u,v) = K_d \;r^2\; \tilde u  \\
