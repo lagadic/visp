@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testUndistortImage.cpp,v 1.1 2007-11-29 15:09:45 asaunier Exp $
+ * $Id: testUndistortImage.cpp,v 1.2 2007-12-04 16:19:39 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,6 +43,7 @@
 #include <visp/vpIoTools.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpDebug.h>
+#include <visp/vpTime.h>
 
 /*!
   \example testCreateSubImage.cpp
@@ -238,12 +239,21 @@ int
   cam.init_mp(600,600,192,144,-0.17);
   // Read the input grey image from the disk
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+  
   std::cout << "Read image: " << filename << std::endl;
   vpImageIo::readPGM(I, filename) ;
-
-  // Create the undistorted image
   vpImageTools::undistort(I, cam, U);
+  
+  double begintime = vpTime::measureTimeMs();
+  for(unsigned int i=0;i<100;i++)
+  // Create the undistorted image
+    vpImageTools::undistort(I, cam, U);
 
+  double endtime = vpTime::measureTimeMs();
+  
+  std::cout<<"Time for 100 undistort (ms): "<< endtime - begintime <<std::endl;
+  
+   
   // Write the undistorted image on the disk
   filename = opath +  vpIoTools::path("/Klimt_undistorted.pgm");
   std::cout << "Write undistorted image: " << filename << std::endl;
