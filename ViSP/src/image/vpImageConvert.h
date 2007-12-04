@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.15 2007-11-26 08:37:56 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.16 2007-12-04 16:26:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,7 @@ public:
   static void convert(const vpImage<unsigned char> &src,
 		      vpImage<vpRGBa> & dest) ;
   static void convert(const vpImage<vpRGBa> &src,
-		      vpImage<unsigned char> & dest) ;
+		      vpImage<unsigned char> & dest) ; 
 #ifdef VISP_HAVE_OPENCV        
   static void convert(const IplImage* src,
           vpImage<vpRGBa> & dest) ;
@@ -80,8 +80,13 @@ public:
           IplImage* &dest) ;
   static void convert(const vpImage<unsigned char> & src,
           IplImage* &dest) ;
-
 #endif
+   
+  static void split(const vpImage<vpRGBa> &src,
+                    vpImage<unsigned char>* pR,
+                    vpImage<unsigned char>* pG,
+                    vpImage<unsigned char>* pB,
+                    vpImage<unsigned char>* pa = NULL) ;
   
   /*!
     Converts a yuv pixel value in rgb format.
@@ -193,6 +198,11 @@ private:
 
 private:
   static bool YCbCrLUTcomputed;
+  static int vpCrr[256];
+  static int vpCgb[256];
+  static int vpCgr[256];
+  static int vpCbb[256];
+  
 } ;
 
 #endif
