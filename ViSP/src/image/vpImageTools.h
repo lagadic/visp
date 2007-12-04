@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.10 2007-11-29 15:07:49 asaunier Exp $
+ * $Id: vpImageTools.h,v 1.11 2007-12-04 16:17:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -216,6 +216,10 @@ void vpImageTools::binarise(vpImage<Type> &I,
 
   \warning This function works only with Types authorizing "+,-,
    multiplication by a scalar" operators.
+
+  \warning This function is time consuming :
+    - On "Rhea"(Intel Core 2 Extreme X6800 2.93GHz, 2Go RAM)
+      or "Charon"(Intel Xeon 3 GHz, 2Go RAM) : ~16 ms for a 640x480 image.
 */
 template<class Type>
 void vpImageTools::undistort(const vpImage<Type> &I,
@@ -232,13 +236,13 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   double px = cam.get_px_mp();
   double py = cam.get_py_mp();
   double kd = cam.get_kd_mp();
-  for(unsigned int i = 0;i < I.getWidth(); i++){
-    for(unsigned int j = 0 ; j < I.getHeight(); j++){
-      double r2 = vpMath::sqr(((double)i - u0)/px) +
-                  vpMath::sqr(((double)j-v0)/py);
-      double u = ((double)i - u0)*(1.0+kd*r2) + u0;
-      double v = ((double)j - v0)*(1.0+kd*r2) + v0;
-      newI[i][j] = I.getPixelBI((float)v,(float)u);
+  for(unsigned int i = 0;i < I.getHeight(); i++){
+    for(unsigned int j = 0 ; j < I.getWidth(); j++){
+      double r2 = vpMath::sqr(((double)j - u0)/px) +
+      vpMath::sqr(((double)i-v0)/py);
+      double u = ((double)j - u0)*(1.0+kd*r2) + u0;
+      double v = ((double)i - v0)*(1.0+kd*r2) + v0;
+      newI[i][j] = I.getPixelBI((float)u,(float)v);
     }
   }
   
@@ -252,14 +256,15 @@ void vpImageTools::undistort(const vpImage<Type> &I,
    double px = cam.get_px_mp();
    double py = cam.get_py_mp();
    double kd = cam.get_kd_mp();
-   Type *dst = &newI[0][0];
-
+   Type *dst = newI.bitmap;
    for (unsigned int i = 0;i < height ; i++) {
      for (unsigned int j = 0 ; j < width ; j++) {
        //computation of u,v : corresponding pixel coordinates in I.
        double  deltau  = (double) (j) - u0;
        double  deltav  = (double) (i) - v0;
-       double fr2 = 1.0 + kd * (vpMath::sqr(deltau / px) + vpMath::sqr(deltav / py));
+       double invpx = 1.0/px;
+       double invpy = 1.0/py;
+       double fr2 = 1.0 + kd * (vpMath::sqr(deltau * invpx) + vpMath::sqr(deltav * invpy));
        double u = deltau * fr2 + u0;
        double v = deltav * fr2 + v0;
 
@@ -274,8 +279,8 @@ void vpImageTools::undistort(const vpImage<Type> &I,
        double  _dv  = (v) - (double) _v;
        Type  _v01;
        Type  _v23;
-       if ( (0 <= _u) && (_u < ((width) - 1)) &&
-            (0 <= _v) && (_v < ((height) - 1)) ) {
+       if ( (0 <= _u) && (0 <= _v) &&
+            (_u < ((width) - 1)) && (_v < ((height) - 1)) ) {
          //process interpolation
          const Type* _mp = &I[_v][_u];
          _v01 = (Type)(_mp[0] + (_du * (_mp[1] - _mp[0])));
