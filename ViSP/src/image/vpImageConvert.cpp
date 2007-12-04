@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.23 2007-12-04 16:26:36 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.24 2007-12-04 16:45:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -2419,6 +2419,37 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
   }
 }
 
+/*!
+
+  Split an image from vpRGBa format to monochrome channels.
+  \param src : source image.
+  \param pR : red channel. Set as NULL if not needed.
+  \param pG : green channel. Set as NULL if not needed.
+  \param pB : blue channel. Set as NULL if not needed.
+  \param pa : alpha channel. Set as NULL if not needed.
+
+  Example code using split :
+
+  \code
+    #include <visp/vpImage.h>
+    #include <visp/vpImageIo.h>
+    #include <visp/vpImageConvert.h>
+
+    // Load a color image from the disk
+    vpImageIo::readPPM(Ic,"/tmp/myimage.ppm") ;
+
+    //Only R and B Channels are desired.
+    vpImage<unsigned char> R,B;
+
+    //Split Ic color image (R and B will be resized in split function if needed)
+    
+    vpImageConvert::split(Ic, &R,NULL,&B,NULL);
+    
+    // Save the the R Channel.
+    vpImageIo::writePGM(R, "/tmp/myRChannel.pgm) ;
+      
+  \endcode
+*/
 void vpImageConvert::split(const vpImage<vpRGBa> &src,
                     vpImage<unsigned char>* pR,
                     vpImage<unsigned char>* pG,
