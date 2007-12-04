@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.22 2007-11-26 08:37:56 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.23 2007-12-04 16:26:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,10 +48,11 @@
 #include <visp/vpImageConvert.h>
 
 bool vpImageConvert::YCbCrLUTcomputed = false;
-static int vpCrr[256];
-static int vpCgb[256];
-static int vpCgr[256];
-static int vpCbb[256];
+int vpImageConvert::vpCrr[256];
+int vpImageConvert::vpCgb[256];
+int vpImageConvert::vpCgr[256];
+int vpImageConvert::vpCbb[256];
+
 
 /*!
 Convert a vpImage\<vpRGBa\> to a vpImage\<unsigned char\>
@@ -2155,10 +2156,10 @@ void vpImageConvert::computeYCbCrLUT()
     while (index-- ) {
 
       aux = index - 128;
-      vpCrr[index] = (int)( 364.6610 * aux) >> 8;
-      vpCgb[index] = (int)( -89.8779 * aux) >> 8;
-      vpCgr[index] = (int)(-185.8154 * aux) >> 8;
-      vpCbb[index] = (int)( 460.5724 * aux) >> 8;
+      vpImageConvert::vpCrr[index] = (int)( 364.6610 * aux) >> 8;
+      vpImageConvert::vpCgb[index] = (int)( -89.8779 * aux) >> 8;
+      vpImageConvert::vpCgr[index] = (int)(-185.8154 * aux) >> 8;
+      vpImageConvert::vpCbb[index] = (int)( 460.5724 * aux) >> 8;
     }
 
     YCbCrLUTcomputed = true;
@@ -2206,9 +2207,9 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
       crv = pt_ycbcr + 3;
     }
 
-    val_r = *pt_ycbcr + vpCrr[*crv];
-    val_g = *pt_ycbcr + vpCgb[*cbv] + vpCgr[*crv];
-    val_b = *pt_ycbcr + vpCbb[*cbv];
+    val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
+    val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
+    val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
@@ -2264,9 +2265,9 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
       crv = pt_ycbcr + 3;
     }
 
-    val_r = *pt_ycbcr + vpCrr[*crv];
-    val_g = *pt_ycbcr + vpCgb[*cbv] + vpCgr[*crv];
-    val_b = *pt_ycbcr + vpCbb[*cbv];
+    val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
+    val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
+    val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
@@ -2343,9 +2344,9 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
       cbv = pt_ycbcr + 3;
     }
 
-    val_r = *pt_ycbcr + vpCrr[*crv];
-    val_g = *pt_ycbcr + vpCgb[*cbv] + vpCgr[*crv];
-    val_b = *pt_ycbcr + vpCbb[*cbv];
+    val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
+    val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
+    val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
@@ -2400,9 +2401,9 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
       cbv = pt_ycbcr + 3;
     }
 
-    val_r = *pt_ycbcr + vpCrr[*crv];
-    val_g = *pt_ycbcr + vpCgb[*cbv] + vpCgr[*crv];
-    val_b = *pt_ycbcr + vpCbb[*cbv];
+    val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
+    val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
+    val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
@@ -2418,6 +2419,60 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
   }
 }
 
+void vpImageConvert::split(const vpImage<vpRGBa> &src,
+                    vpImage<unsigned char>* pR,
+                    vpImage<unsigned char>* pG,
+                    vpImage<unsigned char>* pB,
+                    vpImage<unsigned char>* pa)
+{
+  register size_t n = src.getNumberOfPixel();
+  unsigned int height = src.getHeight();
+  unsigned int width  = src.getWidth();  
+  unsigned char* input;
+  unsigned char* dst ;
+ 
+  vpImage<unsigned char>* tabChannel[4];
+ 
+/*  incrsrc[0] = 0; //init
+  incrsrc[1] = 0; //step after the first used channel
+  incrsrc[2] = 0; //step after the second used channel
+  incrsrc[3] = 0;
+  incrsrc[4] = 0;
+ */ 
+  tabChannel[0] = pR; 
+  tabChannel[1] = pG;
+  tabChannel[2] = pB;
+  tabChannel[3] = pa;
+   
+  register size_t    i;    /* ordre    */
+  for(unsigned int j = 0;j < 4;j++){
+    if(tabChannel[j]!=NULL){
+      if(tabChannel[j]->getHeight() != height ||
+         tabChannel[j]->getWidth() != width){
+        tabChannel[j]->resize(height,width);
+      }
+      dst = (unsigned char*)tabChannel[j]->bitmap;
+         
+      input = (unsigned char*)src.bitmap+j;
+      i = 0;   
+#if 1 //optimization
+      if (n >= 4) {    /* boucle deroulee lsize fois    */
+        n -= 3;
+        for (; i < n; i += 4) {
+          *dst = *input; input += 4; dst++;
+          *dst = *input; input += 4; dst++;
+          *dst = *input; input += 4; dst++;
+          *dst = *input; input += 4; dst++;
+        }
+        n += 3;
+      }
+#endif   
+      for (; i < n; i++) {
+        *dst = *input; input += 4; dst ++;
+      }         
+    }     
+  }   
+}
 
 /*
  * Local variables:
