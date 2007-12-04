@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testConversion.cpp,v 1.15 2007-11-28 11:27:44 fspindle Exp $
+ * $Id: testConversion.cpp,v 1.16 2007-12-04 16:47:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,6 +43,7 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpDebug.h>
+#include <visp/vpTime.h>
 /*!
   \example testConversion.cpp
 
@@ -390,7 +391,38 @@ main(int argc, char ** argv)
   if(image!=NULL) cvReleaseImage( &image );
 
 #endif
+  
+  ////////////////////////////////////
+// Split a vpImage<vpRGBa> to vpImage<unsigned char> 
+  ////////////////////////////////////
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
+  /* Read the color image */
+
+// Load a color image from the disk
+  vpCTRACE << "Load " << filename << std::endl;
+  vpImageIo::readPPM(Ic, filename) ;
+  vpImage<unsigned char> R,G,B,a;
+  vpImageConvert::split(Ic, &R,NULL,&B); 
+  double begintime  = vpTime::measureTimeMs();
+  for(int i=0; i<1000;i++){
+    vpImageConvert::split(Ic, &R,NULL,&B);
+  }
+  double endtime = vpTime::measureTimeMs();
+  
+  std::cout<<"Time for 1000 split (ms): "<< endtime - begintime <<std::endl;
+      
+  filename = opath +  vpIoTools::path("/Klimt_RChannel.pgm");
+  /* Save the the current image */
+  vpCTRACE << "Write " << filename << std::endl;
+  vpImageIo::writePGM(R, filename) ;
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+  filename = opath +  vpIoTools::path("/Klimt_BChannel.pgm");
+  /* Save the the current image */
+  vpCTRACE << "Write " << filename << std::endl;
+  vpImageIo::writePGM(B, filename) ;
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
 }
 

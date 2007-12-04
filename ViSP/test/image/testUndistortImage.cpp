@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testUndistortImage.cpp,v 1.2 2007-12-04 16:19:39 asaunier Exp $
+ * $Id: testUndistortImage.cpp,v 1.3 2007-12-04 16:47:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,7 +46,7 @@
 #include <visp/vpTime.h>
 
 /*!
-  \example testCreateSubImage.cpp
+  \example testUndistortImage.cpp
 
   \brief Create a sub-image from an image by cropping a rectangular area.
 
