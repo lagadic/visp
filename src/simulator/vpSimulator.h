@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.15 2007-11-19 15:54:55 asaunier Exp $
+ * $Id: vpSimulator.h,v 1.16 2007-12-05 17:05:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -209,12 +209,12 @@ public:
   //!   Add the representation of the absolute frame
   void addAbsoluteFrame (double zoom=1) ;
   //!   Add the representation of a frame
-  void addFrame (const vpHomogeneousMatrix &fMo, double zoom=1) ;
+  void addFrame (const vpHomogeneousMatrix &fMo, float zoom=1) ;
   //! set the size of the camera/frame
-  void setZoomFactor (const double zoom) ;
+  void setZoomFactor (const float zoom) ;
 
 protected:
-  double zoomFactor ;
+  float zoomFactor ;
   //---------------------------------------------------
   //  camera description
 protected:

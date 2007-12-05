@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateCircle2DCamVelocity.cpp,v 1.9 2007-11-09 13:38:18 asaunier Exp $
+ * $Id: simulateCircle2DCamVelocity.cpp,v 1.10 2007-12-05 17:05:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -377,7 +377,7 @@ main(int argc, char ** argv)
     simu.initExternalViewer(300, 300) ;
 
     vpTime::wait(1000) ;
-    simu.setZoomFactor(0.2) ;
+    simu.setZoomFactor(0.2f) ;
     simu.addAbsoluteFrame() ;
 
     // Load the cad model
