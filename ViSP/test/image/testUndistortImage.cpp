@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testUndistortImage.cpp,v 1.4 2007-12-05 09:38:23 fspindle Exp $
+ * $Id: testUndistortImage.cpp,v 1.5 2007-12-05 10:59:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,33 +72,33 @@
 void usage(char *name, char *badparam, std::string ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
-          Read an image from the disk, undistort it \n\
-          and save the undistorted image on the disk.\n\
-          (Klimt_undistorted.pgm).\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-i <input image path>] [-o <output image path>]\n\
-          [-h]\n                 \
+Read an image from the disk, undistort it \n\
+and save the undistorted image on the disk.\n\
+(Klimt_undistorted.pgm).\n\
+\n\
+SYNOPSIS\n\
+  %s [-i <input image path>] [-o <output image path>]\n\
+     [-h]\n\
           ", name);
 
   fprintf(stdout, "\n\
-      OPTIONS:                                               Default\n\
-          -i <input image path>                                %s\n\
-          Set image input path.\n\
-          From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
-          image.\n\
-          Setting the VISP_INPUT_IMAGE_PATH environment\n\
-          variable produces the same behaviour than using\n\
-          this option.\n\
-          \n\
-          -o <output image path>                               %s\n\
-          Set image output path.\n\
-          From this directory, creates the \"%s\"\n\
-          subdirectory depending on the username, where \n\
-          Klimt_undistorted.pgm output image is written.\n\
-          \n\
-          -h\n\
-          Print the help.\n\n",
+OPTIONS:                                               Default\n\
+  -i <input image path>                                %s\n\
+     Set image input path.\n\
+     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     image.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment\n\
+     variable produces the same behaviour than using\n\
+     this option.\n\
+     \n\
+  -o <output image path>                               %s\n\
+     Set image output path.\n\
+     From this directory, creates the \"%s\"\n\
+     subdirectory depending on the username, where \n\
+     Klimt_undistorted.pgm output image is written.\n\
+\n\
+  -h\n\
+     Print the help.\n\n",
           ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
@@ -242,17 +242,22 @@ int
   
   std::cout << "Read image: " << filename << std::endl;
   vpImageIo::readPGM(I, filename) ;
+
+  std::cout << "Undistortion in process... " << std::endl;
   vpImageTools::undistort(I, cam, U);
   
   double begintime = vpTime::measureTimeMs();
+
+  // For the test, to have a significant time measure we repeat the
+  // undistortion 100 times
   for(unsigned int i=0;i<100;i++)
-  // Create the undistorted image
+    // Create the undistorted image
     vpImageTools::undistort(I, cam, U);
 
   double endtime = vpTime::measureTimeMs();
   
-  std::cout<<"Time for 100 undistort (ms): "<< endtime - begintime <<std::endl;
-  
+  std::cout<<"Time for 100 undistortion (ms): "<< endtime - begintime 
+	   << std::endl;
    
   // Write the undistorted image on the disk
   filename = opath +  vpIoTools::path("/Klimt_undistorted.pgm");
