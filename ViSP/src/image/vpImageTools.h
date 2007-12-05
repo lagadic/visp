@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.11 2007-12-04 16:17:17 asaunier Exp $
+ * $Id: vpImageTools.h,v 1.12 2007-12-05 10:59:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -210,12 +210,18 @@ void vpImageTools::binarise(vpImage<Type> &I,
 
 /*!
   Undistort an image
+
   \param I : Input image to undistort.
+
   \param cam : Parameters of the camera causing distortion.
-  \param newI : Undistorted output image.
+
+  \param undistI : Undistorted output image. The size of this image
+  will be the same than the input image \e I. If the distorsion
+  parameter \f$K_d\f$ is null (see cam.get_kd_mp()), \e undistI is
+  just a copy of \e I.
 
   \warning This function works only with Types authorizing "+,-,
-   multiplication by a scalar" operators.
+  multiplication by a scalar" operators.
 
   \warning This function is time consuming :
     - On "Rhea"(Intel Core 2 Extreme X6800 2.93GHz, 2Go RAM)
@@ -224,76 +230,102 @@ void vpImageTools::binarise(vpImage<Type> &I,
 template<class Type>
 void vpImageTools::undistort(const vpImage<Type> &I,
                              const vpCameraParameters &cam,
-                             vpImage<Type> &newI)
+                             vpImage<Type> &undistI)
 {
 #if 0 //not optimized version
    
-  unsigned int width = I.getWidth();
-  unsigned int height = I.getHeight();
-  newI.resize(height,width);
+  int width = I.getWidth();
+  int height = I.getHeight();
+
+  undistI.resize(height,width);
+
   double u0 = cam.get_u0_mp();
   double v0 = cam.get_v0_mp();
   double px = cam.get_px_mp();
   double py = cam.get_py_mp();
   double kd = cam.get_kd_mp();
-  for(unsigned int i = 0;i < I.getHeight(); i++){
-    for(unsigned int j = 0 ; j < I.getWidth(); j++){
-      double r2 = vpMath::sqr(((double)j - u0)/px) +
-      vpMath::sqr(((double)i-v0)/py);
-      double u = ((double)j - u0)*(1.0+kd*r2) + u0;
-      double v = ((double)i - v0)*(1.0+kd*r2) + v0;
-      newI[i][j] = I.getPixelBI((float)u,(float)v);
+
+  if (kd == 0) {
+    // There is no need to undistort the image
+    undistI = I;
+    return;
+  }
+
+  for(int v = 0 ; v < width; v++){
+    for(int u = 0; u < height; u++){
+      double r2 = vpMath::sqr(((double)u - u0)/px) +
+	vpMath::sqr(((double)v-v0)/py);
+      double u_double = ((double)u - u0)*(1.0+kd*r2) + u0;
+      double v_double = ((double)v - v0)*(1.0+kd*r2) + v0;
+      undistI[v][u] = I.getPixelBI((float)u_double,(float)v_double);
     }
   }
   
 #else //optimized version
-   unsigned int width = I.getWidth();
-   unsigned int height = I.getHeight();
-   if (width != newI.getWidth() || height != newI.getHeight())
-     newI.resize(height, width);
-   double u0 = cam.get_u0_mp();
-   double v0 = cam.get_v0_mp();
-   double px = cam.get_px_mp();
-   double py = cam.get_py_mp();
-   double kd = cam.get_kd_mp();
-   Type *dst = newI.bitmap;
-   for (unsigned int i = 0;i < height ; i++) {
-     for (unsigned int j = 0 ; j < width ; j++) {
-       //computation of u,v : corresponding pixel coordinates in I.
-       double  deltau  = (double) (j) - u0;
-       double  deltav  = (double) (i) - v0;
-       double invpx = 1.0/px;
-       double invpy = 1.0/py;
-       double fr2 = 1.0 + kd * (vpMath::sqr(deltau * invpx) + vpMath::sqr(deltav * invpy));
-       double u = deltau * fr2 + u0;
-       double v = deltav * fr2 + v0;
+  int width = I.getWidth();
+  int height = I.getHeight();
 
-       //computation of the bilinear interpolation
+  undistI.resize(height, width);
 
-       //declarations
-       int _u  = (int) (u);
-       int _v  = (int) (v);
-       if (u < 0.f) _u = -1;
-       if (v < 0.f) _v = -1;
-       double  _du  = (u) - (double) _u;
-       double  _dv  = (v) - (double) _v;
-       Type  _v01;
-       Type  _v23;
-       if ( (0 <= _u) && (0 <= _v) &&
-            (_u < ((width) - 1)) && (_v < ((height) - 1)) ) {
-         //process interpolation
-         const Type* _mp = &I[_v][_u];
-         _v01 = (Type)(_mp[0] + (_du * (_mp[1] - _mp[0])));
-         _mp += width;
-         _v23 = (Type)(_mp[0] + (_du * (_mp[1] - _mp[0])));
-         *dst = (Type)(_v01 + (_dv * (_v23 - _v01)));
-       }
-       else {
-         *dst = 0;
-       }
-       dst++;
-     }
-   }
+  double u0 = cam.get_u0_mp();
+  double v0 = cam.get_v0_mp();
+  double px = cam.get_px_mp();
+  double py = cam.get_py_mp();
+  double kd = cam.get_kd_mp();
+
+  if (kd == 0) {
+    // There is no need to undistort the image
+    undistI = I;
+    return;
+  }
+
+  double invpx = 1.0/px;
+  double invpy = 1.0/py;
+
+  double kd_px2 = kd * invpx * invpx;
+  double kd_py2 = kd * invpy * invpy;
+  
+  Type *dst = undistI.bitmap;
+  for (double v = 0;v < height ; v++) {
+    double  deltav  = v - v0;
+    //double fr1 = 1.0 + kd * (vpMath::sqr(deltav * invpy));
+    double fr1 = 1.0 + kd_py2 * deltav * deltav;
+
+    for (double u = 0 ; u < width ; u++) {
+      //computation of u,v : corresponding pixel coordinates in I.
+      double  deltau  = u - u0;
+      //double fr2 = fr1 + kd * (vpMath::sqr(deltau * invpx));
+      double fr2 = fr1 + kd_px2 * deltau * deltau;
+
+      double u_double = deltau * fr2 + u0;
+      double v_double = deltav * fr2 + v0;
+
+      //computation of the bilinear interpolation
+
+      //declarations
+      int u_round  = (int) (u_double);
+      int v_round  = (int) (v_double);
+      if (u_round < 0.f) u_round = -1;
+      if (v_round < 0.f) v_round = -1;
+      double  du_double  = (u_double) - (double) u_round;
+      double  dv_double  = (v_double) - (double) v_round;
+      Type  v01;
+      Type  v23;
+      if ( (0 <= u_round) && (0 <= v_round) &&
+	   (u_round < ((width) - 1)) && (v_round < ((height) - 1)) ) {
+	//process interpolation
+	const Type* _mp = &I[v_round][u_round];
+	v01 = (Type)(_mp[0] + (du_double * (_mp[1] - _mp[0])));
+	_mp += width;
+	v23 = (Type)(_mp[0] + (du_double * (_mp[1] - _mp[0])));
+	*dst = (Type)(v01 + (dv_double * (v23 - v01)));
+      }
+      else {
+	*dst = 0;
+      }
+      dst++;
+    }
+  }
 #endif  
 }
 
