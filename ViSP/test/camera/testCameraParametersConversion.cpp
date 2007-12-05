@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testCameraParametersConversion.cpp,v 1.2 2007-12-03 10:01:02 asaunier Exp $
+ * $Id: testCameraParametersConversion.cpp,v 1.3 2007-12-05 09:38:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,7 +39,8 @@
 
 
 /*!
-  \file testPoint.cpp
+  \file testCameraParametersConversion.cpp
+
   Performs various tests on the vpPixelMeterConversion and
   vpPixelMeterConversion class.
 */
