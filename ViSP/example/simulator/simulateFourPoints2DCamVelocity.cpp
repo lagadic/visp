@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.8 2007-11-07 14:46:38 asaunier Exp $
+ * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.9 2007-12-05 17:05:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -375,7 +375,7 @@ main(int argc, char ** argv)
     simu.initExternalViewer(300, 300) ;
 
     vpTime::wait(1000) ;
-    simu.setZoomFactor(0.2) ;
+    simu.setZoomFactor(0.2f) ;
 
     // Load the cad model
     filename = ipath +  vpIoTools::path("/ViSP-images/iv/4points.iv");

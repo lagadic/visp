@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.20 2007-11-19 15:54:55 asaunier Exp $
+ * $Id: vpSimulator.cpp,v 1.21 2007-12-05 17:05:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,46 +81,46 @@
 // Positions of all of the vertices:
 //
 static float pyramidVertexes [5][3] =
-{
+  {
     {0.33f, 0.33f, 0.f},
     {-0.33f, 0.33f, 0.f},
     {-0.33f, -0.33f, 0.f},
     {0.33f, -0.33f, 0.f},
 
     {0.f, 0.f, -1.0f}
-};
+  };
 
 
 static int32_t pyramidFaces[] =
-{
-   0, 1, 2, 3, SO_END_FACE_INDEX, // top face
+  {
+    0, 1, 2, 3, SO_END_FACE_INDEX, // top face
 
-   0, 1, 4, SO_END_FACE_INDEX, // 4 faces about top
-   1, 2, 4, SO_END_FACE_INDEX,
-   2, 3, 4, SO_END_FACE_INDEX,
-   3, 0, 4, SO_END_FACE_INDEX,
-};
+    0, 1, 4, SO_END_FACE_INDEX, // 4 faces about top
+    1, 2, 4, SO_END_FACE_INDEX,
+    2, 3, 4, SO_END_FACE_INDEX,
+    3, 0, 4, SO_END_FACE_INDEX,
+  };
 
 
 // Routine to create a scene graph representing a dodecahedron
 SoSeparator *
 makePyramide()
 {
-   SoSeparator *result = new SoSeparator;
-   result->ref();
+  SoSeparator *result = new SoSeparator;
+  result->ref();
 
-   // Define coordinates for vertices
-   SoCoordinate3 *myCoords = new SoCoordinate3;
-   myCoords->point.setValues(0, 5, pyramidVertexes);
-   result->addChild(myCoords);
+  // Define coordinates for vertices
+  SoCoordinate3 *myCoords = new SoCoordinate3;
+  myCoords->point.setValues(0, 5, pyramidVertexes);
+  result->addChild(myCoords);
 
-   // Define the IndexedFaceSet, with indices into the vertices:
-   SoIndexedFaceSet *myFaceSet = new SoIndexedFaceSet;
-   myFaceSet->coordIndex.setValues (0, 21, (const int32_t*)pyramidFaces);
-   result->addChild (myFaceSet);
+  // Define the IndexedFaceSet, with indices into the vertices:
+  SoIndexedFaceSet *myFaceSet = new SoIndexedFaceSet;
+  myFaceSet->coordIndex.setValues (0, 21, (const int32_t*)pyramidFaces);
+  result->addChild (myFaceSet);
 
-   result->unrefNoDelete();
-   return result;
+  result->unrefNoDelete();
+  return result;
 }
 
 /* Cree une fleche composee d'un cylindre et d'un cone.
@@ -175,9 +175,9 @@ createArrow (float longueur,
 #define PROPORTION_FLECHE                         0.1
 
 SoSeparator *
-createFrame (double longueurFleche = LONGUEUR_FLECHE    ,
-	     double proportionFleche = PROPORTION_FLECHE,
-	     double radiusFleche = RAYON_FLECHE)
+createFrame (float longueurFleche = LONGUEUR_FLECHE    ,
+	     float proportionFleche = PROPORTION_FLECHE,
+	     float radiusFleche = RAYON_FLECHE)
 {
   vpDEBUG_TRACE (15, "# Entree.");
 
@@ -229,7 +229,7 @@ createFrame (double longueurFleche = LONGUEUR_FLECHE    ,
 }
 
 SoSeparator *
-createCameraObject (const double zoomFactor = 1.0)
+createCameraObject (const float zoomFactor = 1.0)
 {
   vpDEBUG_TRACE (15, "# Entree.");
 
@@ -242,8 +242,8 @@ createCameraObject (const double zoomFactor = 1.0)
 
   SoScale *taille = new SoScale;
   {
-      double zoom = 0.1 * zoomFactor;
-      taille->scaleFactor.setValue (zoom, zoom, zoom);
+    float zoom = 0.1f * zoomFactor;
+    taille->scaleFactor.setValue (zoom, zoom, zoom);
   }
 
   SoMaterial *couleurBlanc = new SoMaterial;
@@ -264,10 +264,10 @@ createCameraObject (const double zoomFactor = 1.0)
   cam->addChild(myMaterial);
   cam->addChild(taille);
   cam->addChild(cone);
-  cam->addChild(createFrame(2.0,0.1,0.01));
+  cam->addChild(createFrame(2.0f,0.1f,0.01f));
 
   //  cam->unref() ;
- vpDEBUG_TRACE (15, "# Sortie.");
+  vpDEBUG_TRACE (15, "# Sortie.");
   return cam;
 }
 
@@ -302,8 +302,8 @@ vpSimulator::kill()
   if (externalView !=NULL) delete externalView ;
   if (bufferView!=NULL) delete[] bufferView ;
   if (image_background != NULL) {
-	  free (image_background);
-	  image_background = NULL;
+    free (image_background);
+    image_background = NULL;
   }
 
 }
@@ -373,9 +373,9 @@ vpSimulator::initSceneGraph()
   if (realtime==NULL)
   {
 
-   SoDB::enableRealTimeSensor(FALSE);
+    SoDB::enableRealTimeSensor(FALSE);
     SoSceneManager::enableRealTimeUpdate(FALSE);
-     realtime = (SbTime *) SoDB::getGlobalField("realTime");
+    realtime = (SbTime *) SoDB::getGlobalField("realTime");
     realtime->setValue(0.0);
 
   }
@@ -392,9 +392,9 @@ vpSimulator::initSceneGraph()
   \param zoom: facteur de grossissement des objets. Par default, 1.
 */
 void
-vpSimulator::setZoomFactor (const double zoom)
+vpSimulator::setZoomFactor (const float zoom)
 {
-    zoomFactor = zoom;
+  zoomFactor = zoom;
 }
 
 
@@ -474,9 +474,9 @@ vpSimulator::setInternalCameraParameters(vpCameraParameters &_cam)
   internalCameraParameters = _cam ;
 
 
-  double px = _cam.get_px();
-  double py = _cam.get_py();
-  double v  = internal_height/(2*py);
+  float px = (float)_cam.get_px();
+  float py = (float)_cam.get_py();
+  float v  = internal_height/(2.f*py);
 
   internalCamera->ref() ;
   internalCamera->heightAngle = 2*atan(v);
@@ -493,9 +493,9 @@ vpSimulator::setExternalCameraParameters(vpCameraParameters &_cam)
   SoPerspectiveCamera *camera ;
   camera  = (SoPerspectiveCamera *)this->externalView->getCamera() ;
 
-  double px = _cam.get_px();
-  double py = _cam.get_py();
-  double v  = external_height/(2*py);
+  float px = (float)_cam.get_px();
+  float py = (float)_cam.get_py();
+  float v  = external_height/(2*py);
 
   camera->ref() ;
   camera->heightAngle = 2*atan(v);
@@ -557,7 +557,7 @@ vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
   rotX.setRotate (SbRotation (SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
   for(int i=0;i<4;i++)
     for(int j=0;j<4;j++)
-      matrix[j][i]=cMf[i][j];
+      matrix[j][i]=(float)cMf[i][j];
 
   matrix= matrix.inverse();
   matrix.multLeft (rotX);
@@ -581,7 +581,7 @@ vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
 
 /*!  this function MUST NOT be called from a thread where the vpSimulator and
   its mainloop are not
- */
+*/
 void
 vpSimulator::redraw()
 {
@@ -606,9 +606,9 @@ vpSimulator::redraw()
 static void
 timerSensorCallback(void *data , SoSensor *)
 {
-    vpSimulator * simulator = (vpSimulator *)data ;
+  vpSimulator * simulator = (vpSimulator *)data ;
 
-    simulator->redraw() ;
+  simulator->redraw() ;
 
 }
 
@@ -662,7 +662,7 @@ vpSimulator::load(const char *file_name)
 void
 vpSimulator::save(const char *name,bool binary)
 {
- // get a pointer to the object "name"
+  // get a pointer to the object "name"
   SoOutput output ;
   output.openFile(name) ;
 
@@ -680,7 +680,7 @@ vpSimulator::save(const char *name,bool binary)
   \param zoom : Zoom factor.
 */
 void
-vpSimulator::addFrame (const vpHomogeneousMatrix &fMo, double zoom)
+vpSimulator::addFrame (const vpHomogeneousMatrix &fMo, float zoom)
 {
 
   SoScale *taille = new SoScale;
@@ -767,7 +767,7 @@ vpSimulator::addObject(SoSeparator * newObject, const vpHomogeneousMatrix &fMo)
   \param object : pointer toward the new object
   \param fMo    : position of the object wrt the reference frame
   \param root : pointer toward the subscene graph
- */
+*/
 
 void
 vpSimulator::addObject(SoSeparator * object,
@@ -779,9 +779,9 @@ vpSimulator::addObject(SoSeparator * object,
   for (int i=0 ; i <4 ;i++)
     for (int j=0 ; j < 4 ; j++)
       if (i==j)
-	{
-	  if  (fabs(fMo[i][j] -1) > 1e-6)  identity=false ;
-	}
+      {
+	if  (fabs(fMo[i][j] -1) > 1e-6)  identity=false ;
+      }
       else
 	if (fabs(fMo[i][j]) > 1e-6)  identity=false ;
 
@@ -796,7 +796,7 @@ vpSimulator::addObject(SoSeparator * object,
     SbRotation rotation;
     for(int i=0;i<4;i++)
       for(int j=0;j<4;j++)
-	matrix[j][i]=fMo[i][j];
+	matrix[j][i]=(float)fMo[i][j];
 
     //  matrix= matrix.inverse();
     rotation.setValue(matrix);
@@ -903,15 +903,15 @@ vpSimulator::offScreenRendering(viewEnum view, int * width, int * height)
 
 
     /*
-    if (view==vpSimulator::INTERNAL)
-    {
+      if (view==vpSimulator::INTERNAL)
+      {
       //Recopie du buffer contenant l'image, dans bufferView
       int length = 3*size [0]*size[1];
       delete [] bufferView;
       bufferView = new unsigned char [length];
       for(int i=0; i<length; i++)
       {
-	bufferView[i] = this ->offScreenRenderer->getBuffer()[i];
+      bufferView[i] = this ->offScreenRenderer->getBuffer()[i];
       }
       }*/
 
@@ -941,8 +941,8 @@ vpSimulator::write (const char * fileName)
   while (get==0) {  vpTRACE("%d ",get); }
   get =2 ;
   /*  FILE *fp = fopen(fileName, "w");
-  fprintf(fp,"P6 \n %d %d \n 255",internal_width,internal_height) ;
-  fwrite(bufferView, sizeof(unsigned char), internal_width*internal_height*3, fp) ;*/
+      fprintf(fp,"P6 \n %d %d \n 255",internal_width,internal_height) ;
+      fwrite(bufferView, sizeof(unsigned char), internal_width*internal_height*3, fp) ;*/
   vpImage<vpRGBa> I(internal_height,internal_width) ;
 
 
@@ -959,7 +959,7 @@ vpSimulator::write (const char * fileName)
       I[i][j].B =b ;
     }
   vpImageIo::writePPM(I,fileName) ;
-    // fclose (fp);
+  // fclose (fp);
   get =1 ;
 }
 
