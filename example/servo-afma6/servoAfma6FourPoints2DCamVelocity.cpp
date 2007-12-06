@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.9 2007-11-23 13:24:52 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.10 2007-12-06 17:23:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -141,16 +141,44 @@ main()
       vpTRACE("sets the current position of the visual feature ") ;
       vpFeaturePoint p[4] ;
       for (i=0 ; i < 4 ; i++)
-	vpFeatureBuilder::create(p[i],cam, dot[i])  ;  //retrieve x,y  of the vpFeaturePoint structure
+	vpFeatureBuilder::create(p[i], cam, dot[i])  ;  //retrieve x,y  of the vpFeaturePoint structure
 
-      vpTRACE("sets the desired position of the visual feature ") ;
+      // Set the position of the square target in a frame which origin is
+      // centered in the middle of the square
+      vpPoint point[4] ;
+#define L 0.05 // to deal with a 10cm by 10cm square
+      point[0].setWorldCoordinates(-L, -L, 0) ;
+      point[1].setWorldCoordinates( L, -L, 0) ;
+      point[2].setWorldCoordinates( L,  L, 0) ;
+      point[3].setWorldCoordinates(-L,  L, 0) ;
+
+      // Initialise a desired pose
+      vpHomogeneousMatrix cMo;
+      vpTranslationVector cto(0, 0, 0.7); // tz = 1 meter
+      // vpRxyzVector cro(vpMath::rad(10), vpMath::rad(5), vpMath::rad(-5)); // No rotations
+      vpRxyzVector cro(vpMath::rad(-10), vpMath::rad(5), vpMath::rad(-5)); // No rotations
+      vpRotationMatrix cRo(cro); // Build the rotation matrix
+      cMo.buildFrom(cRo, cto); // Build the homogeneous matrix
+
+      vpTRACE("sets the desired position of the 2D visual feature ");
       vpFeaturePoint pd[4] ;
-#define L 0.105
-#define D 0.5
-      pd[0].buildFrom(-L,-L,D) ;
-      pd[1].buildFrom(L,-L,D) ;
-      pd[2].buildFrom(L,L,D) ;
-      pd[3].buildFrom(-L,L,D) ;
+      // Compute the desired position of the features from the desired pose
+      for (int i=0; i < 4; i ++) {
+	vpColVector cP, p ;
+	point[i].changeFrame(cMo, cP) ;
+	point[i].projection(cP, p) ;
+
+	pd[i].set_x(p[0]) ;
+	pd[i].set_y(p[1]) ;
+	pd[i].set_Z(cP[2]);
+      }
+
+      if (0) {
+	// s* = s
+      for (i=0 ; i < 4 ; i++)
+	vpFeatureBuilder::create(pd[i], cam, dot[i])  ;  //retrieve x,y  of the v
+
+      }
 
       vpTRACE("define the task") ;
       vpTRACE("\t we want an eye-in-hand control law") ;
@@ -201,12 +229,19 @@ main()
 	  v = task.computeControlLaw() ;
 
 	  vpServoDisplay::display(task,cam,I) ;
-	  std::cout << v.t() ;
-	  robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+	  //	  v = 0;
+	  std::cout << "Velocity: " <<v.t() ;
+
+	   robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
 	  vpDisplay::flush(I) ;
 
 	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+
+	  for (int i=0; i < 4; i++)
+	    std::cout << "Dot[" << i << "] = "
+		      << dot[i].get_u() << " " << dot[i].get_v() << std::endl;
+	  iter ++;
 	}
 
       vpTRACE("Display task information " ) ;
