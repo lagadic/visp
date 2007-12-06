@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.cpp,v 1.13 2007-09-10 16:10:54 asaunier Exp $
+ * $Id: vpTime.cpp,v 1.14 2007-12-06 17:22:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,10 +60,17 @@
 #  include <winbase.h>
 #endif
 
-double vpTime::minTimeForUsleepCall = 20; /*! Threshold to activate usleep() in
-					    waiting methods. This threshold is
-					    needed, because usleep() is not
-					    accurate on many machines. */
+double vpTime::minTimeForUsleepCall = 4; /*! This time is in
+					    milli-seconds. Threshold to
+					    activate usleep() in waiting
+					    methods (see wait()). This
+					    threshold is needed, because
+					    usleep() is not accurate on many
+					    machines.  Call sleep() functions
+					    during the time to wait minus
+					    vpTime::minTimeForUsleepCall. The
+					    rest of the time to wait is managed
+					    by a while loop. */
 
 
 /*!
