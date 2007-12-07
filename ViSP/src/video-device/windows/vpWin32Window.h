@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.h,v 1.7 2007-06-05 13:49:02 asaunier Exp $
+ * $Id: vpWin32Window.h,v 1.8 2007-12-07 16:41:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Bruno Renier
+ * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -77,17 +78,18 @@ class VISP_EXPORT vpWin32Window
 
   //! Handle for the getClick semaphore
   HANDLE semaClick;
-
-  //! If there is a getClick demand
-  bool waitForClick;
-  //! If there is a getClickUp demand
-  bool waitForClickUp;
+  //! Handle for the getClickUp semaphore
+  HANDLE semaClickUp;
+  
   //! X coordinate of the click
   int clickX;
+  int clickXUp; 
   //! Y coordinate of the click
   int clickY;
+  int clickYUp; 
   //! Button used for the click
   vpMouseButton::vpMouseButtonType clickButton;
+  vpMouseButton::vpMouseButtonType clickButtonUp;
 
   //! True if the window's class has already been registered
   static bool registered;

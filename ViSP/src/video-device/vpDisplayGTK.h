@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.13 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpDisplayGTK.h,v 1.14 2007-12-07 16:41:48 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,17 +77,16 @@ class VISP_EXPORT vpDisplayGTK: public vpDisplay
 private:
   //! true if GTK display is ready to use
   bool GTKinitialized ;
-
   GdkWindow *window;
   GdkPixmap *background;
-  GdkGC *gc;
+  GdkGC *gc; 
   GdkColor blue,red,yellow,green,cyan,magenta,goldenrod,coral,orange,white, black;
   GdkFont *Police1,*Police2;
   guchar  *vectgtk;
   int windowXPosition ; int  windowYPosition ;
   GdkColor **col ;
   int ncol, nrow ;
-
+ 
 protected:
   void setWindowPosition(int /* winx */, int /* winy */) { ; }
   inline  unsigned int getWidth() const  { return width ; }
@@ -156,12 +155,14 @@ protected:
   void displayCharString(unsigned int i,unsigned int j,char *s,
 			 vpColor::vpColorType c=vpColor::green) ;
 
-  bool  getClick(unsigned int& i, unsigned int& j) ;
-  bool  getClick(unsigned int& i, unsigned int& j,
-		 vpMouseButton::vpMouseButtonType& button) ;
-  void  getClick() ;
-  bool  getClickUp(unsigned int& i, unsigned int& j,
-		   vpMouseButton::vpMouseButtonType& button) ;
+  bool getClick(unsigned int& i, unsigned int& j, bool blocking=true) ;
+  bool getClick(unsigned int& i, unsigned int& j,
+		 vpMouseButton::vpMouseButtonType& button,
+		bool blocking=true) ;
+  bool getClick(bool blocking=true) ;
+  bool getClickUp(unsigned int& i, unsigned int& j,
+		  vpMouseButton::vpMouseButtonType& button, 
+		  bool blocking=true) ;
 
 public:
 
@@ -171,6 +172,7 @@ public:
 
 
   void   getImage(vpImage<vpRGBa> &I) ;
+
 } ;
 
 #endif

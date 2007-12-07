@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.35 2007-09-28 14:10:06 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.36 2007-12-07 16:41:48 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -116,7 +116,7 @@ vpDisplayGTK::vpDisplayGTK(int _x, int _y, char *_title)
   col = NULL;
   title = NULL ;
   window = NULL ;
-
+  
   if (_title != NULL)
     {
       title = new char[strlen(_title) + 1] ; // Modif Fabien le 19/04/02
@@ -243,8 +243,7 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
     GDK_BUTTON_PRESS_MASK |
     GDK_BUTTON_RELEASE_MASK ;
 
-  int attributes_mask = GDK_WA_X | GDK_WA_Y;
-
+  int attributes_mask = GDK_WA_X | GDK_WA_Y ;
   /* Create the window*/
   window = gdk_window_new(NULL, &attr, attributes_mask);
   gdk_window_show(window);
@@ -348,9 +347,6 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 			  I.bitmap,
 			  width);
 
-      /* Permet de fermer la fenêtre si besoin (cas des séquences d'images) */
-      while (g_main_iteration(FALSE));
-
       /* Le pixmap background devient le fond de la zone de dessin */
       gdk_window_set_back_pixmap(window, background, FALSE);
 
@@ -390,7 +386,7 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 			    4* width);
 
       /* Permet de fermer la fenêtre si besoin (cas des séquences d'images) */
-      while (g_main_iteration(FALSE));
+      //while (g_main_iteration(FALSE));
 
       /* Le pixmap background devient le fond de la zone de dessin */
       gdk_window_set_back_pixmap(window, background, FALSE);
@@ -497,8 +493,7 @@ void vpDisplayGTK::closeDisplay()
       gdk_window_destroy(window);
       window = NULL;
     }
-
-  GTKinitialized= false;
+    GTKinitialized= false;
 }
 
 
@@ -869,212 +864,197 @@ void vpDisplayGTK::displayCharString(unsigned int i, unsigned int j,
 
 /*!
   Wait for a click from one of the mouse button.
-*/
-void
-vpDisplayGTK::getClick()
-{
 
-  if (GTKinitialized)
-    {
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
 
-      flushDisplay() ;
-      bool end = false ;
-      GdkEvent *ev ;
-
-      while (!end)
-	{
-	  ev = gdk_event_get() ;
-	  if (ev)
-	    {
-	      switch(ev->type)
-		{
-		case GDK_BUTTON_PRESS :
-		  if(ev->any.window == window)
-		    end = true ;
-		  break ;
-		default :;
-		}
-	    }
-	}
-      gdk_event_free(ev) ;
-      //   return(OK);
-    }
-  else
-    {
-      vpERROR_TRACE("GTK not initialized " ) ;
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-			       "GTK not initialized")) ;
-    }
-}
-
-/*!
-  Wait for and get the position of the click. 
-
-  \param i,j : Position of the clicked pixel (row,colum indexes)
-
-  \return Always true
-
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 */
 bool
-vpDisplayGTK::getClick(unsigned int& i, unsigned int& j)
+vpDisplayGTK::getClick(bool blocking)
 {
-  bool end = false ;
-
-  if (GTKinitialized)
-    {
-
-      flushDisplay() ;
-      GdkEvent *ev ;
-
-      while (!end)
-	{
-	  ev = gdk_event_get() ;
-	  if (ev)
-	    {
-	      switch(ev->type)
-		{
-		case GDK_BUTTON_PRESS :
-		  if(ev->any.window == window)
-		    {
-		      i = (unsigned int)((GdkEventButton *)ev)->y ;
-		      j = (unsigned int)((GdkEventButton *)ev)->x ;
-		      end = true ;
-		    }
-		  break ;
-		default :;
-		}
-	    }
-	}
-      gdk_event_free(ev) ;
-    }
-  else
-    {
-      vpERROR_TRACE("GTK not initialized " ) ;
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-			       "GTK not initialized")) ;
-    }
-  return end ;
-}
-
-
-/*!
-  Wait for and get the position of the click. The button used
-  to click is also set.
-
-  \param i,j : Position of the clicked pixel (row,colum indexes)
-  \param button : Button used to click.
-
-  \return Always true.
-
-*/
-bool
-vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
-		       vpMouseButton::vpMouseButtonType& button)
-{
-  bool end = false ;
+  bool ret = false;
 
   if (GTKinitialized) {
 
-    flushDisplay() ;
-    GdkEvent *ev ;
-
-    while (!end) {
-      ev = gdk_event_get() ;
-      if (ev) {
-	switch(ev->type) {
-	case GDK_BUTTON_PRESS :
-	  if(ev->any.window == window){
-
-	    i = (unsigned int)((GdkEventButton *)ev)->y ;
-	    j = (unsigned int)((GdkEventButton *)ev)->x ;
-
-	    switch((int)((GdkEventButton *)ev)->button) {
-	    case 1: button = vpMouseButton::button1; break;
-	    case 2: button = vpMouseButton::button2; break;
-	    case 3: button = vpMouseButton::button3; break;
-	    }
-
-	    end = true ;
-	  }
-	  break ;
-	default :;
-	}
+//    flushDisplay() ;
+    
+    GdkEvent *ev = NULL;
+    do {
+      while((ev = gdk_event_get())!=NULL){
+        if (ev->any.window == window && ev->type == GDK_BUTTON_PRESS){
+          ret = true ;
+          gdk_event_free(ev) ;
+        }
       }
-    }
-    gdk_event_free(ev) ;
+      if(blocking) vpTime::wait(10);
+    } while ( ret == false && blocking == true);
+  }
+  else {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+  return ret;
+}
+
+/*!
+  Wait for a mouse button click and get the position of the clicked pixel.
+
+  \param i,j : Position of the clicked pixel (row, colum indexes).
+
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
+
+*/
+bool
+vpDisplayGTK::getClick(unsigned int& i, unsigned int& j, bool blocking)
+{
+  bool ret = false;
+
+  if (GTKinitialized) {
+
+    GdkEvent *ev = NULL;
+    do {
+      while((ev = gdk_event_get())!=NULL){
+        if(ev->any.window == window && ev->type == GDK_BUTTON_PRESS) {
+          i = (unsigned int)((GdkEventButton *)ev)->y ;
+	        j = (unsigned int)((GdkEventButton *)ev)->x ;
+	        ret = true ;
+          gdk_event_free(ev) ;     
+	      }
+      }
+      if(blocking) vpTime::wait(10);
+    } while ( ret == false && blocking == true);
   }
   else {
     vpERROR_TRACE("GTK not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
 			     "GTK not initialized")) ;
   }
-  return end;
+  return ret ;
+}
+
+
+/*!
+
+  Wait for a mouse button click and get the position of the clicked
+  pixel. The button used to click is also set.
+
+  \param i,j : Position of the clicked pixel (row, colum indexes).
+
+  \param button : Button used to click.
+
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
+
+*/
+bool
+vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
+		       vpMouseButton::vpMouseButtonType& button,
+		       bool blocking)
+{
+  bool ret = false;
+
+  if (GTKinitialized) {
+    GdkEvent *ev = NULL;
+    do {   
+      while((ev = gdk_event_get())){
+        if(ev->any.window == window && ev->type == GDK_BUTTON_PRESS){
+    	    i = (unsigned int)((GdkEventButton *)ev)->y ;
+	        j = (unsigned int)((GdkEventButton *)ev)->x ;
+
+	        switch((int)((GdkEventButton *)ev)->button) {
+	        case 1: button = vpMouseButton::button1; break;
+	        case 2: button = vpMouseButton::button2; break;
+	        case 3: button = vpMouseButton::button3; break;
+	        }
+	        ret = true ;
+          gdk_event_free(ev) ;
+	      }
+      }
+      if(blocking) vpTime::wait(10);
+    } while ( ret == false && blocking == true);
+  }
+  else {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+			     "GTK not initialized")) ;
+  }
+  return ret;
 }
 
 /*!
 
-  Wait for and get the position of the click release.
+  Wait for a mouse button click release and get the position of the
+  pixel were the click release occurs.  The button used to click is
+  also set. 
 
-  \param i,j : Position of the clicked pixel (row,colum indexes)
+  \param i,j : Position of the clicked pixel (row, colum indexes).
+
   \param button : Button used to click.
 
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
 
-  \return Always true.
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 
 */
 bool
 vpDisplayGTK::getClickUp(unsigned int& i, unsigned int& j,
-			 vpMouseButton::vpMouseButtonType& button)
-
-
-
-
+			 vpMouseButton::vpMouseButtonType& button,
+			 bool blocking)
 {
-  bool end = false ;
+  bool ret = false;
 
-  if ( GTKinitialized )
-  {
+  if ( GTKinitialized ) {
 
     flushDisplay() ;
-    GdkEvent *ev ;
+    GdkEvent *ev = NULL;
+    do {
+      while((ev = gdk_event_get())!=NULL){
+        if ( ev->any.window == window  && ev->type == GDK_BUTTON_RELEASE) {
+          i = ( unsigned int ) ( ( GdkEventButton * ) ev )->y ;
+          j = ( unsigned int ) ( ( GdkEventButton * ) ev )->x ;
 
-    while ( !end )
-    {
-      ev = gdk_event_get() ;
-      if ( ev )
-      {
-        switch ( ev->type )
-        {
-          case GDK_BUTTON_RELEASE :
-
-            if ( ev->any.window == window )
-            {
-              i = ( unsigned int ) ( ( GdkEventButton * ) ev )->y ;
-              j = ( unsigned int ) ( ( GdkEventButton * ) ev )->x ;
-
-              switch ( ( int ) ( ( GdkEventButton * ) ev )->button )
-              {
-                case 1: button = vpMouseButton::button1; break;
-                case 2: button = vpMouseButton::button2; break;
-                case 3: button = vpMouseButton::button3; break;
-              }
-
-              end = true ;
-            }
-            break ;
-          default :;
+          switch ( ( int ) ( ( GdkEventButton * ) ev )->button ) {
+            case 1: button = vpMouseButton::button1; break;
+            case 2: button = vpMouseButton::button2; break;
+            case 3: button = vpMouseButton::button3; break;
+          }
+          ret = true ;
+          gdk_event_free(ev) ;     
         }
       }
-    }
-    gdk_event_free ( ev ) ;
+      if(blocking) vpTime::wait(10);
+    } while ( ret == false && blocking == true);
   }
-  else
-  {
+  else {
     vpERROR_TRACE ( "GTK not initialized " ) ;
     throw ( vpDisplayException ( vpDisplayException::notInitializedError,
                                  "GTK not initialized" ) ) ;
   }
-  return end ;
+  return ret;
 }
 
 /*!

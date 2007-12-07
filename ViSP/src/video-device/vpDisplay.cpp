@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.24 2007-11-19 16:00:15 asaunier Exp $
+ * $Id: vpDisplay.cpp,v 1.25 2007-12-07 16:41:48 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -536,13 +536,13 @@ void vpDisplay::close ( const vpImage<unsigned char> &I )
   return true way a button is pressed
 */
 bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
-                            unsigned int& i, unsigned int& j )
+                            unsigned int& i, unsigned int& j, bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( i,j ) ;
+      return ( I.display )->getClick ( i, j, blocking ) ;
     }
   }
   catch ( ... )
@@ -558,13 +558,14 @@ bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
 */
 bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
                             unsigned int& i, unsigned int& j,
-                            vpMouseButton::vpMouseButtonType& button )
+                            vpMouseButton::vpMouseButtonType& button,
+			    bool blocking)
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( i,j,button ) ;
+      return ( I.display )->getClick ( i, j, button, blocking ) ;
     }
   }
   catch ( ... )
@@ -578,13 +579,13 @@ bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
 /*!
   wait for a click
 */
-void  vpDisplay::getClick ( const vpImage<unsigned char> &I )
+bool  vpDisplay::getClick ( const vpImage<unsigned char> &I, bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      ( I.display )->getClick() ;
+      return ( I.display )->getClick(blocking) ;
     }
   }
   catch ( ... )
@@ -592,6 +593,7 @@ void  vpDisplay::getClick ( const vpImage<unsigned char> &I )
     vpERROR_TRACE ( "Error caught" ) ;
     throw ;
   }
+  return false ;
 }
 
 
@@ -601,13 +603,14 @@ void  vpDisplay::getClick ( const vpImage<unsigned char> &I )
 bool
 vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
                         unsigned int& i, unsigned int& j,
-                        vpMouseButton::vpMouseButtonType& button )
+                        vpMouseButton::vpMouseButtonType& button,
+			bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClickUp ( i,j,button ) ;
+      return ( I.display )->getClickUp ( i, j, button, blocking ) ;
     }
   }
   catch ( ... )
@@ -920,13 +923,13 @@ void vpDisplay::close ( const vpImage<vpRGBa> &I )
   return true way a button is pressed
 */
 bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
-                            unsigned int& i, unsigned int& j )
+                            unsigned int& i, unsigned int& j, bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( i,j ) ;
+      return ( I.display )->getClick ( i, j, blocking ) ;
     }
   }
   catch ( ... )
@@ -942,13 +945,14 @@ bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
 */
 bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
                             unsigned int& i, unsigned int& j,
-                            vpMouseButton::vpMouseButtonType& button )
+                            vpMouseButton::vpMouseButtonType& button, 
+			    bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( i,j,button ) ;
+      return ( I.display )->getClick ( i, j, button, blocking ) ;
     }
   }
   catch ( ... )
@@ -962,13 +966,13 @@ bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
 /*!
   wait for a click
 */
-void  vpDisplay::getClick ( const vpImage<vpRGBa> &I )
+bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I, bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      ( I.display )->getClick() ;
+      return ( I.display )->getClick(blocking) ;
     }
   }
   catch ( ... )
@@ -976,6 +980,7 @@ void  vpDisplay::getClick ( const vpImage<vpRGBa> &I )
     vpERROR_TRACE ( "Error caught" ) ;
     throw ;
   }
+  return false;
 }
 
 
@@ -986,13 +991,14 @@ void  vpDisplay::getClick ( const vpImage<vpRGBa> &I )
 bool
 vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
                         unsigned int& i, unsigned int& j,
-                        vpMouseButton::vpMouseButtonType& button )
+                        vpMouseButton::vpMouseButtonType& button, 
+			bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClickUp ( i,j,button ) ;
+      return ( I.display )->getClickUp ( i, j, button, blocking ) ;
     }
   }
   catch ( ... )
@@ -1225,13 +1231,14 @@ vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
   return true way a button is pressed
 */
 bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
-                               unsigned int& u, unsigned int& v )
+                               unsigned int& u, unsigned int& v, 
+			       bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( v,u ) ;
+      return ( I.display )->getClick ( v, u, blocking ) ;
     }
   }
   catch ( ... )
@@ -1247,13 +1254,14 @@ bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
 */
 bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
                                unsigned int& u, unsigned int& v,
-                               vpMouseButton::vpMouseButtonType& button )
+                               vpMouseButton::vpMouseButtonType& button, 
+			       bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( v,u,button ) ;
+      return ( I.display )->getClick ( v, u, button, blocking ) ;
     }
   }
   catch ( ... )
@@ -1271,13 +1279,14 @@ bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
 bool
 vpDisplay::getClickUp_uv ( const vpImage<unsigned char> &I,
                            unsigned int& u, unsigned int& v,
-                           vpMouseButton::vpMouseButtonType& button )
+                           vpMouseButton::vpMouseButtonType& button,
+			   bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClickUp ( v,u,button ) ;
+      return ( I.display )->getClickUp ( v, u, button, blocking ) ;
     }
   }
   catch ( ... )
@@ -1473,13 +1482,14 @@ vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
   return true way a button is pressed
 */
 bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
-                               unsigned int& u, unsigned int& v )
+                               unsigned int& u, unsigned int& v, 
+			       bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( v,u ) ;
+      return ( I.display )->getClick ( v, u, blocking ) ;
     }
   }
   catch ( ... )
@@ -1495,13 +1505,14 @@ bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
 */
 bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
                                unsigned int& u, unsigned int& v,
-                               vpMouseButton::vpMouseButtonType& button )
+                               vpMouseButton::vpMouseButtonType& button,
+			       bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( v,u,button ) ;
+      return ( I.display )->getClick ( v, u, button, blocking ) ;
     }
   }
   catch ( ... )
@@ -1519,13 +1530,14 @@ bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
 bool
 vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
                            unsigned int& u, unsigned int& v,
-                           vpMouseButton::vpMouseButtonType& button )
+                           vpMouseButton::vpMouseButtonType& button,
+			   bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClickUp ( v,u,button ) ;
+      return ( I.display )->getClickUp ( v, u, button, blocking ) ;
     }
   }
   catch ( ... )

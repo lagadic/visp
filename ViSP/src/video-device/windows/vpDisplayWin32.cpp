@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.21 2007-09-28 14:10:06 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.22 2007-12-07 16:41:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -227,22 +227,37 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
   Waits for a click and returns its coordinates.
   \param i : first coordinate of the click position
   \param j : second coordinate of the click position
-  \return true
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 */
-bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j)
+bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j, bool blocking)
 {
   //wait if the window is not initialized
   waitForInit();
 
+  bool ret = false ;
   //tells the window there has been a getclick demand
-  PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
+//   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
-  WaitForSingleObject(window.semaClick,INFINITE);
-
+  if(blocking){
+    WaitForSingleObject(window.semaClick, NULL);
+    WaitForSingleObject(window.semaClickUp, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClick, INFINITE);
+    ret = true;  
+  }  
+  else
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
+  
   j = window.clickX;
   i = window.clickY;
 
-  return true;
+  return ret;
 }
 
 /*!
@@ -250,24 +265,39 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j)
   \param i : first coordinate of the click position
   \param j : second coordinate of the click position
   \param button : button to use for the click
-  \return true
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 */
 bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j,
-			      vpMouseButton::vpMouseButtonType& button)
+                              vpMouseButton::vpMouseButtonType& button,
+                              bool blocking)
 {
   //wait if the window is not initialized
   waitForInit();
-
+  bool ret = false;
   //tells the window there has been a getclickup demand
-  PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
+//   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
-  WaitForSingleObject(window.semaClick, INFINITE);
-
+  if(blocking){
+    WaitForSingleObject(window.semaClick, NULL);
+    WaitForSingleObject(window.semaClickUp, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClick, INFINITE);
+    ret = true;
+  }
+  else
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
+  
   j = window.clickX;
   i = window.clickY;
   button = window.clickButton;
 
-  return true;
+  return ret;
 }
 
 /*!
@@ -275,40 +305,72 @@ bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j,
   \param i : first coordinate of the click position
   \param j : second coordinate of the click position
   \param button : button to use for the click
-  \return true
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 */
 bool vpDisplayWin32::getClickUp(unsigned int& i, unsigned int& j,
-				vpMouseButton::vpMouseButtonType& button)
+                                vpMouseButton::vpMouseButtonType& button,
+                                bool blocking)
 {
   //wait if the window is not initialized
   waitForInit();
-
+  bool ret = false;
   //tells the window there has been a getclickup demand
-  PostMessage(window.getHWnd(), vpWM_GETCLICKUP, 0,0);
+//   PostMessage(window.getHWnd(), vpWM_GETCLICKUP, 0,0);
 
   //waits for a click release
-  WaitForSingleObject(window.semaClick, INFINITE);
+  if(blocking){
+    WaitForSingleObject(window.semaClickUp, NULL);
+    WaitForSingleObject(window.semaClick, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClickUp, INFINITE);
+    ret = true;
+  }
+  else
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClickUp, NULL));
+  
+  j = window.clickXUp;
+  i = window.clickYUp;
+  button = window.clickButtonUp;
 
-  j = window.clickX;
-  i = window.clickY;
-  button = window.clickButton;
-
-  return true;
+  return ret;
 }
 
 /*!
   Waits for a click.
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 */
-void vpDisplayWin32::getClick()
+bool vpDisplayWin32::getClick( bool blocking)
 {
   //wait if the window is not initialized
   waitForInit();
-
+  bool ret = false;
   //sends a message to the window
-  PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
+//   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
 
   //waits for a button to be pressed
-  WaitForSingleObject(window.semaClick, INFINITE);
+  if(blocking){ 
+    WaitForSingleObject(window.semaClick, NULL);
+    WaitForSingleObject(window.semaClickUp, NULL); //to erase previous events 
+    WaitForSingleObject(window.semaClick, INFINITE);
+    ret = true;
+  }
+  else
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
+  
+  return ret; 
 }
 
 /*!

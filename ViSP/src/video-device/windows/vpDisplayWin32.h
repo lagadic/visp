@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.15 2007-09-17 13:34:51 asaunier Exp $
+ * $Id: vpDisplayWin32.h,v 1.16 2007-12-07 16:41:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -212,18 +212,19 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
 
 
-  bool  getClick(unsigned int& i, unsigned int& j);
+  bool  getClick(unsigned int& i, unsigned int& j, bool blocking=true);
 
   //!  return true when button is pressed
   bool  getClick(unsigned int& i, unsigned int& j,
-		 vpMouseButton::vpMouseButtonType& button);
+                 vpMouseButton::vpMouseButtonType& button, bool blocking=true);
 
   //! return true when  button is released
   bool  getClickUp(unsigned int& i, unsigned int& j,
-		   vpMouseButton::vpMouseButtonType& button);
+                   vpMouseButton::vpMouseButtonType& button,
+                   bool blocking=true);
 
   //! wait for a click
-  void  getClick();
+  bool  getClick( bool blocking=true);
 
 };
 #endif

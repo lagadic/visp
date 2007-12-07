@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.18 2007-11-19 16:00:15 asaunier Exp $
+ * $Id: vpDisplay.h,v 1.19 2007-12-07 16:41:48 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -389,70 +389,83 @@ protected :
  public:
   /* Simple interface with the mouse event */
   //!return true way a button is pressed
-  virtual bool  getClick(unsigned int& i, unsigned int& j) =0;
+  virtual bool getClick(unsigned int& i, unsigned int& j, 
+			bool blocking=true) =0;
   //!  return true way button is pressed
-  virtual bool  getClick(unsigned int& i, unsigned int& j,
-			 vpMouseButton::vpMouseButtonType& button)=0 ;
+  virtual bool getClick(unsigned int& i, unsigned int& j,
+			vpMouseButton::vpMouseButtonType& button, 
+			bool blocking=true)=0 ;
   //! return true way  button is released
-  virtual bool  getClickUp(unsigned int& i, unsigned int& j,
-			   vpMouseButton::vpMouseButtonType &button)= 0;
+  virtual bool getClickUp(unsigned int& i, unsigned int& j,
+			  vpMouseButton::vpMouseButtonType &button, 
+			  bool blocking=true)= 0;
   //! wait for a click
-  virtual void  getClick() =0;
+  virtual bool getClick(bool blocking=true) =0;
 
  public:
   //!return true way a button is pressed
-  static bool  getClick(const vpImage<unsigned char> &I,
-			unsigned int& i, unsigned int& j) ;
+  static bool getClick(const vpImage<unsigned char> &I,
+		       unsigned int& i, unsigned int& j, bool blocking=true) ;
   //!  return true way button is pressed
-  static  bool  getClick(const vpImage<unsigned char> &I,
-			 unsigned int& i, unsigned int& j,
-			 vpMouseButton::vpMouseButtonType &button) ;
+  static bool getClick(const vpImage<unsigned char> &I,
+		       unsigned int& i, unsigned int& j,
+		       vpMouseButton::vpMouseButtonType &button,
+		       bool blocking=true) ;
   //! wait for a click
-  static void  getClick(const vpImage<unsigned char> &I) ;
+  static bool getClick(const vpImage<unsigned char> &I, bool blocking=true) ;
   //! return true when  button is released
-  static  bool  getClickUp(const vpImage<unsigned char> &I,
-			   unsigned int& i, unsigned int& j,
-			   vpMouseButton::vpMouseButtonType &button) ;
+  static bool getClickUp(const vpImage<unsigned char> &I,
+			 unsigned int& i, unsigned int& j,
+			 vpMouseButton::vpMouseButtonType &button,
+			 bool blocking=true) ;
 
 
   //!return true when a button is pressed
-  static bool  getClick(const vpImage<vpRGBa> &I,
-			unsigned int& i, unsigned int& j) ;
+  static bool getClick(const vpImage<vpRGBa> &I,
+			unsigned int& i, unsigned int& j, bool blocking=true) ;
   //!  return true when button is pressed
-  static  bool  getClick(const vpImage<vpRGBa> &I,
-			 unsigned int& i, unsigned int& j,
-			 vpMouseButton::vpMouseButtonType &button) ;
+  static bool getClick(const vpImage<vpRGBa> &I,
+		       unsigned int& i, unsigned int& j,
+		       vpMouseButton::vpMouseButtonType &button, 
+		       bool blocking=true) ;
   //! wait for a click
-  static void  getClick(const vpImage<vpRGBa> &I) ;
+  static bool getClick(const vpImage<vpRGBa> &I, bool blocking=true) ;
   //! return true when button is released
-  static  bool  getClickUp(const vpImage<vpRGBa> &I,
-			   unsigned int& i, unsigned int& j,
-			   vpMouseButton::vpMouseButtonType &button) ;
+  static bool getClickUp(const vpImage<vpRGBa> &I,
+			 unsigned int& i, unsigned int& j,
+			 vpMouseButton::vpMouseButtonType &button,
+			 bool blocking=true) ;
  public:
   //!return true when a button is pressed
-  static bool  getClick_uv(const vpImage<unsigned char> &I,
-			   unsigned int& u, unsigned int& v) ;
+  static bool getClick_uv(const vpImage<unsigned char> &I,
+			  unsigned int& u, unsigned int& v, 
+			  bool blocking=true);
   //!  return true when button is pressed
-  static  bool  getClick_uv(const vpImage<unsigned char> &I,
-			    unsigned int& u, unsigned int& v,
-			    vpMouseButton::vpMouseButtonType &button) ;
+  static bool getClick_uv(const vpImage<unsigned char> &I,
+			  unsigned int& u, unsigned int& v,
+			  vpMouseButton::vpMouseButtonType &button,
+			  bool blocking=true) ;
   //! return true when button is released
-  static  bool  getClickUp_uv(const vpImage<unsigned char> &I,
-			      unsigned int& u, unsigned int& v,
-			      vpMouseButton::vpMouseButtonType &button);
+  static bool getClickUp_uv(const vpImage<unsigned char> &I,
+			    unsigned int& u, unsigned int& v,
+			    vpMouseButton::vpMouseButtonType &button,
+			    bool blocking=true);
 
 
   //!return true when a button is pressed
-  static bool  getClick_uv(const vpImage<vpRGBa> &I,
-			   unsigned int& u, unsigned int& v) ;
+  static bool getClick_uv(const vpImage<vpRGBa> &I,
+			  unsigned int& u, unsigned int& v, 
+			  bool blocking=true) ;
   //!  return true when button is pressed
-  static  bool  getClick_uv(const vpImage<vpRGBa> &I,
-			    unsigned int& u, unsigned int& v,
-			    vpMouseButton::vpMouseButtonType& button) ;
+  static bool getClick_uv(const vpImage<vpRGBa> &I,
+			  unsigned int& u, unsigned int& v,
+			  vpMouseButton::vpMouseButtonType& button,
+			  bool blocking=true) ;
   //! return true when button is released
-  static  bool  getClickUp_uv(const vpImage<vpRGBa> &I,
-			      unsigned int& u, unsigned int& v,
-			      vpMouseButton::vpMouseButtonType& button);
+  static bool getClickUp_uv(const vpImage<vpRGBa> &I,
+			    unsigned int& u, unsigned int& v,
+			    vpMouseButton::vpMouseButtonType& button,
+			    bool blocking=true);
 
  public:
 
