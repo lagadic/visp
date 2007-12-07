@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2007-06-06 13:01:39 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.5 2007-12-07 16:44:14 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -43,6 +43,7 @@
 SET (SOURCE
   testVideoDevice.cpp
   testClick.cpp
+  testMouseEvent.cpp
 )
 
 # rule for binary build
@@ -64,6 +65,7 @@ ENDFOREACH(source)
 
 ADD_TEST(testClick         testClick -d)
 ADD_TEST(testVideoDevice   testVideoDevice -d)
+ADD_TEST(testMouseEvent    testMouseEvent -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
