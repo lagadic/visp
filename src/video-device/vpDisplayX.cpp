@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.38 2007-09-28 14:10:06 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.39 2007-12-07 16:41:48 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1397,7 +1397,6 @@ void vpDisplayX::flushDisplay()
   {
     XClearWindow ( display, window );
     XFlush ( display );
-    XSync ( display,1 );
   }
   else
   {
@@ -1750,61 +1749,59 @@ void vpDisplayX::displayCharString ( unsigned int i, unsigned int j,
 }
 
 /*!
-  Wait for and get the position of the click.
+  Wait for a mouse button click and get the position of the clicked pixel.
 
-  \param i,j : Position of the clicked pixel (row,colum indexes)
+  \param i,j : Position of the clicked pixel (row, colum indexes).
 
-  \return Always true
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 
 */
 
 bool
-vpDisplayX::getClick ( unsigned int& i, unsigned int& j )
+vpDisplayX::getClick ( unsigned int& i, unsigned int& j, bool blocking )
 {
 
   bool ret = false;
-  if ( Xinitialise )
-  {
+  if ( Xinitialise ) {
     unsigned int x,y ;
-    while ( ret==false )
-    {
-      Window  rootwin, childwin ;
-      int   root_x, root_y, win_x, win_y ;
-      unsigned int  modifier ;
-      // Test d'évènements.
-      if ( XPending ( display ) )
-      {
-        XNextEvent ( display, &event );
 
-        /* Detection de l'appui sur l'un des bouton de la souris. */
-        switch ( event.type )
-        {
-
-          case ButtonPress:
-          {
-            /* Recuperation de la coordonnee du pixel cliqué. */
-            if ( XQueryPointer ( display,
-                                 window,
-                                 &rootwin, &childwin,
-                                 &root_x, &root_y,
-                                 &win_x, &win_y,
-                                 &modifier ) )
-            {
-              x = event.xbutton.x;
-              y = event.xbutton.y;
-              i = y ;
-              j = x ;
-            }
-            ret = true ;
-            break;
-
-          } /* Fin case ButtonPress */
-        } /* Fin switch type d'evenement. */
+    Window  rootwin, childwin ;
+    int   root_x, root_y, win_x, win_y ;
+    unsigned int  modifier ;
+    // Test d'évènements.
+    if(blocking){
+      XCheckMaskEvent(display , ButtonPressMask, &event);
+      XCheckMaskEvent(display , ButtonReleaseMask, &event);
+      XMaskEvent ( display, ButtonPressMask ,&event );
+      ret = true;
+    }
+    else{
+      ret = XCheckMaskEvent(display , ButtonPressMask, &event);
+    }
+       
+    if(ret){
+      /* Recuperation de la coordonnee du pixel cliqué. */
+      if ( XQueryPointer ( display,
+                           window,
+                           &rootwin, &childwin,
+                           &root_x, &root_y,
+                           &win_x, &win_y,
+                           &modifier ) ) {
+        x = event.xbutton.x;
+        y = event.xbutton.y;
+        i = y ;
+        j = x ;
       }
     }
   }
-  else
-  {
+  else {
     vpERROR_TRACE ( "X not initialized " ) ;
     throw ( vpDisplayException ( vpDisplayException::notInitializedError,
                                  "X not initialized" ) ) ;
@@ -1816,123 +1813,120 @@ vpDisplayX::getClick ( unsigned int& i, unsigned int& j )
 /*!
   Wait for a click from one of the mouse button.
 
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 */
-void
-vpDisplayX::getClick()
+bool
+vpDisplayX::getClick(bool blocking)
 {
 
   bool ret = false;
 
-  if ( Xinitialise )
-  {
-    while ( ret==false )
-    {
-      Window  rootwin, childwin ;
-      int   root_x, root_y, win_x, win_y ;
-      unsigned int  modifier ;
+  if ( Xinitialise ) {
+    Window  rootwin, childwin ;
+    int   root_x, root_y, win_x, win_y ;
+    unsigned int  modifier ;
 
-      // Test d'évènements.
-      if ( XPending ( display ) )
-      {
-
-        XNextEvent ( display, &event );
-
-        /* Detection de l'appui sur l'un des bouton de la souris. */
-        switch ( event.type )
-        {
-
-          case ButtonPress:
-          {
-            /* Recuperation de la coordonnee du pixel cliqué. */
-            if ( XQueryPointer ( display,
-                                 window,
-                                 &rootwin, &childwin,
-                                 &root_x, &root_y,
-                                 &win_x, &win_y,
-                               &modifier ) ) {}
-            ret = true ;
-            break;
-          } /* Fin case ButtonPress */
-        } /* Fin switch type d'evenement. */
-      }
+    // Test d'évènements.
+    if(blocking){
+      XCheckMaskEvent(display , ButtonPressMask, &event);
+      XCheckMaskEvent(display , ButtonReleaseMask, &event);
+      XMaskEvent ( display, ButtonPressMask ,&event );
+      ret = true;
     }
-    //   return(OK);
+    else{
+      ret = XCheckMaskEvent(display , ButtonPressMask, &event);
+    }
+       
+    if(ret){
+      /* Recuperation de la coordonnee du pixel cliqué. */
+      if ( XQueryPointer ( display,
+                           window,
+                           &rootwin, &childwin,
+                           &root_x, &root_y,
+                           &win_x, &win_y,
+                         &modifier ) ) {}
+    }
   }
-  else
-  {
+  else {
     vpERROR_TRACE ( "X not initialized " ) ;
     throw ( vpDisplayException ( vpDisplayException::notInitializedError,
                                  "X not initialized" ) ) ;
   }
-  return ;//ret;
+  return ret;
 }
 
 /*!
 
-  Wait for and get the position of the click. The button used
-  to click is also set.
+  Wait for a mouse button click and get the position of the clicked
+  pixel. The button used to click is also set.
 
-  \param i,j : Position of the clicked pixel (row,colum indexes)
+  \param i,j : Position of the clicked pixel (row, colum indexes).
+
   \param button : Button used to click.
 
-  \return Always true
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
 
 */
 bool
 vpDisplayX::getClick ( unsigned int& i, unsigned int& j,
-                       vpMouseButton::vpMouseButtonType &button )
+                       vpMouseButton::vpMouseButtonType &button,
+		       bool blocking )
 {
 
   bool ret = false;
-  if ( Xinitialise )
-  {
+  if ( Xinitialise ) {
     unsigned int x,y ;
-    while ( ret==false )
-    {
-      Window  rootwin, childwin ;
-      int   root_x, root_y, win_x, win_y ;
-      unsigned int  modifier ;
 
-      // Test d'évènements.
-      if ( XPending ( display ) )
-      {
+    Window  rootwin, childwin ;
+    int   root_x, root_y, win_x, win_y ;
+    unsigned int  modifier ;
 
-        XNextEvent ( display, &event );
-
-        /* Detection de l'appui sur l'un des bouton de la souris. */
-        switch ( event.type )
-        {
-
-          case ButtonPress:
-          {
-            /* Recuperation de la coordonnee du pixel cliqué. */
-            if ( XQueryPointer ( display,
-                                 window,
-                                 &rootwin, &childwin,
-                                 &root_x, &root_y,
-                                 &win_x, &win_y,
-                                 &modifier ) )
-            {
-              x = event.xbutton.x;
-              y = event.xbutton.y;
-              i = y ;
-              j = x ;
-              switch ( event.xbutton.button )
-              {
-                case Button1: button = vpMouseButton::button1; break;
-                case Button2: button = vpMouseButton::button2; break;
-                case Button3: button = vpMouseButton::button3; break;
-              }
-              ret = true ;
-              break;
-            }
-          } /* Fin case ButtonPress */
-        } /* Fin switch type d'evenement. */
-      }
+    // Test d'évènements.
+    if(blocking){
+      XCheckMaskEvent(display , ButtonPressMask, &event);
+      XCheckMaskEvent(display , ButtonReleaseMask, &event);
+      XMaskEvent ( display, ButtonPressMask ,&event );
+      ret = true;
     }
+    else{
+      ret = XCheckMaskEvent(display , ButtonPressMask, &event);
+    }
+       
+    if(ret){
+      /* Recuperation de la coordonnee du pixel cliqué. */
+      if ( XQueryPointer ( display,
+                           window,
+                           &rootwin, &childwin,
+                           &root_x, &root_y,
+                           &win_x, &win_y,
+                           &modifier ) ) {
+        x = event.xbutton.x;
+        y = event.xbutton.y;
+        i = y ;
+        j = x ;
+        switch ( event.xbutton.button ) {
+          case Button1: button = vpMouseButton::button1; break;
+          case Button2: button = vpMouseButton::button2; break;
+          case Button3: button = vpMouseButton::button3; break;
+        }
+      }
+    }   
   }
-  else
-  {
+  else {
     vpERROR_TRACE ( "X not initialized " ) ;
     throw ( vpDisplayException ( vpDisplayException::notInitializedError,
                                  "X not initialized" ) ) ;
@@ -1942,74 +1936,72 @@ vpDisplayX::getClick ( unsigned int& i, unsigned int& j,
 
 /*!
 
-  Wait for and get the position of the click release. Same method as
-  getClick(unsigned int&, unsigned int& ,
-  vpMouseButton::vpMouseButtonType &). The button used to click is
-  also set.
+  Wait for a mouse button click release and get the position of the
+  pixel were the click release occurs.  The button used to click is
+  also set. Same method as
+  getClick(unsigned int&, unsigned int&, vpMouseButton::vpMouseButtonType &, bool).
 
-  \param i,j : Position of the clicked pixel (row,colum indexes)
+  \param i,j : Position of the clicked pixel (row, colum indexes).
+
   \param button : Button used to click.
 
-  \sa getClick(unsigned int&, unsigned int& ,
-  vpMouseButton::vpMouseButtonType &)
+  \param blocking : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
 
-  \return Always true.
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
+
+    \sa getClick(unsigned int&, unsigned int&, vpMouseButton::vpMouseButtonType &, bool)
+
 */
 bool
 vpDisplayX::getClickUp ( unsigned int& i, unsigned int& j,
-                         vpMouseButton::vpMouseButtonType &button )
+                         vpMouseButton::vpMouseButtonType &button,
+			 bool blocking )
 {
 
   bool ret = false;
-  if ( Xinitialise )
-  {
+  if ( Xinitialise ) {
     unsigned int x,y ;
-    while ( ret==false )
-    {
-      Window  rootwin, childwin ;
-      int   root_x, root_y, win_x, win_y ;
-      unsigned int  modifier ;
+    Window  rootwin, childwin ;
+    int   root_x, root_y, win_x, win_y ;
+    unsigned int  modifier ;
 
-      // Test d'évènements.
-      if ( XPending ( display ) )
-      {
-
-        XNextEvent ( display, &event );
-
-        /* Detection de l'appui sur l'un des bouton de la souris. */
-        switch ( event.type )
-        {
-
-          case ButtonRelease:
-          {
-            /* Recuperation de la coordonnee du pixel cliqué. */
-            if ( XQueryPointer ( display,
-                                 window,
-                                 &rootwin, &childwin,
-                                 &root_x, &root_y,
-                                 &win_x, &win_y,
-                                 &modifier ) )
-            {
-              x = event.xbutton.x;
-              y = event.xbutton.y;
-              i = y ;
-              j = x ;
-              switch ( event.xbutton.button )
-              {
-                case Button1: button = vpMouseButton::button1; break;
-                case Button2: button = vpMouseButton::button2; break;
-                case Button3: button = vpMouseButton::button3; break;
-              }
-              ret = true ;
-              break;
-            }
-          } /* Fin case ButtonRelease */
-        } /* Fin switch type d'evenement. */
+    // Test d'évènements.
+    if(blocking){
+      XCheckMaskEvent(display , ButtonPressMask, &event);
+      XCheckMaskEvent(display , ButtonReleaseMask, &event);
+      XMaskEvent ( display, ButtonReleaseMask ,&event );
+      ret = true;
+    }
+    else{
+      ret = XCheckMaskEvent(display , ButtonReleaseMask, &event);
+    }
+       
+    if(ret){
+      /* Recuperation de la coordonnee du pixel cliqué. */
+      if ( XQueryPointer ( display,
+                           window,
+                           &rootwin, &childwin,
+                           &root_x, &root_y,
+                           &win_x, &win_y,
+                           &modifier ) ) {
+        x = event.xbutton.x;
+        y = event.xbutton.y;
+        i = y ;
+        j = x ;
+        switch ( event.xbutton.button ) {
+          case Button1: button = vpMouseButton::button1; break;
+          case Button2: button = vpMouseButton::button2; break;
+          case Button3: button = vpMouseButton::button3; break;
+        }
       }
     }
   }
-  else
-  {
+  else {
     vpERROR_TRACE ( "X not initialized " ) ;
     throw ( vpDisplayException ( vpDisplayException::notInitializedError,
                                  "X not initialized" ) ) ;

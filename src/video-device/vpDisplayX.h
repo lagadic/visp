@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.15 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpDisplayX.h,v 1.16 2007-12-07 16:41:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -174,12 +174,14 @@ protected:
   void displayCharString(unsigned int i,unsigned int j,char *s,
 			 vpColor::vpColorType c=vpColor::green) ;
 
-  bool  getClick(unsigned int& i, unsigned int& j) ;
-  bool  getClick(unsigned int& i, unsigned int& j,
-		 vpMouseButton::vpMouseButtonType& button) ;
-  void  getClick() ;
-  bool  getClickUp(unsigned int& i, unsigned int& j,
-		   vpMouseButton::vpMouseButtonType& button) ;
+  bool getClick(unsigned int& i, unsigned int& j, bool blocking=true);
+  bool getClick(unsigned int& i, unsigned int& j,
+		vpMouseButton::vpMouseButtonType& button,
+		bool blocking=true) ;
+  bool getClick(bool blocking=true) ;
+  bool getClickUp(unsigned int& i, unsigned int& j,
+		  vpMouseButton::vpMouseButtonType& button, 
+		  bool blocking=true);
 
 public:
 
