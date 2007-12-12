@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.24 2007-11-28 11:31:32 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.25 2007-12-12 10:27:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -182,7 +182,7 @@ vpRobotAfma6::init (vpAfma6::CameraRobotType camera, bool usedistortion)
 
   switch (camera)
   {
-  case vpAfma6::CAMERA_DRAGONFLY2_12MM:
+  case vpAfma6::CAMERA_DRAGONFLY2_8MM:
     if(usedistortion == false)
       api_camera = CAMERA_DRAGONFLY2_WITHOUT_DISTORTION;
     else

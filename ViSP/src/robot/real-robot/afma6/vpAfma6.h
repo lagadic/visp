@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.11 2007-11-22 09:22:23 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.12 2007-12-12 10:27:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,10 +98,10 @@ public: /* Constantes */
   /** Differentes cameras installees sur l'afma6. */
   enum CameraRobotType
     {
-      CAMERA_DRAGONFLY2_12MM,
+      CAMERA_DRAGONFLY2_8MM,
     } ;
   /** Camera utilisee par default. */
-  static const CameraRobotType defaultCameraRobot;// = CAMERA_DRAGONFLY2_12MM;
+  static const CameraRobotType defaultCameraRobot;// = CAMERA_DRAGONFLY2_8MM;
 
 public: /* Attributs publiques */
 
@@ -276,7 +276,7 @@ public: /* Methodes publiques */
 
 public:
 
-  int computeMGI (const vpHomogeneousMatrix & oMc, vpColVector & q, 
+  int computeMGI (const vpHomogeneousMatrix & oMc, vpColVector & q,
 		  bool nearest=true);
 
   //! \brief Calcul le MGD du robot.

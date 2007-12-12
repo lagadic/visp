@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.20 2007-11-28 11:31:32 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.21 2007-12-12 10:27:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@
 /* ------------------------------------------------------------------------ */
 const double vpAfma6::rhoDefault = 0.1;
 const int    vpAfma6::articulationsNb = 6;
-const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_12MM;
+const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_8MM;
 
 /*!
 
@@ -924,7 +924,7 @@ const char * const vpAfma6::CONST_MPI_DRAGONFLY2_WITH_DISTORTION
 const char * const vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME
 = "/udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml";
 
-const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2-12mm";
+const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2-8mm";
 
 /* Declaration des variables statiques.		*/
 static char *opt_Afma6[] = {"KP","KD","KI","PMAX","PMIN","INIT","SENS",
@@ -1215,7 +1215,7 @@ init (vpAfma6::CameraRobotType camera, bool usedistortion)
 
   switch (camera)
   {
-  case vpAfma6::CAMERA_DRAGONFLY2_12MM:
+  case vpAfma6::CAMERA_DRAGONFLY2_8MM:
     {
       if(usedistortion == false){
         snprintf(filenameMPI, 100, "%s",
@@ -1613,11 +1613,11 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
 
   \code
   vpImage<unsigned char> I;
-  vp1394TwoGrabber g; 
-  
+  vp1394TwoGrabber g;
+
   // Acquire an image to update image structure
   g.acquire(I) ;
-  
+
   vpRobotAfma6 robot;
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
@@ -1635,7 +1635,7 @@ getCameraParameters (vpCameraParameters &cam,
   vpXmlParserCamera parser;
   switch (getCameraRobotType())
   {
-  case vpAfma6::CAMERA_DRAGONFLY2_12MM:
+  case vpAfma6::CAMERA_DRAGONFLY2_8MM:
     {
       parser.parse(cam,
 		   vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
@@ -1669,11 +1669,11 @@ getCameraParameters (vpCameraParameters &cam,
 
   \code
   vpImage<unsigned char> I;
-  vp1394TwoGrabber g; 
-  
+  vp1394TwoGrabber g;
+
   // Acquire an image to update image structure
   g.acquire(I) ;
-  
+
   vpRobotAfma6 robot;
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
@@ -1697,11 +1697,11 @@ getCameraParameters (vpCameraParameters &cam, const vpImage<unsigned char> &I)
 
   \code
   vpImage<vpRGBa> I;
-  vp1394TwoGrabber g; 
-  
+  vp1394TwoGrabber g;
+
   // Acquire a color image to update image structure
   g.acquire(I) ;
-  
+
   vpRobotAfma6 robot;
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
