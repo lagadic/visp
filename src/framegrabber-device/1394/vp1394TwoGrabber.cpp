@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.22 2007-12-12 10:33:32 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.23 2007-12-12 13:47:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -156,7 +156,7 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   verbose = false;//true;
   camInUse = NULL;
   cameras = NULL;
-#ifdef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
   d = NULL;
 #endif
   open();
@@ -330,8 +330,10 @@ vp1394TwoGrabber::setVideoMode(vp1394TwoVideoMode videomode)
   }
 
    // Stop dma capture if started
+#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
   if (camera->capture_is_set)
     setCapture(DC1394_OFF);
+#endif
 
   if (dc1394_video_set_mode(camera, (dc1394video_mode_t) videomode) != DC1394_SUCCESS) {
 
@@ -500,8 +502,10 @@ vp1394TwoGrabber::setFramerate(vp1394TwoFramerate fps)
     return;
 
   // Stop dma capture if started
+#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
   if (camera->capture_is_set)
     setCapture(DC1394_OFF);
+#endif
 
   if (dc1394_video_set_framerate(camera, (dc1394framerate_t) fps) != DC1394_SUCCESS) {
 
@@ -677,8 +681,10 @@ vp1394TwoGrabber::setColorCoding(vp1394TwoColorCoding coding)
     // Format 7 video mode
 
     // Stop dma capture if started
+#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
     if (camera->capture_is_set)
     setCapture(DC1394_OFF);
+#endif
 
     if (dc1394_format7_set_color_coding(camera, _videomode,
 				      (dc1394color_coding_t) coding)
@@ -873,8 +879,10 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
 				   "No camera found") );
   }
   // Stop dma capture if started
+#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
   if (camera->capture_is_set)
     setCapture(DC1394_OFF);
+#endif
 
   dc1394video_mode_t _videomode;
   if (dc1394_video_get_mode(camera, &_videomode) != DC1394_SUCCESS) {
@@ -982,12 +990,12 @@ vp1394TwoGrabber::open()
 {
 
   // Find cameras
-#ifdef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
   if (d != NULL)
     dc1394_free (d);
 
   d = dc1394_new ();
-  if (dc1394_enumerate_cameras (d, &list) != DC1394_SUCCESS) {
+  if (dc1394_camera_enumerate (d, &list) != DC1394_SUCCESS) {
     close();
     vpERROR_TRACE("Failed to enumerate cameras\n");
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
@@ -1000,7 +1008,7 @@ vp1394TwoGrabber::open()
 
   cameras = new dc1394camera_t * [num_cameras];
 
-  for (int i=0; i < num_cameras; i ++) {
+  for (unsigned int i=0; i < num_cameras; i ++) {
     cameras[i] = dc1394_camera_new (d, list->ids[i].guid);
     if (!cameras[i]) {
       vpERROR_TRACE ("Failed to initialize camera with guid \"%ld\"\n",
@@ -1012,9 +1020,9 @@ vp1394TwoGrabber::open()
 
   }
 
-  dc1394_free_camera_list (list);
+  dc1394_camera_free_list (list);
 
-#else
+#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS
   int err = dc1394_find_cameras(&cameras, &num_cameras);
 
   if (err!=DC1394_SUCCESS && err != DC1394_NO_CAMERA) {
@@ -1057,18 +1065,11 @@ vp1394TwoGrabber::open()
   camInUse = new bool [num_cameras];
   dc1394switch_t status = DC1394_OFF;
 
-#if 0
-  for (unsigned i=0; i < num_cameras; i ++){
-    dc1394_reset_bus(cameras[i]);
-    dc1394_video_get_transmission(cameras[i], &status);
-    if (status != DC1394_OFF){
-      dc1394_video_set_transmission(cameras[i],DC1394_OFF);}
-    camInUse[i] = false;
-  }
-#else
+  // Call here dc1394_reset_bus() to be sure that we can restart the
+  // framegrabbing afer a non proper program termination, like a CTRL-C
   dc1394_reset_bus(cameras[0]);
   for (unsigned i=0; i < num_cameras; i ++){
-#ifdef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
     dc1394_video_get_transmission(cameras[i], &status);
     if (status != DC1394_OFF){
 #endif
@@ -1082,21 +1083,20 @@ vp1394TwoGrabber::open()
 	if (status==DC1394_ON) {
 	  vpTRACE("ISO transmission refuses to stop");
 	}
-#ifndef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
 	// No yet in the new API
 	cameras[i]->is_iso_on=status;
 #endif
       }
-#ifdef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
     }
 #endif
     }
     camInUse[i] = false;
   }
-#endif
 
   setCamera(0);
-  setCapture(DC1394_OFF);
+    setCapture(DC1394_OFF);
 
   // Set the image size from the current video mode
   vp1394TwoVideoMode cur_videomode;
@@ -1112,6 +1112,9 @@ vp1394TwoGrabber::open()
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
           "Can't get image size") );
   }
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+    setCapture(DC1394_ON);
+#endif
 
 }
 
@@ -1133,9 +1136,9 @@ vp1394TwoGrabber::close()
 
         setTransmission(DC1394_OFF);
         setCapture(DC1394_OFF);
-#ifdef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
         dc1394_camera_free(camera);
-#else
+#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS
         dc1394_free_camera(camera);
 #endif
       }
@@ -1143,7 +1146,7 @@ vp1394TwoGrabber::close()
     if(camInUse != NULL) delete [] camInUse;
   }
 
-#ifdef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
   if (d != NULL) {
     dc1394_free (d);
     d = NULL;
@@ -1336,12 +1339,14 @@ vp1394TwoGrabber::dequeue()
   }
 
   // Start dma capture if halted
+#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
   if (! camera->capture_is_set)
     setCapture(DC1394_ON);
+#endif
 
-#ifdef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
     setTransmission(DC1394_ON);
-#else
+#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS
   if (camera->is_iso_on == DC1394_OFF) {
     setTransmission(DC1394_ON);
   }
@@ -1591,17 +1596,29 @@ vp1394TwoGrabber::printCameraInfo()
        << "            -----" << std::endl
        << "----------------------------------------------------------" << std::endl;
 
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+  dc1394_camera_print_info( camera, stdout);
+#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
   dc1394_print_camera_info( camera);
+#endif
 
   dc1394featureset_t features;
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+  if(dc1394_feature_get_all(camera, &features) != DC1394_SUCCESS) {
+#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
   if(dc1394_get_camera_feature_set(camera, &features) != DC1394_SUCCESS) {
+#endif
     close();
     vpERROR_TRACE("unable to get feature set for camera %d\n", camera_id);
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "Cannot get camera features") );
 
   } else {
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+    dc1394_feature_print_all(&features, stdout);
+#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
     dc1394_print_feature_set(&features);
+#endif
   }
   std::cout << "----------------------------------------------------------" << std::endl;
 }

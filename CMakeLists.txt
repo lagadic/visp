@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.63 2007-12-05 17:05:12 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.64 2007-12-12 13:47:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -504,6 +504,13 @@ IF(USE_DC1394)
   IF(DC1394_FOUND)
     IF(DC1394_VERSION EQUAL 2)
       SET(VISP_HAVE_DC1394_2 TRUE) # for header vpConfig.h
+      IF(DC1394_CAMERA_ENUMERATE_FOUND)
+        SET(VISP_HAVE_DC1394_2_CAMERA_ENUMERATE TRUE) # for header vpConfig.h
+      ENDIF(DC1394_CAMERA_ENUMERATE_FOUND)
+      IF(DC1394_FIND_CAMERAS_FOUND)
+        SET(VISP_HAVE_DC1394_2_FIND_CAMERAS TRUE) # for header vpConfig.h
+      ENDIF(DC1394_FIND_CAMERAS_FOUND)
+
       #MESSAGE("DBG VISP_HAVE_DC1394_2= ${VISP_HAVE_DC1394_2}")
     ELSE(DC1394_VERSION EQUAL 2)
       SET(VISP_HAVE_DC1394_1 TRUE) # for header vpConfig.h

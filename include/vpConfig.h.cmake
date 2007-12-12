@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.21 2007-11-19 16:48:44 asaunier Exp $
+ * $Id: vpConfig.h.cmake,v 1.22 2007-12-12 13:47:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -104,6 +104,16 @@
 
 // Defined if raw1394 and dc1394-2.x libraries available.
 #cmakedefine VISP_HAVE_DC1394_2
+
+// Defined if dc1394_camera_enumerate() is available in dc1394-2.x.
+// dc1394_camera_enumerate() was introduced after libdc1394-2.0.0-rc7.
+#cmakedefine VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+
+// Defined if dc1394_find_cameras() is available in dc1394-2.x 
+// dc1394_find_cameras() is still present until libdc1394-2.0.0-rc7.
+// This function was suppress and replace by dc1394_camera_enumerate()
+// in more recent releases.
+#cmakedefine VISP_HAVE_DC1394_2_FIND_CAMERAS
 
 // Defined if cfox library is available (only under MAC OS X).
 #cmakedefine VISP_HAVE_CFOX
