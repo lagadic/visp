@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.13 2007-12-03 10:45:10 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.14 2007-12-12 13:47:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,6 @@
 
 #if defined(VISP_HAVE_DC1394_2)
 
-//#define DC1394_2_NEW_API // svn version (>= svn463) of libdc1394
 
 /*!
   \class vp1394TwoGrabber
@@ -280,7 +279,7 @@ private:
   dc1394video_frame_t *frame;
 #endif
 
-#ifdef DC1394_2_NEW_API
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
   dc1394_t * d;
   dc1394camera_list_t * list;
 #endif
