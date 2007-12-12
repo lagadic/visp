@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.21 2007-12-03 10:45:10 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.22 2007-12-12 10:33:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1140,10 +1140,6 @@ vp1394TwoGrabber::close()
 #endif
       }
     }
-#ifndef DC1394_2_NEW_API
-    // Not yest usefull in the new API
-    free(cameras);
-#endif
     if(camInUse != NULL) delete [] camInUse;
   }
 
