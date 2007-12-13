@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.cpp,v 1.8 2007-12-07 16:41:49 asaunier Exp $
+ * $Id: vpWin32Window.cpp,v 1.9 2007-12-13 09:17:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -184,9 +184,6 @@ vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
   semaClick = CreateSemaphore(NULL,0,1,NULL);
   semaClickUp = CreateSemaphore(NULL,0,1,NULL);
 
-  //no queries directly after initialization
-  waitForClick = false;
-  waitForClickUp = false;
 }
 
 /*!
