@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMouseEvent.cpp,v 1.1 2007-12-07 16:43:45 asaunier Exp $
+ * $Id: testMouseEvent.cpp,v 1.2 2007-12-13 09:36:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,6 +62,7 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayD3D.h>
 #include <visp/vpMouseButton.h>
 
 #include <visp/vpTime.h>
