@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.20 2007-11-29 15:07:49 asaunier Exp $
+ * $Id: vpImage.h,v 1.21 2007-12-18 14:40:50 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -190,6 +190,10 @@ public:
   {
     bitmap[i*width+j] = v ;
   }
+
+  vpImage<Type> operator-(const vpImage<Type> &B);
+
+  void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
 
   //! bilinear interpolation acces
   double get(double i, double j) ;
@@ -604,6 +608,62 @@ void vpImage<Type>::operator=(const Type &x)
     bitmap[i] = x ;
 }
 
+/*!
+  Operation  A - B (A is unchanged).
+  
+  \sa sub(const vpImage<Type> &, const vpImage<Type> &, vpImage<Type> &) to 
+  avoid matrix allocation for each use.
+*/
+template<class Type>
+vpImage<Type> vpImage<Type>::operator-(const vpImage<Type> &B)
+{
+  vpImage<Type> C;
+  sub(*this,B,C);
+  return C;
+}
+
+/*!
+  Operation C = A - B.
+
+  The Result is placed in the third parameter C and not returned.
+  A new image won't be allocated for every use of the function
+  (Speed gain if used many times with the same result matrix size).
+
+  \sa operator-()
+*/
+template<class Type>
+void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
+			vpImage<Type> &C)
+{
+
+  try
+  {
+    if ((A.getHeight() != C.getHeight())
+	|| (A.getWidth() != C.getWidth()))
+      C.resize(A.getHeight(), A.getWidth());
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
+
+  if ( (A.getWidth() != B.getWidth())||(A.getHeight() != B.getHeight()))
+  {
+    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
+    throw(vpException(vpException::memoryAllocationError,
+		      "vpImage mismatch in vpImage/vpImage substraction ")) ;
+  }
+
+  int i;
+  // MODIF EM 16/6/03
+  for (i=0;i<A.getWidth()*getHeight();i++)
+  {
+    *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
+  }
+}
+
 
 /*!
 
@@ -750,23 +810,32 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
 }
 
 /*!
-  used (eg. to make keypoint patch (normalization)
-   \warning = must be defined for <Type>
- */
+  Used (eg. to make keypoint patch (normalization).
+
+  \param col0 : Sub pixel coordinate along the colums.
+  \param row0 : Sub pixel coordinate along the rows.
+
+  \exception vpImageException::notInTheImage : If (col0, row0) are out
+  of the image.
+
+*/
 
 template<class Type>
 Type vpImage<Type>::getPixelBI(float col0, float row0) const
 {
   unsigned int irow, icol;
   float rfrac, cfrac;
-  Type row1 = 0, row2 = 0;
+  Type row1, row2;
 
   irow = (int) row0;
   icol = (int) col0;
 
   if (/*irow < 0 || */ irow >= height
-	  /* || icol < 0 */ || icol >= width)
-    return 0;
+      /* || icol < 0 */ || icol >= width) {
+    vpERROR_TRACE("Pixel outside the image") ;
+    throw(vpException(vpImageException::notInTheImage, 
+		      "Pixel outside the image"));
+  }
 
   if (row0 > height - 1)
     row0 = (float)(height - 1);
@@ -779,7 +848,7 @@ Type vpImage<Type>::getPixelBI(float col0, float row0) const
 
   if (cfrac < 1)
   {
-    row1 = (Type)(cfrac * row[irow][icol] + (1.0 - cfrac) * row[irow][icol + 1]);
+    row1 = (Type)(row[irow][icol] * cfrac + row[irow][icol + 1]*(1.0 - cfrac));
   }
   else
   {
@@ -790,14 +859,15 @@ Type vpImage<Type>::getPixelBI(float col0, float row0) const
   {
     if (cfrac < 1)
     {
-      row2 = (Type)(cfrac * row[irow+1][icol] + (1.0 - cfrac) * row[irow+1][icol + 1]);
+      row2 = (Type)(row[irow+1][icol] * cfrac 
+		    + row[irow+1][icol + 1]*(1.0 - cfrac) );
     }
     else
     {
       row2 = row[irow+1][icol];
     }
   }
-  return (Type)(rfrac * row1 + (1.0 - rfrac) * row2);
+  return (Type)( row1 * rfrac +  row2 * (1.0 - rfrac));
 }
 
 // For template instantiation with Visual Studio
