@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureLine.cpp,v 1.9 2007-12-18 15:03:17 fspindle Exp $
+ * $Id: vpFeatureLine.cpp,v 1.10 2007-12-18 15:13:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -286,7 +286,7 @@ vpFeatureLine *vpFeatureLine::duplicate() const
 void
 vpFeatureLine::display( const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			bool useDistortion,
+			bool /* useDistortion */,
 			vpColor::vpColorType color) const
 {
   try{
