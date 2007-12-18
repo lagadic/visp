@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testUndistortImage.cpp,v 1.5 2007-12-05 10:59:57 fspindle Exp $
+ * $Id: testUndistortImage.cpp,v 1.6 2007-12-18 14:31:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,6 +38,7 @@
 #include <stdlib.h>
 
 #include <visp/vpImage.h>
+#include <visp/vpRGBa.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageTools.h>
 #include <visp/vpIoTools.h>
@@ -57,6 +58,9 @@
 
 // List of allowed command line options
 #define GETOPTARGS  "i:o:h"
+
+//#define COLOR
+#define BW
 
 /*
 
@@ -145,8 +149,7 @@ bool getOptions(int argc, char **argv,
   return true;
 }
 
-int
-    main(int argc, char ** argv)
+int main(int argc, char ** argv)
 {
   std::string env_ipath;
   std::string opt_ipath;
@@ -229,23 +232,35 @@ int
     exit(-1);
   }
 
+
   //
   // Here starts really the test
   //
+#if defined BW
   vpImage<unsigned char> I; // Input image
   vpImage<unsigned char> U; // undistorted output image
+#elif defined COLOR
+  vpImage<vpRGBa> I; // Input image
+  vpImage<vpRGBa> U; // undistorted output image
+#endif
   vpCameraParameters cam;
-  cam.init_pm(600,600,192,144,0.17);  
+  cam.init_pm(600,600,192,144,0.17);
   cam.init_mp(600,600,192,144,-0.17);
   // Read the input grey image from the disk
+#if defined BW
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-  
   std::cout << "Read image: " << filename << std::endl;
   vpImageIo::readPGM(I, filename) ;
+#elif defined COLOR
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+  std::cout << "Read image: " << filename << std::endl;
+  vpImageIo::readPPM(I, filename) ;
+#endif
+
 
   std::cout << "Undistortion in process... " << std::endl;
   vpImageTools::undistort(I, cam, U);
-  
+
   double begintime = vpTime::measureTimeMs();
 
   // For the test, to have a significant time measure we repeat the
@@ -255,16 +270,23 @@ int
     vpImageTools::undistort(I, cam, U);
 
   double endtime = vpTime::measureTimeMs();
-  
-  std::cout<<"Time for 100 undistortion (ms): "<< endtime - begintime 
+
+  std::cout<<"Time for 100 undistortion (ms): "<< endtime - begintime
 	   << std::endl;
-   
+
   // Write the undistorted image on the disk
+#if defined BW
   filename = opath +  vpIoTools::path("/Klimt_undistorted.pgm");
   std::cout << "Write undistorted image: " << filename << std::endl;
   vpImageIo::writePGM(U, filename) ;
+#elif defined COLOR
+  filename = opath +  vpIoTools::path("/Klimt_undistorted.ppm");
+  std::cout << "Write undistorted image: " << filename << std::endl;
+  vpImageIo::writePPM(U, filename) ;
+#endif
 
 }
+
 
 /*
  * Local variables:
