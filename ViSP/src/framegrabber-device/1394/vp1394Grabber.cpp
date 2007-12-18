@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.18 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vp1394Grabber.cpp,v 1.19 2007-12-18 14:23:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -172,9 +172,9 @@ vp1394Grabber::vp1394Grabber( )
   pformat      = new int [vp1394Grabber::MAX_CAMERAS];
   pmode        = new int [vp1394Grabber::MAX_CAMERAS];
   pframerate   = new int [vp1394Grabber::MAX_CAMERAS];
-  _width        = new int [vp1394Grabber::MAX_CAMERAS];
-  _height       = new int [vp1394Grabber::MAX_CAMERAS];
-  image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
+  _width       = new int [vp1394Grabber::MAX_CAMERAS];
+  _height      = new int [vp1394Grabber::MAX_CAMERAS];
+  image_format = new vp1394ImageFormatType [vp1394Grabber::MAX_CAMERAS];
 
   // Camera settings initialisation
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
@@ -237,9 +237,9 @@ vp1394Grabber::vp1394Grabber(vpImage<unsigned char> &I)
   pformat      = new int [vp1394Grabber::MAX_CAMERAS];
   pmode        = new int [vp1394Grabber::MAX_CAMERAS];
   pframerate   = new int [vp1394Grabber::MAX_CAMERAS];
-  _width        = new int [vp1394Grabber::MAX_CAMERAS];
-  _height       = new int [vp1394Grabber::MAX_CAMERAS];
-  image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
+  _width       = new int [vp1394Grabber::MAX_CAMERAS];
+  _height      = new int [vp1394Grabber::MAX_CAMERAS];
+  image_format = new vp1394ImageFormatType [vp1394Grabber::MAX_CAMERAS];
 
   // Camera settings
   for (int i=0; i < vp1394Grabber::MAX_CAMERAS; i ++) {
@@ -1742,7 +1742,7 @@ vp1394Grabber::open()
   if (_height == NULL)
     _height       = new int [vp1394Grabber::MAX_CAMERAS];
   if (image_format == NULL)
-    image_format = new ImageFormatEnum [vp1394Grabber::MAX_CAMERAS];
+    image_format = new vp1394ImageFormatType [vp1394Grabber::MAX_CAMERAS];
 
   raw_handle = raw1394_new_handle();
 
@@ -1962,7 +1962,7 @@ vp1394Grabber::setup()
 void
 vp1394Grabber::getImageCharacteristics(int _format, int _mode,
 				       int &width, int &height,
-				       ImageFormatEnum &_image_format)
+				       vp1394ImageFormatType &_image_format)
 {
   switch(_format)
   {
