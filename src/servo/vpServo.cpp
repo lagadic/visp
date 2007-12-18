@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.16 2007-06-27 14:37:35 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.17 2007-12-18 14:33:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -167,7 +167,7 @@ vpServo::kill()
 }
 
 void
-vpServo::setServo(servoEnum _servoType)
+vpServo::setServo(vpServoType _servoType)
 {
 
   servoType = _servoType ;
@@ -213,7 +213,7 @@ vpServo::~vpServo()
   }
 }
 
-vpServo::vpServo(servoEnum _servoType)
+vpServo::vpServo(vpServoType _servoType)
 {
   setServo(_servoType);
 }
@@ -390,7 +390,7 @@ vpServo::getDimension()
 }
 
 void
-vpServo::setInteractionMatrixType(const int _interactionMatrixType, const int _interactionMatrixInversion)
+vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &_interactionMatrixType, const vpServoInversionType &_interactionMatrixInversion)
 {
   interactionMatrixType = _interactionMatrixType ;
   inversionType = _interactionMatrixInversion ;
@@ -481,8 +481,14 @@ vpServo::computeInteractionMatrix()
       case CURRENT:
 	{
 	  try
-	    {computeInteractionMatrixFromList(this ->featureList,
-					      this ->featureSelectionList, L);}
+	    {
+	      computeInteractionMatrixFromList(this ->featureList,
+					       this ->featureSelectionList,
+					       L);
+	      dim_task = L.getRows() ;
+	      interactionMatrixComputed = true ;
+	    }
+
 	  catch(vpException me)
 	    {
 	      vpERROR_TRACE("Error caught") ;
@@ -493,8 +499,14 @@ vpServo::computeInteractionMatrix()
       case DESIRED:
 	{
 	  try
-	    {computeInteractionMatrixFromList(this ->desiredFeatureList,
-					      this ->featureSelectionList, L);}
+	    {
+	      computeInteractionMatrixFromList(this ->desiredFeatureList,
+					      this ->featureSelectionList, L);
+	      
+	      dim_task = L.getRows() ;
+	      interactionMatrixComputed = true ;
+
+	    }
 	  catch(vpException me)
 	    {
 	      vpERROR_TRACE("Error caught") ;
@@ -518,12 +530,17 @@ vpServo::computeInteractionMatrix()
 	      throw ;
 	    }
 	  L = (L+Lstar)/2;
+
+	  dim_task = L.getRows() ;
+	  interactionMatrixComputed = true ;
 	}
 	break ;
+      case USER_DEFINED:
+	// dim_task = L.getRows() ;
+	interactionMatrixComputed = false ;
+	break;
       }
 
-    dim_task = L.getRows() ;
-    interactionMatrixComputed = true ;
   }
   catch(vpException me)
     {

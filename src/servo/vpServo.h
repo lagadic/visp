@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.12 2007-06-27 14:37:35 fspindle Exp $
+ * $Id: vpServo.h,v 1.13 2007-12-18 14:33:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,7 +98,7 @@ public:
     Choice of the visual servoing control law
   */
 public:
-  enum servoEnum
+  typedef enum
     {
       NONE,
       EYEINHAND_CAMERA,
@@ -106,14 +106,28 @@ public:
       EYETOHAND_L_cVe_eJe,
       EYETOHAND_L_cVf_fVe_eJe,
       EYETOHAND_L_cVf_fJe
-    } ;
+    } vpServoType;
+
+  typedef enum 
+    {
+      CURRENT,
+      DESIRED,
+      MEAN,
+      USER_DEFINED
+    } vpServoIteractionMatrixType;
+
+  typedef enum 
+    {
+      TRANSPOSE,
+      PSEUDO_INVERSE
+    } vpServoInversionType;
 
   //!  chosen visual servoing control law
-  servoEnum servoType;
+  vpServoType servoType;
   //!  Choice of the visual servoing control law
-  void setServo(servoEnum _servo_type) ;
+  void setServo(vpServoType _servo_type) ;
   //! constructor with Choice of the visual servoing control law
-  vpServo(servoEnum _servoType) ;
+  vpServo(vpServoType _servoType) ;
   /*
     Twist transformation matrix
   */
@@ -179,24 +193,11 @@ public:
   //! sign of the interaction +-1 (Eye-in-hand vs eye-to-hand)
   int signInteractionMatrix ;
   //! type of the interaction matrox (current, mean, desired, user)
-  int interactionMatrixType ;
-  int inversionType ;
-  enum interactionMatrixTypeEnum
-    {
-      CURRENT,
-      DESIRED,
-      MEAN,
-      USER_DEFINED
-    } ;
-
-  enum inversionTypeEnum
-    {
-      TRANSPOSE,
-      PSEUDO_INVERSE
-    } ;
+  vpServoIteractionMatrixType interactionMatrixType ;
+  vpServoInversionType inversionType ;
   //! set the type of the interaction matrox (current, mean, desired, user)
-  void setInteractionMatrixType(const int interactionMatrixType,
-				const int interactionMatrixInversion=PSEUDO_INVERSE) ;
+  void setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
+				const vpServoInversionType &interactionMatrixInversion=PSEUDO_INVERSE) ;
 
   //! create a new ste of  two visual features
   void addFeature(vpBasicFeature& s, vpBasicFeature& s_star,
