@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.14 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vp1394Grabber.h,v 1.15 2007-12-18 14:23:32 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -87,7 +87,7 @@
 class VISP_EXPORT vp1394Grabber : public vpFrameGrabber
 {
 public:
-  /*! \enum ImageFormatEnum
+  /*! \enum vp1394ImageFormatType
   Supported image coding format.
   */
   typedef enum {
@@ -98,7 +98,7 @@ public:
     RGBa,   /*!< RGBa coding format (32 bits/pixel) */
     MONO,   /*!< MONO8 coding format (8 bits/pixel) */
     MONO16  /*!< MONO16 coding format (16 bits/pixel) */
-  } ImageFormatEnum;
+  } vp1394ImageFormatType;
 
   static const int DROP_FRAMES; // Number of frames to drop
   static const int NUM_BUFFERS; // Number of buffers
@@ -171,7 +171,7 @@ private:
 
   void getImageCharacteristics(int _format, int _mode,
 			       int &width, int &height,
-			       ImageFormatEnum &imageformat);
+			       vp1394ImageFormatType &imageformat);
   int* dmaCapture(bool waiting = true);
   void dmaDoneWithBuffer();
 
@@ -205,7 +205,7 @@ private:
   // Image settings
   int *_width;  // MAX_CAMERAS
   int *_height; // MAX_CAMERAS
-  ImageFormatEnum *image_format; // MAX_CAMERAS
+  vp1394ImageFormatType *image_format; // MAX_CAMERAS
 } ;
 
 #endif
