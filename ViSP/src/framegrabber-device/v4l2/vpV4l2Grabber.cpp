@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.11 2007-04-27 16:40:14 fspindle Exp $
+ * $Id: vpV4l2Grabber.cpp,v 1.12 2007-12-18 14:26:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -550,7 +550,7 @@ vpV4l2Grabber::getField()
 
 */
 void
-vpV4l2Grabber::setFramerate(vpV4l2Grabber::framerateEnum framerate)
+vpV4l2Grabber::setFramerate(vpV4l2Grabber::vpV4l2FramerateType framerate)
 {
    this->framerate = framerate;
 
@@ -570,7 +570,7 @@ vpV4l2Grabber::setFramerate(vpV4l2Grabber::framerateEnum framerate)
 */
 
 
-vpV4l2Grabber::framerateEnum
+vpV4l2Grabber::vpV4l2FramerateType
 vpV4l2Grabber::getFramerate()
 {
   return framerate;
