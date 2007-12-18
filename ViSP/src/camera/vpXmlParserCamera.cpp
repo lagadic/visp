@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.cpp,v 1.5 2007-11-22 14:10:22 fspindle Exp $
+ * $Id: vpXmlParserCamera.cpp,v 1.6 2007-12-18 14:22:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -126,9 +126,11 @@ vpXmlParserCamera::operator =(const vpXmlParserCamera& twinParser) {
 
   \return error code.
 */
-int vpXmlParserCamera::
-parse(vpCameraParameters &cam, const char * filename, const std::string& camera_name,
-      const unsigned int image_width, const unsigned int image_height)
+int 
+vpXmlParserCamera::parse(vpCameraParameters &cam, const char * filename, 
+			 const std::string& camera_name,
+			 const unsigned int image_width, 
+			 const unsigned int image_height)
 {
   xmlDocPtr doc;
   xmlNodePtr node;
@@ -168,10 +170,11 @@ parse(vpCameraParameters &cam, const char * filename, const std::string& camera_
 
   \return error code.
 */
-int vpXmlParserCamera::
-save(const vpCameraParameters &cam, const char * filename,
-     const std::string& camera_name,
-     const unsigned int image_width, const unsigned int image_height)
+int 
+vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
+			const std::string& camera_name,
+			const unsigned int image_width,
+			const unsigned int image_height)
 {
   xmlDocPtr doc;
   xmlNodePtr node;
@@ -224,11 +227,10 @@ save(const vpCameraParameters &cam, const char * filename,
  \param node : XML tree, pointing on a marker equipement.
  \param res : variable where to place the result.
 */
-void vpXmlParserCamera::
-myXmlReadCharChild (xmlDocPtr doc,
-        xmlNodePtr node,
-        char **res/*,
-        int &code_error*/)
+void
+vpXmlParserCamera::myXmlReadCharChild (xmlDocPtr doc,
+				       xmlNodePtr node,
+				       char **res)
 {
   xmlNodePtr cur;
 
@@ -248,11 +250,11 @@ myXmlReadCharChild (xmlDocPtr doc,
  \param res : variable where to place the result.
  \param code_error: place a SEQUENCE_ERROR if error.
 */
-void vpXmlParserCamera::
-myXmlReadIntChild (xmlDocPtr doc,
-       xmlNodePtr node,
-       int &res,
-       int &code_error)
+void 
+vpXmlParserCamera::myXmlReadIntChild (xmlDocPtr doc,
+				      xmlNodePtr node,
+				      int &res,
+				      vpXmlCodeSequenceType &code_error)
 {
   char * val_char;
   char * control_convert;
@@ -290,11 +292,11 @@ myXmlReadIntChild (xmlDocPtr doc,
  \param res : variable where to place the result.
  \param code_error: place a SEQUENCE_ERROR if error.
 */
-void vpXmlParserCamera::
-myXmlReadDoubleChild (xmlDocPtr doc,
-          xmlNodePtr node,
-          double &res,
-          int &code_error)
+void 
+vpXmlParserCamera::myXmlReadDoubleChild (xmlDocPtr doc,
+					 xmlNodePtr node,
+					 double &res,
+					 vpXmlCodeSequenceType &code_error)
 {
   char * val_char;
   char * control_convert;
@@ -345,22 +347,24 @@ myXmlReadDoubleChild (xmlDocPtr doc,
 
   \return error code.
  */
-int vpXmlParserCamera::
-read (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
-      const unsigned int image_width, const unsigned int image_height,
-      const unsigned int subsampling_width,
-      const unsigned int subsampling_height)
+int 
+vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node, 
+			 const std::string& camera_name,
+			 const unsigned int image_width, 
+			 const unsigned int image_height,
+			 const unsigned int subsampling_width,
+			 const unsigned int subsampling_height)
 {
   //    char * val_char;
-  int prop;
+  vpXmlCodeType prop;
 
-  int back = SEQUENCE_OK;
+  vpXmlCodeSequenceType back = SEQUENCE_OK;
   int nbCamera = 0;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
   {
     if (node->type != XML_ELEMENT_NODE) continue;
-    if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
+    if (SEQUENCE_OK != str2xmlcode ((char*)(node ->name), prop))
     {
       prop = CODE_XML_OTHER;
       back = SEQUENCE_ERROR;
@@ -412,20 +416,22 @@ read (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
 
   \return number of available camera parameters corresponding with inputs.
  */
-int vpXmlParserCamera::
-count (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
-      const unsigned int image_width, const unsigned int image_height,
-      const unsigned int subsampling_width,
-      const unsigned int subsampling_height)
+int 
+vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node, 
+			  const std::string& camera_name,
+			  const unsigned int image_width, 
+			  const unsigned int image_height,
+			  const unsigned int subsampling_width,
+			  const unsigned int subsampling_height)
 {
   //    char * val_char;
-  int prop;
+  vpXmlCodeType prop;
   int nbCamera = 0;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
   {
     if (node->type != XML_ELEMENT_NODE) continue;
-    if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
+    if (SEQUENCE_OK != str2xmlcode ((char*)(node ->name), prop))
     {
       prop = CODE_XML_OTHER;
     }
@@ -465,15 +471,17 @@ count (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
   \return error code.
 
  */
-int vpXmlParserCamera::
-read_camera (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
-      const unsigned int image_width, const unsigned int image_height,
-      const unsigned int subsampling_width,
-      const unsigned int subsampling_height)
+int 
+vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node, 
+				const std::string& camera_name,
+				const unsigned int image_width,
+				const unsigned int image_height,
+				const unsigned int subsampling_width,
+				const unsigned int subsampling_height)
 {
 
   char * val_char;
-  int prop;
+  vpXmlCodeType prop;
   /* read value in the XML file. */
   int val;
   std::string camera_name_tmp = "";
@@ -484,13 +492,13 @@ read_camera (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
   unsigned int full_width_tmp = 0;
   unsigned int full_height_tmp = 0;
   vpCameraParameters cam_tmp;
-  int back = SEQUENCE_OK;
+  vpXmlCodeSequenceType back = SEQUENCE_OK;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
   {
     // vpDEBUG_TRACE (15, "Carac : %s.", node ->name);
     if (node->type != XML_ELEMENT_NODE) continue;
-    if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
+    if (SEQUENCE_OK != str2xmlcode ((char*)(node ->name), prop))
     {
 
       prop = CODE_XML_OTHER;
@@ -573,12 +581,13 @@ read_camera (xmlDocPtr doc, xmlNodePtr node, const std::string& camera_name,
   \return error code.
 
  */
-int vpXmlParserCamera::
-read_camera_model (xmlDocPtr doc, xmlNodePtr node, vpCameraParameters &cam_tmp)
+vpXmlParserCamera::vpXmlCodeSequenceType
+vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
+				      vpCameraParameters &cam_tmp)
 {
   // counter of the number of read parameters
   int nb = 0;
-  int prop;
+  vpXmlCodeType prop;
   /* read value in the XML file. */
   double vald;
   char* val_char=NULL;
@@ -589,13 +598,13 @@ read_camera_model (xmlDocPtr doc, xmlNodePtr node, vpCameraParameters &cam_tmp)
   double px = cam_tmp.get_px();
   double py = cam_tmp.get_py();
   double kd = 0;
-  int back = SEQUENCE_OK;
+  vpXmlCodeSequenceType back = SEQUENCE_OK;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
   {
     // vpDEBUG_TRACE (15, "Carac : %s.", node ->name);
     if (node->type != XML_ELEMENT_NODE) continue;
-    if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
+    if (SEQUENCE_OK != str2xmlcode ((char*)(node ->name), prop))
     {
 
       prop = CODE_XML_OTHER;
@@ -869,18 +878,18 @@ write (xmlNodePtr node, const std::string& camera_name,
   return back;
 }
 /*!
-  Translate xml label to integer code.
+  Translate a string (label) to a xml code.
   \param str : string to translate.
   \param res : resulting code.
 
   \return error code.
 */
-int
-vpXmlParserCamera::
-code_str_to_int (char * str, int & res)
+
+vpXmlParserCamera::vpXmlCodeSequenceType
+vpXmlParserCamera::str2xmlcode (char * str, vpXmlCodeType & res)
 {
-  int val_int = -1;
-  int back = vpXmlParserCamera::SEQUENCE_OK;
+  vpXmlCodeType val_int = CODE_XML_BAD;
+  vpXmlCodeSequenceType back = vpXmlParserCamera::SEQUENCE_OK;
 
   // DEBUG_TRACE (9, "# Entree :str=%s.", str);
 
