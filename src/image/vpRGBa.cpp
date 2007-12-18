@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRGBa.cpp,v 1.4 2007-12-18 14:34:47 fspindle Exp $
+ * $Id: vpRGBa.cpp,v 1.5 2007-12-18 15:14:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,7 +64,7 @@ vpRGBa::vpRGBa()
 /*!
   Constructor.
 
-  Initilialize the color with R, G, B, A values.
+  Initialize the color with R, G, B, A values.
 
   \param R : Red value.
   \param G : Green value.
@@ -72,7 +72,7 @@ vpRGBa::vpRGBa()
   \param A : Additional value.
 
 */
-vpRGBa::vpRGBa(const unsigned char &R, const unsigned char &G, 
+vpRGBa::vpRGBa(const unsigned char &R, const unsigned char &G,
 	       const unsigned char &B, const unsigned char &A)
 {
   this->R = R;
@@ -84,7 +84,23 @@ vpRGBa::vpRGBa(const unsigned char &R, const unsigned char &G,
 /*!
   Constructor.
 
-  Initilialization from a color identifier.
+  Initialize all the R, G, B, A components to \e v.
+
+  \param v : Value to set.
+
+*/
+vpRGBa::vpRGBa(const unsigned char &v)
+{
+  this->R = v;
+  this->G = v;
+  this->B = v;
+  this->A = v;
+}
+
+/*!
+  Constructor.
+
+  Initialization from a color identifier.
 
   \param v : Color to initialize.
 
@@ -180,7 +196,7 @@ vpRGBa::operator=(const vpColVector &v)
     vpERROR_TRACE("Bad vector dimension ") ;
     throw(vpException(vpException::dimensionError, "Bad vector dimension "));
   }
-  R = (unsigned char)v[0]; 
+  R = (unsigned char)v[0];
   G = (unsigned char)v[1];
   B = (unsigned char)v[2];
   A = (unsigned char)v[3];
@@ -191,7 +207,7 @@ vpRGBa::operator=(const vpColVector &v)
   \param v : Color to substract to the current object "this".
   \return "this" - v
 */
-vpColVector 
+vpColVector
 vpRGBa::operator-(const vpRGBa &v) const
 {
   vpColVector n(4); // new color
