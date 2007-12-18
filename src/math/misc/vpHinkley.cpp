@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.cpp,v 1.5 2007-08-17 15:24:45 fspindle Exp $
+ * $Id: vpHinkley.cpp,v 1.6 2007-12-18 14:29:03 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -236,10 +236,10 @@ void vpHinkley::setAlpha(double alpha)
   \sa setDelta(), setAlpha(), testUpwardJump()
 
 */
-vpHinkley::vpHinkleyJump vpHinkley::testDownwardJump(double signal)
+vpHinkley::vpHinkleyJumpType vpHinkley::testDownwardJump(double signal)
 {
 
-  vpHinkleyJump jump = noJump;
+  vpHinkleyJumpType jump = noJump;
 
   nsignal ++; // Signal lenght
 
@@ -294,10 +294,10 @@ vpHinkley::vpHinkleyJump vpHinkley::testDownwardJump(double signal)
   \sa setDelta(), setAlpha(), testDownwardJump()
 
 */
-vpHinkley::vpHinkleyJump vpHinkley::testUpwardJump(double signal)
+vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
 {
 
-  vpHinkleyJump jump = noJump;
+  vpHinkleyJumpType jump = noJump;
 
   nsignal ++; // Signal lenght
 
@@ -351,10 +351,10 @@ vpHinkley::vpHinkleyJump vpHinkley::testUpwardJump(double signal)
   \sa setDelta(), setAlpha(), testDownwardJump(), testUpwardJump()
 
 */
-vpHinkley::vpHinkleyJump vpHinkley::testDownUpwardJump(double signal)
+vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
 {
 
-  vpHinkleyJump jump = noJump;
+  vpHinkleyJumpType jump = noJump;
 
   nsignal ++; // Signal lenght
 
@@ -474,7 +474,7 @@ void vpHinkley::computeNk()
   if (Tk < Nk) Nk = Tk;
 }
 
-void vpHinkley::print(vpHinkley::vpHinkleyJump jump)
+void vpHinkley::print(vpHinkley::vpHinkleyJumpType jump)
 {
   switch(jump)
     {
