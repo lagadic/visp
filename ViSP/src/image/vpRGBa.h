@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRGBa.h,v 1.3 2007-11-29 15:06:38 asaunier Exp $
+ * $Id: vpRGBa.h,v 1.4 2007-12-18 14:34:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,26 +32,9 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
-
-/*
-#----------------------------------------------------------------------------
-#  Copyright (C) 1998  IRISA-INRIA Rennes Vista Project
-#  All Rights Reserved.
-#
-#    Contact:
-#       Eric Marchand
-#       IRISA-INRIA Rennes
-#       Campus Universitaire de Beaulieu
-#       35042 Rennes Cedex
-#       France
-#
-#    email: marchand@irisa.fr
-#    www  : http://www.irisa.fr/vista
-#
-#----------------------------------------------------------------------------
-*/
 
 
 #ifndef vpRGBa_h
@@ -65,6 +48,7 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpColor.h>
+#include <visp/vpColVector.h>
 
 
 /*!
@@ -81,20 +65,27 @@
 class VISP_EXPORT vpRGBa : public vpColor
 {
 public:
-  unsigned char R ; //!< red component
-  unsigned char G ; //!< green component
-  unsigned char B ; //!< blue component
-  unsigned char A ; //!<
+  unsigned char R ; //!< Red component.
+  unsigned char G ; //!< Green component.
+  unsigned char B ; //!< Blue component.
+  unsigned char A ; //!< Additionnal component.
 
   vpRGBa()  ;
-  vpRGBa(unsigned char R1, unsigned char G1, unsigned char B1,
-	 unsigned char A=0) ;
-  vpRGBa(int color) ;
-  vpRGBa(const vpRGBa &c) ;
+  vpRGBa(const unsigned char &R, const unsigned char &G, 
+	 const unsigned char &B, const unsigned char &A=0);
+  vpRGBa(const vpColorType &v) ;
+  vpRGBa(const vpRGBa &v) ;
+  vpRGBa(const vpColVector &v) ;
 
-  void  operator=(const unsigned char x) ;
-  void  operator=(const vpRGBa &m) ;
-
+  void operator=(const unsigned char &v) ;
+  void operator=(const vpRGBa &v) ;
+  void operator=(const vpColVector &v) ;
+  vpColVector operator-(const vpRGBa &v) const;
+  vpRGBa operator+(const vpRGBa &v) const;
+  vpColVector operator-(const vpColVector &v) const;
+  vpColVector operator+(const vpColVector &v) const;
+  vpColVector operator*(const float &v) const;
+  vpColVector operator*(const double &v) const;
 } ;
 
 #endif
