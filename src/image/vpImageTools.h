@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.12 2007-12-05 10:59:11 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.13 2007-12-18 14:33:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,11 +53,17 @@
 #include <string.h>
 
 #include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_PTHREAD
+#  include <pthread.h>
+#endif
+
 #include <visp/vpImageException.h>
 #include <visp/vpImage.h>
 #include <visp/vpMath.h>
 #include <visp/vpRect.h>
 #include <visp/vpCameraParameters.h>
+
 
 /*!
   \class vpImageTools
@@ -82,7 +88,7 @@ public:
 			     vpImage<Type> &S);
   template<class Type>
   static void binarise(vpImage<Type> &I,
-		       Type threshold1, Type threshold2, 
+		       Type threshold1, Type threshold2,
 		       Type value1, Type value2, Type value3);
   static void changeLUT(vpImage<unsigned char>& I,
 			unsigned char A,
@@ -189,11 +195,11 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
     less then or equal to \e threshold2 are set to \e value2
 
   - Pixels whose walues are greater than \e threshold2 are set to \e value3
-  
+
 */
 template<class Type>
 void vpImageTools::binarise(vpImage<Type> &I,
-			    Type threshold1, Type threshold2, 
+			    Type threshold1, Type threshold2,
 			    Type value1, Type value2, Type value3)
 {
   unsigned char v;
@@ -208,85 +214,61 @@ void vpImageTools::binarise(vpImage<Type> &I,
 
 }
 
-/*!
-  Undistort an image
+#ifdef VISP_HAVE_PTHREAD
 
-  \param I : Input image to undistort.
-
-  \param cam : Parameters of the camera causing distortion.
-
-  \param undistI : Undistorted output image. The size of this image
-  will be the same than the input image \e I. If the distorsion
-  parameter \f$K_d\f$ is null (see cam.get_kd_mp()), \e undistI is
-  just a copy of \e I.
-
-  \warning This function works only with Types authorizing "+,-,
-  multiplication by a scalar" operators.
-
-  \warning This function is time consuming :
-    - On "Rhea"(Intel Core 2 Extreme X6800 2.93GHz, 2Go RAM)
-      or "Charon"(Intel Xeon 3 GHz, 2Go RAM) : ~16 ms for a 640x480 image.
-*/
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 template<class Type>
-void vpImageTools::undistort(const vpImage<Type> &I,
-                             const vpCameraParameters &cam,
-                             vpImage<Type> &undistI)
+class VISP_EXPORT vpUndistortInternalType
 {
-#if 0 //not optimized version
-   
-  int width = I.getWidth();
-  int height = I.getHeight();
+public:
+  Type *src;
+  Type *dst;
+  int width;
+  int height;
+  vpCameraParameters cam;
+  int nthreads;
+  int threadid;
+public:
+  vpUndistortInternalType() {};
+  vpUndistortInternalType(const vpUndistortInternalType<Type> &u) {
+    src = u.src;
+    dst = u.dst;
+    width = u.width;
+    height = u.height;
+    cam = u.cam;
+    nthreads = u.nthreads;
+    threadid = u.threadid;
+  };
 
-  undistI.resize(height,width);
+  static void *vpUndistort_threaded(void *arg);
+};
 
-  double u0 = cam.get_u0_mp();
-  double v0 = cam.get_v0_mp();
-  double px = cam.get_px_mp();
-  double py = cam.get_py_mp();
-  double kd = cam.get_kd_mp();
 
-  if (kd == 0) {
-    // There is no need to undistort the image
-    undistI = I;
-    return;
-  }
+template<class Type>
+void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
+{
+  vpUndistortInternalType<Type> *undistortSharedData = (vpUndistortInternalType<Type>*)arg;
+  int offset   = undistortSharedData->threadid;
+  int width    = undistortSharedData->width;
+  int height   = undistortSharedData->height;
+  int nthreads = undistortSharedData->nthreads;
 
-  for(int v = 0 ; v < width; v++){
-    for(int u = 0; u < height; u++){
-      double r2 = vpMath::sqr(((double)u - u0)/px) +
-	vpMath::sqr(((double)v-v0)/py);
-      double u_double = ((double)u - u0)*(1.0+kd*r2) + u0;
-      double v_double = ((double)v - v0)*(1.0+kd*r2) + v0;
-      undistI[v][u] = I.getPixelBI((float)u_double,(float)v_double);
-    }
-  }
-  
-#else //optimized version
-  int width = I.getWidth();
-  int height = I.getHeight();
-
-  undistI.resize(height, width);
-
-  double u0 = cam.get_u0_mp();
-  double v0 = cam.get_v0_mp();
-  double px = cam.get_px_mp();
-  double py = cam.get_py_mp();
-  double kd = cam.get_kd_mp();
-
-  if (kd == 0) {
-    // There is no need to undistort the image
-    undistI = I;
-    return;
-  }
+  double u0 = undistortSharedData->cam.get_u0_mp();
+  double v0 = undistortSharedData->cam.get_v0_mp();
+  double px = undistortSharedData->cam.get_px_mp();
+  double py = undistortSharedData->cam.get_py_mp();
+  double kd = undistortSharedData->cam.get_kd_mp();
 
   double invpx = 1.0/px;
   double invpy = 1.0/py;
 
   double kd_px2 = kd * invpx * invpx;
   double kd_py2 = kd * invpy * invpy;
-  
-  Type *dst = undistI.bitmap;
-  for (double v = 0;v < height ; v++) {
+
+  Type *dst = undistortSharedData->dst+(height/nthreads*offset)*width;
+  Type *src = undistortSharedData->src;
+
+  for (double v = height/nthreads*offset;v < height/nthreads*(offset+1) ; v++) {
     double  deltav  = v - v0;
     //double fr1 = 1.0 + kd * (vpMath::sqr(deltav * invpy));
     double fr1 = 1.0 + kd_py2 * deltav * deltav;
@@ -309,16 +291,16 @@ void vpImageTools::undistort(const vpImage<Type> &I,
       if (v_round < 0.f) v_round = -1;
       double  du_double  = (u_double) - (double) u_round;
       double  dv_double  = (v_double) - (double) v_round;
-      Type  v01;
-      Type  v23;
+      Type v01;
+      Type v23;
       if ( (0 <= u_round) && (0 <= v_round) &&
 	   (u_round < ((width) - 1)) && (v_round < ((height) - 1)) ) {
 	//process interpolation
-	const Type* _mp = &I[v_round][u_round];
-	v01 = (Type)(_mp[0] + (du_double * (_mp[1] - _mp[0])));
+	const Type* _mp = &src[v_round*width+u_round];
+	v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
 	_mp += width;
-	v23 = (Type)(_mp[0] + (du_double * (_mp[1] - _mp[0])));
-	*dst = (Type)(v01 + (dv_double * (v23 - v01)));
+	v23 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
+	*dst = (Type)(v01 + ((v23 - v01) * dv_double));
       }
       else {
 	*dst = 0;
@@ -326,8 +308,189 @@ void vpImageTools::undistort(const vpImage<Type> &I,
       dst++;
     }
   }
-#endif  
+
+  pthread_exit((void*) 0);
+  return NULL;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+#endif // VISP_HAVE_PTHREAD
+
+/*!
+  Undistort an image
+
+  \param I : Input image to undistort.
+
+  \param cam : Parameters of the camera causing distortion.
+
+  \param undistI : Undistorted output image. The size of this image
+  will be the same than the input image \e I. If the distorsion
+  parameter \f$K_d\f$ is null (see cam.get_kd_mp()), \e undistI is
+  just a copy of \e I.
+
+  \warning This function works only with Types authorizing "+,-,
+  multiplication by a scalar" operators.
+
+  \warning This function is time consuming :
+    - On "Rhea"(Intel Core 2 Extreme X6800 2.93GHz, 2Go RAM)
+      or "Charon"(Intel Xeon 3 GHz, 2Go RAM) : ~8 ms for a 640x480 image.
+*/
+template<class Type>
+void vpImageTools::undistort(const vpImage<Type> &I,
+                             const vpCameraParameters &cam,
+                             vpImage<Type> &undistI)
+{
+#ifdef VISP_HAVE_PTHREAD
+  //
+  // Optimized version using pthreads
+  //
+  int width = I.getWidth();
+  int height = I.getHeight();
+
+  undistI.resize(height, width);
+
+  double kd = cam.get_kd_mp();
+
+  if (kd == 0) {
+    // There is no need to undistort the image
+    undistI = I;
+    return;
+  }
+
+  int nthreads = 2;
+  pthread_attr_t attr;
+  pthread_t callThd[nthreads];
+  pthread_attr_init(&attr);
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+  vpUndistortInternalType<Type> *undistortSharedData;
+  undistortSharedData = new vpUndistortInternalType<Type> [nthreads];
+
+  for(int i=0;i<nthreads;i++) {
+    // Each thread works on a different set of data.
+    //    vpTRACE("create thread %d", i);
+    undistortSharedData[i].src      = I.bitmap;
+    undistortSharedData[i].dst      = undistI.bitmap;
+    undistortSharedData[i].width    = I.getWidth();
+    undistortSharedData[i].height   = I.getHeight();
+    undistortSharedData[i].cam      = cam;
+    undistortSharedData[i].nthreads = nthreads;
+    undistortSharedData[i].threadid = i;
+    pthread_create( &callThd[i], &attr,
+		    &vpUndistortInternalType<Type>::vpUndistort_threaded,
+		    &undistortSharedData[i]);
+  }
+  pthread_attr_destroy(&attr);
+  /* Wait on the other threads */
+
+  for(int i=0;i<nthreads;i++) {
+    //  vpTRACE("join thread %d", i);
+    pthread_join( callThd[i], NULL);
+  }
+#else // VISP_HAVE_PTHREAD
+  //
+  // optimized version without pthreads
+  //
+  int width = I.getWidth();
+  int height = I.getHeight();
+
+  undistI.resize(height, width);
+
+  double u0 = cam.get_u0_mp();
+  double v0 = cam.get_v0_mp();
+  double px = cam.get_px_mp();
+  double py = cam.get_py_mp();
+  double kd = cam.get_kd_mp();
+
+  if (kd == 0) {
+    // There is no need to undistort the image
+    undistI = I;
+    return;
+  }
+
+  double invpx = 1.0/px;
+  double invpy = 1.0/py;
+
+  double kd_px2 = kd * invpx * invpx;
+  double kd_py2 = kd * invpy * invpy;
+
+  Type *dst = undistI.bitmap;
+  for (double v = 0;v < height ; v++) {
+    double  deltav  = v - v0;
+    //double fr1 = 1.0 + kd * (vpMath::sqr(deltav * invpy));
+    double fr1 = 1.0 + kd_py2 * deltav * deltav;
+
+    for (double u = 0 ; u < width ; u++) {
+      //computation of u,v : corresponding pixel coordinates in I.
+      double  deltau  = u - u0;
+      //double fr2 = fr1 + kd * (vpMath::sqr(deltau * invpx));
+      double fr2 = fr1 + kd_px2 * deltau * deltau;
+
+      double u_double = deltau * fr2 + u0;
+      double v_double = deltav * fr2 + v0;
+
+      //printf("[%g][%g] %g %g : ", u, v, u_double, v_double );
+
+      //computation of the bilinear interpolation
+
+      //declarations
+      int u_round  = (int) (u_double);
+      int v_round  = (int) (v_double);
+      if (u_round < 0.f) u_round = -1;
+      if (v_round < 0.f) v_round = -1;
+      double  du_double  = (u_double) - (double) u_round;
+      double  dv_double  = (v_double) - (double) v_round;
+      Type  v01;
+      Type  v23;
+      if ( (0 <= u_round) && (0 <= v_round) &&
+	   (u_round < ((width) - 1)) && (v_round < ((height) - 1)) ) {
+	//process interpolation
+	const Type* _mp = &I[v_round][u_round];
+	v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
+	_mp += width;
+	v23 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
+	*dst = (Type)(v01 + ((v23 - v01) * dv_double));
+	//printf("R %d G %d B %d\n", dst->R, dst->G, dst->B); 
+      }
+      else {
+	*dst = 0;
+      }
+      dst++;
+    }
+  }
+#endif // VISP_HAVE_PTHREAD
+
+#if 0
+  // non optimized version
+  int width = I.getWidth();
+  int height = I.getHeight();
+
+  undistI.resize(height,width);
+
+  double u0 = cam.get_u0_mp();
+  double v0 = cam.get_v0_mp();
+  double px = cam.get_px_mp();
+  double py = cam.get_py_mp();
+  double kd = cam.get_kd_mp();
+
+  if (kd == 0) {
+    // There is no need to undistort the image
+    undistI = I;
+    return;
+  }
+
+  for(int v = 0 ; v < height; v++){
+    for(int u = 0; u < height; u++){
+      double r2 = vpMath::sqr(((double)u - u0)/px) +
+	vpMath::sqr(((double)v-v0)/py);
+      double u_double = ((double)u - u0)*(1.0+kd*r2) + u0;
+      double v_double = ((double)v - v0)*(1.0+kd*r2) + v0;
+      undistI[v][u] = I.getPixelBI((float)u_double,(float)v_double);
+    }
+  }
+#endif
+}
+
+
 
 #endif
 
