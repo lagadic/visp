@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMouseEvent.cpp,v 1.2 2007-12-13 09:36:19 asaunier Exp $
+ * $Id: testMouseEvent.cpp,v 1.3 2007-12-18 14:30:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,7 +78,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"di:p:ht:f:n:s:w"
+#define GETOPTARGS	"di:lp:ht:f:n:s:w"
 typedef enum {
   vpX11,
   vpGTK,
@@ -161,7 +161,7 @@ SYNOPSIS\n\
      \"GDI\": only on Windows platform (Graphics Device Interface),\n\
      \"D3D\": only on Windows platform (Direct3D).\n\
 \n\
-     -l\n\
+  -l\n\
      Print the list of video-devices available and exit.\n\
 \n\
   -d\n\
@@ -206,7 +206,7 @@ SYNOPSIS\n\
 */
 bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
 		unsigned &first, unsigned &nimages, unsigned &step,
-  vpDisplayType &dtype, bool &list, bool &display, bool &wait)
+		vpDisplayType &dtype, bool &list, bool &display, bool &wait)
 {
   char *optarg;
   int	c;
@@ -232,6 +232,7 @@ bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
 
     break;  
     case 'i': ipath = optarg; break;
+    case 'l': list = true; break;
     case 'p': ppath = optarg; break;
     case 'f': first = (unsigned) atoi(optarg); break;
     case 'n': nimages = (unsigned) atoi(optarg); break;
@@ -296,7 +297,8 @@ main(int argc, char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
-      opt_step, opt_dtype,opt_list, opt_display, opt_click_blocking) == false) {
+		 opt_step, opt_dtype, opt_list, opt_display, 
+		 opt_click_blocking) == false) {
     exit (-1);
   }
     // Print the list of video-devices available
