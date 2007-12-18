@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.h,v 1.9 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpItifg8Grabber.h,v 1.10 2007-12-18 14:25:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -156,11 +156,11 @@ public:
   static const int DEFAULT_SCALE;
 
   /*! Allowed framerates for AM-STD COMP board. */
-  enum framerateEnum
+  typedef enum 
     {
       framerate_50fps, //!< 50 frames per second
       framerate_25fps  //!< 25 frames per second
-    };
+    } vpItifg8FramerateType;
 
 #if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
 public:
@@ -168,12 +168,12 @@ public:
     {
       READ_MODE,
       MMAP_MODE
-    } vpItifg8Opmode_t;
+    } vpItifg8OpmodeType;
 
 private:
   struct vpItifg8OpmodeName_t
   {
-    vpItifg8Opmode_t number;
+    vpItifg8OpmodeType number;
     char name[8];
   };
 #endif
@@ -186,12 +186,12 @@ public:
       SELECT_MODE,
       MANUAL_MODE,
       POLL_MODE
-    } vpItifg8Syncmd_t;
+    } vpItifg8SyncmdType;
 
 private:
   struct vpItifg8SyncmdName_t
   {
-    vpItifg8Syncmd_t number;
+    vpItifg8SyncmdType number;
     char name[8];
   };
 
@@ -204,7 +204,7 @@ public:
       SYNC_MODE = 0x2,
       APPEND_MODE = 0x4,
       DELAY_MODE = 0x8
-    } vpItifg8Sacqmd_t;
+    } vpItifg8SacqmdType;
 #else
   typedef enum
     {
@@ -213,13 +213,13 @@ public:
       NODMA_MODE = 0x2,
       NOSYNC_MODE = 0x4,
       NOAPPEND_MODE = 0x8
-    } vpItifg8Sacqmd_t;
+    } vpItifg8SacqmdType;
 
 #endif
 private:
   struct vpItifg8SacqmdName_t
   {
-    vpItifg8Sacqmd_t number;
+    vpItifg8SacqmdType number;
     char name[16];
   };
 
@@ -247,16 +247,16 @@ private:
     int hdec[ITI_BOARDS_MAX];
     int vdec[ITI_BOARDS_MAX];
     float rate[ITI_BOARDS_MAX];
-    framerateEnum amcmp_rate[ITI_BOARDS_MAX];
+    vpItifg8FramerateType amcmp_rate[ITI_BOARDS_MAX];
 #if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
-    vpItifg8Opmode_t opmode[ITI_BOARDS_MAX];
+    vpItifg8OpmodeType opmode[ITI_BOARDS_MAX];
 #else
     bool other[ITI_BOARDS_MAX];
     int window[ITI_BOARDS_MAX];
     int contig[ITI_BOARDS_MAX];
 #endif
-    vpItifg8Syncmd_t syncmd[ITI_BOARDS_MAX];
-    vpItifg8Sacqmd_t sacqmd[ITI_BOARDS_MAX];
+    vpItifg8SyncmdType syncmd[ITI_BOARDS_MAX];
+    vpItifg8SacqmdType sacqmd[ITI_BOARDS_MAX];
   };
 
 
@@ -264,7 +264,7 @@ private:
 private:
   unsigned int input ; //!< video entry
   unsigned int scale ;
-  framerateEnum framerate;
+  vpItifg8FramerateType framerate;
   bool field; // The type of the acquired frame (0 if odd, 1 if even).
 
 public:
@@ -305,14 +305,14 @@ public:
   void setDepth(unsigned int depth);
   void setBuffer(unsigned int buffer);
   void setFramerate(float rate);
-  void setFramerate(framerateEnum rate);
+  void setFramerate(vpItifg8FramerateType rate);
 #if VISP_HAVE_ITIFG8_VERSION < 83 // 8.3.1-12
-  void setOpmode  (vpItifg8Opmode_t opmode);
+  void setOpmode  (vpItifg8OpmodeType opmode);
 #else
   void setContigmode(bool contig);
 #endif
-  void setSyncmode(vpItifg8Syncmd_t synmode);
-  void setAcqmode (vpItifg8Sacqmd_t sacqmode);
+  void setSyncmode(vpItifg8SyncmdType synmode);
+  void setAcqmode (vpItifg8SacqmdType sacqmode);
 
 private:
   void setupBufs();

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.cpp,v 1.13 2007-11-15 15:26:22 fspindle Exp $
+ * $Id: vpItifg8Grabber.cpp,v 1.14 2007-12-18 14:25:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -789,14 +789,14 @@ void vpItifg8Grabber::setBuffer(unsigned int buffer)
 /*!
 
   Set the acquisition framerate. Did not work for AM-STD COMP framegrabber
-  board. For such a board, see setFramerate(framerateEnum rate).
+  board. For such a board, see setFramerate(vpItifg8FramerateType rate).
 
   \param rate : Framerate [0.01-100.0].
 
   \exception vpFrameGrabberException::settingError : If framerate is
   invalid.
 
-  \sa setFramerate(framerateEnum rate)
+  \sa setFramerate(vpItifg8FramerateType rate)
 */
 void vpItifg8Grabber::setFramerate(float rate)
 {
@@ -852,7 +852,7 @@ void vpItifg8Grabber::setFramerate(float rate)
 
 */
 void
-vpItifg8Grabber::setFramerate(vpItifg8Grabber::framerateEnum rate)
+vpItifg8Grabber::setFramerate(vpItifg8Grabber::vpItifg8FramerateType rate)
 {
   args.amcmp_rate[args.board_i]  = rate;
 }
@@ -866,7 +866,7 @@ vpItifg8Grabber::setFramerate(vpItifg8Grabber::framerateEnum rate)
   \exception vpFrameGrabberException::settingError : If operation mode is
   invalid.
 */
-void vpItifg8Grabber::setOpmode(vpItifg8Opmode_t opmode)
+void vpItifg8Grabber::setOpmode(vpItifg8OpmodeType opmode)
 {
   switch(opmode) {
   case READ_MODE:
@@ -904,7 +904,7 @@ void vpItifg8Grabber::setContigmode(bool contig)
   \exception vpFrameGrabberException::settingError : If synchronisation mode is
   invalid.
 */
-void vpItifg8Grabber::setSyncmode(vpItifg8Syncmd_t syncmode)
+void vpItifg8Grabber::setSyncmode(vpItifg8SyncmdType syncmode)
 {
   switch(syncmode) {
   case BLOCK_MODE:
@@ -930,7 +930,7 @@ void vpItifg8Grabber::setSyncmode(vpItifg8Syncmd_t syncmode)
   \exception vpFrameGrabberException::settingError : If special acquisition
   mode is invalid.
 */
-void vpItifg8Grabber::setAcqmode(vpItifg8Sacqmd_t sacqmode)
+void vpItifg8Grabber::setAcqmode(vpItifg8SacqmdType sacqmode)
 {
   switch(sacqmode) {
   case NORMAL_MODE:
@@ -1029,10 +1029,10 @@ void vpItifg8Grabber::open()
 	{
 	  fprintf (stderr, "One have to be root to lock the read buffer.");
 	  fprintf (stderr, " Disable locking.");
-	  //	  args.sacqmd[args.board_i] &= (vpItifg8Sacqmd_t) (~LOCK_MODE);
+	  //	  args.sacqmd[args.board_i] &= (vpItifg8SacqmdType) (~LOCK_MODE);
 	  int tmpval = args.sacqmd[args.board_i];
 	  tmpval  &= (~LOCK_MODE);
-	  args.sacqmd[args.board_i] = (vpItifg8Sacqmd_t) tmpval;
+	  args.sacqmd[args.board_i] = (vpItifg8SacqmdType) tmpval;
 	}
     }
   if (args.sacqmd[args.board_i] & NODMA_MODE)
