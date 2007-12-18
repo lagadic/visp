@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.28 2007-10-03 16:33:00 fspindle Exp $
+ * $Id: vpDot.h,v 1.29 2007-12-18 14:29:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,7 +66,7 @@
 class VISP_EXPORT vpDot : public vpTracker
 {
 public:
-  /*! \enum ConnexityEnum
+  /*! \enum vpConnexityType
   Type of connexity 4, or 8.
   */
   typedef enum {
@@ -74,7 +74,7 @@ public:
 		   right, up, down) */
     CONNEXITY_8 /*!< For a given pixel 8 neighbors are considered (left,
 		  right, up, down, and the 4 pixels located on the diagonal) */
-  } ConnexityEnum;
+  } vpConnexityType;
 
   static const unsigned int SPIRAL_SEARCH_SIZE; /*!< Spiral size for the dot
 						  search. */
@@ -84,7 +84,7 @@ private:
   vpList<unsigned int> Lu, Lv ;
 
   //! Type of connexity
-  ConnexityEnum connexity;
+  vpConnexityType connexity;
 
   //! coordinates of the point center of gravity
   unsigned int cog_u, cog_v ;
@@ -202,7 +202,7 @@ public:
   /*!
     Set the type of connexity: 4 or 8.
   */
-  void setConnexity(ConnexityEnum connexity) {this->connexity = connexity; };
+  void setConnexity(vpConnexityType connexity) {this->connexity = connexity; };
 
 public:
 

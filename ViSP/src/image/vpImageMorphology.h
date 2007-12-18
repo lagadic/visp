@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageMorphology.h,v 1.5 2007-04-23 15:54:48 fspindle Exp $
+ * $Id: vpImageMorphology.h,v 1.6 2007-12-18 14:27:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,7 +67,7 @@
 class vpImageMorphology
 {
 public:
-  /*! \enum ConnexityEnum
+  /*! \enum vpConnexityType
   Type of connexity 4, or 8.
   */
   typedef enum {
@@ -75,16 +75,16 @@ public:
 		   right, up, down) */
     CONNEXITY_8 /*!< For a given pixel 8 neighbors are considered (left,
 		  right, up, down, and the 4 pixels located on the diagonal) */
-  } ConnexityEnum;
+  } vpConnexityType;
 
 public:
   template<class Type>
   static void erosion(vpImage<Type> &I, Type value, Type value_out,
-		      ConnexityEnum connexity = CONNEXITY_4);
+		      vpConnexityType connexity = CONNEXITY_4);
 
   template<class Type>
   static void dilatation(vpImage<Type> &I, Type value, Type value_out,
-			 ConnexityEnum connexity = CONNEXITY_4);
+			 vpConnexityType connexity = CONNEXITY_4);
 
 } ;
 
@@ -109,7 +109,7 @@ template<class Type>
 void vpImageMorphology::erosion(vpImage<Type> &I,
 				Type value,
 				Type value_out,
-				ConnexityEnum connexity)
+				vpConnexityType connexity)
 {
   vpImage<Type> J(I.getRows(), I.getCols()) ;
   J = I;
@@ -174,7 +174,7 @@ template<class Type>
 void vpImageMorphology::dilatation(vpImage<Type> &I,
 				   Type value,
 				   Type value_out,
-				   ConnexityEnum connexity)
+				   vpConnexityType connexity)
 {
   vpImage<Type> J(I.getRows(), I.getCols()) ;
   J = I;
