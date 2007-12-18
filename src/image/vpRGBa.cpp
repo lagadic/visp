@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRGBa.cpp,v 1.3 2007-01-31 15:40:13 asaunier Exp $
+ * $Id: vpRGBa.cpp,v 1.4 2007-12-18 14:34:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,11 +44,14 @@
 
 #include <visp/vpRGBa.h>
 #include <visp/vpColor.h>
+#include <visp/vpDebug.h>
+#include <visp/vpException.h>
 
 /*!
-  \brief basic constructor
+  Basic constructor.
 
-  build a black value
+  Build a black value.
+
 */
 vpRGBa::vpRGBa()
 {
@@ -59,34 +62,45 @@ vpRGBa::vpRGBa()
 }
 
 /*!
-  \brief constructor
+  Constructor.
 
-  initilialization with R1, G1, B1
+  Initilialize the color with R, G, B, A values.
+
+  \param R : Red value.
+  \param G : Green value.
+  \param B : Blue value.
+  \param A : Additional value.
+
 */
-vpRGBa::vpRGBa(unsigned char R1, unsigned char G1, unsigned char B1, unsigned char  A1)
+vpRGBa::vpRGBa(const unsigned char &R, const unsigned char &G, 
+	       const unsigned char &B, const unsigned char &A)
 {
-  R=R1 ;
-  G=G1 ;
-  B=B1 ;
-  A=A1 ;
+  this->R = R;
+  this->G = G;
+  this->B = B;
+  this->A = A;
 }
 
 /*!
-  \brief constructor
+  Constructor.
 
-  initilialization from a color identifier
+  Initilialization from a color identifier.
 
-  are allowd the following identifier
-    RED, GREEN,  BLUE, WHITE, BLACK, NOIR, YELLOW, CYAN
-
-  \sa defs_color.h
+  \param v : Color to initialize.
 
 */
-vpRGBa::vpRGBa(int color)
+vpRGBa::vpRGBa(const vpColorType &v)
 {
   R = G = B = A = (unsigned char)0 ;
-  switch(color)
+  switch(v)
   {
+  case none:
+  case black:
+    R = G = B = (unsigned char)0 ;
+    break ;
+  case white:
+    R = G = B = (unsigned char)255;
+    break ;
   case red   :
     R = (unsigned char)255 ;
     break ;
@@ -96,12 +110,6 @@ vpRGBa::vpRGBa(int color)
   case blue :
     B = (unsigned char)255 ;
     break ;
-  case white :
-    R = G = B = (unsigned char)255 ;
-    break ;
-  case black :
-    R = G = B = (unsigned char)0 ;
-    break ;
   case yellow :
     R = G = (unsigned char)255 ;
     B = (unsigned char)0 ;
@@ -110,39 +118,169 @@ vpRGBa::vpRGBa(int color)
     G = B = (unsigned char)255 ;
     R = (unsigned char)0 ;
     break ;
+  case orange  :
+    R = (unsigned char)244 ;
+    R = (unsigned char)121 ;
+    R = (unsigned char)7 ;
+    break ;
   }
 }
 /*!
-  \brief Copy constructor
+  Copy constructor.
 */
-vpRGBa::vpRGBa(const vpRGBa &c)
+vpRGBa::vpRGBa(const vpRGBa &v)
 {
-  *this = c ;
+  *this = v ;
 }
 
 /*!
-  \brief copy operator (from an unsigned char value)
-
-  \param x : input color ( R = G = B = x )
+  Copy constructor.
 */
-void
-vpRGBa::operator=(const unsigned char x)
+vpRGBa::vpRGBa(const vpColVector &v)
 {
-  R = x ; G = x ;  B = x ;
+  *this = v ;
 }
 
 /*!
-  \brief copy operator
+  Copy operator (from an unsigned char value)
+
+  \param v : Input color ( R = G = B = v )
 */
 void
-vpRGBa::operator=(const vpRGBa &c)
+vpRGBa::operator=(const unsigned char &v)
 {
-  R = c.R ;
-  G = c.G ;
-  B = c.B ;
-  A = c.A ;
+  R = v ; G = v ;  B = v ; A = v;
 }
 
+/*!
+  Copy operator.
+*/
+void
+vpRGBa::operator=(const vpRGBa &v)
+{
+  R = v.R ;
+  G = v.G ;
+  B = v.B ;
+  A = v.A ;
+}
+
+/*!
+  \brief Cast a vpColVector in a vpRGBa
+
+  \param v : Input vector. v[0], v[1], v[2], v[3] are to make into
+  relation with respectively R, G, B and A.
+
+  \exception vpException::dimensionError : If v is not a 4 four
+  dimention vector.
+*/
+void
+vpRGBa::operator=(const vpColVector &v)
+{
+  if (v.getRows() != 4) {
+    vpERROR_TRACE("Bad vector dimension ") ;
+    throw(vpException(vpException::dimensionError, "Bad vector dimension "));
+  }
+  R = (unsigned char)v[0]; 
+  G = (unsigned char)v[1];
+  B = (unsigned char)v[2];
+  A = (unsigned char)v[3];
+}
+
+/*!
+  Substraction operator : "this" - v.
+  \param v : Color to substract to the current object "this".
+  \return "this" - v
+*/
+vpColVector 
+vpRGBa::operator-(const vpRGBa &v) const
+{
+  vpColVector n(4); // new color
+  n[0] = (double)R - (double)v.R;
+  n[1] = (double)G - (double)v.G;
+  n[2] = (double)B - (double)v.B;
+  n[3] = (double)A - (double)v.A;
+  return n;
+}
+
+/*!
+  Addition operator : "this" + v.
+  \param v : Color to add to the current object "this".
+  \return "this" + v
+*/
+vpRGBa
+vpRGBa::operator+(const vpRGBa &v) const
+{
+  vpRGBa n; // new color
+  n.R = R + v.R ;
+  n.G = G + v.G ;
+  n.B = B + v.B ;
+  n.A = A + v.A ;
+  return n;
+}
+
+/*!
+  Substraction operator : "this" - v.
+  \param v : Color to substract to the current object "this".
+  \return "this" - v
+*/
+vpColVector
+vpRGBa::operator-(const vpColVector &v) const
+{
+  vpColVector n(4); // new color
+  n[0] = R - v[0];
+  n[1] = G - v[1];
+  n[2] = B - v[2];
+  n[3] = A - v[3];
+  return n;
+}
+
+/*!
+  Addition operator : "this" + v.
+  \param v : Color to add to the current object "this".
+  \return "this" + v
+*/
+vpColVector
+vpRGBa::operator+(const vpColVector &v) const
+{
+  vpColVector n(4); // new color
+  n[0] = R + v[0];
+  n[1] = G + v[1];
+  n[2] = B + v[2];
+  n[3] = A + v[3];
+  return n;
+}
+
+/*!
+  Multiplication operator : v * "this".
+  \param v : Value to multiply.
+  \return v * "this"
+*/
+vpColVector
+vpRGBa::operator*(const float &v) const
+{
+  vpColVector n(4);
+  n[0] = R * v;
+  n[1] = G * v;
+  n[2] = B * v;
+  n[3] = A * v;
+  return n;
+}
+
+/*!
+  Multiplication operator : v * "this".
+  \param v : Value to multiply.
+  \return v * "this"
+*/
+vpColVector
+vpRGBa::operator*(const double &v) const
+{
+  vpColVector n(4);
+  n[0] = R * v;
+  n[1] = G * v;
+  n[2] = B * v;
+  n[3] = A * v;
+  return n;
+}
 
 /*
  * Local variables:
