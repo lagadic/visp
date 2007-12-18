@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.21 2007-12-18 14:40:50 fspindle Exp $
+ * $Id: vpImage.h,v 1.22 2007-12-18 14:52:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -97,6 +97,25 @@ public:
 private:
   Type **row ;    //!< points the row pointer array
 public:
+  //! constructor
+  vpImage() ;
+  //! copy constructor
+  vpImage(const vpImage<Type>&);
+  //! constructor  set the size of the image
+  vpImage(unsigned int height, unsigned int width) ;
+  //! constructor  set the size of the image and init all the pixel
+  vpImage(unsigned int height, unsigned int width, Type value) ;
+  //! destructor
+  virtual ~vpImage() ;
+  //! set the size of the image
+  void init(unsigned int height, unsigned int width) ;
+  //! set the size of the image
+  void init(unsigned int height, unsigned int width, Type value) ;
+  //! set the size of the image
+  void resize(const unsigned int height, const unsigned int width) ;
+  //! destructor
+  void destroy() ;
+
   /*!
     Get the number of rows in the image.
 
@@ -193,41 +212,16 @@ public:
 
   vpImage<Type> operator-(const vpImage<Type> &B);
 
-  void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
-
-  //! bilinear interpolation acces
-  double get(double i, double j) ;
-
-  //------------------------------------------------------------------
-  //         build the image
-
-  //! set the size of the image
-  void  resize(const unsigned int height, const unsigned int width) ;
-
-  //! set the size of the image
-  void init(unsigned int height, unsigned int width) ;
-  //! set the size of the image
-  void init(unsigned int height, unsigned int width, Type value) ;
-
-  //! constructor  set the size of the image
-  vpImage(unsigned int height, unsigned int width) ;
-  //! constructor  set the size of the image and init all the pixel
-  vpImage(unsigned int height, unsigned int width, Type value) ;
-  //! constructor
-  vpImage() ;
-  //! destructor
-  virtual ~vpImage() ;
-  //! destructor
-  void destroy() ;
-
-
-  //! copy constructor
-  vpImage(const vpImage<Type>&);
-
   //! Copy operator
   void operator=(const vpImage<Type> &m) ;
 
   void operator=(const Type &x);
+
+  void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
+  //! Substract two images: dst = this - im2;
+  void sub(vpImage<Type>* im2, vpImage<Type>* dst);
+
+
 
   //! Return the maximum value within the bitmap
   Type maxValue() const ;
@@ -243,8 +237,9 @@ public:
   //! Returns a new image that's double size of the current image
   void doubleSizeImage(vpImage<Type>* res);
 
-  //! Substract two images: dst = this - im2;
-  void sub(vpImage<Type>* im2, vpImage<Type>* dst);
+
+  //! bilinear interpolation acces
+  double get(double i, double j) ;
 
   /** Gets the value of a pixel at a location with bilinear interpolation.
    * If location is out of bounds, then return value of closest pixel.
