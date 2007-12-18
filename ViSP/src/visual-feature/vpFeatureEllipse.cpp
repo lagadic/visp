@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.cpp,v 1.10 2007-12-18 15:13:49 fspindle Exp $
+ * $Id: vpFeatureEllipse.cpp,v 1.11 2007-12-18 15:17:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -333,8 +333,12 @@ vpFeatureEllipse::setMu(const double mu20, const double mu11,
 
 /*!
 
-  Display  ellipse feature.
+  Display ellipse feature.
+
+  \param cam : Camera parameters.
+  \param I : Image on which features have to be displayed.
   \param useDistortion : Not used.
+  \param color : Color used to display the feature.
 */
 void
 vpFeatureEllipse::display(const vpCameraParameters &cam,
