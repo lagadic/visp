@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.h,v 1.6 2007-09-13 14:17:52 fspindle Exp $
+ * $Id: vpHinkley.h,v 1.7 2007-12-18 14:29:03 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -48,14 +48,14 @@
 class VISP_EXPORT vpHinkley
 {
  public:
-  /*! \enum vpHinkleyJump
+  /*! \enum vpHinkleyJumpType
     Indicates if a jump is detected by the Hinkley test.
   */
   typedef enum {
     noJump, /*!< No jump is detected by the Hinkley test. */
     downwardJump, /*!< A downward jump is detected by the Hinkley test. */
     upwardJump /*!< An upward jump is detected by the Hinkley test. */
-  } vpHinkleyJump;
+  } vpHinkleyJumpType;
 
  public:
   vpHinkley();
@@ -67,11 +67,11 @@ class VISP_EXPORT vpHinkley
 
   void setDelta(double delta);
   void setAlpha(double alpha);
-  vpHinkleyJump testDownwardJump(double signal);
-  vpHinkleyJump testUpwardJump(double signal);
-  vpHinkleyJump testDownUpwardJump(double signal);
+  vpHinkleyJumpType testDownwardJump(double signal);
+  vpHinkleyJumpType testUpwardJump(double signal);
+  vpHinkleyJumpType testDownUpwardJump(double signal);
 
-  static void print(vpHinkleyJump jump) ;
+  static void print(vpHinkleyJumpType jump) ;
 
   /*!
     \return The mean value \f$m_0\f$ of the signal \f$ s(t) \f$.
