@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoDisplay.h,v 1.3 2007-02-26 17:29:47 fspindle Exp $
+ * $Id: vpServoDisplay.h,v 1.4 2007-12-18 15:03:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,6 +66,7 @@ public:
   static void display(vpServo &s,
 		      const vpCameraParameters &cam,
 		      vpImage<unsigned char> &I,
+		      bool useDistortion=false,
 		      vpColor::vpColorType currentColor = vpColor::green,
 		      vpColor::vpColorType desiredColor = vpColor::red) ;
 

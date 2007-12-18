@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.cpp,v 1.7 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpFeatureTranslation.cpp,v 1.8 2007-12-18 15:03:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -222,6 +222,7 @@ Not implemented.
 void
 vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
 			      vpImage<unsigned char> &/* I */,
+			      bool /*useDistortion*/,
 			      vpColor::vpColorType /* color */) const
 {
   static int firsttime =0 ;

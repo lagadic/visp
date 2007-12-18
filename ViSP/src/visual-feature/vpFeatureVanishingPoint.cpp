@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.cpp,v 1.8 2007-11-19 16:00:58 asaunier Exp $
+ * $Id: vpFeatureVanishingPoint.cpp,v 1.9 2007-12-18 15:03:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -249,7 +249,7 @@ vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
     x = get_x() ;
     y = get_y() ;
 
-    vpFeatureDisplay::displayPoint(x,y, cam, I, color, usedistortion) ;
+    vpFeatureDisplay::displayPoint(x,y, cam, I, usedistortion, color) ;
 
   }
   catch(...)

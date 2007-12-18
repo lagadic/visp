@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpFeatureTranslation.h,v 1.6 2007-12-18 15:03:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -121,6 +121,7 @@ public:
 public:
   void display(const vpCameraParameters &cam,
 	       vpImage<unsigned char> &I,
+	       bool useDistortion=false,
 	       vpColor::vpColorType color=vpColor::green) const ;
 
 } ;

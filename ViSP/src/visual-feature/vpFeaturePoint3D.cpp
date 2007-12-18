@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint3D.cpp,v 1.10 2007-05-02 16:43:23 fspindle Exp $
+ * $Id: vpFeaturePoint3D.cpp,v 1.11 2007-12-18 15:03:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -345,6 +345,7 @@ vpFeaturePoint3D *vpFeaturePoint3D::duplicate() const
 void
 vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
 			  vpImage<unsigned char> &/* I */,
+			  bool /* useDistortion */,
 			  vpColor::vpColorType /* color */) const
 {
   static int firsttime =0 ;
