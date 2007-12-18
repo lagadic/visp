@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBasicFeature.h,v 1.6 2007-06-27 14:38:31 fspindle Exp $
+ * $Id: vpBasicFeature.h,v 1.7 2007-12-18 15:03:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -125,8 +125,8 @@ class VISP_EXPORT vpBasicFeature
  public:
   virtual void display(const vpCameraParameters &cam,
 		       vpImage<unsigned char> &I,
-		       vpColor::vpColorType color=vpColor::green) const = 0 ;
-
+		       bool useDistortion = false,
+		       vpColor::vpColorType color=vpColor::green) const = 0;
 
   // memory issue (used by the vpServo class)
  public:
