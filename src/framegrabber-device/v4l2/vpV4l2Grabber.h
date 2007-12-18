@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.h,v 1.10 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpV4l2Grabber.h,v 1.11 2007-12-18 14:26:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -104,22 +104,26 @@ public:
   static const int MAX_BUFFERS;
   static const int FRAME_SIZE;
 
-  enum framerateEnum
+  /*! \enum vpV4l2FramerateType
+    Frame rate type for capture.
+  */
+  typedef enum 
     {
       framerate_50fps, //!< 50 frames per second
       framerate_25fps  //!< 25 frames per second
-    };
-  /*! \enum frameformatEnum
-    Frame format for capture.
+    } vpV4l2FramerateType;
+
+  /*! \enum vpV4l2FrameFormatType
+    Frame format type for capture.
   */
   typedef enum
     {
       V4L2_FRAME_FORMAT, /*!< a field only */
       V4L2_IMAGE_FORMAT  /*!< an interlaced image */
-    } frameformatEnum;
+    } vpV4l2FrameFormatType;
 
-  /*! \enum pixelformatEnum
-    Pixel format for capture.
+  /*! \enum vpV4l2PixelFormatType
+    Pixel format type for capture.
   */
   typedef enum {
     V4L2_GREY_FORMAT, /*!<  */
@@ -127,7 +131,7 @@ public:
     V4L2_RGB32_FORMAT, /*!<  */
     V4L2_BGR24_FORMAT, /*!<  */
     V4L2_BGR32_FORMAT /*!<  */
-  } pixelformatEnum;
+  } vpV4l2PixelFormatType;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct ng_video_fmt {
@@ -162,8 +166,8 @@ public:
   void acquire(vpImage<unsigned char> &I) ;
   void acquire(vpImage<vpRGBa> &I)  ;
   bool getField();
-  void setFramerate(framerateEnum framerate);
-  framerateEnum getFramerate();
+  void setFramerate(vpV4l2FramerateType framerate);
+  vpV4l2FramerateType getFramerate();
   void close();
 
   void setInput(unsigned input = vpV4l2Grabber::DEFAULT_INPUT) ;
@@ -226,7 +230,7 @@ private:
     - vpV4l2Grabber::V4L2_BGR24_FORMAT,
     - vpV4l2Grabber::V4L2_BGR32_FORMAT.
   */
-  inline void setPixelFormat(pixelformatEnum pixelformat)
+  inline void setPixelFormat(vpV4l2PixelFormatType pixelformat)
   {
     this->pixelformat = pixelformat;
   }
@@ -237,7 +241,7 @@ private:
     - vpV4l2Grabber::V4L2_FRAME_FORMAT: capture alternate fields (or frames),
     - vpV4l2Grabber::V4L2_IMAGE_FORMAT: capture interlaced images.
   */
-  inline void setFrameFormat(frameformatEnum frameformat)
+  inline void setFrameFormat(vpV4l2FrameFormatType frameformat)
   {
     this->frameformat = frameformat;
   }
@@ -278,12 +282,12 @@ private:
   int           field;
   bool		streaming;
 
-  framerateEnum framerate;
   unsigned      input;
   unsigned      _width;
   unsigned      _height;
-  frameformatEnum frameformat;
-  pixelformatEnum pixelformat;
+  vpV4l2FramerateType framerate;
+  vpV4l2FrameFormatType frameformat;
+  vpV4l2PixelFormatType pixelformat;
 } ;
 
 #endif
