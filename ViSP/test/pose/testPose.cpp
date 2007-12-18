@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testPose.cpp,v 1.9 2007-04-27 16:40:16 fspindle Exp $
+ * $Id: testPose.cpp,v 1.10 2007-12-18 15:02:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,6 +40,9 @@
 #include <visp/vpPose.h>
 #include <visp/vpPoint.h>
 #include <visp/vpMath.h>
+#include <visp/vpTranslationVector.h>
+#include <visp/vpRxyzVector.h>
+#include <visp/vpRotationMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
@@ -48,13 +51,6 @@
 #define GETOPTARGS	"h"
 
 #define L 0.035
-
-// #ifdef HAVE_GSL
-// extern int gsl_warnings_off;
-// //#include <gsl/gsl_errno.h>
-// //#include <gsl/gsl_message.h>
-// gsl_warnings_off = 1;
-// #endif
 
 /*!
   \example testPose.cpp
@@ -138,6 +134,9 @@ main(int argc, char ** argv)
   P[2].setWorldCoordinates(L,L, 0 ) ;
   P[3].setWorldCoordinates(-L,L, 0 ) ;
 
+  vpRotationMatrix cRo;
+  vpTranslationVector cto;
+  vpRxyzVector cro;
   vpHomogeneousMatrix cMo_ref(0.1,0.2,1,vpMath::rad(10),0,vpMath::rad(10)) ;
   int i ;
   for(i=0 ; i < 4 ; i++)
@@ -152,58 +151,179 @@ main(int argc, char ** argv)
   // Let's go ...
   vpHomogeneousMatrix cMo ;
 
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  std::cout <<"-------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LAGRANGE, cMo) ;
   vpTRACE("LAGRANGE pose : ") ;
   std::cout << cMo << std::endl ;
   std::cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<std::endl ;
+  cMo.extract(cto);
+  cMo.extract(cRo);
+  cro.buildFrom(cRo);
+  double residual = pose.computeResidual(cMo);
+
+  std::cout << "\nPose Lagrange "
+	    << "(residual: " << residual << ")\n "
+	    << "cdto[0] = " << cto[0] << ";\n "
+	    << "cdto[1] = " << cto[1] << ";\n "
+	    << "cdto[2] = " << cto[2] << ";\n "
+	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+	    << std::endl;
 
 
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
   vpTRACE( "LOWE pose :" ) ;
   std::cout <<  cMo << std::endl ;
   std::cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<std::endl ;
 
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  cMo.extract(cto);
+  cMo.extract(cRo);
+  cro.buildFrom(cRo);
+  residual = pose.computeResidual(cMo);
+
+  std::cout << "\nPose Lowe "
+	    << "(residual: " << residual << ")\n "
+	    << "cdto[0] = " << cto[0] << ";\n "
+	    << "cdto[1] = " << cto[1] << ";\n "
+	    << "cdto[2] = " << cto[2] << ";\n "
+	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+	    << std::endl;
+
+  std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
   vpTRACE(  "DEMENTHON pose :" ) ;
   std::cout <<  cMo << std::endl ;
-  std::cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<std::endl ;
+  std::cout << "Dementhon residual term: " << pose.computeResidual(cMo)
+	    << std::endl ;
 
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  cMo.extract(cto);
+  cMo.extract(cRo);
+  cro.buildFrom(cRo);
+  residual = pose.computeResidual(cMo);
+
+  std::cout << "\nPose Dementhon "
+	    << "(residual: " << residual << ")\n "
+	    << "cdto[0] = " << cto[0] << ";\n "
+	    << "cdto[1] = " << cto[1] << ";\n "
+	    << "cdto[2] = " << cto[2] << ";\n "
+	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+	    << std::endl;
+
+  std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
   std::cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<std::endl ;
   //  vpTRACE(  "Pose LOWE"  ) ;
   //  std::cout <<  cMo << std::endl ;
   //  std::cout << "residu Lowe " << pose.computeResidual(cMo) <<std::endl ;
 
+  cMo.extract(cto);
+  cMo.extract(cRo);
+  cro.buildFrom(cRo);
+  residual = pose.computeResidual(cMo);
+
+  std::cout << "\nPose lowe "
+	    << "(residual: " << residual << ")\n "
+	    << "cdto[0] = " << cto[0] << ";\n "
+	    << "cdto[1] = " << cto[1] << ";\n "
+	    << "cdto[2] = " << cto[2] << ";\n "
+	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+	    << std::endl;
 
   std::cout <<std::endl << std::endl ;
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  std::cout <<"--------------------------------------------------"<<std::endl ;
   std::cout << "Virtual Visual servoing " << std::endl ;
 
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LAGRANGE, cMo) ;
   vpTRACE("LAGRANGE pose : ") ;
   std::cout << cMo << std::endl ;
-  std::cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<std::endl ;
+  std::cout << "Lagrange residual term: " << pose.computeResidual(cMo)
+	    <<std::endl ;
+
+  cMo.extract(cto);
+  cMo.extract(cRo);
+  cro.buildFrom(cRo);
+  residual = pose.computeResidual(cMo);
+
+  std::cout << "\nPose Lagrange "
+	    << "(residual: " << residual << ")\n "
+	    << "cdto[0] = " << cto[0] << ";\n "
+	    << "cdto[1] = " << cto[1] << ";\n "
+	    << "cdto[2] = " << cto[2] << ";\n "
+	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+	    << std::endl;
 
 
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
   vpTRACE( "VIRTUAL_VS pose :" ) ;
   std::cout <<  cMo << std::endl ;
   std::cout << "vvs residual term: " <<pose.computeResidual(cMo) <<std::endl ;
 
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  cMo.extract(cto);
+  cMo.extract(cRo);
+  cro.buildFrom(cRo);
+  residual = pose.computeResidual(cMo);
+
+  std::cout << "\nPose VVS "
+	    << "(residual: " << residual << ")\n "
+	    << "cdto[0] = " << cto[0] << ";\n "
+	    << "cdto[1] = " << cto[1] << ";\n "
+	    << "cdto[2] = " << cto[2] << ";\n "
+	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+	    << std::endl;
+
+  std::cout <<"-------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
   vpTRACE(  "DEMENTHON pose :" ) ;
   std::cout <<  cMo << std::endl ;
-  std::cout << "Dementhon residual term: " << pose.computeResidual(cMo) <<std::endl ;
+  std::cout << "Dementhon residual term: " << pose.computeResidual(cMo)
+	    <<std::endl ;
 
-  std::cout <<"------------------------------------------------------------"<<std::endl ;
+  cMo.extract(cto);
+  cMo.extract(cRo);
+  cro.buildFrom(cRo);
+  residual = pose.computeResidual(cMo);
+
+  std::cout << "\nPose Dementhon "
+	    << "(residual: " << residual << ")\n "
+	    << "cdto[0] = " << cto[0] << ";\n "
+	    << "cdto[1] = " << cto[1] << ";\n "
+	    << "cdto[2] = " << cto[2] << ";\n "
+	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+	    << std::endl;
+
+  std::cout <<"-------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
   std::cout << "vvs residual term: " <<pose.computeResidual(cMo) <<std::endl ;
 
+  cMo.extract(cto);
+  cMo.extract(cRo);
+  cro.buildFrom(cRo);
+  residual = pose.computeResidual(cMo);
+
+  std::cout << "\nPose VVS "
+	    << "(residual: " << residual << ")\n "
+	    << "cdto[0] = " << cto[0] << ";\n "
+	    << "cdto[1] = " << cto[1] << ";\n "
+	    << "cdto[2] = " << cto[2] << ";\n "
+	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+	    << std::endl;
+  return 0;
 }
