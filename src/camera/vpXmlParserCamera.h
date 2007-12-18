@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.h,v 1.3 2007-11-28 11:32:53 fspindle Exp $
+ * $Id: vpXmlParserCamera.h,v 1.4 2007-12-18 14:22:23 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -90,8 +90,9 @@ class VISP_EXPORT vpXmlParserCamera
 public:
 
   /* --- XML Code------------------------------------------------------------ */
-  enum CodeXml
+  typedef enum 
     {
+      CODE_XML_BAD = -1,
       CODE_XML_OTHER,
       CODE_XML_CAMERA,
       CODE_XML_CAMERA_NAME,
@@ -108,14 +109,14 @@ public:
       CODE_XML_PX,
       CODE_XML_PY,
       CODE_XML_KD
-    };
+    } vpXmlCodeType;
 
 
-  enum CodeSequence
+  typedef enum 
     {
       SEQUENCE_OK    ,
       SEQUENCE_ERROR
-    };
+    } vpXmlCodeSequenceType;
 
 private :
 
@@ -184,18 +185,18 @@ private:
 		   const unsigned int image_height = 0,
 		   const unsigned int subsampling_width = 0,
 		   const unsigned int subsampling_height = 0);
-  int read_camera_model (xmlDocPtr doc, xmlNodePtr node,
-			 vpCameraParameters &camera);
-  static int code_str_to_int (char * str, int & res);
+  vpXmlCodeSequenceType read_camera_model (xmlDocPtr doc, xmlNodePtr node,
+					   vpCameraParameters &camera);
+  static vpXmlCodeSequenceType str2xmlcode (char * str, vpXmlCodeType & res);
   void myXmlReadIntChild (xmlDocPtr doc,
 			  xmlNodePtr node,
 			  int &res,
-			  int &code_error);
+			  vpXmlCodeSequenceType &code_error);
 
   void myXmlReadDoubleChild (xmlDocPtr doc,
 			     xmlNodePtr node,
 			     double &res,
-			     int &code_error);
+			     vpXmlCodeSequenceType &code_error);
 
   void myXmlReadCharChild (xmlDocPtr doc,
 			   xmlNodePtr node,
