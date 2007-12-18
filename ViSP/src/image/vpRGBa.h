@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRGBa.h,v 1.4 2007-12-18 14:34:47 fspindle Exp $
+ * $Id: vpRGBa.h,v 1.5 2007-12-18 15:14:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,9 +54,6 @@
 /*!
   \class vpRGBa
 
-  \author Eric Marchand (Eric.Marchand@irisa.fr), Irisa / Inria Rennes
-
-
   Define the object vpRGBa that is used to build color
   images (it define a RGB 32 bits structure, fourth byte is not used)
 
@@ -71,8 +68,9 @@ public:
   unsigned char A ; //!< Additionnal component.
 
   vpRGBa()  ;
-  vpRGBa(const unsigned char &R, const unsigned char &G, 
+  vpRGBa(const unsigned char &R, const unsigned char &G,
 	 const unsigned char &B, const unsigned char &A=0);
+  vpRGBa(const unsigned char &v) ;
   vpRGBa(const vpColorType &v) ;
   vpRGBa(const vpRGBa &v) ;
   vpRGBa(const vpColVector &v) ;
