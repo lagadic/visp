@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.8 2007-09-28 14:46:07 asaunier Exp $
+ * $Id: poseVirtualVS.cpp,v 1.9 2007-12-19 13:15:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -428,17 +428,22 @@ main(int argc, char** argv)
 	  //    occurs. The threshold can be modified using the
 	  //    setMaxDotSize() method
 	  d[i].track(I,u[i],v[i]) ;
+	  vpDisplay::flush(I) ;
 	}
     }
     else{
       d[0].initTracking(I,194,88 );
       d[0].track(I,u[0],v[0]);
+      vpDisplay::flush(I) ;
       d[1].initTracking(I, 225, 84);
       d[1].track(I,u[1],v[1]);
+      vpDisplay::flush(I) ;
       d[2].initTracking(I, 242, 114);
       d[2].track(I,u[2],v[2]);
+      vpDisplay::flush(I) ;
       d[3].initTracking(I, 212, 131);
       d[3].track(I,u[3],v[3]);
+      vpDisplay::flush(I) ;
     }
   }
   catch(...)
