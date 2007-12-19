@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.7 2007-11-23 13:24:52 fspindle Exp $
+ * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.8 2007-12-19 13:14:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -124,7 +124,7 @@ main()
       me.setRange(10) ;
       me.setPointsToTrack(60) ;
       me.setThreshold(15000) ;
-      line.setDisplay(vpMeTracker::RANGE_RESULT) ;
+      line.setDisplay(vpMeSite::RANGE_RESULT) ;
 
 
       line.setMe(&me) ;
