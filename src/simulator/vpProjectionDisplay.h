@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.h,v 1.10 2007-11-19 15:55:51 asaunier Exp $
+ * $Id: vpProjectionDisplay.h,v 1.11 2007-12-19 17:36:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -107,8 +107,8 @@ public:
 	       const vpHomogeneousMatrix &cextMo,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color ,
-         const bool usedistortion = false ) ;
+	       const vpColor::vpColorType color,
+	       const bool usedistortion = false) ;
 
 
 private:
@@ -122,7 +122,7 @@ public:
 		     const vpHomogeneousMatrix &cextMo,
 		     const vpHomogeneousMatrix &cMo,
 		     const vpCameraParameters &cam,
-         const bool usedistortion = false) ;
+		     const bool usedistortion = false) ;
 } ;
 
 

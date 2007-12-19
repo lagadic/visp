@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLine.h,v 1.4 2007-02-26 16:42:18 fspindle Exp $
+ * $Id: vpLine.h,v 1.5 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,9 +108,9 @@ public:
 
   //! set the line world coordinates
   void setWorldCoordinates(const double &A1, const double &B1,
-	  const double &C1, const double &D1,
-	  const double &A2, const double &B2,
-	  const double &C2, const double &D2) ;
+			   const double &C1, const double &D1,
+			   const double &A2, const double &B2,
+			   const double &C2, const double &D2) ;
   //! set the line world coordinates from two planes
   void setWorldCoordinates(const vpColVector &_oP1,
 			   const vpColVector &_oP2) ;
@@ -123,10 +123,12 @@ public:
 
   void display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
+	       const bool usedistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
+	       const bool usedistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
 
   vpLine *duplicate() const ;

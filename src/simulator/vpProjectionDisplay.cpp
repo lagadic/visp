@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.cpp,v 1.9 2007-11-19 15:55:51 asaunier Exp $
+ * $Id: vpProjectionDisplay.cpp,v 1.10 2007-12-19 17:36:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -131,14 +131,14 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
 			     const vpHomogeneousMatrix &cextMo,
 			     const vpHomogeneousMatrix &cMo,
 			     const vpCameraParameters &cam,
-			     const vpColor::vpColorType color ,
-           const bool usedistortion)
+			     const vpColor::vpColorType color,
+			     const bool usedistortion)
 {
 
     for (listFp.front() ; !listFp.outside() ; listFp.next() )
     {
       vpForwardProjection *fp = listFp.value() ;
-      fp->display(I,cextMo,cam,color) ;
+      fp->display(I,cextMo,cam, usedistortion, color) ;
     }
 
     displayCamera(I,cextMo,cMo, cam, usedistortion) ;
@@ -147,10 +147,10 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
 
 void
 vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
-			     const vpHomogeneousMatrix &cextMo,
-			     const vpHomogeneousMatrix &cMo,
-			     const vpCameraParameters &cam,
-           const bool usedistortion)
+				   const vpHomogeneousMatrix &cextMo,
+				   const vpHomogeneousMatrix &cMo,
+				   const vpCameraParameters &cam,
+				   const bool usedistortion)
 {
   vpHomogeneousMatrix c1Mc ;
   c1Mc = cextMo*cMo.inverse() ;

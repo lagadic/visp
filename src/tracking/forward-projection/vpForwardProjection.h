@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpForwardProjection.h,v 1.4 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpForwardProjection.h,v 1.5 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,10 +85,12 @@ public:
 
   virtual void display(vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
+		       const bool useDistortion=false,
 		       const vpColor::vpColorType color=vpColor::green) =0;
   virtual void display(vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
+		       const bool useDistortion=false,
 		       const vpColor::vpColorType color=vpColor::green) =0;
 
   virtual void print() const ;
@@ -97,7 +99,7 @@ public:
 
   // memory issue (used by the vpServo class)
 public:
-  typedef enum 
+  typedef enum
     {
       user,
       vpDisplayForwardProjection

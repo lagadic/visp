@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.13 2007-12-18 14:33:55 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.14 2007-12-19 17:36:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -358,7 +358,7 @@ void vpImageTools::undistort(const vpImage<Type> &I,
 
   int nthreads = 2;
   pthread_attr_t attr;
-  pthread_t callThd[nthreads];
+  pthread_t *callThd = new pthread_t [nthreads];
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
@@ -386,6 +386,8 @@ void vpImageTools::undistort(const vpImage<Type> &I,
     //  vpTRACE("join thread %d", i);
     pthread_join( callThd[i], NULL);
   }
+
+  delete [] callThd;
 #else // VISP_HAVE_PTHREAD
   //
   // optimized version without pthreads
@@ -449,7 +451,7 @@ void vpImageTools::undistort(const vpImage<Type> &I,
 	_mp += width;
 	v23 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
 	*dst = (Type)(v01 + ((v23 - v01) * dv_double));
-	//printf("R %d G %d B %d\n", dst->R, dst->G, dst->B); 
+	//printf("R %d G %d B %d\n", dst->R, dst->G, dst->B);
       }
       else {
 	*dst = 0;

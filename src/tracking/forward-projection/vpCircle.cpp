@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.cpp,v 1.7 2007-04-20 14:22:22 asaunier Exp $
+ * $Id: vpCircle.cpp,v 1.8 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -228,24 +228,26 @@ vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 }
 
 void vpCircle::display(vpImage<unsigned char> &I,
-	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color)
+		       const vpCameraParameters &cam,
+		       const bool useDistortion,
+		       const vpColor::vpColorType color)
 {
   vpFeatureDisplay::displayEllipse(p[0],p[1],p[2],p[3], p[4],
-				   cam, I,color) ;
+				   cam, I, useDistortion, color) ;
 }
 
 // non destructive wrt. cP and p
 void vpCircle::display(vpImage<unsigned char> &I,
-	       const vpHomogeneousMatrix &cMo,
-	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color)
+		       const vpHomogeneousMatrix &cMo,
+		       const vpCameraParameters &cam,
+		       const bool useDistortion,
+		       const vpColor::vpColorType color)
 {
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
   projection(_cP,_p) ;
   vpFeatureDisplay::displayEllipse(_p[0],_p[1],_p[2],_p[3], _p[4],
-				   cam, I, color) ;
+				   cam, I, useDistortion, color) ;
 
 }
 //! for memory issue (used by the vpServo class only)

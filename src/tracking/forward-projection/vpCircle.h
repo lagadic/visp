@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.h,v 1.7 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpCircle.h,v 1.8 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,7 @@ public:
   virtual ~vpCircle() ;
 
 public:
-  typedef enum 
+  typedef enum
     {
       line1,
       line2
@@ -105,10 +105,12 @@ public:
 
   void display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
+	       const bool useDistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
+	       const bool useDistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
   vpCircle *duplicate() const ;
 

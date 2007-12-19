@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLine.cpp,v 1.6 2007-04-20 14:22:22 asaunier Exp $
+ * $Id: vpLine.cpp,v 1.7 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -283,24 +283,26 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 
 
 void vpLine::display(vpImage<unsigned char> &I,
-	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color)
+		     const vpCameraParameters &cam,
+		     const bool usedistortion,
+		     const vpColor::vpColorType color)
 {
   vpFeatureDisplay::displayLine(p[0],p[1],
-				cam, I,color) ;
+				cam, I, usedistortion, color) ;
 }
 
 // non destructive wrt. cP and p
 void vpLine::display(vpImage<unsigned char> &I,
-	       const vpHomogeneousMatrix &cMo,
-	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color)
+		     const vpHomogeneousMatrix &cMo,
+		     const vpCameraParameters &cam,
+		     const bool usedistortion,
+		     const vpColor::vpColorType color)
 {
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
   projection(_cP,_p) ;
   vpFeatureDisplay::displayLine(_p[0],_p[1],
-				cam, I, color) ;
+				cam, I, usedistortion, color) ;
 
 }
 //! for memory issue (used by the vpServo class only)
