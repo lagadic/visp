@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.10 2007-09-21 14:15:48 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.11 2007-12-19 13:15:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -208,11 +208,11 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
 		  unsigned int &nframes, bool &verbose_info,
 		  bool &verbose_settings,
 		  bool &videomode_is_set,
-		  vp1394TwoGrabber::vp1394TwoVideoMode &videomode,
+		  vp1394TwoGrabber::vp1394TwoVideoModeType &videomode,
 		  bool &framerate_is_set,
-		  vp1394TwoGrabber::vp1394TwoFramerate &framerate,
+		  vp1394TwoGrabber::vp1394TwoFramerateType &framerate,
 		  bool &colorcoding_is_set,
-		  vp1394TwoGrabber::vp1394TwoColorCoding &colorcoding,
+		  vp1394TwoGrabber::vp1394TwoColorCodingType &colorcoding,
 		  bool &display, bool &save, std::string &opath,
 		  unsigned int &roi_left, unsigned int &roi_top,
 		  unsigned int &roi_width, unsigned int &roi_height)
@@ -230,10 +230,12 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
       display = false; break;
     case 'f':
       framerate_is_set = true;
-      framerate = (vp1394TwoGrabber::vp1394TwoFramerate) atoi(optarg); break;
+      framerate = (vp1394TwoGrabber::vp1394TwoFramerateType) atoi(optarg);
+      break;
     case 'g':
       colorcoding_is_set = true;
-      colorcoding = (vp1394TwoGrabber::vp1394TwoColorCoding) atoi(optarg); break;
+      colorcoding = (vp1394TwoGrabber::vp1394TwoColorCodingType) atoi(optarg);
+      break;
     case 'h':
       roi_height = (unsigned int) atoi(optarg); break;
     case 'i':
@@ -253,7 +255,8 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
       roi_top = (unsigned int) atoi(optarg); break;
     case 'v':
       videomode_is_set = true;
-      videomode = (vp1394TwoGrabber::vp1394TwoVideoMode) atoi(optarg); break;
+      videomode = (vp1394TwoGrabber::vp1394TwoVideoModeType) atoi(optarg); 
+      break;
     case 'w':
       roi_width = (unsigned int) atoi(optarg); break;
     default:
@@ -290,11 +293,11 @@ main(int argc, char ** argv)
     unsigned int nframes = 50;
     unsigned int offset;
     bool videomode_is_set = false;
-    vp1394TwoGrabber::vp1394TwoVideoMode videomode;
+    vp1394TwoGrabber::vp1394TwoVideoModeType videomode;
     bool framerate_is_set = false;
-    vp1394TwoGrabber::vp1394TwoFramerate framerate;
+    vp1394TwoGrabber::vp1394TwoFramerateType framerate;
     bool colorcoding_is_set = false;
-    vp1394TwoGrabber::vp1394TwoColorCoding colorcoding;
+    vp1394TwoGrabber::vp1394TwoColorCodingType colorcoding;
     bool save = false;
 
     // Format 7 roi
@@ -375,12 +378,12 @@ main(int argc, char ** argv)
 	  g.printCameraInfo();
 
 	if (verbose_settings) {
-	  vp1394TwoGrabber::vp1394TwoVideoMode curmode;
-	  vp1394TwoGrabber::vp1394TwoFramerate curfps;
-	  vp1394TwoGrabber::vp1394TwoColorCoding curcoding;
-	  vpList<vp1394TwoGrabber::vp1394TwoVideoMode> lmode;
-	  vpList<vp1394TwoGrabber::vp1394TwoFramerate> lfps;
-	  vpList<vp1394TwoGrabber::vp1394TwoColorCoding> lcoding;
+	  vp1394TwoGrabber::vp1394TwoVideoModeType curmode;
+	  vp1394TwoGrabber::vp1394TwoFramerateType curfps;
+	  vp1394TwoGrabber::vp1394TwoColorCodingType curcoding;
+	  vpList<vp1394TwoGrabber::vp1394TwoVideoModeType> lmode;
+	  vpList<vp1394TwoGrabber::vp1394TwoFramerateType> lfps;
+	  vpList<vp1394TwoGrabber::vp1394TwoColorCodingType> lcoding;
 
 	  g.getVideoMode(curmode);
 	  g.getFramerate(curfps);
@@ -403,7 +406,7 @@ main(int argc, char ** argv)
 	  while (! lmode.outside() ) {
 
 	    // Parse the list of supported modes
-	    vp1394TwoGrabber::vp1394TwoVideoMode supmode = lmode.value();
+	    vp1394TwoGrabber::vp1394TwoVideoModeType supmode = lmode.value();
 	    if (curmode == supmode)
 	      std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode)
 		   << " (-v " << supmode << ")" << std::endl;
@@ -412,18 +415,22 @@ main(int argc, char ** argv)
 		   << " (-v " << supmode << ")" << std::endl;
 
 	    if (g.isVideoModeFormat7(supmode)){
-	      // Format 7 video mode; no framerate setting, but color coding setting
+	      // Format 7 video mode; no framerate setting, but color
+	      // coding setting
 	      lcoding.kill();
 	      g.getColorCodingSupported(supmode, lcoding);
 	      lcoding.front();
 	      while (! lcoding.outside() ) {
-		vp1394TwoGrabber::vp1394TwoColorCoding supcoding = lcoding.value();
+		vp1394TwoGrabber::vp1394TwoColorCodingType supcoding;
+		supcoding = lcoding.value();
 		if ( (curmode == supmode) && (supcoding == curcoding) )
-		  std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding)
-		       << " (-g " << supcoding << ")" << std::endl;
+		  std::cout << "    * " 
+			    << vp1394TwoGrabber::colorCoding2string(supcoding)
+			    << " (-g " << supcoding << ")" << std::endl;
 		else
-		  std::cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding)
-		       << " (-g " << supcoding << ")" << std::endl;
+		  std::cout << "      " 
+			    << vp1394TwoGrabber::colorCoding2string(supcoding)
+			    << " (-g " << supcoding << ")" << std::endl;
 		lcoding.next();
 	      }
 	    }
@@ -434,13 +441,15 @@ main(int argc, char ** argv)
 	      g.getFramerateSupported(supmode, lfps);
 	      lfps.front();
 	      while (! lfps.outside() ) {
-		vp1394TwoGrabber::vp1394TwoFramerate supfps = lfps.value();
+		vp1394TwoGrabber::vp1394TwoFramerateType supfps = lfps.value();
 		if ( (curmode == supmode) && (supfps == curfps) )
-		  std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps)
-		       << " (-f " << supfps << ")" << std::endl;
+		  std::cout << "    * " 
+			    << vp1394TwoGrabber::framerate2string(supfps)
+			    << " (-f " << supfps << ")" << std::endl;
 		else
-		  std::cout << "      " << vp1394TwoGrabber::framerate2string(supfps)
-		       << " (-f " << supfps << ")" << std::endl;
+		  std::cout << "      " 
+			    << vp1394TwoGrabber::framerate2string(supfps)
+			    << " (-f " << supfps << ")" << std::endl;
 		lfps.next();
 	      }
 	    }
