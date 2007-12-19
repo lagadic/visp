@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeEllipse.cpp,v 1.8 2007-11-07 14:43:17 asaunier Exp $
+ * $Id: trackMeEllipse.cpp,v 1.9 2007-12-19 13:13:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -289,7 +289,7 @@ main(int argc, char ** argv)
 
 
   E1.setMe(&me) ;
-  E1.setDisplay(vpMeTracker::RANGE_RESULT) ;
+  E1.setDisplay(vpMeSite::RANGE_RESULT) ;
   if (opt_click_allowed)
     E1.initTracking(I) ;
   else {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeCircle.cpp,v 1.9 2007-11-07 14:43:17 asaunier Exp $
+ * $Id: trackMeCircle.cpp,v 1.10 2007-12-19 13:13:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -288,7 +288,7 @@ main(int argc, char ** argv)
 
   E1.setCircle(true) ;
   E1.setMe(&me) ;
-  E1.setDisplay(vpMeTracker::RANGE_RESULT) ;
+  E1.setDisplay(vpMeSite::RANGE_RESULT) ;
   // If click is allowed, wait for a mouse click to select the points
   // on the ellipse
   if (opt_display && opt_click_allowed) {

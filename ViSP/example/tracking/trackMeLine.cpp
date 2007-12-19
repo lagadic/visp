@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeLine.cpp,v 1.8 2007-11-07 14:43:17 asaunier Exp $
+ * $Id: trackMeLine.cpp,v 1.9 2007-12-19 13:13:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -294,7 +294,7 @@ main(int argc, char ** argv)
 
 
   L1.setMe(&me) ;
-  L1.setDisplay(vpMeTracker::RANGE_RESULT) ;
+  L1.setDisplay(vpMeSite::RANGE_RESULT) ;
 
   if (opt_display && opt_click_allowed)
     L1.initTracking(I) ;
