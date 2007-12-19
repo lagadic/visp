@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureLine.cpp,v 1.11 2007-12-18 15:17:52 fspindle Exp $
+ * $Id: vpFeatureLine.cpp,v 1.12 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -284,14 +284,15 @@ vpFeatureLine *vpFeatureLine::duplicate() const
 
   \param cam : Camera parameters.
   \param I : Image on which features have to be displayed.
-  \param useDistortion : Not used.
+  \param useDistortion : Indicates if the distortion has to be used to convert
+  the line parameters into pixel coordinates.
   \param color : Color used to display the feature.
 
 */
 void
 vpFeatureLine::display( const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			bool /* useDistortion */,
+			bool useDistortion,
 			vpColor::vpColorType color) const
 {
   try{
@@ -299,7 +300,7 @@ vpFeatureLine::display( const vpCameraParameters &cam,
     rho = getRho() ;
     theta = getTheta() ;
 
-    vpFeatureDisplay::displayLine(rho,theta,cam,I,color) ;
+    vpFeatureDisplay::displayLine(rho,theta,cam,I, useDistortion, color) ;
 
   }
   catch(...)

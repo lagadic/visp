@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.h,v 1.6 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpCylinder.h,v 1.7 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,10 +108,12 @@ public:
 
   void display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
+	       const bool useDistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
+	       const bool useDistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
 
   vpCylinder *duplicate() const ;

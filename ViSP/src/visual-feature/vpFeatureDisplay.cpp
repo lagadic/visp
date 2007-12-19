@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.cpp,v 1.11 2007-12-18 15:03:17 fspindle Exp $
+ * $Id: vpFeatureDisplay.cpp,v 1.12 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,15 +52,25 @@
 
 
 
+/*!
+  \param x, y : Point coordinates in meters.
+  \param cam : Camera intrinsic parameters.
+  \param I : Image.
+
+  \param useDistortion : Indicates if the distortion has to be used to convert
+  the point coordinates into pixel coordinates.
+
+  \param color : Color to use to display the feature
+*/
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<unsigned char> &I,
-				    const bool usedistortion,
+				    const bool useDistortion,
 				    vpColor::vpColorType color)
 {
   try{
     double uf,vf ; // pixel coordinates in float
-    vpMeterPixelConversion::convertPoint(cam, x, y, uf, vf, usedistortion) ;
+    vpMeterPixelConversion::convertPoint(cam, x, y, uf, vf, useDistortion) ;
 
     unsigned u,v ;
     u = vpMath::round(uf) ;
@@ -75,9 +85,17 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   }
 
 }
+/*!
+  \param rho, theta : Line parameters.
+  \param cam : Camera intrinsic parameters.
+  \param I : Image.
+  \param useDistortion : Not used.
+  \param color : Color to use to display the feature
+*/
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
 				   vpImage<unsigned char> &I,
+				   const bool /* useDistortion */,
 				   vpColor::vpColorType color )
 {
 
@@ -172,16 +190,27 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
     throw ;
   }
 }
+/*!
+  \param rho1, theta1 : Cylinder limb1 parameters.
+  \param rho2, theta2 : Cylinder limb2 parameters.
+  \param cam : Camera intrinsic parameters.
+  \param I : Image.
+  \param useDistortion : Indicates if the distortion has to be used to convert
+  the cylinder parameters into pixel coordinates.
+
+  \param color : Color to use to display the feature
+*/
 void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
 				       double rho2,double theta2,
 				       const vpCameraParameters &cam,
 				       vpImage<unsigned char> &I,
+				       const bool useDistortion,
 				       vpColor::vpColorType color)
 {
   try
   {
-    displayLine(rho1, theta1, cam, I, color) ;
-    displayLine(rho2, theta2, cam, I, color) ;
+    displayLine(rho1, theta1, cam, I, useDistortion, color) ;
+    displayLine(rho2, theta2, cam, I, useDistortion, color) ;
   }
   catch(...)
   {
@@ -189,10 +218,18 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
     throw ;
   }
 }
+/*!
+  \param x, y, mu20, mu11, mu02 : Ellipse parameters.
+  \param cam : Camera intrinsic parameters.
+  \param I : Image.
+  \param useDistortion : Not used.
+  \param color : Color to use to display the feature
+*/
 void vpFeatureDisplay::displayEllipse(double x,double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
 				      vpImage<unsigned char> &I,
+				      const bool /* useDistortion */,
 				      vpColor::vpColorType color)
 {
 
@@ -258,15 +295,25 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
   }
 }
 
+/*!
+  \param x, y : Point coordinates in meters.
+  \param cam : Camera intrinsic parameters.
+  \param I : Image.
+
+  \param useDistortion : Indicates if the distortion has to be used to convert
+  the point coordinates into pixel coordinates.
+
+  \param color : Color to use to display the feature
+*/
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<vpRGBa> &I,
-				    const bool usedistortion,
+				    const bool useDistortion,
 				    vpColor::vpColorType color)
 {
   try{
     double uf,vf ; // pixel coordinates in float
-    vpMeterPixelConversion::convertPoint(cam, x, y, uf, vf, usedistortion) ;
+    vpMeterPixelConversion::convertPoint(cam, x, y, uf, vf, useDistortion) ;
 
     unsigned u,v ;
     u = vpMath::round(uf) ;
@@ -281,9 +328,18 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   }
 
 }
+
+/*!
+  \param rho, theta : Line parameters.
+  \param cam : Camera intrinsic parameters.
+  \param I : Image.
+  \param useDistortion : Not used.
+  \param color : Color to use to display the feature
+*/
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
 				   vpImage<vpRGBa> &I,
+				   const bool /* useDistortion */,
 				   vpColor::vpColorType color )
 {
 
@@ -378,16 +434,27 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
     throw ;
   }
 }
-void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
-				       double rho2,double theta2,
+/*!
+  \param rho1, theta1 : Cylinder limb1 parameters.
+  \param rho2, theta2 : Cylinder limb2 parameters.
+  \param cam : Camera intrinsic parameters.
+  \param I : Image.
+  \param useDistortion : Indicates if the distortion has to be used to convert
+  the cylinder parameters into pixel coordinates.
+
+  \param color : Color to use to display the feature
+*/
+void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
+				       double rho2, double theta2,
 				       const vpCameraParameters &cam,
 				       vpImage<vpRGBa> &I,
+				       const bool useDistortion,
 				       vpColor::vpColorType color)
 {
   try
   {
-    displayLine(rho1, theta1, cam, I, color) ;
-    displayLine(rho2, theta2, cam, I, color) ;
+    displayLine(rho1, theta1, cam, I, useDistortion, color) ;
+    displayLine(rho2, theta2, cam, I, useDistortion, color) ;
   }
   catch(...)
   {
@@ -395,10 +462,19 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
     throw ;
   }
 }
-void vpFeatureDisplay::displayEllipse(double x,double y,
+
+/*!
+  \param x, y, mu20, mu11, mu02 : Ellipse parameters.
+  \param cam : Camera intrinsic parameters.
+  \param I : Image.
+  \param useDistortion : Not used.
+  \param color : Color to use to display the feature
+*/
+void vpFeatureDisplay::displayEllipse(double x, double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
 				      vpImage<vpRGBa> &I,
+				      const bool /*useDistortion*/,
 				      vpColor::vpColorType color)
 {
 

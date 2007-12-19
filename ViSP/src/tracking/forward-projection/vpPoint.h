@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.13 2007-11-19 15:59:28 asaunier Exp $
+ * $Id: vpPoint.h,v 1.14 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -127,7 +127,7 @@ public:
   vpColVector getWorldCoordinates(void) ;
   //@}
 
-  //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p. 
+  //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p.
   void projection(const vpColVector &_cP, vpColVector &_p) ;
 
   //! Projection onto the image plane of the point. Update the object attribute p (2D homogeneous coordinates) according to object attribute cP (current 3D coordinates in the camera frame).
@@ -142,20 +142,13 @@ public:
 
   void display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
+	       const bool usedistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
-  void display(vpImage<unsigned char> &I,
-         const vpCameraParameters &cam,
-         const bool usedistortion,
-         const vpColor::vpColorType color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
+	       const bool usedistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
-  void display(vpImage<unsigned char> &I,
-         const vpHomogeneousMatrix &cMo,
-         const vpCameraParameters &cam,
-         const bool usedistortion,
-         const vpColor::vpColorType color=vpColor::green) ;
   vpPoint *duplicate() const ;
 
   friend std::ostream& operator<<(std::ostream& os, vpPoint& vpp);

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.h,v 1.7 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpFeatureVanishingPoint.h,v 1.8 2007-12-19 17:36:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,7 +41,7 @@
 
 
 
-/*!  
+/*!
   \file vpFeatureVanishingPoint.h \brief Class that defines 2D vanishing
   point visual feature (Z coordinate in 3D space is infinity)
 */
@@ -55,8 +55,8 @@
 
 
 
-/*!  
-  \class vpFeatureVanishingPoint 
+/*!
+  \class vpFeatureVanishingPoint
   \brief Class that defines 2D vanishing point visual feature (Z coordinate in 3D space is infinity).
 */
 class VISP_EXPORT vpFeatureVanishingPoint : public vpBasicFeature
@@ -130,11 +130,8 @@ public:
 public:
   void display(const vpCameraParameters &cam,
 	       vpImage<unsigned char> &I,
-	       vpColor::vpColorType color=vpColor::green) const ;
-  void display(const vpCameraParameters &cam,
-         vpImage<unsigned char> &I,
-         const bool usedistortion,
-         vpColor::vpColorType color=vpColor::green) const ;
+	       bool usedistortion=false,
+	       vpColor::vpColorType color=vpColor::green) const;
 
 } ;
 
