@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.17 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpSimulator.h,v 1.18 2007-12-19 08:59:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -116,15 +116,18 @@ protected:
 #elif defined(VISP_HAVE_SOXT)
   Widget mainWindow ;
 #endif
-  
+
   bool mainWindowInitialized ;
 
   //! open the SoGui application
   void initSoApplication() ;
 
 public:
-  typedef enum  {grayImage, colorImage} vpSimulatorImageType ;
-  vpSimulatorImageType typeImage ;
+  typedef enum  {
+    grayImage,
+    colorImage
+  } vpImageType ;
+  vpImageType typeImage ;
 
   GLubyte * image_background;
   //! activate the mainloop
