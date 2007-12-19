@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpCircle.h,v 1.7 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,11 +65,11 @@ public:
   virtual ~vpCircle() ;
 
 public:
-  enum lineCircleEnum
+  typedef enum 
     {
       line1,
       line2
-    };
+    } vpLineCircleType;
 
   vpCircle(const vpColVector& oP) ;
   vpCircle(const double A, const double B1,

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.12 2007-12-12 10:27:19 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.13 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,12 +96,13 @@ public: /* Constantes */
   static const char * const CONST_LABEL_DRAGONFLY2 ;
 
   /** Differentes cameras installees sur l'afma6. */
-  enum CameraRobotType
+  typedef enum 
     {
       CAMERA_DRAGONFLY2_8MM,
-    } ;
+    } vpAfma6CameraRobotType;
+
   /** Camera utilisee par default. */
-  static const CameraRobotType defaultCameraRobot;// = CAMERA_DRAGONFLY2_8MM;
+  static const vpAfma6CameraRobotType defaultCameraRobot;// = CAMERA_DRAGONFLY2_8MM;
 
 public: /* Attributs publiques */
 
@@ -168,7 +169,7 @@ public: /* Methodes publiques */
 				    const char * filenameMPI);
 
   /* \brief Lecture des fichiers de configuration.   */
-  void init (vpAfma6::CameraRobotType camera, bool usedistortion = false);
+  void init (vpAfma6::vpAfma6CameraRobotType camera, bool usedistortion = false);
 
   /** \brief Initialisation a l'aide du fichier par default.    */
   void init (void);
@@ -216,7 +217,7 @@ protected: /* Attributs prives */
   /** Seuil d'activation de l'evitement de butees (en pourcentage).   */
   double  rho;
   /** Camera courante utilisée */
-  CameraRobotType camera_current;
+  vpAfma6CameraRobotType camera_current;
 
 public: /* Methodes publiques */
 
@@ -294,9 +295,9 @@ public:
   //! get the robot Jacobian expressed in the robot reference frame
   void get_fJe(const vpColVector &q, vpMatrix &_fJe)  ;
   //!get the current used camera
-  CameraRobotType getCameraRobotType(){return camera_current;};
+  vpAfma6CameraRobotType getCameraRobotType(){return camera_current;};
   /** Place the current used camera*/
-  void setCameraRobotType(vpAfma6::CameraRobotType camera){camera_current = camera;};
+  void setCameraRobotType(vpAfma6::vpAfma6CameraRobotType camera){camera_current = camera;};
 
   void getCameraParameters(vpCameraParameters &cam,
         const unsigned int image_width,

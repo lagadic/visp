@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBasicFeature.h,v 1.7 2007-12-18 15:03:17 fspindle Exp $
+ * $Id: vpBasicFeature.h,v 1.8 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -79,6 +79,7 @@ class VISP_EXPORT vpBasicFeature
 {
  public: // Public constantes
   static const int FEATURE_LINE [32];
+
   static const int FEATURE_ALL;
 
  protected:
@@ -130,17 +131,23 @@ class VISP_EXPORT vpBasicFeature
 
   // memory issue (used by the vpServo class)
  public:
-  enum whoShouldDeallocateEnum
+
+  /*!
+    \enum vpBasicFeatureDeallocatorType
+    Indicates who should deallocate the feature.
+
+  */
+  typedef enum
     {
       user,
       vpServo
-    } ;
+    } vpBasicFeatureDeallocatorType;
 
  private:
-  int deallocate ;
+  vpBasicFeatureDeallocatorType deallocate ;
  public:
-  void setDeallocate(int d) { deallocate = d ; }
-  int getDeallocate() { return deallocate ; }
+  void setDeallocate(vpBasicFeatureDeallocatorType d) { deallocate = d ; }
+  vpBasicFeatureDeallocatorType getDeallocate() { return deallocate ; }
 } ;
 
 

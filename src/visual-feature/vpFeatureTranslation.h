@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.h,v 1.6 2007-12-18 15:03:18 fspindle Exp $
+ * $Id: vpFeatureTranslation.h,v 1.7 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,18 +56,6 @@
 */
 class VISP_EXPORT vpFeatureTranslation : public vpBasicFeature
 {
-public:
-  enum thetauFeatureEnum
-    {
-      TUx,
-      TUy,
-      TUz
-    };
-  /*
-    attributes and members directly related to the vpBasicFeature needs
-    other functionalities ar usefull but not mandatory
-  */
-
 public:
   //! basic construction
   void init() ;

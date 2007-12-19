@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.h,v 1.7 2007-05-02 13:29:40 fspindle Exp $
+ * $Id: vpIcCompGrabber.h,v 1.8 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,17 +75,17 @@ public:
   static const int DEFAULT_INPUT;
   static const int DEFAULT_SCALE;
 
-  enum framerateEnum
+  typedef enum 
     {
       framerate_50fps, //!< 50 frames per second
       framerate_25fps  //!< 25 frames per second
-    };
+    } vpIcCompFramerateType;
   int ncols, nrows ;
   ICcomp2x *framegrabber ; //!< pointeur sur l'objet ICcomp
 private:
   unsigned int input ; //!< video entry
   unsigned int scale ;
-  framerateEnum framerate;
+  vpIcCompFramerateType framerate;
   bool field; // The type of the acquired frame (0 if odd, 1 if even).
 
 public:
@@ -107,8 +107,8 @@ public:
   void acquire(vpImage<unsigned char> &I) ;
   void acquire(vpImage<vpRGBa> &I)  ;
   bool getField();
-  void setFramerate(framerateEnum framerate);
-  framerateEnum getFramerate();
+  void setFramerate(vpIcCompFramerateType framerate);
+  vpIcCompFramerateType getFramerate();
   void close()  ;
 
 

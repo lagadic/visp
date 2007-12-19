@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpCylinder.h,v 1.6 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,11 +64,11 @@ public:
   virtual ~vpCylinder() ;
 
 public:
-  enum lineCylinderEnum
+  typedef enum
     {
       line1,
       line2
-    };
+    } vpLineCylinderType;
 
   vpCylinder(const vpColVector& oP) ;
   vpCylinder(const double A, const double B1,

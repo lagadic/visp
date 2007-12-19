@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.13 2007-11-19 15:43:22 asaunier Exp $
+ * $Id: vpPose.h,v 1.14 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,7 +83,7 @@ public:
       VIRTUAL_VS       ,
       DEMENTHON_VIRTUAL_VS,
       LAGRANGE_VIRTUAL_VS
-    } vpPoseMethodEnum;
+    } vpPoseMethodType;
 public:
   int npt ;       //!< number of point used in pose computation
   vpList<vpPoint> listP ;     //!< array of point (use here class vpPoint)

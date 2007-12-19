@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.cpp,v 1.13 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpMeEllipse.cpp,v 1.14 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -678,24 +678,24 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
   i = new unsigned[n] ;
   j = new unsigned[n] ;
 
-   for (int k =0 ; k < n ; k++)
-  {
-    std::cout << "Click points "<< k+1 <<"/" << n ;
-    std::cout << " on the ellipse in the trigonometric order" <<std::endl ;
-    while (vpDisplay::getClick(I,i[k],j[k])!=true) ;
-    std::cout << i[k] <<" " <<j[k] << std::endl;
+  for (int k =0 ; k < n ; k++)
+    {
+      std::cout << "Click points "<< k+1 <<"/" << n ;
+      std::cout << " on the ellipse in the trigonometric order" <<std::endl ;
+      while (vpDisplay::getClick(I,i[k],j[k])!=true) ;
+      std::cout << i[k] <<" " <<j[k] << std::endl;
     }
 
 
-   i1 = i[0] ;
-   j1 = j[0] ;
-   i2 = i[n-1] ;
-   j2 = j[n-1] ;
+  i1 = i[0] ;
+  j1 = j[0] ;
+  i2 = i[n-1] ;
+  j2 = j[n-1] ;
 
-   initTracking(I, n, i, j) ;
+  initTracking(I, n, i, j) ;
 
-   delete []i ;
-   delete []j ;
+  delete []i ;
+  delete []j ;
 
 }
 

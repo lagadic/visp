@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.h,v 1.6 2007-11-19 16:00:58 asaunier Exp $
+ * $Id: vpFeatureVanishingPoint.h,v 1.7 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,11 +62,11 @@
 class VISP_EXPORT vpFeatureVanishingPoint : public vpBasicFeature
 {
 public:
-  enum pointFeatureEnum
+  typedef enum
     {
       X,   // x coordinates
       Y    // y coordinates
-    };
+    } vpFeatureVanishingPointType;
 
   /*
     attributes and members directly related to the vpBasicFeature needs

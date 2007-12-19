@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.cpp,v 1.10 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpIcCompGrabber.cpp,v 1.11 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -383,7 +383,7 @@ vpIcCompGrabber::getField()
 
 */
 void
-vpIcCompGrabber::setFramerate(vpIcCompGrabber::framerateEnum framerate)
+vpIcCompGrabber::setFramerate(vpIcCompGrabber::vpIcCompFramerateType framerate)
 {
    this->framerate = framerate;
 }
@@ -397,7 +397,7 @@ vpIcCompGrabber::setFramerate(vpIcCompGrabber::framerateEnum framerate)
 */
 
 
-vpIcCompGrabber::framerateEnum
+vpIcCompGrabber::vpIcCompFramerateType
 vpIcCompGrabber::getFramerate()
 {
   return framerate;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.23 2007-12-12 13:47:49 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.24 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -320,7 +320,7 @@ vp1394TwoGrabber::getNumCameras(unsigned int &ncameras)
 
 */
 void
-vp1394TwoGrabber::setVideoMode(vp1394TwoVideoMode videomode)
+vp1394TwoGrabber::setVideoMode(vp1394TwoVideoModeType videomode)
 {
   if (! num_cameras) {
     close();
@@ -373,7 +373,7 @@ vp1394TwoGrabber::setVideoMode(vp1394TwoVideoMode videomode)
 
 */
 void
-vp1394TwoGrabber::getVideoMode(vp1394TwoVideoMode & videomode)
+vp1394TwoGrabber::getVideoMode(vp1394TwoVideoModeType & videomode)
 {
   if (! num_cameras) {
     close();
@@ -390,7 +390,7 @@ vp1394TwoGrabber::getVideoMode(vp1394TwoVideoMode & videomode)
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Can't get current video mode") );
   }
-  videomode = (vp1394TwoVideoMode) _videomode;
+  videomode = (vp1394TwoVideoModeType) _videomode;
 
 }
 
@@ -414,7 +414,7 @@ vp1394TwoGrabber::getVideoMode(vp1394TwoVideoMode & videomode)
   \sa setVideoMode(), getVideoMode(), getCamera()
 */
 int
-vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoMode> & videomodes)
+vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes)
 {
   // Refresh the list of supported modes
   videomodes.kill();
@@ -438,7 +438,7 @@ vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoMode> & videomodes)
 
   // parse the video modes to add in the list
   for (unsigned i=0; i < _videomodes.num; i++) {
-    vp1394TwoVideoMode _mode = (vp1394TwoVideoMode) _videomodes.modes[i];
+    vp1394TwoVideoModeType _mode = (vp1394TwoVideoModeType) _videomodes.modes[i];
     videomodes.addRight( _mode );
   }
 
@@ -457,7 +457,7 @@ vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoMode> & videomodes)
 
 */
 bool
-vp1394TwoGrabber::isVideoModeFormat7(vp1394TwoVideoMode  videomode)
+vp1394TwoGrabber::isVideoModeFormat7(vp1394TwoVideoModeType  videomode)
 {
 
   if (dc1394_is_video_mode_scalable((dc1394video_mode_t) videomode))
@@ -487,7 +487,7 @@ vp1394TwoGrabber::isVideoModeFormat7(vp1394TwoVideoMode  videomode)
 
 */
 void
-vp1394TwoGrabber::setFramerate(vp1394TwoFramerate fps)
+vp1394TwoGrabber::setFramerate(vp1394TwoFramerateType fps)
 {
   if (! num_cameras) {
     close();
@@ -496,7 +496,7 @@ vp1394TwoGrabber::setFramerate(vp1394TwoFramerate fps)
 				   "No camera found") );
   }
 
-  vp1394TwoVideoMode cur_videomode;
+  vp1394TwoVideoModeType cur_videomode;
   getVideoMode(cur_videomode);
   if (isVideoModeFormat7(cur_videomode))
     return;
@@ -533,7 +533,7 @@ vp1394TwoGrabber::setFramerate(vp1394TwoFramerate fps)
 
 */
 void
-vp1394TwoGrabber::getFramerate(vp1394TwoFramerate & fps)
+vp1394TwoGrabber::getFramerate(vp1394TwoFramerateType & fps)
 {
   if (! num_cameras) {
     close();
@@ -549,7 +549,7 @@ vp1394TwoGrabber::getFramerate(vp1394TwoFramerate & fps)
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Can't get current framerate") );
   }
-  fps = (vp1394TwoFramerate) _fps;
+  fps = (vp1394TwoFramerateType) _fps;
 
 }
 
@@ -585,8 +585,8 @@ vp1394TwoGrabber::getFramerate(vp1394TwoFramerate & fps)
   \sa setFramerate(), getFramerate(), setCamera()
 */
 int
-vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoMode mode,
-					vpList<vp1394TwoFramerate> & fps)
+vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
+					vpList<vp1394TwoFramerateType> & fps)
 {
   if (! num_cameras) {
     close();
@@ -629,7 +629,7 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoMode mode,
 	return 0;
 
       for (unsigned int i = 0; i < _fps.num; i ++)
-	fps.addRight((vp1394TwoFramerate)_fps.framerates[i]);
+	fps.addRight((vp1394TwoFramerateType)_fps.framerates[i]);
 
       return _fps.num;
     }
@@ -659,7 +659,7 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoMode mode,
 
 */
 void
-vp1394TwoGrabber::setColorCoding(vp1394TwoColorCoding coding)
+vp1394TwoGrabber::setColorCoding(vp1394TwoColorCodingType coding)
 {
   if (! num_cameras) {
     close();
@@ -716,7 +716,7 @@ vp1394TwoGrabber::setColorCoding(vp1394TwoColorCoding coding)
 
 */
 void
-vp1394TwoGrabber::getColorCoding(vp1394TwoColorCoding & coding)
+vp1394TwoGrabber::getColorCoding(vp1394TwoColorCodingType & coding)
 {
   if (! num_cameras) {
     close();
@@ -761,7 +761,7 @@ vp1394TwoGrabber::getColorCoding(vp1394TwoColorCoding & coding)
 				     "Can't query current color coding"));
     }
   }
-  coding = (vp1394TwoColorCoding) _coding;
+  coding = (vp1394TwoColorCodingType) _coding;
 }
 
 /*!
@@ -786,8 +786,8 @@ vp1394TwoGrabber::getColorCoding(vp1394TwoColorCoding & coding)
   \sa setColorCoding(), getColorCoding(), setCamera()
 */
 int
-vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoMode mode,
-					  vpList<vp1394TwoColorCoding> & codings)
+vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
+					  vpList<vp1394TwoColorCodingType> & codings)
 {
   if (! num_cameras) {
     close();
@@ -815,7 +815,7 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoMode mode,
       return 0;
 
     for (unsigned int i = 0; i < _codings.num; i ++)
-      codings.addRight((vp1394TwoColorCoding)_codings.codings[i]);
+      codings.addRight((vp1394TwoColorCodingType)_codings.codings[i]);
 
     return _codings.num;
   }
@@ -835,7 +835,7 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoMode mode,
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				     "Could not query supported color coding") );
     }
-    codings.addRight((vp1394TwoColorCoding)_coding);
+    codings.addRight((vp1394TwoColorCodingType)_coding);
     return 1;
   }
 }
@@ -1099,7 +1099,7 @@ vp1394TwoGrabber::open()
     setCapture(DC1394_OFF);
 
   // Set the image size from the current video mode
-  vp1394TwoVideoMode cur_videomode;
+  vp1394TwoVideoModeType cur_videomode;
   getVideoMode(cur_videomode);
   // Updates image size from new video mode
   if (dc1394_get_image_size_from_video_mode(camera,
@@ -1635,7 +1635,7 @@ vp1394TwoGrabber::printCameraInfo()
 
   \sa string2videoMode()
 */
-std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoMode videomode)
+std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoModeType videomode)
 {
   std::string _str = "";
   dc1394video_mode_t _videomode = (dc1394video_mode_t) videomode;
@@ -1664,7 +1664,7 @@ std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoMode videomode)
 
   \sa string2framerate()
 */
-std::string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
+std::string vp1394TwoGrabber::framerate2string(vp1394TwoFramerateType fps)
 {
   std::string _str = "";
   dc1394framerate_t _fps = (dc1394framerate_t) fps;
@@ -1693,7 +1693,7 @@ std::string vp1394TwoGrabber::framerate2string(vp1394TwoFramerate fps)
 
   \sa string2colorCoding()
 */
-std::string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCoding colorcoding)
+std::string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCodingType colorcoding)
 {
   std::string _str = "";
   dc1394color_coding_t _coding = (dc1394color_coding_t) colorcoding;
@@ -1728,13 +1728,13 @@ std::string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCoding colorcodin
   \sa videoMode2string()
 
 */
-vp1394TwoGrabber::vp1394TwoVideoMode
+vp1394TwoGrabber::vp1394TwoVideoModeType
 vp1394TwoGrabber::string2videoMode(std::string videomode)
 {
-  vp1394TwoVideoMode _id;
+  vp1394TwoVideoModeType _id;
 
   for (int i = DC1394_VIDEO_MODE_MIN; i <= DC1394_VIDEO_MODE_MAX; i ++) {
-    _id = (vp1394TwoVideoMode) i;
+    _id = (vp1394TwoVideoModeType) i;
     if (videomode.compare(videoMode2string(_id)) == 0)
       return _id;
   };
@@ -1742,7 +1742,7 @@ vp1394TwoGrabber::string2videoMode(std::string videomode)
   throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				 "The required videomode is not valid") );
 
-  return (vp1394TwoVideoMode) 0;
+  return (vp1394TwoVideoModeType) 0;
 }
 
 
@@ -1763,13 +1763,13 @@ vp1394TwoGrabber::string2videoMode(std::string videomode)
   \sa framerate2string()
 
 */
-vp1394TwoGrabber::vp1394TwoFramerate
+vp1394TwoGrabber::vp1394TwoFramerateType
 vp1394TwoGrabber::string2framerate(std::string framerate)
 {
-  vp1394TwoFramerate _id;
+  vp1394TwoFramerateType _id;
 
   for (int i = DC1394_FRAMERATE_MIN; i <= DC1394_FRAMERATE_MAX; i ++) {
-    _id = (vp1394TwoFramerate) i;
+    _id = (vp1394TwoFramerateType) i;
     if (framerate.compare(framerate2string(_id)) == 0)
       return _id;
   };
@@ -1777,7 +1777,7 @@ vp1394TwoGrabber::string2framerate(std::string framerate)
   throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				 "The required framerate is not valid") );
 
-  return (vp1394TwoFramerate) 0;
+  return (vp1394TwoFramerateType) 0;
 }
 
 /*!
@@ -1797,13 +1797,13 @@ vp1394TwoGrabber::string2framerate(std::string framerate)
   \sa colorCoding2string()
 
 */
-vp1394TwoGrabber::vp1394TwoColorCoding
+vp1394TwoGrabber::vp1394TwoColorCodingType
 vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
 {
-  vp1394TwoColorCoding _id;
+  vp1394TwoColorCodingType _id;
 
   for (int i = DC1394_COLOR_CODING_MIN; i <= DC1394_COLOR_CODING_MAX; i ++) {
-    _id = (vp1394TwoColorCoding) i;
+    _id = (vp1394TwoColorCodingType) i;
     if (colorcoding.compare(colorCoding2string(_id)) == 0)
       return _id;
   };
@@ -1811,7 +1811,7 @@ vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
   throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				 "The required color coding is not valid") );
 
-  return (vp1394TwoColorCoding) 0;
+  return (vp1394TwoColorCodingType) 0;
 }
 
 #endif

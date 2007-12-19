@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGenericFeature.h,v 1.7 2007-12-18 15:03:18 fspindle Exp $
+ * $Id: vpGenericFeature.h,v 1.8 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,16 +80,17 @@ public:
   vpGenericFeature *duplicate() const ;
 
 private:
-  vpMatrix L ;
-  vpColVector err ;
-  int errorStatus ;
-
-  enum errorEnum
+  typedef enum
     {
       errorNotInitalized,
       errorInitialized,
       errorHasToBeUpdated
-    } ;
+    } vpGenericFeatureErrorType;
+
+  vpMatrix L ;
+  vpColVector err ;
+  vpGenericFeatureErrorType errorStatus ;
+
 public:
   void setInteractionMatrix(const vpMatrix &L) ;
   vpMatrix getInteractionMatrix() const { return L ; }

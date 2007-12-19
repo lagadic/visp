@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.cpp,v 1.16 2007-11-02 15:21:16 fspindle Exp $
+ * $Id: vpMePath.cpp,v 1.17 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -250,7 +250,7 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
 	computeNormAng(norm_ang, K,  i_1,  j_1, line)  ;
 	pix.init(i_1, j_1, norm_ang) ;
 	pix.convlt = p1.convlt;
-	pix.setDisplay(NONE) ;
+	pix.setDisplay(vpMeSite::NONE) ;
 	pix.suppress = 0;
 	pix.track(I,me,false) ;
 	//if point is tracked, add it to the list
@@ -271,7 +271,7 @@ void vpMePath::seekExtremities(vpImage<unsigned char>  &I)
 	computeNormAng(norm_ang, K,  i_2,  j_2, line)  ;
 	pix.init(i_2, j_2, norm_ang) ;
 	pix.convlt = p2.convlt;
-	pix.setDisplay(NONE) ;//was selectdisplay
+	pix.setDisplay(vpMeSite::NONE) ;//was selectdisplay
 	pix.suppress = 0;
 	pix.track(I,me,false) ;
 	//if point is tracked, add it to the list
@@ -377,7 +377,7 @@ void vpMePath::displayList(vpImage<unsigned char> &/* I */)
   while(!list.outside())
     {
       vpMeSite s = list.value() ;//current reference pixel
-      s.setDisplay(RESULT);
+      s.setDisplay(vpMeSite::RESULT);
       list.next();
     }
 }

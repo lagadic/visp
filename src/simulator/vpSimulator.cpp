@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.21 2007-12-05 17:05:53 fspindle Exp $
+ * $Id: vpSimulator.cpp,v 1.22 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -859,7 +859,7 @@ vpSimulator::closeMainApplication()
  *   - height : hauteur de l'image dans le buffer.
  */
 void
-vpSimulator::offScreenRendering(viewEnum view, int * width, int * height)
+vpSimulator::offScreenRendering(vpSimulatorViewType view, int * width, int * height)
 {
 
   SbVec2s size(320,200);

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.cpp,v 1.9 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpMeTracker.cpp,v 1.10 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@ vpMeTracker::init()
 
   vpTracker::init()  ;
   p.resize(2) ;
-  selectDisplay = NONE ;
+  selectDisplay = vpMeSite::NONE ;
 
   if (DEBUG_LEVEL1)
     std::cout << "end vpMeTracker::init() " <<  std::endl ;

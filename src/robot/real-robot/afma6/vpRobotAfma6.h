@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.12 2007-11-19 15:53:04 asaunier Exp $
+ * $Id: vpRobotAfma6.h,v 1.13 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -135,7 +135,7 @@ public: /* Methodes */
    * l'afma6.
    */
   void init (void);
-  void init (vpAfma6::CameraRobotType camera, bool usedistortion = false);
+  void init (vpAfma6::vpAfma6CameraRobotType camera, bool usedistortion = false);
 
 public:  /* Constantes */
 
