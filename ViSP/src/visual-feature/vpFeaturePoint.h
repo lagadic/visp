@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint.h,v 1.7 2007-12-18 15:03:17 fspindle Exp $
+ * $Id: vpFeaturePoint.h,v 1.8 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,11 +59,11 @@
 class VISP_EXPORT vpFeaturePoint : public vpBasicFeature
 {
 public:
-  enum pointFeatureEnum
+  typedef enum
     {
       X,   // x coordinates
       Y    // y coordinates
-    };
+    } vpFeaturePointType;
   /*
     attributes and members directly related to the vpBasicFeature needs
     other functionalities ar usefull but not mandatory

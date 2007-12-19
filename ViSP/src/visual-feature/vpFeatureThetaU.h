@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.h,v 1.8 2007-12-18 15:03:18 fspindle Exp $
+ * $Id: vpFeatureThetaU.h,v 1.9 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,12 +59,12 @@
 class VISP_EXPORT vpFeatureThetaU : public vpBasicFeature
 {
 public:
-  enum thetauFeatureEnum
+  typedef enum
     {
       TUx,
       TUy,
       TUz
-    };
+    } vpFeatureThetaUType;
   /*
     attributes and members directly related to the vpBasicFeature needs
     other functionalities ar usefull but not mandatory

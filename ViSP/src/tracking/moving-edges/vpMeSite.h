@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.h,v 1.8 2007-06-14 12:04:22 marchand Exp $
+ * $Id: vpMeSite.h,v 1.9 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,12 +72,21 @@
 class VISP_EXPORT vpMeSite
 {
 public:
+  typedef enum
+    {
+      NONE,
+      RANGE,
+      RESULT,
+      RANGE_RESULT
+    } vpMeSiteDisplayType;
+
+public:
   int i,j ;
   int i_1, j_1 ;
   double ifloat, jfloat ;
   unsigned char v ;
   int mask_sign ;
-public:
+
   // Angle of tangent at site
   double alpha;
 
@@ -117,18 +126,10 @@ public:
   void track(vpImage<unsigned char>& im,
 	     const vpMe *me,
 	     const  bool test_contraste=true);
+  void setDisplay(vpMeSiteDisplayType select) { selectDisplay = select ; }
 
 private:
-  int selectDisplay ;
-  enum displayEnum
-    {
-      NONE,
-      RANGE,
-      RESULT,
-      RANGE_RESULT
-    } ;
-public:
-  void setDisplay(int select) { selectDisplay = select ; }
+  vpMeSiteDisplayType selectDisplay ;
 } ;
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.14 2007-12-12 13:47:49 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.15 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -176,7 +176,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
     vpVIDEO_MODE_FORMAT7_5 = DC1394_VIDEO_MODE_FORMAT7_5,
     vpVIDEO_MODE_FORMAT7_6 = DC1394_VIDEO_MODE_FORMAT7_6,
     vpVIDEO_MODE_FORMAT7_7 = DC1394_VIDEO_MODE_FORMAT7_7
-  } vp1394TwoVideoMode;
+  } vp1394TwoVideoModeType;
 
   /*!
     Enumeration of framerates. See libdc1394 2.x header file
@@ -191,7 +191,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
     vpFRAMERATE_60    = DC1394_FRAMERATE_60,
     vpFRAMERATE_120   = DC1394_FRAMERATE_120,
     vpFRAMERATE_240   = DC1394_FRAMERATE_240
-  } vp1394TwoFramerate;
+  } vp1394TwoFramerateType;
 
   /*!
     Enumeration of color codings. See libdc1394 2.x header file
@@ -209,7 +209,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
     vpCOLOR_CODING_RGB16S  = DC1394_COLOR_CODING_RGB16S,
     vpCOLOR_CODING_RAW8    = DC1394_COLOR_CODING_RAW8,
     vpCOLOR_CODING_RAW16   = DC1394_COLOR_CODING_RAW16
-  } vp1394TwoColorCoding;
+  } vp1394TwoColorCodingType;
 
 
  public:
@@ -220,20 +220,20 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void getCamera(unsigned int &camera);
   void getNumCameras(unsigned int &ncameras);
 
-  void setVideoMode(vp1394TwoVideoMode videomode);
-  void getVideoMode(vp1394TwoVideoMode & videomode);
-  int  getVideoModeSupported(vpList<vp1394TwoVideoMode> & videomodes);
-  bool isVideoModeFormat7(vp1394TwoVideoMode videomode);
+  void setVideoMode(vp1394TwoVideoModeType videomode);
+  void getVideoMode(vp1394TwoVideoModeType & videomode);
+  int  getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
+  bool isVideoModeFormat7(vp1394TwoVideoModeType videomode);
 
-  void setFramerate(vp1394TwoFramerate fps);
-  void getFramerate(vp1394TwoFramerate & fps);
-  int  getFramerateSupported(vp1394TwoVideoMode videomode,
-			     vpList<vp1394TwoFramerate> & fps);
+  void setFramerate(vp1394TwoFramerateType fps);
+  void getFramerate(vp1394TwoFramerateType & fps);
+  int  getFramerateSupported(vp1394TwoVideoModeType videomode,
+			     vpList<vp1394TwoFramerateType> & fps);
 
-  void setColorCoding(vp1394TwoColorCoding coding);
-  void getColorCoding(vp1394TwoColorCoding & coding);
-  int  getColorCodingSupported(vp1394TwoVideoMode videomode,
-			       vpList<vp1394TwoColorCoding> & codings);
+  void setColorCoding(vp1394TwoColorCodingType coding);
+  void getColorCoding(vp1394TwoColorCodingType & coding);
+  int  getColorCodingSupported(vp1394TwoVideoModeType videomode,
+			       vpList<vp1394TwoColorCodingType> & codings);
 
   void setFormat7ROI(unsigned int left=0, unsigned int top=0,
 		     unsigned int width=0, unsigned int height=0);
@@ -255,12 +255,12 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void close();
 
 public:
-  static std::string videoMode2string(vp1394TwoVideoMode videomode);
-  static std::string framerate2string(vp1394TwoFramerate fps);
-  static std::string colorCoding2string(vp1394TwoColorCoding colorcoding);
-  static vp1394TwoVideoMode string2videoMode(std::string videomode);
-  static vp1394TwoFramerate string2framerate(std::string fps);
-  static vp1394TwoColorCoding string2colorCoding(std::string colorcoding);
+  static std::string videoMode2string(vp1394TwoVideoModeType videomode);
+  static std::string framerate2string(vp1394TwoFramerateType fps);
+  static std::string colorCoding2string(vp1394TwoColorCodingType colorcoding);
+  static vp1394TwoVideoModeType string2videoMode(std::string videomode);
+  static vp1394TwoFramerateType string2framerate(std::string fps);
+  static vp1394TwoColorCodingType string2colorCoding(std::string colorcoding);
 
  private:
   void open();

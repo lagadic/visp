@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.25 2007-12-12 10:27:19 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.26 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -176,7 +176,7 @@ vpRobotAfma6::init (void)
 
 */
 void
-vpRobotAfma6::init (vpAfma6::CameraRobotType camera, bool usedistortion)
+vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera, bool usedistortion)
 {
   ECameraAfma6 api_camera; // Interface with low level Afma6 api
 
@@ -197,7 +197,7 @@ vpRobotAfma6::init (vpAfma6::CameraRobotType camera, bool usedistortion)
 		   "et que le code n'a pas ete mis a jour "
 		   "correctement.");
       vpERROR_TRACE ("Verifiez les valeurs possibles du type "
-		   "vpAfma6::CameraRobotType, et controlez que "
+		   "vpAfma6::vpAfma6CameraRobotType, et controlez que "
 		   "tous les cas ont ete pris en compte dans la "
 		   "fonction init(camera).");
       break;

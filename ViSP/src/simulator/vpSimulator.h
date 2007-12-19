@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.16 2007-12-05 17:05:53 fspindle Exp $
+ * $Id: vpSimulator.h,v 1.17 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -123,8 +123,8 @@ protected:
   void initSoApplication() ;
 
 public:
-  typedef enum  {grayImage, colorImage} vpImageType ;
-  vpImageType typeImage ;
+  typedef enum  {grayImage, colorImage} vpSimulatorImageType ;
+  vpSimulatorImageType typeImage ;
 
   GLubyte * image_background;
   //! activate the mainloop
@@ -241,12 +241,12 @@ public:
 
   /* --- Off screen rendering  --- */
 public:
-  enum viewEnum { INTERNAL, EXTERNAL } ;
+  typedef enum { INTERNAL, EXTERNAL } vpSimulatorViewType ;
   void  write(const char * fileName);
 protected:
   SbTime * realtime ;
   SoOffscreenRenderer * offScreenRenderer ;
-  void offScreenRendering (viewEnum view=vpSimulator::EXTERNAL,
+  void offScreenRendering (vpSimulatorViewType view=vpSimulator::EXTERNAL,
 			   int * width = NULL,
 			   int * height = NULL);
 public:

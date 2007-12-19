@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.5 2007-11-22 08:57:12 asaunier Exp $
+ * $Id: vpCalibration.cpp,v 1.6 2007-12-19 08:25:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -356,7 +356,7 @@ vpCalibration::computeStdDeviation(double &deviation,double &deviation_pm, doubl
   \return 0 if the calibration computation managed.
 */
 int
-vpCalibration::computeCalibration(vpCalibrationMethod method,
+vpCalibration::computeCalibration(vpCalibrationMethodType method,
 				  vpHomogeneousMatrix &cMo,
 				  vpCameraParameters &cam,
 				  bool verbose)
@@ -438,7 +438,8 @@ vpCalibration::computeCalibration(vpCalibrationMethod method,
   \return 0 if the computation managed.
 */
 int
-vpCalibration::computeCalibrationMulti(vpCalibrationMethod method,unsigned int nbPose,
+vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
+				       unsigned int nbPose,
 				       vpCalibration table_cal[],
 				       vpCameraParameters& cam,
 				       bool verbose)

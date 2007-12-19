@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.h,v 1.6 2007-05-11 16:53:35 fspindle Exp $
+ * $Id: vpMeTracker.h,v 1.7 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,6 @@
 
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
-
 public:
 
   //! Tracking dependent variables/functions =====================
@@ -114,18 +113,12 @@ public:
   void display(vpImage<unsigned char>& I);
   //!Displays the status of me sites
   void display(vpImage<unsigned char>& I,vpColVector &w,int &index_w);
+  void setDisplay(vpMeSite::vpMeSiteDisplayType select)  { 
+    selectDisplay = select ;
+  }
 
 protected:
-  int selectDisplay ;
-public:
-  enum displayEnum
-    {
-      NONE,
-      RANGE,
-      RESULT,
-      RANGE_RESULT
-    } ;
-  void setDisplay(int select)  { selectDisplay = select ; }
+  vpMeSite::vpMeSiteDisplayType selectDisplay ;
 
 };
 

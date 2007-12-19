@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpForwardProjection.h,v 1.3 2007-02-26 16:42:18 fspindle Exp $
+ * $Id: vpForwardProjection.h,v 1.4 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -97,17 +97,17 @@ public:
 
   // memory issue (used by the vpServo class)
 public:
-  enum whoShouldDeallocateEnum
+  typedef enum 
     {
       user,
       vpDisplayForwardProjection
-    } ;
+    } vpForwardProjectionDeallocatorType;
 
 private:
-  int deallocate ;
+  vpForwardProjectionDeallocatorType deallocate ;
 public:
-  void setDeallocate(int d) { deallocate = d ; }
-  int getDeallocate() { return deallocate ; }
+  void setDeallocate(vpForwardProjectionDeallocatorType d) { deallocate = d ; }
+  vpForwardProjectionDeallocatorType getDeallocate() { return deallocate ; }
 } ;
 
 

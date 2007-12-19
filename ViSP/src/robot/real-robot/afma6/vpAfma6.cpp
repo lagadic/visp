@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.21 2007-12-12 10:27:19 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.22 2007-12-19 08:25:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,7 +62,7 @@
 /* ------------------------------------------------------------------------ */
 const double vpAfma6::rhoDefault = 0.1;
 const int    vpAfma6::articulationsNb = 6;
-const vpAfma6::CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_8MM;
+const vpAfma6::vpAfma6CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_8MM;
 
 /*!
 
@@ -1209,7 +1209,7 @@ init (const char * paramAfma6,
  * PARAMETRES_AFMA6_FILENAME en argument.
  */
 void vpAfma6::
-init (vpAfma6::CameraRobotType camera, bool usedistortion)
+init (vpAfma6::vpAfma6CameraRobotType camera, bool usedistortion)
 {
   char            filenameMPI [FILENAME_MAX];
 
@@ -1235,7 +1235,7 @@ init (vpAfma6::CameraRobotType camera, bool usedistortion)
 		   "et que le code n'a pas ete mis a jour "
 		   "correctement.");
       vpERROR_TRACE ("Verifiez les valeurs possibles du type "
-		   "vpAfma6::CameraRobotType, et controlez que "
+		   "vpAfma6::vpAfma6CameraRobotType, et controlez que "
 		   "tous les cas ont ete pris en compte dans la "
 		   "fonction init(camera).");
       break;
@@ -1651,7 +1651,7 @@ getCameraParameters (vpCameraParameters &cam,
        "et que le code n'a pas ete mis a jour "
        "correctement.");
       vpERROR_TRACE ("Verifiez les valeurs possibles du type "
-       "vpAfma6::CameraRobotType, et controlez que "
+       "vpAfma6::vpAfma6CameraRobotType, et controlez que "
        "tous les cas ont ete pris en compte dans la "
        "fonction init(camera).");
       break;

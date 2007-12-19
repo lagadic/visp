@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.h,v 1.3 2007-11-26 13:31:18 asaunier Exp $
+ * $Id: vpCalibration.h,v 1.4 2007-12-19 08:25:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@ public:
     CALIB_VIRTUAL_VS_DIST,
     CALIB_LAGRANGE_VIRTUAL_VS,
     CALIB_LAGRANGE_VIRTUAL_VS_DIST,
-  } vpCalibrationMethod ;
+  } vpCalibrationMethodType ;
 private:
   unsigned int npt ;       //!< number of points used in calibration computation
   vpList<double> LoX, LoY, LoZ  ;  //!< list of points coordinates (3D in meters)
@@ -164,12 +164,12 @@ public:
   void computeStdDeviation(double &deviation, double &deviation_pm,
                            double &deviation_mp);
   //! Compute the calibration for a given method
-  int computeCalibration(vpCalibrationMethod method,
+  int computeCalibration(vpCalibrationMethodType method,
 			  vpHomogeneousMatrix &cMo,
         vpCameraParameters &cam,
         bool verbose = false) ;
   //! Compute the calibration for a given method using many poses
-  static int computeCalibrationMulti(vpCalibrationMethod method,unsigned int nbPose,
+  static int computeCalibrationMulti(vpCalibrationMethodType method,unsigned int nbPose,
         vpCalibration table_cal[],
         vpCameraParameters &cam,
         bool verbose = false) ;
