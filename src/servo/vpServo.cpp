@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.17 2007-12-18 14:33:04 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.18 2007-12-20 08:18:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -219,7 +219,7 @@ vpServo::vpServo(vpServoType _servoType)
 }
 
 void
-vpServo::print(const vpServo::printEnum displayLevel, std::ostream &os)
+vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 {
   switch (displayLevel)
     {
