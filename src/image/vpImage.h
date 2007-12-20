@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.22 2007-12-18 14:52:05 fspindle Exp $
+ * $Id: vpImage.h,v 1.23 2007-12-20 14:37:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -605,8 +605,8 @@ void vpImage<Type>::operator=(const Type &x)
 
 /*!
   Operation  A - B (A is unchanged).
-  
-  \sa sub(const vpImage<Type> &, const vpImage<Type> &, vpImage<Type> &) to 
+
+  \sa sub(const vpImage<Type> &, const vpImage<Type> &, vpImage<Type> &) to
   avoid matrix allocation for each use.
 */
 template<class Type>
@@ -651,9 +651,7 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
 		      "vpImage mismatch in vpImage/vpImage substraction ")) ;
   }
 
-  int i;
-  // MODIF EM 16/6/03
-  for (i=0;i<A.getWidth()*getHeight();i++)
+  for (unsigned int i=0;i<A.getWidth()*getHeight();i++)
   {
     *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
   }
@@ -828,7 +826,7 @@ Type vpImage<Type>::getPixelBI(float col0, float row0) const
   if (/*irow < 0 || */ irow >= height
       /* || icol < 0 */ || icol >= width) {
     vpERROR_TRACE("Pixel outside the image") ;
-    throw(vpException(vpImageException::notInTheImage, 
+    throw(vpException(vpImageException::notInTheImage,
 		      "Pixel outside the image"));
   }
 
@@ -854,7 +852,7 @@ Type vpImage<Type>::getPixelBI(float col0, float row0) const
   {
     if (cfrac < 1)
     {
-      row2 = (Type)(row[irow+1][icol] * cfrac 
+      row2 = (Type)(row[irow+1][icol] * cfrac
 		    + row[irow+1][icol + 1]*(1.0 - cfrac) );
     }
     else
