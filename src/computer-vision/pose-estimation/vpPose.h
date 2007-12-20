@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.14 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpPose.h,v 1.15 2007-12-20 08:20:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,7 +73,7 @@ class VISP_EXPORT vpPose
 {
 
 public:
-  enum poseMethodEnum
+  typedef enum
     {
       LAGRANGE         ,
       DEMENTHON        ,
@@ -144,7 +144,7 @@ public:
   //! compute the pose using virtual visual servoing approach
   void poseVirtualVS(vpHomogeneousMatrix & cMo) ;
   //! compute the pose for a given method
-  void computePose(poseMethodEnum methode, vpHomogeneousMatrix &cMo) ;
+  void computePose(vpPoseMethodType methode, vpHomogeneousMatrix &cMo) ;
   void printPoint() ;
 
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
