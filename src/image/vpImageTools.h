@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.14 2007-12-19 17:36:28 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.15 2007-12-20 14:38:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -218,7 +218,7 @@ void vpImageTools::binarise(vpImage<Type> &I,
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 template<class Type>
-class VISP_EXPORT vpUndistortInternalType
+class vpUndistortInternalType
 {
 public:
   Type *src;
