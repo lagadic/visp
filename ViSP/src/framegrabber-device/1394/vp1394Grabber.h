@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.15 2007-12-18 14:23:32 fspindle Exp $
+ * $Id: vp1394Grabber.h,v 1.16 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@
 
 /*!
   \class vp1394Grabber
-  \brief class for firewire ieee1394 video devices.
+  \brief class for firewire ieee1394 video devices using libdc1394-1.x api
 
   Needs libraw1394-1.2.0 and libdc1394-1.1.0 or more recent versions
   available on http://sourceforge.net.

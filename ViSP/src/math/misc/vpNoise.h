@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpNoise.h,v 1.2 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpNoise.h,v 1.3 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,8 +55,9 @@
 
 
 /*!
-  \brief CUniRand is a class for generating random number
-  with uniform probability density
+  \class vpUniRand
+
+  \brief class for generating random numbers with uniform probability density
 
 
   The algorithms and notations used are described in
@@ -103,8 +104,8 @@ public:
 };
 
 /*!
-  \brief   vpGaussrand is a class for generating random number
-  with normal probability density
+  \class vpGaussRand
+  \brief class for generating random number with normal probability density
 
   The algorithms and notations used are described in
 

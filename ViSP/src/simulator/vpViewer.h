@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.h,v 1.10 2007-11-22 09:21:47 fspindle Exp $
+ * $Id: vpViewer.h,v 1.11 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -99,9 +99,10 @@
 /*!
   \class vpViewer
 
-  Viewer used by the simulator. Under Windows, the viewer is based
-  either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or
-  SoXt .
+  \brief Viewer used by the simulator.
+
+  Under Windows, the viewer is based either on SoWin or SoQt. Under
+  Unix, the viewer is based on SoQt or SoXt .
 */
 
 class vpSimulator;

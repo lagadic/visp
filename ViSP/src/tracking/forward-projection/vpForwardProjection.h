@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpForwardProjection.h,v 1.5 2007-12-19 17:36:29 fspindle Exp $
+ * $Id: vpForwardProjection.h,v 1.6 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,7 +40,7 @@
 
 /*!
   \file vpForwardProjection.h
-  \brief  class that defines what is a generic geoemtric feature
+  \brief  class that defines what is a generic geometric feature
 */
 
 #include <visp/vpConfig.h>

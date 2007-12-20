@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.14 2007-12-07 16:41:48 asaunier Exp $
+ * $Id: vpDisplayGTK.h,v 1.15 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,7 +55,7 @@
 */
 
 
-/*
+/*!
 
   \class vpDisplayGTK
 

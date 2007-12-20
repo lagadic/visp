@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.h,v 1.9 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpMeSite.h,v 1.10 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,23 +52,21 @@
 #include <visp/vpDisplay.h>
 #include <visp/vpMe.h>
 
-// ====================================================================
 /*!
- * \class vpMeSite
- * \brief Performs search in a given direction(normal) for a given distance(pixels)
- * \n for a given 'site'. Gives the most likely site given the probablility
- * \n from an ME mask
- * \n
- * \n - Bug fix rewrote application of masks to use the temporal information
- * \n instead of applying both temporal masks to the same image.
- * \n ie: spacial -> spatio/temporal
- * \n - Added new tracking function to choose the most similar edge amongst
- * \n - all edges found.
- * \n sample step.
+  \class vpMeSite
+
+  \brief Performs search in a given direction(normal) for a given
+   distance(pixels) for a given 'site'. Gives the most likely site
+   given the probablility from an ME mask
+
+  - Bug fix: rewrote application of masks to use the temporal
+    information instead of applying both temporal masks to the same
+    image. ie: spacial -> spatio/temporal
+  
+  - Added new tracking function to choose the most similar edge amongst
+  - all edges found.
+  - sample step.
  */
-// ====================================================================
-
-
 class VISP_EXPORT vpMeSite
 {
 public:
