@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.h,v 1.5 2007-12-20 08:17:29 fspindle Exp $
+ * $Id: vpRobust.h,v 1.6 2007-12-20 09:00:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,11 +41,8 @@
 
 // ===================================================================
 /*!
- * \brief Contains an M-Estimator and various
- * influence function.
- * \n Methods : M-estimation, Tukey, Cauchy, Mclure and Huber
- * \author Andrew Comport
- * \date 29/1/02
+  \brief Contains an M-Estimator and various influence function.
+  Supported methods : M-estimation, Tukey, Cauchy and Huber
 */
 // ===================================================================
 
@@ -66,7 +63,7 @@ public:
   {
     TUKEY,
     CAUCHY,
-    MCLURE,
+    //    MCLURE,
     HUBER
   } vpRobustEstimatorType;
 private:
@@ -79,9 +76,7 @@ public:
 
   double NoiseThreshold;
 
-  //! Constructor
-  vpRobust(int);
-  //! Destructor
+  vpRobust(int n_data);
   virtual ~vpRobust(void);
 
   int MEstimator(const vpRobustEstimatorType method,
@@ -95,14 +90,14 @@ public:
 
   vpColVector simultMEstimator(vpColVector &residues);
 
-  void setIteration(const int x);
+  void setIteration(const int iter);
   void setThreshold(const double x);
 
- public : 
+ public :
   double residualMedian ;
   double normalizedResidualMedian ;
  private:
-  
+
   double median(vpColVector &x);
   double median(vpColVector &x, vpColVector &weights);
 
