@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.8 2007-10-26 17:06:40 acherubi Exp $
+ * $Id: vpMePath.h,v 1.9 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,12 @@
 #include <visp/vpColor.h>
 
 
+/*!
+  \class vpMeEllipse 
 
+  \brief class that tracks a path (white road line) moving edges
+						
+*/
 class VISP_EXPORT vpMePath : public vpMeTracker
 {
 

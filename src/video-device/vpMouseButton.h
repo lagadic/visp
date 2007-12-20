@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMouseButton.h,v 1.1 2007-02-26 16:33:49 fspindle Exp $
+ * $Id: vpMouseButton.h,v 1.2 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,6 +42,10 @@
 
 #include <visp/vpConfig.h>
 
+/*!
+  \class vpMouseButton
+  \brief class that defines mouse button identiers
+*/
 class VISP_EXPORT vpMouseButton
 {
 public:

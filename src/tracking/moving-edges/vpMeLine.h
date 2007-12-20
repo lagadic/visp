@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.h,v 1.6 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpMeLine.h,v 1.7 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,6 +54,12 @@
 #include <visp/vpMeTracker.h>
 
 
+/*!
+  \class vpMe Line
+
+  \brief class that tracks a line moving edges
+						
+*/
 
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {

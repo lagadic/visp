@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.19 2007-12-07 16:41:48 asaunier Exp $
+ * $Id: vpDisplay.h,v 1.20 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,11 @@
   with the image.
 */
 
+/*!
 
+  \class vpDisplay
+  \brief class that defines generic functionnalities for display
+*/
 class VISP_EXPORT vpDisplay
 {
 protected :

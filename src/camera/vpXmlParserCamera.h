@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.h,v 1.4 2007-12-18 14:22:23 fspindle Exp $
+ * $Id: vpXmlParserCamera.h,v 1.5 2007-12-20 08:21:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,7 +58,7 @@
 
 /*!
   \class vpXmlParserCamera
-  XML Parser to load and save intrinsic camera parameters.
+  \brief XML Parser to load and save intrinsic camera parameters.
 
   Example of loading existing camera parameters :
   \code

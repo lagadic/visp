@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.h,v 1.7 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpFeatureTranslation.h,v 1.8 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,7 @@
 
 /*!
   \class vpFeatureTranslation
-  \brief class that defines the thetaU visual feature
+  \brief class that defines the translation visual feature
 */
 class VISP_EXPORT vpFeatureTranslation : public vpBasicFeature
 {

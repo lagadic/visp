@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColor.h,v 1.4 2007-06-13 08:57:19 asaunier Exp $
+ * $Id: vpColor.h,v 1.5 2007-12-20 08:21:49 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,6 +42,12 @@
 
 #include <visp/vpConfig.h>
 
+/*!
+
+  \class vpColor
+  \brief class to define colors available for display functionnalities
+
+*/ 
 class VISP_EXPORT vpColor
 {
 public:
