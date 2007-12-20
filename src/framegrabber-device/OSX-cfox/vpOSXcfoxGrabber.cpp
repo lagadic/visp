@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.cpp,v 1.9 2007-05-10 16:32:30 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.cpp,v 1.10 2007-12-20 08:19:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -237,7 +237,7 @@ vpOSXcfoxGrabber::acquire(vpImage<vpRGBa> &I)
 
 */
 void
-vpOSXcfoxGrabber::setFramerate(vpOSXcfoxGrabber::framerateEnum _framerate)
+vpOSXcfoxGrabber::setFramerate(vpOSXcfoxGrabber::vpOSXcfoxFramerateType _framerate)
 {
   framerate = _framerate ;
 }
@@ -252,7 +252,7 @@ vpOSXcfoxGrabber::setFramerate(vpOSXcfoxGrabber::framerateEnum _framerate)
 */
 
 
-vpOSXcfoxGrabber::framerateEnum
+vpOSXcfoxGrabber::vpOSXcfoxFramerateType
 vpOSXcfoxGrabber::getFramerate()
 {
   return framerate;

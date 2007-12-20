@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.h,v 1.6 2007-05-10 16:32:30 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.h,v 1.7 2007-12-20 08:19:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,11 +84,11 @@ public:
   static const int DEFAULT_INPUT;
   static const int DEFAULT_SCALE;
 
-  enum framerateEnum
+  typedef enum 
     {
       framerate_30fps, //!< 30 frames per second
       framerate_15fps  //!< 15 frames per second
-    };
+    } vpOSXcfoxFramerateType ;
 
 public:
   vpOSXcfoxGrabber();
@@ -100,8 +100,8 @@ public:
 
   void acquire(vpImage<unsigned char> &I) ;
   void acquire(vpImage<vpRGBa> &I)  ;
-  void setFramerate(framerateEnum framerate);
-  framerateEnum getFramerate();
+  void setFramerate(vpOSXcfoxFramerateType framerate);
+  vpOSXcfoxFramerateType getFramerate();
   void close();
 
 
@@ -119,7 +119,7 @@ private:
   // Camera::Frame img;
   int input ;
   int scale ;
-  framerateEnum framerate ;
+  vpOSXcfoxFramerateType framerate ;
 
 
 } ;
