@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.cpp,v 1.11 2007-07-11 16:28:23 acherubi Exp $
+ * $Id: vpRobotBiclops.cpp,v 1.12 2007-12-20 08:15:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -497,8 +497,8 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
   speed control.
 
 */
-vpRobot::RobotStateType
-vpRobotBiclops::setRobotState(vpRobot::RobotStateType newState)
+vpRobot::vpRobotStateType
+vpRobotBiclops::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState)
   {
@@ -706,7 +706,7 @@ vpRobotBiclops::getPositioningVelocity (void)
 
 */
 void
-vpRobotBiclops::setPosition (const vpRobot::ControlFrameType frame,
+vpRobotBiclops::setPosition (const vpRobot::vpControlFrameType frame,
 			     const vpColVector & q )
 {
 
@@ -772,7 +772,7 @@ vpRobotBiclops::setPosition (const vpRobot::ControlFrameType frame,
    is given.
 
 */
-void vpRobotBiclops::setPosition (const vpRobot::ControlFrameType frame,
+void vpRobotBiclops::setPosition (const vpRobot::vpControlFrameType frame,
 				  const double &q1, const double &q2)
 {
   try{
@@ -830,7 +830,7 @@ vpRobotBiclops::setPosition(const char *filename)
 
 */
 void
-vpRobotBiclops::getPosition (const vpRobot::ControlFrameType frame,
+vpRobotBiclops::getPosition (const vpRobot::vpControlFrameType frame,
 			     vpColVector & q)
 {
   switch(frame)
@@ -859,7 +859,7 @@ vpRobotBiclops::getPosition (const vpRobot::ControlFrameType frame,
     break ;
   }
 
-  vpRobot::RobotStateType state;
+  vpRobot::vpRobotStateType state;
   state = vpRobot::getRobotState();
 
   switch (state) {
@@ -928,7 +928,7 @@ vpRobotBiclops::getPosition (const vpRobot::ControlFrameType frame,
 
 */
 void
-vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
+vpRobotBiclops::setVelocity (const vpRobot::vpControlFrameType frame,
 			     const vpColVector & q_dot)
 {
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
@@ -1058,7 +1058,7 @@ vpRobotBiclops::setVelocity (const vpRobot::ControlFrameType frame,
   is given.
 */
 void
-vpRobotBiclops::getVelocity (const vpRobot::ControlFrameType frame,
+vpRobotBiclops::getVelocity (const vpRobot::vpControlFrameType frame,
 			     vpColVector & q_dot)
 {
   switch(frame)
@@ -1087,7 +1087,7 @@ vpRobotBiclops::getVelocity (const vpRobot::ControlFrameType frame,
     break ;
   }
 
-  vpRobot::RobotStateType state;
+  vpRobot::vpRobotStateType state;
   state = vpRobot::getRobotState();
 
   switch (state) {
@@ -1141,7 +1141,7 @@ vpRobotBiclops::getVelocity (const vpRobot::ControlFrameType frame,
   is given.
 */
 vpColVector
-vpRobotBiclops::getVelocity (vpRobot::ControlFrameType frame)
+vpRobotBiclops::getVelocity (vpRobot::vpControlFrameType frame)
 {
   vpColVector q_dot;
   getVelocity (frame, q_dot);
@@ -1274,7 +1274,7 @@ void vpRobotBiclops::getArticularDisplacement(vpColVector &d)
 
 */
 void
-vpRobotBiclops::getDisplacement(vpRobot::ControlFrameType frame,
+vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame,
 				vpColVector &d)
 {
   vpColVector q_current; // current position

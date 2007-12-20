@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobot.h,v 1.7 2007-11-28 11:32:04 fspindle Exp $
+ * $Id: vpRobot.h,v 1.8 2007-12-20 08:15:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,41 +57,41 @@
 class VISP_EXPORT vpRobot
 {
 public:
-  enum RobotStateType
+  typedef enum 
     {
       STATE_STOP,
       STATE_VELOCITY_CONTROL,
       STATE_POSITION_CONTROL,
       STATE_ACCELERATION_CONTROL
-    }  ;
+    } vpRobotStateType ;
 
     /** \brief valeur utilisee par default pour l'etat du robot a
      * la construction. */
-  static const vpRobot::RobotStateType
+  static const vpRobot::vpRobotStateType
   defaultEtatRobot = vpRobot::STATE_STOP;
 
-  enum ControlFrameType
+  typedef enum 
     {
       REFERENCE_FRAME,
       ARTICULAR_FRAME,
       CAMERA_FRAME,
       MIXT_FRAME
-    }  ;
+    } vpControlFrameType ;
 
-    static const vpRobot::ControlFrameType
+    static const vpRobot::vpControlFrameType
     defaultFrameRobot = vpRobot::CAMERA_FRAME ;
 
 private:  /* Membres privees */
-    vpRobot::RobotStateType   stateRobot;
-    vpRobot::ControlFrameType   frameRobot;
+    vpRobot::vpRobotStateType   stateRobot;
+    vpRobot::vpControlFrameType   frameRobot;
 public:
-  virtual RobotStateType
-  setRobotState (const vpRobot::RobotStateType newState);
+  virtual vpRobotStateType
+  setRobotState (const vpRobot::vpRobotStateType newState);
   virtual
-  RobotStateType     getRobotState (void) { return stateRobot ; }
+  vpRobotStateType     getRobotState (void) { return stateRobot ; }
 
-  ControlFrameType   setRobotFrame (vpRobot::ControlFrameType newFrame);
-  ControlFrameType   getRobotFrame (void) { return frameRobot ; }
+  vpControlFrameType   setRobotFrame (vpRobot::vpControlFrameType newFrame);
+  vpControlFrameType   getRobotFrame (void) { return frameRobot ; }
 
 
 protected:
@@ -127,7 +127,7 @@ public:
 
 
   //! set to the controller a velocity (frame as to ve specified)
-  virtual void setVelocity(const vpRobot::ControlFrameType frame,
+  virtual void setVelocity(const vpRobot::vpControlFrameType frame,
 			   const vpColVector &vel) = 0 ;
 
 
@@ -139,14 +139,14 @@ public:
   //---------- POSITION -----------------------------
 
   //! get a displacement (frame as to ve specified)
-  virtual void getPosition(const vpRobot::ControlFrameType frame,
+  virtual void getPosition(const vpRobot::vpControlFrameType frame,
 			   vpColVector &q)   = 0 ;
 
   //! get a displacement (frame as to ve specified)
-  vpColVector getPosition (const vpRobot::ControlFrameType frame);
+  vpColVector getPosition (const vpRobot::vpControlFrameType frame);
 
   //! set a displacement (frame as to ve specified)
-  virtual void setPosition(const vpRobot::ControlFrameType frame,
+  virtual void setPosition(const vpRobot::vpControlFrameType frame,
 			   const vpColVector &q)   = 0 ;
 
 
@@ -155,7 +155,7 @@ public:
   //! get a displacement expressed  in the articular frame
   virtual void getArticularDisplacement(vpColVector  &qdot) = 0 ;
   //! get a displacement (frame as to ve specified)
-  virtual void getDisplacement(const vpRobot::ControlFrameType frame,
+  virtual void getDisplacement(const vpRobot::vpControlFrameType frame,
 			       vpColVector &q) = 0 ;
 
   /*

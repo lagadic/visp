@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotPtu46.cpp,v 1.12 2007-04-25 09:27:46 fspindle Exp $
+ * $Id: vpRobotPtu46.cpp,v 1.13 2007-12-20 08:15:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,8 +155,8 @@ vpRobotPtu46::init ()
   speed control.
 
 */
-vpRobot::RobotStateType
-vpRobotPtu46::setRobotState(vpRobot::RobotStateType newState)
+vpRobot::vpRobotStateType
+vpRobotPtu46::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState)
   {
@@ -338,7 +338,7 @@ vpRobotPtu46::getPositioningVelocity (void)
 */
 
 void
-vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
+vpRobotPtu46::setPosition (const vpRobot::vpControlFrameType frame,
 			   const vpColVector & q )
 {
 
@@ -410,7 +410,7 @@ vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
 
 */
 void
-vpRobotPtu46::setPosition (const vpRobot::ControlFrameType frame,
+vpRobotPtu46::setPosition (const vpRobot::vpControlFrameType frame,
 			   const double &q1, const double &q2)
 {
   try{
@@ -466,7 +466,7 @@ vpRobotPtu46::setPosition(const char *filename)
 
 */
 void
-vpRobotPtu46::getPosition (const vpRobot::ControlFrameType frame,
+vpRobotPtu46::getPosition (const vpRobot::vpControlFrameType frame,
 			   vpColVector & q)
 {
   vpDEBUG_TRACE (9, "# Entree.");
@@ -543,7 +543,7 @@ vpRobotPtu46::getPosition (const vpRobot::ControlFrameType frame,
 */
 
 void
-vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
+vpRobotPtu46::setVelocity (const vpRobot::vpControlFrameType frame,
 			   const vpColVector & v)
 {
   TPtuFrame ptuFrameInterface;
@@ -668,7 +668,7 @@ vpRobotPtu46::setVelocity (const vpRobot::ControlFrameType frame,
   is given.
 */
 void
-vpRobotPtu46::getVelocity (const vpRobot::ControlFrameType frame,
+vpRobotPtu46::getVelocity (const vpRobot::vpControlFrameType frame,
 			   vpColVector & q_dot)
 {
 
@@ -734,7 +734,7 @@ vpRobotPtu46::getVelocity (const vpRobot::ControlFrameType frame,
   is given.
 */
 vpColVector
-vpRobotPtu46::getVelocity (vpRobot::ControlFrameType frame)
+vpRobotPtu46::getVelocity (vpRobot::vpControlFrameType frame)
 {
   vpColVector q_dot;
   getVelocity (frame, q_dot);
@@ -864,7 +864,7 @@ void vpRobotPtu46::getArticularDisplacement(vpColVector  &d)
 
 */
 void
-vpRobotPtu46::getDisplacement(vpRobot::ControlFrameType frame,
+vpRobotPtu46::getDisplacement(vpRobot::vpControlFrameType frame,
 			      vpColVector &d)
 {
   double d_[6];

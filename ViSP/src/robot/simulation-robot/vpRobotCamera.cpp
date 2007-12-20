@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.cpp,v 1.10 2007-05-10 14:45:22 fspindle Exp $
+ * $Id: vpRobotCamera.cpp,v 1.11 2007-12-20 08:15:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -214,7 +214,7 @@ vpRobotCamera::setArticularVelocity(const vpColVector &qdot)
 
 */
 void
-vpRobotCamera::setVelocity(const vpRobot::ControlFrameType frame,
+vpRobotCamera::setVelocity(const vpRobot::vpControlFrameType frame,
 			   const vpColVector &v)
 {
   switch (frame)
@@ -300,7 +300,7 @@ vpRobotCamera::getArticularPosition(vpColVector &/* q */) const
   \warning Not implemented.
 */
 void
-vpRobotCamera::getPosition(const vpRobot::ControlFrameType /* frame */,
+vpRobotCamera::getPosition(const vpRobot::vpControlFrameType /* frame */,
 			   vpColVector & /* q */)
 {
   std::cout << "Not implemented ! " << std::endl;
@@ -334,7 +334,7 @@ vpRobotCamera::getArticularDisplacement(vpColVector & /* qdot */)
   \warning Not implemented.
 */
 void
-vpRobotCamera::getDisplacement(const vpRobot::ControlFrameType /* frame */,
+vpRobotCamera::getDisplacement(const vpRobot::vpControlFrameType /* frame */,
 			       vpColVector &/* q */)
 {
   std::cout << "Not implemented ! " << std::endl;
