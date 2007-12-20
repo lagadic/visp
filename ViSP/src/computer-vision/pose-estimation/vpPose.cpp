@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.17 2007-11-19 15:43:22 asaunier Exp $
+ * $Id: vpPose.cpp,v 1.18 2007-12-20 08:20:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -279,7 +279,7 @@ vpPose::computeResidual(vpHomogeneousMatrix &_cMo)
 
 */
 void
-vpPose::computePose(poseMethodEnum methode, vpHomogeneousMatrix& cMo)
+vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
 {
   if (DEBUG_LEVEL1)
     std::cout << "begin vpPose::ComputePose()" << std::endl ;
