@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.10 2007-10-19 08:47:06 fspindle Exp $
+ * $Id: vpRobust.cpp,v 1.11 2007-12-20 08:17:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -126,7 +126,7 @@ vpRobust::setThreshold(const double x)
 
 // ===================================================================
 int
-vpRobust::MEstimator(const int method,
+vpRobust::MEstimator(const vpRobustEstimatorType method,
 		     const vpColVector &residues,
 		     vpColVector &weights)
 {
@@ -219,7 +219,7 @@ vpRobust::MEstimator(const int method,
 
 
 int
-vpRobust::MEstimator(const int method,
+vpRobust::MEstimator(const vpRobustEstimatorType method,
 		     const vpColVector &residues,
 		     const vpColVector& all_residues,
 		     vpColVector &weights)
@@ -360,7 +360,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
  */
 // ===================================================================
 vpColVector
-vpRobust::SimultMEstimator(vpColVector &residues)
+vpRobust::simultMEstimator(vpColVector &residues)
 {
 
   double med=0;					// Median
@@ -412,7 +412,7 @@ vpRobust::SimultMEstimator(vpColVector &residues)
   return w;
 }
 double
-vpRobust::scale(int method, vpColVector &x)
+vpRobust::scale(vpRobustEstimatorType method, vpColVector &x)
 {
   int p = 6; //Number of parameters to be estimated.
   int n = x.getRows();
@@ -513,7 +513,7 @@ vpRobust::simultscale(vpColVector &x)
 }
 
 double
-vpRobust::constrainedChi(int method, double x)
+vpRobust::constrainedChi(vpRobustEstimatorType method, double x)
 {
   switch (method)
   {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpRobust.h,v 1.5 2007-12-20 08:17:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,13 +62,13 @@
 class VISP_EXPORT vpRobust
 {
 public:
-  enum estimatorTypeEnum
+  typedef enum
   {
     TUKEY,
     CAUCHY,
     MCLURE,
     HUBER
-  } ;
+  } vpRobustEstimatorType;
 private:
 
   double sig_prev;
@@ -84,17 +84,16 @@ public:
   //! Destructor
   virtual ~vpRobust(void);
 
-  int MEstimator(const int method,
+  int MEstimator(const vpRobustEstimatorType method,
 		 const vpColVector &residues,
 		 vpColVector &weights);
 
-  int MEstimator(const int method,
-		 const  vpColVector &residues,
+  int MEstimator(const vpRobustEstimatorType method,
+		 const vpColVector &residues,
 		 const vpColVector& all_residues,
 		 vpColVector &weights);
 
-  vpColVector SimultMEstimator(vpColVector &residues);
-  vpColVector CMEstimator(int method, vpColVector &residues);
+  vpColVector simultMEstimator(vpColVector &residues);
 
   void setIteration(const int x);
   void setThreshold(const double x);
@@ -113,7 +112,7 @@ public:
 
 
   //! Calculate various scale estimates
-  double scale(int method, vpColVector &x);
+  double scale(vpRobustEstimatorType method, vpColVector &x);
   double simultscale(vpColVector &x);
 
   //! Partial derivative of loss function
@@ -129,7 +128,7 @@ public:
 
   //! Constrained Partial derivative of loss function
   //! with respect to the scale
-  double constrainedChi(int method, double x);
+  double constrainedChi(vpRobustEstimatorType method, double x);
   double constrainedChiTukey(double x);
   double constrainedChiCauchy(double x);
   double constrainedChiHuber(double x);
