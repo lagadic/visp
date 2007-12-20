@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.11 2007-12-20 08:17:29 fspindle Exp $
+ * $Id: vpRobust.cpp,v 1.12 2007-12-20 09:00:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,12 @@
 #define vpCST 1
 
 
-//! Constructor
+/*!
+  Constructor.
+
+  \param n_data : Size of the data vector.
+
+*/
 vpRobust::vpRobust(int n_data)
 {
   vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
@@ -75,10 +80,14 @@ vpRobust::~vpRobust()
 
 }
 
+/*!
+  \param iter : Iteration number.
+
+*/
 void
-vpRobust::setIteration(const int x)
+vpRobust::setIteration(const int iter)
 {
-  it=x;
+  it=iter;
 }
 
 void
@@ -110,8 +119,6 @@ vpRobust::setThreshold(const double x)
   \begin{array}{ll} r_i(r_i^2-C^2)^2 & \mbox{if} |r_i| < C \\ 0 & \mbox{else} \end{array} \right. \f$ where \f$C=4.7 \hat{\sigma} \f$ and with \f$ \hat{\sigma} = 1.48{Med}_i(|r_i - {Med}_j(r_j)|) \f$
 
   - CAUCHY :
-
-  - MCLURE :
 
   - HUBER :
 
@@ -199,11 +206,11 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
       psiCauchy(sigma, normres);
       break ;
     }
-  case MCLURE :
+    /*  case MCLURE :
     {
       psiMcLure(sigma, normres);
       break ;
-    }
+      }*/
   case HUBER :
     {
       psiHuber(sigma, normres);
@@ -271,11 +278,11 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
       psiCauchy(sigma, all_normres);
       break ;
     }
-  case MCLURE :
+    /*  case MCLURE :
     {
       psiMcLure(sigma, all_normres);
       break ;
-    }
+      }*/
   case HUBER :
     {
       psiHuber(sigma, all_normres);
