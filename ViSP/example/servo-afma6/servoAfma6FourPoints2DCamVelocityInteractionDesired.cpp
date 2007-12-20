@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocity.cpp,v 1.10 2007-12-06 17:23:55 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp,v 1.1 2007-12-20 15:44:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,23 +38,25 @@
  *****************************************************************************/
 
 /*!
-  \file servoAfma6FourPoints2DCamVelocity.cpp
+  \file servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
   computed in the camera frame.  Visual features are the image coordinates of 4
-  vpdot points.
+  vpDot2 points. The interaction matrix is computed using the desired visual
+  features.
 
 */
 
 
 /*!
-  \example servoAfma6FourPoints2DCamVelocity.cpp
+  \example servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp
 
   Example of eye-in-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame.  Visual features are the image coordinates of 4 vpdot
-  points.
+  in the camera frame.  Visual features are the image coordinates of 4 vpDot2
+  points. The interaction matrix is computed using the desired visual
+  features.
 
 */
 
@@ -70,27 +72,36 @@
 #include <visp/vpDisplayX.h>
 
 #include <visp/vpMath.h>
+#include <visp/vpTranslationVector.h>
+#include <visp/vpRxyzVector.h>
+#include <visp/vpRotationMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpFeaturePoint.h>
 #include <visp/vpPoint.h>
 #include <visp/vpServo.h>
 #include <visp/vpFeatureBuilder.h>
-
+#include <visp/vpDot.h>
 #include <visp/vpRobotAfma6.h>
+#include <visp/vpServoDisplay.h>
 
 // Exception
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
-#include <visp/vpServoDisplay.h>
 
-#include <visp/vpDot.h>
 
 int
 main()
 {
   try
     {
-      vpRobotAfma6 robot ;
+      bool useDistortion = true;
+      vpRobotAfma6 robot;
+
+      if (useDistortion) {
+	// Load the end-effector to camera frame transformation obtained
+	// using a camera intrinsic model with distortion
+	robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, useDistortion);
+      }
 
       vpServo task ;
 
@@ -109,8 +120,6 @@ main()
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;
 
-
-
       std::cout << std::endl ;
       std::cout << "-------------------------------------------------------" << std::endl ;
       std::cout << " Test program for vpServo "  <<std::endl ;
@@ -121,7 +130,7 @@ main()
       std::cout << std::endl ;
 
 
-      vpDot dot[4] ;
+      vpDot2 dot[4] ;
 
       std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
 	   << std::endl;
@@ -141,7 +150,7 @@ main()
       vpTRACE("sets the current position of the visual feature ") ;
       vpFeaturePoint p[4] ;
       for (i=0 ; i < 4 ; i++)
-	vpFeatureBuilder::create(p[i], cam, dot[i])  ;  //retrieve x,y  of the vpFeaturePoint structure
+	vpFeatureBuilder::create(p[i], cam, dot[i], useDistortion);  //retrieve x,y  of the vpFeaturePoint structure
 
       // Set the position of the square target in a frame which origin is
       // centered in the middle of the square
@@ -152,11 +161,10 @@ main()
       point[2].setWorldCoordinates( L,  L, 0) ;
       point[3].setWorldCoordinates(-L,  L, 0) ;
 
-      // Initialise a desired pose
+      // Initialise a desired pose to compute s*, the desired 2D point features
       vpHomogeneousMatrix cMo;
       vpTranslationVector cto(0, 0, 0.7); // tz = 1 meter
-      // vpRxyzVector cro(vpMath::rad(10), vpMath::rad(5), vpMath::rad(-5)); // No rotations
-      vpRxyzVector cro(vpMath::rad(-10), vpMath::rad(5), vpMath::rad(-5)); // No rotations
+      vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)); // No rotations
       vpRotationMatrix cRo(cro); // Build the rotation matrix
       cMo.buildFrom(cRo, cto); // Build the homogeneous matrix
 
@@ -173,18 +181,11 @@ main()
 	pd[i].set_Z(cP[2]);
       }
 
-      if (0) {
-	// s* = s
-      for (i=0 ; i < 4 ; i++)
-	vpFeatureBuilder::create(pd[i], cam, dot[i])  ;  //retrieve x,y  of the v
-
-      }
-
       vpTRACE("define the task") ;
       vpTRACE("\t we want an eye-in-hand control law") ;
       vpTRACE("\t robot is controlled in the camera frame") ;
       task.setServo(vpServo::EYEINHAND_CAMERA) ;
-      task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
+      task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
       vpTRACE("\t we want to see a point on a point..") ;
       std::cout << std::endl ;
@@ -192,67 +193,61 @@ main()
 	task.addFeature(p[i],pd[i]) ;
 
       vpTRACE("\t set the gain") ;
-      task.setLambda(0.2) ;
-
+      task.setLambda(0.6) ;
 
       vpTRACE("Display task information " ) ;
       task.print() ;
 
-
       robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
       int iter=0 ;
+      double error = 1;
       vpTRACE("\t loop") ;
-      while(1)
-	{
-	  std::cout << "---------------------------------------------" << iter <<std::endl ;
+      while(error > 0.000001 ) {
+	std::cout << "-------------------------------" << iter <<std::endl ;
 
-	  g.acquire(I) ;
-	  vpDisplay::display(I) ;
+	g.acquire(I) ;
+	vpDisplay::display(I) ;
 
-	  for (i=0 ; i < 4 ; i++) {
-	    dot[i].track(I) ;
-	    vpDisplay::displayCross(I,
-				    (unsigned int)dot[i].get_v(),
-				    (unsigned int)dot[i].get_u(),
-				    10, vpColor::green) ;
-	  }
-
-
-	  task.print() ;
-
-	  for (i=0 ; i < 4 ; i++)
-	    vpFeatureBuilder::create(p[i],cam, dot[i]);
-
-
-	  vpColVector v ;
-	  v = task.computeControlLaw() ;
-
-	  vpServoDisplay::display(task,cam,I) ;
-	  //	  v = 0;
-	  std::cout << "Velocity: " <<v.t() ;
-
-	   robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-	  vpDisplay::flush(I) ;
-
-	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
-
-	  for (int i=0; i < 4; i++)
-	    std::cout << "Dot[" << i << "] = "
-		      << dot[i].get_u() << " " << dot[i].get_v() << std::endl;
-	  iter ++;
+	for (i=0 ; i < 4 ; i++) {
+	  dot[i].track(I) ;
+	  vpDisplay::displayCross(I,
+				  (unsigned int)dot[i].get_v(),
+				  (unsigned int)dot[i].get_u(),
+				  10, vpColor::green) ;
 	}
+
+
+	task.print() ;
+
+	for (i=0 ; i < 4 ; i++)
+	  vpFeatureBuilder::create(p[i],cam, dot[i], useDistortion);
+
+	vpColVector v ;
+	v = task.computeControlLaw() ;
+
+	vpServoDisplay::display(task, cam, I, useDistortion);
+	//	v = 0;
+	std::cout << "Velocity: " <<v.t() ;
+
+	robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+	vpDisplay::flush(I) ;
+
+	error = task.error.sumSquare();
+	vpTRACE("\t\t || s - s* || = %g ", error) ;
+
+	iter ++;
+      }
 
       vpTRACE("Display task information " ) ;
       task.print() ;
       task.kill();
     }
-  catch (...)
-    {
-      vpERROR_TRACE(" Test failed") ;
-      return 0;
-    }
+  catch (...) {
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
 }
 
 #else
