@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.13 2007-12-18 14:33:04 fspindle Exp $
+ * $Id: vpServo.h,v 1.14 2007-12-20 08:18:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -121,6 +121,12 @@ public:
       TRANSPOSE,
       PSEUDO_INVERSE
     } vpServoInversionType;
+
+  typedef enum
+    {
+      ALL,
+      MINIMUM
+    } vpServoPrintType;
 
   //!  chosen visual servoing control law
   vpServoType servoType;
@@ -254,13 +260,9 @@ public:
   */
 public:
 
-  enum printEnum
-    {
-      ALL,
-      MINIMUM
-    } ;
   //! display information about the task
-  void print(const vpServo::printEnum display_level=ALL, std::ostream &os = std::cout) ;
+  void print(const vpServo::vpServoPrintType display_level=ALL, 
+	     std::ostream &os = std::cout) ;
 
 } ;
 
