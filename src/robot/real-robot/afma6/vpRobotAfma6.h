@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.13 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.14 2007-12-20 08:15:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -179,17 +179,17 @@ public:  /* Methode publiques */
 
   /* --- ETAT ------------------------------------------------------------- */
 
-  vpRobot::RobotStateType   setRobotState (vpRobot::RobotStateType newState);
+  vpRobot::vpRobotStateType   setRobotState (vpRobot::vpRobotStateType newState);
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
 
   //! set a displacement (frame as to ve specified)
-  void setPosition(const vpRobot::ControlFrameType frame,
+  void setPosition(const vpRobot::vpControlFrameType frame,
 		   const vpColVector &q) ;
-  void setPosition (const vpRobot::ControlFrameType frame,
+  void setPosition (const vpRobot::vpControlFrameType frame,
 		    const double x, const double y, const double z,
 		    const double rx, const double ry, const double rz ) ;
-  void getPosition (const vpRobot::ControlFrameType frame,
+  void getPosition (const vpRobot::vpControlFrameType frame,
 		    vpColVector &r);
 
 
@@ -198,14 +198,14 @@ public:  /* Methode publiques */
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity (const vpRobot::ControlFrameType frame,
+  void setVelocity (const vpRobot::vpControlFrameType frame,
 		    const vpColVector & r_dot);
 
 
-  void getVelocity (const vpRobot::ControlFrameType frame,
+  void getVelocity (const vpRobot::vpControlFrameType frame,
 		    vpColVector & r_dot);
 
-  vpColVector getVelocity (const vpRobot::ControlFrameType frame);
+  vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
 
 private:
   int velocityMeasureTempo ;
@@ -249,7 +249,7 @@ public:
   void getArticularDisplacement(vpColVector  &qdot);
 
   // get a displacement (frame as to ve specified)
-  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q);
+  void getDisplacement(vpRobot::vpControlFrameType  frame, vpColVector &q);
 
 
   void move(char *name) ;

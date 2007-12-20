@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.26 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.27 2007-12-20 08:15:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -292,8 +292,8 @@ vpRobotAfma6::~vpRobotAfma6 (void)
  * ERROR:
  *   - ERRChangementEtat si le changement demande n'est pas possible.
  */
-vpRobot::RobotStateType
-vpRobotAfma6::setRobotState(vpRobot::RobotStateType newState)
+vpRobot::vpRobotStateType
+vpRobotAfma6::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState)
   {
@@ -452,7 +452,7 @@ vpRobotAfma6::getPositioningVelocity (void)
  * ETAT_ROBOT_COMMANDE_POSITION.
  */
 void
-vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
+vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 			   const vpColVector & r )
 {
 
@@ -509,7 +509,7 @@ vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
 }
 
 
-void vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
+void vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 				const double x, const double y, const double z,
 				const double rx, const double ry, const double rz
 	     )
@@ -578,11 +578,11 @@ void vpRobotAfma6::setPosition (const vpRobot::ControlFrameType frame,
     \endcode
 
 
-  \sa setPosition(const vpRobot::ControlFrameType frame, const vpColVector & r)
+  \sa setPosition(const vpRobot::vpControlFrameType frame, const vpColVector & r)
 
 */
 void
-vpRobotAfma6::getPosition (const vpRobot::ControlFrameType frame,
+vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
 			   vpColVector & r)
 {
   vpDEBUG_TRACE (9, "# Entree.");
@@ -689,7 +689,7 @@ vpRobotAfma6::VD6_mrad_mmrad (const vpColVector & input, double * output)
 
  */
 void
-vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
+vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
 			   const vpColVector & r_dot)
 {
 
@@ -808,7 +808,7 @@ vpRobotAfma6::setVelocity (const vpRobot::ControlFrameType frame,
  *   - r_dot: reference dans laquelle est placee le resultat (mm/s et rad/s).
  */
 void
-vpRobotAfma6::getVelocity (const vpRobot::ControlFrameType frame,
+vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
 			   vpColVector & r_dot)
 {
 
@@ -864,7 +864,7 @@ vpRobotAfma6::getVelocity (const vpRobot::ControlFrameType frame,
  *   - Position actuelle du robot (mm/s et rad/s).
  */
 vpColVector
-vpRobotAfma6::getVelocity (vpRobot::ControlFrameType frame)
+vpRobotAfma6::getVelocity (vpRobot::vpControlFrameType frame)
 {
   vpColVector r_dot;
   getVelocity (frame, r_dot);
@@ -987,7 +987,7 @@ void vpRobotAfma6::getArticularDisplacement(vpColVector  &qdot)
 
 */
 void
-vpRobotAfma6::getDisplacement(vpRobot::ControlFrameType frame,
+vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
 			      vpColVector &q)
 {
   double td[6];

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobot.cpp,v 1.7 2007-11-28 11:32:04 fspindle Exp $
+ * $Id: vpRobot.cpp,v 1.8 2007-12-20 08:15:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,15 +63,15 @@ vpRobot::vpRobot (void)
   \file vpRobot.cpp
   \brief class that defines a generic virtual robot
 */
-vpRobot::RobotStateType
-vpRobot::setRobotState (const vpRobot::RobotStateType newState)
+vpRobot::vpRobotStateType
+vpRobot::setRobotState (const vpRobot::vpRobotStateType newState)
 {
   stateRobot = newState ;
   return newState ;
 }
 
-vpRobot::ControlFrameType
-vpRobot::setRobotFrame (vpRobot::ControlFrameType newFrame)
+vpRobot::vpControlFrameType
+vpRobot::setRobotFrame (vpRobot::vpControlFrameType newFrame)
 {
   frameRobot = newFrame ;
   return newFrame ;
@@ -88,7 +88,7 @@ vpRobot::setRobotFrame (vpRobot::ControlFrameType newFrame)
     - Position actuelle du robot.
 */
 vpColVector
-vpRobot::getPosition (vpRobot::ControlFrameType repere)
+vpRobot::getPosition (vpRobot::vpControlFrameType repere)
 {
   vpColVector r;
   this ->getPosition (repere, r);

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.h,v 1.7 2007-05-10 14:45:22 fspindle Exp $
+ * $Id: vpRobotCamera.h,v 1.8 2007-12-20 08:15:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,15 +84,15 @@ public:
   }
   void setCameraVelocity(const vpColVector &v)   ;
   void setArticularVelocity(const vpColVector &qdot)  ;
-  void setVelocity(const vpRobot::ControlFrameType frame,
+  void setVelocity(const vpRobot::vpControlFrameType frame,
 		   const  vpColVector &vel)  ;
 
   void getPosition(vpColVector &q)    ;
   void getPosition(vpHomogeneousMatrix &cMo) const   ;
   void getArticularPosition(vpColVector &q)  const  ;
-  void getPosition(const vpRobot::ControlFrameType frame,
+  void getPosition(const vpRobot::vpControlFrameType frame,
 		   vpColVector &q)  ;
-  void setPosition(const vpRobot::ControlFrameType /* frame */,
+  void setPosition(const vpRobot::vpControlFrameType /* frame */,
 		   const vpColVector & /* q */)  { ; }
 
 
@@ -101,7 +101,7 @@ public:
 
   void getCameraDisplacement(vpColVector &v)  ;
   void getArticularDisplacement(vpColVector &qdot) ;
-  void getDisplacement(const vpRobot::ControlFrameType repere,
+  void getDisplacement(const vpRobot::vpControlFrameType repere,
 		       vpColVector &q) ;
 
 } ;

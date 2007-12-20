@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.cpp,v 1.12 2007-11-28 11:31:32 fspindle Exp $
+ * $Id: vpRobotAfma4.cpp,v 1.13 2007-12-20 08:15:28 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -227,8 +227,8 @@ vpRobotAfma4::~vpRobotAfma4 (void)
  * ERROR:
  *   - ERRChangementEtat si le changement demande n'est pas possible.
  */
-vpRobot::RobotStateType
-vpRobotAfma4::setRobotState(vpRobot::RobotStateType newState)
+vpRobot::vpRobotStateType
+vpRobotAfma4::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState)
   {
@@ -387,7 +387,7 @@ vpRobotAfma4::getPositioningVelocity (void)
  * ETAT_ROBOT_COMMANDE_POSITION.
  */
 void
-vpRobotAfma4::setPosition (const vpRobot::ControlFrameType frame,
+vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
 			   const vpColVector & r )
 {
 
@@ -441,7 +441,7 @@ vpRobotAfma4::setPosition (const vpRobot::ControlFrameType frame,
 }
 
 
-void vpRobotAfma4::setPosition (const vpRobot::ControlFrameType frame,
+void vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
 				const double q1, const double q2,
 				const double q3, const double q4 )
 {
@@ -477,7 +477,7 @@ void vpRobotAfma4::setPosition (const vpRobot::ControlFrameType frame,
  translation, pan and tilt of the camera
 */
 void
-vpRobotAfma4::getPosition (const vpRobot::ControlFrameType frame,
+vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
 			   vpColVector & r)
 {
   vpDEBUG_TRACE (9, "# Entree.");
@@ -637,7 +637,7 @@ vpRobotAfma4::VD4_mrad_mmrad (const vpColVector & input, double * output)
 
 */
 void
-vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
+vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
 			   const vpColVector & r_dot)
 {
 
@@ -832,7 +832,7 @@ vpRobotAfma4::setVelocity (const vpRobot::ControlFrameType frame,
  *   - r_dot: reference dans laquelle est placee le resultat (mm/s et rad/s).
  */
 void
-vpRobotAfma4::getVelocity (const vpRobot::ControlFrameType frame,
+vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
 			   vpColVector & r_dot)
 {
 
@@ -891,7 +891,7 @@ vpRobotAfma4::getVelocity (const vpRobot::ControlFrameType frame,
  *   - Position actuelle du robot (mm/s et rad/s).
  */
 vpColVector
-vpRobotAfma4::getVelocity (vpRobot::ControlFrameType frame)
+vpRobotAfma4::getVelocity (vpRobot::vpControlFrameType frame)
 {
   vpColVector r_dot;
   getVelocity (frame, r_dot);
@@ -1046,7 +1046,7 @@ void vpRobotAfma4::getArticularDisplacement(vpColVector  &qdot)
 
 */
 void
-vpRobotAfma4::getDisplacement(vpRobot::ControlFrameType frame,
+vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame,
 			      vpColVector &q)
 {
   double td[6];

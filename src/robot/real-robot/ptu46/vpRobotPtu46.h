@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotPtu46.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpRobotPtu46.h,v 1.6 2007-12-20 08:15:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,16 +110,16 @@ public:
 
   /* --- STATE ------------------------------------------------------------- */
 
-  vpRobot::RobotStateType   setRobotState (vpRobot::RobotStateType newState);
+  vpRobot::vpRobotStateType   setRobotState (vpRobot::vpRobotStateType newState);
 
   /* --- POSITION --------------------------------------------------- */
 
-  void setPosition(const vpRobot::ControlFrameType frame,
+  void setPosition(const vpRobot::vpControlFrameType frame,
 		   const vpColVector &q) ;
-  void setPosition (const vpRobot::ControlFrameType frame,
+  void setPosition (const vpRobot::vpControlFrameType frame,
 		    const double &q1, const double &q2) ;
   void setPosition(const char *filename) ;
-  void getPosition (const vpRobot::ControlFrameType frame,
+  void getPosition (const vpRobot::vpControlFrameType frame,
 		    vpColVector &q);
 
 
@@ -129,14 +129,14 @@ public:
 
   /* --- SPEED ---------------------------------------------------------- */
 
-  void setVelocity (const vpRobot::ControlFrameType frame,
+  void setVelocity (const vpRobot::vpControlFrameType frame,
 		    const vpColVector & q_dot);
 
 
-  void getVelocity (const vpRobot::ControlFrameType frame,
+  void getVelocity (const vpRobot::vpControlFrameType frame,
 		    vpColVector & q_dot);
 
-  vpColVector getVelocity (const vpRobot::ControlFrameType frame);
+  vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
 
 public:
   void get_cMe(vpHomogeneousMatrix &_cMe) ;
@@ -148,7 +148,7 @@ public:
 
   void getCameraDisplacement(vpColVector &d);
   void getArticularDisplacement(vpColVector  &d);
-  void getDisplacement(vpRobot::ControlFrameType  frame, vpColVector &q);
+  void getDisplacement(vpRobot::vpControlFrameType  frame, vpColVector &q);
 
   bool readPositionFile(const char *filename, vpColVector &q);
 };
