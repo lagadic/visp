@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.9 2007-12-20 08:21:49 fspindle Exp $
+ * $Id: vpMePath.h,v 1.10 2007-12-20 09:09:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,10 +57,10 @@
 
 
 /*!
-  \class vpMeEllipse 
+  \class vpMePath
 
   \brief class that tracks a path (white road line) moving edges
-						
+
 */
 class VISP_EXPORT vpMePath : public vpMeTracker
 {
@@ -84,50 +84,50 @@ private:
   void leastSquare(vpImage<unsigned char> &I);
   void leastSquareParabola(vpImage<unsigned char> &I);
   void leastSquareParabolaGivenOrientation(vpImage<unsigned char> &I);
-  void leastSquareLine(vpImage<unsigned char> &I);        
+  void leastSquareLine(vpImage<unsigned char> &I);
   void updateNormAng();
   void suppressPoints();
   void seekExtremities(vpImage<unsigned char> &I);
   void getParabolaPoints();
   void displayList(vpImage<unsigned char> &I);
-  void computeNormAng(double &norm_ang, vpColVector &K, 
+  void computeNormAng(double &norm_ang, vpColVector &K,
 		      double i, double j, bool isLine);
   void reduceList(vpList<vpMeSite> &list, int newSize);
 
 public:
   //line OR parabola parameters y = ax^2+bx+c in frame (rotated by thetaFin)
-  double aFin, bFin, cFin, thetaFin; 
+  double aFin, bFin, cFin, thetaFin;
   //indicates that the path is a straight line
-  bool line; 
+  bool line;
   //indicates that the line si horizontal
-  bool horLine; 
+  bool horLine;
   //image plane coordinates of curve extremity points
-  double i1, j1, i2, j2; 
+  double i1, j1, i2, j2;
   //image plane parabola point coordinates used to find circle
   double *i_par, *j_par;
-  //number of parabola points used to find circle 
+  //number of parabola points used to find circle
   int numPointPar;
-  //number of initial points used to find parabola 
+  //number of initial points used to find parabola
   int numPoints;
   //image plane coordinates of initial points
-  unsigned *i_ref, *j_ref; 
-  //number of points used for tracking at every iteration  
-  int n_points; 
-    
+  unsigned *i_ref, *j_ref;
+  //number of points used for tracking at every iteration
+  int n_points;
+
 private:
-  //conic (parabola or line) parameters 
+  //conic (parabola or line) parameters
   vpColVector K;
-  //line parameters 
+  //line parameters
   vpColVector K_line;
-  //parabola parameters 
-  vpColVector K_par; 
+  //parabola parameters
+  vpColVector K_par;
   //parabola parameters y = ax^2+bx+c in frame (rotated by thetaPar)
-  double aPar, bPar, cPar, thetaPar; 
+  double aPar, bPar, cPar, thetaPar;
   //cos and sine of thetaFin
   double ct, st;
   //indicates that it is the first iteration
   bool firstIter;
-  //least square errors 
+  //least square errors
   double line_error, parab_error, parab_errorTot;
   //number of points with small error in least squares
   int lineGoodPoints, parGoodPoints, parGoodPointsTot;
@@ -135,27 +135,27 @@ private:
   bool verbose;
   //indicates thta parabolas should be tracked
   bool trackParabolas;
-  
-  //number of least square iterations 
+
+  //number of least square iterations
   int LSiter;
-  //threshold on least square line error  
-  double good_point_thresh; 
+  //threshold on least square line error
+  double good_point_thresh;
   //every sampleIter iterations sample the curve
-  int sampleIter; 
+  int sampleIter;
   //percent of samples within extremities
-  double pointPercentageWithinExtremes; 
+  double pointPercentageWithinExtremes;
   //number of times extremities are seeked at each iteration
-  int seekLoops; 
+  int seekLoops;
   //number of points seeked outside each extremity
-  int numExtr; 
+  int numExtr;
   //gain for considering good points when selecting curve
   int goodPointGain;
   //max error tolerated on line before selecting parabola
-  int maxLineScore; 
+  int maxLineScore;
   //conic determinant threshold for selecting a line
-  double par_det_threshold; 
+  double par_det_threshold;
   //aPar threshold (if below, select line)
-  double aParThreshold;	
+  double aParThreshold;
 };
 
 
