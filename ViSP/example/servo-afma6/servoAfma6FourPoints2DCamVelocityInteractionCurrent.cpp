@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.2 2007-12-21 08:31:24 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.3 2007-12-21 09:54:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -105,6 +105,11 @@ FILE *flowe=NULL;
   \param dot : 2D coordinates of the points.
 
   \param ndot : Number of points or dots used for the pose estimation.
+
+  \param cam : Intrinsic camera parameters.
+
+  \param useDistortion : Indicates if the camera distortion has to be used
+  to convert pixels in meters or vice versa.
 
   \param cMo : Homogeneous matrix in output describing the transformation
   between the camera and object frame.
