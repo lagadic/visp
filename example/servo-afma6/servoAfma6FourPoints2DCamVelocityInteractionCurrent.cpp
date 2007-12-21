@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.1 2007-12-20 15:43:39 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.2 2007-12-21 08:31:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -252,6 +252,7 @@ main()
       char *filename = new char[FILENAME_MAX];
       sprintf(filename, "%s/pose.txt", outputdir.c_str());
       FILE *fdpose = fopen(filename, "w");
+      delete [] filename;
 
       bool useDistortion = true;
       vpRobotAfma6 robot;
