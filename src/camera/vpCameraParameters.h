@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.7 2007-12-04 09:56:32 fspindle Exp $
+ * $Id: vpCameraParameters.h,v 1.8 2008-01-09 08:23:30 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,26 +72,19 @@
   \f]
 
   if a model with distortion is considered, we got:
-  - for the meter based model
   \f[
   \left\{ \begin{array}{l}
-  u = u_0 + p_x x +  \delta_u(x,y) \\
-  v = v_0 + p_y y + \delta_v(x,y)
+  u = u_0 + p_x x +  \delta_u \\
+  v = v_0 + p_y y + \delta_v
   \end{array}\right.
   \f]
-  - for the pixel based model
-  \f[
-  \left\{ \begin{array}{l}
-  u = u_0 + p_x x - \delta_u(u,v) \\
-  v = v_0 + p_y y - \delta_v(u,v)
-  \end{array}\right.
-  \f]
+
   where  \f$\delta_u\f$ and \f$\delta_v\f$ are
-  geometrical distortions introduced in  the camera model. These distortions are
+  geometrical distortions introduced in the camera model. These distortions are
   due to imperfections in the lenses design and assembly there usually are some
   positional errors that have to be taken into account.
   \f$\delta_u\f$ and \f$\delta_v\f$  can be modeled as follow:
-  - for the meter based model
+  - with a meter based model
   \f[
   \left\{ \begin{array}{l}
   \delta_u(x,y) = K_d \;r^2\; p_x x  \\
@@ -99,18 +92,37 @@
   \delta_v(x,y) = K_d\; r^2\; p_y y
   \end{array}\right.
   \f]
-  with \f$ r^2 = x^2 + y^2\f$.
-  - for the pixel based model
+  with \f[ r^2 = x^2 + y^2 \f].
+
+  This model is usefull to convert meter to pixel coordinates because in this
+  case :
   \f[
   \left\{ \begin{array}{l}
-  \delta_u(u,v) = K_d \;r^2\; \tilde u  \\
+  u = f_u(x,y) =  u_0 + p_x x\left(1+K_d\left(x^2 + y^2\right)\right)  \\
   \\
-  \delta_v(u,v) = K_d\; r^2\; \tilde v
+  v = f_v(x,y) =  v_0 + p_y y\left(1+K_d\left(x^2 + y^2\right)\right)
   \end{array}\right.
   \f]
-  with \f$\tilde u = u-u_0, \;\; \tilde v = (v-v_0)\f$ and
-  \f$ r^2 = \frac{\tilde u^2}{p_{x}^2} +  \frac{\tilde v^2}{p_{y}^2} \f$.
 
+  - or with a pixel based model
+  \f[
+  \left\{ \begin{array}{l}
+  \delta_u(u,v) = -K_d \;r^2\; \left(u-u_0\right)  \\
+  \\
+  \delta_v(u,v) = -K_d\; r^2\; \left(v-v_0\right)
+  \end{array}\right.
+  \f]
+  with \f[ r^2 = {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \f].
+
+  This model is usefull to convert pixel to meter coordinates because in this
+  case :
+  \f[
+  \left\{ \begin{array}{l}
+  x = f_x(u,v) =  \frac{u-u_0}{p_x}\left(1+K_d\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)  \\
+  \\
+  y = f_y(u,v) =  \frac{v-v_0}{p_y}\left(1+K_d\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)
+  \end{array}\right.
+  \f]
 */
 class VISP_EXPORT vpCameraParameters
 {
