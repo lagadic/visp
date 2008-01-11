@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGTK2.cmake,v 1.7 2006-07-03 08:26:03 fspindle Exp $
+# $Id: FindGTK2.cmake,v 1.8 2008-01-11 16:41:25 akrupa Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -49,6 +49,7 @@ IF(UNIX OR WIN32)
     /usr/local/include/gtk-2.0
     /opt/gnome/include/gtk-2.0
     "C:/GTK/include/gtk-2.0"
+    /sw/include/gtk-2.0
   )
 
   # Some Linux distributions (e.g. Red Hat) have glibconfig.h
@@ -61,6 +62,8 @@ IF(UNIX OR WIN32)
     /usr/lib/glib-2.0/include
     /opt/gnome/lib/glib-2.0/include
     "C:/GTK/lib/glib-2.0/include"
+    /sw/lib/glib-2.0/include
+    
   )
 
   FIND_PATH( GTK2_glib_INCLUDE_PATH glib.h
@@ -68,6 +71,7 @@ IF(UNIX OR WIN32)
     /usr/include/glib-2.0
     /opt/gnome/include/glib-2.0
     "C:/GTK/include/glib-2.0"
+    /sw/include/glib-2.0
   )
 
   FIND_PATH( GTK2_pango_INCLUDE_PATH pango/pango.h
@@ -75,6 +79,7 @@ IF(UNIX OR WIN32)
     /usr/include/pango-1.0
     /opt/gnome/include/pango-1.0
     "C:/GTK/include/pango-1.0"
+    /sw/include/pango-1.0
   )
 
   FIND_PATH( GTK2_cairo_INCLUDE_PATH cairo.h
@@ -82,6 +87,7 @@ IF(UNIX OR WIN32)
     /usr/include/cairo
     /opt/gnome/include/cairo
     "C:/GTK/include/cairo"
+    /sw/include/cairo
   )
 
   FIND_PATH( GTK2_gdkconfig_INCLUDE_PATH gdkconfig.h
@@ -89,6 +95,7 @@ IF(UNIX OR WIN32)
     /usr/lib/gtk-2.0/include
     /opt/gnome/lib/gtk-2.0/include
     "C:/GTK/lib/gtk-2.0/include"
+    /sw/lib/gtk-2.0/include
   )
 
   FIND_PATH( GTK2_atk_INCLUDE_PATH atk/atk.h
@@ -96,6 +103,7 @@ IF(UNIX OR WIN32)
     /usr/include/atk-1.0
     /opt/gnome/include/atk-1.0
     "C:/GTK/include/atk-1.0"
+    /sw/include/atk-1.0
   )
 
   FIND_LIBRARY( GTK2_gtk_LIBRARY
@@ -107,6 +115,7 @@ IF(UNIX OR WIN32)
           /usr/X11R6/lib
           /opt/gnome/lib
           "C:/GTK/lib"
+	  /sw/lib
   )
 
   FIND_LIBRARY( GTK2_gdk_LIBRARY
@@ -118,6 +127,7 @@ IF(UNIX OR WIN32)
            /usr/X11R6/lib
            /opt/gnome/lib
            "C:/GTK/lib"
+	   /sw/lib
   )
 
   FIND_LIBRARY( GTK2_gmodule_LIBRARY
@@ -129,6 +139,7 @@ IF(UNIX OR WIN32)
            /usr/X11R6/lib
            /opt/gnome/lib
            "C:/GTK/lib"
+	   /sw/lib
   )
 
   FIND_LIBRARY( GTK2_glib_LIBRARY
@@ -140,6 +151,7 @@ IF(UNIX OR WIN32)
            /usr/X11R6/lib
            /opt/gnome/lib
            "C:/GTK/lib"
+	   /sw/lib
   )
 
   FIND_LIBRARY( GTK2_gthread_LIBRARY
@@ -151,6 +163,7 @@ IF(UNIX OR WIN32)
            /usr/X11R6/lib
            /opt/gnome/lib
            "C:/GTK/lib"
+	   /sw/lib
   )
 
   FIND_LIBRARY( GTK2_gobject_LIBRARY
@@ -159,6 +172,7 @@ IF(UNIX OR WIN32)
            /usr/lib
            /opt/gnome/lib
            "C:/GTK/lib"
+	   /sw/lib
   )
 
   IF(GTK2_gtk_INCLUDE_PATH)
