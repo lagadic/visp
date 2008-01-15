@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.20 2007-08-17 09:04:04 asaunier Exp $
+ * $Id: vpMatrix.h,v 1.21 2008-01-15 09:52:37 cdune Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -255,14 +255,17 @@ public:
   void LUDcmp(int* perm, int& d);
   //! solve AX = B using the LU Decomposition
   void LUBksb(int* perm, vpColVector& b);
-
+    //! compute the determinant using the LU Decomposition (usage  double det =A.det();)
+  double detByLU();
+ //! compute the eigne Values using the LU Decomposition (usage  vpColVector v =A.eigenValuesByLU();)
+  vpColVector eigenValuesByLU();
   //! solve Ax=B using the LU decomposition (usage A = solveByLUD(B,x) )
   //  void solveByLUD(const CColVector& B, CColVector& x) const ;
 
   //! solve Ax=B using the LU decomposition (usage  x=A.LUDsolve(B))
   //  CColVector LUDsolve(const CColVector& B) const ;
 
-  //! inverse matrix A using the SVD  (C = A^-1)
+  //! inverse matrix A using the LU decomposition 
  vpMatrix inverseByLU() const;
 
   //-------------------------------------------------
