@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.39 2007-11-27 09:06:26 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.40 2008-01-15 09:52:37 cdune Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1856,6 +1856,99 @@ vpMatrix::infinityNorm () const
       if (x > norm) { norm = x; }
   }
   return norm;
+}
+
+/*!
+  Determinant of the Matrix
+  \return the determinant of the matrix if the matrix is squared, 0 otherwise
+  based on the LU decomposition
+  see the Numerical Recipes in C page 43 for further explanations.
+ */
+ 
+double vpMatrix::detByLU()
+{
+  double det(0);
+
+  // Test wether the matrix is squred
+  if (rowNum == colNum)
+  {
+    // create a temporary matrix that will be modified by LUDcmp
+      vpMatrix tmp(*this);
+
+      // using th LUdcmp based on NR codes
+      // it modified the tmp matrix in a special structure of type :
+      //  b11 b12 b13 b14
+      //  a21 b22 b23 b24
+      //  a21 a32 b33 b34
+      //  a31 a42 a43 b44 
+      
+      int  * perm = new int[rowNum];  // stores the permutations
+      int d;   // +- 1 fi the number of column interchange is even or odd
+      tmp.LUDcmp(perm,  d);
+      delete[]perm;
+
+      // compute the determinant that is the product of the eigen values
+      det = (double) d;
+      for(int i=0;i<rowNum;i++)
+        {
+          det*=tmp[i][i];
+        }
+  }
+
+  else {
+    vpERROR_TRACE("Determinant Computation : ERR Matrix not squared") ;
+      throw(vpMatrixException(vpMatrixException::matrixError,
+            "\n\t\tDeterminant Computation : ERR Matrix not squared")) ;
+    
+
+  }
+ return det ;
+}
+
+/*!
+  Eigen Values of a Matrix
+  \return the Eigen Values of the matrix if the matrix is squared
+  based on the LU decomposition
+  see the Numerical Recipes in C page 43 for further explanations.
+ */
+ 
+vpColVector vpMatrix::eigenValuesByLU()
+{
+
+  vpColVector eigenVector(rowNum);
+
+  // Test wether the matrix is squred
+  if (rowNum == colNum)
+  {
+    // create a temporary matrix that will be modified by LUDcmp
+    vpMatrix tmp(*this);
+
+      // using th LUdcmp based on NR codes
+      // it modified the tmp matrix in a special structure of type :
+      //  b11 b12 b13 b14
+      //  a21 b22 b23 b24
+      //  a21 a32 b33 b34
+      //  a31 a42 a43 b44 
+      
+    int  * perm = new int[rowNum];  // stores the permutations
+    int d;   // +- 1 fi the number of column interchange is even or odd
+    tmp.LUDcmp(perm,  d);
+    delete[]perm;
+
+    for(int i=0;i<rowNum;i++)
+    {
+      eigenVector[i]=tmp[i][i];
+    }
+  }
+
+  else {
+    vpERROR_TRACE("EigenVector Computation : ERR Matrix not squared") ;
+    throw(vpMatrixException(vpMatrixException::matrixError,
+          "\n\t\tEigen Vector Computation : ERR Matrix not squared")) ;
+    
+
+  }
+  return eigenVector ;
 }
 
 
