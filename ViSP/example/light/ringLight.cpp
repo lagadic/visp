@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: ringLight.cpp,v 1.5 2007-11-15 14:56:36 fspindle Exp $
+ * $Id: ringLight.cpp,v 1.6 2008-01-22 08:48:42 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,7 +44,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if defined UNIX
+#if defined VISP_HAVE_PARPORT
 #include <stdio.h>
 #include <iostream>
 
