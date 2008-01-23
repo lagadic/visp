@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testVideoDevice.cpp,v 1.7 2007-11-28 11:27:45 fspindle Exp $
+ * $Id: testVideoDevice.cpp,v 1.8 2008-01-23 16:36:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,6 +40,7 @@
 #include <string>
 
 #include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 
 #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
@@ -47,8 +48,6 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
-#include <visp/vpDebug.h>
-
 
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayX.h>
