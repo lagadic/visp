@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.21 2008-01-30 13:40:10 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.22 2008-01-30 15:32:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,11 +85,19 @@ protected :
  public:
   virtual ~vpDisplay() {;} ;
 
+  virtual void clearDisplay(vpColor::vpColorType c=vpColor::white)=0 ;
+  virtual void closeDisplay() =0;
+
+  // display 8bits image
+  virtual void displayImage(const vpImage<vpRGBa> &I)=0 ;
+  // display 32 bits image
+  virtual void displayImage(const vpImage<unsigned char> &I)=0 ;
+  virtual void flushDisplay() =0;
+  virtual void flushTitle(const char *string) =0;
   // get information
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
 
- public:
   //! initialization
   virtual void init(vpImage<unsigned char> &I,
 		    int winx=-1, int winy=-1,
@@ -106,19 +114,6 @@ protected :
 
   virtual void setWindowPosition(int _winx, int _winy) = 0 ;
 
-
-
-  virtual void closeDisplay() =0;
-  virtual void flushDisplay() =0;
-  virtual void flushTitle(const char *string) =0;
-
-  virtual void clearDisplay(vpColor::vpColorType c=vpColor::white)=0 ;
-
-  // display 8bits image
-  virtual void displayImage(const vpImage<vpRGBa> &I)=0 ;
-  // display 32 bits image
-  virtual void displayImage(const vpImage<unsigned char> &I)=0 ;
-
  private:
   //! get the window pixmap and put it in vpRGBa image
   virtual void getImage(vpImage<vpRGBa> &I) = 0;
@@ -128,37 +123,35 @@ protected :
  protected:
   //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   //! window
-  virtual void displayArrow(unsigned int i1,unsigned int j1,
-			    unsigned int i2, unsigned int j2,
+  virtual void displayArrow(int i1, int j1, int i2, int j2,
 			    vpColor::vpColorType col=vpColor::white,
 			    unsigned int L=4,unsigned int l=2) =0;
-  virtual void displayCharString(unsigned int i,unsigned int j,char *s,
+  virtual void displayCharString(int i, int j,char *s,
 				 vpColor::vpColorType c=vpColor::green)=0 ;
   //! Display a circle at coordinates (i,j) in the display window.
-  virtual void displayCircle(unsigned int i, unsigned int j, unsigned int r,
+  virtual void displayCircle(int i, int j, unsigned int r,
 			     vpColor::vpColorType c)=0;
   //! Display a cross at coordinates (i,j) in the display window
-  virtual void displayCross(unsigned int i, unsigned int j, unsigned int size,
+  virtual void displayCross(int i, int j, unsigned int size,
 			    vpColor::vpColorType col) =0;
   //! Display a large cross at coordinates (i,j) in the display window
-  virtual void displayCrossLarge(unsigned int i, unsigned int j,
-				 unsigned int size,
+  virtual void displayCrossLarge(int i, int j, unsigned int size,
 				 vpColor::vpColorType col) =0;
   //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
   //! window.
-  virtual void displayDotLine(unsigned int i1, unsigned int j1,
-			      unsigned int i2, unsigned int j2,
+  virtual void displayDotLine(int i1, int j1,
+			      int i2, int j2,
 			      vpColor::vpColorType col, unsigned int e=1) =0;
   //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
-  virtual void displayLine(unsigned int i1, unsigned int j1,
-			   unsigned int i2, unsigned int j2,
+  virtual void displayLine(int i1, int j1,
+			   int i2, int j2,
 			   vpColor::vpColorType col, unsigned int e=1) =0;
 
   //! Display a point at coordinates (i,j) in the display window
-  virtual void displayPoint(unsigned int i, unsigned int j,
+  virtual void displayPoint(int i, int j,
 			    vpColor::vpColorType col) =0;
 
-  virtual void displayRectangle(unsigned int i, unsigned int j,
+  virtual void displayRectangle(int i, int j,
 				unsigned int width, unsigned int height,
 				vpColor::vpColorType col, bool fill = false,
 				unsigned int e=1)=0 ;
@@ -167,150 +160,130 @@ protected :
 				unsigned int e=1)=0 ;
 
  public:
-  //! Display a 8bits image in the display window
-  static void display(const vpImage<unsigned char> &I) ;
-
-  //! Display a 32bits image in the display window
-  static void display(const vpImage<vpRGBa> &I) ;
-
-  //! flushes the output buffer
-  static void flush(const vpImage<unsigned char> &I) ;
-  //! flushes the output buffer
-  static void flush(const vpImage<vpRGBa> &I) ;
-
   //! Close a display
   static void close(const vpImage<unsigned char> &I) ;
 
   //! Close a display
   static void close(const vpImage<vpRGBa> &I) ;
 
-  //! get the window pixmap and put it in vpRGBa image
-  static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
+  //! Display a 8bits image in the display window
+  static void display(const vpImage<unsigned char> &I) ;
 
-  //! get the window pixmap and put it in vpRGBa image
-  static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
+  //! Display a 32bits image in the display window
+  static void display(const vpImage<vpRGBa> &I) ;
 
   //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   //! window
   static void displayArrow(const vpImage<unsigned char> &I,
-			   unsigned int i1,unsigned int j1,
-			   unsigned int i2, unsigned int j2,
+			   int i1, int j1, int i2, int j2,
 			   vpColor::vpColorType col=vpColor::white,
 			   unsigned int L=4,unsigned int l=2) ;
   //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   //! window
   static void displayArrow(const vpImage<vpRGBa> &I,
-			   unsigned int i1,unsigned int j1,
-			   unsigned int i2, unsigned int j2,
+			   int i1, int j1, int i2, int j2,
 			   vpColor::vpColorType col=vpColor::white,
 			   unsigned int L=4,unsigned int l=2) ;
   //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   //! window
   static void displayArrow_uv(const vpImage<unsigned char> &I,
-			      unsigned int u1,unsigned int v1,
-			      unsigned int u2, unsigned int v2,
+			      int u1, int v1, int u2, int v2,
 			      vpColor::vpColorType col=vpColor::white,
 			      unsigned int L=4,unsigned int l=2) ;
   //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   //! window
   static void displayArrow_uv(const vpImage<vpRGBa> &I,
-			      unsigned int u1,unsigned int v1,
-			      unsigned int u2, unsigned int v2,
+			      int u1, int v1, int u2, int v2,
 			      vpColor::vpColorType col=vpColor::white,
 			      unsigned int L=4,unsigned int l=2) ;
   //! Display a string
   static void displayCharString(const vpImage<unsigned char> &I,
-				unsigned int i,unsigned int j,char *s,
+				int i, int j, char *s,
 				vpColor::vpColorType c) ;
 
   //! Display a string
   static void displayCharString(const vpImage<vpRGBa> &I,
-				unsigned int i,unsigned int j,char *s,
+				int i, int j, char *s,
 				vpColor::vpColorType c) ;
   //! Display a string
   static void displayCharString_uv(const vpImage<unsigned char> &I,
-				   unsigned int u,unsigned int v,char *s,
+				   int u, int v, char *s,
 				   vpColor::vpColorType c) ;
 
   //! Display a string
   static void displayCharString_uv(const vpImage<vpRGBa> &I,
-				   unsigned int u,unsigned int v,char *s,
+				   int u, int v, char *s,
 				   vpColor::vpColorType c) ;
 
   //! Display a circle at coordinates (i,j) in the display window.
   static void displayCircle(const vpImage<unsigned char> &I,
-			    unsigned int i, unsigned int j, unsigned int r,
+			    int i, int j, unsigned int r,
 			    vpColor::vpColorType c);
   //! Display a circle at coordinates (i,j) in the display window.
   static void displayCircle(const vpImage<vpRGBa> &I,
-			    unsigned int i, unsigned int j, unsigned int r,
+			    int i, int j, unsigned int r,
 			    vpColor::vpColorType c);
   //! Display a circle at coordinates (i,j) in the display window.
   static void displayCircle_uv(const vpImage<unsigned char> &I,
-			       unsigned int u, unsigned int v, unsigned int r,
+			       int u, int v, unsigned int r,
 			       vpColor::vpColorType c);
   //! Display a circle at coordinates (i,j) in the display window.
   static void displayCircle_uv(const vpImage<vpRGBa> &I,
-			       unsigned int u, unsigned int v, unsigned int r,
+			       int u, int v, unsigned int r,
 			       vpColor::vpColorType c);
   //! Display a cross at coordinates (i,j) in the display window
   static void displayCross(const vpImage<unsigned char> &I,
-			   unsigned int i,unsigned int j,
-			   unsigned int size,vpColor::vpColorType col) ;
+			   int i, int j, unsigned int size,
+			   vpColor::vpColorType col) ;
   //! Display a cross at coordinates (i,j) in the display window
   static void displayCross(const vpImage<vpRGBa> &I,
-			   unsigned int i,unsigned int j,
-			   unsigned int size,vpColor::vpColorType col) ;
+			   int i, int j, unsigned int size,
+			   vpColor::vpColorType col) ;
   //! Display a cross at coordinates (i,j) in the display window
   static void displayCross_uv(const vpImage<unsigned char> &I,
-			      unsigned int u,unsigned int v,
-			      unsigned int size,vpColor::vpColorType col) ;
+			      int u, int v, unsigned int size,
+			      vpColor::vpColorType col) ;
   //! Display a cross at coordinates (i,j) in the display window
   static void displayCross_uv(const vpImage<vpRGBa> &I,
-			      unsigned int u,unsigned int v,
-			      unsigned int size,vpColor::vpColorType col) ;
+			      int u, int v, unsigned int size,
+			      vpColor::vpColorType col) ;
   //! Display a large cross at coordinates (i,j) in the display window
   static void displayCrossLarge(const vpImage<unsigned char> &I,
-				unsigned int i,unsigned int j,
-				unsigned int size,vpColor::vpColorType col) ;
+				int i, int j, unsigned int size,
+				vpColor::vpColorType col) ;
   //! Display a large cross at coordinates (i,j) in the display window
   static void displayCrossLarge(const vpImage<vpRGBa> &I,
-				unsigned int i,unsigned int j,
-				unsigned int size,vpColor::vpColorType col) ;
+				int i, int j, unsigned int size,
+				vpColor::vpColorType col) ;
   //! Display a large cross at coordinates (i,j) in the display window
   static void displayCrossLarge_uv(const vpImage<unsigned char> &I,
-				   unsigned int u,unsigned int v,
-				   unsigned int size,vpColor::vpColorType col);
+				   int u, int v, unsigned int size,
+				   vpColor::vpColorType col);
   //! Display a large cross at coordinates (i,j) in the display window
   static void displayCrossLarge_uv(const vpImage<vpRGBa> &I,
-				   unsigned int u, unsigned int v,
-				   unsigned int size,
+				   int u, int v, unsigned int size,
 				   vpColor::vpColorType col);
   //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
   //! window.
   static void displayDotLine(const vpImage<unsigned char> &I,
-			     unsigned int i1, unsigned int j1,
-			     unsigned int i2, unsigned int j2,
+			     int i1, int j1, int i2, int j2,
 			     vpColor::vpColorType col, unsigned int e=1) ;
   //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
   //! window.
   static void displayDotLine(const vpImage<vpRGBa> &I,
-			     unsigned int i1, unsigned int j1,
-			     unsigned int i2, unsigned int j2,
+			     int i1, int j1, int i2, int j2,
 			     vpColor::vpColorType col, unsigned int e=1) ;
   //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
   //! window.
   static void displayDotLine_uv(const vpImage<unsigned char> &I,
-				unsigned int u1, unsigned int v1,
-				unsigned int u2, unsigned int v2,
+				int u1, int v1, int u2, int v2,
 				vpColor::vpColorType col, unsigned int e=1) ;
 
 
   //! Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
   //! window.
   static void displayDotLine_uv(const vpImage<vpRGBa> &I,
-				unsigned int u1, unsigned int v1,
-				unsigned int u2, unsigned int v2,
+				int u1, int v1, int u2, int v2,
 				vpColor::vpColorType col, unsigned int e=1) ;
 
   static void displayFrame(const vpImage<unsigned char> &I,
@@ -320,47 +293,43 @@ protected :
 			   const bool usedistortion = false )  ;
   //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
   static void displayLine(const vpImage<unsigned char> &I,
-			  unsigned int i1, unsigned int j1,
-			  unsigned int i2, unsigned int j2,
+			  int i1, int j1, int i2, int j2,
 			  vpColor::vpColorType col, unsigned int e=1) ;
   //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
   static void displayLine(const vpImage<vpRGBa> &I,
-			  unsigned int i1, unsigned int j1,
-			  unsigned int i2, unsigned int j2,
+			  int i1, int j1, int i2, int j2,
 			  vpColor::vpColorType col, unsigned int e=1) ;
   //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
   static void displayLine_uv(const vpImage<unsigned char> &I,
-			     unsigned int u1, unsigned int v1,
-			     unsigned int u2, unsigned int v2,
+			     int u1, int v1, int u2, int v2,
 			     vpColor::vpColorType col, unsigned int e=1) ;
 
   //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
   static void displayLine_uv(const vpImage<vpRGBa> &I,
-			     unsigned int u1, unsigned int v1,
-			     unsigned int u2, unsigned int v2,
+			     int u1, int v1, int u2, int v2,
 			     vpColor::vpColorType col, unsigned int e=1) ;
   //! Display a point at coordinates (i,j) in the display window
   static void displayPoint(const vpImage<unsigned char> &I,
-			   unsigned int i,unsigned int j,
+			   int i, int j,
 			   vpColor::vpColorType col) ;
   //! Display a point at coordinates (i,j) in the display window
   static void displayPoint(const vpImage<vpRGBa> &I,
-			   unsigned int i,unsigned int j,
+			   int i, int j,
 			   vpColor::vpColorType col) ;
   //! Display a point at coordinates (i,j) in the display window
   static void displayPoint_uv(const vpImage<unsigned char> &I,
-			      unsigned int u,unsigned int v,
+			      int u, int v,
 			      vpColor::vpColorType col) ;
   //! Display a point at coordinates (i,j) in the display window
   static void displayPoint_uv(const vpImage<vpRGBa> &I,
-			      unsigned int u,unsigned int v,
+			      int u, int v,
 			      vpColor::vpColorType col);
 
 
   //! Display a rectangle having (i,j) as top/left corner coordinates
   //! and \e width and \e height.
   static void displayRectangle(const vpImage<unsigned char> &I,
-			       unsigned int i, unsigned int j,
+			       int i, int j,
 			       unsigned int width, unsigned int height,
 			       vpColor::vpColorType col, bool fill = false,
 			       unsigned int e=1);
@@ -373,7 +342,7 @@ protected :
   //! Display a rectangle having (u,v) as top/left corner coordinates,
   //! \e width and \e height.
   static void displayRectangle_uv(const vpImage<unsigned char> &I,
-				  unsigned int u, unsigned int v,
+				  int u, int v,
 				  unsigned int width, unsigned int height,
 				  vpColor::vpColorType col, bool fill = false,
 				  unsigned int e=1);
@@ -381,6 +350,11 @@ protected :
 			   const char *windowtitle);
 
   static void displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
+
+  //! flushes the output buffer
+  static void flush(const vpImage<unsigned char> &I) ;
+  //! flushes the output buffer
+  static void flush(const vpImage<vpRGBa> &I) ;
 
 
  public:
@@ -462,6 +436,12 @@ protected :
 			    unsigned int& u, unsigned int& v,
 			    vpMouseButton::vpMouseButtonType& button,
 			    bool blocking=true);
+
+  //! get the window pixmap and put it in vpRGBa image
+  static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
+
+  //! get the window pixmap and put it in vpRGBa image
+  static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
 
 
 } ;

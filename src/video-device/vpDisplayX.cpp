@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.39 2007-12-07 16:41:48 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.40 2008-01-30 15:32:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1435,7 +1435,7 @@ void vpDisplayX::clearDisplay ( vpColor::vpColorType c )
   \param i,j : (row,colum indexes)
   \param col : color (see vpColor)
 */
-void vpDisplayX::displayPoint ( unsigned int i, unsigned int j,
+void vpDisplayX::displayPoint ( int i, int j,
                                 vpColor::vpColorType col )
 {
   if ( Xinitialise )
@@ -1460,8 +1460,7 @@ void vpDisplayX::displayPoint ( unsigned int i, unsigned int j,
   \param col : color (see vpColor)
   \param e : line thick
 */
-void vpDisplayX::displayLine ( unsigned int i1, unsigned int j1,
-                               unsigned int i2, unsigned int j2,
+void vpDisplayX::displayLine ( int i1, int j1, int i2, int j2,
                                vpColor::vpColorType col, unsigned int e )
 {
   if ( Xinitialise )
@@ -1490,8 +1489,7 @@ void vpDisplayX::displayLine ( unsigned int i1, unsigned int j1,
   \param col : color (see vpColor)
   \param e : line_width
 */
-void vpDisplayX::displayDotLine ( unsigned int i1, unsigned int j1,
-                                  unsigned int i2, unsigned int j2,
+void vpDisplayX::displayDotLine ( int i1, int j1, int i2, int j2,
                                   vpColor::vpColorType col, unsigned int e )
 {
 
@@ -1519,7 +1517,7 @@ void vpDisplayX::displayDotLine ( unsigned int i1, unsigned int j1,
   \param size : Size of the cross
   \param col : Color (see vpColor)
 */
-void vpDisplayX::displayCross ( unsigned int i,unsigned int j,
+void vpDisplayX::displayCross ( int i, int j,
                                 unsigned int size, vpColor::vpColorType col )
 {
   if ( Xinitialise )
@@ -1552,7 +1550,7 @@ void vpDisplayX::displayCross ( unsigned int i,unsigned int j,
   \param size : Size of the cross
   \param col : Color (see vpColor)
 */
-void vpDisplayX::displayCrossLarge ( unsigned int i,unsigned int j,
+void vpDisplayX::displayCrossLarge ( int i, int j,
                                      unsigned int size, vpColor::vpColorType col )
 {
   if ( Xinitialise )
@@ -1584,8 +1582,7 @@ void vpDisplayX::displayCrossLarge ( unsigned int i,unsigned int j,
   \param col : Color (see vpColor)
   \param L,l : width and height of the arrow
 */
-void vpDisplayX::displayArrow ( unsigned int i1,unsigned int j1,
-                                unsigned int i2, unsigned int j2,
+void vpDisplayX::displayArrow ( int i1, int j1, int i2, int j2,
                                 vpColor::vpColorType col,
                                 unsigned int L, unsigned int l )
 {
@@ -1660,7 +1657,7 @@ void vpDisplayX::displayArrow ( unsigned int i1,unsigned int j1,
   \param e : line thick
 */
 void
-vpDisplayX::displayRectangle ( unsigned int i, unsigned int j,
+vpDisplayX::displayRectangle ( int i, int j,
                                unsigned int width, unsigned int height,
                                vpColor::vpColorType col, bool fill,
 			       unsigned int e )
@@ -1732,7 +1729,7 @@ vpDisplayX::displayRectangle ( const vpRect &rect,
   \param string
   \param col : Color (see vpColor)
 */
-void vpDisplayX::displayCharString ( unsigned int i, unsigned int j,
+void vpDisplayX::displayCharString ( int i, int j,
                                      char *string, vpColor::vpColorType col )
 {
   if ( Xinitialise )
@@ -2088,7 +2085,7 @@ vpDisplayX::flushTitle ( const char *windowtitle )
   \param r : radius
   \param c : Color
 */
-void vpDisplayX::displayCircle ( unsigned int i, unsigned int j, unsigned int r,
+void vpDisplayX::displayCircle ( int i, int j, unsigned int r,
                                  vpColor::vpColorType c )
 {
   if ( Xinitialise )

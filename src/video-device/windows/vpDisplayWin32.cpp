@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.22 2007-12-07 16:41:49 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.23 2008-01-30 15:32:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -419,7 +419,7 @@ void vpDisplayWin32::flushDisplay()
   \param j : its second coordinate
   \param col : The point's color
 */
-void vpDisplayWin32::displayPoint(unsigned int i,unsigned int j,
+void vpDisplayWin32::displayPoint(int i, int j,
 				  vpColor::vpColorType col)
 {
   //wait if the window is not initialized
@@ -436,8 +436,7 @@ void vpDisplayWin32::displayPoint(unsigned int i,unsigned int j,
   \param e : width of the line
   \param col : The point's color
 */
-void vpDisplayWin32::displayLine(unsigned int i1, unsigned int j1,
-				 unsigned int i2, unsigned int j2,
+void vpDisplayWin32::displayLine(int i1, int j1, int i2, int j2,
 				 vpColor::vpColorType col, unsigned int e)
 {
   //wait if the window is not initialized
@@ -454,8 +453,7 @@ void vpDisplayWin32::displayLine(unsigned int i1, unsigned int j1,
   \param e : width of the line
   \param col : The line's color
 */
-void vpDisplayWin32::displayDotLine(unsigned int i1, unsigned int j1,
-				    unsigned int i2, unsigned int j2,
+void vpDisplayWin32::displayDotLine(int i1, int j1, int i2, int j2,
 				    vpColor::vpColorType col, unsigned int e)
 {
   //wait if the window is not initialized
@@ -473,7 +471,7 @@ void vpDisplayWin32::displayDotLine(unsigned int i1, unsigned int j1,
   \param fill : set as true to fill the rectangle.
   \param e : line thick
 */
-void vpDisplayWin32::displayRectangle(unsigned int i, unsigned int j,
+void vpDisplayWin32::displayRectangle(int i, int j,
 				      unsigned int width, unsigned int height,
 				      vpColor::vpColorType col, bool fill,
 				      unsigned int e)
@@ -507,7 +505,7 @@ void vpDisplayWin32::displayRectangle(const vpRect &rect,
   \param r : The circle's radius
   \param c : The circle's color
 */
-void vpDisplayWin32::displayCircle(unsigned int i, unsigned int j,
+void vpDisplayWin32::displayCircle(int i, int j,
 				   unsigned int r,
 				   vpColor::vpColorType c)
 {
@@ -523,7 +521,7 @@ void vpDisplayWin32::displayCircle(unsigned int i, unsigned int j,
   \param s : The string to display
   \param c : The text's color
 */
-void vpDisplayWin32::displayCharString(unsigned int i,unsigned int j,char *s,
+void vpDisplayWin32::displayCharString(int i, int j,char *s,
 				       vpColor::vpColorType c)
 {
   //wait if the window is not initialized
@@ -538,7 +536,7 @@ void vpDisplayWin32::displayCharString(unsigned int i,unsigned int j,char *s,
   \param size : Size of the cross
   \param col : The cross' color
 */
-void vpDisplayWin32::displayCross(unsigned int i,unsigned int j,
+void vpDisplayWin32::displayCross(int i, int j,
 				  unsigned int size,
 				  vpColor::vpColorType col)
 {
@@ -554,7 +552,7 @@ void vpDisplayWin32::displayCross(unsigned int i,unsigned int j,
   \param size : Size of the cross
   \param col : The cross' color
 */
-void vpDisplayWin32::displayCrossLarge(unsigned int i,unsigned int j,
+void vpDisplayWin32::displayCrossLarge(int i, int j,
 				       unsigned int size,
 				       vpColor::vpColorType col)
 {
@@ -573,8 +571,8 @@ void vpDisplayWin32::displayCrossLarge(unsigned int i,unsigned int j,
   \param L : ...
   \param l : ...
 */
-void vpDisplayWin32::displayArrow(unsigned int i1, unsigned int j1,
-				  unsigned int i2, unsigned int j2,
+void vpDisplayWin32::displayArrow(int i1, int j1,
+				  int i2, int j2,
 				  vpColor::vpColorType col,
 				  unsigned int L, unsigned int l)
 {

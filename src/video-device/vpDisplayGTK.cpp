@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.36 2007-12-07 16:41:48 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.37 2008-01-30 15:32:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -531,7 +531,7 @@ void vpDisplayGTK::clearDisplay(vpColor::vpColorType /* c */)
   \param i,j (row,colum indexes)
   \param color (see vpColor)
 */
-void vpDisplayGTK::displayPoint(unsigned int i, unsigned int j,
+void vpDisplayGTK::displayPoint(int i, int j,
 				vpColor::vpColorType color)
 {
   if (GTKinitialized)
@@ -555,8 +555,7 @@ void vpDisplayGTK::displayPoint(unsigned int i, unsigned int j,
   \param e : line thick
 */
 void
-vpDisplayGTK::displayLine(unsigned int i1, unsigned int j1,
-			  unsigned int i2, unsigned int j2,
+vpDisplayGTK::displayLine(int i1, int j1, int i2, int j2,
 			  vpColor::vpColorType color,
 			  unsigned int e)
 {
@@ -591,8 +590,7 @@ vpDisplayGTK::displayLine(unsigned int i1, unsigned int j1,
   \param e : line thick
 */
 void
-vpDisplayGTK::displayDotLine(unsigned int i1, unsigned int j1,
-			     unsigned int i2, unsigned int j2,
+vpDisplayGTK::displayDotLine(int i1, int j1, int i2, int j2,
 			     vpColor::vpColorType color,
 			     unsigned int e)
 {
@@ -627,7 +625,7 @@ vpDisplayGTK::displayDotLine(unsigned int i1, unsigned int j1,
   \param col : color (see vpColor)
 */
 void
-vpDisplayGTK::displayCross(unsigned int i,unsigned int j,
+vpDisplayGTK::displayCross(int i, int j,
 			   unsigned int size,
 			   vpColor::vpColorType col)
 {
@@ -660,7 +658,7 @@ vpDisplayGTK::displayCross(unsigned int i,unsigned int j,
   \param size : size of the cross
   \param col : color (see vpColor)
 */
-void vpDisplayGTK::displayCrossLarge(unsigned int i,unsigned int j,
+void vpDisplayGTK::displayCrossLarge(int i, int j,
 				     unsigned int size,
 				     vpColor::vpColorType col)
 {
@@ -694,8 +692,7 @@ void vpDisplayGTK::displayCrossLarge(unsigned int i,unsigned int j,
   \param L,l : width and height of the arrow
 */
 void
-vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
-			   unsigned int i2, unsigned int j2,
+vpDisplayGTK::displayArrow(int i1, int j1, int i2, int j2,
 			   vpColor::vpColorType col,
 			   unsigned int L,unsigned int l)
 {
@@ -772,7 +769,7 @@ vpDisplayGTK::displayArrow(unsigned int i1,unsigned int j1,
   \param e : line thick
 */
 void
-vpDisplayGTK::displayRectangle(unsigned int i, unsigned int j,
+vpDisplayGTK::displayRectangle(int i, int j,
 			       unsigned int width, unsigned int height,
 			       vpColor::vpColorType color, bool fill,
 			       unsigned int e)
@@ -845,7 +842,7 @@ vpDisplayGTK::displayRectangle(const vpRect &rect,
   \param string
   \param color (see vpColor)
 */
-void vpDisplayGTK::displayCharString(unsigned int i, unsigned int j,
+void vpDisplayGTK::displayCharString(int i, int j,
 				     char *string, vpColor::vpColorType color)
 {
   if (GTKinitialized)
@@ -1113,7 +1110,7 @@ vpDisplayGTK::flushTitle(const char *windowtitle)
   \param r : radius
   \param color
 */
-void vpDisplayGTK::displayCircle(unsigned int i, unsigned int j,
+void vpDisplayGTK::displayCircle(int i, int j,
 				 unsigned int r,
 				 vpColor::vpColorType color)
 {
