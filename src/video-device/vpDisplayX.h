@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.17 2007-12-20 08:21:49 fspindle Exp $
+ * $Id: vpDisplayX.h,v 1.18 2008-01-30 14:35:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,23 +101,6 @@ private:
   bool ximage_data_init;
 
 
-protected:
-  void setWindowPosition(int /*_winx*/, int /*_winy*/) { ; }
-  inline  unsigned int getWidth() const  { return width ; }
-  inline  unsigned int getHeight() const { return height ; }
-
-public:
-  void init(vpImage<unsigned char> &I,
-	    int winx=-1, int winy=-1,
-	    char *_title=NULL)  ;
-  void init(vpImage<vpRGBa> &I,
-	   int winx=-1, int winy=-1,
-	   char *_title=NULL)  ;
-
-  void init(unsigned int width, unsigned int height,
-	    int winx=-1, int winy=-1 ,
-	    char *_title=NULL) ;
-  // only the constructor/destructor are public
 public:
   vpDisplayX(vpImage<unsigned char> &I, int _winx=-1, int _winy=-1,
 	     char *title=NULL) ;
@@ -129,37 +112,55 @@ public:
   vpDisplayX() ;
   virtual ~vpDisplayX() ;
 
-protected:
-  void displayImage(const vpImage<vpRGBa> &I) ;
-  void displayImage(const vpImage<unsigned char> &I) ;
-  void displayImage(const unsigned char *I) ;
 
-  void closeDisplay() ;
-  void flushDisplay() ;
-  void flushTitle(const char *string) ;
+  unsigned int getScreenDepth();
+  void getScreenSize(unsigned int &width, unsigned int &height);
+  void getImage(vpImage<vpRGBa> &I) ;
+
+  void init(vpImage<unsigned char> &I,
+	    int winx=-1, int winy=-1,
+	    char *_title=NULL)  ;
+  void init(vpImage<vpRGBa> &I,
+	   int winx=-1, int winy=-1,
+	   char *_title=NULL)  ;
+
+  void init(unsigned int width, unsigned int height,
+	    int winx=-1, int winy=-1 ,
+	    char *_title=NULL) ;
+
+protected:
 
   void clearDisplay(vpColor::vpColorType c=vpColor::white) ;
 
-  void displayPoint(unsigned int x,unsigned int y,vpColor::vpColorType col) ;
-  void displayCross(unsigned int x,unsigned int y, unsigned int size,
-		    vpColor::vpColorType col) ;
-  void displayCrossLarge(unsigned int x,unsigned int y, unsigned int size,
-			 vpColor::vpColorType col) ;
-  void displayCircle(unsigned int i, unsigned int j, unsigned int r,
-		     vpColor::vpColorType c);
-  void displayLine(unsigned int x1, unsigned int y1,
-		   unsigned int x2, unsigned int y2,
-		   vpColor::vpColorType col, unsigned int e=1) ;
-  void displayDotLine(unsigned int x1, unsigned int y1,
-		      unsigned int x2, unsigned int y2,
-		      vpColor::vpColorType col, unsigned int e=1) ;
-
+  void closeDisplay() ;
 
   void displayArrow(unsigned int i1,unsigned int j1,
 		    unsigned int i2, unsigned int j2,
 		    vpColor::vpColorType col=vpColor::white,
 		    unsigned int L=4,unsigned int l=2) ;
 
+  void displayCharString(unsigned int i,unsigned int j,char *s,
+			 vpColor::vpColorType c=vpColor::green) ;
+
+  void displayCircle(unsigned int i, unsigned int j, unsigned int r,
+		     vpColor::vpColorType c);
+  void displayCross(unsigned int i, unsigned int j, unsigned int size,
+		    vpColor::vpColorType col) ;
+  void displayCrossLarge(unsigned int i, unsigned int j, unsigned int size,
+			 vpColor::vpColorType col) ;
+  void displayDotLine(unsigned int i1, unsigned int j1,
+		      unsigned int i2, unsigned int j2,
+		      vpColor::vpColorType col, unsigned int e=1) ;
+  void displayImage(const vpImage<vpRGBa> &I) ;
+  void displayImage(const vpImage<unsigned char> &I) ;
+  void displayImage(const unsigned char *I) ;
+
+  void displayLine(unsigned int i1, unsigned int j1,
+		   unsigned int i2, unsigned int j2,
+		   vpColor::vpColorType col, unsigned int e=1) ;
+
+
+  void displayPoint(unsigned int i, unsigned int j, vpColor::vpColorType col) ;
   void displayRectangle(unsigned int i, unsigned int j,
 			unsigned int width, unsigned int height,
 			vpColor::vpColorType col, bool fill = false,
@@ -167,8 +168,8 @@ protected:
   void displayRectangle(const vpRect &rect,
 			vpColor::vpColorType col, bool fill = false,
 			unsigned int e=1);
-  void displayCharString(unsigned int i,unsigned int j,char *s,
-			 vpColor::vpColorType c=vpColor::green) ;
+  void flushDisplay() ;
+  void flushTitle(const char *string) ;
 
   bool getClick(unsigned int& i, unsigned int& j, bool blocking=true);
   bool getClick(unsigned int& i, unsigned int& j,
@@ -176,14 +177,14 @@ protected:
 		bool blocking=true) ;
   bool getClick(bool blocking=true) ;
   bool getClickUp(unsigned int& i, unsigned int& j,
-		  vpMouseButton::vpMouseButtonType& button, 
+		  vpMouseButton::vpMouseButtonType& button,
 		  bool blocking=true);
 
-public:
+  inline  unsigned int getWidth() const  { return width ; }
+  inline  unsigned int getHeight() const { return height ; }
 
-  unsigned int getScreenDepth();
-  void getScreenSize(unsigned int &width, unsigned int &height);
-  void getImage(vpImage<vpRGBa> &I) ;
+  void setWindowPosition(int /*_winx*/, int /*_winy*/) { ; }
+
 } ;
 
 #endif
