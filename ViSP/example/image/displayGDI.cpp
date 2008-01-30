@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGDI.cpp,v 1.8 2007-11-07 14:47:56 asaunier Exp $
+ * $Id: displayGDI.cpp,v 1.9 2008-01-30 15:33:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -280,6 +280,9 @@ main(int argc, char ** argv)
     for (unsigned i=0 ; i < I.getHeight() ; i+=20)
       vpDisplay::displayLine(I,i,0,i,I.getWidth(), vpColor::red) ;
 
+    // Display a ligne in the diagonal
+    vpDisplay::displayLine(I, -10, -10, I.getHeight() + 10, I.getWidth() +10,
+			   vpColor::red) ;
     // Display in overlay vertical green dot lines
     for (unsigned i=0 ; i < I.getWidth() ; i+=20)
       vpDisplay::displayDotLine(I,0,i,I.getWidth(), i,vpColor::green) ;
@@ -290,7 +293,7 @@ main(int argc, char ** argv)
     // Display in overlay some circles. The position of the center is 200, 200
     // the radius is increased by 20 pixels for each circle
     for (unsigned i=0 ; i < 100 ; i+=20)
-      vpDisplay::displayCircle(I,200,200,20+i,vpColor::yellow) ;
+      vpDisplay::displayCircle(I, 80, 80,20+i,vpColor::yellow) ;
 
     // Display in overlay a yellow string
     vpDisplay::displayCharString(I, 85, 100,
