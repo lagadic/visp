@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.h,v 1.4 2007-12-19 08:25:24 fspindle Exp $
+ * $Id: vpCalibration.h,v 1.5 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -79,22 +79,23 @@ private:
   vpList<double> Lu, Lv ; //!< list of points coordinates (2D in pixels)
 
   double residual ; //!< residual in pixel for camera model without distortion
-  double residual_pm ;     //!< residual in pixel for pixel to meter camera model
-  double residual_mp ;     //!< residual in pixel for meter to pixel camera model
+  double residual_dist ;     //!< residual in pixel for perspective projection
+                             //!< with distortion model 
 public:
   vpHomogeneousMatrix cMo ;    //!< the pose computed for the model without distortion
                                //!< (as a 3x4 matrix [R T])
-  vpHomogeneousMatrix cMo_mp ;  //!< the pose computed for meter to pixel model
-                               //!< (as a 3x4 matrix [R T])
-  vpHomogeneousMatrix cMo_pm ;  //!< the pose computed for pixel to meter model
-                               //!< (as a 3x4 matrix [R T])
-  vpCameraParameters cam;   //!< camera intrinsic parameters
+  vpHomogeneousMatrix cMo_dist ;  //!< the pose computed for perspective projection
+                                  //!< with distortion model 
+                                  //!< (as a 3x4 matrix [R T])
+  vpCameraParameters cam;   //!< camera intrinsic parameters for perspective
+                            //!< projection model without distortion 
+  vpCameraParameters cam_dist; //!< camera intrinsic parameters for perspective
+                            //!< projection model with distortion
 
-  vpHomogeneousMatrix wMe; //!< position of the effector in relation to the 
-                           //!< world coordinates (manipulator base coordinates)
+  vpHomogeneousMatrix rMe; //!< position of the effector in relation to the
+                           //!< reference coordinates (manipulator base coordinates)
   vpHomogeneousMatrix eMc; //!< position of the camera in relation to the effector
-  vpHomogeneousMatrix eMc_mp;
-  vpHomogeneousMatrix eMc_pm;
+  vpHomogeneousMatrix eMc_dist;
 public:
   int init() ;
 
@@ -118,17 +119,10 @@ private:
                       bool verbose = false) ;
   static void calibVVSMulti(unsigned int nbPose, vpCalibration table_cal[] ,
                      vpCameraParameters &cam, bool verbose = false) ;
-  void calibVVSWithDistortion_pm( vpCameraParameters &cam,
+  void calibVVSWithDistortion( vpCameraParameters &cam,
                                vpHomogeneousMatrix &cMo,
                                bool verbose = false) ;
-  void calibVVSWithDistortion_mp( vpCameraParameters &cam,
-                               vpHomogeneousMatrix &cMo,
-                               bool verbose = false) ;
-  static void calibVVSWithDistortionMulti_pm( unsigned int nbPose,
-                                    vpCalibration table_cal[],
-                                    vpCameraParameters &cam,
-                                    bool verbose = false );
-  static void calibVVSWithDistortionMulti_mp( unsigned int nbPose,
+  static void calibVVSWithDistortionMulti( unsigned int nbPose,
                                     vpCalibration table_cal[],
                                     vpCameraParameters &cam,
                                     bool verbose = false );
@@ -137,12 +131,10 @@ private:
 
 
 public:
-  //!get the residual in pixel
+  //!get the residual in pixels
   double getResidual(void) const {return residual;}
-  //!get the residual in pixel
-  double getResidual_mp(void) const {return residual_mp;}
-  //!get the residual in pixel
-  double getResidual_pm(void) const {return residual_pm;}
+  //!get the residual for perspective projection with distortion (in pixels)
+  double getResidual_dist(void) const {return residual_dist;}
   //!get the number of points
   unsigned int get_npt() const {return npt;}
   
@@ -157,12 +149,9 @@ public:
   
   double computeStdDeviation(vpHomogeneousMatrix &cMo,
                           vpCameraParameters &cam);
-  double computeStdDeviation_pm(vpHomogeneousMatrix &cMo,
+  double computeStdDeviation_dist(vpHomogeneousMatrix &cMo,
                           vpCameraParameters &cam);
-  double computeStdDeviation_mp(vpHomogeneousMatrix &cMo,
-                          vpCameraParameters &cam);
-  void computeStdDeviation(double &deviation, double &deviation_pm,
-                           double &deviation_mp);
+  void computeStdDeviation(double &deviation, double &deviation_dist);
   //! Compute the calibration for a given method
   int computeCalibration(vpCalibrationMethodType method,
 			  vpHomogeneousMatrix &cMo,
@@ -175,13 +164,12 @@ public:
         bool verbose = false) ;
 
   static void calibrationTsai(unsigned int nbPose, vpHomogeneousMatrix cMo[],
-                                    vpHomogeneousMatrix wMe[],
+                                    vpHomogeneousMatrix rMe[],
                                     vpHomogeneousMatrix &eMc);
   static int computeCalibrationTsai(unsigned int nbPose,
                                     vpCalibration table_cal[],
                                     vpHomogeneousMatrix &eMc,
-                                    vpHomogeneousMatrix &eMc_mp,
-                                    vpHomogeneousMatrix &eMc_pm);
+                                    vpHomogeneousMatrix &eMc_dist);
   int writeCalibrationParameters(char *filename) ;
 
 } ;

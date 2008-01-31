@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeterPixelConversion.cpp,v 1.8 2007-11-19 15:40:58 asaunier Exp $
+ * $Id: vpMeterPixelConversion.cpp,v 1.9 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,15 +53,9 @@ vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
 				    const double &rho_m, const double &theta_m,
 				    double &rho_p, double &theta_p)
 {
-
-
-  double u0 = cam.get_u0() ;  double v0 = cam.get_v0() ;
-  double px = cam.get_px() ;  double py = cam.get_py() ;
-
-
   double co = cos(theta_m) ;
   double si = sin(theta_m) ;
-  double d = sqrt(vpMath::sqr(py*co) + vpMath::sqr(px*si)) ;
+  double d = sqrt(vpMath::sqr(cam.py*co) + vpMath::sqr(cam.px*si)) ;
 
   if (fabs(d)<1e-6)
   {
@@ -70,8 +64,8 @@ vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
 		      "division by zero")) ;
   }
 
-  theta_p = atan2(px*si, py*co) ;
-  rho_p = (px*py*rho_m + u0*py*co + v0*px*si) ;
+  theta_p = atan2(cam.px*si, cam.py*co) ;
+  rho_p = (cam.px*cam.py*rho_m + cam.u0*cam.py*co + cam.v0*cam.px*si) ;
   rho_p /= d ;
 
 

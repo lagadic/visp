@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.cpp,v 1.6 2007-12-18 14:22:23 fspindle Exp $
+ * $Id: vpXmlParserCamera.cpp,v 1.7 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,11 +65,11 @@
 #define LABEL_XML_V0                                 "v0"
 #define LABEL_XML_PX                                 "px"
 #define LABEL_XML_PY                                 "py"
-#define LABEL_XML_KD                                 "kd"
+#define LABEL_XML_KUD                                "kud"
+#define LABEL_XML_KDU                                "kdu"
 
-#define LABEL_XML_MODEL_WITHOUT_DISTORTION           "without_distortion"
-#define LABEL_XML_MODEL_WITH_PIXEL_BASED_DISTORTION  "with_pixel_based_distortion"
-#define LABEL_XML_MODEL_WITH_METER_BASED_DISTORTION  "with_meter_based_distortion"
+#define LABEL_XML_MODEL_WITHOUT_DISTORTION    "perspectiveProjWithoutDistortion"
+#define LABEL_XML_MODEL_WITH_DISTORTION       "perspectiveProjWithDistortion"
 /*!
   Default constructor
 */
@@ -87,6 +87,7 @@ vpXmlParserCamera::vpXmlParserCamera(){
   \param twinParser : parser object to copy
 */
 vpXmlParserCamera::vpXmlParserCamera(vpXmlParserCamera& twinParser){
+  this->camera = twinParser.camera;
   this->camera_name = twinParser.camera_name;
   this->image_width = twinParser.image_width;
   this->image_height = twinParser.image_height;
@@ -103,6 +104,7 @@ vpXmlParserCamera::vpXmlParserCamera(vpXmlParserCamera& twinParser){
 */
 vpXmlParserCamera&
 vpXmlParserCamera::operator =(const vpXmlParserCamera& twinParser) {
+  this->camera = twinParser.camera;
   this->camera_name = twinParser.camera_name;
   this->image_width = twinParser.image_width;
   this->image_height = twinParser.image_height;
@@ -119,6 +121,7 @@ vpXmlParserCamera::operator =(const vpXmlParserCamera& twinParser) {
   \param filename : name of the xml file to parse
   \param camera_name : name of the camera : usefull if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
+  \param projModel : camera projection model needed. 
   \param image_width : image width on which camera calibration was performed.
   Set as 0 if not ambiguous.
   \param image_height : image height on which camera calibration was performed.
@@ -129,6 +132,7 @@ vpXmlParserCamera::operator =(const vpXmlParserCamera& twinParser) {
 int 
 vpXmlParserCamera::parse(vpCameraParameters &cam, const char * filename, 
 			 const std::string& camera_name,
+       const vpCameraParameters::vpCameraParametersProjType &projModel,
 			 const unsigned int image_width, 
 			 const unsigned int image_height)
 {
@@ -148,7 +152,7 @@ vpXmlParserCamera::parse(vpCameraParameters &cam, const char * filename,
     return SEQUENCE_ERROR;
   }
 
-  this ->read (doc, node, camera_name, image_width, image_height);
+  this ->read (doc, node, camera_name, projModel, image_width, image_height);
 
   cam = camera ;
 
@@ -178,7 +182,8 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
 {
   xmlDocPtr doc;
   xmlNodePtr node;
-
+  xmlNodePtr nodeCamera = NULL;
+  
   doc = xmlReadFile(filename,NULL,XML_PARSE_NOWARNING + XML_PARSE_NOERROR
           + XML_PARSE_NOBLANKS);
   if (doc == NULL){
@@ -201,7 +206,8 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
     return SEQUENCE_ERROR;
   }
 
-  int nbCamera = count(doc, node, camera_name, image_width, image_height);
+  int nbCamera = count(doc, node, camera_name,cam.get_projModel(),
+                       image_width, image_height);
   if( nbCamera > 0){
     vpCERROR << nbCamera
             << " set(s) of camera parameters is(are) already "<< std::endl
@@ -211,9 +217,15 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
     xmlFreeDoc(doc);
     return SEQUENCE_ERROR;
   }
-
   this->camera = cam;
-  write(node, camera_name, image_width, image_height);
+  
+  nodeCamera = find_camera(doc, node, camera_name, image_width, image_height);
+  if(nodeCamera == NULL){
+    write(node, camera_name, image_width, image_height);
+  }
+  else{ 
+    write_camera(nodeCamera);
+  } 
   xmlSaveFormatFile(filename,doc,1);
   xmlFreeDoc(doc);
 
@@ -350,7 +362,8 @@ vpXmlParserCamera::myXmlReadDoubleChild (xmlDocPtr doc,
 int 
 vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node, 
 			 const std::string& camera_name,
-			 const unsigned int image_width, 
+       const vpCameraParameters::vpCameraParametersProjType &projModel,
+       const unsigned int image_width,
 			 const unsigned int image_height,
 			 const unsigned int subsampling_width,
 			 const unsigned int subsampling_height)
@@ -372,7 +385,7 @@ vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
     switch (prop)
     {
     case CODE_XML_CAMERA:
-      if (SEQUENCE_OK == this->read_camera (doc, node, camera_name,
+      if (SEQUENCE_OK == this->read_camera (doc, node, camera_name, projModel,
           image_width, image_height, subsampling_width, subsampling_height)){
         nbCamera++;
       }
@@ -419,7 +432,8 @@ vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
 int 
 vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node, 
 			  const std::string& camera_name,
-			  const unsigned int image_width, 
+        const vpCameraParameters::vpCameraParametersProjType &projModel,
+  		  const unsigned int image_width,
 			  const unsigned int image_height,
 			  const unsigned int subsampling_width,
 			  const unsigned int subsampling_height)
@@ -438,7 +452,7 @@ vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node,
     switch (prop)
     {
     case CODE_XML_CAMERA:
-      if (SEQUENCE_OK == this->read_camera (doc, node, camera_name,
+      if (SEQUENCE_OK == this->read_camera (doc, node, camera_name, projModel,
           image_width, image_height,
           subsampling_width, subsampling_height)){
         nbCamera++;
@@ -450,6 +464,59 @@ vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node,
   }
 
   return nbCamera;
+}
+/*!
+  Read camera headers from a XML file and return the last available
+  node pointeur in the xml tree corresponding with inputs.
+
+  \param doc : XML file.
+  \param node : XML tree, pointing on a marker equipement.
+  \param camera_name : name of the camera : usefull if the xml file has multiple
+  camera parameters. Set as "" if the camera name is not ambiguous.
+  \param image_width : width of image  on which camera calibration was performed.
+    Set as 0 if not ambiguous.
+  \param image_height : height of the image  on which camera calibration
+    was performed. Set as 0 if not ambiguous.
+  \param subsampling_width : subsampling of the image width sent by the camera.
+    Set as 0 if not ambiguous.
+  \param subsampling_height : subsampling of the image height sent by the camera.
+    Set as 0 if not ambiguous.
+
+  \return number of available camera parameters corresponding with inputs.
+ */
+xmlNodePtr
+vpXmlParserCamera::find_camera (xmlDocPtr doc, xmlNodePtr node,
+                                const std::string& camera_name,
+                                const unsigned int image_width,
+                                const unsigned int image_height,
+                                const unsigned int subsampling_width,
+                                const unsigned int subsampling_height)
+{
+  //    char * val_char;
+  vpXmlCodeType prop;
+  int nbCamera = 0;
+
+  for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
+  {
+    if (node->type != XML_ELEMENT_NODE) continue;
+    if (SEQUENCE_OK != str2xmlcode ((char*)(node ->name), prop))
+    {
+      prop = CODE_XML_OTHER;
+    }
+    switch (prop)
+    {
+      case CODE_XML_CAMERA:
+        if (SEQUENCE_OK == this->read_camera_header(doc, node, camera_name,
+            image_width, image_height,
+            subsampling_width, subsampling_height)){
+              return node;
+        }
+        break;
+      default:
+        break;
+    }
+  }
+  return NULL;
 }
 
 /*!
@@ -474,12 +541,12 @@ vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node,
 int 
 vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node, 
 				const std::string& camera_name,
-				const unsigned int image_width,
+        const vpCameraParameters::vpCameraParametersProjType &projModel,
+  			const unsigned int image_width,
 				const unsigned int image_height,
 				const unsigned int subsampling_width,
 				const unsigned int subsampling_height)
 {
-
   char * val_char;
   vpXmlCodeType prop;
   /* read value in the XML file. */
@@ -492,6 +559,8 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
   unsigned int full_width_tmp = 0;
   unsigned int full_height_tmp = 0;
   vpCameraParameters cam_tmp;
+  vpCameraParameters cam_tmp_model; 
+  bool projModelFound = false;
   vpXmlCodeSequenceType back = SEQUENCE_OK;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
@@ -500,7 +569,6 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
     if (node->type != XML_ELEMENT_NODE) continue;
     if (SEQUENCE_OK != str2xmlcode ((char*)(node ->name), prop))
     {
-
       prop = CODE_XML_OTHER;
       back = SEQUENCE_ERROR;
     }
@@ -541,22 +609,25 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
     break;
 
     case CODE_XML_MODEL:
-      back = read_camera_model(doc, node, cam_tmp);
+      back = read_camera_model(doc, node, cam_tmp_model);
+      if(cam_tmp_model.get_projModel() == projModel){
+          cam_tmp = cam_tmp_model;
+          projModelFound = true;     
+      }
       break;
-
     default:
       back = SEQUENCE_ERROR;
       break;
     }
   }
-  if( !((camera_name.empty() || camera_name == camera_name_tmp) &&
+  if( !((projModelFound == true) && (camera_name == camera_name_tmp) &&
         (image_width == image_width_tmp || image_width == 0) &&
         (image_height == image_height_tmp || image_height == 0) &&
         (subsampling_width == subsampling_width_tmp ||
           subsampling_width == 0)&&
         (subsampling_height == subsampling_height_tmp ||
           subsampling_height == 0))){
-      back = SEQUENCE_ERROR;
+    back = SEQUENCE_ERROR;
   }
   else{
     this->camera = cam_tmp;
@@ -569,6 +640,110 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
     this->full_height = subsampling_height_tmp * image_height_tmp;
   }
   return back;
+}
+/*!
+  Read camera header fields from a XML file.
+
+  \param doc : XML file.
+  \param node : XML tree, pointing on a marker equipement.
+  \param camera_name : name of the camera : usefull if the xml file has multiple
+  camera parameters. Set as "" if the camera name is not ambiguous.
+  \param image_width : width of image  on which camera calibration was performed.
+    Set as 0 if not ambiguous.
+  \param image_height : height of the image  on which camera calibration
+    was performed. Set as 0 if not ambiguous.
+  \param subsampling_width : scale of the image width sent by the camera.
+    Set as 0 if not ambiguous.
+  \param subsampling_height : scale of the image height sent by the camera.
+    Set as 0 if not ambiguous.
+
+  \return error code.
+
+ */
+int 
+vpXmlParserCamera::
+read_camera_header (xmlDocPtr doc, xmlNodePtr node,
+              const std::string& camera_name,
+              const unsigned int image_width,
+              const unsigned int image_height,
+              const unsigned int subsampling_width,
+              const unsigned int subsampling_height)
+{
+  char * val_char;
+  vpXmlCodeType prop;
+  /* read value in the XML file. */
+  int val;
+  std::string camera_name_tmp = "";
+  unsigned int image_height_tmp = 0 ;
+  unsigned int image_width_tmp = 0 ;
+  unsigned int subsampling_width_tmp = 0;
+  unsigned int subsampling_height_tmp = 0;
+  unsigned int full_width_tmp = 0;
+  unsigned int full_height_tmp = 0;
+  vpXmlCodeSequenceType back = SEQUENCE_OK;
+
+  for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
+  {
+    // vpDEBUG_TRACE (15, "Carac : %s.", node ->name);
+    if (node->type != XML_ELEMENT_NODE) continue;
+    if (SEQUENCE_OK != str2xmlcode ((char*)(node ->name), prop))
+    {
+      prop = CODE_XML_OTHER;
+      back = SEQUENCE_ERROR;
+    }
+
+
+    switch (prop)
+    {
+      case CODE_XML_CAMERA_NAME:
+        myXmlReadCharChild (doc, node, &val_char);
+        camera_name_tmp = val_char;
+        break;
+
+      case CODE_XML_WIDTH:
+        myXmlReadIntChild (doc, node, val, back);
+        image_width_tmp=val;
+        break;
+
+      case CODE_XML_HEIGHT:
+        myXmlReadIntChild (doc, node, val, back);
+        image_height_tmp = val;
+        break;
+      case CODE_XML_SUBSAMPLING_WIDTH:
+        myXmlReadIntChild (doc, node, val, back);
+        subsampling_width_tmp = val;
+        break;
+      case CODE_XML_SUBSAMPLING_HEIGHT:
+        myXmlReadIntChild (doc, node, val, back);
+        subsampling_height_tmp = val;
+        break;
+      case CODE_XML_FULL_WIDTH:
+        myXmlReadIntChild (doc, node, val, back);
+        full_width_tmp = val;
+        break;
+
+      case CODE_XML_FULL_HEIGHT:
+        myXmlReadIntChild (doc, node, val, back);
+        full_height_tmp = val;
+        break;
+
+      case CODE_XML_MODEL:
+        break;
+      default:
+        back = SEQUENCE_ERROR;
+        break;
+    }
+  }
+  if( !((camera_name == camera_name_tmp) &&
+         (image_width == image_width_tmp || image_width == 0) &&
+         (image_height == image_height_tmp || image_height == 0) &&
+         (subsampling_width == subsampling_width_tmp ||
+         subsampling_width == 0)&&
+         (subsampling_height == subsampling_height_tmp ||
+         subsampling_height == 0))){
+    back = SEQUENCE_ERROR;
+   }
+   return back;
 }
 
 /*!
@@ -597,7 +772,8 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
   double v0 = cam_tmp.get_v0();
   double px = cam_tmp.get_px();
   double py = cam_tmp.get_py();
-  double kd = 0;
+  double kud = cam_tmp.get_kud();
+  double kdu = cam_tmp.get_kdu();
   vpXmlCodeSequenceType back = SEQUENCE_OK;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
@@ -606,7 +782,6 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
     if (node->type != XML_ELEMENT_NODE) continue;
     if (SEQUENCE_OK != str2xmlcode ((char*)(node ->name), prop))
     {
-
       prop = CODE_XML_OTHER;
       back = SEQUENCE_ERROR;
     }
@@ -638,9 +813,14 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
       py = vald;
       nb++;
      break;
-    case CODE_XML_KD:
+    case CODE_XML_KUD:
       myXmlReadDoubleChild (doc, node, vald, back);
-      kd = vald;
+      kud = vald;
+      nb++;
+      break;
+    case CODE_XML_KDU:
+      myXmlReadDoubleChild (doc, node, vald, back);
+      kdu = vald;
       nb++;
       break;
     default:
@@ -656,33 +836,19 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
       vpCERROR << "it must contain 5 parameters\n";
       return SEQUENCE_ERROR;
     }
-    cam_tmp.setPixelRatio(px,py) ;
-    cam_tmp.setPrincipalPoint(u0,v0) ;
+    cam_tmp.initPersProjWithoutDistortion(px,py,u0,v0) ;
   }
-  else if( !strcmp(model_type,LABEL_XML_MODEL_WITH_PIXEL_BASED_DISTORTION)){
-    if (nb != 6)
+  else if( !strcmp(model_type,LABEL_XML_MODEL_WITH_DISTORTION)){
+    if (nb != 7)
     {
       vpCERROR <<"ERROR in 'model' field:\n";
-      vpCERROR << "it must contain 6 parameters\n";
+      vpCERROR << "it must contain 7 parameters\n";
       return SEQUENCE_ERROR;
     }
-    cam_tmp.setPixelRatio_pm(px,py) ;
-    cam_tmp.setPrincipalPoint_pm(u0,v0) ;
-    cam_tmp.setKd_pm(kd);
-  }
-  else if( !strcmp(model_type,LABEL_XML_MODEL_WITH_METER_BASED_DISTORTION)){
-    if (nb != 6)
-    {
-      vpCERROR <<"ERROR in 'model' field:\n";
-      vpCERROR << "it must contain 6 parameters\n";
-      return SEQUENCE_ERROR;
-    }
-    cam_tmp.setPixelRatio_mp(px,py) ;
-    cam_tmp.setPrincipalPoint_mp(u0,v0) ;
-    cam_tmp.setKd_mp(kd);
+    cam_tmp.initPersProjWithDistortion(px,py,u0,v0,kud,kdu);
   }
   else{
-    vpERROR_TRACE("distortion model type doesn't match with any known model !");
+    vpERROR_TRACE("projection model type doesn't match with any known model !");
     return SEQUENCE_ERROR;
   }
   return back;
@@ -715,7 +881,6 @@ write (xmlNodePtr node, const std::string& camera_name,
 
   xmlNodePtr node_tmp;
   xmlNodePtr node_camera;
-  xmlNodePtr node_model;
 
   // <camera>
   node_camera = xmlNewNode(NULL,(xmlChar*)LABEL_XML_CAMERA);
@@ -768,14 +933,35 @@ write (xmlNodePtr node, const std::string& camera_name,
       }
     }
 
-    node_tmp = xmlNewComment((xmlChar*)"Intrinsic camera parameters computed for each distortion model");
+    node_tmp = xmlNewComment((xmlChar*)"Intrinsic camera parameters computed for each projection model");
+    
     xmlAddChild(node_camera,node_tmp);
+
+    back = write_camera(node_camera);
+  }
+  return back; 
+}   
+ /*!
+  Write camera parameters in an XML Tree.
+
+  \param node_camera : XML pointer node, pointing on a camera node.
+
+  \return error code.
+  */
+int vpXmlParserCamera::
+write_camera(xmlNodePtr node_camera){
+  xmlNodePtr node_model;
+  xmlNodePtr node_tmp;  
+  
+  int back = SEQUENCE_OK;
+  switch(camera.get_projModel()){
+  case vpCameraParameters::perspectiveProjWithoutDistortion :
     //<model>
     node_model = xmlNewNode(NULL,(xmlChar*)LABEL_XML_MODEL);
     xmlAddChild(node_camera,node_model);
     {
       char str[21];
-      node_tmp = xmlNewComment((xmlChar*)"Distortion model type");
+      node_tmp = xmlNewComment((xmlChar*)"Projection model type");
       xmlAddChild(node_model,node_tmp);
 
       //<type>without_distortion</type>
@@ -800,83 +986,55 @@ write (xmlNodePtr node, const std::string& camera_name,
       //<v0>
       sprintf(str,"%.10f",camera.get_v0());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
-
     }
+    break;
+  case vpCameraParameters::perspectiveProjWithDistortion :
     //<model>
     node_model = xmlNewNode(NULL,(xmlChar*)LABEL_XML_MODEL);
     xmlAddChild(node_camera,node_model);
     {
       char str[21];
-      node_tmp = xmlNewComment((xmlChar*)"Distortion model type");
+      node_tmp = xmlNewComment((xmlChar*)"Projection model type");
       xmlAddChild(node_model,node_tmp);
-      //<type>with_pixel_based_distortion</type>
+      //<type>with_distortion</type>
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_MODEL_TYPE,
-                      (xmlChar*)LABEL_XML_MODEL_WITH_PIXEL_BASED_DISTORTION);
+                      (xmlChar*)LABEL_XML_MODEL_WITH_DISTORTION);
 
       node_tmp = xmlNewComment((xmlChar*)"Pixel ratio");
       xmlAddChild(node_model,node_tmp);
       //<px>
-      sprintf(str,"%.10f",camera.get_px_pm());
+      sprintf(str,"%.10f",camera.get_px());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PX,(xmlChar*)str);
       //<py>
-      sprintf(str,"%.10f",camera.get_py_pm());
+      sprintf(str,"%.10f",camera.get_py());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PY,(xmlChar*)str);
 
       node_tmp = xmlNewComment((xmlChar*)"Principal point");
       xmlAddChild(node_model,node_tmp);
       //<u0>
-      sprintf(str,"%.10f",camera.get_u0_pm());
+      sprintf(str,"%.10f",camera.get_u0());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_U0,(xmlChar*)str);
       //<v0>
-      sprintf(str,"%.10f",camera.get_v0_pm());
+      sprintf(str,"%.10f",camera.get_v0());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
 
-      //<kd>
-      node_tmp = xmlNewComment((xmlChar*)"Pixel based distortion ");
+      //<kud>
+      node_tmp = xmlNewComment((xmlChar*)"Undistorted to distorted distortion parameter");
       xmlAddChild(node_model,node_tmp);
-
-      sprintf(str,"%.10f",camera.get_kd_pm());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_KD,(xmlChar*)str);
+      sprintf(str,"%.10f",camera.get_kud());
+      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_KUD,(xmlChar*)str);
+      
+      //<kud>
+      node_tmp = xmlNewComment((xmlChar*)"Distorted to undistorted distortion parameter");
+      xmlAddChild(node_model,node_tmp);
+      sprintf(str,"%.10f",camera.get_kdu());
+      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_KDU,(xmlChar*)str);
     }
-    //<model>
-    node_model = xmlNewNode(NULL,(xmlChar*)LABEL_XML_MODEL);
-    xmlAddChild(node_camera,node_model);
-    {
-      char str[21];
-      //<type>with_meter_based_distortion</type>
-      node_tmp = xmlNewComment((xmlChar*)"Distortion model type");
-      xmlAddChild(node_model,node_tmp);
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_MODEL_TYPE,
-                      (xmlChar*)LABEL_XML_MODEL_WITH_METER_BASED_DISTORTION);
-
-      node_tmp = xmlNewComment((xmlChar*)"Pixel ratio");
-      xmlAddChild(node_model,node_tmp);
-      //<px>
-      sprintf(str,"%.10f",camera.get_px_mp());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PX,(xmlChar*)str);
-      //<py>
-      sprintf(str,"%.10f",camera.get_py_mp());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_PY,(xmlChar*)str);
-
-      node_tmp = xmlNewComment((xmlChar*)"Principal point");
-      xmlAddChild(node_model,node_tmp);
-      //<u0>
-      sprintf(str,"%.10f",camera.get_u0_mp());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_U0,(xmlChar*)str);
-      //<v0>
-      sprintf(str,"%.10f",camera.get_v0_mp());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_V0,(xmlChar*)str);
-
-      //<kd>
-      node_tmp = xmlNewComment((xmlChar*)"Meter based distortion ");
-      xmlAddChild(node_model,node_tmp);
-      sprintf(str,"%.10f",camera.get_kd_mp());
-      xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_KD,(xmlChar*)str);
-    }
+    break;
   }
-
   return back;
 }
+
 /*!
   Translate a string (label) to a xml code.
   \param str : string to translate.
@@ -949,10 +1107,14 @@ vpXmlParserCamera::str2xmlcode (char * str, vpXmlCodeType & res)
   {
     val_int = CODE_XML_PY;
   }
-  else if (! strcmp (str,  LABEL_XML_KD))
+  else if (! strcmp (str,  LABEL_XML_KUD))
   {
-    val_int = CODE_XML_KD;
+    val_int = CODE_XML_KUD;
   }
+  else if (! strcmp (str,  LABEL_XML_KDU))
+  {
+    val_int = CODE_XML_KDU;
+  } 
   else
   {
     val_int = CODE_XML_OTHER;

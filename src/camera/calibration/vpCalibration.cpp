@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.6 2007-12-19 08:25:24 fspindle Exp $
+ * $Id: vpCalibration.cpp,v 1.7 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,18 +95,16 @@ void vpCalibration::operator=(vpCalibration& twinCalibration )
 
   residual = twinCalibration.residual;
   cMo = twinCalibration.cMo;
-  residual_pm = twinCalibration.residual_pm;
-  cMo_pm = twinCalibration.cMo_pm ;
-  residual_mp = twinCalibration.residual_mp;
-  cMo_mp = twinCalibration.cMo_mp ;
+  residual_dist = twinCalibration.residual_dist;
+  cMo_dist = twinCalibration.cMo_dist ;
 
   cam = twinCalibration.cam ;
+  cam_dist = twinCalibration.cam_dist ;
 
-  wMe = twinCalibration.wMe;
+  rMe = twinCalibration.rMe;
 
   eMc = twinCalibration.eMc;
-  eMc_mp = twinCalibration.eMc_mp;
-  eMc_pm = twinCalibration.eMc_pm;
+  eMc_dist = twinCalibration.eMc_dist;
 }
 
 
@@ -207,7 +205,7 @@ vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
   \return the standard deviation by point of the error in pixel .
 */
 double
-vpCalibration::computeStdDeviation_pm(vpHomogeneousMatrix& cMo,
+vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
 				      vpCameraParameters& cam)
 {
   double residual = 0 ;
@@ -218,11 +216,12 @@ vpCalibration::computeStdDeviation_pm(vpHomogeneousMatrix& cMo,
   Lu.front() ;
   Lv.front() ;
 
-  double u0_pm = cam.get_u0_pm() ;
-  double v0_pm = cam.get_v0_pm() ;
-  double px_pm = cam.get_px_pm() ;
-  double py_pm = cam.get_py_pm() ;
-  double kd_pm = cam.get_kd_pm() ;
+  double u0 = cam.get_u0() ;
+  double v0 = cam.get_v0() ;
+  double px = cam.get_px() ;
+  double py = cam.get_py() ;
+  double kud = cam.get_kud() ;
+  double kdu = cam.get_kud() ;
 
   for (unsigned int i =0 ; i < npt ; i++)
   {
@@ -241,95 +240,44 @@ vpCalibration::computeStdDeviation_pm(vpHomogeneousMatrix& cMo,
     double u = Lu.value() ;
     double v = Lv.value() ;
 
-    double r2 = (vpMath::sqr((u-u0_pm)/px_pm)+vpMath::sqr((v-v0_pm)/py_pm)) ;
+    double r2ud = 1+kud*(vpMath::sqr(x)+vpMath::sqr(y)) ;
 
-    double xp = u0_pm + x*px_pm - kd_pm *(u-u0_pm)*r2;
-    double yp = v0_pm + y*py_pm - kd_pm *(v-v0_pm)*r2;
+    double xp = u0 + x*px*r2ud;
+    double yp = v0 + y*py*r2ud;
 
     residual += (vpMath::sqr(xp-u) + vpMath::sqr(yp-v))  ;
 
+    double r2du = (vpMath::sqr((u-u0)/px)+vpMath::sqr((v-v0)/py)) ;
+
+    xp = u0 + x*px - kdu*(u-u0)*r2du;
+    yp = v0 + y*py - kdu*(v-v0)*r2du;
+
+    residual += (vpMath::sqr(xp-u) + vpMath::sqr(yp-v))  ;
+    residual /=2;
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
     Lu.next() ;
     Lv.next() ;
   }
-  this->residual_pm = residual ;
+  this->residual_dist = residual;
   return sqrt(residual/npt) ;
 }
+
 /*!
   Compute and return the standard deviation expressed in pixel
-  for pose matrix and camera intrinsic parameters with meter to pixel model.
-  \param cMo : the matrix that defines the pose to be tested.
-  \param cam : camera intrinsic parameters to be tested.
-  \return the standard deviation by point of the error in pixel .
-*/
-double
-vpCalibration::computeStdDeviation_mp(vpHomogeneousMatrix& cMo,
-				      vpCameraParameters& cam)
-{
-  double residual = 0 ;
-
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
-  Lu.front() ;
-  Lv.front() ;
-
-  double u0_mp = cam.get_u0_mp() ;
-  double v0_mp = cam.get_v0_mp() ;
-  double px_mp = cam.get_px_mp() ;
-  double py_mp = cam.get_py_mp() ;
-  double kd_mp = cam.get_kd_mp() ;
-
-  for (unsigned int i =0 ; i < npt ; i++)
-  {
-
-    double oX = LoX.value() ;
-    double oY = LoY.value() ;
-    double oZ = LoZ.value() ;
-
-    double cX = oX*cMo[0][0]+oY*cMo[0][1]+oZ*cMo[0][2] + cMo[0][3];
-    double cY = oX*cMo[1][0]+oY*cMo[1][1]+oZ*cMo[1][2] + cMo[1][3];
-    double cZ = oX*cMo[2][0]+oY*cMo[2][1]+oZ*cMo[2][2] + cMo[2][3];
-
-    double x = cX/cZ ;
-    double y = cY/cZ ;
-
-    double u = Lu.value() ;
-    double v = Lv.value() ;
-
-    double r2 = (vpMath::sqr(x)+vpMath::sqr(y)) ;
-
-    double xp = u0_mp + x*px_mp*(1 + kd_mp*r2);
-    double yp = v0_mp + y*py_mp*(1 + kd_mp*r2);
-
-    residual += (vpMath::sqr(xp-u) + vpMath::sqr(yp-v))  ;
-
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
-    Lu.next() ;
-    Lv.next() ;
-  }
-  this->residual_mp = residual ;
-  return sqrt(residual/npt) ;
-}
-/*!
-  Compute and return the standard deviation expressed in pixel
-  for pose matrix and camera intrinsic parameters with meter to pixel model
-  and pixel to meter model.
+  for pose matrix and camera intrinsic parameters.
   \param deviation   : the standard deviation computed for the model without distortion.
-  \param deviation_pm : the standard deviation computed for the pixel to meter model.
-  \param deviation_mp : the standard deviation computed for the meter to pixel model
+  \param deviation_dist : the standard deviation computed for the model with distortion.
 */
 void
-vpCalibration::computeStdDeviation(double &deviation,double &deviation_pm, double &deviation_mp)
+vpCalibration::computeStdDeviation(double &deviation,double &deviation_dist)
 {
   deviation   = computeStdDeviation(cMo,cam);
-  deviation_pm = computeStdDeviation_pm(cMo_pm,cam);
-  deviation_mp = computeStdDeviation_mp(cMo_mp,cam);
+  deviation_dist = computeStdDeviation_dist(cMo_dist,cam_dist);
 }
+
+
 /*!
   Compute the calibration according to the desired method.
 
@@ -362,13 +310,13 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
 				  bool verbose)
 {
   try{
-    vpHomogeneousMatrix cMo_mp,cMo_pm ;
+    vpHomogeneousMatrix cMo_dist;
     switch (method)
     {
     case CALIB_LAGRANGE :
     case CALIB_LAGRANGE_VIRTUAL_VS :
       {
-	calibLagrange(cam, cMo);
+	      calibLagrange(cam, cMo);
       }
       break;
     default:
@@ -384,35 +332,32 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
       {
 	if (verbose){std::cout << "start calibration without distortion"<< std::endl;}
 	calibVVS(cam, cMo, verbose);
-	cMo_pm = cMo ;
-	cMo_mp = cMo ;
+	cMo_dist = cMo ;
       }
       break ;
     default:
       break;
     }
 
+    this->cam = cam;
+      
     switch (method)
     {
     case CALIB_VIRTUAL_VS_DIST:
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST:
       {
 	if (verbose){std::cout << "start calibration with distortion"<< std::endl;}
-	if (verbose){std::cout << "For pixel to meter camera parameters :"<< std::endl;}
-	calibVVSWithDistortion_pm(cam, cMo_pm, verbose);
-	if (verbose){std::cout << "For meter to pixel camera parameters : "<< std::endl;}
-	calibVVSWithDistortion_mp(cam, cMo_mp, verbose);
+	calibVVSWithDistortion(cam, cMo_dist, verbose);
       }
       break ;
     default:
       break;
     }
 
-    this->cam = cam ;
+    this->cam_dist = cam ;
 
     this->cMo = cMo ;
-    this->cMo_mp = cMo_mp ;
-    this->cMo_pm = cMo_pm ;
+    this->cMo_dist = cMo_dist ;
     return 0 ;
   }
   catch(...){
@@ -455,8 +400,8 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
       else {
 	table_cal[0].calibLagrange(cam,table_cal[0].cMo);
 	table_cal[0].cam = cam ;
-	table_cal[0].cMo_pm = table_cal[0].cMo ;
-	table_cal[0].cMo_mp = table_cal[0].cMo ;
+  table_cal[0].cam_dist = cam ;
+  table_cal[0].cMo_dist = table_cal[0].cMo ;
       }
       break;
     case CALIB_LAGRANGE_VIRTUAL_VS :
@@ -470,8 +415,8 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
       else {
 	table_cal[0].calibLagrange(cam,table_cal[0].cMo);
 	table_cal[0].cam = cam ;
-	table_cal[0].cMo_pm = table_cal[0].cMo ;
-	table_cal[0].cMo_mp = table_cal[0].cMo ;
+  table_cal[0].cam_dist = cam ;
+  table_cal[0].cMo_dist = table_cal[0].cMo ;
       }
     case CALIB_VIRTUAL_VS:
     case CALIB_VIRTUAL_VS_DIST:
@@ -496,17 +441,10 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST :
     case CALIB_VIRTUAL_VS_DIST:
       {
-	if(verbose)
-	  std::cout << "Compute camera parameters with distortion"<<std::endl
-		    << "for pixel to meter model:" << std::endl;
+	     if(verbose)
+	       std::cout << "Compute camera parameters with distortion"<<std::endl;
 
-	calibVVSWithDistortionMulti_pm(nbPose, table_cal, cam, verbose);
-
-	if(verbose)
-	  std::cout << "Compute camera parameters with distortion"<<std::endl
-		    << "for meter to pixel model:" << std::endl;
-
-	calibVVSWithDistortionMulti_mp(nbPose, table_cal, cam, verbose);
+	     calibVVSWithDistortionMulti(nbPose, table_cal, cam, verbose);
       }
       break ;
     }
@@ -516,7 +454,6 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
       cam.printParameters();
       std::cout<<std::endl;
     }
-
     return 0 ;
   }
   catch(...){ throw; }
@@ -530,54 +467,45 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
   and wMe of each vpCalibration have to be initialized.
   \param eMc : output: estimated pose of the camera in relation to the effector
   with the camera model without distortion.
-  \param eMc_mp : output: estimated pose of the camera in relation to the effector
-  with the meter based distortion model.
-  \param eMc_pm : output: estimated pose of the camera in relation to the effector
-  with the pixel based distortion model.
+  \param eMc_dist : output: estimated pose of the camera in relation to the
+  effector with the model with distortion.
   \return 0 if the computation managed.
 */
 int
 vpCalibration::computeCalibrationTsai(unsigned int nbPose,
                                       vpCalibration table_cal[],
                                       vpHomogeneousMatrix& eMc,
-                                      vpHomogeneousMatrix& eMc_mp,
-                                      vpHomogeneousMatrix& eMc_pm)
+                                      vpHomogeneousMatrix& eMc_dist)
 {
   vpHomogeneousMatrix* table_cMo = new vpHomogeneousMatrix[nbPose];
-  vpHomogeneousMatrix* table_cMo_mp = new vpHomogeneousMatrix[nbPose];
-  vpHomogeneousMatrix* table_cMo_pm = new vpHomogeneousMatrix[nbPose];
-  vpHomogeneousMatrix* table_wMe = new vpHomogeneousMatrix[nbPose];
+  vpHomogeneousMatrix* table_cMo_dist = new vpHomogeneousMatrix[nbPose];
+  vpHomogeneousMatrix* table_rMe = new vpHomogeneousMatrix[nbPose];
   try{
     if (nbPose > 2){
       for(unsigned int i=0;i<nbPose;i++){
         table_cMo[i] = table_cal[i].cMo;
-        table_cMo_mp[i] = table_cal[i].cMo_mp;
-        table_cMo_pm[i] = table_cal[i].cMo_pm;
-        table_wMe[i] = table_cal[i].wMe;
+        table_cMo_dist[i] = table_cal[i].cMo_dist;
+        table_rMe[i] = table_cal[i].rMe;
       }
-      calibrationTsai(nbPose,table_cMo,table_wMe,eMc);
-      calibrationTsai(nbPose,table_cMo_mp,table_wMe,eMc_mp);
-      calibrationTsai(nbPose,table_cMo_pm,table_wMe,eMc_pm);
+      calibrationTsai(nbPose,table_cMo,table_rMe,eMc);
+      calibrationTsai(nbPose,table_cMo_dist,table_rMe,eMc_dist);
       delete [] table_cMo;
-      delete [] table_cMo_mp;
-      delete [] table_cMo_pm;
-      delete [] table_wMe;
+      delete [] table_cMo_dist;
+      delete [] table_rMe;
       return 0;
     }
     else{
       vpERROR_TRACE("Three images are needed to compute Tsai calibration !\n");
       delete [] table_cMo;
-      delete [] table_cMo_mp;
-      delete [] table_cMo_pm;
-      delete [] table_wMe;
+      delete [] table_cMo_dist;
+      delete [] table_rMe;
       return -1;
     }
   }
   catch(...){
     delete [] table_cMo;
-    delete [] table_cMo_mp;
-    delete [] table_cMo_pm;
-    delete [] table_wMe;
+    delete [] table_cMo_dist;
+    delete [] table_rMe;
     throw;
   }
 }
@@ -740,18 +668,24 @@ vpCalibration::displayData(vpImage<unsigned char> &I, vpColor::vpColorType col)
 
 /*!
   Display estimated centers of dots using intrinsic camera parameters
-  with meter to pixel model and the computed pose.
+  with model with distortion and the computed pose.
   \param I : Image where to display grid data.
   \param col : color of the data.
 */
 int
 vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
 {
-  double u0 = cam.get_u0_mp() ;
-  double v0 = cam.get_v0_mp() ;
-  double px = cam.get_px_mp() ;
-  double py = cam.get_py_mp() ;
-  double kd = cam.get_kd_mp() ;
+  double u0_dist = cam_dist.get_u0() ;
+  double v0_dist = cam_dist.get_v0() ;
+  double px_dist = cam_dist.get_px() ;
+  double py_dist = cam_dist.get_py() ;
+  double kud_dist = cam_dist.get_kud() ;
+  double kdu_dist = cam_dist.get_kdu() ;
+
+  double u0 = cam.get_u0() ;
+  double v0 = cam.get_v0() ;
+  double px = cam.get_px() ;
+  double py = cam.get_py() ;
 
   LoX.front() ;
   LoY.front() ;
@@ -764,20 +698,35 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
     double oY = LoY.value() ;
     double oZ = LoZ.value() ;
 
-    double cX = oX*cMo_mp[0][0]+oY*cMo_mp[0][1]+oZ*cMo_mp[0][2] + cMo_mp[0][3];
-    double cY = oX*cMo_mp[1][0]+oY*cMo_mp[1][1]+oZ*cMo_mp[1][2] + cMo_mp[1][3];
-    double cZ = oX*cMo_mp[2][0]+oY*cMo_mp[2][1]+oZ*cMo_mp[2][2] + cMo_mp[2][3];
+    double cX = oX*cMo[0][0]+oY*cMo[0][1]+oZ*cMo[0][2] + cMo[0][3];
+    double cY = oX*cMo[1][0]+oY*cMo[1][1]+oZ*cMo[1][2] + cMo[1][3];
+    double cZ = oX*cMo[2][0]+oY*cMo[2][1]+oZ*cMo[2][2] + cMo[2][3];
 
     double x = cX/cZ ;
     double y = cY/cZ ;
 
-    double r2 = vpMath::sqr(x)+vpMath::sqr(y) ;
-
-    double xp = u0 + x*px*(1+kd*r2) ;
-    double yp = v0 + y*py*(1+kd*r2) ;
+    double xp = u0 + x*px ;
+    double yp = v0 + y*py ;
 
     vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp), 5,col) ;
 
+
+    cX = oX*cMo_dist[0][0]+oY*cMo_dist[0][1]+oZ*cMo_dist[0][2] + cMo_dist[0][3];
+    cY = oX*cMo_dist[1][0]+oY*cMo_dist[1][1]+oZ*cMo_dist[1][2] + cMo_dist[1][3];
+    cZ = oX*cMo_dist[2][0]+oY*cMo_dist[2][1]+oZ*cMo_dist[2][2] + cMo_dist[2][3];
+
+    x = cX/cZ ;
+    y = cY/cZ ;
+
+    double r2 = 1+kud_dist*(vpMath::sqr(x)+vpMath::sqr(y)) ;
+
+    xp = u0_dist + x*px_dist*r2 ;
+    yp = v0_dist + y*py_dist*r2 ;
+
+    vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp), 5,vpColor::yellow) ;
+///////////////////////////////////////
+
+    
     //    std::cout << oX << "  " << oY <<  "  " <<oZ << std::endl ;
     //    I.getClick() ;
     LoX.next() ;

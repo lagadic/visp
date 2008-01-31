@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPixelMeterConversion.h,v 1.4 2007-11-19 15:40:58 asaunier Exp $
+ * $Id: vpPixelMeterConversion.h,v 1.5 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,24 +62,33 @@ public:
 
 /*!
   \brief point coordinates conversion (u,v)->(x,y)
+  The used formula depends on the projection model of the camera.
+
   \param cam : camera parameters.
   \param u,v : input coordinates in pixels.
   \param x,y : output coordinates in meter.
-  \param usedistortion : set as true if it is needed to use camera parameters
-    with distortion.
 
-  \f$ x = (u-u_0)*(1+k_d*r^2)/p_x \f$ and  \f$ y = (v-v_0)*(1+k_d*r^2)/p_y  \f$
-      with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$
+  \f$ x = (u-u_0)/p_x \f$ and \f$ y = (v-v_0)/p_y  \f$ in the case of
+  perspective projection without distortion.
+
+  \f$ x = (u-u_0)*(1+k_{du}*r^2)/p_x \f$ and
+  \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y  \f$
+  with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$ in the case of perspective
+  projection with distortion.
 */
 inline static void
 convertPoint(const vpCameraParameters &cam,
   const double &u, const double &v,
-  double &x, double &y, bool usedistortion = false)
+  double &x, double &y)
 {
-  if(usedistortion == false)
-    convertPointWithoutDistortion(cam,u,v,x,y);
-  else
-    convertPointWithDistortion(cam,u,v,x,y);
+  switch(cam.projModel){
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+      convertPointWithoutDistortion(cam,u,v,x,y);
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+      convertPointWithDistortion(cam,u,v,x,y);
+      break;
+  }       
 }
 
 /*!
@@ -96,24 +105,8 @@ convertPointWithoutDistortion(
   const double &u, const double &v,
   double &x, double &y)
 {
-  if (fabs(cam.get_px())<1e-6)
-  {
-    vpERROR_TRACE("Camera parameter px = 0") ;
-    throw(vpException(vpException::divideByZeroError,
-          "Camera parameter px = 0")) ;
-  }
-  if (fabs(cam.get_py())<1e-6)
-  {
-    vpERROR_TRACE("Camera parameter py = 0") ;
-    throw(vpException(vpException::divideByZeroError,
-          "Camera parameter px = 0")) ;
-  }
-  double u0 = cam.get_u0();
-  double v0 = cam.get_v0();
-  double px = cam.get_px();
-  double py = cam.get_py();
-    x = (u - u0)/px ;
-    y = (v - v0)/py ;
+    x = (u - cam.u0)*cam.inv_px ;
+    y = (v - cam.v0)*cam.inv_py ;
 }
 
 /*!
@@ -122,8 +115,9 @@ convertPointWithoutDistortion(
   \param u,v : input coordinates in pixels.
   \param x,y : output coordinates in meter.
 
-  \f$ x = (u-u_0)*(1+k_d*r^2)/p_x \f$ and  \f$ y = (v-v_0)*(1+k_d*r^2)/p_y  \f$
-      with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$
+  \f$ x = (u-u_0)*(1+k_{du}*r^2)/p_x \f$ and
+  \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y \f$
+  with \f$ r^2=((u - u_0)/p_x)^2 + ((v-v_0)/p_y)^2 \f$
 */
 inline static void
 convertPointWithDistortion(
@@ -131,27 +125,10 @@ convertPointWithDistortion(
   const double &u, const double &v,
   double &x, double &y)
 {
-
-  if (fabs(cam.get_px_pm())<1e-6)
-  {
-    vpERROR_TRACE("Camera parameter px = 0") ;
-    throw(vpException(vpException::divideByZeroError,
-          "Camera parameter px = 0")) ;
-  }
-  if (fabs(cam.get_py_pm())<1e-6)
-  {
-    vpERROR_TRACE("Camera parameter py = 0") ;
-    throw(vpException(vpException::divideByZeroError,
-          "Camera parameter px = 0")) ;
-  }
-  double u0 = cam.get_u0_pm();
-  double v0 = cam.get_v0_pm();
-  double px = cam.get_px_pm();
-  double py = cam.get_py_pm();
-  double kd = cam.get_kd_pm();
-  double r2 = vpMath::sqr((u - u0)/px) + vpMath::sqr((v-v0)/py);
-  x = (u - u0)*(1+kd*r2)/px ;
-  y = (v - v0)*(1+kd*r2)/py ;
+  double r2 = 1.+cam.kdu*(vpMath::sqr((u - cam.u0)*cam.inv_px) +
+              vpMath::sqr((v-cam.v0)*cam.inv_py));
+  x = (u - cam.u0)*r2*cam.inv_px ;
+  y = (v - cam.v0)*r2*cam.inv_py ;
 }
   //! line coordinates conversion (rho,theta)
   static void convertLine(const vpCameraParameters &cam,
