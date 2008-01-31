@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.3 2007-12-21 09:54:54 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.4 2008-01-31 14:42:44 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,9 +108,6 @@ FILE *flowe=NULL;
 
   \param cam : Intrinsic camera parameters.
 
-  \param useDistortion : Indicates if the camera distortion has to be used
-  to convert pixels in meters or vice versa.
-
   \param cMo : Homogeneous matrix in output describing the transformation
   between the camera and object frame.
 
@@ -123,7 +120,7 @@ FILE *flowe=NULL;
 
 */
 void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
-		  vpCameraParameters cam, bool useDistortion,
+		  vpCameraParameters cam,
 		  vpHomogeneousMatrix &cMo,
 		  vpTranslationVector &cto,
 		  vpRxyzVector &cro, bool init)
@@ -140,7 +137,7 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
 // 	      << " " << dot[i].get_v() << std::endl;
     vpPixelMeterConversion::convertPoint(cam,
 					 dot[i].get_u(), dot[i].get_v(),
-					 x, y, useDistortion) ; //pixel to meter conversion
+					 x, y) ; //pixel to meter conversion
 //     std::cout << "point cam: " << i << x << " " << y << std::endl;
     point[i].set_x(x) ;//projection perspective          p
     point[i].set_y(y) ;
@@ -259,15 +256,14 @@ main()
       FILE *fdpose = fopen(filename, "w");
       delete [] filename;
 
-      bool useDistortion = true;
+      vpCameraParameters::vpCameraParametersProjType
+          projModel = vpCameraParameters::perspectiveProjWithDistortion;
       vpRobotAfma6 robot;
 
-      if (useDistortion) {
-	// Load the end-effector to camera frame transformation obtained
-	// using a camera intrinsic model with distortion
-	robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, useDistortion);
-      }
-
+      // Load the end-effector to camera frame transformation obtained
+	    // using a camera intrinsic model with distortion
+	    robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, projModel);
+      
       vpServo task ;
 
       vpImage<unsigned char> I ;
@@ -300,12 +296,12 @@ main()
       std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
 	   << std::endl;
       for (i=0 ; i < 4 ; i++) {
-	dot[i].initTracking(I) ;
-	vpDisplay::displayCross(I,
-				(unsigned int)dot[i].get_v(),
-				(unsigned int)dot[i].get_u(),
-				10, vpColor::blue) ;
-	vpDisplay::flush(I);
+	      dot[i].initTracking(I) ;
+	      vpDisplay::displayCross(I,
+				      (unsigned int)dot[i].get_v(),
+				      (unsigned int)dot[i].get_u(),
+				      10, vpColor::blue) ;
+	      vpDisplay::flush(I);
       }
 
       vpCameraParameters cam ;
@@ -315,7 +311,7 @@ main()
       vpTRACE("sets the current position of the visual feature ") ;
       vpFeaturePoint p[4] ;
       for (i=0 ; i < 4 ; i++)
-	vpFeatureBuilder::create(p[i], cam, dot[i], useDistortion);  //retrieve x,y  of the vpFeaturePoint structure
+      	vpFeatureBuilder::create(p[i], cam, dot[i]);  //retrieve x,y  of the vpFeaturePoint structure
 
       // Set the position of the square target in a frame which origin is
       // centered in the middle of the square
@@ -337,13 +333,13 @@ main()
       vpFeaturePoint pd[4] ;
       // Compute the desired position of the features from the desired pose
       for (int i=0; i < 4; i ++) {
-	vpColVector cP, p ;
-	point[i].changeFrame(cMo, cP) ;
-	point[i].projection(cP, p) ;
+	      vpColVector cP, p ;
+	      point[i].changeFrame(cMo, cP) ;
+	      point[i].projection(cP, p) ;
 
-	pd[i].set_x(p[0]) ;
-	pd[i].set_y(p[1]) ;
-	pd[i].set_Z(cP[2]);
+	      pd[i].set_x(p[0]) ;
+	      pd[i].set_y(p[1]) ;
+	      pd[i].set_Z(cP[2]);
       }
 
       vpTRACE("define the task") ;
@@ -356,7 +352,7 @@ main()
       vpTRACE("\t we want to see a point on a point..") ;
       std::cout << std::endl ;
       for (i=0 ; i < 4 ; i++)
-	task.addFeature(p[i],pd[i]) ;
+        task.addFeature(p[i],pd[i]) ;
 
       vpTRACE("\t set the gain") ;
       task.setLambda(0.6) ;
@@ -370,67 +366,67 @@ main()
       double error = 1;
       vpTRACE("\t loop") ;
       while(error > 0.000001 ) {
-	std::cout << "-------------------------------" << iter <<std::endl ;
+	      std::cout << "-------------------------------" << iter <<std::endl ;
 
-	g.acquire(I) ;
-	vpDisplay::display(I) ;
+	      g.acquire(I) ;
+	      vpDisplay::display(I) ;
 
-	for (i=0 ; i < 4 ; i++) {
-	  dot[i].track(I) ;
-	  vpDisplay::displayCross(I,
-				  (unsigned int)dot[i].get_v(),
-				  (unsigned int)dot[i].get_u(),
-				  10, vpColor::green) ;
-	}
+	      for (i=0 ; i < 4 ; i++) {
+	        dot[i].track(I) ;
+	        vpDisplay::displayCross(I,
+				        (unsigned int)dot[i].get_v(),
+				        (unsigned int)dot[i].get_u(),
+				        10, vpColor::green) ;
+	      }
 
-	if (iter == 0) {
-	  compute_pose(point, dot, 4, cam, useDistortion, cMo, cto, cro, true);
-	  // At the first iteration we compute the pose using Lagrange and
-	  // Dementhon methods, chose the best estimated pose (either Lagrange
-	  // or Dementhon) and than compute the pose using LOWE method with
-	  // Lagrange or Dementhon pose as initiaisation.
-	}
-	else {
-	  // During the servo, we compute the pose using LOWE method. For the
-	  // initial pose used in the non linear minimisation we use the pose
-	  // computed at the previous iteration.
-	  compute_pose(point, dot, 4, cam, useDistortion, cMo, cto, cro, false);
-	}
+	      if (iter == 0) {
+	        compute_pose(point, dot, 4, cam, cMo, cto, cro, true);
+	        // At the first iteration we compute the pose using Lagrange and
+	        // Dementhon methods, chose the best estimated pose (either Lagrange
+	        // or Dementhon) and than compute the pose using LOWE method with
+	        // Lagrange or Dementhon pose as initiaisation.
+	      }
+	      else {
+	        // During the servo, we compute the pose using LOWE method. For the
+	        // initial pose used in the non linear minimisation we use the pose
+	        // computed at the previous iteration.
+	        compute_pose(point, dot, 4, cam, cMo, cto, cro, false);
+	      }
 
-	// Save the resulting pose: translations in meters, rotations (rx, ry,
-	// rz) in degrees
-	fprintf(fdpose, "%g %g %g %g %g %g\n",
-		cto[0], cto[1], cto[2],
-		vpMath::deg(cro[0]),
-		vpMath::deg(cro[1]),
-		vpMath::deg(cro[2]));
+	      // Save the resulting pose: translations in meters, rotations (rx, ry,
+	      // rz) in degrees
+	      fprintf(fdpose, "%g %g %g %g %g %g\n",
+		      cto[0], cto[1], cto[2],
+		      vpMath::deg(cro[0]),
+		      vpMath::deg(cro[1]),
+		      vpMath::deg(cro[2]));
 
-	for (i=0 ; i < 4 ; i++) {
-	  vpFeatureBuilder::create(p[i], cam, dot[i], useDistortion);
-	  // Set the feature Z coordinate from the pose
-	  vpColVector cP;
-	  point[i].changeFrame(cMo, cP) ;
+	      for (i=0 ; i < 4 ; i++) {
+	        vpFeatureBuilder::create(p[i], cam, dot[i]);
+	        // Set the feature Z coordinate from the pose
+	        vpColVector cP;
+	        point[i].changeFrame(cMo, cP) ;
 
-	  p[i].set_Z(cP[2]);
-	}
+	        p[i].set_Z(cP[2]);
+	      }
 
-	task.print() ;
+	      task.print() ;
 
-	vpColVector v ;
-	v = task.computeControlLaw() ;
+	      vpColVector v ;
+	      v = task.computeControlLaw() ;
 
-	vpServoDisplay::display(task, cam, I, useDistortion);
-	//	v = 0;
-	std::cout << "Velocity: " <<v.t() ;
+	      vpServoDisplay::display(task, cam, I);
+	      //	v = 0;
+	      std::cout << "Velocity: " <<v.t() ;
 
-	robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+	      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-	vpDisplay::flush(I) ;
+	      vpDisplay::flush(I) ;
 
-	error = task.error.sumSquare();
-	vpTRACE("\t\t || s - s* || = %g ", error) ;
+	      error = task.error.sumSquare();
+	      vpTRACE("\t\t || s - s* || = %g ", error) ;
 
-	iter ++;
+	      iter ++;
       }
 
       fclose(fdpose);
