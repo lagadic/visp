@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.9 2008-01-31 14:43:50 asaunier Exp $
+ * $Id: vpCameraParameters.h,v 1.10 2008-01-31 17:35:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,17 +53,24 @@
 
 /*!
   \class vpCameraParameters
-  \brief Declaration of the vpCameraParameters class.
-  Generic class defining the camera intrinsic parameters
+  \brief Generic class defining intrinsic camera parameters.
+  Two kinds of camera modelisation are implemented:
+  - Camera parameters for a perspective projection without distortion model,
+  - Camera parameters for a perspective projection with distortion model.
 
-  The main parameters intrinsic that describe the camera are
-  (px, py) the ratio between the focal length and the size of a pixel,
-  and (u0, v0) that  are the coordinates of the principal point.
+  The main intrinsic camera parameters are \f$(p_x, p_y)\f$ the ratio
+  between the focal length and the size of a pixel, and \f$(u_0,
+  v_0)\f$ the coordinates of the principal point in pixel. The lens
+  distorsion can also be considered by two additional parameters
+  \f$(k_{ud}, k_{du})\f$.
 
+  <b>1. Camera parameters for a perspective projection without distortion model</b>
 
-  If we denote (u,v) the position of the corresponding pixel in the digitized
-  image, this position is related to the coordinates (x,y) in the normalized
-  space by:
+  In this modelisation, only \f$u_0,v_0,p_x,p_y\f$ parameters are
+  used.  If we denote \f$(u,v)\f$ the position of a pixel in the
+  digitized image, this position is related to the corresponding
+  coordinates \f$(x,y)\f$ in the normalized space (in meter) by:
+
   \f[
   \left\{ \begin{array}{l}
   u = u_0 + p_x x  \\
@@ -71,7 +78,17 @@
   \end{array}\right.
   \f]
 
-  if a model with distortion is considered, we got:
+  The conversion from pixel coordinates \f$(u,v)\f$ in the normalized
+  space \f$(x,y)\f$ is implemented in vpPixelMeterConversion, whereas
+  the conversion from normalized coordinates into pixel is implemented
+  in vpMeterPixelConversion.
+
+  <b>2. Camera parameters for a perspective projection with distortion model</b>
+
+  In this modelisation, \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$
+  parameters are used.  If a model with distortion is considered, we
+  got:
+
   \f[
   \left\{ \begin{array}{l}
   u = u_0 + p_x x +  \delta_u \\
@@ -92,8 +109,7 @@
   \delta_v(x,y) = k_{ud}\; r^2\; p_y y
   \end{array}\right.
   \f]
-  with \f[ r^2 = x^2 + y^2 \f].
-
+  with \f[ r^2 = x^2 + y^2 \f]
   This model is usefull to convert meter to pixel coordinates because in this
   case :
   \f[
@@ -103,6 +119,8 @@
   v = f_v(x,y) =  v_0 + p_y y\left(1+k_{ud}\left(x^2 + y^2\right)\right)
   \end{array}\right.
   \f]
+  The conversion from normalized coordinates \f$(x,y)\f$ into pixel
+  \f$(u,v)\f$ is implemented in vpMeterPixelConversion.
 
   - or with a distorted to undistorted model
   \f[
@@ -112,8 +130,7 @@
   \delta_v(u,v) = -k_{du}\; r^2\; \left(v-v_0\right)
   \end{array}\right.
   \f]
-  with \f[ r^2 = {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \f].
-
+  with \f[ r^2 = {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \f]
   This model is usefull to convert pixel to meter coordinates because in this
   case :
   \f[
@@ -123,35 +140,69 @@
   y = f_y(u,v) =  \frac{v-v_0}{p_y}\left(1+k_{du}\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)
   \end{array}\right.
   \f]
+  The conversion from pixel coordinates \f$(u,v)\f$ in the normalized
+  space \f$(x,y)\f$ is implemented in vpPixelMeterConversion.
 
-  The projection model is defined when an init function is called. By default,
-  the used projection model is the perpective projection without distortion.
+  The selection of one of these modelisations is done during
+  vpCameraParameters initialisation.
 
-  Here an example of camera initialization :
+  Here an example of camera initialisation, for a model without distortion:
   \code
+  double px = 600;
+  double py = 600;
+  double u0 = 320;
+  double v0 = 240;
+
+  // Create a camera parameter container
   vpCameraParameters cam;
+  // Camera initialization with a perspective projection without distortion model
+  cam.initPersProjWithoutDistortion(px,py,u0,v0);
+  // It is also possible to print the current camera parameters
+  cam.printParameters();
+  \endcode
+
+  The same initialisation (for a model without distortion) can be done by:
+  \code
+  double px = 600;
+  double py = 600;
+  double u0 = 320;
+  double v0 = 240;
+
+  // Create a camera parameter container. By default, a perspective projection 
+  // without distortion model is set.
+  vpCameraParameters cam;
+
+  // Set the principal point coordinates (u0,v0)
+  cam.setPrincipalPoint(u0,v0);
+  // Set the pixel ratio (px, py)
+  cam.setPixelRatio (px,py)
+  \endcode
+
+  Here an example of camera initialisation, for a model with distortion:
+  \code
   double px = 600;
   double py = 600;
   double u0 = 320;
   double v0 = 240;
   double kud = -0.19;
   double kdu = 0.20;
-  vpCameraParameters::vpCameraParametersProjType projModel;
 
-  //camera initialization with a perspective projection without distortion model
-  cam.initPersProjWithoutDistortion(px,py,u0,v0);
-  //get_projModel() is usefull to know the current projection model used.
-  projModel = cam.get_projModel();
+  // Create a camera parameter container
+  vpCameraParameters cam;
 
-  //camera initialization with a perspective projection with distortion model
+  // Camera initialization with a perspective projection without distortion model
   cam.initPersProjWithDistortion(px,py,u0,v0,kud,kdu);
-  //Here the returned projection model is
-  //  vpCameraParameters::perspectiveProjWithDistortion
-  projModel = cam.get_projModel();
-
-  //It is also possible to print the current camera parameters
-  cam.printParameters();
   \endcode
+
+  The code below shows how to know the currently used projection model:
+  \code
+  vpCameraParameters cam;
+  ...
+  vpCameraParameters::vpCameraParametersProjType projModel;
+  projModel = cam.get_projModel(); // Get the projection model type
+  \endcode
+
+  An XML parser for camera parameters is also provided in vpXmlParserCamera.
 */
 class VISP_EXPORT vpCameraParameters
 {
@@ -159,8 +210,8 @@ class VISP_EXPORT vpCameraParameters
   friend class vpPixelMeterConversion;
 public :
   typedef enum{
-    perspectiveProjWithoutDistortion,
-    perspectiveProjWithDistortion 
+    perspectiveProjWithoutDistortion, //!< Perspective projection without distortion model
+    perspectiveProjWithDistortion  //!< Perspective projection with distortion model
   } vpCameraParametersProjType ;
   
 private:
