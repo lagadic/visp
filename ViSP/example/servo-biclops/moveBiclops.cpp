@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveBiclops.cpp,v 1.3 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: moveBiclops.cpp,v 1.4 2008-01-31 14:41:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -295,6 +295,7 @@ int
 main()
 {
   vpERROR_TRACE("You do not have a biclops robot connected to your computer...");
+  return 0; 
 }
 
 #endif
