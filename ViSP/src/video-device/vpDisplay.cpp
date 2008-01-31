@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.26 2008-01-30 15:32:25 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.27 2008-01-31 14:58:46 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -310,8 +310,7 @@ void
 vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
-                          double size, vpColor::vpColorType col,
-                          const bool usedistortion )
+                          double size, vpColor::vpColorType col)
 {
   // used by display
   vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
@@ -328,21 +327,21 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
 
   if ( col == vpColor::none )
   {
-    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy,usedistortion ) ;
+    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1,usedistortion ) ;
+    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
                               vpColor::green ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1,usedistortion ) ;
+    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
                               vpColor::blue ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1,usedistortion ) ;
+    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
@@ -350,21 +349,21 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
   }
   else
   {
-    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy,usedistortion ) ;
+    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1,usedistortion ) ;
+    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
                               col ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1,usedistortion ) ;
+    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
                               col ) ;
 
-    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1,usedistortion ) ;
+    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
@@ -417,7 +416,7 @@ vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               int i, int j,
 			      unsigned int width, unsigned int height,
                               vpColor::vpColorType col, bool fill,
-			      unsigned int e)
+			                        unsigned int e)
 {
   try
   {
@@ -446,7 +445,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               const vpRect &rect,
                               vpColor::vpColorType col, bool fill,
-			      unsigned int e )
+			                        unsigned int e )
 {
   try
   {
@@ -556,7 +555,7 @@ bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
 bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
                             unsigned int& i, unsigned int& j,
                             vpMouseButton::vpMouseButtonType& button,
-			    bool blocking)
+			                      bool blocking)
 {
   try
   {
@@ -601,7 +600,7 @@ bool
 vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
                         unsigned int& i, unsigned int& j,
                         vpMouseButton::vpMouseButtonType& button,
-			bool blocking )
+			                  bool blocking )
 {
   try
   {
@@ -942,7 +941,7 @@ bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
 bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
                             unsigned int& i, unsigned int& j,
                             vpMouseButton::vpMouseButtonType& button, 
-			    bool blocking )
+			                      bool blocking )
 {
   try
   {
@@ -988,7 +987,7 @@ bool
 vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
                         unsigned int& i, unsigned int& j,
                         vpMouseButton::vpMouseButtonType& button, 
-			bool blocking )
+			                  bool blocking )
 {
   try
   {
@@ -1226,7 +1225,7 @@ vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
 */
 bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
                                unsigned int& u, unsigned int& v, 
-			       bool blocking )
+			                         bool blocking )
 {
   try
   {
@@ -1249,7 +1248,7 @@ bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
 bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
                                unsigned int& u, unsigned int& v,
                                vpMouseButton::vpMouseButtonType& button, 
-			       bool blocking )
+			                         bool blocking )
 {
   try
   {
@@ -1274,7 +1273,7 @@ bool
 vpDisplay::getClickUp_uv ( const vpImage<unsigned char> &I,
                            unsigned int& u, unsigned int& v,
                            vpMouseButton::vpMouseButtonType& button,
-			   bool blocking )
+			                     bool blocking )
 {
   try
   {
@@ -1474,7 +1473,7 @@ vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
 */
 bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
                                unsigned int& u, unsigned int& v, 
-			       bool blocking )
+			                         bool blocking )
 {
   try
   {
@@ -1497,7 +1496,7 @@ bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
 bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
                                unsigned int& u, unsigned int& v,
                                vpMouseButton::vpMouseButtonType& button,
-			       bool blocking )
+			                         bool blocking )
 {
   try
   {
@@ -1522,7 +1521,7 @@ bool
 vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
                            unsigned int& u, unsigned int& v,
                            vpMouseButton::vpMouseButtonType& button,
-			   bool blocking )
+			                     bool blocking )
 {
   try
   {

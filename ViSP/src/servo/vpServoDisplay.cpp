@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoDisplay.cpp,v 1.6 2007-12-18 15:03:16 fspindle Exp $
+ * $Id: vpServoDisplay.cpp,v 1.7 2008-01-31 14:51:43 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,8 +67,6 @@
   \param cam : Camera parameters.
   \param I : Image on which features have to be displayed.
 
-  \param useDistortion : Allows to use the distortion in the camera models.
-
   \param currentColor : Color for the current features. If vpColor::none,
   current features display is turned off.
 
@@ -80,7 +78,6 @@ void
 vpServoDisplay::display(vpServo &s,
 			const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			bool useDistortion,
 			vpColor::vpColorType currentColor,
 			vpColor::vpColorType desiredColor)
 {
@@ -98,12 +95,12 @@ vpServoDisplay::display(vpServo &s,
     if (desiredColor != vpColor::none) {
       // desired list
       s_ptr = s.desiredFeatureList.value() ;
-      s_ptr->display(cam, I, useDistortion, desiredColor ) ;
+      s_ptr->display(cam, I, desiredColor ) ;
     }
     if (currentColor != vpColor::none) {
       // current list
       s_ptr =  s.featureList.value() ;
-      s_ptr->display(cam, I, useDistortion, currentColor ) ;
+      s_ptr->display(cam, I, currentColor ) ;
     }
   }
 

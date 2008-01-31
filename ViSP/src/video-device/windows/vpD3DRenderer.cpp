@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.11 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.12 2008-01-31 14:58:46 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -699,10 +699,10 @@ void vpD3DRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &rec, 0)!= D3D_OK)
-	{
-	  vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
-	  return;
-	}
+	    {
+	      vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
+	      return;
+	    }
 
       //gets the buffer and pitch of the texture
       unsigned int pitch = d3dLRect.Pitch;
@@ -716,17 +716,17 @@ void vpD3DRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
 
       subDrawCircle(j-rleft, i-rtop, x, y, c, buf, pitch, rectW, rectH);
       while(x < y){
-	x++;
-	if (p < 0)
-	  {
-	    p += (x+1)<<1;
-	  }
-	else
-	  {
-	    y--;
-	    p += ((x-y)<<1)+1;
-	  }
-	subDrawCircle(j-rleft, i-rtop, x, y, c, buf, pitch, rectW, rectH);
+	      x++;
+	      if (p < 0)
+	        {
+	          p += (x+1)<<1;
+	        }
+	      else
+	        {
+	          y--;
+	          p += ((x-y)<<1)+1;
+	        }
+	      subDrawCircle(j-rleft, i-rtop, x, y, c, buf, pitch, rectW, rectH);
       }
 
 

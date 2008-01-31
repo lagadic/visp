@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTrackDot.cpp,v 1.19 2007-12-19 17:37:27 fspindle Exp $
+ * $Id: testTrackDot.cpp,v 1.20 2008-01-31 15:03:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -291,7 +291,7 @@ main(int argc, char ** argv)
   vpCameraParameters cam ;
   vpFeatureBuilder::create(e,cam,dot) ;
   if (opt_display) {
-    e.display(cam, I, false, vpColor::red) ;
+    e.display(cam, I, vpColor::red) ;
     if (opt_click_allowed) {
       std::cout << "A click to exit..." << std::endl;
       vpDisplay::getClick(I) ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.cpp,v 1.10 2007-12-18 15:03:18 fspindle Exp $
+ * $Id: vpFeatureThetaU.cpp,v 1.11 2008-01-31 14:59:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -280,7 +280,6 @@ vpFeatureThetaU *vpFeatureThetaU::duplicate() const
 void
 vpFeatureThetaU::display(const vpCameraParameters &/* cam */,
 			 vpImage<unsigned char> &/* I */,
-			 bool /* useDistortion */,
 			 vpColor::vpColorType /* color */) const
 {
   static int firsttime =0 ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.14 2007-12-20 08:15:28 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.15 2008-01-31 14:50:31 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -135,7 +135,9 @@ public: /* Methodes */
    * l'afma6.
    */
   void init (void);
-  void init (vpAfma6::vpAfma6CameraRobotType camera, bool usedistortion = false);
+  void init (vpAfma6::vpAfma6CameraRobotType camera,
+             vpCameraParameters::vpCameraParametersProjType
+               projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
 public:  /* Constantes */
 

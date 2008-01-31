@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testUndistortImage.cpp,v 1.6 2007-12-18 14:31:54 fspindle Exp $
+ * $Id: testUndistortImage.cpp,v 1.7 2008-01-31 14:56:02 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -244,8 +244,7 @@ int main(int argc, char ** argv)
   vpImage<vpRGBa> U; // undistorted output image
 #endif
   vpCameraParameters cam;
-  cam.init_pm(600,600,192,144,0.17);
-  cam.init_mp(600,600,192,144,-0.17);
+  cam.initPersProjWithDistortion(600,600,192,144,-0.17,0.17);
   // Read the input grey image from the disk
 #if defined BW
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");

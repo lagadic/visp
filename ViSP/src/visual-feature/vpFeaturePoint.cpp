@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint.cpp,v 1.10 2007-12-18 15:03:17 fspindle Exp $
+ * $Id: vpFeaturePoint.cpp,v 1.11 2008-01-31 14:59:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -297,15 +297,12 @@ vpFeaturePoint::buildFrom(const double _x, const double _y, const double _Z)
 
   \param cam : Camera parameters.
   \param I : Image.
-  \param useDistortion: Set as true if it is needed to use camera parameters
-  with distortion.
   \param color : Color to use for the display
 
 */
 void
 vpFeaturePoint::display(const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			bool useDistortion,
 			vpColor::vpColorType color) const
 {
   try{
@@ -313,7 +310,7 @@ vpFeaturePoint::display(const vpCameraParameters &cam,
     x = get_x() ;
     y = get_y() ;
 
-    vpFeatureDisplay::displayPoint(x,y, cam, I, useDistortion, color) ;
+    vpFeatureDisplay::displayPoint(x,y, cam, I, color) ;
 
   }
   catch(...)

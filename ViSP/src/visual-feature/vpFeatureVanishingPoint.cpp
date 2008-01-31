@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.cpp,v 1.10 2007-12-19 17:36:29 fspindle Exp $
+ * $Id: vpFeatureVanishingPoint.cpp,v 1.11 2008-01-31 14:59:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -221,7 +221,6 @@ vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
 void
 vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
 				 vpImage<unsigned char> &I,
-				 bool usedistortion,
 				 vpColor::vpColorType color) const
 {
   try{
@@ -229,7 +228,7 @@ vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
     x = get_x() ;
     y = get_y() ;
 
-    vpFeatureDisplay::displayPoint(x,y, cam, I, usedistortion, color) ;
+    vpFeatureDisplay::displayPoint(x,y, cam, I, color) ;
 
   }
   catch(...)

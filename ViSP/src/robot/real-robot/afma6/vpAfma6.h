@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.13 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.14 2008-01-31 14:50:31 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -169,7 +169,9 @@ public: /* Methodes publiques */
 				    const char * filenameMPI);
 
   /* \brief Lecture des fichiers de configuration.   */
-  void init (vpAfma6::vpAfma6CameraRobotType camera, bool usedistortion = false);
+  void init (vpAfma6::vpAfma6CameraRobotType camera,
+             vpCameraParameters::vpCameraParametersProjType projModel =
+              vpCameraParameters::perspectiveProjWithoutDistortion);
 
   /** \brief Initialisation a l'aide du fichier par default.    */
   void init (void);
@@ -218,6 +220,8 @@ protected: /* Attributs prives */
   double  rho;
   /** Camera courante utilisée */
   vpAfma6CameraRobotType camera_current;
+  /** used projection model */
+  vpCameraParameters::vpCameraParametersProjType projModel;
 
 public: /* Methodes publiques */
 

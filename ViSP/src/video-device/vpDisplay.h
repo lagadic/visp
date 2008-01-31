@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.22 2008-01-30 15:32:25 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.23 2008-01-31 14:58:46 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -289,8 +289,7 @@ protected :
   static void displayFrame(const vpImage<unsigned char> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
-			   double size, vpColor::vpColorType col,
-			   const bool usedistortion = false )  ;
+			   double size, vpColor::vpColorType col)  ;
   //! Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
   static void displayLine(const vpImage<unsigned char> &I,
 			  int i1, int j1, int i2, int j2,

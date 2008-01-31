@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.27 2007-12-20 08:15:28 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.28 2008-01-31 14:50:31 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -171,22 +171,27 @@ vpRobotAfma6::init (void)
 
   Charge la matrice-pince camera associee à la camera
   \param camera : camera utilisée
-  \param usedistortion : placé à true si on veut utiliser la matrice calibrée
-  en tenant compte des distortion de l'optique de la camera.
-
+  \param projModel : placé à vpCameraParameters::perpsectiveProjWithDistortion
+  si on veut utiliser la matrice calibrée en tenant compte des distortion de
+  l'optique de la camera.
 */
 void
-vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera, bool usedistortion)
+vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
+                    vpCameraParameters::vpCameraParametersProjType projModel)
 {
   ECameraAfma6 api_camera; // Interface with low level Afma6 api
 
   switch (camera)
   {
-  case vpAfma6::CAMERA_DRAGONFLY2_8MM:
-    if(usedistortion == false)
+  case vpAfma6::CAMERA_DRAGONFLY2_8MM :
+    switch(projModel){
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
       api_camera = CAMERA_DRAGONFLY2_WITHOUT_DISTORTION;
-    else
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
       api_camera = CAMERA_DRAGONFLY2_WITH_DISTORTION;
+      break;
+    }
     break;
   default:
     {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.h,v 1.7 2007-12-19 17:36:29 fspindle Exp $
+ * $Id: vpFeatureDisplay.h,v 1.8 2008-01-31 14:59:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,47 +66,39 @@ public:
   static void displayPoint(double x,double y,
 			   const vpCameraParameters &cam,
 			   vpImage<unsigned char> &I,
-			   const bool useDistortion = false,
 			   vpColor::vpColorType color = vpColor::green) ;
   static void displayLine(double rho,double theta,
 			  const vpCameraParameters &cam,
 			  vpImage<unsigned char> &I,
-			  const bool useDistortion = false,
 			  vpColor::vpColorType color = vpColor::green) ;
   static void displayCylinder(double rho1,double theta1,
 			      double rho2,double theta2,
 			      const vpCameraParameters &cam,
 			      vpImage<unsigned char> &I,
-			      const bool useDistortion = false,
 			      vpColor::vpColorType color = vpColor::green) ;
   static void displayEllipse(double x,double y,
 			     double mu20, double mu11, double m02,
 			     const vpCameraParameters &cam,
 			     vpImage<unsigned char> &I,
-			     const bool useDistortion = false,
 			     vpColor::vpColorType color = vpColor::green) ;
 
   static void displayPoint(double x,double y,
 			   const vpCameraParameters &cam,
 			   vpImage<vpRGBa> &I,
-			   const bool useDistortion = false,
 			   vpColor::vpColorType color = vpColor::green) ;
   static void displayLine(double rho,double theta,
 			  const vpCameraParameters &cam,
 			  vpImage<vpRGBa> &I,
-			  const bool useDistortion = false,
 			  vpColor::vpColorType color = vpColor::green) ;
   static void displayCylinder(double rho1,double theta1,
 			      double rho2,double theta2,
 			      const vpCameraParameters &cam,
 			      vpImage<vpRGBa> &I,
-			      const bool useDistortion = false,
 			      vpColor::vpColorType color = vpColor::green) ;
   static void displayEllipse(double x,double y,
 			     double mu20, double mu11, double m02,
 			     const vpCameraParameters &cam,
 			     vpImage<vpRGBa> &I,
-			     const bool useDistortion = false,
 			     vpColor::vpColorType color = vpColor::green) ;
 
 
