@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPixelMeterConversion.cpp,v 1.10 2007-11-19 15:40:58 asaunier Exp $
+ * $Id: vpPixelMeterConversion.cpp,v 1.11 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,13 +53,9 @@ vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
 				    const double &rho_p, const double &theta_p,
 				    double &rho_m, double &theta_m)
 {
-
-  double u0 = cam.get_u0() ;  double v0 = cam.get_v0() ;
-  double px = cam.get_px() ;  double py = cam.get_py() ;
-
   double co = cos(theta_p) ;
   double si = sin(theta_p) ;
-  double d = vpMath::sqr(px*co)+vpMath::sqr(py*si) ;
+  double d = vpMath::sqr(cam.px*co)+vpMath::sqr(cam.py*si) ;
 
   if (fabs(d)<1e-6)
   {
@@ -67,8 +63,8 @@ vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
     throw(vpException(vpException::divideByZeroError,
 		      "division by zero")) ;
   }
-  theta_m = atan2(si*py, co*px) ;
-  rho_m = (rho_p - u0*co-v0*si)/sqrt(d) ;
+  theta_m = atan2(si*cam.py, co*cam.px) ;
+  rho_m = (rho_p - cam.u0*co-cam.v0*si)/sqrt(d) ;
 }
 
 
@@ -82,10 +78,8 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
   vpMatrix m(order, order);
   int p, r, q, t;
   int k;
-  double yc = -cam.get_v0() ;
-  double xc = -cam.get_u0() ;
-  double my = 1.0 / cam.get_py() ;
-  double mx = 1.0 / cam.get_px() ;
+  double yc = -cam.v0 ;
+  double xc = -cam.u0 ;
 
   for (k=0; k<order; k++) // itération correspondant à l'ordre du moment
   {
@@ -112,7 +106,7 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
       for (q=0; q<order; q++)
 	if (p+q==k)
 	{
-	  m[p][q] *= pow(mx,1+p) * pow(my,1+q);
+	  m[p][q] *= pow(cam.inv_px,1+p) * pow(cam.inv_py,1+q);
 	}
 
   for (k=0; k<order; k++) // itération correspondant à l'ordre du moment

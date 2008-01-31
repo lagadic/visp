@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.7 2007-11-26 13:31:16 asaunier Exp $
+ * $Id: vpCameraParameters.cpp,v 1.8 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,12 +45,18 @@
 */
 
 #include <visp/vpCameraParameters.h>
+#include <visp/vpDebug.h>
+#include <visp/vpException.h>
 
-const double vpCameraParameters::DEFAULT_U0_PARAMETER = 192.0;
-const double vpCameraParameters::DEFAULT_V0_PARAMETER = 144.0;
 const double vpCameraParameters::DEFAULT_PX_PARAMETER = 600.0;
 const double vpCameraParameters::DEFAULT_PY_PARAMETER = 600.0;
-const double vpCameraParameters::DEFAULT_KD_PARAMETER = 0.0;
+const double vpCameraParameters::DEFAULT_U0_PARAMETER = 192.0;
+const double vpCameraParameters::DEFAULT_V0_PARAMETER = 144.0;
+const double vpCameraParameters::DEFAULT_KUD_PARAMETER = 0.0;
+const double vpCameraParameters::DEFAULT_KDU_PARAMETER = 0.0;
+const vpCameraParameters::vpCameraParametersProjType
+    vpCameraParameters::DEFAULT_PROJ_TYPE =
+    vpCameraParameters::perspectiveProjWithoutDistortion;
 
 /*!
   basic constructor
@@ -71,83 +77,155 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
 }
 
 /*!
+  Constructor for perspective projection without distortion model
+
+  \param px,py : pixel size
+  \param u0,v0 : principal points
+
+ */
+vpCameraParameters::vpCameraParameters(const double px, const double py,
+                                       const double u0, const double v0)
+{
+  initPersProjWithoutDistortion(px,py,u0,v0) ;
+}
+
+/*!
+  Constructor for perspective projection with distortion model
+
+  \param px,py : pixel size
+  \param u0,v0 : principal points
+  \param kud : undistorted to distorted radial distortion
+  \param kdu : distorted to undistorted radial distortion
+
+ */
+vpCameraParameters::vpCameraParameters(const double px, const double py,
+                                       const double u0, const double v0,
+                                       const double kud, const double kdu)
+{
+  initPersProjWithDistortion(px,py,u0,v0,kud,kdu) ;
+}
+
+/*!
   \brief basic initialization with the default parameters
 */
 void
 vpCameraParameters::init()
 {
-  u0    = DEFAULT_U0_PARAMETER ;
-  u0_mp = DEFAULT_U0_PARAMETER ;
-  u0_pm = DEFAULT_U0_PARAMETER ;
-
-  v0    = DEFAULT_V0_PARAMETER ;
-  v0_mp = DEFAULT_V0_PARAMETER ;
-  v0_pm = DEFAULT_V0_PARAMETER ;
+  this->projModel = DEFAULT_PROJ_TYPE ;
   
-  px    = DEFAULT_PX_PARAMETER ;
-  px_mp = DEFAULT_PX_PARAMETER ;
-  px_pm = DEFAULT_PX_PARAMETER ;
-
-  py    = DEFAULT_PY_PARAMETER ;
-  py_mp = DEFAULT_PY_PARAMETER ;
-  py_pm = DEFAULT_PY_PARAMETER ;
-
-  kd_mp = DEFAULT_KD_PARAMETER ;
-  kd_pm = DEFAULT_KD_PARAMETER ;
-
-  computeMatrix()  ;
-}
-
-
-vpCameraParameters::vpCameraParameters(const double px, const double py,
-		     const double u0, const double v0)
-{
-  init(px,py,u0, v0) ;
+  this->px    = DEFAULT_PX_PARAMETER ;
+  this->py    = DEFAULT_PY_PARAMETER ;
+  this->u0    = DEFAULT_U0_PARAMETER ;
+  this->v0    = DEFAULT_V0_PARAMETER ;
+  this->kud   = DEFAULT_KUD_PARAMETER ;
+  this->kdu   = DEFAULT_KDU_PARAMETER ;
+  
+  if (fabs(this->px)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
+  }
+  if (fabs(this->py)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
+  }
+  this->inv_px = 1./this->px;
+  this->inv_py = 1./this->py;
 }
 
 /*!
-  initialization with specific parameters
+  Initialization with specific parameters using perpective projection without
+  distortion model.
+  \param px,py : pixel size
+  \param u0,v0 : principal point
+ */
+void
+vpCameraParameters::initPersProjWithoutDistortion(const double px,
+    const double py, const double u0, const double v0)
+{
+  this->projModel = vpCameraParameters::perspectiveProjWithoutDistortion ;
+  
+  this->px    = px ;
+  this->py    = py ;
+  this->u0    = u0 ;
+  this->v0    = v0 ;
+  this->kud   = 0 ;
+  this->kdu   = 0 ;
+  
+  if (fabs(px)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
+  }
+  if (fabs(py)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
+  }
+  this->inv_px = 1./px;
+  this->inv_py = 1./py;
+}
+
+
+
+
+/*!
+  Initialization with specific parameters using perpective projection without
+  distortion model.
   \param px,py : pixel size
   \param u0,v0 : principal points
+
+  \warning : this function is deprecated.
+  Use initPersProjWithoutDistortion instead.
 */
 void
 vpCameraParameters::init(const double px, const double py,
 			 const double u0, const double v0)
 {
-  init();
-  setPrincipalPoint(u0, v0) ;
-  setPixelRatio(px,py) ;
-  computeMatrix() ;
+  initPersProjWithoutDistortion(px,py,u0,v0);
 }
 
 /*!
-  initialization of the meter based model part with specific parameters
+  Initialization with specific parameters using perpective projection with
+  distortion model.
   \param px,py : pixel size
   \param u0,v0 : principal points
-  \param kd : radial distortion
+  \param kud : undistorted to distorted radial distortion
+  \param kdu : distorted to undistorted radial distortion
 */
 void
-vpCameraParameters::init_mp(const double px, const double py,
-       const double u0, const double v0, const double kd)
+vpCameraParameters::initPersProjWithDistortion(const double px, const double py,
+                            const double u0, const double v0,
+                            const double kud, const double kdu)
 {
-  setPrincipalPoint_mp(u0, v0) ;
-  setPixelRatio_mp(px,py) ;
-  setKd_mp(kd);
-}
+  this->projModel = vpCameraParameters::perspectiveProjWithDistortion ;
 
-/*!
-  initialization of the pixel based model part with specific parameters
-  \param px,py : pixel size
-  \param u0,v0 : principal points
-  \param kd : radial distortion
-*/
-void
-vpCameraParameters::init_pm(const double px, const double py,
-       const double u0, const double v0, const double kd)
-{
-  setPrincipalPoint_pm(u0, v0) ;
-  setPixelRatio_pm(px,py) ;
-  setKd_pm(kd);
+  this->px    = px ;
+  this->py    = py ;
+  this->u0    = u0 ;
+  this->v0    = v0 ;
+  this->kud   = kud ;
+  this->kdu   = kdu ;
+  
+  if (fabs(px)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
+  }
+  if (fabs(py)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
+  }
+  this->inv_px = 1./px;
+  this->inv_py = 1./py;
 }
 
 /*!
@@ -159,10 +237,6 @@ vpCameraParameters::~vpCameraParameters()
 {
 }
 
-
-
-
-
 /*!
   initialization from another vpCameraParameters object
 */
@@ -173,7 +247,26 @@ vpCameraParameters::init(const vpCameraParameters &c)
 }
 
 /*!
-  compute the calibration matrix K
+  copy operator
+ */
+vpCameraParameters&
+    vpCameraParameters::operator=(const vpCameraParameters& cam)
+{
+  projModel = cam.projModel ;
+  px = cam.px ;
+  py = cam.py ;
+  u0 = cam.u0 ;
+  v0 = cam.v0 ;
+  kud = cam.kud ;
+  kdu = cam.kdu ;
+  
+  inv_px = cam.inv_px; 
+  inv_py = cam.inv_py;
+  return *this ;
+}
+
+/*!
+  return the calibration matrix K
 
   K is 3x3 matrix given by:
 
@@ -182,170 +275,72 @@ vpCameraParameters::init(const vpCameraParameters &c)
   0 & p_y & v_0  \\
   0 & 0 & 1
   \end{array} \right) \f$
+
+  \warning : this function is usefull only in the case of perspective
+  projection without distortion.
 */
-void
-vpCameraParameters::computeMatrix()
+vpMatrix
+vpCameraParameters::get_K() const
 {
-  K.resize(3,3) ;
-  K = 0.0 ;
-  K[0][0] = px ;
-  K[1][1] = py ;
-  K[0][2] = u0 ;
-  K[1][2] = v0 ;
-  K[2][2] = 1.0 ;
-}
-
-
-/*!
-  copy operator
-*/
-vpCameraParameters&
-vpCameraParameters::operator=(const vpCameraParameters& cam)
-{
-  u0 = cam.u0 ;
-  v0 = cam.v0 ;
-  px = cam.px ;
-  py = cam.py ;
-  
-  u0_mp = cam.u0_mp ;
-  v0_mp = cam.v0_mp ;
-  px_mp = cam.px_mp ;
-  py_mp = cam.py_mp ;
-  kd_mp = cam.kd_mp ;
-
-  u0_pm = cam.u0_pm ;
-  v0_pm = cam.v0_pm ;
-  px_pm = cam.px_pm ;
-  py_pm = cam.py_pm ;
-  kd_pm = cam.kd_pm ;
-  
-  computeMatrix()  ;
-
-  return *this ;
-}
-
-/*!
-  set the principal point
-
-  \sa vpCameraParameters::u0_mp, vpCameraParameters::v0_mp,
-      vpCameraParameters::u0_pm, vpCameraParameters::v0_pm
-*/
-void
-vpCameraParameters::setPrincipalPoint(double x, double y)
-{
-  u0    = x ;
-  v0    = y ;
-  
-  if(kd_mp == 0){
-    u0_mp = x ;
-    v0_mp = y ;  
+  vpMatrix K;
+  switch(projModel){
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+      K.resize(3,3) ;
+      K = 0.0 ;
+      K[0][0] = px ;
+      K[1][1] = py ;
+      K[0][2] = u0 ;
+      K[1][2] = v0 ;
+      K[2][2] = 1.0 ;
+      break;
+    default :
+      vpERROR_TRACE("\n\t getting K matrix in the case of projection \
+          with distortion has no sense");   
+      throw(vpException(vpException::notImplementedError,
+            "\n\t getting K matrix in the case of projection \
+                  with distortion has no sense"));
   }
+  return K; 
+}
+
+/*!
+  Set the principal point
+
+  \warning : deprecated function. Use an init function instead
+*/
+void
+vpCameraParameters::setPrincipalPoint(double u0, double v0)
+{
+  this->u0    = u0 ;
+  this->v0    = v0 ;
+}
+
+/*!
+  Set the pixel size
+
+  \warning : deprecated function. Use an init function instead
+*/
+void
+vpCameraParameters::setPixelRatio(double px, double py)
+{
+  this->px    = px ;
+  this->py    = py ;
   
-  if(kd_pm == 0){
-    u0_pm = x ;
-    v0_pm = y ;
+  if (fabs(px)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
   }
-  
-  computeMatrix()  ;
-}
-
-/*!
-  set the pixel size
-
-  \sa vpCameraParameters::px_mp,  vpCameraParameters::py_mp,
-      vpCameraParameters::px_pm,  vpCameraParameters::py_pm
-*/
-void
-vpCameraParameters::setPixelRatio(double Px,double Py)
-{
-  px    = Px ;
-  py    = Py ;
-
-  if(kd_mp == 0){
-    px_mp = Px ;
-    py_mp = Py ;
+  if (fabs(py)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
   }
-
-  if(kd_pm == 0){
-    px_pm = Px ;
-    py_pm = Py ;
-  }
-  computeMatrix() ;
+  this->inv_px = 1./px;
+  this->inv_py = 1./py;
 }
-
-/*!
-  set the principal point of the meter based distortion model
-
-  \sa vpCameraParameters::u0_mp, vpCameraParameters::v0_mp
-*/
-void
-vpCameraParameters::setPrincipalPoint_mp(double x, double y)
-{
-  u0_mp = x ;
-  v0_mp = y ;
-}
-
-
-/*!
-  set the radial distortion value of the pixel based distortion model
-
-  \sa vpCameraParameters::kd_mp
-*/
-void
-vpCameraParameters::setKd_mp(double k)
-{
-  kd_mp = k ;
-}
-
-/*!
-  set the pixel size of the meter based distortion model
-
-  \sa vpCameraParameters::px_mp,  vpCameraParameters::py_mp
-*/
-void
-vpCameraParameters::setPixelRatio_mp(double Px,double Py)
-{
-  px_mp = Px ;
-  py_mp = Py ;
-}
-
-/*!
-  set the principal point of the pixel based distortion model
-
-  \sa vpCameraParameters::u0_pm, vpCameraParameters::v0_pm
-*/
-void
-vpCameraParameters::setPrincipalPoint_pm(double x, double y)
-{
-  u0_pm = x ;
-  v0_pm = y ;
-}
-
-
-/*!
-  set the radial distortion value of the pixel based distortion model
-
-  \sa vpCameraParameters::kd_pm
-*/
-void
-vpCameraParameters::setKd_pm(double k)
-{
-  kd_pm = k ;
-}
-
-/*!
-  set the pixel size of the pixel based distortion model
-
-  \sa vpCameraParameters::px_pm,  vpCameraParameters::py_pm
-*/
-void
-vpCameraParameters::setPixelRatio_pm(double Px,double Py)
-{
-  px_pm = Px ;
-  py_pm = Py ;
-}
-
-
 
 /*!
   Print the camera parameters on the standard output
@@ -353,18 +348,24 @@ vpCameraParameters::setPixelRatio_pm(double Px,double Py)
 void
 vpCameraParameters::printParameters()
 {
-  std::cout.precision(10);
-  std::cout << "Parameters for model without distortion :" << std::endl ;
-  std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
-  std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
-  std::cout << "Parameters for meter to pixel distortion model :" << std::endl ;
-  std::cout << "  px = " << px_mp <<"\t py = "<<py_mp<< std::endl ;
-  std::cout << "  u0 = " << u0_mp <<"\t v0 = "<< v0_mp << std::endl ;
-  std::cout << "  Kd = " << kd_mp << std::endl ;
-  std::cout << "Parameters for pixel to meter distortion model :" << std::endl ;
-  std::cout << "  px = " << px_pm <<"\t py = "<< py_pm << std::endl ;
-  std::cout << "  u0 = " << u0_pm <<"\t v0 = "<< v0_pm << std::endl ;
-  std::cout << "  Kd = " << kd_pm << std::endl ;
+  switch(projModel){
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+      std::cout.precision(10);
+      std::cout << "Parameters for perspective projection without distortion :"
+                << std::endl ;
+      std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
+      std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+      std::cout.precision(10);
+      std::cout << "Parameters for perspective projection with distortion :"
+                << std::endl ;
+      std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
+      std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
+      std::cout << "  kud = " << kud << std::endl ;
+      std::cout << "  kdu = " << kdu << std::endl ;
+      break;
+  } 
 }
 
 

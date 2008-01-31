@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.8 2008-01-09 08:23:30 asaunier Exp $
+ * $Id: vpCameraParameters.h,v 1.9 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,12 +84,12 @@
   due to imperfections in the lenses design and assembly there usually are some
   positional errors that have to be taken into account.
   \f$\delta_u\f$ and \f$\delta_v\f$  can be modeled as follow:
-  - with a meter based model
+  - with an undistorted to distorted model
   \f[
   \left\{ \begin{array}{l}
-  \delta_u(x,y) = K_d \;r^2\; p_x x  \\
+  \delta_u(x,y) = k_{ud} \;r^2\; p_x x  \\
   \\
-  \delta_v(x,y) = K_d\; r^2\; p_y y
+  \delta_v(x,y) = k_{ud}\; r^2\; p_y y
   \end{array}\right.
   \f]
   with \f[ r^2 = x^2 + y^2 \f].
@@ -98,18 +98,18 @@
   case :
   \f[
   \left\{ \begin{array}{l}
-  u = f_u(x,y) =  u_0 + p_x x\left(1+K_d\left(x^2 + y^2\right)\right)  \\
+  u = f_u(x,y) =  u_0 + p_x x\left(1+k_{ud}\left(x^2 + y^2\right)\right)  \\
   \\
-  v = f_v(x,y) =  v_0 + p_y y\left(1+K_d\left(x^2 + y^2\right)\right)
+  v = f_v(x,y) =  v_0 + p_y y\left(1+k_{ud}\left(x^2 + y^2\right)\right)
   \end{array}\right.
   \f]
 
-  - or with a pixel based model
+  - or with a distorted to undistorted model
   \f[
   \left\{ \begin{array}{l}
-  \delta_u(u,v) = -K_d \;r^2\; \left(u-u_0\right)  \\
+  \delta_u(u,v) = -k_{du} \;r^2\; \left(u-u_0\right)  \\
   \\
-  \delta_v(u,v) = -K_d\; r^2\; \left(v-v_0\right)
+  \delta_v(u,v) = -k_{du}\; r^2\; \left(v-v_0\right)
   \end{array}\right.
   \f]
   with \f[ r^2 = {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \f].
@@ -118,85 +118,107 @@
   case :
   \f[
   \left\{ \begin{array}{l}
-  x = f_x(u,v) =  \frac{u-u_0}{p_x}\left(1+K_d\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)  \\
+  x = f_x(u,v) =  \frac{u-u_0}{p_x}\left(1+k_{du}\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)  \\
   \\
-  y = f_y(u,v) =  \frac{v-v_0}{p_y}\left(1+K_d\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)
+  y = f_y(u,v) =  \frac{v-v_0}{p_y}\left(1+k_{du}\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)
   \end{array}\right.
   \f]
+
+  The projection model is defined when an init function is called. By default,
+  the used projection model is the perpective projection without distortion.
+
+  Here an example of camera initialization :
+  \code
+  vpCameraParameters cam;
+  double px = 600;
+  double py = 600;
+  double u0 = 320;
+  double v0 = 240;
+  double kud = -0.19;
+  double kdu = 0.20;
+  vpCameraParameters::vpCameraParametersProjType projModel;
+
+  //camera initialization with a perspective projection without distortion model
+  cam.initPersProjWithoutDistortion(px,py,u0,v0);
+  //get_projModel() is usefull to know the current projection model used.
+  projModel = cam.get_projModel();
+
+  //camera initialization with a perspective projection with distortion model
+  cam.initPersProjWithDistortion(px,py,u0,v0,kud,kdu);
+  //Here the returned projection model is
+  //  vpCameraParameters::perspectiveProjWithDistortion
+  projModel = cam.get_projModel();
+
+  //It is also possible to print the current camera parameters
+  cam.printParameters();
+  \endcode
 */
 class VISP_EXPORT vpCameraParameters
 {
-public:
+  friend class vpMeterPixelConversion;
+  friend class vpPixelMeterConversion;
+public :
+  typedef enum{
+    perspectiveProjWithoutDistortion,
+    perspectiveProjWithDistortion 
+  } vpCameraParametersProjType ;
+  
+private:
   static const double DEFAULT_U0_PARAMETER;
   static const double DEFAULT_V0_PARAMETER;
   static const double DEFAULT_PX_PARAMETER;
   static const double DEFAULT_PY_PARAMETER;
-  static const double DEFAULT_KD_PARAMETER;
+  static const double DEFAULT_KUD_PARAMETER;
+  static const double DEFAULT_KDU_PARAMETER;
+  static const vpCameraParametersProjType DEFAULT_PROJ_TYPE; 
 
 private:
- //model without disortion
   double px, py ; //!< pixel size
   double u0, v0 ; //!<  principal point
- //meter to pixel distortion model
-  double px_mp, py_mp ; //!< pixel size
-  double u0_mp, v0_mp ; //!<  principal point
-  double kd_mp ; //!< radial distortion
- //pixel to meter distortion model
-  double px_pm, py_pm ; //!< pixel size
-  double u0_pm, v0_pm ;  //!<  principal point
-  double kd_pm ; //!< radial distortion
-
-  vpMatrix K ; //<! camera projection matrix
-
+  double kud ; //!< radial distortion (from undistorted to distorted)
+  double kdu ; //!< radial distortion (from distorted to undistorted)
+  
+  double inv_px, inv_py; 
+   
+  vpCameraParametersProjType projModel ; //!< used projection model
 public:
   //generic functions
   vpCameraParameters() ;
   vpCameraParameters(const vpCameraParameters &c) ;
   vpCameraParameters(const double px, const double py,
 		     const double u0, const double v0) ;
+  vpCameraParameters(const double px, const double py,
+                     const double u0, const double v0,
+                     const double kud, const double kdu) ;
+
+  vpCameraParameters& operator =(const vpCameraParameters &c) ;
+  virtual ~vpCameraParameters() ;
 
   void init() ;
   void init(const vpCameraParameters &c) ;
   void init(const double px, const double py,
 	   const double u0, const double v0) ;
-  void init_mp(const double px, const double py,
-     const double u0, const double v0, const double kd=0) ;
-  void init_pm(const double px, const double py,
-     const double u0, const double v0, const double kd=0) ;
-
-
-  virtual ~vpCameraParameters() ;
+  
+  void initPersProjWithoutDistortion(const double px, const double py,
+                                      const double u0, const double v0) ;
+  void initPersProjWithDistortion(const double px, const double py,
+     const double u0, const double v0, const double kud,const double kdu) ;
 
   void printParameters() ;
 
-  vpCameraParameters& operator =(const vpCameraParameters& f) ;
-
-  void setPrincipalPoint(const double u0, const double v0) ;
   void setPixelRatio(const double px,const double py) ;
-  void computeMatrix() ;
+  void setPrincipalPoint(const double u0, const double v0) ;
+  
   inline double get_px() const { return px; }
   inline double get_py() const { return py; }
   inline double get_u0() const { return u0; }
   inline double get_v0() const { return v0; }
-  inline vpMatrix get_K() const {return K;}
-
-  void setPrincipalPoint_mp(const double u0, const double v0) ;
-  void setPixelRatio_mp(const double px,const double py) ;
-  void setKd_mp(const double kd);
-  inline double get_px_mp() const { return px_mp; }
-  inline double get_py_mp() const { return py_mp; }
-  inline double get_u0_mp() const { return u0_mp; }
-  inline double get_v0_mp() const { return v0_mp; }
-  inline double get_kd_mp() const {return kd_mp;}
-
-  void setPrincipalPoint_pm(const double u0, const double v0) ;
-  void setPixelRatio_pm(const double px,const double py) ;
-  void setKd_pm(const double kd);
-  inline double get_px_pm() const { return px_pm; }
-  inline double get_py_pm() const { return py_pm; }
-  inline double get_u0_pm() const { return u0_pm; }
-  inline double get_v0_pm() const { return v0_pm; }
-  inline double get_kd_pm() const {return kd_pm;}
+  inline double get_kud() const { return kud; }
+  inline double get_kdu() const { return kdu; }
+   
+  inline vpCameraParametersProjType get_projModel() const { return projModel; } 
+  
+  vpMatrix get_K() const;
 } ;
 
 #endif

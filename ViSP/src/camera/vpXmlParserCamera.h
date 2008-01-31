@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.h,v 1.5 2007-12-20 08:21:48 fspindle Exp $
+ * $Id: vpXmlParserCamera.h,v 1.6 2008-01-31 14:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,10 +67,11 @@
     vpCameraParameters cam;
 
     // Parse the xml file "myXmlFile.xml" to find the intrinsic camera parameters
-    // of the camera named "myCamera" for the image sizes 320x240.
-    // The camera name and the size of the image are optional.
+    // of the camera named "myCamera" for the image sizes 320x240 for the
+    // projection model projModel.
+    // The size of the image are optional.
 
-    p.parse(cam,"myXmlFile.xml","myCamera",width,height);
+    p.parse(cam,"myXmlFile.xml","myCamera",projModel,320,240);
 
     cam.printParameters();
     // Work on camera parameters
@@ -108,9 +109,9 @@ public:
       CODE_XML_V0,
       CODE_XML_PX,
       CODE_XML_PY,
-      CODE_XML_KD
+      CODE_XML_KUD,
+      CODE_XML_KDU
     } vpXmlCodeType;
-
 
   typedef enum 
     {
@@ -138,10 +139,11 @@ public:
   ~vpXmlParserCamera(){}
 
   int parse(vpCameraParameters &cam, const char * filename,
-	    const std::string &camera_name = "",
+	    const std::string &camera_name,
+      const vpCameraParameters::vpCameraParametersProjType &projModel,  
 	    const unsigned int image_width = 0, const unsigned int image_height = 0);
   int save(const vpCameraParameters &cam, const char * filename,
-	   const std::string &camera_name = "",
+	   const std::string &camera_name,
 	   const unsigned int image_width = 0, const unsigned int image_height = 0);
 
   // get/set functions
@@ -166,27 +168,46 @@ public:
 
 private:
   int read (xmlDocPtr doc, xmlNodePtr node,
-	    const std::string& camera_name = "",
-	    const unsigned int image_width  = 0,
+	    const std::string& camera_name,
+      const vpCameraParameters::vpCameraParametersProjType &projModel,
+      const unsigned int image_width  = 0,
 	    const unsigned int image_height = 0,
 	    const unsigned int subsampling_width = 0,
 	    const unsigned int subsampling_height = 0);
 
   int count (xmlDocPtr doc, xmlNodePtr node,
-	     const std::string& camera_name = "",
-	     const unsigned int image_width  = 0,
+	     const std::string& camera_name,
+       const vpCameraParameters::vpCameraParametersProjType &projModel,
+       const unsigned int image_width  = 0,
 	     const unsigned int image_height = 0,
 	     const unsigned int subsampling_width = 0,
 	     const unsigned int subsampling_height = 0);
 
   int read_camera (xmlDocPtr doc, xmlNodePtr node,
-		   const std::string& camera_name = "",
-		   const unsigned int image_width  = 0,
+		   const std::string& camera_name,
+       const vpCameraParameters::vpCameraParametersProjType &projModel,
+       const unsigned int image_width  = 0,
 		   const unsigned int image_height = 0,
 		   const unsigned int subsampling_width = 0,
 		   const unsigned int subsampling_height = 0);
+  
+  xmlNodePtr find_camera (xmlDocPtr doc, xmlNodePtr node,
+                   const std::string& camera_name,
+                   const unsigned int image_width  = 0,
+                   const unsigned int image_height = 0,
+                   const unsigned int subsampling_width = 0,
+                   const unsigned int subsampling_height = 0);
+ 
   vpXmlCodeSequenceType read_camera_model (xmlDocPtr doc, xmlNodePtr node,
-					   vpCameraParameters &camera);
+					                                 vpCameraParameters &camera);
+  
+  int read_camera_header (xmlDocPtr doc, xmlNodePtr node,
+                          const std::string& camera_name,
+                          const unsigned int image_width = 0,
+                          const unsigned int image_height = 0,
+                          const unsigned int subsampling_width = 0,
+                          const unsigned int subsampling_height = 0);
+   
   static vpXmlCodeSequenceType str2xmlcode (char * str, vpXmlCodeType & res);
   void myXmlReadIntChild (xmlDocPtr doc,
 			  xmlNodePtr node,
@@ -201,11 +222,12 @@ private:
   void myXmlReadCharChild (xmlDocPtr doc,
 			   xmlNodePtr node,
 			   char **res);
-  int write (xmlNodePtr node, const std::string& camera_name = "",
+  int write (xmlNodePtr node, const std::string& camera_name,
 	     const unsigned int image_width  = 0,
 	     const unsigned int image_height = 0,
 	     const unsigned int subsampling_width = 0,
 	     const unsigned int subsampling_height = 0);
+  int write_camera(xmlNodePtr node_camera);
 };
 #endif //VISP_HAVE_XML2
 #endif
