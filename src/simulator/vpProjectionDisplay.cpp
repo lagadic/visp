@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.cpp,v 1.10 2007-12-19 17:36:28 fspindle Exp $
+ * $Id: vpProjectionDisplay.cpp,v 1.11 2008-01-31 14:52:30 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -131,17 +131,16 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
 			     const vpHomogeneousMatrix &cextMo,
 			     const vpHomogeneousMatrix &cMo,
 			     const vpCameraParameters &cam,
-			     const vpColor::vpColorType color,
-			     const bool usedistortion)
+			     const vpColor::vpColorType color)
 {
 
     for (listFp.front() ; !listFp.outside() ; listFp.next() )
     {
       vpForwardProjection *fp = listFp.value() ;
-      fp->display(I,cextMo,cam, usedistortion, color) ;
+      fp->display(I,cextMo,cam, color) ;
     }
 
-    displayCamera(I,cextMo,cMo, cam, usedistortion) ;
+    displayCamera(I,cextMo,cMo, cam) ;
 }
 
 
@@ -149,8 +148,7 @@ void
 vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
 				   const vpHomogeneousMatrix &cextMo,
 				   const vpHomogeneousMatrix &cMo,
-				   const vpCameraParameters &cam,
-				   const bool usedistortion)
+				   const vpCameraParameters &cam)
 {
   vpHomogeneousMatrix c1Mc ;
   c1Mc = cextMo*cMo.inverse() ;
@@ -162,23 +160,23 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
 
   double ox,oy, x1,y1 ;
 
-  vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy,usedistortion) ;
+  vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
   o.print() ;
   vpTRACE("%f %f",ox,oy) ;
 
-  vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1,usedistortion) ;
+  vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
   vpDisplay::displayArrow(I,
 			  vpMath::round(oy), vpMath::round(ox),
 			  vpMath::round(y1), vpMath::round(x1),
 			  vpColor::green) ;
 
-  vpMeterPixelConversion::convertPoint(cam,y.p[0],y.p[1],x1,y1,usedistortion) ;
+  vpMeterPixelConversion::convertPoint(cam,y.p[0],y.p[1],x1,y1) ;
   vpDisplay::displayArrow(I,
 			  vpMath::round(oy), vpMath::round(ox),
 			  vpMath::round(y1), vpMath::round(x1),
 			  vpColor::blue) ;
 
-  vpMeterPixelConversion::convertPoint(cam,z.p[0],z.p[1],x1,y1,usedistortion) ;
+  vpMeterPixelConversion::convertPoint(cam,z.p[0],z.p[1],x1,y1) ;
   vpDisplay::displayArrow(I,
 			  vpMath::round(oy), vpMath::round(ox),
 			  vpMath::round(y1), vpMath::round(x1),
