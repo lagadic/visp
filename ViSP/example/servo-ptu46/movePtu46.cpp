@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: movePtu46.cpp,v 1.2 2007-01-30 17:18:35 asaunier Exp $
+ * $Id: movePtu46.cpp,v 1.3 2008-01-31 14:40:41 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -128,6 +128,7 @@ int
 main()
 {
   vpERROR_TRACE("You do not have a ptu-46 robot connected to your computer...");
+  return 0; 
 }
 
 #endif
