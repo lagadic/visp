@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.15 2007-12-20 08:20:40 fspindle Exp $
+ * $Id: vpPose.h,v 1.16 2008-01-31 14:45:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -149,8 +149,7 @@ public:
 
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
 	       vpCameraParameters &cam, double size,
-	       vpColor::vpColorType col=vpColor::none,
-         const bool usedistortion = false) ;
+	       vpColor::vpColorType col=vpColor::none) ;
 
 private:
   int vvsIterMax ; //! define the maximum number of iteration in VVS
