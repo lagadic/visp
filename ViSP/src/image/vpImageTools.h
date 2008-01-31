@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.15 2007-12-20 14:38:59 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.16 2008-01-31 14:46:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -253,17 +253,17 @@ void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
   int height   = undistortSharedData->height;
   int nthreads = undistortSharedData->nthreads;
 
-  double u0 = undistortSharedData->cam.get_u0_mp();
-  double v0 = undistortSharedData->cam.get_v0_mp();
-  double px = undistortSharedData->cam.get_px_mp();
-  double py = undistortSharedData->cam.get_py_mp();
-  double kd = undistortSharedData->cam.get_kd_mp();
+  double u0 = undistortSharedData->cam.get_u0();
+  double v0 = undistortSharedData->cam.get_v0();
+  double px = undistortSharedData->cam.get_px();
+  double py = undistortSharedData->cam.get_py();
+  double kud = undistortSharedData->cam.get_kud();
 
   double invpx = 1.0/px;
   double invpy = 1.0/py;
 
-  double kd_px2 = kd * invpx * invpx;
-  double kd_py2 = kd * invpy * invpy;
+  double kud_px2 = kud * invpx * invpx;
+  double kud_py2 = kud * invpy * invpy;
 
   Type *dst = undistortSharedData->dst+(height/nthreads*offset)*width;
   Type *src = undistortSharedData->src;
@@ -271,13 +271,13 @@ void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
   for (double v = height/nthreads*offset;v < height/nthreads*(offset+1) ; v++) {
     double  deltav  = v - v0;
     //double fr1 = 1.0 + kd * (vpMath::sqr(deltav * invpy));
-    double fr1 = 1.0 + kd_py2 * deltav * deltav;
+    double fr1 = 1.0 + kud_py2 * deltav * deltav;
 
     for (double u = 0 ; u < width ; u++) {
       //computation of u,v : corresponding pixel coordinates in I.
       double  deltau  = u - u0;
       //double fr2 = fr1 + kd * (vpMath::sqr(deltau * invpx));
-      double fr2 = fr1 + kd_px2 * deltau * deltau;
+      double fr2 = fr1 + kud_px2 * deltau * deltau;
 
       double u_double = deltau * fr2 + u0;
       double v_double = deltav * fr2 + v0;
@@ -348,9 +348,9 @@ void vpImageTools::undistort(const vpImage<Type> &I,
 
   undistI.resize(height, width);
 
-  double kd = cam.get_kd_mp();
+  double kud = cam.get_kud();
 
-  if (kd == 0) {
+  if (kud == 0) {
     // There is no need to undistort the image
     undistI = I;
     return;
@@ -397,13 +397,13 @@ void vpImageTools::undistort(const vpImage<Type> &I,
 
   undistI.resize(height, width);
 
-  double u0 = cam.get_u0_mp();
-  double v0 = cam.get_v0_mp();
-  double px = cam.get_px_mp();
-  double py = cam.get_py_mp();
-  double kd = cam.get_kd_mp();
+  double u0 = cam.get_u0();
+  double v0 = cam.get_v0();
+  double px = cam.get_px();
+  double py = cam.get_py();
+  double kud = cam.get_kud();
 
-  if (kd == 0) {
+  if (kud == 0) {
     // There is no need to undistort the image
     undistI = I;
     return;
@@ -412,20 +412,20 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   double invpx = 1.0/px;
   double invpy = 1.0/py;
 
-  double kd_px2 = kd * invpx * invpx;
-  double kd_py2 = kd * invpy * invpy;
+  double kud_px2 = kud * invpx * invpx;
+  double kud_py2 = kud * invpy * invpy;
 
   Type *dst = undistI.bitmap;
   for (double v = 0;v < height ; v++) {
     double  deltav  = v - v0;
     //double fr1 = 1.0 + kd * (vpMath::sqr(deltav * invpy));
-    double fr1 = 1.0 + kd_py2 * deltav * deltav;
+    double fr1 = 1.0 + kud_py2 * deltav * deltav;
 
     for (double u = 0 ; u < width ; u++) {
       //computation of u,v : corresponding pixel coordinates in I.
       double  deltau  = u - u0;
       //double fr2 = fr1 + kd * (vpMath::sqr(deltau * invpx));
-      double fr2 = fr1 + kd_px2 * deltau * deltau;
+      double fr2 = fr1 + kud_px2 * deltau * deltau;
 
       double u_double = deltau * fr2 + u0;
       double v_double = deltav * fr2 + v0;
@@ -468,11 +468,11 @@ void vpImageTools::undistort(const vpImage<Type> &I,
 
   undistI.resize(height,width);
 
-  double u0 = cam.get_u0_mp();
-  double v0 = cam.get_v0_mp();
-  double px = cam.get_px_mp();
-  double py = cam.get_py_mp();
-  double kd = cam.get_kd_mp();
+  double u0 = cam.get_u0();
+  double v0 = cam.get_v0();
+  double px = cam.get_px();
+  double py = cam.get_py();
+  double kd = cam.get_kud();
 
   if (kd == 0) {
     // There is no need to undistort the image
