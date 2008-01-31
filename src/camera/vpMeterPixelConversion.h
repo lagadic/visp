@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeterPixelConversion.h,v 1.6 2008-01-31 14:43:50 asaunier Exp $
+ * $Id: vpMeterPixelConversion.h,v 1.7 2008-01-31 17:35:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,11 @@
 
 /*!
   \class vpMeterPixelConversion
-  \brief meter to pixel  conversion
+
+  \brief Conversion from normalized coordinates \f$(x,y)\f$ in meter
+  to pixel coordinates \f$(u,v)\f$.
+
+  This class relates to vpCameraParameters.
 
 */
 class VISP_EXPORT vpMeterPixelConversion
@@ -62,8 +66,13 @@ class VISP_EXPORT vpMeterPixelConversion
 public:
 
 /*!
-  \brief point coordinates conversion (x,y)->(u,v)
-  The used formula depends on the projection model of the camera.
+
+  \brief Point coordinates conversion from normalized coordinates
+  \f$(x,y)\f$ in meter to pixel coordinates \f$(u,v)\f$.
+
+  The used formula depends on the projection model of the camera. To
+  know the currently used projection model use
+  vpCameraParameter::get_projModel()
 
   \param cam : camera parameters.
   \param x,y : input coordinates in meter.
@@ -94,7 +103,10 @@ public:
   }
 
   /*!
-    \brief point coordinates conversion without distortion (x,y)->(u,v)
+
+    \brief Point coordinates conversion without distortion from
+    normalized coordinates \f$(x,y)\f$ in meter to pixel coordinates
+    \f$(u,v)\f$.
 
     \f$ u = x*p_x+u_0 \f$ and  \f$ v = y*p_y+v_0  \f$
   */
@@ -110,7 +122,11 @@ public:
   }
   
   /*!
-    \brief point coordinates conversion with distortion (x,y)->(u,v)
+
+    \brief Point coordinates conversion with distortion from
+    normalized coordinates \f$(x,y)\f$ in meter to pixel coordinates
+    \f$(u,v)\f$.
+
     \param cam : camera parameters.
     \param x,y : input coordinates in meter.
     \param u,v : output coordinates in pixels.

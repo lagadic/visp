@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.8 2008-01-31 14:43:50 asaunier Exp $
+ * $Id: vpCameraParameters.cpp,v 1.9 2008-01-31 17:35:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,9 +59,10 @@ const vpCameraParameters::vpCameraParametersProjType
     vpCameraParameters::perspectiveProjWithoutDistortion;
 
 /*!
-  basic constructor
+  Default constructor.
+  By default, a perspective projection without distortion model is set.
 
-  /sa init()
+  \sa init()
 */
 vpCameraParameters::vpCameraParameters()
 {
