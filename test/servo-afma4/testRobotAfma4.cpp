@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma4.cpp,v 1.9 2007-04-20 14:22:25 asaunier Exp $
+ * $Id: testRobotAfma4.cpp,v 1.10 2008-01-31 15:01:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -79,6 +79,7 @@ int main()
 int main()
 {
   std::cout << "a test..." << std::endl;
+  return 0; 
 }
 
 #endif

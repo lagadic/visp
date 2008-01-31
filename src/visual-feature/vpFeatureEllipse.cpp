@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.cpp,v 1.12 2007-12-19 17:36:29 fspindle Exp $
+ * $Id: vpFeatureEllipse.cpp,v 1.13 2008-01-31 14:59:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -337,14 +337,11 @@ vpFeatureEllipse::setMu(const double mu20, const double mu11,
 
   \param cam : Camera parameters.
   \param I : Image on which features have to be displayed.
-  \param useDistortion : Indicates if the distortion has to be used to convert
-  the ellipse parameters into pixel coordinates.
   \param color : Color used to display the feature.
 */
 void
 vpFeatureEllipse::display(const vpCameraParameters &cam,
 			  vpImage<unsigned char> &I,
-			  bool useDistortion,
 			  vpColor::vpColorType color ) const
 {
   try{
@@ -356,7 +353,7 @@ vpFeatureEllipse::display(const vpCameraParameters &cam,
       double mu02 = s[4] ;
 
       vpFeatureDisplay::displayEllipse(x,y,mu20,mu11,mu02,
-				       cam, I, useDistortion, color) ;
+				       cam, I, color) ;
 
   }
   catch(...)

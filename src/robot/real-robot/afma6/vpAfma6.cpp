@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.22 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.23 2008-01-31 14:50:31 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1209,22 +1209,25 @@ init (const char * paramAfma6,
  * PARAMETRES_AFMA6_FILENAME en argument.
  */
 void vpAfma6::
-init (vpAfma6::vpAfma6CameraRobotType camera, bool usedistortion)
+init (vpAfma6::vpAfma6CameraRobotType camera,
+      vpCameraParameters::vpCameraParametersProjType projModel)
 {
   char            filenameMPI [FILENAME_MAX];
-
+  this->projModel = projModel;
   switch (camera)
   {
   case vpAfma6::CAMERA_DRAGONFLY2_8MM:
-    {
-      if(usedistortion == false){
+    {   
+      switch(projModel){   
+      case vpCameraParameters::perspectiveProjWithoutDistortion :
         snprintf(filenameMPI, 100, "%s",
 	         CONST_MPI_DRAGONFLY2_WITHOUT_DISTORTION);
-      }
-      else{
+        break;
+      case vpCameraParameters::perspectiveProjWithDistortion :
         snprintf(filenameMPI, 100, "%s",
            CONST_MPI_DRAGONFLY2_WITH_DISTORTION);
-      }
+        break;    
+      }   
       break;
     }
   default:
@@ -1640,6 +1643,7 @@ getCameraParameters (vpCameraParameters &cam,
       parser.parse(cam,
 		   vpAfma6::PARAMETRES_CAMERA_AFMA6_FILENAME,
 		   vpAfma6::CONST_LABEL_DRAGONFLY2,
+       projModel,  
 		   image_width, image_height);
       break;
     }
