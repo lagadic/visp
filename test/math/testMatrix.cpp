@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMatrix.cpp,v 1.3 2007-04-27 16:40:16 fspindle Exp $
+ * $Id: testMatrix.cpp,v 1.4 2008-01-31 15:04:44 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -208,5 +208,19 @@ main(int argc, char ** argv)
   c.print(std::cout, 2, "c");
   std::cout << "r * c = " << rc << std::endl;
 
+  vpTRACE("------------------------");
+  vpTRACE("--- TEST vpRowVector * vpMatrix");
+  vpTRACE("------------------------");
+  M.resize(3,3) ;
+  M.eye(3);
+
+  M[1][0] = 1.5;
+  M[2][0] = 2.3;
+
+  vpRowVector rM = r * M;
+
+  r.print(std::cout, 2, "r");
+  M.print(std::cout, 10, "M");
+  std::cout << "r * M = " << rM << std::endl;
 
 }
