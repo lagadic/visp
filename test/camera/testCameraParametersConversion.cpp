@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testCameraParametersConversion.cpp,v 1.3 2007-12-05 09:38:22 fspindle Exp $
+ * $Id: testCameraParametersConversion.cpp,v 1.4 2008-01-31 14:55:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -125,29 +125,25 @@ main(int argc, char ** argv)
   py = 1658.818598;
   u0 = 322.2437833;
   v0 = 230.8012737;
-  double px_mp,py_mp,u0_mp,v0_mp,kd_mp;
-  px_mp = 1624.824731;
-  py_mp = 1625.263641;
-  u0_mp = 324.0923411;
-  v0_mp = 245.2421388;
-  kd_mp = -0.1741532338;
-  double px_pm,py_pm,u0_pm,v0_pm,kd_pm;
-  px_pm = 1624.824731;
-  py_pm = 1625.263641;
-  u0_pm = 324.0923411;
-  v0_pm = 245.2421388;
-  kd_pm = 0.1771165148;
+  vpCameraParameters camDist;
+  double px_dist,py_dist,u0_dist,v0_dist,kud_dist,kdu_dist;
+  px_dist = 1624.824731;
+  py_dist = 1625.263641;
+  u0_dist = 324.0923411;
+  v0_dist = 245.2421388;
+  kud_dist = -0.1741532338;
+  kdu_dist = 0.1771165148;
   
-  cam.init(px,py,u0,v0);
-  cam.init_mp(px_mp,py_mp,u0_mp,v0_mp,kd_mp);
-  cam.init_pm(px_pm,py_pm,u0_pm,v0_pm,kd_pm);
+  cam.initPersProjWithoutDistortion(px,py,u0,v0);
+  camDist.initPersProjWithDistortion(px_dist,py_dist,u0_dist,v0_dist,
+                                     kud_dist, kdu_dist);
 
   double u1 = 320;
   double v1 = 240;
   double x1,y1;
   double u2,v2;
-  vpPixelMeterConversion::convertPoint(cam,u1,v1,x1,y1,false);
-  vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2,false);
+  vpPixelMeterConversion::convertPoint(cam,u1,v1,x1,y1);
+  vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2);
   if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
     vpTRACE("Error in convertPoint without distortion:\n"
         "u1 = %f, u2 = %f\n"
@@ -158,8 +154,8 @@ main(int argc, char ** argv)
       "u1 - u2 = %.20f\n"
       "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
   
-  vpPixelMeterConversion::convertPoint(cam,u1,v1,x1,y1,true);
-  vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2,true);
+  vpPixelMeterConversion::convertPoint(camDist,u1,v1,x1,y1);
+  vpMeterPixelConversion::convertPoint(camDist,x1,y1,u2,v2);
   if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
     vpTRACE("Error in convertPoint with distortion :\n"
             "u1 = %f, u2 = %f\n"
