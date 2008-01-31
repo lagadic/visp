@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma6.cpp,v 1.15 2007-12-12 10:27:19 fspindle Exp $
+ * $Id: testRobotAfma6.cpp,v 1.16 2008-01-31 15:01:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,8 @@ int main()
     vpCTRACE << robotAfma6;
 
     vpCTRACE << "-- set camera Dragonfly2 with distortion ------" << std::endl;
-    robotAfma6.init( vpAfma6::CAMERA_DRAGONFLY2_8MM, true);
+    robotAfma6.init( vpAfma6::CAMERA_DRAGONFLY2_8MM,
+                     vpCameraParameters::perspectiveProjWithDistortion);
     vpCTRACE << robotAfma6;
     return 0;
   }
@@ -85,6 +86,7 @@ int main()
 int main()
 {
   std::cout << "a test..." << std::endl;
+  return 0; 
 }
 
 #endif
