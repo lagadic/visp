@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSphere.h,v 1.7 2007-12-19 17:36:29 fspindle Exp $
+ * $Id: vpSphere.h,v 1.8 2008-01-31 14:54:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,12 +96,10 @@ public:
 
   void display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
-	       const bool usedistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const bool usedistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
 
 

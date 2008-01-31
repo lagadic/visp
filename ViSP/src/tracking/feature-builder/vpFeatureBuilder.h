@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilder.h,v 1.7 2007-11-19 15:59:28 asaunier Exp $
+ * $Id: vpFeatureBuilder.h,v 1.8 2008-01-31 14:53:55 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,17 +81,14 @@ class VISP_EXPORT vpFeatureBuilder
 public:
   // create vpFeaturePoint feature
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-		      const vpDot &t,
-          const bool usedistortion = false) ;
+		      const vpDot &t) ;
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-		      const vpDot2 &t,
-          const bool usedistortion = false) ;
+		      const vpDot2 &t) ;
   static void create(vpFeaturePoint &s, const vpPoint &t) ;
   static void create(vpFeaturePoint &s,
 		     const vpCameraParameters &goodCam,
 		     const vpCameraParameters &wrongCam,
-		     const vpPoint &t,
-         const bool usedistortion = false) ;
+		     const vpPoint &t) ;
 
   // create vpFeaturePoint3D feature
   static void create(vpFeaturePoint3D &s, const vpPoint &t ) ;

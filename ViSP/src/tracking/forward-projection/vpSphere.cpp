@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSphere.cpp,v 1.7 2007-12-19 17:36:29 fspindle Exp $
+ * $Id: vpSphere.cpp,v 1.8 2008-01-31 14:54:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -201,14 +201,13 @@ vpSphere *vpSphere::duplicate() const
 void vpSphere::display(vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
-		       const bool usedistortion,
 		       const vpColor::vpColorType color)
 {
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
   projection(_cP,_p) ;
   vpFeatureDisplay::displayEllipse(_p[0],_p[1],_p[2],_p[3], _p[4],
-				   cam, I, usedistortion, color) ;
+				   cam, I, color) ;
 
 }
 
@@ -216,9 +215,8 @@ void vpSphere::display(vpImage<unsigned char> &I,
 
 void vpSphere::display(vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
-		       const bool usedistortion,
 		       const vpColor::vpColorType color)
 {
   vpFeatureDisplay::displayEllipse(p[0],p[1],p[2],p[3], p[4],
-				   cam, I, usedistortion, color) ;
+				   cam, I, color) ;
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.h,v 1.8 2007-12-19 17:36:29 fspindle Exp $
+ * $Id: vpCircle.h,v 1.9 2008-01-31 14:54:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -105,12 +105,10 @@ public:
 
   void display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
-	       const bool useDistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const bool useDistortion=false,
 	       const vpColor::vpColorType color=vpColor::green) ;
   vpCircle *duplicate() const ;
 

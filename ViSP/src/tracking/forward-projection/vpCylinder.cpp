@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.cpp,v 1.6 2007-12-19 17:36:29 fspindle Exp $
+ * $Id: vpCylinder.cpp,v 1.7 2008-01-31 14:54:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -261,7 +261,6 @@ void
 vpCylinder::display(vpImage<unsigned char> &I,
 		    const vpHomogeneousMatrix &cMo,
 		    const vpCameraParameters &cam,
-		    const bool useDistortion,
 		    const vpColor::vpColorType color)
 {
 
@@ -269,7 +268,7 @@ vpCylinder::display(vpImage<unsigned char> &I,
   changeFrame(cMo,_cP) ;
   projection(_cP,_p) ;
   vpFeatureDisplay::displayCylinder(_p[0],_p[1], _p[2], _p[3],
-				    cam, I, useDistortion, color) ;
+				    cam, I, color) ;
 
 }
 
@@ -277,9 +276,7 @@ vpCylinder::display(vpImage<unsigned char> &I,
 void
 vpCylinder::display(vpImage<unsigned char> &I,
 		    const vpCameraParameters &cam,
-		    const bool useDistortion,
 		    const vpColor::vpColorType color)
 {
-  vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[4], cam, I,
-				    useDistortion, color) ;
+  vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[4], cam, I, color) ;
 }
