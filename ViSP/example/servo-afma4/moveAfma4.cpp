@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma4.cpp,v 1.6 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: moveAfma4.cpp,v 1.7 2008-01-31 14:38:53 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -194,6 +194,7 @@ int
 main()
 {
   vpERROR_TRACE("You do not have an afma4 robot connected to your computer...");
+  return 0; 
 }
 
 #endif
