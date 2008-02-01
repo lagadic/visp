@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpKeyboard.h,v 1.1 2007-08-21 14:01:50 fspindle Exp $
+ * $Id: vpKeyboard.h,v 1.2 2008-02-01 17:27:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,6 @@ private:
   void end();
 
   void setRawMode(bool active);
-  bool raw_actif;
 
   struct termios initial_settings, new_settings;
 } ;
