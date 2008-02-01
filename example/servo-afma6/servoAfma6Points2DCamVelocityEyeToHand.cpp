@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.9 2008-02-01 16:57:51 fspindle Exp $
+ * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.10 2008-02-01 16:58:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -300,7 +300,7 @@ main()
 
 	  for (i=0 ; i < nbPoint ; i++)
 	    {
-	      double x,y ;
+	      double x=0, y=0;
 	      vpPixelMeterConversion::convertPoint(cam,
 						   dot[i].get_u(), dot[i].get_v(),
 						   x,y)  ;
