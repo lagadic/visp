@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: keyboard.cpp,v 1.5 2007-11-22 15:52:08 fspindle Exp $
+ * $Id: keyboard.cpp,v 1.6 2008-02-01 17:28:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,26 +56,32 @@ int
 main()
 {
   int c;
+  {
+    std::cout << "Push some characters on the keyboard..." << std::endl;
+    printf("Hit 'q' or 'Q' to stop the loop ...\n");
+    vpKeyboard keyboard;
 
-  std::cout << "Push some characters on the keyboard..." << std::endl;
-  printf("Hit 'q' or 'Q' to stop the loop ...\n");
-  vpKeyboard keyboard;
+    std::cout << "Start the keyboard scrutation..." << std::endl;
+    while (1) {
 
-  std::cout << "Start the keyboard scrutation..." << std::endl;
-  while (1) {
-
-    if (keyboard.kbhit()) {
-      c = keyboard.getchar () ;
-      printf("You hit key: %d '%c'\n", c, c);
-      if (c == 'q' || c == 'Q') {
-	printf("You hit key: %d %c we stop the loop\n", c, c);
-	break ;
+      if (keyboard.kbhit()) {
+	c = keyboard.getchar () ;
+	printf("You hit key: %d '%c'\n", c, c);
+	if (c == 'q' || c == 'Q') {
+	  printf("You hit key: %d %c we stop the loop\n", c, c);
+	  break ;
+	}
       }
+
+      // My job is here
+
     }
-
-    // My job is here
-
   }
+
+  std::cout << "Enter an integer: ";
+  int myvalue;
+  std::cin >> myvalue;
+
   return 0;
 }
 #else
