@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderPoint.cpp,v 1.12 2008-01-31 14:53:55 asaunier Exp $
+ * $Id: vpFeatureBuilderPoint.cpp,v 1.13 2008-02-01 15:11:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
 {
   try
   {
-    double x,y ;
+    double x=0, y=0;
 
     double u = t.get_u() ;
     double v = t.get_v() ;
@@ -73,7 +73,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
 {
   try
   {
-    double x,y ;
+    double x=0, y=0;
 
     double u = t.get_u() ;
     double v = t.get_v() ;
@@ -144,7 +144,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s,
      s.set_Z( t.cP[2]/t.cP[3])  ;
 
 
-    double u,v;
+    double u=0, v=0;
     vpMeterPixelConversion::convertPoint(goodCam,x,y,u,v) ;
     vpPixelMeterConversion::convertPoint(wrongCam,u,v,x,y) ;
 

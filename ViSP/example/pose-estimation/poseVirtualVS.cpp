@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.9 2007-12-19 13:15:14 fspindle Exp $
+ * $Id: poseVirtualVS.cpp,v 1.10 2008-02-01 15:11:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -521,7 +521,7 @@ main(int argc, char** argv)
       // x = (u-u0)/px
       // y = (v-v0)/py
       // where px, py, u0, v0 are the intrinsic camera parameters
-      double x,y ;
+      double x=0, y=0;
       vpPixelMeterConversion::convertPoint(cam,
 					   u[i], v[i],
 					   x,y)  ;
@@ -575,7 +575,7 @@ main(int argc, char** argv)
 	  vpDisplay::display(I) ;
      //Flush the display
      vpDisplay::flush(I) ;
- 
+
 	}
 	// kill the point list
 	pose.clearPoint() ;
@@ -592,7 +592,7 @@ main(int argc, char** argv)
 	    }
 	    // pixel->meter conversion
 	    {
-	      double x,y ;
+	      double x=0, y=0;
 	      vpPixelMeterConversion::convertPoint(cam,
 						   u[i], v[i],
 						   x,y)  ;
