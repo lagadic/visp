@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testCameraParametersConversion.cpp,v 1.4 2008-01-31 14:55:24 asaunier Exp $
+ * $Id: testCameraParametersConversion.cpp,v 1.5 2008-02-01 15:11:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -133,15 +133,15 @@ main(int argc, char ** argv)
   v0_dist = 245.2421388;
   kud_dist = -0.1741532338;
   kdu_dist = 0.1771165148;
-  
+
   cam.initPersProjWithoutDistortion(px,py,u0,v0);
   camDist.initPersProjWithDistortion(px_dist,py_dist,u0_dist,v0_dist,
                                      kud_dist, kdu_dist);
 
   double u1 = 320;
   double v1 = 240;
-  double x1,y1;
-  double u2,v2;
+  double x1 = 0, y1 = 0;
+  double u2 = 0, v2 = 0;
   vpPixelMeterConversion::convertPoint(cam,u1,v1,x1,y1);
   vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2);
   if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
@@ -153,7 +153,7 @@ main(int argc, char ** argv)
   vpTRACE("convertPoint without distortion :\n"
       "u1 - u2 = %.20f\n"
       "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
-  
+
   vpPixelMeterConversion::convertPoint(camDist,u1,v1,x1,y1);
   vpMeterPixelConversion::convertPoint(camDist,x1,y1,u2,v2);
   if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){

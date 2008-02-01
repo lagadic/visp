@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpProjectionDisplay.cpp,v 1.11 2008-01-31 14:52:30 asaunier Exp $
+ * $Id: vpProjectionDisplay.cpp,v 1.12 2008-02-01 15:11:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -158,7 +158,7 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
   y.track(c1Mc) ;
   z.track(c1Mc) ;
 
-  double ox,oy, x1,y1 ;
+  double ox=0, oy=0, x1=0, y1=0;
 
   vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
   o.print() ;

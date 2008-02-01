@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.27 2008-01-31 14:58:46 asaunier Exp $
+ * $Id: vpDisplay.cpp,v 1.28 2008-02-01 15:11:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,20 +52,20 @@
 
     #include <visp/vpDebug.h>
     #include <visp/vpConfig.h>
-    
+
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpDisplayX.h>
     #include <visp/vpDisplayGTK.h>
     #include <visp/vpDisplayGDI.h>
     #include <visp/vpDisplayD3D.h>
-    
+
     vpImage<vpRGBa> Ic; // A color image
-    
+
     //Read an image on a disk
     vpImageIo::readPPM(Ic, "image.ppm");
 
-    
+
     #if defined VISP_HAVE_GTK
       vpDisplayGTK display;
     #elif defined VISP_HAVE_X11
@@ -75,7 +75,7 @@
     #elif defined VISP_HAVE_D3D
       vpDisplayD3D display;
     #endif
-        
+
     // We open a window using either X11 or GTK or GDI.
     // Its size is automatically defined by the image (I) size
     display.init(I, 100, 100,"Display...") ;
@@ -91,7 +91,7 @@
     // image. The lines are 10 pixels long
     vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
     // ...
-    
+
     // The display is flushed; without this line, nothing will appear in
     // the display.
     vpDisplay::flush(I) ;
@@ -323,7 +323,7 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
   y.track ( cMo ) ;
   z.track ( cMo ) ;
 
-  double ox,oy, x1,y1 ;
+  double ox=0, oy=0, x1=0, y1=0 ;
 
   if ( col == vpColor::none )
   {
@@ -940,7 +940,7 @@ bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
 */
 bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
                             unsigned int& i, unsigned int& j,
-                            vpMouseButton::vpMouseButtonType& button, 
+                            vpMouseButton::vpMouseButtonType& button,
 			                      bool blocking )
 {
   try
@@ -986,7 +986,7 @@ bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I, bool blocking )
 bool
 vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
                         unsigned int& i, unsigned int& j,
-                        vpMouseButton::vpMouseButtonType& button, 
+                        vpMouseButton::vpMouseButtonType& button,
 			                  bool blocking )
 {
   try
@@ -1224,7 +1224,7 @@ vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
   return true way a button is pressed
 */
 bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
-                               unsigned int& u, unsigned int& v, 
+                               unsigned int& u, unsigned int& v,
 			                         bool blocking )
 {
   try
@@ -1247,7 +1247,7 @@ bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
 */
 bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
                                unsigned int& u, unsigned int& v,
-                               vpMouseButton::vpMouseButtonType& button, 
+                               vpMouseButton::vpMouseButtonType& button,
 			                         bool blocking )
 {
   try
@@ -1472,7 +1472,7 @@ vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
   return true way a button is pressed
 */
 bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
-                               unsigned int& u, unsigned int& v, 
+                               unsigned int& u, unsigned int& v,
 			                         bool blocking )
 {
   try

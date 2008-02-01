@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.cpp,v 1.13 2008-01-31 14:59:35 asaunier Exp $
+ * $Id: vpFeatureDisplay.cpp,v 1.14 2008-02-01 15:11:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 				    vpColor::vpColorType color)
 {
   try{
-    double uf,vf ; // pixel coordinates in float
+    double uf=0, vf=0; // pixel coordinates in float
     vpMeterPixelConversion::convertPoint(cam, x, y, uf, vf) ;
 
     unsigned u,v ;
@@ -297,7 +297,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 				    vpColor::vpColorType color)
 {
   try{
-    double uf,vf ; // pixel coordinates in float
+    double uf=0, vf=0; // pixel coordinates in float
     vpMeterPixelConversion::convertPoint(cam, x, y, uf, vf) ;
 
     unsigned u,v ;
