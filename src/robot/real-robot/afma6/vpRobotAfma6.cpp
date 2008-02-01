@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.28 2008-01-31 14:50:31 asaunier Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.29 2008-02-01 16:53:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -179,7 +179,8 @@ void
 vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
                     vpCameraParameters::vpCameraParametersProjType projModel)
 {
-  ECameraAfma6 api_camera; // Interface with low level Afma6 api
+  // Interface with low level Afma6 api
+  ECameraAfma6 api_camera = CAMERA_DRAGONFLY2_WITHOUT_DISTORTION;
 
   switch (camera)
   {

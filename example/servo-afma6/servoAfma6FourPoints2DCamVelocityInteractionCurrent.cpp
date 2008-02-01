@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.4 2008-01-31 14:42:44 asaunier Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.5 2008-02-01 16:57:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -131,7 +131,7 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
   vpPose pose;
   for (int i=0; i < ndot; i ++) {
 
-    double x,y ;
+    double x=0, y=0;
 
 //     std::cout << "Pixel " << i <<": " <<  dot[i].get_u()
 // 	      << " " << dot[i].get_v() << std::endl;
@@ -263,7 +263,7 @@ main()
       // Load the end-effector to camera frame transformation obtained
 	    // using a camera intrinsic model with distortion
 	    robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, projModel);
-      
+
       vpServo task ;
 
       vpImage<unsigned char> I ;
