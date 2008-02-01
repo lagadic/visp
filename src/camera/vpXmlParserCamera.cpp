@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.cpp,v 1.7 2008-01-31 14:43:50 asaunier Exp $
+ * $Id: vpXmlParserCamera.cpp,v 1.8 2008-02-01 09:42:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -121,7 +121,7 @@ vpXmlParserCamera::operator =(const vpXmlParserCamera& twinParser) {
   \param filename : name of the xml file to parse
   \param camera_name : name of the camera : usefull if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
-  \param projModel : camera projection model needed. 
+  \param projModel : camera projection model needed.
   \param image_width : image width on which camera calibration was performed.
   Set as 0 if not ambiguous.
   \param image_height : image height on which camera calibration was performed.
@@ -129,11 +129,11 @@ vpXmlParserCamera::operator =(const vpXmlParserCamera& twinParser) {
 
   \return error code.
 */
-int 
-vpXmlParserCamera::parse(vpCameraParameters &cam, const char * filename, 
+int
+vpXmlParserCamera::parse(vpCameraParameters &cam, const char * filename,
 			 const std::string& camera_name,
        const vpCameraParameters::vpCameraParametersProjType &projModel,
-			 const unsigned int image_width, 
+			 const unsigned int image_width,
 			 const unsigned int image_height)
 {
   xmlDocPtr doc;
@@ -174,7 +174,7 @@ vpXmlParserCamera::parse(vpCameraParameters &cam, const char * filename,
 
   \return error code.
 */
-int 
+int
 vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
 			const std::string& camera_name,
 			const unsigned int image_width,
@@ -183,7 +183,7 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
   xmlDocPtr doc;
   xmlNodePtr node;
   xmlNodePtr nodeCamera = NULL;
-  
+
   doc = xmlReadFile(filename,NULL,XML_PARSE_NOWARNING + XML_PARSE_NOERROR
           + XML_PARSE_NOBLANKS);
   if (doc == NULL){
@@ -218,14 +218,14 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
     return SEQUENCE_ERROR;
   }
   this->camera = cam;
-  
+
   nodeCamera = find_camera(doc, node, camera_name, image_width, image_height);
   if(nodeCamera == NULL){
     write(node, camera_name, image_width, image_height);
   }
-  else{ 
+  else{
     write_camera(nodeCamera);
-  } 
+  }
   xmlSaveFormatFile(filename,doc,1);
   xmlFreeDoc(doc);
 
@@ -262,7 +262,7 @@ vpXmlParserCamera::myXmlReadCharChild (xmlDocPtr doc,
  \param res : variable where to place the result.
  \param code_error: place a SEQUENCE_ERROR if error.
 */
-void 
+void
 vpXmlParserCamera::myXmlReadIntChild (xmlDocPtr doc,
 				      xmlNodePtr node,
 				      int &res,
@@ -304,7 +304,7 @@ vpXmlParserCamera::myXmlReadIntChild (xmlDocPtr doc,
  \param res : variable where to place the result.
  \param code_error: place a SEQUENCE_ERROR if error.
 */
-void 
+void
 vpXmlParserCamera::myXmlReadDoubleChild (xmlDocPtr doc,
 					 xmlNodePtr node,
 					 double &res,
@@ -359,8 +359,8 @@ vpXmlParserCamera::myXmlReadDoubleChild (xmlDocPtr doc,
 
   \return error code.
  */
-int 
-vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node, 
+int
+vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
 			 const std::string& camera_name,
        const vpCameraParameters::vpCameraParametersProjType &projModel,
        const unsigned int image_width,
@@ -429,8 +429,8 @@ vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
 
   \return number of available camera parameters corresponding with inputs.
  */
-int 
-vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node, 
+int
+vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node,
 			  const std::string& camera_name,
         const vpCameraParameters::vpCameraParametersProjType &projModel,
   		  const unsigned int image_width,
@@ -494,7 +494,6 @@ vpXmlParserCamera::find_camera (xmlDocPtr doc, xmlNodePtr node,
 {
   //    char * val_char;
   vpXmlCodeType prop;
-  int nbCamera = 0;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
   {
@@ -538,8 +537,8 @@ vpXmlParserCamera::find_camera (xmlDocPtr doc, xmlNodePtr node,
   \return error code.
 
  */
-int 
-vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node, 
+int
+vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
 				const std::string& camera_name,
         const vpCameraParameters::vpCameraParametersProjType &projModel,
   			const unsigned int image_width,
@@ -559,7 +558,7 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
   unsigned int full_width_tmp = 0;
   unsigned int full_height_tmp = 0;
   vpCameraParameters cam_tmp;
-  vpCameraParameters cam_tmp_model; 
+  vpCameraParameters cam_tmp_model;
   bool projModelFound = false;
   vpXmlCodeSequenceType back = SEQUENCE_OK;
 
@@ -612,7 +611,7 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
       back = read_camera_model(doc, node, cam_tmp_model);
       if(cam_tmp_model.get_projModel() == projModel){
           cam_tmp = cam_tmp_model;
-          projModelFound = true;     
+          projModelFound = true;
       }
       break;
     default:
@@ -660,7 +659,7 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
   \return error code.
 
  */
-int 
+int
 vpXmlParserCamera::
 read_camera_header (xmlDocPtr doc, xmlNodePtr node,
               const std::string& camera_name,
@@ -934,13 +933,13 @@ write (xmlNodePtr node, const std::string& camera_name,
     }
 
     node_tmp = xmlNewComment((xmlChar*)"Intrinsic camera parameters computed for each projection model");
-    
+
     xmlAddChild(node_camera,node_tmp);
 
     back = write_camera(node_camera);
   }
-  return back; 
-}   
+  return back;
+}
  /*!
   Write camera parameters in an XML Tree.
 
@@ -951,8 +950,8 @@ write (xmlNodePtr node, const std::string& camera_name,
 int vpXmlParserCamera::
 write_camera(xmlNodePtr node_camera){
   xmlNodePtr node_model;
-  xmlNodePtr node_tmp;  
-  
+  xmlNodePtr node_tmp;
+
   int back = SEQUENCE_OK;
   switch(camera.get_projModel()){
   case vpCameraParameters::perspectiveProjWithoutDistortion :
@@ -1023,7 +1022,7 @@ write_camera(xmlNodePtr node_camera){
       xmlAddChild(node_model,node_tmp);
       sprintf(str,"%.10f",camera.get_kud());
       xmlNewTextChild(node_model,NULL,(xmlChar*)LABEL_XML_KUD,(xmlChar*)str);
-      
+
       //<kud>
       node_tmp = xmlNewComment((xmlChar*)"Distorted to undistorted distortion parameter");
       xmlAddChild(node_model,node_tmp);
@@ -1114,7 +1113,7 @@ vpXmlParserCamera::str2xmlcode (char * str, vpXmlCodeType & res)
   else if (! strcmp (str,  LABEL_XML_KDU))
   {
     val_int = CODE_XML_KDU;
-  } 
+  }
   else
   {
     val_int = CODE_XML_OTHER;
