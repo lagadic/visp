@@ -220,7 +220,7 @@ vpCalibration::calibVVS(
 
   double  residu_1 = 1e12 ;
   double r =1e12-1;
-  while (vpMath::equal(residu_1,r,vpCalibration::threshold) == false && iter < vpCalibration::nbIterMax)
+  while (vpMath::equal(residu_1,r,threshold) == false && iter < nbIterMax)
   {
 
     iter++ ;
@@ -297,7 +297,7 @@ vpCalibration::calibVVS(
 
     }    // end interaction
     vpMatrix Lp ;
-    Lp = L.pseudoInverse(1e-15) ;
+    Lp = L.pseudoInverse(1e-10) ;
 
     vpColVector e ;
     e = Lp*error ;
@@ -341,7 +341,7 @@ vpCalibration::calibVVSMulti(
 )
 {
   std::cout.precision(10);
-  int nbPoint[255]; //number of points by image
+  int nbPoint[256]; //number of points by image
   int nbPointTotal = 0; //total number of points
 
   for (unsigned int i=0; i<nbPose ; i++)
@@ -420,8 +420,8 @@ vpCalibration::calibVVSMulti(
         P[2*curPoint] =    cX[curPoint]/cZ[curPoint]*cam.get_px() + cam.get_u0() ;
         P[2*curPoint+1] =  cY[curPoint]/cZ[curPoint]*cam.get_py() + cam.get_v0() ;
 
-        r += ((vpMath::sqr(P[2*curPoint]-Pd[2*curPoint])
-               + vpMath::sqr(P[2*curPoint+1]-Pd[2*curPoint+1]))) ;
+        r += (vpMath::sqr(P[2*curPoint]-Pd[2*curPoint])
+               + vpMath::sqr(P[2*curPoint+1]-Pd[2*curPoint+1])) ;
         curPoint++;
       }
     }
@@ -483,7 +483,7 @@ vpCalibration::calibVVSMulti(
       }    // end interaction
     }
     vpMatrix Lp ;
-    Lp = L.pseudoInverse(1e-15) ;
+    Lp = L.pseudoInverse(1e-10) ;
 
     vpColVector e ;
     e = Lp*error ;
@@ -639,9 +639,10 @@ vpCalibration::calibVVSWithDistortion(
       P[4*i+3] = v0 + py*Y*(1 + kud*r2ud) ;
 
 
-      r += (vpMath::sqr(P[4*i]-Pd[4*i]) + vpMath::sqr(P[4*i+1]-Pd[4*i+1])
-	    + vpMath::sqr(P[4*i+2]-Pd[4*i+2])
-	    + vpMath::sqr(P[4*i+3]-Pd[4*i+3]))/2;
+      r += (vpMath::sqr(P[4*i]-Pd[4*i]) +
+            vpMath::sqr(P[4*i+1]-Pd[4*i+1]) +
+            vpMath::sqr(P[4*i+2]-Pd[4*i+2]) +
+            vpMath::sqr(P[4*i+3]-Pd[4*i+3]))/2;
 
       //--distorted to undistorted
       {
@@ -660,7 +661,7 @@ vpCalibration::calibVVSWithDistortion(
           L[4*i][9]= 2*kdu*(up-u0)*vpMath::sqr(vp-v0)/(py*py*py) ;
           L[4*i][10] = -(up-u0)*(r2du) ;
           L[4*i][11] = 0 ;
-	}
+        }
         {
           L[4*i+1][0] = 0 ;
           L[4*i+1][1] = py*(-1/z) ;
@@ -678,38 +679,38 @@ vpCalibration::calibVVSWithDistortion(
           L[4*i+1][11] = 0 ;
         }
 	//---undistorted to distorted
-	{
-	  L[4*i+2][0] = Axx*(-1/z) ;
-	  L[4*i+2][1] = Axy*(-1/z) ;
-	  L[4*i+2][2] = Axx*(X/z) + Axy*(Y/z) ;
-	  L[4*i+2][3] = Axx*X*Y +  Axy*(1+Y*Y);
-	  L[4*i+2][4] = -Axx*(1+X*X) - Axy*X*Y;
-	  L[4*i+2][5] = Axx*Y -Axy*X;
-	}
-	{
-	  L[4*i+2][6]= 1 ;
-	  L[4*i+2][7]= 0 ;
-	  L[4*i+2][8]= X*(1+kud*r2ud) ;
-	  L[4*i+2][9]= 0;
-	  L[4*i+2][10] = 0 ;
-	  L[4*i+2][11] = px*X*r2ud ;
-	}
-	{
-	  L[4*i+3][0] = Ayx*(-1/z) ;
-	  L[4*i+3][1] = Ayy*(-1/z) ;
-	  L[4*i+3][2] = Ayx*(X/z) + Ayy*(Y/z) ;
-	  L[4*i+3][3] = Ayx*X*Y + Ayy*(1+Y*Y) ;
-	  L[4*i+3][4] = -Ayx*(1+X*X) -Ayy*X*Y ;
-	  L[4*i+3][5] = Ayx*Y -Ayy*X;
-	}
-	{
-	  L[4*i+3][6]= 0 ;
-	  L[4*i+3][7]= 1;
-	  L[4*i+3][8]= 0;
-	  L[4*i+3][9]= Y*(1+kud*r2ud) ;
-	  L[4*i+3][10] = 0 ;
-	  L[4*i+3][11] = py*Y*r2ud ;
-	}
+	      {
+	        L[4*i+2][0] = Axx*(-1/z) ;
+	        L[4*i+2][1] = Axy*(-1/z) ;
+	        L[4*i+2][2] = Axx*(X/z) + Axy*(Y/z) ;
+	        L[4*i+2][3] = Axx*X*Y +  Axy*(1+Y*Y);
+	        L[4*i+2][4] = -Axx*(1+X*X) - Axy*X*Y;
+	        L[4*i+2][5] = Axx*Y -Axy*X;
+	      }
+	      {
+	        L[4*i+2][6]= 1 ;
+	        L[4*i+2][7]= 0 ;
+	        L[4*i+2][8]= X*(1+kud*r2ud) ;
+	        L[4*i+2][9]= 0;
+	        L[4*i+2][10] = 0 ;
+	        L[4*i+2][11] = px*X*r2ud ;
+	      }
+	      {
+	        L[4*i+3][0] = Ayx*(-1/z) ;
+	        L[4*i+3][1] = Ayy*(-1/z) ;
+	        L[4*i+3][2] = Ayx*(X/z) + Ayy*(Y/z) ;
+	        L[4*i+3][3] = Ayx*X*Y + Ayy*(1+Y*Y) ;
+	        L[4*i+3][4] = -Ayx*(1+X*X) -Ayy*X*Y ;
+	        L[4*i+3][5] = Ayx*Y -Ayy*X;
+	      }
+	      {
+	        L[4*i+3][6]= 0 ;
+	        L[4*i+3][7]= 1;
+	        L[4*i+3][8]= 0;
+	        L[4*i+3][9]= Y*(1+kud*r2ud) ;
+	        L[4*i+3][10] = 0 ;
+	        L[4*i+3][11] = py*Y*r2ud ;
+	      }
       }  // end interaction
     }    // end interaction
 
@@ -717,9 +718,8 @@ vpCalibration::calibVVSWithDistortion(
     error = P-Pd ;
     //r = r/n_points ;
 
-    if (r > residu_1) break ;
     vpMatrix Lp ;
-    Lp = L.pseudoInverse(1e-15) ;
+    Lp = L.pseudoInverse(1e-10) ;
 
     vpColVector e ;
     e = Lp*error ;
@@ -763,7 +763,7 @@ vpCalibration::calibVVSWithDistortionMulti(
   bool verbose)
 {
   std::cout.precision(10);
-  unsigned int nbPoint[1023]; //number of points by image
+  unsigned int nbPoint[256]; //number of points by image
   unsigned int nbPointTotal = 0; //total number of points
 
   for (unsigned int i=0; i<nbPose ; i++)
@@ -884,12 +884,10 @@ vpCalibration::calibVVSWithDistortionMulti(
         P[4*curPoint+2] = u0 + px*X*(1 + kud*r2ud) ;
         P[4*curPoint+3] = v0 + py*Y*(1 + kud*r2ud) ;
 
-        r += vpMath::sqr(P[4*curPoint]-Pd[4*curPoint]) +
-             vpMath::sqr(P[4*curPoint+1]-Pd[4*curPoint+1]) ;
-
-        r += ((vpMath::sqr(P[4*curPoint+2]-Pd[4*curPoint+2]) +
-               vpMath::sqr(P[4*curPoint+3]-Pd[4*curPoint+3]))) ;
-        r /=2;
+        r += (vpMath::sqr(P[4*curPoint]-Pd[4*curPoint]) +
+             vpMath::sqr(P[4*curPoint+1]-Pd[4*curPoint+1]) +
+             vpMath::sqr(P[4*curPoint+2]-Pd[4*curPoint+2]) +
+             vpMath::sqr(P[4*curPoint+3]-Pd[4*curPoint+3]))/2 ;
 
         //---------------
         {
@@ -1008,7 +1006,7 @@ vpCalibration::calibVVSWithDistortionMulti(
   {
     table_cal[p].cam_dist = cam ;
     table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist,
-                                          table_cal[p].cam_dist);
+                                          cam);
   }
   if (verbose)
     std::cout <<" std dev " << sqrt(r/(nbPointTotal)) << std::endl;
