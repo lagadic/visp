@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.8 2008-02-01 09:42:48 fspindle Exp $
+ * $Id: vpCalibration.cpp,v 1.9 2008-02-01 16:54:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -221,7 +221,7 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
   double px = cam.get_px() ;
   double py = cam.get_py() ;
   double kud = cam.get_kud() ;
-  double kdu = cam.get_kud() ;
+  double kdu = cam.get_kdu() ;
 
   for (unsigned int i =0 ; i < npt ; i++)
   {
@@ -253,13 +253,14 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
     yp = v0 + y*py - kdu*(v-v0)*r2du;
 
     residual += (vpMath::sqr(xp-u) + vpMath::sqr(yp-v))  ;
-    residual /=2;
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
     Lu.next() ;
     Lv.next() ;
   }
+  residual /=2;
+ 
   this->residual_dist = residual;
   return sqrt(residual/npt) ;
 }
@@ -310,7 +311,6 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
 				  bool verbose)
 {
   try{
-    vpHomogeneousMatrix cMo_dist;
     switch (method)
     {
     case CALIB_LAGRANGE :
@@ -332,11 +332,18 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
       {
 	if (verbose){std::cout << "start calibration without distortion"<< std::endl;}
 	calibVVS(cam, cMo, verbose);
-	cMo_dist = cMo ;
       }
       break ;
     default:
       break;
+    }
+    this->cMo = cMo;
+    this->cMo_dist = cMo;
+      
+    //Print camera parameters
+    if(verbose){
+      std::cout << "Camera parameters without distortion :" << std::endl;
+      cam.printParameters();
     }
 
     this->cam = cam;
@@ -347,17 +354,21 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST:
       {
 	if (verbose){std::cout << "start calibration with distortion"<< std::endl;}
-	calibVVSWithDistortion(cam, cMo_dist, verbose);
+	calibVVSWithDistortion(cam, cMo, verbose);
       }
       break ;
     default:
       break;
     }
+    //Print camera parameters
+    if(verbose){
+      std::cout << "Camera parameters with distortion :" << std::endl;
+      cam.printParameters();
+    }
 
     this->cam_dist = cam ;
 
-    this->cMo = cMo ;
-    this->cMo_dist = cMo_dist ;
+    this->cMo_dist = cMo;
     return 0 ;
   }
   catch(...){
