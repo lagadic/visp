@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.7 2008-01-31 14:43:50 asaunier Exp $
+ * $Id: vpCalibration.cpp,v 1.8 2008-02-01 09:42:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -340,7 +340,7 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
     }
 
     this->cam = cam;
-      
+
     switch (method)
     {
     case CALIB_VIRTUAL_VS_DIST:
@@ -680,7 +680,7 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
   double px_dist = cam_dist.get_px() ;
   double py_dist = cam_dist.get_py() ;
   double kud_dist = cam_dist.get_kud() ;
-  double kdu_dist = cam_dist.get_kdu() ;
+  //  double kdu_dist = cam_dist.get_kdu() ;
 
   double u0 = cam.get_u0() ;
   double v0 = cam.get_v0() ;
@@ -708,12 +708,13 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
     double xp = u0 + x*px ;
     double yp = v0 + y*py ;
 
-    vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp), 5,col) ;
+    vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
+			    5,col) ;
 
 
-    cX = oX*cMo_dist[0][0]+oY*cMo_dist[0][1]+oZ*cMo_dist[0][2] + cMo_dist[0][3];
-    cY = oX*cMo_dist[1][0]+oY*cMo_dist[1][1]+oZ*cMo_dist[1][2] + cMo_dist[1][3];
-    cZ = oX*cMo_dist[2][0]+oY*cMo_dist[2][1]+oZ*cMo_dist[2][2] + cMo_dist[2][3];
+    cX = oX*cMo_dist[0][0]+oY*cMo_dist[0][1]+oZ*cMo_dist[0][2]+cMo_dist[0][3];
+    cY = oX*cMo_dist[1][0]+oY*cMo_dist[1][1]+oZ*cMo_dist[1][2]+cMo_dist[1][3];
+    cZ = oX*cMo_dist[2][0]+oY*cMo_dist[2][1]+oZ*cMo_dist[2][2]+cMo_dist[2][3];
 
     x = cX/cZ ;
     y = cY/cZ ;
@@ -723,10 +724,11 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
     xp = u0_dist + x*px_dist*r2 ;
     yp = v0_dist + y*py_dist*r2 ;
 
-    vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp), 5,vpColor::yellow) ;
-///////////////////////////////////////
+    vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
+			    5,vpColor::yellow) ;
+    ///////////////////////////////////////
 
-    
+
     //    std::cout << oX << "  " << oY <<  "  " <<oZ << std::endl ;
     //    I.getClick() ;
     LoX.next() ;
