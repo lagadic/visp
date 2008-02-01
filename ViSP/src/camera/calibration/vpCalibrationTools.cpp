@@ -139,7 +139,7 @@ vpCalibration::calibLagrange(
                   -resul[0]*resul[0]);
   resul[3] = sqrt(sol[6]*sol[6]+sol[7]*sol[7]+sol[8]*sol[8] /* py */
                   -resul[1]*resul[1]);
-  
+
   cam.initPersProjWithoutDistortion(resul[2],resul[3],resul[0],resul[1]);
 
   resul[4] = (sol[9]-sol[11]*resul[0])/resul[2];  /* X0 */
@@ -310,7 +310,7 @@ vpCalibration::calibVVS(
       Tc_v[i] = Tc[i] ;
 
     cam.initPersProjWithoutDistortion(cam.get_px()+Tc[8],cam.get_py()+Tc[9],
-                                      cam.get_u0()+Tc[6],cam.get_v0()+Tc[7]) ;                 
+                                      cam.get_u0()+Tc[6],cam.get_v0()+Tc[7]) ;
 
     cMo = vpExponentialMap::direct(Tc_v).inverse()*cMo ;
     if (verbose)
@@ -600,7 +600,7 @@ vpCalibration::calibVVSWithDistortion(
     double kdu = cam.get_kdu() ;
 
     vpMatrix L(n_points*4,12) ;
-    
+
     for (unsigned int i=0 ; i < n_points; i++)
     {
       cX[i] = oX[i]*cMo[0][0]+oY[i]*cMo[0][1]+oZ[i]*cMo[0][2] + cMo[0][3];
@@ -624,9 +624,9 @@ vpCalibration::calibVVSWithDistortion(
 
       P[4*i] =   u0 + px*X - kdu *(up-u0)*r2du ;
       P[4*i+1] = v0 + py*Y - kdu *(vp-v0)*r2du ;
-      
+
       double r2ud = (vpMath::sqr(X)+vpMath::sqr(Y)) ;
-      
+
       double Axx = px*(1 + kud*r2ud+2*kud*X*X);
       double Axy = px*2*kud*X*Y;
       double Ayy = py*(1 + kud*r2ud+2*kud*Y*Y);
@@ -637,10 +637,11 @@ vpCalibration::calibVVSWithDistortion(
 
       P[4*i+2] = u0 + px*X*(1 + kud*r2ud) ;
       P[4*i+3] = v0 + py*Y*(1 + kud*r2ud) ;
-      
+
 
       r += (vpMath::sqr(P[4*i]-Pd[4*i]) + vpMath::sqr(P[4*i+1]-Pd[4*i+1])
-          +vpMath::sqr(P[4*i+2]-Pd[4*i+2]) + vpMath::sqr(P[4*i+3]-Pd[4*i+3]))/2;
+	    + vpMath::sqr(P[4*i+2]-Pd[4*i+2])
+	    + vpMath::sqr(P[4*i+3]-Pd[4*i+3]))/2;
 
       //--distorted to undistorted
       {
@@ -659,7 +660,7 @@ vpCalibration::calibVVSWithDistortion(
           L[4*i][9]= 2*kdu*(up-u0)*vpMath::sqr(vp-v0)/(py*py*py) ;
           L[4*i][10] = -(up-u0)*(r2du) ;
           L[4*i][11] = 0 ;
-       }
+	}
         {
           L[4*i+1][0] = 0 ;
           L[4*i+1][1] = py*(-1/z) ;
@@ -676,40 +677,39 @@ vpCalibration::calibVVSWithDistortion(
           L[4*i+1][10] = -(vp-v0)*r2du ;
           L[4*i+1][11] = 0 ;
         }
-            //---undistorted to distorted
-
-        {
-          L[4*i+2][0] = px*(-1/z) ;
-          L[4*i+2][1] = 0 ;
-          L[4*i+2][2] = px*(X/z) ;
-          L[4*i+2][3] = px*X*Y ;
-          L[4*i+2][4] = -px*(1+X*X) ;
-          L[4*i+2][5] = px*Y ;
-        }
-        {
-          L[4*i+2][6]= 1 ;
-          L[4*i+2][7]= 0 ;
-          L[4*i+2][8]= X*(1+kud*r2ud) ;
-          L[4*i+2][9]= 0;
-          L[4*i+2][10] = 0 ;
-          L[4*i+2][11] = px*X*r2ud ;
-        }
-        {
-          L[4*i+3][0] = 0 ;
-          L[4*i+3][1] = py*(-1/z) ;
-          L[4*i+3][2] = py*(Y/z) ;
-          L[4*i+3][3] = py*(1+Y*Y) ;
-          L[4*i+3][4] = -py*X*Y ;
-          L[4*i+3][5] = -py*X ;
-        }
-        {
-          L[4*i+3][6]= 0 ;
-          L[4*i+3][7]= 1;
-          L[4*i+3][8]= 0;
-          L[4*i+3][9]= Y*(1+kud*r2ud) ;
-          L[4*i+3][10] = 0 ;
-          L[4*i+1][11] = py*Y*r2ud ;
-        }
+	//---undistorted to distorted
+	{
+	  L[4*i+2][0] = Axx*(-1/z) ;
+	  L[4*i+2][1] = Axy*(-1/z) ;
+	  L[4*i+2][2] = Axx*(X/z) + Axy*(Y/z) ;
+	  L[4*i+2][3] = Axx*X*Y +  Axy*(1+Y*Y);
+	  L[4*i+2][4] = -Axx*(1+X*X) - Axy*X*Y;
+	  L[4*i+2][5] = Axx*Y -Axy*X;
+	}
+	{
+	  L[4*i+2][6]= 1 ;
+	  L[4*i+2][7]= 0 ;
+	  L[4*i+2][8]= X*(1+kud*r2ud) ;
+	  L[4*i+2][9]= 0;
+	  L[4*i+2][10] = 0 ;
+	  L[4*i+2][11] = px*X*r2ud ;
+	}
+	{
+	  L[4*i+3][0] = Ayx*(-1/z) ;
+	  L[4*i+3][1] = Ayy*(-1/z) ;
+	  L[4*i+3][2] = Ayx*(X/z) + Ayy*(Y/z) ;
+	  L[4*i+3][3] = Ayx*X*Y + Ayy*(1+Y*Y) ;
+	  L[4*i+3][4] = -Ayx*(1+X*X) -Ayy*X*Y ;
+	  L[4*i+3][5] = Ayx*Y -Ayy*X;
+	}
+	{
+	  L[4*i+3][6]= 0 ;
+	  L[4*i+3][7]= 1;
+	  L[4*i+3][8]= 0;
+	  L[4*i+3][9]= Y*(1+kud*r2ud) ;
+	  L[4*i+3][10] = 0 ;
+	  L[4*i+3][11] = py*Y*r2ud ;
+	}
       }  // end interaction
     }    // end interaction
 
@@ -734,7 +734,7 @@ vpCalibration::calibVVSWithDistortion(
                                    cam.get_u0() + Tc[6], cam.get_v0() + Tc[7],
                                    cam.get_kud() + Tc[11],
                                    cam.get_kdu() + Tc[10]);
-    
+
     cMo = vpExponentialMap::direct(Tc_v).inverse()*cMo ;
     if (verbose)
       std::cout <<  " std dev " << sqrt(r/n_points) << std::endl;
@@ -819,7 +819,7 @@ vpCalibration::calibVVSWithDistortionMulti(
   {
     iter++ ;
     residu_1 = r ;
-    
+
     r = 0 ;
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
@@ -927,7 +927,7 @@ vpCalibration::calibVVSWithDistortionMulti(
             L[4*curPoint+1][6*nbPose+4] = -(vp-v0)*r2du ;
             L[4*curPoint+1][6*nbPose+5] = 0 ;
           }
-          //meter to pixel estimation
+          //---undistorted to distorted
           {
             L[4*curPoint+2][6*p] = Axx*(-1/z) ;
             L[4*curPoint+2][6*p+1] = Axy*(-1/z) ;
