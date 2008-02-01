@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpKeyboard.cpp,v 1.1 2007-08-21 14:01:49 fspindle Exp $
+ * $Id: vpKeyboard.cpp,v 1.2 2008-02-01 17:27:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -145,36 +145,28 @@ vpKeyboard::end()
 void
 vpKeyboard::setRawMode(bool active)
 {
-  raw_actif = false;
-
-  if (raw_actif == active) {
-    return;
-  }
-
   if (active) {
 
     tcgetattr(STDIN_FILENO, &initial_settings);
 
     new_settings = initial_settings;
     //    cfmakeraw(&new_settings);
-  new_settings = initial_settings;
-  new_settings.c_lflag &= ~ICANON;
-  new_settings.c_lflag &= ~ECHO;
-  new_settings.c_lflag &= ~ISIG;
-  new_settings.c_oflag &= ~NL0;
-  new_settings.c_oflag &= ~CR0;
-  new_settings.c_oflag &= ~TAB0;
-  new_settings.c_oflag &=~BS0;
-  new_settings.c_cc[VMIN] = 1;
-  new_settings.c_cc[VTIME] = 0;
+    new_settings = initial_settings;
+    new_settings.c_lflag &= ~ICANON;
+    new_settings.c_lflag &= ~ECHO;
+    new_settings.c_lflag &= ~ISIG;
+    new_settings.c_oflag &= ~NL0;
+    new_settings.c_oflag &= ~CR0;
+    new_settings.c_oflag &= ~TAB0;
+    new_settings.c_oflag &=~BS0;
+    new_settings.c_cc[VMIN] = 1;
+    new_settings.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_settings);
 
   }
   else {
     tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
   }
-
-  raw_actif = active;
 }
 
 #endif // defined UNIX
