@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: VISPConfig.cmake.in,v 1.13 2007-02-08 17:01:47 fspindle Exp $
+# $Id: VISPConfig.cmake.in,v 1.14 2008-02-04 16:16:22 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -44,6 +44,10 @@
 # Tells the user project where to find ViSP headers
 SET(VISP_INCLUDE_DIR "${VISP_DIR}/../include" CACHE FILEPATH "Location of ViSP includes")
 #MESSAGE("VISP_INCLUDE_DIR: ${VISP_INCLUDE_DIR}")
+
+# Get ViSP specific definitions
+SET(VISP_DEFS "@VISP_DEFS@")
+#MESSAGE("VISP_DEFS: ${VISP_DEFS}")
 
 # Tells the user project where to find ViSP third party headers used
 # to compile ViSP. These locations are concatenate to VISP_INCLUDE_DIR
@@ -105,11 +109,17 @@ ENDIF(BUILD_TEST_COVERAGE)
 #
 
 SET(VISP_HAVE_X11            "@VISP_HAVE_X11@")
+SET(VISP_HAVE_PTHREAD        "@VISP_HAVE_PTHREAD@")
 SET(VISP_HAVE_GTK            "@VISP_HAVE_GTK@")
+SET(VISP_HAVE_GDI            "@VISP_HAVE_GDI@")
+SET(VISP_HAVE_D3D9           "@VISP_HAVE_D3D9@")
 SET(VISP_HAVE_GSL            "@VISP_HAVE_GSL@")
+SET(VISP_HAVE_OPENCV         "@VISP_HAVE_OPENCV@")
 SET(VISP_HAVE_COIN           "@VISP_HAVE_COIN@")
 SET(VISP_HAVE_QT             "@VISP_HAVE_QT@")
 SET(VISP_HAVE_SOQT           "@VISP_HAVE_SOQT@")
+SET(VISP_HAVE_SOWIN          "@VISP_HAVE_SOWIN@")
+SET(VISP_HAVE_SOXT           "@VISP_HAVE_SOXT@")
 SET(VISP_HAVE_DC1394_1       "@VISP_HAVE_DC1394_1@")
 SET(VISP_HAVE_DC1394_2       "@VISP_HAVE_DC1394_2@")
 SET(VISP_HAVE_CFOX           "@VISP_HAVE_CFOX@")
@@ -122,7 +132,10 @@ SET(VISP_HAVE_AFMA4          "@VISP_HAVE_AFMA4@")
 SET(VISP_HAVE_AFMA6          "@VISP_HAVE_AFMA6@")
 SET(VISP_HAVE_BICLOPS        "@VISP_HAVE_BICLOPS@")
 SET(VISP_HAVE_PTU46          "@VISP_HAVE_PTU46@")
+SET(VISP_HAVE_PARPORT        "@VISP_HAVE_PARPORT@")
+SET(VISP_HAVE_XML2           "@VISP_HAVE_XML2@")
 
 IF(VISP_HAVE_AFMA4 OR  VISP_HAVE_AFMA6)
- ADD_DEFINITIONS(-DBT1003) 
+  ADD_DEFINITIONS(-DBT1003) 
 ENDIF(VISP_HAVE_AFMA4 OR  VISP_HAVE_AFMA6)
+ADD_DEFINITIONS(${VISP_DEFS}) 
