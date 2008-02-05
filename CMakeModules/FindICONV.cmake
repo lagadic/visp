@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindICONV.cmake,v 1.1 2007-11-21 15:10:25 asaunier Exp $
+# $Id: FindICONV.cmake,v 1.2 2008-02-05 10:58:40 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -58,7 +58,7 @@ ELSE(WIN32)
 ENDIF(WIN32)
 
 IF(ICONV_LIBRARY)
-  SET(ICONV_LIBRARIES ${XML2_LIBRARY})
+  SET(ICONV_LIBRARIES ${ICONV_LIBRARY})
 ENDIF(ICONV_LIBRARY)
 
 IF(ICONV_LIBRARIES AND ICONV_INCLUDE_DIR)
