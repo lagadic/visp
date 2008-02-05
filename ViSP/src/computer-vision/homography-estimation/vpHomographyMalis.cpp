@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyMalis.cpp,v 1.9 2007-01-31 13:12:13 asaunier Exp $
+ * $Id: vpHomographyMalis.cpp,v 1.10 2008-02-05 14:01:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -718,8 +718,8 @@ HLM(int q_cible,
 #endif
 
 /*!
-  \brief Computes the homography matrix from panar or non planar points
-  using Ezio Malis (IJCV00) algorithm
+  \brief Computes the homography matrix from planar or non planar points
+  using Ezio Malis linear method (HLM).
 
   Computes H such as  \f[
   ^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}
@@ -732,7 +732,7 @@ HLM(int q_cible,
 
   E. Malis, F. Chaumette. 2 1/2 D visual servoing with respect to unknown
   objects through a new estimation scheme of camera displacement. Int. Journal
-  of Computer Vision, 37(1):79-97, Juin 2000.
+  of Computer Vision, 37(1):79-97, June 2000.
 
   \code
   @article{Malis00b,

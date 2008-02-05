@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyDLT.cpp,v 1.5 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpHomographyDLT.cpp,v 1.6 2008-02-05 14:01:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -133,13 +133,15 @@ vpHomography::HartleyDenormalization(vpHomography &aHbn,
 
 
 /*!
-  \brief  Computes the homography matrix wrt. the
-  data using  normalized  DLT (Direct Linear Transform)
 
-
+  \brief Computes the homography matrix using the DLT (Direct Linear
+  Transform) algorithm on normalized data.
+ 
   Normalizes data, computes H wrt. these normalized data and denormalizes
   the result. The normalization carried out is the one preconized by Hartley .
   At least 4 correspondant points couples are needed.
+
+  \sa DLT()
 */
 void
 vpHomography::HartleyDLT(int n,
@@ -197,22 +199,22 @@ vpHomography::HartleyDLT(int n,
 
 /*!
   \brief Computes the homography matrix wrt. the
-  data using DLT (Direct Linear Transform)  algorithm
+  data using the DLT (Direct Linear Transform) algorithm.
 
   Computes H such as  \f[
   ^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}
   \f]
 
-  To do so, we the DLT algorithm on the data,
-  ie we resolve the linear system  by SDV : A.h =0 .
-  h is the vector with the terms of H_norm,
+  To do so, we use the DLT algorithm on the data,
+  ie we resolve the linear system  by SDV : \f$\bf{Ah} =0\f$.
+  \f$\bf{h}\f$ is the vector with the terms of \f$\mathbf{H}\f$,
 
-  A depends on the  points coordinates.
+  \f$\mathbf{A}\f$ depends on the  points coordinates.
 
   At least 4 correspondant points couples are needed.
 
 
-  For each point, in homogeneous coordinates:
+  For each point, in homogeneous coordinates we have:
   \f[
   \mathbf{p}_{a}= \mathbf{H}\mathbf{p}_{b}
   \f]
@@ -220,7 +222,7 @@ vpHomography::HartleyDLT(int n,
   \f[
   \mathbf{p}_{a} \times \mathbf{H}\mathbf{p}_{b}  =0
   \f]
-  if we note \f$\mathbf{h}_j^T\f$ the  \f$j^{\textrm{th}}\f$ line of  \f$\mathbf{H}\f$, we can write:
+  If we note \f$\mathbf{h}_j^T\f$ the  \f$j^{\textrm{th}}\f$ line of  \f$\mathbf{H}\f$, we can write:
   \f[
   \mathbf{H}\mathbf{p}_{b}  = \left( \begin{array}{c}\mathbf{h}_1^T\mathbf{p}_{b} \\\mathbf{h}_2^T\mathbf{p}_{b} \\\mathbf{h}_3^T \mathbf{p}_{b} \end{array}\right)
   \f]
@@ -237,18 +239,10 @@ vpHomography::HartleyDLT(int n,
   \mathbf{p}_{b}^T&\mathbf{0}^T & -x_{a} \mathbf{p}_{b}^T      \\
   -y_{a} \mathbf{p}_{b}^T & x_{a} \mathbf{p}_{b}^T &
   \mathbf{0}^T\end{array}\right)}_{\mathbf{A}_i (3\times 9)}
-  \underbrace{\left( \begin{array}{c}\mathbf{h}_1      \\
-  \mathbf{h}_2\\\mathbf{h}_3\end{array}\right)}_{\mathbf{h} (9\times 1)}=0
+  \underbrace{\left( \begin{array}{c}\mathbf{h}_{1}^{T}      \\
+  \mathbf{h}_{2}^{T}\\\mathbf{h}_{3}^{T}\end{array}\right)}_{\mathbf{h} (9\times 1)}=0
   \f]
-  \f[
-  \underbrace{\left( \begin{array}{ccc}\mathbf{0}^T & -w_{a} \mathbf{p}_{b}^T
-  & y_{a} \mathbf{p}_{b}^T     \\     w_{a}
-  \mathbf{p}_{b}^T&\mathbf{0}^T & -x_{a} \mathbf{p}_{b}^T      \\
-  -y_{a} \mathbf{p}_{b}^T & x_{a} \mathbf{p}_{b}^T &
-  \mathbf{0}^T\end{array}\right)}_{\mathbf{A}_i (3\times 9)}
-  \underbrace{\left( \begin{array}{c}\mathbf{h}_1      \\
-  \mathbf{h}_2\\\mathbf{h}_3\end{array}\right)}_{\mathbf{h} (9\times 1)}=0
-  \f]
+
   leading to an homogeneous system to be solve:   \f$\mathbf{A}\mathbf{h}=0\f$ with
   \f$\mathbf{A}=\left(\mathbf{A}_1^T, ..., \mathbf{A}_i^T, ..., \mathbf{A}_n^T \right)^T\f$.
 
