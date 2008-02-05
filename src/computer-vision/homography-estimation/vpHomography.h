@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.12 2008-02-05 08:40:24 fspindle Exp $
+ * $Id: vpHomography.h,v 1.13 2008-02-05 14:01:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -200,18 +200,15 @@ private:
 				     double xg2, double yg2, double coef2 ) ;
 
 public:
-  //! compute the homography using the DLT from normalized data
   static void HartleyDLT(int n,
 			 double *xb, double *yb ,
 			 double *xa, double *ya,
 			 vpHomography &aHb) ;
-  //! compute the homography using the DLT
   static void DLT(int n,
 		  double *xb, double *yb ,
 		  double *xa, double *ya,
 		  vpHomography &aHb) ;
 
-  //!  compute the homography using the linear method (HLM) proposed by Ezio Malis
   static void HLM(int n,
 		    double *xb, double *yb,
 		    double *xa, double *ya ,
