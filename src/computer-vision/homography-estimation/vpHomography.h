@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.11 2007-05-16 13:02:56 fspindle Exp $
+ * $Id: vpHomography.h,v 1.12 2008-02-05 08:40:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -144,13 +144,6 @@ public:
   void insert(const vpTranslationVector &atb) ;
   //! insert a translation vector
   void insert(const vpPlane &bP) ;
-
-  //! extract the homogeneous matrix from the homography
-  void extract( vpRotationMatrix &aRb, vpTranslationVector &atb) const;
-
-  //! extract the rotational matrix and translational vector
-  //! from the homography
-  void extract( vpHomogeneousMatrix &aRb) const;
 
   //! Load an homography from a file
   void load(std::ifstream &f) ;
