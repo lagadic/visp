@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindBIT3.cmake,v 1.3 2006-11-07 14:13:09 fspindle Exp $
+# $Id: FindBIT3.cmake,v 1.4 2008-02-05 09:08:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -35,6 +35,7 @@
 # BIT3_FOUND
 # BIT3_INCLUDE_DIR
 # BIT3_LIBRARIES
+# BIT3_DEFS
 #
 # Authors:
 # Fabien Spindler
@@ -75,9 +76,10 @@ ELSE(NOT UNIX)
   
   IF(BIT3_LIBRARIES AND BIT3_INCLUDE_DIR)
     SET(BIT3_INCLUDE_DIR ${BIT3_INCLUDE_DIR})
-    ADD_DEFINITIONS(-DBT1003) 
+    SET(BIT3_DEFS "-DBT1003") 
     SET(BIT3_FOUND TRUE)
   ELSE(BIT3_LIBRARIES AND BIT3_INCLUDE_DIR)
+    SET(BIT3_DEFS "") 
     SET(BIT3_FOUND FALSE)
   ENDIF(BIT3_LIBRARIES AND BIT3_INCLUDE_DIR)
   
@@ -85,5 +87,6 @@ ELSE(NOT UNIX)
     BIT3_INCLUDE_DIR
     BIT3_LIBRARIES
     BIT3_LIBRARY
+    BIT3_DEFS
     )
 ENDIF(NOT UNIX)

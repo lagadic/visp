@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: GenerateConfigScript.cmake,v 1.17 2007-02-09 17:33:31 fspindle Exp $
+# $Id: GenerateConfigScript.cmake,v 1.18 2008-02-05 09:08:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -55,10 +55,6 @@ IF (UNIX)
   FOREACH(INCDIR ${VISP_EXTERN_INCLUDE_DIR})
     SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -I${INCDIR}")
   ENDFOREACH(INCDIR)
-
-  IF(BIT3_FOUND)
-    SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -DBT1003")
-  ENDIF(BIT3_FOUND)
 
   IF(BUILD_TEST_COVERAGE)
     # Add build options for test coverage. Currently coverage is only supported

@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: VISPConfig.cmake.in,v 1.14 2008-02-04 16:16:22 fspindle Exp $
+# $Id: VISPConfig.cmake.in,v 1.15 2008-02-05 09:08:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -135,7 +135,4 @@ SET(VISP_HAVE_PTU46          "@VISP_HAVE_PTU46@")
 SET(VISP_HAVE_PARPORT        "@VISP_HAVE_PARPORT@")
 SET(VISP_HAVE_XML2           "@VISP_HAVE_XML2@")
 
-IF(VISP_HAVE_AFMA4 OR  VISP_HAVE_AFMA6)
-  ADD_DEFINITIONS(-DBT1003) 
-ENDIF(VISP_HAVE_AFMA4 OR  VISP_HAVE_AFMA6)
 ADD_DEFINITIONS(${VISP_DEFS}) 

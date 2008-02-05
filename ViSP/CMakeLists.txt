@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.64 2007-12-12 13:47:49 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.65 2008-02-05 09:08:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -652,6 +652,7 @@ IF(VISP_HAVE_AFMA4 OR VISP_HAVE_AFMA6)
   SET(AFMA_LIBS ${AFMA_LIBS} ${BIT3_LIBRARIES})
   SET(VISP_EXTERN_LIBS ${AFMA_LIBS}
     ${VISP_EXTERN_LIBS} -l${VISP_INTERN_LIBS} )
+  SET(VISP_DEFS "${VISP_DEFS} ${BIT3_DEFS}")
 ENDIF(VISP_HAVE_AFMA4 OR VISP_HAVE_AFMA6)
 
 # library for Biclops pan-tilt head
