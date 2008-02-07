@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.11 2007-12-19 13:15:40 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.12 2008-02-07 17:15:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -255,7 +255,7 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
       roi_top = (unsigned int) atoi(optarg); break;
     case 'v':
       videomode_is_set = true;
-      videomode = (vp1394TwoGrabber::vp1394TwoVideoModeType) atoi(optarg); 
+      videomode = (vp1394TwoGrabber::vp1394TwoVideoModeType) atoi(optarg);
       break;
     case 'w':
       roi_width = (unsigned int) atoi(optarg); break;
@@ -424,11 +424,11 @@ main(int argc, char ** argv)
 		vp1394TwoGrabber::vp1394TwoColorCodingType supcoding;
 		supcoding = lcoding.value();
 		if ( (curmode == supmode) && (supcoding == curcoding) )
-		  std::cout << "    * " 
+		  std::cout << "    * "
 			    << vp1394TwoGrabber::colorCoding2string(supcoding)
 			    << " (-g " << supcoding << ")" << std::endl;
 		else
-		  std::cout << "      " 
+		  std::cout << "      "
 			    << vp1394TwoGrabber::colorCoding2string(supcoding)
 			    << " (-g " << supcoding << ")" << std::endl;
 		lcoding.next();
@@ -443,11 +443,11 @@ main(int argc, char ** argv)
 	      while (! lfps.outside() ) {
 		vp1394TwoGrabber::vp1394TwoFramerateType supfps = lfps.value();
 		if ( (curmode == supmode) && (supfps == curfps) )
-		  std::cout << "    * " 
+		  std::cout << "    * "
 			    << vp1394TwoGrabber::framerate2string(supfps)
 			    << " (-f " << supfps << ")" << std::endl;
 		else
-		  std::cout << "      " 
+		  std::cout << "      "
 			    << vp1394TwoGrabber::framerate2string(supfps)
 			    << " (-f " << supfps << ")" << std::endl;
 		lfps.next();
@@ -500,6 +500,8 @@ main(int argc, char ** argv)
 	char title[100];
 	sprintf(title, "Images captured by camera %u", i+offset);
 	d[i].init(I[i], 100+i*50, 100+i*50, title) ;
+	vpDisplay::display(I[i]);
+	vpDisplay::flush(I[i]);
       }
     }
 
