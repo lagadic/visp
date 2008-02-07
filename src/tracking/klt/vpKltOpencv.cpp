@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpKltOpencv.cpp,v 1.4 2007-10-03 16:33:48 fspindle Exp $
+ * $Id: vpKltOpencv.cpp,v 1.5 2008-02-07 14:50:55 megautie Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,9 +60,11 @@ void vpKltOpencv::clean()
   if (prev_pyramid) cvReleaseImage(&prev_pyramid);
   if (features) cvFree(&features);
   if (prev_features) cvFree(&prev_features);
+  if (init_features) cvFree(&init_features);
   if (status) cvFree(&status);
   if (featuresid) cvFree(&featuresid);
   if (prev_featuresid) cvFree(&prev_featuresid);
+  if (init_featuresid) cvFree(&init_featuresid);
 
   image = 0;
   prev_image = 0;
@@ -70,9 +72,11 @@ void vpKltOpencv::clean()
   prev_pyramid = 0;
   features = 0;
   prev_features = 0;
+  init_features = 0;
   status = 0;
   featuresid = 0;
   prev_featuresid = 0;
+  init_featuresid = 0;
 
   swap_temp = 0;
   countFeatures = 0;
@@ -88,9 +92,11 @@ void vpKltOpencv::reset()
 
   features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(features[0]));
   prev_features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(prev_features[0]));
+  init_features =(CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(init_features[0]));
   status = (char*)cvAlloc(maxFeatures);
   featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
   prev_featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
+  init_featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
 }
 
 vpKltOpencv::vpKltOpencv()
@@ -117,10 +123,12 @@ vpKltOpencv::vpKltOpencv()
   swap_temp = 0;
   features = 0;
   prev_features = 0;
+  init_features = 0;
   flags = 0;
   status = 0;
   featuresid = 0;
   prev_featuresid = 0;
+  init_featuresid = 0;
   OnInitialize = 0;
   OnFeatureLost = 0;
   OnNewFeature = 0;
@@ -161,9 +169,11 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
     //prev_pyramid = 0;
     features = 0;
     prev_features = 0;
+    init_features = 0;
     status = 0;
     featuresid = 0;
     prev_featuresid = 0;
+    init_featuresid = 0;
     swap_temp = 0;
     countFeatures = 0;
     countPrevFeatures = 0;
@@ -281,12 +291,18 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
   for (int boucle=0; boucle<countFeatures;boucle++)  {
     featuresid[boucle] = globalcountFeatures;
     globalcountFeatures++;
-
+    
     if (OnNewFeature){
       OnNewFeature(_tid, boucle, featuresid[boucle], features[boucle].x,
 		   features[boucle].y);
-	}
     }
+  }
+
+  //save init points : 
+  for (int boucle=0; boucle<countFeatures;boucle++)  {
+    init_featuresid[boucle] = featuresid[boucle];
+    init_features[boucle] = features[boucle];
+  }
 }
 
 void vpKltOpencv::track(const IplImage *I)
@@ -340,7 +356,7 @@ void vpKltOpencv::track(const IplImage *I)
 		      features[i].y);
       continue;
     }
-
+    
     if (IsFeatureValid)	{
       if (!IsFeatureValid(_tid, features[i].x, features[i].y))   {
 	if (OnFeatureLost)
@@ -348,9 +364,12 @@ void vpKltOpencv::track(const IplImage *I)
 	continue;
       }
     }
-
     features[k] = features[i];
     featuresid[k] = featuresid[i];
+    //also move init_feature points to still have correspondance
+    init_features[k] = init_features[i];
+    init_featuresid[k] = init_featuresid[i];
+
     if (OnMeasureFeature) OnMeasureFeature(_tid, k, featuresid[k], features[k].x, features[k].y);
     k++;
   }
@@ -381,7 +400,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
 /*!
 
   Get the 'index'th feature image coordinates.  Beware that
-  getPrevFeature(i,...) may not represent the same feature before and
+  getFeature(i,...) may not represent the same feature before and
   after a tracking iteration (if a feature is lost, features are
   shifted in the array).
 
@@ -422,6 +441,27 @@ void vpKltOpencv::getPrevFeature(int index, int &id, float &x, float &y)
 
 /*!
 
+  Get the 'index'th feature image coordinates.  Beware that
+  getFeature(i,...) may not represent the same feature before and
+  after a tracking iteration (if a feature is lost, features are
+  shifted in the array).
+
+*/
+void vpKltOpencv::getInitFeature(int index, int &id, float &x, float &y)
+{
+  if (index >= countFeatures)
+    {
+      vpERROR_TRACE(" Memory problem ");
+      throw(vpException(vpException::memoryAllocationError," Memory problem"));
+    }
+
+  x = init_features[index].x;
+  y = init_features[index].y;
+  id = init_featuresid[index];
+}
+
+/*!
+
 Add at the end of the feauture list.
 
 If there is no space left, the feature is not added (just return)
@@ -438,9 +478,12 @@ void vpKltOpencv::addFeature(const int &id,
   CvPoint2D32f f;
   f.x = x;
   f.y = y;
-  features[countFeatures] = f;
+   features[countFeatures] = f;
   featuresid[countFeatures] = id;
 
+  //add associated init_feature to keep correspondance in tables
+  init_features[countFeatures] = f;
+  init_featuresid[countFeatures] = id;
   countFeatures ++;
 }
 
@@ -458,7 +501,9 @@ void vpKltOpencv::suppressFeature(int index)
     features[i] = features[i+1];
     featuresid[i] = featuresid[i+1];
 
+    //suppress associated init_feature to keep correspondance in tables
+    init_features[i] = init_features[i+1];
+    init_featuresid[i] = init_featuresid[i+1];
   }
 }
-
 #endif
