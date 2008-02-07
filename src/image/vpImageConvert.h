@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.16 2007-12-04 16:26:36 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.17 2008-02-07 17:23:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,8 +70,8 @@ public:
   static void convert(const vpImage<unsigned char> &src,
 		      vpImage<vpRGBa> & dest) ;
   static void convert(const vpImage<vpRGBa> &src,
-		      vpImage<unsigned char> & dest) ; 
-#ifdef VISP_HAVE_OPENCV        
+		      vpImage<unsigned char> & dest) ;
+#ifdef VISP_HAVE_OPENCV
   static void convert(const IplImage* src,
           vpImage<vpRGBa> & dest) ;
   static void convert(const IplImage* src,
@@ -81,13 +81,13 @@ public:
   static void convert(const vpImage<unsigned char> & src,
           IplImage* &dest) ;
 #endif
-   
+
   static void split(const vpImage<vpRGBa> &src,
                     vpImage<unsigned char>* pR,
                     vpImage<unsigned char>* pG,
                     vpImage<unsigned char>* pB,
                     vpImage<unsigned char>* pa = NULL) ;
-  
+
   /*!
     Converts a yuv pixel value in rgb format.
 
@@ -146,14 +146,14 @@ public:
 			  unsigned char* rgb, unsigned int width, unsigned int height);
   static void YUV420ToGrey(unsigned char* yuv,
 			   unsigned char* grey, unsigned int size);
-  
+
   static void YUV444ToRGBa(unsigned char* yuv,
          unsigned char* rgba, unsigned int size);
   static void YUV444ToRGB(unsigned char* yuv,
         unsigned char* rgb, unsigned int size);
   static void YUV444ToGrey(unsigned char* yuv,
          unsigned char* grey, unsigned int size);
-   
+
   static void YV12ToRGBa(unsigned char* yuv,
 			   unsigned char* rgba, unsigned int width, unsigned int height);
   static void YV12ToRGB(unsigned char* yuv,
@@ -166,7 +166,7 @@ public:
 			unsigned char* rgba, unsigned int size);
   static void RGBaToRGB(unsigned char* rgba,
       unsigned char* rgb, unsigned int size);
-   
+
   static void RGBToGrey(unsigned char* rgb,
 			unsigned char* grey, unsigned int size);
   static void RGBaToGrey(unsigned char* rgba,
@@ -192,6 +192,8 @@ public:
 			  unsigned int size);
   static void YCbCrToGrey(unsigned char *ycbcr, unsigned char *grey,
 			 unsigned int size);
+  static void MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
+			   unsigned int size);
 
 private:
   static void computeYCbCrLUT();
@@ -202,7 +204,7 @@ private:
   static int vpCgb[256];
   static int vpCgr[256];
   static int vpCbb[256];
-  
+
 } ;
 
 #endif
