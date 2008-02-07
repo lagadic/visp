@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.24 2007-12-04 16:45:24 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.25 2008-02-07 17:23:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,20 +86,20 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
 
 #ifdef VISP_HAVE_OPENCV
 /*!
-Convert a IplImage to a vpImage\<vpRGBa\>
+  Convert a IplImage to a vpImage\<vpRGBa\>
 
-An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
-image structure. See http://opencvlibrary.sourceforge.net/ for general
-OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
-for the specific IplImage structure documentation.
+  An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
+  image structure. See http://opencvlibrary.sourceforge.net/ for general
+  OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
+  for the specific IplImage structure documentation.
 
-\warning This function is only available if OpenCV was detected during
-the configuration step.
+  \warning This function is only available if OpenCV was detected during
+  the configuration step.
 
-\param src : source image
-\param dest : destination image
+  \param src : source image
+  \param dest : destination image
 
-\code
+  \code
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpImageConvert.h>
@@ -116,7 +116,7 @@ the configuration step.
 
     //Release Ip header and data
     cvReleaseImage(&Ip);
-\endcode
+  \endcode
 */
 void
 vpImageConvert::convert(const IplImage* src,
@@ -178,20 +178,20 @@ vpImageConvert::convert(const IplImage* src,
 }
 
 /*!
-Convert a IplImage to a vpImage\<unsigned char\>
+  Convert a IplImage to a vpImage\<unsigned char\>
 
-An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
-image structure. See http://opencvlibrary.sourceforge.net/ for general
-OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
-for the specific IplImage structure documentation.
+  An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
+  image structure. See http://opencvlibrary.sourceforge.net/ for general
+  OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
+  for the specific IplImage structure documentation.
 
-\warning This function is only available if OpenCV was detected during
-the configuration step.
+  \warning This function is only available if OpenCV was detected during
+  the configuration step.
 
-\param src : source image
-\param dest : destination image
+  \param src : source image
+  \param dest : destination image
 
-\code
+  \code
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpImageConvert.h>
@@ -208,7 +208,7 @@ the configuration step.
 
     //Release Ip header and data
     cvReleaseImage(&Ip);
-\endcode
+  \endcode
 */
 void
 vpImageConvert::convert(const IplImage* src,
@@ -250,20 +250,20 @@ vpImageConvert::convert(const IplImage* src,
 }
 
 /*!
-Convert a vpImage\<vpRGBa\> to a IplImage
+  Convert a vpImage\<vpRGBa\> to a IplImage
 
-An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
-image structure. See http://opencvlibrary.sourceforge.net/ for general
-OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
-for the specific IplImage structure documentation.
+  An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
+  image structure. See http://opencvlibrary.sourceforge.net/ for general
+  OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
+  for the specific IplImage structure documentation.
 
-\warning This function is only available if OpenCV was detected during
-the configuration step.
+  \warning This function is only available if OpenCV was detected during
+  the configuration step.
 
-\param src : source image
-\param dest : destination image
+  \param src : source image
+  \param dest : destination image
 
-\code
+  \code
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpImageConvert.h>
@@ -280,7 +280,7 @@ the configuration step.
 
     //Release Ip header and data
     cvReleaseImage(&Ip);
-\endcode
+  \endcode
 */
 void
 vpImageConvert::convert(const vpImage<vpRGBa> & src,
@@ -299,8 +299,8 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src,
     }
   }
   else dest = cvCreateImage( size, depth, channels );
-    
-  
+
+
   //starting source address
   unsigned char * input = (unsigned char*)src.bitmap;//rgba image
   unsigned char * line;
@@ -328,20 +328,20 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src,
 }
 
 /*!
-Convert a vpImage\<unsigned char\> to a IplImage
+  Convert a vpImage\<unsigned char\> to a IplImage
 
-An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
-image structure. See http://opencvlibrary.sourceforge.net/ for general
-OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
-for the specific IplImage structure documentation.
+  An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
+  image structure. See http://opencvlibrary.sourceforge.net/ for general
+  OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
+  for the specific IplImage structure documentation.
 
-\warning This function is only available if OpenCV was detected during
-the configuration step.
+  \warning This function is only available if OpenCV was detected during
+  the configuration step.
 
-\param src : source image
-\param dest : destination image
+  \param src : source image
+  \param dest : destination image
 
-\code
+  \code
     #include <visp/vpImage.h>
     #include <visp/vpImageIo.h>
     #include <visp/vpImageConvert.h>
@@ -358,7 +358,7 @@ the configuration step.
 
     //Release Ip header and data
     cvReleaseImage(&Ip);
-\endcode
+  \endcode
 */
 void
 vpImageConvert::convert(const vpImage<unsigned char> & src,
@@ -377,7 +377,7 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
     }
   }
   else dest = cvCreateImage( size, depth, channels );
-  
+
   int widthStep = dest->widthStep;
 
   if ((int) width == widthStep){
@@ -856,8 +856,8 @@ void vpImageConvert::YUV411ToRGB(unsigned char* yuv,
 
 /*!
 
-Convert YUV420 into RGBa
-yuv420 : Y(NxM), U(N/2xM/2), V(N/2xM/2)
+  Convert YUV420 into RGBa
+  yuv420 : Y(NxM), U(N/2xM/2), V(N/2xM/2)
 
 */
 void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
@@ -957,8 +957,8 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
 }
 /*!
 
-Convert YUV420 into RGB
-yuv420 : Y(NxM), U(N/2xM/2), V(N/2xM/2)
+  Convert YUV420 into RGB
+  yuv420 : Y(NxM), U(N/2xM/2), V(N/2xM/2)
 
 */
 void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
@@ -1055,8 +1055,8 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
 
 /*!
 
-Convert YUV420 into Grey
-yuv420 : Y(NxM), U(N/2xM/2), V(N/2xM/2)
+  Convert YUV420 into Grey
+  yuv420 : Y(NxM), U(N/2xM/2), V(N/2xM/2)
 
 */
 void vpImageConvert::YUV420ToGrey(unsigned char* yuv,
@@ -1071,8 +1071,8 @@ void vpImageConvert::YUV420ToGrey(unsigned char* yuv,
 }
 /*!
 
-Convert YUV444 into RGBa
-yuv444 :  u y v
+  Convert YUV444 into RGBa
+  yuv444 :  u y v
 
 */
 void vpImageConvert::YUV444ToRGBa(unsigned char* yuv,
@@ -1089,7 +1089,7 @@ void vpImageConvert::YUV444ToRGBa(unsigned char* yuv,
     V   = (int)((*yuv++ - 128) * 0.707);
     V2  = 2*V;
     UV  = - U - V;
-   
+
 
     // Original equations
     // R = Y           + 1.402 V
@@ -1112,8 +1112,8 @@ void vpImageConvert::YUV444ToRGBa(unsigned char* yuv,
 }
 /*!
 
-Convert YUV444 into RGB
-yuv444 : u y v
+  Convert YUV444 into RGB
+  yuv444 : u y v
 
 */
 void vpImageConvert::YUV444ToRGB(unsigned char* yuv,
@@ -1124,7 +1124,7 @@ void vpImageConvert::YUV444ToRGB(unsigned char* yuv,
   register int Y;
   for(unsigned int i = 0; i<size; i++)
   {
-    
+
     U   = (int)((*yuv++ - 128) * 0.354);
     U5  = 5*U;
     Y   = *yuv++;
@@ -1153,8 +1153,8 @@ void vpImageConvert::YUV444ToRGB(unsigned char* yuv,
 
 /*!
 
-Convert YUV444 into Grey
-yuv444 : u y v
+  Convert YUV444 into Grey
+  yuv444 : u y v
 
 */
 void vpImageConvert::YUV444ToGrey(unsigned char* yuv,
@@ -1171,8 +1171,8 @@ void vpImageConvert::YUV444ToGrey(unsigned char* yuv,
 
 /*!
 
-Convert YV12 into RGBa
-yuv420 : Y(NxM), V(N/2xM/2), U(N/2xM/2)
+  Convert YV12 into RGBa
+  yuv420 : Y(NxM), V(N/2xM/2), U(N/2xM/2)
 
 */
 void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
@@ -1272,8 +1272,8 @@ void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
 }
 /*!
 
-Convert YV12 into RGB
-yuv420 : Y(NxM),  V(N/2xM/2), U(N/2xM/2)
+  Convert YV12 into RGB
+  yuv420 : Y(NxM),  V(N/2xM/2), U(N/2xM/2)
 
 */
 void vpImageConvert::YV12ToRGB(unsigned char* yuv,
@@ -1370,8 +1370,8 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
 
 /*!
 
-Convert YVU9 into RGBa
-yuv420 : Y(NxM), V(N/4xM/4), U(N/4xM/4)
+  Convert YVU9 into RGBa
+  yuv420 : Y(NxM), V(N/4xM/4), U(N/4xM/4)
 
 */
 void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
@@ -1664,8 +1664,8 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 }
 /*!
 
-Convert YV12 into RGB
-yuv420 : Y(NxM),  V(N/4xM/4), U(N/4xM/4)
+  Convert YV12 into RGB
+  yuv420 : Y(NxM),  V(N/4xM/4), U(N/4xM/4)
 
 */
 void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
@@ -1943,7 +1943,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 
 /*!
 
-Convert RGB into RGBa
+  Convert RGB into RGBa
 
 */
 void vpImageConvert::RGBToRGBa(unsigned char* rgb, unsigned char* rgba,
@@ -1963,7 +1963,7 @@ void vpImageConvert::RGBToRGBa(unsigned char* rgb, unsigned char* rgba,
 
 /*!
 
-Convert RGB into RGBa
+  Convert RGB into RGBa
 
 */
 void vpImageConvert::RGBaToRGB(unsigned char* rgba, unsigned char* rgb,
@@ -2072,52 +2072,54 @@ vpImageConvert::GreyToRGB(unsigned char* grey,
 
 
 /*!
-	Converts a BGR image to RGBa
-	Flips the image verticaly if needed
-	assumes that rgba is already resized
+  Converts a BGR image to RGBa
+  Flips the image verticaly if needed
+  assumes that rgba is already resized
 */
 void
 vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
 			  unsigned int width, unsigned int height, bool flip)
 {
-	//if we have to flip the image, we start from the end last scanline so the step is negative
-	int lineStep = (flip) ? -(int)(width*3) : (int)(width*3);
+  //if we have to flip the image, we start from the end last scanline so the
+  //step is negative
+  int lineStep = (flip) ? -(int)(width*3) : (int)(width*3);
 
-	//starting source address = last line if we need to flip the image
-	unsigned char * src = (flip) ? (bgr+(width*height*3)+lineStep) : bgr;
-	unsigned char * line;
+  //starting source address = last line if we need to flip the image
+  unsigned char * src = (flip) ? (bgr+(width*height*3)+lineStep) : bgr;
+  unsigned char * line;
 
-	unsigned int j=0;
-	unsigned int i=0;
+  unsigned int j=0;
+  unsigned int i=0;
 
-	for(i=0 ; i < height ; i++)
-	{
-	  line = src;
-	  for( j=0 ; j < width ; j++)
-	    {
-   		*rgba++ = *(line+2);
-		*rgba++ = *(line+1);
-		*rgba++ = *(line+0);
-		*rgba++ = 0;
+  for(i=0 ; i < height ; i++)
+  {
+    line = src;
+    for( j=0 ; j < width ; j++)
+    {
+      *rgba++ = *(line+2);
+      *rgba++ = *(line+1);
+      *rgba++ = *(line+0);
+      *rgba++ = 0;
 
-		line+=3;
-	    }
-	  //go to the next line
-	  src+=lineStep;
-	}
+      line+=3;
+    }
+    //go to the next line
+    src+=lineStep;
+  }
 
 }
 
 /*!
-	Converts a BGR image to greyscale
-	Flips the image verticaly if needed
-	assumes that grey is already resized
+  Converts a BGR image to greyscale
+  Flips the image verticaly if needed
+  assumes that grey is already resized
 */
 void
 vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
 			  unsigned int width, unsigned int height, bool flip)
 {
-  //if we have to flip the image, we start from the end last scanline so the step is negative
+  //if we have to flip the image, we start from the end last scanline so the
+  //step is negative
   int lineStep = (flip) ? -(int)(width*3) : (int)(width*3);
 
   //starting source address = last line if we need to flip the image
@@ -2128,19 +2130,19 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
   unsigned int i=0;
 
   for(i=0 ; i < height ; i++)
+  {
+    line = src;
+    for( j=0 ; j < width ; j++)
     {
-      line = src;
-      for( j=0 ; j < width ; j++)
-	{
-	  *grey++ = (unsigned char)( 0.2126 * *(line+2)
-				    + 0.7152 * *(line+1)
-				    + 0.0722 * *(line+0)) ;
-	  line+=3;
-	}
-
-      //go to the next line
-      src+=lineStep;
+      *grey++ = (unsigned char)( 0.2126 * *(line+2)
+				 + 0.7152 * *(line+1)
+				 + 0.0722 * *(line+0)) ;
+      line+=3;
     }
+
+    //go to the next line
+    src+=lineStep;
+  }
 }
 
 /*!
@@ -2286,8 +2288,8 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
 
 /*!
 
-Convert YUV422 into Grey
-yuv422 : y1 u1 y2 v1 y3 u2 y4 v2
+  Convert YUV422 into Grey
+  yuv422 : y1 u1 y2 v1 y3 u2 y4 v2
 
 */
 void vpImageConvert::YCbCrToGrey(unsigned char* yuv,
@@ -2442,12 +2444,12 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
     vpImage<unsigned char> R,B;
 
     //Split Ic color image (R and B will be resized in split function if needed)
-    
+
     vpImageConvert::split(Ic, &R,NULL,&B,NULL);
-    
+
     // Save the the R Channel.
     vpImageIo::writePGM(R, "/tmp/myRChannel.pgm) ;
-      
+
   \endcode
 */
 void vpImageConvert::split(const vpImage<vpRGBa> &src,
@@ -2458,23 +2460,23 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
 {
   register size_t n = src.getNumberOfPixel();
   unsigned int height = src.getHeight();
-  unsigned int width  = src.getWidth();  
+  unsigned int width  = src.getWidth();
   unsigned char* input;
   unsigned char* dst ;
- 
+
   vpImage<unsigned char>* tabChannel[4];
- 
+
 /*  incrsrc[0] = 0; //init
   incrsrc[1] = 0; //step after the first used channel
   incrsrc[2] = 0; //step after the second used channel
   incrsrc[3] = 0;
   incrsrc[4] = 0;
- */ 
-  tabChannel[0] = pR; 
+ */
+  tabChannel[0] = pR;
   tabChannel[1] = pG;
   tabChannel[2] = pB;
   tabChannel[3] = pa;
-   
+
   register size_t    i;    /* ordre    */
   for(unsigned int j = 0;j < 4;j++){
     if(tabChannel[j]!=NULL){
@@ -2483,9 +2485,9 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
         tabChannel[j]->resize(height,width);
       }
       dst = (unsigned char*)tabChannel[j]->bitmap;
-         
+
       input = (unsigned char*)src.bitmap+j;
-      i = 0;   
+      i = 0;
 #if 1 //optimization
       if (n >= 4) {    /* boucle deroulee lsize fois    */
         n -= 3;
@@ -2497,12 +2499,35 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
         }
         n += 3;
       }
-#endif   
+#endif
       for (; i < n; i++) {
         *dst = *input; input += 4; dst ++;
-      }         
-    }     
-  }   
+      }
+    }
+  }
+}
+
+/*!
+
+  Converts a MONO16 grey scale image (each pixel is coded by two bytes) into a
+  grey image where each pixels are coded on one byte.
+
+  \param grey16 : Input image to convert (two bytes per pixel).
+  \param grey   : Output image (one byte per pixel)
+  \param size : The image size or the number of pixels.
+
+*/
+void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
+				  unsigned int size)
+{
+  register int i = (size<<1)-1;
+  register int j = size-1;
+  register int y;
+
+  while (i >= 0) {
+    y = grey16[i--];
+    grey[j--] = (y + (grey16[i--]<<8))>>8;
+  }
 }
 
 /*

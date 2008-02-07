@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.24 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.25 2008-02-07 17:23:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -156,7 +156,7 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   verbose = false;//true;
   camInUse = NULL;
   cameras = NULL;
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   d = NULL;
 #endif
   open();
@@ -306,6 +306,10 @@ vp1394TwoGrabber::getNumCameras(unsigned int &ncameras)
   Set the camera video capture mode. Image size is than updated with respect to
   the new video capture mode.
 
+  The iso transmission (setTransmission()) and the dma capture (see
+  setCapture()) are first stopped. Then, the camera video capture mode is
+  set. Finaly, the dma capture and the iso transmission are re-started.
+
   \param videomode : The camera video capture mode. The current camera mode is
   given by getVideoMode(). The camera supported modes are given by
   getVideoModeSupported().
@@ -330,10 +334,8 @@ vp1394TwoGrabber::setVideoMode(vp1394TwoVideoModeType videomode)
   }
 
    // Stop dma capture if started
-#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
-  if (camera->capture_is_set)
-    setCapture(DC1394_OFF);
-#endif
+  setTransmission(DC1394_OFF);
+  setCapture(DC1394_OFF);
 
   if (dc1394_video_set_mode(camera, (dc1394video_mode_t) videomode) != DC1394_SUCCESS) {
 
@@ -342,6 +344,9 @@ vp1394TwoGrabber::setVideoMode(vp1394TwoVideoModeType videomode)
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Can't set video mode") );
     }
+
+  setCapture(DC1394_ON);
+  setTransmission(DC1394_ON);
 
   // Updates image size from new video mode
   if (dc1394_get_image_size_from_video_mode(camera,
@@ -354,6 +359,7 @@ vp1394TwoGrabber::setVideoMode(vp1394TwoVideoModeType videomode)
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Can't get image size") );
   }
+
 }
 
 /*!
@@ -470,6 +476,10 @@ vp1394TwoGrabber::isVideoModeFormat7(vp1394TwoVideoModeType  videomode)
 
   Set the active camera framerate for non scalable video modes.
 
+  The iso transmission (setTransmission()) and the dma capture (see
+  setCapture()) are first stopped. Then, the camera framerate capture mode is
+  set. Finaly, the dma capture and the iso transmission are re-started.
+
   If the current video mode is scalable (Format 7), this function is without
   effect.
 
@@ -502,10 +512,8 @@ vp1394TwoGrabber::setFramerate(vp1394TwoFramerateType fps)
     return;
 
   // Stop dma capture if started
-#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
-  if (camera->capture_is_set)
-    setCapture(DC1394_OFF);
-#endif
+  setTransmission(DC1394_OFF);
+  setCapture(DC1394_OFF);
 
   if (dc1394_video_set_framerate(camera, (dc1394framerate_t) fps) != DC1394_SUCCESS) {
 
@@ -514,6 +522,9 @@ vp1394TwoGrabber::setFramerate(vp1394TwoFramerateType fps)
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Can't set framerate") );
   }
+
+  setCapture(DC1394_ON);
+  setTransmission(DC1394_ON);
 }
 
 /*!
@@ -641,6 +652,10 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
 
   Set the active camera Format 7 color coding.
 
+  The iso transmission (setTransmission()) and the dma capture (see
+  setCapture()) are first stopped. Then, the active camera Format 7 is
+  set. Finaly, the dma capture and the iso transmission are re-started.
+
   \warning Setting color coding for non format 7 video mode will be
   without effect.
 
@@ -677,14 +692,10 @@ vp1394TwoGrabber::setColorCoding(vp1394TwoColorCodingType coding)
 				   "Can't get current video mode") );
   }
 
+  // Format 7 video mode
   if (dc1394_is_video_mode_scalable(_videomode)) {
-    // Format 7 video mode
-
-    // Stop dma capture if started
-#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
-    if (camera->capture_is_set)
+    setTransmission(DC1394_OFF);
     setCapture(DC1394_OFF);
-#endif
 
     if (dc1394_format7_set_color_coding(camera, _videomode,
 				      (dc1394color_coding_t) coding)
@@ -695,6 +706,9 @@ vp1394TwoGrabber::setColorCoding(vp1394TwoColorCodingType coding)
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				     "Can't set color coding") );
     }
+
+    setCapture(DC1394_ON);
+    setTransmission(DC1394_ON);
   }
 }
 
@@ -843,8 +857,12 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
 
 /*!
 
-  Set the grabbed region of interest position and size for format 7
+  Set the grabbed region of interest ie roi position and size for format 7
   video mode.
+
+  The iso transmission (setTransmission()) and the dma capture (see
+  setCapture()) are first stopped. Then, the format 7 roi is
+  set. Finaly, the dma capture and the iso transmission are re-started.
 
   \warning Setting format 7 roi takes only effect if video mode is
   format 7 like.
@@ -878,11 +896,6 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "No camera found") );
   }
-  // Stop dma capture if started
-#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
-  if (camera->capture_is_set)
-    setCapture(DC1394_OFF);
-#endif
 
   dc1394video_mode_t _videomode;
   if (dc1394_video_get_mode(camera, &_videomode) != DC1394_SUCCESS) {
@@ -893,6 +906,9 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
 				   "Can't get current video mode") );
   }
   if (dc1394_is_video_mode_scalable(_videomode)) {
+    // Stop dma capture if started
+    setTransmission(DC1394_OFF);
+    setCapture(DC1394_OFF);
     // Format 7 video mode
     unsigned int max_width, max_height;
     if (dc1394_format7_get_max_image_size(camera, _videomode,
@@ -951,23 +967,27 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
 			       DC1394_USE_MAX_AVAIL/*DC1394_QUERY_FROM_CAMERA*/, // bytes_per_packet
 			       left, // left
 			       top, // top
-#if 0
-			       // This code generates a warning:
-			       // converting of negative value
-			       // `-0x000000002' to `unsigned int'
-			       width == 0 ? DC1394_USE_MAX_AVAIL: width,
-			       height == 0 ? DC1394_USE_MAX_AVAIL : height)
-#else
-	// Modification to suppress the warning
-	roi_width,
-	roi_height)
-#endif
+			       roi_width,
+			       roi_height)
 	!= DC1394_SUCCESS) {
       close();
       vpERROR_TRACE("Can't set format7 roi");
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				     "Can't get current video mode") );
     }
+    // Update the image size
+    if (dc1394_format7_get_image_size(camera, _videomode,
+				      &this->width,
+				      &this->height)
+	!= DC1394_SUCCESS) {
+      close();
+      vpERROR_TRACE("Can't get format7 image size");
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Can't get format7 image size") );
+    }
+
+    setCapture(DC1394_ON);
+    setTransmission(DC1394_ON);
   }
 }
 
@@ -990,7 +1010,7 @@ vp1394TwoGrabber::open()
 {
 
   // Find cameras
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   if (d != NULL)
     dc1394_free (d);
 
@@ -1001,28 +1021,34 @@ vp1394TwoGrabber::open()
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
 				   "Failed to enumerate cameras") );
   }
-  num_cameras = list->num;
+
+  if (list->num == 0) {
+    close();
+    vpERROR_TRACE("No cameras found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No cameras found") );
+  }
 
   if (cameras != NULL)
     delete [] cameras;
 
-  cameras = new dc1394camera_t * [num_cameras];
+  cameras = new dc1394camera_t * [list->num];
 
-  for (unsigned int i=0; i < num_cameras; i ++) {
+  num_cameras = 0;
+  for (unsigned int i=0; i < list->num; i ++) {
     cameras[i] = dc1394_camera_new (d, list->ids[i].guid);
     if (!cameras[i]) {
-      vpERROR_TRACE ("Failed to initialize camera with guid \"%ld\"\n",
-		     list->ids[i].guid);
-      close();
-      throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-				     "Unable to initialize cameras") );
+      vpTRACE ("Failed to initialize camera with guid \"%ld\"\n",
+	       list->ids[i].guid);
+      continue;
     }
-
+    // Update the number of working cameras
+    num_cameras ++;
   }
 
   dc1394_camera_free_list (list);
 
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS
+#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
   int err = dc1394_find_cameras(&cameras, &num_cameras);
 
   if (err!=DC1394_SUCCESS && err != DC1394_NO_CAMERA) {
@@ -1036,9 +1062,7 @@ vp1394TwoGrabber::open()
 
   }
 #endif
-  /*-----------------------------------------------------------------------
-   *  get the camera nodes and describe them as we find them
-   *-----------------------------------------------------------------------*/
+
   if (num_cameras == 0) {
     close();
     vpERROR_TRACE("No cameras found");
@@ -1065,30 +1089,33 @@ vp1394TwoGrabber::open()
   camInUse = new bool [num_cameras];
   dc1394switch_t status = DC1394_OFF;
 
+  //#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
   // Call here dc1394_reset_bus() to be sure that we can restart the
   // framegrabbing afer a non proper program termination, like a CTRL-C
   dc1394_reset_bus(cameras[0]);
+  //#endif
+
   for (unsigned i=0; i < num_cameras; i ++){
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     dc1394_video_get_transmission(cameras[i], &status);
     if (status != DC1394_OFF){
 #endif
     if (dc1394_video_set_transmission(cameras[i],DC1394_OFF)!=DC1394_SUCCESS)
       vpTRACE("Could not stop ISO transmission");
     else {
-      vpTime::wait(50);
+      vpTime::wait(500);
       if (dc1394_video_get_transmission(cameras[i], &status)!=DC1394_SUCCESS)
 	vpTRACE("Could get ISO status");
       else {
 	if (status==DC1394_ON) {
 	  vpTRACE("ISO transmission refuses to stop");
 	}
-#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
+#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
 	// No yet in the new API
 	cameras[i]->is_iso_on=status;
 #endif
       }
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     }
 #endif
     }
@@ -1096,7 +1123,7 @@ vp1394TwoGrabber::open()
   }
 
   setCamera(0);
-    setCapture(DC1394_OFF);
+  setCapture(DC1394_OFF);
 
   // Set the image size from the current video mode
   vp1394TwoVideoModeType cur_videomode;
@@ -1112,10 +1139,9 @@ vp1394TwoGrabber::open()
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
           "Can't get image size") );
   }
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
-    setCapture(DC1394_ON);
-#endif
 
+  setCapture(DC1394_ON);
+  setTransmission(DC1394_ON);
 }
 
 /*!
@@ -1136,9 +1162,9 @@ vp1394TwoGrabber::close()
 
         setTransmission(DC1394_OFF);
         setCapture(DC1394_OFF);
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
         dc1394_camera_free(camera);
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS
+#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
         dc1394_free_camera(camera);
 #endif
       }
@@ -1146,7 +1172,7 @@ vp1394TwoGrabber::close()
     if(camInUse != NULL) delete [] camInUse;
   }
 
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   if (d != NULL) {
     dc1394_free (d);
     d = NULL;
@@ -1212,9 +1238,7 @@ vp1394TwoGrabber::setCapture(dc1394switch_t _switch)
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				     "Could not setup dma capture") );
     }
-
   }
-
 }
 
 
@@ -1244,6 +1268,7 @@ vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
               "No camera found") );
   }
 
+  // Start dma capture if halted
   if (dc1394_video_set_transmission(camera, _switch) != DC1394_SUCCESS) {
     vpERROR_TRACE("Unable to setup camera capture-\n"
                   "make sure that the video mode and framerate are "
@@ -1338,19 +1363,6 @@ vp1394TwoGrabber::dequeue()
 				   "No camera found") );
   }
 
-  // Start dma capture if halted
-#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS
-  if (! camera->capture_is_set)
-    setCapture(DC1394_ON);
-#endif
-
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
-    setTransmission(DC1394_ON);
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS
-  if (camera->is_iso_on == DC1394_OFF) {
-    setTransmission(DC1394_ON);
-  }
-#endif
   dc1394video_frame_t *frame = NULL;
 
   if (dc1394_capture_dequeue(camera, DC1394_CAPTURE_POLICY_WAIT, &frame)
@@ -1358,8 +1370,6 @@ vp1394TwoGrabber::dequeue()
     vpERROR_TRACE ("Error: Failed to capture from camera %d\n", camera_id);
   }
 
-  width = frame->size[0];
-  height = frame->size[1];
 
   return frame;
 }
@@ -1407,21 +1417,24 @@ void
 vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 {
   dc1394video_frame_t *frame;
-  unsigned int width, height, size;
+  unsigned int size = this->width * this->height;
+
   frame = dequeue();
 
-  getWidth(width);
-  getHeight(height);
+  if ((I.getWidth() != this->width)||(I.getHeight() != this->height))
+    I.resize(this->height, this->width);
 
-  size = width * height;
-
-  if ((I.getWidth() != width)||(I.getHeight() != height))
-    I.resize(height, width);
-
-  switch(frame->color_coding) {
+  vp1394TwoColorCodingType color_coding;
+  getColorCoding(color_coding);
+  switch(color_coding) {
+    //  switch(frame->color_coding) {
   case DC1394_COLOR_CODING_MONO8:
     memcpy(I.bitmap, (unsigned char *) frame->image,
 	   size*sizeof(unsigned char));
+    break;
+  case DC1394_COLOR_CODING_MONO16:
+    vpImageConvert::MONO16ToGrey( (unsigned char *) frame->image,
+                                  I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV411:

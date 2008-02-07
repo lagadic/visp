@@ -60,8 +60,12 @@ ViSP 2.4.x
 	the standard matrix norms definitions.
         Change determinant formula for 3x3 matrices to match with 
         the standard determinant definition.
-    - vpImageConvert : Add IplImage to vpImage and vpImage to IplImage 
-	conversion tool.
+    - vpImageConvert : 
+	Add IplImage to vpImage and vpImage to IplImage conversion tool.
+	Add MONO16 to grey (MONO8) conversion tool.
+    - vp1394TwoGrabber :
+	Supports libdc1394-2.0.0-rc7 and libdc1394-2.0.1
+	MONO16 color coding is supported
   - Testing and examples:
     - example/tracking/trackKltOpencv.cpp was added
     - example/light/ringLight.cpp was added
