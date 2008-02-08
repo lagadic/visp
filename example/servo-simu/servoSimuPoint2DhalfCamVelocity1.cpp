@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity1.cpp,v 1.6 2007-11-28 10:54:19 fspindle Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity1.cpp,v 1.7 2008-02-08 14:01:59 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,8 @@
 
 /*!
   \file servoSimuPoint2DhalfCamVelocity1.cpp
-  \brief Simulation of a 2 1/2 D visual servoing (theta U):
+  \brief Simulation of a 2 1/2 D visual servoing (x,y,Z,theta U):
+  - (x,y,Z,theta U) features,
   - eye-in-hand control law,
   - velocity computed in the camera frame,
   - no display.
@@ -48,6 +49,7 @@
 /*!
   \example servoSimuPoint2DhalfCamVelocity1.cpp
   Simulation of a 2 1/2 D visual servoing (theta U):
+  - (x,y,Z,theta U) features,
   - eye-in-hand control law,
   - velocity computed in the camera frame,
   - no display.
@@ -81,7 +83,7 @@ Print the program options.
 void usage(char *name, char *badparam)
 {
   fprintf(stdout, "\n\
-Simulation of a 2 1/2 D visual servoing (theta U):\n\
+Simulation of a 2 1/2 D visual servoing (x,y,Z,theta U):\n\
 - eye-in-hand control law,\n\
 - velocity computed in the camera frame,\n\
 - without display.\n\
