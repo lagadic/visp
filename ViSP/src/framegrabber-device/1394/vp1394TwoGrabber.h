@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.16 2007-12-20 08:21:49 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.17 2008-02-08 16:38:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -224,6 +224,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void getVideoMode(vp1394TwoVideoModeType & videomode);
   int  getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
   bool isVideoModeFormat7(vp1394TwoVideoModeType videomode);
+  bool isColor();
 
   void setFramerate(vp1394TwoFramerateType fps);
   void getFramerate(vp1394TwoFramerateType & fps);
@@ -275,9 +276,6 @@ public:
 private:
   bool verbose;
   bool *camInUse;
-#ifdef MODIF_ANTHONY
-  dc1394video_frame_t *frame;
-#endif
 
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
   dc1394_t * d;
