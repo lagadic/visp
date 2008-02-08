@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.12 2008-02-07 17:15:58 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.13 2008-02-08 16:42:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,7 +68,7 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpRGBa.h>
 
-//#define GRAB_COLOR
+#define GRAB_COLOR
 
 
 // List of allowed command line options
@@ -109,6 +109,21 @@ SYNOPTIQUE\n\
 \n\
 DESCRIPTION\n\
     Test for firewire camera image acquisition.\n\
+\n\
+EXAMPLES\n\
+    If two cameras are connected on the bus.\n\
+    %s -s\n\
+       Indicates the current settings for the first camera found on the bus.\n\
+    %s -i\n\
+       Gives information on the first camera found on the bus.\n\
+    %s -s -m\n\
+       Indicates the current settings for all the cameras found on the bus.\n\
+    %s -i -m\n\
+       Gives information on all the cameras found on the bus.\n\
+    %s -c 1\n\
+       Grab images from camera 1.\n\
+    %s -m\n\
+       Grab images from all the cameras.\n\
 \n\
 OPTIONS                                                    Default\n\
     -v [%%u] : Video mode to set for the active camera.\n\
@@ -163,12 +178,16 @@ OPTIONS                                                    Default\n\
 \n\
     -o [%%s] : Filename for image saving.                     \n\
               Example: -o %s\n\
-              The first %%d is for the camera id, %%04d\n\
-              is for the image numbering.\n\
+              The first %%d is for the camera id, %%04d is for\n\
+              the image numbering. If color images are acquired\n\
+              the format of the .ppm file is PNM P6. If grey \n\
+              level images are acquired, the format of the .ppm \n\
+              file is PNM P5.\n\
 \n\
     -?      : Print this help.\n\
 \n",
-	  name, roi_left, roi_top, roi_width, roi_height,
+	  name, name, name, name, name, name, name,
+	  roi_left, roi_top, roi_width, roi_height,
 	  camera, nframes, opath.c_str());
 
   exit(0);
@@ -303,14 +322,10 @@ main(int argc, char ** argv)
     // Format 7 roi
     unsigned int roi_left=0, roi_top=0, roi_width=0, roi_height=0;
 
-#ifdef GRAB_COLOR
-    vpImage<vpRGBa> *I;
+    // Default output path for image saving
     std::string opath = "/tmp/I%d-%04d.ppm";
-#else
-    vpImage<unsigned char> *I;
-    std::string opath = "/tmp/I%d-%04d.pgm";
-#endif
-    vpDisplayX *d = NULL;
+
+    // Create a grabber
     vp1394TwoGrabber g ;
 
     read_options(argc, argv, multi, camera, nframes,
@@ -359,15 +374,6 @@ main(int argc, char ** argv)
     // in I[i]
     offset = camera;
 
-    // allocate an image and display for each camera to consider
-#ifdef GRAB_COLOR
-    I = new vpImage<vpRGBa> [ncameras];
-#else
-    I = new vpImage<unsigned char> [ncameras];
-#endif
-    if (display)
-      d = new vpDisplayX [ncameras];
-
     // Display information for each camera
     if (verbose_info || verbose_settings) {
       for (unsigned int i=0; i < ncameras; i ++) {
@@ -393,7 +399,7 @@ main(int argc, char ** argv)
 	  std::cout << "----------------------------------------------------------"
 	       << std::endl
 	       << "---- Video modes and framerates supported by camera "
-	       << camera << " ----" << std::endl
+	       << i << " ----" << std::endl
 	       << "---- * is for the current settings                    ----"
 	       << std::endl
 	       << "---- between ( ) you have the corresponding option    ----"
@@ -471,6 +477,7 @@ main(int argc, char ** argv)
     }
     else {
       // get The actual video mode
+      g.setCamera(camera);
       g.getVideoMode(videomode);
     }
     if (framerate_is_set) {
@@ -486,22 +493,56 @@ main(int argc, char ** argv)
     if (g.isVideoModeFormat7(videomode))
       g.setFormat7ROI(roi_left, roi_top, roi_width, roi_height);
 
+    // Array to know if color images or grey level images are acquired
+    bool *grab_color = new bool [ncameras];
+
+    // allocate adisplay for each camera to consider
+    vpDisplayX *d = NULL;
+    if (display)
+      d = new vpDisplayX [ncameras];
+
+    // allocate an Grey and color image for each camera to consider
+    vpImage<vpRGBa> *Ic        = new vpImage<vpRGBa> [ncameras];
+    vpImage<unsigned char> *Ig = new vpImage<unsigned char> [ncameras];
+
     // Do a first acquisition to initialise the display
     for (unsigned int i=0; i < ncameras; i ++) {
       // Set the active camera on the bus
       g.setCamera(i+offset);
+      // Ask each camera to know if color images or grey level images are
+      // acquired
+      grab_color[i] = g.isColor();
       // Acquire the first image
-      g.acquire(I[i]);
-      std::cout << "Image size for camera " << i+offset << " : width: "
-	   << I[i].getWidth() << " height: " << I[i].getHeight() << std::endl;
+      if (grab_color[i]) {
+	g.acquire(Ic[i]);
+	std::cout << "Image size for camera " << i+offset << " : width: "
+		  << Ic[i].getWidth() << " height: " << Ic[i].getHeight()
+		  << std::endl;
 
-      if (display) {
-	// Initialise the display
-	char title[100];
-	sprintf(title, "Images captured by camera %u", i+offset);
-	d[i].init(I[i], 100+i*50, 100+i*50, title) ;
-	vpDisplay::display(I[i]);
-	vpDisplay::flush(I[i]);
+	if (display) {
+	  // Initialise the display
+	  char title[100];
+	  sprintf(title, "Images captured by camera %u", i+offset);
+	  d[i].init(Ic[i], 100+i*50, 100+i*50, title) ;
+	  vpDisplay::display(Ic[i]);
+	  vpDisplay::flush(Ic[i]);
+	}
+      }
+      else {
+	g.acquire(Ig[i]);
+	std::cout << "Image size for camera " << i+offset << " : width: "
+		  << Ig[i].getWidth() << " height: " << Ig[i].getHeight()
+		  << std::endl;
+
+	if (display) {
+	  // Initialise the display
+	  char title[100];
+	  sprintf(title, "Images captured by camera %u", i+offset);
+	  d[i].init(Ig[i], 100+i*50, 100+i*50, title) ;
+	  vpDisplay::display(Ig[i]);
+	  vpDisplay::flush(Ig[i]);
+	}
+
       }
     }
 
@@ -517,22 +558,34 @@ main(int argc, char ** argv)
 	// Set the active camera on the bus
 	g.setCamera(c+offset);
 	// Acquire an image
-	g.acquire(I[c]);
-	if (display) {
-	  // Display the last image acquired
-	  vpDisplay::display(I[c]);
-	  vpDisplay::flush(I[c]);
+	if (grab_color[c]) {
+	  g.acquire(Ic[c]);
+	  if (display) {
+	    // Display the last image acquired
+	    vpDisplay::display(Ic[c]);
+	    vpDisplay::flush(Ic[c]);
+	  }
+	}
+	else {
+	  g.acquire(Ig[c]);
+	  if (display) {
+	    // Display the last image acquired
+	    vpDisplay::display(Ig[c]);
+	    vpDisplay::flush(Ig[c]);
+	  }
+
 	}
 	if (save) {
 	  char buf[FILENAME_MAX];
 	  sprintf(buf, opath.c_str(), c+offset, i);
 	  std::string filename(buf);
 	  std::cout << "Write: " << filename << std::endl;
-#ifdef GRAB_COLOR
-	  vpImageIo::writePPM(I[c], filename);
-#else
-	  vpImageIo::writePGM(I[c], filename);
-#endif
+	  if (grab_color[c]) {
+	    vpImageIo::writePPM(Ic[c], filename);
+	  }
+	  else {
+	    vpImageIo::writePGM(Ig[c], filename);
+	  }
 	}
       }
       tend = vpTime::measureTimeMs();
@@ -549,7 +602,11 @@ main(int argc, char ** argv)
     g.close();
 
     // Free memory
-    delete [] I;
+
+    delete [] Ic;
+    delete [] Ig;
+    delete [] grab_color;
+
     if (display)
       delete [] d;
 
