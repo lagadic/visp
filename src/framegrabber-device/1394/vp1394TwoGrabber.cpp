@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.25 2008-02-07 17:23:45 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.26 2008-02-08 16:38:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -158,6 +158,7 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   cameras = NULL;
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   d = NULL;
+  list = NULL;
 #endif
   open();
 
@@ -251,7 +252,6 @@ vp1394TwoGrabber::setCamera(unsigned int camera_id)
   camera = cameras[camera_id];
 
   dc1394_video_set_iso_speed(camera, DC1394_ISO_SPEED_400);
-
 }
 
 /*!
@@ -470,6 +470,44 @@ vp1394TwoGrabber::isVideoModeFormat7(vp1394TwoVideoModeType  videomode)
     return true;
 
   return false;
+}
+
+/*!
+
+  Indicates if the active camera is grabbing color or grey images.
+
+  We consider color images if the color coding is either YUV (411, 422, 444) or
+  RGB (8, 16, 16S).  We consider grey images if the color coding is MONO (8,
+  16, 16S) or RAW (8, 16). vp1394TwoColorCodingType gives the supported color
+  codings.
+
+  \return true : If color images are acquired.
+  \return false : If grey images are acquired.
+
+  \sa getColorCoding(), setCamera()
+
+*/
+bool
+vp1394TwoGrabber::isColor()
+{
+  vp1394TwoColorCodingType coding;
+  getColorCoding(coding);
+
+  switch(coding) {
+  case vpCOLOR_CODING_MONO8:
+  case vpCOLOR_CODING_MONO16:
+  case vpCOLOR_CODING_MONO16S:
+  case vpCOLOR_CODING_RAW8:
+  case vpCOLOR_CODING_RAW16:
+    return false;
+  case vpCOLOR_CODING_YUV411:
+  case vpCOLOR_CODING_YUV422:
+  case vpCOLOR_CODING_YUV444:
+  case vpCOLOR_CODING_RGB8:
+  case vpCOLOR_CODING_RGB16:
+  case vpCOLOR_CODING_RGB16S:
+    return true;
+  }
 }
 
 /*!
@@ -996,9 +1034,8 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
   Open ohci and asign handle to it and get the camera nodes and
   describe them as we find them.
 
-  \param camera_id : The camera identifier to dial with. By default,
-  we use the first camera found on the bus. For the first camera on
-  the bus, camera_id is 0.
+  For each camera detected on the bus start the iso transmission and the dma
+  capture.
 
   \exception initializationError : If a raw1394 handle can't be aquired,
   or if no camera is found.
@@ -1046,7 +1083,9 @@ vp1394TwoGrabber::open()
     num_cameras ++;
   }
 
-  dc1394_camera_free_list (list);
+  if (list != NULL)
+    dc1394_camera_free_list (list);
+  list = NULL;
 
 #elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
   int err = dc1394_find_cameras(&cameras, &num_cameras);
@@ -1122,26 +1161,11 @@ vp1394TwoGrabber::open()
     camInUse[i] = false;
   }
 
-  setCamera(0);
-  setCapture(DC1394_OFF);
-
-  // Set the image size from the current video mode
-  vp1394TwoVideoModeType cur_videomode;
-  getVideoMode(cur_videomode);
-  // Updates image size from new video mode
-  if (dc1394_get_image_size_from_video_mode(camera,
-              (dc1394video_mode_t) cur_videomode,
-              &this->width, &this->height)
-      != DC1394_SUCCESS) {
-
-    close();
-    vpERROR_TRACE("Can't set video mode");
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-          "Can't get image size") );
+  for (int i=0; i < num_cameras; i ++){
+    setCamera(i);
+    setCapture(DC1394_ON);
+    setTransmission(DC1394_ON);
   }
-
-  setCapture(DC1394_ON);
-  setTransmission(DC1394_ON);
 }
 
 /*!
@@ -1417,9 +1441,12 @@ void
 vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 {
   dc1394video_frame_t *frame;
-  unsigned int size = this->width * this->height;
 
   frame = dequeue();
+
+  this->width  = frame->size[0];
+  this->height = frame->size[1];
+  unsigned int size = this->width * this->height;
 
   if ((I.getWidth() != this->width)||(I.getHeight() != this->height))
     I.resize(this->height, this->width);
@@ -1485,14 +1512,12 @@ void
 vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 {
   dc1394video_frame_t *frame;
-  unsigned int width, height, size;
 
   frame = dequeue();
 
-  getWidth(width);
-  getHeight(height);
-
-  size = width * height;
+  this->width  = frame->size[0];
+  this->height = frame->size[1];
+  unsigned int size = this->width * this->height;
 
   if ((I.getWidth() != width)||(I.getHeight() != height))
     I.resize(height, width);
