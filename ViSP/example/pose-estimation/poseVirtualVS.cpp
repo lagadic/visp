@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: poseVirtualVS.cpp,v 1.10 2008-02-01 15:11:39 fspindle Exp $
+ * $Id: poseVirtualVS.cpp,v 1.11 2008-02-08 14:17:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -471,7 +471,7 @@ main(int argc, char** argv)
 
       for (i=0 ; i < 4 ; i++)
 	vpDisplay::displayCross(I,
-				(int)v, (int)u,
+				(int)v[i], (int)u[i],
 				10,
 				vpColor::red) ;
 
