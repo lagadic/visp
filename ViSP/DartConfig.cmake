@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: DartConfig.cmake,v 1.10 2008-02-08 16:44:51 fspindle Exp $
+# $Id: DartConfig.cmake,v 1.11 2008-02-11 13:12:26 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -45,18 +45,16 @@ SET (NIGHTLY_START_TIME "9:00PM")
 SET (PROJECT_URL "http://www.irisa.fr/lagadic/visp/visp.html")
 
 # Problem build email delivery variables
-SET (DELIVER_BROKEN_BUILD_EMAIL "Experimental Nightly")
-SET (SMTP_MAILHOST "smtp.national.inria.fr")
-SET (EMAIL_FROM "fabien.spindler@irisa.fr")
+#SET (DELIVER_BROKEN_BUILD_EMAIL "Experimental Nightly")
+#SET (SMTP_MAILHOST "smtp.national.inria.fr")
+#SET (EMAIL_FROM "fabien.spindler@irisa.fr")
 #SET (DARTBOARD_BASE_URL "http://dart.irisa.fr/ViSP/Dashboard/")
-SET (DARTBOARD_BASE_URL "http://dart.irisa.fr/ViSP/Dashboard/")
-SET (EMAIL_PROJECT_NAME "ViSP")
-SET (BUILD_MONITORS "{.* fabien.spindler@irisa.fr}")
-SET (CVS_IDENT_TO_EMAIL "{fspindle fabien.spindler@irisa.fr}") 
+#SET (EMAIL_PROJECT_NAME "ViSP")
+#SET (BUILD_MONITORS "{.* fabien.spindler@irisa.fr}")
+#SET (CVS_IDENT_TO_EMAIL "{fspindle fabien.spindler@irisa.fr}") 
 
-#SET (DEFAULTCONTIUOUSDOMAIN "gforge.inria.fr")
-SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_CONFIGURE_FAILURES 1)
-SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_BUILD_ERRORS 1)
-SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_BUILD_WARNINGS 1)
-SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_TEST_NOT_RUNS 1)
-SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_TEST_FAILURES 1)
+#SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_CONFIGURE_FAILURES 1)
+#SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_BUILD_ERRORS 1)
+#SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_BUILD_WARNINGS 1)
+#SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_TEST_NOT_RUNS 1)
+#SET (DELIVER_BROKEN_BUILD_EMAIL_WITH_TEST_FAILURES 1)
