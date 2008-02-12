@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpKltOpencv.h,v 1.4 2008-02-07 14:50:55 megautie Exp $
+ * $Id: vpKltOpencv.h,v 1.5 2008-02-12 14:42:20 megautie Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,11 +110,10 @@ class VISP_EXPORT vpKltOpencv
 
   CvPoint2D32f *features; //List of features
   CvPoint2D32f *prev_features; //List of features for previous iteration
-  CvPoint2D32f *init_features; //List of features for first iteration (with a features still present)
+  
   long *featuresid; //Array of ids for features
   long *prev_featuresid; //Array of ids for previous features
-  long *init_featuresid; //Array of ids for init features
-
+  bool *lostDuringTrack; // Result of the tracker for every feature : 1 = lost, 0 = still present
   char *status; //Result of the tracker for every features : 0 = lost, 1 = found
 
 
@@ -171,6 +170,8 @@ class VISP_EXPORT vpKltOpencv
   //Is a feature valid (e.g. : test if not too close to borders) -> event(id_tracker, x, y)
   void setIsFeatureValid(funccheck input) {IsFeatureValid = input;}
 
+  //! Get the list of lost feature
+  bool *getListOfLostFeature(){ return lostDuringTrack; }
   //! Get the current number of features
   int getNbFeatures() { return countFeatures; }
   //! Get the previous number of features
@@ -180,7 +181,6 @@ class VISP_EXPORT vpKltOpencv
 
   void getFeature(int index, int &id, float &x, float &y);
   void getPrevFeature(int index, int &id, float &x, float &y);
-  void getInitFeature(int index, int &id, float &x, float &y);
   void addFeature(const int &id, const float &x, const float &y);
   void suppressFeature(int index);
 };
