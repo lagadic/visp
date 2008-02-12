@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.26 2008-02-08 16:38:13 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.27 2008-02-12 16:22:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -508,6 +508,7 @@ vp1394TwoGrabber::isColor()
   case vpCOLOR_CODING_RGB16S:
     return true;
   }
+  return false;
 }
 
 /*!
@@ -1161,7 +1162,7 @@ vp1394TwoGrabber::open()
     camInUse[i] = false;
   }
 
-  for (int i=0; i < num_cameras; i ++){
+  for (unsigned int i=0; i < num_cameras; i ++){
     setCamera(i);
     setCapture(DC1394_ON);
     setTransmission(DC1394_ON);
