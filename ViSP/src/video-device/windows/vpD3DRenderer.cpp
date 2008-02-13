@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.12 2008-01-31 14:58:46 asaunier Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.13 2008-02-13 15:53:10 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -685,8 +685,8 @@ void vpD3DRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
 
       RECT rec;
 
-      int rleft = (j-r >=0) ? j-r : 0;
-      int rtop = (i-r >=0) ? i-r : 0;
+      int rleft = ((int)(j-r) >=0) ? j-r : 0;
+      int rtop = ((int)(i-r) >=0) ? i-r : 0;
 
       rec.top= rtop;
       rec.left= rleft;
@@ -712,20 +712,20 @@ void vpD3DRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
 
       int x = 0;
       int y = r;
-      int p = (5 - (r<<2))>>2;
+      int p = (3 - (r<<1));
 
       subDrawCircle(j-rleft, i-rtop, x, y, c, buf, pitch, rectW, rectH);
       while(x < y){
-	      x++;
-	      if (p < 0)
+        x++;
+        if (p < 0)
 	        {
-	          p += (x+1)<<1;
+	          p += ((x<<1)+1)<<1;
 	        }
 	      else
 	        {
-	          y--;
-	          p += ((x-y)<<1)+1;
-	        }
+            y--;
+            p += (((x-y)<<1)+1)<<1;
+          }
 	      subDrawCircle(j-rleft, i-rtop, x, y, c, buf, pitch, rectW, rectH);
       }
 
