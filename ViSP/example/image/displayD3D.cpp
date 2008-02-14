@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayD3D.cpp,v 1.8 2008-01-30 15:33:40 fspindle Exp $
+ * $Id: displayD3D.cpp,v 1.9 2008-02-14 15:38:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -292,6 +292,9 @@ main(int argc, char ** argv)
     for (unsigned i=0 ; i < I.getCols() ; i+=20)
       vpDisplay::displayDotLine(I,0,i,I.getCols(), i,vpColor::green) ;
 
+    // Display a rectangle 
+    vpDisplay::displayRectangle(I, I.getRows()-45, -10, 60, 80, vpColor::orange) ;
+    
     // Display in overlay a blue arrow
     vpDisplay::displayArrow(I,0,0,100,100,vpColor::blue) ;
 
@@ -299,6 +302,8 @@ main(int argc, char ** argv)
     // the radius is increased by 20 pixels for each circle
     for (int i=0 ; i < 100 ; i+=20)
       vpDisplay::displayCircle(I, 80, 80,20+i,vpColor::yellow) ;
+    
+    vpDisplay::displayCircle(I, -10, 300,100,vpColor::yellow) ;
 
     // Display in overlay a yellow string
     vpDisplay::displayCharString(I, 85, 100,

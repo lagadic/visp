@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayX.cpp,v 1.9 2008-01-30 15:33:40 fspindle Exp $
+ * $Id: displayX.cpp,v 1.10 2008-02-14 15:38:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -303,6 +303,9 @@ main(int argc, char ** argv)
     for (unsigned int i=0 ; i < I.getWidth() ; i+=20)
       vpDisplay::displayDotLine(I,0,i,I.getWidth(), i,vpColor::green) ;
 
+    // Display a rectangle 
+    vpDisplay::displayRectangle(I, I.getRows()-45, -10, 60, 80, vpColor::orange) ;
+    
     // Display in overlay a blue arrow
     vpDisplay::displayArrow(I,0,0,100,100,vpColor::blue) ;
 
@@ -311,6 +314,8 @@ main(int argc, char ** argv)
     for (unsigned int i=0 ; i < 100 ; i+=20)
       vpDisplay::displayCircle(I, 80, 80,20+i,vpColor::yellow) ;
 
+    vpDisplay::displayCircle(I, -10, 300,100,vpColor::yellow) ;
+    
     // Display in overlay a yellow string
     vpDisplay::displayCharString(I, 85, 100,
 				 "ViSP is a marvelous software",
