@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.h,v 1.8 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpGDIRenderer.h,v 1.9 2008-02-14 15:40:10 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,31 +91,31 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   void setImg(const vpImage<unsigned char>& im);
 
   //Draws a pixel of color color at (x,y).
-  void setPixel(unsigned int y, unsigned int x, vpColor::vpColorType color);
+  void setPixel(int y, int x, vpColor::vpColorType color);
 
   //other drawing methods
-  void drawLine(unsigned int i1, unsigned int j1,
-		unsigned int i2, unsigned int j2,
+  void drawLine(int i1, int j1,
+		int i2, int j2,
 		vpColor::vpColorType col, unsigned int e, int style=PS_SOLID);
 
-  void drawRect(unsigned int i, unsigned int j,
+  void drawRect(int i, int j,
 		unsigned int width, unsigned int height,
 		vpColor::vpColorType col, bool fill=false,
 		unsigned int e=1);
 
   void clear(vpColor::vpColorType c);
 
-  void drawCircle(unsigned int i, unsigned int j, unsigned int r,
+  void drawCircle(int i, int j, unsigned int r,
 		  vpColor::vpColorType c);
 
-  void drawText(unsigned int i, unsigned int j, char * s,
+  void drawText(int i, int j, char * s,
 		vpColor::vpColorType c);
 
-  void drawCross(unsigned int i,unsigned int j, unsigned int size,
+  void drawCross(int i, int j, unsigned int size,
 		 vpColor::vpColorType col, unsigned int e=1);
 
-  void drawArrow(unsigned int i1,unsigned int j1,
-		 unsigned int i2, unsigned int j2,
+  void drawArrow(int i1,int j1,
+		 int i2, int j2,
 		 vpColor::vpColorType col, unsigned int L,unsigned int l);
 
 

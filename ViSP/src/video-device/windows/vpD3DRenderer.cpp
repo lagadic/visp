@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.13 2008-02-13 15:53:10 asaunier Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.14 2008-02-14 15:40:10 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -417,14 +417,13 @@ bool vpD3DRenderer::render()
 /*!
   Sets a pixel to color at position (j,i).
 */
-void vpD3DRenderer::setPixel(unsigned int i, unsigned int j,
+void vpD3DRenderer::setPixel(int i, int j,
 			     vpColor::vpColorType color)
 {
-  if(i<0 || j<0 || i>=nbRows || j>=nbCols)
-    {
-      vpCERROR<<"Invalid parameters!"<<std::endl;
-      return;
-    }
+  if(i<0 || j<0 || i>=(int)nbRows || j>=(int)nbCols)
+  {
+    return;
+  }
 
   //if the device has been initialized
   if(pd3dDevice != NULL)
@@ -440,17 +439,17 @@ void vpD3DRenderer::setPixel(unsigned int i, unsigned int j,
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
-	{
-	  vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
-	  return;
-	}
+	    {
+	      vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
+	      return;
+	    }
 
       //gets the buffer and pitch of the texture
       unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //the coordinates are in the locked area base
-      setBufferPixel(buf, pitch, 0, 0,color, 1, 1);
+      setBufferPixel(buf, pitch, 0, 0,color);
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
@@ -469,16 +468,16 @@ void vpD3DRenderer::setPixel(unsigned int i, unsigned int j,
   \param col the line's color
   \param style style of the line
 */
-void vpD3DRenderer::drawLine(unsigned int i1, unsigned int j1,
-			     unsigned int i2, unsigned int j2,
+void vpD3DRenderer::drawLine(int i1, int j1,
+			     int i2, int j2,
 			     vpColor::vpColorType col,
 			     unsigned int e, int style)
 {
-  if(i1<0 || j1<0 || i2<0 || j2<0 || e<0)
-    {
-      vpCERROR<<"Invalid parameters!"<<std::endl;
-      return;
-    }
+//   if(i1<0 || j1<0 || i2<0 || j2<0 || e<0)
+//     {
+//       vpCERROR<<"Invalid parameters!"<<std::endl;
+//       return;
+//     }
 
   //if the device has been initialized
   if(pd3dDevice != NULL)
@@ -529,16 +528,16 @@ void vpD3DRenderer::drawLine(unsigned int i1, unsigned int j1,
   \param fill Ignored
   \param e : Line thickness
 */
-void vpD3DRenderer::drawRect(unsigned int i, unsigned int j,
+void vpD3DRenderer::drawRect(int i, int j,
 			     unsigned int width, unsigned int height,
 			     vpColor::vpColorType col, bool /* fill */,
 			     unsigned int /*e*/)
 {
-  if(i<0 || j<0 || i>nbRows || j>nbCols || width<0 || height<0)
-    {
-      vpCERROR<<"Invalid parameters!"<<std::endl;
-      return;
-    }
+  if(i>(int)nbRows-1 || j>(int)nbCols-1|| i+height<0 ||j+width<0)
+  {
+  //       vpCERROR<<"Invalid parameters!"<<std::endl;
+    return;
+  }
 
   //if the device has been initialized
   if(pd3dDevice != NULL)
@@ -546,13 +545,13 @@ void vpD3DRenderer::drawRect(unsigned int i, unsigned int j,
       D3DLOCKED_RECT d3dLRect;
 
       RECT r;
-      r.top=i;
-      r.left=j;
-      r.bottom=(i+height < nbRows) ? i+height : nbRows-1;
-      r.right=(j+width < nbCols) ? j+width : nbCols-1;
+      r.top= (i>0)? i : 0 ;
+      r.left=(j>0)? j : 0 ;
+      r.bottom=(i+height < (int)nbRows) ? i+height : nbRows-1;
+      r.right=(j+width < (int)nbCols) ? j+width : nbCols-1;
 
-      unsigned int rectW = r.right - j;
-      unsigned int rectH = r.bottom - i;
+      unsigned int rectW = r.right - r.left;
+      unsigned int rectH = r.bottom - r.top;
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -565,24 +564,28 @@ void vpD3DRenderer::drawRect(unsigned int i, unsigned int j,
       unsigned int pitch = d3dLRect.Pitch;
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
-      unsigned int x=0;
-      unsigned int y=0;
+      unsigned int x= 0;
+      unsigned int y= 0;
 
       //draws the top horizontal line
-      for(x; x<width ; x++)
-	setBufferPixel(buf, pitch, x, y, col, rectW, rectH);
+      if(i>=0)
+        for(x; x<rectW ; x++)
+	       setBufferPixel(buf, pitch, x, y, col);
 
       //draws the right vertical line
-      for(y; y<height ; y++)
-	setBufferPixel(buf, pitch, x, y, col, rectW, rectH);
+      if(j+width < nbCols)   
+        for(y; y<rectH ; y++)
+	       setBufferPixel(buf, pitch, x, y, col);
 
       //draws the bottom horizontal line
+      if(i+height < nbRows)   
       for(x; x>0 ; x--)
-	setBufferPixel(buf, pitch, x, y, col, rectW, rectH);
+	setBufferPixel(buf, pitch, x, y, col);
 
       //draws the left vertical line
+      if(j>=0)
       for(y; y>0 ; y--)
-	setBufferPixel(buf, pitch, x, y, col, rectW, rectH);
+	setBufferPixel(buf, pitch, x, y, col);
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
@@ -634,8 +637,8 @@ void vpD3DRenderer::clear(vpColor::vpColorType c)
 
 
 //writes current circle pixels using symetry to reduce the algorithm's complexity
-void vpD3DRenderer::subDrawCircle(unsigned int i, unsigned int j,
-				  unsigned int x, unsigned int y,
+void vpD3DRenderer::subDrawCircle(int i, int j,
+				  int x, int y,
 				  vpColor::vpColorType col,
 				  unsigned char* buf, unsigned int pitch,
 				  unsigned int maxX, unsigned int maxY)
@@ -672,10 +675,10 @@ void vpD3DRenderer::subDrawCircle(unsigned int i, unsigned int j,
   \param r The circle's radius
   \param col The circle's color
 */
-void vpD3DRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
+void vpD3DRenderer::drawCircle(int i, int j, unsigned int r,
 			       vpColor::vpColorType c)
 {
-  if(r<1)
+  if(r<1 || (int)(i+r)<0 || (int)(i-r) > (int)nbRows || (int)(j+r)<0 || (int)(j-r) > (int)nbCols)
     return;
 
   //if the device has been initialized
@@ -685,13 +688,13 @@ void vpD3DRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
 
       RECT rec;
 
-      int rleft = ((int)(j-r) >=0) ? j-r : 0;
-      int rtop = ((int)(i-r) >=0) ? i-r : 0;
+      int rleft = ((int)(j-r) > 0) ? j-r : 0;
+      int rtop = ((int)(i-r) > 0) ? i-r : 0;
 
       rec.top= rtop;
       rec.left= rleft;
-      rec.bottom=(i+r < nbRows) ? i+r : nbRows-1;
-      rec.right=(j+r < nbCols) ? j+r : nbCols-1;
+      rec.bottom=((int)(i+r) < (int)nbRows) ? i+r : nbRows-1;
+      rec.right=((int)(j+r) < (int)nbCols) ? j+r : nbCols-1;
 
       //used as maxX and maxY for setBufferPixel
       int rectW = rec.right - rleft;
@@ -746,7 +749,7 @@ void vpD3DRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
   \param s The string to display
   \param col The text's color
 */
-void vpD3DRenderer::drawText(unsigned int i, unsigned int j, char * s,
+void vpD3DRenderer::drawText(int i, int j, char * s,
 			     vpColor::vpColorType c)
 {
   //Will contain the texture's surface drawing context
@@ -794,11 +797,11 @@ void vpD3DRenderer::drawText(unsigned int i, unsigned int j, char * s,
   \param col The cross' color
   \param e width of the cross
 */
-void vpD3DRenderer::drawCross(unsigned int i,unsigned int j,
+void vpD3DRenderer::drawCross(int i, int j,
 			      unsigned int size,
 			      vpColor::vpColorType col, unsigned int e)
 {
-  if(i<0 || j<0 || e<=0)
+  if(i<0 || j<0 || i>(int)nbRows || j>(int)nbCols || e<=0)
     return;
 
   //if the device has been initialized
@@ -807,15 +810,11 @@ void vpD3DRenderer::drawCross(unsigned int i,unsigned int j,
       D3DLOCKED_RECT d3dLRect;
 
       RECT rec;
-
+      e = (e<size)? e : size;
       //if j-size/2 is inferior to 0, use 0
-      int rleft = ( (j - (size/2)) < 0 ) ?
-	0
-	: j - (size/2);
+      int rleft = ( (j - (int)(size/2)) < 0 ) ? 0 : j - (size/2);
       //if j-size/2 is inferior to 0, use 0
-      int rtop  = ( (i - (size/2)) < 0 ) ?
-	0
-	: i - (size/2);
+      int rtop  = ( (i - (int)(size/2)) < 0 ) ? 0 : i - (size/2);
 
       rec.top   = rtop;
       rec.left  = rleft;
@@ -824,10 +823,10 @@ void vpD3DRenderer::drawCross(unsigned int i,unsigned int j,
 
       //locks the texture to directly access it
       if( pd3dText->LockRect(0, &d3dLRect, &rec, 0) != D3D_OK)
-      	{
-	  vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
-	  return;
-	}
+      {
+        vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
+        return;
+      }
 
       //gets the buffer and pitch of the texture
       unsigned int pitch = d3dLRect.Pitch;
@@ -836,9 +835,7 @@ void vpD3DRenderer::drawCross(unsigned int i,unsigned int j,
       unsigned int x;         //xpos
 
       //y-coordinate of the line in the locked rectangle base
-      unsigned int y =( i < (size/2) ) ?
-	i
-	: (size/2);
+      unsigned int y =( i < (int)(size/2) ) ? i : (size/2);
 
       int cpt = 0;   //number of lines
       int re = e;    //remaining "width"
@@ -846,46 +843,43 @@ void vpD3DRenderer::drawCross(unsigned int i,unsigned int j,
       //horizontal lines
       //stops when there is enough line for e
       while(re!=0)
-	{
-	  //draws a line
-	  for(x=0; x<size; x++)
-	    setBufferPixel(buf, pitch, x, y, col, size, size);
+      {
+	      //draws a line
+	      for(x=0; x<(unsigned int)(rec.right - rec.left); x++)
+	        setBufferPixel(buf, pitch, x, y, col);
 
-	  re--;
-	  cpt++;
+	      re--;
+	      cpt++;
 
-	  //write alternatively a line at the top and a line at the bottom
-	  //eg : y=4 -> y=5 -> y=3 -> y=6
-	  y += ( (re&1) != 0) ? cpt : -cpt;
-	}
+	      //write alternatively a line at the top and a line at the bottom
+	      //eg : y=4 -> y=5 -> y=3 -> y=6
+	      y += ( (re&1) != 0) ? cpt : -cpt;
+      }
 
       cpt = 0;
       re = e;
 
       //x-coordinate of the line in the locked rectangle base
-      x =( j < (size/2) ) ?
-	j
-	: size/2;
+      x =( j < (int)(size/2) ) ?	j : size/2;
 
       //vertical lines
       while(re!=0)
-	{
-	  //draws a vertical line
-	  for(y=0; y<size; y++)
-	    setBufferPixel(buf, pitch, x, y, col, size, size);
+      {
+	      //draws a vertical line
+	      for(y=0; y<(unsigned int)(rec.bottom - rec.top); y++)
+	        setBufferPixel(buf, pitch, x, y, col);
 
-	  re--;
-	  cpt++;
+	      re--;
+	      cpt++;
 
-	  //write alternatively a line on the left and a line on the right
-	  x += ( (re&1) != 0) ? cpt : -cpt;
-	}
+	      //write alternatively a line on the left and a line on the right
+	      x += ( (re&1) != 0) ? cpt : -cpt;
+      }
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
-	vpCERROR<<"D3D : Couldn't unlock the texture!"<<std::endl;
+        vpCERROR<<"D3D : Couldn't unlock the texture!"<<std::endl;
     }
-
 }
 
 
@@ -899,13 +893,13 @@ void vpD3DRenderer::drawCross(unsigned int i,unsigned int j,
   \param L ...
   \param l ...
 */
-void vpD3DRenderer::drawArrow(unsigned int i1,unsigned int j1,
-			      unsigned int i2, unsigned int j2,
+void vpD3DRenderer::drawArrow(int i1, int j1,
+			      int i2, int j2,
 			      vpColor::vpColorType col,
 			      unsigned int L,unsigned int l)
 {
-  double a = (int)j2 - (int)j1 ;
-  double b = (int)i2 - (int)i1 ;
+  double a = j2 - j1 ;
+  double b = i2 - i1 ;
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
   int _l = l;
 
@@ -944,32 +938,31 @@ void vpD3DRenderer::drawArrow(unsigned int i1,unsigned int j1,
 
       double t = 0 ;
       while (t<=_l)
-	{
-	  i4 = i3 - b*t ;
-	  j4 = j3 + a*t ;
+      {
+	      i4 = i3 - b*t ;
+	      j4 = j3 + a*t ;
 
-	  MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
-	  LineTo(hDCMem, (int)j4, (int)i4);
+	      MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
+	      LineTo(hDCMem, (int)j4, (int)i4);
 
-	  t+=0.1 ;
-	}
+	      t+=0.1 ;
+      }
 
       t = 0 ;
       while (t>= -_l)
-	{
-	  i4 = i3 - b*t ;
-	  j4 = j3 + a*t ;
+      {
+	      i4 = i3 - b*t ;
+	      j4 = j3 + a*t ;
 
-	  MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
-	  LineTo(hDCMem, (int)j4, (int)i4);
+	      MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
+	      LineTo(hDCMem, (int)j4, (int)i4);
 
-	  t-=0.1 ;
-	}
+	      t-=0.1 ;
+      }
       MoveToEx(hDCMem, j1, i1, NULL);
       LineTo(hDCMem, j2, i2);
 
     }
-
   //Deletes the pen
   DeleteObject(hPen);
   //Releases the DC

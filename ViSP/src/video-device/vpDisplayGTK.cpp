@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.37 2008-01-30 15:32:25 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.38 2008-02-14 15:40:09 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -776,9 +776,9 @@ vpDisplayGTK::displayRectangle(int i, int j,
 {
   if (GTKinitialized)
     {
-      if (e == 1) e = 0;
-      gdk_gc_set_foreground(gc,col[color]);
-      gdk_gc_set_line_attributes(gc, e, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT,
+     gdk_gc_set_foreground(gc,col[color]);
+     if (e>1)
+       gdk_gc_set_line_attributes(gc, e, GDK_LINE_SOLID, GDK_CAP_BUTT,
 				 GDK_JOIN_BEVEL) ;
 
       if (fill == false)
@@ -786,7 +786,8 @@ vpDisplayGTK::displayRectangle(int i, int j,
       else
         gdk_draw_rectangle(background,gc,TRUE,j,i,width,height);
 
-      gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
+      if (e>1)
+        gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
 				 GDK_JOIN_BEVEL) ;
     }
   else
@@ -811,9 +812,9 @@ vpDisplayGTK::displayRectangle(const vpRect &rect,
 {
   if (GTKinitialized)
     {
-      if (e == 1) e = 0;
       gdk_gc_set_foreground(gc,col[color]);
-      gdk_gc_set_line_attributes(gc, e, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT,
+      if (e>1)
+        gdk_gc_set_line_attributes(gc, e, GDK_LINE_SOLID, GDK_CAP_BUTT,
 				 GDK_JOIN_BEVEL) ;
 
       if (fill == false)
@@ -825,7 +826,8 @@ vpDisplayGTK::displayRectangle(const vpRect &rect,
           (int)rect.getLeft(), (int)rect.getTop(),
           (int)rect.getWidth(), (int)rect.getHeight());
 
-      gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
+      if (e>1)
+        gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
 				 GDK_JOIN_BEVEL) ;
     }
   else
