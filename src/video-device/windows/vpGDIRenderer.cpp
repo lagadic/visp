@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.15 2007-09-17 13:03:38 asaunier Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.16 2008-02-14 15:40:10 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -339,7 +339,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
   \param x The x coordinate of the pixel.
   \param color The color of the pixel.
 */
-void vpGDIRenderer::setPixel(unsigned int y, unsigned int x,
+void vpGDIRenderer::setPixel(int y, int x,
 			     vpColor::vpColorType color)
 {
   //get the window's DC
@@ -371,8 +371,8 @@ void vpGDIRenderer::setPixel(unsigned int y, unsigned int x,
   \param col the line's color
   \param style style of the line
 */
-void vpGDIRenderer::drawLine(unsigned int i1, unsigned int j1,
-			     unsigned int i2, unsigned int j2,
+void vpGDIRenderer::drawLine(int i1, int j1,
+			     int i2, int j2,
 			     vpColor::vpColorType col,
 			     unsigned int e, int style)
 {
@@ -399,10 +399,10 @@ void vpGDIRenderer::drawLine(unsigned int i1, unsigned int j1,
   LineTo(hDCMem, j2, i2);
 
   //computes the coordinates of the rectangle to blit
-  unsigned int x = (j2 >= j1) ? j1 : j2;
-  unsigned int y = (i2 >= i1) ? i1 : i2;
-  unsigned int w = (j2 >= j1) ? j2-j1 : j1-j2;
-  unsigned int h = (i2 >= i1) ? i2-i1 : i1-i2;
+//   int x = (j2 >= j1) ? j1 : j2;
+//   int y = (i2 >= i1) ? i1 : i2;
+//   int w = (j2 >= j1) ? j2-j1 : j1-j2;
+//   int h = (i2 >= i1) ? i2-i1 : i1-i2;
 
   //display the result (flush)
  // BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
@@ -425,7 +425,7 @@ void vpGDIRenderer::drawLine(unsigned int i1, unsigned int j1,
   \param fill True if it is a filled rectangle
   \param e : Line thickness
 */
-void vpGDIRenderer::drawRect(unsigned int i, unsigned int j,
+void vpGDIRenderer::drawRect(int i, int j,
 			     unsigned int width, unsigned int height,
 			     vpColor::vpColorType col, bool fill,
 			     unsigned int e)
@@ -489,7 +489,7 @@ void vpGDIRenderer::clear(vpColor::vpColorType c)
   \param r The circle's radius
   \param col The circle's color
 */
-void vpGDIRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
+void vpGDIRenderer::drawCircle(int i, int j, unsigned int r,
 			       vpColor::vpColorType c)
 {
 
@@ -506,10 +506,10 @@ void vpGDIRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
   HBRUSH hbrush = CreateBrushIndirect(&lBrush);
 
   //computes bounding rectangle
-  unsigned int x1 = j-r;
-  unsigned int y1 = i-r;
-  unsigned int x2 = j+r;
-  unsigned int y2 = i+r;
+  int x1 = j-r;
+  int y1 = i-r;
+  int x2 = j+r;
+  int y2 = i+r;
 
   //select this bmp in memory
   EnterCriticalSection(&CriticalSection);
@@ -542,7 +542,7 @@ void vpGDIRenderer::drawCircle(unsigned int i, unsigned int j, unsigned int r,
   \param s The string to display
   \param col The text's color
 */
-void vpGDIRenderer::drawText(unsigned int i, unsigned int j, char * s,
+void vpGDIRenderer::drawText(int i, int j, char * s,
 			     vpColor::vpColorType c)
 {
   //get the window's DC
@@ -590,7 +590,7 @@ void vpGDIRenderer::drawText(unsigned int i, unsigned int j, char * s,
   \param col The cross' color
   \param e width of the cross
 */
-void vpGDIRenderer::drawCross(unsigned int i,unsigned int j, unsigned int size,
+void vpGDIRenderer::drawCross(int i, int j, unsigned int size,
 			      vpColor::vpColorType col, unsigned int e)
 {
   unsigned int half_size = size / 2;
@@ -635,7 +635,6 @@ void vpGDIRenderer::drawCross(unsigned int i,unsigned int j, unsigned int size,
   }
   else {
     setPixel(i, j, col);
-
   }
 
 
@@ -651,21 +650,21 @@ void vpGDIRenderer::drawCross(unsigned int i,unsigned int j, unsigned int size,
   \param L ...
   \param l ...
 */
-void vpGDIRenderer::drawArrow(unsigned int i1,unsigned int j1,
-			      unsigned int i2, unsigned int j2,
+void vpGDIRenderer::drawArrow(int i1, int j1,
+			      int i2, int j2,
 			      vpColor::vpColorType col,
 			      unsigned int L,unsigned int l)
 {
   int _l = l;
-  double a = (int)j2 - (int)j1 ;
-  double b = (int)i2 - (int)i1 ;
+  double a = j2 - j1 ;
+  double b = i2 - i1 ;
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
   //computes the coordinates of the rectangle to blit later
-  unsigned int x = (j2 >= j1) ? j1 : j2;
-  unsigned int y = (i2 >= i1) ? i1 : i2;
-  unsigned int w = (j2 >= j1) ? j2-j1 : j1-j2;
-  unsigned int h = (i2 >= i1) ? i2-i1 : i1-i2;
+//   unsigned int x = (j2 >= j1) ? j1 : j2;
+//   unsigned int y = (i2 >= i1) ? i1 : i2;
+//   unsigned int w = (j2 >= j1) ? j2-j1 : j1-j2;
+//   unsigned int h = (i2 >= i1) ? i2-i1 : i1-i2;
 
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
@@ -704,7 +703,7 @@ void vpGDIRenderer::drawArrow(unsigned int i1,unsigned int j1,
 	  i4 = i3 - b*_l ;
 	  j4 = j3 + a*_l ;
 
-	  MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
+	  MoveToEx(hDCMem, j2, i2, NULL);
 	  LineTo(hDCMem, (int)j4, (int)i4);
 
 	  // t+=0.1 ;
@@ -716,7 +715,7 @@ void vpGDIRenderer::drawArrow(unsigned int i1,unsigned int j1,
 	  i4 = i3 + b*_l ;
 	  j4 = j3 - a*_l ;
 
-	  MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
+	  MoveToEx(hDCMem, j2, i2, NULL);
 	  LineTo(hDCMem, (int)j4, (int)i4);
 
 	  // t-=0.1 ;

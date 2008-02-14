@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Renderer.h,v 1.6 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpWin32Renderer.h,v 1.7 2008-02-14 15:40:10 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -87,7 +87,7 @@ class VISP_EXPORT vpWin32Renderer
     \param x The x coordinate of the pixel.
     \param color The color of the pixel.
   */
-  virtual void setPixel(unsigned int y, unsigned int x,
+  virtual void setPixel(int y,int x,
 			vpColor::vpColorType color) =0;
 
   /*!
@@ -100,8 +100,8 @@ class VISP_EXPORT vpWin32Renderer
     \param col the line's color
     \param style style of the line
   */
-  virtual void drawLine(unsigned int i1, unsigned int j1,
-			unsigned int i2, unsigned int j2,
+  virtual void drawLine(int i1, int j1,
+			int i2, int j2,
 			vpColor::vpColorType col, unsigned int e,
 			int style=PS_SOLID) =0;
 
@@ -115,7 +115,7 @@ class VISP_EXPORT vpWin32Renderer
     \param fill True if it is a filled rectangle
     \param e line thickness
   */
-  virtual void drawRect(unsigned int i, unsigned int j,
+  virtual void drawRect(int i, int j,
 			unsigned int width, unsigned int height,
 			vpColor::vpColorType col, bool fill=false,
 			unsigned int e=1) =0;
@@ -133,7 +133,7 @@ class VISP_EXPORT vpWin32Renderer
     \param r The circle's radius
     \param col The circle's color
   */
-  virtual void drawCircle(unsigned int i, unsigned int j, unsigned int r,
+  virtual void drawCircle(int i, int j, unsigned int r,
 			  vpColor::vpColorType c) =0;
 
   /*!
@@ -143,7 +143,7 @@ class VISP_EXPORT vpWin32Renderer
     \param s The string to display
     \param col The text's color
   */
-  virtual void drawText(unsigned int i, unsigned int j, char * s,
+  virtual void drawText(int i, int j, char * s,
 			vpColor::vpColorType c) =0;
 
   /*!
@@ -154,7 +154,7 @@ class VISP_EXPORT vpWin32Renderer
     \param col The cross' color
     \param e width of the cross
   */
-  virtual void drawCross(unsigned int i,unsigned int j, unsigned int size,
+  virtual void drawCross(int i, int j, unsigned int size,
 			 vpColor::vpColorType col, unsigned int e=1) =0;
 
   /*!
@@ -167,8 +167,8 @@ class VISP_EXPORT vpWin32Renderer
     \param L ...
     \param l ...
   */
-  virtual void drawArrow(unsigned int i1,unsigned int j1,
-			 unsigned int i2, unsigned int j2,
+  virtual void drawArrow(int i1, int j1,
+			 int i2, int j2,
 			 vpColor::vpColorType col,
 			 unsigned int L,unsigned int l) =0;
 

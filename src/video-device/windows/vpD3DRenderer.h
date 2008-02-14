@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.h,v 1.8 2007-09-12 07:33:41 fspindle Exp $
+ * $Id: vpD3DRenderer.h,v 1.9 2008-02-14 15:40:10 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -104,30 +104,30 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   void setImg(const vpImage<unsigned char>& im);
 
-  void setPixel(unsigned int x, unsigned int y, vpColor::vpColorType color);
+  void setPixel(int x, int y, vpColor::vpColorType color);
 
-  void drawLine(unsigned int i1, unsigned int j1,
-		unsigned int i2, unsigned int j2,
+  void drawLine(int i1, int j1,
+		int i2, int j2,
 		vpColor::vpColorType col, unsigned int e, int style=PS_SOLID);
 
-  void drawRect(unsigned int i, unsigned int j,
+  void drawRect(int i, int j,
 		unsigned int width, unsigned int height,
 		vpColor::vpColorType col, bool fill=false,
 		unsigned int e=1);
 
   void clear(vpColor::vpColorType c);
 
-  void drawCircle(unsigned int i, unsigned int j, unsigned int r,
+  void drawCircle(int i, int j, unsigned int r,
 		  vpColor::vpColorType c);
 
-  void drawText(unsigned int i, unsigned int j, char * s,
+  void drawText(int i, int j, char * s,
 		vpColor::vpColorType c);
 
-  void drawCross(unsigned int i,unsigned int j, unsigned int size,
+  void drawCross(int i, int j, unsigned int size,
 		 vpColor::vpColorType col, unsigned int e=1);
 
-  void drawArrow(unsigned int i1,unsigned int j1,
-		 unsigned int i2, unsigned int j2,
+  void drawArrow(int i1, int j1,
+		  int i2, int j2,
 		 vpColor::vpColorType col, unsigned int L,unsigned int l);
 
   void getImage(vpImage<vpRGBa> &I);
@@ -142,14 +142,14 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
     Sub function for circle drawing.
     Circle drawing is based on Bresenham 's circle algorithm.
   */
-  void subDrawCircle(unsigned int i, unsigned int j,
-		     unsigned int x, unsigned int y,
+  void subDrawCircle(int i, int j,
+		     int x, int y,
 		     vpColor::vpColorType col, unsigned char* buf,
 		     unsigned int pitch, unsigned int maxX, unsigned int maxY);
 
 
   /*!
-    Useful inline function to set a pixel in a texture buffer.
+    Safe useful inline function to set a pixel in a texture buffer.
     \param buf The texture's buffer.
     \param pitch The image pitch.
     \param x The x-coordinate of the pixel (in the locked rectangle base)
@@ -160,13 +160,28 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   */
   inline void setBufferPixel(unsigned char* buf, unsigned int pitch,
-			     unsigned int x, unsigned int y,
+			     int x, int y,
 			     vpColor::vpColorType color,
 			     unsigned int maxX, unsigned int maxY)
     {
-      if(x>=0 && y>=0 && x<=maxX && y<=maxY)
+      if(x>=0 && y>=0 && x<= (int)maxX && y<= (int)maxY)
 	*(long*)(buf + (y*pitch) + (x<<2)) = colors[color];
     }
+  /*!
+    Unsafe useful inline function to set a pixel in a texture buffer.
+    \param buf The texture's buffer.
+    \param pitch The image pitch.
+    \param x The x-coordinate of the pixel (in the locked rectangle base)
+    \param y The y-coordinate of the pixel (in the locked rectangle base)
+    \param color The color of the pixel.
+
+  */
+  inline void setBufferPixel(unsigned char* buf, unsigned int pitch,
+                             int x, int y,
+                             vpColor::vpColorType color)
+  {
+      *(long*)(buf + (y*pitch) + (x<<2)) = colors[color];
+  }
 
   int supPowerOf2(int n);
 
