@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyDLT.cpp,v 1.6 2008-02-05 14:01:17 fspindle Exp $
+ * $Id: vpHomographyDLT.cpp,v 1.7 2008-02-14 10:24:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -160,10 +160,10 @@ vpHomography::HartleyDLT(int n,
     ybn = new double [n];
 
     double xg1, yg1, coef1 ;
-    HartleyNormalization(n,
-			 xb,yb,
-			 xbn,ybn,
-			 xg1, yg1,coef1);
+    vpHomography::HartleyNormalization(n,
+				       xb,yb,
+				       xbn,ybn,
+				       xg1, yg1,coef1);
 
     double *xan;
     double *yan;
