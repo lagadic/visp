@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.27 2008-02-12 16:22:24 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.28 2008-02-15 15:23:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1054,6 +1054,7 @@ vp1394TwoGrabber::open()
 
   d = dc1394_new ();
   if (dc1394_camera_enumerate (d, &list) != DC1394_SUCCESS) {
+    dc1394_camera_free_list (list);
     close();
     vpERROR_TRACE("Failed to enumerate cameras\n");
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
@@ -1061,6 +1062,7 @@ vp1394TwoGrabber::open()
   }
 
   if (list->num == 0) {
+    dc1394_camera_free_list (list);
     close();
     vpERROR_TRACE("No cameras found");
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
