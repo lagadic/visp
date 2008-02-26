@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.cpp,v 1.11 2008-01-31 14:59:35 asaunier Exp $
+ * $Id: vpFeatureVanishingPoint.cpp,v 1.12 2008-02-26 10:32:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -222,6 +222,26 @@ void
 vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
 				 vpImage<unsigned char> &I,
 				 vpColor::vpColorType color) const
+{
+  try{
+    double x,y ;
+    x = get_x() ;
+    y = get_y() ;
+
+    vpFeatureDisplay::displayPoint(x,y, cam, I, color) ;
+
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+}
+//! display VanishingPoint feature
+void
+vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
+                                 vpImage<vpRGBa> &I,
+                                 vpColor::vpColorType color) const
 {
   try{
     double x,y ;

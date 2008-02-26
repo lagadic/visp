@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.h,v 1.9 2008-01-31 14:59:35 asaunier Exp $
+ * $Id: vpFeatureVanishingPoint.h,v 1.10 2008-02-26 10:32:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,7 @@
 #include <visp/vpPoint.h>
 
 #include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpRGBa.h>
 
 
 
@@ -129,8 +130,11 @@ public:
 
 public:
   void display(const vpCameraParameters &cam,
-	       vpImage<unsigned char> &I,
-	       vpColor::vpColorType color=vpColor::green) const;
+               vpImage<unsigned char> &I,
+               vpColor::vpColorType color=vpColor::green) const;
+  void display(const vpCameraParameters &cam,
+               vpImage<vpRGBa> &I,
+               vpColor::vpColorType color=vpColor::green) const;
 
 } ;
 

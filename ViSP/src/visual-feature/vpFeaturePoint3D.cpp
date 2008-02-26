@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint3D.cpp,v 1.12 2008-01-31 14:59:35 asaunier Exp $
+ * $Id: vpFeaturePoint3D.cpp,v 1.13 2008-02-26 10:32:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -346,6 +346,26 @@ void
 vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
 			  vpImage<unsigned char> &/* I */,
 			  vpColor::vpColorType /* color */) const
+{
+  static int firsttime =0 ;
+
+  if (firsttime==0)
+  {
+    firsttime=1 ;
+    vpERROR_TRACE("not implemented") ;
+    // Do not throw and error since it is not subject
+    // to produce a failure
+  }
+}
+
+/*!
+
+  Not implemented.
+ */
+void
+vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
+                          vpImage<vpRGBa> &/* I */,
+                          vpColor::vpColorType /* color */) const
 {
   static int firsttime =0 ;
 

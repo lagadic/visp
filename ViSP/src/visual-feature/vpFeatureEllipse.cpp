@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.cpp,v 1.13 2008-01-31 14:59:35 asaunier Exp $
+ * $Id: vpFeatureEllipse.cpp,v 1.14 2008-02-26 10:32:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -354,6 +354,38 @@ vpFeatureEllipse::display(const vpCameraParameters &cam,
 
       vpFeatureDisplay::displayEllipse(x,y,mu20,mu11,mu02,
 				       cam, I, color) ;
+
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display ellipse feature.
+
+  \param cam : Camera parameters.
+  \param I : Color image on which features have to be displayed.
+  \param color : Color used to display the feature.
+ */
+void
+vpFeatureEllipse::display(const vpCameraParameters &cam,
+                          vpImage<vpRGBa> &I,
+                          vpColor::vpColorType color ) const
+{
+  try{
+    double x = s[0] ;
+    double y = s[1] ;
+
+    double mu20 = s[2] ;
+    double mu11 = s[3] ;
+    double mu02 = s[4] ;
+
+    vpFeatureDisplay::displayEllipse(x,y,mu20,mu11,mu02,
+                                     cam, I, color) ;
 
   }
   catch(...)

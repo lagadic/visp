@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureLine.cpp,v 1.13 2008-01-31 14:59:35 asaunier Exp $
+ * $Id: vpFeatureLine.cpp,v 1.14 2008-02-26 10:32:11 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -291,6 +291,35 @@ void
 vpFeatureLine::display( const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
 			vpColor::vpColorType color) const
+{
+  try{
+    double rho,theta ;
+    rho = getRho() ;
+    theta = getTheta() ;
+
+    vpFeatureDisplay::displayLine(rho,theta,cam,I,color) ;
+
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display line feature.
+
+  \param cam : Camera parameters.
+  \param I : Color image on which features have to be displayed.
+  \param color : Color used to display the feature.
+
+ */
+void
+vpFeatureLine::display( const vpCameraParameters &cam,
+                        vpImage<vpRGBa> &I,
+                        vpColor::vpColorType color) const
 {
   try{
     double rho,theta ;
