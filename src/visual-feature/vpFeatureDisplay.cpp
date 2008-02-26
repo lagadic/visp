@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.cpp,v 1.14 2008-02-01 15:11:40 fspindle Exp $
+ * $Id: vpFeatureDisplay.cpp,v 1.15 2008-02-26 10:32:10 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,7 @@
 
 
 /*!
-  \param x, y : Point coordinates in meters.
+  \param x,y : Point coordinates in meters.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
 
