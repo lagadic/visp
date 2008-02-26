@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoDisplay.h,v 1.5 2008-01-31 14:51:43 asaunier Exp $
+ * $Id: vpServoDisplay.h,v 1.6 2008-02-26 10:34:41 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,20 +54,24 @@
 //Color / image / display
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
-
+#include <visp/vpRGBa.h>
 /*!
   \class vpServoDisplay
   \brief interface with the image for feature display
 */
 class VISP_EXPORT vpServoDisplay
 {
-
 public:
   static void display(vpServo &s,
-		      const vpCameraParameters &cam,
-		      vpImage<unsigned char> &I,
-		      vpColor::vpColorType currentColor = vpColor::green,
-		      vpColor::vpColorType desiredColor = vpColor::red) ;
+		                  const vpCameraParameters &cam,
+		                  vpImage<unsigned char> &I,
+		                  vpColor::vpColorType currentColor = vpColor::green,
+		                  vpColor::vpColorType desiredColor = vpColor::red) ;
+  static void display(vpServo &s,
+                      const vpCameraParameters &cam,
+                      vpImage<vpRGBa> &I,
+                      vpColor::vpColorType currentColor = vpColor::green,
+                      vpColor::vpColorType desiredColor = vpColor::red) ;
 
 } ;
 
