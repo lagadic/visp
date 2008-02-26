@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.h,v 1.8 2007-12-20 08:15:29 fspindle Exp $
+ * $Id: vpRobotCamera.h,v 1.9 2008-02-26 10:25:42 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,7 +41,7 @@
 
 /*!
   \file vpRobotCamera.h
-  \brief class that defines the simplest robot : a free flying  a camera
+  \brief class that defines the simplest robot : a free flying camera
 */
 
 #include <visp/vpConfig.h>
