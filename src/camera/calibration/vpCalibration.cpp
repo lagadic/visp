@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.9 2008-02-01 16:54:23 asaunier Exp $
+ * $Id: vpCalibration.cpp,v 1.10 2008-03-17 08:29:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,10 +45,12 @@
 
 #include <visp/vpCalibration.h>
 #include <visp/vpDebug.h>
+#include <visp/vpPose.h>
+#include <visp/vpPixelMeterConversion.h>
 
-
-const double vpCalibration::threshold = 1e-10f;
-const unsigned int vpCalibration::nbIterMax = 3000;
+double vpCalibration::threshold = 1e-10f;
+unsigned int vpCalibration::nbIterMax = 3000;
+double vpCalibration::gain = 0.25;
 /*!
   Basic initialisation (called by the constructors)
 */
@@ -143,6 +145,52 @@ int vpCalibration::addPoint(double X, double Y, double Z, double u, double v)
 }
 
 /*!
+  Compute the pose cMo
+  \param cMo : computed pose
+ */
+void
+vpCalibration::computePose(vpHomogeneousMatrix &cMo)
+{
+  // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
+  vpPose pose ;
+    //  the list of point is cleared (if that's not done before)
+  pose.clearPoint() ;
+    // we set the 3D points coordinates (in meter !) in the object/world frame
+  LoX.front() ;
+  LoY.front() ;
+  LoZ.front() ;
+  Lu.front()  ;
+  Lv.front()  ;
+  for (unsigned int i =0 ; i < npt ; i++)
+  {
+    vpPoint P;
+    P.setWorldCoordinates(LoX.value(),LoY.value(),LoZ.value());
+    double x,y ;
+    vpPixelMeterConversion::convertPoint(cam,
+                                         Lu.value(), Lv.value(),
+                                             x,y)  ;
+    P.set_x(x) ;
+    P.set_y(y) ;
+
+    pose.addPoint(P);
+    LoX.next() ;
+    LoY.next() ;
+    LoZ.next() ;
+    Lu.next() ;
+    Lv.next() ;
+  }
+    // compute the initial pose using Lagrange method followed by a non linear
+    // minimisation method
+    // Pose by Lagrange it provides an initialization of the pose
+  pose.computePose(vpPose::LAGRANGE, cMo) ;
+  
+    // the pose is now refined using the virtual visual servoing approach
+    // Warning: cMo needs to be initialized otherwise it may diverge
+  pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+     
+}
+
+/*!
   Compute and return the standard deviation expressed in pixel
   for pose matrix and camera intrinsic parameters for model without distortion.
   \param cMo : the matrix that defines the pose to be tested.
@@ -223,6 +271,9 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
   double kud = cam.get_kud() ;
   double kdu = cam.get_kdu() ;
 
+  double inv_px = 1/px;
+  double inv_py = 1/px;
+      
   for (unsigned int i =0 ; i < npt ; i++)
   {
 
@@ -247,7 +298,7 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
 
     residual += (vpMath::sqr(xp-u) + vpMath::sqr(yp-v))  ;
 
-    double r2du = (vpMath::sqr((u-u0)/px)+vpMath::sqr((v-v0)/py)) ;
+    double r2du = (vpMath::sqr((u-u0)*inv_px)+vpMath::sqr((v-v0)*inv_py)) ;
 
     xp = u0 + x*px - kdu*(u-u0)*r2du;
     yp = v0 + y*py - kdu*(v-v0)*r2du;
@@ -311,6 +362,7 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
 				  bool verbose)
 {
   try{
+    computePose(cMo);
     switch (method)
     {
     case CALIB_LAGRANGE :
@@ -342,7 +394,7 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
       
     //Print camera parameters
     if(verbose){
-      std::cout << "Camera parameters without distortion :" << std::endl;
+//       std::cout << "Camera parameters without distortion :" << std::endl;
       cam.printParameters();
     }
 
@@ -362,7 +414,9 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
     }
     //Print camera parameters
     if(verbose){
-      std::cout << "Camera parameters with distortion :" << std::endl;
+//       std::cout << "Camera parameters without distortion :" << std::endl;
+      this->cam.printParameters();
+//       std::cout << "Camera parameters with distortion :" << std::endl;
       cam.printParameters();
     }
 
@@ -401,7 +455,11 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
 				       bool verbose)
 {
   try{
-    switch (method) {
+    for(unsigned int i=0;i<nbPose;i++){
+      if(table_cal[i].get_npt()>3)
+        table_cal[i].computePose(table_cal[i].cMo);
+    }     
+    switch (method) {   
     case CALIB_LAGRANGE :
       if(nbPose > 1){
 	std::cout << "this calibration method is not available in" << std::endl
@@ -409,10 +467,10 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
 	return -1 ;
       }
       else {
-	table_cal[0].calibLagrange(cam,table_cal[0].cMo);
-	table_cal[0].cam = cam ;
-  table_cal[0].cam_dist = cam ;
-  table_cal[0].cMo_dist = table_cal[0].cMo ;
+        table_cal[0].calibLagrange(cam,table_cal[0].cMo);
+	      table_cal[0].cam = cam ;
+        table_cal[0].cam_dist = cam ;
+        table_cal[0].cMo_dist = table_cal[0].cMo ;
       }
       break;
     case CALIB_LAGRANGE_VIRTUAL_VS :
@@ -424,10 +482,10 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
 	return -1 ;
       }
       else {
-	table_cal[0].calibLagrange(cam,table_cal[0].cMo);
-	table_cal[0].cam = cam ;
-  table_cal[0].cam_dist = cam ;
-  table_cal[0].cMo_dist = table_cal[0].cMo ;
+	      table_cal[0].calibLagrange(cam,table_cal[0].cMo);
+	      table_cal[0].cam = cam ;
+        table_cal[0].cam_dist = cam ;
+        table_cal[0].cMo_dist = table_cal[0].cMo ;
       }
     case CALIB_VIRTUAL_VS:
     case CALIB_VIRTUAL_VS_DIST:
@@ -438,7 +496,7 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
     }
     //Print camera parameters
     if(verbose){
-      std::cout << "Camera parameters without distortion :" << std::endl;
+//       std::cout << "Camera parameters without distortion :" << std::endl;
       cam.printParameters();
     }
 
@@ -461,7 +519,9 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
     }
     //Print camera parameters
     if(verbose){
-      std::cout << "Camera parameters :" << std::endl;
+//       std::cout << "Camera parameters without distortion :" << std::endl;
+      table_cal[0].cam.printParameters();
+//       std::cout << "Camera parameters with distortion:" << std::endl;
       cam.printParameters();
       std::cout<<std::endl;
     }
