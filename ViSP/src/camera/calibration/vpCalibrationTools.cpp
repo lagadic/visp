@@ -2,10 +2,10 @@
 #include <visp/vpCalibration.h>
 #include <visp/vpMath.h>
 #include <visp/vpPose.h>
-
+#include <visp/vpPixelMeterConversion.h>
 #undef MAX
 #undef MIN
-
+ 
 void
 vpCalibration::calibLagrange(
   vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
@@ -226,6 +226,13 @@ vpCalibration::calibVVS(
     iter++ ;
     residu_1 = r ;
 
+    double px = cam.get_px();
+    double py = cam.get_py();
+    double u0 = cam.get_u0();
+    double v0 = cam.get_v0();
+    double inv_px = 1/px;
+    double inv_py = 1/py;
+   
 
     r = 0 ;
 
@@ -238,8 +245,8 @@ vpCalibration::calibVVS(
       Pd[2*i] =   u[i] ;
       Pd[2*i+1] = v[i] ;
 
-      P[2*i] =    cX[i]/cZ[i]*cam.get_px() + cam.get_u0() ;
-      P[2*i+1] =  cY[i]/cZ[i]*cam.get_py() + cam.get_v0() ;
+      P[2*i] =    cX[i]/cZ[i]*px + u0 ;
+      P[2*i+1] =  cY[i]/cZ[i]*py + v0 ;
 
       r += ((vpMath::sqr(P[2*i]-Pd[2*i]) + vpMath::sqr(P[2*i+1]-Pd[2*i+1]))) ;
     }
@@ -256,19 +263,17 @@ vpCalibration::calibVVS(
       double x = cX[i] ;
       double y = cY[i] ;
       double z = cZ[i] ;
-
-      double px = cam.get_px() ;
-      double py = cam.get_py() ;
-
-      double X =   x/z ;
-      double Y =   y/z ;
+      double inv_z = 1/z;
+      
+      double X =   x*inv_z ;
+      double Y =   y*inv_z ;
 
       //---------------
 
       {
-        L[2*i][0] =  px * (-1/z) ;
+        L[2*i][0] =  px * (-inv_z) ;
         L[2*i][1] =  0 ;
-        L[2*i][2] =  px*(X/z) ;
+        L[2*i][2] =  px*X*inv_z ;
         L[2*i][3] =  px*X*Y ;
         L[2*i][4] =  -px*(1+X*X) ;
         L[2*i][5] =  px*Y ;
@@ -276,13 +281,13 @@ vpCalibration::calibVVS(
       {
         L[2*i][6]= 1 ;
         L[2*i][7]= 0 ;
-        L[2*i][8]= x/z ;
+        L[2*i][8]= X ;
         L[2*i][9]= 0;
       }
       {
         L[2*i+1][0] = 0 ;
-        L[2*i+1][1] = py*(-1/z) ;
-        L[2*i+1][2] = py*(Y/z) ;
+        L[2*i+1][1] = py*(-inv_z) ;
+        L[2*i+1][2] = py*(Y*inv_z) ;
         L[2*i+1][3] = py* (1+Y*Y) ;
         L[2*i+1][4] = -py*X*Y ;
         L[2*i+1][5] = -py*X ;
@@ -291,7 +296,7 @@ vpCalibration::calibVVS(
         L[2*i+1][6]= 0 ;
         L[2*i+1][7]= 1 ;
         L[2*i+1][8]= 0;
-        L[2*i+1][9]= y/z ;
+        L[2*i+1][9]= Y ;
       }
 
 
@@ -303,14 +308,14 @@ vpCalibration::calibVVS(
     e = Lp*error ;
 
     vpColVector Tc, Tc_v(6) ;
-    Tc = -e*0.1 ;
+    Tc = -e*gain ;
 
     //   Tc_v =0 ;
     for (int i=0 ; i <6 ; i++)
       Tc_v[i] = Tc[i] ;
 
-    cam.initPersProjWithoutDistortion(cam.get_px()+Tc[8],cam.get_py()+Tc[9],
-                                      cam.get_u0()+Tc[6],cam.get_v0()+Tc[7]) ;
+    cam.initPersProjWithoutDistortion(px+Tc[8],py+Tc[9],
+                                      u0+Tc[6],v0+Tc[7]) ;
 
     cMo = vpExponentialMap::direct(Tc_v).inverse()*cMo ;
     if (verbose)
@@ -343,6 +348,8 @@ vpCalibration::calibVVSMulti(
   std::cout.precision(10);
   int nbPoint[256]; //number of points by image
   int nbPointTotal = 0; //total number of points
+  
+  unsigned int nbPose6 = 6*nbPose;
 
   for (unsigned int i=0; i<nbPose ; i++)
   {
@@ -362,29 +369,28 @@ vpCalibration::calibVVSMulti(
   int curPoint = 0 ; //current point indice
   for (unsigned int p=0; p<nbPose ; p++)
   {
+      
     table_cal[p].LoX.front() ;
     table_cal[p].LoY.front() ;
     table_cal[p].LoZ.front() ;
     table_cal[p].Lu.front()  ;
     table_cal[p].Lv.front()  ;
-
+    
     for (int i =0 ; i < nbPoint[p] ; i++)
     {
-
       oX[curPoint]  = table_cal[p].LoX.value() ;
       oY[curPoint]  = table_cal[p].LoY.value() ;
       oZ[curPoint]  = table_cal[p].LoZ.value() ;
-
-
+    
       u[curPoint] = table_cal[p].Lu.value()  ;
       v[curPoint] = table_cal[p].Lv.value()  ;
-
 
       table_cal[p].LoX.next() ;
       table_cal[p].LoY.next() ;
       table_cal[p].LoZ.next() ;
       table_cal[p].Lu.next() ;
       table_cal[p].Lv.next() ;
+
       curPoint++;
     }
   }
@@ -398,8 +404,14 @@ vpCalibration::calibVVSMulti(
 
     iter++ ;
     residu_1 = r ;
-
-
+    
+    double px = cam.get_px();
+    double py = cam.get_py();
+    double u0 = cam.get_u0();
+    double v0 = cam.get_v0();
+    double inv_px = 1/px;
+    double inv_py = 1/py;
+   
     r = 0 ;
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
@@ -407,6 +419,8 @@ vpCalibration::calibVVSMulti(
       vpHomogeneousMatrix cMoTmp = table_cal[p].cMo;
       for (int i=0 ; i < nbPoint[p]; i++)
       {
+        unsigned int curPoint2 = 2*curPoint;    
+        
         cX[curPoint] = oX[curPoint]*cMoTmp[0][0]+oY[curPoint]*cMoTmp[0][1]
                        +oZ[curPoint]*cMoTmp[0][2] + cMoTmp[0][3];
         cY[curPoint] = oX[curPoint]*cMoTmp[1][0]+oY[curPoint]*cMoTmp[1][1]
@@ -414,14 +428,14 @@ vpCalibration::calibVVSMulti(
         cZ[curPoint] = oX[curPoint]*cMoTmp[2][0]+oY[curPoint]*cMoTmp[2][1]
                        +oZ[curPoint]*cMoTmp[2][2] + cMoTmp[2][3];
 
-        Pd[2*curPoint] =   u[curPoint] ;
-        Pd[2*curPoint+1] = v[curPoint] ;
+        Pd[curPoint2] =   u[curPoint] ;
+        Pd[curPoint2+1] = v[curPoint] ;
 
-        P[2*curPoint] =    cX[curPoint]/cZ[curPoint]*cam.get_px() + cam.get_u0() ;
-        P[2*curPoint+1] =  cY[curPoint]/cZ[curPoint]*cam.get_py() + cam.get_v0() ;
+        P[curPoint2] =    cX[curPoint]/cZ[curPoint]*px + u0 ;
+        P[curPoint2+1] =  cY[curPoint]/cZ[curPoint]*py + v0 ;
 
-        r += (vpMath::sqr(P[2*curPoint]-Pd[2*curPoint])
-               + vpMath::sqr(P[2*curPoint+1]-Pd[2*curPoint+1])) ;
+        r += (vpMath::sqr(P[curPoint2]-Pd[curPoint2])
+               + vpMath::sqr(P[curPoint2+1]-Pd[curPoint2+1])) ;
         curPoint++;
       }
     }
@@ -430,52 +444,54 @@ vpCalibration::calibVVSMulti(
     error = P-Pd ;
     //r = r/nbPointTotal ;
 
-    vpMatrix L(nbPointTotal*2,6*nbPose+4) ;
+    vpMatrix L(nbPointTotal*2,nbPose6+4) ;
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
     {
+      unsigned int q = 6*p;   
       for (int i=0 ; i < nbPoint[p]; i++)
       {
+        unsigned int curPoint2 = 2*curPoint;
+        unsigned int curPoint21 = curPoint2 + 1;
 
         double x = cX[curPoint] ;
         double y = cY[curPoint] ;
         double z = cZ[curPoint] ;
 
-        double px = cam.get_px() ;
-        double py = cam.get_py() ;
-
-        double X =   x/z ;
-        double Y =   y/z ;
+        double inv_z = 1/z;
+            
+        double X =   x*inv_z ;
+        double Y =   y*inv_z ;
 
         //---------------
         {
           {
-            L[2*curPoint][6*p] =  px * (-1/z) ;
-            L[2*curPoint][6*p+1] =  0 ;
-            L[2*curPoint][6*p+2] =  px*(X/z) ;
-            L[2*curPoint][6*p+3] =  px*X*Y ;
-            L[2*curPoint][6*p+4] =  -px*(1+X*X) ;
-            L[2*curPoint][6*p+5] =  px*Y ;
+            L[curPoint2][q] =  px * (-inv_z) ;
+            L[curPoint2][q+1] =  0 ;
+            L[curPoint2][q+2] =  px*(X*inv_z) ;
+            L[curPoint2][q+3] =  px*X*Y ;
+            L[curPoint2][q+4] =  -px*(1+X*X) ;
+            L[curPoint2][q+5] =  px*Y ;
           }
           {
-            L[2*curPoint][6*nbPose]= 1 ;
-            L[2*curPoint][6*nbPose+1]= 0 ;
-            L[2*curPoint][6*nbPose+2]= X ;
-            L[2*curPoint][6*nbPose+3]= 0;
+            L[curPoint2][nbPose6]= 1 ;
+            L[curPoint2][nbPose6+1]= 0 ;
+            L[curPoint2][nbPose6+2]= X ;
+            L[curPoint2][nbPose6+3]= 0;
           }
           {
-            L[2*curPoint+1][6*p+0] = 0 ;
-            L[2*curPoint+1][6*p+1] = py*(-1/z) ;
-            L[2*curPoint+1][6*p+2] = py*(Y/z) ;
-            L[2*curPoint+1][6*p+3] = py* (1+Y*Y) ;
-            L[2*curPoint+1][6*p+4] = -py*X*Y ;
-            L[2*curPoint+1][6*p+5] = -py*X ;
+            L[curPoint21][q] = 0 ;
+            L[curPoint21][q+1] = py*(-inv_z) ;
+            L[curPoint21][q+2] = py*(Y*inv_z) ;
+            L[curPoint21][q+3] = py* (1+Y*Y) ;
+            L[curPoint21][q+4] = -py*X*Y ;
+            L[curPoint21][q+5] = -py*X ;
           }
           {
-            L[2*curPoint+1][6*nbPose]= 0 ;
-            L[2*curPoint+1][6*nbPose+1]= 1 ;
-            L[2*curPoint+1][6*nbPose+2]= 0;
-            L[2*curPoint+1][6*nbPose+3]= Y ;
+            L[curPoint21][nbPose6]= 0 ;
+            L[curPoint21][nbPose6+1]= 1 ;
+            L[curPoint21][nbPose6+2]= 0;
+            L[curPoint21][nbPose6+3]= Y ;
           }
 
         }
@@ -488,17 +504,17 @@ vpCalibration::calibVVSMulti(
     vpColVector e ;
     e = Lp*error ;
 
-    vpColVector Tc, Tc_v(6*nbPose) ;
-    Tc = -e*0.1 ;
+    vpColVector Tc, Tc_v(nbPose6) ;
+    Tc = -e*gain ;
 
     //   Tc_v =0 ;
-    for (unsigned int i = 0 ; i < 6*nbPose ; i++)
+    for (unsigned int i = 0 ; i < nbPose6 ; i++)
       Tc_v[i] = Tc[i] ;
 
-    cam.initPersProjWithoutDistortion(cam.get_px()+Tc[6*nbPose+2],
-                                      cam.get_py()+Tc[6*nbPose+3],
-                                      cam.get_u0()+Tc[6*nbPose],
-                                      cam.get_v0()+Tc[6*nbPose+1]) ;
+    cam.initPersProjWithoutDistortion(px+Tc[nbPose6+2],
+                                      py+Tc[nbPose6+3],
+                                      u0+Tc[nbPose6],
+                                      v0+Tc[nbPose6+1]) ;
 
     //    cam.setKd(get_kd() + Tc[10]) ;
     vpColVector Tc_v_Tmp(6) ;
@@ -595,14 +611,28 @@ vpCalibration::calibVVSWithDistortion(
 
     double px = cam.get_px() ;
     double py = cam.get_py() ;
+    
+    double inv_px = 1/px ;
+    double inv_px2 = inv_px * inv_px;
+    double inv_px3 = inv_px2 *inv_px;
+    double inv_py = 1/py ;
+    double inv_py2 = inv_py * inv_py;
+    double inv_py3 = inv_py2 *inv_py;
 
     double kud = cam.get_kud() ;
     double kdu = cam.get_kdu() ;
 
+    double k2ud = 2*kud;
+    double k2du = 2*kdu;    
     vpMatrix L(n_points*4,12) ;
 
     for (unsigned int i=0 ; i < n_points; i++)
     {
+      unsigned int i4 = 4*i;
+      unsigned int i41 = 4*i+1;
+      unsigned int i42 = 4*i+2;
+      unsigned int i43 = 4*i+3;
+         
       cX[i] = oX[i]*cMo[0][0]+oY[i]*cMo[0][1]+oZ[i]*cMo[0][2] + cMo[0][3];
       cY[i] = oX[i]*cMo[1][0]+oY[i]*cMo[1][1]+oZ[i]*cMo[1][2] + cMo[1][3];
       cZ[i] = oX[i]*cMo[2][0]+oY[i]*cMo[2][1]+oZ[i]*cMo[2][2] + cMo[2][3];
@@ -610,106 +640,122 @@ vpCalibration::calibVVSWithDistortion(
       double x = cX[i] ;
       double y = cY[i] ;
       double z = cZ[i] ;
+      double inv_z = 1/z;
+      
+      double X =   x*inv_z ;
+      double Y =   y*inv_z ;
 
-      double X =   x/z ;
-      double Y =   y/z ;
-
+      double X2 = X*X;
+      double Y2 = Y*Y;
+      double XY = X*Y;        
+       
       double up = u[i] ;
       double vp = v[i] ;
 
-      Pd[4*i] =   up ;
-      Pd[4*i+1] = vp ;
+      Pd[i4] =   up ;
+      Pd[i41] = vp ;
 
-      double r2du = (vpMath::sqr((up-u0)/px)+vpMath::sqr((vp-v0)/py)) ;
+      double up0 = up - u0;
+      double vp0 = vp - v0;
 
-      P[4*i] =   u0 + px*X - kdu *(up-u0)*r2du ;
-      P[4*i+1] = v0 + py*Y - kdu *(vp-v0)*r2du ;
+      double xp0 = up0 * inv_px;
+      double xp02 = xp0 *xp0 ;   
+      
+      double yp0 = vp0 * inv_py;     
+      double yp02 = yp0 * yp0;
+      
+      double r2du = xp02 + yp02 ;
+      double kr2du = kdu * r2du;   
 
-      double r2ud = (vpMath::sqr(X)+vpMath::sqr(Y)) ;
+      P[i4] =   u0 + px*X - kr2du *(up0) ;
+      P[i41] = v0 + py*Y - kr2du *(vp0) ;
 
-      double Axx = px*(1 + kud*r2ud+2*kud*X*X);
-      double Axy = px*2*kud*X*Y;
-      double Ayy = py*(1 + kud*r2ud+2*kud*Y*Y);
-      double Ayx = py*2*kud*X*Y;
+      double r2ud = X2 + Y2 ;
+      double kr2ud = 1 + kud * r2ud;
+      
+      double Axx = px*(kr2ud+k2ud*X2);
+      double Axy = px*k2ud*XY;
+      double Ayy = py*(kr2ud+k2ud*Y2);
+      double Ayx = py*k2ud*XY;
 
-      Pd[4*i+2] = up ;
-      Pd[4*i+3] = vp ;
+      Pd[i42] = up ;
+      Pd[i43] = vp ;
 
-      P[4*i+2] = u0 + px*X*(1 + kud*r2ud) ;
-      P[4*i+3] = v0 + py*Y*(1 + kud*r2ud) ;
+      P[i42] = u0 + px*X*kr2ud ;
+      P[i43] = v0 + py*Y*kr2ud ;
 
 
-      r += (vpMath::sqr(P[4*i]-Pd[4*i]) +
-            vpMath::sqr(P[4*i+1]-Pd[4*i+1]) +
-            vpMath::sqr(P[4*i+2]-Pd[4*i+2]) +
-            vpMath::sqr(P[4*i+3]-Pd[4*i+3]))/2;
+      r += (vpMath::sqr(P[i4]-Pd[i4]) +
+          vpMath::sqr(P[i41]-Pd[i41]) +
+          vpMath::sqr(P[i42]-Pd[i42]) +
+          vpMath::sqr(P[i43]-Pd[i43]))*0.5;
 
       //--distorted to undistorted
       {
         {
-          L[4*i][0] =  px * (-1/z) ;
-          L[4*i][1] =  0 ;
-          L[4*i][2] =  px*(X/z) ;
-          L[4*i][3] =  px*X*Y ;
-          L[4*i][4] =  -px*(1+X*X) ;
-          L[4*i][5] =  px*Y ;
+          L[i4][0] =  px * (-inv_z) ;
+          L[i4][1] =  0 ;
+          L[i4][2] =  px*X*inv_z ;
+          L[i4][3] =  px*X*Y ;
+          L[i4][4] =  -px*(1+X2) ;
+          L[i4][5] =  px*Y ;
         }
         {
-          L[4*i][6]= 1 + kdu*r2du + 2*kdu*vpMath::sqr((up-u0)/px)  ;
-          L[4*i][7]= 2*kdu*(up-u0)*(vp-v0)/vpMath::sqr(py) ;
-          L[4*i][8]= X + 2*kdu*(up -u0)*vpMath::sqr(up-u0)/(px*px*px) ;
-          L[4*i][9]= 2*kdu*(up-u0)*vpMath::sqr(vp-v0)/(py*py*py) ;
-          L[4*i][10] = -(up-u0)*(r2du) ;
-          L[4*i][11] = 0 ;
+          L[i4][6]= 1 + kr2du + k2du*xp02  ;
+          L[i4][7]= k2du*up0*xp0*inv_px ;
+          L[i4][8]= X + k2du*xp02*xp0 ;
+          L[i4][9]= k2du*up0*xp02*inv_py ;
+          L[i4][10] = -(up0)*(r2du) ;
+          L[i4][11] = 0 ;
         }
         {
-          L[4*i+1][0] = 0 ;
-          L[4*i+1][1] = py*(-1/z) ;
-          L[4*i+1][2] = py*(Y/z) ;
-          L[4*i+1][3] = py* (1+Y*Y) ;
-          L[4*i+1][4] = -py*X*Y ;
-          L[4*i+1][5] = -py*X ;
+          L[i41][0] = 0 ;
+          L[i41][1] = py*(-inv_z) ;
+          L[i41][2] = py*Y*inv_z ;
+          L[i41][3] = py* (1+Y2) ;
+          L[i41][4] = -py*XY ;
+          L[i41][5] = -py*X ;
         }
         {
-          L[4*i+1][6]= 2*kdu*(up-u0)*(vp-v0)/vpMath::sqr(px) ;
-          L[4*i+1][7]= 1 + kdu*r2du + 2*kdu*vpMath::sqr((vp-v0)/py);
-          L[4*i+1][8]= 2*kdu*(vp-v0)*vpMath::sqr(up-u0)/(px*px*px);
-          L[4*i+1][9]= Y + 2*kdu*(vp -v0)*vpMath::sqr(vp-v0)/(py*py*py);
-          L[4*i+1][10] = -(vp-v0)*r2du ;
-          L[4*i+1][11] = 0 ;
+          L[i41][6]= k2du*xp0*vp0*inv_px ;
+          L[i41][7]= 1 + kr2du + k2du*yp02;
+          L[i41][8]= k2du*vp0*xp02*inv_px;
+          L[i41][9]= Y + k2du*yp02*yp0;
+          L[i41][10] = -vp0*r2du ;
+          L[i41][11] = 0 ;
         }
 	//---undistorted to distorted
 	      {
-	        L[4*i+2][0] = Axx*(-1/z) ;
-	        L[4*i+2][1] = Axy*(-1/z) ;
-	        L[4*i+2][2] = Axx*(X/z) + Axy*(Y/z) ;
-	        L[4*i+2][3] = Axx*X*Y +  Axy*(1+Y*Y);
-	        L[4*i+2][4] = -Axx*(1+X*X) - Axy*X*Y;
-	        L[4*i+2][5] = Axx*Y -Axy*X;
+          L[i42][0] = Axx*(-inv_z) ;
+          L[i42][1] = Axy*(-inv_z) ;
+          L[i42][2] = Axx*(X*inv_z) + Axy*(Y*inv_z) ;
+          L[i42][3] = Axx*X*Y +  Axy*(1+Y2);
+          L[i42][4] = -Axx*(1+X2) - Axy*XY;
+          L[i42][5] = Axx*Y -Axy*X;
 	      }
 	      {
-	        L[4*i+2][6]= 1 ;
-	        L[4*i+2][7]= 0 ;
-	        L[4*i+2][8]= X*(1+kud*r2ud) ;
-	        L[4*i+2][9]= 0;
-	        L[4*i+2][10] = 0 ;
-	        L[4*i+2][11] = px*X*r2ud ;
+          L[i42][6]= 1 ;
+          L[i42][7]= 0 ;
+          L[i42][8]= X*kr2ud ;
+          L[i42][9]= 0;
+          L[i42][10] = 0 ;
+          L[i42][11] = px*X*r2ud ;
 	      }
 	      {
-	        L[4*i+3][0] = Ayx*(-1/z) ;
-	        L[4*i+3][1] = Ayy*(-1/z) ;
-	        L[4*i+3][2] = Ayx*(X/z) + Ayy*(Y/z) ;
-	        L[4*i+3][3] = Ayx*X*Y + Ayy*(1+Y*Y) ;
-	        L[4*i+3][4] = -Ayx*(1+X*X) -Ayy*X*Y ;
-	        L[4*i+3][5] = Ayx*Y -Ayy*X;
+          L[i43][0] = Ayx*(-inv_z) ;
+          L[i43][1] = Ayy*(-inv_z) ;
+          L[i43][2] = Ayx*(X*inv_z) + Ayy*(Y*inv_z) ;
+          L[i43][3] = Ayx*XY + Ayy*(1+Y2) ;
+          L[i43][4] = -Ayx*(1+X2) -Ayy*XY ;
+          L[i43][5] = Ayx*Y -Ayy*X;
 	      }
 	      {
-	        L[4*i+3][6]= 0 ;
-	        L[4*i+3][7]= 1;
-	        L[4*i+3][8]= 0;
-	        L[4*i+3][9]= Y*(1+kud*r2ud) ;
-	        L[4*i+3][10] = 0 ;
-	        L[4*i+3][11] = py*Y*r2ud ;
+          L[i43][6]= 0 ;
+          L[i43][7]= 1;
+          L[i43][8]= 0;
+          L[i43][9]= Y*kr2ud ;
+          L[i43][10] = 0 ;
+          L[i43][11] = py*Y*r2ud ;
 	      }
       }  // end interaction
     }    // end interaction
@@ -725,15 +771,15 @@ vpCalibration::calibVVSWithDistortion(
     e = Lp*error ;
 
     vpColVector Tc, Tc_v(6) ;
-    Tc = -e*0.1 ;
+    Tc = -e*gain ;
 
     for (int i=0 ; i <6 ; i++)
       Tc_v[i] = Tc[i] ;
 
-    cam.initPersProjWithDistortion(cam.get_px() + Tc[8], cam.get_py() + Tc[9],
-                                   cam.get_u0() + Tc[6], cam.get_v0() + Tc[7],
-                                   cam.get_kud() + Tc[11],
-                                   cam.get_kdu() + Tc[10]);
+    cam.initPersProjWithDistortion(px + Tc[8], py + Tc[9],
+                                   u0 + Tc[6], v0 + Tc[7],
+                                   kud + Tc[11],
+                                   kdu + Tc[10]);
 
     cMo = vpExponentialMap::direct(Tc_v).inverse()*cMo ;
     if (verbose)
@@ -766,6 +812,7 @@ vpCalibration::calibVVSWithDistortionMulti(
   unsigned int nbPoint[256]; //number of points by image
   unsigned int nbPointTotal = 0; //total number of points
 
+  unsigned int nbPose6 = 6*nbPose;
   for (unsigned int i=0; i<nbPose ; i++)
   {
     nbPoint[i] = table_cal[i].npt;
@@ -839,126 +886,156 @@ vpCalibration::calibVVSWithDistortionMulti(
     }
 
 
-    vpMatrix L(nbPointTotal*4,6*nbPose+6) ;
+    vpMatrix L(nbPointTotal*4,nbPose6+6) ;
     curPoint = 0 ; //current point indice
-    double kdu = cam.get_kdu() ;
-    double kud = cam.get_kud() ;
     double px = cam.get_px() ;
     double py = cam.get_py() ;
     double u0 = cam.get_u0() ;
     double v0 = cam.get_v0() ;
 
+    double inv_px = 1/px ;
+    double inv_px2 = inv_px * inv_px;
+    double inv_px3 = inv_px2 *inv_px;
+    double inv_py = 1/py ;
+    double inv_py2 = inv_py * inv_py;
+    double inv_py3 = inv_py2 *inv_py;
 
+    double kud = cam.get_kud() ;
+    double kdu = cam.get_kdu() ;
+
+    double k2ud = 2*kud;
+    double k2du = 2*kdu;
+    
     for (unsigned int p=0; p<nbPose ; p++)
     {
+      unsigned int q = 6*p;   
       for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
-
+        unsigned int curPoint4 = 4*curPoint;
         double x = cX[curPoint] ;
         double y = cY[curPoint] ;
         double z = cZ[curPoint] ;
 
-        double X =   x/z ;
-        double Y =   y/z ;
+        double inv_z = 1/z;    
+        double X =   x*inv_z ;
+        double Y =   y*inv_z ;
 
+        double X2 = X*X;
+        double Y2 = Y*Y;
+        double XY = X*Y;
+       
         double up = u[curPoint] ;
         double vp = v[curPoint] ;
 
-        double r2du = (vpMath::sqr((up-u0)/px)+vpMath::sqr((vp-v0)/py)) ;
+        Pd[curPoint4] =   up ;
+        Pd[curPoint4+1] = vp ;
 
-        Pd[4*curPoint] =   up ;
-        Pd[4*curPoint+1] = vp ;
+        double up0 = up - u0;
+        double vp0 = vp - v0;
 
-        P[4*curPoint] =   u0 + px*X - kdu *(up-u0)*r2du ;
-        P[4*curPoint+1] = v0 + py*Y - kdu *(vp-v0)*r2du ;
+        double xp0 = up0 * inv_px;
+        double xp02 = xp0 *xp0 ;
+      
+        double yp0 = vp0 * inv_py;
+        double yp02 = yp0 * yp0;
+      
+        double r2du = xp02 + yp02 ;
+        double kr2du = kdu * r2du;
 
-        double r2ud = (vpMath::sqr(X)+vpMath::sqr(Y)) ;
-        double Axx = px*(1 + kud*r2ud+2*kud*X*X);
-        double Axy = px*2*kud*X*Y;
-        double Ayy = py*(1 + kdu*r2ud+2*kud*Y*Y);
-        double Ayx = py*2*kud*X*Y;
+        P[curPoint4] =   u0 + px*X - kr2du *(up0) ;
+        P[curPoint4+1] = v0 + py*Y - kr2du *(vp0) ;
 
-        Pd[4*curPoint+2] = up ;
-        Pd[4*curPoint+3] = vp ;
+        double r2ud = X2 + Y2 ;
+        double kr2ud = 1 + kud * r2ud;
+      
+        double Axx = px*(kr2ud+k2ud*X2);
+        double Axy = px*k2ud*XY;
+        double Ayy = py*(kr2ud+k2ud*Y2);
+        double Ayx = py*k2ud*XY;
 
-        P[4*curPoint+2] = u0 + px*X*(1 + kud*r2ud) ;
-        P[4*curPoint+3] = v0 + py*Y*(1 + kud*r2ud) ;
+        Pd[curPoint4+2] = up ;
+        Pd[curPoint4+3] = vp ;
 
-        r += (vpMath::sqr(P[4*curPoint]-Pd[4*curPoint]) +
-             vpMath::sqr(P[4*curPoint+1]-Pd[4*curPoint+1]) +
-             vpMath::sqr(P[4*curPoint+2]-Pd[4*curPoint+2]) +
-             vpMath::sqr(P[4*curPoint+3]-Pd[4*curPoint+3]))/2 ;
+        P[curPoint4+2] = u0 + px*X*kr2ud ;
+        P[curPoint4+3] = v0 + py*Y*kr2ud ;
 
+        r += (vpMath::sqr(P[curPoint4]-Pd[curPoint4]) +
+             vpMath::sqr(P[curPoint4+1]-Pd[curPoint4+1]) +
+             vpMath::sqr(P[curPoint4+2]-Pd[curPoint4+2]) +
+             vpMath::sqr(P[curPoint4+3]-Pd[curPoint4+3]))*0.5 ;
+
+        unsigned int curInd = curPoint4;
         //---------------
         {
-
-          //distorted to undistorted estimation
           {
-            L[4*curPoint][6*p] =  px * (-1/z) ;
-            L[4*curPoint][6*p+1] =  0 ;
-            L[4*curPoint][6*p+2] =  px*(X/z) ;
-            L[4*curPoint][6*p+3] =  px*X*Y ;
-            L[4*curPoint][6*p+4] =  -px*(1+X*X) ;
-            L[4*curPoint][6*p+5] =  px*Y ;
+            L[curInd][q] =  px * (-inv_z) ;
+            L[curInd][q+1] =  0 ;
+            L[curInd][q+2] =  px*X*inv_z ;
+            L[curInd][q+3] =  px*X*Y ;
+            L[curInd][q+4] =  -px*(1+X2) ;
+            L[curInd][q+5] =  px*Y ;
           }
           {
-            L[4*curPoint][6*nbPose]= 1 + kdu*r2du + 2*kdu*vpMath::sqr((up-u0)/px)  ;
-            L[4*curPoint][6*nbPose+1]= 2*kdu*(up-u0)*(vp-v0)/vpMath::sqr(py) ;
-            L[4*curPoint][6*nbPose+2]= X + 2*kdu*(up -u0)*vpMath::sqr(up-u0)/(px*px*px) ;
-            L[4*curPoint][6*nbPose+3]= 2*kdu*(up-u0)*vpMath::sqr(vp-v0)/(py*py*py) ;
-            L[4*curPoint][6*nbPose+4] = -(up-u0)*(r2du) ;
-            L[4*curPoint][6*nbPose+5] = 0 ;
+            L[curInd][nbPose6]= 1 + kr2du + k2du*xp02  ;
+            L[curInd][nbPose6+1]= k2du*up0*yp0*inv_py ;
+            L[curInd][nbPose6+2]= X + k2du*xp02*xp0 ;
+            L[curInd][nbPose6+3]= k2du*up0*yp02*inv_py ;
+            L[curInd][nbPose6+4] = -(up0)*(r2du) ;
+            L[curInd][nbPose6+5] = 0 ;
+          }
+            curInd++;     
+          {
+            L[curInd][q] = 0 ;
+            L[curInd][q+1] = py*(-inv_z) ;
+            L[curInd][q+2] = py*Y*inv_z ;
+            L[curInd][q+3] = py* (1+Y2) ;
+            L[curInd][q+4] = -py*XY ;
+            L[curInd][q+5] = -py*X ;
           }
           {
-            L[4*curPoint+1][6*p] = 0 ;
-            L[4*curPoint+1][6*p+1] = py*(-1/z) ;
-            L[4*curPoint+1][6*p+2] = py*(Y/z) ;
-            L[4*curPoint+1][6*p+3] = py* (1+Y*Y) ;
-            L[4*curPoint+1][6*p+4] = -py*X*Y ;
-            L[4*curPoint+1][6*p+5] = -py*X ;
+            L[curInd][nbPose6]= k2du*xp0*vp0*inv_px ;
+            L[curInd][nbPose6+1]= 1 + kr2du + k2du*yp02;
+            L[curInd][nbPose6+2]= k2du*vp0*xp02*inv_px;
+            L[curInd][nbPose6+3]= Y + k2du*yp02*yp0;
+            L[curInd][nbPose6+4] = -vp0*r2du ;
+            L[curInd][nbPose6+5] = 0 ;
+          }
+            curInd++;
+  //---undistorted to distorted
+          {
+            L[curInd][q] = Axx*(-inv_z) ;
+            L[curInd][q+1] = Axy*(-inv_z) ;
+            L[curInd][q+2] = Axx*(X*inv_z) + Axy*(Y*inv_z) ;
+            L[curInd][q+3] = Axx*X*Y +  Axy*(1+Y2);
+            L[curInd][q+4] = -Axx*(1+X2) - Axy*XY;
+            L[curInd][q+5] = Axx*Y -Axy*X;
           }
           {
-            L[4*curPoint+1][6*nbPose]= 2*kdu*(up-u0)*(vp-v0)/vpMath::sqr(px) ;
-            L[4*curPoint+1][6*nbPose+1]= 1 + kdu*r2du + 2*kdu*vpMath::sqr((vp-v0)/py);
-            L[4*curPoint+1][6*nbPose+2]= 2*kdu*(vp-v0)*vpMath::sqr(up-u0)/(px*px*px);
-            L[4*curPoint+1][6*nbPose+3]= Y + 2*kdu*(vp -v0)*vpMath::sqr(vp-v0)/(py*py*py);
-            L[4*curPoint+1][6*nbPose+4] = -(vp-v0)*r2du ;
-            L[4*curPoint+1][6*nbPose+5] = 0 ;
+            L[curInd][nbPose6]= 1 ;
+            L[curInd][nbPose6+1]= 0 ;
+            L[curInd][nbPose6+2]= X*kr2ud ;
+            L[curInd][nbPose6+3]= 0;
+            L[curInd][nbPose6+4] = 0 ;
+            L[curInd][nbPose6+5] = px*X*r2ud ;
           }
-          //---undistorted to distorted
+            curInd++;   
           {
-            L[4*curPoint+2][6*p] = Axx*(-1/z) ;
-            L[4*curPoint+2][6*p+1] = Axy*(-1/z) ;
-            L[4*curPoint+2][6*p+2] = Axx*(X/z) + Axy*(Y/z) ;
-            L[4*curPoint+2][6*p+3] = Axx*X*Y +  Axy*(1+Y*Y);
-            L[4*curPoint+2][6*p+4] = -Axx*(1+X*X) - Axy*X*Y;
-            L[4*curPoint+2][6*p+5] = Axx*Y -Axy*X;
-          }
-          {
-            L[4*curPoint+2][6*nbPose]= 1 ;
-            L[4*curPoint+2][6*nbPose+1]= 0 ;
-            L[4*curPoint+2][6*nbPose+2]= X*(1+kud*r2ud) ;
-            L[4*curPoint+2][6*nbPose+3]= 0;
-            L[4*curPoint+2][6*nbPose+4] = 0 ;
-            L[4*curPoint+2][6*nbPose+5] = px*X*r2ud ;
+            L[curInd][q] = Ayx*(-inv_z) ;
+            L[curInd][q+1] = Ayy*(-inv_z) ;
+            L[curInd][q+2] = Ayx*(X*inv_z) + Ayy*(Y*inv_z) ;
+            L[curInd][q+3] = Ayx*XY + Ayy*(1+Y2) ;
+            L[curInd][q+4] = -Ayx*(1+X2) -Ayy*XY ;
+            L[curInd][q+5] = Ayx*Y -Ayy*X;
           }
           {
-            L[4*curPoint+3][6*p] = Ayx*(-1/z) ;
-            L[4*curPoint+3][6*p+1] = Ayy*(-1/z) ;
-            L[4*curPoint+3][6*p+2] = Ayx*(X/z) + Ayy*(Y/z) ;
-            L[4*curPoint+3][6*p+3] = Ayx*X*Y + Ayy*(1+Y*Y) ;
-            L[4*curPoint+3][6*p+4] = -Ayx*(1+X*X) -Ayy*X*Y ;
-            L[4*curPoint+3][6*p+5] = Ayx*Y -Ayy*X;
+            L[curInd][nbPose6]= 0 ;
+            L[curInd][nbPose6+1]= 1;
+            L[curInd][nbPose6+2]= 0;
+            L[curInd][nbPose6+3]= Y*kr2ud ;
+            L[curInd][nbPose6+4] = 0 ;
+            L[curInd][nbPose6+5] = py*Y*r2ud ;
           }
-          {
-            L[4*curPoint+3][6*nbPose]= 0 ;
-            L[4*curPoint+3][6*nbPose+1]= 1;
-            L[4*curPoint+3][6*nbPose+2]= 0;
-            L[4*curPoint+3][6*nbPose+3]= Y*(1+kud*r2ud) ;
-            L[4*curPoint+3][6*nbPose+4] = 0 ;
-            L[4*curPoint+3][6*nbPose+5] = py*Y*r2ud ;
-          }
-        }
+        }  // end interaction
         curPoint++;
       }    // end interaction
     }
@@ -973,14 +1050,14 @@ vpCalibration::calibVVSWithDistortionMulti(
     vpColVector e ;
     e = Lp*error ;
     vpColVector Tc, Tc_v(6*nbPose) ;
-    Tc = -0.1*e ;
+    Tc = -e*gain ;
     for (unsigned int i = 0 ; i < 6*nbPose ; i++)
       Tc_v[i] = Tc[i] ;
 
-    cam.initPersProjWithDistortion(  px+Tc[6*nbPose+2], py+Tc[6*nbPose+3],
-                                     u0+Tc[6*nbPose], v0+Tc[6*nbPose+1],
-                                     kud + Tc[6*nbPose+5],
-                                     kdu + Tc[6*nbPose+4]);
+    cam.initPersProjWithDistortion(  px+Tc[nbPose6+2], py+Tc[nbPose6+3],
+                                     u0+Tc[nbPose6], v0+Tc[nbPose6+1],
+                                     kud + Tc[nbPose6+5],
+                                     kdu + Tc[nbPose6+4]);
 
     vpColVector Tc_v_Tmp(6) ;
     for (unsigned int p = 0 ; p < nbPose ; p++)

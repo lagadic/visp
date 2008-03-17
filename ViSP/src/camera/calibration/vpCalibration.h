@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.h,v 1.5 2008-01-31 14:43:50 asaunier Exp $
+ * $Id: vpCalibration.h,v 1.6 2008-03-17 08:29:22 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -112,6 +112,7 @@ public:
   //! = operator
   void operator=(vpCalibration& twinCalibration );
 private:
+  void computePose(vpHomogeneousMatrix &cMo);
   void calibLagrange( vpCameraParameters &cam , vpHomogeneousMatrix &cMo) ;
   
   //! Compute the calibration using virtual visual servoing approach
@@ -126,9 +127,9 @@ private:
                                     vpCalibration table_cal[],
                                     vpCameraParameters &cam,
                                     bool verbose = false );
-  static const double threshold;
-  static const unsigned int nbIterMax;
-
+  static double threshold;
+  static unsigned int nbIterMax;
+  static double gain; 
 
 public:
   //!get the residual in pixels
@@ -171,7 +172,10 @@ public:
                                     vpHomogeneousMatrix &eMc,
                                     vpHomogeneousMatrix &eMc_dist);
   int writeCalibrationParameters(char *filename) ;
-
+  //!set the gain for the virtual visual servoing algorithm
+  static double getLambda(){return gain;}
+  //!set the gain for the virtual visual servoing algorithm 
+  static void setLambda(double &lambda){gain = lambda;}
 } ;
 
 #endif
