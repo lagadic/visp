@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.12 2007-09-04 09:32:19 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.13 2008-03-19 14:21:23 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -40,6 +40,7 @@
 #
 # If you add/remove a directory, modify here
 SET (SRC_SUBDIRS
+  calibration
   framegrabber
   histogram
   homography
