@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.6 2008-02-08 14:01:59 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.7 2008-03-19 08:12:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
  *****************************************************************************/
 
 /*!
-  \file servoSimuPoint2DhalfCamVelocity2.cpp
+  \file servoSimuPoint2DhalfCamVelocity3.cpp
   \brief Simulation of a 2 1/2 D visual servoing (x,y, t,theta u_z)
   - (x,y, t,theta u_z) features
   - eye-in-hand control law,
@@ -47,7 +47,7 @@
 */
 
 /*!
-  \example servoSimuPoint2DhalfCamVelocity2.cpp
+  \example servoSimuPoint2DhalfCamVelocity3.cpp
   Simulation of a 2 1/2 D visual servoing (x,y, t,theta u_z)
   - (x,y, t,theta u_z) features
   - eye-in-hand control law,
