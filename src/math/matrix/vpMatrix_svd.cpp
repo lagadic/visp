@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix_svd.cpp,v 1.12 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpMatrix_svd.cpp,v 1.13 2008-03-20 14:38:30 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -538,6 +538,8 @@ void vpMatrix::svdFlake(vpColVector &W, vpMatrix &V)
 void
 vpMatrix::svdGsl(vpColVector& w, vpMatrix& v)
 {
+  
+#if 0 
   // premier test avec la gsl 1. on recopie...
   int i,j ;
 
@@ -587,6 +589,46 @@ vpMatrix::svdGsl(vpColVector& w, vpMatrix& v)
   gsl_vector_free(S) ;
   gsl_vector_free(work) ;
 
+#else //optimisation Anthony 20/03/2008
+  
+  int nc = getCols() ;
+  int nr = getRows() ;
+  gsl_vector *work = gsl_vector_alloc(nc) ;
+
+//  gsl_linalg_SV_decomp_jacobi(A,V,S) ;
+
+
+  //l'acces par gsl_matrix_get est tres lourd, voir si on peut pas faire
+  // autremement (surement !)
+
+  gsl_matrix A;
+  A.size1 = nr;
+  A.size2 = nc;
+  A.tda = A.size2;
+  A.data = this->data;
+  A.owner = 0;
+  A.block = 0;
+  
+  gsl_matrix V;
+  V.size1 = nc;
+  V.size2 = nc;
+  V.tda = V.size2;
+  V.data = v.data;
+  V.owner = 0;
+  V.block = 0;
+  
+  gsl_vector S;
+  S.size = nc;
+  S.stride = 1;
+  S.data = w.data;
+  S.owner = 0;
+  S.block = 0;
+  
+  gsl_linalg_SV_decomp(&A,&V,&S, work) ;
+  
+  gsl_vector_free(work) ;
+
+#endif  
 }
 #endif // # #GSL
 
