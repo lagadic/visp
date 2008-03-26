@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.21 2007-11-19 16:47:02 asaunier Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.22 2008-03-26 09:11:33 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -197,6 +197,7 @@ SET (HEADER_TRACKING
 SET (HEADER_VIDEO_DEVICE
   video-device/vpDisplayException.h
   video-device/vpDisplayGTK.h
+  video-device/vpDisplayOpenCV.h
   video-device/vpDisplay.h
   video-device/vpDisplayX.h
   video-device/vpMouseButton.h
