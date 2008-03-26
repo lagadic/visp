@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testClick.cpp,v 1.9 2008-01-23 16:36:07 fspindle Exp $
+ * $Id: testClick.cpp,v 1.10 2008-03-26 09:36:42 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,7 +42,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
+#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_OPENCV))
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -53,6 +53,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
+#include <visp/vpDisplayOpenCV.h>
 
 /*!
   \example testClick.cpp
@@ -69,6 +70,7 @@ typedef enum {
   vpGTK,
   vpGDI,
   vpD3D,
+  vpCV 
 } vpDisplayType;
 
 /*!
@@ -97,6 +99,7 @@ SYNOPSIS\n\
   case vpGTK: display = "GTK"; break;
   case vpGDI: display = "GDI"; break;
   case vpD3D: display = "D3D"; break;
+  case vpCV: display = "CV"; break;
   }
 
   fprintf(stdout, "\n\
@@ -116,6 +119,7 @@ OPTIONS:                                               Default\n\
        \"GTK\": on all plaforms,\n\
        \"GDI\": only on Windows platform (Graphics Device Interface),\n\
        \"D3D\": only on Windows platform (Direct3D).\n\
+       \"CV\" : (OpenCV).\n\
 \n\
   -l\n\
      Print the list of video-devices available and exit.\n\
@@ -179,6 +183,9 @@ bool getOptions(int argc, char **argv,
       else if (sDisplayType.compare("D3D") == 0) {
 	dtype = vpD3D;
       }
+      else if (sDisplayType.compare("CV") == 0) {
+        dtype = vpCV;
+      }
 
       break;
     case 'h': usage(argv[0], NULL, ipath, dtype); return false; break;
@@ -224,6 +231,8 @@ main(int argc, char ** argv)
     opt_dtype = vpGDI;
 #elif defined VISP_HAVE_D3D9
     opt_dtype = vpD3D;
+#elif defined VISP_HAVE_OPENCV
+    opt_dtype = vpCV;  
 #endif
 
     // Get the VISP_IMAGE_PATH environment variable value
@@ -261,6 +270,10 @@ main(int argc, char ** argv)
       std::cout << "  D3D (use \"-t D3D\" option to use it)\n";
       nbDevices ++;
 #endif
+#if defined VISP_HAVE_OPENCV
+      std::cout << "  CV (use \"-t CV\" option to use it)\n";
+      nbDevices ++;
+#endif   
       if (!nbDevices) {
         std::cout << "  No display is available\n";
       }
@@ -352,6 +365,17 @@ main(int argc, char ** argv)
         return 0;
 #endif
         break;
+      case vpCV:
+        std::cout << "Requested OpenCV display functionnalities..." << std::endl;
+#if defined VISP_HAVE_OPENCV
+        display = new vpDisplayOpenCV;
+#else
+        std::cout << "  Sorry, OpenCV video device is not available.\n";
+        std::cout << "Use \"" << argv[0]
+            << " -l\" to print the list of available devices.\n";
+        return 0;
+#endif
+        break;   
       }
 
       if (opt_display){

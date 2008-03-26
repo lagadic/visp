@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testVideoDevice.cpp,v 1.9 2008-03-26 09:10:39 asaunier Exp $
+ * $Id: testVideoDevice.cpp,v 1.10 2008-03-26 09:36:42 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,7 +42,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
+#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_OPENCV))
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
