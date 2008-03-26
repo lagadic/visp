@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.23 2007-11-19 16:47:36 asaunier Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.24 2008-03-26 09:11:57 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -207,6 +207,7 @@ SET (SRC_VIDEO_DEVICE
   video-device/vpDisplay.cpp
   video-device/vpDisplayException.cpp
   video-device/vpDisplayGTK.cpp
+  video-device/vpDisplayOpenCV.cpp
   video-device/vpDisplayX.cpp
   video-device/windows/vpDisplayWin32.cpp
   video-device/windows/vpGDIRenderer.cpp
