@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.h,v 1.1 2008-03-26 09:09:55 asaunier Exp $
+ * $Id: vpDisplayOpenCV.h,v 1.2 2008-03-26 09:35:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,10 @@ private:
   IplImage* background;
   int window;
   int windowXPosition ; int  windowYPosition ;
+  static int count; 
   CvScalar *col ;
+  CvFont *font;
+  int fontHeight;  
   int ncol, nrow ;
   int x_lbuttondown ;
   int y_lbuttondown ;
