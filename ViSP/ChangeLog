@@ -1,4 +1,4 @@
-ViSP 2.4.x
+ViSP 2.4.2 (released March 27, 2008)
   - New classes
     - vpCalibration : calibration toolkit for intrinsic and 
         extrinsic parameters of perspective camera.
@@ -67,6 +67,7 @@ ViSP 2.4.x
 	Supports libdc1394-2.0.0-rc7 and libdc1394-2.0.1
 	MONO16 color coding is supported
   - Testing and examples:
+    - example/calibration/calibrate2dGrid.cpp was added
     - example/tracking/trackKltOpencv.cpp was added
     - example/light/ringLight.cpp was added
     - example/tools/parallelPort.cpp was added
