@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: calibrate2dGrid.cpp,v 1.1 2008-03-19 14:17:02 asaunier Exp $
+ * $Id: calibrate2dGrid.cpp,v 1.2 2008-03-27 11:18:02 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -470,7 +470,7 @@ int main(int argc, char ** argv)
 
     try{
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100,"Display...") ;
+      display.init(I, 100, 100,"Calibration initialization") ;
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -524,7 +524,7 @@ int main(int argc, char ** argv)
           }
         }
         else{
-        d[i].initTracking(I,u_click[i],v_click[i]);
+          d[i].initTracking(I,u_click[i],v_click[i]);
         }  
         // an expcetion is thrown by the track method if
         //  - dot is lost
@@ -628,12 +628,16 @@ int main(int argc, char ** argv)
         vpDisplay::getClick(I,r,c,button) ;
         switch(button){
           case 1 :
+            std::cout << "Left click has been pressed." << std::endl;
+            continue;      
           case 3 :
+            std::cout << "Right click has been pressed." << std::endl;
             continue;
           case 2 :
-          iter += opt_step ;
-          niter++;
-          continue;
+            std::cout << "Middle click has been pressed." << std::endl;
+            iter += opt_step ;
+            niter++;
+            continue;
         }
       }
       else{
@@ -664,9 +668,14 @@ int main(int argc, char ** argv)
         vpDisplay::getClick(I,r,c,button) ;
         switch(button){
         case 1 :
-        break;
+          std::cout << "Left click has been pressed." << std::endl;
+          break;
+        case 2 :
+          std::cout << "Middle click has been pressed." << std::endl;
+          continue;
         case 3 :
-        continue;
+          std::cout << "Right click has been pressed." << std::endl;
+          continue;
         }
       }
       vpDisplay::display(I) ;
@@ -783,12 +792,15 @@ int main(int argc, char ** argv)
         vpDisplay::getClick(I,r,c,button) ;
         switch(button){
         case 1 : //left
+          std::cout << "\nLeft click has been pressed." << std::endl;
         break;
         case 2 : //middle
+          std::cout << "Middle click has been pressed." << std::endl;
           for (unsigned int i=0 ; i < nbpt ; i++)
             valid[i]=false;
         break;
         case 3 : //right
+          std::cout << "Right click has been pressed." << std::endl;
         continue;
         }
     }
@@ -842,16 +854,19 @@ int main(int argc, char ** argv)
       std::cout << "read : " << filename << std::endl;
       // read the image
       vpImageIo::readPGM(I, filename);
-    
-      std::cout << "\nCompute standard deviation for pose " << niter <<std::endl;
-      double deviation, deviation_dist ;
-      table_cal[niter].computeStdDeviation(deviation,deviation_dist);
-      std::cout << "deviation for model without distortion : "
-                << deviation << std::endl;
-      std::cout << "deviation for model with distortion : "
-                << deviation_dist << std::endl;
-      //Display results
-
+      if(table_cal[niter].get_npt()!=0){
+        std::cout << "\nCompute standard deviation for pose " << niter <<std::endl;
+        double deviation, deviation_dist ;
+        table_cal[niter].computeStdDeviation(deviation,deviation_dist);
+        std::cout << "deviation for model without distortion : "
+                  << deviation << std::endl;
+        std::cout << "deviation for model with distortion : "
+                  << deviation_dist << std::endl;
+        //Display results
+      }
+      else{
+        std::cout << "This image has not been used!" << std::endl;
+      }       
 #if defined VISP_HAVE_GDI
       vpDisplayGDI display;
 #elif defined VISP_HAVE_GTK
@@ -868,7 +883,7 @@ int main(int argc, char ** argv)
 
         try{
           // Display size is automatically defined by the image (I) size
-          display.init(I, 100, 100,"Display...") ;
+          display.init(I, 100, 100,"Calibration results") ;
           // Display the image
           // The image class has a member that specify a pointer toward
           // the display that has been initialized in the display declaration
