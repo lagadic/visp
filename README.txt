@@ -1,7 +1,7 @@
-                            ViSP-2
+                            ViSP-2-4.2
                      Visual Servoing Platform
 
-         Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006
+     Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006-2008
                   www: http://www.irisa.fr/lagadic
 
 
