@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.1 2008-03-26 09:09:28 asaunier Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.2 2008-03-28 16:39:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -113,7 +113,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
   \param _x, _y : The window is set at position x,y (column index, row index).
   \param _title : window  titled
 */
-vpDisplayOpenCV::vpDisplayOpenCV(int _x, int _y, char *_title)
+vpDisplayOpenCV::vpDisplayOpenCV(int /* _x */, int /* _y*/, char *_title)
 {
   col = NULL;
   title = NULL ;
@@ -987,7 +987,7 @@ vpDisplayOpenCV::getClickUp(unsigned int& i, unsigned int& j,
   \brief set the window title
 */
 void
-vpDisplayOpenCV::flushTitle(const char *windowtitle)
+vpDisplayOpenCV::flushTitle(const char * /*windowtitle*/)
 {
   if (OpenCVinitialized)
   {
@@ -1023,7 +1023,7 @@ void vpDisplayOpenCV::displayCircle(int i, int j,
   }
 }
 
-void vpDisplayOpenCV::on_mouse( int event, int x, int y, int flags, void* display )
+void vpDisplayOpenCV::on_mouse( int event, int x, int y, int /*flags*/, void* display )
 {
   vpDisplayOpenCV* disp = (vpDisplayOpenCV*)display;
   switch ( event )

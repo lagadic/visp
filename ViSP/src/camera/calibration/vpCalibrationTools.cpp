@@ -230,9 +230,6 @@ vpCalibration::calibVVS(
     double py = cam.get_py();
     double u0 = cam.get_u0();
     double v0 = cam.get_v0();
-    double inv_px = 1/px;
-    double inv_py = 1/py;
-   
 
     r = 0 ;
 
@@ -409,8 +406,6 @@ vpCalibration::calibVVSMulti(
     double py = cam.get_py();
     double u0 = cam.get_u0();
     double v0 = cam.get_v0();
-    double inv_px = 1/px;
-    double inv_py = 1/py;
    
     r = 0 ;
     curPoint = 0 ; //current point indice
@@ -613,11 +608,7 @@ vpCalibration::calibVVSWithDistortion(
     double py = cam.get_py() ;
     
     double inv_px = 1/px ;
-    double inv_px2 = inv_px * inv_px;
-    double inv_px3 = inv_px2 *inv_px;
     double inv_py = 1/py ;
-    double inv_py2 = inv_py * inv_py;
-    double inv_py3 = inv_py2 *inv_py;
 
     double kud = cam.get_kud() ;
     double kdu = cam.get_kdu() ;
@@ -894,11 +885,7 @@ vpCalibration::calibVVSWithDistortionMulti(
     double v0 = cam.get_v0() ;
 
     double inv_px = 1/px ;
-    double inv_px2 = inv_px * inv_px;
-    double inv_px3 = inv_px2 *inv_px;
     double inv_py = 1/py ;
-    double inv_py2 = inv_py * inv_py;
-    double inv_py3 = inv_py2 *inv_py;
 
     double kud = cam.get_kud() ;
     double kdu = cam.get_kdu() ;
