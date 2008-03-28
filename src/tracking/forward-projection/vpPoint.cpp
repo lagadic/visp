@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.cpp,v 1.12 2008-01-31 14:54:45 asaunier Exp $
+ * $Id: vpPoint.cpp,v 1.13 2008-03-28 13:36:09 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -203,6 +203,10 @@ operator*(const vpHomogeneousMatrix &cMo, const vpPoint& oP)
   cP.set_Y(v1[1]) ;
   cP.set_Z(v1[2]) ;
   cP.set_W(v1[3]) ;
+  oP.set_X(v1[0]) ;
+  oP.set_Y(v1[1]) ;
+  oP.set_Z(v1[2]) ;
+  oP.set_W(v1[3]) ;
 
 
   return cP ;
