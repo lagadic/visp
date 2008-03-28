@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.7 2007-09-28 14:45:01 asaunier Exp $
+ * $Id: grab1394.cpp,v 1.8 2008-03-28 16:53:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -82,7 +82,7 @@
 
 */
 void usage(char *name, char *badparam, vp1394Grabber &g, long &req_number,
-	   bool &req_display, bool &req_color)
+	   bool &/*req_display*/, bool &req_color)
 {
   unsigned int act_camera;
   int act_format;
