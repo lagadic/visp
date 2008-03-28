@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: calibrate2dGrid.cpp,v 1.2 2008-03-27 11:18:02 asaunier Exp $
+ * $Id: calibrate2dGrid.cpp,v 1.3 2008-03-28 17:06:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -574,7 +574,7 @@ int main(int argc, char ** argv)
       // x = (u-u0)/px
       // y = (v-v0)/py
       // where px, py, u0, v0 are the intrinsic camera parameters
-      double x,y ;
+      double x=0.,y=0. ;
       vpPixelMeterConversion::convertPoint(cam,
 					   d[i].get_u(), d[i].get_v(),
 					   x,y)  ;
@@ -728,7 +728,7 @@ int main(int argc, char ** argv)
     bool* valid = new bool[nbpt];
     for (unsigned int i=0 ; i < nbpt ; i++){
       vpColVector _cP, _p ;
-      double u,v ;
+      double u=0.,v=0. ;
       valid[i] = true;
       mP[i].changeFrame(cMoTmp,_cP) ;
       mP[i].projection(_cP,_p) ;
@@ -743,7 +743,7 @@ int main(int argc, char ** argv)
             valid[i] = false;
           // u[i]. v[i] are expressed in pixel
           // conversion in meter
-          double x,y ;
+          double x=0.,y=0. ;
           vpPixelMeterConversion::convertPoint(camTmp,
                 md[i].get_u(), md[i].get_v(),
                 x,y)  ;

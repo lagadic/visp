@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.10 2008-03-17 08:29:22 asaunier Exp $
+ * $Id: vpCalibration.cpp,v 1.11 2008-03-28 17:06:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -165,7 +165,7 @@ vpCalibration::computePose(vpHomogeneousMatrix &cMo)
   {
     vpPoint P;
     P.setWorldCoordinates(LoX.value(),LoY.value(),LoZ.value());
-    double x,y ;
+    double x=0,y=0 ;
     vpPixelMeterConversion::convertPoint(cam,
                                          Lu.value(), Lv.value(),
                                              x,y)  ;
