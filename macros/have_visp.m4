@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: have_visp.m4,v 1.3 2007-02-05 16:31:30 fspindle Exp $
+# $Id: have_visp.m4,v 1.4 2008-04-01 20:52:28 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -34,7 +34,7 @@
 #   AC_HAVE_VISP_IFELSE( IF-FOUND, IF-NOT-FOUND )
 #
 # Description:
-#   This macro locates the ViSP2 development system.  If it is found,
+#   This macro locates the ViSP development system.  If it is found,
 #   the set of variables listed below are set up as described and made
 #   available to the configure script.
 #
