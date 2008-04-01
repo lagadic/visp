@@ -1,0 +1,10 @@
+all:
+	rm -f Makefile Makefile.in
+	rm -f config.h config.h.in config.log 
+	rm -f configure configure.scan
+	rm -f aclocal.m4
+	rm -f AUTHORS COPYING ChangeLog INSTALL NEWS README
+	rm -rf autom4te.cache 
+	rm -f autoscan.log config.status depcomp install-sh missing stamp-h1
+	rm -f *~
+	rm -f HelloWorld.o HelloWorld myimage.pgm
