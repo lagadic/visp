@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.8 2008-03-28 16:53:39 fspindle Exp $
+ * $Id: grab1394.cpp,v 1.9 2008-04-02 16:12:42 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,12 +77,10 @@
   \param badparam : Bad parameter name.
   \param g : Framegrabber instance.
   \param req_number : Requested number of images to grab.
-  \param req_display : Requested display activation.
   \param req_color: Requested color image display activation.
 
 */
-void usage(char *name, char *badparam, vp1394Grabber &g, long &req_number,
-	   bool &/*req_display*/, bool &req_color)
+void usage(char *name, char *badparam, vp1394Grabber &g, long &req_number, bool &req_color)
 {
   unsigned int act_camera;
   int act_format;
@@ -256,13 +254,13 @@ void getOptions(int argc, char **argv,
     case 'h': usage(argv[0], NULL, g, number, display, color); exit(0); break;
 
     default:
-      usage(argv[0], optarg, g, number, display, color); exit(0); break;
+      usage(argv[0], optarg, g, number, color); exit(0); break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, g, number, display, color);
+    usage(argv[0], NULL, g, number, color);
     fprintf(stderr, "ERROR: \n" );
     fprintf(stderr, "  Bad argument %s\n", optarg);
     fprintf(stderr, "\n");
