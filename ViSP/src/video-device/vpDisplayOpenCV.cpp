@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.2 2008-03-28 16:39:17 fspindle Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.3 2008-04-02 15:45:44 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,29 +103,6 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
   background = NULL;
   font = NULL;
   init(I,_x,_y, _title) ;
-}
-
-
-
-/*!
-  \brief constructor
-
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
-*/
-vpDisplayOpenCV::vpDisplayOpenCV(int /* _x */, int /* _y*/, char *_title)
-{
-  col = NULL;
-  title = NULL ;
-  window = 0 ;
-  background = NULL;
-  if (_title != NULL)
-  {
-    title = new char[strlen(_title) + 1] ; // Modif Fabien le 19/04/02
-    strcpy(title,_title) ;
-  }
-  font = NULL;
-  OpenCVinitialized = false ;
 }
 
 /*!
