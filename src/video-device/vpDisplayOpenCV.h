@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.h,v 1.2 2008-03-26 09:35:49 asaunier Exp $
+ * $Id: vpDisplayOpenCV.h,v 1.3 2008-04-02 15:45:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,8 +100,6 @@ public:
 	       char *title=NULL) ;
   vpDisplayOpenCV(vpImage<vpRGBa> &I, int _winx=-1, int _winy=-1,
 	       char *title=NULL) ;
-
-  vpDisplayOpenCV(int _winx, int _winy, char *title=NULL) ;
 
   vpDisplayOpenCV() ;
   virtual ~vpDisplayOpenCV() ;
