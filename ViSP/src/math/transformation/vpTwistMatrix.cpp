@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTwistMatrix.cpp,v 1.7 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpTwistMatrix.cpp,v 1.8 2008-04-03 08:17:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -158,26 +158,24 @@ vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &T,
 
 //! Construction from Translation and rotation (matrix parameterization)
 vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &T,
-			     const vpRotationMatrix &R)
+                             const vpRotationMatrix &R)
 {
   init() ;
   buildFrom(T,R) ;
 }
 
-/*!
-  \warning Not implemented.
- */
-vpTwistMatrix::vpTwistMatrix(const double /* Rx */,
-			     const double /* Ry */,
-			     const double /* Rz */,
-			     const double /* Tx */,
-			     const double /* Ty */,
-			     const double /* Tz */) : vpMatrix()
+//! Construction from Translation and rotation (ThetaU parameterization)
+vpTwistMatrix::vpTwistMatrix(const double Tx,
+			                       const double Ty,
+			                       const double Tz,
+			                       const double tux,
+			                       const double tuy,
+			                       const double tuz) : vpMatrix()
 {
   init() ;
-
-  vpERROR_TRACE("function not implemented") ;
-  throw(vpException(vpException::functionNotImplementedError)) ;
+  vpTranslationVector T(Tx,Ty,Tz) ;
+  vpThetaUVector tu(tux,tuy,tuz) ;
+  buildFrom(T,tu) ;  
 }
 
 //! Basic initialisation (identity)
