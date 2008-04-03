@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.cpp,v 1.7 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpPoseVector.cpp,v 1.8 2008-04-03 09:27:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,111 +53,210 @@
 //! initialize a size 3 vector
 void vpPoseVector::init()
 {
-    resize(6) ;
+  resize(6) ;
 }
 
 //! constructor
 vpPoseVector::vpPoseVector()
 {
-    init() ;
+  init() ;
 }
 
 //! constructor from 3 translations and 3 angles (in radian)
 vpPoseVector::vpPoseVector(const double tx,
-			   const double ty,
-			   const double tz,
-			   const double tux,
-			   const double tuy,
-			   const double tuz)
+                           const double ty,
+                           const double tz,
+                           const double tux,
+                           const double tuy,
+                           const double tuz)
 {
-    init() ;
+  init() ;
 
+  (*this)[0] = tx ;
+  (*this)[1] = ty ;
+  (*this)[2] = tz ;
 
-    (*this)[0] = tx ;
-    (*this)[1] = ty ;
-    (*this)[2] = tz ;
-
-    (*this)[3] = tux ;
-    (*this)[4] = tuy ;
-    (*this)[5] = tuz ;
-
-
+  (*this)[3] = tux ;
+  (*this)[4] = tuy ;
+  (*this)[5] = tuz ;
 }
 
-//! constructor convert a "euler" vector and a translation into a pose
-vpPoseVector::vpPoseVector(const vpEulerVector &e,
-			   const vpTranslationVector& t)
+//! constructor convert a translation and a "thetau" vector into a pose
+vpPoseVector::vpPoseVector(const vpTranslationVector& t,
+                           const vpThetaUVector& tu)
 {
-    init() ;
-    buildFrom(e,t) ;
+  init() ;
+  buildFrom(t,tu) ;
 }
 
-//! constructor  convert a "thetau" vector and a translation into a pose
-vpPoseVector::vpPoseVector(const vpThetaUVector& tu,
-			   const vpTranslationVector& t)
+//! constructor convert a translation and a rotation matrix into a pose
+vpPoseVector::vpPoseVector(const vpTranslationVector& t,
+                           const vpRotationMatrix& R)
 {
-    init() ;
-    buildFrom(tu,t) ;
+  init() ;
+  buildFrom(t,R) ;
 }
 
-//! constructor  convert arotation matrix  and a translation into a pose
-vpPoseVector::vpPoseVector(const vpRotationMatrix& R,
-			   const vpTranslationVector& t)
+//! constructor convert a translation and a "euler" vector into a pose
+vpPoseVector::vpPoseVector(const vpTranslationVector& t,
+                           const vpEulerVector &e)
 {
-    init() ;
-    buildFrom(R,t) ;
+  init() ;
+  buildFrom(t,e) ;
 }
 
 //! constructor convert an homogeneous matrix in a pose
 vpPoseVector::vpPoseVector(const vpHomogeneousMatrix& M)
 {
-    init() ;
-    buildFrom(M) ;
+  init() ;
+  buildFrom(M) ;
+}
+
+
+/*! constructor convert a "euler" vector and a translation into a pose (deprecated)
+
+  \warning This function is deprecated : prefer to
+  use vpPoseVector(const vpTranslationVector&,const vpEulerVector&).
+ */
+vpPoseVector::vpPoseVector(const vpEulerVector &e,
+                           const vpTranslationVector& t)
+{
+  init() ;
+  buildFrom(t,e) ;
+  vpTRACE("Warning : This function is deprecated : prefer to \
+          use vpPoseVector(vpTranslationVector,vpEulerVector&).");
+}
+
+/*! constructor convert a "thetau" vector and a translation into a pose (deprecated)
+
+  \warning This function is deprecated : prefer to
+  use vpPoseVector(const vpTranslationVector&,const vpThetaUVector&).
+
+ */
+vpPoseVector::vpPoseVector(const vpThetaUVector& tu,
+                           const vpTranslationVector& t)
+{
+  init() ;
+  buildFrom(t,tu) ;
+  vpTRACE("Warning : This function is deprecated : prefer to \
+          use vpPoseVector(vpTranslationVector,vpThetaUVector&).");
+}
+
+/*! constructor convert a rotation matrix and a translation into a pose (deprecated)
+
+  \warning This function is deprecated : prefer to
+  use vpPoseVector(const vpTranslationVector&,const vpRotationMatrix&).
+
+ */
+vpPoseVector::vpPoseVector(const vpRotationMatrix& R,
+                           const vpTranslationVector& t)
+{
+  init() ;
+  buildFrom(t,R) ;
+  vpTRACE("Warning : This function is deprecated : prefer to \
+          use vpPoseVector(vpTranslationVector,vpRotationMatrix&).");
 }
 
 //! convert an homogeneous matrix in a pose
 vpPoseVector
 vpPoseVector::buildFrom(const vpHomogeneousMatrix& M)
 {
-    vpRotationMatrix R ;    M.extract(R) ;
-    vpTranslationVector t ; M.extract(t) ;
-    buildFrom(R,t) ;
-    return *this ;
+  vpRotationMatrix R ;    M.extract(R) ;
+  vpTranslationVector t ; M.extract(t) ;
+  buildFrom(R,t) ;
+  return *this ;
 }
-//! convert a "euler" vector and a translation into a pose
+//! convert a translation and a "euler" vector into a pose
+vpPoseVector
+vpPoseVector::buildFrom(const vpTranslationVector& t,
+                        const vpEulerVector &e)
+{
+  vpThetaUVector tu ;
+  tu.buildFrom(e) ;
+  buildFrom(t,tu) ;
+  return *this ;
+}
+
+//!  convert a translation and a "thetau" vector into a pose
+vpPoseVector
+vpPoseVector::buildFrom(const vpTranslationVector& t,
+                        const vpThetaUVector& tu)
+{
+  for (int i =0  ; i < 3 ; i++)
+  {
+    (*this)[i] = t[i] ;
+    (*this)[i+3] = tu[i] ;
+  }
+  return *this ;
+}
+
+//!  convert a translation and a rotation matrix into a pose
+vpPoseVector
+vpPoseVector::buildFrom(const vpTranslationVector& t,
+                        const vpRotationMatrix& R)
+{
+  vpThetaUVector tu ;
+  tu.buildFrom(R) ;
+
+  buildFrom(t,tu) ;
+  return *this ;
+}
+
+/*! convert a "euler" vector and a translation into a pose (deprecated)
+
+  \warning This function is deprecated : prefer to
+  use buildFrom(const vpTranslationVector&,const vpEulerVector&).
+ */
+
 vpPoseVector
 vpPoseVector::buildFrom(const vpEulerVector &e,
-			const vpTranslationVector& t)
+                        const vpTranslationVector& t)
 {
-    vpThetaUVector tu ;
-    tu.buildFrom(e) ;
-    buildFrom(tu,t) ;
-    return *this ;
+  vpThetaUVector tu ;
+  tu.buildFrom(e) ;
+  buildFrom(t,tu) ;
+  vpTRACE("Warning : This function is deprecated : prefer to \
+          use buildfrom(vpTranslationVector,vpEulerVector&).");
+  return *this ;
 }
 
-//!  convert a "thetau" vector and a translation into a pose
+/*!  convert a "thetau" vector and a translation into a pose (deprecated)
+
+  \warning This function is deprecated : prefer to
+  use buildFrom(const vpTranslationVector&,const vpEulerVector&).
+ */
+
 vpPoseVector
 vpPoseVector::buildFrom(const vpThetaUVector& tu,
-			const vpTranslationVector& t)
+                        const vpTranslationVector& t)
 {
-    for(int i =0  ; i < 3 ; i++)
-    {
-	(*this)[i] = t[i] ;
-	(*this)[i+3] = tu[i] ;
-    }
-    return *this ;
+  for (int i =0  ; i < 3 ; i++)
+  {
+    (*this)[i] = t[i] ;
+    (*this)[i+3] = tu[i] ;
+  }
+  vpTRACE("Warning : This function is deprecated : prefer to \
+          use buildfrom(vpTranslationVector,vpThetaUVector&).");
+  return *this ;
 }
 
-//!  convert arotation matrix  and a translation into a pose
+/*!  convert a rotation matrix  and a translation into a pose (deprecated)
+
+  \warning This function is deprecated : prefer to
+  use buildFrom(const vpTranslationVector&,const vpEulerVector&).
+ */
+
 vpPoseVector
 vpPoseVector::buildFrom(const vpRotationMatrix& R,
-			const vpTranslationVector& t)
+                        const vpTranslationVector& t)
 {
-    vpThetaUVector tu ;
-    tu.buildFrom(R) ;
+  vpThetaUVector tu ;
+  tu.buildFrom(R) ;
 
-    buildFrom(tu,t) ;
-    return *this ;
+  buildFrom(t,tu) ;
+  vpTRACE("Warning : This function is deprecated : prefer to \
+          use buildfrom(vpTranslationVector,vpRotationMatrix&).");
+  return *this ;
 }
 
 
@@ -165,10 +264,10 @@ vpPoseVector::buildFrom(const vpRotationMatrix& R,
 void
 vpPoseVector::print()
 {
-    for(int i =0  ; i < 6 ; i++)
-	if (i<3) std::cout << (*this)[i] <<" " ;
-	else  std::cout << vpMath::deg((*this)[i]) <<" " ;
-    std::cout <<std::endl ;
+  for (int i =0  ; i < 6 ; i++)
+    if (i<3) std::cout << (*this)[i] <<" " ;
+    else  std::cout << vpMath::deg((*this)[i]) <<" " ;
+  std::cout <<std::endl ;
 
 }
 void
@@ -199,7 +298,7 @@ vpPoseVector::load(std::ifstream &f)
   {
     for (int i=0 ; i < 6 ; i++)
     {
-	f>>   (*this)[i] ;
+      f>>   (*this)[i] ;
     }
   }
   else

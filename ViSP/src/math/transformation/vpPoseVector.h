@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.h,v 1.5 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpPoseVector.h,v 1.6 2008-04-03 09:27:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -88,27 +88,47 @@ public:
 		 const double tux, const double tuy, const double tuz) ;
     //! constructor convert an homogeneous matrix in a pose
     vpPoseVector(const vpHomogeneousMatrix& R) ;
-    //! constructor convert a "euler" vector and a translation into a pose
+    //! constructor convert a translation and a "euler" vector into a pose
+    vpPoseVector(const vpTranslationVector& t,
+                 const vpEulerVector &e) ;
+    //! constructor  convert a translation and a "thetau" vector into a pose
+    vpPoseVector(const vpTranslationVector& t,
+                 const vpThetaUVector& tu) ;
+    //! constructor  convert a translation and a rotation matrix into a pose
+    vpPoseVector(const vpTranslationVector& t,
+                 const vpRotationMatrix& R) ;
+  
+    // constructor convert a "euler" vector and a translation into a pose (deprecated)
     vpPoseVector(const vpEulerVector &e,
-		 const vpTranslationVector& t) ;
-    //! constructor  convert a "thetau" vector and a translation into a pose
+                 const vpTranslationVector& t) ;
+    // constructor  convert a "thetau" vector and a translation into a pose (deprecated)
     vpPoseVector(const vpThetaUVector& tu,
-		 const vpTranslationVector& t) ;
-    //! constructor  convert arotation matrix  and a translation into a pose
+                 const vpTranslationVector& t) ;
+    // constructor  convert a rotation matrix  and a translation into a pose (deprecated)
     vpPoseVector(const vpRotationMatrix& R,
-		 const vpTranslationVector& t) ;
+                 const vpTranslationVector& t) ;
 
     //! convert an homogeneous matrix in a pose
     vpPoseVector buildFrom(const vpHomogeneousMatrix& R) ;
-     //! convert a "euler" vector and a translation into a pose
+    //! convert a translation and a "euler" vector into a pose
+    vpPoseVector buildFrom(const vpTranslationVector& t,
+                           const vpEulerVector &e) ;
+    //!  convert a translation and a "thetau" vector into a pose
+    vpPoseVector buildFrom(const vpTranslationVector& t,
+                           const vpThetaUVector& tu) ;
+    //!  convert a translation and a rotation matrix into a pose
+    vpPoseVector buildFrom(const vpTranslationVector& t,
+                           const vpRotationMatrix& R) ;
+    
+     // convert a "euler" vector and a translation into a pose (deprecated)
     vpPoseVector buildFrom(const vpEulerVector &e,
-			   const vpTranslationVector& t) ;
-    //!  convert a "thetau" vector and a translation into a pose
+                           const vpTranslationVector& t) ;
+    //  convert a "thetau" vector and a translation into a pose (deprecated)
     vpPoseVector buildFrom(const vpThetaUVector& tu,
-			   const vpTranslationVector& t) ;
-    //!  convert arotation matrix  and a translation into a pose
+                           const vpTranslationVector& t) ;
+    //  convert a rotation matrix  and a translation into a pose (deprecated)
     vpPoseVector buildFrom(const vpRotationMatrix& R,
-			   const vpTranslationVector& t) ;
+                           const vpTranslationVector& t) ;
 
     //! Access  V[i] = x
     inline double &operator [](int n) {  return *(data + n);  }

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.h,v 1.8 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpHomogeneousMatrix.h,v 1.9 2008-04-03 09:27:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -111,28 +111,47 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! copy constructor
   vpHomogeneousMatrix(const vpHomogeneousMatrix &M) ;
    //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const vpRotationMatrix &R,
-		      const vpTranslationVector &T) ;
+  vpHomogeneousMatrix(const vpTranslationVector &T,
+                      const vpRotationMatrix &R) ;
    //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const vpThetaUVector &tu,
-		      const vpTranslationVector &T) ;
+  vpHomogeneousMatrix(const vpTranslationVector &T,
+                      const vpThetaUVector &tu) ;
   //! Construction from Translation and rotation
   vpHomogeneousMatrix(const vpPoseVector &p) ;
+   
+
+  // Construction from Translation and rotation (deprecated)
+  vpHomogeneousMatrix(const vpRotationMatrix &R,
+                      const vpTranslationVector &T) ;
+   // Construction from Translation and rotation (deprecated)
+  vpHomogeneousMatrix(const vpThetaUVector &tu,
+                      const vpTranslationVector &T) ;
+  
+
   //! Construction from Translation and rotation
   vpHomogeneousMatrix(const double Tx,const  double Ty, const double Tz,
 		      const double tux,const  double tuy, const double tuz  ) ;
 
   //! Construction from Translation and rotation
-  void buildFrom(const vpRotationMatrix &R,
-		      const vpTranslationVector &T) ;
+  void buildFrom(const vpTranslationVector &T,
+                 const vpRotationMatrix &R) ;
    //! Construction from Translation and rotation
-  void buildFrom(const vpThetaUVector &tu,
-		      const vpTranslationVector &T) ;
+  void buildFrom(const vpTranslationVector &T,
+                 const vpThetaUVector &tu) ;
   //! Construction from Translation and rotation
   void buildFrom(const vpPoseVector &p) ;
   //! Construction from Translation and rotation
   void buildFrom(const double Tx,const  double Ty, const double Tz,
 		      const double tux,const  double tuy, const double tuz  ) ;
+  
+
+  // Construction from Translation and rotation (deprecated)
+  void buildFrom(const vpRotationMatrix &R,
+                 const vpTranslationVector &T) ;
+   // Construction from Translation and rotation (deprecated)
+  void buildFrom(const vpThetaUVector &tu,
+                 const vpTranslationVector &T) ;
+  
   //! copy operator from vpHomogeneousMatrix
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &m);
 
