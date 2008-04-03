@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.65 2008-02-05 09:08:53 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.66 2008-04-03 13:44:00 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -796,10 +796,12 @@ ADD_DEFINITIONS(${VISP_DEFS})
 # a worthwhile exercise ! The use of these deprecated functions causes a lot of
 # warnings. To suppress it, we add the _CRT_SECURE_NO_DEPRECATE preprocessor
 # definition
-IF(WIN32 AND MSVC80)
-  #MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")
-  ADD_DEFINITIONS("-D_CRT_SECURE_NO_DEPRECATE")
-ENDIF(WIN32 AND MSVC80)
+IF(WIN32)
+  IF(MSVC80 OR MSVC90)
+    #MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")
+    ADD_DEFINITIONS("-D_CRT_SECURE_NO_DEPRECATE")
+  ENDIF(MSVC80 OR MSVC90)
+ENDIF(WIN32)
 
 
 #----------------------------------------------------------------------
