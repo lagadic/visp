@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTwistMatrix.h,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpTwistMatrix.h,v 1.4 2008-04-03 08:17:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,8 +72,8 @@ public:
     vpTwistMatrix(const vpTranslationVector &T, const vpEulerVector &R) ;
     //! Construction from Translation and rotation (matrix parameterization)
     vpTwistMatrix(const vpTranslationVector &T, const vpRotationMatrix &R) ;
-    vpTwistMatrix(const double tux,  const double tuy,  const double tuz,
-		  const double Tx,   const double Ty,   const double Tz) ;
+    vpTwistMatrix(const double Tx,   const double Ty,   const double Tz,
+                  const double tux,  const double tuy,  const double tuz) ;
 
    //! Assigment
     vpTwistMatrix &operator<<(const vpTwistMatrix &m);
