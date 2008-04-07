@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.cpp,v 1.7 2008-01-31 14:54:45 asaunier Exp $
+ * $Id: vpCylinder.cpp,v 1.8 2008-04-07 12:15:45 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -278,5 +278,5 @@ vpCylinder::display(vpImage<unsigned char> &I,
 		    const vpCameraParameters &cam,
 		    const vpColor::vpColorType color)
 {
-  vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[4], cam, I, color) ;
+  vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], cam, I, color) ;
 }
