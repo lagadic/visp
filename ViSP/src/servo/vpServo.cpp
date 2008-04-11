@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.18 2007-12-20 08:18:30 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.19 2008-04-11 09:40:38 cteulier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -748,14 +748,14 @@ vpServo::testUpdated()
   \f[
   -\lambda {\bf W^+W\widehat J_s^+(s-s^*)}
   \f]
-  of
+  or
   \f[
   -\lambda {\bf\widehat J_s^+(s-s^*)}
   \f]
-  if the task the dimension of the task is equal to number of availble degrees of freedom (in that case \f${\bf W^+W = I}\f$)
+  if the dimension of the task is equal to number of available degrees of freedom (in that case \f${\bf W^+W = I}\f$)
 
   in this equation Js is function of the interaction matrix and of the robot
-  Jacobian. It is also build according to the chosen configuration eye-in-hand
+  Jacobian. It is also built according to the chosen configuration eye-in-hand
   or eye-to-hand (see vpServo::setServo method)
 */
 vpColVector
