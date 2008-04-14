@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.22 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpSimulator.cpp,v 1.23 2008-04-14 12:56:52 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -338,6 +338,9 @@ vpSimulator::initSceneGraph()
 
   // define the camera SoPerspectiveCamera
   this->internalCamera = new SoPerspectiveCamera ;
+  this->externalCamera = new SoPerspectiveCamera ;
+  
+  
   this->internalCameraPosition = new SoTransform;
   this->internalCameraObject = createCameraObject(zoomFactor);
 
@@ -350,7 +353,7 @@ vpSimulator::initSceneGraph()
   this->internalRoot->addChild (this->internalCamera);
   this->internalRoot->addChild (this->scene);
 
-
+  this->externalRoot->addChild (this->externalCamera);
   this->externalRoot->addChild (this->scene);
 
 
@@ -426,8 +429,8 @@ vpSimulator::initInternalViewer(int width, int height)
   // Turn the viewer decorations
   internalView->setDecoration(false) ;
 
-  internalView->resize(width, height) ;
-
+  internalView->resize(width, height, true) ;
+  
   // open the window
   internalView->show();
 
@@ -455,17 +458,13 @@ vpSimulator::initExternalViewer(int width, int height)
 
   // set the title
   externalView->setTitle("External View") ;
-
-  externalView->resize(width, height) ;
+  externalView->resize(width, height, false) ;
   // the goal here is to see all the scene and not to determine
   // a manual viewpoint
   externalView->viewAll ();
 
   // open the window
   externalView->show();
-
-
-
 }
 
 void
@@ -490,31 +489,32 @@ vpSimulator::setInternalCameraParameters(vpCameraParameters &_cam)
 void
 vpSimulator::setExternalCameraParameters(vpCameraParameters &_cam)
 {
-  SoPerspectiveCamera *camera ;
-  camera  = (SoPerspectiveCamera *)this->externalView->getCamera() ;
+//   SoPerspectiveCamera *camera ;
+//   camera  = (SoPerspectiveCamera *)this->externalView->getCamera() ;
+  externalCameraParameters = _cam ;
 
   float px = (float)_cam.get_px();
   float py = (float)_cam.get_py();
   float v  = external_height/(2*py);
 
-  camera->ref() ;
-  camera->heightAngle = 2*atan(v);
-  camera->aspectRatio=(external_width/external_height)*(px/py);
-  camera->nearDistance = 0.001f ;
-  camera->farDistance = 1000;
-  camera->unrefNoDelete() ;
+  externalCamera->ref() ;
+  externalCamera->heightAngle = 2*atan(v);
+  externalCamera->aspectRatio=(external_width/external_height)*(px/py);
+  externalCamera->nearDistance = 0.001f ;
+  externalCamera->farDistance = 1000;
+  externalCamera->unrefNoDelete() ;
 
 }
 
 void
 vpSimulator::getExternalCameraPosition(vpHomogeneousMatrix &cMf)
 {
-  SoCamera *camera ;
-  camera  = this->externalView->getCamera() ;
-  SoSFVec3f 	position = camera->position ;
+/*  SoCamera *camera ;
+  camera  = this->externalView->getCamera() ;*/
+  SoSFVec3f 	position = externalCamera->position ;
 
   // get the rotation
-  SoSFRotation 	orientation = camera->orientation;
+  SoSFRotation 	orientation = externalCamera->orientation;
   SbVec3f axis ;  float angle ;
   orientation.getValue(axis,angle) ;
   SbRotation rotation(axis,angle) ;

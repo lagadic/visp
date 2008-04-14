@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.18 2007-12-19 08:59:30 fspindle Exp $
+ * $Id: vpSimulator.h,v 1.19 2008-04-14 12:56:52 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -178,8 +178,10 @@ protected:
   //! root node of the external view
   SoSeparator *externalRoot;
 
-  //! camera
+  //! internal camera
   SoPerspectiveCamera *internalCamera ;
+  //! external camera
+  SoPerspectiveCamera *externalCamera ;
 
   //! internal camera position
   SoTransform *internalCameraPosition ;
@@ -226,6 +228,8 @@ protected:
   vpHomogeneousMatrix cMf ;
   //! internal camera parameters
   vpCameraParameters internalCameraParameters ;
+  //! internal camera parameters
+  vpCameraParameters externalCameraParameters ;
 
 public:
   //! set the camera position (from an homogeneous matrix)
