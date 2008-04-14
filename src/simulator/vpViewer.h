@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.h,v 1.11 2007-12-20 08:21:49 fspindle Exp $
+ * $Id: vpViewer.h,v 1.12 2008-04-14 12:56:52 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -128,7 +128,7 @@ public:
 #endif
 
   virtual ~vpViewer();
-  void  resize(int x, int y) ;
+  void  resize(int x, int y, bool fixed = false) ;
   virtual void actualRedraw(void);
 
 private:

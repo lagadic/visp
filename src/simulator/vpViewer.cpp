@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.15 2007-11-22 09:21:47 fspindle Exp $
+ * $Id: vpViewer.cpp,v 1.16 2008-04-14 12:56:52 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -136,14 +136,27 @@ vpViewer::actualRedraw(void)
 
 \param x : width
 \param y : height
+\param fixed : set as true to disable mouse window resizing
 
 */
 void
-vpViewer::resize(int x, int y)
+vpViewer::resize(int x, int y, bool fixed)
 {
   SbVec2s size(x,y) ;
-  //  setGlxSize(size) ;
+  setSize(size);
   setGLSize(size) ;
+  if(fixed){
+#if defined(VISP_HAVE_SOWIN)
+    HWND parent = getParentWidget();
+    DWORD dwStyle = GetWindowLong(parent, GWL_STYLE);
+    dwStyle &= ~(WS_SIZEBOX);
+    SetWindowLong(parent, GWL_STYLE,dwStyle);
+#elif defined(VISP_HAVE_SOQT)
+    QWidget * parent = getParentWidget();
+    parent->setFixedSize(x, y);
+#endif
+  }
+ 
 }
 
 /*!
