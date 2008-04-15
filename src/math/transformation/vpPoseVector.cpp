@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.cpp,v 1.8 2008-04-03 09:27:16 asaunier Exp $
+ * $Id: vpPoseVector.cpp,v 1.9 2008-04-15 12:05:31 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -163,7 +163,7 @@ vpPoseVector::buildFrom(const vpHomogeneousMatrix& M)
 {
   vpRotationMatrix R ;    M.extract(R) ;
   vpTranslationVector t ; M.extract(t) ;
-  buildFrom(R,t) ;
+  buildFrom(t,R) ;
   return *this ;
 }
 //! convert a translation and a "euler" vector into a pose
