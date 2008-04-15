@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECTSHOW.cmake,v 1.5 2007-04-03 16:01:56 fspindle Exp $
+# $Id: FindDIRECTSHOW.cmake,v 1.6 2008-04-15 16:35:37 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -45,9 +45,22 @@ SET(DIRECTSHOW_FOUND "NO")
 
 # DirectShow is only available on Windows platforms
 IF(WIN32 AND NOT MINGW)
+# find DirectX
+  FIND_PATH(DIRECTX_INCLUDE_PATH ddraw.h
+    "$ENV{DXSDK_DIR}/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
+    "C:/DXSDK/include"
+    "C:/Program Files/Microsoft Platform SDK/Include"
+    "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
+    NO_DEFAULT_PATH
+    DOC "What is the path where the file ddraw.h can be found"
+    )
+  FIND_PATH(DIRECTX_INCLUDE_PATH ddraw.h
+    DOC "What is the path where the file ddraw.h can be found"
+    )
 
   # find DirectShow include directory
-  FIND_PATH(DIRECTSHOW_INCLUDE_DIR dshow.h
+  FIND_PATH(DIRECTSHOW_dshow_INCLUDE_PATH dshow.h
     "$ENV{WINSDK_HOME}/Include"
     "$ENV{DXSDK_DIR}/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
@@ -57,74 +70,139 @@ IF(WIN32 AND NOT MINGW)
     NO_DEFAULT_PATH
     DOC "What is the path where the file dshow.h can be found"
     )
-  FIND_PATH(DIRECTSHOW_INCLUDE_DIR dshow.h
+  FIND_PATH(DIRECTSHOW_dshow_INCLUDE_PATH dshow.h
     DOC "What is the path where the file dshow.h can be found"
     )
+    
+  FIND_PATH(DIRECTSHOW_qedit_INCLUDE_PATH qedit.h
+    "$ENV{WINSDK_HOME}/Include"
+    "$ENV{DXSDK_DIR}/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
+    "C:/DXSDK/include"
+    "C:/Program Files/Microsoft Platform SDK/Include"
+    "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
+    NO_DEFAULT_PATH
+    DOC "What is the path where the file qedit.h can be found"
+    )
+  FIND_PATH(DIRECTSHOW_qedit_INCLUDE_PATH qedit.h
+    DOC "What is the path where the file qedit.h can be found"
+    )
+    
+  FIND_PATH(DIRECTSHOW_atlbase_INCLUDE_PATH atlbase.h
+    DOC "What is the path where the file atlbase.h can be found"
+    )
+# Specific path search for Visual Studio .NET 2003
+      IF(MSVC71)
+        IF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
+          FIND_PATH(DIRECTSHOW_atlbase_INCLUDE_PATH atlbase.h
+                       "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/atlmfc/include"
+                       "$ENV{VS71COMNTOOLS}/../../Vc7/atlmfc/include"
+                      DOC "What is the path where the file atlbase.h can be found"
+                    )
+        ENDIF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
+      ENDIF(MSVC71)
 
+# Specific path search for Visual Studio 2005
+      IF(MSVC80)
+        IF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
+          FIND_PATH(DIRECTSHOW_atlbase_INCLUDE_PATH atlbase.h
+                       "C:/Program Files/Microsoft Visual Studio 8/VC/atlmfc/include"
+                       "$ENV{VS80COMNTOOLS}/../../VC/atlmfc/include"
+                      DOC "What is the path where the file atlbase.h can be found"
+                    )
+        ENDIF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
+      ENDIF(MSVC80)
+
+# Specific path search for Visual Studio 2008
+      IF(MSVC90)
+        IF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
+          FIND_PATH(DIRECTSHOW_atlbase_INCLUDE_PATH atlbase.h
+                       "C:/Program Files/Microsoft Visual Studio 9.0/VC/atlmfc/include"
+                       "$ENV{VS90COMNTOOLS}/../../VC/atlmfc/include"
+                      DOC "What is the path where the file atlbase.h can be found"
+                    )
+        ENDIF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
+      ENDIF(MSVC90)
+  IF(DIRECTX_INCLUDE_PATH AND DIRECTSHOW_dshow_INCLUDE_PATH AND DIRECTSHOW_qedit_INCLUDE_PATH AND DIRECTSHOW_atlbase_INCLUDE_PATH)
+    SET(DIRECTSHOW_INCLUDE_DIR ${DIRECTX_INCLUDE_PATH}
+                               ${DIRECTSHOW_dshow_INCLUDE_PATH}
+                               ${DIRECTSHOW_qedit_INCLUDE_PATH}
+                               ${DIRECTSHOW_atlbase_INCLUDE_PATH})
+  ENDIF(DIRECTX_INCLUDE_PATH AND DIRECTSHOW_dshow_INCLUDE_PATH AND DIRECTSHOW_qedit_INCLUDE_PATH AND DIRECTSHOW_atlbase_INCLUDE_PATH)
   # if DirectShow include dir found, then find DirectShow libraries
   IF(DIRECTSHOW_INCLUDE_DIR)
     IF(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY strmiids
+      FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY
+        NAMES strmiids
+        PATHS
         "$ENV{WINSDK_HOME}/Lib/x64"
-	"$ENV{DXSDK_DIR}/Lib/x64"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
-	"C:/DXSDK/lib/x64"
+        "$ENV{DXSDK_DIR}/Lib/x64"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
+        "C:/DXSDK/lib/x64"
       	"C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x64"
         "C:/Program Files/Microsoft Platform SDK/Lib/x64"
-	NO_DEFAULT_PATH
+	       NO_DEFAULT_PATH
         DOC "Where can the DirectShow strmiids library be found"
-	)
+	   )
     ELSE(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY strmiids
+      FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY 
+        NAMES strmiids
+        PATHS
         "$ENV{WINSDK_HOME}/Lib"
-	"$ENV{WINSDK_HOME}/Lib/x86"
-	"$ENV{DXSDK_DIR}/Lib"
-	"$ENV{DXSDK_DIR}/Lib/x86"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x86"
-	"C:/DXSDK/lib"
-	"C:/DXSDK/lib/x64"
-      	"C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
+        "$ENV{WINSDK_HOME}/Lib/x86"
+        "$ENV{DXSDK_DIR}/Lib"
+        "$ENV{DXSDK_DIR}/Lib/x86"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x86"
+        "C:/DXSDK/lib"
+        "C:/DXSDK/lib/x64"
+        "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
         "C:/Program Files/Microsoft Platform SDK/Lib"
-	NO_DEFAULT_PATH
+	       NO_DEFAULT_PATH
         DOC "Where can the DirectShow strmiids library be found"
-	)    
+	   )    
     ENDIF(CMAKE_CL_64)  
-    FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY strmiids
+    FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY
+      NAMES strmiids
       DOC "Where can the DirectShow strmiids library be found"
       )
     
 
     IF(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY quartz
-	"$ENV{WINSDK_HOME}/Lib/x64"
-	"$ENV{DXSDK_DIR}/Lib/x64"
+      FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY
+        NAMES quartz
+        PATHS
+        "$ENV{WINSDK_HOME}/Lib/x64"
+        "$ENV{DXSDK_DIR}/Lib/x64"
         "C:/DXSDK/lib/x64"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x64"
         "C:/Program Files/Microsoft Platform SDK/Lib/x64"
+         NO_DEFAULT_PATH
         DOC "Where can the DirectShow quartz library be found"
-	NO_DEFAULT_PATH
-	)
+      )
     ELSE(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY quartz
-	"$ENV{WINSDK_HOME}/Lib/x86"
-	"$ENV{DXSDK_DIR}/Lib/x86"
+      FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY
+        NAMES quartz
+        PATHS
+        "$ENV{WINSDK_HOME}/Lib/x86"
+        "$ENV{DXSDK_DIR}/Lib/x86"
         "C:/DXSDK/lib/x86"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x86"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x86"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x86"
         "C:/Program Files/Microsoft Platform SDK/Lib/x86"
         "$ENV{WINSDK_HOME}/Lib"
-	"$ENV{DXSDK_DIR}/Lib"
+        "$ENV{DXSDK_DIR}/Lib"
         "C:/DXSDK/lib"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
         "C:/Program Files/Microsoft Platform SDK/Lib"
+        NO_DEFAULT_PATH
         DOC "Where can the DirectShow quartz library be found"
-	NO_DEFAULT_PATH
-	)
+	     )
     ENDIF(CMAKE_CL_64)
-    FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY quartz
+    FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY
+      NAMES quartz
       DOC "Where can the DirectShow quartz library be found"
       )
 
@@ -141,8 +219,11 @@ IF(WIN32 AND NOT MINGW)
     DIRECTSHOW_INCLUDE_DIR
     DIRECTSHOW_strmiids_LIBRARY
     DIRECTSHOW_quartz_LIBRARY
+    DIRECTX_INCLUDE_PATH
+    DIRECTSHOW_dshow_INCLUDE_PATH
+    DIRECTSHOW_qedit_INCLUDE_PATH
+    DIRECTSHOW_atlbase_INCLUDE_PATH
     )
-
 
 ENDIF(WIN32 AND NOT MINGW)
 
