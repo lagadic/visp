@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.cpp,v 1.7 2007-06-27 08:26:38 fspindle Exp $
+ * $Id: vpImageIo.cpp,v 1.8 2008-04-17 12:44:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -175,6 +175,26 @@ vpImageIo::openFileWrite(const std::string filename,
   return fd ;
 }
 
+vpImageIo::vpImageFormatType
+vpImageIo::getFormat(const char *filename)
+{
+  std::string sfilename(filename);
+
+  int PGM = sfilename.find("PGM");
+  int pgm = sfilename.find("pgm");
+  int PPM = sfilename.find("PPM");
+  int ppm = sfilename.find("ppm");
+  
+  int size = sfilename.size();
+
+  if ((PGM>0 && PGM<size ) || (pgm>0 && pgm<size))
+    return FORMAT_PGM;
+  else if ((PPM>0 && PPM<size) || ( ppm>0 && ppm<size))
+    return FORMAT_PPM;
+  else{ 
+    return FORMAT_UNKNOWN;
+  } 
+}
 
 
 

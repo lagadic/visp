@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIoPnm.cpp,v 1.14 2007-06-27 08:26:38 fspindle Exp $
+ * $Id: vpImageIoPnm.cpp,v 1.15 2008-04-17 12:44:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,7 +50,167 @@
 const int vpImageIo::vpMAX_LEN = 100;
 
 
+/*!  
+  Read the contents of the file,
+  allocate memory for the corresponding greyscale image.
 
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+ */
+void
+vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
+{
+  switch(getFormat(filename)){
+    case FORMAT_PGM :
+      readPGM(I,filename); break;
+    case FORMAT_PPM :
+      readPPM(I,filename); break;
+    case FORMAT_UNKNOWN :
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) " << std::endl
+          << " image format are implemented..." << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot read file")) ;
+      break;
+  }
+}
+/*!  
+  Read the contents of the file,
+  allocate memory for the corresponding greyscale image.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+ */
+void
+vpImageIo::read(vpImage<unsigned char> &I, const std::string filename)
+{
+  read(I,filename.c_str());
+}
+/*!  
+  Read the contents of the file,
+  allocate memory for the corresponding vpRGBa image.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+ */
+void
+vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
+{
+  switch(getFormat(filename)){
+    case FORMAT_PGM :
+      readPGM(I,filename); break;
+    case FORMAT_PPM :
+      readPPM(I,filename); break;
+    case FORMAT_UNKNOWN :
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6)" << std::endl
+          << " image format are implemented..." << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot read file")) ;
+      break;
+  }
+}
+/*!  
+  Read the contents of the file,
+  allocate memory for the corresponding vpRGBa image.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+ */
+void
+vpImageIo::read(vpImage<vpRGBa> &I, const std::string filename)
+{
+  read(I,filename.c_str());
+}
+
+/*!
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a PNM (PGM P5 or PPM P6) file depending on the
+  filename extension.
+
+  \param I : Image to save as a PNM file.
+  \param filename : Name of the file containing the image.
+ */
+void
+vpImageIo::write(vpImage<unsigned char> &I, const char *filename)
+{
+  switch(getFormat(filename)){
+    case FORMAT_PGM :
+      writePGM(I,filename); break;
+    case FORMAT_PPM :
+      writePPM(I,filename); break;
+    case FORMAT_UNKNOWN :
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) " << std::endl
+          << " image format are implemented..." << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot write file")) ;
+      break;
+  }
+}
+/*!
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a PNM (PGM P5 or PPM P6) file depending on the
+  filename extension.
+
+  \param I : Image to save as a PNM file.
+  \param filename : Name of the file containing the image.
+ */
+void
+vpImageIo::write(vpImage<unsigned char> &I, const std::string filename)
+{
+  write(I,filename.c_str());
+}
+/*!
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a PNM (PGM P5 or PPM P6) file depending on the
+  filename extension.
+
+  \param I : Image to save as a PNM file.
+  \param filename : Name of the file containing the image.
+ */
+void
+vpImageIo::write(vpImage<vpRGBa> &I, const char *filename)
+{
+  switch(getFormat(filename)){
+    case FORMAT_PGM :
+      writePGM(I,filename); break;
+    case FORMAT_PPM :
+      writePPM(I,filename); break;
+    case FORMAT_UNKNOWN :
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6)" << std::endl
+          << " image format are implemented..." << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot write file")) ;
+      break;
+  }
+}
+/*!
+  Write the content of the bitmap in the file which name is given by \e
+  filename. This function writes a PNM (PGM P5 or PPM P6) file depending on the
+  filename extension.
+
+  \param I : Image to save as a PNM file.
+  \param filename : Name of the file containing the image.
+ */
+void
+vpImageIo::write(vpImage<vpRGBa> &I, const std::string filename)
+{
+  write(I,filename.c_str());
+}
 //--------------------------------------------------------------------------
 // PGM
 //--------------------------------------------------------------------------
@@ -838,7 +998,6 @@ vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string filename)
 void
 vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
 {
-
   vpImageIo::writePPM(I, filename.c_str());
 }
 

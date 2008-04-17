@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.h,v 1.9 2007-06-27 08:26:38 fspindle Exp $
+ * $Id: vpImageIo.h,v 1.10 2008-04-17 12:44:58 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,6 +63,14 @@ class VISP_EXPORT vpImageIo
 {
 
 private:
+  
+  typedef enum
+  {
+    FORMAT_PGM,
+    FORMAT_PPM,
+    FORMAT_UNKNOWN
+  } vpImageFormatType;
+  
   static const int vpMAX_LEN;
 
   static FILE * openFileRead(const char *filename) ;
@@ -72,8 +80,26 @@ private:
   static FILE * openFileWrite(const std::string filename, 
 			      const std::string mode="w") ;
 
+  static vpImageFormatType getFormat(const char *filename) ;
 public:
 
+  static
+  void read(vpImage<unsigned char> &I, const char *filename) ;
+  static
+  void read(vpImage<unsigned char> &I, const std::string filename) ;
+  static
+  void read(vpImage<vpRGBa> &I, const char *filename) ;
+  static
+  void read(vpImage<vpRGBa> &I, const std::string filename) ;
+  
+  static
+  void write(vpImage<unsigned char> &I, const char *filename) ;
+  static
+  void write(vpImage<unsigned char> &I, const std::string filename) ;
+  static
+  void write(vpImage<vpRGBa> &I, const char *filename) ;
+  static
+  void write(vpImage<vpRGBa> &I, const std::string filename) ;
 
   static
   void readPGM(vpImage<unsigned char> &I, const char *filename) ;
