@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.25 2008-02-07 17:23:45 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.26 2008-04-17 16:15:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -294,7 +294,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src,
   if (dest != NULL){
     if(dest->nChannels != channels || dest->depth != depth
        || dest->height != (int) height || dest->width != (int) width){
-      cvReleaseImage(&dest);
+      if(dest->nChannels != 0) cvReleaseImage(&dest);
       dest = cvCreateImage( size, depth, channels );
     }
   }
@@ -372,7 +372,7 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
   if (dest != NULL){
     if(dest->nChannels != channels || dest->depth != depth
        || dest->height != (int) height || dest->width != (int) width){
-      cvReleaseImage(&dest);
+      if(dest->nChannels != 0) cvReleaseImage(&dest);
       dest = cvCreateImage( size, depth, channels );
     }
   }
