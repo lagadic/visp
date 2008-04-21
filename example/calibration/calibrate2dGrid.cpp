@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: calibrate2dGrid.cpp,v 1.4 2008-04-03 14:02:01 fspindle Exp $
+ * $Id: calibrate2dGrid.cpp,v 1.5 2008-04-21 13:59:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,6 +62,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpCalibration.h>
+#include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayD3D.h>
