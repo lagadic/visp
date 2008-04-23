@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.29 2008-02-01 16:53:39 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.30 2008-04-23 13:40:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -127,7 +127,8 @@ vpRobotAfma6::vpRobotAfma6 (void)
     vpERROR_TRACE("Error caught") ;
     throw ;
   }
-  positioningVelocity =  defaultPositioningVelocity ;
+  positioningVelocity  = defaultPositioningVelocity ;
+  velocityMeasureTempo = defaultVelocityMeasureTempo;
   return ;
 }
 
