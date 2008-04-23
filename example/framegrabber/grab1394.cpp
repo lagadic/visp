@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.9 2008-04-02 16:12:42 asaunier Exp $
+ * $Id: grab1394.cpp,v 1.10 2008-04-23 10:00:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -251,7 +251,7 @@ void getOptions(int argc, char **argv,
     case 'r': framerate = atoi(optarg); break;
     case 's': shutter = (unsigned int) atoi(optarg); break;
     case 't': color = (bool) atoi(optarg); break;
-    case 'h': usage(argv[0], NULL, g, number, display, color); exit(0); break;
+    case 'h': usage(argv[0], NULL, g, number, color); exit(0); break;
 
     default:
       usage(argv[0], optarg, g, number, color); exit(0); break;
