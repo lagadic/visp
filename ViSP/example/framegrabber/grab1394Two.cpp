@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.13 2008-02-08 16:42:58 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.14 2008-04-23 10:05:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -178,11 +178,11 @@ OPTIONS                                                    Default\n\
 \n\
     -o [%%s] : Filename for image saving.                     \n\
               Example: -o %s\n\
-              The first %%d is for the camera id, %%04d is for\n\
-              the image numbering. If color images are acquired\n\
-              the format of the .ppm file is PNM P6. If grey \n\
-              level images are acquired, the format of the .ppm \n\
-              file is PNM P5.\n\
+              The first %%d is for the camera id. The second\n\
+              %%04d is for the image numbering. If color images \n\
+              are acquired the format of the .ppm file is PNM P6.\n\
+              If grey level images are acquired, the format of \n\
+              the .ppm file is PNM P5.\n\
 \n\
     -?      : Print this help.\n\
 \n",
