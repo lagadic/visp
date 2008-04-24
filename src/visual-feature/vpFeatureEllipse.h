@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.h,v 1.10 2008-02-26 10:32:11 asaunier Exp $
+ * $Id: vpFeatureEllipse.h,v 1.11 2008-04-24 09:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,9 +91,17 @@ public:
   void buildFrom(const double x, const double y,
 		 const double mu20, const double mu11, const double mu02,
 		 const double A, const double B, const double C) ;
+  void set_x(const double x);
+  void set_y(const double y);
+  void set_xy(const double x,const double y);
   void setABC(const double A, const double B, const double C) ;
   void setMu(const double mu20, const double mu11, const double mu02) ;
-
+  
+  double get_x() const {return s[0];}
+  double get_y() const {return s[1];}
+  double getMu20() const {return s[2];}
+  double getMu11() const {return s[3];}
+  double getMu02() const {return s[4];}
 
 public:
   /*!

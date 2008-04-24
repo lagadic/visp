@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.cpp,v 1.14 2008-02-26 10:32:11 asaunier Exp $
+ * $Id: vpFeatureEllipse.cpp,v 1.15 2008-04-24 09:43:50 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -308,6 +308,24 @@ vpFeatureEllipse::buildFrom(const double x, const double y,
   this->C = C ;
 }
 
+void
+vpFeatureEllipse::set_x(const double x)
+{
+  s[0] = x ;
+}
+
+void
+vpFeatureEllipse::set_y(const double y)
+{
+  s[1] = y ;
+}
+
+void
+vpFeatureEllipse::set_xy(const double x,const double y)
+{
+  s[0] = x ;
+  s[1] = y ;
+}
 
 void
 vpFeatureEllipse::setABC(const double A, const double B, const double C)
