@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.26 2008-04-17 16:15:23 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.27 2008-04-24 13:45:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -963,7 +963,7 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
 */
 void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
 				 unsigned char* rgb,
-				 unsigned int height, unsigned int width)
+				 unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYUV420ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
