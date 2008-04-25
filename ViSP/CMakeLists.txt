@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.66 2008-04-03 13:44:00 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.67 2008-04-25 14:36:16 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -851,10 +851,11 @@ INSTALL(FILES
   
 
 #----------------------------------------------------------------------
-# For Dart server and tests
+# For Dart server and tests 
+# We use CDash set through CTestConfig.cmake file
+# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
 #----------------------------------------------------------------------
 ENABLE_TESTING()
-INCLUDE(DartConfig.cmake)
 INCLUDE(Dart)
 
 #----------------------------------------------------------------------

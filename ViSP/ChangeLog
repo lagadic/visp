@@ -1,3 +1,9 @@
+ViSP 2.4.x (released ...)
+  - Testing
+    - Use of CDash insteed of Dart2. Dashboards are sent to 
+      http://cdash.irisa.fr/CDash/index.php?project=ViSP 
+
+----------------------------------------------	
 ViSP 2.4.2 (released March 27, 2008)
   - New classes
     - vpCalibration : calibration toolkit for intrinsic and 
