@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.15 2008-01-31 14:50:31 asaunier Exp $
+ * $Id: vpRobotAfma6.h,v 1.16 2008-04-25 14:02:48 cteulier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -231,17 +231,17 @@ public:
   static inline void
   VD6_mdg_mrad (const vpColVector &input, double * output);
 
-  /** Vecteur de dimension 6: de m et dg vers m et rad. */
+  /** Vecteur de dimension 6: de m et rad vers mm et rad. */
   static inline void
   VD6_mrad_mmrad (const vpColVector & input, double * output);
 
   /* --- Double vers vecteur --- */
 
-  /** Vecteur de dimension 6: de mm et dg vers mm et dg. */
+  /** Vecteur de dimension 6: de mm et dg vers m et dg. */
   static inline void
   DV6_mmdg_mdg (const double * input, vpColVector & output);
 
-  /** Vecteur de dimension 6: de mm et rad vers mm et rad. */
+  /** Vecteur de dimension 6: de mm et rad vers m et rad. */
   static inline void
   DV6_mmrad_mrad (const double * input, vpColVector & output);
 
