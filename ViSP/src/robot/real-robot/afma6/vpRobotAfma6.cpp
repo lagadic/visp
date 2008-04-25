@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.30 2008-04-23 13:40:38 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.31 2008-04-25 14:02:48 cteulier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -812,7 +812,7 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
  * INPUT:
  *   - repere: repere de travail dans lequel est exprime le resultat.
  * OUTPUT:
- *   - r_dot: reference dans laquelle est placee le resultat (mm/s et rad/s).
+ *   - r_dot: reference dans laquelle est placee le resultat (m/s et rad/s).
  */
 void
 vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
@@ -868,7 +868,7 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
  * INPUT:
  *   - repere: repere de travail dans lequel est exprime le resultat.
  * OUTPUT:
- *   - Position actuelle du robot (mm/s et rad/s).
+ *   - Position actuelle du robot (m/s et rad/s).
  */
 vpColVector
 vpRobotAfma6::getVelocity (vpRobot::vpControlFrameType frame)
@@ -893,7 +893,7 @@ vpRobotAfma6::getVelocity (vpRobot::vpControlFrameType frame)
  * Par default, le temps d'attente est defaultVelocityMesureTempo.
  * INPUT:
  *  - tempo: nouvelle duree d'attente entre les deux mesures de
- * position de la fonction de lecteure de la vitesse (mm/s et rad/s).
+ * position de la fonction de lecture de la vitesse (mm/s et rad/s).
  */
 void
 vpRobotAfma6::setVelocityMeasureTempo (const int tempo)
