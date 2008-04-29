@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.27 2008-04-24 13:45:26 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.28 2008-04-29 16:34:04 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -235,7 +235,7 @@ vpImageConvert::convert(const IplImage* src,
     if(nChannel == 1 && depth == 8){
       dest.resize(height,width) ;
       for (int i =0  ; i < height ; i++){
-        memcpy(dest.bitmap, src->imageData + i*widthStep,
+        memcpy(dest.bitmap+i*width, src->imageData + i*widthStep,
               width);
       }
     }
