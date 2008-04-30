@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.cpp,v 1.9 2007-12-13 09:17:06 asaunier Exp $
+ * $Id: vpWin32Window.cpp,v 1.10 2008-04-30 15:22:41 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,6 @@
 //allows multiple displays
 _declspec(thread) vpWin32Window * window;
 
-bool vpWin32Window::registered = false;
 
 /*!
   The message callback
@@ -178,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
 {
   renderer = rend;
-
+  registered = false;
   //creates the semaphores
   semaInit = CreateSemaphore(NULL,0,1,NULL);
   semaClick = CreateSemaphore(NULL,0,1,NULL);
