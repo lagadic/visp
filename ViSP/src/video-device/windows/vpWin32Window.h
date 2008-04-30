@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.h,v 1.8 2007-12-07 16:41:49 asaunier Exp $
+ * $Id: vpWin32Window.h,v 1.9 2008-04-30 15:22:41 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,7 +92,7 @@ class VISP_EXPORT vpWin32Window
   vpMouseButton::vpMouseButtonType clickButtonUp;
 
   //! True if the window's class has already been registered
-  static bool registered;
+  bool registered;
 
   //! The renderer used by the window
   vpWin32Renderer * renderer;
