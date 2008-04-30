@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECT3D.cmake,v 1.4 2007-03-27 10:02:35 asaunier Exp $
+# $Id: FindDIRECT3D.cmake,v 1.5 2008-04-30 16:05:13 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -44,7 +44,7 @@
 SET(DIRECT3D_FOUND "NO")
 
 # Direct3D is only available on Windows platforms
-IF(WIN32)
+IF(WIN32 AND NOT MINGW)
   # Find Direct3D Include Directory
   FIND_PATH(DIRECT3D_INCLUDE_DIR d3dx9.h
  	"$ENV{DXSDK_DIR}/Include"
@@ -122,7 +122,7 @@ IF(WIN32)
   )
 
 
-ENDIF(WIN32)
+ENDIF(WIN32 AND NOT MINGW)
 
 
 #---------------------------------------------------------------------
