@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECT3D.cmake,v 1.5 2008-04-30 16:05:13 fspindle Exp $
+# $Id: FindDIRECT3D.cmake,v 1.6 2008-05-05 14:34:42 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -138,8 +138,6 @@ ELSE(DIRECT3D_FOUND)
     IF(DIRECT3D_FIND_REQUIRED)
       MESSAGE(FATAL_ERROR
               "Direct3D required, please specify it's location.")
-    ELSE(DIRECT3D_FIND_REQUIRED)
-      MESSAGE(STATUS "Direct3D was not found.")
     ENDIF(DIRECT3D_FIND_REQUIRED)
   ENDIF(NOT DIRECT3D_FIND_QUIETLY)
 ENDIF(DIRECT3D_FOUND)
