@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CTestConfig.cmake,v 1.2 2008-04-28 13:29:30 fspindle Exp $
+# $Id: CTestConfig.cmake,v 1.3 2008-05-05 14:26:46 fspindle Exp $
 #
 # Copyright (C) 1998-2008 Inria. All rights reserved.
 #
@@ -36,7 +36,7 @@
 #############################################################################
 
 set(CTEST_PROJECT_NAME "ViSP")
-set(CTEST_NIGHTLY_START_TIME "00:00:00 EST")
+set(CTEST_NIGHTLY_START_TIME "00:00:00 GMT")
 
 set(CTEST_DROP_METHOD "http")
 set(CTEST_DROP_SITE "cdash.inria.fr")
