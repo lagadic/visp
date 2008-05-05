@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.68 2008-04-29 16:29:52 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.69 2008-05-05 14:34:42 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -159,19 +159,27 @@ ENDIF(BIGENDIAN)
 #----------------------------------------------------------------------
 # Unix libraries :  X11, pthread, cfox (MAC OS X)
 #----------------------------------------------------------------------
-IF(UNIX)
+# default initialisation
+SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_CFOX_FOUND "no")  # for ViSP-third-party.txt
 
+IF(UNIX)
   #--------------------------------------------------------------------
   # X11 lib
   #--------------------------------------------------------------------
   IF(USE_X11)
     FIND_PACKAGE(X11)
     IF(X11_FOUND)
+      MESSAGE(STATUS "X11 found")
       SET(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
+      SET(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
       SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
 	${X11_INCLUDE_DIR})
       SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${X11_LIBRARIES} -lm)
       #MESSAGE("X11: ${X11_LIBRARIES}")
+    ELSE(X11_FOUND)
+      MESSAGE(STATUS "X11 not found")
+      SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
     ENDIF(X11_FOUND)
   ENDIF(USE_X11)
   #--------------------------------------------------------------------
@@ -181,7 +189,9 @@ IF(UNIX)
     IF(USE_CFOX)
       FIND_PACKAGE(CFOX)
       IF(CFOX_FOUND)
+        MESSAGE(STATUS "Cfox found")
 	SET(VISP_HAVE_CFOX TRUE) # for header vpConfig.h
+        SET(VISP_HAVE_CFOX_FOUND "yes")  # for ViSP-third-party.txt
 	#MESSAGE("DBG VISP_HAVE_CFOX= ${VISP_HAVE_CFOX}")
 	#MESSAGE("DBG CFOX_INCLUDE_DIR=${CFOX_INCLUDE_DIR}")
 	SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
@@ -190,7 +200,8 @@ IF(UNIX)
 	  ${CFOX_LIBRARIES} -lIOKit "-framework Carbon")
 	#MESSAGE("CFOX_LIBRARIES = ${CFOX_LIBRARIES}")
       ELSE(CFOX_FOUND)
-	MESSAGE("cfox not found.")
+        MESSAGE(STATUS "Cfox not found")
+        SET(VISP_HAVE_CFOX_FOUND "no")  # for ViSP-third-party.txt
 	# SET(USE_CFOX OFF)
       ENDIF(CFOX_FOUND)
     ENDIF(USE_CFOX)
@@ -200,6 +211,9 @@ ENDIF(UNIX)
 #--------------------------------------------------------------------
 # OpenGL, Qt, SoQt and Coin libs
 #--------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_COIN_FOUND "no")  # for ViSP-third-party.txt
+
 IF(USE_COIN)
   INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
   IF(OPENGL_FOUND)
@@ -330,9 +344,13 @@ IF(USE_COIN)
       SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARIES})
       
     ENDIF(UNIX AND SOXT_FOUND AND COIN_FOUND)
-    IF(NOT VISP_HAVE_COIN)
-      MESSAGE(STATUS "COIN_LIBRARIES not found")
-    ENDIF(NOT VISP_HAVE_COIN)
+    IF(VISP_HAVE_COIN)
+      MESSAGE(STATUS "Coin found")
+      SET(VISP_HAVE_COIN_FOUND "yes")  # for ViSP-third-party.txt
+    ELSE(VISP_HAVE_COIN)
+      MESSAGE(STATUS "Coin not found")
+      SET(VISP_HAVE_COIN_FOUND "no")  # for ViSP-third-party.txt
+    ENDIF(VISP_HAVE_COIN)
   ELSE(OPENGL_FOUND)
     #MESSAGE(STATUS "OPENGL_LIBRARIES no found")
   ENDIF(OPENGL_FOUND)
@@ -341,32 +359,43 @@ ENDIF(USE_COIN)
 #---------------------------------------------------------------------
 # XML2
 #---------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_XML2_FOUND "no")  # for ViSP-third-party.txt
+
 IF(USE_XML2)
   FIND_PACKAGE(XML2)
   IF(XML2_FOUND)
     SET(VISP_HAVE_XML2 TRUE)
-  # MESSAGE("XML2 found")
+    SET(VISP_HAVE_XML2_FOUND "yes")  # for ViSP-third-party.txt
+    MESSAGE(STATUS "XML2 found")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
         ${XML2_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${XML2_LIBRARIES})
   ELSE(XML2_FOUND)
-  # MESSAGE("XML2 requested but not found")
+    MESSAGE(STATUS "XML2 not found")
+    SET(VISP_HAVE_XML2_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(XML2_FOUND)
 ENDIF(USE_XML2)
 
 #--------------------------------------------------------------------
 # pthread lib
 #--------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_PTHREAD_FOUND "no")  # for ViSP-third-party.txt
+
 IF(USE_PTHREAD)
   FIND_PACKAGE(PTHREAD)
   IF(PTHREAD_FOUND)
+    MESSAGE(STATUS "pthread found")
     SET(VISP_HAVE_PTHREAD TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_PTHREAD_FOUND "yes")  # for ViSP-third-party.txt
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${PTHREAD_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${PTHREAD_LIBRARIES})
     #MESSAGE("PTHREAD_LIBRARIES = ${PTHREAD_LIBRARIES}")
   ELSE(PTHREAD_FOUND)
-    #MESSAGE("PTHREAD_LIBRARIES no found")
+    MESSAGE(STATUS "pthread not found")
+    SET(VISP_HAVE_PTHREAD_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(PTHREAD_FOUND)
 ENDIF(USE_PTHREAD)
 
@@ -381,13 +410,21 @@ ENDIF(PARPORT_FOUND)
 #----------------------------------------------------------------------
 # Third party software :
 #----------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_OPENCV_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_GSL_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
 
 # open CV
 IF(USE_OPENCV)
   SET(OpenCV_FIND_QUIETLY TRUE)
   FIND_PACKAGE(OpenCV)
   IF(OpenCV_FOUND)
+    MESSAGE(STATUS "OpenCV not found")
     SET(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_OPENCV_FOUND "yes")  # for ViSP-third-party.txt
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS})
     SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR}
       ${OpenCV_EXE_LINKER_FLAGS} -L${OpenCV_LINK_DIRECTORIES})
@@ -396,6 +433,9 @@ IF(USE_OPENCV)
     #MESSAGE("OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
     #MESSAGE("OpenCV_LIBRARIES = ${OpenCV_LIBRARIES}")
     #MESSAGE("OpenCV_LINK_DIRECTORIES = ${OpenCV_LINK_DIRECTORIES}")
+  ELSE(OpenCV_FOUND)
+    MESSAGE(STATUS "OpenCV not found")
+    SET(VISP_HAVE_OPENCV_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(OpenCV_FOUND)
 ENDIF(USE_OPENCV)
 
@@ -404,7 +444,9 @@ ENDIF(USE_OPENCV)
 IF(USE_GSL)
   FIND_PACKAGE(GSL)
   IF(GSL_FOUND)
+    MESSAGE(STATUS "GSL found")
     SET(VISP_HAVE_GSL  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_GSL_FOUND "yes")  # for ViSP-third-party.txt
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GSL_INCLUDE_DIR})
     SET(VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR}
       ${GSL_EXE_LINKER_FLAGS} -L${GSL_LINK_DIRECTORIES})
@@ -413,6 +455,9 @@ IF(USE_GSL)
     #MESSAGE("GSL_INCLUDE_DIR = ${GSL_INCLUDE_DIR}")
     #MESSAGE("GSL_LINK_DIRECTORIES = ${GSL_LINK_DIRECTORIES}")
     #MESSAGE("GSL_LIBRARIES = ${GSL_LIBRARIES}")
+  ELSE(GSL_FOUND)
+    MESSAGE(STATUS "GSL not found")
+    SET(VISP_HAVE_GSL_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(GSL_FOUND)
 ENDIF(USE_GSL)
 
@@ -422,7 +467,9 @@ IF(USE_GTK2)
    IF(UNIX OR WIN32)
     FIND_PACKAGE(GTK2)
     IF(GTK2_FOUND)
+      MESSAGE(STATUS "GTK2 found")
       SET(VISP_HAVE_GTK TRUE)  # for header vpConfig.h
+      SET(VISP_HAVE_GTK_FOUND "yes")  # for ViSP-third-party.txt
       SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GTK2_INCLUDE_DIR})
       
       IF(UNIX)
@@ -436,6 +483,8 @@ IF(USE_GTK2)
       #MESSAGE("GTK2 Libs: ${GTK2_LIBRARIES}")
       SET(USE_GTK1 OFF) # no need to found gtk-1
     ELSE(GTK2_FOUND)
+      MESSAGE(STATUS "GTK2 not found")
+      SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
       #MESSAGE("GTK2 requested but not found.")
       SET(USE_GTK1 ON) # try to found gtk-1
     ENDIF(GTK2_FOUND)
@@ -452,13 +501,17 @@ IF(USE_GTK1)
   IF(UNIX)
     FIND_PACKAGE(GTK)
     IF(GTK_FOUND)
+      MESSAGE(STATUS "GTK1 found")
       SET(VISP_HAVE_GTK TRUE) # for header vpConfig.h
+      SET(VISP_HAVE_GTK_FOUND "yes")  # for ViSP-third-party.txt
       SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${GTK_INCLUDE_DIR})
       ## ignore gtk pedantic warnings by gcc specific -isystem :
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK_gtk_INCLUDE_PATH}")
       # MESSAGE("DBG CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}")
       SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${GTK_LIBRARIES})
     ELSE(GTK_FOUND)
+      MESSAGE(STATUS "GTK1 not found")
+      SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
       #MESSAGE("GTK requested but not found.")
       # SET(USE_GTK OFF)
     ENDIF(GTK_FOUND)
@@ -472,13 +525,18 @@ ENDIF(USE_GTK1)
 IF(USE_DIRECT3D)
   FIND_PACKAGE(DIRECT3D)
   IF(DIRECT3D_FOUND)
+    MESSAGE(STATUS "Direct3D found")
     SET(VISP_HAVE_D3D9 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_D3D9_FOUND "yes")  # for ViSP-third-party.txt
     #MESSAGE("DBG VISP_HAVE_D3D9= ${VISP_HAVE_D3D9}")
     #MESSAGE("DBG DIRECT3D_INCLUDE_DIR=${DIRECT3D_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${DIRECT3D_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${DIRECT3D_LIBRARIES} ${VISP_EXTERN_LIBS})
     #MESSAGE("DIRECT3D_LIBRARIES = ${DIRECT3D_LIBRARIES}")
+  ELSE(DIRECT3D_FOUND)
+    MESSAGE(STATUS "Direct3D not found")
+    SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(DIRECT3D_FOUND)
 ENDIF(USE_DIRECT3D)
 
@@ -486,10 +544,15 @@ ENDIF(USE_DIRECT3D)
 IF(USE_GDI)
   FIND_PACKAGE(GDI)
   IF(GDI_FOUND)
+    MESSAGE(STATUS "GDI found")
     SET(VISP_HAVE_GDI TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_GDI_FOUND "yes")  # for ViSP-third-party.txt
     #MESSAGE("DBG VISP_HAVE_GDI= ${VISP_HAVE_GDI}")
     SET(VISP_EXTERN_LIBS ${GDI_LIBRARIES} ${VISP_EXTERN_LIBS})
     #MESSAGE("GDI_LIBRARIES = ${GDI_LIBRARIES}")
+  ELSE(GDI_FOUND)
+    MESSAGE(STATUS "GDI not found")
+    SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(GDI_FOUND)
 ENDIF(USE_GDI)
 
@@ -497,13 +560,22 @@ ENDIF(USE_GDI)
 #----------------------------------------------------------------------
 # Specific hardware : framegrabbers and cameras
 #----------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_V4L2_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_ICCOMP_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_ITIFG8_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
 
 # library for firewire cameras
 IF(USE_DC1394)
   FIND_PACKAGE(DC1394)
   IF(DC1394_FOUND)
     IF(DC1394_VERSION EQUAL 2)
+      MESSAGE(STATUS "libdc1394-2.x found")
       SET(VISP_HAVE_DC1394_2 TRUE) # for header vpConfig.h
+      SET(VISP_HAVE_DC1394_2_FOUND "yes")  # for ViSP-third-party.txt
       IF(DC1394_CAMERA_ENUMERATE_FOUND)
         SET(VISP_HAVE_DC1394_2_CAMERA_ENUMERATE TRUE) # for header vpConfig.h
       ENDIF(DC1394_CAMERA_ENUMERATE_FOUND)
@@ -513,7 +585,9 @@ IF(USE_DC1394)
 
       #MESSAGE("DBG VISP_HAVE_DC1394_2= ${VISP_HAVE_DC1394_2}")
     ELSE(DC1394_VERSION EQUAL 2)
+      MESSAGE(STATUS "libdc1394-1.x found")
       SET(VISP_HAVE_DC1394_1 TRUE) # for header vpConfig.h
+      SET(VISP_HAVE_DC1394_1_FOUND "yes")  # for ViSP-third-party.txt
       #MESSAGE("DBG VISP_HAVE_DC1394_1= ${VISP_HAVE_DC1394_1}")
     ENDIF(DC1394_VERSION EQUAL 2)
     #MESSAGE("DBG DC1394_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
@@ -526,6 +600,10 @@ IF(USE_DC1394)
     ENDIF(APPLE)
      #MESSAGE("DC1394_LIBRARIES = ${DC1394_LIBRARIES}")
   ELSE(DC1394_FOUND)
+    MESSAGE(STATUS "libdc1394-1.x not found")
+    MESSAGE(STATUS "libdc1394-2.x not found")
+    SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
     #MESSAGE("Firewire dc1394 requested but not found. Turn off USE_DC1394!")
     # SET(USE_DC1394 OFF)
   ENDIF(DC1394_FOUND)
@@ -535,12 +613,16 @@ ENDIF(USE_DC1394)
 IF(USE_V4L2)
   FIND_PACKAGE(V4L2)
   IF(V4L2_FOUND)
+    MESSAGE(STATUS "V4l2 found")
     SET(VISP_HAVE_V4L2 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_V4L2_FOUND "yes")  # for ViSP-third-party.txt
      #MESSAGE("DBG VISP_HAVE_V4L2= ${VISP_HAVE_V4L2}")
      #MESSAGE("DBG V4L2_INCLUDE_DIR=${V4L2_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${V4L2_INCLUDE_DIR})
-  #ELSE(V4L2_FOUND)
+  ELSE(V4L2_FOUND)
+    MESSAGE(STATUS "V4l2 not found")
+    SET(VISP_HAVE_V4L2_FOUND "no")  # for ViSP-third-party.txt
     #MESSAGE("Video For Linux Two requested but not found.")
     # SET(USE_V4L2 OFF)
   ENDIF(V4L2_FOUND)
@@ -550,7 +632,9 @@ ENDIF(USE_V4L2)
 IF(USE_ICCOMP)
   FIND_PACKAGE(ICCOMP)
   IF(ICCOMP_FOUND)
+    MESSAGE(STATUS "ICcomp found")
     SET(VISP_HAVE_ICCOMP TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_ICCOMP_FOUND "yes")  # for ViSP-third-party.txt
      #MESSAGE("DBG VISP_HAVE_ICCOMP= ${VISP_HAVE_ICCOMP}")
      #MESSAGE("DBG ICCOMP_INCLUDE_DIR=${ICCOMP_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
@@ -558,7 +642,8 @@ IF(USE_ICCOMP)
     SET(VISP_EXTERN_LIBS ${ICCOMP_LIBRARIES} ${VISP_EXTERN_LIBS})
      #MESSAGE("ICCOMP_LIBRARIES = ${ICCOMP_LIBRARIES}")
   ELSE(ICCOMP_FOUND)
-    MESSAGE("ICcomp requested but not found.")
+    MESSAGE(STATUS "ICcomp not found")
+    SET(VISP_HAVE_ICCOMP_FOUND "no")  # for ViSP-third-party.txt
     # SET(USE_ICCOMP OFF)
   ENDIF(ICCOMP_FOUND)
 ENDIF(USE_ICCOMP)
@@ -567,7 +652,9 @@ ENDIF(USE_ICCOMP)
 IF(USE_ITIFG8)
   FIND_PACKAGE(ITIFG8)
   IF(ITIFG8_FOUND)
+    MESSAGE(STATUS "Itifg8 found")
     SET(VISP_HAVE_ITIFG8 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_ITIFG8_FOUND "yes")  # for ViSP-third-party.txt
     SET(VISP_HAVE_ITIFG8_VERSION ${ITIFG8_VERSION}) # for header vpConfig.h
     SET(VISP_HAVE_ITIFG8_VERSION_DOXY ${ITIFG8_VERSION}) # for doxygen file doc/config-doxygen
      #MESSAGE("DBG VISP_HAVE_ITIFG8= ${VISP_HAVE_ITIFG8}")
@@ -577,7 +664,8 @@ IF(USE_ITIFG8)
     SET(VISP_EXTERN_LIBS ${ITIFG8_LIBRARIES} ${VISP_EXTERN_LIBS})
      #MESSAGE("ITIFG8_LIBRARIES = ${ITIFG8_LIBRARIES}")
   ELSE(ITIFG8_FOUND)
-    MESSAGE("itifg8 requested but not found.")
+    MESSAGE(STATUS "Itifg8 not found")
+    SET(VISP_HAVE_ITIFG8_FOUND "no")  # for ViSP-third-party.txt
     # SET(USE_ITIFG8 OFF)
   ENDIF(ITIFG8_FOUND)
 ELSE(USE_ITIFG8)
@@ -588,13 +676,18 @@ ENDIF(USE_ITIFG8)
 IF(USE_DIRECTSHOW)
   FIND_PACKAGE(DIRECTSHOW)
   IF(DIRECTSHOW_FOUND)
+    MESSAGE(STATUS "DirectShow found")
     SET(VISP_HAVE_DIRECTSHOW TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_DIRECTSHOW_FOUND "yes")  # for ViSP-third-party.txt
     #MESSAGE("DBG VISP_HAVE_DIRECTSHOW= ${VISP_HAVE_PTU46}")
     #MESSAGE("DBG DIRECTSHOW_INCLUDE_DIR=${DIRECTSHOW_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
       ${DIRECTSHOW_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${DIRECTSHOW_LIBRARIES} ${VISP_EXTERN_LIBS})
     #MESSAGE("DIRECTSHOW_LIBRARIES = ${DIRECTSHOW_LIBRARIES}")
+  ELSE(DIRECTSHOW_FOUND)
+    MESSAGE(STATUS "DirectShow not found")
+    SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(DIRECTSHOW_FOUND)
 ENDIF(USE_DIRECTSHOW)
 
@@ -602,6 +695,11 @@ ENDIF(USE_DIRECTSHOW)
 #----------------------------------------------------------------------
 # Specific hardware : robots
 #----------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_AFMA4_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_AFMA6_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_BICLOPS_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_PTU46_FOUND "no")  # for ViSP-third-party.txt
 
 # library for Irisa's Afma4 cylindrical robot
 SET(AFMA_LIBS "")
@@ -609,7 +707,9 @@ IF(USE_AFMA4)
   FIND_PACKAGE(BIT3)
   FIND_PACKAGE(AFMA4)
   IF(AFMA4_FOUND AND BIT3_FOUND)
+    MESSAGE(STATUS "Afma4 found")
     SET(VISP_HAVE_AFMA4 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_AFMA4_FOUND "yes")  # for ViSP-third-party.txt
      #MESSAGE("DBG VISP_HAVE_AFMA4= ${VISP_HAVE_AFMA4}")
      #MESSAGE("DBG AFMA4_INCLUDE_DIR=${AFMA4_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${AFMA4_INCLUDE_DIR}
@@ -617,7 +717,9 @@ IF(USE_AFMA4)
     SET(AFMA_LIBS ${AFMA_LIBS} ${AFMA4_LIBRARIES})
      #MESSAGE("AFMA4_LIBRARIES = ${AFMA4_LIBRARIES}")
   ELSE(AFMA4_FOUND AND BIT3_FOUND)
+    MESSAGE(STATUS "Afma4 not found")
     MESSAGE("Afma4 robot requested but not found. Turn off USE_AFMA4 option!")
+    SET(VISP_HAVE_AFMA4_FOUND "no")  # for ViSP-third-party.txt
     # SET(USE_AFMA4 OFF)
   ENDIF(AFMA4_FOUND AND BIT3_FOUND)
 ENDIF(USE_AFMA4)
@@ -630,7 +732,9 @@ IF(USE_AFMA6)
   ENDIF(NOT USE_AFMA4)
   FIND_PACKAGE(AFMA6)
   IF(AFMA6_FOUND AND BIT3_FOUND)
+    MESSAGE(STATUS "Afma6 found")
     SET(VISP_HAVE_AFMA6 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_AFMA6_FOUND "yes")  # for ViSP-third-party.txt
     #MESSAGE("DBG VISP_HAVE_AFMA6= ${VISP_HAVE_AFMA6}")
     #MESSAGE("DBG AFMA6_INCLUDE_DIR=${AFMA6_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${AFMA6_INCLUDE_DIR}
@@ -638,7 +742,9 @@ IF(USE_AFMA6)
     SET(AFMA_LIBS ${AFMA_LIBS} ${AFMA6_LIBRARIES})
      #MESSAGE("AFMA6_LIBRARIES = ${AFMA6_LIBRARIES}")
   ELSE(AFMA6_FOUND AND BIT3_FOUND)
+    MESSAGE(STATUS "Afma6 not found")
     MESSAGE("Afma6 robot requested but not found. Turn off USE_AFMA6 option!")
+    SET(VISP_HAVE_AFMA6_FOUND "no")  # for ViSP-third-party.txt
     # SET(USE_AFMA6 OFF)
   ENDIF(AFMA6_FOUND AND BIT3_FOUND)
 ENDIF(USE_AFMA6)
@@ -659,7 +765,9 @@ ENDIF(VISP_HAVE_AFMA4 OR VISP_HAVE_AFMA6)
 IF(USE_BICLOPS)
   FIND_PACKAGE(BICLOPS)
   IF(BICLOPS_FOUND)
+    MESSAGE(STATUS "Biclops found")
     SET(VISP_HAVE_BICLOPS TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_BICLOPS_FOUND "yes")  # for ViSP-third-party.txt
      #MESSAGE("DBG VISP_HAVE_BICLOPS= ${VISP_HAVE_BICLOPS}")
      #MESSAGE("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
@@ -667,7 +775,9 @@ IF(USE_BICLOPS)
     SET(VISP_EXTERN_LIBS ${BICLOPS_LIBRARIES} ${VISP_EXTERN_LIBS})
      #MESSAGE("BICLOPS_LIBRARIES = ${BICLOPS_LIBRARIES}")
   ELSE(BICLOPS_FOUND)
+    MESSAGE(STATUS "Biclops not found")
     MESSAGE("Biclops requested but not found. Turn off USE_BICLOPS option!")
+    SET(VISP_HAVE_BICLOPS_FOUND "no")  # for ViSP-third-party.txt
     # SET(USE_BICLOPS OFF)
   ENDIF(BICLOPS_FOUND)
 ENDIF(USE_BICLOPS)
@@ -676,7 +786,9 @@ ENDIF(USE_BICLOPS)
 IF(USE_PTU46)
   FIND_PACKAGE(PTU46)
   IF(PTU46_FOUND)
+    MESSAGE(STATUS "Ptu46 found")
     SET(VISP_HAVE_PTU46 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_PTU46_FOUND "yes")  # for ViSP-third-party.txt
      #MESSAGE("DBG VISP_HAVE_PTU46= ${VISP_HAVE_PTU46}")
      #MESSAGE("DBG PTU46_INCLUDE_DIR=${PTU46_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
@@ -684,7 +796,9 @@ IF(USE_PTU46)
     SET(VISP_EXTERN_LIBS ${PTU46_LIBRARIES} ${VISP_EXTERN_LIBS})
      #MESSAGE("PTU46_LIBRARIES = ${PTU46_LIBRARIES}")
   ELSE(PTU46_FOUND)
+    MESSAGE(STATUS "Ptu46 not found")
     MESSAGE("Ptu-46 requested but not found. Turn off USE_PTU46 option!")
+    SET(VISP_HAVE_PTU46_FOUND "no")  # for ViSP-third-party.txt
     # SET(USE_PTU46 OFF)
   ENDIF(PTU46_FOUND)
 ENDIF(USE_PTU46)
@@ -934,3 +1048,9 @@ IF(BUILD_TESTING)
   SUBDIRS(test)
 ENDIF(BUILD_TESTING)
 
+#----------------------------------------------------------------------
+# Generate the package dependent file include/visp/vpConfig.h
+#----------------------------------------------------------------------
+CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
+  ${VISP_BINARY_DIR}/ViSP-third-party.txt
+)

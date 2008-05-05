@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECTSHOW.cmake,v 1.7 2008-04-17 12:50:25 asaunier Exp $
+# $Id: FindDIRECTSHOW.cmake,v 1.8 2008-05-05 14:34:42 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -249,8 +249,6 @@ ELSE(DIRECTSHOW_FOUND)
     IF(DIRECTSHOW_FIND_REQUIRED)
       MESSAGE(FATAL_ERROR
         "DirectShow required, please specify it's location.")
-    ELSE(DIRECTSHOW_FIND_REQUIRED)
-      MESSAGE(STATUS "DirectShow was not found.")
     ENDIF(DIRECTSHOW_FIND_REQUIRED)
   ENDIF(NOT DIRECTSHOW_FIND_QUIETLY)
 ENDIF(DIRECTSHOW_FOUND)
