@@ -1,0 +1,13 @@
+To configure this project using ViSP as a third party library, type:
+
+aclocal -I .
+touch NEWS AUTHORS ChangeLog
+automake -a
+autoconf
+./configure
+
+Now you can compile this project by:
+
+make
+
+That's all
