@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.h,v 1.6 2006-10-10 16:06:00 fspindle Exp $
+ * $Id: vpThetaUVector.h,v 1.7 2008-05-06 14:34:56 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,10 +89,16 @@ public:
 
   //! constructor initialize a Theta U vector from a rotation matrix
   vpThetaUVector(const vpRotationMatrix& R) ;
+  //! constructor initialize a Theta U vector from a RzyxVector
+  vpThetaUVector(const vpRzyxVector& rzyx) ;
+  //! constructor initialize a Theta U vector from a RzyzVector
+  vpThetaUVector(const vpRzyzVector& rzyz) ;
+  //! constructor initialize a Theta U vector from a RxyzVector
+  vpThetaUVector(const vpRxyzVector& rxyz) ;
 
   //! constructor from 3 angles (in radian)
-  vpThetaUVector(const double phi, const double theta, const double psi) :
-    vpRotationVector (phi, theta, psi) { ; }
+  vpThetaUVector(const double thetaux, const double thetauy, const double thetauz) :
+    vpRotationVector (thetaux, thetauy, thetauz) { ; }
 
   //! convert a rotation matrix into Theta U vector
   vpThetaUVector buildFrom(const vpRotationMatrix& R) ;
@@ -104,7 +110,7 @@ public:
   vpThetaUVector buildFrom(const vpEulerVector &e) ;
   //! convert an Rxyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRxyzVector &e) ;
-
+  
 } ;
 
 #endif
