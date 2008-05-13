@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.h,v 1.6 2008-03-17 08:29:22 asaunier Exp $
+ * $Id: vpCalibration.h,v 1.7 2008-05-13 09:41:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -153,7 +153,7 @@ public:
   double computeStdDeviation_dist(vpHomogeneousMatrix &cMo,
                           vpCameraParameters &cam);
   void computeStdDeviation(double &deviation, double &deviation_dist);
-  //! Compute the calibration for a given method
+  //! Compute the calibration for a given method using one pose
   int computeCalibration(vpCalibrationMethodType method,
 			  vpHomogeneousMatrix &cMo,
         vpCameraParameters &cam,
@@ -171,7 +171,7 @@ public:
                                     vpCalibration table_cal[],
                                     vpHomogeneousMatrix &eMc,
                                     vpHomogeneousMatrix &eMc_dist);
-  int writeCalibrationParameters(char *filename) ;
+/*  int writeCalibrationParameters(char *filename) ;*/
   //!set the gain for the virtual visual servoing algorithm
   static double getLambda(){return gain;}
   //!set the gain for the virtual visual servoing algorithm 
