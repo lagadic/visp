@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.11 2008-03-28 17:06:59 fspindle Exp $
+ * $Id: vpCalibration.cpp,v 1.12 2008-05-13 09:41:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -531,15 +531,22 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
 }
 
 /*!
-  Compute the multi-image Tsai calibration.
+  \brief Compute the multi-image calibration of effector-camera from R. Tsai and R. LorenzTsai.
+
+  Compute extrinsic camera parameters : the constant transformation from
+  the effector to the camera coordinates (eMc).
+
+  R. Tsai, R. Lenz. -- A new technique for fully autonomous and efficient 3D
+  robotics hand/eye calibration. -- IEEE Transactions on Robotics and
+  Automation, 5(3):345--358, June 1989.
 
   \param nbPose : number of images used to compute multi-images calibration
   \param table_cal : array of vpCalibration. All the vpHomogeneousMatrix cMo
-  and wMe of each vpCalibration have to be initialized.
+  and rMe of each vpCalibration have to be initialized.
   \param eMc : output: estimated pose of the camera in relation to the effector
-  with the camera model without distortion.
+  (camera support) with the camera model without distortion.
   \param eMc_dist : output: estimated pose of the camera in relation to the
-  effector with the model with distortion.
+  effector (camera support) with the model with distortion.
   \return 0 if the computation managed.
 */
 int

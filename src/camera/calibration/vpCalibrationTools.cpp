@@ -1079,6 +1079,9 @@ vpCalibration::calibVVSWithDistortionMulti(
 /*!
   \brief calibration method of effector-camera from R. Tsai and R. Lorenz
 
+  Compute extrinsic camera parameters : the constant transformation from
+  the effector to the camera coordinates (eMc).
+
   R. Tsai, R. Lenz. -- A new technique for fully autonomous and efficient 3D
   robotics hand/eye calibration. -- IEEE Transactions on Robotics and
   Automation, 5(3):345--358, June 1989.
@@ -1087,8 +1090,8 @@ vpCalibration::calibVVSWithDistortionMulti(
   \param cMo : table of homogeneous matrices representing the transformation
   between the camera and the scene (input)
   \param rMe : table of homogeneous matrices representing the transformation
-  between the effector and the reference coordinates (base of the
-  manipulator) (input)
+  between the effector (where the camera is fixed) and the reference coordinates
+  (base of the manipulator) (input)
   \param eMc : homogeneous matrix representing the transformation
   between the effector and the camera (output)
 */
