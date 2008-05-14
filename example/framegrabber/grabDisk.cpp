@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabDisk.cpp,v 1.7 2007-11-09 15:44:25 asaunier Exp $
+ * $Id: grabDisk.cpp,v 1.8 2008-05-14 16:28:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -210,7 +210,7 @@ main(int argc, char ** argv)
   std::string opt_ipath;
   std::string ipath;
   std::string opt_basename = "ViSP-images/cube/image.";
-  std::string opt_ext = ".pgm";
+  std::string opt_ext = "pgm";
   bool opt_display = true;
 
   unsigned opt_first = 5;
@@ -284,6 +284,8 @@ main(int argc, char ** argv)
   g.setNumberOfZero(opt_nzero);
   // Set the first frame number of the sequence
   g.setImageNumber(opt_first);
+  // Set the image extension
+  g.setExtension(opt_ext.c_str());
 
   // Open the framegrabber by loading the first image of the sequence
   try {
