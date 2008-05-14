@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.cpp,v 1.7 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpDiskGrabber.cpp,v 1.8 2008-05-14 16:27:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,6 +51,7 @@ vpDiskGrabber::vpDiskGrabber()
   setImageNumber(0);
   setStep(1);
   setNumberOfZero(0);
+  setExtension("pgm");
 
   init = false;
 }
@@ -68,14 +69,16 @@ vpDiskGrabber::vpDiskGrabber()
 */
 
 vpDiskGrabber::vpDiskGrabber(const char *dir, const char *basename,
-			     unsigned long number,
-			     int step, int noz)
+			                       unsigned long number,
+			                       int step, int noz,
+                             const char *ext)
 {
   setDirectory(dir);
   setBaseName(basename);
   setImageNumber(number);
   setStep(step);
   setNumberOfZero(noz);
+  setExtension(ext);
 
   init = false;
 }
@@ -133,13 +136,13 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I)
 
   char name[FILENAME_MAX] ;
 
-  sprintf(name,"%s/%s%0*ld.pgm",directory,base_name,number_of_zero,image_number) ;
+  sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
 
   image_number += image_step ;
 
   vpDEBUG_TRACE(2, "load: %s\n", name);
 
-  vpImageIo::readPGM(I, name) ;
+  vpImageIo::read(I, name) ;
 
   width = I.getWidth();
   height = I.getHeight();
@@ -157,13 +160,13 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
 
   char name[FILENAME_MAX] ;
 
-  sprintf(name,"%s/%s%0*ld.ppm",directory,base_name,number_of_zero,image_number) ;
+  sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
 
   image_number += image_step ;
 
   vpDEBUG_TRACE(2, "load: %s\n", name);
 
-  vpImageIo::readPGM(I, name) ;
+  vpImageIo::read(I, name) ;
 
   width = I.getWidth();
   height = I.getHeight();
@@ -207,6 +210,15 @@ void
 vpDiskGrabber::setBaseName(const char *name)
 {
   sprintf(base_name, name) ;
+}
+
+/*!
+  Set the image extension.
+ */
+void
+vpDiskGrabber::setExtension(const char *ext)
+{
+  sprintf(extension, ext) ;
 }
 
 /*!
