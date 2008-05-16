@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CTestConfig.cmake,v 1.3 2008-05-05 14:26:46 fspindle Exp $
+# $Id: CTestConfig.cmake,v 1.4 2008-05-16 13:05:42 fspindle Exp $
 #
 # Copyright (C) 1998-2008 Inria. All rights reserved.
 #
@@ -67,9 +67,14 @@ ELSE(BUILD_SHARED_LIBS)
 ENDIF(BUILD_SHARED_LIBS)
 
 # Add the build type, e.g. "Debug, Release..."
+# for Unix
 IF(CMAKE_BUILD_TYPE)
   SET(BUILDNAME "${BUILDNAME}-${CMAKE_BUILD_TYPE}")
 ENDIF(CMAKE_BUILD_TYPE)
+# for Windows
+IF(CMAKE_CONFIGURATION_TYPES)
+  SET(BUILDNAME "${BUILDNAME}-${CMAKE_CONFIGURATION_TYPES}")
+ENDIF(CMAKE_CONFIGURATION_TYPES)
 
 #---- Robots ----
 # Add specific Afma4 robots
