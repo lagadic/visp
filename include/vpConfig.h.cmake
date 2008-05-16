@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.22 2007-12-12 13:47:49 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.23 2008-05-16 10:02:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -128,7 +128,7 @@
 // Defined if Irisa's ICcomp framegraber available.
 #cmakedefine VISP_HAVE_ICCOMP
 
-// Defined if cfox library is available (only under Windows).
+// Defined if DirectShow library is available (only under Windows).
 #cmakedefine VISP_HAVE_DIRECTSHOW
 
 // Defined if Irisa's Afma4 robot available.
