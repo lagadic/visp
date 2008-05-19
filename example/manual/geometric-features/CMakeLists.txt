@@ -1,0 +1,8 @@
+PROJECT(GeometricFeatures)
+
+FIND_PACKAGE(VISP REQUIRED)
+IF(VISP_FOUND)
+  INCLUDE(${VISP_USE_FILE})
+ENDIF(VISP_FOUND)
+
+ADD_EXECUTABLE(geometricFeatures geometricFeatures.cpp)
