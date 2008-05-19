@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.cpp,v 1.8 2008-05-14 16:27:25 asaunier Exp $
+ * $Id: vpDiskGrabber.cpp,v 1.9 2008-05-19 13:14:23 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,8 +41,6 @@
 
 /*!
   Elementary constructor.
-
-
 */
 vpDiskGrabber::vpDiskGrabber()
 {
@@ -60,17 +58,17 @@ vpDiskGrabber::vpDiskGrabber()
 /*!
   Constructor.
 
-  \param dir  Location of the image sequence.
-  \param basename  Base name of each image.
-  \param number Initial image number.
-  \param step   Increment between two images.
-  \param noz Number of zero to code the image number.
-
+  \param dir : Location of the image sequence.
+  \param basename : Base name of each image.
+  \param number : Initial image number.
+  \param step : Increment between two images.
+  \param noz : Number of zero to code the image number.
+  \param ext : Extension of the image file.
 */
 
 vpDiskGrabber::vpDiskGrabber(const char *dir, const char *basename,
-			                       unsigned long number,
-			                       int step, int noz,
+                             unsigned long number,
+                             int step, int noz,
                              const char *ext)
 {
   setDirectory(dir);
