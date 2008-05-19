@@ -16,7 +16,7 @@ int main(){
   // If all cameras support 30 fps acquisition
   for (unsigned int camera=0; camera < ncameras; camera ++) {
     g.setCamera(camera);
-    g.setFramerate(vp1394Two::vpFRAMERATE_30);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
   }
   
   while(1) {

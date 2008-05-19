@@ -3,7 +3,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpDiskGrabber.h>
 
-main(){
+int main(){
   vpImage<unsigned char> I; // Grey level image
 
   // Declare a framegrabber able to read a sequence of successive
@@ -28,7 +28,7 @@ main(){
   g.open(I) ;
 
   // this is the loop over the image sequence
-  for(int cpt = 0, cpt < 100, cpt++)
+  for(int cpt = 0; cpt < 100; cpt++)
   {
     // read the image and then increment the image counter so that the next
     // call to acquire(I) will get the next image

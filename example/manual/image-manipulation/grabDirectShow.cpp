@@ -3,7 +3,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpDirectShowGrabber.h>
 
-main(){
+int main(){
 #ifdef VISP_HAVE_DIRECTSHOW
 
   vpImage<unsigned char> I; // Grey level image
