@@ -41,7 +41,8 @@ int main()
   // pose of the camera with reference to the scene
   vpTranslationVector t(0,0,1);
   vpRxyzVector rxyz(-M_PI/4,0,0);
-  vpHomogeneousMatrix cMo(t,rxyz);
+  vpRotationMatrix R(rxyz);
+  vpHomogeneousMatrix cMo(R,t);
 
   // scene building, geometric features definition
   vpPoint point;
