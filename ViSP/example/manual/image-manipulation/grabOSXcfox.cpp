@@ -3,7 +3,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpOSXcfoxGrabber.h>
 
-main(){
+int main(){
 #ifdef VISP_HAVE_CFOX
 
   vpImage<unsigned char> I; // Grey level image

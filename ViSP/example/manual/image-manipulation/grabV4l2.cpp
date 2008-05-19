@@ -2,7 +2,7 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpV4l2Grabber.h>
-main(){
+int main(){
 #ifdef VISP_HAVE_V4L2
 
   vpImage<unsigned char> I; // Grey level image
