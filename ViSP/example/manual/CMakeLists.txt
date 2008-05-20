@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.1 2008-05-19 09:54:09 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.2 2008-05-20 07:59:18 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -62,7 +62,7 @@ FOREACH(source ${SOURCE})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
   # Add test
-  ADD_TEST(${binary} ${binary})
+  # ADD_TEST(${binary} ${binary})
 
 ENDFOREACH(source)
 
