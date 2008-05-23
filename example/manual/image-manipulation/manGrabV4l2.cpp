@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manGrabV4l2.cpp,v 1.2 2008-05-23 15:22:01 asaunier Exp $
+ * $Id: manGrabV4l2.cpp,v 1.3 2008-05-23 15:44:42 asaunier Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * images grabbing example.
+ * Images grabbing example.
  *
  * Authors:
  * Anthony Saunier
@@ -38,13 +38,13 @@
 /*!
   \file manGrabV4l2.cpp
 
-  \brief images grabbing example with the vpV4l2Grabber class.
+  \brief Images grabbing example with the vpV4l2Grabber class.
 
  */
 /*!
   \example manGrabV4l2.cpp
 
-  \brief images grabbing example with the vpV4l2Grabber class.
+  \brief Images grabbing example with the vpV4l2Grabber class.
  
  */
 
