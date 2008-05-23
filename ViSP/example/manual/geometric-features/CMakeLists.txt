@@ -5,4 +5,4 @@ IF(VISP_FOUND)
   INCLUDE(${VISP_USE_FILE})
 ENDIF(VISP_FOUND)
 
-ADD_EXECUTABLE(geometricFeatures geometricFeatures.cpp)
+ADD_EXECUTABLE(manGeometricFeatures manGeometricFeatures.cpp)
