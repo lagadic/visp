@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manDisplay.cpp,v 1.2 2008-05-23 15:22:01 asaunier Exp $
+ * $Id: manDisplay.cpp,v 1.3 2008-05-23 15:44:42 asaunier Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -38,13 +38,13 @@
 /*!
   \file manDisplay.cpp
 
-  \brief display example.
+  \brief Display example.
 
  */
 /*!
   \example manDisplay.cpp
 
-  \brief display example.
+  \brief Display example.
  
  */
 #include <visp/vpConfig.h>
