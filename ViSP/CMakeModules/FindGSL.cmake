@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGSL.cmake,v 1.8 2007-10-03 15:09:51 asaunier Exp $
+# $Id: FindGSL.cmake,v 1.9 2008-05-23 13:47:16 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -128,9 +128,9 @@ ELSE(WIN32)
       # Because in GSL_LINK_LIBRARIES defs are separated by ";", parse the
       # GSL_LINK_LIBRARIES in order to build a space separated string
       FOREACH(libs ${GSL_LINK_LIBRARIES})
-	SET(GSL_LIBRARIES "${GSL_LIBRARIES} ${libs}")
+	LIST(APPEND GSL_LIBRARIES "${libs}")
       ENDFOREACH(libs)
-      #MESSAGE("GSL_LIBRARIES: ${GSL_LIBRARIES}")
+      #MESSAGE("GSL_LIBRARIES=${GSL_LIBRARIES}")
 
       ## split off the link dirs (for rpath)
       ## use regular expression to match wildcard equivalent "-L*<endchar>"
