@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2008-05-20 07:59:18 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.3 2008-05-23 13:25:47 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,15 +41,15 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  geometric-features/geometricFeatures.cpp
+  geometric-features/manGeometricFeatures.cpp
   helloworld/CMake/HelloWorld.cpp
-  image-manipulation/grab1394-1.cpp
-  image-manipulation/grab1394-2.cpp
-  image-manipulation/grabDirectShow.cpp
-  image-manipulation/grabDisk.cpp
-  image-manipulation/grabOSXcfox.cpp
-  image-manipulation/grabV4l2.cpp
-  image-manipulation/display.cpp
+  image-manipulation/manDisplay.cpp
+  image-manipulation/manGrab1394-1.cpp
+  image-manipulation/manGrab1394-2.cpp
+  image-manipulation/manGrabDirectShow.cpp
+  image-manipulation/manGrabDisk.cpp
+  image-manipulation/manGrabOSXcfox.cpp
+  image-manipulation/manGrabV4l2.cpp
 )
 
 # rule for binary build
