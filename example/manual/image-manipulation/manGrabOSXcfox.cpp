@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manGrabOSXcfox.cpp,v 1.3 2008-05-23 15:44:42 asaunier Exp $
+ * $Id: manGrabOSXcfox.cpp,v 1.4 2008-05-25 07:38:50 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -53,17 +53,18 @@
 #include <visp/vpImage.h>
 #include <visp/vpOSXcfoxGrabber.h>
 
-int main(){
-#ifdef VISP_HAVE_CFOX
-
+int main()
+{
   vpImage<unsigned char> I; // Grey level image
   
+#ifdef VISP_HAVE_CFOX
   vpOSXcfoxGrabber g;
   g.setInput(2);    // Input 2 on the board
   g.setScale(2);    // Use half-size images
   g.open(I);        // Open the grabber
   while(1)
     g.acquire(I);     // Acquire an image
-
 #endif
+
+  return 0;
 }

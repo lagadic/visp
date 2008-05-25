@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manGrabV4l2.cpp,v 1.3 2008-05-23 15:44:42 asaunier Exp $
+ * $Id: manGrabV4l2.cpp,v 1.4 2008-05-25 07:38:50 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -52,11 +52,13 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpV4l2Grabber.h>
-int main(){
-#ifdef VISP_HAVE_V4L2
+
+int main()
+{
 
   vpImage<unsigned char> I; // Grey level image
   
+#ifdef VISP_HAVE_V4L2
   vpV4l2Grabber g;
   g.setInput(2);    // Input 2 on the board
   g.setWidth(768);  // Acquired images are 768 width
@@ -65,6 +67,7 @@ int main(){
   g.open(I);        // Open the grabber
   while(1)
     g.acquire(I);     // Acquire a 768x576 grey image
-
 #endif
+
+  return 0;
 }

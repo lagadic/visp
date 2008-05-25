@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manGrab1394-1.cpp,v 1.3 2008-05-23 15:44:42 asaunier Exp $
+ * $Id: manGrab1394-1.cpp,v 1.4 2008-05-25 07:38:50 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -53,8 +53,8 @@
 #include <visp/vpImage.h>
 #include <visp/vp1394Grabber.h>
 
-int main(){
-
+int main()
+{
 #ifdef VISP_HAVE_DC1394_1
   unsigned int ncameras; // Number of cameras on the bus
   vp1394Grabber g;
@@ -82,4 +82,5 @@ int main(){
   delete [] I;
 #endif
 
+  return 0;
 }
