@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manDisplay.cpp,v 1.3 2008-05-23 15:44:42 asaunier Exp $
+ * $Id: manDisplay.cpp,v 1.4 2008-05-25 07:38:50 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -56,8 +56,6 @@
 
 int main()
 {
-#ifdef VISP_HAVE_GTK
-
   // Create a grey level image
   vpImage<unsigned char> I ;
 
@@ -65,6 +63,7 @@ int main()
   std::string filename = "/tmp/ViSP-images/Klimt/Klimt.pgm";
   vpImageIo::read(I, filename) ;
 
+#ifdef VISP_HAVE_GTK
   // Create a display using GTK
   vpDisplayGTK display;
 
@@ -121,6 +120,7 @@ int main()
 
   // Close the display
   vpDisplay::close(I);
-
 #endif
+
+  return 0;
 } 

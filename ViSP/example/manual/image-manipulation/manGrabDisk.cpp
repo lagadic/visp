@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manGrabDisk.cpp,v 1.3 2008-05-23 15:44:42 asaunier Exp $
+ * $Id: manGrabDisk.cpp,v 1.4 2008-05-25 07:38:50 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -53,7 +53,8 @@
 #include <visp/vpImage.h>
 #include <visp/vpDiskGrabber.h>
 
-int main(){
+int main()
+{
   vpImage<unsigned char> I; // Grey level image
 
   // Declare a framegrabber able to read a sequence of successive
@@ -84,4 +85,6 @@ int main(){
     // call to acquire(I) will get the next image
     g.acquire(I) ;
   }
+
+  return 0;
 }
