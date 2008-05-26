@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2007-01-29 10:20:46 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.5 2008-05-26 15:14:12 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   testRobotAfma6.cpp
+  testRobotAfma6Pose.cpp
 )
 
 # rule for binary build
