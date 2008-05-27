@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.1 2007-01-25 13:00:30 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.2 2008-05-27 09:42:19 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -53,10 +53,10 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
-  # Add test
-  ADD_TEST(${binary} ${binary})
-
 ENDFOREACH(source)
+
+# Add test
+ADD_TEST(moveAfma4 moveAfma4 -m)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

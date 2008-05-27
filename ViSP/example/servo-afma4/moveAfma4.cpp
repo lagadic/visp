@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma4.cpp,v 1.7 2008-01-31 14:38:53 asaunier Exp $
+ * $Id: moveAfma4.cpp,v 1.8 2008-05-27 09:42:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,16 +56,96 @@
 
 #ifdef VISP_HAVE_AFMA4
 
+#include <visp/vpParseArgv.h>
 #include <visp/vpRobotAfma4.h>
-#include <visp/vpDebug.h>
 
-int gsl_warnings_off;
+// List of allowed command line options
+#define GETOPTARGS	"mh"
+
+/*!
+
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+
+*/
+void usage(char *name, char *badparam)
+{
+  fprintf(stdout, "\n\
+Example of a positionning control followed by a velocity control \n\
+of the Afma6 robot.\n						   \
+\n\
+SYNOPSIS\n\
+  %s [-m] [-h]\n						      \
+", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -m\n\
+     Turn off the control of the robot. This option is\n\
+     essentially useful for security reasons during nightly\n\
+     tests.\n\
+\n\
+  -h\n\
+     Print the help.\n\n");
+
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
+
+}
+
+/*!
+
+  Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param control: Indicates if the control has to be applied to the robot.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv, bool &control)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'm': control = false; break;
+    case 'h': usage(argv[0], NULL); return false; break;
+
+    default:
+      usage(argv[0], optarg); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
 
 int
-main()
+main(int argc, char ** argv)
 {
   try
     {
+      bool control = true; // Turn on the robot control by applying positions
+			   // and velocities to the robot.
+      // Read the command line options
+      if (getOptions(argc, argv, control) == false) {
+	exit (-1);
+      }
+
       vpRobotAfma4 robot ;
 
       vpColVector qd(4) ;
@@ -82,7 +162,8 @@ main()
       vpTRACE("Position control: in articular...") ;
       vpCTRACE << "  position to reach: " << qd.t() << std::endl ;
       robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
-      robot.setPosition(vpRobot::ARTICULAR_FRAME, qd) ;
+      if (control)
+	robot.setPosition(vpRobot::ARTICULAR_FRAME, qd) ;
       sleep(1) ;
 
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
@@ -98,29 +179,34 @@ main()
       vpTRACE("Velocity control: rotation arround vertical axis...") ;
       q = 0 ;
       q[0] = vpMath::rad(2) ; // rotation arround vertical axis
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
 
       vpTRACE("Velocity control: vertical translation...") ;
       q = 0 ;
       q[1] = 0.2 ; // Vertical translation
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
       sleep(5) ;
 
       vpTRACE("Velocity control: vertical translation...") ;
       q = 0 ;
       q[1] = -0.2 ; // Vertical translation
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
       sleep(5) ;
       vpTRACE("Velocity control: pan rotation...") ;
       q = 0 ;
       q[2] = vpMath::rad(3) ; // pan
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
       sleep(5) ;
 
       vpTRACE("Velocity control: tilt rotation...") ;
       q = 0 ;
       q[3] = vpMath::rad(2) ; // tilt
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
       sleep(5) ;
 
       //
@@ -132,14 +218,16 @@ main()
       q.resize(2) ;
       q = 0.0;
       q[0] = vpMath::rad(2) ; // rotation arround vertical axis
-      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
       sleep(5) ;
 
       vpTRACE("Velocity control: ry rotation...") ;
       q.resize(2) ;
       q = 0.0;
       q[1] = vpMath::rad(2) ; // rotation arround vertical axis
-      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
       sleep(5) ;
 
       //
@@ -194,7 +282,7 @@ int
 main()
 {
   vpERROR_TRACE("You do not have an afma4 robot connected to your computer...");
-  return 0; 
+  return 0;
 }
 
 #endif
