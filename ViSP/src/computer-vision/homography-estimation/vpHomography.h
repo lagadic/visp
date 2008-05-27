@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.13 2008-02-05 14:01:17 fspindle Exp $
+ * $Id: vpHomography.h,v 1.14 2008-05-27 13:44:03 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,6 +80,8 @@ class VISP_EXPORT vpHomography : public vpMatrix
 
 private:
   static const double sing_threshold; // = 0.0001;
+  static const double threshold_rotation; 
+  static const double threshold_displacement;
   vpHomogeneousMatrix aMb ;
   //  bool isplanar;
   //! reference plane coordinates  expressed in Rb
