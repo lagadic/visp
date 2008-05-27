@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma6Pose.cpp,v 1.1 2008-05-26 15:14:12 fspindle Exp $
+ * $Id: testRobotAfma6Pose.cpp,v 1.2 2008-05-27 09:40:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,6 +64,7 @@
 
 int main()
 {
+  try {
   // Create an image B&W container
   vpImage<unsigned char> I;
 
@@ -216,11 +217,17 @@ int main()
 	    << vpMath::deg(r[2]) << " deg" << std::endl << std::endl;
 
   return 0;
+  }
+  catch(...) {
+    std::cout << "Test failed" << std::endl;
+    return 0;
+  }
 }
 #else
 int main()
 {
-  std::cout << "a test..." << std::endl;
+  std::cout << "Sorry, test not valid. You should have an Afma6 robot..."
+	    << std::endl;
   return 0;
 }
 
