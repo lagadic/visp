@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2007-12-20 15:45:20 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2008-05-27 09:42:19 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -63,10 +63,20 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
-  # Add test
-  ADD_TEST(${binary} ${binary})
-
 ENDFOREACH(source)
+
+# Add test
+ADD_TEST(moveAfma6 moveAfma6 -m)
+ADD_TEST(servoAfma6Ellipse2DCamVelocity servoAfma6Ellipse2DCamVelocity)
+ADD_TEST(servoAfma6FourPoints2DArtVelocity servoAfma6FourPoints2DArtVelocity)
+ADD_TEST(servoAfma6FourPoints2DCamVelocityInteractionDesired servoAfma6FourPoints2DCamVelocityInteractionDesired)
+ADD_TEST(servoAfma6FourPoints2DCamVelocityInteractionCurrent servoAfma6FourPoints2DCamVelocityInteractionCurrent)
+ADD_TEST(servoAfma6Line2DCamVelocity  servoAfma6Line2DCamVelocity)
+ADD_TEST(servoAfma6Point2DArtVelocity servoAfma6Point2DArtVelocity)
+ADD_TEST(servoAfma6Point2DCamVelocity servoAfma6Point2DCamVelocity)
+ADD_TEST(servoAfma6Points2DCamVelocityEyeToHand servoAfma6Points2DCamVelocityEyeToHand)
+ADD_TEST(servoAfma6SquareLines2DCamVelocity servoAfma6SquareLines2DCamVelocity)
+ADD_TEST(servoAfma6TwoLines2DCamVelocity servoAfma6TwoLines2DCamVelocity)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

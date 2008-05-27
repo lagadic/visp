@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma6.cpp,v 1.9 2008-01-31 14:39:59 asaunier Exp $
+ * $Id: moveAfma6.cpp,v 1.10 2008-05-27 09:42:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,21 +56,105 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
+#include <visp/vpParseArgv.h>
 
 #ifdef VISP_HAVE_AFMA6
 
 #include <visp/vpRobotAfma6.h>
 
+// List of allowed command line options
+#define GETOPTARGS	"mh"
+
+/*!
+
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+
+*/
+void usage(char *name, char *badparam)
+{
+  fprintf(stdout, "\n\
+Example of a positionning control followed by a velocity control \n\
+of the Afma6 robot.\n						   \
+\n\
+SYNOPSIS\n\
+  %s [-m] [-h]\n						      \
+", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -m\n\
+     Turn off the control of the robot. This option is\n\
+     essentially useful for security reasons during nightly\n\
+     tests.\n\
+\n\
+  -h\n\
+     Print the help.\n\n");
+
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
+
+}
+
+/*!
+
+  Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param control: Indicates if the control has to be applied to the robot.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, char **argv, bool &control)
+{
+  char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'm': control = false; break;
+    case 'h': usage(argv[0], NULL); return false; break;
+
+    default:
+      usage(argv[0], optarg); return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
 int
-main()
+main(int argc, char ** argv)
 {
   try
     {
+      bool control = true; // Turn on the robot control by applying positions
+			   // and velocities to the robot.
+      // Read the command line options
+      if (getOptions(argc, argv, control) == false) {
+	exit (-1);
+      }
+
       vpRobotAfma6 robot ;
 
-      robot.setPosition(vpRobot::REFERENCE_FRAME,
-			-0.1,0.2,0.1,
-			vpMath::rad(10),vpMath::rad(20),vpMath::rad(30)) ;
+      if (control)
+	robot.setPosition(vpRobot::REFERENCE_FRAME,
+			  -0.1,0.2,0.1,
+			  vpMath::rad(10),vpMath::rad(20),vpMath::rad(30)) ;
 
       vpColVector q(6) ;
       robot.getPosition(vpRobot::REFERENCE_FRAME, q) ;
@@ -84,20 +168,22 @@ main()
       q =0 ;
       q[2] = 0.01 ;
 
-
-      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
       sleep(5) ;
 
       q = 0 ;
       q[1] = 0.01 ;
 
-      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
       sleep(5) ;
 
       q = 0 ;
       q[5] = 0.01 ;
 
-      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+      if (control)
+	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
       sleep(5) ;
     }
   catch (...)
@@ -111,7 +197,7 @@ int
 main()
 {
   vpERROR_TRACE("You do not have an afma6 robot connected to your computer...");
-  return 0; 
+  return 0;
 }
 
 #endif
