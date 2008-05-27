@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2008-05-26 15:14:12 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.6 2008-05-27 09:41:18 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -54,10 +54,14 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
-  # Add test
-  ADD_TEST(${binary} ${binary})
-
 ENDFOREACH(source)
+
+# Add test 
+ADD_TEST(testRobotAfma6 testRobotAfma6) 
+
+# testRobotAfma6Pose cannot be run automaticlly, since human interaction is
+# required to click on the dots for the pose computation
+#ADD_TEST(testRobotAfma6Pose testRobotAfma6Pose) 
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
