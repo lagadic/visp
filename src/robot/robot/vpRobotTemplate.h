@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotTemplate.h,v 1.5 2008-05-23 09:02:45 asaunier Exp $
+ * $Id: vpRobotTemplate.h,v 1.6 2008-05-27 11:55:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,7 +95,7 @@ public:
   //! get a displacement expressed  in the articular frame
   void getArticularDisplacement(vpColVector &qdot) ;
   //! get a displacement (frame as to be specified)
-  void getDisplacement(vpRobot::vpControlFrameType frame,
+  void getDisplacement(const vpRobot::vpControlFrameType frame,
                        vpColVector &q) ;
 } ;
 
