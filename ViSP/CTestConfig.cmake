@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CTestConfig.cmake,v 1.4 2008-05-16 13:05:42 fspindle Exp $
+# $Id: CTestConfig.cmake,v 1.5 2008-05-28 12:55:03 fspindle Exp $
 #
 # Copyright (C) 1998-2008 Inria. All rights reserved.
 #
@@ -56,8 +56,20 @@ ELSE(BUILDNAME)
   SET(BUILDNAME "${CMAKE_SYSTEM_NAME}")
 ENDIF(BUILDNAME)
 
-# Add the compiler name, e.g. "g++, ..."
-SET(BUILDNAME "${BUILDNAME}-${CMAKE_BASE_NAME}")
+# Add the compiler name, e.g. "g++, msvc7..."
+IF(MSVC70)
+  SET(BUILDNAME "${BUILDNAME}-msvc70")
+ELSEIF(MSVC71)
+  SET(BUILDNAME "${BUILDNAME}-msvc71")
+ELSEIF(MSVC80)
+  SET(BUILDNAME "${BUILDNAME}-msvc80")
+ELSEIF(BORLAND)
+  SET(BUILDNAME "${BUILDNAME}-borland")
+ELSEIF(MINGW)
+  SET(BUILDNAME "${BUILDNAME}-mingw")
+ELSE(MSVC70)
+  SET(BUILDNAME "${BUILDNAME}-${CMAKE_BASE_NAME}")
+ENDIF(MSVC70)
 
 # Add the type of library generation, e.g. "Dynamic or Static"
 IF(BUILD_SHARED_LIBS)
@@ -179,3 +191,4 @@ IF(VISP_HAVE_PTHREAD)
   SET(BUILDNAME "${BUILDNAME}-pthread")
 ENDIF(VISP_HAVE_PTHREAD)
 
+#MESSAGE("BUILDNAME=${BUILDNAME}")
