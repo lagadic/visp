@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.14 2008-04-23 10:05:57 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.15 2008-05-29 14:40:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@
 
 
 // List of allowed command line options
-#define GETOPTARGS	"c:df:g:h:l:mn:io:t:sv:w:?"
+#define GETOPTARGS	"c:df:g:h:l:mn:io:r:st:v:w:?"
 
 
 #define DUAL_ACQ
@@ -89,12 +89,14 @@
   \param opath : Image filename when saving.
   \param roi_left, roi_top, roi_width, roi_height : Region of interest in
   format 7.
+  \param ringbuffersize : Ring buffer size used for capture.
 
 */
-void usage(char *name, char *badparam, unsigned int camera,
-	   unsigned int &nframes, std::string &opath,
-	   unsigned int &roi_left, unsigned int &roi_top,
-	   unsigned int &roi_width, unsigned int &roi_height)
+void usage(const char *name, const char *badparam, unsigned int camera,
+	   const unsigned int &nframes, const std::string &opath,
+	   const unsigned int &roi_left, const unsigned int &roi_top,
+	   const unsigned int &roi_width, const unsigned int &roi_height,
+	   const unsigned int &ringbuffersize)
 {
   if (badparam)
     fprintf(stderr, "\nERREUR: Bad parameter [%s]\n", badparam);
@@ -105,7 +107,7 @@ SYNOPTIQUE\n\
     [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
     [-i] [-s] [-d] [-o <filename>] [-l <format 7 roi left position>] \n\
     [-t <format 7 roi top position>] [-w <format 7 roi width>] \n\
-    [-h <format 7 roi height>] [-?]\n\
+    [-h <format 7 roi height>] [-r <ring buffer size>] [-?]\n\
 \n\
 DESCRIPTION\n\
     Test for firewire camera image acquisition.\n\
@@ -176,6 +178,8 @@ OPTIONS                                                    Default\n\
 \n\
     -d      : Flag to turn off image display.\n\
 \n\
+    -r [%%u] : Ring buffer size used during capture           %u\n\
+\n\
     -o [%%s] : Filename for image saving.                     \n\
               Example: -o %s\n\
               The first %%d is for the camera id. The second\n\
@@ -188,7 +192,7 @@ OPTIONS                                                    Default\n\
 \n",
 	  name, name, name, name, name, name, name,
 	  roi_left, roi_top, roi_width, roi_height,
-	  camera, nframes, opath.c_str());
+	  camera, nframes, ringbuffersize, opath.c_str());
 
   exit(0);
 }
@@ -215,6 +219,9 @@ OPTIONS                                                    Default\n\
   \param colorcoding_is_set : New color coding setting.
   \param colorcoding : Color coding setting (usefull only for format 7).
 
+  \param ringbuffersize_is_set : New ring buffer size.
+  \param ringbuffersize : Ring buffer size used during capture.
+
   \param display : Display activation.
   \param save : Image saving activation.
   \param opath : Image filename when saving.
@@ -232,6 +239,8 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
 		  vp1394TwoGrabber::vp1394TwoFramerateType &framerate,
 		  bool &colorcoding_is_set,
 		  vp1394TwoGrabber::vp1394TwoColorCodingType &colorcoding,
+		  bool &ringbuffersize_is_set,
+		  unsigned int &ringbuffersize,
 		  bool &display, bool &save, std::string &opath,
 		  unsigned int &roi_left, unsigned int &roi_top,
 		  unsigned int &roi_width, unsigned int &roi_height)
@@ -268,6 +277,9 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
     case 'o':
       save = true;
       opath = optarg; break;
+    case 'r':
+      ringbuffersize_is_set = true;
+      ringbuffersize = (unsigned int) atoi(optarg); break;
     case 's':
       verbose_settings = true; break;
     case 't':
@@ -280,14 +292,14 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
       roi_width = (unsigned int) atoi(optarg); break;
     default:
       usage(argv[0], NULL, camera, nframes, opath,
-	    roi_left, roi_top, roi_width, roi_height);
+	    roi_left, roi_top, roi_width, roi_height, ringbuffersize);
       break;
     }
 
   /* expect no args left over */
   if (argv[optind]) {
     usage(argv[0], argv[optind], camera, nframes, opath,
-	  roi_left, roi_top, roi_width, roi_height);
+	  roi_left, roi_top, roi_width, roi_height, ringbuffersize);
   }
 }
 
@@ -317,6 +329,8 @@ main(int argc, char ** argv)
     vp1394TwoGrabber::vp1394TwoFramerateType framerate;
     bool colorcoding_is_set = false;
     vp1394TwoGrabber::vp1394TwoColorCodingType colorcoding;
+    bool ringbuffersize_is_set = false;
+    unsigned int ringbuffersize;
     bool save = false;
 
     // Format 7 roi
@@ -327,12 +341,15 @@ main(int argc, char ** argv)
 
     // Create a grabber
     vp1394TwoGrabber g ;
+    // Get the default ring buffer size
+    ringbuffersize = g.getRingBufferSize();
 
     read_options(argc, argv, multi, camera, nframes,
 		 verbose_info, verbose_settings,
 		 videomode_is_set, videomode,
 		 framerate_is_set, framerate,
 		 colorcoding_is_set, colorcoding,
+		 ringbuffersize_is_set, ringbuffersize,
 		 display, save, opath,
 		 roi_left, roi_top, roi_width, roi_height);
 
@@ -487,6 +504,9 @@ main(int argc, char ** argv)
     if (colorcoding_is_set) {
       g.setCamera(camera);
       g.setColorCoding(colorcoding);
+    }
+    if (ringbuffersize_is_set) {
+      g.setRingBufferSize(ringbuffersize);
     }
 
     // In format 7 set roi to the hole image
