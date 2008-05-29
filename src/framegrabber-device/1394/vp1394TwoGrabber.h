@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.17 2008-02-08 16:38:13 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.18 2008-05-29 14:39:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -134,7 +134,6 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 {
 
  public:
-  static const int NUM_BUFFERS; // Number of buffers
   static const char * strVideoMode[DC1394_VIDEO_MODE_NUM];
   static const char * strFramerate[DC1394_FRAMERATE_NUM];
   static const char * strColorCoding[DC1394_COLOR_CODING_NUM];
@@ -216,6 +215,9 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   vp1394TwoGrabber();
   virtual ~vp1394TwoGrabber();
 
+  void setRingBufferSize(unsigned int size);
+  unsigned int getRingBufferSize();
+
   void setCamera(unsigned int camera);
   void getCamera(unsigned int &camera);
   void getNumCameras(unsigned int &ncameras);
@@ -254,6 +256,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void getHeight(unsigned int &height);
 
   void close();
+  void resetBus();
 
 public:
   static std::string videoMode2string(vp1394TwoVideoModeType videomode);
@@ -273,9 +276,10 @@ public:
   unsigned int num_cameras;
   unsigned int camera_id;
 
-private:
   bool verbose;
   bool *camInUse;
+
+  unsigned int num_buffers;
 
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
   dc1394_t * d;

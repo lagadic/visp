@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.28 2008-02-15 15:23:40 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.29 2008-05-29 14:39:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,8 +55,6 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 #include <visp/vpTime.h>
-
-const int vp1394TwoGrabber::NUM_BUFFERS = 1; /*!< Number of buffers */
 
 const char * vp1394TwoGrabber::strVideoMode[DC1394_VIDEO_MODE_NUM]= {
   "MODE_160x120_YUV444",
@@ -125,12 +123,13 @@ const char * vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM]= {
 
   By default:
   - the camera is the first found on the bus.
+  - the ring buffer size is set to 4.
 
   Current camera settings can be changed using setCamera() to select the active
   camera on the bus and than setVideoMode() or setFramerate() to fix the active
   camera settings. The list of supported video modes and framerates is
   available using respectively getVideoModeSupported() and
-  getFramerateSupported().
+  getFramerateSupported(). To change the ring buffer size use setRingBufferSize().
 
   \code
   vpImage<unsigned char> I;
@@ -160,6 +159,7 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
   d = NULL;
   list = NULL;
 #endif
+  num_buffers = 4; // ring buffer size
   open();
 
   init = true;
@@ -250,7 +250,6 @@ vp1394TwoGrabber::setCamera(unsigned int camera_id)
 
   // create a pointer to the working camera
   camera = cameras[camera_id];
-
   dc1394_video_set_iso_speed(camera, DC1394_ISO_SPEED_400);
 }
 
@@ -1131,12 +1130,6 @@ vp1394TwoGrabber::open()
   camInUse = new bool [num_cameras];
   dc1394switch_t status = DC1394_OFF;
 
-  //#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
-  // Call here dc1394_reset_bus() to be sure that we can restart the
-  // framegrabbing afer a non proper program termination, like a CTRL-C
-  dc1394_reset_bus(cameras[0]);
-  //#endif
-
   for (unsigned i=0; i < num_cameras; i ++){
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     dc1394_video_get_transmission(cameras[i], &status);
@@ -1166,8 +1159,8 @@ vp1394TwoGrabber::open()
 
   for (unsigned int i=0; i < num_cameras; i ++){
     setCamera(i);
-    setCapture(DC1394_ON);
     setTransmission(DC1394_ON);
+    setCapture(DC1394_ON);
   }
 }
 
@@ -1219,7 +1212,51 @@ vp1394TwoGrabber::close()
 
 /*!
 
-  Setup camera capture using dma.
+  Set the ring buffer size used for the capture.
+  To know the current ring buffer size see getRingBufferSize().
+
+  \param size : Ring buffer size.
+
+  \exception vpFrameGrabberException::settingError : If ring buffer size is not valid.
+
+  \sa getRingBufferSize()
+*/
+void 
+vp1394TwoGrabber::setRingBufferSize(unsigned int size)
+{
+  if (size < 1)  {
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Could not set ring buffer size") );
+  }
+
+  if (size != num_buffers) {
+    // We need to change the ring buffer size
+    num_buffers = size;
+    setCapture(DC1394_OFF);
+    setCapture(DC1394_ON);
+  }
+}
+
+/*!
+
+  Get the current ring buffer size used for the capture. To change the
+  ring buffer size see setRingBufferSize().
+
+  \return Current ring buffer size.
+
+  \sa setRingBufferSize()
+*/
+unsigned int
+vp1394TwoGrabber::getRingBufferSize()
+{
+  return num_buffers;
+}
+
+/*!
+
+  Setup camera capture using dma. A ring buffer is used for the
+  capture. It's size can be set using setRingBufferSize().
 
   \param _switch : Camera capture switch:
   - DC1394_ON to start dma capture,
@@ -1231,7 +1268,7 @@ vp1394TwoGrabber::close()
   \exception vpFrameGrabberException::settingError : If we can't set
   dma capture.
 
-  \sa setVideoMode(), setFramerate()
+  \sa setRingBufferSize(), setVideoMode(), setFramerate()
 */
 void
 vp1394TwoGrabber::setCapture(dc1394switch_t _switch)
@@ -1244,9 +1281,9 @@ vp1394TwoGrabber::setCapture(dc1394switch_t _switch)
   }
 
   if (_switch == DC1394_ON) {
-    //if (dc1394_capture_setup(camera, NUM_BUFFERS) != DC1394_SUCCESS) {
+    //if (dc1394_capture_setup(camera, num_buffers) != DC1394_SUCCESS) {
     // To be compatible with libdc1394 svn 382 version
-    if (dc1394_capture_setup(camera, NUM_BUFFERS,
+    if (dc1394_capture_setup(camera, num_buffers,
 			     DC1394_CAPTURE_FLAGS_DEFAULT) != DC1394_SUCCESS) {
       vpERROR_TRACE("Unable to setup camera capture-\n"
 		    "make sure that the video mode and framerate are "
@@ -1855,5 +1892,37 @@ vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
   return (vp1394TwoColorCodingType) 0;
 }
 
+/*!
+  Resets the IEEE1394 bus which camera is attached to.  Calling this function is
+  "rude" to other devices because it causes them to re-enumerate on the bus and
+  may cause a temporary disruption in their current activities.  Thus, use it
+  sparingly.  Its primary use is if a program shuts down uncleanly and needs to
+  free leftover ISO channels or bandwidth.  A bus reset will free those things
+  as a side effect.
+
+  The example below shows how to reset the bus attached to the last camera found.
+  \code
+  unsigned int ncameras; // Number of cameras on the bus
+  vp1394TwoGrabber g;
+  g.getNumCameras(ncameras);
+  g.setCamera(ncameras-1); // To dial with the last camera on the bus
+  g.resetBus(); // Reset the bus attached to "ncameras-1"
+  \endcode
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera is found.
+
+*/
+void vp1394TwoGrabber::resetBus()
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No camera found") );
+  }
+
+  dc1394_reset_bus(camera);
+}
 #endif
 
