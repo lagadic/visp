@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.7 2007-11-26 16:52:01 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.8 2008-05-29 14:41:58 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,6 +42,7 @@
 SET (SRC_SUBDIRS
   camera
   feature
+  framegrabber
   homography
   image
   math
