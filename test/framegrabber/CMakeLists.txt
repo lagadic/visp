@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.9 2008-05-29 14:35:46 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.10 2008-06-06 11:26:41 asaunier Exp $
 #
 # Copyright (C) 1998-2008 Inria. All rights reserved.
 #
@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   test1394TwoResetBus.cpp
+  test1394TwoGrabber.cpp
 )
 
 # rule for binary build
