@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseLagrange.cpp,v 1.6 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpPoseLagrange.cpp,v 1.7 2008-06-06 11:28:51 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -233,7 +233,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 {
 
   if (DEBUG_LEVEL1)
-    std::cout << "begin CPose::PoseLagrange(...) " << std::endl ;
+    std::cout << "begin vpPose::PoseLagrange(...) " << std::endl ;
   try
   {
     double s;
