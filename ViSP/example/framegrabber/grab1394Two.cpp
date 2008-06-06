@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.15 2008-05-29 14:40:14 fspindle Exp $
+ * $Id: grab1394Two.cpp,v 1.16 2008-06-06 11:30:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -416,7 +416,7 @@ main(int argc, char ** argv)
 	  std::cout << "----------------------------------------------------------"
 	       << std::endl
 	       << "---- Video modes and framerates supported by camera "
-	       << i << " ----" << std::endl
+	       << i+offset << " ----" << std::endl
 	       << "---- * is for the current settings                    ----"
 	       << std::endl
 	       << "---- between ( ) you have the corresponding option    ----"
