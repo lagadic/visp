@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.cpp,v 1.12 2008-02-26 10:32:11 asaunier Exp $
+ * $Id: vpFeatureThetaU.cpp,v 1.13 2008-06-06 11:32:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -150,7 +150,7 @@ vpFeatureThetaU::buildFrom(const vpHomogeneousMatrix &cdMc)
     buildFrom(tu) ;
 }
 
-//! compute the interaction matrix from a subset a the possible features
+//! compute the interaction matrix from a subset of the possible features
 vpMatrix
 vpFeatureThetaU::interaction(const int select) const
 {
@@ -215,7 +215,7 @@ vpFeatureThetaU::interaction(const int select) const
 }
 
 //! compute the error between two visual features from a subset
-//! a the possible features
+//! of the possible features
 vpColVector
 vpFeatureThetaU::error(const vpBasicFeature &s_star,
 	       const int select)
@@ -235,28 +235,25 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
 
     if (vpFeatureThetaU::selectTUx() & select )
     {
-	vpColVector ex(1) ;
-	ex[0] = s[0]  ;
-	e = vpMatrix::stackMatrices(e,ex) ;
+      vpColVector ex(1) ;
+      ex[0] = s[0]  ;
+      e = vpMatrix::stackMatrices(e,ex) ;
     }
 
     if (vpFeatureThetaU::selectTUy() & select )
     {
-	vpColVector ey(1) ;
-	ey[0] = s[1] ;
-	e = vpMatrix::stackMatrices(e,ey) ;
+      vpColVector ey(1) ;
+      ey[0] = s[1] ;
+      e = vpMatrix::stackMatrices(e,ey) ;
     }
 
     if (vpFeatureThetaU::selectTUz() & select )
     {
-	vpColVector ez(1) ;
-	ez[0] = s[2] ;
-	e = vpMatrix::stackMatrices(e,ez) ;
+      vpColVector ez(1) ;
+      ez[0] = s[2] ;
+      e = vpMatrix::stackMatrices(e,ez) ;
     }
-
-
     return e ;
-
 }
 
 
