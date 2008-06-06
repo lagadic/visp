@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test1394TwoResetBus.cpp,v 1.1 2008-05-29 14:35:46 fspindle Exp $
+ * $Id: test1394TwoResetBus.cpp,v 1.2 2008-06-06 11:26:41 asaunier Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@
 #if defined(VISP_HAVE_DC1394_2)
 
 #include <visp/vp1394TwoGrabber.h>
+#include <visp/vpImage.h>
 
 /*!
   \example test1394TwoResetBus.cpp
@@ -74,6 +75,9 @@ main()
     vp1394TwoGrabber g;
     g.resetBus(); // Reset the bus attached to the first camera found
     std::cout << "IEEE1394 bus was reset." << std::endl;
+      
+    vpImage<unsigned char> I;
+    g.acquire(I);    
   }
   catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
