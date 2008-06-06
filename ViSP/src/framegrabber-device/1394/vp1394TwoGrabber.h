@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.18 2008-05-29 14:39:13 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.19 2008-06-06 11:25:07 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -225,6 +225,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void setVideoMode(vp1394TwoVideoModeType videomode);
   void getVideoMode(vp1394TwoVideoModeType & videomode);
   int  getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
+  bool isVideoModeSupported(vp1394TwoVideoModeType videomode) ;
   bool isVideoModeFormat7(vp1394TwoVideoModeType videomode);
   bool isColor();
 
@@ -232,11 +233,15 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void getFramerate(vp1394TwoFramerateType & fps);
   int  getFramerateSupported(vp1394TwoVideoModeType videomode,
 			     vpList<vp1394TwoFramerateType> & fps);
+  bool isFramerateSupported(vp1394TwoVideoModeType videomode,
+                            vp1394TwoFramerateType fps);
 
   void setColorCoding(vp1394TwoColorCodingType coding);
   void getColorCoding(vp1394TwoColorCodingType & coding);
   int  getColorCodingSupported(vp1394TwoVideoModeType videomode,
 			       vpList<vp1394TwoColorCodingType> & codings);
+  bool isColorCodingSupported(vp1394TwoVideoModeType videomode,
+                              vp1394TwoColorCodingType coding);
 
   void setFormat7ROI(unsigned int left=0, unsigned int top=0,
 		     unsigned int width=0, unsigned int height=0);
@@ -268,6 +273,7 @@ public:
 
  private:
   void open();
+  void initialize(); 
   void setCapture(dc1394switch_t _switch);
   void setTransmission(dc1394switch_t _switch);
 
@@ -277,8 +283,7 @@ public:
   unsigned int camera_id;
 
   bool verbose;
-  bool *camInUse;
-
+  bool *camIsOpen;
   unsigned int num_buffers;
 
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
