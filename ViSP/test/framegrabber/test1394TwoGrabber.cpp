@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: test1394TwoGrabber.cpp,v 1.1 2008-06-06 11:22:38 asaunier Exp $
+ * $Id: test1394TwoGrabber.cpp,v 1.2 2008-06-10 14:37:08 asaunier Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -58,7 +58,7 @@
 /*!
   \example test1394TwoGrabber.cpp
 
-  
+
 
 */
 int
@@ -67,25 +67,25 @@ main()
   try  {
     std::cout << "IEEE1394 test in progress..." << std::endl;
 
-  // Creation of an empty image container
-  vpImage<unsigned char> I;
+    // Creation of an empty image container
+    vpImage<unsigned char> I;
 
-  // Creation of a framegrabber
-  vp1394TwoGrabber g;
-  for(int i=0;i<10;i++) g.acquire(I);
-  g.close();
-  vpImageIo::write(I,"/tmp/imagetest1.pgm");
+    // Creation of a framegrabber
+    vp1394TwoGrabber g;
+    for (int i=0;i<10;i++) g.acquire(I);
+    g.close();
+    vpImageIo::write(I,"/tmp/$USER/imagetest1.pgm");
 
-  std::cout << "New connection..."<< std::endl;
-  g.open(I);
-  g.close();
+    std::cout << "New connection..."<< std::endl;
+    g.open(I);
+    g.close();
 
-  std::cout << "New connection..."<< std::endl;
-  g.open(I);
-  //g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_YUV422);
-  g.acquire(I);
-  g.close();
-  vpImageIo::write(I,"/tmp/imagetest2.pgm");
+    std::cout << "New connection..."<< std::endl;
+    g.open(I);
+    //g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_YUV422);
+    g.acquire(I);
+    g.close();
+    vpImageIo::write(I,"/tmp/$USER/imagetest2.pgm");
   }
   catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
@@ -96,7 +96,7 @@ int
 main()
 {
   vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
-	  "You should install libdc1394-2 to use this binary.") ;
+          "You should install libdc1394-2 to use this binary.") ;
 }
 
 #endif
