@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp,v 1.6 2007-06-25 12:30:50 asaunier Exp $
+ * $Id: vpTranslationVector.cpp,v 1.7 2008-06-13 17:01:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,6 +37,8 @@
 
 
 #include <visp/vpTranslationVector.h>
+#include <stdio.h>
+#include <string.h>
 
 // Exception
 #include <visp/vpException.h>

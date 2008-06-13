@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeSite.cpp,v 1.12 2007-06-14 12:04:22 marchand Exp $
+ * $Id: vpMeSite.cpp,v 1.13 2008-06-13 17:01:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,7 +41,7 @@
   \brief Moving edges
 */
 
-
+#include <stdlib.h>
 
 #include <visp/vpMeSite.h>
 #include <visp/vpMe.h>
