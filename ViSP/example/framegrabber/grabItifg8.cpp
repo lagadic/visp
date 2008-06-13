@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabItifg8.cpp,v 1.9 2007-09-28 14:45:01 asaunier Exp $
+ * $Id: grabItifg8.cpp,v 1.10 2008-06-13 13:37:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,7 +78,7 @@
   \param conffile : Camera configuration file.
 
 */
-void usage(char *name, char *badparam, unsigned board, float fps,
+void usage(const char *name, const char *badparam, unsigned board, float fps,
 	   unsigned input, unsigned scale, unsigned buffer,
 	   unsigned &nframes, std::string opath, std::string conffile)
 {
@@ -163,12 +163,12 @@ OPTIONS:                                                  Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, unsigned &board, float &fps,
+bool getOptions(int argc, const char **argv, unsigned &board, float &fps,
 		unsigned &input, unsigned &scale, unsigned &buffer,
 		bool &display, unsigned &nframes, bool &save,
 		std::string &opath, std::string &conffile)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -216,7 +216,7 @@ bool getOptions(int argc, char **argv, unsigned &board, float &fps,
 
 */
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   unsigned board = 0;
   float fps = 25.;

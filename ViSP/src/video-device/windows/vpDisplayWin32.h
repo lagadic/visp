@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.19 2008-01-30 16:15:46 fspindle Exp $
+ * $Id: vpDisplayWin32.h,v 1.20 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -114,11 +114,11 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   vpDisplayWin32(vpImage<vpRGBa> &I,
 		 int winx=-1, int winy=-1,
-		 char *title=NULL);
+		 const char *title=NULL);
 
   vpDisplayWin32(vpImage<unsigned char> &I,
 		 int winx=-1, int winy=-1,
-		 char *title=NULL);
+		 const char *title=NULL);
 
   virtual ~vpDisplayWin32();
 
@@ -142,17 +142,17 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   //! Initialization function
   void init(vpImage<unsigned char> &I,
 	    int winx=-1, int winy=-1,
-	    char *title=NULL)  ;
+	    const char *title=NULL)  ;
 
   //! Initialization function
   void init(vpImage<vpRGBa> &I,
 	    int winx=-1, int winy=-1,
-	    char *title=NULL)  ;
+	    const char *title=NULL)  ;
 
   //! Initialization function
   void init(unsigned int width, unsigned int height,
 	    int winx=-1, int winy=-1 ,
-	    char *title=NULL) ;
+	    const char *title=NULL) ;
 
   //! Sets the window's position
   void setWindowPosition(int _winx, int _winy);
@@ -164,7 +164,7 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   void displayArrow(int i1, int j1, int i2, int j2,
 		    vpColor::vpColorType col=vpColor::white,
 		    unsigned int L=4,unsigned int l=2);
-  void displayCharString(int i, int j,char *s,
+  void displayCharString(int i, int j,const char *s,
 			 vpColor::vpColorType c=vpColor::green);
   //! Display a circle at coordinates (i,j) in the display window.
   void displayCircle(int i, int j, unsigned int r,

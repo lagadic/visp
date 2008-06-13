@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.7 2007-09-28 14:46:47 asaunier Exp $
+ * $Id: servoBiclopsPoint2DArtVelocity.cpp,v 1.8 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -125,7 +125,7 @@ void signalCtrC( int signumber )
   \param user : Username.
 
  */
-void usage(char *name, char *badparam, std::string& conf, std::string& debugdir, std::string& user)
+void usage(const char *name, const char *badparam, std::string& conf, std::string& debugdir, std::string& user)
 {
   fprintf(stdout, "\n\
   Example of eye-in-hand control law. We control here a real robot, the biclops\n\
@@ -160,9 +160,9 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, std::string& conf, std::string &debugdir, std::string& user)
+bool getOptions(int argc, const char **argv, std::string& conf, std::string &debugdir, std::string& user)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -190,7 +190,7 @@ bool getOptions(int argc, char **argv, std::string& conf, std::string &debugdir,
 
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   std::cout << std::endl ;
   std::cout << "-------------------------------------------------------" << std::endl ;

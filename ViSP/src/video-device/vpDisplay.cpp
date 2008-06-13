@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.28 2008-02-01 15:11:39 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.29 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -465,7 +465,7 @@ vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
-                               int i, int j,char *s,
+                               int i, int j,const char *s,
                                vpColor::vpColorType c )
 {
   try
@@ -855,7 +855,7 @@ vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
-                               int i, int j, char *s,
+                               int i, int j, const char *s,
                                vpColor::vpColorType c )
 {
   try
@@ -1202,7 +1202,7 @@ vpDisplay::displayRectangle_uv ( const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
-                                  int u, int v, char *s,
+                                  int u, int v, const char *s,
                                   vpColor::vpColorType c )
 {
   try
@@ -1449,7 +1449,7 @@ vpDisplay::displayArrow_uv ( const vpImage<vpRGBa> &I,
 */
 void
 vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
-                                  int u, int v, char *s,
+                                  int u, int v, const char *s,
                                   vpColor::vpColorType c )
 {
   try

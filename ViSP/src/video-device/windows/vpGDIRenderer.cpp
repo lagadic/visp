@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGDIRenderer.cpp,v 1.16 2008-02-14 15:40:10 asaunier Exp $
+ * $Id: vpGDIRenderer.cpp,v 1.17 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -542,7 +542,7 @@ void vpGDIRenderer::drawCircle(int i, int j, unsigned int r,
   \param s The string to display
   \param col The text's color
 */
-void vpGDIRenderer::drawText(int i, int j, char * s,
+void vpGDIRenderer::drawText(int i, int j, const char * s,
 			     vpColor::vpColorType c)
 {
   //get the window's DC

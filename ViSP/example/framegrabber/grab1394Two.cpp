@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.16 2008-06-06 11:30:15 asaunier Exp $
+ * $Id: grab1394Two.cpp,v 1.17 2008-06-13 13:37:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -230,7 +230,7 @@ OPTIONS                                                    Default\n\
   format 7.
 
 */
-void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
+void read_options(int argc, const char **argv, bool &multi, unsigned int &camera,
 		  unsigned int &nframes, bool &verbose_info,
 		  bool &verbose_settings,
 		  bool &videomode_is_set,
@@ -245,12 +245,12 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
 		  unsigned int &roi_left, unsigned int &roi_top,
 		  unsigned int &roi_width, unsigned int &roi_height)
 {
-  int	c;
   /*
    * Lecture des options.
    */
-
-  while ((c = getopt(argc, argv, GETOPTARGS)) != EOF)
+  const char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1)
     switch (c) {
     case 'c':
       camera = atoi(optarg); break;
@@ -313,7 +313,7 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
 
 */
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   try  {
     unsigned int camera = 0;

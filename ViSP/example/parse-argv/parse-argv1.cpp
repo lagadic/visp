@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: parse-argv1.cpp,v 1.3 2007-05-04 16:06:44 fspindle Exp $
+ * $Id: parse-argv1.cpp,v 1.4 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,7 +69,7 @@
   \param d_val : A double.
 
 */
-void usage(char *name, char *badparam, int i_val, float f_val, double d_val)
+void usage(const char *name, const char *badparam, int i_val, float f_val, double d_val)
 {
   fprintf(stdout, "\n\
 Parsing command line arguments example.\n\
@@ -111,9 +111,9 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, int &i_val, float &f_val, double &d_val)
+bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d_val)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -140,7 +140,7 @@ bool getOptions(int argc, char **argv, int &i_val, float &f_val, double &d_val)
 }
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   using ::std::cout;
   using ::std::endl;

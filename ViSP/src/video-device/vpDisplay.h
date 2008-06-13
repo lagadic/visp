@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.23 2008-01-31 14:58:46 asaunier Exp $
+ * $Id: vpDisplay.h,v 1.24 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,16 +101,16 @@ protected :
   //! initialization
   virtual void init(vpImage<unsigned char> &I,
 		    int winx=-1, int winy=-1,
-		    char *title=NULL) =0 ;
+		    const char *title=NULL) =0 ;
   //! initialization
   virtual void init(vpImage<vpRGBa> &I,
 		    int winx=-1, int winy=-1,
-		    char *title=NULL) =0 ;
+		    const char *title=NULL) =0 ;
 
   //! initialization
   virtual void init(unsigned int width, unsigned int height,
 		    int winx=-1, int winy=-1 ,
-		    char *title=NULL) =0;
+		    const char *title=NULL) =0;
 
   virtual void setWindowPosition(int _winx, int _winy) = 0 ;
 
@@ -126,7 +126,7 @@ protected :
   virtual void displayArrow(int i1, int j1, int i2, int j2,
 			    vpColor::vpColorType col=vpColor::white,
 			    unsigned int L=4,unsigned int l=2) =0;
-  virtual void displayCharString(int i, int j,char *s,
+  virtual void displayCharString(int i, int j,const char *s,
 				 vpColor::vpColorType c=vpColor::green)=0 ;
   //! Display a circle at coordinates (i,j) in the display window.
   virtual void displayCircle(int i, int j, unsigned int r,
@@ -198,21 +198,21 @@ protected :
 			      unsigned int L=4,unsigned int l=2) ;
   //! Display a string
   static void displayCharString(const vpImage<unsigned char> &I,
-				int i, int j, char *s,
+				int i, int j,const char *s,
 				vpColor::vpColorType c) ;
 
   //! Display a string
   static void displayCharString(const vpImage<vpRGBa> &I,
-				int i, int j, char *s,
+				int i, int j, const char *s,
 				vpColor::vpColorType c) ;
   //! Display a string
   static void displayCharString_uv(const vpImage<unsigned char> &I,
-				   int u, int v, char *s,
+				   int u, int v, const char *s,
 				   vpColor::vpColorType c) ;
 
   //! Display a string
   static void displayCharString_uv(const vpImage<vpRGBa> &I,
-				   int u, int v, char *s,
+				   int u, int v, const char *s,
 				   vpColor::vpColorType c) ;
 
   //! Display a circle at coordinates (i,j) in the display window.

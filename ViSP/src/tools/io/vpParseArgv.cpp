@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.10 2007-06-11 08:38:01 asaunier Exp $
+ * $Id: vpParseArgv.cpp,v 1.11 2008-06-13 13:37:37 asaunier Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -49,8 +49,8 @@ vpParseArgv::vpArgvInfo vpParseArgv::defaultTable[2] = {
 	(char *) NULL}
 };
 
-int (*handlerProc1)(char *dst, char *key, char *argument);
-int (*handlerProc2)(char *dst, char *key, int valargc, char **argument);
+int (*handlerProc1)(const char *dst, const char *key, const char *argument);
+int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **argument);
 
 
 /*!
@@ -71,13 +71,13 @@ int (*handlerProc2)(char *dst, char *key, int valargc, char **argument);
  *
  */
 bool
-vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
+vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, int flags)
 
 {
    register vpArgvInfo *infoPtr;	/* Pointer to the current entry in the
 				 * table of argument descriptions. */
    vpArgvInfo *matchPtr;	        /* Descriptor that matches current argument. */
-   char *curArg;		/* Current argument */
+   const char *curArg;		/* Current argument */
    register char c;		/* Second character of current arg (used for
 				 * quick check for matching;  use 2nd char.
 				 * because first char. will almost always
@@ -220,7 +220,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
             if (argc == 0) {
                goto missingArg;
             } else {
-               *(((char **)infoPtr->dst)+i) = argv[srcIndex];
+               *(((const char **)infoPtr->dst)+i) = argv[srcIndex];
                srcIndex++;
                argc--;
             }
@@ -275,7 +275,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
          break;
 
       case ARGV_FUNC: {
-         handlerProc1 = (int (*)(char *dst, char *key, char *argument))infoPtr->src;
+         handlerProc1 = (int (*)(const char *dst, const char *key, const char *argument))infoPtr->src;
 
          if ((*handlerProc1)(infoPtr->dst, infoPtr->key, argv[srcIndex]))
 	 {
@@ -285,7 +285,7 @@ vpParseArgv::parse(int *argcPtr, char **argv, vpArgvInfo *argTable, int flags)
          break;
       }
       case ARGV_GENFUNC: {
-         handlerProc2 = (int (*)(char *dst, char *key, int valargc, char **argument))infoPtr->src;
+         handlerProc2 = (int (*)(const char *dst, const char *key, int valargc, const char **argument))infoPtr->src;
 
          argc = (*handlerProc2)(infoPtr->dst, infoPtr->key, argc, argv+srcIndex);
          if (argc < 0) {
@@ -436,14 +436,14 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
             break;
          }
          case ARGV_STRING: {
-            char *string;
+            const char *string;
 
             nargs = (long) infoPtr->src;
             if (nargs<1) nargs=1;
-            string = *((char **) infoPtr->dst);
+            string = *((const char **) infoPtr->dst);
             if ((nargs==1) && (string == NULL)) break;
             for (j=0; j<nargs; j++) {
-               string = *(((char **) infoPtr->dst)+j);
+               string = *(((const char **) infoPtr->dst)+j);
                if (string != NULL) {
                   FPRINTF(stderr, " \"%s\"", string);
                }
@@ -496,12 +496,12 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
   is NULL.
 
 */
-int vpParseArgv::parse(int argc, char** argv, char* validOpts, char** param)
+int vpParseArgv::parse(int argc, const char** argv, const char* validOpts, const char** param)
 {
   static int iArg = 1;
   int chOpt;
-  char* psz = NULL;
-  char* pszParam = NULL;
+  const char* psz = NULL;
+  const char* pszParam = NULL;
 
   if (iArg < argc) {
     psz = &(argv[iArg][0]);

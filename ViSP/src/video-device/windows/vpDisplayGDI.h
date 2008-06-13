@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpDisplayGDI.h,v 1.6 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,12 +61,12 @@ public:
 
   vpDisplayGDI(vpImage<vpRGBa> &I,
 	       int winx=-1, int winy=-1,
-	       char *_title=NULL);
+	       const char *_title=NULL);
 
 
   vpDisplayGDI(vpImage<unsigned char> &I,
 	       int winx=-1, int winy=-1,
-	       char *_title=NULL);
+	       const char *_title=NULL);
 
   virtual ~vpDisplayGDI();
 

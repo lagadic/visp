@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: parse-argv2.cpp,v 1.4 2007-06-12 07:30:01 asaunier Exp $
+ * $Id: parse-argv2.cpp,v 1.5 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,7 @@
 
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   using ::std::cout;
   using ::std::endl;

@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity2.cpp,v 1.7 2008-02-08 14:01:59 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity2.cpp,v 1.8 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,7 +78,7 @@ Print the program options.
   \param badparam : Bad parameter name.
 
 */
-void usage(char *name, char *badparam)
+void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Simulation of a 2 1/2 D visual servoing (x,y,log Z, theta U):\n\
@@ -108,9 +108,9 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv)
+bool getOptions(int argc, const char **argv)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -135,7 +135,7 @@ bool getOptions(int argc, char **argv)
 }
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   // Read the command line options
   if (getOptions(argc, argv) == false) {

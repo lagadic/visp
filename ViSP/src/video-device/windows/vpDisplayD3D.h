@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayD3D.h,v 1.4 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpDisplayD3D.h,v 1.5 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,11 +59,11 @@ public:
   
   vpDisplayD3D(vpImage<vpRGBa> &I,
 		    int winx=-1, int winy=-1,
-		    char *_title=NULL);
+		    const char *_title=NULL);
   
   vpDisplayD3D(vpImage<unsigned char> &I,
 		    int winx=-1, int winy=-1,
-		    char *_title=NULL);
+		    const char *_title=NULL);
   
   virtual ~vpDisplayD3D();
   

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testPoint.cpp,v 1.3 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: testPoint.cpp,v 1.4 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@
   Print the program options.
 
 */
-void usage(char *name, char *badparam)
+void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Performs various tests on the point class.\n\
@@ -82,9 +82,9 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv)
+bool getOptions(int argc, const char **argv)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -110,7 +110,7 @@ bool getOptions(int argc, char **argv)
 
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   // Read the command line options
   if (getOptions(argc, argv) == false) {

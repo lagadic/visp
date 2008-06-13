@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: ringLight.cpp,v 1.6 2008-01-22 08:48:42 asaunier Exp $
+ * $Id: ringLight.cpp,v 1.7 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,7 @@
   \param nmsec : Pulse duration in ms
 
 */
-void usage(char *name, char *badparam, int nsec, double nmsec)
+void usage(const char *name, const char *badparam, int nsec, double nmsec)
 {
   fprintf(stdout, "\n\
 Send a pulse to activate the ring light or turn on the ring light \n\
@@ -121,9 +121,9 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, bool &on, int &nsec, double &nmsec)
+bool getOptions(int argc, const char **argv, bool &on, int &nsec, double &nmsec)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
 
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
@@ -156,7 +156,7 @@ bool getOptions(int argc, char **argv, bool &on, int &nsec, double &nmsec)
 
 */
 int
-main(int argc, char **argv)
+main(int argc, const char **argv)
 {
   bool on = false;
   int nsec = 5; // Time while the ring light is turned on

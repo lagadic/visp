@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuLine2DCamVelocityDisplay.cpp,v 1.8 2007-11-28 10:54:19 fspindle Exp $
+ * $Id: servoSimuLine2DCamVelocityDisplay.cpp,v 1.9 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -97,7 +97,7 @@ Print the program options.
   \param badparam : Bad parameter name.
 
 */
-void usage(char *name, char *badparam)
+void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Simulation of 2D a visual servoing on a line:\n\
@@ -137,9 +137,9 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -167,7 +167,7 @@ bool getOptions(int argc, char **argv, bool &click_allowed, bool &display)
 
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   bool opt_display = true;
   bool opt_click_allowed = true;

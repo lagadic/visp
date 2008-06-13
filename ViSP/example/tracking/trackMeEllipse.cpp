@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeEllipse.cpp,v 1.9 2007-12-19 13:13:00 fspindle Exp $
+ * $Id: trackMeEllipse.cpp,v 1.10 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@
   \param ipath : Input image path.
 
 */
-void usage(char *name, char *badparam, std::string ipath)
+void usage(const char *name, const char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
 Test auto detection of dots using vpDot2.\n\
@@ -125,9 +125,9 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, std::string &ipath, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -156,7 +156,7 @@ bool getOptions(int argc, char **argv, std::string &ipath, bool &click_allowed, 
 
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   std::string env_ipath;
   std::string opt_ipath;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMouseEvent.cpp,v 1.3 2007-12-18 14:30:47 fspindle Exp $
+ * $Id: testMouseEvent.cpp,v 1.4 2008-06-13 13:37:40 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -100,7 +100,7 @@ typedef enum {
   \param dtype : Type of video device.
 
  */
-void usage(char *name, char *badparam, std::string ipath, std::string ppath,
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
            unsigned first, unsigned nimages, unsigned step,
            vpDisplayType &dtype)
 {
@@ -204,11 +204,11 @@ SYNOPSIS\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
 		unsigned &first, unsigned &nimages, unsigned &step,
 		vpDisplayType &dtype, bool &list, bool &display, bool &wait)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   std::string sDisplayType; 
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
@@ -259,7 +259,7 @@ bool getOptions(int argc, char **argv, std::string &ipath, std::string &ppath,
 }
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   std::string env_ipath;
   std::string opt_ipath;

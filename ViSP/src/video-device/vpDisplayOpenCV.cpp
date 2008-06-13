@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.3 2008-04-02 15:45:44 asaunier Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.4 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,7 +73,7 @@ int vpDisplayOpenCV::count = 1;
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
                                  int _x,
                                  int _y,
-                                 char *_title) : vpDisplay()
+                                 const char *_title) : vpDisplay()
 {
   col = NULL;
   title = NULL ;
@@ -95,7 +95,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
                                  int _x,
                                  int _y,
-                                 char *_title)
+                                 const char *_title)
 {
   col = NULL;
   title = NULL ;
@@ -148,7 +148,7 @@ void
 vpDisplayOpenCV::init(vpImage<unsigned char> &I,
                       int _x,
                       int _y,
-                      char *_title)
+                      const char *_title)
 {
 
   if ((I.getHeight() == 0) || (I.getWidth()==0))
@@ -174,7 +174,7 @@ void
 vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
                       int _x,
                       int _y,
-                      char *_title)
+                      const char *_title)
 {
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
@@ -199,7 +199,7 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
 void
 vpDisplayOpenCV::init(unsigned int width, unsigned int height,
                       int _x, int _y,
-                      char *_title)
+                      const char *_title)
 {
   this->width  = width;
   this->height = height;
@@ -706,7 +706,7 @@ vpDisplayOpenCV::displayRectangle(const vpRect &rect,
   \param color (see vpColor)
 */
 void vpDisplayOpenCV::displayCharString(int i, int j,
-                                        char *string, vpColor::vpColorType color)
+                                        const char *string, vpColor::vpColorType color)
 {
   if (OpenCVinitialized)
   {

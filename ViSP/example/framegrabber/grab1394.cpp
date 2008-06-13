@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.10 2008-04-23 10:00:53 fspindle Exp $
+ * $Id: grab1394.cpp,v 1.11 2008-06-13 13:37:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -80,7 +80,7 @@
   \param req_color: Requested color image display activation.
 
 */
-void usage(char *name, char *badparam, vp1394Grabber &g, long &req_number, bool &req_color)
+void usage(const char *name, const char *badparam, vp1394Grabber &g, long &req_number, bool &req_color)
 {
   unsigned int act_camera;
   int act_format;
@@ -230,14 +230,14 @@ OTHER OPTIONS:\n\
   \param color: Color image display activation.
 
 */
-void getOptions(int argc, char **argv,
+void getOptions(int argc, const char **argv,
 		vp1394Grabber &g,
 		unsigned int &camera,
 		int &format, int &mode, int &framerate,
 		unsigned int &shutter, unsigned int &gain,
 		long &number, bool &display, bool &color)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -279,7 +279,7 @@ void getOptions(int argc, char **argv,
 
 */
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   unsigned int req_camera = 0;
   int req_format = 0;

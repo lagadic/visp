@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Window.cpp,v 1.10 2008-04-30 15:22:41 asaunier Exp $
+ * $Id: vpWin32Window.cpp,v 1.11 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,6 +193,7 @@ vpWin32Window::~vpWin32Window()
   delete renderer;
   CloseHandle(semaInit);
   CloseHandle(semaClick);
+  CloseHandle(semaClickUp);
 }
 
 
@@ -206,7 +207,7 @@ vpWin32Window::~vpWin32Window()
   \param h Initial window's height
 
 */
-void vpWin32Window::initWindow(char* title, int posx, int posy, int w, int h)
+void vpWin32Window::initWindow(const char* title, int posx, int posy, int w, int h)
 {
   //the window's style
   DWORD style = WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX |WS_MAXIMIZEBOX;

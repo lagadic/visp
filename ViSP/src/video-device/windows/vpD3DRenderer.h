@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.h,v 1.9 2008-02-14 15:40:10 asaunier Exp $
+ * $Id: vpD3DRenderer.h,v 1.10 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -120,7 +120,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   void drawCircle(int i, int j, unsigned int r,
 		  vpColor::vpColorType c);
 
-  void drawText(int i, int j, char * s,
+  void drawText(int i, int j, const char * s,
 		vpColor::vpColorType c);
 
   void drawCross(int i, int j, unsigned int size,
