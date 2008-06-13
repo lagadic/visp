@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.9 2007-12-05 17:05:53 fspindle Exp $
+ * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.10 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@ Print the program options.
   \param ipath : Input image path.
 
 */
-void usage(char *name, char *badparam, std::string ipath)
+void usage(const char *name, const char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
 Simulation Servo 4points.\n\
@@ -128,9 +128,9 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, std::string &ipath, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -314,7 +314,7 @@ void *mainLoop (void *_simu)
 
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   std::string env_ipath;
   std::string opt_ipath;

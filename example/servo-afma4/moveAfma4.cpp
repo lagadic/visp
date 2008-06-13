@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma4.cpp,v 1.8 2008-05-27 09:42:19 fspindle Exp $
+ * $Id: moveAfma4.cpp,v 1.9 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,7 @@
   \param badparam : Bad parameter name.
 
 */
-void usage(char *name, char *badparam)
+void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Example of a positionning control followed by a velocity control \n\
@@ -108,9 +108,9 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, bool &control)
+bool getOptions(int argc, const char **argv, bool &control)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -135,7 +135,7 @@ bool getOptions(int argc, char **argv, bool &control)
 }
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   try
     {

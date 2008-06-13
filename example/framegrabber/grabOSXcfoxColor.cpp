@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOSXcfoxColor.cpp,v 1.6 2007-09-28 14:45:01 asaunier Exp $
+ * $Id: grabOSXcfoxColor.cpp,v 1.7 2008-06-13 13:37:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@
   \param badparam : Bad parameter name.
 
 */
-void usage(char *name, char *badparam)
+void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Acquire images using firewire 1394 framegrabber capabilities \n\
@@ -103,7 +103,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, bool &display)
+bool getOptions(int argc, const char **argv, bool &display)
 {
   char *optarg;
   int	c;
@@ -140,7 +140,7 @@ bool getOptions(int argc, char **argv, bool &display)
   GTK.
 */
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   bool opt_display = true;
 

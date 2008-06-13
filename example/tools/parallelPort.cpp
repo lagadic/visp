@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: parallelPort.cpp,v 1.2 2008-01-22 08:48:33 asaunier Exp $
+ * $Id: parallelPort.cpp,v 1.3 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,7 +64,7 @@
   \param data : Data to send to the parallel port.
 
  */
-void usage(char *name, char *badparam, unsigned char &data)
+void usage(const char *name, const char *badparam, unsigned char &data)
 {
   fprintf(stdout, "\n\
 Send a data to the parallel port.\n\
@@ -101,9 +101,9 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, unsigned char &data)
+bool getOptions(int argc, const char **argv, unsigned char &data)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
 
   int value;
@@ -148,7 +148,7 @@ bool getOptions(int argc, char **argv, unsigned char &data)
 
 */
 int
-main(int argc, char **argv)
+main(int argc, const char **argv)
 {
   // data to send to the parallel port
   unsigned char data = 0;

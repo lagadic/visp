@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobust.cpp,v 1.4 2007-11-28 11:27:44 fspindle Exp $
+ * $Id: testRobust.cpp,v 1.5 2008-06-13 13:37:39 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@
   \param badparam : Bad parameter name.
   \param ofilename : Output filename.
 */
-void usage(char *name, char *badparam, std::string ofilename)
+void usage(const char *name, const char *badparam, std::string ofilename)
 {
   fprintf(stdout, "\n\
 Test some vpMath functionalities. Compute weights and print\n\
@@ -99,9 +99,9 @@ OPTIONS:                                              Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, std::string &ofilename)
+bool getOptions(int argc, const char **argv, std::string &ofilename)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -129,7 +129,7 @@ bool getOptions(int argc, char **argv, std::string &ofilename)
 
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   std::string ofilename;
   std::string username;

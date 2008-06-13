@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveBiclops.cpp,v 1.4 2008-01-31 14:41:45 asaunier Exp $
+ * $Id: moveBiclops.cpp,v 1.5 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,7 +74,7 @@ Print the program options.
   \param conf : Biclops configuration file.
 
 */
-void usage(char *name, char *badparam, std::string conf)
+void usage(const char *name, const char *badparam, std::string conf)
 {
   fprintf(stdout, "\n\
 Move the biclops robot\n\
@@ -102,9 +102,9 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, std::string& conf)
+bool getOptions(int argc, const char **argv, std::string& conf)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -129,7 +129,7 @@ bool getOptions(int argc, char **argv, std::string& conf)
 }
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   std::string opt_conf = "/usr/share/BiclopsDefault.cfg";
 

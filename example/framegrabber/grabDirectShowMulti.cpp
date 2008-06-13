@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-* $Id: grabDirectShowMulti.cpp,v 1.9 2007-09-28 14:45:01 asaunier Exp $
+* $Id: grabDirectShowMulti.cpp,v 1.10 2008-06-13 13:37:35 asaunier Exp $
 *
 * Copyright (C) 1998-2006 Inria. All rights reserved.
 *
@@ -83,7 +83,7 @@ Print the program options.
 \param opath : Image filename when saving.
 
 */
-void usage(char *name, char *badparam, unsigned int camera, unsigned int &nframes,
+void usage(const char *name, const char *badparam, unsigned int camera, unsigned int &nframes,
 		   std::string &opath)
 {
 	if (badparam)
@@ -175,7 +175,7 @@ Set the program options.
 
 */
 
-void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
+void read_options(int argc, const char **argv, bool &multi, unsigned int &camera,
 				  unsigned int &nframes, bool &verbose_info,
 				  bool &verbose_settings,
 				  bool &mediatype_is_set,
@@ -184,7 +184,7 @@ void read_options(int argc, char **argv, bool &multi, unsigned int &camera,
 				  double &framerate,
 				  bool &display, bool &save, std::string &opath)
 {
-	char *optarg;
+	const char *optarg;
 	int	c;
 	/*
 	* Lecture des options.
@@ -237,7 +237,7 @@ Grab grey level images using DirectShow frame grabbing capabilities. Display the
 images using the GTK or GDI display.
 */
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
 	try  {
 		unsigned int camera = 0;

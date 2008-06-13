@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.23 2008-01-30 15:32:26 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.24 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,7 +89,7 @@ vpDisplayWin32::~vpDisplayWin32()
 void vpDisplayWin32::init(vpImage<unsigned char> &I,
 			  int x,
 			  int y,
-			  char *title)
+			  const char *title)
 {
 	if ((I.getHeight() == 0) || (I.getWidth()==0))
     {
@@ -115,7 +115,7 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
 void vpDisplayWin32::init(vpImage<vpRGBa> &I,
 			  int x,
 			  int y,
-			  char *title)
+			  const char *title)
 {
   if ((I.getHeight() == 0) || (I.getWidth()==0))
     {
@@ -142,7 +142,7 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
 */
 void vpDisplayWin32::init(unsigned int width, unsigned int height,
 			  int x, int y,
-			  char *title)
+			  const char *title)
 {
 
 
@@ -521,7 +521,7 @@ void vpDisplayWin32::displayCircle(int i, int j,
   \param s : The string to display
   \param c : The text's color
 */
-void vpDisplayWin32::displayCharString(int i, int j,char *s,
+void vpDisplayWin32::displayCharString(int i, int j,const char *s,
 				       vpColor::vpColorType c)
 {
   //wait if the window is not initialized

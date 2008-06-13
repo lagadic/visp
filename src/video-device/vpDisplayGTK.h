@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.17 2008-01-30 15:32:26 fspindle Exp $
+ * $Id: vpDisplayGTK.h,v 1.18 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,11 +89,11 @@ private:
 
 public:
   vpDisplayGTK(vpImage<unsigned char> &I, int _winx=-1, int _winy=-1,
-	       char *title=NULL) ;
+	       const char *title=NULL) ;
   vpDisplayGTK(vpImage<vpRGBa> &I, int _winx=-1, int _winy=-1,
-	       char *title=NULL) ;
+	       const char *title=NULL) ;
 
-  vpDisplayGTK(int _winx, int _winy, char *title=NULL) ;
+  vpDisplayGTK(int _winx, int _winy, const char *title=NULL) ;
 
   vpDisplayGTK() ;
   virtual ~vpDisplayGTK() ;
@@ -104,14 +104,14 @@ public:
   void getImage(vpImage<vpRGBa> &I) ;
   void init(vpImage<unsigned char> &I,
 	    int winx=-1, int winy=-1,
-	    char *_title=NULL)  ;
+	    const char *_title=NULL)  ;
   void init(vpImage<vpRGBa> &I,
 	    int winx=-1, int winy=-1,
-	    char *_title=NULL)  ;
+	    const char *_title=NULL)  ;
 
   void init(unsigned int width, unsigned int height,
 	    int winx=-1, int winy=-1 ,
-	    char *_title=NULL) ;
+	    const char *_title=NULL) ;
 protected:
   void clearDisplay(vpColor::vpColorType c=vpColor::white) ;
 
@@ -120,7 +120,7 @@ protected:
   void displayArrow(int i1, int j1, int i2, int j2,
 		    vpColor::vpColorType col=vpColor::white,
 		    unsigned int L=4, unsigned int l=2) ;
-  void displayCharString(int i, int j,char *s,
+  void displayCharString(int i, int j,const char *s,
 			 vpColor::vpColorType c=vpColor::green) ;
 
   void displayCircle(int i, int j, unsigned int r,

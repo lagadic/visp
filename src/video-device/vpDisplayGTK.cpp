@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.39 2008-05-30 15:49:22 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.40 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,7 +72,7 @@
 vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
                            int _x,
                            int _y,
-                           char *_title) : vpDisplay()
+                           const char *_title) : vpDisplay()
 {
   col = NULL;
   title = NULL ;
@@ -92,7 +92,7 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
 vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
                            int _x,
                            int _y,
-                           char *_title)
+                           const char *_title)
 {
   col = NULL;
   title = NULL ;
@@ -108,7 +108,7 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
   \param _x, _y : The window is set at position x,y (column index, row index).
   \param _title : window  titled
 */
-vpDisplayGTK::vpDisplayGTK(int _x, int _y, char *_title)
+vpDisplayGTK::vpDisplayGTK(int _x, int _y, const char *_title)
 {
   windowXPosition = _x ;
   windowYPosition = _y ;
@@ -169,7 +169,7 @@ void
 vpDisplayGTK::init(vpImage<unsigned char> &I,
                    int _x,
                    int _y,
-                   char *_title)
+                   const char *_title)
 {
 
   if ((I.getHeight() == 0) || (I.getWidth()==0))
@@ -195,7 +195,7 @@ void
 vpDisplayGTK::init(vpImage<vpRGBa> &I,
                    int _x,
                    int _y,
-                   char *_title)
+                   const char *_title)
 {
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
@@ -220,7 +220,7 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
 void
 vpDisplayGTK::init(unsigned int width, unsigned int height,
                    int _x, int _y,
-                   char *_title)
+                   const char *_title)
 {
   /* Initialisation of thegdk et gdk_rgb library */
   int *argc=NULL ;
@@ -845,7 +845,7 @@ vpDisplayGTK::displayRectangle(const vpRect &rect,
   \param color (see vpColor)
 */
 void vpDisplayGTK::displayCharString(int i, int j,
-                                     char *string, vpColor::vpColorType color)
+                                     const char *string, vpColor::vpColorType color)
 {
   if (GTKinitialized)
   {

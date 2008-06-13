@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testCreateSubImage.cpp,v 1.2 2007-11-28 11:27:44 fspindle Exp $
+ * $Id: testCreateSubImage.cpp,v 1.3 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,7 +69,7 @@
   \param user : Username.
 
  */
-void usage(char *name, char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read an image from the disk (Klimt.pgm), crop a rectangular area\n\
@@ -116,10 +116,10 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv,
+bool getOptions(int argc, const char **argv,
 		std::string &ipath, std::string &opath, std::string user)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -145,7 +145,7 @@ bool getOptions(int argc, char **argv,
 }
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   std::string env_ipath;
   std::string opt_ipath;

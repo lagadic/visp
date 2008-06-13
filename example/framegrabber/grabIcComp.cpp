@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabIcComp.cpp,v 1.5 2007-09-28 14:45:01 asaunier Exp $
+ * $Id: grabIcComp.cpp,v 1.6 2008-06-13 13:37:35 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,7 @@
   \param scale : Subsampling factor.
 
  */
-void usage(char *name, char *badparam, unsigned fps, unsigned input,
+void usage(const char *name, const char *badparam, unsigned fps, unsigned input,
 	   unsigned scale)
 {
   fprintf(stdout, "\n\
@@ -119,10 +119,10 @@ OPTIONS:                                                  Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv, unsigned &fps, unsigned &input,
+bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
 		unsigned &scale, bool &display)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -158,7 +158,7 @@ bool getOptions(int argc, char **argv, unsigned &fps, unsigned &input,
   GTK.
 */
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   unsigned fps = 25;
   unsigned input = vpIcCompGrabber::DEFAULT_INPUT;

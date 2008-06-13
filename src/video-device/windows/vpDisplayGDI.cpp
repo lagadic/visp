@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.cpp,v 1.6 2007-02-13 09:17:41 fspindle Exp $
+ * $Id: vpDisplayGDI.cpp,v 1.7 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -64,7 +64,7 @@ vpDisplayGDI::vpDisplayGDI(): vpDisplayWin32(new vpGDIRenderer()){}
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
 			   int winx, int winy,
-			   char *_title)
+			   const char *_title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   init(I,winx,winy,_title);
@@ -82,7 +82,7 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I,
 			   int winx, int winy,
-			   char *_title)
+			   const char *_title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   init(I,winx,winy,_title);

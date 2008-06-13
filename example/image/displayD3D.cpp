@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayD3D.cpp,v 1.9 2008-02-14 15:38:15 asaunier Exp $
+ * $Id: displayD3D.cpp,v 1.10 2008-06-13 13:37:36 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@
 
 
  */
-void usage(char *name, char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using D3D, display some\n\
@@ -142,11 +142,11 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, char **argv,
+bool getOptions(int argc, const char **argv,
 		std::string &ipath, std::string &opath, bool &click_allowed,
 		std::string user, bool &display)
 {
-  char *optarg;
+  const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
@@ -174,7 +174,7 @@ bool getOptions(int argc, char **argv,
 }
 
 int
-main(int argc, char ** argv)
+main(int argc, const char ** argv)
 {
   std::string env_ipath;
   std::string opt_ipath;

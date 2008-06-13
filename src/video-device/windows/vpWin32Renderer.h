@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpWin32Renderer.h,v 1.7 2008-02-14 15:40:10 asaunier Exp $
+ * $Id: vpWin32Renderer.h,v 1.8 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -143,7 +143,7 @@ class VISP_EXPORT vpWin32Renderer
     \param s The string to display
     \param col The text's color
   */
-  virtual void drawText(int i, int j, char * s,
+  virtual void drawText(int i, int j, const char * s,
 			vpColor::vpColorType c) =0;
 
   /*!

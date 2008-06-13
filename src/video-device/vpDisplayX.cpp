@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.40 2008-01-30 15:32:26 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.41 2008-06-13 13:37:37 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,7 +73,7 @@
 vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
                          int _x,
                          int _y,
-                         char *_title ) : vpDisplay()
+                         const char *_title ) : vpDisplay()
 {
   init ( I,_x,_y, _title ) ;
 
@@ -92,7 +92,7 @@ vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
 vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
                          int _x,
                          int _y,
-                         char *_title )
+                         const char *_title )
 {
   title = NULL ;
   init ( I,_x,_y, _title ) ;
@@ -104,7 +104,7 @@ vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
   \param _x, _y : The window is set at position x,y (column index, row index).
   \param _title : window  titled
 */
-vpDisplayX::vpDisplayX ( int _x, int _y, char *_title )
+vpDisplayX::vpDisplayX ( int _x, int _y, const char *_title )
 {
   displayHasBeenInitialized = false ;
   windowXPosition = _x ;
@@ -162,7 +162,7 @@ vpDisplayX::~vpDisplayX()
 
 */
 void
-vpDisplayX::init ( vpImage<unsigned char> &I, int _x, int _y, char *_title )
+vpDisplayX::init ( vpImage<unsigned char> &I, int _x, int _y, const char *_title )
 {
 
   displayHasBeenInitialized =true ;
@@ -466,7 +466,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int _x, int _y, char *_title )
 
 */
 void
-vpDisplayX::init ( vpImage<vpRGBa> &I, int _x, int _y, char *_title )
+vpDisplayX::init ( vpImage<vpRGBa> &I, int _x, int _y, const char *_title )
 {
 
   displayHasBeenInitialized =true ;
@@ -776,7 +776,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int _x, int _y, char *_title )
 
 */
 void vpDisplayX::init ( unsigned int width, unsigned int height,
-                        int _x, int _y, char *_title )
+                        int _x, int _y, const char *_title )
 {
 
   displayHasBeenInitialized = true ;
@@ -1730,7 +1730,7 @@ vpDisplayX::displayRectangle ( const vpRect &rect,
   \param col : Color (see vpColor)
 */
 void vpDisplayX::displayCharString ( int i, int j,
-                                     char *string, vpColor::vpColorType col )
+                                     const char *string, vpColor::vpColorType col )
 {
   if ( Xinitialise )
   {

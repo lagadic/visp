@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpD3DRenderer.cpp,v 1.14 2008-02-14 15:40:10 asaunier Exp $
+ * $Id: vpD3DRenderer.cpp,v 1.15 2008-06-13 13:37:38 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -749,7 +749,7 @@ void vpD3DRenderer::drawCircle(int i, int j, unsigned int r,
   \param s The string to display
   \param col The text's color
 */
-void vpD3DRenderer::drawText(int i, int j, char * s,
+void vpD3DRenderer::drawText(int i, int j, const char * s,
 			     vpColor::vpColorType c)
 {
   //Will contain the texture's surface drawing context
