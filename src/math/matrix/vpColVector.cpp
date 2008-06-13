@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.cpp,v 1.10 2007-11-19 15:47:06 asaunier Exp $
+ * $Id: vpColVector.cpp,v 1.11 2008-06-13 17:01:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,6 +44,9 @@
 
 
 #include <visp/vpColVector.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 
 // Exception

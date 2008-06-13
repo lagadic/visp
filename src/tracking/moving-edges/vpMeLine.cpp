@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.15 2007-05-02 16:43:22 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.16 2008-06-13 17:01:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,7 +41,7 @@
   \brief Moving edges
 */
 
-
+#include <stdlib.h>
 #include <visp/vpMeTracker.h>
 #include <visp/vpMe.h>
 #include <visp/vpMeSite.h>

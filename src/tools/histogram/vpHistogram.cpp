@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.cpp,v 1.6 2007-09-17 09:15:06 fspindle Exp $
+ * $Id: vpHistogram.cpp,v 1.7 2008-06-13 17:01:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,7 +45,7 @@
 */
 
 #include <visp/vpHistogram.h>
-
+#include <stdlib.h>
 
 
 /*!

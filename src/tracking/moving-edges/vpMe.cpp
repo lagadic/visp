@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMe.cpp,v 1.6 2007-05-03 12:09:37 asaunier Exp $
+ * $Id: vpMe.cpp,v 1.7 2008-06-13 17:01:19 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,6 +40,8 @@
 	\file vpMe.cpp
 	\brief Moving edges
 */
+#include <stdlib.h>
+
 
 #include <visp/vpMe.h>
 #include <visp/vpColVector.h>

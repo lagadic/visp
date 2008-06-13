@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.40 2008-01-15 09:52:37 cdune Exp $
+ * $Id: vpMatrix.cpp,v 1.41 2008-06-13 17:01:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,8 @@
 
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <vector>
 #include <sstream>
 #include <algorithm>

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.h,v 1.7 2007-11-19 15:47:06 asaunier Exp $
+ * $Id: vpColVector.h,v 1.8 2008-06-13 17:01:15 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,7 +39,6 @@
 
 #ifndef vpColVector_H
 #define vpColVector_H
-
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
