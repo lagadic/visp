@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.30 2008-06-06 11:25:07 asaunier Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.31 2008-06-13 09:11:57 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -2211,13 +2211,13 @@ void vp1394TwoGrabber::resetBus()
   setCamera(camera_id);
   // free the other cameras
   for (unsigned int i=0;i<num_cameras;i++){
-    if (i!=camera_id) dc1394_camera_free(cameras[i]);
+    if (i!=camera_id) dc1394_free_camera(cameras[i]);
   }
   free(cameras);
   cameras = NULL;
 
   dc1394_reset_bus(camera);
-  dc1394_camera_free(camera);
+  dc1394_free_camera(camera);
 
 #endif
   if (camIsOpen != NULL)
