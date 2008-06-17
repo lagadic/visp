@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: imageDiskRW.cpp,v 1.7 2008-06-13 13:37:36 asaunier Exp $
+ * $Id: imageDiskRW.cpp,v 1.8 2008-06-17 08:08:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,8 @@
   write in a directory that does no exist
  */
 
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>

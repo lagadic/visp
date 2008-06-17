@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: parallelPort.cpp,v 1.3 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: parallelPort.cpp,v 1.4 2008-06-17 08:08:27 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,6 +45,7 @@
 #include <visp/vpDebug.h>
 
 #if defined VISP_HAVE_PARPORT
+#include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <signal.h>

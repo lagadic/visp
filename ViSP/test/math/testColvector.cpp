@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testColvector.cpp,v 1.4 2008-06-13 13:37:39 asaunier Exp $
+ * $Id: testColvector.cpp,v 1.5 2008-06-17 08:08:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -41,6 +41,8 @@
   Test some vpColVector functionalities.
 */
 
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpColVector.h>
 #include <visp/vpDebug.h>

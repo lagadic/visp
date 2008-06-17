@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuCylinder2DCamVelocityDisplay.cpp,v 1.9 2008-06-13 13:37:36 asaunier Exp $
+ * $Id: servoSimuCylinder2DCamVelocityDisplay.cpp,v 1.10 2008-06-17 08:08:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,6 +57,9 @@
 #include <visp/vpConfig.h>
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>

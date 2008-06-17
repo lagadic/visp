@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayX.cpp,v 1.11 2008-06-13 13:37:36 asaunier Exp $
+ * $Id: displayX.cpp,v 1.12 2008-06-17 08:08:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -43,7 +43,7 @@
   write the image and the overlayed features in an image on the disk.
 
 */
-
+#include <stdlib.h>
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 

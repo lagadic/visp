@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot.cpp,v 1.15 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: trackDot.cpp,v 1.16 2008-06-17 08:08:27 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,6 +49,7 @@
   Example of dot tracking on an image sequence using vpDot.
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>

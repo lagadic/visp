@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMatrix.cpp,v 1.5 2008-06-13 13:37:39 asaunier Exp $
+ * $Id: testMatrix.cpp,v 1.6 2008-06-17 08:08:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,6 +42,8 @@
 */
 
 
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>

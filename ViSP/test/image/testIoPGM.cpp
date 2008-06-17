@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testIoPGM.cpp,v 1.13 2008-06-13 13:37:38 asaunier Exp $
+ * $Id: testIoPGM.cpp,v 1.14 2008-06-17 08:08:29 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,6 +36,8 @@
  *
  *****************************************************************************/
 
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>

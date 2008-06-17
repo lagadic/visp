@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testTime.cpp,v 1.8 2008-06-13 13:37:39 asaunier Exp $
+ * $Id: testTime.cpp,v 1.9 2008-06-17 08:08:30 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,6 +49,8 @@
 #  include <mmsystem.h>
 #  include <winbase.h>
 #endif
+#include <stdlib.h>
+#include <stdio.h>
 #include <iostream>
 #include <time.h>
 #include <visp/vpTime.h>
