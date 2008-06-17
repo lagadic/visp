@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.16 2007-12-20 08:21:49 fspindle Exp $
+ * $Id: vp1394Grabber.h,v 1.17 2008-06-17 08:48:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,8 +57,6 @@
 #if defined(VISP_HAVE_DC1394_1)
 
 #include <string>
-
-
 
 #include <libraw1394/raw1394.h>
 #include <libdc1394/dc1394_control.h>
