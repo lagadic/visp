@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGTK.cpp,v 1.11 2008-06-13 13:37:36 asaunier Exp $
+ * $Id: displayGTK.cpp,v 1.12 2008-06-17 08:43:16 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,6 +49,9 @@
 #include <visp/vpConfig.h>
 
 #ifdef VISP_HAVE_GTK
+
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
