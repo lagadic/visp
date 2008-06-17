@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.cpp,v 1.8 2008-02-01 09:42:48 fspindle Exp $
+ * $Id: vpXmlParserCamera.cpp,v 1.9 2008-06-17 08:43:18 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,6 +44,9 @@
 */
 #include <visp/vpXmlParserCamera.h>
 #ifdef VISP_HAVE_XML2
+
+#include <stdlib.h>
+#include <string.h>
 
 #include <visp/vpDebug.h>
 /* -------------------------------------------------------------------------- */

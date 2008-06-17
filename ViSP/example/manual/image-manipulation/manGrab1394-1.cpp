@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manGrab1394-1.cpp,v 1.4 2008-05-25 07:38:50 fspindle Exp $
+ * $Id: manGrab1394-1.cpp,v 1.5 2008-06-17 08:43:18 asaunier Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -50,6 +50,8 @@
 
 #include <visp/vpConfig.h>
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <visp/vpImage.h>
 #include <visp/vp1394Grabber.h>
 
@@ -63,7 +65,7 @@ int main()
   
   // If the first camera supports MODE_640x480_YUV422 video mode
   g.setCamera(0);
-  g.setFormat(FORMAT_VGA_NON_COMPRESSED);
+  g.setFormat(FORMAT_VGA_NONCOMPRESSED);
   g.setMode(MODE_640x480_YUV422);
   
   // If all cameras support 30 fps acquisition
