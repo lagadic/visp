@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeLine.cpp,v 1.10 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: trackMeLine.cpp,v 1.11 2008-06-17 08:08:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,6 +47,7 @@
   Tracking of a line using vpMe.
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>

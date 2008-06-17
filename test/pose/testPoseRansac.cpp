@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testPoseRansac.cpp,v 1.6 2008-06-13 13:37:39 asaunier Exp $
+ * $Id: testPoseRansac.cpp,v 1.7 2008-06-17 08:08:30 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,6 +37,9 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpPose.h>
 #include <visp/vpPoint.h>

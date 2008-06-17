@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testCameraParametersConversion.cpp,v 1.6 2008-06-13 13:37:38 asaunier Exp $
+ * $Id: testCameraParametersConversion.cpp,v 1.7 2008-06-17 08:08:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,6 +47,9 @@
 
 // List of allowed command line options
 #define GETOPTARGS	"h"
+
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpMath.h>
 #include <visp/vpDebug.h>

@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity2.cpp,v 1.8 2008-06-13 13:37:36 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity2.cpp,v 1.9 2008-06-17 08:08:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,6 +54,9 @@
   - velocity computed in the camera frame,
   - no display.
 */
+
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>

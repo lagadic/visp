@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabV4l2Grey.cpp,v 1.7 2008-06-13 13:37:35 asaunier Exp $
+ * $Id: grabV4l2Grey.cpp,v 1.8 2008-06-17 08:08:24 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,6 +36,7 @@
  *
  *****************************************************************************/
 
+#include <stdlib.h>
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 

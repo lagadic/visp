@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackDot2WithAutoDetection.cpp,v 1.17 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: trackDot2WithAutoDetection.cpp,v 1.18 2008-06-17 08:08:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,6 +46,7 @@
   Example of auto detection of dots using vpDot2.
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>

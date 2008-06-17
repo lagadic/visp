@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displaySequence.cpp,v 1.14 2008-06-13 13:37:36 asaunier Exp $
+ * $Id: displaySequence.cpp,v 1.15 2008-06-17 08:08:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,6 +47,7 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sstream>
 #include <iomanip>
 

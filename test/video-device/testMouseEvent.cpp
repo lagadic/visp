@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testMouseEvent.cpp,v 1.4 2008-06-13 13:37:40 asaunier Exp $
+ * $Id: testMouseEvent.cpp,v 1.5 2008-06-17 08:08:30 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,6 +45,7 @@
 
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>

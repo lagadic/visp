@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisplacement.cpp,v 1.8 2008-06-13 13:37:38 asaunier Exp $
+ * $Id: testDisplacement.cpp,v 1.9 2008-06-17 08:08:28 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,6 +46,9 @@
 
 
 */
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <visp/vpMath.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpHomography.h>

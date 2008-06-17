@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: homographyHLM3DObject.cpp,v 1.4 2008-06-13 13:37:35 asaunier Exp $
+ * $Id: homographyHLM3DObject.cpp,v 1.5 2008-06-17 08:08:25 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,6 +49,7 @@
 
 */
 
+#include <stdlib.h>
 #include <visp/vpMath.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpHomography.h>

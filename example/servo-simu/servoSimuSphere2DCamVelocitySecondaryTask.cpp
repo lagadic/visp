@@ -1,7 +1,6 @@
-
 /****************************************************************************
  *
- * $Id: servoSimuSphere2DCamVelocitySecondaryTask.cpp,v 1.7 2008-06-13 13:37:36 asaunier Exp $
+ * $Id: servoSimuSphere2DCamVelocitySecondaryTask.cpp,v 1.8 2008-06-17 08:08:26 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,6 +55,9 @@
   - a secondary task is the added.
 
 */
+
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
