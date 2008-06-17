@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.19 2008-06-06 11:25:07 asaunier Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.20 2008-06-17 08:48:49 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -120,6 +120,7 @@
 /*
  * Interface with libdc1394 2.x
  */
+#include <string.h>
 
 #include <dc1394/control.h>
 #include <dc1394/utils.h>
