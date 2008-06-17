@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.17 2008-06-13 13:37:35 asaunier Exp $
+ * $Id: grab1394Two.cpp,v 1.18 2008-06-17 08:54:21 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,10 +49,10 @@
   vp1394TwoGrabber was tested with MF-033C and F-131B Marlin cameras.
 */
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <iostream>
 #include <sstream>
-
-
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
