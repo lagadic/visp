@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CTestConfig.cmake,v 1.5 2008-05-28 12:55:03 fspindle Exp $
+# $Id: CTestConfig.cmake,v 1.6 2008-06-17 15:24:28 fspindle Exp $
 #
 # Copyright (C) 1998-2008 Inria. All rights reserved.
 #
@@ -68,8 +68,24 @@ ELSEIF(BORLAND)
 ELSEIF(MINGW)
   SET(BUILDNAME "${BUILDNAME}-mingw")
 ELSE(MSVC70)
+  # g++
   SET(BUILDNAME "${BUILDNAME}-${CMAKE_BASE_NAME}")
 ENDIF(MSVC70)
+
+# Find out the version of gcc being used.
+IF(CMAKE_COMPILER_IS_GNUCC)
+  EXEC_PROGRAM(${CMAKE_CXX_COMPILER}
+    ARGS -dumpversion
+    OUTPUT_VARIABLE COMPILER_VERSION
+  )
+  #MESSAGE("COMPILER_VERSION 1: ${COMPILER_VERSION}")
+  STRING(REGEX REPLACE ".* ([0-9])\\.([0-9])\\.[0-9] .*" "\\1\\2"
+    COMPILER_VERSION ${COMPILER_VERSION})
+  #MESSAGE("COMPILER_VERSION 2: ${COMPILER_VERSION}")
+
+  SET(BUILDNAME "${BUILDNAME}${COMPILER_VERSION}")
+  
+ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
 # Add the type of library generation, e.g. "Dynamic or Static"
 IF(BUILD_SHARED_LIBS)
