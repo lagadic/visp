@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manGrab1394-2.cpp,v 1.4 2008-05-25 07:38:50 fspindle Exp $
+ * $Id: manGrab1394-2.cpp,v 1.5 2008-06-17 08:54:22 asaunier Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -47,6 +47,9 @@
   \brief Images grabbing example with the vp1394TwoGrabber class.
  
  */
+
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpImage.h>
 #include <visp/vp1394TwoGrabber.h>
