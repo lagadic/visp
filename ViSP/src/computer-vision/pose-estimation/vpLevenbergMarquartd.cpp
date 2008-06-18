@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLevenbergMarquartd.cpp,v 1.5 2007-05-31 13:10:48 asaunier Exp $
+ * $Id: vpLevenbergMarquartd.cpp,v 1.6 2008-06-18 14:30:54 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -392,8 +392,8 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
        *	ou parl est nul et ou le nombre d'iteration a
        *	atteint 10.
        */
-      if ((fabs(fp) <= tol1 * *delta) || (parl == 0.0) && (fp <= temp)
-	  && (temp < 0.0) || (iter == 10))
+      if ((fabs(fp) <= tol1 * *delta) || ((parl == 0.0) && (fp <= temp)
+	  && (temp < 0.0)) || (iter == 10))
       {
 	/*
 	 *	terminaison.
