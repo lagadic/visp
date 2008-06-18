@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.18 2008-06-17 08:54:21 asaunier Exp $
+ * $Id: grab1394Two.cpp,v 1.19 2008-06-18 13:10:14 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -194,7 +194,6 @@ OPTIONS                                                    Default\n\
 	  roi_left, roi_top, roi_width, roi_height,
 	  camera, nframes, ringbuffersize, opath.c_str());
 
-  exit(0);
 }
 
 /*!
@@ -296,10 +295,13 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       break;
     }
 
-  /* expect no args left over */
-  if (argv[optind]) {
-    usage(argv[0], argv[optind], camera, nframes, opath,
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, camera, nframes, opath,
 	  roi_left, roi_top, roi_width, roi_height, ringbuffersize);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    exit(-1);
   }
 }
 
