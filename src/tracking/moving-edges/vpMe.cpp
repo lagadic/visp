@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMe.cpp,v 1.7 2008-06-13 17:01:19 asaunier Exp $
+ * $Id: vpMe.cpp,v 1.8 2008-06-18 14:30:54 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -203,12 +203,12 @@ clipping  (point  A, point B,
    if(code_P[0] != 0000)
    {
 	 		n=0;   // c'est P[0] qu'on clippera
-      for(i=0,bit_i=1;  !(code_P[0] & bit_i);  i++,bit_i<<=1);
+      for(i=0,bit_i=1;  !(code_P[0] & bit_i);  i++,bit_i<<=1){;}
    }
    else
 	 {
 			n=1;   // c'est P[1] qu'on clippera
-      for(i=0,bit_i=1;  !(code_P[1] & bit_i);  i++,bit_i<<=1);
+      for(i=0,bit_i=1;  !(code_P[1] & bit_i);  i++,bit_i<<=1){;}
    }
 
    P[n] = point_intersection(AB,D[i]); // clippe le point concerné
