@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CTestConfig.cmake,v 1.6 2008-06-17 15:24:28 fspindle Exp $
+# $Id: CTestConfig.cmake,v 1.7 2008-06-19 10:06:21 fspindle Exp $
 #
 # Copyright (C) 1998-2008 Inria. All rights reserved.
 #
@@ -79,7 +79,7 @@ IF(CMAKE_COMPILER_IS_GNUCC)
     OUTPUT_VARIABLE COMPILER_VERSION
   )
   #MESSAGE("COMPILER_VERSION 1: ${COMPILER_VERSION}")
-  STRING(REGEX REPLACE ".* ([0-9])\\.([0-9])\\.[0-9] .*" "\\1\\2"
+  STRING(REGEX REPLACE ".* ([0-9])\\.([0-9])\\.[0-9].*" "\\1\\2" 
     COMPILER_VERSION ${COMPILER_VERSION})
   #MESSAGE("COMPILER_VERSION 2: ${COMPILER_VERSION}")
 
