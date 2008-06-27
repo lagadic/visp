@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECTSHOW.cmake,v 1.8 2008-05-05 14:34:42 fspindle Exp $
+# $Id: FindDIRECTSHOW.cmake,v 1.9 2008-06-27 14:38:36 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -49,6 +49,7 @@ IF(WIN32 AND NOT MINGW)
   FIND_PATH(DIRECTX_INCLUDE_PATH ddraw.h
     "$ENV{DXSDK_DIR}/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.1/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
     "C:/DXSDK/include"
     "C:/Program Files/Microsoft Platform SDK/Include"
@@ -65,6 +66,7 @@ IF(WIN32 AND NOT MINGW)
     "$ENV{WINSDK_HOME}/Include"
     "$ENV{DXSDK_DIR}/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.1/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
     "C:/DXSDK/include"
     "C:/Program Files/Microsoft Platform SDK/Include"
@@ -80,6 +82,7 @@ IF(WIN32 AND NOT MINGW)
     "$ENV{WINSDK_HOME}/Include"
     "$ENV{DXSDK_DIR}/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.1/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
     "C:/DXSDK/include"
     "C:/Program Files/Microsoft Platform SDK/Include"
@@ -141,6 +144,7 @@ IF(WIN32 AND NOT MINGW)
         "$ENV{WINSDK_HOME}/Lib/x64"
         "$ENV{DXSDK_DIR}/Lib/x64"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x64"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib/x64"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
         "C:/DXSDK/lib/x64"
       	"C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x64"
@@ -158,6 +162,8 @@ IF(WIN32 AND NOT MINGW)
         "$ENV{DXSDK_DIR}/Lib/x86"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x86"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib/x86"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x86"
         "C:/DXSDK/lib"
@@ -182,6 +188,7 @@ IF(WIN32 AND NOT MINGW)
         "$ENV{DXSDK_DIR}/Lib/x64"
         "C:/DXSDK/lib/x64"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x64"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib/x64"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x64"
         "C:/Program Files/Microsoft Platform SDK/Lib/x64"
@@ -196,6 +203,7 @@ IF(WIN32 AND NOT MINGW)
         "$ENV{DXSDK_DIR}/Lib/x86"
         "C:/DXSDK/lib/x86"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x86"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib/x86"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x86"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x86"
         "C:/Program Files/Microsoft Platform SDK/Lib/x86"
@@ -203,6 +211,7 @@ IF(WIN32 AND NOT MINGW)
         "$ENV{DXSDK_DIR}/Lib"
         "C:/DXSDK/lib"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib"
+        "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
         "C:/Program Files/Microsoft Platform SDK/Lib"
