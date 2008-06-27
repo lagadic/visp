@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.28 2008-04-29 16:34:04 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.29 2008-06-27 12:45:02 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -2138,6 +2138,75 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
 				 + 0.7152 * *(line+1)
 				 + 0.0722 * *(line+0)) ;
       line+=3;
+    }
+
+    //go to the next line
+    src+=lineStep;
+  }
+}
+/*!
+  Converts a RGB image to RGBa
+  Flips the image verticaly if needed
+  assumes that rgba is already resized
+*/
+void
+vpImageConvert::RGBToRGBa(unsigned char * rgb, unsigned char * rgba,
+			  unsigned int width, unsigned int height, bool flip)
+{
+  //if we have to flip the image, we start from the end last scanline so the
+  //step is negative
+  int lineStep = (flip) ? -(int)(width*3) : (int)(width*3);
+
+  //starting source address = last line if we need to flip the image
+  unsigned char * src = (flip) ? (rgb+(width*height*3)+lineStep) : rgb;
+  unsigned char * line;
+
+  unsigned int j=0;
+  unsigned int i=0;
+
+  for(i=0 ; i < height ; i++)
+  {
+    line = src;
+    for( j=0 ; j < width ; j++)
+    {
+      *rgba++ = *(line++);
+      *rgba++ = *(line++);
+      *rgba++ = *(line++);
+      *rgba++ = 0;
+    }
+    //go to the next line
+    src+=lineStep;
+  }
+}
+
+/*!
+  Converts a RGB image to greyscale
+  Flips the image verticaly if needed
+  assumes that grey is already resized
+*/
+void
+vpImageConvert::RGBToGrey(unsigned char * rgb, unsigned char * grey,
+			  unsigned int width, unsigned int height, bool flip)
+{
+  //if we have to flip the image, we start from the end last scanline so the
+  //step is negative
+  int lineStep = (flip) ? -(int)(width*3) : (int)(width*3);
+
+  //starting source address = last line if we need to flip the image
+  unsigned char * src = (flip) ? rgb+(width*height*3)+lineStep : rgb;
+  unsigned char * line;
+
+  unsigned int j=0;
+  unsigned int i=0;
+
+  for(i=0 ; i < height ; i++)
+  {
+    line = src;
+    for( j=0 ; j < width ; j++)
+    {
+      *grey++ = (unsigned char)( 0.2126 * *(line++)
+				 + 0.7152 * *(line++)
+				 + 0.0722 * *(line++)) ;
     }
 
     //go to the next line
