@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.h,v 1.12 2008-04-14 12:56:52 asaunier Exp $
+ * $Id: vpViewer.h,v 1.13 2008-06-27 12:43:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -119,12 +119,16 @@ class VISP_EXPORT vpViewer : public SoXtExaminerViewer
   friend class vpSimulator ;
 
 public:
+  typedef enum{
+    internalView,
+    externalView
+  } vpViewerType ; 
 #if defined(VISP_HAVE_SOWIN)
-  vpViewer(HWND parent,  vpSimulator *simu);
+  vpViewer(HWND parent,  vpSimulator *simu,vpViewerType viewerType);
 #elif defined(VISP_HAVE_SOQT)
-  vpViewer(QWidget * parent,  vpSimulator *simu);
+  vpViewer(QWidget * parent,  vpSimulator *simu,vpViewerType viewerType);
 #elif defined(VISP_HAVE_SOXT)
-  vpViewer(Widget parent,  vpSimulator *simu);
+  vpViewer(Widget parent,  vpSimulator *simu,vpViewerType viewerType);
 #endif
 
   virtual ~vpViewer();
@@ -132,7 +136,8 @@ public:
   virtual void actualRedraw(void);
 
 private:
-
+ 
+  vpViewerType  viewerType; 
   vpSimulator *simu ;
   SbBool processSoEvent(const SoEvent * const event) ;
 #if defined(VISP_HAVE_SOWIN)

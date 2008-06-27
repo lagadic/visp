@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.16 2008-04-14 12:56:52 asaunier Exp $
+ * $Id: vpViewer.cpp,v 1.17 2008-06-27 12:43:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,18 +52,18 @@
 
 
 #if defined(VISP_HAVE_SOWIN)
-vpViewer::vpViewer(HWND parent,  vpSimulator *_simu):
+vpViewer::vpViewer(HWND parent,  vpSimulator *_simu, vpViewerType viewerType):
   SoWinExaminerViewer(parent,(char *)NULL,false)
 #elif defined(VISP_HAVE_SOQT)
-vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu) :
+vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu, vpViewerType viewerType) :
   SoQtExaminerViewer(parent,(char *)NULL,false)
 #elif defined(VISP_HAVE_SOXT)
-vpViewer::vpViewer(Widget parent,  vpSimulator *_simu):
+vpViewer::vpViewer(Widget parent,  vpSimulator *_simu, vpViewerType viewerType):
   SoXtExaminerViewer(parent,(char *)NULL,false)
 #endif
 {
   this->simu = _simu ;
-
+  this->viewerType = viewerType;
   // Coin should not clear the pixel-buffer, so the background image
   // is not removed.
 
@@ -120,14 +120,14 @@ vpViewer::actualRedraw(void)
     SoXtExaminerViewer::actualRedraw();
 #endif
    glSwapBuffers() ;
-
-   simu->get = 0 ;
-   glReadPixels(0,0,simu->getInternalWidth(), simu->getInternalHeight(),
-		  (GLenum)GL_RGB,
-		  GL_UNSIGNED_BYTE,
-		  simu->bufferView ) ;
-   simu-> get =1 ;
-
+    if(viewerType == vpViewer::internalView){
+       simu->get = 0 ;
+       glReadPixels(0,0,simu->getInternalWidth(), simu->getInternalHeight(),
+		      (GLenum)GL_RGB,
+		      GL_UNSIGNED_BYTE,
+		      simu->bufferView ) ;
+       simu->get =1 ;
+    }
  }
 
 }
@@ -145,18 +145,28 @@ vpViewer::resize(int x, int y, bool fixed)
   SbVec2s size(x,y) ;
   setSize(size);
   setGLSize(size) ;
-  if(fixed){
+
 #if defined(VISP_HAVE_SOWIN)
-    HWND parent = getParentWidget();
+  HWND parent = getParentWidget();
+
+  RECT rcClient, rcWindow;
+  POINT ptDiff;
+  GetClientRect(parent, &rcClient);
+  GetWindowRect(parent, &rcWindow);
+  ptDiff.x = (rcWindow.right - rcWindow.left) - rcClient.right;
+  ptDiff.y = (rcWindow.bottom - rcWindow.top) - rcClient.bottom;
+  MoveWindow(parent,rcWindow.left, rcWindow.top, x + ptDiff.x, y + ptDiff.y, TRUE);
+  if(fixed){
     DWORD dwStyle = GetWindowLong(parent, GWL_STYLE);
     dwStyle &= ~(WS_SIZEBOX);
     SetWindowLong(parent, GWL_STYLE,dwStyle);
-#elif defined(VISP_HAVE_SOQT)
-    QWidget * parent = getParentWidget();
-    parent->setFixedSize(x, y);
-#endif
   }
- 
+#elif defined(VISP_HAVE_SOQT)
+  if(fixed){
+  QWidget * parent = getParentWidget();
+  parent->setFixedSize(x, y);
+  }
+#endif 
 }
 
 /*!
