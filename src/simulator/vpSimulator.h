@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.19 2008-04-14 12:56:52 asaunier Exp $
+ * $Id: vpSimulator.h,v 1.20 2008-06-27 12:43:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -88,6 +88,9 @@
 #include <visp/vpDebug.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpImage.h>
+#include <visp/vpRGBa.h>
+#include <visp/vpImageConvert.h>
 /*!
   \class vpSimulator
   \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
@@ -198,6 +201,8 @@ protected:
   //!Add a new object in the scene graph ad a given location
   void addObject(SoSeparator * object, const vpHomogeneousMatrix &fMo,
 		 SoSeparator * root) ;
+
+public :
   //!Add a new object in the scene graph ad a given location
   void addObject(SoSeparator * newObject, const vpHomogeneousMatrix &fMo) ;
 
@@ -245,7 +250,10 @@ public:
   //! get the external camera position
   void getExternalCameraPosition(vpHomogeneousMatrix &cMf) ;
 
-
+  //! get an Image of the internal view 
+  void getInternalImage(vpImage<unsigned char> &I) ;
+  //! get an Image of the internal view 
+  void getInternalImage(vpImage<vpRGBa> &I) ;
   /* --- Off screen rendering  --- */
 public:
   typedef enum { INTERNAL, EXTERNAL } vpSimulatorViewType ;
@@ -275,7 +283,6 @@ public:
   {
     cam = internalCameraParameters;
   }
-
 } ;
 
 

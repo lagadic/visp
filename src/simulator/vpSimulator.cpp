@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.23 2008-04-14 12:56:52 asaunier Exp $
+ * $Id: vpSimulator.cpp,v 1.24 2008-06-27 12:43:17 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -413,7 +413,7 @@ vpSimulator::initInternalViewer(int width, int height)
     initSceneGraph() ;
   }
 
-  internalView = new vpViewer(mainWindow, this);
+  internalView = new vpViewer(mainWindow, this,vpViewer::internalView);
 
   // set the scene to render from this view
   internalView->setSceneGraph(internalRoot);
@@ -451,7 +451,7 @@ vpSimulator::initExternalViewer(int width, int height)
     initSceneGraph() ;
   }
 
-  externalView = new vpViewer(mainWindow,   this);
+  externalView = new vpViewer(mainWindow,this, vpViewer::externalView);
 
   // set the scene to render this view
   externalView->setSceneGraph(externalRoot);
@@ -969,6 +969,35 @@ vpSimulator::getSizeInternalView(int& width, int& height)
   SbVec2s size = this ->internalView ->getViewportRegion().getWindowSize();
   width = size [0];
   height = size[1];
+}
+
+/*! 
+  Make a copy of the current internal view
+  \param I : destination image
+ */
+
+void
+vpSimulator::getInternalImage(vpImage<vpRGBa> &I)
+{
+  while (get==0) {;}
+  get =2 ;
+  I.resize(internal_height,internal_width) ;
+  vpImageConvert::RGBToRGBa(bufferView,(unsigned char*)I.bitmap,internal_width,internal_height,true);
+  get =1 ;
+}
+
+/*! 
+  Make a copy of the current internal view
+  \param I : destination image
+ */
+void
+vpSimulator::getInternalImage(vpImage<unsigned char> &I)
+{
+  while (get==0) {;}
+  get =2 ;
+  I.resize(internal_height,internal_width) ;
+  vpImageConvert::RGBToGrey(bufferView,I.bitmap,internal_width,internal_height,true);
+  get =1 ;
 }
 
 #endif
