@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindCOIN.cmake,v 1.5 2007-12-05 17:05:12 fspindle Exp $
+# $Id: FindCOIN.cmake,v 1.6 2008-06-27 13:59:51 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -46,6 +46,7 @@ IF(UNIX OR WIN32)
 
   FIND_PATH(COIN_INCLUDE_DIR Inventor/nodes/SoSeparator.h
     $ENV{COINDIR}/include
+    $ENV{COIN3DDIR}/include
     /usr/include 
     )
   #MESSAGE("DBG COIN_INCLUDE_DIR=${COIN_INCLUDE_DIR}")
@@ -56,12 +57,14 @@ IF(UNIX OR WIN32)
       NAMES coin2 #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
+      "$ENV{COIN3DDIR}/lib"   
       )
 
     FIND_LIBRARY(COIN_LIBRARY_DEBUG
       NAMES coin2d #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
+      "$ENV{COIN3DDIR}/lib"   
       )
     MARK_AS_ADVANCED(
       COIN_LIBRARY_RELEASE
@@ -75,6 +78,7 @@ IF(UNIX OR WIN32)
       NAMES Coin #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
+      "$ENV{COIN3DDIR}/lib"   
       )
     
     #MESSAGE("DBG COIN_LIBRARY=${COIN_LIBRARY}")
