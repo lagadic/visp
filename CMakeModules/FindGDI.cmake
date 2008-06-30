@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGDI.cmake,v 1.5 2008-04-17 12:49:35 asaunier Exp $
+# $Id: FindGDI.cmake,v 1.6 2008-06-30 13:49:44 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -59,6 +59,7 @@ IF(WIN32)
                    "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
                    "C:/Program Files/Microsoft Platform SDK/Lib/x64"
                    "C:/DXSDK/Include/Lib/x64"
+                   "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib/x64"
                    DOC "Where can the GDI (Graphics Device Interface) library be found"
                   )
 
@@ -95,6 +96,7 @@ IF(WIN32)
                    "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
                    "C:/Program Files/Microsoft Platform SDK/Lib"
                    "C:/DXSDK/Include/Lib"
+                   "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib"
                    DOC "Where can the GDI (Graphics Device Interface) library be found"
                   )
 
