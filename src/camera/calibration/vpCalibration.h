@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.h,v 1.7 2008-05-13 09:41:49 asaunier Exp $
+ * $Id: vpCalibration.h,v 1.8 2008-07-02 09:40:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -112,7 +112,7 @@ public:
   //! = operator
   void operator=(vpCalibration& twinCalibration );
 private:
-  void computePose(vpHomogeneousMatrix &cMo);
+  void computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
   void calibLagrange( vpCameraParameters &cam , vpHomogeneousMatrix &cMo) ;
   
   //! Compute the calibration using virtual visual servoing approach
@@ -141,12 +141,13 @@ public:
   
   int readData(const char *filename) ;
   static int readGrid(const char *filename,unsigned int &n,
-                  vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ);
+                      vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ,
+                      bool verbose = false);
   int writeData(const char *filename) ;
   int displayData(vpImage<unsigned char> &I,
                       vpColor::vpColorType col=vpColor::red) ;
   int displayGrid(vpImage<unsigned char> &I,
-                      vpColor::vpColorType col=vpColor::blue) ;
+                      vpColor::vpColorType col=vpColor::yellow) ;
   
   double computeStdDeviation(vpHomogeneousMatrix &cMo,
                           vpCameraParameters &cam);
@@ -175,7 +176,7 @@ public:
   //!set the gain for the virtual visual servoing algorithm
   static double getLambda(){return gain;}
   //!set the gain for the virtual visual servoing algorithm 
-  static void setLambda(double &lambda){gain = lambda;}
+  static void setLambda(const double &lambda){gain = lambda;}
 } ;
 
 #endif

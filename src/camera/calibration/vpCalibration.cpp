@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.12 2008-05-13 09:41:49 asaunier Exp $
+ * $Id: vpCalibration.cpp,v 1.13 2008-07-02 09:40:06 asaunier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -146,10 +146,11 @@ int vpCalibration::addPoint(double X, double Y, double Z, double u, double v)
 
 /*!
   Compute the pose cMo
+  \param cam : camera intrinsic parameters used for computation
   \param cMo : computed pose
  */
 void
-vpCalibration::computePose(vpHomogeneousMatrix &cMo)
+vpCalibration::computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
   // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
   vpPose pose ;
@@ -179,10 +180,26 @@ vpCalibration::computePose(vpHomogeneousMatrix &cMo)
     Lu.next() ;
     Lv.next() ;
   }
-    // compute the initial pose using Lagrange method followed by a non linear
+  vpHomogeneousMatrix cMo_dementhon;  // computed pose with dementhon
+  vpHomogeneousMatrix cMo_lagrange;  // computed pose with dementhon
+    
+  // compute the initial pose using Lagrange method followed by a non linear
     // minimisation method
     // Pose by Lagrange it provides an initialization of the pose
-  pose.computePose(vpPose::LAGRANGE, cMo) ;
+  pose.computePose(vpPose::LAGRANGE, cMo_lagrange) ;
+  double residual_lagrange = pose.computeResidual(cMo_lagrange);
+ 
+  // compute the initial pose using Dementhon method followed by a non linear
+    // minimisation method
+    // Pose by Dementhon it provides an initialization of the pose
+  pose.computePose(vpPose::DEMENTHON, cMo_dementhon) ;
+  double residual_dementhon = pose.computeResidual(cMo_dementhon);
+
+  //we keep the better initialization 
+  if (residual_lagrange < residual_dementhon)
+    cMo = cMo_lagrange;
+  else
+    cMo = cMo_dementhon;
   
     // the pose is now refined using the virtual visual servoing approach
     // Warning: cMo needs to be initialized otherwise it may diverge
@@ -348,7 +365,7 @@ vpCalibration::computeStdDeviation(double &deviation,double &deviation_dist)
   CALIB_LAGRANGE_VIRTUAL_VS_DIST  Lagrange approach first,
   than virtual visual servoing approach,
   with distortion.
-  \param cMo : the homogeneous matrix that defines the initial pose.
+  \param cMo : the homogeneous matrix that defines the pose.
   \param cam : intrinsic camera parameters.
   \param verbose : set at true if information about the residual at each loop
   of the algorithm is hoped.
@@ -362,7 +379,7 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
 				  bool verbose)
 {
   try{
-    computePose(cMo);
+    computePose(cam,cMo);
     switch (method)
     {
     case CALIB_LAGRANGE :
@@ -439,8 +456,7 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
   (results are similar to Lowe appraoch)
   CALIB_VIRTUAL_VS_DIST  Virtual visual servoing approach with distortion.
   \param nbPose : number of images used to compute multi-images calibration
-  \param table_cal : array of vpCalibration. All the vpHomogeneousMatrix cMo of
-  each vpCalibration have to be initialized.
+  \param table_cal : array of vpCalibration.
   \param cam : intrinsic camera parameters.
   \param verbose : set at true if information about the residual at each loop
   of the algorithm is hoped.
@@ -455,10 +471,10 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
 				       bool verbose)
 {
   try{
-    for(unsigned int i=0;i<nbPose;i++){
+   for(unsigned int i=0;i<nbPose;i++){
       if(table_cal[i].get_npt()>3)
-        table_cal[i].computePose(table_cal[i].cMo);
-    }     
+        table_cal[i].computePose(cam,table_cal[i].cMo);
+    }
     switch (method) {   
     case CALIB_LAGRANGE :
       if(nbPose > 1){
@@ -682,7 +698,7 @@ vpCalibration::readData(const char* filename)
 */
 int
 vpCalibration::readGrid(const char* filename,unsigned int &n,
-			vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ)
+			vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ, bool verbose)
 {
   try{
     std::ifstream f;
@@ -690,7 +706,8 @@ vpCalibration::readGrid(const char* filename,unsigned int &n,
     if (f != NULL){
 
       f >> n ;
-      std::cout << "There are "<< n <<" points on the calibration grid " << std::endl ;
+      if(verbose)   
+        std::cout << "There are "<< n <<" points on the calibration grid " << std::endl ;
       int no_pt;
       double x,y,z;
 
@@ -700,8 +717,10 @@ vpCalibration::readGrid(const char* filename,unsigned int &n,
       for (unsigned int i=0 ; i < n ; i++)
       {
         f >> no_pt >> x >> y >> z ;
-        std::cout << no_pt <<std::endl ;
-        std::cout << x <<"  "<< y <<"  "<< z <<std::endl ;
+        if(verbose){    
+          std::cout << no_pt <<std::endl ;
+          std::cout << x <<"  "<< y <<"  "<< z <<std::endl ;
+        }     
         oX.addRight(x) ;
         oY.addRight(y) ;
         oZ.addRight(z) ;
@@ -786,8 +805,8 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
     double xp = u0 + x*px ;
     double yp = v0 + y*py ;
 
-    vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
-			    5,col) ;
+//     vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
+// 			    5,col) ;
 
 
     cX = oX*cMo_dist[0][0]+oY*cMo_dist[0][1]+oZ*cMo_dist[0][2]+cMo_dist[0][3];
@@ -803,7 +822,7 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
     yp = v0_dist + y*py_dist*r2 ;
 
     vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
-			    5,vpColor::yellow) ;
+			    5,col) ;
     ///////////////////////////////////////
 
 
