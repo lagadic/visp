@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDC1394.cmake,v 1.5 2007-12-12 13:47:49 fspindle Exp $
+# $Id: FindDC1394.cmake,v 1.6 2008-07-10 08:36:58 asaunier Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -33,11 +33,17 @@
 # Once run this will define: 
 #
 # DC1394_FOUND
+# DC1394_1_FOUND
+# DC1394_2_FOUND
 # DC1394_VERSION
 # DC1394_INCLUDE_DIR
+# DC1394_1_INCLUDE_DIR
+# DC1394_2_INCLUDE_DIR
 # DC1394_LIBRARIES
+# DC1394_1_LIBRARY
+# DC1394_2_LIBRARY
 #
-# The two defines below are only usefull to compile with libdc1394-2.x. In 
+# The two defines below are only usefull to compile with libdc1394-2.x. In
 # that case DC1394_VERSION=2. Since the libdc1394-2.x API is not stable, we 
 # need to determine if dc1394_find_cameras() or dc1394_enumerate_cameras() 
 # functions are available. dc1394_enumerate_cameras() was introduced after 
@@ -56,6 +62,31 @@ IF(NOT UNIX)
   # MESSAGE("FindDC1394.cmake: libdc1394 only available for Unix.")
   SET(DC1394_FOUND FALSE)
 ELSE(NOT UNIX)
+# Search for libdc1394-1.x
+  
+  FIND_PATH(DC1394_1_INCLUDE_DIR libdc1394/dc1394_control.h
+    $ENV{DC1394_HOME}/include
+    /usr/include )
+#MESSAGE("DBG DC1394_1_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
+
+  FIND_LIBRARY(DC1394_1_LIBRARY
+    NAMES dc1394_control
+    PATHS
+    $ENV{DC1394_HOME}/lib
+    /usr/lib
+    )
+#MESSAGE("DBG DC1394_1_LIBRARY=${DC1394_LIBRARY}")
+
+  IF(DC1394_1_LIBRARY AND DC1394_1_INCLUDE_DIR)
+    SET(DC1394_FOUND TRUE)
+    SET(DC1394_1_FOUND TRUE)
+    SET(DC1394_VERSION 1)
+    SET(DC1394_LIBRARIES ${DC1394_1_LIBRARY})
+    SET(DC1394_INCLUDE_DIR ${DC1394_1_INCLUDE_DIR})
+  ELSE(DC1394_1_LIBRARY AND DC1394_1_INCLUDE_DIR)
+    SET(DC1394_FOUND FALSE)
+    SET(DC1394_1_FOUND FALSE)
+  ENDIF(DC1394_1_LIBRARY AND DC1394_1_INCLUDE_DIR)
   
   # Search for libdc1394-2.x
   FIND_PATH(DC1394_2_INCLUDE_DIR dc1394/control.h
@@ -114,41 +145,19 @@ ELSE(NOT UNIX)
     ENDIF(NOT DC1394_CAMERA_ENUMERATE_FOUND)
 
     IF(NOT DC1394_CAMERA_ENUMERATE_FOUND AND NOT DC1394_FIND_CAMERAS_FOUND)
-       SET(DC1394_FOUND FALSE)
+       SET(DC1394_2_FOUND FALSE)
        MESSAGE(SEND_ERROR "libdc1394-2.x found but not compatible with ViSP. Please contact ViSP authors...")
     ELSE(NOT DC1394_CAMERA_ENUMERATE_FOUND AND NOT DC1394_FIND_CAMERAS_FOUND)
        SET(DC1394_FOUND TRUE)
+       SET(DC1394_2_FOUND TRUE)
     ENDIF(NOT DC1394_CAMERA_ENUMERATE_FOUND AND NOT DC1394_FIND_CAMERAS_FOUND)
 
     SET(DC1394_VERSION 2)
     SET(DC1394_LIBRARIES ${DC1394_2_LIBRARY})
     SET(DC1394_INCLUDE_DIR ${DC1394_2_INCLUDE_DIR})
-  ELSE(DC1394_2_LIBRARY AND DC1394_2_INCLUDE_DIR)
-
-    # Search for libdc1394-1.x
-    FIND_PATH(DC1394_1_INCLUDE_DIR libdc1394/dc1394_control.h
-      $ENV{DC1394_HOME}/include
-      /usr/include )
-    #MESSAGE("DBG DC1394_1_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")  
-  
-    FIND_LIBRARY(DC1394_1_LIBRARY
-      NAMES dc1394_control
-      PATHS 
-      $ENV{DC1394_HOME}/lib
-      /usr/lib
-      )
-    #MESSAGE("DBG DC1394_1_LIBRARY=${DC1394_LIBRARY}")
-
-    IF(DC1394_1_LIBRARY AND DC1394_1_INCLUDE_DIR)
-      SET(DC1394_FOUND TRUE)
-      SET(DC1394_VERSION 1)
-      SET(DC1394_LIBRARIES ${DC1394_1_LIBRARY})
-      SET(DC1394_INCLUDE_DIR ${DC1394_1_INCLUDE_DIR})
-    ELSE(DC1394_1_LIBRARY AND DC1394_1_INCLUDE_DIR)
-      SET(DC1394_FOUND FALSE)
-    ENDIF(DC1394_1_LIBRARY AND DC1394_1_INCLUDE_DIR)
-
   ENDIF(DC1394_2_LIBRARY AND DC1394_2_INCLUDE_DIR)
+  
+
 
   ## --------------------------------
 
