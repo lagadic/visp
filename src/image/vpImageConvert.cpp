@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.29 2008-06-27 12:45:02 asaunier Exp $
+ * $Id: vpImageConvert.cpp,v 1.30 2008-07-15 11:46:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -2199,14 +2199,17 @@ vpImageConvert::RGBToGrey(unsigned char * rgb, unsigned char * grey,
   unsigned int j=0;
   unsigned int i=0;
 
+  unsigned r,g,b;
+
   for(i=0 ; i < height ; i++)
   {
     line = src;
     for( j=0 ; j < width ; j++)
     {
-      *grey++ = (unsigned char)( 0.2126 * *(line++)
-				 + 0.7152 * *(line++)
-				 + 0.0722 * *(line++)) ;
+      r = *(line++);
+      g = *(line++);
+      b = *(line++);
+      *grey++ = (unsigned char)( 0.2126 * r + 0.7152 * g + 0.0722 * b) ;
     }
 
     //go to the next line
