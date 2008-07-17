@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.14 2007-12-20 08:18:30 fspindle Exp $
+ * $Id: vpServo.h,v 1.15 2008-07-17 14:38:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,7 +108,7 @@ public:
       EYETOHAND_L_cVf_fJe
     } vpServoType;
 
-  typedef enum 
+  typedef enum
     {
       CURRENT,
       DESIRED,
@@ -116,7 +116,7 @@ public:
       USER_DEFINED
     } vpServoIteractionMatrixType;
 
-  typedef enum 
+  typedef enum
     {
       TRANSPOSE,
       PSEUDO_INVERSE
@@ -255,13 +255,8 @@ public:
 		 const double deriv_at_zero)
   { lambda .initStandard (at_zero, at_infinity, deriv_at_zero) ; }
   void setLambda(const vpAdaptativeGain& _l){lambda=_l;}
-  /*
-    Print informations
-  */
-public:
 
-  //! display information about the task
-  void print(const vpServo::vpServoPrintType display_level=ALL, 
+  void print(const vpServo::vpServoPrintType display_level=ALL,
 	     std::ostream &os = std::cout) ;
 
 } ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.19 2008-04-11 09:40:38 cteulier Exp $
+ * $Id: vpServo.cpp,v 1.20 2008-07-17 14:38:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,12 +71,12 @@
 
   vpFeatureThetaU tu;
   tu.buildFrom(tuv);
-  ...  
+  ...
   task.addFeature(tu); // Add current ThetaU feature
-  
-  // A call to kill() is requested here to destroy properly the current 
+
+  // A call to kill() is requested here to destroy properly the current
   // and desired feature lists.
-  task.kill(); 
+  task.kill();
   \endcode
 
 
@@ -122,21 +122,21 @@ vpServo::init()
   \code
   vpServo task ;
   vpFeatureThetaU tu;
-  ...  
+  ...
   task.addFeature(tu); // Add current ThetaU feature
-  
+
   task.kill(); // A call to kill() is requested here
   \endcode
 
 */
 void
 vpServo::kill()
-{ 
+{
   if (taskWasKilled == false) {
     // kill the current and desired feature lists
     featureList.front() ;
     desiredFeatureList.front() ;
-    
+
     while (!featureList.outside()) {
 	vpBasicFeature *s_ptr = NULL;
 
@@ -191,12 +191,12 @@ vpServo::setServo(vpServoType _servoType)
     };
 
 }
-/*! 
+/*!
   Destructor.
-  
+
   In fact, it does nothing. You have to call kill() to destroy the
   current and desired feature lists.
-  
+
   \exception vpServoException::notKilledProperly : Task was not killed
   properly. That means that you should explitly call kill().
 
@@ -208,7 +208,7 @@ vpServo::~vpServo()
     vpERROR_TRACE("--- Begin Warning Warning Warning Warning Warning ---");
     vpERROR_TRACE("--- You should explicitly call vpServo.kill()...  ---");
     vpERROR_TRACE("--- End Warning Warning Warning Warning Warning   ---");
-    throw(vpServoException(vpServoException::notKilledProperly, 
+    throw(vpServoException(vpServoException::notKilledProperly,
 			   "Task was not killed properly"));
   }
 }
@@ -218,6 +218,24 @@ vpServo::vpServo(vpServoType _servoType)
   setServo(_servoType);
 }
 
+
+/*!
+
+  Prints on \e os stream informations about the task:
+
+  \param displayLevel : If vpServo::ALL prints
+  - Type of control law (eye-in-hand, eye-to-hand)
+  - Control frame (camera frame, joint space)
+  - List of current visual features : s
+  - List of desired visual features : s*
+  - Interaction Matrix Ls
+  - Error vector (s-s*)
+  - Gain of the controller
+
+  \param displayLevel : If vpServo::MINIMUM prints only the error vector (s-s*).
+
+  \param os : Output stream.
+*/
 void
 vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 {
@@ -502,7 +520,7 @@ vpServo::computeInteractionMatrix()
 	    {
 	      computeInteractionMatrixFromList(this ->desiredFeatureList,
 					      this ->featureSelectionList, L);
-	      
+
 	      dim_task = L.getRows() ;
 	      interactionMatrixComputed = true ;
 
