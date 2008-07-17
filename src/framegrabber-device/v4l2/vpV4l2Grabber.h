@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.h,v 1.11 2007-12-18 14:26:08 fspindle Exp $
+ * $Id: vpV4l2Grabber.h,v 1.12 2008-07-17 09:03:29 akrupa Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -107,7 +107,7 @@ public:
   /*! \enum vpV4l2FramerateType
     Frame rate type for capture.
   */
-  typedef enum 
+  typedef enum
     {
       framerate_50fps, //!< 50 frames per second
       framerate_25fps  //!< 25 frames per second
@@ -164,7 +164,9 @@ public:
   void open(vpImage<vpRGBa> &I) ;
 
   void acquire(vpImage<unsigned char> &I) ;
-  void acquire(vpImage<vpRGBa> &I)  ;
+  void acquire(vpImage<unsigned char> &I, struct timeval &timestamp) ;
+  void acquire(vpImage<vpRGBa> &I) ;
+  void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp) ;
   bool getField();
   void setFramerate(vpV4l2FramerateType framerate);
   vpV4l2FramerateType getFramerate();
@@ -250,7 +252,7 @@ private:
   void getCapabilities();
   void startStreaming();
   void stopStreaming();
-  unsigned char * waiton(int &index);
+  unsigned char * waiton(int &index, struct timeval &timestamp);
   int  queueBuffer();
   void queueAll();
   void printBufInfo(struct v4l2_buffer buf);
