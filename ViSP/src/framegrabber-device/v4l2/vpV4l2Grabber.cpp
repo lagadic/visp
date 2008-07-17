@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.12 2007-12-18 14:26:08 fspindle Exp $
+ * $Id: vpV4l2Grabber.cpp,v 1.13 2008-07-17 09:03:29 akrupa Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -460,8 +460,44 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
 				   "V4l2 frame grabber not initialized") );
   }
 
+  struct timeval timestamp;
   unsigned  char *bitmap ;
-  bitmap = waiton(index_buffer);
+  bitmap = waiton(index_buffer, timestamp);
+
+  if ((I.getWidth() != width)||(I.getHeight() != height))
+    I.resize(height, width) ;
+
+  memcpy(I.bitmap, bitmap, height * width*sizeof(unsigned char));
+
+  queueAll();
+}
+
+/*!
+  Acquire a grey level image.
+
+  \param I : Image data structure (8 bits image).
+
+  \param timestamp : Timeval data structure providing the timestamp of the image.
+
+  \exception vpFrameGrabberException::initializationError : Frame grabber not
+  initialized.
+
+  \sa getField()
+*/
+void
+vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp)
+{
+
+  if (init==false)
+  {
+    close();
+
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "V4l2 frame grabber not initialized") );
+  }
+
+  unsigned  char *bitmap ;
+  bitmap = waiton(index_buffer, timestamp);
 
   if ((I.getWidth() != width)||(I.getHeight() != height))
     I.resize(height, width) ;
@@ -493,8 +529,46 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
 				   "V4l2 frame grabber not initialized") );
   }
 
+  struct timeval timestamp;
   unsigned  char *bitmap ;
-  bitmap = waiton(index_buffer);
+  bitmap = waiton(index_buffer, timestamp);
+
+  if ((I.getWidth() != width)||(I.getHeight() != height))
+    I.resize(height, width) ;
+
+  // The framegrabber acquire aRGB format. We just shift the data from 1 byte all the data and initialize the last byte
+
+  memcpy(I.bitmap, bitmap + 1, height * width * sizeof(vpRGBa) - 1);
+  I[height-1][width-1].A = 0;
+
+  queueAll();
+}
+/*!
+  Acquire a color image.
+
+  \param I : Image data structure (32 bits image).
+
+  \param timestamp : Timeval data structure providing the timestamp of the image.
+
+  \exception vpFrameGrabberException::initializationError : Frame grabber not
+  initialized.
+
+  \sa getField()
+*/
+void
+vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp)
+{
+
+  if (init==false)
+  {
+    close();
+
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "V4l2 frame grabber not initialized") );
+  }
+
+  unsigned  char *bitmap ;
+  bitmap = waiton(index_buffer, timestamp);
 
   if ((I.getWidth() != width)||(I.getHeight() != height))
     I.resize(height, width) ;
@@ -945,11 +1019,15 @@ vpV4l2Grabber::stopStreaming()
 
   Update the buffer index. If all the buffers are filled index is set to -1.
 
+  \param index : Index in the buffer where image is available.
+
+  \param timestamp : Timeval data structure providing the timestamp of the image.
+
   \exception vpFrameGrabberException::otherError : If can't access to the
   frame.
 */
 unsigned char *
-vpV4l2Grabber::waiton(int &index)
+vpV4l2Grabber::waiton(int &index, struct timeval &timestamp)
 {
   struct v4l2_buffer buf;
   struct timeval tv;
@@ -1010,6 +1088,9 @@ vpV4l2Grabber::waiton(int &index)
   index = buf.index;
 
   field = buf_v4l2[index].field;
+
+  timestamp = buf_v4l2[index].timestamp;
+
 
   if(verbose)
   {

@@ -2,6 +2,10 @@ ViSP 2.4.x (released ...)
   - Testing
     - Use of CDash insteed of Dart2. Dashboards are sent to 
       http://cdash.irisa.fr/CDash/index.php?project=ViSP 
+  - New Features
+    - vpV4l2Grabber: Get the timestamp associated to the grabbed image.
+  - Examples:
+    - New examples in example/manual described in ViSP guide.
 
 ----------------------------------------------	
 ViSP 2.4.2 (released March 27, 2008)
