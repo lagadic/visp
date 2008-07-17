@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.5 2008-02-01 16:57:51 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.6 2008-07-17 20:11:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -34,6 +34,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -90,9 +91,8 @@
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 
-FILE *flagrange=NULL;
-FILE *fdementhon=NULL;
-FILE *flowe=NULL;
+#define L 0.05 // to deal with a 10cm by 10cm square
+
 
 /*!
 
@@ -195,7 +195,7 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
   }
   else { // init = false; use of the previous pose to initialise LOWE
     cRo.buildFrom(cro);
-    cMo.buildFrom(cRo, cto);
+    cMo.buildFrom(cto, cRo);
   }
   pose.computePose(vpPose::LOWE, cMo) ;
   cMo.extract(cto);
@@ -220,222 +220,262 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
 int
 main()
 {
+  // Log file creation in /tmp/$USERNAME/log.dat
+  // This file contains by line:
+  // - the 6 computed camera velocities (m/s, rad/s) to achieve the task
+  // - the 6 mesured joint velocities (m/s, rad/s)
+  // - the 6 mesured joint positions (m, rad)
+  // - the 8 values of s - s*
+  // - the 6 values of the pose cMo (tx,ty,tz, rx,ry,rz) with translation
+  //   in meters and rotations in radians
+  std::string username;
+  // Get the user login name
+  vpIoTools::getUserName(username);
+
+  // Create a log filename to save velocities...
+  std::string logdirname;
+  logdirname ="/tmp/" + username;
+
+  // Test if the output path exist. If no try to create it
+  if (vpIoTools::checkDirectory(logdirname) == false) {
+    try {
+      // Create the dirname
+      vpIoTools::makeDirectory(logdirname);
+    }
+    catch (...) {
+      std::cerr << std::endl
+		<< "ERROR:" << std::endl;
+      std::cerr << "  Cannot create " << logdirname << std::endl;
+      exit(-1);
+    }
+  }
+  std::string logfilename;
+  logfilename = logdirname + "/log.dat";
+
+  // Open the log file name
+  std::ofstream flog(logfilename.c_str());
+
   try
-    {
-      std::string username;
-      std::string outputdir; // for the results files
-      // Set the default output path
-#ifdef UNIX
-      outputdir = "/tmp";
-#elif WIN32
-      outputdir = "C:/temp";
-#endif
+  {
+    vpCameraParameters::vpCameraParametersProjType
+      projModel = vpCameraParameters::perspectiveProjWithDistortion;
+    vpRobotAfma6 robot;
 
-      // Get the user login name
-      vpIoTools::getUserName(username);
+    // Load the end-effector to camera frame transformation obtained
+    // using a camera intrinsic model with distortion
+    robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, projModel);
 
-      // Append to the output path string, the login name of the user
-      outputdir = outputdir + "/" + username;
+    vpServo task ;
 
-      // Test if the output path exist. If no try to create it
-      if (vpIoTools::checkDirectory(outputdir) == false) {
-	try {
-	  // Create the dirname
-	  vpIoTools::makeDirectory(outputdir);
-	}
-	catch (...) {
-	  std::cerr << std::endl
-		    << "ERROR:" << std::endl;
-	  std::cerr << "  Cannot create " << outputdir << std::endl;
-	  exit(-1);
-	}
-      }
-      // Create the debug file: $outputdir/pose.txt
-      char *filename = new char[FILENAME_MAX];
-      sprintf(filename, "%s/pose.txt", outputdir.c_str());
-      FILE *fdpose = fopen(filename, "w");
-      delete [] filename;
+    vpImage<unsigned char> I ;
+    int i ;
 
-      vpCameraParameters::vpCameraParametersProjType
-          projModel = vpCameraParameters::perspectiveProjWithDistortion;
-      vpRobotAfma6 robot;
+    vp1394TwoGrabber g;
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
+    g.open(I) ;
 
-      // Load the end-effector to camera frame transformation obtained
-	    // using a camera intrinsic model with distortion
-	    robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, projModel);
+    vpDisplayX display(I,100,100,"Current image") ;
 
-      vpServo task ;
+    g.acquire(I) ;
 
-      vpImage<unsigned char> I ;
-      int i ;
+    vpDisplay::display(I) ;
+    vpDisplay::flush(I) ;
 
-      vp1394TwoGrabber g;
-      g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-      g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-      g.open(I) ;
+    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << " Test program for vpServo "  <<std::endl ;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
+    std::cout << " Use of the Afma6 robot " << std::endl ;
+    std::cout << " Interaction matrix computed with the current features " << std::endl ;
+    std::cout << " task : servo 4 points on a square with dimention " << L << " meters" << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << std::endl ;
 
-      vpDisplayX display(I,100,100,"Current image") ;
 
+    vpDot2 dot[4] ;
+
+    std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
+	      << std::endl;
+    for (i=0 ; i < 4 ; i++) {
+      dot[i].initTracking(I) ;
+      vpDisplay::displayCross(I,
+			      (unsigned int)dot[i].get_v(),
+			      (unsigned int)dot[i].get_u(),
+			      10, vpColor::blue) ;
+      vpDisplay::flush(I);
+    }
+
+    vpCameraParameters cam ;
+    // Update camera parameters
+    robot.getCameraParameters (cam, I);
+
+    // Sets the current position of the visual feature
+    vpFeaturePoint p[4] ;
+    for (i=0 ; i < 4 ; i++)
+      vpFeatureBuilder::create(p[i], cam, dot[i]);  //retrieve x,y  of the vpFeaturePoint structure
+
+    // Set the position of the square target in a frame which origin is
+    // centered in the middle of the square
+    vpPoint point[4] ;
+    point[0].setWorldCoordinates(-L, -L, 0) ;
+    point[1].setWorldCoordinates( L, -L, 0) ;
+    point[2].setWorldCoordinates( L,  L, 0) ;
+    point[3].setWorldCoordinates(-L,  L, 0) ;
+
+    // Initialise a desired pose to compute s*, the desired 2D point features
+    vpHomogeneousMatrix cMo;
+    vpTranslationVector cto(0, 0, 0.7); // tz = 0.7 meter
+    vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)); // No rotations
+    vpRotationMatrix cRo(cro); // Build the rotation matrix
+    cMo.buildFrom(cto, cRo); // Build the homogeneous matrix
+
+    // Sets the desired position of the 2D visual feature
+    vpFeaturePoint pd[4] ;
+    // Compute the desired position of the features from the desired pose
+    for (int i=0; i < 4; i ++) {
+      vpColVector cP, p ;
+      point[i].changeFrame(cMo, cP) ;
+      point[i].projection(cP, p) ;
+
+      pd[i].set_x(p[0]) ;
+      pd[i].set_y(p[1]) ;
+      pd[i].set_Z(cP[2]);
+    }
+
+    // Define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    // - Interaction matrix is computed with the current visual features
+    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
+
+    // We want to see a point on a point
+    std::cout << std::endl ;
+    for (i=0 ; i < 4 ; i++)
+      task.addFeature(p[i],pd[i]) ;
+
+    // Set the proportional gain
+    task.setLambda(0.4) ;
+
+    // Display task information
+    task.print() ;
+
+    // Initialise the velocity control of the robot
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+
+    // Initialise the pose using Lagrange and Dementhon methods, chose the best
+    // estimated pose (either Lagrange or Dementhon) and than compute the pose
+    // using LOWE method with Lagrange or Dementhon pose as initialisation.
+    // compute_pose(point, dot, 4, cam, cMo, cto, cro, true);
+
+    std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
+
+    while (1) {
+      // Acquire a new image from the camera
       g.acquire(I) ;
 
+      // Display this image
       vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
 
-      std::cout << std::endl ;
-      std::cout << "-------------------------------------------------------" << std::endl ;
-      std::cout << " Test program for vpServo "  <<std::endl ;
-      std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
-      std::cout << " Simulation " << std::endl ;
-      std::cout << " task : servo a point " << std::endl ;
-      std::cout << "-------------------------------------------------------" << std::endl ;
-      std::cout << std::endl ;
-
-
-      vpDot2 dot[4] ;
-
-      std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
-	   << std::endl;
+      // For each point...
       for (i=0 ; i < 4 ; i++) {
-	      dot[i].initTracking(I) ;
-	      vpDisplay::displayCross(I,
-				      (unsigned int)dot[i].get_v(),
-				      (unsigned int)dot[i].get_u(),
-				      10, vpColor::blue) ;
-	      vpDisplay::flush(I);
+	// Achieve the tracking of the dot in the image
+	dot[i].track(I) ;
+	// Display a green cross at the center of gravity position in the
+	// image
+	vpDisplay::displayCross(I,
+				(unsigned int)dot[i].get_v(),
+				(unsigned int)dot[i].get_u(),
+				10, vpColor::green) ;
       }
 
-      vpCameraParameters cam ;
-      // Update camera parameters
-      robot.getCameraParameters (cam, I);
+      // During the servo, we compute the pose using LOWE method. For the
+      // initial pose used in the non linear minimisation we use the pose
+      // computed at the previous iteration.
+      compute_pose(point, dot, 4, cam, cMo, cto, cro, false);
 
-      vpTRACE("sets the current position of the visual feature ") ;
-      vpFeaturePoint p[4] ;
-      for (i=0 ; i < 4 ; i++)
-      	vpFeatureBuilder::create(p[i], cam, dot[i]);  //retrieve x,y  of the vpFeaturePoint structure
+      for (i=0 ; i < 4 ; i++) {
+	// Update the point feature from the dot location
+	vpFeatureBuilder::create(p[i], cam, dot[i]);
+	// Set the feature Z coordinate from the pose
+	vpColVector cP;
+	point[i].changeFrame(cMo, cP) ;
 
-      // Set the position of the square target in a frame which origin is
-      // centered in the middle of the square
-      vpPoint point[4] ;
-#define L 0.05 // to deal with a 10cm by 10cm square
-      point[0].setWorldCoordinates(-L, -L, 0) ;
-      point[1].setWorldCoordinates( L, -L, 0) ;
-      point[2].setWorldCoordinates( L,  L, 0) ;
-      point[3].setWorldCoordinates(-L,  L, 0) ;
-
-      // Initialise a desired pose to compute s*, the desired 2D point features
-      vpHomogeneousMatrix cMo;
-      vpTranslationVector cto(0, 0, 0.7); // tz = 1 meter
-      vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)); // No rotations
-      vpRotationMatrix cRo(cro); // Build the rotation matrix
-      cMo.buildFrom(cRo, cto); // Build the homogeneous matrix
-
-      vpTRACE("sets the desired position of the 2D visual feature ");
-      vpFeaturePoint pd[4] ;
-      // Compute the desired position of the features from the desired pose
-      for (int i=0; i < 4; i ++) {
-	      vpColVector cP, p ;
-	      point[i].changeFrame(cMo, cP) ;
-	      point[i].projection(cP, p) ;
-
-	      pd[i].set_x(p[0]) ;
-	      pd[i].set_y(p[1]) ;
-	      pd[i].set_Z(cP[2]);
+	p[i].set_Z(cP[2]);
       }
 
-      vpTRACE("define the task") ;
-      vpTRACE("\t we want an eye-in-hand control law") ;
-      vpTRACE("\t robot is controlled in the camera frame") ;
-      vpTRACE("\t Interaction matrix is computed with the current visual features") ;
-      task.setServo(vpServo::EYEINHAND_CAMERA) ;
-      task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
+      // Printing on stdout concerning task information
+      // task.print() ;
 
-      vpTRACE("\t we want to see a point on a point..") ;
-      std::cout << std::endl ;
-      for (i=0 ; i < 4 ; i++)
-        task.addFeature(p[i],pd[i]) ;
+      vpColVector v ;
+      // Compute the visual servoing skew vector
+      v = task.computeControlLaw() ;
 
-      vpTRACE("\t set the gain") ;
-      task.setLambda(0.6) ;
+      // Display the current and desired feature points in the image display
+      vpServoDisplay::display(task, cam, I);
 
-      vpTRACE("Display task information " ) ;
-      task.print() ;
+      // Apply the computed camera velocities to the robot
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-      robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+      // Save velocities applied to the robot in the log file
+      // v[0], v[1], v[2] correspond to camera translation velocities in m/s
+      // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
+      flog << v[0] << " " << v[1] << " " << v[2] << " "
+	   << v[3] << " " << v[4] << " " << v[5] << " ";
 
-      int iter=0 ;
-      double error = 1;
-      vpTRACE("\t loop") ;
-      while(error > 0.000001 ) {
-	      std::cout << "-------------------------------" << iter <<std::endl ;
+      // Get the measured joint velocities of the robot
+      vpColVector qvel;
+      robot.getVelocity(vpRobot::ARTICULAR_FRAME, qvel);
+      // Save measured joint velocities of the robot in the log file:
+      // - qvel[0], qvel[1], qvel[2] correspond to measured joint translation
+      //   velocities in m/s
+      // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
+      //   velocities in rad/s
+      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
+	   << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
-	      g.acquire(I) ;
-	      vpDisplay::display(I) ;
+      // Get the measured joint positions of the robot
+      vpColVector q;
+      robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
+      // Save measured joint positions of the robot in the log file
+      // - q[0], q[1], q[2] correspond to measured joint translation
+      //   positions in m
+      // - q[3], q[4], q[5] correspond to measured joint rotation
+      //   positions in rad
+      flog << q[0] << " " << q[1] << " " << q[2] << " "
+	   << q[3] << " " << q[4] << " " << q[5] << " ";
 
-	      for (i=0 ; i < 4 ; i++) {
-	        dot[i].track(I) ;
-	        vpDisplay::displayCross(I,
-				        (unsigned int)dot[i].get_v(),
-				        (unsigned int)dot[i].get_u(),
-				        10, vpColor::green) ;
-	      }
+      // Save feature error (s-s*) for the 4 feature points. For each feature
+      // point, we have 2 errors (along x and y axis).  This error is expressed
+      // in meters in the camera frame
+      flog << task.error[0] << " " << task.error[1] << " "  // s-s* for point 1
+	   << task.error[2] << " " << task.error[3] << " "  // s-s* for point 2
+	   << task.error[4] << " " << task.error[5] << " "  // s-s* for point 3
+	   << task.error[6] << " " << task.error[7] << " "; // s-s* for point 4
 
-	      if (iter == 0) {
-	        compute_pose(point, dot, 4, cam, cMo, cto, cro, true);
-	        // At the first iteration we compute the pose using Lagrange and
-	        // Dementhon methods, chose the best estimated pose (either Lagrange
-	        // or Dementhon) and than compute the pose using LOWE method with
-	        // Lagrange or Dementhon pose as initiaisation.
-	      }
-	      else {
-	        // During the servo, we compute the pose using LOWE method. For the
-	        // initial pose used in the non linear minimisation we use the pose
-	        // computed at the previous iteration.
-	        compute_pose(point, dot, 4, cam, cMo, cto, cro, false);
-	      }
+      // Save the current cMo pose: translations in meters, rotations (rx, ry,
+      // rz) in radians
+      flog << cto[0] << " " << cto[1] << " " << cto[2] << " " // translation
+	   << cro[0] << " " << cro[1] << " " << cro[2] << std::endl; // rot
 
-	      // Save the resulting pose: translations in meters, rotations (rx, ry,
-	      // rz) in degrees
-	      fprintf(fdpose, "%g %g %g %g %g %g\n",
-		      cto[0], cto[1], cto[2],
-		      vpMath::deg(cro[0]),
-		      vpMath::deg(cro[1]),
-		      vpMath::deg(cro[2]));
-
-	      for (i=0 ; i < 4 ; i++) {
-	        vpFeatureBuilder::create(p[i], cam, dot[i]);
-	        // Set the feature Z coordinate from the pose
-	        vpColVector cP;
-	        point[i].changeFrame(cMo, cP) ;
-
-	        p[i].set_Z(cP[2]);
-	      }
-
-	      task.print() ;
-
-	      vpColVector v ;
-	      v = task.computeControlLaw() ;
-
-	      vpServoDisplay::display(task, cam, I);
-	      //	v = 0;
-	      std::cout << "Velocity: " <<v.t() ;
-
-	      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-	      vpDisplay::flush(I) ;
-
-	      error = task.error.sumSquare();
-	      vpTRACE("\t\t || s - s* || = %g ", error) ;
-
-	      iter ++;
-      }
-
-      fclose(fdpose);
-
-      vpTRACE("Display task information " ) ;
-      task.print() ;
-      task.kill();
+      // Flush the display
+      vpDisplay::flush(I) ;
     }
+
+    flog.close() ; // Close the log file
+
+    // Display task information
+    task.print() ;
+
+    // Kill the task
+    task.kill();
+
+    return 0;
+  }
   catch (...) {
+    flog.close() ; // Close the log file
+
     vpERROR_TRACE(" Test failed") ;
     return 0;
   }
