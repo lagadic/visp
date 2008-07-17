@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.71 2008-07-10 08:38:18 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.72 2008-07-17 20:14:03 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -734,9 +734,11 @@ IF(USE_AFMA4)
      #MESSAGE("DBG VISP_HAVE_AFMA4= ${VISP_HAVE_AFMA4}")
      #MESSAGE("DBG AFMA4_INCLUDE_DIR=${AFMA4_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${AFMA4_INCLUDE_DIR}
-      )
-    SET(AFMA_LIBS ${AFMA_LIBS} ${AFMA4_LIBRARIES})
+      ${BIT3_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${AFMA4_LIBRARIES} 
+      ${BIT3_LIBRARIES})
      #MESSAGE("AFMA4_LIBRARIES = ${AFMA4_LIBRARIES}")
+    SET(VISP_DEFS "${VISP_DEFS} ${BIT3_DEFS}")
   ELSE(AFMA4_FOUND AND BIT3_FOUND)
     MESSAGE(STATUS "Afma4 not found")
     MESSAGE("Afma4 robot requested but not found. Turn off USE_AFMA4 option!")
@@ -747,40 +749,34 @@ ENDIF(USE_AFMA4)
 
 # library for Irisa's Afma6 cartesian robot
 IF(USE_AFMA6)
-  # Test if bit3 was added previously for Afma4
-  IF(NOT USE_AFMA4)
-    FIND_PACKAGE(BIT3)
-  ENDIF(NOT USE_AFMA4)
-  FIND_PACKAGE(AFMA6)
-  IF(AFMA6_FOUND AND BIT3_FOUND)
+  # Low level API to control the robot: 
+  # libcalinux - librt - libraw1394 - libirisa
+  IF(NOT RAW1394_FOUND)
+    FIND_PACKAGE(RAW1394)
+  ENDIF(NOT RAW1394_FOUND)
+  FIND_PACKAGE(RT)
+  FIND_PACKAGE(CALINUX)
+  FIND_PACKAGE(IRISA)
+  IF(RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND)
     MESSAGE(STATUS "Afma6 found")
     SET(VISP_HAVE_AFMA6 TRUE) # for header vpConfig.h
     SET(VISP_HAVE_AFMA6_FOUND "yes")  # for ViSP-third-party.txt
-    #MESSAGE("DBG VISP_HAVE_AFMA6= ${VISP_HAVE_AFMA6}")
-    #MESSAGE("DBG AFMA6_INCLUDE_DIR=${AFMA6_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${AFMA6_INCLUDE_DIR}
-      )
-    SET(AFMA_LIBS ${AFMA_LIBS} ${AFMA6_LIBRARIES})
-     #MESSAGE("AFMA6_LIBRARIES = ${AFMA6_LIBRARIES}")
-  ELSE(AFMA6_FOUND AND BIT3_FOUND)
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} 
+      ${RAW1394_INCLUDE_DIR} 
+      ${CALINUX_INCLUDE_DIR}
+      ${IRISA_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} 
+      ${IRISA_LIBRARIES} 
+      ${CALINUX_LIBRARIES} 
+      ${RAW1394_LIBRARIES} 
+      ${RT_LIBRARIES})
+  ELSE(RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND)
     MESSAGE(STATUS "Afma6 not found")
     MESSAGE("Afma6 robot requested but not found. Turn off USE_AFMA6 option!")
     SET(VISP_HAVE_AFMA6_FOUND "no")  # for ViSP-third-party.txt
     # SET(USE_AFMA6 OFF)
-  ENDIF(AFMA6_FOUND AND BIT3_FOUND)
+  ENDIF(RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND)
 ENDIF(USE_AFMA6)
-
-# For Irisa's Afma4 and Afma6 libraries addition of common bit3 libraries.
-IF(VISP_HAVE_AFMA4 OR VISP_HAVE_AFMA6)
-  SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${BIT3_INCLUDE_DIR})
-  # Afma4 or Afma6 api is build using basic ViSP functionalities. Because
-  # of cross references problems with static libraries, we need to add
-  # -lvisp-2 after Afma4 libs
-  SET(AFMA_LIBS ${AFMA_LIBS} ${BIT3_LIBRARIES})
-  SET(VISP_EXTERN_LIBS ${AFMA_LIBS}
-    ${VISP_EXTERN_LIBS} -l${VISP_INTERN_LIBS} )
-  SET(VISP_DEFS "${VISP_DEFS} ${BIT3_DEFS}")
-ENDIF(VISP_HAVE_AFMA4 OR VISP_HAVE_AFMA6)
 
 # library for Biclops pan-tilt head
 IF(USE_BICLOPS)
