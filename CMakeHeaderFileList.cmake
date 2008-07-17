@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.22 2008-03-26 09:11:33 asaunier Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.23 2008-07-17 20:15:48 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -132,7 +132,6 @@ SET (HEADER_ROBOT
   robot/real-robot/afma4/vpRobotAfma4Contrib.h
   robot/real-robot/afma4/vpRobotAfma4.h
   robot/real-robot/afma6/vpAfma6.h
-  robot/real-robot/afma6/vpRobotAfma6Contrib.h
   robot/real-robot/afma6/vpRobotAfma6.h
   robot/real-robot/biclops/vpBiclops.h
   robot/real-robot/biclops/vpRobotBiclopsController.h
