@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.16 2008-04-25 14:02:48 cteulier Exp $
+ * $Id: vpRobotAfma6.h,v 1.17 2008-07-17 20:14:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,21 +28,23 @@
  * not clear to you.
  *
  * Description:
- * Interface for the Irisa's Afma6 robot.
+ * Interface for the Irisa's Afma6 robot controlled by an Adept MotionBlox.
  *
  * Authors:
- * Nicolas Mansard
  * Fabien Spindler
  *
  *****************************************************************************/
+
+#ifndef vpRobotAfma6_h
+#define vpRobotAfma6_h
 
 #include <visp/vpConfig.h>
 
 #ifdef VISP_HAVE_AFMA6
 
+#include <iostream>
+#include <stdio.h>
 
-#ifndef __vpROBOT_AFMA6_H
-#define __vpROBOT_AFMA6_H
 
 
 /* ------------------------------------------------------------------------ */
@@ -51,29 +53,27 @@
 
 /* --- ViSP --- */
 
-#include <visp/vpRobot.h>   /* Classe CRobot dont herite CRobotAfma6.  */
-#include <visp/vpAfma6.h>   /* Constantes du robot (classe vpAfma6).    */
-#include <visp/vpColVector.h>   /* Constantes du robot (classe vpAfma6).    */
-#include <visp/vpDebug.h>   /* Constantes du robot (classe vpAfma6).    */
+#include <visp/vpRobot.h>
+#include <visp/vpColVector.h>
+#include <visp/vpDebug.h>
+#include <visp/vpAfma6.h>
 
-/* --- GENERAL --- */
-#include <iostream>                /* Classe std::ostream.              */
-#include <stdio.h>                /* Classe std::ostream.              */
+// low level controller api
+extern "C" {
+#  include "irisa.h"
+#  include "trycatch.h"
+}
 
-#include <visp/vpRobotAfma6Contrib.h>   /* Constantes du robot (classe vpAfma6).    */
-//#include <visp/vpTwistMatrix.h>
 /* ------------------------------------------------------------------------ */
 /* --- CLASSE ------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
 
-/**
- * \brief Implementation de la classe vpRobot permettant de diriger le
- * robot AFMA6.
- *
- * La classe vpRobotAfma6 reprend toutes les specs de la classe CRobot et
- * les implementent toutes.
- */
+/*!
+
+  Implementation of the vpRobot class in order to control Irisa's Afma6 robot.
+
+*/
 class VISP_EXPORT vpRobotAfma6
   :
   public vpAfma6,
@@ -82,7 +82,8 @@ class VISP_EXPORT vpRobotAfma6
 
 private: /* Methodes implicites interdites. */
 
-  /** \brief Constructeur par clonage interdit.
+  /*!
+    Copy contructor not allowed.
    */
   vpRobotAfma6 (const vpRobotAfma6 & ass);
 
@@ -97,47 +98,22 @@ private: /* Attributs prives. */
    * a VRAI. Seul le destructeur repositionne le champ a FAUX, ce qui
    * alors la creation d'un nouvel objet.
    */
-  static bool               robotAlreadyCreated;
+  static bool robotAlreadyCreated;
 
-public:  /* Attributs publiques. */
+  double positioningVelocity;
 
-  /* Vitesse maximale du robot lors d'un positionnement. */
-  double                    positioningVelocity;
-  /** Attente pour la lecture de la vitesse courrante. */
-  int                       velocityMesureTempo;
-
-  /* On maintient construit un objet de chaque classe de communication. */
-
-  /** Objet de communication avec le robot en position (set et get). */
-  st_position_Afma6         communicationPosition;
-  st_mouvement_Afma6        communicationVelocity;
-
-public:  /* Construction Destruction. */
-
-  /** Constructeur avec un reference sur la partie publique.
-   * \throw ERRUniciteRobot si un objet vpRobotAfma6 a deja ete cree.
-   */
-  vpRobotAfma6 (vpRobotAfma6 * pub);
-
-
-public:  /* Attributs */
-
-
+  // Variables used to compute the measured velocities (see getVelocity() )
+  vpColVector q_prev_getvel;
+  vpHomogeneousMatrix fMc_prev_getvel;
+  double time_prev_getvel;
+  bool first_time_getvel;
 
 public: /* Methodes */
 
-  /* Initialise les connexions avec la carte VME et demare le robot.
-   * La fonction est lancee lors de la construction. Il s'agit uniquement
-   * d'une factorisation du code.
-   * \throw
-   *   - ERRConstruction si une erreur survient lors de l'ouverture du VME.
-   *   - ERRCommunication si une erreur survient lors de l'initialisation de
-   * l'afma6.
-   */
   void init (void);
   void init (vpAfma6::vpAfma6CameraRobotType camera,
              vpCameraParameters::vpCameraParametersProjType
-               projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+	     projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
 public:  /* Constantes */
 
@@ -146,76 +122,43 @@ public:  /* Constantes */
    * positioningVelocity. Cette valeur peut etre changee par la fonction
    * #setPositioningVelocity.
    */
-  static const double       defaultPositioningVelocity; // = 20.0;
-
-  /** Valeur par default de l'attribut prive velocityMeasureTempo, accessible
-   * en lecture par #getVelocityMeasureTempo, et en ecriture par
-   * #setVelocityMeasureTempo. */
-  static const int          defaultVelocityMeasureTempo; // = 10;
-
-  /** Nombre d'articulation, i.e. taille des vecteurs articulaires. */
-  static const int          nbArticulations; // = 6;
-
-public:  /* Attributs publiques */
+  static const double defaultPositioningVelocity; // = 20.0;
 
 public:  /* Methode publiques */
 
-  /** \brief Constructeur vide, le seul possible.
-   *
-   * \throw ERRUniciteRobot si un objet vpRobotAfma6 a deja ete cree. Un
-   * seul vpRobotAfma6 peut exister a un temps donner. Si cette erreur est
-   * lancee, cela veut dire que le precedent vpRobotAfma6 cree n'a pas
-   * ete correctement detruit.
-   */
   vpRobotAfma6 (void);
-
-  /** \brief Destructeur.
-   *
-   * \throw ERRCommunication si une erreur survient lors de la fermeture
-   * des communications avec le robot.
-   * \throw ERRMauvaisEtatRobot si le robot n'etait pas arrete au moment de
-   * la destruction de l'objet. Dans ce cas le robot est arrete et les
-   * communications sont fermee, avant le lancement de l'erreur. */
   virtual ~vpRobotAfma6 (void);
 
 
   /* --- ETAT ------------------------------------------------------------- */
 
-  vpRobot::vpRobotStateType   setRobotState (vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
-
-  //! set a displacement (frame as to ve specified)
   void setPosition(const vpRobot::vpControlFrameType frame,
-		   const vpColVector &q) ;
+		   const vpColVector &position) ;
   void setPosition (const vpRobot::vpControlFrameType frame,
-		    const double x, const double y, const double z,
-		    const double rx, const double ry, const double rz ) ;
+		    const double pos1, const double pos2, const double pos3,
+		    const double pos4, const double pos5, const double pos6) ;
   void getPosition (const vpRobot::vpControlFrameType frame,
-		    vpColVector &r);
+		    vpColVector &position);
 
 
-  void                      setPositioningVelocity (const double velocity);
-  double                    getPositioningVelocity (void);
+  void   setPositioningVelocity (const double velocity);
+  double getPositioningVelocity (void);
 
   /* --- VITESSE ---------------------------------------------------------- */
 
   void setVelocity (const vpRobot::vpControlFrameType frame,
-		    const vpColVector & r_dot);
+		    const vpColVector & velocity);
 
 
   void getVelocity (const vpRobot::vpControlFrameType frame,
-		    vpColVector & r_dot);
+		    vpColVector & velocity);
 
   vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
 
-private:
-  int velocityMeasureTempo ;
 public:
-  void setVelocityMeasureTempo (const int tempo);
-  int getVelocityMeasureTempo (void);
-
-
   void get_cMe(vpHomogeneousMatrix &_cMe) ;
   void get_cVe(vpTwistMatrix &_cVe) ;
   //! get the robot Jacobian expressed in the end-effector frame
@@ -224,49 +167,22 @@ public:
   void get_fJe(vpMatrix &_fJe)  ;
 
   void stopMotion() ;
+  void powerOff() ;
 
-  /* --- Vecteur vers double --- */
-  static inline void V6_mmrad_mrad(vpColVector& r);
-  /** Vecteur de dimension 6: de m et dg vers m et rad. */
-  static inline void
-  VD6_mdg_mrad (const vpColVector &input, double * output);
-
-  /** Vecteur de dimension 6: de m et rad vers mm et rad. */
-  static inline void
-  VD6_mrad_mmrad (const vpColVector & input, double * output);
-
-  /* --- Double vers vecteur --- */
-
-  /** Vecteur de dimension 6: de mm et dg vers m et dg. */
-  static inline void
-  DV6_mmdg_mdg (const double * input, vpColVector & output);
-
-  /** Vecteur de dimension 6: de mm et rad vers m et rad. */
-  static inline void
-  DV6_mmrad_mrad (const double * input, vpColVector & output);
-
-  // get a displacement expressed in the camera frame
-  void getCameraDisplacement(vpColVector &v);
-  // get a displacement expressed  in the articular frame
-  void getArticularDisplacement(vpColVector  &qdot);
-
-  // get a displacement (frame as to ve specified)
-  void getDisplacement(vpRobot::vpControlFrameType  frame, vpColVector &q);
-
-
-  void move(char *name) ;
-  static bool readPosFile(const char *filename, vpColVector &v)  ;
-  static bool savePosFile(const char *filename, const vpColVector &v)  ;
-
+  void move(const char *filename) ;
+  static bool readPosFile(const char *filename, vpColVector &q)  ;
+  static bool savePosFile(const char *filename, const vpColVector &q)  ;
 
   void openGripper() ;
   void closeGripper() ;
 
+  void getCameraDisplacement(vpColVector &d);
+  void getArticularDisplacement(vpColVector  &d);
+  void getDisplacement(vpRobot::vpControlFrameType  frame, vpColVector &d);
 };
 
 
 
-#endif /* #ifndef __vpROBOT_AFMA6_H */
 
 
 /*
@@ -276,3 +192,4 @@ public:
  */
 
 #endif
+#endif /* #ifndef vpRobotAfma6_h */

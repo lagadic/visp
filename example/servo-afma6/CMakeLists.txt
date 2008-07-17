@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2008-05-27 09:42:19 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.4 2008-07-17 20:11:57 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,7 +41,6 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  moveAfma6.cpp
   servoAfma6Ellipse2DCamVelocity.cpp
   servoAfma6FourPoints2DArtVelocity.cpp
   servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma6Pose.cpp,v 1.2 2008-05-27 09:40:30 fspindle Exp $
+ * $Id: testRobotAfma6Pose.cpp,v 1.3 2008-07-17 20:10:06 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -197,7 +197,7 @@ int main()
   robot.getPosition(vpRobotAfma6::ARTICULAR_FRAME, p);
   std::cout << "Robot pose in articular: " << p << std::endl;
 
-  robot.computeMGD(p, rMc);
+  robot.get_fMc(p, rMc);
   std::cout << "Pose rMc from MGD: " << std::endl << rMc;
   rMc.extract(R);
   r.buildFrom(R);
