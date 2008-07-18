@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.72 2008-07-17 20:14:03 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.73 2008-07-18 08:46:43 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -735,9 +735,13 @@ IF(USE_AFMA4)
      #MESSAGE("DBG AFMA4_INCLUDE_DIR=${AFMA4_INCLUDE_DIR}")
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${AFMA4_INCLUDE_DIR}
       ${BIT3_INCLUDE_DIR})
-    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${AFMA4_LIBRARIES} 
-      ${BIT3_LIBRARIES})
-     #MESSAGE("AFMA4_LIBRARIES = ${AFMA4_LIBRARIES}")
+    SET(VISP_EXTERN_LIBS ${AFMA4_LIBRARIES} ${BIT3_LIBRARIES}
+      ${VISP_EXTERN_LIBS})
+    #MESSAGE("AFMA4_LIBRARIES = ${AFMA4_LIBRARIES}")
+    # Afma4 or Afma6 api is build using basic ViSP functionalities. Because
+    # of cross references problems with static libraries, we need to add
+    # -lvisp-2 after Afma4 libs
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} -l${VISP_INTERN_LIBS} )
     SET(VISP_DEFS "${VISP_DEFS} ${BIT3_DEFS}")
   ELSE(AFMA4_FOUND AND BIT3_FOUND)
     MESSAGE(STATUS "Afma4 not found")
