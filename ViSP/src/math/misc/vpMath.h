@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.h,v 1.10 2007-05-16 09:20:13 mpressig Exp $
+ * $Id: vpMath.h,v 1.11 2008-07-18 09:26:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,15 +52,15 @@
 #ifdef WIN32	// Not defined in Microsoft math.h
 
 # ifndef M_PI
-#   define M_PI            3.14159265358979323846
+#   define M_PI            3.14159265358979323846f
 # endif
 
 # ifndef M_PI_2
-#   define M_PI_2          (M_PI/2)
+#   define M_PI_2          (M_PI/2.f)
 # endif
 
 # ifndef M_PI_4
-#   define M_PI_4          (M_PI/4)
+#   define M_PI_4          (M_PI/4.f)
 # endif
 
 #endif
