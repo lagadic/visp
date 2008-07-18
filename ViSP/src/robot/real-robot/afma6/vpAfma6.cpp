@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.25 2008-07-18 09:25:22 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.26 2008-07-18 09:49:51 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -889,6 +889,10 @@ vpAfma6::parseConfigFile (const char * filename)
 /*!
   Get the current intrinsic camera parameters obtained by calibration.
 
+  \warning This method needs XML library to parse the file containing
+  the camera parameters. If XML is detected by ViSP, VISP_HAVE_XML
+  macro is defined in include/visp/vpConfig.h file.
+
   Camera parameters are read from
   /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
 
@@ -915,15 +919,21 @@ vpAfma6::parseConfigFile (const char * filename)
   \endcode
 */
 
+#ifndef VISP_HAVE_XML
+void 
+vpAfma6::getCameraParameters (vpCameraParameters &,
+			      const unsigned int &,
+			      const unsigned int &)
+{
+  vpTRACE("Not implemented, since XML library is not installed !");
+  return;
+}
+#else
 void 
 vpAfma6::getCameraParameters (vpCameraParameters &cam,
 			      const unsigned int &image_width,
 			      const unsigned int &image_height)
 {
-#ifndef VISP_HAVE_XML
-  vpTRACE("Not implemented, since xml library is not installed !");
-  return;
-#else
   vpXmlParserCamera parser;
   switch (getCameraRobotType())
   {
@@ -951,8 +961,8 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     }
   }
   return;
-#endif
 }
+#endif
 
 /*!
   Get the current intrinsic camera parameters obtained by calibration.
