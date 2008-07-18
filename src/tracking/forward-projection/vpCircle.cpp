@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCircle.cpp,v 1.9 2008-01-31 14:54:45 asaunier Exp $
+ * $Id: vpCircle.cpp,v 1.10 2008-07-18 10:20:46 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -104,6 +104,14 @@ vpCircle::~vpCircle()
 
 
 
+
+//! perspective projection of the circle
+void
+vpCircle::projection()
+{
+  projection(cP,p) ;
+}
+
 //! perspective projection of the circle
 void
 vpCircle::projection(const vpColVector &cP, vpColVector &p)
@@ -200,6 +208,36 @@ vpCircle::projection(const vpColVector &cP, vpColVector &p)
 //! perspective projection of the circle
 void
 vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
+{
+
+  double A,B,C ;
+  A = cMo[0][0]*oP[0] + cMo[0][1]*oP[1]  + cMo[0][2]*oP[2];
+  B = cMo[1][0]*oP[0] + cMo[1][1]*oP[1]  + cMo[1][2]*oP[2];
+  C = cMo[2][0]*oP[0] + cMo[2][1]*oP[1]  + cMo[2][2]*oP[2];
+
+  double X0,Y0,Z0 ;
+  X0 = cMo[0][3] + cMo[0][0]*oP[3] + cMo[0][1]*oP[4] + cMo[0][2]*oP[5];
+  Y0 = cMo[1][3] + cMo[1][0]*oP[3] + cMo[1][1]*oP[4] + cMo[1][2]*oP[5];
+  Z0 = cMo[2][3] + cMo[2][0]*oP[3] + cMo[2][1]*oP[4] + cMo[2][2]*oP[5];
+  double R = oP[6] ;
+
+  cP[0] = A ;
+  cP[1] = B ;
+  cP[2] = C ;
+
+  cP[3] = X0 ;
+  cP[4] = Y0 ;
+  cP[5] = Z0 ;
+
+  cP[6] = R ;
+
+  // vpTRACE("_cP :") ; std::cout << _cP.t() ;
+
+}
+
+//! perspective projection of the circle
+void
+vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
 {
 
   double A,B,C ;

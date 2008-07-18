@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.cpp,v 1.8 2008-04-07 12:15:45 asaunier Exp $
+ * $Id: vpCylinder.cpp,v 1.9 2008-07-18 10:20:46 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,6 +103,13 @@ vpCylinder::~vpCylinder()
 }
 
 
+//! perspective projection of the cylinder
+void
+vpCylinder::projection()
+{
+  projection(cP,p) ;
+}
+
 
 //! perspective projection of the cylinder
 void
@@ -156,6 +163,13 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   while (p[3] < -M_PI/2) { p[3] += M_PI ; p[2] *= -1 ; }
 
 //  std::cout << p.t() << std::endl ;
+}
+
+//! perspective projection of the cylinder
+void
+vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo)
+{
+  changeFrame(cMo,cP) ;
 }
 
 //! perspective projection of the cylinder

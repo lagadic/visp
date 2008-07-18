@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.cpp,v 1.14 2008-03-28 16:49:38 marchand Exp $
+ * $Id: vpPoint.cpp,v 1.15 2008-07-18 10:20:46 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -138,8 +138,9 @@ void
 vpPoint::projection()
 {
 
-  p[0] = cP[0]/cP[2] ;
-  p[1] = cP[1]/cP[2] ;
+  double d = 1/cP[2] ;
+  p[0] = cP[0]*d ;
+  p[1] = cP[1]*d ;
   p[2] = 1 ;
 }
 
@@ -157,7 +158,11 @@ vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
   _cP[2] = cMo[2][0]*oP[0]+ cMo[2][1]*oP[1]+ cMo[2][2]*oP[2]+ cMo[2][3]*oP[3] ;
   _cP[3] = cMo[3][0]*oP[0]+ cMo[3][1]*oP[1]+ cMo[3][2]*oP[2]+ cMo[3][3]*oP[3] ;
 
-  _cP /= _cP[3] ;
+  double d = 1/_cP[3] ;
+  _cP[0] *=d ;
+  _cP[1] *=d ;
+  _cP[2] *=d ; 
+  _cP[3] *=d ; ;
 }
 
 
@@ -165,12 +170,17 @@ vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 void
 vpPoint::changeFrame(const vpHomogeneousMatrix &cMo)
 {
-  cP[0] = cMo[0][0]*oP[0]+ cMo[0][1]*oP[1]+ cMo[0][2]*oP[2]+ cMo[0][3]*oP[3] ;
-  cP[1] = cMo[1][0]*oP[0]+ cMo[1][1]*oP[1]+ cMo[1][2]*oP[2]+ cMo[1][3]*oP[3] ;
-  cP[2] = cMo[2][0]*oP[0]+ cMo[2][1]*oP[1]+ cMo[2][2]*oP[2]+ cMo[2][3]*oP[3] ;
-  cP[3] = cMo[3][0]*oP[0]+ cMo[3][1]*oP[1]+ cMo[3][2]*oP[2]+ cMo[3][3]*oP[3] ;
+  double X = cMo[0][0]*oP[0]+ cMo[0][1]*oP[1]+ cMo[0][2]*oP[2]+ cMo[0][3]*oP[3] ;
+  double Y = cMo[1][0]*oP[0]+ cMo[1][1]*oP[1]+ cMo[1][2]*oP[2]+ cMo[1][3]*oP[3] ;
+  double Z = cMo[2][0]*oP[0]+ cMo[2][1]*oP[1]+ cMo[2][2]*oP[2]+ cMo[2][3]*oP[3] ;
+  double W = cMo[3][0]*oP[0]+ cMo[3][1]*oP[1]+ cMo[3][2]*oP[2]+ cMo[3][3]*oP[3] ;
 
-  cP /= cP[3] ;
+  double d = 1/W ;
+  cP[0] =X*d ;
+  cP[1] =Y*d ;
+  cP[2] =Z*d ;
+  cP[3] =1 ;
+  
 }
 
 

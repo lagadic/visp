@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.15 2008-01-31 14:54:45 asaunier Exp $
+ * $Id: vpPoint.h,v 1.16 2008-07-18 10:20:47 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,16 +77,16 @@ public:
   //@{
 
   //! set the point coordinates (camera frame)
-  void set_X(const double X) { cP[0] = X ; }
-  void set_Y(const double Y) { cP[1] = Y ; }
-  void set_Z(const double Z) { cP[2] = Z ; }
-  void set_W(const double W) { cP[3] = W ; }
+  inline void set_X(const double X) { cP[0] = X ; }
+  inline void set_Y(const double Y) { cP[1] = Y ; }
+  inline void set_Z(const double Z) { cP[2] = Z ; }
+  inline void set_W(const double W) { cP[3] = W ; }
 
   //! set the point coordinates (object frame)
-  void set_oX(const double X) { oP[0] = X ; }
-  void set_oY(const double Y) { oP[1] = Y ; }
-  void set_oZ(const double Z) { oP[2] = Z ; }
-  void set_oW(const double W) { oP[3] = W ; }
+  inline void set_oX(const double X) { oP[0] = X ; }
+  inline void set_oY(const double Y) { oP[1] = Y ; }
+  inline void set_oZ(const double Z) { oP[2] = Z ; }
+  inline void set_oW(const double W) { oP[3] = W ; }
 
   //! get the point coordinates (camera frame)
   double get_X()  const { return cP[0] ; }
@@ -101,9 +101,9 @@ public:
   double get_oW() const { return oP[3] ; }
 
   //! set the point xyw-coordinates
-  void set_x(const double x) {  p[0] = x ; }
-  void set_y(const double y) {  p[1] = y ; }
-  void set_w(const double w) {  p[2] = w ; }
+  inline void set_x(const double x) {  p[0] = x ; }
+  inline void set_y(const double y) {  p[1] = y ; }
+  inline void set_w(const double w) {  p[2] = w ; }
 
 
   //! get the point xyw-coordinates
@@ -131,13 +131,13 @@ public:
   void projection(const vpColVector &_cP, vpColVector &_p) ;
 
   //! Projection onto the image plane of the point. Update the object attribute p (2D homogeneous coordinates) according to object attribute cP (current 3D coordinates in the camera frame).
-  void projection();
+  inline void projection();
 
   //!Compute the 3D coordinates _cP  (camera frame)
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) ;
 
   //!Update the object attribute cP  (3D coordinates in the camera frame)
-  void changeFrame(const vpHomogeneousMatrix &cMo) ;
+  inline void changeFrame(const vpHomogeneousMatrix &cMo) ;
 
 
   void display(vpImage<unsigned char> &I,
