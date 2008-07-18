@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2008-07-17 20:11:57 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.5 2008-07-18 09:16:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -65,7 +65,6 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(moveAfma6 moveAfma6 -m)
 ADD_TEST(servoAfma6Ellipse2DCamVelocity servoAfma6Ellipse2DCamVelocity)
 ADD_TEST(servoAfma6FourPoints2DArtVelocity servoAfma6FourPoints2DArtVelocity)
 ADD_TEST(servoAfma6FourPoints2DCamVelocityInteractionDesired servoAfma6FourPoints2DCamVelocityInteractionDesired)
