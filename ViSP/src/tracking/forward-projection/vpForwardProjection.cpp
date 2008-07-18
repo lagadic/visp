@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpForwardProjection.cpp,v 1.6 2007-04-20 14:22:22 asaunier Exp $
+ * $Id: vpForwardProjection.cpp,v 1.7 2008-07-18 10:20:46 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,21 +67,21 @@ vpForwardProjection::project()
 
 
 
-
+/*
 //! change frame
 void
 vpForwardProjection::changeFrame(const vpHomogeneousMatrix &cMo)
 {
   changeFrame(cMo,cP) ;
-}
+  }*/
 
 //! change frame and project
 void
 vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
 {
   try{
-    changeFrame(cMo,cP) ;
-    project() ;
+    changeFrame(cMo) ;
+    projection() ;
   }
   catch(...)
   {

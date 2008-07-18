@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSphere.cpp,v 1.8 2008-01-31 14:54:45 asaunier Exp $
+ * $Id: vpSphere.cpp,v 1.9 2008-07-18 10:20:47 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,6 +92,12 @@ vpSphere::~vpSphere()
 }
 
 
+//! perspective projection of the sphere
+void
+vpSphere::projection()
+{
+  projection(cP,p) ;
+}
 
 //! perspective projection of the circle
 void
@@ -165,6 +171,12 @@ vpSphere::projection(const vpColVector &cP, vpColVector &p)
 
   //  std::cout << p.t() ;
 
+}
+//! perspective projection of the circle
+void
+vpSphere::changeFrame(const vpHomogeneousMatrix &cMo)
+{
+  changeFrame(cMo,cP) ;
 }
 
 //! perspective projection of the circle

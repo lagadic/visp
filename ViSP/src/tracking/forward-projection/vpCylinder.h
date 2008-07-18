@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.h,v 1.8 2008-01-31 14:54:45 asaunier Exp $
+ * $Id: vpCylinder.h,v 1.9 2008-07-18 10:20:47 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -102,8 +102,10 @@ public:
   double getR() const { return cP[6] ; }
 
 
+  void projection() ;
   void projection(const vpColVector &cP, vpColVector &p) ;
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
+  void changeFrame(const vpHomogeneousMatrix &cMo) ;
 
 
   void display(vpImage<unsigned char> &I,
