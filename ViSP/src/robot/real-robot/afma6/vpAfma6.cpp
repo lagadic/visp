@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.24 2008-07-17 20:14:58 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.25 2008-07-18 09:25:22 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -165,12 +165,22 @@ vpAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
     {   
       switch(projModel){   
       case vpCameraParameters::perspectiveProjWithoutDistortion :
+#ifdef UNIX
         snprintf(filename_eMc, FILENAME_MAX, "%s",
 	         CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME);
+#else // WIN32
+        _snprintf(filename_eMc, FILENAME_MAX, "%s",
+	         CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME);
+#endif
         break;
       case vpCameraParameters::perspectiveProjWithDistortion :
+#ifdef UNIX
         snprintf(filename_eMc, FILENAME_MAX, "%s",
            CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME);
+#else // WIN32
+        _snprintf(filename_eMc, FILENAME_MAX, "%s",
+           CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME);
+#endif
         break;    
       }   
       break;
@@ -289,7 +299,7 @@ vpAfma6::getForwardKinematics(const vpColVector & q)
   }
   \endcode
 
-  \sa getForwardKinematics()
+sr	  \sa getForwardKinematics()
 
 */
 int 
@@ -297,9 +307,9 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 			      vpColVector & q, const bool &nearest)
 {
   vpHomogeneousMatrix fMe;
-  float q_[2][6],d[2],t;
+  double q_[2][6],d[2],t;
   int ok[2];
-  float cord[6];
+  double cord[6];
 
   int nbsol = 0;
 
@@ -320,10 +330,10 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
   fMe = fMc * this->_eMc.inverse();
   std::cout << "\n\nfMe: " << fMe;
 
-  if (fMe[2][2] >= .99999)
+  if (fMe[2][2] >= .99999f)
   {
     vpTRACE("singularity\n");
-    q_[0][4] = q_[1][4] = M_PI/2;
+    q_[0][4] = q_[1][4] = M_PI/2.f;
     t = atan2(fMe[0][0],fMe[0][1]);
     q_[1][3] = q_[0][3] = q[3];
     q_[1][5] = q_[0][5] = t - q_[0][3];
@@ -910,6 +920,10 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
 			      const unsigned int &image_width,
 			      const unsigned int &image_height)
 {
+#ifndef VISP_HAVE_XML
+  vpTRACE("Not implemented, since xml library is not installed !");
+  return;
+#else
   vpXmlParserCamera parser;
   switch (getCameraRobotType())
   {
@@ -936,6 +950,8 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
       break;
     }
   }
+  return;
+#endif
 }
 
 /*!
