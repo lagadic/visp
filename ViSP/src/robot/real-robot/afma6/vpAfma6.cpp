@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.26 2008-07-18 09:49:51 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.27 2008-07-18 09:51:52 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -890,7 +890,7 @@ vpAfma6::parseConfigFile (const char * filename)
   Get the current intrinsic camera parameters obtained by calibration.
 
   \warning This method needs XML library to parse the file containing
-  the camera parameters. If XML is detected by ViSP, VISP_HAVE_XML
+  the camera parameters. If XML is detected by ViSP, VISP_HAVE_XML2
   macro is defined in include/visp/vpConfig.h file.
 
   Camera parameters are read from
@@ -919,7 +919,7 @@ vpAfma6::parseConfigFile (const char * filename)
   \endcode
 */
 
-#ifndef VISP_HAVE_XML
+#ifndef VISP_HAVE_XML2
 void 
 vpAfma6::getCameraParameters (vpCameraParameters &,
 			      const unsigned int &,
