@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.18 2008-07-21 09:41:11 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.19 2008-07-21 18:52:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -241,6 +241,7 @@ public:  /* Methode publiques */
   void setPosition (const vpRobot::vpControlFrameType frame,
 		    const double pos1, const double pos2, const double pos3,
 		    const double pos4, const double pos5, const double pos6) ;
+  void setPosition(const char *filename) ;
   void getPosition (const vpRobot::vpControlFrameType frame,
 		    vpColVector &position);
 
@@ -266,6 +267,7 @@ public:
   void get_fJe(vpMatrix &_fJe)  ;
 
   void stopMotion() ;
+  void powerOn() ;
   void powerOff() ;
 
   void move(const char *filename) ;
