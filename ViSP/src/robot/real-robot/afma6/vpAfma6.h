@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.15 2008-07-17 20:14:58 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.16 2008-07-21 09:41:11 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -66,7 +66,7 @@ class VISP_EXPORT vpAfma6
 {
  public:
   //! File where constant parameters in relation with the robot are
-  //! stored: joint max, min, couplig factor between 4 ant 5 joint,
+  //! stored: joint max, min, coupling factor between 4 ant 5 joint,
   //! distance between 5 and 6 joint.
   static const char * const CONST_AFMA6_FILENAME;
   static const char * const CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME;

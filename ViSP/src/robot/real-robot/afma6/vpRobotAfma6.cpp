@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.32 2008-07-17 20:14:58 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.33 2008-07-21 09:41:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,15 @@
 /* ---------------------------------------------------------------------- */
 
 bool vpRobotAfma6::robotAlreadyCreated = false;
-const double       vpRobotAfma6::defaultPositioningVelocity = 20.0;
+
+/*!
+
+  Default positioning velocity in percentage of the maximum
+  velocity. This value is set to 20. The member function
+  setPositioningVelocity() allows to change this value.
+
+*/
+const double vpRobotAfma6::defaultPositioningVelocity = 20.0;
 
 /* ---------------------------------------------------------------------- */
 /* --- CONSTRUCTOR ------------------------------------------------------ */
@@ -176,6 +184,12 @@ vpRobotAfma6::init (void)
   q_prev_getvel = 0;
   time_prev_getvel = 0;
   first_time_getvel = true;
+
+  // Initialise private variables used to compute the measured displacement
+  q_prev_getdis.resize(6);
+  q_prev_getdis = 0;
+  first_time_getdis = true;
+
 
   // Connect to the servoboard
   Try( InitializeConnection() );
@@ -541,7 +555,12 @@ vpRobotAfma6::get_eJe(vpMatrix &eJe)
 
   Set the maximal velocity percentage to use for a positionning task.
 
-  \param velocity : Percentage of the maximal velocity.
+  The default positioning velocity is defined by
+  vpRobotAfma6::defaultPositioningVelocity. This method allows to
+  change this default positioning velocity
+
+  \param velocity : Percentage of the maximal velocity. Values should
+  be in ]0:100].
 
   \code
   vpColVector position(6);
@@ -831,7 +850,7 @@ void vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   frame, and rotation in camera frame)
 
   \param position : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0,
+  - in camera cartesien frame, a 6 dimension vector, set to 0.
 
   - in articular, a 6 dimension vector corresponding to the articular
   position of each dof, first the 3 translations, then the 3
@@ -1294,13 +1313,38 @@ vpRobotAfma6::getVelocity (vpRobot::vpControlFrameType frame)
 
 /*!
 
-Read articular positions in a specific Afma6 file.
+Read joint positions in a specific Afma6 position file.
+
+This position file has to start with a header. The six joint positions
+are given after the "R:" keyword. The first 3 values correspond to the
+joint translations X,Y,Z expressed in meters. The 3 last values
+correspond to the joint rotations A,B,C expressed in degres to be more
+representative for the user. Theses values are then converted in
+radians in \e q. The character "#" starting a line indicates a
+comment.
+
+A typical content of such a file is given below:
+
+\code
+#AFMA6 - Position - Version 2.01
+# 
+# R: X Y Z A B C
+# Joint position: X, Y, Z: translations in meters
+#                 A, B, C: rotations in degrees
+# 
+
+R: 0.1 0.3 -0.25 -80.5 80 0
+\endcode
 
 \param filename : Name of the position file to read.
-\param v : articular positions
+
+\param q : Joint positions: X,Y,Z,A,B,C. Translations X,Y,Z are
+expressed in meters, while joint rotations A,B,C in radians.
 
 \return true if the positions were successfully readen in the file. false, if
 an error occurs.
+
+\sa savePosFile()
 */
 
 bool
@@ -1352,7 +1396,12 @@ vpRobotAfma6::readPosFile(const char *filename, vpColVector &q)
 
 /*!
 
-  Save joint (articular) positions in a specific Afma6 file.
+  Save joint (articular) positions in a specific Afma6 position file.
+
+  This position file starts with a header on the first line. After
+  convertion of the rotations in degrees, the joint position \e q is
+  written on a line starting with the keyword "R: ". See readPosFile()
+  documentation for an example of such a file.
 
   \param filename : Name of the position file to create.
 
@@ -1361,10 +1410,12 @@ vpRobotAfma6::readPosFile(const char *filename, vpColVector &q)
   rotations A,B,C in radians.
 
   \warning The joint rotations A,B,C written in the file are converted
-  in degrees.
+  in degrees to be more representative for the user..
 
   \return true if the positions were successfully saved in the file. false, if
   an error occurs.
+
+  \sa readPosFile()
 */
 
 bool
@@ -1419,13 +1470,39 @@ vpRobotAfma6::move(const char *filename)
   this->setPosition ( vpRobot::ARTICULAR_FRAME,  q) ;
 }
 
+/*!
 
+  Open the pneumatic CCMOP gripper by calling:
+
+  \code
+  rsh japet sudo /local/driver/pince/Afma6_pince_root -s 1
+  \endcode
+
+  The binary "Afma6_pince_root" communicates throw the parallel port with
+  the pneumatic servo.
+
+  \sa closeGripper()
+*/
 void
 vpRobotAfma6::openGripper()
 {
   system("rsh japet sudo /local/driver/pince/Afma6_pince_root -s 1") ;
 }
 
+/*!
+
+  Close the pneumatic CCMOP gripper by calling:
+
+  \code
+  rsh japet sudo /local/driver/pince/Afma6_pince_root -s 0
+  \endcode
+
+  The binary "Afma6_pince_root" communicates throw the parallel port with
+  the pneumatic servo.
+
+  \sa openGripper()
+
+*/
 void
 vpRobotAfma6::closeGripper()
 {
@@ -1437,81 +1514,112 @@ vpRobotAfma6::closeGripper()
   Get the robot displacement expressed in the camera frame since the last call
   of this method.
 
-  \param d : The measured displacement in camera frame. The dimension of d is 6
-  (tx, ty, ty, rx, ry, rz). Translations are expressed in meters, rotations in
-  radians.
+  \param displacement : The measured displacement in camera frame. The
+  dimension of \e displacement is 6 (tx, ty, ty, rx, ry,
+  rz). Translations are expressed in meters, rotations in radians with
+  the Euler Rxyz representation.
 
   \sa getDisplacement(), getArticularDisplacement()
 
 */
 void
-vpRobotAfma6::getCameraDisplacement(vpColVector &d)
+vpRobotAfma6::getCameraDisplacement(vpColVector &displacement)
 {
-  getDisplacement(vpRobot::CAMERA_FRAME, d);
+  getDisplacement(vpRobot::CAMERA_FRAME, displacement);
 }
 /*!
 
   Get the robot articular displacement since the last call of this method.
 
-  \param d : The measured articular displacement. The dimension of qdot is 6
-  (the number of axis of the robot). Translations are expressed in meters,
-  rotations in radians.
+  \param displacement : The measured articular displacement. The
+  dimension of \e displacement is 6 (the number of axis of the
+  robot). Translations are expressed in meters, rotations in radians.
 
   \sa getDisplacement(), getCameraDisplacement()
 
 */
 void
-vpRobotAfma6::getArticularDisplacement(vpColVector  &d)
+vpRobotAfma6::getArticularDisplacement(vpColVector  &displacement)
 {
-  getDisplacement(vpRobot::ARTICULAR_FRAME, d);
+  getDisplacement(vpRobot::ARTICULAR_FRAME, displacement);
 }
 
 /*!
 
   Get the robot displacement since the last call of this method.
 
+  \warning This functionnality is not implemented for the moment in the
+  cartesian space. It is only available in the joint space
+  (vpRobot::ARTICULAR_FRAME).
+
   \param frame : The frame in which the measured displacement is expressed.
 
-  \param d : The displacement.
-  . In articular, the dimension of q is 6.
-  . In camera or reference frame, the dimension of q is 6 (tx, ty, ty, rx, ry,
-  rz). Translations are expressed in meters, rotations in radians.
+  \param displacement : The measured displacement since the last call
+  of this method. The dimension of \e displacement is always
+  6. Translations are expressed in meters, rotations in radians.
+  
+  In camera or reference frame, rotations are expressed with the
+  Euler Rxyz representation.
 
   \sa getArticularDisplacement(), getCameraDisplacement()
 
 */
 void
 vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
-			      vpColVector &d)
+			      vpColVector &displacement)
 {
-  d.resize (6);
-  d = 0;
-  switch (frame)
-  {
-  case vpRobot::CAMERA_FRAME:
-    {
+  displacement.resize (6);
+  displacement = 0;
+
+  double q[6];
+  vpColVector q_cur(6);
+
+  InitTry;
+
+  // Get the current joint position
+  Try( PrimitiveACQ_POS(q) );
+  for (int i=0; i < njoint; i ++) {
+    q_cur[i] = q[i];
+  }
+
+  if ( ! first_time_getdis ) {
+    switch (frame) {
+    case vpRobot::CAMERA_FRAME: {
       std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
       return;
       break ;
     }
-  case vpRobot::ARTICULAR_FRAME:
-    {
-      std::cout << "getDisplacement() ARTICULAR_FRAME not implemented\n";
-      return;
+
+    case vpRobot::ARTICULAR_FRAME: {
+      displacement = q_cur - q_prev_getdis;
       break ;
     }
-  case vpRobot::REFERENCE_FRAME:
-    {
+
+    case vpRobot::REFERENCE_FRAME: {
       std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
       return;
       break ;
     }
-  case vpRobot::MIXT_FRAME:
-    {
+
+    case vpRobot::MIXT_FRAME: {
       std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
       return;
       break ;
     }
+    }
+  }
+  else {
+    first_time_getdis = false;
+  }
+
+  // Memorize the joint position for the next call
+  q_prev_getdis = q_cur;
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot get velocity.");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Cannot get velocity.");
   }
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manServo4PointsDisplay.cpp,v 1.1 2008-07-11 13:25:57 asaunier Exp $
+ * $Id: manServo4PointsDisplay.cpp,v 1.2 2008-07-21 09:41:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,12 +37,12 @@
  *****************************************************************************/
 
 /*!
-  \file manServo4PointsDisplay
+  \file manServo4PointsDisplay.cpp
   \brief Visual servoing experiment on 4 points with a display.
 */
 
 /*!
-  \example manServo4PointsDisplay
+  \example manServo4PointsDisplay.cpp
   Visual servoing experiment on 4 points with a display.
 */
 

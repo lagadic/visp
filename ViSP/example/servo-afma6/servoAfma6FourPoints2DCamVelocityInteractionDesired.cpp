@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp,v 1.3 2008-07-17 20:11:57 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp,v 1.4 2008-07-21 09:41:11 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -289,7 +289,7 @@ main()
       // - qvel[0], qvel[1], qvel[2] correspond to measured camera translation
       //   velocities in m/s
       // - qvel[3], qvel[4], qvel[5] correspond to measured camera rotation
-      //   velocities in rad/s in the ThetaU representation
+      //   velocities in rad/s 
       flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
 	   << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
