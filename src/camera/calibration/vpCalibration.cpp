@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.13 2008-07-02 09:40:06 asaunier Exp $
+ * $Id: vpCalibration.cpp,v 1.14 2008-07-21 09:41:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -693,6 +693,10 @@ vpCalibration::readData(const char* filename)
   \param oX : vpList of oX coordinates
   \param oY : vpList of oY coordinates
   \param oZ : vpList of oZ coordinates
+
+  \param verbose : Additionnal printings if true (number of points on
+  the calibration grid and their respective coordinates in the object
+  frame).
 
   \return 0 : if success
 */

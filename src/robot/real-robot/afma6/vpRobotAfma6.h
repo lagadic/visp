@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.17 2008-07-17 20:14:58 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.18 2008-07-21 09:41:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,14 +45,6 @@
 #include <iostream>
 #include <stdio.h>
 
-
-
-/* ------------------------------------------------------------------------ */
-/* --- INCLUDES ----------------------------------------------------------- */
-/* ------------------------------------------------------------------------ */
-
-/* --- ViSP --- */
-
 #include <visp/vpRobot.h>
 #include <visp/vpColVector.h>
 #include <visp/vpDebug.h>
@@ -64,15 +56,118 @@ extern "C" {
 #  include "trycatch.h"
 }
 
-/* ------------------------------------------------------------------------ */
-/* --- CLASSE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------ */
-
 
 /*!
 
-  Implementation of the vpRobot class in order to control Irisa's Afma6 robot.
+  Implementation of the vpRobot class in order to control Irisa's
+  Afma6 robot.  This robot is a gentry robot with six degrees of
+  freedom manufactured in 1992 by the french Afma-Robots company. In
+  2008, the low level controller change for a more recent Adept
+  technology based on the MotionBlox controller. A firewire camera is
+  mounted on the end-effector to allow eye-in-hand visual
+  servoing. The control of this camera is achieved by the
+  vp1394TwoGrabber class. A ring light is attached around the
+  camera. The control of this ring light is possible throw the
+  vpRingLight class. A CCMOP gripper is also mounted on the
+  end-effector. The pneumatic control of this gripper is possible
+  throw the openGripper() or closeGripper() member functions.
 
+  This class allows to control the Afma6 gentry robot in position
+  and velocity:
+  - in the joint space (vpRobot::ARTICULAR_FRAME), 
+  - in the fixed reference frame (vpRobot::REFERENCE_FRAME), 
+  - in the camera frame (vpRobot::CAMERA_FRAME),
+  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed 
+  in the reference frame and rotations in the camera frame.
+
+  All the translations are expressed in meters for positions and m/s
+  for the velocities. Rotations are expressed in radians for the
+  positions, and rad/s for the rotation velocities.
+
+  The direct and inverse kinematics models are implemented in the
+  vpAfma6 class.
+
+  \warning A Ctrl-C, a segmentation fault or other system errors are
+  catched by this class to stop the robot.
+
+  To communicate with the robot, you may first create an instance of this
+  class by calling the default constructor:
+
+  \code
+  vpRobotAfma6 robot;
+  \endcode
+ 
+  To control the robot in position, you may set the controller
+  to position control and than send the position to reach in a specific
+  frame like here in the joint space:
+
+  \code
+  vpColVector q(6);
+  // Set a joint position
+  q[0] = 0.1; // x axis, in meter
+  q[1] = 0.2; // y axis, in meter
+  q[2] = 0.3; // z axis, in meter
+  q[3] = M_PI/8; // rotation around A axis, in rad
+  q[4] = M_PI/4; // rotation around B axis, in rad
+  q[5] = M_PI;   // rotation around C axis, in rad
+
+  // Initialize the controller to position control
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL)
+
+  // Moves the robot in the joint space
+  robot.setPosition(q, vpRobot::ARTICULAR_FRAME);
+  \endcode
+
+  The robot moves to the specified position with the default
+  positioning velocity vpRobotAfma6::defaultPositioningVelocity. The
+  setPositioningVelocity() method allows to change the maximal
+  velocity used to reach the desired position.
+
+  \code
+  // Set the max velocity to 40%
+  robot.setPositioningVelocity(40);
+
+  // Moves the robot in the joint space
+  robot.setPosition(q, vpRobot::ARTICULAR_FRAME);
+  \endcode
+
+  To control the robot in velocity, you may set the controller to
+  velocity control and than send the velocities. To end the velocity
+  control and stop the robot you have to set the controller to the
+  stop state. Here is an example of a velocity control in the joint
+  space:
+
+  \code
+  vpColVector qvel(6);
+  // Set a joint velocity
+  qvel[0] = 0.1; // x axis, in m/s
+  qvel[1] = 0.2; // y axis, in m/s
+  qvel[2] = 0  ; // z axis, in m/s
+  qvel[3] = M_PI/8; // rotation around A axis, in rad/s
+  qvel[4] = 0;      // rotation around B axis, in rad/s
+  qvel[5] = 0;      // rotation around C axis, in rad/s
+
+  // Initialize the controller to position control
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL)
+
+  while (...) {
+    // Apply a velocity in the joint space
+    robot.setPosition(qvel, vpRobot::ARTICULAR_FRAME);
+
+    // Compute new velocities qvel...
+  }
+
+  // Stop the robot
+  robot.setRobotState(vpRobot::STATE_STOP)
+  \endcode
+
+  There is also possible to measure the robot current position with
+  getPosition() method and the robot current velocities with the getVelocity()
+  method.
+
+  For convenience, there is also the ability to read/write joint
+  positions from a position file with readPosFile() and writePodFile()
+  methods.
 */
 class VISP_EXPORT vpRobotAfma6
   :
@@ -108,6 +203,12 @@ private: /* Attributs prives. */
   double time_prev_getvel;
   bool first_time_getvel;
 
+  // Variables used to compute the measured displacement (see
+  // getDisplacement() )
+  vpColVector q_prev_getdis;
+  bool first_time_getdis;
+
+
 public: /* Methodes */
 
   void init (void);
@@ -117,7 +218,7 @@ public: /* Methodes */
 
 public:  /* Constantes */
 
-  /** Vitesse maximale par default lors du positionnement du robot.
+  /* Vitesse maximale par default lors du positionnement du robot.
    * C'est la valeur a la construction de l'attribut prive \a
    * positioningVelocity. Cette valeur peut etre changee par la fonction
    * #setPositioningVelocity.
@@ -161,9 +262,7 @@ public:  /* Methode publiques */
 public:
   void get_cMe(vpHomogeneousMatrix &_cMe) ;
   void get_cVe(vpTwistMatrix &_cVe) ;
-  //! get the robot Jacobian expressed in the end-effector frame
   void get_eJe(vpMatrix &_eJe)  ;
-  //! get the robot Jacobian expressed in the robot reference frame
   void get_fJe(vpMatrix &_fJe)  ;
 
   void stopMotion() ;
@@ -176,9 +275,10 @@ public:
   void openGripper() ;
   void closeGripper() ;
 
-  void getCameraDisplacement(vpColVector &d);
-  void getArticularDisplacement(vpColVector  &d);
-  void getDisplacement(vpRobot::vpControlFrameType  frame, vpColVector &d);
+  void getCameraDisplacement(vpColVector &displacement);
+  void getArticularDisplacement(vpColVector &displacement);
+  void getDisplacement(vpRobot::vpControlFrameType frame, 
+		       vpColVector &displacement);
 };
 
 

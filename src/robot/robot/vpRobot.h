@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobot.h,v 1.8 2007-12-20 08:15:29 fspindle Exp $
+ * $Id: vpRobot.h,v 1.9 2008-07-21 09:41:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,12 +57,16 @@
 class VISP_EXPORT vpRobot
 {
 public:
+  /*!
+    Robot control states.
+  */
   typedef enum 
     {
-      STATE_STOP,
-      STATE_VELOCITY_CONTROL,
-      STATE_POSITION_CONTROL,
-      STATE_ACCELERATION_CONTROL
+      STATE_STOP,  /*!< Stops robot motion especially in velocity and
+		     acceleration control. */
+      STATE_VELOCITY_CONTROL, //!< Initialize the velocity controller.
+      STATE_POSITION_CONTROL, //!< Initialize the position controller.
+      STATE_ACCELERATION_CONTROL //!< Initialize the acceleration controller.
     } vpRobotStateType ;
 
     /** \brief valeur utilisee par default pour l'etat du robot a
@@ -70,12 +74,20 @@ public:
   static const vpRobot::vpRobotStateType
   defaultEtatRobot = vpRobot::STATE_STOP;
 
+  /*!
+    Robot control frames. 
+  */
   typedef enum 
     {
-      REFERENCE_FRAME,
-      ARTICULAR_FRAME,
-      CAMERA_FRAME,
-      MIXT_FRAME
+      
+      REFERENCE_FRAME, /*!< Corresponds to a fixed reference frame
+	attached to the robot structure. */
+      ARTICULAR_FRAME, /*!< Corresponds to the joint space. */
+      CAMERA_FRAME,    /*!< Corresponds to a frame attached to the
+	camera mounted on the robot end-effector. */
+      MIXT_FRAME /*!< Corresponds to a "virtual" frame where
+	translations are expressed in the reference frame, and
+	rotations in the camera frame.*/      
     } vpControlFrameType ;
 
     static const vpRobot::vpControlFrameType

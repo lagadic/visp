@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.27 2008-07-18 09:51:52 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.28 2008-07-21 09:41:11 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -261,7 +261,7 @@ vpAfma6::getForwardKinematics(const vpColVector & q)
   return the farest.
 
   \return The number of solutions (1 or 2) of the inverse geometric
-  model. O no solution can be found.
+  model. O, if no solution can be found.
 
   The code below shows how to compute the inverse geometric model:
 
@@ -299,7 +299,7 @@ vpAfma6::getForwardKinematics(const vpColVector & q)
   }
   \endcode
 
-sr	  \sa getForwardKinematics()
+  \sa getForwardKinematics()
 
 */
 int 
