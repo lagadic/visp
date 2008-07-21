@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.28 2008-07-21 09:41:11 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.29 2008-07-21 18:50:56 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -269,7 +269,7 @@ vpAfma6::getForwardKinematics(const vpColVector & q)
   vpColVector q1(6), q2(6);
   vpHomogeneousMatrix fMc;
 
-  a6RobotAfma6 robot;
+  vpRobotAfma6 robot;
 
   // Get the current articular position of the robot
   robot.getPosition(vpRobot::ARTICULAR_FRAME, q1);
@@ -313,7 +313,9 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 
   int nbsol = 0;
 
-  q.resize(6);
+  if (q.getRows() != njoint)
+    q.resize(6);
+
 
 //   for(int i=0;i<3;i++) {
 //     fMe[i][3] = fMc[i][3];
@@ -324,11 +326,11 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 //     }
 //   }
   
-  std::cout << "\n\nfMc: " << fMc;
-  std::cout << "\n\neMc: " << _eMc;
+//   std::cout << "\n\nfMc: " << fMc;
+//   std::cout << "\n\neMc: " << _eMc;
 
   fMe = fMc * this->_eMc.inverse();
-  std::cout << "\n\nfMe: " << fMe;
+//   std::cout << "\n\nfMe: " << fMe;
 
   if (fMe[2][2] >= .99999f)
   {
@@ -910,7 +912,7 @@ vpAfma6::parseConfigFile (const char * filename)
   // Acquire an image to update image structure
   g.acquire(I) ;
 
-  a6RobotAfma6 robot;
+  vpRobotAfma6 robot;
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
   // Camera parameters are read from
@@ -980,7 +982,7 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
   // Acquire an image to update image structure
   g.acquire(I) ;
 
-  a6RobotAfma6 robot;
+  vpRobotAfma6 robot;
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
   robot.getCameraParameters (cam, I);
@@ -1009,7 +1011,7 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
   // Acquire a color image to update image structure
   g.acquire(I) ;
 
-  a6RobotAfma6 robot;
+  vpRobotAfma6 robot;
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
   robot.getCameraParameters (cam, I);
