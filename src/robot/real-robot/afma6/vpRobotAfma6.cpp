@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.33 2008-07-21 09:41:11 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.34 2008-07-21 18:52:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -403,6 +403,38 @@ vpRobotAfma6::stopMotion(void)
 
 /*!
 
+  Power on the robot.
+
+  \exception vpRobotException::lowLevelError : If the low level
+  controller returns an error during robot power on.
+*/
+void
+vpRobotAfma6::powerOn(void)
+{
+  InitTry;
+
+  // Look if the power is on or off
+  UInt32 HIPowerStatus;
+  Try( PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  CAL_Wait(0.1);
+
+  if (HIPowerStatus == 0) {
+    fprintf(stdout, "Power ON the robot\n");
+    fflush(stdout);
+
+    Try( PrimitivePOWERON() );
+  }
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot power on the robot");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot power off the robot.");
+  }
+}
+
+/*!
+
   Power off the robot.
 
   \exception vpRobotException::lowLevelError : If the low level
@@ -611,6 +643,9 @@ vpRobotAfma6::getPositioningVelocity (void)
   position to reach. All the positions are expressed in meters for the
   translations and radians for the rotations.
 
+  \warning If the position is out of range, prints only an error
+  message like "position out of range". No exception is provided.
+
   \param frame : Frame in which the position is expressed.
 
   - In the joint space, positions are respectively X, Y, Z, A, B, C,
@@ -748,12 +783,17 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 
   CatchPrint();
   if (TryStt == -10000)
-    printf("Error: pos non atteignable + autre a revoir\n");
-  if (TryStt < 0) {
-    vpERROR_TRACE ("Positionning error.");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Positionning error.");
-  }
+    printf(" : Position out of range\n");
+  else if (TryStt == -10001 || TryStt == -1023)
+    std::cout << " : Position out of range.\n";
+  else if (TryStt < 0)
+    std::cout << " : Unknown error (see Fabien).\n";
+    
+//   if (TryStt < 0) {
+//     vpERROR_TRACE ("Positionning error.");
+//     throw vpRobotException (vpRobotException::lowLevelError,
+// 			    "Positionning error.");
+//   }
 
   return ;
 }
@@ -837,6 +877,49 @@ void vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     }
 }
 
+/*!
+
+  Move to an absolute joint position with a given percent of max
+  velocity. The robot state is set to position control.  The percent
+  of max velocity is to set with setPositioningVelocity(). The
+  position to reach is defined in the position file.
+
+  \param filename : Name of the position file to read. The
+  readPosFile() documentation shows a typical content of such a
+  position file.
+
+  This method has the same behavior than the sample code given below;
+  \code
+  vpColVector q;
+
+  robot.readPosFile("MyPositionFilename.pos", q);
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL)
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  \endcode
+
+  \exception vpRobotException::lowLevelError : If the position cannot
+  be read from the file.
+
+
+  \sa setPositioningVelocity()
+
+  
+*/
+void vpRobotAfma6::setPosition(const char *filename)
+{
+  vpColVector q;
+  bool ret;
+
+  ret = this->readPosFile(filename, q);
+
+  if (ret == false) {
+    vpERROR_TRACE ("Bad position in \"%s\"", filename);
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Bad position in filename.");
+  }
+  this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
+  this->setPosition(vpRobot::ARTICULAR_FRAME, q); 
+}
 
 /*!
 
@@ -882,6 +965,8 @@ void vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   vpHomogeneousMatrix fMc(fRc, ftc);
   \endcode
 
+  \exception vpRobotException::lowLevelError : If the position cannot
+  be get from the low level controller.
 
   \sa setPosition(const vpRobot::vpControlFrameType frame, const
   vpColVector & r)
@@ -1357,20 +1442,20 @@ vpRobotAfma6::readPosFile(const char *filename, vpColVector &q)
     return false;
 
   char line[FILENAME_MAX];
+  char dummy[FILENAME_MAX];
   char head[] = "R:";
   bool sortie = false;
 
   do {
     // Saut des lignes commencant par #
-    if (fgets (line, 100, fd) != NULL) {
+    if (fgets (line, FILENAME_MAX, fd) != NULL) {
       if ( strncmp (line, "#", 1) != 0) {
 	// La ligne n'est pas un commentaire
-	if ( fscanf (fd, "%s", line) != EOF)   {
-	  if ( strcmp (line, head) == 0)
-	    sortie = true; 	// Position robot trouvee.
+	if ( strncmp (line, head, sizeof(head)-1) == 0) {
+	  sortie = true; 	// Position robot trouvee.
 	}
-	else
-	  return (false); // fin fichier sans position robot.
+// 	else
+// 	  return (false); // fin fichier sans position robot.
       }
     }
     else {
@@ -1382,7 +1467,8 @@ vpRobotAfma6::readPosFile(const char *filename, vpColVector &q)
 
   // Lecture des positions
   q.resize(njoint);
-  fscanf(fd, "%lf %lf %lf %lf %lf %lf",
+  sscanf(line, "%s %lf %lf %lf %lf %lf %lf",
+	 dummy,
 	 &q[0], &q[1], &q[2],
 	 &q[3], &q[4], &q[5]);
 
