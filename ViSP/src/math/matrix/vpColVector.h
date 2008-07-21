@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.h,v 1.8 2008-06-13 17:01:15 asaunier Exp $
+ * $Id: vpColVector.h,v 1.9 2008-07-21 18:49:40 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -84,7 +84,10 @@ public:
   //! constructor initialize a vpColVector from a vpRotationVector
   vpColVector (const vpRotationVector &v);
 
-  //! Set the size of the Column vector
+  /*! Set the size of the column vector.
+    \param i : Column vector size.
+    \param flagNullify : If true, set the data to zero.
+   */
   void resize(const int i, const bool flagNullify = true)
   {  vpMatrix::resize(i, 1, flagNullify); }
 
