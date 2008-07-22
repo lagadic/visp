@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.19 2008-07-21 18:52:52 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.20 2008-07-22 07:51:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -112,7 +112,7 @@ extern "C" {
   q[5] = M_PI;   // rotation around C axis, in rad
 
   // Initialize the controller to position control
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL)
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
   // Moves the robot in the joint space
   robot.setPosition(q, vpRobot::ARTICULAR_FRAME);
@@ -140,15 +140,15 @@ extern "C" {
   \code
   vpColVector qvel(6);
   // Set a joint velocity
-  qvel[0] = 0.1; // x axis, in m/s
-  qvel[1] = 0.2; // y axis, in m/s
-  qvel[2] = 0  ; // z axis, in m/s
+  qvel[0] = 0.1;    // x axis, in m/s
+  qvel[1] = 0.2;    // y axis, in m/s
+  qvel[2] = 0;      // z axis, in m/s
   qvel[3] = M_PI/8; // rotation around A axis, in rad/s
   qvel[4] = 0;      // rotation around B axis, in rad/s
   qvel[5] = 0;      // rotation around C axis, in rad/s
 
   // Initialize the controller to position control
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL)
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
   while (...) {
     // Apply a velocity in the joint space
