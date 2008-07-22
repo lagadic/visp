@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotException.h,v 1.6 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRobotException.h,v 1.7 2008-07-22 17:37:33 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -112,7 +113,10 @@ public:
 	     * affiche simplement un message d'erreur avant de sortir
 	     * par le 'throw'.
 	     */
-	    notImplementedError
+	    notImplementedError,
+	    /** Position is out of range.
+	     */
+	    positionOutOfRangeError
     } ;
 
 public:
