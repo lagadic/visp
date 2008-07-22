@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.35 2008-07-22 07:51:29 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.36 2008-07-22 17:38:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -407,6 +407,8 @@ vpRobotAfma6::stopMotion(void)
 
   \exception vpRobotException::lowLevelError : If the low level
   controller returns an error during robot power on.
+
+  \sa powerOff(), getPowerState()
 */
 void
 vpRobotAfma6::powerOn(void)
@@ -439,6 +441,8 @@ vpRobotAfma6::powerOn(void)
 
   \exception vpRobotException::lowLevelError : If the low level
   controller returns an error during robot stopping.
+
+  \sa powerOn(), getPowerState()
 */
 void
 vpRobotAfma6::powerOff(void)
@@ -463,6 +467,40 @@ vpRobotAfma6::powerOff(void)
     throw vpRobotException (vpRobotException::lowLevelError,
 			      "Cannot power off the robot.");
   }
+}
+
+/*!
+
+  Get the robot power state indication if power is on or off.
+
+  \return true if power is on. false if power is off
+
+  \exception vpRobotException::lowLevelError : If the low level
+  controller returns an error.
+
+  \sa powerOn(), powerOff()
+*/
+bool
+vpRobotAfma6::getPowerState(void)
+{
+  InitTry;
+  bool status = false;
+  // Look if the power is on or off
+  UInt32 HIPowerStatus;
+  Try( PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  CAL_Wait(0.1);
+
+  if (HIPowerStatus == 1) {
+    status = true;
+  }
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot get the power status");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot get the power status.");
+  }
+  return status;
 }
 
 /*!
@@ -641,10 +679,8 @@ vpRobotAfma6::getPositioningVelocity (void)
 
   \param position : A six dimension vector corresponding to the
   position to reach. All the positions are expressed in meters for the
-  translations and radians for the rotations.
-
-  \warning If the position is out of range, prints only an error
-  message like "position out of range". No exception is provided.
+  translations and radians for the rotations. If the position is out
+  of range, an exception is provided.
 
   \param frame : Frame in which the position is expressed.
 
@@ -659,8 +695,11 @@ vpRobotAfma6::getPositioningVelocity (void)
   expressed in the reference frame, and rotations in the camera
   frame.
 
-  \exception vpRobotException::lowLevelError : Frame not implemented
-  (only for the mixt frame).
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
+  implemented.
+
+  \exception vpRobotException::positionOutOfRangeError : The requested
+  position is out of range.
 
   \code
   vpColVector position(6);
@@ -680,7 +719,19 @@ vpRobotAfma6::getPositioningVelocity (void)
   robot.setPositioningVelocity(20);
 
   // Moves the robot in the camera frame
-  robot.setPosition(position, vpRobot::CAMERA_FRAME);
+  robot.setPosition(vpRobot::CAMERA_FRAME, position);
+  \endcode
+
+  To catch the exception if the position is out of range, modify the code like:
+
+  \code
+  try {
+    robot.setPosition(vpRobot::CAMERA_FRAME, position);
+  }
+  catch (vpRobotException e) {
+    if (e.getCode() == vpRobotException::positionOutOfRangeError) {
+    std::cout << "The position is out of range" << std::endl;
+  }
   \endcode
 
 */
@@ -697,6 +748,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     }
 
   double _destination[6];
+  int error = 0;
 
   InitTry;
   switch(frame) {
@@ -729,12 +781,18 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 
     // Compute the corresponding joint position from the inverse kinematics
     bool nearest = true;
-    this->getInverseKinematics(fMc2, q, nearest);
-    for (int i=0; i < njoint; i ++) {
-      _destination[i] = q[i];
+    int solution = this->getInverseKinematics(fMc2, q, nearest);
+    if (solution) { // Position is reachable
+      for (int i=0; i < njoint; i ++) {
+	_destination[i] = q[i];
+      }
+      Try( PrimitiveMOVE(_destination, positioningVelocity) );
+      Try( WaitState(ETAT_ATTENTE, 1000) );
     }
-    Try( PrimitiveMOVE(_destination, positioningVelocity) );
-    Try( WaitState(ETAT_ATTENTE, 1000) );
+    else {
+      // Cartesian position is out of range
+      error = -1;
+    }
 
     break ;
   }
@@ -762,12 +820,18 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     // Compute the corresponding joint position from the inverse kinematics
     vpColVector q(6);
     bool nearest = true;
-    this->getInverseKinematics(fMc, q, nearest);
-    for (int i=0; i < njoint; i ++) {
-      _destination[i] = q[i];
+    int solution = this->getInverseKinematics(fMc, q, nearest);
+    if (solution) { // Position is reachable
+      for (int i=0; i < njoint; i ++) {
+	_destination[i] = q[i];
+      }
+      Try( PrimitiveMOVE(_destination, positioningVelocity) );
+      Try( WaitState(ETAT_ATTENTE, 1000) );
     }
-    Try( PrimitiveMOVE(_destination, positioningVelocity) );
-    Try( WaitState(ETAT_ATTENTE, 1000) );
+    else {
+      // Cartesian position is out of range
+      error = -1;
+    }
 
     break ;
   }
@@ -782,18 +846,18 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   }
 
   CatchPrint();
-  if (TryStt == -10000)
-    printf(" : Position out of range\n");
-  else if (TryStt == -10001 || TryStt == -1023)
+  if (TryStt == -10001 || TryStt == -1023)
     std::cout << " : Position out of range.\n";
   else if (TryStt < 0)
     std::cout << " : Unknown error (see Fabien).\n";
+  else if (error == -1)
+     std::cout << "Position out of range.\n";
     
-//   if (TryStt < 0) {
-//     vpERROR_TRACE ("Positionning error.");
-//     throw vpRobotException (vpRobotException::lowLevelError,
-// 			    "Positionning error.");
-//   }
+  if (TryStt < 0 || error < 0) {
+     vpERROR_TRACE ("Positionning error.");
+     throw vpRobotException (vpRobotException::positionOutOfRangeError,
+ 			    "Position out of range.");
+  }
 
   return ;
 }
@@ -804,7 +868,8 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   The position to reach can be specified in joint coordinates, in the
   camera frame or in the reference frame.
 
-  This method has the same behavior than setPosition().
+  This method owerloads setPosition(const
+  vpRobot::vpControlFrameType, const vpColVector &).
 
   \warning This method is blocking. It returns only when the position
   is reached by the robot.
@@ -826,8 +891,11 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   expressed in the reference frame, and rotations in the camera
   frame.
 
-  \exception vpRobotException::lowLevelError : Frame not implemented
-  (only for the mixt frame).
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
+  implemented.
+
+  \exception vpRobotException::positionOutOfRangeError : The requested
+  position is out of range.
 
   \code
   // Set positions in the camera frame
@@ -897,12 +965,13 @@ void vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
   \endcode
 
-  \exception vpRobotException::lowLevelError : If the position cannot
-  be read from the file.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
+  implemented.
 
+  \exception vpRobotException::positionOutOfRangeError : The requested
+  position is out of range.
 
   \sa setPositioningVelocity()
-
   
 */
 void vpRobotAfma6::setPosition(const char *filename)

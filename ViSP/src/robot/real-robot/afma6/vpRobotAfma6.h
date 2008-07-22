@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.20 2008-07-22 07:51:29 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.21 2008-07-22 17:38:19 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,7 +115,7 @@ extern "C" {
   robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
   // Moves the robot in the joint space
-  robot.setPosition(q, vpRobot::ARTICULAR_FRAME);
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
   \endcode
 
   The robot moves to the specified position with the default
@@ -128,7 +128,7 @@ extern "C" {
   robot.setPositioningVelocity(40);
 
   // Moves the robot in the joint space
-  robot.setPosition(q, vpRobot::ARTICULAR_FRAME);
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
   \endcode
 
   To control the robot in velocity, you may set the controller to
@@ -152,7 +152,7 @@ extern "C" {
 
   while (...) {
     // Apply a velocity in the joint space
-    robot.setPosition(qvel, vpRobot::ARTICULAR_FRAME);
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
 
     // Compute new velocities qvel...
   }
@@ -269,6 +269,7 @@ public:
   void stopMotion() ;
   void powerOn() ;
   void powerOff() ;
+  bool getPowerState();
 
   void move(const char *filename) ;
   static bool readPosFile(const char *filename, vpColVector &q)  ;
