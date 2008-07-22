@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.34 2008-07-21 18:52:17 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.35 2008-07-22 07:51:29 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -600,7 +600,7 @@ vpRobotAfma6::get_eJe(vpMatrix &eJe)
 
   vpRobotAfma6 robot;
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL)
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
   // Set the max velocity to 20%
   robot.setPositioningVelocity(20);
@@ -665,16 +665,16 @@ vpRobotAfma6::getPositioningVelocity (void)
   \code
   vpColVector position(6);
   // Set positions in the camera frame
-  position[0] = 0.1; // x axis, in meter
-  position[1] = 0.2; // y axis, in meter
-  position[2] = 0.3; // z axis, in meter
+  position[0] = 0.1;    // x axis, in meter
+  position[1] = 0.2;    // y axis, in meter
+  position[2] = 0.3;    // z axis, in meter
   position[3] = M_PI/8; // rotation around x axis, in rad
   position[4] = M_PI/4; // rotation around y axis, in rad
   position[5] = M_PI;   // rotation around z axis, in rad
 
   vpRobotAfma6 robot;
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL)
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
   // Set the max velocity to 20%
   robot.setPositioningVelocity(20);
@@ -840,7 +840,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 
   vpRobotAfma6 robot;
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL)
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
   // Set the max velocity to 20%
   robot.setPositioningVelocity(20);
@@ -1086,7 +1086,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
 
   vpRobotAfma6 robot;
 
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL)
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
   // Moves the joint in velocity
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
@@ -1221,7 +1221,7 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
 
   vpRobotAfma6 robot;
 
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL)
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
   // Moves the joint in velocity
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
@@ -1371,7 +1371,7 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
 
   vpRobotAfma6 robot;
 
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL)
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
   // Moves the joint in velocity
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
