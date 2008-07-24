@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.21 2008-07-22 17:38:19 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.22 2008-07-24 10:54:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,7 +96,29 @@ extern "C" {
   \code
   vpRobotAfma6 robot;
   \endcode
+
+  This initialize the robot kinematics with the eMc extrinsic camera
+  parameters obtained with a projection model without distorsion. To
+  set the robot kinematics with the eMc matrix obtained with a camera
+  perspective model including distorsion you need to initialize the
+  robot with:
+
+  \code
+  // Set the extrinsic camera parameters obtained with a perpective 
+  // projection model including a distorsion parameter
+  robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, vpCameraParameters::perspectiveProjWithDistortion);
+  \endcode
  
+  You can get the intrinsic camera parameters of the image I
+  acquired with the camera, with:
+
+  \code
+  vpCameraParameters cam;
+  robot.getCameraParameters(cam, I);
+  // In cam, you get the intrinsic parameters of the projection model 
+  // with distorsion.  
+  \endcode
+
   To control the robot in position, you may set the controller
   to position control and than send the position to reach in a specific
   frame like here in the joint space:
