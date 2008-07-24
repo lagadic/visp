@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.42 2008-07-24 13:54:50 rmebarki Exp $
+ * $Id: vpMatrix.cpp,v 1.43 2008-07-24 14:43:42 rmebarki Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1154,7 +1154,7 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
 
   \warning Destructive method wrt. to the matrix \f$ A \f$ to
   decompose. You should make a COPY of that matrix if needed not to
-  CHANGE:
+  CHANGE.
   
   \param w : Vector of singular values. \f$ \Sigma = diag(w) \f$.
   
@@ -1163,7 +1163,7 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
   \return Matrix \f$ U \f$.
 
   \warning If the Gun Scientific Library (GSL) third party library is used to compute the SVD
-  decomposition, the singular values \f$ \Sigma_{(i,i)} \f$ are ordered in decreasing
+  decomposition, the singular values \f$ \Sigma_{i,i} \f$ are ordered in decreasing
   fashion in \e w. This is not the case, if the GSL is not detected by ViSP. 
 
   Here an example of SVD decomposition of a non square Matrix M.
@@ -1193,7 +1193,7 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
   // Reconstruct the initial matrix M using the decomposition
   Mrec =  M * Sigma * v.t();
 
-  // Here, Mrec is equal to the initial value of M
+  // Here, Mrec is obtained equal to the initial value of M
   // Mrec[0][0] = 1;
   // Mrec[1][0] = 2;
   // Mrec[2][0] = 0.5;
