@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.36 2008-07-22 17:38:19 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.37 2008-07-24 10:54:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -106,12 +106,36 @@ void emergencyStop(int signo)
 
 /*!
 
-  The only available constructor. Throw the call of init() initialise
+  The only available constructor.
+
+  This contructor calls init() to initialise
   the connection with the MotionBox or low level controller, send the
   default eMc homogeneous matrix, power on the robot and wait 1 sec
   before returning to be sure the initialisation is done.
 
-  \sa init()
+  To set the extrinsic camera parameters related to the eMc matrix
+  obtained with a camera perspective projection model including the
+  distorsion, use the code below:
+
+  \code
+  vpRobotAfma6 robot;
+  // Set the extrinsic camera parameters obtained with a perpective 
+  // projection model including a distorsion parameter
+  robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, vpCameraParameters::perspectiveProjWithDistortion);
+  \endcode
+
+  Now, you can get the intrinsic camera parameters of the image I
+  acquired with the camera, with:
+
+  \code
+  vpCameraParameters cam;
+  robot.getCameraParameters(cam, I);
+  // In cam, you get the intrinsic parameters of the projection model 
+  // with distorsion.  
+  \endcode
+ 
+  \sa vpCameraParameters, init(vpAfma6::vpAfma6CameraRobotType,
+  vpCameraParameters::vpCameraParametersProjType)
 
 */
 vpRobotAfma6::vpRobotAfma6 (void)
@@ -168,11 +192,22 @@ vpRobotAfma6::vpRobotAfma6 (void)
 
 /*!
 
-Initialise the connection with the MotionBox or low level
-controller, send the default eMc homogeneous matrix, power on the
-robot and wait 1 sec before returning to be sure the initialisation
-is done.
+  Initialise the connection with the MotionBox or low level
+  controller, send the default eMc homogeneous matrix, power on the
+  robot and wait 1 sec before returning to be sure the initialisation
+  is done.
 
+  \warning This method sets the camera extrinsic parameters (matrix
+  eMc) to the one obtained by calibration with a camera projection
+  model without distorsion by calling
+  init(vpAfma6::defaultCameraRobot). If you want to set the extrinsic
+  camera parameters to those obtained with a camera perspective model
+  including the distorsion you have to call the
+  init(vpAfma6::vpAfma6CameraRobotType,
+  vpCameraParameters::vpCameraParametersProjType) method.
+
+  \sa vpCameraParameters, init(vpAfma6::vpAfma6CameraRobotType,
+  vpCameraParameters::vpCameraParametersProjType)
 */
 void
 vpRobotAfma6::init (void)
@@ -245,9 +280,10 @@ vpRobotAfma6::init (void)
 
 /*!
 
-  Initialize the robot parameters:
-  - set the eMc homogeneous parameters in the low level controller,
-  - get the joint limits from the low-level controller.
+  Initialize the robot kinematics with the extrinsic calibration
+  parameters associated to a specific camera (set the eMc homogeneous
+  parameters in the low level controller) and also get the joint
+  limits from the low-level controller.
 
   The eMc parameters depend on the camera and the projection model in use.
 
@@ -255,6 +291,28 @@ vpRobotAfma6::init (void)
 
   \param projModel : Projection model associated to the camera.
 
+  To set the extrinsic camera parameters related to the eMc matrix
+  obtained with a camera perspective projection model including the
+  distorsion, use the code below:
+
+  \code
+  vpRobotAfma6 robot;
+  // Set the extrinsic camera parameters obtained with a perpective 
+  // projection model including a distorsion parameter
+  robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, vpCameraParameters::perspectiveProjWithDistortion);
+  \endcode
+
+  Now, you can get the intrinsic camera parameters of the image \e I
+  acquired with the camera, with:
+
+  \code
+  vpCameraParameters cam;
+  robot.getCameraParameters(cam, I);
+  // In cam, you get the intrinsic parameters of the projection model 
+  // with distorsion.  
+  \endcode
+ 
+  \sa vpCameraParameters, init()
 */
 void
 vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
