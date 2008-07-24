@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.41 2008-06-13 17:01:15 asaunier Exp $
+ * $Id: vpMatrix.cpp,v 1.42 2008-07-24 13:54:50 rmebarki Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1052,11 +1052,44 @@ vpMatrix vpMatrix::AtA() const
 }
 
 /*!
-  \brief solve a linear system AX = B using an SVD decomposition
+  Solve a linear system \f$ A X = B \f$ using Singular Value Decomposition (SVD).
 
-  non destructive wrt. A and B
+  Non destructive wrt. A and B.
 
-  \sa this function SVDcmp and SVDksb for solving the system
+  \param b : Vector\f$ B \f$.
+
+  \param x : Vector \f$ X \f$.
+
+  Here an example:
+  \code
+  vpMatrix A(3,3);
+ 
+  A[0][0] = 4.64; 
+  A[0][1] = 0.288; 
+  A[0][2] = -0.384; 
+  
+  A[1][0] = 0.288; 
+  A[1][1] = 7.3296; 
+  A[1][2] = 2.2272; 
+  
+  A[2][0] = -0.384; 
+  A[2][1] = 2.2272; 
+  A[2][2] = 6.0304; 
+  
+  vpColVector X(3), B(3);
+  B[0] = 1;
+  B[1] = 2;
+  B[2] = 3;
+
+  A.solveBySVD(B, X);
+
+  // Obtained values of X
+  // X[0] = 0.2468; 
+  // X[1] = 0.120782; 
+  // X[2] = 0.468587; 
+  \endcode
+
+  \sa SVDsolve()
 */
 void
 vpMatrix::solveBySVD(const vpColVector& b, vpColVector& x) const
@@ -1066,11 +1099,43 @@ vpMatrix::solveBySVD(const vpColVector& b, vpColVector& x) const
 
 
 /*!
-  \brief solve a linear system AX = B using an SVD decomposition
+  Solve a linear system \f$ A X = B \f$ using Singular Value Decomposition (SVD).
 
-  non destructive wrt. A and B
+  Non destructive wrt. A and B.
 
-  \sa SVDcmp and SVDksb
+  \param B : Vector\f$ B \f$.
+
+  \return Vector \f$ X \f$.
+
+  Here an example:
+  \code
+  vpMatrix A(3,3);
+ 
+  A[0][0] = 4.64; 
+  A[0][1] = 0.288; 
+  A[0][2] = -0.384; 
+  
+  A[1][0] = 0.288; 
+  A[1][1] = 7.3296; 
+  A[1][2] = 2.2272; 
+  
+  A[2][0] = -0.384; 
+  A[2][1] = 2.2272; 
+  A[2][2] = 6.0304; 
+  
+  vpColVector X(3), B(3);
+  B[0] = 1;
+  B[1] = 2;
+  B[2] = 3;
+
+  X = A.SVDsolve(B);
+  // Obtained values of X
+  // X[0] = 0.2468; 
+  // X[1] = 0.120782; 
+  // X[2] = 0.468587; 
+  \endcode
+
+  \sa solveBySVD()
 */
 vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
 {
@@ -1081,7 +1146,64 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
 }
 
 
+/*!
+  
+  Singular value decomposition (SVD).
+ 
+  \f[ M = U \Sigma V^{\top} \f]
 
+  \warning Destructive method wrt. to the matrix \f$ A \f$ to
+  decompose. You should make a COPY of that matrix if needed not to
+  CHANGE:
+  
+  \param w : Vector of singular values. \f$ \Sigma = diag(w) \f$.
+  
+  \param v : Matrix \f$ V \f$.
+  
+  \return Matrix \f$ U \f$.
+
+  \warning If the Gun Scientific Library (GSL) third party library is used to compute the SVD
+  decomposition, the singular values \f$ \Sigma_{(i,i)} \f$ are ordered in decreasing
+  fashion in \e w. This is not the case, if the GSL is not detected by ViSP. 
+
+  Here an example of SVD decomposition of a non square Matrix M.
+
+  \code
+  vpMatrix M(3,2);
+  M[0][0] = 1;
+  M[1][0] = 2;
+  M[2][0] = 0.5;
+
+  M[0][1] = 6;
+  M[1][1] = 8 ;
+  M[2][1] = 9 ;
+
+  vpMatrix v;
+  vpColVector w;
+  vpMatrix Mrec;
+  vpMatrix Sigma(2,2);
+
+  M.svd(w, v); 
+  // Here M is modified and is now equal to U
+
+  // Construct the diagonal matrix from the singular values
+  for (int i=0; i < w.getRows(); i++)
+    Sigma[i][i] = w[i];
+
+  // Reconstruct the initial matrix M using the decomposition
+  Mrec =  M * Sigma * v.t();
+
+  // Here, Mrec is equal to the initial value of M
+  // Mrec[0][0] = 1;
+  // Mrec[1][0] = 2;
+  // Mrec[2][0] = 0.5;
+  // Mrec[0][1] = 6;
+  // Mrec[1][1] = 8 ;
+  // Mrec[2][1] = 9 ;
+ 
+  \endcode
+  
+*/
 void
 vpMatrix::svd(vpColVector& w, vpMatrix& v)
 {
