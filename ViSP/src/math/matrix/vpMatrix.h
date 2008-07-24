@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.21 2008-01-15 09:52:37 cdune Exp $
+ * $Id: vpMatrix.h,v 1.22 2008-07-24 13:54:50 rmebarki Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -284,13 +284,13 @@ public:
   	      const vpColVector& b, vpColVector& x);
 #endif
 
-  //! singular value decomposition
+  // singular value decomposition SVD
   void svd(vpColVector& w, vpMatrix& v);
 
 
-  //! solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
+  // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
   void solveBySVD(const vpColVector& B, vpColVector& x) const ;
-  //! solve Ax=B using the SVD decomposition (usage  x=A.SVDsolve(B))
+  // solve Ax=B using the SVD decomposition (usage  x=A.SVDsolve(B))
   vpColVector SVDsolve(const vpColVector& B) const ;
 
   //! Compute the pseudo inverse of the matrix using the SVD.
