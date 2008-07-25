@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.37 2008-07-24 10:54:01 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.38 2008-07-25 13:47:36 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,11 +57,11 @@ bool vpRobotAfma6::robotAlreadyCreated = false;
 /*!
 
   Default positioning velocity in percentage of the maximum
-  velocity. This value is set to 20. The member function
+  velocity. This value is set to 15. The member function
   setPositioningVelocity() allows to change this value.
 
 */
-const double vpRobotAfma6::defaultPositioningVelocity = 20.0;
+const double vpRobotAfma6::defaultPositioningVelocity = 15.0;
 
 /* ---------------------------------------------------------------------- */
 /* --- CONSTRUCTOR ------------------------------------------------------ */
@@ -95,9 +95,10 @@ void emergencyStop(int signo)
   std::cout << "Emergency stop called\n";
   //  PrimitiveESTOP();
   PrimitiveSTOP();
+  std::cout << "Robot was stopped\n";
 
   // Free allocated ressources
-  ShutDownConnection();
+  ShutDownConnection(); // Some times cannot exit here when Ctrl-C
 
   std::cout << "exit(1)" <<std::endl ;
   exit(1) ;
