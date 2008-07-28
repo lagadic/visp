@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.9 2008-01-31 17:35:51 fspindle Exp $
+ * $Id: vpCameraParameters.cpp,v 1.10 2008-07-28 16:46:44 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -176,13 +176,15 @@ vpCameraParameters::initPersProjWithoutDistortion(const double px,
 
 
 /*!
-  Initialization with specific parameters using perpective projection without
-  distortion model.
+
+  \deprecated Initialization with specific parameters using perpective
+  projection without distortion model.
+
+  This function is deprecated: use initPersProjWithoutDistortion() instead.
+
   \param px,py : pixel size
   \param u0,v0 : principal points
 
-  \warning : this function is deprecated.
-  Use initPersProjWithoutDistortion instead.
 */
 void
 vpCameraParameters::init(const double px, const double py,
@@ -305,9 +307,11 @@ vpCameraParameters::get_K() const
 }
 
 /*!
-  Set the principal point
+  
+  \deprecated Set the principal point.
 
-  \warning : deprecated function. Use an init function instead
+  This function is deprecated: use either initializer functions like
+  initPersProjWithoutDistortion() or initPersProjWithDistortion().
 */
 void
 vpCameraParameters::setPrincipalPoint(double u0, double v0)
@@ -317,9 +321,10 @@ vpCameraParameters::setPrincipalPoint(double u0, double v0)
 }
 
 /*!
-  Set the pixel size
+  \deprecated Set the pixel size.
 
-  \warning : deprecated function. Use an init function instead
+  This function is deprecated: use either initializer functions like
+  initPersProjWithoutDistortion() or initPersProjWithDistortion().
 */
 void
 vpCameraParameters::setPixelRatio(double px, double py)

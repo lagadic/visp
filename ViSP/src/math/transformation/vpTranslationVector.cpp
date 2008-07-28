@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp,v 1.7 2008-06-13 17:01:19 asaunier Exp $
+ * $Id: vpTranslationVector.cpp,v 1.8 2008-07-28 16:46:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -49,7 +50,7 @@
 
 /*!
   \file vpTranslationVector.cpp
-  \brief class that consider the case of a translation vector
+  \brief Class that consider the case of a translation vector.
 */
 
 //! initialize a size 3 vector
@@ -58,7 +59,12 @@ void vpTranslationVector::init()
     resize(3) ;
 }
 
-//! constructor from double in meter
+/*!
+  Contruct a translation vector \f$ \bf t \f$ from 3 doubles.
+
+  \param tx,ty,tz : Translation respectively along x, y and z axis.
+
+*/
 vpTranslationVector::vpTranslationVector(const double tx,
 					 const double ty,
 					 const double tz)
@@ -69,23 +75,63 @@ vpTranslationVector::vpTranslationVector(const double tx,
     (*this)[2] = tz ;
 }
 
-//!copy constructor
-vpTranslationVector::vpTranslationVector (const vpTranslationVector &v) : vpColVector(v)
+/*!
+  Copy constructor.
+
+  \param t : Translation vector to copy.
+
+  \code
+  vpTranslationVector t1(1,2,3); // Create and initialize a translation vector
+
+  vpTranslationVector t2(t1);    // t2 is now a copie of t1
+  \endcode
+
+*/
+vpTranslationVector::vpTranslationVector (const vpTranslationVector &t) : vpColVector(t)
 {
 }
-//! operator addition of two translation vectors
+/*!
+  Operator that allows to add two translation vectors.
+
+  \param t : Translation  vector to add.
+
+  \return The sum of the current translation vector (*this) and the one to add.
+  \code
+  vpTranslationVector t1(1,2,3); 
+  vpTranslationVector t2(4,5,6); 
+  vpTranslationVector t3; 
+
+  t3 = t2 + t1; 
+  // t1 and t2 leave unchanged
+  // t3 is now equal to : 5, 7, 9
+  \endcode
+
+*/
 vpTranslationVector
-vpTranslationVector::operator+(const vpTranslationVector &_v) const
+vpTranslationVector::operator+(const vpTranslationVector &t) const
 {
-    vpTranslationVector v ;
+    vpTranslationVector sum ;
 
-    for (int i=0;i<3;i++)  v[i] = (*this)[i]+_v[i] ;
+    for (int i=0;i<3;i++)  sum[i] = (*this)[i]+t[i] ;
 
-    return v;
+    return sum;
 }
 
 
-//! negate t = -a  (t is unchanged)
+/*!
+  Operator that allows to negate a translation vector.
+
+  \return The negate translation. The current translation vector
+  (*this) is unchanged.
+
+  \code
+  vpTranslationVector t1(1,2,3); 
+  vpTranslationVector t2; 
+  t2 = -t1;
+  // t1 is unchanged 
+  // t2 is now equal to : -1, -2, -3 
+  \endcode
+*/
 vpTranslationVector vpTranslationVector::operator-() const //negate
 {
     vpTranslationVector t ;
@@ -98,14 +144,22 @@ vpTranslationVector vpTranslationVector::operator-() const //negate
 }
 
 /*!
-Copy operator.   Allow operation such as A = v
-\param v : Translation vector to copy
-\return A copy of v.
+  Copy operator.  
+  \param t : Translation vector to copy
+  \return A copy of t.
+
+  \code
+  vpTranslationVector t1(1,2,3); 
+  vpTranslationVector t2; 
+  t2 = t1;
+  // t1 is unchanged 
+  // t2 is now equal to t1 : 1, 2, 3 
+  \endcode
 */
-vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &v)
+vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &t)
 {
 
-  int k = v.rowNum ;
+  int k = t.rowNum ;
   if (rowNum != k){
     try {
       resize(k);
@@ -116,14 +170,23 @@ vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &v
       throw ;
     }
   }
-  //
 
-  memcpy(data, v.data, rowNum*sizeof(double)) ;
+  memcpy(data, t.data, rowNum*sizeof(double)) ;
 
   return *this;
 }
 
-//! initialisation each element of the vector is x
+/*! 
+  Initialize each element of a translation vector to the same value x.
+
+  \param x : Value to set for each element of the translation vector.
+
+  \code
+  vpTranslationVector t;
+  t = 3;
+  // Here t is set to 3,3,3
+  \endcode
+*/
 vpTranslationVector & vpTranslationVector::operator=(double x)
 {
 
@@ -138,59 +201,63 @@ vpTranslationVector & vpTranslationVector::operator=(double x)
 /*!
   \relates vpMatrix
 
-  \brief Compute the skew symmetric matrix of vector v (matrice de pre-produit
+  Compute the skew symmetric matrix of vector v (matrice de pre-produit
   vectoriel)
 
-  \f[ \mbox{if} \quad  {\bf V} =  \left( \begin{array}{c} x \\ y \\  z
+  \f[ \mbox{if} \quad  {\bf t} =  \left( \begin{array}{c} x \\ y \\  z
   \end{array}\right), \quad \mbox{then} \qquad
-  skew(\bf V) = \left( \begin{array}{ccc}
+  skew(\bf t) = \left( \begin{array}{ccc}
   0 & -z & y \\
   z & 0 & -x \\
   -y & x & 0
   \end{array}\right)
   \f]
 
-  \param v : Translation vector in input used to compute the skew symmetric
-  matrix M
+  \param t : Translation vector in input used to compute the skew symmetric
+  matrix M.
 
   \param M : Skew symmetric matrix of vector v.
 */
 void
-vpTranslationVector::skew(const vpTranslationVector &v,vpMatrix &M)
+vpTranslationVector::skew(const vpTranslationVector &t,vpMatrix &M)
 {
     M.resize(3,3) ;
-    M[0][0] = 0 ;     M[0][1] = -v[2] ;  M[0][2] = v[1] ;
-    M[1][0] = v[2] ;  M[1][1] = 0 ;      M[1][2] = -v[0] ;
-    M[2][0] = -v[1] ; M[2][1] = v[0] ;   M[2][2] = 0 ;
+    M[0][0] = 0 ;     M[0][1] = -t[2] ;  M[0][2] = t[1] ;
+    M[1][0] = t[2] ;  M[1][1] = 0 ;      M[1][2] = -t[0] ;
+    M[2][0] = -t[1] ; M[2][1] = t[0] ;   M[2][2] = 0 ;
 }
 
 /*!
   \relates vpTranslationVector
 
-  \brief Compute the skew symmetric matrix of vector v (matrice de pre-produit
+  Compute the skew symmetric matrix of vector t (matrice de pre-produit
   vectoriel)
 
-  \sa skew(const vpColVector &v,vpMatrix &M) for more details
+  \param t : Translation vector in input.
 
-  \return the skew symmetric matrix
+  \return Skew symmetric matrix of vector t.
+
+  \sa skew(const vpTranslationVector &, vpMatrix &) for more details
+
 */
 vpMatrix
-vpTranslationVector::skew(const vpTranslationVector &v)
+vpTranslationVector::skew(const vpTranslationVector &t)
 {
     vpMatrix M(3, 3);
-    skew(v,M);
+    skew(t,M);
     return M;
 }
 
 /*!
   \relates vpTranslationVector
 
-  \brief Compute the skew symmetric matrix of vector v (matrice de pre-produit
+  Compute the skew symmetric matrix of vector v (matrice de pre-produit
   vectoriel)
 
-  \sa skew(const vpColVector &v,vpMatrix &M) for more details
+  \return Skew symmetric matrix.
 
-  \return the skew symmetric matrix
+  \sa skew(const vpTranslationVector &, vpMatrix &) for more details
+
 */
 vpMatrix
 vpTranslationVector::skew() const
@@ -203,7 +270,10 @@ vpTranslationVector::skew() const
 
 /*!
   \relates vpTranslationVector
-  \brief Compute the cross product of two vectors C = a x b
+  Compute the cross product of two vectors c = a x b
+
+  \param a,b : Translation vectors in input. 
+  \return The cross product (a x b).
 */
 vpTranslationVector
 vpTranslationVector::cross(const vpTranslationVector &a,

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.10 2008-01-31 17:35:51 fspindle Exp $
+ * $Id: vpCameraParameters.h,v 1.11 2008-07-28 16:46:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -214,25 +214,7 @@ public :
     perspectiveProjWithDistortion  //!< Perspective projection with distortion model
   } vpCameraParametersProjType ;
   
-private:
-  static const double DEFAULT_U0_PARAMETER;
-  static const double DEFAULT_V0_PARAMETER;
-  static const double DEFAULT_PX_PARAMETER;
-  static const double DEFAULT_PY_PARAMETER;
-  static const double DEFAULT_KUD_PARAMETER;
-  static const double DEFAULT_KDU_PARAMETER;
-  static const vpCameraParametersProjType DEFAULT_PROJ_TYPE; 
 
-private:
-  double px, py ; //!< pixel size
-  double u0, v0 ; //!<  principal point
-  double kud ; //!< radial distortion (from undistorted to distorted)
-  double kdu ; //!< radial distortion (from distorted to undistorted)
-  
-  double inv_px, inv_py; 
-   
-  vpCameraParametersProjType projModel ; //!< used projection model
-public:
   //generic functions
   vpCameraParameters() ;
   vpCameraParameters(const vpCameraParameters &c) ;
@@ -247,8 +229,6 @@ public:
 
   void init() ;
   void init(const vpCameraParameters &c) ;
-  void init(const double px, const double py,
-	   const double u0, const double v0) ;
   
   void initPersProjWithoutDistortion(const double px, const double py,
                                       const double u0, const double v0) ;
@@ -257,8 +237,6 @@ public:
 
   void printParameters() ;
 
-  void setPixelRatio(const double px,const double py) ;
-  void setPrincipalPoint(const double u0, const double v0) ;
   
   inline double get_px() const { return px; }
   inline double get_py() const { return py; }
@@ -270,6 +248,34 @@ public:
   inline vpCameraParametersProjType get_projModel() const { return projModel; } 
   
   vpMatrix get_K() const;
+
+  /*!
+    @name Deprecated functions
+  */
+  void init(const double px, const double py,
+	    const double u0, const double v0) ;
+  void setPixelRatio(const double px,const double py) ;
+  void setPrincipalPoint(const double u0, const double v0) ;
+
+private:
+  static const double DEFAULT_U0_PARAMETER;
+  static const double DEFAULT_V0_PARAMETER;
+  static const double DEFAULT_PX_PARAMETER;
+  static const double DEFAULT_PY_PARAMETER;
+  static const double DEFAULT_KUD_PARAMETER;
+  static const double DEFAULT_KDU_PARAMETER;
+  static const vpCameraParametersProjType DEFAULT_PROJ_TYPE; 
+
+
+  double px, py ; //!< pixel size
+  double u0, v0 ; //!<  principal point
+  double kud ; //!< radial distortion (from undistorted to distorted)
+  double kdu ; //!< radial distortion (from distorted to undistorted)
+  
+  double inv_px, inv_py; 
+   
+  vpCameraParametersProjType projModel ; //!< used projection model
+
 } ;
 
 #endif
