@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.h,v 1.5 2007-06-25 12:30:50 asaunier Exp $
+ * $Id: vpTranslationVector.h,v 1.6 2008-07-28 16:46:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -42,7 +43,7 @@
 
 /*!
   \file vpTranslationVector.h
-  \brief class that consider the case of a translation vector
+  \brief Class that consider the case of a translation vector.
 */
 
 #include <visp/vpConfig.h>
@@ -51,7 +52,14 @@
 
 /*!
   \class vpTranslationVector
-  \brief class that consider the case of a translation vector
+
+  Class that consider the case of a translation vector.
+
+  Let be \f$^{a}{\bf t}_{b} = [t_x,t_y,t_z]^\top\f$ be a translation
+  from frame \f$ a \f$ to frame \f$ b \f$.  The representation of a
+  translation is a column vector of dimension 3.
+
+  Translations are expressed in meters.
 */
 class VISP_EXPORT vpTranslationVector : public vpColVector
 {
@@ -60,29 +68,34 @@ private:
     void init() ;
 
 public:
+
+    /*!
+      Default constructor.
+      The translation vector is initialized to zero.
+    */
     vpTranslationVector() { init() ; }
-    //! constructor from double in meter
+    // constructor from double in meter
     vpTranslationVector(const double tx, const double ty, const double tz) ;
-    //! copy constructor
-    vpTranslationVector(const vpTranslationVector &v);
+    // copy constructor
+    vpTranslationVector(const vpTranslationVector &t);
 
     // operators
 
-    //! translation vectors additions  c = a + b (a, b  unchanged)
-    vpTranslationVector operator+(const vpTranslationVector &b) const ;
-    //! negate t = -a  (t is unchanged)
+    // translation vectors additions  c = a + b (a, b  unchanged)
+    vpTranslationVector operator+(const vpTranslationVector &t) const ;
+    // negate t = -a  (t is unchanged)
     vpTranslationVector operator-() const ;
     
-    //! Copy operator.   Allow operation such as A = v
-    vpTranslationVector &operator=(const vpTranslationVector &v);
+    // Copy operator.   Allow operation such as A = v
+    vpTranslationVector &operator=(const vpTranslationVector &t);
 
     vpTranslationVector &operator=(double x) ;
 
 
-    //! Skew Symmetric matrix
+    // Skew Symmetric matrix
     vpMatrix skew() const ;
-    static vpMatrix skew(const vpTranslationVector &v) ;
-    static void skew(const  vpTranslationVector &v, vpMatrix &m) ;
+    static vpMatrix skew(const vpTranslationVector &t) ;
+    static void skew(const  vpTranslationVector &t, vpMatrix &M) ;
     static vpTranslationVector cross(const vpTranslationVector &a,
 				     const vpTranslationVector &b) ;
 } ;

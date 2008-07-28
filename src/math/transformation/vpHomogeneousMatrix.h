@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.h,v 1.9 2008-04-03 09:27:16 asaunier Exp $
+ * $Id: vpHomogeneousMatrix.h,v 1.10 2008-07-28 16:46:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -117,16 +117,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   vpHomogeneousMatrix(const vpTranslationVector &T,
                       const vpThetaUVector &tu) ;
   //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const vpPoseVector &p) ;
-   
-
-  // Construction from Translation and rotation (deprecated)
-  vpHomogeneousMatrix(const vpRotationMatrix &R,
-                      const vpTranslationVector &T) ;
-   // Construction from Translation and rotation (deprecated)
-  vpHomogeneousMatrix(const vpThetaUVector &tu,
-                      const vpTranslationVector &T) ;
-  
+  vpHomogeneousMatrix(const vpPoseVector &p) ;  
 
   //! Construction from Translation and rotation
   vpHomogeneousMatrix(const double Tx,const  double Ty, const double Tz,
@@ -143,15 +134,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! Construction from Translation and rotation
   void buildFrom(const double Tx,const  double Ty, const double Tz,
 		      const double tux,const  double tuy, const double tuz  ) ;
-  
-
-  // Construction from Translation and rotation (deprecated)
-  void buildFrom(const vpRotationMatrix &R,
-                 const vpTranslationVector &T) ;
-   // Construction from Translation and rotation (deprecated)
-  void buildFrom(const vpThetaUVector &tu,
-                 const vpTranslationVector &T) ;
-  
+    
   //! copy operator from vpHomogeneousMatrix
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &m);
 
@@ -191,6 +174,24 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
 
   //! Print the matrix as a vector [T thetaU]
   void print() ;
+
+  /*!
+    @name Deprecated functions
+  */
+
+  // Construction from Translation and rotation (deprecated)
+  vpHomogeneousMatrix(const vpRotationMatrix &R,
+                      const vpTranslationVector &T) ;
+   // Construction from Translation and rotation (deprecated)
+  vpHomogeneousMatrix(const vpThetaUVector &tu,
+                      const vpTranslationVector &T) ;
+  // Construction from Translation and rotation (deprecated)
+  void buildFrom(const vpRotationMatrix &R,
+                 const vpTranslationVector &T) ;
+   // Construction from Translation and rotation (deprecated)
+  void buildFrom(const vpThetaUVector &tu,
+                 const vpTranslationVector &T) ;
+
 
  } ;
 
