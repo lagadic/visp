@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.23 2007-12-20 14:37:52 fspindle Exp $
+ * $Id: vpImage.h,v 1.24 2008-07-29 10:49:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -248,7 +248,7 @@ public:
    * @param y y pixel location
    * @return pixel value
    */
-  Type getPixelBI(float x, float y) const;
+  Type getPixelBI(double x, double y) const;
 
   vpDisplay *display ;
   } ;
@@ -814,11 +814,12 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
 */
 
 template<class Type>
-Type vpImage<Type>::getPixelBI(float col0, float row0) const
+Type vpImage<Type>::getPixelBI(double col0, double row0) const
 {
   unsigned int irow, icol;
-  float rfrac, cfrac;
-  Type row1, row2;
+  double rfrac, cfrac;
+  Type row1;
+  Type row2= (Type)(row[0][0]); // The compiler request an initialisation
 
   irow = (int) row0;
   icol = (int) col0;
@@ -831,13 +832,13 @@ Type vpImage<Type>::getPixelBI(float col0, float row0) const
   }
 
   if (row0 > height - 1)
-    row0 = (float)(height - 1);
+    row0 = (double)(height - 1);
 
   if (col0 > width - 1)
-    col0 = (float)(width - 1);
+    col0 = (double)(width - 1);
 
-  rfrac = 1.0f - (row0 - (float) irow);
-  cfrac = 1.0f - (col0 - (float) icol);
+  rfrac = 1.0f - (row0 - (double) irow);
+  cfrac = 1.0f - (col0 - (double) icol);
 
   if (cfrac < 1)
   {
