@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.39 2008-07-29 09:32:45 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.40 2008-07-29 15:53:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -905,7 +905,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   }
 
   CatchPrint();
-  if (TryStt == -10001 || TryStt == -1023)
+  if (TryStt == InvalidPosition || TryStt == -1023)
     std::cout << " : Position out of range.\n";
   else if (TryStt < 0)
     std::cout << " : Unknown error (see Fabien).\n";
@@ -1306,7 +1306,28 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
   }
   }
 
-  CatchPrint();
+  Catch();
+  if (TryStt < 0) {
+    if (TryStt == VelStopOnJoint) {
+      UInt32 axisInJoint[njoint];
+      PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
+      for (int i=0; i < njoint; i ++) {
+	if (axisInJoint[i])
+	  std::cout << "\nWarning: Velocity control stopped: axis " 
+		    << i+1 << " on joint limit!" <<std::endl;
+      }
+    }
+    else {
+      printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
+      if (TryString != NULL) {                     
+	// The statement is in TryString, but we need to check the validity
+	printf(" Error sentence %s\n", TryString); // Print the TryString
+      }
+      else {
+	printf("\n");
+      }
+    }
+  }
 
   return;
 }
