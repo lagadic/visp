@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.29 2008-07-21 18:50:56 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.30 2008-07-29 10:30:58 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -59,7 +59,7 @@
 /* ---------------------------------------------------------------------- */
 
 static char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_45",
-			    "CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",			    
+			    "CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
 			    NULL};
 
 const char * const vpAfma6::CONST_AFMA6_FILENAME
@@ -781,9 +781,8 @@ vpAfma6::parseConfigFile (const char * filename)
 {
   int               dim;
   int               code;
-  char              Ligne[100];
-  char              namoption[10];
-  float             val;
+  char              Ligne[FILENAME_MAX];
+  char              namoption[100];
   FILE *            fdtask;
   int               numLn = 0;
   double rot_eMc[3]; // rotation
@@ -801,10 +800,10 @@ vpAfma6::parseConfigFile (const char * filename)
 			    "Impossible to read the config file.");
   }
 
-  while (fgets(Ligne,100,fdtask) != NULL) {
+  while (fgets(Ligne, FILENAME_MAX, fdtask) != NULL) {
     numLn ++;
     if ('#' == Ligne[0]) { continue; }
-    sscanf(Ligne, "%s %f", namoption, &val);
+    sscanf(Ligne, "%s", namoption);
     dim = strlen(namoption);
 
     for (code = 0;
