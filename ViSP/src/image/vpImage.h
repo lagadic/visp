@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.24 2008-07-29 10:49:56 fspindle Exp $
+ * $Id: vpImage.h,v 1.25 2008-07-29 14:10:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,17 +86,12 @@ class vpDisplay;
 template<class Type>
 class vpImage
 {
-friend class vpImageConvert;
-private:
-  unsigned int npixels ; //<! number of pixel in the image
-  unsigned int width ;   //<! number of columns
-  unsigned int height ;   //<! number of rows
+  friend class vpImageConvert;
 
 public:
   Type *bitmap ;  //!< points toward the bitmap
-private:
-  Type **row ;    //!< points the row pointer array
-public:
+  vpDisplay *display ;
+
   //! constructor
   vpImage() ;
   //! copy constructor
@@ -237,20 +232,23 @@ public:
   //! Returns a new image that's double size of the current image
   void doubleSizeImage(vpImage<Type>* res);
 
+  // Gets the value of a pixel at a location with bilinear interpolation.
+  Type getSubPix(double i, double j) const;
 
-  //! bilinear interpolation acces
+  /*!
+    @name Deprecated functions
+  */
+  // Gets the value of a pixel at a location with bilinear interpolation.
   double get(double i, double j) ;
 
-  /** Gets the value of a pixel at a location with bilinear interpolation.
-   * If location is out of bounds, then return value of closest pixel.
-   *
-   * @param x x pixel location
-   * @param y y pixel location
-   * @return pixel value
-   */
-  Type getPixelBI(double x, double y) const;
+  // Gets the value of a pixel at a location with bilinear interpolation.
+  Type getPixelBI(double j, double i) const;
 
-  vpDisplay *display ;
+private:
+  unsigned int npixels ; //<! number of pixel in the image
+  unsigned int width ;   //<! number of columns
+  unsigned int height ;   //<! number of rows
+  Type **row ;    //!< points the row pointer array
   } ;
 
 
@@ -660,10 +658,13 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
 
 /*!
 
-  Get the value of pixel at coordinates [i][j] using a bilinear
+  \deprecated Get the value of pixel at coordinates [i][j] using a bilinear
   interpolation.
 
-  \param i,j : There are float value
+  This method is deprecated. You should use getSubPix() instead.
+
+  \param i : Sub pixel coordinate along the rows.
+  \param j : Sub pixel coordinate along the colums.
 
   \return Value of the pixel obtained by bilinear interpolation.
 
@@ -684,6 +685,8 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
   Source : W.H. Press, S.A. Teukolsky, W.T. Vetterling, and B.P. Flannery.
     Numerical Recipes in C.  Cambridge University Press, Cambridge, NY, USA,
     1992. (Section 3.6, p123)
+
+  \sa getSubPix()
 
 */
 
@@ -802,63 +805,139 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
     dst->bitmap[i] = this->bitmap[i] - im2->bitmap[i];
 }
 
-/*!
-  Used (eg. to make keypoint patch (normalization).
+/*! 
+  Retrieves pixel value from image with sub-pixel accuracy.
 
-  \param col0 : Sub pixel coordinate along the colums.
-  \param row0 : Sub pixel coordinate along the rows.
+  Gets the value of a sub-pixel with coordinates (i,j) with bilinear
+  interpolation. If location is out of bounds, then return value of
+  closest pixel.
 
-  \exception vpImageException::notInTheImage : If (col0, row0) are out
+  \param i : Sub-pixel coordinate along the rows.
+  \param j : Sub-pixel coordinate along the columns.
+
+  \return Interpolated sub-pixel value from the four neighbours.
+
+  \exception vpImageException::notInTheImage : If (i,j) is out
   of the image.
 
 */
 
 template<class Type>
-Type vpImage<Type>::getPixelBI(double col0, double row0) const
+Type vpImage<Type>::getSubPix(double i, double j) const
 {
-  unsigned int irow, icol;
+  unsigned int iround, jround;
   double rfrac, cfrac;
   Type row1;
   Type row2= (Type)(row[0][0]); // The compiler request an initialisation
 
-  irow = (int) row0;
-  icol = (int) col0;
+  iround = (int) i;
+  jround = (int) j;
 
-  if (/*irow < 0 || */ irow >= height
-      /* || icol < 0 */ || icol >= width) {
+  if (/*iround < 0 || */ iround >= height
+      /* || jround < 0 */ || jround >= width) {
     vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
 		      "Pixel outside the image"));
   }
 
-  if (row0 > height - 1)
-    row0 = (double)(height - 1);
+  if (i > height - 1)
+    i = (double)(height - 1);
 
-  if (col0 > width - 1)
-    col0 = (double)(width - 1);
+  if (j > width - 1)
+    j = (double)(width - 1);
 
-  rfrac = 1.0f - (row0 - (double) irow);
-  cfrac = 1.0f - (col0 - (double) icol);
+  rfrac = 1.0f - (i - (double) iround);
+  cfrac = 1.0f - (j - (double) jround);
 
   if (cfrac < 1)
   {
-    row1 = (Type)(row[irow][icol] * cfrac + row[irow][icol + 1]*(1.0 - cfrac));
+    row1 = (Type)(row[iround][jround] * cfrac + row[iround][jround + 1]*(1.0 - cfrac));
   }
   else
   {
-    row1 = row[irow][icol];
+    row1 = row[iround][jround];
   }
 
   if (rfrac < 1)
   {
     if (cfrac < 1)
     {
-      row2 = (Type)(row[irow+1][icol] * cfrac
-		    + row[irow+1][icol + 1]*(1.0 - cfrac) );
+      row2 = (Type)(row[iround+1][jround] * cfrac
+		    + row[iround+1][jround + 1]*(1.0 - cfrac) );
     }
     else
     {
-      row2 = row[irow+1][icol];
+      row2 = row[iround+1][jround];
+    }
+  }
+  return (Type)( row1 * rfrac +  row2 * (1.0 - rfrac));
+}
+
+
+/*! 
+  \deprecated Retrieves pixel value from image with sub-pixel accuracy. 
+
+  This method is deprecated. You should use getSubPix() instead.
+
+  Gets the value of a pixel at a location with bilinear
+  interpolation. If location is out of bounds, then return value of
+  closest pixel.
+
+  \param i : Sub pixel coordinate along the rows.
+  \param j : Sub pixel coordinate along the colums.
+
+  \exception vpImageException::notInTheImage : If (i, j) are out
+  of the image.
+
+  \sa getSubPix()
+
+*/
+template<class Type>
+Type vpImage<Type>::getPixelBI(double j, double i) const
+{
+  unsigned int iround, jround;
+  double rfrac, cfrac;
+  Type row1;
+  Type row2= (Type)(row[0][0]); // The compiler request an initialisation
+
+  iround = (int) i;
+  jround = (int) j;
+
+  if (/*iround < 0 || */ iround >= height
+      /* || jround < 0 */ || jround >= width) {
+    vpERROR_TRACE("Pixel outside the image") ;
+    throw(vpException(vpImageException::notInTheImage,
+		      "Pixel outside the image"));
+  }
+
+  if (i > height - 1)
+    i = (double)(height - 1);
+
+  if (j > width - 1)
+    j = (double)(width - 1);
+
+  rfrac = 1.0f - (i - (double) iround);
+  cfrac = 1.0f - (j - (double) jround);
+
+  if (cfrac < 1)
+  {
+    row1 = (Type)(row[iround][jround] * cfrac + row[iround][jround + 1]*(1.0 - cfrac));
+  }
+  else
+  {
+    row1 = row[iround][jround];
+  }
+
+  if (rfrac < 1)
+  {
+    if (cfrac < 1)
+    {
+      row2 = (Type)(row[iround+1][jround] * cfrac
+		    + row[iround+1][jround + 1]*(1.0 - cfrac) );
+    }
+    else
+    {
+      row2 = row[iround+1][jround];
     }
   }
   return (Type)( row1 * rfrac +  row2 * (1.0 - rfrac));
