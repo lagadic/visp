@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.38 2008-07-25 13:47:36 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.39 2008-07-29 09:32:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1540,6 +1540,7 @@ A typical content of such a file is given below:
 
 \code
 #AFMA6 - Position - Version 2.01
+# file: "myposition.pos "
 # 
 # R: X Y Z A B C
 # Joint position: X, Y, Z: translations in meters
@@ -1556,6 +1557,17 @@ expressed in meters, while joint rotations A,B,C in radians.
 
 \return true if the positions were successfully readen in the file. false, if
 an error occurs.
+
+The code below shows how to read a position from a file and move the robot to this position.
+\code
+vpRobotAfma6 robot;
+vpColVector q;        // Joint position
+robot.readPosFile("myposition.pos", q); // Set the joint position from the file
+robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+
+robot.setPositioningVelocity(5); // Positioning velocity set to 5% 
+robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
+\endcode
 
 \sa savePosFile()
 */
