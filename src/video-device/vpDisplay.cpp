@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.29 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDisplay.cpp,v 1.30 2008-07-29 14:10:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1164,15 +1164,16 @@ vpDisplay::displayArrow_uv ( const vpImage<unsigned char> &I,
 
 /*!
 
-Display a rectangle in the display window.  The rectangle upper left corner
-has coordinates (u,v). The size of the rectangle is fixed by \e width and \e
-height.
+Display a rectangle in the display window associated to Image \e I.
+The rectangle upper left corner has coordinates (u,v). The size of the
+rectangle is fixed by \e width and \e height.
 
-\param v Row number of the rectangle upper corner
-\param u Column number of the rectangle upper corner
-\param width Width of the rectangle.
-\param height Height of the rectangle.
-\param col Color of the rectangle.
+\param I : Image. 
+\param u : Column number of the rectangle upper corner
+\param v : Row number of the rectangle upper corner
+\param width : Width of the rectangle.
+\param height : Height of the rectangle.
+\param col : Color of the rectangle.
 \param fill : set as true to fill the rectangle.
 \param e : Line thickness
 

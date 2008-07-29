@@ -8,6 +8,8 @@ ViSP 2.4.x (released ...)
       low level Adept controller provided by Cerebellum Automation.
   - Examples:
     - New examples in example/manual described in ViSP guide.
+  - Documentation
+    - Creation of a deprecated section
 
 ----------------------------------------------	
 ViSP 2.4.2 (released March 27, 2008)

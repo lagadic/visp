@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.22 2008-07-24 13:54:50 rmebarki Exp $
+ * $Id: vpMatrix.h,v 1.23 2008-07-29 14:10:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -295,18 +295,18 @@ public:
 
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank
-  int pseudoInverse(vpMatrix &Ap, double seuil=1e-6)  const;
+  int pseudoInverse(vpMatrix &Ap, double svThreshold=1e-6)  const;
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank and the singular value
-  int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double seuil=1e-6) const ;
+  int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const ;
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank and the singular value, image
   int pseudoInverse(vpMatrix &Ap,
-		    vpColVector &sv, double seuilvp,
+		    vpColVector &sv, double svThreshold,
 		    vpMatrix &ImAt,
 		    vpMatrix &ImA) const ;
   //! Compute the pseudo inverse of the matrix using the SVD.
-  vpMatrix pseudoInverse(double seuil=1e-6)  const;
+  vpMatrix pseudoInverse(double svThreshold=1e-6)  const;
 
   //! test if the matrix is a rotation matrix ( R^T R = Id 3x3 )
   //  int isARotationMatrix() const ;

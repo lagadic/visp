@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.19 2008-01-31 14:45:11 asaunier Exp $
+ * $Id: vpPose.cpp,v 1.20 2008-07-29 14:10:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -228,12 +228,15 @@ vpPose::coplanaire()
 
 /*!
   \brief Compute and return the residual expressed in meter for
-  the pose matrix 'cMo'
-  \param input vpMatrix &pose : the matrix that defines the pose to be tested
-  \return the value of he residual in meter
+  the pose matrix 'cMo'.
+
+  \param cMo : Input pose. The matrix that defines the pose to be tested.
+
+  \return The value of he residual in meter.
+
 */
 double
-vpPose::computeResidual(vpHomogeneousMatrix &_cMo)
+vpPose::computeResidual(vpHomogeneousMatrix &cMo)
 {
 
   double residual = 0 ;
@@ -246,7 +249,7 @@ vpPose::computeResidual(vpHomogeneousMatrix &_cMo)
     double x = P.get_x() ;
     double y = P.get_y() ;
 
-    P.track(_cMo) ;
+    P.track(cMo) ;
 
     residual += vpMath::sqr(x-P.get_x()) + vpMath::sqr(y-P.get_y())  ;
     listP.next() ;
@@ -475,7 +478,7 @@ vpPose::display(vpImage<unsigned char> &I,
 
     \param p1,p2,p3,p4: the image of the corners of the rectangle
     (respectively the image of  (0,0),(lx,0),(lx,lx/s) and (0,lx/s)) (input)
-    \Param cam: the camera used (input)
+    \param cam: the camera used (input)
     \param lx: the rectangle size on the x axis (input)
     \param cMo: the camera pose (output)
     \return int : OK if no pb occurs

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.43 2008-07-24 14:43:42 rmebarki Exp $
+ * $Id: vpMatrix.cpp,v 1.44 2008-07-29 14:10:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1262,16 +1262,16 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
 }
 /*!
   \brief Compute the pseudo inverse of the matrix Ap = A^+
-  \param Ap = A^+ the pseudo inverse
-  \param th threshold used to test the singular values
+  \param Ap : The pseudo inverse \f$ A^+ \f$.
+  \param svThreshold : Threshold used to test the singular values.
   \return Return the rank of the matrix A
 */
 
 int
-vpMatrix::pseudoInverse(vpMatrix &Ap, double th) const
+vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
 {
   vpColVector sv ;
-  return   pseudoInverse(Ap,sv,th) ;
+  return   pseudoInverse(Ap, sv, svThreshold) ;
 }
 
 /*!
@@ -1291,16 +1291,16 @@ vpMatrix::pseudoInverse(double svThreshold) const
 
 /*!
   \brief Compute the pseudo inverse of the matrix Ap = A^+
-  \param Ap = A^+ the pseudo inverse
-  \param sv singular values
-  \param th threshold used to test the singular values
+  \param Ap : The pseudo inverse \f$ A^+ \f$.
+  \param sv : Singular values.
+  \param svThreshold : Threshold used to test the singular values.
   \return Return the rank of the matrix A
 */
 int
-vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double seuilvp) const
+vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
 {
   vpMatrix imA, imAt ;
-  return pseudoInverse(Ap,sv,seuilvp, imA, imAt) ;
+  return pseudoInverse(Ap, sv, svThreshold, imA, imAt) ;
 }
 
 /*!
@@ -1327,18 +1327,17 @@ vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double seuilvp) const
   Im(A^T) is an r x n matrix
 
 
-
-  \param Ap = A^+ the pseudo inverse
-  \param sv singular values
-  \param th threshold used to test the singular values
-  \param ImAt : Image A^T
-  \param ImA: Image  A
+  \param Ap : The pseudo inverse \f$ A^+ \f$.
+  \param sv : Singular values.
+  \param svThreshold : Threshold used to test the singular values.
+  \param imAt : Image A^T
+  \param imA: Image  A
   \return Return the rank of the matrix A
 
 */
 int
 vpMatrix::pseudoInverse(vpMatrix &Ap,
-			vpColVector &sv, double seuilvp,
+			vpColVector &sv, double svThreshold,
 			vpMatrix &imA,
 			vpMatrix &imAt) const
 {
@@ -1378,7 +1377,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
 
   int rank = 0 ;
   for (i=0 ; i < ncols ; i++)
-    if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
+    if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
 
 
 
@@ -1390,7 +1389,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
       a1[i][j] = 0.0;
 
       for (k=0 ; k < ncols ; k++)
-    	 if (fabs(sv[k]) > maxsv*seuilvp)
+    	 if (fabs(sv[k]) > maxsv*svThreshold)
   	   {
 	       a1[i][j] += v[i][k]*a[j][k]/sv[k];
        }

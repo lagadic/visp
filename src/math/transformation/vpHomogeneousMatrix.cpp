@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.cpp,v 1.12 2008-07-28 16:46:45 fspindle Exp $
+ * $Id: vpHomogeneousMatrix.cpp,v 1.13 2008-07-29 14:10:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -439,6 +439,28 @@ vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const
 }
 
 
+/*!
+  Write an homogeneous matrix in an output file stream. 
+
+  \param f : Output file stream. The homogeneous matrix is saved as a
+  4 by 4 matrix.
+
+  The code below shows how to save an homogenous matrix in a file.
+
+  \code
+  // Contruct an homogeneous matrix
+  vpTranslationVector t(1,2,3);
+  vpRxyzVector r(M_PI, 0, -M_PI/4.);
+  vpRotationMatrix R(r);
+  vpHomogeneousMatrix M(t, R);
+  
+  // Save the content of the matrix in "homogeneous.dat"
+  std::ofstream f("homogeneous.dat");  
+  M.save(f);
+  \endcode
+
+  \sa load()
+*/
 void
 vpHomogeneousMatrix::save(std::ofstream &f) const
 {
@@ -455,10 +477,22 @@ vpHomogeneousMatrix::save(std::ofstream &f) const
 
 
 /*!
-  Read an homogeneous matrix in a file, verify if it is really an homogeneous
-  matrix
 
-  \param f : the file
+  Read an homogeneous matrix from an input file stream. The
+  homogeneous matrix is considered as a 4 by 4 matrix.
+
+  \param f : Input file stream. 
+
+  The code below shows how to get an homogenous matrix from a file.
+
+  \code
+  vpHomogeneousMatrix M;
+
+  std::ifstream f("homogeneous.dat");
+  M.load(f);
+  \endcode
+
+  \sa save()
 */
 void
 vpHomogeneousMatrix::load(std::ifstream &f)
@@ -479,10 +513,14 @@ vpHomogeneousMatrix::load(std::ifstream &f)
 }
 
 /*!
-  Read an homogeneous matrix in a file, verify if it is really an homogeneous
-  matrix
 
-  \param std::ifstream &f : the file
+  \deprecated Read an homogeneous matrix from an input file stream. The
+  homogeneous matrix is considered here as a 3 by 4 matrix.
+
+  This methos is deprecated and only proposed for compatibilty issue.
+
+  \param f : Input file stream. 
+
 */
 void
 vpHomogeneousMatrix::loadMatrix34(std::ifstream &f)
