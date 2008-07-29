@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp,v 1.4 2008-07-21 09:41:11 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp,v 1.5 2008-07-29 16:12:15 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -202,7 +202,7 @@ main()
     vpTranslationVector cto(0, 0, 0.7); // tz = 0.7 meter
     vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)); // No rotations
     vpRotationMatrix cRo(cro); // Build the rotation matrix
-    cMo.buildFrom(cRo, cto); // Build the homogeneous matrix
+    cMo.buildFrom(cto, cRo); // Build the homogeneous matrix
 
     // sets the desired position of the 2D visual feature
     vpFeaturePoint pd[4] ;
@@ -230,7 +230,7 @@ main()
       task.addFeature(p[i],pd[i]) ;
 
     // Set the proportional gain
-    task.setLambda(0.6) ;
+    task.setLambda(0.4) ;
 
     // Display task information
     task.print() ;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.6 2008-07-17 20:11:57 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.7 2008-07-29 16:12:14 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -356,7 +356,7 @@ main()
       task.addFeature(p[i],pd[i]) ;
 
     // Set the proportional gain
-    task.setLambda(0.4) ;
+    task.setLambda(0.1) ;
 
     // Display task information
     task.print() ;
