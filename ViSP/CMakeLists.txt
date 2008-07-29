@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.73 2008-07-18 08:46:43 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.74 2008-07-29 14:10:41 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -51,7 +51,7 @@ ENDIF(COMMAND CMAKE_POLICY)
 # VISP version number.  An even minor number corresponds to releases.
 SET(VISP_VERSION_MAJOR "2")
 SET(VISP_VERSION_MINOR "4")
-SET(VISP_VERSION_PATCH "2")
+SET(VISP_VERSION_PATCH "3")
 SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 
 SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")

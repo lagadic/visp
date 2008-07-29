@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.h,v 1.10 2008-07-28 16:46:45 fspindle Exp $
+ * $Id: vpHomogeneousMatrix.h,v 1.11 2008-07-29 14:10:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,8 +98,6 @@ class vpThetaUVector;
 */
 class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
 {
-
-
  public:
   //! Basic initialisation (identity)
   void init() ;
@@ -110,10 +108,10 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   vpHomogeneousMatrix()   ;
   //! copy constructor
   vpHomogeneousMatrix(const vpHomogeneousMatrix &M) ;
-   //! Construction from Translation and rotation
+  //! Construction from Translation and rotation
   vpHomogeneousMatrix(const vpTranslationVector &T,
                       const vpRotationMatrix &R) ;
-   //! Construction from Translation and rotation
+  //! Construction from Translation and rotation
   vpHomogeneousMatrix(const vpTranslationVector &T,
                       const vpThetaUVector &tu) ;
   //! Construction from Translation and rotation
@@ -126,14 +124,14 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! Construction from Translation and rotation
   void buildFrom(const vpTranslationVector &T,
                  const vpRotationMatrix &R) ;
-   //! Construction from Translation and rotation
+  //! Construction from Translation and rotation
   void buildFrom(const vpTranslationVector &T,
                  const vpThetaUVector &tu) ;
   //! Construction from Translation and rotation
   void buildFrom(const vpPoseVector &p) ;
   //! Construction from Translation and rotation
   void buildFrom(const double Tx,const  double Ty, const double Tz,
-		      const double tux,const  double tuy, const double tuz  ) ;
+		 const double tux,const  double tuy, const double tuz  ) ;
     
   //! copy operator from vpHomogeneousMatrix
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &m);
@@ -164,12 +162,9 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! extract the translation vector from the homogeneous  matrix
   void extract(vpTranslationVector &T) const;
 
-  //! Load an homogeneous matrix from a file
+  // Load an homogeneous matrix from a file
   void load(std::ifstream &f) ;
-  //! Load an homogeneous matrix from a file
-  //! proposed for compatibilty issue
-  void loadMatrix34(std::ifstream &f) ;
-  //! Save an homogeneous matrix in a file
+  // Save an homogeneous matrix in a file
   void save(std::ofstream &f) const ;
 
   //! Print the matrix as a vector [T thetaU]
@@ -182,21 +177,22 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   // Construction from Translation and rotation (deprecated)
   vpHomogeneousMatrix(const vpRotationMatrix &R,
                       const vpTranslationVector &T) ;
-   // Construction from Translation and rotation (deprecated)
+  // Construction from Translation and rotation (deprecated)
   vpHomogeneousMatrix(const vpThetaUVector &tu,
                       const vpTranslationVector &T) ;
   // Construction from Translation and rotation (deprecated)
   void buildFrom(const vpRotationMatrix &R,
                  const vpTranslationVector &T) ;
-   // Construction from Translation and rotation (deprecated)
+  // Construction from Translation and rotation (deprecated)
   void buildFrom(const vpThetaUVector &tu,
                  const vpTranslationVector &T) ;
+  // Load an homogeneous matrix from a file. Proposed for compatibilty issue
+  void loadMatrix34(std::ifstream &f) ;
 
+ private:
 
- } ;
+} ;
 
-
-//void ComputeCameraPosition(const vpColVector& dx,vpHomogeneousMatrix&  mati,int typ_mvt=0) ;
 #endif
 
 /*
