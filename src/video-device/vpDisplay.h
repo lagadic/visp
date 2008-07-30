@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.24 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDisplay.h,v 1.25 2008-07-30 19:22:26 cteulier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -345,6 +345,31 @@ protected :
 				  unsigned int width, unsigned int height,
 				  vpColor::vpColorType col, bool fill = false,
 				  unsigned int e=1);
+				  
+  //! Display a rectangle defined by center, orientation and size.
+  static void displayRectangle(const vpImage<unsigned char> &I,
+			    unsigned int i, unsigned int j, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType col, unsigned int e=1);
+
+  //! Display a rectangle defined by center, orientation and size.
+  static void displayRectangle(const vpImage<vpRGBa> &I,
+			    unsigned int i, unsigned int j, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType col, unsigned int e=1);
+			   
+  //! Display a rectangle defined by center, orientation and size.
+  static void displayRectangle_uv(const vpImage<unsigned char> &I,
+			    unsigned int u, unsigned int v, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType col, unsigned int e=1);
+		
+  //! Display a rectangle defined by center, orientation and size.
+  static void displayRectangle_uv(const vpImage<vpRGBa> &I,
+			    unsigned int u, unsigned int v, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType col, unsigned int e=1);
+
   static void displayTitle(const vpImage<unsigned char> &I,
 			   const char *windowtitle);
 

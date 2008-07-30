@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.30 2008-07-29 14:10:42 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.31 2008-07-30 19:22:26 cteulier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -460,6 +460,180 @@ vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
     throw ;
   }
 }
+
+
+/*!
+
+Display a rectangle in the display window.  The rectangle is defined by its center, its orientation (angle) and its size. The rectangle center has coordinates (i,j). 
+The size of the rectangle is fixed by \e width and \e height.
+
+\param I : Image associated to the display.
+\param i : Row number of the rectangle center
+\param j : Column number of the rectangle center
+\param angle : Angle of the width side with horizontal
+\param width : Width of the rectangle.
+\param height : Height of the rectangle.
+\param col : Color of the rectangle.
+\param e : Line thickness
+
+*/
+void
+vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
+			    unsigned int i, unsigned int j, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType col,unsigned int e)
+{
+	try
+    {
+		if (I.display != NULL)
+		{
+			//A, B, C, D, corners of the rectangle clockwise
+			int ua, va, ub, vb, uc, vc, ud, vd;
+			float cosinus = cos(angle);
+			float sinus = sin(angle);
+			ua = (int)(j + 0.5*width*cosinus + 0.5*height*sinus);
+			va = (int)(i + 0.5*width*sinus - 0.5*height*cosinus);
+			ub = (int)(j + 0.5*width*cosinus - 0.5*height*sinus);
+			vb = (int)(i + 0.5*width*sinus + 0.5*height*cosinus);
+			uc = (int)(j - 0.5*width*cosinus - 0.5*height*sinus);
+			vc = (int)(i - 0.5*width*sinus + 0.5*height*cosinus);
+			ud = (int)(j - 0.5*width*cosinus + 0.5*height*sinus);
+			vd = (int)(i - 0.5*width*sinus - 0.5*height*cosinus);
+
+			( I.display )->displayLine_uv(I, ua, va, ub, vb,col, e);
+			( I.display )->displayLine_uv(I, ua, va, ud, vd,col, e);
+			( I.display )->displayLine_uv(I, uc, vc, ub, vb,col, e);
+			( I.display )->displayLine_uv(I, uc, vc, ud, vd,col, e);
+		}
+    }
+	catch(...)
+    {
+		vpERROR_TRACE("Error caught in displayRectangle") ;
+		throw ;
+    }
+}
+
+/*!
+
+Display a rectangle in the display window.  The rectangle is defined by its center, its orientation (angle) and its size. The rectangle center has coordinates (i,j). 
+The size of the rectangle is fixed by \e width and \e height.
+
+\param I : Image associated to the display.
+\param i : Row number of the rectangle center
+\param j : Column number of the rectangle center
+\param angle : Angle of the width side with horizontal
+\param width : Width of the rectangle.
+\param height : Height of the rectangle.
+\param col : Color of the rectangle.
+\param e : Line thickness
+
+*/
+void
+vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
+			    unsigned int i, unsigned int j, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType col,unsigned int e)
+{
+	try
+	{
+		if (I.display != NULL)
+		{
+			//A, B, C, D, corners of the rectangle
+			int ua, va, ub, vb, uc, vc, ud, vd;
+			float cosinus = cos(angle);
+			float sinus = sin(angle);
+			
+			ua = (int)(j + 0.5*width*cosinus + 0.5*height*sinus);
+			va = (int)(i + 0.5*width*sinus - 0.5*height*cosinus);
+			ub = (int)(j + 0.5*width*cosinus - 0.5*height*sinus);
+			vb = (int)(i + 0.5*width*sinus + 0.5*height*cosinus);
+			uc = (int)(j - 0.5*width*cosinus - 0.5*height*sinus);
+			vc = (int)(i - 0.5*width*sinus + 0.5*height*cosinus);
+			ud = (int)(j - 0.5*width*cosinus + 0.5*height*sinus);
+			vd = (int)(i - 0.5*width*sinus - 0.5*height*cosinus);
+	
+			( I.display )->displayLine_uv(I, ua, va, ub, vb,col, e);
+			( I.display )->displayLine_uv(I, ua, va, ud, vd,col, e);
+			( I.display )->displayLine_uv(I, uc, vc, ub, vb,col, e);
+			( I.display )->displayLine_uv(I, uc, vc, ud, vd,col, e);
+		}
+    }
+	catch(...)
+	{
+		vpERROR_TRACE("Error caught in displayRectangle") ;
+		throw ;
+	}
+}
+
+/*!
+
+Display a rectangle in the display window.  The rectangle is defined by its center, its orientation (angle) and its size. The rectangle center
+has coordinates (u, v) in the display window. The size of the rectangle is fixed by \e width and \e
+height.
+\param I : Image associated to the display.
+\param u : Column number of the rectangle center
+\param v : Row number of the rectangle center
+\param angle : Angle of the longest side with horizontal
+\param width : Width of the rectangle.
+\param height : Height of the rectangle.
+\param col : Color of the rectangle.
+\param e : Line thickness
+*/
+void
+vpDisplay::displayRectangle_uv(const vpImage<unsigned char> &I,
+			    unsigned int u, unsigned int v, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType col,unsigned int e)
+{
+	try
+	{
+		if ( I.display != NULL )
+		{
+		( I.display )->displayRectangle ( I, v, u, angle, width, height, col, e ) ;
+		}
+	}
+	catch ( ... )
+	{
+		vpERROR_TRACE ( "Error caught in displayRectangle_uv" ) ;
+		throw ;
+	}
+}
+
+
+/*!
+
+Display a rectangle in the display window.  The rectangle is defined by its center, its orientation (angle) and its size. The rectangle center
+has coordinates (u, v) in the display window. The size of the rectangle is fixed by \e width and \e
+height.
+\param I : Image associated to the display.
+\param u : Column number of the rectangle center
+\param v : Row number of the rectangle center
+\param angle : Angle of the longest side with horizontal
+\param width : Width of the rectangle.
+\param height : Height of the rectangle.
+\param col : Color of the rectangle.
+\param e : Line thickness
+*/
+void
+vpDisplay::displayRectangle_uv(const vpImage<vpRGBa> &I,
+			    unsigned int u, unsigned int v, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType col,unsigned int e)
+{
+	try
+	{
+		if ( I.display != NULL )
+		{
+		( I.display )->displayRectangle ( I, v, u, angle, width, height, col, e ) ;
+		}
+	}
+	catch ( ... )
+	{
+		vpERROR_TRACE ( "Error caught in displayRectangle_uv" ) ;
+		throw ;
+	}
+}
+
 /*! display a string at coordinates (i,j) to (i2,j2) in the display
   window
 */
