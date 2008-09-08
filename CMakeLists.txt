@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.74 2008-07-29 14:10:41 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.75 2008-09-08 13:47:18 jlaneuri Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -428,7 +428,7 @@ IF(USE_OPENCV)
   SET(OpenCV_FIND_QUIETLY TRUE)
   FIND_PACKAGE(OpenCV)
   IF(OpenCV_FOUND)
-    MESSAGE(STATUS "OpenCV not found")
+    MESSAGE(STATUS "OpenCV found")
     SET(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_OPENCV_FOUND "yes")  # for ViSP-third-party.txt
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS})
