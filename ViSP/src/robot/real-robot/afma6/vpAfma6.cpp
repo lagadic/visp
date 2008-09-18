@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.30 2008-07-29 10:30:58 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.31 2008-09-18 14:29:04 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -58,7 +58,7 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-static char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_45",
+static char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_56",
 			    "CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
 			    NULL};
 
@@ -89,18 +89,18 @@ vpAfma6::vpAfma6()
   //
   // Geometric model constant parameters
   //
-  // coupling between join 4 and 5
-  this->_coupl_45 = 0; 
+  // coupling between join 5 and 6
+  this->_coupl_56 = 0;
   // distance between join 5 and 6
-  this->_long_56  = 0; 
+  this->_long_56  = 0;
   // Camera extrinsic parameters: effector to camera frame
-  this->_eMc.setIdentity(); 
+  this->_eMc.setIdentity();
   // Maximal value of the joints
   for (int i=0; i < 6; i ++)
-    this->_joint_max[i] = 0; 
+    this->_joint_max[i] = 0;
   // Minimal value of the joints
   for (int i=0; i < 6; i ++)
-    this->_joint_min[i] = 0; 
+    this->_joint_min[i] = 0;
 
   init();
 
@@ -110,7 +110,7 @@ vpAfma6::vpAfma6()
 
   Initialize the robot with the default camera vpAfma6::defaultCameraRobot.
  */
-void 
+void
 vpAfma6::init (void)
 {
   this->init ( vpAfma6::defaultCameraRobot);
@@ -128,7 +128,7 @@ vpAfma6::init (void)
   \param paramCamera : Filename containing the camera extrinsic parameters.
 
 */
-void 
+void
 vpAfma6::init (const char * paramAfma6,
 	       const char * paramCamera)
 {
@@ -142,7 +142,7 @@ vpAfma6::init (const char * paramAfma6,
 }
 
 /*!
- 
+
   Get the constant parameters related to the robot kinematics and to
   the end-effector to camera transformation (eMc) correponding to the
   camera extrinsic parameters. These last parameters depend on the
@@ -151,9 +151,9 @@ vpAfma6::init (const char * paramAfma6,
   \param camera : Camera in use.
 
   \param projModel : Projection model of the camera.
- 
+
 */
-void 
+void
 vpAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
 	       vpCameraParameters::vpCameraParametersProjType projModel)
 {
@@ -162,8 +162,8 @@ vpAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
   switch (camera)
   {
   case vpAfma6::CAMERA_DRAGONFLY2_8MM:
-    {   
-      switch(projModel){   
+    {
+      switch(projModel){
       case vpCameraParameters::perspectiveProjWithoutDistortion :
 #ifdef UNIX
         snprintf(filename_eMc, FILENAME_MAX, "%s",
@@ -181,8 +181,8 @@ vpAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
         _snprintf(filename_eMc, FILENAME_MAX, "%s",
            CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME);
 #endif
-        break;    
-      }   
+        break;
+      }
       break;
     }
   default:
@@ -214,7 +214,7 @@ vpAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
 
   By forward kinematics we mean here the position and the orientation
   of the camera relative to the base frame given the articular positions of all
-  the six joints. 
+  the six joints.
 
   This method is the same than get_fMc(const vpColVector & q).
 
@@ -231,7 +231,7 @@ vpAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
   \sa getInverseKinematics()
 
 */
-vpHomogeneousMatrix 
+vpHomogeneousMatrix
 vpAfma6::getForwardKinematics(const vpColVector & q)
 {
   vpHomogeneousMatrix fMc;
@@ -246,7 +246,7 @@ vpAfma6::getForwardKinematics(const vpColVector & q)
 
   By inverse kinematics we mean here the six articular values of the joint
   positions given the position and the orientation of the camera frame
-  relative to the base frame. 
+  relative to the base frame.
 
   \param fMc : Homogeneous matrix describing the transformation from
   base frame to the camera frame.
@@ -302,8 +302,8 @@ vpAfma6::getForwardKinematics(const vpColVector & q)
   \sa getForwardKinematics()
 
 */
-int 
-vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc, 
+int
+vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 			      vpColVector & q, const bool &nearest)
 {
   vpHomogeneousMatrix fMe;
@@ -322,10 +322,10 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 //     for(int j=0;j<3;j++) {
 //       fMe[i][j] = 0.0;
 //       for (int k=0;k<3;k++) fMe[i][j] += fMc[i][k]*rpi[j][k];
-//       fMe[i][3] -= fMe[i][j]*rpi[j][3]; 
+//       fMe[i][3] -= fMe[i][j]*rpi[j][3];
 //     }
 //   }
-  
+
 //   std::cout << "\n\nfMc: " << fMc;
 //   std::cout << "\n\neMc: " << _eMc;
 
@@ -392,8 +392,8 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
   q_[0][2] = q_[1][2] = fMe[2][3];
 
   /* prise en compte du couplage axes 5/6	*/
-  q_[0][5] += this->_coupl_45*q_[0][4];
-  q_[1][5] += this->_coupl_45*q_[1][4];
+  q_[0][5] += this->_coupl_56*q_[0][4];
+  q_[1][5] += this->_coupl_56*q_[1][4];
 
   for (int j=0;j<2;j++)
   {
@@ -476,7 +476,7 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 
   \sa getForwardKinematics(const vpColVector & q)
 */
-vpHomogeneousMatrix 
+vpHomogeneousMatrix
 vpAfma6::get_fMc (const vpColVector & q)
 {
   vpHomogeneousMatrix fMc;
@@ -504,7 +504,7 @@ vpAfma6::get_fMc (const vpColVector & q)
   end effector frame (fMe).
 
 */
-void 
+void
 vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe)
 {
   double            q0 = q[0]; // meter
@@ -512,7 +512,7 @@ vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe)
   double            q2 = q[2]; // meter
 
   /* Decouplage liaisons 2 et 3. */
-  double            q5 = q[5] - this->_coupl_45 * q[4];
+  double            q5 = q[5] - this->_coupl_56 * q[4];
 
   double            c1 = cos(q[3]);
   double            s1 = sin(q[3]);
@@ -567,10 +567,10 @@ vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe)
   camera frame (fMc).
 
 */
-void 
+void
 vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc)
 {
-  
+
   // Compute the direct geometric model: fMe = transformation betwee
   // fix and end effector frame.
   vpHomogeneousMatrix fMe;
@@ -582,7 +582,7 @@ vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc)
   return;
 }
 
-/*!  
+/*!
 
   Get the geometric transformation between the camera frame and the
   end-effector frame. This transformation is constant and correspond
@@ -592,7 +592,7 @@ vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc)
   end-effector frame.
 
 */
-void 
+void
 vpAfma6::get_cMe(vpHomogeneousMatrix &cMe)
 {
   cMe = this->_eMc.inverse();
@@ -680,7 +680,7 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
   {^f}J_e = \left(\begin{array}{cccccc}
   1  &   0  &   0  & -Ls4 &   0  &   0   \\
   0  &   1  &   0  &  Lc4 &   0  &   0   \\
-  0  &   0  &   1  &   0  &   0  &   0   \\ 
+  0  &   0  &   1  &   0  &   0  &   0   \\
   0  &   0  &   0  &   0  &   c4 & -s4c5 \\
   0  &   0  &   0  &   0  &   s4 &  c4c5 \\
   0  &   0  &   0  &   1  &   0  &  s5   \\
@@ -718,7 +718,7 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
 }
 
 
-/*! 
+/*!
   Get min joint values.
 
   \return Minimal joint values for the 6 dof
@@ -726,7 +726,7 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
   A,B,C in radians.
 
 */
-vpColVector 
+vpColVector
 vpAfma6::getJointMin()
 {
   vpColVector qmin(6);
@@ -735,7 +735,7 @@ vpAfma6::getJointMin()
   return qmin;
 }
 
-/*! 
+/*!
   Get max joint values.
 
   \return Maximal joint values for the 6 dof
@@ -743,8 +743,8 @@ vpAfma6::getJointMin()
   A,B,C in radians.
 
 */
-vpColVector 
-vpAfma6::getJointMax() 
+vpColVector
+vpAfma6::getJointMax()
 {
   vpColVector qmax(6);
   for (int i=0; i < 6; i ++)
@@ -752,31 +752,31 @@ vpAfma6::getJointMax()
   return qmax;
 }
 
-/*! 
+/*!
 
-  Return the coupling factor between join 4 and 5.
+  Return the coupling factor between join 5 and 6.
 
-  \return Coupling factor between join 4 and 5.
+  \return Coupling factor between join 5 and 6.
 */
-double 
-vpAfma6::getCoupl45()
+double
+vpAfma6::getCoupl56()
 {
-  return _coupl_45;
+  return _coupl_56;
 }
 
-/*! 
+/*!
 
   Return the distance between join 5 and 6.
 
   \return Distance between join 5 and 6.
 */
-double 
+double
 vpAfma6::getLong56()
 {
   return _long_56;
 }
 
-void 
+void
 vpAfma6::parseConfigFile (const char * filename)
 {
   int               dim;
@@ -838,7 +838,7 @@ vpAfma6::parseConfigFile (const char * filename)
       break;
 
     case 3:
-      sscanf(Ligne, "%s %lf", namoption, &this->_coupl_45);
+      sscanf(Ligne, "%s %lf", namoption, &this->_coupl_56);
       break;
 
     case 4:
@@ -846,7 +846,7 @@ vpAfma6::parseConfigFile (const char * filename)
 
     case 5:
       sscanf(Ligne, "%s %lf %lf %lf", namoption,
-	     &rot_eMc[0], 
+	     &rot_eMc[0],
 	     &rot_eMc[1],
 	     &rot_eMc[2]);
 
@@ -859,7 +859,7 @@ vpAfma6::parseConfigFile (const char * filename)
 
     case 6:
       sscanf(Ligne, "%s %lf %lf %lf", namoption,
-	     &trans_eMc[0], 
+	     &trans_eMc[0],
 	     &trans_eMc[1],
 	     &trans_eMc[2]);
       get_trans_eMc = true;
@@ -877,7 +877,7 @@ vpAfma6::parseConfigFile (const char * filename)
   if (get_rot_eMc && get_trans_eMc) {
     for (int i=0; i < 3; i ++) {
       _erc[i] = rot_eMc[i];
-      _etc[i] = trans_eMc[i]; 
+      _etc[i] = trans_eMc[i];
     }
 
     vpRotationMatrix eRc(_erc);
@@ -921,7 +921,7 @@ vpAfma6::parseConfigFile (const char * filename)
 */
 
 #ifndef VISP_HAVE_XML2
-void 
+void
 vpAfma6::getCameraParameters (vpCameraParameters &,
 			      const unsigned int &,
 			      const unsigned int &)
@@ -930,7 +930,7 @@ vpAfma6::getCameraParameters (vpCameraParameters &,
   return;
 }
 #else
-void 
+void
 vpAfma6::getCameraParameters (vpCameraParameters &cam,
 			      const unsigned int &image_width,
 			      const unsigned int &image_height)
@@ -943,7 +943,7 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
       parser.parse(cam,
 		   vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
 		   vpAfma6::CONST_LABEL_DRAGONFLY2,
-		   projModel,  
+		   projModel,
 		   image_width, image_height);
       break;
     }
@@ -988,8 +988,8 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
   \endcode
 
 */
-void 
-vpAfma6::getCameraParameters (vpCameraParameters &cam, 
+void
+vpAfma6::getCameraParameters (vpCameraParameters &cam,
 			      const vpImage<unsigned char> &I)
 {
   getCameraParameters(cam,I.getWidth(),I.getHeight());
@@ -1017,8 +1017,8 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
   \endcode
 */
 
-void 
-vpAfma6::getCameraParameters (vpCameraParameters &cam, 
+void
+vpAfma6::getCameraParameters (vpCameraParameters &cam,
 			      const vpImage<vpRGBa> &I)
 {
   getCameraParameters(cam,I.getWidth(),I.getHeight());
@@ -1034,46 +1034,46 @@ std::ostream & operator << (std::ostream & os,
   vpRxyzVector rxyz(eRc);
 
   os
-    << "Joint Max:" << std::endl 
+    << "Joint Max:" << std::endl
     << "\t" << afma6._joint_max[0]
     << "\t" << afma6._joint_max[1]
     << "\t" << afma6._joint_max[2]
     << "\t" << afma6._joint_max[3]
     << "\t" << afma6._joint_max[4]
     << "\t" << afma6._joint_max[5]
-    << "\t" << std::endl 
+    << "\t" << std::endl
 
-    << "Joint Min: " << std::endl 
+    << "Joint Min: " << std::endl
     << "\t" << afma6._joint_min[0]
     << "\t" << afma6._joint_min[1]
     << "\t" << afma6._joint_min[2]
     << "\t" << afma6._joint_min[3]
     << "\t" << afma6._joint_min[4]
     << "\t" << afma6._joint_min[5]
-    << "\t" << std::endl 
+    << "\t" << std::endl
 
-    << "Long 5-6: " << std::endl 
+    << "Long 5-6: " << std::endl
     << "\t" << afma6._long_56
-    << "\t" << std::endl 
+    << "\t" << std::endl
 
-    << "Coupling 4-5:" << std::endl 
-    << "\t" << afma6._coupl_45
-    << "\t" << std::endl 
+    << "Coupling 5-6:" << std::endl
+    << "\t" << afma6._coupl_56
+    << "\t" << std::endl
 
-    << "eMc: "<< std::endl 
-    << "\tTranslation (m): " 
-    << afma6._eMc[0][3] << " " 
-    << afma6._eMc[1][3] << " " 
+    << "eMc: "<< std::endl
+    << "\tTranslation (m): "
+    << afma6._eMc[0][3] << " "
+    << afma6._eMc[1][3] << " "
     << afma6._eMc[2][3]
-    << "\t" << std::endl 
-    << "\tRotation (rad) : " 
-    << rxyz[0] << " " 
-    << rxyz[1] << " " 
+    << "\t" << std::endl
+    << "\tRotation (rad) : "
+    << rxyz[0] << " "
+    << rxyz[1] << " "
     << rxyz[2]
     << "\t" << std::endl
-    << "\tRotation (deg) : " 
-    << vpMath::deg(rxyz[0])  << " " 
-    << vpMath::deg(rxyz[1])  << " " 
+    << "\tRotation (deg) : "
+    << vpMath::deg(rxyz[0])  << " "
+    << vpMath::deg(rxyz[1])  << " "
     << vpMath::deg(rxyz[2])
     << "\t" << std::endl;
 
