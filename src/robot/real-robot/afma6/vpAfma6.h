@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.16 2008-07-21 09:41:11 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.17 2008-09-18 14:29:05 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -48,7 +48,7 @@
 
 /*!
 
-  \class vpAfma6 
+  \class vpAfma6
 
   Control of Irisa's gentry robot named Afma6.
 
@@ -76,7 +76,7 @@ class VISP_EXPORT vpAfma6
   static const char * const CONST_LABEL_DRAGONFLY2 ;
 
   //! List of cameras intalled on the end-effector
-  typedef enum 
+  typedef enum
     {
       CAMERA_DRAGONFLY2_8MM,
     } vpAfma6CameraRobotType;
@@ -94,7 +94,7 @@ class VISP_EXPORT vpAfma6
 	     vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector & q);
-  int getInverseKinematics(const vpHomogeneousMatrix & fMc, 
+  int getInverseKinematics(const vpHomogeneousMatrix & fMc,
 			   vpColVector & q, const bool &nearest=true);
   vpHomogeneousMatrix get_fMc (const vpColVector & q);
   void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe);
@@ -128,16 +128,16 @@ class VISP_EXPORT vpAfma6
 
   vpColVector getJointMin();
   vpColVector getJointMax();
-  double getCoupl45();
+  double getCoupl56();
   double getLong56();
 
  public:
-   
-  static const int njoint; ///< Number of joint. 
+
+  static const int njoint; ///< Number of joint.
 
 
  protected:
-  double _coupl_45; // coupling between join 4 and 5
+  double _coupl_56; // coupling between join 5 and 6
   double _long_56;  // distance between join 5 and 6
   double _joint_max[6]; // Maximal value of the joints
   double _joint_min[6]; // Minimal value of the joints
@@ -147,7 +147,7 @@ class VISP_EXPORT vpAfma6
 
   vpHomogeneousMatrix _eMc; // Camera extrinsic parameters: effector to camera
 
-protected: 
+protected:
   //! Current camera in use
   vpAfma6CameraRobotType camera_current;
   // Used projection model

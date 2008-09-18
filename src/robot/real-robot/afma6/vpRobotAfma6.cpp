@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.40 2008-07-29 15:53:48 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.41 2008-09-18 14:29:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -120,7 +120,7 @@ void emergencyStop(int signo)
 
   \code
   vpRobotAfma6 robot;
-  // Set the extrinsic camera parameters obtained with a perpective 
+  // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distorsion parameter
   robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
@@ -131,10 +131,10 @@ void emergencyStop(int signo)
   \code
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
-  // In cam, you get the intrinsic parameters of the projection model 
-  // with distorsion.  
+  // In cam, you get the intrinsic parameters of the projection model
+  // with distorsion.
   \endcode
- 
+
   \sa vpCameraParameters, init(vpAfma6::vpAfma6CameraRobotType,
   vpCameraParameters::vpCameraParametersProjType)
 
@@ -298,7 +298,7 @@ vpRobotAfma6::init (void)
 
   \code
   vpRobotAfma6 robot;
-  // Set the extrinsic camera parameters obtained with a perpective 
+  // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distorsion parameter
   robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
@@ -309,10 +309,10 @@ vpRobotAfma6::init (void)
   \code
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
-  // In cam, you get the intrinsic parameters of the projection model 
-  // with distorsion.  
+  // In cam, you get the intrinsic parameters of the projection model
+  // with distorsion.
   \endcode
- 
+
   \sa vpCameraParameters, init()
 */
 void
@@ -322,12 +322,12 @@ vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
 
   InitTry;
   // Read the robot constants from files
-  // - joint [min,max], coupl_45, long_56
+  // - joint [min,max], coupl_56, long_56
   // - camera extrinsic parameters relative to eMc
   vpAfma6::init(camera, projModel);
 
-  // Set the robot constant (coupl_45, long_56) in the MotionBlox
-  Try( PrimitiveROBOT_CONST(_coupl_45, _long_56) );
+  // Set the robot constant (coupl_56, long_56) in the MotionBlox
+  Try( PrimitiveROBOT_CONST(_coupl_56, _long_56) );
 
   // Set the camera constant (eMc pose) in the MotionBlox
   double eMc_pose[6];
@@ -911,7 +911,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     std::cout << " : Unknown error (see Fabien).\n";
   else if (error == -1)
      std::cout << "Position out of range.\n";
-    
+
   if (TryStt < 0 || error < 0) {
      vpERROR_TRACE ("Positionning error.");
      throw vpRobotException (vpRobotException::positionOutOfRangeError,
@@ -1031,7 +1031,7 @@ void vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   position is out of range.
 
   \sa setPositioningVelocity()
-  
+
 */
 void vpRobotAfma6::setPosition(const char *filename)
 {
@@ -1046,7 +1046,7 @@ void vpRobotAfma6::setPosition(const char *filename)
 			    "Bad position in filename.");
   }
   this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
-  this->setPosition(vpRobot::ARTICULAR_FRAME, q); 
+  this->setPosition(vpRobot::ARTICULAR_FRAME, q);
 }
 
 /*!
@@ -1313,13 +1313,13 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
       PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
       for (int i=0; i < njoint; i ++) {
 	if (axisInJoint[i])
-	  std::cout << "\nWarning: Velocity control stopped: axis " 
+	  std::cout << "\nWarning: Velocity control stopped: axis "
 		    << i+1 << " on joint limit!" <<std::endl;
       }
     }
     else {
       printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
-      if (TryString != NULL) {                     
+      if (TryString != NULL) {
 	// The statement is in TryString, but we need to check the validity
 	printf(" Error sentence %s\n", TryString); // Print the TryString
       }
@@ -1562,11 +1562,11 @@ A typical content of such a file is given below:
 \code
 #AFMA6 - Position - Version 2.01
 # file: "myposition.pos "
-# 
+#
 # R: X Y Z A B C
 # Joint position: X, Y, Z: translations in meters
 #                 A, B, C: rotations in degrees
-# 
+#
 
 R: 0.1 0.3 -0.25 -80.5 80 0
 \endcode
@@ -1586,7 +1586,7 @@ vpColVector q;        // Joint position
 robot.readPosFile("myposition.pos", q); // Set the joint position from the file
 robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-robot.setPositioningVelocity(5); // Positioning velocity set to 5% 
+robot.setPositioningVelocity(5); // Positioning velocity set to 5%
 robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
 \endcode
 
@@ -1804,7 +1804,7 @@ vpRobotAfma6::getArticularDisplacement(vpColVector  &displacement)
   \param displacement : The measured displacement since the last call
   of this method. The dimension of \e displacement is always
   6. Translations are expressed in meters, rotations in radians.
-  
+
   In camera or reference frame, rotations are expressed with the
   Euler Rxyz representation.
 
