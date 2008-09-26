@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.20 2008-06-17 08:48:49 asaunier Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.21 2008-09-26 15:17:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,8 +63,12 @@
 
 /*!
   \class vp1394TwoGrabber
-  \brief class for firewire ieee1394 video devices using libdc1394-2.x api.
 
+  \ingroup Framegrabber
+  
+  \brief Class for firewire ieee1394 video devices using libdc1394-2.x api.
+
+ 
   Needs libraw1394-1.2.0 and libdc1394-2.0.0 or more recent versions
   available on http://sourceforge.net.
 
@@ -256,7 +260,9 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void enqueue(dc1394video_frame_t *frame);
 
   void acquire(vpImage<unsigned char> &I);
+  void acquire(vpImage<unsigned char> &I, uint32_t &timestamp, uint32_t &id);
   void acquire(vpImage<vpRGBa> &I);
+  void acquire(vpImage<vpRGBa> &I, uint32_t &timestamp, uint32_t &id);
 
   void getWidth(unsigned int &width);
   void getHeight(unsigned int &height);
