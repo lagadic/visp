@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.31 2008-06-13 09:11:57 asaunier Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.32 2008-09-26 15:17:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1729,6 +1729,7 @@ vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
 
 }
 
+
 /*!
   Acquire a grey level image from the active camera.
 
@@ -1745,10 +1746,44 @@ vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
 void
 vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 {
+  uint32_t timestamp;
+  uint32_t id;
+  
+  this->acquire(I, timestamp, id);
+}
+
+/*!
+  Acquire a grey level image from the active camera.
+
+  \param I : Image data structure (8 bits image).
+
+  \param timestamp : The unix time in microseconds
+  at which the frame was captured in the ring buffer.
+
+  \param id : The frame position in the ring buffer.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus or if can't get camera settings.
+
+  \exception vpFrameGrabberException::otherError : If format
+  conversion to return a 8 bits image is not implemented.
+
+  \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
+*/
+void
+vp1394TwoGrabber::acquire(vpImage<unsigned char> &I, 
+			  uint32_t &timestamp,
+			  uint32_t &id)
+{
   open();
   dc1394video_frame_t *frame;
 
   frame = dequeue();
+
+  // Timeval data structure providing the unix time
+  // [microseconds] at which the frame was captured in the ring buffer.
+  timestamp = frame->timestamp;
+  id = frame->id;
 
   this->width  = frame->size[0];
   this->height = frame->size[1];
@@ -1801,6 +1836,8 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
   enqueue(frame);
 }
 
+
+
 /*!
   Acquire a color image from the active camera.
 
@@ -1817,10 +1854,43 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 void
 vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 {
+  uint32_t timestamp;
+  uint32_t id;
+  
+  this->acquire(I, timestamp, id);
+}
+
+/*!
+  Acquire a color image from the active camera.
+
+  \param I : Image data structure (32 bits RGBa image).
+
+  \param timestamp : The unix time in microseconds
+  at which the frame was captured in the ring buffer.
+
+  \param id : The frame position in the ring buffer.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::otherError : If format
+  conversion to return a RGBa bits image is not implemented.
+
+  \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
+*/
+void
+vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I, 
+			  uint32_t &timestamp,
+			  uint32_t &id)
+{
   open();
   dc1394video_frame_t *frame;
 
   frame = dequeue();
+  // Timeval data structure providing the unix time
+  // [microseconds] at which the frame was captured in the ring buffer.
+  timestamp = frame->timestamp;
+  id = frame->id;
 
   this->width  = frame->size[0];
   this->height = frame->size[1];
