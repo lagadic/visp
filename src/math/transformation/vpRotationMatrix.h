@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.h,v 1.6 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpRotationMatrix.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,20 @@
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
 
+
+/*!
+  \class vpRotationMatrix
+
+  \ingroup RotTransformation
+
+  \brief The vpRotationMatrix considers the particular case of
+  a rotation matrix.
+  
+  It is derived from vpMatrix. 
+
+  \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+
+*/
 class VISP_EXPORT vpRotationMatrix : public vpMatrix
 {
   friend class vpMatrix;

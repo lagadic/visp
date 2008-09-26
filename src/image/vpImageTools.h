@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.16 2008-01-31 14:46:29 asaunier Exp $
+ * $Id: vpImageTools.h,v 1.17 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,6 +67,8 @@
 
 /*!
   \class vpImageTools
+  
+  \ingroup ImageTool
 
   \brief Various image tools; sub-image extraction, modification of
   the look up table, binarisation...

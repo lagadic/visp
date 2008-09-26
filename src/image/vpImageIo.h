@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.h,v 1.10 2008-04-17 12:44:58 asaunier Exp $
+ * $Id: vpImageIo.h,v 1.11 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,10 @@
 
 /*!
   \class vpImageIo
-  \brief Read/write images with various image format
+  
+  \ingroup ImageRW
+
+  \brief Read/write images with various image format.
 */
 
 class VISP_EXPORT vpImageIo

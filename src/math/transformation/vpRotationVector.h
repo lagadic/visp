@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationVector.h,v 1.6 2007-11-19 15:47:07 asaunier Exp $
+ * $Id: vpRotationVector.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,6 +59,9 @@
 
 /*!
   \class vpRotationVector
+
+  \ingroup RotTransformation
+
   \brief class that consider the case of a generic rotation vector
   (cannot be used as is !)
 */

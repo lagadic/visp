@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFrameGrabber.h,v 1.4 2007-02-27 17:08:05 fspindle Exp $
+ * $Id: vpFrameGrabber.h,v 1.5 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,8 +53,11 @@
 
 /*!
   \class vpFrameGrabber
-  \brief Base class for all video devices. It is
-         designed to provide a generic front end to video sources.
+
+  \ingroup Framegrabber
+
+  \brief Base class for all video devices. It is designed to provide a front
+  end to video sources.
 
   \author Eric Marchand (Eric.Marchand@irisa.fr), Irisa / Inria Rennes
 

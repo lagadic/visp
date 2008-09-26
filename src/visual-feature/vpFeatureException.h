@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureException.h,v 1.5 2007-04-20 14:22:24 asaunier Exp $
+ * $Id: vpFeatureException.h,v 1.6 2008-09-26 15:21:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,10 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpFeature class and its derivates
+/*!
+  \class vpFeatureException
+  \ingroup Exception
+  \brief Error that can be emited by the vpBasicFeature class and its derivates.
  */
 class VISP_EXPORT vpFeatureException : public vpException
 {

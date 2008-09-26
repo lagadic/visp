@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.16 2008-01-31 14:45:11 asaunier Exp $
+ * $Id: vpPose.h,v 1.17 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,12 +39,9 @@
 
 /*!
   \file vpPose.h
-  \brief Tools for pose computation (pose from point only)
-  \ingroup libpose
+  \brief Tools for pose computation (pose from point only).
 
   \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
-
-  \sa the example in ComputePose.cpp
   \date   April, 6 1999 (first issue)
 */
 
@@ -59,12 +56,12 @@
 
 /*!
   \class vpPose
-  \brief  class used for pose computation from N points (pose from point only)
+  \ingroup Pose
+  \brief Class used for pose computation from N points (pose from point only).
 
 
   \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
 
-  \sa the example in ComputePose.cpp
   \date   April, 6 1999 (first issue)
 */
 

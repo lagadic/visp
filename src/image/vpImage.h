@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.25 2008-07-29 14:10:30 fspindle Exp $
+ * $Id: vpImage.h,v 1.26 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,9 @@ class vpDisplay;
 /*!
   \class vpImage
 
-  \brief  definition of the vpImage class member functions
+  \ingroup ImageContainer ImageDataRepresentation
+
+  \brief Definition of the vpImage class member functions.
 
   \author Eric Marchand  (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 

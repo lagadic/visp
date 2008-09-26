@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLine.h,v 1.7 2008-07-18 10:20:47 marchand Exp $
+ * $Id: vpLine.h,v 1.8 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,8 @@
 
 /*!
   \class vpLine
-  \brief  class that defines what is a line
+  \ingroup TrackingFeature GeometryFeature
+  \brief Class that defines what is a line.
 
   Line equation in 2D
 

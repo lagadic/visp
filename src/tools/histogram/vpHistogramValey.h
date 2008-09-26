@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogramValey.h,v 1.2 2007-09-17 09:16:13 fspindle Exp $
+ * $Id: vpHistogramValey.h,v 1.3 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@
 /*!
   \class vpHistogramValey
 
+  \ingroup Histogram
   \brief Declaration of the valey (minimum value) in a gray level image
   histogram.
 

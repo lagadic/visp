@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGenericFeature.h,v 1.10 2008-02-26 10:32:11 asaunier Exp $
+ * $Id: vpGenericFeature.h,v 1.11 2008-09-26 15:21:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,8 +54,10 @@
 
 /*!
   \class vpGenericFeature
-  \brief class that defines what is a generic feature (used to create new
-     feature not implemented in ViSP2
+  \ingroup VsFeatureGeneric
+
+  \brief Class that defines what is a generic feature (used to create
+  new feature not implemented in ViSP).
  */
 class VISP_EXPORT vpGenericFeature : public vpBasicFeature
 {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.h,v 1.8 2008-05-14 16:27:25 asaunier Exp $
+ * $Id: vpDiskGrabber.h,v 1.9 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,9 +52,11 @@
 /*!
   \class vpDiskGrabber
 
-  \brief class to grab images from the disk.
+  \ingroup Framegrabber
 
-  Defined a virtual video device. "Grab" the images from the disk
+  \brief Class to grab (ie. read) images from the disk.
+
+  Defined a virtual video device. "Grab" the images from the disk.
   Derived from the vpFrameGrabber class.
 
   \sa vpFrameGrabber

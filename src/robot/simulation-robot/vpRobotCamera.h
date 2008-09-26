@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotCamera.h,v 1.9 2008-02-26 10:25:42 asaunier Exp $
+ * $Id: vpRobotCamera.h,v 1.10 2008-09-26 15:20:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,9 @@
 
 /*!
   \class vpRobotCamera
+
+  \ingroup BasicRobotSimu
+
   \brief Class that defines the simplest robot: a free flying camera.
 
 

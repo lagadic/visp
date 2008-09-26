@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.18 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDisplayGTK.h,v 1.19 2008-09-26 15:21:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,6 +58,8 @@
 /*!
 
   \class vpDisplayGTK
+
+  \ingroup ImageGUI
 
   \brief The  vpDisplayGTK allows to display image using the GTK+ library
   version 1.2.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.cpp,v 1.24 2008-06-27 12:43:17 asaunier Exp $
+ * $Id: vpSimulator.cpp,v 1.25 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,13 +68,6 @@
 #include <Inventor/nodes/SoGroup.h> /* Groupement de noeuds (sans separation)*/
 #include <Inventor/actions/SoWriteAction.h>
 
-
-/*!
-  \class vpSimulator
-
-  Implementation of a simulator based on Coin3d (www.coin3d.org).  The
-  simulator uses the vpViewer class.
-*/
 
 
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRansac.h,v 1.9 2007-06-28 11:53:21 marchand Exp $
+ * $Id: vpRansac.h,v 1.10 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@
 
 /*!
   \class vpRansac
+  \ingroup Robust
 
   \brief This class is a generic implementation of the Ransac algorithm.
   It cannot be used alone.

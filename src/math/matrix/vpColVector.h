@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.h,v 1.9 2008-07-21 18:49:40 fspindle Exp $
+ * $Id: vpColVector.h,v 1.10 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,10 +55,9 @@ class vpMatrix;
 
 /*!
   \class vpColVector
-
-  \brief
-  Class that provides a data structure for the column vectors as well
-  as a set of operations on these vectors.
+  \ingroup Matrix
+  \brief Class that provides a data structure for the column vectors
+  as well as a set of operations on these vectors.
 
   the vpColVector is derived from vpMatrix.
 

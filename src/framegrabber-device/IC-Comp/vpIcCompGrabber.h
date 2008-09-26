@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIcCompGrabber.h,v 1.8 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpIcCompGrabber.h,v 1.9 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,10 @@
 
 /*!
   \class vpIcCompGrabber
-  \brief class for the ICComp (Imaging Technology) video device
+
+  \ingroup Framegrabber
+
+  \brief Class for the ICComp (Imaging Technology) video device.
 
   \ingroup libdevice
 

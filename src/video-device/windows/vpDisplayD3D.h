@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayD3D.h,v 1.5 2008-06-13 13:37:38 asaunier Exp $
+ * $Id: vpDisplayD3D.h,v 1.6 2008-09-26 15:21:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,8 +47,12 @@
 /*!
   \class vpDisplayD3D
 
+  \ingroup ImageGUI
+
   \brief Display for windows using Direct3D.
-  Direct3D is part of the DirectX API available under Windows operating systems.
+
+  Direct3D is part of the DirectX API available under Windows
+  operating systems.
 
   \warning Requires DirectX9 SDK to compile and DirectX9 DLLs to run.
 */

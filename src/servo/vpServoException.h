@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoException.h,v 1.7 2007-06-27 14:36:07 fspindle Exp $
+ * $Id: vpServoException.h,v 1.8 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,9 +56,11 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \class vpServoException
-   \brief error that can be emited by the vpServo class and its derivates
-   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+/*!
+  \class vpServoException
+  \ingroup Exception
+  \brief Error that can be emited by the vpServo class and its derivates.
+  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
  */
 class VISP_EXPORT vpServoException : public vpException
 {

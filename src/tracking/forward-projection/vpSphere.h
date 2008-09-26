@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSphere.h,v 1.9 2008-07-18 10:20:48 marchand Exp $
+ * $Id: vpSphere.h,v 1.10 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,7 +55,10 @@
 
 /*!
   \class vpSphere
-  \brief   forward projection of a sphere
+  \ingroup TrackingFeature GeometryFeature
+  \brief Class that defines what is a sphere.
+
+  Forward projection of a sphere.
 */
 class VISP_EXPORT vpSphere : public vpForwardProjection
 {

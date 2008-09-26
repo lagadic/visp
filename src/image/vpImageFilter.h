@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageFilter.h,v 1.3 2006-05-30 08:40:43 fspindle Exp $
+ * $Id: vpImageFilter.h,v 1.4 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,6 +58,8 @@
 
 /*!
   \class vpImageFilter
+
+  \ingroup ImageFiltering
 
   \brief  Various image filter, convolution, etc...
 

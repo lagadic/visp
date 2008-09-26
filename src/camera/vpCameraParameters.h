@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.11 2008-07-28 16:46:45 fspindle Exp $
+ * $Id: vpCameraParameters.h,v 1.12 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,11 @@
 
 /*!
   \class vpCameraParameters
+
+  \ingroup CameraModelTransformation CameraModel
+
   \brief Generic class defining intrinsic camera parameters.
+
   Two kinds of camera modelisation are implemented:
   - Camera parameters for a perspective projection without distortion model,
   - Camera parameters for a perspective projection with distortion model.

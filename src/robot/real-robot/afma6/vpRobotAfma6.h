@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.22 2008-07-24 10:54:01 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.23 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,6 +58,11 @@ extern "C" {
 
 
 /*!
+  \class vpRobotAfma6
+
+  \ingroup Afma6
+
+  \brief Control of Irisa's gentry robot named Afma6.
 
   Implementation of the vpRobot class in order to control Irisa's
   Afma6 robot.  This robot is a gentry robot with six degrees of

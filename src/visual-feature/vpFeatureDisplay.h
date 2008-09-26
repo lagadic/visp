@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDisplay.h,v 1.8 2008-01-31 14:59:35 asaunier Exp $
+ * $Id: vpFeatureDisplay.h,v 1.9 2008-09-26 15:21:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,9 @@
 
 /*!
   \class vpFeatureDisplay
-  \brief interface with the image for feature display
+
+  \ingroup VsFeatureDisplay
+  \brief Interface with the image for feature display.
 */
 class VISP_EXPORT vpFeatureDisplay
 {

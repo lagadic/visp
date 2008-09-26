@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpScale.cpp,v 1.4 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpScale.cpp,v 1.5 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,17 +39,6 @@
   \file vpScale.cpp
 */
 
-// ===================================================================
-/*!
- * \class vpScale
- * \brief Contains different methods for estimating the robust scale
- * 				of an error distribution.
- * \n Methods of Median Absolute Deviation and Density Gradient
- * 		estimation using the Mean Shift method.
- * \author Andrew Comport
- * \date 24/10/03
- */
-// ===================================================================
 
 #include <stdlib.h>
 #include <visp/vpColVector.h>

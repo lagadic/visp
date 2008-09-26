@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclopsController.h,v 1.5 2007-05-02 13:29:41 fspindle Exp $
+ * $Id: vpRobotBiclopsController.h,v 1.6 2008-09-26 15:20:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,6 +66,10 @@ class VISP_EXPORT Biclops; //needed for dll creation
 /* ------------------------------------------------------------------------ */
 
 /*!
+
+  \class vpRobotBiclopsController
+
+  \ingroup Biclops
 
   \brief Interface to Biclops, pan, tilt, verge head for computer vision
   applications.

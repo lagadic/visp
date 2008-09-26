@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeEllipse.h,v 1.6 2007-12-20 08:21:49 fspindle Exp $
+ * $Id: vpMeEllipse.h,v 1.7 2008-09-26 15:21:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,8 +56,9 @@
 
 /*!
   \class vpMeEllipse 
+  \ingroup TrackingImageME
 
-  \brief class that tracks an ellipse moving edges
+  \brief Class that tracks an ellipse moving edges.
 						
 */
 class VISP_EXPORT vpMeEllipse : public vpMeTracker

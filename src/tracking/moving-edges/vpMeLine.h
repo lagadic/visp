@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.h,v 1.8 2007-12-20 09:09:25 fspindle Exp $
+ * $Id: vpMeLine.h,v 1.9 2008-09-26 15:21:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,9 @@
 /*!
   \class vpMeLine
 
-  \brief class that tracks a line moving edges
+  \ingroup TrackingImageME
+
+  \brief Class that tracks a line moving edges.
 
 */
 

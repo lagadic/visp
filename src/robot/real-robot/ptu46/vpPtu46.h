@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPtu46.h,v 1.6 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpPtu46.h,v 1.7 2008-09-26 15:20:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,6 +60,10 @@
 #include <visp/vpTwistMatrix.h>
 
 /*!
+
+  \class vpPtu46
+
+  \ingroup Ptu46
 
   \brief Jacobian, geometric model functionnalities... for ptu46, pan, tilt
   head from Directed Perception.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.17 2008-06-17 08:48:49 asaunier Exp $
+ * $Id: vp1394Grabber.h,v 1.18 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,10 @@
 
 /*!
   \class vp1394Grabber
-  \brief class for firewire ieee1394 video devices using libdc1394-1.x api
+
+  \ingroup Framegrabber
+
+  \brief Class for firewire ieee1394 video devices using libdc1394-1.x api
 
   Needs libraw1394-1.2.0 and libdc1394-1.1.0 or more recent versions
   available on http://sourceforge.net.

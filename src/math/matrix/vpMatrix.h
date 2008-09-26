@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.23 2008-07-29 14:10:41 fspindle Exp $
+ * $Id: vpMatrix.h,v 1.24 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,13 +60,15 @@ class vpRowVector;
 
 /*!
   \file vpMatrix.h
-  \brief definition of matrix class as well
-  as a set of operations on these matrices
+
+  \brief Definition of matrix class as well as a set of operations on
+  these matrices.
 */
 
 
 /*!
   \class vpMatrix
+  \ingroup Matrix
 
   \brief Definition of the vpMatrix class.
 

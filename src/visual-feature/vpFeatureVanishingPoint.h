@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureVanishingPoint.h,v 1.10 2008-02-26 10:32:11 asaunier Exp $
+ * $Id: vpFeatureVanishingPoint.h,v 1.11 2008-09-26 15:21:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -58,7 +58,10 @@
 
 /*!
   \class vpFeatureVanishingPoint
-  \brief Class that defines 2D vanishing point visual feature (Z coordinate in 3D space is infinity).
+  \ingroup VsFeature2
+
+  \brief Class that defines 2D vanishing point visual feature (Z
+  coordinate in 3D space is infinity).
 */
 class VISP_EXPORT vpFeatureVanishingPoint : public vpBasicFeature
 {

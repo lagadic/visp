@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMePath.h,v 1.10 2007-12-20 09:09:25 fspindle Exp $
+ * $Id: vpMePath.h,v 1.11 2008-09-26 15:21:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,8 @@
 /*!
   \class vpMePath
 
-  \brief class that tracks a path (white road line) moving edges
+  \ingroup TrackingImageME
+  \brief Class that tracks a path (white road line) moving edges.
 
 */
 class VISP_EXPORT vpMePath : public vpMeTracker

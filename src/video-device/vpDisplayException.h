@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayException.h,v 1.7 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpDisplayException.h,v 1.8 2008-09-26 15:21:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,7 +61,12 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpDisplay class and its derivates
+/*!
+  \class vpDisplayException
+
+  \ingroup Exception
+
+  \brief Error that can be emited by the vpDisplay class and its derivates.
  */
 class VISP_EXPORT vpDisplayException : public vpException
 {

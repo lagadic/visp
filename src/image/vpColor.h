@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColor.h,v 1.5 2007-12-20 08:21:49 fspindle Exp $
+ * $Id: vpColor.h,v 1.6 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,7 +45,10 @@
 /*!
 
   \class vpColor
-  \brief class to define colors available for display functionnalities
+
+  \ingroup ImageGUI
+
+  \brief Class to define colors available for display functionnalities.
 
 */ 
 class VISP_EXPORT vpColor

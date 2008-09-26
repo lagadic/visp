@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogram.h,v 1.6 2007-09-21 12:26:15 fspindle Exp $
+ * $Id: vpHistogram.h,v 1.7 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -58,8 +58,8 @@
 
 /*!
   \class vpHistogram
-  \brief Declaration of the vpHistogram class.
-  Class vpHistogram defines a gray level image histogram.
+  \ingroup Histogram
+  \brief Class to compute a gray level image histogram.
 
 
   Here are two examples showing how to use this class to determine the

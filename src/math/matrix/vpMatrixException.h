@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrixException.h,v 1.5 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpMatrixException.h,v 1.6 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,10 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpMatrix class and its derivates
+/*!
+  \class vpMatrixException
+  \ingroup Exception
+  \brief error that can be emited by the vpMatrix class and its derivates
  */
 class VISP_EXPORT vpMatrixException : public vpException
 {

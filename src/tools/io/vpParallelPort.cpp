@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParallelPort.cpp,v 1.3 2007-10-19 08:32:28 fspindle Exp $
+ * $Id: vpParallelPort.cpp,v 1.4 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,19 +52,6 @@
   \brief Parallel port management under unix.
 */
 
-/*!
-
-  \class vpParallelPort
-  \brief Parallel port management under unix.
-
-  \code
-  vpParallelPort parport; // open /dev/parport0 to access to the parallel port.
-
-  parport.sendData(127); // D7 is set to 0 and [D6-D0] are set to logical level 1
-
-  \endcode
-
-*/
 
 
 static unsigned char vpParallelPortData;

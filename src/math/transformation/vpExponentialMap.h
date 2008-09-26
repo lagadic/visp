@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpExponentialMap.h,v 1.3 2007-05-10 14:44:15 fspindle Exp $
+ * $Id: vpExponentialMap.h,v 1.4 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,8 @@
 
 /*!
   \class vpExponentialMap
+
+  \ingroup ExpMapTransformation
 
   \brief Direct or inverse exponential map computation.
 

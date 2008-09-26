@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulator.h,v 1.20 2008-06-27 12:43:17 asaunier Exp $
+ * $Id: vpSimulator.h,v 1.21 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,9 +91,14 @@
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 #include <visp/vpImageConvert.h>
+
 /*!
   \class vpSimulator
+
+  \ingroup VisuRobotSimu
+  
   \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
+
   The simulator uses the vpViewer class.
 */
 

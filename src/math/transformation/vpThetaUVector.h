@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.h,v 1.7 2008-05-06 14:34:56 asaunier Exp $
+ * $Id: vpThetaUVector.h,v 1.8 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,8 +66,11 @@ class vpRzyzVector;
 
 /*!
   \class vpThetaUVector
-  \brief class that consider the case of the Theta U parameterization for the
-  rotation
+
+  \ingroup RotTransformation
+
+  \brief Class that consider the case of the Theta U parameterization for the
+  rotation.
 */
 class VISP_EXPORT vpThetaUVector : public vpRotationVector
 {

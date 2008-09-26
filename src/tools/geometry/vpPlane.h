@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPlane.h,v 1.5 2007-06-14 12:05:48 marchand Exp $
+ * $Id: vpPlane.h,v 1.6 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,11 +45,11 @@
 /*!
   \class vpPlane
 
-  \brief  definition of the vpPlane class member functions
+  \ingroup GeometryPlane
+
+  \brief This class defines the container for a plane geometrical structure.
 
   \author Eric Marchand  (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
-
-  This class defines the container for a plane geometrical structure
 
   A plane is given by the equation
   ax + by + cz + d = 0

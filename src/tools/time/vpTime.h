@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.h,v 1.8 2007-05-29 15:26:27 fspindle Exp $
+ * $Id: vpTime.h,v 1.9 2008-09-26 15:20:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,7 +50,8 @@
 
 /*!
   \class vpTime
-  \brief Time management and measurement
+  \ingroup Time
+  \brief Time management and measurement.
 
 */
 

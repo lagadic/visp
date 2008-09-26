@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.20 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDisplayX.h,v 1.21 2008-09-26 15:21:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -65,7 +65,10 @@
 
 /*!
   \class vpDisplayX
-  \brief Define the X11 console to display images
+
+  \ingroup ImageGUI
+
+  \brief Define the X11 console to display images.
 
   \note Ready to use with a Unix System (tested for Linux and SunOS)
 

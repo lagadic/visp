@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParallelPortException.h,v 1.1 2007-09-04 09:26:51 fspindle Exp $
+ * $Id: vpParallelPortException.h,v 1.2 2008-09-26 15:20:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,7 +68,10 @@
 
 /*!
   \class vpParallelPortException
-  \brief Error that can be emited by the vpParallelPort class and its derivates
+  \ingroup Exception
+
+  \brief Error that can be emited by the vpParallelPort class and its
+  derivates.
  */
 class VISP_EXPORT vpParallelPortException : public vpException
 {

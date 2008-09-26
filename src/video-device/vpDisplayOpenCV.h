@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.h,v 1.4 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDisplayOpenCV.h,v 1.5 2008-09-26 15:21:01 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,9 @@
 
   \class vpDisplayOpenCV
 
-  \brief The vpDisplayOpenCV allows to display image using the opencv library
+  \ingroup ImageGUI
+
+  \brief The vpDisplayOpenCV allows to display image using the opencv library.
 */
 
 class VISP_EXPORT vpDisplayOpenCV: public vpDisplay
