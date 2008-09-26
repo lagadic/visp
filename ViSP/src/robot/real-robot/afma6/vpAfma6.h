@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.17 2008-09-18 14:29:05 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.18 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -42,7 +42,7 @@
 
   \file vpAfma6.h
 
-  Control of Irisa's gentry robot named Afma6.
+  Modelisation of Irisa's gentry robot named Afma6.
 
 */
 
@@ -50,7 +50,9 @@
 
   \class vpAfma6
 
-  Control of Irisa's gentry robot named Afma6.
+  \ingroup Afma6
+
+  \brief Modelisation of Irisa's gentry robot named Afma6.
 
 */
 

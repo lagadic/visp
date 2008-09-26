@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.29 2007-12-18 14:29:46 fspindle Exp $
+ * $Id: vpDot.h,v 1.30 2008-09-26 15:20:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,9 +59,17 @@
 
 /*!
   \class vpDot
-  \brief Track a dot.
 
-  \sa trackDot.cpp
+  \ingroup TrackingImageBasic
+
+  \brief This tracker is meant to track a dot (connex pixels with same
+  gray level) on a vpImage.
+
+  The underground algorithm is based on a binarisation of the image
+  and a connex component segmentation to determine the dot
+  characteristics (location, moments, size...).
+
+  \sa vpDot2
 */
 class VISP_EXPORT vpDot : public vpTracker
 {

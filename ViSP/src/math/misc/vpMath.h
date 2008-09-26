@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.h,v 1.11 2008-07-18 09:26:08 fspindle Exp $
+ * $Id: vpMath.h,v 1.12 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,9 +68,9 @@
 
 /*!
   \class vpMath
-
-  \brief Provides simple Math computation that are not available in
-  the C mathematics library (math.h)
+  \ingroup MathTools
+  \brief Provides simple mathematics computation tools that are not
+  available in the C mathematics library (math.h)
 
   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */

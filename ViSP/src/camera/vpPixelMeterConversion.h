@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPixelMeterConversion.h,v 1.6 2008-01-31 17:35:51 fspindle Exp $
+ * $Id: vpPixelMeterConversion.h,v 1.7 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,8 @@
 
 /*!
   \class vpPixelMeterConversion
+
+  \ingroup CameraModelTransformation CameraModel
 
   \brief Conversion from pixel coordinates \f$(u,v)\f$ to normalized
   coordinates \f$(x,y)\f$ in meter.

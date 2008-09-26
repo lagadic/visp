@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOSXcfoxGrabber.h,v 1.7 2007-12-20 08:19:38 fspindle Exp $
+ * $Id: vpOSXcfoxGrabber.h,v 1.8 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,10 @@
 
 /*!
   \class vpOSXcfoxGrabber
-  \brief class for the Video For Linux 2 video device
+
+  \ingroup Framegrabber
+
+  \brief Class provinding an interface with the cfox library (1394 grabber for OSX).
 
   \ingroup libdevice
 

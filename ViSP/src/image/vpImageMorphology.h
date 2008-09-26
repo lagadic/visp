@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageMorphology.h,v 1.6 2007-12-18 14:27:30 fspindle Exp $
+ * $Id: vpImageMorphology.h,v 1.7 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,6 +57,8 @@
 
 /*!
   \class vpImageMorphology
+
+  \ingroup ImageFiltering
 
   \brief  Various mathematical morphology tools, erosion, dilatation...
 

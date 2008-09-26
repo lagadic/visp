@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRGBa.h,v 1.7 2007-12-20 09:09:24 fspindle Exp $
+ * $Id: vpRGBa.h,v 1.8 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,9 @@
 /*!
   \class vpRGBa
 
-  \brief class that defines a RGB 32 bits structure
+  \ingroup ImageContainer
+
+  \brief Class that defines a RGB 32 bits structure.
 
   Define the object vpRGBa that is used to build color
   images (it define a RGB 32 bits structure, fourth byte is not used)

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoException.h,v 1.6 2007-09-04 09:15:56 fspindle Exp $
+ * $Id: vpIoException.h,v 1.7 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -47,7 +47,7 @@
 
 /*!
   \file vpIoException.h
-  \brief Error that can be emited by the vpIo class and its derivates
+  \brief Error that can be emited by the vpIoTools class and its derivates.
 */
 
 #include <iostream>
@@ -64,7 +64,8 @@
 
 /*!
   \class vpIoException
-  \brief Error that can be emited by the vpIo class and its derivates.
+  \ingroup Exception
+  \brief Error that can be emited by the vpIoTools class and its derivates.
  */
 class VISP_EXPORT vpIoException : public vpException
 {

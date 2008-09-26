@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.18 2008-06-27 12:45:02 asaunier Exp $
+ * $Id: vpImageConvert.h,v 1.19 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,7 +61,11 @@
 
 /*!
   \class vpImageConvert
-  \brief Convert image types
+
+  \ingroup ImageConversion
+
+  \brief Convert image types.
+
 */
 class VISP_EXPORT vpImageConvert
 {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBiclops.h,v 1.4 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpBiclops.h,v 1.5 2008-09-26 15:20:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,6 +63,10 @@
 
 
 /*!
+
+  \class vpBiclops
+
+  \ingroup Biclops
 
   \brief Jacobian, geometric model functionnalities... for biclops, pan, tilt
   head.

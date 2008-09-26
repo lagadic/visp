@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseException.h,v 1.4 2007-04-20 14:22:15 asaunier Exp $
+ * $Id: vpPoseException.h,v 1.5 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,10 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpPose class and its derivates
+/*!
+  \class vpPoseException
+  \ingroup Exception
+  \brief Error that can be emited by the vpPose class and its derivates.
  */
 class VISP_EXPORT vpPoseException : public vpException
 {

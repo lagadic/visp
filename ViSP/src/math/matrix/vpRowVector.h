@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRowVector.h,v 1.5 2007-06-25 11:57:45 asaunier Exp $
+ * $Id: vpRowVector.h,v 1.6 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,8 @@ class vpMatrix;
 /*!
   \class vpRowVector
 
-  \brief Definition of the vpRowVector class.
+  \ingroup Matrix
+  \brief Definition of the row vector class.
 
   vpRowVector class provides a data structure for the row vectors as well
   as a set of operations on these vectors

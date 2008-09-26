@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDebug.h,v 1.10 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDebug.h,v 1.11 2008-09-26 15:20:59 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -191,6 +191,7 @@ public:
 /* -------------------------------------------------------------------------- */
 
 /*!
+  \ingroup Debug
   Used to display trace messages on the standard stream (C++).
   Use like this : vpCTRACE<<"my message"<<std::endl;
 */
@@ -198,12 +199,14 @@ public:
 
 
 /*!
+  \ingroup Debug
   Used to display error messages on the error stream (C++).
   Use like this : vpCERROR<<"my message"<<std::endl;
 */
 #define vpCERROR std::cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 /*!
+  \ingroup Debug
   Used to display error messages on the error stream.
   Prints the name of the file, the function name and the line where
   it was used.
@@ -213,6 +216,7 @@ public:
 #define vpERROR_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, true))
 
 /*!
+  \ingroup Debug
   Used to display trace messages on the standard stream.
   Prints the name of the file, the function name and the line where
   it was used.
@@ -229,24 +233,28 @@ public:
 #ifdef VP_DEBUG
 
 /*!
+  \ingroup Debug
   vpDERROR_TRACE works like printf, but prints only if the
   tracing level niv is greater than the debug level VP_DEBUG_MODE.
 */
 #define vpDERROR_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, true))
 
 /*!
+  \ingroup Debug
   vpDEBUG_TRACE works like printf, but prints only if the
   tracing level niv is greater than the debug level VP_DEBUG_MODE.
 */
 #define vpDEBUG_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, false))
 
 /*!
+  \ingroup Debug
   vpCDEBUG(niv) work like the C++ output stream std::cout.
 */
 #define vpCDEBUG(niv) if (VP_DEBUG_MODE < niv) ; else \
 		std::cout << "(N" << niv << ") "<<  __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
 
 /*!
+  \ingroup Debug
 
   vpDEBUG_ENABLE(niv) is equal to 1 if the debug level niv is greater than
   the debug mode VP_DEBUG_MODE, 0 else.

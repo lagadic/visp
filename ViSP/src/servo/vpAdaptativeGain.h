@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAdaptativeGain.h,v 1.5 2007-02-06 15:13:26 fspindle Exp $
+ * $Id: vpAdaptativeGain.h,v 1.6 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -49,8 +49,9 @@
 
 class vpColVector;
 /*!
-\class vpAdaptativeGain
-\brief adaptative gain
+  \class vpAdaptativeGain
+  \ingroup VsTask
+  \brief Adaptative gain computation.
 */
 
 class VISP_EXPORT vpAdaptativeGain

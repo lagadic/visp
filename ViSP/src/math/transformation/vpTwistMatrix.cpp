@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTwistMatrix.cpp,v 1.8 2008-04-03 08:17:19 asaunier Exp $
+ * $Id: vpTwistMatrix.cpp,v 1.9 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,27 +51,6 @@
    the particular case of twist transformation matrix
 */
 
-/*!
-  \class vpTwistMatrix
-
-  \brief the vpTwistMatrix is derived from vpMatrix.  Class that consider the
-    particular case of twist transformation matrix
-
-  \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
-
-  An twist transformation matrix is 6x6 matrix defines as
-  \f[
-  ^a{\bf V}_b = \left(\begin{array}{cc}
-  ^a{\bf R}_b & [^a{\bf T}_b]_\times ^a{\bf R}_b\\
-  {\bf 0}_{1\times 3} & ^a{\bf R}_b
-  \end{array}
-  \right)
-  \f]
-  that expressed a velocity in frame <em>a</em> knowing velocity in <em>b</em>
-
-  \f$ ^a{\bf R}_b \f$ is a rotation matrix and
-  \f$ ^a{\bf T}_b \f$ is a translation vector.
-*/
 
 /*!
   \brief Copy operator.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.h,v 1.6 2008-07-28 16:46:45 fspindle Exp $
+ * $Id: vpTranslationVector.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,7 +53,9 @@
 /*!
   \class vpTranslationVector
 
-  Class that consider the case of a translation vector.
+  \ingroup TransTransformation
+  
+  \brief Class that consider the case of a translation vector.
 
   Let be \f$^{a}{\bf t}_{b} = [t_x,t_y,t_z]^\top\f$ be a translation
   from frame \f$ a \f$ to frame \f$ b \f$.  The representation of a

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoDisplay.h,v 1.6 2008-02-26 10:34:41 asaunier Exp $
+ * $Id: vpServoDisplay.h,v 1.7 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,8 @@
 #include <visp/vpRGBa.h>
 /*!
   \class vpServoDisplay
-  \brief interface with the image for feature display
+  \ingroup VsTask
+  \brief Interface with the image for feature display.
 */
 class VISP_EXPORT vpServoDisplay
 {

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoData.h,v 1.6 2007-05-03 11:36:34 fspindle Exp $
+ * $Id: vpServoData.h,v 1.7 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,8 @@
 
 /*!
   \class vpServoData
-  \brief save data during the task execution
+  \ingroup VsTask
+  \brief Save data during the task execution.
 */
 class VISP_EXPORT vpServoData
 {

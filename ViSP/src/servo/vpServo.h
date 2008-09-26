@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.15 2008-07-17 14:38:08 fspindle Exp $
+ * $Id: vpServo.h,v 1.16 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,6 +55,38 @@
 #include <visp/vpAdaptativeGain.h>
 
 
+/*!
+  \class vpServo
+
+  \ingroup VsTask
+  \brief Class required to compute the visual servoing control law.
+
+  \warning To avoid potential memory leaks, it is mendatory to call
+  explicitly the kill() function to destroy the task. Otherwise, the
+  destructor ~vpServo() launch an exception
+  vpServoException::notKilledProperly.
+
+  \code
+  vpServo task ;
+
+  vpThetaUVector tuv;
+  tuv[0] =0.1;
+  tuv[1] =0.2;
+  tuv[2] =0.3;
+
+  vpFeatureThetaU tu;
+  tu.buildFrom(tuv);
+  ...
+  task.addFeature(tu); // Add current ThetaU feature
+
+  // A call to kill() is requested here to destroy properly the current
+  // and desired feature lists.
+  task.kill();
+  \endcode
+
+
+  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+*/
 
 class VISP_EXPORT vpServo
 {

@@ -3,13 +3,15 @@ ViSP 2.4.x (released ...)
     - Use of CDash insteed of Dart2. Dashboards are sent to 
       http://cdash.irisa.fr/CDash/index.php?project=ViSP 
   - New Features
+    - vp1394TwoGrabber: Get the timestamp associated to the grabbed image.
     - vpV4l2Grabber: Get the timestamp associated to the grabbed image.
     - vpRobotAfma6 and vpAfma6: Modifications to be compatible with the new 
       low level Adept controller provided by Cerebellum Automation.
   - Examples:
-    - New examples in example/manual described in ViSP guide.
+    - New examples in example/manual described in ViSP guide under preparation.
   - Documentation
-    - Creation of a deprecated section
+    - Creation of a deprecated section.
+    - Classes are now grouped in doxygen modules to help learning ViSP.
 
 ----------------------------------------------	
 ViSP 2.4.2 (released March 27, 2008)

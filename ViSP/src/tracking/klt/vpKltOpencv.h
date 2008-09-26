@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpKltOpencv.h,v 1.5 2008-02-12 14:42:20 megautie Exp $
+ * $Id: vpKltOpencv.h,v 1.6 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,8 +77,10 @@ typedef void (*funcevent)(int);
 /*!
   \class vpKltOpencv
 
+  \ingroup TrackingImagePoint
+
   \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
-  implemented with opencv.
+  implemented with OpenCV.
 
 */
 class VISP_EXPORT vpKltOpencv

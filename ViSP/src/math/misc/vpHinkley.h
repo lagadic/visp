@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHinkley.h,v 1.7 2007-12-18 14:29:03 fspindle Exp $
+ * $Id: vpHinkley.h,v 1.8 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -44,7 +44,55 @@
 */
 #include <visp/vpConfig.h>
 
+/*!
+  \class vpHinkley
 
+  \ingroup Hinkley
+  \brief This class implements the Hinkley's cumulative sum test.
+
+  \author Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
+
+  The Hinkley's cumulative sum test is designed to detect jump in mean
+  of an observed signal \f$ s(t) \f$. It is known to be robust (by
+  taking into account all the past of the observed quantity),
+  efficient, and inducing a very low computational load. The other
+  attractive features of this test are two-fold. First, it can
+  straightforwardly and accurately provide the jump instant. Secondly,
+  due to its formulation (cumulative sum test), it can simultaneously
+  handle both very abrupt and important changes, and gradual smaller
+  ones without adapting the involved thresholds.
+
+  Two tests are performed in parallel to look for downwards or upwards
+  jumps in \f$ s(t) \f$, respectively defined by:
+
+  \f[ S_k = \sum_{t=0}^{k} (s(t) - m_0 + \frac{\delta}{2}) \f]
+  \f[ M_k = \max_{0 \leq i \leq k} S_i\f]
+  \f[ T_k = \sum_{t=0}^{k} (s(t) - m_0 - \frac{\delta}{2}) \f]
+  \f[ N_k = \max_{0 \leq i \leq k} T_i\f]
+
+
+  In which \f$m_o\f$ is computed on-line and corresponds to the mean
+  of the signal \f$ s(t) \f$ we want to detect a jump. \f$m_o\f$ is
+  re-initialized at zero after each jump detection. \f$\delta\f$
+  denotes the jump minimal magnitude that we want to detect and
+  \f$\alpha\f$ is a predefined threshold. These values are set by
+  default to 0.2 in the default constructor vpHinkley(). To modify the
+  default values use setAlpha() and setDelta() or the
+  vpHinkley(double alpha, double delta) constructor.
+
+  A downward jump is detected if \f$ M_k - S_k > \alpha \f$.
+  A upward jump is detected if \f$ T_k - N_k > \alpha \f$.
+
+  To detect only downward jumps in \f$ s(t) \f$ use
+  testDownwardJump().To detect only upward jumps in \f$ s(t) \f$ use
+  testUpwardJump(). To detect both, downard and upward jumps use
+  testDownUpwardJump().
+
+  If a jump is detected, the jump location is given by the last instant
+  \f$k^{'}\f$ when \f$ M_{k^{'}} - S_{k^{'}} = 0 \f$, or \f$ T_{k^{'}} -
+  N_{k^{'}} = 0 \f$.
+
+*/
 class VISP_EXPORT vpHinkley
 {
  public:

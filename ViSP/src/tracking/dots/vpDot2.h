@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.34 2007-09-18 08:00:13 fspindle Exp $
+ * $Id: vpDot2.h,v 1.35 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -13,9 +13,9 @@
  *
  * This file is part of the ViSP toolkit.
  *
- * This file may be distributed under the terms of the Q Public License
- * as defined by Trolltech AS of Norway and appearing in the file
- * LICENSE included in the packaging of this file.
+ * This file may be distributed under the terms of the Q Public
+ * License as defined by Trolltech AS of Norway and appearing in the
+ * file LICENSE included in the packaging of this file.
  *
  * Licensees holding valid ViSP Professional Edition licenses may
  * use this file in accordance with the ViSP Commercial License
@@ -38,7 +38,7 @@
 
 /*
   \file vpDot2.h
-  \brief This tracker is meant to track some white zones on a vpImage.
+  \brief This tracker is meant to track some zones on a vpImage.
 */
 
 #ifndef vpDot2_hh
@@ -53,6 +53,40 @@
 #include <visp/vpColor.h>
 
 
+/*!
+  \class vpDot2
+
+  \ingroup TrackingImageBasic
+
+  \brief This tracker is meant to track a dot (connex pixels with same
+  gray level) on a vpImage.
+
+  The underground algorithm is based on a binarisation of the image
+  and than a contour detection using the Freeman chain coding to
+  determine the dot characteristics (location, moments, size...).
+
+  The center of gravity of a vpDot2 zone have to be of the right color
+  level. You can specify these color levels by setGrayLevelMin() and
+  setGrayLevelMax(). This allows to track white objects on a black background
+  and vice versa.
+
+  The geometry of a vpDot2 zone is by default ellipsoid. If you want to track a
+  non ellipsoid shape, you have to call setEllipsoidShapePrecision(0).
+
+  track() and searchDotsInArea() are the most important features
+  of this class.
+
+  - track() estimate the current position of the dot using it's previous
+    position, then try to compute the new parameters of the dot. It everything
+    went ok, tracking succeded, otherwise we search this dot in an window
+    around the last position of the dot.
+
+  - searchDotsInArea() enable to find dots similar to this dot in a window. It
+    is used when there was a problem performing basic tracking of the dot, but
+    can also be used to find a certain type of dots in the full image.
+
+  \sa vpDot
+*/
 class VISP_EXPORT vpDot2 : public vpTracker
 {
 public:

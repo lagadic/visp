@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRxyzVector.h,v 1.4 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpRxyzVector.h,v 1.5 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -42,7 +42,10 @@
 
 /*!
   \file vpRxyzVector.h
-  \brief   class that consider the case of the  Rxyz angle parameterization for the rotation :
+
+  \brief Class that consider the case of the Rxyz angle
+  parameterization for the rotation.
+
   Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
@@ -56,8 +59,12 @@ class vpThetaUVector;
 
 /*!
   \class vpRxyzVector
-  \brief  class that consider the case of the  Rxyz angle parameterization for the rotation
-  Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
+
+  \ingroup RotTransformation
+
+  \brief Class that consider the case of the Rxyz angle
+  parameterization for the rotation: Rxyz(phi,theta,psi) =
+  Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
 class VISP_EXPORT vpRxyzVector : public vpRotationVector

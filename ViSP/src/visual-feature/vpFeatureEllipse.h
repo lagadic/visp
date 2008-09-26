@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureEllipse.h,v 1.11 2008-04-24 09:43:50 asaunier Exp $
+ * $Id: vpFeatureEllipse.h,v 1.12 2008-09-26 15:21:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,7 +55,8 @@
 
 /*!
   \class vpFeatureEllipse
-  \brief Class that defines 2D ellipse visual feature
+  \ingroup VsFeature2
+  \brief Class that defines 2D ellipse visual feature.
 */
 class VISP_EXPORT vpFeatureEllipse : public vpBasicFeature
 {

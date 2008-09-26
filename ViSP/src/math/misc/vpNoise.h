@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpNoise.h,v 1.3 2007-12-20 08:21:49 fspindle Exp $
+ * $Id: vpNoise.h,v 1.4 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,8 +57,8 @@
 /*!
   \class vpUniRand
 
-  \brief class for generating random numbers with uniform probability density
-
+  \ingroup Random
+  \brief Class for generating random numbers with uniform probability density.
 
   The algorithms and notations used are described in
   Random Number Generation and Monte Carlo Methods
@@ -105,7 +105,8 @@ public:
 
 /*!
   \class vpGaussRand
-  \brief class for generating random number with normal probability density
+  \ingroup Random
+  \brief Class for generating random number with normal probability density.
 
   The algorithms and notations used are described in
 

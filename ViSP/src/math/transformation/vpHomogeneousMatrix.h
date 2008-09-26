@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.h,v 1.11 2008-07-29 14:10:41 fspindle Exp $
+ * $Id: vpHomogeneousMatrix.h,v 1.12 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -73,10 +73,12 @@ class vpThetaUVector;
 /*!
   \class vpHomogeneousMatrix
 
-  \brief  The class provides a data structure for the homogeneous matrices
-  as well    as a set of operations on these matrices.
+  \ingroup PoseTransformation
 
-  the vpHomogeneousMatrix is derived from vpMatrix.
+  \brief  The class provides a data structure for the homogeneous matrices
+  as well as a set of operations on these matrices.
+
+  The vpHomogeneousMatrix is derived from vpMatrix.
 
   \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 

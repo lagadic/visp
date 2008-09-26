@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.h,v 1.10 2007-12-18 14:25:04 fspindle Exp $
+ * $Id: vpItifg8Grabber.h,v 1.11 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -89,7 +89,11 @@
 
 /*!
   \class vpItifg8Grabber
-  \brief class for the itifg-8.x (Coreco Imaging Technology) video device
+
+  \ingroup Framegrabber
+
+  \brief Class providing an interface for the itifg-8.x (Coreco
+  Imaging Technology) video device.
 
   \ingroup libdevice
 

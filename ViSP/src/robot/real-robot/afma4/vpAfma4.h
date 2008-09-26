@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma4.h,v 1.5 2007-04-20 14:22:16 asaunier Exp $
+ * $Id: vpAfma4.h,v 1.6 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,15 +61,23 @@
 #include <visp/vpTwistMatrix.h>
 
 
-/* ----------------------------------------------------------------------- */
-/* --- CLASSE ------------------------------------------------------------ */
-/* ----------------------------------------------------------------------- */
+/*!
 
-/** \brief Lecture du fichiers de config du robot Afma4 et fonctionnalites en
- * decoulant (calcul du jacobien, du MGD, ...).
- *
- */
+  \file vpAfma4.h
 
+  Modelisation of Irisa's cylindrical robot named Afma4.
+
+*/
+
+/*!
+
+  \class vpAfma4
+
+  \ingroup Afma4
+
+  \brief Modelisation of Irisa's cylindrical robot named Afma4.
+
+*/
 class VISP_EXPORT vpAfma4
 {
 

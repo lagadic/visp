@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.h,v 1.8 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpParseArgv.h,v 1.9 2008-09-26 15:20:59 fspindle Exp $
  *
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.
@@ -38,6 +38,7 @@
 
 /*!
   \class vpParseArgv
+  \ingroup ArgumentParser
   \brief Command line argument parsing.
 
 */

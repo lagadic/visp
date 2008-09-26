@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpKeyboard.cpp,v 1.2 2008-02-01 17:27:57 fspindle Exp $
+ * $Id: vpKeyboard.cpp,v 1.3 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,30 +45,6 @@
   \brief Keybord management under unix.
 */
 
-/*!
-
-  \class vpKeyboard
-  \brief Keybord management under unix.
-
-  Gets a key from the keyboard without waiting for the enter key.
-
-  \code
-  vpKeyboard keyboard; // Turn on keyboard raw mode
-  while (...) {
-    ...
-    if (keyboard.kbhit()) { // Detect if a key was pressed
-      c = keyboard.getchar (); // Get the pressed key
-      if (c == 'q' || c == 'Q')
-        break; // Quit the while()
-      }
-    ...
-    }
-  }
-
-  // Keyboard raw mode is turned off by the vpKeyboard destructor
-  \endcode
-
-*/
 
 /*!
   Activates the raw mode to read keys in an non blocking way.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotException.h,v 1.7 2008-07-22 17:37:33 fspindle Exp $
+ * $Id: vpRobotException.h,v 1.8 2008-09-26 15:20:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,7 +61,9 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpRobot class and its derivates
+/*!
+  \ingroup Exception
+  \brief Error that can be emited by the vpRobot class and its derivates.
  */
 class VISP_EXPORT vpRobotException : public vpException
 {

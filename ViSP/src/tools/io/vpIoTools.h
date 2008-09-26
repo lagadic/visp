@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.h,v 1.7 2007-04-20 14:22:19 asaunier Exp $
+ * $Id: vpIoTools.h,v 1.8 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,8 @@
 
 /*!
   \class vpIoTools
-  \brief io basic tools
+  \ingroup FileDirectories
+  \brief File and directories basic tools.
 
 */
 

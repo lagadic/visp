@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.14 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.15 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -63,17 +63,6 @@ const double vpRotationMatrix::threshold = 1e-6;
 const double vpRotationMatrix::minimum = 0.00001;
 
 #define vpDEBUG_LEVEL1 0
-
-/*!
-  \class vpRotationMatrix
-
-  \brief the vpRotationMatrix is derived from vpMatrix.
-  It considers the particular case of rotation matrix
-
-  \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
-
-*/
-
 
 
 /*!

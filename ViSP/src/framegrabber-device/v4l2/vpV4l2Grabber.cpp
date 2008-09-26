@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.13 2008-07-17 09:03:29 akrupa Exp $
+ * $Id: vpV4l2Grabber.cpp,v 1.14 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -477,7 +477,8 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
 
   \param I : Image data structure (8 bits image).
 
-  \param timestamp : Timeval data structure providing the timestamp of the image.
+  \param timestamp : Timeval data structure providing the unix time
+  at which the frame was captured in the ringbuffer.
 
   \exception vpFrameGrabberException::initializationError : Frame grabber not
   initialized.
@@ -548,7 +549,8 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
 
   \param I : Image data structure (32 bits image).
 
-  \param timestamp : Timeval data structure providing the timestamp of the image.
+  \param timestamp : Timeval data structure providing the unix time
+  at which the frame was captured in the ringbuffer.
 
   \exception vpFrameGrabberException::initializationError : Frame grabber not
   initialized.
@@ -1021,7 +1023,8 @@ vpV4l2Grabber::stopStreaming()
 
   \param index : Index in the buffer where image is available.
 
-  \param timestamp : Timeval data structure providing the timestamp of the image.
+  \param timestamp : Timeval data structure providing the unix time
+  [microseconds] at which the frame was captured in the ringbuffer.
 
   \exception vpFrameGrabberException::otherError : If can't access to the
   frame.

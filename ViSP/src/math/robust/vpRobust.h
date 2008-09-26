@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.h,v 1.6 2007-12-20 09:00:36 fspindle Exp $
+ * $Id: vpRobust.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,12 +39,6 @@
  \file vpRobust.h
 */
 
-// ===================================================================
-/*!
-  \brief Contains an M-Estimator and various influence function.
-  Supported methods : M-estimation, Tukey, Cauchy and Huber
-*/
-// ===================================================================
 
 
 #ifndef CROBUST_HH
@@ -55,7 +49,13 @@
 #include <visp/vpMath.h>
 
 
+/*!
+  \class vpRobust
+  \ingroup Robust
+  \brief Contains an M-Estimator and various influence function.
 
+  Supported methods: M-estimation, Tukey, Cauchy and Huber
+*/
 class VISP_EXPORT vpRobust
 {
 public:

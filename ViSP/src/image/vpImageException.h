@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageException.h,v 1.6 2007-12-18 14:26:53 fspindle Exp $
+ * $Id: vpImageException.h,v 1.7 2008-09-26 15:20:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,7 +59,13 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpImage class and its derivates
+/*!
+
+  \class vpImageException
+
+  \ingroup Exception
+
+  \brief Error that can be emited by the vpImage class and its derivates.
  */
 class VISP_EXPORT vpImageException : public vpException
 {

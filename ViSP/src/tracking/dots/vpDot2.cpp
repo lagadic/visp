@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.38 2007-09-21 12:26:15 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.39 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,35 +38,10 @@
 
 /*!
   \file vpDot2.cpp
-  \brief Track a white dot
+  \brief Track a dot.
 */
 
-/*!
-  \class vpDot2
 
-
-  \brief This vpTracker is meant to track some white zones on a vpImage.
-
-  The center of gravity of a vpDot2 zone have to be of the right color
-  level. You can specify these color levels by setGrayLevelMin() and
-  setGrayLevelMax(). This allows to track white objects on a black background
-  and vice versa.
-
-  The geometry of a vpDot2 zone is by default ellipsoid. If you want to track a
-  non ellipsoid shape, you have to call setEllipsoidShapePrecision(0).
-
-  track() and searchDotsInArea() are the most important features
-  of this class.
-
-  - track() estimate the current position of the dot using it's previous
-    position, then try to compute the new parameters of the dot. It everything
-    went ok, tracking succeded, otherwise we search this dot in an window
-    around the last position of the dot.
-
-  - searchDotsInArea() enable to find dots similar to this dot in a window. It
-    is used when there was a problem performing basic tracking of the dot, but
-    can also be used to find a certain type of dots in the full image.
-*/
 #include <math.h>
 
 #include <visp/vpDisplay.h>
@@ -305,7 +280,7 @@ void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
   - The shape should be ellipsoid if
     setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
     This is the default case. To track a non ellipsoid shape use
-    setEllipsoidShape(0).
+    setEllipsoidShapePrecision(0).
 
   To get the center of gravity of the dot, call get_u() and get_v(). To get the
   with or hight of the dot, call getWidth() and getHeight(). The surface of the
@@ -374,7 +349,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
   - The shape should be ellipsoid if
     setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
     This is the default case. To track a non ellipsoid shape use
-    setEllipsoidShape(0).
+    setEllipsoidShapePrecision(0).
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I,
 			  unsigned int u, unsigned int v,unsigned int size)
@@ -445,7 +420,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   - The shape should be ellipsoid if
     setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
     This is the default case. To track a non ellipsoid shape use
-    setEllipsoidShape(0).
+    setEllipsoidShapePrecision(0).
 
   \sa track(), get_u(), get_v()
 
@@ -503,7 +478,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   - The shape should be ellipsoid if
     setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
     This is the default case. To track a non ellipsoid shape use
-    setEllipsoidShape(0).
+    setEllipsoidShapePrecision(0).
 
   To get the center of gravity of the dot, call get_u() and get_v(). To get the
   with or hight of the dot, call getWidth() and getHeight(). The surface of the
@@ -609,9 +584,9 @@ void vpDot2::track(vpImage<unsigned char> &I)
 		    "  surface (number of pixels) which differ too much "
 		    "  to the previous one "
 		    "- or a problem of the shape which is not ellipsoid if "
-		    "  use setEllipsoidShape(double ellipsoidShapePrecision) "
+		    "  use setEllipsoidShapePrecision(double ellipsoidShapePrecision) "
         "  which is the default case. "
-		    "  To track a non ellipsoid shape use setEllipsoidShape(0)") ;
+		    "  To track a non ellipsoid shape use setEllipsoidShapePrecision(0)") ;
       throw(vpTrackingException(vpTrackingException::featureLostError,
 				"The found dot is invalid")) ;
     }

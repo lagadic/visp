@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilder.h,v 1.8 2008-01-31 14:53:55 asaunier Exp $
+ * $Id: vpFeatureBuilder.h,v 1.9 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -74,7 +74,9 @@
 
 /*!
   \class vpFeatureBuilder
-  \brief  class  that defines conversion between tracker and visual feature
+
+  \ingroup VsFeatureBuilder
+  \brief Class that defines conversion between trackers and visual features.
 */
 class VISP_EXPORT vpFeatureBuilder
 {

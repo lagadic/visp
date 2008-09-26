@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.14 2008-05-27 13:44:03 asaunier Exp $
+ * $Id: vpHomography.h,v 1.15 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,10 +52,13 @@ tools for homography computation.
 #include <visp/vpList.h>
 
 
-/*!  \class vpHomography
+/*!  
 
-  \brief This class aims to compute the homography wrt. 2
-  images, which are both described by a set of points. The 2 sets (one per
+  \class vpHomography
+  \ingroup Homography HomographyTransformation
+  \brief This class aims to compute the homography wrt.two images.
+
+  These two images are both described by a set of points. The 2 sets (one per
   image) are sets of corresponding points : for a point in a image, there is
   the corresponding point (image of the same 3D point) in the other image
   points set.  These 2 sets are the only data needed to compute the

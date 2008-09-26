@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.h,v 1.7 2007-12-20 08:15:28 fspindle Exp $
+ * $Id: vpRobotAfma4.h,v 1.8 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,17 +60,14 @@
 
 #include <visp/vpRobotAfma4Contrib.h>
 #include <visp/vpTwistMatrix.h>
-/* ------------------------------------------------------------------------ */
-/* --- CLASSE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------ */
 
+/*!
+  \class vpRobotAfma4
 
-/**
- * \brief Implementation de la classe vpRobot permettant de diriger le
- * robot AFMA4.
- *
- * La classe vpRobotAfma4 reprend toutes les specs de la classe CRobot et
- * les implementent toutes.
+  \ingroup Afma4
+
+  \brief Control of Irisa's cylindrical robot named Afma4.
+
  */
 class vpRobotAfma4
   :

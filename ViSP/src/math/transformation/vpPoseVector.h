@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.h,v 1.7 2008-07-28 16:46:45 fspindle Exp $
+ * $Id: vpPoseVector.h,v 1.8 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,9 +70,12 @@ class vpThetaUVector;
 /*!
   \class vpPoseVector
 
+  \ingroup PoseTransformation
 
-  The pose is a complete representation of every rigid motion in the
-  euclidian space.  It is composed of a translation and a rotation
+  \brief The pose is a complete representation of every rigid motion in the
+  euclidian space.  
+
+  It is composed of a translation and a rotation
   minimaly represented by a 6 dimension pose vector as: \f[ ^{a}{\bf
   r}_b = [^{a}{\bf t}_{b},\Theta {\bf u}]^\top \in R^6\f]
 

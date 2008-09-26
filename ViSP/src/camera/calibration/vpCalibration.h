@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.h,v 1.8 2008-07-02 09:40:06 asaunier Exp $
+ * $Id: vpCalibration.h,v 1.9 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,6 +60,9 @@
 #include <visp/vpCalibrationException.h>
 /*!
   \class vpCalibration
+
+  \ingroup Calibration
+
   \brief Tools for perspective camera calibration.
 
 */

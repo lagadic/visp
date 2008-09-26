@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.13 2007-09-18 07:58:29 fspindle Exp $
+ * $Id: vpList.h,v 1.14 2008-09-26 15:20:53 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,8 +72,8 @@ class vpListElement
 
 /*!
   \class vpList
-
-  \brief Provide simple list managment
+  \ingroup List
+  \brief Provide simple list management
 
   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 

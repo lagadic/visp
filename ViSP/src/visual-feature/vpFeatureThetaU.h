@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.h,v 1.11 2008-02-26 10:32:11 asaunier Exp $
+ * $Id: vpFeatureThetaU.h,v 1.12 2008-09-26 15:21:02 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,7 +55,8 @@
 
 /*!
   \class vpFeatureThetaU
-  \brief class that defines the thetaU visual feature
+  \ingroup VsFeature3
+  \brief Class that defines the thetaU visual feature.
 */
 class VISP_EXPORT vpFeatureThetaU : public vpBasicFeature
 {

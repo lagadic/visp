@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogramPeak.h,v 1.2 2007-09-17 09:15:57 fspindle Exp $
+ * $Id: vpHistogramPeak.h,v 1.3 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2007 Inria. All rights reserved.
  *
@@ -54,6 +54,7 @@
 /*!
   \class vpHistogramPeak
 
+  \ingroup Histogram
   \brief Declaration of the peak (maximum value) in a gray level image
   histogram.
 

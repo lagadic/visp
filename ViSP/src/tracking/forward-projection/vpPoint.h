@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoint.h,v 1.16 2008-07-18 10:20:47 marchand Exp $
+ * $Id: vpPoint.h,v 1.17 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,8 @@ class vpHomography;
 
 /*!
   \class vpPoint
-  \brief  class that defines what is a point
+  \ingroup TrackingFeature GeometryFeature
+  \brief Class that defines what is a point.
 */
 class VISP_EXPORT vpPoint : public vpForwardProjection
 {

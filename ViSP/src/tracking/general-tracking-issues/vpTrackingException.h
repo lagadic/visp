@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTrackingException.h,v 1.4 2007-04-20 14:22:23 asaunier Exp $
+ * $Id: vpTrackingException.h,v 1.5 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,7 +46,7 @@
 
 
 /* \file vpTrackingException.h
-   \brief error that can be emited by the vpTracking class and its derivates
+   \brief error that can be emited by the vpTracker class and its derivates
  */
 /* Classes standards. */
 
@@ -59,7 +59,10 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpTracking class and its derivates
+/*!
+  \class vpTrackingException
+  \ingroup Exception
+  \brief Error that can be emited by the vpTracker class and its derivates.
  */
 class VISP_EXPORT vpTrackingException : public vpException
 {

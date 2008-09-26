@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpEulerVector.h,v 1.6 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: vpEulerVector.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,8 +61,11 @@ class vpThetaUVector;
 
 /*!
   \class vpEulerVector
-  \brief class that consider the case of the euler angles  parameterization
-  for the  rotation
+
+  \ingroup RotTransformation
+
+  \brief Class that consider the case of the euler angles  parameterization
+  for the  rotation.
 
   Euler(phi,theta,psi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */

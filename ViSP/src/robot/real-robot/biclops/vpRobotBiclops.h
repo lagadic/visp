@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclops.h,v 1.6 2007-12-20 08:15:28 fspindle Exp $
+ * $Id: vpRobotBiclops.h,v 1.7 2008-09-26 15:20:56 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,6 +69,11 @@
 
 
 /*!
+
+
+  \class vpRobotBiclops
+
+  \ingroup Biclops
 
   \brief Interface for the biclops, pan, tilt head control.
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSimulatorException.h,v 1.5 2007-04-20 14:22:17 asaunier Exp $
+ * $Id: vpSimulatorException.h,v 1.6 2008-09-26 15:20:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,7 +60,13 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/* \brief error that can be emited by the vpSimulator class and its derivates
+/*!
+
+  \class vpSimulatorException
+
+  \ingroup Exception
+
+  \brief Error that can be emited by the vpSimulator class and its derivates.
  */
 class VISP_EXPORT vpSimulatorException : public vpException
 {

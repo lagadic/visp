@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCylinder.h,v 1.9 2008-07-18 10:20:47 marchand Exp $
+ * $Id: vpCylinder.h,v 1.10 2008-09-26 15:21:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,7 +54,8 @@
 
 /*!
   \class vpCylinder
-  \brief  class that defines what is a cylinder
+  \ingroup TrackingFeature GeometryFeature
+  \brief Class that defines what is a cylinder.
 */
 class VISP_EXPORT vpCylinder : public vpForwardProjection
 {
