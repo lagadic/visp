@@ -5,7 +5,7 @@
 \section intro_sec Introduction
 
 <p>ViSP is a modular C++ library that allows fast development of visual
-servoing applications. ViSP is developped and maintained by the INRIA
+servoing applications. ViSP is developed and maintained by the INRIA
 <a href="http://www.irisa.fr/lagadic">Lagadic</a> team at <a
 href="http://www.irisa.fr">IRISA</a> - <a
 href="http://www.inria.fr">INRIA</a> Rennes.</p>
@@ -13,6 +13,11 @@ href="http://www.inria.fr">INRIA</a> Rennes.</p>
 <p>ViSP official site is <a
 href="http://www.irisa.fr/lagadic/visp/visp.html">http://www.irisa.fr/lagadic/visp/visp.html</a></p>
  
+<p>If you have any problems or find any bugs, please report them at
+<a href="http://gforge.inria.fr/tracker/?group_id=397">http://gforge.inria.fr/tracker/?group_id=397</a>. If you may need help, please use the available forums <a href="http://gforge.inria.fr/forum/?group_id=397">http://gforge.inria.fr/forum/?group_id=397</a> or mailing lists <a href="http://gforge.inria.fr/mail/?group_id=397">http://gforge.inria.fr/mail/?group_id=397</a>.<p> 
+
+It is also possible to contact ViSP main developers using: visp AT irisa.fr
+
 \section download_sec Download
 
 <p>From <a
@@ -31,15 +36,347 @@ display, simulation, ...) you need, prior to install ViSP you may
 install third party libraries <a
 href="http://www.irisa.fr/lagadic/visp/libraries.html">http://www.irisa.fr/lagadic/visp/libraries.html</a>.</p>
 
-<p>ViSP full installation procedure using CMake is avalaible from <a
+<p>ViSP full installation procedure using CMake is available from <a
 href="http://www.irisa.fr/lagadic/visp/install.html">http://www.irisa.fr/lagadic/visp/install.html</a>.</p>
  
-\section Examples_sec Examples
+\section Examples_sec Using ViSP
 
-<p>From the <a href="examples.html">example</a> page, you will find
+<p>ViSP C++ classes are organized in <a href="modules.html">modules</a> that may help the user during his project implementation.</p>
+ 
+<p>From the <a href="examples.html">example</a> page, you will also find
 examples showing how to use the library to acquire and display an
 image, compute a camera pose, estimate an homography, servo a real
 robot or a simulated one using a 2D, 2D half or 3D visual servoing
 scheme, ...</p>
 
+*/
+
+
+
+/*
+ ******************************************
+ * Data representation
+ ******************************************
+ */
+/*!
+  \defgroup DataRepresentation Data representation
+*/
+/*!
+  \ingroup DataRepresentation
+  \defgroup ImageDataRepresentation Image
+*/
+/*!
+  \ingroup DataRepresentation
+  \defgroup List List
+*/
+/*
+ ******************************************
+ * Mathematics
+ ******************************************
+ */
+/*!
+  \defgroup Math Mathematics
+*/
+/*!
+  \ingroup Math
+  \defgroup Matrix Matrices and vectors
+*/
+/*!
+  \ingroup Math
+  \defgroup Geometry Geometry
+*/
+/*!
+  \ingroup Geometry
+  \defgroup GeometryPlane Plane
+*/
+/*!
+  \ingroup Geometry
+  \defgroup GeometryFeature Geometric feature (3D transformation and forward projection)
+*/
+/*!
+  \ingroup Math
+  \defgroup Transformations Transformations
+*/
+/*!
+  \ingroup Math
+  \defgroup Hinkley Hinkley's cumulative sum test
+*/
+/*!
+  \ingroup Math
+  \defgroup Robust Robust estimation
+*/
+/*!
+  \ingroup Math
+  \defgroup Random Random number generator
+*/
+/*!
+  \ingroup Math
+  \defgroup MathTools Other tools
+*/
+
+/*!
+  \ingroup Transformations 
+  \defgroup Transformation 3D transformations
+*/
+/*!
+  \ingroup Transformation 
+  \defgroup RotTransformation Rotation and their representation
+*/
+/*!
+  \ingroup Transformation 
+  \defgroup TransTransformation Translation
+*/
+/*!
+  \ingroup Transformation 
+  \defgroup PoseTransformation Pose
+*/
+/*!
+  \ingroup Transformation 
+  \defgroup HomographyTransformation Homography
+*/
+/*!
+  \ingroup Transformation 
+  \defgroup TwistTransformation Twist transformation matrix
+*/
+/*!
+  \ingroup Transformation 
+  \defgroup ExpMapTransformation Exponential map
+*/
+/*!
+  \ingroup Transformations 
+  \defgroup VisionTransformation Other related transformations
+*/
+/*!
+  \ingroup VisionTransformation 
+  \defgroup CameraModelTransformation Camera models
+*/
+
+/*
+ ******************************************
+ * Image
+ ******************************************
+ */
+/*!
+  \defgroup Image Image
+*/
+/*!
+  \ingroup Image
+  \defgroup ImageManipulation Image manipulation
+*/
+/*!
+  \ingroup ImageManipulation
+  \defgroup ImageContainer Image representation
+*/
+/*!
+  \ingroup ImageManipulation
+  \defgroup ImageRW Reading and writing images
+*/
+/*!
+  \ingroup ImageManipulation
+  \defgroup ImageGUI Graphical user interface
+*/
+/*!
+  \ingroup ImageManipulation
+  \defgroup ImageConversion Image conversion
+*/
+/*!
+  \ingroup ImageManipulation
+  \defgroup ImageTool Image tools
+*/
+/*!
+  \ingroup ImageManipulation
+  \defgroup Framegrabber Image acquisition
+*/
+
+/*!
+  \ingroup Image
+  \defgroup ImageProcessing Image processing
+*/
+/*!
+  \ingroup ImageProcessing
+  \defgroup ImageFiltering Image filtering
+*/
+/*!
+  \ingroup ImageProcessing
+  \defgroup Histogram Image histogram
+*/
+
+
+/*
+ ******************************************
+ * Tracking
+ ******************************************
+ */
+/*!
+  \defgroup Tracking Tracking
+*/
+/*!
+  \ingroup Tracking
+  \defgroup TrackingFeature Geometric features (3D transformation and forward projection)
+*/
+/*!
+  \ingroup Tracking
+  \defgroup TrackingImage Tracking in image sequences
+*/
+/*!
+  \ingroup TrackingImage
+  \defgroup TrackingImageBasic Basic algorithms
+*/
+/*!
+  \ingroup TrackingImage
+  \defgroup TrackingImagePoint Point tracker
+*/
+/*!
+  \ingroup TrackingImage
+  \defgroup TrackingImageME Moving edges
+*/
+/*
+ ******************************************
+ * Computer vision
+ ******************************************
+ */
+/*!
+  \defgroup ComputerVision Computer Vision
+*/
+/*!
+  \ingroup  ComputerVision
+  \defgroup Pose Pose estimation
+*/
+/*!
+  \ingroup  ComputerVision
+  \defgroup Homography Homography estimation
+*/
+/*!
+  \ingroup  ComputerVision
+  \defgroup Calibration Calibration
+*/
+/*!
+  \ingroup  ComputerVision
+  \defgroup CameraModel Camera models
+*/
+/*
+ ******************************************
+ * Building a visual feature task
+ ******************************************
+ */
+/*!
+  \defgroup Vs Building a visual servoing task
+*/
+/*!
+  \ingroup Vs
+  \defgroup VsFeature Visual features
+*/
+/*!
+  \ingroup VsFeature
+  \defgroup VsFeature2 2D visual features
+*/
+/*!
+  \ingroup VsFeature
+  \defgroup VsFeature3 3D visual features
+*/
+/*!
+  \ingroup VsFeature
+  \defgroup VsFeatureGeneric Generic visual features
+*/
+/*!
+  \ingroup VsFeature
+  \defgroup VsFeatureDisplay Display of visual features
+*/
+/*!
+  \ingroup VsFeature
+  \defgroup VsFeatureBuilder Visual features builder
+*/
+/*!
+  \ingroup Vs
+  \defgroup VsTask Task and control laws
+*/
+
+/*
+ ******************************************
+ * Working with robots
+ ******************************************
+ */
+/*!
+  \defgroup Robot Working with robots
+*/
+/*!
+  \ingroup Robot
+  \defgroup RobotSimu Robot simulation
+*/
+/*!
+  \ingroup RobotSimu
+  \defgroup BasicRobotSimu Basic simulation
+*/
+/*!
+  \ingroup RobotSimu
+  \defgroup VisuRobotSimu Simulation with 3D visualization
+*/
+
+/*!
+  \ingroup Robot
+  \defgroup RealRobot Real robots
+*/
+/*!
+  \ingroup RealRobot
+  \defgroup Afma4 Afma4 cylindrical robot
+*/
+/*!
+  \ingroup RealRobot
+  \defgroup Afma6 Afma6 gentry robot
+*/
+/*!
+  \ingroup RealRobot
+  \defgroup Biclops Biclops pan-tilt head
+*/
+/*!
+  \ingroup RealRobot
+  \defgroup Ptu46 Ptu-46 pan-tilt head
+*/
+/*
+ ******************************************
+ * Tools
+ ******************************************
+ */
+/*!
+  \defgroup Tool Tools
+*/
+/*!
+  \ingroup Tool 
+  \defgroup ArgumentParser Command line parsing
+*/
+/*!
+  \ingroup Tool 
+  \defgroup System System
+*/
+/*!
+  \ingroup System 
+  \defgroup Time Time management
+*/
+/*!
+  \ingroup System 
+  \defgroup ParallelPort Parallel port
+*/
+/*!
+  \ingroup System 
+  \defgroup Keyboard Keyboard
+*/
+/*!
+  \ingroup Tool 
+  \defgroup IO Input/output
+*/
+/*!
+  \ingroup IO 
+  \defgroup FileDirectories File and directories
+*/
+/*!
+  \ingroup Tool 
+  \defgroup DebugException Debug and exceptions
+*/
+/*!
+  \ingroup DebugException
+  \defgroup Debug Debug
+*/
+/*!
+  \ingroup DebugException
+  \defgroup Exception Exceptions
 */
