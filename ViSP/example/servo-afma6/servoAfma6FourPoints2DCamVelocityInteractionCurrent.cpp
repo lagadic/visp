@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.7 2008-07-29 16:12:14 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp,v 1.8 2008-10-01 15:26:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,6 +61,7 @@
 
 */
 
+#include <stdlib.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace

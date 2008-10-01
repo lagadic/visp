@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.10 2007-11-23 13:24:52 fspindle Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.11 2008-10-01 15:26:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,6 +56,7 @@
   in the camera frame. The used visual feature is a circle.
 
 */
+#include <stdlib.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
