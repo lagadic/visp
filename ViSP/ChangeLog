@@ -1,7 +1,9 @@
 ViSP 2.4.x (released ...)
   - Testing
     - Use of CDash insteed of Dart2. Dashboards are sent to 
-      http://cdash.irisa.fr/CDash/index.php?project=ViSP 
+      http://cdash.irisa.fr/CDash/index.php?project=ViSP
+  - Platform compatibility
+    - Compatibility with g++ 4.3.0
   - New Features
     - vp1394TwoGrabber: Get the timestamp associated to the grabbed image.
     - vpV4l2Grabber: Get the timestamp associated to the grabbed image.
