@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.41 2008-09-18 14:29:05 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.42 2008-10-01 12:26:27 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,6 +40,7 @@
 #ifdef VISP_HAVE_AFMA6
 
 #include <signal.h>
+#include <stdlib.h>
 
 #include <visp/vpRobotException.h>
 #include <visp/vpExponentialMap.h>

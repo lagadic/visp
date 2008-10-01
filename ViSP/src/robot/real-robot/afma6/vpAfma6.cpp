@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.31 2008-09-18 14:29:04 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.32 2008-10-01 12:26:27 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -58,9 +58,9 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-static char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_56",
-			    "CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
-			    NULL};
+static const char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_56",
+				  "CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
+				  NULL};
 
 const char * const vpAfma6::CONST_AFMA6_FILENAME
 = "/udd/fspindle/robot/Afma6/current/include/const_Afma6.cnf";
