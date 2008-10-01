@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6TwoLines2DCamVelocity.cpp,v 1.8 2007-12-19 13:14:20 fspindle Exp $
+ * $Id: servoAfma6TwoLines2DCamVelocity.cpp,v 1.9 2008-10-01 15:26:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,6 +57,8 @@
   in the camera frame. Visual features are the two lines.
 
 */
+
+#include <stdlib.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace

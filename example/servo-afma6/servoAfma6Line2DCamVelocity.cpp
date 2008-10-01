@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.8 2007-12-19 13:14:20 fspindle Exp $
+ * $Id: servoAfma6Line2DCamVelocity.cpp,v 1.9 2008-10-01 15:26:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,8 @@
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
   in the camera frame.  The visual feature is a line.
 */
+
+#include <stdlib.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
