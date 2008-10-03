@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.h,v 1.8 2008-09-26 15:20:55 fspindle Exp $
+ * $Id: vpThetaUVector.h,v 1.9 2008-10-03 15:50:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -113,6 +113,10 @@ public:
   vpThetaUVector buildFrom(const vpEulerVector &e) ;
   //! convert an Rxyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRxyzVector &e) ;
+
+  // extract the angle and the axis from the ThetaU representation
+  void extract( double &theta, vpColVector &u) const;
+
   
 } ;
 
