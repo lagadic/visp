@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.cpp,v 1.10 2008-05-06 14:34:56 asaunier Exp $
+ * $Id: vpThetaUVector.cpp,v 1.11 2008-10-03 15:50:16 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -217,6 +217,31 @@ vpThetaUVector::buildFrom(const vpRxyzVector& e)
     buildFrom(R) ;
     return *this ;
 }
+
+
+/*!
+
+  Extract the rotation angle \f$ \theta \f$ and the unit vector
+  \f$ u \f$ from the \f$ \theta u \f$ representation.
+
+  \param theta : Rotation angle \f$ \theta \f$.
+
+  \param u : Unit vector \f$ u = (u_{x},u_{y},u_{z})^{\top} \f$
+  representing the rotation axis.
+
+*/
+void 
+vpThetaUVector::extract(double &theta, vpColVector &u) const
+{
+  u.resize(3);
+
+  theta = sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2]);
+
+  for (int i=0 ; i < 3 ; i++) 
+    u[i] = r[i] / theta ;
+}
+
+
 #undef vpDEBUG_LEVEL1
 /*
  * Local variables:
