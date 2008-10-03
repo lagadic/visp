@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.42 2008-10-01 12:26:27 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.43 2008-10-03 08:12:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -269,7 +269,7 @@ vpRobotAfma6::init (void)
     printf(" Timeout enabling power...\n");
   if (TryStt < 0) {
     // Power off the robot
-    Try( PrimitivePOWEROFF() );
+    PrimitivePOWEROFF();
     // Free allocated ressources
     ShutDownConnection();
 
