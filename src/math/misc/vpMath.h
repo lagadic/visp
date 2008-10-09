@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMath.h,v 1.12 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpMath.h,v 1.13 2008-10-09 12:54:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -82,14 +82,14 @@ public:
   /*!
     Convert radian in degrees.
 
-    \param rad Angle in radian.
+    \param rad : Angle in radian.
     \return Angle converted in degrees
   */
    static inline double deg(double rad) { return (rad*180.0)/M_PI ; }
 
   /*!
     Convert degrees in radian.
-    \param deg Angle in degrees.
+    \param deg : Angle in degrees.
     \return Angle converted in radian.
   */
    static inline double rad(double deg) { return (deg*M_PI)/180.0 ; }
@@ -121,10 +121,10 @@ public:
 
 
   /*!
-    Find the maximum between two numbers (or other)
-    \param a first number
-    \param b second number
-    \return The maximum of the two numbers
+    Find the maximum between two numbers (or other).
+    \param a : First number.
+    \param b : Second number.
+    \return The maximum of the two numbers.
   */
   template <class Type> static Type maximum(const Type& a, const Type& b)
   {
@@ -132,10 +132,10 @@ public:
   }
 
   /*!
-    Find the minimum between two numbers (or other)
-    \param a first number
-    \param b second number
-    \return The minimum of the two numbers
+    Find the minimum between two numbers (or other).
+    \param a : First number.
+    \param b : Second number.
+    \return The minimum of the two numbers.
   */
   template <class Type> static Type minimum(const Type& a, const Type& b)
   {
@@ -143,8 +143,8 @@ public:
   }
 
   /*!
-    Find the absolute value of a number (or other)
-    \param x  the number
+    Find the absolute value of a number (or other).
+    \param x : The number.
     \return The absolute value of x
   */
   template <class Type> static Type abs(const Type& x)
@@ -257,7 +257,7 @@ bool vpMath::nul(double x, double s)
   Compares  \f$ | x - y | \f$ to \f$ s \f$.
   \param x : x value.
   \param y : y value.
-  \param s : Tolerance threshold
+  \param s : Tolerance threshold.
   \return true if \f$ | x - y | < s \f$.
 */
 bool vpMath::equal(double x, double y, double s)
@@ -281,10 +281,10 @@ double vpMath::sinc(double x)
 }
 /*!
 
-  Compute sinus cardinal \f$ sinx / x \f$.
+  Compute sinus cardinal \f$ \frac{sin(x)}{x}\f$.
 
-  \param sinx Value of sin(x).
-  \param x Value of x.
+  \param sinx : Value of sin(x).
+  \param x : Value of x.
 
   \return Sinus cardinal.
 
@@ -298,8 +298,8 @@ double vpMath::sinc(double sinx, double x)
 /*!
   Compute \f$ (1-cos(x))/x^2 \f$
 
-  \param cosx Value of cos(x).
-  \param x Value of x.
+  \param cosx : Value of cos(x).
+  \param x : Value of x.
 
   \return \f$ (1-cosx)/x^2 \f$
 
@@ -314,8 +314,8 @@ double vpMath::mcosc(double cosx, double x)
 
   Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sinx / x \f$.
 
-  \param sinx value of sin(x).
-  \param x  Value of x.
+  \param sinx : value of sin(x).
+  \param x  : Value of x.
 
   \return \f$ (1-sinc(x))/x^2 \f$
 
