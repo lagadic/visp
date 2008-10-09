@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394.cpp,v 1.11 2008-06-13 13:37:35 asaunier Exp $
+ * $Id: grab1394.cpp,v 1.12 2008-10-09 09:20:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,7 +56,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if defined(VISP_HAVE_DC1394_1)
+#if defined(VISP_HAVE_DC1394_1) && defined(VISP_HAVE_X11)
 
 #include <visp/vp1394Grabber.h>
 #include <visp/vpImage.h>
@@ -500,8 +500,14 @@ main(int argc, const char ** argv)
 int
 main()
 {
+#ifndef VISP_HAVE_DC1394_1
   vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
 	  "You should install libdc1394-1 to use this example.") ;
+#endif
+#ifndef VISP_HAVE_X11
+  vpTRACE("X11 video device is not installed...\n"
+	  "You should install X11 to use this example.") ;
+#endif
 }
 #endif
 
