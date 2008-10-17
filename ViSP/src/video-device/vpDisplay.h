@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.26 2008-09-26 15:21:01 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.27 2008-10-17 15:48:45 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -290,6 +290,10 @@ protected :
 				vpColor::vpColorType col, unsigned int e=1) ;
 
   static void displayFrame(const vpImage<unsigned char> &I,
+			   const vpHomogeneousMatrix &cMo,
+			   const vpCameraParameters &cam,
+			   double size, vpColor::vpColorType col)  ;
+ static void displayFrame(const vpImage<vpRGBa> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
 			   double size, vpColor::vpColorType col)  ;
