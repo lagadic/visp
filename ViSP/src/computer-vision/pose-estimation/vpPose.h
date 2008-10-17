@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.18 2008-10-17 13:10:28 marchand Exp $
+ * $Id: vpPose.h,v 1.19 2008-10-17 15:48:01 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,6 +53,7 @@
 #include <visp/vpHomography.h>
 #include <visp/vpPoint.h>
 #include <visp/vpList.h>
+#include <visp/vpRGBa.h>
 
 /*!
   \class vpPose
@@ -147,6 +148,9 @@ public:
   void printPoint() ;
 
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
+	       vpCameraParameters &cam, double size,
+	       vpColor::vpColorType col=vpColor::none) ;
+ static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo,
 	       vpCameraParameters &cam, double size,
 	       vpColor::vpColorType col=vpColor::none) ;
 
