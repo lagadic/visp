@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.31 2008-07-30 19:22:26 cteulier Exp $
+ * $Id: vpDisplay.cpp,v 1.32 2008-10-17 15:48:45 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -333,19 +333,19 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
-                              vpColor::green ) ;
+                              vpColor::red ) ;
 
     vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
-                              vpColor::blue ) ;
+                              vpColor::green ) ;
 
     vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1) ;
     vpDisplay::displayArrow ( I,
                               vpMath::round ( oy ), vpMath::round ( ox ),
                               vpMath::round ( y1 ), vpMath::round ( x1 ),
-                              vpColor::red ) ;
+                              vpColor::blue ) ;
   }
   else
   {
@@ -371,6 +371,71 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
   }
 }
 
+
+void
+vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
+                          const vpHomogeneousMatrix &cMo,
+                          const vpCameraParameters &cam,
+                          double size, vpColor::vpColorType col)
+{
+  // used by display
+  vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
+  vpPoint x; x.setWorldCoordinates ( size,0.0,0.0 ) ;
+  vpPoint y; y.setWorldCoordinates ( 0.0,size,0.0 ) ;
+  vpPoint z; z.setWorldCoordinates ( 0.0,0.0,size ) ;
+
+  o.track ( cMo ) ;
+  x.track ( cMo ) ;
+  y.track ( cMo ) ;
+  z.track ( cMo ) ;
+
+  double ox=0, oy=0, x1=0, y1=0 ;
+
+  if ( col == vpColor::none )
+  {
+    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy) ;
+
+    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1) ;
+    vpDisplay::displayArrow ( I,
+                              vpMath::round ( oy ), vpMath::round ( ox ),
+                              vpMath::round ( y1 ), vpMath::round ( x1 ),
+                              vpColor::red ) ;
+
+    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1) ;
+    vpDisplay::displayArrow ( I,
+                              vpMath::round ( oy ), vpMath::round ( ox ),
+                              vpMath::round ( y1 ), vpMath::round ( x1 ),
+                              vpColor::green ) ;
+
+    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1) ;
+    vpDisplay::displayArrow ( I,
+                              vpMath::round ( oy ), vpMath::round ( ox ),
+                              vpMath::round ( y1 ), vpMath::round ( x1 ),
+                              vpColor::blue ) ;
+  }
+  else
+  {
+    vpMeterPixelConversion::convertPoint ( cam,o.p[0],o.p[1],ox,oy) ;
+
+    vpMeterPixelConversion::convertPoint ( cam,x.p[0],x.p[1],x1,y1) ;
+    vpDisplay::displayArrow ( I,
+                              vpMath::round ( oy ), vpMath::round ( ox ),
+                              vpMath::round ( y1 ), vpMath::round ( x1 ),
+                              col ) ;
+
+    vpMeterPixelConversion::convertPoint ( cam,y.p[0],y.p[1],x1,y1) ;
+    vpDisplay::displayArrow ( I,
+                              vpMath::round ( oy ), vpMath::round ( ox ),
+                              vpMath::round ( y1 ), vpMath::round ( x1 ),
+                              col ) ;
+
+    vpMeterPixelConversion::convertPoint ( cam,z.p[0],z.p[1],x1,y1) ;
+    vpDisplay::displayArrow ( I,
+                              vpMath::round ( oy ), vpMath::round ( ox ),
+                              vpMath::round ( y1 ), vpMath::round ( x1 ),
+                              col ) ;
+  }
+}
 
 /*! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   window
