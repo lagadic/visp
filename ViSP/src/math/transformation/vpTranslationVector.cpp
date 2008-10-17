@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp,v 1.8 2008-07-28 16:46:45 fspindle Exp $
+ * $Id: vpTranslationVector.cpp,v 1.9 2008-10-17 17:25:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -117,6 +117,33 @@ vpTranslationVector::operator+(const vpTranslationVector &t) const
     return sum;
 }
 
+/*!
+  Operator that allows to substract two translation vectors.
+
+  \param t : Translation  vector to substract.
+
+  \return The substraction of the current translation vector (*this) and the one to substract.
+  \code
+  vpTranslationVector t1(1,2,3); 
+  vpTranslationVector t2(4,5,6); 
+  vpTranslationVector t3; 
+
+  t3 = t2 - t1; 
+  // t1 and t2 leave unchanged
+  // t3 is now equal to : 3, 3, 3
+  \endcode
+
+*/
+vpTranslationVector
+vpTranslationVector::operator-(const vpTranslationVector &t) const
+{
+    vpTranslationVector sub ;
+
+    for (int i=0;i<3;i++)  sub[i] = (*this)[i]-t[i] ;
+
+    return sub;
+}
+
 
 /*!
   Operator that allows to negate a translation vector.
@@ -138,6 +165,32 @@ vpTranslationVector vpTranslationVector::operator-() const //negate
     for (int i=0;i<dsize;i++)
     {
 	*(t.data + i) = -*(data + i) ;
+    }
+
+    return t;
+}
+
+/*!
+  Operator that allows to multiply a translation vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The translation vector multiplied by the scalar. The current
+  translation vector (*this) is unchanged.
+
+  \code
+  vpTranslationVector t1(1,2,3); 
+  t2 = t1 * 3;
+  // t1 is unchanged 
+  // t2 is now equal to : 3, 6, 9 
+  \endcode
+*/
+vpTranslationVector vpTranslationVector::operator*(const double x) const 
+{
+    vpTranslationVector t ;
+    for (int i=0;i<dsize;i++)
+    {
+	*(t.data + i) = (*(data + i)) * x ;
     }
 
     return t;

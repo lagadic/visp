@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
+ * $Id: vpTranslationVector.h,v 1.8 2008-10-17 17:25:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -85,9 +85,12 @@ public:
 
     // translation vectors additions  c = a + b (a, b  unchanged)
     vpTranslationVector operator+(const vpTranslationVector &t) const ;
+    // translation vectors substraction  c = a - b (a, b  unchanged)
+    vpTranslationVector operator-(const vpTranslationVector &t) const ;
     // negate t = -a  (t is unchanged)
     vpTranslationVector operator-() const ;
-    
+    // b = x * a (x=scalar)
+    vpTranslationVector operator*(const double x) const;
     // Copy operator.   Allow operation such as A = v
     vpTranslationVector &operator=(const vpTranslationVector &t);
 
