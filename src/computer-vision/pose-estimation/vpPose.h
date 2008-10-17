@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.17 2008-09-26 15:20:53 fspindle Exp $
+ * $Id: vpPose.h,v 1.18 2008-10-17 13:10:28 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,10 +115,12 @@ public:
 
   //! test the coplanarity of the points
   bool coplanaire() ;
+  double   distanceToPlaneForCoplanarityTest ;
+  void setDistanceToPlaneForCoplanarityTest(double d) ;
 
 private:
   //! variable used in the Dementhon approach
-  vpPoint *c3d ;
+  vpPoint *c3d ; 
 protected:
   double computeResidualDementhon(vpHomogeneousMatrix &cMo) ;
 
