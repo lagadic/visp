@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.20 2008-07-29 14:10:41 fspindle Exp $
+ * $Id: vpPose.cpp,v 1.21 2008-10-17 13:10:28 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -71,7 +71,9 @@ vpPose::init()
   c3d = NULL ;
 
   vvsIterMax = 200 ;
-
+	
+	distanceToPlaneForCoplanarityTest = 0.001 ;
+	
   if (DEBUG_LEVEL1)
     std::cout << "end vpPose::Init() " << std::endl ;
 }
@@ -137,6 +139,13 @@ vpPose::addPoint(const vpPoint& newP)
     std::cout << "end vpPose::AddPoint(Dot) " << std::endl ;
 }
 
+
+void 
+vpPose::setDistanceToPlaneForCoplanarityTest(double d)
+{
+	distanceToPlaneForCoplanarityTest = d ;
+}
+
 /*!
   \brief test the coplanarity of the set of points
   \return true if points are coplanar
@@ -185,25 +194,7 @@ vpPose::coplanaire()
 
 
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
-  if (fabs(D) < 1e-10)
-  {
-    /*   listP.front() ;
-	 while (!listP.outside())
-	 {
-	 P1 = listP.value() ;
-	 P1.print() ;
-	 listP.next() ;
-
-	 }
-
-	 std::cout << x1 <<" " << y1 << " "<< z1 << std::endl ;
-	 std::cout << x2 <<" " << y2 << " "<< z2 << std::endl ;
-	 std::cout << x3 <<" " << y3 << " "<< z3 << std::endl ;
-	 vpERROR_TRACE("division by zero  ") ;*/
-    // throw(vpException(vpException::divideByZeroError,
-    //		      "division by zero  ")) ;
-  }
-
+  
   double dist;
   listP.front() ;
   while (!listP.outside())
@@ -211,7 +202,7 @@ vpPose::coplanaire()
     P1 = listP.value() ;
     dist = (a*P1.get_oX() + b*P1.get_oY()+c*P1.get_oZ()+d)/D ;
 
-    if (fabs(dist) > 0.01)
+    if (fabs(dist) > distanceToPlaneForCoplanarityTest)
     {
       vpDEBUG_TRACE(10," points are not coplanar ") ;
       //	TRACE(" points are not coplanar ") ;
