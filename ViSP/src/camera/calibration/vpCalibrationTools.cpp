@@ -1101,6 +1101,7 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
                                vpHomogeneousMatrix rMe[],
                                vpHomogeneousMatrix &eMc)
 {
+
   vpColVector x ;
   {
     vpMatrix A ;
@@ -1112,6 +1113,7 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
       vpRotationMatrix rRei, ciRo ;
       rMe[i].extract(rRei) ;
       cMo[i].extract(ciRo) ;
+      std::cout << "rMei: " << std::endl << rMe[i] << std::endl;
 
       for (unsigned int j=0 ; j < nbPose ; j++)
       {
@@ -1120,13 +1122,17 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
           vpRotationMatrix rRej, cjRo ;
           rMe[j].extract(rRej) ;
           cMo[j].extract(cjRo) ;
+	  std::cout << "rMej: " << std::endl << rMe[j] << std::endl;
 
-          vpRotationMatrix rReij = rRej.t() * rRei ;
-          vpRotationMatrix cijRo = cjRo * ciRo.t() ;
+          vpRotationMatrix rReij = rRej.t() * rRei;
+
+          vpRotationMatrix cijRo = cjRo * ciRo.t();
 
           vpThetaUVector rPeij(rReij);
+
           double theta = sqrt(rPeij[0]*rPeij[0] + rPeij[1]*rPeij[1]
                               + rPeij[2]*rPeij[2]);
+
           for (int m=0;m<3;m++) rPeij[m] = rPeij[m] * vpMath::sinc(theta/2);
 
           vpThetaUVector cijPo(cijRo) ;
@@ -1155,15 +1161,27 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
         }
       }
     }
-
+	
     // the linear system is defined
     // x = AtA^-1AtB is solved
     vpMatrix AtA = A.AtA() ;
 
-
     vpMatrix Ap ;
     AtA.pseudoInverse(Ap, 1e-6) ; // rank 3
     x = Ap*A.t()*B ;
+
+//     {
+//       // Residual
+//       vpColVector residual;
+//       residual = A*x-B;
+//       std::cout << "Residual: " << std::endl << residual << std::endl;
+
+//       double res = 0;
+//       for (int i=0; i < residual.getRows(); i++)
+// 	res += residual[i]*residual[i];
+//       res = sqrt(res/residual.getRows());
+//       printf("Mean residual = %lf\n",res);
+//     }
 
     // extraction of theta and U
     double theta ;
@@ -1177,13 +1195,15 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
     }
     else
       x = 0 ;
-    // Building of the rotation matrix eRc
   }
+
+  // Building of the rotation matrix eRc
   vpThetaUVector xP(x[0],x[1],x[2]);
   vpRotationMatrix eRc(xP);
+
   {
     vpMatrix A ;
-    vpMatrix B ;
+    vpColVector B ;
     // Building of the system for the translation estimation
     // for all couples ij
     vpRotationMatrix I3 ;
@@ -1218,13 +1238,11 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
 
           rTeij = rRej.t()*rTeij ;
 
-          vpTranslationVector cijTo = cjTo + (-(cjRo*ciRo.t()*ciTo)) ;
-
           vpMatrix a ;
           a = (vpMatrix)rReij - (vpMatrix)I3 ;
 
           vpTranslationVector b ;
-          b =  eRc*cijTo + rTeij ;
+          b =  eRc*cjTo - rReij*eRc*ciTo + rTeij ;
 
           if (k==0)
           {
@@ -1234,7 +1252,7 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
           else
           {
             A = vpMatrix::stackMatrices(A,a) ;
-            B = vpMatrix::stackMatrices(B,(vpColVector)b) ;
+            B = vpMatrix::stackMatrices(B,b) ;
           }
           k++ ;
         }
@@ -1248,6 +1266,19 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
     vpColVector AeTc ;
     AtA.pseudoInverse(Ap, 1e-6) ;
     AeTc = Ap*A.t()*B ;
+
+//     {
+//       // residual
+//       vpColVector residual;
+//       residual = A*AeTc-B;
+//       std::cout << "Residual: " << std::endl << residual << std::endl;
+//       double res = 0;
+//       for (int i=0; i < residual.getRows(); i++)
+// 	res += residual[i]*residual[i];
+//       res = sqrt(res/residual.getRows());
+//       printf("mean residual = %lf\n",res);
+//     }
+
     vpTranslationVector eTc(AeTc[0],AeTc[1],AeTc[2]);
 
     eMc.insert(eTc) ;
