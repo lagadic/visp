@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.27 2008-10-18 16:10:45 fspindle Exp $
+ * $Id: vpImage.h,v 1.28 2008-10-18 16:27:48 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -746,6 +746,7 @@ vpImage<Type>::halfSizeImage(vpImage<Type>* res)
 
   \param res [out] : Subsampled image that is half size of the current image.
 
+  The example below shows how to use this method:
   \code
   vpImage<unsigned char> I; // original image
   vpImageIo::readPGM(I, "myImage.pgm");
@@ -753,6 +754,17 @@ vpImage<Type>::halfSizeImage(vpImage<Type>* res)
   I.halfSizeImage(I2);
   vpImageIo::writePGM(I2, "myHalfSizeImage.pgm");
   \endcode
+
+  This other example shows how to construct a pyramid of the image:
+  \code
+  vpImage<unsigned char> I[4];   // pyramid with 4 levels
+  vpImageIo::readPGM(I[1], "myImage.pgm"); // Original image at level 1
+  // compute the other levels
+  I5[1].doubleSizeImage(I5[0]);  // double size image at level 0
+  I5[1].halfSizeImage(I5[2]);    // half size image at level 2
+  I5[1].quarterSizeImage(I5[3]); // quarter size image at level 3
+  \endcode
+
 */
 template<class Type>
 void
@@ -796,6 +808,7 @@ vpImage<Type>::quarterSizeImage(vpImage<Type>* res)
   \param res [out] : Subsampled image that is quarter size of the
   current image.
 
+  The example below shows how to use this method:
   \code
   vpImage<unsigned char> I; // original image
   vpImageIo::readPGM(I, "myImage.pgm");
@@ -803,7 +816,10 @@ vpImage<Type>::quarterSizeImage(vpImage<Type>* res)
   I.halfSizeImage(I4);
   vpImageIo::writePGM(I4, "myQuarterSizeImage.pgm");
   \endcode
- */
+
+  See halfSizeImage(vpImage<Type> &) for an example of pyramid construction.
+
+*/
 
 template<class Type>
 void
@@ -885,6 +901,7 @@ vpImage<Type>::doubleSizeImage(vpImage<Type>* res)
 
   \param res [out] : Image that is double size of the current image.
 
+  The example below shows how to use this method:
   \code
   vpImage<unsigned char> I; // original image
   vpImageIo::readPGM(I, "myImage.pgm");
@@ -892,6 +909,8 @@ vpImage<Type>::doubleSizeImage(vpImage<Type>* res)
   I.doubleSizeImage(I2);
   vpImageIo::writePGM(I2, "myDoubleSizeImage.pgm");
   \endcode
+ 
+  See halfSizeImage(vpImage<Type> &) for an example of pyramid construction.
 
 */
 template<class Type>
