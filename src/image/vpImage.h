@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImage.h,v 1.26 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpImage.h,v 1.27 2008-10-18 16:10:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -225,14 +225,14 @@ public:
   //! Return the minumum value within the bitmap
   Type minValue() const ;
 
-  //! Returns a new image that's half size of the current image
-  void halfSizeImage(vpImage<Type>* res);
+  // Returns a new image that's half size of the current image
+  void halfSizeImage(vpImage<Type> &res);
 
-  //! Returns a new image that's a quarter size of the current image
-  void quarterSizeImage(vpImage<Type>* res);
+  // Returns a new image that's a quarter size of the current image
+  void quarterSizeImage(vpImage<Type> &res);
 
-  //! Returns a new image that's double size of the current image
-  void doubleSizeImage(vpImage<Type>* res);
+  // Returns a new image that's double size of the current image
+  void doubleSizeImage(vpImage<Type> &res);
 
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getSubPix(double i, double j) const;
@@ -245,6 +245,12 @@ public:
 
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getPixelBI(double j, double i) const;
+  // Returns a new image that's half size of the current image
+  void halfSizeImage(vpImage<Type>* res);
+  // Returns a new image that's a quarter size of the current image
+  void quarterSizeImage(vpImage<Type>* res);
+  // Returns a new image that's double size of the current image
+  void doubleSizeImage(vpImage<Type>* res);
 
 private:
   unsigned int npixels ; //<! number of pixel in the image
@@ -709,8 +715,11 @@ vpImage<Type>::get(double i, double j)  // bilinear interpolation
 
 
 /*!
+  Returns a new image that's half size of the current image.
+  No filtering is used during the sub sampling.
   Used for building pyramid of the image.
   \warning Operator = must be defined for Type.
+
  */
 
 template<class Type>
@@ -729,6 +738,36 @@ vpImage<Type>::halfSizeImage(vpImage<Type>* res)
 }
 
 /*!
+  Returns a new image that's half size of the current image.
+  No filtering is used during the sub sampling.
+
+  Used for building pyramid of the image.
+  \warning Operator = must be defined for Type.
+
+  \param res [out] : Subsampled image that is half size of the current image.
+
+  \code
+  vpImage<unsigned char> I; // original image
+  vpImageIo::readPGM(I, "myImage.pgm");
+  vpImage<unsigned char> I2; // half size image
+  I.halfSizeImage(I2);
+  vpImageIo::writePGM(I2, "myHalfSizeImage.pgm");
+  \endcode
+*/
+template<class Type>
+void
+vpImage<Type>::halfSizeImage(vpImage<Type> &res)
+{
+  unsigned int h = height/2;
+  unsigned int w = width/2;
+  res.resize(h, w);
+  for(unsigned int i = 0; i < h; i++)
+    for(unsigned int j = 0; j < w; j++)
+      res[i][j] = (*this)[i<<1][j<<1];
+}
+
+/*!
+  Returns a new image that's a quarter size of the current image.
   Used for building a quarter of the image.
   \warning Operator = must be defined for Type.
  */
@@ -749,6 +788,37 @@ vpImage<Type>::quarterSizeImage(vpImage<Type>* res)
 }
 
 /*!
+  Returns a new image that's a quarter size of the current image.
+  No filtering is used during the sub sampling.
+  Used for building a quarter of the image.
+  \warning Operator = must be defined for Type.
+
+  \param res [out] : Subsampled image that is quarter size of the
+  current image.
+
+  \code
+  vpImage<unsigned char> I; // original image
+  vpImageIo::readPGM(I, "myImage.pgm");
+  vpImage<unsigned char> I4; // quarter size image
+  I.halfSizeImage(I4);
+  vpImageIo::writePGM(I4, "myQuarterSizeImage.pgm");
+  \endcode
+ */
+
+template<class Type>
+void
+vpImage<Type>::quarterSizeImage(vpImage<Type> &res)
+{
+  unsigned int h = height/4;
+  unsigned int w = width/4;
+  res.resize(h, w);
+  for(unsigned int i = 0; i < h; i++)
+    for(unsigned int j = 0; j < w; j++)
+      res[i][j] = (*this)[i<<2][j<<2];
+}
+
+/*!
+  Returns a new image that's double size of the current image.
   Used (eg. in case of keypoints extraction, we might
   double size of the image in order to have more keypoints)
   \warning Operator = must be defined for Type.
@@ -792,6 +862,78 @@ vpImage<Type>::doubleSizeImage(vpImage<Type>* res)
     for(int i = 1; i < w - 1; i += 2)
       (*res)[j][i] = (Type)(0.25 * ((*this)[j/2][i/2] + (*this)[j/2][i/2+1] +
 			     (*this)[j/2+1][i/2] + (*this)[j/2+1][i/2+1]));
+}
+
+/*!
+  Returns a new image that's double size of the current image.
+  Used (eg. in case of keypoints extraction, we might
+  double size of the image in order to have more keypoints).
+  The double size image is computed by nearest-neighbour interpolation:
+
+  \code
+  A B C
+  E F G
+  H I J
+
+  where
+  A C H J are pixels from original image
+  B E G I are interpolated pixels
+  \endcode
+
+
+  \warning Operator = must be defined for Type.
+
+  \param res [out] : Image that is double size of the current image.
+
+  \code
+  vpImage<unsigned char> I; // original image
+  vpImageIo::readPGM(I, "myImage.pgm");
+  vpImage<unsigned char> I2; // double size image
+  I.doubleSizeImage(I2);
+  vpImageIo::writePGM(I2, "myDoubleSizeImage.pgm");
+  \endcode
+
+*/
+template<class Type>
+void
+vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
+{
+  int h = height*2;
+  int w = width*2;
+
+  res.resize(h, w);
+
+  for(int i = 0; i < h; i++)
+    for(int j = 0; j < w; j++)
+      res[i][j] = (*this)[i>>1][j>>1];
+
+  /*
+    A B C
+    E F G
+    H I J
+    A C H J are pixels from original image
+    B E G I are interpolated pixels
+  */
+
+  //interpolate pixels B and I
+  for(int i = 0; i < h; i += 2)
+    for(int j = 1; j < w - 1; j += 2)
+      res[i][j] = (Type)(0.5 * ((*this)[i>>1][j>>1] 
+				+ (*this)[i>>1][(j>>1) + 1]));
+
+  //interpolate pixels E and G
+  for(int i = 1; i < h - 1; i += 2)
+    for(int j = 0; j < w; j += 2)
+      res[i][j] = (Type)(0.5 * ((*this)[i>>1][j>>1] 
+				+ (*this)[(i>>1)+1][j>>1]));
+
+  //interpolate pixel F
+  for(int i = 1; i < h - 1; i += 2)
+    for(int j = 1; j < w - 1; j += 2)
+      res[i][j] = (Type)(0.25 * ((*this)[i>>1][j>>1] 
+				 + (*this)[i>>1][(j>>1)+1] 
+				 + (*this)[(i>>1)+1][j>>1] 
+				 + (*this)[(i>>1)+1][(j>>1)+1]));
 }
 
 template<class Type>
