@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.17 2008-10-31 14:07:12 nmelchio Exp $
+ * $Id: vpMeLine.cpp,v 1.18 2008-10-31 17:20:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -996,7 +996,7 @@ vpMeLine::getTheta() const
 }
 
 void
-vpMeLine::getExtremities(unsigned& i1, unsigned& j1, unsigned& i2, unsigned& j2)
+vpMeLine::getExtremities(double& i1, double& j1, double& i2, double& j2)
 {
   /*Return the coordinates of the extremities of the line*/
   i1 = PExt[0].ifloat;

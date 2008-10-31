@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.h,v 1.10 2008-10-31 14:07:51 nmelchio Exp $
+ * $Id: vpMeLine.h,v 1.11 2008-10-31 17:20:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -99,7 +99,7 @@ public:
   void computeRhoTheta(vpImage<unsigned char> &I) ;
   double getRho() const ;
   double getTheta() const ;
-  void getExtremities(unsigned &i1, unsigned &j1, unsigned &i2, unsigned &j2) ;
+  void getExtremities(double &i1, double &j1, double &i2, double &j2) ;
 };
 
 
