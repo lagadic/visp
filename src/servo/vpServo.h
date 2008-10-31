@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.16 2008-09-26 15:20:58 fspindle Exp $
+ * $Id: vpServo.h,v 1.17 2008-10-31 17:45:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,18 +67,19 @@
   vpServoException::notKilledProperly.
 
   \code
-  vpServo task ;
+  // Creation od a Theta U vector that represent the rotation
+  // between the desired camera frame and the current one.
+  vpThetaUVector tu_cdRc; 
+  tu_cdRc[0] =0.1;
+  tu_cdRc[1] =0.2;
+  tu_cdRc[2] =0.3;
 
-  vpThetaUVector tuv;
-  tuv[0] =0.1;
-  tuv[1] =0.2;
-  tuv[2] =0.3;
-
-  vpFeatureThetaU tu;
-  tu.buildFrom(tuv);
+  // Build the current visual feature
+  vpFeatureThetaU s(vpFeatureThetaU::cdRc);
+  s.buildFrom(tu_cdRc);
   ...
-  task.addFeature(tu); // Add current ThetaU feature
-
+  task.addFeature(s); // Add current ThetaU feature
+  ...
   // A call to kill() is requested here to destroy properly the current
   // and desired feature lists.
   task.kill();
@@ -90,42 +91,6 @@
 
 class VISP_EXPORT vpServo
 {
-private:
-  //! basic initialization
-  void init() ;
-public:
-  //! constructor
-  vpServo() { init() ; }
-  //! destructor
-  virtual ~vpServo() ;
-  //! destruction (memory deallocation if required)
-  void kill() ;
-public:
-  //! Interaction matrix
-  vpMatrix L ;
-  //! error
-  vpColVector error ;
-  //! task Jacobian  J1 = L cVa aJe
-  vpMatrix J1 ;
-  //! pseudo inverse of the Jacobian
-  vpMatrix J1p ;
-
-  //! current state
-  vpColVector s ;
-  //! desired state
-  vpColVector sStar ;
-
-  //! primary task e1 = J1p(s-s*)
-  vpColVector e1 ;
-  //! task e = e1 + (I-J1p J1) e2
-  vpColVector e ;
-
-
-  //! articular velocity
-  vpColVector q_dot ;
-  //! camera velocity
-  vpColVector v ;
-
   /*
     Choice of the visual servoing control law
   */
@@ -160,27 +125,19 @@ public:
       MINIMUM
     } vpServoPrintType;
 
-  //!  chosen visual servoing control law
-  vpServoType servoType;
-  //!  Choice of the visual servoing control law
-  void setServo(vpServoType _servo_type) ;
+public:
+  // default constructor
+  vpServo();
   //! constructor with Choice of the visual servoing control law
   vpServo(vpServoType _servoType) ;
-  /*
-    Twist transformation matrix
-  */
-private:
-  //! Twist transformation matrix between Re and Rc
-  vpTwistMatrix cVe ;
-  bool init_cVe ;
-  //! Twist transformation matrix between Rf and Rc
-  vpTwistMatrix cVf ;
-  bool init_cVf ;
-  //! Twist transformation matrix between Re and Rf
-  vpTwistMatrix fVe ;
-  bool init_fVe ;
+  //! destructor
+  virtual ~vpServo() ;
+  //! destruction (memory deallocation if required)
+  void kill() ;
 
-public:
+  //!  Choice of the visual servoing control law
+  void setServo(vpServoType _servo_type) ;
+
   void set_cVe(vpTwistMatrix &_cVe) { cVe = _cVe ; init_cVe = true ; }
   void set_cVf(vpTwistMatrix &_cVf) { cVf = _cVf ; init_cVf = true ; }
   void set_fVe(vpTwistMatrix &_fVe) { fVe = _fVe ; init_fVe = true ; }
@@ -189,53 +146,21 @@ public:
   void set_cVf(vpHomogeneousMatrix &cMf) { cVf.buildFrom(cMf); init_cVf=true ;}
   void set_fVe(vpHomogeneousMatrix &fMe) { fVe.buildFrom(fMe); init_fVe=true ;}
 
-  /*
-    Jacobians
-  */
-private:
-  //! Jacobian expressed in the end-effector frame
-  vpMatrix eJe ;
-  bool init_eJe ;
-  //! Jacobian expressed in the robot reference frame
-  vpMatrix fJe ;
-  bool init_fJe ;
-
-public:
   void set_eJe(vpMatrix &_eJe) { eJe = _eJe ; init_eJe = true ; }
   void set_fJe(vpMatrix &_fJe) { fJe = _fJe ; init_fJe = true ; }
 
-  /*
-    Task building
-  */
-private:
-  //! true if the error has been computed
-  bool errorComputed ;
-  //! true if the interaction matrix has been computed
-  bool interactionMatrixComputed ;
-  //! dimension of the task
-  int dim_task ;
-  bool taskWasKilled; // flag to indicate if the task was killed
-public:
-  //! rank of the task Jacobian
-  int rankJ1 ;
-public:
-  //! list of visual features (produce s)
-  vpList<vpBasicFeature *> featureList ;
-  //! list of desired visual features (produce s*)
-  vpList<vpBasicFeature *> desiredFeatureList ;
-  //! list of selection among visual features
-  //! used to selection a subset of each visual feature if required
-  vpList<int> featureSelectionList ;
-public:
 
-  //! sign of the interaction +-1 (Eye-in-hand vs eye-to-hand)
-  int signInteractionMatrix ;
-  //! type of the interaction matrox (current, mean, desired, user)
-  vpServoIteractionMatrixType interactionMatrixType ;
-  vpServoInversionType inversionType ;
   //! set the type of the interaction matrox (current, mean, desired, user)
   void setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
 				const vpServoInversionType &interactionMatrixInversion=PSEUDO_INVERSE) ;
+
+  //! set the gain lambda
+  void setLambda(double _lambda) { lambda .initFromConstant (_lambda) ; }
+  void setLambda(const double at_zero,
+		 const double at_infinity,
+		 const double deriv_at_zero)
+  { lambda .initStandard (at_zero, at_infinity, deriv_at_zero) ; }
+  void setLambda(const vpAdaptativeGain& _l){lambda=_l;}
 
   //! create a new ste of  two visual features
   void addFeature(vpBasicFeature& s, vpBasicFeature& s_star,
@@ -249,48 +174,122 @@ public:
   //! compute the error between the current set of visual features and
   //! the desired set of visual features
   vpColVector computeError() ;
-  //! test if all the initialiazation are correct if true control law can
+  //! compute the desired control law
+  vpColVector computeControlLaw() ;
+  //! test if all the initialization are correct if true control law can
   //! be computed
   bool testInitialization() ;
   //! test if all the update are correct if true control law can
   //! be computed
   bool testUpdated() ;
-  //! compute the desired control law
-  vpColVector computeControlLaw() ;
 
 
-private:
-  //! projection operators WpW
-  vpMatrix WpW ;
-  //! projection operators I-WpW
-  vpMatrix I_WpW ;
-
-public:
   //! add a secondary task
   vpColVector secondaryTask(vpColVector &de2dt) ;
   //! add a secondary task
   vpColVector secondaryTask(vpColVector &e2, vpColVector &de2dt) ;
 
-public:
   //! get the task dimension
   int getDimension() ;
 
-  /*    gain  */
-public:
-  //! gain
-  vpAdaptativeGain lambda ;
-public:
-  //! set the gain lambda
-  void setLambda(double _lambda) { lambda .initFromConstant (_lambda) ; }
-  void setLambda(const double at_zero,
-		 const double at_infinity,
-		 const double deriv_at_zero)
-  { lambda .initStandard (at_zero, at_infinity, deriv_at_zero) ; }
-  void setLambda(const vpAdaptativeGain& _l){lambda=_l;}
 
   void print(const vpServo::vpServoPrintType display_level=ALL,
 	     std::ostream &os = std::cout) ;
+private:
+  //! basic initialization
+  void init() ;
 
+public:
+  //! Interaction matrix
+  vpMatrix L ;
+  //! error
+  vpColVector error ;
+  //! task Jacobian  J1 = L cVa aJe
+  vpMatrix J1 ;
+  //! pseudo inverse of the Jacobian
+  vpMatrix J1p ;
+
+  //! current state
+  vpColVector s ;
+  //! desired state
+  vpColVector sStar ;
+
+  //! primary task e1 = J1p(s-s*)
+  vpColVector e1 ;
+  //! task e = e1 + (I-J1p J1) e2
+  vpColVector e ;
+
+
+  //! articular velocity
+  vpColVector q_dot ;
+  //! camera velocity
+  vpColVector v ;
+
+  //!  chosen visual servoing control law
+  vpServoType servoType;
+
+  //! rank of the task Jacobian
+  int rankJ1 ;
+
+  //! list of visual features (produce s)
+  vpList<vpBasicFeature *> featureList ;
+  //! list of desired visual features (produce s*)
+  vpList<vpBasicFeature *> desiredFeatureList ;
+  //! list of selection among visual features
+  //! used to selection a subset of each visual feature if required
+  vpList<int> featureSelectionList ;
+
+  //! gain
+  vpAdaptativeGain lambda ;
+
+  //! sign of the interaction +-1 (Eye-in-hand vs eye-to-hand)
+  int signInteractionMatrix ;
+  //! type of the interaction matrox (current, mean, desired, user)
+  vpServoIteractionMatrixType interactionMatrixType ;
+  vpServoInversionType inversionType ;
+
+private:
+  /*
+    Twist transformation matrix
+  */
+
+  //! Twist transformation matrix between Re and Rc
+  vpTwistMatrix cVe ;
+  bool init_cVe ;
+  //! Twist transformation matrix between Rf and Rc
+  vpTwistMatrix cVf ;
+  bool init_cVf ;
+  //! Twist transformation matrix between Re and Rf
+  vpTwistMatrix fVe ;
+  bool init_fVe ;
+
+  /*
+    Jacobians
+  */
+
+  //! Jacobian expressed in the end-effector frame
+  vpMatrix eJe ;
+  bool init_eJe ;
+  //! Jacobian expressed in the robot reference frame
+  vpMatrix fJe ;
+  bool init_fJe ;
+
+  /*
+    Task building
+  */
+
+  //! true if the error has been computed
+  bool errorComputed ;
+  //! true if the interaction matrix has been computed
+  bool interactionMatrixComputed ;
+  //! dimension of the task
+  int dim_task ;
+  bool taskWasKilled; // flag to indicate if the task was killed
+
+  //! projection operators WpW
+  vpMatrix WpW ;
+  //! projection operators I-WpW
+  vpMatrix I_WpW ;
 } ;
 
 

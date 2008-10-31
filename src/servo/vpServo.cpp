@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.21 2008-09-26 15:20:58 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.22 2008-10-31 17:45:20 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,73 @@
 */
 
 
+/*!
+  Default constructor.
+
+  By default:
+
+  - the interaction matrix \f$ L \f$ is computed with the desired
+    features \f$ s^*\f$ (\f$ L=L_{s^*}\f$). With
+    setInteractionMatrixType() you can also use the interaction matrix
+    with the current visual features \f$L_s\f$, or the mean \f$(L_s /
+    2 + L_{s^*} / 2)\f$.
+
+  - the control law is build from the pseudo inverse of the
+    interaction matrix \f$ v = - \lambda \; L^+ \; e\f$. With
+    setInteractionMatrixType() can also set the usage of the transpose
+    \f$ v = \lambda \; L^t \; e\f$ .
+
+*/
+vpServo::vpServo() 
+{
+  init() ;
+}
+
+vpServo::vpServo(vpServoType _servoType)
+{
+  setServo(_servoType);
+}
+
+/*!
+  Destructor.
+
+  In fact, it does nothing. You have to call kill() to destroy the
+  current and desired feature lists.
+
+  \exception vpServoException::notKilledProperly : Task was not killed
+  properly. That means that you should explitly call kill().
+
+  \sa kill()
+*/
+vpServo::~vpServo()
+{
+  if (taskWasKilled == false) {
+    vpERROR_TRACE("--- Begin Warning Warning Warning Warning Warning ---");
+    vpERROR_TRACE("--- You should explicitly call vpServo.kill()...  ---");
+    vpERROR_TRACE("--- End Warning Warning Warning Warning Warning   ---");
+    throw(vpServoException(vpServoException::notKilledProperly,
+			   "Task was not killed properly"));
+  }
+}
+
+
+/*!
+  Initialize the servo.
+
+  By default:
+
+  - the interaction matrix \f$ L \f$ is computed with the desired
+    features \f$ s^*\f$ (\f$ L=L_{s^*}\f$). With
+    setInteractionMatrixType() you can also use the interaction matrix
+    with the current visual features \f$L_s\f$, or the mean \f$(L_s /
+    2 + L_{s^*} / 2)\f$.
+
+  - the control law is build from the pseudo inverse of the
+    interaction matrix \f$ v = - \lambda \; L^+ \; e\f$. With
+    setInteractionMatrixType() can also set the usage of the transpose
+    \f$ v = \lambda \; L^t \; e\f$ .
+
+*/
 void
 vpServo::init()
 {
@@ -90,9 +157,9 @@ vpServo::init()
 
   \code
   vpServo task ;
-  vpFeatureThetaU tu;
+  vpFeatureThetaU s;
   ...
-  task.addFeature(tu); // Add current ThetaU feature
+  task.addFeature(s); // Add current ThetaU feature
 
   task.kill(); // A call to kill() is requested here
   \endcode
@@ -121,7 +188,7 @@ vpServo::kill()
 	s_ptr=  desiredFeatureList.value() ;
 	if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
 	  {
-	    s_ptr->print() ;
+	    //	    s_ptr->print() ;
 	    delete s_ptr ;
 	    s_ptr = NULL ;
 	  }
@@ -159,32 +226,6 @@ vpServo::setServo(vpServoType _servoType)
       set_eJe(_eJe) ;
     };
 
-}
-/*!
-  Destructor.
-
-  In fact, it does nothing. You have to call kill() to destroy the
-  current and desired feature lists.
-
-  \exception vpServoException::notKilledProperly : Task was not killed
-  properly. That means that you should explitly call kill().
-
-  \sa kill()
-*/
-vpServo::~vpServo()
-{
-  if (taskWasKilled == false) {
-    vpERROR_TRACE("--- Begin Warning Warning Warning Warning Warning ---");
-    vpERROR_TRACE("--- You should explicitly call vpServo.kill()...  ---");
-    vpERROR_TRACE("--- End Warning Warning Warning Warning Warning   ---");
-    throw(vpServoException(vpServoException::notKilledProperly,
-			   "Task was not killed properly"));
-  }
-}
-
-vpServo::vpServo(vpServoType _servoType)
-{
-  setServo(_servoType);
 }
 
 
