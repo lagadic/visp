@@ -1113,7 +1113,7 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
       vpRotationMatrix rRei, ciRo ;
       rMe[i].extract(rRei) ;
       cMo[i].extract(ciRo) ;
-      std::cout << "rMei: " << std::endl << rMe[i] << std::endl;
+      //std::cout << "rMei: " << std::endl << rMe[i] << std::endl;
 
       for (unsigned int j=0 ; j < nbPose ; j++)
       {
@@ -1122,7 +1122,7 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
           vpRotationMatrix rRej, cjRo ;
           rMe[j].extract(rRej) ;
           cMo[j].extract(cjRo) ;
-	  std::cout << "rMej: " << std::endl << rMe[j] << std::endl;
+	  //std::cout << "rMej: " << std::endl << rMe[j] << std::endl;
 
           vpRotationMatrix rReij = rRej.t() * rRei;
 
