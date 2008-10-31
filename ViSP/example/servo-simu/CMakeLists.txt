@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2007-01-29 16:48:54 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.3 2008-10-31 17:48:29 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
 servoSimu3DCamVelocity.cpp
+servoSimu3DCamVelocity2.cpp
 servoSimuCircle2DCamVelocity.cpp
 servoSimuCircle2DCamVelocityDisplay.cpp
 servoSimuCylinder2DCamVelocityDisplay.cpp
