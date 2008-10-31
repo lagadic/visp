@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.16 2008-06-13 17:01:19 asaunier Exp $
+ * $Id: vpMeLine.cpp,v 1.17 2008-10-31 14:07:12 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,11 +59,11 @@ normalizeAngle(double &delta)
 }
 
 void
-computeDelta(double &delta, unsigned i1, unsigned j1, unsigned i2, unsigned j2)
+computeDelta(double &delta, int i1, int j1, int i2, int j2)
 {
 
-  double B = i1-i2 ;
-  double A = j1-j2 ;
+  double B = double(i1-i2) ;
+  double A = double(j1-j2) ;
 
   delta =  atan2(B,A) ;
   delta -= M_PI/2.0 ;
@@ -507,6 +507,13 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
 {
   vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<std::endl ;
 
+  int i1s, j1s, i2s, j2s;
+
+  i1s = (int)i1;
+  i2s = (int)i2;
+  j1s = (int)j1;
+  j2s = (int)j2;
+
   try{
 
     //  1. On fait ce qui concerne les droites (peut etre vide)
@@ -517,14 +524,14 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
       PExt[1].ifloat = i2 ;
       PExt[1].jfloat = j2 ;
 
-      double angle = atan2((double)(i1-i2),(double)(j1-j2)) ;
+      double angle = atan2((double)(i1s-i2s),(double)(j1s-j2s)) ;
       a = cos(angle) ;
       b = sin(angle) ;
 
       // Real values of a, b can have an other sign. So to get the good values
       // of a and b in order to initialise then c, we call track(I) just below
 
-      computeDelta(delta,i1,j1,i2,j2) ;
+      computeDelta(delta,i1s,j1s,i2s,j2s) ;
 
       //      vpTRACE("a: %f b: %f c: %f -b/a: %f delta: %f", a, b, c, -(b/a), delta);
 
@@ -554,6 +561,7 @@ vpMeLine::suppressPoints()
   while(!list.outside())
   {
     vpMeSite s = list.value() ;//current reference pixel
+
     if (s.suppress != 0)
       list.suppress() ;
     else
@@ -985,5 +993,15 @@ vpMeLine::getTheta() const
 {
   //  double theta =  atan2(a,b) ;
   return theta ;
+}
+
+void
+vpMeLine::getExtremities(unsigned& i1, unsigned& j1, unsigned& i2, unsigned& j2)
+{
+  /*Return the coordinates of the extremities of the line*/
+  i1 = PExt[0].ifloat;
+  j1 = PExt[0].jfloat;
+  i2 = PExt[1].ifloat;
+  j2 = PExt[1].jfloat;
 }
 
