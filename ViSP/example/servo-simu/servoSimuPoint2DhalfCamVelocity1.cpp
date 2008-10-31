@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity1.cpp,v 1.9 2008-06-17 08:08:26 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity1.cpp,v 1.10 2008-10-31 17:50:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -217,7 +217,7 @@ main(int argc, const char ** argv)
   vpHomogeneousMatrix cdMc ;
   cdMc = cdMo*cMo.inverse() ;
 
-  vpFeatureThetaU tu ;
+  vpFeatureThetaU tu(vpFeatureThetaU::cdRc) ;
   tu.buildFrom(cdMc) ;
 
   vpTRACE("\tsets the desired rotation (always zero !) ") ;

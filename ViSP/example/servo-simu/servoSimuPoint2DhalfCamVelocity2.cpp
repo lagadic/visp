@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity2.cpp,v 1.9 2008-06-17 08:08:26 asaunier Exp $
+ * $Id: servoSimuPoint2DhalfCamVelocity2.cpp,v 1.10 2008-10-31 17:50:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -283,7 +283,7 @@ main(int argc, const char ** argv)
 
   // from this displacement, we extract the rotation cdRc represented by
   // the angle theta and the rotation axis u
-  vpFeatureThetaU tu ;
+  vpFeatureThetaU tu(vpFeatureThetaU::cdRc) ;
   tu.buildFrom(cdMc) ;
   // This visual has to be regulated to zero
 
