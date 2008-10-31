@@ -5,12 +5,16 @@ ViSP 2.4.x (released ...)
   - Platform compatibility
     - Compatibility with g++ 4.3.0
   - New Features
+    - vpfeatureThetaU: Add cRcd feature, with ThetaU corresponding to the 
+      rotation the camera has to achieve to move from current frame to the 
+      desired one.
     - vp1394TwoGrabber: Get the timestamp associated to the grabbed image.
     - vpV4l2Grabber: Get the timestamp associated to the grabbed image.
     - vpRobotAfma6 and vpAfma6: Modifications to be compatible with the new 
       low level Adept controller provided by Cerebellum Automation.
   - Examples:
     - New examples in example/manual described in ViSP guide under preparation.
+    - example/servo-simu/servoSimu3DCamVelocity2.cpp
   - Documentation
     - Creation of a deprecated section.
     - Classes are now grouped in doxygen modules to help learning ViSP.

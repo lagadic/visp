@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimu3DCamVelocity.cpp,v 1.8 2008-06-17 08:08:26 asaunier Exp $
+ * $Id: servoSimu3DCamVelocity.cpp,v 1.9 2008-10-31 17:50:08 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -176,7 +176,7 @@ main(int argc, const char ** argv)
   cdMc = cdMo*cMo.inverse() ;
 
   vpFeatureTranslation t ;
-  vpFeatureThetaU tu ;
+  vpFeatureThetaU tu(vpFeatureThetaU::cdRc); // current feature
   t.buildFrom(cdMc) ;
   tu.buildFrom(cdMc) ;
 
@@ -184,7 +184,7 @@ main(int argc, const char ** argv)
   vpTRACE("since s is the rotation that the camera has to realize ") ;
 
   vpFeatureTranslation td ;
-  vpFeatureThetaU tud ;
+  vpFeatureThetaU tud(vpFeatureThetaU::cdRc); // desired feature
 
   vpTRACE("define the task") ;
   vpTRACE("\t we want an eye-in-hand control law") ;
