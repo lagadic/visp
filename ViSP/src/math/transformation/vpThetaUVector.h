@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.h,v 1.9 2008-10-03 15:50:16 fspindle Exp $
+ * $Id: vpThetaUVector.h,v 1.10 2008-11-05 20:07:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -45,6 +45,7 @@
   rotation
 */
 
+class vpHomogeneousMatrix;
 class vpRotationMatrix;
 class vpRzyxVector;
 class vpRxyzVector;
@@ -54,15 +55,11 @@ class vpRzyzVector;
 #include <visp/vpConfig.h>
 #include <visp/vpRotationVector.h>
 #include <visp/vpRotationMatrix.h>
+#include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpEulerVector.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpRzyxVector.h>
 
-class vpRotationMatrix;
-class vpRzyxVector;
-class vpRxyzVector;
-class vpEulerVector;
-class vpRzyzVector;
 
 /*!
   \class vpThetaUVector
@@ -86,10 +83,12 @@ public:
   //! constructor
   vpThetaUVector() { ; }
   //! copy operator
-  vpThetaUVector &operator=(const vpThetaUVector &m);
+  vpThetaUVector &operator=(const vpThetaUVector &tu);
   //! copy constructor
-  vpThetaUVector(const vpThetaUVector &m) ;
+  vpThetaUVector(const vpThetaUVector &tu) ;
 
+  //! constructor initialize a Theta U vector from a homogeneous matrix
+  vpThetaUVector(const vpHomogeneousMatrix & M) ;
   //! constructor initialize a Theta U vector from a rotation matrix
   vpThetaUVector(const vpRotationMatrix& R) ;
   //! constructor initialize a Theta U vector from a RzyxVector
@@ -103,16 +102,18 @@ public:
   vpThetaUVector(const double thetaux, const double thetauy, const double thetauz) :
     vpRotationVector (thetaux, thetauy, thetauz) { ; }
 
+  //! convert an homogeneous matrix into Theta U vector
+  vpThetaUVector buildFrom(const vpHomogeneousMatrix& M) ;
   //! convert a rotation matrix into Theta U vector
   vpThetaUVector buildFrom(const vpRotationMatrix& R) ;
   //! convert an Rzyx vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRzyxVector &e) ;
+  vpThetaUVector buildFrom(const vpRzyxVector &rzyx) ;
   //! convert an Rzyz vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRzyzVector &e) ;
+  vpThetaUVector buildFrom(const vpRzyzVector &zyz) ;
   //! convert an Euler vector into Theta U vector
-  vpThetaUVector buildFrom(const vpEulerVector &e) ;
+  vpThetaUVector buildFrom(const vpEulerVector &euler) ;
   //! convert an Rxyz vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRxyzVector &e) ;
+  vpThetaUVector buildFrom(const vpRxyzVector &xyz) ;
 
   // extract the angle and the axis from the ThetaU representation
   void extract( double &theta, vpColVector &u) const;
