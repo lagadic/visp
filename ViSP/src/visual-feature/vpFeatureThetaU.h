@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.h,v 1.13 2008-10-31 17:50:09 fspindle Exp $
+ * $Id: vpFeatureThetaU.h,v 1.14 2008-11-05 20:04:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -156,7 +156,8 @@ public:
   void init() ;
   // Basic constructor.
   vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r) ;
-  // constructor : build from a rotation matrix
+  vpFeatureThetaU(vpThetaUVector &tu,
+		  vpFeatureThetaURotationRepresentationType r) ;
   vpFeatureThetaU(vpRotationMatrix &R,
 		  vpFeatureThetaURotationRepresentationType r) ;
   vpFeatureThetaU(vpHomogeneousMatrix &M, 

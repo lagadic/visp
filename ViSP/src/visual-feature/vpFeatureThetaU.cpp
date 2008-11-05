@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.cpp,v 1.14 2008-10-31 17:50:09 fspindle Exp $
+ * $Id: vpFeatureThetaU.cpp,v 1.15 2008-11-05 20:04:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -94,6 +94,37 @@ vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r):
 
 /*!
 
+
+  Constructor that build a 3D visual feature from a \f$ \theta u \f$
+  vector that represent the rotation \f$ R \f$ the camera has to
+  achieve.
+
+  \param tu [in] : Rotation that the camera has to achieve in \f$
+  \theta u \f$ angle/axis representation. Depending on the rotation
+  representation type
+  (vpFeatureThetaU::vpFeatureThetaURotationRepresentationType) used to
+  construct this object, the parameter \e tu represents either the
+  rotation that the camera has to achieve to move from the desired
+  camera frame to the current one (\f$ ^{c^*}R_c\f$), or the rotation
+  that the camera has to achieve to move from the current camera frame
+  to the desired one (\f$ ^{c}R_{c^*}\f$).
+
+*/
+
+vpFeatureThetaU::vpFeatureThetaU(vpThetaUVector &tu, 
+				 vpFeatureThetaURotationRepresentationType r):
+  vpBasicFeature()
+{
+  init() ;
+  
+  buildFrom(tu) ;
+
+  // kind of rotation representation
+  rotation = r;
+}
+
+/*!
+
   Constructor that build a 3D \f$ \theta u \f$ visual feature from a
   rotation matrix \f$ R \f$ that represent the rotation that
   the camera has to achieve.
@@ -161,7 +192,7 @@ vpFeatureThetaU::vpFeatureThetaU(vpHomogeneousMatrix &M,
   represent the rotation \f$ R \f$ the camera has to achieve.
 
   \param tu [in] : Rotation that the camera has to achieve in \f$
-  \theta u \f$ axis/vector representation. Depending on the rotation
+  \theta u \f$ angle/axis representation. Depending on the rotation
   representation type
   (vpFeatureThetaU::vpFeatureThetaURotationRepresentationType) used to
   construct this object, the parameter \e tu represents either the
