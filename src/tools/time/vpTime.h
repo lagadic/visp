@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.h,v 1.9 2008-09-26 15:20:59 fspindle Exp $
+ * $Id: vpTime.h,v 1.10 2008-11-05 20:03:09 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,6 +52,16 @@
   \class vpTime
   \ingroup Time
   \brief Time management and measurement.
+
+  The example below shows how to synchronize a loop to a given framerate.
+
+  \code
+  while(1) {
+    t = vpTime::measureTimeMs();
+    ...
+    vpTime::wait(t, 40); // Loop time is set to 40 ms, ie 25 Hz
+  }
+  \endcode
 
 */
 
