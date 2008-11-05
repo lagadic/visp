@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpThetaUVector.cpp,v 1.11 2008-10-03 15:50:16 fspindle Exp $
+ * $Id: vpThetaUVector.cpp,v 1.12 2008-11-05 20:07:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -69,6 +69,11 @@ vpThetaUVector::vpThetaUVector(const vpThetaUVector &m) : vpRotationVector()
 }
 
 //! initialize a Theta U vector from a rotation matrix
+vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix& M)
+{
+    buildFrom(M) ;
+}
+//! initialize a Theta U vector from a rotation matrix
 vpThetaUVector::vpThetaUVector(const vpRotationMatrix& R)
 {
 
@@ -89,6 +94,18 @@ vpThetaUVector::vpThetaUVector(const vpRzyzVector& rzyz)
 vpThetaUVector::vpThetaUVector(const vpRxyzVector& rxyz)
 {
   buildFrom(rxyz) ;
+}
+
+//! convert an homogeneous matrix into Theta U vector
+vpThetaUVector
+vpThetaUVector::buildFrom(const vpHomogeneousMatrix& M)
+{
+  vpRotationMatrix R;
+
+  M.extract(R);
+  buildFrom(R);
+
+  return *this ;
 }
 
 //! convert a rotation matrix into Theta U vector
