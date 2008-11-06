@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.21 2008-09-26 15:17:18 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.22 2008-11-06 17:07:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -283,6 +283,7 @@ public:
   void initialize(); 
   void setCapture(dc1394switch_t _switch);
   void setTransmission(dc1394switch_t _switch);
+  void setIsoSpeed(dc1394speed_t speed);
 
  private:
   dc1394camera_t *camera, **cameras;
