@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.32 2008-09-26 15:17:18 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.33 2008-11-06 17:07:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -247,11 +247,8 @@ vp1394TwoGrabber::setCamera(unsigned int camera_id)
 
   this->camera_id =  camera_id;
 
-//  camIsOpen[camera_id] = true;
-
   // create a pointer to the working camera
   camera = cameras[camera_id];
-  dc1394_video_set_iso_speed(camera, DC1394_ISO_SPEED_400);
 }
 
 /*!
@@ -1401,6 +1398,7 @@ vp1394TwoGrabber::open()
       //#endif
     }
     setCamera(camera_id);
+    setIsoSpeed(DC1394_ISO_SPEED_400);
     setCapture(DC1394_ON);
     setTransmission(DC1394_ON);
     camIsOpen[camera_id] = true;
@@ -1621,6 +1619,16 @@ vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
   //    }
 }
 
+/*!
+  Speeds over 400Mbps are only available in "B" mode.
+
+  \param speed : Iso data transmission speed.
+*/
+void
+vp1394TwoGrabber::setIsoSpeed(dc1394speed_t speed)
+{
+  dc1394_video_set_iso_speed(camera, speed);
+}
 
 /*!
   Exist only for compatibility with other grabbing devices.
