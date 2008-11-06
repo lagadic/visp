@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.cpp,v 1.15 2008-11-05 20:04:57 fspindle Exp $
+ * $Id: vpFeatureThetaU.cpp,v 1.16 2008-11-06 09:26:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,7 +76,7 @@ vpFeatureThetaU::init()
 }
 
 /*! 
-  Default constructor.
+  Default constructor that build a visual feature and initialize it to zero.
 
   \param r [in] : The rotation representation of the \f$ \theta u\f$
   visual feature.
@@ -94,7 +94,6 @@ vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r):
 
 /*!
 
-
   Constructor that build a 3D visual feature from a \f$ \theta u \f$
   vector that represent the rotation \f$ R \f$ the camera has to
   achieve.
@@ -109,6 +108,7 @@ vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r):
   that the camera has to achieve to move from the current camera frame
   to the desired one (\f$ ^{c}R_{c^*}\f$).
 
+  \param r [in] : The rotation representation of \f$ \theta u \f$.
 */
 
 vpFeatureThetaU::vpFeatureThetaU(vpThetaUVector &tu, 
@@ -261,53 +261,34 @@ vpFeatureThetaU::buildFrom(const vpHomogeneousMatrix &M)
 
 /*!
 
-  Initialise the current 3D visual feature \f$ s\f$ with the \f$\theta
-  u_x \f$ component.
+  Initialise the \f$\theta u_x \f$ subset value of the current 3D
+  visual feature \f$ s\f$.
 
-  \param tu_x : \f$\theta u_x \f$ component.
-  \sa get_TUx()
+  \param tu_x : \f$\theta u_x \f$ subset value to initialize.
+  \sa get_TUz()
 */
 void vpFeatureThetaU::set_TUx(const double tu_x)
 {
     s[0] = tu_x ;
 }
 /*!
-  Return the \f$\theta u_x \f$ visual feature value.
 
-*/
-double vpFeatureThetaU::get_TUx()  const
-{
-    return s[0] ;
-}
+  Initialise the \f$\theta u_y \f$ subset value of the current 3D
+  visual feature \f$ s\f$.
 
-/*!
-
-  Initialise the current 3D visual feature \f$ s\f$ with the \f$\theta
-  u_y \f$ component.
-
-  \param tu_y : \f$\theta u_y \f$ component.
+  \param tu_y : \f$\theta u_y \f$ subset value to initialize.
   \sa get_TUy()
 */
 void vpFeatureThetaU::set_TUy(const double tu_y)
 {
     s[1] = tu_y ;
 }
-
-/*!
-  Return the \f$\theta u_y \f$ visual feature value.
-
-*/
-double vpFeatureThetaU::get_TUy()   const
-{
-    return s[1] ;
-}
-
 /*!
 
-  Initialise the current 3D visual feature \f$ s\f$ with the \f$\theta
-  u_z \f$ component.
+  Initialise the \f$\theta u_z \f$ subset value of the current 3D
+  visual feature \f$ s\f$.
 
-  \param tu_z : \f$\theta u_z \f$ component.
+  \param tu_z : \f$\theta u_z \f$ subset value to initialize.
   \sa get_TUz()
 */
 void
@@ -316,8 +297,31 @@ vpFeatureThetaU::set_TUz(const double tu_z)
     s[2] = tu_z ;
 }
 
+/*!  
+
+  Return the \f$\theta u_x \f$ subset value of the current visual feature 
+  \f$s\f$.
+
+*/
+double vpFeatureThetaU::get_TUx()  const
+{
+    return s[0] ;
+}
+
 /*!
-  Return the \f$\theta u_z \f$ visual feature value.
+  Return the \f$\theta u_y \f$ subset value of the current visual feature 
+  \f$s\f$.
+
+*/
+double vpFeatureThetaU::get_TUy()   const
+{
+    return s[1] ;
+}
+
+
+/*!
+  Return the \f$\theta u_z \f$ subset value of the current visual feature 
+  \f$s\f$.
 
 */
 double
@@ -364,7 +368,7 @@ vpFeatureThetaU::get_TUz() const
   vpFeatureThetaU s(vpFeatureThetaU::cdRc);
   s.buildFrom(cdMc);
 
-  vpMatrix L_x =  s.interaction( vpFeatureThetaU::selectTUx() );
+  vpMatrix L_x = s.interaction( vpFeatureThetaU::selectTUx() );
   \endcode
 
   The code below shows how to compute the interaction matrix
@@ -372,7 +376,7 @@ vpFeatureThetaU::get_TUz() const
   subset visual feature:
 
   \code
-  vpMatrix L_xy =  s.interaction( vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy() );
+  vpMatrix L_xy = s.interaction( vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy() );
   \endcode
 
   L_xy is here now a 2 by 6 matrix. The first line corresponds to
@@ -383,7 +387,7 @@ vpFeatureThetaU::get_TUz() const
   \theta u \f$ components by:
 
   \code
-  vpMatrix L_xyz =  s.interaction( vpBasicFeature::FEATURE_ALL );
+  vpMatrix L_xyz = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
 
   In that case, L_xyz is a 3 by 6 interaction matrix where the last
@@ -470,10 +474,12 @@ vpFeatureThetaU::interaction(const int select) const
   Compute the error \f$ (s-s^*)\f$ between the current and the desired
   visual features from a subset of the possible features.
 
-  Since this visual feature \f$ s \f$ represent the rotation from the desired
-  camera frame to the desired one \f$^{c^*}R_{c} \f$, the desired
-  visual feature \f$ s^* \f$ should be zero. Thus, the error is here
-  equal to the current visual feature \f$ s \f$.
+  Since this visual feature \f$ s \f$ represent either the rotation
+  from the desired camera frame to the current camera frame
+  \f$^{c^*}R_{c} \f$, or the rotation from the current camera frame to
+  the desired camera frame \f$^{c}R_{c^*} \f$, the desired visual
+  feature \f$ s^* \f$ should be zero. Thus, the error is here equal to
+  the current visual feature \f$ s \f$.
 
   \param s_star : Desired visual visual feature that should be equal to zero.
 
@@ -493,7 +499,8 @@ vpFeatureThetaU::interaction(const int select) const
   \exception vpFeatureException::badInitializationError : If the
   desired visual feature \f$ s^* \f$ is not equal to zero.
 
-  The code below shows how to use this method to manipulate the \f$\theta u_z \f$ subset:
+  The code below shows how to use this method to manipulate the
+  \f$\theta u_z \f$ subset:
 
   \code
   // Creation of the current feature s
@@ -505,11 +512,22 @@ vpFeatureThetaU::interaction(const int select) const
   vpFeatureThetaU s_star(vpFeatureThetaU::cdRc); 
 
   // Compute the interaction matrix for the ThetaU_z feature
-  vpMatrix L_z =  s.interaction( vpFeatureThetaU::selectTUz() );
+  vpMatrix L_z = s.interaction( vpFeatureThetaU::selectTUz() );
 
-  // Compute the error vector (s-s^*) for the ThetaU_z feature
+  // Compute the error vector (s-s*) for the ThetaU_z feature
   s.error(s_star, vpFeatureThetaU::selectTUz());
   \endcode
+
+  To manipulate the subset features \f$s=(\theta u_y, \theta u_z)\f$,
+  the code becomes:
+  \code
+  // Compute the interaction matrix for the ThetaU_y, ThetaU_z features
+  vpMatrix L_yz = s.interaction( vpFeatureThetaU::selectTUy() | vpFeatureThetaU::selectTUz() );
+
+  // Compute the error vector (s-s*) for the ThetaU_y, ThetaU_z feature
+  s.error(s_star, vpFeatureThetaU::selectTUy() | vpFeatureThetaU::selectTUz());
+  \endcode
+
 */
 vpColVector
 vpFeatureThetaU::error(const vpBasicFeature &s_star,
@@ -517,38 +535,36 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6)
-  {
+    {
+      vpERROR_TRACE("s* should be zero ! ") ;
+      throw(vpFeatureException(vpFeatureException::badInitializationError,
+			       "s* should be zero !")) ;
+    }
 
-    vpERROR_TRACE("s* should be zero ! ") ;
-        throw(vpFeatureException(vpFeatureException::badInitializationError,
-				 "s* should be zero !")) ;
-
-  }
-
-    vpColVector e(0) ;
+  vpColVector e(0) ;
 
 
-    if (vpFeatureThetaU::selectTUx() & select )
+  if (vpFeatureThetaU::selectTUx() & select )
     {
       vpColVector ex(1) ;
       ex[0] = s[0]  ;
       e = vpMatrix::stackMatrices(e,ex) ;
     }
 
-    if (vpFeatureThetaU::selectTUy() & select )
+  if (vpFeatureThetaU::selectTUy() & select )
     {
       vpColVector ey(1) ;
       ey[0] = s[1] ;
       e = vpMatrix::stackMatrices(e,ey) ;
     }
 
-    if (vpFeatureThetaU::selectTUz() & select )
+  if (vpFeatureThetaU::selectTUz() & select )
     {
       vpColVector ez(1) ;
       ez[0] = s[2] ;
       e = vpMatrix::stackMatrices(e,ez) ;
     }
-    return e ;
+  return e ;
 }
 
 /*!
@@ -573,8 +589,8 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
   s.buildFrom(tu);
 
   s.print(); // print all the 3 components of the feature
+  s.print(vpBasicFeature::FEATURE_ALL);  // same behavior then previous line
   s.print(vpFeatureThetaU::selectTUz()); // print only the ThetaU_z component
-
   \endcode
 */
 void
@@ -593,6 +609,17 @@ vpFeatureThetaU::print(const int select) const
   std::cout << std::endl;
 }
 
+/*!
+  
+  Create an object with the same type.
+
+  \code
+  vpBasicFeature *s_star;
+  vpFeatureThetaU s;
+  s_star = s.duplicate(); // s_star is now a vpFeatureThetaU
+  \endcode
+
+*/
 vpFeatureThetaU *vpFeatureThetaU::duplicate() const
 {
   vpFeatureThetaU *feature;
