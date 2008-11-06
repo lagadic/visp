@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.h,v 1.14 2008-11-05 20:04:57 fspindle Exp $
+ * $Id: vpFeatureThetaU.h,v 1.15 2008-11-06 09:26:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -112,15 +112,36 @@
   vpFeatureThetaU() object by using the selector
   vpFeatureThetaU::vpFeatureThetaURotationRepresentationType.
 
-
   Depending on the choice of the visual feature representation, the
   interaction() method allows to compute the interaction matrix \f$
-  L_{\theta u} \f$ associated to the visual feature, while the error()
+  L \f$ associated to the visual feature, while the error()
   method computes the error vector \f$(s - s^*)\f$ between the current
   visual feature and the desired one.
 
   To know more on the \f$ \theta u \f$ axis/angle representation for a
   3D rotation see the vpThetaUVector class.
+
+  The code below shows how to handle \f$\theta u\f$ visual features.
+
+  \code
+  vpHomogeneousMatrix cdMc;
+  ... // cdMc need here to be initialized from for example a pose estimation.
+
+  // Creation of the current feature s
+  vpFeatureThetaU s(vpFeatureThetaU::cdRc);
+  s.buildFrom(cdMc) // Initialization of the feature
+
+  // Creation of the desired feature s*. By default this feature is 
+  // initialized to zero
+  vpFeatureThetaU s_star; 
+
+  // Compute the interaction matrix for the ThetaU feature
+  vpMatrix L = s.interaction();
+
+  // Compute the error vector (s-s*) for the ThetaU feature
+  s.error(s_star);
+  \endcode
+  
 
 */
 class VISP_EXPORT vpFeatureThetaU : public vpBasicFeature
@@ -169,17 +190,18 @@ public:
   void buildFrom(const vpHomogeneousMatrix &M) ;
 
 		  
-  //! Destructor.
+  //! Destructor. Does nothing.
   virtual ~vpFeatureThetaU() { /*vpTRACE("0x%x", this)*/ ;}
 
 public:
 
 
   void set_TUx(const double tu_x) ;
-  double get_TUx()  const ;
   void set_TUy(const double tu_y) ;
-  double get_TUy()   const ;
   void set_TUz(const double tu_z) ;
+
+  double get_TUx()  const ;
+  double get_TUy()   const ;
   double get_TUz() const  ;
 
 
@@ -190,7 +212,7 @@ public:
 
   /*! 
 
-    Function used to select the \f$ \theta u_x\f$ component of the \f$
+    Function used to select the \f$ \theta u_x\f$ subset of the \f$
     \theta u \f$ visual feature.
 
     This function is to use in conjunction with interaction() in order
@@ -202,7 +224,7 @@ public:
   inline static int selectTUx()  { return FEATURE_LINE[0] ; }
   /*! 
 
-    Function used to select the \f$ \theta u_y\f$ component of the \f$
+    Function used to select the \f$ \theta u_y\f$ subset of the \f$
     \theta u \f$ visual feature.
 
     This function is to use in conjunction with interaction() in order
@@ -214,7 +236,7 @@ public:
   inline static int selectTUy()  { return FEATURE_LINE[1] ; }
   /*! 
 
-    Function used to select the \f$ \theta u_z\f$ component of the \f$
+    Function used to select the \f$ \theta u_z\f$ subset of the \f$
     \theta u \f$ visual feature.
 
     This function is to use in conjunction with interaction() in order
