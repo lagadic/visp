@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2008-05-23 13:25:47 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.4 2008-11-07 09:41:42 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -48,7 +48,6 @@ SET (SOURCE
   image-manipulation/manGrab1394-2.cpp
   image-manipulation/manGrabDirectShow.cpp
   image-manipulation/manGrabDisk.cpp
-  image-manipulation/manGrabOSXcfox.cpp
   image-manipulation/manGrabV4l2.cpp
 )
 
