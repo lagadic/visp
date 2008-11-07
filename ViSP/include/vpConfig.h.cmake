@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.23 2008-05-16 10:02:28 asaunier Exp $
+ * $Id: vpConfig.h.cmake,v 1.24 2008-11-07 09:56:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -115,18 +115,12 @@
 // in more recent releases.
 #cmakedefine VISP_HAVE_DC1394_2_FIND_CAMERAS
 
-// Defined if cfox library is available (only under MAC OS X).
-#cmakedefine VISP_HAVE_CFOX
-
 // Defined if Video For Linux Two available.
 #cmakedefine VISP_HAVE_V4L2
 
 // Defined if itifg-8.x (Coreco Imaging) framegraber driver available.
 #cmakedefine VISP_HAVE_ITIFG8
 #cmakedefine VISP_HAVE_ITIFG8_VERSION ${VISP_HAVE_ITIFG8_VERSION}
-
-// Defined if Irisa's ICcomp framegraber available.
-#cmakedefine VISP_HAVE_ICCOMP
 
 // Defined if DirectShow library is available (only under Windows).
 #cmakedefine VISP_HAVE_DIRECTSHOW

@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.24 2008-03-26 09:11:57 asaunier Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.25 2008-11-07 09:56:00 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -80,9 +80,7 @@ SET (SRC_FRAMEGRABBER_DEVICE
   framegrabber-device/1394/vp1394TwoGrabber.cpp
   framegrabber-device/disk/vpDiskGrabber.cpp
   framegrabber-device/generic-framegrabber/vpFrameGrabberException.cpp
-  framegrabber-device/IC-Comp/vpIcCompGrabber.cpp
   framegrabber-device/itifg8/vpItifg8Grabber.cpp
-  framegrabber-device/OSX-cfox/vpOSXcfoxGrabber.cpp
   framegrabber-device/v4l2/vpV4l2Grabber.cpp 
   framegrabber-device/directshow/vpDirectShowGrabber.cpp
   framegrabber-device/directshow/vpDirectShowGrabberImpl.cpp

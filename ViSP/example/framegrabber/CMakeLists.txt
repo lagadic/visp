@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2008-11-07 09:41:40 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.5 2008-11-07 09:56:05 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -44,7 +44,6 @@ SET (SOURCE
   grab1394.cpp
   grab1394Two.cpp
   grabDisk.cpp
-  grabIcComp.cpp
   grabItifg8.cpp
   grabItifg8Multi.cpp
   grabV4l2Color.cpp
@@ -71,7 +70,6 @@ ENDFOREACH(source)
 ADD_TEST(grab1394         grab1394 -d)
 ADD_TEST(grab1394Two      grab1394Two -d)
 ADD_TEST(grabDisk         grabDisk -d)
-ADD_TEST(grabIcComp       grabIcComp -d)
 ADD_TEST(grabItifg8       grabItifg8 -d)
 ADD_TEST(grabItifg8Multi  grabItifg8Multi -d)
 ADD_TEST(grabV4l2Color    grabV4l2Color -d)

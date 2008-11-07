@@ -1,4 +1,9 @@
 ViSP 2.4.x (released ...)
+  - Deprecated
+    - vpOSXcfoxGrabber was removed, since the C+Fox third party library 
+      available at http://cfox.sourceforge.net/ was not updated since 2005.
+    - vpIcCompGrabber was removed, since it uses a home made wrapper based 
+      on itifg-7.2.1 driver which is not maintained yet
   - Testing
     - Use of CDash insteed of Dart2. Dashboards are sent to 
       http://cdash.irisa.fr/CDash/index.php?project=ViSP
