@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-03-07 17:49:32 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.4 2008-11-07 09:41:40 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -47,7 +47,6 @@ SET (SOURCE
   grabIcComp.cpp
   grabItifg8.cpp
   grabItifg8Multi.cpp
-  grabOSXcfoxColor.cpp
   grabV4l2Color.cpp
   grabV4l2Grey.cpp
   grabDirectShow.cpp
@@ -75,7 +74,6 @@ ADD_TEST(grabDisk         grabDisk -d)
 ADD_TEST(grabIcComp       grabIcComp -d)
 ADD_TEST(grabItifg8       grabItifg8 -d)
 ADD_TEST(grabItifg8Multi  grabItifg8Multi -d)
-ADD_TEST(grabOSXcfoxColor grabOSXcfoxColor -d)
 ADD_TEST(grabV4l2Color    grabV4l2Color -d)
 ADD_TEST(grabV4l2Grey     grabV4l2Grey -d)
 ADD_TEST(grabDirectShow   grabDirectShow -d)
