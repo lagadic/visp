@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
+ * $Id: vpRobust.h,v 1.8 2008-11-07 15:31:31 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,8 +98,8 @@ public:
   double normalizedResidualMedian ;
  private:
 
-  double median(vpColVector &x);
-  double median(vpColVector &x, vpColVector &weights);
+  double median(const vpColVector &x);
+  double median(const vpColVector &x, vpColVector &weights);
 
   double computeNormalizedMedian(vpColVector &all_normres,
 				 const vpColVector &residues,
