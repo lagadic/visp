@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobust.cpp,v 1.12 2007-12-20 09:00:36 fspindle Exp $
+ * $Id: vpRobust.cpp,v 1.13 2008-11-07 15:31:31 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -160,7 +160,7 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
   // calculation.
   //med = median(residues, weights);
   //med = median(residues);
-  med = select(sorted_residues, 0, n_data-1, (int)n_data/2);
+   med = select(sorted_residues, 0, n_data-1, (int)n_data/2);
 
   residualMedian = med ;
 
@@ -751,7 +751,7 @@ vpRobust::psiMcLure(double sig, vpColVector &r)
 }
 
 double
-vpRobust::median(vpColVector &v)
+vpRobust::median(const vpColVector &v)
 {
   int i,j;
   int inf, sup;
@@ -835,7 +835,7 @@ vpRobust::median(vpColVector &v)
 // Calculate median only for the residues which have
 // not be rejected. i.e. weight=0
 double
-vpRobust::median(vpColVector &v, vpColVector &weights)
+vpRobust::median(const vpColVector &v, vpColVector &weights)
 {
   int i,j;
   int inf, sup;
