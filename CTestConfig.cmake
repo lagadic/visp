@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CTestConfig.cmake,v 1.7 2008-06-19 10:06:21 fspindle Exp $
+# $Id: CTestConfig.cmake,v 1.8 2008-11-07 09:56:00 fspindle Exp $
 #
 # Copyright (C) 1998-2008 Inria. All rights reserved.
 #
@@ -146,10 +146,6 @@ ENDIF(VISP_HAVE_ITIFG8)
 IF(VISP_HAVE_DIRECTSHOW)
   SET(BUILDNAME "${BUILDNAME}-Directshow")
 ENDIF(VISP_HAVE_DIRECTSHOW)
-# Cfox
-IF(VISP_HAVE_CFOX)
-  SET(BUILDNAME "${BUILDNAME}-cfox")
-ENDIF(VISP_HAVE_CFOX)
 
 #---- Video-devices ----
 # X11

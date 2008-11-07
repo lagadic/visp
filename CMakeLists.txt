@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.77 2008-10-21 07:57:41 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.78 2008-11-07 09:55:59 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -95,15 +95,11 @@ OPTION(BUILD_SHARED_LIBS "Build ViSP with shared libraries." OFF)
 OPTION(BUILD_EXAMPLES "Build ViSP examples." ON)
 
 IF (UNIX)
-  OPTION(USE_ICCOMP  "Compile ViSP with ICcomp framegrabber usage" OFF)
   OPTION(USE_ITIFG8  "Compile ViSP with itifg8 framegrabber usage" OFF)
   OPTION(USE_AFMA4   "Compile ViSP for Afma4 robot usage" OFF)
   OPTION(USE_AFMA6   "Compile ViSP for Afma6 robot usage" OFF)
   OPTION(USE_BICLOPS "Compile ViSP for Biclops head usage" OFF)
   OPTION(USE_PTU46   "Compile ViSP for Ptu-46 head usage" OFF)
-  IF(APPLE)
-    OPTION(USE_CFOX   "Compile ViSP with cfox usage" OFF)
-  ENDIF(APPLE)
 ENDIF(UNIX)
 
 # Set other options to default value
@@ -163,11 +159,10 @@ IF(BIGENDIAN)
 ENDIF(BIGENDIAN)
 
 #----------------------------------------------------------------------
-# Unix libraries :  X11, pthread, cfox (MAC OS X)
+# Unix libraries :  X11, pthread
 #----------------------------------------------------------------------
 # default initialisation
 SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_CFOX_FOUND "no")  # for ViSP-third-party.txt
 
 IF(UNIX)
   #--------------------------------------------------------------------
@@ -188,30 +183,6 @@ IF(UNIX)
       SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
     ENDIF(X11_FOUND)
   ENDIF(USE_X11)
-  #--------------------------------------------------------------------
-  # Apple MAC OS X cfox library
-  #--------------------------------------------------------------------
-  IF(APPLE AND USE_CFOX)
-    IF(USE_CFOX)
-      FIND_PACKAGE(CFOX)
-      IF(CFOX_FOUND)
-        MESSAGE(STATUS "Cfox found")
-	SET(VISP_HAVE_CFOX TRUE) # for header vpConfig.h
-        SET(VISP_HAVE_CFOX_FOUND "yes")  # for ViSP-third-party.txt
-	#MESSAGE("DBG VISP_HAVE_CFOX= ${VISP_HAVE_CFOX}")
-	#MESSAGE("DBG CFOX_INCLUDE_DIR=${CFOX_INCLUDE_DIR}")
-	SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
-	  ${CFOX_INCLUDE_DIR})
-	SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS}
-	  ${CFOX_LIBRARIES} -lIOKit "-framework Carbon")
-	#MESSAGE("CFOX_LIBRARIES = ${CFOX_LIBRARIES}")
-      ELSE(CFOX_FOUND)
-        MESSAGE(STATUS "Cfox not found")
-        SET(VISP_HAVE_CFOX_FOUND "no")  # for ViSP-third-party.txt
-	# SET(USE_CFOX OFF)
-      ENDIF(CFOX_FOUND)
-    ENDIF(USE_CFOX)
-  ENDIF(APPLE AND USE_CFOX)
 ENDIF(UNIX)
 
 #--------------------------------------------------------------------
@@ -580,7 +551,6 @@ ENDIF(USE_GDI)
 SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_V4L2_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_ICCOMP_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_ITIFG8_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
 
@@ -658,26 +628,6 @@ IF(USE_V4L2)
     # SET(USE_V4L2 OFF)
   ENDIF(V4L2_FOUND)
 ENDIF(USE_V4L2)
-
-# library for Irisa's ICcomp framegrabber devices
-IF(USE_ICCOMP)
-  FIND_PACKAGE(ICCOMP)
-  IF(ICCOMP_FOUND)
-    MESSAGE(STATUS "ICcomp found")
-    SET(VISP_HAVE_ICCOMP TRUE) # for header vpConfig.h
-    SET(VISP_HAVE_ICCOMP_FOUND "yes")  # for ViSP-third-party.txt
-     #MESSAGE("DBG VISP_HAVE_ICCOMP= ${VISP_HAVE_ICCOMP}")
-     #MESSAGE("DBG ICCOMP_INCLUDE_DIR=${ICCOMP_INCLUDE_DIR}")
-    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR}
-      ${ICCOMP_INCLUDE_DIR})
-    SET(VISP_EXTERN_LIBS ${ICCOMP_LIBRARIES} ${VISP_EXTERN_LIBS})
-     #MESSAGE("ICCOMP_LIBRARIES = ${ICCOMP_LIBRARIES}")
-  ELSE(ICCOMP_FOUND)
-    MESSAGE(STATUS "ICcomp not found")
-    SET(VISP_HAVE_ICCOMP_FOUND "no")  # for ViSP-third-party.txt
-    # SET(USE_ICCOMP OFF)
-  ENDIF(ICCOMP_FOUND)
-ENDIF(USE_ICCOMP)
 
 # library itifg8 framegrabber devices
 IF(USE_ITIFG8)

@@ -23,9 +23,7 @@ Framegrabbers
   Firewire libdc1394-2.x    : ${VISP_HAVE_DC1394_2_FOUND}
   Video For Linux Two       : ${VISP_HAVE_V4L2_FOUND}
   Imaging Technology Itifg8 : ${VISP_HAVE_ITIFG8_FOUND}
-  Imaging Technology ICcomp : ${VISP_HAVE_ICCOMP_FOUND}
   DirectShow                : ${VISP_HAVE_DIRECTSHOW_FOUND}
-  Cfox                      : ${VISP_HAVE_CFOX_FOUND}
 Misc:
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
