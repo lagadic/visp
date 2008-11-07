@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.17 2008-10-31 17:45:20 fspindle Exp $
+ * $Id: vpServo.h,v 1.18 2008-11-07 09:17:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -33,6 +33,7 @@
  * Authors:
  * Eric Marchand
  * Nicolas Mansard
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -66,27 +67,71 @@
   destructor ~vpServo() launch an exception
   vpServoException::notKilledProperly.
 
-  \code
-  // Creation od a Theta U vector that represent the rotation
-  // between the desired camera frame and the current one.
-  vpThetaUVector tu_cdRc; 
-  tu_cdRc[0] =0.1;
-  tu_cdRc[1] =0.2;
-  tu_cdRc[2] =0.3;
+  The example below shows how to build a position-based visual servo
+  from 3D visual features \f$s=({^{c^*}}t_c,\theta u)\f$. In that
+  case, we have \f$s^* = 0\f$. Let us denote \f$\theta u\f$ the angle/axis
+  parametrization of the rotation \f${^{c^*}}R_c\f$. Moreover,\f$
+  {^{c^*}}t_c\f$ and \f${^{c^*}}R_c\f$ represent respectively the
+  translation and the rotation between the desired camera frame and
+  the current one obtained by pose estimation (see vpPose class).
 
-  // Build the current visual feature
-  vpFeatureThetaU s(vpFeatureThetaU::cdRc);
-  s.buildFrom(tu_cdRc);
-  ...
-  task.addFeature(s); // Add current ThetaU feature
-  ...
+  \code
+  // Creation of an homogeneous matrix that represent the displacement
+  // the camera has to achieve to move from the desired camera frame
+  // and the current one
+  vpHomogeneousMatrix cdMc;
+
+  // ... cdMc is here the result of a pose estimation
+
+  // Creation of the current visual feature s = (c*_t_c, ThetaU)
+  vpFeatureTranslation s_t;
+  vpFeatureThetaU s_tu(vpFeatureThetaU::cdRc);
+  // Set the initial values of the current visual feature s = (c*_t_c, ThetaU)
+  s_t.buildFrom(cdMc);
+  s_tu.buildFrom(cdMc);
+
+  // Build the desired visual feature s* = (0,0)
+  vpFeatureTranslation s_star_t; // Default initialization to zero 
+  vpFeatureThetaU s_star_tu(vpFeatureThetaU::cdRc);// Default initialization to zero 
+
+  vpColVector v; // Camera velocity
+  double error;  // Task error
+
+  // Creation of the visual servo task.
+  vpServo task;
+
+  // Visual servo task initialization
+  // - Camera is monted on the robot end-effector and velocities are
+  //   computed in the camera frame
+  task.setServo(vpServo::EYEINHAND_CAMERA); 
+  // - Interaction matrix is computed with the current visual features s
+  task.setInteractionMatrixType(vpServo::CURRENT); 
+  // - Set the contant gain to 1
+  task.setLambda(1);
+  // - Add current and desired translation feature
+  task.addFeature(s_t, s_star_t); 
+  // - Add current and desired ThetaU feature for the rotation
+  task.addFeature(s_tu, s_star_tu); 
+
+  // Visual servoing loop. The objective is here to update the visual
+  // features s = (c*_t_c, ThetaU), compute the control law and apply
+  // it to the robot
+  do {
+    // ... cdMc is here the result of a pose estimation
+
+    // Update the current visual feature s
+    s_t.buildFrom(cdMc);  // Update translation visual feature
+    s_tu.buildFrom(cdMc); // Update ThetaU visual feature
+
+    v = task.computeControlLaw(); // Compute camera velocity skew
+    error =  task.error.sumSquare(); // error = s^2 - s_star^2
+  } while (error > 0.0001); // Stop the task when current and desired visual features are close
+
   // A call to kill() is requested here to destroy properly the current
   // and desired feature lists.
   task.kill();
   \endcode
 
-
-  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */
 
 class VISP_EXPORT vpServo
@@ -171,8 +216,8 @@ public:
 
   //! compute the interaction matrix related to the set of visual features
   vpMatrix computeInteractionMatrix() ;
-  //! compute the error between the current set of visual features and
-  //! the desired set of visual features
+  // compute the error between the current set of visual features and
+  // the desired set of visual features
   vpColVector computeError() ;
   //! compute the desired control law
   vpColVector computeControlLaw() ;
@@ -202,50 +247,54 @@ private:
 public:
   //! Interaction matrix
   vpMatrix L ;
-  //! error
+  //! Error \f$(s - s^*)\f$ between the current set of visual features
+  //! \f$s\f$ and the desired set of visual features \f$s^*\f$.
   vpColVector error ;
-  //! task Jacobian  J1 = L cVa aJe
+  //! Task Jacobian  \f$J_1 = L {^c}V_a {^a}J_e\f$
   vpMatrix J1 ;
-  //! pseudo inverse of the Jacobian
+  //! Pseudo inverse of the Jacobian
   vpMatrix J1p ;
 
-  //! current state
+  //! Current state
   vpColVector s ;
-  //! desired state
+  //! Desired state
   vpColVector sStar ;
 
-  //! primary task e1 = J1p(s-s*)
+  //! Primary task \f$e_1 = J_1p(s-s*)\f$
   vpColVector e1 ;
-  //! task e = e1 + (I-J1p J1) e2
+  //! Task \f$e = e_1 + (I-J_1p J_1) e_2\f$
   vpColVector e ;
 
 
-  //! articular velocity
+  //! Articular velocity
   vpColVector q_dot ;
-  //! camera velocity
+  //! Camera velocity
   vpColVector v ;
 
-  //!  chosen visual servoing control law
+  //! Chosen visual servoing control law
   vpServoType servoType;
 
-  //! rank of the task Jacobian
+  //! Rank of the task Jacobian
   int rankJ1 ;
 
-  //! list of visual features (produce s)
+  //! List of visual features (produce \f$s\f$)
   vpList<vpBasicFeature *> featureList ;
-  //! list of desired visual features (produce s*)
+  //! List of desired visual features (produce \f$s^*\f$)
   vpList<vpBasicFeature *> desiredFeatureList ;
-  //! list of selection among visual features
-  //! used to selection a subset of each visual feature if required
+  //! List of selection among visual features
+  //! used for selection of a subset of each visual feature if required
   vpList<int> featureSelectionList ;
 
-  //! gain
+  //! Gain
   vpAdaptativeGain lambda ;
 
-  //! sign of the interaction +-1 (Eye-in-hand vs eye-to-hand)
+  //! Sign of the interaction +/- 1 (1 for eye-in-hand, -1 for
+  //! eye-to-hand configuration)
   int signInteractionMatrix ;
-  //! type of the interaction matrox (current, mean, desired, user)
+  //! Type of the interaction matrox (current, mean, desired, user)
   vpServoIteractionMatrixType interactionMatrixType ;
+  //! Indicates if the transpose or the pseudo inverse of the
+  //!interaction matrix should be used to compute the task
   vpServoInversionType inversionType ;
 
 private:
@@ -267,10 +316,10 @@ private:
     Jacobians
   */
 
-  //! Jacobian expressed in the end-effector frame
+  //! Jacobian expressed in the end-effector frame.
   vpMatrix eJe ;
   bool init_eJe ;
-  //! Jacobian expressed in the robot reference frame
+  //! Jacobian expressed in the robot reference frame.
   vpMatrix fJe ;
   bool init_fJe ;
 
