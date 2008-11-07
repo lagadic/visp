@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.h,v 1.19 2008-10-17 15:48:01 marchand Exp $
+ * $Id: vpPose.h,v 1.20 2008-11-07 15:07:42 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -148,12 +148,18 @@ public:
   void printPoint() ;
 
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
-	       vpCameraParameters &cam, double size,
-	       vpColor::vpColorType col=vpColor::none) ;
- static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo,
-	       vpCameraParameters &cam, double size,
-	       vpColor::vpColorType col=vpColor::none) ;
-
+		      vpCameraParameters &cam, double size,
+		      vpColor::vpColorType col=vpColor::none) ;
+  static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo,
+		      vpCameraParameters &cam, double size,
+		      vpColor::vpColorType col=vpColor::none) ;
+  void displayModel(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
+		    vpCameraParameters &cam,
+		    vpColor::vpColorType col=vpColor::none) ;
+  void displayModel(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo,
+		    vpCameraParameters &cam,
+		    vpColor::vpColorType col=vpColor::none) ;
+  
 private:
   int vvsIterMax ; //! define the maximum number of iteration in VVS
 public:
