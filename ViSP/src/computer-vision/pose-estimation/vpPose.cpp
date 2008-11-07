@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.22 2008-10-17 15:48:01 marchand Exp $
+ * $Id: vpPose.cpp,v 1.23 2008-11-07 15:07:23 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -456,14 +456,71 @@ vpPose::display(vpImage<unsigned char> &I,
 
 void
 vpPose::display(vpImage<vpRGBa> &I,
-								vpHomogeneousMatrix &cMo,
-								vpCameraParameters &cam,
-								double size,
-								vpColor::vpColorType col)
+		vpHomogeneousMatrix &cMo,
+		vpCameraParameters &cam,
+		double size,
+		vpColor::vpColorType col)
 {
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }
 
+/*
+  \brief display the 3D model in image I
+  \warning the 2D coordinate of the point have to be initialized
+  (lispP has to be modified)
+*/
+void
+vpPose::displayModel(vpImage<unsigned char> &I,
+		     vpHomogeneousMatrix &cMo,
+		     vpCameraParameters &cam,
+		     vpColor::vpColorType col)
+{ 
+  listP.front() ;
+  vpPoint P ;
+  while (!listP.outside())
+  {
+    P = listP.value() ;
+    double ox =0; 
+    double oy = 0 ;
+    vpMeterPixelConversion::convertPoint(cam,P.p[0],P.p[1],ox,oy) ;
+    vpDisplay::displayCross(I, vpMath::round ( oy ), vpMath::round ( ox ), 
+			    5,col) ;
+    //  std::cout << "3D oP " << P.oP.t() ;
+    //  std::cout << "3D cP " << P.cP.t() ;
+    //  std::cout << "2D    " << P.p.t() ;
+
+    listP.next() ;
+  }
+}
+
+/*
+  \brief display the 3D model in image I
+  \warning the 2D coordinate of the point have to be initialized
+  (lispP has to be modified)
+*/
+void
+vpPose::displayModel(vpImage<vpRGBa> &I,
+		     vpHomogeneousMatrix &cMo,
+		     vpCameraParameters &cam,
+		     vpColor::vpColorType col)
+{ 
+  listP.front() ;
+  vpPoint P ;
+  while (!listP.outside())
+  {
+    P = listP.value() ;
+    double ox =0; 
+    double oy = 0 ;
+    vpMeterPixelConversion::convertPoint(cam,P.p[0],P.p[1],ox,oy) ;
+    vpDisplay::displayCross(I, vpMath::round ( oy ), vpMath::round ( ox ), 
+			    5,col) ;
+    //  std::cout << "3D oP " << P.oP.t() ;
+    //  std::cout << "3D cP " << P.cP.t() ;
+    //  std::cout << "2D    " << P.p.t() ;
+
+    listP.next() ;
+  }
+}
 
 
 /*!
