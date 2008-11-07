@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.22 2008-10-31 17:45:20 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.23 2008-11-07 09:17:21 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -33,6 +33,7 @@
  * Authors:
  * Eric Marchand
  * Nicolas Mansard
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -578,12 +579,13 @@ vpServo::computeInteractionMatrix()
   return L ;
 }
 
-/*! \brief compute the error between the current set of visual features and
-  the desired set of visual features
+/*! 
 
-  \note vpServo::error is modified
+  Compute the error \f$(s - s^*)\f$ between the current set of visual
+  features \f$s\f$ and the desired set of visual features \f$s^*\f$.
 
-  \return  error (vpColVector)
+  \return The error \f$(s - s^*)\f$. To access to the computed error
+  you can also use the public vpServo::error class member.
 
 */
 vpColVector
