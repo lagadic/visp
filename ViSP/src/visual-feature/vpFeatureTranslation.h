@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.h,v 1.12 2008-11-06 09:23:49 fspindle Exp $
+ * $Id: vpFeatureTranslation.h,v 1.13 2008-11-10 16:54:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,12 +95,18 @@
   The code below shows how to handle 3D translation visual features.
 
   \code
+#include <visp/vpFeatureTranslation.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
   vpHomogeneousMatrix cdMc;
-  ... // cdMc need here to be initialized from for example a pose estimation.
+  // ... cdMc need here to be initialized from for example a pose estimation.
 
   // Creation of the current feature s
   vpFeatureTranslation s;
-  s.buildFrom(cdMc) // Initialization of the feature
+  s.buildFrom(cdMc); // Initialization of the feature
 
   // Creation of the desired feature s*. By default this feature is 
   // initialized to zero
@@ -111,6 +117,7 @@
 
   // Compute the error vector (s-s*) for the translation feature
   s.error(s_star);
+}
   \endcode
 
 */

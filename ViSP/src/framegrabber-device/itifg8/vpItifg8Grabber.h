@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpItifg8Grabber.h,v 1.11 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpItifg8Grabber.h,v 1.12 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -144,6 +144,27 @@
   itifg-8.3.1-12 driver coming from sourceforge. See the documentation of these
   functions to have a description of the driver's modifications.
 
+  The example below shows how to use this framegrabber.
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpItifg8Grabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_ITIFG8)
+  vpImage<unsigned char> I; // Create a gray level image container
+  vpItifg8Grabber g;        // Create a grabber based on itifg-8 third party lib
+  g.setScale(2);            // Acquisition of subsampled images (384x288)
+  g.setFramerate(vpItifg8Grabber::framerate_50fps); //  50 fps
+  g.open(I);                // Open the grabber
+
+  g.acquire(I);                        // Acquire an image
+  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
+#endif
+}
+  \endcode
 
 */
 

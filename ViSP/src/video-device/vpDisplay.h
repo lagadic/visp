@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.28 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.29 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,13 +78,18 @@
 #include <visp/vpDisplayD3D.h>
 #include <visp/vpDisplayOpenCV.h>
 
-int main() {
+int main()
+{
   vpImage<unsigned char> I; // Grey level image
 
   // Read an image in PGM P5 format
-  vpImageIo::readPGM(I, "/local/soft/ViSP-images/Klimt/Klimt.pgm");
+#ifdef UNIX
+  vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+#elif WIN32
+  vpImageIo::readPGM(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+#endif
 
-  vpDisplay *d; 
+  vpDisplay *d;
 
   // Depending on the detected third party libraries, we instantiate here the
   // first video device which is available

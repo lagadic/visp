@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.h,v 1.13 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpV4l2Grabber.h,v 1.14 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -87,7 +87,31 @@
   - /etc/modules.conf
   - or /etc/modprobe.conf
 
-  \ingroup libdevice
+  The example below shows how to use this grabber.
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpV4l2Grabber.h>
+#include <visp/vpImageIo.h>
+
+int main()
+{
+#if defined(VISP_HAVE_V4L2)
+  vpImage<unsigned char> I;
+  vpV4l2Grabber g;
+  g.setInput(2);    // Input 2 on the board
+  g.setFramerate(vpV4l2Grabber::framerate_25fps); //  25 fps
+  g.setWidth(768);  // Acquired images are 768 width
+  g.setHeight(576); // Acquired images are 576 height
+  g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
+  g.open(I);        // Open the grabber
+
+  g.acquire(I);     // Acquire a 768x576 grey image
+  vpImageIo::writePGM(I, "image.pgm"); // Save the image on the disk
+#endif
+}
+  \endcode
+  
 
   \author Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 

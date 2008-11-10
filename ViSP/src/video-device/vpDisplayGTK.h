@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.20 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplayGTK.h,v 1.21 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,17 +61,52 @@
 
   \ingroup ImageGUI
 
-  \brief The  vpDisplayGTK allows to display image using the GTK+ library
+  \brief The vpDisplayGTK allows to display image using the GTK+ library
   version 1.2.
 
   \author Christophe Collewet (Christophe.Collewet@irisa.fr),
   imported in ViSP by Eric Marchand (Eric.Marchand@irisa.fr)
   Irisa / Inria Rennes
 
-  The GTK+ 1.2 library has to be available on the system
+  The GTK+ 1.2 library has to be available on the system.
 
+  The example below shows how to display an image with this video device.
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpDisplayGTK.h>
 
-  \date December 2005
+int main() 
+{
+#if defined(VISP_HAVE_GTK)
+  vpImage<unsigned char> I; // Grey level image
+
+  // Read an image in PGM P5 format
+  vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+
+  vpDisplayGTK d; 
+
+  // Initialize the display with the image I. Display and image are
+  // now link together.
+  d.init(I);
+
+  // Set the display window title
+  vpDisplay::setTitle(I, "My GTK display");
+
+  // Set the display background with image I content
+  vpDisplay::display(I);
+
+  // Draw a red rectangle in the display overlay (foreground)
+  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+
+  // Flush the foreground and background display
+  vpDisplay::flush(I);
+
+  // Wait for a click in the display window
+  vpDisplay::getClick(I);
+#endif
+}
+  \endcode
 */
 
 class VISP_EXPORT vpDisplayGTK: public vpDisplay

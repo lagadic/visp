@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.h,v 1.18 2008-09-26 15:20:53 fspindle Exp $
+ * $Id: vp1394Grabber.h,v 1.19 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,16 +37,18 @@
 
 /*!
   \file vp1394Grabber.h
-  \brief class for firewire cameras video capture
+  \brief class for firewire cameras video capture.
 
   \warning This class needs at least libdc1394-1.0.0 and
   libraw1394-1.1.0. These libraries are available from
   http://sourceforge.net/projects/libdc1394 and
   http://sourceforge.net/projects/libraw1394 .
 
-  vp1394Grabber was tested with a Marlin F033C camera.
+  vp1394Grabber was tested with a Marlin F033C camera. This grabber is
+  not working with a PointGrey DragonFly 2 camera. Since libdc1394-1.x
+  is deprecated, you should better use vp1394TwoGrabber based on
+  libdc1394-2.x.
 
-  \ingroup libdevice
 */
 
 #ifndef vp1394Grabber_h
@@ -78,9 +80,33 @@
   Needs libraw1394-1.2.0 and libdc1394-1.1.0 or more recent versions
   available on http://sourceforge.net.
 
-  This class was tested with Marlin F033C and F131B cameras.
+  This class was tested with Marlin F033C and F131B cameras. This grabber is
+  not working with a PointGrey DragonFly 2 camera. Since libdc1394-1.x
+  is deprecated, you should better use vp1394TwoGrabber based on
+  libdc1394-2.x.
 
-  \ingroup libdevice
+  The code below shows how to use this class.
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vp1394Grabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_1)
+  vpImage<unsigned char> I; // Create a gray level image container
+  vp1394Grabber g;          // Create a grabber based on libdc1394-1.x third party lib
+  g.setFormat(FORMAT_VGA_NONCOMPRESSED); // Format_0
+  g.setMode(MODE_640x480_MONO);          // Mode 5
+  g.setFramerate(FRAMERATE_15);          // 15 fps
+
+  g.open(I);                           // Open the framegrabber
+  g.acquire(I);                        // Acquire an image
+  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
+#endif
+}
+  \endcode
 
   \author  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 

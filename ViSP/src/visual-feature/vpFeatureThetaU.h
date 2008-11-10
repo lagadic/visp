@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureThetaU.h,v 1.15 2008-11-06 09:26:07 fspindle Exp $
+ * $Id: vpFeatureThetaU.h,v 1.16 2008-11-10 16:54:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -124,22 +124,29 @@
   The code below shows how to handle \f$\theta u\f$ visual features.
 
   \code
+#include <visp/vpFeatureThetaU.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
   vpHomogeneousMatrix cdMc;
-  ... // cdMc need here to be initialized from for example a pose estimation.
+  // ... cdMc need here to be initialized from for example a pose estimation.
 
   // Creation of the current feature s
   vpFeatureThetaU s(vpFeatureThetaU::cdRc);
-  s.buildFrom(cdMc) // Initialization of the feature
+  s.buildFrom(cdMc); // Initialization of the feature
 
   // Creation of the desired feature s*. By default this feature is 
   // initialized to zero
-  vpFeatureThetaU s_star; 
+  vpFeatureThetaU s_star(vpFeatureThetaU::cdRc); 
 
   // Compute the interaction matrix for the ThetaU feature
   vpMatrix L = s.interaction();
 
   // Compute the error vector (s-s*) for the ThetaU feature
   s.error(s_star);
+}
   \endcode
   
 

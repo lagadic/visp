@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.19 2007-12-18 14:23:32 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.20 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -303,7 +303,7 @@ vp1394Grabber::~vp1394Grabber()
   unsigned int num_cameras; // Number of cameras on the bus
   g.getNumCameras(num_cameras);
   g.setCamera(num_cameras-1); // To dial with the last camera on the bus
-  acquire(I); // I contains the frame captured by the last camera on the bus
+  g.acquire(I); // I contains the frame captured by the last camera on the bus
   \endcode
 
   \sa setFormat(), setMode(), setFramerate(), open(), getNumCameras()

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDiskGrabber.h,v 1.9 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpDiskGrabber.h,v 1.10 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,14 +61,15 @@
 
   \sa vpFrameGrabber
 
-  Here an example of capture from the directory "/tmp". We want to acquire
-  100 images from the first named "image0001.pgm" by steps of 3.
+  Here an example of capture from the directory
+  "/local/soft/ViSP/ViSP-images/cube". We want to acquire 10 images
+  from the first named "image.0001.pgm" by steps of 2.
 
 \code
 #include <visp/vpImage.h>
 #include <visp/vpDiskGrabber.h>
 
-main(){
+int main(){
   vpImage<unsigned char> I; // Grey level image
 
   // Declare a framegrabber able to read a sequence of successive
@@ -76,12 +77,12 @@ main(){
   vpDiskGrabber g;
 
   // Set the path to the directory containing the sequence
-  g.setDirectory("/tmp");
+  g.setDirectory("/local/soft/ViSP/ViSP-images/cube");
   // Set the image base name. The directory and the base name constitute
   // the constant part of the full filename
-  g.setBaseName("image");
+  g.setBaseName("image.");
   // Set the step between two images of the sequence
-  g.setStep(3);
+  g.setStep(2);
   // Set the number of digits to build the image number
   g.setNumberOfZero(4);
   // Set the first frame number of the sequence
@@ -94,7 +95,7 @@ main(){
 
   unsigned int cpt = 1;
   // this is the loop over the image sequence
-  while(cpt ++ < 100)
+  while(cpt ++ < 10)
   {
     // read the image and then increment the image counter so that the next
     // call to acquire(I) will get the next image
