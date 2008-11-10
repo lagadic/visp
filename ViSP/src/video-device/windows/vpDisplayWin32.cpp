@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.24 2008-06-13 13:37:38 asaunier Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.25 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -391,6 +391,7 @@ void vpDisplayWin32::setWindowPosition(int _winx, int _winy)
 
 /*!
   Changes the window's titlebar text
+  \deprecated Use setTitle() instead.
   \param string The new text to display
 */
 void vpDisplayWin32::flushTitle(const char *string)
@@ -398,6 +399,16 @@ void vpDisplayWin32::flushTitle(const char *string)
   //wait if the window is not initialized
   waitForInit();
   SetWindowText(window.hWnd,string);
+}
+/*!
+  Changes the window's titlebar text
+  \param windowtitle : Window title.
+*/
+void vpDisplayWin32::setTitle(const char *windowtitle)
+{
+  //wait if the window is not initialized
+  waitForInit();
+  SetWindowText(window.hWnd, windowtitle);
 }
 /*!
   \brief flush the Win32 buffer

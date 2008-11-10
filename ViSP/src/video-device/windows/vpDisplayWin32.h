@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.20 2008-06-13 13:37:38 asaunier Exp $
+ * $Id: vpDisplayWin32.h,v 1.21 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -133,8 +133,8 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   //! Flush the Display
   void flushDisplay();
-  //! Changes the window's title
-  void flushTitle(const char *string);
+  // Changes the window's title
+  void setTitle(const char *windowtitle);
   //! Gets the window pixmap and put it in vpRGBa image
   void getImage(vpImage<vpRGBa> &I);
 
@@ -214,6 +214,13 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   //! Used to wait for the window to be initialized
   void waitForInit();
+
+ public:
+  /*!
+    @name Deprecated functions
+  */
+  //! Changes the window's title
+  void flushTitle(const char *string);
 };
 #endif
 #endif

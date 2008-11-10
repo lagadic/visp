@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.h,v 1.5 2008-09-26 15:21:01 fspindle Exp $
+ * $Id: vpDisplayOpenCV.h,v 1.6 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -153,7 +153,7 @@ protected:
 			vpColor::vpColorType col, bool fill = false,
 			unsigned int e=1);
   void flushDisplay() ;
-  void flushTitle(const char *string) ;
+  void setTitle(const char *windowtitle) ;
   bool getClick(unsigned int& i, unsigned int& j, bool blocking=true) ;
   bool getClick(unsigned int& i, unsigned int& j,
 		 vpMouseButton::vpMouseButtonType& button,
@@ -168,6 +168,10 @@ protected:
 
   void setWindowPosition(int /* winx */, int /* winy */) { ; }
   static void on_mouse( int event, int x, int y, int flags, void* param );
+  /*!
+    @name Deprecated functions
+  */
+  void flushTitle(const char *string) ;
 } ;
 
 #endif

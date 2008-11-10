@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.41 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDisplayX.cpp,v 1.42 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -451,7 +451,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int _x, int _y, const char *_title
 
   }
   Xinitialise = true ;
-  flushTitle ( title ) ;
+  setTitle ( title ) ;
   XSync ( display, 1 );
 
   I.display = this ;
@@ -760,7 +760,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int _x, int _y, const char *_title )
   Xinitialise = true ;
 
   XSync ( display, true );
-  flushTitle ( title ) ;
+  setTitle ( title ) ;
 
   I.display = this ;
 }
@@ -1071,7 +1071,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
   Xinitialise = true ;
 
   XSync ( display, true );
-  flushTitle ( title ) ;
+  setTitle ( title ) ;
 
 }
 
@@ -2061,11 +2061,14 @@ void vpDisplayX::getScreenSize ( unsigned int &width, unsigned int &height )
 
 /*!
   \brief set the window title
+  \deprecated Use setTitle() instead.
   \param windowtitle
+
  */
 void
 vpDisplayX::flushTitle ( const char *windowtitle )
 {
+  vpTRACE("This function is deprecated. Use setTitle() instead.");
   if ( Xinitialise )
   {
     XStoreName ( display, window, windowtitle );
@@ -2078,6 +2081,24 @@ vpDisplayX::flushTitle ( const char *windowtitle )
   }
 }
 
+/*!
+  \brief Set the window title.
+  \param windowtitle : Window title.
+ */
+void
+vpDisplayX::setTitle ( const char *windowtitle )
+{
+  if ( Xinitialise )
+  {
+    XStoreName ( display, window, windowtitle );
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
 
 /*!
   \brief Display a circle

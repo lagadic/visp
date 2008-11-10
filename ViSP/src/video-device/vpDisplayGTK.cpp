@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.40 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.41 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -319,7 +319,7 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
     strcpy(title,_title) ;
   }
   GTKinitialized = true ;
-  flushTitle(title) ;
+  setTitle(title) ;
 }
 
 
@@ -1108,6 +1108,7 @@ void vpDisplayGTK::getScreenSize(unsigned int &width, unsigned int &height)
 
 /*!
   \brief set the window title
+  \deprecated Use setTitle() instead.
 */
 void
 vpDisplayGTK::flushTitle(const char *windowtitle)
@@ -1125,6 +1126,26 @@ vpDisplayGTK::flushTitle(const char *windowtitle)
   }
 }
 
+/*!
+  \brief Set the window title.
+  \param windowtitle : Window title.
+ */
+
+void
+vpDisplayGTK::setTitle(const char *windowtitle)
+{
+  if (GTKinitialized)
+  {
+    if (windowtitle != NULL)
+      gdk_window_set_title(window,(char *)windowtitle);
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
 /*!
   \brief Display a circle
   \param i,j : circle center position (row,column)

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.4 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.5 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -962,9 +962,31 @@ vpDisplayOpenCV::getClickUp(unsigned int& i, unsigned int& j,
 
 /*!
   \brief set the window title
+  \deprecated Use setTitle() instead.
+  \warning This method is not implemented yet.
+
 */
 void
 vpDisplayOpenCV::flushTitle(const char * /*windowtitle*/)
+{
+  if (OpenCVinitialized)
+  {
+    vpTRACE("Not implemented");
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+/*!
+  \brief Set the window title.
+  \warning This method is not implemented yet.
+  \param windowtitle : Window title.
+ */
+void
+vpDisplayOpenCV::setTitle(const char * /*windowtitle*/)
 {
   if (OpenCVinitialized)
   {
