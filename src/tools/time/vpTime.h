@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.h,v 1.11 2008-11-10 08:42:12 fspindle Exp $
+ * $Id: vpTime.h,v 1.12 2008-11-10 10:23:35 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,12 +56,17 @@
   The example below shows how to synchronize a loop to a given framerate.
 
   \code
+#include <visp/vpTime.h>
+
+int main()
+{
   double t;
   while(1) {
     t = vpTime::measureTimeMs();
     ...
     vpTime::wait(t, 40); // Loop time is set to 40 ms, ie 25 Hz
   }
+}
   \endcode
 
 */
