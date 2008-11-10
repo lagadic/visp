@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.5 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.6 2008-11-10 14:13:04 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -632,12 +632,15 @@ vpDisplayOpenCV::displayArrow(int i1, int j1, int i2, int j2,
 
 /*!
   \brief display a rectangle
-  \param i,j (row,colum indexes) up left corner
-  \param width
-  \param height
-  \param color (see vpColor)
-  \param fill : set as true to fill the rectangle.
-  \param e : line thick
+  \param i,j : Upper left corner coordinates (row,column).
+  \param width : Rectangle width.
+  \param height : Rectangle height.
+  \param color : Color of the rectangle.
+
+  \param fill : Set as true to fill the rectangle. When false, draw
+  only the edges.
+
+  \param e : Line thickness.
 */
 void
 vpDisplayOpenCV::displayRectangle(int i, int j,
@@ -655,7 +658,7 @@ vpDisplayOpenCV::displayRectangle(int i, int j,
     else
       cvRectangle( background,
                    cvPoint(j,i),
-                   cvPoint(j+height,i+width),
+                   cvPoint(j+width,i+height),
                    col[color],CV_FILLED);
   }
   else
@@ -669,9 +672,10 @@ vpDisplayOpenCV::displayRectangle(int i, int j,
 /*!
   \brief display a rectangle
   \param rect : Rectangle characteristics.
-  \param color : Color (see vpColor)
-  \param fill : set as true to fill the rectangle.
-  \param e : line thick
+  \param color : Color of the rectangle.
+  \param fill : Set as true to fill the rectangle. When false, draw
+  only the edges.
+  \param e : Line thickness.
 */
 void
 vpDisplayOpenCV::displayRectangle(const vpRect &rect,
