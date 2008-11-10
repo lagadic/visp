@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeTracker.h,v 1.7 2007-12-19 08:25:25 fspindle Exp $
+ * $Id: vpMeTracker.h,v 1.8 2008-11-10 08:30:52 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,8 +68,6 @@ class VISP_EXPORT vpMeTracker : public vpTracker
 public:
 
   //! Tracking dependent variables/functions =====================
-  //! \todo create list of points and move tracking dependent
-  //! functionality into a seperate class i.e DistanceEcm
 
   //! List of tracked points
   vpList<vpMeSite> list ;
