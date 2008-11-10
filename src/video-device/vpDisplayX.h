@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.22 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplayX.h,v 1.23 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,6 +75,45 @@
   This class define the X11 console to display  images
   It also define method to display some geometric feature (point, line, circle)
   in the image.
+
+  The example below shows how to display an image with this video device.
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpDisplayX.h>
+
+int main() 
+{
+#if defined(VISP_HAVE_X11)
+  vpImage<unsigned char> I; // Grey level image
+
+  // Read an image in PGM P5 format
+  vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+
+  vpDisplayX d; 
+
+  // Initialize the display with the image I. Display and image are
+  // now link together.
+  d.init(I);
+
+  // Set the display window title
+  vpDisplay::setTitle(I, "My X11 display");
+
+  // Set the display background with image I content
+  vpDisplay::display(I);
+
+  // Draw a red rectangle in the display overlay (foreground)
+  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+
+  // Flush the foreground and background display
+  vpDisplay::flush(I);
+
+  // Wait for a click in the display window
+  vpDisplay::getClick(I);
+#endif
+}
+  \endcode
+
 */
 
 class VISP_EXPORT vpDisplayX: public vpDisplay

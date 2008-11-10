@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.h,v 1.8 2008-09-26 15:20:53 fspindle Exp $
+ * $Id: vpXmlParserCamera.h,v 1.9 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -99,43 +99,54 @@
 
   Example of loading existing camera parameters from an XML file:
   \code
-    vpCameraParameters cam; // Create a camera parameter container
-    vpXmlParserCamera p; // Create a XML parser
-    vpCameraParameters::vpCameraParametersProjType projModel; // Projection model
-    // Use a perspective projection model without distorsion
-    projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
-    // Parse the xml file "myXmlFile.xml" to find the intrinsic camera 
-    // parameters of the camera named "myCamera" for the image sizes 640x480,
-    // for the projection model projModel. The size of the image is optional
-    // if camera parameters are given only for one image size.
-    p.parse(cam,"myXmlFile.xml","myCamera",projModel,640,480);
+#include <visp/vpCameraParameters.h>
+#include <visp/vpXmlParserCamera.h>
 
-    // cout the parameters
-    cam.printParameters();
+int main()
+{
+  vpCameraParameters cam; // Create a camera parameter container
+  vpXmlParserCamera p; // Create a XML parser
+  vpCameraParameters::vpCameraParametersProjType projModel; // Projection model
+  // Use a perspective projection model without distorsion
+  projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
+  // Parse the xml file "myXmlFile.xml" to find the intrinsic camera 
+  // parameters of the camera named "myCamera" for the image sizes 640x480,
+  // for the projection model projModel. The size of the image is optional
+  // if camera parameters are given only for one image size.
+  p.parse(cam,"myXmlFile.xml","myCamera",projModel,640,480);
 
-    // Now we modify the principal point (u0,v0) for example to add noise
-    cam.setPrincipalPoint(1400,1400);
+  // cout the parameters
+  cam.printParameters();
 
-    // Save the parameters in a new file "myXmlFileWithNoise.xml"
-    p.save(cam,"myXmlFileWithNoise.xml",p.getCameraName(),p.getWidth(),p.getHeight());
-    
+  // Now we modify the principal point (u0,v0) for example to add noise
+  cam.setPrincipalPoint(cam.get_u0()*0.9, cam.get_v0()*0.9);
+
+  // Save the parameters in a new file "myXmlFileWithNoise.xml"
+  p.save(cam,"myXmlFileWithNoise.xml",p.getCameraName(),p.getWidth(),p.getHeight());
+}
   \endcode
 
   Example of writing an XML file containing intrinsic camera parameters:
   \code
-    // Create a camera parameter container. We want to set these parameters 
-    // for a 320x240 image, and we want to use the perspective projection 
-    // modelisation without distortion.
-    vpCameraParameters cam; 
+#include <visp/vpCameraParameters.h>
+#include <visp/vpXmlParserCamera.h>
 
-    // Set the principal point coordinates (u0,v0)
-    cam.setPrincipalPoint(162.3,122.4);
-    // Set the pixel ratio (px, py)
-    cam.setPixelRatio (563.2, 564.1)
-    // Create a XML parser
-    vpXmlParserCamera p;
-    // Save the camera parameters in an XML file.
-    p.save(cam,"myXmlFile.xml","myNewCamera",320,240);
+int main()
+{
+  // Create a camera parameter container. We want to set these parameters 
+  // for a 320x240 image, and we want to use the perspective projection 
+  // modelisation without distortion.
+  vpCameraParameters cam; 
+
+  // Set the principal point coordinates (u0,v0)
+  cam.setPrincipalPoint(162.3,122.4);
+  // Set the pixel ratio (px, py)
+  cam.setPixelRatio (563.2, 564.1);
+  // Create a XML parser
+  vpXmlParserCamera p;
+  // Save the camera parameters in an XML file.
+  p.save(cam,"myNewXmlFile.xml","myNewCamera",320,240);
+}
   \endcode
 */
 

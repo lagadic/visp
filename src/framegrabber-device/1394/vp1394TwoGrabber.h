@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.22 2008-11-06 17:07:24 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.23 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,9 +48,9 @@
   with the following cameras:
   - Marlin F033C
   - Marlin F131B
+  - PointGrey Dragonfly 2
   - APPLE iSight extern webcam
 
-  \ingroup libdevice
 */
 
 #ifndef vp1394TwoGrabber_h
@@ -83,20 +83,40 @@
 
   - Here an example of single capture from the first camera found on the bus::
   \code
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g;
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I; // Create a gray level image container
+  vp1394TwoGrabber g;       // Create a grabber based on libdc1394-2.x third party lib
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-  while(1)
-    g.acquire(I);
+
+  g.acquire(I);                        // Acquire an image
+  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
+#endif
+}
   \endcode
 
   - Here an example of multi camera capture:
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
   unsigned int ncameras; // Number of cameras on the bus
-  vp1394TwoGrabber g;
+  vp1394TwoGrabber g;    // Creation of a grabber instance based on libdc1394-2.x third party lib.
   g.getNumCameras(ncameras);
   vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
+  char filename[FILENAME_MAX];
 
   // If the first camera supports vpVIDEO_MODE_640x480_YUV422 video mode
   g.setCamera(0);
@@ -106,16 +126,17 @@
   g.setCamera(1);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
 
-  while(1) {
-    for (unsigned int camera=0; camera < ncameras; camera ++) {
-      // Acquire alternatively images from camera 0 and from camera 1
-      g.setCamera(camera);
-      g.acquire(I[camera]);
-    }
+  // Acquire an image from each camera
+  for (unsigned int camera=0; camera < ncameras; camera ++) {
+    g.setCamera(camera);
+    g.acquire(I[camera]);
+    sprintf(filename, "image-cam%d.pgm", camera);
+    vpImageIo::writePGM(I[camera], filename);
   }
   delete [] I;
+#endif
+}
   \endcode
-
 
   \author  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 

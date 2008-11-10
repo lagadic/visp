@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.h,v 1.7 2008-09-26 15:21:01 fspindle Exp $
+ * $Id: vpDisplayGDI.h,v 1.8 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Bruno Renier
+ * Fabien Spindler
  *
  *****************************************************************************/
 #include <visp/vpConfig.h>
@@ -53,7 +54,43 @@
   GDI stands for Graphics Device Interface and is a core component of Microsoft
   Windows operating systems used for displaying graphics in a window.
 
-  \author Bruno Renier
+  The example below shows how to display an image with this video device.
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpDisplayGDI.h>
+
+int main()
+{
+#if defined(VISP_HAVE_GDI)
+  vpImage<unsigned char> I; // Grey level image
+
+  // Read an image in PGM P5 format
+  vpImageIo::readPGM(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+
+  vpDisplayGDI d;
+
+  // Initialize the display with the image I. Display and image are
+  // now link together.
+  d.init(I);
+
+  // Set the display window title
+  vpDisplay::setTitle(I, "My GDI display");
+
+  // Set the display background with image I content
+  vpDisplay::display(I);
+
+  // Draw a red rectangle in the display overlay (foreground)
+  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+
+  // Flush the foreground and background display
+  vpDisplay::flush(I);
+
+  // Wait for a click in the display window
+  vpDisplay::getClick(I);
+#endif
+}
+  \endcode
 */
 class VISP_EXPORT vpDisplayGDI : public vpDisplayWin32
 {

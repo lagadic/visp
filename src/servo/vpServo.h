@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.h,v 1.18 2008-11-07 09:17:21 fspindle Exp $
+ * $Id: vpServo.h,v 1.19 2008-11-10 16:54:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -76,6 +76,15 @@
   the current one obtained by pose estimation (see vpPose class).
 
   \code
+#include <visp/vpColVector.h>
+#include <visp/vpFeatureThetaU.h>
+#include <visp/vpFeatureTranslation.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpMatrix.h>
+#include <visp/vpServo.h>
+
+int main()
+{
   // Creation of an homogeneous matrix that represent the displacement
   // the camera has to achieve to move from the desired camera frame
   // and the current one
@@ -130,6 +139,7 @@
   // A call to kill() is requested here to destroy properly the current
   // and desired feature lists.
   task.kill();
+}
   \endcode
 
 */
