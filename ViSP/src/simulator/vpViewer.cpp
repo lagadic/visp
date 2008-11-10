@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.17 2008-06-27 12:43:17 asaunier Exp $
+ * $Id: vpViewer.cpp,v 1.18 2008-11-10 08:30:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -91,7 +91,7 @@ vpViewer::actualRedraw(void)
    glClearColor(col[0], col[1], col[2], 0.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-   // this should be used only with the vpRA:vpSimulator
+   // this should be used only with the vpAR:vpSimulator
    // to diplay an image background
    if (simu->image_background != NULL)
    {

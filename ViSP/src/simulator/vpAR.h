@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRA.h,v 1.6 2008-11-10 08:30:05 fspindle Exp $
+ * $Id: vpAR.h,v 1.1 2008-11-10 08:30:05 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,12 +32,13 @@
  * used for augmented reality application
  *
  * Authors:
- * Eric Marchand (march 2007)
+ * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
-#ifndef vpRA_HH
-#define vpRA_HH
+#ifndef vpAR_HH
+#define vpAR_HH
 
 #include <visp/vpConfig.h>
 
@@ -56,16 +57,17 @@
 #include <visp/vpTime.h>
 
 /*!
-  \class vpRA 
+  \class vpAR
 
   \ingroup VisuRobotSimu
   
   \brief Implementation of an augmented reality viewer.
 
-  \deprecated This class is deprecated. You should use vpAR instead.
+  This class can be used to display an image behind the internal view
+  of the simulator used for augmented reality application.
 
 */
-class VISP_EXPORT vpRA : public vpSimulator
+class VISP_EXPORT vpAR : public vpSimulator
 {
 
 private:
@@ -73,11 +75,9 @@ private:
   bool background;
 
  public:
-  vpRA() {
-    vpTRACE("vpRA class is deprecated. You should use vpAR instead.");
-  }
 
-  virtual ~vpRA() ;
+
+  virtual ~vpAR() ;
   void initInternalViewer(int width, int height, vpImageType type = grayImage) ;
   void setImage(vpImage<unsigned char> &I) ;
   void setImage(vpImage<vpRGBa> &I) ;
