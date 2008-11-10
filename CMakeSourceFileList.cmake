@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.25 2008-11-07 09:56:00 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.26 2008-11-10 08:30:05 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -154,6 +154,7 @@ SET (SRC_SERVO
   )
 
 SET (SRC_SIMULATOR
+  simulator/vpAR.cpp
   simulator/vpProjectionDisplay.cpp
   simulator/vpRA.cpp
   simulator/vpSimulator.cpp
