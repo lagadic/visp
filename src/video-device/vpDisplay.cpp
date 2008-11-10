@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.32 2008-10-17 15:48:45 marchand Exp $
+ * $Id: vpDisplay.cpp,v 1.33 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -108,6 +108,7 @@ vpDisplay::vpDisplay()
 
 /*!
   Display the windows title.
+  \deprecated Use setTitle() instead.
 */
 void
 vpDisplay::displayTitle ( const vpImage<unsigned char> &I,
@@ -119,6 +120,29 @@ vpDisplay::displayTitle ( const vpImage<unsigned char> &I,
     if ( I.display != NULL )
     {
       ( I.display )->flushTitle ( windowtitle ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+/*!
+  Set the windows title.
+  \param I : Image associated to the display window.
+  \param windowtitle : Window title.
+*/
+void
+vpDisplay::setTitle ( const vpImage<unsigned char> &I, 
+		      const char *windowtitle )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->setTitle ( windowtitle ) ;
     }
   }
   catch ( ... )
@@ -859,6 +883,7 @@ vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
 
 /*!
   Display the windows title.
+  \deprecated Use setTitle() instead.
 */
 void
 vpDisplay::displayTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
@@ -869,6 +894,29 @@ vpDisplay::displayTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
     if ( I.display != NULL )
     {
       ( I.display )->flushTitle ( windowtitle ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Set the windows title.
+  \param I : Image associated to the display window.
+  \param windowtitle : Window title.
+*/
+void
+vpDisplay::setTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->setTitle ( windowtitle ) ;
     }
   }
   catch ( ... )

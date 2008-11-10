@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.27 2008-10-17 15:48:45 marchand Exp $
+ * $Id: vpDisplay.h,v 1.28 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,6 +66,60 @@
   \ingroup ImageGUI
 
   \brief Class that defines generic functionnalities for display.
+
+  The example below shows how to use this class.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayD3D.h>
+#include <visp/vpDisplayOpenCV.h>
+
+int main() {
+  vpImage<unsigned char> I; // Grey level image
+
+  // Read an image in PGM P5 format
+  vpImageIo::readPGM(I, "/local/soft/ViSP-images/Klimt/Klimt.pgm");
+
+  vpDisplay *d; 
+
+  // Depending on the detected third party libraries, we instantiate here the
+  // first video device which is available
+#if defined(VISP_HAVE_X11)
+  d = new vpDisplayX;
+#elif defined(VISP_HAVE_GTK)
+  d = new vpDisplayGTK;
+#elif defined(VISP_HAVE_GDI)
+  d = new vpDisplayGDI;
+#elif defined(VISP_HAVE_D3D9)
+  d = new vpDisplayD3D;
+#elif defined(VISP_HAVE_OPENCV)
+  d = new vpDisplayOpenCV;
+#endif
+
+  // Initialize the display with the image I. Display and image are
+  // now link together.
+  d->init(I);
+
+  // Set the display window title
+  vpDisplay::setTitle(I, "My image");
+
+  // Set the display background with image I content
+  vpDisplay::display(I);
+
+  // Draw a red rectangle in the display overlay (foreground)
+  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+
+  // Flush the foreground and background display
+  vpDisplay::flush(I);
+
+  // Wait for a click in the display window
+  vpDisplay::getClick(I);
+}
+  \endcode
 */
 class VISP_EXPORT vpDisplay
 {
@@ -96,7 +150,7 @@ protected :
   // display 32 bits image
   virtual void displayImage(const vpImage<unsigned char> &I)=0 ;
   virtual void flushDisplay() =0;
-  virtual void flushTitle(const char *string) =0;
+  virtual void setTitle(const char *string) =0;
   // get information
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
@@ -377,10 +431,10 @@ protected :
 			    unsigned int width, unsigned int height,
 			    vpColor::vpColorType col, unsigned int e=1);
 
-  static void displayTitle(const vpImage<unsigned char> &I,
-			   const char *windowtitle);
+  static void setTitle(const vpImage<unsigned char> &I, 
+		       const char *windowtitle);
 
-  static void displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
+  static void setTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
 
   //! flushes the output buffer
   static void flush(const vpImage<unsigned char> &I) ;
@@ -474,6 +528,15 @@ protected :
   //! get the window pixmap and put it in vpRGBa image
   static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
 
+  /*!
+    @name Deprecated functions
+  */
+  /*! \deprecated Use setTitle() instead. */
+  virtual void flushTitle(const char *string) =0;
+  static void displayTitle(const vpImage<unsigned char> &I,
+			   const char *windowtitle);
+
+  static void displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
 
 } ;
 

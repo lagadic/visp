@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.21 2008-09-26 15:21:01 fspindle Exp $
+ * $Id: vpDisplayX.h,v 1.22 2008-11-10 10:26:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -169,7 +169,7 @@ protected:
 			vpColor::vpColorType col, bool fill = false,
 			unsigned int e=1);
   void flushDisplay() ;
-  void flushTitle(const char *string) ;
+  void setTitle(const char *string) ;
 
   bool getClick(unsigned int& i, unsigned int& j, bool blocking=true);
   bool getClick(unsigned int& i, unsigned int& j,
@@ -184,6 +184,11 @@ protected:
   inline  unsigned int getHeight() const { return height ; }
 
   void setWindowPosition(int /*_winx*/, int /*_winy*/) { ; }
+  /*!
+    @name Deprecated functions
+  */
+  void flushTitle(const char *string) ;
+
 
 } ;
 
