@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTime.h,v 1.10 2008-11-05 20:03:09 fspindle Exp $
+ * $Id: vpTime.h,v 1.11 2008-11-10 08:42:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -56,6 +56,7 @@
   The example below shows how to synchronize a loop to a given framerate.
 
   \code
+  double t;
   while(1) {
     t = vpTime::measureTimeMs();
     ...
