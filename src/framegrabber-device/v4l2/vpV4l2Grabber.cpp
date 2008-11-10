@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.14 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpV4l2Grabber.cpp,v 1.15 2008-11-10 16:01:51 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -991,7 +991,7 @@ vpV4l2Grabber::stopStreaming()
   //nothing to do if (fd < 0) or if  (streaming == false)
   if ((fd >= 0) && (streaming == true)) {
 
-    vpTRACE(" Stop the streaming...");
+    //vpTRACE(" Stop the streaming...");
     /* stop capture */
     if (ioctl(fd, VIDIOC_STREAMOFF,&fmt_v4l2.type)) {
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
