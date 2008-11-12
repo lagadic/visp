@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParallelPort.h,v 1.4 2008-09-26 15:20:58 fspindle Exp $
+ * $Id: vpParallelPort.h,v 1.5 2008-11-12 17:36:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,11 +62,20 @@
   \ingroup ParallelPort
   \brief Parallel port management under unix.
 
+  The code below shows how to send a data over the parallel port.
   \code
-  vpParallelPort parport; // open /dev/parport0 to access to the parallel port.
+#include <visp/vpConfig.h>
+#include <visp/vpParallelPort.h>
 
-  parport.sendData(127); // D7 is set to 0 and [D6-D0] are set to logical level 1
+int main()
+{
+#ifdef VISP_HAVE_PARPORT
+  vpParallelPort parport;
 
+  unsigned char data = 5; // 0x00000101 = 5 in decimal
+  parport.sendData(data); // D0 and D2 are set to logical level 1
+#endif
+}
   \endcode
 
 */

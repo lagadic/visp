@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.h,v 1.9 2008-09-26 15:20:59 fspindle Exp $
+ * $Id: vpParseArgv.h,v 1.10 2008-11-12 17:36:25 fspindle Exp $
  *
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.
@@ -41,6 +41,92 @@
   \ingroup ArgumentParser
   \brief Command line argument parsing.
 
+  The code below shows a first way to parse command line arguments
+  using vpParseArgv class. It allows to specify an option
+  name with more than one character.
+
+  \code
+#include <stdio.h>
+#include <visp/vpParseArgv.h>
+
+// Usage : [-int <integer value>] [-float <float value>] [-double <double value>] [-h]
+int main(int argc, const char ** argv)
+{
+  // Variables to set by command line parsing
+  int    i_val = 0;
+  float  f_val = 0;
+  double d_val = 0;
+
+  // Parse the command line to set the variables
+  vpParseArgv::vpArgvInfo argTable[] =
+    {
+      {"-int", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &i_val,
+	 "An integer value."},
+      {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &f_val,
+       "A float value."},
+      {"-double", vpParseArgv::ARGV_DOUBLE, (char*) NULL, (char *) &d_val,
+       "A double value."},
+      {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
+       "Print the help."},
+      {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
+    } ;
+
+  // Read the command line options
+  if(vpParseArgv::parse(&argc, argv, argTable, 
+			vpParseArgv::ARGV_NO_LEFTOVERS |
+			vpParseArgv::ARGV_NO_ABBREV | 
+			vpParseArgv::ARGV_NO_DEFAULTS)) {
+    return (false);
+  }
+ 
+  // i_val, f_val, d_val may have new values
+}
+  \endcode
+
+  The code below shows an other way to parse command line arguments using 
+  vpParseArgv class. Here command line options are only one character long.
+  \code
+#include <stdio.h>
+#include <stdlib.h>
+#include <visp/vpParseArgv.h>
+
+// List of allowed command line options
+#define GETOPTARGS	"d:f:i:h" // double point mean here that the preceding option request an argument
+
+// Usage : [-i <integer value>] [-f <float value>] [-d <double value>] [-h]
+int main(int argc, const char ** argv)
+{
+  // Variables to set by command line parsing
+  int    i_val = 0;
+  float  f_val = 0;
+  double d_val = 0;
+
+  // Parse the command line to set the variables
+  const char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'd': d_val = atof(optarg); break;
+    case 'f': f_val = (float) atof(optarg); break;
+    case 'i': i_val = atoi(optarg); break;
+    case 'h': printf("Usage: ...\n"); return true; break;
+
+    default:
+      printf("Usage: ...\n"); return true; break;
+    }
+  }
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    printf("Usage: ...\n");
+    return false;
+  }
+ 
+  // i_val, f_val, d_val may have new values
+}
+  \endcode
+
+
 */
 
 
@@ -48,23 +134,32 @@ class VISP_EXPORT vpParseArgv
 {
  public:
   /*!
-  ArgvType
-  Legal values for the type field of a ArgvInfo: see the user
-  documentation for details.
- */
+    Legal values for the type field of a vpArgvInfo.
+  */
   typedef enum  {
-    ARGV_CONSTANT,
-    ARGV_INT,
-    ARGV_LONG,
-    ARGV_STRING,
+    ARGV_CONSTANT,/*!< Stand alone argument. */
+    ARGV_INT,     /*!< Argument is associated to an int. */
+    ARGV_LONG,    /*!< Argument is associated to a long. */
+    ARGV_STRING,  /*!< Argument is associated to a char * string. */
     ARGV_REST,
-    ARGV_FLOAT,
-    ARGV_DOUBLE,
+    ARGV_FLOAT,   /*!< Argument is associated to a float. */
+    ARGV_DOUBLE,  /*!< Argument is associated to a double. */
     ARGV_FUNC,
     ARGV_GENFUNC,
-    ARGV_HELP,
-    ARGV_END
+    ARGV_HELP,    /*!< Argument is for help displaying. */
+    ARGV_END      /*!< End of the argument list. */
   } vpArgvType;
+
+  /*! 
+    Flag bits.
+   */
+  typedef enum {
+    ARGV_NO_DEFAULTS		= 0x1, /*!< No default options like -help. */
+    ARGV_NO_LEFTOVERS		= 0x2, /*!< Print an error message if an option is not in the argument list. */
+    ARGV_NO_ABBREV		= 0x4, /*!< No abrevation. Print an error message if an option is abrevated (ie "-i" in place of "-int" which is requested). */
+    ARGV_DONT_SKIP_FIRST_ARG	= 0x8, /*!< Don't skip first argument. */
+    ARGV_NO_PRINT		= 0x10 /*!< No printings. */
+  } vpArgvFlags;
 
  /*!
 
@@ -91,16 +186,6 @@ public:
   static void printUsage (vpArgvInfo *argTable, int flags);
 
 
-  /*! \enum ArgvFlags
-    Flag bits for passing to vpParseArgv:
-   */
-  enum ArgvFlags {
-    ARGV_NO_DEFAULTS		= 0x1,
-    ARGV_NO_LEFTOVERS		= 0x2,
-    ARGV_NO_ABBREV		= 0x4,
-    ARGV_DONT_SKIP_FIRST_ARG	= 0x8,
-    ARGV_NO_PRINT		= 0x10
-  };
 
 } ;
 

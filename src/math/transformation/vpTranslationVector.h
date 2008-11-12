@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.h,v 1.8 2008-10-17 17:25:07 fspindle Exp $
+ * $Id: vpTranslationVector.h,v 1.9 2008-11-12 17:36:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,6 +62,32 @@
   translation is a column vector of dimension 3.
 
   Translations are expressed in meters.
+
+  The code below shows how to use a translation vector to build an
+  homogeneous matrix.
+
+  \code
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpRotationMatrix.h>
+#include <visp/vpTranslationVector.h>
+
+int main()
+{
+  vpTranslationVector t; // Translation vector 
+
+  // Initialization of the translation vector
+  t[0] =  0.2; // tx = 0.2 meters
+  t[1] = -0.1; // ty = -0.1 meters
+  t[2] =  1.0; // tz = 1 meters
+
+  // Construction of a rotation matrix
+  vpRotationMatrix R; // Set to identity by default
+
+  // Construction of an homogeneous matrix
+  vpHomogeneousMatrix M(t, R);
+}
+  \endcode
+
 */
 class VISP_EXPORT vpTranslationVector : public vpColVector
 {

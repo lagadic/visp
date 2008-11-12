@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureTranslation.cpp,v 1.11 2008-11-06 09:25:32 fspindle Exp $
+ * $Id: vpFeatureTranslation.cpp,v 1.12 2008-11-12 17:36:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -129,7 +129,7 @@ vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &cdMc)
   Initialise the \f$t_x \f$ subset value of the current 3D
   visual feature \f$ s\f$.
 
-  \param tu_x : \f$t_x \f$ subset value to initialize.
+  \param t_x : \f$t_x \f$ subset value to initialize.
   \sa get_Tx()
 
 */
@@ -142,7 +142,7 @@ void vpFeatureTranslation::set_Tx(const double t_x)
   Initialise the \f$t_y \f$ subset value of the current 3D
   visual feature \f$ s\f$.
 
-  \param tu_z : \f$t_y \f$ subset value to initialize.
+  \param t_y : \f$t_y \f$ subset value to initialize.
   \sa get_Ty()
 
 */
@@ -155,7 +155,7 @@ void vpFeatureTranslation::set_Ty(const double t_y)
   Initialise the \f$t_z \f$ subset value of the current 3D
   visual feature \f$ s\f$.
 
-  \param tu_z : \f$t_z \f$ subset value to initialize.
+  \param t_z : \f$t_z \f$ subset value to initialize.
   \sa get_Tz()
 
 */

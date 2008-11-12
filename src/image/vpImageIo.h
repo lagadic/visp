@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIo.h,v 1.11 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpImageIo.h,v 1.12 2008-11-12 17:36:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,6 +60,29 @@
   \ingroup ImageRW
 
   \brief Read/write images with various image format.
+
+  The code below shows how to convert an PPM P6 image file format into
+  a PGM P5 image file format. The extension of the filename is here
+  used in read() and write() functions to set the image file format
+  (".pgm" for PGM P5 and ".ppm" for PPM P6).
+
+  \code
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+
+int main()
+{
+  vpImage<unsigned char> I;
+#ifdef UNIX
+  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
+#elif WIN32
+  std::string filename("C:/temp/ViSP-images/Klimt/Klimt.ppm");
+#endif
+
+  vpImageIo::read(I, filename); // Convert the color image in a gray level image
+  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format 
+}
+  \endcode
 */
 
 class VISP_EXPORT vpImageIo

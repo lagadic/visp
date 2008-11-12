@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.h,v 1.6 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpRingLight.h,v 1.7 2008-11-12 17:36:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,24 +62,47 @@
   \warning This class works only at Irisa with the Edixia's ring light system.
 
   Here is an example showing how to synchronise the framegrabbing with
-  the lighting system:
+  the lighting system.
 
   \code
-  vpItifg8Grabber grabber;
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+#include <visp/vpRingLight.h>
+
+int main()
+{
+#if defined(VISP_HAVE_PARPORT) && defined(VISP_HAVE_DC1394_2)
+  vp1394TwoGrabber g; // Firewire framegrabber based on libdc1394-2.x third party lib
   vpImage<unsigned char> I;
 
   vpRingLight light; // Open the device to access to the ring light.
 
-  light.pulse(); // Send a pulse to the lighting system
-  grabber.acquire(I); // Acquire an image
+  for (int i=0; i < 10; i++) {
+    light.pulse(); // Send a pulse to the lighting system
+    g.acquire(I); // Acquire an image
+  }
+#endif
+}
   \endcode
 
-  Here is an example showing how to turn on the lighting during 10 seconds
+  Here is an example showing how to turn on the lighting during 10 seconds.
   \code
-  int nsec = 10; // Time to wait in seconds
-  light.on(); // Turn the ring light on
+#include <visp/vpConfig.h>
+#include <visp/vpRingLight.h>
+#include <visp/vpTime.h>
+
+int main()
+{
+#ifdef VISP_HAVE_PARPORT
+  vpRingLight light;         // Open the device to access to the ring light.
+
+  int nsec = 10;             // Time to wait in seconds
+  light.on();                // Turn the ring light on
   vpTime::wait(nsec * 1000); // Wait 10 s
-  light.off(); // and then turn the ring light off
+  light.off();               // and then turn the ring light off
+#endif
+}
   \endcode
 
 

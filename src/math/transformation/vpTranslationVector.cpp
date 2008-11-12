@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp,v 1.9 2008-10-17 17:25:07 fspindle Exp $
+ * $Id: vpTranslationVector.cpp,v 1.10 2008-11-12 17:36:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -83,7 +83,7 @@ vpTranslationVector::vpTranslationVector(const double tx,
   \code
   vpTranslationVector t1(1,2,3); // Create and initialize a translation vector
 
-  vpTranslationVector t2(t1);    // t2 is now a copie of t1
+  vpTranslationVector t2(t1);    // t2 is now a copy of t1
   \endcode
 
 */
@@ -254,22 +254,22 @@ vpTranslationVector & vpTranslationVector::operator=(double x)
 /*!
   \relates vpMatrix
 
-  Compute the skew symmetric matrix of vector v (matrice de pre-produit
-  vectoriel)
+  Compute the skew symmetric matrix \f$M\f$ of translation vector \f$t\f$
+  (matrice de pre-produit vectoriel).
 
-  \f[ \mbox{if} \quad  {\bf t} =  \left( \begin{array}{c} x \\ y \\  z
+  \f[ \mbox{if} \quad  {\bf t} =  \left( \begin{array}{c} t_x \\ t_y \\ t_z
   \end{array}\right), \quad \mbox{then} \qquad
-  skew(\bf t) = \left( \begin{array}{ccc}
-  0 & -z & y \\
-  z & 0 & -x \\
-  -y & x & 0
+  M = \left( \begin{array}{ccc}
+  0 & -t_z & t_y \\
+  t_z & 0 & -t_x \\
+  -t_y & t_x & 0
   \end{array}\right)
   \f]
 
   \param t : Translation vector in input used to compute the skew symmetric
   matrix M.
 
-  \param M : Skew symmetric matrix of vector v.
+  \param M : Skew symmetric matrix of translation vector \f$t\f$.
 */
 void
 vpTranslationVector::skew(const vpTranslationVector &t,vpMatrix &M)
@@ -283,14 +283,22 @@ vpTranslationVector::skew(const vpTranslationVector &t,vpMatrix &M)
 /*!
   \relates vpTranslationVector
 
-  Compute the skew symmetric matrix of vector t (matrice de pre-produit
-  vectoriel)
+  Compute the skew symmetric matrix \f$M\f$ of translation vector
+  \f$t\f$ (matrice de pre-produit vectoriel).
+
+  \f[ \mbox{if} \quad  {\bf t} =  \left( \begin{array}{c} t_x \\ t_y \\ t_z
+  \end{array}\right), \quad \mbox{then} \qquad
+  M = \left( \begin{array}{ccc}
+  0 & -t_z & t_y \\
+  t_z & 0 & -t_x \\
+  -t_y & t_x & 0
+  \end{array}\right)
+  \f]
 
   \param t : Translation vector in input.
 
-  \return Skew symmetric matrix of vector t.
-
-  \sa skew(const vpTranslationVector &, vpMatrix &) for more details
+  \return Skew symmetric matrix \f$M\f$ of translation vector
+  \f$t\f$
 
 */
 vpMatrix
@@ -304,12 +312,20 @@ vpTranslationVector::skew(const vpTranslationVector &t)
 /*!
   \relates vpTranslationVector
 
-  Compute the skew symmetric matrix of vector v (matrice de pre-produit
-  vectoriel)
+  Compute the skew symmetric matrix \f$M\f$ of the translation vector (matrice
+  de pre-produit vectoriel), where
 
-  \return Skew symmetric matrix.
+  \f[ M = \left( \begin{array}{ccc}
+  0 & -t_z & t_y \\
+  t_z & 0 & -t_x \\
+  -t_y & t_x & 0
+  \end{array}\right)
+  \f] 
 
-  \sa skew(const vpTranslationVector &, vpMatrix &) for more details
+  and where \f$(t_x,t_y,t_z)\f$ are the coordinates of the translation
+  vector.
+
+  \return Skew symmetric matrix \f$M\f$ of the translation vector.
 
 */
 vpMatrix
@@ -323,10 +339,12 @@ vpTranslationVector::skew() const
 
 /*!
   \relates vpTranslationVector
-  Compute the cross product of two vectors c = a x b
+  Return the cross product of two translation vectors \f$a \times b\f$.
 
   \param a,b : Translation vectors in input. 
-  \return The cross product (a x b).
+
+  \return The cross product of two translation vectors \f$a \times
+  b\f$.
 */
 vpTranslationVector
 vpTranslationVector::cross(const vpTranslationVector &a,
