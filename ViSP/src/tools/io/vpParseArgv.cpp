@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.11 2008-06-13 13:37:37 asaunier Exp $
+ * $Id: vpParseArgv.cpp,v 1.12 2008-11-12 17:36:25 fspindle Exp $
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
@@ -54,24 +54,30 @@ int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **
 
 
 /*!
- *
- *
- *	Process an argv array according to a table of expected
- *	command-line options.  See the manual page for more details.
- *
- * Results:
- *	The return value is a Boolean value with true indicating an error.
- *	If an error occurs then an error message is printed on stderr.
- *	Under normal conditions, both *argcPtr and *argv are modified
- *	to return the arguments that couldn't be processed here (they
- *	didn't match the option table, or followed an ARGV_REST
- *	argument).
- *
- * Side effects:
- *
- */
+  Process an argv array according to a table of expectedvcommand-line options. 
+ 
+  The return value is a boolean value with true indicating an
+  error. If an error occurs then an error message is printed on
+  stderr. Under normal conditions, both *argcPtr and *argv are
+  modified to return the arguments that couldn't be processed here
+  (they didn't match the option table, or followed an
+  vpParseArgv::ARGV_REST argument).
+ 
+  \param argcPtr: Pointer to the count of command line arguments.
+
+  \param argv: Array of command line argument strings.
+
+  \param argTable: Array of command-specific argument.descriptions.
+
+  \param flags: This parameter is to set with vpParseArgv::vpArgvFlags
+  values or combinations of these values using the OR operator
+  (vpParseArgv::ARGV_NO_LEFTOVERS | vpParseArgv::ARGV_NO_DEFAULTS). If
+  the vpParseArgv::ARGV_NO_DEFAULTS bit is set, then
+  don't generate information for default options.
+*/
 bool
-vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, int flags)
+vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, 
+		   int flags)
 
 {
    register vpArgvInfo *infoPtr;	/* Pointer to the current entry in the
@@ -326,24 +332,19 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, int fl
 }
 
 /*!
+  Generate a help string describing command-line options.
+ 
+  Prints on stderr (unless vpParseArgv::ARGV_NO_PRINT is specified in
+  flags) a help string describing all the options in argTable, plus
+  all those in the default table unless vpParseArgv::ARGV_NO_DEFAULTS
+  is specified in flags.
+ 
+  \param argTable: Array of command-specific argument.descriptions.
 
- *
- *	Generate a help string describing command-line options.
- *
- * Results:
- *	Prints on stderr (unless ARGV_NO_PRINT is specified in flags)
- *	a help string describing all the options in argTable, plus all those
- *	in the default table unless ARGV_NO_DEFAULTS is
- *	specified in flags.
- *
- \param argTable: Array of command-specific argument.descriptions.
+  \param flags: If the vpParseArgv::ARGV_NO_DEFAULTS bit is set in
+  this word, then don't generate information for default options.
 
- \param flags: If the ARGV_NO_DEFAULTS bit is set in this word, then
- don't generate information for default options.
-
-
- */
-
+*/
 void
 vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
 {
@@ -469,7 +470,7 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
    FPRINTF(stderr, "\n");
 }
 
-/*
+/*!
 
   Get next command line option and parameter.
 
@@ -477,8 +478,8 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
 
   \param argv: Array of command line argument strings.
 
-  \param validOpts: String of valid, case-sensitive option characters, a
-  colon ':' following a given character means that option can take a parameter.
+  \param validOpts: String of valid case-sensitive option characters, a
+  ':' following a given character means that option can take a parameter.
 
   \param param: Pointer to a pointer to a string for output.
 
@@ -496,7 +497,9 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
   is NULL.
 
 */
-int vpParseArgv::parse(int argc, const char** argv, const char* validOpts, const char** param)
+int 
+vpParseArgv::parse(int argc, const char** argv, const char* validOpts, 
+		   const char** param)
 {
   static int iArg = 1;
   int chOpt;
