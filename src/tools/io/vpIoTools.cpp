@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.cpp,v 1.13 2008-06-13 17:01:19 asaunier Exp $
+ * $Id: vpIoTools.cpp,v 1.14 2008-11-13 11:14:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -297,9 +297,14 @@ vpIoTools::checkFilename(const std::string filename)
 }
 
 /*!
-  Converts a pathname to the current system's format.
-  \param pathname : Pathname to convert.
-  \return The converted pathname.
+  Converts a path name to the current system's format.
+
+  \param pathname : Path name to convert. Path name to convert. Under
+  windows, converts all the "/" characters in the \e pathname string
+  into "\\" characters. Under Unix systems converts all the "\\"
+  characters in the \e pathname string into "/" characters.
+
+  \return The converted path name.
 */
 std::string
 vpIoTools::path(const char * pathname)
@@ -319,9 +324,14 @@ vpIoTools::path(const char * pathname)
 
 
 /*!
-  Converts a pathname to the current system's format.
-  \param pathname : Pathname to convert.
-  \return The converted pathname.
+  Converts a path name to the current system's format.
+  
+  \param pathname : Path name to convert. Under windows, converts all
+  the "/" characters in the \e pathname string into "\\"
+  characters. Under Unix systems converts all the "\\" characters in
+  the \e pathname string into "/" characters.
+
+  \return The converted path name.
 */
 std::string
 vpIoTools::path(const std::string& pathname)

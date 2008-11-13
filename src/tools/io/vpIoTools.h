@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpIoTools.h,v 1.8 2008-09-26 15:20:58 fspindle Exp $
+ * $Id: vpIoTools.h,v 1.9 2008-11-13 11:14:34 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -54,6 +54,41 @@
   \ingroup FileDirectories
   \brief File and directories basic tools.
 
+  The example below shows how to manipulate the functions of this
+  class to create first a directory which name corresponds to the user
+  name and then create a file in this directory.
+
+  \code
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <visp/vpIoTools.h>
+
+int main()
+{
+  std::string username;
+  vpIoTools::getUserName(username);
+
+  // Test if a username directory exist. If no try to create it
+  if (vpIoTools::checkDirectory(username) == false) {
+     try {
+       // Create a directory with name "username"
+       vpIoTools::makeDirectory(username);
+     }
+     catch (...) {
+       std::cout << "Cannot create " << username << " directory" << std::endl;
+       return false;
+     }
+   }
+  // Create a empty filename with name "username/file.txt"
+  std::ofstream f;
+  std::string filename = username + "/file.txt";
+  filename = vpIoTools::path(filename); // Under Windows converts the filename string into "username\\file.txt"
+  f.open(filename.c_str());
+  f.close();
+}
+  \endcode
+
 */
 
 class VISP_EXPORT vpIoTools
@@ -68,7 +103,7 @@ public:
   static bool checkFilename(const char *filename);
   static bool checkFilename(const std::string filename);
 
-  static std::string path(const char * _p);
+  static std::string path(const char * pathname);
   static std::string path(const std::string& _p);
 } ;
 
