@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpXmlParserCamera.h,v 1.9 2008-11-10 16:54:10 fspindle Exp $
+ * $Id: vpXmlParserCamera.h,v 1.10 2008-11-13 11:13:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -105,6 +105,8 @@
 int main()
 {
   vpCameraParameters cam; // Create a camera parameter container
+
+#ifdef VISP_HAVE_XML2
   vpXmlParserCamera p; // Create a XML parser
   vpCameraParameters::vpCameraParametersProjType projModel; // Projection model
   // Use a perspective projection model without distorsion
@@ -123,6 +125,7 @@ int main()
 
   // Save the parameters in a new file "myXmlFileWithNoise.xml"
   p.save(cam,"myXmlFileWithNoise.xml",p.getCameraName(),p.getWidth(),p.getHeight());
+#endif
 }
   \endcode
 
@@ -142,10 +145,13 @@ int main()
   cam.setPrincipalPoint(162.3,122.4);
   // Set the pixel ratio (px, py)
   cam.setPixelRatio (563.2, 564.1);
+
+#ifdef VISP_HAVE_XML2
   // Create a XML parser
   vpXmlParserCamera p;
   // Save the camera parameters in an XML file.
   p.save(cam,"myNewXmlFile.xml","myNewCamera",320,240);
+#endif
 }
   \endcode
 */
