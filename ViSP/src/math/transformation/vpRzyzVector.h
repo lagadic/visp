@@ -1,0 +1,180 @@
+/****************************************************************************
+ *
+ * $Id: vpRzyzVector.h,v 1.1 2008-11-14 17:43:37 fspindle Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit.
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Euler angles parameterization for the rotation.
+ * Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
+ *
+ * Authors:
+ * Eric Marchand
+ * Fabien Spindler
+ *
+ *****************************************************************************/
+
+
+#ifndef vpRzyzVector_h
+#define vpRzyzVector_h
+
+/*!
+  \file vpRzyzVector.h
+  \brief class that consider the case of the Rzyz angles parameterization
+  for the  rotation
+
+  Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
+*/
+
+class vpRotationMatrix;
+class vpThetaUVector;
+
+#include <visp/vpConfig.h>
+#include <visp/vpRotationVector.h>
+#include <visp/vpRotationMatrix.h>
+
+/*!
+  \class vpRzyzVector
+
+  \ingroup RotTransformation
+
+  \brief Class that consider the case of the Euler
+  \f$(\varphi,\theta,\psi)\f$ angles using the z-y-z convention, where
+  \f$(\varphi,\theta,\psi)\f$ are respectively the rotation angles
+  around the \f$z\f$, \f$y\f$ and \f$z\f$ axis.
+
+  \f[R_{zyz}(\varphi,\theta,\psi) = R_z(\varphi) \; R_y(\theta) \; R_z(\psi)\f]
+
+  with
+
+  \f[
+  R_{z}(\varphi) = \left(
+  \begin{array}{ccc}
+  \cos \varphi & -\sin\varphi & 0\\
+  \sin\varphi &\cos \varphi& 0 \\
+  0 & 0 & 1
+  \end{array}
+  \right) \;
+  R_{y}(\theta) = \left(
+  \begin{array}{ccc}
+  \cos \theta & 0 & \sin\theta\\
+  0 & 1 & 0 \\
+  -\sin\theta & 0 &\cos \theta
+  \end{array}
+  \right) \;
+  R_{z}(\psi) = \left(
+  \begin{array}{ccc}
+  \cos \psi & -\sin\psi & 0\\
+  \sin\psi &\cos \psi& 0 \\
+  0 & 0 & 1
+  \end{array}
+  \right)
+  \f]
+  
+  The rotation matrix corresponding to the z-y-z convention is given by:
+
+  \f[
+  R_{zyz}(\varphi,\theta,\psi) = \left(
+  \begin{array}{ccc}
+  \cos\varphi \cos\theta \cos\psi - \sin\varphi\sin\psi & -\cos\varphi \cos\theta \sin\psi -\sin\varphi\cos\psi & \cos\varphi \sin\theta \\
+  \sin\varphi \cos\theta \cos\psi + \cos\varphi\sin\psi & -\sin\varphi \cos\theta \sin\psi +\cos\varphi\cos\psi & \sin\varphi \sin\theta \\
+  -\sin\theta \cos\psi & \sin\theta \sin\psi & \cos\theta
+  \end{array}
+  \right)
+  \f]
+ 
+
+  The code below shows first how to contruct a rotation matrix from a
+  vpRzyzVector and than how to extract the vpRzyzVector Euler angles
+  from the build rotation matrix.
+
+  \code
+#include <visp/vpMath.h>
+#include <visp/vpRotationMatrix.h>
+#include <visp/vpRzyzVector.h>
+
+int main()
+{
+  vpRzyzVector rzyz;
+
+  // Initialise the Euler angles
+  rzyz[0] = vpMath::rad( 45.f); // phi   angle in rad/s around z axis 
+  rzyz[1] = vpMath::rad(-30.f); // theta angle in rad/s around y axis
+  rzyz[2] = vpMath::rad( 90.f); // psi   angle in rad/s around z axis
+
+  // Construct a rotation matrix from the Euler angles
+  vpRotationMatrix R(rzyz);
+
+  // Extract the Euler angles around z,y,z axis from a rotation matrix
+  rzyz.buildFrom(R);
+
+  std::cout << rzyz; // Print the Euler angles
+}
+  \endcode
+*/
+class VISP_EXPORT vpRzyzVector : public vpRotationVector
+{
+  friend class vpRotationMatrix;
+  friend class vpThetaUVector;
+
+ public:
+  //! Default constructor. Initialize the angles to zero.
+  vpRzyzVector() {  ; }
+
+  // Copy constructor.
+  vpRzyzVector(const vpRzyzVector &m);
+  
+  /*!
+    Constructor from 3 angles (in radian).
+    \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
+    \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
+    \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
+  */
+  vpRzyzVector(const double phi, const double theta, const double psi) :
+    vpRotationVector(phi, theta, psi) { ; }
+    
+  // initialize a Rzyz vector from a rotation matrix
+  vpRzyzVector(const vpRotationMatrix& R);
+
+  // initialize a Rzyz vector from a ThetaU vector
+  vpRzyzVector(const vpThetaUVector&  tu);
+
+  // Affectation of two vectors.
+  vpRzyzVector &operator=(const vpRzyzVector &m);
+
+  // convert a rotation matrix into Rzyz vector
+  vpRzyzVector buildFrom(const vpRotationMatrix& R) ;
+
+  // convert a ThetaU vector into a Rzyz vector
+  vpRzyzVector buildFrom(const vpThetaUVector& R) ;
+} ;
+#endif
+
+/*
+ * Local variables:
+ * c-basic-offset: 2
+ * End:
+ */
