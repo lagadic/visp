@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.25 2008-11-10 08:30:05 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.26 2008-11-14 17:44:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -116,6 +116,7 @@ SET (HEADER_MATH
   math/transformation/vpRotationVector.h
   math/transformation/vpRxyzVector.h
   math/transformation/vpRzyxVector.h
+  math/transformation/vpRzyzVector.h
   math/transformation/vpThetaUVector.h
   math/transformation/vpTranslationVector.h
   math/transformation/vpTwistMatrix.h
