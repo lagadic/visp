@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeSourceFileList.cmake,v 1.26 2008-11-10 08:30:05 fspindle Exp $
+# $Id: CMakeSourceFileList.cmake,v 1.27 2008-11-14 17:44:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -123,6 +123,7 @@ SET (SRC_MATH
   math/transformation/vpRotationVector.cpp
   math/transformation/vpRxyzVector.cpp
   math/transformation/vpRzyxVector.cpp
+  math/transformation/vpRzyzVector.cpp
   math/transformation/vpThetaUVector.cpp
   math/transformation/vpTranslationVector.cpp
   math/transformation/vpTwistMatrix.cpp
