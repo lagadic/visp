@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpEulerVector.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
+ * $Id: vpEulerVector.h,v 1.8 2008-11-14 17:43:37 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,6 +67,9 @@ class vpThetaUVector;
   \brief Class that consider the case of the euler angles  parameterization
   for the  rotation.
 
+  \deprecated This class is deprecated because to ambiguous. Yous
+  should use vpRxyzVector, or vpRzyxVector or vpRzyzVector classes.
+
   Euler(phi,theta,psi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
 class VISP_EXPORT vpEulerVector : public vpRotationVector
@@ -96,32 +99,7 @@ public:
 
 } ;
 
-/*!
-  \class vpRzyzVector
-  \brief class that consider the case of the Euler angles  parameterization
-  for the  rotation (this is fully equivalent to the vpEulerVector class)
 
-
-  Euler(phi,theta,psi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
-*/
-class VISP_EXPORT vpRzyzVector : public vpEulerVector
-{
-public:
-  //!  constructor
-  vpRzyzVector() {  ; }
-  //! copy constructor
-  vpRzyzVector(const vpRzyzVector &m) : vpEulerVector(m){ ;}
-
-  //! constructor from 3 angles (in radian)
-  vpRzyzVector(const double phi, const double theta, const double psi) :
-    vpEulerVector(phi, theta, psi) { ; }
-
-  //! constructor initialize a Theta U vector from a rotation matrix
-  vpRzyzVector(const vpRotationMatrix& R) : vpEulerVector(R){ ;}
-  //! constructor initialize a Theta U vector from a rotation matrix
-  vpRzyzVector(const vpThetaUVector&  tu) : vpEulerVector(tu) { ;}
-
-} ;
 #endif
 
 /*
