@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.h,v 1.7 2008-09-26 15:20:55 fspindle Exp $
+ * $Id: vpRotationMatrix.h,v 1.8 2008-11-14 17:45:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -50,6 +50,7 @@
 #include <visp/vpRotationVector.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpRzyxVector.h>
+#include <visp/vpRzyzVector.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
 
@@ -131,7 +132,7 @@ public:
 
   //! Transform a vector vpThetaUVector into an rotation matrix
   vpRotationMatrix buildFrom(const vpThetaUVector &v) ;
-  //! Transform a vector reprensenting the euler (Rzyz) angle
+  //! Transform a vector representing the euler (Rzyz) angle
   //! into a rotation matrix
   vpRotationMatrix buildFrom(const vpEulerVector &v) ;
   //! Transform a vector reprensenting the euler (Rzyz) angle
