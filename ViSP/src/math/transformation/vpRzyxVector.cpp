@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRzyxVector.cpp,v 1.6 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpRzyxVector.cpp,v 1.7 2008-11-14 17:45:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -33,6 +33,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -48,7 +49,7 @@
 
 
 /*!
-  \brief  affectation of two vector
+  Affectation of two vectors.
 */
 vpRzyxVector &
 vpRzyxVector::operator=(const vpRzyxVector &m)
@@ -62,31 +63,44 @@ vpRzyxVector::operator=(const vpRzyxVector &m)
 }
 
 
-//! copy constructor
+//! Copy constructor.
 vpRzyxVector::vpRzyxVector(const vpRzyxVector &m) : vpRotationVector()
 {
   *this = m ;
 }
 
 
-//! initialize a Rzyx vector from a rotation matrix
+/*! 
+  Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
+  angles from a rotation matrix.
+  \param R : Rotation matrix used to initialize the Euler angles.
+*/
 vpRzyxVector::vpRzyxVector(const vpRotationMatrix& R)
 {
-    buildFrom(R) ;
+  buildFrom(R) ;
 }
 
 
-//! initialize a Rzyx vector from a Theta U vector
+/*!
+  Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
+  angles vector from a \f$\theta u\f$ vector.
+  \param tu : \f$\theta u\f$ representation of a rotation used here as 
+  input to initialize the Euler angles.
+*/
 vpRzyxVector::vpRzyxVector(const vpThetaUVector& tu)
 {
-    buildFrom(tu) ;
+  buildFrom(tu) ;
 }
 
-/*! convert a rotation matrix into Rzyx vector
+/*! 
+  Convert a rotation matrix into a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
+  angles vector.
+  
+  Source: R. Paul, Robot Manipulators: Mathematics, Programming, and Control.
+  MIT Press, 1981, p. 71
 
-  source
-  R. Paul, Robot Manipulators: Mathematics, Programming, and Control.
-  MIT Press, 1981,  p. 71
+  \param R : Rotation matrix used as input.
+  \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.   
 */
 vpRzyxVector
 vpRzyxVector::buildFrom(const vpRotationMatrix& R)
@@ -116,16 +130,21 @@ vpRzyxVector::buildFrom(const vpRotationMatrix& R)
 }
 
 
-//! convert a rotation matrix into Theta U vector
+/*! 
+  Convert a \f$\theta u\f$ vector into a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ 
+  Euler angles vector.
+  \param tu : \f$\theta u\f$ representation of a rotation used here as 
+  input.
+  \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.   
+*/
 vpRzyxVector
 vpRzyxVector::buildFrom(const vpThetaUVector& tu)
 {
-
-    vpRotationMatrix R ;
-    R.buildFrom(tu) ;
-    buildFrom(R) ;
-
-    return *this ;
+  vpRotationMatrix R ;
+  R.buildFrom(tu) ;
+  buildFrom(R) ;
+  
+  return *this ;
 }
 
 

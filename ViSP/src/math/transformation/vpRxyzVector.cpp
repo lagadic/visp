@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRxyzVector.cpp,v 1.7 2007-04-27 16:40:15 fspindle Exp $
+ * $Id: vpRxyzVector.cpp,v 1.8 2008-11-14 17:45:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -33,13 +33,13 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
 #include <math.h>
 #include <visp/vpRxyzVector.h>
 
-#define DEBUG_LEVEL1 0
 /*!
   \file vpRxyzVector.cpp
   \brief class that consider the case of the  Rxyz angle parameterization for the rotation :
@@ -48,7 +48,7 @@
 
 
 /*!
-  \brief  affectation of two vector
+  Affectation of two vectors.
 */
 vpRxyzVector &
 vpRxyzVector::operator=(const vpRxyzVector &m)
@@ -62,37 +62,45 @@ vpRxyzVector::operator=(const vpRxyzVector &m)
 }
 
 
-//! copy constructor
+//! Copy constructor.
 vpRxyzVector::vpRxyzVector(const vpRxyzVector &m) : vpRotationVector()
 {
-    *this = m ;
+  *this = m ;
 }
 
-//! initialize a Rxyz vector from a rotation matrix
+/*! 
+  Constructor that initialize \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
+  angles from a rotation matrix.
+  \param R : Rotation matrix used to initialize the Euler angles.
+*/
 vpRxyzVector::vpRxyzVector(const vpRotationMatrix& R)
 {
-
-    buildFrom(R) ;
+  buildFrom(R) ;
 }
 
-
-//! initialize a Rxyz vector from a Theta U vector
+/*!
+  Constructor that initialize \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
+  angles vector from a \f$\theta u\f$ vector.
+  \param tu : \f$\theta u\f$ representation of a rotation used here as 
+  input to initialize the Euler angles.
+*/
 vpRxyzVector::vpRxyzVector(const vpThetaUVector& tu)
 {
-
-    buildFrom(tu) ;
+  buildFrom(tu) ;
 }
 
-//! convert a rotation matrix into Rxyz vector
-
-#ifdef COEF_MIN_ROT
-#undef COEF_MIN_ROT
-#endif
-#define COEF_MIN_ROT 1e-6
+/*! 
+  Convert a rotation matrix into a \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
+  angles vector.
+  
+  \param R : Rotation matrix used as input.
+  \return \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.   
+*/
 vpRxyzVector
 vpRxyzVector::buildFrom(const vpRotationMatrix& R)
 {
 
+  double COEF_MIN_ROT = 1e-6;
   double phi ;
 
   if ((fabs(R[1][2]) < COEF_MIN_ROT) && (fabs(R[2][2]) < COEF_MIN_ROT)) phi = 0 ;
@@ -107,7 +115,7 @@ vpRxyzVector::buildFrom(const vpRotationMatrix& R)
   r[1] = theta ;
   r[2] = psi ;
 
-  if (DEBUG_LEVEL1)  // test new version wrt old version
+  if (0)  // test new version wrt old version
   {
     // old version
 
@@ -160,21 +168,24 @@ vpRxyzVector::buildFrom(const vpRotationMatrix& R)
 
   return *this ;
 }
-#undef COEF_MIN_ROT
 
-//! convert a rotation matrix into Theta U vector
+/*! 
+  Convert a \f$\theta u\f$ vector into a \f$R_{xyz}=(\varphi,\theta,\psi)\f$ 
+  Euler angles vector.
+  \param tu : \f$\theta u\f$ representation of a rotation used here as 
+  input.
+  \return \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.   
+*/
 vpRxyzVector
 vpRxyzVector::buildFrom(const vpThetaUVector& tu)
 {
+  vpRotationMatrix R ;
+  R.buildFrom(tu) ;
+  buildFrom(R) ;
 
-    vpRotationMatrix R ;
-    R.buildFrom(tu) ;
-    buildFrom(R) ;
-
-    return *this ;
+  return *this ;
 }
 
-#undef DEBUG_LEVEL1
 /*
  * Local variables:
  * c-basic-offset: 2

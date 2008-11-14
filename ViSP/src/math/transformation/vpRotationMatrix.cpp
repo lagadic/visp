@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.15 2008-09-26 15:20:55 fspindle Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.16 2008-11-14 17:45:11 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -481,8 +481,11 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 }
 
 /*!
-  \brief   Transform a vector reprensenting the euler angle
-  into an rotation matrix
+  \brief   Transform a vector representing the euler angle
+  into an rotation matrix.
+
+  \deprecated This method is deprecated. You should use
+  buildFrom(const vpRzyzVector &) instead.
 
   Rzyz = Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
 */
@@ -515,11 +518,30 @@ vpRotationMatrix::buildFrom(const vpEulerVector &v)
   \brief   Transform a vector reprensenting the euler angle
   into an rotation matrix
   Rzyz =  Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
+
 */
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpRzyzVector &v)
 {
-  buildFrom((vpEulerVector)v) ;
+  double c0,c1,c2,s0,s1,s2;
+
+  c0 = cos(v[0]);
+  c1 = cos(v[1]);
+  c2 = cos(v[2]);
+  s0 = sin(v[0]);
+  s1 = sin(v[1]);
+  s2 = sin(v[2]);
+
+  (*this)[0][0] = c0*c1*c2 - s0*s2;
+  (*this)[0][1] = -c0*c1*s2 - s0*c2;
+  (*this)[0][2] = c0*s1;
+  (*this)[1][0] = s0*c1*c2+c0*s2 ;
+  (*this)[1][1] = -s0*c1*s2 + c0*c2 ;
+  (*this)[1][2] = s0*s1;
+  (*this)[2][0] = -s1*c2;
+  (*this)[2][1] = s1*s2;
+  (*this)[2][2] = c1;
+
   return (*this) ;
 }
 
