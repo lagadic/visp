@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.35 2008-09-26 15:21:00 fspindle Exp $
+ * $Id: vpDot2.h,v 1.36 2008-11-18 14:38:14 cteulier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -62,10 +62,10 @@
   gray level) on a vpImage.
 
   The underground algorithm is based on a binarisation of the image
-  and than a contour detection using the Freeman chain coding to
+  and then a contour detection using the Freeman chain coding to
   determine the dot characteristics (location, moments, size...).
 
-  The center of gravity of a vpDot2 zone have to be of the right color
+  The center of gravity of a vpDot2 zone has to be of the right color
   level. You can specify these color levels by setGrayLevelMin() and
   setGrayLevelMax(). This allows to track white objects on a black background
   and vice versa.
@@ -76,9 +76,9 @@
   track() and searchDotsInArea() are the most important features
   of this class.
 
-  - track() estimate the current position of the dot using it's previous
-    position, then try to compute the new parameters of the dot. It everything
-    went ok, tracking succeded, otherwise we search this dot in an window
+  - track() estimate the current position of the dot using its previous
+    position, then try to compute the new parameters of the dot. If everything
+    went ok, tracking succeeds, otherwise we search this dot in a window
     around the last position of the dot.
 
   - searchDotsInArea() enable to find dots similar to this dot in a window. It

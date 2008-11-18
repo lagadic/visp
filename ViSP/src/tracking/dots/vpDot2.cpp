@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.39 2008-09-26 15:21:00 fspindle Exp $
+ * $Id: vpDot2.cpp,v 1.40 2008-11-18 14:38:14 cteulier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -273,7 +273,7 @@ void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
   If no valid dot was found in the window, return an exception.
 
   \exception vpTrackingException::featureLostError : If the dot initialisation
-  failed. The initialisation can failed if the following characteristics are
+  failed. The initialisation can fail if the following characteristics are
   not valid;
   - The gray level is between gray level min and gray level max.
 
@@ -283,7 +283,7 @@ void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
     setEllipsoidShapePrecision(0).
 
   To get the center of gravity of the dot, call get_u() and get_v(). To get the
-  with or hight of the dot, call getWidth() and getHeight(). The surface of the
+  width or height of the dot, call getWidth() and getHeight(). The surface of the
   dot is given by getSurface().
 
   \sa track()
@@ -342,7 +342,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
   If no valid dot was found in the window, return an exception.
 
   \exception vpTrackingException::featureLostError : If the dot initialisation
-  failed. The initialisation can failed if the following characteristics are
+  failed. The initialisation can fail if the following characteristics are
   not valid;
   - The gray level is between gray level min and gray level max.
 
@@ -413,7 +413,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   If no valid dot was found in the window, return an exception.
 
   \exception vpTrackingException::featureLostError : If the dot initialisation
-  failed. The initialisation can failed if the following characteristics are
+  failed. The initialisation can fail if the following characteristics are
   not valid;
   - The gray level is between gray level min and gray level max.
 
@@ -456,7 +456,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
 
   Try to locate the dot in the image:
 
-  - First estimate the new position of the dot, using it's previous position.
+  - First, estimate the new position of the dot, using its previous position.
   - Then compute the center of gravity (surface, width height) of the
     tracked entity from the Freeman chain elements.
   - If the dot is lost (estimated point too dark, too much surface change,...),
@@ -466,13 +466,11 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   \param I : Image.
 
   \exception vpTrackingException::featureLostError : If the dot tracking
-  failed. The tracking can failed if the following characteristics are not
+  failed. The tracking can fail if the following characteristics are not
   valid;
   - The gray level is between gray level min and gray level max.
 
-  - The size (width or height)
-
-  - and the surface (in terms f number of pixels) should not differ to much
+  - The size (width or height) and the surface (in terms of number of pixels) should not differ to much
     with the previous dot.
 
   - The shape should be ellipsoid if
@@ -481,7 +479,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
     setEllipsoidShapePrecision(0).
 
   To get the center of gravity of the dot, call get_u() and get_v(). To get the
-  with or hight of the dot, call getWidth() and getHeight(). The surface of the
+  width or height of the dot, call getWidth() and getHeight(). The surface of the
   dot is given by getSurface().
 
   To compute all the inertia moments associated to the dot see
@@ -1395,7 +1393,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   //
   if (ellipsoidShapePrecision != 0 && compute_moment) {
     // See F. Chaumette. Image moments: a general and useful set of features
-    // for visual servoing. IEEE Trans. on Robotics, 20(4):713-723, Août 2004.
+    // for visual servoing. IEEE Trans. on Robotics, 20(4):713-723, Aoï¿½t 2004.
 
     // mu11 = m11 - m00 * xg * yg = m11 - m00 * m10/m00 * m01/m00
     //      = m11 - m10 * m01 / m00
