@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.cpp,v 1.11 2007-09-14 08:42:47 fspindle Exp $
+ * $Id: vpImageTools.cpp,v 1.12 2008-11-18 21:20:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,33 +40,58 @@
 
 /*!
 
-  Change the look up table (LUT) of an image. Considering pixel values
-  \f$ v \f$ in the range \f$[A, B]\f$, rescale this values in
-  \f$[A^*, B^*]\f$ by linear interpolation:
+  Change the look up table (LUT) of an image. Considering pixel gray
+  level values \f$ l \f$ in the range \f$[A, B]\f$, this method allows
+  to rescale these values in \f$[A^*, B^*]\f$ by linear interpolation:
 
   \f$
   \left\{ \begin{array}{ll}
-  v \in ]-\infty, A] \mbox{, } &  v = A^* \\
-  v \in  [B, \infty[ \mbox{, } &  v = B^* \\
-  v \in ]A, B[ \mbox{, }       &  v = A^* + (v-A) * \frac{B^*-A^*}{B-A}
+  l \in ]-\infty, A] \mbox{, } &  l = A^* \\
+  l \in  [B, \infty[ \mbox{, } &  l = B^* \\
+  l \in ]A, B[ \mbox{, }       &  l = A^* + (l-A) * \frac{B^*-A^*}{B-A}
   \end{array} 
   \right.
   \f$
 
   \param I : Image to process.
-  \param A : Low value of the range to consider.
-  \param A_star : New value \f$ A^*\f$ to attribute to pixel who's value was A
-  \param B : Height value of the range to consider.
-  \param B_star : New value \f$ B^*\f$ to attribute to pixel who's value was B
+  \param A : Low gray level value of the range to consider.
+  \param A_star : New gray level value \f$ A^*\f$ to attribute to pixel 
+  who's value was A
+  \param B : Height gray level value of the range to consider.
+  \param B_star : New gray level value \f$ B^*\f$ to attribute to pixel 
+  who's value was B
+  \return The modified image.
 
-  This method can be used to binarize an image. For an unsigned char image
-  (in the range 0-255), thresholding this image at level 128 can be done by:
+  \exception vpImageException::incorrectInitializationError If \f$B \leq A\f$.
+
+  As shown in the example below, this method can be used to binarize
+  an image. For an unsigned char image (in the range 0-255),
+  thresholding this image at level 127 can be done by:
 
   \code
+#include <visp/vpImageTools.h>
+
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+
+int main()
+{
+  vpImage<unsigned char> I;
+#ifdef UNIX
+  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+#elif WIN32
+  std::string filename("C:/temp/ViSP-images/Klimt/Klimt.pgm");
+#endif
+  // Read an image from the disk
+  vpImageIo::read(I, filename); 
+
   // Binarize image I:
-  // - values less than or equal to 128 are set to 0,
-  // - values greater than 128 are set to 255
-  vpImageTools::changeLUT(I, 128, 0, 128, 255);
+  // - gray level values less than or equal to 127 are set to 0,
+  // - gray level values greater than 128 are set to 255
+  vpImageTools::changeLUT(I, 127, 0, 128, 255);
+  
+  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format 
+}
   \endcode
 
 */
@@ -76,6 +101,12 @@ void vpImageTools::changeLUT(vpImage<unsigned char>& I,
 			     unsigned char B,
 			     unsigned char B_star)
 {
+  // Test if input values are valid
+  if (B <= A) {
+    vpERROR_TRACE("Bad gray levels") ;
+    throw (vpImageException(vpImageException::incorrectInitializationError ,
+			    "Bad gray levels")) ;
+  }
   unsigned char v;
 
   double factor = (B_star - A_star)/(B - A);
