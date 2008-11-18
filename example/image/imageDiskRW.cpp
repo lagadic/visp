@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: imageDiskRW.cpp,v 1.9 2008-11-18 12:41:37 fspindle Exp $
+ * $Id: imageDiskRW.cpp,v 1.10 2008-11-18 14:59:33 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -287,7 +287,7 @@ main(int argc, const char ** argv)
   // or where you are not allowd to write.
   try
   {
-    filename = opath + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
+    filename = dirname + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
     vpImageIo::writePPM(I,filename) ;
   }
   catch(vpImageException e)
@@ -308,7 +308,7 @@ main(int argc, const char ** argv)
   vpImageIo::readPPM(Irgba, filename);
 
   // Write the content of the color image on the disk
-  filename = opath + vpIoTools::path("/IoPGM.Klimt_rgba.ppm");
+  filename = dirname + vpIoTools::path("/IoPGM.Klimt_rgba.ppm");
   vpImageIo::writePPM(Irgba, filename) ;
 
   // test io error
@@ -326,7 +326,7 @@ main(int argc, const char ** argv)
  // test io error
   try
   {
-    filename = opath + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
+    filename = dirname + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
     vpImageIo::writePPM(Irgba,filename) ;
   }
   catch(vpImageException e)
