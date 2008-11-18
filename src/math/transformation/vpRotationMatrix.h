@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.h,v 1.8 2008-11-14 17:45:11 fspindle Exp $
+ * $Id: vpRotationMatrix.h,v 1.9 2008-11-18 21:55:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -110,6 +110,8 @@ public:
   vpTranslationVector operator*(const vpTranslationVector &mat) const ;
   //! operation C = A * B (A is unchanged)
   vpRotationMatrix operator*(const vpRotationMatrix &B) const ;
+  // operation v2 = A * v1 (A is unchanged)
+  vpColVector operator*(const vpColVector &v) const ;
    //! overload + operator (to say it forbidden operation, throw exception)
   vpRotationMatrix operator+(const vpRotationMatrix &B) const ;
    //! overload - operator (to say it forbidden operation, throw exception)

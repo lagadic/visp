@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationMatrix.cpp,v 1.16 2008-11-14 17:45:11 fspindle Exp $
+ * $Id: vpRotationMatrix.cpp,v 1.17 2008-11-18 21:55:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -166,6 +166,49 @@ vpRotationMatrix::operator*(const vpRotationMatrix &B) const
     }
   return p;
 }
+
+/*!
+
+  Operator that allows to multiply a rotation matrix by a 3 dimension
+  column vector.
+
+  \param v : Three dimension column vector.
+
+  \return The product of the rotation matrix by the column vector
+
+  \exception vpMatrixException::incorrectMatrixSizeError If the column
+  vector \e v is not a 3 dimension vector.
+
+  The code below shows how to use this operator.
+\code
+#include <visp/vpRotationMatrix.h>
+#include <visp/vpColVector.h>
+
+int main()
+{
+  vpColVector p1(3), p2(3);
+  vpRotationMatrix R;
+
+  p2 = R * p1;
+  
+  return 0;
+}
+\endcode
+
+*/
+vpColVector
+vpRotationMatrix::operator*(const vpColVector &v) const
+{
+  if (v.getRows() != 3) {
+    vpERROR_TRACE("The column vector is not a 3 dimension vector") ;
+    throw (vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+			     "The column vector is not a 3 dimension vector"));
+  }
+  vpColVector c;
+  vpMatrix::multMatrixVector(*this, v, c);
+  return c;
+}
+
 
 /*! overload + operator (to say it forbidden operation, throw exception)
 
