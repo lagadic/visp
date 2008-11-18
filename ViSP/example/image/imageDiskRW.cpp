@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: imageDiskRW.cpp,v 1.8 2008-06-17 08:08:25 asaunier Exp $
+ * $Id: imageDiskRW.cpp,v 1.9 2008-11-18 12:41:37 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -263,7 +263,7 @@ main(int argc, const char ** argv)
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpImageIo::readPPM(I, filename);
 
-  filename = opath +  vpIoTools::path("/IoPPM.Klimt_char.ppm");
+  filename = dirname +  vpIoTools::path("/IoPPM.Klimt_char.ppm");
   vpImageIo::writePPM(I, filename) ;
 
 
