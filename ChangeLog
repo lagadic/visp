@@ -1,5 +1,7 @@
 ViSP 2.4.x (released ...)
   - Deprecated
+    - Creation of a deprecated section in the online documentation that gives the list 
+      of classes or member function that are deprecated
     - vpOSXcfoxGrabber was removed, since the C+Fox third party library 
       available at http://cfox.sourceforge.net/ was not updated since 2005.
     - vpIcCompGrabber was removed, since it uses a home made wrapper based 
@@ -8,11 +10,13 @@ ViSP 2.4.x (released ...)
     - Use of CDash insteed of Dart2. Dashboards are sent to 
       http://cdash.irisa.fr/CDash/index.php?project=ViSP
   - Platform compatibility
-    - Compatibility with g++ 4.3.0
+    - Compatibility with g++ 4.3.0 coming with fedora 9
   - New Features
     - vpFeatureThetaU: Add cRcd feature, with ThetaU corresponding to the 
       rotation the camera has to achieve to move from current frame to the 
       desired one.
+    - vpOpenCVGrabber: New framegrabber based on OpenCV third party library (useful 
+      for USB cameras).
     - vp1394TwoGrabber: Get the timestamp associated to the grabbed image.
     - vpV4l2Grabber: Get the timestamp associated to the grabbed image.
     - vpRobotAfma6 and vpAfma6: Modifications to be compatible with the new 
@@ -23,6 +27,24 @@ ViSP 2.4.x (released ...)
   - Documentation
     - Creation of a deprecated section.
     - Classes are now grouped in doxygen modules to help learning ViSP.
+    - Introduction of new sample examples in the online documentation
+  - Bug fix
+    - [5370] DirectShow and Visual Studio 9 2008 Express
+    - [5375] Compilation error in calibrate2dGrid.cpp
+    - [5398] display cylinder
+    - [5438] window sizes with Coin
+    - [5496] Compilation error in example/framegrabber/grab1394.cpp
+    - [5508] Bug in vpImageConvert::YUV420ToRGB
+    - [5527] Bug in vpImageTools::changeLUT()
+    - [5539] Unhandle exception with multi vpDisplayGDI / D3D instances
+    - [5596] Multiplying a vpRotationMatrix with a vpColVector ?
+    - [5642] warning in vphomographyvvs.cpp with Visual C++ 2003 .Net
+    - [5993] vpImage BI
+    - [6484] Bug in vpCalibration::calibrationTsai() for eye-to-hand calibration
+    - [6590] vpDisplayGDI cannot handle numerous displays (windows)
+    - [6619] Problem vpMeLine : compute of delta
+    - [6743] Bug in vpDisplayOpenCV::displayRectangle()
+    - [6744] Bug in vpDisplayOpenCV
 
 ----------------------------------------------	
 ViSP 2.4.2 (released March 27, 2008)
