@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOpenCVGrabber.cpp,v 1.2 2008-11-19 21:07:18 fspindle Exp $
+ * $Id: vpOpenCVGrabber.cpp,v 1.3 2008-11-19 21:08:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -267,7 +267,7 @@ void vpOpenCVGrabber::setWidth(const unsigned int width)
 	if ( cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, width))
 	{
 	  	close();
-		vpERROR_TRACE("unpossible to set the size of the grabber");
+		vpERROR_TRACE("Impossible to set the size of the grabber");
 	}
 
 	this->width = width;
