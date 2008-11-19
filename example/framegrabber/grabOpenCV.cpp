@@ -1,0 +1,272 @@
+/****************************************************************************
+ *
+ * $Id: grabOpenCV.cpp,v 1.1 2008-11-19 16:52:47 nmelchio Exp $
+ *
+ * Copyright (C) 1998-2006 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Acquire images using DirectShow (under Windows only) and display it
+ * using GTK or GDI.
+ *
+ * Authors:
+ * Nicolas Melchior
+ *
+ *****************************************************************************/
+
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
+
+/*!
+  \file grabDirectShow.cpp
+
+  \brief Example of framegrabbing using vpDirectShowGrabber class.
+
+*/
+
+#if defined (VISP_HAVE_OPENCV) 
+
+
+#include <visp/vpOpenCVGrabber.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpTime.h>
+
+// List of allowed command line options
+#define GETOPTARGS	"dhn:o:"
+
+/*!
+
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param nframes : Number of frames to acquire.
+  \param opath : Image filename when saving.
+
+*/
+void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath)
+{
+  fprintf(stdout, "\n\
+Acquire and display images using OpenCV library.\n\
+\n\
+SYNOPSIS\n\
+  %s [-d] [-n] [-o] [-h] \n", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -n [%%u]                                               %u\n\
+     Number of frames to acquire.               \n\
+\n\
+  -o [%%s] \n\
+     Filename for image saving.                    \n\
+     Example: -o %s\n\
+     The %%d is for the image numbering.\n\
+\n\
+  -h \n\
+     Print the help.\n\
+\n", nframes, opath.c_str());
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
+}
+/*!
+
+  Set the program options.
+
+  Print the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param display : Display activation.
+  \param nframes : Number of frames to acquire.
+  \param save : Image saving activation.
+  \param opath : Image filename when saving.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, const char **argv, bool &display,
+		unsigned &nframes, bool &save, std::string &opath)
+{
+  const char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'd': display = false; break;
+    case 'n':
+      nframes = atoi(optarg); break;
+    case 'o':
+      save = true;
+      opath = optarg; break;
+    case 'h': usage(argv[0], NULL, nframes, opath); return false; break;
+
+    default:
+      usage(argv[0], optarg, nframes, opath);
+      return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, nframes, opath);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+
+/*!
+  \example grabOpenCV.cpp
+
+  Example of framegrabbing using vpOpenCVGrabber class.
+
+  Grab and display grey level images using OpenCV frame grabbing capabilities.
+*/
+int
+main(int argc, const char ** argv)
+{
+  bool opt_display = true;
+  unsigned nframes = 50;
+  bool save = false;
+
+  // Declare an image. It size is not defined yet. It will be defined when the
+  // image will acquired the first time.
+#ifdef GRAB_COLOR
+  vpImage<vpRGBa> I; // This is a color image (in RGBa format)
+#else
+  vpImage<unsigned char> I; // This is a B&W image
+#endif
+
+  // Set default output image name for saving
+#ifdef GRAB_COLOR
+  // Color images will be saved in PGM P6 format
+#  if defined(UNIX)
+  std::string opath = "/tmp/I%04d.ppm";
+#  elif defined(WIN32)
+  std::string opath = "C:/temp/I%04d.ppm";
+#  endif
+#else
+  // B&W images will be saved in PGM P5 format
+#  if defined(UNIX)
+  std::string opath = "/tmp/I%04d.pgm";
+#  elif defined(WIN32)
+  std::string opath = "C:/temp/I%04d.pgm";
+#  endif
+#endif
+
+  // Read the command line options
+  if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
+    exit (-1);
+  }
+  // Create the grabber
+  vpOpenCVGrabber grabber ;
+  try {
+    //test if a camera is connected
+    if(grabber.getDeviceNumber() == 0) {
+      vpCTRACE << "there is no camera detected on your computer." << std::endl ;
+      grabber.close();
+      return true;
+    }
+    // Initialize the grabber
+    grabber.open(I);
+
+    // Acquire an image
+    grabber.acquire(I);
+  }
+  catch(...)
+  {
+    vpCTRACE << "Cannot acquire an image... " << std::endl ;
+    return true;
+  }
+
+  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
+	    << I.getHeight() << std::endl;
+
+  // Creates a display
+  vpDisplayOpenCV display;
+
+  if (opt_display) {
+    display.init(I,100,100,"OpenCV framegrabber");
+  }
+
+  try {
+    double tbegin=0, tend=0, tloop=0, ttotal=0;
+
+    ttotal = 0;
+    tbegin = vpTime::measureTimeMs();
+    // Loop for image acquisition and display
+    for (unsigned i = 0; i < nframes; i++) {
+      //Acquires an RGBa image
+      grabber.acquire(I);
+
+      if (opt_display) {
+	//Displays the grabbed image
+	vpDisplay::display(I);
+        vpDisplay::flush(I);
+      }
+
+      if (save) {
+	char buf[FILENAME_MAX];
+	sprintf(buf, opath.c_str(), i);
+	std::string filename(buf);
+	std::cout << "Write: " << filename << std::endl;
+	vpImageIo::write(I, filename);
+      }
+      tend = vpTime::measureTimeMs();
+      tloop = tend - tbegin;
+      tbegin = tend;
+      std::cout << "loop time: " << tloop << " ms" << std::endl;
+      ttotal += tloop;
+    }
+    std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
+    std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
+
+  }
+  catch(...)
+  {
+    vpCERROR << "Failure: exit" << std::endl;
+    return(-1);
+  }
+}
+#else // defined (VISP_HAVE_OPENCV) 
+int
+main()
+{
+  vpTRACE("OpenCV is not available...") ;
+}
+#endif // defined (VISP_HAVE_OPENCV) 
+
+

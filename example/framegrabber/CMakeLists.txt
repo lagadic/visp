@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2008-11-07 09:56:05 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.6 2008-11-19 16:52:47 nmelchio Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -50,6 +50,7 @@ SET (SOURCE
   grabV4l2Grey.cpp
   grabDirectShow.cpp
   grabDirectShowMulti.cpp
+  grabOpenCV.cpp
 )
 
 # rule for binary build
@@ -76,6 +77,7 @@ ADD_TEST(grabV4l2Color    grabV4l2Color -d)
 ADD_TEST(grabV4l2Grey     grabV4l2Grey -d)
 ADD_TEST(grabDirectShow   grabDirectShow -d)
 ADD_TEST(grabDirectShowMulti   grabDirectShowMulti -d)
+ADD_TEST(grabOpenCV       grabOpenCV -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

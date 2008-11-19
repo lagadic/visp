@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeHeaderFileList.cmake,v 1.26 2008-11-14 17:44:53 fspindle Exp $
+# $Id: CMakeHeaderFileList.cmake,v 1.27 2008-11-19 16:52:47 nmelchio Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -79,6 +79,7 @@ SET (HEADER_FRAMEGRABBER_DEVICE
   framegrabber-device/directshow/vpDirectShowGrabberImpl.h
   framegrabber-device/directshow/vpDirectShowDevice.h
   framegrabber-device/directshow/vpDirectShowSampleGrabberI.h
+  framegrabber-device/OpenCV/vpOpenCVGrabber.h
   )
 
 SET (HEADER_IMAGE
