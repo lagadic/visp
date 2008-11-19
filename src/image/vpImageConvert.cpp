@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.30 2008-07-15 11:46:00 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.31 2008-11-19 08:33:18 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -269,7 +269,7 @@ vpImageConvert::convert(const IplImage* src,
     #include <visp/vpImageConvert.h>
 
     vpImage<vpRGBa> Ic; // A color image
-    IplImage* Ip;
+    IplImage* Ip = NULL;
 
     //Read an image on a disk
     vpImageIo::readPPM(Ic, "image.ppm");
@@ -347,7 +347,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src,
     #include <visp/vpImageConvert.h>
 
     vpImage<unsigned char> Ig; // A greyscale image
-    IplImage* Ip;
+    IplImage* Ip = NULL;
 
     //Read an image on a disk
     vpImageIo::readPGM(Ig, "image.pgm");
