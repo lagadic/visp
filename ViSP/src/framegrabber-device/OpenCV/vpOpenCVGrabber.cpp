@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOpenCVGrabber.cpp,v 1.1 2008-11-19 16:52:47 nmelchio Exp $
+ * $Id: vpOpenCVGrabber.cpp,v 1.2 2008-11-19 21:07:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -79,7 +79,9 @@ vpOpenCVGrabber::vpOpenCVGrabber()
 
 
 /*!
-	Basic Destructor.
+	Basic destructor that calls the close() method.
+
+	\sa close()
 */
 vpOpenCVGrabber::~vpOpenCVGrabber( )
 {
@@ -88,7 +90,7 @@ vpOpenCVGrabber::~vpOpenCVGrabber( )
 
 
 /*!
-	Generic initialization of the grabber
+	Generic initialization of the grabber.
 */
 void vpOpenCVGrabber::open()
 {
@@ -113,10 +115,12 @@ void vpOpenCVGrabber::open()
 
 
 /*!
-	Initialization of the grabber
-	Call the generic initialization
+	Initialization of the grabber.
+	Call the generic initialization method.
 
-	\param I : gray scaled image
+	\param I : Gray level image. This parameter is not used.
+
+	\sa open()
 */
 void vpOpenCVGrabber::open(vpImage<unsigned char> &/*I*/)
 {
@@ -125,10 +129,12 @@ void vpOpenCVGrabber::open(vpImage<unsigned char> &/*I*/)
 
 
 /*!
-	Initialization of the grabber
-	Call the generic initialization
+	Initialization of the grabber.
+	Call the generic initialization method.
 
-	\param I : color image
+	\param I : Color image. This parameter is not used.
+
+	\sa open()
 */
 void vpOpenCVGrabber::open(vpImage<vpRGBa> &/*I*/)
 {
@@ -137,9 +143,12 @@ void vpOpenCVGrabber::open(vpImage<vpRGBa> &/*I*/)
 
 
 /*!
-	Grab a gray scaled image
+	Grab a gray level image.
 
-	\param I : gray scaled image
+	\param I : Acquired gray level image.
+
+	\exception vpFrameGrabberException::initializationError If the
+	initialization of the grabber was not done previously.
 */
 void vpOpenCVGrabber::acquire(vpImage<unsigned char> &I)
 {
@@ -154,13 +163,16 @@ void vpOpenCVGrabber::acquire(vpImage<unsigned char> &I)
 
 	cvGrabFrame(capture);
 	im = cvRetrieveFrame(capture);
-	vpImageConvert::convert(im,I);
+	vpImageConvert::convert(im, I);
 }
 
 /*!
-	Grab a color image
+	Grab a color image.
 
-	\param I : color image
+	\param I : Acquired color image.
+
+	\exception vpFrameGrabberException::initializationError If the
+	initialization of the grabber was not done previously.
 */
 void vpOpenCVGrabber::acquire(vpImage<vpRGBa> &I)
 {
@@ -175,12 +187,12 @@ void vpOpenCVGrabber::acquire(vpImage<vpRGBa> &I)
 
 	cvGrabFrame(capture);
 	im = cvRetrieveFrame(capture);
-	vpImageConvert::convert(im,I);
+	vpImageConvert::convert(im, I);
 }
 
 
 /*!
-	Stop the acquisition of images and free the camera
+	Stop the acquisition of images and free the camera.
 */
 void vpOpenCVGrabber::close()
 {
@@ -191,9 +203,12 @@ void vpOpenCVGrabber::close()
 
 
 /*!
-	Gets the frame rate
+	Gets the capture frame rate.
 
-	\param framerate : the value of the framerate is returned here
+	\param framerate : The value of the framerate is returned here.
+
+	\exception vpFrameGrabberException::initializationError If no
+	camera was found.
 */
 void vpOpenCVGrabber::getFramerate(double & framerate)
 {
@@ -210,9 +225,12 @@ void vpOpenCVGrabber::getFramerate(double & framerate)
 
 
 /*!
-	Sets the frame rate
+	Sets the capture frame rate
 
-	\param framerate : the wanted value of the framerate
+	\param framerate : The requested value of the capture framerate.
+
+	\exception vpFrameGrabberException::initializationError If no
+	camera was found.
 */
 void vpOpenCVGrabber::setFramerate(const double framerate)
 {
@@ -229,9 +247,12 @@ void vpOpenCVGrabber::setFramerate(const double framerate)
 
 
 /*!
-	Sets the width 
+	Sets the captured image width.
 
-	\param width : the wanted value of the width
+	\param width : The requested value of the captured image width.
+
+	\exception vpFrameGrabberException::initializationError If no
+	camera was found.
 */
 void vpOpenCVGrabber::setWidth(const unsigned int width)
 {
@@ -253,9 +274,12 @@ void vpOpenCVGrabber::setWidth(const unsigned int width)
 }
 
 /*!
-	Sets the height
+	Sets the captured image height
 
-	\param height : the wanted value of the height
+	\param height : The requested value of the captured image height.
+
+	\exception vpFrameGrabberException::initializationError If no
+	camera was found.
 */
 void vpOpenCVGrabber::setHeight(const unsigned int height)
 {
@@ -270,7 +294,7 @@ void vpOpenCVGrabber::setHeight(const unsigned int height)
 	if ( cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, height))
 	{
 	  	close();
-		vpERROR_TRACE("unpossible to set the size of the grabber");
+		vpERROR_TRACE("Impossible to set the size of the grabber");
 	}
 
 	this->height = height;
@@ -278,7 +302,7 @@ void vpOpenCVGrabber::setHeight(const unsigned int height)
 
 
 /*!
-	Gets the number of capture devices
+	Gets the number of capture devices connected on your computer.
 			
 	\Warning This function is available only under Windows.
 
@@ -287,7 +311,7 @@ void vpOpenCVGrabber::setHeight(const unsigned int height)
 unsigned int vpOpenCVGrabber::getDeviceNumber()
 {
 #if ( defined(UNIX) )
-	printf("this function is not available");
+	vpTRACE("This function is not available under Unix.");
 	return(1);
 #endif
 

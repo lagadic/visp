@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOpenCV.cpp,v 1.1 2008-11-19 16:52:47 nmelchio Exp $
+ * $Id: grabOpenCV.cpp,v 1.2 2008-11-19 21:07:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,9 +40,9 @@
 #include <visp/vpDebug.h>
 
 /*!
-  \file grabDirectShow.cpp
+  \file grabOpenCV.cpp
 
-  \brief Example of framegrabbing using vpDirectShowGrabber class.
+  \brief Example of framegrabbing using vpOpenCVGrabber class.
 
 */
 
@@ -208,7 +208,9 @@ main(int argc, const char ** argv)
   }
   catch(...)
   {
-    vpCTRACE << "Cannot acquire an image... " << std::endl ;
+    vpCTRACE << "Cannot acquire an image... " 
+	     << "Check if a camera is connected to your computer." 
+	     << std::endl ;
     return true;
   }
 
