@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.h,v 1.23 2008-11-10 16:54:10 fspindle Exp $
+ * $Id: vp1394TwoGrabber.h,v 1.24 2008-11-19 16:55:38 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@
   of a single camera acquisition is given in vp1394TwoGrabber(). An
   example of multi camera acquisition is available in setCamera().
 
-  - Here an example of single capture from the first camera found on the bus::
+  - Here an example of single capture from the first camera found on the bus:
   \code
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>
