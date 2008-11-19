@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOpenCVGrabber.h,v 1.1 2008-11-19 16:52:47 nmelchio Exp $
+ * $Id: vpOpenCVGrabber.h,v 1.2 2008-11-19 21:07:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -78,7 +78,7 @@ int main()
 {
 #if defined(VISP_HAVE_OPENCV)
   vpImage<unsigned char> I; // Create a gray level image container
-  vpOpenCVGrabber g;          // Create a grabber based on OpenCV third party lib
+  vpOpenCVGrabber g;        // Create a grabber based on OpenCV third party lib
 
   g.open(I);                           // Open the framegrabber
   g.acquire(I);                        // Acquire an image
