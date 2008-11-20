@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.43 2008-10-03 08:12:07 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.44 2008-11-20 16:44:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1723,7 +1723,7 @@ vpRobotAfma6::move(const char *filename)
   Open the pneumatic CCMOP gripper by calling:
 
   \code
-  rsh japet sudo /local/driver/pince/Afma6_pince_root -s 1
+  ssh japet sudo /local/driver/pince/Afma6_pince_root -s 1
   \endcode
 
   The binary "Afma6_pince_root" communicates throw the parallel port with
@@ -1734,7 +1734,7 @@ vpRobotAfma6::move(const char *filename)
 void
 vpRobotAfma6::openGripper()
 {
-  system("rsh japet sudo /local/driver/pince/Afma6_pince_root -s 1") ;
+  system("ssh japet sudo /local/driver/pince/Afma6_pince_root -s 1") ;
 }
 
 /*!
@@ -1742,7 +1742,7 @@ vpRobotAfma6::openGripper()
   Close the pneumatic CCMOP gripper by calling:
 
   \code
-  rsh japet sudo /local/driver/pince/Afma6_pince_root -s 0
+  ssh japet sudo /local/driver/pince/Afma6_pince_root -s 0
   \endcode
 
   The binary "Afma6_pince_root" communicates throw the parallel port with
@@ -1754,7 +1754,7 @@ vpRobotAfma6::openGripper()
 void
 vpRobotAfma6::closeGripper()
 {
-  system("rsh japet sudo /local/driver/pince/Afma6_pince_root -s 0") ;
+  system("ssh japet sudo /local/driver/pince/Afma6_pince_root -s 0") ;
 }
 
 /*!
