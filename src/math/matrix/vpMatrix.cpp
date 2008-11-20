@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.44 2008-07-29 14:10:41 fspindle Exp $
+ * $Id: vpMatrix.cpp,v 1.45 2008-11-20 12:56:12 rmebarki Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1152,7 +1152,7 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
  
   \f[ M = U \Sigma V^{\top} \f]
 
-  \warning Destructive method wrt. to the matrix \f$ A \f$ to
+  \warning Destructive method wrt. to the matrix \f$ M \f$ to
   decompose. You should make a COPY of that matrix if needed not to
   CHANGE.
   
@@ -1162,7 +1162,7 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
   
   \return Matrix \f$ U \f$.
 
-  \warning If the Gun Scientific Library (GSL) third party library is used to compute the SVD
+  \warning If the GNU Scientific Library (GSL) third party library is used to compute the SVD
   decomposition, the singular values \f$ \Sigma_{i,i} \f$ are ordered in decreasing
   fashion in \e w. This is not the case, if the GSL is not detected by ViSP. 
 
