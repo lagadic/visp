@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOpenCV.cpp,v 1.2 2008-11-19 21:07:17 fspindle Exp $
+ * $Id: grabOpenCV.cpp,v 1.3 2008-11-20 09:00:30 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -211,7 +211,7 @@ main(int argc, const char ** argv)
     vpCTRACE << "Cannot acquire an image... " 
 	     << "Check if a camera is connected to your computer." 
 	     << std::endl ;
-    return true;
+    return 0;
   }
 
   std::cout << "Image size: width : " << I.getWidth() <<  " height: "
