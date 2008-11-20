@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.44 2008-11-20 16:44:25 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.45 2008-11-20 17:03:41 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1734,7 +1734,10 @@ vpRobotAfma6::move(const char *filename)
 void
 vpRobotAfma6::openGripper()
 {
-  system("ssh japet sudo /local/driver/pince/Afma6_pince_root -s 1") ;
+  char cmd[FILENAME_MAX];
+  sprintf(cmd, "ssh japet sudo /local/driver/pince/Afma6_pince_root -s 1");
+  std::cout << "Open the gripper: \"" << cmd << "\"" << std::endl; 
+  system(cmd) ;
 }
 
 /*!
@@ -1754,7 +1757,10 @@ vpRobotAfma6::openGripper()
 void
 vpRobotAfma6::closeGripper()
 {
-  system("ssh japet sudo /local/driver/pince/Afma6_pince_root -s 0") ;
+  char cmd[FILENAME_MAX];
+  sprintf(cmd, "ssh japet sudo /local/driver/pince/Afma6_pince_root -s 0");
+  std::cout << "Close the gripper: \"" << cmd << "\"" << std::endl; 
+  system(cmd) ;
 }
 
 /*!
