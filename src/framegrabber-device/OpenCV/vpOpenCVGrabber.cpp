@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOpenCVGrabber.cpp,v 1.3 2008-11-19 21:08:26 fspindle Exp $
+ * $Id: vpOpenCVGrabber.cpp,v 1.4 2008-11-21 14:40:16 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -67,6 +67,7 @@ vpOpenCVGrabber::vpOpenCVGrabber()
 
 	// private members
 	capture = NULL;
+	DeviceType = 0;
 
 #if ( defined(UNIX) )
 	nbDevices = 1;
@@ -96,8 +97,7 @@ void vpOpenCVGrabber::open()
 {
 	if (nbDevices > 0)
 	{
-		capture = cvCreateCameraCapture(CV_CAP_ANY);
-		//capture = cvCaptureFromCAM(-1);
+		capture = cvCreateCameraCapture(DeviceType);
 	}
 	
 	if (capture != NULL)
@@ -268,6 +268,8 @@ void vpOpenCVGrabber::setWidth(const unsigned int width)
 	{
 	  	close();
 		vpERROR_TRACE("Impossible to set the size of the grabber");
+		throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+										"Impossible to set the size of the grabber") );
 	}
 
 	this->width = width;
@@ -295,6 +297,8 @@ void vpOpenCVGrabber::setHeight(const unsigned int height)
 	{
 	  	close();
 		vpERROR_TRACE("Impossible to set the size of the grabber");
+		throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+										"Impossible to set the size of the grabber") );
 	}
 
 	this->height = height;
@@ -318,6 +322,31 @@ unsigned int vpOpenCVGrabber::getDeviceNumber()
 #if ( defined(WIN32) )
 	return(nbDevices);	
 #endif
+}
+
+
+/*!
+	Set the expected type of device.
+			
+	\param type : expected type of device
+	- CV_CAP_ANY
+	- CV_CAP_MIL
+	- CV_CAP_VFW
+	- CV_CAP_V4L
+	- CV_CAP_V4L2
+	- CV_CAP_FIREWIRE
+	- CV_CAP_IEEE1394
+	- CV_CAP_DC1394
+	- CV_CAP_CMU_1394
+*/
+void vpOpenCVGrabber::setDeviceType(int type)
+{
+	DeviceType = type;
+	
+	if ( DeviceType != 0 && DeviceType != 100  &&DeviceType != 200 && DeviceType != 300)
+	{
+		vpTRACE("The expected type of device may be unknown.");
+	}
 }
 
 #endif
