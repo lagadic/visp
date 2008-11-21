@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindSOQT.cmake,v 1.5 2007-11-09 15:41:17 asaunier Exp $
+# $Id: FindSOQT.cmake,v 1.6 2008-11-21 09:01:37 nmelchio Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -50,15 +50,18 @@ IF(WIN32)
     NAMES soqt1 #only shared libraries under windows
     PATHS
     "$ENV{COINDIR}/lib"
+	"$ENV{SOQTDIR}/lib"
     )
   FIND_LIBRARY(SOQT_LIBRARY_DEBUG
     NAMES soqt1d #only shared libraries under windows
     PATHS
     "$ENV{COINDIR}/lib"
+	"$ENV{SOQTDIR}/lib"
     )  
 
  FIND_PATH(SOQT_INCLUDE_PATH Inventor/Qt/SoQt.h
     "$ENV{COINDIR}/include"
+	"$ENV{SOQTDIR}/include"
     "$ENV{INCLUDE}"
     )
  MARK_AS_ADVANCED(
@@ -75,6 +78,7 @@ FIND_LIBRARY(SOQT_LIBRARY
     /usr/local/lib
     /lib
     "$ENV{COINDIR}/lib"
+	"$ENV{SOQTDIR}/lib"
     )
 
   #MESSAGE(STATUS "DBG SOQT_LIBRARY=${SOQT_LIBRARY}")
