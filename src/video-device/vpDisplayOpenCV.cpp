@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.7 2008-11-13 16:02:59 nmelchio Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.8 2008-11-24 11:14:56 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -395,7 +395,7 @@ void vpDisplayOpenCV::flushDisplay()
   if (OpenCVinitialized)
   {
     cvShowImage(title, background );
-    cvWaitKey(1);
+    cvWaitKey(5);
   }
   else
   {
