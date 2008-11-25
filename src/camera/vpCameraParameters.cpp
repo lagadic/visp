@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.10 2008-07-28 16:46:44 fspindle Exp $
+ * $Id: vpCameraParameters.cpp,v 1.11 2008-11-25 09:09:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -350,6 +350,8 @@ vpCameraParameters::setPixelRatio(double px, double py)
 
 /*!
   Print the camera parameters on the standard output
+
+  \sa operator <<
 */
 void
 vpCameraParameters::printParameters()
@@ -357,14 +359,14 @@ vpCameraParameters::printParameters()
   switch(projModel){
     case vpCameraParameters::perspectiveProjWithoutDistortion :
       std::cout.precision(10);
-      std::cout << "Parameters for perspective projection without distortion :"
+      std::cout << "Camera parameters for perspective projection without distortion:"
                 << std::endl ;
       std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
       std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
       std::cout.precision(10);
-      std::cout << "Parameters for perspective projection with distortion :"
+      std::cout << "Camera parameters for perspective projection with distortion:"
                 << std::endl ;
       std::cout << "  px = " << px <<"\t py = "<< py << std::endl ;
       std::cout << "  u0 = " << u0 <<"\t v0 = "<< v0 << std::endl ;
@@ -373,6 +375,40 @@ vpCameraParameters::printParameters()
       break;
   } 
 }
+/*!
+
+  Print on the output stream \e os the camera parameters.
+
+  \param os : Output stream.
+  \param cam : Camera parameters.
+*/
+std::ostream & operator << (std::ostream & os,
+			    const vpCameraParameters &cam)
+{
+  switch(cam.get_projModel()){
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+      os << "Camera parameters for perspective projection without distortion:"
+	 << std::endl ;
+      os << "  px = " << cam.get_px() <<"\t py = "<< cam.get_py() 
+	 << std::endl ;
+      os << "  u0 = " << cam.get_u0() <<"\t v0 = "<< cam.get_v0() 
+	 << std::endl ;
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+      os.precision(10);
+      os << "Camera parameters for perspective projection with distortion:"
+                << std::endl ;
+      os << "  px = " << cam.get_px() <<"\t py = "<< cam.get_py() 
+	 << std::endl ;
+      os << "  u0 = " << cam.get_u0() <<"\t v0 = "<< cam.get_v0()
+	 << std::endl ;
+      os << "  kud = " << cam.get_kud() << std::endl ;
+      os << "  kdu = " << cam.get_kdu() << std::endl ;
+      break;
+  } 
+  return os;
+}
+
 
 
 /*

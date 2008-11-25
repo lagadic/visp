@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.12 2008-09-26 15:20:53 fspindle Exp $
+ * $Id: vpCameraParameters.h,v 1.13 2008-11-25 09:09:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -162,7 +162,7 @@
   // Camera initialization with a perspective projection without distortion model
   cam.initPersProjWithoutDistortion(px,py,u0,v0);
   // It is also possible to print the current camera parameters
-  cam.printParameters();
+  std::cout << cam << std::endl;
   \endcode
 
   The same initialisation (for a model without distortion) can be done by:
@@ -238,9 +238,6 @@ public :
                                       const double u0, const double v0) ;
   void initPersProjWithDistortion(const double px, const double py,
      const double u0, const double v0, const double kud,const double kdu) ;
-
-  void printParameters() ;
-
   
   inline double get_px() const { return px; }
   inline double get_py() const { return py; }
@@ -249,9 +246,16 @@ public :
   inline double get_kud() const { return kud; }
   inline double get_kdu() const { return kdu; }
    
-  inline vpCameraParametersProjType get_projModel() const { return projModel; } 
+  inline vpCameraParametersProjType get_projModel() const {
+    return projModel; 
+  } 
   
   vpMatrix get_K() const;
+
+  void printParameters() ;
+  friend std::ostream & operator << (std::ostream & os,
+				     const vpCameraParameters &cam);
+
 
   /*!
     @name Deprecated functions
