@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.33 2008-11-06 17:07:24 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.34 2008-11-25 09:38:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -704,7 +704,7 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
   fps.kill();
 
   switch (mode) {
-      // Framerate not avalaible for:
+      // Framerate not available for:
       //  - vpVIDEO_MODE_EXIF ie Format_6
       //  - vpVIDEO_MODE_FORMAT7... ie the Format_7
     case vpVIDEO_MODE_EXIF:
@@ -786,7 +786,7 @@ vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode,
   }
 
   switch (mode) {
-      // Framerate not avalaible for:
+      // Framerate not available for:
       //  - vpVIDEO_MODE_EXIF ie Format_6
       //  - vpVIDEO_MODE_FORMAT7... ie the Format_7
     case vpVIDEO_MODE_EXIF:
@@ -1952,7 +1952,7 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I,
   Get the image width. It depends on the camera video mode setVideoMode(). The
   image size is only available after a call to open() or acquire().
 
-  \param width : The image width, zero if the required camera is not avalaible.
+  \param width : The image width, zero if the required camera is not available.
 
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.

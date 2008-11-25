@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot2.cpp,v 1.40 2008-11-18 14:38:14 cteulier Exp $
+ * $Id: vpDot2.cpp,v 1.41 2008-11-25 09:38:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1242,7 +1242,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       if( dotToTest->isValid( I, *this ) )
       {
         // Compute the distance to the center. The center used here is not the
-	// area center avalaible by area.getCenter(area_center_u,
+	// area center available by area.getCenter(area_center_u,
 	// area_center_v) but the center of the input area which may be
 	// partially outside the image.
 

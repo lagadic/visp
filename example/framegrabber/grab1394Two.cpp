@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grab1394Two.cpp,v 1.19 2008-06-18 13:10:14 asaunier Exp $
+ * $Id: grab1394Two.cpp,v 1.20 2008-11-25 09:38:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -389,7 +389,7 @@ main(int argc, const char ** argv)
       ncameras = 1; // acquisition from only one camera
     }
     // Offset is used to set the correspondancy between and image and the
-    // camera. For example, images comming from camera (i+offset) are avalaible
+    // camera. For example, images comming from camera (i+offset) are available
     // in I[i]
     offset = camera;
 
