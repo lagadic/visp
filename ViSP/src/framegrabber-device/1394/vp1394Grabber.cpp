@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394Grabber.cpp,v 1.20 2008-11-10 16:54:10 fspindle Exp $
+ * $Id: vp1394Grabber.cpp,v 1.21 2008-11-25 09:38:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -802,7 +802,7 @@ vp1394Grabber::getFramerate(int & framerate)
   format is either FORMAT_VGA_NONCOMPRESSED (format 0),
   FORMAT_SVGA_NONCOMPRESSED_1 (format 1) or FORMAT_SVGA_NONCOMPRESSED_2 (format
   2). If format is equal to FORMAT_STILL_IMAGE (format 6) or
-  FORMAT_SCALABLE_IMAGE_SIZE (format 7), the framerate is not avalaible. In
+  FORMAT_SCALABLE_IMAGE_SIZE (format 7), the framerate is not available. In
   this case, we return 0.
 
   \warning Before requerying supported framerates for a given format and mode a
@@ -869,7 +869,7 @@ vp1394Grabber::getFramerateSupported(int format, int mode,
       }
       break;
   default:
-    // Framerate not avalaible for:
+    // Framerate not available for:
     //  - FORMAT_STILL_IMAGE for the Format_6
     //  - FORMAT_SCALABLE_IMAGE_SIZE for the Format_7
     return 0;
@@ -1440,7 +1440,7 @@ vp1394Grabber::getGain(unsigned int &min_gain,
   Get the image width. It depends on the camera format setFormat() and mode
   setMode(). The width of the images is only available after a call to open().
 
-  \param width : The image width, zero if the required camera is not avalaible.
+  \param width : The image width, zero if the required camera is not available.
 
   \exception vpFrameGrabberException::settingError : If the required camera is
   not present.

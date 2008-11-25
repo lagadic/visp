@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabV4l2Color.cpp,v 1.8 2008-06-17 08:08:24 asaunier Exp $
+ * $Id: grabV4l2Color.cpp,v 1.9 2008-11-25 09:38:46 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -256,7 +256,7 @@ main(int argc, const char ** argv)
 int
 main()
 {
-  vpTRACE("X11 or GTK display are not avalaible") ;
+  vpTRACE("X11 or GTK display are not available") ;
 }
 #endif
 #else
