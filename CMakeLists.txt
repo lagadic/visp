@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.78 2008-11-07 09:55:59 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.79 2008-11-27 12:47:29 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -129,6 +129,14 @@ ENDIF(BUILD_SHARED_LIBS)
 INCLUDE(CheckLibraryExists)
 
 #---------------------------------------------------------------------
+# Try to determine if Inria's NAS server hosting /udd/ is available 
+#----------------------------------------------------------------------
+FIND_PACKAGE(NAS)
+IF(NAS_FOUND)
+  SET(VISP_HAVE_ACCESS_TO_NAS TRUE) # for header vpConfig.h
+ENDIF(NAS_FOUND)
+
+#---------------------------------------------------------------------
 # Platform dependent
 #----------------------------------------------------------------------
 IF(WIN32 AND NOT CYGWIN)
@@ -236,79 +244,81 @@ IF(USE_COIN)
     ENDIF(WIN32 AND SOWIN_FOUND AND COIN_FOUND)
 
     IF(USE_SOQT AND NOT VISP_HAVE_COIN)
-      INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake)    
-      IF(QT_FOUND)
+      IF(COIN_FOUND)
         FIND_PACKAGE(SOQT)
-        IF (SOQT_FOUND AND COIN_FOUND)
-	        # OPenGL, QT and SOQT are found
-	        # We first manage OpenGL
-	        SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
-	        SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
-	        SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OPENGL_gl_LIBRARY})
+        IF(SOQT_FOUND)
+          INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake)    
+          IF (QT_FOUND)
+	    # OPenGL, QT and SOQT are found
+	    # We first manage OpenGL
+	    SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
+	    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+	    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OPENGL_gl_LIBRARY})
 
-	        # We manage QT
-	        SET(VISP_HAVE_QT TRUE)  # for header vpConfig.h
-	        SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${QT_INCLUDE_DIR} ${QT_INCLUDES})
+	    # We manage QT
+	    SET(VISP_HAVE_QT TRUE)  # for header vpConfig.h
+	    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${QT_INCLUDE_DIR} ${QT_INCLUDES})
 			
-		#Add Qt3 libraries
-	        #MESSAGE("QT_QT_LIBRARY ${QT_QT_LIBRARY}")
-		#MESSAGE("QT_QTMAIN_LIBRARY ${QT_QTMAIN_LIBRARY}")
-	        #SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY} ${QT_QTMAIN_LIBRARY})  --- > Not necessary
-		#Add Qt4 libraries
-		#MESSAGE("QT_QTGUI_LIBRARY ${QT_QTGUI_LIBRARY}")
-		#MESSAGE("QT_QTGUI_LIBRARY_RELEASE ${QT_QTGUI_LIBRARY_RELEASE}")
-		#MESSAGE("QT_QTGUI_LIBRARY_DEBUG ${QT_QTGUI_LIBRARY_DEBUG}")
-		IF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
-			SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QTGUI_LIBRARY_RELEASE} ${QT_QTCORE_LIBRARY_RELEASE})
-		ELSEIF (QT_QTGUI_LIBRARY_DEBUG AND QT_QTCORE_LIBRARY_DEBUG)
-			SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QTGUI_LIBRARY_DEBUG} ${QT_QTCORE_LIBRARY_DEBUG})
-		ELSE (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
-			SET(VISP_HAVE_QT FALSE)
-		ENDIF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
+	    #Add Qt3 libraries
+	    #MESSAGE("QT_QT_LIBRARY ${QT_QT_LIBRARY}")
+	    #MESSAGE("QT_QTMAIN_LIBRARY ${QT_QTMAIN_LIBRARY}")
+	    #SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY} ${QT_QTMAIN_LIBRARY})  --- > Not necessary
+	    #Add Qt4 libraries
+	    #MESSAGE("QT_QTGUI_LIBRARY ${QT_QTGUI_LIBRARY}")
+	    #MESSAGE("QT_QTGUI_LIBRARY_RELEASE ${QT_QTGUI_LIBRARY_RELEASE}")
+	    #MESSAGE("QT_QTGUI_LIBRARY_DEBUG ${QT_QTGUI_LIBRARY_DEBUG}")
+	    IF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
+	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QTGUI_LIBRARY_RELEASE} ${QT_QTCORE_LIBRARY_RELEASE})
+	    ELSEIF (QT_QTGUI_LIBRARY_DEBUG AND QT_QTCORE_LIBRARY_DEBUG)
+	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QTGUI_LIBRARY_DEBUG} ${QT_QTCORE_LIBRARY_DEBUG})
+	    ELSE (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
+	      SET(VISP_HAVE_QT FALSE)
+	    ENDIF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
 
-	        # Because in QT_DEFINITIONS defs are separated by ";", parse the
-	        # QT_DEFINITIONS in order to build a space separated string
-	        #SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
-	        # in third party projects which use visp-config shell script (due to ";"
-	        # separate char)
-	        FOREACH(DEF ${QT_DEFINITIONS})
-	          #MESSAGE("DEF: ${DEF}")
-	          SET(VISP_DEFS "${VISP_DEFS} ${DEF}")
-	        ENDFOREACH(DEF)
+	    # Because in QT_DEFINITIONS defs are separated by ";", parse the
+	    # QT_DEFINITIONS in order to build a space separated string
+	    #SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
+	    # in third party projects which use visp-config shell script (due to ";"
+	    # separate char)
+	    FOREACH(DEF ${QT_DEFINITIONS})
+	      #MESSAGE("DEF: ${DEF}")
+	      SET(VISP_DEFS "${VISP_DEFS} ${DEF}")
+	    ENDFOREACH(DEF)
 					  
-			SET(VISP_DEFS "${VISP_DEFS} -DQT_DLL")
+	    SET(VISP_DEFS "${VISP_DEFS} -DQT_DLL")
 
-	        # We manage now SOQT and Coin
-	        SET(VISP_HAVE_SOQT TRUE)  # for header vpConfig.h 
-          SET(VISP_HAVE_COIN TRUE)  # for header vpConfig.h
-	        IF(WIN32)
-	          SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR})
-	          #MESSAGE(STATUS "SOQT_INCLUDE_DIR = ${SOQT_INCLUDE_DIR}")
-	          SET(VISP_DEFS "${VISP_DEFS} -DSOQT_DLL")
-	          SET(VISP_DEFS "${VISP_DEFS} -DCOIN_DLL")
-	          IF(SOQT_LIBRARY_RELEASE)
-	            IF(COIN_LIBRARY_RELEASE)
-		      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${COIN_INCLUDE_DIR})  
-	              SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_RELEASE})
-	              SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARY_RELEASE})
-	            ENDIF(COIN_LIBRARY_RELEASE)
-	          ELSE(SOQT_LIBRARY_RELEASE)
-	            IF(COIN_LIBRARY_DEBUG)
-		      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${COIN_INCLUDE_DIR})  
-	              SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_DEBUG})
-	              SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARY_DEBUG})
-	            ELSE(COIN_LIBRARY_DEBUG)
-	              SET(VISP_HAVE_SOQT FALSE)  # for header vpConfig.h
-                SET(VISP_HAVE_COIN FALSE)  # for header vpConfig.h
-	            ENDIF(COIN_LIBRARY_DEBUG)
-	          ENDIF(SOQT_LIBRARY_RELEASE)
-	        ELSE(WIN32)
-	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARIES})
-	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARIES})
-	          #MESSAGE(STATUS "SOQT_LIBRARIES = ${SOQT_LIBRARY_DEBUG}")
-	        ENDIF(WIN32)
-        ENDIF (SOQT_FOUND AND COIN_FOUND)
-      ENDIF(QT_FOUND)
+	    # We manage now SOQT and Coin
+	    SET(VISP_HAVE_SOQT TRUE)  # for header vpConfig.h 
+            SET(VISP_HAVE_COIN TRUE)  # for header vpConfig.h
+	    IF(WIN32)
+	      SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR})
+	      #MESSAGE(STATUS "SOQT_INCLUDE_DIR = ${SOQT_INCLUDE_DIR}")
+	      SET(VISP_DEFS "${VISP_DEFS} -DSOQT_DLL")
+	      SET(VISP_DEFS "${VISP_DEFS} -DCOIN_DLL")
+	      IF(SOQT_LIBRARY_RELEASE)
+	        IF(COIN_LIBRARY_RELEASE)
+	          SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${COIN_INCLUDE_DIR})  
+	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_RELEASE})
+	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARY_RELEASE})
+	        ENDIF(COIN_LIBRARY_RELEASE)
+	      ELSE(SOQT_LIBRARY_RELEASE)
+	        IF(COIN_LIBRARY_DEBUG)
+	          SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${COIN_INCLUDE_DIR})  
+	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARY_DEBUG})
+	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARY_DEBUG})
+	        ELSE(COIN_LIBRARY_DEBUG)
+	          SET(VISP_HAVE_SOQT FALSE)  # for header vpConfig.h
+                  SET(VISP_HAVE_COIN FALSE)  # for header vpConfig.h
+	        ENDIF(COIN_LIBRARY_DEBUG)
+	      ENDIF(SOQT_LIBRARY_RELEASE)
+	    ELSE(WIN32)
+	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARIES})
+	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARIES})
+	      #MESSAGE(STATUS "SOQT_LIBRARIES = ${SOQT_LIBRARY_DEBUG}")
+	    ENDIF(WIN32)
+          ENDIF (QT_FOUND)
+        ENDIF(SOQT_FOUND)
+      ENDIF(COIN_FOUND)
     ENDIF(USE_SOQT AND NOT VISP_HAVE_COIN)
   
     #MESSAGE(STATUS "QT_LIBRARIES no found")
