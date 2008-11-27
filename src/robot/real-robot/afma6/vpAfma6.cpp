@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.32 2008-10-01 12:26:27 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.33 2008-11-27 12:44:24 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -44,6 +44,7 @@
 */
 
 
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpTwistMatrix.h>
 #include <visp/vpRobotException.h>
@@ -58,6 +59,7 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
+#ifdef VISP_HAVE_ACCESS_TO_NAS
 static const char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_56",
 				  "CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
 				  NULL};
@@ -72,6 +74,7 @@ const char * const vpAfma6::CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME
 
 const char * const vpAfma6::CONST_CAMERA_AFMA6_FILENAME
 = "/udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml";
+#endif // VISP_HAVE_ACCESS_TO_NAS
 
 const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2-8mm";
 
@@ -86,21 +89,34 @@ const int vpAfma6::njoint = 6;
 */
 vpAfma6::vpAfma6()
 {
+  // Set the default parameters in case of the config files on the NAS
+  // at Inria are not available.
+
   //
   // Geometric model constant parameters
   //
   // coupling between join 5 and 6
-  this->_coupl_56 = 0;
+  this->_coupl_56 = 0.009091;
   // distance between join 5 and 6
-  this->_long_56  = 0;
+  this->_long_56  = -0.06924;
   // Camera extrinsic parameters: effector to camera frame
-  this->_eMc.setIdentity();
+  this->_eMc.setIdentity(); // Default values are initialized ... 
+  //  ... in init (vpAfma6::vpAfma6CameraRobotType camera, 
+  //               vpCameraParameters::vpCameraParametersProjType projModel)
   // Maximal value of the joints
-  for (int i=0; i < 6; i ++)
-    this->_joint_max[i] = 0;
+  this->_joint_max[0] = 0.7001;
+  this->_joint_max[1] = 0.6301;
+  this->_joint_max[2] = 0.4601;
+  this->_joint_max[3] = 2.7301;
+  this->_joint_max[4] = 2.4801;
+  this->_joint_max[5] = 1.5901;
   // Minimal value of the joints
-  for (int i=0; i < 6; i ++)
-    this->_joint_min[i] = 0;
+  this->_joint_min[0] = -0.7001;
+  this->_joint_min[1] = -0.6001;
+  this->_joint_min[2] = -0.5001;
+  this->_joint_min[3] = -2.7301;
+  this->_joint_min[4] = -0.1001;
+  this->_joint_min[5] = -1.5901;
 
   init();
 
@@ -122,12 +138,16 @@ vpAfma6::init (void)
   Read files containing the constant parameters related to the robot
   kinematics and to the end-effector to camera transformation.
 
+  \warning This function is only available if the macro
+  VISP_HAVE_ACCESS_TO_NAS is defined in vpConfig.h.
+
   \param paramAfma6 : Filename containing the constant parameters of
   the robot kinematics.
 
   \param paramCamera : Filename containing the camera extrinsic parameters.
 
 */
+#ifdef VISP_HAVE_ACCESS_TO_NAS
 void
 vpAfma6::init (const char * paramAfma6,
 	       const char * paramCamera)
@@ -140,6 +160,7 @@ vpAfma6::init (const char * paramAfma6,
 
   return ;
 }
+#endif
 
 /*!
 
@@ -157,50 +178,80 @@ void
 vpAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
 	       vpCameraParameters::vpCameraParametersProjType projModel)
 {
-  char filename_eMc [FILENAME_MAX];
+  
   this->projModel = projModel;
-  switch (camera)
-  {
-  case vpAfma6::CAMERA_DRAGONFLY2_8MM:
-    {
-      switch(projModel){
-      case vpCameraParameters::perspectiveProjWithoutDistortion :
+  
+#ifdef VISP_HAVE_ACCESS_TO_NAS
+  // Read the robot parameters from files
+  char filename_eMc [FILENAME_MAX];
+  switch (camera) {
+  case vpAfma6::CAMERA_DRAGONFLY2_8MM: {
+    switch(projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
 #ifdef UNIX
-        snprintf(filename_eMc, FILENAME_MAX, "%s",
-	         CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME);
+      snprintf(filename_eMc, FILENAME_MAX, "%s",
+	       CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME);
 #else // WIN32
-        _snprintf(filename_eMc, FILENAME_MAX, "%s",
-	         CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME);
+      _snprintf(filename_eMc, FILENAME_MAX, "%s",
+		CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME);
 #endif
-        break;
-      case vpCameraParameters::perspectiveProjWithDistortion :
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
 #ifdef UNIX
-        snprintf(filename_eMc, FILENAME_MAX, "%s",
-           CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME);
+      snprintf(filename_eMc, FILENAME_MAX, "%s",
+	       CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME);
 #else // WIN32
-        _snprintf(filename_eMc, FILENAME_MAX, "%s",
-           CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME);
+      _snprintf(filename_eMc, FILENAME_MAX, "%s",
+		CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME);
 #endif
-        break;
-      }
       break;
     }
-  default:
-    {
-      vpERROR_TRACE ("Cette erreur ne peut pas arriver.");
-      vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
-		   "que les specs de la classe ont ete modifiee, "
-		   "et que le code n'a pas ete mis a jour "
-		   "correctement.");
-      vpERROR_TRACE ("Verifiez les valeurs possibles du type "
-		   "vpAfma6::vpAfma6CameraRobotType, et controlez que "
-		   "tous les cas ont ete pris en compte dans la "
-		   "fonction init(camera).");
+    break;
+  }
+  default: {
+    vpERROR_TRACE ("This error should not occur!");
+    //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
+    // 		   "que les specs de la classe ont ete modifiee, "
+    // 		   "et que le code n'a pas ete mis a jour "
+    // 		   "correctement.");
+    //       vpERROR_TRACE ("Verifiez les valeurs possibles du type "
+    // 		   "vpAfma6::vpAfma6CameraRobotType, et controlez que "
+    // 		   "tous les cas ont ete pris en compte dans la "
+    // 		   "fonction init(camera).");
+    break;
+  }
+  }
+  
+  this->init (vpAfma6::CONST_AFMA6_FILENAME, filename_eMc);
+
+#else // VISP_HAVE_ACCESS_TO_NAS
+
+  // Use here default values of the robot constant parameters.
+  switch (camera) {
+  case vpAfma6::CAMERA_DRAGONFLY2_8MM: {
+    switch(projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+      _erc[0] = vpMath::rad(135.709); // rx
+      _erc[1] = vpMath::rad( 89.122); // ry
+      _erc[2] = vpMath::rad(-44.118); // rz
+      _etc[0] = 0.00951; // tx
+      _etc[1] = 0.00313; // ty
+      _etc[2] = 0.17967; // tz
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+      _erc[0] = vpMath::rad(72.337); // rx
+      _erc[1] = vpMath::rad(89.144); // ry
+      _erc[2] = vpMath::rad(19.431); // rz
+      _etc[0] = 0.03789; // tx
+      _etc[1] = 0.00177; // ty
+      _etc[2] = 0.17990; // tz
       break;
     }
   }
-
-  this->init (vpAfma6::CONST_AFMA6_FILENAME, filename_eMc);
+  }
+  vpRotationMatrix eRc(_erc);
+  this->_eMc.buildFrom(_etc, eRc);
+#endif // VISP_HAVE_ACCESS_TO_NAS
 
   setCameraRobotType(camera);
   return ;
@@ -776,6 +827,20 @@ vpAfma6::getLong56()
   return _long_56;
 }
 
+
+/*!
+
+  This function gets the robot constant parameters from a file.
+
+  \warning This function is only available if the macro
+  VISP_HAVE_ACCESS_TO_NAS is defined in vpConfig.h.
+
+  \param filename : File name containing the robot constant
+  parameters, like max/min joint values, distance between 5 and 6 axis,
+  coupling factor between axis 5 and 6, and the hand-to-eye homogenous matrix.
+
+*/
+#ifdef VISP_HAVE_ACCESS_TO_NAS
 void
 vpAfma6::parseConfigFile (const char * filename)
 {
@@ -886,16 +951,28 @@ vpAfma6::parseConfigFile (const char * filename)
 
   return;
 }
+#endif
 
 /*!
   Get the current intrinsic camera parameters obtained by calibration.
 
-  \warning This method needs XML library to parse the file containing
-  the camera parameters. If XML is detected by ViSP, VISP_HAVE_XML2
-  macro is defined in include/visp/vpConfig.h file.
+  \warning This method needs XML library to parse the file defined in
+  vpAfma6::CONST_CAMERA_AFMA6_FILENAME and containing the camera
+  parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
+  defined in include/visp/vpConfig.h file.
 
-  Camera parameters are read from
+  \warning Thid method needs also an access to the file located on
+  Inria's NAS server and containing the camera parameters in XML
+  format. This access is available if VISP_HAVE_ACCESS_TO_NAS macro is
+  defined in include/visp/vpConfig.h file.
+
+  - If VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined,
+  this method gets the camera parameters from
   /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
+  config file.
+
+  - If these two macros are not defined, this method set the camera parameters
+  to default one.
 
   \param cam : In output, camera parameters to fill.
   \param image_width : Image width used to compute camera calibration.
@@ -916,54 +993,73 @@ vpAfma6::parseConfigFile (const char * filename)
   // Get the intrinsic camera parameters depending on the image size
   // Camera parameters are read from
   // /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
+  // if VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined in vpConfig.h file
   robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
   \endcode
 */
 
-#ifndef VISP_HAVE_XML2
-void
-vpAfma6::getCameraParameters (vpCameraParameters &,
-			      const unsigned int &,
-			      const unsigned int &)
-{
-  vpTRACE("Not implemented, since XML library is not installed !");
-  return;
-}
-#else
 void
 vpAfma6::getCameraParameters (vpCameraParameters &cam,
 			      const unsigned int &image_width,
 			      const unsigned int &image_height)
 {
+#if defined(VISP_HAVE_XML2) && defined (VISP_HAVE_ACCESS_TO_NAS)
   vpXmlParserCamera parser;
-  switch (getCameraRobotType())
-  {
-  case vpAfma6::CAMERA_DRAGONFLY2_8MM:
-    {
-      parser.parse(cam,
-		   vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
-		   vpAfma6::CONST_LABEL_DRAGONFLY2,
-		   projModel,
-		   image_width, image_height);
-      break;
-    }
-  default:
-    {
-      vpERROR_TRACE ("Cette erreur ne peut pas arriver.");
-      vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
-       "que les specs de la classe ont ete modifiee, "
-       "et que le code n'a pas ete mis a jour "
-       "correctement.");
-      vpERROR_TRACE ("Verifiez les valeurs possibles du type "
-       "vpAfma6::vpAfma6CameraRobotType, et controlez que "
-       "tous les cas ont ete pris en compte dans la "
-       "fonction init(camera).");
+  switch (getCameraRobotType()) {
+  case vpAfma6::CAMERA_DRAGONFLY2_8MM: {
+    std::cout << "Get camera parameters for camera \"" 
+	      << vpAfma6::CONST_LABEL_DRAGONFLY2 << "\"" << std::endl
+	      << "from the XML file: \"" 
+	      << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\""<< std::endl;
+    parser.parse(cam,
+		 vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
+		 vpAfma6::CONST_LABEL_DRAGONFLY2,
+		 projModel,
+		 image_width, image_height);
+    break;
+  }
+  default: {
+    vpERROR_TRACE ("This error should not occur!");
+//       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
+//        "que les specs de la classe ont ete modifiee, "
+//        "et que le code n'a pas ete mis a jour "
+//        "correctement.");
+//       vpERROR_TRACE ("Verifiez les valeurs possibles du type "
+//        "vpAfma6::vpAfma6CameraRobotType, et controlez que "
+//        "tous les cas ont ete pris en compte dans la "
+//        "fonction init(camera).");
       break;
     }
   }
+#else
+  // Set default parameters
+  switch (getCameraRobotType()) {
+  case vpAfma6::CAMERA_DRAGONFLY2_8MM: {
+    // Set default intrinsic camera parameters for 640x480 images
+    if (image_width == 640 && image_height == 480) {
+      std::cout << "Get default camera parameters for camera \"" 
+		<< vpAfma6::CONST_LABEL_DRAGONFLY2 << "\"" << std::endl;
+      switch(this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion :
+	cam.initPersProjWithoutDistortion(1108.0, 1110.0, 314.5, 243.2);
+	break;
+      case vpCameraParameters::perspectiveProjWithDistortion :
+	cam.initPersProjWithDistortion(1090.6, 1090.0, 310.1, 260.8, -0.2114, 0.2217);
+	break;
+      }
+    }
+    else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
+    }
+    break;
+  }
+  default: 
+    vpERROR_TRACE ("This error should not occur!");
+    break;
+  }
+#endif
   return;
 }
-#endif
 
 /*!
   Get the current intrinsic camera parameters obtained by calibration.
@@ -1025,7 +1121,15 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
 }
 
 
+/*!
 
+  Print on the output stream \e os the robot parameters (joint
+  min/max, distance between axis 5 and 6, coupling factor between axis
+  5 and 6, hand-to-eye homogeneous matrix.
+
+  \param os : Output stream.
+  \param afma6 : Robot parameters.
+*/
 std::ostream & operator << (std::ostream & os,
 			    const vpAfma6 & afma6)
 {
@@ -1066,12 +1170,12 @@ std::ostream & operator << (std::ostream & os,
     << afma6._eMc[1][3] << " "
     << afma6._eMc[2][3]
     << "\t" << std::endl
-    << "\tRotation (rad) : "
+    << "\tRotation Rxyz (rad) : "
     << rxyz[0] << " "
     << rxyz[1] << " "
     << rxyz[2]
     << "\t" << std::endl
-    << "\tRotation (deg) : "
+    << "\tRotation Rxyz (deg) : "
     << vpMath::deg(rxyz[0])  << " "
     << vpMath::deg(rxyz[1])  << " "
     << vpMath::deg(rxyz[2])

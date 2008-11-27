@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpConfig.h.cmake,v 1.24 2008-11-07 09:56:05 fspindle Exp $
+ * $Id: vpConfig.h.cmake,v 1.25 2008-11-27 12:44:24 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -139,6 +139,11 @@
 
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
+
+// Defined if Inria's NAS server hosting /udd/ is available
+// Used for the moment in vpAfma6 class to check if config files are
+// available in /udd/fspindle/robot/Afma6/current/include/
+#cmakedefine VISP_HAVE_ACCESS_TO_NAS
 
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
