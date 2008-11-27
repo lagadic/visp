@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.18 2008-09-26 15:20:55 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.19 2008-11-27 12:44:24 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -67,6 +67,7 @@
 class VISP_EXPORT vpAfma6
 {
  public:
+#ifdef VISP_HAVE_ACCESS_TO_NAS
   //! File where constant parameters in relation with the robot are
   //! stored: joint max, min, coupling factor between 4 ant 5 joint,
   //! distance between 5 and 6 joint.
@@ -74,6 +75,7 @@ class VISP_EXPORT vpAfma6
   static const char * const CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME;
   static const char * const CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME;
   static const char * const CONST_CAMERA_AFMA6_FILENAME;
+#endif
   //! Name of the firewire Dragonfly2 camera
   static const char * const CONST_LABEL_DRAGONFLY2 ;
 
@@ -90,7 +92,9 @@ class VISP_EXPORT vpAfma6
   vpAfma6();
 
   void init (void);
+#ifdef VISP_HAVE_ACCESS_TO_NAS
   void init (const char * paramAfma6, const char * paramCamera);
+#endif
   void init (vpAfma6::vpAfma6CameraRobotType camera,
 	     vpCameraParameters::vpCameraParametersProjType projModel =
 	     vpCameraParameters::perspectiveProjWithoutDistortion);
@@ -107,7 +111,9 @@ class VISP_EXPORT vpAfma6
   void get_eJe(const vpColVector &q, vpMatrix &eJe)  ;
   void get_fJe(const vpColVector &q, vpMatrix &fJe)  ;
 
+#ifdef VISP_HAVE_ACCESS_TO_NAS
   void parseConfigFile (const char * filename);
+#endif
 
   //! Get the current used camera
   vpAfma6CameraRobotType getCameraRobotType(){
