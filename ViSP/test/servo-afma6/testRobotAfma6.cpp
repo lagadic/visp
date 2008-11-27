@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma6.cpp,v 1.16 2008-01-31 15:01:40 asaunier Exp $
+ * $Id: testRobotAfma6.cpp,v 1.17 2008-11-27 12:58:54 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,32 +48,41 @@
 #include <visp/vpConfig.h>
 #include <visp/vpRobotAfma6.h>
 #include <visp/vpDebug.h>
+#include <visp/vpCameraParameters.h>
 
 #ifdef VISP_HAVE_AFMA6
-#ifdef VISP_HAVE_GSL
-int gsl_warnings_off;
-#endif
 
 int main()
 {
   try {
 
-    std::cout << "a test..." << std::endl;
+    std::cout << "a test for vpRobotAfma6 class..." << std::endl;
 
-    vpAfma6 afma6;
-    vpCTRACE << afma6;
+    vpRobotAfma6 afma6;
+    vpCameraParameters cam;
 
-    vpRobotAfma6 robotAfma6;
+    std::cout << "-- Default settings for Afma6  ---" 
+	      << std::endl;
+    std::cout << afma6 << std::endl;
+    afma6.getCameraParameters(cam, 640, 480);
+    std::cout << cam << std::endl;
 
-    vpCTRACE << "-- set camera Dragonfly2 without distortion ---" << std::endl;
-    robotAfma6.init( vpAfma6::CAMERA_DRAGONFLY2_8MM);
+    std::cout << "-- Settings associated to camera Dragonfly2 without distortion ---" 
+	      << std::endl;
+    afma6.init( vpAfma6::CAMERA_DRAGONFLY2_8MM);
 
-    vpCTRACE << robotAfma6;
+    std::cout << afma6 << std::endl;
+    afma6.getCameraParameters(cam, 640, 480);
+    std::cout << cam << std::endl;
 
-    vpCTRACE << "-- set camera Dragonfly2 with distortion ------" << std::endl;
-    robotAfma6.init( vpAfma6::CAMERA_DRAGONFLY2_8MM,
-                     vpCameraParameters::perspectiveProjWithDistortion);
-    vpCTRACE << robotAfma6;
+    std::cout << "-- Settings associated to camera Dragonfly2 with distortion ------" 
+	      << std::endl;
+    afma6.init( vpAfma6::CAMERA_DRAGONFLY2_8MM,
+		vpCameraParameters::perspectiveProjWithDistortion);
+    std::cout << afma6 << std::endl;
+    afma6.getCameraParameters(cam, 640, 480);
+    std::cout << cam << std::endl;
+
     return 0;
   }
   catch(...) {
@@ -85,7 +94,7 @@ int main()
 #else
 int main()
 {
-  std::cout << "a test..." << std::endl;
+  std::cout << "The real Afma6 robot controller is not available." << std::endl;
   return 0; 
 }
 
