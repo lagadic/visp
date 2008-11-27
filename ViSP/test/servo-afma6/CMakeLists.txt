@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.6 2008-05-27 09:41:18 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.7 2008-11-27 12:57:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,6 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
+  testAfma6.cpp
   testRobotAfma6.cpp
   testRobotAfma6Pose.cpp
 )
@@ -57,6 +58,7 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test 
+ADD_TEST(testAfma6      testAfma6) 
 ADD_TEST(testRobotAfma6 testRobotAfma6) 
 
 # testRobotAfma6Pose cannot be run automaticlly, since human interaction is
