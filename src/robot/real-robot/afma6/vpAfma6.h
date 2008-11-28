@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.h,v 1.19 2008-11-27 12:44:24 fspindle Exp $
+ * $Id: vpAfma6.h,v 1.20 2008-11-28 14:36:47 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -131,8 +131,8 @@ class VISP_EXPORT vpAfma6
 			   const vpImage<unsigned char> &I);
   void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I);
 
-  friend std::ostream & operator << (std::ostream & os,
-				     const vpAfma6 & afma6);
+  friend ViSP_EXPORT std::ostream & operator << (std::ostream & os,
+						 const vpAfma6 & afma6);
 
   vpColVector getJointMin();
   vpColVector getJointMax();

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.h,v 1.13 2008-11-25 09:09:26 fspindle Exp $
+ * $Id: vpCameraParameters.h,v 1.14 2008-11-28 14:36:47 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -253,8 +253,8 @@ public :
   vpMatrix get_K() const;
 
   void printParameters() ;
-  friend std::ostream & operator << (std::ostream & os,
-				     const vpCameraParameters &cam);
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
+						 const vpCameraParameters &cam);
 
 
   /*!
