@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.33 2008-11-27 12:44:24 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.34 2008-11-28 16:33:32 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -65,15 +65,33 @@ static const char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_56",
 				  NULL};
 
 const char * const vpAfma6::CONST_AFMA6_FILENAME
+#ifdef WIN32
+= "Z:/robot/Afma6/current/include/const_Afma6.cnf";
+#else
 = "/udd/fspindle/robot/Afma6/current/include/const_Afma6.cnf";
+#endif
 
 const char * const vpAfma6::CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME
+#ifdef WIN32
+= "Z:/robot/Afma6/current/include/const_eMc_Dragonfly2_without_distortion_Afma6.cnf";
+#else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_Dragonfly2_without_distortion_Afma6.cnf";
+#endif
+
 const char * const vpAfma6::CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME
+#ifdef WIN32 
+= "Z:/robot/Afma6/current/include/const_eMc_Dragonfly2_with_distortion_Afma6.cnf";
+#else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_Dragonfly2_with_distortion_Afma6.cnf";
+#endif
 
 const char * const vpAfma6::CONST_CAMERA_AFMA6_FILENAME
+#ifdef WIN32 
+= "Z:/robot/Afma6/current/include/const_camera_Afma6.xml";
+#else
 = "/udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml";
+#endif
+
 #endif // VISP_HAVE_ACCESS_TO_NAS
 
 const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2-8mm";
