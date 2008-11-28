@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOpenCVGrabber.cpp,v 1.4 2008-11-21 14:40:16 nmelchio Exp $
+ * $Id: vpOpenCVGrabber.cpp,v 1.5 2008-11-28 14:24:10 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -308,7 +308,7 @@ void vpOpenCVGrabber::setHeight(const unsigned int height)
 /*!
 	Gets the number of capture devices connected on your computer.
 			
-	\Warning This function is available only under Windows.
+	\warning This function is only available under Windows.
 
 	\return 1 under Linux, the number of devices under Windows.
 */
