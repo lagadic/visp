@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindNAS.cmake,v 1.1 2008-11-27 12:44:24 fspindle Exp $
+# $Id: FindNAS.cmake,v 1.2 2008-11-28 16:31:53 fspindle Exp $
 #
 # Copyright (C) 2008 Inria. All rights reserved.
 #
@@ -45,7 +45,7 @@ FIND_FILE(AFMA6_CONSTANT_FILE_ON_NAS
   Z:/robot/Afma6/current/include
   )
 
-#MESSAGE("DBG AFMA6_CONSTANT_FILE_ON_NAS=${AFMA6_CONSTANT_FILE}")
+#MESSAGE("DBG AFMA6_CONSTANT_FILE_ON_NAS=${AFMA6_CONSTANT_FILE_ON_NAS}")
  
 ## --------------------------------
   
