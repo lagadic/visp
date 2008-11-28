@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vp1394TwoGrabber.cpp,v 1.34 2008-11-25 09:38:46 fspindle Exp $
+ * $Id: vp1394TwoGrabber.cpp,v 1.35 2008-11-28 14:09:15 gfortier Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1295,6 +1295,8 @@ vp1394TwoGrabber::initialize()
     cameras = new dc1394camera_t * [list->num];
 
     num_cameras = 0;
+        
+
     for (unsigned int i=0; i < list->num; i ++) {
       cameras[i] = dc1394_camera_new (d, list->ids[i].guid);
       if (!cameras[i]) {
@@ -1305,6 +1307,11 @@ vp1394TwoGrabber::initialize()
       // Update the number of working cameras
       num_cameras ++;
     }
+
+    // Reset the bus to make firewire working if the program was not properly
+    // stopped by a CTRL-C. We reset here only the bus attached to the first
+    // camera
+    dc1394_reset_bus(cameras[0]);
 
     if (list != NULL)
       dc1394_camera_free_list (list);
