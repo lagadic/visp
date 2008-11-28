@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.79 2008-11-27 12:47:29 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.80 2008-11-28 17:26:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -1021,6 +1021,9 @@ IF(BUILD_TESTING)
   #
   # Test coverage specific code
   #
+  # set the default value
+  SET(BUILD_TEST_COVERAGE FALSE)
+
   IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
 
     OPTION(BUILD_TEST_COVERAGE "Enable test coverage." OFF)
