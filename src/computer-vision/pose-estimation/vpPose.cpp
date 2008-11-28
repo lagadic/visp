@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPose.cpp,v 1.23 2008-11-07 15:07:23 marchand Exp $
+ * $Id: vpPose.cpp,v 1.24 2008-11-28 10:13:18 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -471,7 +471,6 @@ vpPose::display(vpImage<vpRGBa> &I,
 */
 void
 vpPose::displayModel(vpImage<unsigned char> &I,
-		     vpHomogeneousMatrix &cMo,
 		     vpCameraParameters &cam,
 		     vpColor::vpColorType col)
 { 
@@ -500,7 +499,6 @@ vpPose::displayModel(vpImage<unsigned char> &I,
 */
 void
 vpPose::displayModel(vpImage<vpRGBa> &I,
-		     vpHomogeneousMatrix &cMo,
 		     vpCameraParameters &cam,
 		     vpColor::vpColorType col)
 { 
