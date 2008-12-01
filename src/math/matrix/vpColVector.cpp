@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColVector.cpp,v 1.11 2008-06-13 17:01:15 asaunier Exp $
+ * $Id: vpColVector.cpp,v 1.12 2008-12-01 08:54:38 marchand Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -55,6 +55,8 @@
 
 // Debug trace
 #include <visp/vpDebug.h>
+#include <string.h> //EM gcc 4.3
+#include <math.h> //EM gcc 4.3
 
 
 
@@ -559,7 +561,7 @@ vpColVector::median(const vpColVector &v)
     // the median should be for |inf-sup| = 0 (1 if an even number of element)
     // which means that there are the same number of element in the array
     // that are greater and smaller that this value.
-    infsup[i] = abs(inf-sup);
+    infsup[i] = fabs(inf-sup); //EM gcc 4.3
   }
 
   // seek for the smaller value of |inf-sup| (should be 0 or 1)
