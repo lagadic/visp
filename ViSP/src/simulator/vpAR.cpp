@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAR.cpp,v 1.1 2008-11-10 08:30:05 fspindle Exp $
+ * $Id: vpAR.cpp,v 1.2 2008-12-02 15:10:51 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,6 +37,11 @@
  *
  *****************************************************************************/
 
+/*!
+  \file vpRA.cpp
+  \brief class used to display an image behind the internal view of the simulator. Used for augmented reality applications.
+*/
+
 #include <visp/vpConfig.h>
 
 #ifdef VISP_HAVE_COIN
@@ -64,11 +69,22 @@
 
 
 
+/*!
+	Basic Destructor that calls the kill() method of the vpSimulator class.
+*/
 vpAR::~vpAR()
 {
   kill() ;
 }
 
+
+/*!
+	Initialisation of the internal view of the simulator.
+
+	\param width : Width of the internal view.
+	\param height : Height of the internal view.
+	\param type : Type of background image ie gray scaled or color.
+*/
 void
 vpAR::initInternalViewer(int width, int height,  vpImageType type)
 {
@@ -97,6 +113,11 @@ vpAR::initInternalViewer(int width, int height,  vpImageType type)
 
 
 
+/*!
+	Set the background image and turn it to deal with the frame of OpenGL.
+
+	\param I : Gray scaled image for the background.
+*/
 // Grey pictures SetBackGroundImage
 void
 vpAR::setImage(vpImage<unsigned char> &I)
@@ -120,7 +141,14 @@ vpAR::setImage(vpImage<unsigned char> &I)
 
 }
 
-// Grey pictures SetBackGroundImage
+
+
+/*!
+	Set the background image and turn it to deal with the frame of OpenGL.
+
+	\param I : Color image for the background.
+*/
+// Color pictures SetBackGroundImage
 void
 vpAR::setImage(vpImage<vpRGBa> &I)
 {

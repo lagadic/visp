@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAR.h,v 1.1 2008-11-10 08:30:05 fspindle Exp $
+ * $Id: vpAR.h,v 1.2 2008-12-02 15:10:51 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,6 +36,13 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+
+
+/*!
+  \file vpRA.h
+  \brief class used to display an image behind the internal view of the simulator. Used for augmented reality applications.
+*/
+
 
 #ifndef vpAR_HH
 #define vpAR_HH
