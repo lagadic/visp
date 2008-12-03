@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.41 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.42 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -385,7 +385,7 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
                           (unsigned char *)I.bitmap,
                           4* width);
 
-    /* Permet de fermer la fenêtre si besoin (cas des séquences d'images) */
+    /* Permet de fermer la fenï¿½tre si besoin (cas des sï¿½quences d'images) */
     //while (g_main_iteration(FALSE));
 
     /* Le pixmap background devient le fond de la zone de dessin */
@@ -1146,6 +1146,19 @@ vpDisplayGTK::setTitle(const char *windowtitle)
                              "GTK not initialized")) ;
   }
 }
+
+/*!
+  \brief Set the font used to display text.
+  \param fontname : Name of the font.
+ */
+
+void
+vpDisplayGTK::setFont(const char *fontname)
+{
+	vpERROR_TRACE("Not yet implemented" ) ;
+}
+
+
 /*!
   \brief Display a circle
   \param i,j : circle center position (row,column)

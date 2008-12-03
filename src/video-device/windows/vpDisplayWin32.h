@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.h,v 1.21 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplayWin32.h,v 1.22 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -135,6 +135,8 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   void flushDisplay();
   // Changes the window's title
   void setTitle(const char *windowtitle);
+  //Sets the font used while displaying a text in an image
+  void setFont( const char *fontname );
   //! Gets the window pixmap and put it in vpRGBa image
   void getImage(vpImage<vpRGBa> &I);
 

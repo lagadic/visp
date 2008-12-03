@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayWin32.cpp,v 1.25 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplayWin32.cpp,v 1.26 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -146,7 +146,7 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height,
 {
 
 
-  if (this->title != NULL)//delete après init du thread.... ou destructeur
+  if (this->title != NULL)//delete aprï¿½s init du thread.... ou destructeur
     {
       delete [] this->title;
       this->title = NULL;
@@ -410,6 +410,17 @@ void vpDisplayWin32::setTitle(const char *windowtitle)
   waitForInit();
   SetWindowText(window.hWnd, windowtitle);
 }
+
+/*!
+  \brief Set the font used to display text.
+  \param fontname : Name of the font.
+ */
+
+void vpDisplayWin32::setFont(const char *fontname)
+{
+	vpERROR_TRACE("Not yet implemented" ) ;
+}
+
 /*!
   \brief flush the Win32 buffer
   It's necessary to use this function to see the results of any drawing

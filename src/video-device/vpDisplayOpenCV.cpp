@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.8 2008-11-24 11:14:56 nmelchio Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.9 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1003,6 +1003,17 @@ vpDisplayOpenCV::setTitle(const char * /*windowtitle*/)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "OpenCV not initialized")) ;
   }
+}
+
+/*!
+  \brief Set the font used to display text.
+  \param fontname : Name of the font.
+ */
+
+void
+vpDisplayOpenCV::setFont(const char *fontname)
+{
+	vpERROR_TRACE("Not yet implemented" ) ;
 }
 
 /*!
