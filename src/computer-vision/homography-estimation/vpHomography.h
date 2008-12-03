@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.h,v 1.15 2008-09-26 15:20:53 fspindle Exp $
+ * $Id: vpHomography.h,v 1.16 2008-12-03 12:48:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -134,11 +134,6 @@ public:
   void buildFrom(const vpHomogeneousMatrix &aMb,
 		 const vpPlane &bP) ;
 
-  //! invert the homography
-  vpHomography inverse() const ;
-  //! invert the homography
-  void inverse(vpHomography &Hi) const;
-
   //! insert a rotation matrix
   void insert(const vpHomogeneousMatrix &aRb) ;
   //! insert a rotation matrix
@@ -193,6 +188,21 @@ public:
 				  vpList<vpRotationMatrix> & vR,
 				  vpList<vpTranslationVector> & vT,
 				  vpList<vpColVector> & vN) ;
+
+  //! invert the homography
+  vpHomography inverse() const ;
+  //! invert the homography
+  void inverse(vpHomography &Hi) const;
+
+  // Multiplication by an homography
+  vpHomography operator*(const vpHomography &H) const;
+
+  // Multiplication by a scalar
+  vpHomography operator*(const double &v) const;
+
+  // Division by a scalar
+  vpHomography operator/(const double &v) const;
+
 private:
   static void HartleyNormalization(int n,
 				   double *x, double *y,

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomography.cpp,v 1.10 2007-05-16 13:02:56 fspindle Exp $
+ * $Id: vpHomography.cpp,v 1.11 2008-12-03 12:48:31 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -32,6 +32,7 @@
  *
  * Authors:
  * Muriel Pressigout
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -305,7 +306,83 @@ vpHomography::save(std::ofstream &f) const
   }
 }
 
+/*!
+ 
+  Multiplication by an homography.
 
+  \param H : Homography to multiply with.
+
+  \code 
+  vpHomography aHb, bHc; 
+  // Initialize aHb and bHc homographies
+  vpHomography aHc = aHb * bHc;  
+  \endcode
+
+*/
+vpHomography vpHomography::operator*(const vpHomography &H) const
+{
+  vpHomography Hp;
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 3; j++) {
+      double s = 0.;
+      for(int k = 0; k < 3; k ++) {
+	s += (*this)[i][k] * H[k][j]; 
+      }
+      Hp[i][j] = s;
+    }
+  }
+  return Hp;
+}
+
+/*!
+ 
+  Multiply an homography by a scalar.
+
+  \param v : Value of the scalar.
+
+  \code 
+  double v = 1.1;
+  vpHomography aHb; 
+  // Initialize aHb
+  vpHomography H = aHb * v;  
+  \endcode
+
+*/
+vpHomography vpHomography::operator*(const double &v) const
+{
+  vpHomography H;
+  	
+  for (int i=0; i < 9; i ++) {
+    H.data[i] = this->data[i] * v;
+  }
+
+  return H;
+}
+
+/*!
+ 
+  Divide an homography by a scalar.
+
+  \param v : Value of the scalar.
+
+  \code 
+  vpHomography aHb; 
+  // Initialize aHb
+  vpHomography H = aHb / aHb[2][2];  
+  \endcode
+
+*/
+vpHomography vpHomography::operator/(const double &v) const
+{
+  vpHomography H;
+  double one_over_v = 1. / v;
+ 
+  for (int i=0; i < 9; i ++) {
+    H.data[i] = this->data[i] * one_over_v;
+  }
+
+  return H;
+}
 /*!
   Read an homography in a file, verify if it is really an homogeneous
   matrix.
