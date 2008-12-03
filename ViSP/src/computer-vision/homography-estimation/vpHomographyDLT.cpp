@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyDLT.cpp,v 1.7 2008-02-14 10:24:47 fspindle Exp $
+ * $Id: vpHomographyDLT.cpp,v 1.8 2008-12-03 16:25:39 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -271,6 +271,13 @@ void vpHomography::DLT(int n,
     vpColVector D(9);
     vpMatrix V(9,9);
     int i, j;
+    
+    // We need here to compute the SVD on a (n*2)*9 matrix (where n is
+    // the number of points). if n == 4, the matrix has more columns
+    // than rows. This kind of matrix is not supported by GSL for
+    // SVD. The solution is to add an extra line with zeros
+    if (n == 4) 
+      A.resize(2*n+1,9);
 
     // build matrix A
     for(i=0; i<n;i++)
@@ -298,12 +305,16 @@ void vpHomography::DLT(int n,
       A[2*i+1][8]=-xa[i] ;
     }
 
+    // Add an extra line with zero.
+    if (n == 4) {
+      for (int i=0; i < 9; i ++) {
+	A[2*n][i] = 0;
+      }
+    }      
 
     // solve Ah = 0
     // SVD  Decomposition A = UDV^T (destructive wrt A)
     A.svd(D,V);
-
-
 
     // on en profite pour effectuer un controle sur le rang de la matrice :
     // pas plus de 2 valeurs singulières quasi=0
