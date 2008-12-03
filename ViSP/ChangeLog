@@ -1,7 +1,7 @@
 ViSP 2.4.x (released ...)
   - Deprecated
-    - Creation of a deprecated section in the online documentation that gives the list 
-      of classes or member function that are deprecated
+    - Creation of a deprecated section in the online documentation that 
+      gives the list of classes or member function that are deprecated
     - vpOSXcfoxGrabber was removed, since the C+Fox third party library 
       available at http://cfox.sourceforge.net/ was not updated since 2005.
     - vpIcCompGrabber was removed, since it uses a home made wrapper based 
@@ -15,8 +15,8 @@ ViSP 2.4.x (released ...)
     - vpFeatureThetaU: Add cRcd feature, with ThetaU corresponding to the 
       rotation the camera has to achieve to move from current frame to the 
       desired one.
-    - vpOpenCVGrabber: New framegrabber based on OpenCV third party library (useful 
-      for USB cameras).
+    - vpOpenCVGrabber: New framegrabber based on OpenCV third party library
+      (useful for USB cameras).
     - vp1394TwoGrabber: Get the timestamp associated to the grabbed image.
     - vpV4l2Grabber: Get the timestamp associated to the grabbed image.
     - vpRobotAfma6 and vpAfma6: Modifications to be compatible with the new 
@@ -28,7 +28,7 @@ ViSP 2.4.x (released ...)
     - Creation of a deprecated section.
     - Classes are now grouped in doxygen modules to help learning ViSP.
     - Introduction of new sample examples in the online documentation
-  - Bug fix
+  - Bug fixed
     - [5370] DirectShow and Visual Studio 9 2008 Express
     - [5375] Compilation error in calibrate2dGrid.cpp
     - [5398] display cylinder
@@ -40,7 +40,8 @@ ViSP 2.4.x (released ...)
     - [5596] Multiplying a vpRotationMatrix with a vpColVector ?
     - [5642] warning in vphomographyvvs.cpp with Visual C++ 2003 .Net
     - [5993] vpImage BI
-    - [6484] Bug in vpCalibration::calibrationTsai() for eye-to-hand calibration
+    - [6336] DLT Homography on 4 points
+    - [6484] Bug in vpCalibration::calibrationTsai for eye-to-hand calibration
     - [6590] vpDisplayGDI cannot handle numerous displays (windows)
     - [6619] Problem vpMeLine : compute of delta
     - [6743] Bug in vpDisplayOpenCV::displayRectangle()
