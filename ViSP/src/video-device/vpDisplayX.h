@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.h,v 1.23 2008-11-10 16:54:10 fspindle Exp $
+ * $Id: vpDisplayX.h,v 1.24 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -141,6 +141,7 @@ private:
   XGCValues     values;
   int size ;
   bool ximage_data_init;
+  
 
 
 public:
@@ -169,7 +170,7 @@ public:
   void init(unsigned int width, unsigned int height,
 	    int winx=-1, int winy=-1 ,
 	    const char *_title=NULL) ;
-
+  
 protected:
 
   void clearDisplay(vpColor::vpColorType c=vpColor::white) ;
@@ -209,6 +210,9 @@ protected:
 			unsigned int e=1);
   void flushDisplay() ;
   void setTitle(const char *string) ;
+  void setFont( const char *string );
+
+  
 
   bool getClick(unsigned int& i, unsigned int& j, bool blocking=true);
   bool getClick(unsigned int& i, unsigned int& j,

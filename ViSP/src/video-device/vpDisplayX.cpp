@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.42 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplayX.cpp,v 1.43 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -186,7 +186,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int _x, int _y, const char *_title
     }
   }
 
-  // Positionnement de la fenetre dans l'écran.
+  // Positionnement de la fenetre dans l'ï¿½cran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
   {
     hints.flags = 0;
@@ -489,7 +489,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int _x, int _y, const char *_title )
     }
   }
 
-  // Positionnement de la fenetre dans l'écran.
+  // Positionnement de la fenetre dans l'ï¿½cran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
   {
     hints.flags = 0;
@@ -790,7 +790,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
   windowXPosition = _x ;
   windowYPosition = _y ;
-  // Positionnement de la fenetre dans l'écran.
+  // Positionnement de la fenetre dans l'ï¿½cran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
   {
     hints.flags = 0;
@@ -1721,6 +1721,37 @@ vpDisplayX::displayRectangle ( const vpRect &rect,
   }
 }
 
+/*!
+ \brief Set the font 
+ \param font : The expected font. The available fonts are given by the command "xlsfonts".
+ \note Under UNIX, to know all the available fonts, use the command "xlsfonts" in a terminal.
+ */
+void vpDisplayX::setFont( const char* font )
+{
+  if ( Xinitialise )
+  {
+	if (font!=NULL)
+	{
+		try
+		{
+			Font stringfont;
+			stringfont = XLoadFont (display, font) ; //"-adobe-times-bold-r-normal--18*");
+			XSetFont (display, context, stringfont);
+		}
+		catch(...)
+		{
+			vpERROR_TRACE ( "Bad font " ) ;
+			throw ( vpDisplayException ( vpDisplayException::notInitializedError,"Bad font" ) ) ;
+		}
+	}	
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+																"X not initialized" ) ) ;
+  }
+}
 
 
 /*!
@@ -1772,7 +1803,7 @@ vpDisplayX::getClick ( unsigned int& i, unsigned int& j, bool blocking )
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
     unsigned int  modifier ;
-    // Test d'évènements.
+    // Test d'ï¿½vï¿½nements.
     if(blocking){
       XCheckMaskEvent(display , ButtonPressMask, &event);
       XCheckMaskEvent(display , ButtonReleaseMask, &event);
@@ -1784,7 +1815,7 @@ vpDisplayX::getClick ( unsigned int& i, unsigned int& j, bool blocking )
     }
        
     if(ret){
-      /* Recuperation de la coordonnee du pixel cliqué. */
+      /* Recuperation de la coordonnee du pixel cliquï¿½. */
       if ( XQueryPointer ( display,
                            window,
                            &rootwin, &childwin,
@@ -1830,7 +1861,7 @@ vpDisplayX::getClick(bool blocking)
     int   root_x, root_y, win_x, win_y ;
     unsigned int  modifier ;
 
-    // Test d'évènements.
+    // Test d'ï¿½vï¿½nements.
     if(blocking){
       XCheckMaskEvent(display , ButtonPressMask, &event);
       XCheckMaskEvent(display , ButtonReleaseMask, &event);
@@ -1842,7 +1873,7 @@ vpDisplayX::getClick(bool blocking)
     }
        
     if(ret){
-      /* Recuperation de la coordonnee du pixel cliqué. */
+      /* Recuperation de la coordonnee du pixel cliquï¿½. */
       if ( XQueryPointer ( display,
                            window,
                            &rootwin, &childwin,
@@ -1892,7 +1923,7 @@ vpDisplayX::getClick ( unsigned int& i, unsigned int& j,
     int   root_x, root_y, win_x, win_y ;
     unsigned int  modifier ;
 
-    // Test d'évènements.
+    // Test d'ï¿½vï¿½nements.
     if(blocking){
       XCheckMaskEvent(display , ButtonPressMask, &event);
       XCheckMaskEvent(display , ButtonReleaseMask, &event);
@@ -1904,7 +1935,7 @@ vpDisplayX::getClick ( unsigned int& i, unsigned int& j,
     }
        
     if(ret){
-      /* Recuperation de la coordonnee du pixel cliqué. */
+      /* Recuperation de la coordonnee du pixel cliquï¿½. */
       if ( XQueryPointer ( display,
                            window,
                            &rootwin, &childwin,
@@ -1967,7 +1998,7 @@ vpDisplayX::getClickUp ( unsigned int& i, unsigned int& j,
     int   root_x, root_y, win_x, win_y ;
     unsigned int  modifier ;
 
-    // Test d'évènements.
+    // Test d'ï¿½vï¿½nements.
     if(blocking){
       XCheckMaskEvent(display , ButtonPressMask, &event);
       XCheckMaskEvent(display , ButtonReleaseMask, &event);
@@ -1979,7 +2010,7 @@ vpDisplayX::getClickUp ( unsigned int& i, unsigned int& j,
     }
        
     if(ret){
-      /* Recuperation de la coordonnee du pixel cliqué. */
+      /* Recuperation de la coordonnee du pixel cliquï¿½. */
       if ( XQueryPointer ( display,
                            window,
                            &rootwin, &childwin,

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.33 2008-11-10 10:26:39 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.34 2008-12-03 10:25:10 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -153,6 +153,30 @@ vpDisplay::setTitle ( const vpImage<unsigned char> &I,
 }
 
 /*!
+  Set the font of a text added to the image.
+  \param I : Image associated to the display window.
+  \param font : Font name.
+*/
+void
+vpDisplay::setFont ( const vpImage<unsigned char> &I, 
+		      const char *fontname )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->setFont ( fontname ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
   Display a 8bits image in the display window
 */
 void
@@ -172,6 +196,8 @@ vpDisplay::display ( const vpImage<unsigned char> &I )
     throw ;
   }
 }
+
+
 
 /*!
   \brief get the window pixmap and put it in vpRGBa image
@@ -917,6 +943,29 @@ vpDisplay::setTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
     if ( I.display != NULL )
     {
       ( I.display )->setTitle ( windowtitle ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Set the font of a text added to the image.
+  \param I : Image associated to the display window.
+  \param font : Font name.
+*/
+void
+vpDisplay::setFont ( const vpImage<vpRGBa> &I, const char *fontname )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->setFont ( fontname ) ;
     }
   }
   catch ( ... )

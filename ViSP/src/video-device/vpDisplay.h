@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.h,v 1.29 2008-11-10 16:54:10 fspindle Exp $
+ * $Id: vpDisplay.h,v 1.30 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -137,6 +137,7 @@ protected :
   int windowYPosition ;
   //! display title
   char *title ;
+  char *font;
   unsigned int width ;
   unsigned int height ;
 
@@ -156,6 +157,7 @@ protected :
   virtual void displayImage(const vpImage<unsigned char> &I)=0 ;
   virtual void flushDisplay() =0;
   virtual void setTitle(const char *string) =0;
+  virtual void setFont(const char *string) =0;
   // get information
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
@@ -440,6 +442,10 @@ protected :
 		       const char *windowtitle);
 
   static void setTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
+
+  static void setFont(const vpImage<unsigned char> &I, const char *font);
+
+  static void setFont(const vpImage<vpRGBa> &I, const char *font);
 
   //! flushes the output buffer
   static void flush(const vpImage<unsigned char> &I) ;

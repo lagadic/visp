@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.h,v 1.7 2008-11-10 16:54:10 fspindle Exp $
+ * $Id: vpDisplayOpenCV.h,v 1.8 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -192,6 +192,7 @@ protected:
 			unsigned int e=1);
   void flushDisplay() ;
   void setTitle(const char *windowtitle) ;
+  void setFont( const char *fontname );
   bool getClick(unsigned int& i, unsigned int& j, bool blocking=true) ;
   bool getClick(unsigned int& i, unsigned int& j,
 		 vpMouseButton::vpMouseButtonType& button,

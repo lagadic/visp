@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.h,v 1.22 2008-11-12 17:36:25 fspindle Exp $
+ * $Id: vpDisplayGTK.h,v 1.23 2008-12-03 10:25:11 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -190,6 +190,7 @@ protected:
 			unsigned int e=1);
   void flushDisplay() ;
   void setTitle(const char *string) ;
+  void setFont( const char *fontname );
   bool getClick(unsigned int& i, unsigned int& j, bool blocking=true) ;
   bool getClick(unsigned int& i, unsigned int& j,
 		 vpMouseButton::vpMouseButtonType& button,
