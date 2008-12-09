@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpViewer.cpp,v 1.18 2008-11-10 08:30:05 fspindle Exp $
+ * $Id: vpViewer.cpp,v 1.19 2008-12-09 13:20:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -134,13 +134,17 @@ vpViewer::actualRedraw(void)
 
 /*!
 
-\param x : width
-\param y : height
-\param fixed : set as true to disable mouse window resizing
+  \param x : width
+  \param y : height
+  \param fixed : set as true to disable mouse window resizing
 
 */
 void
+#if defined(VISP_HAVE_SOWIN) || defined (VISP_HAVE_SOQT)
 vpViewer::resize(int x, int y, bool fixed)
+#else
+vpViewer::resize(int x, int y, bool /*fixed*/)
+#endif
 {
   SbVec2s size(x,y) ;
   setSize(size);
@@ -155,7 +159,8 @@ vpViewer::resize(int x, int y, bool fixed)
   GetWindowRect(parent, &rcWindow);
   ptDiff.x = (rcWindow.right - rcWindow.left) - rcClient.right;
   ptDiff.y = (rcWindow.bottom - rcWindow.top) - rcClient.bottom;
-  MoveWindow(parent,rcWindow.left, rcWindow.top, x + ptDiff.x, y + ptDiff.y, TRUE);
+  MoveWindow(parent,rcWindow.left, rcWindow.top, 
+	     x + ptDiff.x, y + ptDiff.y, TRUE);
   if(fixed){
     DWORD dwStyle = GetWindowLong(parent, GWL_STYLE);
     dwStyle &= ~(WS_SIZEBOX);
@@ -163,8 +168,8 @@ vpViewer::resize(int x, int y, bool fixed)
   }
 #elif defined(VISP_HAVE_SOQT)
   if(fixed){
-  QWidget * parent = getParentWidget();
-  parent->setFixedSize(x, y);
+    QWidget * parent = getParentWidget();
+    parent->setFixedSize(x, y);
   }
 #endif 
 }
