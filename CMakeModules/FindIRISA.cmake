@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindIRISA.cmake,v 1.1 2008-07-17 20:13:29 fspindle Exp $
+# $Id: FindIRISA.cmake,v 1.2 2008-12-09 13:11:07 fspindle Exp $
 #
 # Copyright (C) 2008 Inria. All rights reserved.
 #
@@ -44,9 +44,9 @@ IF(NOT UNIX)
   SET(IRISA_FOUND FALSE)
 ELSE(NOT UNIX)
   
-  FIND_PATH(IRISA_INCLUDE_DIR irisa.h
+  FIND_PATH(IRISA_INCLUDE_DIR irisa_Afma6.h
     $ENV{IRISA_HOME}/include
-    /udd/fspindle/robot/Cerebellum/Linux/Irisa/current
+    /udd/fspindle/robot/Cerebellum/Linux/Irisa/current/src
     )
   #MESSAGE("DBG IRISA_INCLUDE_DIR=${IRISA_INCLUDE_DIR}")  
   
@@ -54,7 +54,7 @@ ELSE(NOT UNIX)
     NAMES irisa
     PATHS 
     $ENV{IRISA_HOME}/lib
-    /udd/fspindle/robot/Cerebellum/Linux/Irisa/current
+    /udd/fspindle/robot/Cerebellum/Linux/Irisa/current/src
     )
 
   #MESSAGE("DBG IRISA_LIBRARY=${IRISA_LIBRARY}")
