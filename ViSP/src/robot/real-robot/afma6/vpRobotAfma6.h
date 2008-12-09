@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.23 2008-09-26 15:20:55 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.24 2008-12-09 13:11:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,7 @@
 
 // low level controller api
 extern "C" {
-#  include "irisa.h"
+#  include "irisa_Afma6.h"
 #  include "trycatch.h"
 }
 

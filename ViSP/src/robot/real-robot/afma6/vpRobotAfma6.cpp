@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.45 2008-11-20 17:03:41 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.46 2008-12-09 13:11:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -94,8 +94,8 @@ void emergencyStop(int signo)
       std::cout << signo << std::endl ;
     }
   std::cout << "Emergency stop called\n";
-  //  PrimitiveESTOP();
-  PrimitiveSTOP();
+  //  PrimitiveESTOP_Afma6();
+  PrimitiveSTOP_Afma6();
   std::cout << "Robot was stopped\n";
 
   // Free allocated ressources
@@ -228,27 +228,32 @@ vpRobotAfma6::init (void)
   first_time_getdis = true;
 
 
-  // Connect to the servoboard
+  // Initialize the firewire connection
   Try( InitializeConnection() );
 
-  Try( PrimitiveRESET() );
+  // Connect to the servoboard using the servo board GUID
+  Try( InitializeNode_Afma6() );
+
+  Try( PrimitiveRESET_Afma6() );
 
   // Update the eMc matrix in the low level controller
   init(vpAfma6::defaultCameraRobot);
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  Try( PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, NULL, 
+			     &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 0) {
     fprintf(stdout, "\nPower ON the robot in the next 10 second...\n");
     fflush(stdout);
-    Try( PrimitivePOWERON() );
+    Try( PrimitivePOWERON_Afma6() );
 
     // waiting for the power on
      do {
-      Try( PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+      Try( PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, NULL,
+				 &HIPowerStatus));
       CAL_Wait(0.1);
       if (HIPowerStatus == 0) {
 
@@ -269,7 +274,7 @@ vpRobotAfma6::init (void)
     printf(" Timeout enabling power...\n");
   if (TryStt < 0) {
     // Power off the robot
-    PrimitivePOWEROFF();
+    PrimitivePOWEROFF_Afma6();
     // Free allocated ressources
     ShutDownConnection();
 
@@ -328,7 +333,7 @@ vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
   vpAfma6::init(camera, projModel);
 
   // Set the robot constant (coupl_56, long_56) in the MotionBlox
-  Try( PrimitiveROBOT_CONST(_coupl_56, _long_56) );
+  Try( PrimitiveROBOT_CONST_Afma6(_coupl_56, _long_56) );
 
   // Set the camera constant (eMc pose) in the MotionBlox
   double eMc_pose[6];
@@ -337,10 +342,10 @@ vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
     eMc_pose[i+3] = _erc[i]; // rotation in rad
   }
   // Update the eMc pose in the low level controller
-  Try( PrimitiveCAMERA_CONST(eMc_pose) );
+  Try( PrimitiveCAMERA_CONST_Afma6(eMc_pose) );
 
   // get real joint min/max from the MotionBlox
-  Try( PrimitiveJOINT_MINMAX(_joint_min, _joint_max) );
+  Try( PrimitiveJOINT_MINMAX_Afma6(_joint_min, _joint_max) );
 //   for (int i=0; i < njoint; i++) {
 //     printf("axis %d: joint min %lf, max %lf\n", i, _joint_min[i], _joint_max[i]);
 //   }
@@ -369,14 +374,15 @@ vpRobotAfma6::~vpRobotAfma6 (void)
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  Try( PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, NULL,
+			     &HIPowerStatus));
   CAL_Wait(0.1);
 
 //   if (HIPowerStatus == 1) {
 //     fprintf(stdout, "Power OFF the robot\n");
 //     fflush(stdout);
 
-//     Try( PrimitivePOWEROFF() );
+//     Try( PrimitivePOWEROFF_Afma6() );
 //   }
 
   // Free allocated ressources
@@ -405,14 +411,14 @@ vpRobotAfma6::setRobotState(vpRobot::vpRobotStateType newState)
   switch (newState) {
   case vpRobot::STATE_STOP: {
     if (vpRobot::STATE_STOP != getRobotState ()) {
-      Try( PrimitiveSTOP() );
+      Try( PrimitiveSTOP_Afma6() );
     }
     break;
   }
   case vpRobot::STATE_POSITION_CONTROL: {
     if (vpRobot::STATE_VELOCITY_CONTROL  == getRobotState ()) {
       std::cout << "Change the control mode from velocity to position control.\n";
-      Try( PrimitiveSTOP() );
+      Try( PrimitiveSTOP_Afma6() );
     }
     else {
       //std::cout << "Change the control mode from stop to position control.\n";
@@ -450,7 +456,7 @@ void
 vpRobotAfma6::stopMotion(void)
 {
   InitTry;
-  Try( PrimitiveSTOP() );
+  Try( PrimitiveSTOP_Afma6() );
   setRobotState (vpRobot::STATE_STOP);
 
   CatchPrint();
@@ -477,14 +483,15 @@ vpRobotAfma6::powerOn(void)
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  Try( PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, NULL, 
+			     &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 0) {
     fprintf(stdout, "Power ON the robot\n");
     fflush(stdout);
 
-    Try( PrimitivePOWERON() );
+    Try( PrimitivePOWERON_Afma6() );
   }
 
   CatchPrint();
@@ -511,14 +518,15 @@ vpRobotAfma6::powerOff(void)
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  Try( PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, NULL, 
+			     &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
     fprintf(stdout, "Power OFF the robot\n");
     fflush(stdout);
 
-    Try( PrimitivePOWEROFF() );
+    Try( PrimitivePOWEROFF_Afma6() );
   }
 
   CatchPrint();
@@ -547,7 +555,8 @@ vpRobotAfma6::getPowerState(void)
   bool status = false;
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  Try( PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, NULL, 
+			     &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
@@ -615,7 +624,7 @@ vpRobotAfma6::get_eJe(vpMatrix &eJe)
   double position[6];
 
   InitTry;
-  Try( PrimitiveACQ_POS(position) );
+  Try( PrimitiveACQ_POS_Afma6(position) );
   CatchPrint();
 
   vpColVector q(6);
@@ -662,7 +671,7 @@ vpRobotAfma6::get_eJe(vpMatrix &eJe)
   double position[6];
 
   InitTry;
-  Try( PrimitiveACQ_POS(position) );
+  Try( PrimitiveACQ_POS_Afma6(position) );
   CatchPrint();
 
   vpColVector q(6);
@@ -814,7 +823,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   switch(frame) {
   case vpRobot::CAMERA_FRAME : {
     double _q[njoint];
-    Try( PrimitiveACQ_POS(_q) );
+    Try( PrimitiveACQ_POS_Afma6(_q) );
 
     vpColVector q(njoint);
     for (int i=0; i < njoint; i++)
@@ -846,8 +855,8 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
       for (int i=0; i < njoint; i ++) {
 	_destination[i] = q[i];
       }
-      Try( PrimitiveMOVE(_destination, positioningVelocity) );
-      Try( WaitState(ETAT_ATTENTE, 1000) );
+      Try( PrimitiveMOVE_Afma6(_destination, positioningVelocity) );
+      Try( WaitState_Afma6(ETAT_ATTENTE_AFMA6, 1000) );
     }
     else {
       // Cartesian position is out of range
@@ -860,8 +869,8 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     for (int i=0; i < njoint; i ++) {
       _destination[i] = position[i];
     }
-    Try( PrimitiveMOVE(_destination, positioningVelocity) );
-    Try( WaitState(ETAT_ATTENTE, 1000) );
+    Try( PrimitiveMOVE_Afma6(_destination, positioningVelocity) );
+    Try( WaitState_Afma6(ETAT_ATTENTE_AFMA6, 1000) );
     break ;
 
   }
@@ -885,8 +894,8 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
       for (int i=0; i < njoint; i ++) {
 	_destination[i] = q[i];
       }
-      Try( PrimitiveMOVE(_destination, positioningVelocity) );
-      Try( WaitState(ETAT_ATTENTE, 1000) );
+      Try( PrimitiveMOVE_Afma6(_destination, positioningVelocity) );
+      Try( WaitState_Afma6(ETAT_ATTENTE_AFMA6, 1000) );
     }
     else {
       // Cartesian position is out of range
@@ -1117,7 +1126,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::ARTICULAR_FRAME : {
     double _q[njoint];
-    Try( PrimitiveACQ_POS(_q) );
+    Try( PrimitiveACQ_POS_Afma6(_q) );
     for (int i=0; i < njoint; i ++) {
       position[i] = _q[i];
     }
@@ -1126,7 +1135,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::REFERENCE_FRAME : {
     double _q[njoint];
-    Try( PrimitiveACQ_POS(_q) );
+    Try( PrimitiveACQ_POS_Afma6(_q) );
 
     vpColVector q(njoint);
     for (int i=0; i < njoint; i++)
@@ -1284,20 +1293,20 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
 
   switch(frame) {
   case vpRobot::CAMERA_FRAME : {
-    Try( PrimitiveMOVESPEED_CART(velocity, REPCAM) );
+    Try( PrimitiveMOVESPEED_CART_Afma6(velocity, REPCAM) );
     break ;
   }
   case vpRobot::ARTICULAR_FRAME : {
     //Try( PrimitiveMOVESPEED_CART(velocity, REPART) );
-    Try( PrimitiveMOVESPEED(velocity) );
+    Try( PrimitiveMOVESPEED_Afma6(velocity) );
     break ;
   }
   case vpRobot::REFERENCE_FRAME : {
-    Try( PrimitiveMOVESPEED_CART(velocity, REPFIX) );
+    Try( PrimitiveMOVESPEED_CART_Afma6(velocity, REPFIX) );
     break ;
   }
   case vpRobot::MIXT_FRAME : {
-    Try( PrimitiveMOVESPEED_CART(velocity, REPMIX) );
+    Try( PrimitiveMOVESPEED_CART_Afma6(velocity, REPMIX) );
     break ;
   }
   default: {
@@ -1311,7 +1320,7 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
   if (TryStt < 0) {
     if (TryStt == VelStopOnJoint) {
       UInt32 axisInJoint[njoint];
-      PrimitiveSTATUS(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
+      PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
       for (int i=0; i < njoint; i ++) {
 	if (axisInJoint[i])
 	  std::cout << "\nWarning: Velocity control stopped: axis "
@@ -1410,7 +1419,7 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
   double time_cur = vpTime::measureTimeSecond();
 
   // Get the current joint position
-  Try( PrimitiveACQ_POS(q) );
+  Try( PrimitiveACQ_POS_Afma6(q) );
   for (int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
@@ -1720,36 +1729,27 @@ vpRobotAfma6::move(const char *filename)
 
 /*!
 
-  Open the pneumatic CCMOP gripper by calling:
-
-  \code
-  ssh japet sudo /local/driver/pince/Afma6_pince_root -s 1
-  \endcode
-
-  The binary "Afma6_pince_root" communicates throw the parallel port with
-  the pneumatic servo.
+  Open the pneumatic CCMOP gripper.
 
   \sa closeGripper()
 */
 void
 vpRobotAfma6::openGripper()
 {
-  char cmd[FILENAME_MAX];
-  sprintf(cmd, "ssh japet sudo /local/driver/pince/Afma6_pince_root -s 1");
-  std::cout << "Open the gripper: \"" << cmd << "\"" << std::endl; 
-  system(cmd) ;
+  InitTry;
+  Try( PrimitiveGripper_Afma6(1) );
+  std::cout << "Open the gripper..." << std::endl; 
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot open the gripper");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot open the gripper.");
+  }
 }
 
 /*!
 
-  Close the pneumatic CCMOP gripper by calling:
-
-  \code
-  ssh japet sudo /local/driver/pince/Afma6_pince_root -s 0
-  \endcode
-
-  The binary "Afma6_pince_root" communicates throw the parallel port with
-  the pneumatic servo.
+  Close the pneumatic CCMOP gripper.
 
   \sa openGripper()
 
@@ -1757,10 +1757,15 @@ vpRobotAfma6::openGripper()
 void
 vpRobotAfma6::closeGripper()
 {
-  char cmd[FILENAME_MAX];
-  sprintf(cmd, "ssh japet sudo /local/driver/pince/Afma6_pince_root -s 0");
-  std::cout << "Close the gripper: \"" << cmd << "\"" << std::endl; 
-  system(cmd) ;
+  InitTry;
+  Try( PrimitiveGripper_Afma6(0) );
+  std::cout << "Close the gripper..." << std::endl; 
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot close the gripper");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot close the gripper.");
+  }
 }
 
 /*!
@@ -1831,7 +1836,7 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
   InitTry;
 
   // Get the current joint position
-  Try( PrimitiveACQ_POS(q) );
+  Try( PrimitiveACQ_POS_Afma6(q) );
   for (int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
