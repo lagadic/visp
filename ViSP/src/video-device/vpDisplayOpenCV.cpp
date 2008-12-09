@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.9 2008-12-03 10:25:11 nmelchio Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.10 2008-12-09 13:20:30 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1007,13 +1007,14 @@ vpDisplayOpenCV::setTitle(const char * /*windowtitle*/)
 
 /*!
   \brief Set the font used to display text.
+  \warning This method is not yet implemented.
   \param fontname : Name of the font.
  */
 
 void
-vpDisplayOpenCV::setFont(const char *fontname)
+vpDisplayOpenCV::setFont(const char */* fontname */)
 {
-	vpERROR_TRACE("Not yet implemented" ) ;
+  vpERROR_TRACE("Not yet implemented" ) ;
 }
 
 /*!
