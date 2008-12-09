@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.34 2008-12-03 10:25:10 nmelchio Exp $
+ * $Id: vpDisplay.cpp,v 1.35 2008-12-09 13:25:18 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -155,7 +155,7 @@ vpDisplay::setTitle ( const vpImage<unsigned char> &I,
 /*!
   Set the font of a text added to the image.
   \param I : Image associated to the display window.
-  \param font : Font name.
+  \param fontname : Font name.
 */
 void
 vpDisplay::setFont ( const vpImage<unsigned char> &I, 
@@ -955,7 +955,7 @@ vpDisplay::setTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
 /*!
   Set the font of a text added to the image.
   \param I : Image associated to the display window.
-  \param font : Font name.
+  \param fontname : Font name.
 */
 void
 vpDisplay::setFont ( const vpImage<vpRGBa> &I, const char *fontname )
