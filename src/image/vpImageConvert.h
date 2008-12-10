@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.19 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpImageConvert.h,v 1.20 2008-12-10 16:55:48 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -77,9 +77,9 @@ public:
 		      vpImage<unsigned char> & dest) ;
 #ifdef VISP_HAVE_OPENCV
   static void convert(const IplImage* src,
-          vpImage<vpRGBa> & dest) ;
+          vpImage<vpRGBa> & dest, bool flip = false) ;
   static void convert(const IplImage* src,
-          vpImage<unsigned char> & dest) ;
+          vpImage<unsigned char> & dest, bool flip = false) ;
   static void convert(const vpImage<vpRGBa> & src,
           IplImage* &dest) ;
   static void convert(const vpImage<unsigned char> & src,
