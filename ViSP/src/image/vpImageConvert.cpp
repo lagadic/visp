@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.31 2008-11-19 08:33:18 nmelchio Exp $
+ * $Id: vpImageConvert.cpp,v 1.32 2008-12-10 16:55:48 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -120,13 +120,15 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
 */
 void
 vpImageConvert::convert(const IplImage* src,
-      vpImage<vpRGBa> & dest)
+      vpImage<vpRGBa> & dest, bool flip)
 {
   int nChannel = src->nChannels;
   int depth = src->depth;
   int height = src->height;
   int width = src->width;
   int widthStep = src->widthStep;
+  int lineStep = (flip) ? 1 : 0;
+
 
   if(nChannel == 3 && depth == 8){
     dest.resize(height,width);
@@ -134,11 +136,13 @@ vpImageConvert::convert(const IplImage* src,
     //starting source address
     unsigned char* input = (unsigned char*)src->imageData;
     unsigned char* line;
-    unsigned char* output = (unsigned char*)dest.bitmap;
+    unsigned char* beginOutput = (unsigned char*)dest.bitmap;
+    unsigned char* output = NULL;
 
     for(int i=0 ; i < height ; i++)
     {
       line = input;
+      output = beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) + (1-lineStep) * 4 * width * i;
       for(int j=0 ; j < width ; j++)
         {
           *(output++) = *(line+2);
@@ -157,11 +161,13 @@ vpImageConvert::convert(const IplImage* src,
     //starting source address
     unsigned char * input = (unsigned char*)src->imageData;
     unsigned char * line;
-    unsigned char * output = (unsigned char*)dest.bitmap;
+    unsigned char* beginOutput = (unsigned char*)dest.bitmap;
+    unsigned char* output = NULL;
 
     for(int i=0 ; i < height ; i++)
     {
       line = input;
+      output = beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) + (1-lineStep) * 4 * width * i;
       for(int j=0 ; j < width ; j++)
         {
           *output++ = *(line);
@@ -212,40 +218,62 @@ vpImageConvert::convert(const IplImage* src,
 */
 void
 vpImageConvert::convert(const IplImage* src,
-      vpImage<unsigned char> &dest)
+      vpImage<unsigned char> &dest, bool flip)
 {
   int nChannel = src->nChannels;
   int depth = src->depth;
   int height = src->height;
   int width = src->width;
   int widthStep = src->widthStep;
+  int lineStep = (flip) ? 1 : 0;
 
-  if(widthStep == width){
-    if(nChannel == 1 && depth == 8){
-      dest.resize(height,width) ;
-      memcpy(dest.bitmap, src->imageData,
-              height*width);
-    }
-    if(nChannel == 3 && depth == 8){
-      dest.resize(height,width) ;
-      BGRToGrey((unsigned char*)src->imageData,dest.bitmap,width,height,false);
-    }
+  if (flip == false)
+  {
+  	if(widthStep == width){
+  	  if(nChannel == 1 && depth == 8){
+  	    dest.resize(height,width) ;
+  	    memcpy(dest.bitmap, src->imageData,
+  	            height*width);
+  	  }
+  	  if(nChannel == 3 && depth == 8){
+  	    dest.resize(height,width) ;
+  	    BGRToGrey((unsigned char*)src->imageData,dest.bitmap,width,height,false);
+  	  }
+  	}
+  	else{
+  	  if(nChannel == 1 && depth == 8){
+  	    dest.resize(height,width) ;
+  	    for (int i =0  ; i < height ; i++){
+  	      memcpy(dest.bitmap+i*width, src->imageData + i*widthStep,
+  	            width);
+  	    }
+  	  }
+  	  if(nChannel == 3 && depth == 8){
+  	    dest.resize(height,width) ;
+  	    for (int i = 0  ; i < height ; i++){
+  	      BGRToGrey((unsigned char*)src->imageData + i*widthStep,
+  	                  dest.bitmap + i*width,width,1,false);
+  	    }
+  	  }
+  	}
   }
-  else{
-    if(nChannel == 1 && depth == 8){
-      dest.resize(height,width) ;
-      for (int i =0  ; i < height ; i++){
-        memcpy(dest.bitmap+i*width, src->imageData + i*widthStep,
-              width);
-      }
-    }
-    if(nChannel == 3 && depth == 8){
-      dest.resize(height,width) ;
-      for (int i = 0  ; i < height ; i++){
-        BGRToGrey((unsigned char*)src->imageData + i*widthStep,
-                    dest.bitmap + i*width,width,1,false);
-      }
-    }
+  else 
+  {
+  	  if(nChannel == 1 && depth == 8){
+	    unsigned char* beginOutput = (unsigned char*)dest.bitmap;
+  	    dest.resize(height,width) ;
+  	    for (int i =0  ; i < height ; i++){
+  	      memcpy(beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) , src->imageData + i*widthStep,
+  	            width);
+  	    }
+  	  }
+  	  if(nChannel == 3 && depth == 8){
+  	    dest.resize(height,width) ;
+  	    //for (int i = 0  ; i < height ; i++){
+  	      BGRToGrey((unsigned char*)src->imageData /*+ i*widthStep*/,
+  	                  dest.bitmap /*+ i*width*/,width,height/*1*/,true);
+  	    //}
+  	  }
   }
 }
 
