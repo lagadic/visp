@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOpenCVGrabber.cpp,v 1.5 2008-11-28 14:24:10 fspindle Exp $
+ * $Id: vpOpenCVGrabber.cpp,v 1.6 2008-12-10 17:00:51 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -68,6 +68,7 @@ vpOpenCVGrabber::vpOpenCVGrabber()
 	// private members
 	capture = NULL;
 	DeviceType = 0;
+	flip = false;
 
 #if ( defined(UNIX) )
 	nbDevices = 1;
@@ -163,7 +164,7 @@ void vpOpenCVGrabber::acquire(vpImage<unsigned char> &I)
 
 	cvGrabFrame(capture);
 	im = cvRetrieveFrame(capture);
-	vpImageConvert::convert(im, I);
+	vpImageConvert::convert(im, I, flip);
 }
 
 /*!
@@ -187,7 +188,7 @@ void vpOpenCVGrabber::acquire(vpImage<vpRGBa> &I)
 
 	cvGrabFrame(capture);
 	im = cvRetrieveFrame(capture);
-	vpImageConvert::convert(im, I);
+	vpImageConvert::convert(im, I, flip);
 }
 
 
@@ -349,4 +350,18 @@ void vpOpenCVGrabber::setDeviceType(int type)
 	}
 }
 
+
+/*!
+	Set the boolean variable flip to the expected value.
+
+	\param flipType : Expected value of the variable flip. True means that the image is flipped during each image acquisition.
+			
+	\warning This function is only usefull under Windows.
+
+	\note The aim of this function is to fix a problem which appears under Windows. Indeed with several cameras the aquired images are flipped.
+*/
+void vpOpenCVGrabber::setFlip(bool flipType)
+{
+	flip = flipType;
+}
 #endif
