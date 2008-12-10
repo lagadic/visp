@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.32 2008-12-10 16:55:48 nmelchio Exp $
+ * $Id: vpImageConvert.cpp,v 1.33 2008-12-10 21:34:50 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -96,31 +96,34 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
   \warning This function is only available if OpenCV was detected during
   the configuration step.
 
-  \param src : source image
-  \param dest : destination image
+  \param src : Source image in OpenCV format.
+  \param dest : Destination image in ViSP format.
+  \param flip : Set to true to vertically flip the converted image.
 
   \code
-    #include <visp/vpImage.h>
-    #include <visp/vpImageIo.h>
-    #include <visp/vpImageConvert.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
 
-    vpImage<vpRGBa> Ic; // A color image
-    IplImage* Ip;
+int main() 
+{
+  vpImage<vpRGBa> Ic; // A color image
+  IplImage* Ip;
 
-    //Read an image on a disk with openCV library
-    Ip = cvLoadImage("image.ppm",CV_LOAD_IMAGE_COLOR);
-    //Convert the grayscale IplImage into vpImage<vpRGBa>
-    vpImageConvert::convert(Ip,Ic);
+  // Read an image on a disk with openCV library
+  Ip = cvLoadImage("image.ppm", CV_LOAD_IMAGE_COLOR);
+  // Convert the grayscale IplImage into vpImage<vpRGBa>
+  vpImageConvert::convert(Ip, Ic);
 
-    //...
+  // ...
 
-    //Release Ip header and data
-    cvReleaseImage(&Ip);
+  // Release Ip header and data
+  cvReleaseImage(&Ip);
+}
   \endcode
 */
 void
-vpImageConvert::convert(const IplImage* src,
-      vpImage<vpRGBa> & dest, bool flip)
+vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
 {
   int nChannel = src->nChannels;
   int depth = src->depth;
@@ -194,26 +197,30 @@ vpImageConvert::convert(const IplImage* src,
   \warning This function is only available if OpenCV was detected during
   the configuration step.
 
-  \param src : source image
-  \param dest : destination image
+  \param src : Source image in OpenCV format.
+  \param dest : Destination image in ViSP format.
+  \param flip : Set to true to vertically flip the converted image.
 
   \code
-    #include <visp/vpImage.h>
-    #include <visp/vpImageIo.h>
-    #include <visp/vpImageConvert.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
 
-    vpImage<unsigned char> Ig; // A grayscale image
-    IplImage* Ip;
+int main()
+{
+  vpImage<unsigned char> Ig; // A grayscale image
+  IplImage* Ip;
 
-    //Read an image on a disk with openCV library
-    Ip = cvLoadImage("image.pgm",CV_LOAD_IMAGE_GRAYSCALE);
-    //Convert the grayscale IplImage into vpImage<unsigned char>
-    vpImageConvert::convert(Ip,Ig);
+  // Read an image on a disk with openCV library
+  Ip = cvLoadImage("image.pgm", CV_LOAD_IMAGE_GRAYSCALE);
+  // Convert the grayscale IplImage into vpImage<unsigned char>
+  vpImageConvert::convert(Ip, Ig);
 
-    //...
+  // ...
 
-    //Release Ip header and data
-    cvReleaseImage(&Ip);
+  // Release Ip header and data
+  cvReleaseImage(&Ip);
+}
   \endcode
 */
 void
