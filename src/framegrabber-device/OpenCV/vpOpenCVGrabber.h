@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpOpenCVGrabber.h,v 1.3 2008-11-21 14:40:16 nmelchio Exp $
+ * $Id: vpOpenCVGrabber.h,v 1.4 2008-12-10 17:00:51 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -98,6 +98,7 @@ class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
                 static unsigned int nbDevices;
 		CvCapture *capture;
 		int DeviceType;
+		bool flip;
 
 	public:
 
@@ -122,6 +123,8 @@ class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
 		void setHeight(const unsigned int height);
 		
 		void setDeviceType(int type);
+
+		void setFlip(bool flipType);
 };
 
 #endif
