@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CTestConfig.cmake,v 1.8 2008-11-07 09:56:00 fspindle Exp $
+# $Id: CTestConfig.cmake,v 1.9 2008-12-11 13:19:44 fspindle Exp $
 #
 # Copyright (C) 1998-2008 Inria. All rights reserved.
 #
@@ -184,6 +184,10 @@ ENDIF(VISP_HAVE_COIN)
 IF(VISP_HAVE_SOQT)
   SET(BUILDNAME "${BUILDNAME}-SoQt")
 ENDIF(VISP_HAVE_SOQT)
+# Qt
+IF(VISP_HAVE_QT)
+  SET(BUILDNAME "${BUILDNAME}-Qt${DESIRED_QT_VERSION}")
+ENDIF(VISP_HAVE_QT)
 # SoWin
 IF(VISP_HAVE_SOWIN)
   SET(BUILDNAME "${BUILDNAME}-SoWin")
