@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.18 2008-10-31 17:20:13 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.19 2008-12-12 14:31:22 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -53,9 +53,10 @@
 static void
 normalizeAngle(double &delta)
 {
-  //
+  /*while (delta > M_PI) { delta -= M_PI ; }
+  while (delta < 0) { delta += M_PI ; }*/
   while (delta > M_PI) { delta -= M_PI ; }
-  while (delta < 0) { delta += M_PI ; }
+  while (delta < -M_PI) { delta += M_PI ; }
 }
 
 void
@@ -71,10 +72,18 @@ computeDelta(double &delta, int i1, int j1, int i2, int j2)
 
 }
 
+/*!
+	Basic constructor that calls the constructor of the class vpMeTracker.
+*/
 vpMeLine::vpMeLine():vpMeTracker()
 {
+	sign = 1;
+	angle_1 = 90;
 }
 
+/*!
+	Basic Destructor.
+*/
 vpMeLine::~vpMeLine()
 {
   list.kill();
@@ -84,13 +93,12 @@ vpMeLine::~vpMeLine()
 
 // ===================================================================
 /*!
- * \brief Construct a list of vpMeSiteME at a particular
- * \n		 sampling step between the two extremities of
- * \n		 the line.
+ * Construct a list of vpMeSiteME at a particular sampling step between the two extremities of the line.
  * \pre  Requies me to hold the size of the sample_step
  * \post Calculates the a normal to the line and stores
  * 			 angle in 'alpha'. Creates a list of sites (list)
  *				 (requires calculation of Rho(),Delta())
+ * \param I : Image in which the line appears.
  * \return status
  */
 // ===================================================================
@@ -136,7 +144,7 @@ vpMeLine::sample(vpImage<unsigned char>& I)
     if(!outOfImage(vpMath::round(is), vpMath::round(js), 0, rows, cols))
     {
       vpMeSite pix ; //= list.value();
-      pix.init((int)is, (int)js, delta) ;
+      pix.init((int)is, (int)js, delta, 0, sign) ;
       pix.setDisplay(selectDisplay) ;
 
       if(vpDEBUG_ENABLE(3))
@@ -161,6 +169,9 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 
   \warning To effectively display the line a call to
   vpDisplay::flush() is needed.
+
+  \param I : Image in which the line appears.
+  \param col : Color of the displayed line.
 
  */
 void
@@ -207,6 +218,11 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
 }
 
 
+/*!
+	Initilisation of the tracking. Ask the user to click on two points from the line to track.
+
+	\param I : Image in which the line appears.
+*/
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I)
 {
@@ -332,6 +348,10 @@ vpMeLine::leastSquare(vpImage<unsigned char> &I)
 
 }
 */
+
+
+
+#if 0
 void
 vpMeLine::leastSquare()
 {
@@ -463,13 +483,17 @@ vpMeLine::leastSquare()
 
       list.front() ;
       k =0 ;
+int cdt =0;
+printf("\n");
       for (i=0 ; i < list.nbElement() ; i++)
       {
+	printf("w[%d] = %f\t",k,w[k]);
 	p = list.value() ;
 	if (p.suppress==0)
 	{
 	  if (w[k] < 0.3)
 	  {
+cdt++;
 	    D[k][k] =w[k]  ;
 	    p.suppress  = 3 ;
 	    list.modify(p) ;
@@ -478,6 +502,7 @@ vpMeLine::leastSquare()
 	}
 	list.next() ;
       }
+printf("\nnbr de truc : %d\n", cdt);
       iter++ ;
       a = 1 ;
       b = x[0] ;
@@ -499,7 +524,192 @@ vpMeLine::leastSquare()
 
   normalizeAngle(delta) ;
 }
+#endif
 
+
+
+/*!
+	Least squares method used to make the tracking more robust. It ensures that the points taken into account to compute the right equation belong to the line
+*/
+void
+vpMeLine::leastSquare()
+{
+  vpMatrix A(numberOfSignal(),2) ;
+  vpColVector x(2) ;
+
+  int i ;
+
+  vpRobust r(numberOfSignal()) ;
+  r.setIteration(0) ;
+  vpMatrix D(numberOfSignal(),numberOfSignal()) ;
+  D.setIdentity() ;
+  vpMatrix DA, DAmemory ;
+  vpColVector DAx ;
+  vpColVector w(numberOfSignal()) ;
+  vpColVector B(numberOfSignal()) ;
+  w =1 ;
+  vpMeSite p ;
+  int iter =0 ;
+  int nos_1 = -1 ;
+
+  if (list.nbElement() < 2)
+  {
+    vpERROR_TRACE("Not enough point") ;
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
+			      "not enough point")) ;
+  }
+
+  if ((fabs(b) >=0.9)) // Construction du systeme Ax=B
+  		       // a i + j + c = 0
+  		       // A = (i 1)   B = (-j)
+  {
+	nos_1 = numberOfSignal() ;
+	list.front() ;
+	int k =0 ;
+	for (i=0 ; i < list.nbElement() ; i++)
+	{
+		p = list.value() ;
+		if (p.suppress==0)
+		{
+			A[k][0] = p.ifloat ;
+			A[k][1] = 1 ;
+			B[k] = -p.jfloat ;
+			k++ ;
+		}
+		list.next() ;
+	}
+
+	while (iter < 4)
+	{
+		DA = D*A ;
+		x = DA.pseudoInverse(1e-26) *D*B ;
+
+		vpColVector residu(nos_1);
+		residu = B - A*x;
+      		r.setIteration(iter) ;
+      		r.MEstimator(vpRobust::TUKEY,residu,w) ;
+
+		k = 0;
+		for (i=0 ; i < nos_1 ; i++)
+		{
+			D[k][k] =w[k]  ;
+			k++;
+		}
+		iter++ ;
+	}
+
+      list.front() ;
+      k =0 ;
+      for (i=0 ; i < list.nbElement() ; i++)
+      {
+	p = list.value() ;
+	if (p.suppress==0)
+	{
+	  if (w[k] < 0.3)
+	  {
+	    p.suppress  = 3 ;
+	    list.modify(p) ;
+	  }
+	  k++ ;
+	}
+	list.next() ;
+      }
+
+      // mise a jour de l'equation de la droite
+      a = x[0] ;
+      b = 1 ;
+      c = x[1] ;
+
+      double s =sqrt( vpMath::sqr(a)+vpMath::sqr(b)) ;
+      a /= s ;
+      b /= s ;
+      c /= s ;
+  }
+
+
+  else		// Construction du systeme Ax=B
+  		// a i + j + c = 0
+  		// A = (j 1)   B = (-i)
+  {
+	nos_1 = numberOfSignal() ;
+	list.front() ;
+	int k =0 ;
+	for (i=0 ; i < list.nbElement() ; i++)
+	{
+		p = list.value() ;
+		if (p.suppress==0)
+		{
+			A[k][0] = p.jfloat ;
+			A[k][1] = 1 ;
+			B[k] = -p.ifloat ;
+			k++ ;
+		}
+		list.next() ;
+	}
+
+	while (iter < 4)
+	{
+		DA = D*A ;
+		x = DA.pseudoInverse(1e-26) *D*B ;
+
+		vpColVector residu(nos_1);
+		residu = B - A*x;
+		r.setIteration(iter) ;
+		r.MEstimator(vpRobust::TUKEY,residu,w) ;
+		
+		k = 0;
+		for (i=0 ; i < nos_1 ; i++)
+		{
+			D[k][k] =w[k]  ;
+			k++;
+		}
+		iter++ ;
+	}
+
+
+	list.front() ;
+	k =0 ;
+	for (i=0 ; i < list.nbElement() ; i++)
+	{
+		p = list.value() ;
+		if (p.suppress==0)
+		{
+			if (w[k] < 0.3)
+			{
+				p.suppress  = 3 ;
+				list.modify(p) ;
+			}
+			k++ ;
+		}
+		list.next() ;
+	}
+	a = 1 ;
+	b = x[0] ;
+	c = x[1] ;
+
+      double s = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
+      a /= s ;
+      b /= s ;
+      c /= s ;
+  }
+
+  // mise a jour du delta
+  delta = atan2(a,b) ;
+
+  normalizeAngle(delta) ;
+}
+
+
+
+/*!
+	Initilisation of the tracking. The line is defined thanks to the coordinates of two points.
+
+	\param I : Image in which the line appears.
+	\param i1 : i coordinate of the first point.
+	\param j1 : j coordinate of the first point.
+	\param i2 : i coordinate of the second point.
+	\param j2 : j coordinate of the second point.
+*/
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I,
 		       unsigned i1,unsigned j1,
@@ -532,6 +742,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
       // of a and b in order to initialise then c, we call track(I) just below
 
       computeDelta(delta,i1s,j1s,i2s,j2s) ;
+      delta_1 = delta;
 
       //      vpTRACE("a: %f b: %f c: %f -b/a: %f delta: %f", a, b, c, -(b/a), delta);
 
@@ -553,22 +764,52 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
   vpCDEBUG(1) <<" end vpMeLine::initTracking()"<<std::endl ;
 }
 
+
+/*!
+	Suppression of the points which belong no more to the line.
+*/
 void
 vpMeLine::suppressPoints()
 {
+int nbrelmt;
+int sup;
+int nbr0 = 0, nbr1 = 0, nbr2 = 0;
+nbrelmt = list.nbElement();
+//printf("\n\n\nnbr elements : %d\n",nbrelmt);
   // Loop through list of sites to track
   list.front();
   while(!list.outside())
   {
     vpMeSite s = list.value() ;//current reference pixel
 
+sup = s.suppress;
+if (sup == 0)
+nbr0++;
+if (sup == 1)
+nbr1++;
+if (sup == 2)
+nbr2++;
+
     if (s.suppress != 0)
       list.suppress() ;
     else
       list.next() ;
   }
+nbrelmt = list.nbElement();
+if (nbrelmt == 0)
+{
+printf("a priori pb");
+}
+//printf("\nnnbr elements : %d\n",nbrelmt);
+//printf("\nnbr elements 0 : %d\n",nbr0);
+//printf("\nnbr elements 1 : %d\n",nbr1);
+//printf("\nnbr elements 2 : %d\n\n\n\n",nbr2);
 }
 
+
+/*!
+	Seek in the list of available points the two extremities of the line.
+*/
 void
 vpMeLine::setExtremities()
 {
@@ -630,6 +871,11 @@ vpMeLine::setExtremities()
 
 }
 
+/*!
+	Seek along the line defined by its equation, the two extremities of the line. This function is usefull in case of translation of the line.
+
+	\param I : Image in which the line appears.
+*/
 void
 vpMeLine::seekExtremities(vpImage<unsigned char> &I)
 {
@@ -663,7 +909,7 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
   double sample = (double)me->sample_step;
 
   vpMeSite P ;
-  P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta) ;
+  P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta, 0, sign) ;
   P.setDisplay(selectDisplay) ;
 
   int  memory_range = me->range ;
@@ -688,7 +934,7 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
     }
   }
 
-  P.init((int) PExt[1].ifloat, (int)PExt[1].jfloat, delta) ;
+  P.init((int) PExt[1].ifloat, (int)PExt[1].jfloat, delta, 0, sign) ;
   P.setDisplay(selectDisplay) ;
   for (int i=0 ; i < 3 ; i++)
   {
@@ -730,6 +976,13 @@ project(double a, double b, double c, double i, double j, double &ip,double  &jp
   }
 }
 
+
+/*!
+	Resample the line if the number of sample is less than 80% of the expected value.
+	\note The expected value is computed thanks to the length of the line and the parameter which indicates the number of pixel between two points (vpMe::sample_step).
+
+	\param I : Image in which the line appears.
+*/
 void
 vpMeLine::reSample(vpImage<unsigned char> &I)
 {
@@ -752,7 +1005,10 @@ vpMeLine::reSample(vpImage<unsigned char> &I)
 
   if (n<0.8*expecteddensity)
   {
+    double delta_new = delta;
+    delta = delta_1;
     sample(I) ;
+    delta = delta_new;
     //  2. On appelle ce qui n'est pas specifique
     {
       vpMeTracker::initTracking(I) ;
@@ -760,20 +1016,52 @@ vpMeLine::reSample(vpImage<unsigned char> &I)
   }
 }
 
+/*!
+	Set the alpha value of the diferent vpMeSites to the value of delta.
+*/
 void
 vpMeLine::updateDelta()
 {
   vpMeSite p ;
+
+  double angle = delta + M_PI/2;
+  double diff = 0;
+
+  while (angle<0) angle += M_PI;
+  while (angle>M_PI) angle -= M_PI;
+
+  angle = vpMath::round(angle * 180 / M_PI) ;
+
+  if(abs(angle) == 180 )
+  {
+    angle= 0 ;
+  }
+
+  //std::cout << "angle theta : " << theta << std::endl ;
+  diff = fabs(angle - angle_1);
+  if (diff >= 90)
+  sign *= -1;
+
+  angle_1 = angle;
+  
   list.front() ;
   for (int i=0 ; i < list.nbElement() ; i++)
   {
     p = list.value() ;
     p.alpha = delta ;
+    p.mask_sign = sign;
     list.modify(p) ;
     list.next() ;
   }
+  delta_1 = delta;
 }
 
+
+/*!
+	Track the line in the image I.
+
+	\param I : Image in which the line appears.
+*/
 void
 vpMeLine::track(vpImage<unsigned char> &I)
 {
@@ -850,6 +1138,11 @@ vpMeLine::track(vpImage<unsigned char> &I)
 }
 
 
+/*!
+	Compute the two angles Rho and Theta made by the line.
+
+	\param I : Image in which the line appears.
+*/
 void
 vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
 {
@@ -970,8 +1263,11 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
 
   if (vpDEBUG_ENABLE(2))
     vpDisplay::displayArrow(I,i,j,i3,j3, vpColor::green) ;
-
 }
+
+/*!
+	Get the value of the angle Rho.
+*/
 double
 vpMeLine::getRho() const
 {
@@ -988,6 +1284,10 @@ vpMeLine::getRho() const
   */
   return  rho ; //-c ;
 }
+
+/*!
+	Get the value of the angle Theta.
+*/
 double
 vpMeLine::getTheta() const
 {
@@ -995,6 +1295,14 @@ vpMeLine::getTheta() const
   return theta ;
 }
 
+/*!
+	Get the extremities of the line.
+
+	\param i1 : i coordinate of the first extremity.
+	\param j1 : j coordinate of the first extremity.
+	\param i2 : i coordinate of the second extremity.
+	\param j2 : j coordinate of the second extremity.
+*/
 void
 vpMeLine::getExtremities(double& i1, double& j1, double& i2, double& j2)
 {

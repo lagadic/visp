@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.h,v 1.11 2008-10-31 17:20:13 fspindle Exp $
+ * $Id: vpMeLine.h,v 1.12 2008-12-12 14:31:22 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -61,6 +61,45 @@
 
   \brief Class that tracks a line moving edges.
 
+  The line is defined by its equation ai + bj + c = 0.
+
+  The code below shows how to use this class.
+\code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpMeLine.h>
+
+
+int main()
+{
+  vpImage<unsigned char> I;
+
+  //Here the code to read or grab the gray scaled image.
+
+  vpMeLine line;
+  vpMe me;
+
+  //Set the tracking parameters.
+  me.setRange(25) ;
+  me.setPointsToTrack(20) ;
+  me.setThreshold(15000) ;
+  me.setSampleStep(10);
+  line.setMe(&me);
+
+  //Initialize the tracking.
+  line.initTracking(I);
+
+  while ( 1 )
+  {
+    //Here the code to read or grab the next image.
+
+    //Track the line.
+    line.track(I);
+  }
+}
+\endcode
+
+  \note It is possible to display the line as an overlay. For that you must use the display function of the class vpMeLine.
 */
 
 class VISP_EXPORT vpMeLine : public vpMeTracker
@@ -69,10 +108,23 @@ private:
   vpMeSite PExt[2] ;
 
   double rho, theta ;
-  double delta ;
+  double delta ,delta_1;
+  double angle, angle_1;
+  double sign;
 
 public:
-  double a, b, c ; // ai + bj + c = 0
+  /*!
+	Parameter a of the line equation a*i + b*j + c = 0
+  */
+  double a;
+  /*!
+	Parameter b of the line equation a*i + b*j + c = 0
+  */
+  double b;
+  /*!
+	Parameter c of the line equation a*i + b*j + c = 0
+  */
+  double c;
 
 
 public:
