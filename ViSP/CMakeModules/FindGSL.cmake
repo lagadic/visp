@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGSL.cmake,v 1.9 2008-05-23 13:47:16 fspindle Exp $
+# $Id: FindGSL.cmake,v 1.10 2008-12-12 10:32:31 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -48,7 +48,6 @@
 #############################################################################
 
 IF(WIN32)
-# MESSAGE("FindGSL.cmake: gnu scientific library GSL not (yet) supported on WIN32")
  FIND_LIBRARY(GSL_gsl_LIBRARY
      NAMES gsl
      PATHS "$ENV{GSL_HOME}/lib"
@@ -138,6 +137,8 @@ ELSE(WIN32)
       STRING(REGEX MATCHALL "[-][L]([^ ;])+" 
 	GSL_LINK_DIRECTORIES_WITH_PREFIX 
 	"${GSL_CONFIG_LIBS}" )
+      SET(GSL_LINK_DIRECTORIES "")
+
       #MESSAGE("DBG  GSL_LINK_DIRECTORIES_WITH_PREFIX=${GSL_LINK_DIRECTORIES_WITH_PREFIX}")
       
       ## remove prefix -L because we need the pure directory for LINK_DIRECTORIES
@@ -147,10 +148,10 @@ ELSE(WIN32)
       ENDIF (GSL_LINK_DIRECTORIES_WITH_PREFIX)
       ## Check if link directory is empty. This can occur with GSL-1.6
       ## In that case we force the link directory to be ${GSL_PREFIX}/lib
-      IF(GSL_LINK_DIRECTORIES EQUAL "")
+      IF(GSL_LINK_DIRECTORIES MATCHES "")
         #MESSAGE("DBG GSL_LINK_DIRECTORIES is empty")
         SET(GSL_LINK_DIRECTORIES "${GSL_PREFIX}/lib")
-      ENDIF(GSL_LINK_DIRECTORIES EQUAL "")
+      ENDIF(GSL_LINK_DIRECTORIES MATCHES "")
 
       #MESSAGE("DBG GSL_LINK_DIRECTORIES=${GSL_LINK_DIRECTORIES}")
       IF(NOT APPLE)
