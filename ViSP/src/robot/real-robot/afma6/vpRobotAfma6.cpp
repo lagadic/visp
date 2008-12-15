@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.46 2008-12-09 13:11:07 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.47 2008-12-15 17:15:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -114,6 +114,8 @@ void emergencyStop(int signo)
   the connection with the MotionBox or low level controller, send the
   default eMc homogeneous matrix, power on the robot and wait 1 sec
   before returning to be sure the initialisation is done.
+
+  It also set the robot state to vpRobot::STATE_STOP.
 
   To set the extrinsic camera parameters related to the eMc matrix
   obtained with a camera perspective projection model including the
@@ -362,9 +364,9 @@ vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
 
 /*!
 
-Destructor.
+  Destructor.
 
-Power off the robot and free allocated ressources.
+  Free allocated ressources.
 */
 vpRobotAfma6::~vpRobotAfma6 (void)
 {
@@ -1539,8 +1541,9 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
   // q_dot_mes is resized to 6, the number of joint
 
+  vpColVector q_dot_mes; // Measured velocities
   while (1) {
-     robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes);
+     q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
      vpTime::wait(40); // wait 40 ms
      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
   }
@@ -1667,7 +1670,7 @@ vpRobotAfma6::readPosFile(const char *filename, vpColVector &q)
   rotations A,B,C in radians.
 
   \warning The joint rotations A,B,C written in the file are converted
-  in degrees to be more representative for the user..
+  in degrees to be more representative for the user.
 
   \return true if the positions were successfully saved in the file. false, if
   an error occurs.
