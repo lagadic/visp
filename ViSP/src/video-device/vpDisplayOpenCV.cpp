@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.10 2008-12-09 13:20:30 fspindle Exp $
+ * $Id: vpDisplayOpenCV.cpp,v 1.11 2008-12-15 15:14:48 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1012,7 +1012,7 @@ vpDisplayOpenCV::setTitle(const char * /*windowtitle*/)
  */
 
 void
-vpDisplayOpenCV::setFont(const char */* fontname */)
+vpDisplayOpenCV::setFont(const char * /* fontname */)
 {
   vpERROR_TRACE("Not yet implemented" ) ;
 }
