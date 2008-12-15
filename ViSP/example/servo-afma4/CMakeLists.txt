@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.2 2008-05-27 09:42:19 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.3 2008-12-15 21:33:37 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -42,6 +42,8 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   moveAfma4.cpp
+  servoAfma4Point2DArtVelocity.cpp
+  servoAfma4Point2DCamVelocity.cpp
 )
 
 # rule for binary build
