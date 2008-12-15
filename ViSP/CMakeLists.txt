@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.81 2008-12-12 10:31:48 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.82 2008-12-15 09:13:35 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -291,7 +291,8 @@ IF(USE_COIN)
 	    ELSE(WIN32)
 	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${COIN_LIBRARIES})
 	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${SOQT_LIBRARIES})
-	      #MESSAGE(STATUS "SOQT_LIBRARIES = ${SOQT_LIBRARY_DEBUG}")
+	      #MESSAGE("COIN_LIBRARIES = ${COIN_LIBRARIES}")
+	      #MESSAGE("SOQT_LIBRARIES = ${SOQT_LIBRARIES}")
 	    ENDIF(WIN32)
 
 	    # We manage QT libraries
