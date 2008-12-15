@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.24 2008-12-09 13:11:07 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.25 2008-12-15 17:15:58 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -193,7 +193,7 @@ extern "C" {
   method.
 
   For convenience, there is also the ability to read/write joint
-  positions from a position file with readPosFile() and writePodFile()
+  positions from a position file with readPosFile() and writePosFile()
   methods.
 */
 class VISP_EXPORT vpRobotAfma6
