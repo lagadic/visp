@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.19 2008-12-12 14:31:22 nmelchio Exp $
+ * $Id: vpMeLine.cpp,v 1.20 2008-12-15 21:30:13 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1032,7 +1032,7 @@ vpMeLine::updateDelta()
 
   angle = vpMath::round(angle * 180 / M_PI) ;
 
-  if(abs(angle) == 180 )
+  if(fabs(angle) == 180 )
   {
     angle= 0 ;
   }
