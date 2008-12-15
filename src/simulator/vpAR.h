@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAR.h,v 1.2 2008-12-02 15:10:51 nmelchio Exp $
+ * $Id: vpAR.h,v 1.3 2008-12-15 15:13:17 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,6 +72,55 @@
 
   This class can be used to display an image behind the internal view
   of the simulator used for augmented reality application.
+
+  The code below shows how to use the class.
+
+  \code
+  #include <visp/vpConfig.h>
+  #include <visp/vpAR.h>
+  #include <visp/vpCameraParameters.h>
+  #include <visp/vpImage.h>
+  #include <visp/vpHomogeneousMatrix.h>
+
+  void main(int argc, const char ** argv)
+  {
+    vpAR simu;
+    //Camera parameters.
+    vpCameraParameters cam(600,600,160,120) ;
+
+    //Initialize the internal view of the simulator.
+    simu.initInternalViewer(640,480, vpSimulator::grayImage) ;
+
+    vpTime::wait(300) ;
+
+    //Load the cad model.
+    simu.load("./4points.iv"); //4points.iv can be downloaded on the website with the image package
+
+    //Initialize the internal camera parameters.
+    simu.setInternalCameraParameters(cam) ;
+
+    simu.initApplication(&mainloopfunction) ;
+
+    simu.mainLoop() ;
+  }
+
+  static void *mainloopfunction(void *_simu)
+  {
+    vpAR *simu = (vpAR *)_simu ;
+    simu->initMainApplication() ;
+
+    vpImage<unsigned char> I;
+    vpHomogeneousMatrix cMo;
+
+    //Your code to compute the pose cMo.
+
+    //Set the image to use as background.
+    simu->setImage(I) ;
+    //Set the camera position thanks to the pose cMo computed before.
+    simu->setCameraPosition(cMo) ;
+  }
+  \endcode
+
 
 */
 class VISP_EXPORT vpAR : public vpSimulator
