@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAfma6.cpp,v 1.34 2008-11-28 16:33:32 fspindle Exp $
+ * $Id: vpAfma6.cpp,v 1.35 2008-12-15 21:36:55 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -560,6 +560,40 @@ vpAfma6::get_fMc (const vpColVector & q)
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
+  of the camera relative to the base frame given the articular positions of all
+  the six joints.
+
+  \param q : Articular joint position of the robot. q[0], q[1], q[2]
+  correspond to the first 3 translations expressed in meter, while
+  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
+  radians.
+
+  \param fMc The homogeneous matrix corresponding to the direct geometric
+  model which expresses the transformation between the fix frame and the
+  camera frame (fMc).
+
+*/
+void
+vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc)
+{
+
+  // Compute the direct geometric model: fMe = transformation between
+  // fix and end effector frame.
+  vpHomogeneousMatrix fMe;
+
+  get_fMe(q, fMe);
+
+  fMc = fMe * this->_eMc;
+
+  return;
+}
+
+/*!
+
+  Compute the forward kinematics (direct geometric model) as an
+  homogeneous matrix.
+
+  By forward kinematics we mean here the position and the orientation
   of the end effector with respect to the base frame given the
   articular positions of all the six joints.
 
@@ -613,40 +647,6 @@ vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe)
   fMe[3][3] = 1;
 
   //  vpCTRACE << "Effector position fMe: " << std::endl << fMe;
-
-  return;
-}
-
-/*!
-
-  Compute the forward kinematics (direct geometric model) as an
-  homogeneous matrix.
-
-  By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
-  the six joints.
-
-  \param q : Articular joint position of the robot. q[0], q[1], q[2]
-  correspond to the first 3 translations expressed in meter, while
-  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
-  radians.
-
-  \param fMc The homogeneous matrix corresponding to the direct geometric
-  model which expresses the transformation between the fix frame and the
-  camera frame (fMc).
-
-*/
-void
-vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc)
-{
-
-  // Compute the direct geometric model: fMe = transformation betwee
-  // fix and end effector frame.
-  vpHomogeneousMatrix fMe;
-
-  get_fMe(q, fMe);
-
-  fMc = fMe * this->_eMc;
 
   return;
 }
@@ -756,6 +756,14 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
   \end{array}
   \right)
   \f]
+
+  \param q : Articular joint position of the robot. q[0], q[1], q[2]
+  correspond to the first 3 translations expressed in meter, while
+  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
+  radians.
+
+  \param fJe : Robot jacobian expressed in the robot reference frame.
+
 */
 
 void
