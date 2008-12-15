@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.h,v 1.12 2008-12-12 14:31:22 nmelchio Exp $
+ * $Id: vpMeLine.h,v 1.13 2008-12-15 15:11:27 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -70,7 +70,7 @@
 #include <visp/vpMeLine.h>
 
 
-int main()
+void main()
 {
   vpImage<unsigned char> I;
 
@@ -110,7 +110,7 @@ private:
   double rho, theta ;
   double delta ,delta_1;
   double angle, angle_1;
-  double sign;
+  int sign;
 
 public:
   /*!
