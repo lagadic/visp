@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.cpp,v 1.13 2007-12-20 08:15:28 fspindle Exp $
+ * $Id: vpRobotAfma4.cpp,v 1.14 2008-12-15 17:19:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -39,56 +39,89 @@
 
 #ifdef VISP_HAVE_AFMA4
 
-/* Headers des fonctions implementees. */
-#include <visp/vpRobotAfma4Contrib.h>    /* Communication avec le robot. */
-#include <visp/vpRobotAfma4.h>           /* Header de la classe.          */
-#include <visp/vpRobotException.h>/* Erreurs lancees par les classes CRobot. */
-
-#include <visp/vpDebug.h>           /* Macros de trace et debug.  */
-// Fonctions AFMA4 bas niveau
-
-
 #include <signal.h>
+#include <stdlib.h>
+
+#include <visp/vpRobotException.h>
+#include <visp/vpExponentialMap.h>
+#include <visp/vpDebug.h>
+#include <visp/vpTwistMatrix.h>
+#include <visp/vpThetaUVector.h>
+#include <visp/vpRobotAfma4.h>
 
 /* ---------------------------------------------------------------------- */
-/* --- STATIC ------------------------------------------------------------ */
-/* ------------------------------------------------------------------------ */
+/* --- STATIC ----------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
 
 bool vpRobotAfma4::robotAlreadyCreated = false;
-const double       vpRobotAfma4::defaultPositioningVelocity = 10.0;
-const int          vpRobotAfma4::nbArticulations = 4;
 
-/* ----------------------------------------------------------------------- */
-/* --- CONSTRUCTOR ------------------------------------------------------ */
+/*!
+
+  Default positioning velocity in percentage of the maximum
+  velocity. This value is set to 15. The member function
+  setPositioningVelocity() allows to change this value.
+
+*/
+const double vpRobotAfma4::defaultPositioningVelocity = 15.0;
+
+
+/* ---------------------------------------------------------------------- */
+/* --- EMERGENCY STOP --------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
+/*!
 
+  Emergency stops the robot if the program is interrupted by a SIGINT
+  (CTRL C), SIGSEGV (segmentation fault), SIGBUS (bus error), SIGKILL
+  or SIGQUIT signal.
 
-void emergencyStopAfma4(int signo)
+*/
+void emergencyStop(int signo)
 {
-  std::cout << "Arret de la tache par : SIGNAL= " << (char)7  ;
+  std::cout << "Stop the application by SIGNAL= " << (char)7  ;
   switch(signo)
-  {
-  case  SIGINT:
-    std::cout << "SIGINT (arret par ^C) " << std::endl ; break ;
-  case SIGSEGV:
-    std::cout <<"SIGSEGV (arret par segmentation fault) " << std::endl ; break ;
-  case SIGBUS:
-    std::cout <<"SIGBUS (arret par bus error) " << std::endl ; break ;
-  default :
-    std::cout << signo << std::endl ;
-  }
-  stop_mouvement_Afma4() ;
-  vmeClose_Afma4();
-  close_rs232_servolens();
+    {
+    case SIGINT:
+      std::cout << "SIGINT (stop by ^C) " << std::endl ; break ;
+    case SIGBUS:
+      std::cout <<"SIGBUS (stop due to a bus error) " << std::endl ; break ;
+    case SIGSEGV:
+      std::cout <<"SIGSEGV (stop due to a segmentation fault) " << std::endl ; break ;
+    case SIGKILL:
+      std::cout <<"SIGKILL (stop by CTRL \\) " << std::endl ; break ;
+    case SIGQUIT:
+      std::cout <<"SIGQUIT " << std::endl ; break ;
+    default :
+      std::cout << signo << std::endl ;
+    }
+  std::cout << "Emergency stop called\n";
+  //  PrimitiveESTOP_Afma4();
+  PrimitiveSTOP_Afma4();
+  std::cout << "Robot was stopped\n";
+
+  // Free allocated ressources
+  ShutDownConnection(); // Some times cannot exit here when Ctrl-C
 
   std::cout << "exit(1)" <<std::endl ;
   exit(1) ;
 }
 
 
-/*! constructor
- */
+/* ---------------------------------------------------------------------- */
+/* --- CONSTRUCTOR ------------------------------------------------------ */
+/* ---------------------------------------------------------------------- */
+
+/*!
+
+  The only available constructor.
+
+  This contructor calls init() to initialise the connection with the MotionBox
+  or low level controller, power on the robot and wait 1 sec before returning
+  to be sure the initialisation is done.
+
+  It also set the robot state to vpRobot::STATE_STOP.
+
+*/
 vpRobotAfma4::vpRobotAfma4 (void)
   :
   vpAfma4 (),
@@ -114,183 +147,356 @@ vpRobotAfma4::vpRobotAfma4 (void)
     #define	SIGTERM	15	// software termination signal from kill
   */
 
-  signal(SIGINT, emergencyStopAfma4);
-  signal(SIGBUS, emergencyStopAfma4) ;
-  signal(SIGSEGV, emergencyStopAfma4) ;
-  signal(SIGKILL, emergencyStopAfma4);
-  signal(SIGQUIT, emergencyStopAfma4);
+  signal(SIGINT, emergencyStop);
+  signal(SIGBUS, emergencyStop) ;
+  signal(SIGSEGV, emergencyStop) ;
+  signal(SIGKILL, emergencyStop);
+  signal(SIGQUIT, emergencyStop);
 
-  vpDEBUG_TRACE (12, "Open communication with VME.");
-  init();
-
-  vpDEBUG_TRACE (12, "Read Config parameters.");
-  vpAfma4::init ();
-
-  try
-  {
-    setRobotState(vpRobot::STATE_STOP) ;
+  std::cout << "Open communication with MotionBlox.\n";
+  try {
+    this->init();
+    this->setRobotState(vpRobot::STATE_STOP) ;
   }
-  catch(...)
-  {
+  catch(...) {
     vpERROR_TRACE("Error caught") ;
     throw ;
   }
-  positioningVelocity = defaultPositioningVelocity ;
+  positioningVelocity  = defaultPositioningVelocity ;
+
+  vpRobotAfma4::robotAlreadyCreated = true;
+
   return ;
 }
 
 
+/* ------------------------------------------------------------------------ */
+/* --- INITIALISATION ----------------------------------------------------- */
+/* ------------------------------------------------------------------------ */
 
-/* -------------------------------------------------------------------------- */
-/* --- INITIALISATION ------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
+/*!
 
-/* Initialise les connexions avec la carte VME et demare le robot.
- * ERROR:
- *   - ERRConstruction si une erreur survient lors de l'ouverture du VME.
- *   - ERRCommunication si une erreur survient lors de l'initialisation de
- * l'afma4.
- */
+  Initialise the connection with the MotionBox or low level
+  controller, power on the
+  robot and wait 1 sec before returning to be sure the initialisation
+  is done.
+
+*/
 void
 vpRobotAfma4::init (void)
 {
+  int stt;
+  InitTry;
 
-  vpDEBUG_TRACE (12, "Open connection to the VME.");
-  if (0 != vmeOpenA32D32_Afma4())
-  {
-    vpERROR_TRACE ("Cannot open connexion between PC and VME.");
+  // Initialise private variables used to compute the measured velocities
+  q_prev_getvel.resize(4);
+  q_prev_getvel = 0;
+  time_prev_getvel = 0;
+  first_time_getvel = true;
+
+  // Initialise private variables used to compute the measured displacement
+  q_prev_getdis.resize(4);
+  q_prev_getdis = 0;
+  first_time_getdis = true;
+
+  // Initialize the firewire connection
+  Try( stt = InitializeConnection() );
+
+  if (stt != SUCCESS) {
+    vpERROR_TRACE ("Cannot open connexion with the motionblox.");
     throw vpRobotException (vpRobotException::constructionError,
-			    "Cannot open connexion between PC and VME");
+  			  "Cannot open connexion with the motionblox");
   }
 
-  if (0 != initialisation_Afma4())
-  {
-    vpERROR_TRACE ("Error during robot initialization.");
-    throw vpRobotException (vpRobotException::communicationError,
-			    "Error during robot initialization.");
+  // Connect to the servoboard using the servo board GUID
+  Try( stt = InitializeNode_Afma4() );
+
+  if (stt != SUCCESS) {
+    vpERROR_TRACE ("Cannot open connexion with the motionblox.");
+    throw vpRobotException (vpRobotException::constructionError,
+  			  "Cannot open connexion with the motionblox");
   }
+  Try( PrimitiveRESET_Afma4() );
 
-  open_rs232_servolens(SERVOLENS_SERIAL_PORT) ;
-  //supprime les 4 carres de l'image
-  init_servolens() ;
+  // Look if the power is on or off
+  UInt32 HIPowerStatus;
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, 
+			     &HIPowerStatus));
+  CAL_Wait(0.1);
 
-  commande_servolens(SERVOLENS_ZOOM,"1000") ;
-  mode_DA0_servolens() ;
+  if (HIPowerStatus == 0) {
+    fprintf(stdout, "\nPower ON the robot in the next 10 second...\n");
+    fflush(stdout);
+    Try( PrimitivePOWERON_Afma4() );
 
+    // waiting for the power on
+     do {
+      Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL,
+				 &HIPowerStatus));
+      CAL_Wait(0.1);
+      if (HIPowerStatus == 0) {
 
+      }
+
+    } while (HIPowerStatus == 0);
+  }
+  fprintf(stdout, "Power is ON. We continue...\n");
+  fflush(stdout);
+
+  // get real joint min/max from the MotionBlox
+  Try( PrimitiveJOINT_MINMAX_Afma4(_joint_min, _joint_max) );
+//   for (int i=0; i < njoint; i++) {
+//     printf("axis %d: joint min %lf, max %lf\n", i, _joint_min[i], _joint_max[i]);
+//   }
+
+  // If an error occur in the low level controller, goto here
+  CatchPrint();
+
+  // Test if an error occurs
+  if (TryStt == -20001)
+    printf("No connection detected\n");
+  else if (TryStt == -675)
+    printf(" Timeout enabling power...\n");
+  if (TryStt < 0) {
+    // Power off the robot
+    PrimitivePOWEROFF_Afma4();
+    // Free allocated ressources
+    ShutDownConnection();
+
+    vpERROR_TRACE ("Cannot open connexion with the motionblox.");
+    throw vpRobotException (vpRobotException::constructionError,
+  			  "Cannot open connexion with the motionblox");
+  }
   return ;
 }
 
 
 /* ------------------------------------------------------------------------ */
-/* --- DESTRUCTEUR -------------------------------------------------------- */
+/* --- DESTRUCTOR --------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-//! destructor
+/*!
+
+  Destructor.
+
+  Free allocated ressources.
+*/
 vpRobotAfma4::~vpRobotAfma4 (void)
 {
+  InitTry;
 
   setRobotState(vpRobot::STATE_STOP) ;
 
-  if (0 != vmeClose_Afma4())
-  {
-    vpERROR_TRACE ("Error while closing communications with the robot.");
-  }
-  close_rs232_servolens();
+  // Look if the power is on or off
+  UInt32 HIPowerStatus;
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL,
+			     &HIPowerStatus));
+  CAL_Wait(0.1);
 
-  vpRobotAfma4::robotAlreadyCreated = FALSE;
+//   if (HIPowerStatus == 1) {
+//     fprintf(stdout, "Power OFF the robot\n");
+//     fflush(stdout);
 
+//     Try( PrimitivePOWEROFF_Afma4() );
+//   }
+
+  // Free allocated ressources
+  ShutDownConnection();
+
+  vpRobotAfma4::robotAlreadyCreated = false;
+
+  CatchPrint();
   return;
 }
 
 
 
 
-/* Demarage du robot.
- * Change l'etat du robot, pour le placer en position arret, vitesse ou
- * position.
- * Les effets de bord sont:
- *   - si le robot est en arret, le changement est realise ssi le robot
- * est sous tension. Aucun effet de bord.
- *   - si le robot est en commande en position, le passage en arret stop
- * le robot a la position courrante, sans attendre la fin du deplacement.
- *   - si le robot est en commande en position, le passage en commande en
- * vitesse est impossible si le robot est en mouvement vers une nouvelle
- * position. Dans ce cas, une erreur ERRChangementEtat est lancee.
- *   - si le robot est en commande en vitesse, vitesse non nulle, un
- * changement d'etat arrete le robot (vitesse=0) a la position courrante.
- * INPUT:
- *   - newState: etat du robot apres l'appel a la fonction si aucune
- * erreur n'a ete lancee.
- * OUTPUT:
- *   - Retourne le precedent etat du robot.
- * ERROR:
- *   - ERRChangementEtat si le changement demande n'est pas possible.
- */
+
+/*!
+
+Change the robot state.
+
+\param newState : New requested robot state.
+*/
 vpRobot::vpRobotStateType
 vpRobotAfma4::setRobotState(vpRobot::vpRobotStateType newState)
 {
-  switch (newState)
-  {
-  case vpRobot::STATE_STOP:
-    {
-      if (vpRobot::STATE_STOP != getRobotState ())
-      {
-	stop_mouvement_Afma4();
-      }
-      break;
+  InitTry;
+
+  switch (newState) {
+  case vpRobot::STATE_STOP: {
+    if (vpRobot::STATE_STOP != getRobotState ()) {
+      Try( PrimitiveSTOP_Afma4() );
     }
-  case vpRobot::STATE_POSITION_CONTROL:
-    {
-      if (vpRobot::STATE_VELOCITY_CONTROL  == getRobotState ())
-      {
-	vpDEBUG_TRACE (12, "Passage vitesse -> position.");
-	stop_mouvement_Afma4();
-      }
-      else
-      {
-	vpDEBUG_TRACE (1, "Passage arret -> position.");
-      }
-      break;
+    break;
+  }
+  case vpRobot::STATE_POSITION_CONTROL: {
+    if (vpRobot::STATE_VELOCITY_CONTROL  == getRobotState ()) {
+      std::cout << "Change the control mode from velocity to position control.\n";
+      Try( PrimitiveSTOP_Afma4() );
     }
-  case vpRobot::STATE_VELOCITY_CONTROL:
-    {
-      if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
-      {
-	vpDEBUG_TRACE (10, "Robot en arret: demarage...");
-	if (0 != init_mouvement_Afma4 ())
-	{
-	  vpERROR_TRACE ("Cannot init velocity control.");
-	  throw vpRobotException (vpRobotException::lowLevelError,
-				  "Cannot init velocity control.");
-	}
-      }
-      break;
+    else {
+      //std::cout << "Change the control mode from stop to position control.\n";
     }
+    break;
+  }
+  case vpRobot::STATE_VELOCITY_CONTROL: {
+    if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ()) {
+      std::cout << "Change the control mode from stop to velocity control.\n";
+    }
+    break;
+  }
   default:
     break ;
   }
 
+  CatchPrint();
+
   return vpRobot::setRobotState (newState);
 }
 
-
 /* ------------------------------------------------------------------------ */
-/* --- ARRET -------------------------------------------------------------- */
+/* --- STOP --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-/* Arret du robot.
- * Envoye une commande pour arreter le robot a sa position actuelle, et
- * place l'objet en etat ETAT_ROBOT_ARRET.
- */
+/*!
+
+  Stop the robot and set the robot state to vpRobot::STATE_STOP.
+
+  \exception vpRobotException::lowLevelError : If the low level
+  controller returns an error during robot stopping.
+*/
 void
 vpRobotAfma4::stopMotion(void)
 {
-  stop_mouvement_Afma4();
+  InitTry;
+  Try( PrimitiveSTOP_Afma4() );
   setRobotState (vpRobot::STATE_STOP);
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot stop robot motion");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot stop robot motion.");
+  }
 }
 
 
+/*!
+
+  Power on the robot.
+
+  \exception vpRobotException::lowLevelError : If the low level
+  controller returns an error during robot power on.
+
+  \sa powerOff(), getPowerState()
+*/
+void
+vpRobotAfma4::powerOn(void)
+{
+  InitTry;
+
+  // Look if the power is on or off
+  UInt32 HIPowerStatus;
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, 
+			     &HIPowerStatus));
+  CAL_Wait(0.1);
+
+  if (HIPowerStatus == 0) {
+    fprintf(stdout, "Power ON the robot\n");
+    fflush(stdout);
+
+    Try( PrimitivePOWERON_Afma4() );
+  }
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot power on the robot");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot power off the robot.");
+  }
+}
+
+/*!
+
+  Power off the robot.
+
+  \exception vpRobotException::lowLevelError : If the low level
+  controller returns an error during robot stopping.
+
+  \sa powerOn(), getPowerState()
+*/
+void
+vpRobotAfma4::powerOff(void)
+{
+  InitTry;
+
+  // Look if the power is on or off
+  UInt32 HIPowerStatus;
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, 
+			     &HIPowerStatus));
+  CAL_Wait(0.1);
+
+  if (HIPowerStatus == 1) {
+    fprintf(stdout, "Power OFF the robot\n");
+    fflush(stdout);
+
+    Try( PrimitivePOWEROFF_Afma4() );
+  }
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot power off the robot");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot power off the robot.");
+  }
+}
+
+/*!
+
+  Get the robot power state indication if power is on or off.
+
+  \return true if power is on. false if power is off
+
+  \exception vpRobotException::lowLevelError : If the low level
+  controller returns an error.
+
+  \sa powerOn(), powerOff()
+*/
+bool
+vpRobotAfma4::getPowerState(void)
+{
+  InitTry;
+  bool status = false;
+  // Look if the power is on or off
+  UInt32 HIPowerStatus;
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, 
+			     &HIPowerStatus));
+  CAL_Wait(0.1);
+
+  if (HIPowerStatus == 1) {
+    status = true;
+  }
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot get the power status");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot get the power status.");
+  }
+  return status;
+}
+
+/*!
+
+  Get the twist transformation from camera frame to end-effector
+  frame.  This transformation allows to compute a velocity expressed
+  in the end-effector frame into the camera frame.
+
+  \param cVe : Twist transformation.
+
+*/
 void
 vpRobotAfma4::get_cVe(vpTwistMatrix &cVe)
 {
@@ -300,69 +506,129 @@ vpRobotAfma4::get_cVe(vpTwistMatrix &cVe)
   cVe.buildFrom(cMe) ;
 }
 
+/*!
+
+  Get the geometric transformation between the camera frame and the
+  end-effector frame. This transformation is constant and correspond
+  to the extrinsic camera parameters estimated by calibration.
+
+  \param cMe : Transformation between the camera frame and the
+  end-effector frame.
+
+*/
 void
 vpRobotAfma4::get_cMe(vpHomogeneousMatrix &cMe)
 {
   vpAfma4::get_cMe(cMe) ;
 }
 
+/*!
 
-//! get the robot Jacobian expressed in the end-effector frame
+  Get the robot jacobian expressed in the end-effector frame.
+
+  To compute eJe, we communicate with the low level controller to get
+  the articular joint position of the robot.
+
+  \param eJe : Robot jacobian expressed in the end-effector frame.
+
+*/
 void
 vpRobotAfma4::get_eJe(vpMatrix &eJe)
 {
 
-  vpColVector q(6) ;
-  getPosition(vpRobot::ARTICULAR_FRAME, q) ;
+  double position[6];
 
-  try
-  {
-    vpAfma4::get_eJe(q,eJe) ;
+  InitTry;
+  Try( PrimitiveACQ_POS_Afma4(position) );
+  CatchPrint();
+
+  vpColVector q(6);
+  for (int i=0; i < njoint; i++)
+    q[i] = position[i];
+
+  try {
+    vpAfma4::get_eJe(q, eJe) ;
   }
-  catch(...)
-  {
-    vpERROR_TRACE("catch exception") ;
+  catch(...) {
+    vpERROR_TRACE("catch exception ") ;
+    throw ;
+  }
+}
+
+
+
+
+/*!
+
+  Get the robot jacobian expressed in the robot reference frame also
+  called fix frame.
+
+  To compute fJe, we communicate with the low level controller to get
+  the articular joint position of the robot.
+
+  \param fJe : Robot jacobian expressed in the reference frame.
+*/
+
+  void
+  vpRobotAfma4::get_fJe(vpMatrix &fJe)
+{
+
+  double position[6];
+
+  InitTry;
+  Try( PrimitiveACQ_POS_Afma4(position) );
+  CatchPrint();
+
+  vpColVector q(6);
+  for (int i=0; i < njoint; i++)
+    q[i] = position[i];
+
+  try {
+    vpAfma4::get_fJe(q, fJe) ;
+  }
+  catch(...) {
+    vpERROR_TRACE("Error caught");
     throw ;
   }
 }
 /*!
-  \brief get the robot Jacobian expressed in the robot reference frame
-  \warning this functionality is not implemented ont he Afma4
-  \exception vpRobotException (vpRobotException::ERRNotImplemented)
-*/
 
-void
-vpRobotAfma4::get_fJe(vpMatrix &fJe)
-{
+  Set the maximal velocity percentage to use for a positionning task.
 
-  vpColVector q(4) ;
-  getPosition(vpRobot::ARTICULAR_FRAME, q) ;
+  The default positioning velocity is defined by
+  vpRobotAfma4::defaultPositioningVelocity. This method allows to
+  change this default positioning velocity
 
-  try
-  {
-    vpAfma4::get_fJe(q,fJe) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught");
-    throw ;
-  }
+  \param velocity : Percentage of the maximal velocity. Values should
+  be in ]0:100].
 
-}
+  \code
+  vpColVector q[4]);
+  q = 0; // position in meter and rad
 
+  vpRobotAfma4 robot;
 
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-/*! Set the velocity for a positionning task
+  // Set the max velocity to 20%
+  robot.setPositioningVelocity(20);
 
-velocity in % of the maximum velocity between [0,100]
+  // Moves the robot to the joint position [0,0,0,0]
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  \endcode
+
+  \sa getPositioningVelocity()
 */
 void
 vpRobotAfma4::setPositioningVelocity (const double velocity)
 {
   positioningVelocity = velocity;
 }
+
 /*!
-  Set the velocity for a positionning task
+  Get the maximal velocity percentage used for a positionning task.
+
+  \sa setPositioningVelocity()
 */
 double
 vpRobotAfma4::getPositioningVelocity (void)
@@ -371,627 +637,967 @@ vpRobotAfma4::getPositioningVelocity (void)
 }
 
 
-/* Deplacement du robot en position.
- * Deplace le robot en position. Le robot se deplace jusqu'a avoir atteint
- * la position donnee en argument. La fonction est bloquante: elle rend la
- * main quand le deplacement est termine. Le robot doit etre dans l'etat
- * ETAT_ROBOT_COMMANDE_POSITION. Le repere de travail utilise est celui
- * donne par l'argument \a repere.
- * INPUT:
- *   - r: nouvelle position du robot apres l'appel a cette fonction.
- *   - repere: repere de travail utilise. Suel le repere articulaire
- *             est disponible
- * ATTENTION: Fonction bloquante.
- * ERROR:
- *   - ERRMauvaisEtatRobot si le robot n'est pas dans l'etat
- * ETAT_ROBOT_COMMANDE_POSITION.
- */
+/*!
+
+  Move to an absolute position with a given percent of max velocity.
+  The percent of max velocity is to set with setPositioningVelocity().
+
+  \warning The position to reach can only be specified in joint space
+  coordinates.
+
+  This method owerloads setPosition(const
+  vpRobot::vpControlFrameType, const vpColVector &).
+
+  \warning This method is blocking. It returns only when the position
+  is reached by the robot.
+
+  \param position : The joint positions to reach. position[0] correspond to the
+  first rotation of the turret around the vertical axis, position[1] correspond
+  to the vertical translation, while position[2] and position[3] correspond to
+  the pan and tilt of the camera respectively. Rotations position[0],
+  position[2] and position[3] are expressed in radians. The translation
+  position[1] is expressed in meters.
+
+  \param frame : Frame in which the position is expressed.
+
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
+  implemented.
+
+  \exception vpRobotException::positionOutOfRangeError : The requested
+  position is out of range.
+
+  \code
+  // Set positions in the joint space
+  vpColVector q[4];
+  double q[0] = M_PI/8; // X axis, in radian
+  double q[1] = 0.2;    // Y axis, in meter
+  double q[2] = M_PI/4; // A axis, in radian
+  double q[3] = M_PI/8; // B axis, in radian
+
+  vpRobotAfma4 robot;
+
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+
+  // Set the max velocity to 20%
+  robot.setPositioningVelocity(20);
+
+  // Moves the robot in the camera frame
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  \endcode
+
+  \exception vpRobotException::lowLevelError : If the requested frame
+  (vpRobot::REFERENCE_FRAME, vpRobot::CAMERA_FRAME, or vpRobot::MIXT_FRAME) are
+  requested since they are not implemented.
+
+  \exception vpRobotException::positionOutOfRangeError : The requested
+  position is out of range.
+
+  To catch the exception if the position is out of range, modify the code like:
+
+  \code
+  try {
+    robot.setPosition(vpRobot::CAMERA_FRAME, q);
+  }
+  catch (vpRobotException e) {
+    if (e.getCode() == vpRobotException::positionOutOfRangeError) {
+    std::cout << "The position is out of range" << std::endl;
+  }
+  \endcode
+
+*/
+
 void
 vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
-			   const vpColVector & r )
+			   const vpColVector & position )
 {
 
-  if (vpRobot::STATE_POSITION_CONTROL != getRobotState ())
-  {
+  if (vpRobot::STATE_POSITION_CONTROL != getRobotState ()) {
     vpERROR_TRACE ("Robot was not in position-based control\n"
-		 "Modification of the robot state");
+		   "Modification of the robot state");
     setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
   }
-
-  switch(frame)
-  {
-  case vpRobot::CAMERA_FRAME:
-    vpERROR_TRACE ("Cannot move the robot in camera frame: not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot move the robot in camera frame: "
-			    "not implemented");
-    break;
-  case vpRobot::REFERENCE_FRAME:
-    vpERROR_TRACE ("Cannot move the robot in reference frame: "
-		 "not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot move the robot in reference frame: "
-			    "not implemented");
-    break;
-  case vpRobot::MIXT_FRAME:
-    vpERROR_TRACE ("Cannot move the robot in mixt frame: "
-		 "not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot move the robot in mixt frame: "
-			    "not implemented");
-    break;
-  case vpRobot::ARTICULAR_FRAME:
-    break ;
-  }
-
-  communicationPosition.mode = ABSOLU;
-
-  vpRobotAfma4::VD4_mrad_mmrad (r, communicationPosition.pos);
-
-  communicationPosition.vitesse = positioningVelocity;
-
-  if (0 != positionnement_Afma4(& communicationPosition ))
-  {
+  
+  int error = 0;
+  
+  
+  if (position.getRows() != this->njoint) {
     vpERROR_TRACE ("Positionning error.");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Positionning error.");
+    throw vpRobotException (vpRobotException::positionOutOfRangeError,
+ 			    "Position out of range.");
+
+
+    switch(frame) {
+    case vpRobot::REFERENCE_FRAME:
+      vpERROR_TRACE ("Positionning error. Reference frame not implemented");
+      throw vpRobotException (vpRobotException::lowLevelError,
+			      "Positionning error: "
+			      "Reference frame not implemented.");
+      break ;
+    case vpRobot::CAMERA_FRAME : 
+      vpERROR_TRACE ("Positionning error. Camera frame not implemented");
+      throw vpRobotException (vpRobotException::lowLevelError,
+			      "Positionning error: "
+			      "Camera frame not implemented.");
+      break ;
+    case vpRobot::MIXT_FRAME:
+      vpERROR_TRACE ("Positionning error. Mixt frame not implemented");
+      throw vpRobotException (vpRobotException::lowLevelError,
+			      "Positionning error: "
+			      "Mixt frame not implemented.");
+      break ;
+ 
+    case vpRobot::ARTICULAR_FRAME: {
+      break ;
+
+    }
+    }
   }
 
+  InitTry;
+
+  Try( PrimitiveMOVE_Afma4(position.data, positioningVelocity) );
+  Try( WaitState_Afma4(ETAT_ATTENTE_AFMA4, 1000) );
+
+  CatchPrint();
+  if (TryStt == InvalidPosition || TryStt == -1023)
+    std::cout << " : Position out of range.\n";
+  else if (TryStt < 0)
+    std::cout << " : Unknown error (see Fabien).\n";
+  else if (error == -1)
+    std::cout << "Position out of range.\n";
+  
+  if (TryStt < 0 || error < 0) {
+    vpERROR_TRACE ("Positionning error.");
+    throw vpRobotException (vpRobotException::positionOutOfRangeError,
+			    "Position out of range.");
+  }
+  
   return ;
 }
 
 
-void vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
-				const double q1, const double q2,
-				const double q3, const double q4 )
-{
-  try{
-    vpColVector q(4) ;
-    q[0] = q1 ;
-    q[1] = q2 ;
-    q[2] = q3 ;
-    q[3] = q4 ;
+/*!
+  Move to an absolute position with a given percent of max velocity.
+  The percent of max velocity is to set with setPositioningVelocity().
 
-    setPosition(frame,q) ;
+  \warning The position to reach can only be specified in joint space
+  coordinates.
+
+  This method owerloads setPosition(const
+  vpRobot::vpControlFrameType, const vpColVector &).
+
+  \warning This method is blocking. It returns only when the position
+  is reached by the robot.
+
+  \param q1, q2, q3, q4 : The four joint positions to reach. q[0] correspond to
+  the first rotation of the turret around the vertical axis, q[1] correspond to
+  the vertical translation, while q[2] and q[3] correspond to the pan and tilt
+  of the camera respectively. Rotations q[0], q[2] and q[3] are expressed in
+  radians. The translation q[1] is expressed in meters.
+
+  \param frame : Frame in which the position is expressed.
+
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
+  implemented.
+
+  \exception vpRobotException::positionOutOfRangeError : The requested
+  position is out of range.
+
+  \code
+  // Set positions in the camera frame
+  double q1 = M_PI/8; // X axis, in radian
+  double q2 = 0.2;    // Y axis, in meter
+  double q3 = M_PI/4; // A axis, in radian
+  double q4 = M_PI/8; // B axis, in radian
+
+  vpRobotAfma4 robot;
+
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+
+  // Set the max velocity to 20%
+  robot.setPositioningVelocity(20);
+
+  // Moves the robot in the camera frame
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q1, q2, q3, q4);
+  \endcode
+
+  \sa setPosition()
+*/
+void vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
+				const double q1,
+				const double q2,
+				const double q3,
+				const double q4)
+{
+  try {
+    vpColVector position(this->njoint) ;
+    position[0] = q1 ;
+    position[1] = q2 ;
+    position[2] = q3 ;
+    position[3] = q4 ;
+
+    setPosition(frame, position) ;
   }
-  catch(...)
-  {
+  catch(...)  {
     vpERROR_TRACE("Error caught");
     throw ;
   }
 }
 
 
-/* Recupere la position articulaire actuelle du robot.
- * Recupere la position actuelle du robot et place le resultat dans la
- * variable <r> donnee en argument. Le repere de travail dans lequel
- * est exprime le resultat est celui donne par l'argument \a repere.
- * OUTPUT:
- *   - r: reference dans laquelle est placee le resultat.
- * INPUT:
- *   - repere: repere de travail dans lequel est exprime le resultat.
- Seul le repere articulaire est disponible
 
- \warning Functionnality only available in articular frame, with
- the axis order: rotation arround the vertical axis, vertical
- translation, pan and tilt of the camera
+
+/*!
+
+  Move to an absolute joint position with a given percent of max
+  velocity. The robot state is set to position control.  The percent
+  of max velocity is to set with setPositioningVelocity(). The
+  position to reach is defined in the position file.
+
+  \param filename : Name of the position file to read. The
+  readPosFile() documentation shows a typical content of such a
+  position file.
+
+  This method has the same behavior than the sample code given below;
+  \code
+  vpColVector q;
+
+  robot.readPosFile("MyPositionFilename.pos", q);
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL)
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  \endcode
+
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
+  implemented.
+
+  \exception vpRobotException::positionOutOfRangeError : The requested
+  position is out of range.
+
+  \sa setPositioningVelocity()
+
+*/
+void vpRobotAfma4::setPosition(const char *filename)
+{
+  vpColVector q;
+  bool ret;
+
+  ret = this->readPosFile(filename, q);
+
+  if (ret == false) {
+    vpERROR_TRACE ("Bad position in \"%s\"", filename);
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Bad position in filename.");
+  }
+  this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
+  this->setPosition(vpRobot::ARTICULAR_FRAME, q);
+}
+
+/*!
+
+  Get the current position of the robot.
+
+  \param frame : Control frame type in which to get the position, either :
+  - in the camera cartesien frame,
+  - joint (articular) coordinates of each axes
+  - in a reference or fixed cartesien frame attached to the robot base
+  - in a mixt cartesien frame (translation in reference
+  frame, and rotation in camera frame)
+
+  \param position : Measured position of the robot:
+  - in camera cartesien frame, a 6 dimension vector, set to 0.
+
+  - in articular, a 4 dimension vector corresponding to the joint position of
+  each dof. position[0] correspond to the first rotation of the turret around
+  the vertical axis, position[1] correspond to the vertical translation, while
+  position[2] and position[3] correspond to the pan and tilt of the camera
+  respectively. Rotations position[0], position[2] and position[3] are
+  expressed in radians. The translation position[1] is expressed in meters.
+
+  - in reference frame, a 6 dimension vector, the first 3 values correspond to
+  the translation tx, ty, tz in meters (like a vpTranslationVector), and the
+  last 3 values to the rx, ry, rz rotation (like a vpRxyzVector). The code
+  below show how to convert this position into a vpHomogenousMatrix:
+
+  \code
+  vpRobotAfma4 robot;
+  vpColVector r;
+  robot.getPosition(vpRobot::REFERENCE_FRAME, r);
+
+  vpTranslationVector ftc; // reference frame to camera frame translations
+  vpRxyzVector frc; // reference frame to camera frame rotations
+
+  // Update the transformation between reference frame and camera frame
+  for (int i=0; i < 3; i++) {
+    ftc[i] = position[i];   // tx, ty, tz
+    frc[i] = position[i+3]; // ry, ry, rz
+  }
+
+  // Create a rotation matrix from the Rxyz rotation angles
+  vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
+
+  // Create the camera to fix frame pose in terms of a homogenous matrix
+  vpHomogeneousMatrix fMc(fRc, ftc);
+  \endcode
+
+  \exception vpRobotException::lowLevelError : If the position cannot
+  be get from the low level controller.
+
+  \sa setPosition(const vpRobot::vpControlFrameType frame, const
+  vpColVector & r)
+
 */
 void
 vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
-			   vpColVector & r)
+			   vpColVector & position)
 {
-  vpDEBUG_TRACE (9, "# Entree.");
 
-  switch(frame)
-  {
-  case vpRobot::CAMERA_FRAME :
-    vpERROR_TRACE ("Cannot get position in camera frame: not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get position in camera frame: "
-			    "not implemented");
-    break;
-  case vpRobot::REFERENCE_FRAME:
-    vpERROR_TRACE ("Cannot get position in reference frame: "
-		 "not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get position in reference frame: "
-			    "not implemented");
-    break;
-  case vpRobot::MIXT_FRAME:
-    vpERROR_TRACE ("Cannot get position in mixt frame: "
-		 "not implemented");
+  InitTry;
+
+  position.resize (this->njoint);
+
+  switch (frame) {
+  case vpRobot::CAMERA_FRAME : {
+    position = 0;
+    return;
+  }
+  case vpRobot::ARTICULAR_FRAME : {
+    double _q[njoint];
+    Try( PrimitiveACQ_POS_Afma4(_q) );
+    for (int i=0; i < this->njoint; i ++) {
+      position[i] = _q[i];
+    }
+
+    return;
+  }
+  case vpRobot::REFERENCE_FRAME : {
+    double _q[njoint];
+    Try( PrimitiveACQ_POS_Afma4(_q) );
+
+    vpColVector q(this->njoint);
+    for (int i=0; i < this->njoint; i++)
+      q[i] = _q[i];
+
+    // Compute fMc
+    vpHomogeneousMatrix fMc;
+    vpAfma4::get_fMc(q, fMc);
+
+    // From fMc extract the pose
+    vpRotationMatrix fRc;
+    fMc.extract(fRc);
+    vpRxyzVector rxyz;
+    rxyz.buildFrom(fRc);
+
+    for (int i=0; i < 3; i++) {
+      position[i] = fMc[i][3]; // translation x,y,z
+      position[i+3] = rxyz[i]; // Euler rotation x,y,z
+    }
+    break ;
+  }
+  case vpRobot::MIXT_FRAME: {
+    vpERROR_TRACE ("Cannot get position in mixt frame: not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot get position in mixt frame: "
 			    "not implemented");
-    break;
-  case vpRobot::ARTICULAR_FRAME:
     break ;
   }
-
-  communicationPosition.mode=ABSOLU;
-  if (0 != recup_posit_Afma4(& (communicationPosition) ) )
-  {
-    vpERROR_TRACE ("Error when calling  recup_posit_Afma4.");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Error when calling  recup_posit_Afma4.");
   }
 
-  r.resize (vpRobotAfma4::nbArticulations);
-  vpRobotAfma4::VD4_mmrad_mrad (communicationPosition.pos, r);
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot get position.");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Cannot get position.");
+  }
 
+  return;
 }
-
-
-void
-vpRobotAfma4::setZoom(int zoom)
-{
-  char cha[10] ;
-  sprintf(cha,"%d",zoom) ;
-  commande_servolens(SERVOLENS_ZOOM, cha);
-  wait_fin_mvt_servolens(SERVOLENS_ZOOM) ;
-}
-
-int
-vpRobotAfma4::getZoom()
-{
-  char cha[10] ;
-  lecture_posit_servolens(SERVOLENS_ZOOM, cha);
-  return atoi(cha) ;
-}
-
-void
-vpRobotAfma4::setIris(int iris)
-{
-  char cha[10] ;
-  sprintf(cha,"%d", iris) ;
-  commande_servolens(SERVOLENS_IRIS, cha);
-  wait_fin_mvt_servolens(SERVOLENS_IRIS) ;
-}
-int
-vpRobotAfma4::getIris()
-{
-  char cha[10] ;
-  lecture_posit_servolens(SERVOLENS_IRIS, cha);
-  return atoi(cha) ;
-}
-void
-vpRobotAfma4::setAutoIris(bool on)
-{
-  if (on == true)
-    mode_DA1_servolens();
-  else
-    mode_DA0_servolens();
-}
-
-void
-vpRobotAfma4::setFocus(int focus)
-{
-  char cha[10] ;
-  sprintf(cha,"%d",focus) ;
-  commande_servolens(SERVOLENS_FOCUS, cha);
-  while (!wait_fin_mvt_servolens(SERVOLENS_FOCUS)) ;
-}
-
-int
-vpRobotAfma4::getFocus()
-{
-  char cha[10] ;//mettre_fin_mvt_servolens(SERVOLENS_FOCUS) ;
-  lecture_posit_servolens(SERVOLENS_FOCUS, cha);
-  return atoi(cha) ;
-}
-
-
-void
-vpRobotAfma4::VD4_mmrad_mrad(const double * input, vpColVector & output)
-{
-  output [0] = input [0];
-  output [1] = input [1] / 1000.0;
-  output [2] = input [2];
-  output [3] = input [3];
-}
-
-void
-vpRobotAfma4::VD4_mrad_mmrad (const vpColVector & input, double * output)
-{
-  output [0] = input [0];
-  output [1] = input [1] * 1000.0;
-  output [2] = input [2];
-  output [3] = input [3];
-}
-
-
-
-
 
 /*!
   Apply a velocity to the robot.
 
-  \param frame : Frame in which the velocity is expressed. Velocities could be
-  expressed in articular or camera frame. The vpRobot::REFERENCE_FRAME and
-  vpRobot::MIXT_FRAME are not implemented.
+  \param frame : Control frame in which the velocity is expressed. Velocities
+  could be expressed in the joint space or in the camera frame. The reference
+  frame and mixt frame are not implemented.
 
-  \param r_dot : Velocity vector \f$ \dot {r} \f$. For translation speed \f$
-  \dot{q}_2 \f$, units are m/s, for rotations speed \f$ \omega, \dot{q}_1,
-  \dot{q}_3, \dot{q}_4 \f$ rad/s. The size of this vector is either 2 in camera
-  frame, either 4 in articular.
+  \param vel : Velocity vector. Translation velocities are expressed in m/s
+  while rotation velocities in rad/s. The size of this vector may be 4 (the
+  number of dof) if frame is set to vpRobot::ARTICULAR_FRAME. The size of this
+  vector is 2 when the control is in the camera frame (frame is than set to
+  vpRobot::CAMERA_FRAME).
 
-  - In articular, \f$ \dot {r} = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4]^t
- \f$ with \f$ \dot{q}_1 \f$ the turret rotation, \f$ \dot{q}_2 \f$ the vertical
- translation, \f$ \dot{q}_3 \f$ the pan of the camera and \f$ \dot{q}_4\f$ the
- tilt of the camera.
+  - In articular, \f$ vel = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4]^t \f$ correspond to joint velocities.
 
-  - In camera frame, \f$ \dot {r} = [^{c} v_x, ^{c} v_y]^t \f$.
+  - In camera frame, \f$ vel = [^{c} \omega_x, ^{c} \omega_y]^t \f$ is
+  expressed in the camera frame.
 
   \exception vpRobotException::wrongStateError : If a the robot is not
   configured to handle a velocity. The robot can handle a velocity only if the
   velocity control mode is set. For that, call setRobotState(
   vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
-  \exception vpRobotException::wrongStateError : If a not supported frame type
-  (vpRobot::REFERENCE_FRAME or vpRobot::MIXT_FRAME) is given.
-
-  \warning Velocities could be saturated if one of them exceed the maximal
-  autorized speed (see vpRobot::maxTranslationVelocity and
+  \warning Velocities could be saturated if one of them exceed the
+  maximal autorized speed (see vpRobot::maxTranslationVelocity and
   vpRobot::maxRotationVelocity). To change these values use
   setMaxTranslationVelocity() and setMaxRotationVelocity().
 
+  \code
+  // Set joint velocities
+  vpColVector q_dot(4);
+  q_dot[0] = M_PI/8; // X axis, in rad/s
+  q_dot[1] = 0.2;    // Y axis, in meter/s
+  q_dot[2] = M_PI/4; // A axis, in rad/s
+  q_dot[3] = M_PI/8; // B axis, in rad/s
+
+  vpRobotAfma4 robot;
+
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+
+  // Moves the joint in velocity
+  robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
+  \endcode
 */
 void
 vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
-			   const vpColVector & r_dot)
+			   const vpColVector & vel)
 {
 
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
-  {
-    vpERROR_TRACE ("Cannot send a velocity to the robot "
-		 "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-    throw vpRobotException (vpRobotException::wrongStateError,
-			    "Cannot send a velocity to the robot "
-			    "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-  }
-
-  switch(frame)
-  {
-  case vpRobot::CAMERA_FRAME :
-    {
-      communicationVelocity.repere = REPCAM;
-      if ( r_dot.getRows() != 2) {
-	vpERROR_TRACE ("Bad dimension fo speed vector in camera frame");
-	throw vpRobotException (vpRobotException::wrongStateError,
-				"Bad dimension for speed vector "
-				"in camera frame");
-      }
-      break ;
-    }
-  case vpRobot::ARTICULAR_FRAME :
-    {
-      communicationVelocity.repere = REPART;
-      if ( r_dot.getRows() != 4) {
-	vpERROR_TRACE ("Bad dimension fo speed vector in articular frame");
-	throw vpRobotException (vpRobotException::wrongStateError,
-				"Bad dimension for speed vector "
-				"in articular frame");
-      }
-      break ;
-    }
-  case vpRobot::REFERENCE_FRAME :
-    {
-      communicationVelocity.repere = REPFIX;
-      vpERROR_TRACE ("Cannot send a velocity to the robot "
-		   "in the reference frame: "
-		   "functionality not implemented");
-      throw vpRobotException (vpRobotException::wrongStateError,
-			      "Cannot send a velocity to the robot "
-			      "in the reference frame:"
-			      "functionality not implemented");
-      break ;
-    }
-  case vpRobot::MIXT_FRAME :
     {
       vpERROR_TRACE ("Cannot send a velocity to the robot "
-		   "in the mixt frame: "
-		   "functionality not implemented");
+		     "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot send a velocity to the robot "
-			      "in the mixt frame:"
-			      "functionality not implemented");
-      break ;
+			      "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
     }
-  default:
-    {
-      vpERROR_TRACE ("Error in spec of vpRobot. "
-		   "Case not taken in account.");
-      throw vpRobotException (vpRobotException::wrongStateError,
-			      "Cannot send a velocity to the robot ");
-    }
-  }
 
-  for (int i = 0; i < 6; ++ i)
-  {
-    communicationVelocity.asserv[i] = VITESSE;
-    communicationVelocity.mvt[i] = 0.0;
-  }
-
-  vpDEBUG_TRACE (12, "Velocity limitation.");
-  bool norm = false; // Flag to indicate when velocities need to be nomalized
-  vpColVector v(6);
-
+  // Check the dimension of the velocity vector to see if it is
+  // compatible with the requested frame
   switch(frame) {
   case vpRobot::CAMERA_FRAME : {
-    double max = getMaxRotationVelocity();
-    for (int i = 0 ; i < 2; ++ i) // rx and ry of the camera
-    {
-      if (fabs (r_dot[i]) > max)
-      {
-	norm = true;
-	max = fabs (r_dot[i]);
-	vpERROR_TRACE ("Excess velocity: ROTATION "
-		     "(axe nr.%d).", i);
-      }
+    if (vel.getRows() != 2) {
+	vpERROR_TRACE ("Bad dimension of the velocity vector in camera frame");
+	throw vpRobotException (vpRobotException::wrongStateError,
+				"Bad dimension of the velocity vector "
+				"in camera frame");
     }
-
-    // Rotations velocities normalisation
-    if (norm == true) {
-      max = getMaxRotationVelocity() / max;
-      for (int i = 0 ; i < 2; ++ i)
-      { v [i] = r_dot[i]*max; }
-    }
-    else {
-      for (int i = 0 ; i < 2; ++ i) {
-	v [i] = r_dot[i];
-      }
-    }
-
-    for (int i = 0; i < 2; ++ i)
-    {
-      communicationVelocity.asserv[i] = VITESSE;
-      communicationVelocity.mvt[i] = v[i];
-    }
-
-    break;
+    break ;
   }
   case vpRobot::ARTICULAR_FRAME : {
-    double max = getMaxRotationVelocity();
-    if (fabs (r_dot[0]) > max) // turret rotation
-    {
-      norm = true;
-      max = fabs (r_dot[0]);
-      vpERROR_TRACE ("Excess velocity: ROTATION "
-		   "(axe nr.%d).", 0);
+    if (vel.getRows() != this->njoint) {
+	vpERROR_TRACE ("Bad dimension of the articular velocity vector");
+	throw vpRobotException (vpRobotException::wrongStateError,
+				"Bad dimension of the articular "
+				"velocity vector ");
     }
-    for (int i = 2 ; i < 4; ++ i) // pan and tilt
-    {
-      if (fabs (r_dot[i]) > max)
-      {
+    break ;
+  }
+  case vpRobot::REFERENCE_FRAME : {
+    vpERROR_TRACE ("Cannot send a velocity to the robot "
+		   "in the reference frame: "
+		   "functionality not implemented");
+    throw vpRobotException (vpRobotException::wrongStateError,
+			    "Cannot send a velocity to the robot "
+			    "in the reference frame:"
+			    "functionality not implemented");
+    break ;
+  }
+  case vpRobot::MIXT_FRAME : {
+    vpERROR_TRACE ("Cannot send a velocity to the robot "
+		   "in the mixt frame: "
+		   "functionality not implemented");
+    throw vpRobotException (vpRobotException::wrongStateError,
+			    "Cannot send a velocity to the robot "
+			    "in the mixt frame:"
+			    "functionality not implemented");
+    break ;
+  }
+  default: {
+      vpERROR_TRACE ("Error in spec of vpRobot. "
+		     "Case not taken in account.");
+      throw vpRobotException (vpRobotException::wrongStateError,
+			      "Cannot send a velocity to the robot ");
+  }
+  }
+
+
+  //
+  // Velocities saturation with normalization
+  //
+  vpColVector velocity;
+  bool norm = false; // Flag to indicate when velocities need to be nomalized
+
+  // Case of the camera frame where we control only 2 dof
+  if (frame == vpRobot::CAMERA_FRAME) {
+    velocity.resize(2);
+    double max = getMaxRotationVelocity();
+    // Determine if we need to saturate the rotation velocities
+    for (int i = 0 ; i < 2; ++ i) { // rx and ry of the camera
+      if (fabs (vel[i]) > max) {
 	norm = true;
-	max = fabs (r_dot[i]);
-	vpERROR_TRACE ("Excess velocity: ROTATION "
-		     "(axe nr.%d).", i);
+	max = fabs (vel[i]);
+	vpERROR_TRACE ("Excess velocity %g: ROTATION "
+		       "(axe nr.%d).", vel[i], i);
       }
     }
     // Rotations velocities normalisation
     if (norm == true) {
       max = getMaxRotationVelocity() / max;
-      v [0] = r_dot[0]*max;
-      v [2] = r_dot[2]*max;
-      v [3] = r_dot[3]*max;
+      velocity = vel * max;
+    }
+    else {
+      velocity = vel;
     }
 
-    max = getMaxTranslationVelocity();
-    if (fabs (r_dot[1]) > max)
-    {
+    vpMatrix eJe(4,2);
+    eJe = 0;
+    eJe[2][1] = -1;
+    eJe[3][0] = 1;
+    
+    velocity = eJe * velocity; // Compute the articular velocity
+  }
+
+  // Case of the joint control where we control all the joints
+  else if (frame == vpRobot::ARTICULAR_FRAME) {
+    velocity.resize(this->njoint);
+
+    // Manage the rotations: joint 0,2,3
+    double max = getMaxRotationVelocity();
+    // Determine if we need to saturate
+    if (fabs (vel[0]) > max) {
       norm = true;
-      max = fabs (r_dot[1]);
-      vpERROR_TRACE ("Excess velocity: TRANSLATION "
-		   "(axe nr.%d).", 1);
+      max = fabs (vel[0]);
+      vpERROR_TRACE ("Excess velocity %g: ROTATION "
+		     "(axe nr.%d).", vel[0], 0);
     }
+
+    for (int i = 2 ; i < 4; ++ i) { // joint 2 and 3
+      if (fabs (vel[i]) > max) {
+	norm = true;
+	max = fabs (vel[i]);
+	vpERROR_TRACE ("Excess velocity %g: ROTATION "
+		       "(axe nr.%d).", vel[i], i);
+      }
+    }
+    // Rotations velocities normalisation
+    if (norm == true) {
+      max = getMaxRotationVelocity() / max;
+      velocity = vel * max;
+     
+    }
+    else {
+      velocity = vel;
+    }
+
+    // Manage the translation: joint 1
+    max = getMaxTranslationVelocity();
+    if (fabs (vel[1]) > max) {
+      norm = true;
+      max = fabs (vel[1]);
+      vpERROR_TRACE ("Excess velocity %g: TRANSLATION "
+		     "(axe nr.%d).", vel[1], 1);
+    }
+
     // Translations velocities normalisation
     if (norm == true)  {
-      max = this ->maxTranslationVelocity * max;
-      v [1] = r_dot[1]*max;
+      max = getMaxTranslationVelocity() * max;
+      velocity = vel * max;
     }
-
-    for (int i = 0; i < 4; ++ i)
-    {
-      communicationVelocity.asserv[i] = VITESSE;
-      communicationVelocity.mvt[i] = v[i];
-    }
-    communicationVelocity.mvt[1] *= 1000.0 ;
-
-    break;
-  }
-  default:
-    // Should never occur
-    break;
-
   }
 
-  vpCDEBUG(12) << "v: " << v.t() << std::endl;
-  active_mouvement_Afma4(& (communicationVelocity) );
+  InitTry;
+
+  // Send a joint velocity to the low level controller
+  Try( PrimitiveMOVESPEED_Afma4(velocity.data) );
+
+  Catch();
+  if (TryStt < 0) {
+    if (TryStt == VelStopOnJoint) {
+      UInt32 axisInJoint[njoint];
+      PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
+      for (int i=0; i < njoint; i ++) {
+	if (axisInJoint[i])
+	  std::cout << "\nWarning: Velocity control stopped: axis "
+		    << i+1 << " on joint limit!" <<std::endl;
+      }
+    }
+    else {
+      printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
+      if (TryString != NULL) {
+	// The statement is in TryString, but we need to check the validity
+	printf(" Error sentence %s\n", TryString); // Print the TryString
+      }
+      else {
+	printf("\n");
+      }
+    }
+  }
+
   return;
 }
 
+/* ------------------------------------------------------------------------ */
+/* --- GET ---------------------------------------------------------------- */
+/* ------------------------------------------------------------------------ */
 
 
+/*!
 
+  Get the robot velocities.
 
+  \param frame : Frame in wich velocities are mesured.
 
-/* -------------------------------------------------------------------------- */
-/* --- GET ------------------------------------------------------------------ */
-/* -------------------------------------------------------------------------- */
+  \param velocity : Measured velocities. Translations are expressed in m/s
+  and rotations in rad/s.
 
+  \warning In camera frame, reference frame and mixt frame, the representation
+  of the rotation is ThetaU. In that cases, \f$velocity = [\dot x, \dot y, \dot
+  z, \dot {\theta U}_x, \dot {\theta U}_y, \dot {\theta U}_z]\f$.
 
-/* Recupere la vitesse actuelle du robot.
- * Recupere la vitesse actuelle du robot et place le resultat dans
- * la reference \a r_dot donnee en argument.
- * Le repere de travail dans lequel est exprime le resultat est celui
- * donne par l'argument \a repere
- * INPUT:
- *   - repere: repere de travail dans lequel est exprime le resultat.
- * OUTPUT:
- *   - r_dot: reference dans laquelle est placee le resultat (mm/s et rad/s).
- */
+  \warning The first time this method is called, \e velocity is set to 0. The
+  first call is used to intialise the velocity computation for the next call.
+
+  \code
+  // Set joint velocities
+  vpColVector q_dot(4);
+  q_dot[0] = M_PI/8; // X axis, in rad/s
+  q_dot[1] = 0.2;    // Y axis, in meter/s
+  q_dot[2] = M_PI/4; // A axis, in rad/s
+  q_dot[3] = M_PI/16; // B axis, in rad/s
+
+  vpRobotAfma4 robot;
+
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+
+  // Moves the joint in velocity
+  robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
+
+  vpColVector q_dot_mes; // Measured velocities
+
+  // Initialisation of the velocity measurement
+  robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
+  // q_dot_mes is resized to 4, the number of joint
+
+  while (1) {
+     robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes);
+     vpTime::wait(40); // wait 40 ms
+     // here q_dot_mes is equal to [M_PI/8, 0.2, M_PI/4, M_PI/16]
+  }
+  \endcode
+*/
 void
 vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
-			   vpColVector & r_dot)
+			   vpColVector & velocity)
 {
 
-  long                 frameAfma4 = REPFIX;
+  velocity.resize (this->njoint);
+  velocity = 0;
 
-  switch (frame)
-  {
-  case vpRobot::CAMERA_FRAME:
-    {
-      frameAfma4 = REPCAM;
-      r_dot.resize (6);
-      break ;
-    }
-  case vpRobot::ARTICULAR_FRAME:
-    {
-      frameAfma4 = REPART;
-      r_dot.resize (nbArticulations);
-      break ;
-    }
-  case vpRobot::REFERENCE_FRAME:
-    {
-      frameAfma4 = REPFIX;
-      r_dot.resize (nbArticulations);
-      break ;
-    }
-  case vpRobot::MIXT_FRAME:
-    {
 
-      vpERROR_TRACE ("Cannot get a velocity in the mixt frame: "
-		   "functionality not implemented");
-      throw vpRobotException (vpRobotException::wrongStateError,
-			      "Cannot get a velocity in the reference frame:"
-			      "functionality not implemented");
-      break ;
-    }
+  double q[4];
+  vpColVector q_cur(4);
+  vpHomogeneousMatrix fMc_cur;
+  vpHomogeneousMatrix cMc; // camera displacement
+
+
+  InitTry;
+
+  // Get the actual time
+  double time_cur = vpTime::measureTimeSecond();
+
+  // Get the current joint position
+  Try( PrimitiveACQ_POS_Afma4(q) );
+  for (int i=0; i < this->njoint; i ++) {
+    q_cur[i] = q[i];
   }
 
-  r_dot.resize(vpRobotAfma4::nbArticulations);
+  // Get the camera pose from the direct kinematics
+  vpAfma4::get_fMc(q_cur, fMc_cur);
 
-  mesure_vit_Afma4  	(frameAfma4, r_dot.data);
+  if ( ! first_time_getvel ) {
 
-  vpRobotAfma4::VD4_mmrad_mrad (r_dot);
+    switch (frame) {
+    case vpRobot::CAMERA_FRAME: {
+      // Compute the displacement of the camera since the previous call
+      cMc = fMc_prev_getvel.inverse() * fMc_cur;
 
+      // Compute the velocity of the camera from this displacement
+      velocity = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
+
+      break ;
+    }
+
+    case vpRobot::ARTICULAR_FRAME: {
+      velocity = (q_cur - q_prev_getvel)
+	/ (time_cur - time_prev_getvel);
+      break ;
+    }
+
+    case vpRobot::REFERENCE_FRAME: {
+      // Compute the displacement of the camera since the previous call
+      cMc = fMc_prev_getvel.inverse() * fMc_cur;
+
+      // Compute the velocity of the camera from this displacement
+      vpColVector v;
+      v = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
+
+      // Express this velocity in the reference frame
+      vpTwistMatrix fVc(fMc_cur);
+      velocity = fVc * v;
+
+      break ;
+    }
+
+    case vpRobot::MIXT_FRAME: {
+      vpERROR_TRACE ("Cannot get a velocity in the mixt frame: "
+		     "functionality not implemented");
+      throw vpRobotException (vpRobotException::wrongStateError,
+			      "Cannot get a displacement in the mixt frame:"
+			      "functionality not implemented");
+
+      break ;
+    }
+    }
+  }
+  else {
+    first_time_getvel = false;
+  }
+
+  // Memorize the camera pose for the next call
+  fMc_prev_getvel = fMc_cur;
+
+  // Memorize the joint position for the next call
+  q_prev_getvel = q_cur;
+
+  // Memorize the time associated to the joint position for the next call
+  time_prev_getvel = time_cur;
+
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot get velocity.");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Cannot get velocity.");
+  }
 }
 
 
 
 
-/* Recupere la vitesse actuelle du robot.
- * Recupere la vitesse actuelle du robot et renvoie le resultat.
- * Le repere de travail dans lequel est exprime le resultat est celui
- * donne par l'argument \a repere
- * INPUT:
- *   - repere: repere de travail dans lequel est exprime le resultat.
- * OUTPUT:
- *   - Position actuelle du robot (mm/s et rad/s).
- */
+/*!
+
+  Get the robot velocities.
+
+  \param frame : Frame in wich velocities are mesured.
+
+  \return Measured velocities. Translations are expressed in m/s
+  and rotations in rad/s.
+
+  \code
+  // Set joint velocities
+  vpColVector q_dot(4);
+  q_dot[0] = M_PI/8; // X axis, in rad/s
+  q_dot[1] = 0.2;    // Y axis, in meter/s
+  q_dot[2] = M_PI/4; // A axis, in rad/s
+  q_dot[3] = M_PI/16; // B axis, in rad/s
+
+  vpRobotAfma4 robot;
+
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+
+  // Moves the joint in velocity
+  robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
+
+  // Initialisation of the velocity measurement
+  robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
+  // q_dot_mes is resized to 4, the number of joint
+
+  vpColVector q_dot_mes; // Measured velocities
+  while (1) {
+     q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
+     vpTime::wait(40); // wait 40 ms
+     // here q_dot_mes is equal to [M_PI/8, 0.2, M_PI/4, M_PI/16]
+  }
+  \endcode
+*/
 vpColVector
 vpRobotAfma4::getVelocity (vpRobot::vpControlFrameType frame)
 {
-  vpColVector r_dot;
-  getVelocity (frame, r_dot);
+  vpColVector velocity;
+  getVelocity (frame, velocity);
 
-  return r_dot;
+  return velocity;
 }
 
+/*!
 
-void
-vpRobotAfma4::VD4_mmrad_mrad (vpColVector & inoutput)
-{
-  inoutput [0] = inoutput [0];
-  inoutput [1] = inoutput [1] / 1000.0;
-  inoutput [2] = inoutput [2];
-  inoutput [3] = inoutput [3] ;
+Read joint positions in a specific Afma4 position file.
 
-  return ;
-}
+This position file has to start with a header. The six joint positions
+are given after the "R:" keyword. The first 3 values correspond to the
+joint translations X,Y,Z expressed in meters. The 3 last values
+correspond to the joint rotations A,B,C expressed in degres to be more
+representative for the user. Theses values are then converted in
+radians in \e q. The character "#" starting a line indicates a
+comment.
 
-/* --- COPIES --------------------------------------------------------------- */
+A typical content of such a file is given below:
 
-void
-vpRobotAfma4::VD4_mdg_mrad (const vpColVector & input, double * output)
-{
-  output [0] = input [0] / 180.0 * M_PI;
-  output [1] = input [1];
-  output [2] = input [2] / 180.0 * M_PI;
-  output [3] = input [3] / 180.0 * M_PI;
+\code
+#AFMA4 - Position - Version 2.01
+# file: "myposition.pos "
+#
+# R: X Y A B
+# Joint position: X : rotation of the turret in degrees
+#                 Y : vertical translation in meters
+#                 A : pan rotation of the camera in degrees
+#                 B : tilt rotation of the camera in degrees
+#
 
-  return ;
-}
+R: 45 0.3 -20 30
+\endcode
 
+\param filename : Name of the position file to read.
 
-/*
- * PROCEDURE: 	lit_pos
- *
- * ENTREE:
- * pt_fich	Pointeur de fichier a lire.
- *
- * SORTIE:
- * position	Positions sauvegardees du robot et de la camera.
- *
- * RESUME:
- * La procedure recupere les positions sauvegardees du robot dans le fichier
- * ayant pour pointeur de fichier "pt_fich".  La procedure retourne "OK" en cas
- * de succes, et "NO_AFMA4_POSITION" en cas d'echec.
+\param q : Joint positions: X,Y,A,B. Translations Y  is
+expressed in meters, while joint rotations X,A,B in radians.
 
- \return 0 if succes, 1 if an error occurs.
+\return true if the positions were successfully readen in the file. false, if
+an error occurs.
+
+The code below shows how to read a position from a file and move the robot to this position.
+\code
+vpRobotAfma4 robot;
+vpColVector q;        // Joint position
+robot.readPosFile("myposition.pos", q); // Set the joint position from the file
+robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+
+robot.setPositioningVelocity(5); // Positioning velocity set to 5%
+robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
+\endcode
+
+\sa savePosFile()
 */
 
-int
-vpRobotAfma4::readPosFile(char *name, vpColVector &v)
-  //FILE *pt_fich, st_position_Afma4 *position)
+bool
+vpRobotAfma4::readPosFile(const char *filename, vpColVector &q)
 {
 
-  FILE * pt_fich ;
-  pt_fich = fopen(name,"r") ;
-
-  if (pt_fich == NULL) {
-    vpERROR_TRACE ("Can not open file %s", name);
-    return 1;
-  }
+  FILE * fd ;
+  fd = fopen(filename, "r") ;
+  if (fd == NULL)
+    return false;
 
   char line[FILENAME_MAX];
+  char dummy[FILENAME_MAX];
   char head[] = "R:";
-  int  sortie = FALSE;
+  bool sortie = false;
 
   do {
     // Saut des lignes commencant par #
-    if (fgets (line, 100, pt_fich) != NULL) {
+    if (fgets (line, FILENAME_MAX, fd) != NULL) {
       if ( strncmp (line, "#", 1) != 0) {
 	// La ligne n'est pas un commentaire
-	if ( fscanf (pt_fich, "%s", line) != EOF)   {
-	  if ( strcmp (line, head) == 0)
-	    sortie = TRUE; 	// Position robot trouvee.
+	if ( strncmp (line, head, sizeof(head)-1) == 0) {
+	  sortie = true; 	// Position robot trouvee.
 	}
-	else
-	  return (1); // fin fichier sans position robot.
+// 	else
+// 	  return (false); // fin fichier sans position robot.
       }
     }
     else {
-      return (1);		/* fin fichier 	*/
+      return (false);		/* fin fichier 	*/
     }
 
   }
-  while ( sortie != TRUE );
+  while ( sortie != true );
 
-  double q1,q2,q3,q4;
   // Lecture des positions
-  fscanf(pt_fich, "%lf %lf %lf %lf",
-	 &q1, &q2, &q3, &q4);
-  v.resize(nbArticulations) ;
+  q.resize(4);
+  sscanf(line, "%s %lf %lf %lf %lf",
+	 dummy,
+	 &q[0], &q[1], &q[2], &q[3]);
 
-  v[0] = vpMath::rad(q1) ; // Rot tourelle
-  v[1] = q2/1000.0 ;
-  v[2] = vpMath::rad(q3) ;
-  v[3] = vpMath::rad(q4) ;
+  // converts rotations from degrees into radians
+  q[0] = vpMath::rad(q[0]);
+  q[2] = vpMath::rad(q[2]);
+  q[3] = vpMath::rad(q[3]);
 
-  fclose(pt_fich) ;
-  return (0);
+
+  fclose(fd) ;
+  return (true);
+}
+
+/*!
+
+  Save joint (articular) positions in a specific Afma4 position file.
+
+  This position file starts with a header on the first line. After
+  convertion of the rotations in degrees, the joint position \e q is
+  written on a line starting with the keyword "R: ". See readPosFile()
+  documentation for an example of such a file.
+
+  \param filename : Name of the position file to create.
+
+  \param q : Joint positions: X,Y,A,B. Translations Y  is
+  expressed in meters, while joint rotations X,A,B in radians.
+
+  \warning The joint rotations X,A,B written in the file are converted
+  in degrees to be more representative for the user.
+
+  \return true if the positions were successfully saved in the file. false, if
+  an error occurs.
+
+  \sa readPosFile()
+*/
+
+bool
+vpRobotAfma4::savePosFile(const char *filename, const vpColVector &q)
+{
+
+  FILE * fd ;
+  fd = fopen(filename, "w") ;
+  if (fd == NULL)
+    return false;
+
+  fprintf(fd, "\
+#AFMA4 - Position - Version 2.01\n\
+#\n\
+# R: X Y Z A B C\n\
+# Joint position: X, Y, Z: translations in meters\n\
+#                 A, B, C: rotations in degrees\n\
+#\n\
+#\n\n");
+
+  // Save positions in mm and deg
+  fprintf(fd, "R: %lf %lf %lf %lf\n",
+	  vpMath::deg(q[0]),
+	  q[1],
+	  vpMath::deg(q[2]),
+	  vpMath::deg(q[3]));
+
+  fclose(fd) ;
+  return (true);
+}
+
+/*!
+
+  Moves the robot to the joint position specified in the filename. The
+  positioning velocity is set to 10% of the robot maximal velocity.
+
+  \param filename: File containing a joint position.
+
+  \sa readPosFile
+
+*/
+void
+vpRobotAfma4::move(const char *filename)
+{
+  vpColVector q;
+
+  this->readPosFile(filename, q)  ;
+  this->setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+  this->setPositioningVelocity(10);
+  this->setPosition ( vpRobot::ARTICULAR_FRAME,  q) ;
 }
 
 /*!
@@ -999,113 +1605,115 @@ vpRobotAfma4::readPosFile(char *name, vpColVector &v)
   Get the robot displacement expressed in the camera frame since the last call
   of this method.
 
-  \param v The measured displacement in camera frame. The dimension of v is 6
-  (tx, ty, ty, rx, ry, rz). Translations are expressed in meters, rotations in
-  radians.
+  \param displacement : The measured displacement in camera frame. The
+  dimension of \e displacement is 6 (tx, ty, ty, rx, ry,
+  rz). Translations are expressed in meters, rotations in radians with
+  the Euler Rxyz representation.
 
   \sa getDisplacement(), getArticularDisplacement()
 
 */
 void
-vpRobotAfma4::getCameraDisplacement(vpColVector &v)
+vpRobotAfma4::getCameraDisplacement(vpColVector &displacement)
 {
-  getDisplacement(vpRobot::CAMERA_FRAME, v);
-
+  getDisplacement(vpRobot::CAMERA_FRAME, displacement);
 }
 /*!
 
   Get the robot articular displacement since the last call of this method.
 
-  \param qdot The measured articular displacement. The dimension of qdot is 4
-  (the number of axis of the robot) with respectively qdot[1] (turret
-  rotation), qdot[2] (vertical translation), qdot[3] (pan), qdot[4]
-  (tilt). Translations are expressed in meters, rotations in radians.
+  \param displacement : The measured articular displacement. The
+  dimension of \e displacement is 6 (the number of axis of the
+  robot). Translations are expressed in meters, rotations in radians.
 
   \sa getDisplacement(), getCameraDisplacement()
 
 */
-void vpRobotAfma4::getArticularDisplacement(vpColVector  &qdot)
+void
+vpRobotAfma4::getArticularDisplacement(vpColVector  &displacement)
 {
-  getDisplacement(vpRobot::ARTICULAR_FRAME, qdot);
+  getDisplacement(vpRobot::ARTICULAR_FRAME, displacement);
 }
 
 /*!
 
   Get the robot displacement since the last call of this method.
 
-  \param frame The frame in which the measured displacement is expressed.
+  \warning This functionnality is not implemented for the moment in the
+  cartesian space. It is only available in the joint space
+  (vpRobot::ARTICULAR_FRAME).
 
-  \param q The displacement.
-  . In articular, the dimension of q is 4 (the number of axis of the robot)
-  with respectively q[1] (turret rotation), q[2] (vertical translation), q[3]
-  (pan), q[4] (tilt).
-  . In camera or reference frame, the dimension of q is 6 (tx, ty, ty, rx, ry,
-  rz). Translations are expressed in meters, rotations in radians.
+  \param frame : The frame in which the measured displacement is expressed.
+
+  \param displacement : The measured displacement since the last call of this
+  method. The dimension of \e displacement is always 4, the number of
+  joints. Translations are expressed in meters, rotations in radians.
+
+  In camera or reference frame, rotations are expressed with the
+  Euler Rxyz representation.
 
   \sa getArticularDisplacement(), getCameraDisplacement()
 
 */
 void
 vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame,
-			      vpColVector &q)
+			      vpColVector &displacement)
 {
-  double td[6];
-  switch (frame)
-  {
-  case vpRobot::CAMERA_FRAME:
-    {
-      q.resize (6);
-      mesure_dpl_Afma4(REPCAM,td);
-      q[0]=td[0]/1000.0; // values are returned in mm
-      q[1]=td[1]/1000.0;
-      q[2]=td[2]/1000.0;
-      q[3]=td[3];
-      q[4]=td[4];
-      q[5]=td[5];
-      break ;
-    }
-  case vpRobot::ARTICULAR_FRAME:
-    {
-      mesure_dpl_Afma4(REPART,td);
-      q.resize (nbArticulations);
-      q[0]=td[0];  // turret rotation
-      q[1]=td[1]/1000.0;// vertical translation returned in mm
-      q[2]=td[2]; // pan
-      q[3]=td[3]; // tilt
-      break ;
-    }
-  case vpRobot::REFERENCE_FRAME:
-    {
-      mesure_dpl_Afma4(REPFIX,td);
-      q.resize (6);
-      q[0]=td[0]/1000.0; // values are returned in mm
-      q[1]=td[1]/1000.0;
-      q[2]=td[2]/1000.0;
-      q[3]=td[3];
-      q[4]=td[4];
-      q[5]=td[5];
-      break ;
-    }
-  case vpRobot::MIXT_FRAME:
-    {
-      vpERROR_TRACE ("Cannot get a displacement in the mixt frame: "
-		   "functionality not implemented");
-      throw vpRobotException (vpRobotException::wrongStateError,
-			      "Cannot get a displacement in the reference frame:"
-			      "functionality not implemented");
+  displacement.resize (6);
+  displacement = 0;
 
+  double q[6];
+  vpColVector q_cur(6);
+
+  InitTry;
+
+  // Get the current joint position
+  Try( PrimitiveACQ_POS_Afma4(q) );
+  for (int i=0; i < njoint; i ++) {
+    q_cur[i] = q[i];
+  }
+
+  if ( ! first_time_getdis ) {
+    switch (frame) {
+    case vpRobot::CAMERA_FRAME: {
+      std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
+      return;
       break ;
     }
+
+    case vpRobot::ARTICULAR_FRAME: {
+      displacement = q_cur - q_prev_getdis;
+      break ;
+    }
+
+    case vpRobot::REFERENCE_FRAME: {
+      std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
+      return;
+      break ;
+    }
+
+    case vpRobot::MIXT_FRAME: {
+      std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
+      return;
+      break ;
+    }
+    }
+  }
+  else {
+    first_time_getdis = false;
+  }
+
+  // Memorize the joint position for the next call
+  q_prev_getdis = q_cur;
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot get velocity.");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Cannot get velocity.");
   }
 }
 
-void
-vpRobotAfma4::move(char *name)
-{
-  vpColVector v ;
-  readPosFile(name, v)  ;
-  setPosition ( vpRobot::ARTICULAR_FRAME,  v) ;
-}
 
 /*
  * Local variables:

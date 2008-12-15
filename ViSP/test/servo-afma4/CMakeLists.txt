@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.3 2007-01-25 12:52:07 asaunier Exp $
+# $Id: CMakeLists.txt,v 1.4 2008-12-15 17:19:22 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -41,6 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
+  testAfma4.cpp
   testRobotAfma4.cpp
 )
 

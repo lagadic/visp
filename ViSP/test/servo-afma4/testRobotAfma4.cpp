@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotAfma4.cpp,v 1.10 2008-01-31 15:01:16 asaunier Exp $
+ * $Id: testRobotAfma4.cpp,v 1.11 2008-12-15 17:19:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -48,37 +48,32 @@
 #include <visp/vpConfig.h>
 #include <visp/vpRobotAfma4.h>
 #include <visp/vpDebug.h>
+#include <visp/vpCameraParameters.h>
 
 #ifdef VISP_HAVE_AFMA4
 
-#ifdef VISP_HAVE_GSL
-int gsl_warnings_off;
-#endif
-
 int main()
 {
-  try
-  {
-    std::cout << "a test..." << std::endl;
+  try {
 
-    vpAfma4 afma4;
-    vpCTRACE << afma4;
+    std::cout << "a test for vpRobotAfma4 class..." << std::endl;
 
-    vpRobotAfma4 robotAfma4;
-    vpCTRACE << robotAfma4;
+    vpRobotAfma4 afma4;
+
+    std::cout << afma4 << std::endl;
+
     return 0;
   }
-  catch (...)
-  {
-    vpERROR_TRACE(" Test failed") ;
+  catch(...) {
+    vpERROR_TRACE(" Test failed");
     return 0;
   }
+
 }
-
 #else
 int main()
 {
-  std::cout << "a test..." << std::endl;
+  std::cout << "The real Afma4 robot controller is not available." << std::endl;
   return 0; 
 }
 
