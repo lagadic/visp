@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.h,v 1.25 2008-12-15 17:15:58 fspindle Exp $
+ * $Id: vpRobotAfma6.h,v 1.26 2008-12-15 21:32:57 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -202,12 +202,12 @@ class VISP_EXPORT vpRobotAfma6
   public vpRobot
 {
 
-private: /* Methodes implicites interdites. */
+private: /* Not allowed functions. */
 
   /*!
     Copy contructor not allowed.
    */
-  vpRobotAfma6 (const vpRobotAfma6 & ass);
+  vpRobotAfma6 (const vpRobotAfma6 & robot);
 
 private: /* Attributs prives. */
 
@@ -236,13 +236,6 @@ private: /* Attributs prives. */
   bool first_time_getdis;
 
 
-public: /* Methodes */
-
-  void init (void);
-  void init (vpAfma6::vpAfma6CameraRobotType camera,
-             vpCameraParameters::vpCameraParametersProjType
-	     projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
-
 public:  /* Constantes */
 
   /* Vitesse maximale par default lors du positionnement du robot.
@@ -257,6 +250,10 @@ public:  /* Methode publiques */
   vpRobotAfma6 (void);
   virtual ~vpRobotAfma6 (void);
 
+  void init (void);
+  void init (vpAfma6::vpAfma6CameraRobotType camera,
+             vpCameraParameters::vpCameraParametersProjType
+	     projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   /* --- ETAT ------------------------------------------------------------- */
 
@@ -269,11 +266,11 @@ public:  /* Methode publiques */
 		    const double pos1, const double pos2, const double pos3,
 		    const double pos4, const double pos5, const double pos6) ;
   void setPosition(const char *filename) ;
+  void setPositioningVelocity (const double velocity);
+
   void getPosition (const vpRobot::vpControlFrameType frame,
 		    vpColVector &position);
 
-
-  void   setPositioningVelocity (const double velocity);
   double getPositioningVelocity (void);
 
   /* --- VITESSE ---------------------------------------------------------- */
