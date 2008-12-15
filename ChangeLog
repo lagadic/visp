@@ -21,6 +21,8 @@ ViSP 2.4.x (released ...)
     - vpV4l2Grabber: Get the timestamp associated to the grabbed image.
     - vpRobotAfma6 and vpAfma6: Modifications to be compatible with the new 
       low level Adept controller provided by Cerebellum Automation.
+    - vpRobotAfma4 and vpAfma4: Modifications to be compatible with the new 
+      low level Adept controller provided by Cerebellum Automation.
   - Examples:
     - New examples in example/manual described in ViSP guide under preparation.
     - example/servo-simu/servoSimu3DCamVelocity2.cpp

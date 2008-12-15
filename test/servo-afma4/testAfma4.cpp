@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4Contrib.h,v 1.3 2006-05-30 08:40:44 fspindle Exp $
+ * $Id: testAfma4.cpp,v 1.1 2008-12-15 17:19:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -11,7 +11,7 @@
  * 35042 Rennes Cedex
  * http://www.irisa.fr/lagadic
  *
- * This file is part of the ViSP toolkit.
+ * This file is part of the ViSP toolkit
  *
  * This file may be distributed under the terms of the Q Public License
  * as defined by Trolltech AS of Norway and appearing in the file
@@ -28,28 +28,45 @@
  * not clear to you.
  *
  * Description:
- * Interface for the Irisa's Afma4 robot.
+ * Test for Afma 6 dof robot.
  *
  * Authors:
  * Fabien Spindler
  *
  *****************************************************************************/
 
+/*!
+  \example testAfma4.cpp
+
+  Example of a real robot control, the Afma4 robot (cartesian robot, with 6
+  degrees of freedom).
+*/
+
+#include <iostream>
+
+
 #include <visp/vpConfig.h>
-
-#ifdef VISP_HAVE_AFMA4
-
-#ifndef vpRobotAfma4Contrib_H
-#define vpRobotAfma4Contrib_H
+#include <visp/vpAfma4.h>
+#include <visp/vpDebug.h>
+#include <visp/vpCameraParameters.h>
 
 
-#include "common_Afma4.h"	// Definitions communes Afma4, IA1000...
-#include "bit3_Afma4.h"  // Acces VME a l'aide de Bit3
-#include "uprim_Afma4.h"	// Acces primitives Afma4
-#include "tools_Afma4.h"	// Outils communs Afma4
-#include "robot_Afma4.h"	// Robot Afma4
-#include "servolens_Afma4.h"	// Robot Afma4
+int main()
+{
+  try {
 
+    std::cout << "a test for vpAfma4 class..." << std::endl;
 
-#endif
-#endif
+    vpAfma4 afma4;
+
+    std::cout << afma4 << std::endl;
+
+    return 0;
+  }
+  catch(...) {
+    vpERROR_TRACE(" Test failed");
+    return 0;
+  }
+
+}
+

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: moveAfma4.cpp,v 1.9 2008-06-13 13:37:36 asaunier Exp $
+ * $Id: moveAfma4.cpp,v 1.10 2008-12-15 17:19:22 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,19 +37,20 @@
 /*!
   \file moveAfma4.cpp
 
-  \brief Example of a real robot control, the Afma4 robot (cylindrical robot, with 4
-  degrees of freedom). The robot is controlled first in position, then in
-  velocity.
+  \brief Example of a real robot control, the Afma4 robot (cylindrical
+  robot, with 4 degrees of freedom). The robot is controlled first in
+  position, then in velocity.
 
 */
 /*!
   \example moveAfma4.cpp
 
-  Example of a real robot control, the Afma4 robot (cylindrical robot, with 4
-  degrees of freedom). The robot is controlled first in position, then in
-  velocity.
+  Example of a real robot control, the Afma4 robot (cylindrical robot,
+  with 4 degrees of freedom). The robot is controlled first in
+  position, then in velocity.
 
 */
+#include <stdlib.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
@@ -74,7 +75,7 @@ void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Example of a positionning control followed by a velocity control \n\
-of the Afma6 robot.\n						   \
+of the Afma4 robot.\n						   \
 \n\
 SYNOPSIS\n\
   %s [-m] [-h]\n						      \
@@ -148,8 +149,8 @@ main(int argc, const char ** argv)
 
       vpRobotAfma4 robot ;
 
-      vpColVector qd(4) ;
-      vpColVector q(4) ;
+      vpColVector qd(robot.njoint) ;
+      vpColVector q(robot.njoint) ;
 
       //
       // Position control in articular
@@ -159,15 +160,16 @@ main(int argc, const char ** argv)
       qd[2] = vpMath::rad(20);
       qd[3] = vpMath::rad(-10);
 
-      vpTRACE("Position control: in articular...") ;
-      vpCTRACE << "  position to reach: " << qd.t() << std::endl ;
+      std::cout << "Position control: in articular..." << std::endl;
+      std::cout << "  position to reach: " << qd.t() << std::endl;
       robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
       if (control)
 	robot.setPosition(vpRobot::ARTICULAR_FRAME, qd) ;
       sleep(1) ;
 
+ 
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
-      vpCTRACE << "  measured position: " << q.t() ;
+      std::cout << "  measured position: " << q.t() ;
       sleep(1) ;
 
       robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
@@ -175,36 +177,38 @@ main(int argc, const char ** argv)
       //
       // Velocity control in articular
       //
-      vpTRACE("Velocity control: in articular...") ;
-      vpTRACE("Velocity control: rotation arround vertical axis...") ;
+      std::cout << "Velocity control: in articular..." << std::endl;
+
       q = 0 ;
       q[0] = vpMath::rad(2) ; // rotation arround vertical axis
+      std::cout << "  rotation arround vertical axis: " << q[0] << std::endl; 
       if (control)
 	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-
-      vpTRACE("Velocity control: vertical translation...") ;
+      sleep(5) ;
+     
       q = 0 ;
       q[1] = 0.2 ; // Vertical translation
+      std::cout << "  vertical translation: " << q[1] << std::endl;
       if (control)
 	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
       sleep(5) ;
 
-      vpTRACE("Velocity control: vertical translation...") ;
       q = 0 ;
       q[1] = -0.2 ; // Vertical translation
+      std::cout << "  vertical translation: " << q[1] << std::endl;
       if (control)
 	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
       sleep(5) ;
-      vpTRACE("Velocity control: pan rotation...") ;
       q = 0 ;
       q[2] = vpMath::rad(3) ; // pan
+      std::cout << "  pan rotation: " << q[2] << std::endl;
       if (control)
 	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
       sleep(5) ;
 
-      vpTRACE("Velocity control: tilt rotation...") ;
       q = 0 ;
       q[3] = vpMath::rad(2) ; // tilt
+      std::cout << "  tilt rotation: " << q[3] << std::endl;
       if (control)
 	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
       sleep(5) ;
@@ -213,69 +217,29 @@ main(int argc, const char ** argv)
       // Velocity control in camera frame
       //
       robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-      vpTRACE("Velocity control: in camera frame...") ;
-      vpTRACE("Velocity control: rx rotation...") ;
+      std::cout << "Velocity control: in camera frame..." << std::endl;
       q.resize(2) ;
       q = 0.0;
       q[0] = vpMath::rad(2) ; // rotation arround vertical axis
+      std::cout << "  rx rotation: " << q[0] << std::endl;
       if (control)
 	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
       sleep(5) ;
 
-      vpTRACE("Velocity control: ry rotation...") ;
       q.resize(2) ;
       q = 0.0;
       q[1] = vpMath::rad(2) ; // rotation arround vertical axis
+      std::cout << "  ry rotation: " << q[1] << std::endl;
       if (control)
 	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
       sleep(5) ;
 
-      //
-      // Camera control : zoom / focus / iris
-      //
-
-      int zoom, focus, iris;
-
-      vpTRACE("Camera control...") ;
-      vpTRACE("Actual camera settings...") ;
-      zoom = robot.getZoom() ;
-      iris = robot.getIris() ;
-      focus = robot.getFocus() ;
-      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << std::endl;
-
-      vpTRACE("Set camera settings...") ;
-      zoom = 3000;
-      focus = 400;
-      iris = 900;
-      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << std::endl;
-      robot.setZoom(zoom);
-      robot.setIris(iris);
-      robot.setFocus(focus);
-
-      vpTRACE("Actual camera settings...") ;
-      zoom = robot.getZoom() ;
-      iris = robot.getIris() ;
-      focus = robot.getFocus() ;
-      vpCTRACE << "  Z: " << zoom << " F: " << focus << " I: " << iris << std::endl;
-
-      vpTRACE("Set camera auto iris on...") ;
-      robot.setAutoIris(true);
-      sleep(2);
-      iris = robot.getIris() ;
-      vpCTRACE << "Actual iris: " << iris << std::endl;
-
-      vpTRACE("Set camera auto iris off...") ;
-      robot.setAutoIris(false);
-      robot.setIris(400);
-      iris = robot.getIris() ;
-      vpCTRACE << "Actual iris: " << iris << std::endl;
+      std::cout << "The end" << std::endl;
     }
-  catch (...)
-    {
-      vpERROR_TRACE(" Test failed") ;
-      return 0;
-    }
-
+  catch (...) {
+    vpERROR_TRACE(" Test failed") ;
+  }
+  return 0;
 }
 #else
 int
