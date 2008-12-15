@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.h,v 1.17 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpImageTools.h,v 1.18 2008-12-15 15:59:02 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -101,6 +101,13 @@ public:
   static void undistort(const vpImage<Type> &I,
                         const vpCameraParameters &cam,
                         vpImage<Type> &newI);
+
+  template<class Type>
+  static void flip(const vpImage<Type> &I,
+                        vpImage<Type> &newI);
+
+  template<class Type>
+  static void flip(vpImage<Type> &I);
 } ;
 
 /*!
@@ -463,6 +470,9 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   }
 #endif // VISP_HAVE_PTHREAD
 
+
+
+
 #if 0
   // non optimized version
   int width = I.getWidth();
@@ -494,7 +504,59 @@ void vpImageTools::undistort(const vpImage<Type> &I,
 #endif
 }
 
+/*!
+  Flip vertically the input image and give the result in the output image.
 
+  \param I : Input image to flip.
+  \param newI : Output image which is the flipped input image.
+*/
+
+template<class Type>
+void vpImageTools::flip(const vpImage<Type> &I,
+                        vpImage<Type> &newI)
+{
+    unsigned int height = 0, width = 0;
+    int i = 0;
+
+    height = I.getHeight();
+    width = I.getWidth();
+    newI.resize(height, width);
+
+    for ( i = 0; i < height; i++)
+    {
+      memcpy(newI.bitmap+i*width, I.bitmap+(height-1-i)*width,
+  	            width);
+    }
+}
+
+
+/*!
+  Flip vertically the input image.
+
+  \param I : Input image which is flipped.
+*/
+template<class Type>
+void vpImageTools::flip(vpImage<Type> &I)
+{
+    unsigned int height = 0, width = 0;
+    int i = 0;
+    vpImage<Type> Ibuf;
+
+    height = I.getHeight();
+    width = I.getWidth();
+    Ibuf.resize(1, width);
+
+    for ( i = 0; i < height/2; i++)
+    {
+      memcpy(Ibuf.bitmap, I.bitmap+i*width,
+  	            width);
+
+      memcpy(I.bitmap+i*width, I.bitmap+(height-1-i)*width,
+  	            width);
+      memcpy(I.bitmap+(height-1-i)*width, Ibuf.bitmap,
+  	            width);
+    }
+}
 
 #endif
 
