@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.24 2008-09-26 15:20:54 fspindle Exp $
+ * $Id: vpMatrix.h,v 1.25 2008-12-16 14:35:49 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -328,6 +328,10 @@ public:
   static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
 
   static double det33(const vpMatrix &P) ;
+
+  static double detNN(const vpMatrix &M);
+
+  static int Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp);
 
 
 

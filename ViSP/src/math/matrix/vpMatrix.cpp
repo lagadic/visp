@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.45 2008-11-20 12:56:12 rmebarki Exp $
+ * $Id: vpMatrix.cpp,v 1.46 2008-12-16 14:35:49 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -72,6 +72,11 @@
 #include <visp/vpDebug.h>
 
 #define DEBUG_LEVEL1 0
+#define DEBUG_LEVEL2 0
+
+
+//Prototypes of specific functions
+vpMatrix subblock(const vpMatrix &, int, int);
 
 /*!
   \brief initialization of the object matrix.
@@ -2072,6 +2077,274 @@ vpColVector vpMatrix::eigenValuesByLU()
 
   }
   return eigenVector ;
+}
+
+
+/*!
+  Compute the determinant of a square matrix.
+
+  \param M : the matrix used to compute determinant.
+  \return determinant of the matrix.
+*/
+double vpMatrix::detNN(const vpMatrix &M)
+{
+ if ((M.getCols() != M.getRows())) // no determinant for nonsquare matrix
+   {
+   vpTRACE("matrix is not square ") ;
+     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                   "\n\t\tmatrix is not square"
+                   )) ;
+   }
+
+ else if (M.getCols() == 3 ) //handle 3x3 matrix ....
+   {
+   double detint ;
+   detint =0.0;
+   detint =          M[0][0]*M[1][1]*M[2][2] ;
+   detint = detint + M[1][0]*M[2][1]*M[0][2] ;
+   detint = detint + M[2][0]*M[0][1]*M[1][2] ;
+   detint = detint - M[0][0]*M[2][1]*M[1][2] ;
+   detint = detint - M[1][0]*M[0][1]*M[2][2] ;
+   detint = detint - M[2][0]*M[1][1]*M[0][2] ;
+   return(detint);
+   }
+
+ else if (M.getCols() > 3 )// handle n x n matrix....n>3
+   {
+   double detint ;
+   detint =0.0;
+   // we will use the first row to compute the determinent of the matrix
+   for ( int i = 0; i < M.getCols(); i++)
+       {
+       detint = detint + pow(-1.0,i) * M[0][i] * detNN( subblock( M,0,i) );
+       }
+       return(detint);
+   }
+
+ else if (M.getCols() == 2 )// if in the begining the matrix was in dimension 2x2
+   return( M[0][0]*M[1][1]-M[1][0]*M[0][1]);
+
+ else
+   return( M[0][0]);
+}
+
+
+
+/*!
+  Function to compute the null space (the kernel) of the interaction matrix L which is not full rank.
+  The null space ( the kernel ) of a matrix L is defined as Null(L) = Ker(M) ={KerL : L*KerL =0}.
+
+  \param L : The matrix for which the null space (kernel) will be computed.
+  \param KerL : The matrix to contain the null space (kernel) of L (L*KerL.t()=0) 
+  \param seuilvp : Specify the used threshold in the svd(...) function (a function to compute the singular value decomposition)
+
+  \return the rank of the matrix L.
+*/
+int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
+{
+
+ if (DEBUG_LEVEL1)
+   std::cout << "begin Kernel" << std::endl ;
+ int i, j ;
+ int ncaptor = L.getRows() ;
+ int ddl = L.getCols() ;
+ vpMatrix C ;
+ if (ncaptor == 0)
+   std::cout << "Erreur Matrice  non initialise" << std::endl ;
+
+ if (DEBUG_LEVEL2)
+ {
+   std::cout << "Interaction matrix L" << std::endl ;
+   std::cout << L   ;
+   std::cout << "signaux capteurs : " << ncaptor << std::endl ;
+ }
+
+ C.resize(ddl,ncaptor) ;
+ int min ;
+
+
+
+ if (ncaptor > ddl) min = ddl ; else min = ncaptor ;
+
+ // ! the SVDcmp function inthe matrix lib is destructive
+
+ vpMatrix a1 ;
+ vpMatrix a2 ;
+
+ vpColVector sv(ddl) ;   // singular values
+ vpMatrix v(ddl,ddl) ;
+
+ if (ncaptor < ddl)
+ {
+   a1.resize(ddl,ddl) ;
+ }
+ else
+ {
+   a1.resize(ncaptor,ddl) ;
+ }
+
+ a2.resize(ncaptor,ddl) ;
+
+ for (i=0 ; i < ncaptor ; i++)
+   for (j=0 ; j < ddl ; j++)
+   {
+     a1[i][j] = L[i][j] ;
+     a2[i][j] = L[i][j] ;
+   }
+
+
+ if (ncaptor < ddl)
+ {
+   for (i=ncaptor ; i < ddl ; i++)
+     for (j=0 ; j < ddl ; j++)
+     {
+   a1[i][j] = 0 ;
+     }
+   a1.svd(sv,v);
+ }
+ else
+ {
+   a1.svd(sv,v);
+ }
+
+ // compute the highest singular value and the rank of h
+
+ double maxsv = 0 ;
+ for (i=0 ; i < ddl ; i++)
+   if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+
+ if (DEBUG_LEVEL2)
+ {
+   std::cout << "Singular Value : (" ;
+   for (i=0 ; i < ddl ; i++) std::cout << sv[i] << " , " ;
+   std::cout << ")" << std::endl ;
+ }
+
+ int rank = 0 ;
+ for (i=0 ; i < ddl ; i++)
+   if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
+
+ if (DEBUG_LEVEL2)
+ /*------------------------------------------------------- */
+
+ for (i = 0 ; i < ddl ; i++)
+ {
+   for (j = 0 ; j < ncaptor ; j++)
+   {
+     int k=0 ;
+     C[i][j] = 0.0;
+
+     // modif le 25 janvier 1999 0.001 <-- maxsv*1.e-ndof
+     // sinon on peut observer une perte de range de la matrice
+     // ( d'ou venait ce 0.001 ??? )
+     for (k=0 ; k < ddl ; k++)  if (fabs(sv[k]) > maxsv*seuilvp)
+     {
+   C[i][j] += v[i][k]*a1[j][k]/sv[k];
+     }
+   }
+ }
+
+ // cout << v << endl ;
+ if (DEBUG_LEVEL2)
+ {
+   std::cout << C << std::endl ;
+ }
+
+ /*------------------------------------------------------- */
+ if (rank != ddl)
+ {
+   int k ;
+   // Compute the kernel if wanted
+   if (min < ddl)
+   {
+     vpMatrix ch(ddl,ddl) ;
+     ch = C*a2 ;
+     ch.svd(sv,v) ;
+
+   }
+   //   if (noyau == 1)
+   {
+     double maxsv = 0 ;
+     for (i=0 ; i < ddl ; i++)
+   if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+     int rank = 0 ;
+     for (i=0 ; i < ddl ; i++)
+   if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
+     vpMatrix cons(ddl,ddl) ;
+     cons =0 ;
+     for (j = 0 ; j < ddl ; j++)
+     {
+   for (i = 0 ; i < ddl ; i++)
+     // Change Nicolas Mansard 23/4/04
+     // was         if (fabs(sv[i]) < maxsv*seuilvp)
+     if (fabs(sv[i]) <= maxsv*seuilvp)
+     {
+       k = i;
+       cons[i][j] = v[j][i];
+     }
+     }
+
+     vpMatrix Ker(ddl-rank,ddl) ;
+     int k =0 ;
+     for (j = 0 ; j < ddl ; j++)
+     {
+   //    cout << cons.Row(j+1) << " = " << cons.Row(j+1).SumSquare() << endl ;
+
+   if (cons.row(j+1).sumSquare() !=0)
+   {
+     for (int i=0 ; i < cons.getCols() ; i++)
+       Ker[k][i] = cons[j][i] ;
+     //  Ker.Row(k+1) = cons.Row(j+1) ;
+     k++;
+   }
+     }
+     KerL = Ker ;
+
+   }
+ }
+ if (DEBUG_LEVEL1) std::cout << "end Kernel" << std::endl ;
+ return rank ;
+}
+
+
+/**************************************************************************************************************/
+/**************************************************************************************************************/
+
+
+//Specific functions
+
+/*
+   input:: matrix M(nCols,nRows), nCols > 3, nRows > 3 , nCols == nRows.
+
+   output:: the complement matrix of the element (rowNo,colNo).
+   This is the matrix obtained from M after elimenating the row rowNo and column colNo 
+
+   example:
+       1 2 3
+   M = 4 5 6
+       7 8 9
+				     1 3
+   subblock(M, 1, 1) give the matrix 7 9
+*/
+vpMatrix subblock(const vpMatrix &M, int col, int row)
+{
+vpMatrix M_comp(M.getRows()-1,M.getCols()-1);
+
+for ( int i = 0 ; i < col ; i++)
+    {
+    for ( int j = 0 ; j < row ; j++)
+        M_comp[i][j]=M[i][j];
+     for ( int j = row+1 ; j < M.getRows() ; j++)
+         M_comp[i][j-1]=M[i][j];
+    }
+for ( int i = col+1 ; i < M.getCols(); i++)
+    {
+    for ( int j = 0 ; j < row ; j++)
+        M_comp[i-1][j]=M[i][j];
+     for ( int j = row+1 ; j < M.getRows() ; j++)
+         M_comp[i-1][j-1]=M[i][j];
+    }
+   return M_comp;
 }
 
 
