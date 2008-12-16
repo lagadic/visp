@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOpenCV.cpp,v 1.3 2008-11-20 09:00:30 nmelchio Exp $
+ * $Id: grabOpenCV.cpp,v 1.4 2008-12-16 17:01:54 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,7 +57,7 @@
 #include <visp/vpTime.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"dhn:o:"
+#define GETOPTARGS	"dhn:o:D:"
 
 /*!
 
@@ -69,7 +69,7 @@
   \param opath : Image filename when saving.
 
 */
-void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath)
+void usage(const char *name, const char *badparam, unsigned int &nframes, std::string &opath)
 {
   fprintf(stdout, "\n\
 Acquire and display images using OpenCV library.\n\
@@ -81,6 +81,10 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
+\n\
+  -D [%%s] \n\
+     Type of device to detect.                          1394\n\
+     It can be ANY, MIL, USB, 1394. \n\
 \n\
   -n [%%u]                                               %u\n\
      Number of frames to acquire.               \n\
@@ -110,12 +114,13 @@ OPTIONS:                                               Default\n\
   \param nframes : Number of frames to acquire.
   \param save : Image saving activation.
   \param opath : Image filename when saving.
+  \param deviceType : Type of device to detect.
 
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, const char **argv, bool &display,
-		unsigned &nframes, bool &save, std::string &opath)
+		unsigned &nframes, bool &save, std::string &opath, int &deviceType)
 {
   const char *optarg;
   int	c;
@@ -123,6 +128,14 @@ bool getOptions(int argc, const char **argv, bool &display,
 
     switch (c) {
     case 'd': display = false; break;
+    case 'D':
+	if (strcmp( optarg ,"ANY") == 0 ) {deviceType = 0;}
+	else if ( strcmp( optarg ,"MIL") == 0) {deviceType = 100;}
+	else if ( strcmp( optarg ,"USB") == 0) {deviceType = 200;}
+	else if ( strcmp( optarg ,"1394") == 0) {deviceType = 300;}
+	else {std::cout << "Unknown type of device" << std::endl;
+	      deviceType = 0;}
+	break;
     case 'n':
       nframes = atoi(optarg); break;
     case 'o':
@@ -161,6 +174,7 @@ main(int argc, const char ** argv)
   bool opt_display = true;
   unsigned nframes = 50;
   bool save = false;
+  int deviceType = CV_CAP_DC1394;
 
   // Declare an image. It size is not defined yet. It will be defined when the
   // image will acquired the first time.
@@ -188,7 +202,7 @@ main(int argc, const char ** argv)
 #endif
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
+  if (getOptions(argc, argv, opt_display, nframes, save, opath, deviceType) == false) {
     exit (-1);
   }
   // Create the grabber
@@ -200,6 +214,10 @@ main(int argc, const char ** argv)
       grabber.close();
       return true;
     }
+
+	// Set the type of device to detect. Here for example we expect to find a firewire camera.
+	grabber.setDeviceType(deviceType);
+	 
     // Initialize the grabber
     grabber.open(I);
 
