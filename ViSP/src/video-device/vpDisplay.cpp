@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplay.cpp,v 1.35 2008-12-09 13:25:18 fspindle Exp $
+ * $Id: vpDisplay.cpp,v 1.36 2008-12-17 10:51:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -153,9 +153,17 @@ vpDisplay::setTitle ( const vpImage<unsigned char> &I,
 }
 
 /*!
-  Set the font of a text added to the image.
+  Set the font of a text printed in the display overlay. To print a
+  text you may use displayCharString().
+
   \param I : Image associated to the display window.
-  \param fontname : Font name.
+  \param fontname : The expected font name.
+
+  \note Under UNIX, the available fonts are given by
+  the "xlsfonts" binary. To choose a font you can also use the
+  "xfontsel" binary.
+
+  \sa displayCharString()
 */
 void
 vpDisplay::setFont ( const vpImage<unsigned char> &I, 
@@ -749,8 +757,19 @@ vpDisplay::displayRectangle_uv(const vpImage<vpRGBa> &I,
 	}
 }
 
-/*! display a string at coordinates (i,j) to (i2,j2) in the display
-  window
+/*! 
+
+  Display a string at coordinates (i,j) in the display
+  window overlay.
+
+  To select the font used to print this string, use setFont().
+
+  \param I : Image associated to the display.
+  \param i, j : Upper left location (row, column) of the string in the display.
+  \param s : String to print in overlay.
+  \param c : Color of the text
+
+  \sa setFont()
 */
 void
 vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
@@ -953,9 +972,17 @@ vpDisplay::setTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
 }
 
 /*!
-  Set the font of a text added to the image.
+  Set the font of a text printed in the display overlay. To print a
+  text you may use displayCharString().
+
   \param I : Image associated to the display window.
-  \param fontname : Font name.
+  \param fontname : The expected font name.
+
+  \note Under UNIX, the available fonts are given by
+  the "xlsfonts" binary. To choose a font you can also use the
+  "xfontsel" binary.
+
+  \sa displayCharString()
 */
 void
 vpDisplay::setFont ( const vpImage<vpRGBa> &I, const char *fontname )
@@ -1186,8 +1213,19 @@ vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
   }
 }
 
-/*! display a string at coordinates (i,j) to (i2,j2) in the display
-  window
+/*!
+
+  Display a string at coordinates (i,j) in the display
+  window overlay.
+
+  To select the font used to print this string, use setFont().
+
+  \param I : Image associated to the display.
+  \param i, j : Upper left location (row, column) of the string in the display.
+  \param s : String to print in overlay.
+  \param c : Color of the text
+
+  \sa setFont()
 */
 void
 vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
@@ -1534,8 +1572,20 @@ vpDisplay::displayRectangle_uv ( const vpImage<unsigned char> &I,
     throw ;
   }
 }
-/*! display a string at coordinates (u,v) in the display
-  window
+/*!
+
+  Display a string at coordinates (i,j) in the display
+  window overlay.
+
+  To select the font used to print this string, use setFont().
+
+  \param I : Image associated to the display.
+  \param u, v : Upper left location (column, row) of the string in the display.
+  \param s : String to print in overlay.
+  \param c : Color of the text
+
+  \sa setFont()
+
 */
 void
 vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
@@ -1781,8 +1831,20 @@ vpDisplay::displayArrow_uv ( const vpImage<vpRGBa> &I,
   }
 }
 
-/*! display a string at coordinates (u,v) to (i2,j2) in the display
-  window
+/*!
+
+  Display a string at coordinates (i,j) in the display
+  window overlay.
+
+  To select the font used to print this string, use setFont().
+
+  \param I : Image associated to the display.
+  \param u, v : Upper left location (column, row) of the string in the display.
+  \param s : String to print in overlay.
+  \param c : Color of the text
+
+  \sa setFont()
+
 */
 void
 vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
