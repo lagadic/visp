@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServolens.h,v 1.2 2008-12-17 16:03:33 fspindle Exp $
+ * $Id: vpServolens.h,v 1.3 2008-12-17 16:24:38 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -60,6 +60,28 @@
 
   \brief Interface for the Servolens lens attached to the camera fixed on the 
   Afma4 robot.
+
+  The code below shows how to manipulate this class to get and modify
+  the position of the focal lens.
+
+  \code
+#include <iostream>
+#include <visp/vpServolens.h>
+
+int main()
+{
+  // Open the serial device to communicate with the Servolens lens
+  vpServolens servolens("/dev/ttyS0"); 
+
+  // Get the current zoom position
+  unsigned zoom;
+  servolens.getPosition(vpServolens::ZOOM, zoom);
+  std::cout << "Actual zoom value: " << zoom << std::endl;
+
+  // Set a new zoom value
+  servolens.setPosition(vpServolens::ZOOM, zoom+1000);  
+}
+  \endcode
 
 */
 
