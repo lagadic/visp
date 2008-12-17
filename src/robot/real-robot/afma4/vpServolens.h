@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServolens.h,v 1.1 2008-12-17 14:45:01 fspindle Exp $
+ * $Id: vpServolens.h,v 1.2 2008-12-17 16:03:33 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,6 +38,8 @@
 
 #ifndef __vpServolens_h
 #define __vpServolens_h
+
+#ifdef UNIX
 
 /*!
 
@@ -121,6 +123,6 @@ class VISP_EXPORT vpServolens
  * c-basic-offset: 2
  * End:
  */
-
+#endif
 #endif
 
