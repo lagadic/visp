@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServolens.cpp,v 1.1 2008-12-17 14:45:01 fspindle Exp $
+ * $Id: vpServolens.cpp,v 1.2 2008-12-17 15:50:00 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,7 +51,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <string.h>
 
 #include <visp/vpServolens.h>
 #include <visp/vpRobotException.h>
