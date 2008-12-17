@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.43 2008-12-03 10:25:11 nmelchio Exp $
+ * $Id: vpDisplayX.cpp,v 1.44 2008-12-17 10:51:12 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1721,10 +1721,19 @@ vpDisplayX::displayRectangle ( const vpRect &rect,
   }
 }
 
-/*!
- \brief Set the font 
- \param font : The expected font. The available fonts are given by the command "xlsfonts".
- \note Under UNIX, to know all the available fonts, use the command "xlsfonts" in a terminal.
+/*!  
+
+  \brief Set the font used to print a text in overlay. To print a
+  text you may use displayCharString().
+
+  \param font : The expected font name. The available fonts are given by
+  the "xlsfonts" binary. To choose a font you can also use the
+  "xfontsel" binary.
+
+  \note Under UNIX, to know all the available fonts, use the
+  "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
+
+  \sa displayCharString()
  */
 void vpDisplayX::setFont( const char* font )
 {
@@ -1755,13 +1764,21 @@ void vpDisplayX::setFont( const char* font )
 
 
 /*!
-  \brief display a string
-  \param i,j : (row,colum indexes)
-  \param string
-  \param col : Color (see vpColor)
+  Display a string at coordinates (i,j) in the display
+  window overlay.
+
+  To select the font used to print this string, use setFont().
+
+  \param i, j : Upper left location (row, column) of the string in the display.
+  \param string : String to print in overlay.
+  \param col : Color of the text
+
+  \sa setFont()
+
 */
 void vpDisplayX::displayCharString ( int i, int j,
-                                     const char *string, vpColor::vpColorType col )
+                                     const char *string, 
+				     vpColor::vpColorType col )
 {
   if ( Xinitialise )
   {
