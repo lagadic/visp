@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServolens.cpp,v 1.2 2008-12-17 15:50:00 fspindle Exp $
+ * $Id: vpServolens.cpp,v 1.3 2008-12-17 16:03:33 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -44,6 +44,8 @@
   Afma4 robot.
 
 */
+
+#ifdef UNIX
 
 #include <termios.h>
 #include <stdio.h>
@@ -793,3 +795,5 @@ vpServolens::clean(const char *in, char *out)
   }
   return (error);
 }
+
+#endif
