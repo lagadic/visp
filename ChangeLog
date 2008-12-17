@@ -22,7 +22,9 @@ ViSP 2.4.x (released ...)
     - vpRobotAfma6 and vpAfma6: Modifications to be compatible with the new 
       low level Adept controller provided by Cerebellum Automation.
     - vpRobotAfma4 and vpAfma4: Modifications to be compatible with the new 
-      low level Adept controller provided by Cerebellum Automation.
+      low level Adept controller provided by Cerebellum Automation. New 
+      vpServolens class to control the Servolens lens attached to the camera 
+      fixed on the Afma4 end-effector.
   - Examples:
     - New examples in example/manual described in ViSP guide under preparation.
     - example/servo-simu/servoSimu3DCamVelocity2.cpp
