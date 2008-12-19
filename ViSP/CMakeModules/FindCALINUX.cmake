@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindCALINUX.cmake,v 1.1 2008-07-17 20:13:29 fspindle Exp $
+# $Id: FindCALINUX.cmake,v 1.2 2008-12-19 14:24:01 fspindle Exp $
 #
 # Copyright (C) 2008 Inria. All rights reserved.
 #
@@ -46,7 +46,7 @@ ELSE(NOT UNIX)
   
   FIND_PATH(CALINUX_INCLUDE_DIR calinux.h
     $ENV{CALINUX_HOME}/include
-    /udd/fspindle/robot/Cerebellum/Linux/CALinux/current/include
+    /local/soft/Cerebellum/CALinux/current/include
     )
   #MESSAGE("DBG CALINUX_INCLUDE_DIR=${CALINUX_INCLUDE_DIR}")  
   
@@ -54,7 +54,7 @@ ELSE(NOT UNIX)
     NAMES calinux
     PATHS 
     $ENV{CALINUX_HOME}/lib
-    /udd/fspindle/robot/Cerebellum/Linux/CALinux/current/lib
+    /local/soft/Cerebellum/CALinux/current/lib
     )
 
   #MESSAGE("DBG CALINUX_LIBRARY=${CALINUX_LIBRARY}")
