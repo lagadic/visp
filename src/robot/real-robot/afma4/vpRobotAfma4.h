@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma4.h,v 1.9 2008-12-15 17:19:22 fspindle Exp $
+ * $Id: vpRobotAfma4.h,v 1.10 2008-12-19 14:26:26 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -35,8 +35,8 @@
  *
  *****************************************************************************/
 
-#ifndef vpRobotAfma6_h
-#define vpRobotAfma6_h
+#ifndef vpRobotAfma4_h
+#define vpRobotAfma4_h
 
 #include <visp/vpConfig.h>
 
