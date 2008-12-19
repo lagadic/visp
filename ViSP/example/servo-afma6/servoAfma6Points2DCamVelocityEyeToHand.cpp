@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.11 2008-10-01 15:26:10 fspindle Exp $
+ * $Id: servoAfma6Points2DCamVelocityEyeToHand.cpp,v 1.12 2008-12-19 14:14:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -95,7 +95,6 @@ main()
 {
   try
     {
-      vpRobotAfma6 robot ;
       vpServo task ;
 
       vpCameraParameters cam ;
@@ -108,9 +107,6 @@ main()
       g.open(I) ;
 
       g.acquire(I) ;
-
-      // Update camera parameters
-      robot.getCameraParameters (cam, I);
 
       vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
       vpTRACE(" ") ;
@@ -153,6 +149,9 @@ main()
       point[5].setWorldCoordinates(L,D, L) ;
       point[6].setWorldCoordinates(-L,D, L) ;
 
+      vpRobotAfma6 robot ;
+      // Update camera parameters
+      robot.getCameraParameters (cam, I);
 
       vpHomogeneousMatrix cMo, cdMo ;
       vpPose pose ;
