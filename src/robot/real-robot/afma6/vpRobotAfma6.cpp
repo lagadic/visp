@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotAfma6.cpp,v 1.48 2008-12-15 21:31:57 fspindle Exp $
+ * $Id: vpRobotAfma6.cpp,v 1.49 2008-12-19 14:23:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -75,9 +75,9 @@ const double vpRobotAfma6::defaultPositioningVelocity = 15.0;
   or SIGQUIT signal.
 
 */
-void emergencyStop(int signo)
+void emergencyStopAfma6(int signo)
 {
-  std::cout << "Stop the application by SIGNAL= " << (char)7  ;
+  std::cout << "Stop the Afma6 application by SIGNAL= " << (char)7  ;
   switch(signo)
     {
     case SIGINT:
@@ -170,11 +170,11 @@ vpRobotAfma6::vpRobotAfma6 (void)
     #define	SIGTERM	15	// software termination signal from kill
   */
 
-  signal(SIGINT, emergencyStop);
-  signal(SIGBUS, emergencyStop) ;
-  signal(SIGSEGV, emergencyStop) ;
-  signal(SIGKILL, emergencyStop);
-  signal(SIGQUIT, emergencyStop);
+  signal(SIGINT, emergencyStopAfma6);
+  signal(SIGBUS, emergencyStopAfma6) ;
+  signal(SIGSEGV, emergencyStopAfma6) ;
+  signal(SIGKILL, emergencyStopAfma6);
+  signal(SIGQUIT, emergencyStopAfma6);
 
   std::cout << "Open communication with MotionBlox.\n";
   try {
@@ -268,6 +268,12 @@ vpRobotAfma6::init (void)
   }
   fprintf(stdout, "Power is ON. We continue...\n");
   fflush(stdout);
+
+  // get real joint min/max from the MotionBlox
+  Try( PrimitiveJOINT_MINMAX_Afma6(_joint_min, _joint_max) );
+//   for (int i=0; i < njoint; i++) {
+//     printf("axis %d: joint min %lf, max %lf\n", i, _joint_min[i], _joint_max[i]);
+//   }
 
   // If an error occur in the low level controller, goto here
   CatchPrint();
