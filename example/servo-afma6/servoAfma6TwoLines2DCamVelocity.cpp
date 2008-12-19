@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6TwoLines2DCamVelocity.cpp,v 1.9 2008-10-01 15:26:10 fspindle Exp $
+ * $Id: servoAfma6TwoLines2DCamVelocity.cpp,v 1.10 2008-12-19 14:14:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -92,9 +92,6 @@ main()
 {
   try
     {
-      vpRobotAfma6 robot ;
-      //robot.move("zero.pos") ;
-
       vpImage<unsigned char> I ;
 
       vp1394TwoGrabber g;
@@ -104,16 +101,13 @@ main()
 
       g.acquire(I) ;
 
-
       vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
       vpTRACE(" ") ;
 
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;
 
-
       vpServo task ;
-
 
       std::cout << std::endl ;
       std::cout << "-------------------------------------------------------" << std::endl ;
@@ -141,6 +135,9 @@ main()
 	      line[i].initTracking(I) ;
 	      line[i].track(I) ;
 	    }
+
+      vpRobotAfma6 robot ;
+      //robot.move("zero.pos") ;
 
       vpCameraParameters cam ;
       // Update camera parameters

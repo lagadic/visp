@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Point2DCamVelocity.cpp,v 1.11 2008-10-01 15:26:10 fspindle Exp $
+ * $Id: servoAfma6Point2DCamVelocity.cpp,v 1.12 2008-12-19 14:14:45 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -125,9 +125,7 @@ main()
 
   try
   {
-    vpRobotAfma6 robot ;
     vpServo task ;
-
 
     vpImage<unsigned char> I ;
 
@@ -163,6 +161,7 @@ main()
 			    10, vpColor::blue) ;
     vpDisplay::flush(I);
 
+    vpRobotAfma6 robot ;
 
     vpCameraParameters cam ;
     // Update camera parameters

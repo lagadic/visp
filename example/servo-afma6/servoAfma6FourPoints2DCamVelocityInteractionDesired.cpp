@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp,v 1.6 2008-10-01 15:26:10 fspindle Exp $
+ * $Id: servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp,v 1.7 2008-12-19 14:14:45 fspindle Exp $
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *
@@ -131,14 +131,6 @@ main()
 
   try
   {
-    vpCameraParameters::vpCameraParametersProjType
-      projModel = vpCameraParameters::perspectiveProjWithDistortion;
-    vpRobotAfma6 robot;
-
-    // Load the end-effector to camera frame transformation obtained
-    // using a camera intrinsic model with distortion
-    robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, projModel);
-
     vpServo task ;
 
     vpImage<unsigned char> I ;
@@ -180,6 +172,15 @@ main()
 			      10, vpColor::blue) ;
       vpDisplay::flush(I);
     }
+
+    vpRobotAfma6 robot;
+
+    vpCameraParameters::vpCameraParametersProjType
+      projModel = vpCameraParameters::perspectiveProjWithDistortion;
+
+    // Load the end-effector to camera frame transformation obtained
+    // using a camera intrinsic model with distortion
+    robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, projModel);
 
     vpCameraParameters cam ;
     // Update camera parameters

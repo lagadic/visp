@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.11 2008-10-01 15:26:10 fspindle Exp $
+ * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.12 2008-12-19 14:14:45 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -90,8 +90,6 @@ main()
 {
   try
   {
-    vpRobotAfma6 robot ;
-
     vpServo task ;
 
     vpImage<unsigned char> I ;
@@ -133,7 +131,9 @@ main()
 
     vpCameraParameters cam ;
 
-    // Update camera parameters
+    vpRobotAfma6 robot ;
+
+   // Update camera parameters
     robot.getCameraParameters (cam, I);
 
     vpTRACE("sets the current position of the visual feature ") ;
