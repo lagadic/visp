@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServo.cpp,v 1.23 2008-11-07 09:17:21 fspindle Exp $
+ * $Id: vpServo.cpp,v 1.24 2009-01-04 10:11:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -86,19 +86,19 @@ vpServo::vpServo(vpServoType _servoType)
   In fact, it does nothing. You have to call kill() to destroy the
   current and desired feature lists.
 
-  \exception vpServoException::notKilledProperly : Task was not killed
-  properly. That means that you should explitly call kill().
-
   \sa kill()
 */
+//  \exception vpServoException::notKilledProperly : Task was not killed
+//  properly. That means that you should explitly call kill().
+
 vpServo::~vpServo()
 {
   if (taskWasKilled == false) {
-    vpERROR_TRACE("--- Begin Warning Warning Warning Warning Warning ---");
-    vpERROR_TRACE("--- You should explicitly call vpServo.kill()...  ---");
-    vpERROR_TRACE("--- End Warning Warning Warning Warning Warning   ---");
-    throw(vpServoException(vpServoException::notKilledProperly,
-			   "Task was not killed properly"));
+    vpTRACE("--- Begin Warning Warning Warning Warning Warning ---");
+    vpTRACE("--- You should explicitly call vpServo.kill()...  ---");
+    vpTRACE("--- End Warning Warning Warning Warning Warning   ---");
+//     throw(vpServoException(vpServoException::notKilledProperly,
+// 			   "Task was not killed properly"));
   }
 }
 
