@@ -1016,7 +1016,8 @@ PREDEFINED             = \
 	   VISP_HAVE_ACCESS_TO_NAS \
            WIN32 \
            APPLE \
-           UNIX
+           UNIX \
+           VP_DEBUG
 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
@@ -1246,4 +1247,4 @@ DOT_CLEANUP            = YES
 # The SEARCHENGINE tag specifies whether or not a search engine should be 
 # used. If set to NO the values of all tags below this one will be ignored.
 
-SEARCHENGINE           = NO
+SEARCHENGINE           = YES
