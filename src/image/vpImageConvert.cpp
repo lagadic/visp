@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.cpp,v 1.33 2008-12-10 21:34:50 fspindle Exp $
+ * $Id: vpImageConvert.cpp,v 1.34 2009-01-05 10:21:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -299,27 +299,31 @@ vpImageConvert::convert(const IplImage* src,
   \param dest : destination image
 
   \code
-    #include <visp/vpImage.h>
-    #include <visp/vpImageIo.h>
-    #include <visp/vpImageConvert.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
 
-    vpImage<vpRGBa> Ic; // A color image
-    IplImage* Ip = NULL;
+int main()
+{
+  vpImage<vpRGBa> Ic; // A color image
+  IplImage* Ip = NULL;
 
-    //Read an image on a disk
-    vpImageIo::readPPM(Ic, "image.ppm");
-    //Convert the vpImage<vpRGBa> in to color IplImage
-    vpImageConvert::convert(Ic,Ip);
-    //Treatments on IplImage
-    //...
+  // Read an image on a disk
+  vpImageIo::readPPM(Ic, "image.ppm");
+  // Convert the vpImage<vpRGBa> in to color IplImage
+  vpImageConvert::convert(Ic, Ip);
+  // Treatments on IplImage
+  //...
+  // Save the IplImage on the disk
+  cvSaveImage("Ipl.ppm", Ip);
 
-    //Release Ip header and data
-    cvReleaseImage(&Ip);
+  //Release Ip header and data
+  cvReleaseImage(&Ip);
+}
   \endcode
 */
 void
-vpImageConvert::convert(const vpImage<vpRGBa> & src,
-       IplImage* &dest)
+vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
 {
   unsigned int height = src.getHeight();
   unsigned int width  = src.getWidth();
@@ -377,22 +381,27 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src,
   \param dest : destination image
 
   \code
-    #include <visp/vpImage.h>
-    #include <visp/vpImageIo.h>
-    #include <visp/vpImageConvert.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
 
-    vpImage<unsigned char> Ig; // A greyscale image
-    IplImage* Ip = NULL;
+int main()
+{
+  vpImage<unsigned char> Ig; // A greyscale image
+  IplImage* Ip = NULL;
 
-    //Read an image on a disk
-    vpImageIo::readPGM(Ig, "image.pgm");
-    //Convert the vpImage<unsigned char> in to greyscale IplImage
-    vpImageConvert::convert(Ig,Ip);
-    //Treatments on IplImage Ip
-    //...
+  // Read an image on a disk
+  vpImageIo::readPGM(Ig, "image.pgm");
+  // Convert the vpImage<unsigned char> in to greyscale IplImage
+  vpImageConvert::convert(Ig, Ip);
+  // Treatments on IplImage Ip
+  //...
+  // Save the IplImage on the disk
+  cvSaveImage("Ipl.pgm", Ip);
 
-    //Release Ip header and data
-    cvReleaseImage(&Ip);
+  //Release Ip header and data
+  cvReleaseImage(&Ip);
+}
   \endcode
 */
 void
@@ -2540,23 +2549,27 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
   Example code using split :
 
   \code
-    #include <visp/vpImage.h>
-    #include <visp/vpImageIo.h>
-    #include <visp/vpImageConvert.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
 
-    // Load a color image from the disk
-    vpImageIo::readPPM(Ic,"/tmp/myimage.ppm") ;
+int main()
+{
+  vpImage<vpRGBa> Ic; // A color image
 
-    //Only R and B Channels are desired.
-    vpImage<unsigned char> R,B;
-
-    //Split Ic color image (R and B will be resized in split function if needed)
-
-    vpImageConvert::split(Ic, &R,NULL,&B,NULL);
-
-    // Save the the R Channel.
-    vpImageIo::writePGM(R, "/tmp/myRChannel.pgm) ;
-
+  // Load a color image from the disk
+  vpImageIo::readPPM(Ic,"image.ppm");
+  
+  // Only R and B Channels are desired.
+  vpImage<unsigned char> R, B;
+  
+  // Split Ic color image 
+  // R and B will be resized in split function if needed
+  vpImageConvert::split(Ic, &R, NULL, &B, NULL);
+  
+  // Save the the R Channel.
+  vpImageIo::writePGM(R, "RChannel.pgm");
+}
   \endcode
 */
 void vpImageConvert::split(const vpImage<vpRGBa> &src,

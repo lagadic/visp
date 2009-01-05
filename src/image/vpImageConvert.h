@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageConvert.h,v 1.20 2008-12-10 16:55:48 nmelchio Exp $
+ * $Id: vpImageConvert.h,v 1.21 2009-01-05 10:21:17 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -81,7 +81,7 @@ public:
   static void convert(const IplImage* src,
           vpImage<unsigned char> & dest, bool flip = false) ;
   static void convert(const vpImage<vpRGBa> & src,
-          IplImage* &dest) ;
+		      IplImage *&dest) ;
   static void convert(const vpImage<unsigned char> & src,
           IplImage* &dest) ;
 #endif
