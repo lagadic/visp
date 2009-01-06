@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.46 2008-12-16 14:35:49 nmelchio Exp $
+ * $Id: vpMatrix.cpp,v 1.47 2009-01-06 15:53:39 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1484,6 +1484,213 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
 }
 
 
+
+/*!
+  \brief Compute the pseudo inverse of the matrix Ap = A^+ along with Ker A, Ker A^T, Im A and Im A^T
+
+  Pseudo Inverse, Kernel and Image are computed using the SVD decomposition
+
+  A is an m x n matrix,
+  if m >=n the svd works on A other wise it works on A^T
+
+  Therefore if m>=n we have
+
+  \f[
+  {\bf A}_{m\times n} = {\bf U}_{m\times m} {\bf S}_{m\times n} {\bf V^\top}_{n\times n}
+\f]
+  \f[
+  {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} {\bf A} & | &
+  \mbox{Ker} {\bf A^\top} \end{array} \right] {\bf S}
+  \left[
+  \begin{array}{c} (\mbox{Im} {\bf A^\top})^\top \\   (\mbox{Ker}{\bf A})^\top \end{array}\right]
+  \f]
+  where
+  Im(A) is an m x r matrix (r is the rank of A) and
+  Im(A^T) is an r x n matrix
+
+
+  \param Ap : The pseudo inverse \f$ A^+ \f$.
+  \param sv : Singular values.
+  \param svThreshold : Threshold used to test the singular values.
+  \param imA: Image  A
+  \param imAt : Image A^T
+  \param kerA : null space of A
+  \return Return the rank of the matrix A
+
+*/
+int vpMatrix::pseudoInverse(vpMatrix &Ap,
+		    vpColVector &sv, double svThreshold,
+		    vpMatrix &imA,
+		    vpMatrix &imAt,
+		    vpMatrix &kerA) const
+{
+
+  int i, j, k ;
+
+  int nrows, ncols;
+  int nrows_orig = getRows() ;
+  int ncols_orig = getCols() ;
+  Ap.resize(ncols_orig,nrows_orig) ;
+
+  if (nrows_orig >=  ncols_orig)
+  {
+    nrows = nrows_orig;
+    ncols = ncols_orig;
+  }
+  else
+  {
+    nrows = ncols_orig;
+    ncols = nrows_orig;
+  }
+
+  vpMatrix a(nrows,ncols) ;
+  vpMatrix a1(ncols,nrows);
+  vpMatrix v(ncols,ncols) ;
+  sv.resize(ncols) ;
+
+  if (nrows_orig >=  ncols_orig) a = *this;
+  else a = (*this).t();
+
+  a.svd(sv,v);
+
+  // compute the highest singular value and the rank of h
+  double maxsv = 0 ;
+  for (i=0 ; i < ncols ; i++)
+     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+
+  int rank = 0 ;
+  for (i=0 ; i < ncols ; i++)
+    if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
+
+
+
+  /*------------------------------------------------------- */
+  for (i = 0 ; i < ncols ; i++)
+  {
+    for (j = 0 ; j < nrows ; j++)
+    {
+      a1[i][j] = 0.0;
+
+      for (k=0 ; k < ncols ; k++)
+    	 if (fabs(sv[k]) > maxsv*svThreshold)
+  	   {
+	       a1[i][j] += v[i][k]*a[j][k]/sv[k];
+       }
+    }
+  }
+  if (nrows_orig >=  ncols_orig) Ap = a1;
+  else Ap = a1.t();
+
+  if (nrows_orig >=  ncols_orig)
+  {
+    //  compute dim At
+    imAt.resize(ncols_orig,rank) ;
+    for (i=0 ; i  < ncols_orig ; i++)
+      for (j=0 ; j < rank ; j++)
+	imAt[i][j] = v[i][j] ;
+
+    //  compute dim A
+    imA.resize(nrows_orig,rank) ;
+    for (i=0 ; i  < nrows_orig ; i++)
+      for (j=0 ; j < rank ; j++)
+	imA[i][j] = a[i][j] ;
+  }
+  else
+  {
+    //  compute dim At
+    imAt.resize(ncols_orig,rank) ;
+    for (i=0 ; i  < ncols_orig ; i++)
+      for (j=0 ; j < rank ; j++)
+	imAt[i][j] = a[i][j] ;
+
+    imA.resize(nrows_orig,rank) ;
+    for (i=0 ; i  < nrows_orig ; i++)
+      for (j=0 ; j < rank ; j++)
+	imA[i][j] = v[i][j] ;
+
+  }
+
+  vpMatrix cons(ncols_orig, ncols_orig);
+  cons = 0;
+
+  for (j = 0; j < ncols_orig; j++)
+  {
+    for (i = 0; i < ncols_orig; i++)
+    {
+      if (fabs(sv[i]) <= maxsv*svThreshold)
+      {
+        cons[i][j] = v[j][i];
+      }
+    }
+  }
+
+  vpMatrix Ker (ncols_orig-rank, ncols_orig);
+  k = 0;
+  for (j = 0; j < ncols_orig ; j++)
+  {
+    if ( cons.row(j+1).sumSquare() != 0)
+    {
+      for (i = 0; i < cons.getCols(); i++)
+        Ker[k][i] = cons[j][i];
+
+      k++;
+    }
+  }
+  kerA = Ker;
+
+  if (DEBUG_LEVEL1)
+  {
+    int pb = 0;
+    vpMatrix A, ApA, AAp, AApA, ApAAp ;
+
+    nrows = nrows_orig;
+    ncols = ncols_orig;
+
+    A.resize(nrows,ncols) ;
+    A = *this ;
+
+    ApA = Ap * A;
+    AApA = A * ApA;
+    ApAAp = ApA * Ap;
+    AAp = A * Ap;
+
+    for (i=0;i<nrows;i++)
+    {
+      for (j=0;j<ncols;j++) if (fabs(AApA[i][j]-A[i][j]) > 1e-6) pb = 1;
+    }
+    for (i=0;i<ncols;i++)
+    {
+      for (j=0;j<nrows;j++) if (fabs(ApAAp[i][j]-Ap[i][j]) > 1e-6) pb = 1;
+    }
+    for (i=0;i<nrows;i++)
+    {
+      for (j=0;j<nrows;j++) if (fabs(AAp[i][j]-AAp[j][i]) > 1e-6) pb = 1;
+    }
+    for (i=0;i<ncols;i++)
+    {
+      for (j=0;j<ncols;j++) if (fabs(ApA[i][j]-ApA[j][i]) > 1e-6) pb = 1;
+    }
+    if (pb == 1)
+    {
+      printf("pb in pseudo inverse\n");
+      std::cout << " A : " << std::endl << A << std::endl;
+      std::cout << " Ap : " << std::endl << Ap << std::endl;
+      std::cout << " A - AApA : " << std::endl << A - AApA << std::endl;
+      std::cout << " Ap - ApAAp : " << std::endl << Ap - ApAAp << std::endl;
+      std::cout << " AAp - (AAp)^T : " << std::endl << AAp - AAp.t() << std::endl;
+      std::cout << " ApA - (ApA)^T : " << std::endl << ApA - ApA.t() << std::endl;
+      std::cout << " KerA : " << std::endl << kerA << std::endl;
+    }
+    //    else printf("Ap OK ;-) \n");
+
+  }
+
+
+  // std::cout << v << std::endl ;
+  return rank ;
+}
+
+
 /*!
   \brief  Return the ith rows of the matrix
   \warning notice row(1) is the 0th row.
@@ -1915,7 +2122,8 @@ cppPrint(std::ostream & os, const char * matrixName, bool octet)
   \param M : the matrix used to compute determinant.
   \return determinant of the matrix.
 
-  \warning M must be a 3x3 matrix. 
+  \warning M must be a 3x3 matrix.
+  \deprecated Use det() instead. 
 */
 
 double
@@ -1991,9 +2199,10 @@ vpMatrix::infinityNorm () const
   \return the determinant of the matrix if the matrix is squared, 0 otherwise
   based on the LU decomposition
   see the Numerical Recipes in C page 43 for further explanations.
+  \deprecated Use det() instead.
  */
  
-double vpMatrix::detByLU()
+double vpMatrix::detByLU() const
 {
   double det(0);
 
@@ -2083,12 +2292,12 @@ vpColVector vpMatrix::eigenValuesByLU()
 /*!
   Compute the determinant of a square matrix.
 
-  \param M : the matrix used to compute determinant.
   \return determinant of the matrix.
+  \deprecated Use det(GAUSSIAN_ELIMINATION) instead.
 */
-double vpMatrix::detNN(const vpMatrix &M)
+double vpMatrix::detNN() const
 {
- if ((M.getCols() != M.getRows())) // no determinant for nonsquare matrix
+ if ((getCols() != getRows())) // no determinant for nonsquare matrix
    {
    vpTRACE("matrix is not square ") ;
      throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
@@ -2096,66 +2305,65 @@ double vpMatrix::detNN(const vpMatrix &M)
                    )) ;
    }
 
- else if (M.getCols() == 3 ) //handle 3x3 matrix ....
+ else if (getCols() == 3 ) //handle 3x3 matrix ....
    {
    double detint ;
    detint =0.0;
-   detint =          M[0][0]*M[1][1]*M[2][2] ;
-   detint = detint + M[1][0]*M[2][1]*M[0][2] ;
-   detint = detint + M[2][0]*M[0][1]*M[1][2] ;
-   detint = detint - M[0][0]*M[2][1]*M[1][2] ;
-   detint = detint - M[1][0]*M[0][1]*M[2][2] ;
-   detint = detint - M[2][0]*M[1][1]*M[0][2] ;
+   detint =          (*this)[0][0]*(*this)[1][1]*(*this)[2][2] ;
+   detint = detint + (*this)[1][0]*(*this)[2][1]*(*this)[0][2] ;
+   detint = detint + (*this)[2][0]*(*this)[0][1]*(*this)[1][2] ;
+   detint = detint - (*this)[0][0]*(*this)[2][1]*(*this)[1][2] ;
+   detint = detint - (*this)[1][0]*(*this)[0][1]*(*this)[2][2] ;
+   detint = detint - (*this)[2][0]*(*this)[1][1]*(*this)[0][2] ;
    return(detint);
    }
 
- else if (M.getCols() > 3 )// handle n x n matrix....n>3
+ else if (getCols() > 3 )// handle n x n matrix....n>3
    {
    double detint ;
    detint =0.0;
    // we will use the first row to compute the determinent of the matrix
-   for ( int i = 0; i < M.getCols(); i++)
+   for ( int i = 0; i < getCols(); i++)
        {
-       detint = detint + pow(-1.0,i) * M[0][i] * detNN( subblock( M,0,i) );
+       detint = detint + pow(-1.0,i) * (*this)[0][i] * (subblock( (*this),0,i)).detNN(  );
        }
        return(detint);
    }
 
- else if (M.getCols() == 2 )// if in the begining the matrix was in dimension 2x2
-   return( M[0][0]*M[1][1]-M[1][0]*M[0][1]);
+ else if (getCols() == 2 )// if in the begining the matrix was in dimension 2x2
+   return( (*this)[0][0]*(*this)[1][1]-(*this)[1][0]*(*this)[0][1]);
 
  else
-   return( M[0][0]);
+   return( (*this)[0][0]);
 }
 
 
 
 /*!
-  Function to compute the null space (the kernel) of the interaction matrix L which is not full rank.
-  The null space ( the kernel ) of a matrix L is defined as Null(L) = Ker(M) ={KerL : L*KerL =0}.
+  Function to compute the null space (the kernel) of the interaction matrix A which is not full rank.
+  The null space ( the kernel ) of a matrix A is defined as Null(A) = Ker(M) ={KerA : A*KerA =0}.
 
-  \param L : The matrix for which the null space (kernel) will be computed.
-  \param KerL : The matrix to contain the null space (kernel) of L (L*KerL.t()=0) 
-  \param seuilvp : Specify the used threshold in the svd(...) function (a function to compute the singular value decomposition)
+  \param kerA : The matrix to contain the null space (kernel) of A (A*KerA.t()=0) 
+  \param svThreshold : Specify the used threshold in the svd(...) function (a function to compute the singular value decomposition)
 
-  \return the rank of the matrix L.
+  \return the rank of the matrix.
 */
-int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
+int vpMatrix::kernel(vpMatrix &kerA, double svThreshold)
 {
-
  if (DEBUG_LEVEL1)
    std::cout << "begin Kernel" << std::endl ;
  int i, j ;
- int ncaptor = L.getRows() ;
- int ddl = L.getCols() ;
+ int ncaptor = getRows() ;
+ int ddl = getCols() ;
  vpMatrix C ;
+
  if (ncaptor == 0)
    std::cout << "Erreur Matrice  non initialise" << std::endl ;
 
  if (DEBUG_LEVEL2)
  {
    std::cout << "Interaction matrix L" << std::endl ;
-   std::cout << L   ;
+   std::cout << *this   ;
    std::cout << "signaux capteurs : " << ncaptor << std::endl ;
  }
 
@@ -2188,8 +2396,8 @@ int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
  for (i=0 ; i < ncaptor ; i++)
    for (j=0 ; j < ddl ; j++)
    {
-     a1[i][j] = L[i][j] ;
-     a2[i][j] = L[i][j] ;
+     a1[i][j] = (*this)[i][j] ;
+     a2[i][j] = (*this)[i][j] ;
    }
 
 
@@ -2198,7 +2406,7 @@ int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
    for (i=ncaptor ; i < ddl ; i++)
      for (j=0 ; j < ddl ; j++)
      {
-   a1[i][j] = 0 ;
+       a1[i][j] = 0 ;
      }
    a1.svd(sv,v);
  }
@@ -2222,7 +2430,7 @@ int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
 
  int rank = 0 ;
  for (i=0 ; i < ddl ; i++)
-   if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
+   if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
 
  if (DEBUG_LEVEL2)
  /*------------------------------------------------------- */
@@ -2237,9 +2445,9 @@ int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
      // modif le 25 janvier 1999 0.001 <-- maxsv*1.e-ndof
      // sinon on peut observer une perte de range de la matrice
      // ( d'ou venait ce 0.001 ??? )
-     for (k=0 ; k < ddl ; k++)  if (fabs(sv[k]) > maxsv*seuilvp)
+     for (k=0 ; k < ddl ; k++)  if (fabs(sv[k]) > maxsv*svThreshold)
      {
-   C[i][j] += v[i][k]*a1[j][k]/sv[k];
+       C[i][j] += v[i][k]*a1[j][k]/sv[k];
      }
    }
  }
@@ -2253,7 +2461,6 @@ int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
  /*------------------------------------------------------- */
  if (rank != ddl)
  {
-   int k ;
    // Compute the kernel if wanted
    if (min < ddl)
    {
@@ -2266,22 +2473,22 @@ int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
    {
      double maxsv = 0 ;
      for (i=0 ; i < ddl ; i++)
-   if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
-     int rank = 0 ;
+     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+       int rank = 0 ;
      for (i=0 ; i < ddl ; i++)
-   if (fabs(sv[i]) > maxsv*seuilvp) rank++ ;
-     vpMatrix cons(ddl,ddl) ;
+       if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
+         vpMatrix cons(ddl,ddl) ;
+
      cons =0 ;
      for (j = 0 ; j < ddl ; j++)
      {
-   for (i = 0 ; i < ddl ; i++)
-     // Change Nicolas Mansard 23/4/04
-     // was         if (fabs(sv[i]) < maxsv*seuilvp)
-     if (fabs(sv[i]) <= maxsv*seuilvp)
-     {
-       k = i;
-       cons[i][j] = v[j][i];
-     }
+       for (i = 0 ; i < ddl ; i++)
+       // Change Nicolas Mansard 23/4/04
+       // was         if (fabs(sv[i]) < maxsv*seuilvp)
+         if (fabs(sv[i]) <= maxsv*svThreshold)
+         {
+           cons[i][j] = v[j][i];
+         }
      }
 
      vpMatrix Ker(ddl-rank,ddl) ;
@@ -2290,20 +2497,37 @@ int vpMatrix::Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp)
      {
    //    cout << cons.Row(j+1) << " = " << cons.Row(j+1).SumSquare() << endl ;
 
-   if (cons.row(j+1).sumSquare() !=0)
-   {
-     for (int i=0 ; i < cons.getCols() ; i++)
-       Ker[k][i] = cons[j][i] ;
+       if (cons.row(j+1).sumSquare() !=0)
+       {
+         for (i=0 ; i < cons.getCols() ; i++)
+           Ker[k][i] = cons[j][i] ;
      //  Ker.Row(k+1) = cons.Row(j+1) ;
-     k++;
-   }
+         k++;
+       }
      }
-     KerL = Ker ;
-
+     kerA = Ker ;
    }
  }
  if (DEBUG_LEVEL1) std::cout << "end Kernel" << std::endl ;
  return rank ;
+}
+
+
+double vpMatrix::det(vpDetMethod method) const
+{
+  double det = 0;
+
+  if ( method == LU_DECOMPOSITION )
+    {
+      det = this->detByLU();
+    }
+
+  if ( method == GAUSSIAN_ELIMINATION )
+  {
+    det = this->detNN();
+  }
+
+  return (det);
 }
 
 
