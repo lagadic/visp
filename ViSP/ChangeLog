@@ -50,6 +50,8 @@ ViSP 2.4.x (released ...)
     - [6619] Problem vpMeLine : compute of delta
     - [6743] Bug in vpDisplayOpenCV::displayRectangle()
     - [6744] Bug in vpDisplayOpenCV
+    - [6962] vpMeLine : problem of tracking
+    - [7034] vpMeLine : Bug when a strip is tracked
 
 ----------------------------------------------	
 ViSP 2.4.2 (released March 27, 2008)
