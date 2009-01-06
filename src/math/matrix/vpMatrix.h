@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.25 2008-12-16 14:35:49 nmelchio Exp $
+ * $Id: vpMatrix.h,v 1.26 2009-01-06 15:53:39 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,6 +66,12 @@ class vpRowVector;
 */
 
 
+typedef enum {
+  LU_DECOMPOSITION,
+  GAUSSIAN_ELIMINATION
+  }vpDetMethod;
+
+
 /*!
   \class vpMatrix
   \ingroup Matrix
@@ -106,8 +112,6 @@ protected:
   int trsize;
 
 public:
-  //! Initialization of the object matrix
-   void  init() ;
   //! Basic constructor
   vpMatrix() ;
   //! Constructor. Initialization of A as an r x c matrix with 0.
@@ -116,15 +120,21 @@ public:
   //! sub vpMatrix constructor
   vpMatrix(const vpMatrix &m, int r, int c, int nrows, int ncols) ;
 
-  //! Destruction of the matrix  (Memory de-allocation)
-  void kill() ;
   //! Destructor (Memory de-allocation)
   virtual ~vpMatrix();
+
+  //! Initialization of the object matrix
+   void  init() ;
+
+  //! Destruction of the matrix  (Memory de-allocation)
+  void kill() ;
+
 
   //---------------------------------
   // Set/get Matrix size
   //---------------------------------
-
+  /** @name Set/get Matrix size  */
+  //@{
   //! Return the number of rows of the matrix
   inline int getRows() const { return rowNum ;}
   //! Return the number of columns of the matrix
@@ -132,11 +142,15 @@ public:
 
   //! Set the size of the matrix A, initialization with a zero matrix
   virtual void resize(const int nrows, const int ncols, const bool nullify = true);
+  //@}
 
   //---------------------------------
   // Printing
   //---------------------------------
+
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s,const vpMatrix &m);
+  /** @name Printing  */
+  //@{
 
   int print(std::ostream& s, unsigned lenght, char const* intro=0);
   //! Affichage pour reinsertion dans matlab
@@ -144,10 +158,14 @@ public:
   //! Affichage pour reinsertion dans ViSP
   std::ostream & cppPrint(std::ostream & os, const char * matrixName = NULL, bool octet = false);
 
+  void printSize() { std::cout << getRows() <<" x " << getCols() <<"  " ; }
+  //@}
+
   //---------------------------------
   // Copy / assigment
   //---------------------------------
-
+  /** @name Copy / assigenment  */
+  //@{
   //! Copy constructor
   vpMatrix (const vpMatrix& m);
 
@@ -158,15 +176,18 @@ public:
   vpMatrix &operator=(const vpMatrix &B);
   //! Set all the element of the matrix A to x
   vpMatrix &operator=(const double x);
+  //@}
 
   //---------------------------------
   // Access/modification operators
   //---------------------------------
-
+  /** @name Access/modification operators  */
+  //@{
   //! write elements Aij (usage : A[i][j] = x )
   inline double *operator[](int n) { return rowPtrs[n]; }
   //! read elements Aij  (usage : x = A[i][j] )
   inline double *operator[](int n) const {return rowPtrs[n];}
+  //@}
 
   //---------------------------------
   // Matrix operations (Static).
@@ -181,7 +202,8 @@ public:
   //---------------------------------
   // Matrix operations.
   //---------------------------------
-
+  /** @name Matrix operations  */
+  //@{
   //! operation A = A + B
    vpMatrix &operator+=(const vpMatrix &B);
   //! operation A = A - B
@@ -192,12 +214,10 @@ public:
    vpMatrix operator-(const vpMatrix &B) const;
    vpMatrix operator-() const;
 
-  //!return sum of the Aij^2 (for all i, for all j)
-   double sumSquare() const;
-
   //---------------------------------
   // Matrix/vector operations.
   //---------------------------------
+
     vpColVector operator*(const vpColVector &b) const;
     //! operation c = A * b (A is unchanged, c and b are translation vectors)
     vpTranslationVector operator*(const vpTranslationVector  &b) const;
@@ -219,21 +239,31 @@ public:
   // Cij = Aij / x (A is unchanged)
   vpMatrix operator/(const double x) const;
 
+  //!return sum of the Aij^2 (for all i, for all j)
+   double sumSquare() const;
+
+  //!return the determinant of the matrix.
+  double det(vpDetMethod method = LU_DECOMPOSITION) const;
+  //@}
+
   //-------------------------------------------------
   // Columns, Rows extraction, SubMatrix
   //-------------------------------------------------
-
+  /** @name Columns, Rows extraction, Submatrix  */
+  //@{
   //! Row extraction
   vpRowVector row(const int i);
   //! Column extraction
   vpColVector column(const int j);
   //! subvpMatrix extraction
   void init(const vpMatrix &m, int r, int c, int nrows, int ncols);
+  //@}
 
   //-------------------------------------------------
   // transpose, identity
   //-------------------------------------------------
-
+  /** @name Transpose, Identity  */
+  //@{
   //! Compute the transpose C = A^T
   vpMatrix t() const;
 
@@ -248,17 +278,17 @@ public:
   //! Compute the AtA operation B = A^T*A
   vpMatrix AtA() const;
   void AtA(vpMatrix &B) const;
+  //@}
 
   //-------------------------------------------------
   // LU decomposition
   //-------------------------------------------------
-
+  /** @name LU decomposition  */
+  //@{
   //! LU Decomposition
   void LUDcmp(int* perm, int& d);
   //! solve AX = B using the LU Decomposition
   void LUBksb(int* perm, vpColVector& b);
-    //! compute the determinant using the LU Decomposition (usage  double det =A.det();)
-  double detByLU();
  //! compute the eigne Values using the LU Decomposition (usage  vpColVector v =A.eigenValuesByLU();)
   vpColVector eigenValuesByLU();
   //! solve Ax=B using the LU decomposition (usage A = solveByLUD(B,x) )
@@ -268,7 +298,8 @@ public:
   //  CColVector LUDsolve(const CColVector& B) const ;
 
   //! inverse matrix A using the LU decomposition 
- vpMatrix inverseByLU() const;
+  vpMatrix inverseByLU() const;
+  //@}
 
   //-------------------------------------------------
   // SVD decomposition
@@ -286,9 +317,11 @@ public:
   	      const vpColVector& b, vpColVector& x);
 #endif
 
+/** @name SVD decomposition  */
+  //@{
   // singular value decomposition SVD
-  void svd(vpColVector& w, vpMatrix& v);
 
+  void svd(vpColVector& w, vpMatrix& v);
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
   void solveBySVD(const vpColVector& B, vpColVector& x) const ;
@@ -305,14 +338,23 @@ public:
   //! return the rank and the singular value, image
   int pseudoInverse(vpMatrix &Ap,
 		    vpColVector &sv, double svThreshold,
-		    vpMatrix &ImAt,
-		    vpMatrix &ImA) const ;
+		    vpMatrix &ImA,
+		    vpMatrix &ImAt) const ;
   //! Compute the pseudo inverse of the matrix using the SVD.
   vpMatrix pseudoInverse(double svThreshold=1e-6)  const;
+  //! Compute the pseudo inverse of the matrix using the SVD.
+  //! return the rank and the singular value, image, kernel.
+  int pseudoInverse(vpMatrix &Ap,
+		    vpColVector &sv, double svThreshold,
+		    vpMatrix &ImA,
+		    vpMatrix &ImAt,
+		    vpMatrix &kerA) const ;
 
+  int kernel(vpMatrix &KerA, double svThreshold=1e-6);
+  //@}
   //! test if the matrix is a rotation matrix ( R^T R = Id 3x3 )
   //  int isARotationMatrix() const ;
-  void printSize() { std::cout << getRows() <<" x " << getCols() <<"  " ; }
+
 
 
   //! Stack two Matrices C = [ A B ]^T
@@ -327,22 +369,32 @@ public:
   //! Create a diagonal matrix with the element of a vector DAii = Ai
   static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
 
-  static double det33(const vpMatrix &P) ;
-
-  static double detNN(const vpMatrix &M);
-
-  static int Kernel(vpMatrix& L, vpMatrix &KerL, double seuilvp);
-
+  
 
 
   // -------------------------
   // Norms
   // -------------------------
-
+  /** @name Norms  */
+  //@{
   // Euclidian norm ||x||=sqrt(sum(x_i^2))
   double euclidianNorm () const;
   // Infinity norm ||x||=max(sum(fabs(x_i)))
   double infinityNorm () const;
+  //@}
+
+  /** @name Deprecated functions */
+  //@{
+  double detNN(/*const vpMatrix &M*/) const;
+  //! compute the determinant using the LU Decomposition (usage  double det =A.det();)
+  double detByLU() const;
+  //@}
+
+  /** @name Deprecated functions */
+  //@{
+  static double det33(const vpMatrix &P) ;
+  //@}
+
 };
 
 
