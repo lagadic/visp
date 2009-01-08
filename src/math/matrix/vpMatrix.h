@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.26 2009-01-06 15:53:39 nmelchio Exp $
+ * $Id: vpMatrix.h,v 1.27 2009-01-08 10:18:25 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -66,11 +66,6 @@ class vpRowVector;
 */
 
 
-typedef enum {
-  LU_DECOMPOSITION,
-  GAUSSIAN_ELIMINATION
-  }vpDetMethod;
-
 
 /*!
   \class vpMatrix
@@ -93,6 +88,18 @@ typedef enum {
 class VISP_EXPORT vpMatrix
 {
   int k ;
+
+ public:
+  /*!
+    Method used to compute the determinant of a square matrix.
+    \sa det()
+  */
+  typedef enum {
+    LU_DECOMPOSITION,     /*!< LU decomposition method. */
+    GAUSSIAN_ELIMINATION  /*!< Gaussian elimination method. */
+  } vpDetMethod;
+
+
 protected:
   //! number of rows
   int rowNum;
@@ -329,6 +336,8 @@ public:
   vpColVector SVDsolve(const vpColVector& B) const ;
 
   //! Compute the pseudo inverse of the matrix using the SVD.
+  vpMatrix pseudoInverse(double svThreshold=1e-6)  const;
+  //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank
   int pseudoInverse(vpMatrix &Ap, double svThreshold=1e-6)  const;
   //! Compute the pseudo inverse of the matrix using the SVD.
@@ -340,8 +349,6 @@ public:
 		    vpColVector &sv, double svThreshold,
 		    vpMatrix &ImA,
 		    vpMatrix &ImAt) const ;
-  //! Compute the pseudo inverse of the matrix using the SVD.
-  vpMatrix pseudoInverse(double svThreshold=1e-6)  const;
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank and the singular value, image, kernel.
   int pseudoInverse(vpMatrix &Ap,
