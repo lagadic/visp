@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.cpp,v 1.47 2009-01-06 15:53:39 nmelchio Exp $
+ * $Id: vpMatrix.cpp,v 1.48 2009-01-08 16:17:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1067,6 +1067,11 @@ vpMatrix vpMatrix::AtA() const
 
   Here an example:
   \code
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
   vpMatrix A(3,3);
  
   A[0][0] = 4.64; 
@@ -1092,6 +1097,9 @@ vpMatrix vpMatrix::AtA() const
   // X[0] = 0.2468; 
   // X[1] = 0.120782; 
   // X[2] = 0.468587; 
+
+  std::cout << "X:\n" << X << std::endl;
+}
   \endcode
 
   \sa SVDsolve()
@@ -1114,6 +1122,11 @@ vpMatrix::solveBySVD(const vpColVector& b, vpColVector& x) const
 
   Here an example:
   \code
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
   vpMatrix A(3,3);
  
   A[0][0] = 4.64; 
@@ -1138,6 +1151,9 @@ vpMatrix::solveBySVD(const vpColVector& b, vpColVector& x) const
   // X[0] = 0.2468; 
   // X[1] = 0.120782; 
   // X[2] = 0.468587; 
+
+  std::cout << "X:\n" << X << std::endl;
+}
   \endcode
 
   \sa solveBySVD()
@@ -1174,6 +1190,11 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
   Here an example of SVD decomposition of a non square Matrix M.
 
   \code
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
   vpMatrix M(3,2);
   M[0][0] = 1;
   M[1][0] = 2;
@@ -1186,14 +1207,13 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
   vpMatrix v;
   vpColVector w;
   vpMatrix Mrec;
-  vpMatrix Sigma(2,2);
+  vpMatrix Sigma;
 
   M.svd(w, v); 
   // Here M is modified and is now equal to U
 
   // Construct the diagonal matrix from the singular values
-  for (int i=0; i < w.getRows(); i++)
-    Sigma[i][i] = w[i];
+  Sigma.diag(w);
 
   // Reconstruct the initial matrix M using the decomposition
   Mrec =  M * Sigma * v.t();
@@ -1205,7 +1225,9 @@ vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
   // Mrec[0][1] = 6;
   // Mrec[1][1] = 8 ;
   // Mrec[2][1] = 9 ;
- 
+
+  std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
+}
   \endcode
   
 */
@@ -1280,10 +1302,37 @@ vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
 }
 
 /*!
-  \brief Compute and return the pseudo inverse of the matrix : \f$ A^+ \f$
+  \brief Compute and return the pseudo inverse of a n-by-m matrix : \f$ A^+ \f$
   \param svThreshold : Threshold used to test the singular values.
 
-  \return Pseudo inverse of the matrix
+  \return Pseudo inverse of the matrix.
+
+  Here an example to compute the inverse of a n-by-n matrix. If the
+  matrix is n-by-n it is also possible to use inverseByLU().
+
+  \code
+#include <visp/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(4,4);
+
+  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+
+  // Compute the inverse
+  vpMatrix A_1; // A^-1
+  A_1 = A.pseudoInverse();
+  std::cout << "Inverse by pseudo inverse: \n" << A_1 << std::endl;
+
+  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+}
+  \endcode
+
+  \sa inverseByLU()
+  
 */
 vpMatrix
 vpMatrix::pseudoInverse(double svThreshold) const
@@ -1877,8 +1926,59 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     {
       C[i][nca+j] = B[i][j] ;
     }
+}
 
+/*!
 
+  Create a diagonal matrix with the element of a vector.
+
+  \param  A : Vector which element will be put in the diagonal.
+
+  \sa createDiagonalMatrix()
+
+  \code
+#include <iostream>
+
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A;
+  vpColVector v(3);
+
+  v[0] = 1;
+  v[1] = 2;
+  v[2] = 3;
+
+  A.diag(v);
+
+  std::cout << "A:\n" << A << std::endl;
+
+  // A is now equal to:
+  // 1 0 0
+  // 0 2 0
+  // 0 0 3
+}
+  \endcode
+*/
+
+void
+vpMatrix::diag(const vpColVector &A)
+{
+  int rows = A.getRows() ;
+  try {
+    this->resize(rows,rows) ;
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    vpCERROR << me << std::endl ;
+    throw ;
+  }
+  (*this) = 0 ;
+  for (int i=0 ; i< rows ; i++ )
+    (* this)[i][i] = A[i] ;
 }
 /*!
 
@@ -1886,7 +1986,9 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 
   \param  A : Vector which element will be put in the diagonal.
 
-  \param  DA : Diagonal matrix DA[i][i]  = A[i]
+  \param  DA : Diagonal matrix DA[i][i] = A[i]
+
+  \sa diag()
 */
 
 void
@@ -2243,56 +2345,253 @@ double vpMatrix::detByLU() const
 }
 
 /*!
-  Eigen Values of a Matrix
-  \return the Eigen Values of the matrix if the matrix is squared
-  based on the LU decomposition
-  see the Numerical Recipes in C page 43 for further explanations.
- */
- 
-vpColVector vpMatrix::eigenValuesByLU()
+  Compute the eigenvalues of a n-by-n real symmetric matrix.
+
+  \return The eigenvalues of a n-by-n real symmetric matrix.
+
+  \warning This method is only available if the Gnu Scientific Library
+  (GSL) is detected as a third party library.
+
+  \exception vpMatrixException::matrixError If the matrix is not
+  square or if the matrix is not symmetric.
+
+  \exception vpMatrixException::notImplementedError If the GSL library
+  is not detected
+
+  Here an example:
+  \code
+#include <iostream>
+
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
 {
+  vpMatrix A(3,3); // A is a symmetric matrix
+  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+  A[1][0] = 1/2.; A[1][1] = 1/3.; A[1][2] = 1/4.;
+  A[2][0] = 1/3.; A[2][1] = 1/4.; A[2][2] = 1/5.;
+  std::cout << "Initial symmetric matrix: \n" << A << std::endl;
 
-  vpColVector eigenVector(rowNum);
+  // Compute the eigen values
+  vpColVector evalue; // Eigenvalues
+  evalue = A.eigenValues();
+  std::cout << "Eigen values: \n" << evalue << std::endl;
+}
+  \endcode
 
-  // Test wether the matrix is squred
-  if (rowNum == colNum)
-  {
-    // create a temporary matrix that will be modified by LUDcmp
-    vpMatrix tmp(*this);
+  \sa eigenValues(vpColVector &, vpMatrix &)
 
-      // using th LUdcmp based on NR codes
-      // it modified the tmp matrix in a special structure of type :
-      //  b11 b12 b13 b14
-      //  a21 b22 b23 b24
-      //  a21 a32 b33 b34
-      //  a31 a42 a43 b44 
-      
-    int  * perm = new int[rowNum];  // stores the permutations
-    int d;   // +- 1 fi the number of column interchange is even or odd
-    tmp.LUDcmp(perm,  d);
-    delete[]perm;
-
-    for(int i=0;i<rowNum;i++)
-    {
-      eigenVector[i]=tmp[i][i];
-    }
+*/ 
+vpColVector vpMatrix::eigenValues()
+{
+  if (rowNum != colNum) {
+    vpERROR_TRACE("Eigen values computation: ERR Matrix not square") ;
+    throw(vpMatrixException(vpMatrixException::matrixError,
+          "\n\t\tEigen values computation: ERR Matrix not square")) ;
   }
 
-  else {
-    vpERROR_TRACE("EigenVector Computation : ERR Matrix not squared") ;
-    throw(vpMatrixException(vpMatrixException::matrixError,
-          "\n\t\tEigen Vector Computation : ERR Matrix not squared")) ;
+#ifdef VISP_HAVE_GSL  /* be careful of the copy below */
+  {
+    // Check if the matrix is symetric: At - A = 0
+    vpMatrix At_A = (*this).t() - (*this);
+    for (int i=0; i < rowNum; i++) {
+      for (int j=0; j < rowNum; j++) {
+	if (At_A[i][j] != 0) {
+	  vpERROR_TRACE("Eigen values computation: ERR Matrix not symmetric") ;
+	  throw(vpMatrixException(vpMatrixException::matrixError,
+				  "\n\t\tEigen values computation: "
+				  "ERR Matrix not symmetric")) ;
+	}
+      }
+    }
     
 
+    vpColVector evalue(rowNum); // Eigen values
+
+    gsl_vector *eval = gsl_vector_alloc (rowNum);
+    gsl_matrix *evec = gsl_matrix_alloc (rowNum, colNum);
+
+    gsl_eigen_symmv_workspace * w =  gsl_eigen_symmv_alloc (rowNum);
+    gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
+       
+    int Atda = m->tda ;
+    for (int i=0 ; i < rowNum ; i++){
+      int k = i*Atda ;
+      for (int j=0 ; j < colNum ; j++)
+	m->data[k+j] = (*this)[i][j] ;
+    }
+    gsl_eigen_symmv (m, eval, evec, w);
+     
+    gsl_eigen_symmv_sort (eval, evec, GSL_EIGEN_SORT_ABS_ASC);
+
+    for (int i=0; i < rowNum; i++) {
+      evalue[i] = gsl_vector_get (eval, i);
+    }
+    
+    gsl_eigen_symmv_free (w);
+    gsl_vector_free (eval);
+    gsl_matrix_free (m);
+    gsl_matrix_free (evec);
+
+    return evalue;
   }
-  return eigenVector ;
+#else
+  {
+    vpERROR_TRACE("Not implemented since the GSL library is not detected.") ;
+    throw(vpMatrixException(vpMatrixException::notImplementedError,
+			    "\n\t\tEigen values Computation: Not implemented "
+			    "since the GSL library is not detected")) ;
+  }
+#endif  
+}
+
+/*!
+  Compute the eigenvalues of a n-by-n real symmetric matrix.
+  \return The eigenvalues of a n-by-n real symmetric matrix.
+
+  \warning This method is only available if the Gnu Scientific Library
+  (GSL) is detected as a third party library.
+
+  \param evalue : Eigenvalues of the matrix.
+
+  \param evector : Eigenvector of the matrix.
+
+  \exception vpMatrixException::matrixError If the matrix is not
+  square or if the matrix is not symmetric.
+
+  \exception vpMatrixException::notImplementedError If the GSL library
+  is not detected
+
+  Here an example:
+  \code
+#include <iostream>
+
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(4,4); // A is a symmetric matrix
+  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+  A[1][0] = 1/2.; A[1][1] = 1/3.; A[1][2] = 1/4.; A[1][3] = 1/5.;
+  A[2][0] = 1/3.; A[2][1] = 1/4.; A[2][2] = 1/5.; A[2][3] = 1/6.;
+  A[3][0] = 1/4.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+  std::cout << "Initial symmetric matrix: \n" << A << std::endl;
+
+  vpColVector d; // Eigenvalues
+  vpMatrix    V; // Eigenvectors
+
+  // Compute the eigenvalues and eigenvectors
+  A.eigenValues(d, V);
+  std::cout << "Eigen values: \n" << d << std::endl;
+  std::cout << "Eigen vectors: \n" << V << std::endl;
+
+  vpMatrix D;
+  D.diag(d); // Eigenvalues are on the diagonal
+
+  std::cout << "D: " << D << std::endl;
+
+  // Verification: A * V = V * D
+  std::cout << "AV-VD = 0 ? \n" << (A*V) - (V*D) << std::endl;
+}
+  \endcode
+
+  \sa eigenValues()
+
+*/
+void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector)
+{
+  if (rowNum != colNum) {
+    vpERROR_TRACE("Eigen values computation: ERR Matrix not square") ;
+    throw(vpMatrixException(vpMatrixException::matrixError,
+          "\n\t\tEigen values computation: ERR Matrix not square")) ;
+  }
+
+#ifdef VISP_HAVE_GSL  /* be careful of the copy below */
+  {
+    // Check if the matrix is symetric: At - A = 0
+    vpMatrix At_A = (*this).t() - (*this);
+    for (int i=0; i < rowNum; i++) {
+      for (int j=0; j < rowNum; j++) {
+	if (At_A[i][j] != 0) {
+	  vpERROR_TRACE("Eigen values computation: ERR Matrix not symmetric") ;
+	  throw(vpMatrixException(vpMatrixException::matrixError,
+				  "\n\t\tEigen values computation: "
+				  "ERR Matrix not symmetric")) ;
+	}
+      }
+    }
+    
+    // Resize the output matrices
+    evalue.resize(rowNum);
+    evector.resize(rowNum, colNum);
+
+    gsl_vector *eval = gsl_vector_alloc (rowNum);
+    gsl_matrix *evec = gsl_matrix_alloc (rowNum, colNum);
+
+    gsl_eigen_symmv_workspace * w =  gsl_eigen_symmv_alloc (rowNum);
+    gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
+       
+    int Atda = m->tda ;
+    for (int i=0 ; i < rowNum ; i++){
+      int k = i*Atda ;
+      for (int j=0 ; j < colNum ; j++)
+	m->data[k+j] = (*this)[i][j] ;
+    }
+    gsl_eigen_symmv (m, eval, evec, w);
+     
+    gsl_eigen_symmv_sort (eval, evec, GSL_EIGEN_SORT_ABS_ASC);
+
+    for (int i=0; i < rowNum; i++) {
+      evalue[i] = gsl_vector_get (eval, i);
+    }
+    Atda = evec->tda ;
+    for (int i=0; i < rowNum; i++) {
+      int k = i*Atda ;
+      for (int j=0; j < rowNum; j++) {
+	evector[i][j] = evec->data[k+j];
+      }
+    }
+
+
+//        {
+//          int i;
+     
+//          for (i = 0; i < rowNum; i++)
+//            {
+//              double eval_i 
+//                 = gsl_vector_get (eval, i);
+//              gsl_vector_view evec_i 
+//                 = gsl_matrix_column (evec, i);
+     
+//              printf ("eigenvalue = %g\n", eval_i);
+//              printf ("eigenvector = \n");
+//              gsl_vector_fprintf (stdout, 
+//                                  &evec_i.vector, "%g");
+//            }
+//        }
+    
+    gsl_eigen_symmv_free (w);
+    gsl_vector_free (eval);
+    gsl_matrix_free (m);
+    gsl_matrix_free (evec);
+  }
+#else
+  {
+    vpERROR_TRACE("Not implemented since the GSL library is not detected.") ;
+    throw(vpMatrixException(vpMatrixException::notImplementedError,
+			    "\n\t\tEigen values Computation: Not implemented "
+			    "since the GSL library is not detected")) ;
+  }
+#endif  
 }
 
 
 /*!
-  Compute the determinant of a square matrix.
+  Compute the determinant of a n-by-n matrix.
 
-  \return determinant of the matrix.
+  \return Determinant of the matrix.
   \deprecated Use det(GAUSSIAN_ELIMINATION) instead.
 */
 double vpMatrix::detNN() const
@@ -2512,7 +2811,36 @@ int vpMatrix::kernel(vpMatrix &kerA, double svThreshold)
  return rank ;
 }
 
+/*!
+  Compute the determinant of a n-by-n matrix.
 
+  \param method : Method used to compute the determinant. Default LU
+  decomposition methos is faster than the method based on Gaussian
+  elimination.
+
+  \return Determinant of the matrix.
+
+  \code
+#include <iostream>
+
+#include <visp/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(3,3);
+  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+  A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
+  A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
+  std::cout << "Initial matrix: \n" << A << std::endl;
+
+  // Compute the determinant
+  std:: cout << "Determinant by Gaussian elimination: " << 
+    A.det(vpMatrix::GAUSSIAN_ELIMINATION) << std::endl;
+  std:: cout << "Determinant by LU decomposition    : " << 
+    A.det(vpMatrix::LU_DECOMPOSITION ) << std::endl;
+}
+  \endcode
+*/
 double vpMatrix::det(vpDetMethod method) const
 {
   double det = 0;

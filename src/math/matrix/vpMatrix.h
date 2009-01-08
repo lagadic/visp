@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix.h,v 1.27 2009-01-08 10:18:25 fspindle Exp $
+ * $Id: vpMatrix.h,v 1.28 2009-01-08 16:17:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -46,6 +46,11 @@
 
 #include <visp/vpTime.h>
 #include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_GSL
+#  include <gsl/gsl_math.h>
+#  include <gsl/gsl_eigen.h>
+#endif
 
 class vpRowVector;
 class vpColVector;
@@ -169,9 +174,9 @@ public:
   //@}
 
   //---------------------------------
-  // Copy / assigment
+  // Copy / assignment
   //---------------------------------
-  /** @name Copy / assigenment  */
+  /** @name Copy / assignment  */
   //@{
   //! Copy constructor
   vpMatrix (const vpMatrix& m);
@@ -183,6 +188,7 @@ public:
   vpMatrix &operator=(const vpMatrix &B);
   //! Set all the element of the matrix A to x
   vpMatrix &operator=(const double x);
+  void diag(const vpColVector &A);
   //@}
 
   //---------------------------------
@@ -249,7 +255,7 @@ public:
   //!return sum of the Aij^2 (for all i, for all j)
    double sumSquare() const;
 
-  //!return the determinant of the matrix.
+  // return the determinant of the matrix.
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
   //@}
 
@@ -292,19 +298,14 @@ public:
   //-------------------------------------------------
   /** @name LU decomposition  */
   //@{
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //! LU Decomposition
   void LUDcmp(int* perm, int& d);
   //! solve AX = B using the LU Decomposition
   void LUBksb(int* perm, vpColVector& b);
- //! compute the eigne Values using the LU Decomposition (usage  vpColVector v =A.eigenValuesByLU();)
-  vpColVector eigenValuesByLU();
-  //! solve Ax=B using the LU decomposition (usage A = solveByLUD(B,x) )
-  //  void solveByLUD(const CColVector& B, CColVector& x) const ;
+#endif // doxygen should skip this
 
-  //! solve Ax=B using the LU decomposition (usage  x=A.LUDsolve(B))
-  //  CColVector LUDsolve(const CColVector& B) const ;
-
-  //! inverse matrix A using the LU decomposition 
+  // inverse matrix A using the LU decomposition 
   vpMatrix inverseByLU() const;
   //@}
 
@@ -318,13 +319,13 @@ public:
 #ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector& w, vpMatrix& v);
 #endif
- //! solve AX=B using the SVD decomposition
-    void SVBksb(const vpColVector& w,
+  //! solve AX=B using the SVD decomposition
+  void SVBksb(const vpColVector& w,
   	      const vpMatrix& v,
   	      const vpColVector& b, vpColVector& x);
 #endif
 
-/** @name SVD decomposition  */
+  /** @name SVD decomposition  */
   //@{
   // singular value decomposition SVD
 
@@ -359,10 +360,18 @@ public:
 
   int kernel(vpMatrix &KerA, double svThreshold=1e-6);
   //@}
-  //! test if the matrix is a rotation matrix ( R^T R = Id 3x3 )
-  //  int isARotationMatrix() const ;
 
+  //-------------------------------------------------
+  // Eigen values and vectors
+  //-------------------------------------------------
 
+  /** @name Eigen values  */
+
+  //@{
+  // compute the eigen values using the Gnu Scientific library
+  vpColVector eigenValues();
+  void eigenValues(vpColVector &evalue, vpMatrix &evector);
+  //@}
 
   //! Stack two Matrices C = [ A B ]^T
   static vpMatrix stackMatrices(const vpMatrix &A,const  vpMatrix &B) ;
@@ -373,7 +382,7 @@ public:
   //! Juxtapose to matrices C = [ A B ]
   static void juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C) ;
 
-  //! Create a diagonal matrix with the element of a vector DAii = Ai
+  // Create a diagonal matrix with the element of a vector DAii = Ai
   static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
 
   
@@ -395,10 +404,6 @@ public:
   double detNN(/*const vpMatrix &M*/) const;
   //! compute the determinant using the LU Decomposition (usage  double det =A.det();)
   double detByLU() const;
-  //@}
-
-  /** @name Deprecated functions */
-  //@{
   static double det33(const vpMatrix &P) ;
   //@}
 
