@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix_lu.cpp,v 1.4 2006-06-23 14:45:05 brenier Exp $
+ * $Id: vpMatrix_lu.cpp,v 1.5 2009-01-08 16:17:07 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -174,11 +174,36 @@ void vpMatrix::LUBksb(int *perm, vpColVector& b)
     b[i]=sum/rowPtrs[i][i];
   }
 }
+#endif // doxygen should skip this
 
 /*!
-  \brief inverse matrix A using the LU  (C = A^-1)
+  Compute the inverse of a n-by-n matrix using the LU decomposition (C = A^-1)
 
-  \sa InverseBySVD()
+  \return The inverse matrix.
+
+  Here an example:
+  \code
+#include <visp/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(4,4);
+
+  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+
+  // Compute the inverse
+  vpMatrix A_1; // A^-1
+  A_1 = A.inverseByLU();
+  std::cout << "Inverse by LU: \n" << A_1 << std::endl;
+
+  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+}
+  \endcode
+
+  \sa pseudoInverse()
 */
 vpMatrix
 vpMatrix::inverseByLU() const
@@ -222,4 +247,3 @@ vpMatrix::inverseByLU() const
   return B;
 }
 
-#endif // doxygen should skip this
