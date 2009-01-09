@@ -34,6 +34,7 @@ ViSP 2.4.x (released ...)
     - Introduction of new sample examples in the online documentation
   - Bug fixed
     - [5370] DirectShow and Visual Studio 9 2008 Express
+    - [5371] Warnings on Visual Studio 9 2008
     - [5375] Compilation error in calibrate2dGrid.cpp
     - [5398] display cylinder
     - [5438] window sizes with Coin
@@ -52,7 +53,7 @@ ViSP 2.4.x (released ...)
     - [6744] Bug in vpDisplayOpenCV
     - [6962] vpMeLine : problem of tracking
     - [7034] vpMeLine : Bug when a strip is tracked
-
+    - [7126] problem with vpMatrix::eigenValuesByLU()
 ----------------------------------------------	
 ViSP 2.4.2 (released March 27, 2008)
   - New classes
