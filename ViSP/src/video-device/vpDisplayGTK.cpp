@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.43 2008-12-09 13:20:30 fspindle Exp $
+ * $Id: vpDisplayGTK.cpp,v 1.44 2009-01-11 16:56:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1154,7 +1154,7 @@ vpDisplayGTK::setTitle(const char *windowtitle)
  */
 
 void
-vpDisplayGTK::setFont(const char */*fontname*/)
+vpDisplayGTK::setFont(const char * /* fontname */)
 {
   vpERROR_TRACE("Not yet implemented" ) ;
 }
