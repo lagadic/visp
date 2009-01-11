@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowDevice.cpp,v 1.6 2009-01-07 13:21:40 fspindle Exp $
+ * $Id: vpDirectShowDevice.cpp,v 1.7 2009-01-11 16:56:42 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -37,6 +37,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include <stdio.h>
 #include <visp/vpConfig.h>
 #if ( defined(VISP_HAVE_DIRECTSHOW) )
 
@@ -71,7 +72,7 @@ bool vpDirectShowDevice::init(const CComPtr<IMoniker>& pMoniker)
 	//successfully got the name
 	if (SUCCEEDED(hr))
 	{
-		sprintf_s(tmp, FILENAME_MAX, "%S", varName.bstrVal);
+		sprintf(tmp, "%S", varName.bstrVal);
 		name = tmp;
 	}
 
@@ -82,7 +83,7 @@ bool vpDirectShowDevice::init(const CComPtr<IMoniker>& pMoniker)
 	//successfully got the description
 	if (SUCCEEDED(hr))
 	{
-		sprintf_s(tmp, FILENAME_MAX, "%S", varDesc.bstrVal);
+		sprintf(tmp, "%S", varDesc.bstrVal);
 		desc = tmp;
 	}
 
@@ -93,7 +94,7 @@ bool vpDirectShowDevice::init(const CComPtr<IMoniker>& pMoniker)
 	//successfully got the device path
 	if (SUCCEEDED(hr))
 	{
-		sprintf_s(tmp, FILENAME_MAX, "%S",varDevPath.bstrVal);
+		sprintf(tmp, "%S",varDevPath.bstrVal);
 		devPath = tmp;
 	}
 
