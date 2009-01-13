@@ -1,0 +1,44 @@
+                "Hello World" example based on CMake
+
+
+This example shows how to exploit the ViSP library to build the "Hello World"
+example based on CMake configuration tools.
+
+Prior to use ViSP as a third party library you need a compiled (build) version
+of ViSP source code. We suppose here that ViSP is build in <visp_build_dir>. 
+ViSP library is than in <visp_build_dir>/lib/libvisp.[a,so,lib,dll].
+
+Under Unix, you can build this project using ViSP as a third party library 
+using: 
+
+ccmake .
+  [hit 'c' key to configure the project]
+  [hit 'e' key to acknoledge the warning indicating that ViSP is not found]
+  [Use the arrow keys to position the cursor on the VISP_DIR line] 
+  [Press "ENTER" key to enter in the edit mode]
+  [Set VISP_DIR variable to the "<visp_build_dir>/lib" location]
+  [Press "ENTER" key to quit the edit mode]
+  [hit 'c' key to configure the project]
+  [hit 'c' key to configure the project]
+  [hit 'g' key to generate the Makefiles]
+
+Than you can compile this project by:
+
+make
+
+That's all under Unix
+
+Under Windows, you need to start CMake GUI and than:
+- set the "Hello World" source code location
+- set the build path for example to the same location
+- click on "Configure" button
+- select your build tool in the list [Visual Studio 2003 for example]
+- set the VISP_DIR variable to the "<visp_build_dir>/lib" location
+- click on "Configure" button
+- click on "Ok" button or "Generate" button
+- CMake GUI will exit automatically when configuration files are generated 
+
+Than open your solution like "HelloWorld.sln" in you build tool to compile
+the Hello World project.
+
+That's all under Windows
