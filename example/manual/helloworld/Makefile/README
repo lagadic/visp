@@ -1,22 +1,18 @@
-                "Hello World" example based on Autotools
+                "Hello World" example based on Makefiles
 
 
 This example shows how to exploit the ViSP library to build the "Hello World"
-example based on Autotools build tools.
+example based on Makefiles build tools.
 
 Prior to use ViSP as a third party library you need a compiled (build) version
 of ViSP source code. We suppose here that ViSP is build in <visp_build_dir>. 
 ViSP library is than in <visp_build_dir>/lib/libvisp.[a,so,lib,dll].
 
-To configure this project using ViSP as a third party library, type:
+To build this project using ViSP as a third party library, you need first 
+to edit the Makefile file in order to set the VISP_BUILD_DIR variable to 
+<visp_build_dir> location.
 
-aclocal -I .
-touch NEWS AUTHORS ChangeLog
-automake -a
-autoconf
-./configure --with-visp-install-bin=<visp_build_dir>/bin
-
-Now you can compile this project by:
+Than you can compile this project by:
 
 make
 
