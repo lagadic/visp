@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: GenerateConfigScript.cmake,v 1.18 2008-02-05 09:08:53 fspindle Exp $
+# $Id: GenerateConfigScript.cmake,v 1.19 2009-01-14 17:16:48 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -179,6 +179,46 @@ IF (UNIX)
   CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
 
 ELSE(UNIX)
-  #MESSAGE("GenerateConfigScript works only on Unix platforms, sorry.")
+  # for windows
+  SET(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.bat.in")
+  SET(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config.bat")
+  
+  #---------------------------------------------------------------------
+  # Updates VISP_CONFIG_SCRIPT_PREFIX
+  #----------------------------------------------------------------------
+  SET(VISP_CONFIG_SCRIPT_PREFIX "${CMAKE_INSTALL_PREFIX}")
+
+  #---------------------------------------------------------------------
+  # Updates VISP_CONFIG_SCRIPT_DEF
+  #----------------------------------------------------------------------
+  SET(VISP_CONFIG_SCRIPT_DEFS "")
+  FOREACH(def ${VISP_DEFS})
+    #MESSAGE("def to process: ${def}")
+    IF("${def}" MATCHES "[-][D]+.")
+    	#MESSAGE("${def} matches -D")
+        STRING(REGEX REPLACE "[-][D]" "" def ${def})
+        STRING(REGEX REPLACE "[ ]" ";" def ${def})
+	#MESSAGE("new ${def} without -D")
+    ENDIF("${def}" MATCHES "[-][D]+.")
+    SET(VISP_CONFIG_SCRIPT_DEFS "${def} ${VISP_CONFIG_SCRIPT_DEFS}")
+  ENDFOREACH(def)
+
+  #---------------------------------------------------------------------
+  # Updates VISP_CONFIG_SCRIPT_INCLUDE
+  #----------------------------------------------------------------------
+  SET(VISP_CONFIG_SCRIPT_INC "%PREFIX%/include")
+  MESSAGE(VISP_CONFIG_SCRIPT_INC: ${VISP_CONFIG_SCRIPT_INC})
+
+  FOREACH(INCDIR ${VISP_EXTERN_INCLUDE_DIR})
+    #MESSAGE("Include to add: ${INCDIR}")
+    SET(VISP_CONFIG_SCRIPT_INC "${VISP_CONFIG_SCRIPT_INC} ${INCDIR}")
+  ENDFOREACH(INCDIR)
+  MESSAGE(VISP_CONFIG_SCRIPT_INC ${VISP_CONFIG_SCRIPT_INC})
+
+
+  #---------------------------------------------------------------------
+  # Updates the visp-config shell script
+  #----------------------------------------------------------------------
+  CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
 ENDIF(UNIX)
 

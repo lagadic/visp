@@ -1,0 +1,115 @@
+@rem visp-config.bat
+
+@rem
+@rem $Id: visp-config.bat.in,v 1.1 2009-01-14 17:16:47 fspindle Exp $
+@rem
+@rem Copyright (C) 1998-2009 Inria. All rights reserved.
+@rem
+@rem This software was developed at:
+@rem IRISA/INRIA Rennes
+@rem Projet Lagadic
+@rem Campus Universitaire de Beaulieu
+@rem 35042 Rennes Cedex
+@rem http://www.irisa.fr/lagadic
+@rem
+@rem This file is part of the ViSP toolkit.
+@rem
+@rem This file may be distributed under the terms of the Q Public License
+@rem as defined by Trolltech AS of Norway and appearing in the file
+@rem LICENSE included in the packaging of this file.
+@rem
+@rem Licensees holding valid ViSP Professional Edition licenses may
+@rem use this file in accordance with the ViSP Commercial License
+@rem Agreement provided with the Software.
+@rem
+@rem This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+@rem WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+@rem
+@rem Contact visp@irisa.fr if any conditions of this licensing are
+@rem not clear to you.
+@rem
+@rem Description:
+@rem visp-config.bat script for Windows.
+@rem Auto-generated from visp-config.bat.in by cmake.
+@rem
+@rem Authors:
+@rem Fabien Spindler
+@rem
+
+
+@echo off
+
+@rem Get the dirname
+for /F %%x in ('CHDIR') do set PREFIX=%%x
+
+set VERSION=${VISP_VERSION}
+
+set DEFS=${VISP_CONFIG_SCRIPT_DEFS}
+
+set INCLUDE="${VISP_CONFIG_SCRIPT_INC}"
+set LIBDIR=visp/lib
+
+set LIBS=visp-2.lib winmm.lib
+
+@rem Test if an argument is provided
+
+if "%1" == "" goto USAGE
+
+@rem Parse the argument list
+for %%a in (%*) do (
+@rem  echo Read arg %%a
+  if "%%a" == "--help" (
+	goto USAGE
+  )
+  if "%%a" == "--prefix" (
+	echo %PREFIX%
+	goto END
+  )
+  if "%%a" == "--def" (
+	echo %DEFS%
+	goto END
+  )
+  if "%%a" == "--include" (
+	echo %INCLUDE%
+	goto END
+  )
+  if "%%a" == "--libdir" (
+	echo %LIBDIR%
+	goto END
+  )
+  if "%%a" == "--libs" (
+	echo %LIBS%
+	goto END
+  )
+  if "%%a" == "--version" (
+	echo ViSP %VERSION% Visual Servoing Platform
+	echo.
+	echo Copyright 1998-2009 Inria. All rights reserved.
+	goto END
+  )
+  if "%%a" == "--dumpversion" (
+	echo %VERSION%
+	goto END
+  )
+
+)
+
+:USAGE
+echo ViSP %VERSION% (Visual Servoing Platform)
+echo Copyright (C) 1998-2009 Inria. All rights reserved.
+echo.
+echo Usage: %0 [--prefix] [--def] [--include] [--libpath] 
+echo [--libs] [--version] [--dumpversion] [--help]
+echo.
+echo  --prefix      Show ViSP installation prefix.
+echo  --def         Print pre-processor definitions.
+echo  --include     Print include directories.
+echo  --libpath     Print library directories.
+echo  --libs        Print library dependencies.
+echo  --version     Output ViSP information.
+echo  --dumpversion Output ViSP version information.
+echo  --help        Display this help and exit.
+echo.
+goto END
+
+:End
