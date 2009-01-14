@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.83 2008-12-15 17:19:22 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.84 2009-01-14 17:17:35 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -856,7 +856,7 @@ CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
 # Generate the package dependent visp-config shell script for projects which
 # are not using CMake:
 # Usage:
-#    visp-config --include ...
+#    visp-config --cflags ...
 #----------------------------------------------------------------------
 INCLUDE(${CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 
@@ -865,11 +865,17 @@ INCLUDE(${CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 #----------------------------------------------------------------------
 # install rule for visp-config shell script
 IF (UNIX)
-INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config
-  DESTINATION bin
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-  OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-  OWNER_WRITE   )
+  INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config
+    DESTINATION bin
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    OWNER_WRITE)
+ELSE(UNIX)
+  INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config.bat
+    DESTINATION bin
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    OWNER_WRITE)
 ENDIF (UNIX)
 
 # install rule for vpConfig.h
