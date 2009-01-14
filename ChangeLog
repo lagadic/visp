@@ -12,6 +12,10 @@ ViSP 2.4.x (released ...)
   - Platform compatibility
     - Compatibility with g++ 4.3.0 coming with fedora 9
   - New Features
+    - Add visp-config.bat under Windows to get the list of include dirs, 
+      library dirs and libraries ViSP depends on. This may help users to 
+      build a Visual Studio project from scratch and where ViSP is used as a 
+      third party project
     - vpFeatureThetaU: Add cRcd feature, with ThetaU corresponding to the 
       rotation the camera has to achieve to move from current frame to the 
       desired one.
