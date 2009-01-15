@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureBuilderLine.cpp,v 1.5 2007-04-18 16:14:29 asaunier Exp $
+ * $Id: vpFeatureBuilderLine.cpp,v 1.6 2009-01-15 15:42:46 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -153,6 +153,22 @@ vpFeatureBuilder::create(vpFeatureLine &s,
   try{
     rhop = t.getRho() ;
     thetap = t.getTheta();
+
+    //Gives the rho and theta coordinates in the (u,v) coordinate system.
+    if (thetap >= 0 && thetap < M_PI/2)
+    {
+      thetap = M_PI/2 - thetap;
+    }
+
+    else if (thetap >= M_PI/2 && thetap < 3*M_PI/2)
+    {
+      thetap = 3*M_PI/2 + M_PI - thetap;
+    }
+
+    else if (thetap >= 3*M_PI/2 && thetap <= 2*M_PI)
+    {
+      thetap = M_PI/2 + 2*M_PI - thetap;
+    }
 
     //  vpTRACE("pixel %f %f",rhop, thetap) ;
     vpPixelMeterConversion::convertLine(cam,rhop,thetap, rho,theta) ;
