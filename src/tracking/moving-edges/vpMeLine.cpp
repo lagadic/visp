@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.20 2008-12-15 21:30:13 fspindle Exp $
+ * $Id: vpMeLine.cpp,v 1.21 2009-01-15 15:35:45 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -535,7 +535,8 @@ void
 vpMeLine::leastSquare()
 {
   vpMatrix A(numberOfSignal(),2) ;
-  vpColVector x(2) ;
+  vpColVector x(2), x_1(2) ;
+  x_1 = 0;
 
   int i ;
 
@@ -551,6 +552,7 @@ vpMeLine::leastSquare()
   vpMeSite p ;
   int iter =0 ;
   int nos_1 = -1 ;
+  double distance = 100;
 
   if (list.nbElement() < 2)
   {
@@ -579,7 +581,7 @@ vpMeLine::leastSquare()
 		list.next() ;
 	}
 
-	while (iter < 4)
+	while (iter < 4 && distance > 0.05)
 	{
 		DA = D*A ;
 		x = DA.pseudoInverse(1e-26) *D*B ;
@@ -596,6 +598,8 @@ vpMeLine::leastSquare()
 			k++;
 		}
 		iter++ ;
+		distance = fabs(x[0]-x_1[0])+fabs(x[1]-x_1[1]);
+		x_1 = x;
 	}
 
       list.front() ;
@@ -628,7 +632,7 @@ vpMeLine::leastSquare()
 
 
   else		// Construction du systeme Ax=B
-  		// a i + j + c = 0
+  		// i + bj + c = 0
   		// A = (j 1)   B = (-i)
   {
 	nos_1 = numberOfSignal() ;
@@ -647,7 +651,7 @@ vpMeLine::leastSquare()
 		list.next() ;
 	}
 
-	while (iter < 4)
+	while (iter < 4 && distance > 0.05)
 	{
 		DA = D*A ;
 		x = DA.pseudoInverse(1e-26) *D*B ;
@@ -664,6 +668,8 @@ vpMeLine::leastSquare()
 			k++;
 		}
 		iter++ ;
+		distance = fabs(x[0]-x_1[0])+fabs(x[1]-x_1[1]);
+		x_1 = x;
 	}
 
 
@@ -772,8 +778,6 @@ void
 vpMeLine::suppressPoints()
 {
 int nbrelmt;
-int sup;
-int nbr0 = 0, nbr1 = 0, nbr2 = 0;
 nbrelmt = list.nbElement();
 //printf("\n\n\nnbr elements : %d\n",nbrelmt);
   // Loop through list of sites to track
@@ -782,28 +786,12 @@ nbrelmt = list.nbElement();
   {
     vpMeSite s = list.value() ;//current reference pixel
 
-sup = s.suppress;
-if (sup == 0)
-nbr0++;
-if (sup == 1)
-nbr1++;
-if (sup == 2)
-nbr2++;
-
     if (s.suppress != 0)
       list.suppress() ;
     else
       list.next() ;
   }
 nbrelmt = list.nbElement();
-if (nbrelmt == 0)
-{
-printf("a priori pb");
-}
-//printf("\nnnbr elements : %d\n",nbrelmt);
-//printf("\nnbr elements 0 : %d\n",nbr0);
-//printf("\nnbr elements 1 : %d\n",nbr1);
-//printf("\nnbr elements 2 : %d\n\n\n\n",nbr2);
 }
 
 
@@ -909,7 +897,7 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
   double sample = (double)me->sample_step;
 
   vpMeSite P ;
-  P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta, 0, sign) ;
+  P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta_1, 0, sign) ;
   P.setDisplay(selectDisplay) ;
 
   int  memory_range = me->range ;
@@ -934,7 +922,7 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
     }
   }
 
-  P.init((int) PExt[1].ifloat, (int)PExt[1].jfloat, delta, 0, sign) ;
+  P.init((int) PExt[1].ifloat, (int)PExt[1].jfloat, delta_1, 0, sign) ;
   P.setDisplay(selectDisplay) ;
   for (int i=0 ; i < 3 ; i++)
   {
@@ -1039,7 +1027,7 @@ vpMeLine::updateDelta()
 
   //std::cout << "angle theta : " << theta << std::endl ;
   diff = fabs(angle - angle_1);
-  if (diff >= 90)
+  if (diff > 90)
   sign *= -1;
 
   angle_1 = angle;
@@ -1146,8 +1134,12 @@ vpMeLine::track(vpImage<unsigned char> &I)
 void
 vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
 {
-  rho = -c ;
-  theta = atan2(a,b) ;
+  //rho = -c ;
+  //theta = atan2(a,b) ;
+  rho = fabs(c);
+  theta = atan2(b,a) ;
+while (theta >= M_PI)    theta -=M_PI ;
+while (theta < 0)    theta +=M_PI ;
 
   /*  while(theta < -M_PI)	theta += 2*M_PI ;
   while(theta >= M_PI)	theta -= 2*M_PI ;
@@ -1180,13 +1172,17 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
   while (!end)
     {
       end = true;
-      i1 = (int)(i + a *incr) ;
-      j1 = (int)(j + b *incr) ;
+      /*i1 = (int)(i + a *incr) ;
+      j1 = (int)(j + b *incr) ;*/
+      i1 = (int)(i + cos(theta) *incr) ;
+      j1 = (int)(j + sin(theta) *incr) ;
       v1 = I[i1][j1] ;
 
 
-      i2 = (int)(i - a *incr) ;
-      j2 = (int)(j - b *incr) ;
+      /*i2 = (int)(i - a *incr) ;
+      j2 = (int)(j - b *incr) ;*/
+      i2 = (int)(i - cos(theta) *incr) ;
+      j2 = (int)(j - sin(theta) *incr) ;
       v2 = I[i2][j2] ;
 
 
@@ -1203,66 +1199,43 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
       }
     }
 
-  int sgn ;
-  int i3, j3 ;
-  if (v1<v2)
-  { i3 = i1 ; j3 = j1 ; sgn = -1 ; }
-  else
-  { i3 = i2 ; j3 = j2 ; sgn =1 ; }
-
-
-  while (theta > M_PI)    theta -=2*M_PI ;
-  while (theta < -M_PI)   theta +=2*M_PI ;
-
-
-    vpTRACE("%f %f %d", rho, theta, sgn) ;
-  if ( (theta > M_PI/4) &&  (theta < 3*M_PI/4))
+  if (theta >=0 && theta <= M_PI/2)
   {
-    if (sgn <0)
+    if (v2 < v1)
     {
-            vpTRACE(" ") ;
-      rho *=-1 ;
-      theta += M_PI ;
+      theta += M_PI;
+      rho *= -1;
     }
   }
+
   else
-    if ( (theta < -M_PI/4) &&  (theta > -3*M_PI/4))
+  {
+    double jinter;
+    jinter = -c/b;
+    if (v2 < v1)
     {
-      if (sgn>0)
+      theta += M_PI;
+      if (jinter > 0)
       {
-	      vpTRACE(" ") ;
-	rho *=-1 ;
-	theta += M_PI ;
+        rho *= -1;
       }
     }
-  else
-    if ((theta <M_PI/4) || (theta>3*M_PI/4))
-    {
-      if (sgn>0)
-      {
-	      vpTRACE(" ") ;
-	rho *=-1 ;
-	theta += M_PI ;
-      }
-    }
+
     else
     {
-      if (sgn<0)
+      if (jinter < 0)
       {
-	vpTRACE(" ") ;
-	rho *=-1 ;
-	theta += M_PI ;
+        rho *= -1;
       }
     }
-     vpTRACE("%f %f", rho, theta) ;
-
-
-  while (theta > M_PI)     theta -=2*M_PI ;
-  while (theta < -M_PI)    theta +=2*M_PI ;
-     vpTRACE("%f %f", rho, theta) ;
+  }
 
   if (vpDEBUG_ENABLE(2))
+  {
     vpDisplay::displayArrow(I,i,j,i3,j3, vpColor::green) ;
+    vpDisplay::displayArrow(I,i,j,i1,j1, vpColor::green) ;
+    vpDisplay::displayArrow(I,i,j,i2,j2, vpColor::red) ;
+  }
 }
 
 /*!
