@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: GenerateConfigScript.cmake,v 1.19 2009-01-14 17:16:48 fspindle Exp $
+# $Id: GenerateConfigScript.cmake,v 1.20 2009-01-15 17:36:49 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -36,6 +36,7 @@
 #
 #############################################################################
 
+
 IF (UNIX)
   SET(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.in")
   SET(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config")
@@ -49,12 +50,33 @@ IF (UNIX)
   # Updates VISP_CONFIG_SCRIPT_CFLAGS
   #----------------------------------------------------------------------
   SET(VISP_CONFIG_SCRIPT_CFLAGS "")
-  SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} ${VISP_DEFS}")
-  SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -I$PREFIX/include")
+  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_CONFIG_SCRIPT_CFLAGS} "${VISP_DEFS}")
+  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_CONFIG_SCRIPT_CFLAGS} "-I$PREFIX/include")
 
   FOREACH(INCDIR ${VISP_EXTERN_INCLUDE_DIR})
-    SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -I${INCDIR}")
+    SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_CONFIG_SCRIPT_CFLAGS} "-I${INCDIR}")
   ENDFOREACH(INCDIR)
+
+  # Suppress twins
+  SET(myvar "")
+  FOREACH(element ${VISP_CONFIG_SCRIPT_CFLAGS})
+#     MESSAGE("element: ${element}")
+     SET(toadd 1)
+     FOREACH(elementadded ${myvar})
+#       MESSAGE("compare ${element} and ${elementadded}")
+       STRING(COMPARE EQUAL "${element}" "${elementadded}" iseq)
+       IF(${iseq})
+#	 MESSAGE("is equal")
+         SET(toadd 0)
+       ENDIF(${iseq})
+     ENDFOREACH(elementadded ${myvar})
+     IF(${toadd})
+#       MESSAGE("need to add ${element}")
+       SET(myvar ${myvar} ${element})
+     ENDIF(${toadd})
+  ENDFOREACH(element ${VISP_CONFIG_SCRIPT_CFLAGS})
+  SET(VISP_CONFIG_SCRIPT_CFLAGS ${myvar})
+#  MESSAGE("VISP_CONFIG_SCRIPT_CFLAGS: ${VISP_CONFIG_SCRIPT_CFLAGS}")
 
   IF(BUILD_TEST_COVERAGE)
     # Add build options for test coverage. Currently coverage is only supported
@@ -200,21 +222,109 @@ ELSE(UNIX)
         STRING(REGEX REPLACE "[ ]" ";" def ${def})
 	#MESSAGE("new ${def} without -D")
     ENDIF("${def}" MATCHES "[-][D]+.")
-    SET(VISP_CONFIG_SCRIPT_DEFS "${def} ${VISP_CONFIG_SCRIPT_DEFS}")
+    SET(VISP_CONFIG_SCRIPT_DEFS "${def}, ${VISP_CONFIG_SCRIPT_DEFS}")
   ENDFOREACH(def)
 
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_INCLUDE
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_INC "%PREFIX%/include")
-  MESSAGE(VISP_CONFIG_SCRIPT_INC: ${VISP_CONFIG_SCRIPT_INC})
+  SET(TMP_SCRIPT_INC "%PREFIX%/include")
+#  MESSAGE(TMP_SCRIPT_INC: ${TMP_SCRIPT_INC})
 
-  FOREACH(INCDIR ${VISP_EXTERN_INCLUDE_DIR})
-    #MESSAGE("Include to add: ${INCDIR}")
-    SET(VISP_CONFIG_SCRIPT_INC "${VISP_CONFIG_SCRIPT_INC} ${INCDIR}")
-  ENDFOREACH(INCDIR)
-  MESSAGE(VISP_CONFIG_SCRIPT_INC ${VISP_CONFIG_SCRIPT_INC})
+  # Suppress twins
+  FOREACH(element ${VISP_EXTERN_INCLUDE_DIR})
+#     MESSAGE("element: ${element}")
+     SET(toadd 1)
+     FOREACH(elementadded ${TMP_SCRIPT_INC})
+#       MESSAGE("compare ${element} and ${elementadded}")
+       STRING(COMPARE EQUAL "${element}" "${elementadded}" iseq)
+       IF(${iseq})
+#	 MESSAGE("is equal")
+         SET(toadd 0)
+       ENDIF(${iseq})
+     ENDFOREACH(elementadded ${TMP_SCRIPT_INC})
+     IF(${toadd})
+#       MESSAGE("need to add ${element}")
+       SET(TMP_SCRIPT_INC ${TMP_SCRIPT_INC} ${element})
+     ENDIF(${toadd})
+  ENDFOREACH(element ${VISP_EXTERN_INCLUDE_DIR})
 
+  # Format the string
+  FOREACH(element ${TMP_SCRIPT_INC})
+    SET(VISP_CONFIG_SCRIPT_INC "\"${element}\"; ${VISP_CONFIG_SCRIPT_INC}")
+  ENDFOREACH(element)
+
+#  MESSAGE(VISP_CONFIG_SCRIPT_INC ${VISP_CONFIG_SCRIPT_INC})
+
+  #---------------------------------------------------------------------
+  # Updates VISP_CONFIG_SCRIPT_LIBDIR
+  #----------------------------------------------------------------------
+  SET(TMP_SCRIPT_LIBDIR "%PREFIX%/lib")
+  FOREACH(var ${VISP_EXTERN_LINK_DIR})
+    #MESSAGE("var to process: ${var}")
+    IF("${var}" MATCHES "[-][L]+.")
+    	#MESSAGE("${var} matches -L")
+        STRING(REGEX REPLACE "[-][L]" "" var ${var})
+	#MESSAGE("new ${newvar} without -L")
+    ENDIF("${var}" MATCHES "[-][L]+.")
+    SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} ${var})
+  ENDFOREACH(var)
+
+  FOREACH(lib ${VISP_EXTERN_LIBS})
+    # Get the library path 
+    GET_FILENAME_COMPONENT(libpath ${lib} PATH)
+    #MESSAGE("library path: ${libpath}")
+
+    SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} ${libpath})
+  ENDFOREACH(lib)
+
+#  MESSAGE("TMP_SCRIPT_LIBDIR: ${TMP_SCRIPT_LIBDIR}")
+
+  # Suppress twins
+  SET(TMP_TMP_SCRIPT_LIBDIR "")
+  FOREACH(element ${TMP_SCRIPT_LIBDIR})
+#     MESSAGE("element: ${element}")
+     SET(toadd 1)
+     FOREACH(elementadded ${TMP_TMP_SCRIPT_LIBDIR})
+#       MESSAGE("compare ${element} and ${elementadded}")
+       STRING(COMPARE EQUAL "${element}" "${elementadded}" iseq)
+       IF(${iseq})
+#	 MESSAGE("is equal")
+         SET(toadd 0)
+       ENDIF(${iseq})
+     ENDFOREACH(elementadded)
+     IF(${toadd})
+#       MESSAGE("need to add ${element}")
+       SET(TMP_TMP_SCRIPT_LIBDIR ${TMP_TMP_SCRIPT_LIBDIR} ${element})
+     ENDIF(${toadd})
+  ENDFOREACH(element)
+
+  # Format the string
+  FOREACH(element ${TMP_TMP_SCRIPT_LIBDIR})
+    SET(VISP_CONFIG_SCRIPT_LIBDIR "\"${element}\", ${VISP_CONFIG_SCRIPT_LIBDIR}")
+  ENDFOREACH(element)
+
+#  MESSAGE("VISP_CONFIG_SCRIPT_LIBDIR: ${VISP_CONFIG_SCRIPT_LIBDIR}")
+
+  #---------------------------------------------------------------------
+  # Updates VISP_CONFIG_SCRIPT_LIBS
+  #----------------------------------------------------------------------
+  SET(TMP_SCRIPT_LIBS "${VISP_INTERN_LIBS}.lib")
+
+  #MESSAGE(VISP_EXTERN_LIBS: ${VISP_EXTERN_LIBS})
+  FOREACH(lib ${VISP_EXTERN_LIBS})
+    # Get the library name
+    GET_FILENAME_COMPONENT(libname ${lib} NAME)
+
+    SET(TMP_SCRIPT_LIBS ${TMP_SCRIPT_LIBS} ${libname})
+  ENDFOREACH(lib)
+
+  # Format the string
+  FOREACH(element ${TMP_SCRIPT_LIBS})
+    SET(VISP_CONFIG_SCRIPT_LIBS "${VISP_CONFIG_SCRIPT_LIBS} ${element}")
+  ENDFOREACH(element)
+
+  #MESSAGE(VISP_CONFIG_SCRIPT_LIBS: ${VISP_CONFIG_SCRIPT_LIBS})
 
   #---------------------------------------------------------------------
   # Updates the visp-config shell script
