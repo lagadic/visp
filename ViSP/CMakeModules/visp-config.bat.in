@@ -1,7 +1,7 @@
 @rem visp-config.bat
 
 @rem
-@rem $Id: visp-config.bat.in,v 1.1 2009-01-14 17:16:47 fspindle Exp $
+@rem $Id: visp-config.bat.in,v 1.2 2009-01-15 17:36:49 fspindle Exp $
 @rem
 @rem Copyright (C) 1998-2009 Inria. All rights reserved.
 @rem
@@ -46,10 +46,11 @@ set VERSION=${VISP_VERSION}
 
 set DEFS=${VISP_CONFIG_SCRIPT_DEFS}
 
-set INCLUDE="${VISP_CONFIG_SCRIPT_INC}"
-set LIBDIR=visp/lib
+set INCLUDE=${VISP_CONFIG_SCRIPT_INC}
 
-set LIBS=visp-2.lib winmm.lib
+set LIBDIR=${VISP_CONFIG_SCRIPT_LIBDIR}
+
+set LIBS=${VISP_CONFIG_SCRIPT_LIBS}
 
 @rem Test if an argument is provided
 
@@ -73,7 +74,7 @@ for %%a in (%*) do (
 	echo %INCLUDE%
 	goto END
   )
-  if "%%a" == "--libdir" (
+  if "%%a" == "--libpath" (
 	echo %LIBDIR%
 	goto END
   )
