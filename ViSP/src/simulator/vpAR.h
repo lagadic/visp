@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAR.h,v 1.3 2008-12-15 15:13:17 nmelchio Exp $
+ * $Id: vpAR.h,v 1.4 2009-01-15 15:44:30 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -118,6 +118,8 @@
     simu->setImage(I) ;
     //Set the camera position thanks to the pose cMo computed before.
     simu->setCameraPosition(cMo) ;
+
+    simu->closeMainApplication();
   }
   \endcode
 
