@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.84 2009-01-14 17:17:35 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.85 2009-01-15 17:36:03 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -140,8 +140,8 @@ ENDIF(NAS_FOUND)
 # Platform dependent
 #----------------------------------------------------------------------
 IF(WIN32 AND NOT CYGWIN)
-  SET(VISP_DEFS "${VISP_DEFS} -DWIN32")
-  SET(VISP_DEFS "${VISP_DEFS} -DGX") # To support exceptions
+  SET(VISP_DEFS ${VISP_DEFS} "-DWIN32")
+  SET(VISP_DEFS ${VISP_DEFS} "-DGX") # To support exceptions
   CHECK_LIBRARY_EXISTS("winmm" getch "" HAVE_LIBWINMM) # for timeGetTime()
   IF(HAVE_LIBWINMM)
     #MESSAGE("have winmm.lib")
@@ -153,9 +153,9 @@ IF(WIN32 AND NOT CYGWIN)
 ENDIF(WIN32 AND NOT CYGWIN)
 
 IF(UNIX)
-  SET(VISP_DEFS "${VISP_DEFS} -DUNIX")
+  SET(VISP_DEFS ${VISP_DEFS} "-DUNIX")
   IF(APPLE)
-    SET(VISP_DEFS "${VISP_DEFS} -DAPPLE")
+    SET(VISP_DEFS ${VISP_DEFS} "-DAPPLE")
   ENDIF(APPLE)
 ENDIF(UNIX)
 
@@ -163,7 +163,7 @@ INCLUDE(TestBigEndian)
 TEST_BIG_ENDIAN(BIGENDIAN)
 
 IF(BIGENDIAN)
-  SET(VISP_DEFS "${VISP_DEFS} -DBIGENDIAN")
+  SET(VISP_DEFS ${VISP_DEFS} "-DBIGENDIAN")
 ENDIF(BIGENDIAN)
 
 #----------------------------------------------------------------------
@@ -221,8 +221,8 @@ IF(USE_COIN)
       
       SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${SOWIN_INCLUDE_DIR})
       #MESSAGE("SOWIN_INCLUDE_DIR = ${SOWIN_INCLUDE_DIR}")
-      SET(VISP_DEFS "${VISP_DEFS} -DSOWIN_DLL")
-      SET(VISP_DEFS "${VISP_DEFS} -DCOIN_DLL")
+      SET(VISP_DEFS ${VISP_DEFS} "-DSOWIN_DLL")
+      SET(VISP_DEFS ${VISP_DEFS} "-DCOIN_DLL")
       IF(SOWIN_LIBRARY_RELEASE AND COIN_LIBRARY_RELEASE)
 	  #MESSAGE("SOWIN AND COIN RELEASE")
 	  SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${COIN_INCLUDE_DIR})  
@@ -268,8 +268,8 @@ IF(USE_COIN)
 	    # Add first Coin and SoQt libraries
 	    IF(WIN32)
 	      #MESSAGE(STATUS "SOQT_INCLUDE_DIR = ${SOQT_INCLUDE_DIR}")
-	      SET(VISP_DEFS "${VISP_DEFS} -DSOQT_DLL")
-	      SET(VISP_DEFS "${VISP_DEFS} -DCOIN_DLL")
+	      SET(VISP_DEFS ${VISP_DEFS} "-DSOQT_DLL")
+	      SET(VISP_DEFS ${VISP_DEFS} "-DCOIN_DLL")
 	      IF(SOQT_LIBRARY_RELEASE)
 	        IF(COIN_LIBRARY_RELEASE)
 	          SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} 
@@ -323,10 +323,10 @@ IF(USE_COIN)
 	    # (due to ";" # separate char)
 	    FOREACH(DEF ${QT_DEFINITIONS})
 	      #MESSAGE("DEF: ${DEF}")
-	      SET(VISP_DEFS "${VISP_DEFS} ${DEF}")
+	      SET(VISP_DEFS ${VISP_DEFS} ${DEF})
 	    ENDFOREACH(DEF)
 					  
-	    SET(VISP_DEFS "${VISP_DEFS} -DQT_DLL")
+	    SET(VISP_DEFS ${VISP_DEFS} "-DQT_DLL")
 
 	    # We add now OpenGL librairies
 	    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${OPENGL_gl_LIBRARY})
