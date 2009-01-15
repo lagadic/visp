@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeLine.cpp,v 1.21 2009-01-15 15:35:45 nmelchio Exp $
+ * $Id: vpMeLine.cpp,v 1.22 2009-01-15 15:52:32 nmelchio Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -1232,7 +1232,6 @@ while (theta < 0)    theta +=M_PI ;
 
   if (vpDEBUG_ENABLE(2))
   {
-    vpDisplay::displayArrow(I,i,j,i3,j3, vpColor::green) ;
     vpDisplay::displayArrow(I,i,j,i1,j1, vpColor::green) ;
     vpDisplay::displayArrow(I,i,j,i2,j2, vpColor::red) ;
   }
