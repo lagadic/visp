@@ -251,7 +251,7 @@ vpRobotAfma6::init (void)
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 0) {
-    fprintf(stdout, "\nPower ON the robot in the next 10 second...\n");
+    fprintf(stdout, "\nPower ON the Afma6 robot in the next 10 second...\n");
     fflush(stdout);
     Try( PrimitivePOWERON_Afma6() );
 
@@ -266,7 +266,7 @@ vpRobotAfma6::init (void)
 
     } while (HIPowerStatus == 0);
   }
-  fprintf(stdout, "Power is ON. We continue...\n");
+  fprintf(stdout, "Afma6 power is ON. We continue...\n");
   fflush(stdout);
 
   // get real joint min/max from the MotionBlox
@@ -499,7 +499,7 @@ vpRobotAfma6::powerOn(void)
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 0) {
-    fprintf(stdout, "Power ON the robot\n");
+    fprintf(stdout, "Power ON the Afma6 robot\n");
     fflush(stdout);
 
     Try( PrimitivePOWERON_Afma6() );
@@ -534,7 +534,7 @@ vpRobotAfma6::powerOff(void)
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
-    fprintf(stdout, "Power OFF the robot\n");
+    fprintf(stdout, "Power OFF the Afma6 robot\n");
     fflush(stdout);
 
     Try( PrimitivePOWEROFF_Afma6() );
