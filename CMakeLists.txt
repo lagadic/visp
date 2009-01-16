@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.85 2009-01-15 17:36:03 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.86 2009-01-16 09:10:48 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -142,10 +142,10 @@ ENDIF(NAS_FOUND)
 IF(WIN32 AND NOT CYGWIN)
   SET(VISP_DEFS ${VISP_DEFS} "-DWIN32")
   SET(VISP_DEFS ${VISP_DEFS} "-DGX") # To support exceptions
-  CHECK_LIBRARY_EXISTS("winmm" getch "" HAVE_LIBWINMM) # for timeGetTime()
+  CHECK_LIBRARY_EXISTS("winmm.lib" getch "" HAVE_LIBWINMM) # for timeGetTime()
   IF(HAVE_LIBWINMM)
     #MESSAGE("have winmm.lib")
-    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} "winmm")
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} "winmm.lib")
   ENDIF(HAVE_LIBWINMM)
   IF(MSVC) #check if MSVC is the compiler and set VISP_USE_MSVC accordingly
     SET(VISP_USE_MSVC TRUE)
