@@ -61,12 +61,12 @@
 #include <visp/vpImageConvert.h>
 #include <visp/vpSimulator.h>
 
-#ifdef VISP_HAVE_X11
-#include <visp/vpDisplayX.h>
-#elif VISP_HAVE_GDI
-#include <visp/vpDisplayGDI.h>
-#elif VISP_HAVE_GTK
-#include <visp/vpDisplayGTK.h>
+#if defined(VISP_HAVE_X11)
+#  include <visp/vpDisplayX.h>
+#elif defined(VISP_HAVE_GDI)
+#  include <visp/vpDisplayGDI.h>
+#elif defined(VISP_HAVE_GTK)
+#  include <visp/vpDisplayGTK.h>
 #endif
 // You may have strange compiler issues using the simulator based on SoQt 
 // and the vpDisplayGTK. In that case prefer to use another display like
@@ -140,11 +140,11 @@ void *mainLoop (void *_simu)
   vpImage<unsigned char> I(height,width);
 
 //Display initialization
-#ifdef VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX disp;
-#elif VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI disp;
-#elif VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   vpDisplayGTK disp;
 #endif
   disp.init(I,100,100,"Simulation display");
