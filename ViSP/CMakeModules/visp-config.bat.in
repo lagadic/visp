@@ -40,7 +40,7 @@
 @echo off
 
 @rem Get the dirname
-for /F %%x in ('CHDIR') do set PREFIX=%%x/..
+for /F %%x in ('CHDIR') do set PREFIX=%%x\..
 
 set VERSION=${VISP_VERSION}
 
