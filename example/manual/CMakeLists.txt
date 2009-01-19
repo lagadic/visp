@@ -49,6 +49,9 @@ SET (SOURCE
   image-manipulation/manGrabDirectShow.cpp
   image-manipulation/manGrabDisk.cpp
   image-manipulation/manGrabV4l2.cpp
+  simulation/manServo4PointsDisplay.cpp
+  simulation/manSimu4Dots.cpp
+  simulation/manSimu4Points.cpp
 )
 
 # rule for binary build
