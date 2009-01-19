@@ -259,7 +259,8 @@ ELSE(UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_LIBDIR
   #----------------------------------------------------------------------
-  SET(TMP_SCRIPT_LIBDIR "%PREFIX%/lib")
+  SET(TMP_SCRIPT_LIBDIR "%PREFIX%\\lib")
+  SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} "%PREFIX%\\lib\\$(Outdir)")
   FOREACH(var ${VISP_EXTERN_LINK_DIR})
     #MESSAGE("var to process: ${var}")
     IF("${var}" MATCHES "[-][L]+.")
@@ -315,6 +316,14 @@ ELSE(UNIX)
   FOREACH(lib ${VISP_EXTERN_LIBS})
     # Get the library name
     GET_FILENAME_COMPONENT(libname ${lib} NAME)
+    IF("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
+      #MESSAGE("${libname} matches .lib or .Lib")
+    ELSE("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
+      # We need to add .lib suffix
+      #MESSAGE("For ${libname} we add .lib suffix")
+      SET(libname "${libname}.lib")
+    ENDIF("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
+
 
     SET(TMP_SCRIPT_LIBS ${TMP_SCRIPT_LIBS} ${libname})
   ENDFOREACH(lib)
