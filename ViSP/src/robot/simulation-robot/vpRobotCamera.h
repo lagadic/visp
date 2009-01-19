@@ -65,7 +65,7 @@ class VISP_EXPORT vpRobotCamera : public vpRobot
 private:
   //! robot / camera location in the world frame
   vpHomogeneousMatrix cMo ;
-  float delta_t; // sampling time
+  double delta_t; // sampling time
 
 public:
   vpRobotCamera() ;
@@ -81,7 +81,7 @@ public:
     \param delta_t : Sampling time used to compute the robot displacement from
     the velocity applied to the robot during this time.
   */
-  inline void setSamplingTime(const float &delta_t)
+  inline void setSamplingTime(const double &delta_t)
   {
     this->delta_t = delta_t;
   }
