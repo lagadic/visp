@@ -60,7 +60,7 @@
 vpHomogeneousMatrix
 vpExponentialMap::direct(const vpColVector &v)
 {
-  return vpExponentialMap::direct(v, 1.0f);
+  return vpExponentialMap::direct(v, 1.0);
 }
 
 /*!
@@ -83,7 +83,7 @@ vpExponentialMap::direct(const vpColVector &v)
   \sa inverse(const vpHomogeneousMatrix &, const float &)
 */
 vpHomogeneousMatrix
-vpExponentialMap::direct(const vpColVector &v, const float &delta_t)
+vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
 {
   double theta,si,co,sinc,mcosc,msinc;
   vpThetaUVector u ;
@@ -213,7 +213,7 @@ vpExponentialMap::direct(const vpColVector &v, const float &delta_t)
 vpColVector
 vpExponentialMap::inverse(const vpHomogeneousMatrix &M)
 {
-  return vpExponentialMap::inverse(M, 1.0f);
+  return vpExponentialMap::inverse(M, 1.0);
 }
 
 /*!
@@ -235,7 +235,7 @@ vpExponentialMap::inverse(const vpHomogeneousMatrix &M)
   \sa direct(const vpColVector &, const float &)
 */
 vpColVector
-vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const float &delta_t)
+vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double &delta_t)
 {
   vpColVector v(6);
   int i;
