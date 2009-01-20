@@ -138,7 +138,7 @@ vpMeSite::init(double ip, double jp, double alphap, double convltp)
   i_1 = 0 ;
   j_1 = 0 ;
 }
-// initialise with convolution
+// initialise with convolution and sign
 void
 vpMeSite::init(double ip, double jp, double alphap, double convltp, int sign)
 {
@@ -177,8 +177,16 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
 }
 
 
+// ===================================================================
+/*!
+ * Construct and return the list of vpMeSite along the normal to the contour, in the given range.
+ * \pre : ifloat, jfloat, and the direction of the normal (alpha) have to be set. 
+ * \param I : Image in which the display is performed.
+ * \param range :  +/- the range within which the pixel's correspondent will be sought
+ * \return Pointer to the list of query sites
+ */
+// ===================================================================
 
-// get query sites along the normal to the contour
 vpMeSite*
 vpMeSite::getQueryList(vpImage<unsigned char> &I, const int range)
 {
@@ -190,29 +198,31 @@ vpMeSite::getQueryList(vpImage<unsigned char> &I, const int range)
   vpMeSite *list_query_pixels ;
   list_query_pixels =  NULL ;
 
-  // Size of query list includes point on line
+  // Size of query list includes the point on the line
   list_query_pixels = new vpMeSite[2 * range + 1] ;
 
-  n = 0 ;
   // range : +/- the range within which the pixel's
   //correspondent will be sought
 
   double salpha = sin(alpha);
   double calpha = cos(alpha);
-
+	n = 0 ;
+	
   for(k = -range ; k <= range ; k++)
   {
     ii = (ifloat+k*salpha);
     jj = (jfloat+k*calpha);
 
+	// Display
     if    ((selectDisplay==RANGE_RESULT)||(selectDisplay==RANGE))
       vpDisplay::displayCross(I,vpMath::round(ii),vpMath::round(jj),1,vpColor::yellow) ;
 
     // Copy parent's convolution
     vpMeSite pel ;
     pel.init(ii, jj, alpha, convlt,mask_sign) ;
-    pel.setDisplay(selectDisplay) ;
+    pel.setDisplay(selectDisplay) ;// Display
 
+	// Add site to the query list
     list_query_pixels[n] = pel ;
     n++ ;
   }
@@ -220,24 +230,30 @@ vpMeSite::getQueryList(vpImage<unsigned char> &I, const int range)
   return(list_query_pixels) ;
 }
 
-// get query sites along the normal to the contour
+// ===================================================================
+/*!
+ * get the sign (according to the difference of values of the intensities of the extremities).
+ * \pre : ifloat, jfloat, and the direction of the normal (alpha) have to be set. 
+ * \param I : Image in which the sign is computed.
+ * \param range :  +/- the range within which the pixel's correspondent is sought
+ * \post : mask_sign is computed
+ */
+// ===================================================================
 void
 vpMeSite::getSign(vpImage<unsigned char> &I, const int range)
 {
 
   int   k ;
 
-  // range : +/- the range within which the pixel's
-  //correspondent will be sought
-
   double salpha = sin(alpha);
   double calpha = cos(alpha);
 
-
+	//First extremity
   k = -range ;
   int i1 = vpMath::round(ifloat+k*salpha);
   int j1 = vpMath::round(jfloat+k*calpha);
 
+	//Second extremity
   k = range ;
   int i2 = vpMath::round(ifloat+k*salpha);
   int j2 = vpMath::round(jfloat+k*calpha);
@@ -248,17 +264,17 @@ vpMeSite::getSign(vpImage<unsigned char> &I, const int range)
 
 // Specific function for ME
 double
-vpMeSite::convolution(vpImage<unsigned char>&ima, const  vpMe *me)
+vpMeSite::convolution(vpImage<unsigned char>&I, const  vpMe *me)
 {
 
   int half, index_mask ;
   double conv = 0.0 ;
   half = (me->mask_size - 1) >> 1 ;
 
-  if(horsImage( i , j , half + me->strip , ima.getHeight(), ima.getWidth()))
+  if(horsImage( i , j , half + me->strip , I.getHeight(), I.getWidth()))
   {
     conv = 0.0 ;
-    i =0 ; j = 0 ;
+    i = 0 ; j = 0 ;
   }
   else
   {
@@ -290,8 +306,8 @@ vpMeSite::convolution(vpImage<unsigned char>&ima, const  vpMe *me)
       for( b = 0 ; b < me->mask_size ; b++ )
       {
 	conv += mask_sign* me->mask[index_mask][a][b] *
-	  //	  ima(i-half+a,j-half+b) ;
-	  ima(ihalfa,jhalf+b) ;
+	  //	  I(i-half+a,j-half+b) ;
+	  I(ihalfa,jhalf+b) ;
       }
     }
 
@@ -337,7 +353,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
   double  contraste_min = 1 - me->mu1 ;
 
   // array in which likelihood ratios will be stored
-  double  *likelyhood= new double[ 2 * range + 1 ] ;
+  double  *likelihood= new double[ 2 * range + 1 ] ;
 
   int ii_1 = i ;
   int jj_1 = j ;
@@ -351,41 +367,41 @@ vpMeSite::track(vpImage<unsigned char>& I,
   {
 
     //   convolution results
-    convolution = list_query_pixels[n].convolution(I ,me) ;
+    convolution = list_query_pixels[n].convolution(I, me) ;
 
     // luminance ratio of reference pixel to potential correspondent pixel
     // the luminance must be similar, hence the ratio value should
     // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
     if( test_contraste )
     {
-      // Include this to eliminate temporal calulation
-      if (convlt==0)
-      {
-	std::cout << "vpMeSite::track : Division by zero  convlt = 0" << std::endl ;
-	delete []list_query_pixels ;
-	delete []likelyhood;
-	throw(vpTrackingException(vpTrackingException::initializationError,
-				  "Division by zero")) ;
-      }
-
-      contraste = fabs(convolution / convlt) ;
-      // likelihood ratios
-      if((contraste > contraste_min) && (contraste < contraste_max))
-	likelyhood[n] = fabs(convolution + convlt ) ;
-      else
-	likelyhood[n] = 0 ;
+		// Include this to eliminate temporal calculation
+		if (convlt==0)
+		{
+			std::cout << "vpMeSite::track : Division by zero  convlt = 0" << std::endl ;
+			delete []list_query_pixels ;
+			delete []likelihood;
+			throw(vpTrackingException(vpTrackingException::initializationError,
+						"Division by zero")) ;
+		}
+	
+		contraste = fabs(convolution / convlt) ;
+		// likelihood ratios
+		if((contraste > contraste_min) && (contraste < contraste_max))
+			likelihood[n] = fabs(convolution + convlt ) ;
+		else
+			likelihood[n] = 0 ;
     }
     else
-      likelyhood[n] = fabs(2*convolution) ;
+		likelihood[n] = fabs(2*convolution) ;
   
 
     // establishment of the maximal likelihood ratios's  rank
     // in the array, the value of the likelihood ratio can now be
     // referenced by its rank in the array
-    if (likelyhood[n] > max)
+    if (likelihood[n] > max)
     {
       max_convolution= convolution;
-      max = likelyhood[n] ;
+      max = likelihood[n] ;
       max_rank = n ;
       max_rank2 = max_rank1;
       max_rank1 = max_rank;
@@ -397,38 +413,38 @@ vpMeSite::track(vpImage<unsigned char>& I,
   // the me->threshold is  selected
 
 
-  //  if (test_contrast)
-  if(max > threshold)
-  {
-    if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
-    {
-      vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::red);
-    }
-
-    *this = list_query_pixels[max_rank] ;
-    normGradient =  vpMath::sqr(max_convolution);
-
-    convlt = max_convolution;
-    i_1 = ii_1; //list_query_pixels[max_rank].i ;
-    j_1 = jj_1; //list_query_pixels[max_rank].j ;
-    delete []list_query_pixels ;
-    delete []likelyhood;
-  }
-  else
-  {
-    if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
-    {
-      vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::green);
-    }
-    normGradient = 0 ;
-    if(max == 0)
-      suppress = 1; // contrast suppression
-    else
-      suppress = 2; // threshold suppression
-
-    delete []list_query_pixels ;
-    delete []likelyhood; // modif portage
-  }
+	//  if (test_contrast)
+	if(max > threshold)
+	{
+		if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
+		{
+			vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::red);
+		}
+		
+		*this = list_query_pixels[max_rank] ;//The vpMeSite is replaced by the vpMeSite of max likelihood
+		normGradient =  vpMath::sqr(max_convolution);
+	
+		convlt = max_convolution;
+		i_1 = ii_1; //list_query_pixels[max_rank].i ;
+		j_1 = jj_1; //list_query_pixels[max_rank].j ;
+		delete []list_query_pixels ;
+		delete []likelihood;
+	}
+	else //none of the query sites is better than the threshold
+	{
+		if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
+		{
+			vpDisplay::displayPoint(I, list_query_pixels[max_rank].i,list_query_pixels[max_rank].j, vpColor::green);
+		}
+		normGradient = 0 ;
+		if(max == 0)
+			suppress = 1; // contrast suppression
+		else
+			suppress = 2; // threshold suppression
+	
+		delete []list_query_pixels ;
+		delete []likelihood; // modif portage
+	}
 }
 
 int vpMeSite::operator!=(const vpMeSite &m)
