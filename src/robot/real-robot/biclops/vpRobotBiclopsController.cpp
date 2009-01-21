@@ -36,6 +36,7 @@
  *****************************************************************************/
 
 #include <signal.h>
+#include <string.h>
 #ifdef UNIX
 #  include <unistd.h>
 #endif
