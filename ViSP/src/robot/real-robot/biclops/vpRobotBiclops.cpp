@@ -37,6 +37,7 @@
 
 #include <signal.h>
 #include <errno.h>
+#include <string.h>
 
 #include <visp/vpTime.h>
 
