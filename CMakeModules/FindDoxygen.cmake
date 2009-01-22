@@ -23,6 +23,7 @@ FIND_PROGRAM(DOXYGEN_EXECUTABLE
   NAMES doxygen
   DOC "where is the doxygen executable?"
   PATHS 
+  $ENV{DOXYGEN_DIR}
   $ENV{DOXYGEN_HOME}
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\doxygen_is1;Inno Setup: App Path]/bin"
   "C:/Program Files/doxygen/bin"
@@ -34,6 +35,8 @@ FIND_PROGRAM(DOXYGEN_DOT_EXECUTABLE
   NAMES dot
   DOC "where is dot executable from Graphiz (for doxygen)?"
   PATHS  
+  $ENV{GRAPHVIZ_DIR}
+  $ENV{DOT_DIR}
   $ENV{DOT_HOME}
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\ATT\\Graphviz;InstallPath]/bin"
   "C:/Program Files/ATT/Graphviz/bin"
