@@ -53,6 +53,7 @@ IF(WIN32)
     IF(CMAKE_CL_64)
       # Generic path seach
       FIND_LIBRARY(GDI_LIBRARY gdi32
+                   "$ENV{WINSDK_DIR}/Lib/x64"
                    "$ENV{WINSDK_HOME}/Lib/x64"
                    "$ENV{DXSDK_DIR}/Lib/x64"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x64"
@@ -90,6 +91,7 @@ IF(WIN32)
     ELSE(CMAKE_CL_64)
       # Generic path seach
       FIND_LIBRARY(GDI_LIBRARY gdi32
+                   "$ENV{WINSDK_DIR}/Lib"
                    "$ENV{WINSDK_HOME}/Lib"
                    "$ENV{DXSDK_DIR}/Lib"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib"
