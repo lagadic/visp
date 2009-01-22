@@ -45,9 +45,11 @@ IF(WIN32)
   FIND_PACKAGE(ICONV)
   IF(ICONV_FOUND)
     FIND_PATH(XML2_INCLUDE_DIR libxml/xmlmemory.h
+      $ENV{XML2_DIR}/include
       $ENV{XML2_HOME}/include
       )
     FIND_LIBRARY(XML2_LIBRARY libxml2
+      $ENV{XML2_DIR}/lib
       $ENV{XML2_HOME}/lib
       /usr/lib
       /usr/local/lib
@@ -56,11 +58,13 @@ IF(WIN32)
   ENDIF(ICONV_FOUND)  
 ELSE(WIN32) 
   FIND_PATH(XML2_INCLUDE_DIR libxml/xmlmemory.h
+    $ENV{XML2_DIR}/include/libxml2
     $ENV{XML2_HOME}/include/libxml2
     /usr/include/libxml2
     /usr/local/include/libxml2
     )
   FIND_LIBRARY(XML2_LIBRARY xml2
+    $ENV{XML2_DIR}/lib
     $ENV{XML2_HOME}/lib
     /usr/lib
     /usr/local/lib
