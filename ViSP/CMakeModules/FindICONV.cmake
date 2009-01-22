@@ -43,13 +43,17 @@
 
 IF(WIN32)
   FIND_PATH(ICONV_INCLUDE_DIR iconv.h
+    $ENV{ICONV_DIR}/include
     $ENV{ICONV_HOME}/include
+    $ENV{XML2_DIR}/include
     $ENV{XML2_HOME}/include
     "c:/libxml2/include"
     "c:/iconv/include"
   )
   FIND_LIBRARY(ICONV_LIBRARY iconv
+    $ENV{ICONV_DIR}/lib
     $ENV{ICONV_HOME}/lib
+    $ENV{XML2_DIR}/lib
     $ENV{XML2_HOME}/lib
     "c:/libxml2/lib"
     "c:/iconv/lib"
