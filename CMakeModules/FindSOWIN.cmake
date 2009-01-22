@@ -48,16 +48,21 @@ IF(WIN32)
     NAMES sowin1 #only shared libraries under windows
     PATHS
     "$ENV{COINDIR}/lib"
+    "$ENV{COIN_DIR}/lib"
+    "$ENV{SOWIN_DIR}/lib"
     )
   FIND_LIBRARY(SOWIN_LIBRARY_DEBUG
     NAMES sowin1d #only shared libraries under windows
     PATHS
     "$ENV{COINDIR}/lib"
+    "$ENV{COIN_DIR}/lib"
+    "$ENV{SOWIN_DIR}/lib"
     )  
 
  FIND_PATH(SOWIN_INCLUDE_PATH Inventor/Win/SoWin.h
     "$ENV{COINDIR}/include"
-    "$ENV{INCLUDE}"
+    "$ENV{COIN_DIR}/include"
+    "$ENV{SOWIN_DIR}/include"
     )
  MARK_AS_ADVANCED(
  	SOWIN_LIBRARY_DEBUG
