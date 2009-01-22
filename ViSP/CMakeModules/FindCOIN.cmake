@@ -45,7 +45,9 @@
 IF(UNIX OR WIN32) 
 
   FIND_PATH(COIN_INCLUDE_DIR Inventor/nodes/SoSeparator.h
+    $ENV{COIN_DIR}/include
     $ENV{COINDIR}/include
+    $ENV{COIN3D_DIR}/include
     $ENV{COIN3DDIR}/include
     /usr/include 
     )
@@ -57,14 +59,18 @@ IF(UNIX OR WIN32)
       NAMES coin2 #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
+      "$ENV{COIN_DIR}/lib"	  
       "$ENV{COIN3DDIR}/lib"   
+      "$ENV{COIN3D_DIR}/lib"   
       )
 
     FIND_LIBRARY(COIN_LIBRARY_DEBUG
       NAMES coin2d #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
+      "$ENV{COIN_DIR}/lib"	  
       "$ENV{COIN3DDIR}/lib"   
+      "$ENV{COIN3D_DIR}/lib"   
       )
     MARK_AS_ADVANCED(
       COIN_LIBRARY_RELEASE
@@ -78,7 +84,9 @@ IF(UNIX OR WIN32)
       NAMES Coin #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
+      "$ENV{COIN_DIR}/lib"	  
       "$ENV{COIN3DDIR}/lib"   
+      "$ENV{COIN3D_DIR}/lib"   
       )
     
     #MESSAGE("DBG COIN_LIBRARY=${COIN_LIBRARY}")
