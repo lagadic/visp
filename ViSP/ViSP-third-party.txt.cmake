@@ -1,7 +1,7 @@
-                        ViSP third-party libraries
+                    ViSP third-party libraries
 
-Below you will find the list of third-party libraries used to compile ViSP
-on your computer.
+Below you will find the list of third party libraries used to 
+compile ViSP on your computer.
 
 Mathematics:
   Gnu Scientific Library    : ${VISP_HAVE_GSL_FOUND}
@@ -12,7 +12,7 @@ Robots
   Afma4                     : ${VISP_HAVE_AFMA4_FOUND}
   Biclops                   : ${VISP_HAVE_BICLOPS_FOUND}
   Ptu46                     : ${VISP_HAVE_PTU46_FOUND}
-Video devices                   
+Video devices (display)                  
   X11                       : ${VISP_HAVE_X11_FOUND}
   GTK                       : ${VISP_HAVE_GTK_FOUND} 
   OpenCV                    : ${VISP_HAVE_OPENCV_FOUND} 
@@ -24,6 +24,11 @@ Framegrabbers
   Video For Linux Two       : ${VISP_HAVE_V4L2_FOUND}
   Imaging Technology Itifg8 : ${VISP_HAVE_ITIFG8_FOUND}
   DirectShow                : ${VISP_HAVE_DIRECTSHOW_FOUND}
+  OpenCV                    : ${VISP_HAVE_OPENCV_FOUND} 
 Misc:
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
+
+Documentation:
+  Doxygen                   : ${VISP_HAVE_DOXYGEN_FOUND}
+  Graphviz                  : ${VISP_HAVE_GRAPHVIZ_FOUND}
