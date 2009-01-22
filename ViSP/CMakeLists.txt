@@ -817,6 +817,12 @@ ENDIF(USE_PTU46)
 #----------------------------------------------------------------------
 FIND_PACKAGE(Doxygen)
 IF (DOXYGEN_FOUND)
+  SET(VISP_HAVE_DOXYGEN_FOUND "yes")  # for ViSP-third-party.txt
+  IF(DOXYGEN_DOT_EXECUTABLE)
+    SET(VISP_HAVE_GRAPHVIZ_FOUND "yes")  # for ViSP-third-party.txt
+  ELSE(DOXYGEN_DOT_EXECUTABLE)
+    SET(VISP_HAVE_GRAPHVIZ_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(DOXYGEN_DOT_EXECUTABLE)
   ## we need latex for doxygen because of the formulas
   FIND_PACKAGE(LATEX)
   IF    (NOT LATEX_COMPILER)
@@ -837,7 +843,8 @@ IF (DOXYGEN_FOUND)
     ${VISP_SOURCE_DIR}/doc/mainpage.doc
     @ONLY )
   ADD_CUSTOM_TARGET(html-doc ${DOXYGEN_EXECUTABLE} ${VISP_DOC_DIR}/config-doxygen) 
-
+ELSE(DOXYGEN_FOUND)
+  SET(VISP_HAVE_DOXYGEN_FOUND "no")  # for ViSP-third-party.txt
 ENDIF(DOXYGEN_FOUND)
 
 #----------------------------------------------------------------------
