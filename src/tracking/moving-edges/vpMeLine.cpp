@@ -609,7 +609,7 @@ vpMeLine::leastSquare()
 	p = list.value() ;
 	if (p.suppress==0)
 	{
-	  if (w[k] < 0.3)
+	  if (w[k] < 0.2)
 	  {
 	    p.suppress  = 3 ;
 	    list.modify(p) ;
@@ -680,7 +680,7 @@ vpMeLine::leastSquare()
 		p = list.value() ;
 		if (p.suppress==0)
 		{
-			if (w[k] < 0.3)
+			if (w[k] < 0.2)
 			{
 				p.suppress  = 3 ;
 				list.modify(p) ;
@@ -831,7 +831,7 @@ vpMeLine::setExtremities()
   PExt[1].ifloat = imax ;
   PExt[1].jfloat = jmax ;
 
-  if (fabs(imin-imax) < 5)
+  if (fabs(imin-imax) < 25)
   {
     list.front();
     while(!list.outside())
@@ -991,7 +991,7 @@ vpMeLine::reSample(vpImage<unsigned char> &I)
   int n = numberOfSignal() ;
   double expecteddensity = d / (double)me->sample_step;
 
-  if (n<0.8*expecteddensity)
+  if ((double)n<0.9*expecteddensity)
   {
     double delta_new = delta;
     delta = delta_1;
@@ -1285,3 +1285,67 @@ vpMeLine::getExtremities(double& i1, double& j1, double& i2, double& j2)
   j2 = PExt[1].jfloat;
 }
 
+
+/*!
+	Computes the intersection point of two lines. The result is given in the (i,j) frame.
+
+	\param line1 : The first line.
+	\param line2 : The second line.
+	\param i : The i coordinate of the intersection point.
+	\param j : The j coordinate of the intersection point
+
+	\return Returns a boolean value which depends on the computation success. True means that the computation ends successfully.
+*/
+bool
+vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, double &i, double &j)
+{
+  double denom = 0;
+  double a1 = line1.a;
+  double b1 = line1.b;
+  double c1 = line1.c;
+  double a2 = line2.a;
+  double b2 = line2.b;
+  double c2 = line2.c;
+
+try{
+
+  if (a1 > 0.1)
+  {
+    denom = (-(a2/a1) * b1 + b2);
+
+    if (denom == 0)
+    {
+      std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
+      return (false);
+    }
+
+    if (denom != 0 )
+    {
+      j = ( (a2/a1)*c1 - c2 ) / denom;
+      i = (-b1*j - c1) / a1;
+    }
+  }
+
+  else
+  {
+    denom = (-(b2/b1) * a1 + a2);
+
+    if (denom == 0)
+    {
+      std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
+      return (false);
+    }
+
+    if (denom != 0 )
+    {
+      i = ( (b2/b1)*c1 - c2 ) / denom;
+      j = (-a1*i - c1) / b1;
+    }
+  }
+  return (true);
+}
+catch(...)
+{
+  return (false);
+}
+}
