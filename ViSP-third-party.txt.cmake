@@ -1,12 +1,18 @@
                     ViSP third-party libraries
 
 Below you will find the list of third party libraries used to 
-compile ViSP on your computer.
+build ViSP on your computer.
 
 Mathematics:
   Gnu Scientific Library    : ${VISP_HAVE_GSL_FOUND}
 Simulator:
-  Coin simulator            : ${VISP_HAVE_COIN_FOUND}
+  Coin simulator            : ${VISP_HAVE_SIMULATOR_FOUND}
+  \- Coin                   : ${VISP_HAVE_COIN_FOUND}
+  \- SoWin                  : ${VISP_HAVE_SOWIN_FOUND}
+  \- SoXt                   : ${VISP_HAVE_SOXT_FOUND}
+  \- SoQt                   : ${VISP_HAVE_SOQT_FOUND}
+  \- Qt4                    : ${VISP_HAVE_QT4_FOUND}
+  \- Qt3                    : ${VISP_HAVE_QT3_FOUND}
 Robots
   Afma6                     : ${VISP_HAVE_AFMA6_FOUND}
   Afma4                     : ${VISP_HAVE_AFMA4_FOUND}
@@ -28,7 +34,6 @@ Framegrabbers
 Misc:
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
-
 Documentation:
   Doxygen                   : ${VISP_HAVE_DOXYGEN_FOUND}
-  Graphviz                  : ${VISP_HAVE_GRAPHVIZ_FOUND}
+  Graphviz dot              : ${VISP_HAVE_GRAPHVIZ_FOUND}
