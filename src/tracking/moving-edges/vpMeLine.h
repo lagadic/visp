@@ -152,6 +152,8 @@ public:
   double getRho() const ;
   double getTheta() const ;
   void getExtremities(double &i1, double &j1, double &i2, double &j2) ;
+
+  static bool intersection(const vpMeLine &line1, const vpMeLine &line2, double &i, double &j); 
 };
 
 
