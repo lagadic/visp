@@ -261,6 +261,7 @@ ELSE(UNIX)
   #----------------------------------------------------------------------
   SET(TMP_SCRIPT_LIBDIR "%PREFIX%\\lib")
   SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} "%PREFIX%\\lib\\$(Outdir)")
+  SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} "%PREFIX%\\lib\\$(ConfigurationName)")
   FOREACH(var ${VISP_EXTERN_LINK_DIR})
     #MESSAGE("var to process: ${var}")
     IF("${var}" MATCHES "[-][L]+.")
