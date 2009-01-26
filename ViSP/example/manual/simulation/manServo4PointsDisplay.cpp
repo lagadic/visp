@@ -195,4 +195,10 @@ int main()
   return 0;
 }
 
+#else
+int
+main()
+{  vpTRACE("You should install GTK") ;
+
+}
 #endif
