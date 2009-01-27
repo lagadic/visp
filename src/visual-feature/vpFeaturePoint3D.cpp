@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -53,16 +54,18 @@
 
 /*
 
-
-attributes and members directly related to the vpBasicFeature needs
-other functionalities ar usefull but not mandatory
-
-
-
-
+  attributes and members directly related to the vpBasicFeature needs
+  other functionalities are useful but not mandatory
 
 */
 
+/*! 
+
+  Initialise the memory space requested for a 3D point visual
+  feature.
+  
+  By default this feature is initialized to \f${\bf X} = (0, 0, 1)\f$.
+*/
 void
 vpFeaturePoint3D::init()
 {
@@ -77,55 +80,71 @@ vpFeaturePoint3D::init()
 
 }
 
+/*!  
+
+  Default constructor that build a 3D point visual feature and
+  initialize it to \f${\bf X} = (0, 0, 1)\f$.
+
+*/
 vpFeaturePoint3D::vpFeaturePoint3D() : vpBasicFeature()
 {
     init() ;
 }
 
 
-//! set the point X coordinates
+/*!
+
+  Initialise the \f$X\f$ coordinate in the camera frame of the 3D Point
+  visual feature \f${\bf X} = (X,Y,Z)\f$.
+
+  \param X : \f$X\f$ coordinate of the visual feature.
+  \sa get_X()
+
+*/
 void
 vpFeaturePoint3D::set_X(const double X)
 {
     s[0] = X ;
 }
 
-//! get the point X coordinates
-double
-vpFeaturePoint3D::get_X() const
-{
-    return s[0] ;
-}
+/*!
 
-//! set the point Y coordinates
+  Initialise the \f$Y\f$ coordinate in the camera frame of the 3D Point
+  visual feature \f${\bf X} = (X,Y,Z)\f$.
+
+  \param Y : \f$Y\f$ coordinate of the visual feature.
+  \sa get_Y()
+
+*/
 void
 vpFeaturePoint3D::set_Y(const double Y)
 {
     s[1] = Y ;
 }
 
-//! get the point Y coordinates
-double
-vpFeaturePoint3D::get_Y() const
-{
-    return s[1] ;
-}
+/*!
 
-//! set the point depth
+  Initialise the \f$Z\f$ coordinate in the camera frame of the 3D Point
+  visual feature \f${\bf X} = (X,Y,Z)\f$.
+
+  \param Z : \f$Z\f$ coordinate or depth of the visual feature.
+  \sa get_Z()
+
+*/
 void
 vpFeaturePoint3D::set_Z(const double Z)
 {
     s[2] = Z ;
 }
 
-//! get the point depth
-double
-vpFeaturePoint3D::get_Z() const
-{
-    return s[2] ;
-}
+/*! 
+  Initialize the 3D point coordinates.
 
-//! set the point XY and Z-coordinates
+  \param X,Y,Z : \f$(X,Y,Z)\f$ coordinates in the camera frame of the
+  3D point visual feature.
+  
+  \sa set_X(), set_Y(), set_Z()
+*/
 void
 vpFeaturePoint3D::set_XYZ(const double X,
 			  const double Y,
@@ -136,7 +155,94 @@ vpFeaturePoint3D::set_XYZ(const double X,
   set_Z(Z) ;
 }
 
-//! compute the interaction matrix from a subset a the possible features
+//! Return the \f$X\f$ coordinate in the camera frame of the 3D point.
+double
+vpFeaturePoint3D::get_X() const
+{
+    return s[0] ;
+}
+
+//! Return the \f$Y\f$ coordinate in the camera frame of the 3D point.
+double
+vpFeaturePoint3D::get_Y() const
+{
+    return s[1] ;
+}
+
+//! Return the \f$Z\f$ coordinate in the camera frame of the 3D point.
+double
+vpFeaturePoint3D::get_Z() const
+{
+    return s[2] ;
+}
+
+/*!
+  Compute and return the interaction matrix \f$ L \f$ associated to a subset
+  of the possible 3D point features \f$(X,Y,Z)\f$ that
+  represent the 3D point coordinates expressed in the camera frame.
+
+  \f[
+  L = \left[
+  \begin{array}{rrrrrr}
+  -1 &  0 &  0 &  0 & -Z &  Y \\
+   0 & -1 &  0 &  Z &  0 & -X \\
+   0 &  0 & -1 & -Y &  X &  0 \\
+  \end{array}
+  \right]
+  \f]
+
+
+  \param select : Selection of a subset of the possible 3D point coordinate
+  features. 
+  - To compute the interaction matrix for all the three 
+    subset features \f$(X,Y,Z)\f$ use vpBasicFeature::FEATURE_ALL. In
+    that case the dimension of the interaction matrix is \f$ [3 \times
+    6] \f$
+  - To compute the interaction matrix for only one of the 
+    subset (\f$X, Y,Z\f$) use
+    one of the corresponding function selectX(), selectY() or
+    selectZ(). In that case the returned interaction matrix is \f$ [1
+    \times 6] \f$ dimension.
+
+  \return The interaction matrix computed from the 3D point coordinate
+  features.
+
+  The code below shows how to compute the interaction matrix
+  associated to the visual feature \f$s = X \f$. 
+
+  \code
+  vpPoint point;
+  ... 
+  // Creation of the current feature s
+  vpFeaturePoint3D s;
+  s.buildFrom(point);
+
+  vpMatrix L_X = s.interaction( vpFeaturePoint3D::selectX() );
+  \endcode
+
+  The code below shows how to compute the interaction matrix
+  associated to the \f$s = (X,Y) \f$
+  subset visual feature:
+
+  \code
+  vpMatrix L_XY = s.interaction( vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY() );
+  \endcode
+
+  L_XY is here now a 2 by 6 matrix. The first line corresponds to
+  the \f$ X \f$ visual feature while the second one to the \f$
+  Y \f$ visual feature.
+
+  It is also possible to build the interaction matrix from all the
+  3D point coordinates by:
+
+  \code
+  vpMatrix L_XYZ = s.interaction( vpBasicFeature::FEATURE_ALL );
+  \endcode
+
+  In that case, L_XYZ is a 3 by 6 interaction matrix where the last
+  line corresponds to the \f$ Z \f$ visual feature.
+
+*/
 vpMatrix
 vpFeaturePoint3D::interaction(const int select) const
 {
@@ -191,11 +297,58 @@ vpFeaturePoint3D::interaction(const int select) const
   return L ;
 }
 
-//! compute the error between two visual features from a subset
-//! a the possible features
+/*!
+  Compute the error \f$ (s-s^*)\f$ between the current and the desired
+  visual features from a subset of the possible features.
+
+  \param s_star : Desired 3D point visual visual feature.
+
+  \param select : The error can be computed for a selection of a
+  subset of the possible 3D point coordinate features.
+  - To compute the error for all the three coordinates use
+    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
+    dimension column vector.
+  - To compute the error for only one of the coordinate
+    feature \f$(X,Y, or Z)\f$ use one of the
+    corresponding function selectX(), selectY() or selectZ(). In
+    that case the error vector is a 1 dimension column vector.
+
+  \return The error \f$ (s-s^*)\f$ between the current and the desired
+  visual feature.
+
+  The code below shows how to use this method to manipulate the \f$
+  Z \f$ subset:
+
+  \code
+  // Creation of the current feature s
+  vpFeaturePoint3D s;
+  s.set_Z(0.8); // Initialization of the current Z feature
+
+  // Creation of the desired feature s*. 
+  vpFeatureTranslation s_star; 
+  s_star.set_Z(1); // Initialization of the current Z* feature to Z*=1 meter 
+
+  // Compute the interaction matrix for the Z coordinate feature
+  vpMatrix L_Z = s.interaction( vpFeaturePoint3D::selectZ() );
+
+  // Compute the error vector (s-s*) for the Z feature
+  s.error(s_star, vpFeaturePoint3D::selectZ());
+  \endcode
+
+  To manipulate the subset features \f$s=(Y, Z)\f$,
+  the code becomes:
+  \code
+  // Compute the interaction matrix for the Y, Z feature coordinates
+  vpMatrix L_YZ = s.interaction( vpFeaturePoint3D::selectY() | vpFeaturePoint3D::selectZ() );
+
+  // Compute the error vector e = (s-s*) for the Y, Z feature coordinates
+  vpColVector e = s.error(s_star, vpFeaturePoint3D::selectY() | vpFeaturePoint3D::selectZ());
+  \endcode
+
+*/
 vpColVector
 vpFeaturePoint3D::error(const vpBasicFeature &s_star,
-		      const int select)
+			const int select)
 {
   vpColVector e(0) ;
 
@@ -224,7 +377,7 @@ vpFeaturePoint3D::error(const vpBasicFeature &s_star,
   }
   catch(vpMatrixException me)
   {
-    vpERROR_TRACE("caught a Matric related error") ;
+    vpERROR_TRACE("caught a Matrix related error") ;
     std::cout <<std::endl << me << std::endl ;
     throw(me) ;
   }
@@ -240,7 +393,9 @@ vpFeaturePoint3D::error(const vpBasicFeature &s_star,
 }
 
 /*!
-  This function has no meaning related to 3D point. It is not implemented.
+
+  \deprecated This function has no meaning related to 3D point. It is
+  not implemented.
 
   \exception vpException::notImplementedError : This function has no meaning
   related to 3D point.
@@ -257,6 +412,22 @@ vpFeaturePoint3D::error(const int /* select */)
 			   "This function has no meaning related to 3D point")) ;
 }
 
+/*!  
+  
+  Build a 3D point visual feature from the camera frame coordinates
+  \f$(X,Y,Z)\f$ of a point.
+
+  \param p : A point with camera frame coordinates \f${^c}P=(X,Y,Z)\f$
+  up to date (see vpPoint class).
+
+  \exception vpFeatureException::badInitializationError: If the depth
+  (\f$Z\f$ coordinate) is negative. That means that the 3D point is
+  on the camera which is not possible.
+
+  \exception vpFeatureException::badInitializationError: If the depth
+  (\f$Z\f$ coordinate) is null. That means that the 3D point is
+  on the camera which is not possible.
+*/
 void
 vpFeaturePoint3D::buildFrom(const vpPoint &p)
 {
@@ -288,6 +459,22 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
 
 }
 
+/*!  
+  
+  Build a 3D point visual feature from the camera frame coordinates
+  \f$(X,Y,Z)\f$ of a point.
+
+  \param X,Y,Z : Camera frame coordinates \f$(X,Y,Z)\f$ of a 3D point.
+
+  \exception vpFeatureException::badInitializationError: If the depth
+  (\f$Z\f$ coordinate) is negative. That means that the 3D point is
+  on the camera which is not possible.
+
+  \exception vpFeatureException::badInitializationError: If the depth
+  (\f$Z\f$ coordinate) is null. That means that the 3D point is
+  on the camera which is not possible.
+
+*/
 void
 vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
 {
@@ -317,6 +504,29 @@ vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
 }
 
 
+/*!
+  Print to stdout the values of the current visual feature \f$ s \f$.
+
+  \param select : Selection of a subset of the possible 3D point
+  feature coordinates.
+  - To print all the three coordinates used as features use
+  vpBasicFeature::FEATURE_ALL. 
+  - To print only one of the coordinate
+  feature \f$(X,Y,Z)\f$ use one of the
+  corresponding function selectX(), selectX() or selectZ().
+
+  \code
+  vpPoint point;
+  
+  // Creation of the current feature s
+  vpFeaturePoint3D s;
+  s.buildFrom(point);
+
+  s.print(); // print all the 3 components of the translation feature
+  s.print(vpBasicFeature::FEATURE_ALL); // same behavior then previous line
+  s.print(vpFeaturePoint3D::selectZ()); // print only the Z component
+  \endcode
+*/
 void
 vpFeaturePoint3D::print(const int select ) const
 {
@@ -332,6 +542,17 @@ vpFeaturePoint3D::print(const int select ) const
 }
 
 
+/*!
+  
+  Create an object with the same type.
+
+  \code
+  vpBasicFeature *s_star;
+  vpFeaturePoint3D s;
+  s_star = s.duplicate(); // s_star is now a vpFeaturePoint3D
+  \endcode
+
+*/
 vpFeaturePoint3D *vpFeaturePoint3D::duplicate() const
 {
   vpFeaturePoint3D *feature = new vpFeaturePoint3D ;
