@@ -131,14 +131,38 @@ public:
   //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p.
   void projection(const vpColVector &_cP, vpColVector &_p) ;
 
-  //! Projection onto the image plane of the point. Update the object attribute p (2D homogeneous coordinates) according to object attribute cP (current 3D coordinates in the camera frame).
-  inline void projection();
+  /*! 
+    Perspective projection of the point. 
+    
+    Projection onto the //image plane of the point. Update the object
+    attribute p (2D //homogeneous coordinates) according to object
+    attribute cP (current //3D coordinates in the camera frame).
+
+  */
+  inline void projection() {
+    double d = 1/cP[2] ;
+    p[0] = cP[0]*d ;
+    p[1] = cP[1]*d ;
+    p[2] = 1 ;
+  }
 
   //!Compute the 3D coordinates _cP  (camera frame)
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) ;
 
+  //! Update the 3D coordinates of the point (camera frame).
   //!Update the object attribute cP  (3D coordinates in the camera frame)
-  inline void changeFrame(const vpHomogeneousMatrix &cMo) ;
+  inline void changeFrame(const vpHomogeneousMatrix &cMo) {
+    double X = cMo[0][0]*oP[0]+ cMo[0][1]*oP[1]+ cMo[0][2]*oP[2]+ cMo[0][3]*oP[3] ;
+    double Y = cMo[1][0]*oP[0]+ cMo[1][1]*oP[1]+ cMo[1][2]*oP[2]+ cMo[1][3]*oP[3] ;
+    double Z = cMo[2][0]*oP[0]+ cMo[2][1]*oP[1]+ cMo[2][2]*oP[2]+ cMo[2][3]*oP[3] ;
+    double W = cMo[3][0]*oP[0]+ cMo[3][1]*oP[1]+ cMo[3][2]*oP[2]+ cMo[3][3]*oP[3] ;
+    
+    double d = 1/W ;
+    cP[0] =X*d ;
+    cP[1] =Y*d ;
+    cP[2] =Z*d ;
+    cP[3] =1 ;  
+  }
 
 
   void display(vpImage<unsigned char> &I,
