@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -41,7 +42,7 @@
 
 /*!
   \file vpFeatureTranslation.h
-  \brief class that defines the translation visual feature
+  \brief class that defines the translation visual feature.
 */
 
 #include <visp/vpConfig.h>
@@ -81,10 +82,10 @@
   documentation.
 
   This class can be used to manipulate the translation visual feature
-  \f$s= ^{c^*}t_c\f$ with components \f$(t_X,t_y,t_z)\f$. The desired
+  \f$s= ^{c^*}t_c\f$ with components \f$(t_x,t_y,t_z)\f$. The desired
   visual feature \f$ s^* \f$ is equal to zero. The corresponding error
   is than equal to \f$ e=(s-s^*) = ^{c^*}t_c \f$. In this case, the
-  interaction matrix related to \f$ e \f$ is given by \f[ L = [
+  interaction matrix related to \f$ s \f$ is given by \f[ L = [
   ^{c^*}R_c \;\; 0_3] \f]
 
   The interaction() method allows to compute the interaction matrix
@@ -92,7 +93,73 @@
   error() method computes the error vector \f$(s - s^*)\f$ between the
   current visual feature and the desired one.
 
-  The code below shows how to handle 3D translation visual features.
+  The code below shows how to create a eye-in hand visual servoing
+  task using a 3D translation feature \f$(t_x,t_y,t_z)\f$ that
+  correspond to the 3D translation between the current camera frame
+  and the desired camera frame. To control six degrees of freedom, at
+  least three other features must be considered like vpFeatureThetaU
+  visual features. First we create a current (\f$s\f$) and desired
+  (\f$s^*\f$) 3D translation feature, set the task to use the
+  interaction matrix associated to the current feature \f$L_s\f$ and
+  than compute the camera velocity \f$v=-\lambda \; L_s^+ \;
+  (s-s^*)\f$. The current feature \f$s\f$ is updated in the while() loop
+  while \f$s^*\f$ is set to zero.
+
+  \code
+#include <visp/vpFeatureTranslation.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpServo.h>
+
+int main()
+{
+  vpServo task; // Visual servoing task
+
+  vpHomogeneousMatrix cdMc;
+  // ... cdMc need here to be initialized from for example a pose estimation.
+
+  // Creation of the current visual feature s
+  vpFeatureTranslation s;
+  s.buildFrom(cdMc); // Initialization of the current feature s=(tx,ty,tz)
+
+  // Set eye-in-hand control law. 
+  // The computed velocities will be expressed in the camera frame
+  task.setServo(vpServo::EYEINHAND_CAMERA);
+  // Interaction matrix is computed with the current visual features s
+  task.setInteractionMatrixType(vpServo::CURRENT); 
+  // Set the constant gain
+  double lambda = 0.8;
+  task.setLambda(lambda);  
+
+  // Add the 3D translation feature to the task
+  task.addFeature(s); // s* is here considered as zero
+
+  // Control loop
+  while(1) {
+    // ... cdMc need here to be initialized from for example a pose estimation.
+    
+    // Update the current 3D translation visual feature
+    s.buildFrom(cdMc);
+    
+    // compute the control law
+    vpColVector v = task.computeControlLaw(); // camera velocity
+  }
+}
+  \endcode
+
+  If you want to deal only with the \f$(t_x,t_y)\f$ subset feature from the 3D 
+  translation, you have just to modify the addFeature() call in 
+  the previous example by the following line. In that case, the dimension 
+  of \f$s\f$ is two.
+
+  \code
+  // Add the (tx,ty) subset features from 3D translation to the task
+  task.addFeature(s, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+  \endcode
+	     
+  If you want to build your own control law, this other example shows
+  how to create a current (\f$s\f$) and desired (\f$s^*\f$) 3D
+  translation visual feature, compute the corresponding error
+  vector \f$(s-s^*)\f$ and finally build the interaction matrix \f$L_s\f$.
 
   \code
 #include <visp/vpFeatureTranslation.h>
@@ -116,7 +183,7 @@ int main()
   vpMatrix L = s.interaction();
 
   // Compute the error vector (s-s*) for the translation feature
-  s.error(s_star);
+  vpColVector e = s.error(s_star); // e = (s-s*)
 }
   \endcode
 
@@ -158,6 +225,19 @@ public:
 
     See the interaction() method for an usage example.
 
+    This function is also useful in the vpServo class to indicate that
+    a subset of the visual feature is to use in the control law:
+
+    \code
+    vpFeatureTranslation t;
+    vpServo task;
+    ...
+    // Add the (tx,ty) subset features from 3D translation to the task
+    task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+    \endcode
+
+    \sa selectTy(), selectTz()
+
   */
   inline static int selectTx()  { return FEATURE_LINE[0] ; }
   /*! 
@@ -170,6 +250,18 @@ public:
 
     See the interaction() method for an usage example.
 
+    This function is also useful in the vpServo class to indicate that
+    a subset of the visual feature is to use in the control law:
+
+    \code
+    vpFeatureTranslation t;
+    vpServo task;
+    ...
+    // Add the (tx,ty) subset features from 3D translation to the task
+    task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+    \endcode
+
+    \sa selectTx(), selectTz()
   */
   inline static int selectTy()  { return FEATURE_LINE[1] ; }
   /*! 
@@ -182,6 +274,18 @@ public:
 
     See the interaction() method for an usage example.
 
+    This function is also useful in the vpServo class to indicate that
+    a subset of the visual feature is to use in the control law:
+
+    \code
+    vpFeatureTranslation t;
+    vpServo task;
+    ...
+    // Add the (tz) subset feature from 3D translation to the task
+    task.addFeature(t, vpFeatureTranslation::selectTz());
+    \endcode
+
+    \sa selectTx(), selectTy()
   */
   inline static int selectTz()  { return FEATURE_LINE[2] ; }
   // compute the interaction matrix from a subset a the possible features
