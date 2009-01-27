@@ -40,7 +40,12 @@
 @echo off
 
 @rem Get the dirname
-for /F %%x in ('CHDIR') do set PREFIX=%%x\..
+@rem for /F %%x in ('CHDIR') do set PREFIX=%%x\..
+set CURPATH=%CD /d %%~dp0%
+
+@rem echo CURPATH: %CURPATH%
+
+set PREFIX=%CURPATH%\..
 
 set VERSION=${VISP_VERSION}
 
