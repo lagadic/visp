@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -51,12 +52,12 @@
 
 /*!
   \file vpFeatureThetaU.cpp
-  \brief class that defines the thetaU visual feature
+  \brief class that defines the ThetaU visual feature
 */
 /*
 
 attributes and members directly related to the vpBasicFeature needs
-other functionalities are usefull but not mandatory
+other functionalities are useful but not mandatory
 
 */
 
@@ -261,7 +262,7 @@ vpFeatureThetaU::buildFrom(const vpHomogeneousMatrix &M)
 
 /*!
 
-  Initialise the \f$\theta u_x \f$ subset value of the current 3D
+  Initialise the \f$\theta u_x \f$ subset value of the 3D
   visual feature \f$ s\f$.
 
   \param tu_x : \f$\theta u_x \f$ subset value to initialize.
@@ -273,7 +274,7 @@ void vpFeatureThetaU::set_TUx(const double tu_x)
 }
 /*!
 
-  Initialise the \f$\theta u_y \f$ subset value of the current 3D
+  Initialise the \f$\theta u_y \f$ subset value of the 3D
   visual feature \f$ s\f$.
 
   \param tu_y : \f$\theta u_y \f$ subset value to initialize.
@@ -285,7 +286,7 @@ void vpFeatureThetaU::set_TUy(const double tu_y)
 }
 /*!
 
-  Initialise the \f$\theta u_z \f$ subset value of the current 3D
+  Initialise the \f$\theta u_z \f$ subset value of the 3D
   visual feature \f$ s\f$.
 
   \param tu_z : \f$\theta u_z \f$ subset value to initialize.
@@ -299,7 +300,7 @@ vpFeatureThetaU::set_TUz(const double tu_z)
 
 /*!  
 
-  Return the \f$\theta u_x \f$ subset value of the current visual feature 
+  Return the \f$\theta u_x \f$ subset value of the visual feature 
   \f$s\f$.
 
 */
@@ -309,7 +310,7 @@ double vpFeatureThetaU::get_TUx()  const
 }
 
 /*!
-  Return the \f$\theta u_y \f$ subset value of the current visual feature 
+  Return the \f$\theta u_y \f$ subset value of the visual feature 
   \f$s\f$.
 
 */
@@ -320,7 +321,7 @@ double vpFeatureThetaU::get_TUy()   const
 
 
 /*!
-  Return the \f$\theta u_z \f$ subset value of the current visual feature 
+  Return the \f$\theta u_z \f$ subset value of the visual feature 
   \f$s\f$.
 
 */
@@ -346,7 +347,7 @@ vpFeatureThetaU::get_TUz() const
   \param select : Selection of a subset of the possible \f$ \theta u \f$
   features. 
   - To compute the interaction matrix for all the three \f$ \theta u \f$ 
-    features use vpBasicFeature::FEATURE_ALL. In that case the dimention of the
+    features use vpBasicFeature::FEATURE_ALL. In that case the dimension of the
     interaction matrix is \f$ [3 \times 6] \f$
   - To compute the interaction matrix for only one of the \f$ \theta u \f$ 
     component feature (\f$\theta u_x, \theta u_y, \theta u_z\f$) use one of the
@@ -487,11 +488,11 @@ vpFeatureThetaU::interaction(const int select) const
   subset of the possible \f$ \theta u \f$ features.
   - To compute the error for all the three \f$ \theta u \f$ features use
     vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
-    dimention column vector.
+    dimension column vector.
   - To compute the error for only one of the \f$ \theta u \f$ component 
     feature (\f$ \theta u_x, \theta u_y, \theta u_z\f$) use one of the
     corresponding function selectTUx(), selectTUy() or selectTUz(). In
-    that case the error vector is a 1 dimention column vector.
+    that case the error vector is a 1 dimension column vector.
 
   \return The error \f$ (s-s^*)\f$ between the current and the desired
   visual feature.
@@ -524,8 +525,8 @@ vpFeatureThetaU::interaction(const int select) const
   // Compute the interaction matrix for the ThetaU_y, ThetaU_z features
   vpMatrix L_yz = s.interaction( vpFeatureThetaU::selectTUy() | vpFeatureThetaU::selectTUz() );
 
-  // Compute the error vector (s-s*) for the ThetaU_y, ThetaU_z feature
-  s.error(s_star, vpFeatureThetaU::selectTUy() | vpFeatureThetaU::selectTUz());
+  // Compute the error vector e = (s-s*) for the ThetaU_y, ThetaU_z feature
+  vpColVector e = s.error(s_star, vpFeatureThetaU::selectTUy() | vpFeatureThetaU::selectTUz());
   \endcode
 
 */
@@ -580,9 +581,9 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
 
   \code
   vpThetaUVector tu; // Current visual feature s
-  tu[0] =0.1;
-  tu[1] =0.2;
-  tu[2] =0.3;
+  tu[0] = 0.1;
+  tu[1] = 0.2;
+  tu[2] = 0.3;
   
   // Creation of the current feature s
   vpFeatureThetaU s(vpFeatureThetaU::cdRc);
@@ -649,7 +650,7 @@ vpFeatureThetaU::display(const vpCameraParameters &/* cam */,
     vpERROR_TRACE("not implemented") ;
     // Do not throw and error since it is not subject
     // to produce a failure
-  }
+  } 
 }
 /*!
 

@@ -58,7 +58,7 @@
 /*
 
 attributes and members directly related to the vpBasicFeature needs
-other functionalities ar usefull but not mandatory
+other functionalities are useful but not mandatory
 
 */
 
@@ -126,7 +126,7 @@ vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &cdMc)
 
 /*!
 
-  Initialise the \f$t_x \f$ subset value of the current 3D
+  Initialise the \f$t_x \f$ subset value of the 3D
   visual feature \f$ s\f$.
 
   \param t_x : \f$t_x \f$ subset value to initialize.
@@ -139,7 +139,7 @@ void vpFeatureTranslation::set_Tx(const double t_x)
 }
 /*!
 
-  Initialise the \f$t_y \f$ subset value of the current 3D
+  Initialise the \f$t_y \f$ subset value of the 3D
   visual feature \f$ s\f$.
 
   \param t_y : \f$t_y \f$ subset value to initialize.
@@ -152,7 +152,7 @@ void vpFeatureTranslation::set_Ty(const double t_y)
 }
 /*!
 
-  Initialise the \f$t_z \f$ subset value of the current 3D
+  Initialise the \f$t_z \f$ subset value of the 3D
   visual feature \f$ s\f$.
 
   \param t_z : \f$t_z \f$ subset value to initialize.
@@ -166,7 +166,7 @@ vpFeatureTranslation::set_Tz(const double t_z)
 }
 
 /*!
-  Return the \f$t_x \f$ subset value of the current visual feature 
+  Return the \f$t_x \f$ subset value of the visual feature 
   \f$s\f$.
 
 */
@@ -177,7 +177,7 @@ double vpFeatureTranslation::get_Tx()  const
 
 
 /*!
-  Return the \f$t_y \f$ subset value of the current visual feature 
+  Return the \f$t_y \f$ subset value of the visual feature 
   \f$s\f$.
 
 */
@@ -188,7 +188,7 @@ double vpFeatureTranslation::get_Ty()   const
 
 
 /*!
-  Return the \f$t_z \f$ subset value of the current visual feature 
+  Return the \f$t_z \f$ subset value of the visual feature 
   \f$s\f$.
 
 */
@@ -210,13 +210,11 @@ vpFeatureTranslation::get_Tz() const
   where \f$^{c^*}R_c\f$ is the rotation the camera has to achieve to
   move from the desired camera frame and the current camera frame.
 
-  
-
   \param select : Selection of a subset of the possible translation
   features. 
   - To compute the interaction matrix for all the three translation
     subset features \f$(t_x,t_y,t_y)\f$ use vpBasicFeature::FEATURE_ALL. In
-    that case the dimention of the interaction matrix is \f$ [3 \times
+    that case the dimension of the interaction matrix is \f$ [3 \times
     6] \f$
   - To compute the interaction matrix for only one of the translation
     subset (\f$t_x, t_y, t_z\f$) use
@@ -322,11 +320,11 @@ vpFeatureTranslation::interaction(const int select) const
   subset of the possible translation features.
   - To compute the error for all the three translation vector coordinates use
     vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
-    dimention column vector.
+    dimension column vector.
   - To compute the error for only one of the translation vector coordinate
     feature \f$(t_x, t_y, t_z)\f$ use one of the
     corresponding function selectTx(), selectTy() or selectTz(). In
-    that case the error vector is a 1 dimention column vector.
+    that case the error vector is a 1 dimension column vector.
 
   \return The error \f$ (s-s^*)\f$ between the current and the desired
   visual feature.
@@ -359,8 +357,8 @@ vpFeatureTranslation::interaction(const int select) const
   // Compute the interaction matrix for the t_y, t_z features
   vpMatrix L_yz = s.interaction( vpFeatureTranslation::selectTy() | vpFeatureTranslation::selectTz() );
 
-  // Compute the error vector (s-s*) for the t_y, t_z feature
-  s.error(s_star, vpFeatureTranslation::selectTy() | vpFeatureTranslation::selectTz());
+  // Compute the error vector e = (s-s*) for the t_y, t_z feature
+  vpColVector e = s.error(s_star, vpFeatureTranslation::selectTy() | vpFeatureTranslation::selectTz());
   \endcode
 
 */
@@ -501,7 +499,7 @@ vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
       // to produce a failure
     }
 }
-
+ 
 /*
  * Local variables:
  * c-basic-offset: 2
