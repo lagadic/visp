@@ -69,37 +69,45 @@
 #include <visp/vpImage.h>
 #include <visp/vpMeLine.h>
 
-
-void main()
+int main()
 {
-  vpImage<unsigned char> I;
+  vpImage<unsigned char> I(240, 320);
 
-  //Here the code to read or grab the gray scaled image.
-
-  vpMeLine line;
+  // Fill the image with a black rectangle
+  I = 0;
+  for (int i = 100; i < 180; i ++) {
+    for (int j = 120; j < 250; j ++) {
+      I[i][j] = 255;
+    }
+  }
+    
+  // Set the moving-edges tracker parameters
   vpMe me;
-
-  //Set the tracking parameters.
-  me.setRange(25) ;
-  me.setPointsToTrack(20) ;
-  me.setThreshold(15000) ;
+  me.setRange(25);
+  me.setPointsToTrack(20);
+  me.setThreshold(15000);
   me.setSampleStep(10);
+
+  // Initialize the moving-edges line tracker parameters
+  vpMeLine line;
   line.setMe(&me);
 
-  //Initialize the tracking.
-  line.initTracking(I);
+  // Initialize the location of the vertical line to track
+  line.initTracking(I, 120, 119, 170, 122);
 
   while ( 1 )
   {
-    //Here the code to read or grab the next image.
+    // ... Here the code to read or grab the next image.
 
-    //Track the line.
+    // Track the line.
     line.track(I);
   }
+  return 0;
 }
 \endcode
 
-  \note It is possible to display the line as an overlay. For that you must use the display function of the class vpMeLine.
+  \note It is possible to display the line as an overlay. For that you 
+  must use the display function of the class vpMeLine.
 */
 
 class VISP_EXPORT vpMeLine : public vpMeTracker

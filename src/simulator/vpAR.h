@@ -76,53 +76,54 @@
   The code below shows how to use the class.
 
   \code
-  #include <visp/vpConfig.h>
-  #include <visp/vpAR.h>
-  #include <visp/vpCameraParameters.h>
-  #include <visp/vpImage.h>
-  #include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpConfig.h>
+#include <visp/vpAR.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpImage.h>
+#include <visp/vpHomogeneousMatrix.h>
 
-  void main(int argc, const char ** argv)
-  {
-    vpAR simu;
-    //Camera parameters.
-    vpCameraParameters cam(600,600,160,120) ;
+static void *mainloopfunction(void *_simu)
+{
+  vpAR *simu = (vpAR *)_simu ;
+  simu->initMainApplication() ;
 
-    //Initialize the internal view of the simulator.
-    simu.initInternalViewer(640,480, vpSimulator::grayImage) ;
+  vpImage<unsigned char> I;
+  vpHomogeneousMatrix cMo;
 
-    vpTime::wait(300) ;
+  //Your code to compute the pose cMo.
 
-    //Load the cad model.
-    simu.load("./4points.iv"); //4points.iv can be downloaded on the website with the image package
+  //Set the image to use as background.
+  simu->setImage(I) ;
+  //Set the camera position thanks to the pose cMo computed before.
+  simu->setCameraPosition(cMo) ;
 
-    //Initialize the internal camera parameters.
-    simu.setInternalCameraParameters(cam) ;
+  simu->closeMainApplication();
+}
 
-    simu.initApplication(&mainloopfunction) ;
+int main(int argc, const char ** argv)
+{
+  vpAR simu;
+  //Camera parameters.
+  vpCameraParameters cam(600,600,160,120);
 
-    simu.mainLoop() ;
-  }
+  //Initialize the internal view of the simulator.
+  simu.initInternalViewer(640,480, vpSimulator::grayImage);
 
-  static void *mainloopfunction(void *_simu)
-  {
-    vpAR *simu = (vpAR *)_simu ;
-    simu->initMainApplication() ;
+  vpTime::wait(300);
 
-    vpImage<unsigned char> I;
-    vpHomogeneousMatrix cMo;
+  //Load the cad model.
+  simu.load("./4points.iv"); //4points.iv can be downloaded on the website with the image package
 
-    //Your code to compute the pose cMo.
+  //Initialize the internal camera parameters.
+  simu.setInternalCameraParameters(cam);
 
-    //Set the image to use as background.
-    simu->setImage(I) ;
-    //Set the camera position thanks to the pose cMo computed before.
-    simu->setCameraPosition(cMo) ;
+  simu.initApplication(&mainloopfunction);
 
-    simu->closeMainApplication();
-  }
+  simu.mainLoop();
+
+  return 0;
+}
   \endcode
-
 
 */
 class VISP_EXPORT vpAR : public vpSimulator
