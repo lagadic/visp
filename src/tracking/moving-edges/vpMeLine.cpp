@@ -541,6 +541,7 @@ vpMeLine::leastSquare()
   int i ;
 
   vpRobust r(numberOfSignal()) ;
+  r.setThreshold(2);
   r.setIteration(0) ;
   vpMatrix D(numberOfSignal(),numberOfSignal()) ;
   D.setIdentity() ;
