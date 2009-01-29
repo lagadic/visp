@@ -1,4 +1,4 @@
-ViSP 2.4.x (released ...)
+ViSP 2.4.3-rc2 (released January 29, 2009)
   - Deprecated
     - Creation of a deprecated section in the online documentation that 
       gives the list of classes or member function that are deprecated
@@ -49,6 +49,7 @@ ViSP 2.4.x (released ...)
     - [5596] Multiplying a vpRotationMatrix with a vpColVector ?
     - [5642] warning in vphomographyvvs.cpp with Visual C++ 2003 .Net
     - [5993] vpImage BI
+    - [6330] Segfault in vpSimulator with Coin + SoXt
     - [6336] DLT Homography on 4 points
     - [6484] Bug in vpCalibration::calibrationTsai for eye-to-hand calibration
     - [6590] vpDisplayGDI cannot handle numerous displays (windows)
