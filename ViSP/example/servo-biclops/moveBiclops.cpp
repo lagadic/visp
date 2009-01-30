@@ -89,6 +89,10 @@ OPTIONS:                                               Default\n\
      Sets the biclops robot configuration file.\n\n",
 	  conf.c_str());
 
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
