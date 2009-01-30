@@ -58,21 +58,20 @@
 
 */
 
-#include <visp/vpTime.h>
-
 #include <signal.h>
 
+#include <visp/vpTime.h>
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
 
-#if ( defined (VISP_HAVE_BICLOPS) & (defined (VISP_HAVE_DC1394_2) | defined (VISP_HAVE_DC1394_1) | defined(VISP_HAVE_DIRECTSHOW)) )
+#if ( defined (VISP_HAVE_BICLOPS) && (defined (VISP_HAVE_DC1394_2) /*|| defined (VISP_HAVE_DC1394_1)*/ || defined(VISP_HAVE_DIRECTSHOW)) )
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>
 #endif
 
-#include <visp/vp1394Grabber.h>
 #include <visp/vp1394TwoGrabber.h>
+//#include <visp/vp1394Grabber.h>
 #include <visp/vpDirectShowGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
@@ -101,7 +100,7 @@
 pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-void signalCtrC( int signumber )
+void signalCtrC( int /* signumber */)
 {
 #ifdef VISP_HAVE_PTHREAD
   pthread_mutex_unlock( &mutexEndLoop );
@@ -146,6 +145,10 @@ OPTIONS:                                               Default\n\
      subdirectory depending on the username, where\n\
      it writes biclops.txt file.\n", conf.c_str(), debugdir.c_str(), user.c_str());
 
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 /*!
 
@@ -269,8 +272,8 @@ main(int argc, const char ** argv)
 
 #if defined VISP_HAVE_DC1394_2
     vp1394TwoGrabber g;
-#elif defined VISP_HAVE_DC1394_1
-    vp1394Grabber g;
+// #elif defined VISP_HAVE_DC1394_1
+//     vp1394Grabber g;
 #elif defined VISP_HAVE_DIRECTSHOW
     vpDirectShowGrabber g;
 #endif
