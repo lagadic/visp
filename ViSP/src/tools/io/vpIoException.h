@@ -78,7 +78,8 @@ public:
     {
       invalidDirectoryName, /*! Directory name is invalid. */
       cantCreateDirectory,  /*! Unable to create a directory. */
-      cantGetUserName       /*! User name is not available. */
+      cantGetUserName,      /*! User name is not available. */
+      cantGetenv            /*! Cannot get environment variable value. */
     } ;
 
 public:
