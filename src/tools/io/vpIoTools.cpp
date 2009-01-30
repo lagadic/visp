@@ -72,7 +72,7 @@ vpIoTools::getUserName(std::string &username)
 #if defined UNIX
   // Get the user name.
   char *_username = NULL;
-  _username = getenv("LOGNAME");
+  _username = ::getenv("LOGNAME");
   if (_username == NULL) {
     vpERROR_TRACE( "Cannot get the username. Check your LOGNAME environment variable" );
     throw(vpIoException(vpIoException::cantGetUserName,
@@ -94,6 +94,104 @@ vpIoTools::getUserName(std::string &username)
   username = infoBuf;
   delete [] infoBuf;
 #endif
+}
+
+/*!
+  Get the content of an environment variable.
+
+  \warning Under windows, this function is not implemented yet.
+
+  \param env : Environment variable name (HOME, LOGNAME...).
+  \return Value of the environment variable
+
+  \exception vpException::notImplementedError : If this method is
+  called under Windows.
+
+  \exception vpIoException::cantGetenv : If an error occur while
+  getting the environement variable value.
+
+  \code
+#include <iostream>
+#include <string>
+#include <visp/vpIoTools.h>
+
+int main()
+{
+  std::string envvalue;
+  try {
+    envvalue = vpIoTools::getenv("HOME");
+    std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
+  }
+  catch (...) {
+    std::cout << "Cannot get the environment variable value" << std::endl;
+    return -1;
+  }
+  return 0;
+}
+  \endcode
+*/
+std::string
+vpIoTools::getenv(const char *env)
+{
+  std::string value;
+#if defined UNIX
+  // Get the environment variable value.
+  char *_value = NULL;
+  _value = ::getenv(env);
+  if (_value == NULL) {
+    vpERROR_TRACE( "Cannot get the environment variable value" );
+    throw(vpIoException(vpIoException::cantGetenv,
+			"Cannot get the environment variable value")) ;
+  }
+  value = _value;
+#elif defined WIN32
+
+  vpERROR_TRACE( "Not implemented!" );
+  throw(vpIoException(vpException::notImplementedError,
+		      "Not implemented!")) ;
+#endif
+  return value;
+}
+
+/*!
+  Get the content of an environment variable.
+
+  \warning Under windows, this function is not implemented yet.
+
+  \param env : Environment variable name (HOME, LOGNAME...).
+  \return Value of the environment variable
+
+  \exception vpException::notImplementedError : If this method is
+  called under Windows.
+
+  \exception vpIoException::cantGetenv : If an error occur while
+  getting the environement variable value.
+
+  \code
+#include <iostream>
+#include <string>
+#include <visp/vpIoTools.h>
+
+int main()
+{
+  std::string envvalue;
+  try {
+    std::string env = "HOME";
+    envvalue = vpIoTools::getenv(env);
+    std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
+  }
+  catch (...) {
+    std::cout << "Cannot get the environment variable value" << std::endl;
+    return -1;
+  }
+  return 0;
+}
+  \endcode
+*/
+std::string
+vpIoTools::getenv(std::string &env)
+{
+  return (vpIoTools::getenv(env.c_str()));
 }
 
 /*!
