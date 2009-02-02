@@ -1,0 +1,549 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Creator: dvips(k) 5.96.1 Copyright 2007 Radical Eye Software
+%%Title: vpFeatureLine.dvi
+%%CreationDate: Mon Feb  2 15:03:53 2009
+%%BoundingBox: 86 157 566 669
+%%DocumentFonts: CMBX12 CMMI12
+%%EndComments
+%DVIPSWebPage: (www.radicaleye.com)
+%DVIPSCommandLine: dvips -Ppdf -E -o vpFeatureLine.ps vpFeatureLine.dvi
+%DVIPSParameters: dpi=8000
+%DVIPSSource:  TeX output 2009.02.02:1503
+%%BeginProcSet: tex.pro 0 0
+%!
+/TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
+N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
+mul N/landplus90{false}def/@rigin{isls{[0 landplus90{1 -1}{-1 1}ifelse 0
+0 0]concat}if 72 Resolution div 72 VResolution div neg scale isls{
+landplus90{VResolution 72 div vsize mul 0 exch}{Resolution -72 div hsize
+mul 0}ifelse TR}if Resolution VResolution vsize -72 div 1 add mul TR[
+matrix currentmatrix{A A round sub abs 0.00001 lt{round}if}forall round
+exch round exch]setmatrix}N/@landscape{/isls true N}B/@manualfeed{
+statusdict/manualfeed true put}B/@copies{/#copies X}B/FMat[1 0 0 -1 0 0]
+N/FBB[0 0 0 0]N/nn 0 N/IEn 0 N/ctr 0 N/df-tail{/nn 8 dict N nn begin
+/FontType 3 N/FontMatrix fntrx N/FontBBox FBB N string/base X array
+/BitMaps X/BuildChar{CharBuilder}N/Encoding IEn N end A{/foo setfont}2
+array copy cvx N load 0 nn put/ctr 0 N[}B/sf 0 N/df{/sf 1 N/fntrx FMat N
+df-tail}B/dfs{div/sf X/fntrx[sf 0 0 sf neg 0 0]N df-tail}B/E{pop nn A
+definefont setfont}B/Cw{Cd A length 5 sub get}B/Ch{Cd A length 4 sub get
+}B/Cx{128 Cd A length 3 sub get sub}B/Cy{Cd A length 2 sub get 127 sub}
+B/Cdx{Cd A length 1 sub get}B/Ci{Cd A type/stringtype ne{ctr get/ctr ctr
+1 add N}if}B/CharBuilder{save 3 1 roll S A/base get 2 index get S
+/BitMaps get S get/Cd X pop/ctr 0 N Cdx 0 Cx Cy Ch sub Cx Cw add Cy
+setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx sub Cy .1 sub]{Ci}imagemask
+restore}B/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
+/BitMaps get S ctr S sf 1 ne{A A length 1 sub A 2 index S get sf div put
+}if put/ctr ctr 1 add N}B/I{cc 1 add D}B/bop{userdict/bop-hook known{
+bop-hook}if/SI save N @rigin 0 0 moveto/V matrix currentmatrix A 1 get A
+mul exch 0 get A mul add .99 lt{/QV}{/RV}ifelse load def pop pop}N/eop{
+SI restore userdict/eop-hook known{eop-hook}if showpage}N/@start{
+userdict/start-hook known{start-hook}if pop/VResolution X/Resolution X
+1000 div/DVImag X/IEn 256 array N 2 string 0 1 255{IEn S A 360 add 36 4
+index cvrs cvn put}for pop 65781.76 div/vsize X 65781.76 div/hsize X}N
+/p{show}N/RMat[1 0 0 -1 0 0]N/BDot 260 string N/Rx 0 N/Ry 0 N/V{}B/RV/v{
+/Ry X/Rx X V}B statusdict begin/product where{pop false[(Display)(NeXT)
+(LaserWriter 16/600)]{A length product length le{A length product exch 0
+exch getinterval eq{pop true exit}if}{pop}ifelse}forall}{false}ifelse
+end{{gsave TR -.1 .1 TR 1 1 scale Rx Ry false RMat{BDot}imagemask
+grestore}}{{gsave TR -.1 .1 TR Rx Ry scale 1 1 false RMat{BDot}
+imagemask grestore}}ifelse B/QV{gsave newpath transform round exch round
+exch itransform moveto Rx 0 rlineto 0 Ry neg rlineto Rx neg 0 rlineto
+fill grestore}B/a{moveto}B/delta 0 N/tail{A/delta X 0 rmoveto}B/M{S p
+delta add tail}B/b{S p tail}B/c{-4 M}B/d{-3 M}B/e{-2 M}B/f{-1 M}B/g{0 M}
+B/h{1 M}B/i{2 M}B/j{3 M}B/k{4 M}B/w{0 rmoveto}B/l{p -4 w}B/m{p -3 w}B/n{
+p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
+rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
+
+%%EndProcSet
+%%BeginProcSet: alt-rule.pro 0 0
+%!
+% Patch by TVZ
+% Makes dvips files draw rules with stroke rather than fill.
+% Makes narrow rules more predictable at low resolutions
+% after distilling to PDF.
+% May have unknown consequences for very thick rules.
+% Tested only with dvips 5.85(k).
+TeXDict begin
+/QV {
+  gsave newpath /ruleY X /ruleX X
+  Rx Ry gt
+  { ruleX ruleY Ry 2 div sub moveto Rx 0 rlineto Ry }
+  { ruleX Rx 2 div add ruleY moveto 0 Ry neg rlineto Rx }
+  ifelse
+  setlinewidth 0 setlinecap stroke grestore
+} bind def
+end
+
+%%EndProcSet
+%%BeginProcSet: texps.pro 0 0
+%!
+TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
+index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
+exec 0 exch 5 -1 roll VResolution Resolution div mul neg 0 0]FontType 0
+ne{/Metrics exch def dict begin Encoding{exch dup type/integertype ne{
+pop pop 1 sub dup 0 le{pop}{[}ifelse}{FontMatrix 0 get div Metrics 0 get
+div def}ifelse}forall Metrics/Metrics currentdict end def}{{1 index type
+/nametype eq{exit}if exch pop}loop}ifelse[2 index currentdict end
+definefont 3 -1 roll makefont/setfont cvx]cvx def}def/ObliqueSlant{dup
+sin S cos div neg}B/SlantFont{4 index mul add}def/ExtendFont{3 -1 roll
+mul exch}def/ReEncodeFont{CharStrings rcheck{/Encoding false def dup[
+exch{dup CharStrings exch known not{pop/.notdef/Encoding true def}if}
+forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}def
+end
+
+%%EndProcSet
+%%BeginProcSet: special.pro 0 0
+%!
+TeXDict begin/SDict 200 dict N SDict begin/@SpecialDefaults{/hs 612 N
+/vs 792 N/ho 0 N/vo 0 N/hsc 1 N/vsc 1 N/ang 0 N/CLIP 0 N/rwiSeen false N
+/rhiSeen false N/letter{}N/note{}N/a4{}N/legal{}N}B/@scaleunit 100 N
+/@hscale{@scaleunit div/hsc X}B/@vscale{@scaleunit div/vsc X}B/@hsize{
+/hs X/CLIP 1 N}B/@vsize{/vs X/CLIP 1 N}B/@clip{/CLIP 2 N}B/@hoffset{/ho
+X}B/@voffset{/vo X}B/@angle{/ang X}B/@rwi{10 div/rwi X/rwiSeen true N}B
+/@rhi{10 div/rhi X/rhiSeen true N}B/@llx{/llx X}B/@lly{/lly X}B/@urx{
+/urx X}B/@ury{/ury X}B/magscale true def end/@MacSetUp{userdict/md known
+{userdict/md get type/dicttype eq{userdict begin md length 10 add md
+maxlength ge{/md md dup length 20 add dict copy def}if end md begin
+/letter{}N/note{}N/legal{}N/od{txpose 1 0 mtx defaultmatrix dtransform S
+atan/pa X newpath clippath mark{transform{itransform moveto}}{transform{
+itransform lineto}}{6 -2 roll transform 6 -2 roll transform 6 -2 roll
+transform{itransform 6 2 roll itransform 6 2 roll itransform 6 2 roll
+curveto}}{{closepath}}pathforall newpath counttomark array astore/gc xdf
+pop ct 39 0 put 10 fz 0 fs 2 F/|______Courier fnt invertflag{PaintBlack}
+if}N/txpose{pxs pys scale ppr aload pop por{noflips{pop S neg S TR pop 1
+-1 scale}if xflip yflip and{pop S neg S TR 180 rotate 1 -1 scale ppr 3
+get ppr 1 get neg sub neg ppr 2 get ppr 0 get neg sub neg TR}if xflip
+yflip not and{pop S neg S TR pop 180 rotate ppr 3 get ppr 1 get neg sub
+neg 0 TR}if yflip xflip not and{ppr 1 get neg ppr 0 get neg TR}if}{
+noflips{TR pop pop 270 rotate 1 -1 scale}if xflip yflip and{TR pop pop
+90 rotate 1 -1 scale ppr 3 get ppr 1 get neg sub neg ppr 2 get ppr 0 get
+neg sub neg TR}if xflip yflip not and{TR pop pop 90 rotate ppr 3 get ppr
+1 get neg sub neg 0 TR}if yflip xflip not and{TR pop pop 270 rotate ppr
+2 get ppr 0 get neg sub neg 0 S TR}if}ifelse scaleby96{ppr aload pop 4
+-1 roll add 2 div 3 1 roll add 2 div 2 copy TR .96 dup scale neg S neg S
+TR}if}N/cp{pop pop showpage pm restore}N end}if}if}N/normalscale{
+Resolution 72 div VResolution 72 div neg scale magscale{DVImag dup scale
+}if 0 setgray}N/psfts{S 65781.76 div N}N/startTexFig{/psf$SavedState
+save N userdict maxlength dict begin/magscale true def normalscale
+currentpoint TR/psf$ury psfts/psf$urx psfts/psf$lly psfts/psf$llx psfts
+/psf$y psfts/psf$x psfts currentpoint/psf$cy X/psf$cx X/psf$sx psf$x
+psf$urx psf$llx sub div N/psf$sy psf$y psf$ury psf$lly sub div N psf$sx
+psf$sy scale psf$cx psf$sx div psf$llx sub psf$cy psf$sy div psf$ury sub
+TR/showpage{}N/erasepage{}N/setpagedevice{pop}N/copypage{}N/p 3 def
+@MacSetUp}N/doclip{psf$llx psf$lly psf$urx psf$ury currentpoint 6 2 roll
+newpath 4 copy 4 2 roll moveto 6 -1 roll S lineto S lineto S lineto
+closepath clip newpath moveto}N/endTexFig{end psf$SavedState restore}N
+/@beginspecial{SDict begin/SpecialSave save N gsave normalscale
+currentpoint TR @SpecialDefaults count/ocount X/dcount countdictstack N}
+N/@setspecial{CLIP 1 eq{newpath 0 0 moveto hs 0 rlineto 0 vs rlineto hs
+neg 0 rlineto closepath clip}if ho vo TR hsc vsc scale ang rotate
+rwiSeen{rwi urx llx sub div rhiSeen{rhi ury lly sub div}{dup}ifelse
+scale llx neg lly neg TR}{rhiSeen{rhi ury lly sub div dup scale llx neg
+lly neg TR}if}ifelse CLIP 2 eq{newpath llx lly moveto urx lly lineto urx
+ury lineto llx ury lineto closepath clip}if/showpage{}N/erasepage{}N
+/setpagedevice{pop}N/copypage{}N newpath}N/@endspecial{count ocount sub{
+pop}repeat countdictstack dcount sub{end}repeat grestore SpecialSave
+restore end}N/@defspecial{SDict begin}N/@fedspecial{end}B/li{lineto}B
+/rl{rlineto}B/rc{rcurveto}B/np{/SaveX currentpoint/SaveY X N 1
+setlinecap newpath}N/st{stroke SaveX SaveY moveto}N/fil{fill SaveX SaveY
+moveto}N/ellipse{/endangle X/startangle X/yrad X/xrad X/savematrix
+matrix currentmatrix N TR xrad yrad scale 0 0 1 startangle endangle arc
+savematrix setmatrix}N end
+
+%%EndProcSet
+%%BeginProcSet: color.pro 0 0
+%!
+TeXDict begin/setcmykcolor where{pop}{/setcmykcolor{dup 10 eq{pop
+setrgbcolor}{1 sub 4 1 roll 3{3 index add neg dup 0 lt{pop 0}if 3 1 roll
+}repeat setrgbcolor pop}ifelse}B}ifelse/TeXcolorcmyk{setcmykcolor}def
+/TeXcolorrgb{setrgbcolor}def/TeXcolorgrey{setgray}def/TeXcolorgray{
+setgray}def/TeXcolorhsb{sethsbcolor}def/currentcmykcolor where{pop}{
+/currentcmykcolor{currentrgbcolor 10}B}ifelse/DC{exch dup userdict exch
+known{pop pop}{X}ifelse}B/GreenYellow{0.15 0 0.69 0 setcmykcolor}DC
+/Yellow{0 0 1 0 setcmykcolor}DC/Goldenrod{0 0.10 0.84 0 setcmykcolor}DC
+/Dandelion{0 0.29 0.84 0 setcmykcolor}DC/Apricot{0 0.32 0.52 0
+setcmykcolor}DC/Peach{0 0.50 0.70 0 setcmykcolor}DC/Melon{0 0.46 0.50 0
+setcmykcolor}DC/YellowOrange{0 0.42 1 0 setcmykcolor}DC/Orange{0 0.61
+0.87 0 setcmykcolor}DC/BurntOrange{0 0.51 1 0 setcmykcolor}DC
+/Bittersweet{0 0.75 1 0.24 setcmykcolor}DC/RedOrange{0 0.77 0.87 0
+setcmykcolor}DC/Mahogany{0 0.85 0.87 0.35 setcmykcolor}DC/Maroon{0 0.87
+0.68 0.32 setcmykcolor}DC/BrickRed{0 0.89 0.94 0.28 setcmykcolor}DC/Red{
+0 1 1 0 setcmykcolor}DC/OrangeRed{0 1 0.50 0 setcmykcolor}DC/RubineRed{
+0 1 0.13 0 setcmykcolor}DC/WildStrawberry{0 0.96 0.39 0 setcmykcolor}DC
+/Salmon{0 0.53 0.38 0 setcmykcolor}DC/CarnationPink{0 0.63 0 0
+setcmykcolor}DC/Magenta{0 1 0 0 setcmykcolor}DC/VioletRed{0 0.81 0 0
+setcmykcolor}DC/Rhodamine{0 0.82 0 0 setcmykcolor}DC/Mulberry{0.34 0.90
+0 0.02 setcmykcolor}DC/RedViolet{0.07 0.90 0 0.34 setcmykcolor}DC
+/Fuchsia{0.47 0.91 0 0.08 setcmykcolor}DC/Lavender{0 0.48 0 0
+setcmykcolor}DC/Thistle{0.12 0.59 0 0 setcmykcolor}DC/Orchid{0.32 0.64 0
+0 setcmykcolor}DC/DarkOrchid{0.40 0.80 0.20 0 setcmykcolor}DC/Purple{
+0.45 0.86 0 0 setcmykcolor}DC/Plum{0.50 1 0 0 setcmykcolor}DC/Violet{
+0.79 0.88 0 0 setcmykcolor}DC/RoyalPurple{0.75 0.90 0 0 setcmykcolor}DC
+/BlueViolet{0.86 0.91 0 0.04 setcmykcolor}DC/Periwinkle{0.57 0.55 0 0
+setcmykcolor}DC/CadetBlue{0.62 0.57 0.23 0 setcmykcolor}DC
+/CornflowerBlue{0.65 0.13 0 0 setcmykcolor}DC/MidnightBlue{0.98 0.13 0
+0.43 setcmykcolor}DC/NavyBlue{0.94 0.54 0 0 setcmykcolor}DC/RoyalBlue{1
+0.50 0 0 setcmykcolor}DC/Blue{1 1 0 0 setcmykcolor}DC/Cerulean{0.94 0.11
+0 0 setcmykcolor}DC/Cyan{1 0 0 0 setcmykcolor}DC/ProcessBlue{0.96 0 0 0
+setcmykcolor}DC/SkyBlue{0.62 0 0.12 0 setcmykcolor}DC/Turquoise{0.85 0
+0.20 0 setcmykcolor}DC/TealBlue{0.86 0 0.34 0.02 setcmykcolor}DC
+/Aquamarine{0.82 0 0.30 0 setcmykcolor}DC/BlueGreen{0.85 0 0.33 0
+setcmykcolor}DC/Emerald{1 0 0.50 0 setcmykcolor}DC/JungleGreen{0.99 0
+0.52 0 setcmykcolor}DC/SeaGreen{0.69 0 0.50 0 setcmykcolor}DC/Green{1 0
+1 0 setcmykcolor}DC/ForestGreen{0.91 0 0.88 0.12 setcmykcolor}DC
+/PineGreen{0.92 0 0.59 0.25 setcmykcolor}DC/LimeGreen{0.50 0 1 0
+setcmykcolor}DC/YellowGreen{0.44 0 0.74 0 setcmykcolor}DC/SpringGreen{
+0.26 0 0.76 0 setcmykcolor}DC/OliveGreen{0.64 0 0.95 0.40 setcmykcolor}
+DC/RawSienna{0 0.72 1 0.45 setcmykcolor}DC/Sepia{0 0.83 1 0.70
+setcmykcolor}DC/Brown{0 0.81 1 0.60 setcmykcolor}DC/Tan{0.14 0.42 0.56 0
+setcmykcolor}DC/Gray{0 0 0 0.50 setcmykcolor}DC/Black{0 0 0 1
+setcmykcolor}DC/White{0 0 0 0 setcmykcolor}DC end
+
+%%EndProcSet
+%%BeginFont: CMMI12
+%!PS-AdobeFont-1.1: CMMI12 1.100
+%%CreationDate: 1996 Jul 27 08:57:55
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.100) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMMI12) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle -14.04 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMMI12 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 177 /delta put
+dup 181 /theta put
+dup 189 /rho put
+dup 60 /less put
+dup 62 /greater put
+readonly def
+/FontBBox{-30 -250 1026 750}readonly def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA0529731C99A784CCBE85B4993B2EEBDE
+3B12D472B7CF54651EF21185116A69AB1096ED4BAD2F646635E019B6417CC77B
+532F85D811C70D1429A19A5307EF63EB5C5E02C89FC6C20F6D9D89E7D91FE470
+B72BEFDA23F5DF76BE05AF4CE93137A219ED8A04A9D7D6FDF37E6B7FCDE0D90B
+986423E5960A5D9FBB4C956556E8DF90CBFAEC476FA36FD9A5C8175C9AF513FE
+D919C2DDD26BDC0D99398B9F4D03D6A8F05B47AF95EF28A9C561DBDC98C47CF5
+5250011D19E9366EB6FD153D3A100CAA6212E3D5D93990737F8D326D347B7EDC
+4391C9DF440285B8FC159D0E98D4258FC57892DCC57F7903449E07914FBE9E67
+3C15C2153C061EB541F66C11E7EE77D5D77C0B11E1AC55101DA976CCACAB6993
+EED1406FBB7FF30EAC9E90B90B2AF4EC7C273CA32F11A5C1426FF641B4A2FB2F
+4E68635C93DB835737567FAF8471CBC05078DCD4E40E25A2F4E5AF46C234CF59
+2A1CE8F39E1BA1B2A594355637E474167EAD4D97D51AF0A899B44387E1FD933A
+323AFDA6BA740534A510B4705C0A15647AFBF3E53A82BF320DD96753639BE49C
+2F79A1988863EF977B800C9DB5B42039C23EB86953713F730E03EA22FF7BB2C1
+D97D33FD77B1BDCC2A60B12CF7805CFC90C5B914C0F30A673DF9587F93E47CEA
+5932DD1930560C4F0D97547BCD805D6D854455B13A4D7382A22F562D7C55041F
+0FD294BDAA1834820F894265A667E5C97D95FF152531EF97258F56374502865D
+A1E7C0C5FB7C6FB7D3C43FEB3431095A59FBF6F61CEC6D6DEE09F4EB0FD70D77
+2A8B0A4984C6120293F6B947944BE23259F6EB64303D627353163B6505FC8A60
+00681F7A3968B6CBB49E0420A691258F5E7B07B417157803FCBE9B9FB1F80FD8
+CA0DA1186446DD565542BCCC7D339A1EB34C7F49246E8D72E987EB477C6DB757
+99AF86CEBCD7605C487A00CD2CD093098182DC57B20D78ECE0BECF3A0BF88EBA
+C866DB19F34BBBED6634AFC0F08D2AFB2A92578A6F8B4ADCD6594737FF6EED7D
+5B536DA9E3E2CADB40DB7C600EA4D100D33C3B92B1CF857E012C4EB370BA8295
+55B50047C85071DCC6C89D0334512E83AF43161F0CA79286AAED627D2F41B402
+4070CAB5577C22AF35C66507E04263915502874E82881203E3EFDC23167FD0D3
+F1B5B6D4AE2B030E0854428BC138FBBE25F67C3EC5B74A189114FD6F8D5595D2
+58C9795BDF8AA61FF49611475267E8DA5777936179C76BA65A15031D7E22F72A
+022CE9A9234E2E13AE50173ACEBD5000ACAB36F87533AFDBF5A81C205B4390E7
+40C3F1AE3F8D0134FF263C7C538464DB3F58BFCE1E6246022424CD735B88BE25
+43C388DEB16F2F788F4ACC7BBBB079D9B166F40F57E490543B1D3977D98AB831
+E88D08CBF909381C0C1011D29A5329A2EEA8E0B8EB684DAF52FD13457098ED04
+B6957F78A2390CF54DCFA305BA5B8A76B64ACB55F9AD8FBD06389B41C01C3B73
+4504183590FBDAA36B32EFBA65B41515962103104238C7346D2E74ECC1FD47B7
+E661DBBC17A6E2EB0ED370A9B6D4CE0051C72467B5A67242582237F2EF132EA5
+8350AFE300955EF6D759F1F88E2C8818725067B4F71126976299BDAD3C045D16
+ACA8FE3B1906FA1F908D58F66BD3EFDD310D29838E5573BEA45F05DB3FF7E067
+75F09E6DB893D17A151CF0DA536465D2A08C94965CB18D7F9512A54ABEF40340
+C442CC9A5EAEE27911B424947957ED688ECA7C5BFE341C4C11554FA48E9B2D70
+347C944AD9564711FBB607678C30CCC8A1C1362EB3F3E9F3F5062DB281D378FF
+7246B1A9CAEDF876654692C4CD3D5E427FAB8A21AC4A7AC3817A0440BAE66168
+ABBE59EC460CF2868955580573588627BADD897F90A251E52206A7A0F4619C3D
+0C6C8F4730861D00B9CFA0C7647318F1792E1C958B22F4FA61C0BE61B29EA36C
+00B4AB5C4585FC843F2CA4FE9D9EE3C55E5C89DE1416B064475C8C4E46321E46
+8AD2BDECEEF5A32CC9983C15F6CCC63415A2F6EC156C9D8C7FDCD9BC5F4C0A7E
+43B804100D8AE03EB6DFF24487D35124B7C555E1E87E8F3B6D061E783035A626
+81B559B84B693313A30CE3770FC64D0FE3CCEA3B189572B9B47E6521B9B2DC45
+674E97B915AAA6FEB230841948591C83223ADE905CB957CC04520FB36E3A4F12
+E2FB7101267338AB70AFF8923D5A5D8A3AA6BB93F912F16A282421D06064FC87
+E1FCAA47CBE176CACE6632163BCCD4F97B9DFE5643E4F134E03C34B775B1D0C2
+B6FB0E24393BB4481CEE66810C677FDB6C8939BBF736A92872F091D6D9A61D
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+%%BeginFont: CMBX12
+%!PS-AdobeFont-1.1: CMBX12 1.0
+%%CreationDate: 1991 Aug 20 16:34:54
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.0) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMBX12) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Bold) readonly def
+/ItalicAngle 0 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMBX12 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 48 /zero put
+dup 120 /x put
+dup 121 /y put
+readonly def
+/FontBBox{-53 -251 1139 750}readonly def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA052A014267B7904EB3C0D3BD0B83D891
+016CA6CA4B712ADEB258FAAB9A130EE605E61F77FC1B738ABC7C51CD46EF8171
+9098D5FEE67660E69A7AB91B58F29A4D79E57022F783EB0FBBB6D4F4EC35014F
+D2DECBA99459A4C59DF0C6EBA150284454E707DC2100C15B76B4C19B84363758
+469A6C558785B226332152109871A9883487DD7710949204DDCF837E6A8708B8
+2BDBF16FBC7512FAA308A093FE5F0364CD5660F74BEE96790DE35AFA90CCF712
+B1805DA88AE375A04D99598EADFC625BDC1F9C315B6CF28C9BD427F32C745C99
+AEBE70DAAED49EA45AF94F081934AA47894A370D698ABABDA4215500B190AF26
+7FCFB7DDA2BC68605A4EF61ECCA3D61C684B47FFB5887A3BEDE0B4D30E8EBABF
+20980C23312618EB0EAF289B2924FF4A334B85D98FD68545FDADB47F991E7390
+B10EE86A46A5AF8866C010225024D5E5862D49DEB5D8ECCB95D94283C50A363D
+68A49071445610F03CE3600945118A6BC0B3AA4593104E727261C68C4A47F809
+D77E4CF27B3681F6B6F3AC498E45361BF9E01FAF5527F5E3CC790D3084674B3E
+26296F3E03321B5C555D2458578A89E72D3166A3C5D740B3ABB127CF420C316D
+F957873DA04CF0DB25A73574A4DE2E4F2D5D4E8E0B430654CF7F341A1BDB3E26
+77C194764EAD58C585F49EF10843FE020F9FDFD9008D660DE50B9BD7A2A87299
+BC319E66D781101BB956E30643A19B93C8967E1AE4719F300BFE5866F0D6DA5E
+C55E171A24D3B707EFA325D47F473764E99BC8B1108D815CF2ACADFA6C4663E8
+30855D673CE98AB78F5F829F7FA226AB57F07B3E7D4E7CE30ED3B7EB0D3035C5
+148DA8D9FA34483414FDA8E3DC9E6C479E3EEE9A11A0547FC9085FA4631AD19C
+E936E0598E3197207FA7BB6E55CFD5EF72AEC12D9A9675241C7B00AD58FAF645
+1297991B5D01701E82228D0313FC7C66B263BC79ACDDF9AAC48A3CBF42B96E38
+583E1D059953076D68148DC8B6C9527B3A74CE7DEF788A11531F44120BDF0F61
+0B2F3ED94EEBCDE4ACD23834C242AA4314B9EF98E4BE72DB76EBDD0A028CEA9D
+B4C38C1F2D24B8FDE686832FE96204552C820E45B6BAF0C3308742AE2E15E0A3
+32D9D2069E82BB9906811AD94C3D55336F7AC39C700E581910709FCF49CD2A7B
+E9CDA742EA5DD9FB0C396D37E5E4A8425285C6237D2A3F0DEC054118FDED5010
+EE9348E4662B9848796308BD9010E0830F9290F985E3D0732FEDF58AA10271F3
+948E61867B5A10989B8A63F67F0782EC0E8E4E3CC2E96E2DD4C4D7313686B939
+8947A521F022F67B22ED569B58011AA7EF12C32A9A2D066C89B2C742F5C5408B
+BD015C07283651014EAF540AAF79EACF757C672D80DA8623F28A741060181080
+1397ABCEA46F2DD79083CD478D01C7E0BE104FCCFE88A0F6EA9C3C455082382E
+9271CEFB1209496947E96C0CA4B14BC04C05AB8EBCC40C5AC4511DE51F8D73C7
+30055F2FA2D675B6015FCA97DEC7CF354C58EE32253EA54150698AA163818620
+7510265DB83997829148016229BCEC4FEE7C3922345FE398976980315A505499
+6D4FFF263231E7310EB105EABBACB67897E7F00D946D6C5A960F6D11CACAD62A
+0884582586DCC3EE875C650453436AE8A0B41226C2D872F78972B67C4ABBD924
+B4BD8928E4C4E29E410CE68EC1DEF06F6D69D34B254822A03A90BA6B256EDE9D
+92BC13031DBF5EC06FA90F260804C804CE2053411D7412EA3DDE16F98178C6BC
+0C0384EF5FF9DF2C8004A85C02568D6323475B628FB58CE88E244E6DC30C442A
+5908DEA0B5C71E8035956A7D0B41E63EC017EBCE8BB6FA6A3022E2509CE313D4
+FDB509E0C4D552E0386CC1B7B136D808F17B678A897950872311A20A7B699AB6
+39E8FECC68EEFF775368898844A0FBA9CA9F816AF2D47E8FBB44BEF03092835F
+92C703FD2376D480ABA9DAC652F4A67EAA1F54CBE69563D4B047C84C4D91237B
+761703C05F3984A87C4034BF36EC2B6CD643DA6260B93D5F2CD15E334BD583B0
+C73EFE
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+TeXDict begin 40258437 52099154 1000 8000 8000 (vpFeatureLine.dvi)
+@start /Fa 193[1748 1[1748 33[1159 7[1048 3[996 14[{}5
+2295.84 /CMMI12 rf /Fb 134[1363 1363 71[1291 48[{}3 2295.84
+/CMBX12 rf end
+%%EndProlog
+%%BeginSetup
+%%Feature: *Resolution 8000dpi
+TeXDict begin
+ end
+%%EndSetup
+TeXDict begin 1 0 bop Black Black 1660 62482 a @beginspecial
+0 @llx 0 @lly 478 @urx 510 @ury 4780 @rwi @setspecial
+%%BeginDocument: vpFeatureLine.pstex
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: vpFeatureLine.fig
+%%Creator: fig2dev Version 3.2 Patchlevel 5
+%%CreationDate: Mon Feb  2 15:03:52 2009
+%%For: nmelchio@nereide (Nicolas MELCHIOR,LAGADIC)
+%%BoundingBox: 0 0 478 510
+%Magnification: 1.0000
+%%EndComments
+/$F2psDict 200 dict def
+$F2psDict begin
+$F2psDict /mtrx matrix put
+/col-1 {0 setgray} bind def
+/col0 {0.000 0.000 0.000 srgb} bind def
+/col1 {0.000 0.000 1.000 srgb} bind def
+/col2 {0.000 1.000 0.000 srgb} bind def
+/col3 {0.000 1.000 1.000 srgb} bind def
+/col4 {1.000 0.000 0.000 srgb} bind def
+/col5 {1.000 0.000 1.000 srgb} bind def
+/col6 {1.000 1.000 0.000 srgb} bind def
+/col7 {1.000 1.000 1.000 srgb} bind def
+/col8 {0.000 0.000 0.560 srgb} bind def
+/col9 {0.000 0.000 0.690 srgb} bind def
+/col10 {0.000 0.000 0.820 srgb} bind def
+/col11 {0.530 0.810 1.000 srgb} bind def
+/col12 {0.000 0.560 0.000 srgb} bind def
+/col13 {0.000 0.690 0.000 srgb} bind def
+/col14 {0.000 0.820 0.000 srgb} bind def
+/col15 {0.000 0.560 0.560 srgb} bind def
+/col16 {0.000 0.690 0.690 srgb} bind def
+/col17 {0.000 0.820 0.820 srgb} bind def
+/col18 {0.560 0.000 0.000 srgb} bind def
+/col19 {0.690 0.000 0.000 srgb} bind def
+/col20 {0.820 0.000 0.000 srgb} bind def
+/col21 {0.560 0.000 0.560 srgb} bind def
+/col22 {0.690 0.000 0.690 srgb} bind def
+/col23 {0.820 0.000 0.820 srgb} bind def
+/col24 {0.500 0.190 0.000 srgb} bind def
+/col25 {0.630 0.250 0.000 srgb} bind def
+/col26 {0.750 0.380 0.000 srgb} bind def
+/col27 {1.000 0.500 0.500 srgb} bind def
+/col28 {1.000 0.630 0.630 srgb} bind def
+/col29 {1.000 0.750 0.750 srgb} bind def
+/col30 {1.000 0.880 0.880 srgb} bind def
+/col31 {1.000 0.840 0.000 srgb} bind def
+
+end
+save
+newpath 0 510 moveto 0 0 lineto 478 0 lineto 478 510 lineto closepath clip newpath
+-208.9 578.9 translate
+1 -1 scale
+
+/cp {closepath} bind def
+/ef {eofill} bind def
+/gr {grestore} bind def
+/gs {gsave} bind def
+/sa {save} bind def
+/rs {restore} bind def
+/l {lineto} bind def
+/m {moveto} bind def
+/rm {rmoveto} bind def
+/n {newpath} bind def
+/s {stroke} bind def
+/sh {show} bind def
+/slc {setlinecap} bind def
+/slj {setlinejoin} bind def
+/slw {setlinewidth} bind def
+/srgb {setrgbcolor} bind def
+/rot {rotate} bind def
+/sc {scale} bind def
+/sd {setdash} bind def
+/ff {findfont} bind def
+/sf {setfont} bind def
+/scf {scalefont} bind def
+/sw {stringwidth} bind def
+/tr {translate} bind def
+/tnt {dup dup currentrgbcolor
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add srgb}
+  bind def
+/shd {dup dup currentrgbcolor 4 -2 roll mul 4 -2 roll mul
+  4 -2 roll mul srgb} bind def
+/$F2psBegin {$F2psDict begin /$F2psEnteredState save def} def
+/$F2psEnd {$F2psEnteredState restore end} def
+
+$F2psBegin
+10 setmiterlimit
+0 slj 0 slc
+ 0.06000 0.06000 sc
+%
+% Fig objects follow
+%
+% 
+% here starts figure with depth 50
+% Arc
+45.000 slw
+0 slc
+gs  clippath
+8119 5728 m 7861 5722 l 7858 5827 l 8116 5832 l 8116 5832 l 7953 5777 l 8119 5728 l cp
+eoclip
+n 8001.1 5403.4 392.4 -50.6405 108.7497 arc
+gs col0 s gr
+ gr
+
+% arrowhead
+0 slj
+n 8119 5728 m 7953 5777 l 8116 5832 l 8119 5728 l  cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+gs  clippath
+11157 5152 m 11415 5152 l 11415 5047 l 11157 5047 l 11157 5047 l 11322 5100 l 11157 5152 l cp
+eoclip
+n 3525 5100 m
+ 11400 5100 l gs col0 s gr gr
+
+% arrowhead
+n 11157 5152 m 11322 5100 l 11157 5047 l 11157 5152 l  cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+gs  clippath
+7147 9357 m 7147 9615 l 7252 9615 l 7252 9357 l 7252 9357 l 7200 9522 l 7147 9357 l cp
+eoclip
+n 7200 1200 m
+ 7200 9600 l gs col0 s gr gr
+
+% arrowhead
+n 7147 9357 m 7200 9522 l 7252 9357 l 7147 9357 l  cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+n 7200 5100 m
+ 8625 6525 l gs col0 s gr 
+% Polyline
+n 5850 3750 m
+ 7200 5100 l gs col0 s gr 
+% Polyline
+75.000 slw
+ [210] 0 sd
+n 3675 5925 m
+ 8362 1237 l gs col0 s gr  [] 0 sd
+% Polyline
+n 6075 9000 m
+ 11100 3975 l gs col0 s gr 
+% Polyline
+45.000 slw
+n 8400 6300 m 8550 6150 l
+ 8700 6300 l gs col0 s gr 
+% here ends figure;
+$F2psEnd
+rs
+showpage
+%%Trailer
+%EOF
+
+%%EndDocument
+ @endspecial 0 0 0 TeXcolorrgb 52955 30661 a Fb(x)p Black
+0 0 0 TeXcolorrgb 23954 61662 a(y)p Black 0 0 0 TeXcolorrgb
+27454 40661 a Fa(\275)639 b(>)f Fb(0)p Black 0 0 0 TeXcolorrgb
+49955 23661 a Fa(\261)p Black 0 0 0 TeXcolorrgb 20454
+24661 a(\275)g(<)h Fb(0)p Black 0 0 0 TeXcolorrgb 34955
+35661 a Fa(\265)p Black Black Black eop end
+%%Trailer
+
+userdict /end-hook known{end-hook}if
+%%EOF
