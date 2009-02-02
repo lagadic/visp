@@ -94,7 +94,7 @@ vpMeLine::~vpMeLine()
 // ===================================================================
 /*!
  * Construct a list of vpMeSiteME at a particular sampling step between the two extremities of the line.
- * \pre  Requies me to hold the size of the sample_step
+ * \pre  Requires me to hold the size of the sample_step
  * \post Calculates the a normal to the line and stores
  * 			 angle in 'alpha'. Creates a list of sites (list)
  *				 (requires calculation of Rho(),Delta())
@@ -219,7 +219,7 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
 
 
 /*!
-	Initilisation of the tracking. Ask the user to click on two points from the line to track.
+	Initilization of the tracking. Ask the user to click on two points from the line to track.
 
 	\param I : Image in which the line appears.
 */
@@ -709,7 +709,7 @@ vpMeLine::leastSquare()
 
 
 /*!
-	Initilisation of the tracking. The line is defined thanks to the coordinates of two points.
+	Initilization of the tracking. The line is defined thanks to the coordinates of two points.
 
 	\param I : Image in which the line appears.
 	\param i1 : i coordinate of the first point.
@@ -861,7 +861,7 @@ vpMeLine::setExtremities()
 }
 
 /*!
-	Seek along the line defined by its equation, the two extremities of the line. This function is usefull in case of translation of the line.
+	Seek along the line defined by its equation, the two extremities of the line. This function is useful in case of translation of the line.
 
 	\param I : Image in which the line appears.
 */
@@ -1006,7 +1006,7 @@ vpMeLine::reSample(vpImage<unsigned char> &I)
 }
 
 /*!
-	Set the alpha value of the diferent vpMeSites to the value of delta.
+	Set the alpha value of the different vpMeSites to the value of delta.
 */
 void
 vpMeLine::updateDelta()
