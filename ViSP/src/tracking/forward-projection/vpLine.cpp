@@ -50,6 +50,9 @@
 
 
 
+/*!
+  Initialize the memory space requested for 2D and 3D line parameters.
+*/
 void
 vpLine::init()
 {
@@ -61,6 +64,9 @@ vpLine::init()
 
 }
 
+/*! 
+  Default constructor.
+*/
 vpLine::vpLine()
 {
   init() ;
@@ -68,7 +74,21 @@ vpLine::vpLine()
 
 
 
-//! set the line world coordinates
+/*! 
+  Sets the parameters which define the line in the object frame. As said in the class description, the line is defined as the intersection of two plans. The different parameters here define the equations of the two plans in the object frame.
+  \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
+  \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
+  Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
+
+  \param A1 : The A parameter of the equation which defines the first plan.
+  \param B1 : The B parameter of the equation which defines the first plan.
+  \param C1 : The C parameter of the equation which defines the first plan.
+  \param D1 : The D parameter of the equation which defines the first plan.
+  \param A2 : The A parameter of the equation which defines the second plan.
+  \param B2 : The B parameter of the equation which defines the second plan.
+  \param C2 : The C parameter of the equation which defines the second plan.
+  \param D2 : The D parameter of the equation which defines the second plan.
+*/
 void
 vpLine::setWorldCoordinates(const double &A1, const double &B1,
 			    const double &C1, const double &D1,
@@ -87,7 +107,15 @@ vpLine::setWorldCoordinates(const double &A1, const double &B1,
 }
 
 
-//! set the line world coordinates
+/*! 
+  Sets the parameters which define the line in the object frame. As said in the class description, the line is defined as the intersection of two plans. Height parameters are required to define the equations of the two plans in the object frame.
+  \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
+  \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
+  Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
+
+  \param _oP : The column vector which contains the height parameters needed to define the equations of the two plans. \f[ \_oP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+
+*/
 void
 vpLine::setWorldCoordinates(const vpColVector &_oP)
 {
@@ -95,7 +123,16 @@ vpLine::setWorldCoordinates(const vpColVector &_oP)
 }
 
 
-//! set the line world coordinates from two planes
+/*! 
+  Sets the parameters which define the line in the object frame. As said in the class description, the line is defined as the intersection of two plans. Height parameters are required to define the equations of the two plans in the object frame.
+  \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
+  \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
+  Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
+
+  \param _oP1 : The column vector which contains the four parameters needed to define the equations of the first plan. \f[ \_oP1 = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \end{array}\right] \f]
+  \param _oP2 : The column vector which contains the four parameters needed to define the equations of the second plan. \f[ \_oP2 = \left[\begin{array}{c} A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+
+*/
 void
 vpLine::setWorldCoordinates(const vpColVector &_oP1,
 			    const vpColVector &_oP2)
@@ -109,7 +146,30 @@ vpLine::setWorldCoordinates(const vpColVector &_oP1,
 }
 
 
-//! perspective projection of the line
+/*!
+  Computes the equation of the line in the image frame thanks to the line features in the camera frame. The method used is the perspective projection.
+  The computed parameters are \f$ \rho \f$ and \f$ \theta \f$.
+
+  The code below shows how to use this method.
+  \code
+  //Create the line
+  vpLine line;
+
+  //Set the coordinates of the line in the object frame in meter.
+  line.setWorldCoordinates( 1, 0, 0, -0.5, 0, 0, 1, 0.5)
+  //Here the line is define by the intersection between the plan X = 0.5m and Z = 0.5m
+
+  //Create the homogeneous matrix
+  vpHomogeneousMatrix cMo;
+  //Computes or set here the homogeneous matrix
+
+  //Computes the equations of the two plans in the camera frame
+  line.changeFrame(cMo);
+
+  //Computes the line features in the image frame( rho and theta)
+  line.projection();
+  \endcode
+*/
 void
 vpLine::projection()
 {
@@ -117,7 +177,13 @@ vpLine::projection()
 }
 
 
-//! perspective projection of the line
+/*!
+  Computes the equation of the line in the image frame thanks to the line features in the camera frame. The method used is the perspective projection.
+  The computed parameters are \f$ \rho \f$ and \f$ \theta \f$.
+
+  \param _cP : The vector containing the line features relative to the camera frame. \f[ \_cP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+  \param _p : The vector which contains the result of the computation ie the line features relative to the image frame. \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right] \f]
+*/
 void
 vpLine::projection(const vpColVector &_cP, vpColVector &_p)
 {
@@ -151,12 +217,62 @@ vpLine::projection(const vpColVector &_cP, vpColVector &_p)
   _p[1] = theta ;
 }
 
+
+/*!
+  Computes the line features given in the camera frame thanks to the line features given in the object frame and the homogeneous matrix relative to the difference between the object frame and the camera frame. Thus the computation gives the equations of the two plans needed to define the line in the camera frame thanks to the equations of the same two plans in the object frame.
+
+  \param cMo : The homogeneous matrix relative to the difference between the object frame and the camera frame.
+
+  The code below shows how to use this method.
+  \code
+  //Create the line
+  vpLine line;
+
+  //Set the coordinates of the line in the object frame in meter.
+  line.setWorldCoordinates( 1, 0, 0, -0.5, 0, 0, 1, 0.5)
+  //The line is define by the intersection between the plan X = 0.5m and Z = 0.5m
+
+  //Create the homogeneous matrix
+  vpHomogeneousMatrix cMo;
+  //Computes or set here the homogeneous matrix
+
+  //Computes the equations of the two plans in the camera frame
+  line.changeFrame(cMo);
+  \endcode
+*/
 void
 vpLine::changeFrame(const vpHomogeneousMatrix &cMo)
 {
   changeFrame(cMo,cP) ;
 }
 
+
+/*!
+  Computes the line features given in a 3D frame of your choice thanks to the line features given in the object frame and the homogeneous matrix relative to the difference between the object frame and the frame you choose. Thus the computation gives the equations of the two plans needed to define the line in the desired frame thanks to the equations of the same two plans in the object frame.
+
+  \param cMo : The homogeneous matrix relative to the difference between the object frame and the desired frame.
+  \param _cP : The vector which will contain the parameters of the two plans equations in the desired frame. \f[ \_cP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+
+  The code below shows how to use this method.
+  \code
+  //Create the line
+  vpLine line;
+
+  //Set the coordinates of the line in the object frame in meter.
+  line.setWorldCoordinates( 1, 0, 0, -0.5, 0, 0, 1, 0.5)
+  //The line is define by the intersection between the plan X = 0.5m and Z = 0.5m
+
+  //Create the homogeneous matrix
+  vpHomogeneousMatrix cMo;
+  //Computes or set here the homogeneous matrix
+
+  //Creates the vector which will contain the line features
+  vpColVector cP(8);
+
+  //Computes the equations of the two plans in the camera frame
+  line.changeFrame(cMo, cP);
+  \endcode
+*/
 void
 vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 {
@@ -295,6 +411,13 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 }
 
 
+/*!
+  Displays the line in the image I thanks to the features in the image frame and the camera parameters which enable to convert the features from meter to pixel.
+
+  \param I : The image where the line must be displayed.
+  \param cam : The camera parameters to enable the conversion from meter to pixel.
+  \param color : The desired color to display the line in the image.
+*/
 void vpLine::display(vpImage<unsigned char> &I,
 		     const vpCameraParameters &cam,
 		     const vpColor::vpColorType color)
@@ -303,6 +426,15 @@ void vpLine::display(vpImage<unsigned char> &I,
 				cam, I, color) ;
 }
 
+
+/*!
+  Displays the line in the image I thanks to the features in the object frame, the homogeneous matrix relative to the difference between the object frame and the camera frame and the camera parameters which enable to convert the features from meter to pixel.
+
+  \param I : The image where the line must be displayed.
+  \param cMo : The homogeneous matrix relative to the difference between the object frame and the camera frame.
+  \param cam : The camera parameters to enable the conversion from meter to pixel.
+  \param color : The desired color to display the line in the image.
+*/
 // non destructive wrt. cP and p
 void vpLine::display(vpImage<unsigned char> &I,
 		     const vpHomogeneousMatrix &cMo,
@@ -316,7 +448,18 @@ void vpLine::display(vpImage<unsigned char> &I,
 				cam, I, color) ;
 
 }
-//! for memory issue (used by the vpServo class only)
+
+
+/*!
+  Create an object with the same type.
+
+  \code
+  vpForwardProjection *fp;
+  vpLine line;
+  fp = line.duplicate(); // fp is now a vpLine
+  \endcode
+
+*/
 vpLine *vpLine::duplicate() const
 {
   vpLine *feature = new vpLine(*this) ;
