@@ -301,7 +301,7 @@ vpFeaturePoint3D::interaction(const int select) const
   Compute the error \f$ (s-s^*)\f$ between the current and the desired
   visual features from a subset of the possible features.
 
-  \param s_star : Desired 3D point visual visual feature.
+  \param s_star : Desired 3D point visual feature.
 
   \param select : The error can be computed for a selection of a
   subset of the possible 3D point coordinate features.
@@ -422,7 +422,7 @@ vpFeaturePoint3D::error(const int /* select */)
 
   \exception vpFeatureException::badInitializationError: If the depth
   (\f$Z\f$ coordinate) is negative. That means that the 3D point is
-  on the camera which is not possible.
+  behind the camera which is not possible.
 
   \exception vpFeatureException::badInitializationError: If the depth
   (\f$Z\f$ coordinate) is null. That means that the 3D point is

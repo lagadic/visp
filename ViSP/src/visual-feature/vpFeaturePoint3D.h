@@ -260,7 +260,7 @@ public:
     vpServo task;
     ...
     // Add the (X,Y) subset coordinates features from a 3D point to the task
-    task.addFeature(t, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
+    task.addFeature(p, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
     \endcode
 
     \sa selectY(), selectZ()
@@ -286,7 +286,7 @@ public:
     vpServo task;
     ...
     // Add the (X,Y) subset coordinates features from a 3D point to the task
-    task.addFeature(t, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
+    task.addFeature(p, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
     \endcode
 
     \sa selectX(), selectZ()
@@ -312,7 +312,7 @@ public:
     vpServo task;
     ...
     // Add the (Z) subset coordinate feature from a 3D point to the task
-    task.addFeature(t, vpFeaturePoint3D::selectZ());
+    task.addFeature(p, vpFeaturePoint3D::selectZ());
     \endcode
 
     \sa selectX(), selectY()
@@ -341,7 +341,7 @@ public:
   /*!
     @name Deprecated functions
   */
-  // compute the error between a visual features and zero
+  //! compute the error between a visual features and zero
   vpColVector error(const int select = FEATURE_ALL)  ;
 
 } ;
