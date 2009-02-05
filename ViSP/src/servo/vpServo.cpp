@@ -335,21 +335,101 @@ vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 	break;
       }
 
+    case vpServo::CONTROLLER:
+      {
+	os << "Type of control law " <<std::endl ;
+	switch( servoType )
+	  {
+	  case NONE :
+	    os << "Type of task have not been chosen yet ! " << std::endl ;
+	    break ;
+	  case EYEINHAND_CAMERA :
+	    os << "Eye-in-hand configuration " << std::endl ;
+	    os << "Control in the camera frame " << std::endl ;
+	    break ;
+	  case EYEINHAND_L_cVe_eJe :
+	    os << "Eye-in-hand configuration " << std::endl ;
+	    os << "Control in the articular frame " << std::endl ;
+	    break ;
+	  case EYETOHAND_L_cVe_eJe :
+	    os << "Eye-to-hand configuration " << std::endl ;
+	    os << "s_dot = _L_cVe_eJe q_dot " << std::endl ;
+	    break ;
+	  case EYETOHAND_L_cVf_fVe_eJe :
+	    os << "Eye-to-hand configuration " << std::endl ;
+	    os << "s_dot = _L_cVe_fVe_eJe q_dot " << std::endl ;
+	    break ;
+	  case EYETOHAND_L_cVf_fJe :
+	    os << "Eye-to-hand configuration " << std::endl ;
+	    os << "s_dot = _L_cVf_fJe q_dot " << std::endl ;
+	    break ;
+	  }
+	break;
+      }
+      
+    case vpServo::FEATURE_CURRENT: 
+      {
+	os << "List of visual features : s" <<std::endl ;
+	for (featureList.front(),
+	       featureSelectionList.front() ;
+	     !featureList.outside() ;
+	     featureList.next(),
+	       featureSelectionList.next()  )
+	  {
+	    vpBasicFeature *s ;
+	    s = featureList.value();
+	    os << "" ;
+	    s->print(featureSelectionList.value()) ;
+	  }
+
+	break;
+      }
+    case vpServo::FEATURE_DESIRED: 
+      {
+	os << "List of desired visual features : s*" <<std::endl ;
+	for (desiredFeatureList.front(),
+	       featureSelectionList.front() ;
+	     !desiredFeatureList.outside() ;
+	     desiredFeatureList.next(),
+	       featureSelectionList.next()  )
+	  {
+	    vpBasicFeature *s ;
+	    s = desiredFeatureList.value();
+	    os << "" ;
+	    s->print(featureSelectionList.value()) ;
+	  }
+	break;
+      }
+   case vpServo::GAIN: 
+      {
+	os << "Gain : " << lambda <<std::endl ;
+	break;
+      }
+   case vpServo::INTERACTION_MATRIX: 
+      {
+	os <<"Interaction Matrix Ls "<<std::endl  ;
+	if (interactionMatrixComputed)
+	  {
+	    os << L;
+	  }
+	else
+	  {os << "not yet computed "<<std::endl ;}
+	break;
+      }
+
+    case vpServo::ERROR:
     case vpServo::MINIMUM:
 
       {
-  	os <<"Err (s-s*):  "  ;
+	os <<"Error vector (s-s*) "<<std::endl  ;
 	if (errorComputed)
 	  {  os << error.t() ;  }
 	else
 	  {os << "not yet computed "<<std::endl ;}
 
+	break;
       }
-
-
     }
-
-
 }
 
 //! create a new set of 2 features in the task
