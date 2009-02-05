@@ -176,8 +176,14 @@ public:
 
   typedef enum
     {
-      ALL,
-      MINIMUM
+      ALL,                /*!< Print all the task information. */
+      CONTROLLER,         /*!< Print the type of controller law. */
+      ERROR,              /*!< Print the error vector \f$(s-s^*)\f$. */
+      FEATURE_CURRENT,    /*!< Print the current features \f$s\f$. */
+      FEATURE_DESIRED,    /*!< Print the desired features \f$s^*\f$. */
+      GAIN,               /*!< Print the gain \f$\lambda\f$. */
+      INTERACTION_MATRIX, /*!< Print the interaction matrix. */
+      MINIMUM             /*!< Same as vpServoPrintType::ERROR. */
     } vpServoPrintType;
 
 public:
