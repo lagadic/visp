@@ -38,10 +38,10 @@
 /*!
   \file servoSimuFourPoints2DCamVelocityDisplay.cpp
   \brief Simulation of a 2D visual servoing:
-  - servo on 4 points,
+  - servo on 4 points with cartesian coordinates,
   - eye-in-hand control law,
-  - articular velocity are computed,
-  - no display.
+  - camera velocities are computed,
+  - display internal camera view and an external view.
 
   Interaction matrix is computed as the mean of the current and desired
   interaction matrix.
@@ -51,10 +51,10 @@
 /*!
   \example servoSimuFourPoints2DCamVelocityDisplay.cpp
   Simulation of a 2D visual servoing:
-  - servo on 4 points,
+  - servo on 4 points with cartesian coordinates,
   - eye-in-hand control law,
-  - articular velocity are computed,
-  - no display.
+  - camera velocities are computed,
+  - display internal camera view and an external view.
 
   Interaction matrix is computed as the mean of the current and desired
   interaction matrix.
