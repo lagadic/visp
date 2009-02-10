@@ -417,7 +417,7 @@ vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 	break;
       }
 
-    case vpServo::ERROR:
+    case vpServo::ERROR_VECTOR:
     case vpServo::MINIMUM:
 
       {
