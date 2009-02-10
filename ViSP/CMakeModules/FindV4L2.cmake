@@ -47,6 +47,7 @@ ELSE(NOT UNIX)
   
   FIND_PATH(V4L2_INCLUDE_DIR linux/videodev2.h
     $ENV{V4L2_HOME}/include
+    $ENV{V4L2_DIR}/include
     /usr/include 
     /usr/src/linux/include)
   #MESSAGE("DBG V4L2_INCLUDE_DIR=${V4L2_INCLUDE_DIR}")  
