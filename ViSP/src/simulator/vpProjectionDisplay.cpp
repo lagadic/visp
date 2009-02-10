@@ -161,8 +161,8 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
   double ox=0, oy=0, x1=0, y1=0;
 
   vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
-  o.print() ;
-  vpTRACE("%f %f",ox,oy) ;
+  //o.print() ;
+  //  vpTRACE("%f %f",ox,oy) ;
 
   vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
   vpDisplay::displayArrow(I,
