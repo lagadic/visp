@@ -41,9 +41,9 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  simulateFourPoints2DCamVelocity.cpp
-  simulateCircle2DCamVelocity.cpp
-  
+  simulateFourPoints2DCartesianCamVelocity.cpp
+  simulateFourPoints2DPolarCamVelocity.cpp
+  simulateCircle2DCamVelocity.cpp 
 )
 
 # rule for binary build
