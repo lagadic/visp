@@ -48,6 +48,7 @@ servoSimuCircle2DCamVelocityDisplay.cpp
 servoSimuCylinder2DCamVelocityDisplay.cpp
 servoSimuFourPoints2DCamVelocity.cpp
 servoSimuFourPoints2DCamVelocityDisplay.cpp
+servoSimuFourPoints2DPolarCamVelocityDisplay.cpp
 servoSimuLine2DCamVelocityDisplay.cpp
 servoSimuPoint2DCamVelocity1.cpp
 servoSimuPoint2DCamVelocity2.cpp
