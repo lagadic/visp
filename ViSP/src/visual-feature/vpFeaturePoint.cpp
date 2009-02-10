@@ -95,12 +95,11 @@ vpFeaturePoint::vpFeaturePoint() : vpBasicFeature()
 
 //! set the point depth
 void
-vpFeaturePoint::set_Z(const double _Z)
+vpFeaturePoint::set_Z(const double Z)
 {
-    Z = _Z ;
+    this->Z = Z ;
 }
 
-#define WARNING
 //! get the point depth
 double
 vpFeaturePoint::get_Z() const
@@ -110,9 +109,9 @@ vpFeaturePoint::get_Z() const
 
 //! set the point x-coordinates
 void
-vpFeaturePoint::set_x(const double _x)
+vpFeaturePoint::set_x(const double x)
 {
-    s[0] = _x ;
+    s[0] = x ;
 }
 //! get the point x-coordinates
 double
@@ -123,9 +122,9 @@ vpFeaturePoint::get_x() const
 
 //! set the point y-coordinates
 void
-vpFeaturePoint::set_y(const double _y)
+vpFeaturePoint::set_y(const double y)
 {
-    s[1] = _y ;
+    s[1] = y ;
 }
 //! get the point y-coordinates
 double
@@ -136,13 +135,13 @@ vpFeaturePoint::get_y() const
 
 //! set the point xy and Z-coordinates
 void
-vpFeaturePoint::set_xyZ(const double _x,
-			const double _y,
-			const double _Z)
+vpFeaturePoint::set_xyZ(const double x,
+			const double y,
+			const double Z)
 {
-  set_x(_x) ;
-  set_y(_y) ;
-  set_Z(_Z) ;
+  set_x(x) ;
+  set_y(y) ;
+  set_Z(Z) ;
 }
 
 //! compute the interaction matrix from a subset a the possible features
@@ -262,13 +261,13 @@ vpFeaturePoint::print(const int select ) const
 
 
 void
-vpFeaturePoint::buildFrom(const double _x, const double _y, const double _Z)
+vpFeaturePoint::buildFrom(const double x, const double y, const double Z)
 {
 
-  s[0] = _x ;
-  s[1] = _y ;
+  s[0] = x ;
+  s[1] = y ;
 
-  Z = _Z  ;
+  this->Z = Z  ;
 
   if (Z < 0)
   {

@@ -56,20 +56,12 @@
 /*!
   \class vpFeaturePoint
   \ingroup VsFeature2
-  \brief Class that defines 2D point visual feature.
+
+  \brief Class that defines 2D image point visual feature with
+  cartesian coordinates \f$(x,y)\f$.
 */
 class VISP_EXPORT vpFeaturePoint : public vpBasicFeature
 {
-public:
-  typedef enum
-    {
-      X,   // x coordinates
-      Y    // y coordinates
-    } vpFeaturePointType;
-  /*
-    attributes and members directly related to the vpBasicFeature needs
-    other functionalities ar usefull but not mandatory
-  */
 private:
   //! FeaturePoint depth (required to compute the interaction matrix)
   //! default Z = 1m
@@ -83,35 +75,30 @@ public:
   //! destructor
   virtual ~vpFeaturePoint() { ; }
 
-public:
+
   /*
-    /section Set coordinates
+    section Set coordinates
   */
 
-  //@{
+  void buildFrom(const double x, const double y, const double Z) ;
 
+  //! set the point x-coordinates
+  void set_x(const double x) ;
+  //! set the point y-coordinates
+  void set_y(const double y) ;
   //! set the point depth (camera frame)
-  void set_Z(const double _Z) ;
+  void set_Z(const double Z) ;
+  //! set the point xy and Z-coordinates
+  void set_xyZ(const double x, const double y, const double Z) ;
+
+  //! get the point x-coordinates
+  double get_x()  const ;
+  //! get the point y-coordinates
+  double get_y()   const ;
   //! get the point depth (camera frame)
   double get_Z() const  ;
 
-  //! set the point x-coordinates
-  void set_x(const double _x) ;
-  //! get the point x-coordinates
-  double get_x()  const ;
-  //! set the point y-coordinates
-  void set_y(const double _y) ;
-  //! get the point y-coordinates
-  double get_y()   const ;
-  //! set the point xy and Z-coordinates
-  void set_xyZ(const double _x, const double _y, const double _Z) ;
 
-  // void buildFrom(const vpPoint &p) ;
-  void buildFrom(const double _x, const double _y, const double _Z) ;
-
-  //@}
-
-public:
   /*
     vpBasicFeature method instantiation
   */
@@ -125,8 +112,6 @@ public:
   //! a the possible features
   vpColVector error(const vpBasicFeature &s_star,
 		    const int select = FEATURE_ALL)  ;
-  //! compute the error between a visual features and zero
-  vpColVector error(const int select = FEATURE_ALL)  ;
   //! print the name of the feature
   void print(const int select = FEATURE_ALL ) const ;
 
@@ -134,13 +119,24 @@ public:
   vpFeaturePoint *duplicate() const ;
 
 
-public:
   void display(const vpCameraParameters &cam,
 	       vpImage<unsigned char> &I,
 	       vpColor::vpColorType color=vpColor::green) const ;
   void display(const vpCameraParameters &cam,
                vpImage<vpRGBa> &I,
                vpColor::vpColorType color=vpColor::green) const ;
+
+
+  /*!
+    @name Deprecated functions
+  */
+  typedef enum
+    {
+      X,   // x coordinates
+      Y    // y coordinates
+    } vpFeaturePointType;
+  //! Compute the error between a visual features and zero
+  vpColVector error(const int select = FEATURE_ALL)  ;
 
 } ;
 
