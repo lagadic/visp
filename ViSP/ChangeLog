@@ -1,3 +1,8 @@
+ViSP 2.4.3 (released ??, 2009)
+  - New Features
+    - Add vpFeaturePointPolar corresponding the a 2D image point with 
+      polar coordinates visual feature.
+----------------------------------------------	
 ViSP 2.4.3-rc2 (released January 29, 2009)
   - Deprecated
     - Creation of a deprecated section in the online documentation that 

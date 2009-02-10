@@ -187,6 +187,7 @@ SET (SRC_TRACKING
   tracking/feature-builder/vpFeatureBuilderLine.cpp
   tracking/feature-builder/vpFeatureBuilderPoint3D.cpp
   tracking/feature-builder/vpFeatureBuilderPoint.cpp
+  tracking/feature-builder/vpFeatureBuilderPointPolar.cpp
   tracking/feature-builder/vpFeatureBuilderVanishingPoint.cpp
   tracking/forward-projection/vpCircle.cpp
   tracking/forward-projection/vpCylinder.cpp
@@ -227,6 +228,7 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpFeatureLine.cpp
   visual-feature/vpFeaturePoint3D.cpp
   visual-feature/vpFeaturePoint.cpp
+  visual-feature/vpFeaturePointPolar.cpp
   visual-feature/vpFeatureThetaU.cpp
   visual-feature/vpFeatureTranslation.cpp
   visual-feature/vpFeatureVanishingPoint.cpp
