@@ -73,21 +73,31 @@
   \right]
   \f]
 
+  Two ways are allowed to initialize the feature.
+
+  - The first way by setting the feature values \f$(X,Y,Z)\f$ using
+    vpFeaturePoint3D member fonctions like set_X(), set_Y(), set_Z(),
+    or also buildFrom().
+
+  - The second by using the feature builder functionalities to
+    initialize the feature from a point structure like
+    vpFeatureBuilder::create (vpFeaturePoint3D &, const vpPoint &).
+
   The interaction() method allows to compute the interaction matrix
   \f$ L\f$ associated to the 3D point visual feature, while the
   error() method computes the error vector \f$ (s - s^*)\f$ between the
   current visual feature and the desired one.
 
   The code below shows how to create a eye-in hand visual servoing
-  task using a 3D point feature \f$(X,Y,Z)\f$ that
-  correspond to the 3D point coordinates in the camera frame. To control six degrees of freedom, at
-  least three other features must be considered like vpFeatureThetaU
-  visual features. First we create a current (\f$s\f$) and desired
-  (\f$s^*\f$) 3D point feature, set the task to use the
-  interaction matrix associated to the desired feature \f$L_{s^*}\f$ and
-  than compute the camera velocity \f$v=-\lambda \; {L_{s^*}}^+ \;
-  (s-s^*)\f$. The current feature \f$s\f$ is updated in the while() loop
-  while \f$s^*\f$ is set to \f$Z^*=1\f$.
+  task using a 3D point feature \f$(X,Y,Z)\f$ that correspond to the
+  3D point coordinates in the camera frame. To control six degrees of
+  freedom, at least three other features must be considered like
+  vpFeatureThetaU visual features. First we create a current (\f$s\f$)
+  and desired (\f$s^*\f$) 3D point feature, set the task to use the
+  interaction matrix associated to the desired feature \f$L_{s^*}\f$
+  and than compute the camera velocity \f$v=-\lambda \; {L_{s^*}}^+ \;
+  (s-s^*)\f$. The current feature \f$s\f$ is updated in the while()
+  loop while \f$s^*\f$ is set to \f$Z^*=1\f$.
 
   \code
 #include <iostream>

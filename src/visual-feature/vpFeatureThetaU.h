@@ -60,7 +60,9 @@
 
   \brief Class that defines a 3D visual feature \f$ s\f$ from a \f$ \theta
   u \f$ axis/angle parametrization that represent the rotation between
-  to frames.  
+  to frames.
+
+  Let us denote \f$ \theta u = (\theta u_x, \theta u_y, \theta u_z)\f$ .
 
   It is convenient to consider two coordinate frames: the current
   camera frame \f$ {\cal{F}}_c \f$ and the desired camera frame \f$
@@ -111,6 +113,10 @@
   The kind of visual feature is to set during the construction of the
   vpFeatureThetaU() object by using the selector
   vpFeatureThetaU::vpFeatureThetaURotationRepresentationType.
+
+  To initialize the feature \f$(\theta u_x, \theta u_y, \theta u_z)\f$
+  you may use vpFeatureThetaU member fonctions like set_TUx(),
+  set_TUy(), set_TUz(), or also buildFrom() fonctions.
 
   Depending on the choice of the visual feature representation, the
   interaction() method allows to compute the interaction matrix \f$

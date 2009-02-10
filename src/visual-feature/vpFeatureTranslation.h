@@ -56,7 +56,9 @@
 /*!
   \class vpFeatureTranslation
   \ingroup VsFeature3
-  \brief Class that defines the translation visual feature.
+
+  \brief Class that defines the translation visual feature
+  \f$s=(t_x,t_y,t_z)\f$.
 
   It is convenient to consider two coordinate frames: the current
   camera frame \f$ {\cal{F}}_c \f$ and the desired camera frame \f$
@@ -87,6 +89,10 @@
   is than equal to \f$ e=(s-s^*) = ^{c^*}t_c \f$. In this case, the
   interaction matrix related to \f$ s \f$ is given by \f[ L = [
   ^{c^*}R_c \;\; 0_3] \f]
+
+  To initialize the feature \f$(t_x, t_y, t_z)\f$ you may use member
+  fonctions like set_Tx(), set_Ty(), set_Tz(), or also buildFrom()
+  fonctions.
 
   The interaction() method allows to compute the interaction matrix
   \f$ L\f$ associated to the translation visual feature, while the
