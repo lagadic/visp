@@ -66,6 +66,7 @@ ELSE(NOT UNIX)
   
   FIND_PATH(DC1394_1_INCLUDE_DIR libdc1394/dc1394_control.h
     $ENV{DC1394_HOME}/include
+    $ENV{DC1394_DIR}/include
     /usr/include )
 #MESSAGE("DBG DC1394_1_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
 
@@ -73,6 +74,7 @@ ELSE(NOT UNIX)
     NAMES dc1394_control
     PATHS
     $ENV{DC1394_HOME}/lib
+    $ENV{DC1394_DIR}/lib
     /usr/lib
     )
 #MESSAGE("DBG DC1394_1_LIBRARY=${DC1394_LIBRARY}")
@@ -91,6 +93,7 @@ ELSE(NOT UNIX)
   # Search for libdc1394-2.x
   FIND_PATH(DC1394_2_INCLUDE_DIR dc1394/control.h
     $ENV{DC1394_HOME}/include
+    $ENV{DC1394_DIR}/include
     /usr/include )
   #MESSAGE("DBG DC1394_2_INCLUDE_DIR=${DC1394_2_INCLUDE_DIR}")  
 
@@ -98,6 +101,7 @@ ELSE(NOT UNIX)
     NAMES dc1394
     PATHS 
     $ENV{DC1394_HOME}/lib
+    $ENV{DC1394_DIR}/lib
     /usr/lib
     )
   #MESSAGE("DBG DC1394_2_LIBRARY=${DC1394_2_LIBRARY}")
