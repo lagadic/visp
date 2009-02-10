@@ -57,6 +57,7 @@
 
 // visual feature
 #include <visp/vpFeaturePoint.h>
+#include <visp/vpFeaturePointPolar.h>
 #include <visp/vpFeatureLine.h>
 #include <visp/vpFeatureEllipse.h>
 #include <visp/vpFeaturePoint3D.h>
@@ -91,6 +92,19 @@ public:
 		     const vpCameraParameters &goodCam,
 		     const vpCameraParameters &wrongCam,
 		     const vpPoint &t) ;
+
+  // create vpFeaturePointPolar feature
+  static void create(vpFeaturePointPolar &s, 
+		     const vpCameraParameters &cam,
+		     const vpDot &dot) ;
+  static void create(vpFeaturePointPolar &s, 
+		     const vpCameraParameters &cam,
+		     const vpDot2 &dot) ;
+  static void create(vpFeaturePointPolar &s, const vpPoint &p) ;
+  static void create(vpFeaturePointPolar &s,
+		     const vpCameraParameters &goodCam,
+		     const vpCameraParameters &wrongCam,
+		     const vpPoint &p) ;
 
   // create vpFeaturePoint3D feature
   static void create(vpFeaturePoint3D &s, const vpPoint &t ) ;

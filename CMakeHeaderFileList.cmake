@@ -218,6 +218,7 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpFeatureLine.h
   visual-feature/vpFeaturePoint3D.h
   visual-feature/vpFeaturePoint.h
+  visual-feature/vpFeaturePointPolar.h
   visual-feature/vpFeatureThetaU.h
   visual-feature/vpFeatureTranslation.h
   visual-feature/vpFeatureVanishingPoint.h
