@@ -278,7 +278,7 @@ vpCylinder::display(vpImage<unsigned char> &I,
 		    const vpColor::vpColorType color)
 {
 
-  vpColVector _cP, _p ;
+  vpColVector _cP(7), _p(4) ;
   changeFrame(cMo,_cP) ;
   projection(_cP,_p) ;
   vpFeatureDisplay::displayCylinder(_p[0],_p[1], _p[2], _p[3],
