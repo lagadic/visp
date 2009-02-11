@@ -100,7 +100,7 @@ class vpThetaUVector;
   \begin{array}{ccc}
   \cos\varphi \cos\theta & -\sin\varphi \cos\psi + \cos\varphi\sin\theta\sin\psi & \sin\varphi \sin\psi +\cos\varphi\sin\theta\cos\psi \\
   \sin\varphi \cos\theta & \cos\varphi\cos\psi + \sin\varphi\sin\theta \sin\psi & -\cos\varphi \sin\psi +\sin\varphi\sin\theta\cos\psi \\
-  -\sin\theta & \cos\varphi \sin\psi & \cos\theta \cos\psi
+  -\sin\theta & \cos\theta \sin\psi & \cos\theta \cos\psi
   \end{array}
   \right)
   \f]
