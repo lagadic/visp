@@ -170,11 +170,14 @@ vpFeatureBuilder::create(vpFeatureLine &s,
       thetap = M_PI/2 + 2*M_PI - thetap;
     }
 
-    while (thetap > M_PI/2)  { thetap -= M_PI ; rhop *= -1 ; }
-    while (thetap < -M_PI/2) { thetap += M_PI ; rhop *= -1 ; }
+    //while (thetap > M_PI/2)  { thetap -= M_PI ; rhop *= -1 ; }
+    //while (thetap < -M_PI/2) { thetap += M_PI ; rhop *= -1 ; }
 
     //  vpTRACE("pixel %f %f",rhop, thetap) ;
     vpPixelMeterConversion::convertLine(cam,rhop,thetap, rho,theta) ;
+
+    while (theta > M_PI)  { thetap -= 2*M_PI ; }
+    while (theta < -M_PI) { thetap += 2*M_PI ; }
     //   vpTRACE("meter %f %f",rho, theta) ;
     /*
 
