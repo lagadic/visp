@@ -210,8 +210,8 @@ vpLine::projection(const vpColVector &_cP, vpColVector &_p)
   double rho = -c/s ;
   double theta = atan2( b, a);
 
-  while (theta > M_PI/2) { theta -= M_PI ; rho *= -1 ; }
-  while (theta < -M_PI/2) { theta += M_PI ; rho *= -1 ; }
+  //while (theta > M_PI/2) { theta -= M_PI ; rho *= -1 ; }
+  //while (theta < -M_PI/2) { theta += M_PI ; rho *= -1 ; }
 
   _p[0] = rho ;
   _p[1] = theta ;
