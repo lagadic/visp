@@ -58,20 +58,20 @@
   \ingroup VsFeature2
   \brief Class that defines a 2D line visual feature \f$ s\f$ which is composed by two parameters that are \f$ \rho \f$ and \f$ \theta \f$.
 
-  In this class, the equation line in the image frame is given by :
+  In this class, the equation line in the camera frame is given by :
   \f[ x \times cos(\theta) + y \times sin(\theta) -\rho = 0 \f]
   Here \f$ x \f$ and \f$ y \f$ are the coordinates of a point belonging to the line and they are given in meter. The following image shows the meanings of the distance \f$ \rho \f$ and the angle \f$ \theta \f$.
 
   \image html vpFeatureLine.gif
   \image latex vpFeatureLine.ps  width=10cm
 
-  You have to note that the \f$ \theta \f$ angle has its value between \f$ -\pi/2 \f$ and \f$ \pi/2 \f$ and that the \f$ \rho \f$ distance can be positive or negative. The conventions are illustrated by the image above.
+  You have to note that the \f$ \theta \f$ angle has its value between \f$ -\pi \f$ and \f$ \pi \f$ and that the \f$ \rho \f$ distance can be positive or negative. The conventions are illustrated by the image above.
 
   The visual features can be set easily from an instance of the classes vpLine, vpMeLine or vpCylinder. For more precision see the class vpFeatureBuilder.
 
   Once the values of the visual features are set, the interaction() method allows to compute the interaction matrix \f$ L \f$ associated to the visual feature, while the error() method computes the error vector \f$(s - s^*)\f$ between the current visual feature and the desired one.
 
-  The code below shows how to create a eye-in hand visual servoing task using a 2D line feature \f$(\rho,\theta)\f$ that correspond to the 2D equation of a line in the image frame. To control six degrees of freedom, at least four other features must be considered like two other line features for example. First we create a current (\f$s\f$) 2D line feature. Then we set the task to use the interaction matrix associated to the current feature \f$L_s\f$. And finally we compute the camera velocity \f$v=-\lambda \; L_s^+ \; (s-s^*)\f$. The current feature \f$s\f$ is updated in the while() loop.
+  The code below shows how to create a eye-in hand visual servoing task using a 2D line feature \f$(\rho,\theta)\f$ that correspond to the 2D equation of a line in the camera frame. To control six degrees of freedom, at least four other features must be considered like two other line features for example. First we create a current (\f$s\f$) 2D line feature. Then we set the task to use the interaction matrix associated to the current feature \f$L_s\f$. And finally we compute the camera velocity \f$v=-\lambda \; L_s^+ \; (s-s^*)\f$. The current feature \f$s\f$ is updated in the while() loop.
 
   \code
 #include <visp/vpFeatureLine.h>
@@ -110,14 +110,14 @@ int main()
   // The computed velocities will be expressed in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA);
   // Interaction matrix is computed with the desired visual features sd
-  task.setInteractionMatrixType(vpServo::CURRENT);
+  task.setInteractionMatrixType(vpServo::DESIRED);
 
   // Add the 2D line feature to the task
   task.addFeature(s, sd);
 
   // Control loop
   while(1) {
-    // The new parameters rho and theta mus be computed here.
+    // The new parameters rho and theta must be computed here.
     
     // Update the current line visual feature
     s.buildfrom(rho, theta);
@@ -129,7 +129,7 @@ int main()
 }
   \endcode
 
-  If you want to build your own control law, this other example shows how to create a current (\f$s\f$) and desired (\f$s^*\f$) 3D \f$\theta u\f$ visual feature, compute the corresponding error vector \f$(s-s^*)\f$ and finally build the interaction matrix \f$L_s\f$.
+  If you want to build your own control law, this other example shows how to create a current (\f$s\f$) and desired (\f$s^*\f$) 2D line visual feature, compute the corresponding error vector \f$(s-s^*)\f$ and finally build the interaction matrix \f$L_s\f$.
 
   \code
 #include <visp/vpFeatureLine.h>
@@ -166,7 +166,7 @@ int main()
   // You can also compute the interaction matrix L_s for the desired line feature
   // The corresponding line of code is : vpMatrix L = sd.interaction();
 
-  // Compute the error vector (s-sd) for the ThetaU feature
+  // Compute the error vector (s-sd) for the line feature
   s.error(s_star);
 }
   \endcode
@@ -229,7 +229,7 @@ public:
     vpServo task;
     ...
     // Add the (rho) subset features from the 2D line
-    task.addFeature(s, vpFeatureLine::selectRho);
+    task.addFeature(s, vpFeatureLine::selectRho());
     \endcode
   */
   inline static int selectRho()  { return FEATURE_LINE[0] ; }
@@ -247,7 +247,7 @@ public:
     vpServo task;
     ...
     // Add the (rho) subset features from the 2D line
-    task.addFeature(s, vpFeatureLine::selectTheta);
+    task.addFeature(s, vpFeatureLine::selectTheta());
     \endcode
   */
   inline static int selectTheta()  { return FEATURE_LINE[1] ; }

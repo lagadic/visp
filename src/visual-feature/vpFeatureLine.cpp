@@ -147,7 +147,7 @@ vpFeatureLine::setABCD(const double A, const double B,
 
 
 /*!
-  Compute and return the interaction matrix \f$ L \f$. The computation is made thanks to the values of the line feature \f$ \rho \f$ and \f$ \theta \f$ (in the image frame) and the equation of a plan (in the camera frame) to which the line belongs.
+  Compute and return the interaction matrix \f$ L \f$. The computation is made thanks to the values of the line feature \f$ \rho \f$ and \f$ \theta \f$ and the equation of a plan to which the line belongs.
 
   \f[ L = \left[\begin{array}{c}L_{\rho} \\ L_{\theta}\end{array}\right] =  
   \left[\begin{array}{cccccc}
@@ -169,7 +169,7 @@ vpFeatureLine::setABCD(const double A, const double B,
   \code
   // Creation of the current feature s
   vpFeatureLine s;
-  s.buildFrom(0, 0);
+  s.buildFrom(0, 0, 0, 0, 1, -1);
 
   vpMatrix L_theta = s.interaction( vpFeatureLine::selectTheta() );
   \endcode
@@ -178,7 +178,7 @@ vpFeatureLine::setABCD(const double A, const double B,
   \code
   // Creation of the current feature s
   vpFeatureLine s;
-  s.buildFrom(0, 0);
+  s.buildFrom(0, 0, 0, 0, 1, -1);
 
   vpMatrix L_theta = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
@@ -246,7 +246,7 @@ vpFeatureLine::interaction(const int select) const
   Compute the error \f$ (s-s^*)\f$ between the current and the desired
   visual features from a subset of the possible features.
 
-  \param s_star : Desired visual visual feature.
+  \param s_star : Desired visual feature.
 
   \param select : The error can be computed for a selection of a
   subset of the possible line features.
@@ -373,7 +373,7 @@ vpFeatureLine::buildFrom(const double rho, const double theta)
 
 /*!
 
-  Build a 2D line visual feature from the line equation parameters \f$ \rho \f$ and \f$ \theta \f$ given in the image frame. The parameters A, B, C and D which describe the equation of a plan to which the line belongs, are set in the same time.
+  Build a 2D line visual feature from the line equation parameters \f$ \rho \f$ and \f$ \theta \f$ given in the camera frame. The parameters A, B, C and D which describe the equation of a plan to which the line belongs, are set in the same time.
   \f[ x \times cos(\theta) + y \times sin(\theta) -\rho = 0 \f]
   \f[ AX + BY + CZ + D = 0 \f]
 
