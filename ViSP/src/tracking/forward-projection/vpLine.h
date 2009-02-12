@@ -53,7 +53,7 @@
 /*!
   \class vpLine
   \ingroup TrackingFeature GeometryFeature
-  \brief Class that defines a line in the three different frames : the object frame, the camera frame and the image frame. All the features are given  and must be set in meter.
+  \brief Class that defines a line in the two different frames : the object frame and the camera frame. All the features are given  and must be set in meter.
 
   In the 3D frames (ie the object frame and the camera frame), the line is defined as the intersection between two plans. Thus, the parameters which define the line are the parameters which define the two equations of the two plans. Each point which belongs to the line is a solution of those two equations :
   \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
@@ -66,9 +66,9 @@
   \f[ A1 A2 + B1 B2 + C1 C2 = 0 \f]
   \f[ || A2 || = 1 \f]
 
-  In the 2D frame (ie the image frame), the line is defined thanks to its equation.
+  In the camera frame, the line is defined thanks to its 2D equation.
   \f[ x \times cos(\theta) + y \times sin(\theta) -\rho = 0 \f]
-  Here \f$ x \f$ and \f$ y \f$ are the coordinates in the image frame, \f$ \rho \f$ and \f$ \theta \f$ are the parameters used to define the line. The value of \f$ \theta \f$ is between \f$ -\pi/2 \f$ and \f$ \pi/2 \f$ and the value of \f$ \rho \f$ can be positive or negative. The conventions used to choose the sign of \f$ \rho \f$ and the value of \f$ \theta \f$ are illustrated by the following image.
+  Here \f$ x \f$ and \f$ y \f$ are the coordinates in the camera frame, \f$ \rho \f$ and \f$ \theta \f$ are the parameters used to define the line. The value of \f$ \theta \f$ is between \f$ -\pi/2 \f$ and \f$ \pi/2 \f$ and the value of \f$ \rho \f$ can be positive or negative. The conventions used to choose the sign of \f$ \rho \f$ and the value of \f$ \theta \f$ are illustrated by the following image.
 
   \image html vpFeatureLine.gif
   \image latex vpFeatureLine.ps  width=10cm

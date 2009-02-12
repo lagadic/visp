@@ -147,7 +147,7 @@ vpLine::setWorldCoordinates(const vpColVector &_oP1,
 
 
 /*!
-  Computes the equation of the line in the image frame thanks to the line features in the camera frame. The method used is the perspective projection.
+  Computes the 2D equation of the line thanks to the 3D line features in the camera frame. The method used is the perspective projection.
   The computed parameters are \f$ \rho \f$ and \f$ \theta \f$.
 
   The code below shows how to use this method.
@@ -166,7 +166,7 @@ vpLine::setWorldCoordinates(const vpColVector &_oP1,
   //Computes the equations of the two plans in the camera frame
   line.changeFrame(cMo);
 
-  //Computes the line features in the image frame( rho and theta)
+  //Computes the line features in the camera frame( rho and theta)
   line.projection();
   \endcode
 */
@@ -178,11 +178,11 @@ vpLine::projection()
 
 
 /*!
-  Computes the equation of the line in the image frame thanks to the line features in the camera frame. The method used is the perspective projection.
+  Computes the 2D equation of the line thanks to the 3D line features. The method used is the perspective projection.
   The computed parameters are \f$ \rho \f$ and \f$ \theta \f$.
 
   \param _cP : The vector containing the line features relative to the camera frame. \f[ \_cP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
-  \param _p : The vector which contains the result of the computation ie the line features relative to the image frame. \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right] \f]
+  \param _p : The vector which contains the result of the computation ie the 2D line features. \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right] \f]
 */
 void
 vpLine::projection(const vpColVector &_cP, vpColVector &_p)
@@ -412,7 +412,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 
 
 /*!
-  Displays the line in the image I thanks to the features in the image frame and the camera parameters which enable to convert the features from meter to pixel.
+  Displays the line in the image I thanks to the 2D features and the camera parameters which enable to convert the features from meter to pixel.
 
   \param I : The image where the line must be displayed.
   \param cam : The camera parameters to enable the conversion from meter to pixel.
