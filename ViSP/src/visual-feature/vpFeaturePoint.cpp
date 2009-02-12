@@ -73,6 +73,9 @@ other functionalities ar usefull but not mandatory
 
 */
 
+/*!
+  Initialize the memory space requested for 2D point visual feature.
+*/
 void
 vpFeaturePoint::init()
 {
@@ -87,53 +90,94 @@ vpFeaturePoint::init()
 
 }
 
+/*! 
+  Default constructor that build a visual feature.
+*/
 vpFeaturePoint::vpFeaturePoint() : vpBasicFeature()
 {
     init() ;
 }
 
 
-//! set the point depth
+/*!
+  Set the value of \f$ Z \f$ which represents the depth in the 3D camera frame.
+
+  \param Z : \f$ Z \f$ value to set.
+*/
 void
 vpFeaturePoint::set_Z(const double Z)
 {
     this->Z = Z ;
 }
 
-//! get the point depth
+
+/*!
+  Get the value of \f$ Z \f$ which represents the depth in the 3D camera frame.
+
+  \return The value of \f$ Z \f$.
+*/
 double
 vpFeaturePoint::get_Z() const
 {
     return Z ;
 }
 
-//! set the point x-coordinates
+
+/*!
+  Set the value of \f$ x \f$ which represents the x coordinate of the point in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+
+  \param x : \f$ x \f$ value to set.
+*/
 void
 vpFeaturePoint::set_x(const double x)
 {
     s[0] = x ;
 }
-//! get the point x-coordinates
+
+
+/*!
+  Get the value of \f$ x \f$ which represents the x coordinate of the point in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+
+  \return The value of \f$ x \f$.
+*/
 double
 vpFeaturePoint::get_x() const
 {
     return s[0] ;
 }
 
-//! set the point y-coordinates
+
+/*!
+  Set the value of \f$ y \f$ which represents the x coordinate of the point in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+
+  \param y : \f$ y \f$ value to set.
+*/
 void
 vpFeaturePoint::set_y(const double y)
 {
     s[1] = y ;
 }
-//! get the point y-coordinates
+
+
+/*!
+  Get the value of \f$ y \f$ which represents the x coordinate of the point in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+
+  \return The value of \f$ y \f$.
+*/
 double
 vpFeaturePoint::get_y() const
 {
     return s[1] ;
 }
 
-//! set the point xy and Z-coordinates
+
+/*!
+  Set the value of \f$ x \f$, \f$ y \f$ and \f$ Z \f$. \f$ x \f$ and \f$ y \f$ represent the coordinates of the point in the camera frame and are the parameters of the visual feature \f$ s \f$. \f$ Z \f$ is the 3D coordinate representing the depth.
+
+  \param x : \f$ x \f$ value to set.
+  \param y : \f$ y \f$ value to set.
+  \param Z : \f$ Z \f$ value to set.
+*/
 void
 vpFeaturePoint::set_xyZ(const double x,
 			const double y,
@@ -144,7 +188,40 @@ vpFeaturePoint::set_xyZ(const double x,
   set_Z(Z) ;
 }
 
-//! compute the interaction matrix from a subset a the possible features
+
+/*!
+  Compute and return the interaction matrix \f$ L \f$. The computation is made thanks to the values of the point features \f$ x \f$ and \f$ y \f$ and the depth \f$ Z \f$.
+
+  \f[ L = \left[\begin{array}{c}L_{\x} \\ L_{\y}\end{array}\right] =  
+  \left[\begin{array}{cccccc}
+  -1/Z & 0 & x/Z & xy & -(1+x^2) & y \\
+  0 & -1/Z & y/Z & 1+y^2 & -xy & -x
+  \end{array}\right]\f]
+
+  \param select : Selection of a subset of the possible point features. 
+  - To compute the interaction matrix for all the two point features use vpBasicFeature::FEATURE_ALL. In that case the dimension of the interaction matrix is \f$ [2 \times 6] \f$
+  - To compute the interaction matrix for only one of the point component feature (\f$ x, y \f$) use one of the corresponding function selectX() or selectY(). In that case the returned interaction matrix is \f$ [1 \times 6] \f$ dimension.
+
+  \return The interaction matrix computed from the point features.
+
+  The code below shows how to compute the interaction matrix associated to the visual feature \f$ s = x \f$.
+  \code
+  // Creation of the current feature s
+  vpFeaturePoint s;
+  s.buildFrom(0, 0, 1);
+
+  vpMatrix L_x = s.interaction( vpFeaturePoint::selectX() );
+  \endcode
+
+  The code below shows how to compute the interaction matrix associated to the visual feature \f$ s = (x, y) \f$.
+  \code
+  // Creation of the current feature s
+  vpFeaturePoint s;
+  s.buildFrom(0, 0, 1);
+
+  vpMatrix L_x = s.interaction( vpBasicFeature::FEATURE_ALL );
+  \endcode
+*/
 vpMatrix
 vpFeaturePoint::interaction(const int select) const
 {
@@ -204,8 +281,37 @@ vpFeaturePoint::interaction(const int select) const
   return L ;
 }
 
-//! compute the error between two visual features from a subset
-//! a the possible features
+
+/*!
+  Compute the error \f$ (s-s^*)\f$ between the current and the desired
+  visual features from a subset of the possible features.
+
+  \param s_star : Desired visual feature.
+
+  \param select : The error can be computed for a selection of a
+  subset of the possible point features.
+  - To compute the error for all the two point features use vpBasicFeature::FEATURE_ALL. In that case the error vector is a 2 dimension column vector.
+  - To compute the error for only one of the point component feature (\f$ x, y \f$) use one of the corresponding function selectX() or selectY(). In that case the error vector is a 1 dimension column vector.
+
+  \return The error \f$ (s-s^*)\f$ between the current and the desired visual feature.
+
+  The code below shows how to use this method to manipulate the \f$ x \f$ subset:
+  \code
+  // Creation of the current feature s
+  vpFeaturePoint s;
+  s.buildFrom(0, 0, 1);
+
+  // Creation of the desired feature s*
+  vpFeaturePoint s_star;
+  s_star.buildFrom(1, 1, 1);
+
+  // Compute the interaction matrix for the x feature
+  vpMatrix L_x = s.interaction( vpFeaturePoint::selectX() );
+
+  // Compute the error vector (s-s*) for the x feature
+  s.error(s_star, vpFeaturePoint::selectX());
+  \endcode
+*/
 vpColVector
 vpFeaturePoint::error(const vpBasicFeature &s_star,
 		      const int select)
@@ -247,6 +353,24 @@ vpFeaturePoint::error(const vpBasicFeature &s_star,
 }
 
 
+/*!
+  Print to stdout the values of the current visual feature \f$ s \f$.
+
+  \param select : Selection of a subset of the possible point features.
+  - To print all the two point features use vpBasicFeature::FEATURE_ALL.
+  - To print only one of the point component feature (\f$ x, y \f$) use one of the corresponding function selectX() or selectY().
+
+  \code
+  vpFeaturePoint s; // Current visual feature s
+
+  // Creation of the current feature s
+  s.buildFrom(0, 0, 1);
+
+  s.print(); // print all the 2 components of the feature
+  s.print(vpBasicFeature::FEATURE_ALL);  // same behavior then previous line
+  s.print(vpFeaturePoint::selectX()); // print only the x component
+  \endcode
+*/
 void
 vpFeaturePoint::print(const int select ) const
 {
@@ -260,6 +384,15 @@ vpFeaturePoint::print(const int select ) const
 }
 
 
+/*!
+  Build a 2D point visual feature from the point coordinates \f$ x \f$ and \f$ y \f$ given in the camera frame. The parameter Z which describes the depth, is set in the same time.
+
+  See the vpFeaturePoint class description for more details about \f$ x \f$ and \f$ y \f$.
+
+  \param x : The \f$ x \f$ parameter.
+  \param y : The \f$ y \f$ parameter.
+  \param Z : The \f$ Z \f$ parameter.
+*/
 void
 vpFeaturePoint::buildFrom(const double x, const double y, const double Z)
 {
@@ -348,7 +481,17 @@ vpFeaturePoint::display(const vpCameraParameters &cam,
   }
 }
 
-//! for memory issue (used by the vpServo class only)
+
+/*!
+  Create an object with the same type.
+
+  \code
+  vpBasicFeature *s_star;
+  vpFeaturePoint s;
+  s_star = s.duplicate(); // s_star is now a vpFeaturePoint
+  \endcode
+
+*/
 vpFeaturePoint *vpFeaturePoint::duplicate() const
 {
   vpFeaturePoint *feature = new vpFeaturePoint ;
