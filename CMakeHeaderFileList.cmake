@@ -212,6 +212,7 @@ SET (HEADER_VIDEO_DEVICE
 
 SET (HEADER_VISUAL_FEATURE
   visual-feature/vpBasicFeature.h
+  visual-feature/vpFeatureDepth.h
   visual-feature/vpFeatureDisplay.h
   visual-feature/vpFeatureEllipse.h
   visual-feature/vpFeatureException.h
