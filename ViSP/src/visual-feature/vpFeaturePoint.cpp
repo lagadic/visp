@@ -123,8 +123,10 @@ vpFeaturePoint::get_Z() const
 }
 
 
-/*!
-  Set the value of \f$ x \f$ which represents the x coordinate of the point in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+/*!  
+
+  Set the value of \f$ x \f$ which represents the x coordinate of the point
+  in the camera frame. It is one parameter of the visual feature \f$ s \f$.
 
   \param x : \f$ x \f$ value to set.
 */
@@ -172,7 +174,11 @@ vpFeaturePoint::get_y() const
 
 
 /*!
-  Set the value of \f$ x \f$, \f$ y \f$ and \f$ Z \f$. \f$ x \f$ and \f$ y \f$ represent the coordinates of the point in the camera frame and are the parameters of the visual feature \f$ s \f$. \f$ Z \f$ is the 3D coordinate representing the depth.
+
+  Set the value of \f$ x \f$, \f$ y \f$ and \f$ Z \f$. \f$ x \f$ and \f$ y \f$
+  represent the coordinates of the point in the camera frame and are the
+  parameters of the visual feature \f$ s \f$. \f$ Z \f$ is the 3D coordinate
+  representing the depth.
 
   \param x : \f$ x \f$ value to set.
   \param y : \f$ y \f$ value to set.
@@ -190,21 +196,30 @@ vpFeaturePoint::set_xyZ(const double x,
 
 
 /*!
-  Compute and return the interaction matrix \f$ L \f$. The computation is made thanks to the values of the point features \f$ x \f$ and \f$ y \f$ and the depth \f$ Z \f$.
 
-  \f[ L = \left[\begin{array}{c}L_{\x} \\ L_{\y}\end{array}\right] =  
+  Compute and return the interaction matrix \f$ L \f$. The computation is made
+  thanks to the values of the point features \f$ x \f$ and \f$ y \f$ and the
+  depth \f$ Z \f$.
+
+  \f[ L = \left[\begin{array}{c}L_{x} \\ L_{y}\end{array}\right] =  
   \left[\begin{array}{cccccc}
   -1/Z & 0 & x/Z & xy & -(1+x^2) & y \\
   0 & -1/Z & y/Z & 1+y^2 & -xy & -x
   \end{array}\right]\f]
 
   \param select : Selection of a subset of the possible point features. 
-  - To compute the interaction matrix for all the two point features use vpBasicFeature::FEATURE_ALL. In that case the dimension of the interaction matrix is \f$ [2 \times 6] \f$
-  - To compute the interaction matrix for only one of the point component feature (\f$ x, y \f$) use one of the corresponding function selectX() or selectY(). In that case the returned interaction matrix is \f$ [1 \times 6] \f$ dimension.
+  - To compute the interaction matrix for all the two point features use
+    vpBasicFeature::FEATURE_ALL. In that case the dimension of the interaction
+    matrix is \f$ [2 \times 6] \f$
+  - To compute the interaction matrix for only one of the point component
+    feature (\f$ x, y \f$) use one of the corresponding function selectX() or
+    selectY(). In that case the returned interaction matrix is \f$ [1 \times 6]
+    \f$ dimension.
 
   \return The interaction matrix computed from the point features.
 
-  The code below shows how to compute the interaction matrix associated to the visual feature \f$ s = x \f$.
+  The code below shows how to compute the interaction matrix associated to the
+  visual feature \f$ s = x \f$.
   \code
   // Creation of the current feature s
   vpFeaturePoint s;
@@ -213,7 +228,8 @@ vpFeaturePoint::set_xyZ(const double x,
   vpMatrix L_x = s.interaction( vpFeaturePoint::selectX() );
   \endcode
 
-  The code below shows how to compute the interaction matrix associated to the visual feature \f$ s = (x, y) \f$.
+  The code below shows how to compute the interaction matrix associated to the
+  visual feature \f$ s = (x, y) \f$.
   \code
   // Creation of the current feature s
   vpFeaturePoint s;
