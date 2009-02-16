@@ -235,8 +235,8 @@ main(int argc, const char ** argv)
   line[2].setWorldCoordinates(1,0,0,-0.05,0,0,1,0);
   line[3].setWorldCoordinates(0,1,0,-0.05,0,0,1,0);
 
-  vpFeatureLine ld[nbline] ;
-  vpFeatureLine l[nbline] ;
+  vpFeatureLine ld[4] ;
+  vpFeatureLine l[4] ;
 
   vpTRACE("sets the desired position of the visual feature ") ;
   for(int i = 0; i < nbline; i++)
