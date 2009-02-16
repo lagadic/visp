@@ -222,6 +222,7 @@ SET (SRC_VIDEO_DEVICE
 
 SET (SRC_VISUAL_FEATURE
   visual-feature/vpBasicFeature.cpp
+  visual-feature/vpFeatureDepth.cpp
   visual-feature/vpFeatureDisplay.cpp
   visual-feature/vpFeatureEllipse.cpp
   visual-feature/vpFeatureException.cpp
