@@ -2,6 +2,8 @@ ViSP 2.4.3 (released ??, 2009)
   - New Features
     - Add vpFeaturePointPolar corresponding the a 2D image point with 
       polar coordinates visual feature.
+  - Bug fixed
+    - [7308] Rotation vector not initialized to zero by the default constructor
 ----------------------------------------------	
 ViSP 2.4.3-rc2 (released January 29, 2009)
   - Deprecated

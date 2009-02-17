@@ -55,15 +55,37 @@
 #include <visp/vpMath.h>
 
 
-//#include <vpRotationMatrix.h>
-
 /*!
   \class vpRotationVector
 
   \ingroup RotTransformation
 
-  \brief class that consider the case of a generic rotation vector
-  (cannot be used as is !)
+  \brief Class that consider the case of a generic rotation vector
+  (cannot be used as is !) consisting in three angles.
+
+  The code below shows how this class can be used to manipulate a vpRxyzVector.
+
+  \code
+#include <iostream>
+#include <visp/vpRxyzVector.h>
+#include <visp/vpMath.h>
+
+int main() 
+{
+  vpRxyzVector r;         // By default initialized to zero
+  r[0] = vpMath::rad(45); // Rotation arround x set to 45 degres converted in radians
+  r[1] = M_PI;            // Rotation arround y set to PI radians
+  r[2] = 0;               // Rotation arround z set to 0 radians
+  
+  std::cout << "Rxyz rotation vector: " << r << std::endl;
+
+  double rx = r[1];       // Get the value of the angle arround x axis
+  double ry = r[2];       // Get the value of the angle arround y axis
+  double rz = r[3];       // Get the value of the angle arround z axis
+}
+  
+  \endcode
+
 */
 
 class VISP_EXPORT vpRotationVector
@@ -75,19 +97,24 @@ protected:
 
 
 public:
-  //! constructor
-  vpRotationVector() { ; }
-  //! constructor from 3 angles (in radian)
+  //! Constructor that initialize the three angles to zero.
+  vpRotationVector() { 
+    r[0] = r[1] = r[2] = 0.;
+  }
+  // Constructor from 3 angles (in radian)
   vpRotationVector(const double phi, const double theta, const double psi) ;
 
-  //! Access  r[i] = x
+  /*!
+    Operator that allows to set the value of an element of the rotation 
+    vector: r[i] = value
+  */
   inline double &operator [](int n) {  return *(r + n);  }
-  //! Access x = r[i]
+  /*!
+    Operator that allows to get the value of an element of the rotation 
+    vector: value = r[i]
+  */
   inline const double &operator [](int n) const { return *(r+n);  }
 
-  //---------------------------------
-  // Printing
-  //---------------------------------
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
 						const vpRotationVector &m);
 
