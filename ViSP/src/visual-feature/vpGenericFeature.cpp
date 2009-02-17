@@ -66,6 +66,9 @@ void vpGenericFeature::init()
 }
 
 
+/*! 
+  Default constructor. You are not allowed to use this constructor. Please use the vpGenericFeature::vpGenericFeature(int _dim) constructor.
+*/
 vpGenericFeature::vpGenericFeature()
 {
   vpERROR_TRACE("You are not allow to use this constructor ") ;
@@ -77,6 +80,12 @@ vpGenericFeature::vpGenericFeature()
 			     "You are not allow to use this constructor ")) ;
 }
 
+
+/*!
+  Constructor of the class you have to use. The feature table is initilialized with the good dimension.
+
+  \param dim_s : Dimension of the feature. It corresponds to the number of features you want to create.
+*/
 vpGenericFeature::vpGenericFeature(int dim_s)
 {
   this->dim_s = dim_s ;
@@ -102,8 +111,8 @@ vpGenericFeature::setError(vpColVector &error)
 
 
 /*!
-  \brief compute the error between two visual features from a subset
-  a the possible features
+  Compute the error \f$ (s-s^*)\f$ between the current and the desired
+  visual features from a subset of the possible features.
 
   \exception if errorHasBeenInitialized is true (that is if
   vpGenericFeature::setError have been used) then s_star is useless.  In that
@@ -113,7 +122,34 @@ vpGenericFeature::setError(vpColVector &error)
   thrown
 
   obviously if vpGenericFeature::setError is not used then s_star is considered
-  and this warning is meaningless
+  and this warning is meaningless.
+
+  \param s_star : Desired visual feature.
+
+  \param select : The error can be computed for a selection of a
+  subset of the possible features.
+  - To compute the error for all the features use vpBasicFeature::FEATURE_ALL. In that case the error vector column vector whose dimension is equal to the number of features.
+  - To compute the error for only one of the component feature you have to say which one you want to take into account. If it is the first one set select to vpBasicFeature::FEATURE_LINE[0], if it is the second one set select to vpBasicFeature::FEATURE_LINE[1], and so on. In that case the error vector is a 1 dimension column vector.
+  - To compute the error for only two of the component feature you have to say which ones you want to take into account. If it is the first one and the second one set select to vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In that case the error vector is a 2 dimension column vector.
+
+  \return The error \f$ (s-s^*)\f$ between the current and the desired visual feature.
+
+  The code below shows how to use this method to manipulate the two visual features over three:
+  \code
+  // Creation of the current feature s
+  vpGenericFeature s(3);
+  s.set_s(0, 0, 0);
+
+  // Creation of the desired feature s*
+  vpGenericFeature s_star(3);
+  s_star.set_s(1, 1, 1);
+
+  // Here you have to compute the interaction matrix L
+  s.setInteractionMatrix(L);
+
+  // Compute the error vector (s-s*) for the two first features
+  s.error(s_star, vpBasicFeature::FEATURE_LINE[0] | vpBasicFeature::FEATURE_LINE[1]);
+  \endcode
 */
 vpColVector
 vpGenericFeature::error(const vpBasicFeature &s_star,
@@ -186,7 +222,33 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
 
 }
 
-//! compute the error between a visual features and zero
+
+
+/*!
+  Compute the error \f$ (s-s^*)\f$ between the current and the desired
+  visual features from a subset of the possible features. But in this case the desired feature is considered as set to 0.
+
+  \param select : The error can be computed for a selection of a
+  subset of the possible features.
+  - To compute the error for all the features use vpBasicFeature::FEATURE_ALL. In that case the error vector column vector whose dimension is equal to the number of features.
+  - To compute the error for only one of the component feature you have to say which one you want to take into account. If it is the first one set select to vpBasicFeature::FEATURE_LINE[0], if it is the second one set select to vpBasicFeature::FEATURE_LINE[1], and so on. In that case the error vector is a 1 dimension column vector.
+  - To compute the error for only two of the component feature you have to say which ones you want to take into account. If it is the first one and the second one set select to vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In that case the error vector is a 2 dimension column vector.
+
+  \return The error \f$ (s-s^*)\f$ between the current and the desired visual feature which is automatically set to zero.
+
+  The code below shows how to use this method to manipulate the two visual features over three:
+  \code
+  // Creation of the current feature s
+  vpGenericFeature s(3);
+  s.set_s(0, 0, 0);
+
+  // Here you have to compute the interaction matrix L
+  s.setInteractionMatrix(L);
+
+  // Compute the error vector (s-s*) for the two first features
+  s.error(vpBasicFeature::FEATURE_LINE[0] | vpBasicFeature::FEATURE_LINE[1]);
+  \endcode
+*/
 vpColVector
 vpGenericFeature::error( const int select)
 {
@@ -249,7 +311,45 @@ vpGenericFeature::error( const int select)
 }
 
 
-//! compute the interaction matrix from a subset a the possible features
+/*!
+  Compute and return the interaction matrix \f$ L \f$ for the whole features or a part of them.
+
+  \param select : Selection of a subset of the possible features. 
+  - To compute the interaction matrix for all the features use
+    vpBasicFeature::FEATURE_ALL. In that case the dimension of the interaction
+    matrix is \f$ [number of features \times 6] \f$
+  - To compute the interaction matrix for only one of the component feature you have to say which one you want to take into account. If it is the first one set select to vpBasicFeature::FEATURE_LINE[0], if it is the second one set select to vpBasicFeature::FEATURE_LINE[1], and so on. In that case the returned interaction matrix is \f$ [1 \times 6]
+    \f$ dimension.
+  - To compute the interaction matrix for only two of the component features you have to say which ones you want to take into account. If it is the first one and the second one set select to vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In that case the returned interaction matrix is \f$ [2 \times 6] \f$ dimension.
+
+  \return The interaction matrix computed from the features.
+
+  The code below shows how to compute the interaction matrix associated to the
+  first visual feature.
+  \code
+  // Creation of the current feature s
+  vpGenericFeature s(3);
+  s.set_s(0, 0, 0);
+
+  // Here you have to compute the interaction matrix L for all the three features
+  s.setInteractionMatrix(L);
+
+  vpMatrix L_x = s.interaction( vpBasicFeature::FEATURE_LINE[0] );
+  \endcode
+
+  The code below shows how to compute the interaction matrix associated to two
+  visual features over three.
+  \code
+  // Creation of the current feature s
+  vpGenericFeature s(3);
+  s.set_s(0, 0, 0);
+
+  // Here you have to compute the interaction matrix L
+  s.setInteractionMatrix(L);
+
+  vpMatrix L_x = s.interaction( vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1] );
+  \endcode
+*/
 vpMatrix
 vpGenericFeature::interaction(const int select) const
 {
@@ -285,8 +385,12 @@ vpGenericFeature::interaction(const int select) const
   return Ls ;
 }
 
+
 /*!
-  \brief set the value of the interaction
+  \brief set the value of the interaction matrix.
+
+  \param L : The matrix corresponding to the interaction matrix you computed.
+
   \exception an exception is thrown if the number of row of the interaction
   matrix is different from the dimension of the visual feature as specified
   in the constructor
@@ -311,7 +415,10 @@ vpGenericFeature::setInteractionMatrix(const vpMatrix &L)
 }
 
 /*!
-  \brief set the value of the interaction
+  \brief set the value of all the features.
+
+  \param s : It is a vector containing the value of the visual features.
+
   \exception an exception is thrown if the number of row of the vector s
   is different from the dimension of the visual feature as specified
   in the constructor
@@ -332,9 +439,17 @@ vpGenericFeature::set_s(const vpColVector &s)
   this->s = s ;
 }
 
+
 /*!
-  \brief set the value of the interaction
-  \exception an exception is thrown if the number of parameters 3
+  \brief set the value of three features if the number of feature is equal to 3.
+
+  \param s0 : value of the first visual feature
+
+  \param s1 : value of the second visual feature
+
+  \param s2 : value of the third visual feature
+
+  \exception an exception is thrown if the number of row of the vector s
   is different from the dimension of the visual feature as specified
   in the constructor
 */
@@ -354,9 +469,15 @@ vpGenericFeature::set_s(const double s0, const double s1, const double s2)
   s[0] = s0 ; s[1] = s1 ; s[2] = s2 ;
 }
 
+
 /*!
-  \brief set the value of the interaction
-  \exception an exception is thrown if the number of parameters 2
+  \brief set the value of two features if the number of feature is equal to 2.
+
+  \param s0 : value of the first visual feature
+
+  \param s1 : value of the second visual feature
+
+  \exception an exception is thrown if the number of row of the vector s
   is different from the dimension of the visual feature as specified
   in the constructor
 */
@@ -376,9 +497,13 @@ vpGenericFeature::set_s(const double s0, const double s1)
   s[0] = s0 ; s[1] = s1 ;
 }
 
+
 /*!
-  \brief set the value of the interaction
-  \exception an exception is thrown if the number of parameters 1
+  \brief set the value of one feature if the number of feature is equal to 1.
+
+  \param s0 : value of the visual feature
+
+  \exception an exception is thrown if the number of row of the vector s
   is different from the dimension of the visual feature as specified
   in the constructor
 */
@@ -398,7 +523,25 @@ vpGenericFeature::set_s(const double s0)
   s[0] = s0 ;
 }
 
-//! print the name of the feature
+
+/*!
+  Print to stdout the values of the current visual feature \f$ s \f$.
+
+  \param select : Selection of a subset of the possible features.
+  - To print all the features use vpBasicFeature::FEATURE_ALL.
+  - To print only one of the component features you have to say which one you want to take into account. If it is the first one set select to vpBasicFeature::FEATURE_LINE[0], if it is the second one set select to vpBasicFeature::FEATURE_LINE[1], and so on.
+
+  \code
+  vpGenericFeature s; // Current visual feature s
+
+  // Creation of the current feature s
+  s.set_s(0, 0, 0);
+
+  s.print(); // print all components of the feature
+  s.print(vpBasicFeature::FEATURE_ALL);  // same behavior then previous line
+  s.print(vpBasicFeature::FEATURE_LINE[0]); // print only the first component
+  \endcode
+*/
 void
 vpGenericFeature::print(const int select) const
 {
