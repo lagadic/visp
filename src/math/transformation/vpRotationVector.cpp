@@ -45,19 +45,47 @@
 */
 
 
-//! constructor from 3 angles (in radian)
+/*! 
+  Constructor from 3 angles \f$\varphi,\theta,\psi\f$ expressed in radians.
+  
+  \param phi, theta, psi : Respectively the first, the second and the
+  third angle of the rotation vector.
+*/
 vpRotationVector::vpRotationVector(const double phi,
 				   const double theta,
 				   const double psi)
 {
-    r[0] = phi ;
-    r[1] = theta ;
-    r[2] = psi ;
+  r[0] = phi ;
+  r[1] = theta ;
+  r[2] = psi ;
 }
 
 
 /*!
-  \brief std::cout a rotation vector.
+
+  Print the values of the three angles on the output stream. Data are 
+  formatted as a column vector. 
+
+  \code
+#include <iostream>
+#include <visp/vpRxyzVector.h>
+
+int main()
+{
+  vpRxyzVector r; // By default initialized to zero
+  
+  std::cout << "Rxyz rotation vector: " << std::endl << r << std::endl;
+}
+  \endcode
+
+  will lead to the following printing on the standart stream:
+
+  \code
+Rxyz rotation vector:
+0
+0
+0
+  \endcode
 */
 std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
 {
