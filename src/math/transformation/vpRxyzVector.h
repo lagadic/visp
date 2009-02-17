@@ -138,16 +138,16 @@ int main()
 
 class VISP_EXPORT vpRxyzVector : public vpRotationVector
 {
-    friend class vpRotationMatrix;
-    friend class vpThetaUVector;
-
-public:
+  friend class vpRotationMatrix;
+  friend class vpThetaUVector;
+  
+ public:
   //! Default constructor. Initialize the angles to zero.
   vpRxyzVector() { ; }
-
+    
   // Copy constructor.
   vpRxyzVector(const vpRxyzVector &m);
-
+    
   /*!
     Constructor from 3 angles (in radian).
     \param phi : \f$\varphi\f$ angle around the \f$x\f$ axis.
