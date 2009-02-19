@@ -67,8 +67,9 @@
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpPoint.h>
+#include <visp/vpFeatureLine.h>
+#include <visp/vpLine.h>
+#include <visp/vpMeLine.h>
 #include <visp/vpServo.h>
 #include <visp/vpFeatureBuilder.h>
 
@@ -78,8 +79,6 @@
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpServoDisplay.h>
-
-#include <visp/vpDot.h>
 
 int
 main()
@@ -97,7 +96,7 @@ main()
       g.acquire(I) ;
 
 
-      vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+      vpDisplayX display(I,100,100,"Example using one line.cpp ") ;
       vpTRACE(" ") ;
 
       vpDisplay::display(I) ;
@@ -121,13 +120,15 @@ main()
 
       vpMe me ;
       me.setRange(10) ;
-      me.setPointsToTrack(60) ;
-      me.setThreshold(15000) ;
+      me.setPointsToTrack(100) ;
+      me.setThreshold(100000) ;
+      me.setSampleStep(10);
       line.setDisplay(vpMeSite::RANGE_RESULT) ;
 
 
       line.setMe(&me) ;
 
+      //Initialize the tracking. Define the line to track.
       line.initTracking(I) ;
       line.track(I) ;
 
@@ -143,9 +144,15 @@ main()
       vpFeatureBuilder::create(p,cam, line)  ;
 
       vpTRACE("sets the desired position of the visual feature ") ;
+      vpLine lined;
+      lined.setWorldCoordinates(1,0,0,0,0,0,1,0);
+      vpHomogeneousMatrix cMo(0,0,0.3,0,0,vpMath::rad(0));
+      lined.project(cMo);
+      lined.setRho(-fabs(lined.getRho()));
+      lined.setTheta(0);
+
       vpFeatureLine pd ;
-      pd.setRhoTheta(0,0) ;
-      pd.setABCD(0,0,1,-1) ; //z = 1
+      vpFeatureBuilder::create(pd,lined);
 
       vpTRACE("define the task") ;
       vpTRACE("\t we want an eye-in-hand control law") ;
@@ -177,22 +184,20 @@ main()
 	    g.acquire(I) ;
 	    vpDisplay::display(I) ;
 
+	    //Track the line
 	    line.track(I) ;
 	    line.display(I, vpColor::red) ;
 
-	    //    vpDisplay::displayCross(I,(int)line.I(), (int)line.J(),
-	    //			   10,vpColor::green) ;
-
+	    //Update the current line feature
 	    vpFeatureBuilder::create(p,cam,line);
-	    vpTRACE("%f %f ",line.getRho(), line.getTheta()) ;
 
+	    //displqy the current and the desired features
 	    p.display(cam, I,  vpColor::red) ;
+	    pd.display(cam, I,  vpColor::green) ;
+
 	    v = task.computeControlLaw() ;
 
-	    vpServoDisplay::display(task,cam,I) ;
-	    //  std::cout << v.t() ;
-
-      vpDisplay::flush(I) ;
+	    vpDisplay::flush(I) ;
 	    if (iter==0)  vpDisplay::getClick(I) ;
 	    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 	  }
