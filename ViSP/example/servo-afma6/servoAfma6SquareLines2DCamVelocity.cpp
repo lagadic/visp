@@ -69,8 +69,9 @@
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpPoint.h>
+#include <visp/vpFeatureLine.h>
+#include <visp/vpLine.h>
+#include <visp/vpMeLine.h>
 #include <visp/vpServo.h>
 #include <visp/vpFeatureBuilder.h>
 
@@ -98,7 +99,7 @@ main()
       g.acquire(I) ;
 
 
-      vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
+      vpDisplayX display(I,100,100,"test SquareLines.cpp ") ;
       vpTRACE(" ") ;
 
       vpDisplay::display(I) ;
@@ -116,15 +117,18 @@ main()
       std::cout << "-------------------------------------------------------" << std::endl ;
       std::cout << std::endl ;
 
-
-      int nbline =4 ;
-      vpMeLine line[nbline] ;
       int i ;
+      int nbline =4 ;
+
+      vpMeLine line[nbline] ;
+
       vpMe me ;
       me.setRange(10) ;
-      me.setPointsToTrack(60) ;
-      me.setThreshold(15000) ;
+      me.setPointsToTrack(100) ;
+      me.setThreshold(50000) ;
+      me.setSampleStep(10);
 
+      //Initialize the tracking. Define the four lines to track.
       for (i=0 ; i < nbline ; i++)
 	{
 	  line[i].setDisplay(vpMeSite::RANGE_RESULT) ;
@@ -147,27 +151,42 @@ main()
 	vpFeatureBuilder::create(p[i],cam, line[i])  ;
 
       vpTRACE("sets the desired position of the visual feature ") ;
+      vpLine lined[nbline];
+      lined[0].setWorldCoordinates(1,0,0,0.05,0,0,1,0);
+      lined[1].setWorldCoordinates(0,1,0,0.05,0,0,1,0);
+      lined[2].setWorldCoordinates(1,0,0,-0.05,0,0,1,0);
+      lined[3].setWorldCoordinates(0,1,0,-0.05,0,0,1,0);
+
+      vpHomogeneousMatrix cMo(0,0,0.5,0,0,vpMath::rad(0));
+
+      lined[0].project(cMo);
+      lined[1].project(cMo);
+      lined[2].project(cMo);
+      lined[3].project(cMo);
+
+      //Those lines are needed to keep the conventions define in vpMeLine (Those in vpLine are less restrictive)
+      //Another way to have the coordinates of the desired features is to learn them before executing the program.
+      lined[0].setRho(-fabs(lined[0].getRho()));
+      lined[0].setTheta(0);
+      lined[1].setRho(-fabs(lined[1].getRho()));
+      lined[1].setTheta(M_PI/2);
+      lined[2].setRho(-fabs(lined[2].getRho()));
+      lined[2].setTheta(M_PI);
+      lined[3].setRho(-fabs(lined[3].getRho()));
+      lined[3].setTheta(-M_PI/2);
+
       vpFeatureLine pd[nbline] ;
-      // vertical BW
-      pd[0].setRhoTheta(0.15,M_PI) ;
-      pd[0].setABCD(0,0,1,-1) ; //z = 1
 
-      //horizontal BW
-      pd[1].setRhoTheta(-0.15,M_PI/2) ;
-      pd[1].setABCD(0.0,0,1,-1) ; //z = 1
-
-      // vertical WB
-      pd[2].setRhoTheta(0.15,0) ;
-      pd[2].setABCD(0,0,1,-1) ; //z = 1
-
-      // horizontal
-      pd[3].setRhoTheta(-0.15,-M_PI/2) ;
-      pd[3].setABCD(0.0,0,1,-1) ; //z = 1
+      vpFeatureBuilder::create(pd[0],lined[0]);
+      vpFeatureBuilder::create(pd[1],lined[1]);
+      vpFeatureBuilder::create(pd[2],lined[2]);
+      vpFeatureBuilder::create(pd[3],lined[3]);
 
       vpTRACE("define the task") ;
       vpTRACE("\t we want an eye-in-hand control law") ;
       vpTRACE("\t robot is controlled in the camera frame") ;
       task.setServo(vpServo::EYEINHAND_CAMERA) ;
+      task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
       vpTRACE("\t we want to see a point on a point..") ;
       std::cout << std::endl ;
@@ -175,23 +194,21 @@ main()
 	task.addFeature(p[i],pd[i]) ;
 
       vpTRACE("\t set the gain") ;
-      task.setLambda(0.032) ;
+      task.setLambda(0.2) ;
 
 
       vpTRACE("Display task information " ) ;
       task.print() ;
 
-      vpDisplay::getClick(I) ;
       robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
       int iter=0 ;
       vpTRACE("\t loop") ;
       vpColVector v ;
-      //char s[FILENAME_MAX] ;
       vpImage<vpRGBa> Ic ;
       double lambda_av =0.05;
-      double alpha = 0.05 ; //1 ;
-      double beta =3 ; //3 ;
+      double alpha = 0.05 ;
+      double beta =3 ;
 
       while(1)
 	{
@@ -200,21 +217,19 @@ main()
 	  try {
 	    g.acquire(I) ;
 	    vpDisplay::display(I) ;
-	    //sprintf(s,"/tmp/servoAfma6SquareLines/image.%04d.ppm",iter) ;
-	    //vpImageIo::writePGM(I,s) ;
+
+	    //Track the lines and update the features
 	    for (i=0 ; i < nbline ; i++)
 	      {
 		      line[i].track(I) ;
 		      line[i].display(I, vpColor::red) ;
 
-		      //    vpDisplay::displayCross(I,(int)line.I(), (int)line.J(),
-		      //			   10,vpColor::green) ;
-
 		      vpFeatureBuilder::create(p[i],cam,line[i]);
-		      //  vpTRACE("%f %f ",p[i].getRho(), p[i].getTheta()) ;
 
 		      p[i].display(cam, I,  vpColor::red) ;
+		      pd[i].display(cam, I,  vpColor::green) ;
 	      }
+
 	    double gain ;
 	    {
 	      if (alpha == 0) gain = lambda_av ;
@@ -225,13 +240,11 @@ main()
 	    }
 
 	    task.setLambda(gain) ;
+
 	    v = task.computeControlLaw() ;
 
-	    //  std::cout << task.error.t() << std::endl ;
+            vpDisplay::flush(I) ;
 
-	    vpServoDisplay::display(task,cam,I) ;
-      vpDisplay::flush(I) ;
-	    std::cout << v.sumSquare() <<std::endl  ;
 	    if (iter==0)  vpDisplay::getClick(I) ;
 	    if (v.sumSquare() > 0.5)
 	      {
@@ -251,8 +264,6 @@ main()
 	      robot.stopMotion() ;
 	      exit(1) ;
 	    }
-	  //   vpDisplay::getImage(I,Ic) ;
-	  //   vpImageIo::writePPM(Ic,s) ;
 
 	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
 	  iter++;
