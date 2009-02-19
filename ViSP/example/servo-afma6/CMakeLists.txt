@@ -51,6 +51,9 @@ SET (SOURCE
   servoAfma6Points2DCamVelocityEyeToHand.cpp
   servoAfma6SquareLines2DCamVelocity.cpp
   servoAfma6TwoLines2DCamVelocity.cpp
+  servoAfma62DhalfCamVelocity.cpp
+  servoAfma6Cylinder2DcamVelocity.cpp
+  servoAfma6Cylinder2DcamVelocitySecondaryTask.cpp
 )
 
 # rule for binary build
@@ -75,6 +78,9 @@ ADD_TEST(servoAfma6Point2DCamVelocity servoAfma6Point2DCamVelocity)
 ADD_TEST(servoAfma6Points2DCamVelocityEyeToHand servoAfma6Points2DCamVelocityEyeToHand)
 ADD_TEST(servoAfma6SquareLines2DCamVelocity servoAfma6SquareLines2DCamVelocity)
 ADD_TEST(servoAfma6TwoLines2DCamVelocity servoAfma6TwoLines2DCamVelocity)
+ADD_TEST(servoAfma62DhalfCamVelocity servoAfma62DhalfCamVelocity)
+ADD_TEST(servoAfma6Cylinder2DcamVelocity servoAfma6Cylinder2DcamVelocity)
+ADD_TEST(servoAfma6Cylinder2DcamVelocitySecondaryTask servoAfma6Cylinder2DcamVelocitySecondaryTask)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
