@@ -1259,8 +1259,15 @@ void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
 
 
     XImage *xi ;
-    xi= XGetImage ( display,window, 0,0, getWidth(), getHeight(),
+    //xi= XGetImage ( display,window, 0,0, getWidth(), getHeight(),
+    //                AllPlanes, ZPixmap ) ;
+
+    XCopyArea (display,window, pixmap, context,
+               0,0, getWidth(), getHeight(), 0, 0);
+
+    xi= XGetImage ( display,pixmap, 0,0, getWidth(), getHeight(),
                     AllPlanes, ZPixmap ) ;
+
     try
     {
       I.resize ( getHeight(), getWidth() ) ;
