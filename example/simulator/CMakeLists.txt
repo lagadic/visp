@@ -55,11 +55,9 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
+  # Add test
+  ADD_TEST(${binary} ${binary} -d)
 ENDFOREACH(source)
-
-# Add test
-ADD_TEST(simulateFourPoints2DCamVelocity	simulateFourPoints2DCamVelocity -d)
-ADD_TEST(simulateCircle2DCamVelocity		simulateCircle2DCamVelocity -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
