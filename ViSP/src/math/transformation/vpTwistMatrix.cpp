@@ -53,12 +53,12 @@
 
 
 /*!
-  \brief Copy operator.
+  Copy operator.
 
-  \param m : Twist matrix to copy
+  \param M : Twist matrix to copy.
 */
 vpTwistMatrix &
-vpTwistMatrix::operator=(const vpTwistMatrix &m)
+vpTwistMatrix::operator=(const vpTwistMatrix &M)
 {
   init() ;
 
@@ -66,7 +66,7 @@ vpTwistMatrix::operator=(const vpTwistMatrix &m)
   {
     for (int j=0; j<6; j++)
     {
-      rowPtrs[i][j] = m.rowPtrs[i][j];
+      rowPtrs[i][j] = M.rowPtrs[i][j];
     }
   }
 
@@ -75,7 +75,7 @@ vpTwistMatrix::operator=(const vpTwistMatrix &m)
 
 
 /*!
-  \brief initialiaze a 6x6 matrix as identity
+  Initialize a 6x6 matrix as identity. 
 */
 
 void
@@ -92,18 +92,16 @@ vpTwistMatrix::init()
     throw ;
   }
 
-
   for (i=0 ; i < 6 ; i++)
     for (j=0 ; j < 6; j++)
       if (i==j)
 	(*this)[i][j] = 1.0 ;
       else
 	(*this)[i][j] = 0.0;
-
 }
 
 /*!
-  \brief initialize an homogeneous matrix as Identity
+  Initialize a twist transformation matrix as identity.
 */
 vpTwistMatrix::vpTwistMatrix() : vpMatrix()
 {
@@ -111,7 +109,9 @@ vpTwistMatrix::vpTwistMatrix() : vpMatrix()
 }
 
 /*!
-  \brief initialize an homogeneous matrix from another twist matrix
+  Initialize a twist transformation matrix from another twist matrix.
+
+  \param M : Twist matrix used as initializer.
 */
 vpTwistMatrix::vpTwistMatrix(const vpTwistMatrix &M) : vpMatrix()
 {
@@ -120,44 +120,82 @@ vpTwistMatrix::vpTwistMatrix(const vpTwistMatrix &M) : vpMatrix()
 }
 
 /*!
-  \brief initialize an homogeneous matrix from another twist matrix
+
+  Initialize a twist transformation matrix from an homogeneous matrix
+  \f$M\f$ with \f[ {\bf M} = \left(\begin{array}{cc} {\bf R} & {\bf t}
+  \\ {\bf 0}_{1\times 3} & 1 \end{array} \right) \f]
+
+  \param M : Homogeneous matrix \f$M\f$ used to initialize the twist
+  transformation matrix.
+
 */
 vpTwistMatrix::vpTwistMatrix(const vpHomogeneousMatrix &M) : vpMatrix()
 {
   init() ;
   buildFrom(M);
 }
-//! Construction from Translation and rotation (ThetaU parameterization)
-vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &T,
-			     const vpThetaUVector &R) : vpMatrix()
+
+/*!
+
+  Initialize a twist transformation matrix from a translation vector
+  \e t and a rotation vector with \f$\theta u \f$ parametrization.
+
+  \param t : Translation vector.
+  
+  \param thetau : \f$\theta u\f$ rotation vector.
+
+*/
+vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &t,
+			     const vpThetaUVector &thetau) : vpMatrix()
 {
   init() ;
-  buildFrom(T,R) ;
+  buildFrom(t, thetau) ;
 }
 
-//! Construction from Translation and rotation (matrix parameterization)
-vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &T,
+/*!
+
+  Initialize a twist transformation matrix from a translation vector
+  \e t and a rotation matrix M.
+
+  \param t : Translation vector.
+  
+  \param R : Rotation matrix.
+
+*/
+vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &t,
                              const vpRotationMatrix &R)
 {
   init() ;
-  buildFrom(T,R) ;
+  buildFrom(t,R) ;
 }
 
-//! Construction from Translation and rotation (ThetaU parameterization)
-vpTwistMatrix::vpTwistMatrix(const double Tx,
-			                       const double Ty,
-			                       const double Tz,
-			                       const double tux,
-			                       const double tuy,
-			                       const double tuz) : vpMatrix()
+/*!
+
+  Initialize a twist transformation matrix from a translation vector
+  \e t and a rotation vector with \f$\theta u \f$ parametrization.
+
+  \param tx,ty,tz : Translation vector in meters.
+
+  \param tux,tuy,tuz : \f$\theta u\f$ rotation vector expressed in radians.
+*/
+vpTwistMatrix::vpTwistMatrix(const double tx,
+			     const double ty,
+			     const double tz,
+			     const double tux,
+			     const double tuy,
+			     const double tuz) : vpMatrix()
 {
   init() ;
-  vpTranslationVector T(Tx,Ty,Tz) ;
+  vpTranslationVector T(tx,ty,tz) ;
   vpThetaUVector tu(tux,tuy,tuz) ;
   buildFrom(T,tu) ;  
 }
 
-//! Basic initialisation (identity)
+/*!
+
+  Set the twist transformation matrix to identity.
+
+*/
 void
 vpTwistMatrix::setIdentity()
 {
@@ -166,10 +204,13 @@ vpTwistMatrix::setIdentity()
 
 
 /*!
-  \brief Skew transformation matrix multiplication
+
+  Operator that allows to multiply a skew transformation matrix by an
+  other skew transformation matrix.
+
 */
 vpTwistMatrix
-vpTwistMatrix::operator*(const vpTwistMatrix &mat) const
+vpTwistMatrix::operator*(const vpTwistMatrix &M) const
 {
   vpTwistMatrix p ;
 
@@ -178,16 +219,85 @@ vpTwistMatrix::operator*(const vpTwistMatrix &mat) const
     {
       double s =0 ;
       for (int k=0;k<6;k++)
-	s +=rowPtrs[i][k] * mat.rowPtrs[k][j];
+	s +=rowPtrs[i][k] * M.rowPtrs[k][j];
       p[i][j] = s ;
     }
   return p;
 }
 
 /*!
-  operation c = A * v (A is unchanged, c and b are 6 dimension vectors )
+  Operator that allows to multiply a skew transformation matrix by a matrix.
 
-  \exception vpMatrixException::incorrectMatrixSizeError if v is not a 6
+  As shown in the example below, this operator can be used to convert
+  a joint velocity in the camera frame knowing the robot jacobian.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpRobotAfma6.h>
+#include <visp/vpColVector.h>
+#include <visp/vpTwistMatrix.h>
+
+#ifdef VISP_HAVE_AFMA6
+
+int main()
+{
+  vpRobotAfma6 robot;
+
+  vpColVector q_vel(6); // Joint velocity on the 6 joints
+  // ... q_vel need here to be initialized
+  
+  vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz 
+
+  vpTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
+  robot.get_cVe(cVe);
+
+  vpMatrix eJe;       // Robot jacobian
+  robot.get_eJe(eJe);
+
+  // Compute the velocity in the camera frame
+  c_v = cVe * eJe * q_vel;
+
+  return 0;
+}
+#endif  
+  \endcode
+
+  \exception vpMatrixException::incorrectMatrixSizeError If M is not a 6 rows
+  dimension matrix.
+*/
+vpMatrix
+vpTwistMatrix::operator*(const vpMatrix &M) const
+{
+
+  if (6 != M.getRows())
+  {
+    vpERROR_TRACE("vpTwistMatrix mismatch in vpTwistMatrix/vpMatrix multiply") ;
+    throw(vpMatrixException::incorrectMatrixSizeError) ;
+  }
+
+  vpMatrix p(6, M.getCols()) ;
+  for (int i=0;i<6;i++)
+    for (int j=0;j<6;j++)
+    {
+      double s =0 ;
+      for (int k=0;k<6;k++)
+	s += rowPtrs[i][k] * M[k][j];
+      p[i][j] = s ;
+    }
+  return p;
+}
+
+/*!
+
+  Operator that allows to multiply a skew transformation matrix by a
+  column vector.
+
+  Operation c = A * v (A the skew transformation matrix is unchanged,
+  c and v are 6 dimension vectors).
+
+  \param v : Velocity skew vector.
+
+  \exception vpMatrixException::incorrectMatrixSizeError If v is not a 6
   dimension vector.
 
 */
@@ -216,6 +326,16 @@ vpTwistMatrix::operator*(const vpColVector &v) const
 }
 
 
+/*!
+
+  Build a twist transformation matrix from a translation vector
+  \e t and a rotation matrix M.
+
+  \param t : Translation vector.
+  
+  \param R : Rotation matrix.
+
+*/
 vpTwistMatrix
 vpTwistMatrix::buildFrom(const vpTranslationVector &t,
 			 const vpRotationMatrix &R)
@@ -234,28 +354,58 @@ vpTwistMatrix::buildFrom(const vpTranslationVector &t,
     return (*this) ;
 }
 
+/*!
+
+  \deprecated Build a twist transformation matrix from a translation vector
+  \e t and a euler vector.
+
+  \param t : Translation vector.
+  
+  \param euler : Euler vector.
+
+*/
 vpTwistMatrix
 vpTwistMatrix::buildFrom(const vpTranslationVector &t,
-			 const vpEulerVector &e)
+			 const vpEulerVector &euler)
 {
     vpRotationMatrix R ;
-    R.buildFrom(e) ;
+    R.buildFrom(euler) ;
     buildFrom(t,R) ;
     return (*this) ;
 }
 
+/*!
+
+  Initialize a twist transformation matrix from a translation vector
+  \e t and a rotation vector with \f$\theta u \f$ parametrization.
+
+  \param t : Translation vector.
+  
+  \param thetau : \f$\theta u\f$ rotation vector.
+
+*/
 vpTwistMatrix
 vpTwistMatrix::buildFrom(const vpTranslationVector &t,
-			 const vpThetaUVector &tu)
+			 const vpThetaUVector &thetau)
 {
     vpRotationMatrix R ;
-    R.buildFrom(tu) ;
+    R.buildFrom(thetau) ;
     buildFrom(t,R) ;
     return (*this) ;
 
 }
 
 
+/*!
+
+  Initialize a twist transformation matrix from an homogeneous matrix
+  \f$M\f$ with \f[ {\bf M} = \left(\begin{array}{cc} {\bf R} & {\bf t}
+  \\ {\bf 0}_{1\times 3} & 1 \end{array} \right) \f]
+
+  \param M : Homogeneous matrix \f$M\f$ used to initialize the twist
+  transformation matrix.
+
+*/
 vpTwistMatrix
 vpTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
 {
@@ -268,9 +418,6 @@ vpTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
     return (*this) ;
 }
 
-#undef MINI
-#undef MINIMUM
-#undef DEBUG_LEVEL1
 
 /*
  * Local variables:

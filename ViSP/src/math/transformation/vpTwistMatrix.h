@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -55,69 +56,92 @@
 
   The vpTwistMatrix is derived from vpMatrix.
 
-  \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
-
-  An twist transformation matrix is 6x6 matrix defines as
+  A twist transformation matrix is 6x6 matrix defined as
   \f[
   ^a{\bf V}_b = \left(\begin{array}{cc}
-  ^a{\bf R}_b & [^a{\bf T}_b]_\times ^a{\bf R}_b\\
+  ^a{\bf R}_b & [^a{\bf t}_b]_\times ^a{\bf R}_b\\
   {\bf 0}_{1\times 3} & ^a{\bf R}_b
   \end{array}
   \right)
   \f]
-  that expressed a velocity in frame <em>a</em> knowing velocity in <em>b</em>
+  that expressed a velocity in frame <em>a</em> knowing velocity in <em>b</em>.
 
   \f$ ^a{\bf R}_b \f$ is a rotation matrix and
-  \f$ ^a{\bf T}_b \f$ is a translation vector.
+  \f$ ^a{\bf t}_b \f$ is a translation vector.
+
+  The code belows shows for example how to convert a velocity skew
+  from camera frame to a fix frame.
+
+  \code
+#include <visp/vpColVector.h>
+#include <visp/vpTwistMatrix.h>
+
+int main()
+{
+  vpTwistMatrix fVc; // Twist transformation matrix from fix to camera frame
+
+  vpHomogeneousMatrix fMc; // Fix to camera frame transformation
+  // ... fMc need here to be initialized
+
+  fVc.buildFrom(fMc); 
+ 
+  vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz 
+  // ... c_v should here have an initial value
+
+  vpColVector f_v(6); // Velocity in the fix frame: vx,vy,vz,wx,wy,wz 
+
+  // Compute the velocity in the fix frame
+  f_v = fVc * c_v;
+}
+  \endcode
 */
 class VISP_EXPORT vpTwistMatrix : public vpMatrix
 {
-    friend class vpMatrix;
+  friend class vpMatrix;
 
-public:
-    //! Basic initialisation (identity)
-    void init() ;
+ public:
+  // basic constructor
+  vpTwistMatrix()   ;
+  // copy constructor
+  vpTwistMatrix(const vpTwistMatrix &M) ;
+  // constructor from an homogeneous transformation
+  vpTwistMatrix(const vpHomogeneousMatrix &M) ;
 
-    //! Basic initialisation (identity)
-    void setIdentity() ;
-    //! basic constructor
-    vpTwistMatrix()   ;
-    //! basic constructor
-    vpTwistMatrix(const vpTwistMatrix &M) ;
-    //! copy constructor
-    vpTwistMatrix(const vpHomogeneousMatrix &M) ;
+  // Construction from Translation and rotation (ThetaU parameterization)
+  vpTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;
+  // Construction from Translation and rotation (matrix parameterization)
+  vpTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
+  vpTwistMatrix(const double tx,   const double ty,   const double tz,
+		const double tux,  const double tuy,  const double tuz) ;
 
-    vpTwistMatrix operator*(const vpTwistMatrix &mat) const ;
+  // Basic initialisation (identity)
+  void init() ;
 
-    vpColVector operator*(const vpColVector &v) const ;
+  vpTwistMatrix buildFrom(const vpTranslationVector &t,
+			  const vpRotationMatrix &R);
+  vpTwistMatrix buildFrom(const vpTranslationVector &t,
+			  const vpThetaUVector &thetau);
+  vpTwistMatrix buildFrom(const vpHomogeneousMatrix &M) ;
 
-    //! Construction from Translation and rotation (ThetaU parameterization)
-    vpTwistMatrix(const vpTranslationVector &T, const vpThetaUVector &R) ;
-    //! Construction from Translation and rotation (euler parameterization)
-    vpTwistMatrix(const vpTranslationVector &T, const vpEulerVector &R) ;
-    //! Construction from Translation and rotation (matrix parameterization)
-    vpTwistMatrix(const vpTranslationVector &T, const vpRotationMatrix &R) ;
-    vpTwistMatrix(const double Tx,   const double Ty,   const double Tz,
-                  const double tux,  const double tuy,  const double tuz) ;
+  // Basic initialisation (identity)
+  void setIdentity() ;
 
-   //! Assigment
-    vpTwistMatrix &operator<<(const vpTwistMatrix &m);
+  vpTwistMatrix operator*(const vpTwistMatrix &M) const ;
+  vpMatrix operator*(const vpMatrix &M) const ;
 
-    //! copy operator from vpMatrix (handle with care)
-    //  vpTwistMatrix &operator=(const vpMatrix &m);
-    //! copy operator from vpMatrix (handle with care)
-    vpTwistMatrix &operator=(const vpTwistMatrix &m);
+  vpColVector operator*(const vpColVector &v) const ;
 
+  // Assigment
+  vpTwistMatrix &operator<<(const vpTwistMatrix &M);
 
+  // copy operator from vpMatrix (handle with care)
+  vpTwistMatrix &operator=(const vpTwistMatrix &M);
 
-    vpTwistMatrix buildFrom(const vpTranslationVector &t,
-			    const vpRotationMatrix &R);
-    vpTwistMatrix buildFrom(const vpTranslationVector &t,
-			    const vpEulerVector &e);
-    vpTwistMatrix buildFrom(const vpTranslationVector &t,
-			    const vpThetaUVector &e);
-    vpTwistMatrix buildFrom(const vpHomogeneousMatrix &M) ;
-
+  /*!
+    @name Deprecated functions
+  */
+  vpTwistMatrix buildFrom(const vpTranslationVector &t,
+			  const vpEulerVector &euler);
 
 } ;
 
