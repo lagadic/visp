@@ -57,15 +57,36 @@
   \class vpFeaturePoint
   \ingroup VsFeature2
 
-  \brief Class that defines a 2D point visual feature \f$ s\f$ which is composed by two parameters that are \f$ x \f$ and \f$ y \f$.
+  \brief Class that defines a 2D point visual feature \f$ s\f$ which
+  is composed by two parameters that are the cartesian coordinates \f$
+  x \f$ and \f$ y \f$.
 
-  In this class \f$ x \f$ and \f$ y \f$ are the 2D coordinates in the camera frame and are given in meter. \f$ Z \f$ which is the 3D coordinate representing the depth is also a parameter of the point. It is needed during the computation of the interaction matrix \f$ L \f$.
+  In this class \f$ x \f$ and \f$ y \f$ are the 2D coordinates in the
+  camera frame and are given in meter. \f$ Z \f$ which is the 3D
+  coordinate representing the depth is also a parameter of the
+  point. It is needed during the computation of the interaction matrix
+  \f$ L \f$.
 
-  The visual features can be set easily from an instance of the classes vpPoint, vpDot or vpDot2. For more precision see the class vpFeatureBuilder.
+  The visual features can be set easily from an instance of the
+  classes vpPoint, vpDot or vpDot2. For more precision see the
+  vpFeatureBuilder class.
 
-  Once the values of the visual features are set, the interaction() method allows to compute the interaction matrix \f$ L \f$ associated to the visual feature, while the error() method computes the error vector \f$(s - s^*)\f$ between the current visual feature and the desired one.
+  Once the values of the visual features are set, the interaction()
+  method allows to compute the interaction matrix \f$ L \f$ associated
+  to the visual feature, while the error() method computes the error
+  vector \f$(s - s^*)\f$ between the current visual feature and the
+  desired one.
 
-  The code below shows how to create a eye-in hand visual servoing task using a 2D point feature \f$(x,y)\f$ that correspond to the 2D coordinates of a point in the camera frame. To control six degrees of freedom, at least four other features must be considered like two other point features for example. First we create a current (\f$s\f$) 2D point feature. Then we set the task to use the interaction matrix associated to the current feature \f$L_s\f$. And finally we compute the camera velocity \f$v=-\lambda \; L_s^+ \; (s-s^*)\f$. The current feature \f$s\f$ is updated in the while() loop.
+  The code below shows how to create a eye-in hand visual servoing
+  task using a 2D point feature \f$(x,y)\f$ that correspond to the 2D
+  coordinates of a point in the camera frame. To control six degrees
+  of freedom, at least four other features must be considered like two
+  other point features for example. First we create a current
+  (\f$s\f$) 2D point feature. Then we set the task to use the
+  interaction matrix associated to the current feature \f$L_s\f$. And
+  finally we compute the camera velocity \f$v=-\lambda \; L_s^+ \;
+  (s-s^*)\f$. The current feature \f$s\f$ is updated in the while()
+  loop.
 
   \code
 #include <visp/vpFeaturePoint.h>
@@ -166,7 +187,7 @@ public:
   void init() ;
 
   vpFeaturePoint() ;
-  //! destructor
+  //! Destructor.
   virtual ~vpFeaturePoint() { ; }
 
 

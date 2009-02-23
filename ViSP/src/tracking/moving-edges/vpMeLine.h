@@ -36,8 +36,8 @@
  *****************************************************************************/
 
 /*!
-\file vpMeLine.h
-\brief Moving edges
+  \file vpMeLine.h
+  \brief Moving edges on a line
 */
 
 #ifndef vpMeLine_HH
@@ -61,21 +61,37 @@
 
   \brief Class that tracks a line moving edges.
 
-  In this class the line is defined by its equation in the \f$ (i,j) = (line,column) \f$ frame. Two types of features are available to write its equation. The first one corresponds to the following equation.
-  \f[ ai + bj + c = 0 \f]
-  Here \f$ i \f$ and \f$ j \f$ are the coordinates of the points belonging to the line. The line features are \f$ (a, b, c) \f$.
+  In this class the line is defined by its equation in the \f$ (i,j) =
+  (line,column) \f$ frame. Two types of features are available to
+  write its equation. The first one corresponds to the following
+  equation
 
-  The second way to write the line equation is the following.
-  \f[ i\times cos(\theta) + j\times sin(\theta) - \rho = 0 \f]
-  Here \f$ i \f$ and \f$ j \f$ are  still the coordinates of the points belonging to the line. But now the line features are \f$ (\rho, \theta) \f$. The computation of \f$ \rho \f$ and \f$ \theta \f$ is easy thanks to \f$ (a, b, c) \f$.
+  \f[ ai + bj + c = 0 \f]
+
+  where \f$ i \f$ and \f$ j \f$ are the coordinates of the points
+  belonging to the line. The line features are \f$ (a, b, c) \f$.
+
+  The second way to write the line equation is to consider polar coordinates
+  \f[ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f]
+
+  where \f$ i \f$ and \f$ j \f$ are still the coordinates of the
+  points belonging to the line. But now the line features are \f$
+  (\rho, \theta) \f$. The computation of \f$ \rho \f$ and \f$ \theta
+  \f$ is easy thanks to \f$ (a, b, c) \f$.
+
   \f[ \theta = arctan(b/a) \f]
   \f[ \rho = -c/\sqrt{a^2+b^2} \f]
-  The value of \f$ \theta \f$ is between \f$ 0 \f$ and \f$ 2\pi \f$. And the value of \f$ \rho \f$ can be positive or negative. The conventions to find the right values of the two features are illustrated in the following pictures.
+
+  The value of \f$ \theta \f$ is between \f$ 0 \f$ and \f$ 2\pi
+  \f$. And the value of \f$ \rho \f$ can be positive or negative. The
+  conventions to find the right values of the two features are
+  illustrated in the following pictures.
 
   \image html vpMeLine.gif
   \image latex vpMeLine.ps  width=10cm
 
-  The angle theta is computed thanks to the direction of the arrow. The arrow points to the side of the line which is darker.
+  The angle \f$\theta\f$ is computed thanks to the direction of the
+  arrow. The arrow points to the side of the line which is darker.
 
   The code below shows how to use this class.
 \code
@@ -135,18 +151,9 @@ private:
   int sign;
 
 public:
-  /*!
-	Parameter a of the line equation a*i + b*j + c = 0
-  */
-  double a;
-  /*!
-	Parameter b of the line equation a*i + b*j + c = 0
-  */
-  double b;
-  /*!
-	Parameter c of the line equation a*i + b*j + c = 0
-  */
-  double c;
+  double a; //!< Parameter a of the line equation a*i + b*j + c = 0
+  double b; //!< Parameter a of the line equation a*i + b*j + c = 0
+  double c; //!< Parameter a of the line equation a*i + b*j + c = 0
 
 
 public:
@@ -175,7 +182,8 @@ public:
   double getTheta() const ;
   void getExtremities(double &i1, double &j1, double &i2, double &j2) ;
 
-  static bool intersection(const vpMeLine &line1, const vpMeLine &line2, double &i, double &j); 
+  static bool intersection(const vpMeLine &line1, const vpMeLine &line2, 
+			   double &i, double &j); 
 };
 
 

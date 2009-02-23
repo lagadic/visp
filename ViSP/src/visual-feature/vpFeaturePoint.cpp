@@ -62,14 +62,8 @@
 
 /*
 
-
-
 attributes and members directly related to the vpBasicFeature needs
 other functionalities ar usefull but not mandatory
-
-
-
-
 
 */
 
