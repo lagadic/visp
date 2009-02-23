@@ -39,28 +39,18 @@
 
 /*!
 
-  \file servoAfma6TwoLines2DCamVelocity.cpp
+  \file servoAfma6Cylinder2DCamVelocitySecondaryTask.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the
-  Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
-  computed in the camera frame. Visual features are the two lines corresponding to the edges of a cylinder.
+  \example servoAfma6Cylinder2DCamVelocitySecondaryTask.cpp
 
-  This example illustrates in one hand a classical visual servoing with a cylinder.
-  And in the other hand it illustrates the behaviour of the robot when adding a secondary task.
+  Example of eye-in-hand control law. We control here a real robot,
+  the Afma6 robot (cartesian robot, with 6 degrees of freedom). The
+  velocity is computed in the camera frame. Visual features are the
+  two lines corresponding to the edges of a cylinder.
 
-*/
-
-
-/*!
-
-  \example servoAfma6TwoLines2DCamVelocity.cpp
-
-  Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame. Visual features are the two lines corresponding to the edges of a cylinder.
-
-  This example illustrates in one hand a classical visual servoing with a cylinder.
-  And in the other hand it illustrates the behaviour of the robot when adding a secondary task.
+  This example illustrates in one hand a classical visual servoing
+  with a cylinder.  And in the other hand it illustrates the behaviour
+  of the robot when adding a secondary task.
 
 */
 
