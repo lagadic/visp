@@ -65,22 +65,9 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
+  # Add test
+  ADD_TEST(${binary} ${binary})
 ENDFOREACH(source)
-
-# Add test
-ADD_TEST(servoAfma6Ellipse2DCamVelocity servoAfma6Ellipse2DCamVelocity)
-ADD_TEST(servoAfma6FourPoints2DArtVelocity servoAfma6FourPoints2DArtVelocity)
-ADD_TEST(servoAfma6FourPoints2DCamVelocityInteractionDesired servoAfma6FourPoints2DCamVelocityInteractionDesired)
-ADD_TEST(servoAfma6FourPoints2DCamVelocityInteractionCurrent servoAfma6FourPoints2DCamVelocityInteractionCurrent)
-ADD_TEST(servoAfma6Line2DCamVelocity  servoAfma6Line2DCamVelocity)
-ADD_TEST(servoAfma6Point2DArtVelocity servoAfma6Point2DArtVelocity)
-ADD_TEST(servoAfma6Point2DCamVelocity servoAfma6Point2DCamVelocity)
-ADD_TEST(servoAfma6Points2DCamVelocityEyeToHand servoAfma6Points2DCamVelocityEyeToHand)
-ADD_TEST(servoAfma6SquareLines2DCamVelocity servoAfma6SquareLines2DCamVelocity)
-ADD_TEST(servoAfma6TwoLines2DCamVelocity servoAfma6TwoLines2DCamVelocity)
-ADD_TEST(servoAfma62DhalfCamVelocity servoAfma62DhalfCamVelocity)
-ADD_TEST(servoAfma6Cylinder2DcamVelocity servoAfma6Cylinder2DcamVelocity)
-ADD_TEST(servoAfma6Cylinder2DcamVelocitySecondaryTask servoAfma6Cylinder2DcamVelocitySecondaryTask)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
