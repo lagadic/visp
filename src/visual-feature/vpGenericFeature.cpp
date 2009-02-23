@@ -67,7 +67,14 @@ void vpGenericFeature::init()
 
 
 /*! 
-  Default constructor. You are not allowed to use this constructor. Please use the vpGenericFeature::vpGenericFeature(int _dim) constructor.
+
+  Default constructor. You are not allowed to use this
+  constructor. Please use the vpGenericFeature::vpGenericFeature(int
+  _dim) constructor.
+
+  \exception vpException::cannotUseConstructorError : If the use call
+  this constructor.
+
 */
 vpGenericFeature::vpGenericFeature()
 {
@@ -93,6 +100,15 @@ vpGenericFeature::vpGenericFeature(int dim_s)
   errorStatus = errorNotInitalized ;
 }
 
+/*!
+
+  Set the error vector \f$(s-s*)\f$.
+
+  \param error : Error vector \f$(s-s*)\f$.
+
+  \exception vpFeatureException::sizeMismatchError : If the size of
+  the error vector is bad.
+*/
 void
 vpGenericFeature::setError(vpColVector &error)
 {
@@ -128,13 +144,27 @@ vpGenericFeature::setError(vpColVector &error)
 
   \param select : The error can be computed for a selection of a
   subset of the possible features.
-  - To compute the error for all the features use vpBasicFeature::FEATURE_ALL. In that case the error vector column vector whose dimension is equal to the number of features.
-  - To compute the error for only one of the component feature you have to say which one you want to take into account. If it is the first one set select to vpBasicFeature::FEATURE_LINE[0], if it is the second one set select to vpBasicFeature::FEATURE_LINE[1], and so on. In that case the error vector is a 1 dimension column vector.
-  - To compute the error for only two of the component feature you have to say which ones you want to take into account. If it is the first one and the second one set select to vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In that case the error vector is a 2 dimension column vector.
+  - To compute the error for all the features use
+    vpBasicFeature::FEATURE_ALL. In that case the error vector column
+    vector whose dimension is equal to the number of features.
+  - To compute the error for only one of the component feature you
+    have to say which one you want to take into account. If it is the
+    first one set select to vpBasicFeature::FEATURE_LINE[0], if it is
+    the second one set select to vpBasicFeature::FEATURE_LINE[1], and
+    so on. In that case the error vector is a 1 dimension column
+    vector.
+  - To compute the error for only two of the component feature you
+    have to say which ones you want to take into account. If it is the
+    first one and the second one set select to
+    vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In
+    that case the error vector is a 2 dimension column vector.
 
-  \return The error \f$ (s-s^*)\f$ between the current and the desired visual feature.
+  \return The error \f$ (s-s^*)\f$ between the current and the desired
+  visual feature.
 
-  The code below shows how to use this method to manipulate the two visual features over three:
+  The code below shows how to use this method to manipulate the two
+  visual features over three:
+
   \code
   // Creation of the current feature s
   vpGenericFeature s(3);
@@ -225,18 +255,33 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
 
 
 /*!
+
   Compute the error \f$ (s-s^*)\f$ between the current and the desired
-  visual features from a subset of the possible features. But in this case the desired feature is considered as set to 0.
+  visual features from a subset of the possible features. But in this
+  case the desired feature is considered as set to 0.
 
   \param select : The error can be computed for a selection of a
   subset of the possible features.
-  - To compute the error for all the features use vpBasicFeature::FEATURE_ALL. In that case the error vector column vector whose dimension is equal to the number of features.
-  - To compute the error for only one of the component feature you have to say which one you want to take into account. If it is the first one set select to vpBasicFeature::FEATURE_LINE[0], if it is the second one set select to vpBasicFeature::FEATURE_LINE[1], and so on. In that case the error vector is a 1 dimension column vector.
-  - To compute the error for only two of the component feature you have to say which ones you want to take into account. If it is the first one and the second one set select to vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In that case the error vector is a 2 dimension column vector.
+  - To compute the error for all the features use
+    vpBasicFeature::FEATURE_ALL. In that case the error vector column
+    vector whose dimension is equal to the number of features.
+  - To compute the error for only one of the component feature you
+    have to say which one you want to take into account. If it is the
+    first one set select to vpBasicFeature::FEATURE_LINE[0], if it is
+    the second one set select to vpBasicFeature::FEATURE_LINE[1], and
+    so on. In that case the error vector is a 1 dimension column
+    vector.
+  - To compute the error for only two of the component feature you
+    have to say which ones you want to take into account. If it is the
+    first one and the second one set select to
+    vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In
+    that case the error vector is a 2 dimension column vector.
 
-  \return The error \f$ (s-s^*)\f$ between the current and the desired visual feature which is automatically set to zero.
+  \return The error \f$ (s-s^*)\f$ between the current and the desired
+  visual feature which is automatically set to zero.
 
-  The code below shows how to use this method to manipulate the two visual features over three:
+  The code below shows how to use this method to manipulate the two
+  visual features over three:
   \code
   // Creation of the current feature s
   vpGenericFeature s(3);
@@ -252,8 +297,6 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
 vpColVector
 vpGenericFeature::error( const int select)
 {
-
-
   vpColVector e(0) ;
 
   try
@@ -312,15 +355,26 @@ vpGenericFeature::error( const int select)
 
 
 /*!
-  Compute and return the interaction matrix \f$ L \f$ for the whole features or a part of them.
+
+  Compute and return the interaction matrix \f$ L \f$ for the whole
+  features or a part of them.
 
   \param select : Selection of a subset of the possible features. 
   - To compute the interaction matrix for all the features use
     vpBasicFeature::FEATURE_ALL. In that case the dimension of the interaction
     matrix is \f$ [number of features \times 6] \f$
-  - To compute the interaction matrix for only one of the component feature you have to say which one you want to take into account. If it is the first one set select to vpBasicFeature::FEATURE_LINE[0], if it is the second one set select to vpBasicFeature::FEATURE_LINE[1], and so on. In that case the returned interaction matrix is \f$ [1 \times 6]
-    \f$ dimension.
-  - To compute the interaction matrix for only two of the component features you have to say which ones you want to take into account. If it is the first one and the second one set select to vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In that case the returned interaction matrix is \f$ [2 \times 6] \f$ dimension.
+  - To compute the interaction matrix for only one of the component
+    feature you have to say which one you want to take into
+    account. If it is the first one set select to
+    vpBasicFeature::FEATURE_LINE[0], if it is the second one set
+    select to vpBasicFeature::FEATURE_LINE[1], and so on. In that case
+    the returned interaction matrix is \f$ [1 \times 6] \f$ dimension.
+  - To compute the interaction matrix for only two of the component
+    features you have to say which ones you want to take into
+    account. If it is the first one and the second one set select to
+    vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In
+    that case the returned interaction matrix is \f$ [2 \times 6] \f$
+    dimension.
 
   \return The interaction matrix computed from the features.
 
@@ -529,7 +583,10 @@ vpGenericFeature::set_s(const double s0)
 
   \param select : Selection of a subset of the possible features.
   - To print all the features use vpBasicFeature::FEATURE_ALL.
-  - To print only one of the component features you have to say which one you want to take into account. If it is the first one set select to vpBasicFeature::FEATURE_LINE[0], if it is the second one set select to vpBasicFeature::FEATURE_LINE[1], and so on.
+  - To print only one of the component features you have to say which
+    one you want to take into account. If it is the first one set
+    select to vpBasicFeature::FEATURE_LINE[0], if it is the second one
+    set select to vpBasicFeature::FEATURE_LINE[1], and so on.
 
   \code
   vpGenericFeature s; // Current visual feature s

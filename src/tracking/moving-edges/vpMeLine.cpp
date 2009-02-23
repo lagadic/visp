@@ -53,8 +53,6 @@
 static void
 normalizeAngle(double &delta)
 {
-  /*while (delta > M_PI) { delta -= M_PI ; }
-  while (delta < 0) { delta += M_PI ; }*/
   while (delta > M_PI) { delta -= M_PI ; }
   while (delta < -M_PI) { delta += M_PI ; }
 }
@@ -72,36 +70,50 @@ computeDelta(double &delta, int i1, int j1, int i2, int j2)
 
 }
 
-/*!
-	Basic constructor that calls the constructor of the class vpMeTracker.
-*/
-vpMeLine::vpMeLine():vpMeTracker()
+static void
+project(double a, double b, double c, 
+	double i, double j, double &ip,double  &jp)
 {
-	sign = 1;
-	angle_1 = 90;
+  if (fabs(a)>fabs(b))
+  {
+    jp = (vpMath::sqr(a)*j - a*b*i - c*b)/(vpMath::sqr(a)+vpMath::sqr(b)) ;
+    ip = (-c-b*jp)/a;
+  }
+  else
+  {
+   ip = (vpMath::sqr(b)*i-a*b*j-c*a)/(vpMath::sqr(a)+vpMath::sqr(b)) ;
+   jp = (-c-a*ip)/b;
+  }
 }
 
 /*!
-	Basic Destructor.
+
+  Basic constructor that calls the constructor of the class vpMeTracker.
+
+*/
+vpMeLine::vpMeLine():vpMeTracker()
+{
+  sign = 1;
+  angle_1 = 90;
+}
+
+/*!
+
+  Basic destructor.
+
 */
 vpMeLine::~vpMeLine()
 {
   list.kill();
 }
 
-
-
-// ===================================================================
 /*!
- * Construct a list of vpMeSiteME at a particular sampling step between the two extremities of the line.
- * \pre  Requires me to hold the size of the sample_step
- * \post Calculates the a normal to the line and stores
- * 			 angle in 'alpha'. Creates a list of sites (list)
- *				 (requires calculation of Rho(),Delta())
- * \param I : Image in which the line appears.
- * \return status
- */
-// ===================================================================
+
+  Construct a list of vpMeSite moving edges at a particular sampling
+  step between the two extremities of the line.
+
+  \param I : Image in which the line appears.
+*/
 void
 vpMeLine::sample(vpImage<unsigned char>& I)
 {
@@ -219,9 +231,11 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
 
 
 /*!
-	Initilization of the tracking. Ask the user to click on two points from the line to track.
 
-	\param I : Image in which the line appears.
+  Initilization of the tracking. Ask the user to click on two points
+  from the line to track.
+
+  \param I : Image in which the line appears.
 */
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I)
@@ -529,7 +543,10 @@ printf("\nnbr de truc : %d\n", cdt);
 
 
 /*!
-	Least squares method used to make the tracking more robust. It ensures that the points taken into account to compute the right equation belong to the line
+	
+  Least squares method used to make the tracking more robust. It
+  ensures that the points taken into account to compute the right
+  equation belong to the line.
 */
 void
 vpMeLine::leastSquare()
@@ -709,13 +726,15 @@ vpMeLine::leastSquare()
 
 
 /*!
-	Initilization of the tracking. The line is defined thanks to the coordinates of two points.
+	
+  Initilization of the tracking. The line is defined thanks to the
+  coordinates of two points.
 
-	\param I : Image in which the line appears.
-	\param i1 : i coordinate of the first point.
-	\param j1 : j coordinate of the first point.
-	\param i2 : i coordinate of the second point.
-	\param j2 : j coordinate of the second point.
+  \param I : Image in which the line appears.
+  \param i1 : i coordinate of the first point.
+  \param j1 : j coordinate of the first point.
+  \param i2 : i coordinate of the second point.
+  \param j2 : j coordinate of the second point.
 */
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I,
@@ -773,7 +792,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
 
 
 /*!
-	Suppression of the points which belong no more to the line.
+  Suppression of the points which belong no more to the line.
 */
 void
 vpMeLine::suppressPoints()
@@ -797,7 +816,7 @@ nbrelmt = list.nbElement();
 
 
 /*!
-	Seek in the list of available points the two extremities of the line.
+  Seek in the list of available points the two extremities of the line.
 */
 void
 vpMeLine::setExtremities()
@@ -856,14 +875,15 @@ vpMeLine::setExtremities()
     PExt[1].ifloat = imax ;
     PExt[1].jfloat = jmax ;
   }
-
-
 }
 
-/*!
-	Seek along the line defined by its equation, the two extremities of the line. This function is useful in case of translation of the line.
+/*!  
 
-	\param I : Image in which the line appears.
+  Seek along the line defined by its equation, the two extremities of
+  the line. This function is useful in case of translation of the
+  line.
+
+  \param I : Image in which the line appears.
 */
 void
 vpMeLine::seekExtremities(vpImage<unsigned char> &I)
@@ -950,27 +970,17 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
   vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;
 }
 
-static void
-project(double a, double b, double c, double i, double j, double &ip,double  &jp)
-{
-  if (fabs(a)>fabs(b))
-  {
-    jp = (vpMath::sqr(a)*j - a*b*i - c*b)/(vpMath::sqr(a)+vpMath::sqr(b)) ;
-    ip = (-c-b*jp)/a;
-  }
-  else
-  {
-   ip = (vpMath::sqr(b)*i-a*b*j-c*a)/(vpMath::sqr(a)+vpMath::sqr(b)) ;
-   jp = (-c-a*ip)/b;
-  }
-}
-
 
 /*!
-	Resample the line if the number of sample is less than 80% of the expected value.
-	\note The expected value is computed thanks to the length of the line and the parameter which indicates the number of pixel between two points (vpMe::sample_step).
+	
+  Resample the line if the number of sample is less than 80% of the
+  expected value.
+	
+  \note The expected value is computed thanks to the length of the
+  line and the parameter which indicates the number of pixel between
+  two points (vpMe::sample_step).
 
-	\param I : Image in which the line appears.
+  \param I : Image in which the line appears.
 */
 void
 vpMeLine::reSample(vpImage<unsigned char> &I)
@@ -1006,7 +1016,8 @@ vpMeLine::reSample(vpImage<unsigned char> &I)
 }
 
 /*!
-	Set the alpha value of the different vpMeSites to the value of delta.
+	
+  Set the alpha value of the different vpMeSite to the value of delta.
 */
 void
 vpMeLine::updateDelta()
@@ -1047,9 +1058,10 @@ vpMeLine::updateDelta()
 
 
 /*!
-	Track the line in the image I.
 
-	\param I : Image in which the line appears.
+  Track the line in the image I.
+
+  \param I : Image in which the line appears.
 */
 void
 vpMeLine::track(vpImage<unsigned char> &I)
@@ -1123,14 +1135,14 @@ vpMeLine::track(vpImage<unsigned char> &I)
   computeRhoTheta(I) ;
 
   vpCDEBUG(1) <<"end vpMeLine::track()"<<std::endl ;
-
 }
 
 
 /*!
-	Compute the two angles Rho and Theta made by the line.
+	
+  Compute the two parameters \f$(\rho, \theta)\f$ of the line.
 
-	\param I : Image in which the line appears.
+  \param I : Image in which the line appears.
 */
 void
 vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
@@ -1139,8 +1151,8 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
   //theta = atan2(a,b) ;
   rho = fabs(c);
   theta = atan2(b,a) ;
-while (theta >= M_PI)    theta -=M_PI ;
-while (theta < 0)    theta +=M_PI ;
+  while (theta >= M_PI)    theta -=M_PI ;
+  while (theta < 0)    theta +=M_PI ;
 
   /*  while(theta < -M_PI)	theta += 2*M_PI ;
   while(theta >= M_PI)	theta -= 2*M_PI ;
@@ -1239,42 +1251,38 @@ while (theta < 0)    theta +=M_PI ;
 }
 
 /*!
-	Get the value of the angle Rho.
+
+   Get the value of \f$\rho\f$, the distance between the origin and the
+   point on the line with belong to the normal to the line crossing
+   the origin.
+
+   Depending on the convention described at the beginning of this
+   class, \f$\rho\f$ is signed.
+
 */
 double
 vpMeLine::getRho() const
 {
-
-
-  /*  double s = vpMath::sqr(a)+vpMath::sqr(b) ;
-  //  vpTRACE("%f %f %f %f", a,b,c,s) ;
-  if (fabs(s) < 1e-10)
-  {
-    vpERROR_TRACE("Division par zero") ;
-    throw(vpTrackingException(vpException::divideByZeroERR,
-			      "division by zero in getRho")) ;
-  }
-  */
-  return  rho ; //-c ;
+  return  rho ;
 }
 
 /*!
-	Get the value of the angle Theta.
+   Get the value of the angle \f$\theta\f$.
 */
 double
 vpMeLine::getTheta() const
 {
-  //  double theta =  atan2(a,b) ;
   return theta ;
 }
 
 /*!
-	Get the extremities of the line.
+	
+  Get the extremities of the line.
 
-	\param i1 : i coordinate of the first extremity.
-	\param j1 : j coordinate of the first extremity.
-	\param i2 : i coordinate of the second extremity.
-	\param j2 : j coordinate of the second extremity.
+  \param i1 : i coordinate of the first extremity.
+  \param j1 : j coordinate of the first extremity.
+  \param i2 : i coordinate of the second extremity.
+  \param j2 : j coordinate of the second extremity.
 */
 void
 vpMeLine::getExtremities(double& i1, double& j1, double& i2, double& j2)
@@ -1288,17 +1296,21 @@ vpMeLine::getExtremities(double& i1, double& j1, double& i2, double& j2)
 
 
 /*!
-	Computes the intersection point of two lines. The result is given in the (i,j) frame.
+	
+  Computes the intersection point of two lines. The result is given in
+  the (i,j) frame.
 
-	\param line1 : The first line.
-	\param line2 : The second line.
-	\param i : The i coordinate of the intersection point.
-	\param j : The j coordinate of the intersection point
+  \param line1 : The first line.
+  \param line2 : The second line.
+  \param i : The i coordinate of the intersection point.
+  \param j : The j coordinate of the intersection point
 
-	\return Returns a boolean value which depends on the computation success. True means that the computation ends successfully.
+  \return Returns a boolean value which depends on the computation
+  success. True means that the computation ends successfully.
 */
 bool
-vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, double &i, double &j)
+vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, 
+		       double &i, double &j)
 {
   double denom = 0;
   double a1 = line1.a;
@@ -1308,45 +1320,45 @@ vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, double &i, 
   double b2 = line2.b;
   double c2 = line2.c;
 
-try{
+  try{
 
-  if (a1 > 0.1)
-  {
-    denom = (-(a2/a1) * b1 + b2);
+    if (a1 > 0.1)
+      {
+	denom = (-(a2/a1) * b1 + b2);
 
-    if (denom == 0)
+	if (denom == 0)
+	  {
+	    std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
+	    return (false);
+	  }
+
+	if (denom != 0 )
+	  {
+	    j = ( (a2/a1)*c1 - c2 ) / denom;
+	    i = (-b1*j - c1) / a1;
+	  }
+      }
+
+    else
+      {
+	denom = (-(b2/b1) * a1 + a2);
+
+	if (denom == 0)
+	  {
+	    std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
+	    return (false);
+	  }
+
+	if (denom != 0 )
+	  {
+	    i = ( (b2/b1)*c1 - c2 ) / denom;
+	    j = (-a1*i - c1) / b1;
+	  }
+      }
+    return (true);
+  }
+  catch(...)
     {
-      std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
       return (false);
     }
-
-    if (denom != 0 )
-    {
-      j = ( (a2/a1)*c1 - c2 ) / denom;
-      i = (-b1*j - c1) / a1;
-    }
-  }
-
-  else
-  {
-    denom = (-(b2/b1) * a1 + a2);
-
-    if (denom == 0)
-    {
-      std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
-      return (false);
-    }
-
-    if (denom != 0 )
-    {
-      i = ( (b2/b1)*c1 - c2 ) / denom;
-      j = (-a1*i - c1) / b1;
-    }
-  }
-  return (true);
-}
-catch(...)
-{
-  return (false);
-}
 }

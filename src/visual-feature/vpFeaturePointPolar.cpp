@@ -407,8 +407,8 @@ vpFeaturePointPolar::error(const vpBasicFeature &s_star,
       double err = s[1] - s_star[1] ;
 
       //      printf("Error: %f ", err );
-      while (err < -M_PI+0.00000001) err += 2*M_PI ;
-      while (err > M_PI-0.00000001) err -= 2*M_PI ;
+      while (err < -M_PI) err += 2*M_PI ;
+      while (err > M_PI) err -= 2*M_PI ;
       //     printf(" modif %f \n", err );
  
       vpColVector etheta(1) ;

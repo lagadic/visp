@@ -56,12 +56,9 @@
 void
 vpLine::init()
 {
-
   oP.resize(8) ;
   cP.resize(8) ;
   p.resize(2) ;
-
-
 }
 
 /*! 
@@ -74,8 +71,13 @@ vpLine::vpLine()
 
 
 
-/*! 
-  Sets the parameters which define the line in the object frame. As said in the class description, the line is defined as the intersection of two plans. The different parameters here define the equations of the two plans in the object frame.
+/*!
+ 
+  Sets the parameters which define the line in the object frame. As
+  said in the class description, the line is defined as the
+  intersection of two plans. The different parameters here define the
+  equations of the two plans in the object frame.
+
   \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
   \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
   Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
@@ -108,46 +110,66 @@ vpLine::setWorldCoordinates(const double &A1, const double &B1,
 
 
 /*! 
-  Sets the parameters which define the line in the object frame. As said in the class description, the line is defined as the intersection of two plans. Height parameters are required to define the equations of the two plans in the object frame.
+
+  Sets the parameters which define the line in the object frame. As
+  said in the class description, the line is defined as the
+  intersection of two plans. Eight parameters are required to define
+  the equations of the two plans in the object frame.
+
   \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
   \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
   Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
 
-  \param _oP : The column vector which contains the height parameters needed to define the equations of the two plans. \f[ \_oP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+  \param oP : The column vector which contains the height parameters
+  needed to define the equations of the two plans. \f[ oP =
+  \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2
+  \end{array}\right] \f]
 
 */
 void
-vpLine::setWorldCoordinates(const vpColVector &_oP)
+vpLine::setWorldCoordinates(const vpColVector &oP)
 {
-  oP = _oP ;
+  this->oP = oP ;
 }
 
 
 /*! 
-  Sets the parameters which define the line in the object frame. As said in the class description, the line is defined as the intersection of two plans. Height parameters are required to define the equations of the two plans in the object frame.
+
+  Sets the parameters which define the line in the object frame. As
+  said in the class description, the line is defined as the
+  intersection of two plans. Eight parameters are required to define
+  the equations of the two plans in the object frame.
+
   \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
   \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
   Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
 
-  \param _oP1 : The column vector which contains the four parameters needed to define the equations of the first plan. \f[ \_oP1 = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \end{array}\right] \f]
-  \param _oP2 : The column vector which contains the four parameters needed to define the equations of the second plan. \f[ \_oP2 = \left[\begin{array}{c} A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+  \param oP1 : The column vector which contains the four parameters
+  needed to define the equations of the first plan. \f[ oP1 =
+  \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \end{array}\right] \f]
+  
+  \param oP2 : The column vector which contains the four parameters
+  needed to define the equations of the second plan. \f[ oP2 =
+  \left[\begin{array}{c} A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
 
 */
 void
-vpLine::setWorldCoordinates(const vpColVector &_oP1,
-			    const vpColVector &_oP2)
+vpLine::setWorldCoordinates(const vpColVector &oP1,
+			    const vpColVector &oP2)
 {
   for (int i=0 ; i < 4 ; i++)
   {
-    oP[i]   = _oP1[i] ;
-    oP[i+4] = _oP2[i] ;
+    oP[i]   = oP1[i] ;
+    oP[i+4] = oP2[i] ;
   }
 
 }
 
 
 /*!
-  Computes the 2D equation of the line thanks to the 3D line features in the camera frame. The method used is the perspective projection.
+
+  Computes the 2D equation of the line thanks to the 3D line features
+  in the camera frame. The method used is the perspective projection.
   The computed parameters are \f$ \rho \f$ and \f$ \theta \f$.
 
   The code below shows how to use this method.
@@ -178,28 +200,35 @@ vpLine::projection()
 
 
 /*!
-  Computes the 2D equation of the line thanks to the 3D line features. The method used is the perspective projection.
-  The computed parameters are \f$ \rho \f$ and \f$ \theta \f$.
 
-  \param _cP : The vector containing the line features relative to the camera frame. \f[ \_cP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
-  \param _p : The vector which contains the result of the computation ie the 2D line features. \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right] \f]
+  Computes the 2D equation of the line thanks to the 3D line
+  features. The method used is the perspective projection.  The
+  computed parameters are \f$ \rho \f$ and \f$ \theta \f$.
+
+  \param cP : The vector containing the line features relative to the
+  camera frame. \f[ cP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1
+  \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+  
+  \param p : The vector which contains the result of the computation
+  ie the 2D line features. \f[ p = \left[\begin{array}{c} \rho \\
+  \theta \end{array}\right] \f]
 */
 void
-vpLine::projection(const vpColVector &_cP, vpColVector &_p)
+vpLine::projection(const vpColVector &cP, vpColVector &p)
 {
  //projection
 
   double A1, A2, B1, B2, C1, C2, D1, D2;
 
-  A1=_cP[0] ;
-  B1=_cP[1] ;
-  C1=_cP[2] ;
-  D1=_cP[3] ;
+  A1=cP[0] ;
+  B1=cP[1] ;
+  C1=cP[2] ;
+  D1=cP[3] ;
 
-  A2=_cP[4] ;
-  B2=_cP[5] ;
-  C2=_cP[6] ;
-  D2=_cP[7] ;
+  A2=cP[4] ;
+  B2=cP[5] ;
+  C2=cP[6] ;
+  D2=cP[7] ;
 
   double a, b, c, s;
   a = A1*D2 - A2*D1;
@@ -213,15 +242,22 @@ vpLine::projection(const vpColVector &_cP, vpColVector &_p)
   //while (theta > M_PI/2) { theta -= M_PI ; rho *= -1 ; }
   //while (theta < -M_PI/2) { theta += M_PI ; rho *= -1 ; }
 
-  _p[0] = rho ;
-  _p[1] = theta ;
+  p[0] = rho ;
+  p[1] = theta ;
 }
 
 
 /*!
-  Computes the line features given in the camera frame thanks to the line features given in the object frame and the homogeneous matrix relative to the difference between the object frame and the camera frame. Thus the computation gives the equations of the two plans needed to define the line in the camera frame thanks to the equations of the same two plans in the object frame.
 
-  \param cMo : The homogeneous matrix relative to the difference between the object frame and the camera frame.
+  Computes the line features given in the camera frame thanks to the
+  line features given in the object frame and the homogeneous matrix
+  relative to the difference between the object frame and the camera
+  frame. Thus the computation gives the equations of the two plans
+  needed to define the line in the camera frame thanks to the
+  equations of the same two plans in the object frame.
+
+  \param cMo : The homogeneous matrix relative to the difference
+  between the object frame and the camera frame.
 
   The code below shows how to use this method.
   \code
@@ -248,10 +284,21 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo)
 
 
 /*!
-  Computes the line features given in a 3D frame of your choice thanks to the line features given in the object frame and the homogeneous matrix relative to the difference between the object frame and the frame you choose. Thus the computation gives the equations of the two plans needed to define the line in the desired frame thanks to the equations of the same two plans in the object frame.
 
-  \param cMo : The homogeneous matrix relative to the difference between the object frame and the desired frame.
-  \param _cP : The vector which will contain the parameters of the two plans equations in the desired frame. \f[ \_cP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+  Computes the line features given in a 3D frame of your choice thanks
+  to the line features given in the object frame and the homogeneous
+  matrix relative to the difference between the object frame and the
+  frame you choose. Thus the computation gives the equations of the
+  two plans needed to define the line in the desired frame thanks to
+  the equations of the same two plans in the object frame.
+
+  \param cMo : The homogeneous matrix relative to the difference
+  between the object frame and the desired frame.
+
+  \param cP : The vector which will contain the parameters of the two
+  plans equations in the desired frame. \f[ cP =
+  \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2
+  \end{array}\right] \f]
 
   The code below shows how to use this method.
   \code
@@ -274,7 +321,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo)
   \endcode
 */
 void
-vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
+vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 {
 
   double a1, a2, b1, b2, c1, c2, d1, d2;
@@ -389,33 +436,37 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
   {
     // Cas degenere D1 = D2 = 0
   }
-  _cP[0] =  A1;
-  _cP[1] =  B1;
-  _cP[2] =  C1;
-  _cP[3] =  D1;
+  cP[0] =  A1;
+  cP[1] =  B1;
+  cP[2] =  C1;
+  cP[3] =  D1;
 
-
-  _cP[4] =  A2;
-  _cP[5] =  B2;
-  _cP[6] =  C2;
-  _cP[7] =  D2;
+  cP[4] =  A2;
+  cP[5] =  B2;
+  cP[6] =  C2;
+  cP[7] =  D2;
 
   if (D2 < 0)
   {
-    _cP[4] *= -1 ;
-    _cP[5] *= -1 ;
-    _cP[6] *= -1 ;
-    _cP[7] *= -1 ;
+    cP[4] *= -1 ;
+    cP[5] *= -1 ;
+    cP[6] *= -1 ;
+    cP[7] *= -1 ;
   }
-
 }
 
 
 /*!
-  Displays the line in the image I thanks to the 2D features and the camera parameters which enable to convert the features from meter to pixel.
+
+  Displays the line in the image I thanks to the 2D features and the
+  camera parameters which enable to convert the features from meter to
+  pixel.
 
   \param I : The image where the line must be displayed.
-  \param cam : The camera parameters to enable the conversion from meter to pixel.
+
+  \param cam : The camera parameters to enable the conversion from
+  meter to pixel.
+
   \param color : The desired color to display the line in the image.
 */
 void vpLine::display(vpImage<unsigned char> &I,
@@ -428,11 +479,20 @@ void vpLine::display(vpImage<unsigned char> &I,
 
 
 /*!
-  Displays the line in the image I thanks to the features in the object frame, the homogeneous matrix relative to the difference between the object frame and the camera frame and the camera parameters which enable to convert the features from meter to pixel.
+
+  Displays the line in the image I thanks to the features in the
+  object frame, the homogeneous matrix relative to the difference
+  between the object frame and the camera frame and the camera
+  parameters which enable to convert the features from meter to pixel.
 
   \param I : The image where the line must be displayed.
-  \param cMo : The homogeneous matrix relative to the difference between the object frame and the camera frame.
-  \param cam : The camera parameters to enable the conversion from meter to pixel.
+
+  \param cMo : The homogeneous matrix relative to the difference
+  between the object frame and the camera frame.
+
+  \param cam : The camera parameters to enable the conversion from
+  meter to pixel.
+
   \param color : The desired color to display the line in the image.
 */
 // non destructive wrt. cP and p

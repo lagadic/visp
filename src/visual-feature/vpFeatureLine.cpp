@@ -147,7 +147,10 @@ vpFeatureLine::setABCD(const double A, const double B,
 
 
 /*!
-  Compute and return the interaction matrix \f$ L \f$. The computation is made thanks to the values of the line feature \f$ \rho \f$ and \f$ \theta \f$ and the equation of a plan to which the line belongs.
+
+  Compute and return the interaction matrix \f$ L \f$. The computation
+  is made thanks to the values of the line feature \f$ \rho \f$ and
+  \f$ \theta \f$ and the equation of a plan to which the line belongs.
 
   \f[ L = \left[\begin{array}{c}L_{\rho} \\ L_{\theta}\end{array}\right] =  
   \left[\begin{array}{cccccc}
@@ -156,16 +159,22 @@ vpFeatureLine::setABCD(const double A, const double B,
   \end{array}\right]\f]
 
   Where :
-  \f[ \lambda_{\rho} = (A\rho cos(\theta) + B\rho sin(\theta) + C) / D \f]
-  \f[ \lambda_{\theta} = (A sin(\theta) - B cos(\theta)) / D \f]
+  \f[ \lambda_{\rho} = (A \; \rho \; cos(\theta) + B \; \rho \; sin(\theta) + C) / D \f]
+  \f[ \lambda_{\theta} = (A \; sin(\theta) - B \; cos(\theta)) / D \f]
 
   \param select : Selection of a subset of the possible line features. 
-  - To compute the interaction matrix for all the two line features use vpBasicFeature::FEATURE_ALL. In that case the dimension of the interaction matrix is \f$ [2 \times 6] \f$
-  - To compute the interaction matrix for only one of the line component feature (\f$ \rho, \theta \f$) use one of the corresponding function selectRho() or selectTheta(). In that case the returned interaction matrix is \f$ [1 \times 6] \f$ dimension.
+  - To compute the interaction matrix for all the two line features
+    use vpBasicFeature::FEATURE_ALL. In that case the dimension of the
+    interaction matrix is \f$ [2 \times 6] \f$
+  - To compute the interaction matrix for only one of the line
+    component feature (\f$ \rho, \theta \f$) use one of the
+    corresponding function selectRho() or selectTheta(). In that case
+    the returned interaction matrix is \f$ [1 \times 6] \f$ dimension.
 
   \return The interaction matrix computed from the line features.
 
-  The code below shows how to compute the interaction matrix associated to the visual feature \f$ s = \theta \f$.
+  The code below shows how to compute the interaction matrix
+  associated to the visual feature \f$ s = \theta \f$.
   \code
   // Creation of the current feature s
   vpFeatureLine s;
@@ -174,7 +183,9 @@ vpFeatureLine::setABCD(const double A, const double B,
   vpMatrix L_theta = s.interaction( vpFeatureLine::selectTheta() );
   \endcode
 
-  The code below shows how to compute the interaction matrix associated to the visual feature \f$ s = (\rho, \theta) \f$.
+  The code below shows how to compute the interaction matrix
+  associated to the visual feature \f$ s = (\rho, \theta) \f$.
+
   \code
   // Creation of the current feature s
   vpFeatureLine s;
@@ -207,8 +218,6 @@ vpFeatureLine::interaction(const int select) const
 
   double lambda_theta =( A*si - B*co) /D;
   double lambda_rho =  (C + rho*A*co + rho*B*si)/D;
-
-
 
   if (vpFeatureLine::selectRho() & select )
   {
@@ -250,12 +259,20 @@ vpFeatureLine::interaction(const int select) const
 
   \param select : The error can be computed for a selection of a
   subset of the possible line features.
-  - To compute the error for all the two line features use vpBasicFeature::FEATURE_ALL. In that case the error vector is a 2 dimension column vector.
-  - To compute the error for only one of the line component feature (\f$ \rho, \theta \f$) use one of the corresponding function selectRho() or selectTheta(). In that case the error vector is a 1 dimension column vector.
+  - To compute the error for all the two line features use
+    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 2
+    dimension column vector.
+  - To compute the error for only one of the line component feature
+    (\f$ \rho, \theta \f$) use one of the corresponding function
+    selectRho() or selectTheta(). In that case the error vector is a 1
+    dimension column vector.
 
-  \return The error \f$ (s-s^*)\f$ between the current and the desired visual feature.
+  \return The error \f$ (s-s^*)\f$ between the current and the desired
+  visual feature.
 
-  The code below shows how to use this method to manipulate the \f$ \theta \f$ subset:
+  The code below shows how to use this method to manipulate the \f$
+  \theta \f$ subset:
+
   \code
   // Creation of the current feature s
   vpFeatureLine s;
@@ -325,7 +342,8 @@ vpFeatureLine::error(const vpBasicFeature &s_star,
 
   \param select : Selection of a subset of the possible line features.
   - To print all the two line features use vpBasicFeature::FEATURE_ALL.
-  - To print only one of the line component feature (\f$ \rho, \theta \f$) use one of the corresponding function selectRho() or selectTheta().
+  - To print only one of the line component feature (\f$ \rho, \theta \f$)
+    use one of the corresponding function selectRho() or selectTheta().
 
   \code
   vpFeatureLine s; // Current visual feature s
@@ -354,10 +372,13 @@ vpFeatureLine::print(const int select ) const
 
 /*!
 
-  Build a 2D line visual feature from the line equation parameters \f$ \rho \f$ and \f$ \theta \f$ given in the image frame.
-  \f[ x \times cos(\theta) + y \times sin(\theta) -\rho = 0 \f]
+  Build a 2D line visual feature from the line equation parameters \f$
+  \rho \f$ and \f$ \theta \f$ given in the image frame.
 
-  See the vpFeatureLine class description for more details about \f$ \rho \f$ and \f$ \theta \f$.
+  \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f]
+
+  See the vpFeatureLine class description for more details about \f$
+  \rho \f$ and \f$ \theta \f$.
 
   \param rho : The \f$ \rho \f$ parameter.
   \param theta : The \f$ \theta \f$ parameter.
@@ -373,13 +394,23 @@ vpFeatureLine::buildFrom(const double rho, const double theta)
 
 /*!
 
-  Build a 2D line visual feature from the line equation parameters \f$ \rho \f$ and \f$ \theta \f$ given in the camera frame. The parameters A, B, C and D which describe the equation of a plan to which the line belongs, are set in the same time.
-  \f[ x \times cos(\theta) + y \times sin(\theta) -\rho = 0 \f]
+  Build a 2D line visual feature from the line equation parameters \f$
+  \rho \f$ and \f$ \theta \f$ given in the camera frame. The
+  parameters A, B, C and D which describe the equation of a plan to
+  which the line belongs, are set in the same time.
+
+  \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f]
   \f[ AX + BY + CZ + D = 0 \f]
 
-  See the vpFeatureLine class description for more details about \f$ \rho \f$ and \f$ \theta \f$.
+  See the vpFeatureLine class description for more details about \f$
+  \rho \f$ and \f$ \theta \f$.
 
-  The A, B, C, D parameters are needed to compute the interaction matrix associated to a visual feature. Normally, two plans are needed to describe a line (the intersection of those two plans). But to compute the interaction matrix only one plan equation is required. The only one restrictions is that the value of D must not be equal to zero !
+  The A, B, C, D parameters are needed to compute the interaction
+  matrix associated to a visual feature. Normally, two plans are
+  needed to describe a line (the intersection of those two plans). But
+  to compute the interaction matrix only one plan equation is
+  required. The only one restrictions is that the value of D must not
+  be equal to zero !
 
   \param rho : The \f$ \rho \f$ parameter.
   \param theta : The \f$ \theta \f$ parameter.

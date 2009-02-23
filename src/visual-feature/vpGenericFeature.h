@@ -205,7 +205,7 @@ private:
 public:
   void setInteractionMatrix(const vpMatrix &L) ;
   vpMatrix getInteractionMatrix() const { return L ; }
-  void setError(vpColVector &_error)  ;
+  void setError(vpColVector &error)  ;
   void set_s(const vpColVector &s) ;
   void set_s(const double s0) ;
   void set_s(const double s0, const double s1) ;

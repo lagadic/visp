@@ -56,22 +56,45 @@
 /*!
   \class vpFeatureLine
   \ingroup VsFeature2
-  \brief Class that defines a 2D line visual feature \f$ s\f$ which is composed by two parameters that are \f$ \rho \f$ and \f$ \theta \f$.
+
+  \brief Class that defines a 2D line visual feature \f$ s\f$ which is
+  composed by two parameters that are \f$ \rho \f$ and \f$ \theta \f$,
+  the polar coordinates of a line.
 
   In this class, the equation line in the camera frame is given by :
-  \f[ x \times cos(\theta) + y \times sin(\theta) -\rho = 0 \f]
-  Here \f$ x \f$ and \f$ y \f$ are the coordinates of a point belonging to the line and they are given in meter. The following image shows the meanings of the distance \f$ \rho \f$ and the angle \f$ \theta \f$.
+  \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f] Here
+  \f$ x \f$ and \f$ y \f$ are the coordinates of a point belonging to
+  the line and they are given in meter. The following image shows the
+  meanings of the distance \f$\rho\f$ and the angle \f$\theta\f$.
 
   \image html vpFeatureLine.gif
   \image latex vpFeatureLine.ps  width=10cm
 
-  You have to note that the \f$ \theta \f$ angle has its value between \f$ -\pi \f$ and \f$ \pi \f$ and that the \f$ \rho \f$ distance can be positive or negative. The conventions are illustrated by the image above.
+  You have to note that the \f$ \theta \f$ angle has its value between
+  \f$ -\pi \f$ and \f$ \pi \f$ and that the \f$ \rho \f$ distance can
+  be positive or negative. The conventions are illustrated by the
+  image above.
 
-  The visual features can be set easily from an instance of the classes vpLine, vpMeLine or vpCylinder. For more precision see the class vpFeatureBuilder.
+  The visual features can be set easily from an instance of the
+  classes vpLine, vpMeLine or vpCylinder. For more precision see the
+  class vpFeatureBuilder.
 
-  Once the values of the visual features are set, the interaction() method allows to compute the interaction matrix \f$ L \f$ associated to the visual feature, while the error() method computes the error vector \f$(s - s^*)\f$ between the current visual feature and the desired one.
+  Once the values of the visual features are set, the interaction()
+  method allows to compute the interaction matrix \f$ L \f$ associated
+  to the visual feature, while the error() method computes the error
+  vector \f$(s - s^*)\f$ between the current visual feature and the
+  desired one.
 
-  The code below shows how to create a eye-in hand visual servoing task using a 2D line feature \f$(\rho,\theta)\f$ that correspond to the 2D equation of a line in the camera frame. To control six degrees of freedom, at least four other features must be considered like two other line features for example. First we create a current (\f$s\f$) 2D line feature. Then we set the task to use the interaction matrix associated to the current feature \f$L_s\f$. And finally we compute the camera velocity \f$v=-\lambda \; L_s^+ \; (s-s^*)\f$. The current feature \f$s\f$ is updated in the while() loop.
+  The code below shows how to create a eye-in hand visual servoing
+  task using a 2D line feature \f$(\rho,\theta)\f$ that correspond to
+  the 2D equation of a line in the camera frame. To control six
+  degrees of freedom, at least four other features must be considered
+  like two other line features for example. First we create a current
+  (\f$s\f$) 2D line feature. Then we set the task to use the
+  interaction matrix associated to the current feature \f$L_s\f$. And
+  finally we compute the camera velocity \f$v=-\lambda \; L_s^+ \;
+  (s-s^*)\f$. The current feature \f$s\f$ is updated in the while()
+  loop.
 
   \code
 #include <visp/vpFeatureLine.h>
