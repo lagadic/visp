@@ -165,23 +165,6 @@
   std::cout << cam << std::endl;
   \endcode
 
-  The same initialisation (for a model without distortion) can be done by:
-  \code
-  double px = 600;
-  double py = 600;
-  double u0 = 320;
-  double v0 = 240;
-
-  // Create a camera parameter container. By default, a perspective projection 
-  // without distortion model is set.
-  vpCameraParameters cam;
-
-  // Set the principal point coordinates (u0,v0)
-  cam.setPrincipalPoint(u0,v0);
-  // Set the pixel ratio (px, py)
-  cam.setPixelRatio (px,py)
-  \endcode
-
   Here an example of camera initialisation, for a model with distortion:
   \code
   double px = 600;
