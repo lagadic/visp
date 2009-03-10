@@ -91,12 +91,15 @@ vpFeatureLine::init()
 {
     //feature dimension
     dim_s = 2 ;
+    nbParameters = 6;
 
     // memory allocation
     //  x cos(theta) + y sin(theta) - rho = 0
     // s[0] = rho
     // s[1] = theta
     s.resize(dim_s) ;
+    flags = new bool[nbParameters];
+    for (int i = 0; i < nbParameters; i++) flags[i] = false;
 
     A = B = C = D = 0.0 ;
 }
@@ -122,6 +125,7 @@ vpFeatureLine::setRhoTheta(const double rho, const double theta)
 {
   s[0] = rho ;
   s[1] = theta ;
+  for( int i = 0; i < 2; i++) flags[i] = true;
 }
 
 
@@ -143,6 +147,7 @@ vpFeatureLine::setABCD(const double A, const double B,
   this->B = B ;
   this->C = C ;
   this->D = D ;
+  for( int i = 2; i < nbParameters; i++) flags[i] = true;
 }
 
 
@@ -200,6 +205,35 @@ vpFeatureLine::interaction(const int select) const
   vpMatrix L ;
 
   L.resize(0,6) ;
+
+  for (int i = 0; i < nbParameters; i++)
+  {
+    if (flags[i] == false)
+    {
+      switch(i){
+      case 0:
+        vpTRACE("Warning !!!  The interaction matrix is computed but rho was not set yet");
+      break;
+      case 1:
+        vpTRACE("Warning !!!  The interaction matrix is computed but theta was not set yet");
+      break;
+      case 2:
+        vpTRACE("Warning !!!  The interaction matrix is computed but A was not set yet");
+      break;
+      case 3:
+        vpTRACE("Warning !!!  The interaction matrix is computed but B was not set yet");
+      break;
+      case 4:
+        vpTRACE("Warning !!!  The interaction matrix is computed but C was not set yet");
+      break;
+      case 5:
+        vpTRACE("Warning !!!  The interaction matrix is computed but D was not set yet");
+      break;
+      default:
+        vpTRACE("Problem during the reading of the variable flags");
+      }
+    }
+  }
 
   double rho = s[0] ;
   double theta = s[1] ;
@@ -389,6 +423,7 @@ vpFeatureLine::buildFrom(const double rho, const double theta)
 {
   s[0] = rho ;
   s[1] = theta ;
+  for( int i = 0; i < 2; i++) flags[i] = true;
 }
 
 
@@ -430,6 +465,7 @@ void vpFeatureLine::buildFrom(const double rho, const double theta,
   this->B = B ;
   this->C = C ;
   this->D = D ;
+  for( int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 

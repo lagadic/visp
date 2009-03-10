@@ -75,12 +75,15 @@ vpFeaturePoint::init()
 {
     //feature dimension
     dim_s = 2 ;
+    nbParameters = 3;
 
     // memory allocation
     s.resize(dim_s) ;
+    flags = new bool[nbParameters];
+    for (int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //default value Z (1 meters)
-    set_Z(1) ;
+    Z = 1;
 
 }
 
@@ -102,6 +105,7 @@ void
 vpFeaturePoint::set_Z(const double Z)
 {
     this->Z = Z ;
+    flags[2] = true;
 }
 
 
@@ -128,6 +132,7 @@ void
 vpFeaturePoint::set_x(const double x)
 {
     s[0] = x ;
+    flags[0] = true;
 }
 
 
@@ -152,6 +157,7 @@ void
 vpFeaturePoint::set_y(const double y)
 {
     s[1] = y ;
+    flags[1] = true;
 }
 
 
@@ -186,6 +192,7 @@ vpFeaturePoint::set_xyZ(const double x,
   set_x(x) ;
   set_y(y) ;
   set_Z(Z) ;
+  for( int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 
@@ -238,6 +245,26 @@ vpFeaturePoint::interaction(const int select) const
   vpMatrix L ;
 
   L.resize(0,6) ;
+
+  for (int i = 0; i < nbParameters; i++)
+  {
+    if (flags[i] == false)
+    {
+      switch(i){
+      case 0:
+        vpTRACE("Warning !!!  The interaction matrix is computed but x was not set yet");
+      break;
+      case 1:
+        vpTRACE("Warning !!!  The interaction matrix is computed but y was not set yet");
+      break;
+      case 2:
+        vpTRACE("Warning !!!  The interaction matrix is computed but Z was not set yet");
+      break;
+      default:
+        vpTRACE("Problem during the reading of the variable flags");
+      }
+    }
+  }
 
   double x = get_x() ;
   double y = get_y() ;
@@ -429,6 +456,8 @@ vpFeaturePoint::buildFrom(const double x, const double y, const double Z)
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
   }
+
+  for( int i = 0; i < nbParameters; i++) flags[i] = true;
 
 }
 

@@ -103,7 +103,7 @@ int main()
   //Set the depth of the point in the camera frame.
   double Zd = 1;
   //Set the point feature thanks to the desired parameters.
-  sd.buildfrom(xd, yd, Zd);
+  sd.buildFrom(xd, yd, Zd);
 
   vpFeaturePoint s; //The current point feature.
   //Set the current features x and y
@@ -111,7 +111,7 @@ int main()
   double y;  //You have to compute the value of y.
   double Z;  //You have to compute the value of Z.
   //Set the point feature thanks to the current parameters.
-  s.buildfrom(x, y, Z);
+  s.buildFrom(x, y, Z);
   //In this case the parameter Z is not necessary because the interaction matrix is computed
   //with the desired visual feature.
 
@@ -129,7 +129,7 @@ int main()
     // The new parameters x and y must be computed here.
     
     // Update the current point visual feature
-    s.buildfrom(x, y, Z);
+    s.buildFrom(x, y, Z);
     
     // compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -153,7 +153,7 @@ int main()
   //Set the depth of the point in the camera frame.
   double Zd = 1;
   //Set the point feature thanks to the desired parameters.
-  sd.buildfrom(xd, yd, Zd);
+  sd.buildFrom(xd, yd, Zd);
 
   vpFeaturePoint s; //The current point feature.
   //Set the current features x and y
@@ -161,7 +161,7 @@ int main()
   double y;  //You have to compute the value of y.
   double Z;  //You have to compute the value of Z.
   //Set the point feature thanks to the current parameters.
-  s.buildfrom(x, y, Z);
+  s.buildFrom(x, y, Z);
 
   // Compute the interaction matrix L_s for the current point feature
   vpMatrix L = s.interaction();
