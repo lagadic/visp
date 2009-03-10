@@ -79,9 +79,12 @@ vpFeatureEllipse::init()
 {
     //feature dimension
     dim_s = 5 ;
+    nbParameters = 8;
 
     // memory allocation
     s.resize(dim_s) ;
+    flags = new bool[nbParameters];
+    for (int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //default depth values
     A = B = 0;
@@ -103,6 +106,41 @@ vpFeatureEllipse::interaction(const int select) const
   vpMatrix L ;
 
   L.resize(0,6) ;
+
+  for (int i = 0; i < nbParameters; i++)
+  {
+    if (flags[i] == false)
+    {
+      switch(i){
+      case 0:
+        vpTRACE("Warning !!!  The interaction matrix is computed but x was not set yet");
+      break;
+      case 1:
+        vpTRACE("Warning !!!  The interaction matrix is computed but y was not set yet");
+      break;
+      case 2:
+        vpTRACE("Warning !!!  The interaction matrix is computed but mu20 was not set yet");
+      break;
+      case 3:
+        vpTRACE("Warning !!!  The interaction matrix is computed but mu11 was not set yet");
+      break;
+      case 4:
+        vpTRACE("Warning !!!  The interaction matrix is computed but mu02 was not set yet");
+      break;
+      case 5:
+        vpTRACE("Warning !!!  The interaction matrix is computed but A was not set yet");
+      break;
+      case 6:
+        vpTRACE("Warning !!!  The interaction matrix is computed but B was not set yet");
+      break;
+      case 7:
+        vpTRACE("Warning !!!  The interaction matrix is computed but C was not set yet");
+      break;
+      default:
+        vpTRACE("Problem during the reading of the variable flags");
+      }
+    }
+  }
 
   double xc = s[0] ;
   double yc = s[1] ;
@@ -288,6 +326,8 @@ vpFeatureEllipse::buildFrom(const double x, const double y,
   s[3] = mu11 ;
   s[4] = mu02 ;
 
+  for( int i = 0; i < 5; i++) flags[i] = true;
+
 }
 
 void
@@ -306,18 +346,22 @@ vpFeatureEllipse::buildFrom(const double x, const double y,
   this->A = A ;
   this->B = B ;
   this->C = C ;
+
+  for( int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 void
 vpFeatureEllipse::set_x(const double x)
 {
   s[0] = x ;
+  flags[0] = true;
 }
 
 void
 vpFeatureEllipse::set_y(const double y)
 {
   s[1] = y ;
+  flags[1] = true;
 }
 
 void
@@ -325,6 +369,7 @@ vpFeatureEllipse::set_xy(const double x,const double y)
 {
   s[0] = x ;
   s[1] = y ;
+  for( int i = 0; i < 2; i++) flags[i] = true;
 }
 
 void
@@ -333,6 +378,7 @@ vpFeatureEllipse::setABC(const double A, const double B, const double C)
   this->A = A ;
   this->B = B ;
   this->C = C ;
+  for( int i = 5; i < nbParameters; i++) flags[i] = true;
 }
 
 
@@ -344,6 +390,7 @@ vpFeatureEllipse::setMu(const double mu20, const double mu11,
   s[2] = mu20 ;
   s[3] = mu11 ;
   s[4] = mu02 ;
+  for( int i = 2; i < 5; i++) flags[i] = true;
 
 }
 

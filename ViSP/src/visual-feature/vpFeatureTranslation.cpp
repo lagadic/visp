@@ -72,9 +72,12 @@ vpFeatureTranslation::init()
 {
   //feature dimension
   dim_s = 3 ;
+  nbParameters = 1;
 
   // memory allocation
   s.resize(dim_s) ;
+  flags = new bool[nbParameters];
+  for (int i = 0; i < nbParameters; i++) flags[i] = false;
 
 }
 
@@ -122,6 +125,8 @@ vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &cdMc)
   s[0] = cdMc[0][3] ;
   s[1] = cdMc[1][3] ;
   s[2] = cdMc[2][3] ;
+
+  flags[0] = true;
 }
 
 /*!
@@ -267,6 +272,20 @@ vpFeatureTranslation::interaction(const int select) const
 
   vpMatrix L ;
   L.resize(0,6) ;
+
+  for (int i = 0; i < nbParameters; i++)
+  {
+    if (flags[i] == false)
+    {
+      switch(i){
+      case 0:
+        vpTRACE("Warning !!!  The interaction matrix is computed but cdMc was not set yet");
+      break;
+      default:
+        vpTRACE("Problem during the reading of the variable flags");
+      }
+    }
+  }
 
   //This version is a simplification
   if (vpFeatureTranslation::selectTx() & select )

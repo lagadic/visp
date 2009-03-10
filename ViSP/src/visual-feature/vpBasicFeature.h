@@ -89,6 +89,10 @@ class VISP_EXPORT vpBasicFeature
   //! dimension of the visual feature
   int dim_s ;
   //int featureLine[8] ;
+  //! ensure that all the parameters needed to compute the iteraction matrix are set.
+  bool *flags;
+  //!number of parmeters needed to compute the iteraction matrix.
+  int nbParameters;
 
  public:
   int dimension_s() { return dim_s ; }
