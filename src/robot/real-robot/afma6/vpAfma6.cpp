@@ -123,7 +123,7 @@ vpAfma6::vpAfma6()
   //               vpCameraParameters::vpCameraParametersProjType projModel)
   // Maximal value of the joints
   this->_joint_max[0] = 0.7001;
-  this->_joint_max[1] = 0.6301;
+  this->_joint_max[1] = 0.5801;
   this->_joint_max[2] = 0.4601;
   this->_joint_max[3] = 2.7301;
   this->_joint_max[4] = 2.4801;
