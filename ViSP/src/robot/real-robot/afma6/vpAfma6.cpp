@@ -73,16 +73,16 @@ const char * const vpAfma6::CONST_AFMA6_FILENAME
 
 const char * const vpAfma6::CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME
 #ifdef WIN32
-= "Z:/robot/Afma6/current/include/const_eMc_Dragonfly2_without_distortion_Afma6.cnf";
+= "Z:/robot/Afma6/current/include/const_eMc_ccmop_without_distortion_Afma6.cnf";
 #else
-= "/udd/fspindle/robot/Afma6/current/include/const_eMc_Dragonfly2_without_distortion_Afma6.cnf";
+= "/udd/fspindle/robot/Afma6/current/include/const_eMc_ccmop_without_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME
 #ifdef WIN32 
-= "Z:/robot/Afma6/current/include/const_eMc_Dragonfly2_with_distortion_Afma6.cnf";
+= "Z:/robot/Afma6/current/include/const_eMc_ccmop_with_distortion_Afma6.cnf";
 #else
-= "/udd/fspindle/robot/Afma6/current/include/const_eMc_Dragonfly2_with_distortion_Afma6.cnf";
+= "/udd/fspindle/robot/Afma6/current/include/const_eMc_ccmop_with_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_CAMERA_AFMA6_FILENAME
@@ -94,7 +94,7 @@ const char * const vpAfma6::CONST_CAMERA_AFMA6_FILENAME
 
 #endif // VISP_HAVE_ACCESS_TO_NAS
 
-const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2-8mm";
+const char * const vpAfma6::CONST_LABEL_DRAGONFLY2 = "Dragonfly2-8mm-ccmop";
 
 const vpAfma6::vpAfma6CameraRobotType vpAfma6::defaultCameraRobot = CAMERA_DRAGONFLY2_8MM;
 
