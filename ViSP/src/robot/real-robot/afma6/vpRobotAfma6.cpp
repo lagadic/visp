@@ -1254,69 +1254,65 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
 			      "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
     }
 
+  vpColVector vel_sat(6);
 
-  vpDEBUG_TRACE (12, "Velocity limitation.");
-  bool norm = false; // Flag to indicate when velocities need to be nomalized
-  double max = getMaxTranslationVelocity();
+  double scale_trans_sat = 1;
+  double scale_rot_sat   = 1;
+  double scale_sat       = 1;
+  double vel_trans_max = getMaxTranslationVelocity();
+  double vel_rot_max   = getMaxRotationVelocity(); 
 
-  double velocity[6]
-    ;
+  double vel_abs; // Absolute value
+
   for (int i = 0 ; i < 3; ++ i) {
-    if (fabs (vel[i]) > max) {
-      norm = true;
-      max = fabs (vel[i]);
-      vpERROR_TRACE ("Excess velocity %g: TRANSLATION "
-		     "(axe nr.%d).", vel[i], i);
+    vel_abs = fabs (vel[i]);
+    if (vel_abs > vel_trans_max) {
+      vel_trans_max = vel_abs;
+      vpERROR_TRACE ("Excess velocity %g m/s in TRANSLATION "
+		     "(axis nr. %d).", vel[i], i+1);
+    }
+
+    vel_abs = fabs (vel[i+3]);
+    if (vel_abs > vel_rot_max) {
+      vel_rot_max = vel_abs;
+      vpERROR_TRACE ("Excess velocity %g rad/s in ROTATION "
+		     "(axis nr. %d).", vel[i+3], i+4);
     }
   }
 
-  // Translations velocities normalisation
-  if (norm == true)  {
-    max =  getMaxTranslationVelocity() / max;
-    for (int i = 0 ; i < 6; ++ i) {
-      velocity [i] = vel[i]*max; }
-  }
-  else {
-    for (int i = 0 ; i < 6; ++ i) {
-      velocity [i] = vel[i];
-    }
+  if (vel_trans_max > getMaxTranslationVelocity())                     
+    scale_trans_sat = getMaxTranslationVelocity() / vel_trans_max;
+  
+  if (vel_rot_max > getMaxRotationVelocity())
+    scale_rot_sat = getMaxRotationVelocity() / vel_rot_max; 
+ 
+  if ( (scale_trans_sat < 1) || (scale_rot_sat < 1) ) {
+    if (scale_trans_sat < scale_rot_sat)  
+      scale_sat = scale_trans_sat;                    
+    else                        
+      scale_sat = scale_rot_sat;
   }
 
-  max = getMaxRotationVelocity();
-  for (int i = 3 ; i < 6; ++ i) {
-    if (fabs (vel[i]) > max) {
-      norm = true;
-      max = fabs (vel[i]);
-      vpERROR_TRACE ("Excess velocity %g: ROTATION "
-		     "(axe nr.%d).", vel[i], i);
-    }
-  }
-  // Rotations velocities normalisation
-  if (norm == true) {
-    max = getMaxRotationVelocity() / max;
-    for (int i = 3 ; i < 6; ++ i) {
-      velocity [i] = vel[i]*max;
-    }
-  }
+  vel_sat = vel * scale_sat;
 
   InitTry;
 
   switch(frame) {
   case vpRobot::CAMERA_FRAME : {
-    Try( PrimitiveMOVESPEED_CART_Afma6(velocity, REPCAM) );
+    Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPCAM) );
     break ;
   }
   case vpRobot::ARTICULAR_FRAME : {
-    //Try( PrimitiveMOVESPEED_CART(velocity, REPART) );
-    Try( PrimitiveMOVESPEED_Afma6(velocity) );
+    //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART) );
+    Try( PrimitiveMOVESPEED_Afma6(vel_sat.data) );
     break ;
   }
   case vpRobot::REFERENCE_FRAME : {
-    Try( PrimitiveMOVESPEED_CART_Afma6(velocity, REPFIX) );
+    Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPFIX) );
     break ;
   }
   case vpRobot::MIXT_FRAME : {
-    Try( PrimitiveMOVESPEED_CART_Afma6(velocity, REPMIX) );
+    Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPMIX) );
     break ;
   }
   default: {
