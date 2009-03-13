@@ -242,7 +242,7 @@ vpRobotAfma6::init (void)
   Try( PrimitiveRESET_Afma6() );
 
   // Update the eMc matrix in the low level controller
-  init(vpAfma6::defaultCameraRobot);
+  init(vpAfma6::defaultTool);
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
@@ -333,7 +333,7 @@ vpRobotAfma6::init (void)
   \sa vpCameraParameters, init()
 */
 void
-vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
+vpRobotAfma6::init (vpAfma6::vpAfma6ToolType tool,
                     vpCameraParameters::vpCameraParametersProjType projModel)
 {
 
@@ -341,7 +341,7 @@ vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
   // Read the robot constants from files
   // - joint [min,max], coupl_56, long_56
   // - camera extrinsic parameters relative to eMc
-  vpAfma6::init(camera, projModel);
+  vpAfma6::init(tool, projModel);
 
   // Set the robot constant (coupl_56, long_56) in the MotionBlox
   Try( PrimitiveROBOT_CONST_Afma6(_coupl_56, _long_56) );
@@ -361,7 +361,7 @@ vpRobotAfma6::init (vpAfma6::vpAfma6CameraRobotType camera,
 //     printf("axis %d: joint min %lf, max %lf\n", i, _joint_min[i], _joint_max[i]);
 //   }
 
-  setCameraRobotType(camera);
+  setToolType(tool);
 
   CatchPrint();
   return ;

@@ -66,17 +66,33 @@ int main()
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
-    std::cout << "-- Settings associated to camera Dragonfly2 without distortion ---" 
+    std::cout << "-- Settings associated to the CCMOP tool without distortion ---" 
 	      << std::endl;
-    afma6.init( vpAfma6::CAMERA_DRAGONFLY2_8MM);
+    afma6.init( vpAfma6::TOOL_CCMOP);
 
     std::cout << afma6 << std::endl;
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
-    std::cout << "-- Settings associated to camera Dragonfly2 with distortion ------" 
+    std::cout << "-- Settings associated to the CCMOP tool with distortion ------" 
 	      << std::endl;
-    afma6.init( vpAfma6::CAMERA_DRAGONFLY2_8MM,
+    afma6.init( vpAfma6::TOOL_CCMOP,
+		vpCameraParameters::perspectiveProjWithDistortion);
+    std::cout << afma6 << std::endl;
+    afma6.getCameraParameters(cam, 640, 480);
+    std::cout << cam << std::endl;
+
+    std::cout << "-- Settings associated to the gripper tool without distortion ---" 
+	      << std::endl;
+    afma6.init( vpAfma6::TOOL_GRIPPER);
+
+    std::cout << afma6 << std::endl;
+    afma6.getCameraParameters(cam, 640, 480);
+    std::cout << cam << std::endl;
+
+    std::cout << "-- Settings associated to the gripper tool with distortion ------" 
+	      << std::endl;
+    afma6.init( vpAfma6::TOOL_GRIPPER,
 		vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << afma6 << std::endl;
     afma6.getCameraParameters(cam, 640, 480);

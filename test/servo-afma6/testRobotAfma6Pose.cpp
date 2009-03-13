@@ -126,7 +126,7 @@ int main()
 
   // Load the end-effector to camera frame transformation obtained
   // using a camera intrinsic model with distortion
-  robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM,
+  robot.init(vpAfma6::TOOL_CCMOP,
 	     vpCameraParameters::perspectiveProjWithDistortion);
 
   // Get the intrinsic camera parameters associated to the image

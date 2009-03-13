@@ -251,7 +251,7 @@ public:  /* Methode publiques */
   virtual ~vpRobotAfma6 (void);
 
   void init (void);
-  void init (vpAfma6::vpAfma6CameraRobotType camera,
+  void init (vpAfma6::vpAfma6ToolType tool,
              vpCameraParameters::vpCameraParametersProjType
 	     projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
