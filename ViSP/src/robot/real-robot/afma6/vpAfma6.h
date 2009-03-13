@@ -72,21 +72,31 @@ class VISP_EXPORT vpAfma6
   //! stored: joint max, min, coupling factor between 4 ant 5 joint,
   //! distance between 5 and 6 joint.
   static const char * const CONST_AFMA6_FILENAME;
-  static const char * const CONST_EMC_DRAGONFLY2_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_DRAGONFLY2_WITH_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME;
   static const char * const CONST_CAMERA_AFMA6_FILENAME;
 #endif
-  //! Name of the firewire Dragonfly2 camera
-  static const char * const CONST_LABEL_DRAGONFLY2 ;
+  /*!
+    Name of the camera attached to the CCMOP tool (vpAfma6ToolType::TOOL_CCMOP).
+  */
+  static const char * const CONST_CCMOP_CAMERA_NAME;
+  /*!
+    Name of the camera attached to the gripper tool
+    (vpAfma6ToolType::TOOL_GRIPPER).
+  */
+  static const char * const CONST_GRIPPER_CAMERA_NAME;
 
   //! List of cameras intalled on the end-effector
   typedef enum
     {
-      CAMERA_DRAGONFLY2_8MM,
-    } vpAfma6CameraRobotType;
+      TOOL_CCMOP,  /*!< Pneumatic CCMOP gripper. */
+      TOOL_GRIPPER /*!< Pneumatic gripper with 2 fingers. */
+    } vpAfma6ToolType;
 
   //! Default camera
-  static const vpAfma6CameraRobotType defaultCameraRobot;
+  static const vpAfma6ToolType defaultTool;
 
  public:
   vpAfma6();
@@ -95,7 +105,7 @@ class VISP_EXPORT vpAfma6
 #ifdef VISP_HAVE_ACCESS_TO_NAS
   void init (const char * paramAfma6, const char * paramCamera);
 #endif
-  void init (vpAfma6::vpAfma6CameraRobotType camera,
+  void init (vpAfma6::vpAfma6ToolType tool,
 	     vpCameraParameters::vpCameraParametersProjType projModel =
 	     vpCameraParameters::perspectiveProjWithoutDistortion);
 
@@ -116,12 +126,12 @@ class VISP_EXPORT vpAfma6
 #endif
 
   //! Get the current used camera
-  vpAfma6CameraRobotType getCameraRobotType(){
-    return camera_current;
+  vpAfma6ToolType getToolType(){
+    return tool_current;
   };
   //! Set the current used camera
-  void setCameraRobotType(vpAfma6::vpAfma6CameraRobotType camera){
-    camera_current = camera;
+  void setToolType(vpAfma6::vpAfma6ToolType tool){
+    tool_current = tool;
   };
 
   void getCameraParameters(vpCameraParameters &cam,
@@ -156,8 +166,8 @@ class VISP_EXPORT vpAfma6
   vpHomogeneousMatrix _eMc; // Camera extrinsic parameters: effector to camera
 
 protected:
-  //! Current camera in use
-  vpAfma6CameraRobotType camera_current;
+  //! Current tool in use
+  vpAfma6ToolType tool_current;
   // Used projection model
   vpCameraParameters::vpCameraParametersProjType projModel;
 
