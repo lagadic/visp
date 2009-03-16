@@ -125,13 +125,13 @@ class VISP_EXPORT vpAfma6
   void parseConfigFile (const char * filename);
 #endif
 
-  //! Get the current used camera
-  vpAfma6ToolType getToolType(){
+  //! Get the current tool type
+  vpAfma6::vpAfma6ToolType getToolType(){
     return tool_current;
   };
-  //! Set the current used camera
-  void setToolType(vpAfma6::vpAfma6ToolType tool){
-    tool_current = tool;
+  //! Get the current camera model projection type
+  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType(){
+    return projModel;
   };
 
   void getCameraParameters(vpCameraParameters &cam,
@@ -149,6 +149,12 @@ class VISP_EXPORT vpAfma6
   double getCoupl56();
   double getLong56();
 
+ protected:
+  //! Set the current tool type
+  void setToolType(vpAfma6::vpAfma6ToolType tool){
+    tool_current = tool;
+  };
+
  public:
 
   static const int njoint; ///< Number of joint.
@@ -165,7 +171,7 @@ class VISP_EXPORT vpAfma6
 
   vpHomogeneousMatrix _eMc; // Camera extrinsic parameters: effector to camera
 
-protected:
+ protected:
   //! Current tool in use
   vpAfma6ToolType tool_current;
   // Used projection model
