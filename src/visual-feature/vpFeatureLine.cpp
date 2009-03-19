@@ -407,7 +407,7 @@ vpFeatureLine::print(const int select ) const
 /*!
 
   Build a 2D line visual feature from the line equation parameters \f$
-  \rho \f$ and \f$ \theta \f$ given in the image frame.
+  \rho \f$ and \f$ \theta \f$ given in the image plan.
 
   \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f]
 
@@ -430,7 +430,7 @@ vpFeatureLine::buildFrom(const double rho, const double theta)
 /*!
 
   Build a 2D line visual feature from the line equation parameters \f$
-  \rho \f$ and \f$ \theta \f$ given in the camera frame. The
+  \rho \f$ and \f$ \theta \f$ given in the image plan. The
   parameters A, B, C and D which describe the equation of a plan to
   which the line belongs, are set in the same time.
 

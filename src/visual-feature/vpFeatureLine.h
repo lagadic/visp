@@ -61,7 +61,7 @@
   composed by two parameters that are \f$ \rho \f$ and \f$ \theta \f$,
   the polar coordinates of a line.
 
-  In this class, the equation line in the camera frame is given by :
+  In this class, the equation line in the image plan is given by :
   \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f] Here
   \f$ x \f$ and \f$ y \f$ are the coordinates of a point belonging to
   the line and they are given in meter. The following image shows the
@@ -87,7 +87,7 @@
 
   The code below shows how to create a eye-in hand visual servoing
   task using a 2D line feature \f$(\rho,\theta)\f$ that correspond to
-  the 2D equation of a line in the camera frame. To control six
+  the 2D equation of a line in the image plan. To control six
   degrees of freedom, at least four other features must be considered
   like two other line features for example. First we create a current
   (\f$s\f$) 2D line feature. Then we set the task to use the
