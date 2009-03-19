@@ -124,7 +124,7 @@ vpFeaturePoint::get_Z() const
 /*!  
 
   Set the value of \f$ x \f$ which represents the x coordinate of the point
-  in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+  in image plan. It is one parameter of the visual feature \f$ s \f$.
 
   \param x : \f$ x \f$ value to set.
 */
@@ -137,7 +137,7 @@ vpFeaturePoint::set_x(const double x)
 
 
 /*!
-  Get the value of \f$ x \f$ which represents the x coordinate of the point in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+  Get the value of \f$ x \f$ which represents the x coordinate of the point in the image plan. It is one parameter of the visual feature \f$ s \f$.
 
   \return The value of \f$ x \f$.
 */
@@ -149,7 +149,7 @@ vpFeaturePoint::get_x() const
 
 
 /*!
-  Set the value of \f$ y \f$ which represents the x coordinate of the point in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+  Set the value of \f$ y \f$ which represents the x coordinate of the point in the image plan. It is one parameter of the visual feature \f$ s \f$.
 
   \param y : \f$ y \f$ value to set.
 */
@@ -162,7 +162,7 @@ vpFeaturePoint::set_y(const double y)
 
 
 /*!
-  Get the value of \f$ y \f$ which represents the x coordinate of the point in the camera frame. It is one parameter of the visual feature \f$ s \f$.
+  Get the value of \f$ y \f$ which represents the x coordinate of the point in the image plan. It is one parameter of the visual feature \f$ s \f$.
 
   \return The value of \f$ y \f$.
 */
@@ -176,8 +176,8 @@ vpFeaturePoint::get_y() const
 /*!
 
   Set the value of \f$ x \f$, \f$ y \f$ and \f$ Z \f$. \f$ x \f$ and \f$ y \f$
-  represent the coordinates of the point in the camera frame and are the
-  parameters of the visual feature \f$ s \f$. \f$ Z \f$ is the 3D coordinate
+  represent the coordinates of the point in the image plan and are the
+  parameters of the visual feature \f$ s \f$. \f$ Z \f$ is the 3D coordinate in the camera frame
   representing the depth.
 
   \param x : \f$ x \f$ value to set.
@@ -422,7 +422,7 @@ vpFeaturePoint::print(const int select ) const
 
 
 /*!
-  Build a 2D point visual feature from the point coordinates \f$ x \f$ and \f$ y \f$ given in the camera frame. The parameter Z which describes the depth, is set in the same time.
+  Build a 2D point visual feature from the point coordinates in the image plan \f$ x \f$ and \f$ y \f$. The parameter Z which describes the depth, is set in the same time.
 
   See the vpFeaturePoint class description for more details about \f$ x \f$ and \f$ y \f$.
 

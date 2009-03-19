@@ -62,7 +62,7 @@
   x \f$ and \f$ y \f$.
 
   In this class \f$ x \f$ and \f$ y \f$ are the 2D coordinates in the
-  camera frame and are given in meter. \f$ Z \f$ which is the 3D
+  image plan and are given in meter. \f$ Z \f$ which is the 3D
   coordinate representing the depth is also a parameter of the
   point. It is needed during the computation of the interaction matrix
   \f$ L \f$.
@@ -79,7 +79,7 @@
 
   The code below shows how to create a eye-in hand visual servoing
   task using a 2D point feature \f$(x,y)\f$ that correspond to the 2D
-  coordinates of a point in the camera frame. To control six degrees
+  coordinates of a point in image plan. To control six degrees
   of freedom, at least four other features must be considered like two
   other point features for example. First we create a current
   (\f$s\f$) 2D point feature. Then we set the task to use the
