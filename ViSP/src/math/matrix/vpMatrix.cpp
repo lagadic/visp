@@ -724,6 +724,12 @@ vpMatrix::operator*(const vpTranslationVector &b) const
 {
   vpTranslationVector c;
 
+  if (rowNum != 3 || colNum != 3)
+  {
+    vpERROR_TRACE("vpMatrix mismatch in vpMatrix::operator*(const vpTranslationVector)") ;
+    throw(vpMatrixException::incorrectMatrixSizeError) ;
+  }
+
   for (int j=0;j<3;j++) c[j]=0 ;
 
   for (int j=0;j<3;j++) {
@@ -817,6 +823,8 @@ vpMatrix  vpMatrix::operator/(double x) const
     throw ;
   }
 
+  if (x == 0)
+    throw vpMatrixException(vpMatrixException::divideByZeroError, "Divide by zero in method /(double x)");
 
   double  xinv = 1/x ;
 
@@ -873,6 +881,8 @@ vpMatrix & vpMatrix::operator*=(double x)
 //! Divide  all the element of the matrix by x : Aij = Aij / x
 vpMatrix & vpMatrix::operator/=(double x)
 {
+  if (x == 0)
+    throw vpMatrixException(vpMatrixException::divideByZeroError, "Divide by zero in method /=(double x)");
 
   double xinv = 1/x ;
   for (int i=0;i<dsize;i++)
@@ -2589,56 +2599,6 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector)
 
 
 /*!
-  Compute the determinant of a n-by-n matrix.
-
-  \return Determinant of the matrix.
-  \deprecated Use det(GAUSSIAN_ELIMINATION) instead.
-*/
-double vpMatrix::detNN() const
-{
- if ((getCols() != getRows())) // no determinant for nonsquare matrix
-   {
-   vpTRACE("matrix is not square ") ;
-     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-                   "\n\t\tmatrix is not square"
-                   )) ;
-   }
-
- else if (getCols() == 3 ) //handle 3x3 matrix ....
-   {
-   double detint ;
-   detint =0.0;
-   detint =          (*this)[0][0]*(*this)[1][1]*(*this)[2][2] ;
-   detint = detint + (*this)[1][0]*(*this)[2][1]*(*this)[0][2] ;
-   detint = detint + (*this)[2][0]*(*this)[0][1]*(*this)[1][2] ;
-   detint = detint - (*this)[0][0]*(*this)[2][1]*(*this)[1][2] ;
-   detint = detint - (*this)[1][0]*(*this)[0][1]*(*this)[2][2] ;
-   detint = detint - (*this)[2][0]*(*this)[1][1]*(*this)[0][2] ;
-   return(detint);
-   }
-
- else if (getCols() > 3 )// handle n x n matrix....n>3
-   {
-   double detint ;
-   detint =0.0;
-   // we will use the first row to compute the determinent of the matrix
-   for ( int i = 0; i < getCols(); i++)
-       {
-       detint = detint + pow(-1.0,i) * (*this)[0][i] * (subblock( (*this),0,i)).detNN(  );
-       }
-       return(detint);
-   }
-
- else if (getCols() == 2 )// if in the begining the matrix was in dimension 2x2
-   return( (*this)[0][0]*(*this)[1][1]-(*this)[1][0]*(*this)[0][1]);
-
- else
-   return( (*this)[0][0]);
-}
-
-
-
-/*!
   Function to compute the null space (the kernel) of the interaction matrix A which is not full rank.
   The null space ( the kernel ) of a matrix A is defined as Null(A) = Ker(M) ={KerA : A*KerA =0}.
 
@@ -2849,11 +2809,6 @@ double vpMatrix::det(vpDetMethod method) const
     {
       det = this->detByLU();
     }
-
-  if ( method == GAUSSIAN_ELIMINATION )
-  {
-    det = this->detNN();
-  }
 
   return (det);
 }

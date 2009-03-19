@@ -101,7 +101,6 @@ class VISP_EXPORT vpMatrix
   */
   typedef enum {
     LU_DECOMPOSITION,     /*!< LU decomposition method. */
-    GAUSSIAN_ELIMINATION  /*!< Gaussian elimination method. */
   } vpDetMethod;
 
 
@@ -401,7 +400,6 @@ public:
 
   /** @name Deprecated functions */
   //@{
-  double detNN(/*const vpMatrix &M*/) const;
   //! compute the determinant using the LU Decomposition (usage  double det =A.det();)
   double detByLU() const;
   static double det33(const vpMatrix &P) ;
