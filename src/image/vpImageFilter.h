@@ -55,6 +55,7 @@
 #include <visp/vpImageException.h>
 #include <visp/vpImage.h>
 #include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
 
 /*!
   \class vpImageFilter
@@ -77,6 +78,27 @@ public:
   static void filter(const vpImage<unsigned char> &I,
 		     vpImage<double>& If,
 		     const vpMatrix& M) ;
+
+  static double gaussianFilter(vpImage<unsigned char> &I, 
+			       const int r, 
+			       const int c) ;
+
+  static double  derivativeFilterX(vpImage<unsigned char> &I,
+				   const int r, int c) ;
+
+  static double  derivativeFilterY(vpImage<unsigned char> &I,
+				   const int r, int c) ;
+
+  static void  coefficientGaussianDerivative(double *fg, const int t) ;
+
+
+  static double derivativeFilterX(vpImage<unsigned char> &I, 
+			   const int r, const int c, 
+			   double *filter,   const int size)  ;
+  
+  static double  derivativeFilterY(vpImage<unsigned char> &I, 
+				   const int r, const int c, 
+				   double *filter, const int size) ;
 } ;
 
 
