@@ -121,3 +121,153 @@ vpImageFilter::filter(const vpImage<double> &I,
 
 }
 
+
+/*!
+ Apply a 5x5 Gaussian filter to an image pixel.
+ 
+ \param fr : Image to filter
+ \param r : coordinates (row) of the pixel
+ \param c : coordinates (column) of the pixel
+ */
+
+double 
+vpImageFilter::gaussianFilter(vpImage<unsigned char> & fr, 
+															const int r, const int c)
+{
+  //filter Gaussien
+  return ( 
+					15.0 * fr[r][c] 
+					+ 12.0 * ( fr[r-1][c]  + fr[r][c-1]  + fr[r+1][c]   + fr[r][c+1]   ) 
+					+ 9.0  * ( fr[r-1][c-1] + fr[r+1][c-1] + fr[r-1][c+1] + fr[r+1][c+1]) 
+					+ 5.0  * ( fr[r-2][c]   + fr[r][c-2]   + fr[r+2][c]   + fr[r][c+2] )
+					+ 4.0  * ( fr[r-2][c+1] + fr[r-2][c-1] + fr[r-1][c-2] + fr[r+1][c-2] +
+										fr[r+2][c-1] + fr[r+2][c+1] + fr[r-1][c+2] + fr[r+1][c+2] ) 
+					+ 2.0  * ( fr[r-2][c-2] + fr[r+2][c-2] + fr[r-2][c+2] + fr[r+2][c+2] )
+					)
+	/159.0;
+}
+
+
+
+/*!
+ Apply a 1x3 Derivative Filter to an image pixel.
+ 
+ \param fr : Image to filter
+ \param r: coordinates (row) of the pixel
+ \param c : coordinates (column) of the pixel
+ */
+
+double 
+vpImageFilter::derivativeFilterX(vpImage<unsigned char> & fr, const int r, const int c)
+{
+	return (2047.0 *(fr[r][c+1] - fr[r][c-1])
+					+913.0 *(fr[r][c+2] - fr[r][c-2])
+					+112.0 *(fr[r][c+3] - fr[r][c-3]))/8418.0;
+}
+
+/*!
+ Apply a 3x1 Derivative Filter to an image pixel.
+ 
+ \param fr : Image to filter
+ \param r : coordinates (row) of the pixel
+ \param c : coordinates (column) of the pixel
+ */
+
+double 
+vpImageFilter::derivativeFilterY(vpImage<unsigned char> & fr, const int r, const int c)
+{
+	return (2047.0 *(fr[r+1][c] - fr[r-1][c])
+					+913.0 *(fr[r+2][c] - fr[r-2][c])
+					+112.0 *(fr[r+3][c] - fr[r-3][c]))/8418.0;
+}
+
+/*!
+ build a Gaussian Derivative filter 
+ 
+	\param filter : array (of size t/2) that contains the filter 
+	\param t : size of the filter
+ 
+ \warning filter has to be deallocated
+ */
+
+void 
+vpImageFilter::coefficientGaussianDerivative(double *filter, const int t)
+{ 
+  int i;
+  //  double sigma;
+	if (filter == NULL)
+		filter = new double[t/2] ;
+	
+  double s2 = vpMath::sqr((t-1)/6.0);
+	
+  for(i=1; i<=(t-1)/2; i++)
+  {
+    filter[i] = (i/(s2*sqrt(2*M_PI)))*exp(-(i*i)/(2*s2));
+		
+  }
+	
+}
+
+
+/*!
+ Apply a 1 x size Derivative Filter in X to an image pixel.
+ 
+ \param I : Image to filter
+ \param r : coordinates (row) of the pixel
+ \param c : coordinates (column) of the pixel
+ \param filter : coefficients of the filter
+ (to be initialized using vpImageFilter::coefficientGaussianDerivative)
+ \param size : size of the filter
+ 
+ \sa vpImageFilter::coefficientGaussianDerivative
+ */
+
+double 
+vpImageFilter::derivativeFilterX(vpImage<unsigned char> &I, 
+							 const int r, const int c, 
+							 double *filter, const int size)
+{
+	int i;
+	double result;
+	
+	result = 0;
+	
+	for(i=1; i<=(size-1)/2; i++)
+	{
+		result += filter[i]*(I[r][c+i] - I[r][c-i]) ;
+	}
+	return result;
+}
+
+
+
+/*!
+ Apply a size x 1 Derivative Filter in Y to an image pixel.
+ 
+ \param I : Image to filter
+ \param r : coordinates (row) of the pixel
+ \param c : coordinates (column) of the pixel
+ \param filter : coefficients of the filter
+   (to be initialized using vpImageFilter::coefficientGaussianDerivative)
+ \param size : size of the filter
+ 
+\sa vpImageFilter::coefficientGaussianDerivative
+ */
+
+double  
+vpImageFilter::derivativeFilterY(vpImage<unsigned char> &I, 
+							 const int r, const int c, 
+							 double *filter, const int size)
+{
+	int i;
+	double result;
+	
+	result = 0;
+	
+	for(i=1; i<=(size-1)/2; i++)
+	{
+		result += filter[i]*(I[r+i][c] - I[r-i][c]) ;
+	}
+	return result;
+}
+
