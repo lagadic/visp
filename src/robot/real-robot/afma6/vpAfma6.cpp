@@ -202,7 +202,7 @@ vpAfma6::init (const char * paramAfma6,
   camera extrinsic parameters. These last parameters depend on the
   camera and projection model in use.
 
-  \param camera : Camera in use.
+  \param tool : Camera in use.
 
   \param projModel : Projection model of the camera.
 

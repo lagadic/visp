@@ -305,7 +305,7 @@ vpRobotAfma6::init (void)
 
   The eMc parameters depend on the camera and the projection model in use.
 
-  \param camera : Camera to use.
+  \param tool : Tool to use.
 
   \param projModel : Projection model associated to the camera.
 
