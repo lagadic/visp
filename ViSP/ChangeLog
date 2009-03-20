@@ -7,6 +7,7 @@ ViSP 2.4.3 (released ??, 2009)
     - [7308] Rotation vector not initialized to zero by the default constructor
     - [7309] visp-config --cflags produces a bad output
     - [7342] Bug in vpRobotAfma6::setVelocity(vpRobot::CAMERA_FRAME, v)
+    - [7494] Division by 0 in vpHomography
 ----------------------------------------------	
 ViSP 2.4.3-rc2 (released January 29, 2009)
   - Deprecated
