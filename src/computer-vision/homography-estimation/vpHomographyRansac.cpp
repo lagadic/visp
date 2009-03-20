@@ -218,7 +218,7 @@ vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
       pa[i][2] = 1;
     }
 
-  vpMatrix aHb(3,3) ; aHb /= aHb[2][2] ;
+  vpMatrix aHb(3,3) ; //aHb /= aHb[2][2] ;
 
   for (i=0 ; i <9 ; i++)
     {

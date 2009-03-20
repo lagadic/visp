@@ -39,7 +39,7 @@
 
 /*!
   \file vpHomography.cpp
-  \brief Définition de la classe vpHomography. Class that consider
+  \brief Dï¿½finition de la classe vpHomography. Class that consider
   the particular case of homography
 */
 
@@ -207,7 +207,7 @@ void
 vpHomography::insert(const vpRotationMatrix &aRb)
 {
   aMb.insert(aRb) ;
-  build() ;
+  //build() ;
 }
 /*!
   \brief insert the rotational component and
@@ -218,7 +218,7 @@ vpHomography::insert(const vpHomogeneousMatrix &_aMb)
 {
 
   aMb = _aMb ;
-  build() ;
+  //build() ;
 }
 
 
@@ -232,7 +232,7 @@ vpHomography::insert(const vpThetaUVector &tu)
 {
   vpRotationMatrix aRb(tu) ;
   aMb.insert(aRb) ;
-  build() ;
+  //build() ;
 }
 
 
@@ -244,7 +244,7 @@ void
 vpHomography::insert(const vpTranslationVector &atb)
 {
   aMb.insert(atb) ;
-  build() ;
+  //build() ;
 }
 
 /*!
@@ -256,7 +256,7 @@ vpHomography::insert(const vpPlane &_bP)
 {
 
   bP= _bP ;
-  build() ;
+  //build() ;
 }
 
 
