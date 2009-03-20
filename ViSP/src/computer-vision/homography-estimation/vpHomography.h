@@ -187,6 +187,17 @@ public:
 private:
   virtual void resize(int , int ) { ; }
 
+  //! insert a rotation matrix
+  void insert(const vpHomogeneousMatrix &aRb) ;
+  //! insert a rotation matrix
+  void insert(const vpRotationMatrix &aRb) ;
+  //! insert a theta u vector (transformation into a rotation matrix)
+  void insert(const vpThetaUVector &tu) ;
+  //! insert a translation vector
+  void insert(const vpTranslationVector &atb) ;
+  //! insert a translation vector
+  void insert(const vpPlane &bP) ;
+
 public:
 
   //! copy constructor
@@ -220,17 +231,6 @@ public:
   //! Construction from homogeneous matrix and a plane
   void buildFrom(const vpHomogeneousMatrix &aMb,
 		 const vpPlane &bP) ;
-
-  //! insert a rotation matrix
-  void insert(const vpHomogeneousMatrix &aRb) ;
-  //! insert a rotation matrix
-  void insert(const vpRotationMatrix &aRb) ;
-  //! insert a theta u vector (transformation into a rotation matrix)
-  void insert(const vpThetaUVector &tu) ;
-  //! insert a translation vector
-  void insert(const vpTranslationVector &atb) ;
-  //! insert a translation vector
-  void insert(const vpPlane &bP) ;
 
   //! Load an homography from a file
   void load(std::ifstream &f) ;
