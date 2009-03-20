@@ -129,7 +129,7 @@ vpLine::setWorldCoordinates(const double &A1, const double &B1,
 void
 vpLine::setWorldCoordinates(const vpColVector &oP)
 {
-  if (oP.getCols() != 8)
+  if (oP.getRows() != 8)
     throw vpException(vpException::dimensionError, "Size of oP is not equal to 8 as it should be");
 
   this->oP = oP ;
@@ -160,10 +160,10 @@ void
 vpLine::setWorldCoordinates(const vpColVector &oP1,
 			    const vpColVector &oP2)
 {
-    if (oP1.getCols() != 4)
+    if (oP1.getRows() != 4)
       throw vpException(vpException::dimensionError, "Size of oP1 is not equal to 4 as it should be");
 
-    if (oP2.getCols() != 4)
+    if (oP2.getRows() != 4)
       throw vpException(vpException::dimensionError, "Size of oP2 is not equal to 4 as it should be");
 
   for (int i=0 ; i < 4 ; i++)
@@ -227,7 +227,7 @@ vpLine::projection(const vpColVector &cP, vpColVector &p)
 {
  //projection
 
-  if (cP.getCols() != 8)
+  if (cP.getRows() != 8)
     throw vpException(vpException::dimensionError, "Size of cP is not equal to 8 as it should be");
 
   double A1, A2, B1, B2, C1, C2, D1, D2;
@@ -254,7 +254,7 @@ vpLine::projection(const vpColVector &cP, vpColVector &p)
   //while (theta > M_PI/2) { theta -= M_PI ; rho *= -1 ; }
   //while (theta < -M_PI/2) { theta += M_PI ; rho *= -1 ; }
 
-  if (p.getCols() != 2)
+  if (p.getRows() != 2)
     p.resize(2);
 
   p[0] = rho ;
@@ -452,7 +452,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
     // Cas degenere D1 = D2 = 0
   }
 
-  if (cP.getCols() != 8)
+  if (cP.getRows() != 8)
     cP.resize(8);
 
   cP[0] =  A1;
