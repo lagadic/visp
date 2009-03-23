@@ -218,12 +218,14 @@ vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
       pa[i][2] = 1;
     }
 
-  vpMatrix aHb(3,3) ; //aHb /= aHb[2][2] ;
+  vpMatrix aHb(3,3) ;
 
   for (i=0 ; i <9 ; i++)
     {
       aHb.data[i] = M[i];
     }
+
+  aHb /= aHb[2][2];
 
   d.resize(n);
 
