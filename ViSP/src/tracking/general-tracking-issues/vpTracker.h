@@ -42,7 +42,7 @@
 
 /*!
   \file vpTracker.h
-  \brief  class that defines what is a generic tracker
+  \brief Class that defines what is a generic tracker.
 */
 
 #include <visp/vpConfig.h>
@@ -53,38 +53,45 @@
 
 /*!
   \class vpTracker
-  \brief  class that defines what is a generic tracker
+  \brief Class that defines what is a feature generic tracker.
+
+  A tracker is able to track features with parameters expressed in:
+  - in the camera frame \e cP. These parameters are located in the public
+    attribute vpTracker::cP.
+  - in the image plane \e p. These parameters are located in the public
+    attribute vpTracker::p. They correspond to normalized coordinates 
+    of the feature expressed in meters.
+
 */
 class VISP_EXPORT vpTracker
 {
 
 
 public:
-  //! 2D feature coordinates
+  /*!
+    Feature coordinates expressed in the image plane \e p. They correspond
+    to 2D normalized coordinates expressed in meters.
+  */
   vpColVector p ;
-  //! feature coordinates  expressed in
-  //! camera frame
+  /*!
+    Feature coordinates expressed in the camera frame \e cP. 
+  */
   vpColVector cP ;
 
-  //!
+  /*!
+    Flag used to indicate if the feature parameters \e cP expressed
+    in the camera frame are available.
+  */
   bool cPAvailable ;
 
-
 public:
-  //! basic construction
+  //! Default initialization.
   void init() ;
-  //! constructor
+  //! Default constructor.
   vpTracker() ;
 
-  //! destructor
+  //! Destructor.
   virtual ~vpTracker() { ; }
-
-public:
-
-  //  virtual void track(vpHomogeneousMatrix &cMo) ;
-  //  virtual void track(vpImage<unsigned char>, vpCameraParameters &c) ;
-  //  virtual void pixelToMeter(vpCameraParameters &c) ;
-
 } ;
 
 

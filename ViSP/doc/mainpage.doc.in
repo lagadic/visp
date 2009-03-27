@@ -211,7 +211,7 @@ scheme, ...</p>
 */
 /*!
   \ingroup Tracking
-  \defgroup TrackingFeature Geometric features (3D transformation and forward projection)
+  \defgroup TrackingFeature Tracking features (3D transformation and forward projection)
 */
 /*!
   \ingroup Tracking
