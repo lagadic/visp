@@ -59,11 +59,11 @@
 
   \ingroup TrackingImageME
 
-  \brief Class that tracks a line moving edges.
+  \brief Class that tracks in an image a line moving edges.
 
   In this class the line is defined by its equation in the \f$ (i,j) =
-  (line,column) \f$ frame. Two types of features are available to
-  write its equation. The first one corresponds to the following
+  (line,column) \f$ image plane. Two kinds of parametrization are available to
+  describe a 2D line. The first one corresponds to the following
   equation
 
   \f[ ai + bj + c = 0 \f]

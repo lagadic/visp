@@ -49,7 +49,12 @@
 
 
 
-
+/*!
+  Print to stdout the feature parameters in:
+  - the object frame
+  - the camera frame
+  - the image plane.
+*/
 void
 vpForwardProjection::print() const
 {
@@ -58,24 +63,34 @@ vpForwardProjection::print() const
   std::cout << "p : " << p.t() ;
 }
 
+/*!
 
+  Compute the feature parameters in the image plane (vpTracker::p)
+  from the parameters in the camera frame (vpTracker::cP).
+
+  \warning Be careful to update vpTracker::p and vpTracker::cP public
+  attributes before the call of this method.
+*/
 void
 vpForwardProjection::project()
 {
   projection(cP, p) ;
 }
 
+/*! 
+  
+  Compute the feature parameters in the camera frame (vpTracker::cP)
+  and than compute the projection of these parameters in the image
+  plane (vpTracker::p).
 
+  \warning The feature parameters in the object frame
+  (vpForwardProjection:oP) need to be set prior the use of this
+  method. To initialize these parameters see setWorldCoordinates().
+ 
+  \param cMo : The homogeneous matrix corresponding to the pose
+  between the camera frame and the object frame.
 
-/*
-//! change frame
-void
-vpForwardProjection::changeFrame(const vpHomogeneousMatrix &cMo)
-{
-  changeFrame(cMo,cP) ;
-  }*/
-
-//! change frame and project
+*/
 void
 vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
 {
@@ -91,6 +106,22 @@ vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
 }
 
 
+/*! 
+  
+  Track the feature parameters in the camera frame (vpTracker::cP)
+  and than compute the projection of these parameters in the image
+  plane (vpTracker::p).
+
+  This method is similar to project(const vpHomogeneousMatrix &).
+
+  \warning The feature parameters in the object frame
+  (vpForwardProjection:oP) need to be set prior the use of this
+  method. To initialize these parameters see setWorldCoordinates().
+ 
+  \param cMo : The homogeneous matrix corresponding to the pose
+  between the camera frame and the object frame.
+
+*/
 void
 vpForwardProjection::track(const vpHomogeneousMatrix &cMo)
 {

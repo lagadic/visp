@@ -42,12 +42,8 @@
 
 /*!
   \file vpTracker.cpp
-  \brief   class that defines what is a generic tracker
+  \brief Class that defines what is a generic tracker.
 */
-
-
-
-
 
 
 void
