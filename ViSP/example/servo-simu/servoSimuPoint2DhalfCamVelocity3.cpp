@@ -264,7 +264,7 @@ main(int argc, const char ** argv)
   vpFeatureThetaU tuz(vpFeatureThetaU::cdRc) ;
   tuz.buildFrom(cdMc) ;
   // And the translations
-  vpFeatureTranslation t ;
+  vpFeatureTranslation t(vpFeatureTranslation::cdMc) ;
   t.buildFrom(cdMc) ;
   
   // This visual has to be regulated to zero

@@ -175,7 +175,7 @@ main(int argc, const char ** argv)
   vpHomogeneousMatrix cdMc ;
   cdMc = cdMo*cMo.inverse() ;
 
-  vpFeatureTranslation t ;
+  vpFeatureTranslation t(vpFeatureTranslation::cdMc) ;
   vpFeatureThetaU tu(vpFeatureThetaU::cdRc); // current feature
   t.buildFrom(cdMc) ;
   tu.buildFrom(cdMc) ;
@@ -183,7 +183,7 @@ main(int argc, const char ** argv)
   vpTRACE("sets the desired rotation (always zero !) ") ;
   vpTRACE("since s is the rotation that the camera has to realize ") ;
 
-  vpFeatureTranslation td ;
+  vpFeatureTranslation td(vpFeatureTranslation::cdMc) ;
   vpFeatureThetaU tud(vpFeatureThetaU::cdRc); // desired feature
 
   vpTRACE("define the task") ;
