@@ -176,7 +176,7 @@ main(int argc, const char ** argv)
   cdMc = cdMo*cMo.inverse() ;
   
   // build the translation feature
-  vpFeatureTranslation t ;
+  vpFeatureTranslation t(vpFeatureTranslation::cdMc) ;
   t.buildFrom(cdMc) ;
 
   // build the theta u feature
@@ -188,7 +188,7 @@ main(int argc, const char ** argv)
   vpTRACE("sets the desired rotation (always zero !) ") ;
   vpTRACE("since s is the rotation that the camera has to realize ") ;
 
-  vpFeatureTranslation td ;
+  vpFeatureTranslation td(vpFeatureTranslation::cdMc) ;
   vpFeatureThetaU tud(vpFeatureThetaU::cRcd); // desired feature
 
   vpTRACE("define the task") ;
