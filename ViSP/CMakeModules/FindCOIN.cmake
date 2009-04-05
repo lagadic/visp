@@ -28,7 +28,8 @@
 # not clear to you.
 #
 # Description:
-# Try to find Coin library .
+# Try to find Coin library. Try first to see if Coin3D-3 is available. If not,
+# check for Coin3D-2.
 # Once run this will define: 
 #
 # COIN_FOUND
@@ -42,7 +43,33 @@
 #
 #############################################################################
 
+MACRO(TRY_COMPILE_WITH_COIN COIN_LIB COIN_INC)
+
+  # Try to compile a sample code using Coin release library
+  include(CheckCXXSourceCompiles)
+	
+  SET(CMAKE_REQUIRED_LIBRARIES "${COIN_LIB}")
+  SET(CMAKE_REQUIRED_INCLUDES  "${COIN_INC}")
+  SET(CMAKE_REQUIRED_DEFINITIONS "-DCOIN_DLL")
+	
+  CHECK_CXX_SOURCE_COMPILES("
+  #include <Inventor/nodes/SoSeparator.h>
+  int main(){
+    SoSeparator *scene = new SoSeparator;
+    return 0;
+  }
+  " IS_COMPILER_COMPATIBLE) 
+  #MESSAGE("DBG1 IS_COMPILER_COMPATIBLE release=${IS_COMPILER_COMPATIBLE}")
+
+ENDMACRO(TRY_COMPILE_WITH_COIN)
+
 IF(UNIX OR WIN32) 
+  MARK_AS_ADVANCED(
+    COIN_INCLUDE_DIR
+    COIN_LIBRARY_RELEASE
+    COIN_LIBRARY_DEBUG
+    COIN_LIBRARY
+  )
 
   FIND_PATH(COIN_INCLUDE_DIR Inventor/nodes/SoSeparator.h
     $ENV{COIN_DIR}/include
@@ -55,8 +82,9 @@ IF(UNIX OR WIN32)
 
   
   IF(WIN32)
+    # Try first to find Coin3D-3 and only if not found Coin3D-2
     FIND_LIBRARY(COIN_LIBRARY_RELEASE
-      NAMES coin2 #only shared libraries under windows
+      NAMES coin3 #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
       "$ENV{COIN_DIR}/lib"	  
@@ -65,17 +93,14 @@ IF(UNIX OR WIN32)
       )
 
     FIND_LIBRARY(COIN_LIBRARY_DEBUG
-      NAMES coin2d #only shared libraries under windows
+      NAMES coin3d #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
       "$ENV{COIN_DIR}/lib"	  
       "$ENV{COIN3DDIR}/lib"   
       "$ENV{COIN3D_DIR}/lib"   
       )
-    MARK_AS_ADVANCED(
-      COIN_LIBRARY_RELEASE
-      COIN_LIBRARY_DEBUG
-      )
+
     #MESSAGE("DBG COIN_LIBRARY_RELEASE=${COIN_LIBRARY_RELEASE}")
     #MESSAGE("DBG COIN_LIBRARY_DEBUG=${COIN_LIBRARY_DEBUG}")
 
@@ -99,48 +124,58 @@ IF(UNIX OR WIN32)
     IF(WIN32)
 
       IF(COIN_LIBRARY_RELEASE)
-	# Try to compile a sample code using Coin release library
-	include(CheckCXXSourceCompiles)
-	
-	SET(CMAKE_REQUIRED_LIBRARIES ${COIN_LIBRARY_RELEASE})
-	SET(CMAKE_REQUIRED_INCLUDES ${COIN_INCLUDE_DIR})
-	SET(CMAKE_REQUIRED_DEFINITIONS "-DCOIN_DLL")
-	
-	CHECK_CXX_SOURCE_COMPILES("
-	#include <Inventor/nodes/SoSeparator.h>
-	int main(){
-	SoSeparator *scene = new SoSeparator;
-	return 0;
-	}
-	" IS_COMPILER_COMPATIBLE) 
-	#MESSAGE("DBG1 IS_COMPILER_COMPATIBLE release=${IS_COMPILER_COMPATIBLE}")
+
+	TRY_COMPILE_WITH_COIN(${COIN_LIBRARY_RELEASE} ${COIN_INCLUDE_DIR})
 
 	IF(NOT IS_COMPILER_COMPATIBLE)
 	  SET(COIN_LIBRARY_RELEASE FALSE)
 	ENDIF(NOT IS_COMPILER_COMPATIBLE)
       ENDIF(COIN_LIBRARY_RELEASE)
 
+      
+      # Try to found COIN3D-2
+      IF(NOT COIN_LIBRARY_RELEASE)
+        FIND_LIBRARY(COIN_LIBRARY_RELEASE
+          NAMES coin2 #only shared libraries under windows
+          PATHS
+          "$ENV{COINDIR}/lib"	  
+          "$ENV{COIN_DIR}/lib"	  
+          "$ENV{COIN3DDIR}/lib"   
+          "$ENV{COIN3D_DIR}/lib"   
+        )
+        TRY_COMPILE_WITH_COIN(${COIN_LIBRARY_RELEASE} ${COIN_INCLUDE_DIR})
+
+	IF(NOT IS_COMPILER_COMPATIBLE)
+	  SET(COIN_LIBRARY_RELEASE FALSE)
+	ENDIF(NOT IS_COMPILER_COMPATIBLE)
+      ENDIF(NOT COIN_LIBRARY_RELEASE)
+
       IF(COIN_LIBRARY_DEBUG)
-	# Try to compile a sample code using Coin release library
-	include(CheckCXXSourceCompiles)
-	
-	SET(CMAKE_REQUIRED_LIBRARIES ${COIN_LIBRARY_DEBUG})
-	SET(CMAKE_REQUIRED_INCLUDES ${COIN_INCLUDE_DIR})
-	SET(CMAKE_REQUIRED_DEFINITIONS "-DCOIN_DLL")
-	
-	CHECK_CXX_SOURCE_COMPILES("
-	#include <Inventor/nodes/SoSeparator.h>
-	int main(){
-	SoSeparator *scene = new SoSeparator = new SoSeparator;
-	return 0;
-	}
-	" IS_COMPILER_COMPATIBLE) 
-	#MESSAGE("DBG IS_COMPILER_COMPATIBLE debug=${IS_COMPILER_COMPATIBLE}")
+
+	TRY_COMPILE_WITH_COIN(${COIN_LIBRARY_DEBUG} ${COIN_INCLUDE_DIR})
 
 	IF(NOT IS_COMPILER_COMPATIBLE)
 	  SET(COIN_LIBRARY_DEBUG FALSE)
 	ENDIF(NOT IS_COMPILER_COMPATIBLE)
       ENDIF(COIN_LIBRARY_DEBUG)
+
+      # Try to found COIN3D-2
+      IF(NOT COIN_LIBRARY_DEBUG)
+        FIND_LIBRARY(COIN_LIBRARY_DEBUG
+          NAMES coin2d #only shared libraries under windows
+          PATHS
+          "$ENV{COINDIR}/lib"	  
+          "$ENV{COIN_DIR}/lib"	  
+          "$ENV{COIN3DDIR}/lib"   
+          "$ENV{COIN3D_DIR}/lib"   
+        )
+	TRY_COMPILE_WITH_COIN(${COIN_LIBRARY_DEBUG} ${COIN_INCLUDE_DIR})
+
+	IF(NOT IS_COMPILER_COMPATIBLE)
+	  SET(COIN_LIBRARY_DEBUG FALSE)
+	ENDIF(NOT IS_COMPILER_COMPATIBLE)
+
+      ENDIF(NOT COIN_LIBRARY_DEBUG)
 
       IF(COIN_LIBRARY_RELEASE AND NOT COIN_LIBRARY_DEBUG)
 	SET(COIN_LIBRARY_RELEASE ${COIN_LIBRARY_RELEASE})
@@ -153,21 +188,8 @@ IF(UNIX OR WIN32)
 	SET(COIN_LIBRARY_DEBUG ${COIN_LIBRARY_DEBUG})
       ENDIF(COIN_LIBRARY_RELEASE AND COIN_LIBRARY_DEBUG)
     ELSE(WIN32)
-      # Try to compile a sample code using Coin library
-      include(CheckCXXSourceCompiles)
-      
-      SET(CMAKE_REQUIRED_LIBRARIES ${COIN_LIBRARY})
-      SET(CMAKE_REQUIRED_INCLUDES ${COIN_INCLUDE_DIR})
-      SET(CMAKE_REQUIRED_DEFINITIONS "-DCOIN_DLL")
-      
-      CHECK_CXX_SOURCE_COMPILES("
-      #include <Inventor/nodes/SoSeparator.h>
-      int main(){
-      SoSeparator *scene = new SoSeparator;
-      return 0;
-      }
-      " IS_COMPILER_COMPATIBLE) 
-      #MESSAGE("DBG IS_COMPILER_COMPATIBLE=${IS_COMPILER_COMPATIBLE}")
+
+      TRY_COMPILE_WITH_COIN(${COIN_LIBRARY} ${COIN_INCLUDE_DIR})
 
       IF(IS_COMPILER_COMPATIBLE)
 	SET(COIN_LIBRARIES ${COIN_LIBRARY})

@@ -1,15 +1,17 @@
-ViSP 2.4.3 (released ??, 2009)
+ViSP 2.4.3 (released April, 2009)
   - New Features
     - Add vpFeaturePointPolar corresponding the a 2D image point with 
       polar coordinates visual feature.
+    - Add vpFeatureTranslation for cto (camera to object translation feature)
   - Bug fixed
     - [7281] Segfault when displaying a vpCylinder.
     - [7308] Rotation vector not initialized to zero by the default constructor
     - [7309] visp-config --cflags produces a bad output
     - [7342] Bug in vpRobotAfma6::setVelocity(vpRobot::CAMERA_FRAME, v)
     - [7494] Division by 0 in vpHomography
+    - [7424] Coin3D version 3 not supported under Windows
 ----------------------------------------------	
-ViSP 2.4.3-rc2 (released January 29, 2009)
+ViSP 2.4.3-rc2 (released January 29th, 2009)
   - Deprecated
     - Creation of a deprecated section in the online documentation that 
       gives the list of classes or member function that are deprecated
@@ -71,7 +73,7 @@ ViSP 2.4.3-rc2 (released January 29, 2009)
     - [7034] vpMeLine : Bug when a strip is tracked
     - [7126] problem with vpMatrix::eigenValuesByLU()
 ----------------------------------------------	
-ViSP 2.4.2 (released March 27, 2008)
+ViSP 2.4.2 (released March 27th, 2008)
   - New classes
     - vpCalibration : calibration toolkit for intrinsic and 
         extrinsic parameters of perspective camera.
@@ -154,7 +156,7 @@ ViSP 2.4.2 (released March 27, 2008)
     - vpRobotAfma6: example usage of getPosition() was updated
     - vpDisplayGDI is included in the doxygen documentation
 ----------------------------------------------	
-ViSP 2.4.1 (released May 16, 2007)
+ViSP 2.4.1 (released May 16th, 2007)
   - New classes
         - vpRect class for rectangle manipulations, display	
         - vpHistogram,vpHistogramPeak and vpHistogramValey classes to
@@ -190,7 +192,7 @@ ViSP 2.4.1 (released May 16, 2007)
 	- cfox and std namespace were removed. To use cout you need to call 
 	  std::cout, std::endl, std::cin ...
 ----------------------------------------------	
-ViSP 2.4.0 (released February 6, 2007)
+ViSP 2.4.0 (released February 6th, 2007)
   - New Feature
 	- add new framegrabber interface for itifg8 driver from Coreco 
 	  Imaging Technology (http://sourceforge.net/projects/itifg)
@@ -210,7 +212,7 @@ ViSP 2.4.0 (released February 6, 2007)
 	- works fully under windows
 	- doxygen documentation
 ----------------------------------------------	
-ViSP 2.2.0 (released August 25, 2006)
+ViSP 2.2.0 (released August 25th, 2006)
   - Build
 	- To increase the code portability, especially under windows), 
 	  all the build process is now based on CMake 
