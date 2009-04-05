@@ -972,7 +972,7 @@ vpSimulator::getSizeInternalView(int& width, int& height)
 void
 vpSimulator::getInternalImage(vpImage<vpRGBa> &I)
 {
-  while (get==0) {;}
+  //while (get==0) {;}
   get =2 ;
   I.resize(internal_height,internal_width) ;
   vpImageConvert::RGBToRGBa(bufferView,(unsigned char*)I.bitmap,internal_width,internal_height,true);
@@ -986,7 +986,7 @@ vpSimulator::getInternalImage(vpImage<vpRGBa> &I)
 void
 vpSimulator::getInternalImage(vpImage<unsigned char> &I)
 {
-  while (get==0) {;}
+  //while (get==0) {;}
   get =2 ;
   I.resize(internal_height,internal_width) ;
   vpImageConvert::RGBToGrey(bufferView,I.bitmap,internal_width,internal_height,true);
