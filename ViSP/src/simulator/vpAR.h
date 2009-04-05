@@ -39,7 +39,7 @@
 
 
 /*!
-  \file vpRA.h
+  \file vpAR.h
   \brief class used to display an image behind the internal view of the simulator. Used for augmented reality applications.
 */
 
@@ -100,7 +100,7 @@ static void *mainloopfunction(void *_simu)
   simu->closeMainApplication();
 }
 
-int main(int argc, const char ** argv)
+int main()
 {
   vpAR simu;
   //Camera parameters.
