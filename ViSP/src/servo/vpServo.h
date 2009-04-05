@@ -93,14 +93,14 @@ int main()
   // ... cdMc is here the result of a pose estimation
 
   // Creation of the current visual feature s = (c*_t_c, ThetaU)
-  vpFeatureTranslation s_t;
+  vpFeatureTranslation s_t(vpFeatureTranslation::cdMc);
   vpFeatureThetaU s_tu(vpFeatureThetaU::cdRc);
   // Set the initial values of the current visual feature s = (c*_t_c, ThetaU)
   s_t.buildFrom(cdMc);
   s_tu.buildFrom(cdMc);
 
   // Build the desired visual feature s* = (0,0)
-  vpFeatureTranslation s_star_t; // Default initialization to zero 
+  vpFeatureTranslation s_star_t(vpFeatureTranslation::cdMc); // Default initialization to zero 
   vpFeatureThetaU s_star_tu(vpFeatureThetaU::cdRc);// Default initialization to zero 
 
   vpColVector v; // Camera velocity
