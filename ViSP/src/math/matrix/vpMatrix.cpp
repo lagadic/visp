@@ -2794,8 +2794,8 @@ int main()
   std::cout << "Initial matrix: \n" << A << std::endl;
 
   // Compute the determinant
-  std:: cout << "Determinant by Gaussian elimination: " << 
-    A.det(vpMatrix::GAUSSIAN_ELIMINATION) << std::endl;
+  std:: cout << "By defaukt determinant by LU decomposition    : " << 
+    A.det() << std::endl;
   std:: cout << "Determinant by LU decomposition    : " << 
     A.det(vpMatrix::LU_DECOMPOSITION ) << std::endl;
 }
