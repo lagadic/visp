@@ -160,8 +160,6 @@ void *mainLoop (void *_simu)
   simu->initMainApplication() ;
 
   while (1) {
-    int i ;
-
     vpServo task ;
     vpRobotCamera robot ;
 
@@ -205,14 +203,14 @@ void *mainLoop (void *_simu)
     point[3].setWorldCoordinates(-0.1,0.1,0) ;
 
     vpTRACE("project : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
-    for (i = 0 ; i < 4 ; i++) {
+    for (int i = 0 ; i < 4 ; i++) {
       point[i].changeFrame(cMo); // Compute point coordinates in the camera frame
       point[i].project(); // Compute desired point doordinates in the camera frame
     }
 
     vpTRACE("sets the desired position of the point ") ;
     vpFeaturePointPolar p[4] ;
-    for (i = 0 ; i < 4 ; i++)
+    for (int i = 0 ; i < 4 ; i++)
       vpFeatureBuilder::create(p[i], point[i])  ;  //retrieve x,y and Z of the vpPoint structure to build the polar coordinates
 
     std::cout << "s: \n";
@@ -266,7 +264,7 @@ void *mainLoop (void *_simu)
     task.set_eJe(eJe) ;
 
     vpTRACE("\t we want to see a point on a point..") ;
-    for (i = 0 ; i < 4 ; i++)
+    for (int i = 0 ; i < 4 ; i++)
       task.addFeature(p[i],pd[i]) ;
 
     vpTRACE("\t set the gain") ;
