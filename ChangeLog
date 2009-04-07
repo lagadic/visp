@@ -10,6 +10,8 @@ ViSP 2.4.3 (released April, 2009)
     - [7342] Bug in vpRobotAfma6::setVelocity(vpRobot::CAMERA_FRAME, v)
     - [7494] Division by 0 in vpHomography
     - [7424] Coin3D version 3 not supported under Windows
+    - [7613] vpSimulator::getInternalImage() function yields to an infinite 
+	     loop.
 ----------------------------------------------	
 ViSP 2.4.3-rc2 (released January 29th, 2009)
   - Deprecated
