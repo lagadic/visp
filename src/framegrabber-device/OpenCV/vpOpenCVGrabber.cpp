@@ -70,12 +70,10 @@ vpOpenCVGrabber::vpOpenCVGrabber()
 	DeviceType = 0;
 	flip = false;
 
-#if ( defined(UNIX) )
 	nbDevices = 1;
-#endif
 
-#if ( defined(WIN32) )
-	nbDevices = cvcamGetCamerasCount();	//Available only with windows
+#ifdef VISP_HAVE_OPENCV_CVCAM
+	nbDevices = cvcamGetCamerasCount();	//Available only version prior to 1.1 under windows
 #endif
 }
 
@@ -309,20 +307,21 @@ void vpOpenCVGrabber::setHeight(const unsigned int height)
 /*!
 	Gets the number of capture devices connected on your computer.
 			
-	\warning This function is only available under Windows.
+	\warning This function is consistent only under Windows if cvcam 
+        library is part of OpenCV. If VISP_HAVE_OPENCV_CVCAM macro is defined 
+        in vpConfig.h file, than cvcam library is available.
 
-	\return 1 under Linux, the number of devices under Windows.
+	\return 1 (always under Unix plaforms), or the number of devices if 
+        cvcam library is avalaible (only under Windows, for OpenCV versions 
+        prior or equal to 1.0.0). 
 */
 unsigned int vpOpenCVGrabber::getDeviceNumber()
 {
-#if ( defined(UNIX) )
-	vpTRACE("This function is not available under Unix.");
-	return(1);
+#ifndef VISP_HAVE_OPENCV_CVCAM
+	vpTRACE("Since OpenCV cvcam library is not available, this function is not consistent.");
 #endif
-
-#if ( defined(WIN32) )
 	return(nbDevices);	
-#endif
+
 }
 
 

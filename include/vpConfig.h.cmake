@@ -66,8 +66,11 @@
 // Defined if pthread library available.
 #cmakedefine VISP_HAVE_PTHREAD
 
-// Defined if OpenCV library available.
+// Defined if OpenCV cv, cxcore, cvaux and highgui libraries available.
 #cmakedefine VISP_HAVE_OPENCV
+
+// Defined if OpenCV cvcam library available.
+#cmakedefine VISP_HAVE_OPENCV_CVCAM
 
 // Defined if GTK library available (either gtk or gtk2).
 #cmakedefine VISP_HAVE_GTK
