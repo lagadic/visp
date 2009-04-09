@@ -48,7 +48,7 @@
 #if defined(VISP_HAVE_OPENCV)
 
 #include <highgui.h>
-#ifdef WIN32
+#ifdef VISP_HAVE_OPENCV_CVCAM
 #  include <cvcam.h>
 #endif
 

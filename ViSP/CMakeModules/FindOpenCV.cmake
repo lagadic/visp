@@ -21,17 +21,20 @@
 # 2006/01 complete rewrite by Jan Woetzel
 # 2006/09 2nd rewrite introducing ROOT_DIR and PATH_SUFFIXES 
 #   to handle multiple installed versions gracefully by Jan Woetzel
+# 2009/04 Fabien Spindler, specific detection of cvcam under Windows
 #
 # tested with:
 # -OpenCV 0.97 (beta5a):  MSVS 7.1, gcc 3.3, gcc 4.1
 # -OpenCV 0.99 (1.0rc1):  MSVS 7.1
+# -OpenCV 1.0
+# -OpenCV 1.1
 #
 # www.mip.informatik.uni-kiel.de/~jw
 # --------------------------------
 
 
 MACRO(DBG_MSG _MSG)
-  #  MESSAGE(STATUS "${CMAKE_CURRENT_LIST_FILE}(${CMAKE_CURRENT_LIST_LINE}):\n${_MSG}")
+    #MESSAGE(STATUS "${CMAKE_CURRENT_LIST_FILE}(${CMAKE_CURRENT_LIST_LINE}):\n${_MSG}")
 ENDMACRO(DBG_MSG)
 
 
@@ -40,9 +43,9 @@ ENDMACRO(DBG_MSG)
 IF    (NOT OpenCV_FIND_COMPONENTS)
   # default
   SET(OpenCV_FIND_REQUIRED_COMPONENTS   CV CXCORE CVAUX HIGHGUI )
-  IF   (WIN32)
-    LIST(APPEND OpenCV_FIND_REQUIRED_COMPONENTS  CVCAM ) # WIN32 only actually
-  ENDIF(WIN32)  
+#  IF   (WIN32)
+#    LIST(APPEND OpenCV_FIND_REQUIRED_COMPONENTS  CVCAM ) # WIN32 only actually
+#  ENDIF(WIN32)  
 ENDIF (NOT OpenCV_FIND_COMPONENTS)
 
 
