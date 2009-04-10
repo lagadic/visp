@@ -292,7 +292,7 @@ void *mainLoop (void *_simu)
       task.set_eJe(eJe) ;
 
       robot.getPosition(cMo) ;
-      for (i = 0 ; i < 4 ; i++)
+      for (int i = 0 ; i < 4 ; i++)
 	{
 	  point[i].track(cMo) ;
 	  vpFeatureBuilder::create(p[i],point[i])  ;
