@@ -41,9 +41,10 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  testVideoDevice.cpp
   testClick.cpp
   testMouseEvent.cpp
+  testVideoDevice.cpp
+  testVideoDeviceDual.cpp
 )
 
 # rule for binary build
@@ -63,9 +64,10 @@ ENDFOREACH(source)
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
 
-ADD_TEST(testClick         testClick -d)
-ADD_TEST(testVideoDevice   testVideoDevice -d)
-ADD_TEST(testMouseEvent    testMouseEvent -d)
+ADD_TEST(testClick             testClick -d)
+ADD_TEST(testMouseEvent        testMouseEvent -d)
+ADD_TEST(testVideoDevice       testVideoDevice -d)
+ADD_TEST(testVideoDeviceDual   testVideoDeviceDual -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
