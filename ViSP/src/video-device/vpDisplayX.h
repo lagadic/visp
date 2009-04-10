@@ -96,6 +96,9 @@ int main()
   // now link together.
   d.init(I);
 
+  // Specify the window location
+  vpDisplay::setWindowPosition(I, 400, 100);
+
   // Set the display window title
   vpDisplay::setTitle(I, "My X11 display");
 
@@ -145,12 +148,12 @@ private:
 
 
 public:
-  vpDisplayX(vpImage<unsigned char> &I, int _winx=-1, int _winy=-1,
+  vpDisplayX(vpImage<unsigned char> &I, int winx=-1, int winy=-1,
 	     const char *title=NULL) ;
-  vpDisplayX(vpImage<vpRGBa> &I, int _winx=-1, int _winy=-1,
+  vpDisplayX(vpImage<vpRGBa> &I, int winx=-1, int winy=-1,
 	     const char *title=NULL) ;
 
-  vpDisplayX(int _winx, int _winy, const char *title=NULL) ;
+  vpDisplayX(int winx, int winy, const char *title=NULL) ;
 
   vpDisplayX() ;
   virtual ~vpDisplayX() ;
@@ -162,14 +165,14 @@ public:
 
   void init(vpImage<unsigned char> &I,
 	    int winx=-1, int winy=-1,
-	    const char *_title=NULL)  ;
+	    const char *title=NULL)  ;
   void init(vpImage<vpRGBa> &I,
 	   int winx=-1, int winy=-1,
-	   const char *_title=NULL)  ;
+	   const char *title=NULL)  ;
 
   void init(unsigned int width, unsigned int height,
 	    int winx=-1, int winy=-1 ,
-	    const char *_title=NULL) ;
+	    const char *title=NULL) ;
   
 protected:
 
@@ -226,7 +229,7 @@ protected:
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
 
-  void setWindowPosition(int /*_winx*/, int /*_winy*/) { ; }
+  void setWindowPosition(int winx, int winy);
   /*!
     @name Deprecated functions
   */

@@ -84,8 +84,8 @@ int main()
   // now link together.
   d.init(I);
 
-  // Set the display window title
-  vpDisplay::setTitle(I, "My OpenCV display");
+  // Specify the window location
+  vpDisplay::setWindowPosition(I, 400, 100);
 
   // Set the display background with image I content
   vpDisplay::display(I);
@@ -136,9 +136,9 @@ private:
   bool rbuttonup;
   
 public:
-  vpDisplayOpenCV(vpImage<unsigned char> &I, int _winx=-1, int _winy=-1,
+  vpDisplayOpenCV(vpImage<unsigned char> &I, int winx=-1, int winy=-1,
 	       const char *title=NULL) ;
-  vpDisplayOpenCV(vpImage<vpRGBa> &I, int _winx=-1, int _winy=-1,
+  vpDisplayOpenCV(vpImage<vpRGBa> &I, int winx=-1, int winy=-1,
 	       const char *title=NULL) ;
 
   vpDisplayOpenCV() ;
@@ -147,14 +147,14 @@ public:
   void getImage(vpImage<vpRGBa> &I) ;
   void init(vpImage<unsigned char> &I,
 	    int winx=-1, int winy=-1,
-	    const char *_title=NULL)  ;
+	    const char *title=NULL)  ;
   void init(vpImage<vpRGBa> &I,
 	    int winx=-1, int winy=-1,
-	    const char *_title=NULL)  ;
+	    const char *title=NULL)  ;
 
   void init(unsigned int width, unsigned int height,
 	    int winx=-1, int winy=-1 ,
-	    const char *_title=NULL) ;
+	    const char *title=NULL) ;
 protected:
   void clearDisplay(vpColor::vpColorType c=vpColor::white) ;
 
@@ -205,7 +205,7 @@ protected:
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
 
-  void setWindowPosition(int /* winx */, int /* winy */) { ; }
+  void setWindowPosition(int winx, int winy);
   static void on_mouse( int event, int x, int y, int flags, void* param );
   /*!
     @name Deprecated functions

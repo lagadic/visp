@@ -109,8 +109,15 @@ int main()
   // now link together.
   d->init(I);
 
+  // Specify the window location
+  vpDisplay::setWindowPosition(I, 400, 100);
+
   // Set the display window title
   vpDisplay::setTitle(I, "My image");
+
+  // To initialize the video device, it is also possible to replace
+  // the 3 previous lines by:
+  // d->init(I, 400, 100, "My image");
 
   // Set the display background with image I content
   vpDisplay::display(I);
@@ -123,6 +130,8 @@ int main()
 
   // Wait for a click in the display window
   vpDisplay::getClick(I);
+
+  delete d;
 }
   \endcode
 */
@@ -176,7 +185,7 @@ protected :
 		    int winx=-1, int winy=-1 ,
 		    const char *title=NULL) =0;
 
-  virtual void setWindowPosition(int _winx, int _winy) = 0 ;
+  virtual void setWindowPosition(int winx, int winy) = 0 ;
 
  private:
   //! get the window pixmap and put it in vpRGBa image
@@ -446,6 +455,11 @@ protected :
   static void setFont(const vpImage<unsigned char> &I, const char *font);
 
   static void setFont(const vpImage<vpRGBa> &I, const char *font);
+
+  static void setWindowPosition(const vpImage<unsigned char> &I, 
+				int winx, int winy);
+
+  static void setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy);
 
   //! flushes the output buffer
   static void flush(const vpImage<unsigned char> &I) ;

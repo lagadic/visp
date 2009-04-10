@@ -157,7 +157,7 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 	    const char *title=NULL) ;
 
   //! Sets the window's position
-  void setWindowPosition(int _winx, int _winy);
+  void setWindowPosition(int winx, int winy);
 
  protected:
 

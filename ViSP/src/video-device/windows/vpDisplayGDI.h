@@ -74,6 +74,9 @@ int main()
   // now link together.
   d.init(I);
 
+  // Specify the window location
+  vpDisplay::setWindowPosition(I, 400, 100);
+
   // Set the display window title
   vpDisplay::setTitle(I, "My GDI display");
 
