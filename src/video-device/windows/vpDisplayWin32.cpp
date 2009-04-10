@@ -384,7 +384,7 @@ void vpDisplayWin32::setWindowPosition(int winx, int winy)
   waitForInit();
 
   //cahange the window position only
-  SetWindowPos(window.hWnd,HWND_TOP,_winx,_winy, 0, 0,
+  SetWindowPos(window.hWnd,HWND_TOP, winx, winy, 0, 0,
 	       SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER |SWP_NOSIZE);
 
 }
