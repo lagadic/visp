@@ -84,7 +84,7 @@ public:
   //! basic constructor
   vpFeatureVanishingPoint() ;
   //! destructor
-  virtual ~vpFeatureVanishingPoint() { ; }
+  virtual ~vpFeatureVanishingPoint() { delete [] flags; }
 
 
 public:

@@ -138,7 +138,10 @@ int main()
 }
   \endcode
 
-  If you want to build your own control law, this other example shows how to create a current (\f$s\f$) and desired (\f$s^*\f$) 2D point visual feature, compute the corresponding error vector \f$(s-s^*)\f$ and finally build the interaction matrix \f$L_s\f$.
+  If you want to build your own control law, this other example shows how 
+  to create a current (\f$s\f$) and desired (\f$s^*\f$) 2D point visual 
+  feature, compute the corresponding error vector \f$(s-s^*)\f$ and finally 
+  build the interaction matrix \f$L_s\f$.
 
   \code
 #include <visp/vpFeaturePoint.h>
@@ -188,7 +191,7 @@ public:
 
   vpFeaturePoint() ;
   //! Destructor.
-  virtual ~vpFeaturePoint() { ; }
+  virtual ~vpFeaturePoint() { delete [] flags; }
 
 
   /*
