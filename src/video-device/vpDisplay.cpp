@@ -153,6 +153,34 @@ vpDisplay::setTitle ( const vpImage<unsigned char> &I,
 }
 
 /*!
+  Set the window position in the screen.
+
+  \param I : Image associated to the display window.
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void
+vpDisplay::setWindowPosition ( const vpImage<unsigned char> &I, 
+			       int winx, int winy )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->setWindowPosition ( winx, winy ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
   Set the font of a text printed in the display overlay. To print a
   text you may use displayCharString().
 
@@ -962,6 +990,33 @@ vpDisplay::setTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
     if ( I.display != NULL )
     {
       ( I.display )->setTitle ( windowtitle ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Set the window position in the screen.
+
+  \param I : Image associated to the display window.
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void
+vpDisplay::setWindowPosition ( const vpImage<vpRGBa> &I, int winx, int winy )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->setWindowPosition ( winx, winy ) ;
     }
   }
   catch ( ... )

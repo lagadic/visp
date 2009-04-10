@@ -374,11 +374,11 @@ bool vpDisplayWin32::getClick( bool blocking)
 }
 
 /*!
-  Changes the window's position
-  \param _winx : its first new coordinate
-  \param _winy : its second new coordinate
+  Changes the window's position.
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
 */
-void vpDisplayWin32::setWindowPosition(int _winx, int _winy)
+void vpDisplayWin32::setWindowPosition(int winx, int winy)
 {
   //wait if the window is not initialized
   waitForInit();

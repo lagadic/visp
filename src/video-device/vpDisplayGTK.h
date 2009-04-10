@@ -94,6 +94,9 @@ int main()
   // now link together.
   d.init(I);
 
+  // Specify the window location
+  vpDisplay::setWindowPosition(I, 400, 100);
+
   // Set the display window title
   vpDisplay::setTitle(I, "My GTK display");
 
@@ -118,7 +121,7 @@ class VISP_EXPORT vpDisplayGTK: public vpDisplay
 private:
   //! true if GTK display is ready to use
   bool GTKinitialized ;
-  GdkWindow *window;
+  GtkWidget *widget;
   GdkPixmap *background;
   GdkGC *gc;
   GdkColor blue,red,yellow,green,cyan,magenta,goldenrod,coral,orange,white, black;
@@ -203,7 +206,7 @@ protected:
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
 
-  void setWindowPosition(int /* winx */, int /* winy */) { ; }
+  void setWindowPosition(int winx, int winy);
 
   /*!
     @name Deprecated functions

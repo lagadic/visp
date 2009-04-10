@@ -62,47 +62,47 @@
 int vpDisplayOpenCV::count = 1;
 /*!
 
-\brief constructor : initialize a display to visualize a gray level image
-(8 bits).
+  \brief Constructor. Initialize a display to visualize a gray level image
+  (8 bits).
 
-\param I : image to be displayed (not that image has to be initialized)
-\param _x, _y The window is set at position x,y (column index, row index).
-\param _title  window  titled
+  \param I : Image to be displayed (not that image has to be initialized)
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
-                                 int _x,
-                                 int _y,
-                                 const char *_title) : vpDisplay()
+                                 int x,
+                                 int y,
+                                 const char *title) : vpDisplay()
 {
   col = NULL;
   title = NULL ;
   window = 0 ;
   background = NULL;
   font = NULL;
-  init(I,_x,_y, _title) ;
+  init(I, x, y, title) ;
 }
 
 
 /*!
-  \brief constructor : initialize a display to visualize a RGBa level image
+  \brief Constructor. Initialize a display to visualize a RGBa level image
   (32 bits).
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param I : Image to be displayed (not that image has to be initialized)
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
-                                 int _x,
-                                 int _y,
-                                 const char *_title)
+                                 int x,
+                                 int y,
+                                 const char *title)
 {
   col = NULL;
   title = NULL ;
   window = 0 ;
   background = NULL;
   font = NULL;
-  init(I,_x,_y, _title) ;
+  init(I, x, y, title) ;
 }
 
 /*!
@@ -140,15 +140,15 @@ vpDisplayOpenCV::~vpDisplayOpenCV()
   \brief Initialized the display of a gray level image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void
 vpDisplayOpenCV::init(vpImage<unsigned char> &I,
-                      int _x,
-                      int _y,
-                      const char *_title)
+                      int x,
+                      int y,
+                      const char *title)
 {
 
   if ((I.getHeight() == 0) || (I.getWidth()==0))
@@ -157,7 +157,7 @@ vpDisplayOpenCV::init(vpImage<unsigned char> &I,
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "Image not initialized")) ;
   }
-  init (I.getWidth(), I.getHeight(), _x, _y, _title) ;
+  init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
   OpenCVinitialized = true ;
 }
@@ -165,16 +165,16 @@ vpDisplayOpenCV::init(vpImage<unsigned char> &I,
 /*!
   \brief Initialized the display of a RGBa  image
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param I : Image to be displayed (not that image has to be initialized)
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void
 vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
-                      int _x,
-                      int _y,
-                      const char *_title)
+                      int x,
+                      int y,
+                      const char *title)
 {
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
@@ -183,63 +183,63 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
                              "Image not initialized")) ;
   }
 
-  init (I.getWidth(), I.getHeight(), _x, _y, _title) ;
+  init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
   OpenCVinitialized = true ;
 }
 /*!
-  \brief actual member used to Initialize the display of a
+  \brief Actual member used to Initialize the display of a
   gray level or RGBa  image
 
-  \param width, height : width, height of the window
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param width, height : Width, height of the window
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void
 vpDisplayOpenCV::init(unsigned int width, unsigned int height,
-                      int _x, int _y,
-                      const char *_title)
+                      int x, int y,
+                      const char *title)
 {
   this->width  = width;
   this->height = height;
-  this->windowXPosition = _x;
-  this->windowYPosition = _y;
+  this->windowXPosition = x;
+  this->windowYPosition = y;
   int flags = CV_WINDOW_AUTOSIZE;
-  if (_title != NULL)
+  if (title != NULL)
   {
-    if (title != NULL)
+    if (this->title != NULL)
     {
-      delete [] title ;
-      title = NULL ;
+      delete [] this->title ;
+      this->title = NULL ;
     }
-    title = new char[strlen(_title) + 1] ;
-    strcpy(title,_title) ;
+    this->title = new char[strlen(title) + 1] ;
+    strcpy(this->title, title) ;
   }
   else{
-    if (title != NULL)
+    if (this->title != NULL)
     {
-      delete [] title ;
-      title = NULL ;
+      delete [] this->title ;
+      this->title = NULL ;
     }
-    title = new char[50] ;
-    sprintf(title,"Unnamed ViSP display <%02d>",count) ;
+    this->title = new char[50] ;
+    sprintf(this->title,"Unnamed ViSP display <%02d>",count) ;
   }
   count++;
   /* Create the window*/
-  window = cvNamedWindow( title, flags );
-  cvMoveWindow( title, _x, _y );
+  window = cvNamedWindow( this->title, flags );
+  cvMoveWindow( this->title, x, y );
   lbuttondown = false;
   mbuttondown = false;
   rbuttondown = false;
   lbuttonup = false;
   mbuttonup = false;
   rbuttonup = false;
-  cvSetMouseCallback( title,on_mouse, this );
+  cvSetMouseCallback( this->title, on_mouse, this );
   /* Create background pixmap */
 //   background = cvCreateImage(cvSize((int)width,(int)height),IPL_DEPTH_8U,3);
 //
-//   cvShowImage( _title,background);
+//   cvShowImage( this->title,background);
 
   col = new CvScalar[vpColor::none] ;
 
@@ -987,15 +987,29 @@ vpDisplayOpenCV::flushTitle(const char * /*windowtitle*/)
 }
 /*!
   \brief Set the window title.
+
   \warning This method is not implemented yet.
+
   \param windowtitle : Window title.
  */
 void
-vpDisplayOpenCV::setTitle(const char * /*windowtitle*/)
+vpDisplayOpenCV::setTitle(const char * /* windowtitle */)
 {
+
+  vpTRACE("Not implemented");
+#if 0
   if (OpenCVinitialized)
   {
-    vpTRACE("Not implemented");
+    if (this->title != NULL) {
+      delete [] this->title ;
+      this->title = NULL ;
+    }
+    //    fprintf(stdout, "len: %d\n",  strlen(windowtitle)); fflush(stdout);
+    this->title = new char[strlen(windowtitle) + 1] ;
+    strcpy(this->title, windowtitle) ;
+    //cvMoveWindow( this->title, windowXPosition,  windowYPosition);
+    cvMoveWindow(windowtitle , windowXPosition,  windowYPosition);
+
   }
   else
   {
@@ -1003,6 +1017,7 @@ vpDisplayOpenCV::setTitle(const char * /*windowtitle*/)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "OpenCV not initialized")) ;
   }
+#endif
 }
 
 /*!
@@ -1030,6 +1045,29 @@ void vpDisplayOpenCV::displayCircle(int i, int j,
   if (OpenCVinitialized)
   {
     cvCircle( background, cvPoint(j,i), (int)r, col[color]);
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+
+/*!
+  Set the window position in the screen.
+
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
+{
+  if (OpenCVinitialized) {
+    this->windowXPosition = winx;
+    this->windowYPosition = winy;
+    cvMoveWindow( this->title, winx, winy );
   }
   else
   {

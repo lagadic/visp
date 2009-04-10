@@ -66,56 +66,56 @@
   (8 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
-                         int _x,
-                         int _y,
-                         const char *_title ) : vpDisplay()
+                         int x,
+                         int y,
+                         const char *title ) : vpDisplay()
 {
-  init ( I,_x,_y, _title ) ;
+  init ( I, x, y, title ) ;
 
 }
 
 
 
 /*!
-  \brief constructor : initialize a display to visualize a RGBa level image
+  \brief Constructor : initialize a display to visualize a RGBa level image
   (32 bits).
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param I : Image to be displayed (not that image has to be initialized)
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 */
 vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
-                         int _x,
-                         int _y,
-                         const char *_title )
+                         int x,
+                         int y,
+                         const char *title )
 {
   title = NULL ;
-  init ( I,_x,_y, _title ) ;
+  init ( I, x, y, title ) ;
 }
 
 /*!
-  \brief constructor
+  \brief Constructor
 
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 */
-vpDisplayX::vpDisplayX ( int _x, int _y, const char *_title )
+vpDisplayX::vpDisplayX ( int x, int y, const char *title )
 {
   displayHasBeenInitialized = false ;
-  windowXPosition = _x ;
-  windowYPosition = _y ;
+  windowXPosition = x ;
+  windowYPosition = y ;
 
-  title = NULL ;
+  this->title = NULL ;
 
-  if ( _title != NULL )
+  if ( title != NULL )
   {
-    title = new char[strlen ( _title ) + 1] ; // Modif Fabien le 19/04/02
-    strcpy ( title,_title ) ;
+    this->title = new char[strlen ( title ) + 1] ; // Modif Fabien le 19/04/02
+    strcpy ( this->title, title ) ;
   }
 
   ximage_data_init = false;
@@ -156,33 +156,33 @@ vpDisplayX::~vpDisplayX()
 /*!
   \brief Initialized the display of a gray level image
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param I : Image to be displayed (not that image has to be initialized)
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void
-vpDisplayX::init ( vpImage<unsigned char> &I, int _x, int _y, const char *_title )
+vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
 {
 
   displayHasBeenInitialized =true ;
 
 
   XSizeHints  hints;
-  windowXPosition = _x ;
-  windowYPosition = _y ;
+  windowXPosition = x ;
+  windowYPosition = y ;
   {
-    if ( title != NULL )
+    if ( this->title != NULL )
     {
       //   vpTRACE(" ") ;
-      delete [] title ;
-      title = NULL ;
+      delete [] this->title ;
+      this->title = NULL ;
     }
 
-    if ( _title != NULL )
+    if ( title != NULL )
     {
-      title = new char[strlen ( _title ) + 1] ;
-      strcpy ( title,_title ) ;
+      this->title = new char[strlen ( title ) + 1] ;
+      strcpy ( this->title, title ) ;
     }
   }
 
@@ -461,31 +461,31 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int _x, int _y, const char *_title
   \brief Initialized the display of a RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  title
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void
-vpDisplayX::init ( vpImage<vpRGBa> &I, int _x, int _y, const char *_title )
+vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 {
 
   displayHasBeenInitialized =true ;
 
   XSizeHints  hints;
-  windowXPosition = _x ;
-  windowYPosition = _y ;
+  windowXPosition = x ;
+  windowYPosition = y ;
 
   {
-    if ( title != NULL )
+    if ( this->title != NULL )
     {
-      delete [] title ;
-      title = NULL ;
+      delete [] this->title ;
+      this->title = NULL ;
     }
 
-    if ( _title != NULL )
+    if ( title != NULL )
     {
-      title = new char[strlen ( _title ) + 1] ; // Modif Fabien le 19/04/02
-      strcpy ( title,_title ) ;
+      this->title = new char[strlen ( title ) + 1] ; // Modif Fabien le 19/04/02
+      strcpy ( this->title, title ) ;
     }
   }
 
@@ -767,16 +767,16 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int _x, int _y, const char *_title )
 
 
 /*!
-  \brief actual member used to Initialize the display of a
-  gray level or RGBa  image
+  \brief Actual member used to initialize the display of a
+  gray level or RGBa  image.
 
   \param width, height : width, height of the window
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  title
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void vpDisplayX::init ( unsigned int width, unsigned int height,
-                        int _x, int _y, const char *_title )
+                        int x, int y, const char *title )
 {
 
   displayHasBeenInitialized = true ;
@@ -788,8 +788,8 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
   XSizeHints  hints;
 
-  windowXPosition = _x ;
-  windowYPosition = _y ;
+  windowXPosition = x ;
+  windowYPosition = y ;
   // Positionnement de la fenetre dans l'�cran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
   {
@@ -804,16 +804,16 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
 
   {
-    if ( title != NULL )
+    if ( this->title != NULL )
     {
-      delete [] title ;
-      title = NULL ;
+      delete [] this->title ;
+      this->title = NULL ;
     }
 
-    if ( _title != NULL )
+    if ( title != NULL )
     {
-      title = new char[strlen ( _title ) + 1] ; // Modif Fabien le 19/04/02
-      strcpy ( title,_title ) ;
+      this->title = new char[strlen ( title ) + 1] ; // Modif Fabien le 19/04/02
+      strcpy ( this->title, title ) ;
     }
   }
 
@@ -1081,7 +1081,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
   Display has to be initialized
 
-  \warning suppres the overlay drawing
+  \warning Suppres the overlay drawing.
 
   \sa init(), closeDisplay()
 */
@@ -2179,6 +2179,28 @@ void vpDisplayX::displayCircle ( int i, int j, unsigned int r,
                                  "X not initialized" ) ) ;
   }
 }
+
+/*!
+  Set the window position in the screen.
+
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void vpDisplayX::setWindowPosition(int winx, int winy)
+{
+  if ( Xinitialise ) {
+    XMoveWindow(display, window, winx, winy);
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
+
 
 #endif
 

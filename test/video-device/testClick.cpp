@@ -125,7 +125,7 @@ OPTIONS:                                               Default\n\
      Print the list of video-devices available and exit.\n\
 \n\
   -c\n\
-     Disable the mouse click. Usefull to automaze the \n\
+     Disable the mouse click. Useful to automaze the \n\
      execution of this program without humain intervention.\n\
 \n\
   -d \n\
@@ -151,7 +151,7 @@ OPTIONS:                                               Default\n\
   \param click_allowed : Enable/disable mouse click.
   \param display : Set as true, activates the image display. This is
   the default configuration. When set to false, the display is
-  disabled. This can be usefull for automatic tests using crontab
+  disabled. This can be useful for automatic tests using crontab
   under Unix or using the task manager under Windows.
 
   \return false if the program has to be stopped, true otherwise.
