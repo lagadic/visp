@@ -61,23 +61,23 @@
 
 /*!
 
-\brief constructor : initialize a display to visualize a gray level image
-(8 bits).
+  \brief constructor : initialize a display to visualize a gray level image
+  (8 bits).
 
-\param I : image to be displayed (not that image has to be initialized)
-\param _x, _y The window is set at position x,y (column index, row index).
-\param _title  window  titled
+  \param I : image to be displayed (not that image has to be initialized)
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
-                           int _x,
-                           int _y,
-                           const char *_title) : vpDisplay()
+                           int x,
+                           int y,
+                           const char *title) : vpDisplay()
 {
   col = NULL;
   title = NULL ;
-  window = NULL ;
-  init(I,_x,_y, _title) ;
+  widget = NULL ;
+  init(I, x, y, title) ;
 }
 
 
@@ -86,18 +86,18 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
   (32 bits).
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 */
 vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
-                           int _x,
-                           int _y,
-                           const char *_title)
+                           int x,
+                           int y,
+                           const char *title)
 {
   col = NULL;
   title = NULL ;
-  window = NULL ;
-  init(I,_x,_y, _title) ;
+  widget = NULL ;
+  init(I, x, y, title) ;
 }
 
 
@@ -105,22 +105,22 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
 /*!
   \brief constructor
 
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 */
-vpDisplayGTK::vpDisplayGTK(int _x, int _y, const char *_title)
+vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title)
 {
-  windowXPosition = _x ;
-  windowYPosition = _y ;
+  windowXPosition = x ;
+  windowYPosition = y ;
 
   col = NULL;
   title = NULL ;
-  window = NULL ;
+  widget = NULL ;
 
-  if (_title != NULL)
+  if (title != NULL)
   {
-    title = new char[strlen(_title) + 1] ; // Modif Fabien le 19/04/02
-    strcpy(title,_title) ;
+    this->title = new char[strlen(title) + 1] ; // Modif Fabien le 19/04/02
+    strcpy(this->title, title) ;
   }
 
   GTKinitialized = false ;
@@ -137,7 +137,7 @@ vpDisplayGTK::vpDisplayGTK()
 
   col = NULL;
   title = NULL ;
-  window = NULL ;
+  widget = NULL ;
   if (title != NULL)
   {
     delete [] title ;
@@ -160,16 +160,16 @@ vpDisplayGTK::~vpDisplayGTK()
 /*!
   \brief Initialized the display of a gray level image
 
-  \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param I : Image to be displayed (not that image has to be initialized)
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void
 vpDisplayGTK::init(vpImage<unsigned char> &I,
-                   int _x,
-                   int _y,
-                   const char *_title)
+                   int x,
+                   int y,
+                   const char *title)
 {
 
   if ((I.getHeight() == 0) || (I.getWidth()==0))
@@ -178,7 +178,7 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "Image not initialized")) ;
   }
-  init (I.getWidth(), I.getHeight(), _x, _y, _title) ;
+  init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
   GTKinitialized = true ;
 }
@@ -187,15 +187,15 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
   \brief Initialized the display of a RGBa  image
 
   \param I : image to be displayed (not that image has to be initialized)
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void
 vpDisplayGTK::init(vpImage<vpRGBa> &I,
-                   int _x,
-                   int _y,
-                   const char *_title)
+                   int x,
+                   int y,
+                   const char *title)
 {
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
@@ -204,60 +204,54 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
                              "Image not initialized")) ;
   }
 
-  init (I.getWidth(), I.getHeight(), _x, _y, _title) ;
+  init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
   GTKinitialized = true ;
 }
 /*!
-  \brief actual member used to Initialize the display of a
-  gray level or RGBa  image
+  \brief Actual member used to Initialize the display of a
+  gray level or RGBa  image.
 
   \param width, height : width, height of the window
-  \param _x, _y : The window is set at position x,y (column index, row index).
-  \param _title : window  titled
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
 
 */
 void
 vpDisplayGTK::init(unsigned int width, unsigned int height,
-                   int _x, int _y,
-                   const char *_title)
+                   int x, int y,
+                   const char *title)
 {
   /* Initialisation of thegdk et gdk_rgb library */
   int *argc=NULL ;
   char **argv ;
-  gdk_init(argc,&argv);
-  gdk_rgb_init();
+  gtk_init(argc,&argv);
 
   this->width  = width;
   this->height = height;
 
-  GdkWindowAttr attr ;
-  attr.x = _x;
-  attr.y = _y ;
-  attr.width = width ;
-  attr.height = height ;
-  attr.wclass =  GDK_INPUT_OUTPUT ;
-  attr.window_type = GDK_WINDOW_TOPLEVEL ;
-
-  attr.event_mask =
-    GDK_BUTTON_PRESS_MASK |
-    GDK_BUTTON_RELEASE_MASK;
-
-  int attributes_mask = GDK_WA_X | GDK_WA_Y ;
   /* Create the window*/
-  window = gdk_window_new(NULL, &attr, attributes_mask);
-  gdk_window_show(window);
+  widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
+  gtk_widget_add_events(widget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK );
+
+  gtk_window_set_default_size(GTK_WINDOW(widget), width, height);
+
+  gtk_window_move(GTK_WINDOW(widget), x, y); 
+
+  gtk_widget_show(widget);
+
+  gdk_rgb_init();
 
   /* Create background pixmap */
-  background = gdk_pixmap_new(window,width,height,-1);
+  background = gdk_pixmap_new(widget->window,width,height,-1);
 
   /* Create graphic context */
-  gc = gdk_gc_new(window);
+  gc = gdk_gc_new(widget->window);
 
   /* get the colormap  */
   GdkColormap  *colormap;
-  colormap = gdk_window_get_colormap(window);
+  colormap = gdk_window_get_colormap(widget->window);
 
 
   col = new GdkColor *[vpColor::none] ;
@@ -308,15 +302,15 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   Police1 = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");
   Police2 = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
 
-  if (_title != NULL)
+  if (title != NULL)
   {
-    if (title != NULL)
+    if (this->title != NULL)
     {
-      delete [] title ;
-      title = NULL ;
+      delete [] this->title ;
+      this->title = NULL ;
     }
-    title = new char[strlen(_title) + 1] ;
-    strcpy(title,_title) ;
+    this->title = new char[strlen(title) + 1] ;
+    strcpy(this->title, title) ;
   }
   GTKinitialized = true ;
   setTitle(title) ;
@@ -348,10 +342,10 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
                         width);
 
     /* Le pixmap background devient le fond de la zone de dessin */
-    gdk_window_set_back_pixmap(window, background, FALSE);
+    gdk_window_set_back_pixmap(widget->window, background, FALSE);
 
     /* Affichage */
-    //gdk_window_clear(window);
+    //gdk_window_clear(GTK_WINDOW(widget));
     //gdk_flush();
   }
   else
@@ -389,10 +383,10 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
     //while (g_main_iteration(FALSE));
 
     /* Le pixmap background devient le fond de la zone de dessin */
-    gdk_window_set_back_pixmap(window, background, FALSE);
+    gdk_window_set_back_pixmap(widget->window, background, FALSE);
 
     /* Affichage */
-    //gdk_window_clear(window);
+    //gdk_window_clear(GTK_WINDOW(widget));
     //flushDisplay() ;
 
   }
@@ -487,13 +481,13 @@ void vpDisplayGTK::closeDisplay()
     title = NULL ;
   }
 
-  if (window != NULL)
+  if (widget != NULL)
   {
-    gdk_window_hide (window);
-    gdk_window_destroy(window);
-    window = NULL;
+    gdk_window_hide (widget->window);
+    gdk_window_destroy(widget->window);
+    widget = NULL;
   }
-  GTKinitialized= false;
+  GTKinitialized = false;
 }
 
 
@@ -506,7 +500,7 @@ void vpDisplayGTK::flushDisplay()
 {
   if (GTKinitialized)
   {
-    gdk_window_clear(window);
+    gdk_window_clear(widget->window);
     gdk_flush();
   }
   else
@@ -878,14 +872,20 @@ vpDisplayGTK::getClick(bool blocking)
 {
   bool ret = false;
 
+  int cpt =0;
   if (GTKinitialized) {
 
 //    flushDisplay() ;
     GdkEvent *ev = NULL;
     do {
       while ((ev = gdk_event_get())!=NULL){
-        if (ev->any.window == window && ev->type == GDK_BUTTON_PRESS){
+	cpt++;
+	//	printf("event %d type %d on window %p My window %p\n", 
+	//cpt, ev->type, ev->any.window, widget->window);
+	
+        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS){
           ret = true ;
+	  //printf("Click detection\n");
         }
         gdk_event_free(ev) ;
       }
@@ -928,7 +928,7 @@ vpDisplayGTK::getClick(unsigned int& i, unsigned int& j, bool blocking)
     GdkEvent *ev = NULL;
     do {
       while ((ev = gdk_event_get())!=NULL){
-        if (ev->any.window == window && ev->type == GDK_BUTTON_PRESS) {
+        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
           i = (unsigned int)((GdkEventButton *)ev)->y ;
           j = (unsigned int)((GdkEventButton *)ev)->x ;
           ret = true ;
@@ -980,7 +980,7 @@ vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
     GdkEvent *ev = NULL;
     do {
       while ((ev = gdk_event_get())){
-        if (ev->any.window == window && ev->type == GDK_BUTTON_PRESS){
+        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS){
           i = (unsigned int)((GdkEventButton *)ev)->y ;
           j = (unsigned int)((GdkEventButton *)ev)->x ;
 
@@ -1044,7 +1044,7 @@ vpDisplayGTK::getClickUp(unsigned int& i, unsigned int& j,
     GdkEvent *ev = NULL;
     do {
       while ((ev = gdk_event_get())!=NULL){
-        if ( ev->any.window == window  && ev->type == GDK_BUTTON_RELEASE) {
+        if ( ev->any.window == widget->window  && ev->type == GDK_BUTTON_RELEASE) {
           i = ( unsigned int ) ( ( GdkEventButton * ) ev )->y ;
           j = ( unsigned int ) ( ( GdkEventButton * ) ev )->x ;
 
@@ -1085,7 +1085,7 @@ unsigned int vpDisplayGTK::getScreenDepth()
 
   unsigned int depth;
 
-  depth = gdk_window_get_visual(window)->depth ;
+  depth = gdk_window_get_visual(widget->window)->depth ;
 
   return (depth);
 }
@@ -1116,7 +1116,7 @@ vpDisplayGTK::flushTitle(const char *windowtitle)
   if (GTKinitialized)
   {
     if (windowtitle != NULL)
-      gdk_window_set_title(window,(char *)windowtitle);
+      gdk_window_set_title(widget->window,(char *)windowtitle);
   }
   else
   {
@@ -1137,7 +1137,7 @@ vpDisplayGTK::setTitle(const char *windowtitle)
   if (GTKinitialized)
   {
     if (windowtitle != NULL)
-      gdk_window_set_title(window,(char *)windowtitle);
+      gdk_window_set_title(widget->window,(char *)windowtitle);
   }
   else
   {
@@ -1174,6 +1174,28 @@ void vpDisplayGTK::displayCircle(int i, int j,
   {
     gdk_gc_set_foreground(gc,col[color]);
     gdk_draw_arc(background,gc,FALSE,j-r,i-r,2*r,2*r,360*64,360*64) ;
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+/*!
+  Set the window position in the screen.
+
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void vpDisplayGTK::setWindowPosition(int winx, int winy)
+{
+
+  if (GTKinitialized)  {
+    gtk_window_move(GTK_WINDOW(widget), winx, winy); 
   }
   else
   {
