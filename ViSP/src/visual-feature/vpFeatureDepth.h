@@ -56,15 +56,36 @@
   \class vpFeatureDepth
   \ingroup VsFeature3
 
-  \brief Class that defines a 3D point visual feature \f$ s\f$ which is composed by one parameters that is \f$ log( \frac{Z}{Z^*}) \f$ that defines the current depth relative to the desired depth. Here \f$ Z \f$ represents the current depth and \f$ Z^* \f$ the desired depth.
+  \brief Class that defines a 3D point visual feature \f$ s\f$ which
+  is composed by one parameters that is \f$ log( \frac{Z}{Z^*}) \f$
+  that defines the current depth relative to the desired depth. Here
+  \f$ Z \f$ represents the current depth and \f$ Z^* \f$ the desired
+  depth.
 
-  In this class \f$ x \f$ and \f$ y \f$ are the 2D coordinates in the camera frame and are given in meter. \f$ x \f$, \f$ y \f$ and \f$ Z \f$ are needed during the computation of the interaction matrix \f$ L \f$.
+  In this class \f$ x \f$ and \f$ y \f$ are the 2D coordinates in the
+  camera frame and are given in meter. \f$ x \f$, \f$ y \f$ and \f$ Z
+  \f$ are needed during the computation of the interaction matrix \f$
+  L \f$.
 
   The visual features can be set easily thanks to the buildFrom() method.
 
-  As the visual feature \f$ s \f$ represents the current depth relative to the desired depth, the desired visual feature \f$ s^* \f$ is set to zero. Once the value of the visual feature is set, the interaction() method allows to compute the interaction matrix \f$ L \f$ associated to the visual feature, while the error() method computes the error vector \f$(s - s^*)\f$ between the current visual feature and the desired one which is here set to zero.
+  As the visual feature \f$ s \f$ represents the current depth
+  relative to the desired depth, the desired visual feature \f$ s^*
+  \f$ is set to zero. Once the value of the visual feature is set, the
+  interaction() method allows to compute the interaction matrix \f$ L
+  \f$ associated to the visual feature, while the error() method
+  computes the error vector \f$(s - s^*)\f$ between the current visual
+  feature and the desired one which is here set to zero.
 
-  The code below shows how to create a eye-in hand visual servoing task using a 3D depth feature \f$ log( \frac{Z}{Z^*}) \f$ that corresponds to the current depth relative to the desired depth. To control six degrees of freedom, at least five other features must be considered. First we create a current (\f$s\f$) 3D depth feature. Then we set the task to use the interaction matrix associated to the current feature \f$L_s\f$. And finally we compute the camera velocity \f$v=-\lambda \; L_s^+ \; (s-s^*)\f$. The current feature \f$s\f$ is updated in the while() loop.
+  The code below shows how to create a eye-in hand visual servoing
+  task using a 3D depth feature \f$ log( \frac{Z}{Z^*}) \f$ that
+  corresponds to the current depth relative to the desired depth. To
+  control six degrees of freedom, at least five other features must be
+  considered. First we create a current (\f$s\f$) 3D depth
+  feature. Then we set the task to use the interaction matrix
+  associated to the current feature \f$L_s\f$. And finally we compute
+  the camera velocity \f$v=-\lambda \; L_s^+ \; (s-s^*)\f$. The
+  current feature \f$s\f$ is updated in the while() loop.
 
   \code
 #include <visp/vpFeatureDepth.h>
@@ -106,7 +127,10 @@ int main()
 }
   \endcode
 
-  If you want to build your own control law, this other example shows how to create a current (\f$s\f$) and desired (\f$s^*\f$) 2D point visual feature, compute the corresponding error vector \f$(s-s^*)\f$ and finally build the interaction matrix \f$L_s\f$.
+  If you want to build your own control law, this other example shows how
+  to create a current (\f$s\f$) and desired (\f$s^*\f$) 2D point visual 
+  feature, compute the corresponding error vector \f$(s-s^*)\f$ and finally 
+  build the interaction matrix \f$L_s\f$.
 
   \code
 #include <visp/vpFeatureDepth.h>
@@ -153,7 +177,7 @@ public:
 
   vpFeatureDepth() ;
   //! destructor
-  virtual ~vpFeatureDepth() { ; }
+  virtual ~vpFeatureDepth() { delete [] flags; }
 
 
   /*

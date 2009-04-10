@@ -270,7 +270,7 @@ public:
 
 		  
   //! Destructor. Does nothing.
-  virtual ~vpFeatureThetaU() { /*vpTRACE("0x%x", this)*/ ;}
+  virtual ~vpFeatureThetaU() { delete [] flags; /*vpTRACE("0x%x", this)*/ ;}
 
 public:
 

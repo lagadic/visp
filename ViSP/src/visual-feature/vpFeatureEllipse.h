@@ -76,7 +76,7 @@ public:
   //! basic constructor
   vpFeatureEllipse() ;
   //! destructor
-  virtual ~vpFeatureEllipse() { ; }
+  virtual ~vpFeatureEllipse() { delete [] flags; }
 
 public:
   /*!
