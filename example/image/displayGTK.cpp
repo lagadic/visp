@@ -337,8 +337,6 @@ main(int argc, const char ** argv)
     vpDisplay::close(I);
   }
 
-  vpTRACE("-------------------------------------");
-
   // Create a color image
   vpImage<vpRGBa> Irgba ;
 
