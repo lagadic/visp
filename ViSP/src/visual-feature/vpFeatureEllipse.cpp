@@ -83,7 +83,8 @@ vpFeatureEllipse::init()
 
     // memory allocation
     s.resize(dim_s) ;
-    flags = new bool[nbParameters];
+    if (flags == NULL)
+      flags = new bool[nbParameters];
     for (int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //default depth values

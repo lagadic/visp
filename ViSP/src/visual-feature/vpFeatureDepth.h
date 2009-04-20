@@ -177,7 +177,7 @@ public:
 
   vpFeatureDepth() ;
   //! destructor
-  virtual ~vpFeatureDepth() { delete [] flags; }
+  virtual ~vpFeatureDepth() { if (flags != NULL) delete [] flags; }
 
 
   /*

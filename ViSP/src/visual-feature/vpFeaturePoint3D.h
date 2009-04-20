@@ -220,7 +220,7 @@ public:
   // basic constructor
   vpFeaturePoint3D() ;
   //! Destructor. Does nothing.
-  virtual ~vpFeaturePoint3D() { delete [] flags; }
+  virtual ~vpFeaturePoint3D() { if (flags != NULL) delete [] flags; }
 
   /*
     /section Set coordinates
