@@ -526,7 +526,7 @@ vpFeatureTranslation::print(const int select) const
 */
 vpFeatureTranslation *vpFeatureTranslation::duplicate() const
 {
-  vpFeatureTranslation *feature;
+  vpFeatureTranslation *feature = NULL;
   if (translation == cdMc)
     feature = new vpFeatureTranslation(cdMc) ;
   if (translation == cMo)
