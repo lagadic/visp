@@ -98,7 +98,8 @@ vpFeatureLine::init()
     // s[0] = rho
     // s[1] = theta
     s.resize(dim_s) ;
-    flags = new bool[nbParameters];
+    if (flags == NULL)
+      flags = new bool[nbParameters];
     for (int i = 0; i < nbParameters; i++) flags[i] = false;
 
     A = B = C = D = 0.0 ;

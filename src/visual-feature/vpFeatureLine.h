@@ -210,7 +210,7 @@ public:
 
   void init() ;
   vpFeatureLine() ;
-  virtual ~vpFeatureLine() { delete [] flags; }
+  virtual ~vpFeatureLine() { if (flags != NULL) delete [] flags; }
 
 public:
 

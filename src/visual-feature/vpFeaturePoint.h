@@ -191,7 +191,7 @@ public:
 
   vpFeaturePoint() ;
   //! Destructor.
-  virtual ~vpFeaturePoint() { delete [] flags; }
+  virtual ~vpFeaturePoint() { if (flags != NULL) delete [] flags; }
 
 
   /*

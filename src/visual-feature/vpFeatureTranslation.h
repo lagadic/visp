@@ -279,7 +279,7 @@ public:
   // cdMc is the displacement that the camera has to realize
   vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1, vpFeatureTranslationRepresentationType r) ;
   //! Destructor. Does nothing.
-  virtual ~vpFeatureTranslation() { delete [] flags; }
+  virtual ~vpFeatureTranslation() { if (flags != NULL) delete [] flags; }
 
   // build from an homogeneous matrix
   // cdMc is the displacement that the camera has to realize

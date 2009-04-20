@@ -273,7 +273,7 @@ public:
   // basic constructor
   vpFeaturePointPolar() ;
   //! Destructor. Does nothing.
-  virtual ~vpFeaturePointPolar() { delete [] flags; }
+  virtual ~vpFeaturePointPolar() { if (flags != NULL) delete [] flags; }
 
   void buildFrom(const double rho, const double theta, const double Z) ;
 

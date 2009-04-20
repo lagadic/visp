@@ -70,6 +70,7 @@ vpBasicFeature::vpBasicFeature()
 //     featureLine[7] = 0x80 ;
     //vpTRACE("0x%x", this);
     deallocate = vpBasicFeature::user ;
+    flags = NULL;
 }
 
 //! get the feature dimension
