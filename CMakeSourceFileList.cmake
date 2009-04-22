@@ -97,7 +97,6 @@ SET (SRC_IMAGE
   image/vpImageIoPnm.cpp
   image/vpImageMorphology.cpp
   image/vpImageTools.cpp
-  image/vpColor.cpp
   image/vpRGBa.cpp
   image/vpImagePoint.cpp
   )
