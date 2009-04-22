@@ -126,19 +126,22 @@ vpFeatureVanishingPoint::interaction(const int select) const
 
   L.resize(0,6) ;
 
-  for (int i = 0; i < nbParameters; i++)
+  if (deallocate == vpBasicFeature::user)
   {
-    if (flags[i] == false)
+    for (int i = 0; i < nbParameters; i++)
     {
-      switch(i){
-      case 0:
-        vpTRACE("Warning !!!  The interaction matrix is computed but x was not set yet");
-      break;
-      case 1:
-        vpTRACE("Warning !!!  The interaction matrix is computed but y was not set yet");
-      break;
-      default:
-        vpTRACE("Problem during the reading of the variable flags");
+      if (flags[i] == false)
+      {
+        switch(i){
+        case 0:
+          vpTRACE("Warning !!!  The interaction matrix is computed but x was not set yet");
+        break;
+        case 1:
+          vpTRACE("Warning !!!  The interaction matrix is computed but y was not set yet");
+        break;
+        default:
+          vpTRACE("Problem during the reading of the variable flags");
+        }
       }
     }
   }
