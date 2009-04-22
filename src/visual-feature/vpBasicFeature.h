@@ -150,7 +150,7 @@ class VISP_EXPORT vpBasicFeature
       vpServo
     } vpBasicFeatureDeallocatorType;
 
- private:
+  protected:
   vpBasicFeatureDeallocatorType deallocate ;
  public:
   void setDeallocate(vpBasicFeatureDeallocatorType d) { deallocate = d ; }
