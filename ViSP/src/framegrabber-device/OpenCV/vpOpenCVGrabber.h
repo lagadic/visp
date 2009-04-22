@@ -86,7 +86,10 @@ int main()
 #endif
 }
   \endcode
-  
+
+  \warning As said previously, this class allows the grabbing of images thanks to the OpenCV library. Thus some functions may not be available depending on the operating system and the camera you are using.
+  - QuickCam Sphere AF : compatible with Linux and Windows.
+  - QuickCam Fusion : compatible with windows.
  */
 class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
 {
