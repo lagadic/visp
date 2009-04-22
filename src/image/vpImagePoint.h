@@ -104,7 +104,7 @@ class VISP_EXPORT vpImagePoint
 
       \sa get_j(), get_u(), get_v()
     */
-    double get_i()  const { return iP[0] ; }
+    inline double get_i()  const { return iP[0] ; }
 
     /*!
       Gets the point coordinate corresponding to the \f$ j \f$ axes in the frame (i,j).
@@ -113,7 +113,7 @@ class VISP_EXPORT vpImagePoint
 
       \sa get_i(), get_u(), get_v()
     */
-    double get_j()  const { return iP[1] ; }
+    inline double get_j()  const { return iP[1] ; }
 
     /*!
       Sets the point coordinate corresponding to the \f$ u \f$ axes in the frame (u,v).
@@ -140,7 +140,7 @@ class VISP_EXPORT vpImagePoint
 
       \sa get_i(), get_j(), get_v()
     */
-    double get_u()  const { return iP[1] ; }
+    inline double get_u()  const { return iP[1] ; }
 
     /*!
       Gets the point coordinate corresponding to the \f$ v \f$ axes in the frame (u,v).
@@ -149,7 +149,7 @@ class VISP_EXPORT vpImagePoint
 
       \sa get_i(), get_j(), get_u()
     */
-    double get_v()  const { return iP[0] ; }
+    inline double get_v()  const { return iP[0] ; }
 
   private:
     vpColVector iP;
