@@ -91,7 +91,9 @@ SET (HEADER_IMAGE
   image/vpImageIo.h
   image/vpImageMorphology.h
   image/vpImageTools.h
+  image/vpColor.h
   image/vpRGBa.h
+  image/vpImagePoint.h
   )
 
 SET (HEADER_LIGHT
