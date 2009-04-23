@@ -65,6 +65,9 @@
 #include <visp/vpFeatureTranslation.h>
 #include <visp/vpFeatureVanishingPoint.h>
 
+// others
+#include <visp/vpImagePoint.h>
+
 //pixel / meter conversion
 #include <visp/vpCameraParameters.h>
 #include <visp/vpPixelMeterConversion.h>
@@ -87,6 +90,8 @@ public:
 		      const vpDot &t) ;
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
 		      const vpDot2 &t) ;
+  static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
+		      const vpImagePoint &t) ;
   static void create(vpFeaturePoint &s, const vpPoint &t) ;
   static void create(vpFeaturePoint &s,
 		     const vpCameraParameters &goodCam,

@@ -90,6 +90,29 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   }
 }
 
+void vpFeatureBuilder::create(vpFeaturePoint &s,
+			      const vpCameraParameters &cam,
+			      const vpImagePoint &t)
+{
+  try
+  {
+    double x=0, y=0;
+
+    double u = t.get_u() ;
+    double v = t.get_v() ;
+
+    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+
+    s.set_x(x) ;
+    s.set_y(y) ;
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+}
+
 void
 vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
 {
