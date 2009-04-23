@@ -111,7 +111,7 @@ extern "C" {
   \code
   // Set the extrinsic camera parameters obtained with a perpective 
   // projection model including a distorsion parameter
-  robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, vpCameraParameters::perspectiveProjWithDistortion);
+  robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
  
   You can get the intrinsic camera parameters of the image I
