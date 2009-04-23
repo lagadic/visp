@@ -352,7 +352,7 @@ public:
   */
   inline static int selectTheta()  { return FEATURE_LINE[1] ; }
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const int select = FEATURE_ALL) const;
+  vpMatrix  interaction(const int select = FEATURE_ALL);
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,

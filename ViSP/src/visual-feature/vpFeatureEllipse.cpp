@@ -102,7 +102,7 @@ vpFeatureEllipse::vpFeatureEllipse() : vpBasicFeature()
 
 //! compute the interaction matrix from a subset a the possible features
 vpMatrix
-vpFeatureEllipse::interaction(const int select) const
+vpFeatureEllipse::interaction(const int select)
 {
   vpMatrix L ;
 
@@ -144,6 +144,7 @@ vpFeatureEllipse::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
 
   double xc = s[0] ;

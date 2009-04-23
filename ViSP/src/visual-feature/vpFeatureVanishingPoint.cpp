@@ -120,7 +120,7 @@ vpFeatureVanishingPoint::set_xy(const double _x,
 
 //! compute the interaction matrix from a subset of the possible features
 vpMatrix
-vpFeatureVanishingPoint::interaction(const int select) const
+vpFeatureVanishingPoint::interaction(const int select)
 {
   vpMatrix L ;
 
@@ -144,6 +144,7 @@ vpFeatureVanishingPoint::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
 
   double x = get_x() ;

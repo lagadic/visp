@@ -210,7 +210,7 @@ public:
   */
 
 
-  vpMatrix  interaction(const int select = FEATURE_ALL) const;
+  vpMatrix  interaction(const int select = FEATURE_ALL);
 
   vpColVector error(const vpBasicFeature &s_star,
 		    const int select = FEATURE_ALL)  ;

@@ -201,7 +201,7 @@ vpFeatureLine::setABCD(const double A, const double B,
   \endcode
 */
 vpMatrix
-vpFeatureLine::interaction(const int select) const
+vpFeatureLine::interaction(const int select)
 {
   vpMatrix L ;
 
@@ -237,6 +237,7 @@ vpFeatureLine::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
   double rho = s[0] ;
   double theta = s[1] ;

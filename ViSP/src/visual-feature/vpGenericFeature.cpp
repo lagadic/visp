@@ -405,7 +405,7 @@ vpGenericFeature::error( const int select)
   \endcode
 */
 vpMatrix
-vpGenericFeature::interaction(const int select) const
+vpGenericFeature::interaction(const int select)
 {
   if (L.getRows() == 0)
   {
