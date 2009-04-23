@@ -282,7 +282,7 @@ vpFeatureTranslation::get_Tz() const
 
 */
 vpMatrix
-vpFeatureTranslation::interaction(const int select) const
+vpFeatureTranslation::interaction(const int select)
 {
 
   vpMatrix L ;
@@ -303,6 +303,7 @@ vpFeatureTranslation::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
 
   if(translation == cdMc)

@@ -255,7 +255,7 @@ vpFeaturePoint3D::get_Z() const
 
 */
 vpMatrix
-vpFeaturePoint3D::interaction(const int select) const
+vpFeaturePoint3D::interaction(const int select)
 {
   vpMatrix L ;
 
@@ -282,6 +282,7 @@ vpFeaturePoint3D::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
 
   double X = get_X() ;

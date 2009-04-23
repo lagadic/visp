@@ -256,7 +256,7 @@ public:
   */
   inline static int selectY()  { return FEATURE_LINE[1] ; }
 
-  vpMatrix  interaction(const int select = FEATURE_ALL) const;
+  vpMatrix  interaction(const int select = FEATURE_ALL);
 
   vpColVector error(const vpBasicFeature &s_star,
 		    const int select = FEATURE_ALL)  ;

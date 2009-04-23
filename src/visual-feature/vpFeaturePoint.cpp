@@ -241,7 +241,7 @@ vpFeaturePoint::set_xyZ(const double x,
   \endcode
 */
 vpMatrix
-vpFeaturePoint::interaction(const int select) const
+vpFeaturePoint::interaction(const int select)
 {
   vpMatrix L ;
 
@@ -268,6 +268,7 @@ vpFeaturePoint::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
 
   double x = get_x() ;

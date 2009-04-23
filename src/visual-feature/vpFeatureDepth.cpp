@@ -242,7 +242,7 @@ vpFeatureDepth::set_xyZLogZoverZstar(const double x,
   \endcode
 */
 vpMatrix
-vpFeatureDepth::interaction(const int select) const
+vpFeatureDepth::interaction(const int select)
 {
   vpMatrix L ;
 
@@ -267,6 +267,7 @@ vpFeatureDepth::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
 
   L.resize(1,6) ;

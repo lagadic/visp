@@ -275,7 +275,7 @@ vpFeaturePointPolar::get_Z() const
   In that case, L_theta is a 1 by 6 matrix.
 */
 vpMatrix
-vpFeaturePointPolar::interaction(const int select) const
+vpFeaturePointPolar::interaction(const int select)
 {
   vpMatrix L ;
 
@@ -302,6 +302,7 @@ vpFeaturePointPolar::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
 
   double rho   = get_rho() ;

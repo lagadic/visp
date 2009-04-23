@@ -93,6 +93,15 @@ vpColVector
     vpColVector state  ; state = s ;
     return state ;
 }
+
+void vpBasicFeature::resetFlags()
+{
+  if (flags != NULL)
+  {
+    for (int i = 0; i < nbParameters; i++)
+      flags[i] = false;
+  }
+}
 /*
  * Local variables:
  * c-basic-offset: 4

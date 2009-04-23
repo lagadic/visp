@@ -404,7 +404,7 @@ vpFeatureThetaU::get_TUz() const
 
 */
 vpMatrix
-vpFeatureThetaU::interaction(const int select) const
+vpFeatureThetaU::interaction(const int select)
 {
 
   vpMatrix L ;
@@ -431,6 +431,7 @@ vpFeatureThetaU::interaction(const int select) const
         }
       }
     }
+    resetFlags();
   }
 
   vpMatrix Lw(3,3) ;

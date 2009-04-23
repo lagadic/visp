@@ -117,7 +117,7 @@ class VISP_EXPORT vpBasicFeature
   //! get the feature dimension
   int getDimension(int select=FEATURE_ALL) const;
   //! compute the interaction matrix from a subset a the possible features
-  virtual vpMatrix interaction(const int select = FEATURE_ALL) const = 0;
+  virtual vpMatrix interaction(const int select = FEATURE_ALL) = 0;
   //! compute the error between two visual features from a subset
   //! a the possible features
   virtual vpColVector error(const vpBasicFeature &s_star,
@@ -136,6 +136,9 @@ class VISP_EXPORT vpBasicFeature
                        vpImage<vpRGBa> &I,
                        vpColor::vpColorType color=vpColor::green) const = 0;
 
+
+ protected:
+  void resetFlags();
   // memory issue (used by the vpServo class)
  public:
 
