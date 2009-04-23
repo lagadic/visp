@@ -37,16 +37,21 @@
 
 
 /*!
-  \file calibrate2dGrid.cpp
-  \brief example of camera calibration.
-  This example is an implementation of a camera calibration with a non linear
-  method based on virtual visual servoing. It uses several images of a unique
-  calibration grid. The calibration grid used here is available in :
-  ViSP-images/calibration/grid2d.{fig,pdf} or ./example/calibration/grid2d.fig
-  This is a 6*6 dots calibration grid where dots centers are spaced by 0.03 meter.
-  You can obviously use another calibration grid changing its parameters in
-  the program.
-  Then you have to grab some images of this grid (you can use grab examples of
+  \example calibrate2dGrid.cpp
+  \brief Tool for camera calibration.
+
+  This example is an implementation of a camera calibration tool with
+  a non linear method based on virtual visual servoing. It uses
+  several images of a unique calibration grid. 
+
+  The calibration grid used here is available in
+  ViSP-images/calibration/grid2d.{fig,pdf} or in
+  ./example/calibration/grid2d.fig (.fig files comes from Xfig tool).
+
+  The calibration grid is a 6*6 dots grid where dots
+  centers are spaced by 0.03 meter.  You can obviously use another
+  calibration grid changing its parameters in the program.  Then you
+  have to grab some images of this grid (you can use grab examples of
   ViSP to do it), save them as PGM files and precise their names with
   the -p option.
 */
