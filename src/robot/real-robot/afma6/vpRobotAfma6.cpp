@@ -128,7 +128,7 @@ void emergencyStopAfma6(int signo)
   vpRobotAfma6 robot;
   // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distorsion parameter
-  robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, vpCameraParameters::perspectiveProjWithDistortion);
+  robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
 
   Now, you can get the intrinsic camera parameters of the image I
@@ -317,7 +317,7 @@ vpRobotAfma6::init (void)
   vpRobotAfma6 robot;
   // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distorsion parameter
-  robot.init(vpAfma6::CAMERA_DRAGONFLY2_8MM, vpCameraParameters::perspectiveProjWithDistortion);
+  robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
 
   Now, you can get the intrinsic camera parameters of the image \e I
