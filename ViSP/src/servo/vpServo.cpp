@@ -548,7 +548,7 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
        !featureList.outside();
        featureSelectionList.next(),featureList.next() )
     {
-      const vpBasicFeature * sPTR = featureList.value() ;
+      vpBasicFeature * sPTR = featureList.value() ;
       const int select = featureSelectionList.value() ;
 
       /* Get s. */
@@ -609,11 +609,14 @@ vpServo::computeInteractionMatrix()
 	{
 	  try
 	    {
-	      computeInteractionMatrixFromList(this ->desiredFeatureList,
-					      this ->featureSelectionList, L);
+              if (interactionMatrixComputed == false)
+              {
+	        computeInteractionMatrixFromList(this ->desiredFeatureList,
+		  			      this ->featureSelectionList, L);
 
-	      dim_task = L.getRows() ;
-	      interactionMatrixComputed = true ;
+	        dim_task = L.getRows() ;
+	        interactionMatrixComputed = true ;
+              }
 
 	    }
 	  catch(vpException me)
