@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBasicFeature.h,v 1.10 2008-02-26 10:32:10 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * 2D point usefull for image processing
+ * 2D point useful for image processing
  *
  * Author:
  * Nicolas Melchior
@@ -41,7 +41,8 @@
 
 /*!
   \file vpImagePoint.h
-  \brief class that defines a 2D point in an image. This class is usefull for image processing.
+  \brief class that defines a 2D point in an image. This class is useful
+  for image processing.
 */
 
 
@@ -56,6 +57,14 @@ vpImagePoint::vpImagePoint()
 {
   init();
 }
+
+vpImagePoint::vpImagePoint(const vpImagePoint &ip)
+{
+  init();
+
+  this->iP = ip.iP;
+}
+
 
 
 /*

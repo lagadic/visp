@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBasicFeature.h,v 1.10 2008-02-26 10:32:10 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * 2D point usefull for image processing
+ * 2D point useful for image processing
  *
  * Author:
  * Nicolas Melchior
@@ -40,7 +40,8 @@
 
 /*!
   \file vpImagePoint.h
-  \brief Class that defines a 2D point in an image. This class is usefull for image processing
+  \brief Class that defines a 2D point in an image. This class is useful
+  for image processing
 */
 
 
@@ -52,107 +53,142 @@
   \class vpImagePoint
   \ingroup TrackingFeature GeometryFeature
 
-  \brief Class that defines a 2D point in an image. This class is usefull for image processing and stores only the <B>2D coordinates given in pixel</B>.
+  \brief Class that defines a 2D point in an image. This class is
+  useful for image processing and stores only the <B>2D coordinates
+  given in sub-pixel</B>.
 
-  \warning If you want to define a point thanks to its coordinates given in meter in the object frame, the camera frame or the image plan, you have to use the class vpPoint.
-  It is possible to switch from a vpImagePoint to a vpPoint or the contrary thanks to methods implemented in the vpImagePoint class.
+  \warning If you want to define a point thanks to its coordinates
+  given in meter in the object frame, the camera frame or the image
+  plane, you have to use the class vpPoint. 
 
-  In this class, the 2D coordinates are not necessary integer values. It is easy to manipulate the given coordinates in the two frames used in ViSP : the (i,j) coordinates and the (u,v) coordinates.
-  The two following images illustrate the two coordinate systems.
+  In this class, the 2D coordinates are not necessary integer
+  values. It is easy to manipulate the given coordinates in the two
+  frames used in ViSP : the (i,j) coordinates and the (u,v)
+  coordinates.  The two following images illustrate the two coordinate
+  systems.
 
   \image html vpImagePoint.gif
   \image latex vpImagePoint.ps  width=10cm
 
-  \warning <B>An instance of the vpImagePoint class corresponds to a particular point. Thus if you change the point coordinate using the method set_i(const double i), it produces the same effect than if you used the method set_v(const double v).
-  These two methods change the same private attribute. It is also true for the two methods set_j(const double j) and set_u(const double u).</B>
+  \warning <B>An instance of the vpImagePoint class corresponds to a
+  particular point. Thus, if you change the point coordinate using the
+  method set_i(const double i), it produces the same effect than if
+  you used the method set_v(const double v). These two methods change
+  the same private attribute. It is also true for the two methods
+  set_j(const double j) and set_u(const double u).</B>
 */
 
 
 class VISP_EXPORT vpImagePoint
 {
-  public:
-  //! basic construction
-  void init() ;
-  //! basic constructor
+ public:
+  /*!
+    Default constructor that initialize the coordinates of the image
+    point to zero.
+  */
   vpImagePoint() ;
-  //! destructor
+  /*!
+    Copy constructor.
+
+    Initialize the coordinates of the image point with \e ip.
+
+    \param ip : An image point.
+  */
+  vpImagePoint(const vpImagePoint &ip);
+
+  //! Destructor.
   virtual ~vpImagePoint() { ; }
 
-  public:
-    /*!
-      Sets the point coordinate corresponding to the \f$ i \f$ axes in the frame (i,j).
+  /*!
+  
+    Copy operator.
 
-      \param i : The desired value for the coordinate along the \f$ i \f$ axes.
+  */
+  const vpImagePoint& operator=(const vpImagePoint &ip) {
+    this->iP = ip.iP;
+    return *this;
+  }
 
-      \sa set_j(), set_u(), set_v()
-    */
-    inline void set_i(const double i) {  iP[0] = i ; }
+  /*!
+    Sets the point coordinate corresponding to the \f$ i \f$ axes in the frame (i,j).
 
-    /*!
-      Sets the point coordinate corresponding to the \f$ j \f$ axes in the frame (i,j).
+    \param i : The desired value for the coordinate along the \f$ i \f$ axes.
 
-      \param j : The desired value for the coordinate along the \f$ j \f$ axes.
+    \sa set_j(), set_u(), set_v()
+  */
+  inline void set_i(const double i) {  iP[0] = i ; }
 
-      \sa set_i(), set_u(), set_v()
-    */
-    inline void set_j(const double j) {  iP[1] = j ; }
+  /*!
+    Sets the point coordinate corresponding to the \f$ j \f$ axes in the frame (i,j).
 
-    /*!
-      Gets the point coordinate corresponding to the \f$ i \f$ axes in the frame (i,j).
+    \param j : The desired value for the coordinate along the \f$ j \f$ axes.
 
-      \return The value of the coordinate along the \f$ i \f$ axes.
+    \sa set_i(), set_u(), set_v()
+  */
+  inline void set_j(const double j) {  iP[1] = j ; }
 
-      \sa get_j(), get_u(), get_v()
-    */
-    inline double get_i()  const { return iP[0] ; }
+  /*!
+    Gets the point coordinate corresponding to the \f$ i \f$ axes in the frame (i,j).
 
-    /*!
-      Gets the point coordinate corresponding to the \f$ j \f$ axes in the frame (i,j).
+    \return The value of the coordinate along the \f$ i \f$ axes.
 
-      \return The value of the coordinate along the \f$ j \f$ axes.
+    \sa get_j(), get_u(), get_v()
+  */
+  inline double get_i()  const { return iP[0] ; }
 
-      \sa get_i(), get_u(), get_v()
-    */
-    inline double get_j()  const { return iP[1] ; }
+  /*!
+    Gets the point coordinate corresponding to the \f$ j \f$ axes in the frame (i,j).
 
-    /*!
-      Sets the point coordinate corresponding to the \f$ u \f$ axes in the frame (u,v).
+    \return The value of the coordinate along the \f$ j \f$ axes.
 
-      \param u : The desired value for the coordinate along the \f$ u \f$ axes.
+    \sa get_i(), get_u(), get_v()
+  */
+  inline double get_j()  const { return iP[1] ; }
 
-      \sa set_i(), set_j(), set_v()
-    */
-    inline void set_u(const double u) {  iP[1] = u ; }
+  /*!
+    Sets the point coordinate corresponding to the \f$ u \f$ axes in the frame (u,v).
 
-    /*!
-      Sets the point coordinate corresponding to the \f$ v \f$ axes in the frame (u,v).
+    \param u : The desired value for the coordinate along the \f$ u \f$ axes.
 
-      \param v : The desired value for the coordinate along the \f$ v \f$ axes.
+    \sa set_i(), set_j(), set_v()
+  */
+  inline void set_u(const double u) {  iP[1] = u ; }
 
-      \sa set_i(), set_j(), set_u()
-    */
-    inline void set_v(const double v) {  iP[0] = v ; }
+  /*!
+    Sets the point coordinate corresponding to the \f$ v \f$ axes in the frame (u,v).
 
-    /*!
-      Gets the point coordinate corresponding to the \f$ u \f$ axes in the frame (u,v).
+    \param v : The desired value for the coordinate along the \f$ v \f$ axes.
 
-      \return The value of the coordinate along the \f$ u \f$ axes.
+    \sa set_i(), set_j(), set_u()
+  */
+  inline void set_v(const double v) {  iP[0] = v ; }
 
-      \sa get_i(), get_j(), get_v()
-    */
-    inline double get_u()  const { return iP[1] ; }
+  /*!
+    Gets the point coordinate corresponding to the \f$ u \f$ axes in the frame (u,v).
 
-    /*!
-      Gets the point coordinate corresponding to the \f$ v \f$ axes in the frame (u,v).
+    \return The value of the coordinate along the \f$ u \f$ axes.
 
-      \return The value of the coordinate along the \f$ v \f$ axes.
+    \sa get_i(), get_j(), get_v()
+  */
+  inline double get_u()  const { return iP[1] ; }
 
-      \sa get_i(), get_j(), get_u()
-    */
-    inline double get_v()  const { return iP[0] ; }
+  /*!
+    Gets the point coordinate corresponding to the \f$ v \f$ axes in the frame (u,v).
 
-  private:
-    vpColVector iP;
+    \return The value of the coordinate along the \f$ v \f$ axes.
+
+    \sa get_i(), get_j(), get_u()
+  */
+  inline double get_v()  const { return iP[0] ; }
+
+ private:
+  //! basic construction
+  void init() ;
+
+
+  vpColVector iP;
+
+
 };
 
 #endif
