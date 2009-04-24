@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSubPixel.h,v 1.1 2007-05-14 08:37:20 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,6 +51,8 @@
 /*!
   \class vpSubPixel
   \brief Class that defines what is a sub-pixel.
+
+  \deprecated This class is deprecated. You should use vpImagePoint instead.
 
   A sub-pixel is considered here as an image pixel with non-integer
   (u,v) coordinates.
