@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpSubPixel.cpp,v 1.1 2007-05-14 08:37:20 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
