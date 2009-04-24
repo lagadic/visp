@@ -99,6 +99,20 @@ const char * const vpAfma6::CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_gripper_with_distortion_Afma6.cnf";
 #endif
 
+const char * const vpAfma6::CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME
+#ifdef WIN32
+= "Z:/robot/Afma6/current/include/const_eMc_vacuum_without_distortion_Afma6.cnf";
+#else
+= "/udd/fspindle/robot/Afma6/current/include/const_eMc_vacuum_without_distortion_Afma6.cnf";
+#endif
+
+const char * const vpAfma6::CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME
+#ifdef WIN32 
+= "Z:/robot/Afma6/current/include/const_eMc_vacuum_with_distortion_Afma6.cnf";
+#else
+= "/udd/fspindle/robot/Afma6/current/include/const_eMc_vacuum_with_distortion_Afma6.cnf";
+#endif
+
 const char * const vpAfma6::CONST_CAMERA_AFMA6_FILENAME
 #ifdef WIN32 
 = "Z:/robot/Afma6/current/include/const_camera_Afma6.xml";
@@ -110,6 +124,7 @@ const char * const vpAfma6::CONST_CAMERA_AFMA6_FILENAME
 
 const char * const vpAfma6::CONST_CCMOP_CAMERA_NAME = "Dragonfly2-8mm-ccmop";
 const char * const vpAfma6::CONST_GRIPPER_CAMERA_NAME = "Dragonfly2-6mm-gripper";
+const char * const vpAfma6::CONST_VACUUM_CAMERA_NAME = "Dragonfly2-6mm-vacuum";
 
 const vpAfma6::vpAfma6ToolType vpAfma6::defaultTool = TOOL_CCMOP;
 
@@ -264,6 +279,29 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
     }
     break;
   }
+  case vpAfma6::TOOL_VACUUM: {
+    switch(projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+#ifdef UNIX
+      snprintf(filename_eMc, FILENAME_MAX, "%s",
+	       CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME);
+#else // WIN32
+      _snprintf(filename_eMc, FILENAME_MAX, "%s",
+		CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME);
+#endif
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+#ifdef UNIX
+      snprintf(filename_eMc, FILENAME_MAX, "%s",
+	       CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME);
+#else // WIN32
+      _snprintf(filename_eMc, FILENAME_MAX, "%s",
+		CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME);
+#endif
+      break;
+    }
+    break;
+  }
   default: {
     vpERROR_TRACE ("This error should not occur!");
     //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
@@ -321,6 +359,26 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
       _etc[0] = 0.1034; // tx
       _etc[1] = 0.1142; // ty
       _etc[2] = 0.1642; // tz
+      break;
+    }
+  }
+  case vpAfma6::TOOL_VACUUM: {
+    switch(projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+      _erc[0] = vpMath::rad( 90.40); // rx
+      _erc[1] = vpMath::rad( 75.11); // ry
+      _erc[2] = vpMath::rad(  0.18); // rz
+      _etc[0] = 0.0038; // tx
+      _etc[1] = 0.1281; // ty
+      _etc[2] = 0.1658; // tz
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+      _erc[0] = vpMath::rad(91.61); // rx
+      _erc[1] = vpMath::rad(76.17); // ry
+      _erc[2] = vpMath::rad(-0.98); // rz
+      _etc[0] = 0.0815; // tx
+      _etc[1] = 0.1162; // ty
+      _etc[2] = 0.1658; // tz
       break;
     }
   }
@@ -1114,6 +1172,18 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
 		 image_width, image_height);
     break;
   }
+  case vpAfma6::TOOL_VACUUM: {
+    std::cout << "Get camera parameters for camera \"" 
+	      << vpAfma6::CONST_VACUUM_CAMERA_NAME << "\"" << std::endl
+	      << "from the XML file: \"" 
+	      << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\""<< std::endl;
+    parser.parse(cam,
+		 vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
+		 vpAfma6::CONST_VACUUM_CAMERA_NAME,
+		 projModel,
+		 image_width, image_height);
+    break;
+  }
   default: {
     vpERROR_TRACE ("This error should not occur!");
 //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
@@ -1153,13 +1223,32 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" 
-		<< vpAfma6::CONST_CCMOP_CAMERA_NAME << "\"" << std::endl;
+		<< vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\"" << std::endl;
       switch(this->projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion :
 	cam.initPersProjWithoutDistortion(850.9, 853.0, 311.1, 243.6);
 	break;
       case vpCameraParameters::perspectiveProjWithDistortion :
 	cam.initPersProjWithDistortion(837.0, 837.5, 308.7, 251.6, -0.1455, 0.1511);
+	break;
+      }
+    }
+    else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
+    }
+    break;
+  }
+  case vpAfma6::TOOL_VACUUM: {
+    // Set default intrinsic camera parameters for 640x480 images
+    if (image_width == 640 && image_height == 480) {
+      std::cout << "Get default camera parameters for camera \"" 
+		<< vpAfma6::CONST_VACUUM_CAMERA_NAME << "\"" << std::endl;
+      switch(this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion :
+	cam.initPersProjWithoutDistortion(853.5, 856.0, 307.8, 236.8);
+	break;
+      case vpCameraParameters::perspectiveProjWithDistortion :
+	cam.initPersProjWithDistortion(828.5, 829.0, 322.5, 232.9, -0.1921, 0.2057);
 	break;
       }
     }
