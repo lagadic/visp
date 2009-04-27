@@ -30,8 +30,9 @@
  * Description:
  * 2D point useful for image processing
  *
- * Author:
+ * Authors:
  * Nicolas Melchior
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -190,6 +191,14 @@ class VISP_EXPORT vpImagePoint
 
 
 };
+
+VISP_EXPORT bool operator==( const vpImagePoint &ip1, 
+			     const vpImagePoint &ip2 );
+VISP_EXPORT bool operator!=( const vpImagePoint &ip1, 
+			     const vpImagePoint &ip2 );
+
+VISP_EXPORT std::ostream& operator<< (std::ostream &os, 
+				      const vpImagePoint& ip);
 
 #endif
 
