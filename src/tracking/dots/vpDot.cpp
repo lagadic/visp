@@ -65,11 +65,8 @@ const unsigned int vpDot::SPIRAL_SEARCH_SIZE = 50;
 */
 void vpDot::init()
 {
-  cog_u = 0 ;
-  cog_v = 0 ;
-
-  cog_ufloat = 0 ;
-  cog_vfloat = 0 ;
+  cog.set_u(0);
+  cog.set_v(0);
 
   compute_moment = false ;
   graphics = false ;
@@ -97,7 +94,24 @@ vpDot::vpDot() : vpTracker()
 }
 
 /*!
-  \brief constructor with initialization of the dot location
+  \brief Constructor with initialization of the dot location.
+
+  \param ip : An image point with sub-pixel coordinates.
+ */
+vpDot::vpDot(const vpImagePoint &ip) : vpTracker()
+{
+  init() ;
+
+  cog = ip;
+
+}
+
+
+/*!
+  \brief Constructor with initialization of the dot location.
+
+  \deprecated This constructor is deprecated. You should use
+  vpDot(const vpImagePoint &) instead.
 
   \param u : dot location (column)
   \param v : dot location (row)
@@ -106,16 +120,15 @@ vpDot::vpDot(const unsigned int u, const unsigned int v) : vpTracker()
 {
   init() ;
 
-  cog_u = u ;
-  cog_v = v ;
-
-  cog_ufloat = u ;
-  cog_vfloat = v ;
-
+  cog.set_u(u) ;
+  cog.set_v(v) ;
 }
 
 /*!
-  \brief constructor with initialization of the dot location
+  \brief Constructor with initialization of the dot location.
+
+  \deprecated This constructor is deprecated. You should use
+  vpDot(const vpImagePoint &) instead.
 
   \param u : dot location (column)
   \param v : dot location (row)
@@ -125,85 +138,75 @@ vpDot::vpDot(const double u,const  double v) : vpTracker()
 
   init() ;
 
-  cog_u = (unsigned int)u ;
-  cog_v = (unsigned int)v ;
-
-  cog_ufloat = u ;
-  cog_vfloat = v ;
-
+  cog.set_u(u) ;
+  cog.set_v(v) ;
 }
 
 /*!
-  \brief copy constructor
+  \brief Copy constructor.
  */
-vpDot::vpDot(const vpDot& c)  : vpTracker()
+vpDot::vpDot(const vpDot& d)  : vpTracker()
 {
 
-  *this = c ;
+  *this = d ;
 
 }
 
 
 /*!
-  \brief destructor
+  \brief Destructor.
  */
 vpDot::~vpDot()
 {
 
-  Lu.kill() ;
-  Lv.kill() ;
-
+  ip_edges_list.kill() ;
 }
 
 /*!
-  \brief copy operator
+  \brief Copy operator.
  */
 vpDot&
-vpDot::operator=(const vpDot& pt)
+vpDot::operator=(const vpDot& d)
 {
-  cog_u = pt.cog_u ;
-  cog_v = pt.cog_v ;
+  cog = d.getCog();
 
-  cog_ufloat = pt.cog_ufloat ;
-  cog_vfloat = pt.cog_vfloat ;
+  graphics = d.graphics ;
+  mean_gray_level = d.mean_gray_level ;
+  gray_level_min = d.gray_level_min ;
+  gray_level_max = d.gray_level_max ;
+  grayLevelPrecision = d.grayLevelPrecision;
+  compute_moment = d.compute_moment ;
 
-  graphics = pt.graphics ;
-  mean_gray_level = pt.mean_gray_level ;
-  gray_level_min = pt.gray_level_min ;
-  gray_level_max = pt.gray_level_max ;
-  grayLevelPrecision = pt.grayLevelPrecision;
-  compute_moment = pt.compute_moment ;
+  maxDotSizePercentage = d.maxDotSizePercentage;
 
-  maxDotSizePercentage = pt.maxDotSizePercentage;
+  m00 = d.m00;
+  m01 = d.m01;
+  m10 = d.m10;
+  m02 = d.m02;
+  m20 = d.m20;
 
-  m00 = pt.m00;
-  m01 = pt.m01;
-  m10 = pt.m10;
-  m02 = pt.m02;
-  m20 = pt.m20;
+  u_min = d.u_min;
+  v_min = d.v_min;
+  u_max = d.u_max;
+  v_max = d.v_max;
 
-  u_min = pt.u_min;
-  v_min = pt.v_min;
-  u_max = pt.u_max;
-  v_max = pt.v_max;
+  gray_level_out = d.gray_level_out;
 
-  gray_level_out = pt.gray_level_out;
-
-  nbMaxPoint = pt.nbMaxPoint;
+  nbMaxPoint = d.nbMaxPoint;
 
   return *this ;
 }
 
 bool
-vpDot::operator!=(const vpDot& m)
+vpDot::operator!=(const vpDot& d)
 {
-  return ((cog_u!=m.cog_v) || (cog_v!=m.cog_v)) ;
+  return ( cog != d.getCog() );
 }
 
 bool
-vpDot::operator==(const vpDot& m)
+vpDot::operator==(const vpDot& d)
 {
-  return ((cog_u==m.cog_u) && (cog_v==m.cog_v)) ;
+  return ( cog != d.getCog() );
 }
 
 /*!
@@ -268,8 +271,12 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
       vpDisplay::displayPoint(I,v,u,vpColor::green) ;
       //vpDisplay::flush(I);
     }
-    Lu += u ;
-    Lv += v ;
+    vpImagePoint ip;
+    ip.set_u(u);
+    ip.set_v(v);
+
+    ip_edges_list += ip;
+
     u_cog += u ;
     v_cog += v ;
     n+=1 ;
@@ -411,8 +418,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   double npoint = 0 ;
   this->mean_gray_level = 0 ;
 
-  Lu.kill() ;
-  Lv.kill() ;
+  ip_edges_list.kill() ;
 
   // Initialise the boundig box
   this->u_min = I.getWidth();
@@ -435,8 +441,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	{
 	  u_cog = 0 ;
 	  v_cog = 0 ;
-	  Lu.kill() ;
-	  Lv.kill() ;
+	  ip_edges_list.kill() ;
+	 
 	  this->mean_gray_level = 0 ;
 	  if (connexe(I, (unsigned int)(u+k*pas),(unsigned int)(v+l*pas),
 		      gray_level_min, gray_level_max,
@@ -474,8 +480,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= right; k++) if(sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-	Lu.kill() ;
-	Lv.kill() ;
+	ip_edges_list.kill() ;
+	
 	this->mean_gray_level = 0 ;
 	if (connexe(I, (unsigned int)u_+k, (unsigned int)(v_),
 		    gray_level_min, gray_level_max, mean_gray_level,
@@ -489,8 +495,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= botom; k++) if (sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-	Lu.kill() ;
-	Lv.kill() ;
+	ip_edges_list.kill() ;
+	
 	this->mean_gray_level = 0 ;
 	
 	if (connexe(I, (unsigned int)(u_), (unsigned int)(v_+k),
@@ -506,8 +512,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= left; k++) if (sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-	Lu.kill() ;
-	Lv.kill() ;
+	ip_edges_list.kill() ;
+	
 	this->mean_gray_level = 0 ;
 
 	if (connexe(I, (unsigned int)(u_-k), (unsigned int)(v_),
@@ -523,8 +529,8 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= up; k++) if(sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-	Lu.kill() ;
-	Lv.kill() ;
+	ip_edges_list.kill() ;
+	
 	this->mean_gray_level = 0 ;
 
 	if (connexe(I, (unsigned int)(u_), (unsigned int)(v_-k),
@@ -546,14 +552,15 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   }
 
 #endif
-  Lu.front() ; Lv.front() ;
-  while (!Lu.outside())
-  {
-    unsigned int u,v ;
-    u = Lu.value() ; v = Lv.value() ;
-    I[v][u] = 255 ;
-    Lu.next() ;
-    Lv.next() ;
+  ip_edges_list.front() ; 
+  vpImagePoint ip;
+  unsigned int i, j;
+  while (! ip_edges_list.outside()) {
+    ip = ip_edges_list.value(); 
+    i = (unsigned int) ip.get_i();
+    j = (unsigned int) ip.get_j();
+    I[i][j] = 255 ;
+    ip_edges_list.next() ;
   }
 
   u_cog = u_cog/npoint ;
@@ -624,6 +631,7 @@ vpDot::setMaxDotSize(double percentage)
     maxDotSizePercentage = percentage;
   }
 }
+
 /*!
 
   Initialize the tracking with a mouse click and update the dot
@@ -650,12 +658,12 @@ vpDot::setMaxDotSize(double percentage)
 void
 vpDot::initTracking(vpImage<unsigned char>& I)
 {
-  unsigned int i1,j1;
+  while (vpDisplay::getClick(I, cog) != true) ;
 
-  while (vpDisplay::getClick(I,i1,j1)!=true) ;
+  unsigned int i = (unsigned int)cog.get_i();
+  unsigned int j = (unsigned int)cog.get_j();
 
-
-  double Ip = pow((double)I[i1][j1]/255,1/gamma);
+  double Ip = pow((double)I[i][j]/255, 1/gamma);
 
   if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
@@ -668,24 +676,6 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
-
-    
-  double u,v ;
-  u = j1 ;
-  v = i1 ;
-
-  cog_ufloat = u ;
-  cog_vfloat = v ;
-
-  if ((u-(unsigned int)u) < 0.5)
-    cog_u = (unsigned int)u ;
-  else
-    cog_u = (unsigned int)u+1 ;
-
-  if ((v-(unsigned int)v) < 0.5)
-    cog_v = (unsigned int)v ;
-  else
-    cog_v = (unsigned int)v+1 ;
 
   try {
     track( I );
@@ -715,25 +705,21 @@ vpDot::initTracking(vpImage<unsigned char>& I)
 
   \param I : Image to process.
 
-  \param u : Dot location or starting point (column pixel coordinate)
-  from which the dot will be tracked in the image.
+  \param ip : Location of th starting point from which the dot will be
+  tracked in the image.
 
-  \param v : Dot location or starting point (row pixel coordinate)
-  from which the dot will be tracked in the image.
-
-  \sa track(), get_u(), get_v()
+  \sa track()
 */
 void
-vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
+vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip)
 {
 
-  cog_ufloat = u ;
-  cog_vfloat = v ;
+  cog = ip ;
 
-  cog_u = u ;
-  cog_v = v ;
+  unsigned int i = (unsigned int)cog.get_i();
+  unsigned int j = (unsigned int)cog.get_j();
 
-  double Ip = pow((double)I[cog_v][cog_u]/255,1/gamma);
+  double Ip = pow((double)I[i][j]/255, 1/gamma);
 
   if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
@@ -761,7 +747,6 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
   Initialize the tracking for a dot supposed to be located at (u,v) and
   updates the dot characteristics (center of gravity, moments).
 
-
   The sub pixel coordinates of the dot are updated. To get the center
   of gravity coordinates of the dot, use get_u() and get_v(). To
   compute the moments use setComputeMoments(true) before a call to
@@ -772,11 +757,8 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
 
   \param I : Image to process.
 
-  \param u : Dot location or starting point (column pixel coordinate)
-  from which the dot will be tracked in the image.
-
-  \param v : Dot location or starting point (row pixel coordinate)
-  from which the dot will be tracked in the image.
+  \param ip : Location of the starting point from which the dot will
+  be tracked in the image.
 
   \param gray_level_min : Minimum gray level threshold used to segment the dot;
   value comprised between 0 and 255.
@@ -788,15 +770,12 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
   \sa track(), get_u(), get_v()
 */
 void
-vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip,
 		    unsigned int gray_level_min, unsigned int gray_level_max)
 {
 
-  cog_ufloat = u ;
-  cog_vfloat = v ;
+  cog = ip ;
 
-  cog_u = u ;
-  cog_v = v ;
   this->gray_level_min = gray_level_min;
   this->gray_level_max = gray_level_max;
 
@@ -828,32 +807,25 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
 void
 vpDot::track(vpImage<unsigned char> &I)
 {
-  double u = cog_ufloat ;
-  double v = cog_vfloat ;
-
   try{
     setGrayLevelOut();
-    COG(I,u,v) ;
+    double u = this->cog.get_u();
+    double v = this->cog.get_v();
+
+    COG( I, u, v ) ;
+
+    this->cog.set_u( u );
+    this->cog.set_v( v );
   }
   catch(...)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
   }
-
-  cog_ufloat = u ;
-  cog_vfloat = v ;
-
-  if ((u-(unsigned int)u) < 0.5)
-    cog_u = (unsigned int)u ;
-  else  cog_u = (unsigned int)u+1 ;
-
-  if ((v-(unsigned int)v) < 0.5)
-    cog_v = (unsigned int)v ;
-  else  cog_v = (unsigned int)v+1 ;
 }
 
 /*!
+
   Track and updates the new dot coordinates
 
   To compute the moments use setComputeMoments(true) before a call to
@@ -864,22 +836,22 @@ vpDot::track(vpImage<unsigned char> &I)
 
   \param I : Image to process.
 
-  \param u : Sub pixel coordinate (along the columns) of the tracked dot.
-  \param v : Sub pixel coordinate (along the rows) of the tracked dot.
+  \param cog [out] : Sub pixel coordinate of the tracked dot.
 */
 void
-vpDot::track(vpImage<unsigned char> &I, double &u, double &v)
+vpDot::track(vpImage<unsigned char> &I, vpImagePoint &cog)
 {
-  track(I) ;
-  u = vpDot::get_u() ;
-  v = vpDot::get_v() ;
+  track( I ) ;
+
+  cog = this->cog;
 }
 
 /*!
 
   Set the precision of the gray level of the dot.
 
-  \param grayLevelPrecision : It is a double precision float which value is in ]0,1]:
+  \param grayLevelPrecision : It is a double precision float which value is 
+  in ]0,1]:
   - 1 means full precision, whereas values close to 0 show a very bad accuracy.
   - Values lower or equal to 0 are brought back to an epsion>0
   - Values higher than  1 are brought back to 1
@@ -907,6 +879,156 @@ void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
     this->grayLevelPrecision = grayLevelPrecision;
   }
 }
+
+
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+/*!
+
+  \deprecated This method is deprecated. You should use
+  initTracking(vpImage<unsigned char> &, const vpImagePoint &ip)
+  instead.
+ 
+  Initialize the tracking for a dot supposed to be located at (u,v) and
+  updates the dot characteristics (center of gravity, moments).
+
+  The threshold used to segment the dot is set to 80 percent of the
+  gray level of the pixel (u,v).
+
+  The sub pixel coordinates of the dot are updated. To get the center
+  of gravity coordinates of the dot, use get_u() and get_v(). To
+  compute the moments use setComputeMoments(true) before a call to
+  initTracking().
+
+  \warning The content of the image modified since we call track() to
+  compute the dot characteristics.
+
+  \param I : Image to process.
+
+  \param u : Dot location or starting point (column pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param v : Dot location or starting point (row pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \sa track(), get_u(), get_v()
+*/
+void
+vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
+{
+  this->cog.set_u( u );
+  this->cog.set_v( v );
+
+  double Ip = pow((double)I[v][u]/255,1/gamma);
+
+  if(Ip - (1 - grayLevelPrecision)<0){
+    gray_level_min = 0 ;
+  }
+  else{
+    gray_level_min = (unsigned int) (255*pow(Ip - (1 - grayLevelPrecision),gamma));
+    if (gray_level_min > 255)
+      gray_level_min = 255;
+  }
+  gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
+  if (gray_level_max > 255)
+    gray_level_max = 255;
+  try {
+    track( I );
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+}
+
+/*!
+
+  \deprecated This method is deprecated. You should use
+  initTracking(vpImage<unsigned char> &, const vpImagePoint &ip, 
+  unsigned int, unsigned int) instead.
+
+  Initialize the tracking for a dot supposed to be located at (u,v) and
+  updates the dot characteristics (center of gravity, moments).
+
+  The sub pixel coordinates of the dot are updated. To get the center
+  of gravity coordinates of the dot, use get_u() and get_v(). To
+  compute the moments use setComputeMoments(true) before a call to
+  initTracking().
+
+  \warning The content of the image modified since we call track() to
+  compute the dot characteristics.
+
+  \param I : Image to process.
+
+  \param u : Dot location or starting point (column pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param v : Dot location or starting point (row pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param gray_level_min : Minimum gray level threshold used to segment the dot;
+  value comprised between 0 and 255.
+
+  \param gray_level_max : Maximum gray level threshold used to segment the
+  dot; value comprised between 0 and 255. \e gray_level_max should be
+  greater than \e gray_level_min.
+
+  \sa track(), get_u(), get_v()
+*/
+void
+vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+		    unsigned int gray_level_min, unsigned int gray_level_max)
+{
+
+  this->cog.set_u( u );
+  this->cog.set_v( v );
+
+  this->gray_level_min = gray_level_min;
+  this->gray_level_max = gray_level_max;
+
+  try {
+    track( I );
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+}
+
+
+/*!
+
+  \deprecated This method is deprecated. You should use 
+  track(vpImage<unsigned char> &I, vpImagePoint &) instead.
+
+  Track and updates the new dot coordinates
+
+  To compute the moments use setComputeMoments(true) before a call to
+  initTracking() or track().
+
+  \warning The image is modified (all the pixels that belong to the point
+  are set to white (ie to 255).
+
+  \param I : Image to process.
+
+  \param u : Sub pixel coordinate (along the columns) of the tracked dot.
+  \param v : Sub pixel coordinate (along the rows) of the tracked dot.
+*/
+void
+vpDot::track(vpImage<unsigned char> &I, double &u, double &v)
+{
+  track(I) ;
+  u = vpDot::get_u() ;
+  v = vpDot::get_v() ;
+}
+
+
 
 /*
  * Local variables:

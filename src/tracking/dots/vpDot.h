@@ -55,6 +55,7 @@
 
 #include <visp/vpTracker.h>
 #include <visp/vpRect.h>
+#include <visp/vpImagePoint.h>
 
 
 /*!
@@ -73,7 +74,7 @@
 */
 class VISP_EXPORT vpDot : public vpTracker
 {
-public:
+public :
   /*! \enum vpConnexityType
   Type of connexity 4, or 8.
   */
@@ -86,26 +87,6 @@ public:
 
   static const unsigned int SPIRAL_SEARCH_SIZE; /*!< Spiral size for the dot
 						  search. */
-private:
-
-  //! internal use only
-  vpList<unsigned int> Lu, Lv ;
-
-  //! Type of connexity
-  vpConnexityType connexity;
-
-  //! coordinates of the point center of gravity
-  unsigned int cog_u, cog_v ;
-  //! coordinates (float) of the point center of gravity
-  double cog_ufloat, cog_vfloat ;
-
-  // Bounding box
-  int u_min, u_max, v_min, v_max;
-
-  // Flag used to allow display
-  bool graphics ;
-
-public :
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
@@ -154,102 +135,23 @@ public :
 
 		\sa setComputeMoments()
 	      */
-public:
-  void init() ;
+
   vpDot() ;
-  vpDot(const unsigned int u, const unsigned int v) ;
-  vpDot(const double u, const double v) ;
-  vpDot(const vpDot& c) ;
+  vpDot(const vpImagePoint &ip) ;
+  vpDot(const vpDot& d) ;
   virtual ~vpDot() ;
 
-public:
-  vpDot& operator =(const vpDot& f) ;
-  bool operator ==(const vpDot& m);
-  bool operator !=(const vpDot& m);
+  vpDot& operator =(const vpDot& d) ;
+  bool operator ==(const vpDot& d);
+  bool operator !=(const vpDot& d);
 
-
-public:
-  /*!
-
-  Return the "u" (column) coordinate of the center of the dot within the image
-  it comes from.
-  */
-  double get_u() const { return cog_ufloat ; }
-  /*!
-
-  Return the "v" (row) coordinate of the center of the dot within the image it
-  comes from.
-  */
-
-  double get_v() const { return cog_vfloat ; }
-  /*!
-
-  Return the list of the "u" coordinates (row) of all the pixels on the dot
-  border.
-
-  \param u_list The "u" coordinate of the pixels on the dot border. This list
-  is update after a call to track().
-
-
-  */
-  void   get_u(vpList<unsigned int> & u_list) { u_list = Lu; };
-  /*!
-
-  Return the list of the "v" coordinates (column) of all the pixels on the dot
-  border.
-
-  \param v_list The "v" coordinate of the pixels on the dot border. This list
-  is update after a call to track().
-
-  */
-  void   get_v(vpList<unsigned int> & v_list) { v_list = Lv; };
-
-  void set_u(double u) { cog_ufloat = u ; cog_u = (unsigned int)u ; }
-  void set_v(double v) { cog_vfloat = v ; cog_v = (unsigned int)v ; }
 
   /*!
-    Set the type of connexity: 4 or 8.
+    Initialize the dot coordinates with \e cog. 
   */
-  void setConnexity(vpConnexityType connexity) {this->connexity = connexity; };
-
-public:
-
-  /*!
-    Print the coordinates of the point center of gravity
-    in the stream.
-  */
-  friend std::ostream& operator<< (std::ostream& os, vpDot& p) {
-    return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ;
-  } ;
-  void print(std::ostream& os) { os << *this << std::endl ; }
-
-private:
-  enum pixelInDot
-    {
-      in,
-      out
-    } ;
-  double maxDotSizePercentage;
-  unsigned char gray_level_out;
-  void setGrayLevelOut();
-
-  int connexe(vpImage<unsigned char>& I, int u, int v,
-	      unsigned int gray_level_min, unsigned int gray_level_max,
-	      double &mean_value, double &u_cog, double &v_cog, double &n);
-  void COG(vpImage<unsigned char> &I,double& u, double& v) ;
-
-  double mean_gray_level; // Mean gray level of the dot
-  unsigned int gray_level_min; // left threshold for binarisation
-  unsigned int gray_level_max; // right threshold for binarisation
-  double grayLevelPrecision;  //precision of the gray level of the dot.
-  //It is a double precision float witch value is in ]0,1].
-  //1 means full precision, whereas values close to 0 show a very bad precision
-  double gamma ;
-  //! flag : true moment are computed
-  bool compute_moment ;
-  double nbMaxPoint;
-
-public:
+  inline void setCog(const vpImagePoint &cog) {
+    this->cog = cog; 
+  }
   /*!
 
     Activates the dot's moments computation.
@@ -265,43 +167,19 @@ public:
 
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
-  void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v);
-  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v,
-		    unsigned int gray_level_min,
-		    unsigned int gray_level_max);
-  void track(vpImage<unsigned char> & I) ;
-  void track(vpImage<unsigned char> & I, double &u, double &v) ;
-
+  /*!
+    Set the type of connexity: 4 or 8.
+  */
+  void setConnexity(vpConnexityType connexity) {this->connexity = connexity; };
   void setMaxDotSize(double percentage) ;
-  double getMaxDotSize(){
-    return this->maxDotSizePercentage;
-  }
   void setGrayLevelMin( const unsigned int &gray_level_min ) {
     this->gray_level_min = gray_level_min;
   };
   void setGrayLevelMax( const unsigned int &gray_level_max ) {
     this->gray_level_max = gray_level_max;
   };
-  /*!
-
-  \return The mean gray level value of the dot.
-
-  */
-  double getMeanGrayLevel() {
-    return (this->mean_gray_level);
-  };
   void setGrayLevelPrecision( const double & grayLevelPrecision );
 
-  inline double getGamma() {return this->gamma;};
-  /*!
-
-    Return the precision of the gray level of the dot. It is a double
-    precision float witch value is in ]0,1]. 1 means full precision, whereas
-    values close to 0 show a very bad precision.
-
-  */
-  double getGrayLevelPrecision() const {return grayLevelPrecision;}
 
   /*!
     Activates the display of all the pixels of the dot during the tracking.
@@ -313,6 +191,80 @@ public:
     off the display
   */
   void setGraphics(const bool activate) { graphics = activate ; }
+
+  /*!
+    Writes the dot center of gravity coordinates to the stream \e os, and
+    returns a reference to the stream. 
+
+  */
+  friend std::ostream& operator<< (std::ostream& os, vpDot& d) {
+    return (os << "(" << d.getCog() << ")" ) ;
+  } ;
+
+
+  void initTracking(vpImage<unsigned char> &I) ;
+  void initTracking(vpImage<unsigned char> &I, const vpImagePoint &ip);
+  void initTracking(vpImage<unsigned char> &I, const vpImagePoint &ip,
+		    unsigned int gray_level_min, unsigned int gray_level_max);
+
+  void track(vpImage<unsigned char> & I) ;
+  void track(vpImage<unsigned char> & I, vpImagePoint &ip) ;
+
+  /*!
+
+    Return the dot bounding box.
+
+    \sa getWidth(), getHeight()
+
+  */
+  inline vpRect getBBox() {
+    vpRect bbox;
+
+    bbox.setRect(this->u_min,
+		 this->v_min,
+		 this->u_max - this->u_min + 1,
+		 this->v_max - this->v_min + 1);
+
+    return (bbox);
+  };
+  /*!
+    Return the location of the dot center of gravity.
+
+    \return The coordinates of the center of gravity.
+  */
+  inline vpImagePoint getCog() const {
+    return cog;
+  }
+  /*!
+
+    Return the list of all the pixels on the dot
+    border.
+
+    \param ip_edges_list : The list of all the images points on the dot
+    border. This list is update after a call to track().
+
+  */
+  void getEdges(vpList<vpImagePoint> &ip_edges_list) { 
+    ip_edges_list = this->ip_edges_list;
+  };
+  inline double getGamma() {return this->gamma;};
+  /*!
+
+    Return the precision of the gray level of the dot. It is a double
+    precision float witch value is in ]0,1]. 1 means full precision, whereas
+    values close to 0 show a very bad precision.
+
+  */
+  double getGrayLevelPrecision() const {return grayLevelPrecision;}
+  double getMaxDotSize(){
+    return this->maxDotSizePercentage;
+  }
+  /*!
+    Return the mean gray level value of the dot.
+  */
+  double getMeanGrayLevel() {
+    return (this->mean_gray_level);
+  };
 
   /*!
 
@@ -336,23 +288,92 @@ public:
     return (this->v_max - this->v_min + 1);
   };
 
+
+  void print(std::ostream& os) { os << *this << std::endl ; }
+
+  /*!
+    @name Deprecated functions
+  */
+  vpDot(const unsigned int u, const unsigned int v) ;
+  vpDot(const double u, const double v) ;
+
+  /*! 
+    \deprecated You should use setCog() instead.
+  */
+  void set_u(double u) { cog.set_u(u); }
+  /*! 
+    \deprecated You should use setCog() instead.
+  */
+  void set_v(double v) { cog.set_v(v); }
+
+  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v);
+  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v,
+		    unsigned int gray_level_min,
+		    unsigned int gray_level_max);
+  void track(vpImage<unsigned char> & I, double &u, double &v) ;
+
+
   /*!
 
-    Return the dot bounding box.
+  \deprecated This method is deprecated. You should use getCog() instead.
 
-    \sa getWidth(), getHeight()
-
+  Return the "u" (column) coordinate of the center of the dot within the image
+  it comes from.
   */
-  inline vpRect getBBox() {
-    vpRect bbox;
+  double get_u() const { return cog.get_u() ; }
+  /*!
 
-    bbox.setRect(this->u_min,
-		 this->v_min,
-		 this->u_max - this->u_min + 1,
-		 this->v_max - this->v_min + 1);
+  \deprecated This method is deprecated. You should use getCog() instead.
 
-    return (bbox);
-  };
+  Return the "v" (row) coordinate of the center of the dot within the image it
+  comes from.
+  */
+
+  double get_v() const { return cog.get_v() ; }
+
+private:
+
+  //! internal use only
+  vpList<vpImagePoint> ip_edges_list;
+
+  //! Type of connexity
+  vpConnexityType connexity;
+
+  //! coordinates of the point center of gravity
+  vpImagePoint cog;
+
+  // Bounding box
+  int u_min, u_max, v_min, v_max;
+
+  // Flag used to allow display
+  bool graphics ;
+
+  enum pixelInDot
+    {
+      in,
+      out
+    } ;
+  double maxDotSizePercentage;
+  unsigned char gray_level_out;
+  void init() ;
+  void setGrayLevelOut();
+
+  int connexe(vpImage<unsigned char>& I, int u, int v,
+	      unsigned int gray_level_min, unsigned int gray_level_max,
+	      double &mean_value, double &u_cog, double &v_cog, double &n);
+  void COG(vpImage<unsigned char> &I,double& u, double& v) ;
+
+  double mean_gray_level; // Mean gray level of the dot
+  unsigned int gray_level_min; // left threshold for binarisation
+  unsigned int gray_level_max; // right threshold for binarisation
+  double grayLevelPrecision;  //precision of the gray level of the dot.
+  //It is a double precision float witch value is in ]0,1].
+  //1 means full precision, whereas values close to 0 show a very bad precision
+  double gamma ;
+  //! flag : true moment are computed
+  bool compute_moment ;
+  double nbMaxPoint;
+
 } ;
 
 
