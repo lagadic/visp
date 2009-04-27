@@ -48,6 +48,7 @@
 #include <visp/vpWin32Window.h>
 #include <visp/vpWin32Renderer.h>
 #include <visp/vpRect.h>
+#include <visp/vpImagePoint.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
@@ -122,6 +123,12 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   virtual ~vpDisplayWin32();
 
+  // Changes the window's title
+  void setTitle(const char *windowtitle);
+  //Sets the font used while displaying a text in an image
+  void setFont( const char *fontname );
+  //! Sets the window's position
+  void setWindowPosition(int winx, int winy);
   //! Clears the whole window
   void clearDisplay(vpColor::vpColorType c=vpColor::white);
   //! Closes the display
@@ -133,12 +140,6 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   //! Flush the Display
   void flushDisplay();
-  // Changes the window's title
-  void setTitle(const char *windowtitle);
-  //Sets the font used while displaying a text in an image
-  void setFont( const char *fontname );
-  //! Gets the window pixmap and put it in vpRGBa image
-  void getImage(vpImage<vpRGBa> &I);
 
 
   //! Initialization function
@@ -156,8 +157,8 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 	    int winx=-1, int winy=-1 ,
 	    const char *title=NULL) ;
 
-  //! Sets the window's position
-  void setWindowPosition(int winx, int winy);
+  //! Gets the window pixmap and put it in vpRGBa image
+  void getImage(vpImage<vpRGBa> &I);
 
  protected:
 
@@ -199,17 +200,17 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 			vpColor::vpColorType col, bool fill = false,
 			unsigned int e=1);
 
-  //! wait for a click
+  // wait for a click
   bool getClick( bool blocking=true);
 
-  bool getClick(unsigned int& i, unsigned int& j, bool blocking=true);
+  bool getClick(vpImagePoint &ip, bool blocking=true);
 
-  //!  return true when button is pressed
-  bool getClick(unsigned int& i, unsigned int& j,
+  //  return true when button is pressed
+  bool getClick(vpImagePoint &ip,
 		vpMouseButton::vpMouseButtonType& button, bool blocking=true);
 
-  //! return true when  button is released
-  bool getClickUp(unsigned int& i, unsigned int& j,
+  // return true when  button is released
+  bool getClickUp(vpImagePoint &ip,
 		  vpMouseButton::vpMouseButtonType& button,
 		  bool blocking=true);
 

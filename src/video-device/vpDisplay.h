@@ -52,6 +52,7 @@
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpRect.h>
+#include <visp/vpImagePoint.h>
 
 /*!
   \file vpDisplay.h
@@ -157,19 +158,12 @@ protected :
  public:
   virtual ~vpDisplay() {;} ;
 
-  virtual void clearDisplay(vpColor::vpColorType c=vpColor::white)=0 ;
-  virtual void closeDisplay() =0;
-
-  // display 8bits image
-  virtual void displayImage(const vpImage<vpRGBa> &I)=0 ;
-  // display 32 bits image
-  virtual void displayImage(const vpImage<unsigned char> &I)=0 ;
-  virtual void flushDisplay() =0;
   virtual void setTitle(const char *string) =0;
   virtual void setFont(const char *string) =0;
-  // get information
-  inline  unsigned int getWidth() const  { return width ; }
-  inline  unsigned int getHeight() const { return height ; }
+  virtual void setWindowPosition(int winx, int winy) = 0 ;
+
+  virtual void clearDisplay(vpColor::vpColorType c=vpColor::white) =0 ;
+  virtual void closeDisplay() =0;
 
   //! initialization
   virtual void init(vpImage<unsigned char> &I,
@@ -185,7 +179,16 @@ protected :
 		    int winx=-1, int winy=-1 ,
 		    const char *title=NULL) =0;
 
-  virtual void setWindowPosition(int winx, int winy) = 0 ;
+  // display 8bits image
+  virtual void displayImage(const vpImage<unsigned char> &I) =0 ;
+  // display 32 bits image
+  virtual void displayImage(const vpImage<vpRGBa> &I) =0 ;
+  virtual void flushDisplay() =0;
+  // get information
+  inline  unsigned int getWidth() const  { return width ; }
+  inline  unsigned int getHeight() const { return height ; }
+
+
 
  private:
   //! get the window pixmap and put it in vpRGBa image
@@ -200,10 +203,10 @@ protected :
 			    vpColor::vpColorType col=vpColor::white,
 			    unsigned int L=4,unsigned int l=2) =0;
   virtual void displayCharString(int i, int j,const char *s,
-				 vpColor::vpColorType c=vpColor::green)=0 ;
+				 vpColor::vpColorType c=vpColor::green) =0 ;
   //! Display a circle at coordinates (i,j) in the display window.
   virtual void displayCircle(int i, int j, unsigned int r,
-			     vpColor::vpColorType c)=0;
+			     vpColor::vpColorType c) =0;
   //! Display a cross at coordinates (i,j) in the display window
   virtual void displayCross(int i, int j, unsigned int size,
 			    vpColor::vpColorType col) =0;
@@ -233,17 +236,6 @@ protected :
 				unsigned int e=1)=0 ;
 
  public:
-  //! Close a display
-  static void close(const vpImage<unsigned char> &I) ;
-
-  //! Close a display
-  static void close(const vpImage<vpRGBa> &I) ;
-
-  //! Display a 8bits image in the display window
-  static void display(const vpImage<unsigned char> &I) ;
-
-  //! Display a 32bits image in the display window
-  static void display(const vpImage<vpRGBa> &I) ;
 
   //! Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
   //! window
@@ -363,7 +355,7 @@ protected :
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
 			   double size, vpColor::vpColorType col)  ;
- static void displayFrame(const vpImage<vpRGBa> &I,
+  static void displayFrame(const vpImage<vpRGBa> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
 			   double size, vpColor::vpColorType col)  ;
@@ -447,121 +439,223 @@ protected :
 			    unsigned int width, unsigned int height,
 			    vpColor::vpColorType col, unsigned int e=1);
 
+
+
+  /* Simple interface with the mouse event */
+
+  //! Wait for a click. 
+  virtual bool getClick(bool blocking=true) =0;
+
+  //! Return true when a mouse button is pressed. 
+  virtual bool getClick(vpImagePoint &ip,
+			bool blocking=true) =0;
+  //! Return true when a specific mouse button is pressed. 
+  virtual bool getClick(vpImagePoint &ip,
+			vpMouseButton::vpMouseButtonType& button,
+			bool blocking=true) =0 ;
+  //! Return true when a specific mouse button is released. 
+  virtual bool getClickUp(vpImagePoint &ip,
+			  vpMouseButton::vpMouseButtonType &button,
+			  bool blocking=true) =0;
+
+  /*!
+    @name Display functionalities on gray level images.
+  */
+  static void setFont(const vpImage<unsigned char> &I, const char *font);
   static void setTitle(const vpImage<unsigned char> &I, 
 		       const char *windowtitle);
-
-  static void setTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
-
-  static void setFont(const vpImage<unsigned char> &I, const char *font);
-
-  static void setFont(const vpImage<vpRGBa> &I, const char *font);
-
   static void setWindowPosition(const vpImage<unsigned char> &I, 
 				int winx, int winy);
 
-  static void setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy);
-
+  //! Close a display
+  static void close(const vpImage<unsigned char> &I) ;
+  //! Display a 8bits image in the display window
+  static void display(const vpImage<unsigned char> &I) ;
   //! flushes the output buffer
   static void flush(const vpImage<unsigned char> &I) ;
+
+  //! Wait for a click.
+  static bool getClick(const vpImage<unsigned char> &I, bool blocking=true) ;
+  // Return true when a mouse button is pressed.
+  static bool getClick(const vpImage<unsigned char> &I,
+		       vpImagePoint &ip, bool blocking=true) ;
+  //! Return true when a specific mouse button is pressed.
+  static bool getClick(const vpImage<unsigned char> &I,
+		       vpImagePoint &ip,
+		       vpMouseButton::vpMouseButtonType &button,
+		       bool blocking=true) ;
+  //! Return true when a specific mouse button is released.
+  static bool getClickUp(const vpImage<unsigned char> &I,
+			 vpImagePoint &ip,
+			 vpMouseButton::vpMouseButtonType &button,
+			 bool blocking=true) ;
+  //! Get the window pixmap and put it in a gray level image
+  static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
+
+
+
+
+
+  /*!
+    @name Display functionalities on color images.
+  */
+  static void setFont(const vpImage<vpRGBa> &I, const char *font);
+  static void setTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
+  static void setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy);
+
+  //! Close a display
+  static void close(const vpImage<vpRGBa> &I) ;
+
+  //! Display a 32bits image in the display window
+  static void display(const vpImage<vpRGBa> &I) ;
   //! flushes the output buffer
   static void flush(const vpImage<vpRGBa> &I) ;
 
-
- public:
-  /* Simple interface with the mouse event */
-  //!return true way a button is pressed
-  virtual bool getClick(unsigned int& i, unsigned int& j,
-			bool blocking=true) =0;
-  //!  return true way button is pressed
-  virtual bool getClick(unsigned int& i, unsigned int& j,
-			vpMouseButton::vpMouseButtonType& button,
-			bool blocking=true)=0 ;
-  //! return true way  button is released
-  virtual bool getClickUp(unsigned int& i, unsigned int& j,
-			  vpMouseButton::vpMouseButtonType &button,
-			  bool blocking=true)= 0;
-  //! wait for a click
-  virtual bool getClick(bool blocking=true) =0;
-
- public:
-  //! wait for a click
-  static bool getClick(const vpImage<unsigned char> &I, bool blocking=true) ;
-  //! wait for a click
+  //! Wait for a click.
   static bool getClick(const vpImage<vpRGBa> &I, bool blocking=true) ;
-  //!return true way a button is pressed
+
+  //! Return true when a mouse button is pressed.
+  static bool getClick(const vpImage<vpRGBa> &I,
+		       vpImagePoint &ip, bool blocking=true) ;
+  //! Return true when a specific mouse button is pressed.
+  static bool getClick(const vpImage<vpRGBa> &I,
+		       vpImagePoint &ip,
+		       vpMouseButton::vpMouseButtonType &button,
+		       bool blocking=true) ;
+  //! Return true when a specific mouse button is released.
+  static bool getClickUp(const vpImage<vpRGBa> &I,
+			 vpImagePoint &ip,
+			 vpMouseButton::vpMouseButtonType &button,
+			 bool blocking=true) ;
+  //! Get the window pixmap and put it in color image.
+  static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
+
+
+
+
+  /*!
+    @name Deprecated functions
+  */
+  static void displayTitle(const vpImage<unsigned char> &I,
+			   const char *windowtitle);
+
+  static void displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
+
+
+  /*! 
+    Return true if a mouse button is pressed.  
+    \deprecated You should use getClick(const vpImage<unsigned char> &,
+    vpImagePoint &, bool blocking) instead.
+  */
   static bool getClick(const vpImage<unsigned char> &I,
 		       unsigned int& i, unsigned int& j, bool blocking=true) ;
-  //!return true when a button is pressed
+  /*!
+    Return true when a button is pressed.
+    \deprecated You should use getClick(const vpImage<vpRGBa> &,
+    vpImagePoint &, bool blocking) instead.
+  */
   static bool getClick(const vpImage<vpRGBa> &I,
 			unsigned int& i, unsigned int& j, bool blocking=true) ;
-  //!return true when a button is pressed
+  /*!
+    Return true when a button is pressed.
+    \deprecated You should use getClick(const vpImage<unsigned char> &, 
+    vpImagePoint &, bool blocking) instead.
+  */
   static bool getClick_uv(const vpImage<unsigned char> &I,
 			  unsigned int& u, unsigned int& v,
 			  bool blocking=true);
-  //!return true when a button is pressed
+  /*!
+    Return true when a button is pressed.
+    \deprecated You should use getClick(const vpImage<vpRGBa> &, 
+    vpImagePoint &, bool blocking) instead.
+  */
   static bool getClick_uv(const vpImage<vpRGBa> &I,
 			  unsigned int& u, unsigned int& v,
 			  bool blocking=true) ;
-  //!  return true way button is pressed
+  /*!
+    Return true way button is pressed.
+    \deprecated You should use getClick(const vpImage<unsigned char> &, 
+    vpImagePoint &, vpMouseButton::vpMouseButtonType &, 
+    bool blocking) instead.
+  */
   static bool getClick(const vpImage<unsigned char> &I,
 		       unsigned int& i, unsigned int& j,
 		       vpMouseButton::vpMouseButtonType &button,
 		       bool blocking=true) ;
-  //!  return true when button is pressed
+  /*! 
+    Return true when button is pressed.
+    \deprecated You should use getClick(const vpImage<vpRGBa> &, 
+    vpImagePoint &, vpMouseButton::vpMouseButtonType &, 
+    bool blocking) instead.
+  */
   static bool getClick(const vpImage<vpRGBa> &I,
 		       unsigned int& i, unsigned int& j,
 		       vpMouseButton::vpMouseButtonType &button,
 		       bool blocking=true) ;
-  //!  return true when button is pressed
+  /*!
+    Return true when button is pressed.
+    \deprecated You should use getClick(const vpImage<unsigned char> &, 
+    vpImagePoint &, vpMouseButton::vpMouseButtonType &, 
+    bool blocking) instead.
+  */
   static bool getClick_uv(const vpImage<unsigned char> &I,
 			  unsigned int& u, unsigned int& v,
 			  vpMouseButton::vpMouseButtonType &button,
 			  bool blocking=true) ;
-  //!  return true when button is pressed
+  /*!  
+    Return true when button is pressed.
+    \deprecated You should use getClick(const vpImage<vpRGBa> &, 
+    vpImagePoint &, vpMouseButton::vpMouseButtonType &, 
+    bool blocking) instead.
+  */
   static bool getClick_uv(const vpImage<vpRGBa> &I,
 			  unsigned int& u, unsigned int& v,
 			  vpMouseButton::vpMouseButtonType& button,
 			  bool blocking=true) ;
-  //! return true when  button is released
+  /*! 
+    Return true when  button is released.
+    \deprecated You should use getClickUp(const vpImage<unsigned char> &, 
+    vpImagePoint &, vpMouseButton::vpMouseButtonType &, 
+    bool blocking) instead.
+  */
   static bool getClickUp(const vpImage<unsigned char> &I,
 			 unsigned int& i, unsigned int& j,
 			 vpMouseButton::vpMouseButtonType &button,
 			 bool blocking=true) ;
 
 
-  //! return true when button is released
+  /*!
+    Return true when button is released.
+    \deprecated You should use getClickUp(const vpImage<vpRGBa> &, 
+    vpImagePoint &, vpMouseButton::vpMouseButtonType &, 
+    bool blocking) instead.
+  */
   static bool getClickUp(const vpImage<vpRGBa> &I,
 			 unsigned int& i, unsigned int& j,
 			 vpMouseButton::vpMouseButtonType &button,
 			 bool blocking=true) ;
-  //! return true when button is released
+  /*!
+    Return true when button is released.
+    \deprecated You should use getClickUp(const vpImage<unsigned char> &, 
+    vpImagePoint &, vpMouseButton::vpMouseButtonType &, 
+    bool blocking) instead.
+  */
   static bool getClickUp_uv(const vpImage<unsigned char> &I,
 			    unsigned int& u, unsigned int& v,
 			    vpMouseButton::vpMouseButtonType &button,
 			    bool blocking=true);
 
 
-  //! return true when button is released
+  /*! 
+    Return true when button is released.
+    \deprecated You should use getClickUp(const vpImage<vpRGBa> &, 
+    vpImagePoint &, vpMouseButton::vpMouseButtonType &, 
+    bool blocking) instead.
+  */
   static bool getClickUp_uv(const vpImage<vpRGBa> &I,
 			    unsigned int& u, unsigned int& v,
 			    vpMouseButton::vpMouseButtonType& button,
 			    bool blocking=true);
-
-  //! get the window pixmap and put it in vpRGBa image
-  static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
-
-  //! get the window pixmap and put it in vpRGBa image
-  static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
-
-  /*!
-    @name Deprecated functions
-  */
-  /*! \deprecated Use setTitle() instead. */
-  virtual void flushTitle(const char *string) =0;
-  static void displayTitle(const vpImage<unsigned char> &I,
-			   const char *windowtitle);
-
-  static void displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
 
 } ;
 

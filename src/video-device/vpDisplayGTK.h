@@ -142,10 +142,6 @@ public:
   vpDisplayGTK() ;
   virtual ~vpDisplayGTK() ;
 
-  unsigned int getScreenDepth();
-  void getScreenSize(unsigned int &width, unsigned int &height);
-
-  void getImage(vpImage<vpRGBa> &I) ;
   void init(vpImage<unsigned char> &I,
 	    int winx=-1, int winy=-1,
 	    const char *_title=NULL)  ;
@@ -156,7 +152,17 @@ public:
   void init(unsigned int width, unsigned int height,
 	    int winx=-1, int winy=-1 ,
 	    const char *_title=NULL) ;
+
+  unsigned int getScreenDepth();
+  void getScreenSize(unsigned int &width, unsigned int &height);
+
+  void getImage(vpImage<vpRGBa> &I) ;
+
 protected:
+  void setFont( const char *fontname );
+  void setTitle(const char *string) ;
+  void setWindowPosition(int winx, int winy);
+
   void clearDisplay(vpColor::vpColorType c=vpColor::white) ;
 
   void closeDisplay() ;
@@ -192,26 +198,20 @@ protected:
 			vpColor::vpColorType col, bool fill = false,
 			unsigned int e=1);
   void flushDisplay() ;
-  void setTitle(const char *string) ;
-  void setFont( const char *fontname );
-  bool getClick(unsigned int& i, unsigned int& j, bool blocking=true) ;
-  bool getClick(unsigned int& i, unsigned int& j,
-		 vpMouseButton::vpMouseButtonType& button,
-		bool blocking=true) ;
+
   bool getClick(bool blocking=true) ;
-  bool getClickUp(unsigned int& i, unsigned int& j,
+  bool getClick(vpImagePoint &ip, bool blocking=true) ;
+  bool getClick(vpImagePoint &ip,
+		vpMouseButton::vpMouseButtonType& button,
+		bool blocking=true) ;
+  bool getClickUp(vpImagePoint &ip,
 		  vpMouseButton::vpMouseButtonType& button,
 		  bool blocking=true) ;
 
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
 
-  void setWindowPosition(int winx, int winy);
 
-  /*!
-    @name Deprecated functions
-  */
-  void flushTitle(const char *string) ;
 } ;
 
 #endif
