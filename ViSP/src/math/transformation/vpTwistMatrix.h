@@ -137,11 +137,13 @@ class VISP_EXPORT vpTwistMatrix : public vpMatrix
   // copy operator from vpMatrix (handle with care)
   vpTwistMatrix &operator=(const vpTwistMatrix &M);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
     @name Deprecated functions
   */
   vpTwistMatrix buildFrom(const vpTranslationVector &t,
 			  const vpEulerVector &euler);
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 } ;
 

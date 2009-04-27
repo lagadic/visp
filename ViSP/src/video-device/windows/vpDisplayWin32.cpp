@@ -419,17 +419,6 @@ void vpDisplayWin32::setWindowPosition(int winx, int winy)
 
 /*!
   Changes the window's titlebar text
-  \deprecated Use setTitle() instead.
-  \param string The new text to display
-*/
-void vpDisplayWin32::flushTitle(const char *string)
-{
-  //wait if the window is not initialized
-  waitForInit();
-  SetWindowText(window.hWnd,string);
-}
-/*!
-  Changes the window's titlebar text
   \param windowtitle : Window title.
 */
 void vpDisplayWin32::setTitle(const char *windowtitle)

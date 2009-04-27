@@ -39,6 +39,7 @@
 #include <math.h>
 #include <visp/vpEulerVector.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /*!
   \file vpEulerVector.cpp
@@ -118,6 +119,8 @@ vpEulerVector::buildFrom(const vpThetaUVector& tu)
 
     return *this ;
 }
+
+#endif //ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 /*

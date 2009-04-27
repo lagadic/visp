@@ -134,40 +134,6 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const double Tx,
   init() ;
   buildFrom(Tx, Ty, Tz,tux, tuy, tuz) ;
 }
-/*! 
-
-  \deprecated Construction from translation and rotation.
-
-  This function is deprecated: use vpHomogeneousMatrix(const
-  vpTranslationVector&,const vpThetaUVector&) instead.
-
- */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpThetaUVector &tu,
-                                         const vpTranslationVector &T) : vpMatrix()
-{
-  init() ;
-  buildFrom(T,tu) ;
-  vpTRACE("Warning : This function is deprecated: \
-      use vpHomogeneousMatrix(vpTranslationVector&,vpThetaUVector&) instead.");
-}
-
-/*! 
-
-  \deprecated Construction from translation and rotation.
-
-  This function is deprecated: use vpHomogeneousMatrix(const
-  vpTranslationVector&,const vpRotationMatrix&) instead.
-
- */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpRotationMatrix &R,
-                                         const vpTranslationVector &T) : vpMatrix()
-{
-  init() ;
-  insert(R) ;
-  insert(T) ;
-  vpTRACE("Warning : This function is deprecated: use \
-      vpHomogeneousMatrix(vpTranslationVector&,vpRotationMatrix&).instead");
-}
 
 void
 vpHomogeneousMatrix::buildFrom(const vpTranslationVector &T,
@@ -184,42 +150,6 @@ vpHomogeneousMatrix::buildFrom(const vpTranslationVector &T,
   init() ;
   insert(R) ;
   insert(T) ;
-}
-
-/*! 
-
-  \deprecated Construction from translation and rotation.
-
-  This function is deprecated: use vpHomogeneousMatrix(const
-  vpTranslationVector&,const vpThetaUVector&) instead.
-
- */
-void
-    vpHomogeneousMatrix::buildFrom(const vpThetaUVector &tu,
-                                   const vpTranslationVector &T)
-{
-  insert(tu) ;
-  insert(T) ;
-  vpTRACE("Warning : This function is deprecated: \
-      use buildFrom(vpTranslationVector&,vpThetaUVector&) instead.");
-}
-
-/*! 
-
-  \deprecated Construction from translation and rotation.
-
-  This function is deprecated: use vpHomogeneousMatrix(const
-  vpTranslationVector&,const vpRotationMatrix&) instead.
- */
-void
-    vpHomogeneousMatrix::buildFrom(const vpRotationMatrix &R,
-                                   const vpTranslationVector &T)
-{
-  init() ;
-  insert(R) ;
-  insert(T) ;
-  vpTRACE("Warning : This function is deprecated:  \
-      use buildFrom(vpTranslationVector&,vpRotationMatrix&) instead.");
 }
 
 
@@ -512,6 +442,98 @@ vpHomogeneousMatrix::load(std::ifstream &f)
   }
 }
 
+//! Print the matrix as a vector [T thetaU]
+void
+vpHomogeneousMatrix::print()
+{
+  vpPoseVector r(*this) ;
+  std::cout << r.t() ;
+}
+//! Basic initialisation (identity)
+void
+vpHomogeneousMatrix::setIdentity()
+{
+  init() ;
+}
+
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*! 
+
+  \deprecated Construction from translation and rotation.
+
+  This function is deprecated: use vpHomogeneousMatrix(const
+  vpTranslationVector&,const vpThetaUVector&) instead.
+
+ */
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpThetaUVector &tu,
+                                         const vpTranslationVector &T) : vpMatrix()
+{
+  init() ;
+  buildFrom(T,tu) ;
+  vpTRACE("Warning : This function is deprecated: \
+      use vpHomogeneousMatrix(vpTranslationVector&,vpThetaUVector&) instead.");
+}
+
+/*! 
+
+  \deprecated Construction from translation and rotation.
+
+  This function is deprecated: use vpHomogeneousMatrix(const
+  vpTranslationVector&,const vpRotationMatrix&) instead.
+
+ */
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpRotationMatrix &R,
+                                         const vpTranslationVector &T) : vpMatrix()
+{
+  init() ;
+  insert(R) ;
+  insert(T) ;
+  vpTRACE("Warning : This function is deprecated: use \
+      vpHomogeneousMatrix(vpTranslationVector&,vpRotationMatrix&).instead");
+}
+
+/*! 
+
+  \deprecated Construction from translation and rotation.
+
+  This function is deprecated: use vpHomogeneousMatrix(const
+  vpTranslationVector&,const vpThetaUVector&) instead.
+
+ */
+void
+    vpHomogeneousMatrix::buildFrom(const vpThetaUVector &tu,
+                                   const vpTranslationVector &T)
+{
+  insert(tu) ;
+  insert(T) ;
+  vpTRACE("Warning : This function is deprecated: \
+      use buildFrom(vpTranslationVector&,vpThetaUVector&) instead.");
+}
+
+/*! 
+
+  \deprecated Construction from translation and rotation.
+
+  This function is deprecated: use vpHomogeneousMatrix(const
+  vpTranslationVector&,const vpRotationMatrix&) instead.
+ */
+void
+    vpHomogeneousMatrix::buildFrom(const vpRotationMatrix &R,
+                                   const vpTranslationVector &T)
+{
+  init() ;
+  insert(R) ;
+  insert(T) ;
+  vpTRACE("Warning : This function is deprecated:  \
+      use buildFrom(vpTranslationVector&,vpRotationMatrix&) instead.");
+}
+
 /*!
 
   \deprecated Read an homogeneous matrix from an input file stream. The
@@ -540,21 +562,7 @@ vpHomogeneousMatrix::loadMatrix34(std::ifstream &f)
   }
 }
 
-
-
-//! Print the matrix as a vector [T thetaU]
-void
-vpHomogeneousMatrix::print()
-{
-  vpPoseVector r(*this) ;
-  std::cout << r.t() ;
-}
-//! Basic initialisation (identity)
-void
-vpHomogeneousMatrix::setIdentity()
-{
-  init() ;
-}
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /*
  * Local variables:

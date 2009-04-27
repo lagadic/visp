@@ -41,6 +41,8 @@
 
 #include "visp/vpConfig.h"
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 /*!
   \file vpSubPixel.h
   \brief Class that defines what is a sub-pixel.
@@ -117,6 +119,7 @@ class VISP_EXPORT vpSubPixel
   
 } ;
 
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #endif
 
 /*

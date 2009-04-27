@@ -172,6 +172,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! Print the matrix as a vector [T thetaU]
   void print() ;
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
     @name Deprecated functions
   */
@@ -190,8 +191,8 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
                  const vpTranslationVector &T) ;
   // Load an homogeneous matrix from a file. Proposed for compatibilty issue
   void loadMatrix34(std::ifstream &f) ;
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
- private:
 
 } ;
 

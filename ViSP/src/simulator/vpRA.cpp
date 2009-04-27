@@ -38,6 +38,8 @@
 
 #include <visp/vpConfig.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 #ifdef VISP_HAVE_COIN
 
 #include <visp/vpRA.h>
@@ -150,7 +152,9 @@ vpRA::setImage(vpImage<vpRGBa> &I)
 
 }
 
+
 #endif
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /*
  * Local variables:

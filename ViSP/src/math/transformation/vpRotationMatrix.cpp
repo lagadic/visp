@@ -46,9 +46,6 @@
 #include <visp/vpMatrix.h>
 
 // Rotation classes
-#include <visp/vpRxyzVector.h>
-#include <visp/vpRzyxVector.h>
-#include <visp/vpEulerVector.h>
 #include <visp/vpRotationMatrix.h>
 
 
@@ -324,12 +321,6 @@ vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpMatrix()
   buildFrom(tu) ;
 }
 
-//! Construction from  rotation (Euler parameterization)
-vpRotationMatrix::vpRotationMatrix(const vpEulerVector &euler) : vpMatrix()
-{
-  init() ;
-  buildFrom(euler) ;
-}
 
 //! Construction from  rotation (Euler parameterization, ie Rzyz parameterization)
 vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpMatrix()
@@ -524,40 +515,6 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 }
 
 /*!
-  \brief   Transform a vector representing the euler angle
-  into an rotation matrix.
-
-  \deprecated This method is deprecated. You should use
-  buildFrom(const vpRzyzVector &) instead.
-
-  Rzyz = Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
-*/
-vpRotationMatrix
-vpRotationMatrix::buildFrom(const vpEulerVector &v)
-{
-  double c0,c1,c2,s0,s1,s2;
-
-  c0 = cos(v[0]);
-  c1 = cos(v[1]);
-  c2 = cos(v[2]);
-  s0 = sin(v[0]);
-  s1 = sin(v[1]);
-  s2 = sin(v[2]);
-
-  (*this)[0][0] = c0*c1*c2 - s0*s2;
-  (*this)[0][1] = -c0*c1*s2 - s0*c2;
-  (*this)[0][2] = c0*s1;
-  (*this)[1][0] = s0*c1*c2+c0*s2 ;
-  (*this)[1][1] = -s0*c1*s2 + c0*c2 ;
-  (*this)[1][2] = s0*s1;
-  (*this)[2][0] = -s1*c2;
-  (*this)[2][1] = s1*s2;
-  (*this)[2][2] = c1;
-
-  return (*this) ;
-}
-
-/*!
   \brief   Transform a vector reprensenting the euler angle
   into an rotation matrix
   Rzyz =  Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
@@ -672,6 +629,60 @@ vpRotationMatrix::buildFrom(const double tux,
   return *this ;
 }
 
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This constructor is deprecated.
+
+  Construction from rotation (Euler parameterization)
+
+*/
+vpRotationMatrix::vpRotationMatrix(const vpEulerVector &euler) : vpMatrix()
+{
+  init() ;
+  buildFrom(euler) ;
+}
+
+/*!
+  \brief   Transform a vector representing the euler angle
+  into an rotation matrix.
+
+  \deprecated This method is deprecated. You should use
+  buildFrom(const vpRzyzVector &) instead.
+
+  Rzyz = Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
+*/
+vpRotationMatrix
+vpRotationMatrix::buildFrom(const vpEulerVector &v)
+{
+  double c0,c1,c2,s0,s1,s2;
+
+  c0 = cos(v[0]);
+  c1 = cos(v[1]);
+  c2 = cos(v[2]);
+  s0 = sin(v[0]);
+  s1 = sin(v[1]);
+  s2 = sin(v[2]);
+
+  (*this)[0][0] = c0*c1*c2 - s0*s2;
+  (*this)[0][1] = -c0*c1*s2 - s0*c2;
+  (*this)[0][2] = c0*s1;
+  (*this)[1][0] = s0*c1*c2+c0*s2 ;
+  (*this)[1][1] = -s0*c1*s2 + c0*c2 ;
+  (*this)[1][2] = s0*s1;
+  (*this)[2][0] = -s1*c2;
+  (*this)[2][1] = s1*s2;
+  (*this)[2][2] = c1;
+
+  return (*this) ;
+}
+
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 #undef vpDEBUG_LEVEL1

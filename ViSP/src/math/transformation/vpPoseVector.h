@@ -175,6 +175,7 @@ class VISP_EXPORT vpPoseVector : public vpColVector
   // Print  a vector [T thetaU] thetaU in degree
   void print() ;
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
     @name Deprecated functions
   */
@@ -206,6 +207,7 @@ class VISP_EXPORT vpPoseVector : public vpColVector
   // convert a translation and a "euler" vector into a pose
   vpPoseVector buildFrom(const vpTranslationVector& t,
 			 const vpEulerVector &e) ;
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 } ;
 

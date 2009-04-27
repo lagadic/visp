@@ -145,26 +145,6 @@ vpPoseVector::vpPoseVector(const vpTranslationVector& t,
   buildFrom(t,R) ;
 }
 
-/*!  
-
-  \deprecated Construct a 6 dimension pose vector \f$[ \Theta \bf
-  u]^\top\f$ from a translation vector and an Euler rotation
-  vector. Since vpEulerVector is deprecated (because ambiguous) this
-  constructor should not be used.
-
-  \param t : Translation vector \f$ \bf t \f$.
-
-  \param e : Euler vector. This vector is converted into a \f$\Theta
-  \bf u\f$ vector.
-
-*/
-vpPoseVector::vpPoseVector(const vpTranslationVector& t,
-                           const vpEulerVector &e)
-{
-  init() ;
-  buildFrom(t,e) ;
-}
-
 /*! 
 
   Construct a 6 dimension pose vector \f$ [\bf t, \Theta \bf
@@ -179,58 +159,6 @@ vpPoseVector::vpPoseVector(const vpHomogeneousMatrix& M)
 {
   init() ;
   buildFrom(M) ;
-}
-
-
-/*! 
-
-  \deprecated Constructor. Convert a "euler" vector and a translation
-  vector into a pose.
-
-*/
-vpPoseVector::vpPoseVector(const vpEulerVector &e,
-                           const vpTranslationVector& t)
-{
-  init() ;
-  buildFrom(t,e) ;
-  vpTRACE("Warning : This function is deprecated : \
-          use vpPoseVector(vpTranslationVector,vpEulerVector&) instead.");
-}
-
-/*! 
-
-  \deprecated Constructor. Convert a "thetau" vector and a translation
-  vector into a pose.
-
-  This function is deprecated: use vpPoseVector(const
-  vpTranslationVector&,const vpThetaUVector&) instead.
-
-*/
-vpPoseVector::vpPoseVector(const vpThetaUVector& tu,
-                           const vpTranslationVector& t)
-{
-  init() ;
-  buildFrom(t,tu) ;
-  vpTRACE("Warning : This function is deprecated :  \
-          use vpPoseVector(vpTranslationVector,vpThetaUVector&) instead.");
-}
-
-/*! 
-
-  \deprecated Constructor. Convert a rotation matrix and a translation
-  vector into a pose.
-
-  This function is deprecated: use vpPoseVector(const
-  vpTranslationVector&,const vpRotationMatrix&) instead.
-
-*/
-vpPoseVector::vpPoseVector(const vpRotationMatrix& R,
-                           const vpTranslationVector& t)
-{
-  init() ;
-  buildFrom(t,R) ;
-  vpTRACE("Warning : This function is deprecated :  \
-          use vpPoseVector(vpTranslationVector,vpRotationMatrix&) instead.");
 }
 
 /*!
@@ -250,21 +178,6 @@ vpPoseVector::buildFrom(const vpHomogeneousMatrix& M)
   vpRotationMatrix R ;    M.extract(R) ;
   vpTranslationVector t ; M.extract(t) ;
   buildFrom(t,R) ;
-  return *this ;
-}
-
-/*!
-
-  \deprecated Convert a translation and a "euler" vector into a pose.
-
-*/
-vpPoseVector
-vpPoseVector::buildFrom(const vpTranslationVector& t,
-                        const vpEulerVector &e)
-{
-  vpThetaUVector tu ;
-  tu.buildFrom(e) ;
-  buildFrom(t,tu) ;
   return *this ;
 }
 
@@ -315,70 +228,6 @@ vpPoseVector::buildFrom(const vpTranslationVector& t,
   return *this ;
 }
 
-/*! 
-
-  \deprecated Convert a "euler" vector and a translation vector into a pose.
-
-  This function is deprecated: use buildFrom(const
-  vpTranslationVector&,const vpEulerVector&) instead.
-
-*/
-vpPoseVector
-vpPoseVector::buildFrom(const vpEulerVector &e,
-                        const vpTranslationVector& t)
-{
-  vpThetaUVector tu ;
-  tu.buildFrom(e) ;
-  buildFrom(t,tu) ;
-  vpTRACE("Warning : This function is deprecated :  \
-          use buildFrom(vpTranslationVector,vpEulerVector&) instead.");
-  return *this ;
-}
-
-/*!  
-
-  \deprecated Convert a "thetau" vector and a translation vector into
-  a pose.
-
-  This function is deprecated: 
-  use buildFrom(const vpTranslationVector&,const vpEulerVector&) instead.
-*/
-
-vpPoseVector
-vpPoseVector::buildFrom(const vpThetaUVector& tu,
-                        const vpTranslationVector& t)
-{
-  for (int i =0  ; i < 3 ; i++)
-    {
-      (*this)[i] = t[i] ;
-      (*this)[i+3] = tu[i] ;
-    }
-  vpTRACE("Warning : This function is deprecated :  \
-          use buildFrom(vpTranslationVector,vpThetaUVector&) instead.");
-  return *this ;
-}
-
-/*!  
-
-  \deprecated Convert a rotation matrix and a translation vector into a pose.
-
-  This function is deprecated: 
-  use buildFrom(const vpTranslationVector&,const vpEulerVector&) instead.
- 
-*/
-
-vpPoseVector
-vpPoseVector::buildFrom(const vpRotationMatrix& R,
-                        const vpTranslationVector& t)
-{
-  vpThetaUVector tu ;
-  tu.buildFrom(R) ;
-
-  buildFrom(t,tu) ;
-  vpTRACE("Warning : This function is deprecated :  \
-          use buildFrom(vpTranslationVector,vpRotationMatrix&) instead.");
-  return *this ;
-}
 
 
 /*!
@@ -461,6 +310,166 @@ vpPoseVector::load(std::ifstream &f)
       throw(vpException(vpException::ioError, "\t\t file not open")) ;
     }
 }
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+/*!  
+
+  \deprecated Construct a 6 dimension pose vector \f$[ \Theta \bf
+  u]^\top\f$ from a translation vector and an Euler rotation
+  vector. Since vpEulerVector is deprecated (because ambiguous) this
+  constructor should not be used.
+
+  \param t : Translation vector \f$ \bf t \f$.
+
+  \param e : Euler vector. This vector is converted into a \f$\Theta
+  \bf u\f$ vector.
+
+*/
+vpPoseVector::vpPoseVector(const vpTranslationVector& t,
+                           const vpEulerVector &e)
+{
+  init() ;
+  buildFrom(t,e) ;
+}
+
+/*! 
+
+  \deprecated Constructor. Convert a "euler" vector and a translation
+  vector into a pose.
+
+*/
+vpPoseVector::vpPoseVector(const vpEulerVector &e,
+                           const vpTranslationVector& t)
+{
+  init() ;
+  buildFrom(t,e) ;
+  vpTRACE("Warning : This function is deprecated : \
+          use vpPoseVector(vpTranslationVector,vpEulerVector&) instead.");
+}
+
+/*! 
+
+  \deprecated Constructor. Convert a "thetau" vector and a translation
+  vector into a pose.
+
+  This function is deprecated: use vpPoseVector(const
+  vpTranslationVector&,const vpThetaUVector&) instead.
+
+*/
+vpPoseVector::vpPoseVector(const vpThetaUVector& tu,
+                           const vpTranslationVector& t)
+{
+  init() ;
+  buildFrom(t,tu) ;
+  vpTRACE("Warning : This function is deprecated :  \
+          use vpPoseVector(vpTranslationVector,vpThetaUVector&) instead.");
+}
+
+/*! 
+
+  \deprecated Constructor. Convert a rotation matrix and a translation
+  vector into a pose.
+
+  This function is deprecated: use vpPoseVector(const
+  vpTranslationVector&,const vpRotationMatrix&) instead.
+
+*/
+vpPoseVector::vpPoseVector(const vpRotationMatrix& R,
+                           const vpTranslationVector& t)
+{
+  init() ;
+  buildFrom(t,R) ;
+  vpTRACE("Warning : This function is deprecated :  \
+          use vpPoseVector(vpTranslationVector,vpRotationMatrix&) instead.");
+}
+
+/*!
+
+  \deprecated Convert a translation and a "euler" vector into a pose.
+
+*/
+vpPoseVector
+vpPoseVector::buildFrom(const vpTranslationVector& t,
+                        const vpEulerVector &e)
+{
+  vpThetaUVector tu ;
+  tu.buildFrom(e) ;
+  buildFrom(t,tu) ;
+  return *this ;
+}
+
+/*! 
+
+  \deprecated Convert a "euler" vector and a translation vector into a pose.
+
+  This function is deprecated: use buildFrom(const
+  vpTranslationVector&,const vpEulerVector&) instead.
+
+*/
+vpPoseVector
+vpPoseVector::buildFrom(const vpEulerVector &e,
+                        const vpTranslationVector& t)
+{
+  vpThetaUVector tu ;
+  tu.buildFrom(e) ;
+  buildFrom(t,tu) ;
+  vpTRACE("Warning : This function is deprecated :  \
+          use buildFrom(vpTranslationVector,vpEulerVector&) instead.");
+  return *this ;
+}
+
+/*!  
+
+  \deprecated Convert a "thetau" vector and a translation vector into
+  a pose.
+
+  This function is deprecated: 
+  use buildFrom(const vpTranslationVector&,const vpEulerVector&) instead.
+*/
+
+vpPoseVector
+vpPoseVector::buildFrom(const vpThetaUVector& tu,
+                        const vpTranslationVector& t)
+{
+  for (int i =0  ; i < 3 ; i++)
+    {
+      (*this)[i] = t[i] ;
+      (*this)[i+3] = tu[i] ;
+    }
+  vpTRACE("Warning : This function is deprecated :  \
+          use buildFrom(vpTranslationVector,vpThetaUVector&) instead.");
+  return *this ;
+}
+
+/*!  
+
+  \deprecated Convert a rotation matrix and a translation vector into a pose.
+
+  This function is deprecated: 
+  use buildFrom(const vpTranslationVector&,const vpEulerVector&) instead.
+ 
+*/
+
+vpPoseVector
+vpPoseVector::buildFrom(const vpRotationMatrix& R,
+                        const vpTranslationVector& t)
+{
+  vpThetaUVector tu ;
+  tu.buildFrom(R) ;
+
+  buildFrom(t,tu) ;
+  vpTRACE("Warning : This function is deprecated :  \
+          use buildFrom(vpTranslationVector,vpRotationMatrix&) instead.");
+  return *this ;
+}
+
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 

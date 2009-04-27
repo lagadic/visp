@@ -172,27 +172,6 @@ vpCameraParameters::initPersProjWithoutDistortion(const double px,
   this->inv_py = 1./py;
 }
 
-
-
-
-/*!
-
-  \deprecated Initialization with specific parameters using perpective
-  projection without distortion model.
-
-  This function is deprecated: use initPersProjWithoutDistortion() instead.
-
-  \param px,py : pixel size
-  \param u0,v0 : principal points
-
-*/
-void
-vpCameraParameters::init(const double px, const double py,
-			 const double u0, const double v0)
-{
-  initPersProjWithoutDistortion(px,py,u0,v0);
-}
-
 /*!
   Initialization with specific parameters using perpective projection with
   distortion model.
@@ -306,47 +285,6 @@ vpCameraParameters::get_K() const
   return K; 
 }
 
-/*!
-  
-  \deprecated Set the principal point.
-
-  This function is deprecated: use either initializer functions like
-  initPersProjWithoutDistortion() or initPersProjWithDistortion().
-*/
-void
-vpCameraParameters::setPrincipalPoint(double u0, double v0)
-{
-  this->u0    = u0 ;
-  this->v0    = v0 ;
-}
-
-/*!
-  \deprecated Set the pixel size.
-
-  This function is deprecated: use either initializer functions like
-  initPersProjWithoutDistortion() or initPersProjWithDistortion().
-*/
-void
-vpCameraParameters::setPixelRatio(double px, double py)
-{
-  this->px    = px ;
-  this->py    = py ;
-  
-  if (fabs(px)<1e-6)
-  {
-    vpERROR_TRACE("Camera parameter px = 0") ;
-    throw(vpException(vpException::divideByZeroError,
-          "Camera parameter px = 0")) ;
-  }
-  if (fabs(py)<1e-6)
-  {
-    vpERROR_TRACE("Camera parameter px = 0") ;
-    throw(vpException(vpException::divideByZeroError,
-          "Camera parameter px = 0")) ;
-  }
-  this->inv_px = 1./px;
-  this->inv_py = 1./py;
-}
 
 /*!
   Print the camera parameters on the standard output
@@ -409,6 +347,73 @@ std::ostream & operator << (std::ostream & os,
   return os;
 }
 
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+
+  \deprecated Initialization with specific parameters using perpective
+  projection without distortion model.
+
+  This function is deprecated: use initPersProjWithoutDistortion() instead.
+
+  \param px,py : pixel size
+  \param u0,v0 : principal points
+
+*/
+void
+vpCameraParameters::init(const double px, const double py,
+			 const double u0, const double v0)
+{
+  initPersProjWithoutDistortion(px,py,u0,v0);
+}
+
+/*!
+  
+  \deprecated Set the principal point.
+
+  This function is deprecated: use either initializer functions like
+  initPersProjWithoutDistortion() or initPersProjWithDistortion().
+*/
+void
+vpCameraParameters::setPrincipalPoint(double u0, double v0)
+{
+  this->u0    = u0 ;
+  this->v0    = v0 ;
+}
+
+/*!
+  \deprecated Set the pixel size.
+
+  This function is deprecated: use either initializer functions like
+  initPersProjWithoutDistortion() or initPersProjWithDistortion().
+*/
+void
+vpCameraParameters::setPixelRatio(double px, double py)
+{
+  this->px    = px ;
+  this->py    = py ;
+  
+  if (fabs(px)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
+  }
+  if (fabs(py)<1e-6)
+  {
+    vpERROR_TRACE("Camera parameter px = 0") ;
+    throw(vpException(vpException::divideByZeroError,
+          "Camera parameter px = 0")) ;
+  }
+  this->inv_px = 1./px;
+  this->inv_py = 1./py;
+}
+
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 /*

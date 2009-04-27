@@ -46,7 +46,6 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
-#include <visp/vpEulerVector.h>
 #include <visp/vpRotationVector.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpRzyxVector.h>
@@ -54,6 +53,9 @@
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpEulerVector.h>
+#endif
 
 /*!
   \class vpRotationMatrix
@@ -75,7 +77,9 @@ class VISP_EXPORT vpRotationMatrix : public vpMatrix
   friend class vpRxyzVector;
   friend class vpRzyzVector;
   friend class vpRzyxVector;
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   friend class vpEulerVector;
+#endif
   friend class vpThetaUVector;
   friend class vpTranslationVector;
 public:
@@ -92,8 +96,6 @@ public:
   vpRotationMatrix(const vpThetaUVector &r) ;
   //! Construction from  rotation (Euler parameterization)
   vpRotationMatrix(const vpRzyzVector &r) ;
-  //! Construction from  rotation Rzyz
-  vpRotationMatrix(const vpEulerVector &r) ;
   //! Construction from  rotation Rxyz
   vpRotationMatrix(const vpRxyzVector &r) ;
   //! Construction from  rotation Rzyx
@@ -134,9 +136,6 @@ public:
 
   //! Transform a vector vpThetaUVector into an rotation matrix
   vpRotationMatrix buildFrom(const vpThetaUVector &v) ;
-  //! Transform a vector representing the euler (Rzyz) angle
-  //! into a rotation matrix
-  vpRotationMatrix buildFrom(const vpEulerVector &v) ;
   //! Transform a vector reprensenting the euler (Rzyz) angle
   //! into a rotation matrix
   vpRotationMatrix buildFrom(const vpRzyzVector &v) ;
@@ -148,6 +147,17 @@ public:
   vpRotationMatrix buildFrom(const double tux,
 			     const double tuy,
 			     const double tuz) ;
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  //! Construction from  rotation Rzyz
+  vpRotationMatrix(const vpEulerVector &r) ;
+  //! Transform a vector representing the euler (Rzyz) angle
+  //! into a rotation matrix
+  vpRotationMatrix buildFrom(const vpEulerVector &v) ;
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 private:
   static const double threshold;
