@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.86 2009-01-16 09:10:48 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -93,6 +93,12 @@ MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
 OPTION(BUILD_SHARED_LIBS "Build ViSP with shared libraries." OFF)
 # Build examples as an option.
 OPTION(BUILD_EXAMPLES "Build ViSP examples." ON)
+# Build deprecated functions as an option.
+OPTION(BUILD_DEPRECATED_FUNCTIONS "Build deprecated functionalities." ON)
+
+IF(BUILD_DEPRECATED_FUNCTIONS)
+  SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE) # for header vpConfig.h
+ENDIF(BUILD_DEPRECATED_FUNCTIONS)
 
 IF (UNIX)
   OPTION(USE_ITIFG8  "Compile ViSP with itifg8 framegrabber usage" OFF)

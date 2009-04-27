@@ -54,6 +54,9 @@
 // Used to set declspec(import, export) in headers if required under Windows
 #cmakedefine VISP_BUILD_SHARED_LIBS
 
+// Defined if deprecated functionalities are requested to build
+#cmakedefine VISP_BUILD_DEPRECATED_FUNCTIONS
+
 // Defined if MSVC is the compiler
 #cmakedefine VISP_USE_MSVC
 
