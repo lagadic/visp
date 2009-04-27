@@ -728,11 +728,14 @@ void vpDisplayOpenCV::displayCharString(int i, int j,
 /*!
   Wait for a click from one of the mouse button.
 
-  \param blocking : true for a blocking behaviour waiting a mouse
-  button click, false for a non blocking behaviour.
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
 
-  \return
-  - true if a button was clicked. This is always the case if blocking is set
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
     to \e true.
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
@@ -773,27 +776,32 @@ vpDisplayOpenCV::getClick(bool blocking)
 }
 
 /*!
-  Wait for a mouse button click and get the position of the clicked pixel.
 
-  \param i,j : Position of the clicked pixel (row, colum indexes).
+  Wait for a click from one of the mouse button and get the position
+  of the clicked image point.
 
-  \param blocking : true for a blocking behaviour waiting a mouse
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param blocking [in] : true for a blocking behaviour waiting a mouse
   button click, false for a non blocking behaviour.
 
-  \return
-  - true if a button was clicked. This is always the case if blocking is set
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
     to \e true.
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
 
 */
 bool
-vpDisplayOpenCV::getClick(unsigned int& i, unsigned int& j, bool blocking)
+vpDisplayOpenCV::getClick(vpImagePoint &ip, bool blocking)
 {
   bool ret = false;
 
   if (OpenCVinitialized) {
     flushDisplay() ;
+
+    double u, v;
+
     if (blocking){
       lbuttondown = false;
       mbuttondown = false;
@@ -802,23 +810,26 @@ vpDisplayOpenCV::getClick(unsigned int& i, unsigned int& j, bool blocking)
     do {
       if (lbuttondown){
         ret = true ;
-        j = (unsigned int)x_lbuttondown;
-        i = (unsigned int)y_lbuttondown;
-
+        u = (unsigned int)x_lbuttondown;
+        v = (unsigned int)y_lbuttondown;
+	ip.set_u( u );
+	ip.set_v( v );
         lbuttondown = false;
       }
       if (mbuttondown){
         ret = true ;
-        j = (unsigned int)x_mbuttondown;
-        i = (unsigned int)y_mbuttondown;
-
+        u = (unsigned int)x_mbuttondown;
+        v = (unsigned int)y_mbuttondown;
+	ip.set_u( u );
+	ip.set_v( v );
         mbuttondown = false;
       }
       if (rbuttondown){
         ret = true ;
-        j = (unsigned int)x_rbuttondown;
-        i = (unsigned int)y_rbuttondown;
-
+        u = (unsigned int)x_rbuttondown;
+        v = (unsigned int)y_rbuttondown;
+	ip.set_u( u );
+	ip.set_v( v );
         rbuttondown = false;
       }
       if (blocking) cvWaitKey(10);
@@ -837,23 +848,23 @@ vpDisplayOpenCV::getClick(unsigned int& i, unsigned int& j, bool blocking)
 
   Wait for a mouse button click and get the position of the clicked
   pixel. The button used to click is also set.
+  
+  \param ip [out] : The coordinates of the clicked image point.
 
-  \param i,j : Position of the clicked pixel (row, colum indexes).
+  \param button [out] : The button used to click.
 
-  \param button : Button used to click.
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
 
-  \param blocking : true for a blocking behaviour waiting a mouse
-  button click, false for a non blocking behaviour.
-
-  \return
-  - true if a button was clicked. This is always the case if blocking is set
-    to \e true.
-  - false if no button was clicked. This can occur if blocking is set
-    to \e false.
-
+  \return true if a mouse button is pressed, false otherwise. If a
+  button is pressed, the location of the mouse pointer is updated in
+  \e ip.
 */
 bool
-vpDisplayOpenCV::getClick(unsigned int& i, unsigned int& j,
+vpDisplayOpenCV::getClick(vpImagePoint &ip,
                           vpMouseButton::vpMouseButtonType& button,
                           bool blocking)
 {
@@ -861,6 +872,7 @@ vpDisplayOpenCV::getClick(unsigned int& i, unsigned int& j,
 
   if (OpenCVinitialized) {
     flushDisplay() ;
+    double u, v;
     if (blocking){
       lbuttondown = false;
       mbuttondown = false;
@@ -869,22 +881,28 @@ vpDisplayOpenCV::getClick(unsigned int& i, unsigned int& j,
     do {
       if (lbuttondown){
         ret = true ;
-        j = (unsigned int)x_lbuttondown;
-        i = (unsigned int)y_lbuttondown;
+        u = (unsigned int)x_lbuttondown;
+        v = (unsigned int)y_lbuttondown;
+	ip.set_u( u );
+	ip.set_v( v );
         button = vpMouseButton::button1;
         lbuttondown = false;
       }
       if (mbuttondown){
         ret = true ;
-        j = (unsigned int)x_mbuttondown;
-        i = (unsigned int)y_mbuttondown;
+        u = (unsigned int)x_mbuttondown;
+        v = (unsigned int)y_mbuttondown;
+	ip.set_u( u );
+	ip.set_v( v );
         button = vpMouseButton::button2;
         mbuttondown = false;
       }
       if (rbuttondown){
         ret = true ;
-        j = (unsigned int)x_rbuttondown;
-        i = (unsigned int)y_rbuttondown;
+        u = (unsigned int)x_rbuttondown;
+        v = (unsigned int)y_rbuttondown;
+	ip.set_u( u );
+	ip.set_v( v );
         button = vpMouseButton::button3;
         rbuttondown = false;
       }
@@ -902,31 +920,35 @@ vpDisplayOpenCV::getClick(unsigned int& i, unsigned int& j,
 /*!
 
   Wait for a mouse button click release and get the position of the
-  pixel were the click release occurs.  The button used to click is
-  also set.
+  image point were the click release occurs.  The button used to click is
+  also set. Same method as getClick(unsigned int&, unsigned int&,
+  vpMouseButton::vpMouseButtonType &, bool).
 
-  \param i,j : Position of the clicked pixel (row, colum indexes).
+  \param ip [out] : Position of the clicked image point.
 
-  \param button : Button used to click.
+  \param button [in] : Button used to click.
 
-  \param blocking : true for a blocking behaviour waiting a mouse
+  \param blocking [in] : true for a blocking behaviour waiting a mouse
   button click, false for a non blocking behaviour.
 
-  \return
-  - true if a button was clicked. This is always the case if blocking is set
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
     to \e true.
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
 
+  \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
+
 */
 bool
-vpDisplayOpenCV::getClickUp(unsigned int& i, unsigned int& j,
+vpDisplayOpenCV::getClickUp(vpImagePoint &ip,
                             vpMouseButton::vpMouseButtonType& button,
                             bool blocking)
 {
   bool ret = false;
   if (OpenCVinitialized) {
     flushDisplay() ;
+    double u, v;
     if (blocking){
       lbuttonup = false;
       mbuttonup = false;
@@ -935,22 +957,28 @@ vpDisplayOpenCV::getClickUp(unsigned int& i, unsigned int& j,
     do {
       if (lbuttonup){
         ret = true ;
-        j = (unsigned int)x_lbuttonup;
-        i = (unsigned int)y_lbuttonup;
+        u = (unsigned int)x_lbuttonup;
+        v = (unsigned int)y_lbuttonup;
+	ip.set_u( u );
+	ip.set_v( v );
         button = vpMouseButton::button1;
         lbuttonup = false;
       }
       if (mbuttonup){
         ret = true ;
-        j = (unsigned int)x_mbuttonup;
-        i = (unsigned int)y_mbuttonup;
+        u = (unsigned int)x_mbuttonup;
+        v = (unsigned int)y_mbuttonup;
+	ip.set_u( u );
+	ip.set_v( v );
         button = vpMouseButton::button2;
         mbuttonup = false;
       }
       if (rbuttonup){
         ret = true ;
-        j = (unsigned int)x_rbuttonup;
-        i = (unsigned int)y_rbuttonup;
+        u = (unsigned int)x_rbuttonup;
+        v = (unsigned int)y_rbuttonup;
+	ip.set_u( u );
+	ip.set_v( v );
         button = vpMouseButton::button3;
         rbuttonup = false;
       }
@@ -965,26 +993,7 @@ vpDisplayOpenCV::getClickUp(unsigned int& i, unsigned int& j,
   return ret;
 }
 
-/*!
-  \brief set the window title
-  \deprecated Use setTitle() instead.
-  \warning This method is not implemented yet.
 
-*/
-void
-vpDisplayOpenCV::flushTitle(const char * /*windowtitle*/)
-{
-  if (OpenCVinitialized)
-  {
-    vpTRACE("Not implemented");
-  }
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;
-  }
-}
 /*!
   \brief Set the window title.
 

@@ -107,28 +107,6 @@ vpDisplay::vpDisplay()
 }
 
 /*!
-  Display the windows title.
-  \deprecated Use setTitle() instead.
-*/
-void
-vpDisplay::displayTitle ( const vpImage<unsigned char> &I,
-                          const char *windowtitle )
-{
-
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->flushTitle ( windowtitle ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-/*!
   Set the windows title.
   \param I : Image associated to the display window.
   \param windowtitle : Window title.
@@ -865,118 +843,6 @@ void vpDisplay::close ( const vpImage<unsigned char> &I )
 
 
 /*!
-  return true way a button is pressed
-*/
-bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
-                            unsigned int& i, unsigned int& j, bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClick ( i, j, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-/*!
-  return true way button is pressed
-*/
-bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
-                            unsigned int& i, unsigned int& j,
-                            vpMouseButton::vpMouseButtonType& button,
-			                      bool blocking)
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClick ( i, j, button, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-/*!
-  wait for a click
-*/
-bool  vpDisplay::getClick ( const vpImage<unsigned char> &I, bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClick(blocking) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-
-/*!
-  return true way  button is released
-*/
-bool
-vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
-                        unsigned int& i, unsigned int& j,
-                        vpMouseButton::vpMouseButtonType& button,
-			                  bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClickUp ( i, j, button, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-
-/*!
-  Display the windows title.
-  \deprecated Use setTitle() instead.
-*/
-void
-vpDisplay::displayTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
-{
-
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->flushTitle ( windowtitle ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
   Set the windows title.
   \param I : Image associated to the display window.
   \param windowtitle : Window title.
@@ -1343,96 +1209,6 @@ void vpDisplay::close ( const vpImage<vpRGBa> &I )
   }
 }
 
-/*!
-  return true way a button is pressed
-*/
-bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
-                            unsigned int& i, unsigned int& j, bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClick ( i, j, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-/*!
-  return true way button is pressed
-*/
-bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
-                            unsigned int& i, unsigned int& j,
-                            vpMouseButton::vpMouseButtonType& button,
-			                      bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClick ( i, j, button, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-/*!
-  wait for a click
-*/
-bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I, bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClick(blocking) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false;
-}
-
-
-
-/*!
-  return true way  button is released
-*/
-bool
-vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
-                        unsigned int& i, unsigned int& j,
-                        vpMouseButton::vpMouseButtonType& button,
-			                  bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClickUp ( i, j, button, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
 
 //--------------
 // uv
@@ -1661,78 +1437,6 @@ vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
   }
 }
 
-
-/*!
-  return true way a button is pressed
-*/
-bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
-                               unsigned int& u, unsigned int& v,
-			                         bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClick ( v, u, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-/*!
-  return true way button is pressed
-*/
-bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
-                               unsigned int& u, unsigned int& v,
-                               vpMouseButton::vpMouseButtonType& button,
-			                         bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClick ( v, u, button, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-
-/*!
-  return true way  button is released
-*/
-bool
-vpDisplay::getClickUp_uv ( const vpImage<unsigned char> &I,
-                           unsigned int& u, unsigned int& v,
-                           vpMouseButton::vpMouseButtonType& button,
-			                     bool blocking )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      return ( I.display )->getClickUp ( v, u, button, blocking ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-  return false ;
-}
-
-
 /*!
   Display a point at coordinates (u,v) in the display window
 */
@@ -1920,6 +1624,608 @@ vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
   }
 }
 
+/*!
+  Wait for a click from one of the mouse button.
+
+  \param I [in] : The displayed image.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
+*/
+bool  vpDisplay::getClick ( const vpImage<unsigned char> &I, bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getClick(blocking) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+
+  Wait for a click from one of the mouse button and get the position
+  of the clicked image point.
+  
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return true if a mouse button is pressed, false otherwise. If a
+  button is pressed, the location of the mouse pointer is updated in
+  \e ip.
+
+*/
+bool vpDisplay::getClick ( const vpImage<unsigned char> &I,
+			   vpImagePoint &ip, bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getClick ( ip, blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  Wait for a mouse button click and get the position of the clicked
+  image point. The button used to click is also set.
+  
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param button [out] : The button used to click.
+
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return true if a mouse button is pressed, false otherwise. If a
+  button is pressed, the location of the mouse pointer is updated in
+  \e ip.
+  
+*/
+bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
+                            vpImagePoint &ip, 
+                            vpMouseButton::vpMouseButtonType& button,
+			    bool blocking)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getClick ( ip, button, blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  Wait for a mouse button click release and get the position of the clicked
+  image point. The button used to click is also set.
+
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param button [out] : The clicked button.
+
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    released and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    released, otherwise returns false.
+
+  \return true if a mouse button is released, false otherwise. If a
+  button is released, the location of the mouse pointer is updated in
+  \e ip.
+   
+*/
+bool
+vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
+                        vpImagePoint &ip,
+                        vpMouseButton::vpMouseButtonType& button,
+			bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getClickUp ( ip, button, blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  Wait for a click.
+
+  \param I [in] : The displayed image.
+
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return true if a mouse button is pressed, false otherwise. 
+*/
+bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I, bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getClick(blocking) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false;
+}
+
+
+/*!
+  Return true when a mouse button is pressed.
+  
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return true if a mouse button is pressed, false otherwise. If a
+  button is pressed, the location of the mouse pointer is updated in
+  \e ip.
+
+*/
+bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
+                            vpImagePoint &ip, bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getClick ( ip, blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  Return true when a mouse button is pressed.
+  
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param button [out] : The clicked button.
+
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return true if a mouse button is pressed, false otherwise. If a
+  button is pressed, the location of the mouse pointer is updated in
+  \e ip.
+  
+*/
+bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
+                            vpImagePoint &ip,
+                            vpMouseButton::vpMouseButtonType& button,
+			    bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getClick ( ip, button, blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  Return true when a mouse button is released.
+  
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param button [out] : The clicked button.
+
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    released and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    released, otherwise returns false.
+
+  \return true if a mouse button is released, false otherwise. If a
+  button is released, the location of the mouse pointer is updated in
+  \e ip.
+   
+*/
+bool
+vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
+                        vpImagePoint &ip,
+                        vpMouseButton::vpMouseButtonType& button,
+			bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getClickUp ( ip, button, blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+
+
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+/*!
+  Display the windows title.
+  \deprecated Use setTitle() instead.
+*/
+void
+vpDisplay::displayTitle ( const vpImage<unsigned char> &I,
+                          const char *windowtitle )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->setTitle ( windowtitle ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+/*!
+  Display the windows title.
+  \deprecated Use setTitle() instead.
+*/
+void
+vpDisplay::displayTitle ( const vpImage<vpRGBa> &I, const char *windowtitle )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->setTitle ( windowtitle ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  return true way a button is pressed
+*/
+bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
+                            unsigned int& i, unsigned int& j, bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClick ( ip, blocking);
+
+      i = (unsigned int) ip.get_i();
+      j = (unsigned int) ip.get_j();
+    
+      return ( ret ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  return true way button is pressed
+*/
+bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
+                            unsigned int& i, unsigned int& j,
+                            vpMouseButton::vpMouseButtonType& button,
+			    bool blocking)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClick ( ip, button, blocking);
+
+      i = (unsigned int) ip.get_i();
+      j = (unsigned int) ip.get_j();
+    
+      return ( ret ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+
+/*!
+  return true way a button is pressed
+*/
+bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
+                            unsigned int& i, unsigned int& j, bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClick ( ip, blocking);
+
+      i = (unsigned int) ip.get_i();
+      j = (unsigned int) ip.get_j();
+    
+      return ( ret ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  return true way button is pressed
+*/
+bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
+                            unsigned int& i, unsigned int& j,
+                            vpMouseButton::vpMouseButtonType& button,
+			                      bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClick ( ip, button, blocking);
+
+      i = (unsigned int) ip.get_i();
+      j = (unsigned int) ip.get_j();
+    
+      return ( ret ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+
+/*!
+  return true way  button is released
+*/
+bool
+vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
+                        unsigned int& i, unsigned int& j,
+                        vpMouseButton::vpMouseButtonType& button,
+			                  bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClickUp ( ip, button, blocking);
+
+      i = (unsigned int) ip.get_i();
+      j = (unsigned int) ip.get_j();
+    
+      return ( ret ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  return true way  button is released
+*/
+bool
+vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
+                        unsigned int& i, unsigned int& j,
+                        vpMouseButton::vpMouseButtonType& button,
+			                  bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClickUp ( ip, button, blocking);
+
+      i = (unsigned int) ip.get_i();
+      j = (unsigned int) ip.get_j();
+    
+      return ( ret ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  return true way a button is pressed
+*/
+bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
+                               unsigned int& u, unsigned int& v,
+			       bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClick ( ip, blocking);
+
+      u = (unsigned int) ip.get_u();
+      v = (unsigned int) ip.get_v();
+    
+      return ( ret ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  return true way button is pressed
+*/
+bool  vpDisplay::getClick_uv ( const vpImage<unsigned char> &I,
+                               unsigned int& u, unsigned int& v,
+                               vpMouseButton::vpMouseButtonType& button,
+			                         bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClick ( ip, button, blocking);
+
+      u = (unsigned int) ip.get_u();
+      v = (unsigned int) ip.get_v();
+    
+      return ( ret ) ;
+     }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
 
 
 /*!
@@ -1933,7 +2239,15 @@ bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( v, u, blocking ) ;
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClick ( ip, blocking);
+
+      u = (unsigned int) ip.get_u();
+      v = (unsigned int) ip.get_v();
+    
+      return ( ret ) ;
     }
   }
   catch ( ... )
@@ -1950,13 +2264,21 @@ bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
 bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
                                unsigned int& u, unsigned int& v,
                                vpMouseButton::vpMouseButtonType& button,
-			                         bool blocking )
+			       bool blocking )
 {
   try
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClick ( v, u, button, blocking ) ;
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClick ( ip, button, blocking);
+
+      u = (unsigned int) ip.get_u();
+      v = (unsigned int) ip.get_v();
+    
+      return ( ret ) ;
     }
   }
   catch ( ... )
@@ -1972,7 +2294,7 @@ bool  vpDisplay::getClick_uv ( const vpImage<vpRGBa> &I,
   return true way  button is released
 */
 bool
-vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
+vpDisplay::getClickUp_uv ( const vpImage<unsigned char> &I,
                            unsigned int& u, unsigned int& v,
                            vpMouseButton::vpMouseButtonType& button,
 			                     bool blocking )
@@ -1981,7 +2303,47 @@ vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
   {
     if ( I.display != NULL )
     {
-      return ( I.display )->getClickUp ( v, u, button, blocking ) ;
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClickUp ( ip, button, blocking);
+
+      u = (unsigned int) ip.get_u();
+      v = (unsigned int) ip.get_v();
+    
+      return ( ret ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+  return true way  button is released
+*/
+bool
+vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
+                           unsigned int& u, unsigned int& v,
+                           vpMouseButton::vpMouseButtonType& button,
+			   bool blocking )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      bool ret;
+      vpImagePoint ip;
+
+      ret = (I.display )->getClickUp ( ip, button, blocking);
+
+      u = (unsigned int) ip.get_u();
+      v = (unsigned int) ip.get_v();
+    
+      return ( ret ) ;
     }
   }
   catch ( ... )

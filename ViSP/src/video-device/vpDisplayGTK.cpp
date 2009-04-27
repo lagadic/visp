@@ -858,11 +858,14 @@ void vpDisplayGTK::displayCharString(int i, int j,
 /*!
   Wait for a click from one of the mouse button.
 
-  \param blocking : true for a blocking behaviour waiting a mouse
-  button click, false for a non blocking behaviour.
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
 
-  \return
-  - true if a button was clicked. This is always the case if blocking is set
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
     to \e true.
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
@@ -904,33 +907,37 @@ vpDisplayGTK::getClick(bool blocking)
 }
 
 /*!
-  Wait for a mouse button click and get the position of the clicked pixel.
+  Wait for a click from one of the mouse button and get the position
+  of the clicked image point.
 
-  \param i,j : Position of the clicked pixel (row, colum indexes).
+  \param ip [out] : The coordinates of the clicked image point.
 
-  \param blocking : true for a blocking behaviour waiting a mouse
+  \param blocking [in] : true for a blocking behaviour waiting a mouse
   button click, false for a non blocking behaviour.
 
-  \return
-  - true if a button was clicked. This is always the case if blocking is set
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
     to \e true.
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
 
 */
 bool
-vpDisplayGTK::getClick(unsigned int& i, unsigned int& j, bool blocking)
+vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
 {
   bool ret = false;
 
   if (GTKinitialized) {
 
     GdkEvent *ev = NULL;
+    double u, v ;
     do {
       while ((ev = gdk_event_get())!=NULL){
         if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
-          i = (unsigned int)((GdkEventButton *)ev)->y ;
-          j = (unsigned int)((GdkEventButton *)ev)->x ;
+          u = ((GdkEventButton *)ev)->x ;
+          v = ((GdkEventButton *)ev)->y ;
+	  ip.set_u( u );
+	  ip.set_v( v );
           ret = true ;
         }
         gdk_event_free(ev) ;
@@ -954,23 +961,23 @@ vpDisplayGTK::getClick(unsigned int& i, unsigned int& j, bool blocking)
 
   Wait for a mouse button click and get the position of the clicked
   pixel. The button used to click is also set.
+  
+  \param ip [out] : The coordinates of the clicked image point.
 
-  \param i,j : Position of the clicked pixel (row, colum indexes).
+  \param button [out] : The button used to click.
 
-  \param button : Button used to click.
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
 
-  \param blocking : true for a blocking behaviour waiting a mouse
-  button click, false for a non blocking behaviour.
-
-  \return
-  - true if a button was clicked. This is always the case if blocking is set
-    to \e true.
-  - false if no button was clicked. This can occur if blocking is set
-    to \e false.
-
+  \return true if a mouse button is pressed, false otherwise. If a
+  button is pressed, the location of the mouse pointer is updated in
+  \e ip.
 */
 bool
-vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
+vpDisplayGTK::getClick(vpImagePoint &ip,
                        vpMouseButton::vpMouseButtonType& button,
                        bool blocking)
 {
@@ -978,11 +985,14 @@ vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
 
   if (GTKinitialized) {
     GdkEvent *ev = NULL;
+    double u, v ;
     do {
       while ((ev = gdk_event_get())){
         if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS){
-          i = (unsigned int)((GdkEventButton *)ev)->y ;
-          j = (unsigned int)((GdkEventButton *)ev)->x ;
+          u = ((GdkEventButton *)ev)->x ;
+          v = ((GdkEventButton *)ev)->y ;
+	  ip.set_u( u );
+	  ip.set_v( v );
 
           switch ((int)((GdkEventButton *)ev)->button) {
             case 1:
@@ -1014,25 +1024,28 @@ vpDisplayGTK::getClick(unsigned int& i, unsigned int& j,
 /*!
 
   Wait for a mouse button click release and get the position of the
-  pixel were the click release occurs.  The button used to click is
-  also set.
+  image point were the click release occurs.  The button used to click is
+  also set. Same method as getClick(unsigned int&, unsigned int&,
+  vpMouseButton::vpMouseButtonType &, bool).
 
-  \param i,j : Position of the clicked pixel (row, colum indexes).
+  \param ip [out] : Position of the clicked image point.
 
-  \param button : Button used to click.
+  \param button [in] : Button used to click.
 
-  \param blocking : true for a blocking behaviour waiting a mouse
+  \param blocking [in] : true for a blocking behaviour waiting a mouse
   button click, false for a non blocking behaviour.
 
-  \return
-  - true if a button was clicked. This is always the case if blocking is set
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
     to \e true.
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
 
+  \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
+
 */
 bool
-vpDisplayGTK::getClickUp(unsigned int& i, unsigned int& j,
+vpDisplayGTK::getClickUp(vpImagePoint &ip,
                          vpMouseButton::vpMouseButtonType& button,
                          bool blocking)
 {
@@ -1042,11 +1055,15 @@ vpDisplayGTK::getClickUp(unsigned int& i, unsigned int& j,
 
     flushDisplay() ;
     GdkEvent *ev = NULL;
+    double u, v ;
     do {
       while ((ev = gdk_event_get())!=NULL){
-        if ( ev->any.window == widget->window  && ev->type == GDK_BUTTON_RELEASE) {
-          i = ( unsigned int ) ( ( GdkEventButton * ) ev )->y ;
-          j = ( unsigned int ) ( ( GdkEventButton * ) ev )->x ;
+        if ( ev->any.window == widget->window  
+	     && ev->type == GDK_BUTTON_RELEASE) {
+          u = ((GdkEventButton *)ev)->x ;
+          v = ((GdkEventButton *)ev)->y ;
+	  ip.set_u( u );
+	  ip.set_v( v );
 
           switch ( ( int ) ( ( GdkEventButton * ) ev )->button ) {
             case 1:
@@ -1100,30 +1117,6 @@ void vpDisplayGTK::getScreenSize(unsigned int &width, unsigned int &height)
   vpTRACE("Not implemented") ;
   width = 0;
   height = 0;
-}
-
-
-
-
-
-/*!
-  \brief set the window title
-  \deprecated Use setTitle() instead.
-*/
-void
-vpDisplayGTK::flushTitle(const char *windowtitle)
-{
-  if (GTKinitialized)
-  {
-    if (windowtitle != NULL)
-      gdk_window_set_title(widget->window,(char *)windowtitle);
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
 }
 
 /*!

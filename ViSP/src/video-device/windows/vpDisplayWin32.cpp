@@ -224,127 +224,13 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
 }
 
 /*!
-  Waits for a click and returns its coordinates.
-  \param i : first coordinate of the click position
-  \param j : second coordinate of the click position
-  \param blocking : true for a blocking behaviour waiting a mouse
-  button click, false for a non blocking behaviour.
+  Wait for a click from one of the mouse button.
 
-  \return 
-  - true if a button was clicked. This is always the case if blocking is set 
-    to \e true.
-  - false if no button was clicked. This can occur if blocking is set
-    to \e false.
-*/
-bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j, bool blocking)
-{
-  //wait if the window is not initialized
-  waitForInit();
-
-  bool ret = false ;
-  //tells the window there has been a getclick demand
-//   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
-  //waits for a click
-  if(blocking){
-    WaitForSingleObject(window.semaClick, NULL);
-    WaitForSingleObject(window.semaClickUp, NULL);//to erase previous events
-    WaitForSingleObject(window.semaClick, INFINITE);
-    ret = true;  
-  }  
-  else
-    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
-  
-  j = window.clickX;
-  i = window.clickY;
-
-  return ret;
-}
-
-/*!
-  Waits for a click from a certain button and returns its coordinates.
-  \param i : first coordinate of the click position
-  \param j : second coordinate of the click position
-  \param button : button to use for the click
-  \param blocking : true for a blocking behaviour waiting a mouse
-  button click, false for a non blocking behaviour.
-
-  \return 
-  - true if a button was clicked. This is always the case if blocking is set 
-    to \e true.
-  - false if no button was clicked. This can occur if blocking is set
-    to \e false.
-*/
-bool vpDisplayWin32::getClick(unsigned int& i, unsigned int& j,
-                              vpMouseButton::vpMouseButtonType& button,
-                              bool blocking)
-{
-  //wait if the window is not initialized
-  waitForInit();
-  bool ret = false;
-  //tells the window there has been a getclickup demand
-//   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
-  //waits for a click
-  if(blocking){
-    WaitForSingleObject(window.semaClick, NULL);
-    WaitForSingleObject(window.semaClickUp, NULL);//to erase previous events
-    WaitForSingleObject(window.semaClick, INFINITE);
-    ret = true;
-  }
-  else
-    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
-  
-  j = window.clickX;
-  i = window.clickY;
-  button = window.clickButton;
-
-  return ret;
-}
-
-/*!
-  Waits for a click "up" from a certain button and returns its coordinates.
-  \param i : first coordinate of the click position
-  \param j : second coordinate of the click position
-  \param button : button to use for the click
-  \param blocking : true for a blocking behaviour waiting a mouse
-  button click, false for a non blocking behaviour.
-
-  \return 
-  - true if a button was clicked. This is always the case if blocking is set 
-    to \e true.
-  - false if no button was clicked. This can occur if blocking is set
-    to \e false.
-*/
-bool vpDisplayWin32::getClickUp(unsigned int& i, unsigned int& j,
-                                vpMouseButton::vpMouseButtonType& button,
-                                bool blocking)
-{
-  //wait if the window is not initialized
-  waitForInit();
-  bool ret = false;
-  //tells the window there has been a getclickup demand
-//   PostMessage(window.getHWnd(), vpWM_GETCLICKUP, 0,0);
-
-  //waits for a click release
-  if(blocking){
-    WaitForSingleObject(window.semaClickUp, NULL);
-    WaitForSingleObject(window.semaClick, NULL);//to erase previous events
-    WaitForSingleObject(window.semaClickUp, INFINITE);
-    ret = true;
-  }
-  else
-    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClickUp, NULL));
-  
-  j = window.clickXUp;
-  i = window.clickYUp;
-  button = window.clickButtonUp;
-
-  return ret;
-}
-
-/*!
-  Waits for a click.
-  \param blocking : true for a blocking behaviour waiting a mouse
-  button click, false for a non blocking behaviour.
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
 
   \return 
   - true if a button was clicked. This is always the case if blocking is set 
@@ -371,6 +257,148 @@ bool vpDisplayWin32::getClick( bool blocking)
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
   
   return ret; 
+}
+
+/*!
+  Wait for a click from one of the mouse button and get the position
+  of the clicked image point.
+
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param blocking [in] : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
+
+*/
+bool vpDisplayWin32::getClick(vpImagePoint &ip, bool blocking)
+{
+  //wait if the window is not initialized
+  waitForInit();
+
+  bool ret = false ;
+  double u, v;
+  //tells the window there has been a getclick demand
+//   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
+  //waits for a click
+  if(blocking){
+    WaitForSingleObject(window.semaClick, NULL);
+    WaitForSingleObject(window.semaClickUp, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClick, INFINITE);
+    ret = true;  
+  }  
+  else
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
+  
+  u = window.clickX;
+  v = window.clickY;
+  ip.set_u( u );
+  ip.set_v( v );
+
+  return ret;
+}
+
+/*!
+  Wait for a mouse button click and get the position of the clicked
+  pixel. The button used to click is also set.
+  
+  \param ip [out] : The coordinates of the clicked image point.
+
+  \param button [out] : The button used to click.
+
+  \param blocking [in] : 
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return true if a mouse button is pressed, false otherwise. If a
+  button is pressed, the location of the mouse pointer is updated in
+  \e ip.
+*/
+bool vpDisplayWin32::getClick(vpImagePoint &ip,
+                              vpMouseButton::vpMouseButtonType& button,
+                              bool blocking)
+{
+  //wait if the window is not initialized
+  waitForInit();
+  bool ret = false;
+  double u, v;
+  //tells the window there has been a getclickup demand
+//   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
+  //waits for a click
+  if(blocking){
+    WaitForSingleObject(window.semaClick, NULL);
+    WaitForSingleObject(window.semaClickUp, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClick, INFINITE);
+    ret = true;
+  }
+  else
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
+  
+  u = window.clickX;
+  v = window.clickY;
+  ip.set_u( u );
+  ip.set_v( v );
+  button = window.clickButton;
+
+  return ret;
+}
+
+/*!
+  Wait for a mouse button click release and get the position of the
+  image point were the click release occurs.  The button used to click is
+  also set. Same method as getClick(unsigned int&, unsigned int&,
+  vpMouseButton::vpMouseButtonType &, bool).
+
+  \param ip [out] : Position of the clicked image point.
+
+  \param button [in] : Button used to click.
+
+  \param blocking [in] : true for a blocking behaviour waiting a mouse
+  button click, false for a non blocking behaviour.
+
+  \return 
+  - true if a button was clicked. This is always the case if blocking is set 
+    to \e true.
+  - false if no button was clicked. This can occur if blocking is set
+    to \e false.
+
+  \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
+
+*/
+bool vpDisplayWin32::getClickUp(vpImagePoint &ip,
+                                vpMouseButton::vpMouseButtonType& button,
+                                bool blocking)
+{
+  //wait if the window is not initialized
+  waitForInit();
+  bool ret = false;
+  double u, v;
+  //tells the window there has been a getclickup demand
+//   PostMessage(window.getHWnd(), vpWM_GETCLICKUP, 0,0);
+
+  //waits for a click release
+  if(blocking){
+    WaitForSingleObject(window.semaClickUp, NULL);
+    WaitForSingleObject(window.semaClick, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClickUp, INFINITE);
+    ret = true;
+  }
+  else
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClickUp, NULL));
+  
+  u = window.clickXUp;
+  v = window.clickYUp;
+  ip.set_u( u );
+  ip.set_v( v );
+  button = window.clickButtonUp;
+
+  return ret;
 }
 
 /*!
