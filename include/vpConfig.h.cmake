@@ -69,8 +69,15 @@
 // Defined if OpenCV cv, cxcore, cvaux and highgui libraries available.
 #cmakedefine VISP_HAVE_OPENCV
 
-// Defined if OpenCV cvcam library available.
+// Defined if OpenCV cvcam library is available.
 #cmakedefine VISP_HAVE_OPENCV_CVCAM
+
+// OpenCV version in hexadecimal (for example 1.1.0 gives 0x010101).
+#ifdef VISP_HAVE_OPENCV
+#  include <cvver.h>
+
+#  define VISP_HAVE_OPENCV_VERSION (CV_MAJOR_VERSION*65536 + CV_MINOR_VERSION*256 + CV_SUBMINOR_VERSION)
+#endif
 
 // Defined if GTK library available (either gtk or gtk2).
 #cmakedefine VISP_HAVE_GTK
