@@ -996,6 +996,7 @@ PREDEFINED             = \
            VISP_HAVE_D3D9 \
            VISP_HAVE_GSL \
            VISP_HAVE_OPENCV \
+           VISP_HAVE_OPENCV_VERSION=0x111111 \
            VISP_HAVE_COIN \
            VISP_HAVE_QT \
            VISP_HAVE_SOQT \
