@@ -39,6 +39,8 @@
 
 #include <visp/vpSubPixel.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 /*!
   \file vpSubPixel.cpp
   \brief Class that defines what is a sub-pixel.
@@ -85,6 +87,8 @@ std::ostream &operator << (std::ostream &s, const vpSubPixel &p)
 
   return s;
 }
+
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 /*

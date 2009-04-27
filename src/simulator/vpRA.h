@@ -41,6 +41,8 @@
 
 #include <visp/vpConfig.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 #ifdef VISP_HAVE_COIN
 
 // visp
@@ -86,4 +88,5 @@ private:
 
 
 #endif
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #endif

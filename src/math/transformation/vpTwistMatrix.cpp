@@ -356,26 +356,6 @@ vpTwistMatrix::buildFrom(const vpTranslationVector &t,
 
 /*!
 
-  \deprecated Build a twist transformation matrix from a translation vector
-  \e t and a euler vector.
-
-  \param t : Translation vector.
-  
-  \param euler : Euler vector.
-
-*/
-vpTwistMatrix
-vpTwistMatrix::buildFrom(const vpTranslationVector &t,
-			 const vpEulerVector &euler)
-{
-    vpRotationMatrix R ;
-    R.buildFrom(euler) ;
-    buildFrom(t,R) ;
-    return (*this) ;
-}
-
-/*!
-
   Initialize a twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
@@ -417,6 +397,34 @@ vpTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
     buildFrom(t, R) ;
     return (*this) ;
 }
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+
+  \deprecated Build a twist transformation matrix from a translation vector
+  \e t and a euler vector.
+
+  \param t : Translation vector.
+  
+  \param euler : Euler vector.
+
+*/
+vpTwistMatrix
+vpTwistMatrix::buildFrom(const vpTranslationVector &t,
+			 const vpEulerVector &euler)
+{
+    vpRotationMatrix R ;
+    R.buildFrom(euler) ;
+    buildFrom(t,R) ;
+    return (*this) ;
+}
+
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 /*

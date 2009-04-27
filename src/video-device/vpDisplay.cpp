@@ -1935,6 +1935,7 @@ vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
 
 *****************************************************************/
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
   Display the windows title.
   \deprecated Use setTitle() instead.
@@ -2353,3 +2354,4 @@ vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
   }
   return false ;
 }
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

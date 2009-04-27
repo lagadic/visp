@@ -106,42 +106,6 @@ vpDot::vpDot(const vpImagePoint &ip) : vpTracker()
 
 }
 
-
-/*!
-  \brief Constructor with initialization of the dot location.
-
-  \deprecated This constructor is deprecated. You should use
-  vpDot(const vpImagePoint &) instead.
-
-  \param u : dot location (column)
-  \param v : dot location (row)
- */
-vpDot::vpDot(const unsigned int u, const unsigned int v) : vpTracker()
-{
-  init() ;
-
-  cog.set_u(u) ;
-  cog.set_v(v) ;
-}
-
-/*!
-  \brief Constructor with initialization of the dot location.
-
-  \deprecated This constructor is deprecated. You should use
-  vpDot(const vpImagePoint &) instead.
-
-  \param u : dot location (column)
-  \param v : dot location (row)
- */
-vpDot::vpDot(const double u,const  double v) : vpTracker()
-{
-
-  init() ;
-
-  cog.set_u(u) ;
-  cog.set_v(v) ;
-}
-
 /*!
   \brief Copy constructor.
  */
@@ -887,6 +851,42 @@ void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
 
 *****************************************************************/
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \brief Constructor with initialization of the dot location.
+
+  \deprecated This constructor is deprecated. You should use
+  vpDot(const vpImagePoint &) instead.
+
+  \param u : dot location (column)
+  \param v : dot location (row)
+ */
+vpDot::vpDot(const unsigned int u, const unsigned int v) : vpTracker()
+{
+  init() ;
+
+  cog.set_u(u) ;
+  cog.set_v(v) ;
+}
+
+/*!
+  \brief Constructor with initialization of the dot location.
+
+  \deprecated This constructor is deprecated. You should use
+  vpDot(const vpImagePoint &) instead.
+
+  \param u : dot location (column)
+  \param v : dot location (row)
+ */
+vpDot::vpDot(const double u,const  double v) : vpTracker()
+{
+
+  init() ;
+
+  cog.set_u(u) ;
+  cog.set_v(v) ;
+}
+
 /*!
 
   \deprecated This method is deprecated. You should use
@@ -1027,6 +1027,7 @@ vpDot::track(vpImage<unsigned char> &I, double &u, double &v)
   u = vpDot::get_u() ;
   v = vpDot::get_v() ;
 }
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 

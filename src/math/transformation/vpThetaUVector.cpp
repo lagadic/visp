@@ -208,16 +208,6 @@ vpThetaUVector::buildFrom(const vpRzyxVector& e)
 }
 
 vpThetaUVector
-vpThetaUVector::buildFrom(const vpEulerVector& e)
-{
-    vpRotationMatrix R(e) ;
-
-    buildFrom(R) ;
-    return *this ;
-}
-
-
-vpThetaUVector
 vpThetaUVector::buildFrom(const vpRzyzVector& e)
 {
     vpRotationMatrix R(e) ;
@@ -258,6 +248,24 @@ vpThetaUVector::extract(double &theta, vpColVector &u) const
     u[i] = r[i] / theta ;
 }
 
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+vpThetaUVector
+vpThetaUVector::buildFrom(const vpEulerVector& e)
+{
+    vpRotationMatrix R(e) ;
+
+    buildFrom(R) ;
+    return *this ;
+}
+
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 #undef vpDEBUG_LEVEL1
 /*

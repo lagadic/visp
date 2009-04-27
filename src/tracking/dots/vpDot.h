@@ -291,6 +291,7 @@ public :
 
   void print(std::ostream& os) { os << *this << std::endl ; }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
     @name Deprecated functions
   */
@@ -330,6 +331,8 @@ public :
   */
 
   double get_v() const { return cog.get_v() ; }
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 
 private:
 

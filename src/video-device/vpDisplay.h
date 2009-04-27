@@ -532,7 +532,7 @@ protected :
 
 
 
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
     @name Deprecated functions
   */
@@ -656,6 +656,8 @@ protected :
 			    unsigned int& u, unsigned int& v,
 			    vpMouseButton::vpMouseButtonType& button,
 			    bool blocking=true);
+
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 } ;
 

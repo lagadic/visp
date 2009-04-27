@@ -218,12 +218,6 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   //! Used to wait for the window to be initialized
   void waitForInit();
 
- public:
-  /*!
-    @name Deprecated functions
-  */
-  //! Changes the window's title
-  void flushTitle(const char *string);
 };
 #endif
 #endif

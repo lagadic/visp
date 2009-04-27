@@ -59,6 +59,8 @@ class vpThetaUVector;
 class vpRotationMatrix;
 class vpThetaUVector;
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 /*!
   \class vpEulerVector
 
@@ -99,6 +101,7 @@ public:
 
 } ;
 
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 #endif
 

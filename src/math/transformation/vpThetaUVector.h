@@ -56,10 +56,12 @@ class vpRzyzVector;
 #include <visp/vpRotationVector.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpEulerVector.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpRzyxVector.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpEulerVector.h>
+#endif
 
 /*!
   \class vpThetaUVector
@@ -110,15 +112,20 @@ public:
   vpThetaUVector buildFrom(const vpRzyxVector &rzyx) ;
   //! convert an Rzyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRzyzVector &zyz) ;
-  //! convert an Euler vector into Theta U vector
-  vpThetaUVector buildFrom(const vpEulerVector &euler) ;
   //! convert an Rxyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRxyzVector &xyz) ;
 
   // extract the angle and the axis from the ThetaU representation
   void extract( double &theta, vpColVector &u) const;
 
-  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  //! convert an Euler vector into Theta U vector
+  vpThetaUVector buildFrom(const vpEulerVector &euler) ;
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+ 
 } ;
 
 #endif
