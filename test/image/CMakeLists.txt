@@ -43,6 +43,7 @@
 SET (SOURCE
   testConversion.cpp
   testCreateSubImage.cpp
+  testImagePoint.cpp
   testIoPGM.cpp
   testIoPPM.cpp
   testUndistortImage.cpp
@@ -66,6 +67,7 @@ ENDFOREACH(source)
 # http://www.irisa.fr/lagadic/visp/visp.html
 ADD_TEST(testConversion     testConversion)
 ADD_TEST(testCreateSubImage testCreateSubImage)
+ADD_TEST(testImagePoint     testImagePoint)
 ADD_TEST(testIoPGM          testIoPGM)
 ADD_TEST(testIoPPM          testIoPPM)
 
