@@ -101,6 +101,11 @@ SET (SRC_IMAGE
   image/vpImagePoint.cpp
   )
 
+SET (SRC_KEY_POINT
+  key-point/vpBasicKeyPoint.cpp
+  key-point/vpKeyPointSurf.cpp
+  )
+
 SET (SRC_LIGHT
   light/vpRingLight.cpp
   )
@@ -244,6 +249,7 @@ SET (SRC_ALL
   ${SRC_EXCEPTION}
   ${SRC_FRAMEGRABBER_DEVICE}
   ${SRC_IMAGE}
+  ${SRC_KEY_POINT}
   ${SRC_LIGHT}
   ${SRC_MATH}
   ${SRC_ROBOT}

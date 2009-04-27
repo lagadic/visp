@@ -96,6 +96,11 @@ SET (HEADER_IMAGE
   image/vpImagePoint.h
   )
 
+SET (HEADER_KEY_POINT
+  key-point/vpBasicKeyPoint.h
+  key-point/vpKeyPointSurf.h
+  )
+
 SET (HEADER_LIGHT
   light/vpRingLight.h
   )
@@ -235,6 +240,7 @@ SET (HEADER_ALL
   ${HEADER_EXCEPTION}
   ${HEADER_FRAMEGRABBER_DEVICE}
   ${HEADER_IMAGE}
+  ${HEADER_KEY_POINT}
   ${HEADER_LIGHT}
   ${HEADER_MATH}
   ${HEADER_ROBOT}
