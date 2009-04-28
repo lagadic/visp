@@ -144,7 +144,7 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
     vpKeyPointSurf();
 
     //! Basic destructor
-    virtual ~vpKeyPointSurf() {;} ;
+    virtual ~vpKeyPointSurf() {cvReleaseMemStorage(&storage);} ;
 
     int buildReference(const vpImage<unsigned char> &I);
     int buildReference(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, unsigned int height, unsigned int width);
