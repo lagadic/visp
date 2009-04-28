@@ -105,8 +105,10 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
   try {
     double x=0, y=0;
 
-    double u = dot.get_u() ;
-    double v = dot.get_v() ;
+    vpImagePoint cog;
+    cog = dot.getCog();
+    double u = cog.get_u() ;
+    double v = cog.get_v() ;
 
     vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
 
@@ -181,8 +183,10 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
   try {
     double x=0, y=0;
 
-    double u = dot.get_u() ;
-    double v = dot.get_v() ;
+    vpImagePoint cog;
+    cog = dot.getCog();
+    double u = cog.get_u() ;
+    double v = cog.get_v() ;
 
     vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
 

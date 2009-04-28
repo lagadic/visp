@@ -76,6 +76,35 @@ vpRect::vpRect(double left, double top, double width, double height)
 
 /*!
  
+  Constructs a rectangle with \e topLeft the top-left corner location
+  and \e width and \e height the rectangle size.
+
+*/
+vpRect::vpRect(const vpImagePoint &topLeft, double width, double height)
+{
+  this->left = topLeft.get_u();
+  this->top = topLeft.get_v();
+  this->width = width;
+  this->height = height;
+};
+
+/*!
+ 
+  Constructs a rectangle with \e topLeft the top-left corner location
+  and \e bottomRight the bottom-right corner.
+
+*/
+vpRect::vpRect(const vpImagePoint &topLeft, const vpImagePoint &bottomRight)
+{
+  this->left = topLeft.get_u();
+  this->top = topLeft.get_v();
+  
+  setBottom( bottomRight.get_v() );
+  setRight( bottomRight.get_u() );
+};
+
+/*!
+ 
   Constructs a rectangle that is a copy of \e r.
 
 */
