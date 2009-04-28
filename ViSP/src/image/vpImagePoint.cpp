@@ -74,7 +74,7 @@ vpImagePoint::vpImagePoint(const vpImagePoint &ip)
 */
 bool operator==( const vpImagePoint &ip1, const vpImagePoint &ip2 )
 {
-  return ( ( ip1.get_i() == ip2.get_j() ) && ( ip1.get_i() == ip2.get_j() ) );
+  return ( ( ip1.get_i() == ip2.get_i() ) && ( ip1.get_j() == ip2.get_j() ) );
 }
 
 /*!
@@ -86,7 +86,7 @@ bool operator==( const vpImagePoint &ip1, const vpImagePoint &ip2 )
 */
 bool operator!=( const vpImagePoint &ip1, const vpImagePoint &ip2 )
 {
-  return ( ( ip1.get_i() != ip2.get_j() ) || ( ip1.get_i() != ip2.get_j() ) );
+  return ( ( ip1.get_i() != ip2.get_i() ) || ( ip1.get_j() != ip2.get_j() ) );
 }
 
 /*!
