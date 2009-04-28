@@ -87,16 +87,16 @@ class VISP_EXPORT vpFeatureBuilder
 public:
   // create vpFeaturePoint feature
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-		      const vpDot &t) ;
+		      const vpDot &d) ;
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-		      const vpDot2 &t) ;
+		      const vpDot2 &d) ;
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
 		      const vpImagePoint &t) ;
-  static void create(vpFeaturePoint &s, const vpPoint &t) ;
-  static void create(vpFeaturePoint &s,
+  static void create(vpFeaturePoint &s, const vpPoint &p) ;
+  static void create(vpFeaturePoint &p,
 		     const vpCameraParameters &goodCam,
 		     const vpCameraParameters &wrongCam,
-		     const vpPoint &t) ;
+		     const vpPoint &p) ;
 
   // create vpFeaturePointPolar feature
   static void create(vpFeaturePointPolar &s, 
@@ -112,42 +112,42 @@ public:
 		     const vpPoint &p) ;
 
   // create vpFeaturePoint3D feature
-  static void create(vpFeaturePoint3D &s, const vpPoint &t ) ;
+  static void create(vpFeaturePoint3D &s, const vpPoint &p ) ;
 
   // create vpFeatureLine feature
-  static void create(vpFeatureLine &s, const vpLine &t ) ;
-  static void create(vpFeatureLine &s, const vpCylinder &t, const int line) ;
+  static void create(vpFeatureLine &s, const vpLine &l ) ;
+  static void create(vpFeatureLine &s, const vpCylinder &c, const int line) ;
 
   static  void create(vpFeatureLine &s,
 		      const vpCameraParameters &cam,
-		      const vpMeLine &t) ;
+		      const vpMeLine &mel) ;
 
   //! create vpFeatureEllipse feature
-  static void create(vpFeatureEllipse &s, const vpCircle &t) ;
-  static void create(vpFeatureEllipse &s, const vpSphere &t) ;
+  static void create(vpFeatureEllipse &s, const vpCircle &c) ;
+  static void create(vpFeatureEllipse &s, const vpSphere &sphere) ;
   static void create(vpFeatureEllipse &s,
 		     const vpCameraParameters &cam,
-		     const vpDot &t ) ;
+		     const vpDot &d ) ;
   static void create(vpFeatureEllipse &s,
 		     const vpCameraParameters &cam,
-		     const vpDot2 &t ) ;
+		     const vpDot2 &d ) ;
 
 
   /*!
       create vpFeatureVanishingPoint feature from the 2D coordinates of a point
       in the image plane
   */
-  static void create(vpFeatureVanishingPoint &s, const vpPoint &t);
+  static void create(vpFeatureVanishingPoint &s, const vpPoint &p);
   /*!
     create vpFeatureVanishingPoint feature from 2 FeatureLine, ie lines in
     the image plane (error if the 2 lines are parallel)
   */
-  static void create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, const vpFeatureLine &L2 );
+  static void create(vpFeatureVanishingPoint &s, const vpFeatureLine &l1, const vpFeatureLine &l2 );
   /*!
     create vpFeatureVanishingPoint feature from 2 Lines, (error if the 2
     lines are parallel in the image plane)
   */
-  static void create(vpFeatureVanishingPoint &s, const vpLine &L1, const vpLine &L2 );
+  static void create(vpFeatureVanishingPoint &s, const vpLine &l1, const vpLine &l2 );
 
 
 
