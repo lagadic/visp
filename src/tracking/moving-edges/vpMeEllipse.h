@@ -88,7 +88,7 @@ public:
   virtual ~vpMeEllipse() ;
 
 
-  void setSeekExtremities(double _seek) {seek = _seek ; }
+  void setSeekExtremities(double seek) {this->seek = seek ; }
   void display(vpImage<unsigned char>&I, vpColor::vpColorType col) ;
 
 private:
@@ -125,7 +125,7 @@ public:
   //! i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
   //! K0 = 1
   //! K1 = 0
-  void setCircle(bool _circle) { circle = _circle ; }
+  void setCircle(bool circle) { this->circle = circle ; }
 };
 
 
