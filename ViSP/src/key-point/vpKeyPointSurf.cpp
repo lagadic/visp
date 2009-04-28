@@ -198,13 +198,11 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
 
 /*!
-  Build the list of reference points. The computation of the points is made only on a part of the image. This part is a rectangle defined by its top left corner, its height and its width. The parameters of this rectangle must be given in pixel and the frame is the (i,j) coordinate system.
+  Build the list of reference points. The computation of the points is made only on a part of the image. This part is a rectangle defined by its top left corner, its height and its width. The parameters of this rectangle must be given in pixel.
 
   \param I : The gray scaled image where the refrence points are computed.
 
-  \param i : coordinate of the rectangle top left corner along the i axis (in pixel).
-
-  \param j : coordinate of the rectangle top left corner along the j axis (in pixel).
+  \param iP : The top left corner of the rectangle.
 
   \param height : height of the rectangle (in pixel).
 
@@ -212,9 +210,9 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
   \return the number of reference points.
 */
-int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, unsigned int height, unsigned int width)
+int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width)
 {
-  if((i+height) >= I.getHeight() || (j+width) >= I.getWidth())
+  if((iP.get_i()+height) >= I.getHeight() || (iP.get_j()+width) >= I.getWidth())
   {
     vpTRACE("Bad size for the subimage");
     throw(vpException(vpImageException::notInTheImage ,"Bad size for the subimage"));
@@ -222,14 +220,14 @@ int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, unsigned in
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::createSubImage(I, i, j, height, width, subImage);
+  vpImageTools::createSubImage(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(), height, width, subImage);
 
   int nbRefPoint = this->buildReference(subImage);
 
   for(int k = 0; k < nbRefPoint; k++)
   {
-    (referenceImagePointsList[k]).set_i((referenceImagePointsList[k]).get_i() + i);
-    (referenceImagePointsList[k]).set_j((referenceImagePointsList[k]).get_j() + j);
+    (referenceImagePointsList[k]).set_i((referenceImagePointsList[k]).get_i() + iP.get_i());
+    (referenceImagePointsList[k]).set_j((referenceImagePointsList[k]).get_j() + iP.get_j());
   }
   return(nbRefPoint);
 }
@@ -246,7 +244,10 @@ int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, unsigned in
 */
 int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, const vpRect rectangle)
 {
-  return (this->buildReference(I, (unsigned int)rectangle.getTop(), (unsigned int)rectangle.getLeft(), (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
+  vpImagePoint iP;
+  iP.set_i(rectangle.getTop());
+  iP.set_j(rectangle.getLeft());
+  return (this->buildReference(I, iP, (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
 }
 
 
@@ -328,13 +329,11 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
 
 /*!
-  Computes the SURF points in only a part of the current image I and try to matched them with the points in the reference list. The part of the image is a rectangle defined by its top left corner, its height and its width. The parameters of this rectangle must be given in pixel and the frame is the (i,j) coordinate system. Only the matched points are stored.
+  Computes the SURF points in only a part of the current image I and try to matched them with the points in the reference list. The part of the image is a rectangle defined by its top left corner, its height and its width. The parameters of this rectangle must be given in pixel. Only the matched points are stored.
 
   \param I : The gray scaled image where the points are computed.
 
-  \param i : coordinate of the rectangle top left corner along the i axis (in pixel).
-
-  \param j : coordinate of the rectangle top left corner along the j axis (in pixel).
+  \param iP : The top left corner of the rectangle.
 
   \param height : height of the rectangle (in pixel).
 
@@ -342,9 +341,9 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
   \return the number of point which have been matched.
 */
-int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, unsigned int height, unsigned int width)
+int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width)
 {
-  if((i+height) >= I.getHeight() || (j+width) >= I.getWidth())
+  if((iP.get_i()+height) >= I.getHeight() || (iP.get_j()+width) >= I.getWidth())
   {
     vpTRACE("Bad size for the subimage");
     throw(vpException(vpImageException::notInTheImage ,"Bad size for the subimage"));
@@ -352,14 +351,14 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, unsigned int i, 
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::createSubImage(I, i, j, height, width, subImage);
+  vpImageTools::createSubImage(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(), height, width, subImage);
 
   int nbMatchedPoint = this->matchPoint(subImage);
 
   for(int k = 0; k < nbMatchedPoint; k++)
   {
-    (currentImagePointsList[k]).set_i((currentImagePointsList[k]).get_i() + i);
-    (currentImagePointsList[k]).set_j((currentImagePointsList[k]).get_j() + j);
+    (currentImagePointsList[k]).set_i((currentImagePointsList[k]).get_i() + iP.get_i());
+    (currentImagePointsList[k]).set_j((currentImagePointsList[k]).get_j() + iP.get_j());
   }
 
   return(nbMatchedPoint);
@@ -377,7 +376,10 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, unsigned int i, 
 */
 int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle)
 {
-  return (this->matchPoint(I, (unsigned int)rectangle.getTop(), (unsigned int)rectangle.getLeft(), (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
+  vpImagePoint iP;
+  iP.set_i(rectangle.getTop());
+  iP.set_j(rectangle.getLeft());
+  return (this->matchPoint(I, iP, (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
 }
 
 

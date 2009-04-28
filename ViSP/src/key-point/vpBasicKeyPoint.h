@@ -70,13 +70,13 @@ class VISP_EXPORT vpBasicKeyPoint
 
    virtual int buildReference(const vpImage<unsigned char> &I) =0;
 
-   virtual int buildReference(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, unsigned int height, unsigned int width) =0;
+   virtual int buildReference(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width) =0;
 
    virtual int buildReference(const vpImage<unsigned char> &I, const vpRect rectangle) =0;
 
    virtual int matchPoint(const vpImage<unsigned char> &I) =0;
 
-   virtual int matchPoint(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, unsigned int height, unsigned int width) =0;
+   virtual int matchPoint(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width) =0;
 
    virtual int matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle) =0;
 

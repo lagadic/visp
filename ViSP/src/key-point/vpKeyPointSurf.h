@@ -101,25 +101,32 @@ int main()
   //First grab the reference image Irefrence
 
   //Select a part of the image by clincking on two points which define a rectangle
-  unsigned int corner_i[2], corner_j[2];
+  vpImagePoint corners[2];
   for (int i=0 ; i < 2 ; i++)
   {
-    vpDisplay::getClick(Ireference, corner_i[i], corner_j[i]);
+    vpDisplay::getClick(I, corners[i]);
   }
 
   //Build the reference SURF points.
-  surf.buildReference(Irefrence, corner_i[0], corner_j[0],corner_i[1]-corner_i[0], corner_j[1]-corner_j[0]);
+  int nbrRef;
+  unsigned int height, width;
+  height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+  nbrRef = surf.buildReference(I, corners[0], height, width);
 
   //Then grab another image which represents the current image Icurrent
 
   //Select a part of the image by clincking on two points which define a rectangle
   for (int i=0 ; i < 2 ; i++)
   {
-    vpDisplay::getClick(Icurrent, corner_i[i], corner_j[i]);
+    vpDisplay::getClick(I, corners[i]);
   }
 
   //Match points between the reference points and the SURF points computed in the current image.
-  surf.matchPoint(Icurrent, corner_i[0], corner_j[0],corner_i[1]-corner_i[0], corner_j[1]-corner_j[0]);
+  int nbrMatched;
+  height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+  nbrMatched = surf.matchPoint(Icurrent, corners[0], height, width);
 
   //Display the matched points
   surf.display(Irefrence, Icurrent);
@@ -147,10 +154,10 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
     virtual ~vpKeyPointSurf() {cvReleaseMemStorage(&storage);} ;
 
     int buildReference(const vpImage<unsigned char> &I);
-    int buildReference(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, unsigned int height, unsigned int width);
+    int buildReference(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width);
     int buildReference(const vpImage<unsigned char> &I, const vpRect rectangle);
     int matchPoint(const vpImage<unsigned char> &I);
-    int matchPoint(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, unsigned int height, unsigned int width);
+    int matchPoint(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width);
     int matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle);
     void display(vpImage<unsigned char> &Iref, vpImage<unsigned char> &Icurrent);
     void display(vpImage<unsigned char> &Icurrent);
@@ -160,18 +167,18 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
       Notes that during the computation of the hessian for each potential points, only the points which have a hessian value higher than the threshold are keeped.
       Fore more details about the threshold see the article Herbert Bay, Tinne Tuytelaars and Luc Van Gool "SURF: Speeded Up Robust Features", Proceedings of the 9th European Conference on Computer Vision, Springer LNCS volume 3951, part 1, pp 404--417, 2006.
 
-      \param _hessianThreshold : Desired hessian threshold value.
+      \param hessianThreshold : Desired hessian threshold value.
     */
-    void setHessianThreshold (double _hessianThreshold) {hessianThreshold = _hessianThreshold; params = cvSURFParams(hessianThreshold, descriptorType);} ;
+    void setHessianThreshold (double hessianThreshold) {this->hessianThreshold = hessianThreshold; params = cvSURFParams(this->hessianThreshold, this->descriptorType);} ;
 
     /*!
       Sets the type of descriptors to use.
       basicDescriptor means that the descriptors are composed by 64 elements floating-point vector.
       extendedDescriptor means that the descriptors are composed by 128 elements floating-point vector.
 
-      \param _descriptorType : type of descriptor to use.
+      \param descriptorType : type of descriptor to use.
     */
-    void setDescriptorType (vpDescriptorType _descriptorType) {descriptorType = _descriptorType; params = cvSURFParams(hessianThreshold, descriptorType);} ;
+    void setDescriptorType (vpDescriptorType descriptorType) {this->descriptorType = descriptorType; params = cvSURFParams(this->hessianThreshold, this->descriptorType);} ;
 
     /*!
       Gets the value of the hessian threhold.
