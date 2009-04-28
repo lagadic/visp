@@ -63,7 +63,10 @@ class VISP_EXPORT vpBasicKeyPoint
   public:
     vpBasicKeyPoint();
 
-   virtual ~vpBasicKeyPoint() {;};
+   virtual ~vpBasicKeyPoint() { if (referenceImagePointsList != NULL) delete[] referenceImagePointsList;
+                                if (currentImagePointsList != NULL) delete[] currentImagePointsList;
+                                matchedPointsCurrentImageList.kill();
+                                matchedPointsReferenceImageList.kill();};
 
    virtual int buildReference(const vpImage<unsigned char> &I) =0;
 

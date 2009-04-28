@@ -150,6 +150,11 @@ vpKeyPointSurf::vpKeyPointSurf():vpBasicKeyPoint()
   descriptorType = extendedDescriptor;
   hessianThreshold = 500;
   init();
+
+  image_keypoints = NULL;
+  image_descriptors = NULL;
+  ref_keypoints = NULL;
+  ref_descriptors = NULL;
 }
 
 /*!
