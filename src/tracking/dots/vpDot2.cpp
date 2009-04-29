@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: vpDot2.cpp 2135 2009-04-29 13:51:31Z fspindle $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -57,17 +57,15 @@
  *
  *      CONSTRUCTORS AND DESTRUCTORS
  *
- *****************************************************************************/
+ ******************************************************************************/
+
 /*!
-
-  Initialize the tracker with default parameters.
-
+  Default contructor .... just do basic default initialisation.
 */
-void 
-vpDot2::init()
+vpDot2::vpDot2() : vpTracker()
 {
-  cog.set_u(0);
-  cog.set_v(0);
+  cog_ufloat = 0 ;
+  cog_vfloat = 0 ;
 
   width = 0;
   height = 0;
@@ -93,27 +91,85 @@ vpDot2::init()
 }
 
 /*!
-  Default contructor. Just do basic default initialisation.
+
+  Constructor initialise the coordinates of the gravity center of the dot to
+  (u,v).  Rest is the same as the default constructor.
+
+  \param u : The horizontal coordinate of the dot's center of gravity in the
+  image.
+
+  \param v : The vertical coordinate of the dot's center of gravity in the
+  image.
+
 */
-vpDot2::vpDot2() : vpTracker()
+vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
 {
-  init();
+  cog_ufloat = u ;
+  cog_vfloat = v ;
+
+  width = 0;
+  height = 0;
+  surface = 0;
+  mean_gray_level = 0;
+  gray_level_min = 128;
+  gray_level_max = 255;
+  grayLevelPrecision = 0.80;
+  gamma = 1.5 ;
+  sizePrecision = 0.65;
+  ellipsoidShapePrecision = 0.65;
+  maxSizeSearchDistancePrecision = 0.65;
+
+  m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+
+  bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
+
+  firstBorder_u = 0;
+  firstBorder_v = 0;
+
+  compute_moment = false ;
+  graphics = false;
 }
 
 /*!
 
   Constructor initialise the coordinates of the gravity center of the dot to
-  the image point \e ip.  Rest is the same as the default constructor.
+  (u,v).  Rest is the same as the default constructor.
 
-  \param ip : An image point with sub-pixel coordinates.
+  \param u : The horizontal coordinate of the dot's center of gravity in the
+  image.
+
+  \param v : The vertical coordinate of the dot's center of gravity in the
+  image.
 
 */
-vpDot2::vpDot2(const vpImagePoint &ip) : vpTracker()
+vpDot2::vpDot2(const double u, const double v ) : vpTracker()
 {
-  init() ;
+  cog_ufloat = u ;
+  cog_vfloat = v ;
 
-  cog = ip;
+  width = 0;
+  height = 0;
+  surface = 0;
+  mean_gray_level = 0;
+  gray_level_min = 128;
+  gray_level_max = 255;
+  grayLevelPrecision = 0.80;
+  gamma = 1.5 ;
+  sizePrecision = 0.65;
+  ellipsoidShapePrecision = 0.65;
+  maxSizeSearchDistancePrecision = 0.65;
+
+  m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+
+  bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
+
+  firstBorder_u = 0;
+  firstBorder_v = 0;
+
+  compute_moment = false ;
+  graphics = false;
 }
+
 
 /*!
   Copy contructor.
@@ -128,7 +184,8 @@ vpDot2::vpDot2( vpDot2& twinDot ) : vpTracker()
 */
 void vpDot2::operator=( vpDot2& twinDot )
 {
-  cog = twinDot.cog;
+  cog_ufloat = twinDot.cog_ufloat;
+  cog_vfloat = twinDot.cog_vfloat;
 
   width    = twinDot.width;
   height   = twinDot.height;
@@ -162,7 +219,10 @@ void vpDot2::operator=( vpDot2& twinDot )
   graphics = twinDot.graphics;
 
   direction_list = twinDot.direction_list;
-  ip_edges_list =  twinDot.ip_edges_list;
+  u_list =  twinDot.u_list;
+  v_list =  twinDot.v_list;
+
+
 }
 
 /*!
@@ -180,21 +240,18 @@ vpDot2::~vpDot2(){}
   Display in overlay the dot edges and center of gravity.
 
   \param I : Image.
-  \param c : The color used for the display.
+  \param c : The color used for the display
 */
 void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
 {
-  vpDisplay::displayCross(I,
-			  (unsigned int) cog.get_i(),
-			  (unsigned int) cog.get_j(),
-                          10, c);
-  ip_edges_list.front();
-  
-  vpImagePoint ip;
-  while( ! (ip_edges_list.outside())){
-    ip = ip_edges_list.value();
-    vpDisplay::displayPoint(I, ip, c);
-    ip_edges_list.next();
+  vpDisplay::displayCross(I,(unsigned int)cog_vfloat,(unsigned int)cog_ufloat,
+                          10,c);
+  u_list.front();
+  v_list.front();
+  while(!(u_list.outside())){
+    vpDisplay::displayPoint(I,v_list.value(),u_list.value(),c);
+    u_list.next();
+    v_list.next();
   }
 }
 
@@ -207,10 +264,8 @@ void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
   Wait a user click in a white area in the image. The clicked pixel
   will be the starting point from which the dot will be tracked.
 
-  To get center of gravity of the dot, see getCog(). To compute the
-  moments see setComputeMoments(). To get the width or height of the
-  dot, call getWidth() and getHeight(). The surface of the dot is
-  given by getSurface().
+  To get center of gravity of the dot, see get_u() and get_v(). To compute the
+  moments see setComputeMoments().
 
   \param I : Image.
   \param size : Size of the dot to track.
@@ -227,17 +282,24 @@ void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
     This is the default case. To track a non ellipsoid shape use
     setEllipsoidShapePrecision(0).
 
+  To get the center of gravity of the dot, call get_u() and get_v(). To get the
+  width or height of the dot, call getWidth() and getHeight(). The surface of the
+  dot is given by getSurface().
+
   \sa track()
 
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
 {
-  while ( vpDisplay::getClick(I, cog) != true) ;
+  unsigned u = 0;
+  unsigned v = 0;
 
-  unsigned int i = (unsigned int)cog.get_i();
-  unsigned int j = (unsigned int)cog.get_j();
+  while ( vpDisplay::getClick(I, v, u) != true) ;
 
-  double Ip = pow((double)I[i][j]/255,1/gamma);
+  cog_ufloat = (double) u ;
+  cog_vfloat = (double) v ;
+
+  double Ip = pow((double)I[v][u]/255,1/gamma);
 
   if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
@@ -269,14 +331,12 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
   Initialize the tracking for a dot supposed to be located at (u,v) and update
   the dot characteristics (center of gravity, moments) by a call to track().
 
-  \param I : Image to process.
-
-  \param ip : Location of the starting point from which the dot will be
-  tracked in the image.
-
+  \param I : Image.
+  \param u : Dot location (column).
+  \param v : Dot location (row).
   \param size : Size of the dot to track.
 
-  To get center of gravity of the dot, see getCog(). To compute the
+  To get center of gravity of the dot, see get_u() and get_v(). To compute the
   moments see setComputeMoments().
 
   If no valid dot was found in the window, return an exception.
@@ -292,14 +352,11 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
     setEllipsoidShapePrecision(0).
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I,
-			  const vpImagePoint &ip, unsigned int size)
+			  unsigned int u, unsigned int v,unsigned int size)
 {
-  cog = ip ;
-
-  unsigned int i = (unsigned int)cog.get_i();
-  unsigned int j = (unsigned int)cog.get_j();
-
-  double Ip = pow((double)I[i][j]/255,1/gamma);
+  cog_ufloat = (double) u ;
+  cog_vfloat = (double) v ;
+  double Ip = pow((double)I[v][u]/255,1/gamma);
 
   if(Ip - (1 - grayLevelPrecision)<0){
     gray_level_min = 0 ;
@@ -332,14 +389,17 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   the dot characteristics (center of gravity, moments) by a call to track().
 
   The sub pixel coordinates of the dot are updated. To get the center
-  of gravity coordinates of the dot, use getCog(). To
+  of gravity coordinates of the dot, use get_u() and get_v(). To
   compute the moments use setComputeMoments(true) before a call to
   initTracking().
 
   \param I : Image to process.
 
-  \param ip : Location of the starting point from which the dot will
-  be tracked in the image.
+  \param u : Dot location or starting point (column pixel coordinate)
+  from which the dot will be tracked in the image.
+
+  \param v : Dot location or starting point (row pixel coordinate)
+  from which the dot will be tracked in the image.
 
   \param gray_level_min : Minimum gray level threshold used to segment the dot;
   value comprised between 0 and 255.
@@ -362,16 +422,17 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
     This is the default case. To track a non ellipsoid shape use
     setEllipsoidShapePrecision(0).
 
-  \sa track(), getCog()
+  \sa track(), get_u(), get_v()
 
 */
 void vpDot2::initTracking(vpImage<unsigned char>& I,
-			  const vpImagePoint &ip,
+			  unsigned int u, unsigned int v,
 			  unsigned int gray_level_min,
 			  unsigned int gray_level_max,
-			  unsigned int size)
+        unsigned int size)
 {
-  cog = ip ;
+  cog_ufloat = (double) u ;
+  cog_vfloat = (double) v ;
 
   this->gray_level_min = gray_level_min;
   this->gray_level_max = gray_level_max;
@@ -409,15 +470,15 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   valid;
   - The gray level is between gray level min and gray level max.
 
-  - The size (width or height) and the surface (in terms of number of
-    pixels) should not differ to much with the previous dot.
+  - The size (width or height) and the surface (in terms of number of pixels) should not differ to much
+    with the previous dot.
 
   - The shape should be ellipsoid if
     setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
     This is the default case. To track a non ellipsoid shape use
     setEllipsoidShapePrecision(0).
 
-  To get the center of gravity of the dot, call getCog(). To get the
+  To get the center of gravity of the dot, call get_u() and get_v(). To get the
   width or height of the dot, call getWidth() and getHeight(). The surface of the
   dot is given by getSurface().
 
@@ -435,13 +496,16 @@ void vpDot2::track(vpImage<unsigned char> &I)
 
   // First, we will estimate the position of the tracked point
 
+  double estimated_u = get_u();
+  double estimated_v = get_v();
+
   // Set the search area to the entire image
   setArea(I);
 
 //   vpDEBUG_TRACE(0, "Previous dot: ");
 //   vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
 //   vpDEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
-  if (computeParameters(I, cog.get_u(), cog.get_v()) == false) {
+  if (computeParameters(I, estimated_u, estimated_v) == false) {
 //     vpDEBUG_TRACE(0, "Search the dot in a bigest window around the last position");
 //     vpDEBUG_TRACE(0, "Bad computed dot: ");
 //     vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
@@ -466,8 +530,8 @@ void vpDot2::track(vpImage<unsigned char> &I)
     }
     vpList<vpDot2>* candidates =
       searchDotsInArea( I,
-			(int)(this->cog.get_u()-searchWindowWidth /2.0),
-			(int)(this->cog.get_v()-searchWindowHeight/2.0),
+			(int)(this->get_u()-searchWindowWidth /2.0),
+			(int)(this->get_v()-searchWindowHeight/2.0),
 			(int)searchWindowWidth,
 			(int)searchWindowHeight);
 
@@ -486,7 +550,8 @@ void vpDot2::track(vpImage<unsigned char> &I)
     // otherwise we've got our dot, update this dot's parameters
     vpDot2 movingDot = candidates->firstValue();
 
-    setCog( movingDot.getCog() );
+    set_u( movingDot.get_u() );
+    set_v( movingDot.get_v() );
     setSurface( movingDot.getSurface() );
     setWidth( movingDot.getWidth() );
     setHeight( movingDot.getHeight() );
@@ -534,8 +599,8 @@ void vpDot2::track(vpImage<unsigned char> &I)
   }
 
   // Get dots center of gravity
-  unsigned int u = (unsigned int) this->cog.get_u();
-  unsigned int v = (unsigned int) this->cog.get_v();
+  unsigned int u = (unsigned int) this->get_u();
+  unsigned int v = (unsigned int) this->get_v();
   // Updates the min and max gray levels for the next iteration
   // double Ip = pow((double)I[v][u]/255,1/gamma);
   double Ip = pow(getMeanGrayLevel()/255,1/gamma);
@@ -568,29 +633,59 @@ void vpDot2::track(vpImage<unsigned char> &I)
   Track and get the new dot coordinates. See track() for a more complete
   description
 
-  \param I : Image to process.
+  \param I : Image
+  \param u : Dot location (column)
+  \param v : Dot location (row)
 
-  \param cog [out] : Sub pixel coordinate of the tracked dot.
-
-  The behavior of this method is similar to the following code:
+  This method is similar to call:
   \code
-  vpDot2 d;
-  d.track(I);
-  vpImagePoint cog = d.getCog();
+  track(I);
+  u = get_u();
+  v = get_v();
   \endcode
 
-  \sa track()
+  \sa track().
 */
 void
-vpDot2::track(vpImage<unsigned char> &I, vpImagePoint &cog)
+vpDot2::track(vpImage<unsigned char> &I, double &u, double &v)
 {
   track(I);
-
-  cog = this->cog;
+  u = get_u();
+  v = get_v();
 }
 
 ///// GET METHODS /////////////////////////////////////////////////////////////
 
+/*!
+
+  Return \f$u_0\f$ the coordinate of the center of the dot along the u axis
+  (horizontal).
+
+  This value comes directly from the moments computation: \f$ u_0 =
+  m_{10}/m_{00}\f$.
+
+  \sa m00, m10
+*/
+double vpDot2::get_u() const
+{
+  return cog_ufloat;
+}
+
+/*!
+
+  Return \f$v_0\f$ the coordinate of the center of the dot along the v axis
+  (vertical).
+
+  This value comes directly from the moments computation: \f$ v_0 =
+  m_{01}/m_{00}\f$.
+
+  \sa m00, m01
+
+*/
+double vpDot2::get_v() const
+{
+  return cog_vfloat;
+}
 /*!
   Return the width of the dot.
 
@@ -665,14 +760,42 @@ double vpDot2::getMaxSizeSearchDistancePrecision() const{
 */
 double vpDot2::getDistance( const vpDot2& distantDot ) const
 {
-  vpImagePoint cogDistantDot = distantDot.getCog();
-  double diff_u = this->cog.get_u() - cogDistantDot.get_u();
-  double diff_v = this->cog.get_v() - cogDistantDot.get_v();
+  double diff_u = get_u() - distantDot.get_u();
+  double diff_v = get_v() - distantDot.get_v();
   return sqrt( diff_u*diff_u + diff_v*diff_v );
 }
 
 
 ///// SET METHODS ////////////////////////////////////////////////////////////
+
+
+/*!
+
+  Set the u (horizontal) coordinate of the dot's center of gravity in the
+  image.
+
+  \param u : Center of gravity of a dot along the horizontal axis.
+
+  \sa set_v()
+*/
+void vpDot2::set_u( const double & u )
+{
+  cog_ufloat = u;
+}
+
+/*!
+
+  Set the v (vertical) coordinate of the dot's center of gravity in the image.
+
+  \param v : Center of gravity of a dot along the vertical axis.
+
+  \sa set_u()
+
+*/
+void vpDot2::set_v( const double & v )
+{
+  cog_vfloat = v;
+}
 
 
 /*!
@@ -985,6 +1108,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 					    int area_h)
 
 {
+
   // Fit the input area in the image; we keep only the common part between this
   // area and the image.
   setArea(I, area_u, area_v, area_w, area_h);
@@ -1015,8 +1139,6 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
   unsigned int area_v_max = (unsigned int) area.getBottom();
 
   unsigned int u, v;
-  vpImagePoint cogTmpDot;
-
   for( v=area_v_min ; v<area_v_max ; v=v+gridHeight )
   {
     for( u=area_u_min ; u<area_u_max ; u=u+gridWidth )
@@ -1032,10 +1154,8 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       niceDotsVector->front();
       while( !niceDotsVector->outside() && good_germ == true) {
         tmpDot = niceDotsVector->value();
-	
-	cogTmpDot = tmpDot.getCog();
-        double u0 = cogTmpDot.get_u();
-        double v0 = cogTmpDot.get_v();
+        double u0 = tmpDot.get_u();
+        double v0 = tmpDot.get_v();
         double half_w = tmpDot.getWidth()  / 2.;
         double half_h = tmpDot.getHeight() / 2.;
 
@@ -1063,23 +1183,23 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 
       badDotsVector->front();
 #define vpBAD_DOT_VALUE (badDotsVector->value())
-      vpImagePoint cogBadDot;
-
       while( !badDotsVector->outside() && good_germ == true) {
         if( (double)u >= vpBAD_DOT_VALUE.bbox_u_min
 	    && (double)u <= vpBAD_DOT_VALUE.bbox_u_max &&
             (double)v >= vpBAD_DOT_VALUE.bbox_v_min
 	    && (double)v <= vpBAD_DOT_VALUE.bbox_v_max){
-          vpBAD_DOT_VALUE.ip_edges_list.front();
-	  while (!vpBAD_DOT_VALUE.ip_edges_list.outside() && good_germ == true){
+          vpBAD_DOT_VALUE.u_list.front();
+          vpBAD_DOT_VALUE.v_list.front();
+	  while (!vpBAD_DOT_VALUE.u_list.outside() && good_germ == true){
 	    // Test if the germ belong to a previously detected dot:
 	    // - from the germ go right to the border and compare this
 	    //   position to the list of pixels of previously detected dots
-	    cogBadDot = vpBAD_DOT_VALUE.ip_edges_list.value();
-	    if( border_u == cogBadDot.get_u() && v == cogBadDot.get_v()) {
+	    if( border_u == vpBAD_DOT_VALUE.u_list.value() &&
+		v == vpBAD_DOT_VALUE.v_list.value()) {
 	      good_germ = false;
 	    }
-	    vpBAD_DOT_VALUE.ip_edges_list.next();
+	    vpBAD_DOT_VALUE.u_list.next();
+	    vpBAD_DOT_VALUE.v_list.next();
 	  }
         }
         badDotsVector->next();
@@ -1094,16 +1214,12 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       }
 
       vpTRACE(4, "Try germ (%d, %d)", u, v);
-
-      vpImagePoint germ;
-      germ.set_u( u );
-      germ.set_v( v );
-      
       // otherwise estimate the width, height and surface of the dot we
       // created, and test it.
       if( dotToTest != NULL ) delete dotToTest;
       dotToTest = getInstance();
-      dotToTest->setCog( germ );
+      dotToTest->set_u(u);
+      dotToTest->set_v(v);
       dotToTest->setGrayLevelMin ( getGrayLevelMin() );
       dotToTest->setGrayLevelMax ( getGrayLevelMax() );
       dotToTest->setGrayLevelPrecision( getGrayLevelPrecision() );
@@ -1125,8 +1241,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
       // if the dot to test is valid,
       if( dotToTest->isValid( I, *this ) )
       {
-	vpImagePoint cogDotToTest = dotToTest->getCog();
-	// Compute the distance to the center. The center used here is not the
+        // Compute the distance to the center. The center used here is not the
 	// area center available by area.getCenter(area_center_u,
 	// area_center_v) but the center of the input area which may be
 	// partially outside the image.
@@ -1134,13 +1249,12 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
         double area_center_u = area_u + area_w/2.0 - 0.5;
 	double area_center_v = area_v + area_h/2.0 - 0.5;
 
-        double thisDiff_u = cogDotToTest.get_u() - area_center_u;
-        double thisDiff_v = cogDotToTest.get_v() - area_center_v;
+        double thisDiff_u = dotToTest->get_u() - area_center_u;
+        double thisDiff_v = dotToTest->get_v() - area_center_v;
         double thisDist = sqrt( thisDiff_u*thisDiff_u + thisDiff_v*thisDiff_v);
 
         bool stopLoop = false;
         niceDotsVector->front();
-
         while( !niceDotsVector->outside() &&  stopLoop == false )
         {
           vpDot2 tmpDot = niceDotsVector->value();
@@ -1149,10 +1263,8 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
           double epsilon = 3.0;
           // if the center of the dot is the same than the current
           // don't add it, test the next point of the grid
-	  cogTmpDot = tmpDot.getCog();
-
-          if( fabs( cogTmpDot.get_u() - cogDotToTest.get_u() ) < epsilon &&
-              fabs( cogTmpDot.get_v() - cogDotToTest.get_v() ) < epsilon )
+          if( fabs( tmpDot.get_u() - dotToTest->get_u() ) < epsilon &&
+              fabs( tmpDot.get_v() - dotToTest->get_v() ) < epsilon )
           {
             stopLoop = true;
             // Jump all the pixels between v,u and v, tmpDot->getFirstBorder_u()
@@ -1161,10 +1273,10 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
             continue;
           }
 
-          double otherDiff_u = cogTmpDot.get_u() - area_center_u;
-          double otherDiff_v = cogTmpDot.get_v() - area_center_v;
+          double otherDiff_u = tmpDot.get_u() - area_center_u;
+          double otherDiff_v = tmpDot.get_v() - area_center_v;
           double otherDist = sqrt( otherDiff_u*otherDiff_u +
-				   otherDiff_v*otherDiff_v );
+                      otherDiff_v*otherDiff_v );
 
 
           // if the distance of the curent vector element to the center
@@ -1240,43 +1352,37 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   if(sizePrecision!=0){
     if( ( wantedDot.getWidth()*sizePrecision-epsilon < getWidth() ) == false )
     {
-      vpDEBUG_TRACE(3, "Bad width < for dot (%g, %g)", 
-		    cog.get_u(), cog.get_v());
+      vpDEBUG_TRACE(3, "Bad width < for dot (%g, %g)", get_u(), get_v());
       return false;
     }
 
     if( ( getWidth() < wantedDot.getWidth()/(sizePrecision+epsilon ) )== false )
     {
-      vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", 
-		    cog.get_u(), cog.get_v());
+      vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", get_u(), get_v());
       return false;
     }
 
     if( ( wantedDot.getHeight()*sizePrecision-epsilon < getHeight() ) == false )
     {
-      vpDEBUG_TRACE(3, "Bad height < for dot (%g, %g)", 
-		    cog.get_u(), cog.get_v());
+      vpDEBUG_TRACE(3, "Bad height < for dot (%g, %g)", get_u(), get_v());
       return false;
     }
 
     if( ( getHeight() < wantedDot.getHeight()/(sizePrecision+epsilon )) == false )
     {
-      vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", 
-		    cog.get_u(), cog.get_v());
+      vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", get_u(), get_v());
       return false;
     }
 
     if( ( wantedDot.getSurface()*(sizePrecision*sizePrecision)-epsilon < getSurface() ) == false )
     {
-      vpDEBUG_TRACE(3, "Bad surface < for dot (%g, %g)", 
-		    cog.get_u(), cog.get_v());
+      vpDEBUG_TRACE(3, "Bad surface < for dot (%g, %g)", get_u(), get_v());
       return false;
     }
 
     if( ( getSurface() < wantedDot.getSurface()/(sizePrecision*sizePrecision+epsilon )) == false )
     {
-      vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", 
-		    cog.get_u(), cog.get_v());
+      vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", get_u(), get_v());
       return false;
     }
   }
@@ -1318,13 +1424,12 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     int u, v;
     for( double theta = 0. ; theta<2*M_PI ; theta+= 0.4 )
     {
-      u = (int) (this->cog.get_u() + innerCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
-      v = (int) (this->cog.get_v() + innerCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
+      u = (int) (this->get_u() + innerCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
+      v = (int) (this->get_v() + innerCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
       if( !wantedDot.hasGoodLevel( I, u, v ) )
       {
-	vpImagePoint cogWantedDot = wantedDot.getCog();
 	vpDEBUG_TRACE(3, "Inner cercle pixel (%d, %d) has bad level for dot (%g, %g)",
-		      u, v, cogWantedDot.get_u(), cogWantedDot.get_v());
+		      u, v, wantedDot.get_u(), wantedDot.get_v());
 	return false;
       }
       if (graphics) {
@@ -1345,8 +1450,8 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     double outCoef =  2-ellipsoidShapePrecision;           //1.6;
     for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 )
     {
-      u = (int) (this->cog.get_u() + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
-      v = (int) (this->cog.get_v() + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
+      u = (int) (this->get_u() + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
+      v = (int) (this->get_v() + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
       // If outside the area, continue
       if ((double)u < area.getLeft() || (double)u > area.getRight()
 	  || (double)v < area.getTop() || (double)v > area.getBottom()) {
@@ -1354,9 +1459,8 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
       }
       if( !wantedDot.hasReverseLevel( I, u, v ) )
       {
-	vpImagePoint cogWantedDot = wantedDot.getCog();
 	vpDEBUG_TRACE(3, "Outside cercle pixel (%d, %d) has bad level for dot (%g, %g)",
-		      u, v, cogWantedDot.get_u(), cogWantedDot.get_v());
+		      u, v, wantedDot.get_u(), wantedDot.get_v());
 	return false;
       }
       if (graphics) {
@@ -1520,7 +1624,8 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
 			       const double &_v)
 {
   direction_list.kill();
-  ip_edges_list.kill();
+  u_list.kill();
+  v_list.kill();
 
   double est_u = _u; // estimated
   double est_v = _v;
@@ -1528,13 +1633,13 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
   // if u has default value, set it to the actual center value
   if( est_u == -1.0 )
   {
-    est_u = this->cog.get_u();
+    est_u = this->get_u();
   }
 
   // if v has default value, set it to the actual center value
   if( est_v == -1.0 )
   {
-    est_v = this->cog.get_v();
+    est_v = this->get_v();
   }
 
   // if the estimated position of the dot is out of the image, not need to continue,
@@ -1586,11 +1691,8 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
 
   // store the new direction and dot border coordinates.
   direction_list.addRight( dir );
-  vpImagePoint ip;
-  ip.set_u( this->firstBorder_u );
-  ip.set_v( this->firstBorder_v );
-
-  ip_edges_list.addRight( ip );
+  u_list.addRight( this->firstBorder_u );
+  v_list.addRight( this->firstBorder_v );
 
   int border_u = this->firstBorder_u;
   int border_v = this->firstBorder_v;
@@ -1641,10 +1743,8 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
     // store the new direction and dot border coordinates.
 
     direction_list.addRight( dir );
-
-    ip.set_u( border_u );
-    ip.set_v( border_v );
-    ip_edges_list.addRight( ip );
+    u_list.addRight( border_u );
+    v_list.addRight( border_v );
 
     // vpDisplay::getClick(I);
 
@@ -1697,8 +1797,8 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
 //       return false;
 //     }
 
-    cog.set_u( tmpCenter_u );
-    cog.set_v( tmpCenter_v );
+    cog_ufloat = tmpCenter_u;
+    cog_vfloat = tmpCenter_v;
   }
 
   width   = bbox_u_max - bbox_u_min + 1;
@@ -2062,19 +2162,22 @@ void vpDot2::updateFreemanPosition( unsigned int& u, unsigned int& v,
 
 /*!
 
-  Test if a pixel is in the image. Points of the border are not
-  considered to be in the image.  Call the isInImage( vpImage<unsigned
-  char> &I, const vpImagePoint &) method.
+  Test if a pixel is in the image. Points of the border are not considered to
+  be in the image.  Call the isInImage( vpImage<unsigned char> &I, int u, int
+  v) method.
 
   \param I : The image.
+
 
   \return true if the pixel of coordinates (posI, posJ) is in the image and
   false otherwise.
 */
 bool vpDot2::isInImage( vpImage<unsigned char> &I) const
 {
-  return isInImage( I, cog);
+  return isInImage( I, (int)this->get_u(), (int)this->get_v());
 }
+
+
 
 /*!
 
@@ -2082,19 +2185,17 @@ bool vpDot2::isInImage( vpImage<unsigned char> &I) const
   be in the image.
 
   \param I : The image.
-  \param ip : An image point.
+  \param u : The column coordinate of the pixel.
+  \param v : The row coordinate of the pixel .
 
-  \return true if the image point \e ip is in the image and false
+  \return true if the pixel of coordinates (u, v) is in the image and false
   otherwise.
 */
 bool vpDot2::isInImage( vpImage<unsigned char> &I,
-			const vpImagePoint &ip) const
+			const int &u, const int &v) const
 {
   int height = I.getHeight();
   int width = I.getWidth();
-  double u = ip.get_u();
-  double v = ip.get_v();
-
   if( u < 0 || u >= width ) return false;
   if( v < 0 || v >= height ) return false;
   return true;
@@ -2165,8 +2266,8 @@ void vpDot2::getGridSize( unsigned int &gridWidth, unsigned int &gridHeight )
 */
 void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char>& I) 
 {
-  unsigned int cog_u = (unsigned int)cog.get_u();
-  unsigned int cog_v = (unsigned int)cog.get_v();
+  unsigned int cog_u = (unsigned int)get_u();
+  unsigned int cog_v = (unsigned int)get_v();
 
   unsigned int sum_value =0;
   unsigned int nb_pixels =0;
@@ -2230,289 +2331,6 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char>& I)
     mean_gray_level = sum_value/nb_pixels;
   }
 }
-
-/****************************************************************
-
-           Deprecated functions
-
-*****************************************************************/
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-
-  \deprecated This constructor is deprecated. You should use
-  vpDot2::vpDot2(const vpImagePoint &) instead.
-
-  Constructor initialise the coordinates of the gravity center of the dot to
-  (u,v).  Rest is the same as the default constructor.
-
-  \param u : The horizontal coordinate of the dot's center of gravity in the
-  image.
-
-  \param v : The vertical coordinate of the dot's center of gravity in the
-  image.
-
-*/
-vpDot2::vpDot2(const unsigned int u, const unsigned int v ) : vpTracker()
-{
-  init();
-
-  this->cog.set_u( u );
-  this->cog.set_v( v );
-}
-/*!
-
-  \deprecated This constructor is deprecated. You should use
-  vpDot2::vpDot2(const vpImagePoint &) instead.
-
-  Constructor initialise the coordinates of the gravity center of the dot to
-  (u,v).  Rest is the same as the default constructor.
-
-  \param u : The horizontal coordinate of the dot's center of gravity in the
-  image.
-
-  \param v : The vertical coordinate of the dot's center of gravity in the
-  image.
-
-*/
-vpDot2::vpDot2(const double u, const double v ) : vpTracker()
-{
-  init();
-
-  this->cog.set_u( u );
-  this->cog.set_v( v );
-}
-
-/*!
-  \deprecated You should use vpDot2::setCog() instead.
-
-  Set the u (horizontal) coordinate of the dot's center of gravity in the
-  image.
-
-  \param u : Center of gravity of a dot along the horizontal axis.
-
-  \sa set_v()
-*/
-void vpDot2::set_u( const double & u )
-{
-  cog.set_u( u );
-}
-
-/*!
-
-  \deprecated You should use vpDot2::setCog() instead.
-
-  Set the v (vertical) coordinate of the dot's center of gravity in the image.
-
-  \param v : Center of gravity of a dot along the vertical axis.
-
-  \sa set_u()
-
-*/
-void vpDot2::set_v( const double & v )
-{
-  cog.set_v( v );
-}
-
-/*!
-
-  \deprecated This method is deprecated. You should use
-  vpDot2::initTracking(vpImage<unsigned char> &, const vpImagePoint &,
-  unsigned int) instead.
-
-  Initialize the tracking for a dot supposed to be located at (u,v) and update
-  the dot characteristics (center of gravity, moments) by a call to track().
-
-  \param I : Image.
-  \param u : Dot location (column).
-  \param v : Dot location (row).
-  \param size : Size of the dot to track.
-
-  To get center of gravity of the dot, see getCog(). To compute the
-  moments see setComputeMoments().
-
-  If no valid dot was found in the window, return an exception.
-
-  \exception vpTrackingException::featureLostError : If the dot initialisation
-  failed. The initialisation can fail if the following characteristics are
-  not valid;
-  - The gray level is between gray level min and gray level max.
-
-  - The shape should be ellipsoid if
-    setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
-    This is the default case. To track a non ellipsoid shape use
-    setEllipsoidShapePrecision(0).
-*/
-void vpDot2::initTracking(vpImage<unsigned char>& I,
-			  unsigned int u, unsigned int v,unsigned int size)
-{
-  this->cog.set_u( u );
-  this->cog.set_v( v );
-
-  double Ip = pow((double)I[v][u]/255,1/gamma);
-
-  if(Ip - (1 - grayLevelPrecision)<0){
-    gray_level_min = 0 ;
-  }
-  else{
-    gray_level_min = (unsigned int) (255*pow(Ip - (1 - grayLevelPrecision),gamma));
-    if (gray_level_min > 255)
-      gray_level_min = 255;
-  }
-  gray_level_max = (unsigned int) (255*pow(Ip + (1 - grayLevelPrecision),gamma));
-  if (gray_level_max > 255)
-    gray_level_max = 255;
-
-  setWidth(size);
-  setHeight(size);
-
-  try {
-    track( I );
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
-}
-
-/*!
-
-  \deprecated This method is deprecated. You should use
-  vpDot2::initTracking(vpImage<unsigned char> &, const vpImagePoint &ip, 
-  unsigned int, unsigned int, unsigned int) instead.
-
-  Initialize the tracking for a dot supposed to be located at (u,v) and update
-  the dot characteristics (center of gravity, moments) by a call to track().
-
-  The sub pixel coordinates of the dot are updated. To get the center
-  of gravity coordinates of the dot, use getCog(). To
-  compute the moments use setComputeMoments(true) before a call to
-  initTracking().
-
-  \param I : Image to process.
-
-  \param u : Dot location or starting point (column pixel coordinate)
-  from which the dot will be tracked in the image.
-
-  \param v : Dot location or starting point (row pixel coordinate)
-  from which the dot will be tracked in the image.
-
-  \param gray_level_min : Minimum gray level threshold used to segment the dot;
-  value comprised between 0 and 255.
-
-  \param gray_level_max : Maximum gray level threshold used to segment the
-  dot; value comprised between 0 and 255. \e gray_level_max should be
-  greater than \e gray_level_min.
-
-  \param size : Size of the dot to track.
-
-  If no valid dot was found in the window, return an exception.
-
-  \exception vpTrackingException::featureLostError : If the dot initialisation
-  failed. The initialisation can fail if the following characteristics are
-  not valid;
-  - The gray level is between gray level min and gray level max.
-
-  - The shape should be ellipsoid if
-    setEllipsoidShapePrecision(ellipsoidShapePrecision) is used.
-    This is the default case. To track a non ellipsoid shape use
-    setEllipsoidShapePrecision(0).
-
-  \sa track(), getCog()
-
-*/
-void vpDot2::initTracking(vpImage<unsigned char>& I,
-			  unsigned int u, unsigned int v,
-			  unsigned int gray_level_min,
-			  unsigned int gray_level_max,
-			  unsigned int size)
-{
-  this->cog.set_u( u );
-  this->cog.set_v( v );
-
-  this->gray_level_min = gray_level_min;
-  this->gray_level_max = gray_level_max;
-
-  setWidth(size);
-  setHeight(size);
-
-  try {
-    track( I );
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
-}
-
-/*!
-
-  \deprecated This method is deprecated. You should use 
-  vpDot2::track(vpImage<unsigned char> &I, vpImagePoint &) instead.
-
-  Track and get the new dot coordinates. See track() for a more complete
-  description
-
-  \param I : Image
-  \param u : Dot location (column)
-  \param v : Dot location (row)
-
-  The behavior of this method is similar to the following code:
-  \code
-  vpDot2 d;
-  d.track(I);
-  vpImagePoint cog = d.getCog();
-  \endcode
-
-  \sa track().
-*/
-void
-vpDot2::track(vpImage<unsigned char> &I, double &u, double &v)
-{
-  track(I);
-  u = get_u();
-  v = get_v();
-}
-
-/*!
-
-  \deprecated This method is deprecated. You should use
-  vpDot2::getCog() instead.
-
-  Return \f$u_0\f$ the coordinate of the center of the dot along the u axis
-  (horizontal).
-
-  This value comes directly from the moments computation: \f$ u_0 =
-  m_{10}/m_{00}\f$.
-
-  \sa m00, m10
-*/
-double vpDot2::get_u() const
-{
-  return cog.get_u();
-}
-
-/*!
-
-  \deprecated This method is deprecated. You should use
-  vpDot2::getCog() instead.
-
-  Return \f$v_0\f$ the coordinate of the center of the dot along the v axis
-  (vertical).
-
-  This value comes directly from the moments computation: \f$ v_0 =
-  m_{01}/m_{00}\f$.
-
-  \sa m00, m01
-
-*/
-double vpDot2::get_v() const
-{
-  return cog.get_v();
-}
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*
  * Local variables:
  * c-basic-offset: 2
