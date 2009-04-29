@@ -1,6 +1,6 @@
  /****************************************************************************
  *
- * $Id: vpDot2.h,v 1.36 2008-11-18 14:38:14 cteulier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -51,6 +51,7 @@
 #include <visp/vpRect.h>
 #include <visp/vpTracker.h>
 #include <visp/vpColor.h>
+#include <visp/vpImagePoint.h>
 
 
 /*!
@@ -91,45 +92,116 @@ class VISP_EXPORT vpDot2 : public vpTracker
 {
 public:
   vpDot2();
-  vpDot2(const unsigned int u, const unsigned int v) ;
-  vpDot2(const double u, const double v) ;
+  vpDot2(const vpImagePoint &ip) ;
   vpDot2( vpDot2& twinDot );
   virtual ~vpDot2();
   void operator=( vpDot2& twinDot );
 
+  /*!
+    Initialize the dot coordinates with \e cog. 
+  */
+  inline void setCog(const vpImagePoint &cog) {
+    this->cog = cog; 
+  }
+  /*!
+    Activates the display of the border of the dot during the tracking.
+
+    \warning To effectively display the dot graphics a call to
+    vpDisplay::flush() is needed.
+
+    \param activate If true, the border of the dot will be painted. false to
+    turn off border painting.
+
+  */
+  void setGraphics(const bool activate) { graphics = activate ; }
+  /*!
+
+    Activates the dot's moments computation.
+
+    \param activate true, if you want to compute the moments. If false, moments
+    are not computed.
+
+    Computed moment are vpDot::m00, vpDot::m10, vpDot::m01, vpDot::m11,
+    vpDot::m20, vpDot::m02.
+
+    The coordinates of the region's centroid (u, v) can be computed from the
+    moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.
+
+  */
+  void setComputeMoments(const bool activate) { compute_moment = activate; }
+  void setWidth( const double & width );
+  void setHeight( const double & height );
+  void setSurface( const double & surface );
+  /*!
+
+  Set the color level of the dot to search a dot in an area. This level will be
+  used to know if a pixel in the image belongs to the dot or not. Only pixels
+  with higher level can belong to the dot.  If the level is lower than the
+  minimum level for a dot, set the level to MIN_IN_LEVEL.
+
+  \param min : Color level of a dot to search in an area.
+
+  \sa setGrayLevelMax(), setGrayLevelPrecision()
+
+  */
+  inline void setGrayLevelMin( const unsigned int & min ) {
+    if (min > 255)
+      this->gray_level_min = 255;
+    else
+      this->gray_level_min = min;
+  };
+
+  /*!
+
+  Set the color level of pixels surrounding the dot. This is meant to be used
+  to search a dot in an area.
+
+  \param max : Intensity level of a dot to search in an area.
+
+  \sa  setGrayLevelMin(), setGrayLevelPrecision()
+  */
+  inline void setGrayLevelMax( const unsigned int & max ) {
+    if (max > 255)
+      this->gray_level_max = 255;
+    else
+      this->gray_level_max = max;
+  };
+  void setGrayLevelPrecision( const double & grayLevelPrecision );
+  void setSizePrecision( const double & sizePrecision );
+  void setEllipsoidShapePrecision(const double & ellipsoidShapePrecision);
+  void setMaxSizeSearchDistancePrecision(const double & maxSizeSearchDistancePrecision);
+
   void initTracking(vpImage<unsigned char>& I, unsigned int size = 0);
-  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
-                     unsigned int size = 0);
-  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+  void initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip,
+		    unsigned int size = 0);
+  void initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip,
 		    unsigned int gray_level_min, unsigned int gray_level_max,
-        unsigned int size = 0 );
+		    unsigned int size = 0 );
 
   void track(vpImage<unsigned char> &I);
-  void track(vpImage<unsigned char> &I, double &u, double &v);
+  void track(vpImage<unsigned char> &I, vpImagePoint &cog);
 
-  double get_u() const;
-  double get_v() const;
+  /*!
+    Return the location of the dot center of gravity.
+
+    \return The coordinates of the center of gravity.
+  */
+  inline vpImagePoint getCog() const {
+    return cog;
+  }
+
   /*!
 
-  Return the list of the "u" coordinates (row) of all the pixels on the dot
-  border.
+    Return the list of all the image points on the dot
+    border.
 
-  \param u_list The "u" coordinate of the pixels on the dot border. This list
-  is update after a call to track().
-
-
-  */
-  void get_u(vpList<unsigned int> & u_list) { u_list = this->u_list; };
-  /*!
-
-  Return the list of the "v" coordinates (column) of all the pixels on the dot
-  border.
-
-  \param v_list The "v" coordinate of the pixels on the dot border. This list
-  is update after a call to track().
+    \param ip_edges_list : The list of all the images points on the dot
+    border. This list is update after a call to track().
 
   */
-  void get_v(vpList<unsigned int> & v_list) { v_list = this->v_list; };
+  void getEdges(vpList<vpImagePoint> &ip_edges_list) { 
+    ip_edges_list = this->ip_edges_list;
+  };
   void getFreemanChain(vpList<int> &freeman_chain) ;
 
   double getWidth() const;
@@ -181,78 +253,9 @@ public:
   double getEllipsoidShapePrecision() const;
   double getMaxSizeSearchDistancePrecision() const;
   inline double getGamma() {return this->gamma;};
-  /*!
-    Activates the display of the border of the dot during the tracking.
-
-    \warning To effectively display the dot graphics a call to
-    vpDisplay::flush() is needed.
-
-    \param activate If true, the border of the dot will be painted. false to
-    turn off border painting.
-
-  */
-  void setGraphics(const bool activate) { graphics = activate ; }
 
   void display(vpImage<unsigned char>& I,vpColor::vpColorType c = vpColor::red);
 
-  /*!
-
-    Activates the dot's moments computation.
-
-    \param activate true, if you want to compute the moments. If false, moments
-    are not computed.
-
-    Computed moment are vpDot::m00, vpDot::m10, vpDot::m01, vpDot::m11,
-    vpDot::m20, vpDot::m02.
-
-    The coordinates of the region's centroid (u, v) can be computed from the
-    moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.
-
-  */
-  void setComputeMoments(const bool activate) { compute_moment = activate; }
-  void set_u( const double & u );
-  void set_v( const double & v );
-  void setWidth( const double & width );
-  void setHeight( const double & height );
-  void setSurface( const double & surface );
-  /*!
-
-  Set the color level of the dot to search a dot in an area. This level will be
-  used to know if a pixel in the image belongs to the dot or not. Only pixels
-  with higher level can belong to the dot.  If the level is lower than the
-  minimum level for a dot, set the level to MIN_IN_LEVEL.
-
-  \param min : Color level of a dot to search in an area.
-
-  \sa setGrayLevelMax(), setGrayLevelPrecision()
-
-  */
-  inline void setGrayLevelMin( const unsigned int & min ) {
-    if (min > 255)
-      this->gray_level_min = 255;
-    else
-      this->gray_level_min = min;
-  };
-
-  /*!
-
-  Set the color level of pixels surrounding the dot. This is meant to be used
-  to search a dot in an area.
-
-  \param max : Intensity level of a dot to search in an area.
-
-  \sa  setGrayLevelMin(), setGrayLevelPrecision()
-  */
-  inline void setGrayLevelMax( const unsigned int & max ) {
-    if (max > 255)
-      this->gray_level_max = 255;
-    else
-      this->gray_level_max = max;
-  };
-  void setGrayLevelPrecision( const double & grayLevelPrecision );
-  void setSizePrecision( const double & sizePrecision );
-  void setEllipsoidShapePrecision(const double & ellipsoidShapePrecision);
-  void setMaxSizeSearchDistancePrecision(const double & maxSizeSearchDistancePrecision);
   double getDistance( const vpDot2& distantDot ) const;
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
@@ -278,16 +281,16 @@ private :
 
 public:
   /*!
-    Print the coordinates of the point center of gravity
-    in the stream.
+    Writes the dot center of gravity coordinates to the stream \e os, and
+    returns a reference to the stream. 
   */
-  friend std::ostream& operator<< (std::ostream& os, vpDot2& p) {
-    return (os <<"("<<p.cog_ufloat<<","<<p.cog_vfloat<<")" ) ;
+  friend std::ostream& operator<< (std::ostream& os, vpDot2& d) {
+    return (os << "(" << d.getCog() << ")" ) ;
   } ;
 
   void print(std::ostream& os) { os << *this << std::endl ; }
 
-public :
+
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
@@ -337,9 +340,30 @@ public :
 
 		\sa setComputeMoments()
 	      */
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vpDot2(const unsigned int u, const unsigned int v) ;
+  vpDot2(const double u, const double v) ;
+
+  void set_u( const double & u );
+  void set_v( const double & v );
+
+  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+                     unsigned int size = 0);
+  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+		    unsigned int gray_level_min, unsigned int gray_level_max,
+        unsigned int size = 0 );
+  void track(vpImage<unsigned char> &I, double &u, double &v);
+  double get_u() const;
+  double get_v() const;
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 private:
+  void init();
+
   bool computeParameters(const vpImage<unsigned char> &I,
 			 const double &u = -1.0,
 			 const double &v = -1.0);
@@ -389,7 +413,7 @@ private:
 
 
   bool isInImage( vpImage<unsigned char> &I ) const;
-  bool isInImage( vpImage<unsigned char> &I, const int &u, const int &v) const;
+  bool isInImage( vpImage<unsigned char> &I, const vpImagePoint &ip) const;
 
   bool isInArea(const unsigned int &u, const unsigned int &v) const;
 
@@ -401,7 +425,7 @@ private:
 
   unsigned char getMeanGrayLevel(vpImage<unsigned char>& I) const;
   //! coordinates (float) of the point center of gravity
-  double cog_ufloat, cog_vfloat ;
+  vpImagePoint cog;
 
   double width;
   double height;
@@ -424,8 +448,7 @@ private:
 
   // other
   vpList<int> direction_list;
-  vpList<unsigned int> u_list;
-  vpList<unsigned int> v_list;
+  vpList<vpImagePoint> ip_edges_list;
 
   // flag
   bool compute_moment ; // true moment are computed
