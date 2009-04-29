@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.h,v 1.30 2008-09-26 15:20:59 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -237,7 +237,7 @@ public :
   }
   /*!
 
-    Return the list of all the pixels on the dot
+    Return the list of all the image points on the dot
     border.
 
     \param ip_edges_list : The list of all the images points on the dot
@@ -299,11 +299,11 @@ public :
   vpDot(const double u, const double v) ;
 
   /*! 
-    \deprecated You should use setCog() instead.
+    \deprecated You should use vpDot::setCog() instead.
   */
   void set_u(double u) { cog.set_u(u); }
   /*! 
-    \deprecated You should use setCog() instead.
+    \deprecated You should use vpDot::setCog() instead.
   */
   void set_v(double v) { cog.set_v(v); }
 
@@ -316,7 +316,8 @@ public :
 
   /*!
 
-  \deprecated This method is deprecated. You should use getCog() instead.
+  \deprecated This method is deprecated. You should use
+  vpDot::getCog() instead.
 
   Return the "u" (column) coordinate of the center of the dot within the image
   it comes from.
@@ -324,7 +325,8 @@ public :
   double get_u() const { return cog.get_u() ; }
   /*!
 
-  \deprecated This method is deprecated. You should use getCog() instead.
+  \deprecated This method is deprecated. You should use
+  vpDot::getCog() instead.
 
   Return the "v" (row) coordinate of the center of the dot within the image it
   comes from.

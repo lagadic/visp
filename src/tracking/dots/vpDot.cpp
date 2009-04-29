@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDot.cpp,v 1.27 2007-09-17 09:18:28 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -103,7 +103,6 @@ vpDot::vpDot(const vpImagePoint &ip) : vpTracker()
   init() ;
 
   cog = ip;
-
 }
 
 /*!
@@ -608,7 +607,7 @@ vpDot::setMaxDotSize(double percentage)
   parameter. See the formula in setGrayLevelPrecision() function.
 
   The sub pixel coordinates of the dot are updated. To get the center
-  of gravity coordinates of the dot, use get_u() and get_v(). To
+  of gravity coordinates of the dot, use getCog(). To
   compute the moments use setComputeMoments(true) before a call to
   initTracking().
 
@@ -617,7 +616,7 @@ vpDot::setMaxDotSize(double percentage)
 
   \param I : Image to process.
 
-  \sa track(), get_u(), get_v()
+  \sa track(), getCog()
 */
 void
 vpDot::initTracking(vpImage<unsigned char>& I)
@@ -660,7 +659,7 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   gray level of the pixel (u,v).
 
   The sub pixel coordinates of the dot are updated. To get the center
-  of gravity coordinates of the dot, use get_u() and get_v(). To
+  of gravity coordinates of the dot, use getCog(). To
   compute the moments use setComputeMoments(true) before a call to
   initTracking().
 
@@ -669,7 +668,7 @@ vpDot::initTracking(vpImage<unsigned char>& I)
 
   \param I : Image to process.
 
-  \param ip : Location of th starting point from which the dot will be
+  \param ip : Location of the starting point from which the dot will be
   tracked in the image.
 
   \sa track()
@@ -712,7 +711,7 @@ vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip)
   updates the dot characteristics (center of gravity, moments).
 
   The sub pixel coordinates of the dot are updated. To get the center
-  of gravity coordinates of the dot, use get_u() and get_v(). To
+  of gravity coordinates of the dot, use getCog(). To
   compute the moments use setComputeMoments(true) before a call to
   initTracking().
 
@@ -731,7 +730,7 @@ vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip)
   dot; value comprised between 0 and 255. \e gray_level_max should be
   greater than \e gray_level_min.
 
-  \sa track(), get_u(), get_v()
+  \sa track(), getCog()
 */
 void
 vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip,
@@ -757,16 +756,16 @@ vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip,
 /*!
   Track and compute the dot characteristics.
 
-  To get the center of gravity coordinates of the dot, use get_u() and
-  get_v(). To compute the moments use setComputeMoments(true) before a
-  call to initTracking().
+  To get the center of gravity coordinates of the dot, use
+  getCog(). To compute the moments use setComputeMoments(true) before
+  a call to initTracking().
 
   \warning The image is modified (all the pixels that belong to the point
   are set to white (ie to 255).
 
   \param I : Image to process.
 
-  \sa get_u(), get_v()
+  \sa getCog()
 */
 void
 vpDot::track(vpImage<unsigned char> &I)
@@ -856,7 +855,7 @@ void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
   \brief Constructor with initialization of the dot location.
 
   \deprecated This constructor is deprecated. You should use
-  vpDot(const vpImagePoint &) instead.
+  vpDot::vpDot(const vpImagePoint &) instead.
 
   \param u : dot location (column)
   \param v : dot location (row)
@@ -873,7 +872,7 @@ vpDot::vpDot(const unsigned int u, const unsigned int v) : vpTracker()
   \brief Constructor with initialization of the dot location.
 
   \deprecated This constructor is deprecated. You should use
-  vpDot(const vpImagePoint &) instead.
+  vpDot::vpDot(const vpImagePoint &) instead.
 
   \param u : dot location (column)
   \param v : dot location (row)
@@ -890,7 +889,7 @@ vpDot::vpDot(const double u,const  double v) : vpTracker()
 /*!
 
   \deprecated This method is deprecated. You should use
-  initTracking(vpImage<unsigned char> &, const vpImagePoint &ip)
+  vpDot::initTracking(vpImage<unsigned char> &, const vpImagePoint &ip)
   instead.
  
   Initialize the tracking for a dot supposed to be located at (u,v) and
@@ -900,7 +899,7 @@ vpDot::vpDot(const double u,const  double v) : vpTracker()
   gray level of the pixel (u,v).
 
   The sub pixel coordinates of the dot are updated. To get the center
-  of gravity coordinates of the dot, use get_u() and get_v(). To
+  of gravity coordinates of the dot, use getCog(). To
   compute the moments use setComputeMoments(true) before a call to
   initTracking().
 
@@ -915,7 +914,7 @@ vpDot::vpDot(const double u,const  double v) : vpTracker()
   \param v : Dot location or starting point (row pixel coordinate)
   from which the dot will be tracked in the image.
 
-  \sa track(), get_u(), get_v()
+  \sa track(), getCog()
 */
 void
 vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
@@ -949,14 +948,14 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
 /*!
 
   \deprecated This method is deprecated. You should use
-  initTracking(vpImage<unsigned char> &, const vpImagePoint &ip, 
+  vpDot::initTracking(vpImage<unsigned char> &, const vpImagePoint &ip, 
   unsigned int, unsigned int) instead.
 
   Initialize the tracking for a dot supposed to be located at (u,v) and
   updates the dot characteristics (center of gravity, moments).
 
   The sub pixel coordinates of the dot are updated. To get the center
-  of gravity coordinates of the dot, use get_u() and get_v(). To
+  of gravity coordinates of the dot, use getCog(). To
   compute the moments use setComputeMoments(true) before a call to
   initTracking().
 
@@ -978,7 +977,7 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v)
   dot; value comprised between 0 and 255. \e gray_level_max should be
   greater than \e gray_level_min.
 
-  \sa track(), get_u(), get_v()
+  \sa track(), getCog()
 */
 void
 vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
@@ -1005,7 +1004,7 @@ vpDot::initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
 /*!
 
   \deprecated This method is deprecated. You should use 
-  track(vpImage<unsigned char> &I, vpImagePoint &) instead.
+  vpDot::track(vpImage<unsigned char> &I, vpImagePoint &) instead.
 
   Track and updates the new dot coordinates
 
