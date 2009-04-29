@@ -93,7 +93,7 @@ public:
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
 		      const vpImagePoint &t) ;
   static void create(vpFeaturePoint &s, const vpPoint &p) ;
-  static void create(vpFeaturePoint &p,
+  static void create(vpFeaturePoint &s,
 		     const vpCameraParameters &goodCam,
 		     const vpCameraParameters &wrongCam,
 		     const vpPoint &p) ;
