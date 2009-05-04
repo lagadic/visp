@@ -427,11 +427,7 @@ void vpKeyPointSurf::display(vpImage<unsigned char> &Icurrent)
   }
 }
 
-#else
-
-std::cout << "Only available with opencv 1.1.0 or more recent versions..." << std::endl;
-
-#endif 
+#endif
 
 #endif
 
