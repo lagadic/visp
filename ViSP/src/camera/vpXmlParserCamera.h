@@ -120,8 +120,18 @@ int main()
   // cout the parameters
   cam.printParameters();
 
+  // Get the camera parameters for the model without distorsion
+  double px = cam.get_px();
+  double py = cam.get_py();
+  double u0 = cam.get_u0();
+  double v0 = cam.get_v0();
+
   // Now we modify the principal point (u0,v0) for example to add noise
-  cam.setPrincipalPoint(cam.get_u0()*0.9, cam.get_v0()*0.9);
+  u0 *= 0.9;
+  v0 *= 0.8;
+
+  // Set the new camera parameters
+  cam.initPersProjWithoutDistortion(px, py, u0, v0);
 
   // Save the parameters in a new file "myXmlFileWithNoise.xml"
   p.save(cam,"myXmlFileWithNoise.xml",p.getCameraName(),p.getWidth(),p.getHeight());
@@ -142,15 +152,20 @@ int main()
   vpCameraParameters cam; 
 
   // Set the principal point coordinates (u0,v0)
-  cam.setPrincipalPoint(162.3,122.4);
+  double u0 = 162.3;
+  double v0 = 122.4;
   // Set the pixel ratio (px, py)
-  cam.setPixelRatio (563.2, 564.1);
+  double px = 563.2;
+  double py = 564.1;
+  
+  // Set the camera parameters for a model without distorsion
+  cam.initPersProjWithoutDistortion(px, py, u0, v0);
 
 #ifdef VISP_HAVE_XML2
   // Create a XML parser
   vpXmlParserCamera p;
   // Save the camera parameters in an XML file.
-  p.save(cam,"myNewXmlFile.xml","myNewCamera",320,240);
+  p.save(cam, "myNewXmlFile.xml", "myNewCamera", 320, 240);
 #endif
 }
   \endcode
