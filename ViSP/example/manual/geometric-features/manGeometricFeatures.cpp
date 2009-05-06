@@ -91,7 +91,7 @@ int main()
   vpTranslationVector t(0,0,1);
   vpRxyzVector rxyz(-M_PI/4,0,0);
   vpRotationMatrix R(rxyz);
-  vpHomogeneousMatrix cMo(R,t);
+  vpHomogeneousMatrix cMo(t, R);
 
   // scene building, geometric features definition
   vpPoint point;

@@ -202,11 +202,10 @@ main(int argc, const char ** argv)
   }
   vpProjectionDisplay externalview ;
 
-  vpCameraParameters cam ;
   double px, py ; px = py = 500 ;
   double u0, v0 ; u0 = 150, v0 = 160 ;
 
-  cam.init(px,py,u0,v0);
+  vpCameraParameters cam(px,py,u0,v0);
 
   int i ;
   vpServo task ;

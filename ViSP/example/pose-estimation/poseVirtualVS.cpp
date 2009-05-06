@@ -69,6 +69,7 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpImagePoint.h>
 
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
@@ -401,21 +402,20 @@ main(int argc, const char** argv)
       }
   }
 
-
-
-  double u[4],v[4] ;
+  vpImagePoint cog[4]; // Center of gravity of the dot
   try{
     if (opt_display && opt_click_allowed) {
       // dot coordinates (u,v) = (column,row)
-      std::cout << "Click the four white  on the object corner clockwise" <<std::endl  ;
+      std::cout << "Click the four white dots on the object corner clockwise" 
+		<< std::endl  ;
       for (i=0 ; i < 4 ; i++)
 	{
-	  // tracking is initalized
-	  // if no other parameters are given to the iniTracking(..) method
-	  // a right mouse click on the dot is expected
-	  // dot location can also be specified explicitely in the initTracking
-	  // method  : d.initTracking(I,u,v)  where u is the column index and v is
-	  // the row index
+	  // tracking is initalized if no other parameters are given
+	  // to the iniTracking(..) method a right mouse click on the
+	  // dot is expected dot location can also be specified
+	  // explicitely in the initTracking method :
+	  // d.initTracking(I,ip) where ip is the image point from
+	  // where the dot need to be searched.
 
 	  d[i].initTracking(I) ;
 	  // track the dot and returns its coordinates in the image
@@ -427,22 +427,33 @@ main(int argc, const char** argv)
 	  //  - too many pixels are detected (this is usual when a "big" specularity
 	  //    occurs. The threshold can be modified using the
 	  //    setMaxDotSize() method
-	  d[i].track(I,u[i],v[i]) ;
+	  d[i].track(I, cog[i]) ;
 	  vpDisplay::flush(I) ;
 	}
     }
     else{
-      d[0].initTracking(I,194,88 );
-      d[0].track(I,u[0],v[0]);
+      cog[0].set_u( 194 );
+      cog[0].set_v( 88 );
+      d[0].initTracking(I, cog[0] );
+      d[0].track(I, cog[0]);
       vpDisplay::flush(I) ;
-      d[1].initTracking(I, 225, 84);
-      d[1].track(I,u[1],v[1]);
+
+      cog[1].set_u( 225 );
+      cog[1].set_v( 84 );
+      d[1].initTracking(I, cog[1]);
+      d[1].track(I, cog[1]);
       vpDisplay::flush(I) ;
-      d[2].initTracking(I, 242, 114);
-      d[2].track(I,u[2],v[2]);
+
+      cog[2].set_u( 242 );
+      cog[2].set_v( 114 );
+      d[2].initTracking(I, cog[2]);
+      d[2].track(I, cog[2]);
       vpDisplay::flush(I) ;
-      d[3].initTracking(I, 212, 131);
-      d[3].track(I,u[3],v[3]);
+
+      cog[3].set_u( 212 );
+      cog[3].set_v( 131 );
+      d[3].initTracking(I, cog[3]);
+      d[3].track(I, cog[3]);
       vpDisplay::flush(I) ;
     }
   }
@@ -470,10 +481,7 @@ main(int argc, const char** argv)
       //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
 
       for (i=0 ; i < 4 ; i++)
-	vpDisplay::displayCross(I,
-				(int)v[i], (int)u[i],
-				10,
-				vpColor::red) ;
+	vpDisplay::displayCross(I, cog[i], 10, vpColor::red) ;
 
       // flush the X11 buffer
       vpDisplay::flush(I) ;
@@ -522,9 +530,7 @@ main(int argc, const char** argv)
       // y = (v-v0)/py
       // where px, py, u0, v0 are the intrinsic camera parameters
       double x=0, y=0;
-      vpPixelMeterConversion::convertPoint(cam,
-					   u[i], v[i],
-					   x,y)  ;
+      vpPixelMeterConversion::convertPoint(cam, cog[i], x,y)  ;
       P[i].set_x(x) ;
       P[i].set_y(y) ;
     }
@@ -584,18 +590,15 @@ main(int argc, const char** argv)
 	for (i=0 ; i < 4 ; i++)
 	  {
 	    // track the point
-	    d[i].track(I,u[i],v[i]) ;
+	    d[i].track(I, cog[i]) ;
 	    if (opt_display){
 	      // display point location
-	      vpDisplay::displayCross(I,(int)v[i], (int)u[i],
-				      10,vpColor::red) ;
+	      vpDisplay::displayCross(I, cog[i], 10,vpColor::red) ;
 	    }
 	    // pixel->meter conversion
 	    {
 	      double x=0, y=0;
-	      vpPixelMeterConversion::convertPoint(cam,
-						   u[i], v[i],
-						   x,y)  ;
+	      vpPixelMeterConversion::convertPoint(cam, cog[i], x, y)  ;
 	      P[i].set_x(x) ;
 	      P[i].set_y(y) ;
 	    }

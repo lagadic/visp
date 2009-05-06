@@ -60,6 +60,7 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
@@ -294,9 +295,16 @@ main(int argc, const char ** argv)
   if (opt_click_allowed)
     E1.initTracking(I) ;
   else {
-    unsigned i[5] = {30, 62, 212, 234, 178};
-    unsigned j[5] = {331, 171, 50, 196, 353};
-    E1.initTracking(I, 5, i, j);
+    // Create a list of points to automate the test
+    int n=5 ;
+    vpImagePoint *ip = new vpImagePoint [n];
+    ip[0].set_i( 30 ); ip[0].set_j( 331 );
+    ip[1].set_i( 62 ); ip[1].set_j( 171 );
+    ip[2].set_i( 212 ); ip[2].set_j( 50 );
+    ip[3].set_i( 234 ); ip[3].set_j( 196 );
+    ip[4].set_i( 178 ); ip[4].set_j( 353 );
+    E1.initTracking(I, n, ip) ;
+    delete [] ip ;
   }
   if (opt_display) {
     E1.display(I, vpColor::green) ;

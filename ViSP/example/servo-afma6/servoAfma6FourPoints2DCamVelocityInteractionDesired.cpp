@@ -70,6 +70,7 @@
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
 
@@ -161,15 +162,14 @@ main()
 
 
     vpDot2 dot[4] ;
+    vpImagePoint cog;
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
 	      << std::endl;
     for (i=0 ; i < 4 ; i++) {
       dot[i].initTracking(I) ;
-      vpDisplay::displayCross(I,
-			      (unsigned int)dot[i].get_v(),
-			      (unsigned int)dot[i].get_u(),
-			      10, vpColor::blue) ;
+      cog = dot[i].getCog();
+      vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
       vpDisplay::flush(I);
     }
 
@@ -253,12 +253,11 @@ main()
       for (i=0 ; i < 4 ; i++) {
 	// Achieve the tracking of the dot in the image
 	dot[i].track(I) ;
+	// Get the dot cog
+	cog = dot[i].getCog();
 	// Display a green cross at the center of gravity position in the
 	// image
-	vpDisplay::displayCross(I,
-				(unsigned int)dot[i].get_v(),
-				(unsigned int)dot[i].get_u(),
-				10, vpColor::green) ;
+	vpDisplay::displayCross(I,cog, 10, vpColor::green) ;
       }
 
       // Printing on stdout concerning task information

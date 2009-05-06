@@ -457,10 +457,11 @@ int main(int argc, const char ** argv)
       // read the image
       vpImageIo::readPGM(I, filename);
     
-    u0 = I.getWidth()/2;
-    v0 = I.getHeight()/2;
-
-    cam.setPrincipalPoint(u0,v0);
+      double px = cam.get_px();
+      double py = cam.get_px();
+      double u0 = I.getWidth()/2;
+      double v0 = I.getHeight()/2;
+      cam.initPersProjWithoutDistortion(px, py, u0, v0);
       
 #if defined VISP_HAVE_GDI
     vpDisplayGDI display; 
@@ -497,7 +498,8 @@ int main(int argc, const char ** argv)
 
     // here we track dots on the calibration grid
     vpDot2 d[nptPose] ;
-    unsigned int u_click[nptPose], v_click[nptPose];
+    vpImagePoint ip_click[nptPose];
+
     try{
       for(unsigned int i=0;i<nptPose;i++) {
         // by using setGraphics, we request to see the edges of the dot
@@ -520,19 +522,23 @@ int main(int argc, const char ** argv)
           std::printf("click in the dot %d of coordinates\nx=%f y=%f z=%f \n",
           i+1 ,P[i].get_oX(),P[i].get_oY(),P[i].get_oZ());
           std::sprintf(comment,"click in the dot %d",i+1 );
-          vpDisplay::displayCharString(I,10,10,&comment[0],vpColor::blue);
+	  vpImagePoint ip;
+	  ip.set_i( 10 );
+	  ip.set_j( 10 );
+	  
+          vpDisplay::displayCharString(I, ip, &comment[0], vpColor::blue);
           for(unsigned int j = 0;j<i;j++)
             d[j].display(I) ;
         // flush the display buffer
           vpDisplay::flush(I);
           try{
-		        d[i].initTracking(I) ;
+	    d[i].initTracking(I) ;
           }
           catch(...){
           }
         }
         else{
-          d[i].initTracking(I,u_click[i],v_click[i]);
+          d[i].initTracking(I, ip_click[i]);
         }  
         // an expcetion is thrown by the track method if
         //  - dot is lost
@@ -575,17 +581,15 @@ int main(int argc, const char ** argv)
     // we set the 3D points coordinates (in meter !) in the object/world frame
     
 
-
     // pixel-> meter conversion
     for (unsigned int i=0 ; i < nptPose ; i++){
       // conversion in meter is achieved using
       // x = (u-u0)/px
       // y = (v-v0)/py
       // where px, py, u0, v0 are the intrinsic camera parameters
-      double x=0.,y=0. ;
-      vpPixelMeterConversion::convertPoint(cam,
-					   d[i].get_u(), d[i].get_v(),
-					   x,y)  ;
+      double x=0, y=0;
+      vpImagePoint cog = d[i].getCog();
+      vpPixelMeterConversion::convertPoint(cam, cog, x, y);
       P[i].set_x(x) ;
       P[i].set_y(y) ;
     }
@@ -593,11 +597,12 @@ int main(int argc, const char ** argv)
     // The pose structure is build, we put in the point list the set of point
     // here both 2D and 3D world coordinates are known
     for (unsigned int i=0 ; i < nptPose ; i++){
+      vpImagePoint cog = d[i].getCog();
       pose.addPoint(P[i]) ; // and added to the pose computation point list
 
       //and added to the local calibration points list
       calib.addPoint(P[i].get_oX(),P[i].get_oY(),P[i].get_oZ(),
-                      d[i].get_u(),d[i].get_v());
+                      cog.get_u(), cog.get_v());
     
     }
     // compute the initial pose using Lagrange method followed by a non linear
@@ -618,13 +623,20 @@ int main(int argc, const char ** argv)
     }
     catch(...){
       if(opt_click){
+	vpImagePoint ip;
         vpDisplay::display(I);    
-        vpDisplay::displayCharString(I,10,10,"Pose computation failed",
+	ip.set_i( 10 );
+	ip.set_j( 10 );
+        vpDisplay::displayCharString(I, ip, "Pose computation failed",
                                      vpColor::red);
-        vpDisplay::displayCharString(I,22,10,
+	ip.set_i( 22 );
+	ip.set_j( 10 );
+        vpDisplay::displayCharString(I, ip,
                                      "A left click to define other dots.",
                                      vpColor::blue);
-        vpDisplay::displayCharString(I,34,10,
+	ip.set_i( 34 );
+	ip.set_j( 10 );
+        vpDisplay::displayCharString(I, ip,
                                      "A middle click to don't care of this pose.",
                                      vpColor::blue);
         vpDisplay::flush(I) ;
@@ -632,8 +644,7 @@ int main(int argc, const char ** argv)
         std::cout << "A left click to define other dots." << std::endl;
         std::cout << "A middle click to don't care of this pose." << std::endl;
         vpMouseButton::vpMouseButtonType button;
-        unsigned int r,c;
-        vpDisplay::getClick(I,r,c,button) ;
+        vpDisplay::getClick(I, ip, button) ;
         switch(button){
           case 1 :
             std::cout << "Left click has been pressed." << std::endl;
@@ -662,18 +673,22 @@ int main(int argc, const char ** argv)
       pose.display(I,cMoTmp,camTmp, 0.05, vpColor::red) ;
       vpDisplay::flush(I) ;
       if(opt_click){
-        vpDisplay::displayCharString(I,10,10,
+	vpImagePoint ip;
+	ip.set_i( 10 );
+	ip.set_j( 10 );
+        vpDisplay::displayCharString(I, ip,
                                      "A left click to display grid.",
                                      vpColor::blue);
-        vpDisplay::displayCharString(I,22,10,
+	ip.set_i( 22 );
+	ip.set_j( 10 );
+        vpDisplay::displayCharString(I, ip,
                                      "A right click to define other dots.",
                                      vpColor::blue);
         vpDisplay::flush(I) ;
         std::cout << "\nA a left click to display grid." << std::endl;
         std::cout << "A right click to define other dots." << std::endl;
         vpMouseButton::vpMouseButtonType button;
-        unsigned int r,c;
-        vpDisplay::getClick(I,r,c,button) ;
+        vpDisplay::getClick(I, ip, button) ;
         switch(button){
         case 1 :
           std::cout << "Left click has been pressed." << std::endl;
@@ -733,28 +748,30 @@ int main(int argc, const char ** argv)
         LoZ.next();
     }
     // pixel-> meter conversion
+    vpImagePoint ip;
+    vpImagePoint cog;
     bool* valid = new bool[nbpt];
     for (unsigned int i=0 ; i < nbpt ; i++){
       vpColVector _cP, _p ;
-      double u=0.,v=0. ;
       valid[i] = true;
       mP[i].changeFrame(cMoTmp,_cP) ;
       mP[i].projection(_cP,_p) ;
-      vpMeterPixelConversion::convertPoint(camTmp,_p[0],_p[1], u, v);
-      if(10<u && u<I.getWidth()-10 && 10<v && v<I.getHeight()-10){
+      vpMeterPixelConversion::convertPoint(camTmp,_p[0],_p[1], ip);
+      if (10 < ip.get_u() && ip.get_u() < I.getWidth()-10 &&
+	  10 < ip.get_v() && ip.get_v() < I.getHeight()-10) {
         try {
-          md[i].initTracking(I,(unsigned int)u,(unsigned int)v,(unsigned int)dotSize);
+          md[i].initTracking(I, ip, (unsigned int)dotSize);
           vpRect bbox = md[i].getBBox();
+	  cog = md[i].getCog();
           if(bbox.getLeft()<5 || bbox.getRight()>(double)I.getWidth()-5 ||
               bbox.getTop()<5 || bbox.getBottom()>(double)I.getHeight()-5||
-              vpMath::abs(u-md[i].get_u())>10 ||vpMath::abs(v-md[i].get_v())>10)
+	     vpMath::abs(ip.get_u() - cog.get_u()) > 10 ||
+	     vpMath::abs(ip.get_v() - cog.get_v()) > 10)
             valid[i] = false;
           // u[i]. v[i] are expressed in pixel
           // conversion in meter
-          double x=0.,y=0. ;
-          vpPixelMeterConversion::convertPoint(camTmp,
-                md[i].get_u(), md[i].get_v(),
-                x,y)  ;
+	  double x=0, y=0;
+          vpPixelMeterConversion::convertPoint(camTmp, cog, x, y)  ;
           mP[i].set_x(x) ;
           mP[i].set_y(y) ;
           if (opt_display) {
@@ -778,46 +795,54 @@ int main(int argc, const char ** argv)
 
     //we put the pose matrix in the current calibration structure
 //     table_cal[niter].cMo = cMo ; //.setIdentity();//
-    if(save == true)
+    if(save == true) {
       table_cal[niter].writeData(filename_out.c_str());
+    }
     if (opt_click) {
-        
-        vpDisplay::displayCharString(I,10,10,"A left click to validate this pose.",
-                                     vpColor::blue);
-        vpDisplay::displayCharString(I,22,10,
-                                     "A right click to retry.",
-                                     vpColor::blue);
-        vpDisplay::displayCharString(I,34,10,
-                                     "A middle click to don't care of this pose.",
-                                     vpColor::blue);
-        vpDisplay::flush(I) ;
+      vpImagePoint ip;
+      ip.set_i( 10 );
+      ip.set_j( 10 );	
+      vpDisplay::displayCharString(I, ip,
+				   "A left click to validate this pose.",
+				   vpColor::blue);
+      ip.set_i( 22 );
+      ip.set_j( 10 );	
+      vpDisplay::displayCharString(I, ip,
+				   "A right click to retry.",
+				   vpColor::blue);
+      ip.set_i( 34 );
+      ip.set_j( 10 );	
+      vpDisplay::displayCharString(I, ip,
+				   "A middle click to don't care of this pose.",
+				   vpColor::blue);
+      vpDisplay::flush(I) ;
    
-        std::cout << "\nA left click to validate this pose." << std::endl;
-        std::cout << "A right click to retry." << std::endl;
-        std::cout << "A middle click to don't care of this pose." << std::endl;
-        vpMouseButton::vpMouseButtonType button;
-        unsigned int r,c;
-        vpDisplay::getClick(I,r,c,button) ;
-        switch(button){
-        case 1 : //left
-          std::cout << "\nLeft click has been pressed." << std::endl;
+      std::cout << "\nA left click to validate this pose." << std::endl;
+      std::cout << "A right click to retry." << std::endl;
+      std::cout << "A middle click to don't care of this pose." << std::endl;
+      vpMouseButton::vpMouseButtonType button;
+      vpDisplay::getClick(I, ip, button) ;
+      switch(button){
+      case 1 : //left
+	std::cout << "\nLeft click has been pressed." << std::endl;
         break;
-        case 2 : //middle
-          std::cout << "Middle click has been pressed." << std::endl;
-          for (unsigned int i=0 ; i < nbpt ; i++)
-            valid[i]=false;
+      case 2 : //middle
+	std::cout << "Middle click has been pressed." << std::endl;
+	for (unsigned int i=0 ; i < nbpt ; i++)
+	  valid[i]=false;
         break;
-        case 3 : //right
-          std::cout << "Right click has been pressed." << std::endl;
+      case 3 : //right
+	std::cout << "Right click has been pressed." << std::endl;
         continue;
-        }
+      }
     }
     //Add valid points in the calibration structure
     for (unsigned int i=0 ; i < nbpt ; i++){
       if(valid[i]){
+	vpImagePoint cog = md[i].getCog();
 
         table_cal[niter].addPoint(mP[i].get_oX(),mP[i].get_oY(),mP[i].get_oZ(),
-            md[i].get_u(),md[i].get_v()) ;
+				  cog.get_u(), cog.get_v()) ;
       }
     }
       
@@ -910,7 +935,10 @@ int main(int argc, const char ** argv)
         table_cal[niter].displayGrid(I) ;
         vpDisplay::flush(I) ;
         if(opt_click){
-          vpDisplay::displayCharString(I,10,10,"A click to continue...",
+	  vpImagePoint ip;
+	  ip.set_i( 10 );
+	  ip.set_j( 10 );
+          vpDisplay::displayCharString(I, ip, "A click to continue...",
                                        vpColor::blue);
           vpDisplay::flush(I) ;
           std::cout << "\nA click to continue..." << std::endl;
