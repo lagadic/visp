@@ -87,8 +87,8 @@ vpGDIRenderer::~vpGDIRenderer()
 /*!
   Initialiaze the renderer
   \param hWindow Handle of the window we are working with
-  \param width largeur de la fenêtre
-  \param height hauteur de la fenêtre
+  \param width The window's width.
+  \param height The window's height.
 */
 bool vpGDIRenderer::init(HWND hWindow, unsigned int width, unsigned int height)
 {
@@ -334,12 +334,12 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
 }
 
 /*!
-  Sets the pixel at (x,y).
-  \param y The y coordinate of the pixel.
-  \param x The x coordinate of the pixel.
-  \param color The color of the pixel.
+  Sets a pixel to color at position (j,i).
+
+  \param ip : The pixel coordinates.
+  \param color : the color of the point.
 */
-void vpGDIRenderer::setPixel(int y, int x,
+void vpGDIRenderer::setPixel(const vpImagePoint iP,
 			     vpColor::vpColorType color)
 {
   //get the window's DC
@@ -351,7 +351,8 @@ void vpGDIRenderer::setPixel(int y, int x,
   SelectObject(hDCMem, bmp);
 
 
-  SetPixel(hDCMem,x,y,colors[color]);
+  SetPixel(hDCMem,vpMath::round(iP.get_u()),vpMath::round(iP.get_v()),colors[color]);
+  //SetPixel(hDCMem,x,y,colors[color]); avec appel y,x
   //display the result (flush)
  // BitBlt(hDCScreen, x, y, 1, 1, hDCMem, x, y, SRCCOPY);
 
@@ -363,18 +364,15 @@ void vpGDIRenderer::setPixel(int y, int x,
 
 /*!
   Draws a line.
-  \param i1 its starting point's first coordinate
-  \param j1 its starting point's second coordinate
-  \param i2 its ending point's first coordinate
-  \param j2 its ending point's second coordinate
-  \param e width of the line
-  \param col the line's color
+  \param ip1,ip2 : Initial and final image point.
+  \param color the line's color
+  \param thickness : Thickness of the line.
   \param style style of the line
 */
-void vpGDIRenderer::drawLine(int i1, int j1,
-			     int i2, int j2,
-			     vpColor::vpColorType col,
-			     unsigned int e, int style)
+void vpGDIRenderer::drawLine(const vpImagePoint &ip1, 
+			     const vpImagePoint &ip2,
+			     vpColor::vpColorType color,
+			     unsigned int thickness, int style)
 {
 
   //get the window's DC
@@ -382,7 +380,7 @@ void vpGDIRenderer::drawLine(int i1, int j1,
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(style, e, colors[col]);
+  HPEN hPen = CreatePen(style, thickness, colors[color]);
 
   SetBkMode(hDCMem, TRANSPARENT);
 
@@ -394,9 +392,9 @@ void vpGDIRenderer::drawLine(int i1, int j1,
   SelectObject(hDCMem, hPen);
 
   //move to the starting point
-  MoveToEx(hDCMem, j1, i1, NULL);
+  MoveToEx(hDCMem, vpMath::round(ip1.get_u()), vpMath::round(ip1.get_v()), NULL);
   //Draw the line
-  LineTo(hDCMem, j2, i2);
+  LineTo(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()));
 
   //computes the coordinates of the rectangle to blit
 //   int x = (j2 >= j1) ? j1 : j2;
@@ -417,33 +415,32 @@ void vpGDIRenderer::drawLine(int i1, int j1,
 
 /*!
   Draws a rectangle.
-  \param i its top left point's first coordinate
-  \param j its top left point's second coordinate
+  \param topLeft its top left point's coordinates
   \param width width of the rectangle
   \param height height of the rectangle
-  \param col The rectangle's color
-  \param fill True if it is a filled rectangle
-  \param e : Line thickness
+  \param color The rectangle's color
+  \param fill  When set to true fill the rectangle.
+  \param thickness : Line thickness
 */
-void vpGDIRenderer::drawRect(int i, int j,
+void vpGDIRenderer::drawRect(const vpImagePoint &topLeft,
 			     unsigned int width, unsigned int height,
-			     vpColor::vpColorType col, bool fill,
-			     unsigned int e)
+			     vpColor::vpColorType color, bool fill,
+			     unsigned int thickness)
 {
-  if (e == 0) e = 1;
+  if (thickness == 0) thickness = 1;
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, e, colors[col]);
+  HPEN hPen = CreatePen(PS_SOLID, thickness, colors[color]);
 
   //create an hollow or solid brush (depends on boolean fill)
   LOGBRUSH lBrush;
   if(fill)
     {
       lBrush.lbStyle = BS_SOLID;
-      lBrush.lbColor = colors[col];
+      lBrush.lbColor = colors[color];
     }
   else lBrush.lbStyle = BS_HOLLOW;
   HBRUSH hbrush = CreateBrushIndirect(&lBrush);
@@ -458,7 +455,7 @@ void vpGDIRenderer::drawRect(int i, int j,
   SelectObject(hDCMem, hPen);
 
   //draw the rectangle
-  Rectangle(hDCMem, j, i, j+width, i+height);
+  Rectangle(hDCMem, vpMath::round(topLeft.get_u()), vpMath::round(topLeft.get_v()), vpMath::round(topLeft.get_u())+width, vpMath::round(topLeft.get_v())+height);
 
   //display the result (flush)
 //  BitBlt(hDCScreen, j, i, width, height, hDCMem, j, i, SRCCOPY);
@@ -473,24 +470,28 @@ void vpGDIRenderer::drawRect(int i, int j,
 }
 
 /*!
-  Clears the image to color c.
-  \param c The color used to fill the image.
+  Clears the image to a specific color.
+  \param color The color used to fill the image.
 */
-void vpGDIRenderer::clear(vpColor::vpColorType c)
+void vpGDIRenderer::clear(vpColor::vpColorType color)
 {
-  drawRect(0, 0, nbCols, nbRows, c, true, 0);
+	vpImagePoint ip;
+	ip.set_i(0);
+	ip.set_j(0);
+  drawRect(ip, nbCols, nbRows, color, true, 0);
 }
 
 
 /*!
   Draws a circle.
-  \param i its center point's first coordinate
-  \param j its center point's second coordinate
-  \param r The circle's radius
-  \param col The circle's color
+  \param center its center point's coordinates
+  \param radius The circle's radius
+  \param color The circle's color
+  \param fill  When set to true fill the circle.
+  \param thickness : Line thickness
 */
-void vpGDIRenderer::drawCircle(int i, int j, unsigned int r,
-			       vpColor::vpColorType c)
+void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
+			       vpColor::vpColorType color, bool fill, unsigned char thickness)
 {
 
   //get the window's DC
@@ -498,7 +499,7 @@ void vpGDIRenderer::drawCircle(int i, int j, unsigned int r,
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, 1, colors[c]);
+  HPEN hPen = CreatePen(PS_SOLID, thickness, colors[color]);
 
   //create an hollow brush
   LOGBRUSH lBrush;
@@ -506,10 +507,10 @@ void vpGDIRenderer::drawCircle(int i, int j, unsigned int r,
   HBRUSH hbrush = CreateBrushIndirect(&lBrush);
 
   //computes bounding rectangle
-  int x1 = j-r;
-  int y1 = i-r;
-  int x2 = j+r;
-  int y2 = i+r;
+  int x1 = vpMath::round(center.get_u())-radius;
+  int y1 = vpMath::round(center.get_v())-radius;
+  int x2 = vpMath::round(center.get_u())+radius;
+  int y2 = vpMath::round(center.get_v())+radius;
 
   //select this bmp in memory
   EnterCriticalSection(&CriticalSection);
@@ -521,7 +522,20 @@ void vpGDIRenderer::drawCircle(int i, int j, unsigned int r,
   SelectObject(hDCMem, hPen);
 
   //draw the circle
-  Ellipse(hDCMem, x1, y1, x2, y2),
+  if (fill==false)
+    Ellipse(hDCMem, x1, y1, x2, y2);
+
+  else
+  {
+    while (x2-x1 > 0)
+	{
+		x1++;
+		x2--;
+		y1++;
+		y2--;
+		Ellipse(hDCMem, x1, y1, x2, y2);
+	}
+  }
 
     //display the result (flush)
    // BitBlt(hDCScreen, x1, y1, x2-x1, y2-y1, hDCMem, x1, y1, SRCCOPY);
@@ -537,13 +551,12 @@ void vpGDIRenderer::drawCircle(int i, int j, unsigned int r,
 
 /*!
   Draws some text.
-  \param i its top left point's first coordinate
-  \param j its top left point's second coordinate
-  \param s The string to display
-  \param col The text's color
+  \param ip its top left point's coordinates
+  \param text The string to display
+  \param color The text's color
 */
-void vpGDIRenderer::drawText(int i, int j, const char * s,
-			     vpColor::vpColorType c)
+void vpGDIRenderer::drawText(const vpImagePoint &ip, const char * text,
+			     vpColor::vpColorType color)
 {
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
@@ -557,19 +570,19 @@ void vpGDIRenderer::drawText(int i, int j, const char * s,
   SelectObject(hDCMem, hFont);
 
   //set the text color
-  SetTextColor(hDCMem, colors[c]);
+  SetTextColor(hDCMem, colors[color]);
 
   //we don't use the bkColor
   SetBkMode(hDCMem, TRANSPARENT);
 
   SIZE size;
-  int length = (int) strlen(s);
+  int length = (int) strlen(text);
 
   //get the displayed string dimensions
-  GetTextExtentPoint32(hDCMem, s, length, &size);
+  GetTextExtentPoint32(hDCMem, text, length, &size);
 
   //displays the string
-  TextOut(hDCMem, j, i, s, length);
+  TextOut(hDCMem, vpMath::round(ip.get_u()), vpMath::round(ip.get_v()), text, length);
 
   //display the result (flush)
  // BitBlt(hDCScreen, j, i, size.cx, size.cy, hDCMem, j, i, SRCCOPY);
@@ -584,14 +597,13 @@ void vpGDIRenderer::drawText(int i, int j, const char * s,
 
 /*!
   Draws a cross.
-  \param i its center point's first coordinate
-  \param j its center point's second coordinate
+  \param ip its center point's coordinates
   \param size Size of the cross
-  \param col The cross' color
-  \param e width of the cross
+  \param color The cross' color
+  \param thickness width of the cross
 */
-void vpGDIRenderer::drawCross(int i, int j, unsigned int size,
-			      vpColor::vpColorType col, unsigned int e)
+void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
+			      vpColor::vpColorType color, unsigned int thickness)
 {
   unsigned int half_size = size / 2;
 
@@ -604,7 +616,7 @@ void vpGDIRenderer::drawCross(int i, int j, unsigned int size,
     HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
     //create the pen
-    HPEN hPen = CreatePen(PS_SOLID, e, colors[col]);
+    HPEN hPen = CreatePen(PS_SOLID, thickness, colors[color]);
 
     //select this bmp in memory
     EnterCriticalSection(&CriticalSection);
@@ -614,14 +626,14 @@ void vpGDIRenderer::drawCross(int i, int j, unsigned int size,
     SelectObject(hDCMem, hPen);
 
     //move to the starting point
-    MoveToEx(hDCMem, j-half_size, i, NULL);
+    MoveToEx(hDCMem, vpMath::round(ip.get_u())-half_size, vpMath::round(ip.get_v()), NULL);
     //Draw the first line (horizontal)
-    LineTo(hDCMem, j+half_size, i);
+    LineTo(hDCMem, vpMath::round(ip.get_u())+half_size, vpMath::round(ip.get_v()));
 
     //move to the starting point
-    MoveToEx(hDCMem, j, i-half_size, NULL);
+    MoveToEx(hDCMem, vpMath::round(ip.get_u()), vpMath::round(ip.get_v())-half_size, NULL);
     //Draw the second line (vertical)
-    LineTo(hDCMem, j, i+half_size);
+    LineTo(hDCMem, vpMath::round(ip.get_u()), vpMath::round(ip.get_v())+half_size);
 
     //display the result (flush)
   //  BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size,
@@ -634,7 +646,7 @@ void vpGDIRenderer::drawCross(int i, int j, unsigned int size,
     ReleaseDC(hWnd, hDCScreen);
   }
   else {
-    setPixel(i, j, col);
+    setPixel(ip, color);
   }
 
 
@@ -642,22 +654,19 @@ void vpGDIRenderer::drawCross(int i, int j, unsigned int size,
 
 /*!
   Draws an arrow.
-  \param i1 its starting point's first coordinate
-  \param j1 its starting point's second coordinate
-  \param i2 its ending point's first coordinate
-  \param j2 its ending point's second coordinate
-  \param col The line's color
-  \param L ...
-  \param l ...
+  \param ip1,ip2 : Initial and final image point.
+  \param color The arrow's color
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpGDIRenderer::drawArrow(int i1, int j1,
-			      int i2, int j2,
-			      vpColor::vpColorType col,
-			      unsigned int L,unsigned int l)
+void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, 
+			      const vpImagePoint &ip2,
+			      vpColor::vpColorType color,
+			      unsigned int w,unsigned int h, unsigned int thickness)
 {
-  int _l = l;
-  double a = j2 - j1 ;
-  double b = i2 - i1 ;
+  int _h = h;
+  double a = ip2.get_i() - ip1.get_i() ;
+  double b = ip2.get_j() - ip1.get_j() ;
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
   //computes the coordinates of the rectangle to blit later
@@ -671,7 +680,7 @@ void vpGDIRenderer::drawArrow(int i1, int j1,
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, 1, colors[col]);
+  HPEN hPen = CreatePen(PS_SOLID, thickness, colors[color]);
 
   //select this bmp in memory
   EnterCriticalSection(&CriticalSection);
@@ -690,21 +699,21 @@ void vpGDIRenderer::drawArrow(int i1, int j1,
       a /= lg ;
       b /= lg ;
 
-      double i3,j3  ;
-      i3 = i2 - L*a ;
-      j3 = j2 - L*b ;
+      vpImagePoint ip3;
+      ip3.set_i( ip2.get_i() - w*a );
+      ip3.set_j( ip2.get_j() - w*b );
 
 
-      double i4,j4 ;
+      vpImagePoint ip4;
 
       //double t = 0 ;
       //while (t<=_l)
 	{
-	  i4 = i3 - b*_l ;
-	  j4 = j3 + a*_l ;
+	  ip4.set_i( ip3.get_i() - b*_h );
+	  ip4.set_j( ip3.get_j() + a*_h );
 
-	  MoveToEx(hDCMem, j2, i2, NULL);
-	  LineTo(hDCMem, (int)j4, (int)i4);
+	  MoveToEx(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()), NULL);
+	  LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
 
 	  // t+=0.1 ;
 	}
@@ -712,16 +721,16 @@ void vpGDIRenderer::drawArrow(int i1, int j1,
 	//t = 0 ;
 	//while (t>= -_l)
 	{
-	  i4 = i3 + b*_l ;
-	  j4 = j3 - a*_l ;
+	  ip4.set_i( ip3.get_i() + b*_h );
+	  ip4.set_j( ip3.get_j() - a*_h );
 
-	  MoveToEx(hDCMem, j2, i2, NULL);
-	  LineTo(hDCMem, (int)j4, (int)i4);
+	  MoveToEx(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()), NULL);
+	  LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
 
 	  // t-=0.1 ;
 	}
-      MoveToEx(hDCMem, j1, i1, NULL);
-      LineTo(hDCMem, j2, i2);
+      MoveToEx(hDCMem, vpMath::round(ip1.get_u()), vpMath::round(ip1.get_v()), NULL);
+      LineTo(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()));
 
     }
 

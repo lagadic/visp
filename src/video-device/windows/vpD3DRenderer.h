@@ -104,31 +104,31 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   void setImg(const vpImage<unsigned char>& im);
 
-  void setPixel(int x, int y, vpColor::vpColorType color);
+  void setPixel(const vpImagePoint iP, vpColor::vpColorType color);
 
-  void drawLine(int i1, int j1,
-		int i2, int j2,
-		vpColor::vpColorType col, unsigned int e, int style=PS_SOLID);
+  void drawLine(const vpImagePoint &ip1, 
+		const vpImagePoint &ip2,
+		vpColor::vpColorType color, unsigned int thickness, int style=PS_SOLID);
 
-  void drawRect(int i, int j,
+  void drawRect(const vpImagePoint &topLeft,
 		unsigned int width, unsigned int height,
-		vpColor::vpColorType col, bool fill=false,
-		unsigned int e=1);
+		vpColor::vpColorType color, bool fill=false,
+		unsigned int thickness=1);
 
-  void clear(vpColor::vpColorType c);
+  void clear(vpColor::vpColorType color);
 
-  void drawCircle(int i, int j, unsigned int r,
-		  vpColor::vpColorType c);
+  void drawCircle(const vpImagePoint &center, unsigned int radius,
+		  vpColor::vpColorType color, bool fill=false, unsigned char thickness=1);
 
-  void drawText(int i, int j, const char * s,
-		vpColor::vpColorType c);
+  void drawText(const vpImagePoint &ip, const char * text,
+		vpColor::vpColorType color);
 
-  void drawCross(int i, int j, unsigned int size,
-		 vpColor::vpColorType col, unsigned int e=1);
+  void drawCross(const vpImagePoint &ip, unsigned int size,
+		 vpColor::vpColorType color, unsigned int thickness=1);
 
-  void drawArrow(int i1, int j1,
-		  int i2, int j2,
-		 vpColor::vpColorType col, unsigned int L,unsigned int l);
+  void drawArrow(const vpImagePoint &ip1, 
+		 const vpImagePoint &ip2,
+		 vpColor::vpColorType color, unsigned int w,unsigned int h, unsigned int thickness=1);
 
   void getImage(vpImage<vpRGBa> &I);
 

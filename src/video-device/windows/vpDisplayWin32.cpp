@@ -77,11 +77,12 @@ vpDisplayWin32::~vpDisplayWin32()
 }
 
 
-
 /*!
-  \brief Initialized the display of a gray level image
 
-  \param I : Image to be displayed (note that image has to be initialized).
+  Constructor. Initialize a display to visualize a gray level image
+  (8 bits).
+
+  \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -104,13 +105,14 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
   I.display = this ;
 }
 
-/*!
-  \brief Initialized the display of a RGBa  image
 
-  \param I : Image to be displayed (note that image has to be initialized).
+/*!
+  Constructor. Initialize a display to visualize a RGBa level image
+  (32 bits).
+
+  \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
-
 */
 void vpDisplayWin32::init(vpImage<vpRGBa> &I,
 			  int x,
@@ -132,10 +134,9 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
 
 
 /*!
-  \brief actual member used to Initialize the display of a
-  gray level or RGBa  image
+  Initialize the display size, position and title.
 
-  \param width, height : weight, height of the window
+  \param width, height : Width and height of the window.
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -176,6 +177,7 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height,
   displayHasBeenInitialized = true;
 }
 
+
 /*!
   If the window is not initialized yet, wait a little (MAX_INIT_DELAY).
   \exception notInitializedError : the window isn't initialized
@@ -193,9 +195,17 @@ void vpDisplayWin32::waitForInit()
     }
 }
 
+
 /*!
-  Displays an RGBa image in the window.
-  \param I : image to display
+  Display the color image \e I in RGBa format (32bits).
+
+  \warning Display has to be initialized.
+
+  \warning suppres the overlay drawing
+
+  \param I : Image to display.
+
+  \sa init(), closeDisplay()
 */
 void vpDisplayWin32::displayImage(const vpImage<vpRGBa> &I)
 {
@@ -208,9 +218,17 @@ void vpDisplayWin32::displayImage(const vpImage<vpRGBa> &I)
   //PostMessage(window.getHWnd(),vpWM_DISPLAY,0,0);
 }
 
+
 /*!
-  Displays a grayscale image in the window.
-  \param I : image to display
+  Display the gray level image \e I (8bits).
+
+  \warning Display has to be initialized.
+
+  \warning suppres the overlay drawing
+
+  \param I : Image to display.
+
+  \sa init(), closeDisplay()
 */
 void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
 {
@@ -222,6 +240,7 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
   //sends a message to the window
   //PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
 }
+
 
 /*!
   Wait for a click from one of the mouse button.
@@ -258,6 +277,7 @@ bool vpDisplayWin32::getClick( bool blocking)
   
   return ret; 
 }
+
 
 /*!
   Wait for a click from one of the mouse button and get the position
@@ -301,6 +321,7 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip, bool blocking)
 
   return ret;
 }
+
 
 /*!
   Wait for a mouse button click and get the position of the clicked
@@ -348,6 +369,7 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip,
 
   return ret;
 }
+
 
 /*!
   Wait for a mouse button click release and get the position of the
@@ -401,8 +423,10 @@ bool vpDisplayWin32::getClickUp(vpImagePoint &ip,
   return ret;
 }
 
+
 /*!
   Changes the window's position.
+
   \param winx, winy : Position of the upper-left window's border in the screen.
 
 */
@@ -417,8 +441,10 @@ void vpDisplayWin32::setWindowPosition(int winx, int winy)
 
 }
 
+
 /*!
   Changes the window's titlebar text
+
   \param windowtitle : Window title.
 */
 void vpDisplayWin32::setTitle(const char *windowtitle)
@@ -427,6 +453,7 @@ void vpDisplayWin32::setTitle(const char *windowtitle)
   waitForInit();
   SetWindowText(window.hWnd, windowtitle);
 }
+
 
 /*!
   \brief Set the font used to display text.
@@ -437,6 +464,7 @@ void vpDisplayWin32::setFont(const char *fontname)
 {
 	vpERROR_TRACE("Not yet implemented" ) ;
 }
+
 
 /*!
   \brief flush the Win32 buffer
@@ -452,184 +480,210 @@ void vpDisplayWin32::flushDisplay()
   PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
 }
 
+
 /*!
-  Displays a point.
-  \param i : its first coordinate
-  \param j : its second coordinate
-  \param col : The point's color
+  Display a point at the image point \e ip location.
+  \param ip : Point location.
+  \param color : Point color.
 */
-void vpDisplayWin32::displayPoint(int i, int j,
-				  vpColor::vpColorType col)
+void vpDisplayWin32::displayPoint(const vpImagePoint &ip,
+                                  vpColor::vpColorType color )
 {
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->setPixel(i,j,col);
+  window.renderer->setPixel(ip, color);
 }
 
 /*!
-  Displays a line.
-  \param i1 : its starting point's first coordinate
-  \param j1 : its starting point's second coordinate
-  \param i2 : its ending point's first coordinate
-  \param j2 : its ending point's second coordinate
-  \param e : width of the line
-  \param col : The point's color
+  Display a line from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
 */
-void vpDisplayWin32::displayLine(int i1, int j1, int i2, int j2,
-				 vpColor::vpColorType col, unsigned int e)
+void vpDisplayWin32::displayLine( const vpImagePoint &ip1, 
+			                      const vpImagePoint &ip2,
+                                  vpColor::vpColorType color, 
+			                      unsigned int thickness )
 {
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->drawLine(i1,j1,i2,j2,col,e);
+  window.renderer->drawLine(ip1, ip2, color, thickness);
+}
+
+
+/*!
+  Display a dashed line from image point \e ip1 to image point \e ip2.
+
+  \warning This line is a dashed line only if the thickness is equal to 1.
+
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplayWin32::displayDotLine(const vpImagePoint &ip1, 
+				    const vpImagePoint &ip2,
+                                    vpColor::vpColorType color, 
+				    unsigned int thickness )
+{
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawLine(ip1,ip2,color,thickness,PS_DASHDOT);
+}
+
+/*!  
+  Display a rectangle with \e topLeft as the top-left corner and \e
+  width and \e height the rectangle size.
+
+  \param topLeft : Top-left corner of the rectangle.
+  \param width,height : Rectangle size.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+  \param thickness : Thickness of the four lines used to display the
+  rectangle.
+
+  \warning The thickness can not be set if the display uses the d3d library.
+*/
+void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
+                                       unsigned int width, unsigned int height,
+                                       vpColor::vpColorType color, bool fill,
+			               unsigned int thickness )
+{
+  //wait if the window is not initialized
+  waitForInit();
+  window.renderer->drawRect(topLeft,width,height,color, fill, thickness);
+}
+
+
+/*!  
+  Display a rectangle.
+
+  \param topLeft : Top-left corner of the rectangle.
+  \param bottomRight : Bottom-right corner of the rectangle.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+  \param thickness : Thickness of the four lines used to display the
+  rectangle.
+
+  \warning The thickness can not be set if the display uses the d3d library.
+*/
+void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
+                                       const vpImagePoint &bottomRight,
+                                       vpColor::vpColorType color, bool fill,
+			               unsigned int thickness )
+{
+  //wait if the window is not initialized
+  waitForInit();
+  double width = bottomRight.get_j() - topLeft.get_j();
+  double height = bottomRight.get_i() - topLeft.get_i();
+  window.renderer->drawRect(topLeft,(int)width,(int)height,color, fill, thickness);
 }
 
 /*!
-  Displays a dotted line.
-  \param i1 : its starting point's first coordinate
-  \param j1 : its starting point's second coordinate
-  \param i2 : its ending point's first coordinate
-  \param j2 : its ending point's second coordinate
-  \param e : width of the line
-  \param col : The line's color
+  Display a rectangle.
+
+  \param rectangle : Rectangle characteristics.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+  \param thickness : Thickness of the four lines used to display the
+  rectangle.
+
+  \warning The thickness can not be set if the display uses the d3d library.
 */
-void vpDisplayWin32::displayDotLine(int i1, int j1, int i2, int j2,
-				    vpColor::vpColorType col, unsigned int e)
+void vpDisplayWin32::displayRectangle( const vpRect &rectangle,
+                                       vpColor::vpColorType color, bool fill,
+			               unsigned int thickness )
 {
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->drawLine(i1,j1,i2,j2,col,e,PS_DASHDOT);
+  vpImagePoint topLeft;
+  topLeft.set_i(rectangle.getTop());
+  topLeft.set_j(rectangle.getLeft());
+  window.renderer->drawRect(topLeft,(int)rectangle.getWidth(),(int)rectangle.getHeight(),
+			    color, fill, thickness);
 }
 
-/*!
-  Displays a rectangle.
-  \param i : its top left point's first coordinate
-  \param j : its top left point's second coordinate
-  \param width : width of the rectangle
-  \param height : height of the rectangle
-  \param col : The rectangle's color
-  \param fill : set as true to fill the rectangle.
-  \param e : line thick
-*/
-void vpDisplayWin32::displayRectangle(int i, int j,
-				      unsigned int width, unsigned int height,
-				      vpColor::vpColorType col, bool fill,
-				      unsigned int e)
-{
-  //wait if the window is not initialized
-  waitForInit();
-  window.renderer->drawRect(i,j,width,height,col, fill, e);
-}
-/*!
-  Displays a rectangle.
-  \param rect : Rectangle characteristics.
-  \param col : The rectangle's color
-  \param fill : set as true to fill the rectangle.
-  \param e : line thick
-*/
-void vpDisplayWin32::displayRectangle(const vpRect &rect,
-				      vpColor::vpColorType col, bool fill,
-				      unsigned int e)
-{
-  //wait if the window is not initialized
-  waitForInit();
-  window.renderer->drawRect((int)rect.getTop(),(int)rect.getLeft(),
-			    (int)rect.getWidth(),(int)rect.getHeight(),
-			    col, fill, e);
-}
 
 /*!
-  Displays a circle.
-  \param i : its center point's first coordinate
-  \param j : its center point's second coordinate
-  \param r : The circle's radius
-  \param c : The circle's color
+  Display a circle.
+  \param center : Circle center position.
+  \param radius : Circle radius.
+  \param color : Circle color.
+  \param fill : When set to true fill the circle.
+  \param thickness : Thickness of the circle. This parameter is only useful 
+  when \e fill is set to false.
 */
-void vpDisplayWin32::displayCircle(int i, int j,
-				   unsigned int r,
-				   vpColor::vpColorType c)
+void vpDisplayWin32::displayCircle(const vpImagePoint &center,
+				   unsigned int radius,
+                                   vpColor::vpColorType color,
+				   bool fill,
+				   unsigned int thickness )
 {
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->drawCircle(i,j,r,c);
+  window.renderer->drawCircle(center,radius,color,fill,thickness);
 }
 
 /*!
   Displays a string.
-  \param i : its top left point's first coordinate
-  \param j : its top left point's second coordinate
-  \param s : The string to display
-  \param c : The text's color
+  \param ip : its top left point's coordinates
+  \param text : The string to display
+  \param color : The text's color
 */
-void vpDisplayWin32::displayCharString(int i, int j,const char *s,
-				       vpColor::vpColorType c)
+void vpDisplayWin32::displayCharString(const vpImagePoint &ip,
+                                     const char *text, 
+				     vpColor::vpColorType color )
 {
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->drawText(i,j,s,c);
+  window.renderer->drawText(ip,text,color);
 }
 
 /*!
-  Displays a cross.
-  \param i : its center point's first coordinate
-  \param j : its center point's second coordinate
-  \param size : Size of the cross
-  \param col : The cross' color
+  Display a cross at the image point \e ip location.
+  \param ip : Cross location.
+  \param size : Size (width and height) of the cross.
+  \param color : Cross color.
+  \param thickness : Thickness of the lines used to display the cross.
 */
-void vpDisplayWin32::displayCross(int i, int j,
-				  unsigned int size,
-				  vpColor::vpColorType col)
+void vpDisplayWin32::displayCross( const vpImagePoint &ip, 
+                                   unsigned int size, 
+				   vpColor::vpColorType color,
+				   unsigned int thickness)
 {
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->drawCross(i, j, size, col);
+  window.renderer->drawCross(ip, size, color, thickness);
 }
 
-/*!
-  Displays a large cross.
-  \param i : its center point's first coordinate
-  \param j : its center point's second coordinate
-  \param size : Size of the cross
-  \param col : The cross' color
-*/
-void vpDisplayWin32::displayCrossLarge(int i, int j,
-				       unsigned int size,
-				       vpColor::vpColorType col)
-{
-  //wait if the window is not initialized
-  waitForInit();
-  window.renderer->drawCross(i, j, size, col, 3);
-}
 
 /*!
-  Displays an arrow.
-  \param i1 : its starting point's first coordinate
-  \param j1 : its starting point's second coordinate
-  \param i2 : its ending point's first coordinate
-  \param j2 : its ending point's second coordinate
-  \param col : The line's color
-  \param L : ...
-  \param l : ...
+  Display an arrow from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image point.
+  \param color : Arrow color.
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplayWin32::displayArrow(int i1, int j1,
-				  int i2, int j2,
-				  vpColor::vpColorType col,
-				  unsigned int L, unsigned int l)
+void vpDisplayWin32::displayArrow(const vpImagePoint &ip1, 
+		    const vpImagePoint &ip2,
+		    vpColor::vpColorType color,
+		    unsigned int w,unsigned int h,
+		    unsigned int thickness)
+
 {
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->drawArrow(i1, j1, i2, j2, col, L, l);
+  window.renderer->drawArrow(ip1, ip2, color, w, h, thickness);
 }
 
 
 /*!
   Clears the display.
-  \param c : the color to fill the display with
+  \param color : the color to fill the display with
 */
-void vpDisplayWin32::clearDisplay(vpColor::vpColorType c)
-{
+void vpDisplayWin32::clearDisplay(vpColor::vpColorType color){
   //wait if the window is not initialized
   waitForInit();
-  window.renderer->clear(c);
+  window.renderer->clear(color);
 }
 
 
