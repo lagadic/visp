@@ -416,11 +416,14 @@ bool vpD3DRenderer::render()
 
 /*!
   Sets a pixel to color at position (j,i).
+
+  \param ip : The pixel coordinates.
+  \param color : the color of the point.
 */
-void vpD3DRenderer::setPixel(int i, int j,
+void vpD3DRenderer::setPixel(const vpImagePoint iP,
 			     vpColor::vpColorType color)
 {
-  if(i<0 || j<0 || i>=(int)nbRows || j>=(int)nbCols)
+  if(iP.get_i()<0 || iP.get_j()<0 || iP.get_i()>=(int)nbRows || iP.get_j()>=(int)nbCols)
   {
     return;
   }
@@ -432,10 +435,10 @@ void vpD3DRenderer::setPixel(int i, int j,
 
       RECT r;
 
-      r.top=i;
-      r.left=j;
-      r.bottom=i+1;
-      r.right=j+1;
+      r.top=(LONG)iP.get_i();
+      r.left=(LONG)iP.get_j();
+      r.bottom=(LONG)iP.get_i()+1;
+      r.right=(LONG)iP.get_j()+1;
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -460,18 +463,15 @@ void vpD3DRenderer::setPixel(int i, int j,
 
 /*!
   Draws a line.
-  \param i1 its starting point's first coordinate
-  \param j1 its starting point's second coordinate
-  \param i2 its ending point's first coordinate
-  \param j2 its ending point's second coordinate
-  \param e width of the line
-  \param col the line's color
+  \param ip1,ip2 : Initial and final image point.
+  \param color the line's color
+  \param thickness : Thickness of the line.
   \param style style of the line
 */
-void vpD3DRenderer::drawLine(int i1, int j1,
-			     int i2, int j2,
-			     vpColor::vpColorType col,
-			     unsigned int e, int style)
+void vpD3DRenderer::drawLine(const vpImagePoint &ip1,
+			     const vpImagePoint &ip2,
+			     vpColor::vpColorType color,
+			     unsigned int thickness, int style)
 {
 //   if(i1<0 || j1<0 || i2<0 || j2<0 || e<0)
 //     {
@@ -494,7 +494,7 @@ void vpD3DRenderer::drawLine(int i1, int j1,
       pd3dSurf->GetDC(&hDCMem);
 
       //create the pen
-      HPEN hPen = CreatePen(style, e, colorsGDI[col]);
+      HPEN hPen = CreatePen(style, thickness, colorsGDI[color]);
 
       //we don't use the bkColor
       SetBkMode(hDCMem, TRANSPARENT);
@@ -503,9 +503,9 @@ void vpD3DRenderer::drawLine(int i1, int j1,
       SelectObject(hDCMem, hPen);
 
       //move to the starting point
-      MoveToEx(hDCMem, j1, i1, NULL);
+	  MoveToEx(hDCMem, vpMath::round(ip1.get_u()), vpMath::round(ip1.get_v()), NULL);
       //Draw the line
-      LineTo(hDCMem, j2, i2);
+      LineTo(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()));
 
 
       //Releases the DC
@@ -520,20 +520,19 @@ void vpD3DRenderer::drawLine(int i1, int j1,
 
 /*!
   Draws a rectangle.
-  \param i its top left point's first coordinate
-  \param j its top left point's second coordinate
+  \param topLeft its top left point's coordinates
   \param width width of the rectangle
   \param height height of the rectangle
-  \param col The rectangle's color
-  \param fill Ignored
-  \param e : Line thickness
+  \param color The rectangle's color
+  \param fill  When set to true fill the rectangle.
+  \param thickness : Line thickness
 */
-void vpD3DRenderer::drawRect(int i, int j,
+void vpD3DRenderer::drawRect(const vpImagePoint &topLeft,
 			     unsigned int width, unsigned int height,
-			     vpColor::vpColorType col, bool /* fill */,
-			     unsigned int /*e*/)
+			     vpColor::vpColorType color, bool  fill ,
+			     unsigned int /*thickness*/)
 {
-  if(i>(int)nbRows-1 || j>(int)nbCols-1|| i+height<0 ||j+width<0)
+  if(topLeft.get_i()>(int)nbRows-1 || topLeft.get_j()>(int)nbCols-1|| topLeft.get_i()+height<0 ||topLeft.get_j()+width<0)
   {
   //       vpCERROR<<"Invalid parameters!"<<std::endl;
     return;
@@ -545,10 +544,10 @@ void vpD3DRenderer::drawRect(int i, int j,
       D3DLOCKED_RECT d3dLRect;
 
       RECT r;
-      r.top= (i>0)? i : 0 ;
-      r.left=(j>0)? j : 0 ;
-      r.bottom=(i+height < (int)nbRows) ? i+height : nbRows-1;
-      r.right=(j+width < (int)nbCols) ? j+width : nbCols-1;
+      r.top= (LONG)((topLeft.get_i()>0)? topLeft.get_i() : 0 );
+      r.left=(LONG)((topLeft.get_j()>0)? topLeft.get_j() : 0 );
+      r.bottom=(LONG)((topLeft.get_i()+height < (int)nbRows) ? topLeft.get_i()+height : nbRows-1);
+      r.right=(LONG)((topLeft.get_j()+width < (int)nbCols) ? topLeft.get_j()+width : nbCols-1);
 
       unsigned int rectW = r.right - r.left;
       unsigned int rectH = r.bottom - r.top;
@@ -567,25 +566,40 @@ void vpD3DRenderer::drawRect(int i, int j,
       unsigned int x= 0;
       unsigned int y= 0;
 
-      //draws the top horizontal line
-      if(i>=0)
-        for(x; x<rectW ; x++)
-	       setBufferPixel(buf, pitch, x, y, col);
+	  if(fill == false)
+	  {
+        //draws the top horizontal line
+        if(topLeft.get_i()>=0)
+          for(x; x<rectW ; x++)
+	         setBufferPixel(buf, pitch, x, y, color);
 
-      //draws the right vertical line
-      if(j+width < nbCols)   
-        for(y; y<rectH ; y++)
-	       setBufferPixel(buf, pitch, x, y, col);
+        //draws the right vertical line
+        if(topLeft.get_j()+width < nbCols)   
+          for(y; y<rectH ; y++)
+	         setBufferPixel(buf, pitch, x, y, color);
 
-      //draws the bottom horizontal line
-      if(i+height < nbRows)   
-      for(x; x>0 ; x--)
-	setBufferPixel(buf, pitch, x, y, col);
+        //draws the bottom horizontal line
+        if(topLeft.get_i()+height < nbRows)   
+          for(x; x>0 ; x--)
+	        setBufferPixel(buf, pitch, x, y, color);
 
-      //draws the left vertical line
-      if(j>=0)
-      for(y; y>0 ; y--)
-	setBufferPixel(buf, pitch, x, y, col);
+        //draws the left vertical line
+        if(topLeft.get_j()>=0)
+          for(y; y>0 ; y--)
+	        setBufferPixel(buf, pitch, x, y, color);
+	  }
+
+	  else
+	  {
+		  if(topLeft.get_i()>=0 && topLeft.get_j()+width < nbCols && topLeft.get_i()+height < nbRows && topLeft.get_j()>=0)
+		  {
+			  for (x = 0; x<rectW; x++)
+			  {
+				  for (y = 0; y<rectH; y++)
+					  setBufferPixel(buf, pitch, x, y, color);
+			  }
+		  }	  
+	  }
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
@@ -594,10 +608,10 @@ void vpD3DRenderer::drawRect(int i, int j,
 }
 
 /*!
-  Clears the image to color c.
-  \param c The color used to fill the image.
+  Clears the image to a specific color.
+  \param color The color used to fill the image.
 */
-void vpD3DRenderer::clear(vpColor::vpColorType c)
+void vpD3DRenderer::clear(vpColor::vpColorType color)
 {
   //if the device has been initialized
   if(pd3dDevice != NULL)
@@ -621,12 +635,12 @@ void vpD3DRenderer::clear(vpColor::vpColorType c)
       unsigned int pitch = d3dLRect.Pitch;
       long * buf = (long *) d3dLRect.pBits;
 
-      long color = colors[(int) c];
+      long c = colors[(int) color];
       long * end = (long*)((long)buf + (pitch * nbRows));
 
       //fills the whole image
       while (buf < end)
-	*buf++ = color;
+	*buf++ = c;
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
@@ -670,15 +684,14 @@ void vpD3DRenderer::subDrawCircle(int i, int j,
 
 /*!
   Draws a circle.
-  \param i its center point's first coordinate
-  \param j its center point's second coordinate
-  \param r The circle's radius
-  \param col The circle's color
+  \param center its center point's coordinates
+  \param radius The circle's radius
+  \param color The circle's color
 */
-void vpD3DRenderer::drawCircle(int i, int j, unsigned int r,
-			       vpColor::vpColorType c)
+void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
+			       vpColor::vpColorType color, bool /*fill*/, unsigned char /*thickness*/)
 {
-  if(r<1 || (int)(i+r)<0 || (int)(i-r) > (int)nbRows || (int)(j+r)<0 || (int)(j-r) > (int)nbCols)
+  if(radius<1 || vpMath::round(center.get_i()+radius)<0 || vpMath::round(center.get_i()-radius) > (int)nbRows || vpMath::round(center.get_j()+radius)<0 || vpMath::round(center.get_j()-radius) > (int)nbCols)
     return;
 
   //if the device has been initialized
@@ -688,13 +701,13 @@ void vpD3DRenderer::drawCircle(int i, int j, unsigned int r,
 
       RECT rec;
 
-      int rleft = ((int)(j-r) > 0) ? j-r : 0;
-      int rtop = ((int)(i-r) > 0) ? i-r : 0;
+      int rleft = (vpMath::round(center.get_j()-radius) > 0) ? vpMath::round(center.get_j())-radius : 0;
+      int rtop = (vpMath::round(center.get_i()-radius) > 0) ? vpMath::round(center.get_i())-radius : 0;
 
       rec.top= rtop;
       rec.left= rleft;
-      rec.bottom=((int)(i+r) < (int)nbRows) ? i+r : nbRows-1;
-      rec.right=((int)(j+r) < (int)nbCols) ? j+r : nbCols-1;
+      rec.bottom=(LONG)((vpMath::round(center.get_i()+radius) < (int)nbRows) ? center.get_i()+radius : nbRows-1);
+      rec.right=(LONG)((vpMath::round(center.get_j()+radius) < (int)nbCols) ? center.get_j()+radius : nbCols-1);
 
       //used as maxX and maxY for setBufferPixel
       int rectW = rec.right - rleft;
@@ -714,10 +727,14 @@ void vpD3DRenderer::drawCircle(int i, int j, unsigned int r,
       // Bresenham 's circle algorithm
 
       int x = 0;
-      int y = r;
-      int p = (3 - (r<<1));
+      int y = radius;
+      int p = (3 - (radius<<1));
 
-      subDrawCircle(j-rleft, i-rtop, x, y, c, buf, pitch, rectW, rectH);
+      vpImagePoint ip;
+      ip.set_i(center.get_i()-rtop);
+      ip.set_j(center.get_j()-rleft);
+
+	  subDrawCircle(vpMath::round(ip.get_i()), vpMath::round(ip.get_j()), x, y, color, buf, pitch, rectW, rectH);
       while(x < y){
         x++;
         if (p < 0)
@@ -729,7 +746,7 @@ void vpD3DRenderer::drawCircle(int i, int j, unsigned int r,
             y--;
             p += (((x-y)<<1)+1)<<1;
           }
-	      subDrawCircle(j-rleft, i-rtop, x, y, c, buf, pitch, rectW, rectH);
+	      subDrawCircle(vpMath::round(ip.get_i()), vpMath::round(ip.get_j()), x, y, color, buf, pitch, rectW, rectH);
       }
 
 
@@ -744,13 +761,12 @@ void vpD3DRenderer::drawCircle(int i, int j, unsigned int r,
 
 /*!
   Draws some text.
-  \param i its top left point's first coordinate
-  \param j its top left point's second coordinate
-  \param s The string to display
-  \param col The text's color
+  \param ip its top left point's coordinates
+  \param text The string to display
+  \param color The text's color
 */
-void vpD3DRenderer::drawText(int i, int j, const char * s,
-			     vpColor::vpColorType c)
+void vpD3DRenderer::drawText(const vpImagePoint &ip, const char * text,
+			     vpColor::vpColorType color)
 {
   //Will contain the texture's surface drawing context
   HDC hDCMem;
@@ -766,19 +782,19 @@ void vpD3DRenderer::drawText(int i, int j, const char * s,
   SelectObject(hDCMem, hFont);
 
   //set the text color
-  SetTextColor(hDCMem, colorsGDI[c]);
+  SetTextColor(hDCMem, colorsGDI[color]);
 
   //we don't use the bkColor
   SetBkMode(hDCMem, TRANSPARENT);
 
   SIZE size;
-  int length = (int) strlen(s);
+  int length = (int) strlen(text);
 
   //get the displayed string dimensions
-  GetTextExtentPoint32(hDCMem, s, length, &size);
+  GetTextExtentPoint32(hDCMem, text, length, &size);
 
   //displays the string
-  TextOut(hDCMem, j, i, s, length);
+  TextOut(hDCMem, vpMath::round(ip.get_u()), vpMath::round(ip.get_v()), text, length);
 
   //Releases the DC
   pd3dSurf->ReleaseDC(hDCMem);
@@ -791,17 +807,16 @@ void vpD3DRenderer::drawText(int i, int j, const char * s,
 
 /*!
   Draws a cross.
-  \param i its center point's first coordinate
-  \param j its center point's second coordinate
+  \param ip its center point's coordinates
   \param size Size of the cross
-  \param col The cross' color
-  \param e width of the cross
+  \param color The cross' color
+  \param thickness width of the cross
 */
-void vpD3DRenderer::drawCross(int i, int j,
+void vpD3DRenderer::drawCross(const vpImagePoint &ip,
 			      unsigned int size,
-			      vpColor::vpColorType col, unsigned int e)
+			      vpColor::vpColorType color, unsigned int thickness)
 {
-  if(i<0 || j<0 || i>(int)nbRows || j>(int)nbCols || e<=0)
+  if(ip.get_i()<0 || ip.get_j()<0 || ip.get_i()>(int)nbRows || ip.get_j()>(int)nbCols || thickness<=0)
     return;
 
   //if the device has been initialized
@@ -810,16 +825,16 @@ void vpD3DRenderer::drawCross(int i, int j,
       D3DLOCKED_RECT d3dLRect;
 
       RECT rec;
-      e = (e<size)? e : size;
+      thickness = (thickness<size)? thickness : size;
       //if j-size/2 is inferior to 0, use 0
-      int rleft = ( (j - (int)(size/2)) < 0 ) ? 0 : j - (size/2);
+      int rleft = ( (vpMath::round(ip.get_j()) - (int)(size/2)) < 0 ) ? 0 : vpMath::round(ip.get_j()) - (size/2);
       //if j-size/2 is inferior to 0, use 0
-      int rtop  = ( (i - (int)(size/2)) < 0 ) ? 0 : i - (size/2);
+      int rtop  = ( (vpMath::round(ip.get_i()) - (int)(size/2)) < 0 ) ? 0 : vpMath::round(ip.get_i()) - (size/2);
 
       rec.top   = rtop;
       rec.left  = rleft;
-      rec.bottom= i + (size/2);
-      rec.right = j + (size/2);
+      rec.bottom= (LONG)(ip.get_i() + (size/2));
+      rec.right = (LONG)(ip.get_j() + (size/2));
 
       //locks the texture to directly access it
       if( pd3dText->LockRect(0, &d3dLRect, &rec, 0) != D3D_OK)
@@ -835,10 +850,10 @@ void vpD3DRenderer::drawCross(int i, int j,
       unsigned int x;         //xpos
 
       //y-coordinate of the line in the locked rectangle base
-      unsigned int y =( i < (int)(size/2) ) ? i : (size/2);
+      unsigned int y =( vpMath::round(ip.get_i()) < (int)(size/2) ) ? vpMath::round(ip.get_i()) : (size/2);
 
       int cpt = 0;   //number of lines
-      int re = e;    //remaining "width"
+      int re = thickness;    //remaining "width"
 
       //horizontal lines
       //stops when there is enough line for e
@@ -846,7 +861,7 @@ void vpD3DRenderer::drawCross(int i, int j,
       {
 	      //draws a line
 	      for(x=0; x<(unsigned int)(rec.right - rec.left); x++)
-	        setBufferPixel(buf, pitch, x, y, col);
+	        setBufferPixel(buf, pitch, x, y, color);
 
 	      re--;
 	      cpt++;
@@ -857,17 +872,17 @@ void vpD3DRenderer::drawCross(int i, int j,
       }
 
       cpt = 0;
-      re = e;
+      re = thickness;
 
       //x-coordinate of the line in the locked rectangle base
-      x =( j < (int)(size/2) ) ?	j : size/2;
+      x =( vpMath::round(ip.get_j()) < (int)(size/2) ) ?	vpMath::round(ip.get_j()) : size/2;
 
       //vertical lines
       while(re!=0)
       {
 	      //draws a vertical line
 	      for(y=0; y<(unsigned int)(rec.bottom - rec.top); y++)
-	        setBufferPixel(buf, pitch, x, y, col);
+	        setBufferPixel(buf, pitch, x, y, color);
 
 	      re--;
 	      cpt++;
@@ -885,23 +900,20 @@ void vpD3DRenderer::drawCross(int i, int j,
 
 /*!
   Draws an arrow.
-  \param i1 its starting point's first coordinate
-  \param j1 its starting point's second coordinate
-  \param i2 its ending point's first coordinate
-  \param j2 its ending point's second coordinate
-  \param col The line's color
-  \param L ...
-  \param l ...
+  \param ip1,ip2 : Initial and final image point.
+  \param color The arrow's color
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpD3DRenderer::drawArrow(int i1, int j1,
-			      int i2, int j2,
-			      vpColor::vpColorType col,
-			      unsigned int L,unsigned int l)
+void vpD3DRenderer::drawArrow(const vpImagePoint &ip1, 
+		              const vpImagePoint &ip2,
+			      vpColor::vpColorType color,
+			      unsigned int w,unsigned int h, unsigned int thickness)
 {
-  double a = j2 - j1 ;
-  double b = i2 - i1 ;
+  double a = ip2.get_i() - ip1.get_i();
+  double b = ip2.get_j() - ip1.get_j();
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
-  int _l = l;
+  int _h = h;
 
   //Will contain the texture's surface drawing context
   HDC hDCMem;
@@ -914,7 +926,7 @@ void vpD3DRenderer::drawArrow(int i1, int j1,
   pd3dSurf->GetDC(&hDCMem);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, 1, colorsGDI[col]);
+  HPEN hPen = CreatePen(PS_SOLID, thickness, colorsGDI[color]);
 
   //select the pen
   SelectObject(hDCMem, hPen);
@@ -929,38 +941,27 @@ void vpD3DRenderer::drawArrow(int i1, int j1,
       a /= lg ;
       b /= lg ;
 
-      double i3,j3  ;
-      i3 = i2 - L*a ;
-      j3 = j2 - L*b ;
+      vpImagePoint ip3;
+      ip3.set_i( ip2.get_i() - w*a );
+      ip3.set_j( ip2.get_j() - w*b );
 
 
-      double i4,j4 ;
+      vpImagePoint ip4 ;
 
-      double t = 0 ;
-      while (t<=_l)
-      {
-	      i4 = i3 - b*t ;
-	      j4 = j3 + a*t ;
+	  ip4.set_i( ip3.get_i() + b*_h );
+	  ip4.set_j( ip3.get_j() - a*_h );
 
-	      MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
-	      LineTo(hDCMem, (int)j4, (int)i4);
+	  MoveToEx(hDCMem, vpMath::round(ip2.get_j()), vpMath::round(ip2.get_i()), NULL);
+	  LineTo(hDCMem, vpMath::round(ip4.get_j()), vpMath::round(ip4.get_i()));
 
-	      t+=0.1 ;
-      }
+	  ip4.set_i( ip3.get_i() - b*h );
+	  ip4.set_j( ip3.get_j() + a*h );
 
-      t = 0 ;
-      while (t>= -_l)
-      {
-	      i4 = i3 - b*t ;
-	      j4 = j3 + a*t ;
+	  MoveToEx(hDCMem, vpMath::round(ip2.get_j()), vpMath::round(ip2.get_i()), NULL);
+	  LineTo(hDCMem, vpMath::round(ip4.get_j()), vpMath::round(ip4.get_i()));
 
-	      MoveToEx(hDCMem, (int)j2, (int)i2, NULL);
-	      LineTo(hDCMem, (int)j4, (int)i4);
-
-	      t-=0.1 ;
-      }
-      MoveToEx(hDCMem, j1, i1, NULL);
-      LineTo(hDCMem, j2, i2);
+      MoveToEx(hDCMem, vpMath::round(ip1.get_j()), vpMath::round(ip1.get_i()), NULL);
+      LineTo(hDCMem, vpMath::round(ip2.get_j()), vpMath::round(ip2.get_i()));
 
     }
   //Deletes the pen
