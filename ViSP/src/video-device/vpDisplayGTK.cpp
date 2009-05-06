@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGTK.cpp,v 1.44 2009-01-11 16:56:42 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,7 +40,7 @@
 
 /*!
   \file vpDisplayGTK.cpp
-  \brief Define the GTK console to display images
+  \brief Define the GTK console to display images.
 */
 
 #include <visp/vpConfig.h>
@@ -58,13 +58,14 @@
 //debug / exception
 #include <visp/vpDebug.h>
 #include <visp/vpDisplayException.h>
+#include <visp/vpMath.h>
 
 /*!
 
-  \brief constructor : initialize a display to visualize a gray level image
+  Constructor : initialize a display to visualize a gray level image
   (8 bits).
 
-  \param I : image to be displayed (not that image has to be initialized)
+  \param I : Image to be displayed (not that image has to be initialized).
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -82,10 +83,10 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
 
 
 /*!
-  \brief constructor : initialize a display to visualize a RGBa level image
+  Constructor : initialize a display to visualize a RGBa level image
   (32 bits).
 
-  \param I : image to be displayed (not that image has to be initialized)
+  \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
@@ -103,10 +104,26 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
 
 
 /*!
-  \brief constructor
+
+  Constructor that just initialize the display position in the screen
+  and the display title.
 
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
+
+  To initialize the display size, you need to call init().
+
+  \code
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpDisplayGTK d(100, 200, "My display");
+  vpImage<unsigned char> I(240,384);
+  d.init(I);
+}
+  \endcode
 */
 vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title)
 {
@@ -127,9 +144,23 @@ vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title)
 }
 
 /*!
-  \brief basic constructor
-  \warning must an init member of the vpDisplayGTK function to be useful
-  \sa init()
+  Basic constructor.
+
+  To initialize the window position, title and size you may call
+  init(vpImage<unsigned char> &, int, int, const char *) or
+  init(vpImage<vpRGBa> &, int, int, const char *).
+
+  \code
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpDisplayGTK d;
+  vpImage<unsigned char> I(240,384);
+  d.init(I, 100, 200, "My display");
+}
+  \endcode
 */
 vpDisplayGTK::vpDisplayGTK()
 {
@@ -150,7 +181,7 @@ vpDisplayGTK::vpDisplayGTK()
 }
 
 /*!
-  \brief close the window
+  Destructor.
 */
 vpDisplayGTK::~vpDisplayGTK()
 {
@@ -158,7 +189,7 @@ vpDisplayGTK::~vpDisplayGTK()
 }
 
 /*!
-  \brief Initialized the display of a gray level image
+  Initialize the display (size, position and title) of a gray level image.
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
@@ -183,10 +214,11 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
   GTKinitialized = true ;
 }
 
-/*!
-  \brief Initialized the display of a RGBa  image
+/*!  
+  Initialize the display (size, position and title) of a color
+  image in RGBa format.
 
-  \param I : image to be displayed (not that image has to be initialized)
+  \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -209,10 +241,9 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
   GTKinitialized = true ;
 }
 /*!
-  \brief Actual member used to Initialize the display of a
-  gray level or RGBa  image.
+  Initialize the display size, position and title.
 
-  \param width, height : width, height of the window
+  \param width, height : Width and height of the window.
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -317,13 +348,77 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
 }
 
 
+/*!
+
+  \warning Not implemented yet.
+
+  Set the font used to display a text in overlay. The display is
+  performed using displayCharString().
+
+  \param font : The expected font name. 
+
+  \note Under UNIX, to know all the available fonts, use the
+  "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
+
+  \sa displayCharString()
+*/
+void
+vpDisplayGTK::setFont(const char * /* font */)
+{
+  vpERROR_TRACE("Not yet implemented" ) ;
+}
 
 /*!
-  \brief display the gray level image (8bits)
+  Set the window title.
+  \param title : Window title.
+*/
+void
+vpDisplayGTK::setTitle(const char *title)
+{
+  if (GTKinitialized)
+  {
+    if (title != NULL)
+      gdk_window_set_title(widget->window,(char *)title);
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
 
-  GTK has to be initialized
+/*!
+  Set the window position in the screen.
 
-  \warning suppres the overlay drawing
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void vpDisplayGTK::setWindowPosition(int winx, int winy)
+{
+
+  if (GTKinitialized)  {
+    gtk_window_move(GTK_WINDOW(widget), winx, winy); 
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+
+/*!
+  Display the gray level image \e I (8bits).
+
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing.
+
+  \param I : Image to display.
 
   \sa init(), closeDisplay()
 */
@@ -332,8 +427,6 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 
   if (GTKinitialized)
   {
-
-
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_gray_image(background,
                         gc,0, 0, width, height,
@@ -358,11 +451,13 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 
 
 /*!
-  \brief display the RGBa level image (32bits)
+  Display the color image \e I in RGBa format (32bits).
 
-  GTK has to be initialized
+  \warning Display has to be initialized.
 
-  \warning suppres the overlay drawing
+  \warning Suppress the overlay drawing.
+
+  \param I : Image to display.
 
   \sa init(), closeDisplay()
 */
@@ -398,62 +493,8 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
   }
 }
 
-/*
-  \brief gets the displayed image (including the overlay plane)
-  and returns an RGBa image
-*/
-void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
-{
-
-
-  // shoudl certainly be optimized.
-  // doesn't work
-  if (GTKinitialized)
-  {
-
-    GdkImage *ImageGtk;
-    /*
-     */
-
-    ImageGtk = gdk_image_get(background,0,0,width,height);
-
-
-    I.resize(height,width) ;
-    guchar *pos;
-    guint32 pixel;
-    guint32 x,y;
-    guchar OctetRouge,OctetVert,OctetBleu,mask;
-    mask = 0x000000FF;
-
-    pos = (unsigned char *)I.bitmap;
-    for (y=0;y<height;y++)
-    {
-      for (x=0;x<width;x++)
-      {
-        pixel = gdk_image_get_pixel(ImageGtk,x,y);
-        OctetBleu  = (guchar)pixel & mask;
-        OctetVert  = (guchar)(pixel>>8) & mask;
-        OctetRouge = (guchar)(pixel>>16) & mask;
-        *pos++ = OctetRouge;
-        *pos++ = OctetVert;
-        *pos++ = OctetBleu;
-        *pos++ = 0;
-      }
-    }
-
-
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
-
-}
-
 /*!
-  \brief not implemented
+  \warning Not implemented yet.
 
   \sa init(), closeDisplay()
 */
@@ -463,11 +504,9 @@ void vpDisplayGTK::displayImage(const unsigned char * /* I */)
 }
 
 /*!
+  Close the window.
 
-\brief close the window
-
-\sa init()
-
+  \sa init()
 */
 void vpDisplayGTK::closeDisplay()
 {
@@ -492,9 +531,8 @@ void vpDisplayGTK::closeDisplay()
 
 
 /*!
-  \brief flush the GTK buffer
-  It's necessary to use this function to see the results of any drawing
-
+  Flushes the display buffer.
+  It's necessary to use this function to see the results of any drawing.
 */
 void vpDisplayGTK::flushDisplay()
 {
@@ -513,189 +551,31 @@ void vpDisplayGTK::flushDisplay()
 
 
 /*!
-  \brief not implemented
+  \warning Not implemented yet.
 */
-void vpDisplayGTK::clearDisplay(vpColor::vpColorType /* c */)
+void vpDisplayGTK::clearDisplay(vpColor::vpColorType /* color */)
 {
   vpTRACE("Not implemented") ;
 }
 
 /*!
-  \brief display a point
-  \param i,j (row,colum indexes)
-  \param color (see vpColor)
+  Display an arrow from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image point.
+  \param color : Arrow color.
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplayGTK::displayPoint(int i, int j,
-                                vpColor::vpColorType color)
-{
-  if (GTKinitialized)
-  {
-    gdk_gc_set_foreground(gc,col[color]);
-    gdk_draw_point(background,gc,j,i) ;
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
-}
-
-/*!
-  \brief display a line
-  \param i1,j1 (row,colum indexes) initial coordinates
-  \param i2,j2 (row,colum indexes) final coordinates
-  \param color (see vpColor)
-  \param e : line thick
-*/
-void
-vpDisplayGTK::displayLine(int i1, int j1, int i2, int j2,
-                          vpColor::vpColorType color,
-                          unsigned int e)
-{
-  if (GTKinitialized)
-  {
-    gdk_gc_set_foreground(gc,col[color]);
-    if (e>1)
-      gdk_gc_set_line_attributes(gc,e,
-                                 GDK_LINE_SOLID,GDK_CAP_BUTT,
-                                 GDK_JOIN_BEVEL) ;
-    gdk_draw_line(background,gc,j1,i1,j2,i2) ;
-    if (e>1)
-      gdk_gc_set_line_attributes(gc,0,
-                                 GDK_LINE_SOLID,GDK_CAP_BUTT,
-                                 GDK_JOIN_BEVEL) ;
-
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
-}
-
-
-/*!
-  \brief display a dashed line
-  \param i1,j1 : (row,colum indexes) initial coordinates
-  \param i2,j2 : (row,colum indexes) final coordinates
-  \param color : (see vpColor)
-  \param e : line thick
-*/
-void
-vpDisplayGTK::displayDotLine(int i1, int j1, int i2, int j2,
-                             vpColor::vpColorType color,
-                             unsigned int e)
-{
-
-  if (GTKinitialized)
-  {
-    if (e == 1) e = 0;
-
-    gdk_gc_set_foreground(gc,col[color]);
-    gdk_gc_set_line_attributes(gc,e
-                               ,GDK_LINE_ON_OFF_DASH,GDK_CAP_BUTT,
-                               GDK_JOIN_BEVEL) ;
-    gdk_draw_line(background,gc,j1,i1,j2,i2) ;
-    gdk_gc_set_line_attributes(gc,0,
-                               GDK_LINE_SOLID,GDK_CAP_BUTT,
-                               GDK_JOIN_BEVEL) ;
-
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
-}
-
-
-/*!
-  \brief display a cross
-  \param i,j : (row,colum indexes)
-  \param size : size of the cross
-  \param col : color (see vpColor)
-*/
-void
-vpDisplayGTK::displayCross(int i, int j,
-                           unsigned int size,
-                           vpColor::vpColorType col)
+void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1, 
+				  const vpImagePoint &ip2,
+				  vpColor::vpColorType color,
+				  unsigned int w, unsigned int h,
+				  unsigned int thickness)
 {
   if (GTKinitialized)
   {
     try{
-      displayLine(i-size/2,j,i+size/2,j,col,1) ;
-      displayLine(i ,j-size/2,i,j+size/2,col,1) ;
-    }
-    catch (...)
-    {
-      vpERROR_TRACE("Error caught") ;
-      throw ;
-    }
-  }
-
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
-
-}
-
-
-/*!
-  \brief display a "large" cross
-  \param i,j : (row,colum indexes)
-  \param size : size of the cross
-  \param col : color (see vpColor)
-*/
-void vpDisplayGTK::displayCrossLarge(int i, int j,
-                                     unsigned int size,
-                                     vpColor::vpColorType col)
-{
-  if (GTKinitialized)
-  {
-    try{
-      displayLine(i-size/2,j,i+size/2,j,col,3) ;
-      displayLine(i ,j-size/2,i,j+size/2,col,3) ;
-    }
-    catch (...)
-    {
-      vpERROR_TRACE("Error caught") ;
-      throw ;
-    }
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;    //
-  }
-}
-
-
-
-/*!
-  \brief display an arrow
-  \param i1,j1 : (row,colum indexes) initial coordinates
-  \param i2,j2 : (row,colum indexes) final coordinates
-  \param col : color (see vpColor)
-  \param L,l : width and height of the arrow
-*/
-void
-vpDisplayGTK::displayArrow(int i1, int j1, int i2, int j2,
-                           vpColor::vpColorType col,
-                           unsigned int L,unsigned int l)
-{
-  if (GTKinitialized)
-  {
-    try{
-      int _l = l;
-      double a = (int)i2 - (int)i1 ;
-      double b = (int)j2 - (int)j1 ;
+      double a = ip2.get_i() - ip1.get_i() ;
+      double b = ip2.get_j() - ip1.get_j() ;
       double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
       if ((a==0)&&(b==0))
@@ -707,35 +587,21 @@ vpDisplayGTK::displayArrow(int i1, int j1, int i2, int j2,
         a /= lg ;
         b /= lg ;
 
-        double i3,j3  ;
-        i3 = i2 - L*a ;
-        j3 = j2 - L*b ;
+	vpImagePoint ip3;
+        ip3.set_i(ip2.get_i() - w*a);
+        ip3.set_j(ip2.get_j() - w*b);
 
+	vpImagePoint ip4;
+	ip4.set_i( ip3.get_i() - b*h );
+	ip4.set_j( ip3.get_j() + a*h );
 
-        double i4,j4 ;
+	displayLine ( ip2, ip4, color, thickness ) ;
+        
+	ip4.set_i( ip3.get_i() + b*h );
+	ip4.set_j( ip3.get_j() - a*h );
 
-        //double t = 0 ;
-        //while (t<=_l)
-        {
-          i4 = i3 - b*_l ;
-          j4 = j3 + a*_l ;
-
-          displayLine(i2, j2, (unsigned int) i4,
-                      (unsigned int) j4, col) ;
-          //t+=0.1 ;
-        }
-        //t = 0 ;
-        //while (t>= -_l)
-        {
-          i4 = i3 + b*_l ;
-          j4 = j3 - a*_l ;
-
-          displayLine(i2, j2, (unsigned int) i4,
-                      (unsigned int) j4, col) ;
-          //t-=0.1 ;
-        }
-        displayLine(i1,j1,i2,j2,col) ;
-
+	displayLine ( ip2, ip4, color, thickness ) ;
+	displayLine ( ip1, ip2, color, thickness ) ;
       }
     }
     catch (...)
@@ -754,33 +620,311 @@ vpDisplayGTK::displayArrow(int i1, int j1, int i2, int j2,
 
 
 /*!
-  \brief display a rectangle
-  \param i,j (row,colum indexes) up left corner
-  \param width
-  \param height
-  \param color (see vpColor)
-  \param fill : set as true to fill the rectangle.
-  \param e : line thick
+  Display a string at the image point \e ip location.
+
+  To select the font used to display the string, use setFont().
+
+  \param ip : Upper left image point location of the string in the display.
+  \param text : String to display in overlay.
+  \param color : String color.
+
+  \sa setFont()
 */
-void
-vpDisplayGTK::displayRectangle(int i, int j,
-                               unsigned int width, unsigned int height,
-                               vpColor::vpColorType color, bool fill,
-                               unsigned int e)
+void vpDisplayGTK::displayCharString ( const vpImagePoint &ip,
+				       const char *text, 
+				       vpColor::vpColorType color )
 {
   if (GTKinitialized)
   {
     gdk_gc_set_foreground(gc,col[color]);
-    if (e>1)
-      gdk_gc_set_line_attributes(gc, e, GDK_LINE_SOLID, GDK_CAP_BUTT,
-                                 GDK_JOIN_BEVEL) ;
+    gdk_draw_string(background, Police2, gc,
+		    vpMath::round( ip.get_u() ), 
+		    vpMath::round( ip.get_v() ),
+		    (const gchar *)text);
+
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+/*!
+  Display a circle.
+  \param center : Circle center position.
+  \param radius : Circle radius.
+  \param color : Circle color.
+  \param fill : When set to true fill the circle.
+  \param thickness : Thickness of the circle. This parameter is only useful 
+  when \e fill is set to false.
+*/
+void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
+				   unsigned int radius,
+				   vpColor::vpColorType color,
+				   bool fill,
+				   unsigned int thickness )
+{
+  if (GTKinitialized)
+  {
+    if ( thickness == 1 ) thickness = 0;
+
+    gdk_gc_set_foreground(gc, col[color]);
+    gdk_gc_set_line_attributes(gc, thickness,
+			       GDK_LINE_SOLID, GDK_CAP_BUTT,
+			       GDK_JOIN_BEVEL) ;
 
     if (fill == false)
-      gdk_draw_rectangle(background,gc,FALSE,j,i,width-1,height-1);
+      gdk_draw_arc(background, gc, FALSE,
+		   vpMath::round( center.get_u()-radius ), 
+		   vpMath::round( center.get_v()-radius ),
+		   2*radius, 2*radius, 23040, 23040) ; /* 23040 = 360*64 */
     else
-      gdk_draw_rectangle(background,gc,TRUE,j,i,width,height);
+      gdk_draw_arc(background, gc, TRUE,
+		   vpMath::round( center.get_u()-radius ), 
+		   vpMath::round( center.get_v()-radius ),
+		   2*radius, 2*radius, 23040, 23040) ; /* 23040 = 360*64 */
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+/*!
+  Display a cross at the image point \e ip location.
+  \param ip : Cross location.
+  \param size : Size (width and height) of the cross.
+  \param color : Cross color.
+  \param thickness : Thickness of the lines used to display the cross.
+*/
+void vpDisplayGTK::displayCross ( const vpImagePoint &ip, 
+				  unsigned int size, 
+				  vpColor::vpColorType color,
+				  unsigned int thickness)
+{
+  if (GTKinitialized)
+  {
+    try{
+      double i = ip.get_i();
+      double j = ip.get_j();
+      vpImagePoint ip1, ip2;
 
-    if (e>1)
+      ip1.set_i( i-size/2 ); 
+      ip1.set_j( j );
+      ip2.set_i( i+size/2 ); 
+      ip2.set_j( j );
+      displayLine ( ip1, ip2, color, thickness ) ;
+
+      ip1.set_i( i ); 
+      ip1.set_j( j-size/2 );
+      ip2.set_i( i ); 
+      ip2.set_j( j+size/2 );
+
+      displayLine ( ip1, ip2, color, thickness ) ;
+    }
+    catch (...)
+    {
+      vpERROR_TRACE("Error caught") ;
+      throw ;
+    }
+  }
+
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+/*!
+  Display a dashed line from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplayGTK::displayDotLine ( const vpImagePoint &ip1, 
+				    const vpImagePoint &ip2,
+				    vpColor::vpColorType color, 
+				    unsigned int thickness )
+{
+
+  if (GTKinitialized)
+  {
+    if ( thickness == 1 ) thickness = 0;
+
+    gdk_gc_set_foreground(gc, col[color]);
+    gdk_gc_set_line_attributes(gc, thickness, 
+			       GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT,
+                               GDK_JOIN_BEVEL) ;
+    gdk_draw_line(background, gc,
+		  vpMath::round( ip1.get_u() ),
+		  vpMath::round( ip1.get_v() ),
+		  vpMath::round( ip2.get_u() ),
+		  vpMath::round( ip2.get_v() ) );
+    gdk_gc_set_line_attributes(gc, 0,
+                               GDK_LINE_SOLID, GDK_CAP_BUTT,
+                               GDK_JOIN_BEVEL) ;
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+/*!
+  Display a line from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplayGTK::displayLine ( const vpImagePoint &ip1, 
+				 const vpImagePoint &ip2,
+				 vpColor::vpColorType color, 
+				 unsigned int thickness )
+{
+  if (GTKinitialized)
+  {
+    if ( thickness == 1 ) thickness = 0;
+
+    gdk_gc_set_foreground(gc, col[color]);
+    gdk_gc_set_line_attributes(gc, thickness,
+			       GDK_LINE_SOLID, GDK_CAP_BUTT,
+			       GDK_JOIN_BEVEL) ;
+    gdk_draw_line(background, gc,
+		  vpMath::round( ip1.get_u() ),
+		  vpMath::round( ip1.get_v() ),
+		  vpMath::round( ip2.get_u() ),
+		  vpMath::round( ip2.get_v() ) );
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+/*!
+  Display a point at the image point \e ip location.
+  \param ip : Point location.
+  \param color : Point color.
+*/
+void vpDisplayGTK::displayPoint ( const vpImagePoint &ip,
+				  vpColor::vpColorType color )
+{
+  if (GTKinitialized)
+  {
+    gdk_gc_set_foreground(gc, col[color]);
+    gdk_draw_point(background,gc, 
+		   vpMath::round( ip.get_u() ), 
+		   vpMath::round( ip.get_v() ) );
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+
+/*!  
+  Display a rectangle with \e topLeft as the top-left corner and \e
+  width and \e height the rectangle size.
+
+  \param topLeft : Top-left corner of the rectangle.
+  \param width,height : Rectangle size.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+*/
+void
+vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
+				 unsigned int width, unsigned int height,
+				 vpColor::vpColorType color, bool fill,
+				 unsigned int thickness )
+{
+  if (GTKinitialized)
+  {
+    if ( thickness == 1 ) thickness = 0;
+
+    gdk_gc_set_foreground(gc, col[color]);
+    gdk_gc_set_line_attributes(gc, thickness,
+			       GDK_LINE_SOLID, GDK_CAP_BUTT,
+			       GDK_JOIN_BEVEL) ;
+
+    if (fill == false)
+      gdk_draw_rectangle(background, gc, FALSE,
+			 vpMath::round( topLeft.get_u() ),
+			 vpMath::round( topLeft.get_v() ),
+			 width-1,height-1);
+    else
+      gdk_draw_rectangle(background, gc, TRUE,
+			 vpMath::round( topLeft.get_u() ),
+			 vpMath::round( topLeft.get_v() ),
+			 width, height);
+
+    if (thickness > 1)
+      gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
+                                 GDK_JOIN_BEVEL) ;
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+/*!  
+  Display a rectangle.
+
+  \param topLeft : Top-left corner of the rectangle.
+  \param bottomRight : Bottom-right corner of the rectangle.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+*/
+void
+vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
+				 const vpImagePoint &bottomRight,
+				 vpColor::vpColorType color, bool fill,
+				 unsigned int thickness )
+{
+  if (GTKinitialized)
+  {
+    if ( thickness == 1 ) thickness = 0;
+
+    gdk_gc_set_foreground(gc, col[color]);
+    gdk_gc_set_line_attributes(gc, thickness,
+			       GDK_LINE_SOLID, GDK_CAP_BUTT,
+			       GDK_JOIN_BEVEL) ;
+
+    int width  = vpMath::round( bottomRight.get_u() - topLeft.get_u() );
+    int height = vpMath::round( bottomRight.get_v() - topLeft.get_v() );
+
+    if (fill == false)
+      gdk_draw_rectangle(background, gc, FALSE,
+			 vpMath::round( topLeft.get_u() ),
+			 vpMath::round( topLeft.get_v() ),
+			 width-1,height-1);
+    else
+      gdk_draw_rectangle(background, gc, TRUE,
+			 vpMath::round( topLeft.get_u() ),
+			 vpMath::round( topLeft.get_v() ),
+			 width, height);
+
+    if (thickness > 1)
       gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
                                  GDK_JOIN_BEVEL) ;
   }
@@ -793,34 +937,45 @@ vpDisplayGTK::displayRectangle(int i, int j,
 }
 
 /*!
-  \brief display a rectangle
-  \param rect : Rectangle characteristics.
-  \param color : Color (see vpColor)
-  \param fill : set as true to fill the rectangle.
-  \param e : line thick
+  Display a rectangle.
+
+  \param rectangle : Rectangle characteristics.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+
 */
 void
-vpDisplayGTK::displayRectangle(const vpRect &rect,
-                               vpColor::vpColorType color, bool fill,
-                               unsigned int e)
+vpDisplayGTK::displayRectangle ( const vpRect &rectangle,
+				 vpColor::vpColorType color, bool fill,
+				 unsigned int thickness )
 {
   if (GTKinitialized)
   {
-    gdk_gc_set_foreground(gc,col[color]);
-    if (e>1)
-      gdk_gc_set_line_attributes(gc, e, GDK_LINE_SOLID, GDK_CAP_BUTT,
-                                 GDK_JOIN_BEVEL) ;
+    gdk_gc_set_foreground(gc, col[color]);
+    if ( thickness == 1 ) thickness = 0;
+
+    gdk_gc_set_line_attributes(gc, thickness, GDK_LINE_SOLID, GDK_CAP_BUTT,
+			       GDK_JOIN_BEVEL) ;
 
     if (fill == false)
-      gdk_draw_rectangle(background,gc,FALSE,
-                         (int)rect.getLeft(), (int)rect.getTop(),
-                         (int)rect.getWidth()-1, (int)rect.getHeight()-1);
-    else
-      gdk_draw_rectangle(background,gc,TRUE,
-                         (int)rect.getLeft(), (int)rect.getTop(),
-                         (int)rect.getWidth(), (int)rect.getHeight());
+      gdk_draw_rectangle(background, gc, FALSE,
+                       vpMath::round( rectangle.getLeft() ), 
+		       vpMath::round( rectangle.getTop() ),
+		       vpMath::round( rectangle.getWidth()-1 ), 
+		       vpMath::round( rectangle.getHeight()-1 ) );
 
-    if (e>1)
+    else
+      gdk_draw_rectangle(background, gc, TRUE,
+                       vpMath::round( rectangle.getLeft() ), 
+		       vpMath::round( rectangle.getTop() ),
+		       vpMath::round( rectangle.getWidth()-1 ), 
+		       vpMath::round( rectangle.getHeight()-1 ) );
+
+    if (thickness > 1)
       gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
                                  GDK_JOIN_BEVEL) ;
   }
@@ -832,28 +987,6 @@ vpDisplayGTK::displayRectangle(const vpRect &rect,
   }
 }
 
-/*!
-  \brief display a string
-  \param i,j (row,colum indexes)
-  \param string
-  \param color (see vpColor)
-*/
-void vpDisplayGTK::displayCharString(int i, int j,
-                                     const char *string, vpColor::vpColorType color)
-{
-  if (GTKinitialized)
-  {
-    gdk_gc_set_foreground(gc,col[color]);
-    gdk_draw_string(background,Police2,gc,j,i,(const gchar *)string);
-
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
-}
 
 /*!
   Wait for a click from one of the mouse button.
@@ -1092,6 +1225,60 @@ vpDisplayGTK::getClickUp(vpImagePoint &ip,
   return ret;
 }
 
+/*
+  \brief gets the displayed image (including the overlay plane)
+  and returns an RGBa image
+*/
+void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
+{
+
+
+  // shoudl certainly be optimized.
+  // doesn't work
+  if (GTKinitialized)
+  {
+
+    GdkImage *ImageGtk;
+    /*
+     */
+
+    ImageGtk = gdk_image_get(background,0,0,width,height);
+
+
+    I.resize(height,width) ;
+    guchar *pos;
+    guint32 pixel;
+    guint32 x,y;
+    guchar OctetRouge,OctetVert,OctetBleu,mask;
+    mask = 0x000000FF;
+
+    pos = (unsigned char *)I.bitmap;
+    for (y=0;y<height;y++)
+    {
+      for (x=0;x<width;x++)
+      {
+        pixel = gdk_image_get_pixel(ImageGtk,x,y);
+        OctetBleu  = (guchar)pixel & mask;
+        OctetVert  = (guchar)(pixel>>8) & mask;
+        OctetRouge = (guchar)(pixel>>16) & mask;
+        *pos++ = OctetRouge;
+        *pos++ = OctetVert;
+        *pos++ = OctetBleu;
+        *pos++ = 0;
+      }
+    }
+
+
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+
+}
+
 /*!
   \brief get the window depth (8,16,24,32)
 
@@ -1117,85 +1304,6 @@ void vpDisplayGTK::getScreenSize(unsigned int &width, unsigned int &height)
   vpTRACE("Not implemented") ;
   width = 0;
   height = 0;
-}
-
-/*!
-  \brief Set the window title.
-  \param windowtitle : Window title.
- */
-
-void
-vpDisplayGTK::setTitle(const char *windowtitle)
-{
-  if (GTKinitialized)
-  {
-    if (windowtitle != NULL)
-      gdk_window_set_title(widget->window,(char *)windowtitle);
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
-}
-
-/*!
-  \brief Set the font used to display text.
-  \warning This method is not yet implemented.
-  \param fontname : Name of the font.
- */
-
-void
-vpDisplayGTK::setFont(const char * /* fontname */)
-{
-  vpERROR_TRACE("Not yet implemented" ) ;
-}
-
-
-/*!
-  \brief Display a circle
-  \param i,j : circle center position (row,column)
-  \param r : radius
-  \param color
-*/
-void vpDisplayGTK::displayCircle(int i, int j,
-                                 unsigned int r,
-                                 vpColor::vpColorType color)
-{
-  if (GTKinitialized)
-  {
-    gdk_gc_set_foreground(gc,col[color]);
-    gdk_draw_arc(background,gc,FALSE,j-r,i-r,2*r,2*r,360*64,360*64) ;
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
-}
-
-/*!
-  Set the window position in the screen.
-
-  \param winx, winy : Position of the upper-left window's border in the screen.
-
-  \exception vpDisplayException::notInitializedError : If the video
-  device is not initialized.
-*/
-void vpDisplayGTK::setWindowPosition(int winx, int winy)
-{
-
-  if (GTKinitialized)  {
-    gtk_window_move(GTK_WINDOW(widget), winx, winy); 
-  }
-  else
-  {
-    vpERROR_TRACE("GTK not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized")) ;
-  }
 }
 
 #endif
