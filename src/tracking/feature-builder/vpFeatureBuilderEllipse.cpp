@@ -47,7 +47,21 @@
 
 #include <visp/vpMath.h>
 
-// create vpFeatureEllipse feature
+
+
+/*!
+  Initialize an ellipse feature thanks to a vpCircle.
+  The vpFeatureEllipse is initialized thanks to the parameters of the circle in the camera frame and in the image plan.
+  All the parameters are given in meter.
+
+  \warning To be sure that the vpFeatureEllipse is well initialized,
+  you have to be sure that at least the circle coordinates in the image 
+  plan and in the camera frame are computed and stored in the vpCircle.
+
+  \param s : Visual feature to initialize.
+
+  \param t : The vpCircle used to create the vpFeatureEllipse.
+*/
 void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCircle &t )
 {
   try
@@ -83,6 +97,22 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCircle &t )
   }
 
 }
+
+
+/*!
+  Initialize an ellipse feature thanks to a vpSphere.
+  The vpFeatureEllipse is initialized thanks to the parameters
+  of the sphere in the camera frame and in the image plan.
+  All the parameters are given in meter.
+
+  \warning To be sure that the vpFeatureEllipse is well initialized,
+  you have to be sure that at least the sphere coordinates in the image 
+  plan and in the camera frame are computed and stored in the vpSphere.
+
+  \param s : Visual feature to initialize.
+
+  \param t : The vpSphere used to create the vpFeatureEllipse.
+*/
 void vpFeatureBuilder::create(vpFeatureEllipse &s,  const vpSphere &t)
 {
   try
@@ -116,7 +146,23 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,  const vpSphere &t)
   }
 }
 
-// create vpFeatureEllipse feature
+
+/*!
+  Initialize an ellipse feature thanks to a vpDot and camera parameters.
+  The vpFeatureEllipse is initialized thanks to the parameters
+  of the dot given in pixel. The camera parameters are used to convert the
+  pixel parameters to parameters given in meter.
+
+  \warning With a vpDot there is no information about 3D parameters. 
+  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them and
+  initialized them outside the method.
+
+  \param s : Visual feature to initialize.
+
+  \param cam : The parameters of the camera used to acquire the image containing the vpDot.
+
+  \param t : The vpDot used to create the vpFeatureEllipse.
+*/
 void vpFeatureBuilder::create(vpFeatureEllipse &s,
 			      const vpCameraParameters &cam,
 			      const vpDot &t )
@@ -161,7 +207,24 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
 
 }
 
-// create vpFeatureEllipse feature
+
+
+/*!
+  Initialize an ellipse feature thanks to a vpDot2 and camera parameters.
+  The vpFeatureEllipse is initialized thanks to the parameters
+  of the dot given in pixel. The camera parameters are used to convert the
+  pixel parameters to parameters given in meter. 
+
+  \warning With a vpDot2 there is no information about 3D parameters. 
+  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them and
+  initialized them outside the method.
+
+  \param s : Visual feature to initialize.
+
+  \param cam : The parameters of the camera used to acquire the image containing the vpDot2.
+
+  \param t : The vpDot2 used to create the vpFeatureEllipse.
+*/
 void vpFeatureBuilder::create(vpFeatureEllipse &s,
 			      const vpCameraParameters &cam,
 			      const vpDot2 &t )

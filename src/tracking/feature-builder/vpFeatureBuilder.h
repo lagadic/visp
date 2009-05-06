@@ -105,6 +105,9 @@ public:
   static void create(vpFeaturePointPolar &s, 
 		     const vpCameraParameters &cam,
 		     const vpDot2 &dot) ;
+  static void create(vpFeaturePointPolar &s, 
+		     const vpCameraParameters &cam,
+		     const vpImagePoint &iP) ;
   static void create(vpFeaturePointPolar &s, const vpPoint &p) ;
   static void create(vpFeaturePointPolar &s,
 		     const vpCameraParameters &goodCam,

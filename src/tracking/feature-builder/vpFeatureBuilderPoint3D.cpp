@@ -46,6 +46,19 @@
 #include <visp/vpException.h>
 
 
+/*!
+
+  Initialize a 3D point feature using the coordinates of the point
+  \f$(X,Y,Z)\f$ in the camera frame. The values of \f$(X,Y,Z)\f$ are
+  expressed in meters.
+
+  \warning To be sure that the vpFeaturePoint is well initialized, you have to be sure that at least the point
+  coordinates in the camera frame are computed and stored in the vpPoint.
+
+  \param s : Visual feature to initialize.
+
+  \param t : The vpPoint used to create the vpFeaturePoint.
+*/
 void
 vpFeatureBuilder::create(vpFeaturePoint3D &s, const vpPoint &t )
 {
