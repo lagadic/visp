@@ -54,7 +54,10 @@
 
 /*!
   \class vpBasicKeyPoint
-  \brief class that defines what is a Keypoint. This class provides all the basic elements to implement classes which aims to match points from an image to another.
+
+  \brief class that defines what is a Keypoint. This class provides
+  all the basic elements to implement classes which aims to match
+  points from an image to another.
 */
 
 
@@ -63,32 +66,47 @@ class VISP_EXPORT vpBasicKeyPoint
   public:
     vpBasicKeyPoint();
 
-   virtual ~vpBasicKeyPoint() { if (referenceImagePointsList != NULL) delete[] referenceImagePointsList;
-                                if (currentImagePointsList != NULL) delete[] currentImagePointsList;
-                                matchedPointsCurrentImageList.kill();
-                                matchedPointsReferenceImageList.kill();};
+   virtual ~vpBasicKeyPoint() { 
+     if (referenceImagePointsList != NULL) delete[] referenceImagePointsList;
+     if (currentImagePointsList != NULL) delete[] currentImagePointsList;
+     matchedPointsCurrentImageList.kill();
+     matchedPointsReferenceImageList.kill();
+   };
 
    virtual int buildReference(const vpImage<unsigned char> &I) =0;
 
-   virtual int buildReference(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width) =0;
+   virtual int buildReference(const vpImage<unsigned char> &I, 
+			      vpImagePoint &iP, 
+			      unsigned int height, unsigned int width) =0;
 
-   virtual int buildReference(const vpImage<unsigned char> &I, const vpRect rectangle) =0;
+   virtual int buildReference(const vpImage<unsigned char> &I, 
+			      const vpRect rectangle) =0;
 
    virtual int matchPoint(const vpImage<unsigned char> &I) =0;
 
-   virtual int matchPoint(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width) =0;
+   virtual int matchPoint(const vpImage<unsigned char> &I, 
+			  vpImagePoint &iP, 
+			  unsigned int height, unsigned int width) =0;
 
-   virtual int matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle) =0;
+   virtual int matchPoint(const vpImage<unsigned char> &I, 
+			  const vpRect rectangle) =0;
 
-   virtual void display(vpImage<unsigned char> &Iref, vpImage<unsigned char> &Icurrent) =0;
+   virtual void display(vpImage<unsigned char> &Iref, 
+			vpImage<unsigned char> &Icurrent) =0;
 
    virtual void display(vpImage<unsigned char> &Icurrent) =0;
 
-   inline vpImagePoint* getAllPointsInReferenceImage() {return referenceImagePointsList;} ;
+   inline vpImagePoint* getAllPointsInReferenceImage() {
+     return referenceImagePointsList;
+   } ;
 
-   inline vpList<vpImagePoint*>* getMatchedPointsInReferenceImage() {return &matchedPointsReferenceImageList;} ;
+   inline vpList<vpImagePoint*>* getMatchedPointsInReferenceImage() {
+     return &matchedPointsReferenceImageList;
+   } ;
 
-   inline vpList<vpImagePoint*>* getMatchedPointsInCurrentImage() {return &matchedPointsCurrentImageList;} ;
+   inline vpList<vpImagePoint*>* getMatchedPointsInCurrentImage() {
+     return &matchedPointsCurrentImageList;
+   } ;
 
   private:
     virtual void init()=0;
@@ -100,17 +118,23 @@ class VISP_EXPORT vpBasicKeyPoint
     vpImagePoint* referenceImagePointsList;
 
     /*!
-      List of the points which belong to the current image and have been matched with points belonging to the reference.
+
+      List of the points which belong to the current image and have
+      been matched with points belonging to the reference.
     */
     vpImagePoint* currentImagePointsList;
 
     /*!
-      List of pointers that locates the matched points belonging to the reference.
+
+      List of pointers that locates the matched points belonging to
+      the reference.
     */
     vpList<vpImagePoint*> matchedPointsCurrentImageList;
 
     /*!
-      List of pointers that locates the matched points belonging to the current image.
+
+      List of pointers that locates the matched points belonging to
+      the current image.
     */
     vpList<vpImagePoint*> matchedPointsReferenceImageList;
 };
