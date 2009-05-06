@@ -47,8 +47,13 @@
 
 
 /*!
-  create vpFeatureVanishingPoint feature from the 2D coordinates of a point
-in the image plane
+  Initialize a vpFeatureVanishingPoint thanks to a vpPoint.
+  The vpFeatureVanishingPoint is initialized thanks to the parameters of the point in the image plan.
+  All the parameters are given in meter.
+
+  \param s : Visual feature to initialize.
+
+  \param t : The vpPoint used to create the vpFeatureVanishingPoint.
 */
 void
 vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpPoint &t)
@@ -67,8 +72,17 @@ vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpPoint &t)
 
 
 /*!
-  create vpFeatureVanishingPoint feature from 2 FeatureLine, ie lines in the
-  image plane (error if the 2 lines are parallel)
+  Initialize a vpFeatureVanishingPoint thanks to two vpFeatureLine.
+  The vpFeatureVanishingPoint is initialized thanks to the coordinate of the intersection point in the image plan.
+  All the parameters are given in meter.
+
+  \warning An exception is thrown if the two lines are parallels 
+
+  \param s : Visual feature to initialize.
+
+  \param L1 : The first vpFeatureLine.
+
+  \param L2 : The second vpFeatureLine.
 */
 void
 vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, const vpFeatureLine &L2 )
@@ -109,9 +123,20 @@ vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, co
   s.set_y ( y );
 }
 
+
+
 /*!
-  create vpFeatureVanishingPoint feature from 2 Lines, (error if the 2 lines
-  are parallel in the image plane)
+  Initialize a vpFeatureVanishingPoint thanks to two vpLine.
+  The vpFeatureVanishingPoint is initialized thanks to the coordinate of the intersection point in the image plan.
+  All the parameters are given in meter.
+
+  \warning An exception is thrown if the two lines are parallels 
+
+  \param s : Visual feature to initialize.
+
+  \param L1 : The first vpLine.
+
+  \param L2 : The second vpLine.
 */
 void
 vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1, const vpLine &L2 )

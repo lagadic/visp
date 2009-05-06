@@ -47,7 +47,18 @@
 
 #include <visp/vpMath.h>
 
-// create vpFeatureLine feature
+
+
+/*!
+  Initialize a line feature thanks to a vpLine.
+  A vpFeatureLine contains the parameters \f$(\rho,\theta)\f$ which are expressed in meter.
+  It also contains the parameters of a plan equation \f$(A,B,C,D)\f$. In vpLine there are the parameters of two plans,
+  but the one which have the biggest D parameter is copied in the vpFeatureLine parameters.
+
+  \param s : Visual feature to initialize.
+
+  \param t : The vpLine used to create the vpFeatureLine.
+*/
 void vpFeatureBuilder::create(vpFeatureLine &s, const vpLine &t )
 {
   try
@@ -81,6 +92,21 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpLine &t )
   }
 
 }
+
+/*!
+  Initialize a line feature thanks to a vpCylinder.
+  A vpFeatureLine contains the parameters \f$(\rho,\theta)\f$ which are expressed in meter.
+  It also contains the parameters of a plan equation \f$(A,B,C,D)\f$. These parameters are computed
+  thanks to the parameters that are contained in vpCylinder. It is possible to choose which edge of the cylinder to use to
+  initialize the vpFeatureLine.
+
+  \param s : Visual feature to initialize.
+
+  \param t : The vpLine used to create the vpFeatureLine.
+
+  \param line : The cylinder edge used to create the line feature.
+  It can be vpCylinder::line1 or vpCylinder::line2.
+*/
 void vpFeatureBuilder::create(vpFeatureLine &s,
 			      const vpCylinder &t,
 			      const int line)
@@ -139,6 +165,49 @@ void vpFeatureBuilder::create(vpFeatureLine &s,
 }
 
 
+/*!
+  Initialize a line feature thanks to a vpMeLine and the parameters of the camera.
+  A vpFeatureLine contains the parameters \f$(\rho,\theta)\f$ which are expressed in meter. 
+  In vpMeLine these parameters are given in pixel. The conversion is done thanks to the camera parameters.
+
+  \warning vpFeatureLine also contains the parameters of a plan equation \f$(A,B,C,D)\f$. These parameters are needed to
+  compute the interaction matrix but can not be computed thanks to a vpMeLine. You have to compute and set these parameters
+  outside the function.
+
+  \param s : Visual feature to initialize.
+
+  \param cam : The parameters of the camera used to acquire the image containing the line.
+
+  \param t : The vpLine used to create the vpFeatureLine.
+
+  The code below shows how to initialize a vpFeatureLine visual
+  feature. First, we initialize the \f$(\rho,\theta)\f$, and lastly we
+  set the parameters of on equation plan which is generally the result
+  of a pose estimation.
+
+  \code
+  vpImage<unsigned char> I; // Image container
+  vpCameraParameters cam;   // Default intrinsic camera parameters
+  vpMeLine line;               // Dot tracker
+
+  vpFeatureLine s;    // Point feature
+  ...
+  // Tracking on the dot
+  line.track(I);
+
+  // Initialize rho,theta visual feature
+  vpFeatureBuilder::create(s, cam, line);
+  
+  // A pose estimation is requested to initialize A, B, C and D the
+  //parameters of the equation plan.
+  double A = 1;
+  double B = 1;
+  double C = 1;
+  double D = 1;
+  ....
+  s.setABCD(A,B,C,D);
+  \endcode
+*/
 void
 vpFeatureBuilder::create(vpFeatureLine &s,
 			 const vpCameraParameters &cam,

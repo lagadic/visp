@@ -51,9 +51,9 @@
 
   Initialize a point feature with polar coordinates
   \f$(\rho,\theta)\f$ using the coordinates of the point in pixels
-  \f$(u,v)\f$ obtained by image processing. This point is the center
+  obtained by image processing. This point is the center
   of gravity of a dot tracked using vpDot. Using the camera
-  parameters, the pixels coordinates of the dot \f$(u,v)\f$ are first
+  parameters, the pixels coordinates of the dot are first
   converted in cartesian \f$(x,y)\f$ coordinates in meter in the
   camera frame and than in polar coordinates by:
 
@@ -105,10 +105,11 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
   try {
     double x=0, y=0;
 
-    double u = dot.get_u() ;
-    double v = dot.get_v() ;
+    vpImagePoint cog;
+    cog.set_u( dot.get_u());
+    cog.set_v( dot.get_v());
 
-    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam,cog,x,y) ;
 
     double rho   = sqrt(x*x + y*y);
     double theta = atan2(y, x);
@@ -127,9 +128,9 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
 
   Initialize a point feature with polar coordinates
   \f$(\rho,\theta)\f$ using the coordinates of the point in pixels
-  \f$(u,v)\f$ obtained by image processing. This point is the center
+  obtained by image processing. This point is the center
   of gravity of a dot tracked using vpDot2. Using the camera
-  parameters, the pixels coordinates of the dot \f$(u,v)\f$ are first
+  parameters, the pixels coordinates of the dot are first
   converted in cartesian \f$(x,y)\f$ coordinates in meter in the
   camera frame and than in polar coordinates by:
 
@@ -181,10 +182,11 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
   try {
     double x=0, y=0;
 
-    double u = dot.get_u() ;
-    double v = dot.get_v() ;
+    vpImagePoint cog;
+    cog.set_u( dot.get_u());
+    cog.set_v( dot.get_v());
 
-    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam,cog,x,y) ;
 
     double rho   = sqrt(x*x + y*y);
     double theta = atan2(y, x);
@@ -197,6 +199,79 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
     throw ;
   }
 }
+
+
+/*!
+
+  Initialize a point feature with polar coordinates
+  \f$(\rho,\theta)\f$ using the coordinates of the point in pixels
+  obtained by image processing. The points coordinates are stored in a vpImagePoint. Using the camera
+  parameters, the pixels coordinates of the point are first
+  converted in cartesian \f$(x,y)\f$ coordinates in meter in the
+  camera frame and than in polar coordinates by:
+
+  \f[\rho = \sqrt{x^2+y^2}  \hbox{,}\; \; \theta = \arctan \frac{y}{x}\f]
+
+  \warning This function does not initialize \f$Z\f$ which is
+  requested to compute the interaction matrix by
+  vpfeaturePointPolar::interaction().
+  
+  \param s : Visual feature \f$(\rho,\theta)\f$ to initialize. Be
+  aware, the 3D depth \f$Z\f$ requested to compute the interaction
+  matrix is not initialized by this function.
+  
+  \param cam : Camera parameters.
+
+  \param iP : The vpImagePoint used to create the vpFeaturePoint.
+
+  The code below shows how to initialize a vpFeaturePointPolar visual
+  feature. First, we initialize the \f$\rho,\theta\f$, and lastly we
+  set the 3D depth \f$Z\f$ of the point which is generally the result
+  of a pose estimation.
+
+  \code
+  vpImage<unsigned char> I; // Image container
+  vpCameraParameters cam;   // Default intrinsic camera parameters
+  vpImagePoint iP;               // the point in the image
+
+  vpFeaturePointPolar s;    // Point feature with polar coordinates
+  ...
+  // Set the point coordinates in the image (here the coordinates are given in the (i,j) frame
+  iP.set_i(0);
+  iP.set_j(0);
+
+  // Initialize rho,theta visual feature
+  vpFeatureBuilder::create(s, cam, iP);
+  
+  // A pose estimation is requested to initialize Z, the depth of the
+  // point in the camera frame.
+  double Z = 1; // Depth of the point in meters
+  ....
+  s.set_Z(Z);
+  \endcode
+
+*/
+void vpFeatureBuilder::create(vpFeaturePointPolar &s,
+			      const vpCameraParameters &cam,
+			      const vpImagePoint &iP)
+{
+  try {
+    double x=0, y=0;
+
+    vpPixelMeterConversion::convertPoint(cam,iP,x,y) ;
+
+    double rho   = sqrt(x*x + y*y);
+    double theta = atan2(y, x);
+ 
+    s.set_rho(rho) ;
+    s.set_theta(theta) ;
+  }
+  catch(...) {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+}
+
 
 /*!
 

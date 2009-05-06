@@ -45,6 +45,47 @@
 #include <visp/vpFeatureException.h>
 #include <visp/vpException.h>
 
+
+/*!
+  Create a vpFeaturePoint thanks to a vpDot and the parameters of the camera.
+  The vpDot contains only the pixel coordinates of the point in an image.
+  Thus this method uses the camera parameters to compute the meter coordinates \f$ x \f$ and \f$ y \f$ in the image plan.
+  Those coordinates are stored in the vpFeaturePoint.
+
+  \warning It is not possible to compute the depth of the point \f$ Z \f$ in the camera frame thanks to a vpDot. 
+  This coordinate is needed in vpFeaturePoint to compute the interaction matrix. So this value must be computed outside this function.
+
+  \param s : Visual feature \f$(x, y)\f$ to initialize. Be
+  aware, the 3D depth \f$Z\f$ requested to compute the interaction
+  matrix is not initialized by this function.
+  \param cam : The parameters of the camera used to acquire the image containing the vpDot.
+  \param t : The vpDot used to create the vpFeaturePoint.
+
+  The code below shows how to initialize a vpFeaturePoint visual
+  feature. First, we initialize the \f$x,y\f$, and lastly we
+  set the 3D depth \f$Z\f$ of the point which is generally the result
+  of a pose estimation.
+
+  \code
+  vpImage<unsigned char> I; // Image container
+  vpCameraParameters cam;   // Default intrinsic camera parameters
+  vpDot dot;               // Dot tracker
+
+  vpFeaturePoint s;    // Point feature
+  ...
+  // Tracking on the dot
+  dot.track(I);
+
+  // Initialize rho,theta visual feature
+  vpFeatureBuilder::create(s, cam, dot);
+  
+  // A pose estimation is requested to initialize Z, the depth of the
+  // point in the camera frame.
+  double Z = 1; // Depth of the point in meters
+  ....
+  s.set_Z(Z);
+  \endcode
+*/
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
 			      const vpDot &t)
@@ -53,10 +94,11 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   {
     double x=0, y=0;
 
-    double u = t.get_u() ;
-    double v = t.get_v() ;
+    vpImagePoint cog;
+    cog.set_u( t.get_u());
+    cog.set_v( t.get_v());
 
-    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam,cog,x,y) ;
 
     s.set_x(x) ;
     s.set_y(y) ;
@@ -67,6 +109,46 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
     throw ;
   }
 }
+
+
+/*!
+  Create a vpFeaturePoint thanks to a vpDot2 and the parameters of the camera.
+  The vpDot2 contains only the pixel coordinates of the point in an image.
+  Thus this method uses the camera parameters to compute the meter coordinates \f$ x \f$ and \f$ y \f$ in the image plan.
+  Those coordinates are stored in the vpFeaturePoint.
+
+  \warning It is not possible to compute the depth of the point \f$ Z \f$ in the camera frame thanks to a vpDot2. 
+  This coordinate is needed in vpFeaturePoint to compute the interaction matrix. So this value must be computed outside this function.
+
+  \param s : The feature point.
+  \param cam : The parameters of the camera used to acquire the image containing the vpDot2.
+  \param t : The vpDot2 used to create the vpFeaturePoint.
+
+  The code below shows how to initialize a vpFeaturePoint visual
+  feature. First, we initialize the \f$x,y\f$, and lastly we
+  set the 3D depth \f$Z\f$ of the point which is generally the result
+  of a pose estimation.
+
+  \code
+  vpImage<unsigned char> I; // Image container
+  vpCameraParameters cam;   // Default intrinsic camera parameters
+  vpDot2 dot;               // Dot tracker
+
+  vpFeaturePoint s;    // Point feature
+  ...
+  // Tracking on the dot
+  dot.track(I);
+
+  // Initialize rho,theta visual feature
+  vpFeatureBuilder::create(s, cam, dot);
+  
+  // A pose estimation is requested to initialize Z, the depth of the
+  // point in the camera frame.
+  double Z = 1; // Depth of the point in meters
+  ....
+  s.set_Z(Z);
+  \endcode
+*/
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
 			      const vpDot2 &t)
@@ -75,10 +157,11 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   {
     double x=0, y=0;
 
-    double u = t.get_u() ;
-    double v = t.get_v() ;
+    vpImagePoint cog;
+    cog.set_u( t.get_u());
+    cog.set_v( t.get_v());
 
-    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam,cog,x,y) ;
 
     s.set_x(x) ;
     s.set_y(y) ;
@@ -90,18 +173,55 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   }
 }
 
+
+/*!
+  Create a vpFeaturePoint thanks to a vpImagePoint and the parameters of the camera.
+  The vpImagePoint contains only the pixel coordinates of the point in an image.
+  Thus this method uses the camera parameters to compute the meter coordinates \f$ x \f$ and \f$ y \f$ in the image plan.
+  Those coordinates are stored in the vpFeaturePoint.
+
+  \warning It is not possible to compute the depth of the point \f$ Z \f$ in the camera frame thanks to a vpImagePoint. 
+  This coordinate is needed in vpFeaturePoint to compute the interaction matrix. So this value must be computed outside this function.
+
+  \param s : The feature point.
+  \param cam : The parameters of the camera used to acquire the image containing the point.
+  \param iP : The vpImagePoint used to create the vpFeaturePoint.
+
+  The code below shows how to initialize a vpFeaturePoint visual
+  feature. First, we initialize the \f$x,y\f$, and lastly we
+  set the 3D depth \f$Z\f$ of the point which is generally the result
+  of a pose estimation.
+
+  \code
+  vpImage<unsigned char> I; // Image container
+  vpCameraParameters cam;   // Default intrinsic camera parameters
+  vpImagePoint iP;               // the point in the image
+
+  vpFeaturePoint s;    // Point feature
+  ...
+  // Set the point coordinates in the image (here the coordinates are given in the (i,j) frame
+  iP.set_i(0);
+  iP.set_j(0);
+
+  // Initialize rho,theta visual feature
+  vpFeatureBuilder::create(s, cam, iP);
+  
+  // A pose estimation is requested to initialize Z, the depth of the
+  // point in the camera frame.
+  double Z = 1; // Depth of the point in meters
+  ....
+  s.set_Z(Z);
+  \endcode
+*/
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
-			      const vpImagePoint &t)
+			      const vpImagePoint &iP)
 {
   try
   {
     double x=0, y=0;
 
-    double u = t.get_u() ;
-    double v = t.get_v() ;
-
-    vpPixelMeterConversion::convertPoint(cam,u,v,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam,iP,x,y) ;
 
     s.set_x(x) ;
     s.set_y(y) ;
@@ -113,6 +233,17 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   }
 }
 
+
+/*!
+  Create a vpFeaturePoint thanks to a vpPoint.
+  This method uses the point coordinates \f$ x \f$ and \f$ y \f$ in the image plan to set the visual feature parameters. 
+  The value of the depth \f$ Z \f$ in the camera frame is also computed thanks to the coordinates in the camera frame which are stored in vpPoint.
+
+  \warning To be sure that the vpFeaturePoint is well initialized, you have to be sure that at least the point coordinates in the image plan and in the camera frame are computed and stored in the vpPoint.
+
+  \param s : The feature point.
+  \param t : The vpPoint used to create the vpFeaturePoint.
+*/
 void
 vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
 {
@@ -152,7 +283,32 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
   }
 }
 
-//! introduce noise in the transfert
+
+/*!
+  Create a vpFeaturePoint thanks to a vpPoint. In this method noise is introduced during the initialization of the vpFeaturePoint.
+  This method uses the point coordinates \f$ x \f$ and \f$ y \f$ in the image plan to set the visual feature parameters. 
+  The value of the depth \f$ Z \f$ in the camera frame is also computed thanks to the coordinates in the camera frame which are stored in vpPoint.
+
+  This function intends to introduce noise after the initialization of the parameters. Cartesian \f$(x,y)\f$ coordinates
+  are first converted in pixel coordinates in the image using \e
+  goodCam camera parameters. Then, the pixels coordinates of the point
+  are converted back to cartesian coordinates \f$(x^{'},y^{'})\f$ using
+  the noisy camera parameters \e wrongCam. These last parameters are stored in the vpFeaturePoint.
+
+  \warning To be sure that the vpFeaturePoint is well initialized, you have to be sure that at least the point coordinates in the image plan and in the camera frame are computed and stored in the vpPoint.
+
+  \param s : The feature point.
+
+  \param goodCam : Camera parameters used to introduce noise. These
+  parameters are used to convert cartesian coordinates of the point \e
+  p in the image plane in pixel coordinates.
+
+  \param wrongCam : Camera parameters used to introduce noise. These
+  parameters are used to convert pixel coordinates of the point in
+  cartesian coordinates of the point in the image plane.
+
+  \param t : The vpPoint used to create the vpFeaturePoint.
+*/
 void
 vpFeatureBuilder::create(vpFeaturePoint &s,
 		     const vpCameraParameters &goodCam,
