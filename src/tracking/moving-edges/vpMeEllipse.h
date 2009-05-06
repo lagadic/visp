@@ -50,6 +50,7 @@
 
 #include <visp/vpMeTracker.h>
 #include <visp/vpMeSite.h>
+#include <visp/vpImagePoint.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpColor.h>
@@ -64,46 +65,28 @@
 class VISP_EXPORT vpMeEllipse : public vpMeTracker
 {
 public:
-  vpMeSite PExt[2] ;
+  vpMeSite PExt[2];
 
   double theta ;
   //! vecteur de parametres de la quadrique
   //! i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
   vpColVector K ;
 
-  double ic, jc, e, a, b ;
+  vpImagePoint iPc;
+  double /*ic, jc,*/ e, a, b ;
   double ce, se ;
-  int i1,j1, i2, j2 ;
+  //int i1,j1, i2, j2 ;
+  vpImagePoint iP1, iP2;
   double alpha1 ;
   double alpha2 ;
-private:
-  //! seek extremities (in degree)
-  double seek ;
 
-public:
   int sample_step ;
 
-public:
   vpMeEllipse() ;
   virtual ~vpMeEllipse() ;
 
-
   void setSeekExtremities(double seek) {this->seek = seek ; }
   void display(vpImage<unsigned char>&I, vpColor::vpColorType col) ;
-
-private:
-  void computeAngle(int ip1, int jp1,int ip2, int jp2) ;
-  void computeAngle(int ip1, int jp1, double &alpha1,
-	     int ip2, int jp2, double &alpha2) ;
-
-  void sample(vpImage<unsigned char>&image);
-  void reSample(vpImage<unsigned char> &I) ;
-  void leastSquare() ;
-  void updateTheta();
-  void suppressPoints() ;
-  void seekExtremities(vpImage<unsigned char> &I) ;
-
-public:
 
   void getParameters() ;
   void printParameters() ;
@@ -112,11 +95,16 @@ public:
 
   void initTracking(vpImage<unsigned char> &I) ;
   void initTracking(vpImage<unsigned char> &I, int n,
-		    unsigned *i, unsigned *j) ;
+		    vpImagePoint* iP) ;
 
-private:
-  bool circle ;
-public:
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  void initTracking(vpImage<unsigned char> &I, int n,
+		    unsigned *i, unsigned *j) ;
+#endif //VISP_BUILD_DEPRECATED_FUNCTIONS
+
   //! set to true if we are sure to track a circle and that this very
   //! unlikely to append in perspective projection, nevertherless for
   //! omnidirectional camera, this can be useful
@@ -126,6 +114,33 @@ public:
   //! K0 = 1
   //! K1 = 0
   void setCircle(bool circle) { this->circle = circle ; }
+
+private:
+  //! seek extremities (in degree)
+  double seek ;
+
+  bool circle ;
+
+  void computeAngle(vpImagePoint pt1, vpImagePoint pt2) ;
+  void computeAngle(vpImagePoint pt1, double &alpha1,
+	     vpImagePoint pt2, double &alpha2) ;
+
+  void sample(vpImage<unsigned char>&image);
+  void reSample(vpImage<unsigned char> &I) ;
+  void leastSquare() ;
+  void updateTheta();
+  void suppressPoints() ;
+  void seekExtremities(vpImage<unsigned char> &I) ;
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  void computeAngle(int ip1, int jp1,int ip2, int jp2) ;
+  void computeAngle(int ip1, int jp1, double &alpha1,
+	     int ip2, int jp2, double &alpha2) ;
+#endif //VISP_BUILD_DEPRECATED_FUNCTIONS
+
 };
 
 

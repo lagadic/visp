@@ -46,8 +46,11 @@
 
 
 void
-computeTheta(double &theta, vpColVector &K, double i, double j)
+computeTheta(double &theta, vpColVector &K, vpImagePoint iP)
 {
+
+  double i = iP.get_i();
+  double j = iP.get_j();
 
   double A = 2*i+2*K[1]*j + 2*K[2] ;
   double B = 2*K[0]*j + 2*K[1]*i + 2*K[3];
@@ -73,7 +76,12 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
   alpha1 = 0 ;
   alpha2 = 2*M_PI ;
 
-  j1 = j2 = i1 = i2 = 0 ;
+  //j1 = j2 = i1 = i2 = 0 ;
+  iP1.set_i(0);
+  iP1.set_j(0);
+  iP2.set_i(0);
+  iP2.set_j(0);
+
   seek = 10.; // angle in degrees
   vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << std::endl ;
 }
@@ -117,7 +125,8 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
     //return fatalError ;
   }
 
-  double j, i, j11, i11;
+  double j, i;//, j11, i11;
+  vpImagePoint iP11;
   j = i = 0.0 ;
 
   double incr = vpMath::rad(me->sample_step) ; // angle increment en degree
@@ -141,25 +150,25 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
     // (i,j) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    j11 = jc + ce *j - se *i ;
-    i11 = ic -( se *j + ce *i) ;
+    iP11.set_j( iPc.get_j() + ce *j - se *i );
+    iP11.set_i( iPc.get_i() -( se *j + ce *i) );
 
-    vpDisplay::displayCross(I, (unsigned)i11,  (unsigned)j11,  5, col) ;
+    vpDisplay::displayCross(I, iP11,  5, col) ;
 
     double theta ;
-    computeTheta(theta, K,  i11,  j11)  ;
+    computeTheta(theta, K, iP11)  ;
 
     // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 0, height, width))
+    if(!outOfImage(vpMath::round(iP11.get_i()), vpMath::round(iP11.get_j()), 0, height, width))
     {
       vpMeSite pix ;
-      pix.init((int)i11, (int)j11, theta) ;
+      pix.init((int)iP11.get_i(), (int)iP11.get_j(), theta) ;
       pix.setDisplay(selectDisplay) ;
       pix.suppress = 0 ;
 
       if(vpDEBUG_ENABLE(3))
       {
-	vpDisplay::displayCross(I,vpMath::round(i11), vpMath::round(j11), 5, vpColor::blue);
+	vpDisplay::displayCross(I,iP11, 5, vpColor::blue);
       }
       list.addRight(pix);
     }
@@ -197,8 +206,8 @@ vpMeEllipse::getParameters()
   double d = k[2]*k[2] - k[0]*k[1];
 
 
-  ic = (k[1] * k[3] - k[2] * k[4]) / d;
-  jc = (k[0] * k[4] - k[2] * k[3]) / d;
+  iPc.set_i( (k[1] * k[3] - k[2] * k[4]) / d );
+  iPc.set_j( (k[0] * k[4] - k[2] * k[3]) / d );
 
   double sq =  sqrt(vpMath::sqr(k[1]-k[0]) + 4.0*vpMath::sqr(k[2])) ;
   if (circle ==true)
@@ -218,7 +227,7 @@ vpMeEllipse::getParameters()
   ce = cos(e) ;
   se = sin(e) ;
 
-  double num = 2.0*(k[0]*ic*ic + 2.0*k[2]*jc*ic + k[1]*jc*jc - k[5]) ;
+  double num = 2.0*(k[0]*iPc.get_i()*iPc.get_i() + 2.0*k[2]*iPc.get_j()*iPc.get_i() + k[1]*iPc.get_j()*iPc.get_j() - k[5]) ;
   double a2 = num / (k[0] + k[1] + sq ) ;
   double b2 = num / (k[0] + k[1] - sq ) ;
 
@@ -232,15 +241,14 @@ vpMeEllipse::printParameters()
 {
   std::cout << "K" << std::endl ;
   std::cout << K.t() ;
-  std::cout << ic << "  " << jc << std::endl ;
+  std::cout << iPc << std::endl ;
 }
 
 /*!
  * \brief computeAngle
  */
 void
-vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
-			  int ip2, int jp2, double &_alpha2)
+vpMeEllipse::computeAngle(vpImagePoint pt1, double &_alpha1, vpImagePoint pt2, double &_alpha2)
 {
 
   getParameters() ;
@@ -262,17 +270,17 @@ vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
     // (i1,j1) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    j11 = jc + ce *j1 - se *i1 ;
-    i11 = ic -( se *j1 + ce *i1) ;
+    j11 = iPc.get_j() + ce *j1 - se *i1 ;
+    i11 = iPc.get_i() -( se *j1 + ce *i1) ;
 
-    double  d = vpMath::sqr(ip1-i11) + vpMath::sqr(jp1-j11) ;
+    double  d = vpMath::sqr(pt1.get_i()-i11) + vpMath::sqr(pt1.get_j()-j11) ;
     if (d < dmin1)
     {
       dmin1 = d ;
       alpha1 = k ;
       _alpha1 = k ;
     }
-    d = vpMath::sqr(ip2-i11) + vpMath::sqr(jp2-j11) ;
+    d = vpMath::sqr(pt2.get_i()-i11) + vpMath::sqr(pt2.get_j()-j11) ;
     if (d < dmin2)
     {
       dmin2 = d ;
@@ -291,12 +299,13 @@ vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
  * \brief computeAngle
  */
 void
-vpMeEllipse::computeAngle(int ip1, int jp1, int ip2, int jp2)
+vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
 {
 
   double a1, a2 ;
-  computeAngle(ip1,jp1,a1, ip2, jp2,a2) ;
+  computeAngle(pt1, a1, pt2, a2) ;
 }
+
 
 void
 vpMeEllipse::updateTheta()
@@ -306,7 +315,10 @@ vpMeEllipse::updateTheta()
   for (int i=0 ; i < list.nbElement() ; i++)
   {
     p = list.value() ;
-    computeTheta(theta, K,  p.ifloat, p.jfloat) ;
+    vpImagePoint iP;
+    iP.set_i(p.ifloat);
+    iP.set_j(p.jfloat);
+    computeTheta(theta, K, iP) ;
     p.alpha = theta ;
     list.modify(p) ;
     list.next() ;
@@ -330,12 +342,12 @@ vpMeEllipse::suppressPoints()
 
   list.front();
   vpMeSite s = list.value() ;//current reference pixel
-  i1 = s.i ;
-  j1 = s.j ;
+  iP1.set_i ( s.i );
+  iP1.set_j ( s.j );
   list.end();
   s = list.value() ;//current reference pixel
-  i2 = s.i ;
-  j2 = s.j ;
+  iP2.set_i ( s.i );
+  iP2.set_j ( s.j );
 }
 
 
@@ -356,7 +368,8 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
   double  memory_mu2 = me->mu2 ;
   me->mu2 = 0.1 ;
 
-  double i,j,i11,j11 ;
+  double i,j;
+  vpImagePoint iP11;
   k = alpha2 ;
   double incr = vpMath::rad(2.0) ;
 
@@ -370,18 +383,18 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
 
     j = a *cos(k) ; // equation of an ellipse
     i = b *sin(k) ; // equation of an ellipse
-    j11 = jc + ce *j - se *i ;
-    i11 = ic -( se *j + ce *i) ;
+    iP11.set_j ( iPc.get_j() + ce *j - se *i );
+    iP11.set_i ( iPc.get_i() -( se *j + ce *i) );
 
     double theta ;
-    computeTheta(theta, K,  i11,  j11)  ;
+    computeTheta(theta, K,  iP11)  ;
 
     // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 2, height, width))
+    if(!outOfImage(vpMath::round(iP11.get_i()), vpMath::round(iP11.get_j()), 2, height, width))
     {
       vpMeSite P ;
       P = Plast ;
-      P.init((int)i11, (int)j11, theta) ;
+      P.init((int)iP11.get_i(), (int)iP11.get_j(), theta) ;
       P.setDisplay(selectDisplay) ;
       P.suppress = 0 ;
 
@@ -409,16 +422,16 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
 
     j = a *cos(k) ; // equation of an ellipse
     i = b *sin(k) ; // equation of an ellipse
-    j11 = jc + ce *j - se *i ;
-    i11 = ic -( se *j + ce *i) ;
+    iP11.set_j( iPc.get_j() + ce *j - se *i );
+    iP11.set_i( iPc.get_i() -( se *j + ce *i) );
     double theta ;
-    computeTheta(theta, K,  i11,  j11)  ;
+    computeTheta(theta, K,  iP11)  ;
 
     // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(i11), vpMath::round(j11), 2, height, width))
+    if(!outOfImage(vpMath::round(iP11.get_i()), vpMath::round(iP11.get_j()), 2, height, width))
     {
       vpMeSite P ; P = Pfirst ;
-      P.init((int)i11, (int)j11, theta) ;
+      P.init((int)iP11.get_i(), (int)iP11.get_j(), theta) ;
       P.setDisplay(selectDisplay) ;
       P.suppress = 0 ;
       P.track(I,me,true) ;
@@ -610,13 +623,15 @@ void
 vpMeEllipse::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
 {
 
-  double j1, i1, j11, i11 ;
-  double j2, i2, j22, i22 ;
+  double j1, i1;
+  vpImagePoint iP11;
+  double j2, i2;
+  vpImagePoint iP22;
   j1 = j2 = i1 = i2 = 0 ;
 
   double incr = vpMath::rad(2) ; // angle increment
 
-  vpDisplay::displayCross(I,(int)ic,(int)jc,20,vpColor::red) ;
+  vpDisplay::displayCross(I,iPc,20,vpColor::red) ;
 
 
   double k = alpha1 ;
@@ -631,14 +646,14 @@ vpMeEllipse::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
     // (i1,j1) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    j11 = jc + ce *j1 - se *i1 ;
-    i11 = ic -( se *j1 + ce *i1) ;
+    iP11.set_j ( iPc.get_j() + ce *j1 - se *i1 );
+    iP11.set_i ( iPc.get_i() -( se *j1 + ce *i1) );
     // to get the coordinates of the point on the shifted ellipse
-    j22 = jc + ce *j2 - se *i2 ;
-    i22 = ic -( se *j2 + ce *i2) ;
+    iP22.set_j ( iPc.get_j() + ce *j2 - se *i2 );
+    iP22.set_i ( iPc.get_i() -( se *j2 + ce *i2) );
 
 
-    vpDisplay::displayLine(I, (int)i11,  (int)j11,  (int)i22,  (int)j22, col, 3) ;
+    vpDisplay::displayLine(I, iP11, iP22, col, 3) ;
 
     k += incr ;
   }
@@ -652,15 +667,15 @@ vpMeEllipse::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
     // (i1,j1) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    j11 = jc + ce *j1 - se *i1 ;
-    i11 = ic -( se *j1 + ce *i1) ;
+    iP11.set_j ( iPc.get_j() + ce *j1 - se *i1 );
+    iP11.set_i ( iPc.get_i() -( se *j1 + ce *i1) );
     // to get the coordinates of the point on the shifted ellipse
-    j22 = jc + ce *j2 - se *i2 ;
-    i22 = ic -( se *j2 + ce *i2) ;
+    iP22.set_j ( iPc.get_j() + ce *j2 - se *i2 );
+    iP22.set_i ( iPc.get_i() -( se *j2 + ce *i2) );
 
 
-    vpDisplay::displayLine(I,(int)ic,(int)jc, (int)i11,  (int)j11, vpColor::red, 3) ;
-    vpDisplay::displayLine(I,(int)ic,(int)jc, (int)i22,  (int)j22, vpColor::blue, 3) ;
+    vpDisplay::displayLine(I,iPc, iP11, vpColor::red, 3) ;
+    vpDisplay::displayLine(I,iPc, iP22, vpColor::blue, 3) ;
 
 
 
@@ -674,34 +689,37 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
 
   int n=5 ;
-  unsigned *i, *j ;
-  i = new unsigned[n] ;
-  j = new unsigned[n] ;
+//   unsigned *i, *j ;
+//   i = new unsigned[n] ;
+//   j = new unsigned[n] ;
+  vpImagePoint *iP;
+  iP = new vpImagePoint[n];
 
   for (int k =0 ; k < n ; k++)
     {
       std::cout << "Click points "<< k+1 <<"/" << n ;
       std::cout << " on the ellipse in the trigonometric order" <<std::endl ;
-      while (vpDisplay::getClick(I,i[k],j[k])!=true) ;
-      std::cout << i[k] <<" " <<j[k] << std::endl;
+      while (vpDisplay::getClick(I,iP[k])!=true) ;
+      std::cout << iP[k] << std::endl;
     }
 
 
-  i1 = i[0] ;
-  j1 = j[0] ;
-  i2 = i[n-1] ;
-  j2 = j[n-1] ;
+//   i1 = i[0] ;
+//   j1 = j[0] ;
+//   i2 = i[n-1] ;
+//   j2 = j[n-1] ;
+  iP1 = iP[0];
+  iP2 = iP[n-1];
 
-  initTracking(I, n, i, j) ;
+  initTracking(I, n, iP) ;
 
-  delete []i ;
-  delete []j ;
+  delete [] iP;
 
 }
 
 void
 vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
-			  unsigned *i, unsigned *j)
+			  vpImagePoint *iP)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
 
@@ -717,13 +735,13 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
 
     for (int k =0 ; k < n ; k++)
     {
-      A[k][0] = vpMath::sqr(j[k]) ;
-      A[k][1] = 2* i[k] * j[k] ;
-      A[k][2] = 2* i[k] ;
-      A[k][3] = 2* j[k] ;
+      A[k][0] = vpMath::sqr(iP[k].get_j()) ;
+      A[k][1] = 2* iP[k].get_i() * iP[k].get_j() ;
+      A[k][2] = 2* iP[k].get_i() ;
+      A[k][3] = 2* iP[k].get_j() ;
       A[k][4] = 1 ;
 
-      b[k] = - vpMath::sqr(i[k]) ;
+      b[k] = - vpMath::sqr(iP[k].get_i()) ;
     }
 
     K = A.pseudoInverse(1e-26)*b ;
@@ -738,11 +756,11 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
     vpColVector Kc(3) ;
     for (int k =0 ; k < n ; k++)
     {
-      A[k][0] =  2* i[k] ;
-      A[k][1] =  2* j[k] ;
+      A[k][0] =  2* iP[k].get_i() ;
+      A[k][1] =  2* iP[k].get_j() ;
 
       A[k][2] = 1 ;
-      b[k] = - vpMath::sqr(i[k]) - vpMath::sqr(j[k]) ;
+      b[k] = - vpMath::sqr(iP[k].get_i()) - vpMath::sqr(iP[k].get_j()) ;
     }
 
     Kc = A.pseudoInverse(1e-26)*b ;
@@ -754,13 +772,16 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
 
     std::cout << K << std::endl;
   }
-  i1 = i[0] ;
-  j1 = j[0] ;
-  i2 = i[n-1] ;
-  j2 = j[n-1] ;
+//   i1 = i[0] ;
+//   j1 = j[0] ;
+//   i2 = i[n-1] ;
+//   j2 = j[n-1] ;
+
+  iP1 = iP[0];
+  iP2 = iP[n-1];
 
   getParameters() ;
-  computeAngle(i1,j1, i2, j2) ;
+  computeAngle(iP1, iP2) ;
   display(I, vpColor::green) ;
 
   sample(I) ;
@@ -826,7 +847,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
       vpERROR_TRACE("Error caught") ;
       throw ;
     }
-    computeAngle(i1,j1, i2, j2) ;
+    computeAngle(iP1, iP2) ;
 
     if (iter%5==0)
     {
@@ -838,7 +859,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
 	vpERROR_TRACE("Error caught") ;
 	throw ;
       }
-      computeAngle(i1,j1, i2, j2) ;
+      computeAngle(iP1, iP2) ;
     }
     seekExtremities(I) ;
 
@@ -856,3 +877,170 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
   vpCDEBUG(1) << "end vpMeEllipse::track()"<<std::endl ;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+/*!
+ * \brief computeAngle
+ */
+void
+vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
+			  int ip2, int jp2, double &_alpha2)
+{
+
+  getParameters() ;
+  double j1, i1, j11, i11;
+  j1 =  i1 =  0.0 ;
+
+  int number_of_points = 2000 ;
+  double incr = 2 * M_PI / number_of_points ; // angle increment
+
+  double dmin1 = 1e6  ;
+  double dmin2 = 1e6  ;
+
+  double k =  -M_PI ;
+  while(k < M_PI) {
+
+    j1 = a *cos(k) ; // equation of an ellipse
+    i1 = b *sin(k) ; // equation of an ellipse
+
+    // (i1,j1) are the coordinates on the origin centered ellipse ;
+    // a rotation by "e" and a translation by (xci,jc) are done
+    // to get the coordinates of the point on the shifted ellipse
+    j11 = iPc.get_j() + ce *j1 - se *i1 ;
+    i11 = iPc.get_i() -( se *j1 + ce *i1) ;
+
+    double  d = vpMath::sqr(ip1-i11) + vpMath::sqr(jp1-j11) ;
+    if (d < dmin1)
+    {
+      dmin1 = d ;
+      alpha1 = k ;
+      _alpha1 = k ;
+    }
+    d = vpMath::sqr(ip2-i11) + vpMath::sqr(jp2-j11) ;
+    if (d < dmin2)
+    {
+      dmin2 = d ;
+      alpha2 = k ;
+      _alpha2 = k ;
+    }
+    k += incr ;
+  }
+
+  if (alpha2 <alpha1) alpha2 += 2*M_PI ;
+
+  vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;
+
+}
+
+
+/*!
+ * \brief computeAngle
+ */
+void
+vpMeEllipse::computeAngle(int ip1, int jp1, int ip2, int jp2)
+{
+
+  double a1, a2 ;
+  computeAngle(ip1,jp1,a1, ip2, jp2,a2) ;
+}
+
+
+void
+vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
+			  unsigned *i, unsigned *j)
+{
+  vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
+
+  if (circle==false)
+  {
+    vpMatrix A(n,5) ;
+    vpColVector b(n) ;
+    vpColVector x(5) ;
+
+    // Construction du systeme Ax=b
+    //! i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
+    // A = (j^2 2ij 2i 2j 1)   x = (K0 K1 K2 K3 K4)^T  b = (-i^2 )
+
+    for (int k =0 ; k < n ; k++)
+    {
+      A[k][0] = vpMath::sqr(j[k]) ;
+      A[k][1] = 2* i[k] * j[k] ;
+      A[k][2] = 2* i[k] ;
+      A[k][3] = 2* j[k] ;
+      A[k][4] = 1 ;
+
+      b[k] = - vpMath::sqr(i[k]) ;
+    }
+
+    K = A.pseudoInverse(1e-26)*b ;
+    std::cout << K << std::endl;
+  }
+  else
+  {
+    vpMatrix A(n,3) ;
+    vpColVector b(n) ;
+    vpColVector x(3) ;
+
+    vpColVector Kc(3) ;
+    for (int k =0 ; k < n ; k++)
+    {
+      A[k][0] =  2* i[k] ;
+      A[k][1] =  2* j[k] ;
+
+      A[k][2] = 1 ;
+      b[k] = - vpMath::sqr(i[k]) - vpMath::sqr(j[k]) ;
+    }
+
+    Kc = A.pseudoInverse(1e-26)*b ;
+    K[0] = 1 ;
+    K[1] = 0 ;
+    K[2] = Kc[0] ;
+    K[3] = Kc[1] ;
+    K[4] = Kc[2] ;
+
+    std::cout << K << std::endl;
+  }
+  iP1.set_i( i[0] );
+  iP1.set_j( j[0] );
+  iP2.set_i( i[n-1] );
+  iP2.set_j( j[n-1] );
+
+  getParameters() ;
+  computeAngle(iP1, iP2) ;
+  display(I, vpColor::green) ;
+
+  sample(I) ;
+
+  //  2. On appelle ce qui n'est pas specifique
+  {
+    vpMeTracker::initTracking(I) ;
+  }
+
+
+  try{
+    track(I) ;
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+  vpMeTracker::display(I) ;
+  vpDisplay::flush(I) ;
+
+}
+
+#endif
+
