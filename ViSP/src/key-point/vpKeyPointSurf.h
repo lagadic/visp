@@ -107,6 +107,9 @@ int main()
 
   //Display the matched points
   surf.display(Irefrence, Icurrent);
+
+  return (0);
+}
   \endcode
 
   It is also possible to create the refernece thanks to only a part of the 
@@ -115,11 +118,12 @@ int main()
 
   \code
 #include <visp/vpImage.h>
+#include <visp/vpDisplay.h>
 #include <visp/vpKeyPointSurf.h>
 
 int main()
 {
-  vpImage<unsigned char> Irefrence;
+  vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
 
@@ -129,7 +133,7 @@ int main()
   vpImagePoint corners[2];
   for (int i=0 ; i < 2 ; i++)
   {
-    vpDisplay::getClick(I, corners[i]);
+    vpDisplay::getClick(Ireference, corners[i]);
   }
 
   //Build the reference SURF points.
@@ -137,14 +141,14 @@ int main()
   unsigned int height, width;
   height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
   width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
-  nbrRef = surf.buildReference(I, corners[0], height, width);
+  nbrRef = surf.buildReference(Ireference, corners[0], height, width);
 
   //Then grab another image which represents the current image Icurrent
 
   //Select a part of the image by clincking on two points which define a rectangle
   for (int i=0 ; i < 2 ; i++)
   {
-    vpDisplay::getClick(I, corners[i]);
+    vpDisplay::getClick(Icurrent, corners[i]);
   }
 
   //Match points between the reference points and the SURF points computed in the current image.
@@ -154,7 +158,10 @@ int main()
   nbrMatched = surf.matchPoint(Icurrent, corners[0], height, width);
 
   //Display the matched points
-  surf.display(Irefrence, Icurrent);
+  surf.display(Ireference, Icurrent);
+
+  return(0);
+}
   \endcode
 */
 
