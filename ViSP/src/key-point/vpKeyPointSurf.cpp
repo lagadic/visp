@@ -52,18 +52,9 @@
 #include <visp/vpDisplay.h>
 
 
-/** Type of descriptor  0 or 1*/
-#define SURF_DESCRIPTOR_TYPE 1 
-
-/** Hesian threshold 300~500 */
-#define SURF_HESSIAN_THRESHOLD 500
-
-using namespace std;
-
-
-
 // Compare two surf descriptors.
-double compareSURFDescriptors( const float* d1, const float* d2, double best, int length )
+double compareSURFDescriptors( const float* d1, const float* d2, 
+			       double best, int length )
 {
   double total_cost = 0;
   int i;
@@ -83,7 +74,9 @@ double compareSURFDescriptors( const float* d1, const float* d2, double best, in
 
 
 //Find for a point candidate the most similar point in the reference point list.
-int naiveNearestNeighbor( const float *vec, int laplacian, const CvSeq *model_keypoints, const CvSeq *model_descriptors )
+int naiveNearestNeighbor( const float *vec, int laplacian, 
+			  const CvSeq *model_keypoints, 
+			  const CvSeq *model_descriptors )
 {
   int length = (int)(model_descriptors->elem_size/sizeof(float));
   int i, neighbor = -1;
@@ -117,7 +110,11 @@ int naiveNearestNeighbor( const float *vec, int laplacian, const CvSeq *model_ke
 
 
 //Find all the matched points
-void findPairs( const CvSeq* objectKeypoints, const CvSeq* objectDescriptors, const CvSeq* imageKeypoints, const CvSeq* imageDescriptors, vector<int>& ptpairs )
+void findPairs( const CvSeq* objectKeypoints,
+		const CvSeq* objectDescriptors, 
+		const CvSeq* imageKeypoints,
+		const CvSeq* imageDescriptors, 
+		std::vector<int>& ptpairs )
 {
   int i;
   CvSeqReader reader, kreader;
@@ -131,7 +128,10 @@ void findPairs( const CvSeq* objectKeypoints, const CvSeq* objectDescriptors, co
     const float* descriptor = (const float*)reader.ptr;
     CV_NEXT_SEQ_ELEM( kreader.seq->elem_size, kreader );
     CV_NEXT_SEQ_ELEM( reader.seq->elem_size, reader );
-    int nearest_neighbor = naiveNearestNeighbor( descriptor, kp->laplacian, imageKeypoints, imageDescriptors );
+    int nearest_neighbor = naiveNearestNeighbor( descriptor, 
+						 kp->laplacian, 
+						 imageKeypoints, 
+						 imageDescriptors );
     if( nearest_neighbor >= 0 )
     {
       ptpairs.push_back(i);
@@ -143,7 +143,11 @@ void findPairs( const CvSeq* objectKeypoints, const CvSeq* objectDescriptors, co
 
 
 /*!
-  Basic constructor. It sets by default the hessian threshold to 500 (a good default value is between 300 and 500) and the descriptor type to extended.
+
+  Basic constructor. It sets by default the hessian threshold to 500
+  (a good default value is between 300 and 500) and the descriptor
+  type to extended.
+
 */
 vpKeyPointSurf::vpKeyPointSurf():vpBasicKeyPoint()
 {
@@ -167,7 +171,9 @@ void vpKeyPointSurf::init()
 }
 
 /*!
-  Build the list of reference points. The computation of the points is made all over the image I.
+
+  Build the list of reference points. The computation of the points is
+  made all over the image I.
 
   \param I : The gray scaled image where the refrence points are computed.
 
@@ -198,7 +204,11 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
 
 /*!
-  Build the list of reference points. The computation of the points is made only on a part of the image. This part is a rectangle defined by its top left corner, its height and its width. The parameters of this rectangle must be given in pixel.
+
+  Build the list of reference points. The computation of the points is
+  made only on a part of the image. This part is a rectangle defined
+  by its top left corner, its height and its width. The parameters of
+  this rectangle must be given in pixel.
 
   \param I : The gray scaled image where the refrence points are computed.
 
@@ -210,49 +220,68 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
   \return the number of reference points.
 */
-int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width)
+int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
+				    vpImagePoint &iP,
+				    unsigned int height, unsigned int width)
 {
-  if((iP.get_i()+height) >= I.getHeight() || (iP.get_j()+width) >= I.getWidth())
+  if((iP.get_i()+height) >= I.getHeight() 
+     || (iP.get_j()+width) >= I.getWidth())
   {
     vpTRACE("Bad size for the subimage");
-    throw(vpException(vpImageException::notInTheImage ,"Bad size for the subimage"));
+    throw(vpException(vpImageException::notInTheImage ,
+		      "Bad size for the subimage"));
   }
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::createSubImage(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(), height, width, subImage);
+  vpImageTools::createSubImage(I, 
+			       (unsigned int)iP.get_i(), 
+			       (unsigned int)iP.get_j(),
+			       height, width, subImage);
 
   int nbRefPoint = this->buildReference(subImage);
 
   for(int k = 0; k < nbRefPoint; k++)
   {
-    (referenceImagePointsList[k]).set_i((referenceImagePointsList[k]).get_i() + iP.get_i());
-    (referenceImagePointsList[k]).set_j((referenceImagePointsList[k]).get_j() + iP.get_j());
+    (referenceImagePointsList[k]).set_i((referenceImagePointsList[k]).get_i()
+					+ iP.get_i());
+    (referenceImagePointsList[k]).set_j((referenceImagePointsList[k]).get_j()
+					+ iP.get_j());
   }
   return(nbRefPoint);
 }
 
 
 /*!
-  Build the list of reference points. The computation of the points is made only on a part of the image. This part is a rectangle. The parameters of this rectangle must be given in pixel.
+
+  Build the list of reference points. The computation of the points is
+  made only on a part of the image. This part is a rectangle. The
+  parameters of this rectangle must be given in pixel.
 
   \param I : The gray scaled image where the refrence points are computed.
 
-  \param rectangle : The rectangle which defines the interesting part of the image.
+  \param rectangle : The rectangle which defines the interesting part
+  of the image.
 
   \return the number of reference points.
 */
-int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, const vpRect rectangle)
+int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
+				    const vpRect rectangle)
 {
   vpImagePoint iP;
   iP.set_i(rectangle.getTop());
   iP.set_j(rectangle.getLeft());
-  return (this->buildReference(I, iP, (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
+  return (this->buildReference(I, iP, 
+			       (unsigned int)rectangle.getHeight(),
+			       (unsigned int)rectangle.getWidth()));
 }
 
 
 /*!
-  Computes the SURF points in the current image I and try to matched them with the points in the reference list. Only the matched points are stored.
+
+  Computes the SURF points in the current image I and try to matched
+  them with the points in the reference list. Only the matched points
+  are stored.
 
   \param I : The gray scaled image where the points are computed.
 
@@ -264,7 +293,8 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
   vpImageConvert::convert(I,currentImage);
 
-  cvExtractSURF( currentImage, 0, &image_keypoints, &image_descriptors, storage, params );
+  cvExtractSURF( currentImage, 0, &image_keypoints, &image_descriptors, 
+		 storage, params );
 
   cvReleaseImage(&currentImage);
 
@@ -286,7 +316,10 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
     const float* descriptor = (const float*)reader.ptr;
     CV_NEXT_SEQ_ELEM( kreader.seq->elem_size, kreader );
     CV_NEXT_SEQ_ELEM( reader.seq->elem_size, reader );
-    int nearest_neighbor = naiveNearestNeighbor( descriptor, kp->laplacian, image_keypoints, image_descriptors );
+    int nearest_neighbor = naiveNearestNeighbor( descriptor,
+						 kp->laplacian, 
+						 image_keypoints,
+						 image_descriptors );
     if( nearest_neighbor >= 0 )
     {
       matchedPointsReferenceImageList.addRight(referenceImagePointsList+i);
@@ -329,7 +362,12 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
 
 /*!
-  Computes the SURF points in only a part of the current image I and try to matched them with the points in the reference list. The part of the image is a rectangle defined by its top left corner, its height and its width. The parameters of this rectangle must be given in pixel. Only the matched points are stored.
+
+  Computes the SURF points in only a part of the current image I and
+  try to matched them with the points in the reference list. The part
+  of the image is a rectangle defined by its top left corner, its
+  height and its width. The parameters of this rectangle must be given
+  in pixel. Only the matched points are stored.
 
   \param I : The gray scaled image where the points are computed.
 
@@ -341,24 +379,33 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
   \return the number of point which have been matched.
 */
-int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int height, unsigned int width)
+int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, 
+			       vpImagePoint &iP, 
+			       unsigned int height, unsigned int width)
 {
-  if((iP.get_i()+height) >= I.getHeight() || (iP.get_j()+width) >= I.getWidth())
+  if((iP.get_i()+height) >= I.getHeight() 
+     || (iP.get_j()+width) >= I.getWidth())
   {
     vpTRACE("Bad size for the subimage");
-    throw(vpException(vpImageException::notInTheImage ,"Bad size for the subimage"));
+    throw(vpException(vpImageException::notInTheImage ,
+		      "Bad size for the subimage"));
   }
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::createSubImage(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(), height, width, subImage);
+  vpImageTools::createSubImage(I, 
+			       (unsigned int)iP.get_i(), 
+			       (unsigned int)iP.get_j(), 
+			       height, width, subImage);
 
   int nbMatchedPoint = this->matchPoint(subImage);
 
   for(int k = 0; k < nbMatchedPoint; k++)
   {
-    (currentImagePointsList[k]).set_i((currentImagePointsList[k]).get_i() + iP.get_i());
-    (currentImagePointsList[k]).set_j((currentImagePointsList[k]).get_j() + iP.get_j());
+    (currentImagePointsList[k]).set_i((currentImagePointsList[k]).get_i()
+				      + iP.get_i());
+    (currentImagePointsList[k]).set_j((currentImagePointsList[k]).get_j()
+				      + iP.get_j());
   }
 
   return(nbMatchedPoint);
@@ -366,64 +413,94 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, vpImagePoint &iP
 
 
 /*!
-  Computes the SURF points in only a part of the current image I and try to matched them with the points in the reference list. The part of the image is a rectangle. The parameters of this rectangle must be given in pixel. Only the matched points are stored.
+
+  Computes the SURF points in only a part of the current image I and
+  try to matched them with the points in the reference list. The part
+  of the image is a rectangle. The parameters of this rectangle must
+  be given in pixel. Only the matched points are stored.
 
   \param I : The gray scaled image where the points are computed.
 
-  \param rectangle : The rectangle which defines the interesting part of the image.
+  \param rectangle : The rectangle which defines the interesting part
+  of the image.
 
   \return the number of point which have been matched.
 */
-int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle)
+int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, 
+			       const vpRect rectangle)
 {
   vpImagePoint iP;
   iP.set_i(rectangle.getTop());
   iP.set_j(rectangle.getLeft());
-  return (this->matchPoint(I, iP, (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
+  return (this->matchPoint(I, iP,
+			   (unsigned int)rectangle.getHeight(), 
+			   (unsigned int)rectangle.getWidth()));
 }
 
 
 /*!
-  This function displays the matched reference points and the matched points computed in the current image. The refrence points are displayed in the image Ireference and the matched points coming from the current image are displayed in the image Icurrent. It is possible to set Ireference and Icurrent with the same image when calling the method.
 
-  \param Ireference : The image where the matched refrence points are displayed.
+  This function displays the matched reference points and the matched
+  points computed in the current image. The refrence points are
+  displayed in the image Ireference and the matched points coming from
+  the current image are displayed in the image Icurrent. It is
+  possible to set Ireference and Icurrent with the same image when
+  calling the method.
 
-  \param Icurrent : The image where the matched points computed in the current image are displayed.
+  \param Ireference : The image where the matched refrence points are
+  displayed.
+
+  \param Icurrent : The image where the matched points computed in the
+  current image are displayed.
 */
-void vpKeyPointSurf::display(vpImage<unsigned char> &Ireference, vpImage<unsigned char> &Icurrent)
+void vpKeyPointSurf::display(vpImage<unsigned char> &Ireference, 
+			     vpImage<unsigned char> &Icurrent)
 {
   matchedPointsCurrentImageList.front();
   matchedPointsReferenceImageList.front();
 
-  if (matchedPointsCurrentImageList.nbElements() != matchedPointsReferenceImageList.nbElements())
+  if (matchedPointsCurrentImageList.nbElements() 
+      != matchedPointsReferenceImageList.nbElements())
   {
     vpTRACE("Numbers of points mismatch");
     throw(vpException(vpException::fatalError,"Numbers of points mismatch"));
   }
 
+  vpImagePoint ipRef, ipCur;
   while (!matchedPointsCurrentImageList.outside())
   {
-    vpDisplay::displayCross (Ireference, (int)((matchedPointsReferenceImageList.value())->get_i()), (int)((matchedPointsReferenceImageList.value())->get_j()),3, vpColor::red);
-    vpDisplay::displayCross (Icurrent, (int)((matchedPointsCurrentImageList.value())->get_i()), (int)((matchedPointsCurrentImageList.value())->get_j()),3, vpColor::green);
-    matchedPointsReferenceImageList.next();
-    matchedPointsCurrentImageList.next();
+      ipRef.set_i( (matchedPointsReferenceImageList.value()) ->get_i() );
+      ipRef.set_j( (matchedPointsReferenceImageList.value()) ->get_j() );
+      ipCur.set_i( (matchedPointsCurrentImageList.value()) ->get_i() );
+      ipCur.set_j( (matchedPointsCurrentImageList.value()) ->get_j() );
+      vpDisplay::displayCross (Ireference, ipRef, 3, vpColor::red);
+      vpDisplay::displayCross (Icurrent,   ipCur, 3, vpColor::green);
+      matchedPointsReferenceImageList.next();
+      matchedPointsCurrentImageList.next();
   }
 }
 
 
 /*!
-  This function displays only the matched points computed in the current image. They are displayed in the image Icurrent.
 
-  \param Icurrent : The image where the matched points computed in the current image are displayed.
+  This function displays only the matched points computed in the
+  current image. They are displayed in the image Icurrent.
+
+  \param Icurrent : The image where the matched points computed in the
+  current image are displayed.
 */
 void vpKeyPointSurf::display(vpImage<unsigned char> &Icurrent)
 {
   matchedPointsCurrentImageList.front();
 
+  vpImagePoint ipCur;
+  
   while (!matchedPointsCurrentImageList.outside())
   {
-    vpDisplay::displayCross (Icurrent, (int)((matchedPointsCurrentImageList.value())->get_i()), (int)((matchedPointsCurrentImageList.value())->get_j()),3, vpColor::green);
-    matchedPointsCurrentImageList.next();
+      ipCur.set_i( (matchedPointsCurrentImageList.value()) ->get_i() );
+      ipCur.set_j( (matchedPointsCurrentImageList.value()) ->get_j() );
+      vpDisplay::displayCross (Icurrent, ipCur, 3, vpColor::green);
+      matchedPointsCurrentImageList.next();
   }
 }
 

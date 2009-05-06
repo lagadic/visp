@@ -35,6 +35,9 @@
  *
  *****************************************************************************/
 
+#include <signal.h>
+#include <string.h>
+
 #include <visp/vpConfig.h>
 #ifdef VISP_HAVE_PTU46
 
@@ -43,9 +46,6 @@
 #include <visp/vpRobotPtu46.h>
 #include <visp/vpRobotException.h>
 #include <visp/vpDebug.h>
-
-
-#include <signal.h>
 
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */

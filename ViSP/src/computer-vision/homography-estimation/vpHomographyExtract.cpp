@@ -165,8 +165,8 @@ vpHomography::computeDisplacement (const vpHomography &aHb,
 #endif
 
   /* A verifier si necessaire!!! */
-  determinantV = vpMatrix::det33(mV);
-  determinantU = vpMatrix::det33(mU);
+  determinantV = mV.det();
+  determinantU = mU.det();
 
   s = determinantU * determinantV;
 
@@ -480,8 +480,8 @@ vpHomography::computeDisplacement (const vpHomography &aHb,
 #endif
 
   /* A verifier si necessaire!!! */
-  determinantV = vpMatrix::det33(mV);
-  determinantU = vpMatrix::det33(mU);
+  determinantV = mV.det();
+  determinantU = mU.det();
 
   s = determinantU * determinantV;
 

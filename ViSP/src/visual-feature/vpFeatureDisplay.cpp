@@ -50,6 +50,8 @@
 // math
 #include <visp/vpMath.h>
 
+#include <visp/vpImagePoint.h>
+
 
 
 /*!
@@ -65,14 +67,10 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 				    vpColor::vpColorType color)
 {
   try{
-    double uf=0, vf=0; // pixel coordinates in float
-    vpMeterPixelConversion::convertPoint(cam, x, y, uf, vf) ;
+    vpImagePoint ip; // pixel coordinates in float
+    vpMeterPixelConversion::convertPoint(cam, x, y, ip) ;
 
-    unsigned u,v ;
-    u = vpMath::round(uf) ;
-    v = vpMath::round(vf) ;
-
-    vpDisplay::displayCross(I,v,u,5,color) ;
+    vpDisplay::displayCross(I, ip, 5, color) ;
   }
   catch(...)
   {
@@ -111,20 +109,25 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 
     double a = si ;
     double b = co ;
+    vpImagePoint ip;
 
-  if (fabs(a) < fabs(b))
-  for (unsigned i=0 ; i < I.getHeight() ; i ++)
-  {
-    double  j = (-c - a*i)/b  ;
-    vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
-  }
-  else
+    if (fabs(a) < fabs(b)) {
+      for (unsigned i=0 ; i < I.getHeight() ; i ++) {
+	double  j = (-c - a*i)/b  ;
+	ip.set_i( i );
+	ip.set_j( j );
+	vpDisplay::displayPoint(I, ip, color);
+      }
+    }
+    else {
 
-  for (unsigned j=0 ; j < I.getWidth() ; j++)
-  {
-    double  i = (-c - b*j)/a  ;
-    vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
-  }
+      for (unsigned j=0 ; j < I.getWidth() ; j++) {
+	double  i = (-c - b*j)/a  ;
+	ip.set_i( i );
+	ip.set_j( j );
+	vpDisplay::displayPoint(I, ip, color);
+      }
+    }
   /*
      //  vpERROR_TRACE("********* %f %f %f %f ",si, co, theta, rho) ;
     //      vpERROR_TRACE("********* %f %f %f %f ",si, co, thetap, rhop) ;
@@ -225,11 +228,9 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 
   try{
     {
-     int number_of_points = 45 ;
+      int number_of_points = 45 ;
       const double incr = 2 * M_PI/(double)number_of_points ; // angle increment
       int i = 0 ;
-
-
 
       //	 std::cout << s.t() ;
       double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
@@ -244,7 +245,6 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 
       double e1  = atan(e) ;
 
-
       double k = 0.0 ;
 
       double ce = cos(e1) ;
@@ -252,25 +252,25 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 
       double x2  = 0;
       double y2 =0;
+      vpImagePoint ip1, ip2;
+
       for( i = 0; i < number_of_points+2 ; i++)
       {
-
-
-
 	double    x1 = a *cos(k) ; // equation of an ellipse
 	double    y1 = b *sin(k) ; // equation of an ellipse
 	double    x11 = x + ce *x1 - se *y1 ;
 	double    y11 = y + se *x1 + ce *y1 ;
 
-	x1=x11*cam.get_px() + cam.get_u0() ;
-	y1=y11*cam.get_py() + cam.get_v0() ;
+	vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
 
-	if (i>1) vpDisplay::displayLine(I,
-					(unsigned)y1, (unsigned)x1,
-					(unsigned)y2, (unsigned)x2,
-					color) ;
+	if (i > 1) {
+	  ip2.set_u( x2 );
+	  ip2.set_v( y2 );
 
-	x2 = x1 ;
+	  vpDisplay::displayLine(I, ip1, ip2, color) ;
+	}
+
+	ip2 = ip1;
 	y2 = y1 ;
 	k += incr ;
       } // end for loop
@@ -297,14 +297,10 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 				    vpColor::vpColorType color)
 {
   try{
-    double uf=0, vf=0; // pixel coordinates in float
-    vpMeterPixelConversion::convertPoint(cam, x, y, uf, vf) ;
+    vpImagePoint ip; // pixel coordinates in float
+    vpMeterPixelConversion::convertPoint(cam, x, y, ip) ;
 
-    unsigned u,v ;
-    u = vpMath::round(uf) ;
-    v = vpMath::round(vf) ;
-
-    vpDisplay::displayCross(I,v,u,5,color) ;
+    vpDisplay::displayCross(I, ip, 5, color) ;
   }
   catch(...)
   {
@@ -344,20 +340,25 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 
     double a = si ;
     double b = co ;
+    vpImagePoint ip;
 
-  if (fabs(a) < fabs(b))
-  for (unsigned i=0 ; i < I.getHeight() ; i ++)
-  {
-    double  j = (-c - a*i)/b  ;
-    vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
-  }
-  else
+    if (fabs(a) < fabs(b)) {
+      for (unsigned i=0 ; i < I.getHeight() ; i ++) {
+	double  j = (-c - a*i)/b  ;
+	ip.set_i( i );
+	ip.set_j( j );
+	vpDisplay::displayPoint(I, ip, color);
+      }
+    }
+    else {
 
-  for (unsigned j=0 ; j < I.getWidth() ; j++)
-  {
-    double  i = (-c - b*j)/a  ;
-    vpDisplay::displayPoint(I,vpMath::round(i), vpMath::round(j), color);
-  }
+      for (unsigned j=0 ; j < I.getWidth() ; j++) {
+	double  i = (-c - b*j)/a  ;
+	ip.set_i( i );
+	ip.set_j( j );
+	vpDisplay::displayPoint(I, ip, color);
+      }
+    }
   /*
      //  vpERROR_TRACE("********* %f %f %f %f ",si, co, theta, rho) ;
     //      vpERROR_TRACE("********* %f %f %f %f ",si, co, thetap, rhop) ;
@@ -458,11 +459,9 @@ void vpFeatureDisplay::displayEllipse(double x, double y,
 
   try{
     {
-     int number_of_points = 45 ;
+      int number_of_points = 45 ;
       const double incr = 2 * M_PI/(double)number_of_points ; // angle increment
       int i = 0 ;
-
-
 
       //	 std::cout << s.t() ;
       double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
@@ -477,34 +476,31 @@ void vpFeatureDisplay::displayEllipse(double x, double y,
 
       double e1  = atan(e) ;
 
-
       double k = 0.0 ;
 
       double ce = cos(e1) ;
       double se = sin(e1) ;
-
       double x2  = 0;
       double y2 =0;
+      vpImagePoint ip1, ip2;
+
       for( i = 0; i < number_of_points+2 ; i++)
       {
-
-
-
 	double    x1 = a *cos(k) ; // equation of an ellipse
 	double    y1 = b *sin(k) ; // equation of an ellipse
 	double    x11 = x + ce *x1 - se *y1 ;
 	double    y11 = y + se *x1 + ce *y1 ;
 
-	x1=x11*cam.get_px() + cam.get_u0() ;
-	y1=y11*cam.get_py() + cam.get_v0() ;
+	vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
 
-	if (i>1) vpDisplay::displayLine(I,
-					(unsigned)y1, (unsigned)x1,
-					(unsigned)y2, (unsigned)x2,
-					color) ;
+	if (i > 1) {
+	  ip2.set_u( x2 );
+	  ip2.set_v( y2 );
 
-	x2 = x1 ;
-	y2 = y1 ;
+	  vpDisplay::displayLine(I, ip1, ip2, color) ;
+	}
+
+	ip2 = ip1;
 	k += incr ;
       } // end for loop
     }

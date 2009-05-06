@@ -158,31 +158,19 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
   y.track(c1Mc) ;
   z.track(c1Mc) ;
 
-  double ox=0, oy=0, x1=0, y1=0;
+  vpImagePoint ipo;
+  vpImagePoint ipx;
 
-  vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],ox,oy) ;
-  //o.print() ;
-  //  vpTRACE("%f %f",ox,oy) ;
+  vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo) ;
 
-  vpMeterPixelConversion::convertPoint(cam,x.p[0],x.p[1],x1,y1) ;
-  vpDisplay::displayArrow(I,
-			  vpMath::round(oy), vpMath::round(ox),
-			  vpMath::round(y1), vpMath::round(x1),
-			  vpColor::green) ;
+  vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ipx) ;
+  vpDisplay::displayArrow(I, ipo, ipx, vpColor::green) ;
 
-  vpMeterPixelConversion::convertPoint(cam,y.p[0],y.p[1],x1,y1) ;
-  vpDisplay::displayArrow(I,
-			  vpMath::round(oy), vpMath::round(ox),
-			  vpMath::round(y1), vpMath::round(x1),
-			  vpColor::blue) ;
+  vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ipx) ;
+  vpDisplay::displayArrow(I, ipo, ipx, vpColor::blue) ;
 
-  vpMeterPixelConversion::convertPoint(cam,z.p[0],z.p[1],x1,y1) ;
-  vpDisplay::displayArrow(I,
-			  vpMath::round(oy), vpMath::round(ox),
-			  vpMath::round(y1), vpMath::round(x1),
-			  vpColor::red) ;
-
-
+  vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ipx) ;
+  vpDisplay::displayArrow(I, ipo, ipx, vpColor::red) ;
 }
 
 #endif

@@ -476,14 +476,12 @@ vpPose::displayModel(vpImage<unsigned char> &I,
 { 
   listP.front() ;
   vpPoint P ;
+  vpImagePoint ip;
   while (!listP.outside())
   {
     P = listP.value() ;
-    double ox =0; 
-    double oy = 0 ;
-    vpMeterPixelConversion::convertPoint(cam,P.p[0],P.p[1],ox,oy) ;
-    vpDisplay::displayCross(I, vpMath::round ( oy ), vpMath::round ( ox ), 
-			    5,col) ;
+    vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip) ;
+    vpDisplay::displayCross(I, ip, 5, col) ;
     //  std::cout << "3D oP " << P.oP.t() ;
     //  std::cout << "3D cP " << P.cP.t() ;
     //  std::cout << "2D    " << P.p.t() ;
@@ -504,14 +502,12 @@ vpPose::displayModel(vpImage<vpRGBa> &I,
 { 
   listP.front() ;
   vpPoint P ;
+  vpImagePoint ip;
   while (!listP.outside())
   {
     P = listP.value() ;
-    double ox =0; 
-    double oy = 0 ;
-    vpMeterPixelConversion::convertPoint(cam,P.p[0],P.p[1],ox,oy) ;
-    vpDisplay::displayCross(I, vpMath::round ( oy ), vpMath::round ( ox ), 
-			    5,col) ;
+    vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip) ;
+    vpDisplay::displayCross(I, ip, 5, col) ;
     //  std::cout << "3D oP " << P.oP.t() ;
     //  std::cout << "3D cP " << P.cP.t() ;
     //  std::cout << "2D    " << P.p.t() ;

@@ -752,14 +752,13 @@ vpCalibration::displayData(vpImage<unsigned char> &I, vpColor::vpColorType col)
   Lu.front() ;
   Lv.front() ;
 
-
+  vpImagePoint ip;
   for (unsigned int i =0 ; i < npt ; i++)
   {
-    double u = Lu.value() ;
-    double v = Lv.value() ;
+    ip.set_u( Lu.value() );
+    ip.set_v( Lv.value() );
 
-    vpDisplay::displayCross(I,(int)vpMath::round(v),(int)vpMath::round(u),10,col) ;
-
+    vpDisplay::displayCross(I, ip, 10, col) ;
 
     Lu.next() ;
     Lv.next() ;
@@ -783,10 +782,10 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
   double kud_dist = cam_dist.get_kud() ;
   //  double kdu_dist = cam_dist.get_kdu() ;
 
-  double u0 = cam.get_u0() ;
-  double v0 = cam.get_v0() ;
-  double px = cam.get_px() ;
-  double py = cam.get_py() ;
+//   double u0 = cam.get_u0() ;
+//   double v0 = cam.get_v0() ;
+//   double px = cam.get_px() ;
+//   double py = cam.get_py() ;
 
   LoX.front() ;
   LoY.front() ;
@@ -806,8 +805,8 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
     double x = cX/cZ ;
     double y = cY/cZ ;
 
-    double xp = u0 + x*px ;
-    double yp = v0 + y*py ;
+//     double xp = u0 + x*px ;
+//     double yp = v0 + y*py ;
 
 //     vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
 // 			    5,col) ;
@@ -822,11 +821,11 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
 
     double r2 = 1+kud_dist*(vpMath::sqr(x)+vpMath::sqr(y)) ;
 
-    xp = u0_dist + x*px_dist*r2 ;
-    yp = v0_dist + y*py_dist*r2 ;
+    vpImagePoint ip;
+    ip.set_u( u0_dist + x*px_dist*r2 );
+    ip.set_v( v0_dist + y*py_dist*r2 );
 
-    vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
-			    5,col) ;
+    vpDisplay::displayCross(I, ip, 5,col) ;
     ///////////////////////////////////////
 
 
