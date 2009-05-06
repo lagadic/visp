@@ -43,6 +43,7 @@
 #include <visp/vpRobust.h>
 #include <visp/vpTrackingException.h>
 #include <visp/vpDebug.h>
+#include <visp/vpImagePoint.h>
 
 
 void
@@ -404,11 +405,23 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
       {
 	list.end() ;
 	list.addRight(P);
-	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 25, vpColor::green) ;
-      }
-      else
-	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::red) ;
+	if (vpDEBUG_ENABLE(3)) {
+	  vpImagePoint ip;
+	  ip.set_i( P.i );
+	  ip.set_j( P.j );
 
+	  vpDisplay::displayCross(I, ip, 25, vpColor::green) ;
+	}
+      }
+      else {
+	if (vpDEBUG_ENABLE(3)) {
+	  vpImagePoint ip;
+	  ip.set_i( P.i );
+	  ip.set_j( P.j );
+	  
+	  vpDisplay::displayCross(I, ip, 10, vpColor::red) ;
+	}
+      }
     }
 
 
@@ -428,7 +441,8 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
     computeTheta(theta, K,  iP11)  ;
 
     // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(iP11.get_i()), vpMath::round(iP11.get_j()), 2, height, width))
+    if(!outOfImage(vpMath::round(iP11.get_i()), 
+		   vpMath::round(iP11.get_j()), 2, height, width))
     {
       vpMeSite P ; P = Pfirst ;
       P.init((int)iP11.get_i(), (int)iP11.get_j(), theta) ;
@@ -441,12 +455,21 @@ vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
 
 	list.front() ;
 	list.addLeft(P);
-	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 25, vpColor::green) ;
+	if (vpDEBUG_ENABLE(3)) 	{
+	  vpImagePoint ip;
+	  ip.set_i( P.i );
+	  ip.set_j( P.j );
+	  vpDisplay::displayCross(I, ip, 25, vpColor::green) ;
+	}
       }
-      else
-	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::red) ;
-
-
+      else {
+	if (vpDEBUG_ENABLE(3)) {
+	  vpImagePoint ip;
+	  ip.set_i( P.i );
+	  ip.set_j( P.j );
+	  vpDisplay::displayCross(I, ip, 10, vpColor::red) ;
+	}
+      }
     }
   }
   suppressPoints() ;

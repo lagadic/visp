@@ -88,17 +88,16 @@
 */
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
-			      const vpDot &t)
+			      const vpDot &d)
 {
   try
   {
     double x=0, y=0;
 
     vpImagePoint cog;
-    cog.set_u( t.get_u());
-    cog.set_v( t.get_v());
+    cog = d.getCog();
 
-    vpPixelMeterConversion::convertPoint(cam,cog,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y) ;
 
     s.set_x(x) ;
     s.set_y(y) ;
@@ -151,17 +150,16 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
 */
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
-			      const vpDot2 &t)
+			      const vpDot2 &d)
 {
   try
   {
     double x=0, y=0;
 
     vpImagePoint cog;
-    cog.set_u( t.get_u());
-    cog.set_v( t.get_v());
+    cog = d.getCog();
 
-    vpPixelMeterConversion::convertPoint(cam,cog,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y) ;
 
     s.set_x(x) ;
     s.set_y(y) ;
@@ -215,13 +213,13 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
 */
 void vpFeatureBuilder::create(vpFeaturePoint &s,
 			      const vpCameraParameters &cam,
-			      const vpImagePoint &iP)
+			      const vpImagePoint &ip)
 {
   try
   {
     double x=0, y=0;
 
-    vpPixelMeterConversion::convertPoint(cam,iP,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam, ip, x, y) ;
 
     s.set_x(x) ;
     s.set_y(y) ;
@@ -245,17 +243,14 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   \param t : The vpPoint used to create the vpFeaturePoint.
 */
 void
-vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
+vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &p)
 {
   try
   {
+    s.set_x( p.get_x()) ;
+    s.set_y( p.get_y()) ;
 
-
-
-    s.set_x( t.get_x()) ;
-    s.set_y( t.get_y()) ;
-
-    s.set_Z( t.cP[2]/t.cP[3])  ;
+    s.set_Z( p.cP[2]/p.cP[3])  ;
 
     if (s.get_Z() < 0)
     {
@@ -311,17 +306,16 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &t)
 */
 void
 vpFeatureBuilder::create(vpFeaturePoint &s,
-		     const vpCameraParameters &goodCam,
-		     const vpCameraParameters &wrongCam,
-		     const vpPoint &t)
+			 const vpCameraParameters &goodCam,
+			 const vpCameraParameters &wrongCam,
+			 const vpPoint &p)
 {
   try
   {
-    double x = t.p[0] ;
-    double y = t.p[1] ;
+    double x = p.p[0] ;
+    double y = p.p[1] ;
 
-     s.set_Z( t.cP[2]/t.cP[3])  ;
-
+    s.set_Z( p.cP[2]/p.cP[3])  ;
 
     double u=0, v=0;
     vpMeterPixelConversion::convertPoint(goodCam,x,y,u,v) ;
