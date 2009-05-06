@@ -267,7 +267,8 @@ public:
   Type getSubPix(double i, double j) const;
   /*!
 
-    \deprecated This method is deprecated. You should use getHeight() instead.
+    \deprecated This method is deprecated. You should use
+    vpImahe::getHeight() instead.
 
     Get the number of rows in the image.
 
@@ -281,8 +282,9 @@ public:
   */
   inline  unsigned int getRows() const { return height ; }
 
-  /*!
-    \deprecated This method is deprecated. You should use getWidth() instead.
+  /*!  
+    \deprecated This method is deprecated. You should use
+    vpImahe::getWidth() instead.
 
     Get the number of columns in the image.
 
@@ -1121,10 +1123,11 @@ Type vpImage<Type>::getValue(const vpImagePoint &ip) const
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
 
-  \deprecated Get the value of pixel at coordinates [i][j] using a bilinear
-  interpolation.
+  \deprecated This method is deprecated. You should use
+  vpImage::getSubPix() instead.
 
-  This method is deprecated. You should use getSubPix() instead.
+  Get the value of pixel at coordinates [i][j] using a bilinear
+  interpolation.
 
   \param i : Sub pixel coordinate along the rows.
   \param j : Sub pixel coordinate along the colums.
@@ -1168,7 +1171,9 @@ vpImage<Type>::get(double i, double j)  // bilinear interpolation
 }
 
 /*! 
-  \deprecated This method is deprecated. You should use getValue() instead.
+
+  \deprecated This method is deprecated. You should use
+  vpImage::getValue() instead.
 
   Retrieves pixel value from image with sub-pixel accuracy. 
 
@@ -1238,7 +1243,8 @@ Type vpImage<Type>::getPixelBI(double j, double i) const
 }
 /*! 
 
-  \deprecated This method is deprecated. You should use getValue() instead.
+  \deprecated This method is deprecated. You should use
+  vpImage::getValue() instead.
 
   Retrieves pixel value from image with sub-pixel accuracy.
 
@@ -1308,7 +1314,10 @@ Type vpImage<Type>::getSubPix(double i, double j) const
 }
 
 /*!
-  \deprecated This method is deprecated. You should use getMaxValue() instead.
+
+  \deprecated This method is deprecated. You should use
+  vpImage::getMaxValue() instead.
+
   \brief Return the maximum value within the bitmap
 */
 template<class Type>
@@ -1323,7 +1332,10 @@ Type vpImage<Type>::maxValue() const
 }
 
 /*!
-  \deprecated This method is deprecated. You should use getMaxValue() instead.
+
+  \deprecated This method is deprecated. You should use
+  vpImage::getMaxValue() instead.
+
   \brief Return the minimum value within the bitmap
 */
 template<class Type>
