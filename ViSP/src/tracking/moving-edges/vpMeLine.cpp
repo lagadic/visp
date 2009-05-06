@@ -48,6 +48,8 @@
 #include <visp/vpMeLine.h>
 #include <visp/vpRobust.h>
 #include <visp/vpTrackingException.h>
+#include <visp/vpImagePoint.h>
+#include <visp/vpMath.h>
 
 
 static void
@@ -150,6 +152,8 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 
   // sample positions at i*me->sample_step interval along the
   // line_p, starting at PSiteExt[0]
+
+  vpImagePoint ip;
   for(int i=0; i<=vpMath::round(n_sample); i++)
   {
     // If point is in the image, add to the sample list
@@ -161,7 +165,9 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 
       if(vpDEBUG_ENABLE(3))
       {
-	vpDisplay::displayCross(I,vpMath::round(is), vpMath::round(js), 2, vpColor::blue);
+	ip.set_i( is );
+	ip.set_j( js );
+	vpDisplay::displayCross(I, ip, 2, vpColor::blue);
       }
 
       list.addRight(pix);
@@ -191,19 +197,25 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
 {
   list.front();
 
+  vpImagePoint ip;
+
   while (!list.outside())
   {
     vpMeSite pix = list.value() ;
+    ip.set_i( pix.ifloat );
+    ip.set_j( pix.jfloat );
+
 
     if (pix.suppress==3)
-      vpDisplay::displayCross(I,vpMath::round(pix.ifloat), vpMath::round(pix.jfloat), 5, vpColor::green);
+      vpDisplay::displayCross(I, ip, 5, vpColor::green);
     else
-      vpDisplay::displayCross(I,vpMath::round(pix.ifloat), vpMath::round(pix.jfloat), 5, col);
+      vpDisplay::displayCross(I, ip, 5, col);
 
     //vpDisplay::flush(I);
     list.next() ;
   }
 
+  vpImagePoint ip1, ip2;
 
   if (fabs(a) < fabs(b)) {
     double i1, j1, i2, j2;
@@ -211,7 +223,12 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
     j1 = (-a*i1 -c) / b;
     i2 = I.getHeight() - 1.0;
     j2 = (-a*i2 -c) / b;
-    vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
+
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+    ip2.set_i( i2 );
+    ip2.set_j( j2 );
+    vpDisplay::displayLine(I, ip1, ip2, col);
     //vpDisplay::flush(I);
 
   }
@@ -221,11 +238,22 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
     i1 = -(b * j1 + c) / a;
     j2 = I.getWidth() - 1.0;
     i2 = -(b * j2 + c) / a;
-    vpDisplay::displayLine(I, vpMath::round(i1), vpMath::round(j1), vpMath::round(i2), vpMath::round(j2), col);
+
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+    ip2.set_i( i2 );
+    ip2.set_j( j2 );
+    vpDisplay::displayLine(I, ip1, ip2, col);
     //vpDisplay::flush(I);
   }
-  vpDisplay::displayCross(I,vpMath::round(PExt[0].ifloat), vpMath::round(PExt[0].jfloat), 10, vpColor::green);
-  vpDisplay::displayCross(I,vpMath::round(PExt[1].ifloat), vpMath::round(PExt[1].jfloat), 10, vpColor::green);
+
+  ip1.set_i( PExt[0].ifloat );
+  ip1.set_j( PExt[0].jfloat );
+  vpDisplay::displayCross(I, ip1, 10, vpColor::green);
+
+  ip1.set_i( PExt[1].ifloat );
+  ip1.set_j( PExt[1].jfloat );
+  vpDisplay::displayCross(I, ip1, 10, vpColor::green);
   //vpDisplay::flush(I) ;
 }
 
@@ -240,16 +268,16 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I)
 {
-  unsigned i1, j1, i2, j2 ;
+  vpImagePoint ip1, ip2;
 
   std::cout << "Click on the line first point..." <<std::endl ;
-  while (vpDisplay::getClick(I,i1,j1)!=true) ;
+  while (vpDisplay::getClick(I, ip1)!=true) ;
   std::cout << "Click on the line second point..." <<std::endl ;
-  while (vpDisplay::getClick(I,i2,j2)!=true) ;
+  while (vpDisplay::getClick(I, ip2)!=true) ;
 
   try
   {
-    initTracking(I, i1, j1,  i2,  j2) ;
+    initTracking(I, ip1, ip2) ;
   }
   catch(...)
   {
@@ -727,38 +755,36 @@ vpMeLine::leastSquare()
 
 /*!
 	
-  Initilization of the tracking. The line is defined thanks to the
+  Initialization of the tracking. The line is defined thanks to the
   coordinates of two points.
 
   \param I : Image in which the line appears.
-  \param i1 : i coordinate of the first point.
-  \param j1 : j coordinate of the first point.
-  \param i2 : i coordinate of the second point.
-  \param j2 : j coordinate of the second point.
+  \param ip1 : Coordinates of the first point.
+  \param ip2 : Coordinates of the second point.
 */
 void
 vpMeLine::initTracking(vpImage<unsigned char> &I,
-		       unsigned i1,unsigned j1,
-		       unsigned i2, unsigned j2)
+		       const vpImagePoint &ip1,
+		       const vpImagePoint &ip2)
 {
   vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<std::endl ;
 
   int i1s, j1s, i2s, j2s;
 
-  i1s = (int)i1;
-  i2s = (int)i2;
-  j1s = (int)j1;
-  j2s = (int)j2;
+  i1s = vpMath::round( ip1.get_i() );
+  i2s = vpMath::round( ip2.get_i() );
+  j1s = vpMath::round( ip1.get_j() );
+  j2s = vpMath::round( ip1.get_j() );
 
   try{
 
     //  1. On fait ce qui concerne les droites (peut etre vide)
     {
       // Points extremites
-      PExt[0].ifloat = i1 ;
-      PExt[0].jfloat = j1 ;
-      PExt[1].ifloat = i2 ;
-      PExt[1].jfloat = j2 ;
+      PExt[0].ifloat = (float)ip1.get_i() ;
+      PExt[0].jfloat = (float)ip1.get_j() ;
+      PExt[1].ifloat = (float)ip2.get_i() ;
+      PExt[1].jfloat = (float)ip2.get_j() ;
 
       double angle = atan2((double)(i1s-i2s),(double)(j1s-j2s)) ;
       a = cos(angle) ;
@@ -924,6 +950,8 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
   int  memory_range = me->range ;
   me->range = 1 ;
 
+  vpImagePoint ip;
+
   for (int i=0 ; i < 3 ; i++)
   {
     P.ifloat = P.ifloat + di*sample ; P.i = (int)P.ifloat ;
@@ -936,10 +964,20 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
       if (P.suppress ==0)
       {
 	list += P ;
-	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
+	if (vpDEBUG_ENABLE(3)) {
+	  ip.set_i( P.i );
+	  ip.set_j( P.j );
+
+	  vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
+	}
       }
-      else
-	if (vpDEBUG_ENABLE(3)) 	vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::blue) ;
+      else {
+	if (vpDEBUG_ENABLE(3)) {
+	  ip.set_i( P.i );
+	  ip.set_j( P.j );
+	  vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
+	}
+      }
     }
   }
 
@@ -957,10 +995,19 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
       if (P.suppress ==0)
       {
 	list += P ;
-	if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
+	if (vpDEBUG_ENABLE(3)) {
+	  ip.set_i( P.i );
+	  ip.set_j( P.j );
+	  vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
+	}
       }
-      else
-	if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::blue) ;
+      else {
+	if (vpDEBUG_ENABLE(3)) {
+	  ip.set_i( P.i );
+	  ip.set_j( P.j );
+	  vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
+	}
+      }
     }
   }
 
@@ -1245,8 +1292,17 @@ vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
 
   if (vpDEBUG_ENABLE(2))
   {
-    vpDisplay::displayArrow(I,i,j,i1,j1, vpColor::green) ;
-    vpDisplay::displayArrow(I,i,j,i2,j2, vpColor::red) ;
+    vpImagePoint ip, ip1, ip2;
+
+    ip.set_i( i );
+    ip.set_j( j );
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+    ip2.set_i( i2 );
+    ip2.set_j( j2 );
+
+    vpDisplay::displayArrow(I, ip, ip1, vpColor::green) ;
+    vpDisplay::displayArrow(I, ip, ip2, vpColor::red) ;
   }
 }
 
@@ -1279,6 +1335,174 @@ vpMeLine::getTheta() const
 	
   Get the extremities of the line.
 
+  \param ip1 : Coordinates of the first extremity.
+  \param ip2 : Coordinates of the second extremity.
+*/
+void
+vpMeLine::getExtremities(vpImagePoint &ip1, vpImagePoint &ip2)
+{
+  /*Return the coordinates of the extremities of the line*/
+  ip1.set_i( PExt[0].ifloat );
+  ip1.set_j( PExt[0].jfloat );
+  ip2.set_i( PExt[1].ifloat );
+  ip2.set_j( PExt[1].jfloat );
+}
+
+
+/*!
+	
+  Computes the intersection point of two lines. The result is given in
+  the (i,j) frame.
+
+  \param line1 : The first line.
+  \param line2 : The second line.
+  \param ip : The coordinates of the intersection point.
+
+  \return Returns a boolean value which depends on the computation
+  success. True means that the computation ends successfully.
+*/
+bool
+vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, 
+		       vpImagePoint &ip)
+{
+  double denom = 0;
+  double a1 = line1.a;
+  double b1 = line1.b;
+  double c1 = line1.c;
+  double a2 = line2.a;
+  double b2 = line2.b;
+  double c2 = line2.c;
+  double i=0, j=0;
+
+  try{
+
+    if (a1 > 0.1)
+      {
+	denom = (-(a2/a1) * b1 + b2);
+
+	if (denom == 0)
+	  {
+	    std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
+	    return (false);
+	  }
+
+	if (denom != 0 )
+	  {
+	    j = ( (a2/a1)*c1 - c2 ) / denom;
+	    i = (-b1*j - c1) / a1;
+	  }
+      }
+
+    else
+      {
+	denom = (-(b2/b1) * a1 + a2);
+
+	if (denom == 0)
+	  {
+	    std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
+	    return (false);
+	  }
+
+	if (denom != 0 )
+	  {
+	    i = ( (b2/b1)*c1 - c2 ) / denom;
+	    j = (-a1*i - c1) / b1;
+	  }
+      }
+    ip.set_i( i );
+    ip.set_j( j );
+    
+    return (true);
+  }
+  catch(...)
+    {
+      return (false);
+    }
+}
+
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+	
+  \deprecated This method is deprecated. You should use
+  vpMeLine::getExtremities(vpImage<unsigned char> &, const vpImagePoint &,
+  const vpImagePoint &) instead.
+
+  Initialization of the tracking. The line is defined thanks to the
+  coordinates of two points.
+
+  \param I : Image in which the line appears.
+  \param i1 : i coordinate of the first point.
+  \param j1 : j coordinate of the first point.
+  \param i2 : i coordinate of the second point.
+  \param j2 : j coordinate of the second point.
+*/
+void
+vpMeLine::initTracking(vpImage<unsigned char> &I,
+		       unsigned i1,unsigned j1,
+		       unsigned i2, unsigned j2)
+{
+  vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<std::endl ;
+
+  int i1s, j1s, i2s, j2s;
+
+  i1s = (int)i1;
+  i2s = (int)i2;
+  j1s = (int)j1;
+  j2s = (int)j2;
+
+  try{
+
+    //  1. On fait ce qui concerne les droites (peut etre vide)
+    {
+      // Points extremites
+      PExt[0].ifloat = i1 ;
+      PExt[0].jfloat = j1 ;
+      PExt[1].ifloat = i2 ;
+      PExt[1].jfloat = j2 ;
+
+      double angle = atan2((double)(i1s-i2s),(double)(j1s-j2s)) ;
+      a = cos(angle) ;
+      b = sin(angle) ;
+
+      // Real values of a, b can have an other sign. So to get the good values
+      // of a and b in order to initialise then c, we call track(I) just below
+
+      computeDelta(delta,i1s,j1s,i2s,j2s) ;
+      delta_1 = delta;
+
+      //      vpTRACE("a: %f b: %f c: %f -b/a: %f delta: %f", a, b, c, -(b/a), delta);
+
+      sample(I) ;
+
+    }
+    //  2. On appelle ce qui n'est pas specifique
+    {
+      vpMeTracker::initTracking(I) ;
+    }
+    // Call track(I) to give the good sign to a and b and to initialise c which can be used for the display
+    track(I);
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+  vpCDEBUG(1) <<" end vpMeLine::initTracking()"<<std::endl ;
+}
+
+/*!
+	
+  \deprecated This method is deprecated. You should use
+  vpMeLine::getExtremities(vpImagePoint &, vpImagePoint &) instead.
+
+  Get the extremities of the line.
+
   \param i1 : i coordinate of the first extremity.
   \param j1 : j coordinate of the first extremity.
   \param i2 : i coordinate of the second extremity.
@@ -1294,9 +1518,11 @@ vpMeLine::getExtremities(double& i1, double& j1, double& i2, double& j2)
   j2 = PExt[1].jfloat;
 }
 
-
 /*!
 	
+  \deprecated This method is deprecated. You should use
+  vpMeLine::const vpMeLine &, const vpMeLine &, vpImagePoint &)
+
   Computes the intersection point of two lines. The result is given in
   the (i,j) frame.
 
@@ -1362,3 +1588,5 @@ vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
       return (false);
     }
 }
+
+#endif

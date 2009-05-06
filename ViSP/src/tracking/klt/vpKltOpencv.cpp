@@ -375,21 +375,23 @@ void vpKltOpencv::track(const IplImage *I)
 void vpKltOpencv::display(const vpImage<unsigned char> &I,
 			  vpColor::vpColorType color)
 {
-  int x,y ;
   if ((features == 0) || (I.bitmap==0) || (!initialized))
     {
       vpERROR_TRACE(" Memory problem ");
       throw(vpException(vpException::memoryAllocationError," Memory problem"));
     }
 
+  vpImagePoint ip;
   for (int i = 0 ; i < countFeatures ; i++)
     {
-      x = vpMath::round(features[i].x );
-      y = vpMath::round(features[i].y );
-      vpDisplay::displayCross(I,y,x,10,color) ;
+      ip.set_u( vpMath::round(features[i].x ) );
+      ip.set_v( vpMath::round(features[i].y ) );
+      vpDisplay::displayCross(I, ip, 10, color) ;
       char id[10];
       sprintf(id, "%ld", featuresid[i]);
-      vpDisplay::displayCharString(I, y, x+5, id, vpColor::red);
+      
+      ip.set_u( vpMath::round( features[i].x + 5 ) );
+      vpDisplay::displayCharString(I, ip, id, vpColor::red);
     }
 }
 

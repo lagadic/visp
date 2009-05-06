@@ -228,15 +228,16 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
   }
   if (I[v][u] >= gray_level_min && I[v][u] <= gray_level_max)
   {
-    if (graphics==true)
-    {
-      //      printf("u %d v %d\n", u, v);
-      vpDisplay::displayPoint(I,v,u,vpColor::green) ;
-      //vpDisplay::flush(I);
-    }
     vpImagePoint ip;
     ip.set_u(u);
     ip.set_v(v);
+
+    if (graphics==true)
+    {
+      //      printf("u %d v %d\n", u, v);
+      vpDisplay::displayPoint(I, ip, vpColor::green) ;
+      //vpDisplay::flush(I);
+    }
 
     ip_edges_list += ip;
 
