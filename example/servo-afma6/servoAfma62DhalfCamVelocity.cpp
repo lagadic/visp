@@ -63,6 +63,7 @@
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -180,17 +181,19 @@ main()
         line[i].track(I) ;
       }
 
-      //Compute the position of the four corners. The goal is to compute the pose
+      // Compute the position of the four corners. The goal is to
+      // compute the pose
+      vpImagePoint ip;
       for (i=0 ; i < nbline ; i++)
       {
-        double k=0, l=0, x=0, y=0;
+        double x=0, y=0;
 
-        if (!vpMeLine::intersection (line[i%nbline], line[(i+1)%nbline], k, l))
+        if (!vpMeLine::intersection (line[i%nbline], line[(i+1)%nbline], ip))
         {
           exit(-1);
         }
 
-        vpPixelMeterConversion::convertPoint(cam, l, k, x, y)  ;
+        vpPixelMeterConversion::convertPoint(cam, ip, x, y)  ;
 
         point[i].set_x(x) ;
         point[i].set_y(y) ;
@@ -285,14 +288,14 @@ main()
 
 		      line[i].display(I,vpColor::green);
 
-	              double k=0, l=0, x=0, y=0;
+	              double x=0, y=0;
 
-	              if (!vpMeLine::intersection (line[i%nbline], line[(i+1)%nbline], k, l))
+	              if (!vpMeLine::intersection (line[i%nbline], line[(i+1)%nbline], ip))
 	              {
 	                 exit(-1);
 	              }
 
-		      vpPixelMeterConversion::convertPoint(cam, l, k, x, y)  ;
+		      vpPixelMeterConversion::convertPoint(cam, ip, x, y)  ;
 
 	              point[i].set_x(x);
 	              point[i].set_y(y);

@@ -70,6 +70,7 @@
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
 
@@ -130,15 +131,13 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
   vpHomogeneousMatrix cMo_lagrange;  // computed pose with dementhon
   vpRotationMatrix cRo;
   vpPose pose;
+  vpImagePoint cog;
   for (int i=0; i < ndot; i ++) {
 
     double x=0, y=0;
 
-//     std::cout << "Pixel " << i <<": " <<  dot[i].get_u()
-// 	      << " " << dot[i].get_v() << std::endl;
-    vpPixelMeterConversion::convertPoint(cam,
-					 dot[i].get_u(), dot[i].get_v(),
-					 x, y) ; //pixel to meter conversion
+    cog = dot[i].getCog();
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y) ; //pixel to meter conversion
 //     std::cout << "point cam: " << i << x << " " << y << std::endl;
     point[i].set_x(x) ;//projection perspective          p
     point[i].set_y(y) ;
@@ -287,15 +286,14 @@ main()
 
 
     vpDot2 dot[4] ;
+    vpImagePoint cog;
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
 	      << std::endl;
     for (i=0 ; i < 4 ; i++) {
       dot[i].initTracking(I) ;
-      vpDisplay::displayCross(I,
-			      (unsigned int)dot[i].get_v(),
-			      (unsigned int)dot[i].get_u(),
-			      10, vpColor::blue) ;
+      cog = dot[i].getCog();
+      vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
       vpDisplay::flush(I);
     }
 
@@ -383,12 +381,11 @@ main()
       for (i=0 ; i < 4 ; i++) {
 	// Achieve the tracking of the dot in the image
 	dot[i].track(I) ;
+	// Get the dot cog
+	cog = dot[i].getCog();
 	// Display a green cross at the center of gravity position in the
 	// image
-	vpDisplay::displayCross(I,
-				(unsigned int)dot[i].get_v(),
-				(unsigned int)dot[i].get_u(),
-				10, vpColor::green) ;
+	vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
       }
 
       // During the servo, we compute the pose using LOWE method. For the

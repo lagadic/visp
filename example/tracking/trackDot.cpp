@@ -61,6 +61,7 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
@@ -374,10 +375,13 @@ main(int argc, const char ** argv)
       d.initTracking(I) ;
     }
     else {
-      // dot location can also be specified explicitely in the initTracking
-      // method  : d.initTracking(I,u,v)  where u is the column index and v is
-      // the row index
-      d.initTracking(I, 160, 212) ;
+      // dot location can also be specified explicitely in the
+      // initTracking method : d.initTracking(I,ip) where ip is the
+      // image point from which the dot is searched
+      vpImagePoint ip;
+      ip.set_u( 160 );
+      ip.set_v( 212 );     
+      d.initTracking(I, ip) ;
     }
   }
   catch(...)
@@ -387,6 +391,7 @@ main(int argc, const char ** argv)
     }
 
   try {
+    vpImagePoint cog;
     while (iter < opt_first + opt_nimages*opt_step) {
 	    // set the new image name
 	    if (opt_ppath.empty()){
@@ -414,7 +419,8 @@ main(int argc, const char ** argv)
 
 	    std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): "
 		      << std::endl;
-	    std::cout << d.get_u() << " " << d.get_v()
+	    cog = d.getCog();
+	    std::cout << cog.get_u() << " " << cog.get_v()
 	        << " - "
 	        << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
 	    std::cout << "Size:" << std::endl;
@@ -444,7 +450,7 @@ main(int argc, const char ** argv)
 	      // If the method name is postfixe with _uv the specification is :
 	      //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
 
-	      vpDisplay::displayCross(I,(int)d.get_v(), (int)d.get_u(),10,vpColor::red) ;
+	      vpDisplay::displayCross(I, cog, 10, vpColor::red) ;
 	      // flush the X11 buffer
 	      vpDisplay::flush(I) ;
 	    }

@@ -298,17 +298,14 @@ main(int argc, const char ** argv)
   else {
     // Create a list of points to automate the test
     int n=5 ;
-    unsigned *i, *j ;
-    i = new unsigned[n] ;
-    j = new unsigned[n] ;
-    i[0] = 39; j[0] = 136;
-    i[1] = 42; j[1] = 83;
-    i[2] = 86; j[2] = 55;
-    i[3] = 132; j[3] = 72;
-    i[4] = 145; j[4] = 134;
-    E1.initTracking(I, n, i, j) ;
-    delete [] i ;
-    delete [] j ;
+    vpImagePoint *ip = new vpImagePoint [n];
+    ip[0].set_i( 39 ); ip[0].set_j( 136 );
+    ip[1].set_i( 42 ); ip[1].set_j( 83 );
+    ip[2].set_i( 86 ); ip[2].set_j( 55 );
+    ip[3].set_i( 132 ); ip[3].set_j( 72 );
+    ip[4].set_i( 145 ); ip[4].set_j( 134 );
+    E1.initTracking(I, n, ip) ;
+    delete [] ip ;
   }
 
   if (opt_display) {

@@ -76,6 +76,7 @@
 #include <visp/vpMeterPixelConversion.h>
 
 #include <visp/vpImage.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
@@ -232,11 +233,10 @@ main(int argc, const char ** argv)
   }
   vpProjectionDisplay externalview ;
 
-  vpCameraParameters cam ;
   double px, py ; px = py = 500 ;
   double u0, v0 ; u0 = 150, v0 = 160 ;
 
-  cam.init(px,py,u0,v0);
+  vpCameraParameters cam(px,py,u0,v0);
 
   int i ;
   vpServo task ;
@@ -466,7 +466,11 @@ main(int argc, const char ** argv)
     flog << std::endl;
 
     if (iter == 1) {
-      vpDisplay::displayCharString(Iint, 10,10, 
+      vpImagePoint ip;
+      ip.set_i( 10 );
+      ip.set_j( 10 );
+
+      vpDisplay::displayCharString(Iint, ip, 
 				   "A click to continue...",vpColor::red);
       vpDisplay::getClick(Iint);
       vpDisplay::flush(Iint);

@@ -53,11 +53,15 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpColor.h>
 #include <visp/vpDisplayGTK.h>
+#include <visp/vpImagePoint.h>
 
 int main()
 {
   // Create a grey level image
   vpImage<unsigned char> I ;
+
+  // Create image points for pixel coordinates
+  vpImagePoint ip, ip1, ip2;
 
   // Load a grey image from the disk
   std::string filename = "/tmp/ViSP-images/Klimt/Klimt.pgm";
@@ -74,31 +78,52 @@ int main()
   // Display the image
   vpDisplay::display(I) ;
 
-  // Display in overlay a red cross at position 10,10 in the
-  // image. The lines are 10 pixels long
-  vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
+  // Display in overlay a red cross at position 100,10 in the
+  // image. The lines are 20 pixels long
+  ip.set_i( 100 );
+  ip.set_j( 10 );
+  vpDisplay::displayCross(I, ip, 20, vpColor::red) ;
 
   // Display in overlay a horizontal red line
-  vpDisplay::displayLine(I,10,0,10,I.getWidth(), vpColor::red) ;
+  ip1.set_i( 10 );
+  ip1.set_j( 0 );
+  ip2.set_i( 10 );
+  ip2.set_j( I.getWidth() );
+  vpDisplay::displayLine(I, ip1, ip2, vpColor::red) ;
 
   // Display in overlay a vertical green dot line
-  vpDisplay::displayDotLine(I,0,20,I.getWidth(),20,vpColor::green) ;
+  ip1.set_i( 0 );
+  ip1.set_j( 20 );
+  ip2.set_i( I.getWidth() );
+  ip2.set_j( 20 );
+  vpDisplay::displayDotLine(I, ip1, ip2, vpColor::green) ;
 
   // Display in overlay a blue arrow
-  vpDisplay::displayArrow(I,0,0,100,100,vpColor::blue) ;
+  ip1.set_i( 0 );
+  ip1.set_j( 0 );
+  ip2.set_i( 100 );
+  ip2.set_j( 100 );
+  vpDisplay::displayArrow(I, ip1, ip2, vpColor::blue) ;
 
   // Display in overlay some circles. The position of the center is 200, 200
   // the radius is increased by 20 pixels for each circle
-  for (unsigned i=0 ; i < 5 ; i++)
-    vpDisplay::displayCircle(I,200,200,20*i,vpColor::yellow) ;
+  for (unsigned i=0 ; i < 5 ; i++) {
+    ip.set_i( 200 );
+    ip.set_j( 200 );
+    vpDisplay::displayCircle(I, ip, 20*i, vpColor::yellow) ;
+  }
 
   // Display in overlay a rectangle. 
   // The position of the top left corner is 300, 200.
   // The width is 200. The height is 100.
-  vpDisplay::displayRectangle(I,300,200,200,100,vpColor::orange) ;
+  ip.set_i( 300 );
+  ip.set_j( 200 );  
+  vpDisplay::displayRectangle(I, ip, 200, 100,vpColor::orange) ;
 
   // Display in overlay a yellow string
-  vpDisplay::displayCharString(I, 85, 100,
+  ip.set_i( 85 );
+  ip.set_j( 100 );  
+  vpDisplay::displayCharString(I, ip,
 			       "ViSP is a marvelous software",
 			       vpColor::yellow) ;
   //Flush the display : without this line nothing will appear on the screen

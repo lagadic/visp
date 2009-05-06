@@ -53,6 +53,7 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
@@ -361,6 +362,7 @@ main(int argc, const char ** argv)
   // contour of the dot is parsed)
 
   vpDot2 d ;
+  vpImagePoint cog;
 
   if (opt_display) {
     // by using setGraphics, we request to see the all the pixel of the dot
@@ -380,12 +382,11 @@ main(int argc, const char ** argv)
   d.setComputeMoments(true);
   d.setGrayLevelPrecision(0.90);
 
-  // tracking is initalized
-  // if no other parameters are given to the iniTracking(..) method
-  // a right mouse click on the dot is expected
-  // dot location can also be specified explicitely in the initTracking
-  // method  : d.initTracking(I,u,v)  where u is the column index and v is
-  // the row index
+  // tracking is initalized if no other parameters are given to the
+  // iniTracking(..) method a right mouse click on the dot is expected
+  // dot location can also be specified explicitely in the
+  // initTracking method : d.initTracking(I,ip) where ip is the image
+  // point from which the dot is searched
 
   try{
     if (opt_display && opt_click_allowed) {
@@ -393,11 +394,15 @@ main(int argc, const char ** argv)
       d.initTracking(I) ;
     }
     else {
-      d.initTracking(I, 160, 212) ;
+      vpImagePoint ip;
+      ip.set_u( 160 );
+      ip.set_v( 212 );
+      d.initTracking(I, ip) ;
     }
     if (1) {
       std::cout << "COG: " << std::endl;
-      std::cout << "  u: " << d.get_u() << " v: " << d.get_v()
+      cog = d.getCog();
+      std::cout << "  u: " << cog.get_u() << " v: " << cog.get_v()
 	   << " - "
 	   << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
       std::cout << "Size:" << std::endl;
@@ -456,7 +461,8 @@ main(int argc, const char ** argv)
 
 	std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): "
 		  << std::endl;
-	std::cout << "  u: " << d.get_u() << " v: " << d.get_v()
+	cog = d.getCog();
+	std::cout << "  u: " << cog.get_u() << " v: " << cog.get_v()
 		  << " - "
 		  << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
 	std::cout << "Size:" << std::endl;
@@ -491,7 +497,7 @@ main(int argc, const char ** argv)
 	  // If the method name is postfixe with _uv the specification is :
 	  //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
 
-	  vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),10,vpColor::green) ;
+	  vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
 	  // flush the X11 buffer
 
 	  vpDisplay::flush(I) ;

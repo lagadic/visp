@@ -259,6 +259,7 @@ main(int argc, const char ** argv)
 
   // Create a grey level image
   vpImage<unsigned char> I ;
+  vpImagePoint ip, ip1, ip2;
 
   // Load a grey image from the disk
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
@@ -278,37 +279,70 @@ main(int argc, const char ** argv)
 
     // Display in overlay a red cross at position 10,10 in the
     // image. The lines are 10 pixels long
-    vpDisplay::displayCross(I, 100,10, 20, vpColor::red) ;
+    ip.set_i( 100 );
+    ip.set_j( 10 );
+    
+    vpDisplay::displayCross(I, ip, 20, vpColor::red) ;
 
     // Display in overlay horizontal red lines
-    for (unsigned i=0 ; i < I.getRows() ; i+=20)
-      vpDisplay::displayLine(I,i,0,i,I.getCols(), vpColor::red) ;
+    for (unsigned i=0 ; i < I.getHeight() ; i+=20) {
+      ip1.set_i( i );
+      ip1.set_j( 0 );
+      ip2.set_i( i );
+      ip2.set_j( I.getWidth() );
+      vpDisplay::displayLine(I, ip1, ip2, vpColor::red) ;
+    }
 
     // Display a ligne in the diagonal
-    vpDisplay::displayLine(I, -10, -10, I.getHeight() + 10, I.getWidth() +10,
-			   vpColor::red) ;
+    ip1.set_i( -10 );
+    ip1.set_j( -10 );
+    ip2.set_i( I.getHeight() + 10 );
+    ip2.set_j( I.getWidth()  + 10 );
+    
+    vpDisplay::displayLine(I, ip1, ip2, vpColor::red) ;
 
     // Display in overlay vertical green dot lines
-    for (unsigned i=0 ; i < I.getCols() ; i+=20)
-      vpDisplay::displayDotLine(I,0,i,I.getCols(), i,vpColor::green) ;
+    for (unsigned i=0 ; i < I.getWidth() ; i+=20) {
+      ip1.set_i( 0 );
+      ip1.set_j( i );
+      ip2.set_i( I.getWidth() );
+      ip2.set_j( i );
+      vpDisplay::displayDotLine(I, ip1, ip2, vpColor::green) ;
+    }
 
     // Display a rectangle 
-    vpDisplay::displayRectangle(I, I.getRows()-45, -10, 60, 80, vpColor::orange) ;
+    ip.set_i( I.getHeight() - 45 );
+    ip.set_j( -10 );
+    vpDisplay::displayRectangle(I, ip, 60, 80, vpColor::orange) ;
     
     // Display in overlay a blue arrow
-    vpDisplay::displayArrow(I,0,0,100,100,vpColor::blue) ;
+    ip1.set_i( 0 );
+    ip1.set_j( 0 );
+    ip2.set_i( 100 );
+    ip2.set_j( 100 );
+    vpDisplay::displayArrow(I, ip1, ip2, vpColor::blue) ;
 
     // Display in overlay some circles. The position of the center is 200, 200
     // the radius is increased by 20 pixels for each circle
-    for (int i=0 ; i < 100 ; i+=20)
-      vpDisplay::displayCircle(I, 80, 80,20+i,vpColor::yellow) ;
-    
-    vpDisplay::displayCircle(I, -10, 300,100,vpColor::yellow) ;
 
+    for (unsigned int i=0 ; i < 100 ; i+=20) {
+      ip.set_i( 80 );
+      ip.set_j( 80 );
+      vpDisplay::displayCircle(I, ip, 20+i, vpColor::yellow) ;
+    }
+
+    ip.set_i( -10 );
+    ip.set_j( 300 );
+    vpDisplay::displayCircle(I, ip, 100,vpColor::yellow) ;
+    
     // Display in overlay a yellow string
-    vpDisplay::displayCharString(I, 85, 100,
+    ip.set_i( 85 );
+    ip.set_j( 100 );
+    vpDisplay::displayCharString(I, ip,
 				 "ViSP is a marvelous software",
 				 vpColor::yellow) ;
+    //Flush the display    
+    vpDisplay::flush(I);
 
     // Create a color image
     vpImage<vpRGBa> Ioverlay ;
@@ -330,8 +364,6 @@ main(int argc, const char ** argv)
     vpDisplay::close(I);
   }
 
-  vpTRACE("-------------------------------------");
-
   // Create a color image
   vpImage<vpRGBa> Irgba ;
 
@@ -352,26 +384,30 @@ main(int argc, const char ** argv)
     vpDisplay::display(Irgba) ;
     vpDisplay::flush(Irgba) ;
 
-    // If click is allowed, wait for a blocking mouse click to display
-    // a cross at the clicked pixel position
+    // If click is allowed, wait for a blocking mouse click to display a cross
+    // at the clicked pixel position
     if (opt_click_allowed) {
       std::cout << "\nA click to display a cross..." << std::endl;
-      unsigned i,j;
       // Blocking wait for a click. Get the position of the selected pixel
       // (i correspond to the row and j to the column coordinates in the image)
-      vpDisplay::getClick(Irgba, i, j);
+      vpDisplay::getClick(Irgba, ip);
       // Display a red cross on the click pixel position
-      std::cout << "Cross position: " << i << ", " << j << std::endl;
-      vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
+      std::cout << "Cross position: " << ip << std::endl;
+      vpDisplay::displayCross(Irgba, ip, 15, vpColor::red);
     }
     else {
-      unsigned i=10,j=20;
+      ip.set_i( 10 );
+      ip.set_j( 20 );
       // Display a red cross at position i, j (i correspond to the row
       // and j to the column coordinates in the image)
-      std::cout << "Cross position: " << i << ", " << j << std::endl;
-      vpDisplay::displayCross(Irgba,i,j,15,vpColor::red);
+      std::cout << "Cross position: " << ip << std::endl;
+      vpDisplay::displayCross(Irgba, ip, 15, vpColor::red);
 
     }
+    // Flush the display. Sometimes the display content is
+    // bufferized. Force to display the content that has been bufferized.
+    vpDisplay::flush(Irgba);
+
     // If click is allowed, wait for a blocking mouse click to exit.
     if (opt_click_allowed) {
       std::cout << "\nA click to exit the program..." << std::endl;

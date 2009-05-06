@@ -60,6 +60,7 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
@@ -299,8 +300,14 @@ main(int argc, const char ** argv)
 
   if (opt_display && opt_click_allowed)
     L1.initTracking(I) ;
-  else
-    L1.initTracking(I, 96, 191, 122, 211) ;
+  else {
+    vpImagePoint ip1, ip2;
+    ip1.set_i( 96 );
+    ip1.set_j( 191 );
+    ip2.set_i( 122 );
+    ip2.set_j( 211 );
+    L1.initTracking(I, ip1, ip2) ;
+  }
 
   if (opt_display)
     L1.display(I, vpColor::green) ;

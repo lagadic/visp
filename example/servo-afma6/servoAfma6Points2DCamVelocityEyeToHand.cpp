@@ -66,6 +66,7 @@
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
 
@@ -128,6 +129,7 @@ main()
       int nbPoint =7 ;
 
       vpDot dot[nbPoint] ;
+      vpImagePoint cog;
 
       for (i=0 ; i < nbPoint ; i++)
 	{
@@ -158,10 +160,9 @@ main()
       pose.clearPoint() ;
       for (i=0 ; i < nbPoint ; i++)
 	{
+	  cog = dot[i].getCog();
 	  double x=0, y=0;
-	  vpPixelMeterConversion::convertPoint(cam,
-					       dot[i].get_u(), dot[i].get_v(),
-					       x,y)  ;
+	  vpPixelMeterConversion::convertPoint(cam, cog, x, y)  ;
 	  point[i].set_x(x) ;
 	  point[i].set_y(y) ;
 	  pose.addPoint(point[i]) ;
@@ -267,17 +268,22 @@ main()
       std::cin >> alpha ;
       std::cout << "beta 5" << std::endl;
       std::cin >> beta ;
-      vpList<double> Lu, Lv ;
+      vpList<vpImagePoint> Lcog ;
+      vpImagePoint ip;
       while(error > convergence_threshold)
 	{
 	  std::cout << "---------------------------------------------" << iter++ <<std::endl ;
 
 	  g.acquire(I) ;
 	  vpDisplay::display(I) ;
-	  vpDisplay::displayCharString(I,265,150,
+	  ip.set_i( 265 );
+	  ip.set_j( 150 );
+	  vpDisplay::displayCharString(I, ip,
 				       "Eye-To-Hand Visual Servoing",
 				       vpColor::green) ;
-	  vpDisplay::displayCharString(I,280,150,
+	  ip.set_i( 280 );
+	  ip.set_j( 150 );
+	  vpDisplay::displayCharString(I, ip,
 				       "IRISA-INRIA Rennes, Lagadic project",
 				       vpColor::green) ;
 	  try
@@ -285,8 +291,7 @@ main()
 	      for (i=0 ; i < nbPoint ; i++)
 		    {
 		      dot[i].track(I) ;
-		      Lu += dot[i].get_u() ;
-		      Lv += dot[i].get_v() ;
+		      Lcog += dot[i].getCog();
 		    }
 	    }
 	  catch(...)
@@ -302,9 +307,8 @@ main()
 	  for (i=0 ; i < nbPoint ; i++)
 	    {
 	      double x=0, y=0;
-	      vpPixelMeterConversion::convertPoint(cam,
-						   dot[i].get_u(), dot[i].get_v(),
-						   x,y)  ;
+	      cog = dot[i].getCog();
+	      vpPixelMeterConversion::convertPoint(cam, cog, x, y)  ;
 	      point[i].set_x(x) ;
 	      point[i].set_y(y) ;
 
@@ -357,16 +361,13 @@ main()
 	  v = task.computeControlLaw() ;
 
 	  // display points trajectory
-	  Lu.front() ; Lv.front() ;
-	  while (!Lu.outside())
+	  Lcog.front();
+	  while (! Lcog.outside())
 	    {
-	      double u = Lu.value() ;
-	      double v = Lv.value() ;
+	      cog = Lcog.value() ;
 
-	      vpDisplay::displayPoint(I,
-				      vpMath::round(v), vpMath::round(u),
-				      vpColor::red) ;
-	      Lu.next() ; Lv.next() ;
+	      vpDisplay::displayPoint(I, cog, vpColor::red) ;
+	      Lcog.next();
 	    }
 	  vpServoDisplay::display(task,cam,I) ;
 	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;

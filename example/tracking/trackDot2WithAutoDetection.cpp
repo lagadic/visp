@@ -58,6 +58,7 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
@@ -403,9 +404,10 @@ main(int argc, const char ** argv)
 
       d.initTracking(I) ;
       if (opt_display) {
-          vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),
-                        10,vpColor::green) ;
-          vpDisplay::flush(I) ;
+	vpImagePoint cog;
+	cog = d.getCog();
+	vpDisplay::displayCross(I, cog, 10,vpColor::green) ;
+	vpDisplay::flush(I) ;
       }
       d.setSizePrecision(opt_sizePrecision);
       d.setEllipsoidShapePrecision(opt_ellipsoidShapePrecision);
@@ -494,13 +496,14 @@ main(int argc, const char ** argv)
         while (!list_d->outside()) {
           vpDot2 tmp_d;
           tmp_d = list_d->value() ;
+	  vpImagePoint cog;
+	  cog = tmp_d.getCog();
 
-	  std::cout << "Dot " << i++ << " : " << tmp_d.get_u()
-		    << " " << tmp_d.get_v() << std::endl;
+	  std::cout << "Dot " << i++ << " : " << cog.get_u()
+		    << " " << cog.get_v() << std::endl;
 
           list_d->next() ;
-          vpDisplay::displayCross_uv(I,(int)tmp_d.get_u(), (int)tmp_d.get_v(),
-                        10, vpColor::red) ;
+          vpDisplay::displayCross(I, cog, 10, vpColor::red) ;
         }
         vpDisplay::flush(I) ;
       }

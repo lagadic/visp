@@ -71,6 +71,7 @@
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
 
@@ -156,13 +157,13 @@ main()
 
 
     vpDot dot ;
+    vpImagePoint cog;
 
     std::cout << "Click on a dot..." << std::endl;
     dot.initTracking(I) ;
-    vpDisplay::displayCross(I,
-			    (unsigned int)dot.get_v(),
-			    (unsigned int)dot.get_u(),
-			    10, vpColor::blue) ;
+    // Get the dot cog
+    cog = dot.getCog();
+    vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
     vpDisplay::flush(I);
 
     vpRobotAfma6 robot ;
@@ -226,12 +227,11 @@ main()
       // Achieve the tracking of the dot in the image
       dot.track(I) ;
 
-      // Display a green cross at the center of gravity position in the image
-      vpDisplay::displayCross(I,
-			      (unsigned int)dot.get_v(),
-			      (unsigned int)dot.get_u(),
-			      10, vpColor::green) ;
+      // Get the dot cog
+      cog = dot.getCog();
 
+      // Display a green cross at the center of gravity position in the image
+      vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
 
       // Update the point feature from the dot location
       vpFeatureBuilder::create(p, cam, dot);

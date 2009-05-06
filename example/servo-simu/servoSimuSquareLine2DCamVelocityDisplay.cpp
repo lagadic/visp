@@ -205,12 +205,10 @@ main(int argc, const char ** argv)
   }
 
   // Set the camera parameters
-  vpCameraParameters cam ;
   double px, py ; px = py = 600 ;
   double u0, v0 ; u0 = v0 = 256 ;
 
-  cam.init(px,py,u0,v0);
-
+  vpCameraParameters cam(px,py,u0,v0);
 
   vpServo task ;
   vpRobotCamera robot ;

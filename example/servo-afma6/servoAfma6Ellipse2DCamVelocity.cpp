@@ -121,10 +121,8 @@ main()
     dot.setComputeMoments(true) ;
     std::cout << "Click on an ellipse..." << std::endl;
     dot.initTracking(I) ;
-    vpDisplay::displayCross(I,
-			    (unsigned int)dot.get_v(),
-			    (unsigned int)dot.get_u(),
-			    10, vpColor::blue) ;
+    vpImagePoint cog = dot.getCog();
+    vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
     vpDisplay::flush(I);
 
     dot.track(I) ;
@@ -191,10 +189,11 @@ main()
       vpDisplay::display(I) ;
 
       dot.track(I) ;
-      vpDisplay::displayCross(I,
-			      (unsigned int)dot.get_v(),
-			      (unsigned int)dot.get_u(),
-			      10, vpColor::green) ;
+
+      // Get the dot cog
+      cog = dot.getCog();
+
+      vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
 
       vpFeatureBuilder::create(c,cam, dot);
       // Compute the adaptative gain (speed up the convergence)

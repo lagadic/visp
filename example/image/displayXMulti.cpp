@@ -268,6 +268,7 @@ main(int argc, const char ** argv)
 
   // Create two color images
   vpImage<vpRGBa> I1, I2 ;
+  vpImagePoint ip, ip1, ip2;
 
   try {
     // Load a grey image from the disk
@@ -314,51 +315,69 @@ main(int argc, const char ** argv)
     vpDisplay::display(I2) ;
 
     // In the first display, display in overlay horizontal red lines
-    for (unsigned int i=0 ; i < I1.getHeight() ; i+=20)
-      vpDisplay::displayLine(I1,i,0,i,I1.getWidth(), vpColor::red) ;
+    for (unsigned int i=0 ; i < I1.getHeight() ; i+=20) {
+      ip1.set_i( i );
+      ip1.set_j( 0 );
+      ip2.set_i( i );
+      ip2.set_j( I1.getWidth() );
+      vpDisplay::displayLine(I1, ip1, ip2, vpColor::red) ;
+    }
 
     // In the first display, display in overlay vertical green dot lines
-    for (unsigned int i=0 ; i < I1.getWidth() ; i+=20)
-      vpDisplay::displayDotLine(I1,0,i,I1.getWidth(), i,vpColor::green) ;
+    for (unsigned int i=0 ; i < I1.getWidth() ; i+=20) {
+      ip1.set_i( 0 );
+      ip1.set_j( i );
+      ip2.set_i( I1.getWidth() );
+      ip2.set_j( i );
+      vpDisplay::displayDotLine(I1, ip1, ip2, vpColor::green) ;
+    }
 
     // In the first display, display in overlay a blue arrow
-    vpDisplay::displayArrow(I1,0,0,100,100,vpColor::blue) ;
+    ip1.set_i( 0 );
+    ip1.set_j( 0 );
+    ip2.set_i( 100 );
+    ip2.set_j( 100 );
+    vpDisplay::displayArrow(I1, ip1, ip2, vpColor::blue) ;
 
     // In the first display, display in overlay some circles. The
     // position of the center is 200, 200 the radius is increased by 20
     // pixels for each circle
-    for (unsigned int i=0 ; i < 100 ; i+=20)
-      vpDisplay::displayCircle(I1,200,200,20+i,vpColor::yellow) ;
+    for (unsigned int i=0 ; i < 100 ; i+=20) {
+      ip.set_i( 200 );
+      ip.set_j( 200 );
+      vpDisplay::displayCircle(I1, ip, 20+i,vpColor::yellow) ;
+    }
 
     // In the first display, display in overlay a yellow string
-    vpDisplay::displayCharString(I1,100,100,
+    ip.set_i( 100 );
+    ip.set_j( 100 );
+    vpDisplay::displayCharString(I1, ip,
 				 "ViSP is a marvelous software",
 				 vpColor::blue) ;
 
-	//Flush displays. The displays must be flushed to show the overlay.
+    //Flush displays. The displays must be flushed to show the overlay.
     //without this line, nothing will be displayed.
-	vpDisplay::flush(I1);
-	vpDisplay::flush(I2);
-
+    vpDisplay::flush(I1);
+    vpDisplay::flush(I2);
+	
     // If click is allowed, wait for a blocking mouse click in the first
     // display, to display a cross at the clicked pixel position
     if (opt_click_allowed) {
       std::cout << "\nA click in the first display to draw a cross..." << std::endl;
-      unsigned i,j;
       // Blocking wait for a click. Get the position of the selected pixel
       // (i correspond to the row and j to the column coordinates in the image)
-      vpDisplay::getClick(I1, i, j);
+      vpDisplay::getClick(I1, ip);
       // Display a red cross on the click pixel position
-      std::cout << "Cross position: " << i << ", " << j << std::endl;
-      vpDisplay::displayCross(I1,i,j,15,vpColor::red);
+      std::cout << "Cross position: " << ip << std::endl;
+      vpDisplay::displayCross(I1, ip, 15,vpColor::red);
       vpDisplay::flush(I1);
     }
     else {
-      unsigned i=50,j=50;
-      // Display a red cross at position i, j (i correspond to the row
-      // and j to the column coordinates in the image) in the first display
-      std::cout << "Cross position: " << i << ", " << j << std::endl;
-      vpDisplay::displayCross(I1,i,j,15,vpColor::red);
+      ip.set_i( 50 );
+      ip.set_j( 50 );
+      // Display a red cross at position ip in the first display
+      std::cout << "Cross position: " << ip<< std::endl;
+      vpDisplay::displayCross(I1, ip, 15, vpColor::red);
       vpDisplay::flush(I1);
     }
 
