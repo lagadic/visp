@@ -1067,7 +1067,9 @@ vpMatrix vpMatrix::AtA() const
 }
 
 /*!
-  Solve a linear system \f$ A X = B \f$ using Singular Value Decomposition (SVD).
+
+  Solve a linear system \f$ A X = B \f$ using Singular Value
+  Decomposition (SVD).
 
   Non destructive wrt. A and B.
 
@@ -1112,17 +1114,19 @@ int main()
 }
   \endcode
 
-  \sa SVDsolve()
+  \sa solveBySVD(const vpColVector &)
 */
 void
-vpMatrix::solveBySVD(const vpColVector& b, vpColVector& x) const
+vpMatrix::solveBySVD(const vpColVector &b, vpColVector &x) const
 {
   x = pseudoInverse(1e-6)*b ;
 }
 
 
 /*!
-  Solve a linear system \f$ A X = B \f$ using Singular Value Decomposition (SVD).
+
+  Solve a linear system \f$ A X = B \f$ using Singular Value
+  Decomposition (SVD).
 
   Non destructive wrt. A and B.
 
@@ -1156,7 +1160,7 @@ int main()
   B[1] = 2;
   B[2] = 3;
 
-  X = A.SVDsolve(B);
+  X = A.solveBySVD(B);
   // Obtained values of X
   // X[0] = 0.2468; 
   // X[1] = 0.120782; 
@@ -1166,9 +1170,9 @@ int main()
 }
   \endcode
 
-  \sa solveBySVD()
+  \sa solveBySVD(const vpColVector &, vpColVector &)
 */
-vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
+vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
 {
   vpColVector X(colNum);
 
@@ -2229,57 +2233,20 @@ cppPrint(std::ostream & os, const char * matrixName, bool octet)
 
 
 /*!
-  \brief Compute determinant of a 3x3 matrix.
+  Compute and return the Euclidean norm \f$ ||x|| = \sqrt{ \sum{x_{ij}^2}} \f$.
 
-  \param M : the matrix used to compute determinant.
-  \return determinant of the matrix.
+  \return The Euclidean norm if the matrix is initialized, 0 otherwise.
 
-  \warning M must be a 3x3 matrix.
-  \deprecated Use det() instead. 
-*/
-
-double
-vpMatrix::det33(const vpMatrix &M)
-{
-
-  if ((M.getCols() !=3 ) || (M.getRows() !=3))
-  {
-    vpTRACE("matrix is not of size 3x3 ") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\tmatrix is not of size 3x3"
-			    )) ;
-  }
-  double detint ;
-
-  detint = 0.0 ;
-  detint =          M[0][0]*M[1][1]*M[2][2] ;
-  detint = detint + M[2][0]*M[0][1]*M[1][2] ;
-  detint = detint + M[0][2]*M[2][1]*M[1][0] ;
-  detint = detint - M[0][2]*M[1][1]*M[2][0] ;
-  detint = detint - M[0][0]*M[2][1]*M[1][2] ;
-  detint = detint - M[2][2]*M[1][0]*M[0][1] ;
-  return(detint);
-
-}
-
-
-
-
-
-
-
-/*!
-  Euclidian norm ||x||=sqrt(sum(x_i^2))
-  \return the norm if the matrix is initialized, 0 otherwise
-  \sa infinityNorm
+  \sa infinityNorm()
 */
 double
-vpMatrix::euclidianNorm () const
+vpMatrix::euclideanNorm () const
 {
   double norm=0.0;
   double x ;
-  for (int i=0;i<dsize;i++)
-    { x = *(data +i); norm += x*x;  }
+  for (int i=0;i<dsize;i++) {
+    x = *(data +i); norm += x*x; 
+  }
     
   return sqrt(norm);
 }
@@ -2287,9 +2254,14 @@ vpMatrix::euclidianNorm () const
 
 
 /*!
-  Infinity norm ||x||=max(sum(fabs(x_i)))
-  \return the norm if the matrix is initialized, 0 otherwise
-  \sa euclidianNorm
+
+  Compute and return the infinity norm \f$ {||x||}_{\infty} =
+  max\left(\sum_{j=0}^{n}{\mid x_{ij} \mid}\right) \f$ with \f$i \in
+  \{0, ..., m\}\f$ where \f$(m,n)\f$ is the matrix size.
+
+  \return The infinity norm if the matrix is initialized, 0 otherwise.
+
+  \sa euclideanNorm()
 */
 double
 vpMatrix::infinityNorm () const
@@ -2301,17 +2273,19 @@ vpMatrix::infinityNorm () const
     for (int j=0; j<colNum;j++){
       x += fabs (*(*(rowPtrs + i)+j)) ;
     }
-      if (x > norm) { norm = x; }
+    if (x > norm) {
+      norm = x;
+    }
   }
   return norm;
 }
 
 /*!
-  Determinant of the Matrix
-  \return the determinant of the matrix if the matrix is squared, 0 otherwise
-  based on the LU decomposition
-  see the Numerical Recipes in C page 43 for further explanations.
-  \deprecated Use det() instead.
+  Compute the determinant of the matrix using the LU Decomposition.
+
+  \return The determinant of the matrix if the matrix is square, 0 otherwise.
+
+  See the Numerical Recipes in C page 43 for further explanations.
  */
  
 double vpMatrix::detByLU() const
@@ -2794,9 +2768,9 @@ int main()
   std::cout << "Initial matrix: \n" << A << std::endl;
 
   // Compute the determinant
-  std:: cout << "By defaukt determinant by LU decomposition    : " << 
+  std:: cout << "Determinant by default method  : " << 
     A.det() << std::endl;
-  std:: cout << "Determinant by LU decomposition    : " << 
+  std:: cout << "Determinant by LU decomposition: " << 
     A.det(vpMatrix::LU_DECOMPOSITION ) << std::endl;
 }
   \endcode
@@ -2853,6 +2827,132 @@ for ( int i = col+1 ; i < M.getCols(); i++)
     }
    return M_comp;
 }
+
+
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+/*!
+
+  \deprecated This method is deprecated. You should use
+  vpMatrix::det() instead.
+
+  \brief Compute determinant of a 3x3 matrix.
+
+  \param M : the matrix used to compute determinant.
+  \return determinant of the matrix.
+
+  \warning M must be a 3x3 matrix.
+*/
+
+double
+vpMatrix::det33(const vpMatrix &M)
+{
+
+  if ((M.getCols() !=3 ) || (M.getRows() !=3))
+  {
+    vpTRACE("matrix is not of size 3x3 ") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+			    "\n\t\tmatrix is not of size 3x3"
+			    )) ;
+  }
+  double detint ;
+
+  detint = 0.0 ;
+  detint =          M[0][0]*M[1][1]*M[2][2] ;
+  detint = detint + M[2][0]*M[0][1]*M[1][2] ;
+  detint = detint + M[0][2]*M[2][1]*M[1][0] ;
+  detint = detint - M[0][2]*M[1][1]*M[2][0] ;
+  detint = detint - M[0][0]*M[2][1]*M[1][2] ;
+  detint = detint - M[2][2]*M[1][0]*M[0][1] ;
+  return(detint);
+}
+
+/*!
+  \deprecated This method is deprecated. You should use
+  vpMatrix::euclideanNorm() instead.
+
+  Euclidian norm ||x||=sqrt(sum(x_i^2))
+  \return the norm if the matrix is initialized, 0 otherwise
+  \sa infinityNorm
+*/
+double
+vpMatrix::euclidianNorm () const
+{
+  double norm=0.0;
+  double x ;
+  for (int i=0;i<dsize;i++)
+    { x = *(data +i); norm += x*x;  }
+    
+  return sqrt(norm);
+}
+
+/*!
+
+  \deprecated This method is deprecated. You should use
+  vpMatrix::solveBySVD(const vpColVector &) instead.
+
+  Solve a linear system \f$ A X = B \f$ using Singular Value
+  Decomposition (SVD).
+
+  Non destructive wrt. A and B.
+
+  \param B : Vector\f$ B \f$.
+
+  \return Vector \f$ X \f$.
+
+  Here an example:
+  \code
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(3,3);
+ 
+  A[0][0] = 4.64; 
+  A[0][1] = 0.288; 
+  A[0][2] = -0.384; 
+  
+  A[1][0] = 0.288; 
+  A[1][1] = 7.3296; 
+  A[1][2] = 2.2272; 
+  
+  A[2][0] = -0.384; 
+  A[2][1] = 2.2272; 
+  A[2][2] = 6.0304; 
+  
+  vpColVector X(3), B(3);
+  B[0] = 1;
+  B[1] = 2;
+  B[2] = 3;
+
+  X = A.SVDsolve(B);
+  // Obtained values of X
+  // X[0] = 0.2468; 
+  // X[1] = 0.120782; 
+  // X[2] = 0.468587; 
+
+  std::cout << "X:\n" << X << std::endl;
+}
+  \endcode
+
+  \sa solveBySVD()
+*/
+vpColVector vpMatrix::SVDsolve(const vpColVector& B) const
+{
+  vpColVector X(colNum);
+
+  solveBySVD(B, X);
+  return X;
+}
+
+#endif
 
 
 #undef DEBUG_LEVEL1
