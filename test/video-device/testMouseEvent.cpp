@@ -527,10 +527,10 @@ main(int argc, const char ** argv)
 	if (opt_click_blocking) {
 	  std::cout << "A click in the image to continue..." << std::endl;
 	}
-	unsigned i, j;
+	vpImagePoint ip;
 	vpMouseButton::vpMouseButtonType button;
 
-  bool pressed = vpDisplay::getClick(I, i,j, button, opt_click_blocking);
+	bool pressed = vpDisplay::getClick(I, ip, button, opt_click_blocking);
 	if (pressed) {
 	  switch (button) {
 	  case vpMouseButton::button1:
@@ -547,7 +547,6 @@ main(int argc, const char ** argv)
 	}
 
 	vpTime::wait(tms, 1000);
-
       }
       
       else {

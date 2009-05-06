@@ -276,7 +276,10 @@ main(int argc, const char ** argv)
 
   vpDot dot ;
   dot.setMaxDotSize(0.50); // dot max size = 50% of the image size
-  dot.initTracking(I, 140, 140) ;
+  vpImagePoint ip;
+  ip.set_i( 140 );
+  ip.set_j( 140 );
+  dot.initTracking(I, ip) ;
   if (opt_display) {
     dot.setGraphics(true) ;
   }

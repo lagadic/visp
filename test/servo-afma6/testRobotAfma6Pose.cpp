@@ -100,6 +100,7 @@ int main()
   // points from the image acquired by the camera
   // Creation of 4 trackers
   vpDot dot[4];
+  vpImagePoint cog;
   for (int i=0; i < 4; i ++) {
     dot[i].setGraphics(true); // to display the tracking results
     std::cout << "Click on dot " << i << std::endl;
@@ -110,10 +111,7 @@ int main()
     // |
     // \/
     // v
-    std::cout << "  Coordinates ("
-	      << dot[i].get_u()
-	      << ", "
-	      << dot[i].get_v() << std::endl;
+    std::cout << "  Coordinates: " << dot[i].getCog() << std::endl;
     // Flush the tracking results in the viewer
     vpDisplay::flush(I) ;
   }
@@ -143,9 +141,8 @@ int main()
     // \/
     // y
     //pixel to meter conversion
-    vpPixelMeterConversion::convertPoint(cam,
-					 dot[i].get_u(), dot[i].get_v(),
-					 x, y);
+    cog = dot[i].getCog();
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y);
     target[i].set_x(x) ;
     target[i].set_y(y) ;
   }
