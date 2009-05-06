@@ -106,10 +106,9 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
     double x=0, y=0;
 
     vpImagePoint cog;
-    cog.set_u( dot.get_u());
-    cog.set_v( dot.get_v());
+    cog = dot.getCog();
 
-    vpPixelMeterConversion::convertPoint(cam,cog,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y) ;
 
     double rho   = sqrt(x*x + y*y);
     double theta = atan2(y, x);
@@ -183,10 +182,9 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
     double x=0, y=0;
 
     vpImagePoint cog;
-    cog.set_u( dot.get_u());
-    cog.set_v( dot.get_v());
+    cog = dot.getCog();
 
-    vpPixelMeterConversion::convertPoint(cam,cog,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y) ;
 
     double rho   = sqrt(x*x + y*y);
     double theta = atan2(y, x);
