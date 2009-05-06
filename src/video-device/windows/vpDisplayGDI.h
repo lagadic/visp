@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayGDI.h,v 1.8 2008-11-10 16:54:10 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -59,6 +59,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpImagePoint.h>
 
 int main()
 {
@@ -84,7 +85,10 @@ int main()
   vpDisplay::display(I);
 
   // Draw a red rectangle in the display overlay (foreground)
-  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+  vpImagePoint topLeftCorner;
+  topLeftCorner.set_i(10);
+  topLeftCorner.set_j(20);
+  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::red, true);
 
   // Flush the foreground and background display
   vpDisplay::flush(I);

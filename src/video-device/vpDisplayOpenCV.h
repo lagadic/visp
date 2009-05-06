@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.h,v 1.8 2008-12-03 10:25:11 nmelchio Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -52,7 +52,7 @@
 
 /*!
   \file vpDisplayOpenCV.h
-  \brief  Define the OpenCV console to display images
+  \brief Define the OpenCV console to display images.
 */
 
 
@@ -69,6 +69,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayOpenCV.h>
+#include <visp/vpImagePoint.h>
 
 int main() 
 {
@@ -91,7 +92,10 @@ int main()
   vpDisplay::display(I);
 
   // Draw a red rectangle in the display overlay (foreground)
-  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+  vpImagePoint topLeftCorner;
+  topLeftCorner.set_i(10);
+  topLeftCorner.set_j(20);
+  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::red, true);
 
   // Flush the foreground and background display
   vpDisplay::flush(I);
@@ -136,12 +140,13 @@ private:
   bool rbuttonup;
   
 public:
+  vpDisplayOpenCV() ;
+  vpDisplayOpenCV(int winx, int winy, const char *title=NULL) ;
   vpDisplayOpenCV(vpImage<unsigned char> &I, int winx=-1, int winy=-1,
 	       const char *title=NULL) ;
   vpDisplayOpenCV(vpImage<vpRGBa> &I, int winx=-1, int winy=-1,
 	       const char *title=NULL) ;
 
-  vpDisplayOpenCV() ;
   virtual ~vpDisplayOpenCV() ;
 
   void init(vpImage<unsigned char> &I,
@@ -157,44 +162,54 @@ public:
   void getImage(vpImage<vpRGBa> &I) ;
 
 protected:
-  void setFont( const char *fontname );
-  void setTitle(const char *windowtitle) ;
+  void setFont( const char *font );
+  void setTitle(const char *title) ;
   void setWindowPosition(int winx, int winy);
 
-  void clearDisplay(vpColor::vpColorType c=vpColor::white) ;
+  void clearDisplay(vpColor::vpColorType color=vpColor::white) ;
 
   void closeDisplay() ;
 
-  void displayArrow(int i1, int j1, int i2, int j2,
-		    vpColor::vpColorType col=vpColor::white,
-		    unsigned int L=4, unsigned int l=2) ;
-  void displayCharString(int i, int j,const char *s,
-			 vpColor::vpColorType c=vpColor::green) ;
+  void displayArrow(const vpImagePoint &ip1, 
+		    const vpImagePoint &ip2,
+		    vpColor::vpColorType color=vpColor::white,
+		    unsigned int w=4,unsigned int h=2,
+		    unsigned int thickness=1) ;
 
-  void displayCircle(int i, int j, unsigned int r,
-		     vpColor::vpColorType c);
-  void displayCross(int i, int j, unsigned int size,
-		    vpColor::vpColorType col) ;
-  void displayCrossLarge(int i, int j, unsigned int size,
-			 vpColor::vpColorType col) ;
-  void displayDotLine(int i1, int j1, int i2, int j2,
-		      vpColor::vpColorType col, unsigned int e=1) ;
+  void displayCharString(const vpImagePoint &ip, const char *text,
+			 vpColor::vpColorType color=vpColor::green) ;
+
+  void displayCircle(const vpImagePoint &center, unsigned int radius,
+		     vpColor::vpColorType color,
+		     bool fill = false,
+		     unsigned int thickness=1);
+  void displayCross(const vpImagePoint &ip, unsigned int size,
+		    vpColor::vpColorType color, unsigned int thickness=1) ;
+  void displayDotLine(const vpImagePoint &ip1, 
+		      const vpImagePoint &ip2,
+		      vpColor::vpColorType color, unsigned int thickness=1) ;
 
   void displayImage(const vpImage<vpRGBa> &I) ;
   void displayImage(const vpImage<unsigned char> &I) ;
   void displayImage(const unsigned char *I) ;
 
-  void displayLine(int i1, int j1, int i2, int j2,
-		   vpColor::vpColorType col, unsigned int e=1) ;
+  void displayLine(const vpImagePoint &ip1, 
+		   const vpImagePoint &ip2,
+		   vpColor::vpColorType color, unsigned int thickness=1) ;
+  void displayPoint(const vpImagePoint &ip, vpColor::vpColorType color) ;
 
-  void displayPoint(int i, int j, vpColor::vpColorType col) ;
-  void displayRectangle(int i, int j,
+  void displayRectangle(const vpImagePoint &topLeft,
 			unsigned int width, unsigned int height,
-			vpColor::vpColorType col, bool fill = false,
-			unsigned int e=1);
-  void displayRectangle(const vpRect &rect,
-			vpColor::vpColorType col, bool fill = false,
-			unsigned int e=1);
+			vpColor::vpColorType color, bool fill = false,
+			unsigned int thickness=1) ;
+  void displayRectangle(const vpImagePoint &topLeft,
+			const vpImagePoint &bottomRight,
+			vpColor::vpColorType color, bool fill = false,
+			unsigned int thickness=1) ;
+  void displayRectangle(const vpRect &rectangle,
+			vpColor::vpColorType color, bool fill = false,
+			unsigned int thickness=1) ;
+
   void flushDisplay() ;
 
   bool getClick(bool blocking=true) ;
@@ -210,7 +225,6 @@ protected:
   inline  unsigned int getHeight() const { return height ; }
 
   static void on_mouse( int event, int x, int y, int flags, void* param );
-
 } ;
 
 #endif

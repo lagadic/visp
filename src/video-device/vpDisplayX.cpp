@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayX.cpp,v 1.44 2008-12-17 10:51:12 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -38,7 +38,7 @@
 
 /*!
   \file vpDisplayX.cpp
-  \brief Define the X11 console to display images
+  \brief Define the X11 console to display images.
 */
 
 
@@ -62,10 +62,10 @@
 
 /*!
 
-  \brief constructor : initialize a display to visualize a gray level image
+  Constructor : initialize a display to visualize a gray level image
   (8 bits).
 
-  \param I : image to be displayed (not that image has to be initialized)
+  \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -76,16 +76,15 @@ vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
                          const char *title ) : vpDisplay()
 {
   init ( I, x, y, title ) ;
-
 }
 
 
 
 /*!
-  \brief Constructor : initialize a display to visualize a RGBa level image
+  Constructor : initialize a display to visualize a RGBa level image
   (32 bits).
 
-  \param I : Image to be displayed (not that image has to be initialized)
+  \param I : Image to be displayed (not that image has to be initialized).
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
@@ -99,10 +98,26 @@ vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
 }
 
 /*!
-  \brief Constructor
+
+  Constructor that just initialize the display position in the screen
+  and the display title.
 
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
+
+  To initialize the display size, you need to call init().
+
+  \code
+#include <visp/vpDisplayX.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpDisplayX d(100, 200, "My display");
+  vpImage<unsigned char> I(240, 384);
+  d.init(I);
+}
+  \endcode
 */
 vpDisplayX::vpDisplayX ( int x, int y, const char *title )
 {
@@ -119,13 +134,26 @@ vpDisplayX::vpDisplayX ( int x, int y, const char *title )
   }
 
   ximage_data_init = false;
-
 }
 
 /*!
-  \brief basic constructor
-  \warning must an init member of the vpDisplayGTK function to be useful
-  \sa init()
+  Basic constructor.
+
+  To initialize the window position, title and size you may call
+  init(vpImage<unsigned char> &, int, int, const char *) or
+  init(vpImage<vpRGBa> &, int, int, const char *).
+
+  \code
+#include <visp/vpDisplayX.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpDisplayX d;
+  vpImage<unsigned char> I(240, 384);
+  d.init(I, 100, 200, "My display");
+}
+  \endcode
 */
 vpDisplayX::vpDisplayX()
 {
@@ -146,7 +174,7 @@ vpDisplayX::vpDisplayX()
 }
 
 /*!
-  \brief close the window
+  Destructor.
 */
 vpDisplayX::~vpDisplayX()
 {
@@ -154,7 +182,7 @@ vpDisplayX::~vpDisplayX()
 }
 
 /*!
-  \brief Initialized the display of a gray level image
+  Initialize the display (size, position and title) of a gray level image.
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
@@ -457,10 +485,11 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
   I.display = this ;
 }
 
-/*!
-  \brief Initialized the display of a RGBa  image
+/*!  
+  Initialize the display (size, position and title) of a color
+  image in RGBa format.
 
-  \param I : image to be displayed (not that image has to be initialized)
+  \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -767,13 +796,11 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 
 
 /*!
-  \brief Actual member used to initialize the display of a
-  gray level or RGBa  image.
+  Initialize the display size, position and title.
 
-  \param width, height : width, height of the window
+  \param width, height : Width and height of the window.
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
-
 */
 void vpDisplayX::init ( unsigned int width, unsigned int height,
                         int x, int y, const char *title )
@@ -1075,13 +1102,95 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
 }
 
+/*!  
+
+  Set the font used to display a text in overlay. The display is
+  performed using displayCharString().
+
+  \param font : The expected font name. The available fonts are given by
+  the "xlsfonts" binary. To choose a font you can also use the
+  "xfontsel" binary.
+
+  \note Under UNIX, to know all the available fonts, use the
+  "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
+
+  \sa displayCharString()
+*/
+void vpDisplayX::setFont( const char* font )
+{
+  if ( Xinitialise )
+  {
+	if (font!=NULL)
+	{
+		try
+		{
+			Font stringfont;
+			stringfont = XLoadFont (display, font) ; //"-adobe-times-bold-r-normal--18*");
+			XSetFont (display, context, stringfont);
+		}
+		catch(...)
+		{
+			vpERROR_TRACE ( "Bad font " ) ;
+			throw ( vpDisplayException ( vpDisplayException::notInitializedError,"Bad font" ) ) ;
+		}
+	}	
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+																"X not initialized" ) ) ;
+  }
+}
 
 /*!
-  \brief display the gray level image (8bits)
+  Set the window title.
+  \param title : Window title.
+*/
+void
+vpDisplayX::setTitle ( const char *title )
+{
+  if ( Xinitialise )
+  {
+    XStoreName ( display, window, title );
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
 
-  Display has to be initialized
+/*!
+  Set the window position in the screen.
 
-  \warning Suppres the overlay drawing.
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void vpDisplayX::setWindowPosition(int winx, int winy)
+{
+  if ( Xinitialise ) {
+    XMoveWindow(display, window, winx, winy);
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
+
+/*!
+  Display the gray level image \e I (8bits).
+
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing.
+
+  \param I : Image to display.
 
   \sa init(), closeDisplay()
 */
@@ -1180,9 +1289,13 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
   }
 }
 /*!
-  \brief display the RGBa level image (32bits)
+  Display the color image \e I in RGBa format (32bits).
 
-  \warning suppress the overlay drawing
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing.
+
+  \param I : Image to display.
 
   \sa init(), closeDisplay()
 */
@@ -1235,74 +1348,6 @@ void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
         throw ( vpDisplayException ( vpDisplayException::depthNotSupportedError,
                                      "Unsupported depth for color display" ) ) ;
     }
-
-
-
-  }
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;
-  }
-}
-/*
-  \brief gets the displayed image (including the overlay plane)
-  and returns an RGBa image
-  \param I : Image to get
-*/
-void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
-{
-
-  if ( Xinitialise )
-  {
-
-
-    XImage *xi ;
-    //xi= XGetImage ( display,window, 0,0, getWidth(), getHeight(),
-    //                AllPlanes, ZPixmap ) ;
-
-    XCopyArea (display,window, pixmap, context,
-               0,0, getWidth(), getHeight(), 0, 0);
-
-    xi= XGetImage ( display,pixmap, 0,0, getWidth(), getHeight(),
-                    AllPlanes, ZPixmap ) ;
-
-    try
-    {
-      I.resize ( getHeight(), getWidth() ) ;
-    }
-    catch ( ... )
-    {
-      vpERROR_TRACE ( "Error caught" ) ;
-      throw ;
-    }
-
-    unsigned char       *src_32 = NULL;
-    src_32 = ( unsigned char* ) xi->data;
-
-#ifdef BIGENDIAN
-    // little indian/big indian
-    for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
-    {
-      I.bitmap[i].A = src_32[i*4] ;
-      I.bitmap[i].R = src_32[i*4 + 1] ;
-      I.bitmap[i].G = src_32[i*4 + 2] ;
-      I.bitmap[i].B = src_32[i*4 + 3] ;
-    }
-#else
-    for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
-    {
-      I.bitmap[i].B = src_32[i*4] ;
-      I.bitmap[i].G = src_32[i*4 + 1] ;
-      I.bitmap[i].R = src_32[i*4 + 2] ;
-      I.bitmap[i].A = src_32[i*4 + 3] ;
-    }
-#endif
-
-
-    XDestroyImage ( xi ) ;
-
   }
   else
   {
@@ -1313,10 +1358,16 @@ void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
 }
 
 /*!
-  \brief Display an image
-  \param I : image to display
+  Display an image with a reference to the bitmap.
 
-*/
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing.
+
+  \param I : Pointer to the image bitmap.
+
+  \sa init(), closeDisplay()
+*/  
 void vpDisplayX::displayImage ( const unsigned char *I )
 {
   unsigned char       *dst_32 = NULL;
@@ -1351,7 +1402,7 @@ void vpDisplayX::displayImage ( const unsigned char *I )
 
 /*!
 
-  \brief close the window
+  Close the window.
 
   \sa init()
 
@@ -1391,11 +1442,9 @@ void vpDisplayX::closeDisplay()
 }
 
 
-
-
 /*!
-  \brief flush the X buffer
-  It's necessary to use this function to see the results of any drawing
+  Flushes the X buffer.
+  It's necessary to use this function to see the results of any drawing.
 
 */
 void vpDisplayX::flushDisplay()
@@ -1415,14 +1464,15 @@ void vpDisplayX::flushDisplay()
 
 
 /*!
-
+  Set the window backgroud to \e color.
+  \param color : Background color.
 */
-void vpDisplayX::clearDisplay ( vpColor::vpColorType c )
+void vpDisplayX::clearDisplay ( vpColor::vpColorType color )
 {
   if ( Xinitialise )
   {
 
-    XSetWindowBackground ( display, window, x_color[c] );
+    XSetWindowBackground ( display, window, x_color[color] );
     XClearWindow ( display, window );
 
     XFreePixmap ( display, pixmap );
@@ -1438,168 +1488,25 @@ void vpDisplayX::clearDisplay ( vpColor::vpColorType c )
 }
 
 /*!
-  \brief display a point
-  \param i,j : (row,colum indexes)
-  \param col : color (see vpColor)
+  Display an arrow from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image point.
+  \param color : Arrow color.
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplayX::displayPoint ( int i, int j,
-                                vpColor::vpColorType col )
-{
-  if ( Xinitialise )
-  {
-    XSetForeground ( display, context, x_color[col] );
-    XDrawPoint ( display, pixmap, context, j, i ) ;
-
-  }
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;
-  }
-}
-
-
-/*!
-  \brief display a line
-  \param i1,j1 : (row,colum indexes) initial coordinates
-  \param i2,j2 : (row,colum indexes) final coordinates
-  \param col : color (see vpColor)
-  \param e : line thick
-*/
-void vpDisplayX::displayLine ( int i1, int j1, int i2, int j2,
-                               vpColor::vpColorType col, unsigned int e )
-{
-  if ( Xinitialise )
-  {
-    if ( e == 1 ) e = 0;
-
-    XSetForeground ( display, context, x_color[col] );
-    XSetLineAttributes ( display, context, e,
-                         LineSolid, CapButt, JoinBevel );
-
-    XDrawLine ( display, pixmap, context, j1, i1, j2, i2 );
-
-  }
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;
-  }
-}
-
-/*!
-  \brief display a dashed line
-  \param i1,j1 : (row,colum indexes) initial coordinates
-  \param i2,j2 : (row,colum indexes) final coordinates
-  \param col : color (see vpColor)
-  \param e : line_width
-*/
-void vpDisplayX::displayDotLine ( int i1, int j1, int i2, int j2,
-                                  vpColor::vpColorType col, unsigned int e )
-{
-
-  if ( Xinitialise )
-  {
-    if ( e == 1 ) e = 0;
-
-    XSetForeground ( display, context, x_color[col] );
-    XSetLineAttributes ( display, context, e,
-                         LineOnOffDash, CapButt, JoinBevel );
-
-    XDrawLine ( display, pixmap,context, j1, i1, j2, i2 );
-  }
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;
-  }
-}
-
-/*!
-  \brief display a cross
-  \param i,j : (row,colum indexes)
-  \param size : Size of the cross
-  \param col : Color (see vpColor)
-*/
-void vpDisplayX::displayCross ( int i, int j,
-                                unsigned int size, vpColor::vpColorType col )
+void vpDisplayX::displayArrow ( const vpImagePoint &ip1, 
+				const vpImagePoint &ip2,
+                                vpColor::vpColorType color,
+                                unsigned int w, unsigned int h,
+				unsigned int thickness)
 {
   if ( Xinitialise )
   {
     try
     {
-      displayLine ( i-size/2,j,i+size/2,j,col,1 ) ;
-      displayLine ( i ,j-size/2,i,j+size/2,col,1 ) ;
-    }
-    catch ( ... )
-    {
-      vpERROR_TRACE ( "Error caught" ) ;
-      throw ;
-    }
-  }
-
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;
-  }
-
-}
-
-
-/*!
-  \brief display a "large" cross
-  \param i,j : (row,colum indexes)
-  \param size : Size of the cross
-  \param col : Color (see vpColor)
-*/
-void vpDisplayX::displayCrossLarge ( int i, int j,
-                                     unsigned int size, vpColor::vpColorType col )
-{
-  if ( Xinitialise )
-  {
-    try
-    {
-      displayLine ( i-size/2,j,i+size/2,j,col,3 ) ;
-      displayLine ( i ,j-size/2,i,j+size/2,col,3 ) ;
-    }
-    catch ( ... )
-    {
-      vpERROR_TRACE ( "Error caught" ) ;
-      throw ;
-    }
-  }
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;  //
-  }
-}
-
-
-/*!
-  \brief display an arrow
-  \param i1,j1 : (row,colum indexes) initial coordinates
-  \param i2,j2 : (row,colum indexes) final coordinates
-  \param col : Color (see vpColor)
-  \param L,l : width and height of the arrow
-*/
-void vpDisplayX::displayArrow ( int i1, int j1, int i2, int j2,
-                                vpColor::vpColorType col,
-                                unsigned int L, unsigned int l )
-{
-  if ( Xinitialise )
-  {
-    try
-    {
-      double a = ( int ) i2 - ( int ) i1 ;
-      double b = ( int ) j2 - ( int ) j1 ;
-      double lg = sqrt ( vpMath::sqr ( a ) +vpMath::sqr ( b ) ) ;
+      double a = ip2.get_i() - ip1.get_i() ;
+      double b = ip2.get_j() - ip1.get_j() ;
+      double lg = sqrt ( vpMath::sqr ( a ) + vpMath::sqr ( b ) ) ;
 
       if ( ( a==0 ) && ( b==0 ) )
       {
@@ -1610,33 +1517,21 @@ void vpDisplayX::displayArrow ( int i1, int j1, int i2, int j2,
         a /= lg ;
         b /= lg ;
 
-        double i3,j3  ;
-        i3 = i2 - L*a ;
-        j3 = j2 - L*b ;
+	vpImagePoint ip3;
+        ip3.set_i(ip2.get_i() - w*a);
+        ip3.set_j(ip2.get_j() - w*b);
 
+	vpImagePoint ip4;
+	ip4.set_i( ip3.get_i() - b*h );
+	ip4.set_j( ip3.get_j() + a*h );
 
-        double i4,j4 ;
+	displayLine ( ip2, ip4, color, thickness ) ;
+        
+	ip4.set_i( ip3.get_i() + b*h );
+	ip4.set_j( ip3.get_j() - a*h );
 
-        //double t = 0 ;
-        //while (t<=l)
-        {
-          i4 = i3 - b*l ;
-          j4 = j3 + a*l ;
-
-          displayLine ( ( int ) i2, ( int ) j2, ( int ) i4, ( int ) j4,col ) ;
-          //t+=0.1 ;
-        }
-        //t = 0 ;
-        //while (t>= -l)
-        {
-          i4 = i3 + b*l ;
-          j4 = j3 - a*l ;
-
-          displayLine ( ( int ) i2, ( int ) j2, ( int ) i4, ( int ) j4,col ) ;
-          //t-=0.1 ;
-        }
-        displayLine ( i1,j1,i2,j2,col ) ;
-
+	displayLine ( ip2, ip4, color, thickness ) ;
+	displayLine ( ip1, ip2, color, thickness ) ;
       }
     }
     catch ( ... )
@@ -1653,32 +1548,27 @@ void vpDisplayX::displayArrow ( int i1, int j1, int i2, int j2,
   }
 }
 
-
 /*!
-  \brief display a rectangle
-  \param i,j : (row,colum indexes) up left corner
-  \param width
-  \param height
-  \param col : Color (see vpColor)
-  \param fill : set as true to fill the rectangle.
-  \param e : line thick
+  Display a string at the image point \e ip location.
+
+  To select the font used to display the string, use setFont().
+
+  \param ip : Upper left image point location of the string in the display.
+  \param text : String to display in overlay.
+  \param color : String color.
+
+  \sa setFont()
 */
-void
-vpDisplayX::displayRectangle ( int i, int j,
-                               unsigned int width, unsigned int height,
-                               vpColor::vpColorType col, bool fill,
-			       unsigned int e )
+void vpDisplayX::displayCharString ( const vpImagePoint &ip,
+                                     const char *text, 
+				     vpColor::vpColorType color )
 {
   if ( Xinitialise )
   {
-    if ( e == 1 ) e = 0;
-    XSetForeground ( display, context, x_color[col] );
-    XSetLineAttributes ( display, context, e,
-                         LineSolid, CapButt, JoinBevel );
-    if ( fill == false )
-      XDrawRectangle ( display, pixmap, context,  j, i, width-1, height-1 );
-    else
-      XFillRectangle ( display, pixmap, context,  j, i, width, height );
+    XSetForeground ( display, context, x_color[color] );
+    XDrawString ( display, pixmap, context, 
+		  (int)ip.get_u(), (int)ip.get_v(), 
+		  text, strlen ( text ) );
   }
   else
   {
@@ -1689,35 +1579,175 @@ vpDisplayX::displayRectangle ( int i, int j,
 }
 
 /*!
-  \brief display a rectangle
-  \param rect : Rectangle characteristics.
-  \param col : Color (see vpColor)
-  \param fill : set as true to fill the rectangle.
-  \param e : line thick
+  Display a circle.
+  \param center : Circle center position.
+  \param radius : Circle radius.
+  \param color : Circle color.
+  \param fill : When set to true fill the circle.
+  \param thickness : Thickness of the circle. This parameter is only useful 
+  when \e fill is set to false.
 */
-void
-vpDisplayX::displayRectangle ( const vpRect &rect,
-                               vpColor::vpColorType col, bool fill,
-			       unsigned int e )
+void vpDisplayX::displayCircle ( const vpImagePoint &center,
+				 unsigned int radius,
+                                 vpColor::vpColorType color,
+				 bool fill,
+				 unsigned int thickness )
 {
   if ( Xinitialise )
   {
-    if ( e == 1 ) e = 0;
-    XSetForeground ( display, context, x_color[col] );
-    XSetLineAttributes ( display, context, e,
+    if ( thickness == 1 ) thickness = 0;
+    XSetForeground ( display, context, x_color[color] );
+    XSetLineAttributes ( display, context, thickness,
                          LineSolid, CapButt, JoinBevel );
 
-    XDrawRectangle ( display, pixmap, context,
-                     ( int ) rect.getLeft(), ( int ) rect.getTop(),
-                     ( int ) rect.getWidth()-1, ( int ) rect.getHeight()-1 );
     if ( fill == false )
-      XDrawRectangle ( display, pixmap, context,
-                       ( int ) rect.getLeft(), ( int ) rect.getTop(),
-                       ( int ) rect.getWidth()-1, ( int ) rect.getHeight()-1 );
+      XDrawArc ( display, pixmap, context, 
+		 vpMath::round( center.get_u()-radius ), 
+		 vpMath::round( center.get_v()-radius ),
+		 radius*2, radius*2, 0, 23040 ); /* 23040 = 360*64 */
     else
-      XFillRectangle ( display, pixmap, context,
-                       ( int ) rect.getLeft(), ( int ) rect.getTop(),
-                       ( int ) rect.getWidth(), ( int ) rect.getHeight() );
+      XFillArc ( display, pixmap, context, 
+		 vpMath::round( center.get_u()-radius ), 
+		 vpMath::round( center.get_v()-radius ),
+		 radius*2, radius*2, 0, 23040 ); /* 23040 = 360*64 */
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
+
+/*!
+  Display a cross at the image point \e ip location.
+  \param ip : Cross location.
+  \param size : Size (width and height) of the cross.
+  \param color : Cross color.
+  \param thickness : Thickness of the lines used to display the cross.
+*/
+void vpDisplayX::displayCross ( const vpImagePoint &ip, 
+                                unsigned int size, 
+				vpColor::vpColorType color,
+				unsigned int thickness)
+{
+  if ( Xinitialise )
+  {
+    try
+    {
+      double i = ip.get_i();
+      double j = ip.get_j();
+      vpImagePoint ip1, ip2;
+
+      ip1.set_i( i-size/2 ); 
+      ip1.set_j( j );
+      ip2.set_i( i+size/2 ); 
+      ip2.set_j( j );
+      displayLine ( ip1, ip2, color, thickness ) ;
+
+      ip1.set_i( i ); 
+      ip1.set_j( j-size/2 );
+      ip2.set_i( i ); 
+      ip2.set_j( j+size/2 );
+
+      displayLine ( ip1, ip2, color, thickness ) ;
+    }
+    catch ( ... )
+    {
+      vpERROR_TRACE ( "Error caught" ) ;
+      throw ;
+    }
+  }
+
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+
+}
+/*!
+  Display a dashed line from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplayX::displayDotLine ( const vpImagePoint &ip1, 
+				  const vpImagePoint &ip2,
+                                  vpColor::vpColorType color, 
+				  unsigned int thickness )
+{
+
+  if ( Xinitialise )
+  {
+    if ( thickness == 1 ) thickness = 0;
+
+    XSetForeground ( display, context, x_color[color] );
+    XSetLineAttributes ( display, context, thickness,
+                         LineOnOffDash, CapButt, JoinBevel );
+
+    XDrawLine ( display, pixmap, context, 
+		vpMath::round( ip1.get_u() ),
+		vpMath::round( ip1.get_v() ),
+		vpMath::round( ip2.get_u() ),
+		vpMath::round( ip2.get_v() ) );
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
+
+/*!
+  Display a line from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplayX::displayLine ( const vpImagePoint &ip1, 
+			       const vpImagePoint &ip2,
+                               vpColor::vpColorType color, 
+			       unsigned int thickness )
+{
+  if ( Xinitialise )
+  {
+    if ( thickness == 1 ) thickness = 0;
+
+    XSetForeground ( display, context, x_color[color] );
+    XSetLineAttributes ( display, context, thickness,
+                         LineSolid, CapButt, JoinBevel );
+
+    XDrawLine ( display, pixmap, context, 
+		vpMath::round( ip1.get_u() ),
+		vpMath::round( ip1.get_v() ),
+		vpMath::round( ip2.get_u() ),
+		vpMath::round( ip2.get_v() ) );
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
+
+/*!
+  Display a point at the image point \e ip location.
+  \param ip : Point location.
+  \param color : Point color.
+*/
+void vpDisplayX::displayPoint ( const vpImagePoint &ip,
+                                vpColor::vpColorType color )
+{
+  if ( Xinitialise )
+  {
+    XSetForeground ( display, context, x_color[color] );
+    XDrawPoint ( display, pixmap, context, 
+		 vpMath::round( ip.get_u() ), 
+		 vpMath::round( ip.get_v() ) );
 
   }
   else
@@ -1729,68 +1759,132 @@ vpDisplayX::displayRectangle ( const vpRect &rect,
 }
 
 /*!  
+  Display a rectangle with \e topLeft as the top-left corner and \e
+  width and \e height the rectangle size.
 
-  \brief Set the font used to print a text in overlay. To print a
-  text you may use displayCharString().
+  \param topLeft : Top-left corner of the rectangle.
+  \param width,height : Rectangle size.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
 
-  \param font : The expected font name. The available fonts are given by
-  the "xlsfonts" binary. To choose a font you can also use the
-  "xfontsel" binary.
-
-  \note Under UNIX, to know all the available fonts, use the
-  "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
-
-  \sa displayCharString()
- */
-void vpDisplayX::setFont( const char* font )
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+*/
+void
+vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
+                               unsigned int width, unsigned int height,
+                               vpColor::vpColorType color, bool fill,
+			       unsigned int thickness )
 {
   if ( Xinitialise )
   {
-	if (font!=NULL)
-	{
-		try
-		{
-			Font stringfont;
-			stringfont = XLoadFont (display, font) ; //"-adobe-times-bold-r-normal--18*");
-			XSetFont (display, context, stringfont);
-		}
-		catch(...)
-		{
-			vpERROR_TRACE ( "Bad font " ) ;
-			throw ( vpDisplayException ( vpDisplayException::notInitializedError,"Bad font" ) ) ;
-		}
-	}	
+    if ( thickness == 1 ) thickness = 0;
+    XSetForeground ( display, context, x_color[color] );
+    XSetLineAttributes ( display, context, thickness,
+                         LineSolid, CapButt, JoinBevel );
+    if ( fill == false )
+      XDrawRectangle ( display, pixmap, context, 
+		       vpMath::round( topLeft.get_u() ),
+		       vpMath::round( topLeft.get_v() ),
+		       width-1, height-1 );
+    else
+      XFillRectangle ( display, pixmap, context, 
+		       vpMath::round( topLeft.get_u() ),
+		       vpMath::round( topLeft.get_v() ),
+		       width, height );
   }
   else
   {
     vpERROR_TRACE ( "X not initialized " ) ;
     throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-																"X not initialized" ) ) ;
+                                 "X not initialized" ) ) ;
   }
 }
 
+/*!  
+  Display a rectangle.
 
-/*!
-  Display a string at coordinates (i,j) in the display
-  window overlay.
+  \param topLeft : Top-left corner of the rectangle.
+  \param bottomRight : Bottom-right corner of the rectangle.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
 
-  To select the font used to print this string, use setFont().
-
-  \param i, j : Upper left location (row, column) of the string in the display.
-  \param string : String to print in overlay.
-  \param col : Color of the text
-
-  \sa setFont()
-
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
 */
-void vpDisplayX::displayCharString ( int i, int j,
-                                     const char *string, 
-				     vpColor::vpColorType col )
+void
+vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
+                               const vpImagePoint &bottomRight,
+                               vpColor::vpColorType color, bool fill,
+			       unsigned int thickness )
 {
   if ( Xinitialise )
   {
-    XSetForeground ( display, context, x_color[col] );
-    XDrawString ( display, pixmap, context, j, i, string, strlen ( string ) );
+    if ( thickness == 1 ) thickness = 0;
+    XSetForeground ( display, context, x_color[color] );
+    XSetLineAttributes ( display, context, thickness,
+                         LineSolid, CapButt, JoinBevel );
+
+    int width  = vpMath::round( bottomRight.get_u() - topLeft.get_u() );
+    int height = vpMath::round( bottomRight.get_v() - topLeft.get_v() );
+    if ( fill == false )
+      XDrawRectangle ( display, pixmap, context, 
+		       vpMath::round( topLeft.get_u() ),
+		       vpMath::round( topLeft.get_v() ),
+		       width-1, height-1 );
+    else
+      XFillRectangle ( display, pixmap, context, 
+		       vpMath::round( topLeft.get_u() ),
+		       vpMath::round( topLeft.get_v() ),
+		       width, height );
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
+
+/*!
+  Display a rectangle.
+
+  \param rectangle : Rectangle characteristics.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+
+*/
+void
+vpDisplayX::displayRectangle ( const vpRect &rectangle,
+                               vpColor::vpColorType color, bool fill,
+			       unsigned int thickness )
+{
+  if ( Xinitialise )
+  {
+    if ( thickness == 1 ) thickness = 0;
+    XSetForeground ( display, context, x_color[color] );
+    XSetLineAttributes ( display, context, thickness,
+                         LineSolid, CapButt, JoinBevel );
+
+    if ( fill == false )
+      XDrawRectangle ( display, pixmap, context,
+                       vpMath::round( rectangle.getLeft() ), 
+		       vpMath::round( rectangle.getTop() ),
+		       vpMath::round( rectangle.getWidth()-1 ), 
+		       vpMath::round( rectangle.getHeight()-1 ) );
+    else
+      XFillRectangle ( display, pixmap, context,
+                       vpMath::round( rectangle.getLeft() ), 
+		       vpMath::round( rectangle.getTop() ),
+                       vpMath::round( rectangle.getWidth() ), 
+		       vpMath::round( rectangle.getHeight() ) );
+
   }
   else
   {
@@ -1871,7 +1965,6 @@ vpDisplayX::getClick(bool blocking)
     to \e true.
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
-
 */
 bool
 vpDisplayX::getClick ( vpImagePoint &ip, bool blocking )
@@ -1896,7 +1989,7 @@ vpDisplayX::getClick ( vpImagePoint &ip, bool blocking )
     }
        
     if(ret){
-      /* Recuperation de la coordonnee du pixel cliqu�. */
+      // Get mouse position
       if ( XQueryPointer ( display,
                            window,
                            &rootwin, &childwin,
@@ -1963,7 +2056,7 @@ vpDisplayX::getClick ( vpImagePoint &ip,
     }
        
     if(ret){
-      /* Recuperation de la coordonnee du pixel cliqu�. */
+      // Get mouse position
       if ( XQueryPointer ( display,
                            window,
                            &rootwin, &childwin,
@@ -2065,11 +2158,75 @@ vpDisplayX::getClickUp ( vpImagePoint &ip,
   return ret ;
 }
 
+/*
+  Gets the displayed image (including the overlay plane)
+  and returns an RGBa image.
+
+  \param I : Image to get.
+*/
+void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
+{
+
+  if ( Xinitialise )
+  {
+
+
+    XImage *xi ;
+    //xi= XGetImage ( display,window, 0,0, getWidth(), getHeight(),
+    //                AllPlanes, ZPixmap ) ;
+
+    XCopyArea (display,window, pixmap, context,
+               0,0, getWidth(), getHeight(), 0, 0);
+
+    xi= XGetImage ( display,pixmap, 0,0, getWidth(), getHeight(),
+                    AllPlanes, ZPixmap ) ;
+
+    try
+    {
+      I.resize ( getHeight(), getWidth() ) ;
+    }
+    catch ( ... )
+    {
+      vpERROR_TRACE ( "Error caught" ) ;
+      throw ;
+    }
+
+    unsigned char       *src_32 = NULL;
+    src_32 = ( unsigned char* ) xi->data;
+
+#ifdef BIGENDIAN
+    // little indian/big indian
+    for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
+    {
+      I.bitmap[i].A = src_32[i*4] ;
+      I.bitmap[i].R = src_32[i*4 + 1] ;
+      I.bitmap[i].G = src_32[i*4 + 2] ;
+      I.bitmap[i].B = src_32[i*4 + 3] ;
+    }
+#else
+    for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
+    {
+      I.bitmap[i].B = src_32[i*4] ;
+      I.bitmap[i].G = src_32[i*4 + 1] ;
+      I.bitmap[i].R = src_32[i*4 + 2] ;
+      I.bitmap[i].A = src_32[i*4 + 3] ;
+    }
+#endif
+
+
+    XDestroyImage ( xi ) ;
+
+  }
+  else
+  {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+}
 
 /*!
-  \brief get the window depth (8,16,24,32)
-
-  usualy it 24 bits now...
+  Gets the window depth (8, 16, 24, 32).
 */
 unsigned int vpDisplayX::getScreenDepth()
 {
@@ -2093,7 +2250,7 @@ unsigned int vpDisplayX::getScreenDepth()
 }
 
 /*!
-  \brief get the window size
+  Gets the window size.
   \param width, height : Size of the display.
  */
 void vpDisplayX::getScreenSize ( unsigned int &width, unsigned int &height )
@@ -2114,73 +2271,6 @@ void vpDisplayX::getScreenSize ( unsigned int &width, unsigned int &height )
 
   XCloseDisplay ( _display );
 }
-
-
-/*!
-  \brief Set the window title.
-  \param windowtitle : Window title.
- */
-void
-vpDisplayX::setTitle ( const char *windowtitle )
-{
-  if ( Xinitialise )
-  {
-    XStoreName ( display, window, windowtitle );
-  }
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;
-  }
-}
-
-/*!
-  \brief Display a circle
-  \param i,j : circle center position (row,column)
-  \param r : radius
-  \param c : Color
-*/
-void vpDisplayX::displayCircle ( int i, int j, unsigned int r,
-                                 vpColor::vpColorType c )
-{
-  if ( Xinitialise )
-  {
-    XSetForeground ( display, context, x_color[c] );
-    XSetLineAttributes ( display, context, 0,
-                         LineSolid, CapButt, JoinBevel );
-
-    XDrawArc ( display, pixmap, context,  j-r, i-r, r*2, r*2, 0, 360*64 );
-  }
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;
-  }
-}
-
-/*!
-  Set the window position in the screen.
-
-  \param winx, winy : Position of the upper-left window's border in the screen.
-
-  \exception vpDisplayException::notInitializedError : If the video
-  device is not initialized.
-*/
-void vpDisplayX::setWindowPosition(int winx, int winy)
-{
-  if ( Xinitialise ) {
-    XMoveWindow(display, window, winx, winy);
-  }
-  else
-  {
-    vpERROR_TRACE ( "X not initialized " ) ;
-    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-                                 "X not initialized" ) ) ;
-  }
-}
-
 
 #endif
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayException.cpp,v 1.4 2007-04-20 14:22:23 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

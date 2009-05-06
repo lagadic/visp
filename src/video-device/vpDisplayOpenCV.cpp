@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDisplayOpenCV.cpp,v 1.11 2008-12-15 15:14:48 nmelchio Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -40,7 +40,7 @@
 
 /*!
   \file vpDisplayOpenCV.cpp
-  \brief Define the OpenCV console to display images
+  \brief Define the OpenCV console to display images.
 */
 
 #include <visp/vpConfig.h>
@@ -54,6 +54,7 @@
 // Display stuff
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayOpenCV.h>
+#include <visp/vpMath.h>
 
 //debug / exception
 #include <visp/vpDebug.h>
@@ -62,7 +63,7 @@
 int vpDisplayOpenCV::count = 1;
 /*!
 
-  \brief Constructor. Initialize a display to visualize a gray level image
+  Constructor. Initialize a display to visualize a gray level image
   (8 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
@@ -85,7 +86,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
 
 
 /*!
-  \brief Constructor. Initialize a display to visualize a RGBa level image
+  Constructor. Initialize a display to visualize a RGBa level image
   (32 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
@@ -106,9 +107,55 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
 }
 
 /*!
-  \brief basic constructor
-  \warning must an init member of the vpDisplayOpenCV function to be useful
-  \sa init()
+
+  Constructor that just initialize the display position in the screen
+  and the display title.
+
+  \param x, y : The window is set at position x,y (column index, row index).
+  \param title : Window title.
+
+  To initialize the display size, you need to call init().
+
+  \code
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpDisplayOpenCV d(100, 200, "My display");
+  vpImage<unsigned char> I(240, 384);
+  d.init(I);
+}
+  \endcode
+*/
+vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
+{
+  col = NULL;
+  title = NULL ;
+  window = 0 ;
+  background = NULL;
+  font = NULL;
+  init(0, 0, x, y, title) ;
+}
+
+/*!
+  Basic constructor.
+
+  To initialize the window position, title and size you may call
+  init(vpImage<unsigned char> &, int, int, const char *) or
+  init(vpImage<vpRGBa> &, int, int, const char *).
+
+  \code
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpDisplayOpenCV d;
+  vpImage<unsigned char> I(240, 384);
+  d.init(I, 100, 200, "My display");
+}
+  \endcode
 */
 vpDisplayOpenCV::vpDisplayOpenCV()
 {
@@ -128,7 +175,7 @@ vpDisplayOpenCV::vpDisplayOpenCV()
 }
 
 /*!
-  \brief close the window
+  Destructor.
 */
 vpDisplayOpenCV::~vpDisplayOpenCV()
 {
@@ -137,9 +184,9 @@ vpDisplayOpenCV::~vpDisplayOpenCV()
 }
 
 /*!
-  \brief Initialized the display of a gray level image
+  Initialize the display (size, position and title) of a gray level image.
 
-  \param I : image to be displayed (not that image has to be initialized)
+  \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -162,8 +209,9 @@ vpDisplayOpenCV::init(vpImage<unsigned char> &I,
   OpenCVinitialized = true ;
 }
 
-/*!
-  \brief Initialized the display of a RGBa  image
+/*!  
+  Initialize the display (size, position and title) of a color
+  image in RGBa format.
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
@@ -187,11 +235,11 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
   I.display = this ;
   OpenCVinitialized = true ;
 }
-/*!
-  \brief Actual member used to Initialize the display of a
-  gray level or RGBa  image
 
-  \param width, height : Width, height of the window
+/*!
+  Initialize the display size, position and title.
+
+  \param width, height : Width and height of the window.
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -264,13 +312,93 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
 }
 
 
+/*!
+  \warning This method is not yet implemented.
+
+  Set the font used to display a text in overlay. The display is
+  performed using displayCharString().
+
+  \param font : The expected font name. The available fonts are given by
+  the "xlsfonts" binary. To choose a font you can also use the
+  "xfontsel" binary.
+
+  \note Under UNIX, to know all the available fonts, use the
+  "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
+
+  \sa displayCharString()
+*/
+void
+vpDisplayOpenCV::setFont(const char * /* font */)
+{
+  vpERROR_TRACE("Not yet implemented" ) ;
+}
 
 /*!
-  \brief display the gray level image (8bits)
+  Set the window title.
 
-  OpenCV has to be initialized
+  \warning This method is not implemented yet.
+
+  \param title : Window title.
+ */
+void
+vpDisplayOpenCV::setTitle(const char * /* title */)
+{
+
+  vpTRACE("Not implemented");
+#if 0
+  if (OpenCVinitialized)
+  {
+    if (this->title != NULL) {
+      delete [] this->title ;
+      this->title = NULL ;
+    }
+    //    fprintf(stdout, "len: %d\n",  strlen(windowtitle)); fflush(stdout);
+    this->title = new char[strlen(windowtitle) + 1] ;
+    strcpy(this->title, windowtitle) ;
+    //cvMoveWindow( this->title, windowXPosition,  windowYPosition);
+    cvMoveWindow(windowtitle , windowXPosition,  windowYPosition);
+
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+#endif
+}
+
+
+/*!
+  Set the window position in the screen.
+
+  \param winx, winy : Position of the upper-left window's border in the screen.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
+{
+  if (OpenCVinitialized) {
+    this->windowXPosition = winx;
+    this->windowYPosition = winy;
+    cvMoveWindow( this->title, winx, winy );
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+/*!
+  Display the gray level image \e I (8bits).
+
+  \warning Display has to be initialized.
 
   \warning suppres the overlay drawing
+
+  \param I : Image to display.
 
   \sa init(), closeDisplay()
 */
@@ -301,11 +429,13 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
 
 
 /*!
-  \brief display the RGBa level image (32bits)
+  Display the color image \e I in RGBa format (32bits).
 
-  OpenCV has to be initialized
+  \warning Display has to be initialized.
 
   \warning suppres the overlay drawing
+
+  \param I : Image to display.
 
   \sa init(), closeDisplay()
 */
@@ -330,18 +460,9 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
   }
 }
 
-/*
-  \brief gets the displayed image (including the overlay plane)
-  and returns an RGBa image
-*/
-void vpDisplayOpenCV::getImage(vpImage<vpRGBa> &I)
-{
-  vpImageConvert::convert(background,I);
-  // shoudl certainly be optimized.
-}
 
 /*!
-  \brief not implemented
+  \warning ot implemented yet
 
   \sa init(), closeDisplay()
 */
@@ -352,9 +473,9 @@ void vpDisplayOpenCV::displayImage(const unsigned char * /* I */)
 
 /*!
 
-\brief close the window
+  Close the window.
 
-\sa init()
+  \sa init()
 
 */
 void vpDisplayOpenCV::closeDisplay()
@@ -386,8 +507,8 @@ void vpDisplayOpenCV::closeDisplay()
 
 
 /*!
-  \brief flush the OpenCV buffer
-  It's necessary to use this function to see the results of any drawing
+  Flushes the OpenCV buffer.
+  It's necessary to use this function to see the results of any drawing.
 
 */
 void vpDisplayOpenCV::flushDisplay()
@@ -407,173 +528,31 @@ void vpDisplayOpenCV::flushDisplay()
 
 
 /*!
-  \brief not implemented
+  \warning Not implemented yet.
 */
-void vpDisplayOpenCV::clearDisplay(vpColor::vpColorType /* c */)
+void vpDisplayOpenCV::clearDisplay(vpColor::vpColorType /* color */)
 {
   vpTRACE("Not implemented") ;
 }
 
 /*!
-  \brief display a point
-  \param i,j (row,colum indexes)
-  \param color (see vpColor)
+  Display an arrow from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image point.
+  \param color : Arrow color.
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplayOpenCV::displayPoint(int i, int j,
-                                   vpColor::vpColorType color)
-{
-  if (OpenCVinitialized)
-  {
-    ((uchar*)(background->imageData + background->widthStep*i))[j*3] = (uchar)col[color].val[0];
-    ((uchar*)(background->imageData + background->widthStep*i))[j*3+1] = (uchar)col[color].val[1];
-    ((uchar*)(background->imageData + background->widthStep*i))[j*3+2] = (uchar)col[color].val[2];
-  }
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;
-  }
-}
-
-/*!
-  \brief display a line
-  \param i1,j1 (row,colum indexes) initial coordinates
-  \param i2,j2 (row,colum indexes) final coordinates
-  \param color (see vpColor)
-  \param e : line thick
-*/
-void
-vpDisplayOpenCV::displayLine(int i1, int j1, int i2, int j2,
-                             vpColor::vpColorType color,
-                             unsigned int e)
-{
-  if (OpenCVinitialized)
-  {
-    cvLine( background, cvPoint(j1,i1), cvPoint(j2,i2), col[color],
-            (int)e);
-  }
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;
-  }
-}
-
-
-/*!
-  \brief display a dashed line
-  \param i1,j1 : (row,colum indexes) initial coordinates
-  \param i2,j2 : (row,colum indexes) final coordinates
-  \param color : (see vpColor)
-  \param e : line thick
-*/
-void
-vpDisplayOpenCV::displayDotLine(int i1, int j1, int i2, int j2,
-                                vpColor::vpColorType color,
-                                unsigned int e)
-{
-
-  if (OpenCVinitialized)
-  {
-    vpTRACE("Dot lines are not yet implemented");
-    cvLine( background, cvPoint(j1,i1), cvPoint(j2,i2), col[color],
-            (int)e);
-  }
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;
-  }
-}
-
-
-/*!
-  \brief display a cross
-  \param i,j : (row,colum indexes)
-  \param size : size of the cross
-  \param col : color (see vpColor)
-*/
-void
-vpDisplayOpenCV::displayCross(int i, int j,
-                              unsigned int size,
-                              vpColor::vpColorType col)
+void vpDisplayOpenCV::displayArrow ( const vpImagePoint &ip1, 
+				     const vpImagePoint &ip2,
+				     vpColor::vpColorType color,
+				     unsigned int w, unsigned int h,
+				     unsigned int thickness)
 {
   if (OpenCVinitialized)
   {
     try{
-      displayLine(i-size/2,j,i+size/2,j,col,1) ;
-      displayLine(i ,j-size/2,i,j+size/2,col,1) ;
-    }
-    catch (...)
-    {
-      vpERROR_TRACE("Error caught") ;
-      throw ;
-    }
-  }
-
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;
-  }
-
-}
-
-
-/*!
-  \brief display a "large" cross
-  \param i,j : (row,colum indexes)
-  \param size : size of the cross
-  \param col : color (see vpColor)
-*/
-void vpDisplayOpenCV::displayCrossLarge(int i, int j,
-                                        unsigned int size,
-                                        vpColor::vpColorType col)
-{
-  if (OpenCVinitialized)
-  {
-    try{
-      displayLine(i-size/2,j,i+size/2,j,col,3) ;
-      displayLine(i ,j-size/2,i,j+size/2,col,3) ;
-    }
-    catch (...)
-    {
-      vpERROR_TRACE("Error caught") ;
-      throw ;
-    }
-  }
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;    //
-  }
-}
-
-
-
-/*!
-  \brief display an arrow
-  \param i1,j1 : (row,colum indexes) initial coordinates
-  \param i2,j2 : (row,colum indexes) final coordinates
-  \param col : color (see vpColor)
-  \param L,l : width and height of the arrow
-*/
-void
-vpDisplayOpenCV::displayArrow(int i1, int j1, int i2, int j2,
-                              vpColor::vpColorType col,
-                              unsigned int L,unsigned int l)
-{
-  if (OpenCVinitialized)
-  {
-    try{
-      int _l = l;
-      double a = (int)i2 - (int)i1 ;
-      double b = (int)j2 - (int)j1 ;
+      double a = ip2.get_i() - ip1.get_i() ;
+      double b = ip2.get_j() - ip1.get_j() ;
       double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
       if ((a==0)&&(b==0))
@@ -582,38 +561,24 @@ vpDisplayOpenCV::displayArrow(int i1, int j1, int i2, int j2,
       }
       else
       {
-        a /= lg ;
+	a /= lg ;
         b /= lg ;
 
-        double i3,j3  ;
-        i3 = i2 - L*a ;
-        j3 = j2 - L*b ;
+	vpImagePoint ip3;
+        ip3.set_i(ip2.get_i() - w*a);
+        ip3.set_j(ip2.get_j() - w*b);
 
+	vpImagePoint ip4;
+	ip4.set_i( ip3.get_i() - b*h );
+	ip4.set_j( ip3.get_j() + a*h );
 
-        double i4,j4 ;
+	displayLine ( ip2, ip4, color, thickness ) ;
+        
+	ip4.set_i( ip3.get_i() + b*h );
+	ip4.set_j( ip3.get_j() - a*h );
 
-        //double t = 0 ;
-        //while (t<=_l)
-        {
-          i4 = i3 - b*_l ;
-          j4 = j3 + a*_l ;
-
-          displayLine(i2, j2, (unsigned int) i4,
-                      (unsigned int) j4, col) ;
-          //t+=0.1 ;
-        }
-        //t = 0 ;
-        //while (t>= -_l)
-        {
-          i4 = i3 + b*_l ;
-          j4 = j3 - a*_l ;
-
-          displayLine(i2, j2, (unsigned int) i4,
-                      (unsigned int) j4, col) ;
-          //t-=0.1 ;
-        }
-        displayLine(i1,j1,i2,j2,col) ;
-
+	displayLine ( ip2, ip4, color, thickness ) ;
+	displayLine ( ip1, ip2, color, thickness ) ;
       }
     }
     catch (...)
@@ -630,37 +595,235 @@ vpDisplayOpenCV::displayArrow(int i1, int j1, int i2, int j2,
   }
 }
 
+/*!
+  Display a string at the image point \e ip location.
+
+  To select the font used to display the string, use setFont().
+
+  \param ip : Upper left image point location of the string in the display.
+  \param text : String to display in overlay.
+  \param color : String color.
+
+  \sa setFont()
+*/
+void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
+                                     const char *text, 
+				     vpColor::vpColorType color )
+{
+  if (OpenCVinitialized)
+  {
+    cvPutText( background, text, 
+	       cvPoint( vpMath::round( ip.get_u() ),
+			vpMath::round( ip.get_v()+fontHeight ) ), 
+	       font, col[color] );
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+/*!
+  Display a circle.
+  \param center : Circle center position.
+  \param radius : Circle radius.
+  \param color : Circle color.
+  \param fill : When set to true fill the circle.
+  \param thickness : Thickness of the circle. This parameter is only useful 
+  when \e fill is set to false.
+*/
+void vpDisplayOpenCV::displayCircle(const vpImagePoint &center,
+				    unsigned int radius,
+				    vpColor::vpColorType color,
+				    bool /* fill */,
+				    unsigned int /* thickness */)
+{
+  if (OpenCVinitialized)
+  {
+    cvCircle( background, 
+	      cvPoint( vpMath::round( center.get_u() ), 
+		       vpMath::round( center.get_v() ) ), 
+	      (int)radius, col[color]);
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
 
 /*!
-  \brief display a rectangle
-  \param i,j : Upper left corner coordinates (row,column).
-  \param width : Rectangle width.
-  \param height : Rectangle height.
-  \param color : Color of the rectangle.
-
-  \param fill : Set as true to fill the rectangle. When false, draw
-  only the edges.
-
-  \param e : Line thickness.
+  Display a cross at the image point \e ip location.
+  \param ip : Cross location.
+  \param size : Size (width and height) of the cross.
+  \param color : Cross color.
+  \param thickness : Thickness of the lines used to display the cross.
 */
 void
-vpDisplayOpenCV::displayRectangle(int i, int j,
+vpDisplayOpenCV::displayCross(const vpImagePoint &ip,
+                              unsigned int size,
+                              vpColor::vpColorType color,
+			      unsigned int thickness)
+{
+  if (OpenCVinitialized)
+  {
+    vpImagePoint top,bottom,left,right;
+    top.set_i(ip.get_i()-size/2);
+    top.set_j(ip.get_j());
+    bottom.set_i(ip.get_i()+size/2);
+    bottom.set_j(ip.get_j());
+    left.set_i(ip.get_i());
+    left.set_j(ip.get_j()-size/2);
+    right.set_i(ip.get_i());
+    right.set_j(ip.get_j()+size/2);
+    try{
+      displayLine(top, bottom, color, thickness) ;
+      displayLine(left, right, color, thickness) ;
+    }
+    catch (...)
+    {
+      vpERROR_TRACE("Error caught") ;
+      throw ;
+    }
+  }
+
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+
+}
+
+/*!
+  Display a dashed line from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void
+vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, 
+				const vpImagePoint &ip2,
+				vpColor::vpColorType color, 
+				unsigned int thickness)
+{
+
+  if (OpenCVinitialized)
+  {
+    vpTRACE("Dot lines are not yet implemented");
+    cvLine( background, 
+	    cvPoint( vpMath::round( ip1.get_u() ), 
+		     vpMath::round( ip1.get_v() ) ), 
+	    cvPoint( vpMath::round( ip2.get_u() ),
+		     vpMath::round( ip2.get_v() ) ), 
+	    col[color], (int) thickness);
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+
+
+/*!
+  Display a line from image point \e ip1 to image point \e ip2.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void
+vpDisplayOpenCV::displayLine(const vpImagePoint &ip1, 
+			     const vpImagePoint &ip2,
+			     vpColor::vpColorType color, 
+			     unsigned int thickness)
+{
+  if (OpenCVinitialized)
+  {
+    cvLine( background, 
+	    cvPoint( vpMath::round( ip1.get_u() ), 
+		     vpMath::round( ip1.get_v() ) ), 
+	    cvPoint( vpMath::round( ip2.get_u() ),
+		     vpMath::round( ip2.get_v() ) ), 
+	    col[color], (int) thickness);
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+
+/*!
+  Display a point at the image point \e ip location.
+  \param ip : Point location.
+  \param color : Point color.
+*/
+void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
+                                   vpColor::vpColorType color)
+{
+  if (OpenCVinitialized)
+  {
+    ((uchar*)(background->imageData 
+	      + background->widthStep*vpMath::round( ip.get_i() )))
+      [vpMath::round( ip.get_j()*3 )] = (uchar)col[color].val[0];
+
+    ((uchar*)(background->imageData 
+	      + background->widthStep*vpMath::round( ip.get_i() )))
+      [vpMath::round( ip.get_j()*3+1 )] = (uchar)col[color].val[1];
+
+    ((uchar*)(background->imageData 
+	      + background->widthStep*vpMath::round( ip.get_i() )))
+      [vpMath::round( ip.get_j()*3+2 )] = (uchar)col[color].val[2];
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+
+/*!  
+  Display a rectangle with \e topLeft as the top-left corner and \e
+  width and \e height the rectangle size.
+
+  \param topLeft : Top-left corner of the rectangle.
+  \param width,height : Rectangle size.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+*/
+void
+vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
                                   unsigned int width, unsigned int height,
                                   vpColor::vpColorType color, bool fill,
-                                  unsigned int e)
+                                  unsigned int thickness)
 {
   if (OpenCVinitialized)
   {
     if (fill == false)
       cvRectangle( background,
-                   cvPoint(j,i),
-                   cvPoint(j+width,i+height),
-                   col[color],(int)e);
+                   cvPoint( vpMath::round( topLeft.get_u() ),
+			    vpMath::round( topLeft.get_v() ) ),
+                   cvPoint( vpMath::round( topLeft.get_u()+width ),
+			    vpMath::round( topLeft.get_v()+height ) ),
+                   col[color], (int)thickness);
     else
       cvRectangle( background,
-                   cvPoint(j,i),
-                   cvPoint(j+width,i+height),
-                   col[color],CV_FILLED);
+                   cvPoint( vpMath::round( topLeft.get_u() ),
+			    vpMath::round( topLeft.get_v() ) ),
+                   cvPoint( vpMath::round( topLeft.get_u()+width ),
+			    vpMath::round( topLeft.get_v()+height ) ),
+                   col[color], CV_FILLED);
   }
   else
   {
@@ -669,32 +832,41 @@ vpDisplayOpenCV::displayRectangle(int i, int j,
                              "OpenCV not initialized")) ;
   }
 }
+/*!  
+  Display a rectangle.
 
-/*!
-  \brief display a rectangle
-  \param rect : Rectangle characteristics.
-  \param color : Color of the rectangle.
-  \param fill : Set as true to fill the rectangle. When false, draw
-  only the edges.
-  \param e : Line thickness.
+  \param topLeft : Top-left corner of the rectangle.
+  \param bottomRight : Bottom-right corner of the rectangle.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
 */
 void
-vpDisplayOpenCV::displayRectangle(const vpRect &rect,
-                                  vpColor::vpColorType color, bool fill,
-                                  unsigned int e)
+vpDisplayOpenCV::displayRectangle ( const vpImagePoint &topLeft,
+				    const vpImagePoint &bottomRight,
+				    vpColor::vpColorType color, bool fill,
+				    unsigned int thickness )
 {
   if (OpenCVinitialized)
   {
     if (fill == false)
       cvRectangle( background,
-                   cvPoint((int)rect.getLeft(),(int)rect.getBottom()),
-                   cvPoint((int)rect.getRight(),(int)rect.getTop()),
-                   col[color],(int)e);
+                   cvPoint( vpMath::round( topLeft.get_u() ), 
+			    vpMath::round( topLeft.get_v() ) ),
+                   cvPoint( vpMath::round( bottomRight.get_u()+width ), 
+			    vpMath::round( bottomRight.get_v()+height ) ),
+                   col[color], (int)thickness);
+
     else
       cvRectangle( background,
-                   cvPoint((int)rect.getLeft(),(int)rect.getBottom()),
-                   cvPoint((int)rect.getRight(),(int)rect.getTop()),
-                   col[color],CV_FILLED);
+                   cvPoint( vpMath::round( topLeft.get_u() ), 
+			    vpMath::round( topLeft.get_v() ) ),
+                   cvPoint( vpMath::round( bottomRight.get_u()+width ), 
+			    vpMath::round( bottomRight.get_v()+height ) ),
+                   col[color], CV_FILLED);
   }
   else
   {
@@ -705,17 +877,38 @@ vpDisplayOpenCV::displayRectangle(const vpRect &rect,
 }
 
 /*!
-  \brief display a string
-  \param i,j (row,colum indexes)
-  \param string
-  \param color (see vpColor)
+  Display a rectangle.
+
+  \param rectangle : Rectangle characteristics.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+
 */
-void vpDisplayOpenCV::displayCharString(int i, int j,
-                                        const char *string, vpColor::vpColorType color)
+void
+vpDisplayOpenCV::displayRectangle(const vpRect &rectangle,
+                                  vpColor::vpColorType color, bool fill,
+                                  unsigned int thickness)
 {
   if (OpenCVinitialized)
   {
-    cvPutText( background, string, cvPoint(j,i+fontHeight) , font, col[color] );
+    if (fill == false)
+      cvRectangle( background,
+                   cvPoint( vpMath::round( rectangle.getLeft() ),
+			    vpMath::round( rectangle.getBottom() ) ),
+                   cvPoint( vpMath::round( rectangle.getRight() ),
+			    vpMath::round( rectangle.getTop() ) ),
+                   col[color], (int)thickness);
+    else
+      cvRectangle( background,
+                   cvPoint( vpMath::round( rectangle.getLeft() ),
+			    vpMath::round( rectangle.getBottom() ) ),
+                   cvPoint( vpMath::round( rectangle.getRight() ),
+			    vpMath::round( rectangle.getTop() ) ),
+		   col[color], CV_FILLED);
   }
   else
   {
@@ -724,6 +917,8 @@ void vpDisplayOpenCV::displayCharString(int i, int j,
                              "OpenCV not initialized")) ;
   }
 }
+
+
 
 /*!
   Wait for a click from one of the mouse button.
@@ -993,97 +1188,14 @@ vpDisplayOpenCV::getClickUp(vpImagePoint &ip,
   return ret;
 }
 
-
-/*!
-  \brief Set the window title.
-
-  \warning This method is not implemented yet.
-
-  \param windowtitle : Window title.
- */
-void
-vpDisplayOpenCV::setTitle(const char * /* windowtitle */)
-{
-
-  vpTRACE("Not implemented");
-#if 0
-  if (OpenCVinitialized)
-  {
-    if (this->title != NULL) {
-      delete [] this->title ;
-      this->title = NULL ;
-    }
-    //    fprintf(stdout, "len: %d\n",  strlen(windowtitle)); fflush(stdout);
-    this->title = new char[strlen(windowtitle) + 1] ;
-    strcpy(this->title, windowtitle) ;
-    //cvMoveWindow( this->title, windowXPosition,  windowYPosition);
-    cvMoveWindow(windowtitle , windowXPosition,  windowYPosition);
-
-  }
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;
-  }
-#endif
-}
-
-/*!
-  \brief Set the font used to display text.
-  \warning This method is not yet implemented.
-  \param fontname : Name of the font.
- */
-
-void
-vpDisplayOpenCV::setFont(const char * /* fontname */)
-{
-  vpERROR_TRACE("Not yet implemented" ) ;
-}
-
-/*!
-  \brief Display a circle
-  \param i,j : circle center position (row,column)
-  \param r : radius
-  \param color
+/*
+  \brief gets the displayed image (including the overlay plane)
+  and returns an RGBa image
 */
-void vpDisplayOpenCV::displayCircle(int i, int j,
-                                    unsigned int r,
-                                    vpColor::vpColorType color)
+void vpDisplayOpenCV::getImage(vpImage<vpRGBa> &I)
 {
-  if (OpenCVinitialized)
-  {
-    cvCircle( background, cvPoint(j,i), (int)r, col[color]);
-  }
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;
-  }
-}
-
-/*!
-  Set the window position in the screen.
-
-  \param winx, winy : Position of the upper-left window's border in the screen.
-
-  \exception vpDisplayException::notInitializedError : If the video
-  device is not initialized.
-*/
-void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
-{
-  if (OpenCVinitialized) {
-    this->windowXPosition = winx;
-    this->windowYPosition = winy;
-    cvMoveWindow( this->title, winx, winy );
-  }
-  else
-  {
-    vpERROR_TRACE("OpenCV not initialized " ) ;
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "OpenCV not initialized")) ;
-  }
+  vpImageConvert::convert(background,I);
+  // shoudl certainly be optimized.
 }
 
 void vpDisplayOpenCV::on_mouse( int event, int x, int y, int /*flags*/, void* display )
