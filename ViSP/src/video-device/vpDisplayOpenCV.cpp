@@ -636,15 +636,21 @@ void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
 void vpDisplayOpenCV::displayCircle(const vpImagePoint &center,
 				    unsigned int radius,
 				    vpColor::vpColorType color,
-				    bool /* fill */,
-				    unsigned int /* thickness */)
+				    bool  fill ,
+				    unsigned int thickness)
 {
   if (OpenCVinitialized)
   {
+    if (fill == false)
     cvCircle( background, 
 	      cvPoint( vpMath::round( center.get_u() ), 
 		       vpMath::round( center.get_v() ) ), 
-	      (int)radius, col[color]);
+	      (int)radius, col[color], (int)thickness);
+    else
+    cvCircle( background, 
+	      cvPoint( vpMath::round( center.get_u() ), 
+		       vpMath::round( center.get_v() ) ), 
+	      (int)radius, col[color], CV_FILLED);
   }
   else
   {
@@ -856,16 +862,16 @@ vpDisplayOpenCV::displayRectangle ( const vpImagePoint &topLeft,
       cvRectangle( background,
                    cvPoint( vpMath::round( topLeft.get_u() ), 
 			    vpMath::round( topLeft.get_v() ) ),
-                   cvPoint( vpMath::round( bottomRight.get_u()+width ), 
-			    vpMath::round( bottomRight.get_v()+height ) ),
+                   cvPoint( vpMath::round( bottomRight.get_u() ), 
+			    vpMath::round( bottomRight.get_v() ) ),
                    col[color], (int)thickness);
 
     else
       cvRectangle( background,
                    cvPoint( vpMath::round( topLeft.get_u() ), 
 			    vpMath::round( topLeft.get_v() ) ),
-                   cvPoint( vpMath::round( bottomRight.get_u()+width ), 
-			    vpMath::round( bottomRight.get_v()+height ) ),
+                   cvPoint( vpMath::round( bottomRight.get_u() ), 
+			    vpMath::round( bottomRight.get_v() ) ),
                    col[color], CV_FILLED);
   }
   else
