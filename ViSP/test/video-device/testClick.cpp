@@ -394,19 +394,17 @@ main(int argc, const char ** argv)
         vpDisplay::flush(I) ;
         if ( opt_click_allowed ){
           std::cout << "Click on a pixel to get his coordinates...\n";
-          unsigned u, v;
+          vpImagePoint ip;
           vpMouseButton::vpMouseButtonType button;
-          vpDisplay::getClick(I, v, u, button);
-          //   vpDisplay::getClick(I, v, u);
-          std::cout << "  You click down on pixel (" << u << ", " << v <<") ";
+          vpDisplay::getClick(I, ip, button);
+          std::cout << "  You click down on pixel (" << ip <<") ";
           switch(button) {
             case vpMouseButton::button1: std::cout << "with left button.\n"; break;
             case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
             case vpMouseButton::button3: std::cout << "with right button.\n"; break;
           }
-          vpDisplay::getClickUp(I, v, u, button);
-          //   vpDisplay::getClick(I, v, u);
-          std::cout << "  You click up on pixel (" << u << ", " << v <<") ";
+          vpDisplay::getClickUp(I, ip, button);
+          std::cout << "  You click up on pixel (" << ip <<") ";
           switch(button) {
             case vpMouseButton::button1: std::cout << "with left button.\n"; break;
             case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
