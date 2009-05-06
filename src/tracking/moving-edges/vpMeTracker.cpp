@@ -155,6 +155,8 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
   nGoodElement=0;
 
   int d = 0;
+  vpImagePoint ip1, ip2;
+  
   // Loop through list of sites to track
   list.front();
   while(!list.outside())
@@ -183,11 +185,13 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
       double a,b ;
       a = refp.i_1 - refp.i ;
       b = refp.j_1 - refp.j ;
-      if(refp.suppress==0)
-	vpDisplay::displayArrow(I,
-				refp.i,refp.j,
-				refp.i+(int)(a),refp.j+(int)(b),
-				vpColor::green) ;
+      if(refp.suppress==0) {
+	ip1.set_i( refp.i );
+	ip1.set_j( refp.j );
+	ip2.set_i( refp.i+a );
+	ip2.set_j( refp.j+b );
+	vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
+      }
     }
 
     list.modify(refp) ;
@@ -238,6 +242,7 @@ vpMeTracker::track(vpImage<unsigned char>& I)
 
   }
 
+  vpImagePoint ip1, ip2;
   nGoodElement=0;
   //  int d =0;
   // Loop through list of sites to track
@@ -271,11 +276,13 @@ vpMeTracker::track(vpImage<unsigned char>& I)
 	  double a,b ;
 	  a = s.i_1 - s.i ;
 	  b = s.j_1 - s.j ;
-	  if(s.suppress==0)
-	    vpDisplay::displayArrow(I,
-				    s.i,s.j,
-				    s.i+(int)(a*5),s.j+(int)(b*5),
-				    vpColor::red) ;
+	  if(s.suppress==0) {
+	    ip1.set_i( s.i );
+	    ip1.set_j( s.j );
+	    ip2.set_i( s.i+a*5 );
+	    ip2.set_j( s.j+b*5 );
+	    vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
+	  }
 	}
 
       }
@@ -299,20 +306,34 @@ vpMeTracker::display(vpImage<unsigned char>& I)
     std::cout <<"begin vpMeTracker::displayList() " << std::endl ;
     std::cout<<" There are "<<list.nbElement()<< " sites in the list " << std::endl ;
   }
+  vpImagePoint ip;
+
   list.front();
 
   while (!list.outside())
   {
     vpMeSite p = list.value() ;
 
-    if(p.suppress == 1)
-      vpDisplay::displayCross(I,p.i, p.j, 2, vpColor::white) ; // Contrast
-    else if(p.suppress == 2)
-      vpDisplay::displayCross(I,p.i, p.j, 2,vpColor::blue) ; // Threshold
-    else if(p.suppress == 3)
-      vpDisplay::displayCross(I,p.i, p.j, 3, vpColor::green) ; // M-estimator
-    else if(p.suppress == 0)
-      vpDisplay::displayCross(I,p.i, p.j, 2, vpColor::red) ; // OK
+    if(p.suppress == 1) {
+      ip.set_i( p.i );
+      ip.set_j( p.j);
+      vpDisplay::displayCross(I, ip, 2, vpColor::white) ; // Contrast
+    }
+    else if(p.suppress == 2) {
+      ip.set_i( p.i );
+      ip.set_j( p.j);
+      vpDisplay::displayCross(I, ip, 2,vpColor::blue) ; // Threshold
+    }
+    else if(p.suppress == 3) {
+      ip.set_i( p.i );
+      ip.set_j( p.j);
+      vpDisplay::displayCross(I, ip, 3, vpColor::green) ; // M-estimator
+    }
+    else if(p.suppress == 0) {
+      ip.set_i( p.i );
+      ip.set_j( p.j);
+      vpDisplay::displayCross(I, ip, 2, vpColor::red) ; // OK
+    }
 
     list.next() ;
   }

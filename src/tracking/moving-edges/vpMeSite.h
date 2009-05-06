@@ -63,7 +63,9 @@
     information instead of applying both temporal masks to the same
     image. ie: spatial -> spatio/temporal
   
-  - Added new tracking function to choose the most similar edge amongst all edges found.
+  - Added new tracking function to choose the most similar edge
+    amongst all edges found.
+
   - sample step.
  */
 class VISP_EXPORT vpMeSite

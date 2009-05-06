@@ -135,64 +135,79 @@ void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
   //convert coordinates to reference frame rotated by theta
   double x_1 = i1*ct - j1*st;
   double tanOrient = atan (1 /(2*aFin*x_1 + bFin)) + thetaFin;
+
+  vpImagePoint ip, ip1, ip2;
   if (!video) {
   	//display parabola vertex
-  	if (!line)
-		vpDisplay::displayCross(I,(int)(x_v*ct + y_v*st),
-  			(int)(-x_v*st + y_v*ct),20, col);
-  	//display segment oriented along parabola symetric axis
-  	vpDisplay::displayLine(I, (int) i_ref [2], (int) j_ref [2],
-			(int)(i_ref [2] + 70*sin (thetaFin)),
-			(int)(j_ref [2] + 70*cos (thetaFin)),
-			vpColor::blue, 1) ;
-	//display initial points
-  	if (firstIter)
-		for (int k = 0; k < numPoints; k++)
-			vpDisplay::displayCross(I,(int)i_ref[k], (int) j_ref[k],
-				10,vpColor::green);
+    if (!line) {
+      ip.set_i( x_v*ct + y_v*st );
+      ip.set_j( -x_v*st + y_v*ct );
+
+	  vpDisplay::displayCross(I, ip, 20, col);
+    }
+    //display segment oriented along parabola symetric axis
+    ip1.set_i( i_ref [2] );
+    ip1.set_j( j_ref [2] );
+    ip2.set_i( i_ref [2] + 70*sin (thetaFin) );
+    ip2.set_j( j_ref [2] + 70*cos (thetaFin) );
+
+    vpDisplay::displayLine(I, ip1, ip2, vpColor::blue, 1) ;
+    //display initial points
+    if (firstIter)
+      for (int k = 0; k < numPoints; k++) {
+	ip.set_i( i_ref[k] );
+	ip.set_j( j_ref[k] );
+	vpDisplay::displayCross(I, ip, 10,vpColor::green);
+      }
   }
   if (video) {
-  //just for capturing the image plane in video: display circle in D
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 1, vpColor::red);
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 2, vpColor::red);
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 3, vpColor::red);
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 4, vpColor::red);
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 5, vpColor::red);
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 6, vpColor::red);
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 7, vpColor::red);
-  	vpDisplay::displayCircle(I, (int)i1, (int)j1, 8, vpColor::red);
-	if (line) {
-    		//display tangent
-    	  if (horLine) {
-	     if (verbose)
-		std::printf("bFin %f atan (1/bFin) %f cFin %f atan (cFin) %f\n",
-			bFin, atan (1/bFin), cFin, atan (cFin));
-	      vpDisplay::displayLine(I,
-		(int)(i1 + 200*bFin*cos (atan (cFin))/fabs(bFin)),
-		(int)(j1 - 200*fabs(sin (atan (cFin)))),
-		(int)(i1 - 200*bFin*cos (atan (cFin))/fabs(bFin)),
-		(int)(j1 + 200*fabs(sin (atan (cFin)))),
-		vpColor::red, 3) ;
-    	  } else {
-	      vpDisplay::displayLine(I,
-		 (int)(i1 - 200*fabs(sin (atan (1/bFin)))),
-		 (int)(j1 - 200*bFin*cos (atan (1/bFin))/fabs(bFin)),
-		 (int)(i1 + 200*fabs(sin (atan (1/bFin)))),
-		 (int)(j1 + 200*bFin*cos (atan (1/bFin))/fabs(bFin)),
-		 vpColor::red, 3) ;
-    	  }
-  	} else {
-    	     vpDisplay::displayLine(I,
-		 (int)(i1 - 200*fabs(sin (tanOrient))),
-		 (int)(j1 - 200*tanOrient*cos (tanOrient)/fabs(tanOrient)),
-		 (int)(i1 + 200*fabs(sin (tanOrient))),
-		 (int)(j1 + 200*tanOrient*cos (tanOrient)/fabs(tanOrient)),
-		 vpColor::red, 3);
-  	}
+    //just for capturing the image plane in video: display circle in D
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+
+    vpDisplay::displayCircle(I, ip1, 1, vpColor::red);
+    vpDisplay::displayCircle(I, ip1, 2, vpColor::red);
+    vpDisplay::displayCircle(I, ip1, 3, vpColor::red);
+    vpDisplay::displayCircle(I, ip1, 4, vpColor::red);
+    vpDisplay::displayCircle(I, ip1, 5, vpColor::red);
+    vpDisplay::displayCircle(I, ip1, 6, vpColor::red);
+    vpDisplay::displayCircle(I, ip1, 7, vpColor::red);
+    vpDisplay::displayCircle(I, ip1, 8, vpColor::red);
+    if (line) {
+      //display tangent
+      if (horLine) {
+	if (verbose) {
+	  std::printf("bFin %f atan (1/bFin) %f cFin %f atan (cFin) %f\n",
+		      bFin, atan (1/bFin), cFin, atan (cFin));
+	}
+	ip1.set_i( i1 + 200*bFin*cos (atan (cFin))/fabs(bFin) );
+	ip1.set_j( j1 - 200*fabs(sin (atan (cFin))) );
+	ip2.set_i( i1 - 200*bFin*cos (atan (cFin))/fabs(bFin) );
+	ip2.set_j( j1 + 200*fabs(sin (atan (cFin))) );
+  	vpDisplay::displayLine(I, ip1, ip2, vpColor::red, 3) ;
+      } else {
+	ip1.set_i( i1 - 200*fabs(sin (atan (1/bFin))) );
+	ip1.set_j( j1 - 200*bFin*cos (atan (1/bFin))/fabs(bFin) );
+	ip2.set_i( i1 + 200*fabs(sin (atan (1/bFin))) );
+	ip2.set_j( j1 + 200*bFin*cos (atan (1/bFin))/fabs(bFin) );
+	vpDisplay::displayLine(I, ip1, ip2, vpColor::red, 3) ;
+      }
+    } else {
+      ip1.set_i( i1 - 200*fabs(sin (tanOrient)) );
+      ip1.set_j( j1 - 200*tanOrient*cos (tanOrient)/fabs(tanOrient) );
+      ip2.set_i( i1 + 200*fabs(sin (tanOrient)) );
+      ip2.set_j( j1 + 200*tanOrient*cos (tanOrient)/fabs(tanOrient) );
+      vpDisplay::displayLine(I, ip1, ip2, vpColor::red, 3) ;
+    }
   } else {
-  //display initial and final curve pixels
-    	vpDisplay::displayCross(I, (int) i1, (int) j1, 20, vpColor::cyan);
-	vpDisplay::displayCross(I, (int) i2, (int) j2, 20, vpColor::yellow);
+    //display initial and final curve pixels
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+    ip2.set_i( i2 );
+    ip2.set_j( j2 );
+    
+    vpDisplay::displayCross(I, ip1, 20, vpColor::cyan);
+    vpDisplay::displayCross(I, ip2, 20, vpColor::yellow);
   }
 }
 /*
@@ -1063,36 +1078,36 @@ void vpMePath::leastSquareLine(vpImage<unsigned char> &I)
 */
 void vpMePath::initTracking(vpImage<unsigned char> &I)
 {
-  unsigned *i;
-  unsigned *j ;
-  i = new unsigned[numPoints] ;
-  j = new unsigned[numPoints] ;
+
+  vpImagePoint *ip = new vpImagePoint[numPoints] ;
+
   for (int k =0 ; k < numPoints; k++) {
       std::cout << "Please do click on the points "<< k+1 <<"/" << numPoints;
       std::cout << " in the order desired for path following" <<std::endl ;
       std::cout << "points must be on the left edge of the path" <<std::endl ;
       std::cout << "--------  "<< std::endl;
-      while (vpDisplay::getClick(I,i[k],j[k])!=true) ;
-      std::cout << i[k] <<" " <<j[k] << std::endl;
+      while (vpDisplay::getClick(I, ip[k])!=true) ;
+      
+      std::cout << ip[k] << std::endl;
   }
-  for (int k =0 ; k < numPoints ; k++) {
-    i_ref [k] = i[k];
-    j_ref [k] = j[k];
-    if (verbose)
-    	std::printf("init tracking ref --> i %d j %d \n",i_ref[k], j_ref[k]);
-  }
-  i1 = i[0] ;
-  j1 = j[0] ;
-  i2 = i[numPoints-1] ;
-  j2 = j[numPoints-1] ;
+
   //start tracking these points
-  initTracking(I, numPoints, i, j) ;
-  delete []i ;
-  delete []j ;
+  initTracking(I, numPoints, ip) ;
+
+  delete [] ip ;
 }
+
 /*!
 
-  Initialise the tracking of the path points
+  Initialise the tracking of the path points.
+
+  \param I : Image to process.  
+
+  \param n : Number of image points \e ip used to initialize the
+  path. Generally set to 5.
+
+  \param ip : A pointer to the image point table used to initialize
+  the tracker. The table size is given by \e n.  
 
   \exception vpTrackingException::notEnoughPointError : Not enough
   points to compute the parameters.
@@ -1101,13 +1116,25 @@ void vpMePath::initTracking(vpImage<unsigned char> &I)
 
 */
 void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
-		       unsigned *i, unsigned *j)
+			    vpImagePoint *ip)
 {
+
+  for (int k =0 ; k < n ; k++) {
+    i_ref [k] = vpMath::round( ip[k].get_i() );
+    j_ref [k] = vpMath::round( ip[k].get_j() );
+    if (verbose)
+    	std::printf("init tracking ref --> i %d j %d \n",i_ref[k], j_ref[k]);
+  }
+  i1 = ip[0].get_i() ;
+  j1 = ip[0].get_j() ;
+  i2 = ip[numPoints-1].get_i() ;
+  j2 = ip[numPoints-1].get_j() ;
+
   if (verbose) {
     std::printf("vpMePath::initTracking(I,n,i,j)\n");
     std::printf("n %d\n",n);
     for (int k =0 ; k < n; k++) {
-    	std::printf("init tracking ref --> i %d j %d \n",i[k], j[k]);
+      std::cout <<"init tracking ref " << k << ": " << ip[k] << std::endl;
     }
   }
   //pick line or parabola and compute its parameters
@@ -1130,6 +1157,7 @@ void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
   if (verbose)
     std::printf("vpMePath::initTracking(I,n,i,j) finshed\n");
 }
+
 /*!
 
   Track the path points and compute curve characteristics at every iteration
@@ -1220,3 +1248,55 @@ void vpMePath::track(vpImage<unsigned char> &I)
   }
   iter++ ;
 }
+
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+
+  \deprecated This method is deprecated. You should use
+  vpMePath::initTracking(vpImage<unsigned char> &I, int n, vpImagePath *)
+
+  Initialise the tracking of the path points
+
+  \exception vpTrackingException::notEnoughPointError : Not enough
+  points to compute the parameters.
+  \exception vpMeTracker::initTracking : cannot track points
+
+
+*/
+void vpMePath::initTracking(vpImage<unsigned char> &I, int n,
+		       unsigned *i, unsigned *j)
+{
+  if (verbose) {
+    std::printf("vpMePath::initTracking(I,n,i,j)\n");
+    std::printf("n %d\n",n);
+    for (int k =0 ; k < n; k++) {
+    	std::printf("init tracking ref --> i %d j %d \n",i[k], j[k]);
+    }
+  }
+  //pick line or parabola and compute its parameters
+  leastSquare(I);
+  if (verbose)
+    std::printf("vpMePath::initTracking parameters computed\n");
+  sample(I);
+  firstIter = false;
+  vpMeTracker::initTracking(I) ;
+  try {
+    //track points
+    track(I) ;
+  }
+  catch(...) {
+      vpERROR_TRACE("Error caught") ;
+      throw ;
+  }
+  vpMeTracker::display(I) ;
+  vpDisplay::flush(I);
+  if (verbose)
+    std::printf("vpMePath::initTracking(I,n,i,j) finshed\n");
+}
+#endif

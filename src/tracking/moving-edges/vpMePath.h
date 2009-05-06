@@ -54,6 +54,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpColor.h>
+#include <visp/vpImagePoint.h>
 
 
 /*!
@@ -74,9 +75,24 @@ public:
   void track(vpImage<unsigned char>& Im);
   void initTracking(vpImage<unsigned char> &I);
   void initTracking(vpImage<unsigned char> &I, int n,
-		    unsigned *i, unsigned *j);
+		    vpImagePoint *ip);
   inline void setVerboseMode(bool on=false) {this->verbose = on;};
   inline void setTrackParabolas(bool on=true) {this->trackParabolas = on;};
+
+  /****************************************************************
+
+           Deprecated functions
+
+  *****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  void initTracking(vpImage<unsigned char> &I, int n,
+		    unsigned *i, unsigned *j);
+#endif
+
 
 private:
 

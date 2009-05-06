@@ -98,6 +98,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpMeLine.h>
+#include <visp/vpImagePoint.h>
 
 int main()
 {
@@ -123,7 +124,13 @@ int main()
   line.setMe(&me);
 
   // Initialize the location of the vertical line to track
-  line.initTracking(I, 120, 119, 170, 122);
+  vpImagePoint ip1, ip2; // Two points belonging to the line to track 
+  ip1.set_i( 120 );
+  ip1.set_j( 119 );
+  ip2.set_i( 170 );
+  ip2.set_j( 122 );
+
+  line.initTracking(I, ip1, ip2);
 
   while ( 1 )
   {
@@ -174,16 +181,36 @@ public:
 
   void initTracking(vpImage<unsigned char> &I) ;
   void initTracking(vpImage<unsigned char> &I,
-		    unsigned i1,unsigned j1,
-		    unsigned i2, unsigned j2) ;
+		    const vpImagePoint &ip1,
+		    const vpImagePoint &ip2) ;
 
   void computeRhoTheta(vpImage<unsigned char> &I) ;
   double getRho() const ;
   double getTheta() const ;
-  void getExtremities(double &i1, double &j1, double &i2, double &j2) ;
+  void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) ;
 
   static bool intersection(const vpMeLine &line1, const vpMeLine &line2, 
+			   vpImagePoint &ip); 
+
+  /****************************************************************
+
+           Deprecated functions
+
+  *****************************************************************/
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  void initTracking(vpImage<unsigned char> &I,
+		    unsigned i1,unsigned j1,
+		    unsigned i2, unsigned j2) ;
+  void getExtremities(double &i1, double &j1, double &i2, double &j2) ;
+  static bool intersection(const vpMeLine &line1, const vpMeLine &line2, 
 			   double &i, double &j); 
+
+#endif
+
 };
 
 
