@@ -256,7 +256,20 @@ public:
 
   // return the determinant of the matrix.
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /** @name Deprecated functions */
+  //@{
+  /*!
+    \deprecated This method is deprecated. You should use vpMatrix::det() 
+    instead.
+  */
+  double detByLU() const;
   //@}
+#else
+ private:
+  double detByLU() const;
+ public:
+#endif
 
   //-------------------------------------------------
   // Columns, Rows extraction, SubMatrix
@@ -331,9 +344,9 @@ public:
   void svd(vpColVector& w, vpMatrix& v);
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
-  void solveBySVD(const vpColVector& B, vpColVector& x) const ;
-  // solve Ax=B using the SVD decomposition (usage  x=A.SVDsolve(B))
-  vpColVector SVDsolve(const vpColVector& B) const ;
+  void solveBySVD(const vpColVector &B, vpColVector &x) const ;
+  // solve Ax=B using the SVD decomposition (usage  x=A.solveBySVD(B))
+  vpColVector solveBySVD(const vpColVector &B) const ;
 
   //! Compute the pseudo inverse of the matrix using the SVD.
   vpMatrix pseudoInverse(double svThreshold=1e-6)  const;
@@ -392,18 +405,21 @@ public:
   // -------------------------
   /** @name Norms  */
   //@{
-  // Euclidian norm ||x||=sqrt(sum(x_i^2))
-  double euclidianNorm () const;
+  // Euclidean norm ||x||=sqrt(sum(x_i^2))
+  double euclideanNorm () const;
   // Infinity norm ||x||=max(sum(fabs(x_i)))
   double infinityNorm () const;
   //@}
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /** @name Deprecated functions */
   //@{
-  //! compute the determinant using the LU Decomposition (usage  double det =A.det();)
-  double detByLU() const;
   static double det33(const vpMatrix &P) ;
+  double euclidianNorm () const;
+  // solve Ax=B using the SVD decomposition (usage  x=A.SVDsolve(B))
+  vpColVector SVDsolve(const vpColVector& B) const ;
   //@}
+#endif
 
 };
 
