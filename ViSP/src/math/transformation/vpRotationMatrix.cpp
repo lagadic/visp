@@ -649,11 +649,11 @@ vpRotationMatrix::vpRotationMatrix(const vpEulerVector &euler) : vpMatrix()
 }
 
 /*!
-  \brief   Transform a vector representing the euler angle
-  into an rotation matrix.
-
   \deprecated This method is deprecated. You should use
-  buildFrom(const vpRzyzVector &) instead.
+  vpRotationMatrix::buildFrom(const vpRzyzVector &) instead.
+
+  Transform a vector representing the euler angle
+  into an rotation matrix.
 
   Rzyz = Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
 */
