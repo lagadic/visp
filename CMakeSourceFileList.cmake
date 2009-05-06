@@ -98,7 +98,6 @@ SET (SRC_IMAGE
   image/vpImageMorphology.cpp
   image/vpImageTools.cpp
   image/vpRGBa.cpp
-  image/vpImagePoint.cpp
   )
 
 SET (SRC_KEY_POINT
