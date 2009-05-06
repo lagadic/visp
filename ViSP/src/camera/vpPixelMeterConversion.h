@@ -50,6 +50,7 @@
 #include<visp/vpException.h>
 #include<visp/vpMath.h>
 #include<visp/vpDebug.h>
+#include<visp/vpImagePoint.h>
 
 /*!
   \class vpPixelMeterConversion
@@ -101,6 +102,43 @@ convertPoint(const vpCameraParameters &cam,
   }       
 }
 
+/*!  
+  \brief Point coordinates conversion from pixel coordinates
+  Coordinates in pixel to normalized coordinates \f$(x,y)\f$ in meter.
+
+  The used formula depends on the projection model of the camera. To
+  know the currently used projection model use
+  vpCameraParameter::get_projModel()
+
+  \param cam : camera parameters.
+  \param iP : input coordinates in pixels.
+  \param x,y : output coordinates in meter.
+
+  Thanks to the pixel coordinates in the frame (u,v), the meter coordinates are given by :
+
+  \f$ x = (u-u_0)/p_x \f$ and \f$ y = (v-v_0)/p_y  \f$ in the case of
+  perspective projection without distortion.
+
+  \f$ x = (u-u_0)*(1+k_{du}*r^2)/p_x \f$ and
+  \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y  \f$
+  with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$ in the case of perspective
+  projection with distortion.
+*/
+inline static void
+convertPoint(const vpCameraParameters &cam,
+  const vpImagePoint &iP,
+  double &x, double &y)
+{
+  switch(cam.projModel){
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+      convertPointWithoutDistortion(cam,iP,x,y);
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+      convertPointWithDistortion(cam,iP,x,y);
+      break;
+  }       
+}
+
 /*!
   \brief Point coordinates conversion without distortion from pixel coordinates
   \f$(u,v)\f$ to normalized coordinates \f$(x,y)\f$ in meter.
@@ -119,6 +157,28 @@ convertPointWithoutDistortion(
 {
     x = (u - cam.u0)*cam.inv_px ;
     y = (v - cam.v0)*cam.inv_py ;
+}
+
+/*!
+  \brief Point coordinates conversion without distortion from pixel coordinates
+  Coordinates in pixel to normalized coordinates \f$(x,y)\f$ in meter.
+
+  \param cam : camera parameters.
+  \param iP : input coordinates in pixels.
+  \param x,y : output coordinates in meter.
+
+  Thanks to the pixel coordinates in the frame (u,v), the meter coordinates are given by :
+
+  \f$ x = (u-u_0)/p_x \f$ and  \f$ y = (v-v_0)/p_y  \f$
+*/
+inline static void
+convertPointWithoutDistortion(
+  const vpCameraParameters &cam,
+  const vpImagePoint &iP,
+  double &x, double &y)
+{
+    x = (iP.get_u() - cam.u0)*cam.inv_px ;
+    y = (iP.get_v() - cam.v0)*cam.inv_py ;
 }
 
 /*!
@@ -144,6 +204,33 @@ convertPointWithDistortion(
   x = (u - cam.u0)*r2*cam.inv_px ;
   y = (v - cam.v0)*r2*cam.inv_py ;
 }
+
+/*!
+  \brief Point coordinates conversion with distortion from pixel coordinates
+  Coordinates in pixel to normalized coordinates \f$(x,y)\f$ in meter.
+
+  \param cam : camera parameters.
+  \param iP : input coordinates in pixels.
+  \param x,y : output coordinates in meter.
+
+  Thanks to the pixel coordinates in the frame (u,v), the meter coordinates are given by :
+
+  \f$ x = (u-u_0)*(1+k_{du}*r^2)/p_x \f$ and
+  \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y \f$
+  with \f$ r^2=((u - u_0)/p_x)^2 + ((v-v_0)/p_y)^2 \f$
+*/
+inline static void
+convertPointWithDistortion(
+  const vpCameraParameters &cam,
+  const vpImagePoint &iP,
+  double &x, double &y)
+{
+  double r2 = 1.+cam.kdu*(vpMath::sqr((iP.get_u() - cam.u0)*cam.inv_px) +
+              vpMath::sqr((iP.get_v()-cam.v0)*cam.inv_py));
+  x = (iP.get_u() - cam.u0)*r2*cam.inv_px ;
+  y = (iP.get_v() - cam.v0)*r2*cam.inv_py ;
+}
+
   //! line coordinates conversion (rho,theta)
   static void convertLine(const vpCameraParameters &cam,
 		      const double &rho_p, const double &theta_p,
