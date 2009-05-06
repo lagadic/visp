@@ -45,9 +45,9 @@
   for image processing
 */
 
+#include <ostream>
 
 #include <visp/vpConfig.h>
-#include <visp/vpColVector.h>
 
 
 /*!
@@ -87,7 +87,10 @@ class VISP_EXPORT vpImagePoint
     Default constructor that initialize the coordinates of the image
     point to zero.
   */
-  vpImagePoint() ;
+  inline vpImagePoint() {
+    i = 0;
+    j = 0;
+  }
   /*!
     Copy constructor.
 
@@ -95,110 +98,178 @@ class VISP_EXPORT vpImagePoint
 
     \param ip : An image point.
   */
-  vpImagePoint(const vpImagePoint &ip);
-
+  inline vpImagePoint(const vpImagePoint &ip) {
+    this->i = ip.i;
+    this->j = ip.j;
+  }
   //! Destructor.
-  virtual ~vpImagePoint() { ; }
+  inline virtual ~vpImagePoint() { ; }
 
   /*!
   
     Copy operator.
 
   */
-  const vpImagePoint& operator=(const vpImagePoint &ip) {
-    this->iP = ip.iP;
+  inline const vpImagePoint& operator=(const vpImagePoint &ip) {
+    this->i = ip.i;
+    this->j = ip.j;
     return *this;
   }
 
   /*!
-    Sets the point coordinate corresponding to the \f$ i \f$ axes in the frame (i,j).
+
+    Sets the point coordinate corresponding to the \f$ i \f$ axes in
+    the frame (i,j).
 
     \param i : The desired value for the coordinate along the \f$ i \f$ axes.
 
     \sa set_j(), set_u(), set_v()
   */
-  inline void set_i(const double i) {  iP[0] = i ; }
+  inline void set_i(const double i) {  this->i = i ; }
 
   /*!
-    Sets the point coordinate corresponding to the \f$ j \f$ axes in the frame (i,j).
+
+    Sets the point coordinate corresponding to the \f$ j \f$ axes in
+    the frame (i,j).
 
     \param j : The desired value for the coordinate along the \f$ j \f$ axes.
 
     \sa set_i(), set_u(), set_v()
   */
-  inline void set_j(const double j) {  iP[1] = j ; }
+  inline void set_j(const double j) {  this->j = j ; }
 
   /*!
-    Gets the point coordinate corresponding to the \f$ i \f$ axes in the frame (i,j).
+
+    Gets the point coordinate corresponding to the \f$ i \f$ axes in
+    the frame (i,j).
 
     \return The value of the coordinate along the \f$ i \f$ axes.
 
     \sa get_j(), get_u(), get_v()
   */
-  inline double get_i()  const { return iP[0] ; }
+  inline double get_i()  const { return i ; }
 
   /*!
-    Gets the point coordinate corresponding to the \f$ j \f$ axes in the frame (i,j).
+
+    Gets the point coordinate corresponding to the \f$ j \f$ axes in
+    the frame (i,j).
 
     \return The value of the coordinate along the \f$ j \f$ axes.
 
     \sa get_i(), get_u(), get_v()
   */
-  inline double get_j()  const { return iP[1] ; }
+  inline double get_j()  const { return j ; }
 
   /*!
-    Sets the point coordinate corresponding to the \f$ u \f$ axes in the frame (u,v).
+
+    Sets the point coordinate corresponding to the \f$ u \f$ axes in
+    the frame (u,v).
 
     \param u : The desired value for the coordinate along the \f$ u \f$ axes.
 
     \sa set_i(), set_j(), set_v()
   */
-  inline void set_u(const double u) {  iP[1] = u ; }
+  inline void set_u(const double u) {  j = u ; }
 
   /*!
-    Sets the point coordinate corresponding to the \f$ v \f$ axes in the frame (u,v).
+
+    Sets the point coordinate corresponding to the \f$ v \f$ axes in
+    the frame (u,v).
 
     \param v : The desired value for the coordinate along the \f$ v \f$ axes.
 
     \sa set_i(), set_j(), set_u()
   */
-  inline void set_v(const double v) {  iP[0] = v ; }
+  inline void set_v(const double v) {  i = v ; }
 
   /*!
-    Gets the point coordinate corresponding to the \f$ u \f$ axes in the frame (u,v).
+
+    Gets the point coordinate corresponding to the \f$ u \f$ axes in
+    the frame (u,v).
 
     \return The value of the coordinate along the \f$ u \f$ axes.
 
     \sa get_i(), get_j(), get_v()
   */
-  inline double get_u()  const { return iP[1] ; }
+  inline double get_u()  const { return j ; }
 
   /*!
-    Gets the point coordinate corresponding to the \f$ v \f$ axes in the frame (u,v).
+
+    Gets the point coordinate corresponding to the \f$ v \f$ axes in
+    the frame (u,v).
 
     \return The value of the coordinate along the \f$ v \f$ axes.
 
     \sa get_i(), get_j(), get_u()
   */
-  inline double get_v()  const { return iP[0] ; }
+  inline double get_v()  const { return i; }
 
  private:
-  //! basic construction
-  void init() ;
-
-
-  vpColVector iP;
-
-
+  double i,j;
 };
 
-VISP_EXPORT bool operator==( const vpImagePoint &ip1, 
-			     const vpImagePoint &ip2 );
-VISP_EXPORT bool operator!=( const vpImagePoint &ip1, 
-			     const vpImagePoint &ip2 );
+/*!
+  \relates vpImagePoint
 
-VISP_EXPORT std::ostream& operator<< (std::ostream &os, 
-				      const vpImagePoint& ip);
+  Returns true if ip1 and ip2 are equal; otherwire returns false.
+
+*/
+VISP_EXPORT inline bool operator==( const vpImagePoint &ip1, 
+				    const vpImagePoint &ip2 ) {
+  return ( ( ip1.get_i() == ip2.get_i() ) && ( ip1.get_j() == ip2.get_j() ) );
+}
+
+/*!
+
+  \relates vpImagePoint
+
+  Returns true if ip1 and ip2 are different; otherwire returns true.
+
+*/
+VISP_EXPORT inline bool operator!=( const vpImagePoint &ip1, 
+				    const vpImagePoint &ip2 ) {
+  return ( ( ip1.get_i() != ip2.get_i() ) || ( ip1.get_j() != ip2.get_j() ) );
+}
+
+/*!
+
+  \relates vpImagePoint
+
+  Writes the image point coordinates \e ip to the stream \e os, and
+  returns a reference to the stream. Writes the first coordinate along
+  the \e i axis and then the second one along the \e j axis. The
+  coordinates are separated by a comma.
+
+  The following code
+  \code
+#include <iostream>
+
+#include <visp/vpImagePoint.h>
+int main()
+{
+  vpImagePoint ip;
+
+  ip.set_i(10);
+  ip.set_j(11.1);
+
+  std::cout << "Image point with coordinates: " << ip << std::endl;
+
+  return 0;
+}
+  \endcode
+
+  The previous sample code produces the output:
+  \verbatim
+Image point with coordinates: 10, 11.1
+  \endverbatim
+*/
+VISP_EXPORT inline std::ostream& operator<< (std::ostream &os,
+					     const vpImagePoint& ip)
+ {
+  os << ip.get_i() << ", " << ip.get_j();
+  return os;
+}
+
 
 #endif
 
