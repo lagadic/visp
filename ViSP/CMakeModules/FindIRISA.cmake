@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindIRISA.cmake,v 1.3 2008-12-19 14:24:13 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 2008 Inria. All rights reserved.
 #

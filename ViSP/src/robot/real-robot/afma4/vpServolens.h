@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServolens.h,v 1.3 2008-12-17 16:24:38 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

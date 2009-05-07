@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindNAS.cmake,v 1.2 2008-11-28 16:31:53 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 2008 Inria. All rights reserved.
 #

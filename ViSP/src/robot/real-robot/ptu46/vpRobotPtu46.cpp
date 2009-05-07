@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotPtu46.cpp,v 1.13 2007-12-20 08:15:29 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

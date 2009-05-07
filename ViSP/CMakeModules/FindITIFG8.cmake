@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindITIFG8.cmake,v 1.2 2007-01-26 17:26:28 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

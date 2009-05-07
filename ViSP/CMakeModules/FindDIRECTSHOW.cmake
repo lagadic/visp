@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECTSHOW.cmake,v 1.11 2008-11-21 09:04:10 nmelchio Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

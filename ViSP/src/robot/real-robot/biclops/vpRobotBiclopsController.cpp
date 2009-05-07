@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotBiclopsController.cpp,v 1.5 2007-04-20 14:22:16 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

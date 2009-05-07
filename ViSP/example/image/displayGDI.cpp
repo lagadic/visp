@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: displayGDI.cpp,v 1.11 2008-06-13 13:37:36 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

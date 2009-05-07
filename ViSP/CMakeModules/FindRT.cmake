@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindRT.cmake,v 1.1 2008-07-17 20:13:29 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 2008 Inria. All rights reserved.
 #

@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: TargetDistclean.cmake,v 1.2 2006-05-30 08:35:02 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

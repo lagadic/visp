@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindPTHREAD.cmake,v 1.5 2007-03-21 13:59:33 asaunier Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

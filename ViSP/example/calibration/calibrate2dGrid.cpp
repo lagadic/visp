@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: calibrate2dGrid.cpp,v 1.7 2008-06-17 08:08:23 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

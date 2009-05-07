@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindBICLOPS.cmake,v 1.4 2006-09-29 12:18:14 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

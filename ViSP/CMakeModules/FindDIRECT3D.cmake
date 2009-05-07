@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindDIRECT3D.cmake,v 1.6 2008-05-05 14:34:42 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

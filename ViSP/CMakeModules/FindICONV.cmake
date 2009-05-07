@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindICONV.cmake,v 1.2 2008-02-05 10:58:40 asaunier Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
