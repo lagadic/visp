@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabV4l2Color.cpp,v 1.9 2008-11-25 09:38:46 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

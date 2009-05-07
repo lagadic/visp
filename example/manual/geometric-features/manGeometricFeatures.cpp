@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manGeometricFeatures.cpp,v 1.1 2008-05-23 13:25:47 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *

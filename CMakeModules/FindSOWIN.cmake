@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindSOWIN.cmake,v 1.1 2007-11-09 15:41:17 asaunier Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

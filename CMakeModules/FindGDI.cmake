@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindGDI.cmake,v 1.6 2008-06-30 13:49:44 asaunier Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

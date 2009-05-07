@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOpenCV.cpp,v 1.4 2008-12-16 17:01:54 nmelchio Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

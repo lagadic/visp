@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindCALINUX.cmake,v 1.2 2008-12-19 14:24:01 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 2008 Inria. All rights reserved.
 #

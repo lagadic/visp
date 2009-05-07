@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindAFMA4.cmake,v 1.3 2006-11-08 14:53:03 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
