@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   testClick.cpp
+  testDisplays.cpp
   testMouseEvent.cpp
   testVideoDevice.cpp
   testVideoDeviceDual.cpp
@@ -65,6 +66,7 @@ ENDFOREACH(source)
 # http://www.irisa.fr/lagadic/visp/visp.html
 
 ADD_TEST(testClick             testClick -d)
+ADD_TEST(testDisplays          testDisplays -d -c)
 ADD_TEST(testMouseEvent        testMouseEvent -d)
 ADD_TEST(testVideoDevice       testVideoDevice -d)
 ADD_TEST(testVideoDeviceDual   testVideoDeviceDual -d)
