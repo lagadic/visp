@@ -202,141 +202,6 @@ vpDisplay::getImage ( const vpImage<unsigned  char> &Isrc,
   }
 }
 
-/*!
-  Display a point at the image point \e ip location.
-  \param I : The image associated to the display.
-  \param ip : Point location.
-  \param color : Point color.
-*/
-void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
-                               const vpImagePoint &ip,
-			       vpColor::vpColorType color )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayPoint ( ip, color ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-  Display a cross at the image point \e ip location.
-  \param I : The image associated to the display.
-  \param ip : Cross location.
-  \param size : Size (width and height) of the cross.
-  \param color : Cross color.
-  \param thickness : Thickness of the lines used to display the cross.
-*/
-void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
-                               const vpImagePoint &ip, unsigned int size,
-			       vpColor::vpColorType color, 
-			       unsigned int thickness )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayCross ( ip, size, color, thickness ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-  Display a circle.
-  \param I : The image associated to the display.
-  \param center : Circle center position.
-  \param radius : Circle radius.
-  \param color : Circle color.
-  \param fill : When set to true fill the rectangle.
-  \param thickness : Thickness of the circle. This parameter is only useful 
-  when \e fill is set to false.
-*/
-void
-vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
-                           const vpImagePoint &center, unsigned int radius,
-			   vpColor::vpColorType color,
-			   bool fill,
-			   unsigned int thickness)
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayCircle ( center, radius, color, fill, thickness ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-/*!
-  Display a line from image point \e ip1 to image point \e ip2.
-  \param I : The image associated to the display.
-  \param ip1,ip2 : Initial and final image points.
-  \param color : Line color.
-  \param thickness : Line thickness.
-*/
-void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
-                              const vpImagePoint &ip1, 
-			      const vpImagePoint &ip2,
-			      vpColor::vpColorType color, 
-			      unsigned int thickness )
-{
-
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayLine ( ip1, ip2, color, thickness );
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-  Display a dashed line from image point \e ip1 to image point \e ip2.
-  \param I : The image associated to the display.
-  \param ip1,ip2 : Initial and final image points.
-  \param color : Line color.
-  \param thickness : Dashed line thickness.
-*/
-void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
-                                 const vpImagePoint &ip1, 
-				 const vpImagePoint &ip2,
-				 vpColor::vpColorType color, 
-				 unsigned int thickness )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayDotLine ( ip1, ip2, color, thickness );
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
 
 /*!
 
@@ -500,6 +365,845 @@ vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
   }
 }
 
+/*!
+  Display an arrow from image point \e ip1 to image point \e ip2.
+  \param I : The image associated to the display.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Arrow color.
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
+*/
+
+void
+vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
+                          const vpImagePoint &ip1, const vpImagePoint &ip2,
+                          vpColor::vpColorType color,
+                          unsigned int w,unsigned int h,
+			  unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayArrow ( ip1, ip2, color, w, h, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*! 
+  Display an arrow from image point (i1,j1) to  image point (i2,j2).
+
+  \param I : The image associated to the display.
+  \param i1,j1 : Initial image point.
+  \param i2,j2 : Final image point.
+  \param color : Arrow color.
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
+*/
+void
+vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
+                          int i1, int j1, int i2, int j2,
+                          vpColor::vpColorType color,
+			  unsigned int w, unsigned int h,
+			  unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip1, ip2;
+      ip1.set_i(i1);
+      ip1.set_j(j1);
+      ip2.set_i(i2);
+      ip2.set_j(j2);
+      ( I.display )->displayArrow ( ip1, ip2, color, w, h, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display an arrow from image point (i1,j1) to  image point (i2,j2).
+
+  \param I : The image associated to the display.
+  \param i1,j1 : Initial image point.
+  \param i2,j2 : Final image point.
+  \param color : Arrow color.
+  \param w,h : Width and height of the arrow.
+  \param thickness : Thickness of the lines used to display the arrow.
+
+*/
+void
+vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
+                          int i1, int j1, int i2, int j2,
+                          vpColor::vpColorType color,
+			  unsigned int w, unsigned int h,
+			  unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip1, ip2;
+      ip1.set_i(i1);
+      ip1.set_j(j1);
+      ip2.set_i(i2);
+      ip2.set_j(j2);
+
+      ( I.display )->displayArrow ( ip1, ip2, color, w, h, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*! 
+
+  Display a string at the image point \e ip location.
+    
+  To select the font used to display the string, use setFont().
+    
+  \param I : Image associated to the display.
+  \param ip : Upper left image point location of the string in the display.
+  \param string : String to display in overlay.
+  \param color : String color.
+  
+  \sa setFont()
+
+*/
+void
+vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
+                               const vpImagePoint &ip, const char *string,
+			       vpColor::vpColorType color )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayCharString ( ip, string, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*! 
+
+  Display a string at the image point \e ip location.
+    
+  To select the font used to display the string, use setFont().
+    
+  \param I : Image associated to the display.
+  \param ip : Upper left image point location of the string in the display.
+  \param string : String to display in overlay.
+  \param color : String color.
+  
+  \sa setFont()
+
+*/
+void
+vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
+                               const vpImagePoint &ip, const char *string,
+			       vpColor::vpColorType color )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayCharString ( ip, string, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*! 
+
+  Display a string at the image point (i,j) location.
+    
+  To select the font used to display the string, use setFont().
+    
+  \param I : Image associated to the display.
+  \param i,j : Upper left image point location of the string in the display.
+  \param string : String to display in overlay.
+  \param color : String color.
+  
+  \sa setFont()
+
+*/
+void
+vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
+                               int i, int j, const char *string,
+			       vpColor::vpColorType color)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+
+      ( I.display )->displayCharString ( ip, string, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display a string at the image point (i,j) location.
+    
+  To select the font used to display the string, use setFont().
+    
+  \param I : Image associated to the display.
+  \param i,j : Upper left image point location of the string in the display.
+  \param string : String to display in overlay.
+  \param color : String color.
+  
+  \sa setFont()
+
+*/
+void
+vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
+                               int i, int j, const char *string,
+			       vpColor::vpColorType color)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+      ( I.display )->displayCharString ( ip, string, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a circle.
+  \param I : The image associated to the display.
+  \param center : Circle center position.
+  \param radius : Circle radius.
+  \param color : Circle color.
+  \param fill : When set to true fill the rectangle.
+  \param thickness : Thickness of the circle. This parameter is only useful 
+  when \e fill is set to false.
+*/
+void
+vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
+                           const vpImagePoint &center, unsigned int radius,
+			   vpColor::vpColorType color,
+			   bool fill,
+			   unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayCircle ( center, radius, color, fill, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+/*!
+  Display a circle.
+  \param I : The image associated to the display.
+  \param center : Circle center position.
+  \param radius : Circle radius.
+  \param color : Circle color.
+  \param fill : When set to true fill the rectangle.
+  \param thickness : Thickness of the circle. This parameter is only useful 
+  when \e fill is set to false.
+*/
+void
+vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
+                           const vpImagePoint &center, unsigned int radius,
+			   vpColor::vpColorType color,
+			   bool fill,
+			   unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayCircle ( center, radius, color, fill, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+/*!
+
+  Display a circle.
+  \param I : The image associated to the display.
+  \param i,j : Circle center position.
+  \param radius : Circle radius.
+  \param color : Circle color.
+  \param fill : When set to true fill the rectangle.
+  \param thickness : Thickness of the circle. This parameter is only useful 
+  when \e fill is set to false.
+
+*/
+void
+vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
+                           int i, int j,  unsigned int radius,
+			   vpColor::vpColorType color,
+			   bool fill,
+			   unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+
+      ( I.display )->displayCircle ( ip, radius, color, fill, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+
+/*!
+
+  Display a circle.
+  \param I : The image associated to the display.
+  \param i,j : Circle center position.
+  \param radius : Circle radius.
+  \param color : Circle color.
+  \param fill : When set to true fill the rectangle.
+  \param thickness : Thickness of the circle. This parameter is only useful 
+  when \e fill is set to false.
+
+*/
+void
+vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
+                           int i, int j, unsigned int radius,
+			   vpColor::vpColorType color,
+			   bool fill,
+			   unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+      ( I.display )->displayCircle ( ip, radius, color, fill, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a cross at the image point \e ip location.
+  \param I : The image associated to the display.
+  \param ip : Cross location.
+  \param size : Size (width and height) of the cross.
+  \param color : Cross color.
+  \param thickness : Thickness of the lines used to display the cross.
+*/
+void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
+                               const vpImagePoint &ip, unsigned int size,
+			       vpColor::vpColorType color, 
+			       unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayCross ( ip, size, color, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a cross at the image point \e ip location.
+  \param I : The image associated to the display.
+  \param ip : Cross location.
+  \param size : Size (width and height) of the cross.
+  \param color : Cross color.
+  \param thickness : Thickness of the lines used to display the cross.
+*/
+void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
+                               const vpImagePoint &ip, unsigned int size,
+			       vpColor::vpColorType color, 
+			       unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayCross ( ip, size, color, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+/*!
+  Display a cross at the image point (i,j) location.
+  \param I : The image associated to the display.
+  \param i,j : Cross location.
+  \param size : Size (width and height) of the cross.
+  \param color : Cross color.
+  \param thickness : Thickness of the lines used to display the cross.
+*/
+void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
+                               int i, int j,
+                               unsigned int size, vpColor::vpColorType color, 
+			       unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+
+      ( I.display )->displayCross ( ip, size, color, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a cross at the image point (i,j) location.
+  \param I : The image associated to the display.
+  \param i,j : Cross location.
+  \param size : Size (width and height) of the cross.
+  \param color : Cross color.
+  \param thickness : Thickness of the lines used to display the cross.
+*/
+void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
+                               int i, int j,
+			       unsigned int size, vpColor::vpColorType color, 
+			       unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+      ( I.display )->displayCross ( ip, size, color, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a dashed line from image point \e ip1 to image point \e ip2.
+  \param I : The image associated to the display.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
+*/
+void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
+                                 const vpImagePoint &ip1, 
+				 const vpImagePoint &ip2,
+				 vpColor::vpColorType color, 
+				 unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayDotLine ( ip1, ip2, color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a dashed line from image point \e ip1 to image point \e ip2.
+  \param I : The image associated to the display.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
+*/
+void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
+                                 const vpImagePoint &ip1, 
+				 const vpImagePoint &ip2,
+				 vpColor::vpColorType color, 
+				 unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayDotLine ( ip1, ip2, color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+/*!
+  Display a dashed line from image point (i1,j1) to image point (i2,j2).
+  \param I : The image associated to the display.
+  \param i1,j1: Initial image point.
+  \param i2,j2: Final image point.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
+
+*/
+void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
+                                 int i1, int j1, int i2, int j2,
+                                 vpColor::vpColorType color, 
+				 unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip1, ip2;
+      ip1.set_i( i1 );
+      ip1.set_j( j1 );
+      ip2.set_i( i2 );
+      ip2.set_j( j2 );
+      ( I.display )->displayDotLine ( ip1, ip2, color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!  
+  Display a dashed line from image point (i1,j1) to image point (i2,j2).
+  \param I : The image associated to the display.
+  \param i1,j1: Initial image point.
+  \param i2,j2: Final image point.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
+*/
+void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
+                                 int i1, int j1,
+                                 int i2, int j2,
+                                 vpColor::vpColorType color, 
+				 unsigned int thickness )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip1, ip2;
+      ip1.set_i( i1 );
+      ip1.set_j( j1 );
+      ip2.set_i( i2 );
+      ip2.set_j( j2 );
+      ( I.display )->displayDotLine ( ip1, ip2, color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a line from image point \e ip1 to image point \e ip2.
+  \param I : The image associated to the display.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
+                              const vpImagePoint &ip1, 
+			      const vpImagePoint &ip2,
+			      vpColor::vpColorType color, 
+			      unsigned int thickness )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayLine ( ip1, ip2, color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a line from image point (i1,j1) to image point (i2,j2).
+  \param I : The image associated to the display.
+  \param i1,j1: Initial image point.
+  \param i2,j2: Final image point.
+  \param color : Line color.
+  \param thickness : Line thickness.
+
+*/
+void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
+                              int i1, int j1, int i2, int j2,
+			      vpColor::vpColorType color, 
+			      unsigned int thickness )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip1, ip2;
+      ip1.set_i( i1 );
+      ip1.set_j( j1 );
+      ip2.set_i( i2 );
+      ip2.set_j( j2 );
+      ( I.display )->displayLine ( ip1, ip2, color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+
+/*!
+
+  Display a line from image point (i1,j1) to image point (i2,j2).
+  \param I : The image associated to the display.
+  \param i1,j1: Initial image point.
+  \param i2,j2: Final image point.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
+                              int i1, int j1,
+                              int i2, int j2,
+			      vpColor::vpColorType color, 
+			      unsigned int thickness )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip1, ip2;
+      ip1.set_i( i1 );
+      ip1.set_j( j1 );
+      ip2.set_i( i2 );
+      ip2.set_j( j2 );
+      ( I.display )->displayLine ( ip1, ip2, color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a line from image point \e ip1 to image point \e ip2.
+  \param I : The image associated to the display.
+  \param ip1,ip2 : Initial and final image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
+                              const vpImagePoint &ip1, 
+			      const vpImagePoint &ip2,
+			      vpColor::vpColorType color, 
+			      unsigned int thickness )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayLine ( ip1, ip2, color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a point at the image point \e ip location.
+  \param I : The image associated to the display.
+  \param ip : Point location.
+  \param color : Point color.
+*/
+void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
+                               const vpImagePoint &ip,
+			       vpColor::vpColorType color )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayPoint ( ip, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+/*!
+  Display a point at the image point \e ip location.
+  \param I : The image associated to the display.
+  \param ip : Point location.
+  \param color : Point color.
+*/
+void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
+                               const vpImagePoint &ip,
+			       vpColor::vpColorType color )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayPoint ( ip, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a point at the image point (i,j) location.
+  \param I : The image associated to the display.
+  \param i,j : Point location.
+  \param color : Point color.
+*/
+void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
+                               int i, int j,
+                               vpColor::vpColorType color )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+      ( I.display )->displayPoint ( ip, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+
+/*!
+  Display a point at the image point (i,j) location.
+  \param I : The image associated to the display.
+  \param i,j : Point location.
+  \param color : Point color.
+*/
+void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
+                               int i, int j,
+                               vpColor::vpColorType color )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+      ( I.display )->displayPoint ( ip, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
 /*!  
   Display a rectangle with \e topLeft as the top-left corner and \e
   width and \e height the rectangle size.
@@ -535,6 +1239,8 @@ vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
     throw ;
   }
 }
+
+
 /*!  
   Display a rectangle with \e topLeft as the top-left corner and \e
   width and \e height the rectangle size.
@@ -822,31 +1528,39 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
     }
 }
 
+/*!
 
-/*! 
+  Display a rectangle with (i,j) as the top-left corner and \e
+  width and \e height the rectangle size.
 
-  Display a string at the image point \e ip location.
-    
-  To select the font used to display the string, use setFont().
-    
-  \param I : Image associated to the display.
-  \param ip : Upper left image point location of the string in the display.
-  \param string : String to display in overlay.
-  \param color : String color.
-  
-  \sa setFont()
+  \param I : The image associated to the display.
+  \param i,j : Top-left corner of the rectangle.
+  \param width,height : Rectangle size.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
 
 */
 void
-vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
-                               const vpImagePoint &ip, const char *string,
-			       vpColor::vpColorType color )
+vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
+                              int i, int j,
+			      unsigned int width, unsigned int height,
+                              vpColor::vpColorType color, bool fill,
+			      unsigned int thickness)
 {
   try
   {
     if ( I.display != NULL )
     {
-      ( I.display )->displayCharString ( ip, string, color ) ;
+      vpImagePoint topLeft;
+      topLeft.set_i( i );
+      topLeft.set_j( j );
+
+      ( I.display )->displayRectangle ( topLeft, width, height, 
+					color, fill, thickness ) ;
     }
   }
   catch ( ... )
@@ -855,7 +1569,147 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
     throw ;
   }
 }
+/*!
 
+  Display a rectangle defined by its center, its orientation (angle)
+  and its size.
+
+  \param I : Image associated to the display.
+  \param i,j : Rectangle center point.
+  \param angle : Angle in radians width an horizontal axis oriented from left 
+  to right.
+  \param width,height : Rectangle size.
+  \param color : Rectangle color.
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. 
+
+*/
+void
+vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
+			    unsigned int i, unsigned int j, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType color,unsigned int thickness)
+{
+  try
+    {
+      if (I.display != NULL)
+	{
+	  //A, B, C, D, corners of the rectangle clockwise
+	  vpImagePoint ipa, ipb, ipc, ipd;
+	  float cosinus = cos(angle);
+	  float sinus = sin(angle);
+	  ipa.set_u(j + 0.5*width*cosinus + 0.5*height*sinus);
+	  ipa.set_v(i + 0.5*width*sinus - 0.5*height*cosinus);
+	  ipb.set_u(j + 0.5*width*cosinus - 0.5*height*sinus);
+	  ipb.set_v(i + 0.5*width*sinus + 0.5*height*cosinus);
+	  ipc.set_u(j - 0.5*width*cosinus - 0.5*height*sinus);
+	  ipc.set_v(i - 0.5*width*sinus + 0.5*height*cosinus);
+	  ipd.set_u(j - 0.5*width*cosinus + 0.5*height*sinus);
+	  ipd.set_v(i - 0.5*width*sinus - 0.5*height*cosinus);
+
+	  ( I.display )->displayLine(I, ipa, ipb, color, thickness);
+	  ( I.display )->displayLine(I, ipa, ipd, color, thickness);
+	  ( I.display )->displayLine(I, ipc, ipb, color, thickness);
+	  ( I.display )->displayLine(I, ipc, ipd, color, thickness);
+	}
+    }
+  catch(...)
+    {
+      vpERROR_TRACE("Error caught in displayRectangle") ;
+      throw ;
+    }
+}
+
+/*!
+
+  Display a rectangle with (i,j) as the top-left corner and \e
+  width and \e height the rectangle size.
+
+  \param I : The image associated to the display.
+  \param i,j : Top-left corner of the rectangle.
+  \param width,height : Rectangle size.
+  \param color : Rectangle color.
+  \param fill : When set to true fill the rectangle.
+
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+
+*/
+void
+vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
+                              int i, int j,
+			      unsigned int width, unsigned int height,
+                              vpColor::vpColorType color, bool fill,
+			      unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint topLeft;
+      topLeft.set_i( i );
+      topLeft.set_j( j );
+
+      ( I.display )->displayRectangle ( topLeft, width, height, 
+					color, fill, thickness ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+/*!
+
+  Display a rectangle defined by its center, its orientation (angle)
+  and its size.
+
+  \param I : Image associated to the display.
+  \param i,j : Rectangle center point.
+  \param angle : Angle in radians width an horizontal axis oriented from left 
+  to right.
+  \param width,height : Rectangle size.
+  \param color : Rectangle color.
+  \param thickness : Thickness of the four lines used to display the
+  rectangle. 
+*/
+void
+vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
+			    unsigned int i, unsigned int j, float angle,
+			    unsigned int width, unsigned int height,
+			    vpColor::vpColorType color, unsigned int thickness)
+{
+  try
+    {
+      if (I.display != NULL)
+	{
+	  //A, B, C, D, corners of the rectangle clockwise
+	  vpImagePoint ipa, ipb, ipc, ipd;
+	  float cosinus = cos(angle);
+	  float sinus = sin(angle);
+	  ipa.set_u(j + 0.5*width*cosinus + 0.5*height*sinus);
+	  ipa.set_v(i + 0.5*width*sinus - 0.5*height*cosinus);
+	  ipb.set_u(j + 0.5*width*cosinus - 0.5*height*sinus);
+	  ipb.set_v(i + 0.5*width*sinus + 0.5*height*cosinus);
+	  ipc.set_u(j - 0.5*width*cosinus - 0.5*height*sinus);
+	  ipc.set_v(i - 0.5*width*sinus + 0.5*height*cosinus);
+	  ipd.set_u(j - 0.5*width*cosinus + 0.5*height*sinus);
+	  ipd.set_v(i - 0.5*width*sinus - 0.5*height*cosinus);
+
+	  ( I.display )->displayLine(I, ipa, ipb, color, thickness);
+	  ( I.display )->displayLine(I, ipa, ipd, color, thickness);
+	  ( I.display )->displayLine(I, ipc, ipb, color, thickness);
+	  ( I.display )->displayLine(I, ipc, ipd, color, thickness);
+	}
+    }
+  catch(...)
+    {
+      vpERROR_TRACE("Error caught in displayRectangle") ;
+      throw ;
+    }
+}
 
 /*!
   Flushes the output buffer associated to image \e I display.
@@ -1067,207 +1921,6 @@ vpDisplay::getImage ( const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest )
     throw ;
   }
 }
-
-/*!
-  Display a point at the image point \e ip location.
-  \param I : The image associated to the display.
-  \param ip : Point location.
-  \param color : Point color.
-*/
-void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
-                               const vpImagePoint &ip,
-			       vpColor::vpColorType color )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayPoint ( ip, color ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-  Display a cross at the image point \e ip location.
-  \param I : The image associated to the display.
-  \param ip : Cross location.
-  \param size : Size (width and height) of the cross.
-  \param color : Cross color.
-  \param thickness : Thickness of the lines used to display the cross.
-*/
-void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
-                               const vpImagePoint &ip, unsigned int size,
-			       vpColor::vpColorType color, 
-			       unsigned int thickness )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayCross ( ip, size, color, thickness ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-
-/*!
-  Display a circle.
-  \param I : The image associated to the display.
-  \param center : Circle center position.
-  \param radius : Circle radius.
-  \param color : Circle color.
-  \param fill : When set to true fill the rectangle.
-  \param thickness : Thickness of the circle. This parameter is only useful 
-  when \e fill is set to false.
-*/
-void
-vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
-                           const vpImagePoint &center, unsigned int radius,
-			   vpColor::vpColorType color,
-			   bool fill,
-			   unsigned int thickness )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayCircle ( center, radius, color, fill, thickness ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-/*!
-  Display a line from image point \e ip1 to image point \e ip2.
-  \param I : The image associated to the display.
-  \param ip1,ip2 : Initial and final image points.
-  \param color : Line color.
-  \param thickness : Line thickness.
-*/
-void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
-                              const vpImagePoint &ip1, 
-			      const vpImagePoint &ip2,
-			      vpColor::vpColorType color, 
-			      unsigned int thickness )
-{
-
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayLine ( ip1, ip2, color, thickness );
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-  Display a dashed line from image point \e ip1 to image point \e ip2.
-  \param I : The image associated to the display.
-  \param ip1,ip2 : Initial and final image points.
-  \param color : Line color.
-  \param thickness : Dashed line thickness.
-*/
-void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
-                                 const vpImagePoint &ip1, 
-				 const vpImagePoint &ip2,
-				 vpColor::vpColorType color, 
-				 unsigned int thickness )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayDotLine ( ip1, ip2, color, thickness );
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-  Display an arrow from image point \e ip1 to image point \e ip2.
-  \param I : The image associated to the display.
-  \param ip1,ip2 : Initial and final image points.
-  \param color : Arrow color.
-  \param w,h : Width and height of the arrow.
-  \param thickness : Thickness of the lines used to display the arrow.
-*/
-
-void
-vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
-                          const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          vpColor::vpColorType color,
-                          unsigned int w,unsigned int h,
-			  unsigned int thickness )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayArrow ( ip1, ip2, color, w, h, thickness ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*! 
-
-  Display a string at the image point \e ip location.
-    
-  To select the font used to display the string, use setFont().
-    
-  \param I : Image associated to the display.
-  \param ip : Upper left image point location of the string in the display.
-  \param string : String to display in overlay.
-  \param color : String color.
-  
-  \sa setFont()
-
-*/
-void
-vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
-                               const vpImagePoint &ip, const char *string,
-			       vpColor::vpColorType color )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      ( I.display )->displayCharString ( ip, string, color ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
 
 /*!
   Flushes the output buffer associated to image \e I display.
@@ -2112,75 +2765,7 @@ vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
   return false ;
 }
 
-/*! 
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayArrow(const vpImage<unsigned char> &, const vpImagePoint &,
-  const vpImagePoint &, vpColor::vpColorType, unsigned int, unsigned
-  int, unsigned int)
 
-  Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
-  window
-*/
-void
-vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
-                          int i1, int j1, int i2, int j2,
-                          vpColor::vpColorType col,
-                          unsigned int L,unsigned int l )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip1, ip2;
-      ip1.set_i(i1);
-      ip1.set_j(j1);
-      ip2.set_i(i2);
-      ip2.set_j(j2);
-      ( I.display )->displayArrow ( ip1, ip2, col, L, l ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayArrow(const vpImage<vpRGBa> &, const vpImagePoint &,
-  const vpImagePoint &, vpColor::vpColorType, unsigned int, unsigned
-  int, unsigned int)
-
-  Display an arrow from coordinates (i1,j1) to (i2,j2) in the display
-  window
-*/
-void
-vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
-                          int i1, int j1, int i2, int j2,
-                          vpColor::vpColorType col,
-                          unsigned int L,unsigned int l )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip1, ip2;
-      ip1.set_i(i1);
-      ip1.set_j(j1);
-      ip2.set_i(i2);
-      ip2.set_j(j2);
-
-      ( I.display )->displayArrow ( ip1, ip2, col, L,l ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
 
 /*!
 
@@ -2251,86 +2836,7 @@ vpDisplay::displayArrow_uv ( const vpImage<vpRGBa> &I,
   }
 }
 
-/*! 
 
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayCharString(const vpImage<unsigned char> &, const
-  vpImagePoint &, const char *, vpColor::vpColorType) instead.
-
-  Display a string at coordinates (i,j) in the display
-  window overlay.
-
-  To select the font used to print this string, use setFont().
-
-  \param I : Image associated to the display.
-  \param i, j : Upper left location (row, column) of the string in the display.
-  \param s : String to print in overlay.
-  \param c : Color of the text
-
-  \sa setFont()
-*/
-void
-vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
-                               int i, int j,const char *s,
-                               vpColor::vpColorType c )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip;
-      ip.set_i( i );
-      ip.set_j( j );
-
-      ( I.display )->displayCharString ( ip, s, c ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayCharString(const vpImage<vpRGBa> &, const vpImagePoint
-  &, const char *, vpColor::vpColorType) instead.
-
-  Display a string at coordinates (i,j) in the display
-  window overlay.
-
-  To select the font used to print this string, use setFont().
-
-  \param I : Image associated to the display.
-  \param i, j : Upper left location (row, column) of the string in the display.
-  \param s : String to print in overlay.
-  \param c : Color of the text
-
-  \sa setFont()
-*/
-void
-vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
-                               int i, int j, const char *s,
-                               vpColor::vpColorType c )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip;
-      ip.set_i( i );
-      ip.set_j( j );
-      ( I.display )->displayCharString ( ip, s, c ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
 
 /*!
 
@@ -2413,67 +2919,7 @@ vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
     throw ;
   }
 }
-/*!
 
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayCircle(const vpImage<unsigned char> &, const
-  vpImagePoint &, unsigned int, vpColor::vpColorType, bool, unsigned
-  int) instead.
-
-  Display a circle at coordinates (i,j) in the display window.
-  circle radius is given in pixel by paramter r
-*/
-void
-vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
-                           int i, int j, unsigned int r,
-                           vpColor::vpColorType col )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip;
-      ip.set_i( i );
-      ip.set_j( j );
-
-      ( I.display )->displayCircle ( ip, r, col ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-/*!
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayCircle(const vpImage<vpRGBa> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, bool, unsigned int) instead.
-
-  Display a circle at coordinates (i,j) in the display window.
-  circle radius is given in pixel by paramter r
-*/
-void
-vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
-                           int i, int j, unsigned int r,
-                           vpColor::vpColorType col )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip;
-      ip.set_i( i );
-      ip.set_j( j );
-      ( I.display )->displayCircle ( ip, r, col ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
 /*!  
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCircle(const vpImage<unsigned char> &, const
@@ -2534,35 +2980,7 @@ vpDisplay::displayCircle_uv ( const vpImage<vpRGBa> &I,
   }
 }
 
-/*!
 
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayCross(const vpImage<unsigned char> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, unsigned int) instead.
-
-  Display a cross at coordinates (i,j) in the display window
-*/
-void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
-                               int i, int j,
-                               unsigned int size,vpColor::vpColorType col )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip;
-      ip.set_i( i );
-      ip.set_j( j );
-
-      ( I.display )->displayCross ( ip, size, col ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCross(const vpImage<unsigned char> &, const vpImagePoint &,
@@ -2592,33 +3010,7 @@ vpDisplay::displayCrossLarge ( const vpImage<unsigned char> &I,
   }
 }
 
-/*!
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayCross(const vpImage<vpRGBa> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, unsigned int) instead.
 
-  Display a cross at coordinates (i,j) in the display window
-*/
-void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
-                               int i, int j,
-                               unsigned int size,vpColor::vpColorType col )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip;
-      ip.set_i( i );
-      ip.set_j( j );
-      ( I.display )->displayCross ( ip, size, col ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCross(const vpImage<vpRGBa> &, const vpImagePoint &,
@@ -2759,71 +3151,7 @@ vpDisplay::displayCrossLarge_uv ( const vpImage<vpRGBa> &I,
   }
 }
 
-/*!
-  
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayDotLine(const vpImage<unsigned char> &, const
-  vpImagePoint &, const vpImagePoint &, vpColor::vpColorType, unsigned
-  int)
 
-  Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
-  window.  circle radius is given in pixel by paramter r
-*/
-void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
-                                 int i1, int j1, int i2, int j2,
-                                 vpColor::vpColorType col, unsigned int e2 )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip1, ip2;
-      ip1.set_i( i1 );
-      ip1.set_j( j1 );
-      ip2.set_i( i2 );
-      ip2.set_j( j2 );
-      ( I.display )->displayDotLine ( ip1, ip2, col, e2 ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-/*!  
-  
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayDotLine(const vpImage<vpRGBa> &, const
-  vpImagePoint &, const vpImagePoint &, vpColor::vpColorType, unsigned
-  int)
-
-  Display a dotted line from coordinates (i1,j1) to (i2,j2) in the display
-  window.  circle radius is given in pixel by paramter r
-*/
-void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
-                                 int i1, int j1,
-                                 int i2, int j2,
-                                 vpColor::vpColorType col, unsigned int e2 )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip1, ip2;
-      ip1.set_i( i1 );
-      ip1.set_j( j1 );
-      ip2.set_i( i2 );
-      ip2.set_j( j2 );
-      ( I.display )->displayDotLine ( ip1, ip2, col, e2 ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
 
 /*!
   \deprecated This method is deprecated. You should use
@@ -2890,69 +3218,6 @@ void vpDisplay::displayDotLine_uv ( const vpImage<vpRGBa> &I,
   }
 }
 
-/*!
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayLine(const vpImage<unsigned char> &, const
-  vpImagePoint &, const vpImagePoint &, vpColor::vpColorType, unsigned
-  int)
-
-  Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
-*/
-void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
-                              int i1, int j1, int i2, int j2,
-                              vpColor::vpColorType col, unsigned int e )
-{
-
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip1, ip2;
-      ip1.set_i( i1 );
-      ip1.set_j( j1 );
-      ip2.set_i( i2 );
-      ip2.set_j( j2 );
-      ( I.display )->displayLine ( ip1, ip2, col, e ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-/*!
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayLine(const vpImage<vpRGBa> &, const
-  vpImagePoint &, const vpImagePoint &, vpColor::vpColorType, unsigned
-  int)
-
-  Display a line from coordinates (i1,j1) to (i2,j2) in the display window.
-*/
-void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
-                              int i1, int j1,
-                              int i2, int j2,
-                              vpColor::vpColorType col, unsigned int e )
-{
-
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip1, ip2;
-      ip1.set_i( i1 );
-      ip1.set_j( j1 );
-      ip2.set_i( i2 );
-      ip2.set_j( j2 );
-      ( I.display )->displayLine ( ip1, ip2, col, e ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
 
 /*!
   \deprecated This method is deprecated. You should use
@@ -3010,61 +3275,6 @@ void vpDisplay::displayLine_uv ( const vpImage<vpRGBa> &I,
       ip2.set_u( u2 );
       ip2.set_v( v2 );
       ( I.display )->displayLine ( ip1, ip2, col, e ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-/*!
-  \deprecated This method is deprecated. You should use
-  vpDisplay::vpImage<unsigned char> &, const vpImagePoint &,
-  vpColor::vpColorType)
-
-  Display a point at coordinates (i,j) in the display window
-*/
-void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
-                               int i, int j,
-                               vpColor::vpColorType col )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip;
-      ip.set_i( i );
-      ip.set_j( j );
-      ( I.display )->displayPoint ( ip, col ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-
-/*!
-  \deprecated This method is deprecated. You should use
-  vpDisplay::vpImage<vpRGBa> &, const vpImagePoint &,
-  vpColor::vpColorType)
-
-  Display a point at coordinates (i,j) in the display window
-*/
-void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
-                               int i, int j,
-                               vpColor::vpColorType col )
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint ip;
-      ip.set_i( i );
-      ip.set_j( j );
-      ( I.display )->displayPoint ( ip, col ) ;
     }
   }
   catch ( ... )
@@ -3132,163 +3342,9 @@ void vpDisplay::displayPoint_uv ( const vpImage<vpRGBa> &I,
   }
 }
 
-/*!
 
-  \deprecated This method is deprecated. You should use
-  vpDisplay::displayRectangle(const vpImage<unsigned char> &, const
-  vpImagePoint &, unsigned int, unsigned int, vpColor::vpColorType,
-  bool, unsigned int) instead.
 
-  Display a rectangle in the display window.  The rectangle upper left corner
-  has coordinates (i,j). The size of the rectangle is fixed by \e width and \e
-  height.
 
-  \param I : Image associated to the display.
-  \param i : Row number of the rectangle upper corner
-  \param j : Column number of the rectangle upper corner
-  \param width : Width of the rectangle.
-  \param height : Height of the rectangle.
-  \param col : Color of the rectangle.
-  \param fill : set as true to fill the rectangle.
-  \param e : Line thickness
-
-*/
-void
-vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
-                              int i, int j,
-			      unsigned int width, unsigned int height,
-                              vpColor::vpColorType col, bool fill,
-			      unsigned int e)
-{
-  try
-  {
-    if ( I.display != NULL )
-    {
-      vpImagePoint topLeft;
-      topLeft.set_i( i );
-      topLeft.set_j( j );
-
-      ( I.display )->displayRectangle ( topLeft,width,height,col, fill, e ) ;
-    }
-  }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
-  }
-}
-/*!
-
-  \deprecated This method is deprecated. You should use
-  vpDisplay::const vpImage<unsigned char> &, const vpImagePoint &,
-  float, unsigned int, unsigned int, vpColor::vpColorType, unsigned) instead.
-
-  Display a rectangle in the display window.  The rectangle is defined
-  by its center, its orientation (angle) and its size. The rectangle
-  center has coordinates (i,j).  The size of the rectangle is fixed by
-  \e width and \e height.
-
-  \param I : Image associated to the display.
-  \param i : Row number of the rectangle center
-  \param j : Column number of the rectangle center
-  \param angle : Angle of the width side with horizontal
-  \param width : Width of the rectangle.
-  \param height : Height of the rectangle.
-  \param col : Color of the rectangle.
-  \param e : Line thickness
-
-*/
-void
-vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
-			    unsigned int i, unsigned int j, float angle,
-			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType col,unsigned int e)
-{
-  try
-    {
-      if (I.display != NULL)
-	{
-	  //A, B, C, D, corners of the rectangle clockwise
-	  vpImagePoint ipa, ipb, ipc, ipd;
-	  float cosinus = cos(angle);
-	  float sinus = sin(angle);
-	  ipa.set_u(j + 0.5*width*cosinus + 0.5*height*sinus);
-	  ipa.set_v(i + 0.5*width*sinus - 0.5*height*cosinus);
-	  ipb.set_u(j + 0.5*width*cosinus - 0.5*height*sinus);
-	  ipb.set_v(i + 0.5*width*sinus + 0.5*height*cosinus);
-	  ipc.set_u(j - 0.5*width*cosinus - 0.5*height*sinus);
-	  ipc.set_v(i - 0.5*width*sinus + 0.5*height*cosinus);
-	  ipd.set_u(j - 0.5*width*cosinus + 0.5*height*sinus);
-	  ipd.set_v(i - 0.5*width*sinus - 0.5*height*cosinus);
-
-	  ( I.display )->displayLine(I, ipa, ipb,col, e);
-	  ( I.display )->displayLine(I, ipa, ipd,col, e);
-	  ( I.display )->displayLine(I, ipc, ipb,col, e);
-	  ( I.display )->displayLine(I, ipc, ipd,col, e);
-	}
-    }
-  catch(...)
-    {
-      vpERROR_TRACE("Error caught in displayRectangle") ;
-      throw ;
-    }
-}
-/*!
-
-  \deprecated This method is deprecated. You should use
-  vpDisplay::const vpImage<vpRGBa> &, const vpImagePoint &,
-  float, unsigned int, unsigned int, vpColor::vpColorType, unsigned) instead.
-
-  Display a rectangle in the display window.  The rectangle is defined
-  by its center, its orientation (angle) and its size. The rectangle
-  center has coordinates (i,j).  The size of the rectangle is fixed by
-  \e width and \e height.
-  
-  \param I : Image associated to the display.
-  \param i : Row number of the rectangle center
-  \param j : Column number of the rectangle center
-  \param angle : Angle of the width side with horizontal
-  \param width : Width of the rectangle.
-  \param height : Height of the rectangle.
-  \param col : Color of the rectangle.
-  \param e : Line thickness
-
-*/
-void
-vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
-			    unsigned int i, unsigned int j, float angle,
-			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType col,unsigned int e)
-{
-  try
-    {
-      if (I.display != NULL)
-	{
-	  //A, B, C, D, corners of the rectangle clockwise
-	  vpImagePoint ipa, ipb, ipc, ipd;
-	  float cosinus = cos(angle);
-	  float sinus = sin(angle);
-	  ipa.set_u(j + 0.5*width*cosinus + 0.5*height*sinus);
-	  ipa.set_v(i + 0.5*width*sinus - 0.5*height*cosinus);
-	  ipb.set_u(j + 0.5*width*cosinus - 0.5*height*sinus);
-	  ipb.set_v(i + 0.5*width*sinus + 0.5*height*cosinus);
-	  ipc.set_u(j - 0.5*width*cosinus - 0.5*height*sinus);
-	  ipc.set_v(i - 0.5*width*sinus + 0.5*height*cosinus);
-	  ipd.set_u(j - 0.5*width*cosinus + 0.5*height*sinus);
-	  ipd.set_v(i - 0.5*width*sinus - 0.5*height*cosinus);
-
-	  ( I.display )->displayLine(I, ipa, ipb,col, e);
-	  ( I.display )->displayLine(I, ipa, ipd,col, e);
-	  ( I.display )->displayLine(I, ipc, ipb,col, e);
-	  ( I.display )->displayLine(I, ipc, ipd,col, e);
-	}
-    }
-  catch(...)
-    {
-      vpERROR_TRACE("Error caught in displayRectangle") ;
-      throw ;
-    }
-}
 /*!
 
   \deprecated This method is deprecated. You should use
