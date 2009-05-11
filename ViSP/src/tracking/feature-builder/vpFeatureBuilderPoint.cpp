@@ -59,7 +59,7 @@
   aware, the 3D depth \f$Z\f$ requested to compute the interaction
   matrix is not initialized by this function.
   \param cam : The parameters of the camera used to acquire the image containing the vpDot.
-  \param t : The vpDot used to create the vpFeaturePoint.
+  \param d : The vpDot used to create the vpFeaturePoint.
 
   The code below shows how to initialize a vpFeaturePoint visual
   feature. First, we initialize the \f$x,y\f$, and lastly we
@@ -121,7 +121,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
 
   \param s : The feature point.
   \param cam : The parameters of the camera used to acquire the image containing the vpDot2.
-  \param t : The vpDot2 used to create the vpFeaturePoint.
+  \param d : The vpDot2 used to create the vpFeaturePoint.
 
   The code below shows how to initialize a vpFeaturePoint visual
   feature. First, we initialize the \f$x,y\f$, and lastly we
@@ -183,7 +183,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
 
   \param s : The feature point.
   \param cam : The parameters of the camera used to acquire the image containing the point.
-  \param iP : The vpImagePoint used to create the vpFeaturePoint.
+  \param ip : The vpImagePoint used to create the vpFeaturePoint.
 
   The code below shows how to initialize a vpFeaturePoint visual
   feature. First, we initialize the \f$x,y\f$, and lastly we
@@ -240,7 +240,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   \warning To be sure that the vpFeaturePoint is well initialized, you have to be sure that at least the point coordinates in the image plan and in the camera frame are computed and stored in the vpPoint.
 
   \param s : The feature point.
-  \param t : The vpPoint used to create the vpFeaturePoint.
+  \param p : The vpPoint used to create the vpFeaturePoint.
 */
 void
 vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &p)
@@ -302,7 +302,7 @@ vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &p)
   parameters are used to convert pixel coordinates of the point in
   cartesian coordinates of the point in the image plane.
 
-  \param t : The vpPoint used to create the vpFeaturePoint.
+  \param p : The vpPoint used to create the vpFeaturePoint.
 */
 void
 vpFeatureBuilder::create(vpFeaturePoint &s,
