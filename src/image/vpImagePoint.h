@@ -140,6 +140,20 @@ class VISP_EXPORT vpImagePoint
 
   /*!
 
+    Sets the point coordinates in the frame (i,j).
+
+    \param i : The desired value for the coordinate along the \f$ i \f$ axes.
+    \param j : The desired value for the coordinate along the \f$ j \f$ axes.
+
+    \sa set_i(), set_j(), set_u(), set_v()
+  */
+  inline void set_ij(const double i, const double j) {
+    this->i = i ;
+    this->j = j ;
+  }
+
+  /*!
+
     Gets the point coordinate corresponding to the \f$ i \f$ axes in
     the frame (i,j).
 
@@ -181,6 +195,20 @@ class VISP_EXPORT vpImagePoint
     \sa set_i(), set_j(), set_u()
   */
   inline void set_v(const double v) {  i = v ; }
+
+  /*!
+
+    Sets the point coordinates in the frame (u,v).
+
+    \param u : The desired value for the coordinate along the \f$ u \f$ axes.
+    \param v : The desired value for the coordinate along the \f$ v \f$ axes.
+
+    \sa set_i(), set_j(), set_u(), set_v()
+  */
+  inline void set_uv(const double u, const double v) {
+    this->i = v ;
+    this->j = u ;
+  }
 
   /*!
 
