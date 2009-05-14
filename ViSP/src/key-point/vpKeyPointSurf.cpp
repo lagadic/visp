@@ -159,6 +159,9 @@ vpKeyPointSurf::vpKeyPointSurf():vpBasicKeyPoint()
   image_descriptors = NULL;
   ref_keypoints = NULL;
   ref_descriptors = NULL;
+
+  nbReferencePoints = 0;
+  nbMatchedPoints = 0;
 }
 
 /*!
@@ -198,6 +201,8 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
   }
 
   cvReleaseImage(&model);
+
+  nbReferencePoints = ref_keypoints->total;
 
   return ref_keypoints->total;
 }
@@ -302,11 +307,13 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   cvStartReadSeq( ref_keypoints, &kreader );
   cvStartReadSeq( ref_descriptors, &reader );
 
-  matchedPointsReferenceImageList.kill();
-  matchedPointsReferenceImageList.front();
+//  matchedPointsReferenceImageList.kill();
+//  matchedPointsReferenceImageList.front();
 
   vpList<int> indexImagePair;
+  vpList<int> indexReferencePair;
   indexImagePair.front();
+  indexReferencePair.front();
 
   int nbrPair = 0;
 
@@ -322,15 +329,17 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 						 image_descriptors );
     if( nearest_neighbor >= 0 )
     {
-      matchedPointsReferenceImageList.addRight(referenceImagePointsList+i);
+//      matchedPointsReferenceImageList.addRight(referenceImagePointsList+i);
+      indexReferencePair.addRight(i);
       indexImagePair.addRight(nearest_neighbor);
       nbrPair++;
     }
   }
 
+  indexReferencePair.front();
   indexImagePair.front();
-  matchedPointsCurrentImageList.kill();
-  matchedPointsCurrentImageList.front();
+//   matchedPointsCurrentImageList.kill();
+//   matchedPointsCurrentImageList.front();
 
   if (currentImagePointsList != NULL)
   {
@@ -338,10 +347,17 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
     currentImagePointsList = NULL;
   }
 
+  if (matchedReferencePoints != NULL)
+  {
+    delete [] matchedReferencePoints;
+    matchedReferencePoints = NULL;
+  }
+
   if (nbrPair == 0)
     return (0);
 
   currentImagePointsList = new vpImagePoint[nbrPair];
+  matchedReferencePoints = new int[nbrPair];
 
   for (int i = 0; i < nbrPair; i++)
   {
@@ -352,10 +368,15 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
       currentImagePointsList[i].set_i(r1->pt.y);
       currentImagePointsList[i].set_j(r1->pt.x);
 
-      matchedPointsCurrentImageList.addRight(currentImagePointsList+i);
+      matchedReferencePoints[i] = indexReferencePair.value();
+
+//      matchedPointsCurrentImageList.addRight(currentImagePointsList+i);
 
       indexImagePair.next();
+      indexReferencePair.next();
   }
+
+  nbMatchedPoints = nbrPair;
 
   return nbrPair;
 }
@@ -456,27 +477,22 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
 void vpKeyPointSurf::display(vpImage<unsigned char> &Ireference, 
 			     vpImage<unsigned char> &Icurrent)
 {
-  matchedPointsCurrentImageList.front();
-  matchedPointsReferenceImageList.front();
+//  matchedPointsCurrentImageList.front();
+//  matchedPointsReferenceImageList.front();
 
-  if (matchedPointsCurrentImageList.nbElements() 
-      != matchedPointsReferenceImageList.nbElements())
-  {
-    vpTRACE("Numbers of points mismatch");
-    throw(vpException(vpException::fatalError,"Numbers of points mismatch"));
-  }
+//   if (matchedPointsCurrentImageList.nbElements() 
+//       != matchedPointsReferenceImageList.nbElements())
+//   {
+//     vpTRACE("Numbers of points mismatch");
+//     throw(vpException(vpException::fatalError,"Numbers of points mismatch"));
+//   }
 
-  vpImagePoint ipRef, ipCur;
-  while (!matchedPointsCurrentImageList.outside())
+  for (int i = 0; i < nbMatchedPoints; i++)
   {
-      ipRef.set_i( (matchedPointsReferenceImageList.value()) ->get_i() );
-      ipRef.set_j( (matchedPointsReferenceImageList.value()) ->get_j() );
-      ipCur.set_i( (matchedPointsCurrentImageList.value()) ->get_i() );
-      ipCur.set_j( (matchedPointsCurrentImageList.value()) ->get_j() );
-      vpDisplay::displayCross (Ireference, ipRef, 3, vpColor::red);
-      vpDisplay::displayCross (Icurrent,   ipCur, 3, vpColor::green);
-      matchedPointsReferenceImageList.next();
-      matchedPointsCurrentImageList.next();
+      vpDisplay::displayCross (Ireference, referenceImagePointsList[matchedReferencePoints[i]], 3, vpColor::red);
+      vpDisplay::displayCross (Icurrent, currentImagePointsList[i], 3, vpColor::green);
+//       matchedPointsReferenceImageList.next();
+//       matchedPointsCurrentImageList.next();
   }
 }
 
@@ -491,16 +507,13 @@ void vpKeyPointSurf::display(vpImage<unsigned char> &Ireference,
 */
 void vpKeyPointSurf::display(vpImage<unsigned char> &Icurrent)
 {
-  matchedPointsCurrentImageList.front();
-
-  vpImagePoint ipCur;
-  
-  while (!matchedPointsCurrentImageList.outside())
+//   matchedPointsCurrentImageList.front();
+// 
+//   vpImagePoint ipCur;
+//   
+  for (int i = 0; i < nbMatchedPoints; i++)
   {
-      ipCur.set_i( (matchedPointsCurrentImageList.value()) ->get_i() );
-      ipCur.set_j( (matchedPointsCurrentImageList.value()) ->get_j() );
-      vpDisplay::displayCross (Icurrent, ipCur, 3, vpColor::green);
-      matchedPointsCurrentImageList.next();
+      vpDisplay::displayCross (Icurrent, currentImagePointsList[i], 3, vpColor::green);
   }
 }
 

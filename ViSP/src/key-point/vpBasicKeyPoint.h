@@ -69,8 +69,7 @@ class VISP_EXPORT vpBasicKeyPoint
    virtual ~vpBasicKeyPoint() { 
      if (referenceImagePointsList != NULL) delete[] referenceImagePointsList;
      if (currentImagePointsList != NULL) delete[] currentImagePointsList;
-     matchedPointsCurrentImageList.kill();
-     matchedPointsReferenceImageList.kill();
+     if (matchedReferencePoints != NULL) delete[] matchedReferencePoints;
    };
 
    virtual int buildReference(const vpImage<unsigned char> &I) =0;
@@ -96,17 +95,91 @@ class VISP_EXPORT vpBasicKeyPoint
 
    virtual void display(vpImage<unsigned char> &Icurrent) =0;
 
-   inline vpImagePoint* getAllPointsInReferenceImage() {
+   /*!
+     Get the pointer to the complete list of reference points. The pointer is const. Thus the points can not be modified
+
+     \return The pointer to the complete list of reference points.
+   */
+   inline const vpImagePoint* getAllPointsInReferenceImage() {
      return referenceImagePointsList;
    } ;
 
-   inline vpList<vpImagePoint*>* getMatchedPointsInReferenceImage() {
-     return &matchedPointsReferenceImageList;
-   } ;
+   /*!
+     Get the nth reference point. This point is copied in the vpImagePoint instance given in argument.
 
-   inline vpList<vpImagePoint*>* getMatchedPointsInCurrentImage() {
-     return &matchedPointsCurrentImageList;
-   } ;
+    \param index : The index of the desired reference point. The index must be between 0 and the number of reference points - 1.
+    \param referencePoint : The coordinates of the desired reference point are copied there.
+   */
+   inline void getReferencePoint (const int index, vpImagePoint &referencePoint )
+   {
+     if (index >= nbReferencePoints || index < 0)
+     {
+       vpTRACE("Index of the reference point out of range");
+       throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
+     }
+
+     referencePoint.set_ij((referenceImagePointsList+index)->get_i(),(referenceImagePointsList+index)->get_j());
+   }
+
+   /*!
+     Get the nth couple of reference point and current point which have been matched. These points are copied in the vpImagePoint instances given in argument.
+
+    \param index : The index of the desired couple of reference point and current point . The index must be between 0 and the number of matched points - 1.
+    \param referencePoint : The coordinates of the desired reference point are copied here.
+    \param currentPoint : The coordinates of the desired current point are copied here.
+   */
+   inline void getMatchedPoints(const int index, vpImagePoint &referencePoint, vpImagePoint &currentPoint) {
+     if (index >= nbMatchedPoints || index < 0)
+     {
+       vpTRACE("Index of the matched points out of range");
+       throw(vpException(vpException::fatalError,"Index of the matched points out of range"));
+     }
+     referencePoint.set_ij(referenceImagePointsList[matchedReferencePoints[index]].get_i(),referenceImagePointsList[matchedReferencePoints[index]].get_j());
+     currentPoint.set_ij(currentImagePointsList[index].get_i(), currentImagePointsList[index].get_j());
+   };
+
+   /*!
+     Get the nth matched reference point index in the complete list of reference point.
+
+     In the code below referencePoint1 and referencePoint2 correspond to the same matched reference point.
+
+    \code
+    vpKeyPointSurf surf;
+
+    //Here the code to compute the reference points and the current points.
+
+    vpImagePoint referencePoint1;
+    vpImagePoint currentPoint;
+    surf.getMatchedPoints(1, referencePoint1, currentPoint);  //Get the first matched points
+
+    vpImagePoint referencePoint2;
+    const vpImagePoint* referencePointsList = surf.getAllPointsInReferenceImage();
+    int index = surf.getIndexInAllReferencePointList(1);  //Get the first matched reference point index in the complete reference point list 
+    referencePoint2 = referencePointsList[index]; //Get the first matched reference point
+    \endcode
+   */
+   inline int getIndexInAllReferencePointList ( const int indexInMatchedPointList ) {
+     if (indexInMatchedPointList >= nbMatchedPoints || indexInMatchedPointList < 0)
+     {
+       vpTRACE("Index of the matched reference point out of range");
+       throw(vpException(vpException::fatalError,"Index of the matched reference point out of range"));
+     }
+     return matchedReferencePoints[indexInMatchedPointList];
+   }
+
+   /*!
+     Get the number of reference points.
+
+     \return the number of reference points.
+   */
+   inline int getReferencePointNumber() {return nbReferencePoints;};
+
+   /*!
+     Get the number of matched points.
+
+     \return the number of matched points.
+   */
+   inline int getMatchedPointNumber() {return nbMatchedPoints;};
 
   private:
     virtual void init()=0;
@@ -118,25 +191,28 @@ class VISP_EXPORT vpBasicKeyPoint
     vpImagePoint* referenceImagePointsList;
 
     /*!
-
       List of the points which belong to the current image and have
       been matched with points belonging to the reference.
     */
     vpImagePoint* currentImagePointsList;
 
     /*!
-
-      List of pointers that locates the matched points belonging to
-      the reference.
+      Number of refrence points which are computed thanks to the buildReference method.
     */
-    vpList<vpImagePoint*> matchedPointsCurrentImageList;
+    int nbReferencePoints;
 
     /*!
-
-      List of pointers that locates the matched points belonging to
-      the current image.
+      Number of matched points which are computed thanks to the matchPoint method.
     */
-    vpList<vpImagePoint*> matchedPointsReferenceImageList;
+    int nbMatchedPoints;
+
+    /*!
+      Array containing the index in the array "referenceImagePointsList" of the reference points which have been matched.
+
+      The first element of the "currentImagePointsList" array is matched with the nth element of the "referenceImagePointsList" array.
+      The value of n is stored in the first element of the "matchedReferencePoints" array.
+    */
+    int* matchedReferencePoints;
 };
 
 #endif

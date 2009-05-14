@@ -45,6 +45,9 @@ vpBasicKeyPoint::vpBasicKeyPoint()
 {
   referenceImagePointsList = NULL;
   currentImagePointsList = NULL;
+  matchedReferencePoints = NULL;
+  nbReferencePoints = 0;
+  nbMatchedPoints = 0;
 }
 
 
