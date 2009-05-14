@@ -358,10 +358,8 @@ main(int argc, const char ** argv)
     vpDisplay::flush(Icur) ;
     if (opt_click_allowed)
     {
-      std::cout << "A click to exit..." << std::endl;
-      while ( vpDisplay::getClick(Iref) && vpDisplay::getClick(Icur))
-      {
-      }
+      std::cout << "A click on the reference image to exit..." << std::endl;
+      vpDisplay::getClick(Iref);
     }
   }
 
