@@ -109,77 +109,20 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 
     double a = si ;
     double b = co ;
-    vpImagePoint ip;
+    vpImagePoint ip1, ip2;
 
     if (fabs(a) < fabs(b)) {
-      for (unsigned i=0 ; i < I.getHeight() ; i ++) {
-	double  j = (-c - a*i)/b  ;
-	ip.set_i( i );
-	ip.set_j( j );
-	vpDisplay::displayPoint(I, ip, color);
-      }
+        ip1.set_ij(0, (-c)/b);
+        double h = I.getHeight() - 1;
+        ip2.set_ij(h, (-c - a*h)/b);
+	vpDisplay::displayLine(I, ip1, ip2, color);
     }
     else {
-
-      for (unsigned j=0 ; j < I.getWidth() ; j++) {
-	double  i = (-c - b*j)/a  ;
-	ip.set_i( i );
-	ip.set_j( j );
-	vpDisplay::displayPoint(I, ip, color);
-      }
+        ip1.set_ij((-c)/a, 0);
+        double w = I.getWidth()-1;
+        ip2.set_ij((-c - b*w)/a, w);
+	vpDisplay::displayLine(I, ip1, ip2, color);
     }
-  /*
-     //  vpERROR_TRACE("********* %f %f %f %f ",si, co, theta, rho) ;
-    //      vpERROR_TRACE("********* %f %f %f %f ",si, co, thetap, rhop) ;
-
-    // std::cout << co <<  "  " << si << std::endl ;
-    if (fabs(si) < 1e-5)
-    {
-      v1 = 0.0 ;
-      u1 = c/co ;
-
-      v2 = I.getHeight()-1 ;
-      u2 = c/co ;
-      //       vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
-    }
-    else
-      if (fabs(co) < 1e-5)
-      {
-	v1 =c/si ;
-	u1 = 0 ;
-	v2 =c/si ;
-	u2 = I.getWidth()-1 ;
-	//	  vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
-      }
-      else
-      {
-
-	if (fabs(si)<fabs(co))
-	{
-	  v1 = 0 ;
-	  u1 = c/co ;
-
-	  v2 = I.getHeight()-1 ;
-	  u2 = (c - v2*si)/co ;
-	}
-	else
-	{
-	  u1 = 0 ;
-	  v1 = c/si ;
-
-	  u2 = v2 = I.getWidth()-1 ;
-	  v2 = (c-u2*co)/si ;
-	}
-
-      }
-
-    //   vpERROR_TRACE("-------->%f %f %f %f \n",u1,v1,u2,v2) ;
-    vpDisplay::displayLine(I,
-			   vpMath::round(v1),vpMath::round(u1),
-			   vpMath::round(v2),vpMath::round(u2),
-			   color) ;
-
-  */
   }
   catch(...)
   {
@@ -340,77 +283,20 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 
     double a = si ;
     double b = co ;
-    vpImagePoint ip;
+    vpImagePoint ip1, ip2;
 
     if (fabs(a) < fabs(b)) {
-      for (unsigned i=0 ; i < I.getHeight() ; i ++) {
-	double  j = (-c - a*i)/b  ;
-	ip.set_i( i );
-	ip.set_j( j );
-	vpDisplay::displayPoint(I, ip, color);
-      }
+        ip1.set_ij(0, (-c)/b);
+        double h = I.getHeight() - 1;
+        ip2.set_ij(h, (-c - a*h)/b);
+	vpDisplay::displayLine(I, ip1, ip2, color);
     }
     else {
-
-      for (unsigned j=0 ; j < I.getWidth() ; j++) {
-	double  i = (-c - b*j)/a  ;
-	ip.set_i( i );
-	ip.set_j( j );
-	vpDisplay::displayPoint(I, ip, color);
-      }
+        ip1.set_ij((-c)/a, 0);
+        double w = I.getWidth()-1;
+        ip2.set_ij((-c - b*w)/a, w);
+	vpDisplay::displayLine(I, ip1, ip2, color);
     }
-  /*
-     //  vpERROR_TRACE("********* %f %f %f %f ",si, co, theta, rho) ;
-    //      vpERROR_TRACE("********* %f %f %f %f ",si, co, thetap, rhop) ;
-
-    // std::cout << co <<  "  " << si << std::endl ;
-    if (fabs(si) < 1e-5)
-    {
-      v1 = 0.0 ;
-      u1 = c/co ;
-
-      v2 = I.getHeight()-1 ;
-      u2 = c/co ;
-      //       vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
-    }
-    else
-      if (fabs(co) < 1e-5)
-      {
-	v1 =c/si ;
-	u1 = 0 ;
-	v2 =c/si ;
-	u2 = I.getWidth()-1 ;
-	//	  vpERROR_TRACE("%f %f %f %f \n",u1,v1,u2,v2) ;
-      }
-      else
-      {
-
-	if (fabs(si)<fabs(co))
-	{
-	  v1 = 0 ;
-	  u1 = c/co ;
-
-	  v2 = I.getHeight()-1 ;
-	  u2 = (c - v2*si)/co ;
-	}
-	else
-	{
-	  u1 = 0 ;
-	  v1 = c/si ;
-
-	  u2 = v2 = I.getWidth()-1 ;
-	  v2 = (c-u2*co)/si ;
-	}
-
-      }
-
-    //   vpERROR_TRACE("-------->%f %f %f %f \n",u1,v1,u2,v2) ;
-    vpDisplay::displayLine(I,
-			   vpMath::round(v1),vpMath::round(u1),
-			   vpMath::round(v2),vpMath::round(u2),
-			   color) ;
-
-  */
   }
   catch(...)
   {
