@@ -2484,7 +2484,11 @@ int main()
   \sa eigenValues()
 
 */
+#ifdef VISP_HAVE_GSL  /* be careful of the copy below */
 void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector)
+#else
+void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
+#endif
 {
   if (rowNum != colNum) {
     vpERROR_TRACE("Eigen values computation: ERR Matrix not square") ;
