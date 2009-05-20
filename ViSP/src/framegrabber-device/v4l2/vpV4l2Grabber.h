@@ -178,6 +178,7 @@ public:
 
 public:
   vpV4l2Grabber();
+  vpV4l2Grabber(bool verbose);
   vpV4l2Grabber(unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
   vpV4l2Grabber(vpImage<unsigned char> &I,
 		unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
@@ -194,6 +195,13 @@ public:
   void acquire(vpImage<vpRGBa> &I) ;
   void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp) ;
   bool getField();
+  /*!
+    Activates the verbose mode to print additionnal informations on stdout.
+    \param verbose : If true activates the verbose mode.
+  */
+  void setVerboseMode(bool verbose) {
+    this->verbose = verbose;
+  };
   void setFramerate(vpV4l2FramerateType framerate);
   vpV4l2FramerateType getFramerate();
   void close();
