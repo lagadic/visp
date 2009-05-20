@@ -60,7 +60,7 @@
 #include <visp/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"df:i:hs:"
+#define GETOPTARGS	"df:i:hs:v"
 
 /*!
 
@@ -71,10 +71,11 @@
   \param fps : Framerate.
   \param input : Card input number.
   \param scale : Subsampling factor.
+  \param niter : Number of images to acquire.
 
 */
-void usage(const char *name, const char *badparam, unsigned fps, unsigned input,
-	   unsigned scale)
+void usage(const char *name, const char *badparam, unsigned fps, 
+	   unsigned input, unsigned scale, long niter)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the Video For Linux Two framegrabber. \n\
@@ -82,7 +83,7 @@ Display these images using X11 or GTK.\n\
 \n\
 SYNOPSIS\n\
   %s [-f <fps=25|50>] [-i <input=0|1|2|3> \n\
-     [-s <scale=1|2|4>] [d] [-h]\n", name);
+     [-s <scale=1|2|4>] [-n <niter>] [-v] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                                  Default\n\
@@ -99,12 +100,18 @@ OPTIONS:                                                  Default\n\
      If 2, half resolution acquisition 384x288. The \n\
      subsampling is achieved by the hardware.\n\
 \n\
+  -n <niter>                                                %ld\n\
+     Number of images to acquire.\n\
+\n\
   -d \n\
      Turn off the display.\n\
 \n\
+  -v \n\
+     Activates the verbose mode.\n\
+\n\
   -h \n\
      Print the help.\n\n",
-	  fps, input, scale);
+	  fps, input, scale, niter);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -120,12 +127,14 @@ OPTIONS:                                                  Default\n\
   \param input : Card input.
   \param scale : Subsampling factor.
   \param display : Display activation.
+  \param verbose : Verbose mode activation.
+  \param niter : Number of images to acquire.
 
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
-		unsigned &scale, bool &display)
+		unsigned &scale, bool &display, bool &verbose, long &niter)
 {
   const char *optarg;
   int	c;
@@ -135,17 +144,20 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
     case 'd': display = false; break;
     case 'f': fps = (unsigned) atoi(optarg); break;
     case 'i': input = (unsigned) atoi(optarg); break;
+    case 'n': niter = atol(optarg); break;
     case 's': scale = (unsigned) atoi(optarg); break;
-    case 'h': usage(argv[0], NULL, fps, input, scale); return false; break;
+    case 'v': verbose = true; break;
+    case 'h': usage(argv[0], NULL, fps, input, scale, niter); 
+      return false; break;
 
     default:
-      usage(argv[0], optarg, fps, input, scale); return false; break;
+      usage(argv[0], optarg, fps, input, scale, niter); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, fps, input, scale);
+    usage(argv[0], NULL, fps, input, scale, niter);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -170,9 +182,12 @@ main(int argc, const char ** argv)
   unsigned input = vpV4l2Grabber::DEFAULT_INPUT;
   unsigned scale = vpV4l2Grabber::DEFAULT_SCALE;
   bool opt_display = true;
+  bool opt_verbose = false;
+  long opt_iter    = 20;
 
   // Read the command line options
-  if (getOptions(argc, argv, fps, input, scale, opt_display) == false) {
+  if (getOptions(argc, argv, fps, input, scale, opt_display, 
+		 opt_verbose, opt_iter) == false) {
     exit (-1);
   }
 
@@ -182,7 +197,7 @@ main(int argc, const char ** argv)
   vpImage<unsigned char> I ;
 
   // Creates the grabber
-  vpV4l2Grabber g;
+  vpV4l2Grabber g(opt_verbose);
 
   try{
     // Initialize the grabber
@@ -240,7 +255,7 @@ main(int argc, const char ** argv)
 
   // Acquisition loop
   long cpt = 1;
-  while(cpt ++ < 100)
+  while(cpt ++ < opt_iter)
   {
     // Measure the initial time of an iteration
     double t = vpTime::measureTimeMs();

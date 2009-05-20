@@ -137,6 +137,74 @@ vpV4l2Grabber::vpV4l2Grabber()
   init = false;
 }
 
+/*!
+  Default constructor.
+
+  Setup the Video For Linux Two (V4L2) driver in streaming mode.
+
+  \param verbose : If true activates the verbose mode.
+
+  Default settings are:
+
+  - Device name: /dev/video0: To change it use setDevice()
+
+  - Number of ring buffers: 3. To change this value use setNBuffers(). For non
+    real-time applications the number of buffers should be set to 1. For
+    real-time applications to reach 25 fps or 50 fps a good compromise is to
+    set the number of buffers to 3.
+
+  - Framerate acquisition: 25 fps. Use setFramerate() to set 25 fps or 50
+    fps. These framerates are reachable only if enought buffers are set.
+
+  - Input board: vpV4l2Grabber::DEFAULT_INPUT. Video input port. Use setInput()
+    to change it.
+
+  - Image size acquisition: vpV4l2Grabber::DEFAULT_SCALE. Use either setScale()
+    or setWidth() and setHeight to change it.
+
+    \code
+    vpImage<unsigned char> I; // Grey level image
+
+    vpV4l2Grabber g(true); // Activates the verbose mode
+    g.setInput(2);    // Input 2 on the board
+    g.setWidth(768);  // Acquired images are 768 width
+    g.setHeight(576); // Acquired images are 576 height
+    g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
+    g.open(I);        // Open the grabber
+
+    g.acquire(I);     // Acquire a 768x576 grey image
+
+    \endcode
+
+*/
+vpV4l2Grabber::vpV4l2Grabber(bool verbose)
+{
+  fd        = -1;
+  streaming = false;
+  this->verbose   = verbose;
+  field     = 0;
+  width     = 0;
+  height    = 0;
+  queue     = 0;
+  waiton_cpt= 0;
+  index_buffer = 0;
+
+  inp       = NULL;
+  std       = NULL;
+  fmt       = NULL;
+  ctl       = NULL;
+  buf_v4l2  = NULL;
+  buf_me    = NULL;
+
+  setDevice("/dev/video0");
+  setNBuffers(3);
+  setFramerate(vpV4l2Grabber::framerate_25fps);
+  setInput(vpV4l2Grabber::DEFAULT_INPUT);
+  setScale(vpV4l2Grabber::DEFAULT_SCALE);
+
+  init = false;
+}
+
 
 /*!
   Constructor.
