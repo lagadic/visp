@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Framegrabber based on itifg-8.x (Coreco Imaging Technology) driver.
+ * Framegrabber based on Video4Linux2 driver.
  *
  * Authors:
  * Fabien Spindler
@@ -450,7 +450,7 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
 {
   open();
 
-  if( -1 == ioctl (fd, VIDIOC_S_INPUT, &input) )
+  if( ioctl (fd, VIDIOC_S_INPUT, &input) == -1 )
   {
     close();
 
@@ -485,7 +485,7 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
 {
   open();
 
-  if( -1 == ioctl (fd, VIDIOC_S_INPUT, &input) )
+  if( ioctl (fd, VIDIOC_S_INPUT, &input) == -1 )
   {
     close();
 
@@ -757,10 +757,8 @@ vpV4l2Grabber::close()
 void
 vpV4l2Grabber::open()
 {
-  int err;
-
   /* Open Video Device */
-  fd = ::open (device, O_RDWR);
+  fd = ::open (device, O_RDWR | O_NONBLOCK, 0);
   if (fd < 0) {
     close();
 
@@ -785,8 +783,7 @@ vpV4l2Grabber::open()
   buf_me   = new struct ng_video_buf   [vpV4l2Grabber::MAX_BUFFERS];
 
   /* Querry Video Device Capabilities */
-  err = ioctl (fd, VIDIOC_QUERYCAP, &cap);
-  if (err < 0) {
+  if ( ioctl (fd, VIDIOC_QUERYCAP, &cap) == -1 ) {
     close();
 
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
@@ -857,7 +854,7 @@ vpV4l2Grabber::getCapabilities()
   }
 
   streamparm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  if (ioctl(fd, VIDIOC_G_PARM, &streamparm))
+  if (ioctl(fd, VIDIOC_G_PARM, &streamparm) == -1)
   {
     close();
 
@@ -903,7 +900,7 @@ vpV4l2Grabber::setFormat()
   /* Get Video Format */
   fmt_v4l2.type                 = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-  if (ioctl (fd, VIDIOC_G_FMT, &fmt_v4l2)) {
+  if (ioctl (fd, VIDIOC_G_FMT, &fmt_v4l2) == -1 ) {
     close();
 
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
@@ -916,8 +913,14 @@ vpV4l2Grabber::setFormat()
 
   switch (frameformat) {
   case V4L2_FRAME_FORMAT: fmt_v4l2.fmt.pix.field = V4L2_FIELD_ALTERNATE;
+    if (verbose) {
+      fprintf(stdout,"v4l2: new capture params (V4L2_FIELD_ALTERNATE\n");
+    }
     break;
   case V4L2_IMAGE_FORMAT: fmt_v4l2.fmt.pix.field = V4L2_FIELD_INTERLACED;
+    if (verbose) {
+      fprintf(stdout,"v4l2: new capture params (V4L2_FIELD_INTERLACED)\n");
+    }
     break;
   default:
     close();
@@ -935,7 +938,7 @@ vpV4l2Grabber::setFormat()
   }
 
 
-  if (ioctl(fd, VIDIOC_S_FMT, &fmt_v4l2)) {
+  if (ioctl(fd, VIDIOC_S_FMT, &fmt_v4l2) == -1) {
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't set video format") );
   }
@@ -948,7 +951,7 @@ vpV4l2Grabber::setFormat()
   fmt_me.height       = fmt_v4l2.fmt.pix.height;
   fmt_me.bytesperline = fmt_v4l2.fmt.pix.bytesperline;
 
-  if (verbose)
+  if (verbose) {
     fprintf(stdout,"v4l2: new capture params (%dx%d, %c%c%c%c, %d byte)\n",
 	    fmt_me.width, fmt_me.height,
 	    fmt_v4l2.fmt.pix.pixelformat & 0xff,
@@ -956,6 +959,14 @@ vpV4l2Grabber::setFormat()
 	    (fmt_v4l2.fmt.pix.pixelformat >> 16) & 0xff,
 	    (fmt_v4l2.fmt.pix.pixelformat >> 24) & 0xff,
 	    fmt_v4l2.fmt.pix.sizeimage);
+//     if (ioctl(fd, VIDIOC_G_FMT, &fmt_v4l2) == -1) {
+//       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+// 				     "Can't get video format") );
+//     }
+//     int w = fmt_v4l2.fmt.pix.width;
+//     int h = fmt_v4l2.fmt.pix.height;
+//     printf("Image %d x %d\n", w, h);
+  }
 
 }
 /*!
@@ -975,21 +986,26 @@ vpV4l2Grabber::startStreaming()
   }
 
   /* setup buffers */
+  memset (&(reqbufs), 0, sizeof (reqbufs));
   reqbufs.count  = nbuffers;
   reqbufs.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   reqbufs.memory = V4L2_MEMORY_MMAP;
-  if (ioctl(fd, VIDIOC_REQBUFS, &reqbufs))
+
+  
+  if (ioctl(fd, VIDIOC_REQBUFS, &reqbufs) == -1)
   {
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't require video buffers") );
   }
 
   for (unsigned i = 0; i < reqbufs.count; i++) {
+    // Clear the buffer
+    memset (&(buf_v4l2[i]), 0, sizeof (buf_v4l2[i]));
     buf_v4l2[i].index  = i;
     buf_v4l2[i].type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf_v4l2[i].memory = V4L2_MEMORY_MMAP;
     buf_v4l2[i].length = 0;
-    if (ioctl(fd, VIDIOC_QUERYBUF, &buf_v4l2[i]))
+    if (ioctl(fd, VIDIOC_QUERYBUF, &buf_v4l2[i]) == -1)
     {
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't query video buffers") );
