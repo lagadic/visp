@@ -4,6 +4,8 @@ ViSP 2.x.y
     - New vpImagePoint class for image coordinates
   - Bug fixed
     - [7638] Memory leak in all vpFeature... classes was reopened
+    - [7888] vpV4l2Grabber cannot acquire an image from an analog camera 
+	     on Ubuntu 8.04 Hardy Heron
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features
