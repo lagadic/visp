@@ -60,7 +60,7 @@
 #include <visp/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"df:i:hs:v"
+#define GETOPTARGS	"df:i:hn:s:v"
 
 /*!
 
