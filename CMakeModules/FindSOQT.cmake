@@ -47,20 +47,25 @@ IF(WIN32)
   FIND_LIBRARY(SOQT_LIBRARY_RELEASE
     NAMES soqt1 #only shared libraries under windows
     PATHS
+    "$ENV{COIN_DIR}/lib"
+    "$ENV{SOQT_DIR}/lib"
     "$ENV{COINDIR}/lib"
-	"$ENV{SOQTDIR}/lib"
+    "$ENV{SOQTDIR}/lib"
     )
   FIND_LIBRARY(SOQT_LIBRARY_DEBUG
     NAMES soqt1d #only shared libraries under windows
     PATHS
+    "$ENV{COIN_DIR}/lib"
+    "$ENV{SOQT_DIR}/lib"
     "$ENV{COINDIR}/lib"
-	"$ENV{SOQTDIR}/lib"
+    "$ENV{SOQTDIR}/lib"
     )  
 
  FIND_PATH(SOQT_INCLUDE_PATH Inventor/Qt/SoQt.h
+    "$ENV{COIN_DIR}/lib"
+    "$ENV{SOQT_DIR}/lib"
     "$ENV{COINDIR}/include"
-	"$ENV{SOQTDIR}/include"
-    "$ENV{INCLUDE}"
+    "$ENV{SOQTDIR}/include"
     )
  MARK_AS_ADVANCED(
  	SOQT_LIBRARY_DEBUG
@@ -75,8 +80,10 @@ ELSE(WIN32)
     /usr/lib
     /usr/local/lib
     /lib
+    "$ENV{COIN_DIR}/lib"
+    "$ENV{SOQT_DIR}/lib"
     "$ENV{COINDIR}/lib"
-	"$ENV{SOQTDIR}/lib"
+    "$ENV{SOQTDIR}/lib"
     )
 
   MARK_AS_ADVANCED(
@@ -121,7 +128,7 @@ ENDIF(WIN32)
 	#MESSAGE("Can not find SoQt includes")
   ENDIF(SOQT_INCLUDE_PATH)
   MARK_AS_ADVANCED(
-    	SOQT_INCUDE_DIR
+    	SOQT_INCLUDE_DIR
   	)
   ENDIF(WIN32)
  
