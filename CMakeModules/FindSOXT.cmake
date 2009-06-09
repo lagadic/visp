@@ -47,6 +47,7 @@ FIND_LIBRARY(SOXT_LIBRARY
     /usr/lib
     /usr/local/lib
     /lib
+    "$ENV{COIN_DIR}/lib"
     "$ENV{COINDIR}/lib"
     )
 MARK_AS_ADVANCED(
