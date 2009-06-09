@@ -99,7 +99,17 @@ extern "C" {
   class by calling the default constructor:
 
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpRobotAfma6.h>
+
+#ifdef VISP_HAVE_AFMA6
+int main()
+{
   vpRobotAfma6 robot;
+}
+#else
+int main() {}
+#endif
   \endcode
 
   This initialize the robot kinematics with the eMc extrinsic camera
