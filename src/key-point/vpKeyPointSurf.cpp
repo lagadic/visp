@@ -43,8 +43,6 @@
 
 #include <visp/vpKeyPointSurf.h>
 
-#if defined(VISP_HAVE_OPENCV)
-
 #if VISP_HAVE_OPENCV_VERSION >= 0x010100 // Require opencv >= 1.1.0 
 
 #include <visp/vpImageConvert.h>
@@ -519,7 +517,6 @@ void vpKeyPointSurf::display(vpImage<unsigned char> &Icurrent)
 
 #endif
 
-#endif
 
 /*
  * Local variables:
