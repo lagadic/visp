@@ -101,10 +101,12 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
   \param flip : Set to true to vertically flip the converted image.
 
   \code
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENCV
 int main() 
 {
   vpImage<vpRGBa> Ic; // A color image
@@ -120,6 +122,9 @@ int main()
   // Release Ip header and data
   cvReleaseImage(&Ip);
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -202,10 +207,12 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
   \param flip : Set to true to vertically flip the converted image.
 
   \code
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENCV
 int main()
 {
   vpImage<unsigned char> Ig; // A grayscale image
@@ -221,6 +228,9 @@ int main()
   // Release Ip header and data
   cvReleaseImage(&Ip);
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -299,10 +309,12 @@ vpImageConvert::convert(const IplImage* src,
   \param dest : destination image
 
   \code
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENCV
 int main()
 {
   vpImage<vpRGBa> Ic; // A color image
@@ -320,6 +332,9 @@ int main()
   //Release Ip header and data
   cvReleaseImage(&Ip);
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -381,10 +396,12 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
   \param dest : destination image
 
   \code
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENCV
 int main()
 {
   vpImage<unsigned char> Ig; // A greyscale image
@@ -402,6 +419,9 @@ int main()
   //Release Ip header and data
   cvReleaseImage(&Ip);
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
