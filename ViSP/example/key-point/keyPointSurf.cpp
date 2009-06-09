@@ -28,23 +28,23 @@
  * not clear to you.
  *
  * Description:
- * Tracking of a line.
+ * Tracking of Surf key points.
  *
  * Authors:
- * Eric Marchand
+ * Nicolas Melchior
  * Fabien Spindler
  *
  *****************************************************************************/
 /*!
-  \file trackMeLine.cpp
+  \file keyPointSurf.cpp
 
-  \brief Tracking of a line using vpMe.
+  \brief Tracking of Surf key-points.
 */
 
 /*!
-  \example trackMeLine.cpp
+  \example keyPointSurf.cpp
 
-  Tracking of a line using vpMe.
+  Tracking of Surf key-points.
 */
 
 #include <stdlib.h>
@@ -55,7 +55,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x010100))
+#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION >= 0x010100))
 
 
 #include <visp/vpImage.h>
@@ -367,7 +367,11 @@ std::cout << corners[i] << std::endl;
 int
 main()
 {
+#if ( ! (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) ) 
   vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
+#else
+  vpERROR_TRACE("You do not have OpenCV-1.1.0 or a more recent release...");
+#endif
 }
 
 #endif
