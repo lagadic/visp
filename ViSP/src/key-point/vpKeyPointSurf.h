@@ -49,8 +49,6 @@
 #include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>
 
-#if ( defined(VISP_HAVE_OPENCV) )
-
 #if (VISP_HAVE_OPENCV_VERSION >= 0x010100) // Require opencv >= 1.1.0 
 
 #include <cxcore.h>
@@ -86,9 +84,11 @@
   how to use the class.
 
   \code
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpKeyPointSurf.h>
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x010100 // Surf key-points only available since OpenCV-1.1.0
 int main()
 {
   vpImage<unsigned char> Irefrence;
@@ -110,6 +110,9 @@ int main()
 
   return (0);
 }
+#else
+int main() {}
+#endif
   \endcode
 
   It is also possible to create the refernece thanks to only a part of the 
@@ -117,10 +120,12 @@ int main()
   part of the current image. The small following example shows how to this
 
   \code
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpKeyPointSurf.h>
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x010100 // Surf key-points only available since OpenCV-1.1.0
 int main()
 {
   vpImage<unsigned char> Ireference;
@@ -162,6 +167,9 @@ int main()
 
   return(0);
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 
@@ -272,8 +280,6 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
 
 
 #endif 
-
-#endif
 
 #endif
 
