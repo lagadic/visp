@@ -329,6 +329,8 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
  missingArg:
    FPRINTF(stderr, "\"%s\" option requires an additional argument\n", curArg);
    return true;
+	
+#undef FPRINTF
 }
 
 /*!
@@ -468,6 +470,7 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
    }
 
    FPRINTF(stderr, "\n");
+#undef FPRINTF
 }
 
 /*!
