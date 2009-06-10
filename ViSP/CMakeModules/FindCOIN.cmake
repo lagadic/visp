@@ -74,9 +74,12 @@ IF(UNIX OR WIN32)
   FIND_PATH(COIN_INCLUDE_DIR Inventor/nodes/SoSeparator.h
     $ENV{COIN_DIR}/include
     $ENV{COINDIR}/include
+    $ENV{COIN_DIR}
+    $ENV{COINDIR}
     $ENV{COIN3D_DIR}/include
     $ENV{COIN3DDIR}/include
     /usr/include 
+    /usr/include/Coin2
     )
   #MESSAGE("DBG COIN_INCLUDE_DIR=${COIN_INCLUDE_DIR}")
 

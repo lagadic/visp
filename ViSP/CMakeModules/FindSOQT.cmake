@@ -45,11 +45,15 @@
 
 # detection of the SoQt headers location
 FIND_PATH(SOQT_INCLUDE_PATH Inventor/Qt/SoQt.h
-  "$ENV{COIN_DIR}/lib"
-  "$ENV{SOQT_DIR}/lib"
+  "$ENV{COIN_DIR}/include"
+  "$ENV{SOQT_DIR}/include"
+  "$ENV{COIN_DIR}"
+  "$ENV{SOQT_DIR}"
   "$ENV{COINDIR}/include"
   "$ENV{SOQTDIR}/include"
+  /usr/include/Coin2
   )
+#MESSAGE("DBG SOQT_INCLUDE_PATH=${SOQT_INCLUDE_PATH}")
 
 IF(WIN32)
   # Detection of the SoQt library on Windows
