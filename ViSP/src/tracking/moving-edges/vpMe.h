@@ -103,10 +103,10 @@ public:
   void setRange(int a) { range =a  ; }
   void setMu1(double a) { mu1 =a  ; }
   void setMu2(double a) { mu2 =a  ; }
-  void setSizeMask(int a) ;
-  void setNumberMask(int a) ;
+  void setMaskNumber(int a) ;
   void setMaskSign(int a){mask_sign = a ; }
-  double GetSampleStep() { return sample_step ; }
+  void setMaskSize(int a) ;
+  double getSampleStep() { return sample_step ; }
   void setSampleStep(double a) { sample_step = a ; }
   void setStrip(int a) { strip = a ; }
   // in CPixel.convolution() : avoids to get points (In Appariement()
@@ -118,6 +118,20 @@ public:
   void setAberration( double a) { aberration = a ; }
   void setInitAberration(double a ) { init_aberration = a ; }
   void checkSamplestep(double &a) { if(a < min_samplestep) a = min_samplestep ; }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  /*!
+    \deprecated This method is deprecated. You should use getSampleStep() 
+    instead.
+  */
+  double GetSampleStep() { return sample_step ; }
+  void setNumberMask(int a) ;
+  void setSizeMask(int a) ;
+#endif
+
 };
 
 
