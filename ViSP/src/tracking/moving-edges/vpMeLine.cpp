@@ -774,7 +774,7 @@ vpMeLine::initTracking(vpImage<unsigned char> &I,
   i1s = vpMath::round( ip1.get_i() );
   i2s = vpMath::round( ip2.get_i() );
   j1s = vpMath::round( ip1.get_j() );
-  j2s = vpMath::round( ip1.get_j() );
+  j2s = vpMath::round( ip2.get_j() );
 
   try{
 
