@@ -149,7 +149,7 @@ int main()
 
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {
-private:
+protected:
   vpMeSite PExt[2] ;
 
   double rho, theta ;
@@ -162,8 +162,6 @@ public:
   double b; //!< Parameter a of the line equation a*i + b*j + c = 0
   double c; //!< Parameter a of the line equation a*i + b*j + c = 0
 
-
-public:
   vpMeLine() ;
   virtual ~vpMeLine() ;
 
