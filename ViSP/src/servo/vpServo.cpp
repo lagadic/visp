@@ -148,6 +148,8 @@ vpServo::init()
   errorComputed = false ;
 
   taskWasKilled = false;
+
+  forceInteractionMatrixComputation = false;
 }
 
 /*!
@@ -609,7 +611,7 @@ vpServo::computeInteractionMatrix()
 	{
 	  try
 	    {
-              if (interactionMatrixComputed == false)
+              if (interactionMatrixComputed == false || forceInteractionMatrixComputation == true)
               {
 	        computeInteractionMatrixFromList(this ->desiredFeatureList,
 		  			      this ->featureSelectionList, L);
