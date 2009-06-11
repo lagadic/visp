@@ -215,6 +215,12 @@ public:
   void setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
 				const vpServoInversionType &interactionMatrixInversion=PSEUDO_INVERSE) ;
 
+  /*! 
+    Set a variable which enable to compute the interaction matrix for each iteration.
+    \param forceInteractionMatrixComputation: If true it forces the interaction matrix computation even if it is already done.
+  */
+  void setForceInteractionMatrixComputation(bool forceInteractionMatrixComputation) {this->forceInteractionMatrixComputation = forceInteractionMatrixComputation;}
+
   //! set the gain lambda
   void setLambda(double _lambda) { lambda .initFromConstant (_lambda) ; }
   void setLambda(const double at_zero,
@@ -350,6 +356,8 @@ private:
   //! dimension of the task
   int dim_task ;
   bool taskWasKilled; // flag to indicate if the task was killed
+  //! Force the interaction matrix computation even if it is already done.
+  bool forceInteractionMatrixComputation;
 
   //! projection operators WpW
   vpMatrix WpW ;
