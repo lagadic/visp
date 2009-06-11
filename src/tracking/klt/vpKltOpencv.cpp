@@ -58,23 +58,11 @@ void vpKltOpencv::clean()
   if (prev_image) cvReleaseImage(&prev_image);
   if (pyramid) cvReleaseImage(&pyramid);
   if (prev_pyramid) cvReleaseImage(&prev_pyramid);
-  if (features) cvFree(&features);
-  if (prev_features) cvFree(&prev_features);
-  if (status) cvFree(&status);
-  if (lostDuringTrack) cvFree(&lostDuringTrack);
-  if (featuresid) cvFree(&featuresid);
-  if (prev_featuresid) cvFree(&prev_featuresid);
   
   image = 0;
   prev_image = 0;
   pyramid = 0;
   prev_pyramid = 0;
-  features = 0;
-  prev_features = 0;
-  status = 0;
-  lostDuringTrack = 0;
-  featuresid = 0;
-  prev_featuresid = 0;
   
   swap_temp = 0;
   countFeatures = 0;
@@ -84,16 +72,29 @@ void vpKltOpencv::clean()
   globalcountFeatures = 0;
 }
 
+void vpKltOpencv::cleanAll()
+{
+  clean();
+
+  if (features) cvFree(&features);
+  if (prev_features) cvFree(&prev_features);
+  if (status) cvFree(&status);
+  if (lostDuringTrack) cvFree(&lostDuringTrack);
+  if (featuresid) cvFree(&featuresid);
+  if (prev_featuresid) cvFree(&prev_featuresid);
+
+  features = 0;
+  prev_features = 0;
+  status = 0;
+  lostDuringTrack = 0;
+  featuresid = 0;
+  prev_featuresid = 0;
+}
+
 void vpKltOpencv::reset()
 {
   clean();
 
-  features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(features[0]));
-  prev_features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(prev_features[0]));
-  status = (char*)cvAlloc(maxFeatures);
-  lostDuringTrack = (bool*)cvAlloc(maxFeatures);
-  featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
-  prev_featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
 }
 
 vpKltOpencv::vpKltOpencv()
@@ -130,6 +131,14 @@ vpKltOpencv::vpKltOpencv()
   OnNewFeature = 0;
   OnMeasureFeature = 0;
   IsFeatureValid = 0;
+
+  features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(features[0]));
+  prev_features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(prev_features[0]));
+  status = (char*)cvAlloc(maxFeatures);
+  lostDuringTrack = (bool*)cvAlloc(maxFeatures);
+  featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
+  prev_featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
+
 
   _tid = -1;
 }
@@ -239,13 +248,33 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
 
 vpKltOpencv::~vpKltOpencv()
 {
-  clean();
+  cleanAll();
+
+}
+
+void vpKltOpencv::setMaxFeatures(unsigned int input) {
+  initialized = 0; maxFeatures=input;
+
+  if (features) cvFree(&features);
+  if (prev_features) cvFree(&prev_features);
+  if (status) cvFree(&status);
+  if (lostDuringTrack) cvFree(&lostDuringTrack);
+  if (featuresid) cvFree(&featuresid);
+  if (prev_featuresid) cvFree(&prev_featuresid);
+ 
+
+  features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(features[0]));
+  prev_features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(prev_features[0]));
+  status = (char*)cvAlloc(maxFeatures);
+  lostDuringTrack = (bool*)cvAlloc(maxFeatures);
+  featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
+  prev_featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
+
+  
 }
 
 void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
 {
-  reset();
-
   if (!I) {
     throw(vpException(vpTrackingException::initializationError,  "Image Not initialized")) ;
   }
@@ -260,13 +289,29 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
     }
   }
 
-  initialized = 1;
 
   //Creation des buffers
-  image = cvCreateImage(cvGetSize(I), 8, 1);image->origin = I->origin;
-  prev_image = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
-  pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
-  prev_pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+  CvSize Sizeim, SizeI;
+  SizeI = cvGetSize(I);
+  if(image != NULL)Sizeim = cvGetSize(image);
+  if(image == NULL ||prev_image == NULL || pyramid==NULL || prev_pyramid ==NULL ||
+     SizeI.width != Sizeim.width || SizeI.height != Sizeim.height){
+    reset();
+    image = cvCreateImage(cvGetSize(I), 8, 1);image->origin = I->origin;
+    prev_image = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+    pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+    prev_pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+  }
+  else{
+    swap_temp = 0;
+    countFeatures = 0;
+    countPrevFeatures = 0;
+    flags = 0;
+    initialized = 0;
+    globalcountFeatures = 0;   
+  }
+
+  initialized = 1;
 
   //Import
   cvCopy(I, image, 0);
@@ -299,6 +344,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
     }
   }
 }
+ 
 
 void vpKltOpencv::track(const IplImage *I)
 {
