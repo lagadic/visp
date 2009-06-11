@@ -131,6 +131,7 @@ class VISP_EXPORT vpKltOpencv
 
   //Internal
   void clean();
+  void cleanAll();
   void reset();
 
  public:
@@ -149,7 +150,9 @@ class VISP_EXPORT vpKltOpencv
 	       vpColor::vpColorType color = vpColor::red);
 
   //Seters
-  void setMaxFeatures(unsigned int input) {initialized = 0; maxFeatures=input;}
+  /* Should be used only before initTracking */
+  void setMaxFeatures(unsigned int input);
+
   void setWindowSize(unsigned int input) {initialized = 0; win_size=input;}
   void setQuality(double input) {initialized = 0; quality=input;}
   void setMinDistance(double input) {initialized = 0; min_distance=input;}
