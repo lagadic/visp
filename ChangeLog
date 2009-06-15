@@ -9,6 +9,7 @@ ViSP 2.x.y
     - [7994] vpMeLine : initialization problem for horizontal lines
     - [8001] Coin and SoQt are not detected during CMake configuration
 	     under Fedora 10
+    - [8032] Link error whith GSL while compiling HelloWorld.cpp on OSX
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features
