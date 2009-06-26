@@ -215,19 +215,19 @@ main(int argc, const char ** argv)
     opath = opt_opath;
 
   // Append to the output path string, the login name of the user
-  std::string dirname = opath +  vpIoTools::path("/") + username;
+  std::string odirname = opath +  vpIoTools::path("/") + username;
 
   // Test if the output path exist. If no try to create it
-  if (vpIoTools::checkDirectory(dirname) == false) {
+  if (vpIoTools::checkDirectory(odirname) == false) {
     try {
       // Create the dirname
-      vpIoTools::makeDirectory(dirname);
+      vpIoTools::makeDirectory(odirname);
     }
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
       std::cerr << std::endl
 	   << "ERROR:" << std::endl;
-      std::cerr << "  Cannot create " << dirname << std::endl;
+      std::cerr << "  Cannot create " << odirname << std::endl;
       std::cerr << "  Check your -o " << opath << " option " << std::endl;
       exit(-1);
     }
@@ -350,7 +350,7 @@ main(int argc, const char ** argv)
     vpDisplay::getImage(I, Ioverlay) ;
 
     // Write the color image on the disk
-    filename = opath +  vpIoTools::path("/Klimt_grey.overlay.ppm");
+    filename = odirname +  vpIoTools::path("/Klimt_grey.overlay.ppm");
     vpImageIo::writePPM(Ioverlay, filename) ;
 
     // If click is allowed, wait for a mouse click to close the display
