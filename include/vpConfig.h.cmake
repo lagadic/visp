@@ -112,6 +112,9 @@
 // Defined if SoXt library available.
 #cmakedefine VISP_HAVE_SOXT
 
+// Defined if Liplot library available.
+#cmakedefine VISP_HAVE_LIBPLOTTER
+
 // Defined if raw1394 and dc1394-1.x libraries available.
 #cmakedefine VISP_HAVE_DC1394_1
 

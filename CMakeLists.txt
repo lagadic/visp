@@ -126,6 +126,7 @@ SET(USE_DC1394_1  ON) # For firewire grabber under Linux and OSX ?
 SET(USE_DC1394_2  ON) # For firewire grabber under Linux and OSX ?
 SET(USE_V4L2      ON) # For Video 4 Linux 2 grabber under Linux
 SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
+SET(USE_LIBPLOTTER ON)   # For plotting curves
 
 IF(BUILD_SHARED_LIBS)
   SET(VISP_BUILD_SHARED_LIBS TRUE)  # for header vpConfig.h
@@ -451,6 +452,7 @@ SET(VISP_HAVE_GSL_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_LIBPLOTTER_FOUND "no")  # for ViSP-third-party.txt
 
 # open CV
 IF(USE_OPENCV)
@@ -601,6 +603,22 @@ IF(USE_GDI)
   ENDIF(GDI_FOUND)
 ENDIF(USE_GDI)
 
+# Libplotter
+IF(USE_LIBPLOTTER)
+  FIND_PACKAGE(LIBPLOTTER)
+  IF(LIBPLOTTER_FOUND)
+    MESSAGE(STATUS "Libplotter found")
+    SET(VISP_HAVE_LIBPLOTTER  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_LIBPLOTTER_FOUND "yes")  # for ViSP-third-party.txt
+
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${LIBPLOTTER_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${LIBPLOTTER_LIBRARIES})
+
+  ELSE(LIBPLOTTER_FOUND)
+    MESSAGE(STATUS "Libplot not found")
+    SET(VISP_HAVE_LIBPLOTTER_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(LIBPLOTTER_FOUND)
+ENDIF(USE_LIBPLOTTER)
 
 #----------------------------------------------------------------------
 # Specific hardware : framegrabbers and cameras

@@ -32,6 +32,7 @@ Framegrabbers
   DirectShow                : ${VISP_HAVE_DIRECTSHOW_FOUND}
   OpenCV                    : ${VISP_HAVE_OPENCV_FOUND} 
 Misc:
+  libplotter                : ${VISP_HAVE_LIBPLOTTER_FOUND}
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
 Documentation:
