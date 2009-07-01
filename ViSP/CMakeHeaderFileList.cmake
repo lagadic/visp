@@ -178,6 +178,7 @@ SET (HEADER_TOOLS
   tools/io/vpParseArgv.h
   tools/time/vpTime.h
   tools/trace/vpDebug.h
+  tools/plot/vpPlot.h
   )
 
 SET (HEADER_TRACKING
