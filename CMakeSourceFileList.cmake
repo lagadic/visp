@@ -183,6 +183,7 @@ SET (SRC_TOOLS
   tools/io/vpParallelPortException.cpp
   tools/io/vpParseArgv.cpp
   tools/time/vpTime.cpp
+  tools/plot/vpPlot.cpp
   )
 
 SET (SRC_TRACKING
