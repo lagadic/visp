@@ -1014,6 +1014,7 @@ PREDEFINED             = \
            VISP_HAVE_PTU46 \
            VISP_HAVE_PARPORT \
            VISP_HAVE_XML2 \
+           VISP_HAVE_LIBPLOTTER \
 	   VISP_HAVE_ACCESS_TO_NAS \
            VISP_BUILD_DEPRECATED_FUNCTIONS \
            WIN32 \
