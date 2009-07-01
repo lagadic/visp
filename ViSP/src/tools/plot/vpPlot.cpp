@@ -36,11 +36,11 @@
  *****************************************************************************/
 
 #include <visp/vpConfig.h>
-#include "vpPlot.h"
-#include <unistd.h>
+#include <visp/vpPlot.h>
+//#include <unistd.h>
 #include <visp/vpMath.h>
 
-#if defined(VISP_HAVE_LIBPLOT)
+#if defined(VISP_HAVE_LIBPLOTTER)
 
 
 
@@ -752,7 +752,7 @@ void vpPlot::setUnitX(const int graphNum, char* unitx)
   Sets the unit system of the y axis.
 
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
-  \param unitx : The name of the unit of the y axis.
+  \param unity : The name of the unit of the y axis.
 */
 void vpPlot::setUnitY(const int graphNum, char* unity)
 {

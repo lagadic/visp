@@ -47,7 +47,7 @@
 #include <visp/vpColor.h>
 #include <visp/vpList.h>
 
-#if defined(VISP_HAVE_LIBPLOT)
+#if defined(VISP_HAVE_LIBPLOTTER)
 
 #include <plotter.h>
 
