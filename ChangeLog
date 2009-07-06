@@ -1,7 +1,8 @@
 ViSP 2.x.y 
   - New Features
     - For the Irisa's Afma6 robot addition of a new vacuum tool (vpAfma6).
-    - New vpImagePoint class for image coordinates
+    - New vpImagePoint class for image coordinates.
+    - New vpPlot class that enables real time drawing of graphics under Unix.
   - Bug fixed
     - [7638] Memory leak in all vpFeature... classes was reopened
     - [7888] vpV4l2Grabber cannot acquire an image from an analog camera 
