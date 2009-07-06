@@ -559,8 +559,8 @@ void vpPlot::plot(const int graphNum,  const int curveNum, const double x, const
   x2=graph[graphNum].xorg+(graph[graphNum].zoomx*x); //changement - en +
   y2=graph[graphNum].yorg+(graph[graphNum].zoomy*y); //changement - en +
 
-
-  if(err_range=out_range(graphNum,x2,y2))
+  err_range = out_range(graphNum,x2,y2);
+  if(err_range)
   {
     if( (refresh_mode==false) && ((err_range==2) || (err_range==4)))
     {
