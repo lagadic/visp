@@ -162,9 +162,15 @@ setConstant (void)
 /* --- VALEUR --------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-/* Determine la valeur du lambda adaptatif en fonction de la valeur
- * de la norme de la fonction de tache e par extrapolation exponentielle.
- */
+/*!
+
+  Compute the value of the adaptive gain \f$\lambda\f$ with
+
+  \f[\lambda = a \; \exp{-b*val_e} + c\f]
+
+  \param val_e : Norm of the task function \f$\mid s - s^*\mid\f$.
+
+*/
 double vpAdaptativeGain::
 value_const (const double val_e) const
 {
@@ -177,7 +183,12 @@ value_const (const double val_e) const
   return res;
 }
 
-/* Renvoie la valeur en l'infini.
+/*!
+
+  Return value of the gain corresponding to an infinite value of the norm of
+  the task function.
+
+  \return Parameter \e c.
  */
 double vpAdaptativeGain::
 limitValue_const (void) const
