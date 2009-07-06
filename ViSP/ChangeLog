@@ -10,6 +10,7 @@ ViSP 2.x.y
     - [8001] Coin and SoQt are not detected during CMake configuration
 	     under Fedora 10
     - [8032] Link error whith GSL while compiling HelloWorld.cpp on OSX
+    - [8225] Bug in the multiplication of a twist matrix (6x6) by a matrix (6xn)
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features

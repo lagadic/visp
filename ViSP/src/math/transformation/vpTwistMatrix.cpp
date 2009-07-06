@@ -277,7 +277,7 @@ vpTwistMatrix::operator*(const vpMatrix &M) const
 
   vpMatrix p(6, M.getCols()) ;
   for (int i=0;i<6;i++)
-    for (int j=0;j<6;j++)
+    for (int j=0;j<M.getCols();j++)
     {
       double s =0 ;
       for (int k=0;k<6;k++)
