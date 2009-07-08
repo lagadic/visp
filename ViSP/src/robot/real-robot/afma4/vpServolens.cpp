@@ -171,6 +171,16 @@ vpServolens::open(const char *port)
     isinit = true;
 
     this->init();
+
+    // Try to get the position of the zoom to check if the lens is really connected
+    unsigned int izoom;
+    if (this->getPosition(vpServolens::ZOOM, izoom) == false) {
+      vpERROR_TRACE ("Cannot dial with the servolens. Check if the serial link is connected.");
+      throw vpRobotException (vpRobotException::communicationError,
+			      "Cannot dial with the servolens. Check if the serial link is connected.");
+
+    }
+   
   }
 }
 
