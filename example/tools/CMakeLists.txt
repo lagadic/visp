@@ -43,6 +43,7 @@
 SET (SOURCE
   keyboard.cpp
   parallelPort.cpp
+  plot.cpp
 )
 
 # rule for binary build
