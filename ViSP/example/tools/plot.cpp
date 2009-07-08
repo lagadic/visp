@@ -111,5 +111,20 @@ int main ()
   plot.saveData(0,"dataSin.txt");
 }
 
+#else
+int
+main()
+{
+  vpTRACE("Sorry, since libplotter was not detected, plotting functionalities are not available...");
+  return 0;
+}
 #endif
+
+#else
+int
+main()
+{
+  vpTRACE("Sorry, plotting functionalities are only available on unix...");
+  return 0;
+}
 #endif
