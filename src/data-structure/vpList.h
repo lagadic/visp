@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpList.h,v 1.14 2008-09-26 15:20:53 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -165,6 +165,8 @@ class vpList
   inline void modify(const type& el);     // modifies thevalue field of the curr. el.
   inline void addRight(type& el);   // inserts an element on the right
   inline void addLeft(type& el);    // inserts an element on the left
+  inline void swapLeft();    // Switch the current element with the element on the left
+  inline void swapRight();    // Switch the current element with the element on the right
   inline int nbElement(void);       // returns the number of items currently in the list
   inline int nbElements(void);       // returns the number of items currently in the list
 
@@ -607,6 +609,74 @@ template<class type>
 void vpList<type>::modify(const type& v)
 {
   cur->val = v ;
+}
+
+/*!
+  \brief Switch the current element with the element on the left
+
+  \verbatim
+  [*, a, b, c, *]  --> swapLeft -->   [*, b, a, c, *]
+         ^                                  ^
+  \endverbatim
+ */
+template<class type>
+void vpList<type>::swapLeft()
+{
+  if (cur->prev != first)
+  {
+    cur->prev->prev->next = cur;
+    cur->next->prev = cur->prev;
+
+    vpListElement<type> *nextTmp;
+    vpListElement<type> *prevTmp;
+
+    nextTmp = cur->next;
+    prevTmp =  cur->prev;
+
+    cur->next = cur->prev;
+    cur->prev = cur->prev->prev;
+
+    prevTmp->prev = cur;
+    prevTmp->next = nextTmp;
+  }
+  else
+  {
+    std::cout << "vpList: previous element is outside (swapLeft) " << std::endl ;
+  }
+}
+
+/*!
+  \brief Switch the current element with the element on the right
+
+  \verbatim
+  [*, a, b, c, *]  --> swapRight -->   [*, a, c, b, *]
+         ^                                         ^
+  \endverbatim
+ */
+template<class type>
+void vpList<type>::swapRight()
+{
+  if (cur->next != last)
+  {
+    cur->prev->next = cur->next;
+    cur->next->next->prev = cur;
+
+    vpListElement<type> *nextTmp;
+    vpListElement<type> *prevTmp;
+
+    nextTmp = cur->next;
+    prevTmp =  cur->prev;
+
+    cur->next = nextTmp->next;
+    cur->prev = nextTmp;
+
+    nextTmp->prev = prevTmp;
+    nextTmp->next = cur;
+  }
+  else
+  {
+    std::cout << "vpList: next element is outside (swapRight) " << std::endl ;
+  }
 }
 
 /*!
