@@ -271,7 +271,6 @@ class vpPlot
 
     void setBgColor(const int r, const int g, const int b);
     void setBgColor(const vpColor color);
-    //void setUserSpaceCoordinate(const double x0, const double y0, const double x1, double y1);
     void flush();
 
     void drawPoint(const int graphNum,  const int curveNum, const double x, const double y, vpPlotType plotType = X);
@@ -295,6 +294,7 @@ class vpPlot
     void setUnitY(const int graphNum, char* unity);
 
     void savePS(char* psFile);
+    void saveData(const int graphNum, char* dataFile);
 
 
   protected:
