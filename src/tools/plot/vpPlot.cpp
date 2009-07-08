@@ -920,4 +920,65 @@ void vpPlot::plotExtremities(const int graphNum,  const int curveNum, vpPlotType
   }
 }
 
-#endif 
+
+/*!
+  This function enables to save in a text file all the plotted points of a graphic.
+
+  The first line of the text file is the graphic title. Then the points coordinates are given. If the graphic has to curves: 
+  - the first column corresponds to the x axis of the first curve
+  - the second column corresponds to the y axis of the first curve
+  - the third column corresponds to the x axis of the second curve
+  - the fourth column corresponds to the y axis of the second curve
+
+  The column are delimited thanks to tabultaions.
+
+  \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param dataFile : Name of the text file.
+*/
+void vpPlot::saveData(const int graphNum, char* dataFile)
+{
+  ofstream fichier;
+  fichier.open(dataFile);
+
+  int ind;
+  double *p = new double[2];
+  bool end;
+
+  fichier << graph[graphNum].title << std::endl;
+
+  for(ind=0;ind<graph[graphNum].curveNbr;ind++)
+  {
+    graph[graphNum].curveList[ind].pointListx.front();
+    graph[graphNum].curveList[ind].pointListy.front();
+  }
+
+  while (end == false)
+  {
+    end = true;
+    for(ind=0;ind<graph[graphNum].curveNbr;ind++)
+    {
+      if (!graph[graphNum].curveList[ind].pointListy.outside() && !graph[graphNum].curveList[ind].pointListy.outside())
+      {
+        p[0] = graph[graphNum].curveList[ind].pointListx.value();
+        p[1] = graph[graphNum].curveList[ind].pointListy.value();
+        fichier << p[0] << "\t" << p[1] << "\t";
+        graph[graphNum].curveList[ind].pointListx.next();
+        graph[graphNum].curveList[ind].pointListy.next();
+        if(!graph[graphNum].curveList[ind].pointListy.nextOutside() && !graph[graphNum].curveList[ind].pointListy.nextOutside()) end = false;
+      }
+      else
+      {
+        p[0] = graph[graphNum].curveList[ind].pointListx.previousValue();
+        p[1] = graph[graphNum].curveList[ind].pointListy.previousValue();
+        fichier << p[0] << "\t" << p[1] << "\t";
+      }
+    }
+    fichier << std::endl;
+  }
+
+  delete[] p;
+  fichier.close();
+}
+
+#endif
+
