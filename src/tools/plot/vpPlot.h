@@ -64,10 +64,12 @@
   The example below shows how to use the vpPlot class.
 
   \code
-  #include <visp/vpPlot.h>
+#include <visp/vpConfig.h>
+#include <visp/vpPlot.h>
 
-  int main ()
-  {
+int main ()
+{
+#ifdef VISP_HAVE_LIBPLOTTER
   //Create a window with two graphics
   vpPlot A(2);
 
@@ -77,9 +79,9 @@
 
   //The color of the curve in the first graphic is red
   A.setColor(0,0,55000,0,0);
- //The first curve in the second graphic is green
+  //The first curve in the second graphic is green
   A.setColor(1,0,0,55000,0);
- //The second curve in the second graphic is blue
+  //The second curve in the second graphic is blue
   A.setColor(1,1,0,0,55000);
 
   //For the first graphic : along the x axis the expected values are between 0 and 200 and the step is 1
@@ -100,19 +102,20 @@
   A.plot(1,1,0,2);
 
   for (int i = 0; i < 50; i++)
-  {
-    //Add the point (i,0) in the first graphic 
-    A.plot(0,0,i,0);
+    {
+      //Add the point (i,0) in the first graphic 
+      A.plot(0,0,i,0);
 
-    //Add the point (i,1) to the first curve of the second graphic
-    A.plot(1,0,i,1);
+      //Add the point (i,1) to the first curve of the second graphic
+      A.plot(1,0,i,1);
 
-    //Add the point (i,2) to the second curve of the second graphic
-    A.plot(1,1,i,2);
-  }
+      //Add the point (i,2) to the second curve of the second graphic
+      A.plot(1,1,i,2);
+    }
 
   return 0;
-  }
+#endif
+}
   \endcode
 */
 
