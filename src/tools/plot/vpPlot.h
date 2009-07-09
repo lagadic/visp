@@ -268,43 +268,65 @@ class vpPlot
     virtual ~vpPlot();
 
     void init(int graphNbr);
-    void initSize(int graphNum, const double lx, const double ly, const double x, const double y);
+    void initSize(int graphNum, const double lx, const double ly, 
+		  const double x, const double y);
     void initGraph(int graphNum, int curveNbr);
-    void initRange(const int graphNum, const double xmin, const double xmax, double xdelt, const double ymin, const double ymax, double ydelt, const bool gx = 0, const bool gy = 0);
+    void initRange(const int graphNum, const double xmin, const double xmax, 
+		   double xdelt, const double ymin, const double ymax, 
+		   double ydelt, const bool gx = 0, const bool gy = 0);
 
     void setBgColor(const int r, const int g, const int b);
     void setBgColor(const vpColor color);
     void flush();
 
-    void drawPoint(const int graphNum,  const int curveNum, const double x, const double y, vpPlotType plotType = X);
-    void drawPath(const int graphNum,  const int curveNum, const double x, const double y, vpPlotType plotType = X);
-    void drawLine(const int graphNum,  const int curveNum, const double x0, const double y0, const double x1, double y1, vpPlotType plotType = X);
-    void drawDashedLine(const int graphNum,  const int curveNum, const double x0, const double y0, const double x1, double y1, vpPlotType plotType = X);
-    void drawMarker(const int graphNum,  const int curveNum, const double x, const double y, vpMarkerStyle type, const double size, vpPlotType plotType = X);
+    void drawPoint(const int graphNum,  const int curveNum, 
+		   const double x, const double y, 
+		   vpPlotType plotType = X);
+    void drawPath(const int graphNum,  const int curveNum, 
+		  const double x, const double y, 
+		  vpPlotType plotType = X);
+    void drawLine(const int graphNum,  const int curveNum, 
+		  const double x0, const double y0,
+		  const double x1, const double y1, vpPlotType plotType = X);
+    void drawDashedLine(const int graphNum,  const int curveNum, 
+			const double x0, const double y0, 
+			const double x1, const double y1, 
+			vpPlotType plotType = X);
+    void drawMarker(const int graphNum,  const int curveNum, 
+		    const double x, const double y, 
+		    vpMarkerStyle type, const double size,
+		    vpPlotType plotType = X);
 
-    void setColor(const int graphNum,  const int curveNum, const int r, const int g, const int b);
-    void setLineStyle(const int graphNum,  const int curveNum, const char* style);
+    void setColor(const int graphNum,  const int curveNum, 
+		  const int r, const int g, const int b);
+    void setLineStyle(const int graphNum,  const int curveNum, 
+		      const char* style);
 
-    void plot(const int graphNum,  const int curveNum, const double x, const double y);
-    void plotExtremities(const int graphNum,  const int curveNum, vpPlotType plotType = X);
+    void plot(const int graphNum,  const int curveNum, 
+	      const double x, const double y);
+    void plotExtremities(const int graphNum,  const int curveNum, 
+			 vpPlotType plotType = X);
 
     int out_range(const int graphNum, double x, double y);
     void replot(const int graphNum);
 
-    void setLegend(const int graphNum,  const int curveNum, char* legend);
-    void setTitle(const int graphNum, char* title);
-    void setUnitX(const int graphNum, char* unitx);
-    void setUnitY(const int graphNum, char* unity);
+    void setLegend(const int graphNum,  const int curveNum, const char* legend);
+    void setTitle(const int graphNum, const char* title);
+    void setUnitX(const int graphNum, const char* unitx);
+    void setUnitY(const int graphNum, const char* unity);
 
-    void savePS(char* psFile);
-    void saveData(const int graphNum, char* dataFile);
+    void savePS(const char* psFile);
+    void saveData(const int graphNum, const char* dataFile);
 
 
   protected:
     vpPlot();
-    void draw(const int graphNum,  const int curveNum, const double x0, const double y0, const double x1, double y1, vpPlotType plotType = X);
+    void draw(const int graphNum,  const int curveNum, 
+	      const double x0, const double y0, 
+	      const double x1, const double y1, vpPlotType plotType = X);
     void drawLegend(const int graphNum);
-    void setUserSpaceCoordinate(const double x0, const double y0, const double x1, double y1);
+    void setUserSpaceCoordinate(const double x0, const double y0, 
+				const double x1, const double y1);
 
 };
 

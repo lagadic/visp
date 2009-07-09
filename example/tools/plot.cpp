@@ -107,8 +107,8 @@ int main ()
   }
 
   //Save the datas as text files
-  plot.saveData(0,"dataCos.txt");
-  plot.saveData(0,"dataSin.txt");
+  plot.saveData(0, "dataCos.txt");
+  plot.saveData(0, "dataSin.txt");
 }
 
 #else

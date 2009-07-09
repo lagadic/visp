@@ -149,7 +149,8 @@ void vpPlot::init(int graphNbr)
   \param x : The coordinate of the bottom left corner along the x axis.
   \param y : The coordinate of the bottom left corner along the y axis.
 */
-void vpPlot::initSize(int graphNum, const double lx, const double ly, const double x, const double y)
+void vpPlot::initSize(int graphNum, const double lx, const double ly, 
+		      const double x, const double y)
 {
   graph[graphNum].lgx=lx;
   graph[graphNum].lgy=ly;
@@ -199,7 +200,10 @@ void vpPlot::initGraph(int graphNum, int curveNbr)
   \param gx : If true, a grid is drawn allog the x axis to help the user to read the graphic.
   \param gy : If true, a grid is drawn allog the y axis to help the user to read the graphic.
 */
-void vpPlot::initRange(const int graphNum, const double xmin, const double xmax, double xdelt, const double ymin, const double ymax, double ydelt, const bool gx, const bool gy)
+void vpPlot::initRange(const int graphNum, const double xmin, 
+		       const double xmax,  double xdelt,
+		       const double ymin, const double ymax, 
+		       double ydelt, const bool gx, const bool gy)
 {
   if(gx||gy)
   {
@@ -303,7 +307,8 @@ void vpPlot::setBgColor(const int r, const int g, const int b)
   \param x1 : The relative coordinate of the window's top right corner along the x axis.
   \param y1 : The relative coordinate of the window's top right corner along the y axis.
 */
-void vpPlot::setUserSpaceCoordinate(const double x0, const double y0, const double x1, double y1)
+void vpPlot::setUserSpaceCoordinate(const double x0, const double y0, 
+				    const double x1, const double y1)
 {
   if (XPlot != NULL)
   {
@@ -333,19 +338,24 @@ void vpPlot::flush()
   \param y : The point coordinate along the y axis given in the relative coordinate system.
   \param plotType : Not usefull. Use the default value.
 */
-void vpPlot::drawPoint(const int graphNum,  const int curveNum, const double x, const double y, vpPlotType plotType)
+void vpPlot::drawPoint(const int graphNum,  const int curveNum, 
+		       const double x, const double y, vpPlotType plotType)
 {
   if (XPlot != NULL && plotType == X)
   {
     XPlot->fmove (0, 0);
-    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		    graph[graphNum].curveList[curveNum].color[1], 
+		    graph[graphNum].curveList[curveNum].color[2]);
     XPlot->fpointrel(x, y);
   }
 
   if (PsPlot != NULL && plotType == PS)
   {
     PsPlot->fmove (0, 0);
-    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		     graph[graphNum].curveList[curveNum].color[1], 
+		     graph[graphNum].curveList[curveNum].color[2]);
     PsPlot->fpointrel(x, y);
   }
 }
@@ -361,17 +371,22 @@ void vpPlot::drawPoint(const int graphNum,  const int curveNum, const double x, 
   \param y : The point coordinate along the y axis given in the relative coordinate system.
   \param plotType : Not usefull. Use the default value.
 */
-void vpPlot::drawPath(const int graphNum,  const int curveNum, const double x, const double y, vpPlotType plotType)
+void vpPlot::drawPath(const int graphNum,  const int curveNum, 
+		      const double x, const double y, vpPlotType plotType)
 {
   if (XPlot != NULL && plotType == X)
   {
-    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		    graph[graphNum].curveList[curveNum].color[1], 
+		    graph[graphNum].curveList[curveNum].color[2]);
     XPlot->fcontrel(x, y);
   }
 
   if (PsPlot != NULL && plotType == PS)
   {
-    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		     graph[graphNum].curveList[curveNum].color[1],
+		     graph[graphNum].curveList[curveNum].color[2]);
     PsPlot->fcontrel(x, y);
   }
 }
@@ -388,19 +403,25 @@ void vpPlot::drawPath(const int graphNum,  const int curveNum, const double x, c
   \param y1 : The second point coordinate along the y axis given in the relative coordinate system.
   \param plotType : Not usefull. Use the default value.
 */
-void vpPlot::drawLine(const int graphNum,  const int curveNum, const double x0, const double y0, const double x1, double y1, vpPlotType plotType)
+void vpPlot::drawLine(const int graphNum,  const int curveNum,
+		      const double x0, const double y0, 
+		      const double x1, const double y1, vpPlotType plotType)
 {
   if (XPlot != NULL && plotType == X)
   {
     XPlot->fmove (0, 0);
-    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0],
+		    graph[graphNum].curveList[curveNum].color[1], 
+		    graph[graphNum].curveList[curveNum].color[2]);
     XPlot->flinerel (x0, y0, x1, y1);
   }
 
   if (PsPlot != NULL && plotType == PS)
   {
     PsPlot->fmove (0, 0);
-    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		     graph[graphNum].curveList[curveNum].color[1], 
+		     graph[graphNum].curveList[curveNum].color[2]);
     PsPlot->flinerel (x0, y0, x1, y1);
   }
 }
@@ -417,13 +438,18 @@ void vpPlot::drawLine(const int graphNum,  const int curveNum, const double x0, 
   \param y1 : The second point coordinate along the y axis given in the relative coordinate system.
   \param plotType : Not usefull. Use the default value.
 */
-void vpPlot::drawDashedLine(const int graphNum,  const int curveNum, const double x0, const double y0, const double x1, double y1, vpPlotType plotType)
+void vpPlot::drawDashedLine(const int graphNum,  const int curveNum, 
+			    const double x0, const double y0, 
+			    const double x1, const double y1, 
+			    vpPlotType plotType)
 {
   if (XPlot != NULL && plotType == X)
   {
     XPlot->linemod("dotted");
     XPlot->fmove (0, 0);
-    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		    graph[graphNum].curveList[curveNum].color[1], 
+		    graph[graphNum].curveList[curveNum].color[2]);
     XPlot->flinerel (x0, y0, x1, y1);
     XPlot->linemod("solid");
   }
@@ -432,7 +458,9 @@ void vpPlot::drawDashedLine(const int graphNum,  const int curveNum, const doubl
   {
     PsPlot->linemod("dotted");
     PsPlot->fmove (0, 0);
-    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		     graph[graphNum].curveList[curveNum].color[1], 
+		     graph[graphNum].curveList[curveNum].color[2]);
     PsPlot->flinerel (x0, y0, x1, y1);
     PsPlot->linemod("solid");
   }
@@ -450,19 +478,26 @@ void vpPlot::drawDashedLine(const int graphNum,  const int curveNum, const doubl
   \param size : The size of the marker.
   \param plotType : Not usefull. Use the default value.
 */
-void vpPlot::drawMarker(const int graphNum,  const int curveNum, const double x, const double y, vpMarkerStyle type, const double size, vpPlotType plotType)
+void vpPlot::drawMarker(const int graphNum,  const int curveNum, 
+			const double x, const double y,
+			vpMarkerStyle type, const double size,
+			vpPlotType plotType)
 {
   if (XPlot != NULL && plotType == X)
   {
     XPlot->fmove (0, 0);
-    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    XPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		    graph[graphNum].curveList[curveNum].color[1], 
+		    graph[graphNum].curveList[curveNum].color[2]);
     XPlot->fmarkerrel(x, y, type, size);
   }
 
   if (PsPlot != NULL && plotType == PS)
   {
     PsPlot->fmove (0, 0);
-    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], graph[graphNum].curveList[curveNum].color[1], graph[graphNum].curveList[curveNum].color[2]);
+    PsPlot->pencolor(graph[graphNum].curveList[curveNum].color[0], 
+		     graph[graphNum].curveList[curveNum].color[1], 
+		     graph[graphNum].curveList[curveNum].color[2]);
     PsPlot->fmarkerrel(x, y, type, size);
   }
 }
@@ -477,7 +512,8 @@ void vpPlot::drawMarker(const int graphNum,  const int curveNum, const double x,
   \param g : The green value.
   \param b : The blue value.
 */
-void vpPlot::setColor(const int graphNum,  const int curveNum, const int r, const int g, const int b)
+void vpPlot::setColor(const int graphNum,  const int curveNum, 
+		      const int r, const int g, const int b)
 {
   graph[graphNum].curveList[curveNum].color[0] = r; //R
   graph[graphNum].curveList[curveNum].color[1] = g; //G
@@ -501,7 +537,8 @@ void vpPlot::setColor(const int graphNum,  const int curveNum, const int r, cons
   - dotdotdashed      ----   -   -   ----   -   -
   - dotdotdotdashed   ----   -   -   -   ----   -   -   -
 */
-void vpPlot::setLineStyle(const int graphNum,  const int curveNum, const char* style)
+void vpPlot::setLineStyle(const int graphNum,  const int curveNum, 
+			  const char* style)
 {
   strcpy(graph[graphNum].curveList[curveNum].lineStyle,style);
 }
@@ -515,7 +552,8 @@ void vpPlot::setLineStyle(const int graphNum,  const int curveNum, const char* s
   \param x : The coordinate of the new point along the x axis and given in the user unit system.
   \param y : The coordinate of the new point along the y axis and given in the user unit system.
 */
-void vpPlot::plot(const int graphNum,  const int curveNum, const double x, const double y)
+void vpPlot::plot(const int graphNum,  const int curveNum, 
+		  const double x, const double y)
 {
   double x1,x2,y1,y2;
   double *p_1 = new double[2];
@@ -525,11 +563,22 @@ void vpPlot::plot(const int graphNum,  const int curveNum, const double x, const
   //test pour range differe
   if(graph[graphNum].ymax_rel<=graph[graphNum].ymin_rel)
   {
-    if(y>0) initRange(graphNum,graph[graphNum].xmin_rel,graph[graphNum].xmax_rel,graph[graphNum].xdelt_rel,-y/5,y*1.1,y/5);
-    else 
-    {
-      if(y==0) initRange(graphNum, graph[graphNum].xmin_rel,graph[graphNum].xmax_rel,graph[graphNum].xdelt_rel,-1,1,0.5);
-      else initRange(graphNum,graph[graphNum].xmin_rel,graph[graphNum].xmax_rel,graph[graphNum].xdelt_rel,y*1.1,-y/5,y/5);
+    if(y>0) {
+      initRange(graphNum,graph[graphNum].xmin_rel,
+		graph[graphNum].xmax_rel,
+		graph[graphNum].xdelt_rel,-y/5,y*1.1,y/5);
+    }
+    else {
+      if(y==0) {
+	initRange(graphNum, graph[graphNum].xmin_rel,
+		  graph[graphNum].xmax_rel,
+		  graph[graphNum].xdelt_rel,-1,1,0.5);
+      }
+      else {
+	initRange(graphNum,graph[graphNum].xmin_rel,
+		  graph[graphNum].xmax_rel,
+		  graph[graphNum].xdelt_rel,y*1.1,-y/5,y/5);
+      }
     }
   }
 
@@ -564,7 +613,8 @@ void vpPlot::plot(const int graphNum,  const int curveNum, const double x, const
   {
     if( (refresh_mode==false) && ((err_range==2) || (err_range==4)))
     {
-      if(!graph[graphNum].curveList[curveNum].pointListx.empty()) draw(graphNum, curveNum, x1,y1,x2,y2);
+      if(!graph[graphNum].curveList[curveNum].pointListx.empty()) 
+	draw(graphNum, curveNum, x1,y1,x2,y2);
       *p = x; *(p+1) = y;
       graph[graphNum].curveList[curveNum].pointListx+=*p;
       graph[graphNum].curveList[curveNum].pointListy+=*(p+1);
@@ -577,31 +627,76 @@ void vpPlot::plot(const int graphNum,  const int curveNum, const double x, const
       XPlot->color(0xffff,0xffff,0xffff);
       XPlot->fillcolor (0xffff,0xffff,0xffff);
       XPlot->filltype(1);
-      XPlot->box (graph[graphNum].ltx,graph[graphNum].lty,graph[graphNum].ltx+graph[graphNum].lgx+margex,graph[graphNum].lty+graph[graphNum].lgy+margey);
+      XPlot->box (graph[graphNum].ltx,graph[graphNum].lty,
+		  graph[graphNum].ltx+graph[graphNum].lgx+margex,
+		  graph[graphNum].lty+graph[graphNum].lgy+margey);
       switch(err_range)
       {
         case 1:
-          initRange(graphNum,graph[graphNum].xmin_rel,graph[graphNum].xmax_rel*1.5,graph[graphNum].xdelt_rel*coef,graph[graphNum].ymin_rel,graph[graphNum].ymax_rel,graph[graphNum].ydelt_rel,graph[graphNum].gridx,graph[graphNum].gridy);
+          initRange(graphNum,
+		    graph[graphNum].xmin_rel,
+		    graph[graphNum].xmax_rel*1.5,
+		    graph[graphNum].xdelt_rel*coef,
+		    graph[graphNum].ymin_rel,
+		    graph[graphNum].ymax_rel,
+		    graph[graphNum].ydelt_rel,
+		    graph[graphNum].gridx,
+		    graph[graphNum].gridy);
 	 break;
         case 4:
 	  if(y>graph[graphNum].ymax_rel+vpMath::abs(graph[graphNum].ymax_rel*coef))
 
-            initRange(graphNum,graph[graphNum].xmin_rel,graph[graphNum].xmax_rel,graph[graphNum].xdelt_rel,graph[graphNum].ymin_rel,y*1.5,vpMath::abs(y/4),graph[graphNum].gridx,graph[graphNum].gridy);
+            initRange(graphNum,graph[graphNum].xmin_rel,
+		      graph[graphNum].xmax_rel,
+		      graph[graphNum].xdelt_rel,
+		      graph[graphNum].ymin_rel,
+		      y*1.5,vpMath::abs(y/4),
+		      graph[graphNum].gridx,graph[graphNum].gridy);
 
 	  else
-            initRange(graphNum,graph[graphNum].xmin_rel,graph[graphNum].xmax_rel,graph[graphNum].xdelt_rel,graph[graphNum].ymin_rel,graph[graphNum].ymax_rel+vpMath::abs(graph[graphNum].ymax_rel*coef),graph[graphNum].ydelt_rel*coef,graph[graphNum].gridx,graph[graphNum].gridy);
+            initRange(graphNum,
+		      graph[graphNum].xmin_rel,
+		      graph[graphNum].xmax_rel,
+		      graph[graphNum].xdelt_rel,
+		      graph[graphNum].ymin_rel,
+		      graph[graphNum].ymax_rel+vpMath::abs(graph[graphNum].ymax_rel*coef),
+		      graph[graphNum].ydelt_rel*coef,
+		      graph[graphNum].gridx,graph[graphNum].gridy);
 
 	  break;
         case 3:
-          initRange(graphNum,graph[graphNum].xmin_rel*coef,graph[graphNum].xmax_rel,graph[graphNum].xdelt_rel*coef,graph[graphNum].ymin_rel,graph[graphNum].ymax_rel,graph[graphNum].ydelt_rel,graph[graphNum].gridx,graph[graphNum].gridy);
+          initRange(graphNum,
+		    graph[graphNum].xmin_rel*coef,
+		    graph[graphNum].xmax_rel,
+		    graph[graphNum].xdelt_rel*coef,
+		    graph[graphNum].ymin_rel,
+		    graph[graphNum].ymax_rel,
+		    graph[graphNum].ydelt_rel,
+		    graph[graphNum].gridx,graph[graphNum].gridy);
 
 	  break;
         case 2:
 	  if(y<graph[graphNum].ymin_rel-vpMath::abs(graph[graphNum].ymin_rel*coef))
-            initRange(graphNum,graph[graphNum].xmin_rel,graph[graphNum].xmax_rel,graph[graphNum].xdelt_rel,y*1.5,graph[graphNum].ymax_rel,vpMath::abs(y/4),graph[graphNum].gridx,graph[graphNum].gridy);
+            initRange(graphNum,
+		      graph[graphNum].xmin_rel,
+		      graph[graphNum].xmax_rel,
+		      graph[graphNum].xdelt_rel,
+		      y*1.5,
+		      graph[graphNum].ymax_rel,
+		      vpMath::abs(y/4),
+		      graph[graphNum].gridx,
+		      graph[graphNum].gridy);
 
 	  else
-            initRange(graphNum,graph[graphNum].xmin_rel,graph[graphNum].xmax_rel,graph[graphNum].xdelt_rel,graph[graphNum].ymin_rel-vpMath::abs(graph[graphNum].ymin_rel*coef),graph[graphNum].ymax_rel,graph[graphNum].ydelt_rel*coef,graph[graphNum].gridx,graph[graphNum].gridy);
+            initRange(graphNum,
+		      graph[graphNum].xmin_rel,
+		      graph[graphNum].xmax_rel,
+		      graph[graphNum].xdelt_rel,
+		      graph[graphNum].ymin_rel-vpMath::abs(graph[graphNum].ymin_rel*coef),
+		      graph[graphNum].ymax_rel,
+		      graph[graphNum].ydelt_rel*coef,
+		      graph[graphNum].gridx,
+		      graph[graphNum].gridy);
 
 	  break;
       }
@@ -611,7 +706,8 @@ void vpPlot::plot(const int graphNum,  const int curveNum, const double x, const
   }
   else
   {
-    if(!graph[graphNum].curveList[curveNum].pointListx.empty()) draw(graphNum, curveNum, x1,y1,x2,y2);
+    if(!graph[graphNum].curveList[curveNum].pointListx.empty())
+      draw(graphNum, curveNum, x1,y1,x2,y2);
     *p = x; *(p+1) = y;
     graph[graphNum].curveList[curveNum].pointListx+=*p;
     graph[graphNum].curveList[curveNum].pointListy+=*(p+1);
@@ -655,17 +751,23 @@ void vpPlot::drawLegend(const int graphNum){
   int ind;
 
   XPlot->pencolor(0,0,0);
-  XPlot->fmove(graph[graphNum].ltx+margex+graph[graphNum].lgx/2,graph[graphNum].lty+margey+graph[graphNum].lgy+3*eps);
+  XPlot->fmove(graph[graphNum].ltx+margex+graph[graphNum].lgx/2,
+	       graph[graphNum].lty+margey+graph[graphNum].lgy+3*eps);
   XPlot->alabel('c','x',graph[graphNum].title);
-  XPlot->fmove(graph[graphNum].ltx+margex+graph[graphNum].lgx-eps,graph[graphNum].yorg+2*eps);
+  XPlot->fmove(graph[graphNum].ltx+margex+graph[graphNum].lgx-eps,
+	       graph[graphNum].yorg+2*eps);
   XPlot->alabel('r','x',graph[graphNum].unitx);
-  XPlot->fmove(graph[graphNum].xorg+2*eps,graph[graphNum].lty+margey+graph[graphNum].lgy-eps);
+  XPlot->fmove(graph[graphNum].xorg+2*eps,
+	       graph[graphNum].lty+margey+graph[graphNum].lgy-eps);
   XPlot->alabel('l','x',graph[graphNum].unity);
 
   for(ind=0;ind<graph[graphNum].curveNbr;ind++)
   {
-    XPlot->pencolor(graph[graphNum].curveList[ind].color[0], graph[graphNum].curveList[ind].color[1], graph[graphNum].curveList[ind].color[2]);
-    XPlot->fmove(graph[graphNum].ltx+margex+graph[graphNum].lgx-eps,graph[graphNum].lty+margex+graph[graphNum].lgy-(10*ind));
+    XPlot->pencolor(graph[graphNum].curveList[ind].color[0], 
+		    graph[graphNum].curveList[ind].color[1],
+		    graph[graphNum].curveList[ind].color[2]);
+    XPlot->fmove(graph[graphNum].ltx+margex+graph[graphNum].lgx-eps,
+		 graph[graphNum].lty+margex+graph[graphNum].lgy-(10*ind));
     XPlot->alabel('r','x',graph[graphNum].curveList[ind].legend);
   }
 }
@@ -718,7 +820,8 @@ void vpPlot::replot(const int graphNum)
   \param curveNum : The index of the curve in the list of the curves belonging to the graphic.
   \param legend : The legend of the curve.
 */
-void vpPlot::setLegend(const int graphNum,  const int curveNum, char* legend)
+void vpPlot::setLegend(const int graphNum,  const int curveNum,
+		       const char* legend)
 {
   strcpy(graph[graphNum].curveList[curveNum].legend, legend);
 }
@@ -730,7 +833,7 @@ void vpPlot::setLegend(const int graphNum,  const int curveNum, char* legend)
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param title : The graphic title.
 */
-void vpPlot::setTitle(const int graphNum, char* title)
+void vpPlot::setTitle(const int graphNum, const char* title)
 {
   strcpy(graph[graphNum].title, title);
 }
@@ -742,7 +845,7 @@ void vpPlot::setTitle(const int graphNum, char* title)
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param unitx : The name of the unit of the x axis.
 */
-void vpPlot::setUnitX(const int graphNum, char* unitx)
+void vpPlot::setUnitX(const int graphNum, const char* unitx)
 {
   strcpy(graph[graphNum].unitx, unitx);
 }
@@ -754,7 +857,7 @@ void vpPlot::setUnitX(const int graphNum, char* unitx)
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param unity : The name of the unit of the y axis.
 */
-void vpPlot::setUnitY(const int graphNum, char* unity)
+void vpPlot::setUnitY(const int graphNum, const char* unity)
 {
   strcpy(graph[graphNum].unity, unity);
 }
@@ -771,14 +874,19 @@ void vpPlot::setUnitY(const int graphNum, char* unity)
   \param y1 : The second point coordinate along the y axis given in the relative coordinate system.
   \param plotType : Not usefull. Use the default value.
 */
-void vpPlot::draw(const int graphNum,  const int curveNum, const double x0, const double y0, const double x1, double y1, vpPlotType plotType)
+void vpPlot::draw(const int graphNum,  const int curveNum, 
+		  const double x0, const double y0, 
+		  const double x1, const double y1, vpPlotType plotType)
 {
   switch (graph[graphNum].curveList[curveNum].curveStyle)
   {
     case point: drawPoint(graphNum, curveNum, x1, y1,plotType); break;
     case line: drawLine(graphNum, curveNum, x0, y0, x1, y1,plotType); break;
-    case dashed_line: drawDashedLine(graphNum, curveNum, x0, y0, x1, y1,plotType); break;
-    case marker: drawMarker(graphNum, curveNum, x1, y1, graph[graphNum].curveList[curveNum].markerStyle, 2,plotType); break;
+    case dashed_line: drawDashedLine(graphNum, curveNum, x0, y0, x1, y1,
+				     plotType); break;
+    case marker: drawMarker(graphNum, curveNum, x1, y1, 
+			    graph[graphNum].curveList[curveNum].markerStyle,
+			    2,plotType); break;
   }
 }
 
@@ -788,7 +896,7 @@ void vpPlot::draw(const int graphNum,  const int curveNum, const double x0, cons
 
   \param psFile : Name of the file
 */
-void vpPlot::savePS(char* psFile)
+void vpPlot::savePS(const char* psFile)
 {
   ofstream fichier;
   fichier.open(psFile);
@@ -813,7 +921,10 @@ void vpPlot::savePS(char* psFile)
   {
     //trace de la grille ou unitee
     x1 = graph[i].ltx+margex-eps;
-    if(graph[i].gridy) { x2 = graph[i].ltx+margex+graph[i].lgx; PsPlot->linemod("dotted"); }
+    if(graph[i].gridy) {
+      x2 = graph[i].ltx+margex+graph[i].lgx;
+      PsPlot->linemod("dotted"); 
+    }
     else { x2 = graph[i].ltx+margex+eps; PsPlot->linemod("solid"); }
 
     for(t=graph[i].ymin_rel;t<=graph[i].ymax_rel;t=t+graph[i].ydelt_rel){
@@ -830,7 +941,9 @@ void vpPlot::savePS(char* psFile)
     if(graph[i].gridx) { y1 = graph[i].lty+margey; y2= graph[i].lty+margey+graph[i].lgy; PsPlot->linemod("dotted"); }
     else
     {
-      if (graph[i].yorg >= graph[i].lty+margey) {y1=graph[i].yorg-eps; y2=graph[i].yorg+eps;}
+      if (graph[i].yorg >= graph[i].lty+margey) {
+	y1=graph[i].yorg-eps; y2=graph[i].yorg+eps;
+      }
       else {y1=graph[i].lty+margey-eps; y2=graph[i].lty+margey+eps;}
       PsPlot->linemod("solid");
     }
@@ -842,8 +955,10 @@ void vpPlot::savePS(char* psFile)
       PsPlot->fline(xp,y1,xp,y2);
       if((t<1e-5)&&(t>-1e-5)) t=0;
       sprintf(valeur, "%g", t);
-      if (graph[i].yorg >= graph[i].lty+margey) PsPlot->fmove(xp,graph[i].yorg-3*eps);
-      else PsPlot->fmove(xp,graph[i].lty+margey-3*eps);
+      if (graph[i].yorg >= graph[i].lty+margey) 
+	PsPlot->fmove(xp,graph[i].yorg-3*eps);
+      else 
+	PsPlot->fmove(xp,graph[i].lty+margey-3*eps);
       PsPlot->color(20000,20000,50000);
       PsPlot->alabel('c','x',valeur);
     }
@@ -851,11 +966,17 @@ void vpPlot::savePS(char* psFile)
     //trace des axes
     PsPlot->color(0,0,0);
     PsPlot->linemod("solid");
-    PsPlot->fline(graph[i].ltx,graph[i].yorg,graph[i].ltx+margex+graph[i].lgx,graph[i].yorg);
-    PsPlot->fline(graph[i].xorg,graph[i].lty+margey,graph[i].xorg,graph[i].lty+margey+graph[i].lgy);
+    PsPlot->fline(graph[i].ltx,
+		  graph[i].yorg,
+		  graph[i].ltx+margex+graph[i].lgx,
+		  graph[i].yorg);
+    PsPlot->fline(graph[i].xorg,
+		  graph[i].lty+margey,graph[i].xorg,
+		  graph[i].lty+margey+graph[i].lgy);
 
     PsPlot->pencolor(0,0,0);
-    PsPlot->fmove(graph[i].ltx+margex+graph[i].lgx/2,graph[i].lty+margey+graph[i].lgy+3*eps);
+    PsPlot->fmove(graph[i].ltx+margex+graph[i].lgx/2,
+		  graph[i].lty+margey+graph[i].lgy+3*eps);
     PsPlot->alabel('c','x',graph[i].title);
     PsPlot->fmove(graph[i].ltx+margex+graph[i].lgx-eps,graph[i].yorg+2*eps);
     PsPlot->alabel('r','x',graph[i].unitx);
@@ -864,8 +985,11 @@ void vpPlot::savePS(char* psFile)
 
     for(int ind=0;ind<graph[i].curveNbr;ind++)
     {
-      PsPlot->pencolor(graph[i].curveList[ind].color[0], graph[i].curveList[ind].color[1], graph[i].curveList[ind].color[2]);
-      PsPlot->fmove(graph[i].ltx+margex+graph[i].lgx-eps,graph[i].lty+margex+graph[i].lgy-(10*ind));
+      PsPlot->pencolor(graph[i].curveList[ind].color[0], 
+		       graph[i].curveList[ind].color[1], 
+		       graph[i].curveList[ind].color[2]);
+      PsPlot->fmove(graph[i].ltx+margex+graph[i].lgx-eps,
+		    graph[i].lty+margex+graph[i].lgy-(10*ind));
       PsPlot->alabel('r','x',graph[i].curveList[ind].legend);
 
       int nb = graph[i].curveList[ind].pointListx.nbElements();
@@ -907,7 +1031,8 @@ void vpPlot::savePS(char* psFile)
   \param curveNum : The index of the curve in the list of the curves belonging to the graphic.
   \param plotType : Not usefull. Use the default value.
 */
-void vpPlot::plotExtremities(const int graphNum,  const int curveNum, vpPlotType plotType)
+void vpPlot::plotExtremities(const int graphNum,  const int curveNum, 
+			     vpPlotType plotType)
 {
   if(XPlot != NULL && plotType == X)
   {
@@ -935,7 +1060,7 @@ void vpPlot::plotExtremities(const int graphNum,  const int curveNum, vpPlotType
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param dataFile : Name of the text file.
 */
-void vpPlot::saveData(const int graphNum, char* dataFile)
+void vpPlot::saveData(const int graphNum, const char* dataFile)
 {
   ofstream fichier;
   fichier.open(dataFile);
@@ -957,14 +1082,17 @@ void vpPlot::saveData(const int graphNum, char* dataFile)
     end = true;
     for(ind=0;ind<graph[graphNum].curveNbr;ind++)
     {
-      if (!graph[graphNum].curveList[ind].pointListy.outside() && !graph[graphNum].curveList[ind].pointListy.outside())
+      if (!graph[graphNum].curveList[ind].pointListy.outside() 
+	  && !graph[graphNum].curveList[ind].pointListy.outside())
       {
         p[0] = graph[graphNum].curveList[ind].pointListx.value();
         p[1] = graph[graphNum].curveList[ind].pointListy.value();
         fichier << p[0] << "\t" << p[1] << "\t";
         graph[graphNum].curveList[ind].pointListx.next();
         graph[graphNum].curveList[ind].pointListy.next();
-        if(!graph[graphNum].curveList[ind].pointListy.nextOutside() && !graph[graphNum].curveList[ind].pointListy.nextOutside()) end = false;
+        if(!graph[graphNum].curveList[ind].pointListy.nextOutside() 
+	   && !graph[graphNum].curveList[ind].pointListy.nextOutside()) 
+	  end = false;
       }
       else
       {
