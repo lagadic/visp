@@ -47,7 +47,6 @@
 */
 
 #include <visp/vpConfig.h>
-#include <visp/vpColor.h>
 #include <visp/vpColVector.h>
 
 
@@ -63,21 +62,73 @@
 
   \sa vpImage
 */
-class VISP_EXPORT vpRGBa : public vpColor
+class VISP_EXPORT vpRGBa
 {
 public:
-  unsigned char R ; //!< Red component.
-  unsigned char G ; //!< Green component.
-  unsigned char B ; //!< Blue component.
-  unsigned char A ; //!< Additionnal component.
+  /*!
+    Basic constructor.
+    
+    Build a black value.
+    
+  */
+  inline vpRGBa() 
+    : R(0), G(0), B(0), A(0) 
+    {
+    };
+  
+  /*!
+    Constructor.
+    
+    Initialize the color with R, G, B, A values.
+    
+    \param R : Red value.
+    \param G : Green value.
+    \param B : Blue value.
+    \param A : Additional value.
+    
+  */
+  inline vpRGBa(const unsigned char &R, const unsigned char &G,
+		const unsigned char &B, const unsigned char &A=0) 
+    : R(R), G(G), B(B), A(A)
+  {
+  };
 
-  vpRGBa()  ;
-  vpRGBa(const unsigned char &R, const unsigned char &G,
-	 const unsigned char &B, const unsigned char &A=0);
-  vpRGBa(const unsigned char &v) ;
-  vpRGBa(const vpColorType &v) ;
-  vpRGBa(const vpRGBa &v) ;
-  vpRGBa(const vpColVector &v) ;
+
+  /*!
+    Constructor.
+    
+    Initialize all the R, G, B, A components to \e v.
+    
+    \param v : Value to set.
+    
+  */
+  inline vpRGBa::vpRGBa(const unsigned char &v) 
+    : R(v), G(v), B(v), A(v)
+  {
+  };
+
+
+  /*!
+    Copy constructor.
+  */
+  inline vpRGBa(const vpRGBa &v)
+  {
+    *this = v ;
+  };
+
+  /*!
+    Create a RGBa value from a 4 dimension column vector.
+
+    R=v[0]
+    G=v[1]
+    B=v[2]
+    A=v[3]
+    
+  */
+  inline vpRGBa(const vpColVector &v)
+  {
+    *this = v ;
+  }
 
   void operator=(const unsigned char &v) ;
   void operator=(const vpRGBa &v) ;
@@ -88,6 +139,13 @@ public:
   vpColVector operator+(const vpColVector &v) const;
   vpColVector operator*(const float &v) const;
   vpColVector operator*(const double &v) const;
+
+ public:
+  unsigned char R ; //!< Red component.
+  unsigned char G ; //!< Green component.
+  unsigned char B ; //!< Blue component.
+  unsigned char A ; //!< Additionnal component.
+
 } ;
 
 #endif

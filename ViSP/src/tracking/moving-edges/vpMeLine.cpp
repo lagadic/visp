@@ -193,7 +193,7 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 
  */
 void
-vpMeLine::display(vpImage<unsigned char>&I, vpColor::vpColorType col)
+vpMeLine::display(vpImage<unsigned char>&I, vpColor col)
 {
   list.front();
 

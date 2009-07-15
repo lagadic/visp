@@ -479,7 +479,7 @@ vpFeaturePoint::buildFrom(const double x, const double y, const double Z)
 void
 vpFeaturePoint::display(const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			vpColor::vpColorType color) const
+			vpColor color) const
 {
   try{
     double x,y ;
@@ -508,7 +508,7 @@ vpFeaturePoint::display(const vpCameraParameters &cam,
 void
 vpFeaturePoint::display(const vpCameraParameters &cam,
                         vpImage<vpRGBa> &I,
-                        vpColor::vpColorType color) const
+                        vpColor color) const
 {
   try{
     double x,y ;

@@ -275,7 +275,7 @@ void
 vpCylinder::display(vpImage<unsigned char> &I,
 		    const vpHomogeneousMatrix &cMo,
 		    const vpCameraParameters &cam,
-		    const vpColor::vpColorType color)
+		    const vpColor color)
 {
 
   vpColVector _cP(7), _p(4) ;
@@ -290,7 +290,7 @@ vpCylinder::display(vpImage<unsigned char> &I,
 void
 vpCylinder::display(vpImage<unsigned char> &I,
 		    const vpCameraParameters &cam,
-		    const vpColor::vpColorType color)
+		    const vpColor color)
 {
   vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], cam, I, color) ;
 }

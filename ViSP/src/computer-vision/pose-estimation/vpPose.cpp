@@ -448,7 +448,7 @@ vpPose::display(vpImage<unsigned char> &I,
 		vpHomogeneousMatrix &cMo,
 		vpCameraParameters &cam,
 		double size,
-		vpColor::vpColorType col)
+		vpColor col)
 {
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }
@@ -459,7 +459,7 @@ vpPose::display(vpImage<vpRGBa> &I,
 		vpHomogeneousMatrix &cMo,
 		vpCameraParameters &cam,
 		double size,
-		vpColor::vpColorType col)
+		vpColor col)
 {
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }
@@ -472,7 +472,7 @@ vpPose::display(vpImage<vpRGBa> &I,
 void
 vpPose::displayModel(vpImage<unsigned char> &I,
 		     vpCameraParameters &cam,
-		     vpColor::vpColorType col)
+		     vpColor col)
 { 
   listP.front() ;
   vpPoint P ;
@@ -498,7 +498,7 @@ vpPose::displayModel(vpImage<unsigned char> &I,
 void
 vpPose::displayModel(vpImage<vpRGBa> &I,
 		     vpCameraParameters &cam,
-		     vpColor::vpColorType col)
+		     vpColor col)
 { 
   listP.front() ;
   vpPoint P ;

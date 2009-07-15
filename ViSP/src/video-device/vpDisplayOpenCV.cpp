@@ -289,17 +289,26 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
 //
 //   cvShowImage( this->title,background);
 
-  col = new CvScalar[vpColor::none] ;
+  col = new CvScalar[vpColor::id_unknown] ;
 
   /* Create color */
-  col[vpColor::blue] = CV_RGB(0,0,255) ;
-  col[vpColor::red] = CV_RGB(255,0,0) ;
-  col[vpColor::green] = CV_RGB(0,255,0) ;
-  col[vpColor::yellow] = CV_RGB(255,255,0) ;
-  col[vpColor::cyan] = CV_RGB(0,255,255) ;
-  col[vpColor::orange] = CV_RGB(255,128,0) ;
-  col[vpColor::white] = CV_RGB(255,255,255) ;
-  col[vpColor::black] = CV_RGB(0,0,0) ;
+  vpColor pcolor; // Predefined colors
+  pcolor = vpColor::blue;
+  col[vpColor::id_blue]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::red;
+  col[vpColor::id_red]    = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::green;
+  col[vpColor::id_green]  = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::yellow;
+  col[vpColor::id_yellow] = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::cyan;
+  col[vpColor::id_cyan]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::orange;
+  col[vpColor::id_orange] = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::white;
+  col[vpColor::id_white]  = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::black;
+  col[vpColor::id_black]  = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
 
   font = new CvFont;
   cvInitFont( font, CV_FONT_HERSHEY_PLAIN, 1.0f,1.0f);
@@ -530,7 +539,7 @@ void vpDisplayOpenCV::flushDisplay()
 /*!
   \warning Not implemented yet.
 */
-void vpDisplayOpenCV::clearDisplay(vpColor::vpColorType /* color */)
+void vpDisplayOpenCV::clearDisplay(vpColor /* color */)
 {
   vpTRACE("Not implemented") ;
 }
@@ -544,7 +553,7 @@ void vpDisplayOpenCV::clearDisplay(vpColor::vpColorType /* color */)
 */
 void vpDisplayOpenCV::displayArrow ( const vpImagePoint &ip1, 
 				     const vpImagePoint &ip2,
-				     vpColor::vpColorType color,
+				     vpColor color,
 				     unsigned int w, unsigned int h,
 				     unsigned int thickness)
 {
@@ -608,14 +617,23 @@ void vpDisplayOpenCV::displayArrow ( const vpImagePoint &ip1,
 */
 void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
                                      const char *text, 
-				     vpColor::vpColorType color )
+				     vpColor color )
 {
   if (OpenCVinitialized)
   {
-    cvPutText( background, text, 
-	       cvPoint( vpMath::round( ip.get_u() ),
-			vpMath::round( ip.get_v()+fontHeight ) ), 
-	       font, col[color] );
+    if (color.id < vpColor::id_unknown) {
+      cvPutText( background, text, 
+		 cvPoint( vpMath::round( ip.get_u() ),
+			  vpMath::round( ip.get_v()+fontHeight ) ), 
+		 font, col[color.id] );
+    }
+    else {
+      cvcolor = CV_RGB(color.R, color.G, color.B) ;
+      cvPutText( background, text, 
+		 cvPoint( vpMath::round( ip.get_u() ),
+			  vpMath::round( ip.get_v()+fontHeight ) ), 
+		 font, cvcolor );
+    }
   }
   else
   {
@@ -635,22 +653,42 @@ void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
 */
 void vpDisplayOpenCV::displayCircle(const vpImagePoint &center,
 				    unsigned int radius,
-				    vpColor::vpColorType color,
+				    vpColor color,
 				    bool  fill ,
 				    unsigned int thickness)
 {
   if (OpenCVinitialized)
   {
-    if (fill == false)
-    cvCircle( background, 
-	      cvPoint( vpMath::round( center.get_u() ), 
-		       vpMath::round( center.get_v() ) ), 
-	      (int)radius, col[color], (int)thickness);
-    else
-    cvCircle( background, 
-	      cvPoint( vpMath::round( center.get_u() ), 
-		       vpMath::round( center.get_v() ) ), 
-	      (int)radius, col[color], CV_FILLED);
+    if (fill == false) {
+      if (color.id < vpColor::id_unknown) {
+	cvCircle( background, 
+		  cvPoint( vpMath::round( center.get_u() ), 
+			   vpMath::round( center.get_v() ) ), 
+		  (int)radius, col[color.id], (int)thickness);
+      }
+      else {
+	cvcolor = CV_RGB(color.R, color.G, color.B) ;
+	cvCircle( background, 
+		  cvPoint( vpMath::round( center.get_u() ), 
+			   vpMath::round( center.get_v() ) ), 
+		  (int)radius, cvcolor, (int)thickness);
+      }
+    }
+    else {
+      if (color.id < vpColor::id_unknown) {
+	cvCircle( background, 
+		  cvPoint( vpMath::round( center.get_u() ), 
+			   vpMath::round( center.get_v() ) ), 
+		  (int)radius, col[color.id], CV_FILLED);
+      }
+      else {
+	cvcolor = CV_RGB(color.R, color.G, color.B) ;
+	cvCircle( background, 
+		  cvPoint( vpMath::round( center.get_u() ), 
+			   vpMath::round( center.get_v() ) ), 
+		  (int)radius, cvcolor, CV_FILLED);
+      }
+    }
   }
   else
   {
@@ -670,7 +708,7 @@ void vpDisplayOpenCV::displayCircle(const vpImagePoint &center,
 void
 vpDisplayOpenCV::displayCross(const vpImagePoint &ip,
                               unsigned int size,
-                              vpColor::vpColorType color,
+                              vpColor color,
 			      unsigned int thickness)
 {
   if (OpenCVinitialized)
@@ -706,6 +744,10 @@ vpDisplayOpenCV::displayCross(const vpImagePoint &ip,
 
 /*!
   Display a dashed line from image point \e ip1 to image point \e ip2.
+
+  \warning Dot lines are not yet implemented in OpenCV. We display a
+  normal line instead.
+
   \param ip1,ip2 : Initial and final image points.
   \param color : Line color.
   \param thickness : Line thickness.
@@ -713,19 +755,30 @@ vpDisplayOpenCV::displayCross(const vpImagePoint &ip,
 void
 vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, 
 				const vpImagePoint &ip2,
-				vpColor::vpColorType color, 
+				vpColor color, 
 				unsigned int thickness)
 {
 
   if (OpenCVinitialized)
   {
     vpTRACE("Dot lines are not yet implemented");
-    cvLine( background, 
-	    cvPoint( vpMath::round( ip1.get_u() ), 
-		     vpMath::round( ip1.get_v() ) ), 
-	    cvPoint( vpMath::round( ip2.get_u() ),
-		     vpMath::round( ip2.get_v() ) ), 
-	    col[color], (int) thickness);
+    if (color.id < vpColor::id_unknown) {
+      cvLine( background, 
+	      cvPoint( vpMath::round( ip1.get_u() ), 
+		       vpMath::round( ip1.get_v() ) ), 
+	      cvPoint( vpMath::round( ip2.get_u() ),
+		       vpMath::round( ip2.get_v() ) ), 
+	      col[color.id], (int) thickness);
+    }
+    else {
+      cvcolor = CV_RGB(color.R, color.G, color.B) ;
+      cvLine( background, 
+	      cvPoint( vpMath::round( ip1.get_u() ), 
+		       vpMath::round( ip1.get_v() ) ), 
+	      cvPoint( vpMath::round( ip2.get_u() ),
+		       vpMath::round( ip2.get_v() ) ), 
+	      cvcolor, (int) thickness);
+    }
   }
   else
   {
@@ -745,17 +798,28 @@ vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1,
 void
 vpDisplayOpenCV::displayLine(const vpImagePoint &ip1, 
 			     const vpImagePoint &ip2,
-			     vpColor::vpColorType color, 
+			     vpColor color, 
 			     unsigned int thickness)
 {
   if (OpenCVinitialized)
   {
-    cvLine( background, 
-	    cvPoint( vpMath::round( ip1.get_u() ), 
-		     vpMath::round( ip1.get_v() ) ), 
-	    cvPoint( vpMath::round( ip2.get_u() ),
-		     vpMath::round( ip2.get_v() ) ), 
-	    col[color], (int) thickness);
+    if (color.id < vpColor::id_unknown) {
+      cvLine( background, 
+	      cvPoint( vpMath::round( ip1.get_u() ), 
+		       vpMath::round( ip1.get_v() ) ), 
+	      cvPoint( vpMath::round( ip2.get_u() ),
+		       vpMath::round( ip2.get_v() ) ), 
+	      col[color.id], (int) thickness);
+    }
+    else {
+      cvcolor = CV_RGB(color.R, color.G, color.B) ;
+      cvLine( background, 
+	      cvPoint( vpMath::round( ip1.get_u() ), 
+		       vpMath::round( ip1.get_v() ) ), 
+	      cvPoint( vpMath::round( ip2.get_u() ),
+		       vpMath::round( ip2.get_v() ) ), 
+	      cvcolor, (int) thickness);
+    }
   }
   else
   {
@@ -771,21 +835,38 @@ vpDisplayOpenCV::displayLine(const vpImagePoint &ip1,
   \param color : Point color.
 */
 void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
-                                   vpColor::vpColorType color)
+                                   vpColor color)
 {
   if (OpenCVinitialized)
   {
-    ((uchar*)(background->imageData 
-	      + background->widthStep*vpMath::round( ip.get_i() )))
-      [vpMath::round( ip.get_j()*3 )] = (uchar)col[color].val[0];
+    if (color.id < vpColor::id_unknown) {
+      ((uchar*)(background->imageData 
+		+ background->widthStep*vpMath::round( ip.get_i() )))
+	[vpMath::round( ip.get_j()*3 )] = (uchar)col[color.id].val[0];
 
-    ((uchar*)(background->imageData 
-	      + background->widthStep*vpMath::round( ip.get_i() )))
-      [vpMath::round( ip.get_j()*3+1 )] = (uchar)col[color].val[1];
+      ((uchar*)(background->imageData 
+		+ background->widthStep*vpMath::round( ip.get_i() )))
+	[vpMath::round( ip.get_j()*3+1 )] = (uchar)col[color.id].val[1];
+      
+      ((uchar*)(background->imageData 
+		+ background->widthStep*vpMath::round( ip.get_i() )))
+	[vpMath::round( ip.get_j()*3+2 )] = (uchar)col[color.id].val[2];
+    }
+    else {
+      cvcolor = CV_RGB(color.R, color.G, color.B) ;
+      ((uchar*)(background->imageData 
+		+ background->widthStep*vpMath::round( ip.get_i() )))
+	[vpMath::round( ip.get_j()*3 )] = (uchar)cvcolor.val[0];
 
-    ((uchar*)(background->imageData 
-	      + background->widthStep*vpMath::round( ip.get_i() )))
-      [vpMath::round( ip.get_j()*3+2 )] = (uchar)col[color].val[2];
+      ((uchar*)(background->imageData 
+		+ background->widthStep*vpMath::round( ip.get_i() )))
+	[vpMath::round( ip.get_j()*3+1 )] = (uchar)cvcolor.val[1];
+      
+      ((uchar*)(background->imageData 
+		+ background->widthStep*vpMath::round( ip.get_i() )))
+	[vpMath::round( ip.get_j()*3+2 )] = (uchar)cvcolor.val[2];
+
+    }
   }
   else
   {
@@ -811,25 +892,50 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
 void
 vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
                                   unsigned int width, unsigned int height,
-                                  vpColor::vpColorType color, bool fill,
+                                  vpColor color, bool fill,
                                   unsigned int thickness)
 {
   if (OpenCVinitialized)
   {
-    if (fill == false)
-      cvRectangle( background,
-                   cvPoint( vpMath::round( topLeft.get_u() ),
-			    vpMath::round( topLeft.get_v() ) ),
-                   cvPoint( vpMath::round( topLeft.get_u()+width ),
-			    vpMath::round( topLeft.get_v()+height ) ),
-                   col[color], (int)thickness);
-    else
-      cvRectangle( background,
-                   cvPoint( vpMath::round( topLeft.get_u() ),
-			    vpMath::round( topLeft.get_v() ) ),
-                   cvPoint( vpMath::round( topLeft.get_u()+width ),
-			    vpMath::round( topLeft.get_v()+height ) ),
-                   col[color], CV_FILLED);
+    if (fill == false) {
+      if (color.id < vpColor::id_unknown) {
+	cvRectangle( background,
+		     cvPoint( vpMath::round( topLeft.get_u() ),
+			      vpMath::round( topLeft.get_v() ) ),
+		     cvPoint( vpMath::round( topLeft.get_u()+width ),
+			      vpMath::round( topLeft.get_v()+height ) ),
+		     col[color.id], (int)thickness);
+      }
+      else {
+	cvcolor = CV_RGB(color.R, color.G, color.B) ;
+	cvRectangle( background,
+		     cvPoint( vpMath::round( topLeft.get_u() ),
+			      vpMath::round( topLeft.get_v() ) ),
+		     cvPoint( vpMath::round( topLeft.get_u()+width ),
+			      vpMath::round( topLeft.get_v()+height ) ),
+		     cvcolor, (int)thickness);
+      }
+    }
+    else {
+      if (color.id < vpColor::id_unknown) {
+	cvRectangle( background,
+		     cvPoint( vpMath::round( topLeft.get_u() ),
+			      vpMath::round( topLeft.get_v() ) ),
+		     cvPoint( vpMath::round( topLeft.get_u()+width ),
+			      vpMath::round( topLeft.get_v()+height ) ),
+		     col[color.id], CV_FILLED);
+      }
+      else {
+	cvcolor = CV_RGB(color.R, color.G, color.B) ;
+	cvRectangle( background,
+		     cvPoint( vpMath::round( topLeft.get_u() ),
+			      vpMath::round( topLeft.get_v() ) ),
+		     cvPoint( vpMath::round( topLeft.get_u()+width ),
+			      vpMath::round( topLeft.get_v()+height ) ),
+		     cvcolor, CV_FILLED);
+
+      }
+    }
   }
   else
   {
@@ -853,26 +959,50 @@ vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
 void
 vpDisplayOpenCV::displayRectangle ( const vpImagePoint &topLeft,
 				    const vpImagePoint &bottomRight,
-				    vpColor::vpColorType color, bool fill,
+				    vpColor color, bool fill,
 				    unsigned int thickness )
 {
   if (OpenCVinitialized)
   {
-    if (fill == false)
-      cvRectangle( background,
-                   cvPoint( vpMath::round( topLeft.get_u() ), 
-			    vpMath::round( topLeft.get_v() ) ),
-                   cvPoint( vpMath::round( bottomRight.get_u() ), 
-			    vpMath::round( bottomRight.get_v() ) ),
-                   col[color], (int)thickness);
+    if (fill == false) {
+      if (color.id < vpColor::id_unknown) {
+	cvRectangle( background,
+		     cvPoint( vpMath::round( topLeft.get_u() ), 
+			      vpMath::round( topLeft.get_v() ) ),
+		     cvPoint( vpMath::round( bottomRight.get_u() ), 
+			      vpMath::round( bottomRight.get_v() ) ),
+		     col[color.id], (int)thickness);
+      }
+      else {
+	cvcolor = CV_RGB(color.R, color.G, color.B) ;
+	cvRectangle( background,
+		     cvPoint( vpMath::round( topLeft.get_u() ), 
+			      vpMath::round( topLeft.get_v() ) ),
+		     cvPoint( vpMath::round( bottomRight.get_u() ), 
+			      vpMath::round( bottomRight.get_v() ) ),
+		     cvcolor, (int)thickness);
+      }
+    }
+    else {
+      if (color.id < vpColor::id_unknown) {
+	cvRectangle( background,
+		     cvPoint( vpMath::round( topLeft.get_u() ), 
+			      vpMath::round( topLeft.get_v() ) ),
+		     cvPoint( vpMath::round( bottomRight.get_u() ), 
+			      vpMath::round( bottomRight.get_v() ) ),
+		     col[color.id], CV_FILLED);
+      }
+      else {
+	cvcolor = CV_RGB(color.R, color.G, color.B) ;
+	cvRectangle( background,
+		     cvPoint( vpMath::round( topLeft.get_u() ), 
+			      vpMath::round( topLeft.get_v() ) ),
+		     cvPoint( vpMath::round( bottomRight.get_u() ), 
+			      vpMath::round( bottomRight.get_v() ) ),
+		     cvcolor, CV_FILLED);
 
-    else
-      cvRectangle( background,
-                   cvPoint( vpMath::round( topLeft.get_u() ), 
-			    vpMath::round( topLeft.get_v() ) ),
-                   cvPoint( vpMath::round( bottomRight.get_u() ), 
-			    vpMath::round( bottomRight.get_v() ) ),
-                   col[color], CV_FILLED);
+      }
+    }
   }
   else
   {
@@ -896,25 +1026,50 @@ vpDisplayOpenCV::displayRectangle ( const vpImagePoint &topLeft,
 */
 void
 vpDisplayOpenCV::displayRectangle(const vpRect &rectangle,
-                                  vpColor::vpColorType color, bool fill,
+                                  vpColor color, bool fill,
                                   unsigned int thickness)
 {
   if (OpenCVinitialized)
   {
-    if (fill == false)
-      cvRectangle( background,
-                   cvPoint( vpMath::round( rectangle.getLeft() ),
-			    vpMath::round( rectangle.getBottom() ) ),
-                   cvPoint( vpMath::round( rectangle.getRight() ),
-			    vpMath::round( rectangle.getTop() ) ),
-                   col[color], (int)thickness);
-    else
-      cvRectangle( background,
-                   cvPoint( vpMath::round( rectangle.getLeft() ),
-			    vpMath::round( rectangle.getBottom() ) ),
-                   cvPoint( vpMath::round( rectangle.getRight() ),
-			    vpMath::round( rectangle.getTop() ) ),
-		   col[color], CV_FILLED);
+    if (fill == false) {
+      if (color.id < vpColor::id_unknown) {
+	cvRectangle( background,
+		     cvPoint( vpMath::round( rectangle.getLeft() ),
+			      vpMath::round( rectangle.getBottom() ) ),
+		     cvPoint( vpMath::round( rectangle.getRight() ),
+			      vpMath::round( rectangle.getTop() ) ),
+		     col[color.id], (int)thickness);
+      }
+      else {
+	cvcolor = CV_RGB(color.R, color.G, color.B) ;
+	cvRectangle( background,
+		     cvPoint( vpMath::round( rectangle.getLeft() ),
+			      vpMath::round( rectangle.getBottom() ) ),
+		     cvPoint( vpMath::round( rectangle.getRight() ),
+			      vpMath::round( rectangle.getTop() ) ),
+		     cvcolor, (int)thickness);
+
+      }
+    }
+    else {
+      if (color.id < vpColor::id_unknown) {
+	cvRectangle( background,
+		     cvPoint( vpMath::round( rectangle.getLeft() ),
+			      vpMath::round( rectangle.getBottom() ) ),
+		     cvPoint( vpMath::round( rectangle.getRight() ),
+			      vpMath::round( rectangle.getTop() ) ),
+		     col[color.id], CV_FILLED);
+      }
+      else {
+	cvcolor = CV_RGB(color.R, color.G, color.B) ;
+	cvRectangle( background,
+		     cvPoint( vpMath::round( rectangle.getLeft() ),
+			      vpMath::round( rectangle.getBottom() ) ),
+		     cvPoint( vpMath::round( rectangle.getRight() ),
+			      vpMath::round( rectangle.getTop() ) ),
+		     cvcolor, CV_FILLED);
+      }
+    }
   }
   else
   {

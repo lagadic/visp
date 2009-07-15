@@ -124,12 +124,26 @@ private:
   GtkWidget *widget;
   GdkPixmap *background;
   GdkGC *gc;
-  GdkColor blue,red,yellow,green,cyan,magenta,goldenrod,coral,orange,white, black;
+  GdkColor blue,red,yellow,green,cyan,orange,white, black, gdkcolor;
+  GdkColormap  *colormap;
+
   GdkFont *Police1,*Police2;
   guchar  *vectgtk;
   int windowXPosition ; int  windowYPosition ;
   GdkColor **col ;
   int ncol, nrow ;
+
+  typedef enum {
+    id_black=0,
+    id_white,
+    id_red,
+    id_green,
+    id_blue,
+    id_yellow,
+    id_cyan,
+    id_orange,
+    id_npredefined // Number of predefined colors
+  } vpColorIdentifier;
 
 public:
   vpDisplayGTK() ;
@@ -162,27 +176,27 @@ protected:
   void setTitle(const char *title) ;
   void setWindowPosition(int winx, int winy);
 
-  void clearDisplay(vpColor::vpColorType color=vpColor::white) ;
+  void clearDisplay(vpColor color=vpColor::white) ;
 
   void closeDisplay() ;
 
   void displayArrow(const vpImagePoint &ip1, 
 		    const vpImagePoint &ip2,
-		    vpColor::vpColorType color=vpColor::white,
+		    vpColor color=vpColor::white,
 		    unsigned int w=4,unsigned int h=2,
 		    unsigned int thickness=1) ;
   void displayCharString(const vpImagePoint &ip, const char *text,
-			 vpColor::vpColorType color=vpColor::green) ;
+			 vpColor color=vpColor::green) ;
 
   void displayCircle(const vpImagePoint &center, unsigned int radius,
-		     vpColor::vpColorType color,
+		     vpColor color,
 		     bool fill = false,
 		     unsigned int thickness=1);
   void displayCross(const vpImagePoint &ip, unsigned int size,
-		    vpColor::vpColorType color, unsigned int thickness=1) ;
+		    vpColor color, unsigned int thickness=1) ;
   void displayDotLine(const vpImagePoint &ip1, 
 		      const vpImagePoint &ip2,
-		      vpColor::vpColorType color, unsigned int thickness=1) ;
+		      vpColor color, unsigned int thickness=1) ;
 
   void displayImage(const vpImage<vpRGBa> &I) ;
   void displayImage(const vpImage<unsigned char> &I) ;
@@ -190,19 +204,19 @@ protected:
 
   void displayLine(const vpImagePoint &ip1, 
 		   const vpImagePoint &ip2,
-		   vpColor::vpColorType color, unsigned int thickness=1) ;
+		   vpColor color, unsigned int thickness=1) ;
 
-  void displayPoint(const vpImagePoint &ip, vpColor::vpColorType color) ;
+  void displayPoint(const vpImagePoint &ip, vpColor color) ;
   void displayRectangle(const vpImagePoint &topLeft,
 			unsigned int width, unsigned int height,
-			vpColor::vpColorType color, bool fill = false,
+			vpColor color, bool fill = false,
 			unsigned int thickness=1) ;
   void displayRectangle(const vpImagePoint &topLeft,
 			const vpImagePoint &bottomRight,
-			vpColor::vpColorType color, bool fill = false,
+			vpColor color, bool fill = false,
 			unsigned int thickness=1) ;
   void displayRectangle(const vpRect &rectangle,
-			vpColor::vpColorType color, bool fill = false,
+			vpColor color, bool fill = false,
 			unsigned int thickness=1) ;
 
   void flushDisplay() ;

@@ -68,40 +68,40 @@ public:
   static void displayPoint(double x,double y,
 			   const vpCameraParameters &cam,
 			   vpImage<unsigned char> &I,
-			   vpColor::vpColorType color = vpColor::green) ;
+			   vpColor color = vpColor::green) ;
   static void displayLine(double rho,double theta,
 			  const vpCameraParameters &cam,
 			  vpImage<unsigned char> &I,
-			  vpColor::vpColorType color = vpColor::green) ;
+			  vpColor color = vpColor::green) ;
   static void displayCylinder(double rho1,double theta1,
 			      double rho2,double theta2,
 			      const vpCameraParameters &cam,
 			      vpImage<unsigned char> &I,
-			      vpColor::vpColorType color = vpColor::green) ;
+			      vpColor color = vpColor::green) ;
   static void displayEllipse(double x,double y,
 			     double mu20, double mu11, double m02,
 			     const vpCameraParameters &cam,
 			     vpImage<unsigned char> &I,
-			     vpColor::vpColorType color = vpColor::green) ;
+			     vpColor color = vpColor::green) ;
 
   static void displayPoint(double x,double y,
 			   const vpCameraParameters &cam,
 			   vpImage<vpRGBa> &I,
-			   vpColor::vpColorType color = vpColor::green) ;
+			   vpColor color = vpColor::green) ;
   static void displayLine(double rho,double theta,
 			  const vpCameraParameters &cam,
 			  vpImage<vpRGBa> &I,
-			  vpColor::vpColorType color = vpColor::green) ;
+			  vpColor color = vpColor::green) ;
   static void displayCylinder(double rho1,double theta1,
 			      double rho2,double theta2,
 			      const vpCameraParameters &cam,
 			      vpImage<vpRGBa> &I,
-			      vpColor::vpColorType color = vpColor::green) ;
+			      vpColor color = vpColor::green) ;
   static void displayEllipse(double x,double y,
 			     double mu20, double mu11, double m02,
 			     const vpCameraParameters &cam,
 			     vpImage<vpRGBa> &I,
-			     vpColor::vpColorType color = vpColor::green) ;
+			     vpColor color = vpColor::green) ;
 
 
 };

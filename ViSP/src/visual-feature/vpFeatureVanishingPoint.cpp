@@ -249,7 +249,7 @@ vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
 void
 vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
 				 vpImage<unsigned char> &I,
-				 vpColor::vpColorType color) const
+				 vpColor color) const
 {
   try{
     double x,y ;
@@ -269,7 +269,7 @@ vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
 void
 vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
                                  vpImage<vpRGBa> &I,
-                                 vpColor::vpColorType color) const
+                                 vpColor color) const
 {
   try{
     double x,y ;

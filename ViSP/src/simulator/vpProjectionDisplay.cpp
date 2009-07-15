@@ -108,7 +108,7 @@ void
 vpProjectionDisplay::display(const vpHomogeneousMatrix &cextMo,
 			     const vpHomogeneousMatrix &cMo,
 			     const vpCameraParameters &cam,
-			     const vpColor::vpColorType color,
+			     const vpColor color,
 			     const int select)
 {
   if (select & vpProjectionDisplay::internalView())
@@ -131,7 +131,7 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
 			     const vpHomogeneousMatrix &cextMo,
 			     const vpHomogeneousMatrix &cMo,
 			     const vpCameraParameters &cam,
-			     const vpColor::vpColorType color)
+			     const vpColor color)
 {
 
     for (listFp.front() ; !listFp.outside() ; listFp.next() )

@@ -165,7 +165,7 @@ public:
   vpMeLine() ;
   virtual ~vpMeLine() ;
 
-  void display(vpImage<unsigned char>& I, vpColor::vpColorType col) ;
+  void display(vpImage<unsigned char>& I, vpColor col) ;
 
   void track(vpImage<unsigned char>& Im);
 

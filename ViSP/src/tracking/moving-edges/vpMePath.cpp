@@ -124,7 +124,7 @@ vpMePath::~vpMePath()
   Display some curve features
 
 */
-void vpMePath::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
+void vpMePath::display(vpImage<unsigned char> &I, vpColor col)
 {
   suppressPoints() ;
   //parabola vertex coordinates

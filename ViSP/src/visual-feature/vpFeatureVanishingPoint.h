@@ -134,10 +134,10 @@ public:
 public:
   void display(const vpCameraParameters &cam,
                vpImage<unsigned char> &I,
-               vpColor::vpColorType color=vpColor::green) const;
+               vpColor color=vpColor::green) const;
   void display(const vpCameraParameters &cam,
                vpImage<vpRGBa> &I,
-               vpColor::vpColorType color=vpColor::green) const;
+               vpColor color=vpColor::green) const;
 
 } ;
 

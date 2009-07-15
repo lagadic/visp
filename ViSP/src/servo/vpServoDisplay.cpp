@@ -78,8 +78,8 @@ void
 vpServoDisplay::display(vpServo &s,
                         const vpCameraParameters &cam,
                         vpImage<unsigned char> &I,
-                        vpColor::vpColorType currentColor,
-                        vpColor::vpColorType desiredColor)
+                        vpColor currentColor,
+                        vpColor desiredColor)
 {
 
 
@@ -128,17 +128,17 @@ void
 vpServoDisplay::display(vpServo &s,
                         const vpCameraParameters &cam,
                         vpImage<vpRGBa> &I,
-                        vpColor::vpColorType currentColor,
-                        vpColor::vpColorType desiredColor)
+                        vpColor currentColor,
+                        vpColor desiredColor)
 {
 
 
 
   for (s.featureList.front(),
-       s.desiredFeatureList.front() ;
+	 s.desiredFeatureList.front() ;
        !s.featureList.outside() ;
        s.featureList.next(),
-                          s.desiredFeatureList.next() )
+	 s.desiredFeatureList.next() )
   {
     vpBasicFeature *s_ptr = NULL;
 

@@ -230,7 +230,7 @@ void
 vpPoint::display(vpImage<unsigned char> &I,
 		 const vpHomogeneousMatrix &cMo,
 		 const vpCameraParameters &cam,
-		 const vpColor::vpColorType color)
+		 const vpColor color)
 {
 
   vpColVector _cP, _p ;
@@ -248,7 +248,7 @@ std::ostream& operator<<(std::ostream& os, vpPoint& /* vpp */)
 void
 vpPoint::display(vpImage<unsigned char> &I,
 		 const vpCameraParameters &cam,
-		 const vpColor::vpColorType color)
+		 const vpColor color)
 {
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color) ;
 }

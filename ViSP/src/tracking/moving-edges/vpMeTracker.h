@@ -100,7 +100,7 @@ public:
   //! Feature dependent functions
 
   //!display contour
-  virtual void display(vpImage<unsigned char> &I, vpColor::vpColorType col)=0;
+  virtual void display(vpImage<unsigned char> &I, vpColor col)=0;
   //!Sample pixels at a given interval
   virtual void sample(vpImage<unsigned char> &image)=0;
 

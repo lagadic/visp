@@ -86,7 +86,7 @@ public:
   virtual ~vpMeEllipse() ;
 
   void setSeekExtremities(double seek) {this->seek = seek ; }
-  void display(vpImage<unsigned char>&I, vpColor::vpColorType col) ;
+  void display(vpImage<unsigned char>&I, vpColor col) ;
 
   void getParameters() ;
   void printParameters() ;

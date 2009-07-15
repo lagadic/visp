@@ -90,6 +90,7 @@ SET (SRC_FRAMEGRABBER_DEVICE
   )
 
 SET (SRC_IMAGE
+  image/vpColor.cpp
   image/vpImageConvert.cpp
   image/vpImageException.cpp
   image/vpImageFilter.cpp

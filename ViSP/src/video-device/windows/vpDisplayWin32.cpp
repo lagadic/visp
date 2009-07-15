@@ -487,7 +487,7 @@ void vpDisplayWin32::flushDisplay()
   \param color : Point color.
 */
 void vpDisplayWin32::displayPoint(const vpImagePoint &ip,
-                                  vpColor::vpColorType color )
+                                  vpColor color )
 {
   //wait if the window is not initialized
   waitForInit();
@@ -502,7 +502,7 @@ void vpDisplayWin32::displayPoint(const vpImagePoint &ip,
 */
 void vpDisplayWin32::displayLine( const vpImagePoint &ip1, 
 			                      const vpImagePoint &ip2,
-                                  vpColor::vpColorType color, 
+                                  vpColor color, 
 			                      unsigned int thickness )
 {
   //wait if the window is not initialized
@@ -522,7 +522,7 @@ void vpDisplayWin32::displayLine( const vpImagePoint &ip1,
 */
 void vpDisplayWin32::displayDotLine(const vpImagePoint &ip1, 
 				    const vpImagePoint &ip2,
-                                    vpColor::vpColorType color, 
+                                    vpColor color, 
 				    unsigned int thickness )
 {
   //wait if the window is not initialized
@@ -545,7 +545,7 @@ void vpDisplayWin32::displayDotLine(const vpImagePoint &ip1,
 */
 void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
                                        unsigned int width, unsigned int height,
-                                       vpColor::vpColorType color, bool fill,
+                                       vpColor color, bool fill,
 			               unsigned int thickness )
 {
   //wait if the window is not initialized
@@ -568,7 +568,7 @@ void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
 */
 void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
                                        const vpImagePoint &bottomRight,
-                                       vpColor::vpColorType color, bool fill,
+                                       vpColor color, bool fill,
 			               unsigned int thickness )
 {
   //wait if the window is not initialized
@@ -590,7 +590,7 @@ void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
   \warning The thickness can not be set if the display uses the d3d library.
 */
 void vpDisplayWin32::displayRectangle( const vpRect &rectangle,
-                                       vpColor::vpColorType color, bool fill,
+                                       vpColor color, bool fill,
 			               unsigned int thickness )
 {
   //wait if the window is not initialized
@@ -614,7 +614,7 @@ void vpDisplayWin32::displayRectangle( const vpRect &rectangle,
 */
 void vpDisplayWin32::displayCircle(const vpImagePoint &center,
 				   unsigned int radius,
-                                   vpColor::vpColorType color,
+                                   vpColor color,
 				   bool fill,
 				   unsigned int thickness )
 {
@@ -631,7 +631,7 @@ void vpDisplayWin32::displayCircle(const vpImagePoint &center,
 */
 void vpDisplayWin32::displayCharString(const vpImagePoint &ip,
                                      const char *text, 
-				     vpColor::vpColorType color )
+				     vpColor color )
 {
   //wait if the window is not initialized
   waitForInit();
@@ -647,7 +647,7 @@ void vpDisplayWin32::displayCharString(const vpImagePoint &ip,
 */
 void vpDisplayWin32::displayCross( const vpImagePoint &ip, 
                                    unsigned int size, 
-				   vpColor::vpColorType color,
+				   vpColor color,
 				   unsigned int thickness)
 {
   //wait if the window is not initialized
@@ -665,7 +665,7 @@ void vpDisplayWin32::displayCross( const vpImagePoint &ip,
 */
 void vpDisplayWin32::displayArrow(const vpImagePoint &ip1, 
 		    const vpImagePoint &ip2,
-		    vpColor::vpColorType color,
+		    vpColor color,
 		    unsigned int w,unsigned int h,
 		    unsigned int thickness)
 
@@ -680,7 +680,7 @@ void vpDisplayWin32::displayArrow(const vpImagePoint &ip1,
   Clears the display.
   \param color : the color to fill the display with
 */
-void vpDisplayWin32::clearDisplay(vpColor::vpColorType color){
+void vpDisplayWin32::clearDisplay(vpColor color){
   //wait if the window is not initialized
   waitForInit();
   window.renderer->clear(color);

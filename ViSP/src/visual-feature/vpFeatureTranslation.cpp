@@ -548,7 +548,7 @@ vpFeatureTranslation *vpFeatureTranslation::duplicate() const
 void
 vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
 			      vpImage<unsigned char> &/* I */,
-			      vpColor::vpColorType /* color */) const
+			      vpColor /* color */) const
 {
   static int firsttime =0 ;
 
@@ -568,7 +568,7 @@ vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
 void
 vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
                               vpImage<vpRGBa> &/* I */,
-                              vpColor::vpColorType /* color */) const
+                              vpColor /* color */) const
 {
   static int firsttime =0 ;
 

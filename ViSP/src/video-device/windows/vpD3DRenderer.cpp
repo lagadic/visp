@@ -76,24 +76,41 @@ vpD3DRenderer::vpD3DRenderer()
   pd3dVideoText=NULL;
 
   //D3D palette
-  colors[vpColor::black] = D3DCOLOR_ARGB(0xFF,0,0,0);
-  colors[vpColor::blue]  = D3DCOLOR_ARGB(0xFF,0,0,0xFF);
-  colors[vpColor::cyan]  = D3DCOLOR_ARGB(0xFF,0,0xFF,0xFF);
-  colors[vpColor::green] = D3DCOLOR_ARGB(0xFF,0,0xFF,0);
-  colors[vpColor::red]   = D3DCOLOR_ARGB(0xFF,0xFF,0,0);
-  colors[vpColor::white] = D3DCOLOR_ARGB(0xFF,0xFF,0xFF,0xFF);
-  colors[vpColor::yellow]= D3DCOLOR_ARGB(0xFF,0xFF,0xFF,0);
-  colors[vpColor::orange]= D3DCOLOR_ARGB(0xFF,0xFF,0xA5,0);
+  vpColor pcolor; // Predefined colors
+  pcolor = vpColor::black;
+  colors[vpColor::id_black] = D3DCOLOR_ARGB(0xFF,pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::blue;
+  colors[vpColor::id_blue]  = D3DCOLOR_ARGB(0xFF,pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::cyan;
+  colors[vpColor::id_cyan]  = D3DCOLOR_ARGB(0xFF,pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::green;
+  colors[vpColor::id_green] = D3DCOLOR_ARGB(0xFF,pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::red;
+  colors[vpColor::id_red]   = D3DCOLOR_ARGB(0xFF,pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::white;
+  colors[vpColor::id_white] = D3DCOLOR_ARGB(0xFF,pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::yellow;
+  colors[vpColor::id_yellow]= D3DCOLOR_ARGB(0xFF,pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::orange;
+  colors[vpColor::id_orange]= D3DCOLOR_ARGB(0xFF,pcolor.R, pcolor.G, pcolor.B);
 
   //initialize the GDI palette
-  colorsGDI[vpColor::black] =  RGB(0,0,0);
-  colorsGDI[vpColor::blue]  =  RGB(0,0,0xFF);
-  colorsGDI[vpColor::cyan]  =  RGB(0,0xFF,0xFF);
-  colorsGDI[vpColor::green] =  RGB(0,0xFF,0);
-  colorsGDI[vpColor::red]   =  RGB(0xFF,0,0);
-  colorsGDI[vpColor::white] =  RGB(0xFF,0xFF,0xFF);
-  colorsGDI[vpColor::yellow]=  RGB(0xFF,0xFF,0);
-  colorsGDI[vpColor::orange]=  RGB(0xFF,0xA5,0);
+  pcolor = vpColor::black;
+  colorsGDI[vpColor::id_black] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::blue;
+  colorsGDI[vpColor::id_blue]  =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::cyan;
+  colorsGDI[vpColor::id_cyan]  =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::green;
+  colorsGDI[vpColor::id_green] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::red;
+  colorsGDI[vpColor::id_red]   =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::white;
+  colorsGDI[vpColor::id_white] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::yellow;
+  colorsGDI[vpColor::id_yellow]=  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::orange;
+  colorsGDI[vpColor::id_orange]=  RGB(pcolor.R, pcolor.G, pcolor.B);
 
   //Creates a logical font
   hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,
@@ -421,7 +438,7 @@ bool vpD3DRenderer::render()
   \param color : the color of the point.
 */
 void vpD3DRenderer::setPixel(const vpImagePoint iP,
-			     vpColor::vpColorType color)
+			     vpColor color)
 {
   if(iP.get_i()<0 || iP.get_j()<0 || iP.get_i()>=(int)nbRows || iP.get_j()>=(int)nbCols)
   {
@@ -470,7 +487,7 @@ void vpD3DRenderer::setPixel(const vpImagePoint iP,
 */
 void vpD3DRenderer::drawLine(const vpImagePoint &ip1,
 			     const vpImagePoint &ip2,
-			     vpColor::vpColorType color,
+			     vpColor color,
 			     unsigned int thickness, int style)
 {
 //   if(i1<0 || j1<0 || i2<0 || j2<0 || e<0)
@@ -494,7 +511,13 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1,
       pd3dSurf->GetDC(&hDCMem);
 
       //create the pen
-      HPEN hPen = CreatePen(style, thickness, colorsGDI[color]);
+      HPEN hPen;
+      if (color.id < vpColor::id_unknown)
+		hPen = CreatePen(style, thickness, colorsGDI[color.id]);
+      else {
+		COLORREF gdicolor = RGB(color.R, color.G, color.B);
+		hPen = CreatePen(style, thickness, gdicolor);
+      }
 
       //we don't use the bkColor
       SetBkMode(hDCMem, TRANSPARENT);
@@ -529,7 +552,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1,
 */
 void vpD3DRenderer::drawRect(const vpImagePoint &topLeft,
 			     unsigned int width, unsigned int height,
-			     vpColor::vpColorType color, bool  fill ,
+			     vpColor color, bool  fill ,
 			     unsigned int /*thickness*/)
 {
   if(topLeft.get_i()>(int)nbRows-1 || topLeft.get_j()>(int)nbCols-1|| topLeft.get_i()+height<0 ||topLeft.get_j()+width<0)
@@ -611,7 +634,7 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft,
   Clears the image to a specific color.
   \param color The color used to fill the image.
 */
-void vpD3DRenderer::clear(vpColor::vpColorType color)
+void vpD3DRenderer::clear(vpColor color)
 {
   //if the device has been initialized
   if(pd3dDevice != NULL)
@@ -626,25 +649,30 @@ void vpD3DRenderer::clear(vpColor::vpColorType color)
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
-	{
-	  vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
-	  return;
-	}
+		{
+		 vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
+		 return;
+		}
 
       //gets the buffer and pitch of the texture
       unsigned int pitch = d3dLRect.Pitch;
       long * buf = (long *) d3dLRect.pBits;
 
-      long c = colors[(int) color];
+      long c;
+      if (color.id < vpColor::id_unknown)
+		c = colors[color.id];
+      else {
+		c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
+      }
       long * end = (long*)((long)buf + (pitch * nbRows));
 
       //fills the whole image
       while (buf < end)
-	*buf++ = c;
+		*buf++ = c;
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
-	vpCERROR<<"D3D : Couldn't unlock the texture!"<<std::endl;
+		vpCERROR<<"D3D : Couldn't unlock the texture!"<<std::endl;
     }
 }
 
@@ -653,7 +681,7 @@ void vpD3DRenderer::clear(vpColor::vpColorType color)
 //writes current circle pixels using symetry to reduce the algorithm's complexity
 void vpD3DRenderer::subDrawCircle(int i, int j,
 				  int x, int y,
-				  vpColor::vpColorType col,
+				  vpColor col,
 				  unsigned char* buf, unsigned int pitch,
 				  unsigned int maxX, unsigned int maxY)
 {
@@ -689,7 +717,7 @@ void vpD3DRenderer::subDrawCircle(int i, int j,
   \param color The circle's color
 */
 void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
-			       vpColor::vpColorType color, bool /*fill*/, unsigned char /*thickness*/)
+			       vpColor color, bool /*fill*/, unsigned char /*thickness*/)
 {
   if(radius<1 || vpMath::round(center.get_i()+radius)<0 || vpMath::round(center.get_i()-radius) > (int)nbRows || vpMath::round(center.get_j()+radius)<0 || vpMath::round(center.get_j()-radius) > (int)nbCols)
     return;
@@ -766,7 +794,7 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
   \param color The text's color
 */
 void vpD3DRenderer::drawText(const vpImagePoint &ip, const char * text,
-			     vpColor::vpColorType color)
+			     vpColor color)
 {
   //Will contain the texture's surface drawing context
   HDC hDCMem;
@@ -782,8 +810,13 @@ void vpD3DRenderer::drawText(const vpImagePoint &ip, const char * text,
   SelectObject(hDCMem, hFont);
 
   //set the text color
-  SetTextColor(hDCMem, colorsGDI[color]);
-
+  if (color.id < vpColor::id_unknown)
+    SetTextColor(hDCMem, colorsGDI[color.id]);
+  else {
+    COLORREF gdicolor = RGB(color.R, color.G, color.B);
+    SetTextColor(hDCMem, gdicolor);
+  }
+    
   //we don't use the bkColor
   SetBkMode(hDCMem, TRANSPARENT);
 
@@ -814,7 +847,7 @@ void vpD3DRenderer::drawText(const vpImagePoint &ip, const char * text,
 */
 void vpD3DRenderer::drawCross(const vpImagePoint &ip,
 			      unsigned int size,
-			      vpColor::vpColorType color, unsigned int thickness)
+			      vpColor color, unsigned int thickness)
 {
   if(ip.get_i()<0 || ip.get_j()<0 || ip.get_i()>(int)nbRows || ip.get_j()>(int)nbCols || thickness<=0)
     return;
@@ -907,7 +940,7 @@ void vpD3DRenderer::drawCross(const vpImagePoint &ip,
 */
 void vpD3DRenderer::drawArrow(const vpImagePoint &ip1, 
 		              const vpImagePoint &ip2,
-			      vpColor::vpColorType color,
+			      vpColor color,
 			      unsigned int w,unsigned int h, unsigned int thickness)
 {
   double a = ip2.get_i() - ip1.get_i();
@@ -926,7 +959,13 @@ void vpD3DRenderer::drawArrow(const vpImagePoint &ip1,
   pd3dSurf->GetDC(&hDCMem);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, thickness, colorsGDI[color]);
+  HPEN hPen;
+  if (color.id < vpColor::id_unknown)
+    hPen = CreatePen(PS_SOLID, thickness, colorsGDI[color.id]);
+  else {
+    COLORREF gdicolor = RGB(color.R, color.G, color.B);
+    hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+  }
 
   //select the pen
   SelectObject(hDCMem, hPen);

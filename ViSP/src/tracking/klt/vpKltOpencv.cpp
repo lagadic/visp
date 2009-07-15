@@ -419,7 +419,7 @@ void vpKltOpencv::track(const IplImage *I)
 }
 
 void vpKltOpencv::display(const vpImage<unsigned char> &I,
-			  vpColor::vpColorType color)
+			  vpColor color)
 {
   if ((features == 0) || (I.bitmap==0) || (!initialized))
     {

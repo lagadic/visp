@@ -3,6 +3,8 @@ ViSP 2.x.y
     - For the Irisa's Afma6 robot addition of a new vacuum tool (vpAfma6).
     - New vpImagePoint class for image point coordinates.
     - New vpPlot class that enables real time drawing of graphics under Unix.
+    - Ability to use other colors than the predefined ones with the rewriting 
+      of the vpColor class and modifications in display functionalities.
   - Examples:
     - New plotting example in example/tools/plot.cpp
   - Bug fixed

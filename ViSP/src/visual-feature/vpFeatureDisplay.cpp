@@ -64,7 +64,7 @@
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<unsigned char> &I,
-				    vpColor::vpColorType color)
+				    vpColor color)
 {
   try{
     vpImagePoint ip; // pixel coordinates in float
@@ -88,7 +88,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
 				   vpImage<unsigned char> &I,
-				   vpColor::vpColorType color )
+				   vpColor color )
 {
 
 
@@ -142,7 +142,7 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
 				       double rho2,double theta2,
 				       const vpCameraParameters &cam,
 				       vpImage<unsigned char> &I,
-				       vpColor::vpColorType color)
+				       vpColor color)
 {
   try
   {
@@ -165,7 +165,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
 				      vpImage<unsigned char> &I,
-				      vpColor::vpColorType color)
+				      vpColor color)
 {
 
 
@@ -237,7 +237,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<vpRGBa> &I,
-				    vpColor::vpColorType color)
+				    vpColor color)
 {
   try{
     vpImagePoint ip; // pixel coordinates in float
@@ -262,7 +262,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
 				   vpImage<vpRGBa> &I,
-				   vpColor::vpColorType color )
+				   vpColor color )
 {
 
 
@@ -315,7 +315,7 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
 				       double rho2, double theta2,
 				       const vpCameraParameters &cam,
 				       vpImage<vpRGBa> &I,
-				       vpColor::vpColorType color)
+				       vpColor color)
 {
   try
   {
@@ -339,7 +339,7 @@ void vpFeatureDisplay::displayEllipse(double x, double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
 				      vpImage<vpRGBa> &I,
-				      vpColor::vpColorType color)
+				      vpColor color)
 {
 
 

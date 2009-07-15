@@ -104,31 +104,31 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   void setImg(const vpImage<unsigned char>& im);
 
-  void setPixel(const vpImagePoint iP, vpColor::vpColorType color);
+  void setPixel(const vpImagePoint iP, vpColor color);
 
   void drawLine(const vpImagePoint &ip1, 
 		const vpImagePoint &ip2,
-		vpColor::vpColorType color, unsigned int thickness, int style=PS_SOLID);
+		vpColor color, unsigned int thickness, int style=PS_SOLID);
 
   void drawRect(const vpImagePoint &topLeft,
 		unsigned int width, unsigned int height,
-		vpColor::vpColorType color, bool fill=false,
+		vpColor color, bool fill=false,
 		unsigned int thickness=1);
 
-  void clear(vpColor::vpColorType color);
+  void clear(vpColor color);
 
   void drawCircle(const vpImagePoint &center, unsigned int radius,
-		  vpColor::vpColorType color, bool fill=false, unsigned char thickness=1);
+		  vpColor color, bool fill=false, unsigned char thickness=1);
 
   void drawText(const vpImagePoint &ip, const char * text,
-		vpColor::vpColorType color);
+		vpColor color);
 
   void drawCross(const vpImagePoint &ip, unsigned int size,
-		 vpColor::vpColorType color, unsigned int thickness=1);
+		 vpColor color, unsigned int thickness=1);
 
   void drawArrow(const vpImagePoint &ip1, 
 		 const vpImagePoint &ip2,
-		 vpColor::vpColorType color, unsigned int w,unsigned int h, unsigned int thickness=1);
+		 vpColor color, unsigned int w,unsigned int h, unsigned int thickness=1);
 
   void getImage(vpImage<vpRGBa> &I);
 
@@ -144,7 +144,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   */
   void subDrawCircle(int i, int j,
 		     int x, int y,
-		     vpColor::vpColorType col, unsigned char* buf,
+		     vpColor col, unsigned char* buf,
 		     unsigned int pitch, unsigned int maxX, unsigned int maxY);
 
 
@@ -161,7 +161,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   */
   inline void setBufferPixel(unsigned char* buf, unsigned int pitch,
 			     int x, int y,
-			     vpColor::vpColorType color,
+			     vpColor color,
 			     unsigned int maxX, unsigned int maxY)
     {
       if(x>=0 && y>=0 && x<= (int)maxX && y<= (int)maxY)
@@ -178,7 +178,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   */
   inline void setBufferPixel(unsigned char* buf, unsigned int pitch,
                              int x, int y,
-                             vpColor::vpColorType color)
+                             vpColor color)
   {
       *(long*)(buf + (y*pitch) + (x<<2)) = colors[color];
   }

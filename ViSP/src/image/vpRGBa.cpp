@@ -32,6 +32,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -47,115 +48,6 @@
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
 
-/*!
-  Basic constructor.
-
-  Build a black value.
-
-*/
-vpRGBa::vpRGBa()
-{
-  R=0 ;
-  G=0 ;
-  B=0 ;
-  A=0 ;
-}
-
-/*!
-  Constructor.
-
-  Initialize the color with R, G, B, A values.
-
-  \param R : Red value.
-  \param G : Green value.
-  \param B : Blue value.
-  \param A : Additional value.
-
-*/
-vpRGBa::vpRGBa(const unsigned char &R, const unsigned char &G,
-	       const unsigned char &B, const unsigned char &A)
-{
-  this->R = R;
-  this->G = G;
-  this->B = B;
-  this->A = A;
-}
-
-/*!
-  Constructor.
-
-  Initialize all the R, G, B, A components to \e v.
-
-  \param v : Value to set.
-
-*/
-vpRGBa::vpRGBa(const unsigned char &v)
-{
-  this->R = v;
-  this->G = v;
-  this->B = v;
-  this->A = v;
-}
-
-/*!
-  Constructor.
-
-  Initialization from a color identifier.
-
-  \param v : Color to initialize.
-
-*/
-vpRGBa::vpRGBa(const vpColorType &v)
-{
-  R = G = B = A = (unsigned char)0 ;
-  switch(v)
-  {
-  case none:
-  case black:
-    R = G = B = (unsigned char)0 ;
-    break ;
-  case white:
-    R = G = B = (unsigned char)255;
-    break ;
-  case red   :
-    R = (unsigned char)255 ;
-    break ;
-  case green :
-    G = (unsigned char)255 ;
-    break ;
-  case blue :
-    B = (unsigned char)255 ;
-    break ;
-  case yellow :
-    R = G = (unsigned char)255 ;
-    B = (unsigned char)0 ;
-    break ;
-  case cyan  :
-    G = B = (unsigned char)255 ;
-    R = (unsigned char)0 ;
-    break ;
-  case orange  :
-    R = (unsigned char)244 ;
-    R = (unsigned char)121 ;
-    R = (unsigned char)7 ;
-    break ;
-  }
-}
-/*!
-  Copy constructor.
-*/
-vpRGBa::vpRGBa(const vpRGBa &v)
-{
-  *this = v ;
-}
-
-/*!
-  Copy constructor.
-*/
-vpRGBa::vpRGBa(const vpColVector &v)
-{
-  *this = v ;
-}
 
 /*!
   Copy operator (from an unsigned char value)
@@ -165,7 +57,10 @@ vpRGBa::vpRGBa(const vpColVector &v)
 void
 vpRGBa::operator=(const unsigned char &v)
 {
-  R = v ; G = v ;  B = v ; A = v;
+  this->R = v;
+  this->G = v;
+  this->B = v;
+  this->A = v;
 }
 
 /*!
@@ -174,14 +69,14 @@ vpRGBa::operator=(const unsigned char &v)
 void
 vpRGBa::operator=(const vpRGBa &v)
 {
-  R = v.R ;
-  G = v.G ;
-  B = v.B ;
-  A = v.A ;
+  this->R = v.R;
+  this->G = v.G;
+  this->B = v.B;
+  this->A = v.A;
 }
 
 /*!
-  \brief Cast a vpColVector in a vpRGBa
+  Cast a vpColVector in a vpRGBa
 
   \param v : Input vector. v[0], v[1], v[2], v[3] are to make into
   relation with respectively R, G, B and A.
