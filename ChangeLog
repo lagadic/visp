@@ -14,6 +14,10 @@ ViSP 2.x.y
 	     under Fedora 10
     - [8032] Link error whith GSL while compiling HelloWorld.cpp on OSX
     - [8225] Bug in the multiplication of a twist matrix (6x6) by a matrix (6xn)
+    - [8248] Compilation error under Windows MSCV8 if deprecated functions 
+	     are not build
+    - [8249] Compilation error under Windows MSCV8 when building ViSP 
+	     as a shared library (DLL)
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features
