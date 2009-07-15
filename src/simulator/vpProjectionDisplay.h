@@ -99,14 +99,14 @@ public:
   void display(const vpHomogeneousMatrix &cextMo,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color,
+	       const vpColor color,
 	       const int select) ;
 */
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cextMo,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color) ;
+	       const vpColor color) ;
 
 
 private:

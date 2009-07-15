@@ -563,7 +563,7 @@ vpFeaturePointPolar::buildFrom(const double rho, const double theta,
 void
 vpFeaturePointPolar::display(const vpCameraParameters &cam,
 				   vpImage<unsigned char> &I,
-				   vpColor::vpColorType color) const
+				   vpColor color) const
 {
   try {
     double rho,theta;
@@ -594,7 +594,7 @@ vpFeaturePointPolar::display(const vpCameraParameters &cam,
 void
 vpFeaturePointPolar::display(const vpCameraParameters &cam,
 				   vpImage<vpRGBa> &I,
-				   vpColor::vpColorType color) const
+				   vpColor color) const
 {
   try {
     double rho,theta;

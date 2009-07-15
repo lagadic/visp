@@ -508,7 +508,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 */
 void vpLine::display(vpImage<unsigned char> &I,
 		     const vpCameraParameters &cam,
-		     const vpColor::vpColorType color)
+		     const vpColor color)
 {
   vpFeatureDisplay::displayLine(p[0], p[1], cam, I, color) ;
 }
@@ -536,7 +536,7 @@ void vpLine::display(vpImage<unsigned char> &I,
 void vpLine::display(vpImage<unsigned char> &I,
 		     const vpHomogeneousMatrix &cMo,
 		     const vpCameraParameters &cam,
-		     const vpColor::vpColorType color)
+		     const vpColor color)
 {
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;

@@ -147,10 +147,8 @@ public:
                       vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ,
                       bool verbose = false);
   int writeData(const char *filename) ;
-  int displayData(vpImage<unsigned char> &I,
-                      vpColor::vpColorType col=vpColor::red) ;
-  int displayGrid(vpImage<unsigned char> &I,
-                      vpColor::vpColorType col=vpColor::yellow) ;
+  int displayData(vpImage<unsigned char> &I, vpColor col=vpColor::red) ;
+  int displayGrid(vpImage<unsigned char> &I, vpColor col=vpColor::yellow) ;
   
   double computeStdDeviation(vpHomogeneousMatrix &cMo,
                           vpCameraParameters &cam);

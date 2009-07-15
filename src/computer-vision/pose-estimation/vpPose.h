@@ -148,17 +148,17 @@ public:
   void printPoint() ;
 	
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
-											vpCameraParameters &cam, double size,
-											vpColor::vpColorType col=vpColor::none) ;
+		      vpCameraParameters &cam, double size,
+		      vpColor col=vpColor::none) ;
   static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo,
-											vpCameraParameters &cam, double size,
-											vpColor::vpColorType col=vpColor::none) ;
+		      vpCameraParameters &cam, double size,
+		      vpColor col=vpColor::none) ;
   void displayModel(vpImage<unsigned char> &I, 
-										vpCameraParameters &cam,
-										vpColor::vpColorType col=vpColor::none) ;
+		    vpCameraParameters &cam,
+		    vpColor col=vpColor::none) ;
   void displayModel(vpImage<vpRGBa> &I, 
-										vpCameraParameters &cam,
-										vpColor::vpColorType col=vpColor::none) ;
+		    vpCameraParameters &cam,
+		    vpColor col=vpColor::none) ;
   
 private:
   int vvsIterMax ; //! define the maximum number of iteration in VVS

@@ -192,7 +192,7 @@ void draw(vpImage<vpRGBa> &I)
   iP2.set_j(340);
   vpDisplay::displayDotLine (I, iP1, iP2, vpColor::blue, 3);
 
-//static void 	displayFrame (const vpImage< vpRGBa > &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, vpColor::vpColorType color)
+//static void 	displayFrame (const vpImage< vpRGBa > &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, vpColor color)
 
   iP1.set_i(140);
   iP1.set_j(80);

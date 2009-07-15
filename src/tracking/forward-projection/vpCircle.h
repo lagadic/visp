@@ -108,11 +108,11 @@ public:
 
   void display(vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color=vpColor::green) ;
+	       const vpColor color=vpColor::green) ;
   void display(vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const vpColor::vpColorType color=vpColor::green) ;
+	       const vpColor color=vpColor::green) ;
   vpCircle *duplicate() const ;
 
 } ;

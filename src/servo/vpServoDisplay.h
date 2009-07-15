@@ -66,13 +66,13 @@ public:
   static void display(vpServo &s,
 		                  const vpCameraParameters &cam,
 		                  vpImage<unsigned char> &I,
-		                  vpColor::vpColorType currentColor = vpColor::green,
-		                  vpColor::vpColorType desiredColor = vpColor::red) ;
+		                  vpColor currentColor = vpColor::green,
+		                  vpColor desiredColor = vpColor::red) ;
   static void display(vpServo &s,
                       const vpCameraParameters &cam,
                       vpImage<vpRGBa> &I,
-                      vpColor::vpColorType currentColor = vpColor::green,
-                      vpColor::vpColorType desiredColor = vpColor::red) ;
+                      vpColor currentColor = vpColor::green,
+                      vpColor desiredColor = vpColor::red) ;
 
 } ;
 

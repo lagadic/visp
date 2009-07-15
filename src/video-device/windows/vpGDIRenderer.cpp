@@ -56,15 +56,24 @@ vpGDIRenderer::vpGDIRenderer()
 
   InitializeCriticalSection(&CriticalSection);
 
-  //initialize the palette
-  colors[vpColor::black] =  RGB(0,0,0);
-  colors[vpColor::blue]  =  RGB(0,0,0xFF);
-  colors[vpColor::cyan]  =  RGB(0,0xFF,0xFF);
-  colors[vpColor::green] =  RGB(0,0xFF,0);
-  colors[vpColor::red]   =  RGB(0xFF,0,0);
-  colors[vpColor::white] =  RGB(0xFF,0xFF,0xFF);
-  colors[vpColor::yellow]=  RGB(0xFF,0xFF,0);
-  colors[vpColor::orange]=  RGB(0xFF,0xA5,0);
+  //initialize GDI the palette
+  vpColor pcolor; // Predefined colors
+  pcolor = vpColor::black;
+  colors[vpColor::id_black] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::blue;
+  colors[vpColor::id_blue]  =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::cyan;
+  colors[vpColor::id_cyan]  =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::green;
+  colors[vpColor::id_green] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::red;
+  colors[vpColor::id_red]   =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::white;
+  colors[vpColor::id_white] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::yellow;
+  colors[vpColor::id_yellow]=  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::orange;
+  colors[vpColor::id_orange]=  RGB(pcolor.R, pcolor.G, pcolor.B);
 
   nbCols = 0;
   nbRows = 0;
@@ -340,7 +349,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
   \param color : the color of the point.
 */
 void vpGDIRenderer::setPixel(const vpImagePoint iP,
-			     vpColor::vpColorType color)
+			     vpColor color)
 {
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
@@ -350,11 +359,16 @@ void vpGDIRenderer::setPixel(const vpImagePoint iP,
   EnterCriticalSection(&CriticalSection);
   SelectObject(hDCMem, bmp);
 
-
-  SetPixel(hDCMem,vpMath::round(iP.get_u()),vpMath::round(iP.get_v()),colors[color]);
-  //SetPixel(hDCMem,x,y,colors[color]); avec appel y,x
+  if (color.id < vpColor::id_unknown)
+    SetPixel(hDCMem, vpMath::round(iP.get_u()), vpMath::round(iP.get_v()),
+	     colors[color.id]);
+  else {
+    COLORREF gdicolor = RGB(color.R, color.G, color.B);
+    SetPixel(hDCMem, vpMath::round(iP.get_u()), vpMath::round(iP.get_v()),
+	     gdicolor);
+  }
   //display the result (flush)
- // BitBlt(hDCScreen, x, y, 1, 1, hDCMem, x, y, SRCCOPY);
+  // BitBlt(hDCScreen, x, y, 1, 1, hDCMem, x, y, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
 
@@ -371,7 +385,7 @@ void vpGDIRenderer::setPixel(const vpImagePoint iP,
 */
 void vpGDIRenderer::drawLine(const vpImagePoint &ip1, 
 			     const vpImagePoint &ip2,
-			     vpColor::vpColorType color,
+			     vpColor color,
 			     unsigned int thickness, int style)
 {
 
@@ -380,8 +394,13 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(style, thickness, colors[color]);
-
+  HPEN hPen;
+  if (color.id < vpColor::id_unknown)
+    hPen = CreatePen(style, thickness, colors[color.id]);
+  else {
+    COLORREF gdicolor = RGB(color.R, color.G, color.B);
+    hPen = CreatePen(style, thickness, gdicolor);
+  }
   SetBkMode(hDCMem, TRANSPARENT);
 
   //select this bmp in memory
@@ -424,7 +443,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
 */
 void vpGDIRenderer::drawRect(const vpImagePoint &topLeft,
 			     unsigned int width, unsigned int height,
-			     vpColor::vpColorType color, bool fill,
+			     vpColor color, bool fill,
 			     unsigned int thickness)
 {
   if (thickness == 0) thickness = 1;
@@ -433,15 +452,25 @@ void vpGDIRenderer::drawRect(const vpImagePoint &topLeft,
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, thickness, colors[color]);
+  HPEN hPen;
+  COLORREF gdicolor;
+  if (color.id < vpColor::id_unknown)
+    hPen = CreatePen(PS_SOLID, thickness, colors[color.id]);
+  else {
+    gdicolor = RGB(color.R, color.G, color.B);
+    hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+  }
 
   //create an hollow or solid brush (depends on boolean fill)
   LOGBRUSH lBrush;
-  if(fill)
-    {
-      lBrush.lbStyle = BS_SOLID;
-      lBrush.lbColor = colors[color];
+  if(fill) {
+    lBrush.lbStyle = BS_SOLID;
+    if (color.id < vpColor::id_unknown)
+      lBrush.lbColor = colors[color.id];
+    else {
+      lBrush.lbColor = gdicolor;
     }
+  }
   else lBrush.lbStyle = BS_HOLLOW;
   HBRUSH hbrush = CreateBrushIndirect(&lBrush);
 
@@ -473,7 +502,7 @@ void vpGDIRenderer::drawRect(const vpImagePoint &topLeft,
   Clears the image to a specific color.
   \param color The color used to fill the image.
 */
-void vpGDIRenderer::clear(vpColor::vpColorType color)
+void vpGDIRenderer::clear(vpColor color)
 {
 	vpImagePoint ip;
 	ip.set_i(0);
@@ -491,7 +520,7 @@ void vpGDIRenderer::clear(vpColor::vpColorType color)
   \param thickness : Line thickness
 */
 void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
-			       vpColor::vpColorType color, bool fill, unsigned char thickness)
+			       vpColor color, bool fill, unsigned char thickness)
 {
 
   //get the window's DC
@@ -499,7 +528,13 @@ void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, thickness, colors[color]);
+  HPEN hPen;
+  if (color.id < vpColor::id_unknown)
+    hPen = CreatePen(PS_SOLID, thickness, colors[color.id]);
+  else {
+    COLORREF gdicolor = RGB(color.R, color.G, color.B);
+    hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+  }
 
   //create an hollow brush
   LOGBRUSH lBrush;
@@ -556,7 +591,7 @@ void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
   \param color The text's color
 */
 void vpGDIRenderer::drawText(const vpImagePoint &ip, const char * text,
-			     vpColor::vpColorType color)
+			     vpColor color)
 {
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
@@ -570,7 +605,12 @@ void vpGDIRenderer::drawText(const vpImagePoint &ip, const char * text,
   SelectObject(hDCMem, hFont);
 
   //set the text color
-  SetTextColor(hDCMem, colors[color]);
+  if (color.id < vpColor::id_unknown)
+    SetTextColor(hDCMem, colors[color.id]);
+  else {
+    COLORREF gdicolor = RGB(color.R, color.G, color.B);
+    SetTextColor(hDCMem, gdicolor);
+  }
 
   //we don't use the bkColor
   SetBkMode(hDCMem, TRANSPARENT);
@@ -603,7 +643,7 @@ void vpGDIRenderer::drawText(const vpImagePoint &ip, const char * text,
   \param thickness width of the cross
 */
 void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
-			      vpColor::vpColorType color, unsigned int thickness)
+			      vpColor color, unsigned int thickness)
 {
   unsigned int half_size = size / 2;
 
@@ -616,7 +656,13 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
     HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
     //create the pen
-    HPEN hPen = CreatePen(PS_SOLID, thickness, colors[color]);
+    HPEN hPen;
+    if (color.id < vpColor::id_unknown)
+      hPen = CreatePen(PS_SOLID, thickness, colors[color.id]);
+    else {
+      COLORREF gdicolor = RGB(color.R, color.G, color.B);
+      hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+    }
 
     //select this bmp in memory
     EnterCriticalSection(&CriticalSection);
@@ -661,7 +707,7 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
 */
 void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, 
 			      const vpImagePoint &ip2,
-			      vpColor::vpColorType color,
+			      vpColor color,
 			      unsigned int w,unsigned int h, unsigned int thickness)
 {
   int _h = h;
@@ -680,7 +726,13 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
   HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen = CreatePen(PS_SOLID, thickness, colors[color]);
+  HPEN hPen;
+  if (color.id < vpColor::id_unknown)
+    hPen = CreatePen(PS_SOLID, thickness, colors[color.id]);
+  else {
+    COLORREF gdicolor = RGB(color.R, color.G, color.B);
+    hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+  }
 
   //select this bmp in memory
   EnterCriticalSection(&CriticalSection);

@@ -281,53 +281,43 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   gc = gdk_gc_new(widget->window);
 
   /* get the colormap  */
-  GdkColormap  *colormap;
   colormap = gdk_window_get_colormap(widget->window);
 
-
-  col = new GdkColor *[vpColor::none] ;
+  col = new GdkColor *[vpColor::id_unknown] ; // id_unknown = number of predefined colors
 
   /* Create color */
   gdk_color_parse("blue",&blue);
+  printf("%d %d %d %d", blue.pixel, blue.red, blue.green, blue.blue);
   gdk_colormap_alloc_color(colormap,&blue,FALSE,TRUE);
-  col[vpColor::blue] = &blue ;
+  col[vpColor::id_blue] = &blue ;
 
   gdk_color_parse("red",&red);
   gdk_colormap_alloc_color(colormap,&red,FALSE,TRUE);
-  col[vpColor::red] = &red ;
+  col[vpColor::id_red] = &red ;
 
   gdk_color_parse("green",&green);
   gdk_colormap_alloc_color(colormap,&green,FALSE,TRUE);
-  col[vpColor::green] = &green ;
+  col[vpColor::id_green] = &green ;
 
   gdk_color_parse("yellow",&yellow);
   gdk_colormap_alloc_color(colormap,&yellow,FALSE,TRUE);
-  col[vpColor::yellow] = &yellow ;
+  col[vpColor::id_yellow] = &yellow ;
 
   gdk_color_parse("cyan",&cyan);
   gdk_colormap_alloc_color(colormap,&cyan,FALSE,TRUE);
-  col[vpColor::cyan] = &cyan ;
-
-  gdk_color_parse("magenta",&magenta);
-  gdk_colormap_alloc_color(colormap,&magenta,FALSE,TRUE);
-
-  gdk_color_parse("goldenrod",&goldenrod);
-  gdk_colormap_alloc_color(colormap,&goldenrod,FALSE,TRUE);
-
-  gdk_color_parse("coral",&coral);
-  gdk_colormap_alloc_color(colormap,&coral,FALSE,TRUE);
+  col[vpColor::id_cyan] = &cyan ;
 
   gdk_color_parse("orange",&orange);
   gdk_colormap_alloc_color(colormap,&orange,FALSE,TRUE);
-  col[vpColor::orange] = &orange ;
+  col[vpColor::id_orange] = &orange ;
 
   gdk_color_parse("white",&white);
   gdk_colormap_alloc_color(colormap,&white,FALSE,TRUE);
-  col[vpColor::white] = &white ;
+  col[vpColor::id_white] = &white ;
 
   gdk_color_parse("black",&black);
   gdk_colormap_alloc_color(colormap,&black,FALSE,TRUE);
-  col[vpColor::black] = &black ;
+  col[vpColor::id_black] = &black ;
 
   /* Chargement des polices */
   Police1 = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");
@@ -553,7 +543,7 @@ void vpDisplayGTK::flushDisplay()
 /*!
   \warning Not implemented yet.
 */
-void vpDisplayGTK::clearDisplay(vpColor::vpColorType /* color */)
+void vpDisplayGTK::clearDisplay(vpColor /* color */)
 {
   vpTRACE("Not implemented") ;
 }
@@ -567,7 +557,7 @@ void vpDisplayGTK::clearDisplay(vpColor::vpColorType /* color */)
 */
 void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1, 
 				  const vpImagePoint &ip2,
-				  vpColor::vpColorType color,
+				  vpColor color,
 				  unsigned int w, unsigned int h,
 				  unsigned int thickness)
 {
@@ -632,11 +622,20 @@ void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1,
 */
 void vpDisplayGTK::displayCharString ( const vpImagePoint &ip,
 				       const char *text, 
-				       vpColor::vpColorType color )
+				       vpColor color )
 {
   if (GTKinitialized)
   {
-    gdk_gc_set_foreground(gc,col[color]);
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(gc, col[color.id]);
+    else {
+      gdkcolor.red   = 256 * color.R;
+      gdkcolor.green = 256 * color.G;
+      gdkcolor.blue  = 256 * color.B;
+      gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
+      gdk_gc_set_foreground(gc, &gdkcolor);     
+    }
+
     gdk_draw_string(background, Police2, gc,
 		    vpMath::round( ip.get_u() ), 
 		    vpMath::round( ip.get_v() ),
@@ -661,7 +660,7 @@ void vpDisplayGTK::displayCharString ( const vpImagePoint &ip,
 */
 void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
 				   unsigned int radius,
-				   vpColor::vpColorType color,
+				   vpColor color,
 				   bool fill,
 				   unsigned int thickness )
 {
@@ -669,7 +668,16 @@ void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
   {
     if ( thickness == 1 ) thickness = 0;
 
-    gdk_gc_set_foreground(gc, col[color]);
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(gc, col[color.id]);
+    else {
+      gdkcolor.red   = 256 * color.R;
+      gdkcolor.green = 256 * color.G;
+      gdkcolor.blue  = 256 * color.B;
+      gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
+      gdk_gc_set_foreground(gc, &gdkcolor);     
+    }
+
     gdk_gc_set_line_attributes(gc, thickness,
 			       GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
@@ -701,7 +709,7 @@ void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
 */
 void vpDisplayGTK::displayCross ( const vpImagePoint &ip, 
 				  unsigned int size, 
-				  vpColor::vpColorType color,
+				  vpColor color,
 				  unsigned int thickness)
 {
   if (GTKinitialized)
@@ -746,7 +754,7 @@ void vpDisplayGTK::displayCross ( const vpImagePoint &ip,
 */
 void vpDisplayGTK::displayDotLine ( const vpImagePoint &ip1, 
 				    const vpImagePoint &ip2,
-				    vpColor::vpColorType color, 
+				    vpColor color, 
 				    unsigned int thickness )
 {
 
@@ -754,7 +762,16 @@ void vpDisplayGTK::displayDotLine ( const vpImagePoint &ip1,
   {
     if ( thickness == 1 ) thickness = 0;
 
-    gdk_gc_set_foreground(gc, col[color]);
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(gc, col[color.id]);
+    else {
+      gdkcolor.red   = 256 * color.R;
+      gdkcolor.green = 256 * color.G;
+      gdkcolor.blue  = 256 * color.B;
+      gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
+      gdk_gc_set_foreground(gc, &gdkcolor);     
+    }
+
     gdk_gc_set_line_attributes(gc, thickness, 
 			       GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT,
                                GDK_JOIN_BEVEL) ;
@@ -783,14 +800,23 @@ void vpDisplayGTK::displayDotLine ( const vpImagePoint &ip1,
 */
 void vpDisplayGTK::displayLine ( const vpImagePoint &ip1, 
 				 const vpImagePoint &ip2,
-				 vpColor::vpColorType color, 
+				 vpColor color, 
 				 unsigned int thickness )
 {
   if (GTKinitialized)
   {
     if ( thickness == 1 ) thickness = 0;
 
-    gdk_gc_set_foreground(gc, col[color]);
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(gc, col[color.id]);
+    else {
+      gdkcolor.red   = 256 * color.R;
+      gdkcolor.green = 256 * color.G;
+      gdkcolor.blue  = 256 * color.B;
+      gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
+      gdk_gc_set_foreground(gc, &gdkcolor);     
+    }
+
     gdk_gc_set_line_attributes(gc, thickness,
 			       GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
@@ -814,11 +840,20 @@ void vpDisplayGTK::displayLine ( const vpImagePoint &ip1,
   \param color : Point color.
 */
 void vpDisplayGTK::displayPoint ( const vpImagePoint &ip,
-				  vpColor::vpColorType color )
+				  vpColor color )
 {
   if (GTKinitialized)
   {
-    gdk_gc_set_foreground(gc, col[color]);
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(gc, col[color.id]);
+    else {
+      gdkcolor.red   = 256 * color.R;
+      gdkcolor.green = 256 * color.G;
+      gdkcolor.blue  = 256 * color.B;
+      gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
+      gdk_gc_set_foreground(gc, &gdkcolor);     
+    }
+
     gdk_draw_point(background,gc, 
 		   vpMath::round( ip.get_u() ), 
 		   vpMath::round( ip.get_v() ) );
@@ -848,14 +883,22 @@ void vpDisplayGTK::displayPoint ( const vpImagePoint &ip,
 void
 vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 				 unsigned int width, unsigned int height,
-				 vpColor::vpColorType color, bool fill,
+				 vpColor color, bool fill,
 				 unsigned int thickness )
 {
   if (GTKinitialized)
   {
     if ( thickness == 1 ) thickness = 0;
 
-    gdk_gc_set_foreground(gc, col[color]);
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(gc, col[color.id]);
+    else {
+      gdkcolor.red   = 256 * color.R;
+      gdkcolor.green = 256 * color.G;
+      gdkcolor.blue  = 256 * color.B;
+      gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
+      gdk_gc_set_foreground(gc, &gdkcolor);     
+    }
     gdk_gc_set_line_attributes(gc, thickness,
 			       GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
@@ -898,14 +941,23 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 void
 vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 				 const vpImagePoint &bottomRight,
-				 vpColor::vpColorType color, bool fill,
+				 vpColor color, bool fill,
 				 unsigned int thickness )
 {
   if (GTKinitialized)
   {
     if ( thickness == 1 ) thickness = 0;
 
-    gdk_gc_set_foreground(gc, col[color]);
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(gc, col[color.id]);
+    else {
+      gdkcolor.red   = 256 * color.R;
+      gdkcolor.green = 256 * color.G;
+      gdkcolor.blue  = 256 * color.B;
+      gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
+      gdk_gc_set_foreground(gc, &gdkcolor);     
+    }
+
     gdk_gc_set_line_attributes(gc, thickness,
 			       GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
@@ -950,12 +1002,21 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 */
 void
 vpDisplayGTK::displayRectangle ( const vpRect &rectangle,
-				 vpColor::vpColorType color, bool fill,
+				 vpColor color, bool fill,
 				 unsigned int thickness )
 {
   if (GTKinitialized)
   {
-    gdk_gc_set_foreground(gc, col[color]);
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(gc, col[color.id]);
+    else {
+      gdkcolor.red   = 256 * color.R;
+      gdkcolor.green = 256 * color.G;
+      gdkcolor.blue  = 256 * color.B;
+      gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
+      gdk_gc_set_foreground(gc, &gdkcolor);     
+    }
+
     if ( thickness == 1 ) thickness = 0;
 
     gdk_gc_set_line_attributes(gc, thickness, GDK_LINE_SOLID, GDK_CAP_BUTT,

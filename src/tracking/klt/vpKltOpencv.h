@@ -147,7 +147,7 @@ class VISP_EXPORT vpKltOpencv
 
   //Draw the tracked features on the given image
   void display(const vpImage<unsigned char> &I,
-	       vpColor::vpColorType color = vpColor::red);
+	       vpColor color = vpColor::red);
 
   //Seters
   /* Should be used only before initTracking */

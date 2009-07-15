@@ -131,10 +131,10 @@ class VISP_EXPORT vpBasicFeature
  public:
   virtual void display(const vpCameraParameters &cam,
 		       vpImage<unsigned char> &I,
-		       vpColor::vpColorType color=vpColor::green) const = 0;
+		       vpColor color=vpColor::green) const = 0;
   virtual void display(const vpCameraParameters &cam,
                        vpImage<vpRGBa> &I,
-                       vpColor::vpColorType color=vpColor::green) const = 0;
+                       vpColor color=vpColor::green) const = 0;
 
 
  protected:

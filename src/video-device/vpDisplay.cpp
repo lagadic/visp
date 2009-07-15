@@ -285,7 +285,7 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
                           double size, 
-			  vpColor::vpColorType color)
+			  vpColor color)
 {
   // used by display
   vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
@@ -352,7 +352,7 @@ void
 vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
-                          double size, vpColor::vpColorType color)
+                          double size, vpColor color)
 {
   // used by display
   vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
@@ -406,7 +406,7 @@ vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
                           const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          vpColor::vpColorType color,
+                          vpColor color,
                           unsigned int w,unsigned int h,
 			  unsigned int thickness )
 {
@@ -436,7 +436,7 @@ vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
                           const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          vpColor::vpColorType color,
+                          vpColor color,
                           unsigned int w,unsigned int h,
 			  unsigned int thickness )
 {
@@ -467,7 +467,7 @@ vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
                           int i1, int j1, int i2, int j2,
-                          vpColor::vpColorType color,
+                          vpColor color,
 			  unsigned int w, unsigned int h,
 			  unsigned int thickness)
 {
@@ -505,7 +505,7 @@ vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
                           int i1, int j1, int i2, int j2,
-                          vpColor::vpColorType color,
+                          vpColor color,
 			  unsigned int w, unsigned int h,
 			  unsigned int thickness)
 {
@@ -546,7 +546,7 @@ vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
                                const vpImagePoint &ip, const char *string,
-			       vpColor::vpColorType color )
+			       vpColor color )
 {
   try
   {
@@ -579,7 +579,7 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
                                const vpImagePoint &ip, const char *string,
-			       vpColor::vpColorType color )
+			       vpColor color )
 {
   try
   {
@@ -612,7 +612,7 @@ vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
                                int i, int j, const char *string,
-			       vpColor::vpColorType color)
+			       vpColor color)
 {
   try
   {
@@ -649,7 +649,7 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
                                int i, int j, const char *string,
-			       vpColor::vpColorType color)
+			       vpColor color)
 {
   try
   {
@@ -681,7 +681,7 @@ vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
                            const vpImagePoint &center, unsigned int radius,
-			   vpColor::vpColorType color,
+			   vpColor color,
 			   bool fill,
 			   unsigned int thickness)
 {
@@ -711,7 +711,7 @@ vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
                            const vpImagePoint &center, unsigned int radius,
-			   vpColor::vpColorType color,
+			   vpColor color,
 			   bool fill,
 			   unsigned int thickness )
 {
@@ -743,7 +743,7 @@ vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
                            int i, int j,  unsigned int radius,
-			   vpColor::vpColorType color,
+			   vpColor color,
 			   bool fill,
 			   unsigned int thickness)
 {
@@ -781,7 +781,7 @@ vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
                            int i, int j, unsigned int radius,
-			   vpColor::vpColorType color,
+			   vpColor color,
 			   bool fill,
 			   unsigned int thickness)
 {
@@ -812,7 +812,7 @@ vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
                                const vpImagePoint &ip, unsigned int size,
-			       vpColor::vpColorType color, 
+			       vpColor color, 
 			       unsigned int thickness )
 {
   try
@@ -839,7 +839,7 @@ void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
                                const vpImagePoint &ip, unsigned int size,
-			       vpColor::vpColorType color, 
+			       vpColor color, 
 			       unsigned int thickness )
 {
   try
@@ -865,7 +865,7 @@ void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
                                int i, int j,
-                               unsigned int size, vpColor::vpColorType color, 
+                               unsigned int size, vpColor color, 
 			       unsigned int thickness )
 {
   try
@@ -896,7 +896,7 @@ void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
                                int i, int j,
-			       unsigned int size, vpColor::vpColorType color, 
+			       unsigned int size, vpColor color, 
 			       unsigned int thickness )
 {
   try
@@ -926,7 +926,7 @@ void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
 void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
                                  const vpImagePoint &ip1, 
 				 const vpImagePoint &ip2,
-				 vpColor::vpColorType color, 
+				 vpColor color, 
 				 unsigned int thickness )
 {
   try
@@ -953,7 +953,7 @@ void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
 void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
                                  const vpImagePoint &ip1, 
 				 const vpImagePoint &ip2,
-				 vpColor::vpColorType color, 
+				 vpColor color, 
 				 unsigned int thickness )
 {
   try
@@ -980,7 +980,7 @@ void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
                                  int i1, int j1, int i2, int j2,
-                                 vpColor::vpColorType color, 
+                                 vpColor color, 
 				 unsigned int thickness )
 {
   try
@@ -1013,7 +1013,7 @@ void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
 void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
                                  int i1, int j1,
                                  int i2, int j2,
-                                 vpColor::vpColorType color, 
+                                 vpColor color, 
 				 unsigned int thickness )
 {
   try
@@ -1045,7 +1045,7 @@ void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
 void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
                               const vpImagePoint &ip1, 
 			      const vpImagePoint &ip2,
-			      vpColor::vpColorType color, 
+			      vpColor color, 
 			      unsigned int thickness )
 {
 
@@ -1074,7 +1074,7 @@ void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
                               int i1, int j1, int i2, int j2,
-			      vpColor::vpColorType color, 
+			      vpColor color, 
 			      unsigned int thickness )
 {
 
@@ -1110,7 +1110,7 @@ void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
 void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
                               int i1, int j1,
                               int i2, int j2,
-			      vpColor::vpColorType color, 
+			      vpColor color, 
 			      unsigned int thickness )
 {
 
@@ -1143,7 +1143,7 @@ void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
 void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
                               const vpImagePoint &ip1, 
 			      const vpImagePoint &ip2,
-			      vpColor::vpColorType color, 
+			      vpColor color, 
 			      unsigned int thickness )
 {
 
@@ -1169,7 +1169,7 @@ void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
                                const vpImagePoint &ip,
-			       vpColor::vpColorType color )
+			       vpColor color )
 {
   try
   {
@@ -1192,7 +1192,7 @@ void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
                                const vpImagePoint &ip,
-			       vpColor::vpColorType color )
+			       vpColor color )
 {
   try
   {
@@ -1216,7 +1216,7 @@ void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
                                int i, int j,
-                               vpColor::vpColorType color )
+                               vpColor color )
 {
   try
   {
@@ -1244,7 +1244,7 @@ void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
                                int i, int j,
-                               vpColor::vpColorType color )
+                               vpColor color )
 {
   try
   {
@@ -1281,7 +1281,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               const vpImagePoint &topLeft,
 			      unsigned int width, unsigned int height,
-			      vpColor::vpColorType color, bool fill,
+			      vpColor color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1318,7 +1318,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               const vpImagePoint &topLeft,
 			      const vpImagePoint &bottomRight,
-			      vpColor::vpColorType color, bool fill,
+			      vpColor color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1352,7 +1352,7 @@ vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               const vpRect &rectangle,
-			      vpColor::vpColorType color, bool fill,
+			      vpColor color, bool fill,
 			      unsigned int thickness )
 {
   try
@@ -1390,7 +1390,7 @@ vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
 			    const vpImagePoint &center,
 			    float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType color,
+			    vpColor color,
 			    unsigned int thickness)
 {
   try
@@ -1444,7 +1444,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
                               const vpImagePoint &topLeft,
 			      unsigned int width, unsigned int height,
-			      vpColor::vpColorType color, bool fill,
+			      vpColor color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1479,7 +1479,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
                               const vpImagePoint &topLeft,
 			      const vpImagePoint &bottomRight,
-			      vpColor::vpColorType color, bool fill,
+			      vpColor color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1513,7 +1513,7 @@ vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
                               const vpRect &rectangle,
-			      vpColor::vpColorType color, bool fill,
+			      vpColor color, bool fill,
 			      unsigned int thickness )
 {
   try
@@ -1551,7 +1551,7 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
 			    const vpImagePoint &center,
 			    float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType color,
+			    vpColor color,
 			    unsigned int thickness)
 {
   try
@@ -1607,7 +1607,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               int i, int j,
 			      unsigned int width, unsigned int height,
-                              vpColor::vpColorType color, bool fill,
+                              vpColor color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1647,7 +1647,7 @@ void
 vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
 			    unsigned int i, unsigned int j, float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType color,unsigned int thickness)
+			    vpColor color,unsigned int thickness)
 {
   try
     {
@@ -1699,7 +1699,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
                               int i, int j,
 			      unsigned int width, unsigned int height,
-                              vpColor::vpColorType color, bool fill,
+                              vpColor color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1738,7 +1738,7 @@ void
 vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
 			    unsigned int i, unsigned int j, float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType color, unsigned int thickness)
+			    vpColor color, unsigned int thickness)
 {
   try
     {
@@ -2889,7 +2889,7 @@ vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
 
   \deprecated This method is deprecated. You should use
   vpDisplay::displayArrow(const vpImage<unsigned char> &, const vpImagePoint &,
-  const vpImagePoint &, vpColor::vpColorType, unsigned int, unsigned
+  const vpImagePoint &, vpColor, unsigned int, unsigned
   int, unsigned int)
 
   Display an arrow from coordinates (u1,v1) to (u2,v2) in the display
@@ -2898,7 +2898,7 @@ vpDisplay::getClickUp_uv ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayArrow_uv ( const vpImage<unsigned char> &I,
                              int u1, int v1, int u2, int v2,
-                             vpColor::vpColorType col,
+                             vpColor col,
                              unsigned int L,unsigned int l )
 {
   try
@@ -2923,7 +2923,7 @@ vpDisplay::displayArrow_uv ( const vpImage<unsigned char> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayArrow(const vpImage<vpRGBa> &, const vpImagePoint &,
-  const vpImagePoint &, vpColor::vpColorType, unsigned int, unsigned
+  const vpImagePoint &, vpColor, unsigned int, unsigned
   int, unsigned int)
  
   Display an arrow from coordinates  (u1,v1) to (u2,v2) in the display
@@ -2932,7 +2932,7 @@ vpDisplay::displayArrow_uv ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayArrow_uv ( const vpImage<vpRGBa> &I,
                              int u1, int v1, int u2, int v2,
-                             vpColor::vpColorType col,
+                             vpColor col,
                              unsigned int L,unsigned int l )
 {
   try
@@ -2960,7 +2960,7 @@ vpDisplay::displayArrow_uv ( const vpImage<vpRGBa> &I,
 
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCharString(const vpImage<unsigned char> &, const
-  vpImagePoint &, const char *, vpColor::vpColorType) instead.
+  vpImagePoint &, const char *, vpColor) instead.
 
   Display a string at coordinates (i,j) in the display
   window overlay.
@@ -2978,7 +2978,7 @@ vpDisplay::displayArrow_uv ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
                                   int u, int v, const char *s,
-                                  vpColor::vpColorType c )
+                                  vpColor c )
 {
   try
   {
@@ -3001,7 +3001,7 @@ vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
 
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCharString(const vpImage<vpRGBa> &, const vpImagePoint
-  &, const char *, vpColor::vpColorType) instead.
+  &, const char *, vpColor) instead.
 
   Display a string at coordinates (i,j) in the display
   window overlay.
@@ -3019,7 +3019,7 @@ vpDisplay::displayCharString_uv ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
                                   int u, int v, const char *s,
-                                  vpColor::vpColorType c )
+                                  vpColor c )
 {
   try
   {
@@ -3041,7 +3041,7 @@ vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
 /*!  
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCircle(const vpImage<unsigned char> &, const
-  vpImagePoint &, unsigned int, vpColor::vpColorType, bool, unsigned
+  vpImagePoint &, unsigned int, vpColor, bool, unsigned
   int) instead.
 
   Display a circle at coordinates (u,v) in the display window.
@@ -3050,7 +3050,7 @@ vpDisplay::displayCharString_uv ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCircle_uv ( const vpImage<unsigned char> &I,
                               int u, int v, unsigned int r,
-                              vpColor::vpColorType col )
+                              vpColor col )
 {
   try
   {
@@ -3071,7 +3071,7 @@ vpDisplay::displayCircle_uv ( const vpImage<unsigned char> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCircle(const vpImage<vpRGBa> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, bool, unsigned int) instead.
+  unsigned int, vpColor, bool, unsigned int) instead.
 
   Display a circle at coordinates (u,v) in the display window.
   circle radius is given in pixel by paramter r
@@ -3079,7 +3079,7 @@ vpDisplay::displayCircle_uv ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCircle_uv ( const vpImage<vpRGBa> &I,
                               int u, int v, unsigned int r,
-                              vpColor::vpColorType col )
+                              vpColor col )
 {
   try
   {
@@ -3102,14 +3102,14 @@ vpDisplay::displayCircle_uv ( const vpImage<vpRGBa> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCross(const vpImage<unsigned char> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, unsigned int) instead.
+  unsigned int, vpColor, unsigned int) instead.
 
   Display a large cross at coordinates (i,j) in the display window
 */
 void
 vpDisplay::displayCrossLarge ( const vpImage<unsigned char> &I,
                                int i, int j,
-                               unsigned int size,vpColor::vpColorType col )
+                               unsigned int size,vpColor col )
 {
   try
   {
@@ -3132,14 +3132,14 @@ vpDisplay::displayCrossLarge ( const vpImage<unsigned char> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCross(const vpImage<vpRGBa> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, unsigned int) instead.
+  unsigned int, vpColor, unsigned int) instead.
 
   Display a large cross at coordinates (i,j) in the display window
 */
 void
 vpDisplay::displayCrossLarge ( const vpImage<vpRGBa> &I,
                                int i, int j,
-                               unsigned int size,vpColor::vpColorType col )
+                               unsigned int size,vpColor col )
 {
   try
   {
@@ -3160,13 +3160,13 @@ vpDisplay::displayCrossLarge ( const vpImage<vpRGBa> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCross(const vpImage<unsigned char> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, unsigned int) instead.
+  unsigned int, vpColor, unsigned int) instead.
 
   Display a cross at coordinates (u,v) in the display window
 */
 void vpDisplay::displayCross_uv ( const vpImage<unsigned char> &I,
                                   int u, int v,
-                                  unsigned int size,vpColor::vpColorType col )
+                                  unsigned int size,vpColor col )
 {
   try
   {
@@ -3187,14 +3187,14 @@ void vpDisplay::displayCross_uv ( const vpImage<unsigned char> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCross(const vpImage<unsigned char> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, unsigned int) instead.
+  unsigned int, vpColor, unsigned int) instead.
 
   Display a large cross at coordinates (u,v) in the display window
 */
 void
 vpDisplay::displayCrossLarge_uv ( const vpImage<unsigned char> &I,
                                   int u, int v,
-                                  unsigned int size,vpColor::vpColorType col )
+                                  unsigned int size,vpColor col )
 {
   try
   {
@@ -3216,13 +3216,13 @@ vpDisplay::displayCrossLarge_uv ( const vpImage<unsigned char> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCross(const vpImage<vpRGBa> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, unsigned int) instead.
+  unsigned int, vpColor, unsigned int) instead.
 
   Display a cross at coordinates (u,v) in the display window
 */
 void vpDisplay::displayCross_uv ( const vpImage<vpRGBa> &I,
                                   int u, int v,
-                                  unsigned int size,vpColor::vpColorType col )
+                                  unsigned int size,vpColor col )
 {
   try
   {
@@ -3243,14 +3243,14 @@ void vpDisplay::displayCross_uv ( const vpImage<vpRGBa> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayCross(const vpImage<vpRGBa> &, const vpImagePoint &,
-  unsigned int, vpColor::vpColorType, unsigned int) instead.
+  unsigned int, vpColor, unsigned int) instead.
 
   Display a large cross at coordinates (u,v) in the display window
 */
 void
 vpDisplay::displayCrossLarge_uv ( const vpImage<vpRGBa> &I,
                                   int u, int v,
-                                  unsigned int size,vpColor::vpColorType col )
+                                  unsigned int size,vpColor col )
 {
   try
   {
@@ -3274,7 +3274,7 @@ vpDisplay::displayCrossLarge_uv ( const vpImage<vpRGBa> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayDotLine(const vpImage<unsigned char> &, const
-  vpImagePoint &, const vpImagePoint &, vpColor::vpColorType, unsigned
+  vpImagePoint &, const vpImagePoint &, vpColor, unsigned
   int)
 
   Display a dotted line from coordinates (u1,v1) to (u2,v2) in the display
@@ -3282,7 +3282,7 @@ vpDisplay::displayCrossLarge_uv ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayDotLine_uv ( const vpImage<unsigned char> &I,
                                     int u1, int v1, int u2, int v2,
-                                    vpColor::vpColorType col, unsigned int e2 )
+                                    vpColor col, unsigned int e2 )
 {
   try
   {
@@ -3307,7 +3307,7 @@ void vpDisplay::displayDotLine_uv ( const vpImage<unsigned char> &I,
 
   \deprecated This method is deprecated. You should use
   vpDisplay::displayDotLine(const vpImage<vpRGBa> &, const
-  vpImagePoint &, const vpImagePoint &, vpColor::vpColorType, unsigned
+  vpImagePoint &, const vpImagePoint &, vpColor, unsigned
   int)
 
   Display a dotted line from coordinates  (u1,v1) to (u2,v2) in the display
@@ -3315,7 +3315,7 @@ void vpDisplay::displayDotLine_uv ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayDotLine_uv ( const vpImage<vpRGBa> &I,
                                     int u1, int v1, int u2, int v2,
-                                    vpColor::vpColorType col, unsigned int e2 )
+                                    vpColor col, unsigned int e2 )
 {
   try
   {
@@ -3340,7 +3340,7 @@ void vpDisplay::displayDotLine_uv ( const vpImage<vpRGBa> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayLine(const vpImage<unsigned char> &, const
-  vpImagePoint &, const vpImagePoint &, vpColor::vpColorType, unsigned
+  vpImagePoint &, const vpImagePoint &, vpColor, unsigned
   int)
 
   Display a line from coordinates (u1,v1) to (u2,v2) in the display window.
@@ -3348,7 +3348,7 @@ void vpDisplay::displayDotLine_uv ( const vpImage<vpRGBa> &I,
 void vpDisplay::displayLine_uv ( const vpImage<unsigned char> &I,
                                  int u1, int v1,
                                  int u2, int v2,
-                                 vpColor::vpColorType col, unsigned int e )
+                                 vpColor col, unsigned int e )
 {
 
   try
@@ -3373,14 +3373,14 @@ void vpDisplay::displayLine_uv ( const vpImage<unsigned char> &I,
 /*!
   \deprecated This method is deprecated. You should use
   vpDisplay::displayLine(const vpImage<vpRGBa> &, const
-  vpImagePoint &, const vpImagePoint &, vpColor::vpColorType, unsigned
+  vpImagePoint &, const vpImagePoint &, vpColor, unsigned
   int)
 
   Display a line from coordinates (u1,v1) to (u2,v2) in the display window.
 */
 void vpDisplay::displayLine_uv ( const vpImage<vpRGBa> &I,
                                  int u1, int v1, int u2, int v2,
-                                 vpColor::vpColorType col, unsigned int e )
+                                 vpColor col, unsigned int e )
 {
 
   try
@@ -3405,14 +3405,13 @@ void vpDisplay::displayLine_uv ( const vpImage<vpRGBa> &I,
 
 /*!
   \deprecated This method is deprecated. You should use
-  vpDisplay::vpImage<unsigned char> &, const vpImagePoint &,
-  vpColor::vpColorType)
+  vpDisplay::vpImage<unsigned char> &, const vpImagePoint &, vpColor)
 
   Display a point at coordinates (u,v) in the display window
 */
 void vpDisplay::displayPoint_uv ( const vpImage<unsigned char> &I,
                                   int u, int v,
-                                  vpColor::vpColorType col )
+                                  vpColor col )
 {
   try
   {
@@ -3434,14 +3433,13 @@ void vpDisplay::displayPoint_uv ( const vpImage<unsigned char> &I,
 
 /*!
   \deprecated This method is deprecated. You should use
-  vpDisplay::vpImage<vpRGBa> &, const vpImagePoint &,
-  vpColor::vpColorType)
+  vpDisplay::vpImage<vpRGBa> &, const vpImagePoint &, vpColor)
 
   Display a point at coordinates (u,v) in the display window
 */
 void vpDisplay::displayPoint_uv ( const vpImage<vpRGBa> &I,
                                   int u, int v,
-                                  vpColor::vpColorType col )
+                                  vpColor col )
 {
   try
   {
@@ -3467,7 +3465,7 @@ void vpDisplay::displayPoint_uv ( const vpImage<vpRGBa> &I,
 
   \deprecated This method is deprecated. You should use
   vpDisplay::const vpImage<unsigned char> &, const vpImagePoint &,
-  float, unsigned int, unsigned int, vpColor::vpColorType, unsigned) instead.
+  float, unsigned int, unsigned int, vpColor, unsigned) instead.
 
   Display a rectangle in the display window.  The rectangle is defined
   by its center, its orientation (angle) and its size. The rectangle
@@ -3487,7 +3485,7 @@ void
 vpDisplay::displayRectangle_uv(const vpImage<unsigned char> &I,
 			       unsigned int u, unsigned int v, float angle,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType col,unsigned int e)
+			       vpColor col,unsigned int e)
 {
   try
     {
@@ -3508,7 +3506,7 @@ vpDisplay::displayRectangle_uv(const vpImage<unsigned char> &I,
 
   \deprecated This method is deprecated. You should use
   vpDisplay::const vpImage<vpRGBa> &, const vpImagePoint &,
-  float, unsigned int, unsigned int, vpColor::vpColorType, unsigned) instead.
+  float, unsigned int, unsigned int, vpColor, unsigned) instead.
 
   Display a rectangle in the display window.  The rectangle is defined
   by its center, its orientation (angle) and its size. The rectangle
@@ -3528,7 +3526,7 @@ void
 vpDisplay::displayRectangle_uv(const vpImage<vpRGBa> &I,
 			       unsigned int u, unsigned int v, float angle,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType col,unsigned int e)
+			       vpColor col,unsigned int e)
 {
   try
     {

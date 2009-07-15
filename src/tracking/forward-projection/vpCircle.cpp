@@ -267,7 +267,7 @@ vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
 
 void vpCircle::display(vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
-		       const vpColor::vpColorType color)
+		       const vpColor color)
 {
   vpFeatureDisplay::displayEllipse(p[0],p[1],p[2],p[3], p[4],
 				   cam, I, color) ;
@@ -277,7 +277,7 @@ void vpCircle::display(vpImage<unsigned char> &I,
 void vpCircle::display(vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
-		       const vpColor::vpColorType color)
+		       const vpColor color)
 {
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;

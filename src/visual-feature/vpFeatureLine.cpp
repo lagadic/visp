@@ -503,7 +503,7 @@ vpFeatureLine *vpFeatureLine::duplicate() const
 void
 vpFeatureLine::display( const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			vpColor::vpColorType color) const
+			vpColor color) const
 {
   try{
     double rho,theta ;
@@ -532,7 +532,7 @@ vpFeatureLine::display( const vpCameraParameters &cam,
 void
 vpFeatureLine::display( const vpCameraParameters &cam,
                         vpImage<vpRGBa> &I,
-                        vpColor::vpColorType color) const
+                        vpColor color) const
 {
   try{
     double rho,theta ;

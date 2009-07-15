@@ -71,7 +71,7 @@ public:
 
   vpMePath();
   virtual ~vpMePath();
-  void display(vpImage<unsigned char> &I, vpColor::vpColorType col);
+  void display(vpImage<unsigned char> &I, vpColor col);
   void track(vpImage<unsigned char>& Im);
   void initTracking(vpImage<unsigned char> &I);
   void initTracking(vpImage<unsigned char> &I, int n,

@@ -139,11 +139,10 @@ private:
   int		planes;
   XEvent	event;
   Pixmap	pixmap;
-  unsigned char *bitmap_bis ;
-  unsigned long	x_color[vpColor::none];
+  unsigned long	*x_color; // Array of predefined colors
   int screen_depth  ;
   unsigned short  colortable[256];
-  XColor        color;
+  XColor        xcolor;
   XGCValues     values;
   int size ;
   bool ximage_data_init;
@@ -180,28 +179,28 @@ protected:
   void setTitle(const char *title) ;
   void setWindowPosition(int winx, int winy);
 
-  void clearDisplay(vpColor::vpColorType color=vpColor::white) ;
+  void clearDisplay(vpColor color=vpColor::white) ;
 
   void closeDisplay() ;
 
   void displayArrow(const vpImagePoint &ip1, 
 		    const vpImagePoint &ip2,
-		    vpColor::vpColorType color=vpColor::white,
+		    vpColor color=vpColor::white,
 		    unsigned int w=4,unsigned int h=2,
 		    unsigned int thickness=1) ;
 
   void displayCharString(const vpImagePoint &ip, const char *text,
-			 vpColor::vpColorType color=vpColor::green) ;
+			 vpColor color=vpColor::green) ;
 
   void displayCircle(const vpImagePoint &center, unsigned int radius,
-		     vpColor::vpColorType color,
+		     vpColor color,
 		     bool fill = false,
 		     unsigned int thickness=1);
   void displayCross(const vpImagePoint &ip, unsigned int size,
-		    vpColor::vpColorType color, unsigned int thickness=1) ;
+		    vpColor color, unsigned int thickness=1) ;
   void displayDotLine(const vpImagePoint &ip1, 
 		      const vpImagePoint &ip2,
-		      vpColor::vpColorType color, unsigned int thickness=1) ;
+		      vpColor color, unsigned int thickness=1) ;
 
   void displayImage(const vpImage<vpRGBa> &I) ;
   void displayImage(const vpImage<unsigned char> &I) ;
@@ -209,19 +208,19 @@ protected:
 
   void displayLine(const vpImagePoint &ip1, 
 		   const vpImagePoint &ip2,
-		   vpColor::vpColorType color, unsigned int thickness=1) ;
-  void displayPoint(const vpImagePoint &ip, vpColor::vpColorType color) ;
+		   vpColor color, unsigned int thickness=1) ;
+  void displayPoint(const vpImagePoint &ip, vpColor color) ;
 
   void displayRectangle(const vpImagePoint &topLeft,
 			unsigned int width, unsigned int height,
-			vpColor::vpColorType color, bool fill = false,
+			vpColor color, bool fill = false,
 			unsigned int thickness=1) ;
   void displayRectangle(const vpImagePoint &topLeft,
 			const vpImagePoint &bottomRight,
-			vpColor::vpColorType color, bool fill = false,
+			vpColor color, bool fill = false,
 			unsigned int thickness=1) ;
   void displayRectangle(const vpRect &rectangle,
-			vpColor::vpColorType color, bool fill = false,
+			vpColor color, bool fill = false,
 			unsigned int thickness=1) ;
 
   void flushDisplay() ;

@@ -131,7 +131,7 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
   j = i = 0.0 ;
 
   double incr = vpMath::rad(me->sample_step) ; // angle increment en degree
-  vpColor::vpColorType col = vpColor::red ;
+  vpColor col = vpColor::red ;
   getParameters() ;
 
 
@@ -643,7 +643,7 @@ vpMeEllipse::leastSquare()
  * \brief Display Ellipse
  */
 void
-vpMeEllipse::display(vpImage<unsigned char> &I, vpColor::vpColorType col)
+vpMeEllipse::display(vpImage<unsigned char> &I, vpColor col)
 {
 
   double j1, i1;

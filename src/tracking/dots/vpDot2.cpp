@@ -182,7 +182,7 @@ vpDot2::~vpDot2(){}
   \param I : Image.
   \param c : The color used for the display.
 */
-void vpDot2::display(vpImage<unsigned char>& I, vpColor::vpColorType c)
+void vpDot2::display(vpImage<unsigned char>& I, vpColor c)
 {
   vpDisplay::displayCross(I, cog, 10, c);
   ip_edges_list.front();

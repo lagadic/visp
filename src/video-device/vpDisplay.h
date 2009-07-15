@@ -166,7 +166,7 @@ class VISP_EXPORT vpDisplay
     \param thickness : Thickness of the lines used to display the arrow.
   */
   virtual void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2,
-			    vpColor::vpColorType color=vpColor::white,
+			    vpColor color=vpColor::white,
 			    unsigned int w=4, unsigned int h=2,
 			    unsigned int thickness=1) =0;
   /*!
@@ -181,7 +181,7 @@ class VISP_EXPORT vpDisplay
     \sa setFont()
   */
   virtual void displayCharString(const vpImagePoint &ip, const char *text,
-				 vpColor::vpColorType color=vpColor::green) =0;
+				 vpColor color=vpColor::green) =0;
   /*!
     Display a circle.
     \param center : Circle center position.
@@ -192,7 +192,7 @@ class VISP_EXPORT vpDisplay
     when \e fill is set to false.
   */
   virtual void displayCircle(const vpImagePoint &center, unsigned int radius,
-			     vpColor::vpColorType color,
+			     vpColor color,
 			     bool fill = false,
 			     unsigned int thickness=1) =0;
   /*!
@@ -203,7 +203,7 @@ class VISP_EXPORT vpDisplay
     \param thickness : Thickness of the lines used to display the cross.
   */
   virtual void displayCross(const vpImagePoint &ip, unsigned int size,
-			    vpColor::vpColorType color, 
+			    vpColor color, 
 			    unsigned int thickness=1) =0;
   /*!
     Display a dashed line from image point \e ip1 to image point \e ip2.
@@ -213,7 +213,7 @@ class VISP_EXPORT vpDisplay
   */
   virtual void displayDotLine(const vpImagePoint &ip1, 
 			      const vpImagePoint &ip2,
-			      vpColor::vpColorType color, 
+			      vpColor color, 
 			      unsigned int thickness=1) =0;
   /*!
     Display a line from image point \e ip1 to image point \e ip2.
@@ -223,7 +223,7 @@ class VISP_EXPORT vpDisplay
   */
   virtual void displayLine(const vpImagePoint &ip1, 
 			   const vpImagePoint &ip2,
-			   vpColor::vpColorType color, 
+			   vpColor color, 
 			   unsigned int thickness=1) =0;
 
   /*!
@@ -231,8 +231,7 @@ class VISP_EXPORT vpDisplay
     \param ip : Point location.
     \param color : Point color.
   */
-  virtual void displayPoint(const vpImagePoint &ip,
-			    vpColor::vpColorType color) =0;
+  virtual void displayPoint(const vpImagePoint &ip, vpColor color) =0;
 
   /*!  
     Display a rectangle with \e topLeft as the top-left corner and \e
@@ -249,7 +248,7 @@ class VISP_EXPORT vpDisplay
   */
   virtual void displayRectangle(const vpImagePoint &topLeft,
 				unsigned int width, unsigned int height,
-				vpColor::vpColorType color, bool fill = false,
+				vpColor color, bool fill = false,
 				unsigned int thickness=1)=0 ;
   /*!  
     Display a rectangle with \e topLeft as the top-left corner and \e
@@ -266,7 +265,7 @@ class VISP_EXPORT vpDisplay
   */
   virtual void displayRectangle(const vpImagePoint &topLeft,
 				const vpImagePoint &bottomRight,
-				vpColor::vpColorType color, bool fill = false,
+				vpColor color, bool fill = false,
 				unsigned int thickness=1 )=0;
   /*!
     Display a rectangle with \e topLeft as the top-left corner and \e
@@ -282,7 +281,7 @@ class VISP_EXPORT vpDisplay
 
   */
   virtual void displayRectangle(const vpRect &rectangle,
-				vpColor::vpColorType color, bool fill = false,
+				vpColor color, bool fill = false,
 				unsigned int thickness=1)=0 ;
 
  public:
@@ -323,7 +322,7 @@ class VISP_EXPORT vpDisplay
     Set the window backgroud to \e color.
     \param color : Background color.
   */  
-  virtual void clearDisplay(vpColor::vpColorType color=vpColor::white) =0 ;
+  virtual void clearDisplay(vpColor color=vpColor::white) =0 ;
   /*!
     Close the window.
   */
@@ -499,95 +498,95 @@ class VISP_EXPORT vpDisplay
   static void display(const vpImage<unsigned char> &I) ;
   static void displayArrow(const vpImage<unsigned char> &I,
 			   const vpImagePoint &ip1, const vpImagePoint &ip2,
-			   vpColor::vpColorType color=vpColor::white,
+			   vpColor color=vpColor::white,
 			   unsigned int w=4, unsigned int h=2,
 			   unsigned int thickness=1) ;
   static void displayArrow(const vpImage<unsigned char> &I,
 			   int i1, int j1, int i2, int j2,
-			   vpColor::vpColorType color=vpColor::white,
+			   vpColor color=vpColor::white,
 			   unsigned int w=4, unsigned int h=2,
 			   unsigned int thickness=1) ;
   static void displayCharString(const vpImage<unsigned char> &I,
 				const vpImagePoint &ip, const char *string,
-				vpColor::vpColorType color) ;
+				vpColor color) ;
   static void displayCharString(const vpImage<unsigned char> &I,
 				int i, int j, const char *string,
-				vpColor::vpColorType color) ;
+				vpColor color) ;
   static void displayCircle(const vpImage<unsigned char> &I,
 			    const vpImagePoint &center, unsigned int radius,
-			    vpColor::vpColorType color,
+			    vpColor color,
 			    bool fill = false,
 			    unsigned int thickness=1);
   static void displayCircle(const vpImage<unsigned char> &I,
 			    int i, int j, unsigned int radius,
-			    vpColor::vpColorType color,
+			    vpColor color,
 			    bool fill = false,
 			    unsigned int thickness=1);
   static void displayCross(const vpImage<unsigned char> &I,
 			   const vpImagePoint &ip, unsigned int size,
-			   vpColor::vpColorType color, 
+			   vpColor color, 
 			   unsigned int thickness=1) ;
   static void displayCross(const vpImage<unsigned char> &I,
 			   int i, int j, unsigned int size,
-			   vpColor::vpColorType color, 
+			   vpColor color, 
 			   unsigned int thickness=1) ;
   static void displayDotLine(const vpImage<unsigned char> &I,
 			     const vpImagePoint &ip1, 
 			     const vpImagePoint &ip2,
-			     vpColor::vpColorType color, 
+			     vpColor color, 
 			     unsigned int thickness=1) ;
   static void displayDotLine(const vpImage<unsigned char> &I,
 			     int i1, int j1, int i2, int j2,
-			     vpColor::vpColorType color, 
+			     vpColor color, 
 			     unsigned int thickness=1) ;
   static void displayFrame(const vpImage<unsigned char> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
-			   double size, vpColor::vpColorType color)  ;
+			   double size, vpColor color)  ;
   static void displayLine(const vpImage<unsigned char> &I,
 			  const vpImagePoint &ip1, 
 			  const vpImagePoint &ip2,
-			  vpColor::vpColorType color, 
+			  vpColor color, 
 			  unsigned int thickness=1) ;
   static void displayLine(const vpImage<unsigned char> &I,
 			  int i1, int j1, int i2, int j2,
-			  vpColor::vpColorType color, 
+			  vpColor color, 
 			  unsigned int thickness=1) ;
   static void displayPoint(const vpImage<unsigned char> &I,
 			   const vpImagePoint &ip,
-			   vpColor::vpColorType color) ;
+			   vpColor color) ;
   static void displayPoint(const vpImage<unsigned char> &I,
 			   int i, int j,
-			   vpColor::vpColorType color) ;
+			   vpColor color) ;
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       const vpImagePoint &topLeft,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color, bool fill = false,
+			       vpColor color, bool fill = false,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       const vpImagePoint &topLeft,
 			       const vpImagePoint &bottomRight,
-			       vpColor::vpColorType color, bool fill = false,
+			       vpColor color, bool fill = false,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       const vpRect &rectangle,
-			       vpColor::vpColorType color, bool fill = false,
+			       vpColor color, bool fill = false,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       const vpImagePoint &center,
 			       float angle,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color,
+			       vpColor color,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       int i, int j,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color, bool fill = false,
+			       vpColor color, bool fill = false,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       unsigned int i, unsigned int j, float angle,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color, 
+			       vpColor color, 
 			       unsigned int thickness=1);
 
   static void flush(const vpImage<unsigned char> &I) ;
@@ -621,96 +620,96 @@ class VISP_EXPORT vpDisplay
   static void display(const vpImage<vpRGBa> &I) ;
   static void displayArrow(const vpImage<vpRGBa> &I,
 			   const vpImagePoint &ip1, const vpImagePoint &ip2,
-			   vpColor::vpColorType color=vpColor::white,
+			   vpColor color=vpColor::white,
 			   unsigned int w=4, unsigned int h=2,
 			   unsigned int thickness=1) ;
   static void displayArrow(const vpImage<vpRGBa> &I,
 			   int i1, int j1, int i2, int j2,
-			   vpColor::vpColorType color=vpColor::white,
+			   vpColor color=vpColor::white,
 			   unsigned int w=4, unsigned int h=2,
 			   unsigned int thickness=1) ;
   static void displayCharString(const vpImage<vpRGBa> &I,
 				const vpImagePoint &ip, const char *string,
-				vpColor::vpColorType color) ;
+				vpColor color) ;
   static void displayCharString(const vpImage<vpRGBa> &I,
 				int i, int j, const char *string,
-				vpColor::vpColorType color) ;
+				vpColor color) ;
   static void displayCircle(const vpImage<vpRGBa> &I,
 			    const vpImagePoint &center, unsigned int radius,
-			    vpColor::vpColorType color,
+			    vpColor color,
 			    bool fill = false,
 			    unsigned int thickness=1);
   static void displayCircle(const vpImage<vpRGBa> &I,
 			    int i, int j, unsigned int radius,
-			    vpColor::vpColorType color,
+			    vpColor color,
 			    bool fill = false,
 			    unsigned int thickness=1);
   static void displayCross(const vpImage<vpRGBa> &I,
 			   const vpImagePoint &ip, unsigned int size,
-			   vpColor::vpColorType color, 
+			   vpColor color, 
 			   unsigned int thickness=1) ;
   static void displayCross(const vpImage<vpRGBa> &I,
 			   int i, int j, unsigned int size,
-			   vpColor::vpColorType color, 
+			   vpColor color, 
 			   unsigned int thickness=1) ;
   static void displayDotLine(const vpImage<vpRGBa> &I,
 			     const vpImagePoint &ip1, 
 			     const vpImagePoint &ip2,
-			     vpColor::vpColorType color, 
+			     vpColor color, 
 			     unsigned int thickness=1) ;
   static void displayDotLine(const vpImage<vpRGBa> &I,
 			     int i1, int j1, int i2, int j2,
-			     vpColor::vpColorType color, 
+			     vpColor color, 
 			     unsigned int thickness=1) ;
   static void displayFrame(const vpImage<vpRGBa> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
-			   double size, vpColor::vpColorType color)  ;
+			   double size, vpColor color)  ;
   static void displayLine(const vpImage<vpRGBa> &I,
 			  const vpImagePoint &ip1, 
 			  const vpImagePoint &ip2,
-			  vpColor::vpColorType color, 
+			  vpColor color, 
 			  unsigned int thickness=1) ;
   static void displayLine(const vpImage<vpRGBa> &I,
 			  int i1, int j1, int i2, int j2,
-			  vpColor::vpColorType color, 
+			  vpColor color, 
 			  unsigned int thickness=1) ;
   static void displayPoint(const vpImage<vpRGBa> &I,
 			   const vpImagePoint &ip,
-			   vpColor::vpColorType color) ;
+			   vpColor color) ;
   static void displayPoint(const vpImage<vpRGBa> &I,
 			   int i, int j,
-			   vpColor::vpColorType color) ;
+			   vpColor color) ;
   static void displayRectangle(const vpImage<vpRGBa> &I,
 			       const vpImagePoint &topLeft,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color, bool fill = false,
+			       vpColor color, bool fill = false,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I,
 			       const vpImagePoint &topLeft,
 			       const vpImagePoint &bottomRight,
-			       vpColor::vpColorType color, bool fill = false,
+			       vpColor color, bool fill = false,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I,
 			       const vpRect &rectangle,
-			       vpColor::vpColorType color, bool fill = false,
+			       vpColor color, bool fill = false,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I,
 			       const vpImagePoint &center,
 			       float angle,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color,
+			       vpColor color,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I,
 			       int i, int j,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color, bool fill = false,
+			       vpColor color, bool fill = false,
 			       unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I,
 			       unsigned int i, unsigned int j, 
 			       float angle,
 			       unsigned int width, unsigned int height,
-			       vpColor::vpColorType color, 
+			       vpColor color, 
 			       unsigned int thickness=1);
 
   static void flush(const vpImage<vpRGBa> &I) ;
@@ -741,77 +740,77 @@ class VISP_EXPORT vpDisplay
 
   static void displayArrow_uv(const vpImage<unsigned char> &I,
 			      int u1, int v1, int u2, int v2,
-			      vpColor::vpColorType col=vpColor::white,
+			      vpColor col=vpColor::white,
 			      unsigned int L=4,unsigned int l=2) ;
   static void displayArrow_uv(const vpImage<vpRGBa> &I,
 			      int u1, int v1, int u2, int v2,
-			      vpColor::vpColorType col=vpColor::white,
+			      vpColor col=vpColor::white,
 			      unsigned int L=4,unsigned int l=2) ;
   static void displayCharString_uv(const vpImage<unsigned char> &I,
 				   int u, int v, const char *s,
-				   vpColor::vpColorType c) ;
+				   vpColor c) ;
 
   static void displayCharString_uv(const vpImage<vpRGBa> &I,
 				   int u, int v, const char *s,
-				   vpColor::vpColorType c) ;
+				   vpColor c) ;
 
   static void displayCircle_uv(const vpImage<unsigned char> &I,
 			       int u, int v, unsigned int r,
-			       vpColor::vpColorType c);
+			       vpColor c);
   static void displayCircle_uv(const vpImage<vpRGBa> &I,
 			       int u, int v, unsigned int r,
-			       vpColor::vpColorType c);
+			       vpColor c);
   static void displayCross_uv(const vpImage<unsigned char> &I,
 			      int u, int v, unsigned int size,
-			      vpColor::vpColorType col) ;
+			      vpColor col) ;
   static void displayCross_uv(const vpImage<vpRGBa> &I,
 			      int u, int v, unsigned int size,
-			      vpColor::vpColorType col) ;
+			      vpColor col) ;
   static void displayCrossLarge(const vpImage<unsigned char> &I,
 				int i, int j, unsigned int size,
-				vpColor::vpColorType col) ;
+				vpColor col) ;
   static void displayCrossLarge(const vpImage<vpRGBa> &I,
 				int i, int j, unsigned int size,
-				vpColor::vpColorType col) ;
+				vpColor col) ;
   static void displayCrossLarge_uv(const vpImage<unsigned char> &I,
 				   int u, int v, unsigned int size,
-				   vpColor::vpColorType col);
+				   vpColor col);
   static void displayCrossLarge_uv(const vpImage<vpRGBa> &I,
 				   int u, int v, unsigned int size,
-				   vpColor::vpColorType col);
+				   vpColor col);
   static void displayDotLine_uv(const vpImage<unsigned char> &I,
 				int u1, int v1, int u2, int v2,
-				vpColor::vpColorType col, unsigned int e=1) ;
+				vpColor col, unsigned int e=1) ;
   static void displayDotLine_uv(const vpImage<vpRGBa> &I,
 				int u1, int v1, int u2, int v2,
-				vpColor::vpColorType col, unsigned int e=1) ;
+				vpColor col, unsigned int e=1) ;
   static void displayLine_uv(const vpImage<unsigned char> &I,
 			     int u1, int v1, int u2, int v2,
-			     vpColor::vpColorType col, unsigned int e=1) ;
+			     vpColor col, unsigned int e=1) ;
 
   static void displayLine_uv(const vpImage<vpRGBa> &I,
 			     int u1, int v1, int u2, int v2,
-			     vpColor::vpColorType col, unsigned int e=1) ;
+			     vpColor col, unsigned int e=1) ;
   static void displayPoint_uv(const vpImage<unsigned char> &I,
 			      int u, int v,
-			      vpColor::vpColorType col) ;
+			      vpColor col) ;
   static void displayPoint_uv(const vpImage<vpRGBa> &I,
 			      int u, int v,
-			      vpColor::vpColorType col);
+			      vpColor col);
   static void displayRectangle_uv(const vpImage<unsigned char> &I,
 				  int u, int v,
 				  unsigned int width, unsigned int height,
-				  vpColor::vpColorType col, bool fill = false,
+				  vpColor col, bool fill = false,
 				  unsigned int e=1);			   
   static void displayRectangle_uv(const vpImage<unsigned char> &I,
 			    unsigned int u, unsigned int v, float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType col, unsigned int e=1);
+			    vpColor col, unsigned int e=1);
 		
   static void displayRectangle_uv(const vpImage<vpRGBa> &I,
 			    unsigned int u, unsigned int v, float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor::vpColorType col, unsigned int e=1);
+			    vpColor col, unsigned int e=1);
 
   static bool getClick(const vpImage<unsigned char> &I,
 		       unsigned int& i, unsigned int& j, bool blocking=true) ;

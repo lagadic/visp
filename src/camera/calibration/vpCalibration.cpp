@@ -743,10 +743,10 @@ vpCalibration::readGrid(const char* filename,unsigned int &n,
 /*!
   Display the data of the calibration (center of the tracked dots)
   \param I : Image where to display data.
-  \param col : color of the data.
+  \param color : Color of the data.
 */
 int
-vpCalibration::displayData(vpImage<unsigned char> &I, vpColor::vpColorType col)
+vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color)
 {
 
   Lu.front() ;
@@ -758,7 +758,7 @@ vpCalibration::displayData(vpImage<unsigned char> &I, vpColor::vpColorType col)
     ip.set_u( Lu.value() );
     ip.set_v( Lv.value() );
 
-    vpDisplay::displayCross(I, ip, 10, col) ;
+    vpDisplay::displayCross(I, ip, 10, color) ;
 
     Lu.next() ;
     Lv.next() ;
@@ -770,10 +770,10 @@ vpCalibration::displayData(vpImage<unsigned char> &I, vpColor::vpColorType col)
   Display estimated centers of dots using intrinsic camera parameters
   with model with distortion and the computed pose.
   \param I : Image where to display grid data.
-  \param col : color of the data.
+  \param color : Color of the data.
 */
 int
-vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
+vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color)
 {
   double u0_dist = cam_dist.get_u0() ;
   double v0_dist = cam_dist.get_v0() ;
@@ -825,7 +825,7 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor::vpColorType col)
     ip.set_u( u0_dist + x*px_dist*r2 );
     ip.set_v( v0_dist + y*py_dist*r2 );
 
-    vpDisplay::displayCross(I, ip, 5,col) ;
+    vpDisplay::displayCross(I, ip, 5, color) ;
     ///////////////////////////////////////
 
 

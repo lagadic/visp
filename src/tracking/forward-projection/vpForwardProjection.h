@@ -173,7 +173,7 @@ public:
   */
   virtual void display(vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
-		       const vpColor::vpColorType color=vpColor::green) =0;
+		       const vpColor color=vpColor::green) =0;
 
   /*!
 
@@ -196,7 +196,7 @@ public:
   virtual void display(vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
-		       const vpColor::vpColorType color=vpColor::green) =0;
+		       const vpColor color=vpColor::green) =0;
 
   virtual void print() const ;
 
