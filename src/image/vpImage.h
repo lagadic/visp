@@ -197,7 +197,8 @@ public:
   /*!
     Get the value of an image point.
 
-    \param ip : An image point.
+    \param ip : An image point with sub-pixel coordinates. Sub-pixel 
+	coordinates are roughly transformed to insigned int coordinates by cast.
 
     \return Value of the image point \e ip.
 
@@ -206,15 +207,16 @@ public:
   */
   inline  Type operator()(const vpImagePoint &ip)
   {
-    unsigned int i = ip.get_i();
-    unsigned int j = ip.get_j();
+    unsigned int i = (unsigned int) ip.get_i();
+    unsigned int j = (unsigned int) ip.get_j();
 
     return bitmap[i*width+j] ;
   }
   /*!
     Set the value of an image point.
 
-    \param ip : An image point.
+    \param ip : An image point with sub-pixel coordinates. Sub-pixel 
+	coordinates are roughly transformed to insigned int coordinates by cast.
 
     \param v : Value to set for the image point.
 
@@ -222,8 +224,8 @@ public:
   inline  void  operator()(const vpImagePoint &ip,
 			   const Type &v)
   {
-    unsigned int i = ip.get_i();
-    unsigned int j = ip.get_j();
+    unsigned int i = (unsigned int) ip.get_i();
+    unsigned int j = (unsigned int) ip.get_j();
 
     bitmap[i*width+j] = v ;
   }
@@ -734,7 +736,7 @@ vpImage<Type>::halfSizeImage(vpImage<Type>* res)
   unsigned int c = width/2;
   if(res == NULL)
     res = new vpImage<Type>(r, c);
-  else if((res->getCols() != c) || (res->getRows()!= r))
+  else if((res->getWidth() != c) || (res->getHeight()!= r))
     res->resize(r,c);
   for(unsigned int y = 0; y < r; y++)
     for(unsigned int x = 0; x < c; x++)
@@ -796,7 +798,7 @@ vpImage<Type>::quarterSizeImage(vpImage<Type>* res)
   unsigned int c = width/4;
   if(res == NULL)
     res = new vpImage<Type>(r, c);
-  else if((res->getCols() != c) || (res->getRows()!= r))
+  else if((res->getWidth() != c) || (res->getHeight()!= r))
     res->resize(r,c);
   for(unsigned int y = 0; y < r; y++)
     for(unsigned int x = 0; x < c; x++)
@@ -852,7 +854,7 @@ vpImage<Type>::doubleSizeImage(vpImage<Type>* res)
 
   if(res == NULL)
     res = new vpImage<Type>(h, w);
-  else if((res->getCols() != w) || (res->getRows()!= h))
+  else if((res->getWidth() != w) || (res->getHeight()!= h))
     res->resize(h, w);
 
   for(int j = 0; j < h; j++)
@@ -965,7 +967,7 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
 {
   if(dst == NULL)
     dst = new vpImage<Type>(height, width);
-  else if((dst->getRows()!=height) || (dst->getCols()!=width))
+  else if((dst->getHeight()!=height) || (dst->getWidth()!=width))
     dst->resize(height, width);
 
   for(unsigned int i  = 0; i < height * width; i++)
