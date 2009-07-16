@@ -555,7 +555,7 @@ void vpPlot::setLineStyle(const int graphNum,  const int curveNum,
 void vpPlot::plot(const int graphNum,  const int curveNum, 
 		  const double x, const double y)
 {
-  double x1,x2,y1,y2;
+  double x1=0.,x2=0.,y1=0.,y2=0.;
   double *p_1 = new double[2];
   double *p = new double[2];
   int err_range;
@@ -779,7 +779,7 @@ void vpPlot::drawLegend(const int graphNum){
 void vpPlot::replot(const int graphNum)
 {
   int nb,t,ind;
-  double x1,y1,x2,y2;
+  double x1=0.,y1=0.,x2=0.,y2=0.;
   double *p_1 = new double[2];
   double *p = new double[2];
 
@@ -1067,7 +1067,7 @@ void vpPlot::saveData(const int graphNum, const char* dataFile)
 
   int ind;
   double *p = new double[2];
-  bool end;
+  bool end=false;
 
   fichier << graph[graphNum].title << std::endl;
 
