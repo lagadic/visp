@@ -54,6 +54,8 @@
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+
 
 /*!
   \example test1394TwoResetBus.cpp
@@ -78,6 +80,8 @@ main()
       
     vpImage<unsigned char> I;
     g.acquire(I);    
+//     std::cout << "write /tmp/test.pgm" << std::endl;
+//     vpImageIo::writePGM(I, "/tmp/test.pgm");
   }
   catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
