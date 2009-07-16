@@ -49,7 +49,7 @@
 #include <visp/vpPixelMeterConversion.h>
 
 double vpCalibration::threshold = 1e-10f;
-unsigned int vpCalibration::nbIterMax = 3000;
+unsigned int vpCalibration::nbIterMax = 4000;
 double vpCalibration::gain = 0.25;
 /*!
   Basic initialisation (called by the constructors)
