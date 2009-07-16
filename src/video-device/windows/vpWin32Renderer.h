@@ -45,7 +45,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpImage.h>
-#include <visp/vpRGBa.h>
+#include <visp/vpColor.h>
 #include <windows.h>
 #include <visp/vpDebug.h>
 
