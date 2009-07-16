@@ -62,7 +62,7 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   HBITMAP bmp;
 
   //colors for overlay
-  COLORREF colors[vpColor::none];
+  COLORREF colors[vpColor::id_unkown];
 
   //font used to draw text
   HFONT hFont;

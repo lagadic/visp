@@ -84,10 +84,10 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   HWND hWnd;
 
   //Colors  for overlay drawn with d3d directly.
-  long colors[vpColor::none];
+  long colors[vpColor::id_unknown];
 
   //Colors for overlay drawn with GDI.
-  COLORREF colorsGDI[vpColor::none];
+  COLORREF colorsGDI[vpColor::id_unknown];
 
   //Font used for text drawing.
   HFONT hFont;
