@@ -102,7 +102,7 @@ public:
     \param v : Value to set.
     
   */
-  inline vpRGBa::vpRGBa(const unsigned char &v) 
+  inline vpRGBa(const unsigned char &v) 
     : R(v), G(v), B(v), A(v)
   {
   };
