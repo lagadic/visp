@@ -1311,7 +1311,7 @@ vp1394TwoGrabber::initialize()
     // Reset the bus to make firewire working if the program was not properly
     // stopped by a CTRL-C. We reset here only the bus attached to the first
     // camera
-    dc1394_reset_bus(cameras[0]);
+    //dc1394_reset_bus(cameras[0]);
 
     if (list != NULL)
       dc1394_camera_free_list (list);
@@ -2280,8 +2280,11 @@ void vp1394TwoGrabber::resetBus()
   for (unsigned int i=0;i<num_cameras;i++){
     if (i!=camera_id) dc1394_camera_free(cameras[i]);
   }
-  dc1394_camera_free_list (list);
-  list = NULL ;
+  if (list != NULL){
+    dc1394_camera_free_list (list);
+    list = NULL;
+  }
+
   printf ("Reseting bus...\n");
   dc1394_reset_bus (camera);
 
