@@ -160,6 +160,7 @@ int main()
 */
 vpDisplayX::vpDisplayX()
 {
+  x_color = NULL;
   displayHasBeenInitialized =false ;
   windowXPosition = windowYPosition = -1 ;
 
