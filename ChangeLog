@@ -21,6 +21,7 @@ ViSP 2.x.y
     - [8249] Compilation error under Windows MSCV8 when building ViSP 
 	     as a shared library (DLL)
     - [8257] Bug in vp1394TwoGrabber::resetBus()
+    - [8259] Segfault in vpDisplayX
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features
