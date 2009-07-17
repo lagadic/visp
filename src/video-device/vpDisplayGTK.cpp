@@ -287,7 +287,6 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
 
   /* Create color */
   gdk_color_parse("blue",&blue);
-  printf("%d %d %d %d", blue.pixel, blue.red, blue.green, blue.blue);
   gdk_colormap_alloc_color(colormap,&blue,FALSE,TRUE);
   col[vpColor::id_blue] = &blue ;
 
@@ -1366,6 +1365,9 @@ void vpDisplayGTK::getScreenSize(unsigned int &width, unsigned int &height)
   width = 0;
   height = 0;
 }
+
+
+
 
 #endif
 
