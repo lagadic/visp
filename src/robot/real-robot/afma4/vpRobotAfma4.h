@@ -64,15 +64,17 @@ extern "C" {
 
   \brief Control of Irisa's cylindrical robot named Afma4.
 
-  Implementation of the vpRobot class in order to control Irisa's Afma4 robot.
-  This robot is a cylindrical robot with four degrees of freedom manufactured
-  in 1995 by the french Afma-Robots company. In 2008, the low level controller
-  change for a more recent Adept technology based on the MotionBlox
-  controller. A firewire camera is mounted on the end-effector to allow
-  eye-in-hand visual servoing. The control of this camera is achieved by the
-  vp1394TwoGrabber class. A Servolens lens is attached to the camera. It allows
-  to control the focal lens, the iris and the focus throw a serial link. The
-  control of the lens is possible using the vpServolens class.
+  Implementation of the vpRobot class in order to control Irisa's
+  Afma4 robot.  This robot is a cylindrical robot with five degrees of
+  freedom but only four are actuated (see vpAfma4 documentation). It
+  was manufactured in 1995 by the french Afma-Robots company. In 2008,
+  the low level controller change for a more recent Adept technology
+  based on the MotionBlox controller. A firewire camera is mounted on
+  the end-effector to allow eye-in-hand visual servoing. The control
+  of this camera is achieved by the vp1394TwoGrabber class. A
+  Servolens lens is attached to the camera. It allows to control the
+  focal lens, the iris and the focus throw a serial link. The control
+  of the lens is possible using the vpServolens class.
 
   This class allows to control the Afma4 cylindrical robot in position
   and velocity:
@@ -87,8 +89,9 @@ extern "C" {
   for the velocities. Rotations are expressed in radians for the
   positions, and rad/s for the rotation velocities.
 
-  The direct and inverse kinematics models are implemented in the
-  vpAfma4 class.
+  The Denavit-Hartenberg representation as well as the direct and
+  inverse kinematics models are given and implemented in the vpAfma4
+  class.
 
   \warning A Ctrl-C, a segmentation fault or other system errors are
   catched by this class to stop the robot.
@@ -235,7 +238,7 @@ public:  /* Methode publiques */
 		   const vpColVector &position) ;
   void setPosition (const vpRobot::vpControlFrameType frame,
 		    const double q1, const double q2,
-		    const double q3, const double q4) ;
+		    const double q4, const double q5) ;
   void setPosition(const char *filename) ;
   void setPositioningVelocity (const double velocity);
 
@@ -255,10 +258,11 @@ public:  /* Methode publiques */
 
   vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
 
-  void get_cMe(vpHomogeneousMatrix &_cMe) ;
-  void get_cVe(vpTwistMatrix &_cVe) ;
-  void get_eJe(vpMatrix &_eJe)  ;
-  void get_fJe(vpMatrix &_fJe)  ;
+  void get_cMe(vpHomogeneousMatrix &cMe) ;
+  void get_cVe(vpTwistMatrix &cVe) ;
+  void get_cVf(vpTwistMatrix &cVf) ;
+  void get_eJe(vpMatrix &eJe)  ;
+  void get_fJe(vpMatrix &fJe)  ;
 
   void stopMotion() ;
   void powerOn() ;

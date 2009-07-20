@@ -75,9 +75,9 @@ vpAfma4::vpAfma4()
   //
   // Geometric model constant parameters
   //
-  // Distance between joint 2 and 3
-  this->_long_23 = 0.205;
-  this->_Long_23 = 0.403;
+  this->_a1 = 0.205; // distance along x2
+  this->_d3 = 0.403; // distance along z2
+  this->_d4 = 0.14; // distance along z3
 
   // Maximal value of the joints
   this->_joint_max[0] = 1.8;  // rad
@@ -95,8 +95,8 @@ vpAfma4::vpAfma4()
   this->_etc[1] = 0.;
   this->_etc[2] = 0.;
   this->_erc[0] = 0.; // Rotation
-  this->_erc[1] = M_PI/2.;
-  this->_erc[2] = M_PI;
+  this->_erc[1] = -M_PI/2.;
+  this->_erc[2] = 0;
 
   vpRotationMatrix eRc(_erc);
   this->_eMc.buildFrom(_etc, eRc);
@@ -126,16 +126,21 @@ vpAfma4::init (void)
 
   This method is the same than get_fMc(const vpColVector & q).
 
-  \param q : Articular position of the four joints: q[0] correspond to
-  the first rotation of the turret around the vertical axis, q[1]
-  correspond to the vertical translation, while q[2] and q[3]
-  correspond to the pan and tilt of the camera respectively. Rotations
-  q[0], q[2] and q[3] are expressed in radians. The translation q[1]
-  is expressed in meters.
+ \param q : Articular position of the four joints: q[0] corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q[1] corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q[2] and q[3]
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q[0], q[2] and
+  q[3] are expressed in radians. The translation q[1] is expressed in
+  meters.
 
   \return The homogeneous matrix corresponding to the direct geometric
-  model which expresses the transformation between the base frame and the
-  camera frame (fMc).
+  model which expresses the transformation between the fix frame and the
+  camera frame (\f${^f}M_c\f$) with:
+  \f[
+  {^f}M_c =  {^f}M_e *  {^e}M_c 
+  \f]
 
   \sa get_fMc(const vpColVector & q)
   \sa getInverseKinematics()
@@ -161,16 +166,21 @@ vpAfma4::getForwardKinematics(const vpColVector & q)
 
   This method is the same than getForwardKinematics(const vpColVector & q).
 
-  \param q : Articular position of the four joints: q[0] correspond to
-  the first rotation of the turret around the vertical axis, q[1]
-  correspond to the vertical translation, while q[2] and q[3]
-  correspond to the pan and tilt of the camera respectively. Rotations
-  q[0], q[2] and q[3] are expressed in radians. The translation q[1]
-  is expressed in meters.
+  \param q : Articular position of the four joints: q[0] corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q[1] corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q[2] and q[3]
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q[0], q[2] and
+  q[3] are expressed in radians. The translation q[1] is expressed in
+  meters.
 
   \return The homogeneous matrix corresponding to the direct geometric
-  model which expresses the transformation between the base frame and the
-  camera frame (fMc).
+  model which expresses the transformation between the fix frame and the
+  camera frame (\f${^f}M_c\f$) with:
+  \f[
+  {^f}M_c =  {^f}M_e *  {^e}M_c 
+  \f]
 
   \sa getForwardKinematics(const vpColVector & q)
 */
@@ -192,16 +202,21 @@ vpAfma4::get_fMc (const vpColVector & q)
   of the camera relative to the base frame given the articular positions of all
   the four joints.
 
-  \param q : Articular position of the four joints: q[0] correspond to
-  the first rotation of the turret around the vertical axis, q[1]
-  correspond to the vertical translation, while q[2] and q[3]
-  correspond to the pan and tilt of the camera respectively. Rotations
-  q[0], q[2] and q[3] are expressed in radians. The translation q[1]
-  is expressed in meters.
+  \param q : Articular position of the four joints: q[0] corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q[1] corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q[2] and q[3]
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q[0], q[2] and
+  q[3] are expressed in radians. The translation q[1] is expressed in
+  meters.
 
-  \param fMc The homogeneous matrix corresponding to the direct geometric
+  \param fMc : The homogeneous matrix corresponding to the direct geometric
   model which expresses the transformation between the fix frame and the
-  camera frame (fMc).
+  camera frame (\f${^f}M_c\f$) with:
+  \f[
+  {^f}M_c =  {^f}M_e *  {^e}M_c 
+  \f]
 
 */
 void
@@ -226,50 +241,62 @@ vpAfma4::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc)
 
   By forward kinematics we mean here the position and the orientation
   of the end effector with respect to the base frame given the
-  articular positions of all the four joints.
+  articular positions of all the four variable joints.
 
-  \param q : Articular position of the four joints: q[0] correspond to
-  the first rotation of the turret around the vertical axis, q[1]
-  correspond to the vertical translation, while q[2] and q[3]
-  correspond to the pan and tilt of the camera respectively. Rotations
-  q[0], q[2] and q[3] are expressed in radians. The translation q[1]
-  is expressed in meters.
+  \param q : Articular position of the four joints: q[0] corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q[1] corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q[2] and q[3]
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q[0], q[2] and
+  q[3] are expressed in radians. The translation q[1] is expressed in
+  meters.
 
   \param fMe The homogeneous matrix corresponding to the direct geometric
   model which expresses the transformation between the fix frame and the
-  end effector frame (fMe).
+  end effector frame (\f${^f}M_e\f$) with
+
+  \f[
+  {^f}M_e = \left[\begin{array}{cccc}
+  c_1s_4c_5+s_1c_4c_5  & -c_1s_4s_5-s_1c_4s_5 & c_1c_4-s_1s_4 &a_1c_1-d_3s_1 \\
+  s_1s_4c_5-c_1c_4c_5  & -s_1s_4s_5+c_1c_4s_5 & s_1c_4+c_1s_4 &a_1s_1+d_3c_1 \\
+  -s_5 & -c_5  & d_4+q_2 \\
+  0  &   0  &   0  &   1    \\
+  \end{array}
+  \right]
+  \f]
 
 */
 void
 vpAfma4::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe)
 {
-  double            q0 = q[0]; // rot tourelle
-  double            q1 = q[1]; // vertical translation
-  double            q2 = q[2]; // pan
-  double            q3 = q[3]; // tilt
+  double            q1 = q[0]; // rot touret
+  double            q2 = q[1]; // vertical translation
+  double            q4 = q[2]; // pan
+  double            q5 = q[3]; // tilt
 
-  double            c1 = cos(q0);
-  double            s1 = sin(q0);
-  double            c2 = cos(q2);
-  double            s2 = sin(q2);
-  double            c3 = cos(q3);
-  double            s3 = sin(q3);
+  double            c1 = cos(q1);
+  double            s1 = sin(q1);
+  double            c4 = cos(q4);
+  double            s4 = sin(q4);
+  double            c5 = cos(q5);
+  double            s5 = sin(q5);
 
   /* Calcul du modele d'apres les angles. */
-  fMe[0][0] = -c1*s2*c3 - s1*c2*c3;
-  fMe[0][1] = c1*s2*s3 + s1*c2*s3;
-  fMe[0][2] = c1*c2 - s1*s2;
-  fMe[0][3] = c1*this->_long_23 - s1*(this->_Long_23);
+  fMe[0][0] = c1*s4*c5 + s1*c4*c5;
+  fMe[0][1] = -c1*s4*s5 - s1*c4*s5;
+  fMe[0][2] = c1*c4 - s1*s4;
+  fMe[0][3] = c1*this->_a1 - s1*(this->_d3);
 
-  fMe[1][0] = -s1*s2*c3 + c1*c2*c3;
-  fMe[1][1] = s1*s2*s3 - c1*c2*s3;
-  fMe[1][2] = s1*c2+c1*s2;
-  fMe[1][3] = s1*this->_long_23 + c1*(this->_Long_23);
+  fMe[1][0] = s1*s4*c5 - c1*c4*c5;
+  fMe[1][1] = -s1*s4*s5 + c1*c4*s5;
+  fMe[1][2] = s1*c4+c1*s4;
+  fMe[1][3] = s1*this->_a1 + c1*(this->_d3);
 
-  fMe[2][0] = s3;
-  fMe[2][1] = c3;
+  fMe[2][0] = -s5;
+  fMe[2][1] = -c5;
   fMe[2][2] = 0.f;
-  fMe[2][3] = q1;
+  fMe[2][3] = this->_d4 + q2;
 
   fMe[3][0] = 0.f;
   fMe[3][1] = 0.f;
@@ -285,7 +312,7 @@ vpAfma4::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe)
 
   Get the geometric transformation between the camera frame and the
   end-effector frame. This transformation is constant and correspond
-  to the extrinsic camera parameters estimated by calibration.
+  to the extrinsic camera parameters estimated by hand or by calibration.
 
   \param cMe : Transformation between the camera frame and the
   end-effector frame.
@@ -317,74 +344,210 @@ vpAfma4::get_cVe(vpTwistMatrix &cVe)
   return;
 }
 
+/*!
+
+  Get the twist transformation from camera frame to the reference
+  frame.  This transformation allows to compute a velocity expressed
+  in the reference frame into the camera frame.
+
+  \param q : Articular position of the four joints: q[0] corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q[1] corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q[2] and q[3]
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q[0], q[2] and
+  q[3] are expressed in radians. The translation q[1] is expressed in
+  meters.
+
+  \param cVf : Twist transformation.
+
+*/
+void
+vpAfma4::get_cVf(const vpColVector & q, vpTwistMatrix &cVf)
+{
+  vpHomogeneousMatrix fMc, cMf ;
+  get_fMc(q, fMc) ;
+  cMf = fMc.inverse();
+
+  cVf.buildFrom(cMf) ;
+
+  return;
+}
+
 
 
 /*!
 
-  Get the robot jacobian expressed in the end-effector frame.
+  Get the robot jacobian expressed in the end-effector frame:
 
-  \warning Not implemented.
+  \f[
+  {^e}J_e = \left[\begin{array}{cccc}
+  -c_5(a_1c_4+d_3s_4) & -s_5 & 0 & 0   \\
+  s_5(a_1c_4+d_3s_4) & -c_5 & 0 & 0   \\
+  a_1s_4-d_3c_4 & 0 & 0 & 0 \\
+  -s_5 & 0 & -s_5 & 0 \\
+  -c_5 & 0 & -c_5 & 0 \\
+  0 & 0 & 0 & 1 \\
+  \end{array}
+  \right]
+  \f]
 
-  \param q : Articular position of the four joints: q[0] correspond to
-  the first rotation of the turret around the vertical axis, q[1]
-  correspond to the vertical translation, while q[2] and q[3]
-  correspond to the pan and tilt of the camera respectively. Rotations
-  q[0], q[2] and q[3] are expressed in radians. The translation q[1]
-  is expressed in meters.
+  \param q : Articular position of the four joints: q[0] corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q[1] corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q[2] and q[3]
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q[0], q[2] and
+  q[3] are expressed in radians. The translation q[1] is expressed in
+  meters.
 
-  \param eJe : Robot jacobian expressed in the end-effector frame.
+  \param eJe : Robot jacobian expressed in the end-effector frame, with:
+  \f[
+  {^e}J_e = \left[\begin{array}{cc}
+  {^f}R_e^T & 0_{3 \times 3}    \\
+  0_{3 \times 3} & {^f}R_e^T \\
+  \end{array}
+  \right]  {^f}J_e
+  \f]
+
+  \sa get_fJe()
 */
 void
-vpAfma4::get_eJe(const vpColVector &/*q*/, vpMatrix &eJe)
+vpAfma4::get_eJe(const vpColVector &q, vpMatrix &eJe)
 {
+  double            q4 = q[2]; // pan
+  double            q5 = q[3]; // tilt
+
+  double            c4 = cos(q4);
+  double            s4 = sin(q4);
+  double            c5 = cos(q5);
+  double            s5 = sin(q5);
+
+  eJe.resize(6, 4);
 
   eJe = 0;
-  vpERROR_TRACE("Jacobian expressed in the end-effector frame not implemented");
+
+  eJe[0][0] = -(this->_a1*c4 + this->_d3*s4)*c5;  eJe[0][1] = -s5;
+  eJe[1][0] =  (this->_a1*c4 + this->_d3*s4)*s5;  eJe[1][1] = -c5;
+  eJe[2][0] =  (this->_a1*s4 - this->_d3*c4);
+  eJe[3][0] = eJe[3][2] = -s5;
+  eJe[4][0] = eJe[4][2] = -c5;
+  eJe[5][3] = 1.;
 }
 
 /*!
 
   Get the robot jacobian expressed in the robot reference frame also
-  called fix frame.
+  called fix frame:
 
-  \param q : Articular position of the four joints: q[0] correspond to
-  the first rotation of the turret around the vertical axis, q[1]
-  correspond to the vertical translation, while q[2] and q[3]
-  correspond to the pan and tilt of the camera respectively. Rotations
-  q[0], q[2] and q[3] are expressed in radians. The translation q[1]
-  is expressed in meters.
+  \f[
+  {^f}J_e = \left[\begin{array}{cccc}
+  -a_1s_1-d_3c_1 & 0 & 0 & 0   \\
+  a_1c_1-d_3s_1 & 0 & 0 & 0   \\
+  0 & 1 & 0 & 0 \\
+  0 & 0 & 0 & c_{14} \\
+  0 & 0 & 0 & s_{14} \\
+  1 & 0 & 1 & 0 \\
+  \end{array}
+  \right]
+  \f]
+
+  \param q : Articular position of the four joints: q[0] corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q[1] corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q[2] and q[3]
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q[0], q[2] and
+  q[3] are expressed in radians. The translation q[1] is expressed in
+  meters.
 
   \param fJe : Robot jacobian expressed in the robot reference frame.
+
+  \sa get_eJe() and get_fJe_inverse()
 */
 
 void
 vpAfma4::get_fJe(const vpColVector &q, vpMatrix &fJe)
 {
-
   fJe.resize(6,4) ;
 
-  double c1 = cos(q[0]);
-  double s1 = sin(q[0]);
-  double c13 = cos(q[0] + q[2]);
-  double s13 = sin(q[0] + q[2]);
+  double q1 = q[0]; // rot touret
+  double q4 = q[2]; // pan
 
-  fJe[0][0] = -s1*this->_long_23 - c1*this->_Long_23;
-  fJe[0][1] = fJe[0][2] = fJe[0][3] = 0.0;;
+  double c1 = cos(q1);
+  double s1 = sin(q1);
+  double c14 = cos(q1 + q4);
+  double s14 = sin(q1 + q4);
 
-  fJe[1][0] = c1*this->_long_23 - s1*this->_Long_23;
-  fJe[1][1] = fJe[1][2] = fJe[1][3] = 0.0;;
+  fJe = 0;
 
+  fJe[0][0] = -s1*this->_a1 - c1*this->_d3;
+
+  fJe[1][0] = c1*this->_a1 - s1*this->_d3;
+ 
   fJe[2][1] = 1.0;
-  fJe[2][0] = fJe[2][2] = fJe[2][3] = 0.0;;
+ 
+  fJe[3][3] = c14;
 
-  fJe[3][0] = fJe[3][1] = fJe[3][2] = 0.0;;
-  fJe[3][3] = c13;
+  fJe[4][3] = s14;
 
-  fJe[4][0] = fJe[4][1] = fJe[4][2] = 0.0;;
-  fJe[4][3] = s13;
+  fJe[5][0] = fJe[5][2] = 1.0;
+}
 
-  fJe[5][0] = fJe[5][3] = 1.0;
-  fJe[5][2] = fJe[5][4] = 0.0;
+/*! 
+
+  Get the inverse jacobian.
+
+  \f[
+  {^f}J_e^+ = \left[\begin{array}{cccccc}
+  -(a_1s_1+d_3c_1)/(a_1^2+d_3^2) & (a_1c_1-d_3s_1)/(a_1^2+d_3^2) & 0&0&0&0 \\
+  0 & 0 & 1 & 0 & 0 & 0  \\
+  (a_1s_1+d_3c_1)/(a_1^2+d_3^2) & -(a_1c_1-d_3s_1)/(a_1^2+d_3^2) & 0&0&0&1 \\
+  0 & 0 & 0 & c_{14} & s_{14} & 0  \\
+  \end{array}
+  \right]
+  \f]
+
+  \param q : Articular position of the four joints: q[0] corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q[1] corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q[2] and q[3]
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q[0], q[2] and
+  q[3] are expressed in radians. The translation q[1] is expressed in
+  meters.
+
+  \param fJe_inverse : Inverse robot jacobian expressed in the robot
+  reference frame.
+
+  \sa get_eJe() and get_fJe()
+
+*/
+void vpAfma4::get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse)
+{
+  fJe_inverse.resize(4, 6) ;
+  fJe_inverse = 0;
+
+  double q1 = q[0]; // rot touret
+  double q4 = q[2]; // pan
+ 
+  double c1 = cos(q1);
+  double s1 = sin(q1);
+  double c14 = cos(q1 + q4);
+  double s14 = sin(q1 + q4);
+
+  double det = this->_a1 * this->_a1 + this->_d3 * this->_d3;
+
+  fJe_inverse[0][0] = (-s1*this->_a1 - c1*this->_d3)/det;
+  fJe_inverse[0][1] = (c1*this->_a1 - s1*this->_d3)/det;
+
+  fJe_inverse[1][2] = fJe_inverse[2][5] = 1.;
+
+  fJe_inverse[2][0] = - fJe_inverse[0][0];
+  fJe_inverse[2][1] = - fJe_inverse[0][1];
+
+  fJe_inverse[3][3] = c14;
+  fJe_inverse[3][4] = s14;
 }
 
 /*!
@@ -422,29 +585,6 @@ vpAfma4::getJointMax()
 }
 
 
-/*!
-
-  Return the distance between join 2 and 3.
-
-  \return Distance between join 2 and 3.
-*/
-double
-vpAfma4::getLong23()
-{
-  return _Long_23;
-}
-
-/*!
-
-  Return the distance between join 2 and 3.
-
-  \return Distance between join 2 and 3.
-*/
-double
-vpAfma4::getlong23()
-{
-  return _long_23;
-}
 
 /*!
 
@@ -477,12 +617,16 @@ std::ostream & operator << (std::ostream & os,
     << "\t" << afma4._joint_min[3]
     << "\t" << std::endl
 
-    << "long 2-3: " << std::endl
-    << "\t" << afma4._long_23
+    << "a1: " << std::endl
+    << "\t" << afma4._a1
     << "\t" << std::endl
 
-    << "Long 2-3: " << std::endl
-    << "\t" << afma4._Long_23
+    << "d3: " << std::endl
+    << "\t" << afma4._d3
+    << "\t" << std::endl
+
+    << "d4: " << std::endl
+    << "\t" << afma4._d4
     << "\t" << std::endl
 
     << "eMc: "<< std::endl
