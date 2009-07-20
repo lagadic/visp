@@ -76,9 +76,9 @@ const double vpRobotAfma4::defaultPositioningVelocity = 15.0;
   or SIGQUIT signal.
 
 */
-void emergencyStop(int signo)
+void emergencyStopAfma4(int signo)
 {
-  std::cout << "Stop the application by SIGNAL= " << (char)7  ;
+  std::cout << "Stop the Afma4 application by SIGNAL= " << (char)7  ;
   switch(signo)
     {
     case SIGINT:
@@ -147,11 +147,11 @@ vpRobotAfma4::vpRobotAfma4 (void)
     #define	SIGTERM	15	// software termination signal from kill
   */
 
-  signal(SIGINT, emergencyStop);
-  signal(SIGBUS, emergencyStop) ;
-  signal(SIGSEGV, emergencyStop) ;
-  signal(SIGKILL, emergencyStop);
-  signal(SIGQUIT, emergencyStop);
+  signal(SIGINT, emergencyStopAfma4);
+  signal(SIGBUS, emergencyStopAfma4) ;
+  signal(SIGSEGV, emergencyStopAfma4) ;
+  signal(SIGKILL, emergencyStopAfma4);
+  signal(SIGQUIT, emergencyStopAfma4);
 
   std::cout << "Open communication with MotionBlox.\n";
   try {
@@ -225,7 +225,7 @@ vpRobotAfma4::init (void)
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 0) {
-    fprintf(stdout, "\nPower ON the robot in the next 10 second...\n");
+    fprintf(stdout, "\nPower ON the Afma4 robot in the next 10 second...\n");
     fflush(stdout);
     Try( PrimitivePOWERON_Afma4() );
 
@@ -240,7 +240,7 @@ vpRobotAfma4::init (void)
 
     } while (HIPowerStatus == 0);
   }
-  fprintf(stdout, "Power is ON. We continue...\n");
+  fprintf(stdout, "Afma4 power is ON. We continue...\n");
   fflush(stdout);
 
   // get real joint min/max from the MotionBlox
@@ -404,7 +404,7 @@ vpRobotAfma4::powerOn(void)
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 0) {
-    fprintf(stdout, "Power ON the robot\n");
+    fprintf(stdout, "Power ON the Afma4 robot\n");
     fflush(stdout);
 
     Try( PrimitivePOWERON_Afma4() );
@@ -439,7 +439,7 @@ vpRobotAfma4::powerOff(void)
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
-    fprintf(stdout, "Power OFF the robot\n");
+    fprintf(stdout, "Power OFF the Afma4 robot\n");
     fflush(stdout);
 
     Try( PrimitivePOWEROFF_Afma4() );
@@ -508,6 +508,36 @@ vpRobotAfma4::get_cVe(vpTwistMatrix &cVe)
 
 /*!
 
+  Get the twist transformation from camera frame to the reference
+  frame.  This transformation allows to compute a velocity expressed
+  in the reference frame into the camera frame.
+
+  \param cVf : Twist transformation.
+
+*/
+void
+vpRobotAfma4::get_cVf(vpTwistMatrix &cVf)
+{
+  double position[this->njoint];
+
+  InitTry;
+  Try( PrimitiveACQ_POS_Afma4(position) );
+  CatchPrint();
+
+  vpColVector q(this->njoint);
+  for (int i=0; i < njoint; i++)
+    q[i] = position[i];
+
+  try {
+    vpAfma4::get_cVf(q, cVf) ;
+  }
+  catch(...) {
+    vpERROR_TRACE("catch exception ") ;
+    throw ;
+  }}
+
+/*!
+
   Get the geometric transformation between the camera frame and the
   end-effector frame. This transformation is constant and correspond
   to the extrinsic camera parameters estimated by calibration.
@@ -524,25 +554,27 @@ vpRobotAfma4::get_cMe(vpHomogeneousMatrix &cMe)
 
 /*!
 
-  Get the robot jacobian expressed in the end-effector frame.
+  Get the robot jacobian expressed in the end-effector frame. To have
+  acces to the analytic form of this jacobian see vpAfma4::get_eJe().
 
   To compute eJe, we communicate with the low level controller to get
   the articular joint position of the robot.
 
   \param eJe : Robot jacobian expressed in the end-effector frame.
 
+  \sa vpAfma4::get_eJe()
 */
 void
 vpRobotAfma4::get_eJe(vpMatrix &eJe)
 {
 
-  double position[6];
+  double position[this->njoint];
 
   InitTry;
   Try( PrimitiveACQ_POS_Afma4(position) );
   CatchPrint();
 
-  vpColVector q(6);
+  vpColVector q(this->njoint);
   for (int i=0; i < njoint; i++)
     q[i] = position[i];
 
@@ -555,18 +587,18 @@ vpRobotAfma4::get_eJe(vpMatrix &eJe)
   }
 }
 
-
-
-
 /*!
 
   Get the robot jacobian expressed in the robot reference frame also
-  called fix frame.
+  called fix frame. To have acces to the analytic form of this
+  jacobian see vpAfma4::get_fJe().
 
   To compute fJe, we communicate with the low level controller to get
   the articular joint position of the robot.
 
   \param fJe : Robot jacobian expressed in the reference frame.
+
+  \sa vpAfma4::get_fJe()
 */
 
   void
@@ -651,12 +683,14 @@ vpRobotAfma4::getPositioningVelocity (void)
   \warning This method is blocking. It returns only when the position
   is reached by the robot.
 
-  \param position : The joint positions to reach. position[0] correspond to the
-  first rotation of the turret around the vertical axis, position[1] correspond
-  to the vertical translation, while position[2] and position[3] correspond to
-  the pan and tilt of the camera respectively. Rotations position[0],
-  position[2] and position[3] are expressed in radians. The translation
-  position[1] is expressed in meters.
+  \param position : The joint positions to reach. position[0]
+  corresponds to the first rotation of the turret around the vertical
+  axis (joint 1 with value \f$q_1\f$), while position[1] corresponds
+  to the vertical translation (joint 2 with value \f$q_2\f$), while
+  position[2] and position[3] correspond to the pan and tilt of the
+  camera (respectively joint 4 and 5 with values \f$q_4\f$ and
+  \f$q_5\f$). Rotations position[0], position[2] and position[3] are
+  expressed in radians. The translation q[1] is expressed in meters.
 
   \param frame : Frame in which the position is expressed.
 
@@ -669,10 +703,10 @@ vpRobotAfma4::getPositioningVelocity (void)
   \code
   // Set positions in the joint space
   vpColVector q[4];
-  double q[0] = M_PI/8; // X axis, in radian
-  double q[1] = 0.2;    // Y axis, in meter
-  double q[2] = M_PI/4; // A axis, in radian
-  double q[3] = M_PI/8; // B axis, in radian
+  double q[0] = M_PI/8; // Joint 1, in radian
+  double q[1] = 0.2;    // Joint 2, in meter
+  double q[2] = M_PI/4; // Joint 4, in radian
+  double q[3] = M_PI/8; // Joint 5, in radian
 
   vpRobotAfma4 robot;
 
@@ -719,38 +753,35 @@ vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
   
   int error = 0;
   
-  
+  switch(frame) {
+  case vpRobot::REFERENCE_FRAME:
+    vpERROR_TRACE ("Positionning error. Reference frame not implemented");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Positionning error: "
+			    "Reference frame not implemented.");
+    break ;
+  case vpRobot::CAMERA_FRAME : 
+    vpERROR_TRACE ("Positionning error. Camera frame not implemented");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Positionning error: "
+			    "Camera frame not implemented.");
+    break ;
+  case vpRobot::MIXT_FRAME:
+    vpERROR_TRACE ("Positionning error. Mixt frame not implemented");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Positionning error: "
+			    "Mixt frame not implemented.");
+    break ;
+    
+  case vpRobot::ARTICULAR_FRAME: {
+    break ;
+    
+  }
+  }
   if (position.getRows() != this->njoint) {
-    vpERROR_TRACE ("Positionning error.");
+    vpERROR_TRACE ("Positionning error: bad vector dimension.");
     throw vpRobotException (vpRobotException::positionOutOfRangeError,
- 			    "Position out of range.");
-
-
-    switch(frame) {
-    case vpRobot::REFERENCE_FRAME:
-      vpERROR_TRACE ("Positionning error. Reference frame not implemented");
-      throw vpRobotException (vpRobotException::lowLevelError,
-			      "Positionning error: "
-			      "Reference frame not implemented.");
-      break ;
-    case vpRobot::CAMERA_FRAME : 
-      vpERROR_TRACE ("Positionning error. Camera frame not implemented");
-      throw vpRobotException (vpRobotException::lowLevelError,
-			      "Positionning error: "
-			      "Camera frame not implemented.");
-      break ;
-    case vpRobot::MIXT_FRAME:
-      vpERROR_TRACE ("Positionning error. Mixt frame not implemented");
-      throw vpRobotException (vpRobotException::lowLevelError,
-			      "Positionning error: "
-			      "Mixt frame not implemented.");
-      break ;
- 
-    case vpRobot::ARTICULAR_FRAME: {
-      break ;
-
-    }
-    }
+ 			    "Positionning error: bad vector dimension."); 
   }
 
   InitTry;
@@ -789,11 +820,14 @@ vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
   \warning This method is blocking. It returns only when the position
   is reached by the robot.
 
-  \param q1, q2, q3, q4 : The four joint positions to reach. q[0] correspond to
-  the first rotation of the turret around the vertical axis, q[1] correspond to
-  the vertical translation, while q[2] and q[3] correspond to the pan and tilt
-  of the camera respectively. Rotations q[0], q[2] and q[3] are expressed in
-  radians. The translation q[1] is expressed in meters.
+  \param q1, q2, q4, q5 : The four joint positions to reach. q1 corresponds to
+  the first rotation (joint 1 with value \f$q_1\f$) of the turret
+  around the vertical axis, while q2 corresponds to the vertical
+  translation (joint 2 with value \f$q_2\f$), while q4 and q5
+  correspond to the pan and tilt of the camera (respectively joint 4
+  and 5 with values \f$q_4\f$ and \f$q_5\f$). Rotations q1, q4 and
+  q5 are expressed in radians. The translation q2 is expressed in
+  meters.
 
   \param frame : Frame in which the position is expressed.
 
@@ -805,10 +839,10 @@ vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
 
   \code
   // Set positions in the camera frame
-  double q1 = M_PI/8; // X axis, in radian
-  double q2 = 0.2;    // Y axis, in meter
-  double q3 = M_PI/4; // A axis, in radian
-  double q4 = M_PI/8; // B axis, in radian
+  double q1 = M_PI/8; // Joint 1, in radian
+  double q2 = 0.2;    // Joint 2, in meter
+  double q4 = M_PI/4; // Joint 4, in radian
+  double q5 = M_PI/8; // Joint 5, in radian
 
   vpRobotAfma4 robot;
 
@@ -818,7 +852,7 @@ vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
   robot.setPositioningVelocity(20);
 
   // Moves the robot in the camera frame
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q1, q2, q3, q4);
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q1, q2, q4, q5);
   \endcode
 
   \sa setPosition()
@@ -826,15 +860,15 @@ vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
 void vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
 				const double q1,
 				const double q2,
-				const double q3,
-				const double q4)
+				const double q4,
+				const double q5)
 {
   try {
     vpColVector position(this->njoint) ;
     position[0] = q1 ;
     position[1] = q2 ;
-    position[2] = q3 ;
-    position[3] = q4 ;
+    position[2] = q4 ;
+    position[3] = q5 ;
 
     setPosition(frame, position) ;
   }
@@ -907,11 +941,14 @@ void vpRobotAfma4::setPosition(const char *filename)
   - in camera cartesien frame, a 6 dimension vector, set to 0.
 
   - in articular, a 4 dimension vector corresponding to the joint position of
-  each dof. position[0] correspond to the first rotation of the turret around
-  the vertical axis, position[1] correspond to the vertical translation, while
-  position[2] and position[3] correspond to the pan and tilt of the camera
-  respectively. Rotations position[0], position[2] and position[3] are
-  expressed in radians. The translation position[1] is expressed in meters.
+  each dof. position[0]
+  corresponds to the first rotation of the turret around the vertical
+  axis (joint 1 with value \f$q_1\f$), while position[1] corresponds
+  to the vertical translation (joint 2 with value \f$q_2\f$), while
+  position[2] and position[3] correspond to the pan and tilt of the
+  camera (respectively joint 4 and 5 with values \f$q_4\f$ and
+  \f$q_5\f$). Rotations position[0], position[2] and position[3] are
+  expressed in radians. The translation q[1] is expressed in meters.
 
   - in reference frame, a 6 dimension vector, the first 3 values correspond to
   the translation tx, ty, tz in meters (like a vpTranslationVector), and the
@@ -1027,8 +1064,10 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
 
   - In articular, \f$ vel = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4]^t \f$ correspond to joint velocities.
 
-  - In camera frame, \f$ vel = [^{c} \omega_x, ^{c} \omega_y]^t \f$ is
-  expressed in the camera frame.
+  - In camera frame, \f$ vel = [^{c} t_x, ^{c} t_y, ^{c} t_z,^{c}
+  \omega_x, ^{c} \omega_y]^t, ^{c} \omega_z]^t\f$ is expressed in the
+  camera frame. Since only four dof are available, in camera frame we
+  control control only the camera pan and tilt.
 
   \exception vpRobotException::wrongStateError : If a the robot is not
   configured to handle a velocity. The robot can handle a velocity only if the
@@ -1043,10 +1082,10 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
   \code
   // Set joint velocities
   vpColVector q_dot(4);
-  q_dot[0] = M_PI/8; // X axis, in rad/s
-  q_dot[1] = 0.2;    // Y axis, in meter/s
-  q_dot[2] = M_PI/4; // A axis, in rad/s
-  q_dot[3] = M_PI/8; // B axis, in rad/s
+  q_dot[0] = M_PI/8; // Joint 1 velocity, in rad/s
+  q_dot[1] = 0.2;    // Joint 2 velocity, in meter/s
+  q_dot[2] = M_PI/4; // Joint 4 velocity, in rad/s
+  q_dot[3] = M_PI/8; // Joint 5 velocity, in rad/s
 
   vpRobotAfma4 robot;
 
@@ -1074,7 +1113,8 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
   // compatible with the requested frame
   switch(frame) {
   case vpRobot::CAMERA_FRAME : {
-    if (vel.getRows() != 2) {
+    //if (vel.getRows() != 2) {
+      if (vel.getRows() != 6) {
 	vpERROR_TRACE ("Bad dimension of the velocity vector in camera frame");
 	throw vpRobotException (vpRobotException::wrongStateError,
 				"Bad dimension of the velocity vector "
@@ -1123,12 +1163,12 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
   //
   // Velocities saturation with normalization
   //
-  vpColVector velocity;
+  vpColVector joint_vel(this->njoint);
   bool norm = false; // Flag to indicate when velocities need to be nomalized
 
   // Case of the camera frame where we control only 2 dof
   if (frame == vpRobot::CAMERA_FRAME) {
-    velocity.resize(2);
+    vpColVector velocity( vel.getRows() );
     double max = getMaxRotationVelocity();
     // Determine if we need to saturate the rotation velocities
     for (int i = 0 ; i < 2; ++ i) { // rx and ry of the camera
@@ -1148,17 +1188,39 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
       velocity = vel;
     }
 
-    vpMatrix eJe(4,2);
+#if 0 // ok 
+    vpMatrix eJe(4,6);
     eJe = 0;
-    eJe[2][1] = -1;
-    eJe[3][0] = 1;
-    
-    velocity = eJe * velocity; // Compute the articular velocity
+    eJe[2][4] = -1;
+    eJe[3][3] =  1;
+
+    joint_vel = eJe * velocity; // Compute the articular velocity
+#endif
+    vpColVector q;
+    getPosition(vpRobot::ARTICULAR_FRAME, q);
+    vpMatrix fJe_inverse;
+    get_fJe_inverse(q, fJe_inverse);
+    vpHomogeneousMatrix fMe;
+    get_fMe(q, fMe);
+    vpTranslationVector t;
+    t=0;
+    vpRotationMatrix fRe;
+    fMe.extract(fRe);
+    vpTwistMatrix fVe(t, fRe);
+    // compute the inverse jacobian in the end-effector frame
+    vpMatrix eJe_inverse = fJe_inverse * fVe;
+
+    // Transform the velocities from camera to end-effector frame
+    vpTwistMatrix eVc;
+    eVc.buildFrom(this->_eMc);
+    joint_vel = eJe_inverse * eVc * velocity;
+
+//     printf("Vitesse art: %f %f %f %f\n", joint_vel[0], joint_vel[1], 
+// 	   joint_vel[2], joint_vel[3]);
   }
 
   // Case of the joint control where we control all the joints
   else if (frame == vpRobot::ARTICULAR_FRAME) {
-    velocity.resize(this->njoint);
 
     // Manage the rotations: joint 0,2,3
     double max = getMaxRotationVelocity();
@@ -1181,11 +1243,11 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
     // Rotations velocities normalisation
     if (norm == true) {
       max = getMaxRotationVelocity() / max;
-      velocity = vel * max;
+      joint_vel = vel * max;
      
     }
     else {
-      velocity = vel;
+      joint_vel = vel;
     }
 
     // Manage the translation: joint 1
@@ -1200,14 +1262,14 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
     // Translations velocities normalisation
     if (norm == true)  {
       max = getMaxTranslationVelocity() * max;
-      velocity = vel * max;
+      joint_vel = vel * max;
     }
   }
 
   InitTry;
 
   // Send a joint velocity to the low level controller
-  Try( PrimitiveMOVESPEED_Afma4(velocity.data) );
+  Try( PrimitiveMOVESPEED_Afma4(joint_vel.data) );
 
   Catch();
   if (TryStt < 0) {
@@ -1259,10 +1321,10 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
   \code
   // Set joint velocities
   vpColVector q_dot(4);
-  q_dot[0] = M_PI/8; // X axis, in rad/s
-  q_dot[1] = 0.2;    // Y axis, in meter/s
-  q_dot[2] = M_PI/4; // A axis, in rad/s
-  q_dot[3] = M_PI/16; // B axis, in rad/s
+  q_dot[0] = M_PI/8;  // Joint 1 velocity, in rad/s
+  q_dot[1] = 0.2;     // Joint 2 velocity, in meter/s
+  q_dot[2] = M_PI/4;  // Joint 4 velocity, in rad/s
+  q_dot[3] = M_PI/16; // Joint 5 velocity, in rad/s
 
   vpRobotAfma4 robot;
 
@@ -1289,7 +1351,13 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
 			   vpColVector & velocity)
 {
 
-  velocity.resize (this->njoint);
+  switch (frame) {
+  case vpRobot::ARTICULAR_FRAME: 
+    velocity.resize (this->njoint);
+  default:
+    velocity.resize (6);
+  }
+
   velocity = 0;
 
 
@@ -1395,10 +1463,10 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
   \code
   // Set joint velocities
   vpColVector q_dot(4);
-  q_dot[0] = M_PI/8; // X axis, in rad/s
-  q_dot[1] = 0.2;    // Y axis, in meter/s
-  q_dot[2] = M_PI/4; // A axis, in rad/s
-  q_dot[3] = M_PI/16; // B axis, in rad/s
+  q_dot[0] = M_PI/8;  // Joint 1 velocity, in rad/s
+  q_dot[1] = 0.2;     // Joint 2 velocity, in meter/s
+  q_dot[2] = M_PI/4;  // Joint 4 velocity, in rad/s
+  q_dot[3] = M_PI/16; // Joint 5 velocity, in rad/s
 
   vpRobotAfma4 robot;
 
@@ -1447,10 +1515,10 @@ A typical content of such a file is given below:
 # file: "myposition.pos "
 #
 # R: X Y A B
-# Joint position: X : rotation of the turret in degrees
-#                 Y : vertical translation in meters
-#                 A : pan rotation of the camera in degrees
-#                 B : tilt rotation of the camera in degrees
+# Joint position: X : rotation of the turret in degrees (joint 1)
+#                 Y : vertical translation in meters (joint 2)
+#                 A : pan rotation of the camera in degrees (joint 4)
+#                 B : tilt rotation of the camera in degrees (joint 5)
 #
 
 R: 45 0.3 -20 30
@@ -1562,10 +1630,11 @@ vpRobotAfma4::savePosFile(const char *filename, const vpColVector &q)
   fprintf(fd, "\
 #AFMA4 - Position - Version 2.01\n\
 #\n\
-# R: X Y Z A B C\n\
-# Joint position: X, Y, Z: translations in meters\n\
-#                 A, B, C: rotations in degrees\n\
-#\n\
+# R: X Y A B\n\
+# Joint position: X : rotation of the turret in degrees (joint 1)\n\
+#                 Y : vertical translation in meters (joint 2)\n\
+#                 A : pan rotation of the camera in degrees (joint 4)\n\
+#                 B : tilt rotation of the camera in degrees (joint 5)\n\
 #\n\n");
 
   // Save positions in mm and deg
