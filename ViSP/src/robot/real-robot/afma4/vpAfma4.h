@@ -77,7 +77,7 @@
   \f]
 
   The forward kinematics of the robot is given by the homogeneous
-  matrix \f$f_M_e\f$ which is implemented in get_fMe(). 
+  matrix \f${^f}M_e\f$ which is implemented in get_fMe(). 
 
   \f[
   {^f}M_e = \left[\begin{array}{cccc}
