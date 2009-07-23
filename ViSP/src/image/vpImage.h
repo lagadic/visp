@@ -176,7 +176,7 @@ public:
     \return Value of the image point (i, j).
 
   */
-  inline  Type operator()(const unsigned int i, const  unsigned int j)
+  inline  Type operator()(const unsigned int i, const  unsigned int j) const
   {
     return bitmap[i*width+j] ;
   }
@@ -205,7 +205,7 @@ public:
     \sa getValue(const vpImagePoint &)
 
   */
-  inline  Type operator()(const vpImagePoint &ip)
+  inline  Type operator()(const vpImagePoint &ip) const
   {
     unsigned int i = (unsigned int) ip.get_i();
     unsigned int j = (unsigned int) ip.get_j();
