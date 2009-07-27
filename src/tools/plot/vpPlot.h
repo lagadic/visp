@@ -181,7 +181,6 @@ class vpPlot
       marker
     } vpCurveStyle;
 
-
   protected:
     //! The X window plot class
     XPlotter* XPlot;
@@ -276,7 +275,6 @@ class vpPlot
 		   double ydelt, const bool gx = 0, const bool gy = 0);
 
     void setBgColor(const int r, const int g, const int b);
-    void setBgColor(const vpColor color);
     void flush();
 
     void drawPoint(const int graphNum,  const int curveNum, 
@@ -299,6 +297,7 @@ class vpPlot
 
     void setColor(const int graphNum,  const int curveNum, 
 		  const int r, const int g, const int b);
+    void setColor(const int graphNum,  const int curveNum, vpColor color);
     void setLineStyle(const int graphNum,  const int curveNum, 
 		      const char* style);
 
