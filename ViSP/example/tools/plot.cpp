@@ -57,12 +57,12 @@ int main ()
   vpPlot plot(2);
 
   //Initialize the number of curve for each graphic
-  plot.initGraph(0,2);
+  plot.initGraph(0,1);
   plot.initGraph(1,1);
 
   //Set the color of the curves
-  plot.setColor(0,0,0,55000,0);
-  plot.setColor(1,0,55000,0,0);
+  plot.setColor(0,0,vpColor::green);
+  plot.setColor(1,0,vpColor::red);
 
   //Set the titles of the graphic
   char title[40];
