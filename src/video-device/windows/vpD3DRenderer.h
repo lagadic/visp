@@ -164,8 +164,15 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 			     vpColor color,
 			     unsigned int maxX, unsigned int maxY)
     {
+      long c;
+      if (color.id < vpColor::id_unknown)
+		c = colors[color.id];
+      else {
+		c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
+	  }
+
       if(x>=0 && y>=0 && x<= (int)maxX && y<= (int)maxY)
-	*(long*)(buf + (y*pitch) + (x<<2)) = colors[color];
+	  *(long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
     }
   /*!
     Unsafe useful inline function to set a pixel in a texture buffer.
@@ -180,7 +187,14 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
                              int x, int y,
                              vpColor color)
   {
-      *(long*)(buf + (y*pitch) + (x<<2)) = colors[color];
+      long c;
+      if (color.id < vpColor::id_unknown)
+		c = colors[color.id];
+      else {
+		c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
+	  }
+
+	  *(long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
   }
 
   int supPowerOf2(int n);
