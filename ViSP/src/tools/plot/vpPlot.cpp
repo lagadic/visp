@@ -520,6 +520,29 @@ void vpPlot::setColor(const int graphNum,  const int curveNum,
   graph[graphNum].curveList[curveNum].color[2] = b; //B
 }
 
+/*!
+  This function enables you to choose the color used to draw a given curve.
+
+  \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param curveNum : The index of the curve in the list of the curves belonging to the graphic.
+  \param color : The color you want to use
+*/
+void vpPlot::setColor(const int graphNum,  const int curveNum, vpColor color)
+{
+  switch(color.id)
+  {
+    case vpColor::id_black: this->setColor(graphNum, curveNum, 0,0,0);break;
+    case vpColor::id_white: this->setColor(graphNum, curveNum, (256*256)-1,(256*256)-1,(256*256)-1);break;
+    case vpColor::id_red: this->setColor(graphNum, curveNum, (256*256)-1,0,0);break;
+    case vpColor::id_green: this->setColor(graphNum, curveNum, 0,(256*256)-1,0);break;
+    case vpColor::id_blue: this->setColor(graphNum, curveNum, 0,0,(256*256)-1);break;
+    case vpColor::id_yellow: this->setColor(graphNum, curveNum, (256*256)-1,(256*256)-1,0);break;
+    case vpColor::id_cyan: this->setColor(graphNum, curveNum, 0,(256*256)-1,(256*256)-1);break;
+    case vpColor::id_orange: this->setColor(graphNum, curveNum, (256*256)-1,(256*128)-1,0);break;
+    case vpColor::id_unknown: this->setColor(graphNum, curveNum, color.R*256, color.G*256, color.B*256);break;
+  }
+}
+
 
 /*!
   This function enables to set the line style used to draw a line for a given curve.
