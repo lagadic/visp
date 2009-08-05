@@ -170,11 +170,14 @@ void vpPlot::initGraph(int graphNum, int curveNbr)
   graph[graphNum].curveNbr = curveNbr;
   graph[graphNum].curveList = new vpCurve[curveNbr];
 
-  for (int i = 0; i < curveNbr; i++)
-  {
-    graph[graphNum].curveList[i].color[0] = 0; //R
-    graph[graphNum].curveList[i].color[1] = 0; //G
-    graph[graphNum].curveList[i].color[2] = 0; //B
+  vpColor colors[6] = {vpColor::blue,vpColor::green,vpColor::red,vpColor::cyan,vpColor::orange,vpColor::yellow};
+
+	for (int i = 0; i < curveNbr; i++)
+	{
+	setColor(graphNum, i, colors[i%6]);
+	/*graph[graphNum].curveList[i].color[0] = 0; //R
+	graph[graphNum].curveList[i].color[1] = 0; //G
+	graph[graphNum].curveList[i].color[2] = 0; //B*/
     graph[graphNum].curveList[i].curveStyle = line;
     graph[graphNum].curveList[i].pointListx.kill();
     graph[graphNum].curveList[i].pointListy.kill();
@@ -1130,6 +1133,26 @@ void vpPlot::saveData(const int graphNum, const char* dataFile)
   delete[] p;
   fichier.close();
 }
+
+/*!
+  This function enables you to add new points in all curves of a plot. These points are drawn with the parameters of the curves.
+
+  \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param x : The coordinate of the new points along the x axis and given in the user unit system.
+  \param v : The coordinates of the new points along the y axis and given in the user unit system.
+*/
+void vpPlot::plot(const int graphNum, const double x, const vpColVector v)
+{
+	if(graph[graphNum].curveNbr == v.getRows())
+	{
+		for(int i = 0;i = v.getRows()-1;++i)
+			plot(graphNum, i, x, v[i]);
+	}
+	else
+		vpTRACE("error in plot vector : not the right dimension");
+}
+
+
 
 #endif
 
