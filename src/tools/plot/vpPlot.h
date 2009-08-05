@@ -303,6 +303,7 @@ class vpPlot
 
     void plot(const int graphNum,  const int curveNum, 
 	      const double x, const double y);
+    void plot(const int graphNum, const double x, const vpColVector v);
     void plotExtremities(const int graphNum,  const int curveNum, 
 			 vpPlotType plotType = X);
 
