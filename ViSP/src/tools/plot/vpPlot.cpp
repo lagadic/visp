@@ -1145,8 +1145,8 @@ void vpPlot::plot(const int graphNum, const double x, const vpColVector v)
 {
 	if(graph[graphNum].curveNbr == v.getRows())
 	{
-		for(int i = 0;i = v.getRows()-1;++i)
-			plot(graphNum, i, x, v[i]);
+		for(int i = 0;i < v.getRows();++i)
+			this->plot(graphNum, i, x, v[i]);
 	}
 	else
 		vpTRACE("error in plot vector : not the right dimension");
