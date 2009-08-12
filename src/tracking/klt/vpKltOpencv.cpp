@@ -99,7 +99,7 @@ void vpKltOpencv::reset()
 
 vpKltOpencv::vpKltOpencv()
 {
-  //Valeurs par défaut pour le KLT
+  //Valeurs par dï¿½faut pour le KLT
   initialized = 0;
   maxFeatures = 50;
   countFeatures = 0;
@@ -168,10 +168,10 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
   IsFeatureValid = copy.IsFeatureValid;
 
   if (!initialized) {
-    //image = 0;
-    //prev_image = 0;
-    //pyramid = 0;
-    //prev_pyramid = 0;
+    image = 0;
+    prev_image = 0;
+    pyramid = 0;
+    prev_pyramid = 0;
     features = 0;
     prev_features = 0;
     status = 0;
@@ -186,61 +186,65 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
     globalcountFeatures = 0;
   }
 
-  // 	if (copy.image)
-  // 	{
-  // 		IplImage *image = cvCloneImage(copy.image);
-  // 	}
+  	if (copy.image)
+  	{
+           image =  cvCreateImage(cvGetSize(copy.image), 8, 1);
+  		/*IplImage **/cvCopyImage(copy.image,image);
+  	}
 
-  // 	if (copy.prev_image)
-  // 	{
-  // 		IplImage *prev_image = cvCloneImage(copy.prev_image);
-  // 	}
+  	if (copy.prev_image)
+  	{
+          prev_image = cvCreateImage(cvGetSize(copy.prev_image), IPL_DEPTH_8U, 1);
+  		/*IplImage **/ cvCopyImage(copy.prev_image,prev_image);
+  	}
 
-  // 	if (copy.pyramid)
-  // 	{
-  // 		IplImage *pyramid = cvCloneImage(copy.pyramid);
-  // 	}
+  	if (copy.pyramid)
+  	{
+          pyramid = cvCreateImage(cvGetSize(copy.pyramid), IPL_DEPTH_8U, 1);
+  		/*IplImage **/cvCopyImage(copy.pyramid,pyramid);
+  	}
 
-  // 	if (copy.prev_pyramid)
-  // 	{
-  // 		IplImage *prev_pyramid = cvCloneImage(copy.prev_pyramid);
-  // 	}
+  	if (copy.prev_pyramid)
+  	{
+          prev_pyramid = cvCreateImage(cvGetSize(copy.prev_pyramid), IPL_DEPTH_8U, 1);
+  		/*IplImage **/cvCopyImage(copy.prev_pyramid,prev_pyramid);
+  	}
 
   //Deep copy of arrays
   if (copy.features) {
-      CvPoint2D32f *features =
-	(CvPoint2D32f*)cvAlloc(copy.maxFeatures*sizeof(copy.features[0]));
+      /*CvPoint2D32f **/features =
+	(CvPoint2D32f*)cvAlloc(copy.maxFeatures*sizeof(CvPoint2D32f));
       for (int i = 0; i < copy.maxFeatures; i++)
 	features[i] = copy.features[i];
     }
 
   if (copy.prev_features) {
-      CvPoint2D32f *prev_features =
-	(CvPoint2D32f*)cvAlloc(copy.maxFeatures*sizeof(copy.prev_features[0]));
+      /*CvPoint2D32f **/prev_features =
+	(CvPoint2D32f*)cvAlloc(copy.maxFeatures*sizeof(CvPoint2D32f));
       for (int i = 0; i < copy.maxFeatures; i++)
 	prev_features[i] = copy.prev_features[i];
     }
 
   if (copy.featuresid) {
-      long *featuresid = (long*)cvAlloc(copy.maxFeatures*sizeof(long));
+      /*long **/featuresid = (long*)cvAlloc(copy.maxFeatures*sizeof(long));
       for (int i = 0; i < copy.maxFeatures; i++)
 	featuresid[i] = copy.featuresid[i];
     }
 
   if (copy.prev_featuresid) {
-      long *prev_featuresid = (long*)cvAlloc(copy.maxFeatures*sizeof(long));
+      /*long **/prev_featuresid = (long*)cvAlloc(copy.maxFeatures*sizeof(long));
       for (int i = 0; i < copy.maxFeatures; i++)
 	prev_featuresid[i] = copy.prev_featuresid[i];
     }
 
   if (copy.status) {
-      char *status = (char*)cvAlloc(copy.maxFeatures);
+      /*char **/status = (char*)cvAlloc(copy.maxFeatures*sizeof(char));
       for (int i = 0; i < copy.maxFeatures; i++)
 	status[i] = copy.status[i];
     }
 
   if (copy.lostDuringTrack) {
-    bool *lostDuringTrack = (bool*)cvAlloc(copy.maxFeatures);
+    /*bool **/lostDuringTrack = (bool*)cvAlloc(copy.maxFeatures*sizeof(bool));
     for (int i = 0; i < copy.maxFeatures; i++)
       lostDuringTrack[i] = copy.lostDuringTrack[i];
   }
@@ -263,10 +267,10 @@ void vpKltOpencv::setMaxFeatures(unsigned int input) {
   if (prev_featuresid) cvFree(&prev_featuresid);
  
 
-  features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(features[0]));
-  prev_features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(prev_features[0]));
-  status = (char*)cvAlloc(maxFeatures);
-  lostDuringTrack = (bool*)cvAlloc(maxFeatures);
+  features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(CvPoint2D32f));
+  prev_features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(CvPoint2D32f));
+  status = (char*)cvAlloc(maxFeatures*sizeof(char));
+  lostDuringTrack = (bool*)cvAlloc(maxFeatures*sizeof(bool));
   featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
   prev_featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
 
@@ -316,7 +320,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
   //Import
   cvCopy(I, image, 0);
 
-  //Recherche de points d'intérets
+  //Recherche de points d'intï¿½rets
   countFeatures = maxFeatures;
   countPrevFeatures = 0;
   IplImage* eig = cvCreateImage(cvGetSize(image), 32, 1);
