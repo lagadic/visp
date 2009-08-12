@@ -22,6 +22,7 @@ ViSP 2.x.y
 	     as a shared library (DLL)
     - [8257] Bug in vp1394TwoGrabber::resetBus()
     - [8259] Segfault in vpDisplayX
+    - [8389] vpKltOpencv : Bug in the copy constructor
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features
