@@ -161,6 +161,12 @@
 // available in /udd/fspindle/robot/Afma6/current/include/
 #cmakedefine VISP_HAVE_ACCESS_TO_NAS
 
+// Defined if Doxygen documentation tool is found
+#cmakedefine VISP_HAVE_DOXYGEN
+
+// Defined if dot documentation tool used by Doxygen is found
+#cmakedefine VISP_HAVE_DOT
+
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
 // We exploit here the fact that cmake auto set xxx_EXPORTS (with S) on 
