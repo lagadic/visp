@@ -867,13 +867,13 @@ ENDIF(USE_PTU46)
 #----------------------------------------------------------------------
 FIND_PACKAGE(Doxygen)
 IF (DOXYGEN_FOUND)
-  SET(VISP_HAVE_DOXYGEN_FOUND "yes")  # for ViSP-third-party.txt
+  SET(VISP_HAVE_DOXYGEN "yes")  # for ViSP-third-party.txt
   IF(DOXYGEN_DOT_EXECUTABLE)
-    SET(VISP_HAVE_GRAPHVIZ_FOUND "yes")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_DOT "yes")  # for ViSP-third-party.txt
   ELSE(DOXYGEN_DOT_EXECUTABLE)
-    SET(VISP_HAVE_GRAPHVIZ_FOUND "no")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_DOT "no")  # for ViSP-third-party.txt
   ENDIF(DOXYGEN_DOT_EXECUTABLE)
-  ## we need latex for doxygen because of the formulas
+e  ## we need latex for doxygen because of the formulas
   FIND_PACKAGE(LATEX)
   IF    (NOT LATEX_COMPILER)
     MESSAGE(STATUS "latex command LATEX_COMPILER not found but usually required. You will probably get warnings and user interaction on doxy run.")
@@ -894,7 +894,7 @@ IF (DOXYGEN_FOUND)
     @ONLY )
   ADD_CUSTOM_TARGET(html-doc ${DOXYGEN_EXECUTABLE} ${VISP_DOC_DIR}/config-doxygen) 
 ELSE(DOXYGEN_FOUND)
-  SET(VISP_HAVE_DOXYGEN_FOUND "no")  # for ViSP-third-party.txt
+  SET(VISP_HAVE_DOXYGEN "no")  # for ViSP-third-party.txt
 ENDIF(DOXYGEN_FOUND)
 
 #----------------------------------------------------------------------
