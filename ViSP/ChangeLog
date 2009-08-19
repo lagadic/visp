@@ -5,8 +5,15 @@ ViSP 2.x.y
     - New vpPlot class that enables real time drawing of graphics under Unix.
     - Ability to use other colors than the predefined ones with the rewriting 
       of the vpColor class and modifications in display functionalities.
+  - Improvements
+    - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
+      bus reset can be switched off in the constructor. There are also 
+      improvements in the acquisition using acquire(vpImage<unsigned char> &I, 
+      ...) by removing the color coding format request and by support of the 
+      RAW8 and RAW16 video format.
   - Examples:
     - New plotting example in example/tools/plot.cpp
+    - In grab1394Two.cpp example, addition of [-r] new option to reset the bus.
   - Bug fixed
     - [7638] Memory leak in all vpFeature... classes was reopened
     - [7888] vpV4l2Grabber cannot acquire an image from an analog camera 
