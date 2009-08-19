@@ -78,7 +78,8 @@ const double vpRobotAfma4::defaultPositioningVelocity = 15.0;
 */
 void emergencyStopAfma4(int signo)
 {
-  std::cout << "Stop the Afma4 application by SIGNAL= " << (char)7  ;
+  std::cout << "Stop the Afma4 application by signal (" 
+	    << signo << "): " << (char)7 ;
   switch(signo)
     {
     case SIGINT:
@@ -94,7 +95,7 @@ void emergencyStopAfma4(int signo)
     default :
       std::cout << signo << std::endl ;
     }
-  std::cout << "Emergency stop called\n";
+  // std::cout << "Emergency stop called\n";
   //  PrimitiveESTOP_Afma4();
   PrimitiveSTOP_Afma4();
   std::cout << "Robot was stopped\n";
@@ -102,7 +103,9 @@ void emergencyStopAfma4(int signo)
   // Free allocated ressources
   ShutDownConnection(); // Some times cannot exit here when Ctrl-C
 
-  std::cout << "exit(1)" <<std::endl ;
+  fprintf(stdout, "Application ");
+  fflush(stdout);
+  kill(getpid(), SIGKILL);
   exit(1) ;
 }
 
@@ -159,7 +162,7 @@ vpRobotAfma4::vpRobotAfma4 (void)
     this->setRobotState(vpRobot::STATE_STOP) ;
   }
   catch(...) {
-    vpERROR_TRACE("Error caught") ;
+    //    vpERROR_TRACE("Error caught") ;
     throw ;
   }
   positioningVelocity  = defaultPositioningVelocity ;
@@ -220,25 +223,35 @@ vpRobotAfma4::init (void)
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, 
+  UInt32 EStopStatus;
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, &EStopStatus, NULL, NULL, NULL, 
 			     &HIPowerStatus));
   CAL_Wait(0.1);
+
+  switch(EStopStatus) {
+  case ESTOP_AUTO: break;
+  case ESTOP_MANUAL: break;
+  case ESTOP_ACTIVATED: 
+    std::cout << "Emergency stop is activated! \n"
+	      << "Check the emergency stop button before continuing. \n"
+	      << "We quit now the application. See you soon..." << std::endl;
+    // Free allocated ressources
+    ShutDownConnection();
+    exit(0);
+
+    break;
+  default: 
+    std::cout << "Sorry there is an error on the emergency chain." << std::endl;
+    std::cout << "You have to call Adept for maintenance..." << std::endl;
+    // Free allocated ressources
+    ShutDownConnection();
+    exit(0);
+  }
 
   if (HIPowerStatus == 0) {
     fprintf(stdout, "\nPower ON the Afma4 robot in the next 10 second...\n");
     fflush(stdout);
     Try( PrimitivePOWERON_Afma4() );
-
-    // waiting for the power on
-     do {
-      Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL,
-				 &HIPowerStatus));
-      CAL_Wait(0.1);
-      if (HIPowerStatus == 0) {
-
-      }
-
-    } while (HIPowerStatus == 0);
   }
   fprintf(stdout, "Afma4 power is ON. We continue...\n");
   fflush(stdout);
@@ -255,15 +268,16 @@ vpRobotAfma4::init (void)
   // Test if an error occurs
   if (TryStt == -20001)
     printf("No connection detected\n");
-  else if (TryStt == -675)
+  else if (TryStt == -675) 
     printf(" Timeout enabling power...\n");
+
   if (TryStt < 0) {
     // Power off the robot
     PrimitivePOWEROFF_Afma4();
     // Free allocated ressources
     ShutDownConnection();
 
-    vpERROR_TRACE ("Cannot open connexion with the motionblox.");
+    std::cout << "Cannot open connexion with the motionblox." << std::endl;
     throw vpRobotException (vpRobotException::constructionError,
   			  "Cannot open connexion with the motionblox");
   }
