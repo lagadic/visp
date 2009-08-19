@@ -122,8 +122,9 @@ const char * vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM]= {
   Default constructor.
 
   By default:
-  - the camera is the first found on the bus.
-  - the ring buffer size is set to 4.
+  - the camera is the first found on the bus,
+  - the ring buffer size is set to 4,
+  - reset the bus attached to the first camera found on the bus.
 
   Current camera settings can be changed using setCamera() to select the active
   camera on the bus and than setVideoMode() or setFramerate() to fix the active
@@ -131,9 +132,13 @@ const char * vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM]= {
   available using respectively getVideoModeSupported() and
   getFramerateSupported(). To change the ring buffer size use setRingBufferSize().
 
+  \param reset : If "true", reset the bus attached to the first
+  camera found. Bus reset may help to make firewire working if the
+  program was not properly stopped by a CTRL-C.
+
   \code
   vpImage<unsigned char> I;
-  vp1394TwoGrabber g;
+  vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
   while(1)
@@ -143,7 +148,7 @@ const char * vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM]= {
   \sa setCamera(), setVideoMode(), setFramerate()
 
 */
-vp1394TwoGrabber::vp1394TwoGrabber( )
+vp1394TwoGrabber::vp1394TwoGrabber(bool reset)
 {
   // protected members
   width = height = 0;
@@ -162,7 +167,7 @@ vp1394TwoGrabber::vp1394TwoGrabber( )
 #endif
   num_buffers = 4; // ring buffer size
 
-  initialize();
+  initialize(reset);
   //  open();
 }
 
@@ -1258,13 +1263,17 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
   Open ohci and asign handle to it and get the camera nodes and
   describe them as we find them.
 
+  \param reset : If "true", reset the bus attached to the first
+  camera found. Bus reset may help to make firewire working if the
+  program was not properly stopped by a CTRL-C.
+
   \exception initializationError : If a raw1394 handle can't be aquired,
   or if no camera is found.
 
   \sa close()
  */
 void
-vp1394TwoGrabber::initialize()
+vp1394TwoGrabber::initialize(bool reset)
 {
   if (init == false){
     // Find cameras
@@ -1296,7 +1305,6 @@ vp1394TwoGrabber::initialize()
 
     num_cameras = 0;
         
-
     for (unsigned int i=0; i < list->num; i ++) {
       cameras[i] = dc1394_camera_new (d, list->ids[i].guid);
       if (!cameras[i]) {
@@ -1308,10 +1316,12 @@ vp1394TwoGrabber::initialize()
       num_cameras ++;
     }
 
-    // Reset the bus to make firewire working if the program was not properly
-    // stopped by a CTRL-C. We reset here only the bus attached to the first
-    // camera
-    dc1394_reset_bus(cameras[0]);
+    if (reset) {
+      // Reset the bus to make firewire working if the program was not properly
+      // stopped by a CTRL-C. We reset here only the bus attached to the first
+      // camera
+      dc1394_reset_bus(cameras[0]);
+    }
 
     if (list != NULL)
       dc1394_camera_free_list (list);
@@ -1362,6 +1372,7 @@ vp1394TwoGrabber::initialize()
     for (unsigned int i = 0;i<num_cameras;i++){
       camIsOpen[i]=false;
     }
+
     init = true;
   }
 }
@@ -1377,7 +1388,7 @@ vp1394TwoGrabber::initialize()
 void
 vp1394TwoGrabber::open()
 {
-  if (init == false) initialize();
+  if (init == false) initialize(false);
   if (camIsOpen[camera_id] == false){
     dc1394switch_t status = DC1394_OFF;
 
@@ -1714,7 +1725,6 @@ vp1394TwoGrabber::dequeue()
     vpERROR_TRACE ("Error: Failed to capture from camera %d\n", camera_id);
   }
 
-
   return frame;
 }
 
@@ -1741,7 +1751,6 @@ vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
 
   if (frame)
     dc1394_capture_enqueue(camera, frame);
-
 }
 
 
@@ -1807,15 +1816,14 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I,
   if ((I.getWidth() != this->width)||(I.getHeight() != this->height))
     I.resize(this->height, this->width);
 
-  vp1394TwoColorCodingType color_coding;
-  getColorCoding(color_coding);
-  switch (color_coding) {
-      //  switch(frame->color_coding) {
+  switch(frame->color_coding) {
     case DC1394_COLOR_CODING_MONO8:
+    case DC1394_COLOR_CODING_RAW8:
       memcpy(I.bitmap, (unsigned char *) frame->image,
              size*sizeof(unsigned char));
       break;
     case DC1394_COLOR_CODING_MONO16:
+    case DC1394_COLOR_CODING_RAW16:
       vpImageConvert::MONO16ToGrey( (unsigned char *) frame->image,
                                     I.bitmap, size);
       break;
@@ -1916,6 +1924,7 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I,
 
   switch (frame->color_coding) {
     case DC1394_COLOR_CODING_MONO8:
+    case DC1394_COLOR_CODING_RAW8:
       vpImageConvert::GreyToRGBa((unsigned char *) frame->image,
                                  (unsigned char *) I.bitmap, size);
       break;
@@ -2316,7 +2325,7 @@ void vp1394TwoGrabber::resetBus()
 
   init = false;
   vpTime::wait(1000);
-  initialize();
+  initialize(false);
 }
 
 

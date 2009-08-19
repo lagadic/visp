@@ -238,7 +238,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 
 
  public:
-  vp1394TwoGrabber();
+  vp1394TwoGrabber(bool reset=false);
   virtual ~vp1394TwoGrabber();
 
   void setRingBufferSize(unsigned int size);
@@ -301,7 +301,7 @@ public:
 
  private:
   void open();
-  void initialize(); 
+  void initialize(bool reset); 
   void setCapture(dc1394switch_t _switch);
   void setTransmission(dc1394switch_t _switch);
   void setIsoSpeed(dc1394speed_t speed);

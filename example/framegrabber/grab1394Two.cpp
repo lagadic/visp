@@ -72,7 +72,7 @@
 
 
 // List of allowed command line options
-#define GETOPTARGS	"c:df:g:h:l:mn:io:r:st:v:w:?"
+#define GETOPTARGS	"b:c:df:g:hH:L:mn:io:rsT:v:W:"
 
 
 #define DUAL_ACQ
@@ -99,15 +99,15 @@ void usage(const char *name, const char *badparam, unsigned int camera,
 	   const unsigned int &ringbuffersize)
 {
   if (badparam)
-    fprintf(stderr, "\nERREUR: Bad parameter [%s]\n", badparam);
+    fprintf(stderr, "\nERROR: Bad parameter [%s]\n", badparam);
 
   fprintf(stderr, "\n\
 SYNOPTIQUE\n\
     %s [-v <video mode>] [-f <framerate>] \n\
     [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
-    [-i] [-s] [-d] [-o <filename>] [-l <format 7 roi left position>] \n\
-    [-t <format 7 roi top position>] [-w <format 7 roi width>] \n\
-    [-h <format 7 roi height>] [-r <ring buffer size>] [-?]\n\
+    [-i] [-s] [-d] [-o <filename>] [-L <format 7 roi left position>] \n\
+    [-T <format 7 roi top position>] [-W <format 7 roi width>] \n\
+    [-H <format 7 roi height>] [-b <ring buffer size>] [-R] [-h]\n\
 \n\
 DESCRIPTION\n\
     Test for firewire camera image acquisition.\n\
@@ -146,19 +146,19 @@ OPTIONS                                                    Default\n\
               See -t <top>, -l <left>, -w <width>, \n\
               -h <height> option to set format 7 roi.\n\
 \n\
-    -l [%%u] : Format 7 region of interest (roi) left         %u\n\
+    -L [%%u] : Format 7 region of interest (roi) left         %u\n\
               position. This option is only used if video\n\
               mode is format 7.\n\
 \n\
-    -t [%%u] : Format 7 region of interest (roi) top          %u\n\
+    -T [%%u] : Format 7 region of interest (roi) top          %u\n\
               position. This option is only used if video\n\
               mode is format 7.\n\
 \n\
-    -w [%%u] : Format 7 region of interest (roi) width.       %u\n\
+    -W [%%u] : Format 7 region of interest (roi) width.       %u\n\
               Is set to zero, use the maximum width. This\n\
               option is only used if video mode is format 7.\n\
 \n\
-    -h [%%u] : Format 7 region of interest (roi) height.      %u\n\
+    -H [%%u] : Format 7 region of interest (roi) height.      %u\n\
               Is set to zero, use the maximum height. This\n\
               option is only used if video mode is format 7.\n\
 \n\
@@ -178,7 +178,7 @@ OPTIONS                                                    Default\n\
 \n\
     -d      : Flag to turn off image display.\n\
 \n\
-    -r [%%u] : Ring buffer size used during capture           %u\n\
+    -b [%%u] : Ring buffer size used during capture           %u\n\
 \n\
     -o [%%s] : Filename for image saving.                     \n\
               Example: -o %s\n\
@@ -188,7 +188,11 @@ OPTIONS                                                    Default\n\
               If grey level images are acquired, the format of \n\
               the .ppm file is PNM P5.\n\
 \n\
-    -?      : Print this help.\n\
+    -r      : Reset the bus attached to the first camera found.\n\
+              Bus reset may help to make firewire working if the\n\
+              program was not properly stopped by a CTRL-C.\n\
+\n\
+    -h      : Print this help.\n\
 \n",
 	  name, name, name, name, name, name, name,
 	  roi_left, roi_top, roi_width, roi_height,
@@ -228,6 +232,9 @@ OPTIONS                                                    Default\n\
   \param roi_left, roi_top, roi_width, roi_height : Region of interest in
   format 7.
 
+  \param reset : If "true", reset the bus attached to the first
+  camera found. Bus reset may help to make firewire working if the
+  program was not properly stopped by a CTRL-C.
 */
 void read_options(int argc, const char **argv, bool &multi, unsigned int &camera,
 		  unsigned int &nframes, bool &verbose_info,
@@ -242,14 +249,16 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
 		  unsigned int &ringbuffersize,
 		  bool &display, bool &save, std::string &opath,
 		  unsigned int &roi_left, unsigned int &roi_top,
-		  unsigned int &roi_width, unsigned int &roi_height)
+		  unsigned int &roi_width, unsigned int &roi_height,
+		  bool &reset)
 {
   /*
    * Lecture des options.
    */
   const char *optarg;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1)
+
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
     switch (c) {
     case 'c':
       camera = atoi(optarg); break;
@@ -263,11 +272,11 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       colorcoding_is_set = true;
       colorcoding = (vp1394TwoGrabber::vp1394TwoColorCodingType) atoi(optarg);
       break;
-    case 'h':
+    case 'H':
       roi_height = (unsigned int) atoi(optarg); break;
     case 'i':
       verbose_info = true; break;
-    case 'l':
+    case 'L':
       roi_left = (unsigned int) atoi(optarg); break;
     case 'm':
       multi = true; break;
@@ -276,24 +285,29 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     case 'o':
       save = true;
       opath = optarg; break;
-    case 'r':
+    case 'b':
       ringbuffersize_is_set = true;
       ringbuffersize = (unsigned int) atoi(optarg); break;
+    case 'r':
+      reset = true; break;
     case 's':
       verbose_settings = true; break;
-    case 't':
+    case 'T':
       roi_top = (unsigned int) atoi(optarg); break;
     case 'v':
       videomode_is_set = true;
       videomode = (vp1394TwoGrabber::vp1394TwoVideoModeType) atoi(optarg);
       break;
-    case 'w':
+    case 'W':
       roi_width = (unsigned int) atoi(optarg); break;
-    default:
+    case 'h':
+    case '?':
       usage(argv[0], NULL, camera, nframes, opath,
 	    roi_left, roi_top, roi_width, roi_height, ringbuffersize);
+      exit(0);
       break;
     }
+  }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
@@ -332,19 +346,15 @@ main(int argc, const char ** argv)
     bool colorcoding_is_set = false;
     vp1394TwoGrabber::vp1394TwoColorCodingType colorcoding;
     bool ringbuffersize_is_set = false;
-    unsigned int ringbuffersize;
+    unsigned int ringbuffersize = 4;
     bool save = false;
+    bool reset = false;
 
     // Format 7 roi
     unsigned int roi_left=0, roi_top=0, roi_width=0, roi_height=0;
 
     // Default output path for image saving
     std::string opath = "/tmp/I%d-%04d.ppm";
-
-    // Create a grabber
-    vp1394TwoGrabber g ;
-    // Get the default ring buffer size
-    ringbuffersize = g.getRingBufferSize();
 
     read_options(argc, argv, multi, camera, nframes,
 		 verbose_info, verbose_settings,
@@ -353,8 +363,17 @@ main(int argc, const char ** argv)
 		 colorcoding_is_set, colorcoding,
 		 ringbuffersize_is_set, ringbuffersize,
 		 display, save, opath,
-		 roi_left, roi_top, roi_width, roi_height);
+		 roi_left, roi_top, roi_width, roi_height, reset);
 
+    // Create a grabber
+    vp1394TwoGrabber g(reset);
+
+    if (reset) {
+      // The experience shows that for some Marlin cameras (F131B and
+      // F033C) a tempo of 1s is requested after a bus reset.
+      vpTime::wait(1000); // Wait 1000 ms
+    }
+    
     // Number of cameras connected on the bus
     unsigned int ncameras = 0;
     g.getNumCameras(ncameras);
