@@ -873,7 +873,7 @@ IF (DOXYGEN_FOUND)
   ELSE(DOXYGEN_DOT_EXECUTABLE)
     SET(VISP_HAVE_DOT "no")  # for ViSP-third-party.txt
   ENDIF(DOXYGEN_DOT_EXECUTABLE)
-e  ## we need latex for doxygen because of the formulas
+  ## we need latex for doxygen because of the formulas
   FIND_PACKAGE(LATEX)
   IF    (NOT LATEX_COMPILER)
     MESSAGE(STATUS "latex command LATEX_COMPILER not found but usually required. You will probably get warnings and user interaction on doxy run.")
