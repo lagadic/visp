@@ -396,8 +396,9 @@ public:
 
   // Create a diagonal matrix with the element of a vector DAii = Ai
   static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
-
   
+  // Stack the matrix A below the current one, copy if not initialized this = [ this A ]^T
+  void stackMatrices(const vpMatrix &A);
 
 
   // -------------------------

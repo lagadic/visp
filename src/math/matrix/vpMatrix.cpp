@@ -2328,6 +2328,31 @@ double vpMatrix::detByLU() const
  return det ;
 }
 
+
+
+/*!
+  Stack A at the end of the current matrix, or copy if the matrix has no dimensions : this = [ this A ]^T
+
+  Here an example for a robot velocity log :
+  \code
+vpMatrix Velocities;
+vpColVector v(6);
+for(int i = 0;i<100;i++)
+	{
+	robot.getVelocity(vpRobot::ARTICULAR_FRAME, v);
+	Velocities.stackMatrices(v.t());
+	}
+  \endcode
+ */
+void vpMatrix::stackMatrices(const vpMatrix &A)
+{
+		if(rowNum == 0)
+			*this = A;
+		else
+			*this = vpMatrix::stackMatrices(*this, A);
+}
+
+
 /*!
   Compute the eigenvalues of a n-by-n real symmetric matrix.
 
