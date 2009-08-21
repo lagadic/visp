@@ -77,6 +77,8 @@ vpMeTracker::vpMeTracker()
   me = NULL ;
   display_point = false ;
   nGoodElement = 0;
+  query_range = 0;
+  seuil = 0;
 
   if (DEBUG_LEVEL1)
     std::cout << "end vpMeTracker::vpMeTracker() " << std::endl ;
@@ -168,7 +170,7 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
     if(refp.suppress==0)
     {
       try {
-	refp.track(I,me,false);
+		refp.track(I,me,false);
       }
       catch(...)
       {
@@ -186,11 +188,11 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
       a = refp.i_1 - refp.i ;
       b = refp.j_1 - refp.j ;
       if(refp.suppress==0) {
-	ip1.set_i( refp.i );
-	ip1.set_j( refp.j );
-	ip2.set_i( refp.i+a );
-	ip2.set_j( refp.j+b );
-	vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
+		ip1.set_i( refp.i );
+		ip1.set_j( refp.j );
+		ip2.set_i( refp.i+a );
+		ip2.set_j( refp.j+b );
+		vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
       }
     }
 
