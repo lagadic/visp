@@ -101,7 +101,7 @@ void emergencyStopAfma4(int signo)
   std::cout << "Robot was stopped\n";
 
   // Free allocated ressources
-  ShutDownConnection(); // Some times cannot exit here when Ctrl-C
+  // ShutDownConnection(); // Some times cannot exit here when Ctrl-C
 
   fprintf(stdout, "Application ");
   fflush(stdout);
@@ -233,7 +233,7 @@ vpRobotAfma4::init (void)
   case ESTOP_MANUAL: break;
   case ESTOP_ACTIVATED: 
     std::cout << "Emergency stop is activated! \n"
-	      << "Check the emergency stop button before continuing. \n"
+	      << "Check the emergency stop button and push the yellow button before continuing. \n"
 	      << "We quit now the application. See you soon..." << std::endl;
     // Free allocated ressources
     ShutDownConnection();
