@@ -369,7 +369,7 @@ vpMe::print( )
   std::cout<<" Size of the convolution masks...."<<mask_size<<"x"<<mask_size<<" pixels"<<std::endl ;
   std::cout<<" Number of masks.................."<<n_mask<<"        "<<std::endl ;
   std::cout<<" Query range +/- J................"<<range<<" pixels  "<<std::endl ;
-  std::cout<<" Likelyhood test ratio............"<<threshold<<std::endl ;
+  std::cout<<" Likelihood test ratio............"<<threshold<<std::endl ;
   std::cout<<" Contrast tolerance +/-..........."<< mu1 * 100<<"% and "<<mu2 * 100<<"%     "<<std::endl ;
   std::cout<<" Sample step......................"<<sample_step<<" pixels"<<std::endl ;
   std::cout<<" Strip............................"<<strip<<" pixels  "<<std::endl ;
