@@ -238,7 +238,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 
 
  public:
-  vp1394TwoGrabber(bool reset=false);
+  vp1394TwoGrabber(bool reset=true);
   virtual ~vp1394TwoGrabber();
 
   void setRingBufferSize(unsigned int size);
