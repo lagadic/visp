@@ -281,9 +281,9 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void enqueue(dc1394video_frame_t *frame);
 
   void acquire(vpImage<unsigned char> &I);
-  void acquire(vpImage<unsigned char> &I, uint32_t &timestamp, uint32_t &id);
+  void acquire(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id);
   void acquire(vpImage<vpRGBa> &I);
-  void acquire(vpImage<vpRGBa> &I, uint32_t &timestamp, uint32_t &id);
+  void acquire(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id);
 
   void getWidth(unsigned int &width);
   void getHeight(unsigned int &height);

@@ -1770,7 +1770,7 @@ vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
 void
 vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 {
-  uint32_t timestamp;
+  uint64_t timestamp;
   uint32_t id;
   
   this->acquire(I, timestamp, id);
@@ -1796,7 +1796,7 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 */
 void
 vp1394TwoGrabber::acquire(vpImage<unsigned char> &I, 
-			  uint32_t &timestamp,
+			  uint64_t &timestamp,
 			  uint32_t &id)
 {
   open();
@@ -1877,7 +1877,7 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I,
 void
 vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 {
-  uint32_t timestamp;
+  uint64_t timestamp;
   uint32_t id;
   
   this->acquire(I, timestamp, id);
@@ -1903,7 +1903,7 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 */
 void
 vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I, 
-			  uint32_t &timestamp,
+			  uint64_t &timestamp,
 			  uint32_t &id)
 {
   open();
