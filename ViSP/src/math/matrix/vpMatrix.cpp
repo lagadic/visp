@@ -823,8 +823,10 @@ vpMatrix  vpMatrix::operator/(double x) const
     throw ;
   }
 
-  if (x == 0)
+  if (x == 0) {
+    vpERROR_TRACE("Divide by zero in method /(double x)") ;
     throw vpMatrixException(vpMatrixException::divideByZeroError, "Divide by zero in method /(double x)");
+  }
 
   double  xinv = 1/x ;
 
