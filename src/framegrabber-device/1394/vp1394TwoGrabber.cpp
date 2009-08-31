@@ -1682,6 +1682,7 @@ vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
   acquire(I);
 }
 
+
 /*!
 
   Get an image from the active camera frame buffer. This buffer neads to be
@@ -1729,55 +1730,49 @@ vp1394TwoGrabber::dequeue()
 }
 
 /*!
-  Release the frame buffer used by the active camera.
 
-  \param frame : Pointer to the libdc1394-2.x image data structure.
+  Get an image from the active camera frame buffer. This buffer neads to be
+  released by enqueue().
+
+  \param I : Image data structure (8 bits image).
+
+  \return Pointer to the libdc1394-2.x image data structure.
 
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
-  \sa dequeue()
-*/
-void
-vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
-{
-
-  if (! num_cameras) {
-    close();
-    vpERROR_TRACE("No camera found");
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                   "No camera found") );
+  \code
+  vp1394TwoGrabber g;
+  dc1394video_frame_t *frame;
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+  while(1) {
+    frame = g.dequeue();
+    // Current image is now in frame structure
+    g.enqueue(frame);
   }
 
-  if (frame)
-    dc1394_capture_enqueue(camera, frame);
-}
+  \endcode
 
-
-/*!
-  Acquire a grey level image from the active camera.
-
-  \param I : Image data structure (8 bits image).
-
-  \exception vpFrameGrabberException::initializationError : If no
-  camera found on the bus or if can't get camera settings.
-
-  \exception vpFrameGrabberException::otherError : If format
-  conversion to return a 8 bits image is not implemented.
-
-  \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
+  \sa enqueue()
 */
-void
-vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
+dc1394video_frame_t *
+vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I)
 {
   uint64_t timestamp;
   uint32_t id;
-  
-  this->acquire(I, timestamp, id);
+   
+  dc1394video_frame_t *frame;
+
+  frame = dequeue(I, timestamp, id);
+
+  return frame;
 }
 
 /*!
-  Acquire a grey level image from the active camera.
+
+  Get an image from the active camera frame buffer. This buffer neads to be
+  released by enqueue().
 
   \param I : Image data structure (8 bits image).
 
@@ -1786,20 +1781,34 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 
   \param id : The frame position in the ring buffer.
 
+  \return Pointer to the libdc1394-2.x image data structure.
+
   \exception vpFrameGrabberException::initializationError : If no
-  camera found on the bus or if can't get camera settings.
+  camera found on the bus.
 
-  \exception vpFrameGrabberException::otherError : If format
-  conversion to return a 8 bits image is not implemented.
+  \code
+  vp1394TwoGrabber g;
+  dc1394video_frame_t *frame;
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+  while(1) {
+    frame = g.dequeue();
+    // Current image is now in frame structure
+    g.enqueue(frame);
+  }
 
-  \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
+  \endcode
+
+  \sa enqueue()
 */
-void
-vp1394TwoGrabber::acquire(vpImage<unsigned char> &I, 
+dc1394video_frame_t *
+vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I, 
 			  uint64_t &timestamp,
 			  uint32_t &id)
 {
+
   open();
+
   dc1394video_frame_t *frame;
 
   frame = dequeue();
@@ -1856,6 +1865,224 @@ vp1394TwoGrabber::acquire(vpImage<unsigned char> &I,
                                      "Acquisition failed.") );
       break;
   };
+
+  return frame;
+}
+
+/*!
+
+  Get an image from the active camera frame buffer. This buffer neads to be
+  released by enqueue().
+
+  \param I : Image data structure (32 bits RGBa image).
+
+  \return Pointer to the libdc1394-2.x image data structure.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \code
+  vp1394TwoGrabber g;
+  dc1394video_frame_t *frame;
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+  while(1) {
+    frame = g.dequeue();
+    // Current image is now in frame structure
+    g.enqueue(frame);
+  }
+
+  \endcode
+
+  \sa enqueue()
+*/
+dc1394video_frame_t *
+vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I)
+{
+  uint64_t timestamp;
+  uint32_t id;
+   
+  dc1394video_frame_t *frame;
+
+  frame = dequeue(I, timestamp, id);
+
+  return frame;
+}
+
+/*!
+
+  Get an image from the active camera frame buffer. This buffer neads to be
+  released by enqueue().
+
+  \param I : Image data structure (32 bits RGBa image).
+
+  \param timestamp : The unix time in microseconds
+  at which the frame was captured in the ring buffer.
+
+  \param id : The frame position in the ring buffer.
+
+  \return Pointer to the libdc1394-2.x image data structure.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \code
+  vp1394TwoGrabber g;
+  dc1394video_frame_t *frame;
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+  while(1) {
+    frame = g.dequeue();
+    // Current image is now in frame structure
+    g.enqueue(frame);
+  }
+
+  \endcode
+
+  \sa enqueue()
+*/
+dc1394video_frame_t *
+vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I, 
+			  uint64_t &timestamp,
+			  uint32_t &id)
+{
+
+  open();
+
+  dc1394video_frame_t *frame;
+
+  frame = dequeue();
+
+  // Timeval data structure providing the unix time
+  // [microseconds] at which the frame was captured in the ring buffer.
+  timestamp = frame->timestamp;
+  id = frame->id;
+
+  this->width  = frame->size[0];
+  this->height = frame->size[1];
+  unsigned int size = this->width * this->height;
+
+  if ((I.getWidth() != width)||(I.getHeight() != height))
+    I.resize(height, width);
+
+  switch (frame->color_coding) {
+    case DC1394_COLOR_CODING_MONO8:
+    case DC1394_COLOR_CODING_RAW8:
+      vpImageConvert::GreyToRGBa((unsigned char *) frame->image,
+                                 (unsigned char *) I.bitmap, size);
+      break;
+
+    case DC1394_COLOR_CODING_YUV411:
+      vpImageConvert::YUV411ToRGBa( (unsigned char *) frame->image,
+                                    (unsigned char *) I.bitmap, size);
+      break;
+
+    case DC1394_COLOR_CODING_YUV422:
+      vpImageConvert::YUV422ToRGBa( (unsigned char *) frame->image,
+                                    (unsigned char *) I.bitmap, size);
+      break;
+
+    case DC1394_COLOR_CODING_YUV444:
+      vpImageConvert::YUV444ToRGBa( (unsigned char *) frame->image,
+                                    (unsigned char *) I.bitmap, size);
+      break;
+
+    case DC1394_COLOR_CODING_RGB8:
+      vpImageConvert::RGBToRGBa((unsigned char *) frame->image,
+                                (unsigned char *) I.bitmap, size);
+      break;
+
+
+    default:
+      close();
+      vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
+      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+                                     "Format conversion not implemented. "
+                                     "Acquisition failed.") );
+      break;
+  };
+
+  return frame;
+}
+
+/*!
+  Release the frame buffer used by the active camera.
+
+  \param frame : Pointer to the libdc1394-2.x image data structure.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \sa dequeue()
+*/
+void
+vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
+{
+
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  if (frame)
+    dc1394_capture_enqueue(camera, frame);
+}
+
+
+/*!
+  Acquire a grey level image from the active camera.
+
+  \param I : Image data structure (8 bits image).
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus or if can't get camera settings.
+
+  \exception vpFrameGrabberException::otherError : If format
+  conversion to return a 8 bits image is not implemented.
+
+  \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
+*/
+void
+vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
+{
+  uint64_t timestamp;
+  uint32_t id;
+   
+  dc1394video_frame_t *frame;
+
+  frame = dequeue(I, timestamp, id);
+  enqueue(frame);
+}
+
+/*!
+  Acquire a grey level image from the active camera.
+
+  \param I : Image data structure (8 bits image).
+
+  \param timestamp : The unix time in microseconds
+  at which the frame was captured in the ring buffer.
+
+  \param id : The frame position in the ring buffer.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus or if can't get camera settings.
+
+  \exception vpFrameGrabberException::otherError : If format
+  conversion to return a 8 bits image is not implemented.
+
+  \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
+*/
+void
+vp1394TwoGrabber::acquire(vpImage<unsigned char> &I, 
+			  uint64_t &timestamp,
+			  uint32_t &id)
+{
+  dc1394video_frame_t *frame;
+
+  open();
+  frame = dequeue(I, timestamp, id);
   enqueue(frame);
 }
 
@@ -1879,8 +2106,11 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 {
   uint64_t timestamp;
   uint32_t id;
+  dc1394video_frame_t *frame;
   
-  this->acquire(I, timestamp, id);
+  open();
+  frame = dequeue(I, timestamp, id);
+  enqueue(frame);
 }
 
 /*!
@@ -1906,9 +2136,9 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I,
 			  uint64_t &timestamp,
 			  uint32_t &id)
 {
-  open();
   dc1394video_frame_t *frame;
 
+  open();
   frame = dequeue();
   // Timeval data structure providing the unix time
   // [microseconds] at which the frame was captured in the ring buffer.
