@@ -11,6 +11,11 @@ ViSP 2.x.y
       improvements in the acquisition using acquire(vpImage<unsigned char> &I, 
       ...) by removing the color coding format request and by support of the 
       RAW8 and RAW16 video format.
+      New dequeue() functions were also introduced to make possible to 
+      separate the ring buffer dequeuing and enqueuing. This behavior 
+      is for example useful when image processing needs to be introduced 
+      between the dequeuing and enqueuing stages. It may also useful
+      to synchronise the image acquisition with an other sensor.
   - Examples:
     - New plotting example in example/tools/plot.cpp
     - In grab1394Two.cpp example, addition of [-r] new option to reset the bus.
