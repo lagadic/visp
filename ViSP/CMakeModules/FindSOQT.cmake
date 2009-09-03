@@ -52,6 +52,7 @@ FIND_PATH(SOQT_INCLUDE_PATH Inventor/Qt/SoQt.h
   "$ENV{COINDIR}/include"
   "$ENV{SOQTDIR}/include"
   /usr/include/Coin2
+  /Library/Frameworks/SoQt.framework/Headers
   )
 #MESSAGE("DBG SOQT_INCLUDE_PATH=${SOQT_INCLUDE_PATH}")
 
@@ -86,13 +87,14 @@ ELSE(WIN32)
   FIND_LIBRARY(SOQT_LIBRARY
     NAMES SoQt
     PATHS
-    /usr/lib
-    /usr/local/lib
-    /lib
     "$ENV{COIN_DIR}/lib"
     "$ENV{SOQT_DIR}/lib"
     "$ENV{COINDIR}/lib"
     "$ENV{SOQTDIR}/lib"
+    /usr/lib
+    /usr/local/lib
+    /lib
+    /Library/Frameworks/SoQt.framework/Libraries
     )
 
   MARK_AS_ADVANCED(

@@ -80,6 +80,7 @@ IF(UNIX OR WIN32)
     $ENV{COIN3DDIR}/include
     /usr/include 
     /usr/include/Coin2
+    /Library/Frameworks/Inventor.framework/Headers	
     )
   #MESSAGE("DBG COIN_INCLUDE_DIR=${COIN_INCLUDE_DIR}")
 
@@ -109,12 +110,13 @@ IF(UNIX OR WIN32)
 
   ELSE(WIN32)
     FIND_LIBRARY(COIN_LIBRARY
-      NAMES Coin #only shared libraries under windows
+      NAMES Coin 
       PATHS
       "$ENV{COINDIR}/lib"	  
       "$ENV{COIN_DIR}/lib"	  
       "$ENV{COIN3DDIR}/lib"   
-      "$ENV{COIN3D_DIR}/lib"   
+      "$ENV{COIN3D_DIR}/lib"
+      /Library/Frameworks/Inventor.framework/Libraries
       )
     
     #MESSAGE("DBG COIN_LIBRARY=${COIN_LIBRARY}")
