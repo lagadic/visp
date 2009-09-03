@@ -35,6 +35,7 @@ Misc:
   libplotter                : ${VISP_HAVE_LIBPLOTTER_FOUND}
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
+  libjpeg                   : ${VISP_HAVE_LIBJPEG_FOUND}
 Documentation:
   Doxygen                   : ${VISP_HAVE_DOXYGEN_FOUND}
   Graphviz dot              : ${VISP_HAVE_GRAPHVIZ_FOUND}
