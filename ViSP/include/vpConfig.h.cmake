@@ -115,6 +115,9 @@
 // Defined if Liplot library available.
 #cmakedefine VISP_HAVE_LIBPLOTTER
 
+// Defined if libjpeg library available.
+#cmakedefine VISP_HAVE_LIBJPEG
+
 // Defined if raw1394 and dc1394-1.x libraries available.
 #cmakedefine VISP_HAVE_DC1394_1
 
