@@ -53,6 +53,10 @@
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 
+#if defined(VISP_HAVE_LIBJPEG)
+#include <jpeglib.h>
+#include <jerror.h>
+#endif
 
 /*!
   \class vpImageIo
@@ -94,6 +98,7 @@ private:
   {
     FORMAT_PGM,
     FORMAT_PPM,
+	FORMAT_JPEG,
     FORMAT_UNKNOWN
   } vpImageFormatType;
   
@@ -145,6 +150,17 @@ public:
   static
   void readPPM(vpImage<vpRGBa> &I, const std::string filename) ;
 
+#if defined(VISP_HAVE_LIBJPEG)
+  static
+  void readJPEG(vpImage<unsigned char> &I, const char *filename) ;
+  static
+  void readJPEG(vpImage<unsigned char> &I, const std::string filename) ;
+  static
+  void readJPEG(vpImage<vpRGBa> &I, const char *filename) ;
+  static
+  void readJPEG(vpImage<vpRGBa> &I, const std::string filename) ;
+#endif
+
   static
   void writePGM(const vpImage<unsigned char> &I, const char *filename) ;
   static
@@ -166,6 +182,17 @@ public:
   void writePPM(const vpImage<vpRGBa> &I, const char *filename) ;
   static
   void writePPM(const vpImage<vpRGBa> &I, const std::string filename) ;
+
+#if defined(VISP_HAVE_LIBJPEG)
+  static
+  void writeJPEG(vpImage<unsigned char> &I, const char *filename) ;
+  static
+  void writeJPEG(vpImage<unsigned char> &I, const std::string filename) ;
+  static
+  void writeJPEG(vpImage<vpRGBa> &I, const char *filename) ;
+  static
+  void writeJPEG(vpImage<vpRGBa> &I, const std::string filename) ;
+#endif
 
   } ;
 #endif
