@@ -184,6 +184,10 @@ vpImageIo::getFormat(const char *filename)
   int pgm = sfilename.find("pgm");
   int PPM = sfilename.find("PPM");
   int ppm = sfilename.find("ppm");
+  int JPG = sfilename.find("JPG");
+  int jpg = sfilename.find("jpg");
+  int JPEG = sfilename.find("JPEG");
+  int jpeg = sfilename.find("jpeg");
   
   int size = sfilename.size();
 
@@ -191,6 +195,8 @@ vpImageIo::getFormat(const char *filename)
     return FORMAT_PGM;
   else if ((PPM>0 && PPM<size) || ( ppm>0 && ppm<size))
     return FORMAT_PPM;
+  else if ((JPG>0 && JPG<size) || ( jpg>0 && jpg<size) || (JPEG>0 && JPEG<size) || ( jpeg>0 && jpeg<size))
+	return FORMAT_JPEG;
   else{ 
     return FORMAT_UNKNOWN;
   } 

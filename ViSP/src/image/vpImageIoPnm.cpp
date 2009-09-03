@@ -69,8 +69,14 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
       readPGM(I,filename); break;
     case FORMAT_PPM :
       readPPM(I,filename); break;
+	case FORMAT_JPEG :
+#if defined(VISP_HAVE_LIBJPEG)
+      readJPEG(I,filename); break;
+#else
+	  vpCERROR << "You need the libjpeg library to open JPEG files " << std::endl
+#endif
     case FORMAT_UNKNOWN :
-      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) " << std::endl
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
           << " image format are implemented..." << std::endl;
       throw (vpImageException(vpImageException::ioError,
              "cannot read file")) ;
@@ -112,8 +118,14 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
       readPGM(I,filename); break;
     case FORMAT_PPM :
       readPPM(I,filename); break;
+	case FORMAT_JPEG :
+#if defined(VISP_HAVE_LIBJPEG)
+      readJPEG(I,filename); break;
+#else
+	  vpCERROR << "You need the libjpeg library to open JPEG files " << std::endl
+#endif
     case FORMAT_UNKNOWN :
-      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6)" << std::endl
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
           << " image format are implemented..." << std::endl;
       throw (vpImageException(vpImageException::ioError,
              "cannot read file")) ;
@@ -139,10 +151,10 @@ vpImageIo::read(vpImage<vpRGBa> &I, const std::string filename)
 
 /*!
   Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a PNM (PGM P5 or PPM P6) file depending on the
+  filename. This function writes a PNM (PGM P5 or PPM P6) or a JPEG file depending on the
   filename extension.
 
-  \param I : Image to save as a PNM file.
+  \param I : Image to save as a PNM or a JPEG file.
   \param filename : Name of the file containing the image.
  */
 void
@@ -153,8 +165,10 @@ vpImageIo::write(vpImage<unsigned char> &I, const char *filename)
       writePGM(I,filename); break;
     case FORMAT_PPM :
       writePPM(I,filename); break;
+	case FORMAT_JPEG :
+      writeJPEG(I,filename); break;
     case FORMAT_UNKNOWN :
-      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) " << std::endl
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
           << " image format are implemented..." << std::endl;
       throw (vpImageException(vpImageException::ioError,
              "cannot write file")) ;
@@ -163,10 +177,10 @@ vpImageIo::write(vpImage<unsigned char> &I, const char *filename)
 }
 /*!
   Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a PNM (PGM P5 or PPM P6) file depending on the
+  filename. This function writes a PNM (PGM P5 or PPM P6) or a JPEG file depending on the
   filename extension.
 
-  \param I : Image to save as a PNM file.
+  \param I : Image to save as a PNM or a JPEG file.
   \param filename : Name of the file containing the image.
  */
 void
@@ -176,10 +190,10 @@ vpImageIo::write(vpImage<unsigned char> &I, const std::string filename)
 }
 /*!
   Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a PNM (PGM P5 or PPM P6) file depending on the
+  filename. This function writes a PNM (PGM P5 or PPM P6) or a JPEG file depending on the
   filename extension.
 
-  \param I : Image to save as a PNM file.
+  \param I : Image to save as a PNM or a JPEG file.
   \param filename : Name of the file containing the image.
  */
 void
@@ -190,8 +204,10 @@ vpImageIo::write(vpImage<vpRGBa> &I, const char *filename)
       writePGM(I,filename); break;
     case FORMAT_PPM :
       writePPM(I,filename); break;
+	case FORMAT_JPEG :
+      writeJPEG(I,filename); break;
     case FORMAT_UNKNOWN :
-      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6)" << std::endl
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
           << " image format are implemented..." << std::endl;
       throw (vpImageException(vpImageException::ioError,
              "cannot write file")) ;
@@ -200,10 +216,10 @@ vpImageIo::write(vpImage<vpRGBa> &I, const char *filename)
 }
 /*!
   Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a PNM (PGM P5 or PPM P6) file depending on the
+  filename. This function writes a PNM (PGM P5 or PPM P6) or a JPEG file depending on the
   filename extension.
 
-  \param I : Image to save as a PNM file.
+  \param I : Image to save as a PNM or a JPEG file.
   \param filename : Name of the file containing the image.
  */
 void
@@ -1000,6 +1016,414 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
 {
   vpImageIo::writePPM(I, filename.c_str());
 }
+
+
+//--------------------------------------------------------------------------
+// JPEG
+//--------------------------------------------------------------------------
+
+#if defined(VISP_HAVE_LIBJPEG)
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function writes a JPEG file.
+
+  \param I : Image to save as a JPEG file.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::writeJPEG(vpImage<unsigned char> &I, const char *filename)
+{
+  struct jpeg_compress_struct cinfo;
+  struct jpeg_error_mgr jerr;
+  FILE *file;
+
+  cinfo.err = jpeg_std_error(&jerr);
+  jpeg_create_compress(&cinfo);
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "no filename")) ;
+  }
+
+  file = fopen(filename, "wb");
+
+  if (file == NULL) {
+     vpERROR_TRACE("couldn't write file \"%s\"\n",  filename);
+     throw (vpImageException(vpImageException::ioError,
+			     "cannot write file")) ;
+  }
+
+  int width = I.getWidth();
+  int height = I.getHeight();
+
+  jpeg_stdio_dest(&cinfo, file);
+
+  cinfo.image_width = width;
+  cinfo.image_height = height;
+  cinfo.input_components = 1;
+  cinfo.in_color_space = JCS_GRAYSCALE;
+  jpeg_set_defaults(&cinfo);
+
+  jpeg_start_compress(&cinfo,TRUE);
+
+  unsigned char *line;
+  line = new unsigned char[width];
+  unsigned char* input = (unsigned char*)I.bitmap;
+  while (cinfo.next_scanline < cinfo.image_height)
+  {
+    for (int i = 0; i < width; i++)
+    {
+      line[i] = *(input);
+	  input++;
+    }
+	jpeg_write_scanlines(&cinfo, &line, 1);
+  }
+
+  jpeg_finish_compress(&cinfo);
+  jpeg_destroy_compress(&cinfo);
+  delete [] line;
+  fclose(file);
+}
+
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function writes a JPEG file.
+
+  \param I : Image to save as a JPEG file.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::writeJPEG(vpImage<unsigned char> &I, const std::string filename)
+{
+  vpImageIo::writeJPEG(I, filename.c_str());
+}
+
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function writes a JPEG file.
+
+  \param I : Image to save as a JPEG file.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const char *filename)
+{
+  struct jpeg_compress_struct cinfo;
+  struct jpeg_error_mgr jerr;
+  FILE *file;
+
+  cinfo.err = jpeg_std_error(&jerr);
+  jpeg_create_compress(&cinfo);
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "no filename")) ;
+  }
+
+  file = fopen(filename, "wb");
+
+  if (file == NULL) {
+     vpERROR_TRACE("couldn't write file \"%s\"\n",  filename);
+     throw (vpImageException(vpImageException::ioError,
+			     "cannot write file")) ;
+  }
+
+  int width = I.getWidth();
+  int height = I.getHeight();
+
+  jpeg_stdio_dest(&cinfo, file);
+
+  cinfo.image_width = width;
+  cinfo.image_height = height;
+  cinfo.input_components = 3;
+  cinfo.in_color_space = JCS_RGB;
+  jpeg_set_defaults(&cinfo);
+
+  jpeg_start_compress(&cinfo,TRUE);
+
+  unsigned char *line;
+  line = new unsigned char[3*width];
+  unsigned char* input = (unsigned char*)I.bitmap;
+  while (cinfo.next_scanline < cinfo.image_height)
+  {
+    for (int i = 0; i < width; i++)
+    {
+      line[i*3] = *(input); input++;
+	  line[i*3+1] = *(input); input++;
+	  line[i*3+2] = *(input); input++;
+	  input++;
+    }
+	jpeg_write_scanlines(&cinfo, &line, 1);
+  }
+
+  jpeg_finish_compress(&cinfo);
+  jpeg_destroy_compress(&cinfo);
+  delete [] line;
+  fclose(file);
+}
+
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function writes a JPEG file.
+
+  \param I : Image to save as a JPEG file.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const std::string filename)
+{
+  vpImageIo::writeJPEG(I, filename.c_str());
+}
+
+
+/*!
+  Read the contents of the JPEG file, allocate memory
+  for the corresponding gray level image, if necessary convert the data in gray level, and
+  set the bitmap whith the gray level data. That means that the image \e I is a
+  "black and white" rendering of the original image in \e filename, as in a
+  black and white photograph. If necessary, the quantization formula used is \f$0,299 r +
+  0,587 g + 0,114 b\f$.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+
+*/
+void
+vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
+{
+  struct jpeg_decompress_struct cinfo;
+  struct jpeg_error_mgr jerr;
+  FILE *file;
+
+  cinfo.err = jpeg_std_error(&jerr);
+  jpeg_create_decompress(&cinfo);
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "no filename")) ;
+  }
+
+  file = fopen(filename, "rb");
+
+  if (file == NULL) {
+     vpERROR_TRACE("couldn't read file \"%s\"\n",  filename);
+     throw (vpImageException(vpImageException::ioError,
+			     "cannot read file")) ;
+  }
+
+  jpeg_stdio_src(&cinfo, file);
+  jpeg_read_header(&cinfo, TRUE);
+
+  unsigned int width = cinfo.image_width;
+  unsigned int height = cinfo.image_height;
+
+  if ( (width != I.getWidth()) || (height != I.getHeight()) )
+	  I.resize(height,width);
+
+  unsigned char *line;
+
+  jpeg_start_decompress(&cinfo);
+
+  if (cinfo.out_color_space == JCS_RGB)
+  {
+	vpImage<vpRGBa> Ic(height,width);
+    line = new unsigned char[3*width];
+    unsigned char* output = (unsigned char*)Ic.bitmap;
+    while (cinfo.output_scanline<cinfo.output_height)
+    {
+      jpeg_read_scanlines(&cinfo,&line,1);
+      for (unsigned int i = 0; i < width; i++)
+      {
+        *(output++) = line[i*3];
+        *(output++) = line[i*3+1];
+        *(output++) = line[i*3+2];
+        *(output++) = 0;
+      }
+    }
+	vpImageConvert::convert(Ic,I) ;
+  }
+
+  else if (cinfo.out_color_space == JCS_GRAYSCALE)
+  {
+    line = new unsigned char[width];
+    unsigned char* output = (unsigned char*)I.bitmap;
+    while (cinfo.output_scanline<cinfo.output_height)
+    {
+      jpeg_read_scanlines(&cinfo,&line,1);
+      for (unsigned int i = 0; i < width; i++)
+      {
+        *(output++) = line[i];
+      }
+    }
+  }
+
+  jpeg_finish_decompress(&cinfo);
+  jpeg_destroy_decompress(&cinfo);
+  delete [] line;
+  fclose(file);
+}
+
+
+/*!
+  Read the contents of the JPEG file, allocate memory
+  for the corresponding gray level image, if necessary convert the data in gray level, and
+  set the bitmap whith the gray level data. That means that the image \e I is a
+  "black and white" rendering of the original image in \e filename, as in a
+  black and white photograph. If necessary, the quantization formula used is \f$0,299 r +
+  0,587 g + 0,114 b\f$.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+
+*/
+void
+vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string filename)
+{
+  vpImageIo::readJPEG(I, filename.c_str());
+}
+
+
+/*!
+  Read a JPEG file and initialize a scalar image.
+
+  Read the contents of the JPEG file, allocate
+  memory for the corresponding image, and set 
+  the bitmap whith the content of
+  the file.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  If the file corresponds to a grayscaled image, a conversion is done to deal
+  with \e I which is a color image.
+
+  \param I : Color image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
+{
+  struct jpeg_decompress_struct cinfo;
+  struct jpeg_error_mgr jerr;
+  FILE *file;
+
+  cinfo.err = jpeg_std_error(&jerr);
+  jpeg_create_decompress(&cinfo);
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "no filename")) ;
+  }
+
+  file = fopen(filename, "rb");
+
+  if (file == NULL) {
+     vpERROR_TRACE("couldn't read file \"%s\"\n",  filename);
+     throw (vpImageException(vpImageException::ioError,
+			     "cannot read file")) ;
+  }
+
+  jpeg_stdio_src(&cinfo, file);
+
+  jpeg_read_header(&cinfo, TRUE);
+
+  unsigned int width = cinfo.image_width;
+  unsigned int height = cinfo.image_height;
+
+  if ( (width != I.getWidth()) || (height != I.getHeight()) )
+	  I.resize(height,width);
+
+  unsigned char *line;
+
+  jpeg_start_decompress(&cinfo);
+
+  if (cinfo.out_color_space == JCS_RGB)
+  {
+    line = new unsigned char[3*width];
+    unsigned char* output = (unsigned char*)I.bitmap;
+    while (cinfo.output_scanline<cinfo.output_height)
+    {
+      jpeg_read_scanlines(&cinfo,&line,1);
+      for (unsigned int i = 0; i < width; i++)
+      {
+        *(output++) = line[i*3];
+        *(output++) = line[i*3+1];
+        *(output++) = line[i*3+2];
+        *(output++) = 0;
+      }
+    }
+  }
+
+  else if (cinfo.out_color_space == JCS_GRAYSCALE)
+  {
+	vpImage<unsigned char> Ig(height,width);
+    line = new unsigned char[width];
+    unsigned char* output = (unsigned char*)Ig.bitmap;
+    while (cinfo.output_scanline<cinfo.output_height)
+    {
+      jpeg_read_scanlines(&cinfo,&line,1);
+      for (unsigned int i = 0; i < width; i++)
+      {
+        *(output++) = line[i];
+      }
+    }
+	vpImageConvert::convert(Ig,I) ;
+  }
+
+  jpeg_finish_decompress(&cinfo);
+  jpeg_destroy_decompress(&cinfo);
+  delete [] line;
+  fclose(file);
+}
+
+
+/*!
+  Read a JPEG file and initialize a scalar image.
+
+  Read the contents of the JPEG file, allocate
+  memory for the corresponding image, and set 
+  the bitmap whith the content of
+  the file.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  If the file corresponds to a grayscaled image, a conversion is done to deal
+  with \e I which is a color image.
+
+  \param I : Color image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
+{
+  vpImageIo::readJPEG(I, filename.c_str());
+}
+
+#endif
+
 
 /*
  * Local variables:
