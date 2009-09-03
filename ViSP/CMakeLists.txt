@@ -127,6 +127,7 @@ SET(USE_DC1394_2  ON) # For firewire grabber under Linux and OSX ?
 SET(USE_V4L2      ON) # For Video 4 Linux 2 grabber under Linux
 SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
 SET(USE_LIBPLOTTER ON)   # For plotting curves
+SET(USE_LIBJPEG ON)   # For reading jpeg files
 
 IF(BUILD_SHARED_LIBS)
   SET(VISP_BUILD_SHARED_LIBS TRUE)  # for header vpConfig.h
@@ -453,6 +454,7 @@ SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBPLOTTER_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
 
 # open CV
 IF(USE_OPENCV)
@@ -619,6 +621,23 @@ IF(USE_LIBPLOTTER)
     SET(VISP_HAVE_LIBPLOTTER_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(LIBPLOTTER_FOUND)
 ENDIF(USE_LIBPLOTTER)
+
+# Libjpeg
+IF(USE_LIBJPEG)
+  FIND_PACKAGE(LIBJPEG)
+  IF(LIBJPEG_FOUND)
+    MESSAGE(STATUS "Libjpeg found")
+    SET(VISP_HAVE_LIBJPEG  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_LIBJPEG_FOUND "yes")  # for ViSP-third-party.txt
+
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${LIBJPEG_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${LIBJPEG_LIBRARIES})
+
+  ELSE(LIBJPEG_FOUND)
+    MESSAGE(STATUS "Libjpeg not found")
+    SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(LIBJPEG_FOUND)
+ENDIF(USE_LIBJPEG)
 
 #----------------------------------------------------------------------
 # Specific hardware : framegrabbers and cameras
