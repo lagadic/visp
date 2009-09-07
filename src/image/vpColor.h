@@ -142,16 +142,15 @@ class VISP_EXPORT vpColor : public vpRGBa
                            RGB values. */
 
   /* Predefined colors. */
-  static const vpColor 
-    black,  
-    white,  
-    red,    
-    green,  
-    blue,   
-    yellow, 
-    cyan,   
-    orange, 
-    none;   
+  static const vpColor black ;
+  static const vpColor  white ;
+  static const vpColor  red ;
+  static const vpColor  green;
+  static const vpColor  blue ;  
+  static const vpColor  yellow ;
+  static const vpColor  cyan;   
+  static const vpColor  orange;
+  static const vpColor  none;  
 
   /*!
     Default constructor. All the colors components are set to zero. 
