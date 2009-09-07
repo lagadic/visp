@@ -116,24 +116,24 @@ void
 vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 {
   switch(getFormat(filename)){
-    case FORMAT_PGM :
-      readPGM(I,filename); break;
-    case FORMAT_PPM :
-      readPPM(I,filename); break;
-	case FORMAT_JPEG :
+  case FORMAT_PGM :
+    readPGM(I,filename); break;
+  case FORMAT_PPM :
+    readPPM(I,filename); break;
+  case FORMAT_JPEG :
 #if defined(VISP_HAVE_LIBJPEG)
-      readJPEG(I,filename); break;
+    readJPEG(I,filename); break;
 #else
-      vpCERROR << "You need the libjpeg library to open JPEG files " 
-	       << std::endl;
-      break;
+    vpCERROR << "You need the libjpeg library to open JPEG files " 
+	     << std::endl;
+    break;
 #endif
-    case FORMAT_UNKNOWN :
-      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
-          << " image format are implemented..." << std::endl;
-      throw (vpImageException(vpImageException::ioError,
-             "cannot read file")) ;
-      break;
+  case FORMAT_UNKNOWN :
+    vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
+	     << " image format are implemented..." << std::endl;
+    throw (vpImageException(vpImageException::ioError,
+			    "cannot read file")) ;
+    break;
   }
 }
 /*!  
@@ -169,9 +169,13 @@ vpImageIo::write(vpImage<unsigned char> &I, const char *filename)
     writePGM(I,filename); break;
   case FORMAT_PPM :
     writePPM(I,filename); break;
-#if defined(VISP_HAVE_LIBJPEG)
   case FORMAT_JPEG :
+#if defined(VISP_HAVE_LIBJPEG)
     writeJPEG(I,filename); break;
+#else
+    vpCERROR << "You need the libjpeg library to write JPEG files " 
+	     << std::endl;
+    break;
 #endif
   case FORMAT_UNKNOWN :
     vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
@@ -210,9 +214,13 @@ vpImageIo::write(vpImage<vpRGBa> &I, const char *filename)
     writePGM(I,filename); break;
   case FORMAT_PPM :
     writePPM(I,filename); break;
-#if defined(VISP_HAVE_LIBJPEG)
   case FORMAT_JPEG :
+#if defined(VISP_HAVE_LIBJPEG)
     writeJPEG(I,filename); break;
+#else
+    vpCERROR << "You need the libjpeg library to open JPEG files " 
+	     << std::endl;
+    break;
 #endif
   case FORMAT_UNKNOWN :
     vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
