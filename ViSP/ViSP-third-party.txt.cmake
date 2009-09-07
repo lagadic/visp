@@ -38,4 +38,4 @@ Misc:
   libjpeg                   : ${VISP_HAVE_LIBJPEG_FOUND}
 Documentation:
   Doxygen                   : ${VISP_HAVE_DOXYGEN_FOUND}
-  Graphviz dot              : ${VISP_HAVE_GRAPHVIZ_FOUND}
+  Graphviz dot              : ${VISP_HAVE_DOT_FOUND}
