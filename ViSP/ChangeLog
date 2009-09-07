@@ -35,6 +35,8 @@ ViSP 2.x.y
     - [8257] Bug in vp1394TwoGrabber::resetBus()
     - [8259] Segfault in vpDisplayX
     - [8389] vpKltOpencv : Bug in the copy constructor
+    - [8493] Problem to build ViSP as a dynamic library under windows (Visual C++)
+    - [8495] Segmentation fault during the execution of the example grabDirectShow
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features
