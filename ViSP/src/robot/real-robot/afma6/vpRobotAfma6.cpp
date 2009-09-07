@@ -1199,6 +1199,35 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
 
   return;
 }
+/*!
+
+  Get the current position of the robot.
+  Similar as :
+   void getPosition (const vpRobot::vpControlFrameType frame,   vpColVector &position)
+  as the difference the position is returned using a ThetaU representation.
+
+ 
+
+*/
+ void getPosition (const vpRobot::vpControlFrameType frame,   vpPoseVector &position)
+{
+	vpColVector posRxyz;
+	//recupere  position en Rxyz
+	robot.getPosition(frame,posRxyz);
+	vpRxyzVector RxyzVect;
+	for(int j=0;j<3;j++)
+		RxyzVect[j]=posRxyz[j+3];
+	//recupere le vecteur thetaU correspondant
+	vpThetaUVector RtuVect(RxyzVectt);
+	
+	//remplit le vpPoseVector avec translation et rotation ThetaU
+	for(int j=0;j<3;j++)
+	{
+		position[j]=posRxyz[j];
+		position[j+3]=RtuVect[j];
+	}
+
+}
 
 /*!
   Apply a velocity to the robot.

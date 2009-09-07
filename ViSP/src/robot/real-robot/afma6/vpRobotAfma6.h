@@ -280,6 +280,8 @@ public:  /* Methode publiques */
 
   void getPosition (const vpRobot::vpControlFrameType frame,
 		    vpColVector &position);
+  void getPosition (const vpRobot::vpControlFrameType frame,
+		    vpPoseVector &position);
 
   double getPositioningVelocity (void);
 
