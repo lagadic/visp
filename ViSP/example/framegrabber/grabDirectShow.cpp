@@ -188,7 +188,7 @@ main(int argc, const char ** argv)
   if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
     exit (-1);
   }
-  vpDirectShowGrabber* grabber ;
+  vpDirectShowGrabber* grabber = NULL;
   try {
     // Create the grabber
     grabber = new vpDirectShowGrabber();
@@ -208,8 +208,8 @@ main(int argc, const char ** argv)
   }
   catch(...)
   {
+	if (grabber !=NULL) delete grabber;
     vpCTRACE << "Cannot acquire an image... " << std::endl ;
-    delete grabber;
     exit(-1);
   }
 
@@ -264,13 +264,13 @@ main(int argc, const char ** argv)
     std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
 
     // Release the framegrabber
-    delete grabber;
+    if (grabber !=NULL) delete grabber;
 
   }
   catch(...)
   {
     vpCERROR << "Failure: exit" << std::endl;
-    delete grabber;
+    if (grabber !=NULL) delete grabber;
     return(-1);
   }
 }
