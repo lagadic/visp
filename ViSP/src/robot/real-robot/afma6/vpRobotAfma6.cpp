@@ -1209,24 +1209,25 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
  
 
 */
- void getPosition (const vpRobot::vpControlFrameType frame,   vpPoseVector &position)
+void 
+vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,   
+                            vpPoseVector &position)
 {
-	vpColVector posRxyz;
-	//recupere  position en Rxyz
-	robot.getPosition(frame,posRxyz);
-	vpRxyzVector RxyzVect;
-	for(int j=0;j<3;j++)
-		RxyzVect[j]=posRxyz[j+3];
-	//recupere le vecteur thetaU correspondant
-	vpThetaUVector RtuVect(RxyzVectt);
-	
-	//remplit le vpPoseVector avec translation et rotation ThetaU
-	for(int j=0;j<3;j++)
-	{
-		position[j]=posRxyz[j];
-		position[j+3]=RtuVect[j];
-	}
+  vpColVector posRxyz;
+  //recupere  position en Rxyz
+  this->getPosition(frame,posRxyz);
+  vpRxyzVector RxyzVect;
+  for(int j=0;j<3;j++)
+    RxyzVect[j]=posRxyz[j+3];
+  //recupere le vecteur thetaU correspondant
+  vpThetaUVector RtuVect(RxyzVect);
 
+  //remplit le vpPoseVector avec translation et rotation ThetaU
+  for(int j=0;j<3;j++)
+  {
+    position[j]=posRxyz[j];
+    position[j+3]=RtuVect[j];
+  }
 }
 
 /*!
