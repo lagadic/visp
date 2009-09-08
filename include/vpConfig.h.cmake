@@ -118,6 +118,9 @@
 // Defined if libjpeg library available.
 #cmakedefine VISP_HAVE_LIBJPEG
 
+// Defined if libpng library available.
+#cmakedefine VISP_HAVE_LIBPNG
+
 // Defined if raw1394 and dc1394-1.x libraries available.
 #cmakedefine VISP_HAVE_DC1394_1
 
