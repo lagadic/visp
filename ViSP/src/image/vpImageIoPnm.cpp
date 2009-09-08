@@ -77,8 +77,16 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
 	       << std::endl;
       break;
 #endif
+	case FORMAT_PNG :
+#if defined(VISP_HAVE_LIBPNG)
+      readPNG(I,filename); break;
+#else
+      vpCERROR << "You need the libpng library to open PNG files " 
+	       << std::endl;
+      break;
+#endif
     case FORMAT_UNKNOWN :
-      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6), JPEG and PNG " << std::endl
           << " image format are implemented..." << std::endl;
       throw (vpImageException(vpImageException::ioError,
              "cannot read file")) ;
@@ -116,24 +124,32 @@ void
 vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 {
   switch(getFormat(filename)){
-  case FORMAT_PGM :
-    readPGM(I,filename); break;
-  case FORMAT_PPM :
-    readPPM(I,filename); break;
-  case FORMAT_JPEG :
+    case FORMAT_PGM :
+      readPGM(I,filename); break;
+    case FORMAT_PPM :
+      readPPM(I,filename); break;
+	case FORMAT_JPEG :
 #if defined(VISP_HAVE_LIBJPEG)
-    readJPEG(I,filename); break;
+      readJPEG(I,filename); break;
 #else
-    vpCERROR << "You need the libjpeg library to open JPEG files " 
-	     << std::endl;
-    break;
+      vpCERROR << "You need the libjpeg library to open JPEG files " 
+	       << std::endl;
+      break;
 #endif
-  case FORMAT_UNKNOWN :
-    vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
-	     << " image format are implemented..." << std::endl;
-    throw (vpImageException(vpImageException::ioError,
-			    "cannot read file")) ;
-    break;
+	case FORMAT_PNG :
+#if defined(VISP_HAVE_LIBPNG)
+      readPNG(I,filename); break;
+#else
+      vpCERROR << "You need the libpng library to open PNG files " 
+	       << std::endl;
+      break;
+#endif
+    case FORMAT_UNKNOWN :
+      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6), JPEG and PNG " << std::endl
+          << " image format are implemented..." << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot read file")) ;
+      break;
   }
 }
 /*!  
@@ -174,11 +190,19 @@ vpImageIo::write(vpImage<unsigned char> &I, const char *filename)
     writeJPEG(I,filename); break;
 #else
     vpCERROR << "You need the libjpeg library to write JPEG files " 
-	     << std::endl;
+	       << std::endl;
+    break;
+#endif
+  case FORMAT_PNG :
+#if defined(VISP_HAVE_LIBPNG)
+    writePNG(I,filename); break;
+#else
+    vpCERROR << "You need the libpng library to write PNG files " 
+	       << std::endl;
     break;
 #endif
   case FORMAT_UNKNOWN :
-    vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
+    vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) JPEG and PNG " << std::endl
 	     << " image format are implemented..." << std::endl;
     throw (vpImageException(vpImageException::ioError,
 			    "cannot write file")) ;
@@ -218,12 +242,20 @@ vpImageIo::write(vpImage<vpRGBa> &I, const char *filename)
 #if defined(VISP_HAVE_LIBJPEG)
     writeJPEG(I,filename); break;
 #else
-    vpCERROR << "You need the libjpeg library to open JPEG files " 
-	     << std::endl;
-    break;
+      vpCERROR << "You need the libjpeg library to write JPEG files " 
+	       << std::endl;
+      break;
+#endif
+  case FORMAT_PNG :
+#if defined(VISP_HAVE_LIBPNG)
+    writePNG(I,filename); break;
+#else
+      vpCERROR << "You need the libpng library to write PNG files " 
+	       << std::endl;
+      break;
 #endif
   case FORMAT_UNKNOWN :
-    vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) and JPEG " << std::endl
+    vpCERROR << "Error: Only PNM (PGM P5 and PPM P6), JPEG and PNG " << std::endl
 	     << " image format are implemented..." << std::endl;
     throw (vpImageException(vpImageException::ioError,
 			    "cannot write file")) ;
@@ -1436,6 +1468,703 @@ void
 vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
 {
   vpImageIo::readJPEG(I, filename.c_str());
+}
+
+#endif
+
+
+
+
+
+
+//--------------------------------------------------------------------------
+// PNG
+//--------------------------------------------------------------------------
+
+#if defined(VISP_HAVE_LIBPNG)
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function writes a PNG file.
+
+  \param I : Image to save as a PNG file.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
+{
+  FILE *file;
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "no filename")) ;
+  }
+
+  file = fopen(filename, "wb");
+
+  if (file == NULL) {
+     vpERROR_TRACE("couldn't write file \"%s\"\n",  filename);
+     throw (vpImageException(vpImageException::ioError,
+			     "cannot write file")) ;
+  }
+
+  /* create a png info struct */
+  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,NULL, NULL, NULL);
+  if (!png_ptr)
+  {
+    fclose (file);
+  }
+
+  png_infop info_ptr = png_create_info_struct(png_ptr);
+  if (!info_ptr)
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+  }
+
+  /* initialize the setjmp for returning properly after a libpng error occured */
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    vpERROR_TRACE("Error during init_io\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG write error")) ;
+  }
+
+  /* setup libpng for using standard C fwrite() function with our FILE pointer */
+  png_init_io (png_ptr, file);
+
+  int width = I.getWidth();
+  int height = I.getHeight();
+  int bit_depth = 8;
+  int color_type = PNG_COLOR_TYPE_GRAY;
+  /* set some usefull information from header */
+
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    vpERROR_TRACE("Error during write header\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG write error")) ;
+  }
+
+  png_set_IHDR(png_ptr, info_ptr, width, height,
+		     bit_depth, color_type, PNG_INTERLACE_NONE,
+		     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+  png_write_info(png_ptr, info_ptr);
+
+  png_bytep* row_ptrs = new png_bytep[height];
+  for (int i = 0; i < height; i++)
+    row_ptrs[i] = new png_byte[width];
+
+  unsigned char* input = (unsigned char*)I.bitmap;;
+
+  for (int i = 0; i < height; i++)
+  {
+    png_byte* row = row_ptrs[i];
+    for(int j = 0; j < width; j++)
+    {
+      row[j] = *(input);
+      input++;
+    }
+  }
+
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    vpERROR_TRACE("Error during write image\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG write error")) ;
+  }
+
+  png_write_image(png_ptr, row_ptrs);
+
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    vpERROR_TRACE("Error during write end\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG write error")) ;
+  }
+
+  png_write_end(png_ptr, NULL);
+
+  for(int j = 0; j < height; j++)
+    delete[] /*(png_byte)*/row_ptrs[j];
+
+  delete[] (png_bytep)row_ptrs;
+
+  png_destroy_write_struct (&png_ptr, &info_ptr);
+
+  fclose(file);
+}
+
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function writes a PNG file.
+
+  \param I : Image to save as a PNG file.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::writePNG(vpImage<unsigned char> &I, const std::string filename)
+{
+  vpImageIo::writePNG(I, filename.c_str());
+}
+
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function writes a PNG file.
+
+  \param I : Image to save as a PNG file.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
+{
+  FILE *file;
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "no filename")) ;
+  }
+
+  file = fopen(filename, "wb");
+
+  if (file == NULL) {
+     vpERROR_TRACE("couldn't write file \"%s\"\n",  filename);
+     throw (vpImageException(vpImageException::ioError,
+			     "cannot write file")) ;
+  }
+
+  /* create a png info struct */
+  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,NULL, NULL, NULL);
+  if (!png_ptr)
+  {
+    fclose (file);
+  }
+
+  png_infop info_ptr = png_create_info_struct(png_ptr);
+  if (!info_ptr)
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+  }
+
+  /* initialize the setjmp for returning properly after a libpng error occured */
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    vpERROR_TRACE("Error during init_io\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG write error")) ;
+  }
+
+  /* setup libpng for using standard C fwrite() function with our FILE pointer */
+  png_init_io (png_ptr, file);
+
+  int width = I.getWidth();
+  int height = I.getHeight();
+  int bit_depth = 8;
+  int color_type = PNG_COLOR_TYPE_RGB;
+  /* set some usefull information from header */
+
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    vpERROR_TRACE("Error during write header\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG write error")) ;
+  }
+
+  png_set_IHDR(png_ptr, info_ptr, width, height,
+		     bit_depth, color_type, PNG_INTERLACE_NONE,
+		     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+  png_write_info(png_ptr, info_ptr);
+
+  png_bytep* row_ptrs = new png_bytep[height];
+  for (int i = 0; i < height; i++)
+    row_ptrs[i] = new png_byte[3*width];
+
+  unsigned char* input = (unsigned char*)I.bitmap;;
+
+  for (int i = 0; i < height; i++)
+  {
+    png_byte* row = row_ptrs[i];
+    for(int j = 0; j < width; j++)
+    {
+      row[3*j] = *(input);input++;
+      row[3*j+1] = *(input);input++;
+      row[3*j+2] = *(input);input++;
+      input++;
+    }
+  }
+
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    vpERROR_TRACE("Error during write image\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG write error")) ;
+  }
+
+  png_write_image(png_ptr, row_ptrs);
+
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    vpERROR_TRACE("Error during write end\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG write error")) ;
+  }
+
+  png_write_end(png_ptr, NULL);
+
+  for(int j = 0; j < height; j++)
+    delete[] /*(png_byte)*/row_ptrs[j];
+
+  delete[] (png_bytep)row_ptrs;
+
+  png_destroy_write_struct (&png_ptr, &info_ptr);
+
+  fclose(file);
+}
+
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function writes a PNG file.
+
+  \param I : Image to save as a PNG file.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::writePNG(vpImage<vpRGBa> &I, const std::string filename)
+{
+  vpImageIo::writePNG(I, filename.c_str());
+}
+
+/*!
+  Read the contents of the PNG file, allocate memory
+  for the corresponding gray level image, if necessary convert the data in gray level, and
+  set the bitmap whith the gray level data. That means that the image \e I is a
+  "black and white" rendering of the original image in \e filename, as in a
+  black and white photograph. If necessary, the quantization formula used is \f$0,299 r +
+  0,587 g + 0,114 b\f$.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+
+*/
+void
+vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
+{
+  FILE *file;
+  png_byte magic[8];
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "no filename")) ;
+  }
+
+  file = fopen(filename, "rb");
+
+  if (file == NULL) {
+     vpERROR_TRACE("couldn't read file \"%s\"\n",  filename);
+     throw (vpImageException(vpImageException::ioError,
+			     "cannot read file")) ;
+  }
+
+  /* read magic number */
+  fread (magic, 1, sizeof (magic), file);
+
+  /* check for valid magic number */
+  if (!png_check_sig (magic, sizeof (magic)))
+  {
+    fprintf (stderr, "error: \"%s\" is not a valid PNG image!\n",filename);
+    fclose (file);
+  }
+
+  /* create a png read struct */
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if (!png_ptr)
+  {
+    fclose (file);
+  }
+
+  /* create a png info struct */
+  png_infop info_ptr = png_create_info_struct (png_ptr);
+  if (!info_ptr)
+  {
+    fclose (file);
+    png_destroy_read_struct (&png_ptr, NULL, NULL);
+  }
+
+  /* initialize the setjmp for returning properly after a libpng error occured */
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
+    vpERROR_TRACE("Error during init io\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG read error")) ;
+  }
+
+  /* setup libpng for using standard C fread() function with our FILE pointer */
+  png_init_io (png_ptr, file);
+
+  /* tell libpng that we have already read the magic number */
+  png_set_sig_bytes (png_ptr, sizeof (magic));
+
+  /* read png info */
+  png_read_info (png_ptr, info_ptr);
+
+  unsigned int width = png_get_image_width(png_ptr, info_ptr);
+  unsigned int height = png_get_image_height(png_ptr, info_ptr);
+
+  int bit_depth, channels, color_type;
+  /* get some usefull information from header */
+  bit_depth = png_get_bit_depth (png_ptr, info_ptr);
+  channels = png_get_channels(png_ptr, info_ptr);
+  color_type = png_get_color_type (png_ptr, info_ptr);
+
+  /* convert index color images to RGB images */
+  if (color_type == PNG_COLOR_TYPE_PALETTE)
+    png_set_palette_to_rgb (png_ptr);
+
+  /* convert 1-2-4 bits grayscale images to 8 bits grayscale. */
+  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+    png_set_gray_1_2_4_to_8 (png_ptr);
+
+//  if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS))
+//    png_set_tRNS_to_alpha (png_ptr);
+
+  if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    png_set_strip_alpha(png_ptr);
+
+  if (bit_depth == 16)
+    png_set_strip_16 (png_ptr);
+  else if (bit_depth < 8)
+    png_set_packing (png_ptr);
+
+  /* update info structure to apply transformations */
+  png_read_update_info (png_ptr, info_ptr);
+
+  channels = png_get_channels(png_ptr, info_ptr);
+
+  if ( (width != I.getWidth()) || (height != I.getHeight()) )
+	  I.resize(height,width);
+
+  png_bytep* rowPtrs = new png_bytep[height];
+
+  unsigned char* data = new  unsigned char[width * height * bit_depth * channels / 8];
+
+  unsigned int stride = width * bit_depth * channels / 8;
+
+  for (unsigned int  i =0; i < height; i++)
+    rowPtrs[i] = (png_bytep)data + (i * stride);
+
+  png_read_image(png_ptr, rowPtrs);
+
+  vpImage<vpRGBa> Ic(height,width);
+  unsigned char* output;
+
+  switch (channels)
+  {
+  case 1:
+	  output = (unsigned char*)I.bitmap;
+	  for (unsigned int i = 0; i < width*height; i++)
+      {
+        *(output++) = data[i];
+      }
+	  break;
+  case 2:
+	  output = (unsigned char*)I.bitmap;
+	  for (unsigned int i = 0; i < width*height; i++)
+      {
+        *(output++) = data[i*2];
+      }
+	  break;
+  case 3:
+	  
+	  output = (unsigned char*)Ic.bitmap;
+      for (unsigned int i = 0; i < width*height; i++)
+      {
+        *(output++) = data[i*3];
+        *(output++) = data[i*3+1];
+        *(output++) = data[i*3+2];
+        *(output++) = 0;
+      }
+	  vpImageConvert::convert(Ic,I) ;
+	  break;
+  case 4:
+	  output = (unsigned char*)Ic.bitmap;
+      for (unsigned int i = 0; i < width*height; i++)
+      {
+        *(output++) = data[i*4];
+        *(output++) = data[i*4+1];
+        *(output++) = data[i*4+2];
+        *(output++) = data[i*4+3];
+      }
+	  vpImageConvert::convert(Ic,I) ;
+	  break;
+  }
+
+  delete[] (png_bytep)rowPtrs;
+  png_read_end (png_ptr, NULL);
+  png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
+  fclose(file);
+}
+
+
+/*!
+  Read the contents of the PNG file, allocate memory
+  for the corresponding gray level image, if necessary convert the data in gray level, and
+  set the bitmap whith the gray level data. That means that the image \e I is a
+  "black and white" rendering of the original image in \e filename, as in a
+  black and white photograph. If necessary, the quantization formula used is \f$0,299 r +
+  0,587 g + 0,114 b\f$.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+
+*/
+void
+vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string filename)
+{
+  vpImageIo::readPNG(I, filename.c_str());
+}
+
+
+/*!
+  Read a PNG file and initialize a scalar image.
+
+  Read the contents of the PNG file, allocate
+  memory for the corresponding image, and set 
+  the bitmap whith the content of
+  the file.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  If the file corresponds to a grayscaled image, a conversion is done to deal
+  with \e I which is a color image.
+
+  \param I : Color image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
+{
+  FILE *file;
+  png_byte magic[8];
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "no filename")) ;
+  }
+
+  file = fopen(filename, "rb");
+
+  if (file == NULL) {
+     vpERROR_TRACE("couldn't read file \"%s\"\n",  filename);
+     throw (vpImageException(vpImageException::ioError,
+			     "cannot read file")) ;
+  }
+
+  /* read magic number */
+  fread (magic, 1, sizeof (magic), file);
+
+  /* check for valid magic number */
+  if (!png_check_sig (magic, sizeof (magic)))
+  {
+    fprintf (stderr, "error: \"%s\" is not a valid PNG image!\n",filename);
+    fclose (file);
+  }
+
+  /* create a png read struct */
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if (!png_ptr)
+  {
+    fclose (file);
+  }
+
+  /* create a png info struct */
+  png_infop info_ptr = png_create_info_struct (png_ptr);
+  if (!info_ptr)
+  {
+    fclose (file);
+    png_destroy_read_struct (&png_ptr, NULL, NULL);
+  }
+
+  /* initialize the setjmp for returning properly after a libpng error occured */
+  if (setjmp (png_jmpbuf (png_ptr)))
+  {
+    fclose (file);
+    png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
+    vpERROR_TRACE("Error during init io\n");
+    throw (vpImageException(vpImageException::ioError,
+		       "PNG read error")) ;
+  }
+
+  /* setup libpng for using standard C fread() function with our FILE pointer */
+  png_init_io (png_ptr, file);
+
+  /* tell libpng that we have already read the magic number */
+  png_set_sig_bytes (png_ptr, sizeof (magic));
+
+  /* read png info */
+  png_read_info (png_ptr, info_ptr);
+
+  unsigned int width = png_get_image_width(png_ptr, info_ptr);
+  unsigned int height = png_get_image_height(png_ptr, info_ptr);
+
+  int bit_depth, channels, color_type;
+  /* get some usefull information from header */
+  bit_depth = png_get_bit_depth (png_ptr, info_ptr);
+  channels = png_get_channels(png_ptr, info_ptr);
+  color_type = png_get_color_type (png_ptr, info_ptr);
+
+  /* convert index color images to RGB images */
+  if (color_type == PNG_COLOR_TYPE_PALETTE)
+    png_set_palette_to_rgb (png_ptr);
+
+  /* convert 1-2-4 bits grayscale images to 8 bits grayscale. */
+  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+    png_set_gray_1_2_4_to_8 (png_ptr);
+
+//  if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS))
+//    png_set_tRNS_to_alpha (png_ptr);
+
+  if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    png_set_strip_alpha(png_ptr);
+
+  if (bit_depth == 16)
+    png_set_strip_16 (png_ptr);
+  else if (bit_depth < 8)
+    png_set_packing (png_ptr);
+
+  /* update info structure to apply transformations */
+  png_read_update_info (png_ptr, info_ptr);
+
+  channels = png_get_channels(png_ptr, info_ptr);
+
+  if ( (width != I.getWidth()) || (height != I.getHeight()) )
+	  I.resize(height,width);
+
+  png_bytep* rowPtrs = new png_bytep[height];
+
+  unsigned char* data = new  unsigned char[width * height * bit_depth * channels / 8];
+
+  unsigned int stride = width * bit_depth * channels / 8;
+
+  for (unsigned int  i =0; i < height; i++)
+    rowPtrs[i] = (png_bytep)data + (i * stride);
+
+  png_read_image(png_ptr, rowPtrs);
+
+  vpImage<unsigned char> Ig(height,width);
+  unsigned char* output;
+
+  switch (channels)
+  {
+  case 1:
+	  output = (unsigned char*)Ig.bitmap;
+	  for (unsigned int i = 0; i < width*height; i++)
+      {
+        *(output++) = data[i];
+      }
+	  vpImageConvert::convert(Ig,I) ;
+	  break;
+  case 2:
+	  output = (unsigned char*)Ig.bitmap;
+	  for (unsigned int i = 0; i < width*height; i++)
+      {
+        *(output++) = data[i*2];
+      }
+	  vpImageConvert::convert(Ig,I) ;
+	  break;
+  case 3:
+	  
+	  output = (unsigned char*)I.bitmap;
+      for (unsigned int i = 0; i < width*height; i++)
+      {
+        *(output++) = data[i*3];
+        *(output++) = data[i*3+1];
+        *(output++) = data[i*3+2];
+        *(output++) = 0;
+      }
+	  break;
+  case 4:
+	  output = (unsigned char*)I.bitmap;
+      for (unsigned int i = 0; i < width*height; i++)
+      {
+        *(output++) = data[i*4];
+        *(output++) = data[i*4+1];
+        *(output++) = data[i*4+2];
+        *(output++) = data[i*4+3];
+      }
+	  break;
+  }
+
+  delete[] (png_bytep)rowPtrs;
+  png_read_end (png_ptr, NULL);
+  png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
+  fclose(file);
+}
+
+
+/*!
+  Read a PNG file and initialize a scalar image.
+
+  Read the contents of the PNG file, allocate
+  memory for the corresponding image, and set 
+  the bitmap whith the content of
+  the file.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  If the file corresponds to a grayscaled image, a conversion is done to deal
+  with \e I which is a color image.
+
+  \param I : Color image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
+void
+vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string filename)
+{
+  vpImageIo::readPNG(I, filename.c_str());
 }
 
 #endif

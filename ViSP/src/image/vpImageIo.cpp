@@ -188,6 +188,8 @@ vpImageIo::getFormat(const char *filename)
   int jpg = sfilename.find("jpg");
   int JPEG = sfilename.find("JPEG");
   int jpeg = sfilename.find("jpeg");
+  int PNG = sfilename.find("PNG");
+  int png = sfilename.find("png");
   
   int size = sfilename.size();
 
@@ -197,6 +199,8 @@ vpImageIo::getFormat(const char *filename)
     return FORMAT_PPM;
   else if ((JPG>0 && JPG<size) || ( jpg>0 && jpg<size) || (JPEG>0 && JPEG<size) || ( jpeg>0 && jpeg<size))
 	return FORMAT_JPEG;
+  else if ((PNG>0 && PNG<size) || ( png>0 && png<size))
+    return FORMAT_PNG;
   else{ 
     return FORMAT_UNKNOWN;
   } 
