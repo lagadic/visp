@@ -323,7 +323,7 @@ IF(USE_COIN)
 	      #Add Qt3 libraries
 	      SET(VISP_HAVE_QT3_FOUND "yes")       # for ViSP-third-party.txt
 	      #MESSAGE("QT_QT_LIBRARY ${QT_QT_LIBRARY}")
-	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY}) 
+	      SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${QT_QT_LIBRARY})
 	    ELSEIF(DESIRED_QT_VERSION MATCHES 4)
 	      #Add Qt4 libraries
 	      SET(VISP_HAVE_QT4_FOUND "yes")       # for ViSP-third-party.txt
@@ -653,6 +653,14 @@ IF(USE_LIBJPEG)
 
     SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${LIBJPEG_INCLUDE_DIR})
     SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${LIBJPEG_LIBRARIES})
+
+    # If Qt3 and libjpeg are used, we add here QT_CLEAN_NAMESPACE define to 
+    # handle a compilation error "conflicting declaration 'typedef long int 
+    # INT32'"
+    IF(VISP_HAVE_QT3_FOUND)
+      LIST(APPEND VISP_DEFS "-DQT_CLEAN_NAMESPACE")
+      # MESSAGE("add -DQT_CLEAN_NAMESPACE")
+    ENDIF(VISP_HAVE_QT3_FOUND)
 
   ELSE(LIBJPEG_FOUND)
     MESSAGE(STATUS "Libjpeg not found")
@@ -1036,6 +1044,7 @@ ADD_CUSTOM_TARGET(uninstall
 # Add definitions
 #----------------------------------------------------------------------
 ADD_DEFINITIONS(${VISP_DEFS})
+#MESSAGE("Definitions: ${VISP_DEFS}")
 
 # With Visual Studio 2005, Microsoft deprecates the standard C library, for
 # example fopen() and sprintf(), to non-portable functions fopen_s() and
