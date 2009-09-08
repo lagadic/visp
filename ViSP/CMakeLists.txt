@@ -109,25 +109,27 @@ IF (UNIX)
 ENDIF(UNIX)
 
 # Set other options to default value
-SET(USE_X11       ON) # For Linux/OSX display
-SET(USE_XML2      ON) # For the Xml Parser (vpCameraParameters)
-SET(USE_COIN      ON) # For the simulator
-SET(USE_SOWIN     ON) # For the simulator viewer
-SET(USE_SOQT      ON) # For the simulator viewer
-SET(USE_SOXT      ON) # For the simulator viewer
-SET(USE_PTHREAD   ON) # For Biclops/Simulator
-SET(USE_OPENCV    ON) # For Intel opencv
-SET(USE_GSL       ON) # For matrix manipulations
-SET(USE_GTK1      ON) # For Linux/OSX/Windows display with gtk-1.x
-SET(USE_GTK2      ON) # For Linux/OSX/Windows display with gtk-2.x
-SET(USE_DIRECT3D  ON) # For Windows display
-SET(USE_GDI       ON) # For Windows display
-SET(USE_DC1394_1  ON) # For firewire grabber under Linux and OSX ?
-SET(USE_DC1394_2  ON) # For firewire grabber under Linux and OSX ?
-SET(USE_V4L2      ON) # For Video 4 Linux 2 grabber under Linux
+SET(USE_X11        ON) # For Linux/OSX display
+SET(USE_XML2       ON) # For the Xml Parser (vpCameraParameters)
+SET(USE_COIN       ON) # For the simulator
+SET(USE_SOWIN      ON) # For the simulator viewer
+SET(USE_SOQT       ON) # For the simulator viewer
+SET(USE_SOXT       ON) # For the simulator viewer
+SET(USE_PTHREAD    ON) # For Biclops/Simulator
+SET(USE_OPENCV     ON) # For Intel opencv
+SET(USE_GSL        ON) # For matrix manipulations
+SET(USE_GTK1       ON) # For Linux/OSX/Windows display with gtk-1.x
+SET(USE_GTK2       ON) # For Linux/OSX/Windows display with gtk-2.x
+SET(USE_DIRECT3D   ON) # For Windows display
+SET(USE_GDI        ON) # For Windows display
+SET(USE_DC1394_1   ON) # For firewire grabber under Linux and OSX ?
+SET(USE_DC1394_2   ON) # For firewire grabber under Linux and OSX ?
+SET(USE_V4L2       ON) # For Video 4 Linux 2 grabber under Linux
 SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
-SET(USE_LIBPLOTTER ON)   # For plotting curves
-SET(USE_LIBJPEG ON)   # For reading jpeg files
+SET(USE_LIBPLOTTER ON) # For plotting curves
+SET(USE_LIBJPEG    ON) # For reading jpeg files
+SET(USE_LIBPNG     ON) # For reading png files
+SET(USE_ZLIB       ON) # For data compression
 
 IF(BUILD_SHARED_LIBS)
   SET(VISP_BUILD_SHARED_LIBS TRUE)  # for header vpConfig.h
@@ -455,6 +457,8 @@ SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBPLOTTER_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_ZLIB_FOUND "no")  # for ViSP-third-party.txt
 
 # open CV
 IF(USE_OPENCV)
@@ -622,6 +626,23 @@ IF(USE_LIBPLOTTER)
   ENDIF(LIBPLOTTER_FOUND)
 ENDIF(USE_LIBPLOTTER)
 
+# zlib
+IF(USE_ZLIB)
+  FIND_PACKAGE(ZLIB)
+  IF(ZLIB_FOUND)
+    MESSAGE(STATUS "zlib found")
+    SET(VISP_HAVE_ZLIB  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_ZLIB_FOUND "yes")  # for ViSP-third-party.txt
+
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${ZLIB_LIBRARY})
+
+  ELSE(ZLIB_FOUND)
+    MESSAGE(STATUS "zlib not found")
+    SET(VISP_HAVE_ZLIB_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(ZLIB_FOUND)
+ENDIF(USE_ZLIB)
+
 # Libjpeg
 IF(USE_LIBJPEG)
   FIND_PACKAGE(LIBJPEG)
@@ -638,6 +659,23 @@ IF(USE_LIBJPEG)
     SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(LIBJPEG_FOUND)
 ENDIF(USE_LIBJPEG)
+
+# Libpng
+IF(USE_LIBPNG)
+  FIND_PACKAGE(LIBPNG)
+  IF(LIBPNG_FOUND)
+    MESSAGE(STATUS "Libpng found")
+    SET(VISP_HAVE_LIBPNG  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_LIBPNG_FOUND "yes")  # for ViSP-third-party.txt
+
+    SET(VISP_EXTERN_INCLUDE_DIR ${VISP_EXTERN_INCLUDE_DIR} ${LIBPNG_INCLUDE_DIR})
+    SET(VISP_EXTERN_LIBS ${VISP_EXTERN_LIBS} ${LIBPNG_LIBRARIES})
+
+  ELSE(LIBPNG_FOUND)
+    MESSAGE(STATUS "Libpng not found")
+    SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(LIBPNG_FOUND)
+ENDIF(USE_LIBPNG)
 
 #----------------------------------------------------------------------
 # Specific hardware : framegrabbers and cameras
