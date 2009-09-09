@@ -46,6 +46,13 @@
 #include <visp/vpImagePoint.h>
 
 
+/*!
+  Computes the \f$ \theta \f$ angle which represents the angle between the tangente to the curve and the i axis.
+
+  \param theta : The computed value.
+  \param K : The parameters of the ellipse.
+  \param iP : the point belonging th the ellipse where the angle is computed.
+*/
 void
 computeTheta(double &theta, vpColVector &K, vpImagePoint iP)
 {
@@ -56,14 +63,16 @@ computeTheta(double &theta, vpColVector &K, vpImagePoint iP)
   double A = 2*i+2*K[1]*j + 2*K[2] ;
   double B = 2*K[0]*j + 2*K[1]*i + 2*K[3];
 
-  theta = atan2(A,B) ; //tangente
+  theta = atan2(A,B) ; //Angle between the tangente and the i axis.
 
   while (theta > M_PI) { theta -= M_PI ; }
   while (theta < 0) { theta += M_PI ; }
-
 }
 
 
+/*!
+  Basic constructor that calls the constructor of the class vpMeTracker.
+*/
 vpMeEllipse::vpMeEllipse():vpMeTracker()
 {
   vpCDEBUG(1) << "begin vpMeEllipse::vpMeEllipse() " <<  std::endl ;
@@ -83,32 +92,31 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
   iP2.set_i(0);
   iP2.set_j(0);
 
-  seek = 10.; // angle in degrees
   vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << std::endl ;
 }
 
+
+/*!
+  Basic destructor.
+*/
 vpMeEllipse::~vpMeEllipse()
 {
   vpCDEBUG(1) << "begin vpMeEllipse::~vpMeEllipse() " << std::endl ;
 
   list.kill();
+  angle.kill();
 
   vpCDEBUG(1) << "end vpMeEllipse::~vpMeEllipse() " << std::endl ;
 }
 
 
-// ===================================================================
-/*!
- * \brief Construct a list of vpMeSiteME at a particular
- * \n		 sampling step between the two extremities of
- * \n		 the line.
- * \pre  Requies me to hold the size of the sample_step
- * \post Calculates the a normal to the line and stores
- * 			 angle in 'alpha'. Creates a list of sites (list)
- *				 (requires calculation of Rho(),Theta())
- * \return status
- */
-// ===================================================================
+  /*!
+    Construct a list of vpMeSite moving edges at a particular sampling
+    step between the two extremities. The two extremities are defined by
+    the points with the smallest and the biggest \f$ alpha \f$ angle.
+
+    \param I : Image in which the ellipse appears.
+  */
 void
 vpMeEllipse::sample(vpImage<unsigned char> & I)
 {
@@ -139,20 +147,29 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
   list.front();
   list.kill();
 
+  angle.front();
+  angle.kill();
+
   // sample positions
 
   double k = alpha1 ;
   while (k<alpha2)
   {
 
-    j = a *cos(k) ; // equation of an ellipse
-    i = b *sin(k) ; // equation of an ellipse
+//     j = a *cos(k) ; // equation of an ellipse
+//     i = b *sin(k) ; // equation of an ellipse
+
+    j = a *sin(k) ; // equation of an ellipse
+    i = b *cos(k) ; // equation of an ellipse
 
     // (i,j) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    iP11.set_j( iPc.get_j() + ce *j - se *i );
-    iP11.set_i( iPc.get_i() -( se *j + ce *i) );
+//     iP11.set_j( iPc.get_j() + ce *j - se *i );
+//     iP11.set_i( iPc.get_i() -( se *j + ce *i) );
+
+    iP11.set_j( iPc.get_j() + ce *j + se *i );
+    iP11.set_i( iPc.get_i() - se *j + ce *i );
 
     vpDisplay::displayCross(I, iP11,  5, col) ;
 
@@ -172,6 +189,7 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
 	vpDisplay::displayCross(I,iP11, 5, vpColor::blue);
       }
       list.addRight(pix);
+      angle.addRight(k);
     }
     k += incr ;
 
@@ -185,15 +203,32 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
 }
 
 
+/*!
+	
+  Resample the ellipse if the number of sample is less than 90% of the
+  expected value.
+	
+  \note The expected value is computed thanks to the difference between the smallest and the biggest \f$ \alpha \f$ angles
+  and the parameter which indicates the number of degrees between
+  two points (vpMe::sample_step).
+
+  \param I : Image in which the ellipse appears.
+*/
 void
 vpMeEllipse::reSample(vpImage<unsigned char>  &I)
 {
-  sample(I) ;
+  int n = numberOfSignal() ;
+  double expecteddensity = (alpha2-alpha1) / vpMath::rad((double)me->sample_step);
+  if ((double)n<0.9*expecteddensity)
+    sample(I) ;
 }
 
+
 /*!
-  calcul les parametres de l'ellipse en terme de centre de gravite (ic,jc)
-  petit axe (b) et grand axe (a) et exentricite (e)
+  Computes the length of the semiminor axis \f$ a \f$, the length of the semimajor axis \f$ b \f$ and, 
+  \f$ e \f$ which is the angle made by the major axis and the i axis of the image frame \f$ (i,j) \f$.
+  
+  All those computations are made thanks to the parameters \f$ K = {K_0, ..., K_4} \f$.
 */
 void
 vpMeEllipse::getParameters()
@@ -237,6 +272,9 @@ vpMeEllipse::getParameters()
 
 }
 
+/*!
+  Print the parameters \f$ K = {K_0, ..., K_4} \f$ and the coordinates of the ellipse center.
+*/
 void
 vpMeEllipse::printParameters()
 {
@@ -246,10 +284,15 @@ vpMeEllipse::printParameters()
 }
 
 /*!
- * \brief computeAngle
- */
+  Computes the \f$ alpha \f$ angle of the two points and store them into alpha1 for the smallest and alpha2 for the biggest.
+
+  \note this function is usefull only during the initialization.
+
+  \param pt1 : First point whose \f$ alpha \f$ angle is computed.
+  \param pt2 : Second point whose \f$ alpha \f$ angle is computed.
+*/ 
 void
-vpMeEllipse::computeAngle(vpImagePoint pt1, double &_alpha1, vpImagePoint pt2, double &_alpha2)
+vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
 {
 
   getParameters() ;
@@ -265,28 +308,32 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, double &_alpha1, vpImagePoint pt2, d
   double k =  -M_PI ;
   while(k < M_PI) {
 
-    j1 = a *cos(k) ; // equation of an ellipse
-    i1 = b *sin(k) ; // equation of an ellipse
+//     j1 = a *cos(k) ; // equation of an ellipse
+//     i1 = b *sin(k) ; // equation of an ellipse
+
+    j1 = a *sin(k) ; // equation of an ellipse
+    i1 = b *cos(k) ; // equation of an ellipse
 
     // (i1,j1) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    j11 = iPc.get_j() + ce *j1 - se *i1 ;
-    i11 = iPc.get_i() -( se *j1 + ce *i1) ;
+//     j11 = iPc.get_j() + ce *j1 - se *i1 ;
+//     i11 = iPc.get_i() -( se *j1 + ce *i1) ;
+
+    j11 = iPc.get_j() + ce *j1 + se *i1 ;
+    i11 = iPc.get_i() - se *j1 + ce *i1 ;
 
     double  d = vpMath::sqr(pt1.get_i()-i11) + vpMath::sqr(pt1.get_j()-j11) ;
     if (d < dmin1)
     {
       dmin1 = d ;
       alpha1 = k ;
-      _alpha1 = k ;
     }
     d = vpMath::sqr(pt2.get_i()-i11) + vpMath::sqr(pt2.get_j()-j11) ;
     if (d < dmin2)
     {
       dmin2 = d ;
       alpha2 = k ;
-      _alpha2 = k ;
     }
     k += incr ;
   }
@@ -294,25 +341,20 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, double &_alpha1, vpImagePoint pt2, d
   if (alpha2 <alpha1) alpha2 += 2*M_PI ;
 
   vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;
-
 }
+
+
 /*!
- * \brief computeAngle
- */
-void
-vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
-{
+  Compute the \f$ theta \f$ angle for each vpMeSite.
 
-  double a1, a2 ;
-  computeAngle(pt1, a1, pt2, a2) ;
-}
-
-
+  \note The \f$ theta \f$ angle is usefull during the tracking part.
+*/
 void
 vpMeEllipse::updateTheta()
 {
-  vpMeSite p ;
-  list.front() ;
+  vpMeSite p;
+  list.front();
+  double theta;
   for (int i=0 ; i < list.nbElement() ; i++)
   {
     p = list.value() ;
@@ -324,168 +366,199 @@ vpMeEllipse::updateTheta()
     list.modify(p) ;
     list.next() ;
   }
-
 }
 
+/*!
+  Suppress the vpMeSite which are no more detected as point which belongs to the ellipse edge.
+*/
 void
 vpMeEllipse::suppressPoints()
 {
   // Loop through list of sites to track
   list.front();
+  angle.front();
   while(!list.outside())
   {
     vpMeSite s = list.value() ;//current reference pixel
     if (s.suppress != 0)
+    {
       list.suppress() ;
+      angle.suppress();
+    }
     else
+    {
       list.next() ;
+      angle.next();
+    }
   }
-
-  list.front();
-  vpMeSite s = list.value() ;//current reference pixel
-  iP1.set_i ( s.i );
-  iP1.set_j ( s.j );
-  list.end();
-  s = list.value() ;//current reference pixel
-  iP2.set_i ( s.i );
-  iP2.set_j ( s.j );
 }
 
 
+/*!  
+  Seek along the ellipse edge defined by its equation, the two extremities of
+  the ellipse (ie the two points with the smallest and the biggest \f$ \alpha \f$ angle.
+
+  \param I : Image in which the ellipse appears.
+*/
 void
 vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
 {
-  double k;
+  int rows = I.getHeight() ;
+  int cols = I.getWidth() ;
 
-  unsigned height = I.getHeight() ;
-  unsigned width  = I.getWidth() ;
+  vpImagePoint ip;
 
   int  memory_range = me->range ;
   me->range = 2 ;
 
   double  memory_mu1 = me->mu1 ;
-  me->mu1 = 0.1 ;
+  me->mu1 = 0.5 ;
 
   double  memory_mu2 = me->mu2 ;
-  me->mu2 = 0.1 ;
+  me->mu2 = 0.5 ;
 
-  double i,j;
-  vpImagePoint iP11;
-  k = alpha2 ;
   double incr = vpMath::rad(2.0) ;
 
-
-
-  vpMeSite Plast ;
-  Plast = list.lastValue() ;
-  while (k < alpha2 + vpMath::rad(seek))
+  if (alpha2-alpha1 < 2*M_PI-vpMath::rad(6.0))
   {
-    k += incr ;
+    vpMeSite P;
+    double k = alpha1;
+    double i1,j1;
 
-    j = a *cos(k) ; // equation of an ellipse
-    i = b *sin(k) ; // equation of an ellipse
-    iP11.set_j ( iPc.get_j() + ce *j - se *i );
-    iP11.set_i ( iPc.get_i() -( se *j + ce *i) );
-
-    double theta ;
-    computeTheta(theta, K,  iP11)  ;
-
-    // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(iP11.get_i()), vpMath::round(iP11.get_j()), 2, height, width))
+    for (int i=0 ; i < 3 ; i++)
     {
-      vpMeSite P ;
-      P = Plast ;
-      P.init((int)iP11.get_i(), (int)iP11.get_j(), theta) ;
-      P.setDisplay(selectDisplay) ;
-      P.suppress = 0 ;
+      k -= incr;
+      //while ( k < -M_PI ) { k+=2*M_PI; }
 
-      P.track(I,me,true) ;
+      i1 = b *cos(k) ; // equation of an ellipse
+      j1 = a *sin(k) ; // equation of an ellipse
+      P.ifloat = iPc.get_i() - se *j1 + ce *i1 ; P.i = (int)P.ifloat ;
+      P.jfloat = iPc.get_j() + ce *j1 + se *i1 ; P.j = (int)P.jfloat ;
 
-      if (P.suppress ==0)
+      if(!outOfImage(P.i, P.j, 5, rows, cols))
       {
-	list.end() ;
-	list.addRight(P);
-	if (vpDEBUG_ENABLE(3)) {
-	  vpImagePoint ip;
-	  ip.set_i( P.i );
-	  ip.set_j( P.j );
+        P.track(I,me,false) ;
 
-	  vpDisplay::displayCross(I, ip, 25, vpColor::green) ;
-	}
-      }
-      else {
-	if (vpDEBUG_ENABLE(3)) {
-	  vpImagePoint ip;
-	  ip.set_i( P.i );
-	  ip.set_j( P.j );
-	  
-	  vpDisplay::displayCross(I, ip, 10, vpColor::red) ;
-	}
+        if (P.suppress ==0)
+        {
+          list += P ;
+          angle += k;
+          if (vpDEBUG_ENABLE(3)) {
+            ip.set_i( P.i );
+            ip.set_j( P.j );
+
+            vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
+          }
+        }
+        else {
+	  if (vpDEBUG_ENABLE(3)) {
+	    ip.set_i( P.i );
+	    ip.set_j( P.j );
+	    vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
+	  }
+        }
       }
     }
 
+    k = alpha2;
 
-  }
-  vpMeSite Pfirst ;
-  Pfirst = list.firstValue() ;
-  k = alpha1 ;
-  while (k > alpha1 - vpMath::rad(seek))
-  {
-    k -= incr ;
-
-    j = a *cos(k) ; // equation of an ellipse
-    i = b *sin(k) ; // equation of an ellipse
-    iP11.set_j( iPc.get_j() + ce *j - se *i );
-    iP11.set_i( iPc.get_i() -( se *j + ce *i) );
-    double theta ;
-    computeTheta(theta, K,  iP11)  ;
-
-    // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(iP11.get_i()), 
-		   vpMath::round(iP11.get_j()), 2, height, width))
+    for (int i=0 ; i < 3 ; i++)
     {
-      vpMeSite P ; P = Pfirst ;
-      P.init((int)iP11.get_i(), (int)iP11.get_j(), theta) ;
-      P.setDisplay(selectDisplay) ;
-      P.suppress = 0 ;
-      P.track(I,me,true) ;
+      k += incr;
+      //while ( k > M_PI ) { k-=2*M_PI; }
 
-      if (P.suppress ==0)
+      i1 = b *cos(k) ; // equation of an ellipse
+      j1 = a *sin(k) ; // equation of an ellipse
+      P.ifloat = iPc.get_i() - se *j1 + ce *i1 ; P.i = (int)P.ifloat ;
+      P.jfloat = iPc.get_j() + ce *j1 + se *i1 ; P.j = (int)P.jfloat ;
+
+      if(!outOfImage(P.i, P.j, 5, rows, cols))
       {
+        P.track(I,me,false) ;
 
-	list.front() ;
-	list.addLeft(P);
-	if (vpDEBUG_ENABLE(3)) 	{
-	  vpImagePoint ip;
-	  ip.set_i( P.i );
-	  ip.set_j( P.j );
-	  vpDisplay::displayCross(I, ip, 25, vpColor::green) ;
-	}
-      }
-      else {
-	if (vpDEBUG_ENABLE(3)) {
-	  vpImagePoint ip;
-	  ip.set_i( P.i );
-	  ip.set_j( P.j );
-	  vpDisplay::displayCross(I, ip, 10, vpColor::red) ;
-	}
+        if (P.suppress ==0)
+        {
+	  list += P ;
+          angle += k;
+	  if (vpDEBUG_ENABLE(3)) {
+	    ip.set_i( P.i );
+	    ip.set_j( P.j );
+
+	    vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
+	  }
+        }
+        else {
+	  if (vpDEBUG_ENABLE(3)) {
+	    ip.set_i( P.i );
+	    ip.set_j( P.j );
+	    vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
+	  }
+        }
       }
     }
   }
+
   suppressPoints() ;
 
   me->range = memory_range ;
   me->mu1 = memory_mu1 ;
   me->mu2 = memory_mu2 ;
-
-
 }
 
+
+/*!
+  Finds in the list of vpMeSite the two points with the smallest and the biggest \f$ \alpha \f$ angle value, and stores them.
+*/
+void
+vpMeEllipse::setExtremities()
+{
+  double alphamin = +1e6;
+  double alphamax = -1e6;
+  double imin = 0;
+  double jmin = 0;
+  double imax = 0;
+  double jmax = 0;
+
+  // Loop through list of sites to track
+  list.front();
+  angle.front();
+
+  while(!list.outside())
+  {
+    vpMeSite s = list.value() ;//current reference pixel
+    double alpha = angle.value();
+    if (alpha < alphamin)
+    {
+      alphamin = alpha;
+      imin = s.ifloat ;
+      jmin = s.jfloat ;
+    }
+
+    if (alpha > alphamax)
+    {
+      alphamax = alpha;
+      imax = s.ifloat ;
+      jmax = s.jfloat ;
+    }
+    list.next() ;
+    angle.next();
+  }
+
+  alpha1 = alphamin;
+  alpha2 = alphamax;
+  iP1.set_ij(imin,jmin);
+  iP2.set_ij(imax,jmax);
+}
+
+
+/*!
+  Least squares method used to make the tracking more robust. It
+  ensures that the points taken into account to compute the right
+  equation belong to the ellipse.
+*/
 void
 vpMeEllipse::leastSquare()
 {
-
-
   // Construction du systeme Ax=b
   //! i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
   // A = (j^2 2ij 2i 2j 1)   x = (K0 K1 K2 K3 K4)^T  b = (-i^2 )
@@ -494,7 +567,17 @@ vpMeEllipse::leastSquare()
   vpMeSite p ;
 
   int iter =0 ;
-
+  vpColVector b(numberOfSignal()) ;
+  vpRobust r(numberOfSignal()) ;
+  r.setThreshold(2);
+  r.setIteration(0) ;
+  vpMatrix D(numberOfSignal(),numberOfSignal()) ;
+  D.setIdentity() ;
+  vpMatrix DA, DAmemory ;
+  vpColVector DAx ;
+  vpColVector w(numberOfSignal()) ;
+  w =1 ;
+  int nos_1 = numberOfSignal() ;
 
   if (list.nbElement() < 3)
   {
@@ -502,145 +585,148 @@ vpMeEllipse::leastSquare()
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "not enough point")) ;
   }
+
   if (circle ==false)
   {
     vpMatrix A(numberOfSignal(),5) ;
-    vpColVector b(numberOfSignal()) ;
-    vpRobust r(numberOfSignal()) ;
-    r.setIteration(0) ;
-    vpMatrix D(numberOfSignal(),numberOfSignal()) ;
-    D.setIdentity() ;
-    vpMatrix DA, DAmemory ;
-    vpColVector DAx ;
-    vpColVector w(numberOfSignal()) ;
-    w =1 ;
+    vpColVector x(5);
 
-    while (iter < 2)
+    list.front() ;
+    int k =0 ;
+    for (i=0 ; i < list.nbElement() ; i++)
     {
-
-
-      // -------------------
-      list.front() ;
-      int k =0 ;
-      for (i=0 ; i < list.nbElement() ; i++)
+      p = list.value() ;
+      if (p.suppress==0)
       {
-	p = list.value() ;
-	if (p.suppress==0)
-	{
 
-	  A[k][0] = vpMath::sqr(p.jfloat) ;
-	  A[k][1] = 2 * p.ifloat * p.jfloat ;
-	  A[k][2] = 2 * p.ifloat ;
-	  A[k][3] = 2 * p.jfloat ;
-	  A[k][4] = 1 ;
+        A[k][0] = vpMath::sqr(p.jfloat) ;
+        A[k][1] = 2 * p.ifloat * p.jfloat ;
+        A[k][2] = 2 * p.ifloat ;
+        A[k][3] = 2 * p.jfloat ;
+        A[k][4] = 1 ;
 
-	  b[k] = - vpMath::sqr(p.ifloat) ;
-	  k++ ;
-	}
-	list.next() ;
+        b[k] = - vpMath::sqr(p.ifloat) ;
+        k++ ;
       }
+      list.next() ;
+    }
 
-      //
+    while (iter < 4 )
+    {
       DA = D*A ;
       vpMatrix DAp ;
 
-      K = DA.pseudoInverse(1e-26) *D*b ;
+      x = DA.pseudoInverse(1e-26) *D*b ;
 
-      DAx = DA*K ;
+      vpColVector residu(nos_1);
+      residu = b - A*x;
+      r.setIteration(iter) ;
+      r.MEstimator(vpRobust::TUKEY,residu,w) ;
 
-      r.setIteration(0) ;
-      r.MEstimator(vpRobust::TUKEY,DAx,w) ;
-
-      list.front() ;
-      k =0 ;
-      for (i=0 ; i < list.nbElement() ; i++)
+      k = 0;
+      for (i=0 ; i < nos_1 ; i++)
       {
-	p = list.value() ;
-	if (p.suppress==0)
-	{
-	  D[k][k] =w[k]  ;
-	  k++ ;
-	}
-	list.next() ;
+        D[k][k] =w[k]  ;
+        k++;
       }
-      iter++ ;
+      iter++;
     }
+
+    list.front() ;
+    k =0 ;
+    for (i=0 ; i < list.nbElement() ; i++)
+    {
+      p = list.value() ;
+      if (p.suppress==0)
+      {
+        if (w[k] < 0.2)
+        {
+          p.suppress  = 3 ;
+          list.modify(p) ;
+        }
+        k++ ;
+      }
+      list.next() ;
+    }
+    for(i = 0; i < 5; i ++)
+      K[i] = x[i];
   }
+  
   else
   {
     vpMatrix A(numberOfSignal(),3) ;
-    vpColVector b(numberOfSignal()) ;
-    vpColVector Kc(3) ;
-    vpRobust r(numberOfSignal()) ;
-    r.setIteration(0) ;
-    vpMatrix D(numberOfSignal(),numberOfSignal()) ;
-    D.setIdentity() ;
-    vpMatrix DA, DAmemory ;
-    vpColVector DAx ;
-    vpColVector w(numberOfSignal()) ;
-    w =1 ;
-    while (iter < 2)
+    vpColVector x(3);
+
+    list.front() ;
+    int k =0 ;
+    for (i=0 ; i < list.nbElement() ; i++)
     {
-
-
-      // -------------------
-      list.front() ;
-      int k =0 ;
-      for (i=0 ; i < list.nbElement() ; i++)
+      p = list.value() ;
+      if (p.suppress==0)
       {
-	p = list.value() ;
-	if (p.suppress==0)
-	{
 
-	  A[k][0] =  2* p.ifloat ;
-	  A[k][1] =  2* p.jfloat ;
+        A[k][0] = 2* p.ifloat ;
+        A[k][1] = 2 * p.jfloat ;
+        A[k][2] = 1 ;
 
-	  A[k][2] = 1 ;
-	  b[k] = - vpMath::sqr(p.ifloat) - vpMath::sqr(p.jfloat) ;
-
-	  k++ ;
-	}
-	list.next() ;
+        b[k] = - vpMath::sqr(p.ifloat) - vpMath::sqr(p.jfloat) ;
+        k++ ;
       }
+      list.next() ;
+    }
 
-      //
+    while (iter < 4 )
+    {
       DA = D*A ;
       vpMatrix DAp ;
 
-      Kc = DA.pseudoInverse(1e-26) *D*b ;
-      K[0] = 1 ;
-      K[1] = 0 ;
-      K[2] = Kc[0] ;
-      K[3] = Kc[1] ;
-      K[4] = Kc[2] ;
+      x = DA.pseudoInverse(1e-26) *D*b ;
 
-      DAx = DA*Kc ;
+      vpColVector residu(nos_1);
+      residu = b - A*x;
+      r.setIteration(iter) ;
+      r.MEstimator(vpRobust::TUKEY,residu,w) ;
 
-      vpColVector res ;
-      res = DAx-b ;
-      r.setIteration(0) ;
-      r.MEstimator(vpRobust::TUKEY,res,w) ;
-
-      list.front() ;
-      k =0 ;
-      for (i=0 ; i < list.nbElement() ; i++)
+      k = 0;
+      for (i=0 ; i < nos_1 ; i++)
       {
-	p = list.value() ;
-	if (p.suppress==0)
-	{
-	  D[k][k] =w[k]  ;
-	  k++ ;
-	}
-	list.next() ;
+        D[k][k] =w[k];
+        k++;
       }
-      iter++ ;
+      iter++;
     }
+
+    list.front() ;
+    k =0 ;
+    for (i=0 ; i < list.nbElement() ; i++)
+    {
+      p = list.value() ;
+      if (p.suppress==0)
+      {
+        if (w[k] < 0.2)
+        {
+          p.suppress  = 3 ;
+          list.modify(p) ;
+        }
+        k++ ;
+      }
+      list.next() ;
+    }
+    for(i = 0; i < 3; i ++)
+      K[i+2] = x[i];
   }
   getParameters() ;
 }
 
+
 /*!
- * \brief Display Ellipse
+  Display the ellipse.
+
+  \warning To effectively display the ellipse a call to
+  vpDisplay::flush() is needed.
+
+  \param I : Image in which the ellipse appears.
+  \param col : Color of the displayed ellipse.
  */
 void
 vpMeEllipse::display(vpImage<unsigned char> &I, vpColor col)
@@ -699,22 +785,21 @@ vpMeEllipse::display(vpImage<unsigned char> &I, vpColor col)
 
     vpDisplay::displayLine(I,iPc, iP11, vpColor::red, 3) ;
     vpDisplay::displayLine(I,iPc, iP22, vpColor::blue, 3) ;
-
-
-
 }
 
 
+/*!
+  Initilization of the tracking. Ask the user to click on five points
+  from the ellipse edge to track.
 
+  \param I : Image in which the ellipse appears.
+*/
 void
 vpMeEllipse::initTracking(vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
 
   int n=5 ;
-//   unsigned *i, *j ;
-//   i = new unsigned[n] ;
-//   j = new unsigned[n] ;
   vpImagePoint *iP;
   iP = new vpImagePoint[n];
 
@@ -726,20 +811,25 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
       std::cout << iP[k] << std::endl;
     }
 
-
-//   i1 = i[0] ;
-//   j1 = j[0] ;
-//   i2 = i[n-1] ;
-//   j2 = j[n-1] ;
   iP1 = iP[0];
   iP2 = iP[n-1];
 
   initTracking(I, n, iP) ;
 
   delete [] iP;
-
 }
 
+
+/*!
+  Initialization of the tracking. The ellipse is defined thanks to the
+  coordinates of n points.
+
+  \warning It is better to use at least five points to well estimate the K parameters.
+
+  \param I : Image in which the ellipse appears.
+  \param n : The number of points in the list.
+  \param iP : A pointer to a list of pointsbelonging to the ellipse edge.
+*/
 void
 vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
 			  vpImagePoint *iP)
@@ -781,8 +871,8 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
     {
       A[k][0] =  2* iP[k].get_i() ;
       A[k][1] =  2* iP[k].get_j() ;
-
       A[k][2] = 1 ;
+
       b[k] = - vpMath::sqr(iP[k].get_i()) - vpMath::sqr(iP[k].get_j()) ;
     }
 
@@ -795,10 +885,6 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
 
     std::cout << K << std::endl;
   }
-//   i1 = i[0] ;
-//   j1 = j[0] ;
-//   i2 = i[n-1] ;
-//   j2 = j[n-1] ;
 
   iP1 = iP[0];
   iP2 = iP[n-1];
@@ -829,10 +915,9 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
 }
 
 /*!
+  Track the ellipse in the image I.
 
-  \warning To display the ellipse graphics a call to vpDisplay::flush()
-  is needed.
-
+  \param I : Image in which the ellipse appears.
 */
 void
 vpMeEllipse::track(vpImage<unsigned char> &I)
@@ -863,6 +948,9 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
   {
     // Estimation des parametres de la droite aux moindres carre
     suppressPoints() ;
+    setExtremities() ;
+
+
     try{
       leastSquare() ;  }
     catch(...)
@@ -870,27 +958,60 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
       vpERROR_TRACE("Error caught") ;
       throw ;
     }
-    computeAngle(iP1, iP2) ;
 
-    if (iter%5==0)
-    {
-      sample(I) ;
-      try{
-	leastSquare() ;  }
-      catch(...)
-      {
-	vpERROR_TRACE("Error caught") ;
-	throw ;
-      }
-      computeAngle(iP1, iP2) ;
-    }
     seekExtremities(I) ;
 
-    vpMeTracker::display(I) ;
-    // vpDisplay::flush(I) ;
+    setExtremities() ;
 
-    // remet a jour l'angle theta pour chaque  point de la liste
+    try
+    {
+      leastSquare() ;
+    }
+    catch(...)
+    {
+      vpERROR_TRACE("Error caught") ;
+	  throw ;
+    }
+
+    // suppression des points rejetes par la regression robuste
+    suppressPoints() ;
+    setExtremities() ;
+
+    //reechantillonage si necessaire
+    reSample(I) ;
+
+    // remet a jour l'angle delta pour chaque  point de la liste
+
     updateTheta() ;
+
+    // Remise a jour de delta dans la liste de site me
+    if (vpDEBUG_ENABLE(2))
+    {
+	display(I,vpColor::red) ;
+	vpMeTracker::display(I) ;
+	vpDisplay::flush(I) ;
+    }
+//     computeAngle(iP1, iP2) ;
+// 
+//     if (iter%5==0)
+//     {
+//       sample(I) ;
+//       try{
+// 	leastSquare() ;  }
+//       catch(...)
+//       {
+// 	vpERROR_TRACE("Error caught") ;
+// 	throw ;
+//       }
+//       computeAngle(iP1, iP2) ;
+//     }
+//     seekExtremities(I) ;
+// 
+//     vpMeTracker::display(I) ;
+//     // vpDisplay::flush(I) ;
+// 
+//     // remet a jour l'angle theta pour chaque  point de la liste
+//     updateTheta() ;
 
   }
 
