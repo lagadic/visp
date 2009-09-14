@@ -60,7 +60,7 @@
 
   The non modified Denavit-Hartenberg representation of the robot is
   given in the table below, where \f$q_1^*, q_2^*,q_4^*, q_5^*\f$
-  are to the variable joint positions.
+  are the variable joint positions.
 
   \f[
   \begin{tabular}{|c|c|c|c|c|}
