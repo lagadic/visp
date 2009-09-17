@@ -60,7 +60,7 @@ ELSE(NOT UNIX)
     SET(RT_FOUND TRUE)
   ELSE(RT_LIBRARY)
     SET(RT_FOUND FALSE)
-    MESSAGE(SEND_ERROR "rt library not found.")
+    #MESSAGE(SEND_ERROR "rt library not found.")
   ENDIF(RT_LIBRARY)
   
   MARK_AS_ADVANCED(
