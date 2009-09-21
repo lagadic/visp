@@ -53,6 +53,7 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpMath.h>
+#include <visp/vpRowVector.h>
 
 
 /*!
@@ -103,6 +104,9 @@ public:
   }
   // Constructor from 3 angles (in radian)
   vpRotationVector(const double phi, const double theta, const double psi) ;
+
+  // Transpose of the rotation vector.
+  vpRowVector t() const;
 
   /*!
     Operator that allows to set the value of an element of the rotation 

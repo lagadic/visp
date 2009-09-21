@@ -60,6 +60,21 @@ vpRotationVector::vpRotationVector(const double phi,
   r[2] = psi ;
 }
 
+/*!
+  Transpose the rotation vector.
+
+  \return Return \f$[r[Ø] r[1] r[2]]\f$.
+ */
+vpRowVector vpRotationVector::t() const
+{
+  vpRowVector v(3);
+
+  v[0] = r[0];
+  v[1] = r[1];
+  v[2] = r[2];
+
+  return v;
+}
 
 /*!
 
