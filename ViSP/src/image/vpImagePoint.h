@@ -92,6 +92,14 @@ class VISP_EXPORT vpImagePoint
     j = 0;
   }
   /*!
+    Default constructor that initialize the coordinates of the image
+    thanks to the parameters \f$ i \f$ and \f$ j \f$.
+  */
+  inline vpImagePoint(double i, double j) {
+    this->i = i;
+    this->j = j;
+  }
+  /*!
     Copy constructor.
 
     Initialize the coordinates of the image point with \e ip.
