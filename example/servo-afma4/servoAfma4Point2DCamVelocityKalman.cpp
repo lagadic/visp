@@ -39,7 +39,7 @@
  *****************************************************************************/
 
 /*!
-  \file servoAfma4Point2DCamVelocityKalman.cpp
+  \example servoAfma4Point2DCamVelocityKalman.cpp
 
   \brief Example of eye-in-hand control law. We control here a real
   robot, the Afma4 robot (cylindrical robot, with 4 degrees of
@@ -53,16 +53,6 @@
 */
 
 
-
-/*!
-  \example servoAfma4Point2DCamVelocityKalman.cpp
-
-  Example of eye-in-hand control law. We control here a real robot, the Afma4
-  robot (cylindrical robot, with 4 degrees of
-  freedom). The velocity is computed in the camera frame. The visual
-  feature is the center of gravity of a point.
-
-*/
 
 #include <stdlib.h>
 
