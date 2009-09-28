@@ -77,47 +77,47 @@
 
 class VISP_EXPORT vpMath
 {
-public:
+ public:
 
   /*!
-    Convert radian in degrees.
+    Convert an angle in radians into degrees.
 
-    \param rad : Angle in radian.
-    \return Angle converted in degrees
+    \param rad : Angle in radians.
+    \return Angle converted in degrees.
   */
-   static inline double deg(double rad) { return (rad*180.0)/M_PI ; }
+  static inline double deg(double rad) { return (rad*180.0)/M_PI ; }
 
   /*!
-    Convert degrees in radian.
+    Convert an angle in degrees into radian.
     \param deg : Angle in degrees.
     \return Angle converted in radian.
   */
-   static inline double rad(double deg) { return (deg*M_PI)/180.0 ; }
+  static inline double rad(double deg) { return (deg*M_PI)/180.0 ; }
 
   /*!
     Compute x square value.
     \return \f$ x^2 \f$.
   */
-   static inline double sqr(double x) { return x*x ; }
+  static inline double sqr(double x) { return x*x ; }
 
   //  factorial of x
-   static inline double fact(int x) ;
+  static inline double fact(int x) ;
 
   // combinaison
-   static inline double comb(int n, int p) ;
+  static inline double comb(int n, int p) ;
 
   //   round x to the nearest integer
-   static inline int round(const double x) ;
+  static inline int round(const double x) ;
 
   //   return the sign of x (+-1)
-   static inline int sign(double x) ;
+  static inline int sign(double x) ;
 
 
   // test if a number equals 0 (with threshold value)
-   static inline bool nul(double x, double s=0.001);
+  static inline bool nul(double x, double s=0.001);
 
   // test if two numbers ar equals (with a user defined threshold)
-   static inline bool equal(double x, double y, double s=0.001);
+  static inline bool equal(double x, double y, double s=0.001);
 
 
   /*!
@@ -128,7 +128,7 @@ public:
   */
   template <class Type> static Type maximum(const Type& a, const Type& b)
   {
-	return (a > b) ? a : b;
+    return (a > b) ? a : b;
   }
 
   /*!
@@ -139,7 +139,7 @@ public:
   */
   template <class Type> static Type minimum(const Type& a, const Type& b)
   {
-	return (a < b) ? a : b;
+    return (a < b) ? a : b;
   }
 
   /*!
@@ -149,7 +149,7 @@ public:
   */
   template <class Type> static Type abs(const Type& x)
   {
-	return (x < 0) ? -x : x;
+    return (x < 0) ? -x : x;
   }
 
 
@@ -167,12 +167,12 @@ public:
   */
   template <class Type> static void swap(Type& a, Type& b)
   {
-	Type tmp = b;
-        b = a;
-	a = tmp;
+    Type tmp = b;
+    b = a;
+    a = tmp;
   }
 
-private:
+ private:
   static const double ang_min_sinc;
   static const double ang_min_mc;
 };
@@ -189,19 +189,19 @@ private:
 */
 double vpMath::fact(int x)
 {
-    if ( (x == 1) || (x == 0)) return 1;
-    return x * fact(x-1);
+  if ( (x == 1) || (x == 0)) return 1;
+  return x * fact(x-1);
 }
 
 /*!
   Combinaison computation.
 
   \return \f$ !n / (!(n-p) !p) \f$
- */
+*/
 double vpMath::comb(int n, int p)
 {
-    if (n == p) return 1;
-    return fact(n)/ (fact(n-p) * fact(p));
+  if (n == p) return 1;
+  return fact(n)/ (fact(n-p) * fact(p));
 }
 
 
@@ -215,15 +215,15 @@ double vpMath::comb(int n, int p)
 */
 int vpMath::round(const double x)
 {
-    if (sign(x) > 0)
+  if (sign(x) > 0)
     {
-	if ((x-(int)x) <= 0.5) return (int)x ;
-	else return (int)x+1 ;
+      if ((x-(int)x) <= 0.5) return (int)x ;
+      else return (int)x+1 ;
     }
-    else
+  else
     {
-	if (fabs(x-(int)x) <= 0.5) return (int)x ;
-	else return (int)x-1 ;
+      if (fabs(x-(int)x) <= 0.5) return (int)x ;
+      else return (int)x-1 ;
     }
 }
 
@@ -235,9 +235,9 @@ int vpMath::round(const double x)
 */
 int vpMath::sign(double x)
 {
-    if (fabs(x) < 1e-15) return 0 ;else
+  if (fabs(x) < 1e-15) return 0 ;else
     {
-	if (x<0) return -1 ; else return 1 ;
+      if (x<0) return -1 ; else return 1 ;
     }
 }
 
