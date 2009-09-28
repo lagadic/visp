@@ -68,9 +68,9 @@ class VISP_EXPORT vpAfma6
 {
  public:
 #ifdef VISP_HAVE_ACCESS_TO_NAS
-  //! File where constant parameters in relation with the robot are
-  //! stored: joint max, min, coupling factor between 4 ant 5 joint,
-  //! distance between 5 and 6 joint.
+  //! File where constant parameters in relation with the robot are stored:
+  //! joint max, min, coupling factor between 4 ant 5 joint, distance between 5
+  //! and 6 joint, tranformation eMc between end-effector and camera frame.
   static const char * const CONST_AFMA6_FILENAME;
   static const char * const CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
   static const char * const CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME;
@@ -95,7 +95,7 @@ class VISP_EXPORT vpAfma6
   */
   static const char * const CONST_VACUUM_CAMERA_NAME;
 
-  //! List of possible tools that can be attached to the robot the end-effector.
+  //! List of possible tools that can be attached to the robot end-effector.
   typedef enum
     {
       TOOL_CCMOP,   /*!< Pneumatic CCMOP gripper. */
@@ -103,7 +103,7 @@ class VISP_EXPORT vpAfma6
       TOOL_VACUUM   /*!< Pneumatic vaccum gripper. */
     } vpAfma6ToolType;
 
-  //! Default camera
+  //! Default tool attached to the robot end effector
   static const vpAfma6ToolType defaultTool;
 
  public:
@@ -134,7 +134,7 @@ class VISP_EXPORT vpAfma6
 #endif
 
   //! Get the current tool type
-  vpAfma6::vpAfma6ToolType getToolType(){
+  vpAfma6ToolType getToolType(){
     return tool_current;
   };
   //! Get the current camera model projection type
