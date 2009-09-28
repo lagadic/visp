@@ -93,7 +93,9 @@ public:
       notImplementedError,
       divideByZeroError,
       dimensionError,
-      fatalError
+      fatalError,
+      badValue, /*!< Used to indicate that a value is not in the allowed range. */
+      notInitialized /*!< Used to indicate that a parameter is not initialized. */
     } ;
 
   vpException (const int code, const char * msg);
