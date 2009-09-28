@@ -44,6 +44,7 @@ SET (SOURCE
   moveAfma4.cpp
   servoAfma4Point2DArtVelocity.cpp
   servoAfma4Point2DCamVelocity.cpp
+  servoAfma4Point2DCamVelocityKalman.cpp
 )
 
 # rule for binary build
