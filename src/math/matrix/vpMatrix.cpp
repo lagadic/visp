@@ -2040,7 +2040,9 @@ std::ostream &operator <<(std::ostream &s,const vpMatrix &m)
     for (int j=0;j<m.getCols();j++){
       s <<  m[i][j] << "  ";
     }
-    s <<std::endl;
+    // We don't add a \n char on the end of the last matrix line
+    if (i < m.getRows()-1)
+      s << std::endl;
   }
 
   return s;
