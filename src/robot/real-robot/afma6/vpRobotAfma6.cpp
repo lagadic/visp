@@ -289,11 +289,13 @@ vpRobotAfma6::init (void)
 //   }
 
   // If an error occur in the low level controller, goto here
-  CatchPrint();
+  //CatchPrint();
+  Catch();
 
   // Test if an error occurs
   if (TryStt == -20001)
-    printf("No connection detected\n");
+    printf("No connection detected. Check if the robot is powered on \n"
+	   "and if the firewire link exist between the MotionBlox and this computer.\n");
   else if (TryStt == -675)
     printf(" Timeout enabling power...\n");
 
@@ -303,7 +305,7 @@ vpRobotAfma6::init (void)
     // Free allocated ressources
     ShutDownConnection();
 
-    std::cout << "Cannot open connexion with the motionblox." << std::endl;
+    std::cout << "Cannot open connexion with the motionblox..." << std::endl;
     throw vpRobotException (vpRobotException::constructionError,
   			  "Cannot open connexion with the motionblox");
   }
