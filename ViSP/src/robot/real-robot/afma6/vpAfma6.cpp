@@ -172,7 +172,7 @@ vpAfma6::vpAfma6()
 
 /*!
 
-  Initialize the robot with the default camera vpAfma6::defaultCameraRobot.
+  Initialize the robot with the default tool vpAfma6::defaultTool.
  */
 void
 vpAfma6::init (void)
