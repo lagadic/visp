@@ -46,6 +46,7 @@
 #include <visp/vpRotationVector.h>
 
 class vpMatrix;
+class vpRotationVector;
 
 /*!
   \file vpColVector.h
@@ -143,16 +144,38 @@ public:
   
   static double dotProd(const vpColVector &a, const vpColVector &b)  ;
  
- //! sort the elements of vector v
-   static vpColVector  sort(const vpColVector &v)  ;
+  //! sort the elements of vector v
+  static vpColVector  sort(const vpColVector &v)  ;
   //! reverse sorting of the elements of vector v
-   static vpColVector invSort(const vpColVector &v)  ;
+  static vpColVector invSort(const vpColVector &v)  ;
   //! compute the median
-   static double median(const vpColVector &v) ;
+  static double median(const vpColVector &v) ;
   //! compute the mean
-   static double mean(const vpColVector &v)  ;
-};
+  static double mean(const vpColVector &v)  ;
 
+  /*!
+
+    Convert a column vector containing angles in radians into
+    degrees.
+
+  */
+  inline void rad2deg() {
+    double rad2deg = 180.0/M_PI;
+
+    for (int i=0; i < rowNum; i++)
+      (*this)[i] *= rad2deg;
+  }
+  /*!
+    Convert a column vector containing angles in degrees into radians.
+
+  */
+  inline void deg2rad() {
+    double deg2rad = M_PI/180.0;
+
+    for (int i=0; i < rowNum; i++)
+      (*this)[i] *= deg2rad;
+  }
+};
 
 
 #endif
