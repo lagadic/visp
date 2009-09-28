@@ -435,10 +435,30 @@ void vpDot2::track(vpImage<unsigned char> &I)
   // Set the search area to the entire image
   setArea(I);
 
+  // create a copy of the dot to search
+  // This copy can be saw as the previous dot used to check if the current one 
+  // found with computeParameters() is similar to the previous one (see isValid() 
+  // function).
+  // If the found dot is not similar (or valid), we use this copy to set the current 
+  // found dot to the previous one (see below).
+  vpDot2 wantedDot(*this);
+
 //   vpDEBUG_TRACE(0, "Previous dot: ");
 //   vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
 //   vpDEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
-  if (computeParameters(I, cog.get_u(), cog.get_v()) == false) {
+  bool found = false;
+  found = computeParameters(I, cog.get_u(), cog.get_v());
+
+  if (found) {
+    // test if the found dot is valid (ie similar to the previous one)
+    found = isValid( I, wantedDot);
+    if (! found) {
+      *this = wantedDot;
+      //std::cout << "The found dot is not valid" << std::endl;
+    }
+  }
+
+  if (! found) {
 //     vpDEBUG_TRACE(0, "Search the dot in a bigest window around the last position");
 //     vpDEBUG_TRACE(0, "Bad computed dot: ");
 //     vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
@@ -506,21 +526,22 @@ void vpDot2::track(vpImage<unsigned char> &I)
     candidates->kill();
     delete candidates;
   }
-  else {
-    // test if the found dot is valid,
-    if( ! isValid( I, *this ) ) {
-      vpERROR_TRACE("The found dot is invalid:",
-		    "- could be a problem of size (width or height) or "
-		    "  surface (number of pixels) which differ too much "
-		    "  to the previous one "
-		    "- or a problem of the shape which is not ellipsoid if "
-		    "  use setEllipsoidShapePrecision(double ellipsoidShapePrecision) "
-        "  which is the default case. "
-		    "  To track a non ellipsoid shape use setEllipsoidShapePrecision(0)") ;
-      throw(vpTrackingException(vpTrackingException::featureLostError,
-				"The found dot is invalid")) ;
-    }
-  }
+//   else {
+//     // test if the found dot is valid,
+//     if( ! isValid( I, wantedDot ) ) {
+//       *this = wantedDot;
+//       vpERROR_TRACE("The found dot is invalid:",
+// 		    "- could be a problem of size (width or height) or "
+// 		    "  surface (number of pixels) which differ too much "
+// 		    "  to the previous one "
+// 		    "- or a problem of the shape which is not ellipsoid if "
+// 		    "  use setEllipsoidShapePrecision(double ellipsoidShapePrecision) "
+//         "  which is the default case. "
+// 		    "  To track a non ellipsoid shape use setEllipsoidShapePrecision(0)") ;
+//       throw(vpTrackingException(vpTrackingException::featureLostError,
+// 				"The found dot is invalid")) ;
+//     }
+//   }
 
   // if this dot is partially out of the image, return an error tracking.
   if( !isInImage( I ) )
@@ -1234,7 +1255,19 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // First, check the width, height and surface of the dot. Those parameters
   // must be the same.
   //
-  if(sizePrecision!=0){
+  if (   (wantedDot.getWidth()   != 0) 
+      && (wantedDot.getHeight()  != 0) 
+      && (wantedDot.getSurface() != 0) ) 
+  if (sizePrecision!=0){
+//     std::cout << "test size precision......................\n";
+//     std::cout << "wanted dot: " << "w=" << wantedDot.getWidth() 
+// 	      << " h=" << wantedDot.getHeight() 
+// 	      << " s=" << wantedDot.getSurface() 
+// 	      << " precision=" << sizePrecision
+// 	      << " epsilon=" << epsilon << std::endl;
+//     std::cout << "dot found: " << "w=" << getWidth() 
+// 	      << " h=" << getHeight() 
+// 	      << " s=" << getSurface() << std::endl;
     if( ( wantedDot.getWidth()*sizePrecision-epsilon < getWidth() ) == false )
     {
       vpDEBUG_TRACE(3, "Bad width < for dot (%g, %g)", 
@@ -1283,7 +1316,8 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // Then check the dot is surrounded by a black elipse.
   //
   if (ellipsoidShapePrecision != 0 && compute_moment) {
-    // See F. Chaumette. Image moments: a general and useful set of features
+//       std::cout << "test shape precision......................\n";
+     // See F. Chaumette. Image moments: a general and useful set of features
     // for visual servoing. IEEE Trans. on Robotics, 20(4):713-723, Ao�t 2004.
 
     // mu11 = m11 - m00 * xg * yg = m11 - m00 * m10/m00 * m01/m00
@@ -1315,21 +1349,15 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     int u, v;
     double cog_u = this->cog.get_u();
     double cog_v = this->cog.get_v();
-    vpImagePoint wanted_cog = wantedDot.getCog();
 
-    double wanted_cog_u = wanted_cog.get_u();
-    double wanted_cog_v = wanted_cog.get_v();
     vpImagePoint ip;
 
-    for( double theta = 0. ; theta<2*M_PI ; theta+= 0.4 )
-    {
+    for( double theta = 0. ; theta<2*M_PI ; theta+= 0.4 ) {
       u = (int) (cog_u + innerCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
       v = (int) (cog_v + innerCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
-      if( !wantedDot.hasGoodLevel( I, u, v ) )
-      {
-	
-	vpDEBUG_TRACE(3, "Inner cercle pixel (%d, %d) has bad level for dot (%g, %g)",
-		      u, v, wanted_cog_u, wanted_cog_v);
+      if( ! this->hasGoodLevel( I, u, v ) ) {
+// 	vpTRACE("Inner cercle pixel (%d, %d) has bad level for dot (%g, %g)",
+// 		u, v, cog_u, cog_v);
 	return false;
       }
       if (graphics) {
@@ -1351,8 +1379,7 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
     a2 += 2.0;
     
     double outCoef =  2-ellipsoidShapePrecision;           //1.6;
-    for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 )
-    {
+    for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 ) {
       u = (int) (cog_u + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
       v = (int) (cog_v + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
       // If outside the area, continue
@@ -1360,10 +1387,9 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
 	  || (double)v < area.getTop() || (double)v > area.getBottom()) {
 	continue;
       }
-      if( !wantedDot.hasReverseLevel( I, u, v ) )
-      {
-	vpDEBUG_TRACE(3, "Outside cercle pixel (%d, %d) has bad level for dot (%g, %g)",
-		      u, v, wanted_cog_u, wanted_cog_v);
+      if( ! this->hasReverseLevel( I, u, v ) ) {
+// 	vpTRACE("Outside cercle pixel (%d, %d) has bad level for dot (%g, %g)",
+// 		u, v, cog_u, cog_v);
 	return false;
       }
       if (graphics) {
@@ -1377,7 +1403,6 @@ bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
   #endif
 #endif
       }
-
     }
   }
 
