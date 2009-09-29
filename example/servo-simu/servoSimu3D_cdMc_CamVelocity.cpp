@@ -39,7 +39,7 @@
   \example servoSimu3D_cdMc_CamVelocity.cpp
 
   Simulation of a 3D visual servoing where the current visual feature
-  is given by \f$s=({^{c^*}}{\bf t}_c, \theta U_{{^{c^*}}{\bf
+  is given by \f$s=({^{c^*}}{\bf t}_c, \theta u_{{^{c^*}}{\bf
   R}_c})^T\f$ and the desired one \f$s^*=(0,0)^T\f$.
 
   The control law is set as:
@@ -50,7 +50,7 @@
 
   This example is to make into relation with
   servoSimu3D_cMcd_CamVelocity.cpp where the current visual feature is
-  \f$s=({^{c}}{\bf t}_{c^*}, \theta U_{{^{c}}{\bf
+  \f$s=({^{c}}{\bf t}_{c^*}, \theta u_{{^{c}}{\bf
   R}_{c^*}})^T\f$.
 
 */
@@ -67,6 +67,7 @@
 #include <visp/vpRobotCamera.h>
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"h"
@@ -142,6 +143,40 @@ main(int argc, const char ** argv)
   if (getOptions(argc, argv) == false) {
     exit (-1);
   }
+
+  // Log file creation in /tmp/$USERNAME/log.dat
+  // This file contains by line:
+  // - the 6 computed camera velocities (m/s, rad/s) to achieve the task
+  // - the 6 values of s - s*
+  std::string username;
+  // Get the user login name
+  vpIoTools::getUserName(username);
+
+  // Create a log filename to save velocities...
+  std::string logdirname;
+#ifdef WIN32
+  logdirname ="C:/temp/" + username;
+#else
+  logdirname ="/tmp/" + username;
+#endif
+  // Test if the output path exist. If no try to create it
+  if (vpIoTools::checkDirectory(logdirname) == false) {
+    try {
+      // Create the dirname
+      vpIoTools::makeDirectory(logdirname);
+    }
+    catch (...) {
+      std::cerr << std::endl
+		<< "ERROR:" << std::endl;
+      std::cerr << "  Cannot create " << logdirname << std::endl;
+      exit(-1);
+    }
+  }
+  std::string logfilename;
+  logfilename = logdirname + "/log.dat";
+
+  // Open the log file name
+  std::ofstream flog(logfilename.c_str());
 
   vpServo task ;
   vpRobotCamera robot ;
@@ -235,12 +270,18 @@ main(int argc, const char ** argv)
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
       
     // Retrieve the error 
-    std::cout << task.error.sumSquare() <<std::endl ; ;
+    std::cout << task.error.sumSquare() <<std::endl ;
+    
+    // Save log
+    flog << v.t() << " " << task.error.t() << std::endl;
   }
   // Display task information
   task.print() ;
 
   // Kill the task
   task.kill();
+
+  // Close the log file
+  flog.close();
 }
 
