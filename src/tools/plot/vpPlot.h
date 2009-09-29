@@ -120,7 +120,7 @@ int main ()
 */
 
 
-class vpPlot
+class VISP_EXPORT vpPlot
 {
   public:
 
