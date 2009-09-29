@@ -319,7 +319,7 @@ vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 	os <<"Interaction Matrix Ls "<<std::endl  ;
 	if (interactionMatrixComputed)
 	  {
-	    os << L;
+	    os << L << std::endl;
 	  }
 	else
 	  {os << "not yet computed "<<std::endl ;}
@@ -327,7 +327,7 @@ vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 	os <<"Error vector (s-s*) "<<std::endl  ;
 	if (errorComputed)
 	  {
-	    os << error.t() ;
+	    os << error.t() << std::endl;
 	  }
 	else
 	  {os << "not yet computed "<<std::endl ;}
@@ -412,7 +412,7 @@ vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 	os <<"Interaction Matrix Ls "<<std::endl  ;
 	if (interactionMatrixComputed)
 	  {
-	    os << L;
+	    os << L << std::endl;
 	  }
 	else
 	  {os << "not yet computed "<<std::endl ;}
@@ -425,7 +425,7 @@ vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
       {
 	os <<"Error vector (s-s*) "<<std::endl  ;
 	if (errorComputed)
-	  {  os << error.t() ;  }
+	  {  os << error.t() << std::endl;  }
 	else
 	  {os << "not yet computed "<<std::endl ;}
 

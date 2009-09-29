@@ -41,8 +41,9 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-servoSimu3DCamVelocity.cpp
-servoSimu3DCamVelocity2.cpp
+servoSimu3D_cdMc_CamVelocity.cpp
+servoSimu3D_cdMc_CamVelocityWithoutVpServo.cpp
+servoSimu3D_cMcd_CamVelocity.cpp
 servoSimuCircle2DCamVelocity.cpp
 servoSimuCircle2DCamVelocityDisplay.cpp
 servoSimuCylinder2DCamVelocityDisplay.cpp

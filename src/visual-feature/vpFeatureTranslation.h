@@ -81,7 +81,7 @@
   know more about homogeneous matrices see vpHomogeneousMatrix
   documentation.
 
-  This class can be used to manipulate two kind of visual features:
+  This class can be used to manipulate three kind of visual features:
 
   -  This class can be used to manipulate the translation visual feature
   \f$s= ^{c^*}t_c\f$ which gives the position of
@@ -92,13 +92,22 @@
   ^{c^*}R_c \;\; 0_3] \f]
 
   -  This class can also be used to manipulate the translation visual feature
-  \f$s= ^{c}t_o\f$ which gives the position of
-  the object frame relative to the current camera frame. It is composed by the three components \f$(t_x,t_y,t_z)\f$ too. The desired
-  visual feature \f$ s^* \f$ is the translation visual feature
-  \f$s^*= ^{c^*}t_o\f$ which gives the position of
-  the object frame relative to the desired camera frame. The corresponding error
-  is than equal to \f$ e=(s-s^*) = ^{c}t_o - ^{c^*}t_o \f$. In this case, the
+  \f$s= ^{c}t_{c^*}\f$ which gives the position of
+  the desired camera frame relative to the current camera frame. It is composed by the three components \f$(t_x,t_y,t_z)\f$. The desired
+  visual feature \f$ s^* \f$ is equal to zero. The corresponding error
+  is than equal to \f$ e=(s-s^*) = ^{c}t_{c^*} \f$. In this case, the
   interaction matrix related to \f$ s \f$ is given by \f[ L = [
+  -I_3 \;\; [^{c}t_{c^*}]_\times] \f]
+
+  - Actually, this class can also be used to manipulate the
+  translation visual feature \f$s= ^{c}t_o\f$ which gives the position
+  of the object frame relative to the current camera frame. It is
+  composed by the three components \f$(t_x,t_y,t_z)\f$ too. The
+  desired visual feature \f$ s^* \f$ is the translation visual feature
+  \f$s^*= ^{c^*}t_o\f$ which gives the position of the object frame
+  relative to the desired camera frame. The corresponding error is
+  than equal to \f$ e=(s-s^*) = ^{c}t_o - ^{c^*}t_o \f$. In this case,
+  the interaction matrix related to \f$ s \f$ is given by \f[ L = [
   -I_3 \;\; [^{c}t_o]_\times] \f]
 
   To initialize the feature \f$(t_x, t_y, t_z)\f$ you may use member
@@ -112,8 +121,8 @@
 
   The code below shows how to create a eye-in hand visual servoing
   task using a 3D translation feature \f$(t_x,t_y,t_z)\f$ that
-  correspond to the 3D translation between the current camera frame
-  and the desired camera frame. To control six degrees of freedom, at
+  correspond to the 3D translation between the desired camera frame
+  and the current camera frame. To control six degrees of freedom, at
   least three other features must be considered like vpFeatureThetaU
   visual features. First we create a current (\f$s\f$) and desired
   (\f$s^*\f$) 3D translation feature, set the task to use the
@@ -204,12 +213,15 @@ int main()
 }
   \endcode
 
-  The code below shows how to create a eye-in hand visual servoing
+  The code below shows how to create an eye-in hand visual servoing
   task using a 3D translation feature \f$(t_x,t_y,t_z)\f$ that
-  correspond to the 3D translation between the object frame
-  and the current camera frame. Like with the previous examples, to control six degrees of freedom, at
-  least three other features must be considered like vpFeatureThetaU
-  visual features. The way to initialize the visual features is quite the same as before. The difference is that the cMo method must be precised and the desired feature is note necessary equal to zero.
+  correspond to the 3D translation between the current camera frame
+  and the object frame. Like with the previous examples, to 
+  control six degrees of freedom, at least three other features must be 
+  considered like vpFeatureThetaU visual features. The way to initialize 
+  the visual features is quite the same as before. The difference is that 
+  the cMo method must be precised and the desired feature is note 
+  necessary equal to zero.
 
   \code
 #include <visp/vpFeatureTranslation.h>
@@ -264,13 +276,25 @@ class VISP_EXPORT vpFeatureTranslation : public vpBasicFeature
 {
 public:
 
-  typedef enum
-    {
-      cdMc, /*!< Selector used to manipulate the visual feature \f$s= ^{c^*}t_c\f$ which gives the position of
-  the current camera frame relative to the desired camera frame.*/
-      cMo /*!< Selector used to manipulate the visual feature \f$s= ^{c}t_o\f$ which gives the position of
-  the object frame relative to the current camera frame. */
-    } vpFeatureTranslationRepresentationType;
+  /*! 
+    \enum vpFeatureTranslationRepresentationType 
+    Kind of implemented 3D translation feature.
+   */
+  typedef enum {
+    /*! Selector used to manipulate the visual feature \f$s=
+      ^{c^*}t_c\f$ which gives the position of the current camera frame
+      relative to the desired camera frame.*/
+    cdMc, 
+    /*! Selector used to manipulate the visual feature \f$s=
+      ^{c}t_{c^*}\f$ which gives the position of the desired camera frame
+      relative to the current camera frame.*/
+    cMcd, 
+    /*! Selector used to manipulate the visual feature \f$s=
+      ^{c}t_o\f$ which gives the position of the object frame relative to
+      the current camera frame. */
+    cMo 
+  } vpFeatureTranslationRepresentationType;
+
   // basic construction
   void init() ;
   // basic constructor
@@ -317,6 +341,15 @@ public:
     task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
     \endcode
 
+    - With the feature type cMcd:
+    \code
+    vpFeatureTranslation t(vpFeatureTranslation::cMcd);
+    vpServo task;
+    ...
+    // Add the (tx,ty) subset features from 3D translation to the task
+    task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+    \endcode
+
     - With the feature type cMo:
     \code
     vpFeatureTranslation t(vpFeatureTranslation::cMo);
@@ -353,6 +386,15 @@ public:
     task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
     \endcode
 
+    - With the feature type cMcd:
+    \code
+    vpFeatureTranslation t(vpFeatureTranslation::cMcd);
+    vpServo task;
+    ...
+    // Add the (tx,ty) subset features from 3D translation to the task
+    task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+    \endcode
+
     - With the feature type cMo:
     \code
     vpFeatureTranslation t(vpFeatureTranslation::cMo);
@@ -382,6 +424,15 @@ public:
     - With the feature type cdMc:
     \code
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
+    vpServo task;
+    ...
+    // Add the (tz) subset feature from 3D translation to the task
+    task.addFeature(t, vpFeatureTranslation::selectTz());
+    \endcode
+
+    - With the feature type cMcd:
+    \code
+    vpFeatureTranslation t(vpFeatureTranslation::cMcd);
     vpServo task;
     ...
     // Add the (tz) subset feature from 3D translation to the task

@@ -36,20 +36,23 @@
  *
  *****************************************************************************/
 /*!
-  \file servoSimu3DCamVelocity.cpp
-  \brief Simulation of a 3D visual servoing:
-  - eye-in-hand control law,
-  - velocity computed in the camera frame,
-  - no display.
-*/
+  \example servoSimu3D_cdMc_CamVelocity.cpp
 
+  Simulation of a 3D visual servoing where the current visual feature
+  is given by \f$s=({^{c^*}}{\bf t}_c, \theta U_{{^{c^*}}{\bf
+  R}_c})^T\f$ and the desired one \f$s^*=(0,0)^T\f$.
 
-/*!
-  \example servoSimu3DCamVelocity.cpp
-  Simulation of a 3D visual servoing:
-  - eye-in-hand control law,
-  - velocity computed in the camera frame,
-  - no display.
+  The control law is set as:
+  - an eye-in-hand control law,
+  - where velocities are computed in the camera frame.
+
+  To compute the camera velocities, we use here the vpServo class. 
+
+  This example is to make into relation with
+  servoSimu3D_cMcd_CamVelocity.cpp where the current visual feature is
+  \f$s=({^{c}}{\bf t}_{c^*}, \theta U_{{^{c}}{\bf
+  R}_{c^*}})^T\f$.
+
 */
 
 
@@ -153,83 +156,91 @@ main(int argc, const char ** argv)
   std::cout << std::endl ;
 
 
-  vpTRACE("sets the initial camera location " ) ;
-  vpPoseVector c_r_o(0.1,0.2,2,
-		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
-		     ) ;
-
-  vpCTRACE ; std::cout << std::endl ;
+  // Sets the initial camera location
+  vpPoseVector c_r_o(// Translation tx,ty,tz
+		     0.1, 0.2, 2, 
+		     // ThetaU rotation 
+		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
+  
+  // From the camera pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cMo(c_r_o) ;
-  vpCTRACE ; std::cout << std::endl ;
-  robot.setPosition(cMo) ;
-  vpCTRACE ; std::cout << std::endl ;
 
-  vpTRACE("sets the desired camera location " ) ;
-  vpPoseVector cd_r_o(0,0,1,
-		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+  // Set the robot initial position
+  robot.setPosition(cMo) ;
+
+  // Sets the desired camera location
+  vpPoseVector cd_r_o(// Translation tx,ty,tz
+		      0, 0, 1, 
+		      // ThetaU rotation 
+		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ; 
+  // From the camera desired pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cdMo(cd_r_o) ;
 
-
-
-  vpTRACE("compute the rotation that the camera has to realize "  ) ;
+  // Compute the homogeneous transformation from the desired camera position to the initial one
   vpHomogeneousMatrix cdMc ;
   cdMc = cdMo*cMo.inverse() ;
 
+  // Build the current visual features s = (c*tc, thetaU_c*Rc)^T
   vpFeatureTranslation t(vpFeatureTranslation::cdMc) ;
   vpFeatureThetaU tu(vpFeatureThetaU::cdRc); // current feature
   t.buildFrom(cdMc) ;
   tu.buildFrom(cdMc) ;
 
-  vpTRACE("sets the desired rotation (always zero !) ") ;
-  vpTRACE("since s is the rotation that the camera has to realize ") ;
-
+  // Sets the desired rotation (always zero !)  since s is the
+  // rotation that the camera has to achieve. Here s* = (0, 0)^T
   vpFeatureTranslation td(vpFeatureTranslation::cdMc) ;
   vpFeatureThetaU tud(vpFeatureThetaU::cdRc); // desired feature
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t robot is controlled in the camera frame") ;
+  // Define the task
+  // - we want an eye-in-hand control law
+  // - the robot is controlled in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
+  // - we use here the interaction matrix computed with the 
+  //   current features
+  task.setInteractionMatrixType(vpServo::CURRENT);
 
-  task.addFeature(t,td) ;
-  task.addFeature(tu,tud) ;
+  // Add the current and desired visual features
+  task.addFeature(t,td) ;   // 3D translation
+  task.addFeature(tu,tud) ; // 3D rotation
 
-  vpTRACE("\t set the gain") ;
+  // - set the constant gain to 1.0
   task.setLambda(1) ;
 
-
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
 
   int iter=0 ;
-  vpTRACE("\t loop") ;
-  while(iter++<200)
-    {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
+  // Start the visual servoing loop. We stop the servo after 200 iterations
+  while(iter++ < 200) {
+    std::cout << "-----------------------------------" << iter <<std::endl ;
+    vpColVector v ;
 
-      if (iter==1) vpTRACE("\t\t get the robot position ") ;
-      robot.getPosition(cMo) ;
+    // get the robot position
+    robot.getPosition(cMo) ;
 
-      if (iter==1) vpTRACE("\t\t new rotation to realize ") ;
-      cdMc = cdMo*cMo.inverse() ;
-      t.buildFrom(cdMc) ;
-      tu.buildFrom(cdMc) ;
+    // new displacement to achieve
+    cdMc = cdMo*cMo.inverse() ;
 
+    // Update the current visual features
+    t.buildFrom(cdMc) ;
+    tu.buildFrom(cdMc) ;
 
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
-      if (iter==1) task.print() ;
+    // Compute the control law
+    v = task.computeControlLaw() ;
 
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    // Display task information
+    if (iter==1) task.print() ;
 
-
-      std::cout << task.error.sumSquare() <<std::endl ; ;
-    }
-
-  vpTRACE("Display task information " ) ;
+    // Send the camera velocity to the controller
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+      
+    // Retrieve the error 
+    std::cout << task.error.sumSquare() <<std::endl ; ;
+  }
+  // Display task information
   task.print() ;
+
+  // Kill the task
   task.kill();
 }
 
