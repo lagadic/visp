@@ -198,7 +198,8 @@ vpIoTools::getenv(std::string &env)
 
   Check if a directory exists.
 
-  \param dirname : Directory to test if it exists.
+  \param dirname : Directory to test if it exists. The directory name
+  is converted to the current system's format; see path().
 
   \return true : If the directory exists and is accessible with write access.
 
@@ -219,10 +220,12 @@ vpIoTools::checkDirectory(const char *dirname )
     return false;
   }
 
+  std::string _dirname = path(dirname);
+
 #if defined UNIX
-  if ( stat( dirname, &stbuf ) != 0 )
+  if ( stat( _dirname.c_str(), &stbuf ) != 0 )
 #elif defined WIN32
-  if ( _stat( dirname, &stbuf ) != 0 )
+  if ( _stat( _dirname.c_str(), &stbuf ) != 0 )
 #endif
   {
     return false;
@@ -244,7 +247,8 @@ vpIoTools::checkDirectory(const char *dirname )
 /*!
   Check if a directory exists.
 
-  \param dirname : Directory to test if it exists.
+  \param dirname : Directory to test if it exists. The directory name
+  is converted to the current system's format; see path().
 
   \return true : If the directory exists and is accessible with write access.
 
@@ -261,7 +265,8 @@ vpIoTools::checkDirectory(const std::string dirname )
 
   Create a new directory.
 
-  \param dirname : Directory to create.
+  \param dirname : Directory to create. The directory name
+  is converted to the current system's format; see path().
 
   \exception vpIoException::invalidDirectoryName : The \e dirname is invalid.
 
@@ -282,16 +287,19 @@ vpIoTools::makeDirectory(const  char *dirname )
     throw(vpIoException(vpIoException::invalidDirectoryName,
 			"invalid directory name")) ;
   }
+
+  std::string _dirname = path(dirname);
+
 #if defined UNIX
-  if ( stat( dirname, &stbuf ) != 0 )
+  if ( stat( _dirname.c_str(), &stbuf ) != 0 )
 #elif defined WIN32
-  if ( _stat( dirname, &stbuf ) != 0 )
+  if ( _stat( _dirname.c_str(), &stbuf ) != 0 )
 #endif
   {
 #if defined UNIX
-    if ( mkdir( dirname, (mode_t)0755 ) != 0 )
+    if ( mkdir( _dirname.c_str(), (mode_t)0755 ) != 0 )
 #elif defined WIN32
-    if ( _mkdir( dirname) != 0 )
+    if ( _mkdir( _dirname.c_str()) != 0 )
 #endif
 	{
       vpERROR_TRACE("unable to create directory '%s'\n",  dirname );
@@ -312,7 +320,8 @@ vpIoTools::makeDirectory(const  char *dirname )
 
   Create a new directory.
 
-  \param dirname : Directory to create.
+  \param dirname : Directory to create. The directory name
+  is converted to the current system's format; see path().
 
   \exception vpIoException::cantCreateDirectory : If the directory cannot be
   created.
@@ -355,10 +364,11 @@ vpIoTools::checkFilename(const char *filename)
     return false;
   }
 
+  std::string _filename = path(filename);
 #if defined UNIX
-  if ( stat( filename, &stbuf ) != 0 )
+  if ( stat( _filename.c_str(), &stbuf ) != 0 )
 #elif defined WIN32
-  if ( _stat( filename, &stbuf ) != 0 )
+  if ( _stat( _filename.c_str(), &stbuf ) != 0 )
 #endif
   {
     return false;
