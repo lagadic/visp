@@ -44,6 +44,7 @@ SET (SOURCE
 servoSimu3D_cdMc_CamVelocity.cpp
 servoSimu3D_cdMc_CamVelocityWithoutVpServo.cpp
 servoSimu3D_cMcd_CamVelocity.cpp
+servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp
 servoSimuCircle2DCamVelocity.cpp
 servoSimuCircle2DCamVelocityDisplay.cpp
 servoSimuCylinder2DCamVelocityDisplay.cpp
@@ -77,7 +78,10 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(servoSimu3DCamVelocity				servoSimu3DCamVelocity				)	
+ADD_TEST(servoSimu3D_cdMc_CamVelocity			servoSimu3D_cdMc_CamVelocity			)	
+ADD_TEST(servoSimu3D_cdMc_CamVelocityWithoutVpServo	servoSimu3D_cdMc_CamVelocityWithoutVpServo	)	
+ADD_TEST(servoSimu3D_cMcd_CamVelocity			servoSimu3D_cMcd_CamVelocity			)	
+ADD_TEST(servoSimu3D_cMcd_CamVelocityWithoutVpServo	servoSimu3D_cMcd_CamVelocityWithoutVpServo	)	
 ADD_TEST(servoSimuCircle2DCamVelocity			servoSimuCircle2DCamVelocity			)
 ADD_TEST(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-d	)
 ADD_TEST(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-d	)

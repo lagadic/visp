@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimu3DCamVelocity.cpp,v 1.9 2008-10-31 17:50:08 fspindle Exp $
+ * $Id: servoSimu3DCamVelocity2.cpp,v 1.1 2008-10-31 17:47:33 fspindle Exp $
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
@@ -36,20 +36,20 @@
  *
  *****************************************************************************/
 /*!
-  \example servoSimu3D_cdMc_CamVelocityWithoutVpServo.cpp
+  \example servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp
 
   Simulation of a 3D visual servoing where the current visual feature
-  is given by \f$s=({^{c^*}}{\bf t}_c, \theta U_{{^{c^*}}{\bf
-  R}_c})^T\f$ and the desired one \f$s^*=(0,0)^T\f$.
+  is given by \f$s=({^{c}}{\bf t}_{c^*}, \theta u_{{^{c}}{\bf
+  R}_{c^*}})^T\f$ and the desired one \f$s^*=(0,0)^T\f$.
 
   The control law is set as:
   - an eye-in-hand control law,
   - where velocities are computed in the camera frame.
 
   Considering the visual feature, the interaction matrix to consider
-  is \f[{\bf L}_s = \left[ \begin{array}{cc} {^{c^*}}{\bf R}_c} & 0\\ 0
-  & {\bf Lw} \end{array} \right]\f] with \f[ {\bf Lw} = I_3 +
-  \frac{\theta}{2} \; [u]_\times + \left(1 - \frac{sinc \theta}{sinc^2
+  is \f[{\bf L}_s = \left[ \begin{array}{cc} -I_3 & [{^{c}}{\bf t}_{c^*}]_\times\\ 0
+  & {\bf Lw} \end{array} \right]\f] with \f[ {\bf Lw} = -I_3 +
+  \frac{\theta}{2} \; [u]_\times - \left(1 - \frac{sinc \theta}{sinc^2
   \frac{\theta}{2}}\right) [u]^2_\times \f]
 
   The camera velocity skew is given by:
@@ -60,15 +60,24 @@
   which becomes:
 
   \f[ \left( \begin{array}{c} {\bf v} \\ {\bf w} \end{array} \right) =
-  -\lambda \; \left( \begin{array}{c} {^c}{\bf R}_{c^*} \;
-  {^{c^*}}{\bf t}_c \\ \theta U_{{^{c^*}}{\bf R}_c} \end{array}
-  \right) \f]
+  -\lambda \; \left( \begin{array}{c} -{^c}{\bf t}_{c^*} - [{^{c}}{\bf
+  t}_{c^*}]_\times \; \theta u_{{^c}{\bf R}_{c^*}} \\ -\theta
+  U_{{^c}{\bf R}_{c^*}} \end{array} \right) \f]
+
+  This relation is also equal to:
+
+  \f[ \left( \begin{array}{c} {\bf v} \\ {\bf w} \end{array} \right) =
+  \lambda \; \left( \begin{array}{c} (I - [\theta u_{{^c}{\bf
+  R}_{c^*}}]_\times) \; {^c}{\bf t}_{c^*} \\ \theta U_{{^c}{\bf
+  R}_{c^*}} \end{array} \right) \f]
+
 
   This example is to make into relation with
-  servoSimu3D_cdMc_CamVelocity.cpp where vpServo and vpFeature
-  classes are used.
+  servoSimu3D_cMcd_CamVelocity.cpp where vpServo and vpFeature
+  classes are used.  
 
 */
+
 
 
 #include <stdlib.h>
@@ -76,8 +85,9 @@
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpThetaUVector.h>
-#include <visp/vpTranslationVector.h>
+#include <visp/vpFeatureThetaU.h>
+#include <visp/vpFeatureTranslation.h>
+#include <visp/vpServo.h>
 #include <visp/vpRobotCamera.h>
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
@@ -157,6 +167,7 @@ main(int argc, const char ** argv)
   if (getOptions(argc, argv) == false) {
     exit (-1);
   }
+
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
   // - the 6 computed camera velocities (m/s, rad/s) to achieve the task
@@ -195,20 +206,19 @@ main(int argc, const char ** argv)
 
   std::cout << std::endl ;
   std::cout << "-------------------------------------------------------" << std::endl ;
-  std::cout << " Test program without vpServo and vpFeature classes "  <<std::endl ;
+  std::cout << " Test program for vpServo "  <<std::endl ;
   std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
   std::cout << " Simulation " << std::endl ;
   std::cout << " task :  3D visual servoing " << std::endl ;
   std::cout << "-------------------------------------------------------" << std::endl ;
   std::cout << std::endl ;
 
-
   // Sets the initial camera location
   vpPoseVector c_r_o(// Translation tx,ty,tz
 		     0.1, 0.2, 2, 
 		     // ThetaU rotation 
 		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
-  
+
   // From the camera pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cMo(c_r_o) ;
 
@@ -220,42 +230,44 @@ main(int argc, const char ** argv)
 		      0, 0, 1, 
 		      // ThetaU rotation 
 		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ; 
+
   // From the camera desired pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cdMo(cd_r_o) ;
 
-  vpHomogeneousMatrix cdMc; // Transformation between desired and current camera frame
-  vpRotationMatrix cdRc; // Rotation between desired and current camera frame
+  vpHomogeneousMatrix cMcd; // Transformation between current and desired camera frame
   vpRotationMatrix cRcd; // Rotation between current and desired camera frame
-  
+ 
   // Set the constant gain of the servo
   double lambda = 1;
 
   int iter=0 ;
   // Start the visual servoing loop. We stop the servo after 200 iterations
   while(iter++ < 200) {
-    std::cout << "-----------------------------------" << iter <<std::endl ;
- 
+    std::cout << "------------------------------------" << iter <<std::endl ;
+
     // get the robot position
     robot.getPosition(cMo) ;
 
     // new displacement to achieve
-    cdMc = cdMo*cMo.inverse() ;
-    // Extract the translation vector c*tc which is the current
+    cMcd = cMo*cdMo.inverse() ;
+      
+    // Extract the translation vector ctc* which is the current
     // translational visual feature. 
-    vpTranslationVector cdtc;
-    cdMc.extract(cdtc);
-    // Extract the rotation matrix c*Rc
-    cdMc.extract(cdRc);
-    // Compute the inverse rotation cRc* (in fact the transpose of c*Rc)
-    cRcd = cdRc.inverse();
+    vpTranslationVector ctcd;
+    cMcd.extract(ctcd);
     // Compute the current theta U visual feature
-    vpThetaUVector tu_cdRc(cdMc);
+    vpThetaUVector tu_cRcd(cMcd);
+
+    // Create the identity matrix
+    vpMatrix I(3,3);
+    I.setIdentity();
+
     // Compute the camera translational velocity
     vpColVector v(3);
-    v = -lambda * cRcd * cdtc; 
+    v = lambda * ( I - vpColVector::skew(tu_cRcd) ) * ctcd; 
     // Compute the camera rotational velocity
     vpColVector w(3);
-    w = -lambda * tu_cdRc;
+    w = lambda * tu_cRcd;
 
     // Update the complete camera velocity vector
     vpColVector velocity(6);
@@ -266,13 +278,14 @@ main(int argc, const char ** argv)
 
     // Send the camera velocity to the controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, velocity) ;
-      
+
     // Retrieve the error (s-s*)
-    std::cout << cdtc.t() << " " << tu_cdRc.t() << std::endl;
+    std::cout << ctcd.t() << " " << tu_cRcd.t() << std::endl;
 
     // Save log
-    flog << velocity.t() << " " << cdtc.t() << " " << tu_cdRc.t() << std::endl;
+    flog << velocity.t() << " " << ctcd.t() << " " << tu_cRcd.t() << std::endl;
   }
+
   // Close the log file
   flog.close();
 }
