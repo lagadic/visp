@@ -45,14 +45,20 @@
 
 #include <visp/vpKalmanFilter.h>
 
+typedef enum {
+  Position, // Considered measures are the succesive positions of the target
+  Velocity  // Considered measures are the succesive velocities of the target
+} vpMeasureType;
 
 int
 main()
 {
   int nsignal = 2; // Number of signal to filter
-  int niter = 10;
+  int niter = 200;
   int size_state_vector = 2*nsignal;
   int size_measure_vector = 1*nsignal;
+  //vpMeasureType measure_t = Velocity;
+    vpMeasureType measure_t = Position;
 
   std::string filename = "/tmp/log.dat";
   std::ofstream flog(filename.c_str());
@@ -61,39 +67,60 @@ main()
 
   vpColVector sigma_measure(size_measure_vector);
   for (int signal=0; signal < nsignal; signal ++) 
-    sigma_measure = 0.0001;
+    sigma_measure = 0.000001;
   vpColVector sigma_state(size_state_vector);
-  for (int signal=0; signal < nsignal; signal ++) {
-    sigma_state[2*signal] = 0.; // not used
-    sigma_state[2*signal+1] = 0.000001;
+
+  switch (measure_t) {
+  case Velocity:
+    for (int signal=0; signal < nsignal; signal ++) {
+      sigma_state[2*signal] = 0.; // not used
+      sigma_state[2*signal+1] = 0.000001;
+    }
+    break;
+  case Position:
+    for (int signal=0; signal < nsignal; signal ++) {
+      sigma_state[2*signal] = 0.000001; 
+      sigma_state[2*signal+1] = 0; // not used
+    }
+    break;
   }
   
-  vpColVector velocity_measure(size_measure_vector);
+  vpColVector measure(size_measure_vector);
 
-  double rho = 0.5; // correlation
   for (int signal=0; signal < nsignal; signal ++) {
-    velocity_measure[signal] = 3+2*signal;
+    measure[signal] = 3+2*signal;
   }
 
   kalman.verbose(true);
 
   vpKalmanFilter::vpStateModel model;
-  model = vpKalmanFilter::stateConstVelWithColoredNoise_MeasureVel;
-  kalman.initStateConstVelWithColoredNoise_MeasureVel(nsignal, sigma_state,
-						      sigma_measure, rho);
+  double dt = 0.04; // Sampling period
+  double rho = 0.5;
+  double dummy = 0; // non used parameter
+  switch (measure_t) {
+  case Velocity:
+    model = vpKalmanFilter::stateConstVelWithColoredNoise_MeasureVel;
+    kalman.setStateModel(model);
+    kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
+    break;
+  case Position:
+    model = vpKalmanFilter::stateConstVel_MeasurePos;
+    kalman.setStateModel(model);
+    kalman.initFilter(nsignal, sigma_state, sigma_measure, dummy, dt);
+    break;
+  }
 
   for (int iter=0; iter <= niter; iter++) {
     std::cout << "-------- iter " << iter << " ------------" << std::endl;
     for (int signal=0; signal < nsignal; signal ++) {
-      velocity_measure[signal] = 3+2*signal 
-	+ 0.3*sin(vpMath::rad(360./niter*iter));
+      measure[signal] = 3+2*signal + 0.3*sin(vpMath::rad(360./niter*iter));
     }
-    std::cout << "measure : " << velocity_measure.t() << std::endl;
+    std::cout << "measure : " << measure.t() << std::endl;
 
-    flog << velocity_measure.t();
+    flog << measure.t();
 
     //    kalman.prediction();
-    kalman.filter(velocity_measure);
+    kalman.filter(measure);
     flog << kalman.Xest.t() << std::endl;
 
     std::cout << "Xest: " << kalman.Xest.t() << std::endl;

@@ -53,6 +53,7 @@
   Initialize the Kalman filter material depending on the selected
   state model set with setStateModel(). This function is provided as a
   wrapper over all the other initializer functions like
+  initStateConstVel_MeasurePos(),
   initStateConstVelWithColoredNoise_MeasureVel(),
   initStateConstAccWithColoredNoise_MeasureVel().
 
@@ -75,11 +76,11 @@
   \param rho : Degree of correlation between successive accelerations. Values 
   are in [0:1[.
 
-  \param dt : Sampling period \f$\Delta t\f$ expressed is
+  \param dt : Sampling time \f$\Delta t\f$ expressed is
   second. Depending on the filter modelization, this value may not be
-  used. This is for example the case for the vpKalmanFilter::
-  stateConstVelWithColoredNoise_MeasureVel model implemented in
-  initStateConstVelWithColoredNoise_MeasureVel().
+  used. This is for example the case for the
+  vpKalmanFilter::stateConstVelWithColoredNoise_MeasureVel model
+  implemented in initStateConstVelWithColoredNoise_MeasureVel().
 
   \exception vpException::badValue : Bad rho value wich is not in [0:1[.
 
@@ -177,6 +178,10 @@ vpKalmanFilter::initFilter(int nsignal,
     initStateConstVelWithColoredNoise_MeasureVel(nsignal, sigma_state, 
 						 sigma_measure, rho);
     break;
+  case stateConstVel_MeasurePos:
+    initStateConstVel_MeasurePos(nsignal, sigma_state, 
+				 sigma_measure, dt);
+    break;
   case stateConstAccWithColoredNoise_MeasureVel:
     initStateConstAccWithColoredNoise_MeasureVel(nsignal, sigma_state, 
 						 sigma_measure, rho, dt);
@@ -184,6 +189,159 @@ vpKalmanFilter::initFilter(int nsignal,
   case unknown:
     vpERROR_TRACE("Kalman state model is not set") ;    
     throw(vpException(vpException::notInitialized, "Kalman state model is not set")) ;
+  }
+}
+
+/*!
+  Modelisation of a constant speed state model with white noise. The
+  measure is assumed to be the position of the target.
+
+  The considered state model is the following
+
+  \f[
+  \left\{
+  \begin{array}{rlrl}
+  x_{(k+1)}  & = x_{(k)}   & + \Delta t \; {\dot{x}}_{(k)} & + {w_1}_{(k)} \\
+  {\dot{x}}_{(k+1)} & =  & {\dot{x}}_{(k)}   &+{w_2}_{(k)}
+  \end{array}
+  \right.
+  \f]
+
+  The terms \f${w_1}_{(k)}\f$ and \f${w_2}_{(k)}\f$ account for deviations from the assumed
+  constant velocity trajectory. They are assumed zero-mean, white,
+  mutually uncorrelated, stationary random variable with variance
+  \f$\sigma^2_{Q_1}\f$ and \f$\sigma^2_{Q_2}\f$. 
+
+  We recall that the recursive state evolution equation is given by
+  \f[
+  {\bf x}_k= {\bf F}_{k-1} {\bf x}_{k-1} + {\bf w}_{k-1} \\
+  \f]
+ 
+  From this state model, the transition matrix \f${\bf F}\f$ and the
+  state covariance matrix \f${\bf Q}\f$ are given by:
+
+  \f[
+  {\bf F} =
+  \left[
+  \begin{array}{cc}
+  1 & \Delta t\\
+  0 & 1
+  \end{array}
+  \right]
+  \f]
+  
+  and 
+
+  \f[
+  {\bf Q} = \sigma^2_Q
+  \left[
+  \begin{array}{cc}
+  \frac{1}{3}\Delta t^3 & \frac{1}{2}\Delta t^2\\
+  \frac{1}{2}\Delta t^2 & \Delta t
+  \end{array}
+  \right]
+  \f]
+
+  The initial value of the state vector at iteration 0 is set to:
+  \f[
+  {\bf x_{(0)}} =
+  \left[
+  \begin{array}{c}
+  z_{(0)}\\
+  0 
+  \end{array}
+  \right]
+  \f]
+
+  The value at iteration 1 is set to:
+  \f[
+  {\bf x_{(1)}} =
+  \left[
+  \begin{array}{c}
+  z_{(1)}\\
+  (z_{(1)} - z_{(0)})/ \Delta t
+  \end{array}
+  \right]
+  \f]
+
+  The initial value \f$P_{(0|0)}\f$ of the prediction covariance
+  matrix is given by: 
+
+  \f[
+  {\bf P_{(0|0)}} =
+  \left[ \begin{array}{cc}
+  \sigma^2_R & \frac{\sigma^2_R}{2 \Delta t}\\ 
+  \frac{\sigma^2_R}{2 \Delta t} & \frac{2}{3}\sigma^2_Q \Delta t +  \frac{\sigma^2_R}{2 \Delta t^2}
+  \end{array} 
+  \right] 
+  \f]
+
+  \param nsignal : Number of signal to filter.
+
+  \param sigma_state : Vector that fix the variance of the state covariance matrix
+  \f$[\sigma^2_Q \; 0]^T\f$. The dimension of
+  this vector is 2 multiplied by the number of signal to filter.
+
+  \param sigma_measure : Variance \f$\sigma^2_R\f$ of the measurement
+  noise. The dimension of this vector is equal to the number of signal
+  to filter.
+
+  \param dt : Sampling time \f$\Delta t\f$ expressed is second. 
+
+*/
+void
+vpKalmanFilter::initStateConstVel_MeasurePos(int nsignal,
+					     vpColVector &sigma_state,
+					     vpColVector &sigma_measure, 
+					     double dt )
+{
+  // init_done = true ;
+  setStateModel(stateConstVel_MeasurePos);
+
+  init(size_state, size_measure, nsignal);
+
+  iter = 0;
+  Pest = 0;
+  Xest = 0;
+  F    = 0;
+  H    = 0;
+  R    = 0;
+  Q    = 0;
+  this->dt = dt ;
+
+  double dt2 = dt*dt ;
+  double dt3 = dt2*dt ;
+
+  for (int i=0;  i < size_measure*nsignal ;  i++ ) {
+    // State model
+    //         | 1  dt |
+    //     F = |       |
+    //         | 0   1 |
+
+    F[2*i][2*i] = 1 ;
+    F[2*i][2*i+1] = dt ;
+    F[2*i+1][2*i+1] = 1 ;
+
+    // Measure model
+    H[i][2*i] = 1 ;
+    H[i][2*i+1] = 0 ;
+
+    double sR = sigma_measure[i] ;
+    double sQ = sigma_state[2*i] ; // sigma_state[2*i+1] is not used 
+
+    // Measure noise 
+    R[i][i] = sR ;
+
+    // State covariance matrix 6.2.2.12
+    Q[2*i][2*i]     = sQ * dt3/3;
+    Q[2*i][2*i+1]   = sQ * dt2/2;
+    Q[2*i+1][2*i]   = sQ * dt2/2;
+    Q[2*i+1][2*i+1] = sQ * dt;
+
+    Pest[2*i][2*i]     = sR ;
+    Pest[2*i][2*i+1]   = sR/(2*dt) ;
+    Pest[2*i+1][2*i]   = sR/(2*dt) ;
+    Pest[2*i+1][2*i+1] = sQ*2*dt/3.0+ sR/(2*dt2) ;
   }
 }
 
@@ -212,11 +370,16 @@ vpKalmanFilter::initFilter(int nsignal,
   \f$\sigma^2_Q\f$. The term \f$\rho\f$ is the degree of correlation
   between successive accelerations. Values can range from 0 to 1.
 
-  From this state model, the transition matrix \f${\bf H}\f$ and the
-  state noise matrix \f${\bf Q}\f$ are given by:
+  We recall that the recursive state evolution equation is given by
+  \f[
+  {\bf x}_k= {\bf F}_{k-1} {\bf x}_{k-1} + {\bf w}_{k-1} \\
+  \f]
+ 
+  From this state model, the transition matrix \f${\bf F}\f$ and the
+  state covariance matrix \f${\bf Q}\f$ are given by:
 
   \f[
-  {\bf H} =
+  {\bf F} =
   \left[
   \begin{array}{cc}
   1 & 1\\
@@ -239,13 +402,13 @@ vpKalmanFilter::initFilter(int nsignal,
 
   The measurement model is given by:
   \f[
-  z_{(k)} = x_{(k)} + r_{(k)}
+  z_{(k)} = {\bf H} {\bf x}_{(k)} + r_{(k)}
   \f]
 
-  where \f$z_{(k)}\f$ is the measure of the velocity and \f$r_{(k)}\f$
-  is the measurement noise, assumed zero-mean, white mutually
-  uncorrelated stationary random variables with variance
-  \f$\sigma^2_R\f$, giving the covariance matrix:
+  where \f${\bf H} = [1 \; 0  \; 0]\f$, \f$z_{(k)}\f$ is the measure of the
+  velocity and \f$r_{(k)}\f$ is the measurement noise, assumed
+  zero-mean, white mutually uncorrelated stationary random variables
+  with variance \f$\sigma^2_R\f$, giving the covariance matrix:
 
   \f[
   {\bf R} = \left[\sigma^2_R\right]
@@ -276,7 +439,7 @@ vpKalmanFilter::initFilter(int nsignal,
  
   \param nsignal : Number of signal to filter.
 
-  \param sigma_state : Vector that fix the variance of the state noise
+  \param sigma_state : Vector that fix the variance of the state covariance matrix
   \f$[0 \; \sigma^2_Q]^T\f$. The dimension of
   this vector is 2 multiplied by the number of signal to filter.
 
@@ -378,7 +541,7 @@ vpKalmanFilter::initStateConstVelWithColoredNoise_MeasureVel(int nsignal,
     // Measure noise 
     R[i][i] = sR ;
 
-    // State noise
+    // State covariance matrix
     Q[2*i][2*i] = 0 ;
     Q[2*i][2*i+1] = 0;
     Q[2*i+1][2*i] = 0;
@@ -388,9 +551,6 @@ vpKalmanFilter::initStateConstVelWithColoredNoise_MeasureVel(int nsignal,
     Pest[2*i][2*i+1]   = 0. ;
     Pest[2*i+1][2*i]   = 0 ;
     Pest[2*i+1][2*i+1] = sQ/(1-rho*rho) ;
-
-//     Xest[2*i] = Z[i] ;
-//     Xest[2*i+1] = 0 ;
   }
 }
 
@@ -421,11 +581,16 @@ vpKalmanFilter::initStateConstVelWithColoredNoise_MeasureVel(int nsignal,
   \f$\rho\f$ is the degree of correlation between successive
   accelerations. Values can range from 0 to 1.
 
-  From this state model, the transition matrix \f${\bf H}\f$ and the
-  state noise matrix \f${\bf Q}\f$ are given by:
+  We recall that the recursive state evolution equation is given by
+  \f[
+  {\bf x}_k= {\bf F}_{k-1} {\bf x}_{k-1} + {\bf w}_{k-1} \\
+  \f]
+ 
+  From this state model, the transition matrix \f${\bf F}\f$ and the
+  state covariance matrix \f${\bf Q}\f$ are given by:
 
   \f[
-  {\bf H} =
+  {\bf F} =
   \left[
   \begin{array}{ccc}
   1 & 1 & \Delta t\\
@@ -450,10 +615,10 @@ vpKalmanFilter::initStateConstVelWithColoredNoise_MeasureVel(int nsignal,
 
   The measurement model is given by:
   \f[
-  z_{(k)} = x_{(k)} + r_{(k)}
+  z_{(k)} = {\bf H} {\bf x}_{(k)} + r_{(k)}
   \f]
 
-  where \f$z_{(k)}\f$ is the measure of the velocity and \f$r_{(k)}\f$
+  where \f${\bf H} = [1  \; 0  \; 0]\f$, \f$z_{(k)}\f$ is the measure of the velocity and \f$r_{(k)}\f$
   is the measurement noise, assumed zero-mean, white mutually
   uncorrelated stationary random variables with variance
   \f$\sigma^2_R\f$, giving the covariance matrix:
@@ -489,9 +654,10 @@ vpKalmanFilter::initStateConstVelWithColoredNoise_MeasureVel(int nsignal,
  
   \param nsignal : Number of signal to filter.
  
-  \param sigma_state : Vector that fix the variance of the state noise
-  \f$[0 \; \sigma^2_{Q_1} \; \sigma^2_{Q_2}]^T\f$. The dimension of
-  this vector is 3 multiplied by the number of signal to filter.
+  \param sigma_state : Vector that fix the variance of the state
+  covariance matrix \f$[0 \; \sigma^2_{Q_1} \;
+  \sigma^2_{Q_2}]^T\f$. The dimension of this vector is 3 multiplied
+  by the number of signal to filter.
 
   \param sigma_measure : Variance \f$\sigma^2_R\f$ of the measurement
   noise. The dimension of this vector is equal to the number of signal
@@ -500,7 +666,7 @@ vpKalmanFilter::initStateConstVelWithColoredNoise_MeasureVel(int nsignal,
   \param rho : Degree of correlation between successive accelerations. Values 
   are in [0:1[.
 
-  \param dt : Sampling period \f$\Delta t\f$ expressed is second. 
+  \param dt : Sampling time \f$\Delta t\f$ expressed is second. 
 
   \exception vpException::badValue : Bad rho value wich is not in [0:1[.
 
@@ -603,7 +769,7 @@ vpKalmanFilter::initStateConstAccWithColoredNoise_MeasureVel(int nsignal,
     // Measure noise 
     R[i][i] = sR ;
 
-    // State noise
+    // State covariance matrix
     Q[3*i+1][3*i+1] = sQ1;
     Q[3*i+2][3*i+2] = sQ2;
  
@@ -624,7 +790,7 @@ vpKalmanFilter::initStateConstAccWithColoredNoise_MeasureVel(int nsignal,
 
   Do the filtering and prediction of the measure signal.
 
-  \param Z : Measures used to initialise the filter. The dimension of
+  \param z : Measures \f${\bf z}_k\f$ used to initialise the filter. The dimension of
   this vector is equal to the number of signal to filter (given by
   getNumberOfSignal()) multiplied by the size of the measure vector
   (given by getMeasureSize()) .
@@ -634,24 +800,26 @@ vpKalmanFilter::initStateConstAccWithColoredNoise_MeasureVel(int nsignal,
 
 */
 void
-vpKalmanFilter::filter(vpColVector &Z)
+vpKalmanFilter::filter(vpColVector &z)
 {
   if (nsignal < 1) {
     vpERROR_TRACE("Bad signal number. You need to initialize the Kalman filter") ;    
     throw(vpException(vpException::notInitialized, 
 		      "Bad signal number")) ;
   }
+
   // Specific initialization of the filter that depends on the state model
   if (iter == 0) {
     Xest = 0;
-    switch(model) {
+    switch (model) {
+    case stateConstVel_MeasurePos:
     case stateConstVelWithColoredNoise_MeasureVel:
     case stateConstAccWithColoredNoise_MeasureVel:
       for (int i=0;  i < size_measure*nsignal ;  i++ ) {
-	Xest[size_state*i] = Z[i] ;
+	Xest[size_state*i] = z[i] ;
       }
       prediction();
-      init_done = true;
+      //      init_done = true;
       break;
     case unknown:
       vpERROR_TRACE("Kalman state model is not set") ;    
@@ -662,8 +830,22 @@ vpKalmanFilter::filter(vpColVector &Z)
 
     return;
   }
-  
-  filtering(Z);
+  else if (iter == 1) {
+    if (model == stateConstVel_MeasurePos) {
+      for (int i=0;  i < size_measure*nsignal ;  i++ ) {
+	double z_prev = Xest[size_state*i]; // Previous mesured position
+	//	std::cout << "Mesure pre: " << z_prev << std::endl;
+	Xest[size_state*i]   = z[i] ;
+	Xest[size_state*i+1] = (z[i] - z_prev) / dt ;	
+      }
+      prediction();
+      iter ++;
+      
+      return;
+    }
+  }
+
+  filtering(z);
   prediction();
 
 }

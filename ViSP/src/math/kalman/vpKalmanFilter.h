@@ -56,16 +56,20 @@ class vpKalmanFilter : public vpKalman
 {
  public:
   /*!  
-    Selector used to set the Kalman filter with a constant
-    velocity state model.
+    Selector used to set the Kalman filter state model.
   */ 
   typedef enum {
-    /*! State as a constant velocity model with colored noise
+    /*! Consider the state as a constant velocity model with white
+        noise. Measures available are the succesive positions of the
+        target. To know more about this state model, see
+        initStateConstVel_MeasurePos(). */
+    stateConstVel_MeasurePos, 
+    /*! Consider the state as a constant velocity model with colored noise
         measurements as acceleration terms. Measured available are the
         velocities of the target. To know more about this state model,
         see initStateConstVelWithColoredNoise_MeasureVel(). */
     stateConstVelWithColoredNoise_MeasureVel, 
-    /*! State as a constant acceleration model with colored noise
+    /*! Consider the state as a constant acceleration model with colored noise
         measurements as acceleration terms. Measured available are the
         velocities of the target. To know more about this state model,
         see initStateConstAccWithColoredNoise_MeasureVel(). */
@@ -84,6 +88,17 @@ class vpKalmanFilter : public vpKalman
     {
       setStateModel(unknown);
     };
+
+  /*!
+    Return the current state model.
+   */
+  inline vpStateModel getStateModel() {
+    return model;
+  }
+  void filter(vpColVector &z);
+ 
+  /*! @name Generic linear filter initializer */
+  //@{
   /*!
     Set the Kalman state model. Depending on the state model, we set
     the state vector size and the measure vector size. 
@@ -107,6 +122,7 @@ int main()
   inline void setStateModel(vpStateModel model) {
     this->model = model;
     switch(model) {
+    case stateConstVel_MeasurePos:
     case stateConstVelWithColoredNoise_MeasureVel:
       size_state = 2;
       size_measure = 1;
@@ -121,30 +137,23 @@ int main()
       break;
     }
   }
-
-  /*!
-    Return the current state model.
-   */
-  inline vpStateModel getStateModel() {
-    return model;
-  }
-  void filter(vpColVector &Z);
- 
-  /*! @name Filter initializer */
-  //@{
   void initFilter(int nsignal, vpColVector &sigma_state,
 		  vpColVector &sigma_measure, double rho, double dt);
   //@}
 
-  /*! @name Filter initializer with constant velocity models */
+  /*! @name Linear filter initializer with constant velocity models */
   //@{
+  void initStateConstVel_MeasurePos(int nsignal, 
+				    vpColVector &sigma_state,
+				    vpColVector &sigma_measure,
+				    double dt);
   void initStateConstVelWithColoredNoise_MeasureVel(int nsignal, 
 						    vpColVector &sigma_state,
 						    vpColVector &sigma_measure, 
 						    double rho);
   //@}
 
-  /*! @name Filters initializer with constant acceleration models */
+  /*! @name Linear filter initializer with constant acceleration models */
   //@{
   void initStateConstAccWithColoredNoise_MeasureVel(int nsignal, 
 						    vpColVector &sigma_state,
@@ -153,7 +162,7 @@ int main()
 						    double dt);
   //@}
 
- private:
+ protected:
   vpStateModel model;
 
 } ;

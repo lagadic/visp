@@ -50,9 +50,9 @@
 /*!
   Initialize the Kalman filter.
   
-  \param size_state : Size of the state vector \f${\bf x}_{(k)}\f$ for one signal.
+  \param size_state : Size of the state vector \f${\bf x}_{k}\f$ for one signal.
 
-  \param size_measure : Size of the measure vector \f${\bf z}_{(k)}\f$
+  \param size_measure : Size of the measure vector \f${\bf z}_{k}\f$
   for one signal.
 
   \param nsignal : Number of signal to filter.
@@ -75,7 +75,7 @@ vpKalman::init(int size_state, int size_measure, int nsignal)
   Pest.resize(size_state*nsignal, size_state*nsignal) ; Pest = 0 ;
 
   I.resize(size_state*nsignal, size_state*nsignal) ;
-  init_done = false ;
+  //  init_done = false ;
   iter = 0 ;
   dt = -1 ;
 }
@@ -89,7 +89,7 @@ vpKalman::init(int size_state, int size_measure, int nsignal)
 vpKalman::vpKalman()
 {
   verbose(false);
-  init_done = false ;
+  //  init_done = false ;
   this->size_state = 0;
   this->size_measure = 0 ;
   this->nsignal = 0 ;
@@ -107,7 +107,7 @@ vpKalman::vpKalman()
 vpKalman::vpKalman(int nsignal)
 {
   verbose(false);
-  init_done = false;
+  // init_done = false;
   this->size_state = 0;
   this->size_measure = 0 ;
   this->nsignal = nsignal;
@@ -134,12 +134,13 @@ vpKalman::vpKalman(int size_state, int size_measure, int nsignal)
 }
 
 /*!
-  \brief Mise a jour du filtre de Kalman : Etape de prediction
+  Update the Kalman filter by applying the prediction equations.
 
-  Équations de prédiction
+  The predicted state is given by
   \f[
   {{\bf x}}_{k|k-1}   =  {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}
   \f]
+  and the state prediction covariance by
   \f[
   {\bf P}_{k \mid k-1}  = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1}
   + {\bf Q}_k
@@ -185,30 +186,41 @@ vpKalman::prediction()
 }
 
 /*!
-  \brief  Mise a jour du filtre de Kalman : Etape de Filtrage
 
-  \param Z : nouvelle mesure
+  Update the Kalman filter by applying the filtering equations and
+  increment the filter iteration (vpKalman::iter).
 
-  Équations de filtrage
+  \param z : Measure (or observation) \f${\bf z}_k\f$ provided at iteration \f$k\f$.
+
+  The filtering equation is given by:
   \f[
-  {\bf x}_{k \mid k} = {\bf x}_{k \mid k-1} + {\bf W}_k  \left[ {\bf Z}_k -
-  {\bf H x}_{k \mid k-1} \right]
+  {\bf x}_{k \mid k} = {\bf x}_{k \mid k-1} + {\bf W}_k  \left[ {\bf z}_k -
+  {\bf H} {\bf x}_{k \mid k-1} \right]
   \f]
-  gain du filtre de Kalman
+  where \f${\bf W_k}\f$ is the filter gain computed using the formula:
   \f[
   {\bf W_k} = {\bf P}_{k \mid k-1} {\bf H}^T
   \left[  {\bf H P}_{k \mid k-1} {\bf H}^T + {\bf R}_k \right]^{-1}
   \f]
+  and where the updated covariance of the state is given by
   \f[
-  {\bf P}_{k \mid k} = \left({\bf I - K}_k {\bf H} \right)  {\bf P}_{k \mid k-1}
+  {\bf P}_{k \mid k} = \left({\bf I} - {\bf W}_k {\bf H} \right)  {\bf P}_{k \mid k-1}
+  \f]
+  or in a symetric form
+  \f[
+  {\bf P}_{k \mid k} = {\bf P}_{k \mid k-1} - {\bf W}_k {\bf S}_k {\bf W}^T_k
+  \f]
+  with
+  \f[
+  {\bf S}_k = {\bf H P}_{k \mid k-1} {\bf H}^T + {\bf R}_k
   \f]
 
 */
 void
-vpKalman::filtering(vpColVector &Z)
+vpKalman::filtering(vpColVector &z)
 {
   if (verbose_mode)
-    std::cout << "Z " << std::endl << Z << std::endl ;
+    std::cout << "z " << std::endl << z << std::endl ;
   // Bar-Shalom  5.2.3.11
   vpMatrix S =  H*Ppre*H.t() + R ;
   if (verbose_mode)
@@ -230,7 +242,7 @@ vpKalman::filtering(vpColVector &Z)
     Pest =   Pestinv.inverseByLU() ;
   }
   // Bar-Shalom  5.2.3.12 5.2.3.13 5.2.3.7
-  Xest = Xpre + (W*(Z - (H*Xpre))) ;
+  Xest = Xpre + (W*(z - (H*Xpre))) ;
   if (verbose_mode)
     std::cout << "Xest " << std::endl << Xest << std::endl ;
   
@@ -239,113 +251,6 @@ vpKalman::filtering(vpColVector &Z)
 
 
 #if 0
-/*!
-  \brief Filter initialization for a constant velocity model
-
-  \param dt : time between two measures
-  \param Z0 : Measure at iteration 0.
-  \param Z1 : Measure at iteration 1.
-  \param Vn : Variance of measure noise
-  \param Vw : Variance of the state noise
-
-  modèle d'état
-  \f[ {\bf x} = \left[\; y  \quad \frac{\partial y}{\partial t}\;\right]^T = \left[\;  y  \quad \dot{ y}\;\right]^T
-  \f]
-
-  Modélisation des filtres
-  \f[
-  \begin{array}{rcl} \\
-  {\bf x}(t+1) &= &  {\bf Fx} (t) + {\bf Q} \\
-  {\bf z}(t) &=& {\bf H x}(t) + {\bf R}
-  \end{array}
-  \f]
-
-
-  La matrice F décrit le modèle d'évolution de l'état. Dans le cas présent elle
-  est donnée par :
-  \f[
- {\bf F}= \left( \begin{array}{cc} 1 & \Delta t  \\ 0 & 1 \end{array} \right)
-  \f]
-
-  Le bruit \f${\bf Q} = \left( \begin{array}{c} \;q_1 \quad q_2\;  \end{array} \right)^T\f$
-  vient modéliser les variations sur le modèle à vitesse constante (dues aux accélérations)
-
-  En effet on a:
-  \f[
-  \left\{
-  \begin{array}{rcl}
-  y(t+1)& =& y(t) + \Delta(t) \dot y(t) + \underbrace{\frac{\Delta t^2}{2} \ddot y(t)}_{q_1} \\
-  \dot y(t+1) &=& \dot y(t) + \underbrace{\Delta(t) \ddot y(t)}_{q_2}
-  \end{array}
-  \right.
-  \f]
-  et donc
-  \f[
-  \left\{
-  \begin{array}{rcccccc}
-  y(t+1)& =& y(t) &+& \Delta(t) \dot y(t) &+& {q_1} \\
-  \dot y(t+1) &=& & &\dot y(t) &+& {q_2}
-  \end{array}
-  \right. \qquad \Leftrightarrow  \qquad {\bf x}(t+1) = {\bf F x}(t) + Q
-  \f]
-*/
-void
-vpKalman::initFilterCteVelocity(double dt, 
-				vpColVector &Z0, 
-				vpColVector &Z1, 
-				vpColVector  &sigma_noise, 
-				vpColVector &sigma_state )
-{
-  init_done = true ;
-
-  this->dt = dt ;
-
-  double dt2 = dt*dt ;
-  double dt3 = dt2*dt ;
-
-  Pest =0 ;
-  // initialise les matrices decrivant les modeles
-  for (int i=0;  i < size_measure ;  i++ )
-  {
-    // modele sur l'etat
-
-    //         | 1  dt |
-    //     F = |       |
-    //         | 0   1 |
-
-    F[2*i][2*i] = 1 ;
-    F[2*i][2*i+1] = dt ;
-    F[2*i+1][2*i+1] = 1 ;
-
-
-    // modele sur la mesure
-    H[i][2*i] = 1 ;
-    H[i][2*i+1] = 0 ;
-
-    double sR = sigma_noise[i] ;
-    double sQ = sigma_state[i] ;
-
-    // bruit de mesure
-    R[i][i] = sR ;
-    // bruit d'etat 6.2.2.12
-
-    Q[2*i][2*i] = sQ *dt3/3 ;
-    Q[2*i][2*i+1] = sQ*dt2/2;
-    Q[2*i+1][2*i] =sQ *dt2/2 ;
-    Q[2*i+1][2*i+1] =sQ*dt  ;
-
-    // T[1|1]
-    Pest[2*i][2*i]     = sR ;
-    Pest[2*i][2*i+1]     =  sR/(2*dt) ;
-    Pest[2*i+1][2*i]     =    sR/(2*dt) ;
-    Pest[2*i+1][2*i+1] =  sQ*2*dt/3.0+ sR/(2*dt2) ;
-
-
-    Xest[2*i] = Z1[i] ;
-    Xest[2*i+1] = (Z1[i] - Z0[i])/dt ; ;
-
-  }
-}
 
 
 /*!
@@ -412,7 +317,7 @@ vpKalman::initFilterCteAcceleration(double dt,
   double dt4 = dt3*dt ;
   double dt5 = dt4*dt ;
 
-  init_done = true ;
+  //init_done = true ;
 
   Pest =0 ;
   // initialise les matrices decrivant les modeles
@@ -498,7 +403,7 @@ vpKalman::initFilterSinger(double dt,
   double a3 = a2*a ;
   double a4 = a3*a ;
 
-  init_done = true ;
+  //init_done = true ;
 
   Pest =0 ;
   // initialise les matrices decrivant les modeles
