@@ -47,7 +47,7 @@
   - where velocities are computed in the camera frame.
 
   Considering the visual feature, the interaction matrix to consider
-  is \f[{\bf L}_s = \left[ \begin{array}{cc} {^{c^*}}{\bf R}_c} & 0\\ 0
+  is \f[{\bf L}_s = \left[ \begin{array}{cc} {^{c^*}}{\bf R}_c & 0\\ 0
   & {\bf Lw} \end{array} \right]\f] with \f[ {\bf Lw} = I_3 +
   \frac{\theta}{2} \; [u]_\times + \left(1 - \frac{sinc \theta}{sinc^2
   \frac{\theta}{2}}\right) [u]^2_\times \f]
