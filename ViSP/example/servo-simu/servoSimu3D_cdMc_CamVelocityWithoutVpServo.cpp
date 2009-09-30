@@ -73,6 +73,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -172,6 +173,7 @@ main(int argc, const char ** argv)
 #else
   logdirname ="/tmp/" + username;
 #endif
+
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(logdirname) == false) {
     try {
