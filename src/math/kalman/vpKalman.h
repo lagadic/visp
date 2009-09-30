@@ -51,38 +51,35 @@
 
 /*!
   \class vpKalman
-  \brief Generic kalman filtering implementation.
+  \brief This class provides a generic Kalman filtering algorithm along with
+  some specific state model (constant velocity, constant acceleration)
+  which are implemented in the vpKalmanFilter class.
 
-  The CKalman provide of a generic kalman filtering algorithm along with some
-  specific state model (constant velocity, constant acceleration)
-
-  Équation d'etat
+  The state evolution equation is given by:
   \f[
   {\bf x}_k= {\bf F}_{k-1} {\bf x}_{k-1} + {\bf w}_{k-1} \\
   \f]
-  où
-  <ul>
-  <li>  \f${\bf z}{k}\f$ est la mesure à l'itération \f$k\f$
-  <li> \f${\bf x}{k}\f$ est la valeur inconnue de l'état à l'itération \f$k\f$
-  </ul>
-  Equation de mesure
+  where \f${\bf x}_{k}\f$ is the unknown state at iteration \f$k\f$.
+  
+  The measurement equation is given by:
   \f[
   {\bf z}_k = {\bf H} {\bf x}_k + {\bf r}_k
   \f]
-  Équations de prédiction
+  where \f${\bf z}_{k}\f$ is the measure (also named observation) at iteration \f$k\f$.
+ 
+  The predicted state is obtained by:
   \f[
-  {{\bf x}}_{k|k-1}  =  {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}
+  {\bf x}_{k|k-1}  =  {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}
   \f]
   \f[
   {\bf P}_{k \mid k-1} = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1}
   + {\bf Q}_k \f]
-  où
+  where
   <ul>
-  <li> \f$ {{\bf x}}_{k|k-1}\f$ est la valeur prédite de l'état
-  <li> \f$ {\bf P}_{k \mid k-1}\f$ est la matrice de covariance de l'erreur de
-  prediction
+  <li> \f$ {\bf x}_{k|k-1}\f$ is the prediction of the state,
+  <li> \f$ {\bf P}_{k \mid k-1}\f$ is the state prediction covariance matrix.
   </ul>
-  Équations de filtrage
+  Filtering equation are:
   \f[
   {\bf W}_k = {\bf P}_{k \mid k-1} {\bf H}^T
   \left[  {\bf H P}_{k \mid k-1} {\bf H}^T + {\bf R}_k \right]^{-1}
@@ -95,36 +92,39 @@
   {\bf P}_{k \mid k} = \left({\bf I - W}_k {\bf H} \right)  {\bf P}_{k \mid
   k-1} \f]
 
-  \f$ {\bf W}_k \f$ est le gain du filtre de Kalman
+  where \f$ {\bf W}_k \f$ is the filter gain.
 
-  Notons que \f$ {\bf P}_{k \mid k}\f$  peut aussi s'écrire :
+  Notice that there is a recursion for the inverse covariance
   \f[
   {\bf P}_{k \mid k}^{-1}=  {\bf P}_{k \mid k-1}^{-1} + {\bf H}^T {\bf
   R}^{-1} {\bf H}
   \f]
-  ou \f${\bf P}_{k \mid k}^{-1}\f$ désigne l'inverse de la matrice de covariance.
+  where \f${\bf P}_{k \mid k}^{-1}\f$ is the inverse of the covariance matrix.
 
-
-  La classe implémente différent modèle d'évolution
-  <ul>
-  <li> Modèle à vitesse constante
-  <li>  Modèle à accélération constante
-  <li> Modèle de Singer
-  </ul>
+  ViSP provides different state evolution models implemented in the vpKalmanFilter class.
 */
 class vpKalman
 {
 protected :
-  bool init_done ;
+  //bool init_done ;
+
+  //! Filter step or iteration. When set to zero, initialize the filter. 
   long iter ;
 
+  //! Size of the state vector \f${\bf x}_k\f$.
   int size_state ;
+  //! Size of the measure vector \f${\bf z}_k\f$.
   int size_measure ;
+  //! Number of signal to filter.
   int nsignal ;
 
+  //! When set to true, print the content of internal variables during filtering() and prediction().
   bool verbose_mode;
 
 public:
+  vpKalman() ;
+  vpKalman(int nsignal) ;
+  vpKalman(int size_state, int size_measure, int nsignal) ;
   /*!
     Set the number of signal to filter.
   */
@@ -132,6 +132,11 @@ public:
   {
     this->nsignal = nsignal;
   }
+
+  // int init() { return init_done ; }
+  void init(int size_state, int size_measure, int nsignal) ;
+  void prediction() ;
+  void filtering(vpColVector &z) ;
   /*!
     Return the size of the state vector \f${\bf x}_{(k)}\f$ for one signal.
   */
@@ -150,76 +155,62 @@ public:
   int getIteration() { return iter ; }
   /*!
     Sets the verbose mode.
-    \param on : If true, activates the verbose mode by printing the Kalman 
+    \param on : If true, activates the verbose mode which consists in printing the Kalman 
     filter internal values.
   */
   void verbose(bool on) { verbose_mode = on;};
 
 public:
-  //!  \f${\bf x}_{k \mid k} \f$ valeur estime de l'etat   \f${\bf x}_{k \mid k} =  {\bf x}_{k \mid k-1} + {\bf W}_k  \left[ {\bf z}_k -  {\bf H x}_{k \mid k-1} \right]\f$
+  /*!
+    The updated state estimate \f${\bf x}_{k \mid k} \f$ where 
+    \f${\bf x}_{k \mid k} = {\bf x}_{k \mid k-1} + {\bf W}_k  
+    \left[ {\bf z}_k -  {\bf H x}_{k \mid k-1} \right]\f$.
+  */
   vpColVector Xest ;
-  //! \f${\bf x}_{k \mid k-1} \f$ : valeur predite   de l'etat \f$ {{\bf x}}_{k|k-1}  =  {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}\f$
+  /*!
+    The predicted state \f${\bf x}_{k \mid k-1} \f$ where 
+    \f$ {\bf x}_{k|k-1} = {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}\f$.
+  */
   vpColVector Xpre ;
-
-protected:
-  //! \f${\bf P}_{k \mid k-1} \f$ : matrice de covariance de l'erreur de prediction
-  //! \f$ {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1}   + {\bf Q}_k\f$
-  vpMatrix Ppre ;
-
-  //!  \f${\bf P}_{k \mid k}\f$ matrice de covariance de l'erreur d'estimation
-  //!  \f${\bf P}_{k \mid k} = \left({\bf I - W}_k {\bf H} \right)  {\bf P}_{k \mid  k-1}\f$
-  vpMatrix Pest ;
-
-  //! \f${\bf W}_k\f$ : Gain du filtre de Kalman
-  //! \f$ {\bf W}_k = {\bf P}_{k \mid k-1} {\bf H}^T   \left[  {\bf H P}_{k \mid k-1} {\bf H}^T + {\bf R}_k \right]^{-1}\f$
-  vpMatrix W ;
-
-  //! \f$ \bf I\f$ : matrice identite
-  vpMatrix I ;
-
-public:
-  //! matrice décrivant le modele d'evolution de l'etat
+  //! Transition matrix \f${\bf F}\f$ that describes the evolution of the state.
   vpMatrix F ;
 
-  //! matrice décrivant le modele d'evolution de la mesure
+  //! Matrix \f${\bf H}\f$ that describes the evolution of the measurements. 
   vpMatrix H ;
 
-  //! Variance du bruits sur le modele de mesure
+  //! Measurement noise covariance matrix \f${\bf R}\f$.
   vpMatrix R ;
-  //! Variance du bruits sur le modele d'etat
+  //! Process noise covariance matrix \f${\bf Q}\f$.
   vpMatrix Q ;
-
-public:
-  vpKalman() ;
-  vpKalman(int nsignal) ;
-  vpKalman(int size_state, int size_measure, int nsignal) ;
-
-  int init() { return init_done ; }
-  void init(int size_state, int size_measure, int nsignal) ;
-  /*
-  void initFilterCteAcceleration(double dt,
-				vpColVector &Z0,
-				vpColVector &Z1,
-				vpColVector &Z2,
-				vpColVector  &sigma_noise,
-				vpColVector &sigma_state ) ;
-  void initFilterCteVelocity(double dt,
-			    vpColVector &Z0,
-			    vpColVector &Z1,
-			    vpColVector  &sigma_noise,
-			    vpColVector &sigma_state) ;
-
-  void initFilterSinger(double dt,
-		       double a,
-		       vpColVector &Z0,
-		       vpColVector &Z1,
-		       vpColVector  &sigma_noise,
-		       vpColVector &sigma_state) ;
-  */
-
-  void prediction() ;
-  void filtering(vpColVector &Xmes) ;
+  /*! Sampling time \f$\Delta t\f$ in second between two succesive
+      iterations. Only used in some specific state models implemented
+      in vpKalmanFilter.*/
   double dt ;
+
+protected:
+  /*!
+    The state prediction covariance \f${\bf P}_{k \mid k-1} \f$ where 
+    \f$ {\bf P}_{k \mid k-1} = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1} 
+    + {\bf Q}_k\f$.
+  */
+  vpMatrix Ppre ;
+
+  /*!  
+    The updated covariance of the state \f${\bf P}_{k \mid k}\f$
+    where \f${\bf P}_{k \mid k} = \left({\bf I - W}_k {\bf H}
+    \right) {\bf P}_{k \mid k-1}\f$. 
+  */
+  vpMatrix Pest ;
+
+  /*!  
+    Filter gain \f${\bf W}_k\f$ where \f$ {\bf W}_k = {\bf P}_{k
+    \mid k-1} {\bf H}^T \left[ {\bf H P}_{k \mid k-1} {\bf H}^T + {\bf
+    R}_k \right]^{-1}\f$.
+  */
+  vpMatrix W ;
+
+  //! Identity matrix \f$ \bf I\f$.
+  vpMatrix I ;
 } ;
 
 
