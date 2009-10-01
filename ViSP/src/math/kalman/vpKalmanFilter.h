@@ -52,7 +52,7 @@
   \class vpKalmanFilter
   This class provides an implementation of some specific filters
 */
-class vpKalmanFilter : public vpKalman
+class VISP_EXPORT vpKalmanFilter : public vpKalman
 {
  public:
   /*!  
