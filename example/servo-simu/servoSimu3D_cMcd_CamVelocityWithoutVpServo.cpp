@@ -39,8 +39,8 @@
   \example servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp
 
   Simulation of a 3D visual servoing where the current visual feature
-  is given by \f$s=({^{c}}{\bf t}_{c^*}, \theta u_{{^{c}}{\bf
-  R}_{c^*}})^T\f$ and the desired one \f$s^*=(0,0)^T\f$.
+  is given by \f$s=({^{c}}{\bf t}_{c^*}, \; \theta u_{{^{c}}{\bf
+  R}_{c^*}})\f$ and the desired one \f$s^*=(0, \; 0)\f$.
 
   The control law is set as:
   - an eye-in-hand control law,
