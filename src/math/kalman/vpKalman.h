@@ -103,7 +103,7 @@
 
   ViSP provides different state evolution models implemented in the vpKalmanFilter class.
 */
-class vpKalman
+class VISP_EXPORT vpKalman
 {
 protected :
   //bool init_done ;
