@@ -50,6 +50,7 @@
 
 #ifdef VISP_HAVE_PARPORT
 
+#  include <stdio.h>
 #  include <errno.h>
 #  include <linux/parport.h>
 #  include <linux/ppdev.h>
