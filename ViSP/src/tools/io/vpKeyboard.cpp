@@ -38,6 +38,7 @@
 
 
 #if defined UNIX
+#  include <stdio.h>
 #  include <visp/vpKeyboard.h>
 
 /*!
