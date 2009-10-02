@@ -308,6 +308,7 @@ public:
   bool getPowerState();
 
   void move(const char *filename) ;
+  void move(const char *filename, const double velocity) ;
   static bool readPosFile(const char *filename, vpColVector &q)  ;
   static bool savePosFile(const char *filename, const vpColVector &q)  ;
 

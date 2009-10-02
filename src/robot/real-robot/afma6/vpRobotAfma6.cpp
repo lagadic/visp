@@ -1764,9 +1764,9 @@ vpRobotAfma6::savePosFile(const char *filename, const vpColVector &q)
   Moves the robot to the joint position specified in the filename. The
   positioning velocity is set to 10% of the robot maximal velocity.
 
-  \param filename: File containing a joint position.
+  \param filename: File containing a joint position to reach.
 
-  \sa readPosFile
+  \sa readPosFile(), move(const char *, const double)
 
 */
 void
@@ -1777,6 +1777,29 @@ vpRobotAfma6::move(const char *filename)
   this->readPosFile(filename, q)  ;
   this->setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
   this->setPositioningVelocity(10);
+  this->setPosition ( vpRobot::ARTICULAR_FRAME,  q) ;
+}
+
+/*!
+
+  Moves the robot to the joint position specified in the \e filename with a
+  specified positioning \e velocity.
+
+  \param filename : File containing a joint position to reach.
+  \param velocity : Percentage of the maximal velocity. Values should
+  be in ]0:100].
+
+  \sa readPosFile(), move(const char *)
+
+*/
+void
+vpRobotAfma6::move(const char *filename, const double velocity)
+{
+  vpColVector q;
+
+  this->readPosFile(filename, q)  ;
+  this->setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+  this->setPositioningVelocity(velocity);
   this->setPosition ( vpRobot::ARTICULAR_FRAME,  q) ;
 }
 
