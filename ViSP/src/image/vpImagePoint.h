@@ -48,6 +48,7 @@
 #include <ostream>
 
 #include <visp/vpConfig.h>
+#include <visp/vpMath.h>
 
 
 /*!
@@ -240,6 +241,18 @@ class VISP_EXPORT vpImagePoint
   */
   inline double get_v()  const { return i; }
 
+  /*!
+
+    Compute the distance \f$ |iP1 - iP2| = \sqrt{(i_1-i_2)^2+(j_1-j_2)^2} \f$
+
+    \param iP1 : First point
+    \param iP2 : Second point
+
+    \return the distance between the two points.
+  */
+  static double distance (const vpImagePoint iP1, const vpImagePoint iP2) {
+    return(sqrt(vpMath::sqr(iP1.get_i()-iP2.get_i())+vpMath::sqr(iP1.get_j()-iP2.get_j())));}
+
  private:
   double i,j;
 };
@@ -265,6 +278,30 @@ VISP_EXPORT inline bool operator==( const vpImagePoint &ip1,
 VISP_EXPORT inline bool operator!=( const vpImagePoint &ip1, 
 				    const vpImagePoint &ip2 ) {
   return ( ( ip1.get_i() != ip2.get_i() ) || ( ip1.get_j() != ip2.get_j() ) );
+}
+
+/*!
+
+  \relates vpImagePoint
+
+  Returns a vpImagePoint wich is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
+
+*/
+VISP_EXPORT inline vpImagePoint operator+( const vpImagePoint &ip1, 
+				           const vpImagePoint &ip2 ) {
+  return ( vpImagePoint(ip1.get_i()+ip2.get_i(), ip1.get_j()+ip2.get_j()));
+}
+
+/*!
+
+  \relates vpImagePoint
+
+  Returns a vpImagePoint wich is the difference between \f$ ip1 \f$ and \f$ ip2 \f$.
+
+*/
+VISP_EXPORT inline vpImagePoint operator-( const vpImagePoint &ip1, 
+				           const vpImagePoint &ip2 ) {
+  return ( vpImagePoint(ip1.get_i()-ip2.get_i(), ip1.get_j()-ip2.get_j()));
 }
 
 /*!
