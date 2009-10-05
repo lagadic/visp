@@ -53,6 +53,7 @@
 
 #if (defined (VISP_HAVE_OPENCV))
 
+#include <visp/vpKltOpencv.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayX.h>
@@ -60,7 +61,6 @@
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
-#include <visp/vpKltOpencv.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdf:i:n:p:s:h"
