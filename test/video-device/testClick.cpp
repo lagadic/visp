@@ -49,11 +49,11 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayOpenCV.h>
 
 /*!
   \example testClick.cpp

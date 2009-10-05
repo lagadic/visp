@@ -39,11 +39,11 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpParseArgv.h>
 
 #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_OPENCV))

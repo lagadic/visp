@@ -50,11 +50,11 @@
 #include <visp/vpIoTools.h>
 #include <visp/vpRect.h>
 
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayOpenCV.h>
 
 /*!
   \example testDisplays.cpp
