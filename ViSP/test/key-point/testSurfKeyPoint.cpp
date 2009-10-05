@@ -45,12 +45,12 @@
 
 #if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION >= 0x010100))  // Require opencv >= 1.1.0 
 
+#include <visp/vpKeyPointSurf.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpKeyPointSurf.h>
 
 
 #include <visp/vpCameraParameters.h>
