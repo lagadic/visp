@@ -58,7 +58,7 @@
   # Detection of the Libjpeg library on Unix
   FIND_LIBRARY(LIBJPEG_LIBRARY
     NAMES
-    libjpeg.so jpeg.lib
+    jpeg
     PATHS
     /usr/lib
     /usr/local/lib
