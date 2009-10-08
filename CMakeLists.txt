@@ -106,12 +106,13 @@ IF (UNIX)
   OPTION(USE_AFMA6   "Compile ViSP for Afma6 robot usage" OFF)
   OPTION(USE_BICLOPS "Compile ViSP for Biclops head usage" OFF)
   OPTION(USE_PTU46   "Compile ViSP for Ptu-46 head usage" OFF)
+  OPTION(USE_COIN    "Compile ViSP with simulation capabilities based on Coin3D suite" OFF)
 ENDIF(UNIX)
 
 # Set other options to default value
 SET(USE_X11        ON) # For Linux/OSX display
 SET(USE_XML2       ON) # For the Xml Parser (vpCameraParameters)
-SET(USE_COIN       ON) # For the simulator
+#SET(USE_COIN       ON) # For the simulator
 SET(USE_SOWIN      ON) # For the simulator viewer
 SET(USE_SOQT       ON) # For the simulator viewer
 SET(USE_SOXT       ON) # For the simulator viewer
@@ -389,6 +390,7 @@ IF(USE_COIN)
     ELSE(VISP_HAVE_COIN)
       MESSAGE(STATUS "Coin not found")
       SET(VISP_HAVE_SIMULATOR_FOUND "no")  # for ViSP-third-party.txt
+      MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Turn off USE_COIN option!")
     ENDIF(VISP_HAVE_COIN)
   ELSE(OPENGL_FOUND)
     #MESSAGE(STATUS "OPENGL_LIBRARIES no found")
