@@ -58,6 +58,8 @@
 #include <sstream>
 #include <algorithm>
 #include <assert.h>
+#include <fstream>
+#include <string>
 
 #include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
@@ -2819,6 +2821,168 @@ double vpMatrix::det(vpDetMethod method) const
 
   return (det);
 }
+
+
+/*!
+  Save a matrix to a file
+
+  \param Filename : absolute file name
+  \param M : matrix to be saved
+  \param binary :If true the matrix is save in a binary file, else a text file.
+  \param Header : optional line that will be saved at the beginning of the file
+  
+  \return Returns true if no problem appends.
+  
+  \Warning If you save the matrix as in a text file the precision is less than if you save it in a binary file.
+ */
+bool
+vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, const bool binary, const char *Header)
+{
+  std::fstream file;
+  
+  if (!binary)
+    file.open(filename, std::fstream::out);
+  else
+    file.open(filename, std::fstream::out|std::fstream::binary);
+  
+  if(!file)
+  {
+    file.close();
+    return false;
+  }
+  
+  else
+  {
+    if (!binary)
+    {
+      int i = 0;
+      file << "# ";
+      while (Header[i] != '\0')
+      {
+	file << Header[i];
+	if (Header[i] == '\n')
+	  file << "# ";
+	i++;
+      }
+      file << '\0';
+      file << std::endl;
+      file << M.getRows() << "\t" << M.getCols() << std::endl;
+      file << M << std::endl;
+    }
+    else
+    {
+      int headerSize = 0;
+      while (Header[headerSize] != '\0') headerSize++;
+      file.write(Header,headerSize+1);
+      int matrixSize;
+      matrixSize = M.getRows();
+      file.write((char*)&matrixSize,sizeof(int));
+      matrixSize = M.getCols();
+      file.write((char*)&matrixSize,sizeof(int));
+      double value;
+      for(int i = 0; i < M.getRows(); i++)
+      {
+	for(int j = 0; j < M.getCols(); j++)
+	{
+	  value = M[i][j];
+	  file.write((char*)&value,sizeof(double));
+	}
+      }
+    }
+  }
+  
+  file.close();
+  return true;
+}
+
+
+/*!
+  Load a matrix to a file
+
+  \param Filename : absolute file name
+  \param M : matrix to be loaded
+  \param binary :If true the matrix is load from a binary file, else from a text file.
+  \param Header : Header of the file is load in this parameter
+  
+  \return Returns true if no problem appends.
+ */
+bool
+vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, char *Header)
+{
+  std::fstream file;
+  
+  if (!binary)
+    file.open(filename, std::fstream::in);
+  else
+    file.open(filename, std::fstream::in|std::fstream::binary);
+  
+  if(!file)
+  {
+    file.close();
+    return false;
+  }
+  
+  else
+  {
+    if (!binary)
+    {
+      char c='0';
+      std::string h;
+      while (c != '\0')
+      {
+	file.read(&c,1);
+	h+=c;
+      }
+      if (Header != NULL)
+        strncpy(Header, h.c_str(), h.size() + 1);
+      
+      int rows, cols;
+      file >> rows;
+      file >> cols;
+      M.resize(rows,cols);
+
+      double value;
+      for(int i = 0; i < rows; i++)
+      {
+	for(int j = 0; j < cols; j++)
+	{
+	  file >> value;
+	  M[i][j] = value;
+	}
+      }
+    }
+    else
+    {
+      char c='0';
+      std::string h;
+      while (c != '\0')
+      {
+	file.read(&c,1);
+	h+=c;
+      }
+      if (Header != NULL)
+        strncpy(Header, h.c_str(), h.size() + 1);
+      
+      int rows, cols;
+      file.read((char*)&rows,sizeof(int));
+      file.read((char*)&cols,sizeof(int));
+      M.resize(rows,cols);
+      
+      double value;
+      for(int i = 0; i < rows; i++)
+      {
+	for(int j = 0; j < cols; j++)
+	{
+	  file.read((char*)&value,sizeof(double));
+	  M[i][j] = value;
+	}
+      }
+    }
+  }
+  
+  file.close();
+  return true;
+} 
 
 
 /**************************************************************************************************************/

@@ -171,6 +171,9 @@ public:
 
   void printSize() { std::cout << getRows() <<" x " << getCols() <<"  " ; }
   //@}
+  
+  static bool saveMatrix(const char *filename, const vpMatrix &M, const bool binary = false, const char *Header = "");
+  static bool loadMatrix(const char *filename, vpMatrix &M, const bool binary = false, char *Header = NULL);
 
   //---------------------------------
   // Copy / assignment
