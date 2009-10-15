@@ -259,6 +259,9 @@ public:
 
   // return the determinant of the matrix.
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
+  
+  //Compute the exponential matrix of a square matrix
+  vpMatrix expm();
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /** @name Deprecated functions */
   //@{
