@@ -2826,14 +2826,14 @@ double vpMatrix::det(vpDetMethod method) const
 /*!
   Save a matrix to a file
 
-  \param Filename : absolute file name
+  \param filename : absolute file name
   \param M : matrix to be saved
   \param binary :If true the matrix is save in a binary file, else a text file.
   \param Header : optional line that will be saved at the beginning of the file
   
   \return Returns true if no problem appends.
   
-  \Warning If you save the matrix as in a text file the precision is less than if you save it in a binary file.
+  Warning : If you save the matrix as in a text file the precision is less than if you save it in a binary file.
  */
 bool
 vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, const bool binary, const char *Header)
@@ -2899,7 +2899,7 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, const bool binary,
 /*!
   Load a matrix to a file
 
-  \param Filename : absolute file name
+  \param filename : absolute file name
   \param M : matrix to be loaded
   \param binary :If true the matrix is load from a binary file, else from a text file.
   \param Header : Header of the file is load in this parameter
@@ -2982,6 +2982,84 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, char 
   
   file.close();
   return true;
+}
+
+
+/*!
+
+  Compute the exponential matrix of a square matrix.
+  
+  \return Return the exponential matrix.
+  
+*/ 
+vpMatrix
+vpMatrix::expm()
+{
+   if(colNum != rowNum)
+   {
+     vpTRACE("The matrix must be square");
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+			    "The matrix must be square" ));
+   }
+   else
+   {
+     vpMatrix _expE(rowNum, colNum);
+     vpMatrix _expD(rowNum, colNum);
+     vpMatrix _expX(rowNum, colNum);
+     vpMatrix _expcX(rowNum, colNum);
+     vpMatrix _eye(rowNum, colNum);
+
+     _eye.setIdentity();
+     vpMatrix exp(*this);
+
+     double f;
+     int e;
+     double c = 0.5;
+     int q = 6;
+     int p = 1;
+
+     double nA = 0;
+     for (int i = 0; i < rowNum;i++)
+     {
+       double sum = 0;
+       for (int j=0; j < colNum; j++)
+       {
+         sum += fabs((*this)[i][j]);
+       }
+       if (sum>nA||i==0)
+       {
+         nA=sum;
+       }
+     }
+
+     f = frexp(nA, &e);
+     double s = (0 > e+1)?0:e+1;
+
+     double sca = 1.0 / pow(2.0,s);
+     exp=sca*exp;
+     _expX=*this;
+     _expE=c*exp+_eye;
+    _expD=-c*exp+_eye;
+     for (int k=2;k<=q;k++)
+     {
+       c = c * ((double)(q-k+1)) / ((double)(k*(2*q-k+1)));
+       _expcX=exp*_expX;
+       _expX=_expcX;
+       _expcX=c*_expX;
+       _expE=_expE+_expcX;
+       if (p) _expD=_expD+_expcX;
+       else _expD=_expD- _expcX;
+       p = !p;
+     }
+     _expX=_expD.inverseByLU();
+     exp=_expX*_expE;
+     for (int k=1;k<=s;k++)
+     {
+       _expE=exp*exp;
+       exp=_expE;
+     }
+     return exp;
+   }
 } 
 
 
