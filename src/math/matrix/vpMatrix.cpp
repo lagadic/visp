@@ -1003,6 +1003,90 @@ vpMatrix vpMatrix::t() const
   }
   return At;
 }
+/*!
+  \brief Transpose the matrix C = A^T
+  \return  A^T
+*/
+vpMatrix vpMatrix::transpose()const
+{
+  vpMatrix At ;
+
+  try {
+    At.resize(colNum,rowNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    vpCERROR << me << std::endl ;
+    throw ;
+  }
+  
+    size_t A_step = colNum;
+    double ** AtRowPtrs = At.rowPtrs;
+ 
+    for( int i = 0; i < colNum; i++ )
+    {
+        double * row = AtRowPtrs[i];
+	double * col = rowPtrs[0]+i;
+        for( int j = 0; j < rowNum; j++, col+=A_step )
+            *(row++)=*col;
+	   
+    }
+    return At;
+}
+
+
+/*!
+ \brief Compute the AtA operation B = A*A^T
+ \return  A*A^T
+ \sa AAt(vpMatrix &) const
+*/
+ vpMatrix vpMatrix::AAt() const
+{
+ vpMatrix B;
+
+ AAt(B);
+
+ return B;
+}
+
+/*!
+ \brief Compute the AtA operation B = A*A^T
+  The Result is placed in the parameter B and not returned.
+  A new matrix won't be allocated for every use of the function
+  (Speed gain if used many times with the same result matrix size).
+  \sa AAt()
+*/
+void vpMatrix::AAt(vpMatrix &B)const {
+  
+   try {
+       if ((B.rowNum != rowNum) || (B.colNum != rowNum)) B.resize(rowNum,rowNum);
+   }
+   catch(vpException me)
+   {
+       vpERROR_TRACE("Error caught") ;
+       vpCERROR << me << std::endl ;
+       throw ;
+   }
+   
+   // compute A*A^T
+  for(int i=0;i<rowNum;i++){
+    for(int j=i;j<rowNum;j++){
+      double *pi = rowPtrs[i];// row i
+      double *pj = rowPtrs[j];// row j
+      
+      // sum (row i .* row j)
+      double ssum=0;
+      for(int k=0; k < colNum ;k++) 
+	ssum += *(pi++)* *(pj++);
+      
+      B[i][j]=ssum; //upper triangle
+      if(i!=j)
+	B[j][i]=ssum; //lower triangle
+    }
+  }
+}
+
 
 
 /*!

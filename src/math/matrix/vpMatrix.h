@@ -298,6 +298,9 @@ public:
   //! Compute the transpose C = A^T
   vpMatrix t() const;
 
+  //! Compute the transpose C = A^T
+  vpMatrix transpose()const;
+  
   //! Set the matrix to identity
   void setIdentity() ;
 
@@ -306,6 +309,10 @@ public:
   //! Initialize an identity matrix m-by-n
    void eye(int m, int n) ;
 
+   //! Compute the AAt operation B = A*A^T
+   vpMatrix AAt() const;
+   void AAt(vpMatrix &B) const;
+   
   //! Compute the AtA operation B = A^T*A
   vpMatrix AtA() const;
   void AtA(vpMatrix &B) const;
