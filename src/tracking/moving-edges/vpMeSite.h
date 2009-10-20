@@ -126,6 +126,30 @@ public:
 	     const vpMe *me,
 	     const  bool test_contraste=true);
   void setDisplay(vpMeSiteDisplayType select) { selectDisplay = select ; }
+  
+  /*!
+
+    Compute the distance \f$ |S1 - S2| = \sqrt{(i_1-i_2)^2+(j_1-j_2)^2} \f$
+
+    \param S1 : First site
+    \param S2 : Second site
+
+    \return the distance between the two sites.
+  */
+  static double distance (const vpMeSite S1, const vpMeSite S2) {
+    return(sqrt(vpMath::sqr(S1.ifloat-S2.ifloat)+vpMath::sqr(S1.jfloat-S2.jfloat)));}
+    
+  /*!
+
+    Compute the distance \f$ |S1 - S2| = (i_1-i_2)^2+(j_1-j_2)^2 \f$
+
+    \param S1 : First site
+    \param S2 : Second site
+
+    \return the distance between the two sites.
+  */
+  static double sqrDistance (const vpMeSite S1, const vpMeSite S2) {
+    return(vpMath::sqr(S1.ifloat-S2.ifloat)+vpMath::sqr(S1.jfloat-S2.jfloat));}
 
 private:
   vpMeSiteDisplayType selectDisplay ;
