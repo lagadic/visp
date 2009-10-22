@@ -42,6 +42,8 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   exponentialMap.cpp
+  BSpline.cpp
+  Nurbs.cpp
 )
 
 # rule for binary build
@@ -54,7 +56,7 @@ FOREACH(source ${SOURCE})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
   # Add test
-  ADD_TEST(${binary} ${binary})
+  ADD_TEST(${binary} ${binary} -d)
 
 ENDFOREACH(source)
 
