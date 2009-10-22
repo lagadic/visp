@@ -84,7 +84,7 @@
 void usage(const char *name, const char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
-Tracking of a line.\n\
+Tracking of Surf key-points.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-c] [-d] [-h]\n", name);
