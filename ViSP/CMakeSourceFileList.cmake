@@ -124,6 +124,8 @@ SET (SRC_MATH
   math/misc/vpHinkley.cpp 
   math/robust/vpRobust.cpp
   math/robust/vpScale.cpp
+  math/spline/vpBSpline.cpp
+  math/spline/vpNurbs.cpp
   math/transformation/vpEulerVector.cpp
   math/transformation/vpExponentialMap.cpp 
   math/transformation/vpHomogeneousMatrix.cpp
