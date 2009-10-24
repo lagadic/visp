@@ -243,7 +243,10 @@ vpThetaUVector::extract(double &theta, vpColVector &u) const
   u.resize(3);
 
   theta = sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2]);
-
+  if (theta == 0) {
+    u = 0;
+    return;
+  }
   for (int i=0 ; i < 3 ; i++) 
     u[i] = r[i] / theta ;
 }
