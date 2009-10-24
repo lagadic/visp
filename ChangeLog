@@ -47,6 +47,7 @@ ViSP 2.x.y
     - [8389] vpKltOpencv : Bug in the copy constructor
     - [8493] Problem to build ViSP as a dynamic library under windows (Visual C++)
     - [8495] Segmentation fault during the execution of the example grabDirectShow
+    - [8831] Possible bug when extracting axis/angle from theta/u vector	
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features

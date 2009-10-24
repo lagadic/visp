@@ -172,5 +172,15 @@ main(int argc, const char ** argv)
   rzyx_final.buildFrom(R) ;
   std::cout << rzyx_final << std::endl ;
 
+  // ThetaU = 0
+  tu[0] = vpMath::rad(0);
+  tu[1] = vpMath::rad(0);
+  tu[2] = vpMath::rad(0);
 
+  double theta;
+  vpColVector u;
+  tu.extract(theta, u);
+
+  std::cout << "ThetaU: " << tu.t() << std::endl;
+  std::cout << "Theta: " << theta << " U: " << u.t() << std::endl;
 }
