@@ -106,13 +106,13 @@ IF (UNIX)
   OPTION(USE_AFMA6   "Compile ViSP for Afma6 robot usage" OFF)
   OPTION(USE_BICLOPS "Compile ViSP for Biclops head usage" OFF)
   OPTION(USE_PTU46   "Compile ViSP for Ptu-46 head usage" OFF)
-  OPTION(USE_COIN    "Compile ViSP with simulation capabilities based on Coin3D suite" OFF)
+  OPTION(USE_COIN_SIMULATOR    "Compile ViSP with simulation capabilities based on Coin3D suite" OFF)
 ENDIF(UNIX)
 
 # Set other options to default value
 SET(USE_X11        ON) # For Linux/OSX display
 SET(USE_XML2       ON) # For the Xml Parser (vpCameraParameters)
-#SET(USE_COIN       ON) # For the simulator
+#SET(USE_COIN_SIMULATOR       ON) # For the simulator
 SET(USE_SOWIN      ON) # For the simulator viewer
 SET(USE_SOQT       ON) # For the simulator viewer
 SET(USE_SOXT       ON) # For the simulator viewer
@@ -216,7 +216,7 @@ SET(VISP_HAVE_SOQT_FOUND "no")      # for ViSP-third-party.txt
 SET(VISP_HAVE_QT4_FOUND "no")       # for ViSP-third-party.txt
 SET(VISP_HAVE_QT3_FOUND "no")       # for ViSP-third-party.txt
 
-IF(USE_COIN)
+IF(USE_COIN_SIMULATOR)
   INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
   IF(OPENGL_FOUND)
     FIND_PACKAGE(COIN)
@@ -390,12 +390,16 @@ IF(USE_COIN)
     ELSE(VISP_HAVE_COIN)
       MESSAGE(STATUS "Coin not found")
       SET(VISP_HAVE_SIMULATOR_FOUND "no")  # for ViSP-third-party.txt
-      MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Turn off USE_COIN option!")
+      IF (NOT DESIRED_QT_VERSION MATCHES 0)
+        # If QT version not set by the user, we don't print the following 
+	# message
+        MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Turn off USE_COIN_SIMULATOR option!")
+      ENDIF (NOT DESIRED_QT_VERSION MATCHES 0)
     ENDIF(VISP_HAVE_COIN)
   ELSE(OPENGL_FOUND)
     #MESSAGE(STATUS "OPENGL_LIBRARIES no found")
   ENDIF(OPENGL_FOUND)
-ENDIF(USE_COIN)
+ENDIF(USE_COIN_SIMULATOR)
 
 #---------------------------------------------------------------------
 # XML2
