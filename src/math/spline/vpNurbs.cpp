@@ -729,7 +729,7 @@ void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, int
   
   The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
   
-  \param crossingPoints : The list of data points which have to be interpolated.
+  \param l_crossingPoints : The list of data points which have to be interpolated.
 */
 void vpNurbs::globalCurveInterp(vpList<vpImagePoint> &l_crossingPoints)
 {
@@ -933,7 +933,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, int
   The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
   
   \param l_crossingPoints : The list of data points which have to be interpolated.
-  \param l_n : The desired number of control points. l_n must be under or equal to the number of data points.
+  \param n : The desired number of control points. The parameter \e n must be under or equal to the number of data points.
 */
 void vpNurbs::globalCurveApprox(vpList<vpImagePoint> &l_crossingPoints, int n)
 {
@@ -948,14 +948,20 @@ void vpNurbs::globalCurveApprox(vpList<vpImagePoint> &l_crossingPoints, int n)
 }
 
 /*!
-  Method which enables to compute a NURBS curve approximating a set of data points.
+
+  Method which enables to compute a NURBS curve approximating a set of
+  data points.
   
   The data points are approximated thanks to a least square method.
   
-  The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
+  The result of the method is composed by a knot vector, a set of
+  control points and a set of associated weights.
   
-  \param l_crossingPoints : The list of data points which have to be interpolated.
-  \param l_n : The desired number of control points. l_n must be under or equal to the number of data points.
+  \param l_crossingPoints : The list of data points which have to be
+  interpolated.
+
+  \param n : The desired number of control points. This parameter \e n
+  must be under or equal to the number of data points.
 */
 void vpNurbs::globalCurveApprox(vpList<vpMeSite> &l_crossingPoints, int n)
 {
