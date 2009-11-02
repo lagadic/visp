@@ -272,6 +272,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void setFramerate(vp1394TwoFramerateType fps);
   void setRingBufferSize(unsigned int size);
   void setVideoMode(vp1394TwoVideoModeType videomode);
+  void setPanControl(int panControlValue);
 
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);

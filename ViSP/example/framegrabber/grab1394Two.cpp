@@ -72,7 +72,7 @@
 
 
 // List of allowed command line options
-#define GETOPTARGS	"b:c:df:g:hH:L:mn:io:rsT:v:W:"
+#define GETOPTARGS	"b:c:df:g:hH:L:mn:io:p:rsT:v:W:"
 
 
 #define DUAL_ACQ
@@ -90,13 +90,14 @@
   \param roi_left, roi_top, roi_width, roi_height : Region of interest in
   format 7.
   \param ringbuffersize : Ring buffer size used for capture.
+  \param panControl : Pan control value.
 
 */
 void usage(const char *name, const char *badparam, unsigned int camera,
 	   const unsigned int &nframes, const std::string &opath,
 	   const unsigned int &roi_left, const unsigned int &roi_top,
 	   const unsigned int &roi_width, const unsigned int &roi_height,
-	   const unsigned int &ringbuffersize)
+	   const unsigned int &ringbuffersize, const unsigned int &panControl)
 {
   if (badparam)
     fprintf(stderr, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -107,13 +108,14 @@ SYNOPTIQUE\n\
     [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
     [-i] [-s] [-d] [-o <filename>] [-L <format 7 roi left position>] \n\
     [-T <format 7 roi top position>] [-W <format 7 roi width>] \n\
-    [-H <format 7 roi height>] [-b <ring buffer size>] [-R] [-h]\n\
+    [-H <format 7 roi height>] [-b <ring buffer size>] \n\
+    [-p <pan control value>] [-R] [-h]\n\
 \n\
 DESCRIPTION\n\
     Test for firewire camera image acquisition.\n\
 \n\
 EXAMPLES\n\
-    If two cameras are connected on the bus.\n\
+    If two cameras are connected on the bus:\n\
     %s -s\n\
        Indicates the current settings for the first camera found on the bus.\n\
     %s -i\n\
@@ -126,6 +128,13 @@ EXAMPLES\n\
        Grab images from camera 1.\n\
     %s -m\n\
        Grab images from all the cameras.\n\
+\n\
+    If a stereo camera is connected to the bus like the PointGrey Bumblebee,\n\
+    you may set the pan control to select the camera view:\n\
+    %s -p 0\n\
+       Transmit right imge.\n\
+    %s -p 1\n\
+       Transmit left imge.\n\
 \n\
 OPTIONS                                                    Default\n\
     -v [%%u] : Video mode to set for the active camera.\n\
@@ -180,6 +189,10 @@ OPTIONS                                                    Default\n\
 \n\
     -b [%%u] : Ring buffer size used during capture           %u\n\
 \n\
+    -p [%%u] : Pan control value used to control single or    %u\n\
+              multiple image transmission from stereo vision \n\
+              cameras by setting the PAN register 0x884.\n\
+\n\
     -o [%%s] : Filename for image saving.                     \n\
               Example: -o %s\n\
               The first %%d is for the camera id. The second\n\
@@ -194,9 +207,9 @@ OPTIONS                                                    Default\n\
 \n\
     -h      : Print this help.\n\
 \n",
-	  name, name, name, name, name, name, name,
+	  name, name, name, name, name, name, name, name, name,
 	  roi_left, roi_top, roi_width, roi_height,
-	  camera, nframes, ringbuffersize, opath.c_str());
+	  camera, nframes, ringbuffersize, panControl, opath.c_str());
 
 }
 
@@ -250,7 +263,8 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
 		  bool &display, bool &save, std::string &opath,
 		  unsigned int &roi_left, unsigned int &roi_top,
 		  unsigned int &roi_width, unsigned int &roi_height,
-		  bool &reset)
+		  bool &reset,
+		  unsigned int &panControl, bool & panControl_is_set)
 {
   /*
    * Lecture des options.
@@ -288,6 +302,10 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     case 'b':
       ringbuffersize_is_set = true;
       ringbuffersize = (unsigned int) atoi(optarg); break;
+    case 'p':
+      panControl = (unsigned int) atoi(optarg);
+      panControl_is_set = true;
+      break;
     case 'r':
       reset = true; break;
     case 's':
@@ -303,7 +321,8 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     case 'h':
     case '?':
       usage(argv[0], NULL, camera, nframes, opath,
-	    roi_left, roi_top, roi_width, roi_height, ringbuffersize);
+	    roi_left, roi_top, roi_width, roi_height, ringbuffersize, 
+            panControl);
       exit(0);
       break;
     }
@@ -312,7 +331,7 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, camera, nframes, opath,
-	  roi_left, roi_top, roi_width, roi_height, ringbuffersize);
+	  roi_left, roi_top, roi_width, roi_height, ringbuffersize, panControl);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     exit(-1);
@@ -349,6 +368,8 @@ main(int argc, const char ** argv)
     unsigned int ringbuffersize = 4;
     bool save = false;
     bool reset = false;
+    unsigned int panControl = 0;
+    bool panControl_is_set = false;
 
     // Format 7 roi
     unsigned int roi_left=0, roi_top=0, roi_width=0, roi_height=0;
@@ -363,7 +384,8 @@ main(int argc, const char ** argv)
 		 colorcoding_is_set, colorcoding,
 		 ringbuffersize_is_set, ringbuffersize,
 		 display, save, opath,
-		 roi_left, roi_top, roi_width, roi_height, reset);
+		 roi_left, roi_top, roi_width, roi_height, reset,
+		 panControl, panControl_is_set);
 
     // Create a grabber
     vp1394TwoGrabber g(reset);
@@ -506,6 +528,12 @@ main(int argc, const char ** argv)
 	}
       }
       return 0;
+    }
+
+    // If requested set the PAN register 0x884 to control single or
+    // multiple image transmission from stereo vision cameras.
+    if (panControl_is_set) {
+      g.setPanControl(panControl);
     }
 
     // If required modify camera settings

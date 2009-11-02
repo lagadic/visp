@@ -2558,6 +2558,55 @@ void vp1394TwoGrabber::resetBus()
   initialize(false);
 }
 
+/*!
+
+  This method is useful for controlling single or multiple image
+  transmission from stereo vision cameras.
+
+  The PAN register 0x884 used to control which images are transmitted
+  is set to the corresponding \e panControlValue value.
+
+  \param panControlValue : Value used to set the PAN register 0x884.
+  The Format_7 Mode 0 transmits images from one camera. When set to 0,
+  transmit right image. When set to 1, transmit left (Bumblebee2) or
+  center (Bumblebee XB3) image and when set to 2 or higher transmit
+  left image. The Format_7 Mode 3 allows to transmit two images
+  simultaneously. If your camera has two sensors, you can use the PAN
+  register to control the order of the images when
+  transmitting. Writing a value of 0 to this register transmits images
+  in right-left format. A value of 1 transmits images in left-right
+  format. If your camera has three sensors, such as the Bumblebee XB3,
+  you can adjust the PAN register as follows to specify which two
+  sensors are capturing images. When \e panControlValue is set to 0,
+  transmit right-left images, when set to 1, transmit right-center
+  images.
+  
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If the register was not set.
+
+ */
+void vp1394TwoGrabber::setPanControl(int panControlValue)
+{
+  open();
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+  uint64_t offset = 0x884;
+  uint32_t value = 0x82000000 + panControlValue;
+  dc1394error_t err;
+  err = dc1394_set_control_register(camera, offset, value);
+  if (err != DC1394_SUCCESS) {
+    vpERROR_TRACE("Unable to set PAN register");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                   "Unable to set PAN register") );
+  }
+}
 
 #endif
 
