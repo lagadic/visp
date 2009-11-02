@@ -21,6 +21,9 @@ ViSP 2.x.y
       is for example useful when image processing needs to be introduced 
       between the dequeuing and enqueuing stages. It may also useful
       to synchronise the image acquisition with an other sensor.
+      New setPanControl() function was introduced to set the PAN register 
+      0x884 to control single or multiple image transmission from stereo 
+      vision cameras like the PointGrey Bumblebee.
     - vpDot2: The tracking is restarted in vpDot2::track() if a dot is found 
       but is not valid.
   - Examples:
