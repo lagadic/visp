@@ -248,6 +248,12 @@ OPTIONS                                                    Default\n\
   \param reset : If "true", reset the bus attached to the first
   camera found. Bus reset may help to make firewire working if the
   program was not properly stopped by a CTRL-C.
+
+  \param panControl : Value used to set the pan control register.
+
+  \param panControl_is_set : Indicates if the pan contraol register
+  has to be set.
+  
 */
 void read_options(int argc, const char **argv, bool &multi, unsigned int &camera,
 		  unsigned int &nframes, bool &verbose_info,

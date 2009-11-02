@@ -72,7 +72,6 @@
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath : Input image path.
 
 */
 void usage(const char *name, const char *badparam)
@@ -106,7 +105,6 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param ipath : Input image path.
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
 
