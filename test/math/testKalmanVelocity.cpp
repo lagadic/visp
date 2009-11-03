@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Tests some vpKalman functionalities.
+ * Tests some vpLinearKalmanFilterInstantiation functionalities.
  *
  * Authors:
  * Fabien Spindler
@@ -38,12 +38,13 @@
 /*!
   \example testKalmanVelocity.cpp
 
-  \brief Test some vpKalman functionalities with constant velocity state model.
+  \brief Test some vpLinearKalmanFilterInstantiation functionalities
+  with constant velocity state model.
 */
 #include <iostream>
 #include <fstream>
 
-#include <visp/vpKalmanFilter.h>
+#include <visp/vpLinearKalmanFilterInstantiation.h>
 
 typedef enum {
   Position, // Considered measures are the succesive positions of the target
@@ -63,7 +64,7 @@ main()
   std::string filename = "/tmp/log.dat";
   std::ofstream flog(filename.c_str());
 
-  vpKalmanFilter kalman;
+  vpLinearKalmanFilterInstantiation kalman;
 
   vpColVector sigma_measure(size_measure_vector);
   for (int signal=0; signal < nsignal; signal ++) 
@@ -93,18 +94,18 @@ main()
 
   kalman.verbose(true);
 
-  vpKalmanFilter::vpStateModel model;
+  vpLinearKalmanFilterInstantiation::vpStateModel model;
   double dt = 0.04; // Sampling period
   double rho = 0.5;
   double dummy = 0; // non used parameter
   switch (measure_t) {
   case Velocity:
-    model = vpKalmanFilter::stateConstVelWithColoredNoise_MeasureVel;
+    model = vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel;
     kalman.setStateModel(model);
     kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
     break;
   case Position:
-    model = vpKalmanFilter::stateConstVel_MeasurePos;
+    model = vpLinearKalmanFilterInstantiation::stateConstVel_MeasurePos;
     kalman.setStateModel(model);
     kalman.initFilter(nsignal, sigma_state, sigma_measure, dummy, dt);
     break;
