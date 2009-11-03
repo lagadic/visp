@@ -28,7 +28,7 @@
  * not clear to you.
  *
  * Description:
- * Tests some vpKalman functionalities.
+ * Tests some vpLinearKalmanFilterInstantiation functionalities.
  *
  * Authors:
  * Fabien Spindler
@@ -38,13 +38,13 @@
 /*!
   \example testKalmanAcceleration.cpp
 
-  \brief Test some vpKalman functionalities with constant acceleration
-  state model.
+  \brief Test some vpLinearKalmanFilterInstantiation functionalities
+  with constant acceleration state model.
 */
 #include <iostream>
 #include <fstream>
 
-#include <visp/vpKalmanFilter.h>
+#include <visp/vpLinearKalmanFilterInstantiation.h>
 
 int
 main()
@@ -55,10 +55,10 @@ main()
   std::string filename = "/tmp/log.dat";
   std::ofstream flog(filename.c_str());
 
-  vpKalmanFilter kalman;
+  vpLinearKalmanFilterInstantiation kalman;
  
-  vpKalmanFilter::vpStateModel model;
-  model = vpKalmanFilter::stateConstAccWithColoredNoise_MeasureVel;
+  vpLinearKalmanFilterInstantiation::vpStateModel model;
+  model = vpLinearKalmanFilterInstantiation::stateConstAccWithColoredNoise_MeasureVel;
   kalman.setStateModel(model);
 
   int size_state_vector = kalman.getStateSize()*nsignal;

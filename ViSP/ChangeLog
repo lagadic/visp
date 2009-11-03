@@ -5,8 +5,8 @@ ViSP 2.x.y
     - New vpPlot class that enables real time drawing of graphics under Unix.
     - Ability to use other colors than the predefined ones with the rewriting 
       of the vpColor class and modifications in display functionalities.
-    - New vpKalman and vpKalmanFilter classes with velocity and acceleration 
-      state models.
+    - New vpKalmanFilter and vpLinearKalmanFilterInstantiation classes with 
+      velocity and acceleration state models.
     - New vpFeatureTranslation: ctc*
     - New USE_COIN_SIMULATOR option during CMake configuration to enable or 
       disable simulation capabilities based on Coin3D suite.  

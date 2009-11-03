@@ -41,130 +41,177 @@
 
 #include <math.h>
 
-#include <visp/vpKalman.h>
+#include <visp/vpMatrix.h>
+#include <visp/vpColVector.h>
 
 /*!
   \file vpKalmanFilter.h
-  \brief Implementation of some specific Kalman filters.
+  \brief Generic kalman filtering implementation
 */
 
 /*!
   \class vpKalmanFilter
-  This class provides an implementation of some specific filters
-*/
-class VISP_EXPORT vpKalmanFilter : public vpKalman
-{
- public:
-  /*!  
-    Selector used to set the Kalman filter state model.
-  */ 
-  typedef enum {
-    /*! Consider the state as a constant velocity model with white
-        noise. Measures available are the succesive positions of the
-        target. To know more about this state model, see
-        initStateConstVel_MeasurePos(). */
-    stateConstVel_MeasurePos, 
-    /*! Consider the state as a constant velocity model with colored noise
-        measurements as acceleration terms. Measured available are the
-        velocities of the target. To know more about this state model,
-        see initStateConstVelWithColoredNoise_MeasureVel(). */
-    stateConstVelWithColoredNoise_MeasureVel, 
-    /*! Consider the state as a constant acceleration model with colored noise
-        measurements as acceleration terms. Measured available are the
-        velocities of the target. To know more about this state model,
-        see initStateConstAccWithColoredNoise_MeasureVel(). */
-    stateConstAccWithColoredNoise_MeasureVel,
-    /*! Used to indicate that the state model is not initialized. */
-    unknown 
-  } vpStateModel;
+  \brief This class provides a generic Kalman filtering algorithm along with
+  some specific state model (constant velocity, constant acceleration)
+  which are implemented in the vpLinearKalmanFilterInstantiation class.
+
+  The state evolution equation is given by:
+  \f[
+  {\bf x}_k= {\bf F}_{k-1} {\bf x}_{k-1} + {\bf w}_{k-1} \\
+  \f]
+  where \f${\bf x}_{k}\f$ is the unknown state at iteration \f$k\f$.
   
-  /*!
-    Default Kalman filter.
-    
-    By default the state model is unknown and set to
-    vpKalmanFilter::unknown.
-  */
-  vpKalmanFilter() : vpKalman()
-    {
-      setStateModel(unknown);
-    };
-
-  /*!
-    Return the current state model.
-   */
-  inline vpStateModel getStateModel() {
-    return model;
-  }
-  void filter(vpColVector &z);
+  The measurement equation is given by:
+  \f[
+  {\bf z}_k = {\bf H} {\bf x}_k + {\bf r}_k
+  \f]
+  where \f${\bf z}_{k}\f$ is the measure (also named observation) at iteration \f$k\f$.
  
-  /*! @name Generic linear filter initializer */
-  //@{
-  /*!
-    Set the Kalman state model. Depending on the state model, we set
-    the state vector size and the measure vector size. 
+  The predicted state is obtained by:
+  \f[
+  {\bf x}_{k|k-1}  =  {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}
+  \f]
+  \f[
+  {\bf P}_{k \mid k-1} = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1}
+  + {\bf Q}_k \f]
+  where
+  <ul>
+  <li> \f$ {\bf x}_{k|k-1}\f$ is the prediction of the state,
+  <li> \f$ {\bf P}_{k \mid k-1}\f$ is the state prediction covariance matrix.
+  </ul>
+  Filtering equation are:
+  \f[
+  {\bf W}_k = {\bf P}_{k \mid k-1} {\bf H}^T
+  \left[  {\bf H P}_{k \mid k-1} {\bf H}^T + {\bf R}_k \right]^{-1}
+  \f]
+  \f[
+  {\bf x}_{k \mid k} =  {\bf x}_{k \mid k-1} + {\bf W}_k  \left[ {\bf z}_k -
+  {\bf H x}_{k \mid k-1} \right]
+  \f]
+  \f[
+  {\bf P}_{k \mid k} = \left({\bf I - W}_k {\bf H} \right)  {\bf P}_{k \mid
+  k-1} \f]
 
-    The example below shows how to use this method and then to get the
-    size of the state and measure vectors.
+  where \f$ {\bf W}_k \f$ is the filter gain.
 
-    \code
-#include <visp/vpKalmanFilter.h>
+  Notice that there is a recursion for the inverse covariance
+  \f[
+  {\bf P}_{k \mid k}^{-1}=  {\bf P}_{k \mid k-1}^{-1} + {\bf H}^T {\bf
+  R}^{-1} {\bf H}
+  \f]
+  where \f${\bf P}_{k \mid k}^{-1}\f$ is the inverse of the covariance matrix.
 
-int main()
+  ViSP provides different state evolution models implemented in the
+  vpLinearKalmanFilterInstantiation class.
+*/
+class VISP_EXPORT vpKalmanFilter
 {
-  vpKalmanFilter kalman;
+protected :
+  //bool init_done ;
 
-  kalman.setStateModel(vpKalmanFilter::StateConstVelWithColoredNoise_MeasureVel);
-  std::cout << "State vector size: " << kalman.getStateSize() << std::endl; // Value is 2
-  std::cout << "Measure vector size: " << kalman.getMeasureSize() << std::endl; // Value is 1
-}  
-    \endcode
+  //! Filter step or iteration. When set to zero, initialize the filter. 
+  long iter ;
+
+  //! Size of the state vector \f${\bf x}_k\f$.
+  int size_state ;
+  //! Size of the measure vector \f${\bf z}_k\f$.
+  int size_measure ;
+  //! Number of signal to filter.
+  int nsignal ;
+
+  //! When set to true, print the content of internal variables during filtering() and prediction().
+  bool verbose_mode;
+
+public:
+  vpKalmanFilter() ;
+  vpKalmanFilter(int nsignal) ;
+  vpKalmanFilter(int size_state, int size_measure, int nsignal) ;
+  /*!
+    Set the number of signal to filter.
   */
-  inline void setStateModel(vpStateModel model) {
-    this->model = model;
-    switch(model) {
-    case stateConstVel_MeasurePos:
-    case stateConstVelWithColoredNoise_MeasureVel:
-      size_state = 2;
-      size_measure = 1;
-      break;
-    case stateConstAccWithColoredNoise_MeasureVel:
-      size_state = 3;
-      size_measure = 1;
-      break;
-    case unknown:
-      size_state = 0;
-      size_measure = 0;
-      break;
-    }
+  void setNumberOfSignal(int nsignal)
+  {
+    this->nsignal = nsignal;
   }
-  void initFilter(int nsignal, vpColVector &sigma_state,
-		  vpColVector &sigma_measure, double rho, double dt);
-  //@}
 
-  /*! @name Linear filter initializer with constant velocity models */
-  //@{
-  void initStateConstVel_MeasurePos(int nsignal, 
-				    vpColVector &sigma_state,
-				    vpColVector &sigma_measure,
-				    double dt);
-  void initStateConstVelWithColoredNoise_MeasureVel(int nsignal, 
-						    vpColVector &sigma_state,
-						    vpColVector &sigma_measure, 
-						    double rho);
-  //@}
+  // int init() { return init_done ; }
+  void init(int size_state, int size_measure, int nsignal) ;
+  void prediction() ;
+  void filtering(vpColVector &z) ;
+  /*!
+    Return the size of the state vector \f${\bf x}_{(k)}\f$ for one signal.
+  */
+  int getStateSize() { return size_state; };
+  /*!
+    Return the size of the measure vector \f${\bf z}_{(k)}\f$ for one signal.
+  */
+  int getMeasureSize() { return size_measure; };
+  /*!
+    Return the number of signal to filter.
+  */
+  int getNumberOfSignal() { return nsignal; };
+  /*!
+    Return the iteration number.
+  */
+  int getIteration() { return iter ; }
+  /*!
+    Sets the verbose mode.
+    \param on : If true, activates the verbose mode which consists in printing the Kalman 
+    filter internal values.
+  */
+  void verbose(bool on) { verbose_mode = on;};
 
-  /*! @name Linear filter initializer with constant acceleration models */
-  //@{
-  void initStateConstAccWithColoredNoise_MeasureVel(int nsignal, 
-						    vpColVector &sigma_state,
-						    vpColVector &sigma_measure, 
-						    double rho,
-						    double dt);
-  //@}
+public:
+  /*!
+    The updated state estimate \f${\bf x}_{k \mid k} \f$ where 
+    \f${\bf x}_{k \mid k} = {\bf x}_{k \mid k-1} + {\bf W}_k  
+    \left[ {\bf z}_k -  {\bf H x}_{k \mid k-1} \right]\f$.
+  */
+  vpColVector Xest ;
+  /*!
+    The predicted state \f${\bf x}_{k \mid k-1} \f$ where 
+    \f$ {\bf x}_{k|k-1} = {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}\f$.
+  */
+  vpColVector Xpre ;
+  //! Transition matrix \f${\bf F}\f$ that describes the evolution of the state.
+  vpMatrix F ;
 
- protected:
-  vpStateModel model;
+  //! Matrix \f${\bf H}\f$ that describes the evolution of the measurements. 
+  vpMatrix H ;
 
+  //! Measurement noise covariance matrix \f${\bf R}\f$.
+  vpMatrix R ;
+  //! Process noise covariance matrix \f${\bf Q}\f$.
+  vpMatrix Q ;
+  /*! Sampling time \f$\Delta t\f$ in second between two succesive
+      iterations. Only used in some specific state models implemented
+      in vpLinearKalmanFilterInstantiation.*/
+  double dt ;
+
+protected:
+  /*!
+    The state prediction covariance \f${\bf P}_{k \mid k-1} \f$ where 
+    \f$ {\bf P}_{k \mid k-1} = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1} 
+    + {\bf Q}_k\f$.
+  */
+  vpMatrix Ppre ;
+
+  /*!  
+    The updated covariance of the state \f${\bf P}_{k \mid k}\f$
+    where \f${\bf P}_{k \mid k} = \left({\bf I - W}_k {\bf H}
+    \right) {\bf P}_{k \mid k-1}\f$. 
+  */
+  vpMatrix Pest ;
+
+  /*!  
+    Filter gain \f${\bf W}_k\f$ where \f$ {\bf W}_k = {\bf P}_{k
+    \mid k-1} {\bf H}^T \left[ {\bf H P}_{k \mid k-1} {\bf H}^T + {\bf
+    R}_k \right]^{-1}\f$.
+  */
+  vpMatrix W ;
+
+  //! Identity matrix \f$ \bf I\f$.
+  vpMatrix I ;
 } ;
 
 
