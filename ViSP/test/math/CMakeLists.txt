@@ -42,8 +42,8 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   testColvector.cpp
-  #testKalmanAcceleration.cpp
-  #testKalmanVelocity.cpp
+  testKalmanAcceleration.cpp
+  testKalmanVelocity.cpp
   testMatrix.cpp
   testMatrixException.cpp
   testRobust.cpp
