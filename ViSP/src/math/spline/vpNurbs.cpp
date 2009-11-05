@@ -590,7 +590,7 @@ int vpNurbs::removeCurveKnot(double l_u, int l_r, int l_num, double l_TOL, int l
   }
   if (t == 0) return t;
   for(int k = l_r+1; k <= m; k++) l_knots[k-t] = l_knots[k];
-  j = fout;
+  j = (int)fout;
   i = j;
   for(int k = 1; k< t; k++)
   {
