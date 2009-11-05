@@ -80,7 +80,7 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpDot2.h>
 #include <visp/vpAdaptativeGain.h>
-#include <visp/vpKalmanFilter.h>
+#include <visp/vpLinearKalmanFilterInstantiation.h>
 
 
 // List of allowed command line options
@@ -324,7 +324,7 @@ main(int argc, const char ** argv)
     //--------------------------------------------------------------------------
 	
     //!Initialize filter
-    vpKalmanFilter kalman;
+    vpLinearKalmanFilterInstantiation kalman;
     
     // Initialize the kalman filter
     int nsignal = 2; // The two values of dedt
@@ -336,7 +336,7 @@ main(int argc, const char ** argv)
     switch(opt_kalman) {
     case  K_VELOCITY: {
       // Set the constant velocity state model used for the filtering
-      kalman.setStateModel(vpKalmanFilter::stateConstVelWithColoredNoise_MeasureVel);
+      kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
       state_size = kalman.getStateSize();
       sigma_state.resize(state_size*nsignal);
       sigma_state = 0.00001; // Same state variance for all signals 
@@ -348,7 +348,7 @@ main(int argc, const char ** argv)
     }
     case K_ACCELERATION: {
       // Set the constant acceleration state model used for the filtering
-      kalman.setStateModel(vpKalmanFilter::stateConstAccWithColoredNoise_MeasureVel);
+      kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstAccWithColoredNoise_MeasureVel);
       state_size = kalman.getStateSize();
       sigma_state.resize(state_size*nsignal);
       sigma_state = 0.00001; // Same variance for all the signals
