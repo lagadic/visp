@@ -112,7 +112,7 @@ SET (SRC_LIGHT
 
 SET (SRC_MATH
   math/kalman/vpKalmanFilter.cpp
-  #math/kalman/vpLinearKalmanFilterInstantiation.cpp
+  math/kalman/vpLinearKalmanFilterInstantiation.cpp
   math/matrix/vpColVector.cpp
   math/matrix/vpMatrix.cpp
   math/matrix/vpMatrix_lu.cpp

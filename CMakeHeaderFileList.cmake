@@ -106,7 +106,7 @@ SET (HEADER_LIGHT
 
 SET (HEADER_MATH
   math/kalman/vpKalmanFilter.h
-  #math/kalman/vpLinearKalmanFilterInstantiation.h
+  math/kalman/vpLinearKalmanFilterInstantiation.h
   math/matrix/vpColVector.h
   math/matrix/vpMatrixException.h
   math/matrix/vpMatrix.h
