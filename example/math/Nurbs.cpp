@@ -355,7 +355,12 @@ main(int argc, const char ** argv)
   }
   
   if (N != NULL) delete[] N;
-  if (N2 != NULL) delete[] N2;
+  if (N2 != NULL)
+  {
+    for (int j = 0; j <= 2; j++)
+      delete[] N2[j];
+    delete[] N2;
+  }
   
   return 0;
 }
