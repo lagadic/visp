@@ -50,6 +50,9 @@ LIBS="${VISP_CONFIG_SCRIPT_EXTERN_LIBS}"
 
 VERSION="${VISP_VERSION}"
 
+NO_NEWLINE_CHARACTER="${VISP_ECHO_NO_NEWLINE_CHARACTER}"
+NO_NEWLINE_OPTION="${VISP_ECHO_NO_NEWLINE_OPTION}"
+
 usage()
 {
     cat <<EOF
@@ -79,14 +82,14 @@ fi;
 
 for arg in $@; do
     case $arg in
-	--prefix) echo -n "$PREFIX";;
-	--cflags) echo -n "$CFLAGS";;
-	--libs) echo -n "$LIBS";;
+	--prefix) echo $NO_NEWLINE_OPTION "$PREFIX$NO_NEWLINE_CHARACTER";;
+	--cflags) echo $NO_NEWLINE_OPTION "$CFLAGS$NO_NEWLINE_CHARACTER";;
+	--libs) echo $NO_NEWLINE_OPTION "$LIBS$NO_NEWLINE_CHARACTER";;
 	--version) 
-	    echo -n "ViSP $VERSION (Visual Servoing Platform)"
+	    echo "ViSP $VERSION (Visual Servoing Platform)"
 	    echo ""
-	    echo -n "Copyright (C) 1998-2009 Inria. All rights reserved.";;
-	--dumpversion) echo -n "$VERSION";;
+	    echo "Copyright (C) 1998-2009 Inria. All rights reserved.";;
+	--dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
 	*) usage; exit -1 ;;
     esac;
 done;
