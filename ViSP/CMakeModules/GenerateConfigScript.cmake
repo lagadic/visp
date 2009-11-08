@@ -38,6 +38,12 @@
 
 
 IF (UNIX)
+  #######################################################################
+  #
+  # for Unix platforms: Linux, OSX
+  #
+  ####################################################################### 
+
   SET(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.in")
   SET(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config")
   
@@ -49,12 +55,11 @@ IF (UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_CFLAGS
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_CFLAGS "")
-  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_CONFIG_SCRIPT_CFLAGS} "${VISP_DEFS}")
-  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_CONFIG_SCRIPT_CFLAGS} "-I$PREFIX/include")
+  SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_DEFS}")
+  LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "-I$PREFIX/include")
 
   FOREACH(INCDIR ${VISP_EXTERN_INCLUDE_DIR})
-    SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_CONFIG_SCRIPT_CFLAGS} "-I${INCDIR}")
+    LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "-I${INCDIR}")
   ENDFOREACH(INCDIR)
 
   # Suppress twins
@@ -72,7 +77,7 @@ IF (UNIX)
      ENDFOREACH(elementadded ${myvar})
      IF(${toadd})
 #       MESSAGE("need to add ${element}")
-       SET(myvar ${myvar} ${element})
+       LIST(APPEND myvar ${element})
      ENDIF(${toadd})
   ENDFOREACH(element ${VISP_CONFIG_SCRIPT_CFLAGS})
   SET(VISP_CONFIG_SCRIPT_CFLAGS ${myvar})
@@ -105,11 +110,17 @@ IF (UNIX)
   #
   #----------------------------------------------------------------------
   SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS)
-  SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS ${VISP_EXTERN_LINK_DIR})
+  SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS)
+  FOREACH(dir ${VISP_EXTERN_LINK_DIR})
+    LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LDFLAGS "-L${dir}") 
+  ENDFOREACH(dir)
+  #MESSAGE("VISP_EXTERN_LINK_DIR: ${VISP_EXTERN_LINK_DIR}")
+  #MESSAGE("VISP_CONFIG_SCRIPT_TMP_LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
   SET(VISP_CONFIG_SCRIPT_TMP_LIBS "")
+  #MESSAGE("VISP_EXTERN_LIBS: ${VISP_EXTERN_LIBS}")
   FOREACH(lib ${VISP_EXTERN_LIBS})
     #MESSAGE("library to process: ${lib}")
-    IF("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
+    IF("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
       #MESSAGE("${lib} matches .so or .a, processing to create -L and -l")
 
       # If the string lib to process is like: /usr/lib/libgtk-x11-2.0.so
@@ -143,7 +154,7 @@ IF (UNIX)
       STRING(REGEX REPLACE "^[l][i][b]" "-l" libname ${libname})
       #MESSAGE("processed library name: ${libname}")
 
-      SET(VISP_CONFIG_SCRIPT_TMP_LIBS ${VISP_CONFIG_SCRIPT_TMP_LIBS} ${libname})
+      LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LIBS ${libname})
       #----
       # Add test to be sure that the library path is unique in 
       # VISP_CONFIG_SCRIPT_TMP_LDFLAGS
@@ -169,17 +180,24 @@ IF (UNIX)
 	#MESSAGE("add ${path} ")
 	# Add the path to ldflags
 	SET(LDFLAGS_TO_ADD "-L${path}")
-	SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS} ${LDFLAGS_TO_ADD})
+	LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LDFLAGS ${LDFLAGS_TO_ADD})
 
       ENDIF(NOT ${LDFLAGS_ADDED})
 
       #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
       #MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
-            
-    ELSE("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
+#    ELSEIF("${lib}" MATCHES ".+[.][f][r][a][m][e][w][o][r][k]")
+    ELSEIF("${lib}" MATCHES ".[.][f][r][a][m][e][w][o][r][k]+$")
+      # Specific case of APPLE frameworks
+      #MESSAGE("Framework case: ${lib}")
+      # Get the framework name
+      GET_FILENAME_COMPONENT(framework ${lib} NAME_WE)
+      #MESSAGE("Framework name: ${framework}")
+      LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LIBS "-framework ${framework}")
+    ELSE("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
       #MESSAGE("${lib} is not a library in .so or .a, to keep")
-      SET(VISP_CONFIG_SCRIPT_TMP_LIBS ${VISP_CONFIG_SCRIPT_TMP_LIBS} ${lib})
-    ENDIF("${lib}" MATCHES ".+[.][s][o]" OR "${lib}" MATCHES ".+[.][a]")
+      LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LIBS ${lib})
+    ENDIF("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
   ENDFOREACH(lib)
 
   #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
@@ -203,13 +221,25 @@ IF (UNIX)
     ENDIF(NOT APPLE)
   ENDIF(UNIX)
 
+  SET(VISP_ECHO_NO_NEWLINE_CHARACTER "")
+  SET(VISP_ECHO_NO_NEWLINE_OPTION "")
+  IF(APPLE)
+    SET(VISP_ECHO_NO_NEWLINE_CHARACTER "\\c")
+  ELSE(APPLE)
+    SET(VISP_ECHO_NO_NEWLINE_OPTION "-n")
+  ENDIF(APPLE)
+
   #---------------------------------------------------------------------
   # Updates the visp-config shell script
   #----------------------------------------------------------------------
   CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
 
 ELSE(UNIX)
-  # for windows
+  #######################################################################
+  #
+  # for windows platforms
+  #
+  ####################################################################### 
   SET(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.bat.in")
   SET(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config.bat")
   
@@ -253,7 +283,7 @@ ELSE(UNIX)
      ENDFOREACH(elementadded ${TMP_SCRIPT_INC})
      IF(${toadd})
 #       MESSAGE("need to add ${element}")
-       SET(TMP_SCRIPT_INC ${TMP_SCRIPT_INC} ${element})
+       LIST(APPEND TMP_SCRIPT_INC ${element})
      ENDIF(${toadd})
   ENDFOREACH(element ${VISP_EXTERN_INCLUDE_DIR})
 
@@ -277,7 +307,7 @@ ELSE(UNIX)
         STRING(REGEX REPLACE "[-][L]" "" var ${var})
 	#MESSAGE("new ${newvar} without -L")
     ENDIF("${var}" MATCHES "[-][L]+.")
-    SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} ${var})
+    LIST(APPEND TMP_SCRIPT_LIBDIR ${var})
   ENDFOREACH(var)
 
   FOREACH(lib ${VISP_EXTERN_LIBS})
@@ -285,10 +315,10 @@ ELSE(UNIX)
     GET_FILENAME_COMPONENT(libpath ${lib} PATH)
     #MESSAGE("library path: ${libpath}")
 
-    SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} ${libpath})
+    LIST(APPEND TMP_SCRIPT_LIBDIR ${libpath})
   ENDFOREACH(lib)
 
-#  MESSAGE("TMP_SCRIPT_LIBDIR: ${TMP_SCRIPT_LIBDIR}")
+  # MESSAGE("TMP_SCRIPT_LIBDIR: ${TMP_SCRIPT_LIBDIR}")
 
   # Suppress twins
   SET(TMP_TMP_SCRIPT_LIBDIR "")
@@ -305,7 +335,7 @@ ELSE(UNIX)
      ENDFOREACH(elementadded)
      IF(${toadd})
 #       MESSAGE("need to add ${element}")
-       SET(TMP_TMP_SCRIPT_LIBDIR ${TMP_TMP_SCRIPT_LIBDIR} ${element})
+       LIST(APPEND TMP_TMP_SCRIPT_LIBDIR ${element})
      ENDIF(${toadd})
   ENDFOREACH(element)
 
@@ -334,7 +364,7 @@ ELSE(UNIX)
     ENDIF("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
 
 
-    SET(TMP_SCRIPT_LIBS ${TMP_SCRIPT_LIBS} ${libname})
+    LIST(APPEND TMP_SCRIPT_LIBS ${libname})
   ENDFOREACH(lib)
 
   # Format the string
