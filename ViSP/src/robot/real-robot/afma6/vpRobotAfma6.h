@@ -244,6 +244,7 @@ private: /* Attributs prives. */
   // getDisplacement() )
   vpColVector q_prev_getdis;
   bool first_time_getdis;
+  vpHomogeneousMatrix fMc_prev_getdis;
 
 
 public:  /* Constantes */

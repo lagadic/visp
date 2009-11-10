@@ -1884,8 +1884,8 @@ vpRobotAfma6::getArticularDisplacement(vpColVector  &displacement)
   Get the robot displacement since the last call of this method.
 
   \warning This functionnality is not implemented for the moment in the
-  cartesian space. It is only available in the joint space
-  (vpRobot::ARTICULAR_FRAME).
+  reference and mixt frames. It is only available in the joint space
+  (vpRobot::ARTICULAR_FRAME) and in the camera frame (vpRobot::CAMERA_FRAME).
 
   \param frame : The frame in which the measured displacement is expressed.
 
@@ -1908,6 +1908,7 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
 
   double q[6];
   vpColVector q_cur(6);
+  vpHomogeneousMatrix fMc_cur, c_prevMc_cur;  
 
   InitTry;
 
@@ -1917,11 +1918,27 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
     q_cur[i] = q[i];
   }
 
+  // Compute the camera pose in the reference frame
+  fMc_cur = get_fMc(q_cur);
+
   if ( ! first_time_getdis ) {
     switch (frame) {
     case vpRobot::CAMERA_FRAME: {
-      std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
-      return;
+      // Compute the camera dispacement from the previous pose
+      c_prevMc_cur = fMc_prev_getdis.inverse() * fMc_cur;
+
+      vpTranslationVector t;
+      vpRotationMatrix R;
+      c_prevMc_cur.extract(t);
+      c_prevMc_cur.extract(R);
+      
+      vpRxyzVector rxyz;
+      rxyz.buildFrom(R);
+      
+      for (int i=0; i<3; i++) {
+	displacement[i]   = t[i];
+	displacement[i+3] = rxyz[i];
+      }
       break ;
     }
 
@@ -1949,6 +1966,9 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
 
   // Memorize the joint position for the next call
   q_prev_getdis = q_cur;
+
+  // Memorize the pose for the next call
+  fMc_prev_getdis = fMc_cur;
 
   CatchPrint();
   if (TryStt < 0) {
