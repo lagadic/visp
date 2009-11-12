@@ -60,7 +60,7 @@
   \f[
   ^a{\bf V}_b = \left(\begin{array}{cc}
   ^a{\bf R}_b & [^a{\bf t}_b]_\times ^a{\bf R}_b\\
-  {\bf 0}_{1\times 3} & ^a{\bf R}_b
+  {\bf 0}_{3\times 3} & ^a{\bf R}_b
   \end{array}
   \right)
   \f]
