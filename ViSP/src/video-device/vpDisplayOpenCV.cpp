@@ -1412,6 +1412,93 @@ void vpDisplayOpenCV::on_mouse( int event, int x, int y, int /*flags*/, void* di
   }
 }
 
+/*!
+
+  Get a keyboard event.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplayOpenCV::getKeyboardEvent(bool blocking)
+{
+  int key_pressed;
+  int delay;
+  if (OpenCVinitialized) {
+    flushDisplay() ;
+    if (blocking) 
+      delay = 0;
+    else 
+      delay = 10;
+
+    key_pressed = cvWaitKey(delay);
+    if (key_pressed == -1)
+      return false;
+    return true;
+  }
+  else {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+  return false;
+}
+/*!
+
+  Get a keyboard event.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \param string [out]: If possible, an ISO Latin-1 character
+  corresponding to the keyboard key.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
+{
+  int key_pressed;
+  int delay;
+  if (OpenCVinitialized) {
+    flushDisplay() ;
+    if (blocking) 
+      delay = 0;
+    else 
+      delay = 10;
+
+    key_pressed = cvWaitKey(delay);
+    if (key_pressed == -1)
+      return false;
+    else {
+      //std::cout << "Key pressed: \"" << key_pressed << "\"" << std::endl;
+      sprintf(string, "%c", key_pressed);
+    }
+    return true;
+  }
+  else {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+  return false;
+}
 #endif
 
 /*

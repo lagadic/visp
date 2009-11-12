@@ -26,6 +26,8 @@ ViSP 2.x.y
       vision cameras like the PointGrey Bumblebee.
     - vpDot2: The tracking is restarted in vpDot2::track() if a dot is found 
       but is not valid.
+    - In vpDisplay, new getKeyboardEvent() functionalities to handle key 
+      events. 	
   - Examples:
     - New plotting example in example/tools/plot.cpp
     - In grab1394Two.cpp example, addition of [-r] new option to reset the bus.

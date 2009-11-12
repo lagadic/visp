@@ -73,7 +73,6 @@
   \code
 #include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
-#include <visp/vpImagePoint.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
@@ -86,7 +85,8 @@ int main()
 
   // Read an image in PGM P5 format
 #ifdef UNIX
-  vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+  //vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::readPGM(I, "/tmp/Klimt.pgm");
 #elif WIN32
   vpImageIo::readPGM(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
 #endif
@@ -125,20 +125,41 @@ int main()
   vpDisplay::display(I);
 
   // Draw a red rectangle in the display overlay (foreground)
-  vpImagePoint topLeft;
-  topLeft.set_i(10);
-  topLeft.set_j(10);
-  vpDisplay::displayRectangle(I, topLeft, 100, 20, vpColor::red, true);
+  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+
+  // Draw a red rectangle in the display overlay (foreground)
+  vpImagePoint topLeftCorner;
+  topLeftCorner.set_i(50);
+  topLeftCorner.set_j(10);
+  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
 
   // Flush the foreground and background display
   vpDisplay::flush(I);
 
+  // Get non blocking keyboard events
+  std::cout << "Check keyboard events..." << std::endl; 
+  char key[10]; sprintf(key, "\0");
+  bool ret;
+  for (int i=0; i< 200; i++) {
+    bool ret = vpDisplay::getKeyboardEvent(I, key, false);
+    if (ret) 
+      std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
+    vpTime::wait(40);
+  }
+
+  // Get a blocking keyboard event
+  std::cout << "Wait for a keyboard event..." << std::endl; 
+  ret = vpDisplay::getKeyboardEvent(I, key, true);
+  std::cout << "keyboard event: " << ret << std::endl;
+  if (ret) 
+    std::cout << "key: " << "\"" << key << "\"" << std::endl;
+
   // Wait for a click in the display window
+  std::cout << "Wait for a button click..." << std::endl;
   vpDisplay::getClick(I);
 
   delete d;
 }
-
   \endcode
 */
 class VISP_EXPORT vpDisplay
@@ -475,6 +496,44 @@ class VISP_EXPORT vpDisplay
 			  bool blocking=true) =0;
 
   /*!
+    Get a keyboard event.
+    
+    \param blocking [in] : Blocking behavior.
+    - When set to true, this method waits until a key is
+      pressed and then returns always true.
+    - When set to false, returns true only if a key is
+      pressed, otherwise returns false.
+
+      \return 
+      - true if a key was pressed. This is always the case if blocking is set 
+        to \e true.
+      - false if no key was pressed. This can occur if blocking is set
+        to \e false.
+  */
+  virtual bool vpDisplay::getKeyboardEvent(bool blocking=true) =0;
+  /*!
+    
+    Get a keyboard event.
+    
+    \param blocking [in] : Blocking behavior.
+    - When set to true, this method waits until a key is
+      pressed and then returns always true.
+    - When set to false, returns true only if a key is
+      pressed, otherwise returns false.
+
+    \param string [out]: If possible, an ISO Latin-1 character
+    corresponding to the keyboard key.
+
+    \return 
+    - true if a key was pressed. This is always the case if blocking is set 
+      to \e true.
+    - false if no key was pressed. This can occur if blocking is set
+      to \e false.
+  */
+  virtual bool vpDisplay::getKeyboardEvent(char *string, 
+					      bool blocking=true) =0;
+
+  /*!
     Return the display width.
     \sa getHeight()
   */
@@ -604,8 +663,10 @@ class VISP_EXPORT vpDisplay
 			 bool blocking=true) ;
   static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
 
-
-
+  static bool getKeyboardEvent(const vpImage<unsigned char> &I, 
+			       bool blocking=true);
+  static bool getKeyboardEvent(const vpImage<unsigned char> &I, 
+			       char *string, bool blocking=true);
 
 
   /*!
@@ -726,6 +787,10 @@ class VISP_EXPORT vpDisplay
 			 bool blocking=true) ;
   static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
 
+  static bool getKeyboardEvent(const vpImage<vpRGBa> &I, 
+			       bool blocking=true);
+  static bool getKeyboardEvent(const vpImage<vpRGBa> &I, 
+			       char *string, bool blocking=true);
 
 
 
