@@ -58,13 +58,17 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayD3D.h>
 
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9)
+
 // List of allowed command line options
 #define GETOPTARGS	"cdh"
-
 
 /*!
 
@@ -164,6 +168,10 @@ main(int argc, const char ** argv)
   vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI display;
+#elif defined VISP_HAVE_OPENCV
+  vpDisplayOpenCV display;
+#elif defined VISP_HAVE_D3D9
+  vpDisplayD3D display;
 #endif
 
   if (opt_display) {
@@ -275,3 +283,16 @@ main(int argc, const char ** argv)
   
   return 0;
 }
+
+#else
+int main()
+{
+  std::cout << "This example requires a video device. " 
+	    << std::endl
+	    << "You should install X11, GTK, OpenCV, GDI or Direct3D" 
+	    << std::endl
+	    << "to be able to execute this example."
+	    << std::endl;
+  return 0;
+}
+#endif
