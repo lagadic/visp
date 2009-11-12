@@ -112,6 +112,8 @@ public:
   vpTranslationVector operator*(const vpTranslationVector &mat) const ;
   //! operation C = A * B (A is unchanged)
   vpRotationMatrix operator*(const vpRotationMatrix &B) const ;
+  //! operation C = A * B (A is unchanged)
+  vpMatrix operator*(const vpMatrix &B) const ;
   // operation v2 = A * v1 (A is unchanged)
   vpColVector operator*(const vpColVector &v) const ;
    //! overload + operator (to say it forbidden operation, throw exception)
