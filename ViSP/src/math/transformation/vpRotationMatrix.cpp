@@ -163,6 +163,40 @@ vpRotationMatrix::operator*(const vpRotationMatrix &B) const
     }
   return p;
 }
+/*! 
+  Operation C = A * B (A is unchanged).
+  Allows for example to multiply a rotation matrix by a skew matrix.
+  \code
+  vpRotationMatrix A;
+  vpTranslationVector t;
+  vpMatrix B = t.skew();
+  vpMatrix C = A * B;
+  \endcode
+
+  \exception vpMatrixException::incorrectMatrixSizeError : If B is not
+  a 3 by 3 dimension matrix.
+
+*/
+vpMatrix
+vpRotationMatrix::operator*(const vpMatrix &B) const
+{
+  if (B.getRows() != 3 || B.getCols() != 3) {
+    vpERROR_TRACE("The matrix is not a 3 by 3 dimension matrix") ;
+    throw (vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+			     "The matrix is not a 3 by 3 dimension matrix"));
+  }
+  vpRotationMatrix p ;
+
+  for (int i=0;i<3;i++)
+    for (int j=0;j<3;j++)
+    {
+      double s =0 ;
+      for (int k=0;k<3;k++)
+	s +=(*this)[i][k] * B[k][j];
+      p[i][j] = s ;
+    }
+  return p;
+}
 
 /*!
 
