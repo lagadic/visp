@@ -2260,6 +2260,80 @@ vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
   }
   return false ;
 }
+/*!
+  Get a keyboard event.
+
+  \param I [in] : The displayed image.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getKeyboardEvent ( blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+
+  Get a keyboard event.
+
+  \param I [in] : The displayed image.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \param string [out]: If possible, an ISO Latin-1 character
+  corresponding to the keyboard key.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I,
+			    char *string, bool blocking)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getKeyboardEvent ( string, blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
 
 /*!
   Wait for a click.
@@ -2409,6 +2483,80 @@ vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
   return false ;
 }
 
+/*!
+  Get a keyboard event.
+
+  \param I [in] : The displayed image.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I, bool blocking)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getKeyboardEvent ( blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+/*!
+
+  Get a keyboard event.
+
+  \param I [in] : The displayed image.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \param string [out]: If possible, an ISO Latin-1 character
+  corresponding to the keyboard key.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I,
+			    char *string, bool blocking)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getKeyboardEvent ( string, blocking ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
 
 
 /****************************************************************

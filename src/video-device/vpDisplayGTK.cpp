@@ -1087,7 +1087,7 @@ vpDisplayGTK::getClick(bool blocking)
       }
       if (blocking){
         flushDisplay();
-        vpTime::wait(10);
+        vpTime::wait(100);
       }
     } while ( ret == false && blocking == true);
   }
@@ -1137,7 +1137,7 @@ vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
       }
       if (blocking){
         flushDisplay();
-        vpTime::wait(10);
+        vpTime::wait(100);
       }
     } while ( ret == false && blocking == true);
   }
@@ -1201,7 +1201,7 @@ vpDisplayGTK::getClick(vpImagePoint &ip,
       }
       if (blocking){
         flushDisplay();
-        vpTime::wait(10);
+        vpTime::wait(100);
       }
 
     } while ( ret == false && blocking == true);
@@ -1272,7 +1272,7 @@ vpDisplayGTK::getClickUp(vpImagePoint &ip,
       }
       if (blocking){
         flushDisplay();
-        vpTime::wait(10);
+        vpTime::wait(100);
       }
 
     } while ( ret == false && blocking == true);
@@ -1366,8 +1366,111 @@ void vpDisplayGTK::getScreenSize(unsigned int &width, unsigned int &height)
   height = 0;
 }
 
+/*!
+  Get a keyboard event.
 
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
 
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplayGTK::getKeyboardEvent(bool blocking)
+{
+  bool ret = false;
+
+  int cpt =0;
+  if (GTKinitialized) {
+
+    GdkEvent *ev = NULL;
+    do {
+      while ((ev = gdk_event_get())!=NULL){
+	cpt++;
+	//	printf("event %d type %d on window %p My window %p\n", 
+	//cpt, ev->type, ev->any.window, widget->window);
+	
+        if (ev->any.window == widget->window && ev->type == GDK_KEY_PRESS){
+          ret = true ;
+	  //printf("Key press detection\n");
+        }
+        gdk_event_free(ev) ;
+      }
+      if (blocking){
+        flushDisplay();
+        vpTime::wait(100);
+      }
+    } while ( ret == false && blocking == true);
+  }
+  else {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+  return ret;
+}
+
+/*!
+
+  Get a keyboard event.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \param string [out]: If possible, an ISO Latin-1 character
+  corresponding to the keyboard key.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplayGTK::getKeyboardEvent(char *string, bool blocking)
+{
+  bool ret = false;
+
+  int cpt =0;
+  if (GTKinitialized) {
+
+    GdkEvent *ev = NULL;
+    do {
+      while ((ev = gdk_event_get())!=NULL){
+	cpt++;
+	//	printf("event %d type %d on window %p My window %p\n", 
+	//cpt, ev->type, ev->any.window, widget->window);
+	
+        if (ev->any.window == widget->window && ev->type == GDK_KEY_PRESS){
+	  //std::cout << "Key val: \"" << gdk_keyval_name (ev->key.keyval) /*ev->key.string*/ << "\"" << std::endl;
+	  sprintf(string, "%s", gdk_keyval_name (ev->key.keyval));
+          ret = true ;
+	  //printf("Key press detection\n");
+        }
+        gdk_event_free(ev) ;
+      }
+      if (blocking){
+        flushDisplay();
+        vpTime::wait(100);
+      }
+    } while ( ret == false && blocking == true);
+  }
+  else {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+  return ret;
+}
 
 #endif
 

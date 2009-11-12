@@ -200,6 +200,8 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   bool getClickUp(vpImagePoint &ip,
 		  vpMouseButton::vpMouseButtonType& button,
 		  bool blocking=true);
+  bool getKeyboardEvent( bool blocking=true);
+  bool getKeyboardEvent(char *string, bool blocking);
 
   void waitForInit();
 

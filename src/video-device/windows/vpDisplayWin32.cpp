@@ -423,6 +423,54 @@ bool vpDisplayWin32::getClickUp(vpImagePoint &ip,
   return ret;
 }
 
+/*!
+  Get a keyboard event.
+
+  \warning Not implemented yet.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool vpDisplayWin32::getKeyboardEvent( bool /* blocking */)
+{
+  vpTRACE("Not implemented yet.");
+  return false;
+}
+/*!
+
+  Get a keyboard event.
+
+  \warning Not implemented yet.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \param string [out]: If possible, an ISO Latin-1 character
+  corresponding to the keyboard key.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool vpDisplayWin32::getKeyboardEvent(char * /* string */, bool /* blocking */)
+{
+  vpTRACE("Not implemented yet.");
+  return false;
+}
 
 /*!
   Changes the window's position.

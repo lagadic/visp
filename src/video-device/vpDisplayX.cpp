@@ -437,7 +437,10 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
-                 ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask );
+                 ExposureMask | 
+		 ButtonPressMask | ButtonReleaseMask | 
+		 KeyPressMask | KeyReleaseMask | 
+		 StructureNotifyMask );
 
   // graphic context creation
   values.plane_mask = AllPlanes;
@@ -736,7 +739,10 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
-                 ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask );
+                 ExposureMask | 
+		 ButtonPressMask | ButtonReleaseMask |
+ 		 KeyPressMask | KeyReleaseMask | 
+		 StructureNotifyMask );
 
   // Creation du contexte graphique
   values.plane_mask = AllPlanes;
@@ -1047,7 +1053,10 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
-                 ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask );
+                 ExposureMask | 
+		 ButtonPressMask | ButtonReleaseMask | 
+ 		 KeyPressMask | KeyReleaseMask | 
+		 StructureNotifyMask );
 
   /* Creation du contexte graphique */
   values.plane_mask = AllPlanes;
@@ -2349,6 +2358,100 @@ void vpDisplayX::getScreenSize ( unsigned int &width, unsigned int &height )
   height = DisplayHeight ( _display, screen );
 
   XCloseDisplay ( _display );
+}
+/*!
+
+  Get a keyboard event.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplayX::getKeyboardEvent(bool blocking)
+{
+
+  bool ret = false;
+
+  if ( Xinitialise ) {
+    // Event testing
+    if(blocking){
+      XMaskEvent ( display, KeyPressMask ,&event );
+      ret = true;
+    }
+    else{
+      ret = XCheckMaskEvent(display , KeyPressMask, &event);
+    }
+  }
+  else {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+  return ret;
+}
+/*!
+
+  Get a keyboard event.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \param string [out]: If possible, an ISO Latin-1 character
+  corresponding to the keyboard key.
+
+  \return 
+  - true if a key was pressed. This is always the case if blocking is set 
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+*/
+bool
+vpDisplayX::getKeyboardEvent(char *string, bool blocking)
+{
+
+  bool ret = false;
+  KeySym  keysym;
+  int     count;
+  XComposeStatus compose_status;
+  char buffer;
+  
+  if ( Xinitialise ) {
+    // Event testing
+    if(blocking){
+      XMaskEvent ( display, KeyPressMask ,&event );
+      count = XLookupString ((XKeyEvent *)&event, &buffer, 1,
+			     &keysym, &compose_status);
+      //std::cout <<"count: " << count << " get \"" << buffer << "\"" << std::endl;
+      sprintf(string, "%c", buffer);
+      ret = true;
+    }
+    else{
+      ret = XCheckMaskEvent(display , KeyPressMask, &event);
+      if (ret) {
+	count = XLookupString ((XKeyEvent *)&event, &buffer, 1,
+			       &keysym, &compose_status);
+	sprintf(string, "%c", buffer);
+      }
+    }
+  }
+  else {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+  return ret;
 }
 
 #endif
