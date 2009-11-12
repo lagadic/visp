@@ -101,11 +101,12 @@ IF(BUILD_DEPRECATED_FUNCTIONS)
 ENDIF(BUILD_DEPRECATED_FUNCTIONS)
 
 IF (UNIX)
-  OPTION(USE_ITIFG8  "Compile ViSP with itifg8 framegrabber usage" OFF)
-  OPTION(USE_AFMA4   "Compile ViSP for Afma4 robot usage" OFF)
-  OPTION(USE_AFMA6   "Compile ViSP for Afma6 robot usage" OFF)
-  OPTION(USE_BICLOPS "Compile ViSP for Biclops head usage" OFF)
-  OPTION(USE_PTU46   "Compile ViSP for Ptu-46 head usage" OFF)
+  OPTION(USE_ITIFG8  "Compile ViSP with itifg8 framegrabber usage at Irisa" OFF)
+  OPTION(USE_AFMA4   "Compile ViSP for Afma4 robot usage at Irisa" OFF)
+  OPTION(USE_AFMA6   "Compile ViSP for Afma6 robot usage at Irisa" OFF)
+  OPTION(USE_BICLOPS "Compile ViSP for Biclops head usage at Irisa" OFF)
+  OPTION(USE_PTU46   "Compile ViSP for Ptu-46 head usage at Irisa" OFF)
+  OPTION(USE_VIPER850 "Compile ViSP for Viper S850 robot usage at Irisa" OFF)
   OPTION(USE_COIN_SIMULATOR    "Compile ViSP with simulation capabilities based on Coin3D suite" OFF)
 ENDIF(UNIX)
 
@@ -813,6 +814,7 @@ SET(VISP_HAVE_AFMA4_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_AFMA6_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_BICLOPS_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_PTU46_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_VIPER850_FOUND "no")  # for ViSP-third-party.txt
 
 # library for Irisa's Afma4 cylindrical robot
 IF(USE_AFMA4)
@@ -871,6 +873,35 @@ IF(USE_AFMA6)
     # SET(USE_AFMA6 OFF)
   ENDIF(RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND)
 ENDIF(USE_AFMA6)
+
+# library for Irisa's Viper850 cartesian robot
+IF(USE_VIPER850)
+  # Low level API to control the robot: 
+  # libcalinux - librt - libraw1394 - libirisa
+  IF(NOT RAW1394_FOUND)
+    FIND_PACKAGE(RAW1394)
+  ENDIF(NOT RAW1394_FOUND)
+  FIND_PACKAGE(RT)
+  FIND_PACKAGE(CALINUX)
+  FIND_PACKAGE(IRISA)
+  IF(RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND)
+    MESSAGE(STATUS "Viper850 found")
+    SET(VISP_HAVE_VIPER850 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_VIPER850_FOUND "yes")  # for ViSP-third-party.txt
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${RAW1394_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${CALINUX_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${IRISA_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${IRISA_LIBRARIES})
+    LIST(APPEND VISP_EXTERN_LIBS ${CALINUX_LIBRARIES})
+    LIST(APPEND VISP_EXTERN_LIBS ${RAW1394_LIBRARIES})
+    LIST(APPEND VISP_EXTERN_LIBS ${RT_LIBRARIES})
+  ELSE(RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND)
+    MESSAGE(STATUS "Viper S850 not found")
+    MESSAGE("Viper S850 robot requested but not found. Turn off USE_VIPER850 option!")
+    SET(VISP_HAVE_VIPER850_FOUND "no")  # for ViSP-third-party.txt
+    # SET(USE_VIPER850 OFF)
+  ENDIF(RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND)
+ENDIF(USE_VIPER850)
 
 # library for Biclops pan-tilt head
 IF(USE_BICLOPS)

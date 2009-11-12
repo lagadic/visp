@@ -148,6 +148,9 @@ SET (HEADER_ROBOT
   robot/real-robot/biclops/vpRobotBiclops.h
   robot/real-robot/ptu46/vpPtu46.h
   robot/real-robot/ptu46/vpRobotPtu46.h
+  robot/real-robot/viper/vpViper.h
+  robot/real-robot/viper/vpViper850.h
+  robot/real-robot/viper/vpRobotViper850.h
   )
 
 SET (HEADER_SERVO
