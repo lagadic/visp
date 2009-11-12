@@ -18,6 +18,7 @@ Robots
   Afma4                     : ${VISP_HAVE_AFMA4_FOUND}
   Biclops                   : ${VISP_HAVE_BICLOPS_FOUND}
   Ptu46                     : ${VISP_HAVE_PTU46_FOUND}
+  Viper S850                : ${VISP_HAVE_VIPER850_FOUND}
 Video devices (display)                  
   X11                       : ${VISP_HAVE_X11_FOUND}
   GTK                       : ${VISP_HAVE_GTK_FOUND} 

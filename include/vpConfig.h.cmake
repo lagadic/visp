@@ -159,6 +159,9 @@
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46
 
+// Defined if Irisa's Viper S850 robot available.
+#cmakedefine VISP_HAVE_VIPER850
+
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
 

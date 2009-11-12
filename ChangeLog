@@ -9,7 +9,9 @@ ViSP 2.x.y
       velocity and acceleration state models.
     - New vpFeatureTranslation: ctc*
     - New USE_COIN_SIMULATOR option during CMake configuration to enable or 
-      disable simulation capabilities based on Coin3D suite.  
+      disable simulation capabilities based on Coin3D suite.
+    - New vpViper, vpViper850 and vpRobotViper850 classes to provide an 
+      interface for Inria's Adept Viper 850 robot.
   - Improvements
     - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
       bus reset can be switched off in the constructor. There are also 
