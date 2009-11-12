@@ -510,7 +510,7 @@ class VISP_EXPORT vpDisplay
       - false if no key was pressed. This can occur if blocking is set
         to \e false.
   */
-  virtual bool vpDisplay::getKeyboardEvent(bool blocking=true) =0;
+  virtual bool getKeyboardEvent(bool blocking=true) =0;
   /*!
     
     Get a keyboard event.
@@ -530,8 +530,7 @@ class VISP_EXPORT vpDisplay
     - false if no key was pressed. This can occur if blocking is set
       to \e false.
   */
-  virtual bool vpDisplay::getKeyboardEvent(char *string, 
-					      bool blocking=true) =0;
+  virtual bool getKeyboardEvent(char *string, bool blocking=true) =0;
 
   /*!
     Return the display width.
