@@ -55,11 +55,11 @@
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImagePoint.h>
-#include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayD3D.h>
+#include <visp/vpDisplayX.h> // Should be after #include <visp/vpDisplayOpenCV.h>
 
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
