@@ -105,8 +105,8 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint iP, vpMe* me,
       else
 	throw (vpException(vpException::divideByZeroError,"angle step = 0"));
 
-      int ihalf = iP.get_i()-half ;
-      int jhalf = iP.get_j()-half ;
+      int ihalf = (int)(iP.get_i()-half) ;
+      int jhalf = (int)(iP.get_j()-half) ;
       int ihalfa ;
       int a ;
       int b ;
@@ -804,9 +804,9 @@ void
 vpMeNurbs::reSample(vpImage<unsigned char> &I)
 {
   int n = numberOfSignal();
-  int nbPt = floor(dist / me->sample_step);
+  double nbPt = floor(dist / me->sample_step);
 
-  if ((double)n<0.7*(double)nbPt)
+  if ((double)n < 0.7*nbPt)
   {
     std::cout <<"Resample"<< std::cout;
     sample(I);
