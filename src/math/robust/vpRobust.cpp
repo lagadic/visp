@@ -92,13 +92,6 @@ void vpRobust::resize(int n_data){
   
 }
 
-/*!
-  \brief Set  noise threshold
-  \param n_data : size of input data vector.
-
-*/
-void vpRobust::setThreshold(const double x){NoiseThreshold=x;}
-
 // ===================================================================
 /*!
 

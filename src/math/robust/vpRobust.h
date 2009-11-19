@@ -118,8 +118,13 @@ public:
   //! Set iteration 
   void setIteration(const int iter){it=iter;}
   
-  //! Set maximal noise threshold
-  void setThreshold(const double x);//{NoiseThreshold=x;}
+  /*!
+    Set maximal noise threshold.
+    \param noise_threshold : Maximal noise threshold.
+  */
+  inline void vpRobust::setThreshold(const double noise_threshold) {
+    NoiseThreshold=noise_threshold;
+  }
 
 //public :
 //double residualMedian ;
