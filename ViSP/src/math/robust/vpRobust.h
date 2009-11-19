@@ -32,6 +32,7 @@
  *
  * Authors:
  * Andrew Comport
+ * Jean Laneurit
  *
  *****************************************************************************/
 
@@ -58,7 +59,9 @@
 */
 class VISP_EXPORT vpRobust
 {
+  
 public:
+  //! Enumeration of influence functions
   typedef enum
   {
     TUKEY,
@@ -66,79 +69,134 @@ public:
     //    MCLURE,
     HUBER
   } vpRobustEstimatorType;
+  
 private:
 
+  //!Normalized residue
+  vpColVector normres; 
+  //!Sorted normalized Residues
+  vpColVector sorted_normres;
+  //!Sorted residues
+  vpColVector sorted_residues;
+
+  //!Noise threshold
+  double NoiseThreshold;
+  //!
   double sig_prev;
+  //!
   int it;
+  //! Vairiable used in swap method
+  double swap;
+  //! Size of the containers
+  int size;
 
 public:
-  vpColVector w;
 
-  double NoiseThreshold;
-
+  //!Default Constructor
   vpRobust(int n_data);
-  virtual ~vpRobust(void);
+  
+  //!Destructor
+  virtual ~vpRobust(){};
 
-  int MEstimator(const vpRobustEstimatorType method,
+  //!Resize containers for sort methods
+  void resize(int n_data);
+  
+  //! Compute the weights according a residue vector and a PsiFunction
+  void MEstimator(const vpRobustEstimatorType method,
 		 const vpColVector &residues,
 		 vpColVector &weights);
 
-  int MEstimator(const vpRobustEstimatorType method,
+  //! Compute the weights according a residue vector and a PsiFunction
+  void MEstimator(const vpRobustEstimatorType method,
 		 const vpColVector &residues,
 		 const vpColVector& all_residues,
 		 vpColVector &weights);
 
+  //! Simult Mestimator 
   vpColVector simultMEstimator(vpColVector &residues);
 
-  void setIteration(const int iter);
-  void setThreshold(const double x);
+  //! Set iteration 
+  void setIteration(const int iter){it=iter;}
+  
+  //! Set maximal noise threshold
+  void setThreshold(const double x);//{NoiseThreshold=x;}
 
- public :
-  double residualMedian ;
-  double normalizedResidualMedian ;
+//public :
+//double residualMedian ;
+//double normalizedResidualMedian ;
+//  private:
+//   double median(const vpColVector &x);
+//   double median(const vpColVector &x, vpColVector &weights);
+
  private:
-
-  double median(const vpColVector &x);
-  double median(const vpColVector &x, vpColVector &weights);
-
+  //!Compute normalized median
   double computeNormalizedMedian(vpColVector &all_normres,
 				 const vpColVector &residues,
-				 const vpColVector &all_residues);
+				 const vpColVector &all_residues,
+				 const vpColVector &weights				 
+				 );
 
 
   //! Calculate various scale estimates
   double scale(vpRobustEstimatorType method, vpColVector &x);
   double simultscale(vpColVector &x);
 
-  //! Partial derivative of loss function
-  //! with respect to the residue
-  int psiTukey(double sigma, vpColVector &x);
-  int psiCauchy(double sigma, vpColVector &x);
-  int psiMcLure(double sigma, vpColVector &x);
-  int psiHuber(double sigma, vpColVector &x);
+
+  //---------------------------------
+  //  Partial derivative of loss function with respect to the residue
+  //---------------------------------
+  /** @name PsiFunctions  */
+  //@{
+  //! Tuckey influence function 
+  void psiTukey(double sigma, vpColVector &x, vpColVector &w);
+  //! Caucht influence function 
+  void psiCauchy(double sigma, vpColVector &x, vpColVector &w);
+  //! McLure influence function 
+  void psiMcLure(double sigma, vpColVector &x, vpColVector &w);
+  //! Huber influence function 
+  void psiHuber(double sigma, vpColVector &x, vpColVector &w);
+  //@}
 
   //! Partial derivative of loss function
   //! with respect to the scale
   double simult_chi_huber(double x);
 
-  //! Constrained Partial derivative of loss function
-  //! with respect to the scale
+  //---------------------------------
+  // Constrained Partial derivative of loss function with respect to the scale
+  //--------------------------------- 
+   /** @name Constrained Chi Functions  */
+  //@{
+  //! Constrained Chi Function
   double constrainedChi(vpRobustEstimatorType method, double x);
+  //! Constrained Chi Tukey Function
   double constrainedChiTukey(double x);
+  //! Constrained Chi Cauchy Function
   double constrainedChiCauchy(double x);
+   //! Constrained Chi Huber Function
   double constrainedChiHuber(double x);
-
-  //! Used to calculate the Expectation
+  //@}
+  
+  //---------------------------------
+  // Mathematic functions used to calculate the Expectation
+  //---------------------------------
+  /** @name Some math function  */
+  //@{
   double erf(double x);
   double gammp(double a, double x);
   void gser(double *gamser, double a, double x, double *gln);
   void gcf(double *gammcf, double a, double x, double *gln);
   double gammln(double xx);
-
-  // pour le calcul de la mediane
-  void exch(double &A, double &B);
+  //@}
+  
+  /** @name Sort function  */
+  //@{
+  //! Swap two value
+  void exch(double &A, double &B){swap = A; A = B;  B = swap;}
+  //! Sort function using partition method
   int partition(vpColVector &a, int l, int r);
+  //! Sort the vector and select a value in the sorted vector
   double select(vpColVector &a, int l, int r, int k);
+  //@}
 };
 
 #endif
