@@ -218,6 +218,7 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMePath.cpp
   tracking/moving-edges/vpMeSite.cpp
   tracking/moving-edges/vpMeTracker.cpp
+  tracking/moving-edges/vpMeNurbs.cpp
   )
 
 SET (SRC_VIDEO_DEVICE
