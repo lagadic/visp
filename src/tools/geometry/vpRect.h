@@ -295,4 +295,21 @@ private:
 };
 
 
+/*!
+
+  \relates vpImagePoint
+
+  Check if an image point belongs to a rectangle.
+  
+  \param ip : the image point.
+  \param rect : the rectangle.
+  
+  \return Returns true if the point belongs to the rectangle.
+
+*/
+VISP_EXPORT inline bool inRectangle( const vpImagePoint &ip, const vpRect &rect ) {
+  return ( ip.get_i() <= rect.getBottom() && ip.get_i() >= rect.getTop() && ip.get_j() <= rect.getRight() && ip.get_j() >= rect.getLeft());
+}
+
+
 #endif
