@@ -51,6 +51,16 @@
 #include <visp/vpMatrix.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+// For template instantiation with Visual Studio
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT std::allocator<vpImagePoint>;
+template class VISP_EXPORT std::vector<vpImagePoint>;
+template class VISP_EXPORT std::allocator<double>;
+template class VISP_EXPORT std::vector<double>;
+#endif
+
+
 /*!
   Structure that defines a B-Spline basis function \f$ N_{i,p}^k(u) \f$.
   
