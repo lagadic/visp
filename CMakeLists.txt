@@ -980,6 +980,7 @@ IF (DOXYGEN_FOUND)
 ELSE(DOXYGEN_FOUND)
   SET(VISP_HAVE_DOXYGEN "no")        # for header vpConfig.h
   SET(VISP_HAVE_DOXYGEN_FOUND "no")  # for ViSP-third-party.txt
+  SET(VISP_HAVE_DOT_FOUND "no")      # for ViSP-third-party.txt
 ENDIF(DOXYGEN_FOUND)
 
 #----------------------------------------------------------------------
