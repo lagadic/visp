@@ -92,6 +92,7 @@ public:
   void displayNumberOfElements() ;
   void setMe(vpMe *me1) { me = me1 ; }
   int outOfImage( int i , int j , int half , int rows , int cols) ;
+  int outOfImage( vpImagePoint iP , int half , int rows , int cols) ;
 
   int numberOfSignal() ;
   int totalNumberOfSignal() ;
