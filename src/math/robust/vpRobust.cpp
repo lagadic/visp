@@ -32,6 +32,7 @@
  *
  * Authors:
  * Andrew Comport
+ * Jean Laneurit
  *
  *****************************************************************************/
 
@@ -53,13 +54,12 @@
 
 #define vpITMAX 100
 #define vpEPS 3.0e-7
-
 #define vpCST 1
 
 
+// ===================================================================
 /*!
-  Constructor.
-
+  \brief Constructor.
   \param n_data : Size of the data vector.
 
 */
@@ -67,34 +67,37 @@ vpRobust::vpRobust(int n_data)
 {
   vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
 
-  w.resize(n_data);
-  w=1;
+  size=n_data;
+  normres.resize(n_data); 
+  sorted_normres.resize(n_data); 
+  sorted_residues.resize(n_data);
   it=0;
   NoiseThreshold=0.0017; //Can not be more accurate than 1 pixel
 
 }
 
-//! Destructor
-vpRobust::~vpRobust()
-{
+/*!
+  \brief Resize containers.
+  \param n_data : size of input data vector.
 
+*/
+void vpRobust::resize(int n_data){
+
+  if(n_data!=size){
+  normres.resize(n_data); 
+  sorted_normres.resize(n_data); 
+  sorted_residues.resize(n_data);
+  size=n_data;
+  }
+  
 }
 
 /*!
-  \param iter : Iteration number.
+  \brief Set  noise threshold
+  \param n_data : size of input data vector.
 
 */
-void
-vpRobust::setIteration(const int iter)
-{
-  it=iter;
-}
-
-void
-vpRobust::setThreshold(const double x)
-{
-  NoiseThreshold=x;
-}
+void vpRobust::setThreshold(const double x){NoiseThreshold=x;}
 
 // ===================================================================
 /*!
@@ -126,60 +129,43 @@ vpRobust::setThreshold(const double x)
 
   \param weights : Vector of weights \f$w_i =
   \frac{\psi(r_i)}{r_i}\f$. Values are in [0, 1]. A value near zero
-  means that the data is an outlier.
+  means that the data is an outlier. This vector must have the same size
+  residue vector.
 
   \return Returns a Column Vector of weights associated to each residue.
  */
 
 // ===================================================================
-int
-vpRobust::MEstimator(const vpRobustEstimatorType method,
+void vpRobust::MEstimator(const vpRobustEstimatorType method,
 		     const vpColVector &residues,
 		     vpColVector &weights)
 {
 
-  double med=0;					// median
+  double med=0;	// median
   double normmedian=0; 	// Normalized median
-  double sigma=0;				// Standard Deviation
+  double sigma=0;// Standard Deviation
 
+  // resize vector only if the size of residue vector has changed
   int n_data = residues.getRows();
-
-  vpColVector normres(n_data); // Normalized Residue
-  vpColVector sorted_normres(n_data); // Normalized Residue
-  vpColVector sorted_residues = residues;
-
-
-  w.resize(n_data);
-  w = weights;
-
-  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data =" << n_data
-	      << std::endl;
+  resize(n_data); 
+  
+  sorted_residues = residues;
 
   // Calculate median
-  // Be careful to not use the rejected residues for the
-  // calculation.
-  //med = median(residues, weights);
-  //med = median(residues);
    med = select(sorted_residues, 0, n_data-1, (int)n_data/2);
-
-  residualMedian = med ;
+   //residualMedian = med ;
 
   // Normalize residues
   for(int i=0; i<n_data; i++)
   {
     normres[i] = (fabs(residues[i]- med));
-    if(i<n_data)
-      sorted_normres[i] = (fabs(sorted_residues[i]- med));
+    sorted_normres[i] = (fabs(sorted_residues[i]- med));
 
   }
 
-
-  // MAD calculated only on first iteration
-
-  //normmedian = median(normres, weights);
-  //normmedian = median(normres);
+  // Calculate MAD
   normmedian = select(sorted_normres, 0, n_data-1, n_data/2);
-  normalizedResidualMedian = normmedian ;
+  //normalizedResidualMedian = normmedian ;
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   sigma = 1.4826*normmedian; // median Absolute Deviation
 
@@ -190,12 +176,11 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
     sigma= NoiseThreshold;
   }
 
-
   switch (method)
   {
   case TUKEY :
     {
-      psiTukey(sigma, normres);
+      psiTukey(sigma, normres,weights);
 
       vpCDEBUG(2) << "Tukey's function computed" << std::endl;
       break ;
@@ -203,7 +188,7 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
     }
   case CAUCHY :
     {
-      psiCauchy(sigma, normres);
+      psiCauchy(sigma, normres,weights);
       break ;
     }
     /*  case MCLURE :
@@ -213,20 +198,15 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
       }*/
   case HUBER :
     {
-      psiHuber(sigma, normres);
+      psiHuber(sigma, normres,weights);
       break ;
     }
-
-
-  };
-
-  weights = w;
-  return 1;
+  }
 }
 
 
-int
-vpRobust::MEstimator(const vpRobustEstimatorType method,
+
+void vpRobust::MEstimator(const vpRobustEstimatorType method,
 		     const vpColVector &residues,
 		     const vpColVector& all_residues,
 		     vpColVector &weights)
@@ -234,22 +214,13 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
 
 
   double normmedian=0; 	// Normalized median
-  double sigma=0;				// Standard Deviation
+  double sigma=0;// Standard Deviation
 
   int n_all_data = all_residues.getRows();
-
-  vpColVector all_normres(n_all_data); // Normalized Residue
-  //vpColVector sorted_normres(n_data); // Normalized Residue
-  //vpColVector sorted_residues = residues;
-
-
-  // the weights are computed for the all_residues vector
-  w.resize(n_all_data);
-  w = weights;
-
+  vpColVector all_normres(n_all_data); 
 
   // compute median with the residues vector, return all_normres which are the normalized all_residues vector.
-  normmedian = computeNormalizedMedian(all_normres,residues,all_residues);
+  normmedian = computeNormalizedMedian(all_normres,residues,all_residues,weights);
 
 
   // 1.48 keeps scale estimate consistent for a normal probability dist.
@@ -267,7 +238,7 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
   {
   case TUKEY :
     {
-      psiTukey(sigma, all_normres);
+      psiTukey(sigma, all_normres,weights);
 
       vpCDEBUG(2) << "Tukey's function computed" << std::endl;
       break ;
@@ -275,7 +246,7 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
     }
   case CAUCHY :
     {
-      psiCauchy(sigma, all_normres);
+      psiCauchy(sigma, all_normres,weights);
       break ;
     }
     /*  case MCLURE :
@@ -285,40 +256,45 @@ vpRobust::MEstimator(const vpRobustEstimatorType method,
       }*/
   case HUBER :
     {
-      psiHuber(sigma, all_normres);
+      psiHuber(sigma, all_normres,weights);
       break ;
     }
 
 
   };
-
-  weights = w;
-  return 1;
 }
 
 
 
 double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
 					 const vpColVector &residues,
-					 const vpColVector &all_residues)
+					 const vpColVector &all_residues,
+					 const vpColVector & weights
+					 )
 {
   double med=0;
   double normmedian=0;
 
   int n_all_data = all_residues.getRows();
   int n_data = residues.getRows();
-  all_normres.resize(n_all_data); // Normalized Residue
-
-  vpColVector sorted_normres(n_data); // Normalized Residue
-  //vpColVector sorted_residues = residues;
-  vpColVector sorted_residues;
+  
+  // resize vector only if the size of residue vector has changed
+  resize(n_data);
+    
+  sorted_residues = residues;
   vpColVector no_null_weight_residues;
   no_null_weight_residues.resize(n_data);
+  
+  //all_normres.resize(n_all_data); // Normalized Residue
+  //vpColVector sorted_normres(n_data); // Normalized Residue
+  //vpColVector sorted_residues = residues;
+  //vpColVector sorted_residues;
+  
 
   int index =0;
   for(int j=0;j<n_data;j++)
   {
-    if(w[j]!=0)
+    if(weights[j]!=0)
     {
       no_null_weight_residues[index]=residues[j];
       index++;
@@ -369,19 +345,20 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
 vpColVector
 vpRobust::simultMEstimator(vpColVector &residues)
 {
-
+ 
   double med=0;					// Median
   double normmedian=0; 	// Normalized Median
   double sigma=0;				// Standard Deviation
 
   int n_data = residues.getRows();
   vpColVector normres(n_data); // Normalized Residue
-
+  vpColVector w(n_data);
+  
   vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data
 	      << std::endl;
 
   // Calculate Median
-  med = median(residues);
+  med = select(residues, 0, n_data-1, n_data/2);
 
   // Normalize residues
   for(int i=0; i<n_data; i++)
@@ -392,7 +369,7 @@ vpRobust::simultMEstimator(vpColVector &residues)
   // For Others use MAD calculated on first iteration
   if(it==0)
   {
-    normmedian = median(normres);
+    normmedian = select(normres, 0, n_data-1, n_data/2);
     // 1.48 keeps scale estimate consistent for a normal probability dist.
     sigma = 1.4826*normmedian; // Median Absolute Deviation
   }
@@ -412,12 +389,13 @@ vpRobust::simultMEstimator(vpColVector &residues)
 
   vpCDEBUG(2) << "MAD and C computed" << std::endl;
 
-  psiHuber(sigma, normres);
+  psiHuber(sigma, normres,w);
 
   sig_prev = sigma;
 
   return w;
 }
+
 double
 vpRobust::scale(vpRobustEstimatorType method, vpColVector &x)
 {
@@ -606,105 +584,85 @@ vpRobust::simult_chi_huber(double x)
   return sct;
 }
 
-// Caluculation of Tukey's influence function
-// : for a Column Vector of corresponding point pairs.
-int
-vpRobust::psiTukey(double sig, vpColVector &x)
-{
+/*!
+  \brief calculation of Tukey's influence function
 
-  vpCDEBUG(3) << "Tukey reached. No" << std::endl;
+  \param sigma : sigma parameters
+  \param x : normalized residue vector
+  \param weights : weight vector
+*/
+
+void vpRobust::psiTukey(double sig, vpColVector &x, vpColVector & weights)
+{
 
   int n_data = x.getRows();
   double cst_const = vpCST*4.6851;
 
   for(int i=0; i<n_data; i++)
   {
-    if(sig==0 && w[i]!=0)
+    if(sig==0 && weights[i]!=0)
     {
-      w[i]=1;
+      weights[i]=1;
       continue;
     }
 
     double xi_sig = x[i]/sig;
 
-    if((fabs(xi_sig)<=(cst_const)) && w[i]!=0)
+    if((fabs(xi_sig)<=(cst_const)) && weights[i]!=0)
     {
-      w[i] = vpMath::sqr(1-vpMath::sqr(xi_sig/cst_const));
+      weights[i] = vpMath::sqr(1-vpMath::sqr(xi_sig/cst_const));
       //w[i] = vpMath::sqr(1-vpMath::sqr(x[i]/sig/4.7));
     }
     else
     {
       //Outlier - could resize list of points tracked here?
-      w[i] = 0;
+      weights[i] = 0;
     }
   }
-
-#ifdef VP_DEBUG
-#if VP_DEBUG_MODE == 3
-  {
-    std::cout << "Tukey computed." << std::endl;
-    std::cout << "w= " << w << std::endl;
-    std::cout << "r= " << x << std::endl;
-    //getchar();
-  }
-#endif
-#endif
-
-  return 1;
 }
 
-// Caluculation of Huber's influence function
-// : for a Column Vector of corresponding point pairs.
-int
-vpRobust::psiHuber(double sig, vpColVector &x)
+/*!
+  \brief calculation of Tukey's influence function
+
+  \param sigma : sigma parameters
+  \param x : normalized residue vector
+  \param weights : weight vector
+*/
+void vpRobust::psiHuber(double sig, vpColVector &x, vpColVector &weights)
 {
   double c = 1.2107; //1.345;
-  //c = 1.345;
-
-  vpCDEBUG(3) << "Huber reached. No" << std::endl;
-
   int n_data = x.getRows();
 
   for(int i=0; i<n_data; i++)
   {
-    if(w[i]!=0)
+    if(weights[i]!=0)
     {
       double xi_sig = x[i]/sig;
       if(fabs(xi_sig)<=c)
-	w[i] = 1;
+	weights[i] = 1;
       else
-	w[i] = c/fabs(xi_sig);
+	weights[i] = c/fabs(xi_sig);
     }
   }
-
-#ifdef VP_DEBUG
-#if VP_DEBUG_MODE == 3
-  {
-    std::cout << "Huber computed." << std::endl;
-    std::cout << "w= " << w << std::endl;
-    std::cout << "r= " << x << std::endl;
-    //getchar();
-  }
-#endif
-#endif
-
-  return 1;
 }
 
+/*!
+  \brief calculation of Cauchy's influence function
 
-// Caluculation of Cauchy's influence function
-// : for a Column Vector of corresponding point pairs.
-int
-vpRobust::psiCauchy(double sig, vpColVector &x)
+  \param sigma : sigma parameters
+  \param x : normalized residue vector
+  \param weights : weight vector
+*/
+
+void vpRobust::psiCauchy(double sig, vpColVector &x, vpColVector &weights)
 {
   int n_data = x.getRows();
-
   double const_sig = 2.3849*sig;
 
   //Calculate Cauchy's equation
   for(int i=0; i<n_data; i++)
   {
-    w[i] = 1/(1+vpMath::sqr(x[i]/(const_sig)));
+    weights[i] = 1/(1+vpMath::sqr(x[i]/(const_sig)));
 
     // If one coordinate is an outlier the other is too!
     // w[i] < 0.01 is a threshold to be set
@@ -719,18 +677,24 @@ vpRobust::psiCauchy(double sig, vpColVector &x)
       w[i-1] = w[i];
       }*/
   }
-  return 1;
 }
 
-int
-vpRobust::psiMcLure(double sig, vpColVector &r)
+
+/*!
+  \brief calculation of McLure's influence function
+
+  \param sigma : sigma parameters
+  \param x : normalized residue vector
+  \param weights : weight vector
+*/
+void vpRobust::psiMcLure(double sig, vpColVector &r,vpColVector &weights)
 {
   int n_data = r.getRows();
 
   //McLure's function
   for(int i=0; i<n_data; i++)
   {
-    w[i] = 1/(vpMath::sqr(1+vpMath::sqr(r[i]/sig)));
+    weights[i] = 1/(vpMath::sqr(1+vpMath::sqr(r[i]/sig)));
     //w[i] = 2*mad/vpMath::sqr((mad+r[i]*r[i]));//odobez
 
     // If one coordinate is an outlier the other is too!
@@ -746,159 +710,15 @@ vpRobust::psiMcLure(double sig, vpColVector &r)
       w[i-1] = w[i];
       }*/
   }
-
-  return 1;
-}
-
-double
-vpRobust::median(const vpColVector &v)
-{
-  int i,j;
-  int inf, sup;
-  int n = v.getRows() ;
-  vpColVector infsup(n) ;
-  vpColVector eq(n) ;
-
-  for (i=0;i<n;i++)
-  {
-    // We compute the number of elements superior to the current value (sup)
-    // the number of elements inferior (inf) to the current value and
-    // the number of elements equal to the current value (eq)
-    inf = sup = 0;
-    for (j=0;j<n;j++)
-    {
-      if (i != j)
-      {
-	if (v[i] <= v[j]) inf++;
-	if (v[i] >= v[j]) sup++;
-	if (v[i] == v[j]) eq[i]++;
-      }
-    }
-    // We compute then difference between inf and sup
-    // the median should be for |inf-sup| = 0 (1 if an even number of element)
-    // which means that there are the same number of element in the array
-    // that are greater and smaller that this value.
-    infsup[i] = abs(inf-sup);
-  }
-
-  // seek for the smaller value of |inf-sup| (should be 0 or 1)
-  int imin = 0 ; // index of the median in the array
-  //double eqmax = 0 ; // count of equal values
-  // min cannot be greater than the number of element
-  double min = n;
-
-  // number of medians
-  int mediancount = 0;
-  // array of medians
-  int *medianindex = new int[n];
-
-  for (i=0; i<n; i++)
-  {
-    if(infsup[i] < min)
-    {
-      min = infsup[i];
-      imin = i ;
-
-      //reset count of median values
-      mediancount=0;
-      medianindex[mediancount]=i;
-    }
-    else if(infsup[i]==min) //If there is another median
-    {
-      mediancount++;
-      medianindex[mediancount]=i;
-    }
-  }
-
-  // Choose smalest data to be the median
-  /*for(i=0; i<mediancount+1; i++)
-    {
-    //Choose the value with the greatest count
-    if(eq[medianindex[i]] > eqmax)
-    {
-    eqmax = eq[medianindex[i]];
-    imin = medianindex[i];
-    }
-    //If we have identical counts
-    // Choose smalest data to be the median
-    //if(v[medianindex[i]] < v[imin])
-    //	imin = medianindex[i];
-    }*/
-
-  // return the median
-  delete []medianindex;
-  return(v[imin]);
 }
 
 
-
-// Calculate median only for the residues which have
-// not be rejected. i.e. weight=0
-double
-vpRobust::median(const vpColVector &v, vpColVector &weights)
-{
-  int i,j;
-  int inf, sup;
-  int n = v.getRows() ;
-  vpColVector infsup(n) ;
-  vpColVector eq(n) ;
-
-  for (i=0;i<n;i++)
-  {
-    if(weights[i]!=0)
-    {
-      // We compute the number of elements superior to the current value (sup)
-      // the number of elements inferior (inf) to the current value and
-      // the number of elements equal to the current value (eq)
-      inf = sup = 0;
-      for (j=0;j<n;j++)
-      {
-	if (weights[j]!=0 && i!=j)
-	{
-	  if (v[i] <= v[j]) inf++;
-	  if (v[i] >= v[j]) sup++;
-	  if (v[i] == v[j]) eq[i]++;
-	}
-      }
-      // We compute then difference between inf and sup
-      // the median should be for |inf-sup| = 0 (1 if an even number of element)
-      // which means that there are the same number of element in the array
-      // that are greater and smaller that this value.
-      infsup[i] = abs(inf-sup);
-    }
-  }
-
-  // seek for the smaller value of |inf-sup| (should be 0 or 1)
-  int imin = 0 ; // index of the median in the array
-  //double eqmax = 0 ; // count of equal values
-  // min cannot be greater than the number of element
-  double min = n;
-
-  for (i=0; i<n; i++)
-  {
-    if(weights[i]!=0)
-    {
-      if(infsup[i] < min)
-      {
-	min = infsup[i];
-	imin = i ;
-      }
-    }
-  }
-
-  // return the median
-  return(v[imin]);
-}
-
-
-
-void vpRobust::exch(double &A, double &B)
-{
-  double t = A;
-  A = B;
-  B = t;
-}
-
+/*!
+  \brief partition function
+  \param a : vector to be sorted
+  \param l : first value to be considered
+  \param r : last value to be considered
+*/
 int vpRobust::partition(vpColVector &a, int l, int r)
 {
   int i = l-1;
@@ -916,6 +736,13 @@ int vpRobust::partition(vpColVector &a, int l, int r)
   return i;
 }
 
+/*!
+  \brief sort a part of a vector and select a value of this new vector
+  \param a : vector to be sorted
+  \param l : first value to be considered
+  \param r : last value to be considered
+  \param k : value to be selected
+*/
 double vpRobust::select(vpColVector &a, int l, int r, int k)
 {
   while (r > l)
@@ -1038,6 +865,144 @@ vpRobust::gammln(double xx)
 }
 
 
+
+// double
+// vpRobust::median(const vpColVector &v)
+// {
+//   int i,j;
+//   int inf, sup;
+//   int n = v.getRows() ;
+//   vpColVector infsup(n) ;
+//   vpColVector eq(n) ;
+// 
+//   for (i=0;i<n;i++)
+//   {
+//     // We compute the number of elements superior to the current value (sup)
+//     // the number of elements inferior (inf) to the current value and
+//     // the number of elements equal to the current value (eq)
+//     inf = sup = 0;
+//     for (j=0;j<n;j++)
+//     {
+//       if (i != j)
+//       {
+// 	if (v[i] <= v[j]) inf++;
+// 	if (v[i] >= v[j]) sup++;
+// 	if (v[i] == v[j]) eq[i]++;
+//       }
+//     }
+//     // We compute then difference between inf and sup
+//     // the median should be for |inf-sup| = 0 (1 if an even number of element)
+//     // which means that there are the same number of element in the array
+//     // that are greater and smaller that this value.
+//     infsup[i] = abs(inf-sup);
+//   }
+// 
+//   // seek for the smaller value of |inf-sup| (should be 0 or 1)
+//   int imin = 0 ; // index of the median in the array
+//   //double eqmax = 0 ; // count of equal values
+//   // min cannot be greater than the number of element
+//   double min = n;
+// 
+//   // number of medians
+//   int mediancount = 0;
+//   // array of medians
+//   int *medianindex = new int[n];
+// 
+//   for (i=0; i<n; i++)
+//   {
+//     if(infsup[i] < min)
+//     {
+//       min = infsup[i];
+//       imin = i ;
+// 
+//       //reset count of median values
+//       mediancount=0;
+//       medianindex[mediancount]=i;
+//     }
+//     else if(infsup[i]==min) //If there is another median
+//     {
+//       mediancount++;
+//       medianindex[mediancount]=i;
+//     }
+//   }
+// 
+//   // Choose smalest data to be the median
+//   /*for(i=0; i<mediancount+1; i++)
+//     {
+//     //Choose the value with the greatest count
+//     if(eq[medianindex[i]] > eqmax)
+//     {
+//     eqmax = eq[medianindex[i]];
+//     imin = medianindex[i];
+//     }
+//     //If we have identical counts
+//     // Choose smalest data to be the median
+//     //if(v[medianindex[i]] < v[imin])
+//     //	imin = medianindex[i];
+//     }*/
+// 
+//   // return the median
+//   delete []medianindex;
+//   return(v[imin]);
+// }
+// 
+// // Calculate median only for the residues which have
+// // not be rejected. i.e. weight=0
+// double
+// vpRobust::median(const vpColVector &v, vpColVector &weights)
+// {
+//   int i,j;
+//   int inf, sup;
+//   int n = v.getRows() ;
+//   vpColVector infsup(n) ;
+//   vpColVector eq(n) ;
+// 
+//   for (i=0;i<n;i++)
+//   {
+//     if(weights[i]!=0)
+//     {
+//       // We compute the number of elements superior to the current value (sup)
+//       // the number of elements inferior (inf) to the current value and
+//       // the number of elements equal to the current value (eq)
+//       inf = sup = 0;
+//       for (j=0;j<n;j++)
+//       {
+// 	if (weights[j]!=0 && i!=j)
+// 	{
+// 	  if (v[i] <= v[j]) inf++;
+// 	  if (v[i] >= v[j]) sup++;
+// 	  if (v[i] == v[j]) eq[i]++;
+// 	}
+//       }
+//       // We compute then difference between inf and sup
+//       // the median should be for |inf-sup| = 0 (1 if an even number of element)
+//       // which means that there are the same number of element in the array
+//       // that are greater and smaller that this value.
+//       infsup[i] = abs(inf-sup);
+//     }
+//   }
+// 
+//   // seek for the smaller value of |inf-sup| (should be 0 or 1)
+//   int imin = 0 ; // index of the median in the array
+//   //double eqmax = 0 ; // count of equal values
+//   // min cannot be greater than the number of element
+//   double min = n;
+// 
+//   for (i=0; i<n; i++)
+//   {
+//     if(weights[i]!=0)
+//     {
+//       if(infsup[i] < min)
+//       {
+// 	min = infsup[i];
+// 	imin = i ;
+//       }
+//     }
+//   }
+// 
+//   // return the median
+//   return(v[imin]);
+// }
 
 
 #undef vpITMAX
