@@ -2,7 +2,7 @@
  *
  * $Id: vpAfma6.cpp 2158 2009-05-07 07:24:51Z fspindle $
  *
- * Copyright (C) 1998-2008 Inria. All rights reserved.
+ * Copyright (C) 1998-2009 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes
@@ -88,7 +88,7 @@ const vpViper850::vpToolType vpViper850::defaultTool = vpViper850::TOOL_MARLIN_F
 /*!
 
   Default constructor.
-  Sets the specific parameters like the Denavit Hartenberg paramerters
+  Sets the specific parameters like the Denavit Hartenberg parameters.
 
 */
 vpViper850::vpViper850()
@@ -155,10 +155,10 @@ vpViper850::init (const char *camera_extrinsic_parameters)
 
 /*!
 
-  Get the constant parameters related to the robot kinematics and to
-  the end-effector to camera transformation (eMc) correponding to the
-  camera extrinsic parameters. These last parameters depend on the
-  camera and projection model in use.
+  Set the constant parameters related to the robot kinematics and to
+  the end-effector to camera transformation (\f$^e{\bf M}c\f$)
+  correponding to the camera extrinsic parameters. These last
+  parameters depend on the camera and projection model in use.
 
   \param tool : Camera in use.
 
@@ -378,19 +378,37 @@ vpViper850::parseConfigFile (const char * filename)
   attached to the robot.
 
   \code
-  vpImage<unsigned char> I;
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+#include <visp/vpViper850.h>
+#include <visp/vpRobotViper850.h>
+
+int main()
+{
+  vpImage<unsigned char> I(480, 640);
+
+#ifdef VISP_HAVE_DC1394_2
   vp1394TwoGrabber g;
 
   // Acquire an image to update image structure
   g.acquire(I) ;
+#endif
 
+#ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
+#else
+  vpViper850 robot;
+#endif
+
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
   // Camera parameters are read from
   // /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
-  // if VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined in vpConfig.h file
+  // if VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined
+  // in vpConfig.h file
   robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+}
   \endcode
 */
 
@@ -460,23 +478,55 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
 /*!
   Get the current intrinsic camera parameters obtained by calibration.
 
-  Camera parameters are read from
+  \warning This method needs XML library to parse the file defined in
+  vpViper850::CONST_CAMERA_FILENAME and containing the camera
+  parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
+  defined in include/visp/vpConfig.h file.
+
+  \warning Thid method needs also an access to the file located on
+  Inria's NAS server and containing the camera parameters in XML
+  format. This access is available if VISP_HAVE_ACCESS_TO_NAS macro is
+  defined in include/visp/vpConfig.h file.
+
+  - If VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined,
+  this method gets the camera parameters from
   /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
+  config file.
+
+  - If these two macros are not defined, this method set the camera parameters
+  to default one.
 
   \param cam : In output, camera parameters to fill.
   \param I : A B&W image send by the current camera in use.
 
   \code
-  vpImage<unsigned char> I;
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+#include <visp/vpViper850.h>
+#include <visp/vpRobotViper850.h>
+
+int main()
+{
+  vpImage<unsigned char> I(480, 640);
+
+#ifdef VISP_HAVE_DC1394_2
   vp1394TwoGrabber g;
 
   // Acquire an image to update image structure
   g.acquire(I) ;
+#endif
 
+#ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
+#else
+  vpViper850 robot;
+#endif
+
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
   robot.getCameraParameters (cam, I);
+}
   \endcode
 
 */
@@ -489,29 +539,61 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
 /*!
   \brief Get the current intrinsic camera parameters obtained by calibration.
 
-  Camera parameters are read from
+    \warning This method needs XML library to parse the file defined in
+  vpViper850::CONST_CAMERA_FILENAME and containing the camera
+  parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
+  defined in include/visp/vpConfig.h file.
+
+  \warning Thid method needs also an access to the file located on
+  Inria's NAS server and containing the camera parameters in XML
+  format. This access is available if VISP_HAVE_ACCESS_TO_NAS macro is
+  defined in include/visp/vpConfig.h file.
+
+  - If VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined,
+  this method gets the camera parameters from
   /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
+  config file.
+
+  - If these two macros are not defined, this method set the camera parameters
+  to default one.
 
   \param cam : In output, camera parameters to fill.
   \param I : A color image send by the current camera in use.
 
   \code
-  vpImage<vpRGBa> I;
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+#include <visp/vpViper850.h>
+#include <visp/vpRobotViper850.h>
+
+int main()
+{
+  vpImage<vpRGBa> I(480, 640);
+
+#ifdef VISP_HAVE_DC1394_2
   vp1394TwoGrabber g;
 
-  // Acquire a color image to update image structure
+  // Acquire an image to update image structure
   g.acquire(I) ;
+#endif
 
+#ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
+#else
+  vpViper850 robot;
+#endif
+
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
   robot.getCameraParameters (cam, I);
+}
   \endcode
 */
 
 void
 vpViper850::getCameraParameters (vpCameraParameters &cam,
-			      const vpImage<vpRGBa> &I)
+				 const vpImage<vpRGBa> &I)
 {
   getCameraParameters(cam,I.getWidth(),I.getHeight());
 }

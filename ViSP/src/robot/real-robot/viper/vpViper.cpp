@@ -105,19 +105,16 @@ vpViper::vpViper()
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
-  the six joints.
+  of the camera relative to the base frame given the six joint positions.
 
   This method is the same than get_fMc(const vpColVector & q).
 
-  \param q : Articular position of the six joints: q[0], q[1], q[2]
-  correspond to the first 3 translations expressed in meter, while
-  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
-  radians.
+  \param q : A six dimension vector corresponding to the robot joint
+  positions expressed in radians.
 
-  \return The homogeneous matrix corresponding to the direct geometric
-  model which expresses the transformation between the base frame and the
-  camera frame (fMc).
+  \return The homogeneous matrix \f$^f{\bf M}_c \f$ corresponding to
+  the direct geometric model which expresses the transformation
+  between the base frame and the camera frame.
 
   \sa get_fMc(const vpColVector & q)
   \sa getInverseKinematics()
@@ -136,18 +133,19 @@ vpViper::getForwardKinematics(const vpColVector & q)
 
   Compute the inverse kinematics (inverse geometric model).
 
-  By inverse kinematics we mean here the six articular values of the joint
-  positions given the position and the orientation of the camera frame
-  relative to the base frame.
+  \warning Not implemented yet.
 
-  \param fMc : Homogeneous matrix describing the transformation from
-  base frame to the camera frame.
+  By inverse kinematics we mean here the six joint values given the
+  position and the orientation of the camera frame relative to the
+  base frame.
 
-  \param q : In input, the current articular joint position of the
-  robot. In output, the solution of the inverse kinematics. Articular
-  position of the six joints: q[0], q[1], q[2] correspond to the first
-  3 translations expressed in meter, while q[3], q[4] and q[5]
-  correspond to the 3 succesives rotations expressed in radians.
+  \param fMc : Homogeneous matrix \f$^f{\bf M}_c \f$ describing the
+  transformation from base frame to the camera frame.
+
+  \param q : In input, a six dimension vector corresponding to the
+  current joint positions expressed in radians. In output, the
+  solution of the inverse kinematics, ie. the joint positions
+  corresponding to \f$^f{\bf M}_c \f$.
 
   \param nearest : true to return the nearest solution to q. false to
   return the farest.
@@ -163,7 +161,7 @@ vpViper::getForwardKinematics(const vpColVector & q)
 
   vpRobotAfma6 robot;
 
-  // Get the current articular position of the robot
+  // Get the current joint position of the robot
   robot.getPosition(vpRobot::ARTICULAR_FRAME, q1);
 
   // Compute the pose of the camera in the reference frame using the
@@ -175,7 +173,7 @@ vpViper::getForwardKinematics(const vpColVector & q)
 
   // Compute the inverse geometric model
   int nbsol; // number of solutions (0, 1 or 2) of the inverse geometric model
-  // get the nearest solution to the current articular position
+  // get the nearest solution to the current joint position
   nbsol = robot.getInverseKinematics(fMc, q1, true);
 
   if (nbsol == 0)
@@ -352,7 +350,7 @@ vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc,
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
+  of the camera relative to the base frame given the joint positions of all
   the six joints.
 
   \f[
@@ -474,13 +472,13 @@ int main()
   vpColVector q(6); // The measured six joint positions
 
   vpHomogeneousMatrix fMe; // Transformation from fix frame to end-effector
-  robot.get_fMe(fMe); // Get the forward kinematics
+  robot.get_fMe(q, fMe); // Get the forward kinematics
 
   // The forward kinematics can also be computed by considering the wrist frame
   vpHomogeneousMatrix fMw; // Transformation from fix frame to wrist frame
   robot.get_fMw(q, fMw);
   vpHomogeneousMatrix wMe; // Transformation from wrist frame to end-effector
-  robot.get_wMe(q, wMe);
+  robot.get_wMe(wMe); // Constant transformation
 
   // Compute the forward kinematics
   fMe = fMw * wMe;
@@ -1062,8 +1060,8 @@ vpViper::getCoupl56()
 /*!
 
   Print on the output stream \e os the robot parameters (joint
-  min/max, distance between axis 5 and 6, coupling factor between axis
-  5 and 6, hand-to-eye homogeneous matrix.
+  min/max, coupling factor between axis 5 and 6, hand-to-eye constant
+  homogeneous matrix \f$^e{\bf M}_c \f$.
 
   \param os : Output stream.
   \param viper : Robot parameters.
