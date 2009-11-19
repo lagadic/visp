@@ -206,6 +206,7 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMePath.h
   tracking/moving-edges/vpMeSite.h
   tracking/moving-edges/vpMeTracker.h
+  tracking/moving-edges/vpMeNurbs.h
   )
 
 SET (HEADER_VIDEO_DEVICE
