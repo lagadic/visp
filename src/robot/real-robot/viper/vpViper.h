@@ -78,12 +78,27 @@
   3 & $a_3$ & 0     & $-\pi/2$ & $q_3^* - \pi$ \\
   4 & 0     & $d_4$ & $\pi/2$  & $q_4^*$ \\
   5 & 0     & 0     & $-\pi/2$ & $q_5^*$ \\
-  6 & 0     & $d_6$ & 0        & $q_6^*-\pi$ \\
+  6 & 0     & 0     & 0        & $q_6^*-\pi$ \\
+  7 & 0     & $d_6$ & 0        & 0 \\
   \hline
   \end{tabular}
   \f]
+  
+  In this modelisation, different frames have to be considered.
+  - \f$ {\cal F}_f \f$: the reference frame, also called world frame,
 
-  The forward kinematics of the robot is implemented in get_fMw(), get_fMe() and get_fMc(). 
+  - \f$ {\cal F}_w \f$: the wrist frame located at the intersection of
+    the last three rotations, with \f$ ^f{\bf M}_w = ^0{\bf M}_6 \f$,
+
+  - \f$ {\cal F}_e \f$: the end-effector frame, with \f$^f{\bf M}_e =
+    0{\bf M}_7 \f$,
+
+  - \f$ {\cal F}_c \f$: the camera frame, with \f$^f{\bf M}_c = ^f{\bf
+    M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
+    a calibration stage.
+  
+  The forward kinematics of the robot is implemented in get_fMw(),
+  get_fMe() and get_fMc().
 
   The robot forward jacobian used to compute the cartesian velocities
   from joint ones is given and implemented in get_fJw(), get_fJe() and
