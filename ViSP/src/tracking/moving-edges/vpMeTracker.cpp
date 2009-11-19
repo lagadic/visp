@@ -141,6 +141,18 @@ vpMeTracker::outOfImage(int i, int j, int half, int rows, int cols)
 	  ) ;
 }
 
+int
+vpMeTracker::outOfImage(vpImagePoint iP, int half, int rows, int cols)
+{
+  int i = vpMath::round(iP.get_i());
+  int j = vpMath::round(iP.get_j());
+  return (! ((i> half+2) &&
+	     (i< rows -(half+2)) &&
+	     (j>half+2) &&
+	     (j<cols-(half+2)))
+	  ) ;
+}
+
 
 //! Virtual function that is called by lower classes vpMeTrackerLine/Circle/Cylinder
 void
