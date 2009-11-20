@@ -317,6 +317,8 @@ class VISP_EXPORT vpPlot
 
     void savePS(const char* psFile);
     void saveData(const int graphNum, const char* dataFile);
+    
+    void clear();
 
 
   protected:

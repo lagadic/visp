@@ -1153,6 +1153,28 @@ void vpPlot::plot(const int graphNum, const double x, const vpColVector v)
 }
 
 
+/*!
+  This method clears the display and erases the list of points already displayed.
+  
+  The parameters of the legend and the axis are kept.
+*/
+void vpPlot::clear()
+{
+  if (XPlot != NULL)
+  {
+    XPlot->bgcolor(0xffff,0xffff,0xffff);
+    XPlot->erase();
+  }
+  
+  for(int i = 0; i < graphNbr; i++)
+  {
+    for(int j = 0; j < graph[i].curveNbr; j++)
+    {
+      graph[i].curveList[j].pointListx.kill();
+      graph[i].curveList[j].pointListy.kill();
+    }
+  }
+}
 
 #endif
 
