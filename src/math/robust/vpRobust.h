@@ -122,7 +122,7 @@ public:
     Set maximal noise threshold.
     \param noise_threshold : Maximal noise threshold.
   */
-  inline void vpRobust::setThreshold(const double noise_threshold) {
+  inline void setThreshold(const double noise_threshold) {
     NoiseThreshold=noise_threshold;
   }
 
