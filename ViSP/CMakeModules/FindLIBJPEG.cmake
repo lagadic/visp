@@ -50,7 +50,6 @@
     "/usr/local/include"
     $ENV{LIBJPEG_DIR}/include
     $ENV{LIBJPEG_DIR}
-    $ENV{GTK2_DIR}/include
     "C:/Program Files/GnuWin32/include"
     )
   #MESSAGE("LIBJPEG_HEADER=${LIBJPEG_INCLUDE_PATH}")
@@ -66,7 +65,6 @@
     $ENV{LIBJPEG_DIR}/lib
     $ENV{LIBJPEG_DIR}/Release
     $ENV{LIBJPEG_DIR}
-    $ENV{GTK2_DIR}/lib
     "C:/Program Files/GnuWin32/lib"
     )
   #MESSAGE("LIBJPEG_LIBRARY=${LIBJPEG_LIBRARY}")

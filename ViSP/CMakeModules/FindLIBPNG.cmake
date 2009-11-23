@@ -51,7 +51,6 @@
     "/usr/local/include"
     $ENV{LIBPNG_DIR}/include
     $ENV{LIBPNG_DIR}
-    $ENV{GTK2_DIR}/include
     )
   #MESSAGE("LIBPNG_HEADER=${LIBPNG_INCLUDE_PATH}")
 
@@ -66,7 +65,6 @@
     $ENV{LIBPNG_DIR}/lib
     $ENV{LIBPNG_DIR}/Release
     $ENV{LIBPNG_DIR}
-    $ENV{GTK2_DIR}/lib
     )
   #MESSAGE("LIBPNG_LIBRARY=${LIBPNG_LIBRARY}")
 
