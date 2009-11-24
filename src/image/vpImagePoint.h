@@ -50,6 +50,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpMath.h>
 
+class vpRect;
 
 /*!
   \class vpImagePoint
@@ -264,6 +265,9 @@ class VISP_EXPORT vpImagePoint
   */
   static double sqrDistance (const vpImagePoint iP1, const vpImagePoint iP2) {
     return(vpMath::sqr(iP1.get_i()-iP2.get_i())+vpMath::sqr(iP1.get_j()-iP2.get_j()));}
+  
+  
+  bool inRectangle( const vpRect &rect );
 
  private:
   double i,j;
