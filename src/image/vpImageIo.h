@@ -53,6 +53,8 @@
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 
+#include <visp/vpImageConvert.h>
+
 #if defined(VISP_HAVE_LIBJPEG)
 #include <jpeglib.h>
 #include <jerror.h>
@@ -156,7 +158,7 @@ public:
   static
   void readPPM(vpImage<vpRGBa> &I, const std::string filename) ;
 
-#if defined(VISP_HAVE_LIBJPEG)
+#if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
   static
   void readJPEG(vpImage<unsigned char> &I, const char *filename) ;
   static
@@ -167,7 +169,7 @@ public:
   void readJPEG(vpImage<vpRGBa> &I, const std::string filename) ;
 #endif
 
-#if defined(VISP_HAVE_LIBPNG)
+#if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
   static
   void readPNG(vpImage<unsigned char> &I, const char *filename) ;
   static
@@ -200,7 +202,7 @@ public:
   static
   void writePPM(const vpImage<vpRGBa> &I, const std::string filename) ;
 
-#if defined(VISP_HAVE_LIBJPEG)
+#if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
   static
   void writeJPEG(vpImage<unsigned char> &I, const char *filename) ;
   static
@@ -211,7 +213,7 @@ public:
   void writeJPEG(vpImage<vpRGBa> &I, const std::string filename) ;
 #endif
 
-#if defined(VISP_HAVE_LIBPNG)
+#if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
   static
   void writePNG(vpImage<unsigned char> &I, const char *filename) ;
   static
