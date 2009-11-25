@@ -953,7 +953,7 @@ vpRobotViper850::setPosition (const vpRobot::vpControlFrameType frame,
     // convert rad to deg requested for the low level controller
     destination.rad2deg();
 
-    std::cout << "Joint destination (deg): " << destination.t();
+    std::cout << "Joint destination (deg): " << destination.t() << std::endl;
     Try( PrimitiveMOVE_J_Viper850(destination.data, positioningVelocity) );
     Try( WaitState_Viper850(ETAT_ATTENTE_AFMA6, 1000) );
     break ;
@@ -971,7 +971,7 @@ vpRobotViper850::setPosition (const vpRobot::vpControlFrameType frame,
     }
     int configuration = 0; // keep the actual configuration
 
-    std::cout << "Base frame destination Rzyz (deg): " << destination.t();
+    std::cout << "Base frame destination Rzyz (deg): " << destination.t() << std::endl;
     Try( PrimitiveMOVE_C_Viper850(destination.data, configuration,
 				  positioningVelocity) );
     Try( WaitState_Viper850(ETAT_ATTENTE_AFMA6, 1000) );
