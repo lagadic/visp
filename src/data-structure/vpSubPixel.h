@@ -67,9 +67,9 @@ class VISP_EXPORT vpSubPixel
 {
 
  public:
-  vpSubPixel();
-  vpSubPixel(const double &u, const double &v);
-  vpSubPixel(const vpSubPixel &p);
+  vp_deprecated vpSubPixel();
+  vp_deprecated vpSubPixel(const double &u, const double &v);
+  vp_deprecated vpSubPixel(const vpSubPixel &p);
   virtual ~vpSubPixel() {}
 
   /*!
@@ -77,7 +77,7 @@ class VISP_EXPORT vpSubPixel
     Copy operator.
 
    */
-  const vpSubPixel& operator=(const vpSubPixel &p) {
+  vp_deprecated const vpSubPixel& operator=(const vpSubPixel &p) {
     this->u = p.u;
     this->v = p.v;
     return *this;
@@ -88,29 +88,29 @@ class VISP_EXPORT vpSubPixel
 
     \sa set_v(const double &)
   */
-  inline void set_u(const double &u) {this->u = u;}
+  vp_deprecated inline void set_u(const double &u) {this->u = u;}
   /*!
     Set the sub-pixel coordinate along the image vertical axis.
 
     \sa set_u(const double &)
   */
-  inline void set_v(const double &v) {this->v = v;}
+  vp_deprecated inline void set_v(const double &v) {this->v = v;}
   
   /*!
     Get the sub-pixel coordinate along the image horizontal axis.
 
     \sa get_v()
   */
-  inline double get_u() const {return u;}
+  vp_deprecated inline double get_u() const {return u;}
   /*!
     Get the sub-pixel coordinate along the image vertival axis.
 
     \sa get_u()
   */
-  inline double get_v() const {return v;}
+  vp_deprecated inline double get_v() const {return v;}
   
   // Printing
-  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
+  vp_deprecated friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
 						const vpSubPixel &p);
 
  private:

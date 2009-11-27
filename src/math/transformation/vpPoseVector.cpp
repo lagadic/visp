@@ -335,7 +335,12 @@ vpPoseVector::vpPoseVector(const vpTranslationVector& t,
                            const vpEulerVector &e)
 {
   init() ;
-  buildFrom(t,e) ;
+  vpRzyzVector rzyz;
+  for (int i=0; i < 3; i ++)
+    rzyz[i] = e[i];
+  vpThetaUVector tu;
+  tu.buildFrom(rzyz);
+  buildFrom(t,tu) ;
 }
 
 /*! 
@@ -348,9 +353,14 @@ vpPoseVector::vpPoseVector(const vpEulerVector &e,
                            const vpTranslationVector& t)
 {
   init() ;
-  buildFrom(t,e) ;
+  vpRzyzVector rzyz;
+  for (int i=0; i < 3; i ++)
+    rzyz[i] = e[i];
+  vpThetaUVector tu;
+  tu.buildFrom(rzyz);
+  buildFrom(t,tu) ;
   vpTRACE("Warning : This function is deprecated : \
-          use vpPoseVector(vpTranslationVector,vpEulerVector&) instead.");
+          use vpPoseVector(vpTranslationVector,vpThetaVector&) instead.");
 }
 
 /*! 

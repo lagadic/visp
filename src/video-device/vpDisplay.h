@@ -797,71 +797,71 @@ class VISP_EXPORT vpDisplay
   /*!
     @name Deprecated functions
   */
-  static void displayTitle(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayTitle(const vpImage<unsigned char> &I,
 			   const char *windowtitle);
 
-  static void displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
+  static vp_deprecated void displayTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
 
-  static void displayArrow_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayArrow_uv(const vpImage<unsigned char> &I,
 			      int u1, int v1, int u2, int v2,
 			      vpColor col=vpColor::white,
 			      unsigned int L=4,unsigned int l=2) ;
-  static void displayArrow_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayArrow_uv(const vpImage<vpRGBa> &I,
 			      int u1, int v1, int u2, int v2,
 			      vpColor col=vpColor::white,
 			      unsigned int L=4,unsigned int l=2) ;
-  static void displayCharString_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayCharString_uv(const vpImage<unsigned char> &I,
 				   int u, int v, const char *s,
 				   vpColor c) ;
 
-  static void displayCharString_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayCharString_uv(const vpImage<vpRGBa> &I,
 				   int u, int v, const char *s,
 				   vpColor c) ;
 
-  static void displayCircle_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayCircle_uv(const vpImage<unsigned char> &I,
 			       int u, int v, unsigned int r,
 			       vpColor c);
-  static void displayCircle_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayCircle_uv(const vpImage<vpRGBa> &I,
 			       int u, int v, unsigned int r,
 			       vpColor c);
-  static void displayCross_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayCross_uv(const vpImage<unsigned char> &I,
 			      int u, int v, unsigned int size,
 			      vpColor col) ;
-  static void displayCross_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayCross_uv(const vpImage<vpRGBa> &I,
 			      int u, int v, unsigned int size,
 			      vpColor col) ;
-  static void displayCrossLarge(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayCrossLarge(const vpImage<unsigned char> &I,
 				int i, int j, unsigned int size,
 				vpColor col) ;
-  static void displayCrossLarge(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayCrossLarge(const vpImage<vpRGBa> &I,
 				int i, int j, unsigned int size,
 				vpColor col) ;
-  static void displayCrossLarge_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayCrossLarge_uv(const vpImage<unsigned char> &I,
 				   int u, int v, unsigned int size,
 				   vpColor col);
-  static void displayCrossLarge_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayCrossLarge_uv(const vpImage<vpRGBa> &I,
 				   int u, int v, unsigned int size,
 				   vpColor col);
-  static void displayDotLine_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayDotLine_uv(const vpImage<unsigned char> &I,
 				int u1, int v1, int u2, int v2,
 				vpColor col, unsigned int e=1) ;
-  static void displayDotLine_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayDotLine_uv(const vpImage<vpRGBa> &I,
 				int u1, int v1, int u2, int v2,
 				vpColor col, unsigned int e=1) ;
-  static void displayLine_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayLine_uv(const vpImage<unsigned char> &I,
 			     int u1, int v1, int u2, int v2,
 			     vpColor col, unsigned int e=1) ;
 
-  static void displayLine_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayLine_uv(const vpImage<vpRGBa> &I,
 			     int u1, int v1, int u2, int v2,
 			     vpColor col, unsigned int e=1) ;
-  static void displayPoint_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayPoint_uv(const vpImage<unsigned char> &I,
 			      int u, int v,
 			      vpColor col) ;
-  static void displayPoint_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayPoint_uv(const vpImage<vpRGBa> &I,
 			      int u, int v,
 			      vpColor col);
-  static void displayRectangle_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated void displayRectangle_uv(const vpImage<unsigned char> &I,
 				  int u, int v,
 				  unsigned int width, unsigned int height,
 				  vpColor col, bool fill = false,
@@ -871,50 +871,50 @@ class VISP_EXPORT vpDisplay
 			    unsigned int width, unsigned int height,
 			    vpColor col, unsigned int e=1);
 		
-  static void displayRectangle_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated void displayRectangle_uv(const vpImage<vpRGBa> &I,
 			    unsigned int u, unsigned int v, float angle,
 			    unsigned int width, unsigned int height,
 			    vpColor col, unsigned int e=1);
 
-  static bool getClick(const vpImage<unsigned char> &I,
+  static vp_deprecated bool getClick(const vpImage<unsigned char> &I,
 		       unsigned int& i, unsigned int& j, bool blocking=true) ;
-  static bool getClick(const vpImage<vpRGBa> &I,
+  static vp_deprecated bool getClick(const vpImage<vpRGBa> &I,
 			unsigned int& i, unsigned int& j, bool blocking=true) ;
-  static bool getClick_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated bool getClick_uv(const vpImage<unsigned char> &I,
 			  unsigned int& u, unsigned int& v,
 			  bool blocking=true);
-  static bool getClick_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated bool getClick_uv(const vpImage<vpRGBa> &I,
 			  unsigned int& u, unsigned int& v,
 			  bool blocking=true) ;
-  static bool getClick(const vpImage<unsigned char> &I,
+  static vp_deprecated bool getClick(const vpImage<unsigned char> &I,
 		       unsigned int& i, unsigned int& j,
 		       vpMouseButton::vpMouseButtonType &button,
 		       bool blocking=true) ;
-  static bool getClick(const vpImage<vpRGBa> &I,
+  static vp_deprecated bool getClick(const vpImage<vpRGBa> &I,
 		       unsigned int& i, unsigned int& j,
 		       vpMouseButton::vpMouseButtonType &button,
 		       bool blocking=true) ;
-  static bool getClick_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated bool getClick_uv(const vpImage<unsigned char> &I,
 			  unsigned int& u, unsigned int& v,
 			  vpMouseButton::vpMouseButtonType &button,
 			  bool blocking=true) ;
-  static bool getClick_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated bool getClick_uv(const vpImage<vpRGBa> &I,
 			  unsigned int& u, unsigned int& v,
 			  vpMouseButton::vpMouseButtonType& button,
 			  bool blocking=true) ;
-  static bool getClickUp(const vpImage<unsigned char> &I,
+  static vp_deprecated bool getClickUp(const vpImage<unsigned char> &I,
 			 unsigned int& i, unsigned int& j,
 			 vpMouseButton::vpMouseButtonType &button,
 			 bool blocking=true) ;
-  static bool getClickUp(const vpImage<vpRGBa> &I,
+  static vp_deprecated bool getClickUp(const vpImage<vpRGBa> &I,
 			 unsigned int& i, unsigned int& j,
 			 vpMouseButton::vpMouseButtonType &button,
 			 bool blocking=true) ;
-  static bool getClickUp_uv(const vpImage<unsigned char> &I,
+  static vp_deprecated bool getClickUp_uv(const vpImage<unsigned char> &I,
 			    unsigned int& u, unsigned int& v,
 			    vpMouseButton::vpMouseButtonType &button,
 			    bool blocking=true);
-  static bool getClickUp_uv(const vpImage<vpRGBa> &I,
+  static vp_deprecated bool getClickUp_uv(const vpImage<vpRGBa> &I,
 			    unsigned int& u, unsigned int& v,
 			    vpMouseButton::vpMouseButtonType& button,
 			    bool blocking=true);

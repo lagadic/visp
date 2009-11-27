@@ -418,10 +418,13 @@ vpTwistMatrix
 vpTwistMatrix::buildFrom(const vpTranslationVector &t,
 			 const vpEulerVector &euler)
 {
-    vpRotationMatrix R ;
-    R.buildFrom(euler) ;
-    buildFrom(t,R) ;
-    return (*this) ;
+  vpRotationMatrix R ;
+  vpRzyzVector rzyz;
+  for (int i=0; i < 3; i ++)
+    rzyz[i] = euler[i];
+  R.buildFrom(rzyz) ;
+  buildFrom(t,R) ;
+  return (*this) ;
 }
 
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

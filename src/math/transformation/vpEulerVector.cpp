@@ -68,7 +68,8 @@ vpEulerVector::operator=(const vpEulerVector &m)
 //! copy constructor
 vpEulerVector::vpEulerVector(const vpEulerVector &m) : vpRotationVector()
 {
-  *this = m ;
+  for (int i=0; i<3; i++)
+    r[i] = m.r[i] ;
 }
 
 //! initialize a Euler vector from a rotation matrix

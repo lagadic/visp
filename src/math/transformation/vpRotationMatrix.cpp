@@ -679,7 +679,11 @@ vpRotationMatrix::buildFrom(const double tux,
 vpRotationMatrix::vpRotationMatrix(const vpEulerVector &euler) : vpMatrix()
 {
   init() ;
-  buildFrom(euler) ;
+  vpRzyzVector rzyz;
+  for (int i=0; i < 3; i ++)
+    rzyz[i] = euler[i];
+
+  buildFrom(rzyz) ;
 }
 
 /*!

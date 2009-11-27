@@ -261,16 +261,16 @@ public:
     @name Deprecated functions
   */
   // Gets the value of a pixel at a location with bilinear interpolation.
-  double get(double i, double j) ;
+  vp_deprecated double get(double i, double j) ;
 
   // Gets the value of a pixel at a location with bilinear interpolation.
-  Type getPixelBI(double j, double i) const;
+  vp_deprecated Type getPixelBI(double j, double i) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
-  Type getSubPix(double i, double j) const;
+  vp_deprecated Type getSubPix(double i, double j) const;
   /*!
 
     \deprecated This method is deprecated. You should use
-    vpImahe::getHeight() instead.
+    vpImage::getHeight() instead.
 
     Get the number of rows in the image.
 
@@ -282,11 +282,11 @@ public:
 
     \sa getHeight()
   */
-  inline  unsigned int getRows() const { return height ; }
+  vp_deprecated inline  unsigned int getRows() const { return height ; }
 
   /*!  
     \deprecated This method is deprecated. You should use
-    vpImahe::getWidth() instead.
+    vpImage::getWidth() instead.
 
     Get the number of columns in the image.
 
@@ -298,11 +298,11 @@ public:
 
     \sa getWidth()
    */
-  inline  unsigned int getCols() const { return width ; }
+  vp_deprecated inline  unsigned int getCols() const { return width ; }
   // Return the maximum value within the bitmap
-  Type maxValue() const ;
+  vp_deprecated Type maxValue() const ;
   // Return the minumum value within the bitmap
-  Type minValue() const ;
+  vp_deprecated Type minValue() const ;
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 private:

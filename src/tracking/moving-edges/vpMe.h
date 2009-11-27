@@ -127,9 +127,9 @@ public:
     \deprecated This method is deprecated. You should use getSampleStep() 
     instead.
   */
-  double GetSampleStep() { return sample_step ; }
-  void setNumberMask(int a) ;
-  void setSizeMask(int a) ;
+  vp_deprecated double GetSampleStep() { return sample_step ; }
+  vp_deprecated void setNumberMask(int a) ;
+  vp_deprecated void setSizeMask(int a) ;
 #endif
 
 };

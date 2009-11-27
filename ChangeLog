@@ -1,5 +1,6 @@
 ViSP 2.x.y 
   - New Features
+    - Warning during the build if deprecated functions are used
     - For the Irisa's Afma6 robot addition of a new vacuum tool (vpAfma6).
     - New vpImagePoint class for image point coordinates.
     - New vpPlot class that enables real time drawing of graphics under Unix.

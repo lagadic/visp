@@ -190,6 +190,15 @@
 #  define VISP_EXPORT
 #endif
 
+// Add the material to produce a warning when deprecated functions are used
+#ifndef vp_deprecated
+#  if defined (UNIX)
+#    define vp_deprecated __attribute__((deprecated))
+#  else
+#    define vp_deprecated __declspec(deprecated)
+#  endif
+#endif
+
 #endif
 
 

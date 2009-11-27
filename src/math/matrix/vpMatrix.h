@@ -428,10 +428,10 @@ public:
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /** @name Deprecated functions */
   //@{
-  static double det33(const vpMatrix &P) ;
-  double euclidianNorm () const;
+  vp_deprecated static double det33(const vpMatrix &P) ;
+  vp_deprecated double euclidianNorm () const;
   // solve Ax=B using the SVD decomposition (usage  x=A.SVDsolve(B))
-  vpColVector SVDsolve(const vpColVector& B) const ;
+  vp_deprecated vpColVector SVDsolve(const vpColVector& B) const ;
   //@}
 #endif
 

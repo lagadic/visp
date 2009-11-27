@@ -69,8 +69,8 @@ class vpThetaUVector;
   \brief Class that consider the case of the euler angles  parameterization
   for the  rotation.
 
-  \deprecated This class is deprecated because to ambiguous. Yous
-  should use vpRxyzVector, or vpRzyxVector or vpRzyzVector classes.
+  \deprecated This class is deprecated because to ambiguous. You
+  should use vpRzyzVector class instead.
 
   Euler(phi,theta,psi) = Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
@@ -79,19 +79,19 @@ class VISP_EXPORT vpEulerVector : public vpRotationVector
 
 public:
   //! constructor
-  vpEulerVector() { ; }
+  vp_deprecated vpEulerVector() { ; }
   //! copy operator
-  vpEulerVector &operator=(const vpEulerVector &m);
+  vp_deprecated vpEulerVector &operator=(const vpEulerVector &m);
   //! copy constructor
   vpEulerVector(const vpEulerVector &m);
 
   //! constructor initialize a Theta U vector from a rotation matrix
-  vpEulerVector(const vpRotationMatrix& R) ;
+  vp_deprecated vpEulerVector(const vpRotationMatrix& R) ;
   //! constructor initialize a Theta U vector from a rotation matrix
-  vpEulerVector(const vpThetaUVector&  tu) ;
+  vp_deprecated vpEulerVector(const vpThetaUVector&  tu) ;
 
   //! constructor from 3 angles (in radian)
-  vpEulerVector(const double phi, const double theta, const double psi) :
+  vp_deprecated vpEulerVector(const double phi, const double theta, const double psi) :
     vpRotationVector (phi, theta, psi) { ; }
 
   //! convert a rotation matrix into Euler vector

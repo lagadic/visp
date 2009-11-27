@@ -75,14 +75,14 @@ private:
   bool background;
 
  public:
-  vpRA() {
+  vp_deprecated vpRA() {
     vpTRACE("vpRA class is deprecated. You should use vpAR instead.");
   }
 
-  virtual ~vpRA() ;
-  void initInternalViewer(int width, int height, vpImageType type = grayImage) ;
-  void setImage(vpImage<unsigned char> &I) ;
-  void setImage(vpImage<vpRGBa> &I) ;
+  vp_deprecated virtual ~vpRA() ;
+  vp_deprecated void initInternalViewer(int width, int height, vpImageType type = grayImage) ;
+  vp_deprecated void setImage(vpImage<unsigned char> &I) ;
+  vp_deprecated void setImage(vpImage<vpRGBa> &I) ;
 
 } ;
 
