@@ -181,31 +181,31 @@ class VISP_EXPORT vpPoseVector : public vpColVector
   */
   // constructor convert a "euler" vector and a translation into a
   // pose (deprecated)
-  vpPoseVector(const vpEulerVector &e,
+  vp_deprecated vpPoseVector(const vpEulerVector &e,
 	       const vpTranslationVector& t) ;
   // constructor convert a "thetau" vector and a translation into a
   // pose (deprecated)
-  vpPoseVector(const vpThetaUVector& tu,
+  vp_deprecated vpPoseVector(const vpThetaUVector& tu,
 	       const vpTranslationVector& t) ;
   // constructor convert a rotation matrix and a translation into a
   // pose (deprecated)
-  vpPoseVector(const vpRotationMatrix& R,
+  vp_deprecated vpPoseVector(const vpRotationMatrix& R,
 	       const vpTranslationVector& t) ;
   // constructor convert a translation and a "euler" vector into a pose
-  vpPoseVector(const vpTranslationVector& t,
+  vp_deprecated vpPoseVector(const vpTranslationVector& t,
 	       const vpEulerVector &e) ;
 
   // convert a "euler" vector and a translation into a pose (deprecated)
-  vpPoseVector buildFrom(const vpEulerVector &e,
+  vp_deprecated vpPoseVector buildFrom(const vpEulerVector &e,
 			 const vpTranslationVector& t) ;
   // convert a "thetau" vector and a translation into a pose (deprecated)
-  vpPoseVector buildFrom(const vpThetaUVector& tu,
+  vp_deprecated vpPoseVector buildFrom(const vpThetaUVector& tu,
 			 const vpTranslationVector& t) ;
   // convert a rotation matrix  and a translation into a pose (deprecated)
-  vpPoseVector buildFrom(const vpRotationMatrix& R,
+  vp_deprecated vpPoseVector buildFrom(const vpRotationMatrix& R,
 			 const vpTranslationVector& t) ;
   // convert a translation and a "euler" vector into a pose
-  vpPoseVector buildFrom(const vpTranslationVector& t,
+  vp_deprecated vpPoseVector buildFrom(const vpTranslationVector& t,
 			 const vpEulerVector &e) ;
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 

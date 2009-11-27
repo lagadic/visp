@@ -243,10 +243,10 @@ public :
   /*!
     @name Deprecated functions
   */
-  void init(const double px, const double py,
+  vp_deprecated void init(const double px, const double py,
 	    const double u0, const double v0) ;
-  void setPixelRatio(const double px,const double py) ;
-  void setPrincipalPoint(const double u0, const double v0) ;
+  vp_deprecated void setPixelRatio(const double px,const double py) ;
+  vp_deprecated void setPrincipalPoint(const double u0, const double v0) ;
 #endif
 
 private:

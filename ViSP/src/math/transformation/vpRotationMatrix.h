@@ -155,10 +155,10 @@ public:
     @name Deprecated functions
   */
   // Construction from  rotation Rzyz
-  vpRotationMatrix(const vpEulerVector &r) ;
+  vp_deprecated vpRotationMatrix(const vpEulerVector &r) ;
   // Transform a vector representing the euler (Rzyz) angle
   // into a rotation matrix
-  vpRotationMatrix buildFrom(const vpEulerVector &v) ;
+  vp_deprecated vpRotationMatrix buildFrom(const vpEulerVector &v) ;
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 private:

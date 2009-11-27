@@ -72,7 +72,8 @@ vpSubPixel::vpSubPixel(const double &u, const double &v)
 */
 vpSubPixel::vpSubPixel(const vpSubPixel &p)
 {
-  *this = p;
+  this->u = p.u;
+  this->v = p.v;
 }
 
 /*!

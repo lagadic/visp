@@ -345,20 +345,20 @@ public:
   /*!
     @name Deprecated functions
   */
-  vpDot2(const unsigned int u, const unsigned int v) ;
-  vpDot2(const double u, const double v) ;
+  vp_deprecated vpDot2(const unsigned int u, const unsigned int v) ;
+  vp_deprecated vpDot2(const double u, const double v) ;
 
-  void set_u( const double & u );
-  void set_v( const double & v );
+  vp_deprecated void set_u( const double & u );
+  vp_deprecated void set_v( const double & v );
 
-  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+  vp_deprecated void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
                      unsigned int size = 0);
-  void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
+  vp_deprecated void initTracking(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
 		    unsigned int gray_level_min, unsigned int gray_level_max,
         unsigned int size = 0 );
-  void track(vpImage<unsigned char> &I, double &u, double &v);
-  double get_u() const;
-  double get_v() const;
+  vp_deprecated void track(vpImage<unsigned char> &I, double &u, double &v);
+  vp_deprecated double get_u() const;
+  vp_deprecated double get_v() const;
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 

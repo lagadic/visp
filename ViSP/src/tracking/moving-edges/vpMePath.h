@@ -89,7 +89,7 @@ public:
   /*!
     @name Deprecated functions
   */
-  void initTracking(vpImage<unsigned char> &I, int n,
+  vp_deprecated void initTracking(vpImage<unsigned char> &I, int n,
 		    unsigned *i, unsigned *j);
 #endif
 

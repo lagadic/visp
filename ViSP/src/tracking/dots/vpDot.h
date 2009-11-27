@@ -295,23 +295,23 @@ public :
   /*!
     @name Deprecated functions
   */
-  vpDot(const unsigned int u, const unsigned int v) ;
-  vpDot(const double u, const double v) ;
+  vp_deprecated vpDot(const unsigned int u, const unsigned int v) ;
+  vp_deprecated vpDot(const double u, const double v) ;
 
   /*! 
     \deprecated You should use vpDot::setCog() instead.
   */
-  void set_u(double u) { cog.set_u(u); }
+  vp_deprecated void set_u(double u) { cog.set_u(u); }
   /*! 
     \deprecated You should use vpDot::setCog() instead.
   */
-  void set_v(double v) { cog.set_v(v); }
+  vp_deprecated void set_v(double v) { cog.set_v(v); }
 
-  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v);
-  void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v,
+  vp_deprecated void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v);
+  vp_deprecated void initTracking(vpImage<unsigned char> &I, unsigned int u, unsigned int v,
 		    unsigned int gray_level_min,
 		    unsigned int gray_level_max);
-  void track(vpImage<unsigned char> & I, double &u, double &v) ;
+  vp_deprecated void track(vpImage<unsigned char> & I, double &u, double &v) ;
 
 
   /*!
@@ -322,7 +322,7 @@ public :
   Return the "u" (column) coordinate of the center of the dot within the image
   it comes from.
   */
-  double get_u() const { return cog.get_u() ; }
+  vp_deprecated double get_u() const { return cog.get_u() ; }
   /*!
 
   \deprecated This method is deprecated. You should use
@@ -332,7 +332,7 @@ public :
   comes from.
   */
 
-  double get_v() const { return cog.get_v() ; }
+  vp_deprecated double get_v() const { return cog.get_v() ; }
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 

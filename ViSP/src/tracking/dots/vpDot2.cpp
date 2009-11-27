@@ -2510,8 +2510,8 @@ void
 vpDot2::track(vpImage<unsigned char> &I, double &u, double &v)
 {
   track(I);
-  u = get_u();
-  v = get_v();
+  u = cog.get_u();
+  v = cog.get_v();
 }
 
 /*!

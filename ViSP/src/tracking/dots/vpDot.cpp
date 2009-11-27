@@ -1024,8 +1024,8 @@ void
 vpDot::track(vpImage<unsigned char> &I, double &u, double &v)
 {
   track(I) ;
-  u = vpDot::get_u() ;
-  v = vpDot::get_v() ;
+  u = cog.get_u() ;
+  v = cog.get_v() ;
 }
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 

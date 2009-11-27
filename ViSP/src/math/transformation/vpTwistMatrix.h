@@ -141,7 +141,7 @@ class VISP_EXPORT vpTwistMatrix : public vpMatrix
   /*!
     @name Deprecated functions
   */
-  vpTwistMatrix buildFrom(const vpTranslationVector &t,
+  vp_deprecated vpTwistMatrix buildFrom(const vpTranslationVector &t,
 			  const vpEulerVector &euler);
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
