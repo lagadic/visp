@@ -143,11 +143,11 @@ vpImagePoint findFirstBorder(const vpImage<unsigned char> Isub, const vpImagePoi
   double dist = 1e6;
   double dist_1 = 1e6;
   vpImagePoint index(-1,-1);
-  for (unsigned int i = 0; i <= Isub.getRows(); i++)
+  for (unsigned int i = 0; i <= Isub.getHeight(); i++)
   {
-    for (unsigned int j = 0; j <= Isub.getCols(); j++)
+    for (unsigned int j = 0; j <= Isub.getWidth(); j++)
     {
-      if(i == 0 || i == Isub.getRows()-1 || j == 0 || j == Isub.getCols()-1)
+      if(i == 0 || i == Isub.getHeight()-1 || j == 0 || j == Isub.getWidth()-1)
       {
         if (Isub(i,j) > 0)
         {
@@ -1146,7 +1146,10 @@ bool vpMeNurbs::hasGoodLevel(const vpImage<unsigned char>& I,
 */
 bool vpMeNurbs::isInImage(const vpImage<unsigned char>& I, const vpImagePoint iP) const
 {
-  return (iP.get_i() >= 0 && iP.get_j() >= 0 && iP.get_i() < I.getRows()  && iP.get_j() < I.getCols());
+  return (iP.get_i() >= 0 
+	  && iP.get_j() >= 0
+	  && iP.get_i() < I.getHeight() 
+	  && iP.get_j() < I.getWidth());
 }
 
 
@@ -1224,7 +1227,10 @@ vpMeNurbs::computeFreemanParameters( unsigned int element, vpImagePoint &diP)
 bool
 vpMeNurbs::farFromImageEdge(const vpImage<unsigned char> I, const vpImagePoint iP)
 {
-  int row = I.getRows();
-  int col = I.getCols();
-  return (iP.get_i() < row - 20 && iP.get_j() < col - 20 && iP.get_i() > 20 && iP.get_j() > 20);
+  int height = I.getHeight();
+  int width  = I.getWidth();
+  return (iP.get_i() < height - 20 
+	  && iP.get_j() < width - 20 
+	  && iP.get_i() > 20 
+	  && iP.get_j() > 20);
 }
