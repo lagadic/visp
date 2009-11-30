@@ -52,6 +52,14 @@ vpDiskGrabber::vpDiskGrabber()
   setExtension("pgm");
 
   init = false;
+  useGenericName = false;
+}
+
+
+vpDiskGrabber::vpDiskGrabber(const char *genericName)
+{
+  strcpy(this->genericName, genericName);
+  useGenericName = true;
 }
 
 
@@ -79,6 +87,7 @@ vpDiskGrabber::vpDiskGrabber(const char *dir, const char *basename,
   setExtension(ext);
 
   init = false;
+  useGenericName = false;
 }
 
 void
@@ -134,7 +143,10 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I)
 
   char name[FILENAME_MAX] ;
 
-  sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
+  if(useGenericName)
+    sprintf(name,genericName,image_number) ;
+  else
+    sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
 
   image_number += image_step ;
 
@@ -158,7 +170,10 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
 
   char name[FILENAME_MAX] ;
 
-  sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
+  if(useGenericName)
+    sprintf(name,genericName,image_number) ;
+  else
+    sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
 
   image_number += image_step ;
 
@@ -170,6 +185,58 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
   height = I.getHeight();
 
 }
+
+/*!
+  Acquire an image: read a pgm image from the disk.
+  After this call, the image number is incremented considering the step.
+
+  \param I the read image
+ */
+void
+vpDiskGrabber::acquire(vpImage<unsigned char> &I, unsigned long image_number)
+{
+
+  char name[FILENAME_MAX] ;
+
+  if(useGenericName)
+    sprintf(name,genericName,image_number) ;
+  else
+    sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
+
+  vpDEBUG_TRACE(2, "load: %s\n", name);
+
+  vpImageIo::read(I, name) ;
+
+  width = I.getWidth();
+  height = I.getHeight();
+}
+
+/*!
+  Acquire an image: read a ppm image from the disk.
+  After this call, the image number is incremented considering the step.
+
+  \param I the read image
+ */
+void
+vpDiskGrabber::acquire(vpImage<vpRGBa> &I, unsigned long image_number)
+{
+
+  char name[FILENAME_MAX] ;
+
+  if(useGenericName)
+    sprintf(name,genericName,image_number) ;
+  else
+    sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
+
+  vpDEBUG_TRACE(2, "load: %s\n", name);
+
+  vpImageIo::read(I, name) ;
+
+  width = I.getWidth();
+  height = I.getHeight();
+
+}
+
 /*!
   Not usefull
 
@@ -245,4 +312,11 @@ void
 vpDiskGrabber::setNumberOfZero(unsigned int noz)
 {
   number_of_zero = noz ;
+}
+
+void
+vpDiskGrabber::setGenericName(const char *genericName)
+{
+  strcpy(this->genericName, genericName) ;
+  useGenericName = true;
 }

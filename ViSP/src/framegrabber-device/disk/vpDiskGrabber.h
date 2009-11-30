@@ -114,9 +114,13 @@ private:
   char directory[FILENAME_MAX] ; //!< image location
   char base_name[FILENAME_MAX] ; //!< image base name
   char extension[FILENAME_MAX] ; //!< image extension
+  
+  bool useGenericName;
+  char genericName[FILENAME_MAX];
 
 public:
   vpDiskGrabber();
+  vpDiskGrabber(const char *genericName);
   vpDiskGrabber(const char *dir, const char *basename, 
                 unsigned long number, int step, int noz,const char *ext) ;
   virtual ~vpDiskGrabber() ;
@@ -126,6 +130,8 @@ public:
 
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);
+  void acquire(vpImage<unsigned char> &I, unsigned long image_number);
+  void acquire(vpImage<vpRGBa> &I, unsigned long image_number);
 
   void close();
 
@@ -135,6 +141,7 @@ public:
   void setStep(int a);
   void setNumberOfZero(unsigned int noz);
   void setExtension(const char *ext);
+  void setGenericName(const char *genericName);
 
   /*!
     Return the current image number.
