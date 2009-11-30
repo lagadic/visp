@@ -121,6 +121,9 @@
 // Defined if libpng library available.
 #cmakedefine VISP_HAVE_LIBPNG
 
+// Defined if ffmpeg library available.
+#cmakedefine VISP_HAVE_FFMPEG
+
 // Defined if raw1394 and dc1394-1.x libraries available.
 #cmakedefine VISP_HAVE_DC1394_1
 
