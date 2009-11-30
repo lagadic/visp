@@ -146,10 +146,29 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     bool isOpen;
     //!Count the frame number when the class is used as a grabber.
     unsigned int frameCount;
+    //!The first frame index
+    unsigned int firstFrame;
 
   public:
     vpVideoReader();
     ~vpVideoReader();
+    
+    /*!
+      Enables to set the first frame index if you want to use the class like a grabber (ie with the
+      acquire method).
+      
+      \param firstFrame : The first frame index.
+    */
+    inline void setFirstFrameIndex(const unsigned int firstFrame) {this->firstFrame = firstFrame;}
+    
+    /*!
+      Reset the frame counter and sets it to the first image index.
+      
+      By default the first frame index is set to 0.
+      
+      This method is usefull if you use the class like a frame grabber (ie with theacquire method).
+    */
+    inline void resetFrameCounter() {frameCount = firstFrame;}
     
     void setFileName(const char *filename);
     void open (vpImage< vpRGBa > &I);
