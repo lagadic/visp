@@ -61,8 +61,7 @@ int vpCalibration::init()
   LoX.kill() ;
   LoY.kill() ;
   LoZ.kill() ;
-  Lu.kill() ;
-  Lv.kill() ;
+  Lip.kill() ;
 
   return 0 ;
 }
@@ -92,8 +91,7 @@ void vpCalibration::operator=(vpCalibration& twinCalibration )
   LoX = twinCalibration.LoX ;
   LoY = twinCalibration.LoY ;
   LoZ = twinCalibration.LoZ ;
-  Lu = twinCalibration.Lu ;
-  Lv = twinCalibration.Lv ;
+  Lip = twinCalibration.Lip ;
 
   residual = twinCalibration.residual;
   cMo = twinCalibration.cMo;
@@ -118,26 +116,25 @@ int vpCalibration::clearPoint()
   LoX.kill() ;
   LoY.kill() ;
   LoZ.kill() ;
-  Lu.kill() ;
-  Lv.kill() ;
+  Lip.kill() ;
   npt = 0 ;
 
   return 0 ;
 }
 
 /*!
+  
   Add a new point in the array of points.
-  \param  X,Y,Z : 3D information of a point in the object frame
-  \param u,v : 2D information (in pixel) of a point in the camera frame
+  \param  X,Y,Z : 3D coordinates of a point in the object frame
+  \param ip : 2D Coordinates of the point in the camera frame.
 */
-int vpCalibration::addPoint(double X, double Y, double Z, double u, double v)
+int vpCalibration::addPoint(double X, double Y, double Z, vpImagePoint &ip)
 {
   LoX += X ;
   LoY += Y ;
   LoZ += Z ;
 
-  Lu += u ;
-  Lv += v ;
+  Lip += ip;
 
   npt++ ;
 
@@ -160,16 +157,13 @@ vpCalibration::computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &c
   LoX.front() ;
   LoY.front() ;
   LoZ.front() ;
-  Lu.front()  ;
-  Lv.front()  ;
+  Lip.front()  ;
   for (unsigned int i =0 ; i < npt ; i++)
   {
     vpPoint P;
     P.setWorldCoordinates(LoX.value(),LoY.value(),LoZ.value());
     double x=0,y=0 ;
-    vpPixelMeterConversion::convertPoint(cam,
-                                         Lu.value(), Lv.value(),
-                                             x,y)  ;
+    vpPixelMeterConversion::convertPoint(cam, Lip.value(), x,y)  ;
     P.set_x(x) ;
     P.set_y(y) ;
 
@@ -177,8 +171,7 @@ vpCalibration::computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &c
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
-    Lu.next() ;
-    Lv.next() ;
+    Lip.next() ;
   }
   vpHomogeneousMatrix cMo_dementhon;  // computed pose with dementhon
   vpHomogeneousMatrix cMo_lagrange;  // computed pose with dementhon
@@ -223,13 +216,13 @@ vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
   LoX.front() ;
   LoY.front() ;
   LoZ.front() ;
-  Lu.front() ;
-  Lv.front() ;
+  Lip.front() ;
 
   double u0 = cam.get_u0() ;
   double v0 = cam.get_v0() ;
   double px = cam.get_px() ;
   double py = cam.get_py() ;
+  vpImagePoint ip;
 
   for (unsigned int i =0 ; i < npt ; i++)
   {
@@ -245,8 +238,9 @@ vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
     double x = cX/cZ ;
     double y = cY/cZ ;
 
-    double u = Lu.value() ;
-    double v = Lv.value() ;
+    ip = Lip.value();
+    double u = ip.get_u() ;
+    double v = ip.get_v() ;
 
     double xp = u0 + x*px;
     double yp = v0 + y*py;
@@ -256,8 +250,7 @@ vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
-    Lu.next() ;
-    Lv.next() ;
+    Lip.next() ;
   }
   this->residual = residual ;
   return sqrt(residual/npt) ;
@@ -278,8 +271,7 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
   LoX.front() ;
   LoY.front() ;
   LoZ.front() ;
-  Lu.front() ;
-  Lv.front() ;
+  Lip.front() ;
 
   double u0 = cam.get_u0() ;
   double v0 = cam.get_v0() ;
@@ -290,6 +282,7 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
 
   double inv_px = 1/px;
   double inv_py = 1/px;
+  vpImagePoint ip;
       
   for (unsigned int i =0 ; i < npt ; i++)
   {
@@ -305,8 +298,9 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
     double x = cX/cZ ;
     double y = cY/cZ ;
 
-    double u = Lu.value() ;
-    double v = Lv.value() ;
+    ip = Lip.value();
+    double u = ip.get_u() ;
+    double v = ip.get_v() ;
 
     double r2ud = 1+kud*(vpMath::sqr(x)+vpMath::sqr(y)) ;
 
@@ -324,8 +318,7 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
-    Lu.next() ;
-    Lv.next() ;
+    Lip.next() ;
   }
   residual /=2;
  
@@ -616,12 +609,12 @@ int
 vpCalibration::writeData(const char *filename)
 {
   std::ofstream f(filename) ;
+  vpImagePoint ip;
 
   LoX.front() ;
   LoY.front() ;
   LoZ.front() ;
-  Lu.front() ;
-  Lv.front() ;
+  Lip.front() ;
 
   f.precision(10);
   f.setf(std::ios::fixed,std::ios::floatfield);
@@ -634,17 +627,16 @@ vpCalibration::writeData(const char *filename)
     double oY = LoY.value() ;
     double oZ = LoZ.value() ;
 
-    double u = Lu.value() ;
-    double v = Lv.value() ;
-
+    ip = Lip.value();
+    double u = ip.get_u() ;
+    double v = ip.get_v() ;
 
     f << oX <<" " << oY << " " << oZ << " " << u << "  " << v <<std::endl ;
 
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
-    Lu.next() ;
-    Lv.next() ;
+    Lip.next() ;
 
   }
 
@@ -661,6 +653,7 @@ vpCalibration::writeData(const char *filename)
 int
 vpCalibration::readData(const char* filename)
 {
+  vpImagePoint ip;
   std::ifstream f;
   f.open(filename);
   if (f != NULL){
@@ -674,7 +667,9 @@ vpCalibration::readData(const char* filename)
       double x, y, z, u, v ;
       f >> x >> y >> z >> u >> v ;
       std::cout << x <<" "<<y <<" "<<z<<" "<<u<<" "<<v <<std::endl ;
-      addPoint(x,y,z,u,v) ;
+      ip.set_u( u );
+      ip.set_v( v );
+      addPoint(x, y, z, ip) ;
     }
 
     f.close() ;
@@ -749,19 +744,12 @@ int
 vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color)
 {
 
-  Lu.front() ;
-  Lv.front() ;
+  Lip.front() ;
 
-  vpImagePoint ip;
-  for (unsigned int i =0 ; i < npt ; i++)
-  {
-    ip.set_u( Lu.value() );
-    ip.set_v( Lv.value() );
+  for (unsigned int i =0 ; i < npt ; i++) {
+    vpDisplay::displayCross(I, Lip.value(), 10, color) ;
 
-    vpDisplay::displayCross(I, ip, 10, color) ;
-
-    Lu.next() ;
-    Lv.next() ;
+    Lip.next() ;
   }
   return 0 ;
 }
@@ -837,3 +825,37 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color)
   }
   return 0;
 }
+
+
+/****************************************************************
+
+           Deprecated functions
+
+*****************************************************************/
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  
+  \deprecated Add a new point in the array of points.
+
+  This function is deprecated, use either addPoint(double, double, double, vpImagePoint &)
+
+  \param  X,Y,Z : 3D information of a point in the object frame
+  \param u,v : 2D information (in pixel) of a point in the camera frame
+*/
+int vpCalibration::addPoint(double X, double Y, double Z, double u, double v)
+{
+  LoX += X ;
+  LoY += Y ;
+  LoZ += Z ;
+
+  vpImagePoint ip;
+  ip.set_u( u );
+  ip.set_v( v );
+  Lip += ip ;
+
+  npt++ ;
+
+  return 0 ;
+}
+
+#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
