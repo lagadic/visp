@@ -191,6 +191,7 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
   After this call, the image number is incremented considering the step.
 
   \param I the read image
+  \param image_number The index of the desired image.
  */
 void
 vpDiskGrabber::acquire(vpImage<unsigned char> &I, unsigned long image_number)
@@ -216,6 +217,7 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I, unsigned long image_number)
   After this call, the image number is incremented considering the step.
 
   \param I the read image
+  \param image_number The index of the desired image.
  */
 void
 vpDiskGrabber::acquire(vpImage<vpRGBa> &I, unsigned long image_number)
