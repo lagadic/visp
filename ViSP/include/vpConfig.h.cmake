@@ -123,6 +123,8 @@
 
 // Defined if ffmpeg library available.
 #cmakedefine VISP_HAVE_FFMPEG
+// Defined if ffmpeg library includes avcode_decode_video2()
+#cmakedefine VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
 
 // Defined if raw1394 and dc1394-1.x libraries available.
 #cmakedefine VISP_HAVE_DC1394_1
