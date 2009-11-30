@@ -200,8 +200,12 @@ bool vpFFMPEG::initStream()
   {
     if (packet.stream_index == videoStream)
     {
-      ret = avcodec_decode_video(pCodecCtx, pFrame, &frameFinished,packet.data, packet.size);
-
+#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
+      ret = avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#else
+      ret = avcodec_decode_video(pCodecCtx, pFrame, 
+				 &frameFinished, packet.data, packet.size);
+#endif
       if (frameFinished)
       {
         if (ret < 0 )
@@ -253,7 +257,12 @@ bool vpFFMPEG::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
   {
     if (packet.stream_index == videoStream)
     {
-      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, packet.data, packet.size);
+#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#else
+      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, 
+			   packet.data, packet.size);
+#endif
       if (frameFinished)
       {
 	if (color_type == vpFFMPEG::COLORED)
@@ -302,7 +311,12 @@ bool vpFFMPEG::getFrame(vpImage<unsigned char> &I, unsigned int frame)
   {
     if (packet.stream_index == videoStream)
     {
-      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, packet.data, packet.size);
+#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#else
+      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, 
+			   packet.data, packet.size);
+#endif
       if (frameFinished)
       {
         if (color_type == vpFFMPEG::COLORED)
