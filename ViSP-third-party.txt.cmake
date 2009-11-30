@@ -41,3 +41,5 @@ Misc:
 Documentation:
   Doxygen                   : ${VISP_HAVE_DOXYGEN_FOUND}
   Graphviz dot              : ${VISP_HAVE_DOT_FOUND}
+Video Read/Write:
+  FFMPEG                    : ${VISP_HAVE_FFMPEG_FOUND}
