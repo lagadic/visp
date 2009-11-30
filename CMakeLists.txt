@@ -132,6 +132,7 @@ SET(USE_LIBPLOTTER ON) # For plotting curves
 SET(USE_LIBJPEG    ON) # For reading jpeg files
 SET(USE_LIBPNG     ON) # For reading png files
 SET(USE_ZLIB       ON) # For data compression
+SET(USE_FFMPEG     ON) # For video read and write
 
 IF(BUILD_SHARED_LIBS)
   SET(VISP_BUILD_SHARED_LIBS TRUE)  # for header vpConfig.h
@@ -456,6 +457,7 @@ SET(VISP_HAVE_LIBPLOTTER_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_ZLIB_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_FFMPEG_FOUND "no")  # for ViSP-third-party.txt
 
 # open CV
 IF(USE_OPENCV)
@@ -682,6 +684,25 @@ IF(USE_LIBPNG)
     SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(LIBPNG_FOUND)
 ENDIF(USE_LIBPNG)
+
+# FFMPEG
+IF(USE_FFMPEG)
+  FIND_PACKAGE(FFMPEG)
+  IF(FFMPEG_FOUND)
+    MESSAGE(STATUS "FFMPEG found")
+    SET(VISP_HAVE_FFMPEG  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_FFMPEG_FOUND "yes")  # for ViSP-third-party.txt
+    FIND_LIBRARY(BZ2_LIB bz2)
+    IF (BZ2_LIB)
+      LIST(APPEND VISP_EXTERN_LIBS ${BZ2_LIB})
+    ENDIF (BZ2_LIB)
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${FFMPEG_INCLUDE_DIRS})
+    LIST(APPEND VISP_EXTERN_LIBS ${FFMPEG_LIBRARIES})
+  ELSE(LIBFFMPEG_FOUND)
+    MESSAGE(STATUS "FFMPEG not found")
+    SET(VISP_HAVE_FFMPEG_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(FFMPEG_FOUND)
+ENDIF(USE_FFMPEG)
 
 #----------------------------------------------------------------------
 # Specific hardware : framegrabbers and cameras
