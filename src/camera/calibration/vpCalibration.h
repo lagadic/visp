@@ -49,6 +49,7 @@
 #ifndef vpCalibration_h
 #define vpCalibration_h
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
@@ -58,6 +59,8 @@
 #include <visp/vpDisplay.h>
 #include <visp/vpImage.h>
 #include <visp/vpCalibrationException.h>
+#include <visp/vpImagePoint.h>
+
 /*!
   \class vpCalibration
 
@@ -79,7 +82,7 @@ public:
 private:
   unsigned int npt ;       //!< number of points used in calibration computation
   vpList<double> LoX, LoY, LoZ  ;  //!< list of points coordinates (3D in meters)
-  vpList<double> Lu, Lv ; //!< list of points coordinates (2D in pixels)
+  vpList<vpImagePoint> Lip ; //!< list of points coordinates (2D in pixels)
 
   double residual ; //!< residual in pixel for camera model without distortion
   double residual_dist ;     //!< residual in pixel for perspective projection
@@ -104,8 +107,8 @@ public:
 
   //! Suppress all the point in the array of point
   int clearPoint() ;
-  //! Add a new point in this array
-  int addPoint(double X, double Y, double Z, double u, double v) ;
+  // Add a new point in this array
+  int addPoint(double X, double Y, double Z, vpImagePoint &ip) ;
 
   //! Constructor
   vpCalibration() ;
@@ -114,6 +117,15 @@ public:
   virtual ~vpCalibration() ;
   //! = operator
   void operator=(vpCalibration& twinCalibration );
+
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vp_deprecated int addPoint(double X, double Y, double Z, double u, double v);
+#endif
+
 private:
   void computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
   void calibLagrange( vpCameraParameters &cam , vpHomogeneousMatrix &cMo) ;

@@ -18,8 +18,9 @@ vpCalibration::calibLagrange(
   LoX.front() ;
   LoY.front() ;
   LoZ.front() ;
-  Lu.front() ;
-  Lv.front() ;
+  Lip.front() ;
+
+  vpImagePoint ip;
 
   for (unsigned int i = 0 ; i < npt ; i++)
   {
@@ -28,10 +29,10 @@ vpCalibration::calibLagrange(
     double y0 = LoY.value() ;
     double z0 = LoZ.value() ;
 
-
-    double xi = Lu.value()  ;
-    double yi = Lv.value()  ;
-
+    ip = Lip.value();
+    
+    double xi = ip.get_u()  ;
+    double yi = ip.get_v()  ;
 
     A[2*i][0] = x0*xi;
     A[2*i][1] = y0*xi;
@@ -61,8 +62,7 @@ vpCalibration::calibLagrange(
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
-    Lu.next() ;
-    Lv.next() ;
+    Lip.next() ;
   }
 
 
@@ -189,12 +189,13 @@ vpCalibration::calibVVS(
   vpColVector P(2*n_points) ;
   vpColVector Pd(2*n_points) ;
 
+  vpImagePoint ip;
+
 
   LoX.front() ;
   LoY.front() ;
   LoZ.front() ;
-  Lu.front() ;
-  Lv.front() ;
+  Lip.front() ;
 
   for (int i =0 ; i < n_points ; i++)
   {
@@ -203,16 +204,16 @@ vpCalibration::calibVVS(
     oY[i]  = LoY.value() ;
     oZ[i]  = LoZ.value() ;
 
+    ip = Lip.value();
 
-    u[i] = Lu.value()  ;
-    v[i] = Lv.value()  ;
+    u[i] = ip.get_u()  ;
+    v[i] = ip.get_v()  ;
 
 
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
-    Lu.next() ;
-    Lv.next() ;
+    Lip.next() ;
   }
 
   //  double lambda = 0.1 ;
@@ -362,6 +363,7 @@ vpCalibration::calibVVSMulti(
 
   vpColVector P(2*nbPointTotal) ;
   vpColVector Pd(2*nbPointTotal) ;
+  vpImagePoint ip;
 
   int curPoint = 0 ; //current point indice
   for (unsigned int p=0; p<nbPose ; p++)
@@ -370,8 +372,7 @@ vpCalibration::calibVVSMulti(
     table_cal[p].LoX.front() ;
     table_cal[p].LoY.front() ;
     table_cal[p].LoZ.front() ;
-    table_cal[p].Lu.front()  ;
-    table_cal[p].Lv.front()  ;
+    table_cal[p].Lip.front()  ;
     
     for (int i =0 ; i < nbPoint[p] ; i++)
     {
@@ -379,15 +380,15 @@ vpCalibration::calibVVSMulti(
       oY[curPoint]  = table_cal[p].LoY.value() ;
       oZ[curPoint]  = table_cal[p].LoZ.value() ;
     
-      u[curPoint] = table_cal[p].Lu.value()  ;
-      v[curPoint] = table_cal[p].Lv.value()  ;
+      ip = table_cal[p].Lip.value();
+      u[curPoint] = ip.get_u()  ;
+      v[curPoint] = ip.get_v()  ;
 
       table_cal[p].LoX.next() ;
       table_cal[p].LoY.next() ;
       table_cal[p].LoZ.next() ;
-      table_cal[p].Lu.next() ;
-      table_cal[p].Lv.next() ;
-
+      table_cal[p].Lip.next() ;
+ 
       curPoint++;
     }
   }
@@ -566,8 +567,9 @@ vpCalibration::calibVVSWithDistortion(
   LoX.front() ;
   LoY.front() ;
   LoZ.front() ;
-  Lu.front() ;
-  Lv.front() ;
+  Lip.front() ;
+  
+  vpImagePoint ip;
 
   for (unsigned int i =0 ; i < n_points ; i++)
   {
@@ -577,15 +579,14 @@ vpCalibration::calibVVSWithDistortion(
     oZ[i]  = LoZ.value() ;
 
 
-    u[i] = Lu.value()  ;
-    v[i] = Lv.value()  ;
-
+    ip = Lip.value();
+    u[i] = ip.get_u();
+    v[i] = ip.get_v();
 
     LoX.next() ;
     LoY.next() ;
     LoZ.next() ;
-    Lu.next() ;
-    Lv.next() ;
+    Lip.next() ;
   }
 
   //  double lambda = 0.1 ;
@@ -818,6 +819,7 @@ vpCalibration::calibVVSWithDistortionMulti(
 
   vpColVector P(4*nbPointTotal) ;
   vpColVector Pd(4*nbPointTotal) ;
+  vpImagePoint ip;
 
   int curPoint = 0 ; //current point indice
   for (unsigned int p=0; p<nbPose ; p++)
@@ -825,9 +827,8 @@ vpCalibration::calibVVSWithDistortionMulti(
     table_cal[p].LoX.front() ;
     table_cal[p].LoY.front() ;
     table_cal[p].LoZ.front() ;
-    table_cal[p].Lu.front()  ;
-    table_cal[p].Lv.front()  ;
-
+    table_cal[p].Lip.front()  ;
+ 
     for (unsigned int i =0 ; i < nbPoint[p] ; i++)
     {
 
@@ -835,16 +836,15 @@ vpCalibration::calibVVSWithDistortionMulti(
       oY[curPoint]  = table_cal[p].LoY.value() ;
       oZ[curPoint]  = table_cal[p].LoZ.value() ;
 
-
-      u[curPoint] = table_cal[p].Lu.value()  ;
-      v[curPoint] = table_cal[p].Lv.value()  ;
+      ip = table_cal[p].Lip.value();
+      u[curPoint] = ip.get_u()  ;
+      v[curPoint] = ip.get_v()  ;
 
 
       table_cal[p].LoX.next() ;
       table_cal[p].LoY.next() ;
       table_cal[p].LoZ.next() ;
-      table_cal[p].Lu.next() ;
-      table_cal[p].Lv.next() ;
+      table_cal[p].Lip.next() ;
       curPoint++;
     }
   }
