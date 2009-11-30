@@ -222,6 +222,11 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMeNurbs.cpp
   )
 
+SET (SRC_VIDEO
+  video/vpVideoReader.cpp
+  video/vpFFMPEG.cpp
+  )
+
 SET (SRC_VIDEO_DEVICE
   video-device/vpDisplay.cpp
   video-device/vpDisplayException.cpp
@@ -267,6 +272,7 @@ SET (SRC_ALL
   ${SRC_SIMULATOR}
   ${SRC_TOOLS}
   ${SRC_TRACKING}
+  ${SRC_VIDEO}
   ${SRC_VIDEO_DEVICE}
   ${SRC_VISUAL_FEATURE}
   )

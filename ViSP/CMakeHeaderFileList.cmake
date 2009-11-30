@@ -209,6 +209,11 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMeNurbs.h
   )
 
+SET (HEADER_VIDEO
+  video/vpVideoReader.h
+  video/vpFFMPEG.h
+  )
+
 SET (HEADER_VIDEO_DEVICE
   video-device/vpDisplayException.h
   video-device/vpDisplayGTK.h
@@ -256,6 +261,7 @@ SET (HEADER_ALL
   ${HEADER_SERVO}
   ${HEADER_TOOLS}
   ${HEADER_TRACKING}
+  ${HEADER_VIDEO}
   ${HEADER_VIDEO_DEVICE}
   ${HEADER_VISUAL_FEATURE}
   )
