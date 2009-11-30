@@ -54,6 +54,7 @@ vpVideoReader::vpVideoReader()
   #endif
   initFileName = false;
   isOpen = false;
+  firstFrame = 0;
   frameCount = 0;
 }
 
@@ -135,7 +136,8 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   }
   #endif
   
-  getFrame(I,0);
+  frameCount = firstFrame;
+  getFrame(I,firstFrame);
   height = I.getHeight();
   width = I.getWidth();
   
@@ -177,7 +179,8 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   }
   #endif
   
-  getFrame(I,0);
+  frameCount = firstFrame;
+  getFrame(I,firstFrame);
   height = I.getHeight();
   width = I.getWidth();
   
