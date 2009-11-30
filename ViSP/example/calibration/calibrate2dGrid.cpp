@@ -601,8 +601,7 @@ int main(int argc, const char ** argv)
       pose.addPoint(P[i]) ; // and added to the pose computation point list
 
       //and added to the local calibration points list
-      calib.addPoint(P[i].get_oX(),P[i].get_oY(),P[i].get_oZ(),
-                      cog.get_u(), cog.get_v());
+      calib.addPoint(P[i].get_oX(),P[i].get_oY(),P[i].get_oZ(), cog);
     
     }
     // compute the initial pose using Lagrange method followed by a non linear
@@ -841,8 +840,7 @@ int main(int argc, const char ** argv)
       if(valid[i]){
 	vpImagePoint cog = md[i].getCog();
 
-        table_cal[niter].addPoint(mP[i].get_oX(),mP[i].get_oY(),mP[i].get_oZ(),
-				  cog.get_u(), cog.get_v()) ;
+        table_cal[niter].addPoint(mP[i].get_oX(),mP[i].get_oY(),mP[i].get_oZ(), cog) ;
       }
     }
       
