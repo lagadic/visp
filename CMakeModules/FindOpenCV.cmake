@@ -55,31 +55,10 @@ SET (OpenCV_POSSIBLE_ROOT_DIRS
   "$ENV{OpenCV_ROOT_DIR}"  
   "$ENV{OPENCV_DIR}"  # only for backward compatibility deprecated by ROOT_DIR
   "$ENV{OPENCV_HOME}" # only for backward compatibility
-  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Intel(R) Open Source Computer Vision Library_is1;Inno Setup: App Path]"
   "$ENV{ProgramFiles}/OpenCV"
   /usr/local
   /usr
   )
-
-
-# MIP Uni Kiel /opt/net network installation 
-# get correct prefix for current gcc compiler version for gcc 3.x  4.x
-IF    (${CMAKE_COMPILER_IS_GNUCXX})
-  IF    (NOT OpenCV_FIND_QUIETLY)
-    MESSAGE(STATUS "Checking GNUCXX version 3/4 to determine  OpenCV /opt/net/ path")
-  ENDIF (NOT OpenCV_FIND_QUIETLY)
-  EXEC_PROGRAM(${CMAKE_CXX_COMPILER} ARGS --version OUTPUT_VARIABLE CXX_COMPILER_VERSION)  
-  IF   (CXX_COMPILER_VERSION MATCHES ".*3\\.[0-9].*")
-    SET(IS_GNUCXX3 TRUE)
-    LIST(APPEND OpenCV_POSSIBLE_ROOT_DIRS /opt/net/gcc33/OpenCV )
-  ENDIF(CXX_COMPILER_VERSION MATCHES ".*3\\.[0-9].*")  
-  IF   (CXX_COMPILER_VERSION MATCHES ".*4\\.[0-9].*")
-    SET(IS_GNUCXX4 TRUE)
-    LIST(APPEND OpenCV_POSSIBLE_ROOT_DIRS /opt/net/gcc41/OpenCV )
-  ENDIF(CXX_COMPILER_VERSION MATCHES ".*4\\.[0-9].*")
-ENDIF (${CMAKE_COMPILER_IS_GNUCXX})
-
-#DBG_MSG("DBG (OpenCV_POSSIBLE_ROOT_DIRS=${OpenCV_POSSIBLE_ROOT_DIRS}")
 
 #
 # select exactly ONE OpenCV base directory/tree 
