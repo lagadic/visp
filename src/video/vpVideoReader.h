@@ -148,6 +148,8 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     unsigned int frameCount;
     //!The first frame index
     unsigned int firstFrame;
+    //!The last frame index
+    unsigned int lastFrame;
 
   public:
     vpVideoReader();
@@ -170,6 +172,13 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     */
     inline void resetFrameCounter() {frameCount = firstFrame;}
     
+    /*!
+      Gets the last frame index.
+      
+      \return Returns the last frame index.
+    */
+    inline unsigned int getLastFrameIndex() const {return lastFrame;}
+    
     void setFileName(const char *filename);
     void open (vpImage< vpRGBa > &I);
     void open (vpImage< unsigned char > &I);
@@ -181,6 +190,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     
   private:
     vpVideoFormatType getFormat(const char *filename);
+    void findLastFrameIndex();
 };
 
 #endif

@@ -41,7 +41,11 @@
   \brief Read videos and image sequences
 */
 
+#include <visp/vpDebug.h>
 #include <visp/vpVideoReader.h>
+
+#include <iostream>
+#include <fstream>
 
 /*!
   Basic constructor.
@@ -56,6 +60,7 @@ vpVideoReader::vpVideoReader()
   isOpen = false;
   firstFrame = 0;
   frameCount = 0;
+  lastFrame = 0;
 }
 
 
@@ -134,14 +139,29 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
     ffmpeg->openStream(fileName, vpFFMPEG::COLORED);
     ffmpeg->initStream();
   }
+  
+  #else
+  else if (formatType == FORMAT_AVI ||
+           formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MOV)
+  {
+    vpERROR_TRACE("To read video files the FFmpeg library has to be installed");
+    throw (vpException(vpException::fatalError ,"the FFmpeg library is required"));
+  }
   #endif
   
   frameCount = firstFrame;
-  getFrame(I,firstFrame);
+  if(!getFrame(I,firstFrame))
+  {
+    vpERROR_TRACE("Could not read the first frame");
+    throw (vpException(vpException::ioError ,"Could not read the first frame"));
+  }
   height = I.getHeight();
   width = I.getWidth();
   
   isOpen = true;
+  
+  findLastFrameIndex();
 }
 
 
@@ -177,14 +197,28 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
     ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED);
     ffmpeg->initStream();
   }
+  #else
+  else if (formatType == FORMAT_AVI ||
+           formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MOV)
+  {
+    vpERROR_TRACE("To read video files the FFmpeg library has to be installed");
+    throw (vpException(vpException::fatalError ,"the FFmpeg library is required"));
+  }
   #endif
   
   frameCount = firstFrame;
-  getFrame(I,firstFrame);
+  if(!getFrame(I,firstFrame))
+  {
+    vpERROR_TRACE("Could not read the first frame");
+    throw (vpException(vpException::ioError ,"Could not read the first frame"));
+  }
   height = I.getHeight();
   width = I.getWidth();
   
   isOpen = true;
+  
+  findLastFrameIndex();
 }
 
 
@@ -200,7 +234,7 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
   if (!isOpen)
   {
     vpERROR_TRACE("Use the open method before");
-    throw (vpException(vpException::notInitialized,"filename empty"));
+    throw (vpException(vpException::notInitialized,"file not yet opened"));
   }
   
   getFrame(I,frameCount);
@@ -221,7 +255,7 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
   if (!isOpen)
   {
     vpERROR_TRACE("Use the open method before");
-    throw (vpException(vpException::notInitialized,"filename empty"));
+    throw (vpException(vpException::notInitialized,"file not yet opened"));
   }
   
   getFrame(I,frameCount);
@@ -350,4 +384,41 @@ vpVideoReader::getFormat(const char *filename)
   else{ 
     return FORMAT_UNKNOWN;
   } 
+}
+
+
+/*!
+  Gets the last frame index
+*/
+void
+vpVideoReader::findLastFrameIndex()
+{
+  if (!isOpen)
+  {
+    vpERROR_TRACE("Use the open method before");
+    throw (vpException(vpException::notInitialized,"file not yet opened"));
+  }
+
+  if (imSequence != NULL)
+  {
+    char name[FILENAME_MAX];
+    int image_number = firstFrame;
+    std::fstream file;
+    bool failed;
+    do
+    {
+      sprintf(name,fileName,image_number) ;
+      file.open(name, std::fstream::in);
+      failed = file.fail();
+      if (!failed) file.close();
+      image_number++;
+    }while(!failed);
+      
+    lastFrame = image_number - 2;
+  }  
+    
+  #ifdef VISP_HAVE_FFMPEG
+  else if (ffmpeg != NULL)
+    lastFrame = ffmpeg->getFrameNumber() - 1;
+  #endif
 }
