@@ -223,7 +223,14 @@ main(int argc, const char ** argv)
   
   //Initialize the reader and get the first frame.
   reader.setFileName(filename.c_str());
-  reader.open(I);
+  try
+  {
+    reader.open(I);
+  }
+  catch(...)
+  {
+    return 0;
+  }
 
   // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
@@ -280,10 +287,29 @@ main(int argc, const char ** argv)
   
   if (opt_display && opt_click_allowed)
   {
-    std::cout << "Click to leave the example" << std::endl;
+    std::cout << "Click to see the of the video" << std::endl;
     vpDisplay::getClick(I);
   }
   
+  unsigned int lastFrame = reader.getLastFrameIndex();
+  
+  for (unsigned int i = lastFrame - 5; i <= lastFrame; i++)
+  {
+    reader.getFrame(I,i);
+    if (opt_display)
+    {
+      vpDisplay::display(I) ;
+      vpDisplay::flush(I);
+    }
+    if (opt_display && opt_click_allowed)
+    {
+      if (i == lastFrame)
+	std::cout << "Click to exit the test" << std::endl;
+      else
+        std::cout << "Click to see the next frame" << std::endl;
+      vpDisplay::getClick(I);
+    }
+  }
   return 0;
 }
 
