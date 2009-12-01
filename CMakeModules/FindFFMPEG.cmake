@@ -146,8 +146,10 @@
     $ENV{FFMPEG_DIR}
   )
 
-  #FFMpeg depend son Zlib
-  INCLUDE(FindZLIB)
+  # FFMpeg depend son Zlib
+  FIND_PACKAGE(ZLIB)
+  # FFMpeg depend son Zlib
+  FIND_PACKAGE(BZip2)
 
   # Try to find if avcodec_decode_video2() is avalaible since 
   # avcodec_decode_video() is deprecated. To do that we try to compile 
@@ -189,6 +191,7 @@
     ${FFMPEG_AVCODEC_LIBRARY}
     ${FFMPEG_AVUTIL_LIBRARY}
     ${ZLIB_LIBRARY}
+    ${BZIP2_LIBRARIES}
 #   ${VORBISENC}
 #   ${VORBIS}
 #    ${OGG}
