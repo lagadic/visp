@@ -59,6 +59,7 @@ SET (SRC_SUBDIRS
   simulator
   tools
   tracking
+  video
 )
 
 # Build process propagation in the sub directories
