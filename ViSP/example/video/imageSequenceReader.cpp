@@ -57,6 +57,8 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
+
 // List of allowed command line options
 #define GETOPTARGS	"cdi:h"
 
@@ -236,9 +238,6 @@ main(int argc, const char ** argv)
   vpDisplayGDI display;
 #elif defined VISP_HAVE_OPENCV
   vpDisplayOpenCV display;
-#else
-  std::cout << "Sorry, no display is available. We quit this example." << std::endl;
-  return 0;
 #endif
 
   if (opt_display) 
@@ -313,7 +312,14 @@ main(int argc, const char ** argv)
   
   return 0;
 }
-
+#else
+int main()
+{
+  std::cout << "Sorry, no display is available. We quit this example." 
+	    << std::endl;
+  return 0;
+}
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2
