@@ -60,7 +60,7 @@
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:h"
+#define GETOPTARGS	"cdi:p:h"
 
 /*!
 
@@ -69,9 +69,10 @@ Print the program options.
 \param name : Program name.
 \param badparam : Bad parameter name.
 \param ipath : Input image sequence path.
+\param ppath : Personal image sequence path.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath)
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
 {
   fprintf(stdout, "\n\
 Read an image sequence on the disk.\n\
@@ -91,6 +92,12 @@ OPTIONS:                                               Default\n\
      variable produces the same behaviour than using\n\
      this option.\n\
 \n\
+  -p <personal image sequence path>                             %s\n\
+     Specify a personal folder containing a image sequence \n\
+     to process.\n\
+     Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
+     %%04d is for the image numbering.\n\
+\n\
   -c\n\
      Disable the mouse click. Usefull to automaze the \n\
      execution of this program without humain intervention.\n\
@@ -100,7 +107,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str());
+	  ipath.c_str(), ppath.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n" );
@@ -114,13 +121,14 @@ OPTIONS:                                               Default\n\
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param ipath : Input images path.
+  \param ppath : Personal image sequence path.
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, bool &click_allowed, bool &display)
+		std::string &ipath, std::string &ppath, bool &click_allowed, bool &display)
 {
   const char *optarg;
   int	c;
@@ -130,16 +138,17 @@ bool getOptions(int argc, const char **argv,
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
     case 'i': ipath = optarg; break;
-    case 'h': usage(argv[0], NULL, ipath); return false; break;
+    case 'p': ppath = optarg; break;
+    case 'h': usage(argv[0], NULL, ipath, ppath); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath); return false; break;
+      usage(argv[0], optarg, ipath, ppath); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath);
+    usage(argv[0], NULL, ipath, ppath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -157,14 +166,15 @@ main(int argc, const char ** argv)
   std::string env_ipath;
   std::string opt_ipath;
   std::string ipath;
+  std::string opt_ppath;
   std::string filename;
   bool opt_click_allowed = true;
   bool opt_display = true;
 
   std::cout <<  "-------------------------------------------------------" << std::endl ;
-  std::cout <<  "  videoReader.cpp" <<std::endl << std::endl ;
+  std::cout <<  "  videoImageSequenceReader.cpp" <<std::endl << std::endl ;
 
-  std::cout <<  "  reading a video file" << std::endl ;
+  std::cout <<  "  reading an image sequence" << std::endl ;
   std::cout <<  "-------------------------------------------------------" << std::endl ;
   std::cout << std::endl ;
 
@@ -179,7 +189,7 @@ main(int argc, const char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_click_allowed,
+  if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed,
 		 opt_display) == false) {
     exit (-1);
   }
@@ -190,7 +200,7 @@ main(int argc, const char ** argv)
 
   // Compare ipath and env_ipath. If they differ, we take into account
   // the input path comming from the command line option
-  if (!opt_ipath.empty() && !env_ipath.empty()) {
+  if (!opt_ipath.empty() && !env_ipath.empty() && opt_ppath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
 	   << "WARNING: " << std::endl;
@@ -201,8 +211,8 @@ main(int argc, const char ** argv)
   }
 
   // Test if an input path is set
-  if (opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL, ipath);
+  if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()){
+    usage(argv[0], NULL, ipath, opt_ppath);
     std::cerr << std::endl
 	 << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -222,7 +232,14 @@ main(int argc, const char ** argv)
   //Create the video Reader
   vpVideoReader reader;
 
-  filename = ipath +  vpIoTools::path("/ViSP-images/mire-2/image.%04d.pgm");
+  if (opt_ppath.empty())
+  {
+    filename = ipath +  vpIoTools::path("/ViSP-images/mire-2/image.%04d.pgm");
+  }
+  else
+  {
+    filename.assign(opt_ppath);
+  }
   
   //Initialize the reader and get the first frame.
   reader.setFileName(filename.c_str());
