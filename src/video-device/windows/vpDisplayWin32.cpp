@@ -426,8 +426,6 @@ bool vpDisplayWin32::getClickUp(vpImagePoint &ip,
 /*!
   Get a keyboard event.
 
-  \warning Not implemented yet.
-
   \param blocking [in] : Blocking behavior.
   - When set to true, this method waits until a key is
     pressed and then returns always true.
@@ -440,16 +438,27 @@ bool vpDisplayWin32::getClickUp(vpImagePoint &ip,
   - false if no key was pressed. This can occur if blocking is set
     to \e false.
 */
-bool vpDisplayWin32::getKeyboardEvent( bool /* blocking */)
+bool vpDisplayWin32::getKeyboardEvent( bool blocking )
 {
-  vpTRACE("Not implemented yet.");
-  return false;
+  //wait if the window is not initialized
+  waitForInit();
+
+  bool ret = false ;
+  //waits for a keyboard event
+  if(blocking){
+    WaitForSingleObject(window.semaKey, NULL); // key down
+    WaitForSingleObject(window.semaKey, NULL); // key up
+    WaitForSingleObject(window.semaKey, INFINITE);
+    ret = true;  
+  }  
+  else
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, NULL));
+  
+  return ret;
 }
 /*!
 
   Get a keyboard event.
-
-  \warning Not implemented yet.
 
   \param blocking [in] : Blocking behavior.
   - When set to true, this method waits until a key is
@@ -466,10 +475,26 @@ bool vpDisplayWin32::getKeyboardEvent( bool /* blocking */)
   - false if no key was pressed. This can occur if blocking is set
     to \e false.
 */
-bool vpDisplayWin32::getKeyboardEvent(char * /* string */, bool /* blocking */)
+bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
 {
-  vpTRACE("Not implemented yet.");
-  return false;
+  //wait if the window is not initialized
+  waitForInit();
+
+  bool ret = false ;
+  //waits for a keyboard event
+  if(blocking){
+    WaitForSingleObject(window.semaKey, NULL); // key down
+    WaitForSingleObject(window.semaKey, NULL); // key up
+    WaitForSingleObject(window.semaKey, INFINITE);
+    ret = true;  
+  }  
+  else {
+     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, NULL));
+  }
+  //  printf("key: %ud\n", window.key);
+  sprintf(string, "%c", window.key);
+  
+  return ret;
 }
 
 /*!

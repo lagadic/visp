@@ -59,7 +59,6 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpImagePoint.h>
 
 int main()
 {
@@ -67,7 +66,12 @@ int main()
   vpImage<unsigned char> I; // Grey level image
 
   // Read an image in PGM P5 format
+#ifdef UNIX
+  //vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::readPGM(I, "/tmp/Klimt.pgm");
+#elif WIN32
   vpImageIo::readPGM(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+#endif
 
   vpDisplayGDI d;
 
@@ -85,15 +89,37 @@ int main()
   vpDisplay::display(I);
 
   // Draw a red rectangle in the display overlay (foreground)
+  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+
+  // Draw a red rectangle in the display overlay (foreground)
   vpImagePoint topLeftCorner;
-  topLeftCorner.set_i(10);
-  topLeftCorner.set_j(20);
-  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::red, true);
+  topLeftCorner.set_i(50);
+  topLeftCorner.set_j(10);
+  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
 
   // Flush the foreground and background display
   vpDisplay::flush(I);
 
+  // Get non blocking keyboard events
+  std::cout << "Check keyboard events..." << std::endl; 
+  char key[10];
+  bool ret;
+  for (int i=0; i< 200; i++) {
+    bool ret = vpDisplay::getKeyboardEvent(I, key, false);
+    if (ret) 
+      std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
+    vpTime::wait(40);
+  }
+
+  // Get a blocking keyboard event
+  std::cout << "Wait for a keyboard event..." << std::endl; 
+  ret = vpDisplay::getKeyboardEvent(I, key, true);
+  std::cout << "keyboard event: " << ret << std::endl;
+  if (ret) 
+    std::cout << "key: " << "\"" << key << "\"" << std::endl;
+  
   // Wait for a click in the display window
+  std::cout << "Wait for a button click..." << std::endl;
   vpDisplay::getClick(I);
 #endif
 }
