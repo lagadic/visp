@@ -55,6 +55,7 @@
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdi:h"
@@ -232,13 +233,18 @@ main(int argc, const char ** argv)
     return 0;
   }
 
-  // We open a window using either X11, GTK or GDI.
+  // We open a window using either X11, GTK, GDI or OpenCV.
 #if defined VISP_HAVE_X11
   vpDisplayX display;
 #elif defined VISP_HAVE_GTK
   vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
+  vpDisplayGDI display;
+#elif defined VISP_HAVE_OPENCV
   vpDisplayOpenCV display;
+#else
+  std::cout << "Sorry, no display is available. We quit this example." << std::endl;
+  return 0;
 #endif
 
   if (opt_display) 
