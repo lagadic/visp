@@ -13,6 +13,12 @@ ViSP 2.x.y
       disable simulation capabilities based on Coin3D suite.
     - New vpViper, vpViper850 and vpRobotViper850 classes to provide an 
       interface for Inria's Adept Viper 850 robot.
+    - New vpBSpline and vpNurbs classes to manipulate 2D BSpline and 
+      2D Nurbs (Non Uniform Rational BSpline).
+    - New vpMeNurbs class to track object edges.
+    - New vpFFMPEG class to interface the FFmpeg library.
+    - New vpVideoReader class to manipulate easily the video files and the 
+      image sequences.
   - Improvements
     - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
       bus reset can be switched off in the constructor. There are also 
@@ -30,7 +36,8 @@ ViSP 2.x.y
     - vpDot2: The tracking is restarted in vpDot2::track() if a dot is found 
       but is not valid.
     - In vpDisplay, new getKeyboardEvent() functionalities to handle key 
-      events. 	
+      events.
+    - Optimization of the vpMatrix class.
   - Examples:
     - New plotting example in example/tools/plot.cpp
     - In grab1394Two.cpp example, addition of [-r] new option to reset the bus.
