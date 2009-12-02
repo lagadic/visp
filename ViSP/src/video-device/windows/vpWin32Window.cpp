@@ -141,6 +141,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       }
       break;
 
+    case WM_SYSKEYDOWN: 
+      // case WM_SYSKEYUP:
+    case WM_KEYDOWN: 
+      //case WM_KEYUP: 
+      {
+	window->key = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
+	ReleaseSemaphore(window->semaKey,1,NULL);
+	break;
+      }
 
     case WM_COMMAND:
 
@@ -184,6 +193,7 @@ vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
   semaInit = CreateSemaphore(NULL,0,1,NULL);
   semaClick = CreateSemaphore(NULL,0,1,NULL);
   semaClickUp = CreateSemaphore(NULL,0,1,NULL);
+  semaKey = CreateSemaphore(NULL,0,1,NULL);
 
 }
 
@@ -196,6 +206,7 @@ vpWin32Window::~vpWin32Window()
   CloseHandle(semaInit);
   CloseHandle(semaClick);
   CloseHandle(semaClickUp);
+  CloseHandle(semaKey);
 }
 
 

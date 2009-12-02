@@ -81,6 +81,8 @@ private :
   HANDLE semaClick;
   //! Handle for the getClickUp semaphore
   HANDLE semaClickUp;
+  //! Handle for the keyborad event semaphore
+  HANDLE semaKey;
   
   //! X coordinate of the click
   int clickX;
@@ -88,6 +90,8 @@ private :
   //! Y coordinate of the click
   int clickY;
   int clickYUp; 
+  // Keyboard key
+  unsigned int key;
   //! Button used for the click
   vpMouseButton::vpMouseButtonType clickButton;
   vpMouseButton::vpMouseButtonType clickButtonUp;
