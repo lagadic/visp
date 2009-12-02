@@ -136,7 +136,8 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
            formatType == FORMAT_MOV)
   {
     ffmpeg = new vpFFMPEG;
-    ffmpeg->openStream(fileName, vpFFMPEG::COLORED);
+    if(!ffmpeg->openStream(fileName, vpFFMPEG::COLORED))
+      throw (vpException(vpException::ioError ,"Could not open the video"));
     ffmpeg->initStream();
   }
   
@@ -194,7 +195,8 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
            formatType == FORMAT_MOV)
   {
     ffmpeg = new vpFFMPEG;
-    ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED);
+    if (!ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED))
+      throw (vpException(vpException::ioError ,"Could not open the video"));
     ffmpeg->initStream();
   }
   #else
