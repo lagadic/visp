@@ -220,7 +220,7 @@ vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 //   std::cout << "\n\neMc: " << _eMc;
 
   fMe = fMc * this->eMc.inverse();
-  std::cout << "\n\nfMe: " << fMe;
+  //  std::cout << "\n\nfMe: " << fMe;
 
 //   if (fMe[2][2] >= .99999f)
 //   {
