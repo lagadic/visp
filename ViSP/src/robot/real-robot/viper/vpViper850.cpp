@@ -68,6 +68,20 @@ const char * const vpViper850::CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME
 = "/udd/fspindle/robot/Viper850/current/include/const_eMc_MarlinF033C_with_distortion_Viper850.cnf";
 #endif
 
+const char * const vpViper850::CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME
+#ifdef WIN32
+= "Z:/robot/Viper850/current/include/const_eMc_PTGreyFlea2_without_distortion_Viper850.cnf";
+#else
+= "/udd/fspindle/robot/Viper850/current/include/const_eMc_PTGreyFlea2_without_distortion_Viper850.cnf";
+#endif
+
+const char * const vpViper850::CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME
+#ifdef WIN32 
+= "Z:/robot/Viper850/current/include/const_eMc_PTGreyFlea2_with_distortion_Viper850.cnf";
+#else
+= "/udd/fspindle/robot/Viper850/current/include/const_eMc_PTGreyFlea2_with_distortion_Viper850.cnf";
+#endif
+
 
 const char * const vpViper850::CONST_CAMERA_FILENAME
 #ifdef WIN32 
@@ -80,8 +94,9 @@ const char * const vpViper850::CONST_CAMERA_FILENAME
 #endif // VISP_HAVE_ACCESS_TO_NAS
 
 const char * const vpViper850::CONST_MARLIN_F033C_CAMERA_NAME = "Marlin-F033C-12mm";
+const char * const vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME = "PTGrey-Flea2-6mm";
 
-const vpViper850::vpToolType vpViper850::defaultTool = vpViper850::TOOL_MARLIN_F033C_CAMERA;
+const vpViper850::vpToolType vpViper850::defaultTool = vpViper850::TOOL_PTGREY_FLEA2_CAMERA;
 
 
 
@@ -199,6 +214,29 @@ vpViper850::init (vpViper850::vpToolType tool,
     }
     break;
   }
+  case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
+    switch(projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+#ifdef UNIX
+      snprintf(filename_eMc, FILENAME_MAX, "%s",
+	       CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME);
+#else // WIN32
+      _snprintf(filename_eMc, FILENAME_MAX, "%s",
+		CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME);
+#endif
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+#ifdef UNIX
+      snprintf(filename_eMc, FILENAME_MAX, "%s",
+	       CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME);
+#else // WIN32
+      _snprintf(filename_eMc, FILENAME_MAX, "%s",
+		CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME);
+#endif
+      break;
+    }
+    break;
+  }
   default: {
     vpERROR_TRACE ("This error should not occur!");
     //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
@@ -220,6 +258,26 @@ vpViper850::init (vpViper850::vpToolType tool,
   // Use here default values of the robot constant parameters.
   switch (tool) {
   case vpViper850::TOOL_MARLIN_F033C_CAMERA: {
+    switch(projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+      erc[0] = vpMath::rad(0.07); // rx
+      erc[1] = vpMath::rad(2.76); // ry
+      erc[2] = vpMath::rad(-91.50); // rz
+      etc[0] = -0.0453; // tx
+      etc[1] =  0.0005; // ty
+      etc[2] =  0.0728; // tz
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+      erc[0] = vpMath::rad(0.26); // rx
+      erc[1] = vpMath::rad(2.12); // ry
+      erc[2] = vpMath::rad(-91.31); // rz
+      etc[0] = -0.0444; // tx
+      etc[1] = -0.0005; // ty
+      etc[2] =  0.1022; // tz
+      break;
+    }
+  }
+  case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
       erc[0] = vpMath::rad(0.07); // rx
@@ -432,6 +490,18 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
 		 image_width, image_height);
     break;
   }
+  case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
+    std::cout << "Get camera parameters for camera \"" 
+	      << vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl
+	      << "from the XML file: \"" 
+	      << vpViper850::CONST_CAMERA_FILENAME << "\""<< std::endl;
+    parser.parse(cam,
+		 vpViper850::CONST_CAMERA_FILENAME,
+		 vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME,
+		 projModel,
+		 image_width, image_height);
+    break;
+  }
   default: {
     vpERROR_TRACE ("This error should not occur!");
 //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
@@ -453,6 +523,25 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" 
 		<< vpViper850::CONST_MARLIN_F033C_CAMERA_NAME << "\"" << std::endl;
+      switch(this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion :
+	cam.initPersProjWithoutDistortion(1232.0, 1233.0, 317.7, 253.9);
+	break;
+      case vpCameraParameters::perspectiveProjWithDistortion :
+	cam.initPersProjWithDistortion(1214.0, 1213.0, 323.1, 240.0, -0.1824, 0.1881);
+	break;
+      }
+    }
+    else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
+    }
+    break;
+  }
+  case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
+    // Set default intrinsic camera parameters for 640x480 images
+    if (image_width == 640 && image_height == 480) {
+      std::cout << "Get default camera parameters for camera \"" 
+		<< vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl;
       switch(this->projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion :
 	cam.initPersProjWithoutDistortion(1232.0, 1233.0, 317.7, 253.9);
