@@ -1601,12 +1601,9 @@ vpRobotViper850::getVelocity (const vpRobot::vpControlFrameType frame,
   velocity.resize (6);
   velocity = 0;
 
-
-  double q[6];
   vpColVector q_cur(6);
   vpHomogeneousMatrix fMc_cur;
   vpHomogeneousMatrix cMc; // camera displacement
-
 
   InitTry;
 
@@ -1614,10 +1611,8 @@ vpRobotViper850::getVelocity (const vpRobot::vpControlFrameType frame,
   double time_cur = vpTime::measureTimeSecond();
 
   // Get the current joint position
-  Try( PrimitiveACQ_POS_Viper850(q) );
-  for (int i=0; i < njoint; i ++) {
-    q_cur[i] = q[i];
-  }
+  Try( PrimitiveACQ_POS_J_Viper850(q_cur.data) );
+  q_cur.deg2rad();
 
   // Get the camera pose from the direct kinematics
   vpViper850::get_fMc(q_cur, fMc_cur);
