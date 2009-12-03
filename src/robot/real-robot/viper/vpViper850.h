@@ -68,16 +68,20 @@ class VISP_EXPORT vpViper850: public vpViper
   //! are stored.
   static const char * const CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME;
   static const char * const CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
   static const char * const CONST_CAMERA_FILENAME;
 #endif
   /*!
     Name of the camera attached to the end-effector.
   */
   static const char * const CONST_MARLIN_F033C_CAMERA_NAME;
+  static const char * const CONST_PTGREY_FLEA2_CAMERA_NAME;
 
   //! List of possible tools that can be attached to the robot end-effector.
   typedef enum {
-    TOOL_MARLIN_F033C_CAMERA   /*!< Marlin F033C camera. */
+    TOOL_MARLIN_F033C_CAMERA,   /*!< Marlin F033C camera. */
+    TOOL_PTGREY_FLEA2_CAMERA   /*!< Point Grey Flea 2 camera. */
   } vpToolType;
 
   //! Default tool attached to the robot end effector
