@@ -410,7 +410,7 @@ vpRobotViper850::init (vpViper850::vpToolType tool,
     eMc_pose[i+3] = erc[i]; // rotation in rad
   }
   // Update the eMc pose in the low level controller
-  //  Try( PrimitiveCAMERA_CONST_Viper850(eMc_pose) );
+  Try( PrimitiveCONST_Viper850(eMc_pose) );
 
   // get real joint min/max from the MotionBlox
   Try( PrimitiveJOINT_MINMAX_Viper850(joint_min.data, joint_max.data) );
@@ -953,7 +953,7 @@ vpRobotViper850::setPosition (const vpRobot::vpControlFrameType frame,
     // convert rad to deg requested for the low level controller
     destination.rad2deg();
 
-    std::cout << "Joint destination (deg): " << destination.t() << std::endl;
+    //std::cout << "Joint destination (deg): " << destination.t() << std::endl;
     Try( PrimitiveMOVE_J_Viper850(destination.data, positioningVelocity) );
     Try( WaitState_Viper850(ETAT_ATTENTE_AFMA6, 1000) );
     break ;
@@ -971,7 +971,7 @@ vpRobotViper850::setPosition (const vpRobot::vpControlFrameType frame,
     }
     int configuration = 0; // keep the actual configuration
 
-    std::cout << "Base frame destination Rzyz (deg): " << destination.t() << std::endl;
+    //std::cout << "Base frame destination Rzyz (deg): " << destination.t() << std::endl;
     Try( PrimitiveMOVE_C_Viper850(destination.data, configuration,
 				  positioningVelocity) );
     Try( WaitState_Viper850(ETAT_ATTENTE_AFMA6, 1000) );
@@ -1246,7 +1246,7 @@ vpRobotViper850::getPosition (const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::REFERENCE_FRAME : {
     Try( PrimitiveACQ_POS_C_Viper850(position.data) );
-    vpCTRACE << "Get cartesian position " << position.t() << std::endl;
+    //    vpCTRACE << "Get cartesian position " << position.t() << std::endl;
     // 1=tx, 2=ty, 3=tz in meters; 4=Rz 5=Ry 6=Rz in deg
     // Convert Euler Rzyz angles from deg to rad
     for (int i=3; i <6; i++)
@@ -1259,11 +1259,11 @@ vpRobotViper850::getPosition (const vpRobot::vpControlFrameType frame,
     // Update the position using Rxyz representation
     for (int i=0; i <3; i++)
       position[i+3] = rxyz[i];
-    vpCTRACE << "Cartesian position Rxyz (deg)" 
-	     << position[0] << " " << position[1] << " " << position[2] << " "  
-	     << vpMath::deg(position[3]) << " "
-	     << vpMath::deg(position[4]) << " "
-	     << vpMath::deg(position[5]) << std::endl;
+//     vpCTRACE << "Cartesian position Rxyz (deg)" 
+// 	     << position[0] << " " << position[1] << " " << position[2] << " "  
+// 	     << vpMath::deg(position[3]) << " "
+// 	     << vpMath::deg(position[4]) << " "
+// 	     << vpMath::deg(position[5]) << std::endl;
 
     break ;
   }
