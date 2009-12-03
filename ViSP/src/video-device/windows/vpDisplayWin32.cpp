@@ -492,7 +492,7 @@ bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
      ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, NULL));
   }
   //  printf("key: %ud\n", window.key);
-  sprintf(string, "%c", window.key);
+  sprintf(string, "%s", window.lpString);
   
   return ret;
 }

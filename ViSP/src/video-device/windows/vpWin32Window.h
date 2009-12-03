@@ -91,7 +91,7 @@ private :
   int clickY;
   int clickYUp; 
   // Keyboard key
-  unsigned int key;
+  char lpString[10];
   //! Button used for the click
   vpMouseButton::vpMouseButtonType clickButton;
   vpMouseButton::vpMouseButtonType clickButtonUp;
