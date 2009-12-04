@@ -40,12 +40,7 @@ PROJECT(VISP)
 #-----------------------------------------------------------------------------
 # CMake 2.3 is required for INSTALL command functionnality
 # ccmake --help-command INSTALL to kwow more are INSTALL command
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.3)
-
-# Remove these policy lines when CMake 2.6 is the minimum version.
-IF(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 NEW)
-ENDIF(COMMAND CMAKE_POLICY)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
