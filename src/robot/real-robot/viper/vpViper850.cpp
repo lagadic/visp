@@ -280,20 +280,20 @@ vpViper850::init (vpViper850::vpToolType tool,
   case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-      erc[0] = vpMath::rad(0.07); // rx
-      erc[1] = vpMath::rad(2.76); // ry
-      erc[2] = vpMath::rad(-91.50); // rz
-      etc[0] = -0.0453; // tx
-      etc[1] =  0.0005; // ty
-      etc[2] =  0.0728; // tz
+      erc[0] = vpMath::rad(0.15); // rx
+      erc[1] = vpMath::rad(1.28); // ry
+      erc[2] = vpMath::rad(-90.8); // rz
+      etc[0] = -0.0456; // tx
+      etc[1] = -0.0013; // ty
+      etc[2] =  0.001; // tz
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-      erc[0] = vpMath::rad(0.26); // rx
-      erc[1] = vpMath::rad(2.12); // ry
-      erc[2] = vpMath::rad(-91.31); // rz
+      erc[0] = vpMath::rad(0.72); // rx
+      erc[1] = vpMath::rad(2.10); // ry
+      erc[2] = vpMath::rad(-90.5); // rz
       etc[0] = -0.0444; // tx
-      etc[1] = -0.0005; // ty
-      etc[2] =  0.1022; // tz
+      etc[1] = -0.0012; // ty
+      etc[2] =  0.078; // tz
       break;
     }
   }
@@ -544,10 +544,10 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
 		<< vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl;
       switch(this->projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion :
-	cam.initPersProjWithoutDistortion(1232.0, 1233.0, 317.7, 253.9);
+	cam.initPersProjWithoutDistortion(868.0, 869.0, 314.8, 254.1);
 	break;
       case vpCameraParameters::perspectiveProjWithDistortion :
-	cam.initPersProjWithDistortion(1214.0, 1213.0, 323.1, 240.0, -0.1824, 0.1881);
+	cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955, 0.2047);
 	break;
       }
     }
