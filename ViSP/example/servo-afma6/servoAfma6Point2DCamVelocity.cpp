@@ -137,20 +137,10 @@ main()
 
     g.acquire(I) ;
 
-    vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
-    vpTRACE(" ") ;
+    vpDisplayX display(I, 100, 100,"Current image") ;
 
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
-
-    std::cout << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << " Test program for vpServo "  <<std::endl ;
-    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
-    std::cout << " Simulation " << std::endl ;
-    std::cout << " task : servo a point " << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
 
     vpDot dot ;
     vpImagePoint cog;
@@ -167,31 +157,30 @@ main()
     // Update camera parameters
     robot.getCameraParameters (cam, I);
 
-    vpTRACE("sets the current position of the visual feature ") ;
+    // sets the current position of the visual feature
     vpFeaturePoint p ;
-    vpFeatureBuilder::create(p,cam, dot)  ;  //retrieve x,y and Z of the vpPoint structure
+    // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p,cam, dot);  
 
-    vpTRACE("sets the desired position of the visual feature ") ;
+    // sets the desired position of the visual feature
     vpFeaturePoint pd ;
     pd.buildFrom(0,0,1) ;
 
-    vpTRACE("define the task") ;
-    vpTRACE("\t we want an eye-in-hand control law") ;
-    vpTRACE("\t robot is controlled in the camera frame") ;
+    // define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
     task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
-    vpTRACE("\t we want to see a point on a point..") ;
-    std::cout << std::endl ;
+    // - we want to see a point on a point
     task.addFeature(p,pd) ;
 
-    vpTRACE("\t set the gain") ;
+    // - set the constant gain
     task.setLambda(0.8) ;
 
-
-    vpTRACE("Display task information " ) ;
+    // Display task information 
     task.print() ;
 
-
+    // Now the robot will be controlled in velocity
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
