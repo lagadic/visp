@@ -334,10 +334,132 @@ vpMeSite::track(vpImage<unsigned char>& I,
 		const vpMe *me,
 		const bool test_contraste)
 {
+//   vpMeSite  *list_query_pixels ;
+//   int  max_rank =0 ;
+//   int max_rank1=0 ;
+//   int max_rank2 = 0;
+//   double  convolution = 0 ;
+//   double  max_convolution = 0 ;
+//   double max = 0 ;
+//   double contraste = 0;
+//   //  vpDisplay::display(I) ;
+//   //  vpERROR_TRACE("getclcik %d",me->range) ;
+//   //  vpDisplay::getClick(I) ;
+// 
+//   // range = +/- range of pixels within which the correspondent
+//   // of the current pixel will be sought
+//   int range  = me->range ;
+// 
+//   //  std::cout << i << "  " << j<<"  " << range << "  " << suppress  << std::endl ;
+//   list_query_pixels = getQueryList(I, range) ;
+// 
+//   double  contraste_max = 1 + me->mu2 ;
+//   double  contraste_min = 1 - me->mu1 ;
+// 
+//   // array in which likelihood ratios will be stored
+//   double  *likelihood= new double[ 2 * range + 1 ] ;
+// 
+//   int ii_1 = i ;
+//   int jj_1 = j ;
+//   i_1 = i ;
+//   j_1 = j ;
+//   double threshold;
+//   threshold = me->threshold ;
+// 
+//   //    std::cout <<"---------------------"<<std::endl ;
+//   for(int n = 0 ; n < 2 * range + 1 ; n++)
+//     {
+// 
+//       //   convolution results
+//       convolution = list_query_pixels[n].convolution(I, me) ;
+// 
+//       // luminance ratio of reference pixel to potential correspondent pixel
+//       // the luminance must be similar, hence the ratio value should
+//       // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
+//       if( test_contraste )
+// 	{
+// 	  // Include this to eliminate temporal calculation
+// 	  if (convlt==0)
+// 	    {
+// 	      std::cout << "vpMeSite::track : Division by zero  convlt = 0" << std::endl ;
+// 	      delete []list_query_pixels ;
+// 	      delete []likelihood;
+// 	      throw(vpTrackingException(vpTrackingException::initializationError,
+// 					"Division by zero")) ;
+// 	    }
+// 	
+// // 	  contraste = fabs(convolution / convlt) ;
+// 	  contraste = convolution / convlt ;
+// 	  // likelihood ratios
+// 	  if((contraste > contraste_min) && (contraste < contraste_max))
+// 	    likelihood[n] = fabs(convolution + convlt ) ;
+// 	  else
+// 	    likelihood[n] = 0 ;
+// 	}
+//       else
+// 	likelihood[n] = fabs(2*convolution) ;
+//   
+// 
+//       // establishment of the maximal likelihood ratios's  rank
+//       // in the array, the value of the likelihood ratio can now be
+//     // referenced by its rank in the array
+//     if (likelihood[n] > max)
+//     {
+//       max_convolution= convolution;
+//       max = likelihood[n] ;
+//       max_rank = n ;
+//       max_rank2 = max_rank1;
+//       max_rank1 = max_rank;
+//     }
+// 
+//   }
+//   
+//   // test on the likelihood threshold if threshold==-1 then
+//   // the me->threshold is  selected
+// 
+//   vpImagePoint ip;
+// 
+//   //  if (test_contrast)
+//   if(max > threshold)
+//     {
+//       if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
+// 	{
+// 	  ip.set_i( list_query_pixels[max_rank].i );
+// 	  ip.set_j( list_query_pixels[max_rank].j );
+// 	  vpDisplay::displayPoint(I, ip, vpColor::red);
+// 	}
+// 		
+//       *this = list_query_pixels[max_rank] ;//The vpMeSite is replaced by the vpMeSite of max likelihood
+//       normGradient =  vpMath::sqr(max_convolution);
+// 	
+//       convlt = max_convolution;
+//       i_1 = ii_1; //list_query_pixels[max_rank].i ;
+//       j_1 = jj_1; //list_query_pixels[max_rank].j ;
+//       delete []list_query_pixels ;
+//       delete []likelihood;
+//     }
+//   else //none of the query sites is better than the threshold
+//     {
+//       if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
+// 	{
+// 	  ip.set_i( list_query_pixels[max_rank].i );
+// 	  ip.set_j( list_query_pixels[max_rank].j );
+// 	  vpDisplay::displayPoint(I, ip, vpColor::green);
+// 	}
+//       normGradient = 0 ;
+//       if(max == 0)
+// 	suppress = 1; // contrast suppression
+//       else
+// 	suppress = 2; // threshold suppression
+// 	
+//       delete []list_query_pixels ;
+//       delete []likelihood; // modif portage
+//     }
+
   vpMeSite  *list_query_pixels ;
-  int  max_rank =0 ;
-  int max_rank1=0 ;
-  int max_rank2 = 0;
+  int  max_rank =-1 ;
+  int max_rank1=-1 ;
+  int max_rank2 = -1;
   double  convolution = 0 ;
   double  max_convolution = 0 ;
   double max = 0 ;
@@ -365,11 +487,11 @@ vpMeSite::track(vpImage<unsigned char>& I,
   j_1 = j ;
   double threshold;
   threshold = me->threshold ;
+  double diff = 1e6;
 
   //    std::cout <<"---------------------"<<std::endl ;
   for(int n = 0 ; n < 2 * range + 1 ; n++)
-    {
-
+  {
       //   convolution results
       convolution = list_query_pixels[n].convolution(I, me) ;
 
@@ -377,40 +499,35 @@ vpMeSite::track(vpImage<unsigned char>& I,
       // the luminance must be similar, hence the ratio value should
       // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
       if( test_contraste )
+      {
+	likelihood[n] = fabs(convolution + convlt );
+	if (likelihood[n]> threshold)
 	{
-	  // Include this to eliminate temporal calculation
-	  if (convlt==0)
-	    {
-	      std::cout << "vpMeSite::track : Division by zero  convlt = 0" << std::endl ;
-	      delete []list_query_pixels ;
-	      delete []likelihood;
-	      throw(vpTrackingException(vpTrackingException::initializationError,
-					"Division by zero")) ;
-	    }
-	
-	  contraste = fabs(convolution / convlt) ;
-	  // likelihood ratios
-	  if((contraste > contraste_min) && (contraste < contraste_max))
-	    likelihood[n] = fabs(convolution + convlt ) ;
-	  else
-	    likelihood[n] = 0 ;
+	  contraste = convolution / convlt;
+	  if((contraste > contraste_min) && (contraste < contraste_max) && fabs(1-contraste) < diff)
+	  {
+	    diff = fabs(1-contraste);
+	    max_convolution= convolution;
+	    max = likelihood[n] ;
+	    max_rank = n ;
+	    max_rank2 = max_rank1;
+	    max_rank1 = max_rank;
+	  }
 	}
+      }
+      
       else
+      {
 	likelihood[n] = fabs(2*convolution) ;
-  
-
-      // establishment of the maximal likelihood ratios's  rank
-      // in the array, the value of the likelihood ratio can now be
-    // referenced by its rank in the array
-    if (likelihood[n] > max)
-    {
-      max_convolution= convolution;
-      max = likelihood[n] ;
-      max_rank = n ;
-      max_rank2 = max_rank1;
-      max_rank1 = max_rank;
-    }
-
+	if (likelihood[n] > max  && likelihood[n] > threshold)
+	{
+	  max_convolution= convolution;
+          max = likelihood[n] ;
+          max_rank = n ;
+          max_rank2 = max_rank1;
+          max_rank1 = max_rank;
+        }
+      }
   }
   
   // test on the likelihood threshold if threshold==-1 then
@@ -419,7 +536,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
   vpImagePoint ip;
 
   //  if (test_contrast)
-  if(max > threshold)
+  if(max_rank >= 0)
     {
       if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
 	{
@@ -428,7 +545,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
 	  vpDisplay::displayPoint(I, ip, vpColor::red);
 	}
 		
-      *this = list_query_pixels[max_rank] ;//The vpMeSite is replaced by the vpMeSite of max likelihood
+      *this = list_query_pixels[max_rank] ;//The vpMeSite2 is replaced by the vpMeSite2 of max likelihood
       normGradient =  vpMath::sqr(max_convolution);
 	
       convlt = max_convolution;
@@ -441,8 +558,8 @@ vpMeSite::track(vpImage<unsigned char>& I,
     {
       if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
 	{
-	  ip.set_i( list_query_pixels[max_rank].i );
-	  ip.set_j( list_query_pixels[max_rank].j );
+	  ip.set_i( list_query_pixels[0].i );
+	  ip.set_j( list_query_pixels[0].j );
 	  vpDisplay::displayPoint(I, ip, vpColor::green);
 	}
       normGradient = 0 ;
