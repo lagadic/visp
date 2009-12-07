@@ -496,6 +496,24 @@ bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
   
   return ret;
 }
+/*!
+  Get the coordinates of the mouse pointer.
+
+  \warning Not implemented yet.
+  
+  \param ip [out] : The coordinates of the mouse pointer.
+  
+  \return true if a pointer motion event was received, false otherwise.
+  
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+*/
+bool 
+vpDisplayWin32::getPointerMotionEvent (vpImagePoint &ip)
+{
+  vpTRACE("Not implemented yet");
+  return false;
+}
 
 /*!
   Changes the window's position.

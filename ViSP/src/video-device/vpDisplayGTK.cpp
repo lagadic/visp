@@ -264,7 +264,8 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   /* Create the window*/
   widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-  gtk_widget_add_events(widget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK );
+  gtk_widget_add_events(widget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK 
+			| GDK_POINTER_MOTION_MASK);
 
   gtk_window_set_default_size(GTK_WINDOW(widget), width, height);
 
@@ -1463,6 +1464,46 @@ vpDisplayGTK::getKeyboardEvent(char *string, bool blocking)
         vpTime::wait(100);
       }
     } while ( ret == false && blocking == true);
+  }
+  else {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+  return ret;
+}
+
+/*!
+
+  Get the coordinates of the mouse pointer.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+
+  \return true if a pointer motion event was received, false otherwise.
+
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+
+*/
+bool
+vpDisplayGTK::getPointerMotionEvent ( vpImagePoint &ip)
+{
+  bool ret = false;
+
+  if (GTKinitialized) {
+    GdkEvent *ev = NULL;
+    double u, v ;
+    if ((ev = gdk_event_get())){
+      if (ev->any.window == widget->window && ev->type == GDK_MOTION_NOTIFY){
+	u = ((GdkEventMotion *)ev)->x ;
+	v = ((GdkEventMotion *)ev)->y ;
+	ip.set_u( u );
+	ip.set_v( v );
+	
+	ret = true ;
+      }
+      gdk_event_free(ev) ;
+    }
   }
   else {
     vpERROR_TRACE("GTK not initialized " ) ;

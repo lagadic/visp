@@ -252,6 +252,7 @@ protected:
 
   bool getKeyboardEvent(bool blocking=true);
   bool getKeyboardEvent(char *string, bool blocking=true);
+  bool getPointerMotionEvent (vpImagePoint &ip);
 
   static void on_mouse( int event, int x, int y, int flags, void* param );
 } ;

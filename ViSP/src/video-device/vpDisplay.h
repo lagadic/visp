@@ -531,6 +531,17 @@ class VISP_EXPORT vpDisplay
       to \e false.
   */
   virtual bool getKeyboardEvent(char *string, bool blocking=true) =0;
+  /*!
+    Get the coordinates of the mouse pointer.
+    
+    \param ip [out] : The coordinates of the mouse pointer.
+  
+    \return true if a pointer motion event was received, false otherwise.
+
+    \exception vpDisplayException::notInitializedError : If the display
+    was not initialized.
+  */
+  virtual bool getPointerMotionEvent (vpImagePoint &ip) =0;
 
   /*!
     Return the display width.
@@ -552,6 +563,7 @@ class VISP_EXPORT vpDisplay
 		       const char *windowtitle);
   static void setWindowPosition(const vpImage<unsigned char> &I, 
 				int winx, int winy);
+  static void setBackground(const vpImage<unsigned char> &I, vpColor color);
   static void close(const vpImage<unsigned char> &I) ;
   static void display(const vpImage<unsigned char> &I) ;
   static void displayArrow(const vpImage<unsigned char> &I,
@@ -666,7 +678,8 @@ class VISP_EXPORT vpDisplay
 			       bool blocking=true);
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, 
 			       char *string, bool blocking=true);
-
+  static bool getPointerMotionEvent (const vpImage<unsigned char> &I, 
+				     vpImagePoint &ip);
 
   /*!
     @name Display functionalities on color images.
@@ -674,6 +687,7 @@ class VISP_EXPORT vpDisplay
   static void setFont(const vpImage<vpRGBa> &I, const char *font);
   static void setTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
   static void setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy);
+  static void setBackground(const vpImage<vpRGBa> &I, vpColor color);
 
   static void close(const vpImage<vpRGBa> &I) ;
 
@@ -790,6 +804,7 @@ class VISP_EXPORT vpDisplay
 			       bool blocking=true);
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, 
 			       char *string, bool blocking=true);
+  static bool getPointerMotionEvent (const vpImage<vpRGBa> &I, vpImagePoint &ip);
 
 
 
