@@ -141,7 +141,31 @@ vpDisplay::setWindowPosition ( const vpImage<unsigned char> &I,
   }
 }
 
+/*!
+  Set the window background.
 
+  \param I : Image associated to the display window.
+  \param color: Background color.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void 
+vpDisplay::setBackground(const vpImage<unsigned char> &I, vpColor color)
+{
+ try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->clearDisplay ( color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
 
 /*!
   Display the gray level image \e I (8bits).
@@ -1917,6 +1941,31 @@ vpDisplay::setFont ( const vpImage<vpRGBa> &I, const char *fontname )
   }
 }
 
+/*!
+  Set the window background.
+
+  \param I : Image associated to the display window.
+  \param color: Background color.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+void 
+vpDisplay::setBackground(const vpImage<vpRGBa> &I, vpColor color)
+{
+ try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->clearDisplay ( color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
 
 /*!
   Display the color image \e I in RGBa format (32bits).
@@ -2334,6 +2383,34 @@ vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I,
   }
   return false ;
 }
+/*!
+  Get the coordinates of the mouse pointer.
+
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+  
+  \return true if a pointer motion event was received, false otherwise.
+  
+*/
+bool 
+vpDisplay::getPointerMotionEvent (const vpImage<unsigned char> &I,
+				  vpImagePoint &ip)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getPointerMotionEvent ( ip ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false;
+}
 
 /*!
   Wait for a click.
@@ -2557,7 +2634,33 @@ vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I,
   }
   return false ;
 }
+/*!
+  Get the coordinates of the mouse pointer.
 
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+  
+  \return true if a pointer motion event was received, false otherwise.
+  
+*/
+bool 
+vpDisplay::getPointerMotionEvent (const vpImage<vpRGBa> &I, vpImagePoint &ip)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getPointerMotionEvent ( ip ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false;
+}
 
 /****************************************************************
 

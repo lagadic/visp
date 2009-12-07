@@ -1499,6 +1499,34 @@ vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
   }
   return false;
 }
+
+/*!
+  Get the coordinates of the mouse pointer.
+
+  \warning Not implemented yet.
+  
+  \param ip [out] : The coordinates of the mouse pointer.
+  
+  \return true if a pointer motion event was received, false otherwise.
+  
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+*/
+bool 
+vpDisplayOpenCV::getPointerMotionEvent (vpImagePoint & /* ip */)
+{
+  if (OpenCVinitialized) {
+    vpTRACE("Not implemented yet");
+    return false;
+  }
+  else {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+  return false;
+}
+
 #endif
 
 /*

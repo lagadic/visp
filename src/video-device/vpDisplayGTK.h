@@ -253,6 +253,7 @@ protected:
 		  bool blocking=true) ;
   bool getKeyboardEvent(bool blocking=true);
   bool getKeyboardEvent(char *string, bool blocking=true);
+  bool getPointerMotionEvent (vpImagePoint &ip);
 
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }

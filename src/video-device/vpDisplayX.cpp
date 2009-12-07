@@ -440,7 +440,8 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
                  ExposureMask | 
 		 ButtonPressMask | ButtonReleaseMask | 
 		 KeyPressMask | KeyReleaseMask | 
-		 StructureNotifyMask );
+		 StructureNotifyMask |
+		 PointerMotionMask);
 
   // graphic context creation
   values.plane_mask = AllPlanes;
@@ -742,7 +743,8 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
                  ExposureMask | 
 		 ButtonPressMask | ButtonReleaseMask |
  		 KeyPressMask | KeyReleaseMask | 
-		 StructureNotifyMask );
+		 StructureNotifyMask |
+		 PointerMotionMask);
 
   // Creation du contexte graphique
   values.plane_mask = AllPlanes;
@@ -1056,7 +1058,8 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
                  ExposureMask | 
 		 ButtonPressMask | ButtonReleaseMask | 
  		 KeyPressMask | KeyReleaseMask | 
-		 StructureNotifyMask );
+		 StructureNotifyMask |
+		 PointerMotionMask);
 
   /* Creation du contexte graphique */
   values.plane_mask = AllPlanes;
@@ -2374,6 +2377,10 @@ void vpDisplayX::getScreenSize ( unsigned int &width, unsigned int &height )
     to \e true.
   - false if no key was pressed. This can occur if blocking is set
     to \e false.
+
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+
 */
 bool
 vpDisplayX::getKeyboardEvent(bool blocking)
@@ -2416,6 +2423,10 @@ vpDisplayX::getKeyboardEvent(bool blocking)
     to \e true.
   - false if no key was pressed. This can occur if blocking is set
     to \e false.
+
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+
 */
 bool
 vpDisplayX::getKeyboardEvent(char *string, bool blocking)
@@ -2452,6 +2463,54 @@ vpDisplayX::getKeyboardEvent(char *string, bool blocking)
                                  "X not initialized" ) ) ;
   }
   return ret;
+}
+/*!
+
+  Get the coordinates of the mouse pointer.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+
+  \return true if a pointer motion event was received, false otherwise.
+
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+
+*/
+bool
+vpDisplayX::getPointerMotionEvent ( vpImagePoint &ip)
+{
+
+  bool ret = false;
+  if ( Xinitialise ) {
+    unsigned int u, v ;
+
+    Window  rootwin, childwin ;
+    int   root_x, root_y, win_x, win_y ;
+    unsigned int  modifier ;
+    // Event testing
+    ret = XCheckMaskEvent(display , PointerMotionMask, &event);
+       
+    if(ret){
+      // Get mouse position
+      if ( XQueryPointer ( display,
+                           window,
+                           &rootwin, &childwin,
+                           &root_x, &root_y,
+                           &win_x, &win_y,
+                           &modifier ) ) {
+        u = event.xbutton.x;
+        v = event.xbutton.y;
+	ip.set_u( u );
+        ip.set_v( v );	
+      }
+    }
+  }
+  else {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+  return ret ;
 }
 
 #endif

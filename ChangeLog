@@ -35,8 +35,9 @@ ViSP 2.x.y
       vision cameras like the PointGrey Bumblebee.
     - vpDot2: The tracking is restarted in vpDot2::track() if a dot is found 
       but is not valid.
-    - In vpDisplay, new getKeyboardEvent() functionalities to handle key 
-      events.
+    - In vpDisplay, new getKeyboardEvent() functionality to handle key 
+      events and new getPointerMotionEvent() functionality to handle mouse pointer 
+      motion event.
     - Optimization of the vpMatrix class.
   - Examples:
     - New plotting example in example/tools/plot.cpp
