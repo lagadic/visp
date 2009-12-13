@@ -77,7 +77,7 @@
 
   \brief Interface for the biclops, pan, tilt head control.
 
-  See http://www.traclabs.com/tracbiclops.htm for more details.
+  See http://www.traclabs.com/biclopspt.html for more details.
 
   This class provide a position and a speed control interface for the biclops
   head. To manage the biclops joint limits in speed control, a control loop is
