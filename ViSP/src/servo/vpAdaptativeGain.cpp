@@ -54,7 +54,9 @@ const double vpAdaptativeGain::DEFAULT_LAMBDA_PENTE  = 1.666;
 /* --- CONSTRUCTION --------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-/* Initialisation aux valeurs par default. */
+/*!
+  Basic constructor which initializes the parameters with a default value.
+*/
 vpAdaptativeGain::
 vpAdaptativeGain (void)
   :
@@ -73,8 +75,12 @@ vpAdaptativeGain (void)
 /* --- INIT ----------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-/* Initialisation pour un gain constant (l0 = linf).
- */
+/*!
+  Initializes the parameters to have a constant gain.
+  Thus \f$ a = 0 \f$, \f$ b = 1 \f$ and \f$ c = lambda \f$
+  
+  \param lambda : the expected constant gain.
+*/
 void vpAdaptativeGain::
 initFromConstant (const double lambda)
 {
@@ -89,8 +95,12 @@ initFromConstant (const double lambda)
 }
 
 
-/* Initialisation par default (faite apres construction).
- */
+/*!
+  Initializes the parameters with the default value :
+  - \f$ lambda(0) = 1.666 \f$
+  - \f$ lambda(inf) = 0.1666 \f$
+  - \f$ lambda'(0) = 1.666 \f$
+*/
 void vpAdaptativeGain::
 initFromVoid (void)
 {
@@ -105,10 +115,15 @@ initFromVoid (void)
 }
 
 
-/* Calcule les trois parametres a, b et c a partir de la valeur lambda
- * a l'infini (c'est a dire la valeur theorique dans les equations), de
- * la valeur en 0, et de la pente en 0.
- */
+/*!
+  Computes the parameters thanks to the given \f$ lambda(0)\f$, \f$ lambda(inf)\f$ and \f$ lambda'(0)\f$.
+  
+  \f$ lambda(0)\f$ represents the gain in 0, \f$ lambda(inf)\f$ represents the gain to infinity and \f$ lambda'(0)\f$ represents the slope in 0.
+  
+  \param en_zero : the expected gain in 0.
+  \param en_infini : the expected gain to infinity.
+  \param pente_en_zero : the expected slope in 0.
+*/
 void vpAdaptativeGain::
 initStandard (const double en_zero,
 	      const double en_infini,
@@ -138,11 +153,11 @@ initStandard (const double en_zero,
 /* --- MODIFICATOR ---------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-/* Passe le gain adaptatif en gain constant, egal a la valeur du gain
- * adaptatif en 0.
- * OUTPUT
- *   - renvoie la valeur du gain constant.
- */
+/*!
+  Sets the parameters in order to obtain a constant gain equal to the gain in 0.
+  
+  \return It returns the value of the computed constant gain.
+*/
 double vpAdaptativeGain::
 setConstant (void)
 {
@@ -163,13 +178,14 @@ setConstant (void)
 /* -------------------------------------------------------------------------- */
 
 /*!
+  Computes the value of the adaptive gain \f$\lambda\f$ corresponding to
+  the norm of the task function. The formula is the following:
 
-  Compute the value of the adaptive gain \f$\lambda\f$ with
-
-  \f[\lambda = a \; \exp{-b*val_e} + c\f]
+  \f[\lambda = a * exp(-b*val_e) + c\f]
 
   \param val_e : Norm of the task function \f$\mid s - s^*\mid\f$.
-
+  
+  \return It returns the value of the computed gain.
 */
 double vpAdaptativeGain::
 value_const (const double val_e) const
@@ -184,11 +200,9 @@ value_const (const double val_e) const
 }
 
 /*!
+  Gets the value of the gain at infinity (ie the value of \f$ c \f$).
 
-  Return value of the gain corresponding to an infinite value of the norm of
-  the task function.
-
-  \return Parameter \e c.
+  \return It returns the value of the gain at infinity (ie the value of \f$ c \f$).
  */
 double vpAdaptativeGain::
 limitValue_const (void) const
@@ -203,9 +217,17 @@ limitValue_const (void) const
 
 
 
-/* Determine la valeur du lambda adaptatif en fonction de la valeur
- * de la norme de la fonction de tache e par extrapolation exponentielle.
- */
+/*!
+  Computes the value of the adaptive gain \f$\lambda\f$ corresponding to
+  the norm of the task function and stores it as a parameter of the class.
+  The formula used for the gain computation is the following:
+
+  \f[\lambda = a * exp(-b*val_e) + c\f]
+
+  \param val_e : Norm of the task function \f$\mid s - s^*\mid\f$.
+  
+  \return It returns the value of the computed gain.
+*/
 double vpAdaptativeGain::
 value (const double val_e) const
 {
@@ -217,7 +239,12 @@ value (const double val_e) const
   return lambda;
 }
 
-/* Renvoie la valeur en l'infini.
+
+/*!
+  Gets the value of the gain at infinity (ie the value of \f$ c \f$)and stores it
+  as a parameter of the class.
+
+  \return It returns the value of the gain at infinity (ie the value of \f$ c \f$).
  */
 double vpAdaptativeGain::
 limitValue (void) const
@@ -235,26 +262,46 @@ limitValue (void) const
 /* -------------------------------------------------------------------------- */
 
 
-/* Renvoie la derniere valeur stockee dans this ->lambda. */
-double vpAdaptativeGain::
-getLastValue (void) const
-{
-  return this ->lambda;
-}
 
+// double vpAdaptativeGain::
+// getLastValue (void) const
+// {
+//   return this ->lambda;
+// }
 
+/*!
+  Operator which calls the value(double val_e) method with \e val_e in parameter in order
+  to compute the adaptative gain corresponding to \e val_e.
+     
+  \param val_e : Norm of the task function \f$\mid s - s^*\mid\f$.
+      
+  \return It returns the value of the computed gain.
+*/
 double vpAdaptativeGain::
 operator() (const double val_e) const
 {
   return this ->value (val_e);
 }
 
+/*!
+  Gets the value of the gain at infinity (ie the value of \f$ c \f$).
+
+  \return It returns the value of the gain at infinity (ie the value of \f$ c \f$).
+ */
 double vpAdaptativeGain::
 operator() (void) const
 {
   return this ->limitValue ();
 }
 
+/*!
+  Operator which calls the value(double val_e) method with the infinity norm of \e e in parameter in order
+  to compute the adaptative gain corresponding to \f$ |e| \f$.
+     
+  \param e : the task function \f$\mid s - s^*\mid\f$.
+      
+  \return It returns the value of the computed gain.
+*/
 double vpAdaptativeGain::
 operator()  (const vpColVector & e) const
 {
@@ -271,7 +318,13 @@ operator()  (const vpColVector & e) const
 
 
 
-
+/*!
+  Prints the adaptative gain  coefficients. It prints the gain in 0, 
+  the gain to infinity and the slope in 0.
+  
+  \param os : The stream where to print the adaptative gain parameters.
+  \param lambda : The adaptative gain containing the parameters to print.
+*/
 std::ostream&
 operator<< (std::ostream &os, const vpAdaptativeGain& lambda)
 {

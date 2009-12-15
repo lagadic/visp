@@ -50,8 +50,27 @@
 class vpColVector;
 /*!
   \class vpAdaptativeGain
+  
   \ingroup VsTask
+  
   \brief Adaptative gain computation.
+  
+  The formula used to compute the gain is the following :
+  
+  \f[ lambda (x) = a * exp (-b*x) + c \f]
+  
+  where \f$ a \f$, \f$ b \f$ and \f$ c \f$ are parameters which must be set 
+  and \f$ x \f$ is the vector error of the task.
+  
+  By default, the parameters are set with default values:
+  \f[ a = lambda(0) - lambda(inf) \f]
+  \f[ b = lambda'(0) / a \f]
+  \f[ c = lambda(inf) \f]
+  
+  with \f$ lambda(0) = 1.666 \f$, \f$ lambda(inf) = 0.1666 \f$ and \f$ lambda'(0) = 1.666 \f$.
+  
+  \f$ lambda(0)\f$ represents the gain in 0, \f$ lambda(inf)\f$ represents the gain to infinity and \f$ lambda'(0)\f$ represents the slope in 0.
+  
 */
 
 class VISP_EXPORT vpAdaptativeGain
@@ -80,40 +99,22 @@ public:  /* Methodes*/
 
     /* --- CONSTRUCTOR -------------------------------------------------------- */
 
-    /** \brief Construction et initialisation aux valeurs par default. */
     vpAdaptativeGain (void);
 
     /* --- INIT --------------------------------------------------------------- */
-    /** \brief Initialisation pour un gain constant (l0 = linf).
-     */
     void                        initFromConstant (double lambda);
-
-    /** \brief  Initialisation par default (faite apres construction).
-     */
     void                        initFromVoid (void);
-
-    /** \brief Initialisation a partir des trois valeurs, en zero, derivee en
-     * zero et limite a l'infini.
-     *
-     * Calcule les trois parametres a, b et c a partir de la valeur lambda
-     * a l'infini (c'est a dire la valeur theorique dans les equations), de
-     * la valeur en 0, et de la pente en 0.
-     */
     void                        initStandard (double en_zero,
 					      double en_infini,
 					      double pente_en_zero);
 
 
     /* --- MODIFIORS ---------------------------------------------------------- */
-    /** \brief Passe le gain adaptatif en gain constant, egal a la valeur du gain
-     * adaptatif en 0.
-     * \return renvoie la valeur du gain constant.
-     */
     double                      setConstant (void);
 
 
     /* --- COMPUTE ------------------------------------------------------------ */
-    /** \brief Calcule la valeur de lambda au point courrant.
+    /* \brief Calcule la valeur de lambda au point courrant.
      *
      * Determine la valeur du lambda adaptatif en fonction de la valeur
      * de la norme de la fonction de tache e par extrapolation exponentielle.
@@ -127,7 +128,7 @@ public:  /* Methodes*/
      */
     double                      value_const (double val_e) const;
 
-    /** \brief Calcule la valeur de lambda au point courrant et stockage du
+    /* \brief Calcule la valeur de lambda au point courrant et stockage du
      * resultat.
      *
      * La fonction calcule la valeur de lambda d'apres la valeur de la norme
@@ -138,27 +139,25 @@ public:  /* Methodes*/
      */
     double                      value (double val_e) const;
 
-    /** \brief Renvoye la valeur en +inf.
-     */
     double                      limitValue_const (void) const;
 
-    /** \brief Renvoye la valeur en +inf.
-     * La fonction non constante stocke de plus le resultat dans this ->lambda.
-     */
     double                      limitValue (void) const;
 
     /* --- ACCESSORS ---------------------------------------------------------- */
 
-    /** \brief Renvoie la derniere valeur stockee dans this ->lambda. */
-    double                      getLastValue (void) const;
-
-    /** \brief Idem fonction valeur. */
+    /*!
+      Gets the last adaptative gain value which was stored in the class.
+  
+      \return It returns the last adaptative gain value which was stored in the class.
+    */
+    inline double                      getLastValue (void) const {return this ->lambda;}
+   
     double                      operator() (double val_e) const;
 
-    /** \brief Lance la fonction valeur avec la norme INFINIE du vecteur. */
+    /* \brief Lance la fonction valeur avec la norme INFINIE du vecteur. */
     double                      operator()  (const vpColVector & e) const;
 
-    /** \brief Idem function limitValue. */
+    /* \brief Idem function limitValue. */
     double                      operator() (void) const;
 
 
