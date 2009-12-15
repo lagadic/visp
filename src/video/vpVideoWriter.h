@@ -166,6 +166,10 @@ class VISP_EXPORT vpVideoWriter
     
     //!The first frame index.
     unsigned int firstFrame;
+    
+    //!Size of the frame
+    int width;
+    int height;
 
   public:
     vpVideoWriter();
