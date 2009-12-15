@@ -60,6 +60,11 @@ vpFFMPEG::vpFFMPEG()
   height = -1;
   streamWasOpen = false;
   streamWasInitialized = false;
+  bit_rate = 500000;
+  outbuf = NULL;
+  picture_buf = NULL;
+  f = NULL;
+  encoderWasOpened = false;
 }
 
 /*!
@@ -185,7 +190,7 @@ bool vpFFMPEG::initStream()
   else if (color_type == vpFFMPEG::GRAY_SCALED)
     img_convert_ctx= sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt, pCodecCtx->width,pCodecCtx->height,PIX_FMT_GRAY8, SWS_BICUBIC, NULL, NULL, NULL);
 
-  int ret = av_seek_frame(pFormatCtx,videoStream, 0, AVSEEK_FLAG_BACKWARD) ;
+  int ret = av_seek_frame(pFormatCtx,videoStream, 0, AVSEEK_FLAG_ANY) ;
   if (ret < 0 )
   {
     vpTRACE("Error rewinding stream for full indexing") ;
@@ -212,7 +217,7 @@ bool vpFFMPEG::initStream()
         {
           vpTRACE("Unable to decode video picture");
         }
-        index.push_back(packet.pts);
+        index.push_back(packet.dts);
         frame_no++ ;
       }
     }
@@ -241,7 +246,7 @@ bool vpFFMPEG::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
   if (frame < frameNumber && streamWasInitialized== true)
   {
     int64_t targetPts = index[frame];
-    av_seek_frame(pFormatCtx,videoStream,targetPts, AVSEEK_FLAG_BACKWARD);
+    av_seek_frame(pFormatCtx,videoStream,targetPts, AVSEEK_FLAG_ANY);
   }
   else
   {
@@ -282,6 +287,48 @@ bool vpFFMPEG::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
 
 
 /*!
+  Gets the Next frame in the video.
+  
+  \param I : The vpImage used to stored the video's frame.
+  
+  \return It returns true if the frame could be read. Else it returns false.
+*/
+bool vpFFMPEG::acquire(vpImage<vpRGBa> &I)
+{
+  int frameFinished ;
+  
+  if (streamWasInitialized == false)
+  {
+    vpTRACE("Couldn't get a frame. The parameters have to be initialized before ");
+    return false;
+  }
+
+  while (av_read_frame (pFormatCtx, &packet) >= 0)
+  {
+    if (packet.stream_index == videoStream)
+    {
+#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#else
+      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, packet.data, packet.size);
+#endif
+      if (frameFinished)
+      {
+        if (color_type == vpFFMPEG::COLORED)
+	  sws_scale(img_convert_ctx, pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrameRGB->data, pFrameRGB->linesize);
+        else if (color_type == vpFFMPEG::GRAY_SCALED)
+	  sws_scale(img_convert_ctx, pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrameGRAY->data, pFrameGRAY->linesize);
+
+        copyBitmap(I);
+        break;
+      }
+    }
+  }
+  av_free_packet(&packet);
+  return true;
+}
+
+/*!
   Gets the \f$ frame \f$ th frame from the video and stores it in the image  \f$ I \f$.
   
   \param I : The vpImage used to stored the video's frame.
@@ -295,7 +342,7 @@ bool vpFFMPEG::getFrame(vpImage<unsigned char> &I, unsigned int frame)
   if (frame < frameNumber && streamWasInitialized== true)
   {
     int64_t targetPts = index[frame];
-    av_seek_frame(pFormatCtx,videoStream,targetPts, AVSEEK_FLAG_BACKWARD);
+    av_seek_frame(pFormatCtx,videoStream,targetPts, AVSEEK_FLAG_ANY);
   }
   else
   {
@@ -332,6 +379,49 @@ bool vpFFMPEG::getFrame(vpImage<unsigned char> &I, unsigned int frame)
 
     av_free_packet(&packet);
     return true;
+}
+
+
+/*!
+  Gets the Next frame in the video.
+  
+  \param I : The vpImage used to stored the video's frame.
+  
+  \return It returns true if the frame could be read. Else it returns false.
+*/
+bool vpFFMPEG::acquire(vpImage<unsigned char> &I)
+{
+  int frameFinished ;
+  
+  if (streamWasInitialized == false)
+  {
+    vpTRACE("Couldn't get a frame. The parameters have to be initialized before ");
+    return false;
+  }
+
+  while (av_read_frame (pFormatCtx, &packet) >= 0)
+  {
+    if (packet.stream_index == videoStream)
+    {
+#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#else
+      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, packet.data, packet.size);
+#endif
+      if (frameFinished)
+      {
+        if (color_type == vpFFMPEG::COLORED)
+	  sws_scale(img_convert_ctx, pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrameRGB->data, pFrameRGB->linesize);
+        else if (color_type == vpFFMPEG::GRAY_SCALED)
+	  sws_scale(img_convert_ctx, pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrameGRAY->data, pFrameGRAY->linesize);
+
+        copyBitmap(I);
+        break;
+      }
+    }
+  }
+  av_free_packet(&packet);
+  return true;
 }
 
 
@@ -457,6 +547,226 @@ void vpFFMPEG::closeStream()
     av_close_input_file(pFormatCtx);
   }
   streamWasOpen = false;
+  
+  if (encoderWasOpened)
+  {
+    if(f!=NULL) endWrite();
+    
+    if(outbuf != NULL) delete[] outbuf;
+    
+    if(picture_buf != NULL) delete[] picture_buf;
+    
+    av_free(pFrameRGB);
+    av_free(pFrame);
+    avcodec_close(pCodecCtx);
+  }
+  
+  encoderWasOpened = false;
+}
+
+/*!
+  Allocates and initializes the parameters depending on the video to write.
+  
+  \param filename : Path to the video which has to be writen.
+  \param width : Width of the image which will be saved.
+  \param height : Height of the image which will be saved.
+  \param codec : Type of codec used to encode the video.
+  
+  By default codec is set to CODEC_ID_MPEG1VIDEO. But you can use one of the CodecID proposed by ffmpeg such as : CODEC_ID_MPEG2VIDEO, CODEC_ID_MPEG2VIDEO_XVMC, CODEC_ID_MPEG4, CODEC_ID_H264, ... (More CodecID can be found in the ffmpeg documentation).
+  
+  Of course to use the codec it must be installed on your computer.
+  
+  \return It returns true if the paramters could be initialized. Else it returns false.
+*/
+bool vpFFMPEG::openEncoder(const char *filename, unsigned int width, unsigned int height, CodecID codec)
+{
+  av_register_all();
+
+  /* find the mpeg1 video encoder */
+  pCodec = avcodec_find_encoder(codec);
+  if (pCodec == NULL) {
+    fprintf(stderr, "codec not found\n");
+    return false;
+  }
+
+  pCodecCtx = avcodec_alloc_context();
+  pFrame = avcodec_alloc_frame();
+  pFrameRGB = avcodec_alloc_frame();
+
+  /* put sample parameters */
+  pCodecCtx->bit_rate = bit_rate;
+  /* resolution must be a multiple of two */
+  pCodecCtx->width = width;
+  pCodecCtx->height = height;
+  this->width = width;
+  this->height = height;
+  /* frames per second */
+  pCodecCtx->time_base= (AVRational){1,25};
+  pCodecCtx->gop_size = 10; /* emit one intra frame every ten frames */
+  pCodecCtx->max_b_frames=1;
+  pCodecCtx->pix_fmt = PIX_FMT_YUV420P;
+
+  /* open it */
+  if (avcodec_open(pCodecCtx, pCodec) < 0) {
+    fprintf(stderr, "could not open codec\n");
+    exit(1);
+  }
+
+  /* the codec gives us the frame size, in samples */
+
+  f = fopen(filename, "wb");
+  if (!f) {
+    fprintf(stderr, "could not open %s\n", filename);
+    return false;
+  }
+
+  outbuf_size = 100000;
+  outbuf = new uint8_t[outbuf_size];
+
+  numBytes = avpicture_get_size (PIX_FMT_YUV420P,pCodecCtx->width,pCodecCtx->height);
+  picture_buf = new uint8_t[numBytes];
+  avpicture_fill((AVPicture *)pFrame, picture_buf, PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height);
+
+  numBytes = avpicture_get_size (PIX_FMT_RGB24,pCodecCtx->width,pCodecCtx->height);
+  buffer = new uint8_t[numBytes];
+  avpicture_fill((AVPicture *)pFrameRGB, buffer, PIX_FMT_RGB24, pCodecCtx->width, pCodecCtx->height);
+
+  img_convert_ctx= sws_getContext(pCodecCtx->width, pCodecCtx->height, PIX_FMT_RGB24, pCodecCtx->width,pCodecCtx->height,PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
+  
+  encoderWasOpened = true;
+
+  return true;
+}
+
+
+/*!
+  Saves the image I as frame of the video.
+  
+  \param I : the image to save.
+  
+  \return It returns true if the image could be saved.
+*/
+bool vpFFMPEG::saveFrame(vpImage<vpRGBa> &I)
+{
+  if (encoderWasOpened == false)
+  {
+    vpTRACE("Couldn't save a frame. The parameters have to be initialized before ");
+    return false;
+  }
+  
+  writeBitmap(I);
+  sws_scale(img_convert_ctx, pFrameRGB->data, pFrameRGB->linesize, 0, pCodecCtx->height, pFrame->data, pFrame->linesize);
+  out_size = avcodec_encode_video(pCodecCtx, outbuf, outbuf_size, pFrame);
+  fwrite(outbuf, 1, out_size, f);
+  fflush(stdout);
+  return true;
+}
+
+
+/*!
+  Saves the image I as frame of the video.
+  
+  \param I : the image to save.
+  
+  \return It returns true if the image could be saved.
+*/
+bool vpFFMPEG::saveFrame(vpImage<unsigned char> &I)
+{
+  if (encoderWasOpened == false)
+  {
+    vpTRACE("Couldn't save a frame. The parameters have to be initialized before ");
+    return false;
+  }
+  
+  writeBitmap(I);
+  sws_scale(img_convert_ctx, pFrameRGB->data, pFrameRGB->linesize, 0, pCodecCtx->height, pFrame->data, pFrame->linesize);
+  out_size = avcodec_encode_video(pCodecCtx, outbuf, outbuf_size, pFrame);
+  fwrite(outbuf, 1, out_size, f);
+  fflush(stdout);
+  return true;
+}
+
+/*!
+  Ends the writing of the video and close the file.
+  
+  \return It returns true if the file was closed without problem
+*/
+bool vpFFMPEG::endWrite()
+{
+  if (encoderWasOpened == false)
+  {
+    vpTRACE("Couldn't save a frame. The parameters have to be initialized before ");
+    return false;
+  }
+  
+  while (out_size != 0)
+  {
+    out_size = avcodec_encode_video(pCodecCtx, outbuf, outbuf_size, NULL);
+    fwrite(outbuf, 1, out_size, f);
+  }
+
+  /*The end of a mpeg file*/
+  outbuf[0] = 0x00;
+  outbuf[1] = 0x00;
+  outbuf[2] = 0x01;
+  outbuf[3] = 0xb7;
+  fwrite(outbuf, 1, 4, f);
+  fclose(f);
+  f = NULL;
+  return true;
+}
+
+/*!
+  This method enables to fill the frame bitmap thanks to the vpImage bitmap.
+*/
+void vpFFMPEG::writeBitmap(vpImage<vpRGBa> &I)
+{
+  unsigned char* beginInput = (unsigned char*)I.bitmap;
+  unsigned char* input = NULL;
+  unsigned char* output = NULL;
+  unsigned char* beginOutput = (unsigned char*)pFrameRGB->data[0];
+  int widthStep = pFrameRGB->linesize[0];
+  
+  for(int i=0 ; i < height ; i++)
+  {
+    input = beginInput + 4 * i * width;
+    output = beginOutput + i * widthStep;
+    for(int j=0 ; j < width ; j++)
+    {
+      *(output++) = *(input);
+      *(output++) = *(input+1);
+      *(output++) = *(input+2);
+
+      input+=4;
+    }
+  }
+}
+
+
+/*!
+  This method enables to fill the frame bitmap thanks to the vpImage bitmap.
+*/
+void vpFFMPEG::writeBitmap(vpImage<unsigned char> &I)
+{
+  unsigned char* beginInput = (unsigned char*)I.bitmap;
+  unsigned char* input = NULL;
+  unsigned char* output = NULL;
+  unsigned char* beginOutput = (unsigned char*)pFrameRGB->data[0];
+  int widthStep = pFrameRGB->linesize[0];
+  
+  for(int i=0 ; i < height ; i++)
+  {
+    input = beginInput + i * width;
+    output = beginOutput + i * widthStep;
+    for(int j=0 ; j < width ; j++)
+    {
+      *(output++) = *(input);
+      *(output++) = *(input);
+      *(output++) = *(input);
+
+      input++;
+    }
+  }
 }
 
 #endif

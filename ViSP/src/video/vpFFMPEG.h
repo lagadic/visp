@@ -47,6 +47,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <vector>
 
 #ifdef VISP_HAVE_FFMPEG
@@ -151,6 +152,19 @@ class VISP_EXPORT vpFFMPEG
     //! Indicates the video's color output.
     vpFFMPEGColorType color_type;
 
+    //!The file which is the video file
+    FILE *f;
+    //!Buffers
+    uint8_t *outbuf, *picture_buf;
+    //!Buffer size
+    int outbuf_size;
+    //!Size of the data to wrrite in the file
+    int out_size;
+    //!Bit rate of the video to write    
+    unsigned int bit_rate;
+    //!Indicates if the openEncoder method was executed
+    bool encoderWasOpened;
+
   public:
     vpFFMPEG();
     ~vpFFMPEG();
@@ -175,17 +189,34 @@ class VISP_EXPORT vpFFMPEG
       \return The value of the video's frame number.
     */
     inline unsigned long getFrameNumber() const {return frameNumber;}
+    
+    /*!
+      Sets the bit rate of the video when writing.
+      
+      \param bit_rate : the expected bit rate.
+    */
+    inline void setBitRate(const int bit_rate) {this->bit_rate = bit_rate;}
 
     bool openStream(const char *filename,vpFFMPEGColorType color_type);
     bool initStream();
     void closeStream();
 
+    bool acquire(vpImage<vpRGBa> &I);
+    bool acquire(vpImage<unsigned char> &I);
+
     bool getFrame(vpImage<vpRGBa> &I, unsigned int frameNumber);
     bool getFrame(vpImage<unsigned char> &I, unsigned int frameNumber);
+
+    bool openEncoder(const char *filename, unsigned int width, unsigned int height, CodecID codec = CODEC_ID_MPEG1VIDEO);
+    bool saveFrame(vpImage<vpRGBa> &I);
+    bool saveFrame(vpImage<unsigned char> &I);
+    bool endWrite();
   
   private:
     void copyBitmap(vpImage<vpRGBa> &I);
     void copyBitmap(vpImage<unsigned char> &I);
+    void writeBitmap(vpImage<vpRGBa> &I);
+    void writeBitmap(vpImage<unsigned char> &I);
 };
 #endif
 #endif
