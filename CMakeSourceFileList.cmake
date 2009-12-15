@@ -224,6 +224,7 @@ SET (SRC_TRACKING
 
 SET (SRC_VIDEO
   video/vpVideoReader.cpp
+  video/vpVideoWriter.cpp
   video/vpFFMPEG.cpp
   )
 
