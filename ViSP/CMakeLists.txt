@@ -103,31 +103,136 @@ IF (UNIX)
   OPTION(USE_PTU46   "Compile ViSP for Ptu-46 head usage at Irisa" OFF)
   OPTION(USE_VIPER850 "Compile ViSP for Viper S850 robot usage at Irisa" OFF)
   OPTION(USE_COIN_SIMULATOR    "Compile ViSP with simulation capabilities based on Coin3D suite" OFF)
+
+  FIND_PACKAGE(DC1394)
+  IF(DC1394_2_FOUND)
+    OPTION(USE_DC1394_2    "Compile ViSP with the libdc1394.2 library" ON)
+  ELSE(DC1394_2_FOUND)
+    SET(USE_DC1394_2 OFF)
+  ENDIF(DC1394_2_FOUND)
+  IF(DC1394_1_FOUND)
+    OPTION(USE_DC1394_1    "Compile ViSP with the libdc1394.1 library" ON)
+  ELSE(DC1394_1_FOUND)
+    SET(USE_DC1394_1 OFF)
+  ENDIF(DC1394_1_FOUND)
+
+  FIND_PACKAGE(V4L2)
+  IF(V4L2_FOUND)
+    OPTION(USE_V4L2    "Compile ViSP with the v4l2 (video for linux 2) library" ON)
+  ELSE(V4L2_FOUND)
+    SET(USE_V4L2 OFF)
+  ENDIF(V4L2_FOUND)
 ENDIF(UNIX)
+
+IF(WIN32)
+  FIND_PACKAGE(GDI)
+  IF(GDI_FOUND)
+    OPTION(USE_GDI    "Manages the display on windows" ON)
+  ELSE(GDI_FOUND)
+    SET(USE_GDI OFF)
+  ENDIF(GDI_FOUND)
+
+  FIND_PACKAGE(DIRECT3D)
+  IF(DIRECT3D_FOUND)
+    OPTION(USE_DIRECT3D    "Manages the display on windows" ON)
+  ELSE(DIRECT3D_FOUND)
+    SET(USE_DIRECT3D OFF)
+  ENDIF(DIRECT3D_FOUND)
+
+  FIND_PACKAGE(DIRECTSHOW)
+  IF(DIRECTSHOW_FOUND)
+    OPTION(USE_DIRECTSHOW    "Manages the frame grabbing on windows" ON)
+  ELSE(DIRECTSHOW_FOUND)
+    SET(USE_DIRECTSHOW OFF)
+  ENDIF(DIRECTSHOW_FOUND)
+ENDIF(WIN32)
+
+FIND_PACKAGE(XML2)
+IF(XML2_FOUND)
+  OPTION(USE_XML2    "Compile ViSP with the xml2 library" ON)
+ELSE(XML2_FOUND)
+  SET(USE_XML2 OFF)
+ENDIF(XML2_FOUND)
+
+SET(OpenCV_FIND_QUIETLY TRUE)
+FIND_PACKAGE(OpenCV)
+IF(OpenCV_FOUND)
+  OPTION(USE_OPENCV    "Compile ViSP with the OpenCV library" ON)
+ELSE(OpenCV_FOUND)
+  SET(USE_OPENCV OFF)
+ENDIF(OpenCV_FOUND)
+
+FIND_PACKAGE(GSL)
+IF(GSL_FOUND)
+  OPTION(USE_GSL    "Compile ViSP with the GSL library" ON)
+ELSE(GSL_FOUND)
+  SET(USE_GSL OFF)
+ENDIF(GSL_FOUND)
+
+FIND_PACKAGE(GTK2)
+IF(GTK2_FOUND)
+  OPTION(USE_GTK2    "Compile ViSP with the GTK+ library" ON)
+ELSE(GTK2_FOUND)
+  SET(USE_GTK2 OFF)
+  FIND_PACKAGE(GTK)
+  IF(GTK_FOUND)
+    OPTION(USE_GTK1    "Compile ViSP with the GTK library" ON)
+  ELSE(GTK_FOUND)
+    SET(USE_GTK1 OFF)
+  ENDIF(GTK_FOUND)
+ENDIF(GTK2_FOUND)
+
+FIND_PACKAGE(LIBPLOTTER)
+IF(LIBPLOTTER_FOUND)
+  OPTION(USE_LIBPLOTTER    "Compile ViSP with the libplotter library" ON)
+ELSE(LIBPLOTTER_FOUND)
+  SET(USE_LIBPLOTTER OFF)
+ENDIF(LIBPLOTTER_FOUND)
+
+FIND_PACKAGE(LIBJPEG)
+IF(LIBJPEG_FOUND)
+  OPTION(USE_LIBJPEG    "Compile ViSP with the libjpeg library" ON)
+ELSE(LIBJPEG_FOUND)
+  SET(USE_LIBJPEG OFF)
+ENDIF(LIBJPEG_FOUND)
+
+FIND_PACKAGE(LIBPNG)
+IF(LIBPNG_FOUND)
+  OPTION(USE_LIBPNG    "Compile ViSP with the libpng library" ON)
+ELSE(LIBPNG_FOUND)
+  SET(USE_LIBPNG OFF)
+ENDIF(LIBPNG_FOUND)
+
+FIND_PACKAGE(FFMPEG)
+IF(FFMPEG_FOUND)
+  OPTION(USE_FFMPEG    "Compile ViSP with the ffmpeg library" ON)
+ELSE(FFMPEG_FOUND)
+  SET(USE_FFMPEG OFF)
+ENDIF(FFMPEG_FOUND)
 
 # Set other options to default value
 SET(USE_X11        ON) # For Linux/OSX display
-SET(USE_XML2       ON) # For the Xml Parser (vpCameraParameters)
+#SET(USE_XML2       ON) # For the Xml Parser (vpCameraParameters)
 #SET(USE_COIN_SIMULATOR       ON) # For the simulator
 SET(USE_SOWIN      ON) # For the simulator viewer
 SET(USE_SOQT       ON) # For the simulator viewer
 SET(USE_SOXT       ON) # For the simulator viewer
 SET(USE_PTHREAD    ON) # For Biclops/Simulator
-SET(USE_OPENCV     ON) # For Intel opencv
-SET(USE_GSL        ON) # For matrix manipulations
-SET(USE_GTK1       ON) # For Linux/OSX/Windows display with gtk-1.x
-SET(USE_GTK2       ON) # For Linux/OSX/Windows display with gtk-2.x
-SET(USE_DIRECT3D   ON) # For Windows display
-SET(USE_GDI        ON) # For Windows display
-SET(USE_DC1394_1   ON) # For firewire grabber under Linux and OSX ?
-SET(USE_DC1394_2   ON) # For firewire grabber under Linux and OSX ?
-SET(USE_V4L2       ON) # For Video 4 Linux 2 grabber under Linux
-SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
-SET(USE_LIBPLOTTER ON) # For plotting curves
-SET(USE_LIBJPEG    ON) # For reading jpeg files
-SET(USE_LIBPNG     ON) # For reading png files
+#SET(USE_OPENCV     ON) # For Intel opencv
+#SET(USE_GSL        ON) # For matrix manipulations
+#SET(USE_GTK1       ON) # For Linux/OSX/Windows display with gtk-1.x
+#SET(USE_GTK2       ON) # For Linux/OSX/Windows display with gtk-2.x
+#SET(USE_DIRECT3D   ON) # For Windows display
+#SET(USE_GDI        ON) # For Windows display
+#SET(USE_DC1394_1   ON) # For firewire grabber under Linux and OSX ?
+#SET(USE_DC1394_2   ON) # For firewire grabber under Linux and OSX ?
+#SET(USE_V4L2       ON) # For Video 4 Linux 2 grabber under Linux
+#SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
+#SET(USE_LIBPLOTTER ON) # For plotting curves
+#SET(USE_LIBJPEG    ON) # For reading jpeg files
+#SET(USE_LIBPNG     ON) # For reading png files
 SET(USE_ZLIB       ON) # For data compression
-SET(USE_FFMPEG     ON) # For video read and write
+#SET(USE_FFMPEG     ON) # For video read and write
 
 IF(BUILD_SHARED_LIBS)
   SET(VISP_BUILD_SHARED_LIBS TRUE)  # for header vpConfig.h
@@ -397,7 +502,7 @@ ENDIF(USE_COIN_SIMULATOR)
 SET(VISP_HAVE_XML2_FOUND "no")  # for ViSP-third-party.txt
 
 IF(USE_XML2)
-  FIND_PACKAGE(XML2)
+  #FIND_PACKAGE(XML2)
   IF(XML2_FOUND)
     SET(VISP_HAVE_XML2 TRUE)
     SET(VISP_HAVE_XML2_FOUND "yes")  # for ViSP-third-party.txt
@@ -456,8 +561,8 @@ SET(VISP_HAVE_FFMPEG_FOUND "no")  # for ViSP-third-party.txt
 
 # open CV
 IF(USE_OPENCV)
-  SET(OpenCV_FIND_QUIETLY TRUE)
-  FIND_PACKAGE(OpenCV)
+  #SET(OpenCV_FIND_QUIETLY TRUE)
+  #FIND_PACKAGE(OpenCV)
   IF(OpenCV_FOUND)
     MESSAGE(STATUS "OpenCV found")
     SET(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
@@ -489,7 +594,7 @@ ENDIF(USE_OPENCV)
 
 # gnu scientific library
 IF(USE_GSL)
-  FIND_PACKAGE(GSL)
+  #FIND_PACKAGE(GSL)
   IF(GSL_FOUND)
     MESSAGE(STATUS "GSL found")
     SET(VISP_HAVE_GSL  TRUE)  # for header vpConfig.h
@@ -512,7 +617,7 @@ ENDIF(USE_GSL)
 # gtk-2 library:
 IF(USE_GTK2)
    IF(UNIX OR WIN32)
-    FIND_PACKAGE(GTK2)
+    #FIND_PACKAGE(GTK2)
     IF(GTK2_FOUND)
       MESSAGE(STATUS "GTK2 found")
       SET(VISP_HAVE_GTK TRUE)  # for header vpConfig.h
@@ -546,7 +651,7 @@ SET(USE_GTK2 OFF)
 #MESSAGE("USE_GTK1: ${USE_GTK1}")
 IF(USE_GTK1)
   IF(UNIX)
-    FIND_PACKAGE(GTK)
+    #FIND_PACKAGE(GTK)
     IF(GTK_FOUND)
       MESSAGE(STATUS "GTK1 found")
       SET(VISP_HAVE_GTK TRUE) # for header vpConfig.h
@@ -570,7 +675,7 @@ ENDIF(USE_GTK1)
 
 # Under Windows, usage of Direct3D9
 IF(USE_DIRECT3D)
-  FIND_PACKAGE(DIRECT3D)
+  #FIND_PACKAGE(DIRECT3D)
   IF(DIRECT3D_FOUND)
     MESSAGE(STATUS "Direct3D found")
     SET(VISP_HAVE_D3D9 TRUE) # for header vpConfig.h
@@ -588,7 +693,7 @@ ENDIF(USE_DIRECT3D)
 
 # Under Windows, usage of GDI (Graphics Device Interface)
 IF(USE_GDI)
-  FIND_PACKAGE(GDI)
+  #FIND_PACKAGE(GDI)
   IF(GDI_FOUND)
     MESSAGE(STATUS "GDI found")
     SET(VISP_HAVE_GDI TRUE) # for header vpConfig.h
@@ -604,7 +709,7 @@ ENDIF(USE_GDI)
 
 # Libplotter
 IF(USE_LIBPLOTTER)
-  FIND_PACKAGE(LIBPLOTTER)
+  #FIND_PACKAGE(LIBPLOTTER)
   IF(LIBPLOTTER_FOUND)
     MESSAGE(STATUS "Libplotter found")
     SET(VISP_HAVE_LIBPLOTTER  TRUE)  # for header vpConfig.h
@@ -638,7 +743,7 @@ ENDIF(USE_ZLIB)
 
 # Libjpeg
 IF(USE_LIBJPEG)
-  FIND_PACKAGE(LIBJPEG)
+  #FIND_PACKAGE(LIBJPEG)
   #FIND_PACKAGE(JPEG)
   #MESSAGE("test ${JPEG_FOUND}")
   IF(LIBJPEG_FOUND)
@@ -665,7 +770,7 @@ ENDIF(USE_LIBJPEG)
 
 # Libpng
 IF(USE_LIBPNG)
-  FIND_PACKAGE(LIBPNG)
+  #FIND_PACKAGE(LIBPNG)
   IF(LIBPNG_FOUND)
     MESSAGE(STATUS "Libpng found")
     SET(VISP_HAVE_LIBPNG  TRUE)  # for header vpConfig.h
@@ -682,7 +787,7 @@ ENDIF(USE_LIBPNG)
 
 # FFMPEG
 IF(USE_FFMPEG)
-  FIND_PACKAGE(FFMPEG)
+  #FIND_PACKAGE(FFMPEG)
   IF(FFMPEG_FOUND)
     MESSAGE(STATUS "FFMPEG found")
     SET(VISP_HAVE_FFMPEG  TRUE)  # for header vpConfig.h
@@ -710,7 +815,7 @@ SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
 
 # library for firewire cameras
 IF(USE_DC1394_1 OR USE_DC1394_2)
-  FIND_PACKAGE(DC1394)
+  #FIND_PACKAGE(DC1394)
   IF(DC1394_FOUND)
     SET(VISP_HAVE_DC1394 TRUE) # for header vpConfig.h
     IF(DC1394_2_FOUND AND USE_DC1394_2)
@@ -763,7 +868,7 @@ ENDIF(USE_DC1394_1 OR USE_DC1394_2)
 
 # library for Video For Linux Two framegrabber devices
 IF(USE_V4L2)
-  FIND_PACKAGE(V4L2)
+  #FIND_PACKAGE(V4L2)
   IF(V4L2_FOUND)
     MESSAGE(STATUS "V4l2 found")
     SET(VISP_HAVE_V4L2 TRUE) # for header vpConfig.h
@@ -804,7 +909,7 @@ ENDIF(USE_ITIFG8)
 
 # Under Windows, usage of Direct Show
 IF(USE_DIRECTSHOW)
-  FIND_PACKAGE(DIRECTSHOW)
+  #FIND_PACKAGE(DIRECTSHOW)
   IF(DIRECTSHOW_FOUND)
     MESSAGE(STATUS "DirectShow found")
     SET(VISP_HAVE_DIRECTSHOW TRUE) # for header vpConfig.h
