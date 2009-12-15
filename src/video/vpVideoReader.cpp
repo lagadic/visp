@@ -129,6 +129,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   {
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
+    imSequence->setImageNumber(firstFrame);
   }
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
@@ -188,6 +189,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   {
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
+    imSequence->setImageNumber(firstFrame);
   }
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
@@ -239,7 +241,13 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
     throw (vpException(vpException::notInitialized,"file not yet opened"));
   }
   
-  getFrame(I,frameCount);
+  //getFrame(I,frameCount);
+  if (imSequence != NULL)
+    imSequence->acquire(I);
+  #ifdef VISP_HAVE_FFMPEG
+  else if (ffmpeg !=NULL)
+    ffmpeg->acquire(I);
+  #endif
   
   frameCount++;
 }
@@ -260,7 +268,13 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
     throw (vpException(vpException::notInitialized,"file not yet opened"));
   }
   
-  getFrame(I,frameCount);
+  //getFrame(I,frameCount);
+  if (imSequence != NULL)
+    imSequence->acquire(I);
+  #ifdef VISP_HAVE_FFMPEG
+  else if (ffmpeg != NULL)
+    ffmpeg->acquire(I);
+  #endif
   
   frameCount++;
 }
@@ -291,6 +305,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
   #ifdef VISP_HAVE_FFMPEG
   else
   {
+    
     if(!ffmpeg->getFrame(I,frame))
     {
       vpERROR_TRACE("Couldn't find the %u th frame", frame) ;
