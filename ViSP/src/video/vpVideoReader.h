@@ -83,7 +83,7 @@
   #endif
   \endcode
   
-  The other following example explain how to use the class to manipulate a sequence of images. The images are stored in the folder "./image" and are named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ...
+  The other following example explains how to use the class to manipulate a sequence of images. The images are stored in the folder "./image" and are named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ...
   
   \code
   #include <visp/vpConfig.h>
@@ -91,7 +91,6 @@
   #include <visp/vpRGBa.h>
   #include <visp/vpVideoReader.h>
   
-  #ifdef VISP_HAVE_FFMPEG
   int main()
   {
   vpImage<vpRGBa> I;
@@ -107,9 +106,6 @@
 
   return 0;
   }
-  #else
-  int main() {}
-  #endif
   \endcode
 */
 
