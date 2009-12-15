@@ -110,6 +110,8 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
       formatType == FORMAT_JPEG ||
       formatType == FORMAT_PNG)
   {
+    width = I.getWidth();
+    height = I.getHeight();
   }
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
@@ -156,6 +158,8 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
       formatType == FORMAT_JPEG ||
       formatType == FORMAT_PNG)
   {
+    width = I.getWidth();
+    height = I.getHeight();
   }
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
@@ -199,7 +203,11 @@ void vpVideoWriter::saveFrame (vpImage< vpRGBa > &I)
     throw (vpException(vpException::notInitialized,"file not yet opened"));
   }
 
-  if (ffmpeg == NULL)
+  
+  if (formatType == FORMAT_PGM ||
+      formatType == FORMAT_PPM ||
+      formatType == FORMAT_JPEG ||
+      formatType == FORMAT_PNG)
   {
     char name[FILENAME_MAX];
 
@@ -208,10 +216,12 @@ void vpVideoWriter::saveFrame (vpImage< vpRGBa > &I)
     vpImageIo::write(I, name);
   }
   
+  #ifdef VISP_HAVE_FFMPEG
   else
   {
     ffmpeg->saveFrame(I);
   }
+  #endif
 
   frameCount++;
 }
@@ -232,7 +242,10 @@ void vpVideoWriter::saveFrame (vpImage< unsigned char > &I)
     throw (vpException(vpException::notInitialized,"file not yet opened"));
   }
 
-  if (ffmpeg == NULL)
+  if (formatType == FORMAT_PGM ||
+      formatType == FORMAT_PPM ||
+      formatType == FORMAT_JPEG ||
+      formatType == FORMAT_PNG)
   {
     char name[FILENAME_MAX];
 
@@ -241,10 +254,12 @@ void vpVideoWriter::saveFrame (vpImage< unsigned char > &I)
     vpImageIo::write(I, name);
   }
   
+  #ifdef VISP_HAVE_FFMPEG
   else
   {
     ffmpeg->saveFrame(I);
   }
+  #endif
 
   frameCount++;
 }
@@ -318,3 +333,4 @@ vpVideoWriter::getFormat(const char *filename)
     return FORMAT_UNKNOWN;
   } 
 }
+
