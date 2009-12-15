@@ -297,8 +297,6 @@ private:
 
 /*!
 
-  \relates vpImagePoint
-
   Check if an image point belongs to a rectangle.
   
   \param ip : the image point.
