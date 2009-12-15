@@ -211,6 +211,7 @@ SET (HEADER_TRACKING
 
 SET (HEADER_VIDEO
   video/vpVideoReader.h
+  video/vpVideoWriter.h
   video/vpFFMPEG.h
   )
 
