@@ -58,6 +58,7 @@ vpFFMPEG::vpFFMPEG()
   frameNumber = 0;
   width = -1;
   height = -1;
+  buffer = NULL;
   streamWasOpen = false;
   streamWasInitialized = false;
   bit_rate = 500000;
@@ -551,6 +552,8 @@ void vpFFMPEG::closeStream()
   if (encoderWasOpened)
   {
     if(f!=NULL) endWrite();
+    
+    if(buffer!=NULL) delete[] buffer;
     
     if(outbuf != NULL) delete[] outbuf;
     

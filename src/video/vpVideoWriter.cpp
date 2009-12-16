@@ -66,6 +66,10 @@ vpVideoWriter::vpVideoWriter()
 */
 vpVideoWriter::~vpVideoWriter()
 {
+  #ifdef VISP_HAVE_FFMPEG
+  if (ffmpeg != NULL)
+    delete ffmpeg;
+  #endif
 }
 
 
