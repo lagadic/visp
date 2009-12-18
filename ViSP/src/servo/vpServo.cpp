@@ -1016,11 +1016,12 @@ vpServo::computeControlLaw()
 
 
 /*!
-  compute the secondary task according to the projection operator
-
+  Compute the secondary task according to the projection operator,
   see equation (7) of the IEEE RA magazine, dec 2005 paper.
 
-  compute the vector
+  \warning computeControlLaw() must be call prior to this function.
+
+  Compute the vector:
   \f[
   + ({\bf I-W^+W})\frac{\partial {\bf e_2}}{\partial t}
   \f]
@@ -1061,10 +1062,12 @@ vpServo::secondaryTask(vpColVector &de2dt)
 }
 
 /*!
-  compute the secondary task according to the projection operator.
+  Compute the secondary task according to the projection operator.
   see equation (7) of the IEEE RA magazine, dec 2005 paper.
 
-  compute the vector
+  \warning computeControlLaw() must be call prior to this function.
+
+  Compute the vector:
   \f[
   -\lambda ({\bf I-W^+W}) {\bf e_2} +  ({\bf I-W^+W})\frac{\partial {\bf e_2}}{\partial t}
   \f]
@@ -1098,7 +1101,9 @@ vpServo::secondaryTask(vpColVector &e2, vpColVector &de2dt)
 
       I_WpW = (I - WpW) ;
 
-      sec = -lambda(e2) *I_WpW*e2 + I_WpW *de2dt ;
+      // To be coherent with the primary task the gain must be the same between
+      // primary and secondary task.
+      sec = -lambda(e1) *I_WpW*e2 + I_WpW *de2dt ;
 
       return sec ;
     }
