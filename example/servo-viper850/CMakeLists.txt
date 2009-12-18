@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.14 2008-05-19 09:54:09 fspindle Exp $
+# $Id: CMakeLists.txt,v 1.5 2008-07-18 09:16:53 fspindle Exp $
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #
@@ -28,43 +28,41 @@
 # not clear to you.
 #
 # Description:
-# ViSP overall configuration file. 
+# ViSP configuration file. 
 #
 # Authors:
 # Fabien Spindler
 #
 #############################################################################
 
-# Set SRC_SUBDIRS variable to all the sub directories we want to parse during
-# the build process. 
+# SOURCE variable corresponds to the list of all the sources to build binaries.
+# The generate binary comes by removing the .cpp extension to
+# the source name.
 #
-# If you add/remove a directory, modify here
-SET (SRC_SUBDIRS
-  calibration
-  framegrabber
-  histogram
-  homography
-  image
-  key-point
-  light
-  math
-  manual
-  parse-argv
-  pose-estimation
-  servo-afma4
-  servo-afma6
-  servo-biclops
-  servo-ptu46
-  servo-simu
-  servo-viper850
-  simulator
-  tools
-  tracking
-  video
+# If you want to add/remove a source, modify here
+SET (SOURCE
+  servoViper850FourPoints2DArtVelocityInteractionCurrent.cpp
+  servoViper850FourPoints2DArtVelocityInteractionDesired.cpp
+  servoViper850FourPoints2DCamVelocityInteractionCurrent.cpp
+  servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp
+  servoViper850Point2DArtVelocity-jointAvoidance-tra2001-basic.cpp
+  servoViper850Point2DArtVelocity.cpp
+  servoViper850Point2DCamVelocity.cpp
+  servoViper850Point2DCamVelocityKalman.cpp
 )
 
-# Build process propagation in the sub directories
-SUBDIRS(${SRC_SUBDIRS})
+# rule for binary build
+FOREACH(source ${SOURCE})
+  # Compute the name of the binary to create
+  GET_FILENAME_COMPONENT(binary ${source} NAME_WE)
+
+  # From source compile the binary and add link rules
+  ADD_EXECUTABLE(${binary} ${source})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+
+  # Add test
+  ADD_TEST(${binary} ${binary})
+ENDFOREACH(source)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

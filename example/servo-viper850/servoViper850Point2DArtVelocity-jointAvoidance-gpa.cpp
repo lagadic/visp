@@ -1,0 +1,353 @@
+/****************************************************************************
+ *
+ * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.10 2008/07/17 20:11:57 fspindle Exp $
+ *
+ * Copyright (C) 1998-2008 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ *   tests the control law
+ *   eye-in-hand control
+ *   velocity computed in articular
+ *
+ * Authors:
+ * Eric Marchand
+ * Fabien Spindler
+ *
+ *****************************************************************************/
+
+/*!
+  \example servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp
+
+  Joint limits avoidance using a gradient projection approach. 
+
+  Implemented from :
+  
+  - E. Marchand, F. Chaumette, A. Rizzo. Using the task function approach to
+    avoid robot joint limits and kinematic singularities in visual servoing. In
+    IEEE/RSJ Int. Conf. on Intelligent Robots and Systems, IROS'96, Volume 3,
+    Pages 1083-1090, Osaka, Japan, November 1996. details.
+
+  - and section II.B in F. Chaumette, E. Marchand. A redundancy-based iterative
+    approach for avoiding joint limits: Application to visual servoing. IEEE
+    Trans. on Robotics and Automation, 17(5):719-730, October 2001.
+*/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
+
+#if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2))
+
+#include <visp/vp1394TwoGrabber.h>
+#include <visp/vpImage.h>
+#include <visp/vpDisplay.h>
+#include <visp/vpDisplayX.h>
+
+#include <visp/vpMath.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpFeaturePoint.h>
+#include <visp/vpPoint.h>
+#include <visp/vpServo.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpRobotViper850.h>
+#include <visp/vpIoTools.h>
+#include <visp/vpException.h>
+#include <visp/vpMatrixException.h>
+#include <visp/vpServoDisplay.h>
+#include <visp/vpDot2.h>
+#include <visp/vpPlot.h>
+
+
+int
+main()
+{
+ try {
+    vpRobotViper850 robot ;
+
+    vpServo task ;
+
+    vpImage<unsigned char> I ;
+
+    bool reset = false;
+    vp1394TwoGrabber g(reset);
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
+    g.open(I) ;
+
+    g.acquire(I) ;
+
+    vpDisplayX display(I, 800, 100,"Camera view") ;
+
+    vpDisplay::display(I) ;
+    vpDisplay::flush(I) ;
+
+    vpColVector jointMin(6), jointMax(6) ;
+    jointMin = robot.getJointMin();
+    jointMax = robot.getJointMax();
+
+    vpColVector Qmin(6), tQmin(6) ;
+    vpColVector Qmax(6), tQmax(6) ;
+    vpColVector Qmiddle(6);
+    vpColVector data(10) ;
+
+    double rho = 0.15 ;
+    for (int i=0 ; i < 6 ; i++)
+      {
+	Qmin[i] = jointMin[i] + 0.5*rho*(jointMax[i]-jointMin[i]) ;
+	Qmax[i] = jointMax[i] - 0.5*rho*(jointMax[i]-jointMin[i]) ;
+      }
+    Qmiddle = (Qmin + Qmax) /2.;
+    double rho1 = 0.1 ;
+    
+    for (int i=0 ; i < 6 ; i++) {
+      tQmin[i]=Qmin[i]+ 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
+      tQmax[i]=Qmax[i]- 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
+    }
+   
+    vpColVector q(6) ;
+
+    // Create a window with two graphics
+    // - first graphic to plot q(t), Qmin, Qmax, tQmin and tQmax
+    // - second graphic to plot the cost function h_s
+    vpPlot plot(2);
+
+    // The first graphic contains 10 data to plot: q(t), Qmin, Qmax, tQmin and
+    // tQmax
+    plot.initGraph(0, 10);
+    // The second graphic contains 1 curve, the cost function h_s
+    plot.initGraph(1, 1);
+
+
+    // For the first graphic :
+    // - along the x axis the expected values are between 0 and 200 and 
+    //   the step is 1 
+    // - along the y axis the expected values are between -1.2 and 1.2 and the
+    //   step is 0.1
+    plot.initRange(0,0,200,1,-1.2,1.2,0.1);
+    plot.setTitle(0, "Joint behavior");
+
+    // For the second graphic :
+    // - along the x axis the expected values are between 0 and 200 and 
+    //   the step is 1 
+    // - along the y axis the expected values are between 0 and 0.0001 and the
+    //   step is 0.00001
+    plot.initRange(1,0,200,1,0,1e-4,1e-5);
+    plot.setTitle(1, "Cost function");
+
+    // For the first graphic, set the curves legend
+    char legend[10];
+    for (int i=0; i < 6; i++) {
+      sprintf(legend, "q%d", i+1);
+      plot.setLegend(0, i, legend);
+    }
+    plot.setLegend(0, 6, "tQmin");
+    plot.setLegend(0, 7, "tQmax");
+    plot.setLegend(0, 8, "Qmin");
+    plot.setLegend(0, 9, "Qmax");
+ 
+    // Set the curves color
+    plot.setColor(0, 0, vpColor::red); 
+    plot.setColor(0, 1, vpColor::green); 
+    plot.setColor(0, 2, vpColor::blue); 
+    plot.setColor(0, 3, vpColor::orange); 
+    plot.setColor(0, 4, 0, 128, 0); 
+    plot.setColor(0, 5, vpColor::cyan); 
+    for (int i= 6; i < 10; i++)
+      plot.setColor(0, i, vpColor::black); // for Q and tQ [min,max]
+
+    // For the second graphic, set the curves legend
+    plot.setLegend(1, 0, "h_s");
+ 
+    double beta = 1; 
+
+    // Set the amplitude of the control law due to the secondary task
+    cout << " Give the parameters beta (1) : ";
+    cin >> beta ;
+
+    vpDot2 dot ;
+    
+
+    std::cout << "Click on a dot..." << std::endl;
+    dot.initTracking(I) ;
+    vpImagePoint cog = dot.getCog();
+    vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
+    vpDisplay::flush(I);
+
+    vpCameraParameters cam ;
+    // Update camera parameters
+    robot.getCameraParameters (cam, I);
+
+    // sets the current position of the visual feature
+    vpFeaturePoint p ;
+    vpFeatureBuilder::create(p,cam, dot)  ;  //retrieve x,y and Z of the vpPoint structure
+
+    p.set_Z(1) ;
+    // sets the desired position of the visual feature
+    vpFeaturePoint pd ;
+    pd.buildFrom(0,0,1) ;
+
+    // Define the task
+    // - we want an eye-in-hand control law
+    // - articular velocity are computed
+    task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
+    task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
+
+    vpTwistMatrix cVe ;
+    robot.get_cVe(cVe) ;
+    std::cout << cVe <<std::endl ;
+    task.set_cVe(cVe) ;
+
+    // - Set the Jacobian (expressed in the end-effector frame)") ;
+    vpMatrix eJe ;
+    robot.get_eJe(eJe) ;
+    task.set_eJe(eJe) ;
+
+    // - we want to see a point on a point..") ;
+    std::cout << std::endl ;
+    task.addFeature(p,pd) ;
+
+    // - set the gain
+    task.setLambda(0.8) ;
+
+    // Display task information " ) ;
+    task.print() ;
+
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+
+    int iter = 0;
+    std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
+    while(1) {
+      iter ++;
+      // Acquire a new image from the camera
+      g.acquire(I) ;
+
+      // Display this image
+      vpDisplay::display(I) ;
+
+      // Achieve the tracking of the dot in the image
+      dot.track(I) ;
+      cog = dot.getCog();
+
+      // Display a green cross at the center of gravity position in the image
+      vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
+
+      // Get the measured joint positions of the robot
+      robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
+
+       // Update the point feature from the dot location
+      vpFeatureBuilder::create(p, cam, dot);
+
+      // Get the jacobian of the robot
+      robot.get_eJe(eJe) ;
+      // Update this jacobian in the task structure. It will be used to compute
+      // the velocity skew (as an articular velocity)
+      // qdot = -lambda * L^+ * cVe * eJe * (s-s*)
+      task.set_eJe(eJe) ;
+
+      vpColVector prim_task ;
+      vpColVector e2(6) ;
+      // Compute the visual servoing skew vector
+      prim_task = task.computeControlLaw() ;
+
+      vpColVector sec_task(6) ;
+      double h_s = 0 ;
+      {
+	// joint limit avoidance with secondary task
+
+	vpColVector de2dt(6);
+	de2dt = 0 ;
+	e2 = 0 ;
+	for (int i=0 ; i < 6 ; i++)
+	  {
+	    double S = 0 ;
+	    if (q[i] > tQmax[i]) S = q[i] - tQmax[i] ;
+	    if (q[i] < tQmin[i]) S = q[i] - tQmin[i] ;
+	    double D = (Qmax[i]-Qmin[i]) ;
+	    h_s += vpMath::sqr(S)/D ;
+	    e2[i] = S/D ;
+	  }
+	h_s = beta*h_s/2.0 ; // cost function
+	e2 *= beta ;
+	//	std::cout << e2.t() << std::endl;
+ 	std::cout << "Cost function h_s: " << h_s << std::endl;
+ 
+	sec_task = task.secondaryTask(e2, de2dt) ;
+      }
+
+      vpColVector v ;
+      v = prim_task + sec_task;
+
+      // Display the current and desired feature points in the image display
+      vpServoDisplay::display(task, cam, I) ;
+
+      // Apply the computed joint velocities to the robot
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
+ 
+      {
+	// Add the material to plot curves
+
+	// q normalized between (entre -1 et 1)
+	for (int i=0 ; i < 6 ; i++) {
+	  data[i] = (q[i] - Qmiddle[i]) ;
+	  data[i] /= (Qmax[i] - Qmin[i]) ;
+	  data[i]*=2 ;
+	}
+	int joint = 2;
+	data[6] = 2*(tQmin[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
+	data[7] = 2*(tQmax[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
+	data[8] = -1 ; data[9] = 1 ;
+	plot.plot(0, iter, data); // plot q, Qmin, Qmax, tQmin, tQmax
+	plot.plot(1, 0, iter, h_s); // plot the cost function
+      }
+
+      vpDisplay::flush(I) ;
+    }
+
+    // Display task information
+    task.print() ;
+    task.kill();
+    return 0;
+  }
+  catch (...)
+  {
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
+}
+
+
+#else
+int
+main()
+{
+  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
+}
+#endif
