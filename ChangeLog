@@ -1,4 +1,4 @@
-ViSP 2.x.y 
+ViSP 2.4.4-rc1 (released December 21th, 2009)
   - New Features
     - Warning during the build if deprecated functions are used
     - For the Irisa's Afma6 robot addition of a new vacuum tool (vpAfma6).
@@ -36,14 +36,20 @@ ViSP 2.x.y
     - vpDot2: The tracking is restarted in vpDot2::track() if a dot is found 
       but is not valid.
     - In vpDisplay, new getKeyboardEvent() functionality to handle key 
-      events and new getPointerMotionEvent() functionality to handle mouse pointer 
-      motion event.
+      events and new getPointerMotionEvent() functionality to handle mouse 
+      pointer motion event.
     - Optimization of the vpMatrix class.
   - Examples:
+    - New examples in examples/servo-viper850 to show how to use the 
+      linear Kalman filter to compensate the tracking error due to the 
+      motion of a target. 
+    - New examples in examples/servo-viper850 to show how to use the 
+      secondary task to avoid joint limits. 
     - New plotting example in example/tools/plot.cpp
     - In grab1394Two.cpp example, addition of [-r] new option to reset the bus.
     - New examples to show how to build a 3D visual servoing without using the
-      vpServo and vpFeature classes: servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp
+      vpServo and vpFeature classes: 
+      servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp
       and servoSimu3D_cdMc_CamVelocityWithoutVpServo.cpp
   - Bug fixed
     - [7638] Memory leak in all vpFeature... classes was reopened
@@ -61,8 +67,10 @@ ViSP 2.x.y
     - [8257] Bug in vp1394TwoGrabber::resetBus()
     - [8259] Segfault in vpDisplayX
     - [8389] vpKltOpencv : Bug in the copy constructor
-    - [8493] Problem to build ViSP as a dynamic library under windows (Visual C++)
-    - [8495] Segmentation fault during the execution of the example grabDirectShow
+    - [8493] Problem to build ViSP as a dynamic library under windows 
+	     (Visual C++)
+    - [8495] Segmentation fault during the execution of the example 
+	     grabDirectShow
     - [8831] Possible bug when extracting axis/angle from theta/u vector	
 ----------------------------------------------	
 ViSP 2.4.3 (released April 10th, 2009)
