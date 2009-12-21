@@ -267,7 +267,7 @@ vpDiskGrabber::~vpDiskGrabber()
 void
 vpDiskGrabber::setDirectory(const char *dir)
 {
-  sprintf(directory, dir) ;
+  sprintf(directory, "%s", dir) ;
 }
 
 /*!
@@ -276,7 +276,7 @@ vpDiskGrabber::setDirectory(const char *dir)
 void
 vpDiskGrabber::setBaseName(const char *name)
 {
-  sprintf(base_name, name) ;
+  sprintf(base_name, "%s", name) ;
 }
 
 /*!
@@ -285,7 +285,7 @@ vpDiskGrabber::setBaseName(const char *name)
 void
 vpDiskGrabber::setExtension(const char *ext)
 {
-  sprintf(extension, ext) ;
+  sprintf(extension, "%s", ext) ;
 }
 
 /*!
