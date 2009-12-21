@@ -503,8 +503,13 @@ vpMeNurbs::seekExtremities(vpImage<unsigned char> &I)
 
   \param I : Image in which the edge appears.
 */
+#ifdef VISP_HAVE_OPENCV
 void
 vpMeNurbs::seekExtremitiesCanny(vpImage<unsigned char> &I)
+#else
+void
+vpMeNurbs::seekExtremitiesCanny(vpImage<unsigned char> & /* I */)
+#endif
 {
 #ifdef VISP_HAVE_OPENCV
   vpMeSite pt = list.firstValue();
