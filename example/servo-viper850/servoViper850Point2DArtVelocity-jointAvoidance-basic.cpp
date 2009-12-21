@@ -39,7 +39,7 @@
  *****************************************************************************/
 
 /*!
-  \example servoViper850Point2DArtVelocity-jointAvoidance-tra2001-basic.cpp
+  \example servoViper850Point2DArtVelocity-jointAvoidance-basic.cpp
 
   Joint limits avoidance by stopping the motion on axis near the joint limits. 
 
