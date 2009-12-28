@@ -146,7 +146,9 @@ private:
   GtkWidget *widget;
   GdkPixmap *background;
   GdkGC *gc;
-  GdkColor blue,red,yellow,green,cyan,orange,white, black, gdkcolor;
+  GdkColor blue,red,yellow,green,cyan,orange,white, black, gdkcolor,
+           lightBlue, darkBlue, lightRed, darkRed,lightGreen, darkGreen,
+	   purple, lightGray, gray, darkGray;
   GdkColormap  *colormap;
 
   GdkFont *Police1,*Police2;
@@ -158,12 +160,22 @@ private:
   typedef enum {
     id_black=0,
     id_white,
+    id_lightGray,
+    id_gray,
+    id_darkGray,
+    id_lightRed,
     id_red,
+    id_darkRed,
+    id_lightGreen,
     id_green,
+    id_darkGreen,
+    id_lightBlue,
     id_blue,
+    id_darkBlue,
     id_yellow,
     id_cyan,
     id_orange,
+    id_purple,
     id_npredefined // Number of predefined colors
   } vpColorIdentifier;
 

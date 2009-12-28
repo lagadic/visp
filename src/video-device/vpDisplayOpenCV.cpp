@@ -293,22 +293,42 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
 
   /* Create color */
   vpColor pcolor; // Predefined colors
+  pcolor = vpColor::lightBlue;
+  col[vpColor::id_lightBlue]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
   pcolor = vpColor::blue;
   col[vpColor::id_blue]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::darkBlue;
+  col[vpColor::id_darkBlue]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::lightRed;
+  col[vpColor::id_lightRed]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
   pcolor = vpColor::red;
   col[vpColor::id_red]    = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::darkRed;
+  col[vpColor::id_darkRed]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::lightGreen;
+  col[vpColor::id_lightGreen]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
   pcolor = vpColor::green;
   col[vpColor::id_green]  = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::darkGreen;
+  col[vpColor::id_darkGreen]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
   pcolor = vpColor::yellow;
   col[vpColor::id_yellow] = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
   pcolor = vpColor::cyan;
   col[vpColor::id_cyan]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
   pcolor = vpColor::orange;
   col[vpColor::id_orange] = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::purple;
+  col[vpColor::id_purple] = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
   pcolor = vpColor::white;
   col[vpColor::id_white]  = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
   pcolor = vpColor::black;
   col[vpColor::id_black]  = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::lightGray;
+  col[vpColor::id_lightGray]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::gray;
+  col[vpColor::id_gray]  = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
+  pcolor = vpColor::darkGray;
+  col[vpColor::id_darkGray]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
 
   font = new CvFont;
   cvInitFont( font, CV_FONT_HERSHEY_PLAIN, 1.0f,1.0f);
