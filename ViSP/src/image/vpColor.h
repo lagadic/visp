@@ -121,14 +121,24 @@ class VISP_EXPORT vpColor : public vpRGBa
  public:
   /*! Predefined colors identifier. */
   typedef enum {
-    id_black=0,  /*!< Identifier associated to the predefined vpColor::black color. */
-    id_white,    /*!< Identifier associated to the predefined vpColor::white color. */
-    id_red,      /*!< Identifier associated to the predefined vpColor::red color. */
-    id_green,    /*!< Identifier associated to the predefined vpColor::green color. */
-    id_blue,     /*!< Identifier associated to the predefined vpColor::blue color. */
-    id_yellow,   /*!< Identifier associated to the predefined vpColor::yellow color. */
-    id_cyan,     /*!< Identifier associated to the predefined vpColor::cyan color. */
-    id_orange,   /*!< Identifier associated to the predefined vpColor::orange color. */
+    id_black=0,    /*!< Identifier associated to the predefined vpColor::black color. */
+    id_white,      /*!< Identifier associated to the predefined vpColor::white color. */
+    id_lightGray,  /*!< Identifier associated to the predefined vpColor::lightGray color. */
+    id_gray,       /*!< Identifier associated to the predefined vpColor::gray color. */
+    id_darkGray,   /*!< Identifier associated to the predefined vpColor::darkGray color. */
+    id_lightRed,   /*!< Identifier associated to the predefined vpColor::lightRed color. */
+    id_red,        /*!< Identifier associated to the predefined vpColor::red color. */
+    id_darkRed,    /*!< Identifier associated to the predefined vpColor::darkRed color. */
+    id_lightGreen, /*!< Identifier associated to the predefined vpColor::lightGreen color. */
+    id_green,      /*!< Identifier associated to the predefined vpColor::green color. */
+    id_darkGreen,  /*!< Identifier associated to the predefined vpColor::darkGreen color. */
+    id_lightBlue,  /*!< Identifier associated to the predefined vpColor::lightBlue color. */
+    id_blue,       /*!< Identifier associated to the predefined vpColor::blue color. */
+    id_darkBlue,   /*!< Identifier associated to the predefined vpColor::darkBlue color. */
+    id_yellow,     /*!< Identifier associated to the predefined vpColor::yellow color. */
+    id_cyan,       /*!< Identifier associated to the predefined vpColor::cyan color. */
+    id_orange,     /*!< Identifier associated to the predefined vpColor::orange color. */
+    id_purple,     /*!< Identifier associated to the predefined vpColor::purple color. */
 
     id_unknown   /*!< Identifier associated to unknowned
                     colors. By unknowned, we mean not a predefined
@@ -144,12 +154,22 @@ class VISP_EXPORT vpColor : public vpRGBa
   /* Predefined colors. */
   static const vpColor black ;
   static const vpColor  white ;
+  static const vpColor  lightGray;
+  static const vpColor  gray;
+  static const vpColor  darkGray;
+  static const vpColor  lightRed;
   static const vpColor  red ;
+  static const vpColor  darkRed;
+  static const vpColor  lightGreen;
   static const vpColor  green;
+  static const vpColor  darkGreen;
+  static const vpColor  lightBlue;
   static const vpColor  blue ;  
+  static const vpColor  darkBlue;
   static const vpColor  yellow ;
   static const vpColor  cyan;   
   static const vpColor  orange;
+  static const vpColor  purple;
   static const vpColor  none;  
 
   /*!
