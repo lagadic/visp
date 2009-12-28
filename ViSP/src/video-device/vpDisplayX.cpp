@@ -310,33 +310,105 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
   {
     case 8:
       // Color BLACK and WHITE are set properly by default.
+      
+      // Color LIGHT GRAY.
+      x_color[vpColor::id_lightGray] = 254;
+      xcolor.pixel  = x_color[vpColor::id_lightGray] ;
+      xcolor.red    = 256 * 192;
+      xcolor.green  = 256 * 192;
+      xcolor.blue   = 256 * 192;
+      XStoreColor ( display, lut, &xcolor );
+
+      // Color GRAY.
+      x_color[vpColor::id_gray] = 253;
+      xcolor.pixel  = x_color[vpColor::id_gray] ;
+      xcolor.red    = 256 * 128;
+      xcolor.green  = 256 * 128;
+      xcolor.blue   = 256 * 128;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK GRAY.
+      x_color[vpColor::id_darkGray] = 252;
+      xcolor.pixel  = x_color[vpColor::id_darkGray] ;
+      xcolor.red    = 256 * 64;
+      xcolor.green  = 256 * 64;
+      xcolor.blue   = 256 * 64;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT RED.
+      x_color[vpColor::id_lightRed] = 251;
+      xcolor.pixel  = x_color[vpColor::id_lightRed] ;
+      xcolor.red    = 256 * 255;
+      xcolor.green  = 256 * 140;
+      xcolor.blue   = 256 * 140;
+      XStoreColor ( display, lut, &xcolor );
 
       // Color RED.
-      x_color[vpColor::id_red] = 254;
+      x_color[vpColor::id_red] = 250;
       xcolor.pixel  = x_color[vpColor::id_red] ;
       xcolor.red    = 256 * 255;
       xcolor.green  = 0;
       xcolor.blue   = 0;
       XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK RED.
+      x_color[vpColor::id_darkRed] = 249;
+      xcolor.pixel  = x_color[vpColor::id_darkRed] ;
+      xcolor.red    = 256 * 128;
+      xcolor.green  = 0;
+      xcolor.blue   = 0;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT GREEN.
+      x_color[vpColor::id_lightGreen] = 248;
+      xcolor.pixel  = x_color[vpColor::id_lightGreen] ;
+      xcolor.red    = 256 * 140;
+      xcolor.green  = 256 * 255;
+      xcolor.blue   = 256 * 140;
+      XStoreColor ( display, lut, &xcolor );
 
       // Color GREEN.
-      x_color[vpColor::id_green] = 253;
+      x_color[vpColor::id_green] = 247;
       xcolor.pixel  = x_color[vpColor::id_green];
       xcolor.red    = 0;
       xcolor.green  = 256 * 255;
       xcolor.blue   = 0;
       XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK GREEN.
+      x_color[vpColor::id_darkGreen] = 246;
+      xcolor.pixel  = x_color[vpColor::id_darkGreen] ;
+      xcolor.red    = 0;
+      xcolor.green  = 256 * 128;
+      xcolor.blue   = 0;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT BLUE.
+      x_color[vpColor::id_lightBlue] = 245;
+      xcolor.pixel  = x_color[vpColor::id_lightBlue] ;
+      xcolor.red    = 256 * 140;
+      xcolor.green  = 256 * 140;
+      xcolor.blue   = 256 * 255;
+      XStoreColor ( display, lut, &xcolor );
 
       // Color BLUE.
-      x_color[vpColor::id_blue] = 252;
+      x_color[vpColor::id_blue] = 244;
       xcolor.pixel  = x_color[vpColor::id_blue];
       xcolor.red    = 0;
       xcolor.green  = 0;
       xcolor.blue   = 256 * 255;
       XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK BLUE.
+      x_color[vpColor::id_darkBlue] = 243;
+      xcolor.pixel  = x_color[vpColor::id_darkBlue] ;
+      xcolor.red    = 0;
+      xcolor.green  = 0;
+      xcolor.blue   = 256 * 128;
+      XStoreColor ( display, lut, &xcolor );
 
       // Color YELLOW.
-      x_color[vpColor::id_yellow] = 251;
+      x_color[vpColor::id_yellow] = 242;
       xcolor.pixel  = x_color[vpColor::id_yellow];
       xcolor.red    = 256 * 255;
       xcolor.green  = 256 * 255;
@@ -344,7 +416,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
       XStoreColor ( display, lut, &xcolor );
 
       // Color ORANGE.
-      x_color[vpColor::id_orange] = 250;
+      x_color[vpColor::id_orange] = 241;
       xcolor.pixel  = x_color[vpColor::id_orange];
       xcolor.red    = 256 * 255;
       xcolor.green  = 256 * 165;
@@ -352,11 +424,19 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
       XStoreColor ( display, lut, &xcolor );
 
       // Color CYAN.
-      x_color[vpColor::id_cyan] = 249;
+      x_color[vpColor::id_cyan] = 240;
       xcolor.pixel  = x_color[vpColor::id_cyan];
       xcolor.red    = 0;
       xcolor.green  = 256 * 255;
       xcolor.blue   = 256 * 255;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color PURPLE.
+      x_color[vpColor::id_purple] = 239;
+      xcolor.pixel  = x_color[vpColor::id_purple];
+      xcolor.red    = 256 * 128;
+      xcolor.green  = 0;
+      xcolor.blue   = 256 * 128;
       XStoreColor ( display, lut, &xcolor );
 
       break;
@@ -381,6 +461,38 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
       xcolor.blue  = 256* 255;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_white] = xcolor.pixel;
+      
+      // Couleur LIGHT GRAY.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 192;
+      xcolor.green  = 256 * 192;
+      xcolor.blue   = 256 * 192;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightGray] = xcolor.pixel;
+
+      // Couleur GRAY.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 128;
+      xcolor.green  = 256 * 128;
+      xcolor.blue   = 256 * 128;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_gray] = xcolor.pixel;
+      
+      // Couleur DARK GRAY.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 64;
+      xcolor.green  = 256 * 64;
+      xcolor.blue   = 256 * 64;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkGray] = xcolor.pixel;
+      
+      // Couleur LIGHT RED.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 255;
+      xcolor.green  = 256 * 140;
+      xcolor.blue   = 256 * 140;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightRed] = xcolor.pixel;
 
       // Couleur RED.
       xcolor.pad   = 0;
@@ -389,6 +501,22 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
       xcolor.blue  = 0;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_red] = xcolor.pixel;
+      
+      // Couleur DARK RED.
+      xcolor.pad   = 0;
+      xcolor.red   = 256* 128;
+      xcolor.green = 0;
+      xcolor.blue  = 0;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkRed] = xcolor.pixel;
+      
+      // Couleur LIGHT GREEN.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 140;
+      xcolor.green  = 256 * 255;
+      xcolor.blue   = 256 * 140;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightGreen] = xcolor.pixel;
 
       // Couleur GREEN.
       xcolor.pad   = 0;
@@ -397,6 +525,22 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
       xcolor.blue  = 0;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_green] = xcolor.pixel;
+      
+      // Couleur DARK GREEN.
+      xcolor.pad   = 0;
+      xcolor.red   = 0;
+      xcolor.green = 256* 128;
+      xcolor.blue  = 0;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkGreen] = xcolor.pixel;
+      
+      // Couleur LIGHT Blue.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 140;
+      xcolor.green  = 256 * 140;
+      xcolor.blue   = 256 * 255;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightBlue] = xcolor.pixel;
 
       // Couleur BLUE.
       xcolor.pad = 0;
@@ -405,6 +549,14 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
       xcolor.blue  = 256* 255;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_blue] = xcolor.pixel;
+      
+      // Couleur DARK BLUE.
+      xcolor.pad   = 0;
+      xcolor.red   = 0;
+      xcolor.green = 0;
+      xcolor.blue  = 256* 128;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkBlue] = xcolor.pixel;
 
       // Couleur YELLOW.
       xcolor.pad = 0;
@@ -429,6 +581,14 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
       xcolor.blue  = 256 * 255;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_cyan] = xcolor.pixel;
+      
+      // Couleur PURPLE.
+      xcolor.pad = 0;
+      xcolor.red = 256 * 128;
+      xcolor.green = 0;
+      xcolor.blue  = 256 * 128;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_purple] = xcolor.pixel;
       break;
     }
   }
@@ -613,33 +773,105 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 
     case 8:
       // Color BLACK and WHITE are set properly.
+      
+      // Color LIGHT GRAY.
+      x_color[vpColor::id_lightGray] = 254;
+      xcolor.pixel  = x_color[vpColor::id_lightGray] ;
+      xcolor.red    = 256 * 192;
+      xcolor.green  = 256 * 192;
+      xcolor.blue   = 256 * 192;
+      XStoreColor ( display, lut, &xcolor );
+
+      // Color GRAY.
+      x_color[vpColor::id_gray] = 253;
+      xcolor.pixel  = x_color[vpColor::id_gray] ;
+      xcolor.red    = 256 * 128;
+      xcolor.green  = 256 * 128;
+      xcolor.blue   = 256 * 128;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK GRAY.
+      x_color[vpColor::id_darkGray] = 252;
+      xcolor.pixel  = x_color[vpColor::id_darkGray] ;
+      xcolor.red    = 256 * 64;
+      xcolor.green  = 256 * 64;
+      xcolor.blue   = 256 * 64;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT RED.
+      x_color[vpColor::id_lightRed] = 251;
+      xcolor.pixel  = x_color[vpColor::id_lightRed] ;
+      xcolor.red    = 256 * 255;
+      xcolor.green  = 256 * 140;
+      xcolor.blue   = 256 * 140;
+      XStoreColor ( display, lut, &xcolor );
 
       // Color RED.
-      x_color[vpColor::id_red]= 254;
+      x_color[vpColor::id_red] = 250;
       xcolor.pixel  = x_color[vpColor::id_red] ;
       xcolor.red    = 256 * 255;
       xcolor.green  = 0;
       xcolor.blue   = 0;
       XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK RED.
+      x_color[vpColor::id_darkRed] = 249;
+      xcolor.pixel  = x_color[vpColor::id_darkRed] ;
+      xcolor.red    = 256 * 128;
+      xcolor.green  = 0;
+      xcolor.blue   = 0;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT GREEN.
+      x_color[vpColor::id_lightGreen] = 248;
+      xcolor.pixel  = x_color[vpColor::id_lightGreen] ;
+      xcolor.red    = 256 * 140;
+      xcolor.green  = 256 * 255;
+      xcolor.blue   = 256 * 140;
+      XStoreColor ( display, lut, &xcolor );
 
       // Color GREEN.
-      x_color[vpColor::id_green] = 253;
+      x_color[vpColor::id_green] = 247;
       xcolor.pixel  = x_color[vpColor::id_green];
       xcolor.red    = 0;
       xcolor.green  = 256 * 255;
       xcolor.blue   = 0;
       XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK GREEN.
+      x_color[vpColor::id_darkGreen] = 246;
+      xcolor.pixel  = x_color[vpColor::id_darkGreen] ;
+      xcolor.red    = 0;
+      xcolor.green  = 256 * 128;
+      xcolor.blue   = 0;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT BLUE.
+      x_color[vpColor::id_lightBlue] = 245;
+      xcolor.pixel  = x_color[vpColor::id_lightBlue] ;
+      xcolor.red    = 256 * 140;
+      xcolor.green  = 256 * 140;
+      xcolor.blue   = 256 * 255;
+      XStoreColor ( display, lut, &xcolor );
 
       // Color BLUE.
-      x_color[vpColor::id_blue] = 252;
+      x_color[vpColor::id_blue] = 244;
       xcolor.pixel  = x_color[vpColor::id_blue];
       xcolor.red    = 0;
       xcolor.green  = 0;
       xcolor.blue   = 256 * 255;
       XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK BLUE.
+      x_color[vpColor::id_darkBlue] = 243;
+      xcolor.pixel  = x_color[vpColor::id_darkBlue] ;
+      xcolor.red    = 0;
+      xcolor.green  = 0;
+      xcolor.blue   = 256 * 128;
+      XStoreColor ( display, lut, &xcolor );
 
       // Color YELLOW.
-      x_color[vpColor::id_yellow] = 251;
+      x_color[vpColor::id_yellow] = 242;
       xcolor.pixel  = x_color[vpColor::id_yellow];
       xcolor.red    = 256 * 255;
       xcolor.green  = 256 * 255;
@@ -647,7 +879,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
       XStoreColor ( display, lut, &xcolor );
 
       // Color ORANGE.
-      x_color[vpColor::id_orange] = 250;
+      x_color[vpColor::id_orange] = 241;
       xcolor.pixel  = x_color[vpColor::id_orange];
       xcolor.red    = 256 * 255;
       xcolor.green  = 256 * 165;
@@ -655,11 +887,19 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
       XStoreColor ( display, lut, &xcolor );
 
       // Color CYAN.
-      x_color[vpColor::id_cyan] = 249;
+      x_color[vpColor::id_cyan] = 240;
       xcolor.pixel  = x_color[vpColor::id_cyan];
       xcolor.red    = 0;
       xcolor.green  = 256 * 255;
       xcolor.blue   = 256 * 255;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color PURPLE.
+      x_color[vpColor::id_purple] = 239;
+      xcolor.pixel  = x_color[vpColor::id_purple];
+      xcolor.red    = 256 * 128;
+      xcolor.green  = 0;
+      xcolor.blue   = 256 * 128;
       XStoreColor ( display, lut, &xcolor );
 
       break;
@@ -668,7 +908,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
     case 24:
     {
       xcolor.flags = DoRed | DoGreen | DoBlue ;
-
+      
       // Couleur BLACK.
       xcolor.pad   = 0;
       xcolor.red   = 0;
@@ -684,6 +924,38 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
       xcolor.blue  = 256* 255;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_white] = xcolor.pixel;
+      
+      // Couleur LIGHT GRAY.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 192;
+      xcolor.green  = 256 * 192;
+      xcolor.blue   = 256 * 192;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightGray] = xcolor.pixel;
+
+      // Couleur GRAY.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 128;
+      xcolor.green  = 256 * 128;
+      xcolor.blue   = 256 * 128;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_gray] = xcolor.pixel;
+      
+      // Couleur DARK GRAY.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 64;
+      xcolor.green  = 256 * 64;
+      xcolor.blue   = 256 * 64;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkGray] = xcolor.pixel;
+      
+      // Couleur LIGHT RED.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 255;
+      xcolor.green  = 256 * 140;
+      xcolor.blue   = 256 * 140;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightRed] = xcolor.pixel;
 
       // Couleur RED.
       xcolor.pad   = 0;
@@ -692,6 +964,22 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
       xcolor.blue  = 0;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_red] = xcolor.pixel;
+      
+      // Couleur DARK RED.
+      xcolor.pad   = 0;
+      xcolor.red   = 256* 128;
+      xcolor.green = 0;
+      xcolor.blue  = 0;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkRed] = xcolor.pixel;
+      
+      // Couleur LIGHT GREEN.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 140;
+      xcolor.green  = 256 * 255;
+      xcolor.blue   = 256 * 140;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightGreen] = xcolor.pixel;
 
       // Couleur GREEN.
       xcolor.pad   = 0;
@@ -700,6 +988,22 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
       xcolor.blue  = 0;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_green] = xcolor.pixel;
+      
+      // Couleur DARK GREEN.
+      xcolor.pad   = 0;
+      xcolor.red   = 0;
+      xcolor.green = 256* 128;
+      xcolor.blue  = 0;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkGreen] = xcolor.pixel;
+      
+      // Couleur LIGHT Blue.
+      xcolor.pad   = 0;
+      xcolor.red    = 256 * 140;
+      xcolor.green  = 256 * 140;
+      xcolor.blue   = 256 * 255;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightBlue] = xcolor.pixel;
 
       // Couleur BLUE.
       xcolor.pad = 0;
@@ -708,6 +1012,14 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
       xcolor.blue  = 256* 255;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_blue] = xcolor.pixel;
+      
+      // Couleur DARK BLUE.
+      xcolor.pad   = 0;
+      xcolor.red   = 0;
+      xcolor.green = 0;
+      xcolor.blue  = 256* 128;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkBlue] = xcolor.pixel;
 
       // Couleur YELLOW.
       xcolor.pad = 0;
@@ -732,6 +1044,14 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
       xcolor.blue  = 256 * 255;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_cyan] = xcolor.pixel;
+      
+      // Couleur PURPLE.
+      xcolor.pad = 0;
+      xcolor.red = 256 * 128;
+      xcolor.green = 0;
+      xcolor.blue  = 256 * 128;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_purple] = xcolor.pixel;
       break;
     }
   }
@@ -919,10 +1239,58 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
       // Color BLACK: default set to 0
 
       // Color WHITE: default set to 255
+      
+      // Color LIGHT GRAY.
+      pcolor = vpColor::lightGray;
+      xcolor.pixel  = 254 ; // affected to 254
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+ 
+      // Color GRAY.
+      pcolor = vpColor::gray;
+      xcolor.pixel  = 253 ; // affected to 253
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK GRAY.
+      pcolor = vpColor::darkGray;
+      xcolor.pixel  = 252 ; // affected to 252
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT RED.
+      pcolor = vpColor::lightRed;
+      xcolor.pixel  = 251 ; // affected to 251
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
  
       // Color RED.
       pcolor = vpColor::red;
-      xcolor.pixel  = 254 ; // affected to 254
+      xcolor.pixel  = 250 ; // affected to 250
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK RED.
+      pcolor = vpColor::darkRed;
+      xcolor.pixel  = 249 ; // affected to 249
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT GREEN.
+      pcolor = vpColor::lightGreen;
+      xcolor.pixel  = 248 ; // affected to 248
       xcolor.red    = 256 * pcolor.R;
       xcolor.green  = 256 * pcolor.G;
       xcolor.blue   = 256 * pcolor.B;
@@ -930,7 +1298,23 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
       // Color GREEN.
       pcolor = vpColor::green;
-      xcolor.pixel  = 253; // affected to 253
+      xcolor.pixel  = 247; // affected to 247
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK GREEN.
+      pcolor = vpColor::darkGreen;
+      xcolor.pixel  = 246 ; // affected to 246
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color LIGHT BLUE.
+      pcolor = vpColor::lightBlue;
+      xcolor.pixel  = 245 ; // affected to 245
       xcolor.red    = 256 * pcolor.R;
       xcolor.green  = 256 * pcolor.G;
       xcolor.blue   = 256 * pcolor.B;
@@ -938,7 +1322,15 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
       // Color BLUE.
       pcolor = vpColor::blue;
-      xcolor.pixel  = 252; // affected to 252
+      xcolor.pixel  = 244; // affected to 244
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color DARK BLUE.
+      pcolor = vpColor::darkBlue;
+      xcolor.pixel  = 243 ; // affected to 243
       xcolor.red    = 256 * pcolor.R;
       xcolor.green  = 256 * pcolor.G;
       xcolor.blue   = 256 * pcolor.B;
@@ -946,7 +1338,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
       // Color YELLOW.
       pcolor = vpColor::yellow;
-      xcolor.pixel  = 251; // affected to 251
+      xcolor.pixel  = 242; // affected to 242
       xcolor.red    = 256 * pcolor.R;
       xcolor.green  = 256 * pcolor.G;
       xcolor.blue   = 256 * pcolor.B;
@@ -954,7 +1346,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
       // Color ORANGE.
       pcolor = vpColor::orange;
-      xcolor.pixel  = 250; // affected to 250
+      xcolor.pixel  = 241; // affected to 241
       xcolor.red    = 256 * pcolor.R;
       xcolor.green  = 256 * pcolor.G;
       xcolor.blue   = 256 * pcolor.B;
@@ -962,7 +1354,15 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
       // Color CYAN.
       pcolor = vpColor::cyan;
-      xcolor.pixel  = 249; // affected to 249
+      xcolor.pixel  = 240; // affected to 240
+      xcolor.red    = 256 * pcolor.R;
+      xcolor.green  = 256 * pcolor.G;
+      xcolor.blue   = 256 * pcolor.B;
+      XStoreColor ( display, lut, &xcolor );
+      
+      // Color PURPLE.
+      pcolor = vpColor::purple;
+      xcolor.pixel  = 239; // affected to 239
       xcolor.red    = 256 * pcolor.R;
       xcolor.green  = 256 * pcolor.G;
       xcolor.blue   = 256 * pcolor.B;
@@ -992,6 +1392,42 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
       xcolor.blue  = 256 * pcolor.B;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_white] = xcolor.pixel;
+      
+      // Color LIGHT GRAY.
+      pcolor = vpColor::lightGray;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightGray] = xcolor.pixel;
+
+      // Color GRAY.
+      pcolor = vpColor::gray;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_gray] = xcolor.pixel;
+      
+      // Color DARK GRAY.
+      pcolor = vpColor::darkGray;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkGray] = xcolor.pixel;
+      
+      // Color LIGHT RED.
+      pcolor = vpColor::lightRed;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightRed] = xcolor.pixel;
 
       // Color RED.
       pcolor = vpColor::red;
@@ -1001,6 +1437,24 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
       xcolor.blue  = 256 * pcolor.B;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_red] = xcolor.pixel;
+      
+      // Color DARK RED.
+      pcolor = vpColor::darkRed;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkRed] = xcolor.pixel;
+      
+      // Color LIGHT GREEN.
+      pcolor = vpColor::lightGreen;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightGreen] = xcolor.pixel;
 
       // Color GREEN.
       pcolor = vpColor::green;
@@ -1010,6 +1464,24 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
       xcolor.blue  = 256 * pcolor.B;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_green] = xcolor.pixel;
+      
+      // Color DARK GREEN.
+      pcolor = vpColor::darkGreen;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkGreen] = xcolor.pixel;
+      
+      // Color LIGHT BLUE.
+      pcolor = vpColor::lightBlue;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_lightBlue] = xcolor.pixel;
 
       // Color BLUE.
       pcolor = vpColor::blue;
@@ -1019,6 +1491,15 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
       xcolor.blue  = 256 * pcolor.B;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_blue] = xcolor.pixel;
+      
+      // Color DARK BLUE.
+      pcolor = vpColor::darkBlue;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_darkBlue] = xcolor.pixel;
 
       // Color YELLOW.     
       pcolor = vpColor::yellow;
@@ -1046,6 +1527,15 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
       xcolor.blue  = 256 * pcolor.B;
       XAllocColor ( display, lut, &xcolor );
       x_color[vpColor::id_cyan] = xcolor.pixel;
+      
+      // Color PURPLE.
+      pcolor = vpColor::purple;
+      xcolor.pad   = 0;
+      xcolor.red   = 256 * pcolor.R;
+      xcolor.green = 256 * pcolor.G;
+      xcolor.blue  = 256 * pcolor.B;
+      XAllocColor ( display, lut, &xcolor );
+      x_color[vpColor::id_purple] = xcolor.pixel;
       break;
     }
   }

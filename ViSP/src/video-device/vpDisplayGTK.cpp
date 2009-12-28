@@ -287,17 +287,41 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   col = new GdkColor *[vpColor::id_unknown] ; // id_unknown = number of predefined colors
 
   /* Create color */
+  gdk_color_parse("light blue",&lightBlue);
+  gdk_colormap_alloc_color(colormap,&lightBlue,FALSE,TRUE);
+  col[vpColor::id_lightBlue] = &lightBlue ;
+  
   gdk_color_parse("blue",&blue);
   gdk_colormap_alloc_color(colormap,&blue,FALSE,TRUE);
   col[vpColor::id_blue] = &blue ;
+  
+  gdk_color_parse("dark blue",&darkBlue);
+  gdk_colormap_alloc_color(colormap,&darkBlue,FALSE,TRUE);
+  col[vpColor::id_darkBlue] = &darkBlue ;
+  
+  gdk_color_parse("#FF8C8C",&lightRed);
+  gdk_colormap_alloc_color(colormap,&lightRed,FALSE,TRUE);
+  col[vpColor::id_lightRed] = &lightRed ;
 
   gdk_color_parse("red",&red);
   gdk_colormap_alloc_color(colormap,&red,FALSE,TRUE);
   col[vpColor::id_red] = &red ;
+  
+  gdk_color_parse("dark red",&darkRed);
+  gdk_colormap_alloc_color(colormap,&darkRed,FALSE,TRUE);
+  col[vpColor::id_darkRed] = &darkRed ;
+  
+  gdk_color_parse("light green",&lightGreen);
+  gdk_colormap_alloc_color(colormap,&lightGreen,FALSE,TRUE);
+  col[vpColor::id_lightGreen] = &lightGreen ;
 
   gdk_color_parse("green",&green);
   gdk_colormap_alloc_color(colormap,&green,FALSE,TRUE);
   col[vpColor::id_green] = &green ;
+  
+  gdk_color_parse("dark green",&darkGreen);
+  gdk_colormap_alloc_color(colormap,&darkGreen,FALSE,TRUE);
+  col[vpColor::id_darkGreen] = &darkGreen ;
 
   gdk_color_parse("yellow",&yellow);
   gdk_colormap_alloc_color(colormap,&yellow,FALSE,TRUE);
@@ -310,6 +334,10 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   gdk_color_parse("orange",&orange);
   gdk_colormap_alloc_color(colormap,&orange,FALSE,TRUE);
   col[vpColor::id_orange] = &orange ;
+  
+  gdk_color_parse("purple",&purple);
+  gdk_colormap_alloc_color(colormap,&purple,FALSE,TRUE);
+  col[vpColor::id_purple] = &purple ;
 
   gdk_color_parse("white",&white);
   gdk_colormap_alloc_color(colormap,&white,FALSE,TRUE);
@@ -318,6 +346,18 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   gdk_color_parse("black",&black);
   gdk_colormap_alloc_color(colormap,&black,FALSE,TRUE);
   col[vpColor::id_black] = &black ;
+  
+  gdk_color_parse("#C0C0C0",&lightGray);
+  gdk_colormap_alloc_color(colormap,&lightGray,FALSE,TRUE);
+  col[vpColor::id_lightGray] = &lightGray ;
+  
+  gdk_color_parse("#808080",&gray);
+  gdk_colormap_alloc_color(colormap,&gray,FALSE,TRUE);
+  col[vpColor::id_gray] = &gray ;
+  
+  gdk_color_parse("#404040",&darkGray);
+  gdk_colormap_alloc_color(colormap,&darkGray,FALSE,TRUE);
+  col[vpColor::id_darkGray] = &darkGray ;
 
   /* Chargement des polices */
   Police1 = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");

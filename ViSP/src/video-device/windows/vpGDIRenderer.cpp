@@ -58,22 +58,43 @@ vpGDIRenderer::vpGDIRenderer()
 
   //initialize GDI the palette
   vpColor pcolor; // Predefined colors
+  
   pcolor = vpColor::black;
   colors[vpColor::id_black] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::lightBlue;
+  colors[vpColor::id_lightBlue]  = RGB(pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::blue;
   colors[vpColor::id_blue]  =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::darkBlue;
+  colors[vpColor::id_darkBlue]  = RGB(pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::cyan;
   colors[vpColor::id_cyan]  =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::lightGreen;
+  colors[vpColor::id_lightGreen]  = RGB(pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::green;
   colors[vpColor::id_green] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::darkGreen;
+  colors[vpColor::id_darkGreen]  = RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::lightRed;
+  colors[vpColor::id_lightRed]  = RGB(pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::red;
   colors[vpColor::id_red]   =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::darkRed;
+  colors[vpColor::id_darkRed]  = RGB(pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::white;
   colors[vpColor::id_white] =  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::lightGray;
+  colors[vpColor::id_lightGray]  = RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::gray;
+  colors[vpColor::id_gray] = RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::darkGray;
+  colors[vpColor::id_darkGray]  = RGB(pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::yellow;
   colors[vpColor::id_yellow]=  RGB(pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::orange;
   colors[vpColor::id_orange]=  RGB(pcolor.R, pcolor.G, pcolor.B);
+  pcolor = vpColor::purple;
+  colors[vpColor::id_purple]= RGB(pcolor.R, pcolor.G, pcolor.B);
 
   nbCols = 0;
   nbRows = 0;
