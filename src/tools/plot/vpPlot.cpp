@@ -536,12 +536,22 @@ void vpPlot::setColor(const int graphNum,  const int curveNum, vpColor color)
   {
     case vpColor::id_black: this->setColor(graphNum, curveNum, 0,0,0);break;
     case vpColor::id_white: this->setColor(graphNum, curveNum, (256*256)-1,(256*256)-1,(256*256)-1);break;
+    case vpColor::id_lightGray: this->setColor(graphNum, curveNum, (256*192)-1,(256*192)-1,(256*192)-1);break;
+    case vpColor::id_gray: this->setColor(graphNum, curveNum, (256*128)-1,(256*128)-1,(256*128)-1);break;
+    case vpColor::id_darkGray: this->setColor(graphNum, curveNum, (256*64)-1,(256*64)-1,(256*64)-1);break;
+    case vpColor::id_lightRed: this->setColor(graphNum, curveNum, (256*256)-1,(256*140)-1,(256*140)-1);break;
     case vpColor::id_red: this->setColor(graphNum, curveNum, (256*256)-1,0,0);break;
+    case vpColor::id_darkRed: this->setColor(graphNum, curveNum, (256*128)-1,0,0);break;
+    case vpColor::id_lightGreen: this->setColor(graphNum, curveNum, (256*140)-1,(256*256)-1,(256*140)-1);break;
     case vpColor::id_green: this->setColor(graphNum, curveNum, 0,(256*256)-1,0);break;
+    case vpColor::id_darkGreen: this->setColor(graphNum, curveNum, 0,(256*128)-1,0);break;
+    case vpColor::id_lightBlue: this->setColor(graphNum, curveNum, (256*140)-1,(256*140)-1,(256*256)-1);break;
     case vpColor::id_blue: this->setColor(graphNum, curveNum, 0,0,(256*256)-1);break;
+    case vpColor::id_darkBlue: this->setColor(graphNum, curveNum, 0,0,(256*128)-1);break;
     case vpColor::id_yellow: this->setColor(graphNum, curveNum, (256*256)-1,(256*256)-1,0);break;
     case vpColor::id_cyan: this->setColor(graphNum, curveNum, 0,(256*256)-1,(256*256)-1);break;
     case vpColor::id_orange: this->setColor(graphNum, curveNum, (256*256)-1,(256*128)-1,0);break;
+    case vpColor::id_purple: this->setColor(graphNum, curveNum, (256*128)-1,0,(256*128)-1);break;
     case vpColor::id_unknown: this->setColor(graphNum, curveNum, color.R*256, color.G*256, color.B*256);break;
   }
 }
