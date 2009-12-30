@@ -60,7 +60,7 @@
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:p:h"
+#define GETOPTARGS	"cdi:p:f:h"
 
 /*!
 
@@ -78,25 +78,28 @@ void usage(const char *name, const char *badparam, std::string ipath, std::strin
 Read an image sequence on the disk.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input images path>] \n\
-     [-h]\n						      \
+  %s [-i <input images path>] [-p <personal image sequence path>]\n\
+     [-c][-d][-h]\n						      \
 ", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -i <input images path>                                %s\n\
-     Set images input path.\n\
-     From this path read \"ViSP-images/mire-2/image.%%04d.pgm\"\n\
+     Set ViSP-images input path.\n\
+     From this path read \"ViSP-images/cube/image.%%04d.pgm\"\n\
      images.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
 \n\
   -p <personal image sequence path>                             %s\n\
-     Specify a personal folder containing a image sequence \n\
+     Specify a personal folder containing an image sequence \n\
      to process.\n\
      Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
      %%04d is for the image numbering.\n\
+\n\
+  -f <index of the first frame>                             \n\
+     Specify the first image index.\n\
 \n\
   -c\n\
      Disable the mouse click. Usefull to automaze the \n\
@@ -122,13 +125,14 @@ OPTIONS:                                               Default\n\
   \param argv : Array of command line parameters.
   \param ipath : Input images path.
   \param ppath : Personal image sequence path.
+  \param first : first frame index.
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, std::string &ppath, bool &click_allowed, bool &display)
+		std::string &ipath, std::string &ppath, int &first, bool &click_allowed, bool &display)
 {
   const char *optarg;
   int	c;
@@ -139,6 +143,7 @@ bool getOptions(int argc, const char **argv,
     case 'd': display = false; break;
     case 'i': ipath = optarg; break;
     case 'p': ppath = optarg; break;
+    case 'f': first = atoi(optarg); break;
     case 'h': usage(argv[0], NULL, ipath, ppath); return false; break;
 
     default:
@@ -168,6 +173,7 @@ main(int argc, const char ** argv)
   std::string ipath;
   std::string opt_ppath;
   std::string filename;
+  int opt_first = 1;
   bool opt_click_allowed = true;
   bool opt_display = true;
 
@@ -189,7 +195,7 @@ main(int argc, const char ** argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed,
+  if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_click_allowed,
 		 opt_display) == false) {
     exit (-1);
   }
@@ -243,7 +249,7 @@ main(int argc, const char ** argv)
   
   //Initialize the reader and get the first frame.
   reader.setFileName(filename.c_str());
-  reader.setFirstFrameIndex(1);
+  reader.setFirstFrameIndex(opt_first);
   reader.open(I);
 
   // We open a window using either X11, GTK, GDI or OpenCV.
@@ -279,7 +285,7 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I);
   }
   
-  reader.getFrame(I,2);
+  reader.getFrame(I,opt_first+1);
   
   if (opt_display)
   {
@@ -289,11 +295,11 @@ main(int argc, const char ** argv)
   
   if (opt_display && opt_click_allowed)
   {
-    std::cout << "Click on the image to read and display the 1121th frame" << std::endl;
+    std::cout << "Click on the image to read and display the last frame" << std::endl;
     vpDisplay::getClick(I);
   }
   
-  reader.getFrame(I,1121);
+  reader.getFrame(I,reader.getLastFrameIndex());
   
   if (opt_display)
   {
@@ -303,13 +309,13 @@ main(int argc, const char ** argv)
   
   if (opt_display && opt_click_allowed)
   {
-    std::cout << "Click to see the of the video" << std::endl;
+    std::cout << "Click to see the video" << std::endl;
     vpDisplay::getClick(I);
   }
   
   unsigned int lastFrame = reader.getLastFrameIndex();
 
-  for (unsigned int i = lastFrame - 5; i <= lastFrame; i++)
+  for (unsigned int i = opt_first; i <= lastFrame; i++)
   {
     reader.getFrame(I,i);
     if (opt_display)
@@ -317,14 +323,12 @@ main(int argc, const char ** argv)
       vpDisplay::display(I) ;
       vpDisplay::flush(I);
     }
-    if (opt_display && opt_click_allowed)
-    {
-      if (i == lastFrame)
-	std::cout << "Click to exit the test" << std::endl;
-      else
-        std::cout << "Click to see the next frame" << std::endl;
-      vpDisplay::getClick(I);
-    }
+  }
+  
+  if (opt_display && opt_click_allowed)
+  {
+    std::cout << "Click to exit the test" << std::endl;
+    vpDisplay::getClick(I);
   }
   
   return 0;
