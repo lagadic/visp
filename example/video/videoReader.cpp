@@ -233,7 +233,7 @@ main(int argc, const char ** argv)
 
   if (opt_ppath.empty())
   {
-    filename = ipath +  vpIoTools::path("/ViSP-images/video/video.mpeg");
+    filename = ipath +  vpIoTools::path("/ViSP-images/video/cube.mpeg");
   }
   else
   {
@@ -278,58 +278,44 @@ main(int argc, const char ** argv)
     }
   }
   
-  if (opt_display && opt_click_allowed)
-  {
-    std::cout << "Click on the image to read and display the second frame" << std::endl;
-    vpDisplay::getClick(I);
-  }
-  
-  reader.getFrame(I,1);
-  
-  if (opt_display)
-  {
-    vpDisplay::display(I) ;
-    vpDisplay::flush(I);
-  }
-  
-  if (opt_display && opt_click_allowed)
-  {
-    std::cout << "Click on the image to read and display the 22th frame" << std::endl;
-    vpDisplay::getClick(I);
-  }
-  
-  reader.getFrame(I,21);
-  
-  if (opt_display)
-  {
-    vpDisplay::display(I) ;
-    vpDisplay::flush(I);
-  }
+//   if (opt_display && opt_click_allowed)
+//   {
+//     std::cout << "Click on the image to read and display the last key frame" << std::endl;
+//     vpDisplay::getClick(I);
+//   }
+//   
+//   reader.getFrame(I,reader.getLastFrameIndex());
+//   
+//   if (opt_display)
+//   {
+//     vpDisplay::display(I) ;
+//     vpDisplay::flush(I);
+//   }
   
   if (opt_display && opt_click_allowed)
   {
-    std::cout << "Click to see the of the video" << std::endl;
+    std::cout << "Click to see the video" << std::endl;
     vpDisplay::getClick(I);
   }
   
   unsigned int lastFrame = reader.getLastFrameIndex();
+  //To go to the beginning of the video
+  reader.getFrame(I,0);
   
-  for (unsigned int i = lastFrame - 5; i <= lastFrame; i++)
+  for (unsigned int i = 0; i <= lastFrame; i++)
   {
-    reader.getFrame(I,i);
+    reader.acquire(I);
     if (opt_display)
     {
       vpDisplay::display(I) ;
       vpDisplay::flush(I);
     }
-    if (opt_display && opt_click_allowed)
-    {
-      if (i == lastFrame)
-	std::cout << "Click to exit the test" << std::endl;
-      else
-        std::cout << "Click to see the next frame" << std::endl;
-      vpDisplay::getClick(I);
-    }
+  }
+  
+  if (opt_display && opt_click_allowed)
+  {
+    std::cout << "Click to exit the test" << std::endl;
+    vpDisplay::getClick(I);
   }
   return 0;
 }
