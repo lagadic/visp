@@ -498,8 +498,6 @@ bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
 }
 /*!
   Get the coordinates of the mouse pointer.
-
-  \warning Not implemented yet.
   
   \param ip [out] : The coordinates of the mouse pointer.
   
@@ -511,8 +509,20 @@ bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
 bool 
 vpDisplayWin32::getPointerMotionEvent (vpImagePoint &ip)
 {
-  vpTRACE("Not implemented yet");
-  return false;
+  //wait if the window is not initialized
+  waitForInit();
+
+  bool ret = true ;
+  double u, v;
+  //tells the window there has been a getclick demand
+  //PostMessage(window.getHWnd(), vpWM_GETPOINTERMOTIONEVENT, 0,0);
+  
+  u = window.coordX;
+  v = window.coordY;
+  ip.set_u( u );
+  ip.set_v( v );
+
+  return ret;
 }
 
 /*!
