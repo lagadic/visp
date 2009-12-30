@@ -140,6 +140,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         ReleaseSemaphore(window->semaClickUp,1,NULL);
       }
       break;
+    case WM_MOUSEMOVE:
+      {
+        window->coordX = GET_X_LPARAM(lParam);
+        window->coordY = GET_Y_LPARAM(lParam);
+      }
+      break;
 
     case WM_SYSKEYDOWN: 
       // case WM_SYSKEYUP:

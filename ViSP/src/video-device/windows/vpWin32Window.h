@@ -57,6 +57,7 @@
 #define vpWM_DISPLAY WM_USER+2
 #define vpWM_GETCLICKUP WM_USER+3
 #define vpWM_CLOSEDISPLAY WM_USER+4
+#define vpWM_GETPOINTERMOTIONEVENT WM_USER+5
 
 //No specific mouse button query
 #define vpNO_BUTTON_QUERY -1
@@ -90,6 +91,10 @@ private :
   //! Y coordinate of the click
   int clickY;
   int clickYUp; 
+  //! X coordinate of the mouse
+  int coordX;
+  //! Y coordinate of the mouse
+  int coordY;
   // Keyboard key
   char lpString[10];
   //! Button used for the click
