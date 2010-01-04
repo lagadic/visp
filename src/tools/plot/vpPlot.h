@@ -270,8 +270,8 @@ class VISP_EXPORT vpPlot
     void initSize(int graphNum, const double lx, const double ly, 
 		  const double x, const double y);
     void initGraph(int graphNum, int curveNbr);
-    void initRange(const int graphNum, const double xmin, const double xmax, 
-		   double xdelt, const double ymin, const double ymax, 
+    void initRange(const int graphNum, /*const*/ double xmin, /*const*/ double xmax, 
+		   double xdelt, /*const*/ double ymin, /*const*/ double ymax, 
 		   double ydelt, const bool gx = 0, const bool gy = 0);
 
     void setBgColor(const int r, const int g, const int b);
@@ -329,6 +329,7 @@ class VISP_EXPORT vpPlot
     void drawLegend(const int graphNum);
     void setUserSpaceCoordinate(const double x0, const double y0, 
 				const double x1, const double y1);
+    void findBestInterval(double &min, double &max, double &interval, int & power);
 
 };
 

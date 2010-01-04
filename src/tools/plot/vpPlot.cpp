@@ -131,10 +131,15 @@ void vpPlot::init(int graphNbr)
 
   for (int i = 0; i < graphNbr; i++)
   {
-    strcpy(graph[i].title, "title");
-    strcpy(graph[i].unitx, "unitx");
-    strcpy(graph[i].unity, "unity");
+//     strcpy(graph[i].title, "title");
+//     strcpy(graph[i].unitx, "unitx");
+//     strcpy(graph[i].unity, "unity");
+    strcpy(graph[i].title, "");
+    strcpy(graph[i].unitx, "");
+    strcpy(graph[i].unity, "");
     graph[i].textdispayed=false;
+    graph[i].gridx = false;
+    graph[i].gridy = false;
   }
 }
 
@@ -182,7 +187,8 @@ void vpPlot::initGraph(int graphNum, int curveNbr)
     graph[graphNum].curveList[i].pointListx.kill();
     graph[graphNum].curveList[i].pointListy.kill();
     strcpy(graph[graphNum].curveList[i].lineStyle,"none");
-    strcpy(graph[graphNum].curveList[i].legend,"legend");
+    //strcpy(graph[graphNum].curveList[i].legend,"legend");
+    strcpy(graph[graphNum].curveList[i].legend,"");
 
   }
 }
@@ -203,9 +209,9 @@ void vpPlot::initGraph(int graphNum, int curveNbr)
   \param gx : If true, a grid is drawn allog the x axis to help the user to read the graphic.
   \param gy : If true, a grid is drawn allog the y axis to help the user to read the graphic.
 */
-void vpPlot::initRange(const int graphNum, const double xmin, 
-		       const double xmax,  double xdelt,
-		       const double ymin, const double ymax, 
+void vpPlot::initRange(const int graphNum, /*const*/ double xmin, 
+		       /*const*/ double xmax,  double xdelt,
+		       /*const*/ double ymin, /*const*/ double ymax, 
 		       double ydelt, const bool gx, const bool gy)
 {
   if(gx||gy)
@@ -222,6 +228,16 @@ void vpPlot::initRange(const int graphNum, const double xmin,
   // modif EM
   if ((ymax-ymin)/ydelt>10) ydelt = (ymax-ymin)/10 ;
   if ((xmax-xmin)/xdelt>10) xdelt = (xmax-xmin)/10 ;
+  
+  int powerx;
+  double intervalx;
+  findBestInterval(xmin, xmax, intervalx, powerx);
+  xdelt = intervalx*pow(10,powerx);
+  int powery;
+  double intervaly;
+  findBestInterval(ymin, ymax, intervaly, powery);
+  ydelt = intervaly*pow(10,powery);
+  
   //initialisation attributs fenetre
   graph[graphNum].zoomx = graph[graphNum].lgx/(xmax-xmin);
   graph[graphNum].zoomy = graph[graphNum].lgy/(ymax-ymin);
@@ -247,11 +263,17 @@ void vpPlot::initRange(const int graphNum, const double xmin,
       yp = graph[graphNum].yorg+(graph[graphNum].zoomy*t); //+ changé en -
       XPlot->fline(x1,yp,x2,yp);
       if((t<1e-5)&&(t>-1e-5)) t=0;
-      sprintf(valeur, "%g", t);
+      sprintf(valeur, "%g", t*pow(10,-powery));
       XPlot->fmove(x1,yp);
       XPlot->color(20000,20000,50000);
       XPlot->alabel('r','x',valeur);
     }
+    
+    x1 = graph[graphNum].ltx+margex+eps;
+    sprintf(valeur, "x10^%d", powery);
+    XPlot->fmove(x1,yp);
+    XPlot->color(20000,20000,50000);
+    XPlot->alabel('l','x',valeur);
 
     if(gx) { y1 = graph[graphNum].lty+margey; y2= graph[graphNum].lty+margey+graph[graphNum].lgy; XPlot->linemod("dotted"); }
     else
@@ -267,12 +289,18 @@ void vpPlot::initRange(const int graphNum, const double xmin,
       xp = graph[graphNum].xorg+(graph[graphNum].zoomx*t); //+ changé en -
       XPlot->fline(xp,y1,xp,y2);
       if((t<1e-5)&&(t>-1e-5)) t=0;
-      sprintf(valeur, "%g", t);
+      sprintf(valeur, "%g", t*pow(10,-powerx));
       if (graph[graphNum].yorg >= graph[graphNum].lty+margey) XPlot->fmove(xp,graph[graphNum].yorg-3*eps);
       else XPlot->fmove(xp,graph[graphNum].lty+margey-3*eps);
       XPlot->color(20000,20000,50000);
       XPlot->alabel('c','x',valeur);
     }
+
+    sprintf(valeur, "x10^%d", powerx);
+    if (graph[graphNum].yorg >= graph[graphNum].lty+margey) XPlot->fmove(xp,graph[graphNum].yorg+3*eps);
+    else XPlot->fmove(xp,graph[graphNum].lty+margey+3*eps);
+    XPlot->color(20000,20000,50000);
+    XPlot->alabel('r','x',valeur);
 
      //trace des axes
      XPlot->color(0,0,0);
@@ -664,8 +692,8 @@ void vpPlot::plot(const int graphNum,  const int curveNum,
       XPlot->fillcolor (0xffff,0xffff,0xffff);
       XPlot->filltype(1);
       XPlot->box (graph[graphNum].ltx,graph[graphNum].lty,
-		  graph[graphNum].ltx+graph[graphNum].lgx+margex,
-		  graph[graphNum].lty+graph[graphNum].lgy+margey);
+		  graph[graphNum].ltx+graph[graphNum].lgx+margex+20,
+		  graph[graphNum].lty+graph[graphNum].lgy+margey+20);
       switch(err_range)
       {
         case 1:
@@ -791,10 +819,10 @@ void vpPlot::drawLegend(const int graphNum){
 	       graph[graphNum].lty+margey+graph[graphNum].lgy+3*eps);
   XPlot->alabel('c','x',graph[graphNum].title);
   XPlot->fmove(graph[graphNum].ltx+margex+graph[graphNum].lgx-eps,
-	       graph[graphNum].yorg+2*eps);
+	       graph[graphNum].yorg-5*eps);
   XPlot->alabel('r','x',graph[graphNum].unitx);
   XPlot->fmove(graph[graphNum].xorg+2*eps,
-	       graph[graphNum].lty+margey+graph[graphNum].lgy-eps);
+	       graph[graphNum].lty+margey+graph[graphNum].lgy-4*eps);
   XPlot->alabel('l','x',graph[graphNum].unity);
 
   for(ind=0;ind<graph[graphNum].curveNbr;ind++)
@@ -1184,6 +1212,42 @@ void vpPlot::clear()
       graph[i].curveList[j].pointListy.kill();
     }
   }
+}
+
+
+/*!
+  This method enable to find the best scale to plot the curve
+*/
+void vpPlot::findBestInterval(double &min, double &max, double &interval, int &power)
+{
+  double delta = (max-min)/10;
+  
+  bool intervalFound = false;
+  
+  power = 0;
+  
+  while (!intervalFound)
+  {
+    interval = int(delta);
+    
+    if (interval != 0)
+    {
+      intervalFound = true;
+      interval++;
+    }
+    
+    else
+    {
+      delta = delta*10;
+      power--;
+    }
+  }
+  
+  min = min * pow(10,-power);
+  min = round(min);
+  min = min * pow(10,power);
+  
+  max = min + 10*interval*pow(10,power);
 }
 
 #endif
