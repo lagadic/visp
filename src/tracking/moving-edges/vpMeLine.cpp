@@ -320,7 +320,8 @@ vpMeLine::leastSquare()
 
   if (list.nbElement() < 2)
   {
-    vpERROR_TRACE("Not enough point") ;
+    //vpERROR_TRACE("Not enough point") ;
+    vpCDEBUG(1) << "Not enough point";
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "not enough point")) ;
   }
