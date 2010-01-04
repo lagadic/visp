@@ -46,7 +46,7 @@
     NAMES
     plotter.h
     PATHS
-    "$ENV(LIBPLOTTER_HOME)/include"
+    "$ENV(LIBPLOTTER_DIR)/include"
     "/usr/include"
 	"/usr/local/include"
 	"C:/Program Files/GnuWin32/include"
@@ -57,7 +57,7 @@
     NAMES
     libplotter plotter
     PATHS
-    "$ENV(LIBPLOTTER_HOME)/lib"
+    "$ENV(LIBPLOTTER_DIR)/lib"
     /usr/lib
     /usr/local/lib
     /lib
