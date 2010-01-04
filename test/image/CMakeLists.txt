@@ -47,6 +47,7 @@ SET (SOURCE
   testIoPGM.cpp
   testIoPPM.cpp
   testUndistortImage.cpp
+  testReadImage.cpp
 )
 
 # rule for binary build
@@ -70,6 +71,7 @@ ADD_TEST(testCreateSubImage testCreateSubImage)
 ADD_TEST(testImagePoint     testImagePoint)
 ADD_TEST(testIoPGM          testIoPGM)
 ADD_TEST(testIoPPM          testIoPPM)
+ADD_TEST(testReadImage      testReadImage)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
