@@ -74,7 +74,7 @@ int vpBSpline::findSpan(double l_u, int l_p, std::vector<double> &l_knots)
 
   if(l_u > l_knots.back()) 
   {
-    vpTRACE("l_u higher than the maximum value in the knot vector  : %lf",l_u);
+    //vpTRACE("l_u higher than the maximum value in the knot vector  : %lf",l_u);
     return(m-l_p-1);
   }
 
