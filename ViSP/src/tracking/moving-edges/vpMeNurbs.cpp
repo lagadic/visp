@@ -232,10 +232,10 @@ vpMeNurbs::initTracking(vpImage<unsigned char> &I)
     }
     if (b == vpMouseButton::button3) break;
   }
-  if (ptList.nbElements() > 0)
+  if (ptList.nbElements() > 3)
     initTracking(I, ptList);
   else
-    throw (vpException(vpException::notInitialized,"No point to initialize the Nurbs"));
+    throw (vpException(vpException::notInitialized,"Not enough points to initialize the Nurbs"));
 }
 
 
@@ -813,7 +813,6 @@ vpMeNurbs::reSample(vpImage<unsigned char> &I)
 
   if ((double)n < 0.7*nbPt)
   {
-    std::cout <<"Resample"<< std::cout;
     sample(I);
     vpMeTracker::initTracking(I);
   }
@@ -882,7 +881,7 @@ vpMeNurbs::localReSample(vpImage<unsigned char> &I)
         iP = nurbs.computeCurveDersPoint(u, 1);
       
         while (vpImagePoint::sqrDistance(iP[0],iPend) > vpMath::sqr(me->sample_step) && u < uend)
-        {     //std::cout << "Et boum !!!! " << std::endl;
+        {
 	  u+=0.01;
 	  if (iP!=NULL) delete[] iP;
 	  iP = nurbs.computeCurveDersPoint(u, 1);
