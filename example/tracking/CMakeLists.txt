@@ -45,6 +45,7 @@ SET (SOURCE
   trackMeCircle.cpp
   trackMeEllipse.cpp
   trackMeLine.cpp
+  trackMeNurbs.cpp
   trackDot.cpp
   trackDot2.cpp
   trackKltOpencv.cpp
@@ -67,6 +68,7 @@ ADD_TEST(trackDot2WithAutoDetection trackDot2WithAutoDetection -d -c)
 ADD_TEST(trackMeCircle              trackMeCircle -d -c)
 ADD_TEST(trackMeEllipse             trackMeEllipse -d -c)
 ADD_TEST(trackMeLine                trackMeLine -d -c)
+ADD_TEST(trackMeNurbs                trackMeLine -d -c)
 ADD_TEST(trackDot                   trackDot -d -c)
 ADD_TEST(trackDot2                  trackDot2 -d -c)
 
