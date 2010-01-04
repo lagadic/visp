@@ -725,8 +725,8 @@ vpViper::get_cVe(vpTwistMatrix &cVe)
 
   \f[
   {^e}{\bf J}_e = \left[\begin{array}{cc}
-  {^e}{\bf R}_f &  {[{^e}{\bf t}_w}]_\times \; {^e}{\bf R}_f \\
-  0_{3\times3} & {^e}{\bf R}_f
+  {^w}{\bf R}_f &  {[{^e}{\bf t}_w}]_\times \; {^w}{\bf R}_f \\
+  0_{3\times3} & {^w}{\bf R}_f
   \end{array}
   \right] \;
   {^f}{\bf J}_w
@@ -743,19 +743,18 @@ vpViper::get_cVe(vpTwistMatrix &cVe)
 void
 vpViper::get_eJe(const vpColVector &q, vpMatrix &eJe)
 {
-#if 1
   vpMatrix V(6,6);
   V = 0;
   // Compute the first and last block of V
-  vpHomogeneousMatrix fMe;
-  get_fMe(q, fMe);
-  vpRotationMatrix fRe;
-  fMe.extract(fRe);
-  vpRotationMatrix eRf;
-  eRf = fRe.inverse();
+  vpHomogeneousMatrix fMw;
+  get_fMw(q, fMw);
+  vpRotationMatrix fRw;
+  fMw.extract(fRw);
+  vpRotationMatrix wRf;
+  wRf = fRw.inverse();
   for (int i=0; i<3; i++ ) {
     for (int j=0; j<3; j++ ) {
-      V[i][j] = V[i+3][j+3] = eRf[i][j];
+      V[i][j] = V[i+3][j+3] = wRf[i][j];
     }
   }
   // Compute the second block of V
@@ -765,62 +764,17 @@ vpViper::get_eJe(const vpColVector &q, vpMatrix &eJe)
   eMw = wMe.inverse();
   vpTranslationVector etw;
   eMw.extract(etw);
-  vpMatrix block2 = etw.skew()*eRf;
+  vpMatrix block2 = etw.skew()*wRf;
   for (int i=0; i<3; i++ ) {
     for (int j=0; j<3; j++ ) {
       V[i][j+3] = block2[i][j];
     }
   }
-  // V.print(std::cout, 5, "V=eVw*wVf calcule ViSP:");
   // Compute eJe
   vpMatrix fJw;
   get_fJw(q, fJw);  
   eJe = V * fJw;
 
-
-#else
-  // We need here to compute eVw * wVf * fJe
-  eJe.resize(6,6) ;
-
-
-  vpMatrix fJw;
-  // We recall that for simplification, fJw is computed with d6 set to zero in
-  // the modelization, to come in the wrist frame
-  get_fJw(q, fJw);
-
-  // fix frame to wrist transformation
-  vpHomogeneousMatrix fMw;
-  get_fMw(q, fMw);
-  vpHomogeneousMatrix wMf;
-  wMf = fMw.inverse();
-
-  // the transformation between wrist frame and end effector
-  vpHomogeneousMatrix wMe;
-  get_wMe(wMe);
-
-  vpTranslationVector t;
-  t=0;
-  vpRotationMatrix wRf;
-  wMf.extract(wRf);
-  
-  vpTwistMatrix wVf(t, wRf);
-
-  vpHomogeneousMatrix eMw;
-  eMw = wMe.inverse();
-  vpTwistMatrix eVw(eMw);
-
-//   {
-//     vpTwistMatrix fVw(t, wRf.t()); 
-//     vpTwistMatrix wVe(eMw.inverse());
-//     fVw.print(std::cout, 5, "fVw vpViper:");
-//     wVe.print(std::cout, 5, "wVe vpViper:");
-
-//   }
-   wVf.print(std::cout, 5, "wVf:");
-   eVw.print(std::cout, 5, "eVw:");
-
-  eJe = eVw*wVf*fJw;
-#endif
   return;
 }
 
@@ -963,7 +917,7 @@ vpViper::get_fJw(const vpColVector &q, vpMatrix &fJw)
 
   \f[
   {^f}{\bf J}_e = \left[\begin{array}{cc}
-  I_{3\times3} & [{^f}{\bf R}_e \; {^e}{\bf t}_w]_\times \\
+  I_{3\times3} & [{^f}{\bf R}_w \; {^e}{\bf t}_w]_\times \\
   0_{3\times3} & I_{3\times3} 
   \end{array}
   \right]
@@ -988,17 +942,17 @@ vpViper::get_fJe(const vpColVector &q, vpMatrix &fJe)
     V[i][i] = 1;
   
   // Compute the second block of V
-  vpHomogeneousMatrix fMe;
-  get_fMe(q, fMe);
-  vpRotationMatrix fRe;
-  fMe.extract(fRe);
+  vpHomogeneousMatrix fMw;
+  get_fMw(q, fMw);
+  vpRotationMatrix fRw;
+  fMw.extract(fRw);
   vpHomogeneousMatrix wMe;
   get_wMe(wMe);
   vpHomogeneousMatrix eMw;
   eMw = wMe.inverse();
   vpTranslationVector etw;
   eMw.extract(etw);
-  vpMatrix block2 = (fRe*etw).skew();
+  vpMatrix block2 = (fRw*etw).skew();
   // Set the second block
   for (int i=0; i<3; i++ )
     for (int j=0; j<3; j++ )
