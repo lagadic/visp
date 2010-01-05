@@ -1970,7 +1970,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
   fread (magic, 1, sizeof (magic), file);
 
   /* check for valid magic number */
-  if (!png_check_sig (magic, sizeof (magic)))
+  if (png_sig_cmp (magic,0, sizeof (magic)))
   {
     fprintf (stderr, "error: \"%s\" is not a valid PNG image!\n",filename);
     fclose (file);
@@ -2025,7 +2025,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
 
   /* convert 1-2-4 bits grayscale images to 8 bits grayscale. */
   if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-    png_set_gray_1_2_4_to_8 (png_ptr);
+    png_set_expand (png_ptr);
 
 //  if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS))
 //    png_set_tRNS_to_alpha (png_ptr);
@@ -2174,7 +2174,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   fread (magic, 1, sizeof (magic), file);
 
   /* check for valid magic number */
-  if (!png_check_sig (magic, sizeof (magic)))
+  if (png_sig_cmp (magic,0, sizeof (magic)))
   {
     fprintf (stderr, "error: \"%s\" is not a valid PNG image!\n",filename);
     fclose (file);
@@ -2229,7 +2229,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
 
   /* convert 1-2-4 bits grayscale images to 8 bits grayscale. */
   if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-    png_set_gray_1_2_4_to_8 (png_ptr);
+    png_set_expand (png_ptr);
 
 //  if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS))
 //    png_set_tRNS_to_alpha (png_ptr);
