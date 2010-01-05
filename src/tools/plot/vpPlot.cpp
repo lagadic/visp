@@ -268,12 +268,15 @@ void vpPlot::initRange(const int graphNum, /*const*/ double xmin,
       XPlot->color(20000,20000,50000);
       XPlot->alabel('r','x',valeur);
     }
-    
-    x1 = graph[graphNum].ltx+margex+eps;
-    sprintf(valeur, "x10^%d", powery);
-    XPlot->fmove(x1,yp);
-    XPlot->color(20000,20000,50000);
-    XPlot->alabel('l','x',valeur);
+
+    if (powery != 0)
+    {
+      x1 = graph[graphNum].ltx+margex+eps;
+      sprintf(valeur, "x10^%d", powery);
+      XPlot->fmove(x1,yp);
+      XPlot->color(20000,20000,50000);
+      XPlot->alabel('l','x',valeur);
+    }
 
     if(gx) { y1 = graph[graphNum].lty+margey; y2= graph[graphNum].lty+margey+graph[graphNum].lgy; XPlot->linemod("dotted"); }
     else
@@ -296,11 +299,14 @@ void vpPlot::initRange(const int graphNum, /*const*/ double xmin,
       XPlot->alabel('c','x',valeur);
     }
 
-    sprintf(valeur, "x10^%d", powerx);
-    if (graph[graphNum].yorg >= graph[graphNum].lty+margey) XPlot->fmove(xp,graph[graphNum].yorg+3*eps);
-    else XPlot->fmove(xp,graph[graphNum].lty+margey+3*eps);
-    XPlot->color(20000,20000,50000);
-    XPlot->alabel('r','x',valeur);
+    if (powery != 0)
+    {
+      sprintf(valeur, "x10^%d", powerx);
+      if (graph[graphNum].yorg >= graph[graphNum].lty+margey) XPlot->fmove(xp,graph[graphNum].yorg+3*eps);
+      else XPlot->fmove(xp,graph[graphNum].lty+margey+3*eps);
+      XPlot->color(20000,20000,50000);
+      XPlot->alabel('r','x',valeur);
+    }
 
      //trace des axes
      XPlot->color(0,0,0);
@@ -706,8 +712,44 @@ void vpPlot::plot(const int graphNum,  const int curveNum,
 		    graph[graphNum].ydelt_rel,
 		    graph[graphNum].gridx,
 		    graph[graphNum].gridy);
+          if (y2 > graph[graphNum].lty+margey+graph[graphNum].lgy) err_range = 3;
+	  if (y2 < graph[graphNum].lty+margey) err_range = 4;
+	  if (err_range != 1)
+	  {
+	    XPlot->color(0xffff,0xffff,0xffff);
+            XPlot->fillcolor (0xffff,0xffff,0xffff);
+            XPlot->filltype(1);
+            XPlot->box (graph[graphNum].ltx,graph[graphNum].lty,
+		  graph[graphNum].ltx+graph[graphNum].lgx+margex+20,
+		  graph[graphNum].lty+graph[graphNum].lgy+margey+20);
+	  }
 	 break;
-        case 4:
+        case 2:
+          initRange(graphNum,
+		    graph[graphNum].xmin_rel*coef,
+		    graph[graphNum].xmax_rel,
+		    graph[graphNum].xdelt_rel*coef,
+		    graph[graphNum].ymin_rel,
+		    graph[graphNum].ymax_rel,
+		    graph[graphNum].ydelt_rel,
+		    graph[graphNum].gridx,graph[graphNum].gridy);
+          if (y2 > graph[graphNum].lty+margey+graph[graphNum].lgy) err_range = 3;
+	  if(y2 < graph[graphNum].lty+margey) err_range = 4;
+	  if (err_range != 2)
+	  {
+	    XPlot->color(0xffff,0xffff,0xffff);
+            XPlot->fillcolor (0xffff,0xffff,0xffff);
+            XPlot->filltype(1);
+            XPlot->box (graph[graphNum].ltx,graph[graphNum].lty,
+		  graph[graphNum].ltx+graph[graphNum].lgx+margex+20,
+		  graph[graphNum].lty+graph[graphNum].lgy+margey+20);
+	  }
+	  break;
+      }
+      
+      switch(err_range)
+      {
+        case 3:
 	  if(y>graph[graphNum].ymax_rel+vpMath::abs(graph[graphNum].ymax_rel*coef))
 
             initRange(graphNum,graph[graphNum].xmin_rel,
@@ -728,18 +770,7 @@ void vpPlot::plot(const int graphNum,  const int curveNum,
 		      graph[graphNum].gridx,graph[graphNum].gridy);
 
 	  break;
-        case 3:
-          initRange(graphNum,
-		    graph[graphNum].xmin_rel*coef,
-		    graph[graphNum].xmax_rel,
-		    graph[graphNum].xdelt_rel*coef,
-		    graph[graphNum].ymin_rel,
-		    graph[graphNum].ymax_rel,
-		    graph[graphNum].ydelt_rel,
-		    graph[graphNum].gridx,graph[graphNum].gridy);
-
-	  break;
-        case 2:
+        case 4:
 	  if(y<graph[graphNum].ymin_rel-vpMath::abs(graph[graphNum].ymin_rel*coef))
             initRange(graphNum,
 		      graph[graphNum].xmin_rel,
@@ -799,9 +830,9 @@ void vpPlot::plot(const int graphNum,  const int curveNum,
 */
 int vpPlot::out_range(const int graphNum, double x, double y){
    if(x>graph[graphNum].ltx+margex+graph[graphNum].lgx) return 1;
-   if(y<graph[graphNum].lty+margey) return 2;
-   if(x<graph[graphNum].ltx+margex) return 3;
-   if(y>graph[graphNum].lty+margey+graph[graphNum].lgy) return 4;
+   if(x<graph[graphNum].ltx+margex) return 2;
+   if(y<graph[graphNum].lty+margey) return 4;
+   if(y>graph[graphNum].lty+margey+graph[graphNum].lgy) return 3;
    return 0;
 }
 
