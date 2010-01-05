@@ -1233,7 +1233,8 @@ void vpPlot::findBestInterval(double &min, double &max, double &interval, int &p
     if (interval != 0)
     {
       intervalFound = true;
-      interval++;
+      if(fabs(delta-interval) >0.1)
+        interval++;
     }
     
     else
