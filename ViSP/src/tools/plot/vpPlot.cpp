@@ -299,7 +299,7 @@ void vpPlot::initRange(const int graphNum, /*const*/ double xmin,
       XPlot->alabel('c','x',valeur);
     }
 
-    if (powery != 0)
+    if (powerx != 0)
     {
       sprintf(valeur, "x10^%d", powerx);
       if (graph[graphNum].yorg >= graph[graphNum].lty+margey) XPlot->fmove(xp,graph[graphNum].yorg+3*eps);
@@ -700,12 +700,21 @@ void vpPlot::plot(const int graphNum,  const int curveNum,
       XPlot->box (graph[graphNum].ltx,graph[graphNum].lty,
 		  graph[graphNum].ltx+graph[graphNum].lgx+margex+20,
 		  graph[graphNum].lty+graph[graphNum].lgy+margey+20);
+      double value;
+      int iter;
       switch(err_range)
       {
         case 1:
+	  value = graph[graphNum].xmax_rel*1.5;
+	  iter = 0;
+	  while (value < x && iter < 10)
+	  {
+	    value = 2 * value;
+	    iter ++;
+	  }
           initRange(graphNum,
 		    graph[graphNum].xmin_rel,
-		    graph[graphNum].xmax_rel*1.5,
+		    /*graph[graphNum].xmax_rel*1.5*/value,
 		    graph[graphNum].xdelt_rel*coef,
 		    graph[graphNum].ymin_rel,
 		    graph[graphNum].ymax_rel,
@@ -725,8 +734,15 @@ void vpPlot::plot(const int graphNum,  const int curveNum,
 	  }
 	 break;
         case 2:
+	  value = graph[graphNum].xmin_rel*coef;
+	  iter = 0;
+	  while (value > x && iter < 10)
+	  {
+	    value = 2 * value;
+	    iter ++;
+	  }
           initRange(graphNum,
-		    graph[graphNum].xmin_rel*coef,
+		    /*graph[graphNum].xmin_rel*coef*/value,
 		    graph[graphNum].xmax_rel,
 		    graph[graphNum].xdelt_rel*coef,
 		    graph[graphNum].ymin_rel,
