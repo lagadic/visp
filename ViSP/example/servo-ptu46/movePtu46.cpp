@@ -64,6 +64,8 @@
 int
 main()
 {
+  try
+  {
   vpRobotPtu46 robot ;
   vpColVector q(2) ;
 
@@ -118,9 +120,13 @@ main()
   vpCTRACE << "Set articular frame velocity " << qdot.t() ;
   robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
   sleep(2) ;
+  }
+  catch (...)
+  {
+    std::cout << "Sorry PtU46 not available ..." << std::endl;
+  }
 
-
-
+  return 0;
 
 }
 #else
