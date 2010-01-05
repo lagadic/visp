@@ -328,11 +328,10 @@ public:  /* Methode publiques */
              vpCameraParameters::vpCameraParametersProjType
 	     projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
-  /* --- ETAT ------------------------------------------------------------- */
-
+  // State
   vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
 
-  /* --- POSITIONNEMENT --------------------------------------------------- */
+  // Position control
   void setPosition(const vpRobot::vpControlFrameType frame,
 		   const vpColVector &position) ;
   void setPosition (const vpRobot::vpControlFrameType frame,
@@ -348,8 +347,7 @@ public:  /* Methode publiques */
 
   double getPositioningVelocity (void);
 
-  /* --- VITESSE ---------------------------------------------------------- */
-
+  // Velocity control
   void setVelocity (const vpRobot::vpControlFrameType frame,
 		    const vpColVector & velocity);
 
@@ -358,6 +356,10 @@ public:  /* Methode publiques */
 		    vpColVector & velocity);
 
   vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
+
+  // Force/Torque control
+  void biasForceTorqueSensor();
+  void getForceTorque(vpColVector &H);
 
 public:
   void get_cMe(vpHomogeneousMatrix &cMe) ;
