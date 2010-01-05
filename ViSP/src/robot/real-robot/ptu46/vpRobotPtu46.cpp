@@ -72,7 +72,7 @@ vpRobotPtu46::vpRobotPtu46 (const char *device)
   :
   vpRobot ()
 {
-  device = new char [FILENAME_MAX];
+  this->device = new char [FILENAME_MAX];
 
   sprintf(this->device, "%s", device);
 
