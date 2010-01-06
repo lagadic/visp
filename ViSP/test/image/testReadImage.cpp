@@ -104,7 +104,6 @@ OPTIONS:                                               Default\n\
   \param argv : Array of command line parameters.
   \param ipath: Input image path.
   \param ppath : Personal image path.
-  \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 
 */
