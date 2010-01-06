@@ -281,7 +281,6 @@ vpTranslationVector::skew(const vpTranslationVector &t,vpMatrix &M)
 }
 
 /*!
-  \relates vpTranslationVector
 
   Compute the skew symmetric matrix \f$M\f$ of translation vector
   \f$t\f$ (matrice de pre-produit vectoriel).
@@ -310,7 +309,6 @@ vpTranslationVector::skew(const vpTranslationVector &t)
 }
 
 /*!
-  \relates vpTranslationVector
 
   Compute the skew symmetric matrix \f$M\f$ of the translation vector (matrice
   de pre-produit vectoriel), where
@@ -338,7 +336,7 @@ vpTranslationVector::skew() const
 
 
 /*!
-  \relates vpTranslationVector
+
   Return the cross product of two translation vectors \f$a \times b\f$.
 
   \param a,b : Translation vectors in input. 
