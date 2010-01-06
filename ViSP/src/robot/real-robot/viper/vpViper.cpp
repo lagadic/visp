@@ -39,7 +39,7 @@
 
   \file vpViper.cpp
 
-  Control of Irisa's gentry robot named Afma6.
+  Modelisation of the ADEPT Viper 650 or 850 robot.
 
 */
 
