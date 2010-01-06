@@ -2,7 +2,7 @@
 #
 # $Id: CMakeSourceFileList.cmake,v 1.29 2008-12-17 14:45:01 fspindle Exp $
 #
-# Copyright (C) 1998-2006 Inria. All rights reserved.
+# Copyright (C) 1998-2010 Inria. All rights reserved.
 #
 # This software was developed at:
 # IRISA/INRIA Rennes
