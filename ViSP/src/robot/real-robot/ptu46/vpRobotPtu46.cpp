@@ -77,7 +77,16 @@ vpRobotPtu46::vpRobotPtu46 (const char *device)
   sprintf(this->device, "%s", device);
 
   vpDEBUG_TRACE (12, "Open communication with Ptu-46.");
-  init();
+  try
+  {
+    init();
+  }
+  catch(...)
+  {
+    delete [] this->device;
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
 
   try
   {
@@ -85,6 +94,7 @@ vpRobotPtu46::vpRobotPtu46 (const char *device)
   }
   catch(...)
   {
+    delete [] this->device;
     vpERROR_TRACE("Error caught") ;
     throw ;
   }
