@@ -2,7 +2,7 @@
 #
 # $Id: CTestConfig.cmake,v 1.9 2008-12-11 13:19:44 fspindle Exp $
 #
-# Copyright (C) 1998-2008 Inria. All rights reserved.
+# Copyright (C) 1998-2010 Inria. All rights reserved.
 #
 # This software was developed at:
 # IRISA/INRIA Rennes
