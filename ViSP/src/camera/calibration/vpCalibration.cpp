@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCalibration.cpp,v 1.14 2008-07-21 09:41:11 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

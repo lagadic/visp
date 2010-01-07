@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVirtualVisualServoing.cpp,v 1.11 2007-07-02 13:41:51 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

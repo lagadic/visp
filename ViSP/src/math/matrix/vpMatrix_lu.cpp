@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMatrix_lu.cpp,v 1.5 2009-01-08 16:17:07 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

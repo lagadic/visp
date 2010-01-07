@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomogeneousMatrix.h,v 1.12 2008-09-26 15:20:55 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: test1394TwoResetBus.cpp,v 1.2 2008-06-06 11:26:41 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testFeature.cpp,v 1.4 2008-10-31 17:47:52 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

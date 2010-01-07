@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp,v 1.10 2008-11-12 17:36:25 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

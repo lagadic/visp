@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRotationVector.cpp,v 1.6 2007-05-10 14:43:14 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

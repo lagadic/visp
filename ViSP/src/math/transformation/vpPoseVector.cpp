@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseVector.cpp,v 1.10 2008-07-28 16:46:45 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

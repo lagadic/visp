@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testDisplacement.cpp,v 1.9 2008-06-17 08:08:28 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

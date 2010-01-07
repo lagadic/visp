@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyMalis.cpp,v 1.10 2008-02-05 14:01:17 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

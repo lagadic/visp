@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testRobotViper850Pose.cpp,v 1.3 2008-07-17 20:10:06 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

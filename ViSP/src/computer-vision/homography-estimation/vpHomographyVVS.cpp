@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyVVS.cpp,v 1.7 2008-05-27 13:44:03 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

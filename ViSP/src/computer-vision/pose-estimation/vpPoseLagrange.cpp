@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPoseLagrange.cpp,v 1.7 2008-06-06 11:28:51 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

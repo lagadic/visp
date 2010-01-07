@@ -12,7 +12,7 @@
  * Version control
  * ===============
  *
- *  $Id: vpHomographyRansac.cpp,v 1.5 2007-04-27 16:40:14 fspindle Exp $
+ *  $Id$
  * optimized by Tran to improve speed.
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 

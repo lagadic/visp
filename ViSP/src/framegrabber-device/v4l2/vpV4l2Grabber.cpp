@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpV4l2Grabber.cpp,v 1.15 2008-11-10 16:01:51 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
