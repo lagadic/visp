@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImagePoint.cpp 2319 2009-10-22 13:45:50Z nmelchio $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

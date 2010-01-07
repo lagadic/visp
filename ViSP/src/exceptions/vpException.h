@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpException.h,v 1.9 2007-06-28 11:54:13 marchand Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

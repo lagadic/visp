@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageIoPnm.cpp,v 1.15 2008-04-17 12:44:58 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
