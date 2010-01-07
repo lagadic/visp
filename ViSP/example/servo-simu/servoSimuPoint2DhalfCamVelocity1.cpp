@@ -2,7 +2,7 @@
  *
  * $Id: servoSimuPoint2DhalfCamVelocity1.cpp,v 1.10 2008-10-31 17:50:08 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

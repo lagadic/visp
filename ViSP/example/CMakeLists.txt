@@ -2,7 +2,7 @@
 #
 # $Id: CMakeLists.txt,v 1.14 2008-05-19 09:54:09 fspindle Exp $
 #
-# Copyright (C) 1998-2006 Inria. All rights reserved.
+# Copyright (C) 1998-2010 Inria. All rights reserved.
 #
 # This software was developed at:
 # IRISA/INRIA Rennes

@@ -2,7 +2,7 @@
  *
  * $Id: vpServoData.cpp,v 1.8 2007-09-04 09:17:45 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

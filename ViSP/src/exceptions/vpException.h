@@ -2,7 +2,7 @@
  *
  * $Id: vpException.h,v 1.9 2007-06-28 11:54:13 marchand Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

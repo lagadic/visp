@@ -2,7 +2,7 @@
  *
  * $Id: vpPlot.h,v 1.13 2008-12-15 15:11:27 nmelchio Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

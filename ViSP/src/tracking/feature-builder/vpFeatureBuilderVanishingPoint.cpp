@@ -2,7 +2,7 @@
  *
  * $Id: vpFeatureBuilderVanishingPoint.cpp,v 1.6 2007-04-20 14:22:22 asaunier Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

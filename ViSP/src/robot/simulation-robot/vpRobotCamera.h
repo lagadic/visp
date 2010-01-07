@@ -2,7 +2,7 @@
  *
  * $Id: vpRobotCamera.h,v 1.10 2008-09-26 15:20:57 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

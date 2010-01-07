@@ -2,7 +2,7 @@
  *
  * $Id: servoAfma6Point2DArtVelocity.cpp,v 1.10 2008/07/17 20:11:57 fspindle Exp $
  *
- * Copyright (C) 1998-2008 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

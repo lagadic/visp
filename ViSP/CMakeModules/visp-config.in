@@ -4,7 +4,7 @@
 #
 # $Id$
 #
-# Copyright (C) 1998-2006 Inria. All rights reserved.
+# Copyright (C) 1998-2010 Inria. All rights reserved.
 #
 # This software was developed at:
 # IRISA/INRIA Rennes
@@ -58,7 +58,7 @@ usage()
     cat <<EOF
 
 ViSP $VERSION (Visual Servoing Platform)
-Copyright (C) 1998-2009 Inria. All rights reserved.
+Copyright (C) 1998-2010 Inria. All rights reserved.
 
 Usage: $0 [--prefix] [--cflags] [--libs] [--version] [--dumpversion]  [--help]
 
@@ -88,7 +88,7 @@ for arg in $@; do
 	--version) 
 	    echo "ViSP $VERSION (Visual Servoing Platform)"
 	    echo ""
-	    echo "Copyright (C) 1998-2009 Inria. All rights reserved.";;
+	    echo "Copyright (C) 1998-2010 Inria. All rights reserved.";;
 	--dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
 	*) usage; exit -1 ;;
     esac;

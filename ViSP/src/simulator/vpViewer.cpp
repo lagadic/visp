@@ -2,7 +2,7 @@
  *
  * $Id: vpViewer.cpp,v 1.19 2008-12-09 13:20:30 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

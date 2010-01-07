@@ -2,7 +2,7 @@
  *
  * $Id: vpRect.h,v 1.4 2007-07-02 16:35:02 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

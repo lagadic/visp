@@ -2,7 +2,7 @@
  *
  * $Id: vpFeatureThetaU.cpp,v 1.16 2008-11-06 09:26:07 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

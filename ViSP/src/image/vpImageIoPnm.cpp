@@ -2,7 +2,7 @@
  *
  * $Id: vpImageIoPnm.cpp,v 1.15 2008-04-17 12:44:58 asaunier Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes
