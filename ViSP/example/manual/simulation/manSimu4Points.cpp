@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: manSimu4Points.cpp,v 1.1 2008-07-11 13:25:57 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
