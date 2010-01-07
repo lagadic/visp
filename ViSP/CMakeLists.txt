@@ -96,14 +96,6 @@ IF(BUILD_DEPRECATED_FUNCTIONS)
 ENDIF(BUILD_DEPRECATED_FUNCTIONS)
 
 IF (UNIX)
-  INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
-  FIND_PACKAGE(COIN)
-  IF (COIN_FOUND AND OPENGL_FOUND)
-    OPTION(USE_COIN_SIMULATOR    "Compile ViSP with simulation capabilities based on Coin3D suite" ON)
-  ELSE (COIN_FOUND AND OPENGL_FOUND)
-    SET(USE_COIN_SIMULATOR OFF)
-  ENDIF (COIN_FOUND AND OPENGL_FOUND)
-
   FIND_PACKAGE(DC1394)
   IF(DC1394_2_FOUND)
     OPTION(USE_DC1394_2    "Compile ViSP with the libdc1394.2 library" ON)
@@ -183,6 +175,14 @@ IF(WIN32)
     SET(USE_DIRECTSHOW OFF)
   ENDIF(DIRECTSHOW_FOUND)
 ENDIF(WIN32)
+
+INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
+FIND_PACKAGE(COIN)
+IF (COIN_FOUND AND OPENGL_FOUND)
+  OPTION(USE_COIN_SIMULATOR    "Compile ViSP with simulation capabilities based on Coin3D suite" OFF)
+ELSE (COIN_FOUND AND OPENGL_FOUND)
+  SET(USE_COIN_SIMULATOR OFF)
+ENDIF (COIN_FOUND AND OPENGL_FOUND)
 
 FIND_PACKAGE(XML2)
 IF(XML2_FOUND)
@@ -518,11 +518,22 @@ IF(USE_COIN_SIMULATOR)
     ELSE(VISP_HAVE_COIN)
       MESSAGE(STATUS "Coin not found")
       SET(VISP_HAVE_SIMULATOR_FOUND "no")  # for ViSP-third-party.txt
-      IF (NOT DESIRED_QT_VERSION MATCHES 0)
-        # If QT version not set by the user, we don't print the following 
-	# message
-        MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Turn off USE_COIN_SIMULATOR option!")
-      ENDIF (NOT DESIRED_QT_VERSION MATCHES 0)
+      IF (WIN32)
+        MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Go to the ViSP website to check which libraries are required.\n
+                COIN_FOUND=${COIN_FOUND}\n
+                SOWIN_FOUND=${SOQT_FOUND}")
+        MESSAGE("If you don't want to use the simulator, turn off USE_COIN_SIMULATOR option")
+      ELSE (WIN32)
+        IF (NOT DESIRED_QT_VERSION MATCHES 0)
+          # If QT version not set by the user, we don't print the following 
+	  # message
+          MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Go to the ViSP website to check which libraries are required.\n
+                COIN_FOUND=${COIN_FOUND}\n
+                SOQT_FOUND=${SOQT_FOUND}\n
+                SOXT_FOUND=${SOXT_FOUND}")
+          MESSAGE("If you don't want to use the simulator, turn off USE_COIN_SIMULATOR option")
+        ENDIF (NOT DESIRED_QT_VERSION MATCHES 0)
+      ENDIF (WIN32)
     ENDIF(VISP_HAVE_COIN)
   ELSE(OPENGL_FOUND)
     #MESSAGE(STATUS "OPENGL_LIBRARIES no found")
