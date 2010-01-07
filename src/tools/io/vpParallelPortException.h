@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParallelPortException.h,v 1.2 2008-09-26 15:20:59 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

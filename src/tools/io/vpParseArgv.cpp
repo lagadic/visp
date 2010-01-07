@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.cpp,v 1.12 2008-11-12 17:36:25 fspindle Exp $
+ * $Id$
  *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.

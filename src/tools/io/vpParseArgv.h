@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpParseArgv.h,v 1.10 2008-11-12 17:36:25 fspindle Exp $
+ * $Id$
  *
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.

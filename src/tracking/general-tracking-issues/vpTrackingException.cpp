@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTrackingException.cpp,v 1.2 2006-05-30 08:40:47 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
