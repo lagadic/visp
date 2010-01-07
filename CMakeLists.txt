@@ -96,7 +96,13 @@ IF(BUILD_DEPRECATED_FUNCTIONS)
 ENDIF(BUILD_DEPRECATED_FUNCTIONS)
 
 IF (UNIX)
-   OPTION(USE_COIN_SIMULATOR    "Compile ViSP with simulation capabilities based on Coin3D suite" OFF)
+  INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
+  FIND_PACKAGE(COIN)
+  IF (COIN_FOUND AND OPENGL_FOUND)
+    OPTION(USE_COIN_SIMULATOR    "Compile ViSP with simulation capabilities based on Coin3D suite" ON)
+  ELSE (COIN_FOUND AND OPENGL_FOUND)
+    SET(USE_COIN_SIMULATOR OFF)
+  ENDIF (COIN_FOUND AND OPENGL_FOUND)
 
   FIND_PACKAGE(DC1394)
   IF(DC1394_2_FOUND)
@@ -349,10 +355,7 @@ SET(VISP_HAVE_QT4_FOUND "no")       # for ViSP-third-party.txt
 SET(VISP_HAVE_QT3_FOUND "no")       # for ViSP-third-party.txt
 
 IF(USE_COIN_SIMULATOR)
-  INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
   IF(OPENGL_FOUND)
-    FIND_PACKAGE(COIN)
-
     IF (COIN_FOUND)
       SET(VISP_HAVE_COIN_FOUND "yes")   # for ViSP-third-party.txt
     ENDIF (COIN_FOUND)
