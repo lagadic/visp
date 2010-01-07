@@ -1,3 +1,7 @@
+ViSP 2.4.3 (released January 8th, 2010)
+  - Features removed
+    - vpMePath has been removed.
+----------------------------------------------	
 ViSP 2.4.4-rc1 (released December 21th, 2009)
   - New Features
     - During CMake configuration, when a third-party library is detected,
