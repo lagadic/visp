@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6FourPoints2DArtVelocity.cpp,v 1.9 2008/07/17 20:11:57 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

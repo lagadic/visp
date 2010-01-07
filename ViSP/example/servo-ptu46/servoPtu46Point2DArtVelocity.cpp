@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoPtu46Point2DArtVelocity.cpp,v 1.6 2007-09-28 14:46:57 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

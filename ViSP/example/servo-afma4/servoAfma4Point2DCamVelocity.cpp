@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma4Point2DCamVelocity.cpp,v 1.1 2008-12-15 21:29:04 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
