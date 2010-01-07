@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyExtract.cpp,v 1.9 2007-05-16 13:02:56 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

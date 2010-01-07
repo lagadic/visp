@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHomographyDLT.cpp,v 1.8 2008-12-03 16:25:39 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

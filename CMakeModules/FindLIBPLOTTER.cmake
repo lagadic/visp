@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindLibplot.cmake 2179 2009-06-09 16:33:50Z fspindle $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

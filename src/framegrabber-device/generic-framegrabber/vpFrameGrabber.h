@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFrameGrabber.h,v 1.6 2008-11-10 16:54:10 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

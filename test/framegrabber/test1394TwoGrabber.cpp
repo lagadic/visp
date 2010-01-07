@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: test1394TwoGrabber.cpp,v 1.2 2008-06-10 14:37:08 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2008 Inria. All rights reserved.
  *

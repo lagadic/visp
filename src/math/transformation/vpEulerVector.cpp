@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpEulerVector.cpp,v 1.4 2007-04-27 16:40:15 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

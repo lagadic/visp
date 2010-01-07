@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.5 2007-12-07 16:44:14 asaunier Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowDevice.cpp,v 1.7 2009-01-11 16:56:42 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpLevenbergMarquartd.cpp,v 1.6 2008-06-18 14:30:54 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *

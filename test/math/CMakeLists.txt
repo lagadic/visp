@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt,v 1.4 2007-01-26 17:20:44 fspindle Exp $
+# $Id$
 #
 # Copyright (C) 1998-2006 Inria. All rights reserved.
 #

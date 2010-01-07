@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpDirectShowDevice.h,v 1.4 2007-04-20 14:22:15 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2006 Inria. All rights reserved.
  *
