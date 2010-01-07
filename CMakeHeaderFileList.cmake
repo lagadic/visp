@@ -203,7 +203,6 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMeEllipse.h
   tracking/moving-edges/vpMe.h
   tracking/moving-edges/vpMeLine.h
-  tracking/moving-edges/vpMePath.h
   tracking/moving-edges/vpMeSite.h
   tracking/moving-edges/vpMeTracker.h
   tracking/moving-edges/vpMeNurbs.h

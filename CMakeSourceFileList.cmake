@@ -216,7 +216,6 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMe.cpp
   tracking/moving-edges/vpMeEllipse.cpp
   tracking/moving-edges/vpMeLine.cpp
-  tracking/moving-edges/vpMePath.cpp
   tracking/moving-edges/vpMeSite.cpp
   tracking/moving-edges/vpMeTracker.cpp
   tracking/moving-edges/vpMeNurbs.cpp
