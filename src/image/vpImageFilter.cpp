@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageFilter.cpp,v 1.6 2007-02-27 17:08:05 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

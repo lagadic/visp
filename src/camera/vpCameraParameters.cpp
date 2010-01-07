@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpCameraParameters.cpp,v 1.11 2008-11-25 09:09:25 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

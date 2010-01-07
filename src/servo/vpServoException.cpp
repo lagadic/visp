@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoException.cpp,v 1.2 2006-05-30 08:40:45 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

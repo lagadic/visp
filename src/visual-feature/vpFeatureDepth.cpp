@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeatureDepth.cpp,v 1.12 2008-02-26 10:32:11 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

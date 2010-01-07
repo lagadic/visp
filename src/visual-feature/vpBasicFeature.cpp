@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpBasicFeature.cpp,v 1.5 2007-06-27 14:38:31 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

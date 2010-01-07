@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpServoData.cpp,v 1.8 2007-09-04 09:17:45 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

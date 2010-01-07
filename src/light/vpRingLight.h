@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRingLight.h,v 1.7 2008-11-12 17:36:25 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpGenericFeature.cpp,v 1.16 2008-02-26 10:32:11 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

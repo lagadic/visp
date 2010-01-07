@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpImageTools.cpp,v 1.12 2008-11-18 21:20:38 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
