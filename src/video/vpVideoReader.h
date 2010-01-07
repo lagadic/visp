@@ -56,6 +56,9 @@
   \brief Class that enables to manipulate easily a video file or a sequence of images. As it inherits from the vpFrameGrabber Class, it can be used like an other frame grabber class.
   
   The following example shows how this class is really easy to use. It enable to read a video file named video.mpeg and located in the folder "./video".
+  
+  But be careful, for video files, the getFrame method is not precise and returns the nearest key frame from the expected frame. You can use the getFrame method to
+  position the reader in the video and then use the acquire method to get the following frames one by one.
   \code
   #include <visp/vpConfig.h>
   #include <visp/vpImage.h>
@@ -73,8 +76,11 @@
   reader.setFileName("./video/video.mpeg");
   reader.open(I);
   
-  //Read the 3th frame
+  //Read the nearest key frame from the 3th frame
   reader.getFrame(I,2);
+  
+  //After positionning the video reader use acquire to read the video frame by frame
+  reader.acquire(I);
 
   return 0;
   }
