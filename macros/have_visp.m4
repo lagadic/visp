@@ -2,7 +2,7 @@
 #
 # $Id: have_visp.m4,v 1.4 2008-04-01 20:52:28 fspindle Exp $
 #
-# Copyright (C) 1998-2006 Inria. All rights reserved.
+# Copyright (C) 1998-2010 Inria. All rights reserved.
 #
 # This software was developed at:
 # IRISA/INRIA Rennes

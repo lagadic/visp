@@ -2,7 +2,7 @@
  *
  * $Id: servoSimuFourPoints2DCamVelocityDisplay.cpp,v 1.10 2008-06-17 08:08:26 asaunier Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

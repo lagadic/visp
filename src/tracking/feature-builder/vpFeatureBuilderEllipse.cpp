@@ -2,7 +2,7 @@
  *
  * $Id: vpFeatureBuilderEllipse.cpp,v 1.7 2007-04-18 16:14:29 asaunier Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

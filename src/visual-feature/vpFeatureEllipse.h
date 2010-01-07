@@ -2,7 +2,7 @@
  *
  * $Id: vpFeatureEllipse.h,v 1.12 2008-09-26 15:21:02 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

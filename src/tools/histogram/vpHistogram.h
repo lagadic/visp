@@ -2,7 +2,7 @@
  *
  * $Id: vpHistogram.h,v 1.7 2008-09-26 15:20:58 fspindle Exp $
  *
- * Copyright (C) 1998-2007 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

@@ -3,7 +3,7 @@
 @rem
 @rem $Id$
 @rem
-@rem Copyright (C) 1998-2009 Inria. All rights reserved.
+@rem Copyright (C) 1998-2010 Inria. All rights reserved.
 @rem
 @rem This software was developed at:
 @rem IRISA/INRIA Rennes
@@ -90,7 +90,7 @@ for %%a in (%*) do (
   if "%%a" == "--version" (
 	echo ViSP %VERSION% Visual Servoing Platform
 	echo.
-	echo Copyright 1998-2009 Inria. All rights reserved.
+	echo Copyright 1998-2010 Inria. All rights reserved.
 	goto END
   )
   if "%%a" == "--dumpversion" (
@@ -102,7 +102,7 @@ for %%a in (%*) do (
 
 :USAGE
 echo ViSP %VERSION% (Visual Servoing Platform)
-echo Copyright (C) 1998-2009 Inria. All rights reserved.
+echo Copyright (C) 1998-2010 Inria. All rights reserved.
 echo.
 echo Usage: %0 [--prefix] [--def] [--include] [--libpath] 
 echo [--libs] [--version] [--dumpversion] [--help]

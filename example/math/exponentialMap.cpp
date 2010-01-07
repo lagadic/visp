@@ -2,7 +2,7 @@
  *
  * $Id: exponentialMap.cpp,v 1.2 2007-05-10 14:55:47 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

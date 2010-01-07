@@ -2,7 +2,7 @@
  *
  * $Id: vpImageTools.cpp,v 1.12 2008-11-18 21:20:38 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

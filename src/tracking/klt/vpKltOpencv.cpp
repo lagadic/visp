@@ -2,7 +2,7 @@
  *
  * $Id: vpKltOpencv.cpp,v 1.6 2008-02-12 14:42:20 megautie Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

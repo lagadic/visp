@@ -2,7 +2,7 @@
  *
  * $Id: vpImagePoint.cpp 2319 2009-10-22 13:45:50Z nmelchio $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

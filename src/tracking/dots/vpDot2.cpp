@@ -2,7 +2,7 @@
  *
  * $Id: vpDot2.cpp 2135 2009-04-29 13:51:31Z fspindle $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

@@ -2,7 +2,7 @@
  *
  * $Id: vpImage.h,v 1.28 2008-10-18 16:27:48 fspindle Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes

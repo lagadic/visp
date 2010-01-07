@@ -2,7 +2,7 @@
  *
  * $Id: vpAR.h,v 1.4 2009-01-15 15:44:30 nmelchio Exp $
  *
- * Copyright (C) 1998-2006 Inria. All rights reserved.
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
  * This software was developed at:
  * IRISA/INRIA Rennes
