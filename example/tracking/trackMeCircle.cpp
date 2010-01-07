@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: trackMeCircle.cpp,v 1.12 2008-06-17 08:08:28 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

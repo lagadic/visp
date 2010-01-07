@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: simulateFourPoints2DCamVelocity.cpp,v 1.10 2008-06-13 13:37:37 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

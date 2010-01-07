@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoAfma6Ellipse2DCamVelocity.cpp,v 1.12 2008-12-19 14:14:45 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

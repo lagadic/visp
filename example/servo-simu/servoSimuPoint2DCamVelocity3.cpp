@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DCamVelocity3.cpp,v 1.8 2008-06-17 08:08:26 asaunier Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

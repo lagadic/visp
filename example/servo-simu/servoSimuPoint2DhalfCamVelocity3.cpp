@@ -1,7 +1,7 @@
 
 /****************************************************************************
  *
- * $Id: servoSimuPoint2DhalfCamVelocity3.cpp,v 1.10 2008-10-31 17:50:09 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
