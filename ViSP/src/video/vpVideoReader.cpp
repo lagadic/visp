@@ -283,6 +283,10 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
 /*!
   Gets the \f$ frame \f$ th frame and stores it in the image  \f$ I \f$.
   
+  \warning For the video files this method is not precise, and returns the nearest key frame from the expected frame.
+  But this method enables to postion the reader where you want. Then, use the acquire method to grab the following images
+  one after one.
+  
   \param I : The vpImage used to stored the frame.
   \param frame : The index of the frame which has to be read.
   
@@ -319,6 +323,10 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
 
 /*!
   Gets the \f$ frame \f$ th frame and stores it in the image  \f$ I \f$.
+  
+  \warning For the video files this method is not precise, and returns the nearest key frame from the expected frame.
+  But this method enables to postion the reader where you want. Then, use the acquire method to grab the following images
+  one after one.
   
   \param I : The vpImage used to stored the frame.
   \param frame : The index of the frame which has to be read.
