@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMeNurbs.cpp,v 1.1 2009-01-15 15:52:32 nmelchio Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *

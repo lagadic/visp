@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpHistogramValey.cpp,v 1.2 2007-09-17 09:16:13 fspindle Exp $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
