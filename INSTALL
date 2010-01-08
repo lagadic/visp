@@ -23,26 +23,7 @@ Building ViSP with CMake
 ------------------------
 
 Prerequsits: 
-(1) Install newest cmake version (minimum 2.3.x) from http://www.cmake.org
-    It is preferable to install the last CVS version of CMake:
-
-    To get the latest CVS version under unix platforms:
-
-    cvs -d :pserver:anonymous@www.cmake.org:/cvsroot/CMake login
-    (respond with password cmake)
-
-    cd /tmp
-
-    Follow this command by checking out the source code:
-    cvs -d :pserver:anonymous@www.cmake.org:/cvsroot/CMake co CMake
-
-    cd /tmp/CMake
-    ./bootstrap --prefix=/usr
-    make 
-    make install 
-
-    For this last command, you need to be root to have rights in /usr,
-    or change the install prefix location.
+(1) Install newest cmake release from http://www.cmake.org
 
 (2) checkout/install ViSP source code.
 
