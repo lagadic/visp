@@ -521,7 +521,8 @@ IF(USE_COIN_SIMULATOR)
       IF (WIN32)
         MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Go to the ViSP website to check which libraries are required.\n
                 COIN_FOUND=${COIN_FOUND}\n
-                SOWIN_FOUND=${SOQT_FOUND}")
+                SOWIN_FOUND=${SOWIN_FOUND}\n
+                SOQT_FOUND=${SOQT_FOUND}")
         MESSAGE("If you don't want to use the simulator, turn off USE_COIN_SIMULATOR option")
       ELSE (WIN32)
         IF (NOT DESIRED_QT_VERSION MATCHES 0)
