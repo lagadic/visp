@@ -1,4 +1,12 @@
-ViSP 2.4.3 (released January 8th, 2010)
+                               ViSP 
+                     Visual Servoing Platform
+                     Resume of the change log
+
+     Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006-2010
+                  www: http://www.irisa.fr/lagadic
+
+	
+ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
     - vpMePath has been removed.
 ----------------------------------------------	
@@ -23,8 +31,8 @@ ViSP 2.4.4-rc1 (released December 21th, 2009)
       2D Nurbs (Non Uniform Rational BSpline).
     - New vpMeNurbs class to track object edges.
     - New vpFFMPEG class to interface the FFmpeg library.
-    - New vpVideoReader and vpVideoWriter classes to manipulate easily the video 
-      files and the image sequences.
+    - New vpVideoReader and vpVideoWriter classes to manipulate easily the 
+      video files and the image sequences.
   - Improvements
     - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
       bus reset can be switched off in the constructor. There are also 
