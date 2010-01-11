@@ -134,6 +134,25 @@ public:
   */
   inline  unsigned int getWidth() const { return width; }
 
+ /*!
+
+    Get the number of rows in the image.
+
+    \return The image number of rows, or image height.
+
+    \sa getHeight()
+  */
+  inline  unsigned int getRows() const { return height ; }
+
+  /*!  
+    Get the number of columns in the image.
+
+    \return The image number of column, or image width.
+
+    \sa getWidth()
+   */
+   inline  unsigned int getCols() const { return width ; }
+
 
   // Return the maximum value within the bitmap
   Type getMaxValue() const ;
@@ -267,38 +286,7 @@ public:
   vp_deprecated Type getPixelBI(double j, double i) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   vp_deprecated Type getSubPix(double i, double j) const;
-  /*!
-
-    \deprecated This method is deprecated. You should use
-    vpImage::getHeight() instead.
-
-    Get the number of rows in the image.
-
-    \return The image number of rows, or image height.
-
-    \warning getRows() is obsolete and preserved for the moment for
-    compatibility with previous releases. You should use getHeight()
-    instead.
-
-    \sa getHeight()
-  */
-  vp_deprecated inline  unsigned int getRows() const { return height ; }
-
-  /*!  
-    \deprecated This method is deprecated. You should use
-    vpImage::getWidth() instead.
-
-    Get the number of columns in the image.
-
-    \return The image number of column, or image width.
-
-    \warning getCols() is obsolete and preserved for the moment for
-    compatibility with previous releases. You should use getWidth()
-    instead.
-
-    \sa getWidth()
-   */
-  vp_deprecated inline  unsigned int getCols() const { return width ; }
+ 
   // Return the maximum value within the bitmap
   vp_deprecated Type maxValue() const ;
   // Return the minumum value within the bitmap
