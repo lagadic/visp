@@ -113,12 +113,12 @@ void vpImageMorphology::erosion(vpImage<Type> &I,
 				Type value_out,
 				vpConnexityType connexity)
 {
-  vpImage<Type> J(I.getRows(), I.getCols()) ;
+  vpImage<Type> J(I.getHeight(), I.getWidth()) ;
   J = I;
 
   if (connexity == CONNEXITY_4) {
-    for (unsigned int i=1 ; i < I.getRows()-1   ; i++)
-      for (unsigned int j=1 ; j < I.getCols()-1   ; j++)
+    for (unsigned int i=1 ; i < I.getHeight()-1   ; i++)
+      for (unsigned int j=1 ; j < I.getWidth()-1   ; j++)
       {
 	if (I[i][j] == value)
 	{
@@ -132,8 +132,8 @@ void vpImageMorphology::erosion(vpImage<Type> &I,
       }
   }
   else {
-    for (unsigned int i=1 ; i < I.getRows()-1   ; i++)
-      for (unsigned int j=1 ; j < I.getCols()-1   ; j++)
+    for (unsigned int i=1 ; i < I.getHeight()-1   ; i++)
+      for (unsigned int j=1 ; j < I.getWidth()-1   ; j++)
       {
 	if (I[i][j] == value)
 	{
@@ -178,11 +178,11 @@ void vpImageMorphology::dilatation(vpImage<Type> &I,
 				   Type value_out,
 				   vpConnexityType connexity)
 {
-  vpImage<Type> J(I.getRows(), I.getCols()) ;
+  vpImage<Type> J(I.getHeight(), I.getWidth()) ;
   J = I;
   if (connexity == CONNEXITY_4) {
-    for (unsigned int i=1 ; i < I.getRows()-1   ; i++)
-      for (unsigned int j=1 ; j < I.getCols()-1   ; j++)
+    for (unsigned int i=1 ; i < I.getHeight()-1   ; i++)
+      for (unsigned int j=1 ; j < I.getWidth()-1   ; j++)
       {
 	if (I[i][j] == value_out)
 	{
@@ -196,8 +196,8 @@ void vpImageMorphology::dilatation(vpImage<Type> &I,
       }
   }
   else {
-    for (unsigned int i=1 ; i < I.getRows()-1   ; i++)
-      for (unsigned int j=1 ; j < I.getCols()-1   ; j++)
+    for (unsigned int i=1 ; i < I.getHeight()-1   ; i++)
+      for (unsigned int j=1 ; j < I.getWidth()-1   ; j++)
       {
 	if (I[i][j] == value_out)
 	{
