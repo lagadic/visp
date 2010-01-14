@@ -124,6 +124,27 @@ void vpImageTools::changeLUT(vpImage<unsigned char>& I,
   }
 }
 
+/*
+  Compute the signed difference between the two images I1 and I2 for 
+  visualization issue : Idiff = I1-I2
+
+  pixel with a null difference are set to 128. 
+  A negative difference implies a pixel value < 128
+  
+*/
+void vpImageTools::imageDifference(vpImage<unsigned char> &I1, 
+				   vpImage<unsigned char> &I2,
+				   vpImage<unsigned char> &Idiff)
+{
+  int n = I1.getHeight() * I1.getWidth() ;
+  int diff ;
+  for (int b = 0; b < n ; b++)
+    {
+      diff = I1.bitmap[b] - I2.bitmap[b] + 128;
+      Idiff.bitmap[b] = (unsigned char)
+	(vpMath::maximum(vpMath::minimum(diff, 255), 0));
+    }
+}
 
 /*
  * Local variables:
