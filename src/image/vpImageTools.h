@@ -108,6 +108,11 @@ public:
 
   template<class Type>
   static void flip(vpImage<Type> &I);
+
+
+  static void imageDifference(vpImage<unsigned char> &I1, 
+			      vpImage<unsigned char> &I2,
+			      vpImage<unsigned char> &Idiff) ;
 } ;
 
 /*!
