@@ -296,12 +296,15 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
     vpMatrix mp(order,order) ; mp =0 ;
     vpMatrix m(order,order) ; m = 0 ;
 
+    //The opposite of vpDot and vpDot2 because moments in vpMeEllipse 
+    //are computed in the ij coordinate system whereas the moments in vpDot and vpDot2
+    //are computed in the uv coordinate system
     mp[0][0] = t.get_m00() ;
-    mp[1][0] = t.get_m10();
-    mp[0][1] = t.get_m01() ;
-    mp[2][0] = t.get_m20() ;
+    mp[1][0] = t.get_m01();
+    mp[0][1] = t.get_m10() ;
+    mp[2][0] = t.get_m02() ;
     mp[1][1] = t.get_m11() ;
-    mp[0][2] = t.get_m02() ;
+    mp[0][2] = t.get_m20() ;
 
     vpPixelMeterConversion::convertMoment(cam,order,mp,m) ;
 
