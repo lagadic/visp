@@ -182,6 +182,70 @@ public:
       \param circle : Set to true if you want to track a circle.
   */
   void setCircle(bool circle) { this->circle = circle ; }
+  
+  /*!
+    Gets the 0 order moment \f$ m_{00} \f$ which represents the area of the ellipse.
+    
+    \return the value of \f$ m_{00} \f$.
+  */
+  inline double get_m00() const {return m00;}
+  
+  /*!
+    Gets the 1 order raw moment \f$ m_{10} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
+    
+    \return the value of \f$ m_{10} \f$.
+  */
+  inline double get_m10() const {return m10;}
+  
+  /*!
+    Gets the 1 order raw moment \f$ m_{01} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
+    
+    \return the value of \f$ m_{01} \f$.
+  */
+  inline double get_m01() const {return m01;}
+  
+  /*!
+    Gets the 2 order raw moment \f$ m_{11} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
+    
+    \return the value of \f$ m_{11} \f$.
+  */
+  inline double get_m11() const {return m11;}
+  
+  /*!
+    Gets the 2 order raw moment \f$ m_{20} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
+    
+    \return the value of \f$ m_{11} \f$.
+  */
+  inline double get_m20() const {return m20;}
+  
+  /*!
+    Gets the 2 order raw moment \f$ m_{02} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
+    
+    \return the value of \f$ m_{11} \f$.
+  */
+  inline double get_m02() const {return m02;}
+  
+  /*!
+    Gets the 2 order central moment \f$ \mu_{11} \f$.
+    
+    \return the value of \f$ \mu_{11} \f$.
+  */
+  inline double get_mu11() const {return mu11;}
+  
+  /*!
+    Gets the 2 order central moment \f$ \mu_{02} \f$.
+    
+    \return the value of \f$ \mu_{02} \f$.
+  */
+  inline double get_mu02() const {return mu02;}
+  
+  /*!
+    Gets the 2 order central moment \f$ \mu_{20} \f$.
+    
+    \return the value of \f$ \mu_{20} \f$.
+  */
+  inline double get_mu20() const {return mu20;}
+  
 
 protected:
   //! The coordinates of the point corresponding to the smallest \f$ alpha \f$ angle. More things about the \f$ alpha \f$ are given at the beginning of the class description.
@@ -198,6 +262,14 @@ protected:
   double se;
   //!Stores the value of the \f$ alpha \f$ angle for each vpMeSite.
   vpList<double> angle;
+  //!Surface
+  double m00;
+  //!Second order central moments
+  double mu11,mu20, mu02;
+  //!First order raw moments
+  double m10,m01;
+  //!Second order raw moments
+  double m11,m02,m20;
 
 private:
   //! True if the ellipse to track is a circle
@@ -212,6 +284,7 @@ private:
   void seekExtremities(vpImage<unsigned char> &I) ;
   void setExtremities();
   void getParameters() ;
+  void computeMoments();
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!

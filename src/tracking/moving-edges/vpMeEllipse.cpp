@@ -91,6 +91,8 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
   iP1.set_j(0);
   iP2.set_i(0);
   iP2.set_j(0);
+  
+  m00 = m01 = m10 = m11 = m20 = m02 = mu11 = mu20 = mu02 = 0;
 
   vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << std::endl ;
 }
@@ -983,6 +985,8 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
     // remet a jour l'angle delta pour chaque  point de la liste
 
     updateTheta() ;
+    
+    computeMoments();
 
     // Remise a jour de delta dans la liste de site me
     if (vpDEBUG_ENABLE(2))
@@ -1023,8 +1027,25 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
 }
 
 
-
-
+/*!
+  Computes the 0 order moment \f$ m_{00} \f$ which represents the area of the ellipse.
+  
+  Computes the second central moments \f$ \mu_{20} \f$, \f$ \mu_{02} \f$ and \f$ \mu_{11} \f$
+*/
+void
+vpMeEllipse::computeMoments()
+{
+  double tane = tan(-1/e);
+  m00 = M_PI*a*b;
+  m10 = m00*iPc.get_i();
+  m01 = m00*iPc.get_j();
+  m20 = m00*(a*a+b*b*tane*tane)/(4*(1+tane*tane))+m00*iPc.get_i()*iPc.get_i();
+  m02 = m00*(a*a*tane*tane+b*b)/(4*(1+tane*tane))+m00*iPc.get_j()*iPc.get_j();
+  m11 = m00*tane*(a*a-b*b)/(4*(1+tane*tane))+m00*iPc.get_i()*iPc.get_j();
+  mu11 = m11 - iPc.get_j()*m10;
+  mu02 = m02 - iPc.get_j()*m01;
+  mu20 = m20 - iPc.get_i()*m10;
+}
 
 
 
