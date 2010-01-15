@@ -78,7 +78,7 @@ void vpDot::init()
   grayLevelPrecision = 0.85;
   gamma = 1.5 ;
 
-  m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+  m00 = m11 = m02 = m20 = m10 = m01 = mu11 = mu02 = mu20 = 0 ;
 
   connexity = CONNEXITY_4;
 
@@ -147,6 +147,9 @@ vpDot::operator=(const vpDot& d)
   m10 = d.m10;
   m02 = d.m02;
   m20 = d.m20;
+  mu11 = d.mu11;
+  mu20 = d.mu20;
+  mu02 = d.mu02;
 
   u_min = d.u_min;
   v_min = d.v_min;
@@ -342,7 +345,7 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
 		u_cog, v_cog, n) ;
     }
   }
-
+  
   return vpDot::in ;
 }
 
@@ -375,7 +378,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   // segmentation de l'image apres seuillage
   // (etiquetage des composante connexe)
   if (compute_moment)
-    m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+    m00 = m11 = m02 = m20 = m10 = m01 = mu11 = mu20 = mu02 = 0;
 
   double u_cog = 0 ;
   double v_cog = 0 ;
@@ -780,6 +783,13 @@ vpDot::track(vpImage<unsigned char> &I)
 
     this->cog.set_u( u );
     this->cog.set_v( v );
+    
+    if (compute_moment==true)
+    {
+      mu11 = m11 - u*m01;
+      mu02 = m02 - v*m01;
+      mu20 = m20 - u*m10;
+    }
   }
   catch(...)
   {
