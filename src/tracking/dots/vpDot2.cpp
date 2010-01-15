@@ -1725,6 +1725,14 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
     // this magic formula gives the coordinates of the center of gravity
     double tmpCenter_u = m10 / m00;
     double tmpCenter_v = m01 / m00;
+    
+    //Updates the central moments
+    if (compute_moment)
+    {
+      mu11 = m11 - tmpCenter_u*m01;
+      mu02 = m02 - tmpCenter_v*m01;
+      mu20 = m20 - tmpCenter_u*m10;
+    }
 
 
     // check the center is in the image... never know...

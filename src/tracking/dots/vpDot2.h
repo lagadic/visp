@@ -341,6 +341,21 @@ public:
 
 		\sa setComputeMoments()
 	      */
+  double mu11;/*!< \f$ \mu_{11} \f$ is a second order central moments defined by:
+		\f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
+		
+		\sa setComputeMoments()
+	      */
+  double mu20;/*!< \f$ \mu_{20} \f$ is a second order central moments defined by:
+		\f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
+		
+		\sa setComputeMoments()
+	      */
+  double mu02;/*!< \f$ \mu_{02} \f$ is a second order central moments defined by:
+		\f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
+		
+		\sa setComputeMoments()
+	      */
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
     @name Deprecated functions
