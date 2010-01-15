@@ -46,6 +46,7 @@
 #include <visp/vpDot.h>
 #include <visp/vpDot2.h>
 #include <visp/vpMeLine.h>
+#include <visp/vpMeEllipse.h>
 
 
 // forward projection tracker
@@ -134,6 +135,9 @@ public:
   static void create(vpFeatureEllipse &s,
 		     const vpCameraParameters &cam,
 		     const vpDot2 &d ) ;
+  static void create(vpFeatureEllipse &s,
+		     const vpCameraParameters &cam,
+		     const vpMeEllipse &d ) ;
 
 
   /*!
