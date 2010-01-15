@@ -268,6 +268,66 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
   }
 
 }
+
+/*!
+  Initialize an ellipse feature thanks to a vpMeEllipse and camera parameters.
+  The vpFeatureEllipse is initialized thanks to the parameters
+  of the ellipse given in pixel. The camera parameters are used to convert the
+  pixel parameters to parameters given in meter. 
+
+  \warning With a vpMeEllipse there is no information about 3D parameters. 
+  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them and
+  initialized them outside the method.
+
+  \param s : Visual feature to initialize.
+
+  \param cam : The parameters of the camera used to acquire the image containing the vpDot2.
+
+  \param t : The vpMeEllipse used to create the vpFeatureEllipse.
+*/
+void vpFeatureBuilder::create(vpFeatureEllipse &s,
+			      const vpCameraParameters &cam,
+			      const vpMeEllipse &t )
+{
+  try
+  {
+
+    int order = 3 ;
+    vpMatrix mp(order,order) ; mp =0 ;
+    vpMatrix m(order,order) ; m = 0 ;
+
+    mp[0][0] = t.get_m00() ;
+    mp[1][0] = t.get_m10();
+    mp[0][1] = t.get_m01() ;
+    mp[2][0] = t.get_m20() ;
+    mp[1][1] = t.get_m11() ;
+    mp[0][2] = t.get_m02() ;
+
+    vpPixelMeterConversion::convertMoment(cam,order,mp,m) ;
+
+    double  m00 = m[0][0] ;
+    double  m01 = m[0][1] ;
+    double  m10 = m[1][0] ;
+    double  m02 = m[0][2] ;
+    double  m11 = m[1][1] ;
+    double  m20 = m[2][0] ;
+
+    double xc = m10/m00 ; // sum j /S
+    double yc = m01/m00 ; // sum i /S
+
+    double mu20 = 4*(m20 - m00*vpMath::sqr(xc))/(m00) ;
+    double mu02 = 4*(m02 - m00*vpMath::sqr(yc))/(m00) ;
+    double mu11 = 4*(m11 - m00*xc*yc)/(m00) ;
+
+    s.buildFrom(xc, yc,  mu20, mu11, mu02  ) ;
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+
+}
 /*
  * Local variables:
  * c-basic-offset: 2
