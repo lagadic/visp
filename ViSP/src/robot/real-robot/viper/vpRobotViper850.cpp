@@ -274,33 +274,25 @@ vpRobotViper850::init (void)
 			     &HIPowerStatus));
   CAL_Wait(0.1);
 
+  // Print the robot status
+  std::cout << "Robot status: ";
   switch(EStopStatus) {
-  case ESTOP_AUTO: break;
-  case ESTOP_MANUAL: break;
+  case ESTOP_AUTO: 
+  case ESTOP_MANUAL: 
+    if (HIPowerStatus == 0)
+      std::cout << "Power is OFF" << std::endl;
+    else
+      std::cout << "Power is ON" << std::endl;
+    break;
   case ESTOP_ACTIVATED: 
-    std::cout << "Emergency stop is activated! \n"
-	      << "Check the emergency stop button and push the yellow button before continuing. \n"
-	      << "We quit now the application. See you soon..." << std::endl;
-    // Free allocated ressources
-    ShutDownConnection();
-    exit(0);
-
+    std::cout << "Emergency stop is activated" << std::endl;
     break;
   default: 
     std::cout << "Sorry there is an error on the emergency chain." << std::endl;
     std::cout << "You have to call Adept for maintenance..." << std::endl;
     // Free allocated ressources
-    ShutDownConnection();
-    exit(0);
   }
-
-  if (HIPowerStatus == 0) {
-    fprintf(stdout, "\nPower ON the Viper850 robot in the next 10 second...\n");
-    fflush(stdout);
-    Try( PrimitivePOWERON_Viper850() );
-  }
-  fprintf(stdout, "Viper850 power is ON. We continue...\n");
-  fflush(stdout);
+  std::cout << std::endl;
 
   // get real joint min/max from the MotionBlox
   Try( PrimitiveJOINT_MINMAX_Viper850(joint_min.data, joint_max.data) );
@@ -496,12 +488,14 @@ vpRobotViper850::setRobotState(vpRobot::vpRobotStateType newState)
     else {
       //std::cout << "Change the control mode from stop to position control.\n";
     }
+    this->powerOn();
     break;
   }
   case vpRobot::STATE_VELOCITY_CONTROL: {
     if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ()) {
       std::cout << "Change the control mode from stop to velocity control.\n";
     }
+    this->powerOn();
     break;
   }
   default:
@@ -559,14 +553,47 @@ vpRobotViper850::powerOn(void)
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS_Viper850(NULL, NULL, NULL, NULL, NULL, NULL, 
-			     &HIPowerStatus));
-  CAL_Wait(0.1);
+  UInt32 EStopStatus;
+  bool firsttime = true;
+  int nitermax = 10;
 
+  for (int i=0; i<nitermax; i++) {
+    Try( PrimitiveSTATUS_Viper850(NULL, NULL, &EStopStatus, NULL, NULL, NULL, 
+				  &HIPowerStatus));
+    switch(EStopStatus) {
+    case ESTOP_AUTO: break;
+    case ESTOP_MANUAL: break;
+    case ESTOP_ACTIVATED:
+      if (firsttime) {
+	std::cout << "Emergency stop is activated! \n"
+		  << "Check the emergency stop button and push the yellow button before continuing." << std::endl;
+	firsttime = false;
+      }
+      fprintf(stdout, "Remaining time %ds  \r", nitermax-i);
+      fflush(stdout);
+      CAL_Wait(1);
+      break;
+    default: 
+      std::cout << "Sorry there is an error on the emergency chain." << std::endl;
+      std::cout << "You have to call Adept for maintenance..." << std::endl;
+      // Free allocated ressources
+      ShutDownConnection();
+      exit(0);
+    }
+  }
+
+  std::cout << std::endl;
+
+  if (EStopStatus == ESTOP_ACTIVATED) {
+    std::cout << "Sorry, cannot power on the robot." << std::endl;
+    throw vpRobotException (vpRobotException::lowLevelError,
+			      "Cannot power on the robot.");
+  }
+    
   if (HIPowerStatus == 0) {
     fprintf(stdout, "Power ON the Viper850 robot\n");
     fflush(stdout);
-
+    
     Try( PrimitivePOWERON_Viper850() );
   }
 
