@@ -5,7 +5,11 @@
      Copyright Projet Lagadic / IRISA-INRIA Rennes, 2006-2010
                   www: http://www.irisa.fr/lagadic
 
-	
+
+ViSP (Subversion trunk)
+  - Bug fixed
+    - [9476] Memory leak in vpImageIo::readPNG() functions.	
+----------------------------------------------	
 ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
     - vpMePath has been removed.

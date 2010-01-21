@@ -2101,7 +2101,8 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
 	  break;
   }
 
-  delete[] (png_bytep)rowPtrs;
+  delete [] (png_bytep)rowPtrs;
+  delete [] data;
   png_read_end (png_ptr, NULL);
   png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
   fclose(file);
@@ -2305,7 +2306,8 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
 	  break;
   }
 
-  delete[] (png_bytep)rowPtrs;
+  delete [] (png_bytep)rowPtrs;
+  delete [] data;
   png_read_end (png_ptr, NULL);
   png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
   fclose(file);
