@@ -76,6 +76,7 @@ public:
   //! Used for backwards compatibility...could be removed
   int nGoodElement;
   int query_range;
+  int init_range;
   double seuil;
   bool display_point;// if 1 (TRUE) displays the line that is being tracked
 
