@@ -79,6 +79,7 @@ vpMeTracker::vpMeTracker()
   nGoodElement = 0;
   query_range = 0;
   seuil = 0;
+  init_range = 1;
 
   if (DEBUG_LEVEL1)
     std::cout << "end vpMeTracker::vpMeTracker() " << std::endl ;
@@ -164,7 +165,7 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
 
   // Must set range to 0
   int range_tmp = me->range;
-  me->range=1;
+  me->range=init_range;
 
   nGoodElement=0;
 
@@ -248,7 +249,7 @@ vpMeTracker::track(vpImage<unsigned char>& I)
 
   if (list.nbElement()==0)
   {
-
+    if (DEBUG_LEVEL1)
     vpERROR_TRACE("Error Tracking: only %d "
 		 "pixels when entered the function ",list.nbElement()) ;
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
