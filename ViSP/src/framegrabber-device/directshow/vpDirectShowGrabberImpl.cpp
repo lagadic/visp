@@ -73,7 +73,7 @@ vpDirectShowGrabberImpl::vpDirectShowGrabberImpl()
   init = false ;
   initCo = false ;
   //COM initialization
-  if (FAILED(hr = CoInitialize(NULL)))
+  if (FAILED(hr = CoInitializeEx(NULL,COINIT_MULTITHREADED)))
     {
       std::string err;
       HRtoStr(err);
