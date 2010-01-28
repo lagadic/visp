@@ -163,7 +163,7 @@ public:
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
-  Type getValue(const vpImagePoint &ip) const;
+  Type getValue(vpImagePoint &ip) const;
 
   /*!
 
@@ -1080,59 +1080,86 @@ inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
   of the image.
 
 */
-
 template<class Type>
-Type vpImage<Type>::getValue(const vpImagePoint &ip) const
+Type vpImage<Type>::getValue(vpImagePoint &ip) const
+{
+}
+
+template<>
+inline unsigned char vpImage<unsigned char>::getValue(vpImagePoint &ip) const
 {
   unsigned int iround, jround;
   double rfrac, cfrac;
-  Type row1;
-  Type row2= (Type)(row[0][0]); // The compiler request an initialisation
 
-  double i = ip.get_i();
-  double j = ip.get_j();
+  iround = (unsigned int)floor(ip.get_i());
+  jround = (unsigned int)floor(ip.get_j());
 
-  iround = (int) i;
-  jround = (int) j;
-
-  if (/*iround < 0 || */ iround >= height
-      /* || jround < 0 */ || jround >= width) {
+  if (iround >= height || jround >= width) {
     vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
 		      "Pixel outside the image"));
   }
 
-  if (i > height - 1)
-    i = (double)(height - 1);
+  if (ip.get_i() > height - 1)
+    ip.set_i((double)(height - 1));
 
-  if (j > width - 1)
-    j = (double)(width - 1);
+  if (ip.get_j() > width - 1)
+    ip.set_j((double)(width - 1));
 
-  rfrac = 1.0f - (i - (double) iround);
-  cfrac = 1.0f - (j - (double) jround);
+  double rratio = ip.get_i() - (double) iround;
+  if(rratio < 0)
+    rratio=-rratio;
+  double cratio = ip.get_j() - (double) jround;
+  if(cratio < 0) 
+    cratio=-cratio;
 
-  if (cfrac < 1)
-  {
-    row1 = (Type)(row[iround][jround] * cfrac + row[iround][jround + 1]*(1.0 - cfrac));
+  rfrac = 1.0f - rratio;
+  cfrac = 1.0f - cratio;
+
+
+  double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
+             + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
+  return (unsigned char)vpMath::round(value);
+}
+
+template<>
+inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
+{
+  unsigned int iround, jround;
+  double rfrac, cfrac;
+
+  iround = (unsigned int)floor(ip.get_i());
+  jround = (unsigned int)floor(ip.get_j());
+
+  if (iround >= height || jround >= width) {
+    vpERROR_TRACE("Pixel outside the image") ;
+    throw(vpException(vpImageException::notInTheImage,
+		      "Pixel outside the image"));
   }
-  else
-  {
-    row1 = row[iround][jround];
-  }
 
-  if (rfrac < 1)
-  {
-    if (cfrac < 1)
-    {
-      row2 = (Type)(row[iround+1][jround] * cfrac
-		    + row[iround+1][jround + 1]*(1.0 - cfrac) );
-    }
-    else
-    {
-      row2 = row[iround+1][jround];
-    }
-  }
-  return (Type)( row1 * rfrac +  row2 * (1.0 - rfrac));
+  if (ip.get_i() > height - 1)
+    ip.set_i((double)(height - 1));
+
+  if (ip.get_j() > width - 1)
+    ip.set_j((double)(width - 1));
+
+  double rratio = ip.get_i() - (double) iround;
+  if(rratio < 0)
+    rratio=-rratio;
+  double cratio = ip.get_j() - (double) jround;
+  if(cratio < 0) 
+    cratio=-cratio;
+
+  rfrac = 1.0f - rratio;
+  cfrac = 1.0f - cratio;
+
+  double valueR = ((double)row[iround][jround].R * rfrac + (double)row[iround+1][jround].R * rratio)*cfrac
+             + ((double)row[iround][jround+1].R * rfrac + (double)row[iround+1][jround+1].R * rratio)*cratio;
+  double valueG = ((double)row[iround][jround].G * rfrac + (double)row[iround+1][jround].G * rratio)*cfrac
+             + ((double)row[iround][jround+1].G* rfrac + (double)row[iround+1][jround+1].G * rratio)*cratio;
+  double valueB = ((double)row[iround][jround].B * rfrac + (double)row[iround+1][jround].B * rratio)*cfrac
+             + ((double)row[iround][jround+1].B*rfrac + (double)row[iround+1][jround+1].B * rratio)*cratio;
+  return vpRGBa((unsigned char)vpMath::round(valueR),(unsigned char)vpMath::round(valueG),(unsigned char)vpMath::round(valueB));
 }
 
 
