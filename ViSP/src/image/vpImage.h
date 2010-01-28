@@ -55,6 +55,7 @@
 #include <visp/vpException.h>
 #include <visp/vpImageException.h>
 #include <visp/vpImagePoint.h>
+#include <visp/vpRGBa.h>
 
 
 class vpDisplay;
@@ -962,6 +963,8 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
     dst->bitmap[i] = this->bitmap[i] - im2->bitmap[i];
 }
 
+
+
 /*! 
 
   Retrieves pixel value from image with sub-pixel accuracy.
@@ -979,20 +982,21 @@ vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
   of the image.
 
 */
-
 template<class Type>
 Type vpImage<Type>::getValue(double i, double j) const
 {
+}
+
+template<>
+inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const
+{
   unsigned int iround, jround;
   double rfrac, cfrac;
-  Type row1;
-  Type row2= (Type)(row[0][0]); // The compiler request an initialisation
 
-  iround = (int) i;
-  jround = (int) j;
+  iround = (unsigned int)floor(i);
+  jround = (unsigned int)floor(j);
 
-  if (/*iround < 0 || */ iround >= height
-      /* || jround < 0 */ || jround >= width) {
+  if (iround >= height || jround >= width) {
     vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
 		      "Pixel outside the image"));
@@ -1004,31 +1008,60 @@ Type vpImage<Type>::getValue(double i, double j) const
   if (j > width - 1)
     j = (double)(width - 1);
 
-  rfrac = 1.0f - (i - (double) iround);
-  cfrac = 1.0f - (j - (double) jround);
+  double rratio = i - (double) iround;
+  if(rratio < 0)
+    rratio=-rratio;
+  double cratio = j - (double) jround;
+  if(cratio < 0) 
+    cratio=-cratio;
 
-  if (cfrac < 1)
-  {
-    row1 = (Type)(row[iround][jround] * cfrac + row[iround][jround + 1]*(1.0 - cfrac));
-  }
-  else
-  {
-    row1 = row[iround][jround];
+  rfrac = 1.0f - rratio;
+  cfrac = 1.0f - cratio;
+
+
+  double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
+             + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
+  return (unsigned char)vpMath::round(value);
+}
+
+template<>
+inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
+{
+  unsigned int iround, jround;
+  double rfrac, cfrac;
+
+  iround = (unsigned int)floor(i);
+  jround = (unsigned int)floor(j);
+
+  if (iround >= height || jround >= width) {
+    vpERROR_TRACE("Pixel outside the image") ;
+    throw(vpException(vpImageException::notInTheImage,
+		      "Pixel outside the image"));
   }
 
-  if (rfrac < 1)
-  {
-    if (cfrac < 1)
-    {
-      row2 = (Type)(row[iround+1][jround] * cfrac
-		    + row[iround+1][jround + 1]*(1.0 - cfrac) );
-    }
-    else
-    {
-      row2 = row[iround+1][jround];
-    }
-  }
-  return (Type)( row1 * rfrac +  row2 * (1.0 - rfrac));
+  if (i > height - 1)
+    i = (double)(height - 1);
+
+  if (j > width - 1)
+    j = (double)(width - 1);
+
+  double rratio = i - (double) iround;
+  if(rratio < 0)
+    rratio=-rratio;
+  double cratio = j - (double) jround;
+  if(cratio < 0) 
+    cratio=-cratio;
+
+  rfrac = 1.0f - rratio;
+  cfrac = 1.0f - cratio;
+
+  double valueR = ((double)row[iround][jround].R * rfrac + (double)row[iround+1][jround].R * rratio)*cfrac
+             + ((double)row[iround][jround+1].R * rfrac + (double)row[iround+1][jround+1].R * rratio)*cratio;
+  double valueG = ((double)row[iround][jround].G * rfrac + (double)row[iround+1][jround].G * rratio)*cfrac
+             + ((double)row[iround][jround+1].G* rfrac + (double)row[iround+1][jround+1].G * rratio)*cratio;
+  double valueB = ((double)row[iround][jround].B * rfrac + (double)row[iround+1][jround].B * rratio)*cfrac
+             + ((double)row[iround][jround+1].B*rfrac + (double)row[iround+1][jround+1].B * rratio)*cratio;
+  return vpRGBa((unsigned char)vpMath::round(valueR),(unsigned char)vpMath::round(valueG),(unsigned char)vpMath::round(valueB));
 }
 
 /*! 
