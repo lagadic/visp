@@ -597,7 +597,7 @@ vpMeNurbs::seekExtremitiesCanny(vpImage<unsigned char> & /* I */)
       list.front();
       ip_edges_list.front();
       double convlt;
-      double delta;
+      double delta = 0;
       int nbr = 0;
       vpList<vpMeSite> addedPt;
       while (!ip_edges_list.outside())
