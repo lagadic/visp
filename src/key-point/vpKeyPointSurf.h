@@ -49,7 +49,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) // Require opencv >= 1.1.0 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) // Require opencv >= 1.1.0
 
 #include <cxcore.h>
 #include <cv.h>
@@ -57,7 +57,7 @@
 
 /*!
   \class vpKeyPointSurf
-  
+
   \brief Class that implements the SURF key points and technics thanks
   to the OpenCV library.
 
@@ -115,8 +115,8 @@ int main() {}
 #endif
   \endcode
 
-  It is also possible to create the refernece thanks to only a part of the 
-  reference image (not the whole image) and find points to match in only a 
+  It is also possible to create the refernece thanks to only a part of the
+  reference image (not the whole image) and find points to match in only a
   part of the current image. The small following example shows how to this
 
   \code
@@ -176,11 +176,11 @@ int main() {}
 class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
 {
   public:
-    /*!  
+    /*!
       This enumerate enables to set the detail level of the
       descriptors.
     */
-    typedef enum 
+    typedef enum
     {
       basicDescriptor,   /*<! basicDescriptor means that the descriptors are
 			   composed by 64 elements floating-point vector. */
@@ -195,18 +195,21 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
     virtual ~vpKeyPointSurf() {cvReleaseMemStorage(&storage);} ;
 
     int buildReference(const vpImage<unsigned char> &I);
-    int buildReference(const vpImage<unsigned char> &I, 
+    int buildReference(const vpImage<unsigned char> &I,
 		       vpImagePoint &iP,
 		       unsigned int height, unsigned int width);
     int buildReference(const vpImage<unsigned char> &I,
 		       const vpRect rectangle);
     int matchPoint(const vpImage<unsigned char> &I);
-    int matchPoint(const vpImage<unsigned char> &I, 
+    int matchPoint(const vpImage<unsigned char> &I,
 		   vpImagePoint &iP, unsigned int height, unsigned int width);
     int matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle);
-    void display(vpImage<unsigned char> &Iref, 
+    void display(vpImage<unsigned char> &Iref,
 		 vpImage<unsigned char> &Icurrent);
     void display(vpImage<unsigned char> &Icurrent);
+    vpList<int*>* matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList);
+    float* getDescriptorReferencePoint (const int index);
+    int getLaplacianReferencePoint (const int index);
 
     /*!
 
@@ -222,8 +225,8 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
       \param hessianThreshold : Desired hessian threshold value.
     */
     void setHessianThreshold (double hessianThreshold) {
-	this->hessianThreshold = hessianThreshold;
-	params = cvSURFParams(this->hessianThreshold, this->descriptorType);
+			this->hessianThreshold = hessianThreshold;
+			params = cvSURFParams(this->hessianThreshold, this->descriptorType);
     } ;
 
     /*!
@@ -233,8 +236,8 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
       \param descriptorType : Type of descriptor to use.
     */
     void setDescriptorType (vpDescriptorType descriptorType) {
-	this->descriptorType = descriptorType; 
-	params = cvSURFParams(this->hessianThreshold, this->descriptorType);
+			this->descriptorType = descriptorType;
+			params = cvSURFParams(this->hessianThreshold, this->descriptorType);
     } ;
 
     /*!
@@ -279,7 +282,7 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
 };
 
 
-#endif 
+#endif
 
 #endif
 
