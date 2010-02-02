@@ -563,7 +563,7 @@ vpMeSite::track(vpImage<unsigned char>& I,
 	  vpDisplay::displayPoint(I, ip, vpColor::green);
 	}
       normGradient = 0 ;
-      if(max == 0)
+      if(contraste != 0)
 	suppress = 1; // contrast suppression
       else
 	suppress = 2; // threshold suppression
