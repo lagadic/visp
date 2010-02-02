@@ -144,6 +144,10 @@ void vpImageTools::imageDifference(vpImage<unsigned char> &I1,
   {
     throw (vpException(vpException::dimensionError, "The two images have not the same size"));
   }
+  
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+    Idiff.resize(I1.getHeight(), I1.getWidth());
+  
   int n = I1.getHeight() * I1.getWidth() ;
   int diff ;
   for (int b = 0; b < n ; b++)
