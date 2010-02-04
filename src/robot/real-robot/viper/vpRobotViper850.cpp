@@ -959,8 +959,7 @@ vpRobotViper850::setPosition (const vpRobot::vpControlFrameType frame,
     vpHomogeneousMatrix fMc2 = fMc * cMc2;
 
     // Compute the corresponding joint position from the inverse kinematics
-    bool nearest = true;
-    int solution = this->getInverseKinematics(fMc2, q, nearest);
+    int solution = this->getInverseKinematics(fMc2, q);
     if (solution) { // Position is reachable
       destination = q;
       // convert rad to deg requested for the low level controller

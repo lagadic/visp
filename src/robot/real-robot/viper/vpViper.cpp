@@ -131,9 +131,43 @@ vpViper::getForwardKinematics(const vpColVector & q)
 
 /*!
 
-  Compute the inverse kinematics (inverse geometric model).
+  Convert a joint position by applying modulo \f$2 \pi\f$ to ensure
+  that the position is in the joint limits.
 
-  \warning Not implemented yet.
+  \param joint : Joint to consider.
+
+  \param q : A joint position. 
+
+  \param q_mod : The joint position modified by considering modulo
+  \f$2 \pi\f$ to be in the joint limits.
+  
+  \return true if the joint position is in the joint limits. false otherwise. 
+ */
+bool 
+vpViper::convertJointPositionInLimits(int joint, const double &q, double &q_mod)
+{
+  double eps = 0.01;
+  if (q >= joint_min[joint]-eps && q <= joint_max[joint]+eps ) {
+    q_mod = q;
+    return true;
+  }
+
+  q_mod = q + 2*M_PI;
+  if (q_mod >= joint_min[joint]-eps && q_mod <= joint_max[joint]+eps ) {
+    return true;
+  } 
+
+  q_mod = q - 2*M_PI;
+  if (q_mod >= joint_min[joint]-eps && q_mod <= joint_max[joint]+eps ) {
+    return true;
+  } 
+
+  return false;
+}
+
+/*!
+
+  Compute the inverse kinematics (inverse geometric model).
 
   By inverse kinematics we mean here the six joint values given the
   position and the orientation of the camera frame relative to the
@@ -147,10 +181,7 @@ vpViper::getForwardKinematics(const vpColVector & q)
   solution of the inverse kinematics, ie. the joint positions
   corresponding to \f$^f{\bf M}_c \f$.
 
-  \param nearest : true to return the nearest solution to q. false to
-  return the farest.
-
-  \return The number of solutions (1 or 2) of the inverse geometric
+  \return The number of solutions (1 to 8) of the inverse geometric
   model. O, if no solution can be found.
 
   The code below shows how to compute the inverse geometric model:
@@ -159,7 +190,7 @@ vpViper::getForwardKinematics(const vpColVector & q)
   vpColVector q1(6), q2(6);
   vpHomogeneousMatrix fMc;
 
-  vpRobotAfma6 robot;
+  vpViper robot;
 
   // Get the current joint position of the robot
   robot.getPosition(vpRobot::ARTICULAR_FRAME, q1);
@@ -170,178 +201,311 @@ vpViper::getForwardKinematics(const vpColVector & q)
   // this is similar to  fMc = robot.get_fMc(q1);
   // or robot.get_fMc(q1, fMc);
 
-
   // Compute the inverse geometric model
-  int nbsol; // number of solutions (0, 1 or 2) of the inverse geometric model
+  int nbsol; // number of solutions (0, 1 to 8) of the inverse geometric model
   // get the nearest solution to the current joint position
-  nbsol = robot.getInverseKinematics(fMc, q1, true);
+  nbsol = robot.getInverseKinematics(fMc, q1);
 
   if (nbsol == 0)
     std::cout << "No solution of the inverse geometric model " << std::endl;
   else if (nbsol >= 1)
-    std::cout << "First solution: " << q1 << std::endl;
-
-  if (nbsol == 2) {
-    // Compute the other solution of the inverse geometric model
-    q2 = q1;
-    robot.getInverseKinematics(fMc, q2, false);
-    std::cout << "Second solution: " << q2 << std::endl;
-  }
+    std::cout << "Nearest solution: " << q1 << std::endl;
   \endcode
 
   \sa getForwardKinematics()
 
 */
 int
-vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc,
-			      vpColVector & q, const bool &/*nearest*/)
+vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q)
 {
-  vpHomogeneousMatrix fMe;
-//   double q_[2][6],d[2],t;
-//   int ok[2];
-//   double cord[6];
+  vpColVector q_sol[8];
 
-  int nbsol = 0;
+  for (int i=0; i<8; i++)
+    q_sol[i].resize(6);
 
+  double c1[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double s1[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double c3[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double s3[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double c23[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double s23[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double c4[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double s4[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double c5[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double s5[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double c6[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  double s6[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+
+  bool ok[8];
+
+  vpHomogeneousMatrix fMw;
+  vpHomogeneousMatrix wMe;
+  vpHomogeneousMatrix eMc;
+  this->get_wMe(wMe);
+  this->get_eMc(eMc);
+  fMw = fMc * eMc.inverse() * wMe.inverse();
+ 
   if (q.getRows() != njoint)
     q.resize(6);
 
+  for (int i=0; i< 8; i++)
+    ok[i] = true;
 
-//   for(int i=0;i<3;i++) {
-//     fMe[i][3] = fMc[i][3];
-//     for(int j=0;j<3;j++) {
-//       fMe[i][j] = 0.0;
-//       for (int k=0;k<3;k++) fMe[i][j] += fMc[i][k]*rpi[j][k];
-//       fMe[i][3] -= fMe[i][j]*rpi[j][3];
-//     }
-//   }
+  double px = fMw[0][3]; // a*c1
+  double py = fMw[1][3]; // a*s1
+  double pz = fMw[2][3];
 
-//   std::cout << "\n\nfMc: " << fMc;
-//   std::cout << "\n\neMc: " << _eMc;
+  // Compute q1
+  double a_2 = px*px+py*py; 
+  if (a_2 == 0) {// singularity
+    c1[0] = cos(q[0]);
+    s1[0] = sin(q[0]);
+    c1[4] = cos(q[0]+M_PI);
+    s1[4] = sin(q[0]+M_PI);
+  }
+  else {
+    double a = sqrt(a_2);
+    c1[0] = px/a;
+    s1[0] = py/a;
+    c1[4] = -px/a;
+    s1[4] = -py/a;
+  }
 
-  fMe = fMc * this->eMc.inverse();
-  //  std::cout << "\n\nfMe: " << fMe;
+  double q1_mod;
+  for(int i=0;i<8;i+=4) {
+    q_sol[i][0] = atan2(s1[i],c1[i]);
+    if (convertJointPositionInLimits(0, q_sol[i][0], q1_mod) == true) {
+      q_sol[i][0] = q1_mod;
+      for(int j=1;j<4;j++) {
+	c1[i+j] = c1[i];
+	s1[i+j] = s1[i];
+	q_sol[i+j][0] = q_sol[i][0];
+      }
+    }
+    else {
+      for(int j=1;j<4;j++) 
+	ok[i+j] = false;
+    }
+  }
 
-//   if (fMe[2][2] >= .99999f)
-//   {
-//     vpTRACE("singularity\n");
-//     q_[0][4] = q_[1][4] = M_PI/2.f;
-//     t = atan2(fMe[0][0],fMe[0][1]);
-//     q_[1][3] = q_[0][3] = q[3];
-//     q_[1][5] = q_[0][5] = t - q_[0][3];
+//   std::cout << "ok apres q1: ";
+//   for (int i=0; i< 8; i++)
+//     std::cout << ok[i] << " ";
+//   std::cout << std::endl;
 
-//     while  ((q_[1][5]+vpMath::rad(2)) >= this->_joint_max[5])
-//       /*			-> a cause du couplage 4/5	*/
-//     {
-//       q_[1][5] -= vpMath::rad(10);
-//       q_[1][3] += vpMath::rad(10);
-//     }
-//     while  (q_[1][5] <= this->_joint_min[5])
-//     {
-//       q_[1][5] += vpMath::rad(10);
-//       q_[1][3] -= vpMath::rad(10);
-//     }
-//   }
-//   else if (fMe[2][2] <= -.99999)
-//   {
-//     vpTRACE("singularity\n");
-//     q_[0][4] = q_[1][4] = -M_PI/2;
-//     t = atan2(fMe[1][1],fMe[1][0]);
-//     q_[1][3] = q_[0][3] = q[3];
-//     q_[1][5] = q_[0][5] = q_[0][3] - t;
-//     while  ((q_[1][5]+vpMath::rad(2)) >= this->_joint_max[5])
-//       /*			-> a cause du couplage 4/5	*/
-//     {
-//       q_[1][5] -= vpMath::rad(10);
-//       q_[1][3] -= vpMath::rad(10);
-//     }
-//     while  (q_[1][5] <= this->_joint_min[5])
-//     {
-//       q_[1][5] += vpMath::rad(10);
-//       q_[1][3] += vpMath::rad(10);
-//     }
-//   }
-//   else
-//   {
-//     q_[0][3] = atan2(-fMe[0][2],fMe[1][2]);
-//     if (q_[0][3] >= 0.0) q_[1][3] = q_[0][3] - M_PI;
-//     else q_[1][3] = q_[0][3] + M_PI;
+  // Compute q3
+  double K, q3_mod;
+  for(int i=0; i<8; i+=4) {
+    if(ok[i] == true) {
+      K = (px*px+py*py+pz*pz+a1*a1-a2*a2-a3*a3+d1*d1-d4*d4
+	   - 2*(a1*c1[i]*px + a1*s1[i]*py + d1*pz)) / (2*a2);
+      q_sol[i][2]   = atan2(a3, d4) + atan2(K, sqrt(d4*d4+a3*a3-K*K));
+      q_sol[i+2][2] = atan2(a3, d4) + atan2(K, -sqrt(d4*d4+a3*a3-K*K));
 
-//     q_[0][4] = asin(fMe[2][2]);
-//     if (q_[0][4] >= 0.0) q_[1][4] = M_PI - q_[0][4];
-//     else q_[1][4] = -M_PI - q_[0][4];
+      for (int j=0; j<4; j+=2) {
+	if (convertJointPositionInLimits(2, q_sol[i+j][2], q3_mod) == true) {
+	  for(int k=0; k<2; k++) {
+	    q_sol[i+j+k][2] = q3_mod;
+	    c3[i+j+k] = cos(q3_mod);
+	    s3[i+j+k] = sin(q3_mod);
+	  }
+	}
+	else {
+	  for(int k=0; k<2; k++) 
+	    ok[i+j+k] = false;
+	}
+      }
+    }
+  }
+//   std::cout << "ok apres q3: ";
+//   for (int i=0; i< 8; i++)
+//     std::cout << ok[i] << " ";
+//   std::cout << std::endl;
 
-//     q_[0][5] = atan2(-fMe[2][1],fMe[2][0]);
-//     if (q_[0][5] >= 0.0) q_[1][5] = q_[0][5] - M_PI;
-//     else q_[1][5] = q_[0][5] + M_PI;
-//   }
-//   q_[0][0] = fMe[0][3] ;
-//   q_[1][0] = fMe[0][3] ;
-//   q_[0][1] = fMe[1][3] ;
-//   q_[1][1] = fMe[1][3] ;
-//   q_[0][2] = q_[1][2] = fMe[2][3];
+  // Compute q2
+  double q23[8], q2_mod;
+  for (int i=0; i<8; i+=2) {
+    if (ok[i] == true) {
+      // Compute q23 = q2+q3
+      c23[i] = (-(a3-a2*c3[i])*(c1[i]*px+s1[i]*py-a1)-(d1-pz)*(d4+a2*s3[i]))
+	/ ( (c1[i]*px+s1[i]*py-a1)*(c1[i]*px+s1[i]*py-a1) +(d1-pz)*(d1-pz) );
+      s23[i] = ((d4+a2*s3[i])*(c1[i]*px+s1[i]*py-a1)-(d1-pz)*(a3-a2*c3[i]))
+	/ ( (c1[i]*px+s1[i]*py-a1)*(c1[i]*px+s1[i]*py-a1) +(d1-pz)*(d1-pz) );
+      q23[i] = atan2(s23[i],c23[i]);
+      //std::cout << i << " c23 = " << c23[i] << " s23 = " << s23[i] << std::endl;
+      // q2 = q23 - q3
+      q_sol[i][1] = q23[i] - q_sol[i][2];
 
-//   /* prise en compte du couplage axes 5/6	*/
-//   q_[0][5] += this->_coupl_56*q_[0][4];
-//   q_[1][5] += this->_coupl_56*q_[1][4];
+      if (convertJointPositionInLimits(1, q_sol[i][1], q2_mod) == true) {
+	for(int j=0; j<2; j++) {
+	  q_sol[i+j][1] = q2_mod;
+	  c23[i+j] = c23[i];
+	  s23[i+j] = s23[i];
+	}
+      }
+      else {
+	for(int j=0; j<2; j++)
+	  ok[i+j] = false;
+      }
+    }
+  }
+//   std::cout << "ok apres q2: ";
+//   for (int i=0; i< 8; i++)
+//     std::cout << ok[i] << " ";
+//   std::cout << std::endl;
 
-//   for (int j=0;j<2;j++)
-//   {
-//     ok[j] = 1;
-//     // test is position is reachable
-//     for (int i=0;i<6;i++) {
-//       if (q_[j][i] < this->_joint_min[i] || q_[j][i] > this->_joint_max[i])
-// 	ok[j] = 0;
-//     }
-//   }
-//   if (ok[0] == 0)
-//   {
-//     if (ok[1] == 0) {
-//       std::cout << "No solution..." << std::endl;
-//       nbsol = 0;
-//       return nbsol;
-//     }
-//     else if (ok[1] == 1) {
-//       for (int i=0;i<6;i++) cord[i] = q_[1][i];
-//       nbsol = 1;
-//     }
-//   }
-//   else
-//   {
-//     if (ok[1] == 0) {
-//       for (int i=0;i<6;i++) cord[i] = q_[0][i];
-//       nbsol = 1;
-//     }
-//     else
-//     {
-//       nbsol = 2;
-//       //vpTRACE("2 solutions\n");
-//       for (int j=0;j<2;j++)
-//       {
-// 	d[j] = 0.0;
-// 	for (int i=3;i<6;i++)
-// 	  d[j] += (q_[j][i] - q[i]) * (q_[j][i] - q[i]);
-//       }
-//       if (nearest == true)
-//       {
-// 	if (d[0] <= d[1])
-// 	  for (int i=0;i<6;i++) cord[i] = q_[0][i];
-// 	else
-// 	  for (int i=0;i<6;i++) cord[i] = q_[1][i];
-//       }
-//       else
-//       {
-// 	if (d[0] <= d[1])
-// 	  for (int i=0;i<6;i++) cord[i] = q_[1][i];
-// 	else
-// 	  for (int i=0;i<6;i++) cord[i] = q_[0][i];
-//       }
-//     }
-//   }
-//   for(int i=0; i<6; i++)
-//     q[i] = cord[i] ;
+  // Compute q4 as long as s5 != 0
+  double r13 = fMw[0][2];
+  double r23 = fMw[1][2];
+  double r33 = fMw[2][2];
+  double s4s5, c4s5, q4_mod, q5_mod;
+  for (int i=0; i<8; i+=2) { 
+    if (ok[i] == true) {
+      s4s5 = -s1[i]*r13+c1[i]*r23;
+      c4s5 =  c1[i]*c23[i]*r13+s1[i]*c23[i]*r23-s23[i]*r33;
+      if (fabs(s4s5) < vpMath::rad(0.5) && fabs(c4s5) < vpMath::rad(0.5)) {
+	// s5 = 0
+	c5[i] = c1[i]*s23[i]*r13+s1[i]*s23[i]*r23+c23[i]*r33;
+	//std::cout << "Singularity: s5 near 0: ";
+	if (c5[i] > 0.)
+	  q_sol[i][4] = 0.0;
+	else 
+	  q_sol[i][4] = M_PI;
+	
+	if (convertJointPositionInLimits(4, q_sol[i][4], q5_mod) == true) {
+	  for(int j=0; j<2; j++) {
+	    q_sol[i+j][3] = q[3]; // keep current q4
+	    q_sol[i+j][4] = q5_mod;
+	    c4[i] = cos(q_sol[i+j][3]);
+	    s4[i] = sin(q_sol[i+j][3]);
+	  }
+	}
+	else {
+	  for(int j=0; j<2; j++)
+	    ok[i+j] = false;
+	}
+      }
+      else {
+	// s5 != 0
+	if (c4s5 == 0) {
+	  // c4 = 0
+	  //  vpTRACE("c4 = 0");
+	  // q_sol[i][3] = q[3]; // keep current position
+	  q_sol[i][3] = atan2(s4s5, c4s5);
+	}
+	else {
+	  q_sol[i][3] = atan2(s4s5, c4s5);
+	}
+	if (convertJointPositionInLimits(3, q_sol[i][3], q4_mod) == true) {
+	  q_sol[i][3] = q4_mod;
+	  c4[i] = cos(q4_mod);
+	  s4[i] = sin(q4_mod);
+	}
+	else {
+	  ok[i] = false;
+	}
+	if (q_sol[i][3] > 0.) 
+	  q_sol[i+1][3] = q_sol[i][3] + M_PI;
+	else
+	  q_sol[i+1][3] = q_sol[i][3] - M_PI;
+	if (convertJointPositionInLimits(3, q_sol[i+1][3], q4_mod) == true) {
+	  q_sol[i+1][3] = q4_mod;
+	  c4[i+1] = cos(q4_mod);
+	  s4[i+1] = sin(q4_mod);
+	}
+	else {
+	  ok[i+1] = false;
+	}
+	
+	// Compute q5
+	for (int j=0; j<2; j++) { 
+	  if (ok[i+j] == true) {
+	    c5[i+j] = c1[i+j]*s23[i+j]*r13+s1[i+j]*s23[i+j]*r23+c23[i+j]*r33;
+	    s5[i+j] = (c1[i+j]*c23[i+j]*c4[i+j]-s1[i+j]*s4[i+j])*r13
+	      +(s1[i+j]*c23[i+j]*c4[i+j]+c1[i+j]*s4[i+j])*r23-s23[i+j]*c4[i+j]*r33;
+	    
+	    q_sol[i+j][4] = atan2(s5[i+j], c5[i+j]);
+	    if (convertJointPositionInLimits(4, q_sol[i+j][4], q5_mod) == true) {
+	      q_sol[i+j][4] = q5_mod;
+	    }
+	    else {
+	      
+	      ok[i+j] = false;
+	    }
+	  }
+	}
+      }
+    }
+  }
 
+  // Compute q6
+  // 4 solutions for q6 and 4 more solutions by flipping the wrist (see below)
+  double r12 = fMw[0][1];
+  double r22 = fMw[1][1];
+  double r32 = fMw[2][1];
+  double q6_mod;
+  for (int i=0; i<8; i++) { 
+    c6[i] = -(c1[i]*c23[i]*s4[i]+s1[i]*c4[i])*r12 
+      +(c1[i]*c4[i]-s1[i]*c23[i]*s4[i])*r22+s23[i]*s4[i]*r32;
+    s6[i] = -(c1[i]*c23[i]*c4[i]*c5[i]-c1[i]*s23[i]*s5[i]
+	      -s1[i]*s4[i]*c5[i])*r12
+      -(s1[i]*c23[i]*c4[i]*c5[i]-s1[i]*s23[i]*s5[i]+c1[i]*s4[i]*c5[i])*r22
+      +(c23[i]*s5[i]+s23[i]*c4[i]*c5[i])*r32;
+ 
+    q_sol[i][5] = atan2(s6[i], c6[i]);
+    if (convertJointPositionInLimits(5, q_sol[i][5], q6_mod) == true) {
+      q_sol[i][5] = q6_mod;
+    }
+    else {
+      ok[i] = false;
+    }
+  }
+
+  // Select the best config in terms of distance from the current position
+  int nbsol = 0;
+  int sol = 0;
+  vpColVector dist(8);
+  for (int i=0; i<8; i++) {
+    if (ok[i] == true) {
+      nbsol ++;
+      sol = i;
+      //      dist[i] = vpColVector::distance(q, q_sol[i]);
+      vpColVector weight(6);
+      weight = 1;
+      weight[0] = 8; 
+      weight[1] = weight[2] = 4; 
+      dist[i] = 0;
+      for (int j=0; j< 6; j++) {
+	double rought_dist = q[j]- q_sol[i][j];
+	double modulo_dist = rought_dist; 
+	if (rought_dist > 0) {
+	  if (fabs(rought_dist - 2*M_PI) < fabs(rought_dist))
+	    modulo_dist = rought_dist - 2*M_PI;
+	}
+	else {
+	  if (fabs(rought_dist + 2*M_PI) < fabs(rought_dist))
+	    modulo_dist = rought_dist + 2*M_PI;
+	}
+	//std::cout << "dist " << i << ": " << rought_dist << " modulo: " << modulo_dist << std::endl;
+	dist[i] += weight[j]*vpMath::sqr(modulo_dist);
+      }
+    }
+    //  std::cout << "sol " << i << " [" << ok[i] << "] dist: " << dist[i] << " q: " << q_sol[i].t() << std::endl;
+  }
+  //std::cout << "dist: " << dist.t() << std::endl;
+  if (nbsol) {
+    for (int i=0; i<8; i++) {
+      if (ok[i] == true) 
+	if (dist[i] < dist[sol]) sol = i;
+    }
+    // Update the inverse kinematics solution
+    q = q_sol[sol];
+
+//     std::cout << "Nearest solution (" << sol << ") with distance (" 
+// 	      << dist[sol] << "): " << q_sol[sol].t() << std::endl;
+  }
   return nbsol;
+
 }
 
 /*!
