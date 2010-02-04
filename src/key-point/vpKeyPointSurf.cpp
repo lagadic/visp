@@ -121,7 +121,6 @@ int naiveNearestNeighbor( const float *vec,
 
   for( i = 0; i < ref_descriptors->total; i++ )
   {
-    const CvSURFPoint* kp = (const CvSURFPoint*)kreader.ptr;
     const float* mvec = (const float*)reader.ptr;
     CV_NEXT_SEQ_ELEM( kreader.seq->elem_size, kreader );
     CV_NEXT_SEQ_ELEM( reader.seq->elem_size, reader );
