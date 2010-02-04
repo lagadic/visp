@@ -281,10 +281,9 @@ main(int argc, const char ** argv)
     std::cout << "Click on the dot..." << std::endl;
     dot.setGraphics(true);
     dot.initTracking(I) ;
-    vpDisplay::displayCross(I,
-			    (unsigned int)dot.get_v(),
-			    (unsigned int)dot.get_u(),
-			    10, vpColor::blue) ;
+    vpImagePoint cog;
+    cog = dot.getCog();
+    vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
     vpDisplay::flush(I);
 
     vpRobotAfma4 robot ;
