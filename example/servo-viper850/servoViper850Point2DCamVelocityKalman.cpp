@@ -63,9 +63,6 @@
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
-#include <visp/vpDisplay.h>
-#include <visp/vpDisplayX.h>
-
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpFeaturePoint.h>
@@ -74,8 +71,6 @@
 #include <visp/vpFeatureBuilder.h>
 #include <visp/vpRobotViper850.h>
 #include <visp/vpIoTools.h>
-
-// Exception
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpServoDisplay.h>
@@ -83,6 +78,8 @@
 #include <visp/vpDot2.h>
 #include <visp/vpAdaptativeGain.h>
 #include <visp/vpLinearKalmanFilterInstantiation.h>
+#include <visp/vpDisplay.h>
+#include <visp/vpDisplayX.h>
 
 int
 main()
