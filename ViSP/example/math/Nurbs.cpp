@@ -46,6 +46,7 @@
   Describe a curve thanks to a BSpline.
 */
 
+#include <cstdlib>
 
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
