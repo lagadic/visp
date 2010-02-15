@@ -99,6 +99,13 @@ vpMeSite::vpMeSite(double ip, double jp)
   jfloat = jp ;
 }
 
+/*!
+  Copy constructor.
+*/
+vpMeSite::vpMeSite (const vpMeSite &mesite)
+{
+  *this = mesite;
+}
 
 // More an Update than init
 // For points in meter form (to avoid approximations)
@@ -158,20 +165,20 @@ vpMeSite::init(double ip, double jp, double alphap, double convltp, int sign)
 
 vpMeSite &vpMeSite::operator=(const vpMeSite &m)
 {
-  i = m.i ;
-  j = m.j ;
-  i_1 = m.i_1 ;
-  j_1 = m.j_1 ;
-  alpha = m.alpha ;
-  v = m.v ;
-  ifloat = m.ifloat ;
-  jfloat = m.jfloat ;
-  convlt = m.convlt ;
+  i = m.i;
+  j = m.j;
+  i_1 = m.i_1;
+  j_1 = m.j_1;
+  ifloat = m.ifloat;
+  jfloat = m.jfloat;
+  v = m.v;
+  mask_sign = m.mask_sign;
+  alpha = m.alpha;
+  convlt = m.convlt;
+  normGradient = m.normGradient;
   suppress = m.suppress;
   weight = m.weight;
-
-  selectDisplay = m.selectDisplay ;
-  mask_sign = m.mask_sign ;
+  selectDisplay = m.selectDisplay;
 
   return *this ;
 }

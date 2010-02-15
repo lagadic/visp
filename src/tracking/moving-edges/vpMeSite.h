@@ -109,6 +109,7 @@ public:
 
   vpMeSite () ;
   vpMeSite(double ip, double jp) ;
+  vpMeSite (const vpMeSite &mesite) ;
   virtual ~vpMeSite() {} ;
 
   vpMeSite &operator=(const vpMeSite &m) ;
