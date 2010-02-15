@@ -325,10 +325,6 @@ scheme, ...</p>
 */
 /*!
   \ingroup RealRobot
-  \defgroup Viper850 Viper S850 robot arm
-*/
-/*!
-  \ingroup RealRobot
   \defgroup Biclops Biclops pan-tilt head
 */
 /*!
