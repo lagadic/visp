@@ -175,8 +175,8 @@ vpMatrix::vpMatrix(const vpMatrix& m)
   \param nrows : number of rows
   \param ncols : number of column
   \param flagNullify : if true, then the matrix is re-initialized to 0
-  afet resize. If false, the initial values from the common part of the
-  matrix (comon part between old and new version of the matrix) are kept.
+  after resize. If false, the initial values from the common part of the
+  matrix (common part between old and new version of the matrix) are kept.
   Default value is true.
 
   \return OK or MEMORY_FAULT if memory cannot be allocated
