@@ -121,6 +121,7 @@ SET (HEADER_MATH
   math/spline/vpNurbs.h
   math/transformation/vpEulerVector.h
   math/transformation/vpExponentialMap.h
+  math/transformation/vpForceTwistMatrix.h
   math/transformation/vpHomogeneousMatrix.h
   math/transformation/vpPoseVector.h
   math/transformation/vpRotationMatrix.h
