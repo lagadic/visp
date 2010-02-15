@@ -59,8 +59,20 @@ vpTracker::vpTracker()
   init() ;
 }
 
+vpTracker::vpTracker(const vpTracker &tracker)
+{
+  *this = tracker;
+}
 
 
+vpTracker &vpTracker::operator=(const vpTracker &tracker)
+{
+  p = tracker.p;
+  cP = tracker.cP;
+  cPAvailable = tracker.cPAvailable;
+  
+  return *this;
+}
 
 
 
