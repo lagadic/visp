@@ -129,6 +129,7 @@ SET (SRC_MATH
   math/spline/vpNurbs.cpp
   math/transformation/vpEulerVector.cpp
   math/transformation/vpExponentialMap.cpp 
+  math/transformation/vpForceTwistMatrix.cpp
   math/transformation/vpHomogeneousMatrix.cpp
   math/transformation/vpPoseVector.cpp
   math/transformation/vpRotationMatrix.cpp

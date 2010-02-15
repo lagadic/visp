@@ -7,6 +7,9 @@
 
 
 ViSP (Subversion trunk)
+  - New Features
+    - new vpForceTwistMatrix class that allows to transfer a force/torque skew
+      from one frame to an other
   - Bug fixed
     - [9476] Memory leak in vpImageIo::readPNG() functions.	
 ----------------------------------------------	
