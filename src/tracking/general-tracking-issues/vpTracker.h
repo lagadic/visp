@@ -89,6 +89,10 @@ public:
   void init() ;
   //! Default constructor.
   vpTracker() ;
+  //! Copy constructor.
+  vpTracker(const vpTracker &tracker) ;
+  //! Copy operator.
+  vpTracker &operator=(const vpTracker &tracker);
 
   //! Destructor.
   virtual ~vpTracker() { ; }
