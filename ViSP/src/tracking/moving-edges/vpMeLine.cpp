@@ -98,6 +98,27 @@ vpMeLine::vpMeLine():vpMeTracker()
   sign = 1;
   angle_1 = 90;
 }
+/*!
+
+  Copy constructor.
+
+*/
+vpMeLine::vpMeLine(const vpMeLine &meline)
+{
+  rho = meline.rho;
+  theta = meline.theta;
+  delta = meline.delta;
+  delta_1 = meline.delta_1;
+  angle = meline.angle;
+  angle_1 = meline.angle_1;
+  sign = meline.sign;
+
+  a = meline.a;
+  b = meline.b;
+  c = meline.c;
+  PExt[0] = meline.PExt[0];
+  PExt[1] = meline.PExt[1];
+}
 
 /*!
 
