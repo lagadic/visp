@@ -81,6 +81,7 @@ vpMeSite::init()
 
   mask_sign =1 ;
 
+  normGradient = 0;
 }
 
 vpMeSite::vpMeSite()
