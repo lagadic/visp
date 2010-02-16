@@ -277,7 +277,7 @@ class VISP_EXPORT vpRobotViper850
 
 public:  /* Constantes */
 
-  /*! \enum Control mode. */
+  /*! \enum vpControlModeType Control mode. */
   typedef enum {
     AUTO,   //!< Automatic control mode (default).
     MANUAL,  //!< Manual control mode activated when the dead man switch is in use.
