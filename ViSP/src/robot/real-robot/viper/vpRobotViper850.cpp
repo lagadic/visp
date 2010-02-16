@@ -278,13 +278,22 @@ vpRobotViper850::init (void)
   std::cout << "Robot status: ";
   switch(EStopStatus) {
   case ESTOP_AUTO: 
+    controlMode = AUTO;
+     if (HIPowerStatus == 0)
+      std::cout << "Power is OFF" << std::endl;
+    else
+      std::cout << "Power is ON" << std::endl;
+    break;
+
   case ESTOP_MANUAL: 
+    controlMode = MANUAL;
     if (HIPowerStatus == 0)
       std::cout << "Power is OFF" << std::endl;
     else
       std::cout << "Power is ON" << std::endl;
     break;
   case ESTOP_ACTIVATED: 
+    controlMode = ESTOP;
     std::cout << "Emergency stop is activated" << std::endl;
     break;
   default: 
@@ -561,9 +570,10 @@ vpRobotViper850::powerOn(void)
     Try( PrimitiveSTATUS_Viper850(NULL, NULL, &EStopStatus, NULL, NULL, NULL, 
 				  &HIPowerStatus));
     switch(EStopStatus) {
-    case ESTOP_AUTO: break;
-    case ESTOP_MANUAL: break;
+    case ESTOP_AUTO: controlMode = AUTO; break;
+    case ESTOP_MANUAL: controlMode = MANUAL; break;
     case ESTOP_ACTIVATED:
+      controlMode = ESTOP;
       if (firsttime) {
 	std::cout << "Emergency stop is activated! \n"
 		  << "Check the emergency stop button and push the yellow button before continuing." << std::endl;
@@ -2169,7 +2179,6 @@ vpRobotViper850::getForceTorque(vpColVector &H)
 			    "Cannot get force/torque measures.");
   }
 }
-
 
 
 /*
