@@ -275,6 +275,22 @@ class VISP_EXPORT vpRobotViper850
   public vpRobot
 {
 
+public:  /* Constantes */
+
+  /*! \enum Control mode. */
+  typedef enum {
+    AUTO,   //!< Automatic control mode (default).
+    MANUAL,  //!< Manual control mode activated when the dead man switch is in use.
+    ESTOP  //!< Emergency stop activated.
+  } vpControlModeType;
+
+  /* Vitesse maximale par default lors du positionnement du robot.
+   * C'est la valeur a la construction de l'attribut prive \a
+   * positioningVelocity. Cette valeur peut etre changee par la fonction
+   * #setPositioningVelocity.
+   */
+  static const double defaultPositioningVelocity; // = 20.0;
+
 private: /* Not allowed functions. */
 
   /*!
@@ -307,16 +323,8 @@ private: /* Attributs prives. */
   // getDisplacement() )
   vpColVector q_prev_getdis;
   bool first_time_getdis;
+  vpControlModeType controlMode;
 
-
-public:  /* Constantes */
-
-  /* Vitesse maximale par default lors du positionnement du robot.
-   * C'est la valeur a la construction de l'attribut prive \a
-   * positioningVelocity. Cette valeur peut etre changee par la fonction
-   * #setPositioningVelocity.
-   */
-  static const double defaultPositioningVelocity; // = 20.0;
 
 public:  /* Methode publiques */
 
@@ -330,6 +338,13 @@ public:  /* Methode publiques */
 
   // State
   vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
+  /*!
+    \return The control mode indicating if the robot is in automatic, 
+    manual (usage of the dead man switch) or emergnecy stop mode.
+  */
+  vpControlModeType getControlMode() {
+    return controlMode;
+  }
 
   // Position control
   void setPosition(const vpRobot::vpControlFrameType frame,
