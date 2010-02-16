@@ -51,13 +51,22 @@ inline double distance(const vpImagePoint iP1, const double w1, const vpImagePoi
 
 
 /*!
-  Basic constructor
+  Basic constructor.
   
-   The degree \f$ p \f$ of the NURBS basis functions is set to 3 to compute cubic NURBS.
+  The degree \f$ p \f$ of the NURBS basis functions is set to 3 to
+  compute cubic NURBS.
 */
 vpNurbs::vpNurbs()
 {
   p = 3;
+}
+
+/*!
+  Copy constructor.
+*/
+vpNurbs::vpNurbs(const vpNurbs &nurbs)
+{
+  weights = nurbs.weights;
 }
 
 /*!

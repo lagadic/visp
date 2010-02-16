@@ -76,14 +76,16 @@ computeDelta(double deltai, double deltaj)
 static
 bool outOfImage( vpImagePoint iP , int half , int rows , int cols)
 {
-  return((iP.get_i() < half + 1) || ( iP.get_i() > (rows - half - 3) )||(iP.get_j() < half + 1) || (iP.get_j() > (cols - half - 3) )) ;
+  return((iP.get_i() < half + 1) || ( iP.get_i() > (rows - half - 3) )
+	 ||(iP.get_j() < half + 1) || (iP.get_j() > (cols - half - 3) )) ;
 }
 
 //if iP is a edge point, it computes the angle corresponding to the
 //highest convolution result. the angle is between 0 an 179.
 //The result gives the angle in RADIAN + pi/2 (to deal with the moving edeg alpha angle)
 //and the corresponding convolution result.
-void findAngle(const vpImage<unsigned char> &I, const vpImagePoint iP, vpMe* me, double &angle, double &convlt)
+void findAngle(const vpImage<unsigned char> &I, const vpImagePoint iP,
+	       vpMe* me, double &angle, double &convlt)
 {
   angle = 0.0;
   convlt = 0.0;
@@ -199,6 +201,20 @@ vpMeNurbs::vpMeNurbs():vpMeTracker()
   cannyTh2 = 200.0;
 }
 
+/*!
+  Copy constructor.
+*/
+vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
+{
+  nurbs = menurbs.nurbs;
+  dist = menurbs.dist;
+  nbControlPoints = menurbs.nbControlPoints;
+  beginPtFound = menurbs.beginPtFound;
+  endPtFound = menurbs.endPtFound;
+  enableCannyDetection = menurbs.enableCannyDetection;
+  cannyTh1 = menurbs.cannyTh1;
+  cannyTh2 = menurbs.cannyTh2;
+}
 
 /*!
   Basic destructor.
