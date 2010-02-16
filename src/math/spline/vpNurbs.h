@@ -90,6 +90,7 @@ class VISP_EXPORT vpNurbs : public vpBSpline
   public:
 
     vpNurbs();
+    vpNurbs(const vpNurbs &nurbs);
     virtual ~vpNurbs();
     
     /*!

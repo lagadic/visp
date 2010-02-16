@@ -148,6 +148,7 @@ public:
   double e;
 
   vpMeEllipse() ;
+  vpMeEllipse(/* const */ vpMeEllipse &meellipse) ;
   virtual ~vpMeEllipse() ;
 
   void track(vpImage<unsigned char>& Im);
@@ -293,7 +294,7 @@ private:
   //@{
   void computeAngle(int ip1, int jp1,int ip2, int jp2) ;
   void computeAngle(int ip1, int jp1, double &alpha1,
-	     int ip2, int jp2, double &alpha2) ;
+		    int ip2, int jp2, double &alpha2) ;
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS
 

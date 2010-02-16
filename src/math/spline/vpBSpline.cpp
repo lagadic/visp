@@ -38,9 +38,10 @@
 #include <visp/vpBSpline.h>
 
 /*!
-  Basic constructor
+  Basic constructor.
   
-   The degree \f$ p \f$ of the B-Spline basis functions is set to 3 to compute cubic B-Spline.
+  The degree \f$ p \f$ of the B-Spline basis functions is set to 3 to
+  compute cubic B-Spline.
 */
 vpBSpline::vpBSpline()
 {
@@ -48,7 +49,18 @@ vpBSpline::vpBSpline()
 }
 
 /*!
-  Basic destructor
+  Copy constructor.
+  
+*/
+vpBSpline::vpBSpline(const vpBSpline &bspline)
+{
+  controlPoints = bspline.controlPoints;
+  knots = bspline.knots;
+  p = bspline.p;
+  crossingPoints = bspline.crossingPoints;
+}
+/*!
+  Basic destructor.
 */
 vpBSpline::~vpBSpline()
 {

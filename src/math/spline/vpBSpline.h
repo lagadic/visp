@@ -83,6 +83,7 @@ typedef struct vpBasisFunction{
   \class vpBSpline
   \ingroup MathTools
 
+
   \brief Class that provides tools to compute and manipulate a B-Spline curve.
 
   The different parameters are :
@@ -122,6 +123,7 @@ class VISP_EXPORT vpBSpline
   public:
 
     vpBSpline();
+    vpBSpline(const vpBSpline &bspline);
     virtual ~vpBSpline();
     
 	/*!

@@ -97,6 +97,36 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
   vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << std::endl ;
 }
 
+/*!
+  Copy constructor.
+*/
+vpMeEllipse::vpMeEllipse(/* const */ vpMeEllipse &meellipse)
+{
+  K = meellipse.K;
+  iPc = meellipse.iPc;
+  a = meellipse.a;
+  b = meellipse.b;
+  e = meellipse.e;
+
+  iP1 = meellipse.iP1;
+  iP2 = meellipse.iP2;
+  alpha1 = meellipse.alpha1;
+  alpha2 = meellipse.alpha2;
+  ce = meellipse.ce;
+  se = meellipse.se;
+  
+  angle = meellipse.angle; // Because of this line the copy
+			   // constructor cannot be const
+  m00 = meellipse.m00;
+  mu11 = meellipse.mu11;
+  mu20 = meellipse.mu20;
+  mu02 = meellipse.mu02;
+  m10 = meellipse.m10;
+  m01 = meellipse.m01;
+  m11 = meellipse.m11;
+  m02 = meellipse.m02;
+  m20 = meellipse.m20;  
+}
 
 /*!
   Basic destructor.
