@@ -64,7 +64,7 @@ vpNurbs::vpNurbs()
 /*!
   Copy constructor.
 */
-vpNurbs::vpNurbs(const vpNurbs &nurbs)
+vpNurbs::vpNurbs(const vpNurbs &nurbs)  : vpBSpline(nurbs)
 {
   weights = nurbs.weights;
 }
