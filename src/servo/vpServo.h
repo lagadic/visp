@@ -48,7 +48,7 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpServoException.h>
 
@@ -199,9 +199,9 @@ public:
   //!  Choice of the visual servoing control law
   void setServo(vpServoType _servo_type) ;
 
-  void set_cVe(vpTwistMatrix &_cVe) { cVe = _cVe ; init_cVe = true ; }
-  void set_cVf(vpTwistMatrix &_cVf) { cVf = _cVf ; init_cVf = true ; }
-  void set_fVe(vpTwistMatrix &_fVe) { fVe = _fVe ; init_fVe = true ; }
+  void set_cVe(vpVelocityTwistMatrix &_cVe) { cVe = _cVe ; init_cVe = true ; }
+  void set_cVf(vpVelocityTwistMatrix &_cVf) { cVf = _cVf ; init_cVf = true ; }
+  void set_fVe(vpVelocityTwistMatrix &_fVe) { fVe = _fVe ; init_fVe = true ; }
 
   void set_cVe(vpHomogeneousMatrix &cMe) { cVe.buildFrom(cMe); init_cVe=true ;}
   void set_cVf(vpHomogeneousMatrix &cMf) { cVf.buildFrom(cMf); init_cVf=true ;}
@@ -325,13 +325,13 @@ private:
   */
 
   //! Twist transformation matrix between Re and Rc
-  vpTwistMatrix cVe ;
+  vpVelocityTwistMatrix cVe ;
   bool init_cVe ;
   //! Twist transformation matrix between Rf and Rc
-  vpTwistMatrix cVf ;
+  vpVelocityTwistMatrix cVf ;
   bool init_cVf ;
   //! Twist transformation matrix between Re and Rf
-  vpTwistMatrix fVe ;
+  vpVelocityTwistMatrix fVe ;
   bool init_fVe ;
 
   /*

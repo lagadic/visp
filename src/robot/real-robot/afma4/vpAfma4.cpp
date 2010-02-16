@@ -46,7 +46,7 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpRobotException.h>
 #include <visp/vpXmlParserCamera.h>
 #include <visp/vpCameraParameters.h>
@@ -334,7 +334,7 @@ vpAfma4::get_cMe(vpHomogeneousMatrix &cMe)
 
 */
 void
-vpAfma4::get_cVe(vpTwistMatrix &cVe)
+vpAfma4::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   get_cMe(cMe) ;
@@ -363,7 +363,7 @@ vpAfma4::get_cVe(vpTwistMatrix &cVe)
 
 */
 void
-vpAfma4::get_cVf(const vpColVector & q, vpTwistMatrix &cVf)
+vpAfma4::get_cVf(const vpColVector & q, vpVelocityTwistMatrix &cVf)
 {
   vpHomogeneousMatrix fMc, cMf ;
   get_fMc(q, fMc) ;

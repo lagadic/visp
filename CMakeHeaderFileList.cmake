@@ -132,6 +132,7 @@ SET (HEADER_MATH
   math/transformation/vpThetaUVector.h
   math/transformation/vpTranslationVector.h
   math/transformation/vpTwistMatrix.h
+  math/transformation/vpVelocityTwistMatrix.h
   )
 
 SET (HEADER_ROBOT

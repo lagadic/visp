@@ -49,7 +49,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpParseArgv.h>
 
 // List of allowed command line options
@@ -184,7 +184,7 @@ main(int argc, const char ** argv)
   vpTRACE("------------------------");
 
 
-  vpTwistMatrix vMe;
+  vpVelocityTwistMatrix vMe;
   vpMatrix A(1,6),B;
 
   A=1.0;

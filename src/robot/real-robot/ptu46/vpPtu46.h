@@ -57,7 +57,7 @@
 #include <visp/vpMath.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpTranslationVector.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 
 /*!
 
@@ -97,7 +97,7 @@ public: /* Methodes publiques */
   void  computeMGD (const vpColVector & q,  vpPoseVector & r);
 
   void get_cMe(vpHomogeneousMatrix &_cMe) ;
-  void get_cVe(vpTwistMatrix &_cVe) ;
+  void get_cVe(vpVelocityTwistMatrix &_cVe) ;
   void get_eJe(const vpColVector &q, vpMatrix &eJe);
   void get_fJe(const vpColVector &q, vpMatrix &fJe);
 

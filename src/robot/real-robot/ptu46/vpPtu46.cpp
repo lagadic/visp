@@ -218,7 +218,7 @@ std::ostream & operator << (std::ostream & os,
 
 */
 void
-vpPtu46::get_cVe(vpTwistMatrix &cVe)
+vpPtu46::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   get_cMe(cMe) ;

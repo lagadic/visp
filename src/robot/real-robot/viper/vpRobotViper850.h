@@ -378,7 +378,7 @@ public:  /* Methode publiques */
 
 public:
   void get_cMe(vpHomogeneousMatrix &cMe) ;
-  void get_cVe(vpTwistMatrix &cVe) ;
+  void get_cVe(vpVelocityTwistMatrix &cVe) ;
   void get_eJe(vpMatrix &eJe)  ;
   void get_fJe(vpMatrix &fJe)  ;
 

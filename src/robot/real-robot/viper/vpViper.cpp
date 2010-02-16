@@ -46,7 +46,7 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpRobotException.h>
 #include <visp/vpXmlParserCamera.h>
 #include <visp/vpCameraParameters.h>
@@ -872,7 +872,7 @@ vpViper::get_cMe(vpHomogeneousMatrix &cMe)
 
 */
 void
-vpViper::get_cVe(vpTwistMatrix &cVe)
+vpViper::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   get_cMe(cMe) ;

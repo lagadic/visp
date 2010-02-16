@@ -45,7 +45,7 @@
 #include <visp/vpRobotException.h>
 #include <visp/vpExponentialMap.h>
 #include <visp/vpDebug.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpRobotAfma6.h>
 
@@ -636,7 +636,7 @@ vpRobotAfma6::getPowerState(void)
 
 */
 void
-vpRobotAfma6::get_cVe(vpTwistMatrix &cVe)
+vpRobotAfma6::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   vpAfma6::get_cMe(cMe) ;
@@ -1534,7 +1534,7 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
       v = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
 
       // Express this velocity in the reference frame
-      vpTwistMatrix fVc(fMc_cur);
+      vpVelocityTwistMatrix fVc(fMc_cur);
       velocity = fVc * v;
 
       break ;

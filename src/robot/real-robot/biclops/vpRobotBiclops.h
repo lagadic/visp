@@ -58,7 +58,7 @@
 #include <visp/vpBiclops.h>
 #include <visp/vpColVector.h>
 #include <visp/vpDebug.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpRobotBiclopsController.h>
 
 
@@ -161,7 +161,7 @@ public:
 
 public:
   void get_cMe(vpHomogeneousMatrix &_cMe) ;
-  void get_cVe(vpTwistMatrix &_cVe) ;
+  void get_cVe(vpVelocityTwistMatrix &_cVe) ;
   void get_eJe(vpMatrix &_eJe)  ;
   void get_fJe(vpMatrix &_fJe)  ;
 

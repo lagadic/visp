@@ -55,7 +55,7 @@
 #include <visp/vpRxyzVector.h>
 #include <visp/vpTranslationVector.h>
 #include <visp/vpRotationMatrix.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpParseArgv.h>
 
 // List of allowed command line options
@@ -125,7 +125,7 @@ main(int argc, const char ** argv)
   }
 
   vpTRACE("--------------------------");
-  vpTRACE("--- TEST vpTwistMatrix ---");
+  vpTRACE("--- TEST vpVelocityTwistMatrix ---");
   vpTRACE("--------------------------");
 
   // Set the translation
@@ -144,7 +144,7 @@ main(int argc, const char ** argv)
   vpRotationMatrix cRe(cre);
 
   // Build the twist matrix
-  vpTwistMatrix cVe(cte, cRe);
+  vpVelocityTwistMatrix cVe(cte, cRe);
 
   vpTRACE("cVe twist matrix:");
   cVe.print (std::cout, 6);

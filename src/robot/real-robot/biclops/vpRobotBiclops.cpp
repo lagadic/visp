@@ -581,7 +581,7 @@ vpRobotBiclops::stopMotion(void)
 
 */
 void
-vpRobotBiclops::get_cVe(vpTwistMatrix &cVe)
+vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   vpBiclops::get_cMe(cMe) ;

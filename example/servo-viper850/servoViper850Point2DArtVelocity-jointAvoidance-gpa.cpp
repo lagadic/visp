@@ -220,7 +220,7 @@ main()
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
 
-    vpTwistMatrix cVe ;
+    vpVelocityTwistMatrix cVe ;
     robot.get_cVe(cVe) ;
     std::cout << cVe <<std::endl ;
     task.set_cVe(cVe) ;

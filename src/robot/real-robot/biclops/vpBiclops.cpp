@@ -210,7 +210,7 @@ std::ostream & operator << (std::ostream & os,
 
 */
 void
-vpBiclops::get_cVe(vpTwistMatrix &cVe)
+vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   get_cMe(cMe) ;

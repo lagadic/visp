@@ -297,7 +297,7 @@ main()
     task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE) ;
     task.print() ;
 
-    vpTwistMatrix cVe ;
+    vpVelocityTwistMatrix cVe ;
     robot.get_cVe(cVe) ;
     task.set_cVe(cVe) ;
     task.print() ;

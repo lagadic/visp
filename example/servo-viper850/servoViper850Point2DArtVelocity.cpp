@@ -179,7 +179,7 @@ main()
     vpHomogeneousMatrix cMe ;
     //  robot.get_cMe(cMe) ;
 
-    vpTwistMatrix cVe ;
+    vpVelocityTwistMatrix cVe ;
     robot.get_cVe(cVe) ;
     std::cout << cVe <<std::endl ;
     task.set_cVe(cVe) ;
