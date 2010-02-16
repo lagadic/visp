@@ -223,7 +223,7 @@ void vpPlot::initRange(const int graphNum, /*const*/ double xmin,
   char valeur[20];
   double x1 = graph[graphNum].ltx+margex-eps;
   double y1,x2,y2;
-  double xp,yp,t;
+  double xp=0,yp=0,t;
 
   // modif EM
   if ((ymax-ymin)/ydelt>10) ydelt = (ymax-ymin)/10 ;
