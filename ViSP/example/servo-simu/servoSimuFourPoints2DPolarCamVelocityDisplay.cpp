@@ -363,7 +363,7 @@ main(int argc, const char ** argv)
 
   // Set the position of the camera in the end-effector frame
   vpHomogeneousMatrix cMe ;
-  vpTwistMatrix cVe(cMe) ;
+  vpVelocityTwistMatrix cVe(cMe) ;
   task.set_cVe(cVe) ;
 
   // Set the Jacobian (expressed in the end-effector frame)

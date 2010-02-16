@@ -222,7 +222,7 @@ vpServo::setServo(vpServoType _servoType)
   // we relieve the end-user to initialize cVa and aJe
   if (servoType==EYEINHAND_CAMERA)
     {
-      vpTwistMatrix _cVe ; set_cVe(_cVe) ;
+      vpVelocityTwistMatrix _cVe ; set_cVe(_cVe) ;
 
       vpMatrix _eJe ;
       _eJe.eye(6) ;
@@ -880,7 +880,7 @@ vpServo::computeControlLaw()
 
   try
     {
-      vpTwistMatrix cVa ; // Twist transformation matrix
+      vpVelocityTwistMatrix cVa ; // Twist transformation matrix
       vpMatrix aJe ;      // Jacobian
 
       if (iteration==0)

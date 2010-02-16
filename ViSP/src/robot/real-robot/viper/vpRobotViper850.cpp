@@ -45,7 +45,7 @@
 #include <visp/vpRobotException.h>
 #include <visp/vpExponentialMap.h>
 #include <visp/vpDebug.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpRobot.h>
 #include <visp/vpRobotViper850.h>
@@ -695,7 +695,7 @@ vpRobotViper850::getPowerState(void)
 
 */
 void
-vpRobotViper850::get_cVe(vpTwistMatrix &cVe)
+vpRobotViper850::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   vpViper850::get_cMe(cMe) ;
@@ -1679,7 +1679,7 @@ vpRobotViper850::getVelocity (const vpRobot::vpControlFrameType frame,
       v = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
 
       // Express this velocity in the reference frame
-      vpTwistMatrix fVc(fMc_cur);
+      vpVelocityTwistMatrix fVc(fMc_cur);
       velocity = fVc * v;
 
       break ;

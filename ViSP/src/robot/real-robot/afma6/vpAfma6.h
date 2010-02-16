@@ -61,7 +61,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 #include <visp/vpCameraParameters.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 
 
 class VISP_EXPORT vpAfma6
@@ -125,7 +125,7 @@ class VISP_EXPORT vpAfma6
   void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc);
 
   void get_cMe(vpHomogeneousMatrix &cMe) ;
-  void get_cVe(vpTwistMatrix &cVe) ;
+  void get_cVe(vpVelocityTwistMatrix &cVe) ;
   void get_eJe(const vpColVector &q, vpMatrix &eJe)  ;
   void get_fJe(const vpColVector &q, vpMatrix &fJe)  ;
 

@@ -45,10 +45,9 @@
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpRotationMatrix.h>
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /*!
-  \class vpTwistMatrix
+  \class vpVelocityTwistMatrix
 
   \ingroup TwistTransformation
 
@@ -56,10 +55,7 @@
   transformation matrix that allows to transform a velocity skew from
   one frame to an other.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
-  The vpTwistMatrix is derived from vpMatrix.
+  The vpVelocityTwistMatrix is derived from vpMatrix.
 
   A twist transformation matrix is 6x6 matrix defined as
   \f[
@@ -79,11 +75,11 @@
 
   \code
 #include <visp/vpColVector.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 
 int main()
 {
-  vpTwistMatrix fVc; // Twist transformation matrix from fix to camera frame
+  vpVelocityTwistMatrix fVc; // Twist transformation matrix from fix to camera frame
 
   vpHomogeneousMatrix fMc; // Fix to camera frame transformation
   // ... fMc need here to be initialized
@@ -100,53 +96,45 @@ int main()
 }
   \endcode
 */
-class VISP_EXPORT vpTwistMatrix : public vpMatrix
+class VISP_EXPORT vpVelocityTwistMatrix : public vpMatrix
 {
   friend class vpMatrix;
 
  public:
   // basic constructor
-  vpTwistMatrix()   ;
+  vpVelocityTwistMatrix()   ;
   // copy constructor
-  vpTwistMatrix(const vpTwistMatrix &V) ;
+  vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) ;
   // constructor from an homogeneous transformation
-  vp_deprecated vpTwistMatrix(const vpHomogeneousMatrix &M) ;
+  vpVelocityTwistMatrix(const vpHomogeneousMatrix &M) ;
 
   // Construction from Translation and rotation (ThetaU parameterization)
-  vp_deprecated vpTwistMatrix(const vpTranslationVector &t, 
-			      const vpThetaUVector &thetau) ;
+  vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;
   // Construction from Translation and rotation (matrix parameterization)
-  vp_deprecated vpTwistMatrix(const vpTranslationVector &t, 
-			      const vpRotationMatrix &R) ;
-  vp_deprecated vpTwistMatrix(const double tx, const double ty, 
-			      const double tz, const double tux,  
-			      const double tuy,  const double tuz) ;
+  vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
+  vpVelocityTwistMatrix(const double tx,   const double ty,   const double tz,
+			const double tux,  const double tuy,  const double tuz) ;
 
   // Basic initialisation (identity)
   void init() ;
 
-  vpTwistMatrix buildFrom(const vpTranslationVector &t,
-			  const vpRotationMatrix &R);
-  vpTwistMatrix buildFrom(const vpTranslationVector &t,
-			  const vpThetaUVector &thetau);
-  vpTwistMatrix buildFrom(const vpHomogeneousMatrix &M) ;
+  vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t,
+				  const vpRotationMatrix &R);
+  vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t,
+				  const vpThetaUVector &thetau);
+  vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M) ;
 
   // Basic initialisation (identity)
   void setIdentity() ;
 
-  vpTwistMatrix operator*(const vpTwistMatrix &V) const ;
+  vpVelocityTwistMatrix operator*(const vpVelocityTwistMatrix &V) const ;
   vpMatrix operator*(const vpMatrix &M) const ;
 
   vpColVector operator*(const vpColVector &v) const ;
 
   // copy operator from vpMatrix (handle with care)
-  vpTwistMatrix &operator=(const vpTwistMatrix &V);
-
-  vp_deprecated vpTwistMatrix buildFrom(const vpTranslationVector &t,
-					const vpEulerVector &euler);
+  vpVelocityTwistMatrix &operator=(const vpVelocityTwistMatrix &V);
 } ;
-
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 #endif
 

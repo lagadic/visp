@@ -45,7 +45,7 @@
 #include <visp/vpRobotException.h>
 #include <visp/vpExponentialMap.h>
 #include <visp/vpDebug.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpRobotAfma4.h>
 
@@ -541,7 +541,7 @@ vpRobotAfma4::getPowerState(void)
 
 */
 void
-vpRobotAfma4::get_cVe(vpTwistMatrix &cVe)
+vpRobotAfma4::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   vpAfma4::get_cMe(cMe) ;
@@ -559,7 +559,7 @@ vpRobotAfma4::get_cVe(vpTwistMatrix &cVe)
 
 */
 void
-vpRobotAfma4::get_cVf(vpTwistMatrix &cVf)
+vpRobotAfma4::get_cVf(vpVelocityTwistMatrix &cVf)
 {
   double position[this->njoint];
 
@@ -1249,12 +1249,12 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
     t=0;
     vpRotationMatrix fRe;
     fMe.extract(fRe);
-    vpTwistMatrix fVe(t, fRe);
+    vpVelocityTwistMatrix fVe(t, fRe);
     // compute the inverse jacobian in the end-effector frame
     vpMatrix eJe_inverse = fJe_inverse * fVe;
 
     // Transform the velocities from camera to end-effector frame
-    vpTwistMatrix eVc;
+    vpVelocityTwistMatrix eVc;
     eVc.buildFrom(this->_eMc);
     joint_vel = eJe_inverse * eVc * velocity;
 
@@ -1452,7 +1452,7 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
       v = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
 
       // Express this velocity in the reference frame
-      vpTwistMatrix fVc(fMc_cur);
+      vpVelocityTwistMatrix fVc(fMc_cur);
       velocity = fVc * v;
 
       break ;

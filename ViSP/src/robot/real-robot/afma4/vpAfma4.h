@@ -103,7 +103,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 #include <visp/vpCameraParameters.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 
 
 class VISP_EXPORT vpAfma4
@@ -121,8 +121,8 @@ class VISP_EXPORT vpAfma4
   void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc);
 
   void get_cMe(vpHomogeneousMatrix &cMe) ;
-  void get_cVe(vpTwistMatrix &cVe) ;
-  void get_cVf(const vpColVector & q, vpTwistMatrix &cVf);
+  void get_cVe(vpVelocityTwistMatrix &cVe) ;
+  void get_cVf(const vpColVector & q, vpVelocityTwistMatrix &cVf);
   void get_eJe(const vpColVector &q, vpMatrix &eJe)  ;
   void get_fJe(const vpColVector &q, vpMatrix &fJe)  ;
   void get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse)  ;

@@ -51,7 +51,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 #include <visp/vpCameraParameters.h>
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpRobotException.h>
 
 /*!
@@ -121,7 +121,7 @@ class VISP_EXPORT vpViper
   void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc);
 
   void get_cMe(vpHomogeneousMatrix &cMe) ;
-  void get_cVe(vpTwistMatrix &cVe) ;
+  void get_cVe(vpVelocityTwistMatrix &cVe) ;
   void get_fJw(const vpColVector &q, vpMatrix &fJw)  ;
   void get_fJe(const vpColVector &q, vpMatrix &fJe)  ;
   void get_eJe(const vpColVector &q, vpMatrix &eJe)  ;

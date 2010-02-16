@@ -28,14 +28,14 @@
  * not clear to you.
  *
  * Description:
- * Twist transformation matrix.
+ * Velocity twist transformation matrix.
  *
  * Authors:
- * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
-#include <visp/vpTwistMatrix.h>
+#include <visp/vpVelocityTwistMatrix.h>
 
 // Exception
 #include <visp/vpException.h>
@@ -46,42 +46,31 @@
 
 
 /*!
-  \file vpTwistMatrix.cpp
+  \file vpVelocityTwistMatrix.cpp
 
-  \brief Definition of the vpTwistMatrix. Class that consider the
+  \brief Definition of the vpVelocityTwistMatrix. Class that consider the
   particular case of twist transformation matrix that allows to
   transform a velocity skew from one frame to an other.
 */
-
-/****************************************************************
-
-           Deprecated functions
-
-*****************************************************************/
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 /*!
   Copy operator.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
   \param V : Velocity twist matrix to copy.
 */
-vpTwistMatrix &
-vpTwistMatrix::operator=(const vpTwistMatrix &V)
+vpVelocityTwistMatrix &
+vpVelocityTwistMatrix::operator=(const vpVelocityTwistMatrix &V)
 {
   init() ;
 
   for (int i=0; i<6; i++)
-  {
-    for (int j=0; j<6; j++)
     {
-      rowPtrs[i][j] = V.rowPtrs[i][j];
+      for (int j=0; j<6; j++)
+	{
+	  rowPtrs[i][j] = V.rowPtrs[i][j];
+	}
     }
-  }
 
   return *this;
 }
@@ -89,13 +78,10 @@ vpTwistMatrix::operator=(const vpTwistMatrix &V)
 
 /*!
   Initialize a 6x6 velocity twist matrix as identity. 
-
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
 */
+
 void
-vpTwistMatrix::init()
+vpVelocityTwistMatrix::init()
 {
   int i,j ;
 
@@ -103,10 +89,10 @@ vpTwistMatrix::init()
     resize(6,6) ;
   }
   catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
+    {
+      vpERROR_TRACE("Error caught") ;
+      throw ;
+    }
 
   for (i=0 ; i < 6 ; i++)
     for (j=0 ; j < 6; j++)
@@ -118,26 +104,18 @@ vpTwistMatrix::init()
 
 /*!
   Initialize a velocity twist transformation matrix as identity.
-
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
 */
-vpTwistMatrix::vpTwistMatrix() : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpMatrix()
 {
   init() ;
 }
 
-/*!  
-  Initialize a velocity twist transformation matrix from another
-  velocity twist matrix.
-
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
+/*!
+  Initialize a velocity twist transformation matrix from another velocity twist matrix.
 
   \param V : Velocity twist matrix used as initializer.
 */
-vpTwistMatrix::vpTwistMatrix(const vpTwistMatrix &V) : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : vpMatrix()
 {
   init() ;
   *this = V;
@@ -149,14 +127,11 @@ vpTwistMatrix::vpTwistMatrix(const vpTwistMatrix &V) : vpMatrix()
   \f$M\f$ with \f[ {\bf M} = \left[\begin{array}{cc} {\bf R} & {\bf t}
   \\ {\bf 0}_{1\times 3} & 1 \end{array} \right] \f]
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
   \param M : Homogeneous matrix \f$M\f$ used to initialize the velocity twist
   transformation matrix.
 
 */
-vpTwistMatrix::vpTwistMatrix(const vpHomogeneousMatrix &M) : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M) : vpMatrix()
 {
   init() ;
   buildFrom(M);
@@ -167,16 +142,13 @@ vpTwistMatrix::vpTwistMatrix(const vpHomogeneousMatrix &M) : vpMatrix()
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
   \param t : Translation vector.
   
   \param thetau : \f$\theta u\f$ rotation vector.
 
 */
-vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &t,
-			     const vpThetaUVector &thetau) : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
+					     const vpThetaUVector &thetau) : vpMatrix()
 {
   init() ;
   buildFrom(t, thetau) ;
@@ -187,16 +159,13 @@ vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &t,
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation matrix M.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
   \param t : Translation vector.
   
   \param R : Rotation matrix.
 
 */
-vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &t,
-                             const vpRotationMatrix &R)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
+					     const vpRotationMatrix &R)
 {
   init() ;
   buildFrom(t,R) ;
@@ -207,19 +176,16 @@ vpTwistMatrix::vpTwistMatrix(const vpTranslationVector &t,
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
   \param tx,ty,tz : Translation vector in meters.
 
   \param tux,tuy,tuz : \f$\theta u\f$ rotation vector expressed in radians.
 */
-vpTwistMatrix::vpTwistMatrix(const double tx,
-			     const double ty,
-			     const double tz,
-			     const double tux,
-			     const double tuy,
-			     const double tuz) : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const double tx,
+					     const double ty,
+					     const double tz,
+					     const double tux,
+					     const double tuy,
+					     const double tuz) : vpMatrix()
 {
   init() ;
   vpTranslationVector T(tx,ty,tz) ;
@@ -231,12 +197,9 @@ vpTwistMatrix::vpTwistMatrix(const double tx,
 
   Set the velocity twist transformation matrix to identity.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
 */
 void
-vpTwistMatrix::setIdentity()
+vpVelocityTwistMatrix::setIdentity()
 {
   init() ;
 }
@@ -247,48 +210,39 @@ vpTwistMatrix::setIdentity()
   Operator that allows to multiply a velocity twist transformation matrix by an
   other velocity twist transformation matrix.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
 */
-vpTwistMatrix
-vpTwistMatrix::operator*(const vpTwistMatrix &V) const
+vpVelocityTwistMatrix
+vpVelocityTwistMatrix::operator*(const vpVelocityTwistMatrix &V) const
 {
-  vpTwistMatrix p ;
+  vpVelocityTwistMatrix p ;
 
   for (int i=0;i<6;i++)
     for (int j=0;j<6;j++)
-    {
-      double s =0 ;
-      for (int k=0;k<6;k++)
-	s +=rowPtrs[i][k] * V.rowPtrs[k][j];
-      p[i][j] = s ;
-    }
+      {
+	double s =0 ;
+	for (int k=0;k<6;k++)
+	  s +=rowPtrs[i][k] * V.rowPtrs[k][j];
+	p[i][j] = s ;
+      }
   return p;
 }
 
-/*!  
+/*!
+  Operator that allows to multiply a velocity twist transformation matrix by a matrix.
 
-  Operator that allows to multiply a velocity twist transformation
-  matrix by a matrix.
-
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
-  As shown in the example below, this operator can be used to compute
-  the corresponding camera velocity skew from the joint velocities
-  knowing the robot jacobian.
+  As shown in the example below, this operator can be used to compute the corresponding
+  camera velocity skew from the joint velocities knowing the robot jacobian.
 
   \code
-#include <visp/vpConfig.h>
-#include <visp/vpRobotAfma6.h>
-#include <visp/vpColVector.h>
-#include <visp/vpTwistMatrix.h>
+  #include <visp/vpConfig.h>
+  #include <visp/vpRobotAfma6.h>
+  #include <visp/vpColVector.h>
+  #include <visp/vpVelocityTwistMatrix.h>
 
-#ifdef VISP_HAVE_AFMA6
+  #ifdef VISP_HAVE_AFMA6
 
-int main()
-{
+  int main()
+  {
   vpRobotAfma6 robot;
 
   vpColVector q_vel(6); // Joint velocity on the 6 joints
@@ -296,7 +250,7 @@ int main()
   
   vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz 
 
-  vpTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
+  vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
   robot.get_cVe(cVe);
 
   vpMatrix eJe;       // Robot jacobian
@@ -306,32 +260,32 @@ int main()
   c_v = cVe * eJe * q_vel;
 
   return 0;
-}
-#endif  
+  }
+  #endif  
   \endcode
 
   \exception vpMatrixException::incorrectMatrixSizeError If M is not a 6 rows
   dimension matrix.
 */
 vpMatrix
-vpTwistMatrix::operator*(const vpMatrix &M) const
+vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
 {
 
   if (6 != M.getRows())
-  {
-    vpERROR_TRACE("vpTwistMatrix mismatch in vpTwistMatrix/vpMatrix multiply") ;
-    throw(vpMatrixException::incorrectMatrixSizeError) ;
-  }
+    {
+      vpERROR_TRACE("vpVelocityTwistMatrix mismatch in vpVelocityTwistMatrix/vpMatrix multiply") ;
+      throw(vpMatrixException::incorrectMatrixSizeError) ;
+    }
 
   vpMatrix p(6, M.getCols()) ;
   for (int i=0;i<6;i++)
     for (int j=0;j<M.getCols();j++)
-    {
-      double s =0 ;
-      for (int k=0;k<6;k++)
-	s += rowPtrs[i][k] * M[k][j];
-      p[i][j] = s ;
-    }
+      {
+	double s =0 ;
+	for (int k=0;k<6;k++)
+	  s += rowPtrs[i][k] * M[k][j];
+	p[i][j] = s ;
+      }
   return p;
 }
 
@@ -339,9 +293,6 @@ vpTwistMatrix::operator*(const vpMatrix &M) const
 
   Operator that allows to multiply a twist transformation matrix by a
   column vector.
-
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
 
   Operation c = V * v (V, the velocity skew transformation matrix is unchanged,
   c and v are 6 dimension vectors).
@@ -353,15 +304,15 @@ vpTwistMatrix::operator*(const vpMatrix &M) const
 
 */
 vpColVector
-vpTwistMatrix::operator*(const vpColVector &v) const
+vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 {
   vpColVector c(6);
 
   if (6 != v.getRows())
-  {
-    vpERROR_TRACE("vpTwistMatrix mismatch in vpTwistMatrix/vector multiply") ;
-    throw(vpMatrixException::incorrectMatrixSizeError) ;
-  }
+    {
+      vpERROR_TRACE("vpVelocityTwistMatrix mismatch in vpVelocityTwistMatrix/vector multiply") ;
+      throw(vpMatrixException::incorrectMatrixSizeError) ;
+    }
 
   c = 0.0;
 
@@ -382,30 +333,27 @@ vpTwistMatrix::operator*(const vpColVector &v) const
   Build a velocity twist transformation matrix from a translation vector
   \e t and a rotation matrix M.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
   \param t : Translation vector.
   
   \param R : Rotation matrix.
 
 */
-vpTwistMatrix
-vpTwistMatrix::buildFrom(const vpTranslationVector &t,
-			 const vpRotationMatrix &R)
+vpVelocityTwistMatrix
+vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
+				 const vpRotationMatrix &R)
 {
-    int i, j;
-    vpMatrix skewaR = t.skew(t)*R ;
+  int i, j;
+  vpMatrix skewaR = t.skew(t)*R ;
 
-    for (i=0 ; i < 3 ; i++)
-	for (j=0 ; j < 3 ; j++)
-	{
-	    (*this)[i][j] = R[i][j] ;
-	    (*this)[i+3][j+3] = R[i][j] ;
-	    (*this)[i][j+3] = skewaR[i][j] ;
+  for (i=0 ; i < 3 ; i++)
+    for (j=0 ; j < 3 ; j++)
+      {
+	(*this)[i][j] = R[i][j] ;
+	(*this)[i+3][j+3] = R[i][j] ;
+	(*this)[i][j+3] = skewaR[i][j] ;
 
-	}
-    return (*this) ;
+      }
+  return (*this) ;
 }
 
 /*!
@@ -413,22 +361,19 @@ vpTwistMatrix::buildFrom(const vpTranslationVector &t,
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
   \param t : Translation vector.
   
   \param thetau : \f$\theta u\f$ rotation vector.
 
 */
-vpTwistMatrix
-vpTwistMatrix::buildFrom(const vpTranslationVector &t,
-			 const vpThetaUVector &thetau)
+vpVelocityTwistMatrix
+vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
+				 const vpThetaUVector &thetau)
 {
-    vpRotationMatrix R ;
-    R.buildFrom(thetau) ;
-    buildFrom(t,R) ;
-    return (*this) ;
+  vpRotationMatrix R ;
+  R.buildFrom(thetau) ;
+  buildFrom(t,R) ;
+  return (*this) ;
 
 }
 
@@ -439,49 +384,21 @@ vpTwistMatrix::buildFrom(const vpTranslationVector &t,
   \f$M\f$ with \f[ {\bf M} = \left[\begin{array}{cc} {\bf R} & {\bf t}
   \\ {\bf 0}_{1\times 3} & 1 \end{array} \right] \f]
 
-  \deprecated This class is deprecated. You shoud use
-  vpVelocityTwistMatrix class instead.
-
   \param M : Homogeneous matrix \f$M\f$ used to initialize the twist
   transformation matrix.
 
 */
-vpTwistMatrix
-vpTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
+vpVelocityTwistMatrix
+vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
 {
-    vpTranslationVector t ;
-    vpRotationMatrix R ;
-    M.extract(R) ;
-    M.extract(t) ;
-
-    buildFrom(t, R) ;
-    return (*this) ;
-}
-/*!
-
-  \deprecated Build a velocity twist transformation matrix from a
-  translation vector \e t and a euler vector.
-
-  \param t : Translation vector.
-  
-  \param euler : Euler vector.
-
-*/
-vpTwistMatrix
-vpTwistMatrix::buildFrom(const vpTranslationVector &t,
-			 const vpEulerVector &euler)
-{
+  vpTranslationVector t ;
   vpRotationMatrix R ;
-  vpRzyzVector rzyz;
-  for (int i=0; i < 3; i ++)
-    rzyz[i] = euler[i];
-  R.buildFrom(rzyz) ;
-  buildFrom(t,R) ;
+  M.extract(R) ;
+  M.extract(t) ;
+
+  buildFrom(t, R) ;
   return (*this) ;
 }
-
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-
 
 /*
  * Local variables:
