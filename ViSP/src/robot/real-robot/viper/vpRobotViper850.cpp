@@ -1207,9 +1207,8 @@ void vpRobotViper850::setPosition(const char *filename)
   \param position : Measured position of the robot:
   - in camera cartesien frame, a 6 dimension vector, set to 0.
 
-  - in articular, a 6 dimension vector corresponding to the articular
-  position of each dof, first the 3 translations, then the 3
-  articular rotation positions represented by a vpRxyzVector.
+  - in articular, a 6 dimension vector corresponding to the joint
+  position of each dof in radians.
 
   - in reference frame, a 6 dimension vector, the first 3 values correspond to
   the translation tx, ty, tz in meters (like a vpTranslationVector), and the
@@ -1943,9 +1942,9 @@ vpRobotViper850::savePosFile(const char *filename, const vpColVector &q)
 
   // Save positions in mm and deg
   fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n",
-	  q[0],
-	  q[1],
-	  q[2],
+	  vpMath::deg(q[0]),
+	  vpMath::deg(q[1]),
+	  vpMath::deg(q[2]),
 	  vpMath::deg(q[3]),
 	  vpMath::deg(q[4]),
 	  vpMath::deg(q[5]));
