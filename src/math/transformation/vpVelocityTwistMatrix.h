@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef vpTWISTMATRIX_HH
-#define vpTWISTMATRIX_HH
+#ifndef vpVelocityRwistMatrix_h
+#define vpVelocityRwistMatrix_h
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
