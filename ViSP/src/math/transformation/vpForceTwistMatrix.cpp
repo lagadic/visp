@@ -352,7 +352,7 @@ vpForceTwistMatrix::operator*(const vpColVector &H) const
     }
   }
   
-  return H ;
+  return Hout ;
 }
 
 
