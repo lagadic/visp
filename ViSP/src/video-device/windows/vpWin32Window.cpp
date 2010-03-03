@@ -144,6 +144,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       {
         window->coordX = GET_X_LPARAM(lParam);
         window->coordY = GET_Y_LPARAM(lParam);
+		ReleaseSemaphore(window->semaMove,1,NULL);
       }
       break;
 
@@ -201,6 +202,7 @@ vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
   semaClick = CreateSemaphore(NULL,0,1,NULL);
   semaClickUp = CreateSemaphore(NULL,0,1,NULL);
   semaKey = CreateSemaphore(NULL,0,1,NULL);
+  semaMove = CreateSemaphore(NULL,0,1,NULL);
 
 }
 
@@ -214,6 +216,7 @@ vpWin32Window::~vpWin32Window()
   CloseHandle(semaClick);
   CloseHandle(semaClickUp);
   CloseHandle(semaKey);
+  CloseHandle(semaMove);
 }
 
 

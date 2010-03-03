@@ -2413,6 +2413,35 @@ vpDisplay::getPointerMotionEvent (const vpImage<unsigned char> &I,
 }
 
 /*!
+  Get the coordinates of the mouse pointer.
+
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+  
+  \return true.
+  
+*/
+bool 
+vpDisplay::getPointerPosition (const vpImage<unsigned char> &I,
+				  vpImagePoint &ip)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getPointerPosition ( ip ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false;
+}
+
+/*!
   Wait for a click.
 
   \param I [in] : The displayed image.
@@ -2652,6 +2681,33 @@ vpDisplay::getPointerMotionEvent (const vpImage<vpRGBa> &I, vpImagePoint &ip)
     if ( I.display != NULL )
     {
       return ( I.display )->getPointerMotionEvent ( ip ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false;
+}
+
+/*!
+  Get the coordinates of the mouse pointer.
+
+  \param I [in] : The displayed image.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+  
+  \return true.
+*/
+bool 
+vpDisplay::getPointerPosition (const vpImage<vpRGBa> &I, vpImagePoint &ip)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      return ( I.display )->getPointerPosition ( ip ) ;
     }
   }
   catch ( ... )

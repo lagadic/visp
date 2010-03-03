@@ -146,6 +146,9 @@ private:
   CvFont *font;
   int fontHeight;  
   int ncol, nrow ;
+  int x_move;
+  int y_move;
+  bool move;
   int x_lbuttondown ;
   int y_lbuttondown ;
   bool lbuttondown;
@@ -253,6 +256,7 @@ protected:
   bool getKeyboardEvent(bool blocking=true);
   bool getKeyboardEvent(char *string, bool blocking=true);
   bool getPointerMotionEvent (vpImagePoint &ip);
+  bool getPointerPosition (vpImagePoint &ip);
 
   static void on_mouse( int event, int x, int y, int flags, void* param );
 } ;

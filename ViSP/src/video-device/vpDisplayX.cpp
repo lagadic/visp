@@ -3003,6 +3003,45 @@ vpDisplayX::getPointerMotionEvent ( vpImagePoint &ip)
   return ret ;
 }
 
+
+
+bool
+vpDisplayX::getPointerPosition ( vpImagePoint &ip)
+{
+
+  bool ret = false;
+  if ( Xinitialise ) {
+    unsigned int u, v ;
+
+    Window  rootwin, childwin ;
+    int   root_x, root_y, win_x, win_y ;
+    unsigned int  modifier ;
+    // Event testing
+    ret = true;
+       
+    if(ret){
+      // Get mouse position
+      if ( XQueryPointer ( display,
+                           window,
+                           &rootwin, &childwin,
+                           &root_x, &root_y,
+                           &win_x, &win_y,
+                           &modifier ) ) {
+        u = win_x;
+        v = win_y;
+	ip.set_u( u );
+        ip.set_v( v );	
+      }
+    }
+  }
+  else {
+    vpERROR_TRACE ( "X not initialized " ) ;
+    throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "X not initialized" ) ) ;
+  }
+  return ret ;
+}
+
 #endif
 
 /*

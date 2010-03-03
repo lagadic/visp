@@ -512,6 +512,41 @@ vpDisplayWin32::getPointerMotionEvent (vpImagePoint &ip)
   //wait if the window is not initialized
   waitForInit();
 
+  bool ret = false;
+
+  ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaMove, NULL));
+  if (ret)
+  {
+    double u, v;
+	std::cout << "toto";
+    //tells the window there has been a getclick demand
+    //PostMessage(window.getHWnd(), vpWM_GETPOINTERMOTIONEVENT, 0,0);
+  
+    u = window.coordX;
+    v = window.coordY;
+    ip.set_u( u );
+    ip.set_v( v );
+  }
+
+  return ret;
+}
+
+/*!
+  Get the coordinates of the mouse pointer.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+
+  \return true.
+
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+*/
+bool 
+vpDisplayWin32::getPointerPosition (vpImagePoint &ip)
+{
+  //wait if the window is not initialized
+  waitForInit();
+
   bool ret = true ;
   double u, v;
   //tells the window there has been a getclick demand

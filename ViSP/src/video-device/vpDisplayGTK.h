@@ -266,6 +266,7 @@ protected:
   bool getKeyboardEvent(bool blocking=true);
   bool getKeyboardEvent(char *string, bool blocking=true);
   bool getPointerMotionEvent (vpImagePoint &ip);
+  bool getPointerPosition (vpImagePoint &ip);
 
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }

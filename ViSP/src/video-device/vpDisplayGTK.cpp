@@ -1287,7 +1287,7 @@ vpDisplayGTK::getClickUp(vpImagePoint &ip,
 
   if ( GTKinitialized ) {
 
-    flushDisplay() ;
+    //flushDisplay() ;
     GdkEvent *ev = NULL;
     double u, v ;
     do {
@@ -1551,6 +1551,35 @@ vpDisplayGTK::getPointerMotionEvent ( vpImagePoint &ip)
                              "GTK not initialized")) ;
   }
   return ret;
+}
+
+/*!
+  Get the coordinates of the mouse pointer.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+
+  \return true.
+
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+*/
+bool
+vpDisplayGTK::getPointerPosition ( vpImagePoint &ip)
+{
+  if (GTKinitialized)
+  {
+    int u,v;
+    gdk_window_get_pointer(widget->window, &u, &v, NULL);
+    ip.set_u( u );
+    ip.set_v( v );
+  }
+  else {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+  
+  return true;
 }
 
 #endif
