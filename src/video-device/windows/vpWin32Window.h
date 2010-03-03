@@ -84,6 +84,8 @@ private :
   HANDLE semaClickUp;
   //! Handle for the keyborad event semaphore
   HANDLE semaKey;
+  //! Handle for the mouse event semaphore
+  HANDLE semaMove;
   
   //! X coordinate of the click
   int clickX;

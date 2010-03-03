@@ -277,6 +277,7 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
   /* Create the window*/
   window = cvNamedWindow( this->title, flags );
   cvMoveWindow( this->title, x, y );
+  move = false;
   lbuttondown = false;
   mbuttondown = false;
   rbuttondown = false;
@@ -859,34 +860,35 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
 {
   if (OpenCVinitialized)
   {
-    if (color.id < vpColor::id_unknown) {
-      ((uchar*)(background->imageData 
-		+ background->widthStep*vpMath::round( ip.get_i() )))
-	[vpMath::round( ip.get_j()*3 )] = (uchar)col[color.id].val[0];
-
-      ((uchar*)(background->imageData 
-		+ background->widthStep*vpMath::round( ip.get_i() )))
-	[vpMath::round( ip.get_j()*3+1 )] = (uchar)col[color.id].val[1];
-      
-      ((uchar*)(background->imageData 
-		+ background->widthStep*vpMath::round( ip.get_i() )))
-	[vpMath::round( ip.get_j()*3+2 )] = (uchar)col[color.id].val[2];
-    }
-    else {
-      cvcolor = CV_RGB(color.R, color.G, color.B) ;
-      ((uchar*)(background->imageData 
-		+ background->widthStep*vpMath::round( ip.get_i() )))
-	[vpMath::round( ip.get_j()*3 )] = (uchar)cvcolor.val[0];
-
-      ((uchar*)(background->imageData 
-		+ background->widthStep*vpMath::round( ip.get_i() )))
-	[vpMath::round( ip.get_j()*3+1 )] = (uchar)cvcolor.val[1];
-      
-      ((uchar*)(background->imageData 
-		+ background->widthStep*vpMath::round( ip.get_i() )))
-	[vpMath::round( ip.get_j()*3+2 )] = (uchar)cvcolor.val[2];
-
-    }
+    displayLine(ip,ip,color,1);
+//     if (color.id < vpColor::id_unknown) {
+//       ((uchar*)(background->imageData 
+// 		+ background->widthStep*vpMath::round( ip.get_i() )))
+// 	[vpMath::round( ip.get_j()*3 )] = (uchar)col[color.id].val[0];
+// 
+//       ((uchar*)(background->imageData 
+// 		+ background->widthStep*vpMath::round( ip.get_i() )))
+// 	[vpMath::round( ip.get_j()*3+1 )] = (uchar)col[color.id].val[1];
+//       
+//       ((uchar*)(background->imageData 
+// 		+ background->widthStep*vpMath::round( ip.get_i() )))
+// 	[vpMath::round( ip.get_j()*3+2 )] = (uchar)col[color.id].val[2];
+//     }
+//     else {
+//       cvcolor = CV_RGB(color.R, color.G, color.B) ;
+//       ((uchar*)(background->imageData 
+// 		+ background->widthStep*vpMath::round( ip.get_i() )))
+// 	[vpMath::round( ip.get_j()*3 )] = (uchar)cvcolor.val[0];
+// 
+//       ((uchar*)(background->imageData 
+// 		+ background->widthStep*vpMath::round( ip.get_i() )))
+// 	[vpMath::round( ip.get_j()*3+1 )] = (uchar)cvcolor.val[1];
+//       
+//       ((uchar*)(background->imageData 
+// 		+ background->widthStep*vpMath::round( ip.get_i() )))
+// 	[vpMath::round( ip.get_j()*3+2 )] = (uchar)cvcolor.val[2];
+// 
+//     }
   }
   else
   {
@@ -1247,7 +1249,7 @@ vpDisplayOpenCV::getClick(vpImagePoint &ip,
   bool ret = false;
 
   if (OpenCVinitialized) {
-    flushDisplay() ;
+    //flushDisplay() ;
     double u, v;
     if (blocking){
       lbuttondown = false;
@@ -1323,7 +1325,7 @@ vpDisplayOpenCV::getClickUp(vpImagePoint &ip,
 {
   bool ret = false;
   if (OpenCVinitialized) {
-    flushDisplay() ;
+    //flushDisplay() ;
     double u, v;
     if (blocking){
       lbuttonup = false;
@@ -1384,6 +1386,13 @@ void vpDisplayOpenCV::on_mouse( int event, int x, int y, int /*flags*/, void* di
   vpDisplayOpenCV* disp = (vpDisplayOpenCV*)display;
   switch ( event )
   {
+    case CV_EVENT_MOUSEMOVE:
+    {
+      disp->move = true;
+      disp->x_move = x;
+      disp->y_move = y;
+      break;
+    }
     case CV_EVENT_LBUTTONDOWN:
     {
       disp->lbuttondown = true;
@@ -1533,10 +1542,55 @@ vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
   was not initialized.
 */
 bool 
-vpDisplayOpenCV::getPointerMotionEvent (vpImagePoint & /* ip */)
+vpDisplayOpenCV::getPointerMotionEvent (vpImagePoint &ip )
+{
+  bool ret = false;
+
+  if (OpenCVinitialized) {
+    //flushDisplay() ;
+    double u, v;
+    if (move){
+      ret = true ;
+      u = (unsigned int)x_move;
+      v = (unsigned int)y_move;
+      ip.set_u( u );
+      ip.set_v( v );
+      move = false;
+    }
+  }
+
+  else {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+  return ret;
+}
+
+/*!
+  Get the coordinates of the mouse pointer.
+
+  \param ip [out] : The coordinates of the mouse pointer.
+
+  \return true.
+
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+*/
+bool
+vpDisplayOpenCV::getPointerPosition ( vpImagePoint &ip)
 {
   if (OpenCVinitialized) {
-    vpTRACE("Not implemented yet");
+    //vpTRACE("Not implemented yet");
+    bool moved = getPointerMotionEvent(ip);
+    if (!moved)
+    {
+      double u, v;
+      u = (unsigned int)x_move;
+      v = (unsigned int)y_move;
+      ip.set_u( u );
+      ip.set_v( v );
+    }
     return false;
   }
   else {

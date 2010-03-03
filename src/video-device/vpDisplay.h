@@ -542,6 +542,18 @@ class VISP_EXPORT vpDisplay
     was not initialized.
   */
   virtual bool getPointerMotionEvent (vpImagePoint &ip) =0;
+  
+  /*!
+    Get the coordinates of the mouse pointer.
+    
+    \param ip [out] : The coordinates of the mouse pointer.
+  
+    \return true.
+
+    \exception vpDisplayException::notInitializedError : If the display
+    was not initialized.
+  */
+  virtual bool getPointerPosition (vpImagePoint &ip) =0;
 
   /*!
     Return the display width.
@@ -680,6 +692,8 @@ class VISP_EXPORT vpDisplay
 			       char *string, bool blocking=true);
   static bool getPointerMotionEvent (const vpImage<unsigned char> &I, 
 				     vpImagePoint &ip);
+  static bool getPointerPosition (const vpImage<unsigned char> &I, 
+				     vpImagePoint &ip);
 
   /*!
     @name Display functionalities on color images.
@@ -805,6 +819,7 @@ class VISP_EXPORT vpDisplay
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, 
 			       char *string, bool blocking=true);
   static bool getPointerMotionEvent (const vpImage<vpRGBa> &I, vpImagePoint &ip);
+  static bool getPointerPosition (const vpImage<vpRGBa> &I, vpImagePoint &ip);
 
 
 

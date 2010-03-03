@@ -203,6 +203,7 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   bool getKeyboardEvent( bool blocking=true);
   bool getKeyboardEvent(char *string, bool blocking);
   bool getPointerMotionEvent (vpImagePoint &ip);
+  bool getPointerPosition (vpImagePoint &ip);
 
   void waitForInit();
 
