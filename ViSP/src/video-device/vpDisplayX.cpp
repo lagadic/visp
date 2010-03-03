@@ -3003,8 +3003,16 @@ vpDisplayX::getPointerMotionEvent ( vpImagePoint &ip)
   return ret ;
 }
 
+/*!
+  Get the coordinates of the mouse pointer.
 
+  \param ip [out] : The coordinates of the mouse pointer.
 
+  \return true.
+
+  \exception vpDisplayException::notInitializedError : If the display
+  was not initialized.
+*/
 bool
 vpDisplayX::getPointerPosition ( vpImagePoint &ip)
 {
