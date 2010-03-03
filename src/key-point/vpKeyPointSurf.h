@@ -210,7 +210,7 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
     vpList<int*>* matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList);
     float* getDescriptorReferencePoint (const int index);
     int getLaplacianReferencePoint (const int index);
-
+    void getDescriptorParamReferencePoint (const int index, int& size, float& dir);
     /*!
 
       Sets the value of the hessian threhold.  Note that during the

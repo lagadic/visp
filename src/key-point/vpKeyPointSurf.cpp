@@ -549,7 +549,6 @@ void vpKeyPointSurf::display(vpImage<unsigned char> &Icurrent)
   }
 }
 
-
 /*!
 
   Computes the SURF points given by their descriptor and laplacian and try to match
@@ -600,7 +599,7 @@ vpList<int*>* vpKeyPointSurf::matchPoint(vpList<float*> descriptorList, vpList<i
 
   return pairPoints;
 }
-
+ 
 /*!
   Get the descriptor of the nth reference point.
 
@@ -658,6 +657,35 @@ int vpKeyPointSurf::getLaplacianReferencePoint (const int index)
 	return laplacian;
 }
 
+/*!
+  Get the parameters of the descriptor of the nth reference point.
+
+ \param index : The index of the desired reference point. The index must be between 0 and the number of reference points - 1.
+ \param size : The size of the point used to compute the descriptor.
+ \param dir : The orientation of the descriptor (in degree).
+*/
+void vpKeyPointSurf::getDescriptorParamReferencePoint (const int index, int& size, float& dir)
+{
+  if (index >= nbReferencePoints || index < 0){
+    vpTRACE("Index of the reference point out of range");
+    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
+  }
+
+  CvSeqReader reader;
+  cvStartReadSeq( ref_keypoints, &reader );
+
+  int laplacian = 0;/* normally only -1, 0, +1 are possible */
+
+  for(int j = 0; j < ref_keypoints->total; j++ ){
+    if(j== index){
+      const CvSURFPoint* kp = (const CvSURFPoint*)reader.ptr;
+      size = kp->size;
+      dir = kp->dir;
+      break;
+    }
+    CV_NEXT_SEQ_ELEM( reader.seq->elem_size, reader );
+  }
+}
 
 
 #endif
