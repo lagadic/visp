@@ -1024,6 +1024,44 @@ inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const
   return (unsigned char)vpMath::round(value);
 }
 
+
+template<>
+inline double vpImage<double>::getValue(double i, double j) const
+{
+  unsigned int iround, jround;
+  double rfrac, cfrac;
+
+  iround = (unsigned int)floor(i);
+  jround = (unsigned int)floor(j);
+
+  if (iround >= height || jround >= width) {
+    vpERROR_TRACE("Pixel outside the image") ;
+    throw(vpException(vpImageException::notInTheImage,
+		      "Pixel outside the image"));
+  }
+
+  if (i > height - 1)
+    i = (double)(height - 1);
+
+  if (j > width - 1)
+    j = (double)(width - 1);
+
+  double rratio = i - (double) iround;
+  if(rratio < 0)
+    rratio=-rratio;
+  double cratio = j - (double) jround;
+  if(cratio < 0) 
+    cratio=-cratio;
+
+  rfrac = 1.0f - rratio;
+  cfrac = 1.0f - cratio;
+
+
+  double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
+             + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
+  return value;
+}
+
 template<>
 inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 {
@@ -1120,6 +1158,44 @@ inline unsigned char vpImage<unsigned char>::getValue(vpImagePoint &ip) const
   double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
              + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
   return (unsigned char)vpMath::round(value);
+}
+
+
+template<>
+inline double vpImage<double>::getValue(vpImagePoint &ip) const
+{
+  unsigned int iround, jround;
+  double rfrac, cfrac;
+
+  iround = (unsigned int)floor(ip.get_i());
+  jround = (unsigned int)floor(ip.get_j());
+
+  if (iround >= height || jround >= width) {
+    vpERROR_TRACE("Pixel outside the image") ;
+    throw(vpException(vpImageException::notInTheImage,
+		      "Pixel outside the image"));
+  }
+
+  if (ip.get_i() > height - 1)
+    ip.set_i((double)(height - 1));
+
+  if (ip.get_j() > width - 1)
+    ip.set_j((double)(width - 1));
+
+  double rratio = ip.get_i() - (double) iround;
+  if(rratio < 0)
+    rratio=-rratio;
+  double cratio = ip.get_j() - (double) jround;
+  if(cratio < 0) 
+    cratio=-cratio;
+
+  rfrac = 1.0f - rratio;
+  cfrac = 1.0f - cratio;
+
+
+  double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
+             + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
+  return value;
 }
 
 template<>
