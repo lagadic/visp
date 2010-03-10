@@ -948,7 +948,7 @@ vpMatrix vpMatrix::operator*(double x) const
     std::cout << me << std::endl ;
     throw ;
   }
-	double t0,t1;
+//	double t0,t1;
 
 	double ** CrowPtrs=C.rowPtrs;
 	
@@ -1438,7 +1438,7 @@ vpRowVector vpMatrix::stackRows(){
   Compute Kronecker product 
   \param m1 : vpMatrix;
   \param m2 : vpMatrix;
-  \param out : kron(m1,m2)
+  \param out : The kronecker product : \f$ m1 \otimes m2 \f$
   */
 void vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out){
   int r1= m1.getRows();
@@ -1450,7 +1450,7 @@ void vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out){
    if (r1*r2 !=out.rowNum || c1*c2!= out.colNum )
    {
       vpERROR_TRACE("Kronecker prodect bad dimension of output vpMatrix") ;
-      throw(vpMatrixException::incorrectMatrixSizeError,"Kronecker prodect bad dimension of output vpMatrix") ;
+      throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,"Kronecker prodect bad dimension of output vpMatrix"));
    }
    
   for(int r =0;r<r1 ; r++){
@@ -1471,9 +1471,18 @@ void vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out){
 
 /*!
   Compute Kronecker product 
+  \param m : vpMatrix;
+  \param out : If m1.kron(m2) out contains the kronecker product's result : \f$ m1 \otimes m2 \f$
+  */
+void vpMatrix::kron(const vpMatrix  &m , vpMatrix  &out){
+  kron(*this,m,out);
+}
+
+/*!
+  Compute Kronecker product 
   \param m1 : vpMatrix;
   \param m2 : vpMatrix;
-  \return kron(m1,m2)
+  \return The kronecker product : \f$ m1 \otimes m2 \f$
   */
 vpMatrix vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 ){
   
@@ -1498,6 +1507,16 @@ vpMatrix vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 ){
     }
   }
   return out;
+}
+
+
+/*!
+  Compute Kronecker product 
+  \param m : vpMatrix;
+  \return m1.kron(m2) The kronecker product : \f$ m1 \otimes m2 \f$
+  */
+vpMatrix vpMatrix::kron(const vpMatrix  &m){
+    return kron(*this,m);
 }
 
 

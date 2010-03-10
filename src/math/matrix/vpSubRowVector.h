@@ -65,9 +65,9 @@ class vpSubRowVector : public vpRowVector {
   private :
       
       //! Resize method unavaible
-      void resize(const int r , const int c ){}
+      void resize(const int /* r */, const int /* c */ ){}
       //!Copy constructor unavaible
-      vpSubRowVector(const vpSubRowVector& m){}      
+      vpSubRowVector(const vpSubRowVector& /* m */);
        
   protected :
  

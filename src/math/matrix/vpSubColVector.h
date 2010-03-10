@@ -63,9 +63,9 @@ class vpSubColVector : public vpColVector {
   private :
       
       //! Resize method do nothing
-      void resize(const int r , const int c ){}
+      void resize(const int /* r */ , const int /* c */ ){}
       //!Copy constructor
-      vpSubColVector(const vpSubColVector& m){}      
+      vpSubColVector(const vpSubColVector& /* m */);      
        
   protected :
  
