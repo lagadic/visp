@@ -84,7 +84,7 @@ void vpSubColVector::init(vpColVector &v, const int & offset,const int & nrows){
     colNum = 1;
     
     pRowNum=v.getRows();
-    vpColVector *parent=&v;
+    parent=&v;
     
     if(rowPtrs)
       delete [] rowPtrs;

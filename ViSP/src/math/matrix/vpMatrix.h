@@ -324,12 +324,9 @@ public:
   //-------------------------------------------------
   // Kronecker product
   //-------------------------------------------------
-  //! Compute Kronecker produtc matrix 
-  static void kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out);
-
-  //! Compute Kronecker produtc matrix 
-  static vpMatrix kron(const vpMatrix  &m1, const vpMatrix  &m2 );
-
+  /** @name Kronecker product  */
+  //@{
+  
   //! Stacks columns of a matrix in a vector
   void stackColumns(vpColVector  &out );
 
@@ -341,6 +338,19 @@ public:
 
   //! Stacks columns of a matrix in a vector
   vpRowVector stackRows();
+  
+  //! Compute Kronecker produtc matrix 
+  void kron(const vpMatrix  &m1 , vpMatrix  &out);
+  
+  //! Compute Kronecker produtc matrix 
+  vpMatrix kron(const vpMatrix  &m1);
+  //@}
+  
+  //! Compute Kronecker produtc matrix 
+  static void kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out);
+
+  //! Compute Kronecker produtc matrix 
+  static vpMatrix kron(const vpMatrix  &m1, const vpMatrix  &m2 );
 
 
   //-------------------------------------------------

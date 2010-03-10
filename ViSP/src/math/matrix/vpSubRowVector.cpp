@@ -83,7 +83,7 @@ void vpSubRowVector::init(vpRowVector &v, const int & offset,const int & ncols){
 	colNum = ncols;
 	
 	pColNum=v.getCols();
-	vpRowVector *parent=&v;
+	parent=&v;
 	
 	if(rowPtrs)
 	  delete [] rowPtrs;
@@ -136,6 +136,8 @@ vpSubRowVector & vpSubRowVector::operator=(const vpSubRowVector &B){
 	
 	for (int i=0;i<rowNum;i++)
 	    data[i] = B[i];
+	
+	return *this;
 }
 
 /*!

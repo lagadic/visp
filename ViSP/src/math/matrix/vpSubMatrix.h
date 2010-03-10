@@ -63,13 +63,13 @@ class vpSubMatrix : public vpMatrix{
 
   private :
       //! Resize method unavailable
-      void resize(const int r , const int c ){}
+      void resize(const int /* r */ , const int /* c */ ){}
       //! Eye method unavailable
       void eye(int n);
       //! Eye method unavailable
       void eye(int m, int n);
       //! Copy constructor unavailable
-      vpSubMatrix(const vpSubMatrix& m){}      
+      vpSubMatrix(const vpSubMatrix& /* m */);      
        
   protected :
  

@@ -100,7 +100,7 @@ void vpSubMatrix::init(vpMatrix &m, const int & row, const int &col , const int 
     trsize =0 ;
   }else{
     vpERROR_TRACE("Submatrix cannot be contain in parent matrix") ;
-    throw(vpMatrixException::incorrectMatrixSizeError,"Submatrix cannot be contain in parent matrix") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,"Submatrix cannot be contain in parent matrix")) ;
   }
 }
 
