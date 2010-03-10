@@ -123,6 +123,10 @@ public:
   vpColVector rows(int first_row, int last_row)
   { return vpColVector(*this, first_row-1, last_row-first_row+1); }
 
+  //! Reshape methods
+  void reshape(vpMatrix & m,const int &nrows,const int &ncols);
+  vpMatrix reshape(const int &nrows,const int &ncols);
+
   //! transpose of Vector
   vpRowVector t() const;
 

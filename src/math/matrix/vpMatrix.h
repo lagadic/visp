@@ -210,6 +210,7 @@ public:
 
   static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
   static void add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
+  static void add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C);
   static void sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
   static void negateMatrix(const vpMatrix &A, vpMatrix &C);
   static void multMatrixVector(const vpMatrix &A, const vpColVector &b, vpColVector &c);
@@ -300,9 +301,10 @@ public:
 
   //! Compute the transpose C = A^T
   vpMatrix transpose()const;
-  
+  void  transpose(vpMatrix & C )const;
+    
   //! Set the matrix to identity
-  void setIdentity() ;
+  void setIdentity(const double & val=1.0) ;
 
   //! Initialize an identity matrix n-by-n
   void eye(int n) ;
@@ -317,6 +319,29 @@ public:
   vpMatrix AtA() const;
   void AtA(vpMatrix &B) const;
   //@}
+
+
+  //-------------------------------------------------
+  // Kronecker product
+  //-------------------------------------------------
+  //! Compute Kronecker produtc matrix 
+  static void kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out);
+
+  //! Compute Kronecker produtc matrix 
+  static vpMatrix kron(const vpMatrix  &m1, const vpMatrix  &m2 );
+
+  //! Stacks columns of a matrix in a vector
+  void stackColumns(vpColVector  &out );
+
+  //! Stacks columns of a matrix in a vector
+  vpColVector stackColumns();
+
+  //! Stacks columns of a matrix in a vector
+  void stackRows(vpRowVector  &out );
+
+  //! Stacks columns of a matrix in a vector
+  vpRowVector stackRows();
+
 
   //-------------------------------------------------
   // LU decomposition
