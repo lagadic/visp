@@ -344,12 +344,30 @@ vpMatrix::operator=(const vpMatrix &B)
 vpMatrix &
 vpMatrix::operator=(double x)
 {
-  for (int i=0; i<dsize; i++)
-  {
-    *(data+i) = x;
-  }
+  
+// 	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<dsize;i++)
+// 	{
+// 		*(data+i) = x;
+// 	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<< std::endl;
+	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	  for(int j=0;j<colNum;j++)
+	    rowPtrs[i][j] = x;
+	    
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+	
+
+ 
   return *this;
 }
+
 
 /*!
   \brief Assigment from an array of double
@@ -431,6 +449,45 @@ vpMatrix vpMatrix::operator*(const vpMatrix &B) const
 
   return C;
 }
+/*!
+	operation C = A*wA + B*wB 
+	
+	The Result is placed in the third parameter C and not returned.
+	A new matrix won't be allocated for every use of the function 
+	(Speed gain if used many times with the same result matrix size).
+
+	\sa operator+()
+*/
+
+void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C){
+	try 
+	{
+		if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+	}
+	catch(vpException me)
+	{
+		vpERROR_TRACE("Error caught") ;
+		std::cout << me << std::endl ;
+		throw ;
+	}
+
+	if ((A.colNum != B.getCols())||(A.rowNum != B.getRows()))
+	{
+		vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
+		throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+			    "\n\t\t vpMatrix mismatch in "
+			    "vpMatrix/vpMatrix addition")) ;
+	}
+
+	double ** ArowPtrs=A.rowPtrs;
+	double ** BrowPtrs=B.rowPtrs;
+	double ** CrowPtrs=C.rowPtrs;
+	
+	for (int i=0;i<A.rowNum;i++)
+	  for(int j=0;j<A.colNum;j++)	 
+	     CrowPtrs[i][j] = wB*BrowPtrs[i][j]+wA*ArowPtrs[i][j];
+	
+}
 
 /*!
 	operation C = A + B. 
@@ -462,20 +519,30 @@ void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 			    "vpMatrix/vpMatrix addition")) ;
 	}
 
-	int i;
-	// MODIF EM 16/6/03
-	/*int j;
-    for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)
-    {
-    v.rowPtrs[i][j] = B.rowPtrs[i][j]+rowPtrs[i][j];
-    }
-	*/
+	double ** ArowPtrs=A.rowPtrs;
+	double ** BrowPtrs=B.rowPtrs;
+	double ** CrowPtrs=C.rowPtrs;
 
-	for (i=0;i<A.dsize;i++)
+// 	double t0,t1;
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<A.dsize;i++)
+// 	{
+// 		*(C.data + i) = *(B.data + i) + *(A.data + i) ;
+// 	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<< std::endl;
+
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<A.rowNum;i++)
+	for(int j=0;j<A.colNum;j++)
 	{
-		*(C.data + i) = *(B.data + i) + *(A.data + i) ;
+	 
+	    CrowPtrs[i][j] = BrowPtrs[i][j]+ArowPtrs[i][j];
 	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+	
+
 }
 
 /*!
@@ -484,10 +551,12 @@ void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 */
 vpMatrix vpMatrix::operator+(const vpMatrix &B) const
 {
+
 	vpMatrix C;
 	vpMatrix::add2Matrices(*this,B,C);
 	return C;
 }
+
 
 /*!
 	operation C = A - B. 
@@ -519,12 +588,32 @@ void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 			    "vpMatrix/vpMatrix substraction")) ;
 	}
 
-	int i;
-	// MODIF EM 16/6/03
-	for (i=0;i<A.dsize;i++)
+
+
+	double ** ArowPtrs=A.rowPtrs;
+	double ** BrowPtrs=B.rowPtrs;
+	double ** CrowPtrs=C.rowPtrs;
+
+// 	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<A.dsize;i++)
+// 	{
+// 		*(C.data + i) = *(A.data + i) - *(B.data + i)   ;
+// 	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<< std::endl;
+// 	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<A.rowNum;i++)
+	for(int j=0;j<A.colNum;j++)
 	{
-		*(C.data + i) = *(A.data + i) - *(B.data + i) ;
+	    CrowPtrs[i][j] = ArowPtrs[i][j]-BrowPtrs[i][j];
 	}
+// 	t1=vpTime::measureTimeMicros();
+//	std::cout<< t1-t0<<" ";
+	
+
 }
 
 /*!
@@ -551,18 +640,30 @@ vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
 
   }
 
-  int i;
 
-  // MODIF EM 16/6/03
-  for (i=0;i<dsize;i++)
-  {
-    *(data + i) += *(B.data + i) ;
-  }
-  /* int j;
-     for (i=0;i<rowNum;i++)
-     for(j=0;j<colNum;j++)
-     rowPtrs[i][j] += B.rowPtrs[i][j];
-  */
+	double ** BrowPtrs=B.rowPtrs;
+
+// 	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<dsize;i++)
+// 	{
+// 		*(data + i) += *(B.data + i) ;
+// 	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<< std::endl;
+	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	    for(int j=0;j<colNum;j++)	
+	      rowPtrs[i][j] += BrowPtrs[i][j];
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+	
+
+
+
+
   return *this;
 }
 
@@ -579,20 +680,28 @@ vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
 
   }
 
+	double ** BrowPtrs=B.rowPtrs;
+
+// 	double t0,t1;
+     
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<dsize;i++)
+// 	{
+// 		*(data + i) -= *(B.data + i) ;
+// 	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<< " " ;
+	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	  for(int j=0;j<colNum;j++)
+	    rowPtrs[i][j] -= BrowPtrs[i][j];
+	
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<std::endl;
+	
 
 
-
-  int i;
-  // MODIF EM 16/6/03
-  for (i=0;i<dsize;i++)
-  {
-    *(data + i) -= *(B.data + i) ;
-  }
-  /*
-    int j; for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)
-    rowPtrs[i][j] -= B.rowPtrs[i][j];
-  */
   return *this;
 }
 
@@ -617,11 +726,30 @@ void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
 		std::cout << me << std::endl ;
 		throw ;
 	}
+	
+	double ** ArowPtrs=A.rowPtrs;
+	double ** CrowPtrs=C.rowPtrs;
+	
+	
+// 	std::cout << "negate" << std::endl;
+// 	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<A.dsize;i++)
+// 	{
+// 		*(C.data + i) = -*(A.data + i) ;
+// 	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<< " ";
+	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<A.rowNum;i++)
+	  for(int j=0;j<A.colNum;j++)
+	    CrowPtrs[i][j]= -ArowPtrs[i][j];
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<std::endl;
+	
 
-	for (int i=0;i<A.dsize;i++)
-	{
-		*(C.data + i) = -*(A.data + i) ;
-	}
 }
 
 /*!
@@ -641,29 +769,39 @@ vpMatrix::sumSquare() const
 {
   double sum=0.0;
   double x ;
+  
+// 	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	double *d = data ;
+// 	double *n = data+dsize ;
+// 	while (d < n )
+// 	{
+// 	  x = *d++ ;
+// 	  sum += x*x ;
+// 	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" "<< sum << " ";
+// 	
+	
+	
+// 	sum= 0.0;
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	for(int j=0;j<colNum;j++)
+	{
+	    x=rowPtrs[i][j];
+	    sum+=x*x;
+	}
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" "<< sum << std::endl;
 
+	
 
-  double *d = data ;
-  double *n = data+dsize ;
-  while (d < n )
-  {
-    x = *d++ ;
-    sum += x*x ;
-  }
-/*
-  for (int i=0;i<dsize;i++)
-  {
-    x = *(data + i) ;
-    sum += x*x ;
-  }
-
-    for (int i=0; i<rowNum; i++)
-    for (int j=0; j<colNum; j++)
-    sum += rowPtrs[i][j]*rowPtrs[i][j];
-  */
-
+ 
   return sum;
 }
+
 
 //---------------------------------
 // Matrix/vector operations.
@@ -756,10 +894,10 @@ vpMatrix::operator*(const vpTranslationVector &b) const
 vpMatrix operator*(const double &x,const vpMatrix &B)
 {
   // Modif EM 13/6/03
-  vpMatrix v ;
+  vpMatrix C ;
 
   try {
-    v.resize(B.getRows(),B.getCols());
+    C.resize(B.getRows(),B.getCols());
   }
   catch(vpException me)
   {
@@ -767,26 +905,42 @@ vpMatrix operator*(const double &x,const vpMatrix &B)
     std::cout << me << std::endl ;
     throw ;
   }
+// 	double t0,t1;
+	
+	int Brow = B.getRows() ;
+	int Bcol = B.getCols() ;
+// 	t0=vpTime::measureTimeMicros();
+// 
+// 	for (int i=0;i<Brow; i++)
+// 	{
+// 	    double *ci = C[i] ;
+// 	    double *Bi = B[i] ;
+// 	    for (int j=0 ; j < Bcol;j++)
+// 	    ci[j] = Bi[j]*x;
+// 	 }
+//  
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<Brow;i++)
+	  for(int j=0;j<Bcol;j++)
+	    C[i][j]= B[i][j]*x;
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<std::endl;
 
-  int Brow = B.getRows() ;
-  int Bcol = B.getCols() ;
-  for (int i=0;i<Brow; i++)
-    {
-      double *vi = v[i] ;
-      double *Bi = B[i] ;
-      for (int j=0 ; j < Bcol;j++)
-	vi[j] = Bi[j]*x;
-    }
-  return v ;
+
+
+  return C ;
 }
 
 //! Cij = Aij * x (A is unchanged)
 vpMatrix vpMatrix::operator*(double x) const
 {
-  vpMatrix v;
+  vpMatrix C;
 
   try {
-    v.resize(rowNum,colNum);
+    C.resize(rowNum,colNum);
   }
   catch(vpException me)
   {
@@ -794,29 +948,34 @@ vpMatrix vpMatrix::operator*(double x) const
     std::cout << me << std::endl ;
     throw ;
   }
+	double t0,t1;
 
+	double ** CrowPtrs=C.rowPtrs;
+	
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<dsize;i++)
+// 	  *(C.data+i) = *(data+i)*x;
+//  
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+// 	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	  for(int j=0;j<colNum;j++)
+	    CrowPtrs[i][j]= rowPtrs[i][j]*x;
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<std::endl;
 
-
-  for (int i=0;i<dsize;i++)
-    *(v.data+i) = *(data+i)*x;
-
-  // Modif EM 13/6/03
-  /*
-    int i;
-    int j;
-    for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)  v.rowPtrs[i][j] = rowPtrs[i][j]*x;
-  */
-  return v;
+  return C;
 }
 
 //! Cij = Aij / x (A is unchanged)
 vpMatrix  vpMatrix::operator/(double x) const
 {
-  vpMatrix v;
+  vpMatrix C;
 
   try {
-    v.resize(rowNum,colNum);
+    C.resize(rowNum,colNum);
   }
   catch(vpException me)
   {
@@ -832,10 +991,25 @@ vpMatrix  vpMatrix::operator/(double x) const
 
   double  xinv = 1/x ;
 
-  for (int i=0;i<dsize;i++)
-    *(v.data+i) = *(data+i)*xinv ;
-
-  return v;
+  
+//   	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<dsize;i++)
+// 	    *(C.data+i) = *(data+i)*xinv ;
+//  
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+// 	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	  for(int j=0;j<colNum;j++)
+	    C[i][j]=rowPtrs[i][j]*xinv;
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<std::endl;
+	
+       return C;
+ 
 }
 
 
@@ -843,11 +1017,23 @@ vpMatrix  vpMatrix::operator/(double x) const
 vpMatrix & vpMatrix::operator+=(double x)
 {
 
-
-  for (int i=0;i<dsize;i++)
-    *(data+i) += x;
-
-  return *this;
+// 	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<dsize;i++)
+// 	    *(data+i) += x;
+//  
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+// 	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	  for(int j=0;j<colNum;j++)
+	    rowPtrs[i][j]+=x;
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<std::endl;
+	
+       return *this;
 }
 
 
@@ -855,16 +1041,24 @@ vpMatrix & vpMatrix::operator+=(double x)
 vpMatrix & vpMatrix::operator-=(double x)
 {
 
-
-  for (int i=0;i<dsize;i++)
-    *(data+i) -= x;
-  /*
-    int i;int j;
-    for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)
-    rowPtrs[i][j] -= x;
-  */
-  return *this;
+  
+// 	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<dsize;i++)
+// 	    *(data+i) -= x;
+//  
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+// 	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	  for(int j=0;j<colNum;j++)
+	    rowPtrs[i][j]-=x;
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<std::endl;
+	
+       return *this;
 }
 
 //! Multiply  all the element of the matrix by x : Aij = Aij * x
@@ -872,14 +1066,14 @@ vpMatrix & vpMatrix::operator*=(double x)
 {
 
 
-  for (int i=0;i<dsize;i++)
-    *(data+i) *= x;
-  /*
-    int i;int j;
-    for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)  rowPtrs[i][j] *= x;
-  */
-  return *this;
+//   for (int i=0;i<dsize;i++)
+//     *(data+i) *= x;
+  
+  for (int i=0;i<rowNum;i++)
+	  for(int j=0;j<colNum;j++)
+	    rowPtrs[i][j]*=x;
+ 
+   return *this;
 }
 
 //! Divide  all the element of the matrix by x : Aij = Aij / x
@@ -889,26 +1083,36 @@ vpMatrix & vpMatrix::operator/=(double x)
     throw vpMatrixException(vpMatrixException::divideByZeroError, "Divide by zero in method /=(double x)");
 
   double xinv = 1/x ;
-  for (int i=0;i<dsize;i++)
-    *(data+i) *= xinv;
-  /*
-    int i;int j;
-    for (i=0;i<rowNum;i++)
-    for(j=0;j<colNum;j++)  rowPtrs[i][j] /= x;
-  */
-  return *this;
+  
+//   	double t0,t1;
+//      
+// 	t0=vpTime::measureTimeMicros();
+// 	for (int i=0;i<dsize;i++)
+// 	  *(data+i) *= xinv;
+//  
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<" ";
+	
+// 	t0=vpTime::measureTimeMicros();
+	for (int i=0;i<rowNum;i++)
+	  for(int j=0;j<colNum;j++)
+	    rowPtrs[i][j]*=xinv;
+// 	t1=vpTime::measureTimeMicros();
+// 	std::cout<< t1-t0<<std::endl;
+	
+       return *this;
 }
-
 
 //----------------------------------------------------------------
 // Matrix Operation
 //----------------------------------------------------------------
 
+
 /*!
   \brief set the matrix to identity
 */
 void
-vpMatrix::setIdentity()
+vpMatrix::setIdentity(const double & val)
 {
 
   if (rowNum != colNum)
@@ -922,7 +1126,7 @@ vpMatrix::setIdentity()
   int i,j;
   for (i=0;i<rowNum;i++)
     for (j=0;j<colNum;j++)
-      if (i==j) (*this)[i][j] = 1 ; else (*this)[i][j] = 0;
+      if (i==j) (*this)[i][j] = val ; else (*this)[i][j] = 0;
 }
 
 /*!
@@ -1003,16 +1207,23 @@ vpMatrix vpMatrix::t() const
   }
   return At;
 }
+
+
 /*!
   \brief Transpose the matrix C = A^T
   \return  A^T
 */
 vpMatrix vpMatrix::transpose()const
 {
-  vpMatrix At ;
+    vpMatrix At ;
+    transpose(At);
+    return At;
+}
 
+ void  vpMatrix::transpose(vpMatrix & At )const{
+   
   try {
-    At.resize(colNum,rowNum);
+     At.resize(colNum,rowNum);
   }
   catch(vpException me)
   {
@@ -1029,11 +1240,9 @@ vpMatrix vpMatrix::transpose()const
         double * row = AtRowPtrs[i];
 	double * col = rowPtrs[0]+i;
         for( int j = 0; j < rowNum; j++, col+=A_step )
-            *(row++)=*col;
-	   
+            *(row++)=*col;   
     }
-    return At;
-}
+ }
 
 
 /*!
@@ -1153,6 +1362,146 @@ vpMatrix vpMatrix::AtA() const
 
  return B;
 }
+
+
+/*! 
+  \brief Stacks columns of a matrix in a vector 
+  \param out : a vpColVector; 
+  */
+void vpMatrix::stackColumns(vpColVector  &out ){
+   
+    try {
+       if ((out.rowNum != colNum*rowNum) || (out.colNum != 1)) out.resize(rowNum);
+    }
+    catch(vpException me)
+    {
+       vpERROR_TRACE("Error caught") ;
+       vpCERROR << me << std::endl ;
+       throw ;
+    }
+    
+    double *optr=out.data;
+    for(int j =0;j<colNum ; j++){
+	 for(int i =0;i<rowNum ; i++){
+	*(optr++)=rowPtrs[i][j];
+      }
+    }
+}
+
+/*!
+  \brief Stacks columns of a matrix in a vector 
+  \return a vpColVector; 
+*/
+vpColVector vpMatrix::stackColumns(){
+    
+    vpColVector out(colNum*rowNum);
+    stackColumns(out);
+    return out;
+}
+
+/*! 
+  \brief Stacks rows of a matrix in a vector
+  \param out :a  vpRowVector; 
+*/
+void vpMatrix::stackRows(vpRowVector  &out ){
+  
+    try {
+       if ((out.rowNum != 1) || (out.colNum != colNum*rowNum)) out.resize(rowNum);
+    }
+    catch(vpException me)
+    {
+       vpERROR_TRACE("Error caught") ;
+       vpCERROR << me << std::endl ;
+       throw ;
+    }
+    
+    double *mdata=data;
+    double *optr=out.data;
+    for(int i =0;i<dsize ; i++){
+	*(optr++)=*(mdata++);
+    }
+}
+/*! 
+  \brief Stacks rows of a matrix in a vector
+  \return a vpRowVector; 
+*/
+vpRowVector vpMatrix::stackRows(){
+    
+    vpRowVector out(colNum*rowNum);
+    stackRows(out );
+    return out; 
+}
+
+
+
+/*!
+  Compute Kronecker product 
+  \param m1 : vpMatrix;
+  \param m2 : vpMatrix;
+  \param out : kron(m1,m2)
+  */
+void vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out){
+  int r1= m1.getRows();
+  int c1= m1.getCols();
+  int r2= m2.getRows();
+  int c2= m2.getCols();
+    
+  
+   if (r1*r2 !=out.rowNum || c1*c2!= out.colNum )
+   {
+      vpERROR_TRACE("Kronecker prodect bad dimension of output vpMatrix") ;
+      throw(vpMatrixException::incorrectMatrixSizeError,"Kronecker prodect bad dimension of output vpMatrix") ;
+   }
+   
+  for(int r =0;r<r1 ; r++){
+    for(int c =0;c<c1 ; c++){
+      double alpha = m1[r][c];
+      double *m2ptr = m2[0];
+      int roffset= r*r2;
+      int coffset= c*c2;
+      for(int rr =0;rr<r2 ; rr++){
+	for(int cc =0;cc<c2 ;cc++){
+	  out[roffset+rr][coffset+cc]= alpha* *(m2ptr++);
+	}
+      }
+    }
+  }
+  
+}
+
+/*!
+  Compute Kronecker product 
+  \param m1 : vpMatrix;
+  \param m2 : vpMatrix;
+  \return kron(m1,m2)
+  */
+vpMatrix vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 ){
+  
+  int r1= m1.getRows();
+  int c1= m1.getCols();
+  int r2= m2.getRows();
+  int c2= m2.getCols();
+  
+  vpMatrix out(r1*r2,c1*c2);
+  
+  for(int r =0;r<r1 ; r++){
+    for(int c =0;c<c1 ; c++){
+      double alpha = m1[r][c];
+      double *m2ptr = m2[0];
+      int roffset= r*r2;
+      int coffset= c*c2;
+      for(int rr =0;rr<r2 ; rr++){
+	for(int cc =0;cc<c2 ;cc++){
+	  out[roffset+rr ][coffset+cc]= alpha* *(m2ptr++);
+	}
+      }
+    }
+  }
+  return out;
+}
+
+
+
 
 /*!
 

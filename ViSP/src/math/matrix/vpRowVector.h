@@ -105,6 +105,10 @@ public:
   //! initialisation each element of the vector is x
   vpRowVector& operator=(const double x);
 
+  //! Reshape methods
+  void reshape(vpMatrix & m,const int &nrows,const int &ncols);
+  vpMatrix reshape(const int &nrows,const int &ncols);
+  
   //! Transpose the vector
   vpColVector t() const;
 

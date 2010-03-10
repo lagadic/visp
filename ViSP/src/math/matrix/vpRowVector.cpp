@@ -224,3 +224,42 @@ vpRowVector &vpRowVector::normalize()
   return *this;
 }
 
+/*!
+  \brief reshape the row vector in a matrix
+  \param nrows : number of rows of the matrix
+  \param nrows : number of columns of the matrix
+  \return a vpMatrix
+*/
+vpMatrix vpRowVector::reshape(const int &nrows,const int &ncols){
+  vpMatrix m(nrows,ncols);
+  reshape(m,nrows,ncols);
+  return m;
+}
+
+/*!
+  \brief reshape the row vector in a matrix
+  \param m : the reshaped Matrix
+  \param nrows : number of rows of the matrix
+  \param nrows : number of columns of the matrix
+*/
+void vpRowVector::reshape(vpMatrix & m,const int &nrows,const int &ncols){
+  if(dsize!=nrows*ncols)
+  {
+    vpERROR_TRACE("\n\t\t vpSubRowVector mismatch size for reshape vpSubColVector in a vpMatrix") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+			    "\n\t\t \n\t\t vpSubRowVector mismatch size for reshape vpSubColVector in a vpMatrix")) ;
+  }
+  try 
+  {
+    if ((m.getRows() != nrows) || (m.getCols() != ncols)) m.resize(nrows,ncols);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
+     for(int i =0; i< nrows; i++)
+         for(int j =0; j< ncols; j++)
+         	  m[i][j]=data[i*nrows+j];
+}
