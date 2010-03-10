@@ -120,6 +120,9 @@ SET (SRC_MATH
   math/matrix/vpMatrix_svd.cpp
   math/matrix/vpMatrixException.cpp
   math/matrix/vpRowVector.cpp
+  math/matrix/vpSubMatrix.cpp
+  math/matrix/vpSubColVector.cpp
+  math/matrix/vpSubRowVector.cpp
   math/misc/vpMath.cpp 
   math/misc/vpNoise.cpp 
   math/misc/vpHinkley.cpp 

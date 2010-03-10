@@ -111,6 +111,10 @@ SET (HEADER_MATH
   math/matrix/vpMatrixException.h
   math/matrix/vpMatrix.h
   math/matrix/vpRowVector.h
+  math/matrix/vpSubMatrix.h
+  math/matrix/vpSubColVector.h
+  math/matrix/vpSubRowVector.h
+  math/matrix/vpGEMM.h
   math/misc/vpMath.h
   math/misc/vpHinkley.h
   math/misc/vpNoise.h
