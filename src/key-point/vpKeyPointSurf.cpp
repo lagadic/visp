@@ -674,8 +674,6 @@ void vpKeyPointSurf::getDescriptorParamReferencePoint (const int index, int& siz
   CvSeqReader reader;
   cvStartReadSeq( ref_keypoints, &reader );
 
-  int laplacian = 0;/* normally only -1, 0, +1 are possible */
-
   for(int j = 0; j < ref_keypoints->total; j++ ){
     if(j== index){
       const CvSURFPoint* kp = (const CvSURFPoint*)reader.ptr;
