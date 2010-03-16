@@ -653,7 +653,7 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 /*!
   \brief reshape the colvector in a matrix
   \param nrows : number of rows of the matrix
-  \param nrows : number of columns of the matrix
+  \param ncols : number of columns of the matrix
   \return a vpMatrix
 */
 vpMatrix vpColVector::reshape(const int &nrows,const int &ncols){
@@ -666,7 +666,7 @@ vpMatrix vpColVector::reshape(const int &nrows,const int &ncols){
   \brief reshape the colvector in a matrix
   \param m : the reshaped Matrix
   \param nrows : number of rows of the matrix
-  \param nrows : number of columns of the matrix
+  \param ncols : number of columns of the matrix
 */
 void vpColVector::reshape(vpMatrix & m,const int &nrows,const int &ncols){
   if(dsize!=nrows*ncols)

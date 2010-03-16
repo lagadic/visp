@@ -300,6 +300,7 @@ template<int> inline void GEMMsize(const vpMatrix & A,const vpMatrix & B, int &A
    \param alpha : a scalar
    \param C : a Matrix
    \param beta : a scalar
+   \param D : a Matrix
    \param ops : a scalar describing operation applied on the matrices
    
 */

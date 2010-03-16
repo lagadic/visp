@@ -57,9 +57,9 @@ vpSubMatrix::vpSubMatrix(){
   \brief Constructor
   \param m : parent matrix
   \param row : row offset 
-  \param row : col offset 
+  \param col : col offset 
   \param nrows : number of rows of the sub matrix
-  \param nCols : number of columns of the sub matrix
+  \param ncols : number of columns of the sub matrix
 */
 vpSubMatrix::vpSubMatrix(vpMatrix &m, const int & row, const int &col , const int & nrows ,  const int & ncols){
   init(m,row,col,nrows,ncols);
@@ -69,9 +69,9 @@ vpSubMatrix::vpSubMatrix(vpMatrix &m, const int & row, const int &col , const in
   \brief Initialisation of a sub matrix
   \param m : parent matrix
   \param row : row offset 
-  \param row : col offset 
+  \param col : col offset 
   \param nrows : number of rows of the sub matrix
-  \param nCols : number of columns of the sub matrix
+  \param ncols : number of columns of the sub matrix
 */
 void vpSubMatrix::init(vpMatrix &m, const int & row, const int &col , const int & nrows ,  const int & ncols){
   
