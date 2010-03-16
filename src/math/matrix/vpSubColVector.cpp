@@ -57,7 +57,7 @@
   \brief Constructor
   \param v : parent col vector
   \param offset : offset where subColVector start in the parent colVector
-  \param ncols : size of the subColVector
+  \param nrows : size of the subColVector
 */
 vpSubColVector::vpSubColVector(vpColVector &v, const int & offset,const int & nrows){
   init(v,offset,nrows);
@@ -67,7 +67,7 @@ vpSubColVector::vpSubColVector(vpColVector &v, const int & offset,const int & nr
   \brief Initialisation of a the subColVector
   \param v : parent col vector
   \param offset : offset where subColVector start in the parent colVector
-  \param ncols : size of the subColVector
+  \param nrows : size of the subColVector
 */
 void vpSubColVector::init(vpColVector &v, const int & offset,const int & nrows){
   

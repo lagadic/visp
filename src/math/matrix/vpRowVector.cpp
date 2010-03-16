@@ -227,7 +227,7 @@ vpRowVector &vpRowVector::normalize()
 /*!
   \brief reshape the row vector in a matrix
   \param nrows : number of rows of the matrix
-  \param nrows : number of columns of the matrix
+  \param ncols : number of columns of the matrix
   \return a vpMatrix
 */
 vpMatrix vpRowVector::reshape(const int &nrows,const int &ncols){
@@ -240,7 +240,7 @@ vpMatrix vpRowVector::reshape(const int &nrows,const int &ncols){
   \brief reshape the row vector in a matrix
   \param m : the reshaped Matrix
   \param nrows : number of rows of the matrix
-  \param nrows : number of columns of the matrix
+  \param ncols : number of columns of the matrix
 */
 void vpRowVector::reshape(vpMatrix & m,const int &nrows,const int &ncols){
   if(dsize!=nrows*ncols)
