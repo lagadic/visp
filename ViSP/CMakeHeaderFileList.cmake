@@ -252,6 +252,23 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpGenericFeature.h
   )
 
+SET (HEADER_WIRE_FRAME_SIMULATOR
+  wireframe-simulator/vpWireFrameSimulator.h
+  wireframe-simulator/core/vpArit.h
+  wireframe-simulator/core/vpBound.h
+  wireframe-simulator/core/vpCgiconstants.h
+  wireframe-simulator/core/vpImstack.h
+  wireframe-simulator/core/vpKeyword.h
+  wireframe-simulator/core/vpLex.h
+  wireframe-simulator/core/vpMy.h
+  wireframe-simulator/core/vpRfstack.h
+  wireframe-simulator/core/vpSkipio.h
+  wireframe-simulator/core/vpTmstack.h
+  wireframe-simulator/core/vpToken.h
+  wireframe-simulator/core/vpView.h
+  wireframe-simulator/core/vpVwstack.h
+  )
+
 SET (HEADER_ALL 
   ${HEADER_CAMERA}
   ${HEADER_COMPUTER_VISION}
@@ -270,4 +287,5 @@ SET (HEADER_ALL
   ${HEADER_VIDEO}
   ${HEADER_VIDEO_DEVICE}
   ${HEADER_VISUAL_FEATURE}
+  ${HEADER_WIRE_FRAME_SIMULATOR}
   )
