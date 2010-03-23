@@ -240,6 +240,20 @@ vpPoint::display(vpImage<unsigned char> &I,
 
 }
 
+void
+vpPoint::display(vpImage<vpRGBa> &I,
+		 const vpHomogeneousMatrix &cMo,
+		 const vpCameraParameters &cam,
+		 const vpColor color)
+{
+
+  vpColVector _cP, _p ;
+  changeFrame(cMo,_cP) ;
+  vpPoint::projection(_cP,_p) ;
+  vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color) ;
+
+}
+
 std::ostream& operator<<(std::ostream& os, vpPoint& /* vpp */)
 {
   return( os<<"vpPoint" );

@@ -172,6 +172,10 @@ public:
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
 	       const vpColor color=vpColor::green) ;
+  void display(vpImage<vpRGBa> &I,
+	       const vpHomogeneousMatrix &cMo,
+	       const vpCameraParameters &cam,
+	       const vpColor color=vpColor::green) ;
   vpPoint *duplicate() const ;
 
   friend std::ostream& operator<<(std::ostream& os, vpPoint& vpp);
