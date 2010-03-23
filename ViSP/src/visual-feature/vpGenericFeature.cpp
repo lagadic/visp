@@ -495,6 +495,32 @@ vpGenericFeature::set_s(const vpColVector &s)
 
 
 /*!
+  \brief get the value of all the features.
+
+  \param s : It is a vector which will contain the value of the visual features.
+
+  \exception an exception is thrown if the number of row of the vector s
+  is different from the dimension of the visual feature as specified
+  in the constructor
+*/
+void
+vpGenericFeature::get_s(vpColVector &s) const
+{
+
+  if (s.getRows() != dim_s)
+  {
+    vpERROR_TRACE("size mismatch between s dimension"
+		"and feature dimension");
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
+			     "size mismatch between s dimension"
+			     "and feature dimension"));
+
+  }
+  s = this->s ;
+}
+
+
+/*!
   \brief set the value of three features if the number of feature is equal to 3.
 
   \param s0 : value of the first visual feature
@@ -521,6 +547,36 @@ vpGenericFeature::set_s(const double s0, const double s1, const double s2)
 
   }
   s[0] = s0 ; s[1] = s1 ; s[2] = s2 ;
+}
+
+
+/*!
+  \brief get the value of three features if the number of feature is equal to 3.
+
+  \param s0 : value of the first visual feature
+
+  \param s1 : value of the second visual feature
+
+  \param s2 : value of the third visual feature
+
+  \exception an exception is thrown if the number of row of the vector s
+  is different from the dimension of the visual feature as specified
+  in the constructor
+*/
+void
+vpGenericFeature::get_s(double &s0, double &s1, double &s2) const
+{
+
+  if (3 != dim_s)
+  {
+    vpERROR_TRACE("size mismatch between number of parameters"
+		"and feature dimension");
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
+			     "size mismatch between  number of parameters"
+			     "and feature dimension"));
+
+  }
+  s0 = s[0] ; s1 = s[1] ; s2 = s[2] ;
 }
 
 
@@ -553,6 +609,34 @@ vpGenericFeature::set_s(const double s0, const double s1)
 
 
 /*!
+  \brief get the value of two features if the number of feature is equal to 2.
+
+  \param s0 : value of the first visual feature
+
+  \param s1 : value of the second visual feature
+
+  \exception an exception is thrown if the number of row of the vector s
+  is different from the dimension of the visual feature as specified
+  in the constructor
+*/
+void
+vpGenericFeature::get_s(double &s0, double &s1) const
+{
+
+  if (2 != dim_s)
+  {
+    vpERROR_TRACE("size mismatch between number of parameters"
+		"and feature dimension");
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
+			     "size mismatch between  number of parameters"
+			     "and feature dimension"));
+
+  }
+  s0 = s[0] ; s1 = s[1] ;
+}
+
+
+/*!
   \brief set the value of one feature if the number of feature is equal to 1.
 
   \param s0 : value of the visual feature
@@ -575,6 +659,32 @@ vpGenericFeature::set_s(const double s0)
 
   }
   s[0] = s0 ;
+}
+
+
+/*!
+  \brief get the value of one feature if the number of feature is equal to 1.
+
+  \param s0 : value of the visual feature
+
+  \exception an exception is thrown if the number of row of the vector s
+  is different from the dimension of the visual feature as specified
+  in the constructor
+*/
+void
+vpGenericFeature::get_s(double &s0) const
+{
+
+  if (1 != dim_s)
+  {
+    vpERROR_TRACE("size mismatch between number of parameters"
+		"and feature dimension");
+    throw(vpFeatureException(vpFeatureException::sizeMismatchError,
+			     "size mismatch between  number of parameters"
+			     "and feature dimension"));
+
+  }
+  s0 = s[0];
 }
 
 
