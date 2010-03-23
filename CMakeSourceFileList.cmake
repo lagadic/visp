@@ -262,6 +262,27 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpGenericFeature.cpp
   )
 
+SET (SRC_WIRE_FRAME_SIMULATOR
+  wireframe-simulator/vpWireFrameSimulator.cpp
+  wireframe-simulator/core/vpArit.c
+  wireframe-simulator/core/vpAritio.c
+  wireframe-simulator/core/vpBound.c
+  wireframe-simulator/core/vpBoundio.c
+  wireframe-simulator/core/vpClipping.c
+  wireframe-simulator/core/vpDisplay.c
+  wireframe-simulator/core/vpKeyword.c
+  wireframe-simulator/core/vpLex.c
+  wireframe-simulator/core/vpMyio.c
+  wireframe-simulator/core/vpParser.c
+  wireframe-simulator/core/vpProjection.c
+  wireframe-simulator/core/vpRfstack.c
+  wireframe-simulator/core/vpSkipio.c
+  wireframe-simulator/core/vpTmstack.c
+  wireframe-simulator/core/vpToken.c
+  wireframe-simulator/core/vpViewio.c
+  wireframe-simulator/core/vpVwstack.c
+  )
+
 SET (SRC_ALL
   ${SRC_CAMERA}
   ${SRC_COMPUTER_VISION}
@@ -280,4 +301,5 @@ SET (SRC_ALL
   ${SRC_VIDEO}
   ${SRC_VIDEO_DEVICE}
   ${SRC_VISUAL_FEATURE}
+  ${SRC_WIRE_FRAME_SIMULATOR}
   )

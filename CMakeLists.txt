@@ -88,6 +88,8 @@ MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
 OPTION(BUILD_SHARED_LIBS "Build ViSP with shared libraries." OFF)
 # Build examples as an option.
 OPTION(BUILD_EXAMPLES "Build ViSP examples." ON)
+# Build demos as an option.
+OPTION(BUILD_DEMOS "Build ViSP demos." ON)
 # Build deprecated functions as an option.
 OPTION(BUILD_DEPRECATED_FUNCTIONS "Build deprecated functionalities." ON)
 
@@ -973,6 +975,41 @@ ENDIF(USE_DIRECTSHOW)
 
 
 #----------------------------------------------------------------------
+# The wireframe simulator
+#----------------------------------------------------------------------
+# include all the wireframe scene files
+INCLUDE(${VISP_SOURCE_DIR}/src/wireframe-simulator/scene/CMakeWireframeScenesList.cmake)
+
+SET(WIREFRAME_SCENES_LIST "")
+foreach(SCENE ${WIREFRAME_SCENES})
+  set(WIREFRAME_SCENES_SRC "${VISP_SOURCE_DIR}/src/wireframe-simulator/scene/${SCENE}")
+  set(WIREFRAME_SCENES_DST "${VISP_BINARY_DIR}/data/wireframe-simulator/${SCENE}")
+  IF((CMAKE_MINOR_VERSION LESS 8) AND (CMAKE_MAJOR_VERSION GREATER 1))
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${WIREFRAME_SCENES_DST}
+    COMMAND ${CMAKE_COMMAND} -E copy ${WIREFRAME_SCENES_SRC} ${WIREFRAME_SCENES_DST}
+    DEPENDS ${WIREFRAME_SCENES_SRC}
+    )
+  SET(WIREFRAME_SCENES_LIST ${WIREFRAME_SCENES_LIST} ${WIREFRAME_SCENES_DST})
+  ELSE((CMAKE_MINOR_VERSION LESS 8) AND (CMAKE_MAJOR_VERSION GREATER 1))
+    file(COPY ${WIREFRAME_SCENES_SRC}
+      DESTINATION data/wireframe-simulator
+      FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+      OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+      OWNER_WRITE
+      )
+  ENDIF((CMAKE_MINOR_VERSION LESS 8) AND (CMAKE_MAJOR_VERSION GREATER 1))
+endforeach(SCENE)
+
+IF((CMAKE_MINOR_VERSION LESS 8) AND (CMAKE_MAJOR_VERSION GREATER 1))
+ADD_CUSTOM_TARGET(SCENE ALL
+  DEPENDS ${WIREFRAME_SCENES_LIST}
+  )
+ENDIF((CMAKE_MINOR_VERSION LESS 8) AND (CMAKE_MAJOR_VERSION GREATER 1))
+
+SET(VISP_SCENES_DIR ${VISP_BINARY_DIR}/data/wireframe-simulator)
+
+#----------------------------------------------------------------------
 # Specific hardware : robots
 #----------------------------------------------------------------------
 # default initialisation
@@ -1374,6 +1411,9 @@ INCLUDE(CPack)
 # Propagation in sub dirs
 #----------------------------------------------------------------------
 SUBDIRS(src)
+IF(BUILD_DEMOS)
+SUBDIRS(demo)
+ENDIF(BUILD_DEMOS)
 IF(BUILD_EXAMPLES)
   SUBDIRS(example)
 ENDIF(BUILD_EXAMPLES)
