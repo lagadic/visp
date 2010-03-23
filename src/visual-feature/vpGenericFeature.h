@@ -210,6 +210,11 @@ public:
   void set_s(const double s0) ;
   void set_s(const double s0, const double s1) ;
   void set_s(const double s0, const double s1, const double s2) ;
+  
+  void get_s(vpColVector &s) const;
+  void get_s(double &s0) const;
+  void get_s(double &s0, double &s1) const;
+  void get_s(double &s0, double &s1, double &s2) const;
 
 public:
   void display(const vpCameraParameters &cam,
