@@ -842,6 +842,7 @@ void vpList<type>::display()
 #include <visp/vpBasicFeature.h>
 #include <visp/vpForwardProjection.h>
 #include <visp/vpImagePoint.h>
+#include <visp/vpHomogeneousMatrix.h>
 
 template class VISP_EXPORT vpList<int>;
 template class VISP_EXPORT vpList<double>;
@@ -853,6 +854,7 @@ template class VISP_EXPORT vpList<vpPoint>;
 template class VISP_EXPORT vpList<vpMeSite>;
 template class VISP_EXPORT vpList<vpColVector>;
 template class VISP_EXPORT vpList<vpImagePoint>;
+template class VISP_EXPORT vpList<vpHomogeneousMatrix>;
 #endif
 
 
