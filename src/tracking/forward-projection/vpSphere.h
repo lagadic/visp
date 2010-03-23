@@ -79,15 +79,15 @@ public:
 			   const double Z0,
 			   const double R) ;
 
-  double get_x() { return p[0] ; }
-  double get_y() { return p[1] ; }
-  double get_mu20() { return p[2] ; }
-  double get_mu11() { return p[3] ; }
-  double get_mu02() { return p[4] ; }
+  double get_x() const { return p[0] ; }
+  double get_y() const { return p[1] ; }
+  double get_mu20() const { return p[2] ; }
+  double get_mu11() const { return p[3] ; }
+  double get_mu02() const { return p[4] ; }
 
   double getX() const { return cP[0] ; }
   double getY() const { return cP[1] ; }
-  double getZ()  const{ return cP[2] ; }
+  double getZ() const { return cP[2] ; }
 
   double getR() const { return cP[3] ; }
 
