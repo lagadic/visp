@@ -122,7 +122,7 @@ int wireframe_Face (Face *fp, Point2i *pp);
   \image html vpWireFrameSimulator.jpeg
   \image latex vpWireFrameSimulator.ps
   
-  The simulator uses .bnd files as 3D scene descriptors. Several scenes can be found in the ViSP-data archive which is dowloadable from the ViSP web site.
+  The simulator uses .bnd files as 3D scene descriptors. Several scenes can be found in the data folder which is in the directory where you build ViSP.
   
   You can move the main external view while clicking in the image. The left click enables to turn, the middle button enables to zoom and the left to translate along x and y.
   
@@ -182,7 +182,7 @@ class VISP_EXPORT vpWireFrameSimulator
       PLATE,
       SMALL_PLATE,
       RECTANGLE,
-      SQUARE_5CM,
+      SQUARE_10CM,
       DIAMOND,
       TRAPEZOID,
       THREE_LINES,
