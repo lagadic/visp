@@ -353,7 +353,7 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneMotif motif)
     case PLATE : { strcat(name, "/plate.bnd"); break; }
     case SMALL_PLATE : { strcat(name, "/plate_6cm.bnd"); break; }
     case RECTANGLE : { strcat(name, "/rectangle.bnd"); break; }
-    case SQUARE_5CM : { strcat(name, "/square10cm.bnd"); break; }
+    case SQUARE_10CM : { strcat(name, "/square10cm.bnd"); break; }
     case DIAMOND : { strcat(name, "/diamond.bnd"); break; }
     case TRAPEZOID : { strcat(name, "/trapezoid.bnd"); break; }
     case THREE_LINES : { strcat(name, "/line.bnd"); break; }
