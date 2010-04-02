@@ -73,6 +73,8 @@
 
 #define GETOPTARGS	"dh"
 
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
+
 /*!
 
   Print the program options.
@@ -420,3 +422,11 @@ main(int argc, const char ** argv)
 
   return 0;
 }
+#else
+int
+main()
+{
+  vpERROR_TRACE("You do not have X11, OpenCV, GDI, D3D9 or GTK display functionalities...");
+}
+
+#endif
