@@ -46,6 +46,7 @@
 
   Demonstration of the wireframe simulator with a simple visual servoing.
 */
+#include <stdlib.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
