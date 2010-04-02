@@ -329,7 +329,7 @@ void vpNurbs::curveKnotIns(double l_u, int l_k, int l_s, int l_r, int l_p, std::
   it2 = l_weights.begin();
   l_weights.insert(it2+l_k-l_s,l_r,w);
 
-  int L;
+  int L=0;
   double alpha;
   for (int j = 1; j <= l_r; j++)
   {
