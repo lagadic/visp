@@ -320,6 +320,8 @@ public:
   void getArticularDisplacement(vpColVector &displacement);
   void getDisplacement(vpRobot::vpControlFrameType frame, 
 		       vpColVector &displacement);
+		       
+	bool checkJointLimits(vpColVector& jointsStatus);
 };
 
 
