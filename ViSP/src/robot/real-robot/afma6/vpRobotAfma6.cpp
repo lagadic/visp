@@ -1398,7 +1398,7 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
   Catch();
   if (TryStt < 0) {
     if (TryStt == VelStopOnJoint) {
-      UInt32 axisInJoint[njoint];
+      Int32 axisInJoint[njoint];
       PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
       for (int i=0; i < njoint; i ++) {
 	if (axisInJoint[i])
@@ -2005,11 +2005,52 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
   }
 }
 
+/*!
+
+  Test the joints of the robot to detect if one or more is at its limit.
+
+  \param jointsStatus : A vector (size 6) of the status of the joints. For each 
+  joint, the value is equal to 1 if the joint is at its maximal limit, -1 if the
+   joint is at its minimal value and 0 otherwise.
+  
+  \return false if at least one joint is at one of its limit.
+*/
+bool
+vpRobotAfma6::checkJointLimits(vpColVector& jointsStatus)
+{
+  Int32 axisInJoint[njoint];
+  bool status = true;
+  jointsStatus.resize(6);
+  InitTry;
+
+  Try (PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, axisInJoint,
+NULL));
+  for (int i=0; i < njoint; i ++) {
+    if (axisInJoint[i]){
+      std::cout << "\nWarning: Velocity control stopped: axis "
+		<< i+1 << " on joint limit!" <<std::endl;
+		  jointsStatus[i] = axisInJoint[i];
+		  status = false;
+		}
+		else{
+		  jointsStatus[i] = 0;
+		}
+  }
+
+  Catch();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot check joint limits.");
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Cannot check joint limits.");
+  }
+
+  return status;
+
+}
 /*
  * Local variables:
  * c-basic-offset: 2
  * End:
  */
-
 #endif
 
