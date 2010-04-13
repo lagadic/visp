@@ -84,6 +84,7 @@ public:
 
   //! Constructor/Destructor
   vpMeTracker() ;
+  vpMeTracker(vpMeTracker& meTracker) ;
   virtual ~vpMeTracker() ;
   void init() ;
 

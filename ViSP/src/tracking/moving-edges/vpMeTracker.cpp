@@ -85,6 +85,23 @@ vpMeTracker::vpMeTracker()
     std::cout << "end vpMeTracker::vpMeTracker() " << std::endl ;
 }
 
+vpMeTracker::vpMeTracker(vpMeTracker& meTracker):vpTracker(meTracker)
+{
+  if (DEBUG_LEVEL1)
+    std::cout << "begin vpMeTracker::vpMeTracker() " <<  std::endl ;
+
+  init();
+  
+  me = meTracker.me;
+  list = meTracker.list;
+  nGoodElement = meTracker.nGoodElement;
+  query_range = meTracker.query_range;
+  init_range = meTracker.init_range;
+  seuil = meTracker.seuil;
+  display_point = meTracker.display_point;
+  selectDisplay = meTracker.selectDisplay;
+}
+
 vpMeTracker::~vpMeTracker()
 {
   if (DEBUG_LEVEL1) std::cout << "begin vpMeTracker::~vpMeTracker() " << std::endl ;
