@@ -163,7 +163,7 @@ public:
   double c; //!< Parameter a of the line equation a*i + b*j + c = 0
 
   vpMeLine() ;
-  vpMeLine(const vpMeLine &meline);
+  vpMeLine(vpMeLine &meline);
   virtual ~vpMeLine() ;
 
   void display(vpImage<unsigned char>& I, vpColor col) ;
