@@ -204,7 +204,7 @@ vpMeNurbs::vpMeNurbs():vpMeTracker()
 /*!
   Copy constructor.
 */
-vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs):vpMeTracker((vpMeTracker&)menurbs)
+vpMeNurbs::vpMeNurbs(vpMeNurbs &menurbs):vpMeTracker(menurbs)
 {
   nurbs = menurbs.nurbs;
   dist = menurbs.dist;
