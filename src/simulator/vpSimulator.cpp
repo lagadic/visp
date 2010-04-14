@@ -291,9 +291,9 @@ vpSimulator::init()
 void
 vpSimulator::kill()
 {
-  if (internalView !=NULL) delete internalView ;
-  if (externalView !=NULL) delete externalView ;
-  if (bufferView!=NULL) delete[] bufferView ;
+  if (internalView !=NULL) {delete internalView ; internalView = NULL;}
+  if (externalView !=NULL) {delete externalView ; externalView = NULL;}
+  if (bufferView!=NULL) {delete[] bufferView ; bufferView = NULL;}
   if (image_background != NULL) {
     free (image_background);
     image_background = NULL;
@@ -645,7 +645,12 @@ vpSimulator::load(const char *file_name)
   {
     vpERROR_TRACE("Error while reading %s",file_name);
   }
+  
+  SoScale *taille = new SoScale;
+  taille->scaleFactor.setValue (zoomFactor, zoomFactor, zoomFactor);
 
+//  newscene->addChild(taille);
+  this->scene->addChild(taille);
   this->scene->addChild(newscene);
   newscene->unref() ;
 
@@ -682,18 +687,20 @@ vpSimulator::addFrame (const vpHomogeneousMatrix &fMo, float zoom)
   SoSeparator * frame = new SoSeparator;
   frame->ref();
   frame->addChild(taille);
-  frame->addChild(createFrame ());
+  frame->addChild(createFrame (LONGUEUR_FLECHE*zoom, PROPORTION_FLECHE*zoom, RAYON_FLECHE*zoom));
   this->addObject(frame, fMo, externalRoot) ;
   // frame->unref();
 }
 
 /*!
   \brief Add the representation of the absolute frame
+  
+  \param zoom : Zoom factor.
 */
 void
-vpSimulator::addAbsoluteFrame (double /*zoom*/)
+vpSimulator::addAbsoluteFrame (double zoom)
 {
-  scene->addChild(createFrame ()) ;
+  scene->addChild(createFrame (LONGUEUR_FLECHE*zoom, PROPORTION_FLECHE*zoom, RAYON_FLECHE*zoom)) ;
 }
 
 /*!
