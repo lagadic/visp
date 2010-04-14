@@ -309,7 +309,7 @@ class VISP_EXPORT vpWireFrameSimulator
       
       \return the main external camera position relative to the the world reference frame.
     */
-    inline vpHomogeneousMatrix getExternalCameraPoisition() const { return vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * camMw;}
+    inline vpHomogeneousMatrix getExternalCameraPosition() const { return vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * camMw;}
     
     /*!
       Set the color used to display the camera in the external view.
@@ -486,6 +486,33 @@ class VISP_EXPORT vpWireFrameSimulator
     */
     inline void setCameraTrajectoryDisplayType (const vpCameraTrajectoryDisplayType camTrajType) {this->camTrajType = camTrajType;}
     
+    /*!
+      Get the homogeneous matrices cMo stored to display the camera trajectory.
+      
+      \return Returns the list of the homogeneous matrices cMo.
+    */
+    vpList<vpHomogeneousMatrix> get_cMo_History () {
+      vpList<vpHomogeneousMatrix> list_cMo;
+      vpHomogeneousMatrix rot(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180));
+      poseList.front();
+      while (!poseList.outside())
+      {
+	list_cMo.addRight(rot*poseList.value());
+	poseList.next();
+      }
+      return list_cMo;}
+    
+    /*!
+      Get the homogeneous matrices wMo stored to display the camera trajectory.
+      
+      \return Returns the list of the homogeneous matrices wMo.
+    */
+    vpList<vpHomogeneousMatrix> get_wMo_History () {return wMoList;}
+    
+    void displayTrajectory (vpImage<unsigned char> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_wMo, vpHomogeneousMatrix camMw);
+    
+    void displayTrajectory (vpImage<vpRGBa> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_wMo, vpHomogeneousMatrix camMw);
+    
     void getInternalImage(vpImage<vpRGBa> &I);
     void getExternalImage(vpImage<vpRGBa> &I);
     void getExternalImage(vpImage<vpRGBa> &I, vpHomogeneousMatrix camMw);
@@ -501,6 +528,8 @@ class VISP_EXPORT vpWireFrameSimulator
     vpHomogeneousMatrix navigation(vpImage<unsigned char> &I, bool &changed);
     vpImagePoint projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix wMo);
     vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix wMo);
+    vpImagePoint projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix wMo, vpHomogeneousMatrix cMw);
+    vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix wMo, vpHomogeneousMatrix cMw);
 
 };
 
