@@ -47,6 +47,7 @@
 */
 
 #include <cstdlib>
+#include <stdlib.h>
 
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
