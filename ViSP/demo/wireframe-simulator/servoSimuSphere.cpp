@@ -312,7 +312,7 @@ main(int argc, const char ** argv)
   vpWireFrameSimulator sim;
   
   //Set the scene
-  sim.initScene(vpWireFrameSimulator::SPHERE, vpWireFrameSimulator::MOTIF_STANDARD);
+  sim.initScene(vpWireFrameSimulator::SPHERE, vpWireFrameSimulator::D_STANDARD);
   
   //Set the initial and the desired position of the camera.
   sim.setCameraPosition(cMoi) ;
@@ -340,7 +340,7 @@ main(int argc, const char ** argv)
   
   if (opt_display)
   {
-    stop = 2500;
+    stop = 1000;
     //Get the internal and external views
     sim.getInternalImage(Iint);
     sim.getExternalImage(Iext1);

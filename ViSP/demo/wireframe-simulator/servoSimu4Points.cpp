@@ -257,7 +257,7 @@ main(int argc, const char ** argv)
   vpWireFrameSimulator sim;
   
   //Set the scene
-  sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::MOTIF_STANDARD);
+  sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
   
   //Set the initial and the desired position of the camera.
   sim.setCameraPosition(cMoi) ;
