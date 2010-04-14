@@ -143,7 +143,7 @@ int wireframe_Face (Face *fp, Point2i *pp);
     vpImage<vpRGBa> Iext(480,640,255);
     
     //Set the type of scene to use
-    sim.initScene(vpWireFrameSimulator::PLAQUE, vpWireFrameSimulator::MOTIF_STANDARD);
+    sim.initScene(vpWireFrameSimulator::PLAQUE, vpWireFrameSimulator::D_STANDARD);
     
     //Set the initial pose of the camera
     sim.setCameraPosition(vpHomogeneousMatrix(0,0,0.5,vpMath::rad(0),vpMath::rad(10),0));
@@ -198,21 +198,27 @@ class VISP_EXPORT vpWireFrameSimulator
     /*!
       Type of scene used to display the object at the desired pose (in the internal view).
       
-      - MOTIF_STANDARD will use the vpSceneObject used to be the object at the current position.
-      - MOTIF_OUTIL will display a tool which is attached to the camera.
+      - D_STANDARD will use the vpSceneObject used to be the object at the current position.
+      - D_OUTIL will display a tool which is attached to the camera.
     */
     typedef enum  
     {
-      MOTIF_STANDARD,
-      MOTIF_CIRCLE,
-      MOTIF_TOOL
-    } vpSceneMotif;
+      D_STANDARD,
+      D_CIRCLE,
+      D_TOOL
+    } vpSceneDesiredObject;
+    
+    typedef enum  
+    {
+      CT_LINE,
+      CT_POINT
+    } vpCameraTrajectoryDisplayType;
     
     
   private:
     Bound_scene scene;
+    Bound_scene desiredScene;
     Bound_scene camera;
-    Bound_scene motif;
     
     vpHomogeneousMatrix wMo;
     vpHomogeneousMatrix camMw;
@@ -221,9 +227,10 @@ class VISP_EXPORT vpWireFrameSimulator
     vpHomogeneousMatrix cdMo;
     
     vpSceneObject object;
-    vpSceneMotif motifType;
+    vpSceneDesiredObject desiredObject;
     
     vpColor camColor;
+    vpColor camTrajColor;
     vpColor curColor;
     vpColor desColor;
     
@@ -251,13 +258,23 @@ class VISP_EXPORT vpWireFrameSimulator
     double py_int;
     double px_ext;
     double py_ext;
+    
+    bool displayObject;
+    bool displayDesiredObject;
+    bool displayCamera;
+    
+    float cameraFactor;
+    
+    vpCameraTrajectoryDisplayType camTrajType;
   
   public:
     vpWireFrameSimulator();
     virtual ~vpWireFrameSimulator();
     
-    void initScene(vpSceneObject obj, vpSceneMotif motif);
-    void initScene(const char* obj, const char* motif);
+    void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject);
+    void initScene(const char* obj, const char* desiredObject);
+    void initObject(vpSceneObject obj);
+    void initObject(const char* obj);
     
     /*!
       Set the position of the camera relative to the object.
@@ -284,8 +301,15 @@ class VISP_EXPORT vpWireFrameSimulator
       vpTranslationVector T;
       this->camMw.extract (T);
       this->camMw2.buildFrom(0,0,T[2],0,0,0);
-      w2Mw =camMw2.inverse()*this->camMw;
+      w2Mw = camMw2.inverse()*this->camMw;
     }
+    
+    /*!
+      Get the main external camera's position relative to the the world reference frame.
+      
+      \return the main external camera position relative to the the world reference frame.
+    */
+    inline vpHomogeneousMatrix getExternalCameraPoisition() const { return camMw;}
     
     /*!
       Set the color used to display the camera in the external view.
@@ -293,6 +317,13 @@ class VISP_EXPORT vpWireFrameSimulator
       \param col : The desired color.
     */
     void setCameraColor(const vpColor col) {camColor = col;}
+    
+    /*!
+      Set the color used to display the camera trajectory in the external view.
+      
+      \param col : The desired color.
+    */
+    void setCameraTrajectoryColor(const vpColor col) {camTrajColor = col;}
     
     /*!
       Set the color used to display the object at the current position.
@@ -425,6 +456,35 @@ class VISP_EXPORT vpWireFrameSimulator
       px_ext = cam.get_px();
       py_ext = cam.get_py();
     }
+    
+    /*!
+      Set the maximum number of main camera's positions which are stored. Those position can be displayed in the external camera field of view. By default this parameter is set to 1000. 
+      
+      \param nbPt : The desired number of position which are saved.
+    */
+    inline void setNbPtTrajectory(const int nbPt) {nbrPtLimit = nbPt;}
+    
+    /*!
+      Set the parameter which enables to choose the size of the main camera in the external camera views. By default this parameter is set to 1.
+      
+      \param factor : The ration for the camera size.
+    */
+    inline void setCameraSizeFactor (const float factor) {cameraFactor = factor;}
+    
+    /*!
+      Delete the history of the main camera position which are displayed in the external views.
+    */
+    inline void deleteCameraPositionHistory() {
+      cameraTrajectory.kill();
+      poseList.kill();
+      wMoList.kill();}
+      
+    /*!
+      Set the way to display the history of the main camera trajectory in the main external view. The choice is given between displaying lines and points.
+      
+      \param camTrajType : The chosen way to display the camera trajectory.
+    */
+    inline void setCameraTrajectoryDisplayType (const vpCameraTrajectoryDisplayType camTrajType) {this->camTrajType = camTrajType;}
     
     void getInternalImage(vpImage<vpRGBa> &I);
     void getExternalImage(vpImage<vpRGBa> &I);

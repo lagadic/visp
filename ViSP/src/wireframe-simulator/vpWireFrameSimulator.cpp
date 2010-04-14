@@ -59,7 +59,7 @@ extern "C"{extern Point2i *listpoint2i;}
 /*
    Enable to initialize the scene
 */
-void set_scene (const char* str, Bound_scene *sc)
+void set_scene (const char* str, Bound_scene *sc, float factor)
 {
   FILE  *fd;
 
@@ -77,6 +77,20 @@ void set_scene (const char* str, Bound_scene *sc)
   open_source (fd, str);
   malloc_Bound_scene (sc, str,(Index)BOUND_NBR);
   parser (sc);
+  
+  if (factor != 1)
+  {
+    for (int i = 0; i < sc->bound.nbr; i++)
+    {
+      for (int j = 0; j < sc->bound.ptr[i].point.nbr; j++)
+      {
+        sc->bound.ptr[i].point.ptr[j].x = sc->bound.ptr[i].point.ptr[j].x*factor;
+        sc->bound.ptr[i].point.ptr[j].y = sc->bound.ptr[i].point.ptr[j].y*factor;
+        sc->bound.ptr[i].point.ptr[j].z = sc->bound.ptr[i].point.ptr[j].z*factor;
+      }
+    }
+  }
+  
   close_source ();
   close_lex ();
   close_keyword ();
@@ -194,65 +208,63 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene sc, vpImage<unsigned
   }
 }
 
-vpImagePoint getCameraPosition(Matrix mat, vpImage<vpRGBa> &I)
-{
-  Matrix m;
-
-  bcopy ((char *) mat, (char *) m, sizeof (Matrix));
-  View_to_Matrix (get_vwstack (), *(get_tmstack ()));
-  postmult_matrix (m, *(get_tmstack ()));
-
-  Point3f p3[1];
-  Point2i p2[1];
-  Point4f p4[1];
-
-  p3[0].x = 0;//mat[3][0];
-  p3[0].y = 0;//mat[3][1];
-  p3[0].z = 0;//mat[3][2];
-
-  point_3D_4D (p3, 1, m, p4);
-  p3->x = p4->x / p4->w;
-  p3->y = p4->y / p4->w;
-  p3->z = p4->z / p4->w;
-
-  int size = vpMath::minimum(I.getWidth(),I.getHeight());
-  point_3D_2D (p3, 1,size,size,p2);
-
-  vpImagePoint iP((p2)->y,(p2)->x);
-
-  //printf ( "vali : %f\n valj : %f\n\n", iP.get_i(),iP.get_j());
-  return iP;
-}
-
-vpImagePoint getCameraPosition(Matrix mat, vpImage<unsigned char> &I)
-{
-  Matrix m;
-
-  bcopy ((char *) mat, (char *) m, sizeof (Matrix));
-  View_to_Matrix (get_vwstack (), *(get_tmstack ()));
-  postmult_matrix (m, *(get_tmstack ()));
-
-  Point3f p3[1];
-  Point2i p2[1];
-  Point4f p4[1];
-
-  p3[0].x = 0;//mat[3][0];
-  p3[0].y = 0;//mat[3][1];
-  p3[0].z = 0;//mat[3][2];
-
-  point_3D_4D (p3, 1, m, p4);
-  p3->x = p4->x / p4->w;
-  p3->y = p4->y / p4->w;
-  p3->z = p4->z / p4->w;
-
-  int size = vpMath::minimum(I.getWidth(),I.getHeight());
-  point_3D_2D (p3, 1,size,size,p2);
-
-  vpImagePoint iP((p2)->y,(p2)->x);
-
-  //printf ( "vali : %f\n valj : %f\n\n", iP.get_i(),iP.get_j());
-  return iP;
-}
+// vpImagePoint getCameraPosition(Matrix mat, vpImage<vpRGBa> &I)
+// {
+//   Matrix m;
+// 
+//   bcopy ((char *) mat, (char *) m, sizeof (Matrix));
+//   View_to_Matrix (get_vwstack (), *(get_tmstack ()));
+//   postmult_matrix (m, *(get_tmstack ()));
+// 
+//   Point3f p3[1];
+//   Point2i p2[1];
+//   Point4f p4[1];
+// 
+//   p3[0].x = 0;
+//   p3[0].y = 0;
+//   p3[0].z = 0;
+// 
+//   point_3D_4D (p3, 1, m, p4);
+//   p3->x = p4->x / p4->w;
+//   p3->y = p4->y / p4->w;
+//   p3->z = p4->z / p4->w;
+// 
+//   int size = vpMath::minimum(I.getWidth(),I.getHeight());
+//   point_3D_2D (p3, 1,size,size,p2);
+// 
+//   vpImagePoint iP((p2)->y,(p2)->x);
+// 
+//   return iP;
+// }
+// 
+// vpImagePoint getCameraPosition(Matrix mat, vpImage<unsigned char> &I)
+// {
+//   Matrix m;
+// 
+//   bcopy ((char *) mat, (char *) m, sizeof (Matrix));
+//   View_to_Matrix (get_vwstack (), *(get_tmstack ()));
+//   postmult_matrix (m, *(get_tmstack ()));
+// 
+//   Point3f p3[1];
+//   Point2i p2[1];
+//   Point4f p4[1];
+// 
+//   p3[0].x = 0;//mat[3][0];
+//   p3[0].y = 0;//mat[3][1];
+//   p3[0].z = 0;//mat[3][2];
+// 
+//   point_3D_4D (p3, 1, m, p4);
+//   p3->x = p4->x / p4->w;
+//   p3->y = p4->y / p4->w;
+//   p3->z = p4->z / p4->w;
+// 
+//   int size = vpMath::minimum(I.getWidth(),I.getHeight());
+//   point_3D_2D (p3, 1,size,size,p2);
+// 
+//   vpImagePoint iP((p2)->y,(p2)->x);
+// 
+//   return iP;
+// }
 
 
 /*************************************************************************************************************/
@@ -266,6 +278,7 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   open_clipping();
 
   camColor = vpColor::green;
+  camTrajColor = vpColor::green;
   curColor = vpColor::blue;
   desColor = vpColor::red;
 
@@ -292,6 +305,14 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   py_int = 1;
   px_ext = 1;
   py_ext = 1;
+  
+  displayObject = false;
+  displayDesiredObject = false;
+  displayCamera = false;
+  
+  cameraFactor = 1.0;
+  
+  camTrajType = CT_LINE;
 }
 
 
@@ -304,7 +325,7 @@ vpWireFrameSimulator::~vpWireFrameSimulator()
   {
     free_Bound_scene (&(this->scene));
     free_Bound_scene (&(this->camera));
-    free_Bound_scene (&(this->motif));
+    free_Bound_scene (&(this->desiredScene));
   }
   close_display ();
   close_clipping ();
@@ -319,30 +340,30 @@ vpWireFrameSimulator::~vpWireFrameSimulator()
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position and at the desired position.
   
-  It exists several default scenes you can use. Use the vpSceneObject and the vpSceneMotif attributes to use them in this method. The corresponding files are stored in the data folder which is in the ViSP build directory.
+  It exists several default scenes you can use. Use the vpSceneObject and the vpSceneDesiredObject attributes to use them in this method. The corresponding files are stored in the data folder which is in the ViSP build directory.
 
   \param obj : Type of scene used to display the object at the current position.
-  \param motif : Type of scene used to display the object at the desired pose (in the internal view).
+  \param desiredObject : Type of scene used to display the object at the desired pose (in the internal view).
 */
 void
-vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneMotif motif)
+vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject)
 {
   char name_cam[FILENAME_MAX];
   char name[FILENAME_MAX];
 
   object = obj;
-  this->motifType = motif;
+  this->desiredObject = desiredObject;
 
   strcpy(name_cam,VISP_SCENES_DIR);
-  if (motif != MOTIF_TOOL) 
+  if (desiredObject != D_TOOL) 
   {
     strcat(name_cam,"/camera.bnd");
-    set_scene(name_cam,&camera);
+    set_scene(name_cam,&camera,cameraFactor);
   }
   else
   {
     strcat(name_cam,"/tool.bnd");
-    set_scene(name_cam,&(this->camera));
+    set_scene(name_cam,&(this->camera),1.0);
   }
 
   strcpy(name,VISP_SCENES_DIR);
@@ -365,21 +386,21 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneMotif motif)
     case CYLINDER : { strcat(name, "/cylinder.bnd"); break; }
     case PLAN: { strcat(name, "/plan.bnd"); break; }
   }
-  set_scene(name,&(this->scene));
+  set_scene(name,&(this->scene),1.0);
 
-  switch (motif)
+  switch (desiredObject)
   {
-    case MOTIF_STANDARD : { break; }
-    case MOTIF_CIRCLE : { 
+    case D_STANDARD : { break; }
+    case D_CIRCLE : { 
       strcpy(name,VISP_SCENES_DIR);
       strcat(name, "/cercle_sq2.bnd");
       break; }
-    case MOTIF_TOOL : { 
+    case D_TOOL : { 
       strcpy(name,VISP_SCENES_DIR);
       strcat(name, "/tool.bnd");
       break; }
   }
-  set_scene(name,&(this->motif));
+  set_scene(name,&(this->desiredScene),1.0);
 
   if (obj == PIPE) load_rfstack(IS_INSIDE);
   else add_rfstack(IS_BACK);
@@ -389,6 +410,9 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneMotif motif)
   add_vwstack ("start","type", PERSPECTIVE);
 
   sceneInitialized = true;
+  displayObject = true;
+  displayDesiredObject = true;
+  displayCamera = true;
 }
 
 /*!
@@ -398,26 +422,26 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneMotif motif)
   Here you can use the scene you want. You have to set the path to the .bnd file which is a scene file.
 
   \param obj : Path to the scene file you want to use.
-  \param motif : Path to the scene file you want to use.
+  \param desiredObject : Path to the scene file you want to use.
 */
 void
-vpWireFrameSimulator::initScene(const char* obj, const char* motif)
+vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
 {
   char name_cam[FILENAME_MAX];
   char name[FILENAME_MAX];
 
   object = THREE_PTS;
-  this->motifType = MOTIF_STANDARD;
+  this->desiredObject = D_STANDARD;
   
   strcpy(name_cam,VISP_SCENES_DIR);
   strcat(name_cam,"/camera.bnd");
-  set_scene(name_cam,&camera);
+  set_scene(name_cam,&camera,cameraFactor);
 
   strcpy(name,obj);
-  set_scene(name,&(this->scene));
+  set_scene(name,&(this->scene),1.0);
 
-  strcpy(name,motif);
-  set_scene(name,&(this->motif));
+  strcpy(name,desiredObject);
+  set_scene(name,&(this->desiredScene),1.0);
 
   add_rfstack(IS_BACK);
 
@@ -426,7 +450,98 @@ vpWireFrameSimulator::initScene(const char* obj, const char* motif)
   add_vwstack ("start","type", PERSPECTIVE);
 
   sceneInitialized = true;
+  displayObject = true;
+  displayDesiredObject = true;
+  displayCamera = true;
 }
+
+
+/*!
+  Initialize the simulator. It enables to choose the type of object which will be used to display the object
+  at the current position. The object at the desired position is not displayed.
+  
+  It exists several default scenes you can use. Use the vpSceneObject attributes to use them in this method. The corresponding files are stored in the data folder which is in the ViSP build directory.
+
+  \param obj : Type of scene used to display the object at the current position.
+*/
+void
+vpWireFrameSimulator::initObject(vpSceneObject obj)
+{
+  char name_cam[FILENAME_MAX];
+  char name[FILENAME_MAX];
+
+  object = obj;
+
+  strcpy(name_cam,VISP_SCENES_DIR);
+
+  strcpy(name,VISP_SCENES_DIR);
+  switch (obj)
+  {
+    case THREE_PTS : {strcat(name,"/3pts.bnd"); break; }
+    case CUBE : { strcat(name, "/cube.bnd"); break; }
+    case PLATE : { strcat(name, "/plate.bnd"); break; }
+    case SMALL_PLATE : { strcat(name, "/plate_6cm.bnd"); break; }
+    case RECTANGLE : { strcat(name, "/rectangle.bnd"); break; }
+    case SQUARE_10CM : { strcat(name, "/square10cm.bnd"); break; }
+    case DIAMOND : { strcat(name, "/diamond.bnd"); break; }
+    case TRAPEZOID : { strcat(name, "/trapezoid.bnd"); break; }
+    case THREE_LINES : { strcat(name, "/line.bnd"); break; }
+    case ROAD : { strcat(name, "/road.bnd"); break; }
+    case TIRE : { strcat(name, "/circles2.bnd"); break; }
+    case PIPE : { strcat(name, "/pipe.bnd"); break; }
+    case CIRCLE : { strcat(name, "/circle.bnd"); break; }
+    case SPHERE : { strcat(name, "/sphere.bnd"); break; }
+    case CYLINDER : { strcat(name, "/cylinder.bnd"); break; }
+    case PLAN: { strcat(name, "/plan.bnd"); break; }
+  }
+  set_scene(name,&(this->scene),1.0);
+
+  if (obj == PIPE) load_rfstack(IS_INSIDE);
+  else add_rfstack(IS_BACK);
+
+  add_vwstack ("start","depth", 0.0, 100.0);
+  add_vwstack ("start","window", -0.1,0.1,-0.1,0.1);
+  add_vwstack ("start","type", PERSPECTIVE);
+
+  sceneInitialized = true;
+  displayObject = true;
+  displayCamera = true;
+}
+
+/*!
+  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
+  at the current position. The object at the desired position is not displayed.
+  
+  Here you can use the scene you want. You have to set the path to the .bnd file which is a scene file.
+
+  \param obj : Path to the scene file you want to use.
+*/
+void
+vpWireFrameSimulator::initObject(const char* obj)
+{
+  char name_cam[FILENAME_MAX];
+  char name[FILENAME_MAX];
+
+  object = THREE_PTS;
+  
+  strcpy(name_cam,VISP_SCENES_DIR);
+  strcat(name_cam,"/camera.bnd");
+  set_scene(name_cam,&camera,cameraFactor);
+
+  strcpy(name,obj);
+  set_scene(name,&(this->scene),1.0);
+
+  add_rfstack(IS_BACK);
+
+  add_vwstack ("start","depth", 0.0, 100.0);
+  add_vwstack ("start","window", -0.1,0.1,-0.1,0.1);
+  add_vwstack ("start","type", PERSPECTIVE);
+
+  sceneInitialized = true;
+  displayObject = true;
+  displayCamera = true;
+}
+
 
 
 /*!
@@ -454,10 +569,7 @@ vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
   }
 
   float o44c[4][4],o44cd[4][4],x,y,z;
-  Matrix id = IDENTITY_MATRIX;/*{ {1.0, 0.0, 0.0, 0.0},
-                {0.0, 1.0, 0.0, 0.0},
-		{0.0, 0.0, 1.0, 0.0},
-		{0.0, 0.0, 0.0, 1.0} } ;*/
+  Matrix id = IDENTITY_MATRIX;
 
   vp2jlc_matrix(cMo.inverse(),o44c);
   vp2jlc_matrix(cdMo.inverse(),o44cd);
@@ -470,7 +582,8 @@ vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
   add_vwstack ("start","vpn", o44c[2][0],o44c[2][1],o44c[2][2]);
   add_vwstack ("start","vup", o44c[1][0],o44c[1][1],o44c[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
-  display_scene(id,this->scene,I, curColor);
+  if (displayObject)
+    display_scene(id,this->scene,I, curColor);
 
 
   add_vwstack ("start","cop", o44cd[3][0],o44cd[3][1],o44cd[3][2]);
@@ -481,8 +594,11 @@ vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
   add_vwstack ("start","vpn", o44cd[2][0],o44cd[2][1],o44cd[2][2]);
   add_vwstack ("start","vup", o44cd[1][0],o44cd[1][1],o44cd[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
-  if (motifType == MOTIF_TOOL) display_scene(o44cd,motif,I, vpColor::red);
-  else display_scene(id,motif,I, desColor);
+  if (displayDesiredObject)
+  {
+    if (desiredObject == D_TOOL) display_scene(o44cd,desiredScene,I, vpColor::red);
+    else display_scene(id,desiredScene,I, desColor);
+  }
 
 }
 
@@ -537,11 +653,13 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   if ((object == CUBE) || (object == SPHERE))
   {
     add_vwstack ("start","type", PERSPECTIVE);
-   // add_vwstack ("start","window", -0.1, 0.1, -0.1, 0.1);
   }
-  display_scene(w44o,this->scene,I, curColor);
+  
+  if (displayObject)
+    display_scene(w44o,this->scene,I, curColor);
 
-  display_scene(w44c,camera, I, camColor);
+  if (displayCamera)
+    display_scene(w44c,camera, I, camColor);
 
   if (displayCameraTrajectory)
   {
@@ -563,8 +681,12 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
       {
         iP = projectCameraTrajectory(I, poseList.value(),wMoList.value());
         cameraTrajectory.addRight(iP);
-        //vpDisplay::displayPoint(I,cameraTrajectory.value(),vpColor::green);
-        if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+	if (camTrajType == CT_LINE)
+	{
+          if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+	}
+	else if (camTrajType == CT_POINT)
+	  vpDisplay::displayPoint(I,iP,camTrajColor);
         poseList.next();
         wMoList.next();
         iter++;
@@ -579,8 +701,12 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
       cameraTrajectory.front();
       while (!cameraTrajectory.outside())
       {
-        //vpDisplay::displayPoint(I,cameraTrajectory.value(),vpColor::green);
-        if (iter != 0) vpDisplay::displayLine(I,iP_1,cameraTrajectory.value(),vpColor::green);
+	if (camTrajType == CT_LINE)
+	{
+          if (iter != 0) vpDisplay::displayLine(I,iP_1,cameraTrajectory.value(),camTrajColor);
+	}
+	else if (camTrajType == CT_POINT)
+	  vpDisplay::displayPoint(I,cameraTrajectory.value(),camTrajColor);
         iter++;
         iP_1 = cameraTrajectory.value();
         cameraTrajectory.next();
@@ -645,8 +771,10 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, vpHomogeneousMatrix c
   add_vwstack ("start","vup", w44cext[1][0],w44cext[1][1],w44cext[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
   
-  display_scene(w44o,this->scene,I, curColor);
-  display_scene(w44c,camera, I, camColor);
+  if (displayObject)
+    display_scene(w44o,this->scene,I, curColor);
+  if (displayCamera)
+    display_scene(w44c,camera, I, camColor);
 }
 
 
@@ -675,10 +803,7 @@ vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
   }
 
   float o44c[4][4],o44cd[4][4],x,y,z;
-  Matrix id = IDENTITY_MATRIX;/*{ {1.0, 0.0, 0.0, 0.0},
-                {0.0, 1.0, 0.0, 0.0},
-		{0.0, 0.0, 1.0, 0.0},
-		{0.0, 0.0, 0.0, 1.0} } ;*/
+  Matrix id = IDENTITY_MATRIX;
 
   vp2jlc_matrix(cMo.inverse(),o44c);
   vp2jlc_matrix(cdMo.inverse(),o44cd);
@@ -691,7 +816,8 @@ vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
   add_vwstack ("start","vpn", o44c[2][0],o44c[2][1],o44c[2][2]);
   add_vwstack ("start","vup", o44c[1][0],o44c[1][1],o44c[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
-  display_scene(id,this->scene,I, curColor);
+  if (displayObject)
+    display_scene(id,this->scene,I, curColor);
 
 
   add_vwstack ("start","cop", o44cd[3][0],o44cd[3][1],o44cd[3][2]);
@@ -702,8 +828,11 @@ vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
   add_vwstack ("start","vpn", o44cd[2][0],o44cd[2][1],o44cd[2][2]);
   add_vwstack ("start","vup", o44cd[1][0],o44cd[1][1],o44cd[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
-  if (motifType == MOTIF_TOOL) display_scene(o44cd,motif,I, vpColor::red);
-  else display_scene(id,motif,I, desColor);
+  if (displayDesiredObject)
+  {
+    if (desiredObject == D_TOOL) display_scene(o44cd,desiredScene,I, vpColor::red);
+    else display_scene(id,desiredScene,I, desColor);
+  }
 
 }
 
@@ -759,9 +888,11 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   {
     add_vwstack ("start","type", PERSPECTIVE);
   }
-  display_scene(w44o,this->scene,I, curColor);
+  if (displayObject)
+    display_scene(w44o,this->scene,I, curColor);
 
-  display_scene(w44c,camera, I, camColor);
+  if (displayCamera)
+    display_scene(w44c,camera, I, camColor);
 
   if (displayCameraTrajectory)
   {
@@ -784,7 +915,12 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
         iP = projectCameraTrajectory(I, poseList.value(),wMoList.value());
         cameraTrajectory.addRight(iP);
         //vpDisplay::displayPoint(I,cameraTrajectory.value(),vpColor::green);
-        if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+        if (camTrajType == CT_LINE)
+	{
+          if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+	}
+	else if (camTrajType == CT_POINT)
+	  vpDisplay::displayPoint(I,iP,camTrajColor);
         poseList.next();
         wMoList.next();
         iter++;
@@ -799,8 +935,12 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
       cameraTrajectory.front();
       while (!cameraTrajectory.outside())
       {
-        //vpDisplay::displayPoint(I,cameraTrajectory.value(),vpColor::green);
-        if (iter != 0) vpDisplay::displayLine(I,iP_1,cameraTrajectory.value(),vpColor::green);
+        if (camTrajType == CT_LINE)
+	{
+          if (iter != 0) vpDisplay::displayLine(I,iP_1,cameraTrajectory.value(),camTrajColor);
+	}
+	else if (camTrajType == CT_POINT)
+	  vpDisplay::displayPoint(I,cameraTrajectory.value(),camTrajColor);
         iter++;
         iP_1 = cameraTrajectory.value();
         cameraTrajectory.next();
@@ -865,8 +1005,10 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, vpHomogeneousM
   add_vwstack ("start","vup", w44cext[1][0],w44cext[1][1],w44cext[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
   
-  display_scene(w44o,this->scene,I, curColor);
-  display_scene(w44c,camera, I, camColor);
+  if (displayObject)
+    display_scene(w44o,this->scene,I, curColor);
+  if (displayCamera)
+    display_scene(w44c,camera, I, camColor);
 }
 
 /*!
