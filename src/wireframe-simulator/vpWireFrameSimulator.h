@@ -309,7 +309,7 @@ class VISP_EXPORT vpWireFrameSimulator
       
       \return the main external camera position relative to the the world reference frame.
     */
-    inline vpHomogeneousMatrix getExternalCameraPoisition() const { return camMw;}
+    inline vpHomogeneousMatrix getExternalCameraPoisition() const { return vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * camMw;}
     
     /*!
       Set the color used to display the camera in the external view.
