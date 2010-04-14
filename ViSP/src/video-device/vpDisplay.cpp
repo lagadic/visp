@@ -420,6 +420,104 @@ vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
 }
 
 /*!
+
+  Display the projection of an object camera represented by a cone in
+  the image.
+
+  \param I : The image associated to the display.
+
+  \param cMo : Homogeneous matrix that gives the transformation
+  between the camera frame and the object frame to project in the
+  image.
+
+  \param cam : Camera intrinsic parameters.
+
+  \param size : Size of the object camera.
+
+  \param color : Color used to display the camera in the image.
+  
+*/
+void
+vpDisplay::displayCamera ( const vpImage<unsigned char> &I,
+                          const vpHomogeneousMatrix &cMo,
+                          const vpCameraParameters &cam,
+                          double size, 
+			  vpColor color)
+{
+  // used by display
+  double halfSize = size/2.0;
+  vpPoint pt[5];
+  pt[0].setWorldCoordinates ( -halfSize,-halfSize,0.0 );
+  pt[1].setWorldCoordinates ( halfSize,-halfSize,0.0 );
+  pt[2].setWorldCoordinates ( halfSize,halfSize,0.0 );
+  pt[3].setWorldCoordinates ( -halfSize,halfSize,0.0 );
+  pt[4].setWorldCoordinates ( 0.0,0.0,-size );
+  
+  for (int i = 0; i < 5; i++)
+    pt[i].track ( cMo ) ;
+
+  vpImagePoint ip, ip_1, ip0;
+  vpMeterPixelConversion::convertPoint ( cam, pt[4].p[0], pt[4].p[1], ip0);
+  
+  for (int i = 0; i < 4; i++)
+  {
+    vpMeterPixelConversion::convertPoint ( cam, pt[i].p[0], pt[i].p[1], ip_1);
+    vpMeterPixelConversion::convertPoint ( cam, pt[(i+1)%4].p[0], pt[(i+1)%4].p[1], ip);
+    vpDisplay::displayLine ( I, ip_1, ip, color, 1);
+    vpDisplay::displayLine ( I, ip0, ip_1, color, 1);
+  }
+}
+
+
+/*!
+
+  Display the projection of an object camera represented by a cone in
+  the image.
+
+  \param I : The image associated to the display.
+
+  \param cMo : Homogeneous matrix that gives the transformation
+  between the camera frame and the object frame to project in the
+  image.
+
+  \param cam : Camera intrinsic parameters.
+
+  \param size : Size of the object camera.
+
+  \param color : Color used to display the camera in the image.
+  
+*/
+void
+vpDisplay::displayCamera( const vpImage<vpRGBa> &I,
+                          const vpHomogeneousMatrix &cMo,
+                          const vpCameraParameters &cam,
+                          double size, vpColor color)
+{
+  // used by display
+  double halfSize = size/2.0;
+  vpPoint pt[5];
+  pt[0].setWorldCoordinates ( -halfSize,-halfSize,0.0 );
+  pt[1].setWorldCoordinates ( halfSize,-halfSize,0.0 );
+  pt[2].setWorldCoordinates ( halfSize,halfSize,0.0 );
+  pt[3].setWorldCoordinates ( -halfSize,halfSize,0.0 );
+  pt[4].setWorldCoordinates ( 0.0,0.0,-size );
+  
+  for (int i = 0; i < 5; i++)
+    pt[i].track ( cMo ) ;
+
+  vpImagePoint ip, ip_1, ip0;
+  vpMeterPixelConversion::convertPoint ( cam, pt[4].p[0], pt[4].p[1], ip0);
+  
+  for (int i = 0; i < 4; i++)
+  {
+    vpMeterPixelConversion::convertPoint ( cam, pt[i].p[0], pt[i].p[1], ip_1);
+    vpMeterPixelConversion::convertPoint ( cam, pt[(i+1)%4].p[0], pt[(i+1)%4].p[1], ip);
+    vpDisplay::displayLine ( I, ip_1, ip, color, 1);
+    vpDisplay::displayLine ( I, ip0, ip_1, color, 1);
+  }
+}
+
+/*!
   Display an arrow from image point \e ip1 to image point \e ip2.
   \param I : The image associated to the display.
   \param ip1,ip2 : Initial and final image points.

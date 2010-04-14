@@ -625,6 +625,10 @@ class VISP_EXPORT vpDisplay
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
 			   double size, vpColor color)  ;
+  static void displayCamera(const vpImage<unsigned char> &I,
+			   const vpHomogeneousMatrix &cMo,
+			   const vpCameraParameters &cam,
+			   double size, vpColor color)  ;
   static void displayLine(const vpImage<unsigned char> &I,
 			  const vpImagePoint &ip1, 
 			  const vpImagePoint &ip2,
@@ -750,6 +754,10 @@ class VISP_EXPORT vpDisplay
 			     vpColor color, 
 			     unsigned int thickness=1) ;
   static void displayFrame(const vpImage<vpRGBa> &I,
+			   const vpHomogeneousMatrix &cMo,
+			   const vpCameraParameters &cam,
+			   double size, vpColor color)  ;
+  static void displayCamera(const vpImage<vpRGBa> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
 			   double size, vpColor color)  ;
