@@ -1,0 +1,338 @@
+/****************************************************************************
+ *
+ * $Id: servoSimu4Points.cpp 2543 2010-04-14 13:30:08Z nmelchio $
+ *
+ * Copyright (C) 1998-2010 Inria. All rights reserved.
+ *
+ * This software was developed at:
+ * IRISA/INRIA Rennes
+ * Projet Lagadic
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * http://www.irisa.fr/lagadic
+ *
+ * This file is part of the ViSP toolkit
+ *
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech AS of Norway and appearing in the file
+ * LICENSE included in the packaging of this file.
+ *
+ * Licensees holding valid ViSP Professional Edition licenses may
+ * use this file in accordance with the ViSP Commercial License
+ * Agreement provided with the Software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Contact visp@irisa.fr if any conditions of this licensing are
+ * not clear to you.
+ *
+ * Description:
+ * Demonstration of the wireframe simulator
+ *
+ * Authors:
+ * Nicolas Melchior
+ *
+ *****************************************************************************/
+
+/*!
+  \file wireframeSimulator.cpp
+
+  \brief Demonstration of the wireframe simulator.
+*/
+
+/*!
+  \example wireframeSimulator.cpp
+
+  Demonstration of the wireframe simulator.
+*/
+#include <stdlib.h>
+
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayD3D.h>
+#include <visp/vpCameraParameters.h>
+
+#include <visp/vpMath.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
+#include <visp/vpWireFrameSimulator.h>
+
+#define GETOPTARGS	"dh"
+
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
+
+/*!
+
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ipath : Input image path.
+
+*/
+void usage(const char *name, const char *badparam)
+{
+  fprintf(stdout, "\n\
+Demonstration of the wireframe simulator.\n\
+\n\
+The goal of this example is to present the basic functionalities of the wire frame simulator.\n\
+\n\
+SYNOPSIS\n\
+  %s [-d] [-h]\n", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -h\n\
+     Print the help.\n");
+
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+}
+
+
+/*!
+
+  Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param display : Display activation.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, const char **argv, bool &display)
+{
+  const char *optarg;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+
+    switch (c) {
+    case 'd': display = false; break;
+    case 'h': usage(argv[0], NULL); return false; break;
+
+    default:
+      usage(argv[0], optarg);
+      return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+
+int
+main(int argc, const char ** argv)
+{
+  bool opt_display = true;
+  
+  // Read the command line options
+  if (getOptions(argc, argv, opt_display) == false) {
+    exit (-1);
+  }
+  
+  /*
+    Three vpImage are created : one for the main camera and the others
+    for two external cameras
+  */
+  vpImage<vpRGBa> Iint(480,640,255);
+  vpImage<vpRGBa> Iext1(480,640,255);
+  vpImage<vpRGBa> Iext2(480,640,255);
+
+  /*
+    Create a display for each different cameras.
+  */
+  #if defined VISP_HAVE_X11
+  vpDisplayX display[3];
+  #elif defined VISP_HAVE_OPENCV
+  vpDisplayOpenCV display[3];
+  #elif defined VISP_HAVE_GDI
+  vpDisplayGDI display[3];
+  #elif defined VISP_HAVE_D3D9
+  vpDisplayD3D display[3];
+  #elif defined VISP_HAVE_GTK
+  vpDisplayGTK display[3];
+  #endif
+  
+  if (opt_display)
+  {
+    try
+    {
+      // Display size is automatically defined by the image (I) size
+      display[0].init(Iint, 100, 100,"The internal view") ;
+      display[1].init(Iext1, 100, 100,"The first external view") ;
+      display[2].init(Iext2, 100, 100,"The second external view") ;
+      vpDisplay::setWindowPosition (Iint, 0, 0);
+      vpDisplay::setWindowPosition (Iext1, 700, 0);
+      vpDisplay::setWindowPosition (Iext2, 0, 550);
+      vpDisplay::display(Iint);
+      vpDisplay::flush(Iint);
+      vpDisplay::display(Iext1);
+      vpDisplay::flush(Iext1);
+      vpDisplay::display(Iext2);
+      vpDisplay::flush(Iext2);
+    }
+    catch(...)
+    {
+      vpERROR_TRACE("Error while displaying the image") ;
+      exit(-1);
+    }
+  }
+
+  //The homogeneous matrix which gives the current position of the main camera relative to the object
+  vpHomogeneousMatrix cMo(0,0.05,1.3,vpMath::rad(15),vpMath::rad(25),0);
+  
+  //The homogeneous matrix which gives the desired position of the main camera relative to the object
+  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
+
+  //Declaration of the simulator
+  vpWireFrameSimulator sim;
+  
+  /*
+    Set the scene. It enables to choose the shape of the object and the shape of the desired object which is
+    displayed in the main camera view. It exists several objects in ViSP. See the html documentation of the 
+    simulator class to have the complete list.
+    
+    Note : if you don't want to have a desired object displayed in the main camera view you can use the initObject Method.
+    
+    Here the object is a plate with 4 points and it is the same object which is used to display the object at the desired position. 
+  */
+  sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
+  
+  /*
+    The object at the current position will be displayed in blue
+    The object at the desired position will be displayed in red
+    The camera will be display in green
+  */
+  sim.setCurrentViewColor(vpColor::blue);
+  sim.setDesiredViewColor(vpColor::red);
+  sim.setCameraColor(vpColor::green);
+  
+  /*
+    Set the current and the desired position of the camera relative to the object.
+  */
+  sim.setCameraPosition(cMo) ;
+  sim.setDesiredCameraPosition(cdMo);
+  
+  /*
+    Set the main external camera's position relative to the world refrence frame.
+    More information about the different frames are given in the html documentation.
+  */
+  vpHomogeneousMatrix camMw(vpHomogeneousMatrix(0.0,0,4.5,vpMath::rad(0),vpMath::rad(-30),0));
+  sim.setExternalCameraPosition(camMw);
+  
+  /*
+    Set the parameters of the cameras (internal and external)
+  */
+  vpCameraParameters camera(1000,1000,320,240);
+  sim.setInternalCameraParameters(camera);
+  sim.setExternalCameraParameters(camera);
+  
+  //Get the view of the internal camera
+  sim.getInternalImage(Iint);
+  //Get the view of the main external camera
+  sim.getExternalImage(Iext1);
+  //Get the view of an external camera that you can positionned thanks 
+  //to a vpHomogeneousMatrix which describes the position of the camera
+  //relative to the world reference frame.
+  vpHomogeneousMatrix camoMw(vpHomogeneousMatrix(-0.3,0.2,2.5,vpMath::rad(0),vpMath::rad(10),0));
+  sim.getExternalImage(Iext2,camoMw);
+
+  //Display the views.
+  if (opt_display)
+  {
+    vpDisplay::flush(Iint);
+    vpDisplay::flush(Iext1);
+    vpDisplay::flush(Iext2);
+  }
+  
+  std::cout << std::endl;
+  std::cout << "Here are presented the effect of the basic functions of the simulator" << std::endl;
+  std::cout << std::endl;
+  std::cout << "Click on the internal view window to continue. the object will move. The external cameras are fixed. The main camera moves too because the homogeneous matrix cMo didn't change." << std::endl;
+  
+  if (opt_display)
+  {
+    vpDisplay::getClick(Iint);
+
+    vpDisplay::display(Iint) ;
+    vpDisplay::display(Iext1) ;
+    vpDisplay::display(Iext2) ;
+  }
+  
+  /*
+    To move the object you have to define a vpHomogeneousMatrix which gives
+    the position of the object relative to the world refrenece frame.
+  */
+  vpHomogeneousMatrix mov(0.05,0.05,0.2,vpMath::rad(10),0,0);
+  sim.moveObject(mov);
+
+  //Get the view of the internal camera
+  sim.getInternalImage(Iint);
+  //Get the view of the main external camera
+  sim.getExternalImage(Iext1);
+  //Get the view of an external camera that you can positionned thanks 
+  //to a vpHomogeneousMatrix which describes the position of the camera
+  //relative to the world reference frame.
+  sim.getExternalImage(Iext2,camoMw);
+  
+  //Display the views.
+  if (opt_display)
+  {
+    vpDisplay::flush(Iint);
+    vpDisplay::flush(Iext1);
+    vpDisplay::flush(Iext2);
+  }
+  
+  std::cout << std::endl;
+  std::cout << "Click on the internal view window to continue" << std::endl;
+  
+  vpDisplay::getClick(Iint);
+  
+  std::cout << std::endl;
+  std::cout << "Now you can move the main external camera. Click inside the corresponding window with one of the three buttons of your mouse and move the pointer." << std::endl;
+  std::cout << std::endl;
+  std::cout << "Click on the internal view window when you are finished" << std::endl;
+  
+  /*
+    To move the main external camera you need a loop containing the getExternalImage method. This functionnality is only available for the main external camera.
+  */
+  if (opt_display)
+  {
+    while (!vpDisplay::getClick(Iint, false))
+    {
+      vpDisplay::display(Iext1) ;
+      sim.getExternalImage(Iext1);
+      vpDisplay::flush(Iext1);
+    }
+  }
+
+  std::cout << std::endl;
+  std::cout << "You have seen the main capabilities of the simulator. Other specific functionalities are available. Please refers to the html documentation to access the list of all functions" << std::endl;
+  return 0;
+}
+#else
+int
+main()
+{
+  vpERROR_TRACE("You do not have X11, OpenCV, GDI, D3D9 or GTK display functionalities...");
+}
+
+#endif
