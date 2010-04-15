@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: servoSimu4Points.cpp 2543 2010-04-14 13:30:08Z nmelchio $
+ * $Id$
  *
  * Copyright (C) 1998-2010 Inria. All rights reserved.
  *
