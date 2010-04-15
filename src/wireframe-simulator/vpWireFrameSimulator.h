@@ -266,6 +266,10 @@ class VISP_EXPORT vpWireFrameSimulator
     float cameraFactor;
     
     vpCameraTrajectoryDisplayType camTrajType;
+    
+    bool extCamChanged;
+    
+    vpHomogeneousMatrix rotz;
   
   public:
     vpWireFrameSimulator();
@@ -281,14 +285,14 @@ class VISP_EXPORT vpWireFrameSimulator
       
       \param cMo : The pose of the camera.
     */
-    void setCameraPosition(const vpHomogeneousMatrix cMo) {this->cMo = vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * cMo;}
+    void setCameraPosition(const vpHomogeneousMatrix cMo) {this->cMo = rotz * cMo;}
     
     /*!
       Set the desired position of the camera relative to the object.
       
       \param cdMo : The desired pose of the camera.
     */
-    void setDesiredCameraPosition(const vpHomogeneousMatrix cdMo) {this->cdMo = vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * cdMo;}
+    void setDesiredCameraPosition(const vpHomogeneousMatrix cdMo) {this->cdMo = rotz * cdMo;}
     
     /*!
       Set the external camera point of view.
@@ -297,11 +301,12 @@ class VISP_EXPORT vpWireFrameSimulator
     */
     void setExternalCameraPosition(const vpHomogeneousMatrix camMw) 
     {
-      this->camMw = vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * camMw;
+      this->camMw = rotz * camMw;
       vpTranslationVector T;
       this->camMw.extract (T);
       this->camMw2.buildFrom(0,0,T[2],0,0,0);
       w2Mw = camMw2.inverse()*this->camMw;
+      extCamChanged = true;
     }
     
     /*!
@@ -309,7 +314,7 @@ class VISP_EXPORT vpWireFrameSimulator
       
       \return the main external camera position relative to the the world reference frame.
     */
-    inline vpHomogeneousMatrix getExternalCameraPosition() const { return vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * camMw;}
+    inline vpHomogeneousMatrix getExternalCameraPosition() const { return rotz * camMw;}
     
     /*!
       Set the color used to display the camera in the external view.
@@ -353,7 +358,7 @@ class VISP_EXPORT vpWireFrameSimulator
       
       \return It returns the desired pose as a vpHomogeneousMatrix
     */
-    vpHomogeneousMatrix get_cMw() const {return vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180))*camMw;}
+    vpHomogeneousMatrix get_cMw() const {return rotz*camMw;}
     
     /*!
       Get the parameters of the virtual internal camera.
@@ -493,11 +498,10 @@ class VISP_EXPORT vpWireFrameSimulator
     */
     vpList<vpHomogeneousMatrix> get_cMo_History () {
       vpList<vpHomogeneousMatrix> list_cMo;
-      vpHomogeneousMatrix rot(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180));
       poseList.front();
       while (!poseList.outside())
       {
-	list_cMo.addRight(rot*poseList.value());
+	list_cMo.addRight(rotz*poseList.value());
 	poseList.next();
       }
       return list_cMo;}

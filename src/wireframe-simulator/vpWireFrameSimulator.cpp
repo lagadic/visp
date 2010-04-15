@@ -313,6 +313,10 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   cameraFactor = 1.0;
   
   camTrajType = CT_LINE;
+  
+  extCamChanged = false;
+  
+  rotz.buildFrom(0,0,0,0,0,vpMath::rad(180));
 }
 
 
@@ -672,7 +676,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   
     int iter = 0;
 
-    if (changed)
+    if (changed || extCamChanged)
     {
       cameraTrajectory.kill();
       poseList.front();
@@ -692,6 +696,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
         iter++;
         iP_1 = iP;
       }
+      extCamChanged = false;
     }
     else
     {
@@ -743,7 +748,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, vpHomogeneousMatrix c
 {
   float w44o[4][4],w44cext[4][4],w44c[4][4],x,y,z;
   
-  vpHomogeneousMatrix camMwt = vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * camMw;
+  vpHomogeneousMatrix camMwt = rotz * camMw;
 
   double u;
   double v;
@@ -905,7 +910,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   
     int iter = 0;
 
-    if (changed)
+    if (changed || extCamChanged)
     {
       cameraTrajectory.kill();
       poseList.front();
@@ -926,6 +931,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
         iter++;
         iP_1 = iP;
       }
+      extCamChanged = false;
     }
     else
     {
@@ -977,7 +983,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, vpHomogeneousM
 {
   float w44o[4][4],w44cext[4][4],w44c[4][4],x,y,z;
 
-  vpHomogeneousMatrix camMwt = vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180)) * camMw;
+  vpHomogeneousMatrix camMwt = rotz * camMw;
   
   double u;
   double v;
@@ -1032,10 +1038,10 @@ vpWireFrameSimulator::displayTrajectory (vpImage<unsigned char> &I, vpList<vpHom
   vpImagePoint iP;
   vpImagePoint iP_1;
   int iter = 0;
-  vpHomogeneousMatrix rot(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180));
+
   while (!list_cMo.outside() && !list_wMo.outside())
   {
-    iP = projectCameraTrajectory(I, rot * list_cMo.value(), list_wMo.value(), cMw);
+    iP = projectCameraTrajectory(I, rotz * list_cMo.value(), list_wMo.value(), rotz * cMw);
     if (camTrajType == CT_LINE)
     {
       if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
@@ -1070,10 +1076,10 @@ vpWireFrameSimulator::displayTrajectory (vpImage<vpRGBa> &I, vpList<vpHomogeneou
   vpImagePoint iP;
   vpImagePoint iP_1;
   int iter = 0;
-  vpHomogeneousMatrix rot(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180));
+
   while (!list_cMo.outside() && !list_wMo.outside())
   {
-    iP = projectCameraTrajectory(I, rot * list_cMo.value(), list_wMo.value(), cMw);
+    iP = projectCameraTrajectory(I, rotz * list_cMo.value(), list_wMo.value(), rotz * cMw);
     if (camTrajType == CT_LINE)
     {
       if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
@@ -1294,7 +1300,7 @@ vpWireFrameSimulator::projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneous
   vpPoint point;
   point.setWorldCoordinates(0,0,0);
 
-  point.track(vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180))*(camMw*wMo*cMo.inverse())) ;
+  point.track(rotz*(camMw*wMo*cMo.inverse())) ;
 
   vpImagePoint iP;
 
@@ -1312,7 +1318,7 @@ vpWireFrameSimulator::projectCameraTrajectory (vpImage<unsigned char> &I, vpHomo
   vpPoint point;
   point.setWorldCoordinates(0,0,0);
 
-  point.track(vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180))*(camMw*wMo*cMo.inverse())) ;
+  point.track(rotz*(camMw*wMo*cMo.inverse())) ;
 
   vpImagePoint iP;
 
@@ -1330,7 +1336,7 @@ vpWireFrameSimulator::projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneous
   vpPoint point;
   point.setWorldCoordinates(0,0,0);
 
-  point.track(vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180))*(cMw*wMo*cMo.inverse())) ;
+  point.track(rotz*(cMw*wMo*cMo.inverse())) ;
 
   vpImagePoint iP;
 
@@ -1348,7 +1354,7 @@ vpWireFrameSimulator::projectCameraTrajectory (vpImage<unsigned char> &I, vpHomo
   vpPoint point;
   point.setWorldCoordinates(0,0,0);
 
-  point.track(vpHomogeneousMatrix(0,0,0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(180))*(cMw*wMo*cMo.inverse())) ;
+  point.track(rotz*(cMw*wMo*cMo.inverse())) ;
 
   vpImagePoint iP;
 
