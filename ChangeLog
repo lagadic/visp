@@ -14,6 +14,7 @@ ViSP (Subversion trunk)
       from one frame to an other. The vpTwistMatrix class is from now 
       deprecated.
     - Copy constructors were added to better support stl lists and vectors.
+    - Add of a new wireframe simulator.
   - Bug fixed
     - [9476] Memory leak in vpImageIo::readPNG() functions.	
 ----------------------------------------------	
