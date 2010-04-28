@@ -377,7 +377,7 @@ main(int argc, const char ** argv)
     simu.initExternalViewer(300, 300) ;
 
     vpTime::wait(1000) ;
-    simu.setZoomFactor(0.2f) ;
+    simu.setZoomFactor(1.0f) ;
     simu.addAbsoluteFrame() ;
 
     // Load the cad model
