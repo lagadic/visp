@@ -247,6 +247,8 @@ void vpOpenCVGrabber::setFramerate(const double framerate)
 
 /*!
 	Sets the captured image width.
+  
+  \warning This function must be called after open() method.
 
 	\param width : The requested value of the captured image width.
 
@@ -275,7 +277,9 @@ void vpOpenCVGrabber::setWidth(const unsigned int width)
 }
 
 /*!
-	Sets the captured image height
+	Sets the captured image height.
+
+  \warning This function must be called after open() method.
 
 	\param height : The requested value of the captured image height.
 
