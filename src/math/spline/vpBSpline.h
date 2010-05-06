@@ -88,12 +88,12 @@ typedef struct vpBasisFunction{
 
   The different parameters are :
 
-  - The knot vector \f$ U = {u_0, ... , u_m} \f$ where the knots \f$ u_i, i = 0, ...,m \f$ are real number such as \f$ u_i < u_{i+1} i = 0, ...,m \f$.
+  - The knot vector \f$ U = {u_0, ... , u_m} \f$ where the knots \f$ u_i, i = 0, ...,m \f$ are real number such as \f$ u_i < u_{i+1}, i = 0, ...,m \f$.
     To define a curve, the knot vector is such as : \f$ U = {a , ... , a, u_{p+1} , ... , u_{m-p-1} , b , ... , b} \f$ where \f$ a \f$ and \f$ b \f$ are real numbers and p is the degree of the B-Spline basis functions.
 
   - The B-Spline basis functions \f$ N_{i,p} \f$ defined as :
   \f[ N_{i,0}(u) = \left\{\begin{array}{cc}
-  1 & \mbox{si } u_i \leq u_{i+1} \\ 0 & sinon
+  1 & \mbox{if } u_i \leq u \leq u_{i+1} \\ 0 & else
   \end{array}\right.\f]
 
   \f[ N_{i,p}(u) = \frac{u-u_i}{u_{i+p}-u_i}N_{i,p-1}(u)+\frac{u_{i+p+1}-u}{u_{i+p+1}-u_{i+1}}N_{i+1,p-1}(u)\f]
