@@ -17,6 +17,8 @@ ViSP (Subversion trunk)
     - Add of a new wireframe simulator.
   - Bug fixed
     - [9476] Memory leak in vpImageIo::readPNG() functions.	
+  - Improvements
+    - Change the FindOpenCV.cmake in order to detect automatically OpenCV 1.1, 2.0 and 2.1.
 ----------------------------------------------	
 ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
