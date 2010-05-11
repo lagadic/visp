@@ -395,6 +395,9 @@ public:
   void getArticularDisplacement(vpColVector &displacement);
   void getDisplacement(vpRobot::vpControlFrameType frame, 
 		       vpColVector &displacement);
+
+  void openGripper();
+  void closeGripper();
 };
 
 
