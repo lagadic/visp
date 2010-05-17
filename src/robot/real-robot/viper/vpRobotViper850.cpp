@@ -2154,6 +2154,7 @@ int main()
     vpTime::wait(5);
   }
 #endif
+}
   \endcode
   
   \exception vpRobotException::lowLevelError : If the force/torque measures
