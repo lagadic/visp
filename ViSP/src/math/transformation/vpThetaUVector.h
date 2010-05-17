@@ -101,8 +101,8 @@ public:
   vpThetaUVector(const vpRxyzVector& rxyz) ;
 
   //! constructor from 3 angles (in radian)
-  vpThetaUVector(const double thetaux, const double thetauy, const double thetauz) :
-    vpRotationVector (thetaux, thetauy, thetauz) { ; }
+  vpThetaUVector(const double tux, const double tuy, const double tuz) :
+    vpRotationVector (tux, tuy, tuz) { ; }
 
   //! convert an homogeneous matrix into Theta U vector
   vpThetaUVector buildFrom(const vpHomogeneousMatrix& M) ;
@@ -114,6 +114,8 @@ public:
   vpThetaUVector buildFrom(const vpRzyzVector &zyz) ;
   //! convert an Rxyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRxyzVector &xyz) ;
+
+  vpThetaUVector &operator=(double x) ;
 
   // extract the angle and the axis from the ThetaU representation
   void extract( double &theta, vpColVector &u) const;
