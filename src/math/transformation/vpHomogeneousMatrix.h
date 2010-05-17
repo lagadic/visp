@@ -111,38 +111,38 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! copy constructor
   vpHomogeneousMatrix(const vpHomogeneousMatrix &M) ;
   //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const vpTranslationVector &T,
+  vpHomogeneousMatrix(const vpTranslationVector &t,
                       const vpRotationMatrix &R) ;
   //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const vpTranslationVector &T,
+  vpHomogeneousMatrix(const vpTranslationVector &t,
                       const vpThetaUVector &tu) ;
   //! Construction from Translation and rotation
   vpHomogeneousMatrix(const vpPoseVector &p) ;  
 
   //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const double Tx,const  double Ty, const double Tz,
+  vpHomogeneousMatrix(const double tx,const  double ty, const double tz,
 		      const double tux,const  double tuy, const double tuz  ) ;
 
   //! Construction from Translation and rotation
-  void buildFrom(const vpTranslationVector &T,
+  void buildFrom(const vpTranslationVector &t,
                  const vpRotationMatrix &R) ;
   //! Construction from Translation and rotation
-  void buildFrom(const vpTranslationVector &T,
+  void buildFrom(const vpTranslationVector &t,
                  const vpThetaUVector &tu) ;
   //! Construction from Translation and rotation
   void buildFrom(const vpPoseVector &p) ;
   //! Construction from Translation and rotation
-  void buildFrom(const double Tx,const  double Ty, const double Tz,
+  void buildFrom(const double tx,const  double ty, const double tz,
 		 const double tux,const  double tuy, const double tuz  ) ;
     
   //! copy operator from vpHomogeneousMatrix
-  vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &m);
+  vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
 
   //! multiply two homogeneous matrices  aMb = aMc*cMb
-  vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &mat) const;
+  vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
 
   //! multiply by a vector ! size 4 !!!
-  vpColVector operator*(vpColVector &mat) const;
+  vpColVector operator*(vpColVector &v) const;
 
   //! invert the homogeneous matrix
   vpHomogeneousMatrix inverse() const ;
@@ -157,17 +157,22 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! insert a theta u vector (transformation into a rotation matrix)
   void insert(const vpThetaUVector &tu) ;
   //! insert a translation vector
-  void insert(const vpTranslationVector &T) ;
+  void insert(const vpTranslationVector &t) ;
 
   //! extract the rotational matrix from the homogeneous  matrix
   void extract( vpRotationMatrix &R) const;
   //! extract the translation vector from the homogeneous  matrix
-  void extract(vpTranslationVector &T) const;
+  void extract(vpTranslationVector &t) const;
+  // extract the rotation as a Theta U vector.
+  void extract(vpThetaUVector &tu) const;
 
   // Load an homogeneous matrix from a file
   void load(std::ifstream &f) ;
   // Save an homogeneous matrix in a file
   void save(std::ofstream &f) const ;
+
+  // Set to identity
+  void eye();
 
   //! Print the matrix as a vector [T thetaU]
   void print() ;
