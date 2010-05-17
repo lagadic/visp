@@ -225,6 +225,24 @@ vpThetaUVector::buildFrom(const vpRxyzVector& e)
     return *this ;
 }
 
+/*! 
+
+  Initialize each element of the Theta U vector to the same angle value x.
+
+  \param x : Angle value to set for each element of the Theta U vector.
+
+  \code
+  vpThetaU tu;
+  tu = vpMath::rad(45); All the 3 angles are set to 45 degrees
+  \endcode
+*/
+vpThetaUVector &vpThetaUVector::operator=(double x)
+{
+  for (int i=0; i< 3; i++)
+    r[i] = x;
+
+  return *this;
+}
 
 /*!
 
