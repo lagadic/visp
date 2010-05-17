@@ -309,11 +309,11 @@ public:
   //! Initialize an identity matrix n-by-n
   void eye(int n) ;
   //! Initialize an identity matrix m-by-n
-   void eye(int m, int n) ;
+  void eye(int m, int n) ;
 
-   //! Compute the AAt operation B = A*A^T
-   vpMatrix AAt() const;
-   void AAt(vpMatrix &B) const;
+  //! Compute the AAt operation B = A*A^T
+  vpMatrix AAt() const;
+  void AAt(vpMatrix &B) const;
    
   //! Compute the AtA operation B = A^T*A
   vpMatrix AtA() const;
