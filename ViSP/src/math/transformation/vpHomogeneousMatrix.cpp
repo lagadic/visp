@@ -102,19 +102,19 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpMatri
 }
 
 
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &T,
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,
                                          const vpThetaUVector &tu) : vpMatrix()
 {
   init() ;
-  buildFrom(T,tu) ;
+  buildFrom(t,tu) ;
 }
 
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &T,
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,
                                          const vpRotationMatrix &R) : vpMatrix()
 {
   init() ;
   insert(R) ;
-  insert(T) ;
+  insert(t) ;
 }
 
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpMatrix()
@@ -124,32 +124,32 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpMatrix()
   buildFrom(p[0],p[1],p[2],p[3],p[4],p[5]) ;
 }
 
-vpHomogeneousMatrix::vpHomogeneousMatrix(const double Tx,
-					 const double Ty,
-					 const double Tz,
+vpHomogeneousMatrix::vpHomogeneousMatrix(const double tx,
+					 const double ty,
+					 const double tz,
 					 const double tux,
 					 const double tuy,
 					 const double tuz) : vpMatrix()
 {
   init() ;
-  buildFrom(Tx, Ty, Tz,tux, tuy, tuz) ;
+  buildFrom(tx, ty, tz,tux, tuy, tuz) ;
 }
 
 void
-vpHomogeneousMatrix::buildFrom(const vpTranslationVector &T,
+vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t,
                                const vpThetaUVector &tu)
 {
   insert(tu) ;
-  insert(T) ;
+  insert(t) ;
 }
 
 void
-vpHomogeneousMatrix::buildFrom(const vpTranslationVector &T,
+vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t,
                                const vpRotationMatrix &R)
 {
   init() ;
   insert(R) ;
-  insert(T) ;
+  insert(t) ;
 }
 
 
@@ -157,57 +157,68 @@ void
 vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
 {
 
-  vpTranslationVector T(p[0],p[1],p[2]) ;
+  vpTranslationVector t(p[0],p[1],p[2]) ;
   vpThetaUVector tu(p[3],p[4],p[5]) ;
 
   insert(tu) ;
-  insert(T) ;
+  insert(t) ;
 }
 
 void
-vpHomogeneousMatrix::buildFrom(const double Tx,
-			       const double Ty,
-			       const double Tz,
+vpHomogeneousMatrix::buildFrom(const double tx,
+			       const double ty,
+			       const double tz,
 			       const double tux,
 			       const double tuy,
 			       const double tuz)
 {
   vpRotationMatrix R(tux, tuy, tuz) ;
-  vpTranslationVector T(Tx, Ty, Tz) ;
+  vpTranslationVector t(tx, ty, tz) ;
 
   insert(R) ;
-  insert(T) ;
+  insert(t) ;
 }
 
 /*!
   \brief affectation of two homogeneous matrix
 
-  \param m : *this = m
+  \param M : *this = M
 */
 vpHomogeneousMatrix &
-vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &m)
+vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M)
 {
 
-  if (rowPtrs != m.rowPtrs) init() ;
+  if (rowPtrs != M.rowPtrs) init() ;
 
   for (int i=0; i<4; i++)
   {
     for (int j=0; j<4; j++)
     {
-      rowPtrs[i][j] = m.rowPtrs[i][j];
+      rowPtrs[i][j] = M.rowPtrs[i][j];
     }
   }
   return *this;
 }
 
 /*!
-  \brief Homogeneous matrix multiplication
+  \brief Allow homogeneous matrix multiplication.
 
-  aMb = aMc*cMb
+  \code
+#include <visp/vpHomogeneousMatrix.h>
+
+int main()
+{
+  vpHomogeneousMatrix aMb, bMc;
+  // Initialize aMb and bMc...
+
+  // Compute aMc * bMc
+  vpHomogeneousMatrix aMc = aMb * bMc;  
+}
+  \endcode
 
 */
 vpHomogeneousMatrix
-vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &mat) const
+vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M) const
 {
   vpHomogeneousMatrix p,p1 ;
 
@@ -216,10 +227,10 @@ vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &mat) const
 
 
   extract(T1) ;
-  mat.extract(T2) ;
+  M.extract(T2) ;
 
   extract (R1) ;
-  mat.extract (R2) ;
+  M.extract (R2) ;
 
   R = R1*R2 ;
 
@@ -281,12 +292,23 @@ vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
   \brief extract the translational component of the homogeneous matrix
 */
 void
-vpHomogeneousMatrix::extract(vpTranslationVector &T) const
+vpHomogeneousMatrix::extract(vpTranslationVector &t) const
 {
 
-  T[0] = (*this)[0][3] ;
-  T[1] = (*this)[1][3] ;
-  T[2] = (*this)[2][3] ;
+  t[0] = (*this)[0][3] ;
+  t[1] = (*this)[1][3] ;
+  t[2] = (*this)[2][3] ;
+}
+/*!
+  Extract the rotation as a Theta U vector.
+*/
+void
+vpHomogeneousMatrix::extract(vpThetaUVector &tu) const
+{
+  
+  vpRotationMatrix R;
+  (*this).extract(R);
+  tu.buildFrom(R);
 }
 
 
@@ -352,6 +374,24 @@ vpHomogeneousMatrix::inverse() const
   Mi.insert(RtT) ;
 
   return Mi ;
+}
+
+/*!
+  Set to transformation to identity.
+*/
+void vpHomogeneousMatrix::eye()
+{
+  (*this)[0][0] = 1 ;
+  (*this)[1][1] = 1 ;
+  (*this)[2][2] = 1 ;
+
+  (*this)[0][1] = (*this)[0][2] = 0 ;
+  (*this)[1][0] = (*this)[1][2] = 0 ;
+  (*this)[2][0] = (*this)[2][1] = 0 ;
+
+  (*this)[0][3] = 0 ;
+  (*this)[1][3] = 0 ;
+  (*this)[2][3] = 0 ;
 }
 
 /*!
