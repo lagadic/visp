@@ -16,7 +16,15 @@ ViSP (Subversion trunk)
     - Copy constructors were added to better support stl lists and vectors.
     - Add of a new wireframe simulator.
     - In vpRobotViper850 add openGripper() and closeGripper() functions to 
-      control the Schunk two fingers electric gripper.
+      control the Schunk two fingers electric gripper. 
+    - In vpHomogeneousMatrix addition of 
+      . eye() method to set the transformation as identity
+      . extract(vpThetaUVector &) to extract the rotation as a Theta U vector
+    - In vpThetaUVector addition of &operator=() method to initialise all the angles to the 
+      same value
+  - Examples:
+    - New example calibrateTsai.cpp to show how to use the vpCalibration class to estimate  
+      the hand to eye transformation.
   - Bug fixed
     - [9476] Memory leak in vpImageIo::readPNG() functions.	
   - Improvements
