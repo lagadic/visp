@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   calibrate2dGrid.cpp
+  calibrateTsai.cpp
 )
 
 # rule for binary build
@@ -59,6 +60,7 @@ ENDFOREACH(source)
 # To run these tests automaticaly using the crontab under Unix or the task
 # manager under windows, we have to add the -d option to turn off the display
 # of acquired images
+ADD_TEST(calibrateTsai calibrateTsai)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
