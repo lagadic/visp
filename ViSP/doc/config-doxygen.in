@@ -1013,6 +1013,7 @@ PREDEFINED             = \
            VISP_HAVE_BICLOPS \
            VISP_HAVE_PTU46 \
            VISP_HAVE_VIPER850 \
+           VISP_HAVE_CYCABTK \
            VISP_HAVE_PARPORT \
            VISP_HAVE_XML2 \
            VISP_HAVE_LIBPLOTTER \

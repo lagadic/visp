@@ -152,6 +152,7 @@ SET (HEADER_ROBOT
   robot/real-robot/biclops/vpBiclops.h
   robot/real-robot/biclops/vpRobotBiclopsController.h
   robot/real-robot/biclops/vpRobotBiclops.h
+  robot/real-robot/cycab/vpRobotCycab.h
   robot/real-robot/ptu46/vpPtu46.h
   robot/real-robot/ptu46/vpRobotPtu46.h
   robot/real-robot/viper/vpViper.h

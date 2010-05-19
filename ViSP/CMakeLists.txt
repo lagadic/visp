@@ -153,6 +153,14 @@ IF (UNIX)
   ELSE(PTU46_FOUND)
     SET(USE_PTU46 OFF)
   ENDIF(PTU46_FOUND)
+
+  FIND_PACKAGE(CycabTk)
+  IF(CycabTk_FOUND)
+    OPTION(USE_CYCAB "Compile ViSP for Cycab car-like mobile robot at Irisa" ON)
+  ELSE(CycabTk_FOUND)
+    SET(USE_CYCAB OFF)
+  ENDIF(CycabTk_FOUND)
+ 
 ENDIF(UNIX)
 
 IF(WIN32)
@@ -1150,6 +1158,27 @@ IF(USE_PTU46)
     # SET(USE_PTU46 OFF)
   ENDIF(PTU46_FOUND)
 ENDIF(USE_PTU46)
+
+# library for Cycab car-like mobile robot
+IF(USE_CYCAB)
+  IF(CycabTk_FOUND)
+    IF(CycabTk_NEW_FOUND)
+      SET(VISP_HAVE_CYCABTK TRUE) # for header vpConfig.h
+    ENDIF(CycabTk_NEW_FOUND)
+    IF(CycabTk_OLD_FOUND)
+      SET(VISP_HAVE_CYCABTK_OLD TRUE) # for header vpConfig.h
+    ENDIF(CycabTk_OLD_FOUND)
+    SET(VISP_HAVE_CYCAB TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_CYCAB_FOUND "yes")  # for ViSP-third-party.txt
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${CycabTk_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${CycabTk_LIBRARIES})
+  ELSE(CycabTk_FOUND)
+    MESSAGE(STATUS "Cycab interface not found")
+    MESSAGE("Cycab requested but not found. Turn off USE_CYCAB option!")
+    SET(VISP_HAVE_CYCAB_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(CycabTk_FOUND)
+ENDIF(USE_CYCAB)
+
 
 #----------------------------------------------------------------------
 # add html-doc target for doxygen documentation building
