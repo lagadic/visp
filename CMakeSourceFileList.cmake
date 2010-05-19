@@ -159,6 +159,7 @@ SET (SRC_ROBOT
   robot/real-robot/biclops/vpBiclops.cpp
   robot/real-robot/biclops/vpRobotBiclopsController.cpp
   robot/real-robot/biclops/vpRobotBiclops.cpp
+  robot/real-robot/cycab/vpRobotCycab.cpp
   robot/real-robot/ptu46/vpPtu46.cpp
   robot/real-robot/ptu46/vpRobotPtu46.cpp
   robot/real-robot/viper/vpViper.cpp

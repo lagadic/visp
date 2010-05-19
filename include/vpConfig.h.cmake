@@ -170,6 +170,19 @@
 // Defined if Irisa's Viper S850 robot available.
 #cmakedefine VISP_HAVE_VIPER850
 
+// Defined if Irisa's Cycab car-like mobile robot is found. 
+// If found, either VISP_HAVE_CYCABTK_OLD nor VISP_HAVE_CYCABTK
+// is defined.  
+#cmakedefine VISP_HAVE_CYCAB
+
+// Defined if the old cycabtk library is found. CycabTk is used to
+// communicate with Irisa's Cycab car-like robot (obsolete).  
+#cmakedefine VISP_HAVE_CYCABTK_OLD
+
+// Defined if the last cycabtk library is found. CycabTk is used to
+// communicate with Irisa's Cycab car-like robot (to use).  
+#cmakedefine VISP_HAVE_CYCABTK
+
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
 

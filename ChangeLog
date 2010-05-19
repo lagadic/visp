@@ -8,7 +8,7 @@
 
 ViSP (Subversion trunk)
   - New Features
-    - new vpForceTwistMatrix class that allows to transfer a force/torque skew
+    - New vpForceTwistMatrix class that allows to transfer a force/torque skew
       from one frame to an other.
     - new vpVelocityTwistMatrix class that allows to transfer a velocity skew
       from one frame to an other. The vpTwistMatrix class is from now 
@@ -20,8 +20,10 @@ ViSP (Subversion trunk)
     - In vpHomogeneousMatrix addition of 
       . eye() method to set the transformation as identity
       . extract(vpThetaUVector &) to extract the rotation as a Theta U vector
-    - In vpThetaUVector addition of &operator=() method to initialise all the angles to the 
-      same value
+    - In vpThetaUVector addition of &operator=() method to initialise all the 
+      angles to the same value
+    - New vpRobotCycab class to communicate with the Cycab car-like mobile 
+      robot at Irisa.
   - Examples:
     - New example calibrateTsai.cpp to show how to use the vpCalibration class to estimate  
       the hand to eye transformation.
