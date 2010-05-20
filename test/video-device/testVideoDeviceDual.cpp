@@ -45,6 +45,7 @@
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
 #include <visp/vpParseArgv.h>
+#include <stdlib.h>
 
 #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_OPENCV))
 
