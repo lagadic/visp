@@ -235,6 +235,66 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
     vpCOLOR_CODING_RAW8    = DC1394_COLOR_CODING_RAW8,
     vpCOLOR_CODING_RAW16   = DC1394_COLOR_CODING_RAW16
   } vp1394TwoColorCodingType;
+  
+  /*!
+    Enumeration of the parameters that can be modified. See libdc1394 2.x header
+    file dc1394/control.h
+  */
+  typedef enum {
+    vpFEATURE_BRIGHTNESS      = DC1394_FEATURE_BRIGHTNESS,
+    vpFEATURE_EXPOSURE        = DC1394_FEATURE_EXPOSURE,
+    vpFEATURE_SHARPNESS       = DC1394_FEATURE_SHARPNESS,
+//    vpFEATURE_WHITE_BALANCE   = DC1394_FEATURE_WHITE_BALANCE,
+    vpFEATURE_HUE             = DC1394_FEATURE_HUE,
+    vpFEATURE_SATURATION      = DC1394_FEATURE_SATURATION,
+    vpFEATURE_GAMMA           = DC1394_FEATURE_GAMMA,
+    vpFEATURE_SHUTTER         = DC1394_FEATURE_SHUTTER,
+    vpFEATURE_GAIN            = DC1394_FEATURE_GAIN,
+    vpFEATURE_IRIS            = DC1394_FEATURE_IRIS,
+//    vpFEATURE_FOCUS           = DC1394_FEATURE_FOCUS,
+//    vpFEATURE_TEMPERATURE     = DC1394_FEATURE_TEMPERATURE,
+//    vpFEATURE_TRIGGER         = DC1394_FEATURE_TRIGGER,
+//    vpFEATURE_TRIGGER_DELAY   = DC1394_FEATURE_TRIGGER_DELAY,
+//    vpFEATURE_WHITE_SHADING   = DC1394_FEATURE_WHITE_SHADING,
+//    vpFEATURE_FRAME_RATE      = DC1394_FEATURE_FRAME_RATE,
+//    vpFEATURE_ZOOM            = DC1394_FEATURE_ZOOM,
+//    vpFEATURE_PAN             = DC1394_FEATURE_PAN,
+//    vpFEATURE_TILT            = DC1394_FEATURE_TILT,
+//    vpFEATURE_OPTICAL_FILTER  = DC1394_FEATURE_OPTICAL_FILTER,
+//    vpFEATURE_CAPTURE_SIZE    = DC1394_FEATURE_CAPTURE_SIZE,
+//    vpFEATURE_CAPTURE_QUALITY = DC1394_FEATURE_CAPTURE_QUALITY
+  } vp1394TwoParametersType;
+    
+  
+ private: 
+ 
+  /*!
+    Control structure of the values that can be modified during the execution.   
+  */
+  typedef struct{ 
+    uint32_t brightness ; 
+    uint32_t exposure;
+    uint32_t sharpness;
+//    uint32_t whiteBalance;
+    uint32_t hue;
+    uint32_t saturation;
+    uint32_t gamma;
+    uint32_t shutter ; 
+    uint32_t gain ;
+    uint32_t iris;
+//    uint32_t focus;
+//    uint32_t temperature ; 
+//    uint32_t trigger ;
+//    uint32_t triggerDelay ;
+//    uint32_t whiteShadding ; 
+//    uint32_t frameRate ;
+//    uint32_t zoom;
+//    uint32_t pan;
+//    uint32_t tilt ; 
+//    uint32_t opticalFilter ;
+//    uint32_t captureSize;
+//    uint32_t captureQuality ; 
+  } vpDc1394TwoCameraParametersData;    
 
 
  public:
@@ -291,8 +351,8 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void acquire(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id);
   void acquire(vpImage<vpRGBa> &I);
   void acquire(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id);
-
-
+  unsigned int getParameterValue(vp1394TwoParametersType param);
+  void setParameterValue(vp1394TwoParametersType param, unsigned int val);
   void close();
   void resetBus();
 
@@ -310,6 +370,8 @@ public:
   void setCapture(dc1394switch_t _switch);
   void setTransmission(dc1394switch_t _switch);
   void setIsoSpeed(dc1394speed_t speed);
+  inline void updateDataCamToStruct();
+  inline void updateDataStructToCam();
 
  private:
   dc1394camera_t *camera, **cameras;
@@ -319,6 +381,11 @@ public:
   bool verbose;
   bool *camIsOpen;
   unsigned int num_buffers;
+  
+  /* parameters for the cameras */
+  bool* isDataModified;
+  dc1394feature_mode_t* initialShutterMode;
+  vpDc1394TwoCameraParametersData* dataCam;
 
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
   dc1394_t * d;

@@ -31,6 +31,9 @@ ViSP (Subversion trunk)
     - [9476] Memory leak in vpImageIo::readPNG() functions.	
   - Improvements
     - Change the FindOpenCV.cmake in order to detect automatically OpenCV 1.1, 2.0 and 2.1.
+    - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
+      add possibility to change during the execution the shutter, the gain, the
+      brightness, ... (see documentation for more details)
 ----------------------------------------------	
 ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
