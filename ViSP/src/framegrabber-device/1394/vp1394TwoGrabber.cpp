@@ -167,7 +167,13 @@ vp1394TwoGrabber::vp1394TwoGrabber(bool reset)
 #endif
   num_buffers = 4; // ring buffer size
 
+  isDataModified = NULL; 
+  initialShutterMode = NULL;
+  dataCam = NULL; 
+  
+  
   initialize(reset);
+  
   //  open();
 }
 
@@ -182,6 +188,11 @@ vp1394TwoGrabber::vp1394TwoGrabber(bool reset)
 */
 vp1394TwoGrabber::~vp1394TwoGrabber()
 {
+/*  if(num_cameras >= 1){
+    delete[] isDataModified;
+    delete[] initialShutterMode;
+    delete[] dataCam;
+  }*/
   close();
 }
 
@@ -1352,6 +1363,13 @@ vp1394TwoGrabber::initialize(bool reset)
                                      "No cameras found") );
     }
 
+    // allocation for the parameters
+    isDataModified = new bool[num_cameras];
+    for(unsigned int i=0; i<num_cameras; i++)
+      isDataModified[i] = false;
+    initialShutterMode = new dc1394feature_mode_t[num_cameras];
+    dataCam = new vpDc1394TwoCameraParametersData[num_cameras];
+
     if (camera_id >= num_cameras) {
       // Bad camera id
       close();
@@ -1438,8 +1456,32 @@ vp1394TwoGrabber::close()
       for (unsigned int i = 0; i < num_cameras;i++) {
         if (camIsOpen[i]) {
           camera = cameras[i];
+          this->camera_id = i;// set camera id for the function updateDataStructToCam
           setTransmission(DC1394_OFF);
           setCapture(DC1394_OFF);
+          if(isDataModified[i]){
+            // reset values
+            try{
+              updateDataStructToCam();
+            }
+            catch(...){
+            }
+            // reset mode (manual, auto, ...)
+            if (dc1394_feature_set_mode(camera, DC1394_FEATURE_BRIGHTNESS, initialShutterMode[i]) != DC1394_SUCCESS ||
+              dc1394_feature_set_mode(camera, DC1394_FEATURE_EXPOSURE, initialShutterMode[i]) != DC1394_SUCCESS ||
+              dc1394_feature_set_mode(camera, DC1394_FEATURE_SHARPNESS, initialShutterMode[i]) != DC1394_SUCCESS ||
+              dc1394_feature_set_mode(camera, DC1394_FEATURE_HUE, initialShutterMode[i]) != DC1394_SUCCESS ||
+              dc1394_feature_set_mode(camera, DC1394_FEATURE_SATURATION, initialShutterMode[i]) != DC1394_SUCCESS ||
+              dc1394_feature_set_mode(camera, DC1394_FEATURE_GAMMA, initialShutterMode[i]) != DC1394_SUCCESS ||
+              dc1394_feature_set_mode(camera, DC1394_FEATURE_SHUTTER, initialShutterMode[i]) != DC1394_SUCCESS ||
+              dc1394_feature_set_mode(camera, DC1394_FEATURE_GAIN, initialShutterMode[i]) != DC1394_SUCCESS ||
+              dc1394_feature_set_mode(camera, DC1394_FEATURE_IRIS, initialShutterMode[i])){
+              
+              vpERROR_TRACE("Unable to reset the initial mode");
+              throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                            "Unable to reset the initial mode"));
+            }
+          }
         }
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
         dc1394_camera_free(cameras[i]);
@@ -1473,6 +1515,20 @@ vp1394TwoGrabber::close()
 
     camIsOpen = NULL;
     num_cameras = 0;
+  
+    // remove data for the parameters 
+    if(isDataModified != NULL){
+      delete[] isDataModified;
+      isDataModified = NULL;
+    }
+    if(initialShutterMode != NULL){
+      delete[] initialShutterMode;
+      initialShutterMode = NULL;
+    }
+    if(dataCam != NULL){
+      delete[] dataCam;
+      dataCam = NULL;
+    }   
 
     init = false;
   }
@@ -2606,6 +2662,158 @@ void vp1394TwoGrabber::setPanControl(int panControlValue)
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
                                    "Unable to set PAN register") );
   }
+}
+
+
+/*!
+
+  This method get the value of one of the parameters of the camera.
+  
+  \param param : The parameter expressing the value to return 
+  
+  \exception vpFrameGrabberException::settingError : if the parameter cannot be 
+    retrieved.
+  
+  \return the parameter's value
+*/  
+unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+  
+  uint32_t value;
+  dc1394feature_t feature = (dc1394feature_t)param;
+  dc1394error_t err;
+  err = dc1394_feature_get_value(camera, feature, &value);
+  if (err != DC1394_SUCCESS) {
+    vpERROR_TRACE("Unable to get the information");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                   "Unable to get the information") );
+  }
+  return (unsigned int)value;
+}
+
+
+/*!
+
+  This method set the value of one of the parameters of the camera. The initial 
+  value of the parameter is recorded and reset when the destructor is called.
+  
+  \warning if the program crashes and the destructor is not called, then the 
+    modified parameters will remain in the camera.
+    
+  \exception vpFrameGrabberException::settingError if a manual mode is not 
+    available for the parameter, an exception is thrown.
+      
+  \param param : The parameters to modify
+  \param val : the new value of this parameter
+*/ 
+void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param, unsigned int val)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+  uint32_t value = (uint32_t)val;
+  dc1394feature_t feature = (dc1394feature_t)param;
+  dc1394error_t err;
+  dc1394bool_t hasManualMode = DC1394_FALSE;
+  dc1394feature_modes_t modesAvailable;
+  
+  // test wether we can set the shutter value (manual mode available or not)
+  err = dc1394_feature_get_modes(camera, feature,  &modesAvailable);
+  if (err != DC1394_SUCCESS) {
+    vpERROR_TRACE("Unable to detect the manual mode information");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                               "Unable to detect the manual mode information"));
+  }
+  
+  for(unsigned int i=0; i<modesAvailable.num; i++){
+    if(modesAvailable.modes[i] == DC1394_FEATURE_MODE_MANUAL){
+      hasManualMode = DC1394_TRUE;
+    }
+  }  
+  
+  if(hasManualMode == DC1394_TRUE){  
+    
+    if(!isDataModified[camera_id]){//  to ensure we save the first mode even after several set
+      /* we update the structure */
+      updateDataCamToStruct();
+      err = dc1394_feature_get_mode(camera, feature, &(initialShutterMode[camera_id]));
+      if (err != DC1394_SUCCESS) {
+        vpERROR_TRACE("Unable to get the initial mode");
+        close();
+        throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                      "Unable to get the initial mode"));
+      }
+      isDataModified[camera_id] = true;
+    }
+    
+    dc1394feature_mode_t manualMode = DC1394_FEATURE_MODE_MANUAL;
+    err = dc1394_feature_set_mode(camera, feature, manualMode);
+    if (err != DC1394_SUCCESS) {
+      vpERROR_TRACE("Unable to set the muanual mode");
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                     "Unable to set the manual mode") );
+    }    
+    err = dc1394_feature_set_value(camera, feature, value);
+    if (err != DC1394_SUCCESS) {
+      vpERROR_TRACE("Unable to set the shutter information");
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                     "Unable to set the shutter information") );
+    }
+  }
+  else{
+    vpERROR_TRACE("The camera does not have a manual mode.\nCannot change the value");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                     "The camera does not have a manual mode"));
+  } 
+}
+
+/*!
+  update the data structure used to record the value of the current camera.
+  
+*/
+inline void 
+vp1394TwoGrabber::updateDataCamToStruct()
+{
+  dataCam[camera_id].brightness = getParameterValue(vpFEATURE_BRIGHTNESS);
+  dataCam[camera_id].exposure = getParameterValue(vpFEATURE_EXPOSURE);
+  dataCam[camera_id].sharpness = getParameterValue(vpFEATURE_SHARPNESS);
+  dataCam[camera_id].hue = getParameterValue(vpFEATURE_HUE);
+  dataCam[camera_id].saturation = getParameterValue(vpFEATURE_SATURATION);
+  dataCam[camera_id].gamma = getParameterValue(vpFEATURE_GAMMA);
+  dataCam[camera_id].shutter = getParameterValue(vpFEATURE_SHUTTER);
+  dataCam[camera_id].gain = getParameterValue(vpFEATURE_GAIN);
+  dataCam[camera_id].iris = getParameterValue(vpFEATURE_IRIS);
+}
+
+/*!
+  set the values of several parameters of the current camera with the value 
+  previously recorded.
+*/
+inline void 
+vp1394TwoGrabber::updateDataStructToCam()
+{
+  setParameterValue(vpFEATURE_BRIGHTNESS, dataCam[camera_id].brightness);
+  setParameterValue(vpFEATURE_EXPOSURE, dataCam[camera_id].exposure);
+  setParameterValue(vpFEATURE_SHARPNESS, dataCam[camera_id].sharpness);
+  setParameterValue(vpFEATURE_HUE, dataCam[camera_id].hue);
+  setParameterValue(vpFEATURE_SATURATION, dataCam[camera_id].saturation);
+  setParameterValue(vpFEATURE_GAMMA, dataCam[camera_id].gamma);
+  setParameterValue(vpFEATURE_SHUTTER, dataCam[camera_id].shutter);
+  setParameterValue(vpFEATURE_GAIN, dataCam[camera_id].gain);
+  setParameterValue(vpFEATURE_IRIS, dataCam[camera_id].iris);
 }
 
 #endif
