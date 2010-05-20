@@ -68,10 +68,8 @@ bool end = false;
 // and the steering angle, the second CTRL-C ends the execution
 void sighdl(int n)
 {
-  bFinish=true;
-  static double t = 0;
   printf("Received signal %d\n",n);
-
+  bFinish=true;
   end = true;		
 }
 
