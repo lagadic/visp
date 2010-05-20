@@ -57,6 +57,8 @@
 
 #include <visp/vpConfig.h>
 
+#ifdef VISP_HAVE_CYCAB
+
 #ifdef VISP_HAVE_CYCABTK_OLD
 // Old low level controller based on Syndex (obsolete)
 #  include <EtherCycab/EtherCycab.hpp>
@@ -77,8 +79,12 @@ class VISP_EXPORT vpRobotCycab
   
   void setDualSteering(bool dual);
   void setCommand(double v, double phi);
-  void getCommand(double &v, double &phi);
-  void getCommand(double &v, double &phi, double &timestamp);
+  void getOdometry(double &vmean, double &phi);
+  void getOdometry(double &vmean, double &phi, double &timestamp);
+  void getOdometry(double &vfl, double &vfr, double &vrl, double &vrr,
+		   double &phi);
+  void getOdometry(double &vfl, double &vfr, double &vrl, double &vrr,
+		   double &phi, double &timestamp);
   void getJoystickPosition(double &x, double &y);
   void getJoystickPosition(double &x, double &y, double &timestamp);
 
@@ -97,4 +103,5 @@ class VISP_EXPORT vpRobotCycab
 #endif
 };
 
+#endif
 #endif

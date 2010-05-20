@@ -38,7 +38,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpRobotCycab.h>
 
-#if defined(VISP_HAVE_CYCABTK) || defined(VISP_HAVE_CYCABTK_OLD)
+#ifdef VISP_HAVE_CYCAB
 
 /*!
   Initialize the client to be able to communicate with the Cycab server.
@@ -125,32 +125,34 @@ void vpRobotCycab::setCommand(double v, double phi)
 }
 
 /*!
-  Get the actual command applied to the vehicle from the odometry.
+  Get measures from odometry.
   
-  \param v : Velocity in m/s.
+  \param vmean : Measured mean velocity in m/s. This value is computed by considering 
+  the mean velocity between rear-left and rear-right wheel velocities.
 
-  \param phi : Front steering angle in rad.
+  \param phi : Measured front steering angle in rad.
 
 */
-void vpRobotCycab::getCommand(double &v, double &phi)
+void vpRobotCycab::getOdometry(double &vmean, double &phi)
 {
   double timestamp;
-  getCommand(v, phi, timestamp);
+  getOdometry(vmean, phi, timestamp);
 }
 
 /*!
-  Get the actual command applied to the vehicle from the odometry.
-  
-  \param v : Velocity in m/s.
+  Get measures from odometry.
+ 
+  \param v : Measured mean velocity in m/s. This value is computed by considering 
+  the mean velocity between rear-left and rear-right wheel velocities.
 
-  \param phi : Front steering angle in rad.
+  \param phi : Measured front steering angle in rad.
 
-  \param timestamp : Time stamp in second associates to the measured
-  values of \e v and \e phi.
+  \param timestamp : Time stamp in milli second associates to the measured
+  values of \e vmean and \e phi.
 */
-void vpRobotCycab::getCommand(double &v, double &phi, double &timestamp)
+void vpRobotCycab::getOdometry(double &vmean, double &phi, double &timestamp)
 {
-  v = 0.;
+  vmean = 0.;
   phi=0.;
   timestamp=0.;
   
@@ -163,17 +165,87 @@ void vpRobotCycab::getCommand(double &v, double &phi, double &timestamp)
   //   printf("Ktate %f : phi %f vl %f vr %f\n\t",ltime,
   //          lphi,rec.vmsec[REAR][LEFT],rec.vmsec[REAR][RIGHT]);
   // calculate speed
-  v = (rec.vmsec[REAR][LEFT] + rec.vmsec[REAR][RIGHT])*0.5;
+  vmean = (rec.vmsec[REAR][LEFT] + rec.vmsec[REAR][RIGHT])*0.5;
   phi = lphi;
   timestamp = ltime;
 #elif defined VISP_HAVE_CYCABTK
   // New low level controller based on Syndex (to use)
   CycabState cycab_state;
   store.readVariable(cycab_stateId, cycab_state);
-  v = (cycab_state.v_rear_left + cycab_state.v_rear_left)*0.5; 
-  //printf("vl %f vr %f\n", cycab_state.v_rear_left, cycab_state.v_rear_left);
+  vmean = (cycab_state.v_rear_left + cycab_state.v_rear_right)*0.5; 
+  //printf("vl %f vr %f\n", cycab_state.v_rear_left, cycab_state.v_rear_right);
   phi = cycab_state.phi_front;
-  timestamp = cycab_state.time_stamp;
+  timeval tp = store.getTimestamp(cycab_stateId);
+  timestamp = 1000.0*tp.tv_sec + tp.tv_usec/1000.0;
+#endif
+}
+/*!
+  Get measures from odometry.
+  
+  \param vfl : Measured front-left wheel velocity in m/s. 
+  \param vfr : Measured front-right wheel velocity in m/s. 
+  \param vrl : Measured rear-left wheel velocity in m/s. 
+  \param vrr : Measured rear-right wheel velocity in m/s. 
+
+  \param phi : Measured front steering angle in rad.
+
+*/
+void vpRobotCycab::getOdometry(double &vfl, double &vfr, 
+			       double &vrl, double &vrr,
+			       double &phi)
+{
+  double timestamp;
+  getOdometry(vfl, vfr, vrl, vrr, phi, timestamp);
+}
+
+/*!
+  Get measures from odometry.
+
+  \param vfl : Measured front-left wheel velocity in m/s. 
+  \param vfr : Measured front-right wheel velocity in m/s. 
+  \param vrl : Measured rear-left wheel velocity in m/s. 
+  \param vrr : Measured rear-right wheel velocity in m/s. 
+
+  \param phi : Measured front steering angle in rad.
+
+  \param timestamp : Time stamp in milli second associates to the measured
+  values of \e vmean and \e phi.
+*/
+void vpRobotCycab::getOdometry(double &vfl, double &vfr, 
+			       double &vrl, double &vrr,
+			       double &phi, double &timestamp)
+{
+  vfr = vfr = vrl = vrr = 0.;
+  phi=0.;
+  timestamp=0.;
+  
+#ifdef VISP_HAVE_CYCABTK_OLD
+  // Old low level controller based on Syndex (obsolete)
+  Record rec;
+  double dsl,dsr,lphi,ltime;
+  cycab->waitUpdate();
+  cycab->getState(&rec, &dsl, &dsr, &lphi, &ltime);
+  //   printf("Ktate %f : phi %f vl %f vr %f\n\t",ltime,
+  //          lphi,rec.vmsec[REAR][LEFT],rec.vmsec[REAR][RIGHT]);
+  // calculate speed
+  vfl = rec.vmsec[FRONT][LEFT];
+  vfr = rec.vmsec[FRONT][RIGHT];
+  vrl = rec.vmsec[REAR][LEFT];
+  vrr = rec.vmsec[REAR][RIGHT];
+  phi = lphi;
+  timestamp = ltime;
+#elif defined VISP_HAVE_CYCABTK
+  // New low level controller based on Syndex (to use)
+  CycabState cycab_state;
+  store.readVariable(cycab_stateId, cycab_state);
+  vfl = cycab_state.v_front_left;
+  vfr = cycab_state.v_front_right;
+  vrl = cycab_state.v_rear_left;
+  vrr = cycab_state.v_rear_right;
+
+  phi = cycab_state.phi_front;
+  timeval tp = store.getTimestamp(cycab_stateId);
+  timestamp = 1000.0*tp.tv_sec + tp.tv_usec/1000.0;
 #endif
 }
 
@@ -194,7 +266,7 @@ void vpRobotCycab::getJoystickPosition(double &x, double &y)
   
   \param x : Joystick left/right position. 
   \param y : Joystick front/rear position. 
-  \param timestamp : Time stamp in second associates to the measured
+  \param timestamp : Time stamp in milli second associates to the measured
   values of \e x and \e y.
  */
 void vpRobotCycab::getJoystickPosition(double &x, double &y, double &timestamp)
@@ -210,7 +282,8 @@ void vpRobotCycab::getJoystickPosition(double &x, double &y, double &timestamp)
   store.readVariable(cycab_stateId, cycab_state);
   x = cycab_state.joy_x; 
   y = cycab_state.joy_y; 
-  timestamp = cycab_state.time_stamp;
+  timeval tp = store.getTimestamp(cycab_stateId);
+  timestamp = 1000.0*tp.tv_sec + tp.tv_usec/1000.0;
 #endif
 }
 
