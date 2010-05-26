@@ -112,6 +112,7 @@ class VISP_EXPORT vpViper
   virtual ~vpViper() {};
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector & q);
+  int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q);
   int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q);
   vpHomogeneousMatrix get_fMc (const vpColVector & q);
   void get_fMw(const vpColVector & q, vpHomogeneousMatrix & fMw);
