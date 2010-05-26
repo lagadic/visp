@@ -97,6 +97,9 @@
 // Defined the path to the basic scenes used by the simulator
 #cmakedefine VISP_SCENES_DIR "${VISP_SCENES_DIR}"
 
+// Defined the path to the robot's arms 3D model used by the robot simulators
+#cmakedefine VISP_ROBOT_ARMS_DIR "${VISP_ROBOT_ARMS_DIR}"
+
 // Defined if Coin library available.
 #cmakedefine VISP_HAVE_COIN
 
