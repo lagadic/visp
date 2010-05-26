@@ -90,6 +90,9 @@ int wireframe_Face (Face *fp, Point2i *pp);
 #include <visp/vpList.h>
 #include <visp/vpImagePoint.h>
 
+void set_scene (const char*, Bound_scene *, float);
+void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
+
 
 /*!
   \class vpWireFrameSimulator
@@ -111,11 +114,11 @@ int wireframe_Face (Face *fp, Point2i *pp);
   
   The most used homogeneous matrices which describes the displacement between two frames are :
   
-  - wMo which is the displacement between the world frame and the object frame.
+  - fMo which is the displacement between the world frame and the object frame.
   
   - cMo which is the displacement between the main camera frame and the object frame.
   
-  - cextMw which is the displacement between one external camera frame and the world frame.
+  - cextMf which is the displacement between one external camera frame and the world frame.
   
   The following picture summarize all the previous informations.
   
@@ -215,13 +218,13 @@ class VISP_EXPORT vpWireFrameSimulator
     } vpCameraTrajectoryDisplayType;
     
     
-  private:
+  protected:
     Bound_scene scene;
     Bound_scene desiredScene;
     Bound_scene camera;
     
-    vpHomogeneousMatrix wMo;
-    vpHomogeneousMatrix camMw;
+    vpHomogeneousMatrix fMo;
+    vpHomogeneousMatrix camMf;
     vpHomogeneousMatrix refMo;
     vpHomogeneousMatrix cMo;
     vpHomogeneousMatrix cdMo;
@@ -239,7 +242,7 @@ class VISP_EXPORT vpWireFrameSimulator
     bool displayCameraTrajectory;
     vpList<vpImagePoint> cameraTrajectory;
     vpList<vpHomogeneousMatrix> poseList;
-    vpList<vpHomogeneousMatrix> wMoList;
+    vpList<vpHomogeneousMatrix> fMoList;
     int nbrPtLimit;
     
     
@@ -251,8 +254,8 @@ class VISP_EXPORT vpWireFrameSimulator
     bool blockedt;
     bool blocked;
     
-    vpHomogeneousMatrix camMw2;
-    vpHomogeneousMatrix  w2Mw;
+    vpHomogeneousMatrix camMf2;
+    vpHomogeneousMatrix  f2Mf;
     
     double px_int;
     double py_int;
@@ -297,15 +300,15 @@ class VISP_EXPORT vpWireFrameSimulator
     /*!
       Set the external camera point of view.
       
-      \param camMw : The pose of the external camera relative to the world reference frame.
+      \param camMf : The pose of the external camera relative to the world reference frame.
     */
-    void setExternalCameraPosition(const vpHomogeneousMatrix camMw) 
+    void setExternalCameraPosition(const vpHomogeneousMatrix camMf) 
     {
-      this->camMw = rotz * camMw;
+      this->camMf = rotz * camMf;
       vpTranslationVector T;
-      this->camMw.extract (T);
-      this->camMw2.buildFrom(0,0,T[2],0,0,0);
-      w2Mw = camMw2.inverse()*this->camMw;
+      this->camMf.extract (T);
+      this->camMf2.buildFrom(0,0,T[2],0,0,0);
+      f2Mf = camMf2.inverse()*this->camMf;
       extCamChanged = true;
     }
     
@@ -314,7 +317,7 @@ class VISP_EXPORT vpWireFrameSimulator
       
       \return the main external camera position relative to the the world reference frame.
     */
-    inline vpHomogeneousMatrix getExternalCameraPosition() const { return rotz * camMw;}
+    inline vpHomogeneousMatrix getExternalCameraPosition() const { return rotz * camMf;}
     
     /*!
       Set the color used to display the camera in the external view.
@@ -352,13 +355,6 @@ class VISP_EXPORT vpWireFrameSimulator
       \param displayCameraTrajectory : Set to true to display the camera trajectory.
     */
     void setDisplayCameraTrajectory (const bool displayCameraTrajectory) {this->displayCameraTrajectory = displayCameraTrajectory;}
-    
-    /*!
-      Get the pose between the external camera and the fixed world frame.
-      
-      \return It returns the desired pose as a vpHomogeneousMatrix
-    */
-    vpHomogeneousMatrix get_cMw() const {return rotz*camMw;}
     
     /*!
       Get the parameters of the virtual internal camera.
@@ -431,16 +427,16 @@ class VISP_EXPORT vpWireFrameSimulator
     /*!
       Set the pose between the object and the fixed world frame.
       
-      \param wMo : The pose between the object and the fixed world frame.
+      \param fMo : The pose between the object and the fixed world frame.
     */
-    void moveObject(const vpHomogeneousMatrix &wMo) {this->wMo = wMo;}
+    void moveObject(const vpHomogeneousMatrix &fMo) {this->fMo = fMo;}
     
     /*!
       Get the pose between the object and the fixed world frame.
       
       \return The pose between the object and the fixed world frame.
     */
-    vpHomogeneousMatrix get_wMo() const {return wMo;}
+    vpHomogeneousMatrix get_fMo() const {return fMo;}
     
     /*!
       Set the internal camera parameters.
@@ -482,7 +478,7 @@ class VISP_EXPORT vpWireFrameSimulator
     inline void deleteCameraPositionHistory() {
       cameraTrajectory.kill();
       poseList.kill();
-      wMoList.kill();}
+      fMoList.kill();}
       
     /*!
       Set the way to display the history of the main camera trajectory in the main external view. The choice is given between displaying lines and points.
@@ -507,33 +503,38 @@ class VISP_EXPORT vpWireFrameSimulator
       return list_cMo;}
     
     /*!
-      Get the homogeneous matrices wMo stored to display the camera trajectory.
+      Get the homogeneous matrices fMo stored to display the camera trajectory.
       
-      \return Returns the list of the homogeneous matrices wMo.
+      \return Returns the list of the homogeneous matrices fMo.
     */
-    vpList<vpHomogeneousMatrix> get_wMo_History () {return wMoList;}
+    vpList<vpHomogeneousMatrix> get_fMo_History () {return fMoList;}
     
-    void displayTrajectory (vpImage<unsigned char> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_wMo, vpHomogeneousMatrix camMw);
+    void displayTrajectory (vpImage<unsigned char> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix camMf);
     
-    void displayTrajectory (vpImage<vpRGBa> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_wMo, vpHomogeneousMatrix camMw);
+    void displayTrajectory (vpImage<vpRGBa> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix camMf);
     
     void getInternalImage(vpImage<vpRGBa> &I);
     void getExternalImage(vpImage<vpRGBa> &I);
-    void getExternalImage(vpImage<vpRGBa> &I, vpHomogeneousMatrix camMw);
+    void getExternalImage(vpImage<vpRGBa> &I, vpHomogeneousMatrix camMf);
     
     void getInternalImage(vpImage<unsigned char> &I);
     void getExternalImage(vpImage<unsigned char> &I);
-    void getExternalImage(vpImage<unsigned char> &I, vpHomogeneousMatrix camMw);
+    void getExternalImage(vpImage<unsigned char> &I, vpHomogeneousMatrix camMf);
     
-  private:
-    void display_scene(Matrix mat, Bound_scene sc, vpImage<vpRGBa> &I, vpColor color);
-    void display_scene(Matrix mat, Bound_scene sc, vpImage<unsigned char> &I, vpColor color);
+  protected:
+    void display_scene(Matrix mat, Bound_scene &sc, vpImage<vpRGBa> &I, vpColor color);
+    void display_scene(Matrix mat, Bound_scene &sc, vpImage<unsigned char> &I, vpColor color);
     vpHomogeneousMatrix navigation(vpImage<vpRGBa> &I, bool &changed);
     vpHomogeneousMatrix navigation(vpImage<unsigned char> &I, bool &changed);
-    vpImagePoint projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix wMo);
-    vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix wMo);
-    vpImagePoint projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix wMo, vpHomogeneousMatrix cMw);
-    vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix wMo, vpHomogeneousMatrix cMw);
+    vpImagePoint projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo);
+    vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo);
+    vpImagePoint projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo, vpHomogeneousMatrix cMf);
+    vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo, vpHomogeneousMatrix cMf);
+    
+    void projectObjectInternal(vpImage<vpRGBa> &I, Bound_scene &object, vpHomogeneousMatrix cMobject);
+    void projectObjectInternal(vpImage<unsigned char> &I, Bound_scene &object, vpHomogeneousMatrix cMobject);
+    void projectObjectExternal(vpImage<vpRGBa> &I, Bound_scene &object, vpHomogeneousMatrix fMobject, vpHomogeneousMatrix camMf);
+    void projectObjectExternal(vpImage<unsigned char> &I, Bound_scene &object, vpHomogeneousMatrix fMobject, vpHomogeneousMatrix camMf);
 
 };
 
