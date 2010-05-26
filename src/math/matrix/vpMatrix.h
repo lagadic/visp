@@ -153,6 +153,10 @@ public:
 
   //! Set the size of the matrix A, initialization with a zero matrix
   virtual void resize(const int nrows, const int ncols, const bool nullify = true);
+  
+  double getMinValue() const;
+  
+  double getMaxValue() const;
   //@}
 
   //---------------------------------
