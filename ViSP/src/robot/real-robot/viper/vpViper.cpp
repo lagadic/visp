@@ -173,13 +173,13 @@ vpViper::convertJointPositionInLimits(int joint, const double &q, double &q_mod)
   position and the orientation of the camera frame relative to the
   base frame.
 
-  \param fMc : Homogeneous matrix \f$^f{\bf M}_c \f$ describing the
-  transformation from base frame to the camera frame.
+  \param fMw : Homogeneous matrix \f$^f{\bf M}_w \f$ describing the
+  transformation from base frame to the wrist frame.
 
   \param q : In input, a six dimension vector corresponding to the
   current joint positions expressed in radians. In output, the
   solution of the inverse kinematics, ie. the joint positions
-  corresponding to \f$^f{\bf M}_c \f$.
+  corresponding to \f$^f{\bf M}_w \f$.
 
   \return The number of solutions (1 to 8) of the inverse geometric
   model. O, if no solution can be found.
@@ -188,23 +188,21 @@ vpViper::convertJointPositionInLimits(int joint, const double &q, double &q_mod)
 
   \code
   vpColVector q1(6), q2(6);
-  vpHomogeneousMatrix fMc;
+  vpHomogeneousMatrix fMw;
 
   vpViper robot;
 
   // Get the current joint position of the robot
   robot.getPosition(vpRobot::ARTICULAR_FRAME, q1);
 
-  // Compute the pose of the camera in the reference frame using the
+  // Compute the pose of the wrist in the reference frame using the
   // direct geometric model
-  fMc = robot.getForwardKinematics(q1);
-  // this is similar to  fMc = robot.get_fMc(q1);
-  // or robot.get_fMc(q1, fMc);
+  robot.get_fMw(q1, fMw);
 
   // Compute the inverse geometric model
   int nbsol; // number of solutions (0, 1 to 8) of the inverse geometric model
   // get the nearest solution to the current joint position
-  nbsol = robot.getInverseKinematics(fMc, q1);
+  nbsol = robot.getInverseKinematicsWrist(fMw, q1);
 
   if (nbsol == 0)
     std::cout << "No solution of the inverse geometric model " << std::endl;
@@ -212,11 +210,11 @@ vpViper::convertJointPositionInLimits(int joint, const double &q, double &q_mod)
     std::cout << "Nearest solution: " << q1 << std::endl;
   \endcode
 
-  \sa getForwardKinematics()
+  \sa getForwardKinematics(), getInverseKinematics()
 
 */
 int
-vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q)
+vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q)
 {
   vpColVector q_sol[8];
 
@@ -238,13 +236,6 @@ vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q)
 
   bool ok[8];
 
-  vpHomogeneousMatrix fMw;
-  vpHomogeneousMatrix wMe;
-  vpHomogeneousMatrix eMc;
-  this->get_wMe(wMe);
-  this->get_eMc(eMc);
-  fMw = fMc * eMc.inverse() * wMe.inverse();
- 
   if (q.getRows() != njoint)
     q.resize(6);
 
@@ -506,6 +497,69 @@ vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q)
   }
   return nbsol;
 
+}
+
+/*!
+
+  Compute the inverse kinematics (inverse geometric model).
+
+  By inverse kinematics we mean here the six joint values given the
+  position and the orientation of the camera frame relative to the
+  base frame.
+
+  \param fMc : Homogeneous matrix \f$^f{\bf M}_c \f$ describing the
+  transformation from base frame to the camera frame.
+
+  \param q : In input, a six dimension vector corresponding to the
+  current joint positions expressed in radians. In output, the
+  solution of the inverse kinematics, ie. the joint positions
+  corresponding to \f$^f{\bf M}_c \f$.
+
+  \return The number of solutions (1 to 8) of the inverse geometric
+  model. O, if no solution can be found.
+
+  The code below shows how to compute the inverse geometric model:
+
+  \code
+  vpColVector q1(6), q2(6);
+  vpHomogeneousMatrix fMc;
+
+  vpViper robot;
+
+  // Get the current joint position of the robot
+  robot.getPosition(vpRobot::ARTICULAR_FRAME, q1);
+
+  // Compute the pose of the camera in the reference frame using the
+  // direct geometric model
+  fMc = robot.getForwardKinematics(q1);
+  // this is similar to  fMc = robot.get_fMc(q1);
+  // or robot.get_fMc(q1, fMc);
+
+  // Compute the inverse geometric model
+  int nbsol; // number of solutions (0, 1 to 8) of the inverse geometric model
+  // get the nearest solution to the current joint position
+  nbsol = robot.getInverseKinematics(fMc, q1);
+
+  if (nbsol == 0)
+    std::cout << "No solution of the inverse geometric model " << std::endl;
+  else if (nbsol >= 1)
+    std::cout << "Nearest solution: " << q1 << std::endl;
+  \endcode
+
+  \sa getForwardKinematics(), getInverseKinematicsWrist
+
+*/
+int
+vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q)
+{
+  vpHomogeneousMatrix fMw;
+  vpHomogeneousMatrix wMe;
+  vpHomogeneousMatrix eMc;
+  this->get_wMe(wMe);
+  this->get_eMc(eMc);
+  fMw = fMc * eMc.inverse() * wMe.inverse();
+  
+  return (getInverseKinematicsWrist(fMw,q));
 }
 
 /*!
