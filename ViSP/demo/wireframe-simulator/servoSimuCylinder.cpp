@@ -255,8 +255,8 @@ main(int argc, const char ** argv)
   sim.setDesiredCameraPosition(cdMo);
   
   //Set the External camera position
-  vpHomogeneousMatrix camMw(vpHomogeneousMatrix(0.0,0,3.5,vpMath::rad(0),vpMath::rad(30),0));
-  sim.setExternalCameraPosition(camMw);
+  vpHomogeneousMatrix camMf(vpHomogeneousMatrix(0.0,0,3.5,vpMath::rad(0),vpMath::rad(30),0));
+  sim.setExternalCameraPosition(camMf);
   
   //Move the object in the world reference frame
   sim.moveObject(vpHomogeneousMatrix(0.0,0.0,0.0,0,0,0));
@@ -281,9 +281,9 @@ main(int argc, const char ** argv)
     vpDisplay::displayFrame(Iint,cdMo,camera,0.2,vpColor::none);
   
     //Display the object frame the world reference frame and the camera frame
-    vpDisplay::displayFrame(Iext,camMw*sim.get_wMo()*cMo.inverse(),camera,0.2,vpColor::none);
-    vpDisplay::displayFrame(Iext,camMw*sim.get_wMo(),camera,0.2,vpColor::none);
-    vpDisplay::displayFrame(Iext,camMw,camera,0.2,vpColor::none);
+    vpDisplay::displayFrame(Iext,camMf*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
+    vpDisplay::displayFrame(Iext,camMf*sim.get_fMo(),camera,0.2,vpColor::none);
+    vpDisplay::displayFrame(Iext,camMf,camera,0.2,vpColor::none);
 
     vpDisplay::flush(Iint);
     vpDisplay::flush(Iext);
@@ -382,12 +382,12 @@ main(int argc, const char ** argv)
     vpHomogeneousMatrix b(0,0.0,0.0,vpMath::rad(0*iter),0,0);
     vpHomogeneousMatrix c(0,0.0,0.0,0,vpMath::rad(0*iter),0);
 
-    vpHomogeneousMatrix cMw = cMo*sim.get_wMo().inverse(); //The camera position in the world frame
+    vpHomogeneousMatrix cMf = cMo*sim.get_fMo().inverse(); //The camera position in the world frame
 
     sim.moveObject(b*c*a);  //Move the object in the simulator
 
     //Indicates to the task the movement of the object
-    cMo = cMw*b*c*a;
+    cMo = cMf*b*c*a;
     robot.setPosition(cMo);
     sim.setCameraPosition(cMo);
 
@@ -402,10 +402,10 @@ main(int argc, const char ** argv)
       vpDisplay::displayFrame(Iint,cdMo,camera,0.2,vpColor::none);
     
       //Display the object frame the world reference frame and the camera frame
-      vpDisplay::displayFrame(Iext,sim.get_cMw()*sim.get_wMo()*cMo.inverse(),camera,0.2,vpColor::none);
-      vpDisplay::displayFrame(Iext,sim.get_cMw()*sim.get_wMo(),camera,0.2,vpColor::none);
+      vpDisplay::displayFrame(Iext,sim.getExternalCameraPosition()*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
+      vpDisplay::displayFrame(Iext,sim.getExternalCameraPosition()*sim.get_fMo(),camera,0.2,vpColor::none);
 
-      vpDisplay::displayFrame(Iext,sim.get_cMw(),camera,0.2,vpColor::none);;
+      vpDisplay::displayFrame(Iext,sim.getExternalCameraPosition(),camera,0.2,vpColor::none);;
 
       vpDisplay::flush(Iint);
       vpDisplay::flush(Iext);
