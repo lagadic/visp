@@ -3512,7 +3512,35 @@ vpMatrix::expm()
      }
      return exp;
    }
-} 
+}
+
+double
+vpMatrix::getMinValue() const
+{
+  double *dataptr = data;
+  double min = *dataptr;
+  dataptr++;
+  for (int i = 0; i < dsize-1; i++)
+  {
+    if (*dataptr < min) min = *dataptr;
+    dataptr++;
+  }
+  return min;
+}
+
+double
+vpMatrix::getMaxValue() const
+{
+  double *dataptr = data;
+  double max = *dataptr;
+  dataptr++;
+  for (int i = 0; i < dsize-1; i++)
+  {
+    if (*dataptr > max) max = *dataptr;
+    dataptr++;
+  }
+  return max;
+}
 
 
 /**************************************************************************************************************/
