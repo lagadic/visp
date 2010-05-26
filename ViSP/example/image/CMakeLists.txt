@@ -47,6 +47,7 @@ SET (SOURCE
   displayD3D.cpp
   displayGTK.cpp
   displayX.cpp
+  displayOpenCV.cpp
   displayXMulti.cpp
 )
 
@@ -72,6 +73,7 @@ ADD_TEST(displayGDI displayGDI -d)
 ADD_TEST(displayD3D displayD3D -d)
 ADD_TEST(displayGTK displayGTK -d)
 ADD_TEST(displayX displayX -d)
+ADD_TEST(displayOpenCV displayOpenCV -d)
 ADD_TEST(displayXMulti displayXMulti -d)
 
 # customize clean target 
