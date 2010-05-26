@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id$
+# $Id: CMakeLists.txt 2457 2010-01-07 10:41:18Z nmelchio $
 #
 # Copyright (C) 1998-2010 Inria. All rights reserved.
 #
@@ -28,46 +28,35 @@
 # not clear to you.
 #
 # Description:
-# ViSP overall configuration file. 
+# ViSP configuration file. 
 #
 # Authors:
-# Fabien Spindler
+# Nicolas Melchior
 #
 #############################################################################
 
-# Set SRC_SUBDIRS variable to all the sub directories we want to parse during
-# the build process. 
+# SOURCE variable corresponds to the list of all the sources to build binaries.
+# The generate binary comes by removing the .cpp extension to
+# the source name.
 #
-# If you add/remove a directory, modify here
-SET (SRC_SUBDIRS
-  calibration
-  framegrabber
-  histogram
-  homography
-  image
-  key-point
-  light
-  math
-  manual
-  parse-argv
-  pose-estimation
-  robot-simu
-  servo-afma4
-  servo-afma6
-  servo-biclops
-  servo-cycab
-  servo-ptu46
-  servo-simu
-  servo-viper850
-  simulator
-  tools
-  tracking
-  video
-  wireframe-simulator
+# If you want to add/remove a source, modify here
+SET (SOURCE
+viper850ServoSimuFourPoints2DCamVelocity.cpp
 )
 
-# Build process propagation in the sub directories
-SUBDIRS(${SRC_SUBDIRS})
+# rule for binary build
+FOREACH(source ${SOURCE})
+  # Compute the name of the binary to create
+  GET_FILENAME_COMPONENT(binary ${source} NAME_WE)
+
+  # From source compile the binary and add link rules
+  ADD_EXECUTABLE(${binary} ${source})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+
+ENDFOREACH(source)
+
+# Add test
+ADD_TEST(viper850ServoSimuFourPoints2DCamVelocity	viper850ServoSimuFourPoints2DCamVelocity -d -c)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
