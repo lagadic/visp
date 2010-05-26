@@ -165,6 +165,8 @@ SET (SRC_ROBOT
   robot/real-robot/viper/vpViper.cpp
   robot/real-robot/viper/vpViper850.cpp
   robot/real-robot/viper/vpRobotViper850.cpp
+  robot/simulator-robot/vpRobotSimulator.cpp
+  robot/simulator-robot/vpSimulatorViper850.cpp
   )
 
 

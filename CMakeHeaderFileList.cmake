@@ -158,6 +158,8 @@ SET (HEADER_ROBOT
   robot/real-robot/viper/vpViper.h
   robot/real-robot/viper/vpViper850.h
   robot/real-robot/viper/vpRobotViper850.h
+  robot/simulator-robot/vpRobotSimulator.h
+  robot/simulator-robot/vpSimulatorViper850.h
   )
 
 SET (HEADER_SERVO
