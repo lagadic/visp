@@ -1023,6 +1023,46 @@ ENDIF(CMAKE_MINOR_VERSION LESS 8
 SET(VISP_SCENES_DIR ${VISP_BINARY_DIR}/data/wireframe-simulator)
 
 #----------------------------------------------------------------------
+# Robot simulators
+#----------------------------------------------------------------------
+INCLUDE(${VISP_SOURCE_DIR}/src/robot/simulator-robot/arms/CMakeViper850ArmsList.cmake)
+
+SET(VIPER850_ARMS_LIST "")
+foreach(SCENE ${VIPER_ARMS_SCENES})
+  set(VIPER850_ARMS_SRC "${VISP_SOURCE_DIR}/src/robot/simulator-robot/arms/${SCENE}")
+  set(VIPER850_ARMS_DST "${VISP_BINARY_DIR}/data/robot-simulator/${SCENE}")
+  IF(CMAKE_MINOR_VERSION LESS 8 
+    AND CMAKE_MAJOR_VERSION GREATER 1)
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${VIPER850_ARMS_DST}
+    COMMAND ${CMAKE_COMMAND} -E copy ${VIPER850_ARMS_SRC} ${VIPER850_ARMS_DST}
+    DEPENDS ${VIPER850_ARMS_SRC}
+    )
+  SET(VIPER850_ARMS_LIST ${VIPER850_ARMS_LIST} ${VIPER850_ARMS_DST})
+  ELSE(CMAKE_MINOR_VERSION LESS 8 
+    AND CMAKE_MAJOR_VERSION GREATER 1)
+    file(COPY ${VIPER850_ARMS_SRC}
+      DESTINATION data/robot-simulator
+      FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+      OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+      OWNER_WRITE
+      )
+  ENDIF(CMAKE_MINOR_VERSION LESS 8 
+    AND CMAKE_MAJOR_VERSION GREATER 1)
+endforeach(SCENE)
+
+IF(CMAKE_MINOR_VERSION LESS 8 
+  AND CMAKE_MAJOR_VERSION GREATER 1)
+  ADD_CUSTOM_TARGET(SCENE ALL
+    DEPENDS ${VIPER850_ARMS_LIST}
+    )
+ENDIF(CMAKE_MINOR_VERSION LESS 8 
+  AND CMAKE_MAJOR_VERSION GREATER 1)
+
+SET(VISP_ROBOT_ARMS_DIR ${VISP_BINARY_DIR}/data/robot-simulator)
+
+
+#----------------------------------------------------------------------
 # Specific hardware : robots
 #----------------------------------------------------------------------
 # default initialisation
