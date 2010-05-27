@@ -47,7 +47,7 @@
 
 /*!
 
-  \class vpRobotCycab.h
+  \class vpRobotCycab
 
   \ingroup Cycab
 
