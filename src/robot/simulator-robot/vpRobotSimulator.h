@@ -131,6 +131,8 @@ class vpRobotSimulator : protected vpWireFrameSimulator, public vpRobot
     bool jointLimit;
     /*! Index of the joint which is in limit*/
     int jointLimitArt;
+    /*! True if the singularity are automatically managed */
+    bool singularityManagement;
     
     /*! External camera parameters*/
     vpCameraParameters cameraParam;
@@ -173,6 +175,8 @@ class vpRobotSimulator : protected vpWireFrameSimulator, public vpRobot
     virtual void getArticularDisplacement(vpColVector  &qdot) = 0;
     /*! Get the displacement expressed in a frame you have to specified */
     virtual void getDisplacement(const vpRobot::vpControlFrameType frame,vpColVector &q) = 0;
+    /*! Set the parameter which enable or disable the singularity mangement */
+    void setSingularityManagement (const bool sm) {singularityManagement = sm;}
     
     
     /* Display functions */
