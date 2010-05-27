@@ -57,6 +57,7 @@ vpRobotSimulator::vpRobotSimulator():vpWireFrameSimulator(), vpRobot()
   displayBusy = false;
   displayType = MODEL_3D;
   displayAllowed = true;
+  singularityManagement = true;
   
  //pid_t pid = getpid();
  // setpriority (PRIO_PROCESS, pid, 19);
@@ -78,6 +79,7 @@ vpRobotSimulator::vpRobotSimulator(bool display):vpWireFrameSimulator(), vpRobot
   jointLimit = false;
   displayBusy = false;
   displayType = MODEL_3D;
+  singularityManagement = true;
   
   
  //pid_t pid = getpid();

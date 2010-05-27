@@ -876,7 +876,8 @@ vpSimulatorViper850::computeArticularVelocity()
       vpVelocityTwistMatrix eVc(eMc);
       vpViper850::get_eJe(articularCoordinates,eJe);
       eJe = eJe.pseudoInverse();
-      singularityTest(articularCoordinates,eJe);
+      if (singularityManagement)
+        singularityTest(articularCoordinates,eJe);
       articularVelocity = eJe*eVc*velocityframe;
       set_artVel (articularVelocity);
       break;
@@ -886,7 +887,8 @@ vpSimulatorViper850::computeArticularVelocity()
       vpMatrix fJe;
       vpViper850::get_fJe(articularCoordinates,fJe);
       fJe = fJe.pseudoInverse();
-      singularityTest(articularCoordinates,fJe);
+      if (singularityManagement)
+        singularityTest(articularCoordinates,fJe);
       articularVelocity = fJe*velocityframe;
       set_artVel (articularVelocity);
       break;
