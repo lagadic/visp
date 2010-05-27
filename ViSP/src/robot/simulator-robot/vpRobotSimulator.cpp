@@ -202,7 +202,7 @@ vpRobotSimulator::initScene(const char* obj, const char* desiredObject)
   \param obj : Type of scene used to display the object at the current position.
 */
 void
-vpRobotSimulator::initObject(vpSceneObject obj)
+vpRobotSimulator::initScene(vpSceneObject obj)
 {
   char name[FILENAME_MAX];
 
@@ -249,7 +249,7 @@ vpRobotSimulator::initObject(vpSceneObject obj)
   \param obj : Path to the scene file you want to use.
 */
 void
-vpRobotSimulator::initObject(const char* obj)
+vpRobotSimulator::initScene(const char* obj)
 {
   char name[FILENAME_MAX];
 
