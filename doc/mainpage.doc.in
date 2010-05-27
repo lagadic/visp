@@ -333,7 +333,11 @@ scheme, ...</p>
 */
 /*!
   \ingroup RealRobot
-  \defgroup Viper Adept Viper 6 dof robot.
+  \defgroup Viper Adept Viper 6 dof robot
+*/
+/*!
+  \ingroup RealRobot
+  \defgroup Cycab Cycab car-like mobile robot
 */
 /*
  ******************************************
