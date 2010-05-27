@@ -182,8 +182,8 @@ class vpRobotSimulator : protected vpWireFrameSimulator, public vpRobot
     /* Display functions */
     void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject);
     void initScene(const char* obj, const char* desiredObject);
-    void initObject (vpSceneObject obj);
-    void initObject(const char* obj);
+    void initScene (vpSceneObject obj);
+    void initScene(const char* obj);
     
     /*!
       Set the desired position of the robot's camera relative to the object.
