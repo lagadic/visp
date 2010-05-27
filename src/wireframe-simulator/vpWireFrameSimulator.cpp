@@ -472,7 +472,7 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
   \param obj : Type of scene used to display the object at the current position.
 */
 void
-vpWireFrameSimulator::initObject(vpSceneObject obj)
+vpWireFrameSimulator::initScene(vpSceneObject obj)
 {
   char name_cam[FILENAME_MAX];
   char name[FILENAME_MAX];
@@ -524,7 +524,7 @@ vpWireFrameSimulator::initObject(vpSceneObject obj)
   \param obj : Path to the scene file you want to use.
 */
 void
-vpWireFrameSimulator::initObject(const char* obj)
+vpWireFrameSimulator::initScene(const char* obj)
 {
   char name_cam[FILENAME_MAX];
   char name[FILENAME_MAX];
