@@ -81,7 +81,6 @@
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath : Input image path.
 
 */
 void usage(const char *name, const char *badparam)
