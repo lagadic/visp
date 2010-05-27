@@ -280,8 +280,8 @@ class VISP_EXPORT vpWireFrameSimulator
     
     void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject);
     void initScene(const char* obj, const char* desiredObject);
-    void initObject(vpSceneObject obj);
-    void initObject(const char* obj);
+    void initScene(vpSceneObject obj);
+    void initScene(const char* obj);
     
     /*!
       Set the position of the camera relative to the object.
