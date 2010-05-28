@@ -1791,7 +1791,7 @@ vpRobotAfma6::savePosFile(const char *filename, const vpColVector &q)
   Moves the robot to the joint position specified in the filename. The
   positioning velocity is set to 10% of the robot maximal velocity.
 
-  \param filename: File containing a joint position to reach.
+  \param filename : File containing a joint position to reach.
 
   \sa readPosFile(), move(const char *, const double)
 
