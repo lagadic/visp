@@ -100,6 +100,8 @@ int main()
 
   // Moves the robot in the joint space
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  
+  return 0;
 }
   \endcode
 
@@ -129,6 +131,8 @@ int main()
 
   // Moves the robot in the joint space
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  
+  return 0;
 }
   \endcode
 
@@ -169,6 +173,8 @@ int main()
 
   // Stop the robot
   robot.setRobotState(vpRobot::STATE_STOP);
+  
+  return 0;
 }
   \endcode
 
