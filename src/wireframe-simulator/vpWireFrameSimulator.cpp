@@ -105,7 +105,6 @@ getExtension(const char* file)
 #if defined(VISP_HAVE_COIN)
     return WRL_MODEL;
 #else
-#warning "coin not found, no vrml support"
     std::cout << "Coin not installed, cannot read VRML files" << std::endl;
     throw std::string("Coin not installed, cannot read VRML files");
 #endif
