@@ -82,7 +82,7 @@ void open_display ()
   static	char	proc_name[] = "open_display";
 
   if ((point2i = (Point2i *) malloc (POINT_NBR*sizeof (Point2i))) == NULL
-  || (listpoint2i = (Point2i *) malloc (10*sizeof (Point2i))) == NULL
+  || (listpoint2i = (Point2i *) malloc (50*sizeof (Point2i))) == NULL
   || (rename_jlc  = (int *) malloc (POINT_NBR * sizeof (int))) == NULL)
   {
     perror (proc_name);
@@ -228,7 +228,7 @@ void wireframe_Face (Face *fp, Point2i *pp)
 	Point2i *cp   = listpoint2i;
 
 	if (fp->vertex.nbr < 2) return;
-	if (fp->vertex.nbr > 10)
+	if (fp->vertex.nbr > 50)
 	{
 		printf("pb malloc listpoint2i (display.c)\n"); return;
 	}
