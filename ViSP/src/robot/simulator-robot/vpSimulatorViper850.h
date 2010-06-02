@@ -254,8 +254,8 @@ class vpSimulatorViper850 : public vpRobotSimulator, public vpViper850
     
     void stopMotion();
     
-    void initialiseRobotRelativeToObject(vpHomogeneousMatrix cMo);
-    void initialiseObjectRelativeToRobot(vpHomogeneousMatrix cMo);
+    void initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo);
+    void initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo);
     
   protected:
     void updateArticularPosition();
