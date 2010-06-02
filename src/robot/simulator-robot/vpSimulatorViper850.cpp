@@ -264,12 +264,12 @@ vpSimulatorViper850::init (vpViper850::vpToolType tool,
       break;
     }
   case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
-      erc[0] = vpMath::rad(0.15); // rx
-      erc[1] = vpMath::rad(1.28); // ry
-      erc[2] = vpMath::rad(-90.8); // rz
-      etc[0] = -0.0456; // tx
-      etc[1] = -0.0013; // ty
-      etc[2] =  0.001; // tz
+      erc[0] = vpMath::rad(0.1527764261); // rx
+      erc[1] = vpMath::rad(1.285092455); // ry
+      erc[2] = vpMath::rad(-90.75777848); // rz
+      etc[0] = -0.04558630174; // tx
+      etc[1] = -0.00134326752; // ty
+      etc[2] =  0.001000828017; // tz
       
       
       break;
@@ -422,7 +422,7 @@ vpSimulatorViper850::updateArticularPosition()
     if (jl != 0 && jointLimit == false)
     {
       if (jl < 0)
-	ellapsedTime = (joint_min[-jl+1] - articularCoordinates[-jl+1])/(articularVelocities[-jl+1]*1e-3);
+	ellapsedTime = (joint_min[-jl-1] - articularCoordinates[-jl-1])/(articularVelocities[-jl-1]*1e-3);
       else
 	ellapsedTime = (joint_max[jl-1] - articularCoordinates[jl-1])/(articularVelocities[jl-1]*1e-3);
       
@@ -624,7 +624,8 @@ vpSimulatorViper850::compute_fMi()
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
   cMe = cMe.inverse();
-  fMit[7] = fMit[6] * cMe;
+//   fMit[7] = fMit[6] * cMe;
+  get_fMc(q,fMit[7]);
   
   #if defined(WIN32)
   WaitForSingleObject(mutex_fMi,INFINITE);
@@ -1176,7 +1177,7 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
   {
     vpERROR_TRACE ("Robot was not in position-based control\n"
 		     "Modification of the robot state");
-    setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+   // setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
   }
   
   vpColVector articularCoordinates = get_artCoord();
@@ -1215,7 +1216,7 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
         {
           error = qdes - articularCoordinates;
 	  errsqr = error.sumSquare();
-	  findHighestPositioningSpeed(error);
+	  //findHighestPositioningSpeed(error);
 	  set_artVel(error);
 	  if (errsqr < 1e-4)
 	  {
@@ -1244,7 +1245,7 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
 	articularCoordinates = get_artCoord();
         error = q - articularCoordinates;
 	errsqr = error.sumSquare();
-	findHighestPositioningSpeed(error);
+	//findHighestPositioningSpeed(error);
 	set_artVel(error);
 	if (errsqr < 1e-4)
 	{
@@ -1254,7 +1255,6 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
 	  set_velocity(error);
 	  break;
 	}
-        vpTime::wait(vpTime::measureTimeMs(),10);
       }while (errsqr > 1e-8);
       break ;
     }
@@ -1284,7 +1284,7 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
         {
           error = qdes - articularCoordinates;
 	  errsqr = error.sumSquare();
-	  findHighestPositioningSpeed(error);
+	  //findHighestPositioningSpeed(error);
 	  set_artVel(error);
 	  if (errsqr < 1e-4)
 	  {
@@ -1611,7 +1611,7 @@ vpSimulatorViper850::singularityTest(const vpColVector q, vpMatrix &J)
   
   bool cond1 = fabs(s5) < 1e-1;
   bool cond2 = fabs(a3*s3+c3*d4) < 1e-1;
-  bool cond4 = fabs(a2*c2-a3*c23+s23*d4+a1) < 1e-1;
+  bool cond3 = fabs(a2*c2-a3*c23+s23*d4+a1) < 1e-1;
   
   if(cond1)
   {
@@ -1638,7 +1638,7 @@ vpSimulatorViper850::singularityTest(const vpColVector q, vpMatrix &J)
     return true;
   }
   
-  if(cond4)
+  if(cond3)
   {
     J[0][0] = 0; J[3][0] = 0; J[4][0] = 0; J[5][0] = 0;
     J[0][1] = 0; J[3][1] = 0; J[4][1] = 0; J[5][1] = 0;
@@ -1686,7 +1686,7 @@ vpSimulatorViper850::isInJointLimit ()
   }
   
   if (artNumb != 0)
-    std::cout << "\nWarning: Velocity control stopped: axis " << artNumb << " on joint limit!" <<std::endl;
+    std::cout << "\nWarning: Velocity control stopped: axis " << fabs(artNumb) << " on joint limit!" <<std::endl;
   
   return artNumb;
 }
@@ -2205,7 +2205,7 @@ vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I)
 
 
 void 
-vpSimulatorViper850::initialiseRobotRelativeToObject(vpHomogeneousMatrix cMo)
+vpSimulatorViper850::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
 {
   vpColVector stop(6);
   stop = 0;
@@ -2222,7 +2222,7 @@ vpSimulatorViper850::initialiseRobotRelativeToObject(vpHomogeneousMatrix cMo)
 }
 
 void 
-vpSimulatorViper850::initialiseObjectRelativeToRobot(vpHomogeneousMatrix cMo)
+vpSimulatorViper850::initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo)
 {
   vpColVector stop(6);
   stop = 0;
