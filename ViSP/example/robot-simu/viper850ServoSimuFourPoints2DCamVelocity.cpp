@@ -262,7 +262,7 @@ main(int argc, const char ** argv)
   robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
   
   /*Initialise the position of the object relative to the pose of the robot's camera*/
-  robot.initialiseObjectRelativeToRobot(cMo);
+  robot.initialiseObjectRelativeToCamera(cMo);
   
   /*Set the desired position (for the displaypart)*/
   robot.setDesiredCameraPosition(cdMo);
