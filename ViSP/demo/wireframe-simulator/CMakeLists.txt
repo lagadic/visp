@@ -55,6 +55,12 @@ FOREACH(source ${SOURCE})
   ADD_EXECUTABLE(${binary} ${source})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 
+  INSTALL(FILES ${VISP_BINARY_DIR}/demo/wireframe-simulator/${binary}
+    DESTINATION demo/wireframe-simulator
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    OWNER_WRITE)
+
 ENDFOREACH(source)
 
 # Add test
