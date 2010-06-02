@@ -36,7 +36,7 @@
  *****************************************************************************/
 
 /*!
-  \file vpWireFrameSimulator.h
+  \file vpWireFrameSimulator.cpp
   \brief Implementation of a wire frame simulator.
 */
 
@@ -44,17 +44,77 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
+#include <vector>
+
 #include <visp/vpSimulatorException.h>
 #include <visp/vpPoint.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpMeterPixelConversion.h>
+#include <visp/vpPoint.h>
 
 #if defined(WIN32)
 #define bcopy(b1,b2,len) (memmove((b2), (b1), (len)), (void) 0) 
 #endif
 
+
+//Inventor includes
+#if defined(VISP_HAVE_COIN)
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
+#include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
+#include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
+#include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/actions/SoSearchAction.h>
+#include <Inventor/misc/SoChildList.h>
+#include <Inventor/actions/SoGetMatrixAction.h>
+#include <Inventor/actions/SoGetPrimitiveCountAction.h>
+#include <Inventor/actions/SoToVRML2Action.h>
+#include <Inventor/VRMLnodes/SoVRMLGroup.h>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
+#endif
+
 extern "C"{extern Point2i *point2i;}
 extern "C"{extern Point2i *listpoint2i;}
+
+typedef enum
+{
+  BND_MODEL,
+  WRL_MODEL,
+  UNKNOWN_MODEL
+} Model_3D;
+
+/*
+  Get the extension of the file and return it
+*/
+Model_3D
+getExtension(const char* file)
+{
+  std::string sfilename(file);
+
+  int bnd = sfilename.find("bnd");
+  int BND = sfilename.find("BND");
+  int wrl = sfilename.find("wrl");
+  int WRL = sfilename.find("WRL");
+  
+  int size = sfilename.size();
+
+  if ((bnd>0 && bnd<size ) || (BND>0 && BND<size))
+    return BND_MODEL;
+  else if ((wrl>0 && wrl<size) || ( WRL>0 && WRL<size))
+  {
+#if defined(VISP_HAVE_COIN)
+    return WRL_MODEL;
+#else
+#warning "coin not found, no vrml support"
+    std::cout << "Coin not installed, cannot read VRML files" << std::endl;
+    throw std::string("Coin not installed, cannot read VRML files");
+#endif
+  }
+  else
+  { 
+    return UNKNOWN_MODEL;
+  } 
+}
 
 /*
    Enable to initialize the scene
@@ -95,6 +155,245 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
   close_lex ();
   close_keyword ();
 }
+
+#if defined(VISP_HAVE_COIN)
+
+typedef struct
+{
+  int nbPt;
+  std::vector<vpPoint> pt;
+  int nbIndex;
+  std::vector<int> index;
+} indexFaceSet;
+
+void extractFaces(SoVRMLIndexedFaceSet*, indexFaceSet *ifs);
+void ifsToBound (Bound*, vpList<indexFaceSet*> &);
+void destroyIfs(vpList<indexFaceSet*> &);
+  
+
+void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
+{
+  //Load the sceneGraph
+  SoDB::init();
+  SoInput in;
+  SbBool ok = in.openFile(str);
+  SoSeparator  *sceneGraph;
+  SoVRMLGroup  *sceneGraphVRML2;
+  
+  if (!ok) {
+    vpERROR_TRACE("can't open file \"%s\" \n Please check the Marker_Less.ini file", str);
+    exit(1);
+  }
+  
+  if(!in.isFileVRML2())
+  {
+    sceneGraph = SoDB::readAll(&in);
+    if (sceneGraph == NULL) { /*return -1;*/ }
+    sceneGraph->ref();
+
+    SoToVRML2Action tovrml2;
+    tovrml2.apply(sceneGraph);
+    sceneGraphVRML2 =tovrml2.getVRML2SceneGraph();
+    sceneGraphVRML2->ref();
+    sceneGraph->unref();
+  }
+  else
+  {
+    sceneGraphVRML2	= SoDB::readAllVRML(&in);
+    if (sceneGraphVRML2 == NULL) { /*return -1;*/ }
+    sceneGraphVRML2->ref();
+  }
+  
+  in.closeFile();
+
+  int nbShapes = sceneGraphVRML2->getNumChildren();
+
+  SoNode * child;
+  
+  malloc_Bound_scene (sc, str,(Index)BOUND_NBR);
+  
+  int iterShapes = 0;
+  for (int i = 0; i < nbShapes; i++)
+  {
+    int nbFaces = 0;
+    child = sceneGraphVRML2->getChild(i);
+    if (child->getTypeId() == SoVRMLShape::getClassTypeId())
+    {
+      vpList<indexFaceSet*> ifs_list;
+      SoChildList * child2list = child->getChildren();
+      for (int j = 0; j < child2list->getLength(); j++)
+      {
+        if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedFaceSet::getClassTypeId())
+        {
+	  indexFaceSet *ifs = new indexFaceSet;
+          SoVRMLIndexedFaceSet * face_set;
+          face_set = (SoVRMLIndexedFaceSet*)child2list->get(j);
+          extractFaces(face_set,ifs);
+	  ifs_list.addRight(ifs);
+	  nbFaces++;
+        }
+//         if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedLineSet::getClassTypeId())
+//         {
+//           std::cout << "> We found a line" << std::endl;
+//           SoVRMLIndexedLineSet * line_set;
+//           line_set = (SoVRMLIndexedLineSet*)child2list->get(j);
+//           extractLines(line_set);
+//         }
+      }
+      sc->bound.nbr++;
+      ifsToBound (&(sc->bound.ptr[iterShapes]), ifs_list);
+      destroyIfs(ifs_list);
+      iterShapes++;
+    }
+  }
+  
+  if (factor != 1)
+  {
+    for (int i = 0; i < sc->bound.nbr; i++)
+    {
+      for (int j = 0; j < sc->bound.ptr[i].point.nbr; j++)
+      {
+        sc->bound.ptr[i].point.ptr[j].x = sc->bound.ptr[i].point.ptr[j].x*factor;
+        sc->bound.ptr[i].point.ptr[j].y = sc->bound.ptr[i].point.ptr[j].y*factor;
+        sc->bound.ptr[i].point.ptr[j].z = sc->bound.ptr[i].point.ptr[j].z*factor;
+      }
+    }
+  }
+}
+
+
+void
+extractFaces(SoVRMLIndexedFaceSet* face_set, indexFaceSet *ifs)
+{
+//   vpList<vpPoint> pointList;
+//   pointList.kill();
+  SoVRMLCoordinate *coord = (SoVRMLCoordinate *)(face_set->coord.getValue());
+  int coordSize = coord->point.getNum();
+  
+  ifs->nbPt = coordSize;
+  for (int i = 0; i < coordSize; i++)
+  {
+    SbVec3f point(0,0,0);
+    point[0]=coord->point[i].getValue()[0];
+    point[1]=coord->point[i].getValue()[1];
+    point[2]=coord->point[i].getValue()[2];
+    vpPoint pt;
+    pt.setWorldCoordinates(point[0],point[1],point[2]);
+    ifs->pt.push_back(pt);
+  }
+  
+  SoMFInt32 indexList = face_set->coordIndex;
+  int indexListSize = indexList.getNum();  
+  
+  ifs->nbIndex = indexListSize;
+  for (int i = 0; i < indexListSize; i++)
+  {
+    int index = face_set->coordIndex[i];
+    ifs->index.push_back(index);
+  }
+}
+
+void ifsToBound (Bound* bptr, vpList<indexFaceSet*> &ifs_list)
+{
+  int nbPt = 0;
+  ifs_list.front();
+  for (int i = 0; i < ifs_list.nbElements(); i++)
+  {
+    indexFaceSet* ifs = ifs_list.value();
+    nbPt += ifs->nbPt;
+    ifs_list.next();
+  }
+  bptr->point.nbr = nbPt;
+  bptr->point.ptr = (Point3f *) malloc (nbPt * sizeof (Point3f));
+  
+  ifs_list.front();
+  int iter = 0;
+  for (int i = 0; i < ifs_list.nbElements(); i++)
+  {
+    indexFaceSet* ifs = ifs_list.value();
+    for (int j = 0; j < ifs->nbPt; j++)
+    {
+      bptr->point.ptr[iter].x = ifs->pt[j].get_oX();
+      bptr->point.ptr[iter].y = ifs->pt[j].get_oY();
+      bptr->point.ptr[iter].z = ifs->pt[j].get_oZ();
+      iter++;
+    }
+    ifs_list.next();
+  }
+  
+  int nbFace = 0;
+  ifs_list.front();
+  vpList<int> indSize;
+  int indice = 0;
+  for (int i = 0; i < ifs_list.nbElements(); i++)
+  {
+    indexFaceSet* ifs = ifs_list.value();
+    for (int j = 0; j < ifs->nbIndex; j++)
+    {
+      if(ifs->index[j] == -1) 
+      {
+	nbFace++;
+	indSize.addRight(indice);
+	indice = 0;
+      }
+      else indice++;
+    }
+    ifs_list.next();
+  }
+  
+  bptr->face.nbr = nbFace;
+  bptr->face.ptr = (Face *) malloc (nbFace * sizeof (Face));
+  
+  
+  indSize.front();
+  for (int i = 0; i < indSize.nbElements(); i++)
+  {
+    bptr->face.ptr[i].vertex.nbr = indSize.value();
+    bptr->face.ptr[i].vertex.ptr = (Index *) malloc (indSize.value() * sizeof (Index));
+    indSize.next();
+  }
+  
+  int offset = 0;
+  ifs_list.front();
+  indice = 0;
+  for (int i = 0; i < ifs_list.nbElements(); i++)
+  {
+    indexFaceSet* ifs = ifs_list.value();
+    iter = 0;
+    for (int j = 0; j < ifs->nbIndex; j++)
+    {
+      if(ifs->index[j] != -1)
+      {
+	bptr->face.ptr[indice].vertex.ptr[iter] = ifs->index[j] + offset;
+	iter++;
+      }
+      else
+      {
+	iter = 0;
+	indice++;
+      }
+    }
+    offset += ifs->nbPt;
+  }
+}
+
+void destroyIfs(vpList<indexFaceSet*> &ifs_list)
+{
+  ifs_list.front();
+  while (!ifs_list.outside())
+  {
+    indexFaceSet* ifs = ifs_list.value();
+    delete ifs;
+    ifs_list.next();
+  }
+  ifs_list.kill();
+}
+#else
+void set_scene_wrl (const char* /*str*/, Bound_scene */*sc*/, float /*factor*/)
+{
+}
+#endif
+
 
 /*
   Convert the matrix format to deal with the one in the simulator
@@ -335,7 +634,7 @@ vpWireFrameSimulator::~vpWireFrameSimulator()
       free_Bound_scene (&(this->desiredScene));
   }
   close_display ();
-  close_clipping ();
+ // close_clipping ();
 
   cameraTrajectory.kill();
   poseList.kill();
@@ -426,7 +725,7 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position and at the desired position.
   
-  Here you can use the scene you want. You have to set the path to the .bnd file which is a scene file.
+  Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
 
   \param obj : Path to the scene file you want to use.
   \param desiredObject : Path to the scene file you want to use.
@@ -445,10 +744,27 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
   set_scene(name_cam,&camera,cameraFactor);
 
   strcpy(name,obj);
-  set_scene(name,&(this->scene),1.0);
+  Model_3D model;
+  model = getExtension(obj);
+  if (model == BND_MODEL)
+    set_scene(name,&(this->scene),1.0);
+  else if (model == WRL_MODEL)
+    set_scene_wrl(name,&(this->scene),1.0);
+  else if (model == UNKNOWN_MODEL)
+  {
+    vpERROR_TRACE("Unknown file extension for the 3D model");
+  }
 
-  strcpy(name,desiredObject);
-  set_scene(name,&(this->desiredScene),1.0);
+  strcpy(name,desiredObject);  
+  model = getExtension(desiredObject);
+  if (model == BND_MODEL)
+    set_scene(name,&(this->desiredScene),1.0);
+  else if (model == WRL_MODEL)
+    set_scene_wrl(name,&(this->desiredScene),1.0);
+  else if (model == UNKNOWN_MODEL)
+  {
+    vpERROR_TRACE("Unknown file extension for the 3D model");
+  }
 
   add_rfstack(IS_BACK);
 
@@ -519,7 +835,7 @@ vpWireFrameSimulator::initScene(vpSceneObject obj)
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position. The object at the desired position is not displayed.
   
-  Here you can use the scene you want. You have to set the path to the .bnd file which is a scene file.
+  Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
 
   \param obj : Path to the scene file you want to use.
 */
@@ -536,7 +852,16 @@ vpWireFrameSimulator::initScene(const char* obj)
   set_scene(name_cam,&camera,cameraFactor);
 
   strcpy(name,obj);
-  set_scene(name,&(this->scene),1.0);
+  Model_3D model;
+  model = getExtension(obj);
+  if (model == BND_MODEL)
+    set_scene(name,&(this->scene),1.0);
+  else if (model == WRL_MODEL)
+    set_scene_wrl(name,&(this->scene),1.0);
+  else if (model == UNKNOWN_MODEL)
+  {
+    vpERROR_TRACE("Unknown file extension for the 3D model");
+  }
 
   add_rfstack(IS_BACK);
 

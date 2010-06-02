@@ -125,7 +125,7 @@ void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
   \image html vpWireFrameSimulator.jpeg
   \image latex vpWireFrameSimulator.ps
   
-  The simulator uses .bnd files as 3D scene descriptors. Several scenes can be found in the data folder which is in the directory where you build ViSP.
+  The simulator uses .bnd or .wrl files as 3D scene descriptors. Several scenes can be found in the data folder which is in the directory where you build ViSP.
   
   You can move the main external view while clicking in the image. The left click enables to turn, the middle button enables to zoom and the left to translate along x and y.
   
@@ -146,7 +146,7 @@ void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
     vpImage<vpRGBa> Iext(480,640,255);
     
     //Set the type of scene to use
-    sim.initScene(vpWireFrameSimulator::PLAQUE, vpWireFrameSimulator::D_STANDARD);
+    sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
     
     //Set the initial pose of the camera
     sim.setCameraPosition(vpHomogeneousMatrix(0,0,0.5,vpMath::rad(0),vpMath::rad(10),0));
