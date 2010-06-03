@@ -228,11 +228,11 @@ class VISP_EXPORT vpFeatureThetaU : public vpBasicFeature
 public:
   typedef enum
     {
-      TUx, /*!< Select the subset \f$ \theta u_x \f$ visual feature
+      TUx = 1, /*!< Select the subset \f$ \theta u_x \f$ visual feature
 	     from the \f$ \theta u\f$ angle/axis representation. */
-      TUy, /*!< Select the subset \f$ \theta u_y \f$ visual feature
+      TUy = 2, /*!< Select the subset \f$ \theta u_y \f$ visual feature
 	     from the \f$ \theta u\f$ angle/axis representation. */
-      TUz  /*!< Select the subset \f$ \theta u_z \f$ visual feature
+      TUz = 4  /*!< Select the subset \f$ \theta u_z \f$ visual feature
 	     from the \f$ \theta u\f$ angle/axis representation. */
     } vpFeatureThetaUType;
   typedef enum
