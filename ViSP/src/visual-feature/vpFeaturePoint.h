@@ -279,8 +279,8 @@ public:
   */
   typedef enum
     {
-      X,   // x coordinates
-      Y    // y coordinates
+      X = 1,   // x coordinates
+      Y = 2    // y coordinates
     } vpFeaturePointType;
   //! Compute the error between a visual features and zero
   vpColVector error(const int select = FEATURE_ALL)  ;

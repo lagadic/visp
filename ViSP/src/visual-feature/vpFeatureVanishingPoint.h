@@ -68,8 +68,8 @@ class VISP_EXPORT vpFeatureVanishingPoint : public vpBasicFeature
 public:
   typedef enum
     {
-      X,   // x coordinates
-      Y    // y coordinates
+      X = 1,   // x coordinates
+      Y = 2    // y coordinates
     } vpFeatureVanishingPointType;
 
   /*
