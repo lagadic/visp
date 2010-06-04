@@ -228,6 +228,8 @@ main()
     vpColVector err(2), err_1(2);
     vpColVector dedt_filt(2), dedt_mes(2);	
     dc1394video_frame_t *frame = NULL;
+    
+    t_1 = vpTime::measureTimeMs();
 
     while(1) {
       try {
