@@ -209,6 +209,8 @@ vpSimulatorViper850::init()
   joint_max[3] = vpMath::rad(190);
   joint_max[4] = vpMath::rad(110);
   joint_max[5] = vpMath::rad(184);
+  
+  compute_fMi();
 }
 
 /*!
@@ -2203,7 +2205,13 @@ vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I)
   }
 }
 
-
+/*!
+  This method enables to initialise the articular coordinates of the robot in order to position the camera relative to the object.
+  
+  Before using this method it is advised to set the position of the object thanks to the set_fMo() method.
+  
+  \param cMo : the desired pose of the camera.
+*/
 void 
 vpSimulatorViper850::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
 {
@@ -2219,8 +2227,19 @@ vpSimulatorViper850::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
   
   if (nbSol == 0)
     vpERROR_TRACE ("Positionning error. Position unreachable");
+  
+  set_artCoord(articularCoordinates);
+  
+  compute_fMi();
 }
 
+/*!
+  This method enables to initialise the pose between the object and the refrence frame, in order to position the object relative to the camera.
+  
+  Before using this method it is advised to set the articular coordinates of the robot.
+  
+  \param cMo : the desired pose of the camera.
+*/
 void 
 vpSimulatorViper850::initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo)
 {
