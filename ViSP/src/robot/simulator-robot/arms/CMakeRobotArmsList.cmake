@@ -35,7 +35,15 @@
 #
 #############################################################################
 
-SET(VIPER_ARMS_SCENES
+SET(ROBOT_ARMS_SCENES
+  afma6_gate.bnd
+  afma6_arm1.bnd
+  afma6_arm2.bnd
+  afma6_arm3.bnd
+  afma6_arm4.bnd
+  afma6_tool_ccmop.bnd
+  afma6_tool_gripper.bnd
+  afma6_tool_vacuum.bnd
   viper850_arm1.bnd
   viper850_arm2.bnd
   viper850_arm3.bnd
