@@ -160,6 +160,7 @@ SET (HEADER_ROBOT
   robot/real-robot/viper/vpRobotViper850.h
   robot/simulator-robot/vpRobotSimulator.h
   robot/simulator-robot/vpSimulatorViper850.h
+  robot/simulator-robot/vpSimulatorAfma6.h
   )
 
 SET (HEADER_SERVO
@@ -173,7 +174,6 @@ SET (HEADER_SERVO
 SET (HEADER_SIMULATOR
   simulator/vpAR.h
   simulator/vpProjectionDisplay.h
-  simulator/vpRA.h
   simulator/vpSimulatorException.h
   simulator/vpSimulator.h
   simulator/vpViewer.h

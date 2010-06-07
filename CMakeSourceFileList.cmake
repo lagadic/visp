@@ -167,6 +167,7 @@ SET (SRC_ROBOT
   robot/real-robot/viper/vpRobotViper850.cpp
   robot/simulator-robot/vpRobotSimulator.cpp
   robot/simulator-robot/vpSimulatorViper850.cpp
+  robot/simulator-robot/vpSimulatorAfma6.cpp
   )
 
 
@@ -181,7 +182,6 @@ SET (SRC_SERVO
 SET (SRC_SIMULATOR
   simulator/vpAR.cpp
   simulator/vpProjectionDisplay.cpp
-  simulator/vpRA.cpp
   simulator/vpSimulator.cpp
   simulator/vpSimulatorException.cpp
   simulator/vpViewer.cpp
