@@ -434,37 +434,33 @@ vpFeatureThetaU::interaction(const int select)
     resetFlags();
   }
 
-  vpMatrix Lw(3,3) ;
-  Lw.setIdentity() ;
-
-  double  theta = sqrt(s.sumSquare()) ;
-
+  // Lw computed using Lw = [theta/2 u]_x +/- (I + alpha [u]_x [u]_x)
   vpColVector u(3)  ;
-  for (int i=0 ; i < 3 ; i++) u[i] = s[i]/theta ;
-
-  vpMatrix skew_u ;
-  skew_u = vpColVector::skew(u) ;
-
-  if (rotation == cdRc) {
-    if (theta < 1e-6) {
-      Lw.setIdentity() ;
-    }
-    else {
-      Lw += theta/2.0*skew_u 
-	+ (1-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))
-	*skew_u*skew_u ;
-    }
+  for (int i=0 ; i < 3 ; i++) {
+    u[i] = s[i]/2.0 ; 
   }
-  else {
-    if (theta < 1e-6) {
-      Lw = -Lw ;
-    }
-    else {
-      Lw = -Lw + theta/2.0*skew_u 
-	- (1-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))
-	*skew_u*skew_u ;
+  
+  vpMatrix Lw(3,3) ;
+  Lw = vpColVector::skew(u) ;  /* [theta/2  u]_x */
 
-    }
+  vpMatrix U2(3,3) ;
+  U2.setIdentity() ;
+  
+  double  theta = sqrt(s.sumSquare()) ;
+  if (theta >= 1e-6) {
+    for (int i=0 ; i < 3 ; i++) 
+      u[i] = s[i]/theta ;
+
+    vpMatrix skew_u ;
+    skew_u = vpColVector::skew(u) ; 
+    U2 += (1-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*skew_u*skew_u ;
+  }
+ 
+  if (rotation == cdRc) {
+    Lw += U2; 
+  }
+  else { 
+    Lw -=  U2; 
   }
 
   //This version is a simplification
