@@ -150,7 +150,6 @@ SET (SRC_ROBOT
   robot/robot/vpRobot.cpp
   robot/robot/vpRobotException.cpp
   robot/robot/vpRobotTemplate.cpp
-  robot/simulation-robot/vpRobotCamera.cpp
   robot/real-robot/afma4/vpAfma4.cpp
   robot/real-robot/afma4/vpRobotAfma4.cpp
   robot/real-robot/afma4/vpServolens.cpp
@@ -165,6 +164,7 @@ SET (SRC_ROBOT
   robot/real-robot/viper/vpViper.cpp
   robot/real-robot/viper/vpViper850.cpp
   robot/real-robot/viper/vpRobotViper850.cpp
+  robot/simulator-robot/vpRobotCamera.cpp
   robot/simulator-robot/vpRobotSimulator.cpp
   robot/simulator-robot/vpSimulatorViper850.cpp
   robot/simulator-robot/vpSimulatorAfma6.cpp

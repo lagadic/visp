@@ -143,7 +143,6 @@ SET (HEADER_ROBOT
   robot/robot/vpRobotException.h
   robot/robot/vpRobot.h
   robot/robot/vpRobotTemplate.h
-  robot/simulation-robot/vpRobotCamera.h
   robot/real-robot/afma4/vpAfma4.h
   robot/real-robot/afma4/vpRobotAfma4.h
   robot/real-robot/afma4/vpServolens.h
@@ -158,6 +157,7 @@ SET (HEADER_ROBOT
   robot/real-robot/viper/vpViper.h
   robot/real-robot/viper/vpViper850.h
   robot/real-robot/viper/vpRobotViper850.h
+  robot/simulator-robot/vpRobotCamera.h
   robot/simulator-robot/vpRobotSimulator.h
   robot/simulator-robot/vpSimulatorViper850.h
   robot/simulator-robot/vpSimulatorAfma6.h
