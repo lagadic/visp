@@ -38,7 +38,7 @@
  *****************************************************************************/
 
 /*!
-  \file vpRA.cpp
+  \file vpAR.cpp
   \brief class used to display an image behind the internal view of the simulator. Used for augmented reality applications.
 */
 
