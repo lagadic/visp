@@ -84,6 +84,8 @@ vpSimulatorAfma6::vpSimulatorAfma6():vpRobotSimulator(), vpAfma6()
   
   pthread_create(&thread, NULL, launcher, (void *)this);
   #endif
+  
+  compute_fMi();
 }
 
 /*!
@@ -124,6 +126,8 @@ vpSimulatorAfma6::vpSimulatorAfma6(bool disp):vpRobotSimulator(disp)
   
   pthread_create(&thread, NULL, launcher, (void *)this);
   #endif
+  
+  compute_fMi();
 }
 
 /*!
@@ -208,9 +212,6 @@ vpSimulatorAfma6::init()
   _joint_max[3] = 2.7301;
   _joint_max[4] = 2.4801;
   _joint_max[5] = 1.5901;
-  
-  compute_fMi();
-
 }
 
 /*!

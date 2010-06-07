@@ -83,6 +83,8 @@ vpSimulatorViper850::vpSimulatorViper850():vpRobotSimulator(), vpViper850()
   
   pthread_create(&thread, NULL, launcher, (void *)this);
   #endif
+  
+  compute_fMi();
 }
 
 /*!
@@ -123,6 +125,8 @@ vpSimulatorViper850::vpSimulatorViper850(bool disp):vpRobotSimulator(disp)
   
   pthread_create(&thread, NULL, launcher, (void *)this);
   #endif
+  
+  compute_fMi();
 }
 
 /*!
@@ -209,8 +213,6 @@ vpSimulatorViper850::init()
   joint_max[3] = vpMath::rad(190);
   joint_max[4] = vpMath::rad(110);
   joint_max[5] = vpMath::rad(184);
-  
-  compute_fMi();
 }
 
 /*!
