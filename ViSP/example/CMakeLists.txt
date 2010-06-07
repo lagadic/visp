@@ -52,13 +52,13 @@ SET (SRC_SUBDIRS
   manual
   parse-argv
   pose-estimation
-  robot-simu
+  robot-simulator/camera
+  robot-simulator/viper850
   servo-afma4
   servo-afma6
   servo-biclops
   servo-cycab
   servo-ptu46
-  servo-simu
   servo-viper850
   tools
   tracking
