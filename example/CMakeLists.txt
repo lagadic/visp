@@ -41,6 +41,7 @@
 # If you add/remove a directory, modify here
 SET (SRC_SUBDIRS
   calibration
+  coin-simulator
   framegrabber
   histogram
   homography
@@ -59,7 +60,6 @@ SET (SRC_SUBDIRS
   servo-ptu46
   servo-simu
   servo-viper850
-  simulator
   tools
   tracking
   video
