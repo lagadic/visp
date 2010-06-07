@@ -52,6 +52,7 @@ SET (SRC_SUBDIRS
   manual
   parse-argv
   pose-estimation
+  robot-simulator/afma6
   robot-simulator/camera
   robot-simulator/viper850
   servo-afma4
