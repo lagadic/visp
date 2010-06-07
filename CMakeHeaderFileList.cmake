@@ -172,11 +172,11 @@ SET (HEADER_SERVO
   )
 
 SET (HEADER_SIMULATOR
-  simulator/vpAR.h
-  simulator/vpProjectionDisplay.h
-  simulator/vpSimulatorException.h
-  simulator/vpSimulator.h
-  simulator/vpViewer.h
+  coin-simulator/vpAR.h
+  coin-simulator/vpProjectionDisplay.h
+  coin-simulator/vpSimulatorException.h
+  coin-simulator/vpSimulator.h
+  coin-simulator/vpViewer.h
   )
 
 SET (HEADER_TOOLS

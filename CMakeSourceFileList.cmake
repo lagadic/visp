@@ -180,11 +180,11 @@ SET (SRC_SERVO
   )
 
 SET (SRC_SIMULATOR
-  simulator/vpAR.cpp
-  simulator/vpProjectionDisplay.cpp
-  simulator/vpSimulator.cpp
-  simulator/vpSimulatorException.cpp
-  simulator/vpViewer.cpp
+  coin-simulator/vpAR.cpp
+  coin-simulator/vpProjectionDisplay.cpp
+  coin-simulator/vpSimulator.cpp
+  coin-simulator/vpSimulatorException.cpp
+  coin-simulator/vpViewer.cpp
   )
 
 SET (SRC_TOOLS
