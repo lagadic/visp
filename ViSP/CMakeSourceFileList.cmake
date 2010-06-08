@@ -105,6 +105,7 @@ SET (SRC_IMAGE
 SET (SRC_KEY_POINT
   key-point/vpBasicKeyPoint.cpp
   key-point/vpKeyPointSurf.cpp
+  key-point/vpPlanarObjectDetector.cpp
   )
 
 SET (SRC_LIGHT

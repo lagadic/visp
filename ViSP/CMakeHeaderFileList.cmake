@@ -98,6 +98,7 @@ SET (HEADER_IMAGE
 SET (HEADER_KEY_POINT
   key-point/vpBasicKeyPoint.h
   key-point/vpKeyPointSurf.h
+  key-point/vpPlanarObjectDetector.h
   )
 
 SET (HEADER_LIGHT

@@ -42,6 +42,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   keyPointSurf.cpp
+  planarObjectDetector.cpp
 )
 
 # rule for binary build
