@@ -69,7 +69,7 @@
   Thus in this class you will find all the parameters and methods which are necessary to create a simulator. Several methods are pure virtual. In this case it means that they are specific to the each robot, for example the computation of the geometrical model.
 */
 
-class vpRobotSimulator : protected vpWireFrameSimulator, public vpRobot
+class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRobot
 {
   public:
     vpImage<vpRGBa> I;

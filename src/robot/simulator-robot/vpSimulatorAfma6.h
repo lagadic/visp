@@ -162,7 +162,7 @@ int main()
 */
 
 
-class vpSimulatorAfma6 : public vpRobotSimulator, public vpAfma6
+class VISP_EXPORT vpSimulatorAfma6 : public vpRobotSimulator, public vpAfma6
 {
   public:
     static const double defaultPositioningVelocity;

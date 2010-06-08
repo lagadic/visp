@@ -188,7 +188,7 @@ int main()
 */
 
 
-class vpSimulatorViper850 : public vpRobotSimulator, public vpViper850
+class VISP_EXPORT vpSimulatorViper850 : public vpRobotSimulator, public vpViper850
 {
   public:
     static const double defaultPositioningVelocity;
