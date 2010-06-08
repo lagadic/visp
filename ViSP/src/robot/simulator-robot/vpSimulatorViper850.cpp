@@ -265,6 +265,8 @@ vpSimulatorViper850::init (vpViper850::vpToolType tool,
       etc[0] = -0.0453; // tx
       etc[1] =  0.0005; // ty
       etc[2] =  0.0728; // tz
+      
+      setCameraParameters(vpCameraParameters(1232.0, 1233.0, 320, 240));
       break;
     }
   case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
@@ -275,7 +277,7 @@ vpSimulatorViper850::init (vpViper850::vpToolType tool,
       etc[1] = -0.00134326752; // ty
       etc[2] =  0.001000828017; // tz
       
-      
+      setCameraParameters(vpCameraParameters(868.0, 869.0, 320, 240));
       break;
     }
   }
@@ -314,7 +316,7 @@ vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
     {
       std::cout << "Get default camera parameters for camera \"" 
 		<< vpViper850::CONST_MARLIN_F033C_CAMERA_NAME << "\"" << std::endl;
-	cam.initPersProjWithoutDistortion(1232.0, 1233.0, 320, 240.9);
+	cam.initPersProjWithoutDistortion(1232.0, 1233.0, 320, 240);
     }
     else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
