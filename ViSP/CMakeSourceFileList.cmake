@@ -64,7 +64,7 @@ SET (SRC_COMPUTER_VISION
   computer-vision/pose-estimation/vpPoseLagrange.cpp
   computer-vision/pose-estimation/vpPoseLowe.cpp
   computer-vision/pose-estimation/vpPoseRansac.cpp
-  computer-vision/pose-estimation/vpPoseVirtualVisualServoing.cpp  
+  computer-vision/pose-estimation/vpPoseVirtualVisualServoing.cpp
   )
 
 SET (SRC_DATA_STRUCTURE
@@ -191,6 +191,7 @@ SET (SRC_SIMULATOR
 SET (SRC_TOOLS
   tools/geometry/vpPlane.cpp
   tools/geometry/vpRect.cpp
+  tools/geometry/vpTriangle.cpp
   tools/histogram/vpHistogram.cpp
   tools/histogram/vpHistogramPeak.cpp
   tools/histogram/vpHistogramValey.cpp
