@@ -135,6 +135,8 @@ OPTIONS:                                               \n\
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
   \param displayPoints : Display points of interests activation.
+  \param useSequence : sequence of image de activation. 
+  \param ipath : Input image path.
 
   \return false if the program has to be stopped, true otherwise.
 
