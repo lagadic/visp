@@ -1692,7 +1692,7 @@ vpSimulatorViper850::isInJointLimit ()
   }
   
   if (artNumb != 0)
-    std::cout << "\nWarning: Velocity control stopped: axis " << fabs(artNumb) << " on joint limit!" <<std::endl;
+    std::cout << "\nWarning: Velocity control stopped: axis " << fabs((float)artNumb) << " on joint limit!" <<std::endl;
   
   return artNumb;
 }
