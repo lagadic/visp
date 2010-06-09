@@ -63,6 +63,9 @@ class VISP_EXPORT vpTriangle
     double uvinv11;
     double ptempo0;
     double ptempo1;
+    vpImagePoint apex1;
+    vpImagePoint apex2;
+    vpImagePoint apex3;
     
   public:
     vpTriangle();
@@ -73,6 +76,18 @@ class VISP_EXPORT vpTriangle
     void buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
     
     bool inTriangle(const vpImagePoint &iP, double threshold = 0.00001);
+    
+    /*!
+      Get the apexes of the triangle.
+      
+      \param iP1 : first apex.
+      \param iP2 : second apex.
+      \param iP3 : third apex.
+    */
+    void getTriangleApexes(vpImagePoint &iP1, vpImagePoint &iP2, vpImagePoint &iP3) const {
+      iP1 = apex1;
+      iP2 = apex2;
+      iP3 = apex3;}
 
   private:
     void init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
