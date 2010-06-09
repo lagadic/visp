@@ -183,6 +183,7 @@ SET (HEADER_SIMULATOR
 SET (HEADER_TOOLS
   tools/geometry/vpPlane.h
   tools/geometry/vpRect.h
+  tools/geometry/vpTriangle.h
   tools/histogram/vpHistogram.h
   tools/histogram/vpHistogramPeak.h
   tools/histogram/vpHistogramValey.h
