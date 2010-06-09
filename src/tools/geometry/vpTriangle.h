@@ -66,6 +66,7 @@ class VISP_EXPORT vpTriangle
     
   public:
     vpTriangle();
+    vpTriangle(const vpTriangle &tri);
     virtual ~vpTriangle();
     vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
     
