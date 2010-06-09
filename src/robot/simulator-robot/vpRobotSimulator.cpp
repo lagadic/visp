@@ -51,7 +51,9 @@ vpRobotSimulator::vpRobotSimulator():vpWireFrameSimulator(), vpRobot()
   velocity.resize(6);
   I.resize(480,640);
   I = 255;
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) 
   display.init(I, 0, 0,"The External view");
+#endif
   robotStop = false;
   jointLimit = false;
   displayBusy = false;
@@ -73,9 +75,10 @@ vpRobotSimulator::vpRobotSimulator(bool display):vpWireFrameSimulator(), vpRobot
   I = 255;
   
   displayAllowed = display;
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) 
   if (display)
     this->display.init(I, 0, 0,"The External view");
-  
+#endif  
   robotStop = false;
   jointLimit = false;
   displayBusy = false;
