@@ -572,10 +572,14 @@ template<class Type>
 vpImage<Type>::vpImage(const vpImage<Type>& I)
 {
   bitmap = NULL ;
-  row = NULL ;
+  row = NULL ;  
+    /* we first have to set the initial values of the image because resize function calls init function that test the actual size of the image */
+  this->width = 0;
+  this->height = 0;
+  this->npixels = 0;
   try
   {
-    if (I.bitmap!=NULL)
+    //if (I.bitmap!=NULL)
     {
       resize(I.getHeight(),I.getWidth());
       unsigned int i;
@@ -626,13 +630,28 @@ Type vpImage<Type>::getMinValue() const
 template<class Type>
 void vpImage<Type>::operator=(const vpImage<Type> &m)
 {
+    /* we first have to set the initial values of the image because resize function calls init function that test the actual size of the image */
+  if(bitmap != NULL){
+    delete[] bitmap;
+    bitmap = NULL ;
+  }
+  
+  if(row != NULL){
+    delete[] row;
+    row = NULL ;
+  }
+  this->width = 0;
+  this->height = 0;
+  this->npixels = 0;
   try
   {
     resize(m.getHeight(),m.getWidth()) ;
 
     memcpy(bitmap, m.bitmap, m.npixels*sizeof(Type)) ;
 
-    //for (unsigned int i=0; i<this->height; i++) row[i] = bitmap + i*this->width;
+    for (unsigned int i=0; i<this->height; i++){ 
+      row[i] = bitmap + i*this->width;
+    }
   }
   catch(vpException me)
   {
