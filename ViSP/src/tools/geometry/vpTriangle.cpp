@@ -65,6 +65,23 @@ vpTriangle::vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const v
 }
 
 /*!
+  Copy constructor
+  
+  \param tri : The triangle used for the initialisation.
+*/
+vpTriangle::vpTriangle(const vpTriangle &tri)
+{
+  goodTriange = tri.goodTriange;
+  S1 = tri.S1;
+  uvinv00 = tri.uvinv00;
+  uvinv01 = tri.uvinv01;
+  uvinv10 = tri.uvinv10;
+  uvinv11 = tri.uvinv11;
+  ptempo0 = tri.ptempo0;
+  ptempo1 = tri.ptempo1;
+}
+
+/*!
   Basic destructor
 */
 vpTriangle::~vpTriangle()
