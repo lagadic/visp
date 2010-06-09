@@ -486,7 +486,7 @@ vpImage<Type>::vpImage()
   display =  NULL ;
 
   this->height = this->width = 0 ;
-
+  this->npixels = 0;
 }
 
 /*!
@@ -580,6 +580,7 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
   try
   {
     //if (I.bitmap!=NULL)
+//    if(I.getHeight() != 0 || I.getWidth() != 0)
     {
       resize(I.getHeight(),I.getWidth());
       unsigned int i;
@@ -640,17 +641,37 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
     delete[] row;
     row = NULL ;
   }
-  this->width = 0;
-  this->height = 0;
-  this->npixels = 0;
+  this->width = m.width;
+  this->height = m.height;
+  this->npixels = m.npixels;
   try
   {
-    resize(m.getHeight(),m.getWidth()) ;
+    if(m.npixels != 0)
+    {
+      if (bitmap == NULL){  
+        bitmap = new  Type[npixels] ;
+      }
 
-    memcpy(bitmap, m.bitmap, m.npixels*sizeof(Type)) ;
+      if (bitmap == NULL){
+            vpERROR_TRACE("cannot allocate bitmap ") ;
+        throw(vpException(vpException::memoryAllocationError,
+		          "cannot allocate bitmap ")) ;
+      }
 
-    for (unsigned int i=0; i<this->height; i++){ 
-      row[i] = bitmap + i*this->width;
+      if (row == NULL){  
+        row = new  Type*[height] ;
+      }
+      if (row == NULL){
+        vpERROR_TRACE("cannot allocate row ") ;
+        throw(vpException(vpException::memoryAllocationError,
+		          "cannot allocate row ")) ;
+      }      
+
+      memcpy(bitmap, m.bitmap, m.npixels*sizeof(Type)) ;
+
+      for (unsigned int i=0; i<this->height; i++){ 
+        row[i] = bitmap + i*this->width;
+      }
     }
   }
   catch(vpException me)
