@@ -71,6 +71,9 @@ class VISP_EXPORT vpTriangle
     vpTriangle();
     vpTriangle(const vpTriangle &tri);
     virtual ~vpTriangle();
+    
+    vpTriangle &operator=(const vpTriangle& tri);
+    
     vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
     
     void buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
