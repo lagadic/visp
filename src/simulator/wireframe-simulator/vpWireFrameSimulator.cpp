@@ -109,10 +109,7 @@ getExtension(const char* file)
     throw std::string("Coin not installed, cannot read VRML files");
 #endif
   }
-  else
-  { 
-    return UNKNOWN_MODEL;
-  } 
+  return UNKNOWN_MODEL;
 }
 
 /*
