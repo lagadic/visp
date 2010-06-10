@@ -181,11 +181,29 @@ SET (SRC_SERVO
   )
 
 SET (SRC_SIMULATOR
-  coin-simulator/vpAR.cpp
-  coin-simulator/vpProjectionDisplay.cpp
-  coin-simulator/vpSimulator.cpp
-  coin-simulator/vpSimulatorException.cpp
-  coin-simulator/vpViewer.cpp
+  simulator/coin-simulator/vpAR.cpp
+  simulator/coin-simulator/vpProjectionDisplay.cpp
+  simulator/coin-simulator/vpSimulator.cpp
+  simulator/coin-simulator/vpSimulatorException.cpp
+  simulator/coin-simulator/vpViewer.cpp
+  simulator/wireframe-simulator/vpWireFrameSimulator.cpp
+  simulator/wireframe-simulator/core/vpArit.c
+  simulator/wireframe-simulator/core/vpAritio.c
+  simulator/wireframe-simulator/core/vpBound.c
+  simulator/wireframe-simulator/core/vpBoundio.c
+  simulator/wireframe-simulator/core/vpClipping.c
+  simulator/wireframe-simulator/core/vpDisplay.c
+  simulator/wireframe-simulator/core/vpKeyword.c
+  simulator/wireframe-simulator/core/vpLex.c
+  simulator/wireframe-simulator/core/vpMyio.c
+  simulator/wireframe-simulator/core/vpParser.c
+  simulator/wireframe-simulator/core/vpProjection.c
+  simulator/wireframe-simulator/core/vpRfstack.c
+  simulator/wireframe-simulator/core/vpSkipio.c
+  simulator/wireframe-simulator/core/vpTmstack.c
+  simulator/wireframe-simulator/core/vpToken.c
+  simulator/wireframe-simulator/core/vpViewio.c
+  simulator/wireframe-simulator/core/vpVwstack.c
   )
 
 SET (SRC_TOOLS
@@ -267,27 +285,6 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpGenericFeature.cpp
   )
 
-SET (SRC_WIRE_FRAME_SIMULATOR
-  wireframe-simulator/vpWireFrameSimulator.cpp
-  wireframe-simulator/core/vpArit.c
-  wireframe-simulator/core/vpAritio.c
-  wireframe-simulator/core/vpBound.c
-  wireframe-simulator/core/vpBoundio.c
-  wireframe-simulator/core/vpClipping.c
-  wireframe-simulator/core/vpDisplay.c
-  wireframe-simulator/core/vpKeyword.c
-  wireframe-simulator/core/vpLex.c
-  wireframe-simulator/core/vpMyio.c
-  wireframe-simulator/core/vpParser.c
-  wireframe-simulator/core/vpProjection.c
-  wireframe-simulator/core/vpRfstack.c
-  wireframe-simulator/core/vpSkipio.c
-  wireframe-simulator/core/vpTmstack.c
-  wireframe-simulator/core/vpToken.c
-  wireframe-simulator/core/vpViewio.c
-  wireframe-simulator/core/vpVwstack.c
-  )
-
 SET (SRC_ALL
   ${SRC_CAMERA}
   ${SRC_COMPUTER_VISION}
@@ -306,5 +303,4 @@ SET (SRC_ALL
   ${SRC_VIDEO}
   ${SRC_VIDEO_DEVICE}
   ${SRC_VISUAL_FEATURE}
-  ${SRC_WIRE_FRAME_SIMULATOR}
   )
