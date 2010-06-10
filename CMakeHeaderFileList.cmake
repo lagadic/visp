@@ -173,11 +173,25 @@ SET (HEADER_SERVO
   )
 
 SET (HEADER_SIMULATOR
-  coin-simulator/vpAR.h
-  coin-simulator/vpProjectionDisplay.h
-  coin-simulator/vpSimulatorException.h
-  coin-simulator/vpSimulator.h
-  coin-simulator/vpViewer.h
+  simulator/coin-simulator/vpAR.h
+  simulator/coin-simulator/vpProjectionDisplay.h
+  simulator/coin-simulator/vpSimulatorException.h
+  simulator/coin-simulator/vpSimulator.h
+  simulator/coin-simulator/vpViewer.h
+  simulator/wireframe-simulator/vpWireFrameSimulator.h
+  simulator/wireframe-simulator/core/vpArit.h
+  simulator/wireframe-simulator/core/vpBound.h
+  simulator/wireframe-simulator/core/vpCgiconstants.h
+  simulator/wireframe-simulator/core/vpImstack.h
+  simulator/wireframe-simulator/core/vpKeyword.h
+  simulator/wireframe-simulator/core/vpLex.h
+  simulator/wireframe-simulator/core/vpMy.h
+  simulator/wireframe-simulator/core/vpRfstack.h
+  simulator/wireframe-simulator/core/vpSkipio.h
+  simulator/wireframe-simulator/core/vpTmstack.h
+  simulator/wireframe-simulator/core/vpToken.h
+  simulator/wireframe-simulator/core/vpView.h
+  simulator/wireframe-simulator/core/vpVwstack.h
   )
 
 SET (HEADER_TOOLS
@@ -257,23 +271,6 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpGenericFeature.h
   )
 
-SET (HEADER_WIRE_FRAME_SIMULATOR
-  wireframe-simulator/vpWireFrameSimulator.h
-  wireframe-simulator/core/vpArit.h
-  wireframe-simulator/core/vpBound.h
-  wireframe-simulator/core/vpCgiconstants.h
-  wireframe-simulator/core/vpImstack.h
-  wireframe-simulator/core/vpKeyword.h
-  wireframe-simulator/core/vpLex.h
-  wireframe-simulator/core/vpMy.h
-  wireframe-simulator/core/vpRfstack.h
-  wireframe-simulator/core/vpSkipio.h
-  wireframe-simulator/core/vpTmstack.h
-  wireframe-simulator/core/vpToken.h
-  wireframe-simulator/core/vpView.h
-  wireframe-simulator/core/vpVwstack.h
-  )
-
 SET (HEADER_ALL 
   ${HEADER_CAMERA}
   ${HEADER_COMPUTER_VISION}
@@ -292,5 +289,4 @@ SET (HEADER_ALL
   ${HEADER_VIDEO}
   ${HEADER_VIDEO_DEVICE}
   ${HEADER_VISUAL_FEATURE}
-  ${HEADER_WIRE_FRAME_SIMULATOR}
   )

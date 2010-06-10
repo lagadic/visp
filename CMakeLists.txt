@@ -986,11 +986,11 @@ ENDIF(USE_DIRECTSHOW)
 # The wireframe simulator
 #----------------------------------------------------------------------
 # include all the wireframe scene files
-INCLUDE(${VISP_SOURCE_DIR}/src/wireframe-simulator/scene/CMakeWireframeScenesList.cmake)
+INCLUDE(${VISP_SOURCE_DIR}/src/simulator/wireframe-simulator/scene/CMakeWireframeScenesList.cmake)
 
 SET(WIREFRAME_SCENES_LIST "")
 foreach(SCENE ${WIREFRAME_SCENES})
-  set(WIREFRAME_SCENES_SRC "${VISP_SOURCE_DIR}/src/wireframe-simulator/scene/${SCENE}")
+  set(WIREFRAME_SCENES_SRC "${VISP_SOURCE_DIR}/src/simulator/wireframe-simulator/scene/${SCENE}")
   set(WIREFRAME_SCENES_DST "${VISP_BINARY_DIR}/data/wireframe-simulator/${SCENE}")
   IF(CMAKE_MINOR_VERSION LESS 8 
     AND CMAKE_MAJOR_VERSION GREATER 1)
