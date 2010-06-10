@@ -89,6 +89,23 @@ vpTriangle::~vpTriangle()
 }
 
 /*!
+  Assign \e tri to this triangle and return a reference to this triangle.
+*/  
+vpTriangle &
+vpTriangle::operator=(const vpTriangle& tri)
+{
+  goodTriange = tri.goodTriange;
+  S1 = tri.S1;
+  uvinv00 = tri.uvinv00;
+  uvinv01 = tri.uvinv01;
+  uvinv10 = tri.uvinv10;
+  uvinv11 = tri.uvinv11;
+  ptempo0 = tri.ptempo0;
+  ptempo1 = tri.ptempo1;
+  return *this;
+};
+
+/*!
   Initialise the triangle thanks to the three 2D points \f$ iP1 \f$, \f$ iP2 \f$ and \f$ iP3 \f$
   
   \param iP1 : The first apex of the triangle.
