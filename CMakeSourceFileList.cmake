@@ -186,6 +186,7 @@ SET (SRC_SIMULATOR
   simulator/coin-simulator/vpSimulator.cpp
   simulator/coin-simulator/vpSimulatorException.cpp
   simulator/coin-simulator/vpViewer.cpp
+  simulator/image-simulator/vpImageSimulator.cpp
   simulator/wireframe-simulator/vpWireFrameSimulator.cpp
   simulator/wireframe-simulator/core/vpArit.c
   simulator/wireframe-simulator/core/vpAritio.c
