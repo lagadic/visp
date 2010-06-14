@@ -159,7 +159,7 @@ typedef	struct	{
 	Vector		rotate;		/* vecteur rotation	*/
 	Vector		scale;		/* vecteur homothetie	*/
 	Vector		translate;	/* vecteur translation	*/
-} Position;
+} AritPosition;
 
 #define	IDENTITY_ROTATE		{	0.0,	0.0,	0.0	}	
 #define	IDENTITY_SCALE		{	1.0,	1.0,	1.0	}
