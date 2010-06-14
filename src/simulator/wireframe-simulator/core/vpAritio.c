@@ -57,7 +57,7 @@
  * f		Fichier en sortie.
  * pp		Positionnement a ecrite.
  */
-void fprintf_Position (FILE *f, Position *pp)
+void fprintf_Position (FILE *f, AritPosition *pp)
 {
 	fprintf (f, "%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n",
 		pp->rotate.x,	 pp->rotate.y,	  pp->rotate.z,
@@ -135,7 +135,7 @@ static	 char	*err_tbl[] = {
  * Entree :
  * pp		Positionnement a lire.
  */
-void fscanf_Position (Position *pp)
+void fscanf_Position (AritPosition *pp)
 {
 	pusherr ("rotate: ");
 	fscanf_Vector (&pp->rotate);

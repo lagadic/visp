@@ -571,7 +571,7 @@ upright_vector (Vector *vp, Vector *up)
  * pp		Position a initialiser.
  */
 void
-Matrix_to_Position (Matrix m, Position *pp)
+Matrix_to_Position (Matrix m, AritPosition *pp)
 {
 	Matrix_to_Rotate (m, &pp->rotate);
 	SET_COORD3(pp->scale,1.0,1.0,1.0);
@@ -648,7 +648,7 @@ Matrix_to_Rotate (Matrix m, Vector *vp)
  * m		Matrice a initialiser.
  */
 void
-Position_to_Matrix (Position *pp, Matrix m)
+Position_to_Matrix (AritPosition *pp, Matrix m)
 {
 	Rotate_to_Matrix (&pp->rotate, m);	/* rotation	*/
 	prescale_matrix (m, &pp->scale);	/* homothetie	*/
