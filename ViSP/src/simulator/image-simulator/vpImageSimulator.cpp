@@ -42,6 +42,7 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 #include <visp/vpPixelMeterConversion.h>
+#include <visp/vpMeterPixelConversion.h>
 #include <visp/vpMatrixException.h>
 
 /*!
@@ -69,6 +70,10 @@ vpImageSimulator::vpImageSimulator(vpColorPlan col)
 
   vbase_u.resize(3);
   vbase_v.resize(3);
+  
+  focal.resize(3);
+  focal=0;
+  focal[2]=1;
 
   normal_Cam_optim = new double[3];
   X0_2_optim = new double[3];
@@ -78,19 +83,28 @@ vpImageSimulator::vpImageSimulator(vpColorPlan col)
   
   colorI = col;
   interp = SIMPLE;
+  bgColor = vpColor::white;
+  cleanPrevImage = false;
 }
 
 
 vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
 {
   for(int i=0;i<4;i++)
+  {
     X[i] = text.X[i];
+    pt[i] = text.pt[i];
+  }
 
   for(int i=0;i<4;i++)
     X2[i].resize(3);
   
   Ic = text.Ic;
   Ig = text.Ig;
+  
+  focal.resize(3);
+  focal=0;
+  focal[2]=1;
 
   normal_obj = text.normal_obj;
   euclideanNorm_u = text.euclideanNorm_u;
@@ -100,6 +114,7 @@ vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   vbase_u.resize(3);
   vbase_v.resize(3);
   
+  
   normal_Cam_optim = new double[3];
   X0_2_optim = new double[3];
   vbase_u_optim = new double[3];
@@ -108,6 +123,8 @@ vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   
   colorI = text.colorI;
   interp = text.interp;
+  bgColor = text.bgColor;
+  cleanPrevImage = text.cleanPrevImage;
   
   setCameraPosition(text.cMt);
 }
@@ -124,6 +141,36 @@ vpImageSimulator::~vpImageSimulator()
   delete[] Xinter_optim;
 }
 
+
+vpImageSimulator&
+vpImageSimulator::operator=(const vpImageSimulator& sim)
+{
+  for(int i=0;i<4;i++)
+  {
+    X[i] = sim.X[i];
+    pt[i] = sim.pt[i];
+  }
+  
+  Ic = sim.Ic;
+  Ig = sim.Ig;
+  
+  bgColor = sim.bgColor;
+  cleanPrevImage = sim.cleanPrevImage;
+  
+  focal = sim.focal;
+  
+  normal_obj = sim.normal_obj;
+  euclideanNorm_u = sim.euclideanNorm_u;
+  euclideanNorm_v = sim.euclideanNorm_v;
+  
+  colorI = sim.colorI;
+  interp = sim.interp;
+  
+  setCameraPosition(sim.cMt);
+  
+  return *this;
+}
+
 /*!
   Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
   
@@ -134,30 +181,54 @@ void
 vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters cam)
 {
   int nb_point_dessine = 0;
+  if (cleanPrevImage)
+  {
+    unsigned char col = 0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B;
+    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    {
+      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      {
+	I[i][j] = col;
+      }
+    }
+  }
   if(visible)
   {
-    for (unsigned int i = 0; i < I.getHeight(); i++)
+    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    
+    double top = rect.getTop();
+    double bottom = rect.getBottom();
+    double left = rect.getLeft();
+    double right= rect.getRight();
+    
+    unsigned char *bitmap = I.bitmap;
+    unsigned int width = I.getWidth();
+    vpImagePoint ip;
+    
+    for (int i = (int)top; i < (int)bottom; i++)
     {
-      for (unsigned int j = 0; j < I.getWidth(); j++)
+      for (int j = (int)left; j < (int)right; j++)
       {
         double x,y;
-        vpPixelMeterConversion::convertPoint(cam,vpImagePoint(i,j), x,y);
+	ip.set_ij(i,j);
+        vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+	ip.set_ij(y,x);
 	if (colorI == GRAY_SCALED)
 	{
-	  unsigned char Ipixelplan;
-	  if(getPixel(vpImagePoint(y,x),Ipixelplan))
+	  unsigned char Ipixelplan = 0;
+	  if(getPixel(ip,Ipixelplan))
 	  {
-	    I[i][j]=Ipixelplan;
+	    *(bitmap+i*width+j)=Ipixelplan;
 	    nb_point_dessine++;
 	  }
 	}
 	else if (colorI == COLORED)
 	{
 	  vpRGBa Ipixelplan;
-	  if(getPixel(vpImagePoint(y,x),Ipixelplan))
+	  if(getPixel(ip,Ipixelplan))
 	  {
 	    unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B;
-	    I[i][j]=pixelgrey;
+	    *(bitmap+i*width+j)=pixelgrey;
 	    nb_point_dessine++;
 	  }
 	}
@@ -182,22 +253,46 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
     throw (vpMatrixException(vpMatrixException::incorrectMatrixSizeError, " zBuffer must have the same size as the image I ! "));
   
   int nb_point_dessine = 0;
+  if (cleanPrevImage)
+  {
+    unsigned char col = 0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B;
+    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    {
+      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      {
+	I[i][j] = col;
+      }
+    }
+  }
   if(visible)
   {
-    for (unsigned int i = 0; i < I.getHeight(); i++)
+    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    
+    double top = rect.getTop();
+    double bottom = rect.getBottom();
+    double left = rect.getLeft();
+    double right= rect.getRight();
+    
+    unsigned char *bitmap = I.bitmap;
+    unsigned int width = I.getWidth();
+    vpImagePoint ip;
+    
+    for (int i = (int)top; i < (int)bottom; i++)
     {
-      for (unsigned int j = 0; j < I.getWidth(); j++)
+      for (int j = (int)left; j < (int)right; j++)
       {
         double x,y;
-        vpPixelMeterConversion::convertPoint(cam,vpImagePoint(i,j), x,y);
+	ip.set_ij(i,j);
+        vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+	ip.set_ij(y,x);
 	if (colorI == GRAY_SCALED)
 	{
 	  unsigned char Ipixelplan;
-	  if(getPixel(vpImagePoint(y,x),Ipixelplan))
+	  if(getPixel(ip,Ipixelplan))
 	  {
 	    if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0)
 	    {
-	      I[i][j]=Ipixelplan;
+	      *(bitmap+i*width+j)=Ipixelplan;
 	      nb_point_dessine++;
 	      zBuffer[i][j] = Xinter_optim[2];
 	    }
@@ -206,12 +301,12 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
 	else if (colorI == COLORED)
 	{
 	  vpRGBa Ipixelplan;
-	  if(getPixel(vpImagePoint(y,x),Ipixelplan))
+	  if(getPixel(ip,Ipixelplan))
 	  {
 	    if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0)
 	    {
 	      unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B;
-	      I[i][j]=pixelgrey;
+	      *(bitmap+i*width+j)=pixelgrey;
 	      nb_point_dessine++;
 	      zBuffer[i][j] = Xinter_optim[2];
 	    }
@@ -232,33 +327,57 @@ void
 vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam)
 {
   int nb_point_dessine = 0;
+  if (cleanPrevImage)
+  {
+    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    {
+      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      {
+	I[i][j] = bgColor;
+      }
+    }
+  }
+  
   if(visible)
   {
-    for (unsigned int i = 0; i < I.getHeight(); i++)
+    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    
+    double top = rect.getTop();
+    double bottom = rect.getBottom();
+    double left = rect.getLeft();
+    double right= rect.getRight();
+    
+    vpRGBa *bitmap = I.bitmap;
+    unsigned int width = I.getWidth();
+    vpImagePoint ip;
+    
+    for (int i = (int)top; i < (int)bottom; i++)
     {
-      for (unsigned int j = 0; j < I.getWidth(); j++)
+      for (int j = (int)left; j < (int)right; j++)
       {
-        double x,y;//coordonnees dans plan image
-        vpPixelMeterConversion::convertPoint(cam,vpImagePoint(i,j), x,y);
+        double x,y;
+	ip.set_ij(i,j);
+        vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+	ip.set_ij(y,x);
 	if (colorI == GRAY_SCALED)
 	{
 	  unsigned char Ipixelplan;
-	  if(getPixel(vpImagePoint(y,x),Ipixelplan))
+	  if(getPixel(ip,Ipixelplan))
 	  {
 	    vpRGBa pixelcolor;
 	    pixelcolor.R = Ipixelplan;
 	    pixelcolor.G = Ipixelplan;
 	    pixelcolor.B = Ipixelplan;
-	    I[i][j] = pixelcolor;
+	    *(bitmap+i*width+j) = pixelcolor;
 	    nb_point_dessine++;
 	  }
 	}
 	else if (colorI == COLORED)
 	{
 	  vpRGBa Ipixelplan;
-	  if(getPixel(vpImagePoint(y,x),Ipixelplan))
+	  if(getPixel(ip,Ipixelplan))
 	  {
-	    I[i][j] = Ipixelplan;
+	    *(bitmap+i*width+j) = Ipixelplan;
 	    nb_point_dessine++;
 	  }
 	}
@@ -283,18 +402,41 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpM
     throw (vpMatrixException(vpMatrixException::incorrectMatrixSizeError, " zBuffer must have the same size as the image I ! "));
   
   int nb_point_dessine = 0;
+  if (cleanPrevImage)
+  {
+    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    {
+      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      {
+	I[i][j] = bgColor;
+      }
+    }
+  }
   if(visible)
   {
-    for (unsigned int i = 0; i < I.getHeight(); i++)
+    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    
+    double top = rect.getTop();
+    double bottom = rect.getBottom();
+    double left = rect.getLeft();
+    double right= rect.getRight();
+    
+    vpRGBa *bitmap = I.bitmap;
+    unsigned int width = I.getWidth();
+    vpImagePoint ip;
+    
+    for (int i = (int)top; i < (int)bottom; i++)
     {
-      for (unsigned int j = 0; j < I.getWidth(); j++)
+      for (int j = (int)left; j < (int)right; j++)
       {
-        double x,y;//coordonnees dans plan image
-        vpPixelMeterConversion::convertPoint(cam,vpImagePoint(i,j), x,y);
+        double x,y;
+	ip.set_ij(i,j);
+        vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+	ip.set_ij(y,x);
 	if (colorI == GRAY_SCALED)
 	{
 	  unsigned char Ipixelplan;
-	  if(getPixel(vpImagePoint(y,x),Ipixelplan))
+	  if(getPixel(ip,Ipixelplan))
 	  {
 	    if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0)
 	    {
@@ -302,7 +444,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpM
 	      pixelcolor.R = Ipixelplan;
 	      pixelcolor.G = Ipixelplan;
 	      pixelcolor.B = Ipixelplan;
-	      I[i][j] = pixelcolor;
+	      *(bitmap+i*width+j) = pixelcolor;
 	      nb_point_dessine++;
 	      zBuffer[i][j] = Xinter_optim[2];
 	    }
@@ -311,11 +453,11 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpM
 	else if (colorI == COLORED)
 	{
 	  vpRGBa Ipixelplan;
-	  if(getPixel(vpImagePoint(y,x),Ipixelplan))
+	  if(getPixel(ip,Ipixelplan))
 	  {
 	    if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0)
 	    {
-	      I[i][j] = Ipixelplan;
+	      *(bitmap+i*width+j) = Ipixelplan;
 	      nb_point_dessine++;
 	      zBuffer[i][j] = Xinter_optim[2];
 	    }
@@ -324,6 +466,409 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpM
       }
     }
   }
+}
+
+
+/*!
+  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
+  
+  With this method, a list of image is projected into the image. Thus, you have to initialise a list of vpImageSimulator. Then you store them into a vpList. And finally with this method you project them into the image \f$ I \f$. The depth of the 3D scene is managed such as an image in foreground hides an image background.
+  
+  The following example shows how to use the method:
+  
+  \code
+  #include <visp/vpImage.h>
+  #include <visp/vpImageSimulator.h>
+  
+  int main()
+  {
+    vpImage<vpRGBa> Icamera(480,640,0);
+    vpImage<vpRGBa> Iimage(60,60);
+    
+    // Initialise the image which will be projected into the image Icamera
+    vpRGBa colorb(0,0,255);
+    vpRGBa colorw(255,255,255);
+    vpRGBa colorr(255,0,0);
+    for(int i = 0; i < 60; i++)
+    {
+      for(int j = 0; j < 20; j++)
+        Iimage[i][j] = colorb;
+      for(int j = 20; j < 40; j++)
+        Iimage[i][j] = colorw;
+      for(int j = 40; j < 60; j++)
+        Iimage[i][j] = colorr;
+    }
+    
+    // Initialise the 3D coordinates of the Iimage corners
+    vpColVector X[4];
+    for (int i = 0; i < 4; i++) X[i].resize(3);
+    // Top left corner
+    X[0][0] = -1;
+    X[0][1] = -1;
+    X[0][2] = 1;
+  
+    // Top right corner
+    X[1][0] = 1;
+    X[1][1] = -1;
+    X[1][2] = 1;
+  
+    // Bottom right corner
+    X[2][0] = 1;
+    X[2][1] = 1;
+    X[2][2] = 1;
+  
+    //Bottom left corner
+    X[3][0] = -1;
+    X[3][1] = 1;
+    X[3][2] = 1;
+    
+    vpImageSimulator sim;
+    sim.init(Iimage, X);
+    
+    // Top left corner
+    X[0][0] = -1;
+    X[0][1] = -1;
+    X[0][2] = 1;
+  
+    // Top right corner
+    X[1][0] = 1;
+    X[1][1] = -1;
+    X[1][2] = 1;
+  
+    // Bottom right corner
+    X[2][0] = 1;
+    X[2][1] = 1;
+    X[2][2] = 1;
+  
+    //Bottom left corner
+    X[3][0] = -1;
+    X[3][1] = 1;
+    X[3][2] = 1;
+    
+    vpImageSimulator sim2;
+    sim2.init(Iimage, X);
+    
+    sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(0),vpMath::rad(30),0));
+    sim2.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(0),vpMath::rad(-30),0));
+    
+    vpList<vpImageSimulator> listSim;
+    listSim.addRight(sim);
+    listSim.addRight(sim2);
+    
+    sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(60),vpMath::rad(0),0));
+    
+    vpCameraParameters cam(868.0, 869.0, 320, 240);
+    
+    vpImageSimulator::getImage(Icamera,listSim,cam);
+    
+    return 0;
+  }
+  \endcode
+  
+  \param I : The image used to store the result
+  \param list : List of vpImageSimulator to project
+  \param cam : The parameters of the virtual camera
+*/
+void
+vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &list, const vpCameraParameters cam)
+{
+  
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+  
+  int nbsimList = list.nbElements();
+  
+  if (nbsimList < 1)
+    return;
+  
+  vpImageSimulator** simList = new vpImageSimulator* [nbsimList];
+  
+  double topFinal = height+1;;
+  double bottomFinal = -1;
+  double leftFinal = width+1;
+  double rightFinal = -1;
+  
+  list.front();
+  
+  int unvisible = 0;
+  for (int i = 0; i < nbsimList; i++)
+  {
+    vpImageSimulator* sim = &(list.value());
+    list.next();
+    if (sim->visible)
+      simList[i] = sim;
+    else
+      unvisible++;
+  }
+  nbsimList = nbsimList - unvisible;
+  
+   if (nbsimList < 1)
+   {
+     delete[] simList;
+     return;
+   }
+  
+      
+  for (int i = 0; i < nbsimList; i++)
+  {
+    
+    simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    
+    if (topFinal > simList[i]->rect.getTop()) topFinal = simList[i]->rect.getTop();
+    if (bottomFinal < simList[i]->rect.getBottom()) bottomFinal = simList[i]->rect.getBottom();
+    if (leftFinal > simList[i]->rect.getLeft()) leftFinal = simList[i]->rect.getLeft();
+    if (rightFinal < simList[i]->rect.getRight()) rightFinal = simList[i]->rect.getRight();  
+  }
+  
+  double zmin = -1;
+  int indice = -1;
+  unsigned char *bitmap = I.bitmap;
+  vpImagePoint ip;
+    
+  for (int i = (int)topFinal; i < (int)bottomFinal; i++)
+  {
+    for (int j = (int)leftFinal; j < (int)rightFinal; j++)
+    {
+      zmin = -1;
+      double x,y;
+      ip.set_ij(i,j);
+      vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+      ip.set_ij(y,x);
+      for (int k = 0; k < nbsimList; k++)
+      {
+	double z;
+	if(simList[k]->getPixelDepth(ip,z))
+	{
+	  if (z < zmin || zmin < 0)
+	  {
+	    zmin = z;
+	    indice = k;
+	  }
+	}
+      }
+      if (indice >= 0)
+      {
+        if (simList[indice]->colorI == GRAY_SCALED)
+        {
+	  unsigned char Ipixelplan = 255;
+          simList[indice]->getPixel(ip,Ipixelplan);
+	  *(bitmap+i*width+j)=Ipixelplan;
+        }
+        else if (simList[indice]->colorI == COLORED)
+        {
+	  vpRGBa Ipixelplan(255,255,255);
+	  simList[indice]->getPixel(ip,Ipixelplan);
+	  unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B;
+	  *(bitmap+i*width+j)=pixelgrey;
+        }
+      }
+    }
+  }
+  
+  delete[] simList;
+}
+
+
+/*!
+  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
+  
+  With this method, a list of image is projected into the image. Thus, you have to initialise a list of vpImageSimulator. Then you store them into a vpList. And finally with this method you project them into the image \f$ I \f$. The depth of the 3D scene is managed such as an image in foreground hides an image background.
+  
+  The following example shows how to use the method:
+  
+  \code
+  #include <visp/vpImage.h>
+  #include <visp/vpImageSimulator.h>
+  
+  int main()
+  {
+    vpImage<vpRGBa> Icamera(480,640,0);
+    vpImage<vpRGBa> Iimage(60,60);
+    
+    // Initialise the image which will be projected into the image Icamera
+    vpRGBa colorb(0,0,255);
+    vpRGBa colorw(255,255,255);
+    vpRGBa colorr(255,0,0);
+    for(int i = 0; i < 60; i++)
+    {
+      for(int j = 0; j < 20; j++)
+        Iimage[i][j] = colorb;
+      for(int j = 20; j < 40; j++)
+        Iimage[i][j] = colorw;
+      for(int j = 40; j < 60; j++)
+        Iimage[i][j] = colorr;
+    }
+    
+    // Initialise the 3D coordinates of the Iimage corners
+    vpColVector X[4];
+    for (int i = 0; i < 4; i++) X[i].resize(3);
+    // Top left corner
+    X[0][0] = -1;
+    X[0][1] = -1;
+    X[0][2] = 1;
+  
+    // Top right corner
+    X[1][0] = 1;
+    X[1][1] = -1;
+    X[1][2] = 1;
+  
+    // Bottom right corner
+    X[2][0] = 1;
+    X[2][1] = 1;
+    X[2][2] = 1;
+  
+    //Bottom left corner
+    X[3][0] = -1;
+    X[3][1] = 1;
+    X[3][2] = 1;
+    
+    vpImageSimulator sim;
+    sim.init(Iimage, X);
+    
+    // Top left corner
+    X[0][0] = -1;
+    X[0][1] = -1;
+    X[0][2] = 1;
+  
+    // Top right corner
+    X[1][0] = 1;
+    X[1][1] = -1;
+    X[1][2] = 1;
+  
+    // Bottom right corner
+    X[2][0] = 1;
+    X[2][1] = 1;
+    X[2][2] = 1;
+  
+    //Bottom left corner
+    X[3][0] = -1;
+    X[3][1] = 1;
+    X[3][2] = 1;
+    
+    vpImageSimulator sim2;
+    sim2.init(Iimage, X);
+    
+    sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(0),vpMath::rad(30),0));
+    sim2.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(0),vpMath::rad(-30),0));
+    
+    vpList<vpImageSimulator> listSim;
+    listSim.addRight(sim);
+    listSim.addRight(sim2);
+    
+    sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(60),vpMath::rad(0),0));
+    
+    vpCameraParameters cam(868.0, 869.0, 320, 240);
+    
+    vpImageSimulator::getImage(Icamera,listSim,cam);
+    
+    return 0;
+  }
+  \endcode
+  
+  \param I : The image used to store the result
+  \param list : List of vpImageSimulator to project
+  \param cam : The parameters of the virtual camera
+*/
+void
+vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, const vpCameraParameters cam)
+{
+  
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+  
+  int nbsimList = list.nbElements();
+  
+  if (nbsimList < 1)
+    return;
+  
+  vpImageSimulator** simList = new vpImageSimulator* [nbsimList];
+  
+  double topFinal = height+1;;
+  double bottomFinal = -1;
+  double leftFinal = width+1;
+  double rightFinal = -1;
+  
+  list.front();
+  
+  int unvisible = 0;
+  for (int i = 0; i < nbsimList; i++)
+  {
+    vpImageSimulator* sim = &(list.value());
+    list.next();
+    if (sim->visible)
+      simList[i] = sim;
+    else
+      unvisible++;
+  }
+  nbsimList = nbsimList - unvisible;
+  
+   if (nbsimList < 1)
+   {
+     delete[] simList;
+     return;
+   }  
+      
+  for (int i = 0; i < nbsimList; i++)
+  {
+    
+    simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    
+    if (topFinal > simList[i]->rect.getTop()) topFinal = simList[i]->rect.getTop();
+    if (bottomFinal < simList[i]->rect.getBottom()) bottomFinal = simList[i]->rect.getBottom();
+    if (leftFinal > simList[i]->rect.getLeft()) leftFinal = simList[i]->rect.getLeft();
+    if (rightFinal < simList[i]->rect.getRight()) rightFinal = simList[i]->rect.getRight();  
+  }
+  
+  double zmin = -1;
+  int indice = -1;
+  vpRGBa *bitmap = I.bitmap;
+  vpImagePoint ip;
+    
+  for (int i = (int)topFinal; i < (int)bottomFinal; i++)
+  {
+    for (int j = (int)leftFinal; j < (int)rightFinal; j++)
+    {
+      zmin = -1;
+      double x,y;
+      ip.set_ij(i,j);
+      vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+      ip.set_ij(y,x);
+      for (int k = 0; k < nbsimList; k++)
+      {
+	double z;
+	if(simList[k]->getPixelDepth(ip,z))
+	{
+	  if (z < zmin || zmin < 0)
+	  {
+	    zmin = z;
+	    indice = k;
+	  }
+	}
+      }
+      if (indice >= 0)
+      {
+        if (simList[indice]->colorI == GRAY_SCALED)
+        {
+	  unsigned char Ipixelplan = 255;
+          simList[indice]->getPixel(ip,Ipixelplan);
+	  vpRGBa pixelcolor;
+	  pixelcolor.R = Ipixelplan;
+	  pixelcolor.G = Ipixelplan;
+	  pixelcolor.B = Ipixelplan;
+	  *(bitmap+i*width+j) = pixelcolor;
+        }
+        else if (simList[indice]->colorI == COLORED)
+        {
+	  vpRGBa Ipixelplan(255,255,255);
+	  simList[indice]->getPixel(ip,Ipixelplan);
+	  //unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B;
+	  *(bitmap+i*width+j)=Ipixelplan;
+        }
+      }
+    }
+  }
+  
+  delete[] simList;
 }
 
 
@@ -340,13 +885,10 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &_cMt)
   cMt.extract(R);
 
   normal_Cam = R * normal_obj;	
-  vpColVector focal(3);
-  focal=0;
-  focal[2]=1;
   
   visible_result = vpColVector::dotProd(normal_Cam,focal);
 
-  if (visible_result>0)
+  if (visible_result > 0)
     visible=true;
   else 
     visible=false;
@@ -354,7 +896,10 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &_cMt)
   if(visible)
   {
     for(int i = 0; i < 4; i++)
+    {
       project(X[i],cMt,X2[i]);
+      pt[i].track(cMt);
+    }
 
     vbase_u = X2[1]-X2[0];
     vbase_v = X2[3]-X2[0];
@@ -388,7 +933,10 @@ void
 vpImageSimulator::initPlan(vpColVector* _X)
 {
   for (int i = 0; i < 4; i++)
+  {
     X[i]=_X[i];
+    pt[i].setWorldCoordinates(_X[i][0],_X[i][1],_X[i][2]);
+  }
 
   normal_obj=vpColVector::crossProd(X[1]-X[0],X[3]-X[0]);
   normal_obj=normal_obj/normal_obj.euclideanNorm();
@@ -600,4 +1148,36 @@ vpImageSimulator::getCoordFromHomog(const vpColVector &_vH,vpColVector &_v)
 {
   for(int i=0;i<3;i++)
     _v[i]=_vH[i]/_vH[3];
+}
+
+
+void
+vpImageSimulator::getRoi(const unsigned int Iwidth, const unsigned int Iheight, const vpCameraParameters cam, vpPoint* point, vpRect &rectangle)
+{
+  double top = Iheight+1;
+  double bottom = -1;
+  double right = -1;
+  double left= Iwidth+1;
+  for( int i = 0; i < 4; i++)
+  {
+    double u,v;
+    vpMeterPixelConversion::convertPoint(cam,point[i].get_x(),point[i].get_y(),u,v);
+    if (v < top) top = v;
+    if (v > bottom) bottom = v;
+    if (u < left) left = u;
+    if (u > right) right = u;
+  }
+  if (top < 0) top = 0;
+  if(top >= Iheight) top = Iheight-1;
+  if (bottom < 0) bottom = 0;
+  if(bottom >= Iheight) bottom = Iheight-1;
+  if(left < 0) left = 0;
+  if(left >= Iwidth) left = Iwidth-1;
+  if(right < 0) right = 0;
+  if(right >= Iwidth) right = Iwidth-1;
+    
+  rectangle.setTop(top);
+  rectangle.setBottom(bottom);
+  rectangle.setLeft(left);
+  rectangle.setRight(right);
 }
