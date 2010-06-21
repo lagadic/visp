@@ -139,7 +139,7 @@ class vpList
   vpListElement<type> *cur;       // the current element
  public:
   vpList() ;                  // constr.
-  vpList(vpList& l);       // cloning
+  vpList(const vpList& l);       // cloning
   virtual ~vpList();                  // destr.
 
   inline void next(void) ;           // current element's successor ( cur = cur->next )
@@ -170,7 +170,7 @@ class vpList
   inline int nbElement(void);       // returns the number of items currently in the list
   inline int nbElements(void);       // returns the number of items currently in the list
 
-  void operator=(vpList<type>& l);
+  void operator=(const vpList<type>& l);
   inline void operator+=(vpList<type>& l);
   inline void operator+=(const type& l);
 
@@ -730,36 +730,31 @@ void vpList<type>::suppress(void)
 
 
 
-/*!
-  \brief Copy constructor
 
-  \remarks Cannot define this function as usual, ie, :
-   <tt>template<class type>
-   vpList<type>::vpList(const vpList<type>& l)</tt>
-  since the list is indeed modified (not the element but the position
-  of the current element.
+/*!
+  \brief Copy constructor const
+
+  \param l : the list to copy
  */
 
 template<class type>
-void vpList<type>::operator=(vpList<type>& l)
+void vpList<type>::operator=(const vpList<type>& l)
 {
   type x ;
   vpListElement<type> *e ;
 
   kill() ;
-  e = l.cur ;
-  l.front() ;
+  e = l.first->next ;
   front() ;
-  while (!l.outside())
+  while (e!=l.last)
   {
-    x = l.value() ;
+    x = e->val ;
     addRight(x) ;
-    l.next() ;
+    e = e->next ;
   }
 
   nb = l.nb ;
   cur = first->next ;
-  l.cur = e ;
 }
 
 /*!
@@ -802,18 +797,12 @@ void vpList<type>::operator += (const type& l)
 
 
 /*!
-  \brief Copy constructor
-
-  \remarks Cannot define this function as usual, ie, :
-   <tt>template<class type>
-   vpList<type>::vpList(const vpList<type>& l)</tt>
-  since the list is indeed modified (not the element but the position
-  of the current element.
-
-  \sa operator=(vpList<type>& l)
- */
+  \brief copy constructor
+  
+  \param l : the list to copy
+*/
 template<class type>
-vpList<type>::vpList(vpList<type>& l)
+vpList<type>::vpList(const vpList<type>& l)
 {
   init() ;
   *this = l;
