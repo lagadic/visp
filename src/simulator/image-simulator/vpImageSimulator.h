@@ -121,8 +121,11 @@
 #include <visp/vpColVector.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpTriangle.h>
+#include <visp/vpRect.h>
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpPoint.h>
+#include <visp/vpList.h>
 
 class vpImageSimulator
 {
@@ -139,6 +142,7 @@ class vpImageSimulator
     
   private:
     vpColVector X[4];
+    vpPoint pt[4];
     vpHomogeneousMatrix cMt;
     vpColVector X2[4];
     
@@ -174,16 +178,26 @@ class vpImageSimulator
 
     //triangles de projection du plan
     vpTriangle T1,T2;
-
+    
     //image de texture
     vpColorPlan colorI;
     vpImage<unsigned char> Ig;
     vpImage<vpRGBa> Ic;
+
+    vpRect rect;
+    bool cleanPrevImage;
+    vpColor bgColor;
+    
+    vpColVector focal;
     
   public:
     vpImageSimulator(vpColorPlan col = COLORED);
     vpImageSimulator(const vpImageSimulator &text);
     virtual ~vpImageSimulator();
+    
+    vpImageSimulator& operator=(const vpImageSimulator& sim);
+
+    
     //creation du plan a partir de ses coordonnees 3D ds repere objet et de son image texture
     void init(const vpImage<unsigned char> &I,vpColVector* _X);
     void init(const vpImage<vpRGBa> &I,vpColVector* _X);
@@ -199,6 +213,22 @@ class vpImageSimulator
     
     void getImage(vpImage<unsigned char> &I, const vpCameraParameters cam, vpMatrix &zBuffer);
     void getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpMatrix &zBuffer);
+    
+    static void getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &list, const vpCameraParameters cam);
+    static void getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, const vpCameraParameters cam);
+    
+    /*!
+      As it can be time consuming to reset all the image to a default baground value, this function enable to reset only the pixel which changed the previous time.
+      
+      By default this functionality is disabled. and the background color is white.
+      
+      \param clean : Enable the reset method.
+      \param color : Color of the back ground.
+    */
+    void setCleanPreviousImage(const bool &clean, const vpColor &color = vpColor::white) {
+      cleanPrevImage = clean;
+      bgColor = color;
+    }
     
   private:
     void initPlan(vpColVector* _X);
@@ -220,6 +250,8 @@ class vpImageSimulator
     void getHomogCoord(const vpColVector &_v,vpColVector &_vH);
     //donne coordonnes _v en fction coord homogenes _vH;
     void getCoordFromHomog(const vpColVector &_vH,vpColVector &_v);
+    
+    void getRoi(const unsigned int Iwidth, const unsigned int Iheight, const vpCameraParameters cam, vpPoint* pt, vpRect &rect);
 };
 
 #endif
