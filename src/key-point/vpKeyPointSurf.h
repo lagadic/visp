@@ -191,8 +191,7 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
   public:
     vpKeyPointSurf();
 
-    //! Basic destructor
-    virtual ~vpKeyPointSurf() {cvReleaseMemStorage(&storage);} ;
+    virtual ~vpKeyPointSurf(); 
 
     int buildReference(const vpImage<unsigned char> &I);
     int buildReference(const vpImage<unsigned char> &I,
@@ -262,6 +261,7 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
     //OpenCV Parameters
     CvMemStorage* storage;
     CvSURFParams params;
+    CvMemStorage* storage_cur;
 
     CvSeq* image_keypoints;
     CvSeq* image_descriptors;
