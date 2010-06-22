@@ -194,6 +194,7 @@ vpKeyPointSurf::vpKeyPointSurf():vpBasicKeyPoint()
 
   nbReferencePoints = 0;
   nbMatchedPoints = 0;
+  storage_cur = NULL;
 }
 
 /*!
@@ -203,6 +204,18 @@ void vpKeyPointSurf::init()
 {
   storage = cvCreateMemStorage(0);
   params = cvSURFParams(hessianThreshold, descriptorType);
+}
+
+/*!
+  Basic Destructor
+
+*/
+vpKeyPointSurf::~vpKeyPointSurf()
+{
+  cvReleaseMemStorage(&storage);
+  if(storage_cur!=NULL){
+    cvReleaseMemStorage(&storage_cur); 
+  }
 }
 
 /*!
@@ -329,9 +342,17 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   IplImage* currentImage = NULL;
 
   vpImageConvert::convert(I,currentImage);
+  
+  /* we release the memory storage for the current points (it has to be kept 
+      allocated for the get descriptor points, ...) */
+  if(storage_cur != NULL){
+    cvReleaseMemStorage(&storage_cur);
+    storage_cur = NULL;
+  }
+  storage_cur = cvCreateMemStorage(0);
 
   cvExtractSURF( currentImage, 0, &image_keypoints, &image_descriptors,
-		 storage, params );
+		 storage_cur, params );
 
   cvReleaseImage(&currentImage);
 
