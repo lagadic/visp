@@ -148,7 +148,7 @@ public:
   double e;
 
   vpMeEllipse() ;
-  vpMeEllipse(vpMeEllipse &meellipse) ;
+  vpMeEllipse(const vpMeEllipse &meellipse) ;
   virtual ~vpMeEllipse() ;
 
   void track(vpImage<unsigned char>& Im);

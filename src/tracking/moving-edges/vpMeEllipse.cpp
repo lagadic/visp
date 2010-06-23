@@ -100,7 +100,7 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
 /*!
   Copy constructor.
 */
-vpMeEllipse::vpMeEllipse(vpMeEllipse &meellipse):vpMeTracker(meellipse)
+vpMeEllipse::vpMeEllipse(const vpMeEllipse &meellipse):vpMeTracker(meellipse)
 {
   K = meellipse.K;
   iPc = meellipse.iPc;

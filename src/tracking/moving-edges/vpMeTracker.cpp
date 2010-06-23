@@ -85,7 +85,7 @@ vpMeTracker::vpMeTracker()
     std::cout << "end vpMeTracker::vpMeTracker() " << std::endl ;
 }
 
-vpMeTracker::vpMeTracker(vpMeTracker& meTracker):vpTracker(meTracker)
+vpMeTracker::vpMeTracker(const vpMeTracker& meTracker):vpTracker(meTracker)
 {
   if (DEBUG_LEVEL1)
     std::cout << "begin vpMeTracker::vpMeTracker() " <<  std::endl ;

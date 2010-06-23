@@ -118,7 +118,7 @@ vpDot2::vpDot2(const vpImagePoint &ip) : vpTracker()
 /*!
   Copy contructor.
 */
-vpDot2::vpDot2( vpDot2& twinDot ) : vpTracker()
+vpDot2::vpDot2(const vpDot2& twinDot ) : vpTracker()
 {
   *this = twinDot;
 }
@@ -126,7 +126,7 @@ vpDot2::vpDot2( vpDot2& twinDot ) : vpTracker()
 /*!
   = operator.
 */
-void vpDot2::operator=( vpDot2& twinDot )
+void vpDot2::operator=(const vpDot2& twinDot )
 {
   cog = twinDot.cog;
 
