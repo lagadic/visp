@@ -108,6 +108,10 @@ SET (SRC_KEY_POINT
   key-point/vpPlanarObjectDetector.cpp
   )
 
+SET (SRC_LASERSCANNER
+  laserscanner/sick/vpSickLDMRS.cpp
+  )
+
 SET (SRC_LIGHT
   light/vpRingLight.cpp
   )
@@ -294,6 +298,7 @@ SET (SRC_ALL
   ${SRC_FRAMEGRABBER_DEVICE}
   ${SRC_IMAGE}
   ${SRC_KEY_POINT}
+  ${SRC_LASERSCANNER}
   ${SRC_LIGHT}
   ${SRC_MATH}
   ${SRC_ROBOT}
