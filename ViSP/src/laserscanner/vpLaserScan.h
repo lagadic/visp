@@ -123,6 +123,14 @@ class VISP_EXPORT vpLaserScan
   inline void setNumPoints(const unsigned short &numPoints) {
     this->numPoints = numPoints;
   }
+  /*! Return the measurement start time. */
+  inline double getStartTimestamp() {
+    return startTimestamp;
+  }
+  /*! Return the measurement end time. */
+  inline double getEndTimestamp() {
+    return endTimestamp;
+  }
 
  private:
   std::vector<vpScanPoint> listScanPoints;
