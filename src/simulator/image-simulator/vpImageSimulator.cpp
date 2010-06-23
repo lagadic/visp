@@ -183,7 +183,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
   int nb_point_dessine = 0;
   if (cleanPrevImage)
   {
-    unsigned char col = 0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B;
+    unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
     for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
     {
       for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
@@ -255,7 +255,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
   int nb_point_dessine = 0;
   if (cleanPrevImage)
   {
-    unsigned char col = 0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B;
+    unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
     for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
     {
       for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
@@ -658,7 +658,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &
         {
 	  vpRGBa Ipixelplan(255,255,255);
 	  simList[indice]->getPixel(ip,Ipixelplan);
-	  unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B;
+	  unsigned char pixelgrey = (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
 	  *(bitmap+i*width+j)=pixelgrey;
         }
       }
