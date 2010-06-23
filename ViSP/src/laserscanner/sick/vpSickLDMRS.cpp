@@ -45,6 +45,7 @@
 #include <string.h>
 #include <strings.h>
 #include <math.h>
+#include <assert.h>
 
 #include "visp/vpSickLDMRS.h"
 #include "visp/vpMath.h"
@@ -166,6 +167,8 @@ bool vpSickLDMRS::setup()
 bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
 {
   vpSickLDMRSHeader header;
+  assert (sizeof(header) == 24);
+  //std::cout << "size " << sizeof(header) << std::endl;
 
   // read the 24 bytes header
   if (recv(socket_fd, (void *)&header, sizeof(header), MSG_WAITALL) == -1) {
