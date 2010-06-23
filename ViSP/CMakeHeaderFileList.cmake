@@ -101,6 +101,14 @@ SET (HEADER_KEY_POINT
   key-point/vpPlanarObjectDetector.h
   )
 
+SET (HEADER_LASERSCANNER
+  laserscanner/vpScanPoint.h
+  laserscanner/vpLaserScan.h
+  laserscanner/vpLaserScanner.h
+  laserscanner/sick/vpSickLDMRS.h
+  laserscanner/sick/vpSickLDMRSHeader.h
+  )
+
 SET (HEADER_LIGHT
   light/vpRingLight.h
   )
@@ -280,6 +288,7 @@ SET (HEADER_ALL
   ${HEADER_FRAMEGRABBER_DEVICE}
   ${HEADER_IMAGE}
   ${HEADER_KEY_POINT}
+  ${HEADER_LASERSCANNER}
   ${HEADER_LIGHT}
   ${HEADER_MATH}
   ${HEADER_ROBOT}
