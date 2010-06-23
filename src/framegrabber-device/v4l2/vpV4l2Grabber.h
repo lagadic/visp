@@ -63,7 +63,7 @@
 /*!
   \class vpV4l2Grabber
 
-  \ingroup Framegrabber
+  \ingroup Framegrabber CameraDriver
 
   \brief Class for the Video4Linux2 video device.
 

@@ -73,7 +73,7 @@
 
   \class vpRobotBiclops
 
-  \ingroup Biclops
+  \ingroup Biclops RobotDriver
 
   \brief Interface for the biclops, pan, tilt head control.
 

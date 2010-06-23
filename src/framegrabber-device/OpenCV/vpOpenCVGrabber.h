@@ -60,7 +60,7 @@
 /*!
   \class vpOpenCVGrabber
 
-  \ingroup Framegrabber
+  \ingroup Framegrabber CameraDriver
   
   \brief Class for cameras video capture using OpenCV library.
   
