@@ -308,7 +308,7 @@ public:
   int getNbRefPoints() const { return (int)modelPoints.size();}
   
   vpImagePoint getRefPoint(const int index);
-  
+  void getReferencePoint(const int index, vpImagePoint &imP);
 
   /*!
     return the number of current points
@@ -318,8 +318,11 @@ public:
   inline int getNbCurPoints() const { return (int)imgKeypoints.size();}
   
   vpImagePoint getCurPoint(const int index);
+  void getCurPoint(const int index, vpImagePoint & ip);
   
-  inline int getMatchedPointByRef(const int indexRef);
+  int getMatchedPointByRef(const int indexRef);
+  
+  std::vector<int>* getPairsVector(){return &pairs;}
   
 private:
   /*!
