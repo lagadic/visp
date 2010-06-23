@@ -209,7 +209,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
     {
       for (int j = (int)left; j < (int)right; j++)
       {
-        double x,y;
+        double x=0,y=0;
 	ip.set_ij(i,j);
         vpPixelMeterConversion::convertPoint(cam,ip, x,y);
 	ip.set_ij(y,x);
@@ -281,7 +281,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
     {
       for (int j = (int)left; j < (int)right; j++)
       {
-        double x,y;
+        double x=0,y=0;
 	ip.set_ij(i,j);
         vpPixelMeterConversion::convertPoint(cam,ip, x,y);
 	ip.set_ij(y,x);
@@ -355,7 +355,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam)
     {
       for (int j = (int)left; j < (int)right; j++)
       {
-        double x,y;
+        double x=0,y=0;
 	ip.set_ij(i,j);
         vpPixelMeterConversion::convertPoint(cam,ip, x,y);
 	ip.set_ij(y,x);
@@ -429,7 +429,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpM
     {
       for (int j = (int)left; j < (int)right; j++)
       {
-        double x,y;
+        double x=0,y=0;
 	ip.set_ij(i,j);
         vpPixelMeterConversion::convertPoint(cam,ip, x,y);
 	ip.set_ij(y,x);
@@ -630,7 +630,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &
     for (int j = (int)leftFinal; j < (int)rightFinal; j++)
     {
       zmin = -1;
-      double x,y;
+      double x=0,y=0;
       ip.set_ij(i,j);
       vpPixelMeterConversion::convertPoint(cam,ip, x,y);
       ip.set_ij(y,x);
@@ -829,7 +829,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, c
     for (int j = (int)leftFinal; j < (int)rightFinal; j++)
     {
       zmin = -1;
-      double x,y;
+      double x=0,y=0;
       ip.set_ij(i,j);
       vpPixelMeterConversion::convertPoint(cam,ip, x,y);
       ip.set_ij(y,x);
@@ -1160,7 +1160,7 @@ vpImageSimulator::getRoi(const unsigned int Iwidth, const unsigned int Iheight, 
   double left= Iwidth+1;
   for( int i = 0; i < 4; i++)
   {
-    double u,v;
+    double u=0,v=0;
     vpMeterPixelConversion::convertPoint(cam,point[i].get_x(),point[i].get_y(),u,v);
     if (v < top) top = v;
     if (v > bottom) bottom = v;
