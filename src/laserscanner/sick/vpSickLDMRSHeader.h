@@ -57,6 +57,8 @@
 
   \brief Class that defines the structure of the Sick LD-MRS data header
   messages that are transmitted by the laser scanner.
+
+  \warning The header size should be always 24 bytes.
 */
 class VISP_EXPORT vpSickLDMRSHeader
 {
@@ -80,31 +82,6 @@ class VISP_EXPORT vpSickLDMRSHeader
   };
 
  public:
-  /*! Default constructor. */
-  vpSickLDMRSHeader() {
-    magicWord = 0;
-    sizeOfPrevMsg = 0;
-    sizeOfThisMsg = 0;
-    reserved = 0;
-    deviceID = 0;
-    dataType = 0;
-    timeSec = 0;
-    timeSecFractionOffset = 0;
-  }
-  /*! Copy constructor. */
-  vpSickLDMRSHeader(const vpSickLDMRSHeader &header) {
-    magicWord = header.magicWord;
-    sizeOfPrevMsg = header.sizeOfPrevMsg;
-    sizeOfThisMsg = header.sizeOfThisMsg;
-    reserved = header.reserved;
-    deviceID = header.deviceID; 
-    dataType = header.dataType;
-    timeSec = header.timeSec;
-    timeSecFractionOffset = header.timeSecFractionOffset;
-  }
-  /*! Destructor that does nothing. */
-  virtual ~vpSickLDMRSHeader() {};
-
   /*! Returns the magic word 0xAFFEC0C2. */
   inline unsigned int getMagicWord() {
     return ntohl(magicWord);
