@@ -387,3 +387,24 @@ scheme, ...</p>
   \ingroup DebugException
   \defgroup Exception Exceptions
 */
+
+/*
+ ******************************************
+ * Drivers
+ ******************************************
+ */
+/*!
+  \defgroup Driver Drivers
+*/
+/*!
+  \ingroup Driver
+  \defgroup RobotDriver Robot drivers
+*/
+/*!
+  \ingroup Driver
+  \defgroup CameraDriver Camera drivers
+*/
+/*!
+  \ingroup Driver
+  \defgroup LaserDriver Laser scanner drivers
+*/

@@ -60,7 +60,7 @@ extern "C" {
 /*!
   \class vpRobotAfma6
 
-  \ingroup Afma6
+  \ingroup Afma6 RobotDriver
 
   \brief Control of Irisa's gentry robot named Afma6.
 

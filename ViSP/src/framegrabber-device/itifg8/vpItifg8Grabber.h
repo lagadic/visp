@@ -44,7 +44,6 @@
   This class is interfaced with itifg-8.2.2-0 and itifg-8.3.1-12 driver. You
   can download these drivers from http://sourceforge.net/projects/itifg/
 
-  \ingroup libdevice
 */
 
 #ifndef vpItifg8Grabber_hh
@@ -90,12 +89,10 @@
 /*!
   \class vpItifg8Grabber
 
-  \ingroup Framegrabber
+  \ingroup Framegrabber CameraDriver
 
   \brief Class providing an interface for the itifg-8.x (Coreco
   Imaging Technology) video device.
-
-  \ingroup libdevice
 
   \author  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 

@@ -49,7 +49,7 @@
 
   \class vpRobotCycab
 
-  \ingroup Cycab
+  \ingroup Cycab RobotDriver
 
   \brief Interface for the car-like Cycab mobile robot.
 

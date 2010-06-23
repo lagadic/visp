@@ -60,7 +60,7 @@ extern "C" {
 /*!
   \class vpRobotViper850
 
-  \ingroup Viper
+  \ingroup Viper RobotDriver
 
   \brief Control of Irisa's Viper S850 robot named Viper850.
 

@@ -60,7 +60,7 @@ extern "C" {
 /*!
   \class vpRobotAfma4
 
-  \ingroup Afma4
+  \ingroup Afma4 RobotDriver
 
   \brief Control of Irisa's cylindrical robot named Afma4.
 
