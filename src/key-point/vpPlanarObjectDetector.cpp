@@ -136,8 +136,10 @@ vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const int nbpt)
     throw vpException(vpException::badValue, "Not enough point");
   }
   
-  vpImagePoint ptsx[nbpt];
-  vpImagePoint ptsy[nbpt];
+  std::vector < vpImagePoint > ptsx;
+  ptsx.resize(nbpt);
+  std::vector < vpImagePoint > ptsy;
+  ptsy.resize(nbpt);
   for(int i=0; i<nbpt; i++){
     ptsx[i] = ptsy[i] = ip[i];
   }
@@ -252,8 +254,8 @@ vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &I,
 			       height, width, subImage);
   this->setImage(subImage);
   
-  modelROI_Ref.x = iP.get_u();
-  modelROI_Ref.y = iP.get_v();
+  modelROI_Ref.x = (int)iP.get_u();
+  modelROI_Ref.y = (int)iP.get_v();
   modelROI_Ref.width = width;
   modelROI_Ref.height = height;  
   
@@ -572,7 +574,7 @@ vpPlanarObjectDetector::setImage(const vpImage<unsigned char>& I)
 void
 vpPlanarObjectDetector::setRoi(vpImagePoint tl, vpImagePoint br)
 {
-  CvRect rect = cvRect((int)tl.get_u(), (int)tl.get_v(), (int)(br.get_u()-tl.get_u()), (int)br.get_v()-tl.get_v());
+  CvRect rect = cvRect((int)tl.get_u(), (int)tl.get_v(), (int)(br.get_u()-tl.get_u()), (int)(br.get_v()-tl.get_v()));
   if(model == NULL){
     std::cout << "!> image not set" << std::endl;
     throw vpException(vpException::notInitialized , "image not set in setRoi");
@@ -581,15 +583,15 @@ vpPlanarObjectDetector::setRoi(vpImagePoint tl, vpImagePoint br)
   cvSetImageROI(model, rect);
 
     
-  modelROI.x = tl.get_u();
-  modelROI.y = tl.get_v();
-  modelROI.width = br.get_u()-tl.get_u();
-  modelROI.height = br.get_v()-tl.get_v();
+  modelROI.x = (int)tl.get_u();
+  modelROI.y = (int)tl.get_v();
+  modelROI.width = (int)(br.get_u()-tl.get_u());
+  modelROI.height = (int)(br.get_v()-tl.get_v());
   
-  modelROI_Ref.x = tl.get_u();
-  modelROI_Ref.y = tl.get_v();
-  modelROI_Ref.width = br.get_u()-tl.get_u();
-  modelROI_Ref.height = br.get_v()-tl.get_v();
+  modelROI_Ref.x = (int)tl.get_u();
+  modelROI_Ref.y = (int)tl.get_v();
+  modelROI_Ref.width = (int)(br.get_u()-tl.get_u());
+  modelROI_Ref.height = (int)(br.get_v()-tl.get_v());
 
 }
 
@@ -615,6 +617,17 @@ vpPlanarObjectDetector::getRefPoint(const int index)
   return pt;
 }
 
+void 
+vpPlanarObjectDetector::getReferencePoint(const int index, vpImagePoint &imP)
+{
+  if(index <0 || index >= (int)modelPoints.size()){
+    vpTRACE("Index of the reference point out of range");
+    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
+  }
+
+  imP.set_u(modelPoints[index].pt.x);
+  imP.set_v(modelPoints[index].pt.y);
+}
 
 /*!
   get the current image point given by the index
@@ -634,6 +647,18 @@ vpPlanarObjectDetector::getCurPoint(const int index)
   pt.set_u(imgKeypoints[index].pt.x);
   pt.set_v(imgKeypoints[index].pt.y);
   return pt;
+}
+
+void 
+vpPlanarObjectDetector::getCurPoint(const int index, vpImagePoint & ip)
+{
+  if(index <0 || index >= (int)imgKeypoints.size()){
+    vpTRACE("Index of the reference point out of range");
+    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
+  }
+  vpImagePoint pt;
+  ip.set_u(imgKeypoints[index].pt.x);
+  ip.set_v(imgKeypoints[index].pt.y);
 }
 
 /*!
