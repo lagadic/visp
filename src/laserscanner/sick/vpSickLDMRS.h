@@ -70,7 +70,7 @@
   LD-MRS could be acquired.
 
   \code
-  #include "visp/vpSickLDMRS.h"
+#include "visp/vpSickLDMRS.h"
 
 int main()
 {
@@ -81,8 +81,20 @@ int main()
   laser.setup();
     
   vpLaserScan laserscan[4];
-  while (1)
+  while (1) {
+    // Get the measured points in the four layers
     laser.measure(laserscan);
+
+    // Prints all the measured points 
+    for (int layer=0; layer<4; layer++) {
+      std::vector<vpScanPoint> pointsInLayer = laserscan[layer].getScanPoints();
+      vpScanPoint p;
+    
+      for (unsigned int i=0; i < pointsInLayer.size(); i++) {
+	std::cout << pointsInLayer[i] << std::endl; 
+      }
+    }
+  }
 }
   \endcode
 */
