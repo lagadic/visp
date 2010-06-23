@@ -234,7 +234,7 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
 
   // decode the measured points
   double hAngle; // horizontal angle in rad
-  double vAngle; // vertical angle in rad
+  double vAngle=0; // vertical angle in rad
   double rDist; // radial distance in meters
   vpScanPoint scanPoint;
   for (int i=0; i < numPoints; i++) {
