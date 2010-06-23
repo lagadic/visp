@@ -103,7 +103,7 @@ vpMeLine::vpMeLine():vpMeTracker()
   Copy constructor.
 
 */
-vpMeLine::vpMeLine(vpMeLine &meline):vpMeTracker(meline)
+vpMeLine::vpMeLine(const vpMeLine &meline):vpMeTracker(meline)
 {
   rho = meline.rho;
   theta = meline.theta;

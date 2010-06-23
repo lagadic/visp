@@ -93,9 +93,9 @@ class VISP_EXPORT vpDot2 : public vpTracker
 public:
   vpDot2();
   vpDot2(const vpImagePoint &ip) ;
-  vpDot2( vpDot2& twinDot );
+  vpDot2(const vpDot2& twinDot );
   virtual ~vpDot2();
-  void operator=( vpDot2& twinDot );
+  void operator=(const vpDot2& twinDot );
 
   /*!
     Initialize the dot coordinates with \e cog. 

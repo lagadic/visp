@@ -148,7 +148,7 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
 
   public:
     vpMeNurbs();
-    vpMeNurbs(vpMeNurbs &menurbs);
+    vpMeNurbs(const vpMeNurbs &menurbs);
     virtual ~vpMeNurbs();
     
     /*!
