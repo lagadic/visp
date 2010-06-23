@@ -227,7 +227,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
 	  vpRGBa Ipixelplan;
 	  if(getPixel(ip,Ipixelplan))
 	  {
-	    unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B;
+	    unsigned char pixelgrey = (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
 	    *(bitmap+i*width+j)=pixelgrey;
 	    nb_point_dessine++;
 	  }
@@ -305,7 +305,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
 	  {
 	    if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0)
 	    {
-	      unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B;
+	      unsigned char pixelgrey = (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
 	      *(bitmap+i*width+j)=pixelgrey;
 	      nb_point_dessine++;
 	      zBuffer[i][j] = Xinter_optim[2];
