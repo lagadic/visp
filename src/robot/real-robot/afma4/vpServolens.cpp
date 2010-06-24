@@ -675,8 +675,10 @@ vpServolens::wait(vpServoType servo)
     sprintf(fin_mvt, "FF");
     break;
   case IRIS:
+  default:
     sprintf(fin_mvt, "DF");
     break;
+    
   }
 
   /* lecture des caracteres recus */
