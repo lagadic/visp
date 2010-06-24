@@ -126,7 +126,7 @@ int main(int argc, const char ** argv)
     vpLaserScan laserscan[4];
     laser.measure(laserscan);
     
- #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
     vpDisplay::display(map);
 #endif
     
@@ -144,7 +144,7 @@ int main(int argc, const char ** argv)
       case 3: color = vpColor::yellow; break;
       }
       std::vector<vpScanPoint> pointsLayer = laserscan[layer].getScanPoints();      
-      #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
      
       vpImagePoint E; // Beam echo
       double resolution = 100; // 100 pixels = 1 meter
@@ -155,7 +155,9 @@ int main(int argc, const char ** argv)
 	//std::cout << "E: " << E << std::endl;
 	vpDisplay::displayLine(map, O, E, color);
       }
+#endif
     }
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
     vpDisplay::flush(map);
 #endif
     std::cout << "time: " << vpTime::measureTimeMs() - t1 << std::endl;

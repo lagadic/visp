@@ -174,7 +174,9 @@ int main(int argc, const char ** argv)
 	fd << p << std::endl;
       }
       fd.close();
+#endif
     }
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
     vpDisplay::flush(map);
 #endif
     std::cout << "time: " << vpTime::measureTimeMs() - t1 << std::endl;
