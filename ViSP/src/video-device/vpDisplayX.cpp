@@ -1960,7 +1960,7 @@ void vpDisplayX::flushDisplay()
   Set the window backgroud to \e color.
   \param color : Background color.
 */
-void vpDisplayX::clearDisplay ( vpColor color )
+void vpDisplayX::clearDisplay ( const vpColor &color )
 {
   if ( Xinitialise )
   {
@@ -1999,7 +1999,7 @@ void vpDisplayX::clearDisplay ( vpColor color )
 */
 void vpDisplayX::displayArrow ( const vpImagePoint &ip1, 
 				const vpImagePoint &ip2,
-                                vpColor color,
+                                const vpColor &color,
                                 unsigned int w, unsigned int h,
 				unsigned int thickness)
 {
@@ -2064,7 +2064,7 @@ void vpDisplayX::displayArrow ( const vpImagePoint &ip1,
 */
 void vpDisplayX::displayCharString ( const vpImagePoint &ip,
                                      const char *text, 
-				     vpColor color )
+				     const vpColor &color )
 {
   if ( Xinitialise )
   {
@@ -2102,7 +2102,7 @@ void vpDisplayX::displayCharString ( const vpImagePoint &ip,
 */
 void vpDisplayX::displayCircle ( const vpImagePoint &center,
 				 unsigned int radius,
-                                 vpColor color,
+                                 const vpColor &color,
 				 bool fill,
 				 unsigned int thickness )
 {
@@ -2151,7 +2151,7 @@ void vpDisplayX::displayCircle ( const vpImagePoint &center,
 */
 void vpDisplayX::displayCross ( const vpImagePoint &ip, 
                                 unsigned int size, 
-				vpColor color,
+				const vpColor &color,
 				unsigned int thickness)
 {
   if ( Xinitialise )
@@ -2198,7 +2198,7 @@ void vpDisplayX::displayCross ( const vpImagePoint &ip,
 */
 void vpDisplayX::displayDotLine ( const vpImagePoint &ip1, 
 				  const vpImagePoint &ip2,
-                                  vpColor color, 
+                                  const vpColor &color, 
 				  unsigned int thickness )
 {
 
@@ -2242,7 +2242,7 @@ void vpDisplayX::displayDotLine ( const vpImagePoint &ip1,
 */
 void vpDisplayX::displayLine ( const vpImagePoint &ip1, 
 			       const vpImagePoint &ip2,
-                               vpColor color, 
+                               const vpColor &color, 
 			       unsigned int thickness )
 {
   if ( Xinitialise )
@@ -2283,7 +2283,7 @@ void vpDisplayX::displayLine ( const vpImagePoint &ip1,
   \param color : Point color.
 */
 void vpDisplayX::displayPoint ( const vpImagePoint &ip,
-                                vpColor color )
+                                const vpColor &color )
 {
   if ( Xinitialise )
   {
@@ -2326,7 +2326,7 @@ void vpDisplayX::displayPoint ( const vpImagePoint &ip,
 void
 vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
                                unsigned int width, unsigned int height,
-                               vpColor color, bool fill,
+                               const vpColor &color, bool fill,
 			       unsigned int thickness )
 {
   if ( Xinitialise )
@@ -2378,7 +2378,7 @@ vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
 void
 vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
                                const vpImagePoint &bottomRight,
-                               vpColor color, bool fill,
+                               const vpColor &color, bool fill,
 			       unsigned int thickness )
 {
   if ( Xinitialise )
@@ -2433,7 +2433,7 @@ vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
 */
 void
 vpDisplayX::displayRectangle ( const vpRect &rectangle,
-                               vpColor color, bool fill,
+                               const vpColor &color, bool fill,
 			       unsigned int thickness )
 {
   if ( Xinitialise )

@@ -370,7 +370,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
   \param color : the color of the point.
 */
 void vpGDIRenderer::setPixel(const vpImagePoint iP,
-			     vpColor color)
+			     const vpColor &color)
 {
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
@@ -406,7 +406,7 @@ void vpGDIRenderer::setPixel(const vpImagePoint iP,
 */
 void vpGDIRenderer::drawLine(const vpImagePoint &ip1, 
 			     const vpImagePoint &ip2,
-			     vpColor color,
+			     const vpColor &color,
 			     unsigned int thickness, int style)
 {
 
@@ -464,7 +464,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
 */
 void vpGDIRenderer::drawRect(const vpImagePoint &topLeft,
 			     unsigned int width, unsigned int height,
-			     vpColor color, bool fill,
+			     const vpColor &color, bool fill,
 			     unsigned int thickness)
 {
   if (thickness == 0) thickness = 1;
@@ -523,7 +523,7 @@ void vpGDIRenderer::drawRect(const vpImagePoint &topLeft,
   Clears the image to a specific color.
   \param color The color used to fill the image.
 */
-void vpGDIRenderer::clear(vpColor color)
+void vpGDIRenderer::clear(const vpColor &color)
 {
 	vpImagePoint ip;
 	ip.set_i(0);
@@ -541,7 +541,7 @@ void vpGDIRenderer::clear(vpColor color)
   \param thickness : Line thickness
 */
 void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
-			       vpColor color, bool fill, unsigned char thickness)
+			       const vpColor &color, bool fill, unsigned char thickness)
 {
 
   //get the window's DC
@@ -612,7 +612,7 @@ void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
   \param color The text's color
 */
 void vpGDIRenderer::drawText(const vpImagePoint &ip, const char * text,
-			     vpColor color)
+			     const vpColor &color)
 {
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
@@ -664,7 +664,7 @@ void vpGDIRenderer::drawText(const vpImagePoint &ip, const char * text,
   \param thickness width of the cross
 */
 void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
-			      vpColor color, unsigned int thickness)
+			      const vpColor &color, unsigned int thickness)
 {
   unsigned int half_size = size / 2;
 
@@ -728,7 +728,7 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
 */
 void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, 
 			      const vpImagePoint &ip2,
-			      vpColor color,
+			      const vpColor &color,
 			      unsigned int w,unsigned int h, unsigned int thickness)
 {
   int _h = h;

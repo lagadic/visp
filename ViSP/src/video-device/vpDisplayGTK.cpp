@@ -583,7 +583,7 @@ void vpDisplayGTK::flushDisplay()
 /*!
   \warning Not implemented yet.
 */
-void vpDisplayGTK::clearDisplay(vpColor /* color */)
+void vpDisplayGTK::clearDisplay(const vpColor & /* color */)
 {
   vpTRACE("Not implemented") ;
 }
@@ -597,7 +597,7 @@ void vpDisplayGTK::clearDisplay(vpColor /* color */)
 */
 void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1, 
 				  const vpImagePoint &ip2,
-				  vpColor color,
+				  const vpColor &color,
 				  unsigned int w, unsigned int h,
 				  unsigned int thickness)
 {
@@ -662,7 +662,7 @@ void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1,
 */
 void vpDisplayGTK::displayCharString ( const vpImagePoint &ip,
 				       const char *text, 
-				       vpColor color )
+				       const vpColor &color )
 {
   if (GTKinitialized)
   {
@@ -700,7 +700,7 @@ void vpDisplayGTK::displayCharString ( const vpImagePoint &ip,
 */
 void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
 				   unsigned int radius,
-				   vpColor color,
+				   const vpColor &color,
 				   bool fill,
 				   unsigned int thickness )
 {
@@ -749,7 +749,7 @@ void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
 */
 void vpDisplayGTK::displayCross ( const vpImagePoint &ip, 
 				  unsigned int size, 
-				  vpColor color,
+				  const vpColor &color,
 				  unsigned int thickness)
 {
   if (GTKinitialized)
@@ -794,7 +794,7 @@ void vpDisplayGTK::displayCross ( const vpImagePoint &ip,
 */
 void vpDisplayGTK::displayDotLine ( const vpImagePoint &ip1, 
 				    const vpImagePoint &ip2,
-				    vpColor color, 
+				    const vpColor &color, 
 				    unsigned int thickness )
 {
 
@@ -840,7 +840,7 @@ void vpDisplayGTK::displayDotLine ( const vpImagePoint &ip1,
 */
 void vpDisplayGTK::displayLine ( const vpImagePoint &ip1, 
 				 const vpImagePoint &ip2,
-				 vpColor color, 
+				 const vpColor &color, 
 				 unsigned int thickness )
 {
   if (GTKinitialized)
@@ -880,7 +880,7 @@ void vpDisplayGTK::displayLine ( const vpImagePoint &ip1,
   \param color : Point color.
 */
 void vpDisplayGTK::displayPoint ( const vpImagePoint &ip,
-				  vpColor color )
+				  const vpColor &color )
 {
   if (GTKinitialized)
   {
@@ -923,7 +923,7 @@ void vpDisplayGTK::displayPoint ( const vpImagePoint &ip,
 void
 vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 				 unsigned int width, unsigned int height,
-				 vpColor color, bool fill,
+				 const vpColor &color, bool fill,
 				 unsigned int thickness )
 {
   if (GTKinitialized)
@@ -981,7 +981,7 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 void
 vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 				 const vpImagePoint &bottomRight,
-				 vpColor color, bool fill,
+				 const vpColor &color, bool fill,
 				 unsigned int thickness )
 {
   if (GTKinitialized)
@@ -1042,7 +1042,7 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 */
 void
 vpDisplayGTK::displayRectangle ( const vpRect &rectangle,
-				 vpColor color, bool fill,
+				 const vpColor &color, bool fill,
 				 unsigned int thickness )
 {
   if (GTKinitialized)

@@ -478,7 +478,7 @@ bool vpD3DRenderer::render()
   \param color : the color of the point.
 */
 void vpD3DRenderer::setPixel(const vpImagePoint iP,
-			     vpColor color)
+			     const vpColor &color)
 {
   if(iP.get_i()<0 || iP.get_j()<0 || iP.get_i()>=(int)nbRows || iP.get_j()>=(int)nbCols)
   {
@@ -527,7 +527,7 @@ void vpD3DRenderer::setPixel(const vpImagePoint iP,
 */
 void vpD3DRenderer::drawLine(const vpImagePoint &ip1,
 			     const vpImagePoint &ip2,
-			     vpColor color,
+			     const vpColor &color,
 			     unsigned int thickness, int style)
 {
 //   if(i1<0 || j1<0 || i2<0 || j2<0 || e<0)
@@ -592,7 +592,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1,
 */
 void vpD3DRenderer::drawRect(const vpImagePoint &topLeft,
 			     unsigned int width, unsigned int height,
-			     vpColor color, bool  fill ,
+			     const vpColor &color, bool  fill ,
 			     unsigned int /*thickness*/)
 {
   if(topLeft.get_i()>(int)nbRows-1 || topLeft.get_j()>(int)nbCols-1|| topLeft.get_i()+height<0 ||topLeft.get_j()+width<0)
@@ -674,7 +674,7 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft,
   Clears the image to a specific color.
   \param color The color used to fill the image.
 */
-void vpD3DRenderer::clear(vpColor color)
+void vpD3DRenderer::clear(const vpColor &color)
 {
   //if the device has been initialized
   if(pd3dDevice != NULL)
@@ -757,7 +757,7 @@ void vpD3DRenderer::subDrawCircle(int i, int j,
   \param color The circle's color
 */
 void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
-			       vpColor color, bool /*fill*/, unsigned char /*thickness*/)
+			       const vpColor &color, bool /*fill*/, unsigned char /*thickness*/)
 {
   if(radius<1 || vpMath::round(center.get_i()+radius)<0 || vpMath::round(center.get_i()-radius) > (int)nbRows || vpMath::round(center.get_j()+radius)<0 || vpMath::round(center.get_j()-radius) > (int)nbCols)
     return;
@@ -834,7 +834,7 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
   \param color The text's color
 */
 void vpD3DRenderer::drawText(const vpImagePoint &ip, const char * text,
-			     vpColor color)
+			     const vpColor &color)
 {
   //Will contain the texture's surface drawing context
   HDC hDCMem;
@@ -887,7 +887,7 @@ void vpD3DRenderer::drawText(const vpImagePoint &ip, const char * text,
 */
 void vpD3DRenderer::drawCross(const vpImagePoint &ip,
 			      unsigned int size,
-			      vpColor color, unsigned int thickness)
+			      const vpColor &color, unsigned int thickness)
 {
   if(ip.get_i()<0 || ip.get_j()<0 || ip.get_i()>(int)nbRows || ip.get_j()>(int)nbCols || thickness<=0)
     return;
@@ -980,7 +980,7 @@ void vpD3DRenderer::drawCross(const vpImagePoint &ip,
 */
 void vpD3DRenderer::drawArrow(const vpImagePoint &ip1, 
 		              const vpImagePoint &ip2,
-			      vpColor color,
+			      const vpColor &color,
 			      unsigned int w,unsigned int h, unsigned int thickness)
 {
   double a = ip2.get_i() - ip1.get_i();

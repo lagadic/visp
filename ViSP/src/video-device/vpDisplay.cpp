@@ -151,7 +151,7 @@ vpDisplay::setWindowPosition ( const vpImage<unsigned char> &I,
   device is not initialized.
 */
 void 
-vpDisplay::setBackground(const vpImage<unsigned char> &I, vpColor color)
+vpDisplay::setBackground(const vpImage<unsigned char> &I, const vpColor &color)
 {
  try
   {
@@ -311,7 +311,7 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
                           double size, 
-			  vpColor color, unsigned int thickness)
+			  const vpColor &color, unsigned int thickness)
 {
   // used by display
   vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
@@ -380,7 +380,7 @@ void
 vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
-                          double size, vpColor color,
+                          double size, const vpColor &color,
                           unsigned int thickness )
 {
   // used by display
@@ -447,7 +447,7 @@ vpDisplay::displayCamera ( const vpImage<unsigned char> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
                           double size, 
-			  vpColor color)
+			  const vpColor &color)
 {
   // used by display
   double halfSize = size/2.0;
@@ -496,7 +496,7 @@ void
 vpDisplay::displayCamera( const vpImage<vpRGBa> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
-                          double size, vpColor color)
+                          double size, const vpColor &color)
 {
   // used by display
   double halfSize = size/2.0;
@@ -533,7 +533,7 @@ vpDisplay::displayCamera( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
                           const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          vpColor color,
+                          const vpColor &color,
                           unsigned int w,unsigned int h,
 			  unsigned int thickness )
 {
@@ -563,7 +563,7 @@ vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
                           const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          vpColor color,
+                          const vpColor &color,
                           unsigned int w,unsigned int h,
 			  unsigned int thickness )
 {
@@ -594,7 +594,7 @@ vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
                           int i1, int j1, int i2, int j2,
-                          vpColor color,
+                          const vpColor &color,
 			  unsigned int w, unsigned int h,
 			  unsigned int thickness)
 {
@@ -632,7 +632,7 @@ vpDisplay::displayArrow ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
                           int i1, int j1, int i2, int j2,
-                          vpColor color,
+                          const vpColor &color,
 			  unsigned int w, unsigned int h,
 			  unsigned int thickness)
 {
@@ -673,7 +673,7 @@ vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
                                const vpImagePoint &ip, const char *string,
-			       vpColor color )
+			       const vpColor &color )
 {
   try
   {
@@ -706,7 +706,7 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
                                const vpImagePoint &ip, const char *string,
-			       vpColor color )
+			       const vpColor &color )
 {
   try
   {
@@ -739,7 +739,7 @@ vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
                                int i, int j, const char *string,
-			       vpColor color)
+			       const vpColor &color)
 {
   try
   {
@@ -776,7 +776,7 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
                                int i, int j, const char *string,
-			       vpColor color)
+			       const vpColor &color)
 {
   try
   {
@@ -808,7 +808,7 @@ vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
                            const vpImagePoint &center, unsigned int radius,
-			   vpColor color,
+			   const vpColor &color,
 			   bool fill,
 			   unsigned int thickness)
 {
@@ -838,7 +838,7 @@ vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
                            const vpImagePoint &center, unsigned int radius,
-			   vpColor color,
+			   const vpColor &color,
 			   bool fill,
 			   unsigned int thickness )
 {
@@ -870,7 +870,7 @@ vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
                            int i, int j,  unsigned int radius,
-			   vpColor color,
+			   const vpColor &color,
 			   bool fill,
 			   unsigned int thickness)
 {
@@ -908,7 +908,7 @@ vpDisplay::displayCircle ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
                            int i, int j, unsigned int radius,
-			   vpColor color,
+			   const vpColor &color,
 			   bool fill,
 			   unsigned int thickness)
 {
@@ -939,7 +939,7 @@ vpDisplay::displayCircle ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
                                const vpImagePoint &ip, unsigned int size,
-			       vpColor color, 
+			       const vpColor &color, 
 			       unsigned int thickness )
 {
   try
@@ -966,7 +966,7 @@ void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
                                const vpImagePoint &ip, unsigned int size,
-			       vpColor color, 
+			       const vpColor &color, 
 			       unsigned int thickness )
 {
   try
@@ -992,7 +992,7 @@ void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
                                int i, int j,
-                               unsigned int size, vpColor color, 
+                               unsigned int size, const vpColor &color, 
 			       unsigned int thickness )
 {
   try
@@ -1023,7 +1023,7 @@ void vpDisplay::displayCross ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
                                int i, int j,
-			       unsigned int size, vpColor color, 
+			       unsigned int size, const vpColor &color, 
 			       unsigned int thickness )
 {
   try
@@ -1053,7 +1053,7 @@ void vpDisplay::displayCross ( const vpImage<vpRGBa> &I,
 void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
                                  const vpImagePoint &ip1, 
 				 const vpImagePoint &ip2,
-				 vpColor color, 
+				 const vpColor &color, 
 				 unsigned int thickness )
 {
   try
@@ -1080,7 +1080,7 @@ void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
 void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
                                  const vpImagePoint &ip1, 
 				 const vpImagePoint &ip2,
-				 vpColor color, 
+				 const vpColor &color, 
 				 unsigned int thickness )
 {
   try
@@ -1107,7 +1107,7 @@ void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
                                  int i1, int j1, int i2, int j2,
-                                 vpColor color, 
+                                 const vpColor &color, 
 				 unsigned int thickness )
 {
   try
@@ -1140,7 +1140,7 @@ void vpDisplay::displayDotLine ( const vpImage<unsigned char> &I,
 void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
                                  int i1, int j1,
                                  int i2, int j2,
-                                 vpColor color, 
+                                 const vpColor &color, 
 				 unsigned int thickness )
 {
   try
@@ -1172,7 +1172,7 @@ void vpDisplay::displayDotLine ( const vpImage<vpRGBa> &I,
 void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
                               const vpImagePoint &ip1, 
 			      const vpImagePoint &ip2,
-			      vpColor color, 
+			      const vpColor &color, 
 			      unsigned int thickness )
 {
 
@@ -1201,7 +1201,7 @@ void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
                               int i1, int j1, int i2, int j2,
-			      vpColor color, 
+			      const vpColor &color, 
 			      unsigned int thickness )
 {
 
@@ -1237,7 +1237,7 @@ void vpDisplay::displayLine ( const vpImage<unsigned char> &I,
 void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
                               int i1, int j1,
                               int i2, int j2,
-			      vpColor color, 
+			      const vpColor &color, 
 			      unsigned int thickness )
 {
 
@@ -1270,7 +1270,7 @@ void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
 void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
                               const vpImagePoint &ip1, 
 			      const vpImagePoint &ip2,
-			      vpColor color, 
+			      const vpColor &color, 
 			      unsigned int thickness )
 {
 
@@ -1296,7 +1296,7 @@ void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
                                const vpImagePoint &ip,
-			       vpColor color )
+			       const vpColor &color )
 {
   try
   {
@@ -1319,7 +1319,7 @@ void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
                                const vpImagePoint &ip,
-			       vpColor color )
+			       const vpColor &color )
 {
   try
   {
@@ -1343,7 +1343,7 @@ void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
 */
 void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
                                int i, int j,
-                               vpColor color )
+                               const vpColor &color )
 {
   try
   {
@@ -1371,7 +1371,7 @@ void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
 */
 void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
                                int i, int j,
-                               vpColor color )
+                               const vpColor &color )
 {
   try
   {
@@ -1408,7 +1408,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               const vpImagePoint &topLeft,
 			      unsigned int width, unsigned int height,
-			      vpColor color, bool fill,
+			      const vpColor &color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1445,7 +1445,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               const vpImagePoint &topLeft,
 			      const vpImagePoint &bottomRight,
-			      vpColor color, bool fill,
+			      const vpColor &color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1479,7 +1479,7 @@ vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
 void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               const vpRect &rectangle,
-			      vpColor color, bool fill,
+			      const vpColor &color, bool fill,
 			      unsigned int thickness )
 {
   try
@@ -1517,7 +1517,7 @@ vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
 			    const vpImagePoint &center,
 			    float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor color,
+			    const vpColor &color,
 			    unsigned int thickness)
 {
   try
@@ -1571,7 +1571,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
                               const vpImagePoint &topLeft,
 			      unsigned int width, unsigned int height,
-			      vpColor color, bool fill,
+			      const vpColor &color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1606,7 +1606,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
                               const vpImagePoint &topLeft,
 			      const vpImagePoint &bottomRight,
-			      vpColor color, bool fill,
+			      const vpColor &color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1640,7 +1640,7 @@ vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
 void
 vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
                               const vpRect &rectangle,
-			      vpColor color, bool fill,
+			      const vpColor &color, bool fill,
 			      unsigned int thickness )
 {
   try
@@ -1678,7 +1678,7 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
 			    const vpImagePoint &center,
 			    float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor color,
+			    const vpColor &color,
 			    unsigned int thickness)
 {
   try
@@ -1734,7 +1734,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<unsigned char> &I,
                               int i, int j,
 			      unsigned int width, unsigned int height,
-                              vpColor color, bool fill,
+                              const vpColor &color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1774,7 +1774,7 @@ void
 vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
 			    unsigned int i, unsigned int j, float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor color,unsigned int thickness)
+			    const vpColor &color,unsigned int thickness)
 {
   try
     {
@@ -1826,7 +1826,7 @@ void
 vpDisplay::displayRectangle ( const vpImage<vpRGBa> &I,
                               int i, int j,
 			      unsigned int width, unsigned int height,
-                              vpColor color, bool fill,
+                              const vpColor &color, bool fill,
 			      unsigned int thickness)
 {
   try
@@ -1865,7 +1865,7 @@ void
 vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
 			    unsigned int i, unsigned int j, float angle,
 			    unsigned int width, unsigned int height,
-			    vpColor color, unsigned int thickness)
+			    const vpColor &color, unsigned int thickness)
 {
   try
     {
@@ -2054,7 +2054,7 @@ vpDisplay::setFont ( const vpImage<vpRGBa> &I, const char *fontname )
   device is not initialized.
 */
 void 
-vpDisplay::setBackground(const vpImage<vpRGBa> &I, vpColor color)
+vpDisplay::setBackground(const vpImage<vpRGBa> &I, const vpColor &color)
 {
  try
   {
