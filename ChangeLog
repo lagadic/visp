@@ -40,6 +40,7 @@ ViSP (Subversion trunk)
     - [9516] Problem in the getValue methods in the vpImage class.
     - [9746] The displayPoint method of the vpDisplayOpenCV class doesn't work.
     - [10472] Bug in the visual features: can't select the good feature.
+    - [10647] Delay in displaying image overlays
   - Improvements
     - Change the FindOpenCV.cmake in order to detect automatically 
       OpenCV 1.1, 2.0 and 2.1.

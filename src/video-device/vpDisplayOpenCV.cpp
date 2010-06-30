@@ -560,7 +560,7 @@ void vpDisplayOpenCV::flushDisplay()
 /*!
   \warning Not implemented yet.
 */
-void vpDisplayOpenCV::clearDisplay(vpColor /* color */)
+void vpDisplayOpenCV::clearDisplay(const vpColor & /* color */)
 {
   vpTRACE("Not implemented") ;
 }
@@ -574,7 +574,7 @@ void vpDisplayOpenCV::clearDisplay(vpColor /* color */)
 */
 void vpDisplayOpenCV::displayArrow ( const vpImagePoint &ip1, 
 				     const vpImagePoint &ip2,
-				     vpColor color,
+				     const vpColor &color,
 				     unsigned int w, unsigned int h,
 				     unsigned int thickness)
 {
@@ -638,7 +638,7 @@ void vpDisplayOpenCV::displayArrow ( const vpImagePoint &ip1,
 */
 void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
                                      const char *text, 
-				     vpColor color )
+				     const vpColor &color )
 {
   if (OpenCVinitialized)
   {
@@ -674,7 +674,7 @@ void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
 */
 void vpDisplayOpenCV::displayCircle(const vpImagePoint &center,
 				    unsigned int radius,
-				    vpColor color,
+				    const vpColor &color,
 				    bool  fill ,
 				    unsigned int thickness)
 {
@@ -729,7 +729,7 @@ void vpDisplayOpenCV::displayCircle(const vpImagePoint &center,
 void
 vpDisplayOpenCV::displayCross(const vpImagePoint &ip,
                               unsigned int size,
-                              vpColor color,
+                              const vpColor &color,
 			      unsigned int thickness)
 {
   if (OpenCVinitialized)
@@ -776,7 +776,7 @@ vpDisplayOpenCV::displayCross(const vpImagePoint &ip,
 void
 vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, 
 				const vpImagePoint &ip2,
-				vpColor color, 
+				const vpColor &color, 
 				unsigned int thickness)
 {
 
@@ -819,7 +819,7 @@ vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1,
 void
 vpDisplayOpenCV::displayLine(const vpImagePoint &ip1, 
 			     const vpImagePoint &ip2,
-			     vpColor color, 
+			     const vpColor &color, 
 			     unsigned int thickness)
 {
   if (OpenCVinitialized)
@@ -856,7 +856,7 @@ vpDisplayOpenCV::displayLine(const vpImagePoint &ip1,
   \param color : Point color.
 */
 void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
-                                   vpColor color)
+                                   const vpColor &color)
 {
   if (OpenCVinitialized)
   {
@@ -914,7 +914,7 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
 void
 vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
                                   unsigned int width, unsigned int height,
-                                  vpColor color, bool fill,
+                                  const vpColor &color, bool fill,
                                   unsigned int thickness)
 {
   if (OpenCVinitialized)
@@ -981,7 +981,7 @@ vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
 void
 vpDisplayOpenCV::displayRectangle ( const vpImagePoint &topLeft,
 				    const vpImagePoint &bottomRight,
-				    vpColor color, bool fill,
+				    const vpColor &color, bool fill,
 				    unsigned int thickness )
 {
   if (OpenCVinitialized)
@@ -1048,7 +1048,7 @@ vpDisplayOpenCV::displayRectangle ( const vpImagePoint &topLeft,
 */
 void
 vpDisplayOpenCV::displayRectangle(const vpRect &rectangle,
-                                  vpColor color, bool fill,
+                                  const vpColor &color, bool fill,
                                   unsigned int thickness)
 {
   if (OpenCVinitialized)

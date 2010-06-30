@@ -87,31 +87,31 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   void setImg(const vpImage<vpRGBa>& im);
   void setImg(const vpImage<unsigned char>& im);
 
-  void setPixel(const vpImagePoint iP, vpColor color);
+  void setPixel(const vpImagePoint iP, const vpColor &color);
 
   void drawLine(const vpImagePoint &ip1, 
 		const vpImagePoint &ip2,
-		vpColor color, unsigned int thickness, int style=PS_SOLID);
+		const vpColor &color, unsigned int thickness, int style=PS_SOLID);
 
   void drawRect(const vpImagePoint &topLeft,
 		unsigned int width, unsigned int height,
-		vpColor color, bool fill=false,
+		const vpColor &color, bool fill=false,
 		unsigned int thickness=1);
 
-  void clear(vpColor color);
+  void clear(const vpColor &color);
 
   void drawCircle(const vpImagePoint &center, unsigned int radius,
-		  vpColor color, bool fill=false, unsigned char thickness=1);
+		  const vpColor &color, bool fill=false, unsigned char thickness=1);
 
   void drawText(const vpImagePoint &ip, const char * text,
-		vpColor color);
+		const vpColor &color);
 
   void drawCross(const vpImagePoint &ip, unsigned int size,
-		 vpColor color, unsigned int thickness=1);
+		 const vpColor &color, unsigned int thickness=1);
 
   void drawArrow(const vpImagePoint &ip1, 
 		 const vpImagePoint &ip2,
-		 vpColor color, unsigned int w,unsigned int h, unsigned int thickness=1);
+		 const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness=1);
 
   void getImage(vpImage<vpRGBa> &I);
 

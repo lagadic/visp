@@ -195,28 +195,28 @@ protected:
   void setTitle(const char *title) ;
   void setWindowPosition(int winx, int winy);
 
-  void clearDisplay(vpColor color=vpColor::white) ;
+  void clearDisplay(const vpColor &color=vpColor::white) ;
 
   void closeDisplay() ;
 
   void displayArrow(const vpImagePoint &ip1, 
 		    const vpImagePoint &ip2,
-		    vpColor color=vpColor::white,
+		    const vpColor &color=vpColor::white,
 		    unsigned int w=4,unsigned int h=2,
 		    unsigned int thickness=1) ;
 
   void displayCharString(const vpImagePoint &ip, const char *text,
-			 vpColor color=vpColor::green) ;
+			 const vpColor &color=vpColor::green) ;
 
   void displayCircle(const vpImagePoint &center, unsigned int radius,
-		     vpColor color,
+		     const vpColor &color,
 		     bool fill = false,
 		     unsigned int thickness=1);
   void displayCross(const vpImagePoint &ip, unsigned int size,
-		    vpColor color, unsigned int thickness=1) ;
+		    const vpColor &color, unsigned int thickness=1) ;
   void displayDotLine(const vpImagePoint &ip1, 
 		      const vpImagePoint &ip2,
-		      vpColor color, unsigned int thickness=1) ;
+		      const vpColor &color, unsigned int thickness=1) ;
 
   void displayImage(const vpImage<vpRGBa> &I) ;
   void displayImage(const vpImage<unsigned char> &I) ;
@@ -224,19 +224,19 @@ protected:
 
   void displayLine(const vpImagePoint &ip1, 
 		   const vpImagePoint &ip2,
-		   vpColor color, unsigned int thickness=1) ;
-  void displayPoint(const vpImagePoint &ip, vpColor color) ;
+		   const vpColor &color, unsigned int thickness=1) ;
+  void displayPoint(const vpImagePoint &ip, const vpColor &color) ;
 
   void displayRectangle(const vpImagePoint &topLeft,
 			unsigned int width, unsigned int height,
-			vpColor color, bool fill = false,
+			const vpColor &color, bool fill = false,
 			unsigned int thickness=1) ;
   void displayRectangle(const vpImagePoint &topLeft,
 			const vpImagePoint &bottomRight,
-			vpColor color, bool fill = false,
+			const vpColor &color, bool fill = false,
 			unsigned int thickness=1) ;
   void displayRectangle(const vpRect &rectangle,
-			vpColor color, bool fill = false,
+			const vpColor &color, bool fill = false,
 			unsigned int thickness=1) ;
 
   void flushDisplay() ;
