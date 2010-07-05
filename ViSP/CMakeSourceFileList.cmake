@@ -252,6 +252,11 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMeSite.cpp
   tracking/moving-edges/vpMeTracker.cpp
   tracking/moving-edges/vpMeNurbs.cpp
+  tracking/mbt/vpMbtDistanceLine.cpp
+  tracking/mbt/vpMbtHiddenFace.cpp
+  tracking/mbt/vpMbtMeLine.cpp
+  tracking/mbt/vpMbtTracker.cpp
+  tracking/mbt/vpMbtXmlParser.cpp
   )
 
 SET (SRC_VIDEO
