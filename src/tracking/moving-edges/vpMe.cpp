@@ -400,6 +400,46 @@ vpMe::vpMe()
   initMask() ;
 }
 
+vpMe::vpMe(vpMe &me)
+{
+  mask = NULL ;
+  threshold = me.threshold ;
+  mu1 = me.mu1 ;
+  mu2 = me.mu2 ;
+  sample_step = me.sample_step ;
+  range = me.range ;
+  mask_size = me.mask_size ;
+  n_mask = me.n_mask ;
+  mask_sign = me.mask_sign ;
+  anglestep = me.anglestep ;
+  strip = me.strip ;
+  min_samplestep = me.min_samplestep ;
+  aberration = me.aberration ;
+  init_aberration = me.init_aberration;
+  initMask() ;
+}
+
+const
+vpMe& vpMe::operator=(const vpMe &me)
+{
+  mask = NULL ;
+  threshold = me.threshold ;
+  mu1 = me.mu1 ;
+  mu2 = me.mu2 ;
+  sample_step = me.sample_step ;
+  range = me.range ;
+  mask_size = me.mask_size ;
+  n_mask = me.n_mask ;
+  mask_sign = me.mask_sign ;
+  anglestep = me.anglestep ;
+  strip = me.strip ;
+  min_samplestep = me.min_samplestep ;
+  aberration = me.aberration ;
+  init_aberration = me.init_aberration;
+  initMask() ;
+  return *this;
+}
+
 vpMe::~vpMe()
 {
   if (mask != NULL)

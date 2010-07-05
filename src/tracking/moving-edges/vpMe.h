@@ -92,7 +92,11 @@ public:
   vpMatrix *mask ;
 
   vpMe() ;
+  vpMe(vpMe &me) ;
   virtual ~vpMe() ;
+  
+  const vpMe& operator=(const vpMe &me);
+
 
   void initMask() ;// convolution masks - offset computation
   void print( ) ;
