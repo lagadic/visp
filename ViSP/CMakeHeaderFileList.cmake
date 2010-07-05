@@ -240,6 +240,11 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMeSite.h
   tracking/moving-edges/vpMeTracker.h
   tracking/moving-edges/vpMeNurbs.h
+  tracking/mbt/vpMbtDistanceLine.h
+  tracking/mbt/vpMbtHiddenFace.h
+  tracking/mbt/vpMbtMeLine.h
+  tracking/mbt/vpMbtTracker.h
+  tracking/mbt/vpMbtXmlParser.h
   )
 
 SET (HEADER_VIDEO
