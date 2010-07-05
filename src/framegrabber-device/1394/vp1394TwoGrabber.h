@@ -311,6 +311,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 			     vpList<vp1394TwoFramerateType> & fps);
   void getHeight(unsigned int &height);
   void getNumCameras(unsigned int &ncameras);
+  unsigned int getNumCameras();
   unsigned int getRingBufferSize();
   void getVideoMode(vp1394TwoVideoModeType & videomode);
   int  getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);

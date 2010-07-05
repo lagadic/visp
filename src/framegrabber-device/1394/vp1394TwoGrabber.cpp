@@ -316,6 +316,27 @@ vp1394TwoGrabber::getNumCameras(unsigned int &ncameras)
 
 /*!
 
+  Return the number of cameras connected on the bus.
+
+  \param ncameras : The number of cameras found on the bus.
+
+
+*/
+unsigned int
+vp1394TwoGrabber::getNumCameras()
+{
+  unsigned int ncameras = 0;
+  if (! num_cameras) {
+    vpCTRACE << "No camera found..."<< std::endl;
+    ncameras = 0;
+  }
+
+  ncameras = num_cameras;
+  return ncameras;
+}
+
+/*!
+
   Set the camera video capture mode. Image size is than updated with respect to
   the new video capture mode.
 
