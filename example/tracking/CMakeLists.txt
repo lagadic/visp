@@ -41,6 +41,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
+  mbtTracking.cpp
   trackDot2WithAutoDetection.cpp
   trackMeCircle.cpp
   trackMeEllipse.cpp
@@ -64,6 +65,7 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
+ADD_TEST(mbtTracking mbtTracking -d -c)
 ADD_TEST(trackDot2WithAutoDetection trackDot2WithAutoDetection -d -c)
 ADD_TEST(trackMeCircle              trackMeCircle -d -c)
 ADD_TEST(trackMeEllipse             trackMeEllipse -d -c)
