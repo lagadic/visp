@@ -58,7 +58,7 @@
 #include <visp/vpVideoReader.h>
 #include <visp/vpParseArgv.h>
 
-#if (defined USE_1394TWO_CAMERA) || (defined VISP_HAVE_OPENCV)
+#if (defined VISP_HAVE_XML2)
 
 #define GETOPTARGS  "x:m:i:n:dcht"
 
@@ -254,7 +254,13 @@ main(int argc, const char ** argv)
   }
 
   // Load the 3D model (either a vrml file or a .cao file)
-  tracker.loadModel(modelFile.c_str());
+  try{
+    tracker.loadModel(modelFile.c_str());
+  }
+  catch(...)
+  {
+    return 0;
+  }
   // Initialise the tracker by clicking on the image
   // This function looks for 
   //   - a ./cube/cube.init file that defines the 3d coordinates (in meter, in the object basis) of the points used for the initialisation
