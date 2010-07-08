@@ -225,6 +225,8 @@ SET (SRC_TOOLS
   tools/io/vpParallelPortException.cpp
   tools/io/vpParseArgv.cpp
   tools/plot/vpPlot.cpp
+  tools/plot/vpPlotCurve.cpp
+  tools/plot/vpPlotGraph.cpp
   tools/time/vpTime.cpp
   )
 
