@@ -35,6 +35,7 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpConfig.h>
 #include <visp/vpPlotCurve.h>
@@ -111,3 +112,5 @@ vpPlotCurve::plotList(vpImage<unsigned char> &I, const double xorg, const double
     k++;
   }
 }
+
+#endif

@@ -35,6 +35,8 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifndef vpPlotGraph_H
 #define vpPlotGraph_H
 
@@ -184,5 +186,6 @@ class vpPlotGraph
 };
 
 
+#endif
 #endif
 
