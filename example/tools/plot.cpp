@@ -105,6 +105,8 @@ int main ()
     plot.plot(1,0,i,si);
     i+=0.1;
   }
+  
+  vpDisplay::getClick(plot.I);
 
   //Save the datas as text files
   plot.saveData(0, "dataCos.txt");
