@@ -83,12 +83,17 @@ class VISP_EXPORT vpLaserScan
     startAngle = scan.startAngle;
     stopAngle = scan.stopAngle;
     numPoints = scan.numPoints;
+    listScanPoints = scan.listScanPoints;
   }
   /*! Default destructor that does nothing. */
   virtual ~vpLaserScan() {};
   /*! Add the scan point at the end of the list. */
   inline void addPoint(const vpScanPoint &p) {
     listScanPoints.push_back( p );
+  }
+  /*! Drop the list of points. */
+  inline void clear() {
+    listScanPoints.clear(  );
   }
   /*! Get the list of points. */
   inline std::vector<vpScanPoint> getScanPoints() {

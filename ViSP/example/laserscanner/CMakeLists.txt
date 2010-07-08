@@ -41,8 +41,8 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  SickLDMRS-DisplayData.cpp
-  SickLDMRS-SaveData.cpp
+  SickLDMRS-Acq.cpp
+  SickLDMRS-Process.cpp
 )
 
 # rule for binary build
