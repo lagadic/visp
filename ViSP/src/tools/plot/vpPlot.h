@@ -99,6 +99,8 @@ class vpPlot
     
     void resetPointList (const int graphNum);
     void resetPointList (const int graphNum, const int curveNum);
+    
+    void saveData(const int graphNum, const char* dataFile);
 };
 
 #endif
