@@ -41,6 +41,7 @@
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpPose.h>
+#include <fstream>
 
 vpPlot::vpPlot(const int nbGraph)
 {
@@ -242,3 +243,70 @@ vpPlot::resetPointList (const int graphNum, const int curveNum)
   (graphList+graphNum)->resetPointList(curveNum);
 }
 
+/*!
+  This function enables to save in a text file all the plotted points of a graphic.
+
+  The first line of the text file is the graphic title. Then the points coordinates are given. If the graphic has to curves: 
+  - the first column corresponds to the x axis of the first curve
+  - the second column corresponds to the y axis of the first curve
+  - the third column corresponds to the x axis of the second curve
+  - the fourth column corresponds to the y axis of the second curve
+
+  The column are delimited thanks to tabultaions.
+
+  \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param dataFile : Name of the text file.
+*/
+void vpPlot::saveData(const int graphNum, const char* dataFile)
+{
+  std::ofstream fichier;
+  fichier.open(dataFile);
+
+  int ind;
+  double *p = new double[3];
+  bool end=false;
+
+  fichier << (graphList+graphNum)->title << std::endl;
+
+  for(ind=0;ind<(graphList+graphNum)->curveNbr;ind++)
+  {
+    (graphList+graphNum)->curveList[ind].pointListx.front();
+    (graphList+graphNum)->curveList[ind].pointListy.front();
+    (graphList+graphNum)->curveList[ind].pointListz.front();
+  }
+
+  while (end == false)
+  {
+    end = true;
+    for(ind=0;ind<(graphList+graphNum)->curveNbr;ind++)
+    {
+      if (!(graphList+graphNum)->curveList[ind].pointListx.outside() 
+	  && !(graphList+graphNum)->curveList[ind].pointListy.outside()
+	  && !(graphList+graphNum)->curveList[ind].pointListz.outside())
+      {
+        p[0] = (graphList+graphNum)->curveList[ind].pointListx.value();
+        p[1] = (graphList+graphNum)->curveList[ind].pointListy.value();
+	p[2] = (graphList+graphNum)->curveList[ind].pointListz.value();
+        fichier << p[0] << "\t" << p[1] << "\t" << p[2] << "\t";
+        (graphList+graphNum)->curveList[ind].pointListx.next();
+        (graphList+graphNum)->curveList[ind].pointListy.next();
+	(graphList+graphNum)->curveList[ind].pointListz.next();
+        if(!(graphList+graphNum)->curveList[ind].pointListx.nextOutside() 
+	   && !(graphList+graphNum)->curveList[ind].pointListy.nextOutside()
+	   && !(graphList+graphNum)->curveList[ind].pointListz.nextOutside()) 
+	  end = false;
+      }
+      else
+      {
+        p[0] = (graphList+graphNum)->curveList[ind].pointListx.value();
+        p[1] = (graphList+graphNum)->curveList[ind].pointListy.value();
+	p[2] = (graphList+graphNum)->curveList[ind].pointListz.value();
+        fichier << p[0] << "\t" << p[1] << "\t" << p[2] << "\t";
+      }
+    }
+    fichier << std::endl;
+  }
+
+  delete[] p;
+  fichier.close();
+}
