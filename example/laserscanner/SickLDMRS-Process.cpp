@@ -164,7 +164,7 @@ void *laser_display_and_save_loop(void *)
       
      
       vpImagePoint E; // Beam echo
-      double resolution = 100; // 100 pixels = 1 meter
+      double resolution = 50; // 100 pixels = 1 meter
 //       std::cout << "display layer " << layer << " nb points: " 
 // 		<< pointsLayer.size() << std::endl;
       for (unsigned int i=0; i<pointsLayer.size(); i++) {
@@ -242,7 +242,9 @@ void *camera_acq_and_display_loop(void *)
 //     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
 
     vpImage<unsigned char> I; // Create a gray level image container
+    vpImage<unsigned char> Q; // Create a quarter size gray level image container
     g.acquire(I);                        // Acquire an image
+    I.quarterSizeImage(Q);
 
     vpDisplay *display;
 #if defined VISP_HAVE_X11
@@ -252,7 +254,7 @@ void *camera_acq_and_display_loop(void *)
 #elif defined VISP_HAVE_GTK
     display = new vpDisplayGTK;
 #endif
-    display->init (I, 320, 10, "Camera");
+    display->init (Q, 320, 10, "Camera");
     
     // Create a file with cameraimage time stamps
     std::ofstream fdimage_ts;
@@ -269,19 +271,19 @@ void *camera_acq_and_display_loop(void *)
     double image_timestamp;
     while (1) {
       frame = g.dequeue(I, timestamp, id); // Acquire an image
+      I.quarterSizeImage(Q);
       image_timestamp = timestamp/1000000. - time_offset;
       std::cout << "camera timestamp: " << image_timestamp << " s " << std::endl;
       if (save) {
 	// Set the image filename 
 	sprintf(filename, "%s/image%04d.png", output_path.c_str(), iter);
-	vpImageIo::write(I, filename);
+	vpImageIo::write(Q, filename);
 	fdimage_ts << filename << " " << image_timestamp << std::endl;
       }
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
-      vpDisplay::display(I);
-      vpDisplay::flush(I);
+      vpDisplay::display(Q);
+      vpDisplay::flush(Q);
 #endif
-      usleep(10000);
       g.enqueue(frame);
 
       iter ++;
