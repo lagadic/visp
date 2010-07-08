@@ -215,6 +215,7 @@ SET (HEADER_TOOLS
   tools/io/vpParallelPort.h
   tools/io/vpParallelPortException.h
   tools/io/vpParseArgv.h
+  tools/plot/vpPlot.h
   tools/time/vpTime.h
   tools/trace/vpDebug.h
   )
