@@ -35,6 +35,8 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifndef vpPlotCurve_H
 #define vpPlotCurve_H
 
@@ -86,4 +88,5 @@ class vpPlotCurve
     void plotList(vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx, const double zoomy);
 };
 
+#endif
 #endif

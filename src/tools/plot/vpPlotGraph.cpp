@@ -35,6 +35,8 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <visp/vpConfig.h>
 #include <visp/vpPlotGraph.h>
 #include <visp/vpMath.h>
@@ -305,7 +307,7 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
     {
       double ttemp;
       if (power!=0)
-        ttemp = t*pow(10,power); 
+        ttemp = t*pow(10.0,power); 
       else ttemp = t;
       sprintf(valeur, "%.2f", ttemp);
       vpDisplay::displayCharString(I,vpImagePoint(yorg + 3*epsi,x),valeur, vpColor::black);
@@ -328,7 +330,7 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
       
     double ttemp;
     if (power!=0)
-      ttemp = t*pow(10,power); 
+      ttemp = t*pow(10.0,power); 
     else ttemp = t;
       
     sprintf(valeur, "%.2f", ttemp);
@@ -825,7 +827,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
       {
         double ttemp;
         if (power!=0)
-          ttemp = t*pow(10,power); 
+          ttemp = t*pow(10.0,power); 
         else ttemp = t;
         sprintf(valeur, "%.1f", ttemp);
         vpDisplay::displayCharString(I,ip3,valeur, vpColor::black);
@@ -866,7 +868,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
       {
         double ttemp;
         if (power!=0)
-          ttemp = t*pow(10,power); 
+          ttemp = t*pow(10.0,power); 
         else ttemp = t;
         sprintf(valeur, "%.1f", ttemp);
         vpDisplay::displayCharString(I,ip3,valeur, vpColor::black);
@@ -907,7 +909,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
       {
         double ttemp;
         if (power!=0)
-          ttemp = t*pow(10,power); 
+          ttemp = t*pow(10.0,power); 
         else ttemp = t;
         sprintf(valeur, "%.1f", ttemp);
         vpDisplay::displayCharString(I,ip3,valeur, vpColor::black);
@@ -1217,3 +1219,4 @@ vpPlotGraph::navigation(vpImage<unsigned char> &I, bool &changed)
   return mov;
 }
 
+#endif
