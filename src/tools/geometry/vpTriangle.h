@@ -98,3 +98,4 @@ class VISP_EXPORT vpTriangle
 };
 
 #endif
+
