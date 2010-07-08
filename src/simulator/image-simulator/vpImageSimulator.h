@@ -255,3 +255,5 @@ class vpImageSimulator
 };
 
 #endif
+
+
