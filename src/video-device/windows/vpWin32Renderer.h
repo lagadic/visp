@@ -80,6 +80,8 @@ class VISP_EXPORT vpWin32Renderer
   */
   virtual void setImg(const vpImage<vpRGBa>& im) =0;
   virtual void setImg(const vpImage<unsigned char>& im) =0;
+  virtual void setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height ) =0;
+  virtual void setImgROI(const vpImage<unsigned char>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height ) =0;
 
   /*!
     Sets the pixel at (x,y).

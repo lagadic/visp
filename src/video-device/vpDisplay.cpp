@@ -197,6 +197,38 @@ vpDisplay::display ( const vpImage<unsigned char> &I )
 }
 
 
+void
+vpDisplay::displayROI(const vpImage<unsigned char> &I, const vpRect &roi)
+{
+  vpImagePoint topLeft;
+  double top = floor(roi.getTop());
+  double left = floor(roi.getLeft());
+  double roiheight = floor(roi.getHeight());
+  double roiwidth = floor(roi.getWidth());
+  double iheight = (double)(I.getHeight());
+  double iwidth = (double)(I.getWidth());
+  
+  if (top < 0 || top > iheight || left < 0 || left > iwidth || top+roiheight > iheight || left+roiwidth > iwidth)
+  {
+    vpERROR_TRACE ( "Region of interest outside of the image" ) ;
+    throw ( vpException ( vpException::dimensionError,"Region of interest outside of the image" ) ) ;
+  }
+  
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayImageROI ( I , vpImagePoint(top,left), roiwidth,roiheight ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+
 
 /*!
   Get the window pixmap and put it in vpRGBa image.
@@ -1942,6 +1974,23 @@ void vpDisplay::flush ( const vpImage<unsigned char> &I )
   }
 }
 
+void vpDisplay::flushROI ( const vpImage<unsigned char> &I, const vpRect &roi )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->flushDisplayROI(roi.getTopLeft(),roi.getWidth(),roi.getHeight()) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
 /*!
   Close the display attached to I.
 */
@@ -2105,6 +2154,38 @@ vpDisplay::display ( const vpImage<vpRGBa> &I )
   }
 }
 
+void
+vpDisplay::displayROI(const vpImage<vpRGBa> &I, const vpRect &roi)
+{
+  vpImagePoint topLeft;
+  double top = floor(roi.getTop());
+  double left = floor(roi.getLeft());
+  double roiheight = floor(roi.getHeight());
+  double roiwidth = floor(roi.getWidth());
+  double iheight = (double)(I.getHeight());
+  double iwidth = (double)(I.getWidth());
+  
+  if (top < 0 || top >= iheight || left < 0 || left >= iwidth || top+roiheight >= iheight || left+roiwidth >= iwidth)
+  {
+    vpERROR_TRACE ( "Region of interest outside of the image" ) ;
+    throw ( vpException ( vpException::dimensionError,
+                                   "Region of interest outside of the image" ) ) ;
+  }
+  
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayImageROI ( I , vpImagePoint(top,left), roiwidth,roiheight ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
 
 /*!
   Get the window pixmap and put it in vpRGBa image.
@@ -2229,6 +2310,23 @@ void vpDisplay::flush ( const vpImage<vpRGBa> &I )
     if ( I.display != NULL )
     {
       ( I.display )->flushDisplay() ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+void vpDisplay::flushROI ( const vpImage<vpRGBa> &I, const vpRect &roi )
+{
+
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->flushDisplayROI(roi.getTopLeft(),roi.getWidth(),roi.getHeight()) ;
     }
   }
   catch ( ... )

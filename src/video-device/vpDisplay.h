@@ -406,11 +406,22 @@ class VISP_EXPORT vpDisplay
     \sa init(), closeDisplay()
   */
   virtual void displayImage(const vpImage<vpRGBa> &I) =0 ;
+  
+  virtual void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height) =0 ;
+  virtual void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height) =0 ;
+  
+  
   /*!
     Flushes the display.
     It's necessary to use this function to see the results of any drawing.    
   */  
   virtual void flushDisplay() =0;
+  
+  /*!
+    Flushes the display.
+    It's necessary to use this function to see the results of any drawing.    
+  */  
+  virtual void flushDisplayROI(const vpImagePoint iP, const unsigned int width, const unsigned int height) =0;
 
   /* Simple interface with the mouse event */
 
@@ -578,6 +589,7 @@ class VISP_EXPORT vpDisplay
   static void setBackground(const vpImage<unsigned char> &I, const vpColor &color);
   static void close(const vpImage<unsigned char> &I) ;
   static void display(const vpImage<unsigned char> &I) ;
+  static void displayROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
   static void displayArrow(const vpImage<unsigned char> &I,
 			   const vpImagePoint &ip1, const vpImagePoint &ip2,
 			   const vpColor &color=vpColor::white,
@@ -677,6 +689,7 @@ class VISP_EXPORT vpDisplay
 			       unsigned int thickness=1);
 
   static void flush(const vpImage<unsigned char> &I) ;
+  static void flushROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
 
   static bool getClick(const vpImage<unsigned char> &I, bool blocking=true) ;
   static bool getClick(const vpImage<unsigned char> &I,
@@ -711,6 +724,7 @@ class VISP_EXPORT vpDisplay
   static void close(const vpImage<vpRGBa> &I) ;
 
   static void display(const vpImage<vpRGBa> &I) ;
+  static void displayROI(const vpImage<vpRGBa> &I, const vpRect &roi) ;
   static void displayArrow(const vpImage<vpRGBa> &I,
 			   const vpImagePoint &ip1, const vpImagePoint &ip2,
 			   const vpColor &color=vpColor::white,
@@ -811,6 +825,7 @@ class VISP_EXPORT vpDisplay
 			       unsigned int thickness=1);
 
   static void flush(const vpImage<vpRGBa> &I) ;
+  static void flushROI(const vpImage<vpRGBa> &I, const vpRect &roi) ;
   static bool getClick(const vpImage<vpRGBa> &I, bool blocking=true) ;
   static bool getClick(const vpImage<vpRGBa> &I,
 		       vpImagePoint &ip, bool blocking=true) ;
