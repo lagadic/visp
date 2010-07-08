@@ -47,7 +47,7 @@
 #include "visp/vpScanPoint.h"
 #include "visp/vpLaserScan.h"
 #include "visp/vpLaserScanner.h"
-#include "visp/vpSickLDMRSHeader.h"
+#include "visp/vpColVector.h"
 
 /*!
 
@@ -101,9 +101,15 @@ int main()
 class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
 {
  public:
+  enum MagicWord {
+    MagicWordC2 = 0xAFFEC0C2   ///< The magic word that allows to identify the messages that are sent by the Sick LD-MRS.
+  };
+  enum DataType {
+    MeasuredData = 0x2202      ///< Flag to indicate that the body of a message contains measured data.
+  };
   vpSickLDMRS();
   /*! Copy constructor. */
- vpSickLDMRS(const vpSickLDMRS &sick) : vpLaserScanner(sick) {
+  vpSickLDMRS(const vpSickLDMRS &sick) : vpLaserScanner(sick) {
     socket_fd = sick.socket_fd;
     body = new unsigned char [104000];
   };
@@ -120,6 +126,9 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
 #endif
  private:
   unsigned char *body;
+  vpColVector vAngle; // constant vertical angle for each layer
+  double time_offset;
+  bool isFirstMeasure;
  };
 
 #endif
