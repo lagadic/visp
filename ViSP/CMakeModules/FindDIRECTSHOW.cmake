@@ -50,7 +50,8 @@ IF(WIN32 AND NOT MINGW)
     "$ENV{DXSDK_DIR}/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.1/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Include"
     "C:/DXSDK/include"
     "C:/Program Files/Microsoft Platform SDK/Include"
     "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
@@ -67,7 +68,8 @@ IF(WIN32 AND NOT MINGW)
     "$ENV{DXSDK_DIR}/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.1/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Include"
     "C:/DXSDK/include"
     "C:/Program Files/Microsoft Platform SDK/Include"
     "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
@@ -83,7 +85,8 @@ IF(WIN32 AND NOT MINGW)
     "$ENV{DXSDK_DIR}/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.1/Include"
     "C:/Program Files/Microsoft SDKs/Windows/v6.0/Include"
-	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include"
+    "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Include"
     "C:/DXSDK/include"
     "C:/Program Files/Microsoft Platform SDK/Include"
     "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
@@ -129,6 +132,16 @@ IF(WIN32 AND NOT MINGW)
                     )
         ENDIF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
       ENDIF(MSVC90)
+# Specific path search for Visual Studio 2008
+      IF(MSVC10)
+        IF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
+          FIND_PATH(DIRECTSHOW_atlbase_INCLUDE_PATH atlbase.h
+                       "C:/Program Files/Microsoft Visual Studio 10.0/VC/atlmfc/include"
+                       "$ENV{VS100COMNTOOLS}/../../VC/atlmfc/include"
+                      DOC "What is the path where the file atlbase.h can be found"
+                    )
+        ENDIF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
+      ENDIF(MSVC10)
   IF(DIRECTX_INCLUDE_PATH AND DIRECTSHOW_dshow_INCLUDE_PATH AND DIRECTSHOW_qedit_INCLUDE_PATH AND DIRECTSHOW_atlbase_INCLUDE_PATH)
     SET(DIRECTSHOW_INCLUDE_DIR ${DIRECTX_INCLUDE_PATH}
                                ${DIRECTSHOW_dshow_INCLUDE_PATH}
@@ -145,7 +158,8 @@ IF(WIN32 AND NOT MINGW)
         "$ENV{DXSDK_DIR}/Lib/x64"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x64"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
-		"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib/x64"
+	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib/x64"
+        "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Lib/x64"
         "C:/DXSDK/lib/x64"
       	"C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x64"
         "C:/Program Files/Microsoft Platform SDK/Lib/x64"
@@ -163,9 +177,10 @@ IF(WIN32 AND NOT MINGW)
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x86"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
-		"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib"
+	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x86"
-		"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib/x86"
+	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib/x86"
+        "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Lib"
         "C:/DXSDK/lib"
         "C:/DXSDK/lib/x64"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
@@ -189,9 +204,10 @@ IF(WIN32 AND NOT MINGW)
         "C:/DXSDK/lib/x64"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x64"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
-		"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib/x64"
+	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib/x64"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x64"
         "C:/Program Files/Microsoft Platform SDK/Lib/x64"
+        "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Lib/x64"
          NO_DEFAULT_PATH
         DOC "Where can the DirectShow quartz library be found"
       )
@@ -204,20 +220,21 @@ IF(WIN32 AND NOT MINGW)
         "C:/DXSDK/lib/x86"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x86"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x86"
-		"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib/x86"
+	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib/x86"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib/x86"
         "C:/Program Files/Microsoft Platform SDK/Lib/x86"
+        "C:/Program Files/Microsoft SDKs/Windows/v7.0A"
         "$ENV{WINSDK_HOME}/Lib"
         "$ENV{DXSDK_DIR}/Lib"
         "C:/DXSDK/lib"
         "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib"
         "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
-		"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib"
+	"C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib"
         "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Lib"
         "C:/Program Files/Microsoft Platform SDK/Lib"
         NO_DEFAULT_PATH
         DOC "Where can the DirectShow quartz library be found"
-	     )
+      )
     ENDIF(CMAKE_CL_64)
     FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY
       NAMES quartz

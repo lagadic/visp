@@ -58,6 +58,7 @@ IF(WIN32)
                    "$ENV{DXSDK_DIR}/Lib/x64"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib/x64"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib/x64"
+                   "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Lib/x64"
                    "C:/Program Files/Microsoft Platform SDK/Lib/x64"
                    "C:/DXSDK/Include/Lib/x64"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib/x64"
@@ -88,6 +89,7 @@ IF(WIN32)
                        "C:/Program Files/Microsoft Visual Studio 9/VC/PlatformSDK/Lib/AMD64"         )
         ENDIF(NOT GDI_LIBRARY)
       ENDIF(MSVC90)
+
     ELSE(CMAKE_CL_64)
       # Generic path seach
       FIND_LIBRARY(GDI_LIBRARY gdi32
@@ -96,6 +98,7 @@ IF(WIN32)
                    "$ENV{DXSDK_DIR}/Lib"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.1/Lib"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.0/Lib"
+                   "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Lib"
                    "C:/Program Files/Microsoft Platform SDK/Lib"
                    "C:/DXSDK/Include/Lib"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib"
