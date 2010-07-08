@@ -59,6 +59,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpDisplayException.h>
 #include <visp/vpMath.h>
+#include <visp/vpImageTools.h>
 
 /*!
 
@@ -481,6 +482,52 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 
 
 /*!
+  Display a selection of the gray level image \e I (8bits).
+
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing in the region of interest.
+
+  \param I : Image to display.
+  
+  \param iP : Top left corner of the region of interest
+  
+  \param width : Width of the region of interest
+  
+  \param height : Height of the region of interest
+
+  \sa init(), closeDisplay()
+*/
+void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  if (GTKinitialized)
+  {
+    vpImage<unsigned char> Itemp;
+    vpImageTools::createSubImage(I,iP.get_i(),iP.get_j(),height,width,Itemp);
+    /* Copie de l'image dans le pixmap fond */
+    gdk_draw_gray_image(background,
+                        gc,iP.get_u(), iP.get_v(), width, height,
+                        GDK_RGB_DITHER_NONE,
+                        I.bitmap,
+                        width);
+
+    /* Le pixmap background devient le fond de la zone de dessin */
+    gdk_window_set_back_pixmap(widget->window, background, FALSE);
+
+    /* Affichage */
+    //gdk_window_clear(GTK_WINDOW(widget));
+    //gdk_flush();
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+
+/*!
   Display the color image \e I in RGBa format (32bits).
 
   \warning Display has to be initialized.
@@ -514,6 +561,54 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
     //gdk_window_clear(GTK_WINDOW(widget));
     //flushDisplay() ;
 
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+/*!
+  Display a selection of the color image \e I in RGBa format (32bits).
+
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing in the region of interest.
+
+  \param I : Image to display.
+  
+  \param iP : Top left corner of the region of interest
+  
+  \param width : Width of the region of interest
+  
+  \param height : Height of the region of interest
+
+  \sa init(), closeDisplay()
+*/
+void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  if (GTKinitialized)
+  {
+    vpImage<vpRGBa> Itemp;
+    vpImageTools::createSubImage(I,iP.get_i(),iP.get_j(),height,width,Itemp);
+    /* Copie de l'image dans le pixmap fond */
+    gdk_draw_rgb_32_image(background,
+                          gc,iP.get_u(), iP.get_v(),  width, height,
+                          GDK_RGB_DITHER_NONE,
+                          (unsigned char *)Itemp.bitmap,
+                          4* width);
+
+    /* Permet de fermer la fen�tre si besoin (cas des s�quences d'images) */
+    //while (g_main_iteration(FALSE));
+
+    /* Le pixmap background devient le fond de la zone de dessin */
+    gdk_window_set_back_pixmap(widget->window, background, FALSE);
+
+    /* Affichage */
+    //gdk_window_clear(GTK_WINDOW(widget));
+    //flushDisplay() ;
   }
   else
   {
@@ -565,6 +660,26 @@ void vpDisplayGTK::closeDisplay()
   It's necessary to use this function to see the results of any drawing.
 */
 void vpDisplayGTK::flushDisplay()
+{
+  if (GTKinitialized)
+  {
+    gdk_window_clear(widget->window);
+    gdk_flush();
+  }
+  else
+  {
+    vpERROR_TRACE("GTK not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "GTK not initialized")) ;
+  }
+}
+
+
+/*!
+  Flushes the display buffer.
+  It's necessary to use this function to see the results of any drawing.
+*/
+void vpDisplayGTK::flushDisplayROI(const vpImagePoint /*iP*/, const unsigned int /*width*/, const unsigned int /*height*/)
 {
   if (GTKinitialized)
   {

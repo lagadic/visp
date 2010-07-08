@@ -55,6 +55,7 @@
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpMath.h>
+#include <visp/vpImageTools.h>
 
 //debug / exception
 #include <visp/vpDebug.h>
@@ -434,7 +435,6 @@ void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
 */
 void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
 {
-
   if (OpenCVinitialized)
   {
     vpImage<vpRGBa> Ic;
@@ -448,6 +448,81 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
     /* Affichage */
     //gdk_window_clear(window);
     //gdk_flush();
+  }
+  else
+  {
+    vpERROR_TRACE("openCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+
+/*!
+  Display a selection of the gray level image \e I (8bits).
+
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing in the region of interest.
+
+  \param I : Image to display.
+  
+  \param iP : Top left corner of the region of interest
+  
+  \param width : Width of the region of interest
+  
+  \param height : Height of the region of interest
+
+  \sa init(), closeDisplay()
+*/
+void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  if (OpenCVinitialized)
+  { 
+    vpImage<unsigned char> Itemp;
+    vpImageTools::createSubImage(I,iP.get_i(),iP.get_j(),height,width,Itemp);
+    vpImage<vpRGBa> Ic;
+    vpImageConvert::convert(Itemp,Ic);
+    
+    CvSize size = cvSize(this->width,this->height);
+    int depth = 8;
+    int channels = 3;
+    if (background != NULL){
+      if(background->nChannels != channels || background->depth != depth
+         || background->height != (int) I.getHeight() || background->width != (int) I.getWidth()){
+        if(background->nChannels != 0) cvReleaseImage(&background);
+        background = cvCreateImage( size, depth, channels );
+      }
+    }
+    else background = cvCreateImage( size, depth, channels );
+    
+    IplImage* Ip = NULL;
+    vpImageConvert::convert(Ic, Ip);
+    
+    unsigned char * input = (unsigned char*)Ip->imageData;
+    unsigned char * output = (unsigned char*)background->imageData;
+    
+    unsigned int iwidth = Ic.getWidth();
+
+    input = input;
+    output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
+    
+    unsigned int i = 0;
+    while (i < height)
+    {
+      unsigned int j = 0;
+      while (j < width)
+      {
+	*(output+3*j) = *(input+j*3);
+	*(output+3*j+1) = *(input+j*3+1);
+	*(output+3*j+2) = *(input+j*3+2);
+	j++;
+      }
+      input = input + 3*iwidth;
+      output = output + 3*this->width;
+      i++;
+    }
+
+    cvReleaseImage(&Ip);
   }
   else
   {
@@ -485,6 +560,79 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
   else
   {
     vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+
+/*!
+  Display a selection of the color image \e I in RGBa format (32bits).
+
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing in the region of interest.
+
+  \param I : Image to display.
+  
+  \param iP : Top left corner of the region of interest
+  
+  \param width : Width of the region of interest
+  
+  \param height : Height of the region of interest
+
+  \sa init(), closeDisplay()
+*/
+void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  if (OpenCVinitialized)
+  { 
+    vpImage<vpRGBa> Ic;
+    vpImageTools::createSubImage(I,iP.get_i(),iP.get_j(),height,width,Ic);
+    
+    CvSize size = cvSize(this->width,this->height);
+    int depth = 8;
+    int channels = 3;
+    if (background != NULL){
+      if(background->nChannels != channels || background->depth != depth
+         || background->height != (int) I.getHeight() || background->width != (int) I.getWidth()){
+        if(background->nChannels != 0) cvReleaseImage(&background);
+        background = cvCreateImage( size, depth, channels );
+      }
+    }
+    else background = cvCreateImage( size, depth, channels );
+    
+    IplImage* Ip = NULL;
+    vpImageConvert::convert(Ic, Ip);
+    
+    unsigned char * input = (unsigned char*)Ip->imageData;
+    unsigned char * output = (unsigned char*)background->imageData;
+    
+    unsigned int iwidth = Ic.getWidth();
+
+    input = input;
+    output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
+    
+    unsigned int i = 0;
+    while (i < height)
+    {
+      unsigned int j = 0;
+      while (j < width)
+      {
+	*(output+3*j) = *(input+j*3);
+	*(output+3*j+1) = *(input+j*3+1);
+	*(output+3*j+2) = *(input+j*3+2);
+	j++;
+      }
+      input = input + 3*iwidth;
+      output = output + 3*this->width;
+      i++;
+    }
+
+    cvReleaseImage(&Ip);
+  }
+  else
+  {
+    vpERROR_TRACE("openCV not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "OpenCV not initialized")) ;
   }
@@ -542,6 +690,26 @@ void vpDisplayOpenCV::closeDisplay()
 
 */
 void vpDisplayOpenCV::flushDisplay()
+{
+  if (OpenCVinitialized)
+  {
+    cvShowImage(title, background );
+    cvWaitKey(5);
+  }
+  else
+  {
+    vpERROR_TRACE("OpenCV not initialized " ) ;
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV not initialized")) ;
+  }
+}
+
+/*!
+  Flushes the OpenCV buffer.
+  It's necessary to use this function to see the results of any drawing.
+
+*/
+void vpDisplayOpenCV::flushDisplayROI(const vpImagePoint /*iP*/, const unsigned int /*width*/, const unsigned int /*height*/)
 {
   if (OpenCVinitialized)
   {

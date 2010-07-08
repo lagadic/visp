@@ -392,6 +392,42 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa>& im)
     }
 }
 
+/*!
+  Sets the image to display.
+  \param im The image to display.
+*/
+void vpD3DRenderer::setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  //if the device has been initialized
+  if(pd3dDevice != NULL)
+    {
+      D3DLOCKED_RECT d3dLRect;
+
+      RECT r;
+      r.top=iP.get_v(); r.left=iP.get_u();
+      r.bottom=iP.get_v()+height-1; r.right=iP.get_u()+width;
+
+      //locks the texture to directly access it
+      if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
+	{
+	  vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
+	  return;
+	}
+
+      //gets the buffer and pitch of the texture
+      unsigned int pitch = d3dLRect.Pitch;
+      unsigned char * buf = (unsigned char *) d3dLRect.pBits;
+
+      //fills this texture with the image data (converted to bgra)
+      vpRGBaToTexture(im, buf, pitch);
+
+      //unlocks the texture
+      if( pd3dText->UnlockRect(0) != D3D_OK)
+	vpCERROR<<"D3D : Couldn't unlock the texture!"<<std::endl;
+
+    }
+}
+
 
 /*!
   Sets the image to display.
@@ -407,6 +443,43 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char>& im)
       RECT r;
       r.top=0; r.left=0;
       r.bottom=nbRows; r.right=nbCols;
+
+      //locks the texture to directly access it
+      if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
+	{
+	  vpCERROR<<"D3D : Couldn't lock the texture!"<<std::endl;
+	  return;
+	}
+
+      //gets the buffer and pitch of the texture
+      unsigned int pitch = d3dLRect.Pitch;
+      unsigned char * buf = (unsigned char *) d3dLRect.pBits;
+
+      //fills this texture with the image data (converted to bgra)
+      vpGreyToTexture(im, buf, pitch);
+
+      //unlocks the texture
+      if( pd3dText->UnlockRect(0) != D3D_OK)
+	vpCERROR<<"D3D : Couldn't unlock the texture!"<<std::endl;
+    }
+
+}
+
+
+/*!
+  Sets the image to display.
+  \param im The image to display.
+*/
+void vpD3DRenderer::setImgROI(const vpImage<unsigned char>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  //if the device has been initialized
+  if(pd3dDevice != NULL)
+    {
+      D3DLOCKED_RECT d3dLRect;
+
+      RECT r;
+      r.top=iP.get_v(); r.left=iP.get_u();
+      r.bottom=iP.get_v()+height-1; r.right=iP.get_u()+width;
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)

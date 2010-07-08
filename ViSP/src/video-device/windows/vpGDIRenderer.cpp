@@ -149,12 +149,38 @@ void vpGDIRenderer::setImg(const vpImage<vpRGBa>& im)
 
 /*!
   Sets the image to display.
+  \param im The rgba image to display.
+*/
+void vpGDIRenderer::setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  //converts the image into a HBITMAP
+  convertROI(im, bmp, iP, width, height);
+  //updates the size of the image
+  nbCols=im.getWidth();
+  nbRows=im.getHeight();
+}
+
+/*!
+  Sets the image to display.
   \param im The grayscale image to display.
 */
 void vpGDIRenderer::setImg(const vpImage<unsigned char>& im)
 {
   //converts the image into a HBITMAP
   convert(im, bmp);
+  //updates the size of the image
+  nbCols=im.getWidth();
+  nbRows=im.getHeight();
+}
+
+/*!
+  Sets the image to display.
+  \param im The rgba image to display.
+*/
+void vpGDIRenderer::setImgROI(const vpImage<unsigned char>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  //converts the image into a HBITMAP
+  convertROI(im, bmp, iP, width, height);
   //updates the size of the image
   nbCols=im.getWidth();
   nbRows=im.getHeight();
@@ -256,6 +282,93 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
   delete [] imBuffer;
 }
 
+/*!
+  Converts the image form ViSP in GDI's image format (bgra with padding).
+  \param I The image to convert.
+  \param hBmp The destination image.
+*/
+void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, HBITMAP& hBmp, const vpImagePoint iP, const unsigned int width, const unsigned int height)
+{
+  //get the image's width and height
+  unsigned int w = width;
+  unsigned int h = height;
+
+  //each line of a HBITMAP needs to be word aligned
+  //we need padding if the width is an odd number
+  bool needPad = ((w%2) == 0) ? false : true;
+  unsigned int newW = w;
+
+  //in case of padding, the new width is width+1
+  newW = (needPad) ? (w+1) : w;
+
+  //allocate the buffer
+  unsigned char * imBuffer = new unsigned char[newW * h * 4];
+
+  vpRGBa* bitmap = I.bitmap;
+  unsigned int iwidth = I.getWidth();
+  bitmap = bitmap + (int)(iP.get_i()*iwidth+ iP.get_j());
+
+  //if we need padding (width needs to be a multiple of 2)
+  if(needPad)
+  {
+    unsigned int j = 0;
+	unsigned int k = 0;
+    for(unsigned int i=0 ; i<newW * h * 4; i+=4)
+	{
+	  //end of a line = padding = inserts 0s
+	  if(j==w && needPad)
+	  {
+	    imBuffer[i+0] = 0;
+	    imBuffer[i+1] = 0;
+	    imBuffer[i+2] = 0;
+	    imBuffer[i+3] = 0;
+	    j = 0;	    
+	  }
+	  else
+	  {
+	    //RGBA -> BGRA
+	    imBuffer[i+0] = (bitmap+k)->B;
+	    imBuffer[i+1] = (bitmap+k)->G;
+	    imBuffer[i+2] = (bitmap+k)->R;
+	    imBuffer[i+3] = (bitmap+k)->A;
+		//bitmap++;
+	    j++;
+		k++;
+	  }
+	  if (k == newW)
+	  {
+	    bitmap = bitmap+iwidth;
+		k = 0;
+	  }
+	}
+  }
+  else
+  //Simple conversion (no padding)
+  {
+    unsigned int k = 0;
+    for (unsigned int i=0 ; i < w * h * 4 ; i+=4)
+	{
+	  imBuffer[i+0] = (bitmap+k)->B;
+	  imBuffer[i+1] = (bitmap+k)->G;
+	  imBuffer[i+2] = (bitmap+k)->R;
+	  imBuffer[i+3] = (bitmap+k)->A;
+	  //bitmap++;
+	  k++;
+	  if (k == newW)
+	  {
+	    bitmap = bitmap+iwidth;
+	    k = 0;
+	  }
+	}
+  }
+
+  //updates the bitmap's pixel data
+  updateBitmapROI(hBmp,imBuffer,iP, newW, h);
+
+  //we don't need this buffer anymore
+  delete [] imBuffer;
+}
+
 
 /*!
   Converts the image form ViSP in GDI's image format (bgra with padding).
@@ -324,6 +437,94 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
   delete [] imBuffer;
 }
 
+
+/*!
+  Converts the image form ViSP in GDI's image format (bgra with padding).
+  \param I The image to convert.
+  \param hBmp The destination image.
+*/
+void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, HBITMAP& hBmp, const vpImagePoint iP, const unsigned int width, const unsigned int height)
+{
+  //get the image's width and height
+  unsigned int w = width;
+  unsigned int h = height;
+
+  //each line of a HBITMAP needs to be word aligned
+  //we need padding if the width is an odd number
+  bool needPad = ((w%2) == 0) ? false : true;
+  unsigned int newW = w;
+
+  //in case of padding, the new width is width+1
+  newW = (needPad) ? (w+1) : w;
+
+  //allocate the buffer
+  unsigned char * imBuffer = new unsigned char[newW * h * 4];
+
+  unsigned char* bitmap = I.bitmap;
+  unsigned int iwidth = I.getWidth();
+  bitmap = bitmap + (int)(iP.get_i()*iwidth+ iP.get_j());
+
+  //if we need padding (width needs to be a multiple of 2)
+  if(needPad)
+  {
+    unsigned int j = 0;
+	unsigned int k = 0;
+    for(unsigned int i=0 ; i<newW * h * 4; i+=4)
+	{
+	  //end of a line = padding = inserts 0s
+	  if(j==w && needPad)
+	  {
+	    imBuffer[i+0] = 0;
+	    imBuffer[i+1] = 0;
+	    imBuffer[i+2] = 0;
+	    imBuffer[i+3] = 0;
+	    j = 0;	    
+	  }
+	  else
+	  {
+	    //RGBA -> BGRA
+	    imBuffer[i+0] = *(bitmap+k);
+	    imBuffer[i+1] = *(bitmap+k);
+	    imBuffer[i+2] = *(bitmap+k);
+	    imBuffer[i+3] = *(bitmap+k);
+		//bitmap++;
+	    j++;
+		k++;
+	  }
+	  if (k == newW)
+	  {
+	    bitmap = bitmap+iwidth;
+		k = 0;
+	  }
+	}
+  }
+  else
+  //Simple conversion (no padding)
+  {
+    unsigned int k = 0;
+    for (unsigned int i=0 ; i < w * h * 4 ; i+=4)
+	{
+	  imBuffer[i+0] = *(bitmap+k);
+	  imBuffer[i+1] = *(bitmap+k);
+	  imBuffer[i+2] = *(bitmap+k);
+	  imBuffer[i+3] = *(bitmap+k);
+	  //bitmap++;
+	  k++;
+	  if (k == newW)
+	  {
+	    bitmap = bitmap+iwidth;
+	    k = 0;
+	  }
+	}
+  }
+
+  //updates the bitmap's pixel data
+  updateBitmapROI(hBmp,imBuffer,iP, newW, h);
+
+  //we don't need this buffer anymore
+  delete [] imBuffer;
+}
+
 /*!
   Updates the bitmap to display.
   Contains a critical section.
@@ -360,6 +561,43 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
     }
 
   LeaveCriticalSection(&CriticalSection);
+  return true;
+}
+
+
+/*!
+  Updates the bitmap to display.
+  Contains a critical section.
+  \param hBmp The bitmap to update
+  \param imBuffer The new pixel data
+  \param iP The topleft corner of the roi 
+  \param w The roi's width
+  \param h The roi's height
+
+  \return the operation succefulness
+*/
+bool vpGDIRenderer::updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, const vpImagePoint iP,
+				 unsigned int w, unsigned int h)
+{
+  HBITMAP htmp = CreateBitmap(w,h,1,32,(void*)imBuffer);
+
+  //get the window's DC
+  HDC hDCScreen = GetDC(hWnd);
+  HDC hDCMem = CreateCompatibleDC(hDCScreen);
+  HDC hDCMem2 = CreateCompatibleDC(hDCScreen);
+
+  //select this bmp in memory
+  EnterCriticalSection(&CriticalSection);
+  SelectObject(hDCMem, bmp);
+  SelectObject(hDCMem2, htmp);
+
+  BitBlt(hDCMem,iP.get_u(),iP.get_v(), w, h, hDCMem2, 0, 0,SRCCOPY);
+  LeaveCriticalSection(&CriticalSection);
+
+  DeleteDC(hDCMem);
+  ReleaseDC(hWnd, hDCScreen);
+  DeleteObject(htmp);
+
   return true;
 }
 

@@ -220,6 +220,35 @@ void vpDisplayWin32::displayImage(const vpImage<vpRGBa> &I)
 
 
 /*!
+  Display a selection of the color image \e I in RGBa format (32bits).
+
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing in the region of interest.
+
+  \param I : Image to display.
+  
+  \param iP : Top left corner of the region of interest
+  
+  \param width : Width of the region of interest
+  
+  \param height : Height of the region of interest
+
+  \sa init(), closeDisplay()
+*/
+void vpDisplayWin32::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+	//waits if the window is not initialized
+  waitForInit();
+
+  //sets the image to render
+  window.renderer->setImgROI(I,iP,width,height);
+  //sends a message to the window
+  //PostMessage(window.getHWnd(),vpWM_DISPLAY,0,0);
+}
+
+
+/*!
   Display the gray level image \e I (8bits).
 
   \warning Display has to be initialized.
@@ -239,6 +268,34 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
   window.renderer->setImg(I);
   //sends a message to the window
   //PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
+}
+
+/*!
+  Display a selection of the gray level image \e I (8bits).
+
+  \warning Display has to be initialized.
+
+  \warning Suppress the overlay drawing in the region of interest.
+
+  \param I : Image to display.
+  
+  \param iP : Top left corner of the region of interest
+  
+  \param width : Width of the region of interest
+  
+  \param height : Height of the region of interest
+
+  \sa init(), closeDisplay()
+*/
+void vpDisplayWin32::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+{
+  //waits if the window is not initialized
+  waitForInit();
+
+  //sets the image to render
+  window.renderer->setImgROI(I,iP,width,height);
+  //sends a message to the window
+  //PostMessage(window.getHWnd(),vpWM_DISPLAY,0,0);
 }
 
 
@@ -608,6 +665,20 @@ void vpDisplayWin32::setFont(const char *fontname)
 
 */
 void vpDisplayWin32::flushDisplay()
+{
+  //waits if the window is not initialized
+  waitForInit();
+
+  //sends a message to the window
+  PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
+}
+
+/*!
+  \brief flush the Win32 buffer
+  It's necessary to use this function to see the results of any drawing
+
+*/
+void vpDisplayWin32::flushDisplayROI(const vpImagePoint /*iP*/, const unsigned int/* width*/, const unsigned int /*height*/)
 {
   //waits if the window is not initialized
   waitForInit();
