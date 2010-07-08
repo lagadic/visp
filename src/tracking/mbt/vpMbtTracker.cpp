@@ -51,7 +51,7 @@
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpRobust.h>
-#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 
@@ -681,15 +681,17 @@ vpMbtTracker::initClick(vpImage<unsigned char>& I, const char *filename, bool di
     vpDisplayX d;
 #elif defined VISP_HAVE_GDI
     vpDisplayGDI d;
-#elif defined VISP_HAVE_D3D
-    vpDisplayD3D d;
+#elif defined VISP_HAVE_OPENCV
+    vpDisplayOpenCV d;
 #endif
     try{
       if(displayHelp){
-        vpImageIo::readPPM(Iref,s) ;		 
+        vpImageIo::readPPM(Iref,s) ;
+	#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
         d.init(Iref,10,500, "Where to initialize...")  ;
 	  	  vpDisplay::display(Iref) ;
 	  	  vpDisplay::flush(Iref);
+	#endif
 	  	}
     }
     catch(...){}
@@ -858,7 +860,7 @@ vpMbtTracker::loadConfigFile(const char* filename)
   setCameraParameters(camera);
   setMovingEdge(meParser);
 #else
-	vpTRACE("You need the libXML2 to read config files");
+	vpTRACE("You need the libXML2 to read the config file %s", filename);
 #endif
 }
 
