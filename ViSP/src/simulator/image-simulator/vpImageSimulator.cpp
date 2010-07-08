@@ -636,7 +636,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &
       ip.set_ij(y,x);
       for (int k = 0; k < nbsimList; k++)
       {
-	double z;
+	double z = 0;
 	if(simList[k]->getPixelDepth(ip,z))
 	{
 	  if (z < zmin || zmin < 0)
@@ -835,7 +835,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, c
       ip.set_ij(y,x);
       for (int k = 0; k < nbsimList; k++)
       {
-	double z;
+	double z = 0;
 	if(simList[k]->getPixelDepth(ip,z))
 	{
 	  if (z < zmin || zmin < 0)
