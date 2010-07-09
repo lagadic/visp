@@ -552,7 +552,7 @@ vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
     double dBottomRight_j = dTopLeft_j+dWidth;
     
     //Cas vertical
-    if (vpImagePoint::distance(iP1,iP2) < 16)
+    if (vpImagePoint::distance(iP1,iP2) < 9)
       return false;
     if (fabs(iP2.get_j()-iP1.get_j()) <=2)
     {
@@ -661,6 +661,8 @@ vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
     {
       if (fabs(a) < 1)
       {
+	if (vpMath::sign(iP1.get_j()-iP[0].get_j()) == vpMath::sign(iP2.get_j()-iP[0].get_j()))
+	  return false;
         int sign = vpMath::sign(iP1.get_j() - iP2.get_j());
 	if (sign == vpMath::sign(iP[0].get_j()-iP[1].get_j())) 
 	{
@@ -673,6 +675,8 @@ vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
       }
       else
       {
+	if (vpMath::sign(iP1.get_i()-iP[0].get_i()) == vpMath::sign(iP2.get_i()-iP[0].get_i()))
+	  return false;
         int sign = vpMath::sign(iP1.get_i() - iP2.get_i());
 	if (sign == vpMath::sign(iP[0].get_i()-iP[1].get_i()))
 	{
@@ -686,35 +690,79 @@ vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
     }
     else if (!iP1In)
     {
+      vpImagePoint iPtemp = iP1;
       if (fabs(a) < 1)
       {
         int sign = vpMath::sign(iP1.get_j() - iP2.get_j());
-	if (sign == vpMath::sign(iP[0].get_j()-iP2.get_j())) iP1 = iP[0];
-	else iP1 = iP[1];
+	if (fabs(iP[0].get_j()-iP2.get_j()) > 5)
+	{
+	  if (sign == vpMath::sign(iP[0].get_j()-iP2.get_j())) iP1 = iP[0];
+	  else iP1 = iP[1];
+	}
+	else
+	{
+	  if (sign == vpMath::sign(iP[1].get_j()-iP2.get_j())) iP1 = iP[1];
+	  else iP1 = iP[0];
+	}
       }
       else
       {
         int sign = vpMath::sign(iP1.get_i() - iP2.get_i());
-	if (sign == vpMath::sign(iP[0].get_i()-iP2.get_i())) iP1 = iP[0];
-	else iP1 = iP[1];
+	if (fabs(iP[0].get_i()-iP2.get_i()) > 5)
+	{
+	  if (sign == vpMath::sign(iP[0].get_i()-iP2.get_i())) iP1 = iP[0];
+	  else iP1 = iP[1];
+	}
+	else
+	{
+	  if (sign == vpMath::sign(iP[1].get_i()-iP2.get_i())) iP1 = iP[1];
+	  else iP1 = iP[0];
+	}
+      }
+      if (vpImagePoint::distance(iP1,iP2) < 9)
+      {
+	iP1 = iPtemp;
+        return false;
       }
     }
     else if (!iP2In)
     {
+      vpImagePoint iPtemp = iP2;
       if (fabs(a) < 1)
       {
         int sign = vpMath::sign(iP2.get_j() - iP1.get_j());
-	if (sign == vpMath::sign(iP[0].get_j()-iP1.get_j())) iP2 = iP[0];
-	else iP2 = iP[1];
+	if (fabs(iP[0].get_j()-iP1.get_j()) > 5)
+	{
+	  if (sign == vpMath::sign(iP[0].get_j()-iP1.get_j())) iP2 = iP[0];
+	  else iP2 = iP[1];
+	}
+	else
+	{
+	  if (sign == vpMath::sign(iP[1].get_j()-iP1.get_j())) iP2 = iP[1];
+	  else iP2 = iP[0];
+	}
       }
       else
       {
         int sign = vpMath::sign(iP2.get_i() - iP1.get_i());
-	if (sign == vpMath::sign(iP[0].get_i()-iP1.get_i())) iP2 = iP[0];
-	else iP2 = iP[1];
+	if (fabs(iP[0].get_i()-iP1.get_i()) > 5)
+	{
+	  if (sign == vpMath::sign(iP[0].get_i()-iP1.get_i())) iP2 = iP[0];
+	  else iP2 = iP[1];
+	}
+	else
+	{
+	  if (sign == vpMath::sign(iP[1].get_i()-iP1.get_i())) iP2 = iP[1];
+	  else iP2 = iP[0];
+	}  
+      }
+      if (vpImagePoint::distance(iP1,iP2) < 9)
+      {
+	iP2 = iPtemp;
+        return false;
       }
     }
-  } 
+  }
   return true;
 }
 
@@ -1088,10 +1136,12 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
       iP.set_uv(u,v);
       iP = iP + dTopLeft3D;
     
+      vpDisplay::displayCross(I,iP,3,vpColor::cyan);
       if (k > 0)
       {
 	if (check3Dline((curveList+i)->lastPoint,iP))
           vpDisplay::displayLine(I,(curveList+i)->lastPoint, iP, (curveList+i)->color);
+	vpDisplay::displayCross(I,iP,3,vpColor::orange);
       }
     
       (curveList+i)->lastPoint = iP;
