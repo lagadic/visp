@@ -157,6 +157,7 @@ class vpPlot
     void setLegend (const int graphNum, const int curveNum, const char *legend);
     
     void plot (const int graphNum, const int curveNum, const double x, const double y);
+    void plot(const int graphNum, const double x, const vpColVector v);
     void plot (const int graphNum, const int curveNum, const double x, const double y, const double z);
     
     void navigate ();
