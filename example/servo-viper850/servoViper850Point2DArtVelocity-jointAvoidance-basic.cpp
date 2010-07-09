@@ -179,7 +179,7 @@ main()
     plot.setColor(0, 1, vpColor::green); 
     plot.setColor(0, 2, vpColor::blue); 
     plot.setColor(0, 3, vpColor::orange); 
-    plot.setColor(0, 4, 0, 128, 0); 
+    plot.setColor(0, 4, vpColor(0, 128, 0)); 
     plot.setColor(0, 5, vpColor::cyan); 
     for (int i= 6; i < 10; i++)
       plot.setColor(0, i, vpColor::black); // for Q and tQ [min,max]
@@ -189,7 +189,7 @@ main()
     plot.setColor(1, 1, vpColor::green); 
     plot.setColor(1, 2, vpColor::blue); 
     plot.setColor(1, 3, vpColor::orange); 
-    plot.setColor(1, 4, 0, 128, 0); 
+    plot.setColor(1, 4, vpColor(0, 128, 0)); 
     plot.setColor(1, 5, vpColor::cyan); 
     vpDot2 dot ;
     
@@ -303,12 +303,12 @@ main()
 	if (q[i] < tQmin[i])
 	  if (fabs(Qmin[i]-q[i]) > fabs(Qmin[i]-qpre[i])) {
 	    pb[i] = 1 ; npb++ ;
-	    cout << "Joint " << i << " near limit " << endl ;
+	    std::cout << "Joint " << i << " near limit " << std::endl ;
 	  }
 	if (q[i]>tQmax[i]) {
 	  if (fabs(Qmax[i]-q[i]) > fabs(Qmax[i]-qpre[i])) {
 	    pb[i] = 1 ; npb++ ;
-	    cout << "Joint " << i << " near limit " << endl ;
+	    std::cout << "Joint " << i << " near limit " << std::endl ;
 	  }
 	}
       }
