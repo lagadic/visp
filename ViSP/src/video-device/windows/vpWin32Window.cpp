@@ -81,6 +81,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       UpdateWindow(window->getHWnd());
       break;
 
+    case vpWM_DISPLAY_ROI:
+	{
+      //redraw the whole window
+	  RECT* rect = (RECT *)wParam;
+      InvalidateRect(window->getHWnd(), rect, true);
+      UpdateWindow(window->getHWnd());
+	}
+      break;
+
     case WM_LBUTTONDOWN:
      {
         window->clickX = GET_X_LPARAM(lParam);

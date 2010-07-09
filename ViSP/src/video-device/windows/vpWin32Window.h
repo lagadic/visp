@@ -58,6 +58,7 @@
 #define vpWM_GETCLICKUP WM_USER+3
 #define vpWM_CLOSEDISPLAY WM_USER+4
 #define vpWM_GETPOINTERMOTIONEVENT WM_USER+5
+#define vpWM_DISPLAY_ROI WM_USER+6
 
 //No specific mouse button query
 #define vpNO_BUTTON_QUERY -1

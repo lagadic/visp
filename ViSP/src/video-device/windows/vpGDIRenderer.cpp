@@ -591,7 +591,7 @@ bool vpGDIRenderer::updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, con
   SelectObject(hDCMem, bmp);
   SelectObject(hDCMem2, htmp);
 
-  BitBlt(hDCMem,iP.get_u(),iP.get_v(), w, h, hDCMem2, 0, 0,SRCCOPY);
+  BitBlt(hDCMem,(int)iP.get_u(),(int)iP.get_v(), w, h, hDCMem2, 0, 0,SRCCOPY);
   LeaveCriticalSection(&CriticalSection);
 
   DeleteDC(hDCMem);

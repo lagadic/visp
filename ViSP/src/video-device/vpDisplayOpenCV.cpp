@@ -333,7 +333,7 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
   col[vpColor::id_darkGray]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
 
   font = new CvFont;
-  cvInitFont( font, CV_FONT_HERSHEY_PLAIN, 1.0f,1.0f);
+  cvInitFont( font, CV_FONT_HERSHEY_PLAIN, 0.70f,0.70f);
 
   CvSize fontSize;
   int baseline;
@@ -479,7 +479,7 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
   if (OpenCVinitialized)
   { 
     vpImage<unsigned char> Itemp;
-    vpImageTools::createSubImage(I,iP.get_i(),iP.get_j(),height,width,Itemp);
+    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
     vpImage<vpRGBa> Ic;
     vpImageConvert::convert(Itemp,Ic);
     
@@ -587,7 +587,7 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
   if (OpenCVinitialized)
   { 
     vpImage<vpRGBa> Ic;
-    vpImageTools::createSubImage(I,iP.get_i(),iP.get_j(),height,width,Ic);
+    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Ic);
     
     CvSize size = cvSize(this->width,this->height);
     int depth = 8;

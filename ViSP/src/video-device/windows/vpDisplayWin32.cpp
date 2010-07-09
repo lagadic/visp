@@ -678,13 +678,18 @@ void vpDisplayWin32::flushDisplay()
   It's necessary to use this function to see the results of any drawing
 
 */
-void vpDisplayWin32::flushDisplayROI(const vpImagePoint /*iP*/, const unsigned int/* width*/, const unsigned int /*height*/)
+void vpDisplayWin32::flushDisplayROI(const vpImagePoint iP, const unsigned int width, const unsigned int height)
 {
   //waits if the window is not initialized
   waitForInit();
 
+  roi.left = (LONG)iP.get_u();
+  roi.top = (LONG)iP.get_v();
+  roi.right = (LONG)(iP.get_u()+width-1);
+  roi.bottom = (LONG)(iP.get_v()+height-1);
   //sends a message to the window
-  PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
+  WPARAM wp=(WPARAM)&roi;
+  PostMessage(window.getHWnd(), vpWM_DISPLAY_ROI, wp,0);
 }
 
 

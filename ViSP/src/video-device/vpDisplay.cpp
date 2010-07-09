@@ -218,7 +218,7 @@ vpDisplay::displayROI(const vpImage<unsigned char> &I, const vpRect &roi)
   {
     if ( I.display != NULL )
     {
-      ( I.display )->displayImageROI ( I , vpImagePoint(top,left), roiwidth,roiheight ) ;
+      ( I.display )->displayImageROI ( I , vpImagePoint(top,left), (unsigned int)roiwidth,(unsigned int)roiheight ) ;
     }
   }
   catch ( ... )
@@ -1981,7 +1981,7 @@ void vpDisplay::flushROI ( const vpImage<unsigned char> &I, const vpRect &roi )
   {
     if ( I.display != NULL )
     {
-      ( I.display )->flushDisplayROI(roi.getTopLeft(),roi.getWidth(),roi.getHeight()) ;
+      ( I.display )->flushDisplayROI(roi.getTopLeft(),(unsigned int)roi.getWidth(),(unsigned int)roi.getHeight()) ;
     }
   }
   catch ( ... )
@@ -2176,7 +2176,7 @@ vpDisplay::displayROI(const vpImage<vpRGBa> &I, const vpRect &roi)
   {
     if ( I.display != NULL )
     {
-      ( I.display )->displayImageROI ( I , vpImagePoint(top,left), roiwidth,roiheight ) ;
+      ( I.display )->displayImageROI ( I , vpImagePoint(top,left), (unsigned int)roiwidth,(unsigned int)roiheight ) ;
     }
   }
   catch ( ... )
@@ -2326,7 +2326,7 @@ void vpDisplay::flushROI ( const vpImage<vpRGBa> &I, const vpRect &roi )
   {
     if ( I.display != NULL )
     {
-      ( I.display )->flushDisplayROI(roi.getTopLeft(),roi.getWidth(),roi.getHeight()) ;
+      ( I.display )->flushDisplayROI(roi.getTopLeft(),(unsigned int)roi.getWidth(),(unsigned int)roi.getHeight()) ;
     }
   }
   catch ( ... )
