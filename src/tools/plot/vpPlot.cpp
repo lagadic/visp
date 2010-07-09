@@ -197,6 +197,24 @@ vpPlot::plot (const int graphNum, const int curveNum, const double x, const doub
 }
 
 /*!
+  This function enables you to add new points in all curves of a plot. These points are drawn with the parameters of the curves.
+
+  \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param x : The coordinate of the new points along the x axis and given in the user unit system.
+  \param v : The coordinates of the new points along the y axis and given in the user unit system.
+*/
+void vpPlot::plot(const int graphNum, const double x, const vpColVector v)
+{
+	if((graphList+graphNum)->curveNbr == v.getRows())
+	{
+		for(int i = 0;i < v.getRows();++i)
+			this->plot(graphNum, i, x, v[i]);
+	}
+	else
+		vpTRACE("error in plot vector : not the right dimension");
+}
+
+/*!
   This function enables you to add a new point in the curve. This point is drawn with the parameters of the curve.
 
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
