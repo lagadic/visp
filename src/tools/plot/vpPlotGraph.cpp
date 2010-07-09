@@ -301,7 +301,7 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
     if(gridy)
       vpDisplay::displayDotLine(I,vpImagePoint(dTopLeft.get_i(),x), vpImagePoint(dTopLeft.get_i()+dHeight,x), gridColor);
     else
-      vpDisplay::displayDotLine(I,vpImagePoint(yorg,x), vpImagePoint(yorg-3,x), vpColor::black);
+      vpDisplay::displayDotLine(I,vpImagePoint(yorg,x), vpImagePoint(yorg-3,x), vpColor::black);    
     
     if (t+xdelt <= xmax+1e-10)
     {
@@ -310,13 +310,21 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
         ttemp = t*pow(10.0,power); 
       else ttemp = t;
       sprintf(valeur, "%.2f", ttemp);
+#if defined VISP_HAVE_X11
       vpDisplay::displayCharString(I,vpImagePoint(yorg + 3*epsi,x),valeur, vpColor::black);
+#elif defined VISP_HAVE_OPENCV
+      vpDisplay::displayCharString(I,vpImagePoint(yorg + epsi,x),valeur, vpColor::black);
+#endif
     }
   }
   if (power != 0)
   {
     sprintf(valeur, "x10e%d", -power);
+#if defined VISP_HAVE_X11
     vpDisplay::displayCharString(I,vpImagePoint(yorg+4*epsi,dTopLeft.get_j()+dWidth-6*epsj),valeur, vpColor::black);
+#elif defined VISP_HAVE_OPENCV
+    vpDisplay::displayCharString(I,vpImagePoint(yorg+4*epsi,dTopLeft.get_j()+dWidth-10*epsj),valeur, vpColor::black);
+#endif
   }
   
   power = laFonctionSansNom(ydelt);
@@ -334,12 +342,20 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
     else ttemp = t;
       
     sprintf(valeur, "%.2f", ttemp);
+#if defined VISP_HAVE_X11    
     vpDisplay::displayCharString(I,vpImagePoint(y+epsi,topLeft.get_j()+epsj),valeur, vpColor::black);
+#elif defined VISP_HAVE_OPENCV
+    vpDisplay::displayCharString(I,vpImagePoint(y-epsi,topLeft.get_j()+epsj),valeur, vpColor::black);
+#endif
   }
   if (power != 0)
   {
     sprintf(valeur, "x10e%d", -power);
+#if defined VISP_HAVE_X11   
     vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()-6*epsj),valeur, vpColor::black);
+#elif defined VISP_HAVE_OPENCV
+    vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()-6*epsj),valeur, vpColor::black);
+#endif
   }
 
 //Ligne horizontal
@@ -360,15 +376,20 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
 void
 vpPlotGraph::displayUnit (vpImage<unsigned char> &I)
 { 
+#if defined VISP_HAVE_X11   
   vpDisplay::displayCharString(I,vpImagePoint(yorg-2*epsi,dTopLeft.get_j()+dWidth-10*epsj),unitx, vpColor::black);
   vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity, vpColor::black);
+#elif defined VISP_HAVE_OPENCV
+  vpDisplay::displayCharString(I,vpImagePoint(yorg-5*epsi,dTopLeft.get_j()+dWidth-10*epsj),unitx, vpColor::black);
+  vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity, vpColor::black);
+#endif
 }
 
 void
 vpPlotGraph::displayTitle (vpImage<unsigned char> &I)
 {
   int size = strlen(title);
-  size = ((double)size/2.0);
+  size = (int)((double)size/2.0);
   vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()+dWidth/2.0-4*size),title, vpColor::black);
 }
 
@@ -485,7 +506,7 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
   }
   
   (curveList+curveNb)->plotPoint(I, iP, x, y);
-#if !defined VISP_HAVE_X11
+#if (!defined VISP_HAVE_X11 && !defined VISP_HAVE_GDI)
   vpDisplay::flushROI(I,graphZone);
 #endif
 }
@@ -1083,7 +1104,7 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
     if (check3Dline((curveList+curveNb)->lastPoint,iP))
       vpDisplay::displayLine(I,(curveList+curveNb)->lastPoint, iP, (curveList+curveNb)->color);
   }
-#if defined VISP_HAVE_X11
+#if( defined VISP_HAVE_X11 || defined VISP_HAVE_GDI )
   double top;
   double left;
   double width;
@@ -1103,7 +1124,7 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
   (curveList+curveNb)->nbPoint++;
   
   //vpDisplay::flush(I);
-#if !defined VISP_HAVE_X11
+#if( !defined VISP_HAVE_X11  && !defined VISP_HAVE_GDI )
   vpDisplay::flushROI(I,graphZone);
 #endif
 }

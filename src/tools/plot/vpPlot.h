@@ -129,7 +129,6 @@ class vpPlot
     vpImage<unsigned char> I;
   
   private:
-    
     #if defined VISP_HAVE_X11
     vpDisplayX display;
     #elif defined VISP_HAVE_GDI
