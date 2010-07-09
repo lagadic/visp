@@ -178,7 +178,7 @@ main()
     plot.setColor(0, 1, vpColor::green); 
     plot.setColor(0, 2, vpColor::blue); 
     plot.setColor(0, 3, vpColor::orange); 
-    plot.setColor(0, 4, 0, 128, 0); 
+    plot.setColor(0, 4, vpColor(0, 128, 0)); 
     plot.setColor(0, 5, vpColor::cyan); 
     for (int i= 6; i < 10; i++)
       plot.setColor(0, i, vpColor::black); // for Q and tQ [min,max]
@@ -189,8 +189,8 @@ main()
     double beta = 1; 
 
     // Set the amplitude of the control law due to the secondary task
-    cout << " Give the parameters beta (1) : ";
-    cin >> beta ;
+    std::cout << " Give the parameters beta (1) : ";
+    std::cin >> beta ;
 
     vpDot2 dot ;
     
