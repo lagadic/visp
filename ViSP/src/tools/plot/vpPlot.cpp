@@ -60,6 +60,11 @@ vpPlot::vpPlot(const int graphNbr)
   
   vpDisplay::display(I);
   
+  #if defined VISP_HAVE_X11
+  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-15");
+  #endif
+  
+  
   margei = 30;
   margej = 40;
   
