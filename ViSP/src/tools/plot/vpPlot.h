@@ -159,6 +159,7 @@ class vpPlot
     void plot (const int graphNum, const int curveNum, const double x, const double y);
     void plot(const int graphNum, const double x, const vpColVector v);
     void plot (const int graphNum, const int curveNum, const double x, const double y, const double z);
+    void plot(const int graphNum, const double x, const vpColVector vy, const vpColVector vz);
     
     void navigate ();
     
