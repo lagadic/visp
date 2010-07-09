@@ -503,10 +503,10 @@ void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpIma
   if (GTKinitialized)
   {
     vpImage<unsigned char> Itemp;
-    vpImageTools::createSubImage(I,iP.get_i(),iP.get_j(),height,width,Itemp);
+    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_gray_image(background,
-                        gc,iP.get_u(), iP.get_v(), width, height,
+                        gc,(unsigned int)iP.get_u(), (unsigned int)iP.get_v(), width, height,
                         GDK_RGB_DITHER_NONE,
                         I.bitmap,
                         width);
@@ -592,10 +592,10 @@ void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint
   if (GTKinitialized)
   {
     vpImage<vpRGBa> Itemp;
-    vpImageTools::createSubImage(I,iP.get_i(),iP.get_j(),height,width,Itemp);
+    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_rgb_32_image(background,
-                          gc,iP.get_u(), iP.get_v(),  width, height,
+                          gc,(unsigned int)iP.get_u(), (unsigned int)iP.get_v(),  width, height,
                           GDK_RGB_DITHER_NONE,
                           (unsigned char *)Itemp.bitmap,
                           4* width);

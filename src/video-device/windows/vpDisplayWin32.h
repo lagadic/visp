@@ -106,6 +106,9 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   //! The window.
   vpWin32Window window;
 
+  //!
+  RECT roi;
+
   //! Function used to launch the window in a thread.
   friend void vpCreateWindow(threadParam * param);
 

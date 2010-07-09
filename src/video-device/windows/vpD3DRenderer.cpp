@@ -404,8 +404,8 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint iP, 
       D3DLOCKED_RECT d3dLRect;
 
       RECT r;
-      r.top=iP.get_v(); r.left=iP.get_u();
-      r.bottom=iP.get_v()+height-1; r.right=iP.get_u()+width;
+      r.top=(LONG)iP.get_v(); r.left=(LONG)iP.get_u();
+      r.bottom=(LONG)(iP.get_v()+height-1); r.right=(LONG)(iP.get_u()+width);
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -478,8 +478,8 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char>& im, const vpImagePoi
       D3DLOCKED_RECT d3dLRect;
 
       RECT r;
-      r.top=iP.get_v(); r.left=iP.get_u();
-      r.bottom=iP.get_v()+height-1; r.right=iP.get_u()+width;
+      r.top=(LONG)iP.get_v(); r.left=(LONG)iP.get_u();
+      r.bottom=(LONG)(iP.get_v()+height-1); r.right=(LONG)(iP.get_u()+width);
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
