@@ -88,6 +88,9 @@ vpImageSimulator::vpImageSimulator(vpColorPlan col)
 }
 
 
+/*!
+  Copy constructor
+*/
 vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
 {
   for(int i=0;i<4;i++)
@@ -887,8 +890,27 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &_cMt)
   normal_Cam = R * normal_obj;	
   
   visible_result = vpColVector::dotProd(normal_Cam,focal);
+  
+  for(int i = 0; i < 4; i++)
+    pt[i].track(cMt);
+  
+  vpColVector e1(3) ;
+  vpColVector e2(3) ;
+  vpColVector facenormal(3) ;
 
-  if (visible_result > 0)
+  e1[0] = pt[1].get_X() - pt[0].get_X() ;
+  e1[1] = pt[1].get_Y() - pt[0].get_Y() ;
+  e1[2] = pt[1].get_Z() - pt[0].get_Z() ;
+
+  e2[0] = pt[2].get_X() - pt[1].get_X() ;
+  e2[1] = pt[2].get_Y() - pt[1].get_Y() ;
+  e2[2] = pt[2].get_Z() - pt[1].get_Z() ;
+
+  facenormal = vpColVector::crossProd(e1,e2) ;
+
+  double angle = pt[0].get_X()*facenormal[0] +  pt[0].get_Y()*facenormal[1]  +  pt[0].get_Z()*facenormal[2]  ;
+
+  if (angle > 0)
     visible=true;
   else 
     visible=false;
@@ -907,7 +929,10 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &_cMt)
     distance = vpColVector::dotProd(normal_Cam,X2[1]);
     
     if(distance < 0)
+    {
       visible = false;
+      return;
+    }
 
     for(int i = 0; i < 3; i++)
     {
