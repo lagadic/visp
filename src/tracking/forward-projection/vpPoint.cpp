@@ -259,6 +259,17 @@ std::ostream& operator<<(std::ostream& os, vpPoint& /* vpp */)
   return( os<<"vpPoint" );
 }
 
+vpPoint&
+vpPoint::operator=(const vpPoint&  vpp )
+{
+  p = vpp.p;
+  cP = vpp.cP;
+  oP = vpp.oP;
+  cPAvailable = vpp.cPAvailable;
+
+  return *this;
+}
+
 void
 vpPoint::display(vpImage<unsigned char> &I,
 		 const vpCameraParameters &cam,

@@ -179,6 +179,7 @@ public:
   vpPoint *duplicate() const ;
 
   friend std::ostream& operator<<(std::ostream& os, vpPoint& vpp);
+  vpPoint& operator=(const vpPoint& vpp);
 } ;
 
 
