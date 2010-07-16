@@ -48,12 +48,11 @@
 const double vpThetaUVector::minimum = 0.0001;
 
 /*!
-  \brief  affectation of two Theta U vector
+  Affectation of two \f$\theta {\bf u}\f$ vector.
 */
 vpThetaUVector &
 vpThetaUVector::operator=(const vpThetaUVector &m)
 {
-
   for (int i=0; i<3; i++)
   {
       r[i] = m.r[i] ;
@@ -62,41 +61,57 @@ vpThetaUVector::operator=(const vpThetaUVector &m)
 }
 
 
-//! copy constructor
+/*!
+  Copy constructor.
+*/
 vpThetaUVector::vpThetaUVector(const vpThetaUVector &m) : vpRotationVector()
 {
   *this = m ;
 }
 
-//! initialize a Theta U vector from a rotation matrix
+/*!
+  Initialize a \f$\theta {\bf u}\f$ vector from an homogeneous matrix.
+*/
 vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix& M)
 {
-    buildFrom(M) ;
+  buildFrom(M) ;
 }
-//! initialize a Theta U vector from a rotation matrix
+/*!
+  Initialize a \f$\theta {\bf u}\f$ vector from a rotation matrix.
+*/
 vpThetaUVector::vpThetaUVector(const vpRotationMatrix& R)
 {
-
-    buildFrom(R) ;
+  buildFrom(R) ;
 }
 
-//! initialize a Theta U vector from a RzyxVector
+/*!  
+  Initialize a \f$\theta {\bf u}\f$ vector from an Euler z-y-x
+  representation vector.
+*/
 vpThetaUVector::vpThetaUVector(const vpRzyxVector& rzyx)
 {
   buildFrom(rzyx) ;
 } 
-//! initialize a Theta U vector from a RzyzVector
+/*!  
+  Initialize a \f$\theta {\bf u}\f$ vector from an Euler z-y-z
+  representation vector.
+*/
 vpThetaUVector::vpThetaUVector(const vpRzyzVector& rzyz)
 {
   buildFrom(rzyz) ;
 }
-//! initialize a Theta U vector from a RxyzVector
+/*!  
+  Initialize a \f$\theta {\bf u}\f$ vector from an Euler x-y-z
+  representation vector.
+*/
 vpThetaUVector::vpThetaUVector(const vpRxyzVector& rxyz)
 {
   buildFrom(rxyz) ;
 }
 
-//! convert an homogeneous matrix into Theta U vector
+/*!
+  Converts an homogeneous matrix into a \f$\theta {\bf u}\f$ vector.
+*/
 vpThetaUVector
 vpThetaUVector::buildFrom(const vpHomogeneousMatrix& M)
 {
@@ -108,7 +123,9 @@ vpThetaUVector::buildFrom(const vpHomogeneousMatrix& M)
   return *this ;
 }
 
-//! convert a rotation matrix into Theta U vector
+/*!
+  Converts a rotation matrix into a \f$\theta {\bf u}\f$ vector.
+*/
 vpThetaUVector
 vpThetaUVector::buildFrom(const vpRotationMatrix& R)
 {
@@ -138,7 +155,6 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
        r[2] = theta*(sqrt((R[2][2]-c)/(1-c)));
        if ((R[1][0]-R[0][1]) < 0) r[2] = -r[2];
     }
-
 
     if (vpDEBUG_LEVEL1)  // test new version wrt old version
     {
@@ -197,29 +213,38 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
 
     return *this ;
 }
-
+/*!  
+  Build a \f$\theta {\bf u}\f$ vector from an Euler z-y-x
+  representation vector.
+*/
 vpThetaUVector
-vpThetaUVector::buildFrom(const vpRzyxVector& e)
+vpThetaUVector::buildFrom(const vpRzyxVector& rzyx)
 {
-    vpRotationMatrix R(e) ;
+    vpRotationMatrix R(rzyx) ;
 
     buildFrom(R) ;
     return *this ;
 }
-
+/*!  
+  Build a \f$\theta {\bf u}\f$ vector from an Euler z-y-z
+  representation vector.
+*/
 vpThetaUVector
-vpThetaUVector::buildFrom(const vpRzyzVector& e)
+vpThetaUVector::buildFrom(const vpRzyzVector& rzyz)
 {
-    vpRotationMatrix R(e) ;
+    vpRotationMatrix R(rzyz) ;
 
     buildFrom(R) ;
     return *this ;
 }
-
+/*!  
+  Build a \f$\theta {\bf u}\f$ vector from an Euler x-y-z
+  representation vector.
+*/
 vpThetaUVector
-vpThetaUVector::buildFrom(const vpRxyzVector& e)
+vpThetaUVector::buildFrom(const vpRxyzVector& rxyz)
 {
-    vpRotationMatrix R(e) ;
+    vpRotationMatrix R(rxyz) ;
 
     buildFrom(R) ;
     return *this ;
@@ -227,13 +252,23 @@ vpThetaUVector::buildFrom(const vpRxyzVector& e)
 
 /*! 
 
-  Initialize each element of the Theta U vector to the same angle value x.
+  Initialize each element of the \f$\theta {\bf u}\f$ vector to the
+  same angle value \e v.
 
-  \param x : Angle value to set for each element of the Theta U vector.
+  \param v : Angle value to set for each element of the \f$\theta {\bf
+  u}\f$ vector.
 
   \code
-  vpThetaU tu;
-  tu = vpMath::rad(45); All the 3 angles are set to 45 degrees
+#include <visp/vpMath.h>
+#include <visp/vpThetaUVector.h>
+
+int main()
+{
+  vpThetaUVector tu;
+
+  // Initialise the theta U rotation vector
+  tu = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+}
   \endcode
 */
 vpThetaUVector &vpThetaUVector::operator=(double x)
@@ -247,11 +282,11 @@ vpThetaUVector &vpThetaUVector::operator=(double x)
 /*!
 
   Extract the rotation angle \f$ \theta \f$ and the unit vector
-  \f$ u \f$ from the \f$ \theta u \f$ representation.
+  \f$\bf u \f$ from the \f$ \theta {\bf u} \f$ representation.
 
   \param theta : Rotation angle \f$ \theta \f$.
 
-  \param u : Unit vector \f$ u = (u_{x},u_{y},u_{z})^{\top} \f$
+  \param u : Unit vector \f${\bf u} = (u_{x},u_{y},u_{z})^{\top} \f$
   representing the rotation axis.
 
 */
