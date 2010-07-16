@@ -90,11 +90,11 @@ int main ()
   A.initGraph(1,2);
 
   //The color of the curve in the first graphic is red
-  A.setColor(0,0,55000,0,0);
+  A.setColor(0,0,vpColor::red);
   //The first curve in the second graphic is green
-  A.setColor(1,0,0,55000,0);
+  A.setColor(1,0,vpColor::green);
   //The second curve in the second graphic is blue
-  A.setColor(1,1,0,0,55000);
+  A.setColor(1,1,vpColor::blue);
 
   //For the first graphic : along the x axis the expected values are between 0 and 200 and the step is 1
   //For the first graphic : along the y axis the expected values are between -2 and 0.5 and the step is 1
