@@ -43,8 +43,10 @@
 #include <visp/vpPose.h>
 #include <fstream>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 /*!
-  Constructor. This constructor create a new window where the curves will be drawn. The number of graphic in the window must be set.
+  Constructor. This constructor create a new window where the curves
+  will be drawn. The number of graphic in the window must be set.
 
   \param graphNbr : The number of graph in the window.
 
@@ -63,8 +65,7 @@ vpPlot::vpPlot(const int graphNbr)
   #if defined VISP_HAVE_X11
   vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-15");
   #endif
-  
-  
+    
   margei = 30;
   margej = 40;
   
@@ -468,3 +469,4 @@ void vpPlot::saveData(const int graphNum, const char* dataFile)
   fichier.close();
 }
 
+#endif
