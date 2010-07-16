@@ -48,6 +48,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 
 vpPlotGraph::vpPlotGraph()
 {
@@ -1290,4 +1291,5 @@ vpPlotGraph::navigation(vpImage<unsigned char> &I, bool &changed)
   return mov;
 }
 
+#endif
 #endif

@@ -54,6 +54,8 @@
 #include <visp/vpCameraParameters.h>
 #include <visp/vpPoint.h>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
+
 class vpPlotGraph
 {
   public:
@@ -185,7 +187,7 @@ class vpPlotGraph
     
 };
 
-
+#endif
 #endif
 #endif
 
