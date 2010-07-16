@@ -48,6 +48,8 @@
 #include <visp/vpPlot.h>
 #include <visp/vpMath.h>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
+
 int main ()
 {
   vpPlot plot(2);
@@ -109,6 +111,10 @@ int main ()
   plot.saveData(0, "dataSin.txt");
 }
 
-
-
-
+#else
+int main()
+{
+  std::cout << "Plot functionalities are not avalaible since no display is available." << std::endl;
+  return 0;
+}
+#endif
