@@ -90,6 +90,23 @@ vpTranslationVector::vpTranslationVector(const double tx,
 vpTranslationVector::vpTranslationVector (const vpTranslationVector &t) : vpColVector(t)
 {
 }
+
+/*!
+  Initialize a translation vector from 3 doubles.
+
+  \param tx,ty,tz : Translation respectively along x, y and z axis.
+
+*/
+void
+vpTranslationVector::set(const double tx,
+			 const double ty,
+			 const double tz)
+{
+    (*this)[0] = tx ;
+    (*this)[1] = ty ;
+    (*this)[2] = tz ;
+}
+
 /*!
   Operator that allows to add two translation vectors.
 

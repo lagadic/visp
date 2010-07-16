@@ -106,6 +106,7 @@ public:
     vpTranslationVector(const double tx, const double ty, const double tz) ;
     // copy constructor
     vpTranslationVector(const vpTranslationVector &t);
+    void set(const double tx, const double ty, const double tz) ;
 
     // operators
 
