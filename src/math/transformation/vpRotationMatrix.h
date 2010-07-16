@@ -88,6 +88,7 @@ public:
 
   //! Basic initialisation (identity)
   void setIdentity() ;
+  void eye();
   //! basic constructor
   vpRotationMatrix()   ;
   //! copy constructor
