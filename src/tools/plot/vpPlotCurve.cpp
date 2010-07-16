@@ -43,6 +43,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 vpPlotCurve::vpPlotCurve()
 {
   color = vpColor::red;
@@ -113,4 +114,5 @@ vpPlotCurve::plotList(vpImage<unsigned char> &I, const double xorg, const double
   }
 }
 
+#endif
 #endif
