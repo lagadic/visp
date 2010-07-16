@@ -51,6 +51,20 @@
 #include <vector>
 
 #ifdef VISP_HAVE_FFMPEG
+// Fix for the following compilation error: 
+// libavutil/common.h:154: error: UINT64_C was not declared in this scope
+// libavutil/common.h is no more autosufficient for C++ program because
+// stdint.h defines UINT64_C only for C program and not C++ program
+#ifdef __cplusplus
+#define __STDC_CONSTANT_MACROS
+#ifdef _STDINT_H
+#undef _STDINT_H
+#endif
+# include <stdint.h>
+#endif
+// end fix
+
+
 extern "C"
 {
 #include <avcodec.h>
