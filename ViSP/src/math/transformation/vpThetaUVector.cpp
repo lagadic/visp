@@ -271,10 +271,10 @@ int main()
 }
   \endcode
 */
-vpThetaUVector &vpThetaUVector::operator=(double x)
+vpThetaUVector &vpThetaUVector::operator=(double v)
 {
   for (int i=0; i< 3; i++)
-    r[i] = x;
+    r[i] = v;
 
   return *this;
 }
