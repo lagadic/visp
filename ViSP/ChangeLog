@@ -10,20 +10,12 @@ ViSP (Subversion trunk)
   - New Features
     - New vpForceTwistMatrix class that allows to transfer a force/torque skew
       from one frame to an other.
-    - new vpVelocityTwistMatrix class that allows to transfer a velocity skew
+    - New vpVelocityTwistMatrix class that allows to transfer a velocity skew
       from one frame to an other. The vpTwistMatrix class that does the same 
       work previously is from now deprecated.
-    - Copy constructors were added to better support stl lists and vectors.
-    - Add of a new wireframe simulator.
-    - In vpRobotViper850 add openGripper() and closeGripper() functions to 
-      control the Schunk two fingers electric gripper. 
-    - In vpHomogeneousMatrix addition of 
-      . eye() method to set the transformation as identity
-      . extract(vpThetaUVector &) to extract the rotation as a Theta U vector
-    - In vpThetaUVector addition of &operator=() method to initialise all the 
-      angles to the same value
+    - Introduction of a new wireframe simulator.
     - New vpRobotCycab class to communicate with the Cycab car-like mobile 
-      robot at Irisa.
+      robot at Inria.
     - New generic vpRobotSimulator class to create robot simulators.
     - New vpSimulatorViper850 class which simulates the viper850 robot.
     - New vpSimulatorAfma6 class which simulates the viper850 robot.
@@ -31,6 +23,11 @@ ViSP (Subversion trunk)
       the Ferns Classifier. 
     - New vpSickLDMRS class, a UNIX driver to get measures from a Sick LD-MRS 
       laser scanner.
+    - New vpPlot class that was recoded to suppress the XPlotter dependency. 
+      This class aims real time drawing of 2D or 3D graphics under Linux, OSX 
+      and Windows.
+    - Introduction of a model based tracker that allows to track 
+      an object based on its CAD model. See vpMbtTracker class.
   - Examples:
     - New example calibrateTsai.cpp to show how to use the vpCalibration 
       class to estimate the hand to eye transformation.
@@ -41,12 +38,27 @@ ViSP (Subversion trunk)
     - [9746] The displayPoint method of the vpDisplayOpenCV class doesn't work.
     - [10472] Bug in the visual features: can't select the good feature.
     - [10647] Delay in displaying image overlays
+    - [10687] The GDI display is not detected with Visual Studio 2010
+    - [10697] CMake standard output vars
+    - [10719] Compilation error in vpPlot
   - Improvements
+    - Copy constructors were added to better support stl lists and vectors.
     - Change the FindOpenCV.cmake in order to detect automatically 
       OpenCV 1.1, 2.0 and 2.1.
     - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
       add possibility to change during the execution the shutter, the gain, the
       brightness, ... (see documentation for more details)
+    - In vpThetaUVector addition of &operator=() method to initialise all the 
+      angles to the same value
+    - In vpHomogeneousMatrix addition of 
+      . eye() method to set the transformation as identity
+      . extract(vpThetaUVector &) to extract the rotation as a Theta U vector
+    - In vpRobotViper850 add openGripper() and closeGripper() functions to 
+      control the Schunk two fingers electric gripper (available only at 
+      Inria). 
+    - In vpRotationVector and vpTranslationVector introduction of set() 
+      method that allows initialization from 3 doubles
+    - Documentation improvements
 ----------------------------------------------	
 ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
