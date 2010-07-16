@@ -28,7 +28,22 @@
 # not clear to you.
 #
 # Description:
-# cmake PackageConfig file for VISP
+# CMake package config file for ViSP.
+#
+# This file will define the following CMake variables:
+# VISP_ROOT_DIR       : ViSP base directory location
+# VISP_INCLUDE_DIRS   : ViSP and third-party headers location
+# VISP_LIBRARY_DIRS   : ViSP and third-party libraries location
+# VISP_LIBRARY        : ViSP library name
+# VISP_LIBRARIES      : ViSP and third-party libraries name
+# VISP_DEFINITIONS    : Defines required to build ViSP
+#
+# VISP_SOURCE_DIR     : Location of ViSP source code 
+#
+# VISP_VERSION_STRING : Full ViSP version, eg 2.4.5
+# VISP_VERSION_MAJOR  : Major version part of VISP_VERSION, eg 2. 
+# VISP_VERSION_MINOR  : Minor version part of VISP_VERSION, eg 4. 
+# VISP_VERSION_PATCH  : Patch version part of VISP_VERSION, eg 5. 
 #
 # Typical usage in user project:
 #   FIND_PACKAGE(VISP)
@@ -41,41 +56,58 @@
 #
 #############################################################################
 
+SET(VISP_LIBRARY "@VISP_INTERN_LIBS@")
+
+# Set VISP_ROOT_DIR
+FIND_PATH(VISP_ROOT_DIR lib/VISPConfig.cmake
+  "${VISP_DIR}/.."
+)
+IF(NOT VISP_ROOT_DIR)
+  SET(VISP_ROOT_DIR "${VISP_DIR}/..")
+ENDIF()
+#MESSAGE("VISP_ROOT_DIR: ${VISP_ROOT_DIR}")
+
+# Set the version numbers
+SET(VISP_VERSION_STRING "@VISP_VERSION@")
+SET(VISP_VERSION_MAJOR  "@VISP_VERSION_MAJOR@")
+SET(VISP_VERSION_MINOR  "@VISP_VERSION_MINOR@")
+SET(VISP_VERSION_PATCH  "@VISP_VERSION_PATCH@")
+
 # Tells the user project where to find ViSP headers
-SET(VISP_INCLUDE_DIR "${VISP_DIR}/../include" CACHE FILEPATH "Location of ViSP includes")
-#MESSAGE("VISP_INCLUDE_DIR: ${VISP_INCLUDE_DIR}")
+SET(VISP_INCLUDE_DIRS "${VISP_ROOT_DIR}/include" CACHE FILEPATH "Location of ViSP includes")
+#MESSAGE("VISP_INCLUDE_DIRS: ${VISP_INCLUDE_DIRS}")
 
 # Get ViSP specific definitions
-SET(VISP_DEFS "@VISP_DEFS@")
-#MESSAGE("VISP_DEFS: ${VISP_DEFS}")
+SET(VISP_DEFINITIONS "@VISP_DEFS@")
+#MESSAGE("VISP_DEFINITIONS: ${VISP_DEFINITIONS}")
 
 # Tells the user project where to find ViSP third party headers used
-# to compile ViSP. These locations are concatenate to VISP_INCLUDE_DIR
+# to compile ViSP. These locations are concatenate to VISP_INCLUDE_DIRS
 SET(VISP_EXTERN_INCLUDE_DIR "@VISP_EXTERN_INCLUDE_DIR@")
 #MESSAGE("VISP_EXTERN_INCLUDE_DIR: ${VISP_EXTERN_INCLUDE_DIR}")
 FOREACH(val ${VISP_EXTERN_INCLUDE_DIR})
-  SET(VISP_INCLUDE_DIR ${VISP_INCLUDE_DIR} "${val}")
+  LIST(APPEND VISP_INCLUDE_DIRS "${val}")
 ENDFOREACH(val ${VISP_EXTERN_INCLUDE_DIR})
 
-#MESSAGE("VISP_INCLUDE_DIR: ${VISP_INCLUDE_DIR}")
+#MESSAGE("VISP_INCLUDE_DIRS: ${VISP_INCLUDE_DIRS}")
 
 # Tells the user project where to find ViSP library
-SET(VISP_LINK_DIRECTORIES "${VISP_DIR}" CACHE FILEPATH "Location of ViSP library")
+SET(VISP_LIBRARY_DIRS "${VISP_ROOT_DIR}/lib" CACHE FILEPATH "Location of ViSP library")
 
 # Tells the user project where to find third party libraries used to
 # compile ViSP
 SET(VISP_EXTERN_LINK_DIR "@VISP_EXTERN_LINK_DIR@")
 #MESSAGE("VISP_EXTERN_LINK_DIR: ${VISP_EXTERN_LINK_DIR}")
 FOREACH(val ${VISP_EXTERN_LINK_DIR})
-  SET(VISP_LINK_DIRECTORIES ${VISP_LINK_DIRECTORIES} "${val}")
+  LIST(APPEND VISP_LIBRARY_DIRS "${val}")
 ENDFOREACH(val ${VISP_EXTERN_LINK_DIR})
-#MESSAGE("VISP_LINK_DIRECTORIES: ${VISP_LINK_DIRECTORIES}")
+#MESSAGE("VISP_LIBRARY_DIRS: ${VISP_LIBRARY_DIRS}")
 
 # Tells the user project where to find ViSP build settings
-SET(VISP_BUILD_SETTINGS_FILE "${VISP_DIR}/VISPBuildSettings.cmake")
+SET(VISP_BUILD_SETTINGS_FILE "${VISP_ROOT_DIR}/lib/VISPBuildSettings.cmake")
 
 # Tell the user project where to find ViSP dependencies
-INCLUDE("${VISP_DIR}/VISPLibraryDepends.cmake")
+INCLUDE("${VISP_ROOT_DIR}/lib/VISPLibraryDepends.cmake")
 
 # export source dir for doxygen eventually
 SET(VISP_SOURCE_DIR "@VISP_SOURCE_DIR@")
@@ -85,14 +117,13 @@ SET(VISP_LIBRARIES "@VISP_INTERN_LIBS@")
 
 # Tells the user project libraries name used to build ViSP library
 SET(VISP_EXTERN_LIBS "@VISP_EXTERN_LIBS@")
-#MESSAGE("VISP_EXTERN_LIBS: ${VISP_EXTERN_LIBS}")
 FOREACH(val ${VISP_EXTERN_LIBS})
-  SET(VISP_LIBRARIES ${VISP_LIBRARIES} "${val}")
+  LIST(APPEND VISP_LIBRARIES "${val}")
 ENDFOREACH(val ${VISP_EXTERN_LIBS})
 #MESSAGE("VISP_LIBRARIES: ${VISP_LIBRARIES}")
 
 # where to find the USE file to be used by user project
-SET(VISP_USE_FILE "${VISP_DIR}/VISPUse.cmake")
+SET(VISP_USE_FILE "${VISP_ROOT_DIR}/lib/VISPUse.cmake")
 
 IF(BUILD_TEST_COVERAGE)
   # Add build options for test coverage. Currently coverage is only supported
@@ -141,5 +172,3 @@ SET(VISP_HAVE_LIBPLOTTER     "@VISP_HAVE_LIBPLOTTER@")
 SET(VISP_HAVE_LIBJPEG        "@VISP_HAVE_LIBJPEG@")
 SET(VISP_HAVE_LIBPNG         "@VISP_HAVE_LIBPNG@")
 SET(VISP_HAVE_LIBFFMPEG      "@VISP_HAVE_FFMPEG@")
-
-ADD_DEFINITIONS(${VISP_DEFS}) 
