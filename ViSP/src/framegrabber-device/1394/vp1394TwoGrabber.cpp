@@ -301,7 +301,6 @@ vp1394TwoGrabber::getCamera(unsigned int &camera_id)
 
   \param ncameras : The number of cameras found on the bus.
 
-
 */
 void
 vp1394TwoGrabber::getNumCameras(unsigned int &ncameras)
@@ -318,8 +317,7 @@ vp1394TwoGrabber::getNumCameras(unsigned int &ncameras)
 
   Return the number of cameras connected on the bus.
 
-  \param ncameras : The number of cameras found on the bus.
-
+  \return The number of cameras found on the bus.
 
 */
 unsigned int

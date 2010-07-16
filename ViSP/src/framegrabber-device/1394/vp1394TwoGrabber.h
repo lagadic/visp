@@ -92,7 +92,9 @@ int main()
 {
 #if defined(VISP_HAVE_DC1394_2)
   vpImage<unsigned char> I; // Create a gray level image container
-  vp1394TwoGrabber g;       // Create a grabber based on libdc1394-2.x third party lib
+  bool reset = true; // Enable bus reset during construction (default)
+  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
+
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
 
@@ -112,9 +114,12 @@ int main()
 int main()
 {
 #if defined(VISP_HAVE_DC1394_2)
+  bool reset = false; // Disable bus reset during construction
+  vp1394TwoGrabber g(reset);    // Creation of a grabber instance based on libdc1394-2.x third party lib.
   unsigned int ncameras; // Number of cameras on the bus
-  vp1394TwoGrabber g;    // Creation of a grabber instance based on libdc1394-2.x third party lib.
-  g.getNumCameras(ncameras);
+  ncameras = g.getNumCameras();
+
+  // Create an image container for each camera
   vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
   char filename[FILENAME_MAX];
 
