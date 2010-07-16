@@ -106,9 +106,9 @@ class vpThetaUVector;
   \right)
   \f]
  
-
-  The code below shows first how to contruct a rotation matrix from a
-  vpRzyzVector and than how to extract the vpRzyzVector Euler angles
+  The code below shows first how to initialize this representation of
+  Euler angles, than how to contruct a rotation matrix from a
+  vpRzyzVector and finaly how to extract the vpRzyzVector Euler angles
   from the build rotation matrix.
 
   \code
@@ -125,13 +125,25 @@ int main()
   rzyz[1] = vpMath::rad(-30.f); // theta angle in rad/s around y axis
   rzyz[2] = vpMath::rad( 90.f); // psi   angle in rad/s around z axis
 
+  // Do the same initialization
+  rzyz.set(vpMath::rad( 45.f), vpMath::rad(-30.f), vpMath::rad( 90.f));
+
   // Construct a rotation matrix from the Euler angles
   vpRotationMatrix R(rzyz);
 
   // Extract the Euler angles around z,y,z axis from a rotation matrix
   rzyz.buildFrom(R);
 
-  std::cout << rzyz; // Print the Euler angles
+  // Print the extracted Euler angles. Values are the same than the
+  // one used for initialization
+  std::cout << rzyz; 
+
+  // Since the rotation vector is 3 values column vector, the
+  // transpose operation produce a row vector.
+  vpRowVector rzyz_t = rzyz.t();
+  
+  // Print the transpose row vector
+  std::cout << rzyz_t << std::endl;
 }
   \endcode
 */
