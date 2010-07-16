@@ -64,13 +64,21 @@
   \class vpPlot
   \ingroup plot
 
-  \brief This class enables real time drawing of 2D or 3D graphics. An instance of the class open a window which contains between 1 and 4 graphics. Each one contains a desired number of curves.
+  \brief This class enables real time drawing of 2D or 3D graphics. An
+  instance of the class open a window which contains between 1 and 4
+  graphics. Each one contains a desired number of curves.
+
+  \warning This class is only available if display functionalities (X11, GDI or OpenCV)
+  are present. In visp/vpConfig.h header file, you should have one of the macros defines:
+  VISP_HAVE_X11, or VISP_HAVE_GDI, or VISP_HAVE_OPENCV. 
 
   The example below shows how to use the vpPlot class.
 
   \code
 #include <visp/vpConfig.h>
 #include <visp/vpPlot.h>
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 
 int main ()
 {
@@ -119,9 +127,11 @@ int main ()
 
   return 0;
 }
+#endif
   \endcode
 */
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 
 class vpPlot
 {
@@ -174,5 +184,6 @@ class vpPlot
     void init (int nbGraph);
     void displayGrid();
 };
+#endif
 
 #endif
