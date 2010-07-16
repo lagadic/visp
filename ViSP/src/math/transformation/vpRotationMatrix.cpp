@@ -63,7 +63,7 @@ const double vpRotationMatrix::minimum = 0.00001;
 
 
 /*!
-  \brief initializes a 3x3 matrix as identity
+  Initializes a 3x3 rotation matrix as identity
 */
 void
 vpRotationMatrix::init()
@@ -87,9 +87,23 @@ vpRotationMatrix::init()
 
 }
 
-//! Basic initialisation (identity)
+/*!
+  Initializes the rotation matrix as identity.
+  
+  \sa eye()
+*/
 void
 vpRotationMatrix::setIdentity()
+{
+  init() ;
+}
+/*!
+  Initialize the rotation matrix as identity.
+  
+  \sa setIdentity()
+*/
+void
+vpRotationMatrix::eye()
 {
   init() ;
 }
