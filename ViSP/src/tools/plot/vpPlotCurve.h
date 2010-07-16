@@ -51,6 +51,7 @@
 #include <visp/vpCameraParameters.h>
 #include <visp/vpPoint.h>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 
     //! Different styles to plot the curve.
 typedef enum 
@@ -88,5 +89,6 @@ class vpPlotCurve
     void plotList(vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx, const double zoomy);
 };
 
+#endif
 #endif
 #endif
