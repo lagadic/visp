@@ -178,6 +178,8 @@ class VISP_EXPORT vpMbtTracker
     \return an instance of the moving edge parameters used by the tracker.
   */
   inline void getMovingEdge(vpMe &_me ) { _me = this->me;}
+  
+  unsigned int getNbPoints();
 
  private:
   void computeVVS();
