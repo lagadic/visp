@@ -154,6 +154,7 @@ int main()
 
 #include <dc1394/control.h>
 #include <dc1394/utils.h>
+#include <dc1394/vendor/avt.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>
@@ -168,6 +169,19 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   static const char * strVideoMode[DC1394_VIDEO_MODE_NUM];
   static const char * strFramerate[DC1394_FRAMERATE_NUM];
   static const char * strColorCoding[DC1394_COLOR_CODING_NUM];
+
+  /*!
+    Enumeration of iso speed. See libdc1394 2.x header file
+    dc1394/control.h
+  */
+  typedef enum {
+    vpISO_SPEED_100 = DC1394_ISO_SPEED_100,
+    vpISO_SPEED_200 = DC1394_ISO_SPEED_200,
+    vpISO_SPEED_400 = DC1394_ISO_SPEED_400,
+    vpISO_SPEED_800 = DC1394_ISO_SPEED_800,
+    vpISO_SPEED_1600 = DC1394_ISO_SPEED_1600,
+    vpISO_SPEED_3200 = DC1394_ISO_SPEED_3200
+  } vp1394TwoIsoSpeedType;
 
   /*!
     Enumeration of video modes. See libdc1394 2.x header file
@@ -315,12 +329,15 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   int  getFramerateSupported(vp1394TwoVideoModeType videomode,
 			     vpList<vp1394TwoFramerateType> & fps);
   void getHeight(unsigned int &height);
+  unsigned int getHeight();
   void getNumCameras(unsigned int &ncameras);
   unsigned int getNumCameras();
+  unsigned int getParameterValue(vp1394TwoParametersType param);
   unsigned int getRingBufferSize();
   void getVideoMode(vp1394TwoVideoModeType & videomode);
   int  getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
   void getWidth(unsigned int &width);
+  unsigned int getWidth();
 
   bool isColor();
   bool isColorCodingSupported(vp1394TwoVideoModeType videomode,
@@ -330,15 +347,17 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   bool isVideoModeSupported(vp1394TwoVideoModeType videomode) ;
   bool isVideoModeFormat7(vp1394TwoVideoModeType videomode);
 
-
+  void setAutoShutter(unsigned int minvalue, unsigned int maxvalue);
   void setCamera(unsigned int camera);
   void setColorCoding(vp1394TwoColorCodingType coding);
   void setFormat7ROI(unsigned int left=0, unsigned int top=0,
 		     unsigned int width=0, unsigned int height=0);
   void setFramerate(vp1394TwoFramerateType fps);
+  void setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed);
+  void setPanControl(int panControlValue);
+  void setParameterValue(vp1394TwoParametersType param, unsigned int val);
   void setRingBufferSize(unsigned int size);
   void setVideoMode(vp1394TwoVideoModeType videomode);
-  void setPanControl(int panControlValue);
 
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);
@@ -357,8 +376,6 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void acquire(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id);
   void acquire(vpImage<vpRGBa> &I);
   void acquire(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id);
-  unsigned int getParameterValue(vp1394TwoParametersType param);
-  void setParameterValue(vp1394TwoParametersType param, unsigned int val);
   void close();
   void resetBus();
 
@@ -375,7 +392,6 @@ public:
   void initialize(bool reset); 
   void setCapture(dc1394switch_t _switch);
   void setTransmission(dc1394switch_t _switch);
-  void setIsoSpeed(dc1394speed_t speed);
   inline void updateDataCamToStruct();
   inline void updateDataStructToCam();
 

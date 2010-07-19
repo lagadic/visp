@@ -41,6 +41,7 @@ ViSP (Subversion trunk)
     - [10687] The GDI display is not detected with Visual Studio 2010
     - [10697] CMake standard output vars
     - [10719] Compilation error in vpPlot
+    - [10723] Compilation error in vpFFMPEG.cpp
   - Improvements
     - Copy constructors were added to better support stl lists and vectors.
     - Change the FindOpenCV.cmake in order to detect automatically 
@@ -48,6 +49,7 @@ ViSP (Subversion trunk)
     - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
       add possibility to change during the execution the shutter, the gain, the
       brightness, ... (see documentation for more details)
+      . new setIsoTransmissionSpeed(), setAutoShutter() methods
     - In vpThetaUVector addition of &operator=() method to initialise all the 
       angles to the same value
     - In vpHomogeneousMatrix addition of 
