@@ -1587,4 +1587,31 @@ vpMbtTracker::reInitModel(vpImage<unsigned char>& I, const char* cad_name, vpHom
   init(I, _cMo);
 }
 
+/*!
+  return the number of good points tracked
+  
+  \return the number of good points (used during the virtual visual servoing stage)
+*/
+unsigned int 
+vpMbtTracker::getNbPoints()
+{
+  unsigned int nbGoodPoints = 0;
+  vpMbtDistanceLine *l ;
+  Lline.front() ;
+  while (!Lline.outside())
+  {
+    l = Lline.value() ;
+    if (l->isVisible() && l->meline != NULL)
+    {
+      l->meline->list.front();
+      while (!l->meline->list.outside())
+      {
+	      if (l->meline->list.value().suppress == 0) nbGoodPoints++;
+	      l->meline->list.next();
+      }
+    }
+    Lline.next();
+  }
+  return nbGoodPoints;
+}
 
