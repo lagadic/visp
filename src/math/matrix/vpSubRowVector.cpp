@@ -40,6 +40,7 @@
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpDebug.h>
+#include <stdlib.h>
 
     vpSubRowVector::vpSubRowVector(){
        data=NULL;
@@ -86,10 +87,10 @@ void vpSubRowVector::init(vpRowVector &v, const int & offset,const int & ncols){
 	parent=&v;
 	
 	if(rowPtrs)
-	  delete [] rowPtrs;
+	  free(rowPtrs);
 	
-	rowPtrs=new double*[1];
-	for(int i=0;i<ncols;i++)
+	rowPtrs=(double**) malloc(1 * sizeof(double*));
+	for(int i=0;i<1;i++)
 	  rowPtrs[i]=v.data+i+offset;
 	
 	dsize = colNum ;
