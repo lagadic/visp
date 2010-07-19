@@ -140,6 +140,15 @@ public:
   //! Destruction of the matrix  (Memory de-allocation)
   void kill() ;
 
+  //! Initialize an identity matrix n-by-n
+  void eye(int n) ;
+  //! Initialize an identity matrix m-by-n
+  void eye(int m, int n) ;
+
+  //! Set the matrix to identity
+  void setIdentity(const double & val=1.0) ;
+
+
 
   //---------------------------------
   // Set/get Matrix size
@@ -296,7 +305,7 @@ public:
   //@}
 
   //-------------------------------------------------
-  // transpose, identity
+  // transpose
   //-------------------------------------------------
   /** @name Transpose, Identity  */
   //@{
@@ -307,14 +316,6 @@ public:
   vpMatrix transpose()const;
   void  transpose(vpMatrix & C )const;
     
-  //! Set the matrix to identity
-  void setIdentity(const double & val=1.0) ;
-
-  //! Initialize an identity matrix n-by-n
-  void eye(int n) ;
-  //! Initialize an identity matrix m-by-n
-  void eye(int m, int n) ;
-
   //! Compute the AAt operation B = A*A^T
   vpMatrix AAt() const;
   void AAt(vpMatrix &B) const;

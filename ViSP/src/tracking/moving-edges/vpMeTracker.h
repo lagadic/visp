@@ -42,9 +42,12 @@
 
 // ===================================================================
 /*!
- *\class vpMeTracker
- *\brief 2D state = list of points, 3D state = feature
- *\n Contains abstract elements for a Distance to Feature type feature.
+  \class vpMeTracker
+  \ingroup TrackingImageME
+  \brief Contains abstract elements for a Distance to Feature type feature.
+
+  2D state = list of points, 3D state = feature
+  
  */
 // ===================================================================
 

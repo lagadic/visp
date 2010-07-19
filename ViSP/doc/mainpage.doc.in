@@ -227,7 +227,11 @@ scheme, ...</p>
 */
 /*!
   \ingroup TrackingImage
-  \defgroup TrackingImageME Moving edges
+  \defgroup TrackingImageME Moving edges tracker
+*/
+/*!
+  \ingroup TrackingImage
+  \defgroup ModelBasedTracking Model based tracker
 */
 /*
  ******************************************
@@ -239,7 +243,11 @@ scheme, ...</p>
 */
 /*!
   \ingroup  ComputerVision
-  \defgroup Pose Pose estimation
+  \defgroup Calibration Calibration
+*/
+/*!
+  \ingroup  ComputerVision
+  \defgroup CameraModel Camera models
 */
 /*!
   \ingroup  ComputerVision
@@ -247,11 +255,11 @@ scheme, ...</p>
 */
 /*!
   \ingroup  ComputerVision
-  \defgroup Calibration Calibration
+  \defgroup PlanarSurfaceDetector Planar surface detector
 */
 /*!
   \ingroup  ComputerVision
-  \defgroup CameraModel Camera models
+  \defgroup Pose Pose estimation
 */
 /*
  ******************************************
@@ -304,11 +312,11 @@ scheme, ...</p>
 */
 /*!
   \ingroup RobotSimu
-  \defgroup BasicRobotSimu Basic simulation
+  \defgroup VisuRobotSimu Simulation with 3D visualization
 */
 /*!
   \ingroup RobotSimu
-  \defgroup VisuRobotSimu Simulation with 3D visualization
+  \defgroup RealRobotSimu Simulation of industrial robots
 */
 
 /*!
@@ -350,6 +358,10 @@ scheme, ...</p>
 /*!
   \ingroup Tool 
   \defgroup ArgumentParser Command line parsing
+*/
+/*!
+  \ingroup Tool 
+  \defgroup plot Drawing of 2D or 3D graphics
 */
 /*!
   \ingroup Tool 

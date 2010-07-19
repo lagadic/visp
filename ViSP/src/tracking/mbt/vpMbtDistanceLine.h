@@ -56,6 +56,12 @@
 #include <visp/vpFeatureLine.h>
 #include <visp/vpMbtHiddenFace.h>
 
+/*!
+  \class vpMbtDistanceLine
+
+  \ingroup ModelBasedTracking
+
+ */
 class VISP_EXPORT vpMbtDistanceLine
 {
   private :

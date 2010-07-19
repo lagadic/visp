@@ -52,6 +52,12 @@
 #include <visp/vpPoint.h>
 #include <visp/vpList.h>
 
+/*!
+  \class vpMbtPolygon
+
+  \ingroup ModelBasedTracking
+
+ */
 class VISP_EXPORT vpMbtPolygon
 {
   public:
@@ -80,6 +86,12 @@ class VISP_EXPORT vpMbtPolygon
     bool isAppearing() {return isappearing;}
 };
 
+/*!
+  \class vpMbtHiddenFaces
+
+  \ingroup ModelBasedTracking
+
+ */
 class VISP_EXPORT vpMbtHiddenFaces
 {
   private:
