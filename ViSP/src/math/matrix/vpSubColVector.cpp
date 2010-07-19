@@ -86,10 +86,11 @@ void vpSubColVector::init(vpColVector &v, const int & offset,const int & nrows){
     pRowNum=v.getRows();
     parent=&v;
     
-    if(rowPtrs)
-      delete [] rowPtrs;
+    if(rowPtrs){
+      free(rowPtrs);
+    }
     
-    rowPtrs=new double*[nrows];
+  rowPtrs=(double**)malloc( parent->getRows() * sizeof(double*));
     for(int i=0;i<nrows;i++)
       rowPtrs[i]=v.data+i+offset;
     
@@ -104,6 +105,7 @@ void vpSubColVector::init(vpColVector &v, const int & offset,const int & nrows){
 vpSubColVector::~vpSubColVector(){
   data=NULL ;
 }
+
 
 /*!
   \brief This method can be used to detect if the parent colVector
@@ -154,7 +156,6 @@ vpSubColVector & vpSubColVector::operator=(const vpColVector &B){
   for (int i=0;i<rowNum;i++)
     data[i] = B[i];
   
-  std::cout << *this << std::endl;
   return *this;
 }
 

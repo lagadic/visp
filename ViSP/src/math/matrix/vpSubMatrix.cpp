@@ -39,7 +39,7 @@
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpDebug.h>
-
+#include <stdlib.h>
 
 vpSubMatrix::vpSubMatrix(){
   data=NULL;
@@ -90,9 +90,9 @@ void vpSubMatrix::init(vpMatrix &m, const int & row, const int &col , const int 
     pColNum=m.getCols(); 
     
     if(rowPtrs)
-      delete [] rowPtrs;
+      free(rowPtrs);
     
-    rowPtrs=new double*[nrows];
+    rowPtrs=(double**) malloc(nrows * sizeof(double*));
     for(int r=0;r<nrows;r++)
       rowPtrs[r]= m.data+col+(r+row)*pColNum;
     

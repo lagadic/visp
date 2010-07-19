@@ -60,7 +60,7 @@
   \sa vpMatrix vpColvector vpRowVector
 */
 
-class vpSubRowVector : public vpRowVector {
+class VISP_EXPORT vpSubRowVector : public vpRowVector {
 
   private :
       

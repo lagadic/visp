@@ -59,7 +59,7 @@
 
   \sa vpMatrix vpColvector vpRowVector
 */
-class vpSubMatrix : public vpMatrix{
+class VISP_EXPORT vpSubMatrix : public vpMatrix{
 
   private :
       //! Resize method unavailable

@@ -58,7 +58,7 @@
 
   \sa vpMatrix vpColvector vpRowVector
 */
-class vpSubColVector : public vpColVector {
+class VISP_EXPORT vpSubColVector : public vpColVector {
 
   private :
       
@@ -97,8 +97,7 @@ class vpSubColVector : public vpColVector {
     vpSubColVector & operator=(const vpMatrix &B); 
     //! Operation such as subA = x
     vpSubColVector & operator=(const double &x);
-     
-   
+        
 };
 
 #endif
