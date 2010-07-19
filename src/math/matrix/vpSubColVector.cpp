@@ -40,18 +40,18 @@
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpDebug.h>
+#include <stdlib.h>
 
-
-    vpSubColVector::vpSubColVector(){
-       data=NULL;
-       parent=NULL;
-       rowPtrs=NULL;
-       rowNum=0;
-       colNum=0;
-       pRowNum=0;
-       dsize=0;
-       trsize=0;
-    }
+vpSubColVector::vpSubColVector(){
+   data=NULL;
+   parent=NULL;
+   rowPtrs=NULL;
+   rowNum=0;
+   colNum=0;
+   pRowNum=0;
+   dsize=0;
+   trsize=0;
+}
 
 /*!
   \brief Constructor
