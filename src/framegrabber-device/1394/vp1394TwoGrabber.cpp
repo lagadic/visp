@@ -136,13 +136,27 @@ const char * vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM]= {
   camera found. Bus reset may help to make firewire working if the
   program was not properly stopped by a CTRL-C.
 
+  Below you will find an example that shows how to grab images in
+  Format7 with a transmission speed set to 800Mbps in 1394b mode.
+
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
   while(1)
     g.acquire(I);
+#endif
+}
   \endcode
 
   \sa setCamera(), setVideoMode(), setFramerate()
@@ -213,29 +227,53 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
 
   Here an example of single capture from the last camera found on the bus:
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
   unsigned int ncameras; // Number of cameras on the bus
   vpImage<unsigned char> I;
+
   vp1394TwoGrabber g;
-  g.getNumCameras(ncameras);
-  g.setCamera(ncameras-1); // To dial with the last camera on the bus
+  ncameras = g.getNumCameras();
+
+  int last = 0;
+  if (ncameras > 1) 
+    last = ncameras-1;
+
+  g.setCamera(last); // To dial with the last camera on the bus
   while(1)
     g.acquire(I);// I contains the frame captured by the last camera on the bus
+#endif
+}
   \endcode
 
   Here an example of multi camera capture:
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
   unsigned int ncameras; // Number of cameras on the bus
   vp1394TwoGrabber g;
-  g.getNumCameras(ncameras);
+  ncameras = g.getNumCameras();
   vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
 
   // If the first camera supports vpVIDEO_MODE_640x480_YUV422 video mode
   g.setCamera(0);
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_YUV422);
 
-  // If the second camera support 30 fps acquisition
-  g.setCamera(1);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+  if (ncameras >= 2) {
+    // If the second camera support 30 fps acquisition
+    g.setCamera(1);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+  }
 
   while(1) {
     for (unsigned int camera=0; camera < ncameras; camera ++) {
@@ -244,6 +282,8 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
     }
   }
   delete [] I;
+#endif
+}
   \endcode
 
 
@@ -351,6 +391,29 @@ vp1394TwoGrabber::getNumCameras()
 
   \exception vpFrameGrabberException::settingError : If we can't set
   the video mode.
+
+  Below you will find an example that shows how to grab images in
+  Format7 with a transmission speed set to 800Mbps in 1394b mode.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g(false); // Don't reset the bus
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+  while(1)
+    g.acquire(I);
+#endif
+}
+  \endcode
 
   \sa getVideoMode(), getVideoModeSupported(), setCamera()
 
@@ -882,6 +945,29 @@ vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode,
 
   \exception vpFrameGrabberException::settingError : If we can't set
   the color coding for Format 7 video mode.
+
+  Below you will find an example that shows how to grab images in
+  Format7 with a transmission speed set to 800Mbps in 1394b mode.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g(false); // Don't reset the bus
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+  while(1)
+    g.acquire(I);
+#endif
+}
+  \endcode
 
   \sa getColorCoding(), getColorCodingSupported() , setCamera()
 
@@ -1453,7 +1539,7 @@ vp1394TwoGrabber::open()
       //#endif
     }
     setCamera(camera_id);
-    setIsoSpeed(DC1394_ISO_SPEED_400);
+    //setIsoSpeed(DC1394_ISO_SPEED_400);
     setCapture(DC1394_ON);
     setTransmission(DC1394_ON);
     camIsOpen[camera_id] = true;
@@ -1599,6 +1685,82 @@ vp1394TwoGrabber::getRingBufferSize()
 }
 
 /*!
+  Set auto shutter. If available set min and max exposure time.
+  
+  \warning Setting min and max exposure time feature is only available
+  for AVT cameras.
+
+  \param minvalue : Min shutter exposure time.
+  \param maxvalue : Max shutter exposure time.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  Below you will find an example that shows how to grab images in
+  Format7 with a transmission speed set to 800Mbps in 1394b mode.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g(false); // Don't reset the bus
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+  while(1)
+    g.acquire(I);
+#endif
+}
+  \endcode
+
+  \exception vpFrameGrabberException::settingError : If we can't set
+  the auto shutter.
+*/
+void
+vp1394TwoGrabber::setAutoShutter(unsigned int minvalue, unsigned int maxvalue)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+  
+  if (dc1394_feature_set_power(camera, DC1394_FEATURE_SHUTTER, DC1394_ON) 
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot set shutter on. \n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Cannot set shutter on") );
+  }
+   
+   
+  if (dc1394_feature_set_mode(camera,
+			      DC1394_FEATURE_SHUTTER,
+			      DC1394_FEATURE_MODE_AUTO)
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot set auto shutter. \n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Cannot set auto shutter") );
+  }
+
+  if (dc1394_avt_set_auto_shutter(camera, minvalue, maxvalue) 
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot set auto shutter min and max values. Is the camera an AVT one?\n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Cannot set auto shutter min and max values") );
+  }
+}
+
+/*!
 
   Setup camera capture using dma. A ring buffer is used for the
   capture. It's size can be set using setRingBufferSize().
@@ -1713,14 +1875,110 @@ vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
 }
 
 /*!
+  Set the camera iso data transmission speed.
   Speeds over 400Mbps are only available in "B" mode.
 
-  \param speed : Iso data transmission speed.
+  \param isospeed : Iso data transmission speed.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If we can't set
+  the iso speed transmission.
+
+  Below you will find an example that shows how to grab images in
+  Format7 with a transmission speed set to 800Mbps in 1394b mode.
+ \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g(false); // Don't reset the bus
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+  while(1)
+    g.acquire(I);
+#endif
+}
+  \endcode
 */
 void
-vp1394TwoGrabber::setIsoSpeed(dc1394speed_t speed)
+vp1394TwoGrabber::setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed)
 {
-  dc1394_video_set_iso_speed(camera, speed);
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  dc1394operation_mode_t  op_mode;
+  dc1394speed_t speed;
+
+  // Check the speed to configure in B-mode or A-mode
+  if (isospeed >= vpISO_SPEED_800) {
+    if (camera->bmode_capable != DC1394_TRUE) {
+//       vpERROR_TRACE("Camera is not 1394B mode capable. \n"
+// 		    "Set the iso speed lower or equal to 400Mbps");
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Camera is not 1394B mode capable") );
+    }
+
+    if(dc1394_video_set_operation_mode(camera,
+				       DC1394_OPERATION_MODE_1394B)
+       != DC1394_SUCCESS) {
+//       vpERROR_TRACE("Cannot set camera to 1394B mode. \n");
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Cannot set camera to 1394B mode") );
+    }
+
+    if (dc1394_video_get_operation_mode(camera, &op_mode) != DC1394_SUCCESS) {
+//       vpERROR_TRACE("Failed to set 1394B mode. \n");
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Failed to set 1394B mode") );
+    }
+  }
+  else {
+    if (dc1394_video_set_operation_mode(camera,
+					DC1394_OPERATION_MODE_LEGACY) 
+	!= DC1394_SUCCESS) {
+//       vpERROR_TRACE("Cannot set camera to 1394A mode. \n");
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Cannot set camera to 1394A mode") );
+    }
+       
+    if (dc1394_video_get_operation_mode(camera, &op_mode) != DC1394_SUCCESS) {
+//       vpERROR_TRACE("Failed to set 1394A mode. \n");
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Failed to set 1394A mode") );
+    } 
+  }
+
+  if (dc1394_video_set_iso_speed(camera, (dc1394speed_t) isospeed) 
+	!= DC1394_SUCCESS) {
+//       vpERROR_TRACE("Cannot set requested iso speed. \n");
+      close();
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "Cannot set requested iso speed") );
+  }
+
+  if (dc1394_video_get_iso_speed(camera, &speed) != DC1394_SUCCESS) {
+//       vpERROR_TRACE("Failed to set iso speed. \n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "Failed to set iso speed") );
+  }  
 }
 
 /*!
@@ -1768,7 +2026,18 @@ vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
+  Below you will find an example that shows how to grab images. The
+  dequeue() ensure to get the last image, while the enqueue() frees
+  the ring buffer to be sure that the next image is the last one.
+
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
@@ -1776,9 +2045,11 @@ vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
   while(1) {
     frame = g.dequeue();
     // Current image is now in frame structure
+    // Do your stuff
     g.enqueue(frame);
   }
-
+#endif
+}
   \endcode
 
   \sa enqueue()
@@ -1816,17 +2087,31 @@ vp1394TwoGrabber::dequeue()
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
+  Below you will find an example that shows how to grab images. The
+  dequeue() ensure to get the last image, while the enqueue() frees
+  the ring buffer to be sure that the next image is the last one.
+
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
   while(1) {
-    frame = g.dequeue();
-    // Current image is now in frame structure
+    frame = g.dequeue(I);
+    // Current image is now in frame structure and in I
+    // Do your stuff
     g.enqueue(frame);
   }
-
+#endif
+}
   \endcode
 
   \sa enqueue()
@@ -1861,18 +2146,34 @@ vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I)
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
+  Below you will find an example that shows how to grab images. The
+  dequeue() ensure to get the last image, while the enqueue() frees
+  the ring buffer to be sure that the next image is the last one.
+
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
+  uint64_t timestamp_us; // timestamp in us
+  uint32_t id;
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
   while(1) {
-    frame = g.dequeue();
-    // Current image is now in frame structure
+    frame = g.dequeue(I, timestamp_us, id); // get the last image
+    // Current image is now in frame structure and in I
+    // Do your stuff
     g.enqueue(frame);
   }
-
-  \endcode
+#endif
+}
+ \endcode
 
   \sa enqueue()
 */
@@ -1956,17 +2257,30 @@ vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I,
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
+  Below you will find an example that shows how to grab color images. The
+  dequeue() ensure to get the last image, while the enqueue() frees
+  the ring buffer to be sure that the next image is the last one.
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<vpRGBa> I;
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
   while(1) {
-    frame = g.dequeue();
-    // Current image is now in frame structure
+    frame = g.dequeue(I);
+    // Current image is now in frame structure and in I
+    // Do your stuff
     g.enqueue(frame);
   }
-
+#endif
+}
   \endcode
 
   \sa enqueue()
@@ -2001,17 +2315,33 @@ vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I)
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
+  Below you will find an example that shows how to grab color images. The
+  dequeue() ensure to get the last image, while the enqueue() frees
+  the ring buffer to be sure that the next image is the last one.
+
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<vpRGBa> I;
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
+  uint64_t timestamp_us; // timestamp in us
+  uint32_t id;
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
   while(1) {
-    frame = g.dequeue();
-    // Current image is now in frame structure
+    frame = g.dequeue(I, timestamp_us, id); // get the last image
+    // Current image is now in frame structure and in I
+    // Do your stuff
     g.enqueue(frame);
   }
-
+#endif
+}
   \endcode
 
   \sa enqueue()
@@ -2294,7 +2624,34 @@ void vp1394TwoGrabber::getWidth(unsigned int &width)
   }
 
   width = this->width;
+}
 
+/*!
+
+  Get the image width. It depends on the camera video mode setVideoMode(). The
+  image size is only available after a call to open() or acquire().
+
+  \return width : The image width, zero if the required camera is not available.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \warning Has to be called after open() or acquire() to be sure that camera
+  settings are send to the camera.
+
+  \sa getHeight(), open(), acquire()
+
+*/
+unsigned int vp1394TwoGrabber::getWidth()
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  return this->width;
 }
 
 /*!
@@ -2303,7 +2660,7 @@ void vp1394TwoGrabber::getWidth(unsigned int &width)
   setVideoMode(). The image size is only available after a call to
   open() or acquire().
 
-  \param height : The image width.
+  \param height : The image height.
 
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
@@ -2324,6 +2681,34 @@ void vp1394TwoGrabber::getHeight(unsigned int &height)
   }
 
   height = this->height;
+}
+/*!
+
+  Get the image height. It depends on the camera vide mode
+  setVideoMode(). The image size is only available after a call to
+  open() or acquire().
+
+  \return The image height.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \warning Has to be called after open() or acquire() to be sure that camera
+  settings are send to the camera.
+
+  \sa getWidth()
+
+*/
+unsigned int vp1394TwoGrabber::getHeight()
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  return this->height;
 }
 
 /*!
@@ -2566,13 +2951,24 @@ vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
   free leftover ISO channels or bandwidth.  A bus reset will free those things
   as a side effect.
 
-  The example below shows how to reset the bus attached to the last camera found.
+  The example below shows how to reset the bus attached to the last
+  camera found.
+
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
   unsigned int ncameras; // Number of cameras on the bus
   vp1394TwoGrabber g;
-  g.getNumCameras(ncameras);
+  ncameras = g.getNumCameras();
   g.setCamera(ncameras-1); // To dial with the last camera on the bus
   g.resetBus(); // Reset the bus attached to "ncameras-1"
+#endif
+}
   \endcode
 
   \exception vpFrameGrabberException::initializationError : If no
@@ -2690,10 +3086,15 @@ void vp1394TwoGrabber::setPanControl(int panControlValue)
   
   \param param : The parameter expressing the value to return 
   
-  \exception vpFrameGrabberException::settingError : if the parameter cannot be 
-    retrieved.
-  
   \return the parameter's value
+  
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : if the parameter cannot be 
+  retrieved.
+  
+  \sa setParameterValue()
 */  
 unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
 {
@@ -2723,16 +3124,23 @@ unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
   This method set the value of one of the parameters of the camera. The initial 
   value of the parameter is recorded and reset when the destructor is called.
   
-  \warning if the program crashes and the destructor is not called, then the 
-    modified parameters will remain in the camera.
+  \warning If the program crashes and the destructor is not called, then the 
+  modified parameters will remain in the camera.
     
-  \exception vpFrameGrabberException::settingError if a manual mode is not 
-    available for the parameter, an exception is thrown.
-      
   \param param : The parameters to modify
   \param val : the new value of this parameter
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError if a manual mode is not 
+  available for the parameter, an exception is thrown.
+      
+  \sa getParameterValue()
+
 */ 
-void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param, unsigned int val)
+void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param, 
+					 unsigned int val)
 {
   if (! num_cameras) {
     close();
