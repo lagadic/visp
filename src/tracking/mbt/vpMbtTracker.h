@@ -73,6 +73,7 @@
 
 /*!
   \class vpMbtTracker
+  \ingroup ModelBasedTracking
   \brief Make the complete tracking of an object by using its CAD model.
 */
 

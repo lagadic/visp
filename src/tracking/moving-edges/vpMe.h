@@ -43,13 +43,16 @@
 
 // ====================================================================
 /*!
- * \class vpMe
- * \brief Contains predetermined masks for sites, holds ecm
- * \n			tracking parameters
- * \author Adapted from vpMe ViSP,
- * \n Andrew Comport added functionality - replaced points_to_track with
- * \n sample step.
- * \date 4/7/03
+  \class vpMe
+  \ingroup TrackingImageME
+  
+  \brief Contains predetermined masks for sites, holds moving edges
+  tracking parameters.
+  
+  Andrew Comport added functionality - replaced points_to_track with
+  sample step.
+ 
+  \date 4/7/03
 */
 // ====================================================================
 

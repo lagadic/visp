@@ -50,7 +50,8 @@
 /*!
   \class vpSimulatorAfma6
 
-  \ingroup Afma6
+  \ingroup Afma6 RealRobotSimu
+
 
   \brief Simulator of Irisa's gentry robot named Afma6.
 

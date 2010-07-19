@@ -57,7 +57,12 @@
 
 
 
+/*!
+  \class vpMbtXmlParser
 
+  \ingroup ModelBasedTracking
+
+ */
 class VISP_EXPORT vpMbtXmlParser
 {
 private:

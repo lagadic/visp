@@ -60,15 +60,15 @@
 
 /*!
   \class vpPlanarObjectDetector
-  
+  \ingroup PlanarSurfaceDetector
   \brief Class used to detect a planar surface based on the Ferns Classifier. 
   
-  This class allows to train a Fern classifier for a surface thanks to a reference
-  image. 
+  This class allows to train a Fern classifier for a surface thanks to
+  a reference image.
   
-  Using this classifier (which can be stored and loaded). It is possible to 
-  compute the pose of the planar surface in the current image (The homography is
-   also available)
+  Using this classifier (which can be stored and loaded), it is
+  possible to compute the pose of the planar surface in the current
+  image (The homography is also available)
    
   For more details about the Ferns Classifier and the planar object detector, see
    - Mustafa Özuysal, Michael Calonder, Vincent Lepetit, Pascal Fua, "Fast 

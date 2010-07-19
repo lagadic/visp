@@ -53,7 +53,12 @@
 #include <visp/vpMe.h>
 #include <visp/vpMeTracker.h>
 
+/*!
+  \class vpMbtMeLine
 
+  \ingroup ModelBasedTracking
+
+ */
 class VISP_EXPORT vpMbtMeLine : public vpMeTracker
 {
   private:

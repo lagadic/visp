@@ -37,9 +37,9 @@
  *****************************************************************************/
 
 /*!
-  \file mbtTracking.cpp
+  \example mbtTracking.cpp
 
-  \brief Example of dot tracking on an image sequence containing a cube.
+  \brief Example of model based tracking on an image sequence containing a cube.
 */
 
 #include <visp/vpConfig.h>
