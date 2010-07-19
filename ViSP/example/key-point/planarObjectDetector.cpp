@@ -67,7 +67,7 @@
 #include <visp/vpTime.h>
 #include <iomanip>
 
-#define GETOPTARGS  "hlcdb:i:s"
+#define GETOPTARGS  "hlcdb:i:sp"
 
 /*!
 
