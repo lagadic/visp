@@ -994,6 +994,7 @@ vpMbtTracker::updateMovingEdge(vpImage<unsigned char> &I)
   A line is reinitialized if the 2D line do not match enough with the projected 3D line.
   
   \param I : the image.
+  \param _cMo : the pose of the used to re-initialise the moving edges
 */
 void
 vpMbtTracker::reinitMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &_cMo)
@@ -1039,6 +1040,7 @@ bool samePoint(vpPoint &P1, vpPoint &P2, double threshold=1e-5)
   \param P1 : The first extremity of the line.
   \param P2 : The second extremity of the line.
   \param polygone : The index of the polygon to which the line belongs.
+  \param name : the optionnal name of the line 
 */
 void
 vpMbtTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string name)
@@ -1205,7 +1207,7 @@ vpMbtTracker::loadModel(const char* file)
 /*!
   Load a 3D model contained in a .cao file.
   
-  \param file : Path to the .cao file containing the 3D model description.
+  \param file_id : Path to the .cao file containing the 3D model description.
 */
 void
 vpMbtTracker::loadCAOModel(std::ifstream &file_id)
@@ -1356,11 +1358,11 @@ vpMbtTracker::loadCAOModel(std::ifstream &file_id)
   //delete[] caoPolygonPoint;
 }
 
-#if defined(VISP_HAVE_COIN) || defined(NMBT_HAVE_COIN)
+#if defined(VISP_HAVE_COIN)
 /*!
   Load a 3D model contained in a .wrl file.
   
-  \param file : Path to the .wrl file containing the 3D model description.
+  \param file_id : Path to the .wrl file containing the 3D model description.
 */
 void
 vpMbtTracker::loadVRMLModel(const char* file_id)
