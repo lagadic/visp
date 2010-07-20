@@ -56,7 +56,7 @@ typedef enum {
 
 
 
-template<int> inline void GEMMsize(const vpMatrix & A,const vpMatrix & B, int &Arows,  int &Acols, int &Brows,  int &Bcols){}
+template<int> inline void GEMMsize(const vpMatrix & /*A*/,const vpMatrix & /*B*/, int &/*Arows*/,  int &/*Acols*/, int &/*Brows*/,  int &/*Bcols*/){}
 
  template<> void inline GEMMsize<0>(const vpMatrix & A,const vpMatrix & B, int &Arows, int &Acols,int &Brows, int &Bcols){
   Arows= A.getRows();
@@ -114,7 +114,7 @@ template<int> inline void GEMMsize(const vpMatrix & A,const vpMatrix & B, int &A
 
 
 
- template<int> inline void GEMM1(const int &Arows,const int &Brows, const int &Bcols, const vpMatrix & A, const vpMatrix & B, const double & alpha,vpMatrix &D){}
+ template<int> inline void GEMM1(const int &/*Arows*/,const int &/*Brows*/, const int &/*Bcols*/, const vpMatrix & /*A*/, const vpMatrix & /*B*/, const double & /*alpha*/,vpMatrix &/*D*/){}
 
  template<> inline void GEMM1<0>(const int &Arows,const int &Brows, const int &Bcols, const vpMatrix & A, const vpMatrix & B, const double & alpha,vpMatrix &D){
   for(int r=0;r<Arows;r++)
@@ -156,7 +156,7 @@ template<int> inline void GEMMsize(const vpMatrix & A,const vpMatrix & B, int &A
     }
 }
 
- template<int> inline void GEMM2(const int &Arows,const int &Brows, const int &Bcols, const vpMatrix & A,const vpMatrix & B, const double & alpha, const vpMatrix & C , const double &beta, vpMatrix &D){}
+ template<int> inline void GEMM2(const int &/*Arows*/,const int &/*Brows*/, const int &/*Bcols*/, const vpMatrix & /*A*/,const vpMatrix & /*B*/, const double & /*alpha*/, const vpMatrix & /*C*/ , const double &/*beta*/, vpMatrix &/*D*/){}
 
  template<> inline void GEMM2<0>(const int &Arows,const int &Brows, const int &Bcols, const vpMatrix & A,const vpMatrix & B, const double & alpha, const vpMatrix & C , const double &beta, vpMatrix &D){
   
