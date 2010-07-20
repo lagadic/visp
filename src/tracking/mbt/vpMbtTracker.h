@@ -79,7 +79,7 @@
 
 class VISP_EXPORT vpMbtTracker
 {
-  private :
+  protected :
     vpCameraParameters cam ;
     std::string modelFileName;
     
@@ -110,7 +110,7 @@ class VISP_EXPORT vpMbtTracker
  public:
   
   vpMbtTracker(); 
-  ~vpMbtTracker(); 
+  virtual ~vpMbtTracker(); 
   
   /*!
     Set the value of the gain used to compute the control law.
@@ -182,7 +182,7 @@ class VISP_EXPORT vpMbtTracker
   
   unsigned int getNbPoints();
 
- private:
+ protected:
   void computeVVS();
   void initMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &_cMo) ;
   void trackMovingEdge(vpImage<unsigned char> &I) ;
