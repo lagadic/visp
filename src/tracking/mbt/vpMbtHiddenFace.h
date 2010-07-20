@@ -104,6 +104,8 @@ class VISP_EXPORT vpMbtHiddenFaces
     bool isVisible(int index) ;
     bool isAppearing(int index);
     void reset();
+    
+    vpList<vpMbtPolygon *>& getPolygon() { return Lpol;}
 } ;
 
 #endif
