@@ -281,19 +281,18 @@ class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRo
     /*!
       Function used to launch the thread which moves the robot.
     */
-    #if defined(VISP_HAVE_PTHREAD)
-    static void* launcher(void *arg)
-    {
-      (reinterpret_cast<vpRobotSimulator *>(arg))->updateArticularPosition();
-      pthread_exit((void*) 0);
-    }
-    #endif
     #if defined(WIN32)
 	static DWORD WINAPI launcher( LPVOID lpParam ) 
 	{
 		((vpRobotSimulator *)lpParam)->updateArticularPosition();
 		return 0;
 	}
+    #elif defined(VISP_HAVE_PTHREAD)
+    static void* launcher(void *arg)
+    {
+      (reinterpret_cast<vpRobotSimulator *>(arg))->updateArticularPosition();
+      pthread_exit((void*) 0);
+    }    
     #endif
     
     /* Robot functions */
