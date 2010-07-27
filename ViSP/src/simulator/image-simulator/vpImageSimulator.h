@@ -127,7 +127,7 @@
 #include <visp/vpPoint.h>
 #include <visp/vpList.h>
 
-class vpImageSimulator
+class VISP_EXPORT vpImageSimulator
 {
   public:
     typedef enum {
@@ -254,6 +254,23 @@ class vpImageSimulator
     void getRoi(const unsigned int Iwidth, const unsigned int Iheight, const vpCameraParameters cam, vpPoint* pt, vpRect &rect);
 };
 
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT vpList<vpImageSimulator>;
 #endif
+
+VISP_EXPORT inline std::ostream& operator<< (std::ostream &os, const vpImageSimulator& ip)
+{
+  os << "";
+  return os;
+}
+
+
+#endif
+
+/*
+ * Local variables:
+ * c-basic-offset: 2
+ * End:
+ */
 
 
