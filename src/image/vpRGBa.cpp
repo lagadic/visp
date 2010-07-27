@@ -193,6 +193,29 @@ vpRGBa::operator*(const double &v) const
   return n;
 }
 
+bool
+vpRGBa::operator<(const vpRGBa &v) const
+{
+	double gray1 = 0.2126*R+0.7152*G+0.0722*B;
+	double gray2 = 0.2126*v.R+0.7152*v.G+0.0722*v.B;
+
+	return (gray1 < gray2);
+}
+
+bool
+vpRGBa::operator>(const vpRGBa &v) const
+{
+	double gray1 = 0.2126*R+0.7152*G+0.0722*B;
+	double gray2 = 0.2126*v.R+0.7152*v.G+0.0722*v.B;
+
+	return (gray1 > gray2);
+}
+
+vpRGBa operator*(const double &x, const vpRGBa  &rgb)
+{
+	return rgb*x;
+}
+
 /*
  * Local variables:
  * c-basic-offset: 2

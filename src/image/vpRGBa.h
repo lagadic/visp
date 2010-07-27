@@ -140,11 +140,16 @@ public:
   vpColVector operator*(const float &v) const;
   vpColVector operator*(const double &v) const;
 
+  bool operator<(const vpRGBa &v) const;
+  bool operator>(const vpRGBa &v) const;
+
  public:
   unsigned char R ; //!< Red component.
   unsigned char G ; //!< Green component.
   unsigned char B ; //!< Blue component.
   unsigned char A ; //!< Additionnal component.
+
+  friend vpRGBa operator*(const double &x, const vpRGBa  &rgb);
 
 } ;
 
