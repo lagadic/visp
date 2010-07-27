@@ -133,7 +133,7 @@ int main ()
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 
-class vpPlot
+class VISP_EXPORT vpPlot
 {
   public:
     vpImage<unsigned char> I;
