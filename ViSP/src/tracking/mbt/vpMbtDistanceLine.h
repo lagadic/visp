@@ -194,12 +194,17 @@ class VISP_EXPORT vpMbtDistanceLine
     
 
     void reinitMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo);
+
   private:
     void project(vpHomogeneousMatrix &cMo);
     void setFace( vpMbtHiddenFaces *_hiddenface) { hiddenface = _hiddenface ; }
     void belongToPolygon(int index) { Lindex_polygon += index ; }
 
 } ;
+
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT vpList<vpMbtDistanceLine *>;
+#endif
 
 #endif
 #endif
