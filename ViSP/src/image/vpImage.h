@@ -281,7 +281,7 @@ public:
     @name Deprecated functions
   */
   // Gets the value of a pixel at a location with bilinear interpolation.
-  vp_deprecated double get(double i, double j) ;
+  //vp_deprecated double get(double i, double j) ;
 
   // Gets the value of a pixel at a location with bilinear interpolation.
   vp_deprecated Type getPixelBI(double j, double i) const;
@@ -1322,19 +1322,19 @@ inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
 
 */
 
-template<class Type>
-double
-vpImage<Type>::get(double i, double j)  // bilinear interpolation
-{
-  unsigned int l = (unsigned int) i ;
-  unsigned int k = (unsigned int) j ;
-
-  double t =  i - l ;
-  double u =  j - k ;
-  return (1-t)*(1-u)*(*this)[l][k] + t*(1-u)*(*this)[l+1][k] +
-    (1-t)*u*(*this)[l][k+1] + t*u*(*this)[l+1][k+1] ;
-
-}
+//template<class Type>
+//double
+//vpImage<Type>::get(double i, double j)  // bilinear interpolation
+//{
+//  unsigned int l = (unsigned int) i ;
+//  unsigned int k = (unsigned int) j ;
+//
+//  double t =  i - l ;
+//  double u =  j - k ;
+//  return (1-t)*(1-u)*(*this)[l][k] + t*(1-u)*(*this)[l+1][k] +
+//    (1-t)*u*(*this)[l][k+1] + t*u*(*this)[l+1][k+1] ;
+//
+//}
 
 /*! 
 
@@ -1519,6 +1519,7 @@ Type vpImage<Type>::minValue() const
 // For template instantiation with Visual Studio
 #if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
 template class VISP_EXPORT vpImage<unsigned char>;
+template class VISP_EXPORT vpImage<vpRGBa>;
 #endif
 
 #endif
