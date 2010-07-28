@@ -143,9 +143,11 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   resize(n_data); 
   
   sorted_residues = residues;
+  
+  int ind_med = (int)(ceil(n_data/2))-1;
 
   // Calculate median
-   med = select(sorted_residues, 0, n_data-1, (int)n_data/2);
+   med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
    //residualMedian = med ;
 
   // Normalize residues
@@ -157,7 +159,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   }
 
   // Calculate MAD
-  normmedian = select(sorted_normres, 0, n_data-1, n_data/2);
+  normmedian = select(sorted_normres, 0, n_data-1, ind_med/*(int)n_data/2*/);
   //normalizedResidualMedian = normmedian ;
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   sigma = 1.4826*normmedian; // median Absolute Deviation
@@ -303,8 +305,9 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
   // Calculate Median
   // Be careful to not use the rejected residues for the
   // calculation.
-
-  med = select(sorted_residues, 0, n_data-1, (int)n_data/2);
+  
+  int ind_med = (int)(ceil(n_data/2))-1;
+  med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
 
   int i;
   // Normalize residues
@@ -321,7 +324,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
 
   //normmedian = Median(normres, weights);
   //normmedian = Median(normres);
-  normmedian = select(sorted_normres, 0, n_data-1, n_data/2);
+  normmedian = select(sorted_normres, 0, n_data-1, ind_med/*(int)n_data/2*/);
 
   return normmedian;
 }
@@ -351,7 +354,8 @@ vpRobust::simultMEstimator(vpColVector &residues)
 	      << std::endl;
 
   // Calculate Median
-  med = select(residues, 0, n_data-1, n_data/2);
+  int ind_med = (int)(ceil(n_data/2))-1;
+  med = select(residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
 
   // Normalize residues
   for(int i=0; i<n_data; i++)
@@ -362,7 +366,7 @@ vpRobust::simultMEstimator(vpColVector &residues)
   // For Others use MAD calculated on first iteration
   if(it==0)
   {
-    normmedian = select(normres, 0, n_data-1, n_data/2);
+    normmedian = select(normres, 0, n_data-1, ind_med/*(int)n_data/2*/);
     // 1.48 keeps scale estimate consistent for a normal probability dist.
     sigma = 1.4826*normmedian; // Median Absolute Deviation
   }
