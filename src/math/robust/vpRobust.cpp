@@ -144,7 +144,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   
   sorted_residues = residues;
   
-  int ind_med = (int)(ceil(n_data/2))-1;
+  int ind_med = (int)(ceil(n_data/2.0))-1;
 
   // Calculate median
    med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
@@ -306,7 +306,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
   // Be careful to not use the rejected residues for the
   // calculation.
   
-  int ind_med = (int)(ceil(n_data/2))-1;
+  int ind_med = (int)(ceil(n_data/2.0))-1;
   med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
 
   int i;
@@ -354,7 +354,7 @@ vpRobust::simultMEstimator(vpColVector &residues)
 	      << std::endl;
 
   // Calculate Median
-  int ind_med = (int)(ceil(n_data/2))-1;
+  int ind_med = (int)(ceil(n_data/2.0))-1;
   med = select(residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
 
   // Normalize residues
