@@ -258,7 +258,7 @@ class VISP_EXPORT vpImageSimulator
 template class VISP_EXPORT vpList<vpImageSimulator>;
 #endif
 
-VISP_EXPORT inline std::ostream& operator<< (std::ostream &os, const vpImageSimulator& ip)
+VISP_EXPORT inline std::ostream& operator<< (std::ostream &os, const vpImageSimulator& /*ip*/)
 {
   os << "";
   return os;
