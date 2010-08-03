@@ -3380,7 +3380,7 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, char 
     {
       char c='0';
       std::string h;
-      while (c != '\0')
+      while ((c != '\0') && (c != '\n'))
       {
 	file.read(&c,1);
 	h+=c;
@@ -3407,7 +3407,7 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, char 
     {
       char c='0';
       std::string h;
-      while (c != '\0')
+      while ((c != '\0') && (c != '\n'))
       {
 	file.read(&c,1);
 	h+=c;
