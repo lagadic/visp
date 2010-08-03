@@ -49,7 +49,7 @@
 
   James E. Gentle, Random Number Generation and Monte Carlo Methods,
   Springer 1998
-*/
+ */
 
 #include <visp/vpConfig.h>
 
@@ -71,35 +71,35 @@ class VISP_EXPORT vpUniRand
 {
 
 
-  unsigned long    a  ;
-  unsigned long    m ; //2^31-1
-  unsigned long    q ; //integer part of m/a
-  unsigned long    r ;//r=m mod a
-  double    normalizer ; //we use a normalizer > m to ensure ans will never be 1 (it is the case if x = 739806647)
+	unsigned long    a  ;
+	unsigned long    m ; //2^31-1
+	unsigned long    q ; //integer part of m/a
+	unsigned long    r ;//r=m mod a
+	double    normalizer ; //we use a normalizer > m to ensure ans will never be 1 (it is the case if x = 739806647)
 
 
 private:
-  void draw0();
+	void draw0();
 protected:
-  long x;
-  double draw1();
-  void init()
-  {
-    a = 16807 ;
-    m = (unsigned long)2147483647 ; //2^31-1
-    q = 127773 ; //integer part of m/a
-    r = 2836 ;//r=m mod a
-    //we use a normalizer > m to ensure ans will never be
-    // 1 (it is the case if x = 739806647)
-    normalizer = 2147484721.0 ;
-  }
+	long x;
+	double draw1();
+	void init()
+	{
+		a = 16807 ;
+		m = (unsigned long)2147483647 ; //2^31-1
+		q = 127773 ; //integer part of m/a
+		r = 2836 ;//r=m mod a
+		//we use a normalizer > m to ensure ans will never be
+		// 1 (it is the case if x = 739806647)
+		normalizer = 2147484721.0 ;
+	}
 
 public:
-  vpUniRand(const long seed = 0):x((seed)? seed : 739806647)
-  {
-    init() ;
-  }
-  double operator()() {return draw1();}
+	vpUniRand(const long seed = 0):x((seed)? seed : 739806647)
+	{
+		init() ;
+	}
+	double operator()() {return draw1();}
 
 };
 
@@ -112,27 +112,41 @@ public:
 
   Random Number Generation and Monte Carlo Methods
   James E. Gentle, Springer 1998
-*/
+ */
 class vpGaussRand : public vpUniRand
 {
-  double mean;
-  double sigma;
+	double mean;
+	double sigma;
 
 public:
 
-  // Initialiazation
-  vpGaussRand(const double sqrtvariance,
-	     const double _mean,
-	     const long seed = 0):mean(_mean), sigma(sqrtvariance)
-  {
-    init() ;
-    mean = 0 ;
-    if (seed) x=seed; else x=739806647;
-  }
-  double operator()() {return sigma*gaussianDraw()+mean;}
+	// Initialization
+	vpGaussRand() {init();mean=0;sigma=0;x=739806647;}
+	vpGaussRand(const double sqrtvariance,
+			const double _mean,
+			const long seed = 0):mean(_mean), sigma(sqrtvariance)
+	{
+		init() ;
+		mean = 0 ;
+		if (seed) x=seed; else x=739806647;
+	}
+	/*!
+      Set the standard deviation and mean for gaussian noise
+
+      \param _s new standard deviation
+      \param _m new mean
+	 */
+	inline void setSigmaMean(const double _s, const double _m) {mean=_m;sigma=_s;}
+	/*!
+        Set the seed of the noise
+
+        \param seed new seed
+	 */
+	inline void seed(const long seed) {x=seed;}
+	inline double operator()() {return sigma*gaussianDraw()+mean;}
 
 private :
-  double gaussianDraw();
+	double gaussianDraw();
 };
 
 #endif

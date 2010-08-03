@@ -82,11 +82,11 @@ public:
   // SET information
 public:
 
-  void setA(const double _a) {   A = _a ; }
-  void setB(const double _b) {   B = _b ; }
-  void setC(const double _c) {   C = _c ; }
-  void setD(const double _d) {   D = _d ; }
-
+  inline void setA(const double _a) {   A = _a ; }
+  inline void setB(const double _b) {   B = _b ; }
+  inline void setC(const double _c) {   C = _c ; }
+  inline void setD(const double _d) {   D = _d ; }
+  inline void setABCD(const double _a, const double _b, const double _c, const double _d) {A = _a ;B = _b ;C = _c ;D = _d ; }
 
   vpPlane& operator =(const vpPlane& f) ;
 
