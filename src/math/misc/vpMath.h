@@ -116,8 +116,11 @@ class VISP_EXPORT vpMath
   // test if a number equals 0 (with threshold value)
   static inline bool nul(double x, double s=0.001);
 
-  // test if two numbers ar equals (with a user defined threshold)
+  // test if two numbers are equals (with a user defined threshold)
   static inline bool equal(double x, double y, double s=0.001);
+
+  // test if a number is greater than another (with a user defined threshold)
+  static inline bool greater(double x, double y, double s=0.001);
 
 
   /*!
@@ -263,6 +266,18 @@ bool vpMath::nul(double x, double s)
 bool vpMath::equal(double x, double y, double s)
 {
   return( nul(x-y, s) );
+}
+
+/*!
+  Compares  \f$ x \f$ to \f$ y - s \f$.
+  \param x : x value.
+  \param y : y value.
+  \param s : Tolerance threshold.
+  \return true if \f$ x > y - s \f$.
+*/
+bool vpMath::greater(double x, double y, double s)
+{
+  return(x>(y-s));
 }
 
 /*!
