@@ -82,6 +82,7 @@ class VISP_EXPORT vpMbtPolygon
     int getIndex() {return index ;}
     void changeFrame(vpHomogeneousMatrix &cMo) ;
     bool isVisible(vpHomogeneousMatrix &cMo) ;
+    bool isVisible(vpHomogeneousMatrix &cMo, const double alpha) ;
     bool isVisible() {return isvisible;}
     bool isAppearing() {return isappearing;}
 };
