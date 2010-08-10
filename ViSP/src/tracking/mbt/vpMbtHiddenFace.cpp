@@ -113,7 +113,7 @@ vpMbtPolygon::changeFrame(vpHomogeneousMatrix &cMo)
 }
 
 /*!
-  Check if the polygon is visble in the image. To do that, the polygon is projected into the image thanks to the camera pose.
+  Check if the polygon is visible in the image. To do that, the polygon is projected into the image thanks to the camera pose.
   
   \param cMo : The pose of the camera.
   
@@ -166,6 +166,62 @@ vpMbtPolygon::isVisible(vpHomogeneousMatrix &cMo)
     isvisible = false ;
     return false ;
   }
+}
+
+
+
+/*!
+  Check if the polygon is visible in the image and if the angle between the normal 
+  to the face and the normal to the camera plane is below the given threshold. 
+  To do that, the polygon is projected into the image thanks to the camera pose.
+  
+  \param cMo : The pose of the camera.
+  \param alpha : maximum angle to detect if the face is visible (in rad)
+  
+  \return Return true if the polygon is visible.
+*/
+bool 
+vpMbtPolygon::isVisible(vpHomogeneousMatrix &cMo, const double alpha)
+{
+  changeFrame(cMo) ;
+  
+  if(nbpt <= 2){
+    /* a line is allways visible */
+    return  true ;
+  }
+
+  vpColVector e1(3) ;
+  vpColVector e2(3) ;
+  vpColVector facenormal(3) ;
+
+  e1[0] = p[1].get_X() - p[0].get_X() ;
+  e1[1] = p[1].get_Y() - p[0].get_Y() ;
+  e1[2] = p[1].get_Z() - p[0].get_Z() ;
+
+  e2[0] = p[2].get_X() - p[1].get_X() ;
+  e2[1] = p[2].get_Y() - p[1].get_Y() ;
+  e2[2] = p[2].get_Z() - p[1].get_Z() ;
+
+  facenormal = vpColVector::crossProd(e1,e2) ;
+
+  vpColVector n_plan(3);
+  n_plan[0] = 0;
+  n_plan[1] = 0;
+  n_plan[2] = 1;
+  
+  vpColVector n_cam(3);
+  n_cam = facenormal;
+  
+  double angle = p[0].get_X()*facenormal[0] +  p[0].get_Y()*facenormal[1]  +  p[0].get_Z()*facenormal[2]  ;
+  
+  double n_cam_dot_n_plan = vpColVector::dotProd (n_cam, n_plan);
+  double cos_angle = n_cam_dot_n_plan * (1 / ( n_cam.euclideanNorm() * n_plan.euclideanNorm() ));
+  double my_angle = acos(cos_angle);
+  
+  if(angle < 0 && ( my_angle > static_cast<double>(M_PI - alpha) || my_angle < static_cast<double>(-M_PI + alpha) ) ){
+    return true;
+  }  
+  return false;
 }
 
 
