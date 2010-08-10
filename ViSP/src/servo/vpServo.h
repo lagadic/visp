@@ -262,7 +262,7 @@ public:
 
   void print(const vpServo::vpServoPrintType display_level=ALL,
 	     std::ostream &os = std::cout) ;
-private:
+protected:
   //! basic initialization
   void init() ;
 
@@ -319,7 +319,7 @@ public:
   //!interaction matrix should be used to compute the task
   vpServoInversionType inversionType ;
 
-private:
+protected:
   /*
     Twist transformation matrix
   */
