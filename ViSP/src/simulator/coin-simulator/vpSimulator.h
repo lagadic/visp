@@ -260,6 +260,8 @@ public:
   //! get an Image of the internal view 
   void getInternalImage(vpImage<vpRGBa> &I) ;
   /* --- Off screen rendering  --- */
+  
+  void changeZoomFactor(const float zoom, const int index);
 public:
   typedef enum { INTERNAL, EXTERNAL } vpSimulatorViewType ;
   void  write(const char * fileName);
