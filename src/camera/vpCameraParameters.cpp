@@ -251,7 +251,7 @@ vpCameraParameters::initFromCalibrationMatrix(const vpMatrix& _K)
   if(_K.getRows() != 3 || _K.getCols() != 3 ){
     throw vpException(vpException::dimensionError, "bad size for calibration matrix");
   }
-  if( std::fabs(_K[2][2] - 1.0) < std::numeric_limits<double>::epsilon()){
+  if( std::fabs(_K[2][2] - 1.0) > std::numeric_limits<double>::epsilon()){
     throw vpException(vpException::badValue, "bad value: K[2][2] must be equal to 1");
   }
   initPersProjWithoutDistortion (_K[0][0], _K[1][1], _K[0][2], _K[1][2]);
