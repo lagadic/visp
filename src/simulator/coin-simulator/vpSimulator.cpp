@@ -382,17 +382,52 @@ vpSimulator::initSceneGraph()
 
 
 /*!
-  \brief Definit le facteur de zoom utilise ensuite pour definir
-  la taille des objets (camera, reperes...)
+  \brief Define the zoom factor used to define the size of the objects (frame, 
+  camera, ...)
 
-  \param zoom: facteur de grossissement des objets. Par default, 1.
+  \param zoom: zoom factor of the objects. By default, 1.
 */
 void
 vpSimulator::setZoomFactor (const float zoom)
 {
   zoomFactor = zoom;
+  static bool firstTime = true;
+  if(firstTime){
+    SoScale *taille = new SoScale;
+    taille->scaleFactor.setValue (zoomFactor, zoomFactor, zoomFactor);
+    this->scene->addChild(taille);
+    firstTime = false;
+  }
+  else{
+    SoScale * taille = (SoScale*)this->scene->getChild(0);
+    taille->scaleFactor.setValue (zoomFactor, zoomFactor, zoomFactor);  
+  }
 }
 
+/*!
+  \brief Change the zoom factor associated to the child given by index. 
+  In order to create multiple zoom factor for multiple object to display, 
+  objects loaded the load() function, you have to know the index of the scale 
+  object associated to. 
+  
+  Usually, if you define the main zoom factor (for example for the frames) and 
+  then load two differents objects, You can change the zoom factor of all the 
+  objects using: changeZoomFactor(newZoom, 0)
+  
+  If you want to change the zoom factor of the first object, use changeZoomFactor(newZoom, 1)
+  
+  And for the second object, use changeZoomFactor(newZoom, 3)
+  
+  \param zoomFactor : the new zoom use to specify the apparent size of the object
+  \param index : the index of the Scale object to modify (see comments)
+*/
+void 
+vpSimulator::changeZoomFactor(const float zoomFactor, const int index)
+{
+  SoScale * taille = (SoScale*)this->scene->getChild(index);
+  taille->scaleFactor.setValue (zoomFactor, zoomFactor, zoomFactor);
+//  this->setZoomFactor(zoomFactor);
+}
 
 void
 vpSimulator::initInternalViewer(int width, int height)
@@ -650,6 +685,9 @@ vpSimulator::load(const char *file_name)
   taille->scaleFactor.setValue (zoomFactor, zoomFactor, zoomFactor);
 
 //  newscene->addChild(taille);
+
+//  std::cout << "this->scene->getNumChildren() = " << this->scene->getNumChildren() << std::endl;
+
   this->scene->addChild(taille);
   this->scene->addChild(newscene);
   newscene->unref() ;
