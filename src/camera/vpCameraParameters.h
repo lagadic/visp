@@ -216,6 +216,7 @@ public :
 
   void init() ;
   void init(const vpCameraParameters &c) ;
+  void initFromCalibrationMatrix(const vpMatrix& _K);
   
   void initPersProjWithoutDistortion(const double px, const double py,
                                       const double u0, const double v0) ;

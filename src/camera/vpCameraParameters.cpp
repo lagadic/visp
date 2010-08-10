@@ -47,6 +47,8 @@
 #include <visp/vpCameraParameters.h>
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
+#include <cmath>
+#include <limits>
 
 const double vpCameraParameters::DEFAULT_PX_PARAMETER = 600.0;
 const double vpCameraParameters::DEFAULT_PY_PARAMETER = 600.0;
@@ -227,6 +229,34 @@ vpCameraParameters::init(const vpCameraParameters &c)
 {
   *this = c ;
 }
+
+
+/*!
+  initialise the camera from a calibration matrix. 
+  Using a calibration matrix leads to a camera without distorsion
+  
+  The K matrix in parameters must be like:
+  
+  \f$ K = \left(\begin{array}{ccc}
+  p_x & 0 & u_0 \\
+  0 & p_y & v_0  \\
+  0 & 0 & 1
+  \end{array} \right) \f$
+  
+  \param _K : the 3by3 calibration matrix
+*/
+void
+vpCameraParameters::initFromCalibrationMatrix(const vpMatrix& _K)
+{
+  if(_K.getRows() != 3 || _K.getCols() != 3 ){
+    throw vpException(vpException::dimensionError, "bad size for calibration matrix");
+  }
+  if( std::fabs(_K[2][2] - 1.0) < std::numeric_limits<double>::epsilon()){
+    throw vpException(vpException::badValue, "bad value: K[2][2] must be equal to 1");
+  }
+  initPersProjWithoutDistortion (_K[0][0], _K[1][1], _K[0][2], _K[1][2]);
+}
+
 
 /*!
   copy operator
