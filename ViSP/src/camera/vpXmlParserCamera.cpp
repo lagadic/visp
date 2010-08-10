@@ -777,6 +777,7 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
   double kud = cam_tmp.get_kud();
   double kdu = cam_tmp.get_kdu();
   vpXmlCodeSequenceType back = SEQUENCE_OK;
+  int validation = 0;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
   {
@@ -794,36 +795,43 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
       myXmlReadCharChild (doc, node, &val_char);
       model_type = val_char;
       nb++;
+      validation = validation | 0x01;
       break;
     case CODE_XML_U0:
       myXmlReadDoubleChild (doc, node, vald, back);
       u0=vald;
       nb++;
+      validation = validation | 0x02;
       break;
     case CODE_XML_V0:
       myXmlReadDoubleChild (doc, node, vald, back);
       v0 = vald;
       nb++;
+      validation = validation | 0x04;
       break;
     case CODE_XML_PX:
       myXmlReadDoubleChild (doc, node, vald, back);
       px = vald;
       nb++;
+      validation = validation | 0x08;
       break;
     case CODE_XML_PY:
       myXmlReadDoubleChild (doc, node, vald, back);
       py = vald;
       nb++;
+      validation = validation | 0x10;
      break;
     case CODE_XML_KUD:
       myXmlReadDoubleChild (doc, node, vald, back);
       kud = vald;
       nb++;
+      validation = validation | 0x20;
       break;
     case CODE_XML_KDU:
       myXmlReadDoubleChild (doc, node, vald, back);
       kdu = vald;
       nb++;
+      validation = validation | 0x40;
       break;
     default:
       back = SEQUENCE_ERROR;
@@ -832,7 +840,7 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
   }
 
   if( !strcmp(model_type,LABEL_XML_MODEL_WITHOUT_DISTORTION)){
-    if (nb != 5)
+    if (nb != 5 || validation != 0x1F)
     {
       vpCERROR <<"ERROR in 'model' field:\n";
       vpCERROR << "it must contain 5 parameters\n";
@@ -841,7 +849,7 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
     cam_tmp.initPersProjWithoutDistortion(px,py,u0,v0) ;
   }
   else if( !strcmp(model_type,LABEL_XML_MODEL_WITH_DISTORTION)){
-    if (nb != 7)
+    if (nb != 7 || validation != 0x7F)
     {
       vpCERROR <<"ERROR in 'model' field:\n";
       vpCERROR << "it must contain 7 parameters\n";
@@ -921,7 +929,7 @@ write (xmlNodePtr node, const std::string& camera_name,
         sprintf(str,"%u",subsampling_height);
         xmlNewTextChild(node_camera,NULL,(xmlChar*)LABEL_XML_SUBSAMPLING_HEIGHT,
                         (xmlChar*)str);
-        node_tmp = xmlNewComment((xmlChar*)"The full size is the captor size actually used to grab the image. full_width = subsampling_width * image_width");
+        node_tmp = xmlNewComment((xmlChar*)"The full size is the sensor size actually used to grab the image. full_width = subsampling_width * image_width");
         xmlAddChild(node_camera,node_tmp);
 
         //<full_width>
