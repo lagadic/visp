@@ -42,6 +42,8 @@ ViSP (Subversion trunk)
     - [10697] CMake standard output vars
     - [10719] Compilation error in vpPlot
     - [10723] Compilation error in vpFFMPEG.cpp
+    - [10748] PThread and Win32 Conflict
+    - [10928] vpPlane: rayIntersection from 2 points
   - Improvements
     - Copy constructors were added to better support stl lists and vectors.
     - Change the FindOpenCV.cmake in order to detect automatically 
