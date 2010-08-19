@@ -134,6 +134,11 @@ class VISP_EXPORT vpVelocityTwistMatrix : public vpMatrix
 
   // copy operator from vpMatrix (handle with care)
   vpVelocityTwistMatrix &operator=(const vpVelocityTwistMatrix &V);
+
+  //! invert the twist matrix
+  vpVelocityTwistMatrix inverse() const ;
+  //! invert the twist matrix
+  void inverse(vpVelocityTwistMatrix &Wi) const;
 } ;
 
 #endif

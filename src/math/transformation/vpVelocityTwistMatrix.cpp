@@ -400,6 +400,43 @@ vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
   return (*this) ;
 }
 
+
+//! invert the twist matrix
+vpVelocityTwistMatrix
+vpVelocityTwistMatrix::inverse() const
+{
+  vpVelocityTwistMatrix Wi;
+
+  int i,j ;
+
+  vpRotationMatrix Rt;
+  for (i=0 ; i < 3 ; i++)
+    for (j=0 ; j < 3; j++)
+      Rt[j][i] = (*this)[i][j];
+
+  vpMatrix skTR(3,3);
+  for (i=0 ; i < 3 ; i++)
+      for (j=0 ; j < 3; j++)
+        skTR[i][j] = (*this)[i][j+3];
+
+  vpMatrix skT = skTR*Rt;
+  vpTranslationVector T(skT[2][1], skT[0][2], skT[1][0]);
+
+  vpTranslationVector RtT ; RtT = -(Rt*T) ;
+
+  Wi.buildFrom(RtT,Rt);
+
+  return Wi ;
+}
+
+
+//! invert the twist matrix
+void
+vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &Wi) const
+{
+	Wi = inverse();
+}
+
 /*
  * Local variables:
  * c-basic-offset: 2
