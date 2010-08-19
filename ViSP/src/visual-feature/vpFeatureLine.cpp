@@ -498,19 +498,21 @@ vpFeatureLine *vpFeatureLine::duplicate() const
   \param cam : Camera parameters.
   \param I : Image on which features have to be displayed.
   \param color : Color used to display the feature.
+  \param thickness : Thickness of the feature representation.
 
 */
 void
 vpFeatureLine::display( const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			vpColor color) const
+			vpColor color, 
+			unsigned int thickness) const
 {
   try{
     double rho,theta ;
     rho = getRho() ;
     theta = getTheta() ;
 
-    vpFeatureDisplay::displayLine(rho,theta,cam,I,color) ;
+    vpFeatureDisplay::displayLine(rho, theta, cam, I, color, thickness) ;
 
   }
   catch(...)
@@ -527,19 +529,21 @@ vpFeatureLine::display( const vpCameraParameters &cam,
   \param cam : Camera parameters.
   \param I : Color image on which features have to be displayed.
   \param color : Color used to display the feature.
+  \param thickness : Thickness of the feature representation.
 
  */
 void
 vpFeatureLine::display( const vpCameraParameters &cam,
                         vpImage<vpRGBa> &I,
-                        vpColor color) const
+                        vpColor color, 
+			unsigned int thickness) const
 {
   try{
     double rho,theta ;
     rho = getRho() ;
     theta = getTheta() ;
 
-    vpFeatureDisplay::displayLine(rho,theta,cam,I,color) ;
+    vpFeatureDisplay::displayLine(rho, theta, cam, I, color, thickness) ;
 
   }
   catch(...)

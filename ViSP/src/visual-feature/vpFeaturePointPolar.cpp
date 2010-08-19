@@ -558,12 +558,14 @@ vpFeaturePointPolar::buildFrom(const double rho, const double theta,
   \param cam : Camera parameters.
   \param I : Image.
   \param color : Color to use for the display
+  \param thickness : Thickness of the feature representation.
 
 */
 void
 vpFeaturePointPolar::display(const vpCameraParameters &cam,
-				   vpImage<unsigned char> &I,
-				   vpColor color) const
+			     vpImage<unsigned char> &I,
+			     vpColor color, 
+			     unsigned int thickness) const
 {
   try {
     double rho,theta;
@@ -574,7 +576,7 @@ vpFeaturePointPolar::display(const vpCameraParameters &cam,
     x = rho*cos(theta);
     y = rho*sin(theta);
 
-    vpFeatureDisplay::displayPoint(x, y, cam, I, color);
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
   }
   catch(...) {
     vpERROR_TRACE("Error caught") ;
@@ -589,12 +591,14 @@ vpFeaturePointPolar::display(const vpCameraParameters &cam,
   \param cam : Camera parameters.
   \param I : color Image.
   \param color : Color to use for the display
+  \param thickness : Thickness of the feature representation.
 
  */
 void
 vpFeaturePointPolar::display(const vpCameraParameters &cam,
-				   vpImage<vpRGBa> &I,
-				   vpColor color) const
+			     vpImage<vpRGBa> &I,
+			     vpColor color, 
+			     unsigned int thickness) const
 {
   try {
     double rho,theta;
@@ -605,7 +609,7 @@ vpFeaturePointPolar::display(const vpCameraParameters &cam,
     x = rho*cos(theta);
     y = rho*sin(theta);
 
-    vpFeatureDisplay::displayPoint(x, y, cam, I, color);
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
   }
   catch(...) {

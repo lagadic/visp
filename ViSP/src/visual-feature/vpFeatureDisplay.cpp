@@ -60,17 +60,19 @@
   \param I : Image.
 
   \param color : Color to use to display the feature
+  \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<unsigned char> &I,
-				    vpColor color)
+				    vpColor color, 
+				    unsigned int thickness)
 {
   try{
     vpImagePoint ip; // pixel coordinates in float
     vpMeterPixelConversion::convertPoint(cam, x, y, ip) ;
 
-    vpDisplay::displayCross(I, ip, 5, color) ;
+    vpDisplay::displayCross(I, ip, 15, color, thickness) ;
   }
   catch(...)
   {
@@ -84,11 +86,13 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature
+  \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
 				   vpImage<unsigned char> &I,
-				   vpColor color )
+				   vpColor color, 
+				   unsigned int thickness )
 {
 
 
@@ -115,13 +119,13 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
         ip1.set_ij(0, (-c)/b);
         double h = I.getHeight() - 1;
         ip2.set_ij(h, (-c - a*h)/b);
-	vpDisplay::displayLine(I, ip1, ip2, color);
+	vpDisplay::displayLine(I, ip1, ip2, color, thickness);
     }
     else {
         ip1.set_ij((-c)/a, 0);
         double w = I.getWidth()-1;
         ip2.set_ij((-c - b*w)/a, w);
-	vpDisplay::displayLine(I, ip1, ip2, color);
+	vpDisplay::displayLine(I, ip1, ip2, color, thickness);
     }
   }
   catch(...)
@@ -135,19 +139,20 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
   \param rho2, theta2 : Cylinder limb2 parameters.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
-
   \param color : Color to use to display the feature
+  \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
 				       double rho2,double theta2,
 				       const vpCameraParameters &cam,
 				       vpImage<unsigned char> &I,
-				       vpColor color)
+				       vpColor color, 
+				       unsigned int thickness)
 {
   try
   {
-    displayLine(rho1, theta1, cam, I, color) ;
-    displayLine(rho2, theta2, cam, I, color) ;
+    displayLine(rho1, theta1, cam, I, color, thickness) ;
+    displayLine(rho2, theta2, cam, I, color, thickness) ;
   }
   catch(...)
   {
@@ -160,12 +165,14 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature
+  \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayEllipse(double x,double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
 				      vpImage<unsigned char> &I,
-				      vpColor color)
+				      vpColor color, 
+				      unsigned int thickness)
 {
 
 
@@ -210,7 +217,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 	  ip2.set_u( x2 );
 	  ip2.set_v( y2 );
 
-	  vpDisplay::displayLine(I, ip1, ip2, color) ;
+	  vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
 	}
 
 	ip2 = ip1;
@@ -233,17 +240,19 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
   \param I : Image.
 
   \param color : Color to use to display the feature
+  \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
 				    vpImage<vpRGBa> &I,
-				    vpColor color)
+				    vpColor color, 
+				    unsigned int thickness)
 {
   try{
     vpImagePoint ip; // pixel coordinates in float
     vpMeterPixelConversion::convertPoint(cam, x, y, ip) ;
 
-    vpDisplay::displayCross(I, ip, 5, color) ;
+    vpDisplay::displayCross(I, ip, 15, color, thickness) ;
   }
   catch(...)
   {
@@ -258,11 +267,13 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature
+  \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
 				   vpImage<vpRGBa> &I,
-				   vpColor color )
+				   vpColor color, 
+				   unsigned int thickness )
 {
 
 
@@ -289,13 +300,13 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
         ip1.set_ij(0, (-c)/b);
         double h = I.getHeight() - 1;
         ip2.set_ij(h, (-c - a*h)/b);
-	vpDisplay::displayLine(I, ip1, ip2, color);
+	vpDisplay::displayLine(I, ip1, ip2, color, thickness);
     }
     else {
         ip1.set_ij((-c)/a, 0);
         double w = I.getWidth()-1;
         ip2.set_ij((-c - b*w)/a, w);
-	vpDisplay::displayLine(I, ip1, ip2, color);
+	vpDisplay::displayLine(I, ip1, ip2, color, thickness);
     }
   }
   catch(...)
@@ -310,17 +321,19 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature
+  \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
 				       double rho2, double theta2,
 				       const vpCameraParameters &cam,
 				       vpImage<vpRGBa> &I,
-				       vpColor color)
+				       vpColor color, 
+				       unsigned int thickness)
 {
   try
   {
-    displayLine(rho1, theta1, cam, I, color) ;
-    displayLine(rho2, theta2, cam, I, color) ;
+    displayLine(rho1, theta1, cam, I, color, thickness) ;
+    displayLine(rho2, theta2, cam, I, color, thickness) ;
   }
   catch(...)
   {
@@ -334,12 +347,14 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature
+  \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayEllipse(double x, double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
 				      vpImage<vpRGBa> &I,
-				      vpColor color)
+				      vpColor color, 
+				      unsigned int thickness)
 {
 
 
@@ -383,7 +398,7 @@ void vpFeatureDisplay::displayEllipse(double x, double y,
 	  ip2.set_u( x2 );
 	  ip2.set_v( y2 );
 
-	  vpDisplay::displayLine(I, ip1, ip2, color) ;
+	  vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
 	}
 
 	ip2 = ip1;

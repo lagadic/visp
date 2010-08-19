@@ -473,20 +473,22 @@ vpFeaturePoint::buildFrom(const double x, const double y, const double Z)
 
   \param cam : Camera parameters.
   \param I : Image.
-  \param color : Color to use for the display
+  \param color : Color to use for the display.
+  \param thickness : Thickness of the feature representation.
 
 */
 void
 vpFeaturePoint::display(const vpCameraParameters &cam,
 			vpImage<unsigned char> &I,
-			vpColor color) const
+			vpColor color, 
+			unsigned int thickness) const
 {
   try{
     double x,y ;
     x = get_x() ;
     y = get_y() ;
 
-    vpFeatureDisplay::displayPoint(x,y, cam, I, color) ;
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness) ;
 
   }
   catch(...)
@@ -502,20 +504,22 @@ vpFeaturePoint::display(const vpCameraParameters &cam,
 
   \param cam : Camera parameters.
   \param I : color Image.
-  \param color : Color to use for the display
+  \param color : Color to use for the display.
+  \param thickness : Thickness of the feature representation.
 
- */
+*/
 void
 vpFeaturePoint::display(const vpCameraParameters &cam,
                         vpImage<vpRGBa> &I,
-                        vpColor color) const
+                        vpColor color, 
+			unsigned int thickness) const
 {
   try{
     double x,y ;
     x = get_x() ;
     y = get_y() ;
 
-    vpFeatureDisplay::displayPoint(x,y, cam, I, color) ;
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness) ;
 
   }
   catch(...)
