@@ -245,18 +245,28 @@ vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
 }
 
 
-//! display VanishingPoint feature
+/*!
+
+  Display vanishing point feature.
+
+  \param cam : Camera parameters.
+  \param I : Image.
+  \param color : Color to use for the display.
+  \param thickness : Thickness of the feature representation.
+
+*/
 void
 vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
 				 vpImage<unsigned char> &I,
-				 vpColor color) const
+				 vpColor color, 
+				 unsigned int thickness) const
 {
   try{
     double x,y ;
     x = get_x() ;
     y = get_y() ;
 
-    vpFeatureDisplay::displayPoint(x,y, cam, I, color) ;
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness) ;
 
   }
   catch(...)
@@ -265,18 +275,28 @@ vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
     throw ;
   }
 }
-//! display VanishingPoint feature
+/*!
+
+  Display vanishing point feature.
+
+  \param cam : Camera parameters.
+  \param I : color Image.
+  \param color : Color to use for the display.
+  \param thickness : Thickness of the feature representation.
+
+*/
 void
 vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
                                  vpImage<vpRGBa> &I,
-                                 vpColor color) const
+                                 vpColor color, 
+				 unsigned int thickness) const
 {
   try{
     double x,y ;
     x = get_x() ;
     y = get_y() ;
 
-    vpFeatureDisplay::displayPoint(x,y, cam, I, color) ;
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness) ;
 
   }
   catch(...)

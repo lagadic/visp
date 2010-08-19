@@ -408,11 +408,13 @@ vpFeatureEllipse::setMu(const double mu20, const double mu11,
   \param cam : Camera parameters.
   \param I : Image on which features have to be displayed.
   \param color : Color used to display the feature.
+  \param thickness : Thickness of the feature representation.
 */
 void
 vpFeatureEllipse::display(const vpCameraParameters &cam,
 			  vpImage<unsigned char> &I,
-			  vpColor color ) const
+			  vpColor color, 
+			  unsigned int thickness ) const
 {
   try{
       double x = s[0] ;
@@ -422,8 +424,8 @@ vpFeatureEllipse::display(const vpCameraParameters &cam,
       double mu11 = s[3] ;
       double mu02 = s[4] ;
 
-      vpFeatureDisplay::displayEllipse(x,y,mu20,mu11,mu02,
-				       cam, I, color) ;
+      vpFeatureDisplay::displayEllipse(x, y, mu20, mu11, mu02,
+				       cam, I, color, thickness) ;
 
   }
   catch(...)
@@ -440,11 +442,13 @@ vpFeatureEllipse::display(const vpCameraParameters &cam,
   \param cam : Camera parameters.
   \param I : Color image on which features have to be displayed.
   \param color : Color used to display the feature.
- */
+  \param thickness : Thickness of the feature representation.
+*/
 void
 vpFeatureEllipse::display(const vpCameraParameters &cam,
                           vpImage<vpRGBa> &I,
-                          vpColor color ) const
+                          vpColor color, 
+			  unsigned int thickness ) const
 {
   try{
     double x = s[0] ;
@@ -454,8 +458,8 @@ vpFeatureEllipse::display(const vpCameraParameters &cam,
     double mu11 = s[3] ;
     double mu02 = s[4] ;
 
-    vpFeatureDisplay::displayEllipse(x,y,mu20,mu11,mu02,
-                                     cam, I, color) ;
+    vpFeatureDisplay::displayEllipse(x, y, mu20, mu11, mu02,
+                                     cam, I, color, thickness) ;
 
   }
   catch(...)

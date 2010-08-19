@@ -365,10 +365,12 @@ public:
 
   void display(const vpCameraParameters &cam,
 	       vpImage<unsigned char> &I,
-	       vpColor color=vpColor::green) const ;
+	       vpColor color=vpColor::green, 
+	       unsigned int thickness=1) const ;
   void display(const vpCameraParameters &cam,
                vpImage<vpRGBa> &I,
-               vpColor color=vpColor::green) const ;
+               vpColor color=vpColor::green, 
+	       unsigned int thickness=1) const ;
 
   /*!
     @name Deprecated functions

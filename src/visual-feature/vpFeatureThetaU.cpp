@@ -668,7 +668,8 @@ vpFeatureThetaU *vpFeatureThetaU::duplicate() const
 void
 vpFeatureThetaU::display(const vpCameraParameters &/* cam */,
 			 vpImage<unsigned char> &/* I */,
-			 vpColor /* color */) const
+			 vpColor /* color */,
+			 unsigned int /* thickness */) const
 {
   static int firsttime =0 ;
 
@@ -688,7 +689,8 @@ vpFeatureThetaU::display(const vpCameraParameters &/* cam */,
 void
 vpFeatureThetaU::display(const vpCameraParameters &/* cam */,
                          vpImage<vpRGBa> &/* I */,
-                         vpColor /* color */) const
+                         vpColor /* color */,
+			 unsigned int /* thickness */) const
 {
   static int firsttime =0 ;
 

@@ -73,13 +73,16 @@
   \param desiredColor : Color for the desired features. If vpColor::none,
   desired features display is turned off.
 
+  \param thickness : Thickness of the feature representation.
+
 */
 void
 vpServoDisplay::display(vpServo &s,
                         const vpCameraParameters &cam,
                         vpImage<unsigned char> &I,
                         vpColor currentColor,
-                        vpColor desiredColor)
+                        vpColor desiredColor,
+			unsigned int thickness)
 {
 
 
@@ -95,12 +98,12 @@ vpServoDisplay::display(vpServo &s,
     if (desiredColor != vpColor::none) {
       // desired list
       s_ptr = s.desiredFeatureList.value() ;
-      s_ptr->display(cam, I, desiredColor ) ;
+      s_ptr->display(cam, I, desiredColor, thickness ) ;
     }
     if (currentColor != vpColor::none) {
       // current list
       s_ptr =  s.featureList.value() ;
-      s_ptr->display(cam, I, currentColor ) ;
+      s_ptr->display(cam, I, currentColor, thickness ) ;
     }
   }
   //  vpDisplay::flush(I) ;
@@ -123,13 +126,16 @@ vpServoDisplay::display(vpServo &s,
   \param desiredColor : Color for the desired features. If vpColor::none,
   desired features display is turned off.
 
+  \param thickness : Thickness of the feature representation.
+
  */
 void
 vpServoDisplay::display(vpServo &s,
                         const vpCameraParameters &cam,
                         vpImage<vpRGBa> &I,
                         vpColor currentColor,
-                        vpColor desiredColor)
+                        vpColor desiredColor,
+			unsigned int thickness)
 {
 
 
@@ -145,12 +151,12 @@ vpServoDisplay::display(vpServo &s,
     if (desiredColor != vpColor::none) {
       // desired list
       s_ptr = s.desiredFeatureList.value() ;
-      s_ptr->display(cam, I, desiredColor ) ;
+      s_ptr->display(cam, I, desiredColor, thickness ) ;
     }
     if (currentColor != vpColor::none) {
       // current list
       s_ptr =  s.featureList.value() ;
-      s_ptr->display(cam, I, currentColor ) ;
+      s_ptr->display(cam, I, currentColor, thickness ) ;
     }
   }
   //  vpDisplay::flush(I) ;
