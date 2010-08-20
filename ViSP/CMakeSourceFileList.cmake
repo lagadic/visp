@@ -294,6 +294,7 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpFeatureThetaU.cpp
   visual-feature/vpFeatureTranslation.cpp
   visual-feature/vpFeatureVanishingPoint.cpp
+  visual-feature/vpFeatureLuminance.cpp
   visual-feature/vpGenericFeature.cpp
   )
 

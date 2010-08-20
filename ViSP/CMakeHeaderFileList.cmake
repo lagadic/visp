@@ -283,6 +283,7 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpFeatureThetaU.h
   visual-feature/vpFeatureTranslation.h
   visual-feature/vpFeatureVanishingPoint.h
+  visual-feature/vpFeatureLuminance.h
   visual-feature/vpGenericFeature.h
   )
 
