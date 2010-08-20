@@ -256,6 +256,8 @@ public:
   void operator=(const vpImage<Type> &m) ;
 
   void operator=(const Type &x);
+  
+  void insert(const vpImage<Type> &src, const vpImagePoint topLeft);
 
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
   //! Substract two images: dst = this - im2;
@@ -707,6 +709,68 @@ vpImage<Type> vpImage<Type>::operator-(const vpImage<Type> &B)
   vpImage<Type> C;
   sub(*this,B,C);
   return C;
+}
+
+/*!
+  Insert an image into another one.
+
+  It is possible to insert the image \f$ src \f$ into the calling vpImage.
+  You can set the point in the destination image where the top left corner of the \f$ src \f$ image will belocated.
+
+  \param src : Image to insert
+  \param topLeft : Coordinates of the \f$ src \f$ image's top left corner in the destination image.
+*/
+template<class Type>
+void vpImage<Type>::insert(const vpImage<Type> &src,
+			const vpImagePoint topLeft)
+{
+  Type* srcBitmap;
+  Type* destBitmap;
+  
+  int itl = (int)topLeft.get_i();
+  int jtl = (int)topLeft.get_j();
+  
+  int dest_ibegin = 0;
+  int dest_jbegin = 0;
+  int src_ibegin = 0;
+  int src_jbegin = 0;
+  int dest_w = this->getWidth();
+  int dest_h = this->getHeight();
+  int src_w = src.getWidth();
+  int src_h = src.getHeight();
+  int wsize = src.getWidth();
+  int hsize = src.getHeight();
+  
+  if (itl >= dest_h || jtl >= dest_w)
+    return;
+  
+  if (itl < 0)
+    src_ibegin = -itl;  
+  else
+    dest_ibegin = itl;
+  
+  if (jtl < 0)
+    src_jbegin = -jtl;
+  else
+    dest_jbegin = jtl;
+  
+  if (src_w - src_jbegin > dest_w - dest_jbegin)
+    wsize = dest_w - dest_jbegin;
+  else
+    wsize = src_w - src_jbegin;
+  
+  if (src_h - src_ibegin > dest_h - dest_ibegin)
+    hsize = dest_h - dest_ibegin;
+  else
+    hsize = src_h - src_ibegin;
+  
+  for (int i = 0; i < hsize; i++)
+  {
+    srcBitmap = src.bitmap + ((src_ibegin+i)*src_w+src_jbegin);
+    destBitmap = this->bitmap + ((dest_ibegin+i)*dest_w+dest_jbegin);
+  
+    memcpy(destBitmap,srcBitmap,wsize);
+  }
 }
 
 /*!
