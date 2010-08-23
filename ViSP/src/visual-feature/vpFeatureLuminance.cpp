@@ -35,6 +35,8 @@ vpFeatureLuminance::init()
     nbParameters = 1;
     dim_s = 0 ;
     bord = 10 ;
+    flags = NULL;
+    pixInfo = NULL;
 
     if (flags == NULL)
       flags = new bool[nbParameters];
@@ -60,8 +62,11 @@ vpFeatureLuminance::init(int _nbr, int _nbc, double _Z)
 
   s.resize(dim_s) ;
   
-  pixInfo = new vpLuminance[dim_s] ;
+  if (pixInfo != NULL)
+    delete [] pixInfo;
 
+  pixInfo = new vpLuminance[dim_s] ;
+  
   Z = _Z ;
 }
 
@@ -78,7 +83,8 @@ vpFeatureLuminance::vpFeatureLuminance() : vpBasicFeature()
 */
 vpFeatureLuminance::~vpFeatureLuminance() 
 {
-  delete [] pixInfo ;
+  if (pixInfo != NULL) delete [] pixInfo ;
+  if (flags != NULL) delete [] flags;
 }
 
 
@@ -215,7 +221,7 @@ vpFeatureLuminance::interaction(vpMatrix &L)
   Compute and return the interaction matrix \f$ L_I \f$. The computation is made
   thanks to the values of the luminance features \f$ I \f$
 */
-vpMatrix  vpFeatureLuminance::interaction(const int select)
+vpMatrix  vpFeatureLuminance::interaction(const int /* select */)
 {
   static vpMatrix L  ;
   interaction(L) ;
@@ -227,6 +233,7 @@ vpMatrix  vpFeatureLuminance::interaction(const int select)
   Compute the error \f$ (I-I^*)\f$ between the current and the desired
  
   \param s_star : Desired visual feature.
+  \param e : Error between the current and the desired features.
 
 */
 void
@@ -239,7 +246,6 @@ vpFeatureLuminance::error(const vpBasicFeature &s_star,
     {
       e[i] = s[i] - s_star[i] ;
     }
-  
 }
 
 
@@ -252,11 +258,11 @@ vpFeatureLuminance::error(const vpBasicFeature &s_star,
 */
 vpColVector
 vpFeatureLuminance::error(const vpBasicFeature &s_star,
-		      const int select)
+			  const int /* select */)
 {
   static vpColVector e ;
   
-  error(s_star,e) ;
+  error(s_star, e) ;
   
   return e ;
 
@@ -271,7 +277,7 @@ vpFeatureLuminance::error(const vpBasicFeature &s_star,
 
  */
 void
-vpFeatureLuminance::print(const int select ) const
+vpFeatureLuminance::print(const int /* select */) const
 {
   static int firsttime =0 ;
 
@@ -292,9 +298,9 @@ vpFeatureLuminance::print(const int select ) const
 
  */
 void
-vpFeatureLuminance::display(const vpCameraParameters &cam,
-			    vpImage<unsigned char> &I,
-			    vpColor color,  unsigned int thickness) const
+vpFeatureLuminance::display(const vpCameraParameters & /* cam */,
+			    vpImage<unsigned char> & /* I */,
+			    vpColor /* color */,  unsigned int /* thickness */) const
 {
  static int firsttime =0 ;
 
@@ -313,9 +319,9 @@ vpFeatureLuminance::display(const vpCameraParameters &cam,
 
  */
 void
-vpFeatureLuminance::display(const vpCameraParameters &cam,
-			    vpImage<vpRGBa> &I,
-			    vpColor color, unsigned int thickness) const
+vpFeatureLuminance::display(const vpCameraParameters & /* cam */,
+			    vpImage<vpRGBa> & /* I */,
+			    vpColor /* color */, unsigned int /* thickness */) const
 {
   static int firsttime =0 ;
 
