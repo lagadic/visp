@@ -617,6 +617,73 @@ vpServolens::getPosition(vpServoType servo, unsigned &position)
 }
 
 /*!
+
+  These parameters are computed from the Dragonfly2 DR2-COL camera sensor pixel 
+  size (7.4 um) and from the servolens zoom position. 
+
+  \param I : An image coming from the Dragonfly2 camera attached to the 
+  servolens.
+
+\code
+  #include <visp/vpServolens.h>
+  
+  int main()
+  {
+#ifdef UNIX
+    vpServolens servolens("/dev/ttyS0");
+    
+    vpImage<unsigned char> I(240, 320);
+    vpCameraParameters cam = servolens.getCameraParameters(I);
+    std::cout << "Camera parameters: " << cam << std::endl;
+#endif
+  }
+
+  \exception vpRobotException::communicationError : If cannot dial
+  with Servolens.
+\endcode
+  
+ */
+vpCameraParameters 
+vpServolens::getCameraParameters(vpImage<unsigned char> &I)
+{
+  if (!isinit) {
+    vpERROR_TRACE ("Cannot dial with Servolens.");
+    throw vpRobotException (vpRobotException::communicationError,
+			    "Cannot dial with Servolens.");
+  }
+  vpCameraParameters cam;
+  double pix_size = 7.4e-6; // Specific to the Dragonfly2 camera
+  double px=1000, py=1000, u0=320, v0=240;
+  // Determine if the image is subsampled.
+  // Dragonfly2 native images are 640 by 480
+  double subsample_factor = 1.;
+  double width = I.getWidth();
+  double height= I.getHeight();
+
+
+  if (width > 300 && width < 340 && height > 220 && height < 260)
+    subsample_factor = 2;
+  else if (width > 140 && width < 1800 && height > 100 && height < 140)
+    subsample_factor = 4;
+
+  unsigned zoom;
+  getPosition(vpServolens::ZOOM, zoom);
+  std::cout << "Actual zoom value: " << zoom << std::endl;
+
+  // XSIZE_PIX_CAM_AFMA4 / focale et YSIZE_PIX_CAM_AFMA4 / focale correspondent
+  // aux parametres de calibration de la camera (donnees constructeur) pour des
+  // tailles d'images CCIR (768x576), donc avec scale = 1.
+  double focale = zoom * 1.0e-5; // Transformation en metres
+  px = focale / (double)(subsample_factor * pix_size); // Taille des pixels en metres.
+  py = focale / (double)(subsample_factor * pix_size); // Taille des pixels en metres.
+  u0 = I.getWidth() / 2.;
+  v0 = I.getHeight() / 2.;
+  cam.initPersProjWithoutDistortion(px, py, u0, v0);
+
+  return cam;
+}
+
+/*!
   Waits for the Servolens promt '>'.
 
   \return The prompt character.
