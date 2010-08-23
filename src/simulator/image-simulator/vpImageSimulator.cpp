@@ -240,6 +240,61 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
   }
 }
 
+
+/*!
+  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay! In this method you specify directly the image which is projected.
+  
+  \param I : The image used to store the result.
+  \param Isrc : The image which is projected into \f$ I \f$.
+  \param cam : The parameters of the virtual camera.
+*/
+void
+vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc, const vpCameraParameters cam)
+{
+  int nb_point_dessine = 0;
+  if (cleanPrevImage)
+  {
+    unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
+    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    {
+      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      {
+	I[i][j] = col;
+      }
+    }
+  }
+  if(visible)
+  {
+    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    
+    double top = rect.getTop();
+    double bottom = rect.getBottom();
+    double left = rect.getLeft();
+    double right= rect.getRight();
+    
+    unsigned char *bitmap = I.bitmap;
+    unsigned int width = I.getWidth();
+    vpImagePoint ip;
+    
+    for (int i = (int)top; i < (int)bottom; i++)
+    {
+      for (int j = (int)left; j < (int)right; j++)
+      {
+        double x=0,y=0;
+	ip.set_ij(i,j);
+        vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+	ip.set_ij(y,x);
+	unsigned char Ipixelplan = 0;
+	if(getPixel(Isrc,ip,Ipixelplan))
+	{
+	  *(bitmap+i*width+j)=Ipixelplan;
+	  nb_point_dessine++;
+	}
+      }
+    }
+  }
+}
+
 /*!
   Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
   
@@ -383,6 +438,61 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam)
 	    *(bitmap+i*width+j) = Ipixelplan;
 	    nb_point_dessine++;
 	  }
+	}
+      }
+    }
+  }
+}
+
+
+/*!
+  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay! In this method you specify directly the image which is projected.
+  
+  \param I : The image used to store the result.
+  \param Isrc : The image which is projected into \f$ I \f$.
+  \param cam : The parameters of the virtual camera.
+*/
+void
+vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const vpCameraParameters cam)
+{
+  int nb_point_dessine = 0;
+  if (cleanPrevImage)
+  {
+    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    {
+      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      {
+	I[i][j] = bgColor;
+      }
+    }
+  }
+  
+  if(visible)
+  {
+    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    
+    double top = rect.getTop();
+    double bottom = rect.getBottom();
+    double left = rect.getLeft();
+    double right= rect.getRight();
+    
+    vpRGBa *bitmap = I.bitmap;
+    unsigned int width = I.getWidth();
+    vpImagePoint ip;
+    
+    for (int i = (int)top; i < (int)bottom; i++)
+    {
+      for (int j = (int)left; j < (int)right; j++)
+      {
+        double x=0,y=0;
+	ip.set_ij(i,j);
+        vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+	ip.set_ij(y,x);
+	vpRGBa Ipixelplan;
+	if(getPixel(Isrc,ip,Ipixelplan))
+	{
+	  *(bitmap+i*width+j) = Ipixelplan;
+	  nb_point_dessine++;
 	}
       }
     }
@@ -1081,6 +1191,54 @@ vpImageSimulator::getPixel(const vpImagePoint iP,unsigned char &Ipixelplan)
     return false;
 }
 
+bool
+vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint iP,unsigned char &Ipixelplan)
+{
+  //test si pixel dans zone projetee
+  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
+    return false;
+
+  //methoed algebrique
+  double z;
+
+  //calcul de la profondeur de l'intersection
+  z = distance/(normal_Cam_optim[0]*iP.get_u()+normal_Cam_optim[1]*iP.get_v()+normal_Cam_optim[2]);
+  //calcul coordonnees 3D intersection
+  Xinter_optim[0]=iP.get_u()*z;
+  Xinter_optim[1]=iP.get_v()*z;
+  Xinter_optim[2]=z;
+
+  //recuperation des coordonnes de l'intersection dans le plan objet
+  //repere plan object : 
+  //	centre = X0_2_optim[i] (premier point definissant le plan)
+  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //ici j'ai considere que le plan est un rectangle => coordonnees sont simplement obtenu par un produit scalaire
+  double u = 0, v = 0;
+  double diff = 0;
+  for(int i = 0; i < 3; i++)
+  {
+    diff = (Xinter_optim[i]-X0_2_optim[i]);
+    u += diff*vbase_u_optim[i];
+    v += diff*vbase_v_optim[i];
+  }
+  u = u/(euclideanNorm_u*euclideanNorm_u);
+  v = v/(euclideanNorm_v*euclideanNorm_v);
+
+  if( u > 0 && v > 0 && u < 1. && v < 1.)
+  {
+    double i2,j2;
+    i2=v*(Isrc.getHeight()-1);
+    j2=u*(Isrc.getWidth()-1);
+    if (interp == BILINEAR_INTERPOLATION)
+      Ipixelplan = Isrc.getValue(i2,j2);
+    else if (interp == SIMPLE)
+      Ipixelplan = Isrc[(int)i2][(int)j2];
+    return true;
+  }
+  else
+    return false;
+}
+
 
 bool
 vpImageSimulator::getPixel(const vpImagePoint iP,vpRGBa &Ipixelplan)
@@ -1124,6 +1282,54 @@ vpImageSimulator::getPixel(const vpImagePoint iP,vpRGBa &Ipixelplan)
       Ipixelplan = Ic.getValue(i2,j2);
     else if (interp == SIMPLE)
       Ipixelplan = Ic[(int)i2][(int)j2];
+    return true;
+  }
+  else
+    return false;
+}
+
+bool
+vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint iP,vpRGBa &Ipixelplan)
+{
+  //test si pixel dans zone projetee
+  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
+    return false;
+
+  //methoed algebrique
+  double z;
+
+  //calcul de la profondeur de l'intersection
+  z = distance/(normal_Cam_optim[0]*iP.get_u()+normal_Cam_optim[1]*iP.get_v()+normal_Cam_optim[2]);
+  //calcul coordonnees 3D intersection
+  Xinter_optim[0]=iP.get_u()*z;
+  Xinter_optim[1]=iP.get_v()*z;
+  Xinter_optim[2]=z;
+
+  //recuperation des coordonnes de l'intersection dans le plan objet
+  //repere plan object : 
+  //	centre = X0_2_optim[i] (premier point definissant le plan)
+  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //ici j'ai considere que le plan est un rectangle => coordonnees sont simplement obtenu par un produit scalaire
+  double u = 0, v = 0;
+  double diff = 0;
+  for(int i = 0; i < 3; i++)
+  {
+    diff = (Xinter_optim[i]-X0_2_optim[i]);
+    u += diff*vbase_u_optim[i];
+    v += diff*vbase_v_optim[i];
+  }
+  u = u/(euclideanNorm_u*euclideanNorm_u);
+  v = v/(euclideanNorm_v*euclideanNorm_v);
+
+  if( u > 0 && v > 0 && u < 1. && v < 1.)
+  {
+    double i2,j2;
+    i2=v*(Isrc.getHeight()-1);
+    j2=u*(Isrc.getWidth()-1);
+    if (interp == BILINEAR_INTERPOLATION)
+      Ipixelplan = Isrc.getValue(i2,j2);
+    else if (interp == SIMPLE)
+      Ipixelplan = Isrc[(int)i2][(int)j2];
     return true;
   }
   else

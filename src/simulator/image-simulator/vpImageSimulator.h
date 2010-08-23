@@ -211,6 +211,9 @@ class VISP_EXPORT vpImageSimulator
     void getImage(vpImage<unsigned char> &I, const vpCameraParameters cam);
     void getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam);
     
+    void getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc, const vpCameraParameters cam);
+    void getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const vpCameraParameters cam);
+    
     void getImage(vpImage<unsigned char> &I, const vpCameraParameters cam, vpMatrix &zBuffer);
     void getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpMatrix &zBuffer);
     
@@ -241,6 +244,8 @@ class VISP_EXPORT vpImageSimulator
     // and in this case return the corresponding image pixel Ipixelplan
     bool getPixel(const vpImagePoint iP,unsigned char &Ipixelplan);
     bool getPixel(const vpImagePoint iP,vpRGBa &Ipixelplan);
+    bool getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint iP,unsigned char &Ipixelplan);
+    bool getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint iP,vpRGBa &Ipixelplan);
     bool getPixelDepth(const vpImagePoint iP,double &Zpixelplan);
     bool getPixelVisibility(const vpImagePoint iP,double &Zpixelplan);
     
