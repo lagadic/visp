@@ -148,6 +148,7 @@ class VISP_EXPORT vpMbtTracker
   void init(vpImage<unsigned char>& I, vpHomogeneousMatrix &cMo) ;
   void track(vpImage<unsigned char> &I);
   void display(vpImage<unsigned char>& I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, vpColor col , unsigned int l=1);
+  void display(vpImage<vpRGBa>& I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, vpColor col , unsigned int l=1);
   void resetTracker();
   void reInitModel(vpImage<unsigned char>& I, const char* cad_name, vpHomogeneousMatrix& _cMo);
   

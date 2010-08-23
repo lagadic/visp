@@ -889,6 +889,30 @@ vpMbtTracker::display(vpImage<unsigned char>& I, vpHomogeneousMatrix &_cMo, vpCa
   }
 }
 
+/*!
+  Display the 3D model from a given position of the camera
+
+  \param I : The image.
+  \param _cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param col : The desired color.
+  \param thickness : The thickness of the lines.
+*/
+void
+vpMbtTracker::display(vpImage<vpRGBa>& I, vpHomogeneousMatrix &_cMo, vpCameraParameters &cam,
+											vpColor col,
+											unsigned int thickness)
+{
+  vpMbtDistanceLine *l ;
+  Lline.front() ;
+  while (!Lline.outside())
+  {
+    l = Lline.value() ;
+    l->display(I,_cMo, cam, col, thickness) ;
+    Lline.next() ;
+  }
+}
+
 
 /*!
   Initialize the moving edge thanks to a given pose of the camera.

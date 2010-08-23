@@ -189,6 +189,7 @@ class VISP_EXPORT vpMbtDistanceLine
     void initInteractionMatrixError();
     void computeInteractionMatrixError(vpHomogeneousMatrix &cMo);
     void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, vpColor col, unsigned int thickness = 1);
+    void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, vpColor col, unsigned int thickness = 1);
     void displayMovingEdges(vpImage<unsigned char> &I);
 
     

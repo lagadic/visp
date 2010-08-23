@@ -439,6 +439,38 @@ vpMbtDistanceLine::display(vpImage<unsigned char>&I, vpHomogeneousMatrix &cMo, v
 
 
 /*!
+  Display the line. The 3D line is projected into the image.
+
+  \param I : The image.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param col : The desired color.
+  \param thickness : The thickness of the line.
+*/
+void
+vpMbtDistanceLine::display(vpImage<vpRGBa>&I, vpHomogeneousMatrix &cMo, vpCameraParameters&cam, vpColor col, unsigned int thickness)
+{
+  if (isvisible ==true)
+  {
+    p1->changeFrame(cMo) ;
+    p2->changeFrame(cMo) ;
+    line->changeFrame(cMo) ;
+
+    p1->projection() ;
+    p2->projection() ;
+    line->projection() ;
+
+    vpImagePoint ip1, ip2;
+
+    vpMeterPixelConversion::convertPoint(cam,p1->get_x(),p1->get_y(),ip1) ;
+    vpMeterPixelConversion::convertPoint(cam,p2->get_x(),p2->get_y(),ip2) ;
+
+    vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+  }
+}
+
+
+/*!
     Enable to display the points along the line with a color corresponding to their state.
     
     - If green : The vpMeSite is a good point.
