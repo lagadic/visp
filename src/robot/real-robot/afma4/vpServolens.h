@@ -51,6 +51,9 @@
 */
 
 #include <visp/vpConfig.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpImage.h>
+
 
 /*!
 
@@ -119,6 +122,7 @@ class VISP_EXPORT vpServolens
   void setAutoIris(bool enable);
   void setPosition(vpServoType servo, unsigned position);
   bool getPosition(vpServoType servo, unsigned &position);
+  vpCameraParameters getCameraParameters(vpImage<unsigned char> &I);
 
   void enablePrompt(bool active);
 
