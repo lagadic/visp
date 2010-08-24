@@ -160,6 +160,18 @@ vpPlot::initRange (const int graphNum, double xmin, double xmax, double /*xdelt*
   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,gx,gy);
 }
 
+void
+vpPlot::initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax)
+{
+  (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,true,true);
+}
+
+void
+vpPlot::initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
+{
+  (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,zmin,zmax,10,true,true);
+}
+
 /*!
   This function enables you to choose the color used to draw a given curve.
 
