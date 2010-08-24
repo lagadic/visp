@@ -180,17 +180,19 @@ vpDot2::~vpDot2(){}
   Display in overlay the dot edges and center of gravity.
 
   \param I : Image.
-  \param c : The color used for the display.
+  \param color : The color used for the display.
+  \param thickness : Thickness of the displayed cross located at the dot cog.
 */
-void vpDot2::display(vpImage<unsigned char>& I, vpColor c)
+void vpDot2::display(vpImage<unsigned char>& I, vpColor color,
+		     unsigned int thickness)
 {
-  vpDisplay::displayCross(I, cog, 10, c);
+  vpDisplay::displayCross(I, cog, 10, color, thickness);
   ip_edges_list.front();
   
   vpImagePoint ip;
   while( ! (ip_edges_list.outside())){
     ip = ip_edges_list.value();
-    vpDisplay::displayPoint(I, ip, c);
+    vpDisplay::displayPoint(I, ip, color);
     ip_edges_list.next();
   }
 }

@@ -254,7 +254,8 @@ public:
   double getMaxSizeSearchDistancePrecision() const;
   inline double getGamma() {return this->gamma;};
 
-  void display(vpImage<unsigned char>& I, vpColor c = vpColor::red);
+  void display(vpImage<unsigned char>& I, vpColor color = vpColor::red,
+		     unsigned int thickness=1);
 
   double getDistance( const vpDot2& distantDot ) const;
 

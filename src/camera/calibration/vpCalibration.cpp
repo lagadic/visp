@@ -739,15 +739,18 @@ vpCalibration::readGrid(const char* filename,unsigned int &n,
   Display the data of the calibration (center of the tracked dots)
   \param I : Image where to display data.
   \param color : Color of the data.
+  \param thickness : Thickness of the displayed data.
+
 */
 int
-vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color)
+vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color, 
+			   unsigned int thickness)
 {
 
   Lip.front() ;
 
   for (unsigned int i =0 ; i < npt ; i++) {
-    vpDisplay::displayCross(I, Lip.value(), 10, color) ;
+    vpDisplay::displayCross(I, Lip.value(), 12, color, thickness) ;
 
     Lip.next() ;
   }
@@ -759,9 +762,11 @@ vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color)
   with model with distortion and the computed pose.
   \param I : Image where to display grid data.
   \param color : Color of the data.
+  \param thickness : Thickness of the displayed data.
 */
 int
-vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color)
+vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, 
+			   unsigned int thickness)
 {
   double u0_dist = cam_dist.get_u0() ;
   double v0_dist = cam_dist.get_v0() ;
@@ -813,7 +818,7 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color)
     ip.set_u( u0_dist + x*px_dist*r2 );
     ip.set_v( v0_dist + y*py_dist*r2 );
 
-    vpDisplay::displayCross(I, ip, 5, color) ;
+    vpDisplay::displayCross(I, ip, 6, color, thickness) ;
     ///////////////////////////////////////
 
 
