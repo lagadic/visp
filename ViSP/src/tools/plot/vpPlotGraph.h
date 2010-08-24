@@ -79,6 +79,7 @@ class vpPlotGraph
     vpPlotCurve* curveList;
     bool textdispayed;
     bool scaleInitialized;
+    bool firstPoint;
     
     int nbDivisionx;
     int nbDivisiony;
@@ -168,6 +169,8 @@ class vpPlotGraph
     //void rescale(double &min, double &max, double &delta, const int nbDiv, int side);
     
     void initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin, const double ymax, const int nbDivy, const bool gx, const bool gy);
+    
+    void initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin, const double ymax, const int nbDivy, const double zmin, const double zmax, const int nbDivz, const bool gx, const bool gy);
     
     void plot (vpImage<unsigned char> &I, const int curveNb, const double x, const double y);
     void plot (vpImage<unsigned char> &I, const int curveNb, const double x, const double y, const double z);

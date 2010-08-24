@@ -72,6 +72,7 @@ vpPlotGraph::vpPlotGraph()
   gridx = true;
   gridy = true;
   scaleInitialized = false;
+  firstPoint = true;
   
   dispUnit = false;
   dispTitle = false;
@@ -99,7 +100,7 @@ vpPlotGraph::initGraph (int nbCurve)
   curveList = new vpPlotCurve[nbCurve];
   curveNbr = nbCurve;
   
-  vpColor colors[6] = {vpColor::blue,vpColor::green,vpColor::red,vpColor::cyan,vpColor::orange,vpColor::yellow};
+  vpColor colors[6] = {vpColor::blue,vpColor::green,vpColor::red,vpColor::cyan,vpColor::orange,vpColor::purple};
   
   for (int i = 0; i < curveNbr; i++)
   {
@@ -398,7 +399,7 @@ void
 vpPlotGraph::displayLegend (vpImage<unsigned char> &I)
 {
   for (int i = 0; i < curveNbr; i++)
-    vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()+i*5*epsi,dTopLeft.get_j()+dWidth-15*epsj),(curveList+i)->legend, (curveList+i)->color);
+    vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()+i*5*epsi,dTopLeft.get_j()+dWidth-20*epsj),(curveList+i)->legend, (curveList+i)->color);
 }
 
 void
@@ -444,6 +445,28 @@ vpPlotGraph::initScale(vpImage<unsigned char> &I, const double xmin, const doubl
   this->gridy = gy;
   this->nbDivisionx = nbDivx;
   this->nbDivisiony = nbDivy;
+  computeGraphParameters();
+  clearGraphZone(I);
+  displayGrid(I);
+  vpDisplay::flushROI(I,graphZone);
+  scaleInitialized = true;
+}
+
+
+void
+vpPlotGraph::initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin, const double ymax, const int nbDivy, const double zmin, const double zmax, const int nbDivz, const bool gx, const bool gy)
+{
+  this->xmin = xmin;
+  this->xmax = xmax;
+  this->ymin = ymin;
+  this->ymax = ymax;
+  this->zmin = zmin;
+  this->zmax = zmax;
+  this->gridx = gx;
+  this->gridy = gy;
+  this->nbDivisionx = nbDivx;
+  this->nbDivisiony = nbDivy;
+  this->nbDivisionz = nbDivz;
   computeGraphParameters();
   clearGraphZone(I);
   displayGrid(I);
@@ -555,6 +578,7 @@ vpPlotGraph::resetPointList(const int curveNum)
   (curveList+curveNum)->pointListx.kill();
   (curveList+curveNum)->pointListy.kill();
   (curveList+curveNum)->pointListz.kill();
+  firstPoint = true;
 }
 
 
@@ -1027,6 +1051,11 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
       vpDisplay::displayCharString(I,iPunit,unitz, vpColor::black);
     }
   }
+  
+  if (dispTitle)
+    displayTitle(I);
+  if (dispLegend)
+    displayLegend(I);
 }
 
 void
@@ -1068,8 +1097,16 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
     computeGraphParameters3D();
     clearGraphZone(I);
     displayGrid3D(I);
-    if (y == 0)
+    if (y == 0 || z == 0)
       scaleInitialized = false;
+  }
+  
+  if (firstPoint)
+  {
+    clearGraphZone(I);
+    displayGrid3D(I);
+    vpDisplay::flushROI(I,graphZone);
+    firstPoint = false;
   }
   
   bool changed = false;
@@ -1158,12 +1195,12 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
       iP.set_uv(u,v);
       iP = iP + dTopLeft3D;
     
-      vpDisplay::displayCross(I,iP,3,vpColor::cyan);
+      //vpDisplay::displayCross(I,iP,3,vpColor::cyan);
       if (k > 0)
       {
 	if (check3Dline((curveList+i)->lastPoint,iP))
           vpDisplay::displayLine(I,(curveList+i)->lastPoint, iP, (curveList+i)->color);
-	vpDisplay::displayCross(I,iP,3,vpColor::orange);
+	//vpDisplay::displayCross(I,iP,3,vpColor::orange);
       }
     
       (curveList+i)->lastPoint = iP;
@@ -1273,7 +1310,7 @@ vpPlotGraph::navigation(vpImage<unsigned char> &I, bool &changed)
     
     anglei = diffi*360/width;
     anglej = diffj*360/width;
-    mov.buildFrom(0,0,0,vpMath::rad(-anglei),vpMath::rad(anglej),0);
+    mov.buildFrom(0,0,0,vpMath::rad(-anglei),vpMath::rad(-anglej),0);
     changed = true;
   }
 

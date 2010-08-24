@@ -159,6 +159,8 @@ class VISP_EXPORT vpPlot
     
     void initGraph (int graphNum, int curveNbr);
     void initRange (const int graphNum, double xmin, double xmax, double xdelt, double ymin, double ymax, double ydelt, const bool gx=0, const bool gy=0);
+    void initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax);
+    void initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
     void setColor (const int graphNum, const int curveNum, vpColor color);
     void setTitle (const int graphNum, const char *title);
     void setUnitX (const int graphNum, const char *unitx);
