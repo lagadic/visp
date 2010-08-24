@@ -159,8 +159,10 @@ public:
                       vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ,
                       bool verbose = false);
   int writeData(const char *filename) ;
-  int displayData(vpImage<unsigned char> &I, vpColor col=vpColor::red) ;
-  int displayGrid(vpImage<unsigned char> &I, vpColor col=vpColor::yellow) ;
+  int displayData(vpImage<unsigned char> &I, vpColor color=vpColor::red, 
+		  unsigned int thickness=1) ;
+  int displayGrid(vpImage<unsigned char> &I, vpColor color=vpColor::yellow, 
+		  unsigned int thickness=1) ;
   
   double computeStdDeviation(vpHomogeneousMatrix &cMo,
                           vpCameraParameters &cam);

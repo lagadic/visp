@@ -777,7 +777,7 @@ int main(int argc, const char ** argv)
           mP[i].set_y(y) ;
           if (opt_display) {
             if(valid[i]){
-             md[i].display(I,vpColor::red);
+	      md[i].display(I,vpColor::red, 2);
              mP[i].display(I,cMoTmp,camTmp) ;
             }
           }
@@ -933,9 +933,9 @@ int main(int argc, const char ** argv)
           return(-1);
         }
 	    //Display the data of the calibration (center of the dots)
-        table_cal[niter].displayData(I) ;
+        table_cal[niter].displayData(I, vpColor::red, 3) ;
 	    //Display grid : estimated center of dots using camera parameters
-        table_cal[niter].displayGrid(I) ;
+        table_cal[niter].displayGrid(I, vpColor::yellow, 3) ;
         vpDisplay::flush(I) ;
         if(opt_click){
 	  vpImagePoint ip;
