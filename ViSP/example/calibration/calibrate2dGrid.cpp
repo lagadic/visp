@@ -437,6 +437,7 @@ int main(int argc, const char ** argv)
   vpCalibration* table_cal;
   table_cal = new vpCalibration[opt_nimages];
   unsigned int niter = 0;
+  char title[100];
 
   while (iter < opt_first + opt_nimages*opt_step) {
     try {
@@ -479,7 +480,8 @@ int main(int argc, const char ** argv)
 
     try{
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100,"Calibration initialization") ;
+      sprintf(title, "Calibration initialization on image %s", (s.str()).c_str());
+      display.init(I, 100, 100, title) ;
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -521,9 +523,9 @@ int main(int argc, const char ** argv)
           vpDisplay::display(I);
           std::printf("click in the dot %d of coordinates\nx=%f y=%f z=%f \n",
           i+1 ,P[i].get_oX(),P[i].get_oY(),P[i].get_oZ());
-          std::sprintf(comment,"click in the dot %d",i+1 );
+          std::sprintf(comment,"Click in the dot %d",i+1 );
 	  vpImagePoint ip;
-	  ip.set_i( 10 );
+	  ip.set_i( 15 );
 	  ip.set_j( 10 );
 	  
           vpDisplay::displayCharString(I, ip, &comment[0], vpColor::blue);
@@ -624,16 +626,16 @@ int main(int argc, const char ** argv)
       if(opt_click){
 	vpImagePoint ip;
         vpDisplay::display(I);    
-	ip.set_i( 10 );
+	ip.set_i( 15 );
 	ip.set_j( 10 );
         vpDisplay::displayCharString(I, ip, "Pose computation failed",
                                      vpColor::red);
-	ip.set_i( 22 );
+	ip.set_i( 30 );
 	ip.set_j( 10 );
         vpDisplay::displayCharString(I, ip,
                                      "A left click to define other dots.",
                                      vpColor::blue);
-	ip.set_i( 34 );
+	ip.set_i( 45 );
 	ip.set_j( 10 );
         vpDisplay::displayCharString(I, ip,
                                      "A middle click to don't care of this pose.",
@@ -673,12 +675,12 @@ int main(int argc, const char ** argv)
       vpDisplay::flush(I) ;
       if(opt_click){
 	vpImagePoint ip;
-	ip.set_i( 10 );
+	ip.set_i( 15 );
 	ip.set_j( 10 );
         vpDisplay::displayCharString(I, ip,
                                      "A left click to display grid.",
                                      vpColor::blue);
-	ip.set_i( 22 );
+	ip.set_i( 30 );
 	ip.set_j( 10 );
         vpDisplay::displayCharString(I, ip,
                                      "A right click to define other dots.",
@@ -798,18 +800,20 @@ int main(int argc, const char ** argv)
       table_cal[niter].writeData(filename_out.c_str());
     }
     if (opt_click) {
+      sprintf(title, "Extracted 2D data from image %s", (s.str()).c_str());
+      vpDisplay::setTitle(I, title);
       vpImagePoint ip;
-      ip.set_i( 10 );
+      ip.set_i( 15 );
       ip.set_j( 10 );	
       vpDisplay::displayCharString(I, ip,
 				   "A left click to validate this pose.",
 				   vpColor::blue);
-      ip.set_i( 22 );
+      ip.set_i( 30 );
       ip.set_j( 10 );	
       vpDisplay::displayCharString(I, ip,
 				   "A right click to retry.",
 				   vpColor::blue);
-      ip.set_i( 34 );
+      ip.set_i( 45 );
       ip.set_j( 10 );	
       vpDisplay::displayCharString(I, ip,
 				   "A middle click to don't care of this pose.",
@@ -914,7 +918,8 @@ int main(int argc, const char ** argv)
 
         try{
           // Display size is automatically defined by the image (I) size
-          display.init(I, 100, 100,"Calibration results") ;
+	  sprintf(title, "Calibration results for image %s", (s.str()).c_str());
+          display.init(I, 100, 100, title) ;
           // Display the image
           // The image class has a member that specify a pointer toward
           // the display that has been initialized in the display declaration
@@ -934,7 +939,7 @@ int main(int argc, const char ** argv)
         vpDisplay::flush(I) ;
         if(opt_click){
 	  vpImagePoint ip;
-	  ip.set_i( 10 );
+	  ip.set_i( 15 );
 	  ip.set_j( 10 );
           vpDisplay::displayCharString(I, ip, "A click to continue...",
                                        vpColor::blue);
