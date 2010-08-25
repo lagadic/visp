@@ -185,7 +185,7 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
 
   if (ntohl(uintptr[0]) != vpSickLDMRS::MagicWordC2) {
     printf("Error, wrong magic number !!!\n");
-    return 1;
+    return false;
   }
 
   // get the message body
