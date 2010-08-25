@@ -151,23 +151,30 @@ vpPlot::initGraph (int graphNum, int curveNbr)
   \param ymin : The initial minimum value along the y axis given in the user coordinates.
   \param ymax : The initial maximum value along the y axis given in the user coordinates.
   \param ydelt :  The initial step use to write the values along the y axis.
-  \param gx : If true, a grid is drawn allog the x axis to help the user to read the graphic.
-  \param gy : If true, a grid is drawn allog the y axis to help the user to read the graphic.
+  \param gx : If true, a grid is drawn allong the x axis to help the user to read the graphic.
+  \param gy : If true, a grid is drawn allong the y axis to help the user to read the graphic.
 */
 void
-vpPlot::initRange (const int graphNum, double xmin, double xmax, double /*xdelt*/, double ymin, double ymax, double /*ydelt*/, const bool gx, const bool gy)
+vpPlot::initRange (const int graphNum, 
+		   double xmin, double xmax, double /*xdelt*/, 
+		   double ymin, double ymax, double /*ydelt*/, 
+		   const bool gx, const bool gy)
 {
   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,gx,gy);
 }
 
 void
-vpPlot::initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax)
+vpPlot::initRange (const int graphNum, 
+		   double xmin, double xmax, 
+		   double ymin, double ymax)
 {
   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,true,true);
 }
 
 void
-vpPlot::initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
+vpPlot::initRange (const int graphNum, 
+		   double xmin, double xmax, double ymin, 
+		   double ymax, double zmin, double zmax)
 {
   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,zmin,zmax,10,true,true);
 }
