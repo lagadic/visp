@@ -238,6 +238,8 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotSimulator, public vpViper8
 				   const double pos6);
     void setPosition(const char *filename);
     
+    void setJointLimit(vpColVector limitMin, vpColVector limitMax);
+    
     double getPositioningVelocity (void){return positioningVelocity;}
     
     void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);

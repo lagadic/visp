@@ -1596,6 +1596,37 @@ vpSimulatorViper850::getPosition (const vpRobot::vpControlFrameType frame,
   }
 }
 
+/*!
+  This method enables to set the minimum and maximum joint limits for all the six axis of the robot. All the values have to be given in radian.
+  
+  \param limitMin : The minimum joint limits are given in a vector of size 6. All the value must be in radian.
+  \param limitMax : The maximum joint limits are given in a vector of size 6. All the value must be in radian.
+*/
+void 
+vpSimulatorViper850::setJointLimit(vpColVector limitMin, vpColVector limitMax)
+{
+  if (limitMin.getRows() != 6 || limitMax.getRows() != 6)
+  {
+    vpTRACE("Joint limit vector has not a size of 6 !");
+    return;
+  }
+  
+  joint_min[0] = limitMin[0];
+  joint_min[1] = limitMin[1];
+  joint_min[2] = limitMin[2];
+  joint_min[3] = limitMin[3];
+  joint_min[4] = limitMin[4];
+  joint_min[5] = limitMin[5];
+
+  joint_max[0] = limitMax[0];
+  joint_max[1] = limitMax[1];
+  joint_max[2] = limitMax[2];
+  joint_max[3] = limitMax[3];
+  joint_max[4] = limitMax[4];
+  joint_max[5] = limitMax[5];
+
+}
+
 /*! 
   Test to detect if the robot is near one of its singularities.
   
