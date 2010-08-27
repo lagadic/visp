@@ -1117,7 +1117,7 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
   else if(y < ymin) {rescaley(0,y);changed = true;}
   
   if (z > zmax) {rescalez(1,z);changed = true;}
-  else if(z < ymin) {rescalez(0,z);changed = true;}
+  else if(z < zmin) {rescalez(0,z);changed = true;}
   
   if (changed || move(I))
   {
