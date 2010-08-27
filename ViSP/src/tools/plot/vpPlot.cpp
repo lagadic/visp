@@ -44,44 +44,16 @@
 #include <fstream>
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
-/*!
-  Constructor. This constructor create a new window where the curves
-  will be drawn. The number of graphic in the window must be set.
-
-  \param graphNbr : The number of graph in the window.
-
-  \note The basic constructor is not available.
-*/
-vpPlot::vpPlot(const int graphNbr)
-{
-  I.init(700,700,255);
-  
-  graphList = NULL;
-  
-  display.init(I);
-  
-  vpDisplay::display(I);
-  
-  #if defined VISP_HAVE_X11
-  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-15");
-  #endif
-    
-  margei = 30;
-  margej = 40;
-  
-  factori = 1.0;
-  factorj = 1.0;
-  
-  init(graphNbr);
-}
 
 /*!
-  Constructor. This constructor create a new window where the curves
-  will be drawn. The number of graphic in the window must be set. You can set the size of the window
+  This constructor creates a new window where the curves
+  will be drawn. The number of graphics in the window must be set.
+
+  \warning You can modify the default window size, but this is not advised.
 
   \param graphNbr : The number of graph in the window.
-  \param height : Height of the window
-  \param width : Width of the window
+  \param height : Height of the window.
+  \param width : Width of the window.
 
   \note The basic constructor is not available.
 */

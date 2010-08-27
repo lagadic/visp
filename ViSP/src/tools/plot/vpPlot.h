@@ -96,14 +96,6 @@ int main ()
   //The second curve in the second graphic is blue
   A.setColor(1,1,vpColor::blue);
 
-  //For the first graphic : along the x axis the expected values are between 0 and 200 and the step is 1
-  //For the first graphic : along the y axis the expected values are between -2 and 0.5 and the step is 1
-  A.initRange(0,0,200,1,-2,0.5,1);
-
-  //For the second graphic : along the x axis the expected values are between 0 and 200 and the step is 1
-  //For the second graphic : along the y axis the expected values are between 0 and 3 and the step is 0.5
-  A.initRange(1,0,200,1,0,3,0.5);
-
   //Add the point (0,0) in the first graphic 
   A.plot(0,0,0,0);
 
@@ -115,8 +107,8 @@ int main ()
 
   for (int i = 0; i < 50; i++)
     {
-      //Add the point (i,0) in the first graphic 
-      A.plot(0,0,i,0);
+      //Add the point (i,sin(i*pi/10) in the first graphic 
+      A.plot(0,0,i,sin(i*M_PI/10));
 
       //Add the point (i,1) to the first curve of the second graphic
       A.plot(1,0,i,1);
@@ -157,8 +149,7 @@ class VISP_EXPORT vpPlot
     float factorj;
     
   public:
-    vpPlot(const int nbGraph);
-    vpPlot(const int nbGraph, const int height, const int width);
+    vpPlot(const int nbGraph, const int height=700, const int width=700);
     ~vpPlot();
     
     void initGraph (int graphNum, int curveNbr);
