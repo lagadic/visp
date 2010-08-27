@@ -66,6 +66,8 @@ vpPlotCurve::plotPoint(vpImage<unsigned char> &I, vpImagePoint iP, const double 
   pointListy.end();
   pointListz.end();
   
+  nbPoint++;
+  
   if (nbPoint > 1)
   {
     vpDisplay::displayLine(I,lastPoint, iP, color);
@@ -86,9 +88,6 @@ vpPlotCurve::plotPoint(vpImage<unsigned char> &I, vpImagePoint iP, const double 
   pointListx.addRight(x);
   pointListy.addRight(y);
   pointListz.addRight(0.0);
-  nbPoint++;
-  
-  
 }
 
 void 
@@ -103,7 +102,7 @@ vpPlotCurve::plotList(vpImage<unsigned char> &I, const double xorg, const double
   {
     iP.set_ij(yorg-(zoomy*pointListy.value()),xorg+(zoomx*pointListx.value()));
     
-    if (k > 1)
+    if (k > 0)
       vpDisplay::displayLine(I,lastPoint, iP, color);
     
     lastPoint = iP;
