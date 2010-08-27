@@ -1310,7 +1310,7 @@ vpPlotGraph::navigation(vpImage<unsigned char> &I, bool &changed)
     
     anglei = diffi*360/width;
     anglej = diffj*360/width;
-    mov.buildFrom(0,0,0,vpMath::rad(-anglei),vpMath::rad(-anglej),0);
+    mov.buildFrom(0,0,0,vpMath::rad(anglei),vpMath::rad(-anglej),0);
     changed = true;
   }
 
