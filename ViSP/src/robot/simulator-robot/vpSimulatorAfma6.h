@@ -213,6 +213,8 @@ class VISP_EXPORT vpSimulatorAfma6 : public vpRobotSimulator, public vpAfma6
 				   const double pos6);
     void setPosition(const char *filename);
     
+    void setJointLimit(vpColVector limitMin, vpColVector limitMax);
+    
     double getPositioningVelocity (void){return positioningVelocity;}
     
     void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
