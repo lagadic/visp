@@ -89,10 +89,6 @@ int main ()
   strncpy( unit, "y", 40 );
   plot.setUnitY(1,unit);
 
-  //Initialize the graphics
-  plot.initRange(0,0,2*M_PI,0.1,-1.5,1.5,0.5,true,true);
-  plot.initRange(1,0,2*M_PI,0.1,-1.5,1.5,0.5,true,true);
-
   //Plot the cosinus and sinus functions
   double i = 0;
   while(i <= 2*M_PI)
