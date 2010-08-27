@@ -153,12 +153,16 @@ class VISP_EXPORT vpPlot
     int margei;
     int margej;
     
+    float factori;
+    float factorj;
+    
   public:
     vpPlot(const int nbGraph);
+    vpPlot(const int nbGraph, const int height, const int width);
     ~vpPlot();
     
     void initGraph (int graphNum, int curveNbr);
-    void initRange (const int graphNum, double xmin, double xmax, double xdelt, double ymin, double ymax, double ydelt, const bool gx, const bool gy);
+
     void initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax);
     void initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
     void setColor (const int graphNum, const int curveNum, vpColor color);

@@ -69,6 +69,42 @@ vpPlot::vpPlot(const int graphNbr)
   margei = 30;
   margej = 40;
   
+  factori = 1.0;
+  factorj = 1.0;
+  
+  init(graphNbr);
+}
+
+/*!
+  Constructor. This constructor create a new window where the curves
+  will be drawn. The number of graphic in the window must be set. You can set the size of the window
+
+  \param graphNbr : The number of graph in the window.
+  \param height : Height of the window
+  \param width : Width of the window
+
+  \note The basic constructor is not available.
+*/
+vpPlot::vpPlot(const int graphNbr, const int height, const int width)
+{
+  I.init(height,width,255);
+  
+  graphList = NULL;
+  
+  display.init(I);
+  
+  vpDisplay::display(I);
+  
+  #if defined VISP_HAVE_X11
+  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-15");
+  #endif
+    
+  margei = 30;
+  margej = 40;
+  
+  factori = (float)height/700.0;
+  factorj = (float)width/700.0;
+    
   init(graphNbr);
 }
 
@@ -98,22 +134,22 @@ vpPlot::init (int nbGraph)
   switch (nbGraph)
   {
     case 1 : 
-      graphList[0].initSize(vpImagePoint(0,0),700,700,margei,margej);
+      graphList[0].initSize(vpImagePoint(0,0), (int)(700*factorj),(int)(700*factori),margei,margej);
       break;
     case 2 :
-      graphList[0].initSize(vpImagePoint(0,0),700,350,margei,margej);
-      graphList[1].initSize(vpImagePoint(350,0),700,350,margei,margej);
+      graphList[0].initSize(vpImagePoint(0,0),(int)(700*factorj),(int)(350*factori),margei,margej);
+      graphList[1].initSize(vpImagePoint((int)(350*factori),0),(int)(700*factorj),(int)(350*factori),margei,margej);
       break;
     case 3 :
-      graphList[0].initSize(vpImagePoint(0,0),350,350,margei,margej);
-      graphList[1].initSize(vpImagePoint(0,350),350,350,margei,margej);
-      graphList[2].initSize(vpImagePoint(350,0),700,350,margei,margej);
+      graphList[0].initSize(vpImagePoint(0,0),(int)(350*factorj),(int)(350*factori),margei,margej);
+      graphList[1].initSize(vpImagePoint(0,(int)(350*factorj)),(int)(350*factorj),(int)(350*factori),margei,margej);
+      graphList[2].initSize(vpImagePoint((int)(350*factori),0),(int)(700*factorj),(int)(350*factori),margei,margej);
       break;
     case 4 :
-      graphList[0].initSize(vpImagePoint(0,0),350,350,margei,margej);
-      graphList[1].initSize(vpImagePoint(0,350),350,350,margei,margej);
-      graphList[2].initSize(vpImagePoint(350,0),350,350,margei,margej);
-      graphList[3].initSize(vpImagePoint(350,350),350,350,margei,margej);
+      graphList[0].initSize(vpImagePoint(0,0),(int)(350*factorj),(int)(350*factori),margei,margej);
+      graphList[1].initSize(vpImagePoint(0,(int)(350*factorj)),(int)(350*factorj),(int)(350*factori),margei,margej);
+      graphList[2].initSize(vpImagePoint((int)(350*factori),0),(int)(350*factorj),(int)(350*factori),margei,margej);
+      graphList[3].initSize(vpImagePoint((int)(350*factori),(int)(350*factorj)),(int)(350*factorj),(int)(350*factori),margei,margej);
       break;
   }
   
@@ -139,30 +175,25 @@ vpPlot::initGraph (int graphNum, int curveNbr)
   (graphList+graphNum)->initGraph(curveNbr);
 }
 
-/*!
-  This function has two goals. The first one is to computes any parameters which enable to link the user coordinates given in the user unit system (meter, speed, weight,...) with the relative coordinates of the window. Thus the minimum and maximum values are asked to initialize the graphic.
 
-  The second goal of this function is to draw the axis and if necessary a grid to help the graphic reading.
+// void
+// vpPlot::initRange (const int graphNum, 
+// 		   double xmin, double xmax, double /*xdelt*/, 
+// 		   double ymin, double ymax, double /*ydelt*/, 
+// 		   const bool gx, const bool gy)
+// {
+//   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,gx,gy);
+// }
+
+/*!
+  This method enables to set the initial range of the selected graphic.
 
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param xmin : The initial minimum value along the x axis given in the user coordinates.
   \param xmax : The initial maximum value along the x axis given in the user coordinates.
-  \param xdelt :  The initial step use to write the values along the x axis.
   \param ymin : The initial minimum value along the y axis given in the user coordinates.
   \param ymax : The initial maximum value along the y axis given in the user coordinates.
-  \param ydelt :  The initial step use to write the values along the y axis.
-  \param gx : If true, a grid is drawn allong the x axis to help the user to read the graphic.
-  \param gy : If true, a grid is drawn allong the y axis to help the user to read the graphic.
 */
-void
-vpPlot::initRange (const int graphNum, 
-		   double xmin, double xmax, double /*xdelt*/, 
-		   double ymin, double ymax, double /*ydelt*/, 
-		   const bool gx, const bool gy)
-{
-  (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,gx,gy);
-}
-
 void
 vpPlot::initRange (const int graphNum, 
 		   double xmin, double xmax, 
@@ -171,6 +202,17 @@ vpPlot::initRange (const int graphNum,
   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,true,true);
 }
 
+/*!
+  This method enables to set the initial range of the selected graphic.
+
+  \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param xmin : The initial minimum value along the x axis given in the user coordinates.
+  \param xmax : The initial maximum value along the x axis given in the user coordinates.
+  \param ymin : The initial minimum value along the y axis given in the user coordinates.
+  \param ymax : The initial maximum value along the y axis given in the user coordinates.
+  \param zmin : The initial minimum value along the z axis given in the user coordinates.
+  \param zmax : The initial maximum value along the z axis given in the user coordinates.
+*/
 void
 vpPlot::initRange (const int graphNum, 
 		   double xmin, double xmax, double ymin, 
