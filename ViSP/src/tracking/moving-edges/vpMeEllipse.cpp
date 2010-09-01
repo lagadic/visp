@@ -337,8 +337,8 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
   double dmin1 = 1e6  ;
   double dmin2 = 1e6  ;
 
-  double k =  -M_PI ;
-  while(k < M_PI) {
+  double k =  0 ;
+  while(k < 2*M_PI) {
 
 //     j1 = a *cos(k) ; // equation of an ellipse
 //     i1 = b *sin(k) ; // equation of an ellipse
@@ -369,10 +369,18 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
     }
     k += incr ;
   }
+  //std::cout << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;
 
-  if (alpha2 <alpha1) alpha2 += 2*M_PI ;
+  if (alpha2 <alpha1)
+  {
+    double alphatmp = alpha2;
+    alpha2 = alpha1;
+    alpha1 = alphatmp;
+  }
 
-  vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;
+  //std::cout << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;
+  
+  
 }
 
 
@@ -961,7 +969,7 @@ vpMeEllipse::track(vpImage<unsigned char> &I)
   {
   }
 
-  vpDisplay::display(I) ;
+  //vpDisplay::display(I) ;
   //  2. On appelle ce qui n'est pas specifique
   {
 
