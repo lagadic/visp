@@ -179,6 +179,7 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
 
   // read the 24 bytes header
   if (recv(socket_fd, header, sizeof(header), MSG_WAITALL) == -1) {
+    printf("recv\n");
     perror("recv");
     return false;
   }
@@ -199,7 +200,7 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   }
 
   if (msgtype!=vpSickLDMRS::MeasuredData){
-    // printf("The message in not relative to measured data !!!\n");
+    printf("The message in not relative to measured data !!!\n");
     return false;
   }
 
