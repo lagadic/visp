@@ -164,7 +164,7 @@ void *laser_display_and_save_loop(void *)
       
      
       vpImagePoint E; // Beam echo
-      double resolution = 5; // 100 pixels = 1 meter
+      double resolution = 5; // 100 pixels = 1 meter - increase this value to see better near info
 //       std::cout << "display layer " << layer << " nb points: " 
 // 		<< pointsLayer.size() << std::endl;
       for (unsigned int i=0; i<pointsLayer.size(); i++) {
