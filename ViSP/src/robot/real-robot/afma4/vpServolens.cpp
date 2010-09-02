@@ -668,7 +668,7 @@ vpServolens::getCameraParameters(vpImage<unsigned char> &I)
 
   unsigned zoom;
   getPosition(vpServolens::ZOOM, zoom);
-  std::cout << "Actual zoom value: " << zoom << std::endl;
+  //std::cout << "Actual zoom value: " << zoom << std::endl;
 
   // XSIZE_PIX_CAM_AFMA4 / focale et YSIZE_PIX_CAM_AFMA4 / focale correspondent
   // aux parametres de calibration de la camera (donnees constructeur) pour des
