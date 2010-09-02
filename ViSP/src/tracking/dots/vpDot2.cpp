@@ -186,7 +186,7 @@ vpDot2::~vpDot2(){}
 void vpDot2::display(vpImage<unsigned char>& I, vpColor color,
 		     unsigned int thickness)
 {
-  vpDisplay::displayCross(I, cog, 10, color, thickness);
+  vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
   ip_edges_list.front();
   
   vpImagePoint ip;
