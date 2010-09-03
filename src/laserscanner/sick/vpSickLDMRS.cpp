@@ -200,8 +200,8 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   }
 
   if (msgtype!=vpSickLDMRS::MeasuredData){
-    printf("The message in not relative to measured data !!!\n");
-    return false;
+    //printf("The message in not relative to measured data !!!\n");
+    return true;
   }
 
   // decode measured data
