@@ -406,25 +406,11 @@ vpVelocityTwistMatrix
 vpVelocityTwistMatrix::inverse() const
 {
   vpVelocityTwistMatrix Wi;
+  vpRotationMatrix R;extract(R);
+  vpTranslationVector T;extract(T);
+  vpTranslationVector RtT ; RtT = -(R.t()*T) ;
 
-  int i,j ;
-
-  vpRotationMatrix Rt;
-  for (i=0 ; i < 3 ; i++)
-    for (j=0 ; j < 3; j++)
-      Rt[j][i] = (*this)[i][j];
-
-  vpMatrix skTR(3,3);
-  for (i=0 ; i < 3 ; i++)
-      for (j=0 ; j < 3; j++)
-        skTR[i][j] = (*this)[i][j+3];
-
-  vpMatrix skT = skTR*Rt;
-  vpTranslationVector T(skT[2][1], skT[0][2], skT[1][0]);
-
-  vpTranslationVector RtT ; RtT = -(Rt*T) ;
-
-  Wi.buildFrom(RtT,Rt);
+  Wi.buildFrom(RtT,R.t());
 
   return Wi ;
 }
@@ -435,6 +421,31 @@ void
 vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &Wi) const
 {
 	Wi = inverse();
+}
+
+//! extract the rotational matrix from the twist matrix
+void
+vpVelocityTwistMatrix::extract( vpRotationMatrix &R) const
+{
+	for (unsigned int i=0 ; i < 3 ; i++)
+	    for (unsigned int j=0 ; j < 3; j++)
+	      R[i][j] = (*this)[i][j];
+}
+
+//! extract the translation vector from the twist matrix
+void
+vpVelocityTwistMatrix::extract(vpTranslationVector &t) const
+{
+	vpRotationMatrix R;extract(R);
+	vpMatrix skTR(3,3);
+	for (unsigned int i=0 ; i < 3 ; i++)
+	  for (unsigned int j=0 ; j < 3; j++)
+		skTR[i][j] = (*this)[i][j+3];
+
+	vpMatrix skT = skTR*R.t();
+	t[0] = skT[2][1];
+	t[1] = skT[0][2];
+	t[2] = skT[1][0];
 }
 
 /*

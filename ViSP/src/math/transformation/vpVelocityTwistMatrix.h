@@ -139,6 +139,11 @@ class VISP_EXPORT vpVelocityTwistMatrix : public vpMatrix
   vpVelocityTwistMatrix inverse() const ;
   //! invert the twist matrix
   void inverse(vpVelocityTwistMatrix &Wi) const;
+
+  //! extract the rotational matrix from the twist matrix
+  void extract( vpRotationMatrix &R) const;
+  //! extract the translation vector from the twist matrix
+  void extract(vpTranslationVector &t) const;
 } ;
 
 #endif
