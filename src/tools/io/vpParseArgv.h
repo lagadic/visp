@@ -161,6 +161,7 @@ class VISP_EXPORT vpParseArgv
     ARGV_NO_PRINT		= 0x10 /*!< No printings. */
   } vpArgvFlags;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
  /*!
 
    Structure used to specify how to handle argv options.
@@ -175,6 +176,7 @@ class VISP_EXPORT vpParseArgv
 			 * depends on type. */
     const char *help;		/*!< Documentation message describing this option. */
   } vpArgvInfo;
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 public:
   static vpArgvInfo defaultTable[2];

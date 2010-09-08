@@ -254,6 +254,7 @@ vpFeatureLuminance::error(const vpBasicFeature &s_star,
   Compute the error \f$ (I-I^*)\f$ between the current and the desired
  
   \param s_star : Desired visual feature.
+  \param select : Not used.
 
 */
 vpColVector
