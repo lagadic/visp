@@ -228,6 +228,7 @@ SET (SRC_TOOLS
   tools/plot/vpPlotCurve.cpp
   tools/plot/vpPlotGraph.cpp
   tools/time/vpTime.cpp
+  tools/xml/vpXmlParser.cpp
   )
 
 SET (SRC_TRACKING
