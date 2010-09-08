@@ -220,6 +220,7 @@ SET (HEADER_TOOLS
   tools/plot/vpPlotGraph.h
   tools/time/vpTime.h
   tools/trace/vpDebug.h
+  tools/xml/vpXmlParser.h
   )
 
 SET (HEADER_TRACKING
