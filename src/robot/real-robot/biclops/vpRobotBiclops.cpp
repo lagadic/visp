@@ -71,11 +71,82 @@ static pthread_mutex_t vpMeasure_mutex;
 
   Default constructor.
 
+  Does nothing more than setting the default configuration file 
+  to /usr/share/BiclopsDefault.cfg.
+
+  As shown in the following example,the turret need to be initialized 
+  using init() function.
+
+  \code
+#include <visp/vpRobotBiclops.h>
+
+int main()
+{
+  vpRobotBiclops robot; // Use the default config file in /usr/share/BiclopsDefault.cfg"
+
+  // Specify the config file location
+  robot.setConfigFile("/usr/share/BiclopsDefault.cfg"); // Not mandatory since the file is the default one
+  
+  // Initialize the head
+  robot.init();
+
+  // Move the robot to a specified pan and tilt
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+  vpColVector q(2);
+  q[0] = vpMath::rad(20); // pan
+  q[1] = vpMath::rad(40); // tilt
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  
+  return 0;
+}
+  \endcode
+
+*/
+vpRobotBiclops::vpRobotBiclops ()
+  :
+  vpRobot ()
+{
+  vpDEBUG_TRACE (12, "Begin default constructor.");
+
+  vpRobotBiclops::robotAlreadyCreated = false;
+  controlThreadCreated = false;
+  setConfigFile("/usr/share/BiclopsDefault.cfg");
+
+  // Initialize the mutex dedicated to she shm protection
+  pthread_mutex_init (&vpShm_mutex, NULL);
+  pthread_mutex_init (&vpEndThread_mutex, NULL);
+  pthread_mutex_init (&vpMeasure_mutex, NULL);
+}
+
+/*!
+
+  Default constructor.
+
   Initialize the biclops pan, tilt head by reading the
-  /usr/share/BiclopsDefault.cfg default configuration file provided by Traclabs
+  configuration file provided by Traclabs
   and do the homing sequence.
 
-  To change the default configuration file see setConfigFile().
+  The following example shows how to use the constructor.
+
+  \code
+#include <visp/vpRobotBiclops.h>
+
+int main()
+{
+  // Specify the config file location and initialize the turret
+  vpRobotBiclops robot("/usr/share/BiclopsDefault.cfg"); 
+
+  // Move the robot to a specified pan and tilt
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+
+  vpColVector q(2);
+  q[0] = vpMath::rad(-20); // pan
+  q[1] = vpMath::rad(10); // tilt
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  
+  return 0;
+}
+  \endcode
 
 */
 vpRobotBiclops::vpRobotBiclops (const char * filename)
@@ -84,41 +155,20 @@ vpRobotBiclops::vpRobotBiclops (const char * filename)
 {
   vpDEBUG_TRACE (12, "Begin default constructor.");
 
-  sprintf(configfile, filename);
+  vpRobotBiclops::robotAlreadyCreated = false;
+  controlThreadCreated = false;
+  setConfigFile(filename);
 
   // Initialize the mutex dedicated to she shm protection
   pthread_mutex_init (&vpShm_mutex, NULL);
   pthread_mutex_init (&vpEndThread_mutex, NULL);
-  pthread_mutex_init (&vpMeasure_mutex, NULL);
-
-  vpDEBUG_TRACE (12, "Lock mutex vpMeasure_mutex");
-  pthread_mutex_lock(&vpMeasure_mutex);
+  pthread_mutex_init (&vpMeasure_mutex
+, NULL);
 
   init();
 
-  try
-  {
-    setRobotState(vpRobot::STATE_STOP) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
-
-  vpRobotBiclops::robotAlreadyCreated = true;
-
-  positioningVelocity = defaultPositioningVelocity ;
-
-  // Initialize previous articular position to manage getDisplacement()
-  q_previous.resize(vpBiclops::ndof);
-  q_previous = 0;
-
-  controlThreadCreated = false;
-
   return ;
 }
-
 
 /*!
 
@@ -164,6 +214,7 @@ vpRobotBiclops::~vpRobotBiclops (void)
 /* ------------------------------------------------------------------------- */
 /* --- INITIALISATION ------------------------------------------------------ */
 /* ------------------------------------------------------------------------- */
+
 /*!
 
   Set the Biclops config filename.
@@ -175,9 +226,9 @@ vpRobotBiclops::setConfigFile(const char * filename)
   sprintf(configfile, "%s", filename);
 }
 
-
 /*!
 
+  Set the Biclops config filename.
   Check if the config file exists and initialize the head.
 
   \exception vpRobotException::constructionError If the config file cannot be
@@ -185,9 +236,8 @@ vpRobotBiclops::setConfigFile(const char * filename)
 
 */
 void
-vpRobotBiclops::init (void)
+vpRobotBiclops::init ()
 {
-
   // test if the config file exists
   FILE *fd = fopen(configfile, "r");
   if (fd == NULL) {
@@ -199,6 +249,26 @@ vpRobotBiclops::init (void)
 
   // Initialize the controller
   controller.init(configfile);
+
+  try
+  {
+    setRobotState(vpRobot::STATE_STOP) ;
+  }
+  catch(...)
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
+
+  vpRobotBiclops::robotAlreadyCreated = true;
+
+  positioningVelocity = defaultPositioningVelocity ;
+
+  // Initialize previous articular position to manage getDisplacement()
+  q_previous.resize(vpBiclops::ndof);
+  q_previous = 0;
+
+  controlThreadCreated = false;
 
   return ;
 }
