@@ -124,11 +124,12 @@ public:
   static const double       defaultPositioningVelocity;
 
 
-  vpRobotBiclops (const char * filename="/usr/share/BiclopsDefault.cfg");
+  vpRobotBiclops ();
+  vpRobotBiclops (const char * filename);
   virtual ~vpRobotBiclops (void);
 
-  void init (void);
   void setConfigFile (const char * filename="/usr/share/BiclopsDefault.cfg");
+  void init ();
 
   /* --- STATE ---------------------------------------------------------- */
 
