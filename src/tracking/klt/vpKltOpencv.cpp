@@ -453,7 +453,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
   shifted in the array).
 
 */
-void vpKltOpencv::getFeature(int index, int &id, float &x, float &y)
+void vpKltOpencv::getFeature(int index, int &id, float &x, float &y) const
 {
   if (index >= countFeatures)
     {
@@ -474,7 +474,7 @@ void vpKltOpencv::getFeature(int index, int &id, float &x, float &y)
   shifted in the array).
 
 */
-void vpKltOpencv::getPrevFeature(int index, int &id, float &x, float &y)
+void vpKltOpencv::getPrevFeature(int index, int &id, float &x, float &y) const
 {
   if (index >= countPrevFeatures)
     {

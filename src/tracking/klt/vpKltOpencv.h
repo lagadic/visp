@@ -176,16 +176,16 @@ class VISP_EXPORT vpKltOpencv
   void setIsFeatureValid(funccheck input) {IsFeatureValid = input;}
 
   //! Get the list of lost feature
-  bool *getListOfLostFeature(){ return lostDuringTrack; }
+  bool *getListOfLostFeature() const { return lostDuringTrack; }
   //! Get the current number of features
-  int getNbFeatures() { return countFeatures; }
+  int getNbFeatures() const { return countFeatures; }
   //! Get the previous number of features
-  int getNbPrevFeatures() { return countPrevFeatures; }
+  int getNbPrevFeatures() const { return countPrevFeatures; }
   //! Get Max number of features
-  int getMaxFeatures() {return maxFeatures;}
+  int getMaxFeatures() const {return maxFeatures;}
 
-  void getFeature(int index, int &id, float &x, float &y);
-  void getPrevFeature(int index, int &id, float &x, float &y);
+  void getFeature(int index, int &id, float &x, float &y) const;
+  void getPrevFeature(int index, int &id, float &x, float &y) const;
   void addFeature(const int &id, const float &x, const float &y);
   void suppressFeature(int index);
 };
