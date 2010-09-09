@@ -459,8 +459,7 @@ void
 vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, vpImage<unsigned char> &I, vpColor color)
 {
   extern Bound *clipping_Bound ();
-//  extern Point2i *point2i;
-//  extern Point2i *listpoint2i;
+
   Bound *bp, *bend;
   Bound *clip; /* surface apres clipping */
   Byte b  = (Byte) *get_rfstack ();
@@ -502,65 +501,6 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, vpImage<unsigne
     }
   }
 }
-
-// vpImagePoint getCameraPosition(Matrix mat, vpImage<vpRGBa> &I)
-// {
-//   Matrix m;
-// 
-//   bcopy ((char *) mat, (char *) m, sizeof (Matrix));
-//   View_to_Matrix (get_vwstack (), *(get_tmstack ()));
-//   postmult_matrix (m, *(get_tmstack ()));
-// 
-//   Point3f p3[1];
-//   Point2i p2[1];
-//   Point4f p4[1];
-// 
-//   p3[0].x = 0;
-//   p3[0].y = 0;
-//   p3[0].z = 0;
-// 
-//   point_3D_4D (p3, 1, m, p4);
-//   p3->x = p4->x / p4->w;
-//   p3->y = p4->y / p4->w;
-//   p3->z = p4->z / p4->w;
-// 
-//   int size = vpMath::minimum(I.getWidth(),I.getHeight());
-//   point_3D_2D (p3, 1,size,size,p2);
-// 
-//   vpImagePoint iP((p2)->y,(p2)->x);
-// 
-//   return iP;
-// }
-// 
-// vpImagePoint getCameraPosition(Matrix mat, vpImage<unsigned char> &I)
-// {
-//   Matrix m;
-// 
-//   bcopy ((char *) mat, (char *) m, sizeof (Matrix));
-//   View_to_Matrix (get_vwstack (), *(get_tmstack ()));
-//   postmult_matrix (m, *(get_tmstack ()));
-// 
-//   Point3f p3[1];
-//   Point2i p2[1];
-//   Point4f p4[1];
-// 
-//   p3[0].x = 0;//mat[3][0];
-//   p3[0].y = 0;//mat[3][1];
-//   p3[0].z = 0;//mat[3][2];
-// 
-//   point_3D_4D (p3, 1, m, p4);
-//   p3->x = p4->x / p4->w;
-//   p3->y = p4->y / p4->w;
-//   p3->z = p4->z / p4->w;
-// 
-//   int size = vpMath::minimum(I.getWidth(),I.getHeight());
-//   point_3D_2D (p3, 1,size,size,p2);
-// 
-//   vpImagePoint iP((p2)->y,(p2)->x);
-// 
-//   return iP;
-// }
-
 
 /*************************************************************************************************************/
 
@@ -612,6 +552,9 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   extCamChanged = false;
   
   rotz.buildFrom(0,0,0,0,0,vpMath::rad(180));
+  
+  displayImageSimulator = false;
+  objectImage.kill();
 }
 
 
@@ -630,7 +573,6 @@ vpWireFrameSimulator::~vpWireFrameSimulator()
       free_Bound_scene (&(this->desiredScene));
   }
   close_display ();
- // close_clipping ();
 
   cameraTrajectory.kill();
   poseList.kill();
@@ -717,6 +659,28 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
   displayCamera = true;
 }
 
+
+/*!
+  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
+  at the current position and at the desired position.
+  
+  It exists several default scenes you can use. Use the vpSceneObject and the vpSceneDesiredObject attributes to use them in this method. The corresponding files are stored in the "data" folder which is in the ViSP build directory.
+  
+  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
+
+  \param obj : Type of scene used to display the object at the current position.
+  \param desiredObject : Type of scene used to display the object at the desired pose (in the internal view).
+  \param imObj : A list of vpImageSimulator instances.
+*/
+void
+vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, vpList<vpImageSimulator> &imObj)
+{
+  initScene(obj, desiredObject);
+  objectImage = imObj;
+  displayImageSimulator = true;
+}
+
+
 /*!
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position and at the desired position.
@@ -774,6 +738,26 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
   displayCamera = true;
 }
 
+/*!
+  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
+  at the current position and at the desired position.
+  
+  Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
+  
+  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
+
+  \param obj : Path to the scene file you want to use.
+  \param desiredObject : Path to the scene file you want to use.
+  \param imObj : A list of vpImageSimulator instances.
+*/
+void
+vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject, vpList<vpImageSimulator> &imObj)
+{
+  initScene(obj, desiredObject);
+  objectImage = imObj;
+  displayImageSimulator = true;
+}
+
 
 /*!
   Initialize the simulator. It enables to choose the type of object which will be used to display the object
@@ -828,6 +812,25 @@ vpWireFrameSimulator::initScene(vpSceneObject obj)
 }
 
 /*!
+  Initialize the simulator. It enables to choose the type of object which will be used to display the object
+  at the current position. The object at the desired position is not displayed.
+  
+  It exists several default scenes you can use. Use the vpSceneObject attributes to use them in this method. The corresponding files are stored in the "data" folder which is in the ViSP build directory.
+  
+  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
+
+  \param obj : Type of scene used to display the object at the current position.
+  \param imObj : A list of vpImageSimulator instances.
+*/
+void
+vpWireFrameSimulator::initScene(vpSceneObject obj, vpList<vpImageSimulator> &imObj)
+{
+  initScene(obj);
+  objectImage = imObj;
+  displayImageSimulator = true;
+}
+
+/*!
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position. The object at the desired position is not displayed.
   
@@ -870,6 +873,25 @@ vpWireFrameSimulator::initScene(const char* obj)
   displayCamera = true;
 }
 
+/*!
+  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
+  at the current position. The object at the desired position is not displayed.
+  
+  Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
+  
+  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
+
+  \param obj : Path to the scene file you want to use.
+  \param imObj : A list of vpImageSimulator instances.
+*/
+void
+vpWireFrameSimulator::initScene(const char* obj, vpList<vpImageSimulator> &imObj)
+{
+  initScene(obj);
+  objectImage = imObj;
+  displayImageSimulator = true;
+}
+
 
 
 /*!
@@ -903,6 +925,21 @@ vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
 
   vp2jlc_matrix(cMo.inverse(),o44c);
   vp2jlc_matrix(cdMo.inverse(),o44cd);
+  
+  if (displayImageSimulator)
+  {
+    I = 255;
+    objectImage.front();
+    while(!objectImage.outside())
+    {
+      vpImageSimulator* imSim = &(objectImage.value());
+      imSim->setCameraPosition(rotz*cMo);
+      imSim->getImage(I,getInternalCameraParameters(I));
+      objectImage.next();
+    }
+    if (I.display != NULL)
+      vpDisplay::display(I);
+  }
 
   add_vwstack ("start","cop", o44c[3][0],o44c[3][1],o44c[3][2]);
   x = o44c[2][0] + o44c[3][0];
@@ -929,7 +966,6 @@ vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
     if (desiredObject == D_TOOL) display_scene(o44cd,desiredScene,I, vpColor::red);
     else display_scene(id,desiredScene,I, desColor);
   }
-
 }
 
 
@@ -970,7 +1006,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   float w44o[4][4],w44cext[4][4],w44c[4][4],x,y,z;
 
   vp2jlc_matrix(camMf.inverse(),w44cext);
-  vp2jlc_matrix(fMo*cMo.inverse(),w44c);
+  vp2jlc_matrix(fMc,w44c);
   vp2jlc_matrix(fMo,w44o);
 
 
@@ -985,6 +1021,21 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   if ((object == CUBE) || (object == SPHERE))
   {
     add_vwstack ("start","type", PERSPECTIVE);
+  }
+  
+  if (displayImageSimulator)
+  {
+    I = 255;
+    objectImage.front();
+    while(!objectImage.outside())
+    {
+      vpImageSimulator* imSim = &(objectImage.value());
+      imSim->setCameraPosition(rotz*camMf*fMo);
+      imSim->getImage(I,getInternalCameraParameters(I));
+      objectImage.next();
+    }
+    if (I.display != NULL)
+      vpDisplay::display(I);
   }
   
   if (displayObject)
@@ -1106,6 +1157,21 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, vpHomogeneousMatrix c
   add_vwstack ("start","vup", w44cext[1][0],w44cext[1][1],w44cext[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
   
+  if (displayImageSimulator)
+  {
+    I = 255;
+    objectImage.front();
+    while(!objectImage.outside())
+    {
+      vpImageSimulator* imSim = &(objectImage.value());
+      imSim->setCameraPosition(rotz*camMf*fMo);
+      imSim->getImage(I,getInternalCameraParameters(I));
+      objectImage.next();
+    }
+    if (I.display != NULL)
+      vpDisplay::display(I);
+  }
+  
   if (displayObject)
     display_scene(w44o,this->scene,I, curColor);
   if (displayCamera)
@@ -1144,6 +1210,21 @@ vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
 
   vp2jlc_matrix(cMo.inverse(),o44c);
   vp2jlc_matrix(cdMo.inverse(),o44cd);
+  
+  if (displayImageSimulator)
+  {
+    I = 255;
+    objectImage.front();
+    while(!objectImage.outside())
+    {
+      vpImageSimulator* imSim = &(objectImage.value());
+      imSim->setCameraPosition(rotz*cMo);
+      imSim->getImage(I,getInternalCameraParameters(I));
+      objectImage.next();
+    }
+    if (I.display != NULL)
+      vpDisplay::display(I);
+  }
 
   add_vwstack ("start","cop", o44c[3][0],o44c[3][1],o44c[3][2]);
   x = o44c[2][0] + o44c[3][0];
@@ -1170,7 +1251,6 @@ vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
     if (desiredObject == D_TOOL) display_scene(o44cd,desiredScene,I, vpColor::red);
     else display_scene(id,desiredScene,I, desColor);
   }
-
 }
 
 
@@ -1211,7 +1291,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   float w44o[4][4],w44cext[4][4],w44c[4][4],x,y,z;
 
   vp2jlc_matrix(camMf.inverse(),w44cext);
-  vp2jlc_matrix(fMo*cMo.inverse(),w44c);
+  vp2jlc_matrix(fMc,w44c);
   vp2jlc_matrix(fMo,w44o);
 
 
@@ -1227,6 +1307,22 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   {
     add_vwstack ("start","type", PERSPECTIVE);
   }
+  
+  if (displayImageSimulator)
+  {
+    I = 255;
+    objectImage.front();
+    while(!objectImage.outside())
+    {
+      vpImageSimulator* imSim = &(objectImage.value());
+      imSim->setCameraPosition(rotz*camMf*fMo);
+      imSim->getImage(I,getInternalCameraParameters(I));
+      objectImage.next();
+    }
+    if (I.display != NULL)
+      vpDisplay::display(I);
+  }
+  
   if (displayObject)
     display_scene(w44o,this->scene,I, curColor);
 
@@ -1346,6 +1442,21 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, vpHomogeneousM
   add_vwstack ("start","vpn", w44cext[2][0],w44cext[2][1],w44cext[2][2]);
   add_vwstack ("start","vup", w44cext[1][0],w44cext[1][1],w44cext[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
+  
+  if (displayImageSimulator)
+  {
+    I = 255;
+    objectImage.front();
+    while(!objectImage.outside())
+    {
+      vpImageSimulator* imSim = &(objectImage.value());
+      imSim->setCameraPosition(rotz*camMf*fMo);
+      imSim->getImage(I,getInternalCameraParameters(I));
+      objectImage.next();
+    }
+    if (I.display != NULL)
+      vpDisplay::display(I);
+  }
   
   if (displayObject)
     display_scene(w44o,this->scene,I, curColor);
@@ -1481,17 +1592,8 @@ vpWireFrameSimulator::navigation(vpImage<vpRGBa> &I, bool &changed)
       while (vpDisplay::getClick(I,trash,b,false)) {};
     }
   }
-  
-//   std::cout << "clicked : " << clicked << std::endl;
-//   std::cout << "clickedUp : " << clickedUp << std::endl;
-//   std::cout << "blockedr : " << blockedr << std::endl;
-//   std::cout << "blockedz : " << blockedz << std::endl;
-//   std::cout << "blockedt : " << blockedt << std::endl;
-//   std::cout << "blocked : " << blocked << std::endl;
-  
+    
   vpDisplay::getPointerPosition(I,iP);
-  
-  //std::cout << "point : " << iP << std::endl;
 
   double anglei = 0;
   double anglej = 0;
@@ -1697,162 +1799,5 @@ vpWireFrameSimulator::projectCameraTrajectory (vpImage<unsigned char> &I, vpHomo
   vpMeterPixelConversion::convertPoint ( getExternalCameraParameters(I), point.get_x(), point.get_y(),iP );
 
   return iP;
-}
-
-/*!
-*************************************************
-*/
-void
-vpWireFrameSimulator::projectObjectInternal(vpImage<vpRGBa> &I, Bound_scene &object, vpHomogeneousMatrix cMobject)
-{
-  if (!sceneInitialized)
-    throw(vpException(vpSimulatorException::notInitializedError,"The scene has to be initialized")) ;
-
-  double u;
-  double v;
-  if(px_int != 1 && py_int != 1)
-  {
-    u = (double)I.getWidth()/(2*px_int);
-    v = (double)I.getHeight()/(2*py_int);
-  }
-  else
-  {
-    u = (double)I.getWidth()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-    v = (double)I.getHeight()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-  }
-
-  float o44c[4][4],x,y,z;
-  Matrix id = IDENTITY_MATRIX;
-
-  vp2jlc_matrix(cMobject.inverse(),o44c);
-
-  add_vwstack ("start","cop", o44c[3][0],o44c[3][1],o44c[3][2]);
-  x = o44c[2][0] + o44c[3][0];
-  y = o44c[2][1] + o44c[3][1];
-  z = o44c[2][2] + o44c[3][2];
-  add_vwstack ("start","vrp", x,y,z);
-  add_vwstack ("start","vpn", o44c[2][0],o44c[2][1],o44c[2][2]);
-  add_vwstack ("start","vup", o44c[1][0],o44c[1][1],o44c[1][2]);
-  add_vwstack ("start","window", -u, u, -v, v);
-
-  display_scene(id,object,I, curColor);
-}
-
-/*!
-*************************************************
-*/
-void
-vpWireFrameSimulator::projectObjectInternal(vpImage<unsigned char> &I, Bound_scene &object, vpHomogeneousMatrix cMobject)
-{
-  if (!sceneInitialized)
-    throw(vpException(vpSimulatorException::notInitializedError,"The scene has to be initialized")) ;
-
-  double u;
-  double v;
-  if(px_int != 1 && py_int != 1)
-  {
-    u = (double)I.getWidth()/(2*px_int);
-    v = (double)I.getHeight()/(2*py_int);
-  }
-  else
-  {
-    u = (double)I.getWidth()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-    v = (double)I.getHeight()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-  }
-
-  float o44c[4][4],x,y,z;
-  Matrix id = IDENTITY_MATRIX;
-
-  vp2jlc_matrix(cMobject.inverse(),o44c);
-
-  add_vwstack ("start","cop", o44c[3][0],o44c[3][1],o44c[3][2]);
-  x = o44c[2][0] + o44c[3][0];
-  y = o44c[2][1] + o44c[3][1];
-  z = o44c[2][2] + o44c[3][2];
-  add_vwstack ("start","vrp", x,y,z);
-  add_vwstack ("start","vpn", o44c[2][0],o44c[2][1],o44c[2][2]);
-  add_vwstack ("start","vup", o44c[1][0],o44c[1][1],o44c[1][2]);
-  add_vwstack ("start","window", -u, u, -v, v);
-
-  display_scene(id,object,I, curColor);
-}
-
-
-/*!
-*************************************************
-*/
-void
-vpWireFrameSimulator::projectObjectExternal(vpImage<vpRGBa> &I, Bound_scene &object, vpHomogeneousMatrix fMobject, vpHomogeneousMatrix camMf)
-{
-  float w44o[4][4],w44cext[4][4],x,y,z;
-
-  vpHomogeneousMatrix camMft = rotz * camMf;
-  
-  double u;
-  double v;
-  if(px_ext != 1 && py_ext != 1)
-  {
-    u = (double)I.getWidth()/(2*px_ext);
-    v = (double)I.getHeight()/(2*py_ext);
-  }
-  else
-  {
-    u = (double)I.getWidth()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-    v = (double)I.getHeight()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-  }
-
-  vp2jlc_matrix(camMft.inverse(),w44cext);
-  vp2jlc_matrix(fMobject,w44o);
-
-  add_vwstack ("start","cop", w44cext[3][0],w44cext[3][1],w44cext[3][2]);
-  x = w44cext[2][0] + w44cext[3][0];
-  y = w44cext[2][1] + w44cext[3][1];
-  z = w44cext[2][2] + w44cext[3][2];
-  add_vwstack ("start","vrp", x,y,z);
-  add_vwstack ("start","vpn", w44cext[2][0],w44cext[2][1],w44cext[2][2]);
-  add_vwstack ("start","vup", w44cext[1][0],w44cext[1][1],w44cext[1][2]);
-  add_vwstack ("start","window", -u, u, -v, v);
-  
-  if (displayObject)
-    display_scene(w44o,object,I, curColor);
-}
-
-/*!
-*************************************************
-*/
-void
-vpWireFrameSimulator::projectObjectExternal(vpImage<unsigned char> &I, Bound_scene &object, vpHomogeneousMatrix fMobject, vpHomogeneousMatrix camMf)
-{
-  float w44o[4][4],w44cext[4][4],x,y,z;
-
-  vpHomogeneousMatrix camMft = rotz * camMf;
-  
-  double u;
-  double v;
-  if(px_ext != 1 && py_ext != 1)
-  {
-    u = (double)I.getWidth()/(2*px_ext);
-    v = (double)I.getHeight()/(2*py_ext);
-  }
-  else
-  {
-    u = (double)I.getWidth()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-    v = (double)I.getHeight()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-  }
-
-  vp2jlc_matrix(camMft.inverse(),w44cext);
-  vp2jlc_matrix(fMobject,w44o);
-
-  add_vwstack ("start","cop", w44cext[3][0],w44cext[3][1],w44cext[3][2]);
-  x = w44cext[2][0] + w44cext[3][0];
-  y = w44cext[2][1] + w44cext[3][1];
-  z = w44cext[2][2] + w44cext[3][2];
-  add_vwstack ("start","vrp", x,y,z);
-  add_vwstack ("start","vpn", w44cext[2][0],w44cext[2][1],w44cext[2][2]);
-  add_vwstack ("start","vup", w44cext[1][0],w44cext[1][1],w44cext[1][2]);
-  add_vwstack ("start","window", -u, u, -v, v);
-  
-  if (displayObject)
-    display_scene(w44o,object,I, curColor);
 }
 

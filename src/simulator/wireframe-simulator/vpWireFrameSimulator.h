@@ -89,6 +89,7 @@ int wireframe_Face (Face *fp, Point2i *pp);
 #include <visp/vpDisplay.h>
 #include <visp/vpList.h>
 #include <visp/vpImagePoint.h>
+#include <visp/vpImageSimulator.h>
 
 void set_scene (const char*, Bound_scene *, float);
 void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
@@ -222,8 +223,11 @@ class VISP_EXPORT vpWireFrameSimulator
     Bound_scene scene;
     Bound_scene desiredScene;
     Bound_scene camera;
+    vpList<vpImageSimulator> objectImage;
+    
     
     vpHomogeneousMatrix fMo;
+    vpHomogeneousMatrix fMc;
     vpHomogeneousMatrix camMf;
     vpHomogeneousMatrix refMo;
     vpHomogeneousMatrix cMo;
@@ -265,6 +269,7 @@ class VISP_EXPORT vpWireFrameSimulator
     bool displayObject;
     bool displayDesiredObject;
     bool displayCamera;
+    bool displayImageSimulator;
     
     float cameraFactor;
     
@@ -283,12 +288,24 @@ class VISP_EXPORT vpWireFrameSimulator
     void initScene(vpSceneObject obj);
     void initScene(const char* obj);
     
+    void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, vpList<vpImageSimulator> &imObj);
+    void initScene(const char* obj, const char* desiredObject, vpList<vpImageSimulator> &imObj);
+    void initScene(vpSceneObject obj, vpList<vpImageSimulator> &imObj);
+    void initScene(const char* obj, vpList<vpImageSimulator> &imObj);
+    
     /*!
       Set the position of the camera relative to the object.
       
       \param cMo : The pose of the camera.
     */
-    void setCameraPosition(const vpHomogeneousMatrix cMo) {this->cMo = rotz * cMo;}
+    void setCameraPositionRelObj(const vpHomogeneousMatrix cMo) {this->cMo = rotz * cMo; fMc = fMo*this->cMo.inverse();}
+    
+    /*!
+      Set the position of the the world reference frame relative to the camera.
+      
+      \param fMc : The pose of the camera.
+    */
+    void setCameraPositionRelWorld(const vpHomogeneousMatrix fMc) {this->fMc = fMc*rotz; cMo = this->fMc.inverse()*fMo;}
     
     /*!
       Set the desired position of the camera relative to the object.
@@ -429,7 +446,7 @@ class VISP_EXPORT vpWireFrameSimulator
       
       \param fMo : The pose between the object and the fixed world frame.
     */
-    void moveObject(const vpHomogeneousMatrix &fMo) {this->fMo = fMo;}
+    void set_fMo(const vpHomogeneousMatrix &fMo) {this->fMo = fMo;this->cMo = fMc.inverse()*fMo;}
     
     /*!
       Get the pose between the object and the fixed world frame.
@@ -437,6 +454,13 @@ class VISP_EXPORT vpWireFrameSimulator
       \return The pose between the object and the fixed world frame.
     */
     vpHomogeneousMatrix get_fMo() const {return fMo;}
+    
+    /*!
+      Get the pose between the object and the camera.
+      
+      \return The pose between between the object and the camera.
+    */
+    vpHomogeneousMatrix get_cMo() const {return rotz*cMo;}
     
     /*!
       Set the internal camera parameters.
@@ -530,11 +554,6 @@ class VISP_EXPORT vpWireFrameSimulator
     vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo);
     vpImagePoint projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo, vpHomogeneousMatrix cMf);
     vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo, vpHomogeneousMatrix cMf);
-    
-    void projectObjectInternal(vpImage<vpRGBa> &I, Bound_scene &object, vpHomogeneousMatrix cMobject);
-    void projectObjectInternal(vpImage<unsigned char> &I, Bound_scene &object, vpHomogeneousMatrix cMobject);
-    void projectObjectExternal(vpImage<vpRGBa> &I, Bound_scene &object, vpHomogeneousMatrix fMobject, vpHomogeneousMatrix camMf);
-    void projectObjectExternal(vpImage<unsigned char> &I, Bound_scene &object, vpHomogeneousMatrix fMobject, vpHomogeneousMatrix camMf);
 
 };
 
