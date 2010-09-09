@@ -7,13 +7,16 @@
 
 
 ViSP (Subversion trunk)
+  - License:
+      Change the open source license from QPL to GPL v2
   - New Features
+    - Introduction of a new wireframe simulator.
+    - Introduction of a new model-based tracker.
     - New vpForceTwistMatrix class that allows to transfer a force/torque skew
       from one frame to an other.
     - New vpVelocityTwistMatrix class that allows to transfer a velocity skew
       from one frame to an other. The vpTwistMatrix class that does the same 
       work previously is from now deprecated.
-    - Introduction of a new wireframe simulator.
     - New vpRobotCycab class to communicate with the Cycab car-like mobile 
       robot at Inria.
     - New generic vpRobotSimulator class to create robot simulators.
