@@ -204,7 +204,6 @@ main(int argc, const char ** argv)
   vpPoseVector cMoi(0,0.1,0.3,vpMath::rad(35),vpMath::rad(25),vpMath::rad(75));
 
   vpHomogeneousMatrix cMo(cMoi);
-  robot.setPosition(cMo);
   
   //The four point used as visual features
   vpCylinder cylinder(0,0,1,0,0,0,0.1);
@@ -250,7 +249,7 @@ main(int argc, const char ** argv)
   sim.initScene(vpWireFrameSimulator::CYLINDER, vpWireFrameSimulator::D_STANDARD);
   
   //Set the initial and the desired position of the camera.
-  sim.setCameraPosition(cMoi) ;
+  sim.setCameraPositionRelObj(cMoi) ;
   sim.setDesiredCameraPosition(cdMo);
   
   //Set the External camera position
@@ -258,7 +257,7 @@ main(int argc, const char ** argv)
   sim.setExternalCameraPosition(camMf);
   
   //Move the object in the world reference frame
-  sim.moveObject(vpHomogeneousMatrix(0.0,0.0,0.0,0,0,0));
+  sim.set_fMo(vpHomogeneousMatrix(0.0,0.0,0.0,0,0,0));
   
   //Set the parameters of the cameras (internal and external)
   vpCameraParameters camera(1000,1000,320,240);
@@ -290,6 +289,8 @@ main(int argc, const char ** argv)
     std::cout << "Click on a display" << std::endl;
     while (!vpDisplay::getClick(Iint,false) && !vpDisplay::getClick(Iext,false)){};
   }
+  
+  robot.setPosition(sim.get_cMo());
 
   //Print the task
   task.print();
@@ -383,12 +384,12 @@ main(int argc, const char ** argv)
 
     vpHomogeneousMatrix cMf = cMo*sim.get_fMo().inverse(); //The camera position in the world frame
 
-    sim.moveObject(b*c*a);  //Move the object in the simulator
+    sim.set_fMo(b*c*a);  //Move the object in the simulator
 
     //Indicates to the task the movement of the object
     cMo = cMf*b*c*a;
     robot.setPosition(cMo);
-    sim.setCameraPosition(cMo);
+    sim.setCameraPositionRelObj(cMo);
 
     if (opt_display)
     {

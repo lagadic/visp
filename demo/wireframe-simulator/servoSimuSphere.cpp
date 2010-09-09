@@ -314,7 +314,7 @@ main(int argc, const char ** argv)
   sim.initScene(vpWireFrameSimulator::SPHERE, vpWireFrameSimulator::D_STANDARD);
   
   //Set the initial and the desired position of the camera.
-  sim.setCameraPosition(cMoi) ;
+  sim.setCameraPositionRelObj(cMoi) ;
   sim.setDesiredCameraPosition(cdMo);
   
   //Set the External camera position
@@ -395,7 +395,7 @@ main(int argc, const char ** argv)
 
     v = task.computeControlLaw() ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-    sim.setCameraPosition(cMo);
+    sim.setCameraPositionRelObj(cMo);
 
     //Compute the position of the external view which is fixed in the object frame
     vpHomogeneousMatrix temp(vpHomogeneousMatrix(0,0.0,2.5,0,vpMath::rad(150),0)*(sim.get_fMo().inverse()));
