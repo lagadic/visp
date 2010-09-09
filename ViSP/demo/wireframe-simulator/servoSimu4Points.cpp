@@ -81,7 +81,7 @@
   \param badparam : Bad parameter name.
 
 */
-void usage(const char *name, const char *badparam)
+void usage(const char *name, std::string ipath, const char *badparam)
 {
   fprintf(stdout, "\n\
 Demonstration of the wireframe simulator with a simple visual servoing.\n\
@@ -97,11 +97,20 @@ SYNOPSIS\n\
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
+  -i <input image path>                                %s\n\
+     Set mire.jpg image input path.\n\
+     From this path read \"ViSP-images/mire/mire.jpg\"\n\
+     video.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment\n\
+     variable produces the same behaviour than using\n\
+     this option.\n\
+\n\
   -d \n\
      Turn off the display.\n\
 \n\
   -h\n\
-     Print the help.\n");
+     Print the help.\n",
+	  ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -119,25 +128,26 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
 {
   const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
+    case 'i': ipath = optarg; break;
     case 'd': display = false; break;
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'h': usage(argv[0],ipath, NULL); return false; break;
 
     default:
-      usage(argv[0], optarg);
+      usage(argv[0],ipath, optarg);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], ipath, NULL);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -151,9 +161,13 @@ int
 main(int argc, const char ** argv)
 {
   bool opt_display = true;
+  std::string opt_ipath;
+  std::string env_ipath;
+  std::string ipath ;
+  std::string filename;
   
   // Read the command line options
-  if (getOptions(argc, argv, opt_display) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_display) == false) {
     exit (-1);
   }
   
@@ -207,7 +221,6 @@ main(int argc, const char ** argv)
   vpPoseVector cMoi(0,0.1,2.0,vpMath::rad(35),vpMath::rad(25),0);
 
   vpHomogeneousMatrix cMo(cMoi);
-  robot.setPosition(cMo);
   
   //The four point used as visual features
   vpPoint point[4] ;
@@ -252,14 +265,59 @@ main(int argc, const char ** argv)
   
   task.setLambda(10);
   
+  vpList<vpImageSimulator> list;
+  vpImageSimulator imsim;
+  
+  vpColVector X[4];
+  for (int i = 0; i < 4; i++) X[i].resize(3);
+  X[0][0] = -0.2;
+  X[0][1] = -0.2;
+  X[0][2] = 0;
+  
+  X[1][0] = 0.2;
+  X[1][1] = -0.2;
+  X[1][2] = 0;
+  
+  X[2][0] = 0.2;
+  X[2][1] = 0.2;
+  X[2][2] = 0;
+  
+  X[3][0] = -0.2;
+  X[3][1] = 0.2;
+  X[3][2] = 0;
+  
+  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+  if (ptenv != NULL)
+    env_ipath = ptenv;
+  
+  if (! env_ipath.empty())
+    ipath = env_ipath;
+  
+  if (!opt_ipath.empty())
+    ipath = opt_ipath;
+  
+  filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.jpg");
+  
+  try
+  {
+    imsim.init(filename.c_str(), X);
+  }
+  catch(...)
+  {
+    vpTRACE("You need the ViSP data ");
+    task.kill();
+    return 0;
+  }
+  
+  list.addRight(imsim);
   
   vpWireFrameSimulator sim;
   
   //Set the scene
-  sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
+  sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD,list);
   
   //Set the initial and the desired position of the camera.
-  sim.setCameraPosition(cMoi) ;
+  sim.setCameraPositionRelObj(cMoi) ;
   sim.setDesiredCameraPosition(cdMo);
   
   //Set the External camera position
@@ -267,7 +325,7 @@ main(int argc, const char ** argv)
   sim.setExternalCameraPosition(camMf);
   
   //Move the object in the world reference frame
-  sim.moveObject(vpHomogeneousMatrix(0.0,0.0,0.2,0,0,0));
+  sim.set_fMo(vpHomogeneousMatrix(0.0,0.0,0.2,0,0,0));
   
   //Computes the position of a camera which is fixed in the object frame
   vpHomogeneousMatrix camoMf;
@@ -315,6 +373,7 @@ main(int argc, const char ** argv)
     while (!vpDisplay::getClick(Iint,false) && !vpDisplay::getClick(Iext1,false) && !vpDisplay::getClick(Iext2,false)){};
   }
 
+  robot.setPosition(sim.get_cMo());
   //Print the task
   task.print() ;
 
@@ -355,12 +414,12 @@ main(int argc, const char ** argv)
 
     vpHomogeneousMatrix cMf = cMo*sim.get_fMo().inverse(); //The camera position in the world frame
 
-    sim.moveObject(b*c*a);  //Move the object in the simulator
+    sim.set_fMo(b*c*a);  //Move the object in the simulator
 
     //Indicates to the task the movement of the object
     cMo = cMf*b*c*a;
     robot.setPosition(cMo);
-    sim.setCameraPosition(cMo);
+    sim.setCameraPositionRelObj(cMo);
 
     //Compute the position of the external view which is fixed in the object frame
     vpHomogeneousMatrix temp(vpHomogeneousMatrix(0,0.0,1.5,0,vpMath::rad(150),0)*(sim.get_fMo().inverse()));
