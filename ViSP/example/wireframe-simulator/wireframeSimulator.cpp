@@ -227,7 +227,7 @@ main(int argc, const char ** argv)
   /*
     Set the current and the desired position of the camera relative to the object.
   */
-  sim.setCameraPosition(cMo) ;
+  sim.setCameraPositionRelObj(cMo) ;
   sim.setDesiredCameraPosition(cdMo);
   
   /*
@@ -281,7 +281,7 @@ main(int argc, const char ** argv)
     the position of the object relative to the world refrenece frame.
   */
   vpHomogeneousMatrix mov(0.05,0.05,0.2,vpMath::rad(10),0,0);
-  sim.moveObject(mov);
+  sim.set_fMo(mov);
 
   //Get the view of the internal camera
   sim.getInternalImage(Iint);
