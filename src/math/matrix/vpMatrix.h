@@ -457,6 +457,12 @@ public:
   // Stack the matrix A below the current one, copy if not initialized this = [ this A ]^T
   void stackMatrices(const vpMatrix &A);
 
+  // Insert matrix A in the current matrix at the given position (r, c). 
+  void insert(const vpMatrix&A, const unsigned int r, const unsigned int c);
+  // Insert matrix B in matrix A at the given position (r, c). 
+  static vpMatrix insert(const vpMatrix &A,const  vpMatrix &B, const unsigned int r, const unsigned int c) ;
+  // Insert matrix B in matrix A (not modified) at the given position (r, c), the result is given in matrix C. 
+  static void insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, const unsigned int r, const unsigned int c) ;
 
   // -------------------------
   // Norms

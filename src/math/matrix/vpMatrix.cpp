@@ -2325,6 +2325,85 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 
 
 }
+
+
+
+
+
+/*!
+  \brief Insert matrix B in matrix A at the given position.
+
+
+  \param A : Main matrix.
+  \param B : Matrix to insert.
+  \param r : Index of the row where to add the matrix.
+  \param c : Index of the column where to add the matrix.
+  \return Matrix with B insert in A.
+
+  \warning Throw exception if the sizes of the matrices do not allow the insertion.
+*/
+vpMatrix
+vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, 
+		 const unsigned int r, const unsigned int c)
+{
+  vpMatrix C ;
+
+  try{
+  	insert(A,B, C, r, c) ;
+  }
+  catch(vpMatrixException me)
+  {
+    vpCERROR << me << std::endl;
+    throw me;
+  }
+
+  return C ;
+}
+
+/*!
+  \relates vpMatrix
+  Insert matrix B in matrix A at the given position.
+
+  \param A : Main matrix.
+  \param B : Matrix to insert.
+  \param C : Result matrix.
+  \param r : Index of the row where to add the matrix.
+  \param c : Index of the column where to add the matrix.
+
+  \warning Throw exception if the sizes of the matrices do not 
+  allow the insertion.
+*/
+void
+vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, 
+		 const unsigned int r, const unsigned int c)
+{
+  if( (r + static_cast<unsigned int>(B.getRows()) ) <= static_cast<unsigned int>(A.getRows()) && (c + static_cast<unsigned int>(B.getCols()) ) <= static_cast<unsigned int>(A.getRows()) ){
+    try {
+      C.resize(A.getRows(),A.getCols()  ) ;
+    }
+    catch(vpException me)
+    {
+      vpERROR_TRACE("Error caught") ;
+      vpCERROR << me << std::endl ;
+      throw ;
+    }
+    for(unsigned int i=0; i<static_cast<unsigned int>(A.getCols()); i++){
+      for(unsigned int j=0; j<static_cast<unsigned int>(A.getRows()); j++){
+        if(i >= r && i < (r + static_cast<unsigned int>(B.getRows())) && j >= c && j < (c+static_cast<unsigned int>(B.getCols()))){
+          C[i][j] = B[i-r][j-c];
+        }
+        else{
+          C[i][j] = A[i][j];
+        }
+      }
+    }
+  }
+  else{
+    throw vpMatrixException(vpMatrixException::incorrectMatrixSizeError, 
+      "\n\t\tIncorrect size of the matrix to insert data.");
+  }
+}
+
 /*!
   \brief Juxtapose matrices. "juxtapos" two matrices  C = [ A B ]
 
@@ -2816,6 +2895,34 @@ void vpMatrix::stackMatrices(const vpMatrix &A)
 
 
 /*!
+  Insert matrix A at the given position in the current matrix.
+  
+  \warning Throw vpMatrixException::incorrectMatrixSizeError if the
+  dimensions of the matrices do not allow the operation.
+
+  \param A : The matrix to insert.
+  \param r : The index of the row to begin to insert data.
+  \param c : The index of the column to begin to insert data.
+ */
+void vpMatrix::insert(const vpMatrix&A, const unsigned int r, 
+		      const unsigned int c)
+{
+  if( (r + static_cast<unsigned int>(A.getRows()) ) <= static_cast<unsigned int>(rowNum) && (c + static_cast<unsigned int>(A.getCols()) ) <= static_cast<unsigned int>(colNum) ){
+    // recopy matrix A in the current one, does not call static function to avoid initialisation and recopy of matrix
+    for(unsigned int i=r; i<(r+static_cast<unsigned int>(A.getCols())); i++){
+      for(unsigned int j=c; j<(c+static_cast<unsigned int>(A.getRows())); j++){
+        (*this)[i][j] = A[i-r][j-c];
+      }
+    }
+  }
+  else{
+    throw vpMatrixException(vpMatrixException::incorrectMatrixSizeError, 
+      "\n\t\tIncorrect size of the matrix to insert data.");
+  }
+}
+
+
+/*!
   Compute the eigenvalues of a n-by-n real symmetric matrix.
 
   \return The eigenvalues of a n-by-n real symmetric matrix.
@@ -3280,19 +3387,21 @@ double vpMatrix::det(vpDetMethod method) const
 
 
 /*!
-  Save a matrix to a file
+  Save a matrix to a file.
 
-  \param filename : absolute file name
-  \param M : matrix to be saved
-  \param binary :If true the matrix is save in a binary file, else a text file.
-  \param Header : optional line that will be saved at the beginning of the file
+  \param filename : Absolute file name.
+  \param M : Matrix to be saved.
+  \param binary : If true the matrix is save in a binary file, else a text file.
+  \param Header : Optional line that will be saved at the beginning of the file.
   
   \return Returns true if no problem appends.
   
-  Warning : If you save the matrix as in a text file the precision is less than if you save it in a binary file.
+  Warning : If you save the matrix as in a text file the precision is
+  less than if you save it in a binary file.
  */
 bool
-vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, const bool binary, const char *Header)
+vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, 
+		     const bool binary, const char *Header)
 {
   std::fstream file;
   
@@ -3353,17 +3462,18 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, const bool binary,
 
 
 /*!
-  Load a matrix to a file
+  Load a matrix to a file.
 
-  \param filename : absolute file name
-  \param M : matrix to be loaded
+  \param filename : absolute file name.
+  \param M : matrix to be loaded.
   \param binary :If true the matrix is load from a binary file, else from a text file.
-  \param Header : Header of the file is load in this parameter
+  \param Header : Header of the file is load in this parameter.
   
   \return Returns true if no problem appends.
  */
 bool
-vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, char *Header)
+vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, 
+		     char *Header)
 {
   std::fstream file;
   
