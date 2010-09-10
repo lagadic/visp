@@ -170,24 +170,24 @@ public:
   vpMeLine(const vpMeLine &meline);
   virtual ~vpMeLine() ;
 
-  void display(vpImage<unsigned char>& I, vpColor col) ;
+  void display(const vpImage<unsigned char>& I, vpColor col) ;
 
-  void track(vpImage<unsigned char>& Im);
+  void track(const vpImage<unsigned char>& Im);
 
-  void sample(vpImage<unsigned char>&image);
-  void reSample(vpImage<unsigned char> &I) ;
+  void sample(const vpImage<unsigned char>&image);
+  void reSample(const vpImage<unsigned char> &I) ;
   void leastSquare() ;
   void updateDelta();
   void setExtremities() ;
-  void seekExtremities(vpImage<unsigned char> &I) ;
+  void seekExtremities(const vpImage<unsigned char> &I) ;
   void suppressPoints() ;
 
-  void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I,
+  void initTracking(const vpImage<unsigned char> &I) ;
+  void initTracking(const vpImage<unsigned char> &I,
 		    const vpImagePoint &ip1,
 		    const vpImagePoint &ip2) ;
 
-  void computeRhoTheta(vpImage<unsigned char> &I) ;
+  void computeRhoTheta(const vpImage<unsigned char> &I) ;
   double getRho() const ;
   double getTheta() const ;
   void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) ;
@@ -205,7 +205,7 @@ public:
   /*!
     @name Deprecated functions
   */
-  vp_deprecated void initTracking(vpImage<unsigned char> &I,
+  vp_deprecated void initTracking(const vpImage<unsigned char> &I,
 		    unsigned i1,unsigned j1,
 		    unsigned i2, unsigned j2) ;
   vp_deprecated void getExtremities(double &i1, double &j1, double &i2, double &j2) ;

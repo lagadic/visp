@@ -107,7 +107,7 @@ vpMbtPolygon::addPoint(int n, vpPoint &P)
   \param cMo : The pose of the camera.
 */
 void
-vpMbtPolygon::changeFrame(vpHomogeneousMatrix &cMo)
+vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
 {
   for (int i = 0 ; i < nbpt ; i++)
   {
@@ -124,7 +124,7 @@ vpMbtPolygon::changeFrame(vpHomogeneousMatrix &cMo)
   \return Return true if the polygon is visible.
 */
 bool
-vpMbtPolygon::isVisible(vpHomogeneousMatrix &cMo)
+vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo)
 {
   changeFrame(cMo) ;
   
@@ -185,7 +185,7 @@ vpMbtPolygon::isVisible(vpHomogeneousMatrix &cMo)
   \return Return true if the polygon is visible.
 */
 bool 
-vpMbtPolygon::isVisible(vpHomogeneousMatrix &cMo, const double alpha)
+vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha)
 {
   changeFrame(cMo) ;
   
@@ -287,7 +287,7 @@ vpMbtHiddenFaces::addPolygon(vpMbtPolygon *p)
   \return Return the number of visible polygons
 */
 int
-vpMbtHiddenFaces::setVisible(vpHomogeneousMatrix &cMo)
+vpMbtHiddenFaces::setVisible(const vpHomogeneousMatrix &cMo)
 {
   int nbvisiblepolygone = 0 ;
   vpMbtPolygon *p ;

@@ -157,8 +157,8 @@ public:
 	int lecture_contrast (xmlDocPtr doc, xmlNodePtr node);
 #endif
 	
-	void getCameraParameters(vpCameraParameters& _cam){ _cam = this->cam;}
-	void getMe(vpMe& _ecm){ _ecm = this->ecm;}
+	void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
+	void getMe(vpMe& _ecm) const { _ecm = this->ecm;}
 
 };
 

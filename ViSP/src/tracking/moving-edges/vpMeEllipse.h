@@ -155,12 +155,12 @@ public:
   vpMeEllipse(const vpMeEllipse &meellipse) ;
   virtual ~vpMeEllipse() ;
 
-  void track(vpImage<unsigned char>& Im);
+  void track(const vpImage<unsigned char>& Im);
 
-  void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, int n,
+  void initTracking(const vpImage<unsigned char> &I) ;
+  void initTracking(const vpImage<unsigned char> &I, int n,
 		    vpImagePoint* iP) ;
-  void display(vpImage<unsigned char>&I, vpColor col) ;
+  void display(const vpImage<unsigned char>&I, vpColor col) ;
   void printParameters() ;
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -168,7 +168,7 @@ public:
     @name Deprecated functions
   */
   //@{
-  void initTracking(vpImage<unsigned char> &I, int n,
+  void initTracking(const vpImage<unsigned char> &I, int n,
 		    unsigned *i, unsigned *j) ;
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -281,12 +281,12 @@ private:
   bool circle ;
 
   void computeAngle(vpImagePoint pt1, vpImagePoint pt2);
-  void sample(vpImage<unsigned char>&image);
-  void reSample(vpImage<unsigned char> &I) ;
+  void sample(const vpImage<unsigned char>&image);
+  void reSample(const vpImage<unsigned char> &I) ;
   void leastSquare() ;
   void updateTheta();
   void suppressPoints() ;
-  void seekExtremities(vpImage<unsigned char> &I) ;
+  void seekExtremities(const vpImage<unsigned char> &I) ;
   void setExtremities();
   void getParameters() ;
   void computeMoments();

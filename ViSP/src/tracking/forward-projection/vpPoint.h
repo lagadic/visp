@@ -169,14 +169,14 @@ public:
   }
 
 
-  void display(vpImage<unsigned char> &I,
+  void display(const vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
 	       const vpColor color=vpColor::green) ;
-  void display(vpImage<unsigned char> &I,
+  void display(const vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
 	       const vpColor color=vpColor::green) ;
-  void display(vpImage<vpRGBa> &I,
+  void display(const vpImage<vpRGBa> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
 	       const vpColor color=vpColor::green) ;

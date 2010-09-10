@@ -110,17 +110,17 @@ public:
   //! Feature dependent functions
 
   //!display contour
-  virtual void display(vpImage<unsigned char> &I, vpColor col)=0;
+  virtual void display(const vpImage<unsigned char> &I, vpColor col)=0;
   //!Sample pixels at a given interval
-  virtual void sample(vpImage<unsigned char> &image)=0;
+  virtual void sample(const vpImage<unsigned char> &image)=0;
 
-  void initTracking(vpImage<unsigned char>& I);
+  void initTracking(const vpImage<unsigned char>& I);
   //!Track sampled pixels
-  void track(vpImage<unsigned char>& I);
+  void track(const vpImage<unsigned char>& I);
   //!Displays the status of me site
-  void display(vpImage<unsigned char>& I);
+  void display(const vpImage<unsigned char>& I);
   //!Displays the status of me sites
-  void display(vpImage<unsigned char>& I,vpColVector &w,int &index_w);
+  void display(const vpImage<unsigned char>& I,vpColVector &w,int &index_w);
   void setDisplay(vpMeSite::vpMeSiteDisplayType select)  { 
     selectDisplay = select ;
   }

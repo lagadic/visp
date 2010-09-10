@@ -231,7 +231,7 @@ vpPoint *vpPoint::duplicate() const
 
 
 void
-vpPoint::display(vpImage<unsigned char> &I,
+vpPoint::display(const vpImage<unsigned char> &I,
 		 const vpHomogeneousMatrix &cMo,
 		 const vpCameraParameters &cam,
 		 const vpColor color)
@@ -245,7 +245,7 @@ vpPoint::display(vpImage<unsigned char> &I,
 }
 
 void
-vpPoint::display(vpImage<vpRGBa> &I,
+vpPoint::display(const vpImage<vpRGBa> &I,
 		 const vpHomogeneousMatrix &cMo,
 		 const vpCameraParameters &cam,
 		 const vpColor color)
@@ -275,7 +275,7 @@ vpPoint::operator=(const vpPoint&  vpp )
 }
 
 void
-vpPoint::display(vpImage<unsigned char> &I,
+vpPoint::display(const vpImage<unsigned char> &I,
 		 const vpCameraParameters &cam,
 		 const vpColor color)
 {

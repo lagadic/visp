@@ -91,7 +91,7 @@ vpMbtMeLine::~vpMbtMeLine()
   \param theta : The \f$\theta\f$ parameter
 */
 void
-vpMbtMeLine::initTracking(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho, double theta)
+vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho, double theta)
 {
   vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<std::endl ;
 
@@ -139,7 +139,7 @@ vpMbtMeLine::initTracking(vpImage<unsigned char> &I, const vpImagePoint &ip1, co
   \param I : Image in which the line appears.
 */
 void
-vpMbtMeLine::sample(vpImage<unsigned char>& I)
+vpMbtMeLine::sample(const vpImage<unsigned char>& I)
 {
   int rows = I.getHeight() ;
   int cols = I.getWidth() ;
@@ -213,7 +213,7 @@ vpMbtMeLine::sample(vpImage<unsigned char>& I)
   \param I : The image.
 */
 void
-vpMbtMeLine::suppressPoints(vpImage<unsigned char> & /*I*/)
+vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
 {
   int nbrelmt;
   nbrelmt = list.nbElement();
@@ -261,7 +261,7 @@ vpMbtMeLine::suppressPoints(vpImage<unsigned char> & /*I*/)
  \param I : Image in which the line appears.
 */
 void
-vpMbtMeLine::seekExtremities(vpImage<unsigned char> &I)
+vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<std::endl ;
 
@@ -368,7 +368,7 @@ vpMbtMeLine::seekExtremities(vpImage<unsigned char> &I)
   \param I : Image in which the line appears.
 */
 void
-vpMbtMeLine::reSample(vpImage<unsigned char> &I)
+vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
 {
   double d = sqrt(vpMath::sqr(PExt[0].ifloat-PExt[1].ifloat)+vpMath::sqr(PExt[0].jfloat-PExt[1].jfloat)) ;
 
@@ -402,7 +402,7 @@ vpMbtMeLine::reSample(vpImage<unsigned char> &I)
   \param ip2 : The second extremity of the line.
 */
 void
-vpMbtMeLine::reSample(vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2)
+vpMbtMeLine::reSample(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2)
 {
   double d = sqrt(vpMath::sqr(ip1.get_i()-ip2.get_i())+vpMath::sqr(ip1.get_j()-ip2.get_j())) ;
 
@@ -465,7 +465,7 @@ vpMbtMeLine::updateDelta()
  \param I : Image in which the line appears.
  */
 void
-vpMbtMeLine::track(vpImage<unsigned char> &I)
+vpMbtMeLine::track(const vpImage<unsigned char> &I)
 {
   //  2. On appelle ce qui n'est pas specifique
   try
@@ -491,7 +491,7 @@ vpMbtMeLine::track(vpImage<unsigned char> &I)
   \param  theta : The \f$\theta\f$ parameter used in the line's polar equation.
 */
 void
-vpMbtMeLine::updateParameters(vpImage<unsigned char> &I, double rho, double theta)
+vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho, double theta)
 {
   this->rho = rho;
   this->theta = theta;
@@ -522,7 +522,7 @@ vpMbtMeLine::updateParameters(vpImage<unsigned char> &I, double rho, double thet
   \param theta : The \f$\theta\f$ parameter used in the line's polar equation.
 */
 void
-vpMbtMeLine::updateParameters(vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2, double rho, double theta)
+vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2, double rho, double theta)
 {
   this->rho = rho;
   this->theta = theta;
@@ -657,7 +657,7 @@ vpMbtMeLine::bubbleSortJ()
 
 
 void
-vpMbtMeLine::findSignal(vpImage<unsigned char>& I, const vpMe *me, double *conv)
+vpMbtMeLine::findSignal(const vpImage<unsigned char>& I, const vpMe *me, double *conv)
 {
   vpImagePoint itest(PExt[0].ifloat+(PExt[1].ifloat-PExt[0].ifloat)/2, PExt[0].jfloat+(PExt[1].jfloat-PExt[0].jfloat)/2);
   

@@ -154,7 +154,7 @@ vpMeEllipse::~vpMeEllipse()
     \param I : Image in which the ellipse appears.
   */
 void
-vpMeEllipse::sample(vpImage<unsigned char> & I)
+vpMeEllipse::sample(const vpImage<unsigned char> & I)
 {
   vpCDEBUG(1) <<"begin vpMeEllipse::sample() : "<<std::endl ;
 
@@ -251,7 +251,7 @@ vpMeEllipse::sample(vpImage<unsigned char> & I)
   \param I : Image in which the ellipse appears.
 */
 void
-vpMeEllipse::reSample(vpImage<unsigned char>  &I)
+vpMeEllipse::reSample(const vpImage<unsigned char>  &I)
 {
   int n = numberOfSignal() ;
   double expecteddensity = (alpha2-alpha1) / vpMath::rad((double)me->sample_step);
@@ -445,7 +445,7 @@ vpMeEllipse::suppressPoints()
   \param I : Image in which the ellipse appears.
 */
 void
-vpMeEllipse::seekExtremities(vpImage<unsigned char>  &I)
+vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
 {
   int rows = I.getHeight() ;
   int cols = I.getWidth() ;
@@ -773,7 +773,7 @@ vpMeEllipse::leastSquare()
   \param col : Color of the displayed ellipse.
  */
 void
-vpMeEllipse::display(vpImage<unsigned char> &I, vpColor col)
+vpMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
 {
 
   double j1, i1;
@@ -839,7 +839,7 @@ vpMeEllipse::display(vpImage<unsigned char> &I, vpColor col)
   \param I : Image in which the ellipse appears.
 */
 void
-vpMeEllipse::initTracking(vpImage<unsigned char> &I)
+vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
 
@@ -875,7 +875,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I)
   \param iP : A pointer to a list of pointsbelonging to the ellipse edge.
 */
 void
-vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
+vpMeEllipse::initTracking(const vpImage<unsigned char> &I, int n,
 			  vpImagePoint *iP)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
@@ -964,7 +964,7 @@ vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
   \param I : Image in which the ellipse appears.
 */
 void
-vpMeEllipse::track(vpImage<unsigned char> &I)
+vpMeEllipse::track(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<"begin vpMeEllipse::track()"<<std::endl ;
 
@@ -1165,7 +1165,7 @@ vpMeEllipse::computeAngle(int ip1, int jp1, int ip2, int jp2)
 
 
 void
-vpMeEllipse::initTracking(vpImage<unsigned char> &I, int n,
+vpMeEllipse::initTracking(const vpImage<unsigned char> &I, int n,
 			  unsigned *i, unsigned *j)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;

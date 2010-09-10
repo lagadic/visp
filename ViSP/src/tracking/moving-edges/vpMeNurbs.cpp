@@ -144,7 +144,7 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint iP,
 //- the distantce between the point and iP is less than 4 pixels.
 //The function returns the nearest point of iP which respect the hypotheses
 //If no point is found the returned point is (-1,-1)
-vpImagePoint findFirstBorder(const vpImage<unsigned char> Isub, const vpImagePoint iP)
+vpImagePoint findFirstBorder(const vpImage<unsigned char>& Isub, const vpImagePoint iP)
 {
   double dist = 1e6;
   double dist_1 = 1e6;
@@ -235,7 +235,7 @@ vpMeNurbs::~vpMeNurbs()
   \param I : Image in which the edge appears.
 */
 void
-vpMeNurbs::initTracking(vpImage<unsigned char> &I)
+vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
 {
   vpList<vpImagePoint> ptList;
   vpImagePoint pt;
@@ -267,7 +267,7 @@ vpMeNurbs::initTracking(vpImage<unsigned char> &I)
   \param ptList  : List of point to initialize the Nurbs.
 */
 void
-vpMeNurbs::initTracking(vpImage<unsigned char> &I,
+vpMeNurbs::initTracking(const vpImage<unsigned char> &I,
 		       vpList<vpImagePoint> &ptList)
 {
   nurbs.globalCurveInterp(ptList);
@@ -286,7 +286,7 @@ vpMeNurbs::initTracking(vpImage<unsigned char> &I,
   \param I : Image in which the edge appears.
 */
 void
-vpMeNurbs::sample(vpImage<unsigned char>& I)
+vpMeNurbs::sample(const vpImage<unsigned char>& I)
 {
   int rows = I.getHeight() ;
   int cols = I.getWidth() ;
@@ -398,7 +398,7 @@ vpMeNurbs::updateDelta()
   \param I : Image in which the edge appears.
 */
 void
-vpMeNurbs::seekExtremities(vpImage<unsigned char> &I)
+vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
 {
   int rows = I.getHeight() ;
   int cols = I.getWidth() ;
@@ -525,10 +525,10 @@ vpMeNurbs::seekExtremities(vpImage<unsigned char> &I)
 */
 #ifdef VISP_HAVE_OPENCV
 void
-vpMeNurbs::seekExtremitiesCanny(vpImage<unsigned char> &I)
+vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
 #else
 void
-vpMeNurbs::seekExtremitiesCanny(vpImage<unsigned char> & /* I */)
+vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
 #endif
 {
 #ifdef VISP_HAVE_OPENCV
@@ -826,7 +826,7 @@ vpMeNurbs::seekExtremitiesCanny(vpImage<unsigned char> & /* I */)
   \param I : Image in which the edge appears.
 */
 void
-vpMeNurbs::reSample(vpImage<unsigned char> &I)
+vpMeNurbs::reSample(const vpImage<unsigned char> &I)
 {
   int n = numberOfSignal();
   double nbPt = floor(dist / me->sample_step);
@@ -846,7 +846,7 @@ vpMeNurbs::reSample(vpImage<unsigned char> &I)
   \param I : Image in which the edge appears.
 */
 void
-vpMeNurbs::localReSample(vpImage<unsigned char> &I)
+vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 {
   int rows = I.getHeight() ;
   int cols = I.getWidth() ;
@@ -962,7 +962,7 @@ vpMeNurbs::supressNearPoints()
   \param I : Image in which the edge appears.
 */
 void
-vpMeNurbs::track(vpImage<unsigned char> &I)
+vpMeNurbs::track(const vpImage<unsigned char> &I)
 {
   //Tracking des vpMeSites
   vpMeTracker::track(I);
@@ -1017,7 +1017,7 @@ vpMeNurbs::track(vpImage<unsigned char> &I)
 
  */
 void
-vpMeNurbs::display(vpImage<unsigned char>&I, vpColor col)
+vpMeNurbs::display(const vpImage<unsigned char>&I, vpColor col)
 {
   double u = 0.0;
   vpImagePoint pt;
@@ -1249,7 +1249,7 @@ vpMeNurbs::computeFreemanParameters( unsigned int element, vpImagePoint &diP)
   \return true if the point iP is at least 20 pixels far from the image edeges. 
 */
 bool
-vpMeNurbs::farFromImageEdge(const vpImage<unsigned char> I, const vpImagePoint iP)
+vpMeNurbs::farFromImageEdge(const vpImage<unsigned char>& I, const vpImagePoint iP)
 {
   int height = I.getHeight();
   int width  = I.getWidth();
@@ -1258,3 +1258,4 @@ vpMeNurbs::farFromImageEdge(const vpImage<unsigned char> I, const vpImagePoint i
 	  && iP.get_i() > 20 
 	  && iP.get_j() > 20);
 }
+

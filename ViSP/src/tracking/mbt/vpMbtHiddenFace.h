@@ -80,15 +80,15 @@ class VISP_EXPORT vpMbtPolygon
     ~vpMbtPolygon() ;
     void setIndex( int i ) { index = i ; } 
     void setNbPoint(int nb)  ;
-    int getNbPoint() {return nbpt ;  }
+    int getNbPoint() const {return nbpt ;  }
     void addPoint(int n, vpPoint &P) ; 
 
-    int getIndex() {return index ;}
-    void changeFrame(vpHomogeneousMatrix &cMo) ;
-    bool isVisible(vpHomogeneousMatrix &cMo) ;
-    bool isVisible(vpHomogeneousMatrix &cMo, const double alpha) ;
-    bool isVisible() {return isvisible;}
-    bool isAppearing() {return isappearing;}
+    int getIndex() const {return index ;}
+    void changeFrame(const vpHomogeneousMatrix &cMo) ;
+    bool isVisible(const vpHomogeneousMatrix &cMo) ;
+    bool isVisible(const vpHomogeneousMatrix &cMo, const double alpha) ;
+    bool isVisible() const {return isvisible;}
+    bool isAppearing() const {return isappearing;}
 };
 
 #if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
@@ -109,7 +109,7 @@ class VISP_EXPORT vpMbtHiddenFaces
     vpMbtHiddenFaces() ;
     ~vpMbtHiddenFaces() ;
     void addPolygon(vpMbtPolygon *p)  ;
-    int setVisible(vpHomogeneousMatrix &cMo) ;
+    int setVisible(const vpHomogeneousMatrix &cMo) ;
     bool isVisible(int index) ;
     bool isAppearing(int index);
     void reset();

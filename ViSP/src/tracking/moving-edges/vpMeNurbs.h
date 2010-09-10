@@ -179,24 +179,24 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
 	{this->cannyTh1 = th1;
 	 this->cannyTh2 = th2;}
     
-    void initTracking(vpImage<unsigned char> &I) ;
-    void initTracking(vpImage<unsigned char> &I,
+    void initTracking(const vpImage<unsigned char> &I) ;
+    void initTracking(const vpImage<unsigned char> &I,
 		      vpList<vpImagePoint> &ptList) ;
 
-    void track(vpImage<unsigned char>& Im);
+    void track(const vpImage<unsigned char>& Im);
 
-    void sample(vpImage<unsigned char>&image);
-    void reSample(vpImage<unsigned char> &I) ;
+    void sample(const vpImage<unsigned char>&image);
+    void reSample(const vpImage<unsigned char> &I) ;
     void updateDelta();
     void setExtremities() ;
-    void seekExtremities(vpImage<unsigned char> &I) ;
-    void seekExtremitiesCanny(vpImage<unsigned char> &I) ;
+    void seekExtremities(const vpImage<unsigned char> &I) ;
+    void seekExtremitiesCanny(const vpImage<unsigned char> &I) ;
     void suppressPoints() ;
 
     void supressNearPoints();
-    void localReSample(vpImage<unsigned char> &I);
+    void localReSample(const vpImage<unsigned char> &I);
     
-    void display(vpImage<unsigned char>& I, vpColor col) ;
+    void display(const vpImage<unsigned char>& I, vpColor col) ;
     
   private:
     bool computeFreemanChainElement(const vpImage<unsigned char> &I,
@@ -210,7 +210,7 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
     
     void computeFreemanParameters( unsigned int element, vpImagePoint &diP);
     
-    bool farFromImageEdge(const vpImage<unsigned char> I, const vpImagePoint iP);
+    bool farFromImageEdge(const vpImage<unsigned char>& I, const vpImagePoint iP);
 };
 
 #endif

@@ -200,7 +200,7 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
 // ===================================================================
 
 vpMeSite*
-vpMeSite::getQueryList(vpImage<unsigned char> &I, const int range)
+vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
 {
 
   int   k ;
@@ -256,7 +256,7 @@ vpMeSite::getQueryList(vpImage<unsigned char> &I, const int range)
  */
 // ===================================================================
 void
-vpMeSite::getSign(vpImage<unsigned char> &I, const int range)
+vpMeSite::getSign(const vpImage<unsigned char> &I, const int range)
 {
 
   int   k ;
@@ -280,7 +280,7 @@ vpMeSite::getSign(vpImage<unsigned char> &I, const int range)
 
 // Specific function for ME
 double
-vpMeSite::convolution(vpImage<unsigned char>&I, const  vpMe *me)
+vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
 {
 
   int half, index_mask ;
@@ -342,7 +342,7 @@ vpMeSite::convolution(vpImage<unsigned char>&I, const  vpMe *me)
 
 */
 void
-vpMeSite::track(vpImage<unsigned char>& I,
+vpMeSite::track(const vpImage<unsigned char>& I,
 		const vpMe *me,
 		const bool test_contraste)
 {

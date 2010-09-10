@@ -214,7 +214,7 @@ vpSphere *vpSphere::duplicate() const
 
 
 // non destructive wrt. cP and p
-void vpSphere::display(vpImage<unsigned char> &I,
+void vpSphere::display(const vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
 		       const vpColor color)
@@ -229,7 +229,7 @@ void vpSphere::display(vpImage<unsigned char> &I,
 
 
 
-void vpSphere::display(vpImage<unsigned char> &I,
+void vpSphere::display(const vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
 		       const vpColor color)
 {

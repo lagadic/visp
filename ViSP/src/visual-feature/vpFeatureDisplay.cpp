@@ -68,7 +68,7 @@
 */
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
-				    vpImage<unsigned char> &I,
+				    const vpImage<unsigned char> &I,
 				    vpColor color, 
 				    unsigned int thickness)
 {
@@ -94,7 +94,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 */
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
-				   vpImage<unsigned char> &I,
+				   const vpImage<unsigned char> &I,
 				   vpColor color, 
 				   unsigned int thickness )
 {
@@ -149,7 +149,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
 				       double rho2,double theta2,
 				       const vpCameraParameters &cam,
-				       vpImage<unsigned char> &I,
+				       const vpImage<unsigned char> &I,
 				       vpColor color, 
 				       unsigned int thickness)
 {
@@ -174,7 +174,7 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
 void vpFeatureDisplay::displayEllipse(double x,double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
-				      vpImage<unsigned char> &I,
+				      const vpImage<unsigned char> &I,
 				      vpColor color, 
 				      unsigned int thickness)
 {
@@ -249,7 +249,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 */
 void vpFeatureDisplay::displayPoint(double x,double y,
 				    const vpCameraParameters &cam,
-				    vpImage<vpRGBa> &I,
+				    const vpImage<vpRGBa> &I,
 				    vpColor color, 
 				    unsigned int thickness)
 {
@@ -276,7 +276,7 @@ void vpFeatureDisplay::displayPoint(double x,double y,
 */
 void vpFeatureDisplay::displayLine(double rho,double theta,
 				   const vpCameraParameters &cam,
-				   vpImage<vpRGBa> &I,
+				   const vpImage<vpRGBa> &I,
 				   vpColor color, 
 				   unsigned int thickness )
 {
@@ -331,7 +331,7 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
 void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
 				       double rho2, double theta2,
 				       const vpCameraParameters &cam,
-				       vpImage<vpRGBa> &I,
+				       const vpImage<vpRGBa> &I,
 				       vpColor color, 
 				       unsigned int thickness)
 {
@@ -357,7 +357,7 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
 void vpFeatureDisplay::displayEllipse(double x, double y,
 				      double mu20, double mu11, double mu02,
 				      const vpCameraParameters &cam,
-				      vpImage<vpRGBa> &I,
+				      const vpImage<vpRGBa> &I,
 				      vpColor color, 
 				      unsigned int thickness)
 {
