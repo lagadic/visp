@@ -226,6 +226,7 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 
 	ip2 = ip1;
 	y2 = y1 ;
+	x2 = x1 ;
 	k += incr ;
       } // end for loop
     }
