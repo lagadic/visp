@@ -1284,7 +1284,6 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_CYCABTK \
                          VISP_HAVE_PARPORT \
                          VISP_HAVE_XML2 \
-                         VISP_HAVE_LIBPLOTTER \
                          VISP_HAVE_LIBJPEG \
                          VISP_HAVE_LIBPNG \
                          VISP_HAVE_FFMPEG \
