@@ -511,6 +511,14 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
       scaleInitialized = false;
   }
   
+  if (firstPoint)
+  {
+    clearGraphZone(I);
+    displayGrid(I);
+    vpDisplay::flushROI(I,graphZone);
+    firstPoint = false;
+  }
+  
   double i = yorg-(zoomy*y);
   double j = xorg+(zoomx*x);
   
@@ -882,7 +890,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
   for (int i = 0; i < 6; i++)
   {
     pt[i].track(cMo);
-    double u,v;
+    double u=0.0,v=0.0;
     vpMeterPixelConversion::convertPoint(cam,pt[i].get_x(),pt[i].get_y(),u,v);
     iP[i].set_uv(u,v);
     iP[i] = iP[i] + dTopLeft3D;
@@ -911,7 +919,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     double x = ptXorg+(zoomx_3D*t);
     ptunit.set_oX(x);
     ptunit.track(cMo);
-    double u,v;
+    double u=0.0, v=0.0;
     vpMeterPixelConversion::convertPoint(cam,ptunit.get_x(),ptunit.get_y(),u,v);
     iPunit.set_uv(u,v);
     iPunit = iPunit + dTopLeft3D;
@@ -952,7 +960,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     double y = ptYorg-(zoomy_3D*t);
     ptunit.set_oY(y);
     ptunit.track(cMo);
-    double u,v;
+    double u=0.0, v=0.0;
     vpMeterPixelConversion::convertPoint(cam,ptunit.get_x(),ptunit.get_y(),u,v);
     iPunit.set_uv(u,v);
     iPunit = iPunit + dTopLeft3D;
@@ -993,7 +1001,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     double z = ptZorg+(zoomz_3D*t);
     ptunit.set_oZ(z);
     ptunit.track(cMo);
-    double u,v;
+    double u=0.0, v=0.0;
     vpMeterPixelConversion::convertPoint(cam,ptunit.get_x(),ptunit.get_y(),u,v);
     iPunit.set_uv(u,v);
     iPunit = iPunit + dTopLeft3D;
@@ -1132,7 +1140,7 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
   vpPoint pointPlot;
   pointPlot.setWorldCoordinates(ptXorg+(zoomx_3D*x),ptYorg-(zoomy_3D*y),ptZorg+(zoomz_3D*z));
   pointPlot.track(cMo);
-  double u,v;
+  double u=0.0, v=0.0;
   vpMeterPixelConversion::convertPoint(cam,pointPlot.get_x(),pointPlot.get_y(),u,v);
   vpImagePoint iP;
   iP.set_uv(u,v);
@@ -1194,7 +1202,7 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
       z = (curveList+i)->pointListz.value();
       pointPlot.setWorldCoordinates(ptXorg+(zoomx_3D*x),ptYorg-(zoomy_3D*y),ptZorg+(zoomz_3D*z));
       pointPlot.track(cMo);
-      double u,v;
+      double u=0.0, v=0.0;
       vpMeterPixelConversion::convertPoint(cam,pointPlot.get_x(),pointPlot.get_y(),u,v);
       iP.set_uv(u,v);
       iP = iP + dTopLeft3D;
