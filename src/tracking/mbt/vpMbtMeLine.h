@@ -80,11 +80,11 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
   public:  
     vpMbtMeLine();
     ~vpMbtMeLine();
-    void initTracking(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho, double theta);
-    void track(vpImage<unsigned char> &I);
-    void updateParameters(vpImage<unsigned char> &I, double rho, double theta);
-    void updateParameters(vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2, double rho, double theta);
-    void display(vpImage<unsigned char>& /*I*/, vpColor /*col*/) {;}
+    void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho, double theta);
+    void track(const vpImage<unsigned char> &I);
+    void updateParameters(const vpImage<unsigned char> &I, double rho, double theta);
+    void updateParameters(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2, double rho, double theta);
+    void display(const vpImage<unsigned char>& /*I*/, vpColor /*col*/) {;}
     
      /*!
      Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$
@@ -108,16 +108,16 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
     inline double get_c() const { return this->c;}
   
   private:
-    void sample(vpImage<unsigned char>&image);
-    void reSample(vpImage<unsigned char>&image);
-    void reSample(vpImage<unsigned char>&image, vpImagePoint ip1, vpImagePoint ip2);
+    void sample(const vpImage<unsigned char>&image);
+    void reSample(const vpImage<unsigned char>&image);
+    void reSample(const vpImage<unsigned char>&image, vpImagePoint ip1, vpImagePoint ip2);
     void updateDelta();
     void bubbleSortI();
     void bubbleSortJ();
-    void suppressPoints(vpImage<unsigned char> &I);
+    void suppressPoints(const vpImage<unsigned char> &I);
     void setExtremities();
-    void seekExtremities(vpImage<unsigned char> &I);
-    void findSignal(vpImage<unsigned char>& I, const vpMe *me, double *conv);
+    void seekExtremities(const vpImage<unsigned char> &I);
+    void findSignal(const vpImage<unsigned char>& I, const vpMe *me, double *conv);
 } ;
 
 #endif

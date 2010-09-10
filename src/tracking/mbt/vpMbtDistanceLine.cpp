@@ -92,7 +92,7 @@ vpMbtDistanceLine::~vpMbtDistanceLine()
   \param cMo : The pose of the camera used to project the line into the image.
 */
 void
-vpMbtDistanceLine::project(vpHomogeneousMatrix &cMo)
+vpMbtDistanceLine::project(const vpHomogeneousMatrix &cMo)
 {
   line->project(cMo) ;
   p1->project(cMo) ;
@@ -247,7 +247,7 @@ vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param cMo : The pose of the camera used to initialize the moving edges.
 */
 void
-vpMbtDistanceLine::initMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo)
+vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if(isvisible)
   {
@@ -304,7 +304,7 @@ vpMbtDistanceLine::initMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix
   \param cMo : The pose of the camera.
 */
 void
-vpMbtDistanceLine::trackMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix & /*cMo*/)
+vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
 {
 
   if (isvisible)
@@ -347,7 +347,7 @@ vpMbtDistanceLine::trackMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatri
   \param cMo : The pose of the camera.
 */
 void
-vpMbtDistanceLine::updateMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo)
+vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (isvisible)
   {
@@ -399,7 +399,7 @@ vpMbtDistanceLine::updateMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatr
   \param cMo : The pose of the camera.
 */
 void
-vpMbtDistanceLine::reinitMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo)
+vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if(meline!= NULL)
     delete meline;
@@ -420,7 +420,7 @@ vpMbtDistanceLine::reinitMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatr
   \param thickness : The thickness of the line.
 */
 void
-vpMbtDistanceLine::display(vpImage<unsigned char>&I, vpHomogeneousMatrix &cMo, vpCameraParameters&cam, vpColor col, unsigned int thickness)
+vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness)
 {
   if (isvisible ==true)
   {
@@ -452,7 +452,7 @@ vpMbtDistanceLine::display(vpImage<unsigned char>&I, vpHomogeneousMatrix &cMo, v
   \param thickness : The thickness of the line.
 */
 void
-vpMbtDistanceLine::display(vpImage<vpRGBa>&I, vpHomogeneousMatrix &cMo, vpCameraParameters&cam, vpColor col, unsigned int thickness)
+vpMbtDistanceLine::display(const vpImage<vpRGBa>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness)
 {
   if (isvisible ==true)
   {
@@ -485,7 +485,7 @@ vpMbtDistanceLine::display(vpImage<vpRGBa>&I, vpHomogeneousMatrix &cMo, vpCamera
     \param I : The image.
 */
 void
-vpMbtDistanceLine::displayMovingEdges(vpImage<unsigned char> &I)
+vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 {
   if (meline != NULL)
   {
@@ -526,7 +526,7 @@ vpMbtDistanceLine::initInteractionMatrixError()
   Compute the interaction matrix and the error vector corresponding to the line.
 */
 void
-vpMbtDistanceLine::computeInteractionMatrixError(vpHomogeneousMatrix &cMo)
+vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 {
 
   if (isvisible)
@@ -579,6 +579,37 @@ vpMbtDistanceLine::computeInteractionMatrixError(vpHomogeneousMatrix &cMo)
       meline->list.next() ;
     }
   }
+}
+
+/*!
+  Test wether the line is close to the border of the image (at a given threshold)
+  
+  \param I : the input image (to know its size)
+  \param threshold : the threshold in pixel 
+  \return true if the line is near the border of the image
+*/
+bool 
+vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const unsigned int threshold)
+{
+  if(threshold > I.getWidth() || threshold > I.getHeight()){
+    return true;
+  }
+  if (isvisible){
+  
+    meline->list.front() ;
+    while (!meline->list.outside())
+    {
+      unsigned int i = meline->list.value().i ;
+      unsigned int j = meline->list.value().j ;
+      
+      if( (i > (I.getHeight()- threshold) ) || i < threshold ||
+          (j > (I.getWidth ()- threshold) ) || j < threshold ) {
+        return true;
+      }
+      meline->list.next();
+    }
+  }
+  return false;
 }
 
 #endif

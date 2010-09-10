@@ -510,7 +510,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 
   \param color : The desired color to display the line in the image.
 */
-void vpLine::display(vpImage<unsigned char> &I,
+void vpLine::display(const vpImage<unsigned char> &I,
 		     const vpCameraParameters &cam,
 		     const vpColor color)
 {
@@ -537,7 +537,7 @@ void vpLine::display(vpImage<unsigned char> &I,
   \param color : The desired color to display the line in the image.
 */
 // non destructive wrt. cP and p
-void vpLine::display(vpImage<unsigned char> &I,
+void vpLine::display(const vpImage<unsigned char> &I,
 		     const vpHomogeneousMatrix &cMo,
 		     const vpCameraParameters &cam,
 		     const vpColor color)

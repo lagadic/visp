@@ -510,7 +510,7 @@ vpMbtTracker::testTracking()
   \param I : The image.
  */
 void
-vpMbtTracker::track(vpImage<unsigned char> &I)
+vpMbtTracker::track(const vpImage<unsigned char> &I)
 {
   try
   {  
@@ -602,7 +602,7 @@ vpMbtTracker::track(vpImage<unsigned char> &I)
  \param displayHelp : If this flag is true, then an image (name : 'filename'.ppm) is displayed to show where to click
 */
 void
-vpMbtTracker::initClick(vpImage<unsigned char>& I, const char *filename, bool displayHelp)
+vpMbtTracker::initClick(const vpImage<unsigned char>& I, const char *filename, bool displayHelp)
 {
   vpHomogeneousMatrix last_cMo;
   vpPoseVector init_pos;
@@ -814,7 +814,7 @@ vpMbtTracker::initClick(vpImage<unsigned char>& I, const char *filename, bool di
  \param _cMo : The initial pose used to initialize the tracking.
 */
 void
-vpMbtTracker::init(vpImage<unsigned char>& I, vpHomogeneousMatrix &_cMo)
+vpMbtTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo)
 {
   this->cMo = _cMo;
   bool a = false;
@@ -879,9 +879,9 @@ vpMbtTracker::loadConfigFile(const char* filename)
   \param thickness : The thickness of the lines.
 */
 void
-vpMbtTracker::display(vpImage<unsigned char>& I, vpHomogeneousMatrix &_cMo, vpCameraParameters &cam,
-											vpColor col,
-											unsigned int thickness)
+vpMbtTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &cam,
+											const vpColor& col,
+											const unsigned int thickness)
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -903,9 +903,9 @@ vpMbtTracker::display(vpImage<unsigned char>& I, vpHomogeneousMatrix &_cMo, vpCa
   \param thickness : The thickness of the lines.
 */
 void
-vpMbtTracker::display(vpImage<vpRGBa>& I, vpHomogeneousMatrix &_cMo, vpCameraParameters &cam,
-											vpColor col,
-											unsigned int thickness)
+vpMbtTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &cam,
+											const vpColor& col,
+											const unsigned int thickness)
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -926,7 +926,7 @@ vpMbtTracker::display(vpImage<vpRGBa>& I, vpHomogeneousMatrix &_cMo, vpCameraPar
   \param _cMo : The pose of the camera used to initialize the moving edges.
 */
 void
-vpMbtTracker::initMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &_cMo)
+vpMbtTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {
   vpMbtDistanceLine *l ;
 
@@ -978,7 +978,7 @@ vpMbtTracker::initMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &_cM
   \param I : the image.
 */
 void
-vpMbtTracker::trackMovingEdge(vpImage<unsigned char> &I)
+vpMbtTracker::trackMovingEdge(const vpImage<unsigned char> &I)
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -1002,7 +1002,7 @@ vpMbtTracker::trackMovingEdge(vpImage<unsigned char> &I)
   \param I : the image.
 */
 void
-vpMbtTracker::updateMovingEdge(vpImage<unsigned char> &I)
+vpMbtTracker::updateMovingEdge(const vpImage<unsigned char> &I)
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -1025,7 +1025,7 @@ vpMbtTracker::updateMovingEdge(vpImage<unsigned char> &I)
   \param _cMo : the pose of the used to re-initialise the moving edges
 */
 void
-vpMbtTracker::reinitMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &_cMo)
+vpMbtTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -1048,7 +1048,7 @@ vpMbtTracker::reinitMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &_
   \param P2 : The second point to compare
   \param threshold : The threshold  used to decide if the points are similar or not.
 */
-bool samePoint(vpPoint &P1, vpPoint &P2, double threshold=1e-5)
+bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold=1e-5)
 {
   double d = vpMath::sqr(P1.get_oX() - P2.get_oX())+
   vpMath::sqr(P1.get_oY() - P2.get_oY())+
@@ -1125,7 +1125,7 @@ vpMbtTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string name)
 }
 
 void
-vpMbtTracker::removeLine(std::string name)
+vpMbtTracker::removeLine(const std::string& name)
 {
   vpMbtDistanceLine *l;
   Lline.front();
@@ -1169,7 +1169,7 @@ vpMbtTracker::addPolygon(vpMbtPolygon &p)
   \param newvisibleline : This parameter is set to true if a new face appeared.
 */
 void
-vpMbtTracker::visibleFace(vpHomogeneousMatrix &cMo, bool &newvisibleline)
+vpMbtTracker::visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline)
 {
   int n ;
 

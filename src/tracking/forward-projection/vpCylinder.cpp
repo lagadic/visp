@@ -276,7 +276,7 @@ vpCylinder *vpCylinder::duplicate() const
 }
 
 void
-vpCylinder::display(vpImage<unsigned char> &I,
+vpCylinder::display(const vpImage<unsigned char> &I,
 		    const vpHomogeneousMatrix &cMo,
 		    const vpCameraParameters &cam,
 		    const vpColor color)
@@ -292,7 +292,7 @@ vpCylinder::display(vpImage<unsigned char> &I,
 
 
 void
-vpCylinder::display(vpImage<unsigned char> &I,
+vpCylinder::display(const vpImage<unsigned char> &I,
 		    const vpCameraParameters &cam,
 		    const vpColor color)
 {

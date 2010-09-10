@@ -142,7 +142,7 @@ vpMeLine::~vpMeLine()
   \param I : Image in which the line appears.
 */
 void
-vpMeLine::sample(vpImage<unsigned char>& I)
+vpMeLine::sample(const vpImage<unsigned char>& I)
 {
   int rows = I.getHeight() ;
   int cols = I.getWidth() ;
@@ -218,7 +218,7 @@ vpMeLine::sample(vpImage<unsigned char>& I)
 
  */
 void
-vpMeLine::display(vpImage<unsigned char>&I, vpColor col)
+vpMeLine::display(const vpImage<unsigned char>&I, vpColor col)
 {
   list.front();
 
@@ -291,7 +291,7 @@ vpMeLine::display(vpImage<unsigned char>&I, vpColor col)
   \param I : Image in which the line appears.
 */
 void
-vpMeLine::initTracking(vpImage<unsigned char> &I)
+vpMeLine::initTracking(const vpImage<unsigned char> &I)
 {
   vpImagePoint ip1, ip2;
 
@@ -507,7 +507,7 @@ vpMeLine::leastSquare()
   \param ip2 : Coordinates of the second point.
 */
 void
-vpMeLine::initTracking(vpImage<unsigned char> &I,
+vpMeLine::initTracking(const vpImage<unsigned char> &I,
 		       const vpImagePoint &ip1,
 		       const vpImagePoint &ip2)
 {
@@ -652,7 +652,7 @@ vpMeLine::setExtremities()
   \param I : Image in which the line appears.
 */
 void
-vpMeLine::seekExtremities(vpImage<unsigned char> &I)
+vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<std::endl ;
 
@@ -770,7 +770,7 @@ vpMeLine::seekExtremities(vpImage<unsigned char> &I)
   \param I : Image in which the line appears.
 */
 void
-vpMeLine::reSample(vpImage<unsigned char> &I)
+vpMeLine::reSample(const vpImage<unsigned char> &I)
 {
 
   double i1,j1,i2,j2 ;
@@ -851,7 +851,7 @@ vpMeLine::updateDelta()
   \param I : Image in which the line appears.
 */
 void
-vpMeLine::track(vpImage<unsigned char> &I)
+vpMeLine::track(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<"begin vpMeLine::track()"<<std::endl ;
 
@@ -932,7 +932,7 @@ vpMeLine::track(vpImage<unsigned char> &I)
   \param I : Image in which the line appears.
 */
 void
-vpMeLine::computeRhoTheta(vpImage<unsigned char>& I)
+vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
 {
   //rho = -c ;
   //theta = atan2(a,b) ;
@@ -1183,7 +1183,7 @@ vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
   \param j2 : j coordinate of the second point.
 */
 void
-vpMeLine::initTracking(vpImage<unsigned char> &I,
+vpMeLine::initTracking(const vpImage<unsigned char> &I,
 		       unsigned i1,unsigned j1,
 		       unsigned i2, unsigned j2)
 {

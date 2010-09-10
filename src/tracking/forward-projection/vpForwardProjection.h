@@ -175,7 +175,7 @@ public:
 
     \param color : The desired color to display the line in the image.
   */
-  virtual void display(vpImage<unsigned char> &I,
+  virtual void display(const vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
 		       const vpColor color=vpColor::green) =0;
 
@@ -197,7 +197,7 @@ public:
 
     \param color : The desired color to display the line in the image.
   */
-  virtual void display(vpImage<unsigned char> &I,
+  virtual void display(const vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
 		       const vpColor color=vpColor::green) =0;

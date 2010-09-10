@@ -197,10 +197,10 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
   void changeFrame(const vpHomogeneousMatrix &cMo) ;
 
-  void display(vpImage<unsigned char> &I,
+  void display(const vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
 	       const vpColor color=vpColor::green) ;
-  void display(vpImage<unsigned char> &I,
+  void display(const vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
 	       const vpColor color=vpColor::green) ;

@@ -123,12 +123,12 @@ public:
   // Needed in order to use it in vpList
   friend std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS);
 
-  void getSign(vpImage<unsigned char> &I, const int range) ;
-  double convolution(vpImage<unsigned char>& ima, const vpMe *me) ;
+  void getSign(const vpImage<unsigned char> &I, const int range) ;
+  double convolution(const vpImage<unsigned char>& ima, const vpMe *me) ;
 
-  vpMeSite *getQueryList(vpImage<unsigned char> &I, const int range) ;
+  vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range) ;
 
-  void track(vpImage<unsigned char>& im,
+  void track(const vpImage<unsigned char>& im,
 	     const vpMe *me,
 	     const  bool test_contraste=true);
   void setDisplay(vpMeSiteDisplayType select) { selectDisplay = select ; }

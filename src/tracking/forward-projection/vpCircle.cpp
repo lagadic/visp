@@ -269,7 +269,7 @@ vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
 
 }
 
-void vpCircle::display(vpImage<unsigned char> &I,
+void vpCircle::display(const vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
 		       const vpColor color)
 {
@@ -278,7 +278,7 @@ void vpCircle::display(vpImage<unsigned char> &I,
 }
 
 // non destructive wrt. cP and p
-void vpCircle::display(vpImage<unsigned char> &I,
+void vpCircle::display(const vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
 		       const vpColor color)

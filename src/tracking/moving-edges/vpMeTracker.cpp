@@ -178,7 +178,7 @@ vpMeTracker::outOfImage(vpImagePoint iP, int half, int rows, int cols)
 
 //! Virtual function that is called by lower classes vpMeTrackerLine/Circle/Cylinder
 void
-vpMeTracker::initTracking(vpImage<unsigned char>& I)
+vpMeTracker::initTracking(const vpImage<unsigned char>& I)
 {
   if (DEBUG_LEVEL1)
     std::cout << "begin vpMeTracker::initTracking() " << std::endl ;
@@ -263,7 +263,7 @@ vpMeTracker::initTracking(vpImage<unsigned char>& I)
 
 
 void
-vpMeTracker::track(vpImage<unsigned char>& I)
+vpMeTracker::track(const vpImage<unsigned char>& I)
 {
   if (DEBUG_LEVEL1)
     std::cout << "begin  vpMeTracker::Track():" << std::endl ;
@@ -335,7 +335,7 @@ vpMeTracker::track(vpImage<unsigned char>& I)
 
 
 void
-vpMeTracker::display(vpImage<unsigned char>& I)
+vpMeTracker::display(const vpImage<unsigned char>& I)
 {
   if (DEBUG_LEVEL1)
   {
@@ -384,7 +384,7 @@ vpMeTracker::display(vpImage<unsigned char>& I)
 
 
 void
-vpMeTracker::display(vpImage<unsigned char>& I,vpColVector &w,int &index_w)
+vpMeTracker::display(const vpImage<unsigned char>& I,vpColVector &w,int &index_w)
 {
 
   list.front();

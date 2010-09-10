@@ -186,22 +186,22 @@ class VISP_EXPORT vpMbtDistanceLine
     
     void buildFrom(vpPoint &_p1, vpPoint &_p2);
     
-    void initMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo);
-    void trackMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo);
-    void updateMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo);
+    void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+    void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+    void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
     void initInteractionMatrixError();
-    void computeInteractionMatrixError(vpHomogeneousMatrix &cMo);
-    void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, vpColor col, unsigned int thickness = 1);
-    void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, vpColor col, unsigned int thickness = 1);
-    void displayMovingEdges(vpImage<unsigned char> &I);
+    void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
+    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
+    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
+    void displayMovingEdges(const vpImage<unsigned char> &I);
 
-    
+    bool closeToImageBorder(const vpImage<unsigned char>& I, const unsigned int threshold);
 
-    void reinitMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo);
+    void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   private:
-    void project(vpHomogeneousMatrix &cMo);
+    void project(const vpHomogeneousMatrix &cMo);
     void setFace( vpMbtHiddenFaces *_hiddenface) { hiddenface = _hiddenface ; }
     void belongToPolygon(int index) { Lindex_polygon += index ; }
 

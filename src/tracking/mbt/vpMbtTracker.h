@@ -148,11 +148,11 @@ class VISP_EXPORT vpMbtTracker
   void setMovingEdge(vpMe &_me);
   void loadConfigFile(const char* filename);
   void loadModel(const char* cad_name);
-  void initClick(vpImage<unsigned char>& I, const char *filename, bool displayHelp = false);
-  void init(vpImage<unsigned char>& I, vpHomogeneousMatrix &cMo) ;
-  void track(vpImage<unsigned char> &I);
-  void display(vpImage<unsigned char>& I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, vpColor col , unsigned int l=1);
-  void display(vpImage<vpRGBa>& I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, vpColor col , unsigned int l=1);
+  void initClick(const vpImage<unsigned char>& I, const char *filename, bool displayHelp = false);
+  void init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo) ;
+  void track(const vpImage<unsigned char> &I);
+  void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1);
+  void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1);
   void resetTracker();
   void reInitModel(vpImage<unsigned char>& I, const char* cad_name, vpHomogeneousMatrix& _cMo);
   
@@ -189,14 +189,14 @@ class VISP_EXPORT vpMbtTracker
 
  protected:
   void computeVVS();
-  void initMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &_cMo) ;
-  void trackMovingEdge(vpImage<unsigned char> &I) ;
-  void updateMovingEdge(vpImage<unsigned char> &I) ;
-  void visibleFace(vpHomogeneousMatrix &cMo, bool &newvisibleline) ;
-  void reinitMovingEdge(vpImage<unsigned char> &I, vpHomogeneousMatrix &_cMo);
+  void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
+  void trackMovingEdge(const vpImage<unsigned char> &I) ;
+  void updateMovingEdge(const vpImage<unsigned char> &I) ;
+  void visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline) ;
+  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
   void addPolygon(vpMbtPolygon &p) ;
   void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");
-  void removeLine(std::string name);
+  void removeLine(const std::string& name);
   void loadCAOModel(std::ifstream &file_id);
   
 #if defined(VISP_HAVE_COIN)
