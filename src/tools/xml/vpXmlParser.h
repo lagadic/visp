@@ -217,6 +217,7 @@ protected:
 public:
   
   vpXmlParser();
+  virtual ~vpXmlParser();
   void parse(const std::string& filename);
   void save(const std::string& filename, const bool append=false);
 
