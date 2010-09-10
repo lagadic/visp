@@ -232,13 +232,6 @@ ELSE(GTK2_FOUND)
   ENDIF(GTK_FOUND)
 ENDIF(GTK2_FOUND)
 
-FIND_PACKAGE(LIBPLOTTER)
-IF(LIBPLOTTER_FOUND)
-  OPTION(USE_LIBPLOTTER    "Compile ViSP with the libplotter library" ON)
-ELSE(LIBPLOTTER_FOUND)
-  SET(USE_LIBPLOTTER OFF)
-ENDIF(LIBPLOTTER_FOUND)
-
 FIND_PACKAGE(LIBJPEG)
 IF(LIBJPEG_FOUND)
   OPTION(USE_LIBJPEG    "Compile ViSP with the libjpeg library" ON)
@@ -278,7 +271,6 @@ SET(USE_PTHREAD    ON) # For Biclops/Simulator
 #SET(USE_DC1394_2   ON) # For firewire grabber under Linux and OSX ?
 #SET(USE_V4L2       ON) # For Video 4 Linux 2 grabber under Linux
 #SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
-#SET(USE_LIBPLOTTER ON) # For plotting curves
 #SET(USE_LIBJPEG    ON) # For reading jpeg files
 #SET(USE_LIBPNG     ON) # For reading png files
 SET(USE_ZLIB       ON) # For data compression
@@ -612,7 +604,6 @@ SET(VISP_HAVE_GSL_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_LIBPLOTTER_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_ZLIB_FOUND "no")  # for ViSP-third-party.txt
@@ -765,23 +756,6 @@ IF(USE_GDI)
     SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(GDI_FOUND)
 ENDIF(USE_GDI)
-
-# Libplotter
-IF(USE_LIBPLOTTER)
-  #FIND_PACKAGE(LIBPLOTTER)
-  IF(LIBPLOTTER_FOUND)
-    MESSAGE(STATUS "Libplotter found")
-    SET(VISP_HAVE_LIBPLOTTER  TRUE)  # for header vpConfig.h
-    SET(VISP_HAVE_LIBPLOTTER_FOUND "yes")  # for ViSP-third-party.txt
-
-    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBPLOTTER_INCLUDE_DIR})
-    LIST(APPEND VISP_EXTERN_LIBS ${LIBPLOTTER_LIBRARIES})
-
-  ELSE(LIBPLOTTER_FOUND)
-    MESSAGE(STATUS "Libplot not found")
-    SET(VISP_HAVE_LIBPLOTTER_FOUND "no")  # for ViSP-third-party.txt
-  ENDIF(LIBPLOTTER_FOUND)
-ENDIF(USE_LIBPLOTTER)
 
 # zlib
 IF(USE_ZLIB)
@@ -1449,7 +1423,7 @@ INCLUDE(InstallRequiredSystemLibraries)
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ViSP: Visual Servoing Platform")
 SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.GPL")
 
 SET(CPACK_PACKAGE_VERSION ${VISP_VERSION})
 SET(CPACK_PACKAGE_VERSION_MAJOR ${VISP_VERSION_MAJOR})

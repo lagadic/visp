@@ -121,9 +121,6 @@
 // Defined if SoXt library available.
 #cmakedefine VISP_HAVE_SOXT
 
-// Defined if Liplot library available.
-#cmakedefine VISP_HAVE_LIBPLOTTER
-
 // Defined if libjpeg library available.
 #cmakedefine VISP_HAVE_LIBJPEG
 
