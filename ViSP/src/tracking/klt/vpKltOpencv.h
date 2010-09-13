@@ -59,11 +59,16 @@
 #pragma package <opencv>
 #endif
 
-#ifndef _EiC
-#include "cv.h"
-#include "highgui.h"
-#include <stdio.h>
-#include <ctype.h>
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#  include <opencv2/imgproc/imgproc.hpp>
+#  include <opencv2/video/tracking.hpp>
+#else
+#  ifndef _EiC
+#    include "cv.h"
+#    include "highgui.h"
+#    include <stdio.h>
+#    include <ctype.h>
+#    endif
 #endif
 
 #include <visp/vpConfig.h>

@@ -39,6 +39,8 @@
  *
  *****************************************************************************/
 
+#include <vector>
+#include <iostream>
 
 #include <visp/vpConfig.h>
 
@@ -47,10 +49,6 @@
 #include <visp/vpPlanarObjectDetector.h>
 #include <visp/vpImageConvert.h>
 #include <visp/vpException.h>
-#include <cv.h>
-#include <vector>
-#include <cvaux.h>
-#include <iostream>
 #include <visp/vpImagePoint.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpColor.h>

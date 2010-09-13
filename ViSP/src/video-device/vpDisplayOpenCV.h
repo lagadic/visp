@@ -50,9 +50,13 @@
 #include <visp/vpImageConvert.h>
 #include <visp/vpDisplay.h>
 
-#include <cv.h>
-#include <highgui.h>
-#include <cxcore.h>
+#if VISP_HAVE_OPENCV_VERSION >= 0x020101
+#  include <opencv2/core/core.hpp>
+#else
+#  include <cv.h>
+#  include <highgui.h>
+#  include <cxcore.h>
+#endif
 
 /*!
   \file vpDisplayOpenCV.h

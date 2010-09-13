@@ -45,10 +45,15 @@
 
 #include <visp/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
+#ifdef VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
 
-#include <cv.h>
-#include <cvaux.hpp>
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#  include <opencv2/imgproc/imgproc.hpp>
+#  include <opencv2/features2d/features2d.hpp>
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
+#  include <cv.h>
+#  include <cvaux.hpp>
+#endif
 
 #include <visp/vpConfig.h>
 #include <visp/vpList.h>
