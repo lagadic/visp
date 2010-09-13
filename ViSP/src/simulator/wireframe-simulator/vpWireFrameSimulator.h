@@ -154,7 +154,7 @@ void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
     sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
     
     //Set the initial pose of the camera
-    sim.setCameraPosition(vpHomogeneousMatrix(0,0,0.5,vpMath::rad(0),vpMath::rad(10),0));
+    sim.setCameraPositionRelObj(vpHomogeneousMatrix(0,0,0.5,vpMath::rad(0),vpMath::rad(10),0));
     //Set the desired pose of the camera (for the internal view)
     sim.setDesiredCameraPosition(vpHomogeneousMatrix(0.0,0,0.5,0,0,0));
     //Set the pose of the reference frame (for the external view)
