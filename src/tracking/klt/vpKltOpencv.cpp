@@ -193,25 +193,29 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
   	if (copy.image)
   	{
            image =  cvCreateImage(cvGetSize(copy.image), 8, 1);
-  		/*IplImage **/cvCopyImage(copy.image,image);
+	   //		/*IplImage **/cvCopyImage(copy.image,image);
+	   cvCopy(copy.image, image, 0);
   	}
 
   	if (copy.prev_image)
   	{
           prev_image = cvCreateImage(cvGetSize(copy.prev_image), IPL_DEPTH_8U, 1);
-  		/*IplImage **/ cvCopyImage(copy.prev_image,prev_image);
+	  //	/*IplImage **/ cvCopyImage(copy.prev_image,prev_image);
+	  cvCopy(copy.prev_image, prev_image, 0);
   	}
 
   	if (copy.pyramid)
   	{
           pyramid = cvCreateImage(cvGetSize(copy.pyramid), IPL_DEPTH_8U, 1);
-  		/*IplImage **/cvCopyImage(copy.pyramid,pyramid);
+	  // /*IplImage **/cvCopyImage(copy.pyramid,pyramid);
+	  cvCopy(copy.pyramid, pyramid, 0);
   	}
 
   	if (copy.prev_pyramid)
   	{
           prev_pyramid = cvCreateImage(cvGetSize(copy.prev_pyramid), IPL_DEPTH_8U, 1);
-  		/*IplImage **/cvCopyImage(copy.prev_pyramid,prev_pyramid);
+	  //	/*IplImage **/cvCopyImage(copy.prev_pyramid,prev_pyramid);
+	  cvCopy(copy.prev_pyramid, prev_pyramid, 0);
   	}
 
   //Deep copy of arrays

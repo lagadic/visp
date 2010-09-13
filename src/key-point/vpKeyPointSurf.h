@@ -53,11 +53,14 @@
 #include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) // Require opencv >= 1.1.0
+#if defined (VISP_HAVE_OPENCV) 
 
-#include <cxcore.h>
-#include <cv.h>
-
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#  include <opencv2/features2d/features2d.hpp>
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x010100) // Require opencv >= 1.1.0
+#  include <cxcore.h>
+#  include <cv.h>
+#endif
 
 /*!
   \class vpKeyPointSurf

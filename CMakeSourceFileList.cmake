@@ -303,6 +303,7 @@ SET (SRC_VISUAL_FEATURE
   )
 
 SET (SRC_ALL
+  video-device/vpDisplayOpenCV.cpp
   ${SRC_CAMERA}
   ${SRC_COMPUTER_VISION}
   ${SRC_DATA_STRUCTURE}
