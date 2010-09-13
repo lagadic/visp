@@ -82,10 +82,12 @@ static pthread_mutex_t vpMeasure_mutex;
   using init() function.
 
   \code
+#include <visp/vpConfig.h>
 #include <visp/vpRobotBiclops.h>
 
 int main()
 {
+#ifdef VISP_HAVE_BICLOPS
   vpRobotBiclops robot; // Use the default config file in /usr/share/BiclopsDefault.cfg"
 
   // Specify the config file location
@@ -100,7 +102,7 @@ int main()
   q[0] = vpMath::rad(20); // pan
   q[1] = vpMath::rad(40); // tilt
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-  
+#endif
   return 0;
 }
   \endcode
@@ -133,10 +135,12 @@ vpRobotBiclops::vpRobotBiclops ()
   The following example shows how to use the constructor.
 
   \code
+#include <visp/vpConfig.h>
 #include <visp/vpRobotBiclops.h>
 
 int main()
 {
+#ifdef VISP_HAVE_BICLOPS
   // Specify the config file location and initialize the turret
   vpRobotBiclops robot("/usr/share/BiclopsDefault.cfg"); 
 
@@ -147,7 +151,7 @@ int main()
   q[0] = vpMath::rad(-20); // pan
   q[1] = vpMath::rad(10); // tilt
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-  
+#endif
   return 0;
 }
   \endcode
