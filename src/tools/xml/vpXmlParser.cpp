@@ -63,6 +63,16 @@ vpXmlParser::vpXmlParser()
   main_tag = "config";
 }
 
+/*!
+  Basic destructor 
+  
+*/
+vpXmlParser::~vpXmlParser()
+{
+
+}
+
+
 /* utilities functions to read/write data from an xml document */
 
 /*!
