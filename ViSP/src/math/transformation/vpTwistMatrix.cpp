@@ -461,28 +461,6 @@ vpTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
     buildFrom(t, R) ;
     return (*this) ;
 }
-/*!
-
-  \deprecated Build a velocity twist transformation matrix from a
-  translation vector \e t and a euler vector.
-
-  \param t : Translation vector.
-  
-  \param euler : Euler vector.
-
-*/
-vpTwistMatrix
-vpTwistMatrix::buildFrom(const vpTranslationVector &t,
-			 const vpEulerVector &euler)
-{
-  vpRotationMatrix R ;
-  vpRzyzVector rzyz;
-  for (int i=0; i < 3; i ++)
-    rzyz[i] = euler[i];
-  R.buildFrom(rzyz) ;
-  buildFrom(t,R) ;
-  return (*this) ;
-}
 
 #endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 

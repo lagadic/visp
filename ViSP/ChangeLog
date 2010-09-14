@@ -51,7 +51,8 @@ ViSP (Subversion trunk)
       method that allows initialization from 3 doubles
     - Documentation improvements
   - Deprecated
-      . Some deprecated classes or functions were removed: vpItifg8Grabber
+      . Some deprecated classes or functions were removed: vpItifg8Grabber, 
+	vpEulerVector
   - Examples:
     - New example calibrateTsai.cpp to show how to use the vpCalibration 
       class to estimate the hand to eye transformation.
