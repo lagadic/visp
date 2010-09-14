@@ -64,6 +64,7 @@ ViSP (Subversion trunk)
     - [10472] Bug in the visual features: can't select the good feature.
     - [10647] Delay in displaying image overlays
     - [10687] The GDI display is not detected with Visual Studio 2010
+    - [10696] [CMake] VISP_DIR path conflict
     - [10697] CMake standard output vars
     - [10719] Compilation error in vpPlot
     - [10723] Compilation error in vpFFMPEG.cpp
