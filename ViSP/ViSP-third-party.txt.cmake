@@ -30,16 +30,15 @@ Framegrabbers
   Firewire libdc1394-1.x    : ${VISP_HAVE_DC1394_1_FOUND}
   Firewire libdc1394-2.x    : ${VISP_HAVE_DC1394_2_FOUND}
   Video For Linux Two       : ${VISP_HAVE_V4L2_FOUND}
-  Imaging Technology Itifg8 : ${VISP_HAVE_ITIFG8_FOUND}
   DirectShow                : ${VISP_HAVE_DIRECTSHOW_FOUND}
   OpenCV                    : ${VISP_HAVE_OPENCV_FOUND} 
+Video and image Read/Write:
+  FFMPEG                    : ${VISP_HAVE_FFMPEG_FOUND}
+  libjpeg                   : ${VISP_HAVE_LIBJPEG_FOUND}
+  libpng                    : ${VISP_HAVE_LIBPNG_FOUND}
 Misc:
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
-  libjpeg                   : ${VISP_HAVE_LIBJPEG_FOUND}
-  libpng                    : ${VISP_HAVE_LIBPNG_FOUND}
 Documentation:
   Doxygen                   : ${VISP_HAVE_DOXYGEN_FOUND}
   Graphviz dot              : ${VISP_HAVE_DOT_FOUND}
-Video Read/Write:
-  FFMPEG                    : ${VISP_HAVE_FFMPEG_FOUND}
