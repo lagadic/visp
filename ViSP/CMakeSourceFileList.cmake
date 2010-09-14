@@ -70,10 +70,6 @@ SET (SRC_COMPUTER_VISION
   computer-vision/pose-estimation/vpPoseVirtualVisualServoing.cpp
   )
 
-SET (SRC_DATA_STRUCTURE
-  data-structure/vpSubPixel.cpp
-  )
-
 SET (SRC_EXCEPTION
   exceptions/vpException.cpp
   )
@@ -303,7 +299,6 @@ SET (SRC_VISUAL_FEATURE
 SET (SRC_ALL
   ${SRC_CAMERA}
   ${SRC_COMPUTER_VISION}
-  ${SRC_DATA_STRUCTURE}
   ${SRC_EXCEPTION}
   ${SRC_FRAMEGRABBER_DEVICE}
   ${SRC_IMAGE}
