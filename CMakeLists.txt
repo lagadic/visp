@@ -88,7 +88,7 @@ MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
 #--------------------------------------------------------------------
 
 # Choose static or shared libraries.
-OPTION(BUILD_SHARED_LIBS "Build ViSP with shared libraries." OFF)
+OPTION(BUILD_SHARED_LIBS "Build ViSP shared libraries (.dll/.so) instead of static ones (.lib/.a)." OFF)
 # Build examples as an option.
 OPTION(BUILD_EXAMPLES "Build ViSP examples." ON)
 # Build demos as an option.
@@ -1362,37 +1362,85 @@ ADD_CUSTOM_TARGET(uninstall
 #     INCLUDE(${VISP_USE_FILE})
 #   ENDIF(VISP_FOUND)
 #----------------------------------------------------------------------
+
+# Installation for ViSPConfig.cmake
+# case 1: ${BIN_DIR}/ViSPConfig.cmake for use without make install
+# case 2: ${BIN_DIR}/install/ViSPConfig.cmake for use with make install
+
+# case 1
+#--------------
+set(VISP_ROOT_DIR_CONFIGCMAKE ${VISP_BINARY_DIR})
+set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE ${VISP_BINARY_DIR})
 CONFIGURE_FILE(
   ${CMAKE_MODULE_PATH}/VISPConfig.cmake.in
-  ${LIBRARY_OUTPUT_PATH}/VISPConfig.cmake
+  ${VISP_BINARY_DIR}/VISPConfig.cmake
   IMMEDIATE @ONLY)
 
 # Just to copy ./CMakeModule/VISPUse.cmake.in in ./lib/UseVISP.cmake
 CONFIGURE_FILE(
   ${CMAKE_MODULE_PATH}/VISPUse.cmake.in
-  ${LIBRARY_OUTPUT_PATH}/VISPUse.cmake
+  ${VISP_BINARY_DIR}/VISPUse.cmake
   IMMEDIATE @ONLY)
 
 # Export our build settings and library dependencies for use by the third party
 # user projects
 INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
 CMAKE_EXPORT_BUILD_SETTINGS(
-  ${LIBRARY_OUTPUT_PATH}/VISPBuildSettings.cmake
+  ${VISP_BINARY_DIR}/VISPBuildSettings.cmake
   )
 EXPORT_LIBRARY_DEPENDENCIES(
-  ${LIBRARY_OUTPUT_PATH}/VISPLibraryDepends.cmake
+  ${VISP_BINARY_DIR}/VISPLibraryDepends.cmake
+  )
+
+# case 2
+#--------------
+set(VISP_ROOT_DIR_CONFIGCMAKE ${CMAKE_INSTALL_PREFIX})
+IF(UNIX)
+  set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE ${CMAKE_INSTALL_PREFIX}/share/ViSP)
+ELSE()
+  set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE ${CMAKE_INSTALL_PREFIX})
+ENDIF()
+CONFIGURE_FILE(
+  ${CMAKE_MODULE_PATH}/VISPConfig.cmake.in
+  ${VISP_BINARY_DIR}/install/VISPConfig.cmake
+  IMMEDIATE @ONLY)
+
+# Just to copy ./CMakeModule/VISPUse.cmake.in in ./lib/UseVISP.cmake
+CONFIGURE_FILE(
+  ${CMAKE_MODULE_PATH}/VISPUse.cmake.in
+  ${VISP_BINARY_DIR}/install/VISPUse.cmake
+  IMMEDIATE @ONLY)
+
+# Export our build settings and library dependencies for use by the third party
+# user projects
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
+CMAKE_EXPORT_BUILD_SETTINGS(
+  ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
+  )
+EXPORT_LIBRARY_DEPENDENCIES(
+  ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
   )
 
 # Install the packaging files for use by FIND_PACKAGE(VISP) in user projects
-INSTALL(FILES
-  ${LIBRARY_OUTPUT_PATH}/VISPUse.cmake
-  ${LIBRARY_OUTPUT_PATH}/VISPConfig.cmake
-  ${LIBRARY_OUTPUT_PATH}/VISPBuildSettings.cmake
-  ${LIBRARY_OUTPUT_PATH}/VISPLibraryDepends.cmake
-  DESTINATION lib
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+IF(UNIX)
+  INSTALL(FILES
+    ${VISP_BINARY_DIR}/install/VISPUse.cmake
+    ${VISP_BINARY_DIR}/install/VISPConfig.cmake
+    ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
+    ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
+    DESTINATION share/visp
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
   )
-  
+ELSE()
+  INSTALL(FILES
+    ${VISP_BINARY_DIR}/install/VISPUse.cmake
+    ${VISP_BINARY_DIR}/install/VISPConfig.cmake
+    ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
+    ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
+    DESTINATION .
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+  )
+ENDIF()
 
 #----------------------------------------------------------------------
 # For Dart server and tests 
@@ -1413,7 +1461,7 @@ INCLUDE(InstallRequiredSystemLibraries)
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ViSP: Visual Servoing Platform")
 SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.GPL")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 
 SET(CPACK_PACKAGE_VERSION ${VISP_VERSION})
 SET(CPACK_PACKAGE_VERSION_MAJOR ${VISP_VERSION_MAJOR})
@@ -1424,8 +1472,11 @@ SET(CPACK_PACKAGE_VERSION_PATCH ${VISP_VERSION_PATCH})
 # in absolute path + filename to find files or directories to be excluded
 # from source tarball.
 SET(CPACK_SOURCE_IGNORE_FILES
-"~$"
-"^${PROJECT_SOURCE_DIR}.*/CVS/"
+  "/\\\\.svn/"
+  "/autom4te.cache/"
+  "/build/"
+  "/lib/"
+  "~$"
 )
 
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
@@ -1436,10 +1487,10 @@ IF(WIN32 AND NOT UNIX)
   # CPACK_NSIS_INSTALLED_ICON_NAME icon is the one that shows up in the
   # Add/Remove control panel
   #SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\ViSP.exe")
-  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} My Famous Project")
+  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} ViSP SDK")
   SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.http://www.irisa.fr/lagadic/visp")
   SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.http://www.irisa.fr/lagadic/visp/what.html")
-  SET(CPACK_NSIS_CONTACT "visp@irisa.fr")
+  SET(CPACK_NSIS_CONTACT "visp@inria.fr")
   SET(CPACK_NSIS_MODIFY_PATH ON)
 ELSE(WIN32 AND NOT UNIX)
   IF(APPLE)
