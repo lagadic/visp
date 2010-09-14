@@ -63,7 +63,6 @@ SET (HEADER_COMPUTER_VISION
 
 SET (HEADER_DATA_STRUCTURE
   data-structure/vpList.h
-  data-structure/vpSubPixel.h
   )
 
 SET (HEADER_EXCEPTION
