@@ -1273,8 +1273,6 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_DC1394_1 \
                          VISP_HAVE_DC1394_2 \
                          VISP_HAVE_V4L2 \
-                         VISP_HAVE_ITIFG8 \
-                         VISP_HAVE_ITIFG8_VERSION=@VISP_HAVE_ITIFG8_VERSION_DOXY@ \
                          VISP_HAVE_DIRECTSHOW \
                          VISP_HAVE_AFMA4 \
                          VISP_HAVE_AFMA6 \

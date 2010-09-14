@@ -76,7 +76,6 @@ SET (HEADER_FRAMEGRABBER_DEVICE
   framegrabber-device/disk/vpDiskGrabber.h
   framegrabber-device/generic-framegrabber/vpFrameGrabberException.h
   framegrabber-device/generic-framegrabber/vpFrameGrabber.h
-  framegrabber-device/itifg8/vpItifg8Grabber.h
   framegrabber-device/v4l2/vpV4l2Grabber.h
   framegrabber-device/directshow/vpDirectShowGrabber.h
   framegrabber-device/directshow/vpDirectShowGrabberImpl.h

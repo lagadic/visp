@@ -136,13 +136,6 @@ IF (UNIX)
     SET(USE_VIPER850 OFF)
   ENDIF(RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND)
 
-  FIND_PACKAGE(ITIFG8)
-  IF(ITIFG8_FOUND)
-    OPTION(USE_ITIFG8 "Compile ViSP with itifg8 framegrabber usage at Irisa" ON)
-  ELSE(ITIFG8_FOUND)
-    SET(USE_ITIFG8 OFF)
-  ENDIF(ITIFG8_FOUND)
-
   FIND_PACKAGE(BICLOPS)
   IF(BICLOPS_FOUND)
     OPTION(USE_BICLOPS "Compile ViSP for Biclops head usage at Irisa" ON)
@@ -833,7 +826,6 @@ ENDIF(USE_FFMPEG)
 SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_V4L2_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_ITIFG8_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
 
 # library for firewire cameras
@@ -906,29 +898,6 @@ IF(USE_V4L2)
     # SET(USE_V4L2 OFF)
   ENDIF(V4L2_FOUND)
 ENDIF(USE_V4L2)
-
-# library itifg8 framegrabber devices
-IF(USE_ITIFG8)
-#   FIND_PACKAGE(ITIFG8)
-  IF(ITIFG8_FOUND)
-    MESSAGE(STATUS "Itifg8 found")
-    SET(VISP_HAVE_ITIFG8 TRUE) # for header vpConfig.h
-    SET(VISP_HAVE_ITIFG8_FOUND "yes")  # for ViSP-third-party.txt
-    SET(VISP_HAVE_ITIFG8_VERSION ${ITIFG8_VERSION}) # for header vpConfig.h
-    SET(VISP_HAVE_ITIFG8_VERSION_DOXY ${ITIFG8_VERSION}) # for doxygen file doc/config-doxygen
-     #MESSAGE("DBG VISP_HAVE_ITIFG8= ${VISP_HAVE_ITIFG8}")
-     #MESSAGE("DBG ITIFG8_INCLUDE_DIR=${ITIFG8_INCLUDE_DIR}")
-    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${ITIFG8_INCLUDE_DIR})
-    LIST(APPEND VISP_EXTERN_LIBS ${ITIFG8_LIBRARIES})
-     #MESSAGE("ITIFG8_LIBRARIES = ${ITIFG8_LIBRARIES}")
-  ELSE(ITIFG8_FOUND)
-    MESSAGE(STATUS "Itifg8 not found")
-    SET(VISP_HAVE_ITIFG8_FOUND "no")  # for ViSP-third-party.txt
-    # SET(USE_ITIFG8 OFF)
-  ENDIF(ITIFG8_FOUND)
-ELSE(USE_ITIFG8)
-  SET(VISP_HAVE_ITIFG8_VERSION_DOXY 83) # for doxygen file doc/config-doxygen
-ENDIF(USE_ITIFG8)
 
 # Under Windows, usage of Direct Show
 IF(USE_DIRECTSHOW)

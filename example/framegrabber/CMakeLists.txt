@@ -47,8 +47,6 @@ SET (SOURCE
   grab1394.cpp
   grab1394Two.cpp
   grabDisk.cpp
-  grabItifg8.cpp
-  grabItifg8Multi.cpp
   grabV4l2Color.cpp
   grabV4l2Grey.cpp
   grabDirectShow.cpp

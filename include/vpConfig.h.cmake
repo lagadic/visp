@@ -146,10 +146,6 @@
 // Defined if Video For Linux Two available.
 #cmakedefine VISP_HAVE_V4L2
 
-// Defined if itifg-8.x (Coreco Imaging) framegraber driver available.
-#cmakedefine VISP_HAVE_ITIFG8
-#cmakedefine VISP_HAVE_ITIFG8_VERSION ${VISP_HAVE_ITIFG8_VERSION}
-
 // Defined if DirectShow library is available (only under Windows).
 #cmakedefine VISP_HAVE_DIRECTSHOW
 

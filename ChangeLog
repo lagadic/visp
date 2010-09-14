@@ -31,24 +31,6 @@ ViSP (Subversion trunk)
       and Windows.
     - Introduction of a model based tracker that allows to track 
       an object based on its CAD model. See vpMbtTracker class.
-  - Examples:
-    - New example calibrateTsai.cpp to show how to use the vpCalibration 
-      class to estimate the hand to eye transformation.
-  - Bug fixed
-    - [9476] Memory leak in vpImageIo::readPNG() functions.
-    - [9505] Problem with the DirectShow grabber : can't be initialised.
-    - [9516] Problem in the getValue methods in the vpImage class.
-    - [9746] The displayPoint method of the vpDisplayOpenCV class doesn't work.
-    - [10472] Bug in the visual features: can't select the good feature.
-    - [10647] Delay in displaying image overlays
-    - [10687] The GDI display is not detected with Visual Studio 2010
-    - [10697] CMake standard output vars
-    - [10719] Compilation error in vpPlot
-    - [10723] Compilation error in vpFFMPEG.cpp
-    - [10748] PThread and Win32 Conflict
-    - [10928] vpPlane: rayIntersection from 2 points
-    - [10985] In vpPlot, 2D curve plotting starts with point (0,0) 
-	      and not with the first specified point.
   - Improvements
     - Copy constructors were added to better support stl lists and vectors.
     - Change the FindOpenCV.cmake in order to detect automatically 
@@ -68,6 +50,26 @@ ViSP (Subversion trunk)
     - In vpRotationVector and vpTranslationVector introduction of set() 
       method that allows initialization from 3 doubles
     - Documentation improvements
+  - Deprecated
+      . Some deprecated classes or functions were removed: vpItifg8Grabber
+  - Examples:
+    - New example calibrateTsai.cpp to show how to use the vpCalibration 
+      class to estimate the hand to eye transformation.
+  - Bug fixed
+    - [9476] Memory leak in vpImageIo::readPNG() functions.
+    - [9505] Problem with the DirectShow grabber : can't be initialised.
+    - [9516] Problem in the getValue methods in the vpImage class.
+    - [9746] The displayPoint method of the vpDisplayOpenCV class doesn't work.
+    - [10472] Bug in the visual features: can't select the good feature.
+    - [10647] Delay in displaying image overlays
+    - [10687] The GDI display is not detected with Visual Studio 2010
+    - [10697] CMake standard output vars
+    - [10719] Compilation error in vpPlot
+    - [10723] Compilation error in vpFFMPEG.cpp
+    - [10748] PThread and Win32 Conflict
+    - [10928] vpPlane: rayIntersection from 2 points
+    - [10985] In vpPlot, 2D curve plotting starts with point (0,0) 
+	      and not with the first specified point.
 ----------------------------------------------	
 ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
