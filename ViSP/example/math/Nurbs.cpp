@@ -171,10 +171,10 @@ main(int argc, const char ** argv)
   // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
   vpDisplayX display[3];
-#elif defined VISP_HAVE_GTK
-  vpDisplayGTK display[3];
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI display[3];
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK display[3];
 #endif
 
   if (opt_display) {
