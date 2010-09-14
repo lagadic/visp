@@ -64,6 +64,10 @@
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayD3D.h>
 #include <visp/vpDisplayX.h>
 
 
@@ -138,7 +142,13 @@ main(int argc, char *argv[])
 
 
   // display the image
-  vpDisplayX d ;
+  #if defined VISP_HAVE_X11
+  vpDisplayX d;
+  #elif defined VISP_HAVE_GDI
+  vpDisplayGDI d;
+  #elif defined VISP_HAVE_GTK
+  vpDisplayGTK d;
+  #endif
   d.init(I, 20, 10, "Photometric visual servoing : s") ;
 
   vpDisplay::display(I);
@@ -173,7 +183,13 @@ main(int argc, char *argv[])
 
 
   // Affiche de l'image de difference
+  #if defined VISP_HAVE_X11
   vpDisplayX d1;
+  #elif defined VISP_HAVE_GDI
+  vpDisplayGDI d1;
+  #elif defined VISP_HAVE_GTK
+  vpDisplayGTK d1;
+  #endif
   d1.init(Idiff, 680, 10, "photometric visual servoing : s-s* ") ;
   vpDisplay::display(Idiff) ;
   vpDisplay::flush(Idiff) ;
