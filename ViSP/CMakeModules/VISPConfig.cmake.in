@@ -43,10 +43,10 @@
 #
 # VISP_SOURCE_DIR     : Location of ViSP source code 
 #
-# VISP_VERSION_STRING : Full ViSP version, eg 2.4.5
+# VISP_VERSION_STRING : Full ViSP version, eg 2.6.0
 # VISP_VERSION_MAJOR  : Major version part of VISP_VERSION, eg 2. 
-# VISP_VERSION_MINOR  : Minor version part of VISP_VERSION, eg 4. 
-# VISP_VERSION_PATCH  : Patch version part of VISP_VERSION, eg 5. 
+# VISP_VERSION_MINOR  : Minor version part of VISP_VERSION, eg 6. 
+# VISP_VERSION_PATCH  : Patch version part of VISP_VERSION, eg 0. 
 #
 # Typical usage in user project:
 #   FIND_PACKAGE(VISP)
