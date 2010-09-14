@@ -310,7 +310,13 @@ main(int argc, const char ** argv)
       {
 	point[i].track(cMo) ;
 	//retrieve x,y and Z of the vpPoint structure
+	try {
 	vpFeatureBuilder::create(p[i],point[i])  ;
+	}
+	catch(...)
+	{
+	  break;
+	}
       }
 
       if (opt_display) 
