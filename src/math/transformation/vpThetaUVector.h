@@ -53,7 +53,6 @@ class vpHomogeneousMatrix;
 class vpRotationMatrix;
 class vpRzyxVector;
 class vpRxyzVector;
-class vpEulerVector;
 class vpRzyzVector;
 
 #include <visp/vpConfig.h>
@@ -63,9 +62,6 @@ class vpRzyzVector;
 #include <visp/vpRxyzVector.h>
 #include <visp/vpRzyxVector.h>
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp/vpEulerVector.h>
-#endif
 
 /*!
   \class vpThetaUVector
@@ -195,15 +191,6 @@ public:
 
   // extract the angle and the axis from the ThetaU representation
   void extract( double &theta, vpColVector &u) const;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  //! \deprecated Convert an Euler vector into Theta U vector
-  vpThetaUVector buildFrom(const vpEulerVector &euler) ;
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
- 
 } ;
 
 #endif

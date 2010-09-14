@@ -51,7 +51,6 @@
 #include <stdio.h>
 #include <visp/vpMath.h>
 #include <visp/vpRotationMatrix.h>
-#include <visp/vpEulerVector.h>
 #include <visp/vpParseArgv.h>
 
 // List of allowed command line options

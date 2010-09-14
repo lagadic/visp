@@ -133,7 +133,6 @@ SET (HEADER_MATH
   math/robust/vpScale.h
   math/spline/vpBSpline.h
   math/spline/vpNurbs.h
-  math/transformation/vpEulerVector.h
   math/transformation/vpExponentialMap.h
   math/transformation/vpForceTwistMatrix.h
   math/transformation/vpHomogeneousMatrix.h

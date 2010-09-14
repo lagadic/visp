@@ -55,19 +55,16 @@
 class vpRotationMatrix;
 class vpHomogeneousMatrix;
 class vpTranslationVector;
-class vpEulerVector;
 class vpThetaUVector;
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpRotationMatrix.h>
-#include <visp/vpEulerVector.h>
 #include <visp/vpHomogeneousMatrix.h>
 
 class vpRotationMatrix;
 class vpHomogeneousMatrix;
 class vpTranslationVector;
-class vpEulerVector;
 class vpThetaUVector;
 
 
@@ -178,41 +175,6 @@ class VISP_EXPORT vpPoseVector : public vpColVector
 
   // Print  a vector [T thetaU] thetaU in degree
   void print() ;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  // constructor convert a "euler" vector and a translation into a
-  // pose (deprecated)
-  vp_deprecated vpPoseVector(const vpEulerVector &e,
-	       const vpTranslationVector& t) ;
-  // constructor convert a "thetau" vector and a translation into a
-  // pose (deprecated)
-  vp_deprecated vpPoseVector(const vpThetaUVector& tu,
-	       const vpTranslationVector& t) ;
-  // constructor convert a rotation matrix and a translation into a
-  // pose (deprecated)
-  vp_deprecated vpPoseVector(const vpRotationMatrix& R,
-	       const vpTranslationVector& t) ;
-  // constructor convert a translation and a "euler" vector into a pose
-  vp_deprecated vpPoseVector(const vpTranslationVector& t,
-	       const vpEulerVector &e) ;
-
-  // convert a "euler" vector and a translation into a pose (deprecated)
-  vp_deprecated vpPoseVector buildFrom(const vpEulerVector &e,
-			 const vpTranslationVector& t) ;
-  // convert a "thetau" vector and a translation into a pose (deprecated)
-  vp_deprecated vpPoseVector buildFrom(const vpThetaUVector& tu,
-			 const vpTranslationVector& t) ;
-  // convert a rotation matrix  and a translation into a pose (deprecated)
-  vp_deprecated vpPoseVector buildFrom(const vpRotationMatrix& R,
-			 const vpTranslationVector& t) ;
-  // convert a translation and a "euler" vector into a pose
-  vp_deprecated vpPoseVector buildFrom(const vpTranslationVector& t,
-			 const vpEulerVector &e) ;
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-
 } ;
 
 #endif

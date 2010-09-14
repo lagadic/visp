@@ -53,7 +53,6 @@
 class vpPoseVector;
 class vpMatrix;
 class vpRotationMatrix;
-class vpEulerVector;
 class vpPoseVector;
 class vpThetaUVector;
 
@@ -63,14 +62,12 @@ class vpThetaUVector;
 #include <visp/vpMatrix.h>
 
 #include <visp/vpRotationMatrix.h>
-#include <visp/vpEulerVector.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
 #include <visp/vpPoseVector.h>
 
 class vpMatrix;
 class vpRotationMatrix;
-class vpEulerVector;
 class vpPoseVector;
 class vpThetaUVector;
 
