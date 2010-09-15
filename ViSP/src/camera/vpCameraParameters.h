@@ -244,16 +244,6 @@ public :
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
 						 const vpCameraParameters &cam);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated void init(const double px, const double py,
-	    const double u0, const double v0) ;
-  vp_deprecated void setPixelRatio(const double px,const double py) ;
-  vp_deprecated void setPrincipalPoint(const double u0, const double v0) ;
-#endif
-
 private:
   static const double DEFAULT_U0_PARAMETER;
   static const double DEFAULT_V0_PARAMETER;

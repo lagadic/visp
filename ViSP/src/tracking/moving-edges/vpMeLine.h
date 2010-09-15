@@ -195,25 +195,7 @@ public:
   static bool intersection(const vpMeLine &line1, const vpMeLine &line2, 
 			   vpImagePoint &ip); 
 
-  /****************************************************************
-
-           Deprecated functions
-
-  *****************************************************************/
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated void initTracking(const vpImage<unsigned char> &I,
-		    unsigned i1,unsigned j1,
-		    unsigned i2, unsigned j2) ;
-  vp_deprecated void getExtremities(double &i1, double &j1, double &i2, double &j2) ;
-  vp_deprecated static bool intersection(const vpMeLine &line1, const vpMeLine &line2, 
-			   double &i, double &j); 
-
-#endif
-
+ 
 };
 
 

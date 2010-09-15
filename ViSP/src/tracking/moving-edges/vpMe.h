@@ -130,19 +130,6 @@ public:
   void setInitAberration(double a ) { init_aberration = a ; }
   void checkSamplestep(double &a) { if(a < min_samplestep) a = min_samplestep ; }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  /*!
-    \deprecated This method is deprecated. You should use getSampleStep() 
-    instead.
-  */
-  vp_deprecated double GetSampleStep() { return sample_step ; }
-  vp_deprecated void setNumberMask(int a) ;
-  vp_deprecated void setSizeMask(int a) ;
-#endif
-
 };
 
 

@@ -122,14 +122,6 @@ public:
   //! = operator
   void operator=(vpCalibration& twinCalibration );
 
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated int addPoint(double X, double Y, double Z, double u, double v);
-#endif
-
 private:
   void computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
   void calibLagrange( vpCameraParameters &cam , vpHomogeneousMatrix &cMo) ;

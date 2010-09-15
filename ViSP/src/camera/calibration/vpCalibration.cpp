@@ -835,36 +835,3 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
   return 0;
 }
 
-
-/****************************************************************
-
-           Deprecated functions
-
-*****************************************************************/
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  
-  \deprecated Add a new point in the array of points.
-
-  This function is deprecated, use either addPoint(double, double, double, vpImagePoint &)
-
-  \param  X,Y,Z : 3D information of a point in the object frame
-  \param u,v : 2D information (in pixel) of a point in the camera frame
-*/
-int vpCalibration::addPoint(double X, double Y, double Z, double u, double v)
-{
-  LoX += X ;
-  LoY += Y ;
-  LoZ += Z ;
-
-  vpImagePoint ip;
-  ip.set_u( u );
-  ip.set_v( v );
-  Lip += ip ;
-
-  npt++ ;
-
-  return 0 ;
-}
-
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
