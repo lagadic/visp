@@ -255,7 +255,7 @@ SET (SRC_TRACKING
   tracking/mbt/vpMbtDistanceLine.cpp
   tracking/mbt/vpMbtHiddenFace.cpp
   tracking/mbt/vpMbtMeLine.cpp
-  tracking/mbt/vpMbtTracker.cpp
+  tracking/mbt/vpMbEdgeTracker.cpp
   tracking/mbt/vpMbtXmlParser.cpp
   )
 
