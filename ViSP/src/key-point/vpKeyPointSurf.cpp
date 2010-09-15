@@ -529,7 +529,7 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference,
 //     throw(vpException(vpException::fatalError,"Numbers of points mismatch"));
 //   }
 
-  for (int i = 0; i < matchedReferencePoints.size(); i++)
+  for (unsigned int i = 0; i < matchedReferencePoints.size(); i++)
   {
       vpDisplay::displayCross (Ireference, referenceImagePointsList[matchedReferencePoints[i]], 3, vpColor::red);
       vpDisplay::displayCross (Icurrent, currentImagePointsList[i], 3, vpColor::green);
@@ -553,7 +553,7 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent)
 //
 //   vpImagePoint ipCur;
 //
-  for (int i = 0; i < matchedReferencePoints.size(); i++)
+  for (unsigned int i = 0; i < matchedReferencePoints.size(); i++)
   {
       vpDisplay::displayCross (Icurrent, currentImagePointsList[i], 3, vpColor::green);
   }
@@ -617,7 +617,7 @@ vpList<int*>* vpKeyPointSurf::matchPoint(vpList<float*> descriptorList, vpList<i
 */
 float* vpKeyPointSurf::getDescriptorReferencePoint (const int index)
 {
-  if (index >= referenceImagePointsList.size() || index < 0){
+  if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0){
     vpTRACE("Index of the reference point out of range");
     throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
   }
@@ -645,7 +645,7 @@ float* vpKeyPointSurf::getDescriptorReferencePoint (const int index)
 */
 int vpKeyPointSurf::getLaplacianReferencePoint (const int index)
 {
-  if (index >= referenceImagePointsList.size() || index < 0){
+  if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0){
     vpTRACE("Index of the reference point out of range");
     throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
   }
@@ -676,7 +676,7 @@ int vpKeyPointSurf::getLaplacianReferencePoint (const int index)
 */
 void vpKeyPointSurf::getDescriptorParamReferencePoint (const int index, int& size, float& dir)
 {
-  if (index >= referenceImagePointsList.size() || index < 0){
+  if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0){
     vpTRACE("Index of the reference point out of range");
     throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
   }
