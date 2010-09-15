@@ -312,7 +312,7 @@ main(int argc, const char ** argv)
   {
     vpTRACE("You need the ViSP data ");
     task.kill();
-    return 0;
+    return 1;
   }
   
   list.addRight(imsim);
