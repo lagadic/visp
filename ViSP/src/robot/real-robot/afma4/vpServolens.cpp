@@ -704,10 +704,15 @@ vpServolens::wait()
 			    "Cannot dial with Servolens.");
   }
     
+  int r;
+  r = ::write(this->remfd, "\r\n", strlen("\r\n"));
+  if (r != (strlen("\r\n"))) {
+    throw vpRobotException (vpRobotException::communicationError,
+			    "Cannot write on Servolens.");
+  }
   char c;
-  ::write(this->remfd, "\r\n", strlen("\r\n"));
   do {
-    ::read(this->remfd, &c, 1);
+    r = ::read(this->remfd, &c, 1);
     c &= 0x7f;
   }
   while (c != '>');
@@ -752,16 +757,24 @@ vpServolens::wait(vpServoType servo)
     
   }
 
+  int r;
   /* lecture des caracteres recus */
   do {
     /* lecture des caracteres */
-    ::read(this->remfd,&c,1);
+    if (::read(this->remfd,&c,1) != 1) {
+      throw vpRobotException (vpRobotException::communicationError,
+			      "Cannot read on Servolens.");
+    }
     c &= 0x7f;
 
     /* tests si fin de mouvement */
     if (c == fin_mvt[0]) {
       /* lecture du caractere suivant */
-      ::read(this->remfd,&c,1);
+      if (::read(this->remfd,&c,1) != 1) {
+	throw vpRobotException (vpRobotException::communicationError,
+				"Cannot read on Servolens.");
+      }
+
       c &= 0x7f;
       if (c == fin_mvt[1]) {
 	sortie = true;
@@ -826,11 +839,15 @@ vpServolens::write(const char *s)
     throw vpRobotException (vpRobotException::communicationError,
 			    "Cannot dial with Servolens.");
   }
+  int r = 0;
+  r = ::write(this->remfd,"\r", strlen("\r"));
+  r += ::write(this->remfd, s, strlen(s));
+  r += ::write(this->remfd,"\r", strlen("\r"));
+  if (r != (2*strlen("\r") + strlen(s))) {
+    throw vpRobotException (vpRobotException::communicationError,
+			    "Cannot write on Servolens.");
+  }
 
-  ::write(this->remfd,"\r", strlen("\r"));
-
-  ::write(this->remfd, s, strlen(s));
-  ::write(this->remfd,"\r", strlen("\r"));
 
   /*
    * Une petite tempo pour laisser le temps a la liaison serie de
