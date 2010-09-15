@@ -52,6 +52,7 @@
 #include <visp/vpImageConvert.h>
 #include <visp/vpImageTools.h>
 #include <visp/vpDisplay.h>
+#include <vector>
 
 
 // Compare two surf descriptors.
@@ -196,8 +197,6 @@ vpKeyPointSurf::vpKeyPointSurf():vpBasicKeyPoint()
   ref_keypoints = NULL;
   ref_descriptors = NULL;
 
-  nbReferencePoints = 0;
-  nbMatchedPoints = 0;
   storage_cur = NULL;
 }
 
@@ -239,7 +238,7 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
   cvExtractSURF( model, 0, &ref_keypoints, &ref_descriptors, storage, params );
 
-  referenceImagePointsList = new vpImagePoint[ref_keypoints->total];
+  referenceImagePointsList.resize(ref_keypoints->total);
 
   for(int i = 0; i < ref_keypoints->total; i++ )
   {
@@ -250,8 +249,6 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
   }
 
   cvReleaseImage(&model);
-
-  nbReferencePoints = ref_keypoints->total;
 
   return ref_keypoints->total;
 }
@@ -398,23 +395,13 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 //   matchedPointsCurrentImageList.kill();
 //   matchedPointsCurrentImageList.front();
 
-  if (currentImagePointsList != NULL)
-  {
-    delete [] currentImagePointsList;
-    currentImagePointsList = NULL;
-  }
-
-  if (matchedReferencePoints != NULL)
-  {
-    delete [] matchedReferencePoints;
-    matchedReferencePoints = NULL;
-  }
+  matchedReferencePoints.resize(0);
 
   if (nbrPair == 0)
     return (0);
 
-  currentImagePointsList = new vpImagePoint[nbrPair];
-  matchedReferencePoints = new int[nbrPair];
+  currentImagePointsList.resize(nbrPair);
+  matchedReferencePoints.resize(nbrPair);
 
   for (int i = 0; i < nbrPair; i++)
   {
@@ -432,8 +419,6 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
       indexImagePair.next();
       indexReferencePair.next();
   }
-
-  nbMatchedPoints = nbrPair;
 
   return nbrPair;
 }
@@ -531,8 +516,8 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
   \param Icurrent : The image where the matched points computed in the
   current image are displayed.
 */
-void vpKeyPointSurf::display(vpImage<unsigned char> &Ireference,
-			     vpImage<unsigned char> &Icurrent)
+void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference,
+			     const vpImage<unsigned char> &Icurrent)
 {
 //  matchedPointsCurrentImageList.front();
 //  matchedPointsReferenceImageList.front();
@@ -544,7 +529,7 @@ void vpKeyPointSurf::display(vpImage<unsigned char> &Ireference,
 //     throw(vpException(vpException::fatalError,"Numbers of points mismatch"));
 //   }
 
-  for (int i = 0; i < nbMatchedPoints; i++)
+  for (int i = 0; i < matchedReferencePoints.size(); i++)
   {
       vpDisplay::displayCross (Ireference, referenceImagePointsList[matchedReferencePoints[i]], 3, vpColor::red);
       vpDisplay::displayCross (Icurrent, currentImagePointsList[i], 3, vpColor::green);
@@ -562,13 +547,13 @@ void vpKeyPointSurf::display(vpImage<unsigned char> &Ireference,
   \param Icurrent : The image where the matched points computed in the
   current image are displayed.
 */
-void vpKeyPointSurf::display(vpImage<unsigned char> &Icurrent)
+void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent)
 {
 //   matchedPointsCurrentImageList.front();
 //
 //   vpImagePoint ipCur;
 //
-  for (int i = 0; i < nbMatchedPoints; i++)
+  for (int i = 0; i < matchedReferencePoints.size(); i++)
   {
       vpDisplay::displayCross (Icurrent, currentImagePointsList[i], 3, vpColor::green);
   }
@@ -632,7 +617,7 @@ vpList<int*>* vpKeyPointSurf::matchPoint(vpList<float*> descriptorList, vpList<i
 */
 float* vpKeyPointSurf::getDescriptorReferencePoint (const int index)
 {
-  if (index >= nbReferencePoints || index < 0){
+  if (index >= referenceImagePointsList.size() || index < 0){
     vpTRACE("Index of the reference point out of range");
     throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
   }
@@ -660,7 +645,7 @@ float* vpKeyPointSurf::getDescriptorReferencePoint (const int index)
 */
 int vpKeyPointSurf::getLaplacianReferencePoint (const int index)
 {
-  if (index >= nbReferencePoints || index < 0){
+  if (index >= referenceImagePointsList.size() || index < 0){
     vpTRACE("Index of the reference point out of range");
     throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
   }
@@ -691,7 +676,7 @@ int vpKeyPointSurf::getLaplacianReferencePoint (const int index)
 */
 void vpKeyPointSurf::getDescriptorParamReferencePoint (const int index, int& size, float& dir)
 {
-  if (index >= nbReferencePoints || index < 0){
+  if (index >= referenceImagePointsList.size() || index < 0){
     vpTRACE("Index of the reference point out of range");
     throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
   }
