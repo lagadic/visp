@@ -104,6 +104,7 @@ SET (SRC_KEY_POINT
   key-point/vpBasicKeyPoint.cpp
   key-point/vpKeyPointSurf.cpp
   key-point/vpPlanarObjectDetector.cpp
+  key-point/vpFernClassifier.cpp
   )
 
 SET (SRC_LASERSCANNER

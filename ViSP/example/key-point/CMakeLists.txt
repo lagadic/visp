@@ -46,6 +46,7 @@
 SET (SOURCE
   keyPointSurf.cpp
   planarObjectDetector.cpp
+  fernClassifier.cpp
 )
 
 # rule for binary build

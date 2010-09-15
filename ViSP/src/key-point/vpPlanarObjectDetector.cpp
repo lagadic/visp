@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: $
+ * $Id:$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -32,7 +32,7 @@
  *
  *
  * Description:
- * Ferns based plane detection.
+ * Planar surface detection tool.
  *
  * Authors:
  * Romain Tallonneau
@@ -51,6 +51,7 @@
 #include <visp/vpException.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpDisplay.h>
+#include <visp/vpDisplayX.h>
 #include <visp/vpColor.h>
 #include <visp/vpImageTools.h>
 
@@ -60,55 +61,35 @@
   Basic constructor
 
 */
-vpPlanarObjectDetector::vpPlanarObjectDetector(): gen(0, 256, 5, true, 0.6, 1.5, -CV_PI/2, CV_PI/2, -CV_PI/2, CV_PI/2)
+vpPlanarObjectDetector::vpPlanarObjectDetector()
 {
-  hasLearn = false;
-  nbClassfier = 100;
-  ClassifierSize = 11;
-  nbPoints = 100;
-  model = NULL;
-  blurImage = true;
-  radiusBlur = 7;
-  sigmaBlur = 1;
-  init();
+  isCorrect = false;
+  dst_corners.resize(0); 
+  ref_corners.resize(0);
 }
 
 /*!
 
-  Basic constructor, load data from a file
+  Basic constructor, load data from a file.
   
-  \param dataFile : the name of the file
-  \param objectName : the name of the object to load
+  \param _dataFile : the name of the file.
+  \param _objectName : the name of the object to load.
 
 */
-vpPlanarObjectDetector::vpPlanarObjectDetector(const std::string& dataFile, const std::string& objectName): 
-    gen(0, 256, 5, true, 0.6, 1.5, -CV_PI/2, CV_PI/2, -CV_PI/2, CV_PI/2)
+vpPlanarObjectDetector::vpPlanarObjectDetector(const std::string& _dataFile, const std::string& _objectName)
 {
-  nbClassfier = 100;
-  ClassifierSize = 11;
-  nbPoints = 100;
-  model = NULL;
-  blurImage = true;
-  radiusBlur = 7;
-  sigmaBlur = 1;
-  init();
-  this->load(dataFile, objectName);
-  hasLearn = true;
+  isCorrect = false;
+  load(_dataFile, _objectName);
 }
 
 /*!
-  initialise some variables (the values are set from the openCV default values)
+  initialise stuff
+  
 */
 void
 vpPlanarObjectDetector::init()
 {
-  patchSize = 32;
-  radius = 7;
-  threshold = 20;
-  nbOctave = 2;
-  nbView = 2000;
-  dist = 2;  
-  nbMinPoint = 10;
+
 }
 
 /*!
@@ -118,18 +99,15 @@ vpPlanarObjectDetector::init()
 */
 vpPlanarObjectDetector::~vpPlanarObjectDetector() 
 {
-  if(model != NULL){
-    cvReleaseImage(&model);
-    model = NULL;
-  }
+
 }
 
 /*!
   Compute the rectangular ROI from at least 4 points and set the region of 
-  interest on the current image.
+  interest on the current image. 
   
-  \param ip : the list of image point
-  \param nbpt : the number of point
+  \param ip : the list of image point.
+  \param nbpt : the number of point.
 */
 void 
 vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const int nbpt)
@@ -165,7 +143,6 @@ vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const int nbpt)
     }
   }
   
-  
    vpImagePoint tl(ptsx[1].get_j(), ptsy[1].get_i());
    vpImagePoint br(ptsx[nbpt-2].get_j(), ptsy[nbpt-2].get_i());
   
@@ -173,156 +150,88 @@ vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const int nbpt)
   
 }
 
-/*!
-  Set several parameters of the detector.
-
-  \param _threshold : threshold to detect points of interests (between 2 and 20)
-  \param _nbView : number of view used to train the classifier (between 1000 and 10000)
-  \param _dist : the minimum distance between two points (in pixel)
-  \param _nbClassfier : the number of classifier (between 30 and 100)
-  \param _ClassifierSize : the size of each classifier (between 8 and 15)
-  \param _nbOctave : the number of octave ( subsampling of the image )
-  \param _patchSize : the size of a patch for the point recognition (usually 32)
-  \param _radius : the radius for the recognition
-  \param _nbPoints : the maximum number of points 
-  
-*/
-void 
-vpPlanarObjectDetector::setDetectorParameters(int _threshold, int _nbView, int _dist, int _nbClassfier, int _ClassifierSize, int _nbOctave, int _patchSize, int _radius, int _nbPoints)
-{
-  threshold = _threshold;
-  nbView = _nbView;
-  dist = _dist;
-  nbClassfier = _nbClassfier;
-  ClassifierSize = _ClassifierSize;
-  nbOctave = _nbOctave;
-  patchSize = _patchSize;
-  radius = _radius;
-  nbPoints = _nbPoints;
-}
-
 
 /*!
-  train the classifier from the entire image (it is therefore assumed that the image is planar)
+  Train the classifier from the entire image (it is therefore assumed that the 
+  image is planar).
   
   Depending on the parameters, the training can take up to several minutes.
   
-  \param I : the image use to train the classifier
+  \param _I : The image use to train the classifier.
   
-  \return the number of reference points
+  \return The number of reference points.
 */
 int
-vpPlanarObjectDetector:: buildReference(const vpImage<unsigned char> &I)
+vpPlanarObjectDetector:: buildReference(const vpImage<unsigned char> &_I)
 {
-  this->setImage(I);
-  
-  train();
+  modelROI.x = 0;
+  modelROI.y = 0;
+  modelROI.width = _I.getWidth();
+  modelROI.height = _I.getHeight();  
 
-  return objKeypoints.size();
+  initialiseRefCorners(modelROI);  
+  
+  return fern.buildReference(_I);
 }
 
 
 /*!
-  train the classifier a region of the entire image 
+  Train the classifier on a region of the entire image. The region is a 
+  rectangle defined by its top left corner, its height and its width. The 
+  parameters of this rectangle must be given in pixel. It also includes the 
+  training of the fern classifier.
   
-  \param I : the image use to train the classifier
-  \param iP : the top left corner of the rectangle defining the region of interest (ROI)
-  \param height : the height of the ROI
-  \param width : the width of the ROI
+  \param _I : The image use to train the classifier.
+  \param _iP : The top left corner of the rectangle defining the region of interest (ROI).
+  \param _height : The height of the ROI.
+  \param _width : The width of the ROI.
   
   \return the number of reference points
 */
 int
-vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &I,
-		       vpImagePoint &iP,
-		       unsigned int height, unsigned int width)
+vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
+		       vpImagePoint &_iP,
+		       unsigned int _height, unsigned int _width)
 {
-  if((iP.get_i()+height) >= I.getHeight()
-     || (iP.get_j()+width) >= I.getWidth()) {
-    vpTRACE("Bad size for the subimage");
-    throw(vpException(vpImageException::notInTheImage ,
-		      "Bad size for the subimage"));
-  }
-  
-//  vpImagePoint br(iP.get_i() + height, iP.get_j() + width);
-//  this->setImage(I);
-//  this->setRoi(iP, br);
-  
-    vpImage<unsigned char> subImage;
+  int res = fern.buildReference(_I, _iP, _height, _width);
+  modelROI.x = (int)_iP.get_u();
+  modelROI.y = (int)_iP.get_v();
+  modelROI.width = _width;
+  modelROI.height = _height; 
 
-  vpImageTools::createSubImage(I,
-			       (unsigned int)iP.get_i(),
-			       (unsigned int)iP.get_j(),
-			       height, width, subImage);
-  this->setImage(subImage);
+  initialiseRefCorners(modelROI);  
   
-  modelROI_Ref.x = (int)iP.get_u();
-  modelROI_Ref.y = (int)iP.get_v();
-  modelROI_Ref.width = width;
-  modelROI_Ref.height = height;  
-  
-  train();
-
-  return objKeypoints.size(); 
+  return res;
 }
 
 
 
 /*!
-  train the classifier a region of the entire image 
+  Train the classifier on a region of the entire image. The region is a 
+  rectangle. The parameters of this rectangle must be given in pixel. It also 
+  includes the training of the fern classifier.
   
-  \param I : the image use to train the classifier
-  \param rectangle : the rectangle defining the region of interest (ROI)
+  \param _I : The image use to train the classifier.
+  \param _rectangle : The rectangle defining the region of interest (ROI).
   
-  \return the number of reference points
+  \return The number of reference points.
 */
 int 
-vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &I,
-		       const vpRect rectangle)
+vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
+		       const vpRect _rectangle)
 {
-  vpImagePoint iP;
-  iP.set_i(rectangle.getTop());
-  iP.set_j(rectangle.getLeft());
-  return (this->buildReference(I, iP,
-			       (unsigned int)rectangle.getHeight(),
-			       (unsigned int)rectangle.getWidth()));
-}
+  int res = fern.buildReference(_I, _rectangle);
+  
+  vpImagePoint iP = _rectangle.getTopLeft();
+  
+  modelROI.x = (int)iP.get_u();
+  modelROI.y = (int)iP.get_v();
+  modelROI.width = _rectangle.getWidth();
+  modelROI.height = _rectangle.getHeight(); 
 
-
-/*! 
-  train the classifier using the image from the class (the model variable)
-*/
-void
-vpPlanarObjectDetector::train()
-{
+  initialiseRefCorners(modelROI);  
   
-    // initialise detector
-  cv::LDetector d(radius, threshold, nbOctave, nbView, patchSize, dist);
-  
-    //blur 
-  cv::Mat obj = (cv::Mat)model;
-  
-  if(this->getBlurSetting()){
-    cv::GaussianBlur(obj, obj, cv::Size(getBlurSize(), getBlurSize()), getBlurSigma(), getBlurSigma());
-  }
-  
-    // build pyramid 
-  std::vector<cv::Mat> objpyr;
-  cv::buildPyramid(obj, objpyr, d.nOctaves-1);
-  
-    // patch generator
-  std::vector<cv::KeyPoint> imgKeypoints;
-  
-    // getPoints
-  d.getMostStable2D(obj, objKeypoints, 100, gen);
-  
-  ldetector = d;
-  
-    // train classifier
-  cv::PlanarObjectDetector::train(objpyr, /*objKeypoints*/100, this->patchSize, 100, 11, 10000, ldetector, gen);
-  
-    // set flag
-  hasLearn = true;
+  return res;
 }
 
 
@@ -334,57 +243,61 @@ vpPlanarObjectDetector::train()
   
   \param I : The gray scaled image where the points are computed.
   
-  \return true if the surface has been found.
+  \return True if the surface has been found.
 */
 bool 
 vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
 {
-  if(!hasLearn){
-    vpERROR_TRACE("The object has not been learned. ");
-    throw vpException(vpException::notInitialized , "object is not learned, load database or build the reference ");
-  }
-
-  setImage(I);
-  // resize image  
-//  cv::resize(_image, image, Size(), 1./imgscale, 1./imgscale, INTER_CUBIC);
-  cv::Mat img = this->model;
+  fern.matchPoint(I);
   
-  if(this->getBlurSetting()){
-    cv::GaussianBlur(img, img, cv::Size(this->getBlurSize(), this->getBlurSize()), this->getBlurSigma(), this->getBlurSigma());
-  }
+  /* compute homography */
+  std::vector<cv::Point2f> refPts = fern.getRefPt();
+  std::vector<cv::Point2f> curPts = fern.getCurPt();
   
-  std::vector<cv::Mat> imgPyr;
-  cv::buildPyramid(img, imgPyr, ldetector.nOctaves-1);
-  
-    //matching
-  cv::Mat H;  
-  objKeypoints = getModelPoints();
-  
-  ldetector(imgPyr, imgKeypoints, 500);
-
-  bool found = this->operator()(imgPyr, imgKeypoints, H, dst_corners, &pairs); 
-  if(pairs.size() < 2 * nbMinPoint){
+  if(curPts.size() < 4){
+    for (unsigned int i = 0; i < 3; i += 1){
+      for (unsigned int j = 0; j < 3; j += 1){
+        if(i == j){
+          homography[i][j] = 1;
+        }
+        else{
+          homography[i][j] = 0;
+        }
+      }
+    }
     return false;
-  }  
-  double sum = 0;
-  if(found){
-    double* ptr = (double*)H.data;
+  } 
+
+  /* part of code from OpenCV planarObjectDetector */
+  std::vector<unsigned char> mask;
+  H = cv::findHomography(cv::Mat(refPts), cv::Mat(curPts), mask, cv::RANSAC, 10);
+  
+  if( H.data )
+  {
+    const cv::Mat_<double>& H_tmp = H;
+    dst_corners.resize(4);
+    for(int i = 0; i < 4; i++ )
+    {
+        cv::Point2f pt = ref_corners[i];
+
+        double w = 1./(H_tmp(2,0)*pt.x + H_tmp(2,1)*pt.y + H_tmp(2,2));
+        dst_corners[i] = cv::Point2f((float)((H_tmp(0,0)*pt.x + H_tmp(0,1)*pt.y + H_tmp(0,2))*w),
+                             (float)((H_tmp(1,0)*pt.x + H_tmp(1,1)*pt.y + H_tmp(1,2))*w));
+    }
     
+    double* ptr = (double*)H_tmp.data;
     for(int i=0; i<9; i++){
-      sum += *ptr;
       this->homography[(int)(i/3)][i%3] = *(ptr++);
     }
+    isCorrect = true;
   }
   else{
-    this->homography.setIdentity();
-  }
-  
-  if(sum <= DBL_EPSILON){
-    return false;
+    isCorrect = false;
   }
 
-  return found;
+  return isCorrect;
 }
+
 
 
 /*!
@@ -428,9 +341,9 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
   two planar surfaces is also computed.
   
   \param I : The gray scaled image where the points are computed.
-  \param rectangle : the rectangle defining the ROI
+  \param rectangle : The rectangle defining the ROI.
   
-  \return true if the surface has been found.
+  \return True if the surface has been found.
 */
 bool 
 vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle)
@@ -450,32 +363,27 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpRect
   a green circle (the radius of the circle depends on the octave at which it has 
   been detected).
   
-  \param I : the gray scaled image for the display
-  \param displayKpts : the flag to display keypoints in addition to the surface
+  \param I : The gray scaled image for the display.
+  \param displayKpts : The flag to display keypoints in addition to the surface.
 */
 void 
 vpPlanarObjectDetector::display(vpImage<unsigned char> &I, bool displayKpts)
 {
   for(unsigned int i=0; i<dst_corners.size(); i++){
     vpImagePoint ip1(
-      dst_corners[i].y, 
-      dst_corners[i].x);
+      dst_corners[i].y - modelROI.y, 
+      dst_corners[i].x - modelROI.x);
     vpImagePoint ip2(
-      dst_corners[(i+1)%dst_corners.size()].y, 
-      dst_corners[(i+1)%dst_corners.size()].x);
+      dst_corners[(i+1)%dst_corners.size()].y - modelROI.y, 
+      dst_corners[(i+1)%dst_corners.size()].x - modelROI.x);
     vpDisplay::displayLine(I, ip1, ip2, vpColor::red) ;
   }
   
   if(displayKpts){
-    for(unsigned int i=0; i<imgKeypoints.size(); i++){
-      vpImagePoint ip1(
-        imgKeypoints[i].pt.y, 
-        imgKeypoints[i].pt.x);
-      vpDisplay::displayCircle(I, ip1, 2, vpColor::red, true, 1);
-      vpDisplay::displayCircle(I, ip1, (1 << imgKeypoints[i].octave)*15, vpColor::green, false, 1);
-    }
+    fern.display(I);
   }
 }
+
 
 /*!
   This function displays the matched reference points and the matched
@@ -496,212 +404,67 @@ vpPlanarObjectDetector::display(vpImage<unsigned char> &Iref,
 		 vpImage<unsigned char> &Icurrent)
 {
   display(Icurrent, false);
-  for (int i = 0; i < (int)pairs.size(); i+=2){
-    vpImagePoint ptRef, ptCur;
-    ptRef.set_uv(modelPoints[pairs[i]].pt.x, modelPoints[pairs[i]].pt.y);
-    ptCur.set_uv(imgKeypoints[pairs[i+1]].pt.x, imgKeypoints[pairs[i+1]].pt.y);
-    vpDisplay::displayCross (Iref, ptRef, 3, vpColor::red);
-    vpDisplay::displayCross (Icurrent,  ptCur, 3, vpColor::green);
-  }
+  fern.display(Iref, Icurrent);
 }
 
 
 /*!
-  \brief load the Fern classifier
+  \brief Load the Fern classifier.
   
   Load and initialize the Fern classifier and load the 3D and 2D keypoints. It 
   can take up to sevral seconds.
   
-  \param dataFilename : The name of the data filename (very large text file). It can have any file extension.
+  \param dataFilename : The name of the data filename (very large text file). 
+  It can have any file extension.
   \param objName : The name of the object.
 */
 void
 vpPlanarObjectDetector::load(const std::string& dataFilename, const std::string& objName)
 {
-  std::cout << "> Load data for the planar object detector..." << std::endl;
-
-  cv::FileStorage fs(dataFilename, cv::FileStorage::READ);
-  read(fs.getFirstTopLevelNode());
-  
-  if(fs.getFirstTopLevelNode().name() != objName){
-    vpERROR_TRACE(" The name in the database does not correspond to the name in the parameters.");
-  }
-  
-  cv::LDetector d(radius, threshold, nbOctave, nbView, patchSize, dist);
-  ldetector = d;
-  hasLearn = true;
+  fern.load(dataFilename, objName);
+  modelROI = fern.getModelROI();
 }
 
 
 /*!
-  \brief record the Ferns classifier in the text file
+  \brief Record the Ferns classifier in the text file.
 
-  \param objectName : The name of the object to store in the data file
-  \param dataFile : The name of the data filename (very large text file). It can have any file extension.
+  \param objectName : The name of the object to store in the data file.
+  \param dataFile : The name of the data filename (very large text file). 
+  It can have any file extension.
 */
 void
 vpPlanarObjectDetector::recordDetector(const std::string& objectName, const std::string& dataFile )
 {
-  cv::FileStorage fs(dataFile, cv::FileStorage::WRITE);
-  write(fs, objectName);
+  fern.record(objectName, dataFile);
 }
 
 /*!
-  \brief set the current image
+  \brief Set the region of interest (ROI) in the current image.
 
-  \param I : the current image
+  \param tl : The top left image point of the ROI.
+  \param br : The bottom right image point of the ROI.
 */
 void
-vpPlanarObjectDetector::setImage(const vpImage<unsigned char>& I)
+vpPlanarObjectDetector::setRoi(const vpImagePoint& tl, const vpImagePoint& br)
 {
-  if(model != NULL){
-    cvResetImageROI(model);
-    cvReleaseImage(&model);
-    model = NULL;
-  }
+  ref_ROI.x = (int)tl.get_u();
+  ref_ROI.y = (int)tl.get_v();
+  ref_ROI.width = (int)(br.get_u()-tl.get_u());
+  ref_ROI.height = (int)(br.get_v()-tl.get_v());
   
-  vpImageConvert::convert(I,model);
-  if(model == NULL){
-    std::cout << "!> conversion failed" << std::endl;
-    throw vpException(vpException::notInitialized , "conversion failed");
-  }
-}
-
-/*!
-  \brief Set the region of interest (ROI) in the current image
-
-  \param tl : the top left image point of the ROI
-  \param br : the bottom right image point of the ROI
-*/
-void
-vpPlanarObjectDetector::setRoi(vpImagePoint tl, vpImagePoint br)
-{
-  CvRect rect = cvRect((int)tl.get_u(), (int)tl.get_v(), (int)(br.get_u()-tl.get_u()), (int)(br.get_v()-tl.get_v()));
-  if(model == NULL){
-    std::cout << "!> image not set" << std::endl;
-    throw vpException(vpException::notInitialized , "image not set in setRoi");
-  }
-
-  cvSetImageROI(model, rect);
-
-    
-  modelROI.x = (int)tl.get_u();
-  modelROI.y = (int)tl.get_v();
-  modelROI.width = (int)(br.get_u()-tl.get_u());
-  modelROI.height = (int)(br.get_v()-tl.get_v());
-  
-  modelROI_Ref.x = (int)tl.get_u();
-  modelROI_Ref.y = (int)tl.get_v();
-  modelROI_Ref.width = (int)(br.get_u()-tl.get_u());
-  modelROI_Ref.height = (int)(br.get_v()-tl.get_v());
-
+  cur_ROI.x = (int)tl.get_u();
+  cur_ROI.y = (int)tl.get_v();
+  cur_ROI.width = (int)(br.get_u()-tl.get_u());
+  cur_ROI.height = (int)(br.get_v()-tl.get_v());
 }
 
 
 
 /*!
-  get the reference point given by the index
+  Return the last positions of the detected corners.
   
-  \param index : the number of the point
-  
-  \return the reference image point
-*/
-vpImagePoint 
-vpPlanarObjectDetector::getRefPoint(const int index)
-{
-  if(index <0 || index >= (int)modelPoints.size()){
-    vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
-  }
-  vpImagePoint pt;
-  pt.set_u(modelPoints[index].pt.x);
-  pt.set_v(modelPoints[index].pt.y);
-  return pt;
-}
-
-void 
-vpPlanarObjectDetector::getReferencePoint(const int index, vpImagePoint &imP)
-{
-  if(index <0 || index >= (int)modelPoints.size()){
-    vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
-  }
-
-  imP.set_u(modelPoints[index].pt.x);
-  imP.set_v(modelPoints[index].pt.y);
-}
-
-/*!
-  get the current image point given by the index
-  
-  \param index : the number of the point
-  
-  \return the current image point
-*/
-vpImagePoint 
-vpPlanarObjectDetector::getCurPoint(const int index)
-{
-  if(index <0 || index >= (int)imgKeypoints.size()){
-    vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
-  }
-  vpImagePoint pt;
-  pt.set_u(imgKeypoints[index].pt.x);
-  pt.set_v(imgKeypoints[index].pt.y);
-  return pt;
-}
-
-void 
-vpPlanarObjectDetector::getCurPoint(const int index, vpImagePoint & ip)
-{
-  if(index <0 || index >= (int)imgKeypoints.size()){
-    vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
-  }
-  vpImagePoint pt;
-  ip.set_u(imgKeypoints[index].pt.x);
-  ip.set_v(imgKeypoints[index].pt.y);
-}
-
-/*!
-  The image is blurred before being processed. This solution can lead to a 
-  better recognition rate.
-  
-  \param _blur : the new option for the blur
-  \param _sigma : the sigma for the blur
-  \param _size : the size for the blur
-*/
-void 
-vpPlanarObjectDetector::setBlurSettings(const bool _blur, int _sigma, int _size)
-{ 
-  blurImage = _blur; 
-  radiusBlur = _size; 
-  sigmaBlur = _sigma; 
-}
-
-/*!
-  Get the point in the current image matching with the one given by index
-  
-  \param indexRef : the index of the point in the reference image points vector
-  
-  \return the index of the matched point in the current image or -1 if there is 
-    no matching
-*/
-int 
-vpPlanarObjectDetector::getMatchedPointByRef(const int indexRef)
-{
-  for(unsigned int i=0; i< pairs.size(); i+=2){
-    if(pairs[i] == indexRef){
-      return pairs[i+1];
-    }
-  }
-  return -1;
-}
-
-/*!
-  return the last positions of the detected corners
-  
-  \return the vectors of corners' postions
+  \return The vectors of corners' postions.
 */
 std::vector<vpImagePoint> 
 vpPlanarObjectDetector::getDetectedCorners() const{
@@ -714,6 +477,29 @@ vpPlanarObjectDetector::getDetectedCorners() const{
   }
 
   return corners;
+}
+
+/*!
+  Initialise the internal reference corners from the rectangle.
+  
+  \param _modelROI : The rectangle defining the region of interest.
+*/
+void 
+vpPlanarObjectDetector::initialiseRefCorners(const cv::Rect& _modelROI)
+{
+  cv::Point2f ip;
+  ip.y = modelROI.y; 
+  ip.x = modelROI.x;
+  ref_corners.push_back(ip);
+  ip.y = modelROI.y+modelROI.height; 
+  ip.x = modelROI.x;  
+  ref_corners.push_back(ip);
+  ip.y = modelROI.y+modelROI.height; 
+  ip.x = modelROI.x+modelROI.width;  
+  ref_corners.push_back(ip);  
+  ip.y = modelROI.y; 
+  ip.x = modelROI.x+modelROI.width;  
+  ref_corners.push_back(ip);
 }
 
 #endif

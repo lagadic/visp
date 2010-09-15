@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id:$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -8,7 +8,7 @@
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * ("GPL") version 2 as published by the Free Software Foundation.
- * See the file LICENSE.txt at the root directory of this source
+ * See the file LICENSE.GPL at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
@@ -32,22 +32,22 @@
  *
  *
  * Description:
- * Detection of planar surface using Fern classifier.
+ * Detection of points of interests and matching using the Ferns classifier.
  *
  * Authors:
  * Romain Tallonneau
  *
  *****************************************************************************/
 /*!
-  \file planarObjectDetector.cpp
+  \file fernClassifier.cpp
 
-  \brief Tracking of planar surface using Fern classifier.
+  \brief Detection of points of interests and matching using a Fern classifier.
 */
 
 /*!
-  \example planarObjectDetector.cpp
+  \example fernClassifier.cpp
 
-  Tracking of planar surface using Fern classifier.
+  Detection of points of interests and matching using a Fern classifier.
 */
 
 #include <visp/vpConfig.h>
@@ -57,7 +57,7 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <visp/vpPlanarObjectDetector.h>
+#include <visp/vpFernClassifier.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpConfig.h>
 #include <visp/vpOpenCVGrabber.h>
@@ -84,9 +84,9 @@
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Test of detection of planar surface using a Fern classifier. The object needs \
-  first to be learned (-l option). This learning process will create a file used\
-  to detect the object.\n\
+Detection of points of interests and matching using the Ferns classifier. The \
+object needs first to be learned (-l option). This learning process will create\
+a file used to detect the object.\n\
 \n\
 SYNOPSIS\n\
   %s [-l] [-h] [-b] [-c] [-d] [-p] [-i] [-s]\n", name);
@@ -105,7 +105,7 @@ OPTIONS:                                               \n\
      this option.\n\
 \n\
   -b\n\
-     database filename to use (default is ./dataPlanar).\n\
+     database filename to use (default is ./dataFern).\n\
 \n\
   -c\n\
      Disable the mouse click. Useful to automaze the \n\
@@ -184,7 +184,7 @@ int
 main(int argc, const char** argv)
 {
   bool isLearning = false;
-  std::string dataFile("./dataPlanar");
+  std::string dataFile("./dataFern");
   bool opt_click_allowed = true;
   bool opt_display = true;
   std::string objectName("object");
@@ -320,11 +320,11 @@ main(int argc, const char** argv)
 #endif
 
   // declare a planar object detector
-  vpPlanarObjectDetector planar;
+  vpFernClassifier fern;
 
   if(isLearning){  
     if(opt_display){
-      displayRef.init(Iref, 100, 100, "Test vpPlanarObjectDetector reference image") ;
+      displayRef.init(Iref, 100, 100, "Test vpFernClassifier reference image") ;
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
     }
@@ -359,34 +359,49 @@ main(int argc, const char** argv)
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
     }
-    double t0 = vpTime::measureTimeMs (); 
-    planar.buildReference(Iref, roi); 
-    std::cout << "build reference in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
-    t0 = vpTime::measureTimeMs (); 
-    planar.recordDetector(objectName, dataFile);
-    std::cout << "record detector in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
+    
+    try{
+      fern.buildReference(Iref, roi); 
+    }
+    catch(vpException e){
+      std::cout << e.getMessage() << std::endl;
+    }
+    catch(...){
+      std::cout << "unknown error, line " << __LINE__ << std::endl;
+    }
+    try{
+      fern.record(objectName, dataFile);
+    }
+    catch(vpException e){
+      std::cout << e.getMessage() << std::endl;
+    }
+    catch(...){
+      std::cout << "unknown error, line " << __LINE__ << std::endl;
+    }
+    std::cout << __LINE__ << std::endl;
   }
-  else{    
+  else{
     if(!vpIoTools::checkFilename(dataFile)){
       vpERROR_TRACE("cannot load the database with the specified name. Has the object been learned with the -l option? ");
       exit(-1);
     }
     try{
       // load a previously recorded file
-      planar.load(dataFile, objectName);
+      fern.load(dataFile, objectName);
     }
     catch(...){
       vpERROR_TRACE("cannot load the database with the specified name. Has the object been learned with the -l option? ");
       exit(-1);
     }
   }
-    
+  
+  
   if(opt_display){
-    display.init(I, 100, 100, "Test vpPlanarObjectDetector") ;
+    display.init(I, 100, 100, "Test vpFernClassifier current image") ;
     vpDisplay::display(I);
     vpDisplay::flush(I);
   }
-
+   
   if (opt_display && opt_click_allowed){
     std::cout << "Click on the reference image to continue" << std::endl;
     vpDisplay::displayCharString (Iref, vpImagePoint(15,15), 
@@ -414,26 +429,29 @@ main(int argc, const char** argv)
     
     if(opt_display){
       vpDisplay::display(I);
+      vpDisplay::display(Iref);
     }
     
     double t0 = vpTime::measureTimeMs (); 
-    // detection  of the reference planar surface
-    bool isDetected = planar.matchPoint(I);
-    std::cout << "matching in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
+    // detection  of the reference image
+    int nbpts;
+    try{
+      nbpts = fern.matchPoint(I);
+    }
+    catch(vpException e){
+      std::cout << e.getMessage() << std::endl;
+      return -1;
+    }
+    catch(...){
+      std::cout << "unknown error line " << __LINE__ << std::endl;
+      return -1;
+    }
+    std::cout << "matching " << nbpts << " points : " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
     
-    if(isDetected){
-      vpHomography H;
-      planar.getHomography(H);    
-      std::cout << " > computed homography:" << std::endl << H << std::endl;
-      if(opt_display){
-        planar.display(I, false); 
-      }
-    }
-    else{
-      std::cout << " > reference is not detected in the image" << std::endl;
-    }
     if(opt_display){
-      vpDisplay::flush(I);//vpDisplay::getClick(I, true);
+      fern.display(Iref, I);
+      vpDisplay::flush(I);
+      vpDisplay::flush(Iref);
       if(vpDisplay::getClick(I, false)){
         break;
       }

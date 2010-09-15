@@ -100,6 +100,7 @@ SET (HEADER_KEY_POINT
   key-point/vpBasicKeyPoint.h
   key-point/vpKeyPointSurf.h
   key-point/vpPlanarObjectDetector.h
+  key-point/vpFernClassifier.h
   )
 
 SET (HEADER_LASERSCANNER
