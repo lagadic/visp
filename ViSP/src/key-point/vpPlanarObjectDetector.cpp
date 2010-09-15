@@ -488,17 +488,17 @@ void
 vpPlanarObjectDetector::initialiseRefCorners(const cv::Rect& _modelROI)
 {
   cv::Point2f ip;
-  ip.y = modelROI.y; 
-  ip.x = modelROI.x;
+  ip.y = _modelROI.y; 
+  ip.x = _modelROI.x;
   ref_corners.push_back(ip);
-  ip.y = modelROI.y+modelROI.height; 
-  ip.x = modelROI.x;  
+  ip.y = _modelROI.y+_modelROI.height; 
+  ip.x = _modelROI.x;  
   ref_corners.push_back(ip);
-  ip.y = modelROI.y+modelROI.height; 
-  ip.x = modelROI.x+modelROI.width;  
+  ip.y = _modelROI.y+_modelROI.height; 
+  ip.x = _modelROI.x+_modelROI.width;  
   ref_corners.push_back(ip);  
-  ip.y = modelROI.y; 
-  ip.x = modelROI.x+modelROI.width;  
+  ip.y = _modelROI.y; 
+  ip.x = _modelROI.x+_modelROI.width;  
   ref_corners.push_back(ip);
 }
 

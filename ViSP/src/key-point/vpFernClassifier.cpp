@@ -423,7 +423,7 @@ void
 vpFernClassifier::display(const vpImage<unsigned char> &_Iref, 
 	const vpImage<unsigned char> &_Icurrent)
 {
-  for (int i = 0; i < matchedReferencePoints.size(); i++){
+  for (unsigned int i = 0; i < matchedReferencePoints.size(); i++){
       vpDisplay::displayCross (_Iref, referenceImagePointsList[matchedReferencePoints[i]], 3, vpColor::red);
       vpDisplay::displayCross (_Icurrent, currentImagePointsList[i], 3, vpColor::green);
   }
@@ -440,7 +440,7 @@ vpFernClassifier::display(const vpImage<unsigned char> &_Iref,
 void 
 vpFernClassifier::display(const vpImage<unsigned char> &_Icurrent)
 {    
-  for (int i = 0; i < matchedReferencePoints.size(); i++){
+  for (unsigned int i = 0; i < matchedReferencePoints.size(); i++){
       vpDisplay::displayCross (_Icurrent, currentImagePointsList[i], 3, vpColor::green);
   }
 }
@@ -454,10 +454,9 @@ vpFernClassifier::display(const vpImage<unsigned char> &_Icurrent)
   can take up to sevral seconds.
   
   \param _dataFile : The name of the data filename (very large text file). It can have any file extension.
-  \param _objectName : The name of the object.
 */
 void 
-vpFernClassifier::load(const std::string& _dataFile, const std::string& _objectName)
+vpFernClassifier::load(const std::string& _dataFile, const std::string& /*_objectName*/)
 {
   std::cout << " > Load data for the planar object detector..." << std::endl;
   

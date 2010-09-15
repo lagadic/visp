@@ -270,7 +270,7 @@ public:
   virtual void display(const vpImage<unsigned char> &Icurrent);
   
     /* io methods */
-  void load(const std::string& _dataFile, const std::string& _objectName);
+  void load(const std::string& _dataFile, const std::string& /*_objectName*/);
   void record(const std::string& _objectName, const std::string& _dataFile);
   
   
