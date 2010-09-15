@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: vpMbEdgeTracker.h 2807 2010-09-14 10:14:54Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -42,12 +42,12 @@
  *****************************************************************************/
 
 /*!
- \file vpMbtTracker.h
+ \file vpMbEdgeTracker.h
  \brief Make the complete tracking of an object by using its CAD model.
 */
 
-#ifndef vpMbtTracker_HH
-#define vpMbtTracker_HH
+#ifndef vpMbEdgeTracker_HH
+#define vpMbEdgeTracker_HH
 
 #include <visp/vpConfig.h>
 
@@ -76,12 +76,12 @@
 #endif
 
 /*!
-  \class vpMbtTracker
+  \class vpMbEdgeTracker
   \ingroup ModelBasedTracking
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
-class VISP_EXPORT vpMbtTracker
+class VISP_EXPORT vpMbEdgeTracker
 {
   protected :
     vpCameraParameters cam ;
@@ -113,8 +113,8 @@ class VISP_EXPORT vpMbtTracker
   
  public:
   
-  vpMbtTracker(); 
-  virtual ~vpMbtTracker(); 
+  vpMbEdgeTracker(); 
+  virtual ~vpMbEdgeTracker(); 
   
   /*!
     Set the value of the gain used to compute the control law.

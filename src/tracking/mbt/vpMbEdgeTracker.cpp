@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: vpMbEdgeTracker.cpp 2807 2010-09-14 10:14:54Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -42,7 +42,7 @@
  *****************************************************************************/
 
 /*!
-  \file vpMbtTracker.cpp
+  \file vpMbEdgeTracker.cpp
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
@@ -59,7 +59,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 
-#include <visp/vpMbtTracker.h>
+#include <visp/vpMbEdgeTracker.h>
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtXmlParser.h>
 
@@ -69,7 +69,7 @@
 /*!
   Basic constructor
 */
-vpMbtTracker::vpMbtTracker()
+vpMbEdgeTracker::vpMbEdgeTracker()
 {
   index_polygon =0;
   compute_interaction=1;
@@ -89,7 +89,7 @@ vpMbtTracker::vpMbtTracker()
 /*!
   Basic destructor useful to deallocate the memory.
 */
-vpMbtTracker::~vpMbtTracker()
+vpMbEdgeTracker::~vpMbEdgeTracker()
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -109,7 +109,7 @@ vpMbtTracker::~vpMbtTracker()
   \param _me : an instance of vpMe containing all the desired parameters
 */
 void
-vpMbtTracker::setMovingEdge(vpMe &_me)
+vpMbEdgeTracker::setMovingEdge(vpMe &_me)
 {
   me.setThreshold (_me.threshold);
   me.setPointsToTrack (_me.points_to_track);
@@ -141,7 +141,7 @@ vpMbtTracker::setMovingEdge(vpMe &_me)
   Compute the visual servoing loop to get the pose of the feature set.
  */
 void
-vpMbtTracker::computeVVS()
+vpMbEdgeTracker::computeVVS()
 {
   double residu_1 =1e3;
   double r =1e3-1;
@@ -466,7 +466,7 @@ vpMbtTracker::computeVVS()
   Check if the tracking failed.
 */
 void
-vpMbtTracker::testTracking()
+vpMbEdgeTracker::testTracking()
 {
   int nbExpectedPoint = 0;
   int nbGoodPoint = 0;
@@ -510,7 +510,7 @@ vpMbtTracker::testTracking()
   \param I : The image.
  */
 void
-vpMbtTracker::track(const vpImage<unsigned char> &I)
+vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 {
   try
   {  
@@ -602,7 +602,7 @@ vpMbtTracker::track(const vpImage<unsigned char> &I)
  \param displayHelp : If this flag is true, then an image (name : 'filename'.ppm) is displayed to show where to click
 */
 void
-vpMbtTracker::initClick(const vpImage<unsigned char>& I, const char *filename, bool displayHelp)
+vpMbEdgeTracker::initClick(const vpImage<unsigned char>& I, const char *filename, bool displayHelp)
 {
   vpHomogeneousMatrix last_cMo;
   vpPoseVector init_pos;
@@ -814,7 +814,7 @@ vpMbtTracker::initClick(const vpImage<unsigned char>& I, const char *filename, b
  \param _cMo : The initial pose used to initialize the tracking.
 */
 void
-vpMbtTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo)
+vpMbEdgeTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo)
 {
   this->cMo = _cMo;
   bool a = false;
@@ -825,12 +825,12 @@ vpMbtTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_
 
 /*!
   Load the xml configuration file.
-  Write the parameters in the corresponding objects ( Ecm,vpMbtTracker )
+  Write the parameters in the corresponding objects ( Ecm,vpMbEdgeTracker )
 
   \param filename : full name of the xml file.
 */
 void
-vpMbtTracker::loadConfigFile(const char* filename)
+vpMbEdgeTracker::loadConfigFile(const char* filename)
 {
 #ifdef VISP_HAVE_XML2
   vpMbtXmlParser xmlp;
@@ -879,7 +879,7 @@ vpMbtTracker::loadConfigFile(const char* filename)
   \param thickness : The thickness of the lines.
 */
 void
-vpMbtTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &cam,
+vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &cam,
 											const vpColor& col,
 											const unsigned int thickness)
 {
@@ -903,7 +903,7 @@ vpMbtTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix
   \param thickness : The thickness of the lines.
 */
 void
-vpMbtTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &cam,
+vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &cam,
 											const vpColor& col,
 											const unsigned int thickness)
 {
@@ -926,7 +926,7 @@ vpMbtTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_cMo,
   \param _cMo : The pose of the camera used to initialize the moving edges.
 */
 void
-vpMbtTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
+vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {
   vpMbtDistanceLine *l ;
 
@@ -978,7 +978,7 @@ vpMbtTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneou
   \param I : the image.
 */
 void
-vpMbtTracker::trackMovingEdge(const vpImage<unsigned char> &I)
+vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -1002,7 +1002,7 @@ vpMbtTracker::trackMovingEdge(const vpImage<unsigned char> &I)
   \param I : the image.
 */
 void
-vpMbtTracker::updateMovingEdge(const vpImage<unsigned char> &I)
+vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -1025,7 +1025,7 @@ vpMbtTracker::updateMovingEdge(const vpImage<unsigned char> &I)
   \param _cMo : the pose of the used to re-initialise the moving edges
 */
 void
-vpMbtTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
+vpMbEdgeTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {
   vpMbtDistanceLine *l ;
   Lline.front() ;
@@ -1071,7 +1071,7 @@ bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold=1e-5)
   \param name : the optionnal name of the line 
 */
 void
-vpMbtTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string name)
+vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string name)
 {
   //suppress line already in the model
   
@@ -1125,7 +1125,7 @@ vpMbtTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string name)
 }
 
 void
-vpMbtTracker::removeLine(const std::string& name)
+vpMbEdgeTracker::removeLine(const std::string& name)
 {
   vpMbtDistanceLine *l;
   Lline.front();
@@ -1148,7 +1148,7 @@ vpMbtTracker::removeLine(const std::string& name)
   \param p : The polygon to add.
 */
 void
-vpMbtTracker::addPolygon(vpMbtPolygon &p)
+vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
 {
   p.setIndex(index_polygon) ;
   faces.addPolygon(&p) ;
@@ -1169,7 +1169,7 @@ vpMbtTracker::addPolygon(vpMbtPolygon &p)
   \param newvisibleline : This parameter is set to true if a new face appeared.
 */
 void
-vpMbtTracker::visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline)
+vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline)
 {
   int n ;
 
@@ -1193,7 +1193,7 @@ vpMbtTracker::visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline)
   \param file : Path to the file containing the 3D model description.
 */
 void
-vpMbtTracker::loadModel(const char* file)
+vpMbEdgeTracker::loadModel(const char* file)
 {
   std::ifstream infile;
 
@@ -1238,7 +1238,7 @@ vpMbtTracker::loadModel(const char* file)
   \param file_id : Path to the .cao file containing the 3D model description.
 */
 void
-vpMbtTracker::loadCAOModel(std::ifstream &file_id)
+vpMbEdgeTracker::loadCAOModel(std::ifstream &file_id)
 {
   //On nettoie d'abord
   vpMbtDistanceLine *l ;
@@ -1393,7 +1393,7 @@ vpMbtTracker::loadCAOModel(std::ifstream &file_id)
   \param file_id : Path to the .wrl file containing the 3D model description.
 */
 void
-vpMbtTracker::loadVRMLModel(const char* file_id)
+vpMbEdgeTracker::loadVRMLModel(const char* file_id)
 {
   //Load the sceneGraph
   SoDB::init();
@@ -1460,7 +1460,7 @@ vpMbtTracker::loadVRMLModel(const char* file_id)
 
 
 void
-vpMbtTracker::extractFaces(SoVRMLIndexedFaceSet* face_set)
+vpMbEdgeTracker::extractFaces(SoVRMLIndexedFaceSet* face_set)
 {
   vpList<vpPoint> pointList;
   pointList.kill();
@@ -1512,7 +1512,7 @@ vpMbtTracker::extractFaces(SoVRMLIndexedFaceSet* face_set)
 
 
 void
-vpMbtTracker::extractLines(SoVRMLIndexedLineSet* line_set)
+vpMbEdgeTracker::extractLines(SoVRMLIndexedLineSet* line_set)
 {
   vpList<vpPoint> pointList;
   pointList.kill();
@@ -1568,7 +1568,7 @@ vpMbtTracker::extractLines(SoVRMLIndexedLineSet* line_set)
   
 */
 void
-vpMbtTracker::resetTracker()
+vpMbEdgeTracker::resetTracker()
 {
   this->cMo.setIdentity();
   vpMbtDistanceLine *l ;
@@ -1610,7 +1610,7 @@ vpMbtTracker::resetTracker()
   \param _cMo : the new vpHomogeneousMatrix between the camera and the new model
 */
 void
-vpMbtTracker::reInitModel(vpImage<unsigned char>& I, const char* cad_name, vpHomogeneousMatrix& _cMo)
+vpMbEdgeTracker::reInitModel(vpImage<unsigned char>& I, const char* cad_name, vpHomogeneousMatrix& _cMo)
 {
   resetTracker();
   loadModel(cad_name);
@@ -1623,7 +1623,7 @@ vpMbtTracker::reInitModel(vpImage<unsigned char>& I, const char* cad_name, vpHom
   \return the number of good points (used during the virtual visual servoing stage)
 */
 unsigned int 
-vpMbtTracker::getNbPoints()
+vpMbEdgeTracker::getNbPoints()
 {
   unsigned int nbGoodPoints = 0;
   vpMbtDistanceLine *l ;
