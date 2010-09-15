@@ -13,12 +13,17 @@ using:
 
 ccmake .
   [hit 'c' key to configure the project]
-  [hit 'e' key to acknoledge the warning indicating that ViSP is not found]
-  [Use the arrow keys to position the cursor on the VISP_DIR line] 
-  [Press "ENTER" key to enter in the edit mode]
-  [Set VISP_DIR variable to the "<visp_build_dir>/lib" location]
-  [Press "ENTER" key to quit the edit mode]
-  [hit 'c' key to configure the project]
+
+  If ViSP is not detected automatically
+    You get an error messge "Could not find module FindVISP.cmake or 
+    a configuration file for package VISP."
+    [hit 'e' key to acknoledge the error indicating that ViSP is not found]
+    [Use the arrow keys to position the cursor on the VISP_DIR line] 
+    [Press "ENTER" key to enter in the edit mode]
+    [Set VISP_DIR variable to the "<visp_build_dir>" location]
+    [Press "ENTER" key to quit the edit mode]
+    [hit 'c' key to configure the project]
+  Endif
   [hit 'c' key to configure the project]
   [hit 'g' key to generate the Makefiles]
 
@@ -32,8 +37,8 @@ Under Windows, you need to start CMake GUI and than:
 - set the "Hello World" source code location
 - set the build path for example to the same location
 - click on "Configure" button
-- select your build tool in the list [Visual Studio 2003 for example]
-- set the VISP_DIR variable to the "<visp_build_dir>/lib" location
+- select your build tool in the list [Visual Studio 2010 for example]
+- set the VISP_DIR variable to the "<visp_build_dir>" location
 - click on "Configure" button
 - click on "Ok" button or "Generate" button
 - CMake GUI will exit automatically when configuration files are generated 
