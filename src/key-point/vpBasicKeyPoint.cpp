@@ -42,16 +42,16 @@
 
 #include <visp/vpBasicKeyPoint.h>
 
+#include <vector>
+
 /*!
   Basic constructor.
 */
 vpBasicKeyPoint::vpBasicKeyPoint()
 {
-  referenceImagePointsList = NULL;
-  currentImagePointsList = NULL;
-  matchedReferencePoints = NULL;
-  nbReferencePoints = 0;
-  nbMatchedPoints = 0;
+  matchedReferencePoints.resize(0);
+  currentImagePointsList.resize(0);
+  referenceImagePointsList.resize(0);
 }
 
 

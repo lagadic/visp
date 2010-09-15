@@ -53,6 +53,8 @@
 #include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>
 
+#include <vector>
+
 #if defined (VISP_HAVE_OPENCV) 
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
@@ -210,9 +212,9 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
     int matchPoint(const vpImage<unsigned char> &I,
 		   vpImagePoint &iP, unsigned int height, unsigned int width);
     int matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle);
-    void display(vpImage<unsigned char> &Iref,
-		 vpImage<unsigned char> &Icurrent);
-    void display(vpImage<unsigned char> &Icurrent);
+    void display(const vpImage<unsigned char> &Iref,
+		 const vpImage<unsigned char> &Icurrent);
+    void display(const vpImage<unsigned char> &Icurrent);
     vpList<int*>* matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList);
     float* getDescriptorReferencePoint (const int index);
     int getLaplacianReferencePoint (const int index);

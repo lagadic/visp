@@ -55,6 +55,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpRect.h>
 
+#include <vector>
 
 /*!
   \class vpBasicKeyPoint
@@ -71,9 +72,9 @@ class VISP_EXPORT vpBasicKeyPoint
     vpBasicKeyPoint();
 
    virtual ~vpBasicKeyPoint() { 
-     if (referenceImagePointsList != NULL) delete[] referenceImagePointsList;
-     if (currentImagePointsList != NULL) delete[] currentImagePointsList;
-     if (matchedReferencePoints != NULL) delete[] matchedReferencePoints;
+    matchedReferencePoints.resize(0);
+    currentImagePointsList.resize(0);
+    referenceImagePointsList.resize(0);
    };
 
    virtual int buildReference(const vpImage<unsigned char> &I) =0;
@@ -94,10 +95,10 @@ class VISP_EXPORT vpBasicKeyPoint
    virtual int matchPoint(const vpImage<unsigned char> &I, 
 			  const vpRect rectangle) =0;
 
-   virtual void display(vpImage<unsigned char> &Iref, 
-			vpImage<unsigned char> &Icurrent) =0;
+   virtual void display(const vpImage<unsigned char> &Iref, 
+			const vpImage<unsigned char> &Icurrent) =0;
 
-   virtual void display(vpImage<unsigned char> &Icurrent) =0;
+   virtual void display(const vpImage<unsigned char> &Icurrent) =0;
 
    /*!
      Get the pointer to the complete list of reference points. The pointer is const. Thus the points can not be modified
@@ -105,7 +106,7 @@ class VISP_EXPORT vpBasicKeyPoint
      \return The pointer to the complete list of reference points.
    */
    inline const vpImagePoint* getAllPointsInReferenceImage() {
-     return referenceImagePointsList;
+     return &referenceImagePointsList[0];
    } ;
 
    /*!
@@ -116,13 +117,13 @@ class VISP_EXPORT vpBasicKeyPoint
    */
    inline void getReferencePoint (const int index, vpImagePoint &referencePoint )
    {
-     if (index >= nbReferencePoints || index < 0)
+     if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0)
      {
        vpTRACE("Index of the reference point out of range");
        throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
      }
 
-     referencePoint.set_ij((referenceImagePointsList+index)->get_i(),(referenceImagePointsList+index)->get_j());
+     referencePoint.set_ij(referenceImagePointsList[index].get_i(), referenceImagePointsList[index].get_j());
    }
 
    /*!
@@ -133,7 +134,7 @@ class VISP_EXPORT vpBasicKeyPoint
     \param currentPoint : The coordinates of the desired current point are copied here.
    */
    inline void getMatchedPoints(const int index, vpImagePoint &referencePoint, vpImagePoint &currentPoint) {
-     if (index >= nbMatchedPoints || index < 0)
+     if (index >= static_cast<int>(matchedReferencePoints.size()) || index < 0)
      {
        vpTRACE("Index of the matched points out of range");
        throw(vpException(vpException::fatalError,"Index of the matched points out of range"));
@@ -163,7 +164,7 @@ class VISP_EXPORT vpBasicKeyPoint
     \endcode
    */
    inline int getIndexInAllReferencePointList ( const int indexInMatchedPointList ) {
-     if (indexInMatchedPointList >= nbMatchedPoints || indexInMatchedPointList < 0)
+     if (indexInMatchedPointList >= static_cast<int>(matchedReferencePoints.size()) || indexInMatchedPointList < 0)
      {
        vpTRACE("Index of the matched reference point out of range");
        throw(vpException(vpException::fatalError,"Index of the matched reference point out of range"));
@@ -176,14 +177,14 @@ class VISP_EXPORT vpBasicKeyPoint
 
      \return the number of reference points.
    */
-   inline int getReferencePointNumber() {return nbReferencePoints;};
+   inline int getReferencePointNumber() {return referenceImagePointsList.size();};
 
    /*!
      Get the number of matched points.
 
      \return the number of matched points.
    */
-   inline int getMatchedPointNumber() {return nbMatchedPoints;};
+   inline int getMatchedPointNumber() {return matchedReferencePoints.size();};
 
   private:
     virtual void init()=0;
@@ -192,23 +193,13 @@ class VISP_EXPORT vpBasicKeyPoint
     /*!
       List of the points which define the refrence.
     */
-    vpImagePoint* referenceImagePointsList;
+    std::vector<vpImagePoint> referenceImagePointsList;
 
     /*!
       List of the points which belong to the current image and have
       been matched with points belonging to the reference.
     */
-    vpImagePoint* currentImagePointsList;
-
-    /*!
-      Number of refrence points which are computed thanks to the buildReference method.
-    */
-    int nbReferencePoints;
-
-    /*!
-      Number of matched points which are computed thanks to the matchPoint method.
-    */
-    int nbMatchedPoints;
+    std::vector<vpImagePoint> currentImagePointsList;
 
     /*!
       Array containing the index in the array "referenceImagePointsList" of the reference points which have been matched.
@@ -216,7 +207,7 @@ class VISP_EXPORT vpBasicKeyPoint
       The first element of the "currentImagePointsList" array is matched with the nth element of the "referenceImagePointsList" array.
       The value of n is stored in the first element of the "matchedReferencePoints" array.
     */
-    int* matchedReferencePoints;
+    std::vector<int> matchedReferencePoints;
 };
 
 #endif
