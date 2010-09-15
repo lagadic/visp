@@ -57,7 +57,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 
-#include <visp/vpMbtTracker.h>
+#include <visp/vpMbEdgeTracker.h>
 
 #include <visp/vpVideoReader.h>
 #include <visp/vpParseArgv.h>
@@ -231,7 +231,7 @@ main(int argc, const char ** argv)
     vpDisplay::flush(I);
   }
  
-  vpMbtTracker tracker;
+  vpMbEdgeTracker tracker;
   vpHomogeneousMatrix cMo;
   
   // Load tracker config file (camera parameters and moving edge settings)
