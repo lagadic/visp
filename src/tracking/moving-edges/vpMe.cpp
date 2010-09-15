@@ -488,48 +488,6 @@ vpMe::setMaskSize(int a)
   initMask() ;
 }
 
-/****************************************************************
 
-           Deprecated functions
-
-*****************************************************************/
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-
-  \deprecated This method is deprecated. You should use setMaskNumber() instead.
-
-*/
-void
-vpMe::setNumberMask(int a)
-{
-  if (mask != NULL)
-  {
-    for (int i=0 ; i < n_mask ; i++)
-      mask[i].~vpMatrix()  ;
-    if (mask != NULL) delete []mask ;
-  }
-  n_mask = a  ;
-  anglestep = 180 / a ;
-  initMask() ;
-}
-
-/*!
-
-  \deprecated This method is deprecated. You should use setMaskSize() instead.
-
-*/
-void
-vpMe::setSizeMask(int a)
-{
-  if (mask != NULL)
-  {
-    for (int i=0 ; i < n_mask ; i++)
-	    mask[i].~vpMatrix()  ;
-    if (mask != NULL) delete []mask ;
-  }
-  mask_size =a  ;
-  initMask() ;
-}
-#endif
 
 

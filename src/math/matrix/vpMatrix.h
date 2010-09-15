@@ -280,20 +280,6 @@ public:
   
   //Compute the exponential matrix of a square matrix
   vpMatrix expm();
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /** @name Deprecated functions */
-  //@{
-  /*!
-    \deprecated This method is deprecated. You should use vpMatrix::det() 
-    instead.
-  */
-  double detByLU() const;
-  //@}
-#else
- private:
-  double detByLU() const;
- public:
-#endif
 
   //-------------------------------------------------
   // Columns, Rows extraction, SubMatrix
@@ -475,15 +461,8 @@ public:
   double infinityNorm () const;
   //@}
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /** @name Deprecated functions */
-  //@{
-  vp_deprecated static double det33(const vpMatrix &P) ;
-  vp_deprecated double euclidianNorm () const;
-  // solve Ax=B using the SVD decomposition (usage  x=A.SVDsolve(B))
-  vp_deprecated vpColVector SVDsolve(const vpColVector& B) const ;
-  //@}
-#endif
+ private:
+  double detByLU() const;
 
 };
 

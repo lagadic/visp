@@ -622,36 +622,6 @@ vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
   }
 }
 
-/****************************************************************
-
-           Deprecated functions
-
-*****************************************************************/
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-
-  \deprecated This function has no meaning related to 3D point. It is
-  not implemented.
-
-  \exception vpException::notImplementedError : This function has no meaning
-  related to 3D point.
-
-*/
-vpColVector
-vpFeaturePoint3D::error(const int /* select */)
-{
-
-  vpERROR_TRACE("This function has no meaning related to 3D point ") ;
-  vpERROR_TRACE("It is not implemented ") ;
-
-  throw(vpException(vpException::notImplementedError,
-			   "This function has no meaning related to 3D point")) ;
-}
-
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-
-
 /*
  * Local variables:
  * c-basic-offset: 2

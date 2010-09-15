@@ -178,28 +178,6 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! Print the matrix as a vector [T thetaU]
   void print() ;
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-
-  // Construction from Translation and rotation (deprecated)
-  vp_deprecated vpHomogeneousMatrix(const vpRotationMatrix &R,
-                      const vpTranslationVector &T) ;
-  // Construction from Translation and rotation (deprecated)
-  vp_deprecated vpHomogeneousMatrix(const vpThetaUVector &tu,
-                      const vpTranslationVector &T) ;
-  // Construction from Translation and rotation (deprecated)
-  vp_deprecated void buildFrom(const vpRotationMatrix &R,
-                 const vpTranslationVector &T) ;
-  // Construction from Translation and rotation (deprecated)
-  vp_deprecated void buildFrom(const vpThetaUVector &tu,
-                 const vpTranslationVector &T) ;
-  // Load an homogeneous matrix from a file. Proposed for compatibilty issue
-  vp_deprecated void loadMatrix34(std::ifstream &f) ;
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-
-
 } ;
 
 #endif

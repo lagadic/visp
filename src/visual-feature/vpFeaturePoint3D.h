@@ -354,14 +354,6 @@ public:
                vpColor color=vpColor::green, 
 	       unsigned int thickness=1) const ; 
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  //! compute the error between a visual features and zero
-  vp_deprecated vpColVector error(const int select = FEATURE_ALL)  ;
-#endif // ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-
 } ;
 
 
