@@ -245,7 +245,7 @@ SET (HEADER_TRACKING
   tracking/mbt/vpMbtDistanceLine.h
   tracking/mbt/vpMbtHiddenFace.h
   tracking/mbt/vpMbtMeLine.h
-  tracking/mbt/vpMbtTracker.h
+  tracking/mbt/vpMbEdgeTracker.h
   tracking/mbt/vpMbtXmlParser.h
   )
 
