@@ -1563,7 +1563,11 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
 {
   IplImage* Ip = NULL;
   Ip = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
-  vpImageConvert::convert(Ip, I);
+  if (Ip != NULL)
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError,
+		       "Can't read the image")) ;
   cvReleaseImage(&Ip);
 }
 
@@ -1614,7 +1618,11 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
 {
   IplImage* Ip = NULL;
   Ip = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
-  vpImageConvert::convert(Ip, I);
+  if (Ip != NULL)
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError,
+		       "Can't read the image")) ;
   cvReleaseImage(&Ip);
 }
 
@@ -2431,7 +2439,11 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
 {
   IplImage* Ip = NULL;
   Ip = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
-  vpImageConvert::convert(Ip, I);
+  if (Ip != NULL)
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError,
+		       "Can't read the image")) ;
   cvReleaseImage(&Ip);
 }
 
@@ -2482,7 +2494,11 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
 {
   IplImage* Ip = NULL;
   Ip = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
-  vpImageConvert::convert(Ip, I);
+  if (Ip != NULL)
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError,
+		       "Can't read the image")) ;
   cvReleaseImage(&Ip);
 }
 
