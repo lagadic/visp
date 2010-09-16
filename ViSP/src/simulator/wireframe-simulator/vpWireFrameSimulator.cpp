@@ -158,6 +158,7 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
 
 #if defined(VISP_HAVE_COIN)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef struct
 {
   int nbPt;
@@ -165,6 +166,7 @@ typedef struct
   int nbIndex;
   std::vector<int> index;
 } indexFaceSet;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 void extractFaces(SoVRMLIndexedFaceSet*, indexFaceSet *ifs);
 void ifsToBound (Bound*, vpList<indexFaceSet*> &);
