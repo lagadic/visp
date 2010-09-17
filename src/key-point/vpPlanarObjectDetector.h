@@ -171,6 +171,14 @@ protected:
   cv::Rect cur_ROI;
   //! The ROI for the reference image. 
   cv::Rect modelROI;
+  
+  //! list of the image point in the current image that match after the deletion of the outliers with the RANSAC.
+  std::vector<vpImagePoint> currentImagePoints;
+  //! list of the image point in the reference image that match after the deletion of the outliers with the RANSAC.
+  std::vector<vpImagePoint> refImagePoints;
+  
+  //! minimal number of point to after the ransac needed to suppose that the homography has been correctly computed.
+  unsigned int minNbMatching;
 
 public:
 
@@ -224,7 +232,7 @@ public:
     Return the computed homography between the reference image and the current 
     image.
     
-    \param H : The computed homography.
+    \param _H : The computed homography.
   */
   inline void getHomography(vpHomography& _H) const { _H = this->homography;}
   
@@ -241,6 +249,49 @@ public:
     \param nb : the new minimum number of point.
   */
   inline void setNbMinPoint(const unsigned int nb) { this->nbMinPoint = nb;}
+  
+  /*!
+    Return the number of reference points
+    
+    \return Number of reference points.
+  */
+  inline unsigned int getNbRefPoints() {return currentImagePoints.size() ;}
+  
+  /*!
+    Get the i-th reference point.
+    
+    \throw vpException if _i is out if bound.
+    
+    \param _i : index of the point to get
+    \param _imPoint : image point returned by the 
+  */
+  void getReferencePoint(const unsigned int _i, vpImagePoint& _imPoint);
+
+   /*!
+     Get the nth couple of reference point and current point which have been matched. These points are copied in the vpImagePoint instances given in argument.
+
+    \param _index : The index of the desired couple of reference point and current point . The index must be between 0 and the number of matched points - 1.
+    \param _referencePoint : The coordinates of the desired reference point are copied here.
+    \param _currentPoint : The coordinates of the desired current point are copied here.
+   */  
+  void getMatchedPoints(const unsigned int _index, vpImagePoint& _referencePoint, vpImagePoint& _currentPoint);
+    
+  /*!
+    Set the threshold for the minimal number of point to validate the homography.
+    Default value is 10. 
+    
+    \param _min : the new threshold.
+  */
+  void setMinNbPointValidation(const unsigned int _min){ this->minNbMatching = _min;}
+    
+    
+  /*!
+    Get the threshold for the minimal number of point to validate the homography.
+    Default value is 10. 
+    
+    \return : the current threshold.
+  */
+  unsigned int getMinNbPointValidation() const { return this->minNbMatching;}
     
 protected:
 
@@ -252,3 +303,8 @@ protected:
 #endif
 
 #endif /* VPPLANAROBJECTDETECTOR_H_ */
+
+
+
+
+

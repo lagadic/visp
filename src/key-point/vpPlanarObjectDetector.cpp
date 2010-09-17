@@ -66,6 +66,9 @@ vpPlanarObjectDetector::vpPlanarObjectDetector()
   isCorrect = false;
   dst_corners.resize(0); 
   ref_corners.resize(0);
+  currentImagePoints.resize(0);
+  refImagePoints.resize(0);
+  minNbMatching = 10;
 }
 
 /*!
@@ -294,6 +297,25 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
   else{
     isCorrect = false;
   }
+  
+  
+  currentImagePoints.resize(0);
+  refImagePoints.resize(0);
+  for (unsigned int i = 0; i < mask.size(); i += 1){
+    if(mask[i] != 0){
+      vpImagePoint ip;
+      ip.set_i(curPts[i].y);
+      ip.set_j(curPts[i].x);
+      currentImagePoints.push_back(ip);
+      ip.set_i(refPts[i].y);
+      ip.set_j(refPts[i].x);
+      refImagePoints.push_back(ip);
+    }
+  }
+  
+  if(currentImagePoints.size() < minNbMatching){
+    isCorrect = false;
+  }
 
   return isCorrect;
 }
@@ -500,6 +522,28 @@ vpPlanarObjectDetector::initialiseRefCorners(const cv::Rect& _modelROI)
   ip.y = _modelROI.y; 
   ip.x = _modelROI.x+_modelROI.width;  
   ref_corners.push_back(ip);
+}
+
+
+void 
+vpPlanarObjectDetector::getReferencePoint(unsigned int _i, vpImagePoint& _imPoint)
+{
+  if(_i >= refImagePoints.size()){
+    throw vpException(vpException::fatalError, "index out of bound in getMatchedPoints.");
+  }
+  _imPoint = refImagePoints[_i];
+}
+
+void 
+vpPlanarObjectDetector::getMatchedPoints(const unsigned int _index, vpImagePoint& _referencePoint, vpImagePoint& _currentPoint)
+{
+//  fern.getMatchedPoints(_index, _referencePoint, _currentPoint);
+  if(_index >= currentImagePoints.size()){
+    throw vpException(vpException::fatalError, "index out of bound in getMatchedPoints.");
+  }
+
+  _referencePoint = refImagePoints[_index];
+  _currentPoint = currentImagePoints[_index];
 }
 
 #endif
