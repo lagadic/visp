@@ -185,10 +185,42 @@ ENDIF(WIN32)
 INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
 FIND_PACKAGE(COIN)
 IF (COIN_FOUND AND OPENGL_FOUND)
-  OPTION(USE_COIN_SIMULATOR    "Compile ViSP with simulation capabilities based on Coin3D suite" OFF)
+  OPTION(USE_COIN    "Compile ViSP with Coin3D" OFF)
 ELSE (COIN_FOUND AND OPENGL_FOUND)
-  SET(USE_COIN_SIMULATOR OFF)
+  SET(USE_COIN OFF)
 ENDIF (COIN_FOUND AND OPENGL_FOUND)
+
+IF(WIN32 AND USE_COIN)
+  FIND_PACKAGE(SOWIN)
+  IF (SOWIN_FOUND)
+    OPTION(USE_SOWIN    "Compile ViSP with SoWin" ON)
+  ELSE (SOWIN_FOUND)
+    SET(USE_SOWIN OFF)
+  ENDIF (SOWIN_FOUND)
+ENDIF(WIN32 AND USE_COIN)
+
+IF(USE_COIN)
+  FIND_PACKAGE(SOQT)
+  IF (SOQT_FOUND)
+    OPTION(USE_SOQT    "Compile ViSP with SoQt" ON)
+    INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake) 
+    IF (QT_FOUND)
+      OPTION(USE_QT    "Compile ViSP with Qt" ON)
+    ENDIF (QT_FOUND)
+  ELSE (SOQT_FOUND)
+    SET(USE_SOQT OFF)
+    SET(USE_QT OFF)
+  ENDIF (SOQT_FOUND)
+ENDIF(USE_COIN)
+
+IF(USE_COIN)
+  FIND_PACKAGE(SOXT)
+  IF (SOXT_FOUND)
+    OPTION(USE_SOXT    "Compile ViSP with SoXt" ONc)
+  ELSE (SOXT_FOUND)
+    SET(USE_SOXT OFF)
+  ENDIF (SOXT_FOUND)
+ENDIF(USE_COIN)
 
 FIND_PACKAGE(XML2)
 IF(XML2_FOUND)
@@ -248,10 +280,10 @@ ENDIF(FFMPEG_FOUND)
 # Set other options to default value
 SET(USE_X11        ON) # For Linux/OSX display
 #SET(USE_XML2       ON) # For the Xml Parser (vpCameraParameters)
-#SET(USE_COIN_SIMULATOR       ON) # For the simulator
-SET(USE_SOWIN      ON) # For the simulator viewer
-SET(USE_SOQT       ON) # For the simulator viewer
-SET(USE_SOXT       ON) # For the simulator viewer
+#SET(USE_COIN       ON) # For the simulator
+#SET(USE_SOWIN      ON) # For the simulator viewer
+#SET(USE_SOQT       ON) # For the simulator viewer
+#SET(USE_SOXT       ON) # For the simulator viewer
 SET(USE_PTHREAD    ON) # For Biclops/Simulator
 #SET(USE_OPENCV     ON) # For Intel opencv
 #SET(USE_GSL        ON) # For matrix manipulations
@@ -351,192 +383,140 @@ SET(VISP_HAVE_SOQT_FOUND "no")      # for ViSP-third-party.txt
 SET(VISP_HAVE_QT4_FOUND "no")       # for ViSP-third-party.txt
 SET(VISP_HAVE_QT3_FOUND "no")       # for ViSP-third-party.txt
 
-IF(USE_COIN_SIMULATOR)
-  IF(OPENGL_FOUND)
-    IF (COIN_FOUND)
-      SET(VISP_HAVE_COIN_FOUND "yes")   # for ViSP-third-party.txt
-    ENDIF (COIN_FOUND)
+IF(USE_COIN)
+  IF (COIN_FOUND)
+    SET(VISP_HAVE_COIN_FOUND "yes")   # for ViSP-third-party.txt
+    SET(VISP_HAVE_COIN TRUE)          # for header vpConfig.h
+    SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
+    IF(WIN32)
+      LIST(APPEND VISP_DEFS "-DCOIN_DLL")
+    ENDIF(WIN32)
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${COIN_INCLUDE_DIR})  
+    LIST(APPEND VISP_EXTERN_LIBS ${OPENGL_gl_LIBRARY})
 
-    IF(WIN32 AND USE_SOWIN)
-      FIND_PACKAGE(SOWIN)
-    ENDIF(WIN32 AND USE_SOWIN)
-    IF (WIN32 AND SOWIN_FOUND AND COIN_FOUND)
+    #MESSAGE("COIN_INCLUDE_DIR = ${COIN_INCLUDE_DIR}")
+    IF(UNIX)
+      #MESSAGE("COIN_LIBRARIES = ${COIN_LIBRARIES}")
+      LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARIES})
+    ELSE(UNIX)
       #MESSAGE("COIN_LIBRARY_RELEASE = ${COIN_LIBRARY_RELEASE}")
       #MESSAGE("COIN_LIBRARY_DEBUG = ${COIN_LIBRARY_DEBUG}")
-      # OPenGL and SoWin are found
-      # We first manage OpenGL
-      SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
-      LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
-      LIST(APPEND VISP_EXTERN_LIBS ${OPENGL_gl_LIBRARY})
+      IF(${COIN_LIBRARY_RELEASE})
+        LIST(APPEND VISP_EXTERN_LIBS optimized ${COIN_LIBRARY_RELEASE})
+      ENDIF()
+      IF(${COIN_LIBRARY_DEBUG})
+        LIST(APPEND VISP_EXTERN_LIBS debug ${COIN_LIBRARY_DEBUG})
+      ENDIF(${COIN_LIBRARY_DEBUG})
+    ENDIF(UNIX)
 
+    IF (USE_SOWIN AND SOWIN_FOUND)
       # We manage SoWin and Coin
       SET(VISP_HAVE_SOWIN TRUE)         # for header vpConfig.h
-      SET(VISP_HAVE_COIN TRUE)          # for header vpConfig.h
       SET(VISP_HAVE_SOWIN_FOUND "yes")  # for ViSP-third-party.txt
+      SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
       
-      LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${SOWIN_INCLUDE_DIR})
       #MESSAGE("SOWIN_INCLUDE_DIR = ${SOWIN_INCLUDE_DIR}")
+      #MESSAGE("SOWIN_LIBRARY_RELEASE = ${SOWIN_LIBRARY_RELEASE}")
+      #MESSAGE("SOWIN_LIBRARY_DEBUG = ${SOWIN_LIBRARY_DEBUG}")
+
       LIST(APPEND VISP_DEFS "-DSOWIN_DLL")
-      LIST(APPEND VISP_DEFS "-DCOIN_DLL")
-      IF(SOWIN_LIBRARY_RELEASE AND COIN_LIBRARY_RELEASE)
-	  #MESSAGE("SOWIN AND COIN RELEASE")
-	  LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${COIN_INCLUDE_DIR})  
-          LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARY_RELEASE})
+      LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${SOWIN_INCLUDE_DIR})
+      IF(SOWIN_LIBRARY_RELEASE)
           LIST(APPEND VISP_EXTERN_LIBS ${SOWIN_LIBRARY_RELEASE})
-      ELSE(SOWIN_LIBRARY_RELEASE AND COIN_LIBRARY_RELEASE)
-        IF(SOWIN_LIBRARY_DEBUG AND COIN_LIBRARY_DEBUG)
-	  #MESSAGE("SOWIN AND COIN DEBUG")
-	  LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${COIN_INCLUDE_DIR})  
-          LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARY_DEBUG})
+      ENDIF(SOWIN_LIBRARY_RELEASE)
+      IF(SOWIN_LIBRARY_DEBUG)
           LIST(APPEND VISP_EXTERN_LIBS ${SOWIN_LIBRARY_DEBUG})
-        ELSE(SOWIN_LIBRARY_DEBUG AND COIN_LIBRARY_DEBUG)
-	  #MESSAGE("SOWIN AND COIN NOT RELEASE OR DEBUG")
-          SET(VISP_HAVE_SOWIN FALSE)  # for header vpConfig.h
-          SET(VISP_HAVE_COIN FALSE)  # for header vpConfig.h
-        ENDIF(SOWIN_LIBRARY_DEBUG AND COIN_LIBRARY_DEBUG)
-      ENDIF(SOWIN_LIBRARY_RELEASE AND COIN_LIBRARY_RELEASE)
+      ENDIF(SOWIN_LIBRARY_DEBUG)
+    ENDIF(USE_SOWIN AND SOWIN_FOUND)
 
-    ENDIF(WIN32 AND SOWIN_FOUND AND COIN_FOUND)
+    IF(USE_SOQT AND SOQT_FOUND)
+      #MESSAGE("SoQt found")
 
-    IF(USE_SOQT AND NOT VISP_HAVE_COIN)
-      IF(COIN_FOUND)
-        FIND_PACKAGE(SOQT)
-        IF(SOQT_FOUND)
-	  #MESSAGE("Soqt found")
-	  SET(VISP_HAVE_SOQT_FOUND "yes")      # for ViSP-third-party.txt
-          INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake)    
-          IF (QT_FOUND)
-	    #MESSAGE("Qt found")
-	    # OpenGL, QT and SOQT are found
-	    # We first manage OpenGL
-            SET(VISP_HAVE_COIN   TRUE) # for header vpConfig.h
-	    SET(VISP_HAVE_SOQT   TRUE) # for header vpConfig.h 
-	    SET(VISP_HAVE_QT     TRUE) # for header vpConfig.h
-	    SET(VISP_HAVE_OPENGL TRUE) # for header vpConfig.h
+      IF (USE_QT AND QT_FOUND)
+	#MESSAGE("Qt found")
+	# OpenGL, QT and SOQT are found
+	# We first manage OpenGL
+	SET(VISP_HAVE_SOQT   TRUE) # for header vpConfig.h 
+	SET(VISP_HAVE_SOQT_FOUND "yes")      # for ViSP-third-party.txt
+	SET(VISP_HAVE_QT     TRUE) # for header vpConfig.h
+      	SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
 
-	    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${SOQT_INCLUDE_DIR})
-	    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${QT_INCLUDE_DIR})
-	    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${QT_INCLUDES})
-	    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
+        #MESSAGE(STATUS "SOQT_INCLUDE_DIR = ${SOQT_INCLUDE_DIR}")
+	LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${SOQT_INCLUDE_DIR})
+	LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${QT_INCLUDE_DIR})
+        LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${QT_INCLUDES})
 
-	    # Add first Coin and SoQt libraries
-	    IF(WIN32)
-	      #MESSAGE(STATUS "SOQT_INCLUDE_DIR = ${SOQT_INCLUDE_DIR}")
-	      LIST(APPEND VISP_DEFS "-DSOQT_DLL")
-	      LIST(APPEND VISP_DEFS "-DCOIN_DLL")
-	      IF(SOQT_LIBRARY_RELEASE)
-	        IF(COIN_LIBRARY_RELEASE)
-	          LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARY_RELEASE})
-	          LIST(APPEND VISP_EXTERN_LIBS ${SOQT_LIBRARY_RELEASE})
-	        ENDIF(COIN_LIBRARY_RELEASE)
-	      ELSE(SOQT_LIBRARY_RELEASE)
-	        IF(COIN_LIBRARY_DEBUG)
-	          LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARY_DEBUG})
-	          LIST(APPEND VISP_EXTERN_LIBS ${SOQT_LIBRARY_DEBUG})
-	        ELSE(COIN_LIBRARY_DEBUG)
-	          SET(VISP_HAVE_SOQT FALSE)  # for header vpConfig.h
-                  SET(VISP_HAVE_COIN FALSE)  # for header vpConfig.h
-	        ENDIF(COIN_LIBRARY_DEBUG)
-	      ENDIF(SOQT_LIBRARY_RELEASE)
-	    ELSE(WIN32)
-	      LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARIES})
-	      LIST(APPEND VISP_EXTERN_LIBS ${SOQT_LIBRARIES})
-	      #MESSAGE("COIN_LIBRARIES = ${COIN_LIBRARIES}")
-	      #MESSAGE("SOQT_LIBRARIES = ${SOQT_LIBRARIES}")
-	    ENDIF(WIN32)
+	# Add SoQt libraries
+	IF(WIN32)
+	  #MESSAGE("SOQT_LIBRARY_RELEASE = ${SOQT_LIBRARY_RELEASE}")
+	  #MESSAGE("SOQT_LIBRARY_DEBUG = ${SOQT_LIBRARY_DEBUG}")
+	  LIST(APPEND VISP_DEFS "-DSOQT_DLL")
+	  IF(SOQT_LIBRARY_RELEASE)
+	    LIST(APPEND VISP_EXTERN_LIBS optimized ${SOQT_LIBRARY_RELEASE})
+	  ENDIF()
+	  IF(SOQT_LIBRARY_DEBUG)
+	    LIST(APPEND VISP_EXTERN_LIBS optimized ${SOQT_LIBRARY_DEBUG})
+	  ENDIF()
+	ELSE(WIN32)
+	  #MESSAGE("SOQT_LIBRARIES = ${SOQT_LIBRARIES}")
+	  LIST(APPEND VISP_EXTERN_LIBS ${SOQT_LIBRARIES})
+	ENDIF(WIN32)
 
-	    # We manage QT libraries
-	    IF (DESIRED_QT_VERSION MATCHES 3)
-	      #Add Qt3 libraries
-	      SET(VISP_HAVE_QT3_FOUND "yes")       # for ViSP-third-party.txt
-	      #MESSAGE("QT_QT_LIBRARY ${QT_QT_LIBRARY}")
-	      LIST(APPEND VISP_EXTERN_LIBS ${QT_QT_LIBRARY})
-	    ELSEIF(DESIRED_QT_VERSION MATCHES 4)
-	      #Add Qt4 libraries
-	      SET(VISP_HAVE_QT4_FOUND "yes")       # for ViSP-third-party.txt
-	      #MESSAGE("QT_QTGUI_LIBRARY ${QT_QTGUI_LIBRARY}")
-	      #MESSAGE("QT_QTGUI_LIBRARY_RELEASE ${QT_QTGUI_LIBRARY_RELEASE}")
-	      #MESSAGE("QT_QTGUI_LIBRARY_DEBUG ${QT_QTGUI_LIBRARY_DEBUG}")
-	      IF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
-	        LIST(APPEND VISP_EXTERN_LIBS ${QT_QTGUI_LIBRARY_RELEASE})
-		LIST(APPEND VISP_EXTERN_LIBS ${QT_QTCORE_LIBRARY_RELEASE})
-	      ELSEIF (QT_QTGUI_LIBRARY_DEBUG AND QT_QTCORE_LIBRARY_DEBUG)
-	        LIST(APPEND VISP_EXTERN_LIBS ${QT_QTGUI_LIBRARY_DEBUG})
-		LIST(APPEND VISP_EXTERN ${QT_QTCORE_LIBRARY_DEBUG})
-	      ELSE (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
-	        SET(VISP_HAVE_QT FALSE)
-	      ENDIF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
-	    ENDIF (DESIRED_QT_VERSION MATCHES 3)
+	# We manage QT libraries
+	IF (DESIRED_QT_VERSION MATCHES 3)
+	  #Add Qt3 libraries
+	  SET(VISP_HAVE_QT3_FOUND "yes")       # for ViSP-third-party.txt
+	  #MESSAGE("QT_QT_LIBRARY ${QT_QT_LIBRARY}")
+	  LIST(APPEND VISP_EXTERN_LIBS ${QT_QT_LIBRARY})
+	ELSEIF(DESIRED_QT_VERSION MATCHES 4)
+	  #Add Qt4 libraries
+	  SET(VISP_HAVE_QT4_FOUND "yes")       # for ViSP-third-party.txt
+	  #MESSAGE("QT_QTGUI_LIBRARY ${QT_QTGUI_LIBRARY}")
+	  #MESSAGE("QT_QTGUI_LIBRARY_RELEASE ${QT_QTGUI_LIBRARY_RELEASE}")
+	  #MESSAGE("QT_QTGUI_LIBRARY_DEBUG ${QT_QTGUI_LIBRARY_DEBUG}")
+	  IF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
+	    LIST(APPEND VISP_EXTERN_LIBS optimized ${QT_QTGUI_LIBRARY_RELEASE})
+            LIST(APPEND VISP_EXTERN_LIBS optimized ${QT_QTCORE_LIBRARY_RELEASE})
+	  ENDIF()
+	  IF (QT_QTGUI_LIBRARY_DEBUG AND QT_QTCORE_LIBRARY_DEBUG)
+	    LIST(APPEND VISP_EXTERN_LIBS debug ${QT_QTGUI_LIBRARY_DEBUG})
+            LIST(APPEND VISP_EXTERN_LIBS debug ${QT_QTCORE_LIBRARY_DEBUG})
+	  ENDIF()
+	ENDIF (DESIRED_QT_VERSION MATCHES 3)
 
-	    # Because in QT_DEFINITIONS defs are separated by ";", parse the
-	    # QT_DEFINITIONS in order to build a space separated string
-	    #SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
-	    # in third party projects which use visp-config shell script 
-	    # (due to ";" # separate char)
-	    FOREACH(DEF ${QT_DEFINITIONS})
-	      #MESSAGE("DEF: ${DEF}")
-	      LIST(APPEND VISP_DEFS ${DEF})
-	    ENDFOREACH(DEF)
+	# Because in QT_DEFINITIONS defs are separated by ";", parse the
+	# QT_DEFINITIONS in order to build a space separated string
+	#SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
+	# in third party projects which use visp-config shell script 
+	# (due to ";" # separate char)
+	FOREACH(DEF ${QT_DEFINITIONS})
+	  #MESSAGE("DEF: ${DEF}")
+	  LIST(APPEND VISP_DEFS ${DEF})
+	ENDFOREACH(DEF)
 					  
-	    LIST(APPEND VISP_DEFS "-DQT_DLL")
-
-	    # We add now OpenGL librairies
-	    LIST(APPEND VISP_EXTERN_LIBS ${OPENGL_gl_LIBRARY})
-
-          ENDIF (QT_FOUND)
-        ENDIF(SOQT_FOUND)
-      ENDIF(COIN_FOUND)
-    ENDIF(USE_SOQT AND NOT VISP_HAVE_COIN)
-  
-    #MESSAGE(STATUS "QT_LIBRARIES no found")
-    IF(USE_SOXT AND NOT VISP_HAVE_COIN)
-      FIND_PACKAGE(SOXT)
-    ENDIF(USE_SOXT AND NOT VISP_HAVE_COIN)
-
-    IF (UNIX AND SOXT_FOUND AND COIN_FOUND)
+	LIST(APPEND VISP_DEFS "-DQT_DLL")
+      ENDIF (USE_QT AND QT_FOUND)
+    ENDIF(USE_SOQT AND SOQT_FOUND)
+        
+    IF (USE_SOXT AND SOXT_FOUND)
       # OPenGL and SoXt are found
       # We first manage OpenGL
+      SET(VISP_HAVE_SOXT TRUE)  # for header vpConfig.h    
+      SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
       SET(VISP_HAVE_SOXT_FOUND "yes")       # for ViSP-third-party.txt
-      SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
-      LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
-
-      LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARIES})
       LIST(APPEND VISP_EXTERN_LIBS ${SOXT_LIBRARIES})
-      LIST(APPEND VISP_EXTERN_LIBS ${OPENGL_gl_LIBRARY})
-      
-      # We manage SoXt and Coin
-      SET(VISP_HAVE_SOXT TRUE)  # for header vpConfig.h
-      SET(VISP_HAVE_COIN TRUE)  # for header vpConfig.h
-      
-    ENDIF(UNIX AND SOXT_FOUND AND COIN_FOUND)
-    IF(VISP_HAVE_COIN)
-      MESSAGE(STATUS "Coin found")
-      SET(VISP_HAVE_SIMULATOR_FOUND "yes")  # for ViSP-third-party.txt
-    ELSE(VISP_HAVE_COIN)
-      MESSAGE(STATUS "Coin not found")
-      SET(VISP_HAVE_SIMULATOR_FOUND "no")  # for ViSP-third-party.txt
-      IF (WIN32)
-        MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Go to the ViSP website to check which libraries are required.\n
-                COIN_FOUND=${COIN_FOUND}\n
-                SOWIN_FOUND=${SOWIN_FOUND}\n
-                SOQT_FOUND=${SOQT_FOUND}")
-        MESSAGE("If you don't want to use the simulator, turn off USE_COIN_SIMULATOR option")
-      ELSE (WIN32)
-        IF (NOT DESIRED_QT_VERSION MATCHES 0)
-          # If QT version not set by the user, we don't print the following 
-	  # message
-          MESSAGE("Simulation capabilities based on Coin3D suite requested but not found. Go to the ViSP website to check which libraries are required.\n
-                COIN_FOUND=${COIN_FOUND}\n
-                SOQT_FOUND=${SOQT_FOUND}\n
-                SOXT_FOUND=${SOXT_FOUND}")
-          MESSAGE("If you don't want to use the simulator, turn off USE_COIN_SIMULATOR option")
-        ENDIF (NOT DESIRED_QT_VERSION MATCHES 0)
-      ENDIF (WIN32)
-    ENDIF(VISP_HAVE_COIN)
-  ELSE(OPENGL_FOUND)
-    #MESSAGE(STATUS "OPENGL_LIBRARIES no found")
-  ENDIF(OPENGL_FOUND)
-ENDIF(USE_COIN_SIMULATOR)
+    ENDIF(USE_SOXT AND SOXT_FOUND)
+
+    IF(VISP_HAVE_COIN_AND_GUI)
+      SET(VISP_HAVE_COIN_AND_GUI_FOUND "yes")  # for ViSP-third-party.txt
+      MESSAGE(STATUS "Coin3D + GUI found")
+    ELSE(VISP_HAVE_COIN_AND_GUI)
+      MESSAGE(STATUS "Coin3D + GUI not found")
+      SET(VISP_HAVE_COIN_AND_GUI_FOUND "no")  # for ViSP-third-party.txt
+    ENDIF(VISP_HAVE_COIN_AND_GUI)
+  ENDIF (COIN_FOUND)
+ENDIF(USE_COIN)
 
 #---------------------------------------------------------------------
 # XML2
@@ -621,6 +601,10 @@ IF(USE_OPENCV)
     MESSAGE(STATUS "OpenCV not found")
     SET(VISP_HAVE_OPENCV_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(OpenCV_FOUND)
+ELSE(USE_OPENCV)
+  SET(OpenCV_VERSION_MAJOR 0)
+  SET(OpenCV_VERSION_MINOR 0)
+  SET(OpenCV_VERSION_PATCH 0)   
 ENDIF(USE_OPENCV)
 
 

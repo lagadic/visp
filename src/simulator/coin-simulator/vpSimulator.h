@@ -46,10 +46,13 @@
   \file vpSimulator.h
   \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
   The simulator uses the vpViewer class.
+
+  \warning The content of this file is only available if Coin3D and
+  one of the GUI (SoWin, SoXT, SoQt) are installed.
 */
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN_AND_GUI
 
 #include <visp/vpViewer.h>
 
@@ -73,20 +76,7 @@
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/fields/SoSFTime.h>
-
 #include <Inventor/threads/SbThread.h>
-// open GL
-/*
-#if defined(VISP_HAVE_SOWIN)
-  #include <GL/gl.h>
-#elif defined(VISP_HAVE_SOQT)
-  #include <qgl.h>
-#elif defined(VISP_HAVE_SOXT)
-  #include <GL/gl.h>
-#endif
-*/
-// thread
-//#include <pthread.h>
 
 // visp
 #include <visp/vpDebug.h>
@@ -104,6 +94,9 @@
   \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
 
   The simulator uses the vpViewer class.
+
+  \warning This class is only available if Coin3D and one of the GUI
+  (SoWin, SoXT, SoQt) are installed.
 */
 
 class VISP_EXPORT vpSimulator
