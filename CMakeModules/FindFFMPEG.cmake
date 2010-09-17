@@ -170,24 +170,29 @@
   # avcodec_decode_video() is deprecated. To do that we try to compile 
   # a sample code
   IF(FFMPEG_INCLUDE_DIR AND FFMPEG_INCLUDE_DIR_AVCODEC AND FFMPEG_AVCODEC_LIBRARY AND FFMPEG_AVUTIL_LIBRARY AND ZLIB_FOUND)
-    include(CheckCSourceCompiles)
+  INCLUDE (CheckCXXSourceCompiles)
 
     #MESSAGE("zlib ${ZLIB_LIBRARY}")
     SET(CMAKE_REQUIRED_LIBRARIES ${FFMPEG_AVCODEC_LIBRARY} ${FFMPEG_AVUTIL_LIBRARY} ${ZLIB_LIBRARY})
     SET(CMAKE_REQUIRED_INCLUDES ${FFMPEG_INCLUDE_DIR} ${FFMPEG_INCLUDE_DIR_AVCODEC})
-    CHECK_C_SOURCE_COMPILES("
-      #include <avcodec.h>
+    SET(CMAKE_REQUIRED_DEFINITIONS "-D__STDC_CONSTANT_MACROS")
+    CHECK_CXX_SOURCE_COMPILES("
+  #define __STDC_CONSTANT_MACROS
+  extern \"C\"
+  {
+  #include <avcodec.h>
+  }
 
-      int main(){
-        AVCodecContext *avctx;
-	AVFrame *picture;
-	int *got_picture_ptr;
-	AVPacket *avpkt;
-	avcodec_decode_video2(avctx, picture, got_picture_ptr, avpkt);
-        return 0;
-      }
-      " FFMPEG_WITH_DECODE_VIDEO2_FOUND) 
-    #MESSAGE("FFMPEG_WITH_DECODE_VIDEO2_FOUND: ${FFMPEG_WITH_DECODE_VIDEO2_FOUND}")
+  int main(){
+  AVCodecContext *avctx;
+  AVFrame *picture;
+  int *got_picture_ptr;
+  AVPacket *avpkt;
+  avcodec_decode_video2(avctx, picture, got_picture_ptr, avpkt);
+  return 0;
+  }" FFMPEG_WITH_DECODE_VIDEO2_FOUND) 
+
+  #MESSAGE("FFMPEG_WITH_DECODE_VIDEO2_FOUND: ${FFMPEG_WITH_DECODE_VIDEO2_FOUND}")
 
   ELSE(FFMPEG_INCLUDE_DIR AND FFMPEG_INCLUDE_DIR_AVCODEC AND FFMPEG_AVCODEC_LIBRARY AND FFMPEG_AVUTIL_LIBRARY AND ZLIB_FOUND)
     SET(FFMPEG_WITH_DECODE_VIDEO2_FOUND FALSE)
