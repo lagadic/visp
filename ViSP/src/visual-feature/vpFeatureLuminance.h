@@ -41,6 +41,8 @@
 
 #ifndef vpFeatureLuminance_h
 #define vpFeatureLuminance_h
+
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpImage.h>
@@ -66,7 +68,7 @@
 */
 
 
-class  vpLuminance
+class VISP_EXPORT vpLuminance
 {
  public:
   double x, y;   // point coordinates (in meter)
@@ -88,7 +90,7 @@ class  vpLuminance
   Mai 2008.
 */
 
-class vpFeatureLuminance : public vpBasicFeature
+class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature
 {
  protected:
   //! FeaturePoint depth (required to compute the interaction matrix)

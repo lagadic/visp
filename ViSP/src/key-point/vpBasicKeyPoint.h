@@ -57,6 +57,16 @@
 
 #include <vector>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+// For template instantiation with Visual Studio
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+template class VISP_EXPORT std::allocator<vpImagePoint>;
+template class VISP_EXPORT std::vector<vpImagePoint>;
+template class VISP_EXPORT std::allocator<int>;
+template class VISP_EXPORT std::vector<int>;
+#endif
+
 /*!
   \class vpBasicKeyPoint
 
