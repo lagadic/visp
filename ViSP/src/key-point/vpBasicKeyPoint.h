@@ -57,8 +57,6 @@
 
 #include <vector>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 // For template instantiation with Visual Studio
 #if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
 template class VISP_EXPORT std::allocator<vpImagePoint>;
