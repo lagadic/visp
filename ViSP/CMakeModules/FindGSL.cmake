@@ -53,22 +53,30 @@
 IF(WIN32)
  FIND_LIBRARY(GSL_gsl_LIBRARY
      NAMES gsl
-     PATHS "$ENV{GSL_HOME}/lib"
+     PATHS 
+     "$ENV{GSL_HOME}/lib"
+     "$ENV{GSL_DIR}/lib"
      DOC "Where can the GSL (gsl.lib) library be found"
      )
  FIND_LIBRARY(GSL_cblas_LIBRARY
      NAMES cblas
-     PATHS "$ENV{GSL_HOME}/lib"
+     PATHS 
+     "$ENV{GSL_HOME}/lib"
+     "$ENV{GSL_DIR}/lib"
      DOC "Where can the GSL (cblas.lib) library be found"
       )
  FIND_LIBRARY(GSL_gsl_LIBRARY_DEBUG
      NAMES gsl_d
-     PATHS "$ENV{GSL_HOME}/lib"
+     PATHS 
+     "$ENV{GSL_HOME}/lib"
+     "$ENV{GSL_DIR}/lib"
      DOC "Where can the GSL (gsl.lib) library be found"
      )
  FIND_LIBRARY(GSL_cblas_LIBRARY_DEBUG
      NAMES cblas_d
-     PATHS "$ENV{GSL_HOME}/lib"
+     PATHS 
+     "$ENV{GSL_HOME}/lib"
+     "$ENV{GSL_DIR}/lib"
      DOC "Where can the GSL (cblas.lib) library be found"
       )
   SET(GSL_LIBRARIES "optimized" ${GSL_cblas_LIBRARY}
@@ -78,6 +86,7 @@ IF(WIN32)
 
   FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_linalg.h
       $ENV{GSL_HOME}/include
+      $ENV{GSL_DIR}/include
       )
 
   IF(GSL_INCLUDE_DIR AND GSL_gsl_LIBRARY AND GSL_cblas_LIBRARY
@@ -102,6 +111,7 @@ ELSE(WIN32)
   IF(UNIX) 
     FIND_PROGRAM(GSL_CONFIG gsl-config
       $ENV{GSL_HOME}/bin
+      $ENV{GSL_DIR}/bin
       /usr/bin
       /usr/local/bin
       )
