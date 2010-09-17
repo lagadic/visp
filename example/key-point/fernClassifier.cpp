@@ -354,7 +354,7 @@ main(int argc, const char** argv)
   
     vpRect roi(corners[0], corners[1]);
   
-    std::cout << "> train the classifier on the selected plane." << std::endl;
+    std::cout << "> train the classifier on the selected plane. (may take up to several minutes)." << std::endl;
     if(opt_display) {
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
@@ -397,7 +397,7 @@ main(int argc, const char** argv)
   
   
   if(opt_display){
-    display.init(I, 100, 100, "Test vpFernClassifier current image") ;
+    display.init(I, 110 + Iref.getWidth(), 100, "Test vpFernClassifier current image") ;
     vpDisplay::display(I);
     vpDisplay::flush(I);
   }
