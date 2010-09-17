@@ -44,7 +44,13 @@
 
 /*!
   \file vpAR.h
-  \brief class used to display an image behind the internal view of the simulator. Used for augmented reality applications.
+
+  \brief Class used to display an image behind the internal view of
+  the simulator. Used for augmented reality applications.
+
+  \warning The content of this file is only available if Coin3D and
+  one of the GUI (SoWin, SoXT, SoQt) are installed.
+
 */
 
 
@@ -53,7 +59,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN_AND_GUI
 
 // visp
 #include <visp/vpDebug.h>
@@ -76,6 +82,9 @@
 
   This class can be used to display an image behind the internal view
   of the simulator used for augmented reality application.
+  
+  \warning This class is only available if Coin3D and one of the GUI
+  (SoWin, SoXT, SoQt) are installed.
 
   The code below shows how to use the class.
 
@@ -86,6 +95,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpHomogeneousMatrix.h>
 
+#ifdef VISP_HAVE_COIN_AND_GUI
 static void *mainloopfunction(void *_simu)
 {
   vpAR *simu = (vpAR *)_simu ;
@@ -103,9 +113,11 @@ static void *mainloopfunction(void *_simu)
 
   simu->closeMainApplication();
 }
+#endif
 
 int main()
 {
+#ifdef VISP_HAVE_COIN_AND_GUI
   vpAR simu;
   //Camera parameters.
   vpCameraParameters cam(600,600,160,120);
@@ -124,7 +136,7 @@ int main()
   simu.initApplication(&mainloopfunction);
 
   simu.mainLoop();
-
+#endif
   return 0;
 }
   \endcode

@@ -44,13 +44,19 @@
 #define vpViewer_HH
 /*!
   \file vpViewer.h
-  Viewer used by the simulator. Under Windows, the viewer is
-  based either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or SoXt.
+  
+  Viewer used by the simulator. Under Windows, the viewer is based
+  either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or
+  SoXt.
+
+  \warning The content of this file is only available if Coin3D and
+  one of the GUI (SoWin, SoXT, SoQt) are installed.
+
 */
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN_AND_GUI
 
 #if defined(VISP_HAVE_SOWIN)
 
@@ -81,9 +87,6 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/sensors/SoTimerSensor.h>
-// open GL
-//#include <GL/gl.h>
-//#include <QtOpenGL/qgl.h>
 
 #if defined(VISP_HAVE_SOWIN)
 #include <GL/gl.h>
@@ -92,8 +95,6 @@
 #elif defined(VISP_HAVE_SOXT)
 #include <GL/gl.h>
 #endif
-// thread
-//#include <pthread.h>
 
 // visp
 #include <visp/vpDebug.h>
@@ -106,7 +107,11 @@
   \brief Viewer used by the simulator.
 
   Under Windows, the viewer is based either on SoWin or SoQt. Under
-  Unix, the viewer is based on SoQt or SoXt .
+  Unix, the viewer is based on SoQt or SoXt.
+
+  \warning This class is only available if Coin3D and one of the GUI
+  (SoWin, SoXT, SoQt) are installed.
+  
 */
 
 class vpSimulator;
@@ -159,6 +164,6 @@ private:
 #endif
 };
 
-#endif //VISP_HAVE_COIN
+#endif //VISP_HAVE_COIN_AND_GUI
 
 #endif

@@ -46,7 +46,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN_AND_GUI
 #include <visp/vpViewer.h>
 #include <visp/vpSimulator.h>
 

@@ -1265,6 +1265,7 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_GSL \
                          VISP_HAVE_OPENCV \
                          VISP_HAVE_OPENCV_VERSION=0x111111 \
+                         VISP_HAVE_COIN_AND_GUI \
                          VISP_HAVE_COIN \
                          VISP_HAVE_QT \
                          VISP_HAVE_SOQT \

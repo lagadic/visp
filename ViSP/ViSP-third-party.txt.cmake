@@ -6,8 +6,8 @@ build ViSP on your computer.
 Mathematics:
   Gnu Scientific Library    : ${VISP_HAVE_GSL_FOUND}
 Simulator:
-  Coin simulator            : ${VISP_HAVE_SIMULATOR_FOUND}
-  \- Coin                   : ${VISP_HAVE_COIN_FOUND}
+  Coin simulator            : ${VISP_HAVE_COIN_AND_GUI_FOUND}
+  \- Coin3D                 : ${VISP_HAVE_COIN_FOUND}
   \- SoWin                  : ${VISP_HAVE_SOWIN_FOUND}
   \- SoXt                   : ${VISP_HAVE_SOXT_FOUND}
   \- SoQt                   : ${VISP_HAVE_SOQT_FOUND}

@@ -75,7 +75,7 @@
 // Defined if OpenCV available.
 #cmakedefine VISP_HAVE_OPENCV
 
-// OpenCV version in hexadecimal (for example 1.1.0 gives 0x010101).
+// OpenCV version in hexadecimal (for example 2.1.0 gives 0x020100).
 #ifdef VISP_HAVE_OPENCV
 #  define VISP_HAVE_OPENCV_VERSION (${OpenCV_VERSION_MAJOR}*65536 + ${OpenCV_VERSION_MINOR}*256 + ${OpenCV_VERSION_PATCH})
 #endif
@@ -98,7 +98,11 @@
 // Defined the path to the robot's arms 3D model used by the robot simulators
 #cmakedefine VISP_ROBOT_ARMS_DIR "${VISP_ROBOT_ARMS_DIR}"
 
-// Defined if Coin library available.
+// Defined if Coin3D and one of the GUI (SoXt, SoWin, SoQt + Qt) 
+// libraries are available.
+#cmakedefine VISP_HAVE_COIN_AND_GUI
+
+// Defined if Coin3D library available.
 #cmakedefine VISP_HAVE_COIN
 
 // Defined if OpenGL library available.
