@@ -45,6 +45,7 @@
 SET (SRC_SUBDIRS
   calibration
   coin-simulator
+  direct-visual-servoing
   framegrabber
   histogram
   homography
