@@ -58,6 +58,8 @@ FOREACH(source ${SOURCE})
 
 ENDFOREACH(source)
 
+ADD_TEST(photometricVisualServoing photometricVisualServoing -d -c)
+
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
