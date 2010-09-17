@@ -78,8 +78,8 @@ vpPlot::vpPlot(const int graphNbr, const int height, const int width)
   margei = 30;
   margej = 40;
   
-  factori = (float)height/700.0;
-  factorj = (float)width/700.0;
+  factori = height/700.0f;
+  factorj = width/700.0f;
     
   init(graphNbr);
 }
