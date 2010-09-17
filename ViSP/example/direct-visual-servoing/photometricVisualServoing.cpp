@@ -87,7 +87,7 @@ using namespace std ;
 
 
 int
-main(int argc, char *argv[])
+main()
 {
   
 
@@ -308,7 +308,7 @@ main(int argc, char *argv[])
       cout << "|e| "<<normeError <<endl ;
       
      
-      double t = vpTime::measureTimeMs() ;
+     // double t = vpTime::measureTimeMs() ;
 
 
       // ---------- Methode Levenberg Marquardt --------------
