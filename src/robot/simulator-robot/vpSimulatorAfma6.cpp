@@ -2306,3 +2306,77 @@ vpSimulatorAfma6::initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo)
   get_fMi(fMit);
   fMo = fMit[7] * cMo;
 }
+
+/*!
+  This method enable to move the robot with respect to the initialized object.
+  The robot trajectory is a straight line from the current position to the one corresponding to the desired pose (3D visual servoing).
+
+  \param cdMo : the desired pose of the camera wrt. the object
+  \param Iint : pointer to the image where the internal view is displayed
+*/
+void
+vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint)
+{
+	// get rid of max velocity
+	double vMax = getMaxTranslationVelocity();
+	double wMax = getMaxRotationVelocity();
+	setMaxTranslationVelocity(10.*vMax);
+	setMaxRotationVelocity(10.*wMax);
+
+	vpColVector v(3),w(3),vel(6);
+	vpHomogeneousMatrix cdMc;
+	vpTranslationVector cdTc;vpRotationMatrix cdRc;vpThetaUVector cdTUc;
+	vpColVector err(6);err=1.;
+	const double lambda = 2.;
+	const double errMax = 0.00001;
+	double t;
+
+	vpVelocityTwistMatrix cVe;
+	vpMatrix eJe;
+
+	int i,iter=0;
+	while((iter++<300) & (err.euclideanNorm()>errMax))
+		{
+		t = vpTime::measureTimeMs();
+
+		// update image
+		if(Iint != NULL)
+		{
+			vpDisplay::display(*Iint);
+			getInternalView(*Iint);
+			vpDisplay::flush(*Iint);
+		}
+
+		// update pose error
+		cdMc = cdMo*get_cMo().inverse();
+		cdMc.extract(cdRc);
+		cdMc.extract(cdTc);
+		cdTUc.buildFrom(cdRc);
+
+		// compute v,w and velocity
+		v = -lambda*cdRc.t()*cdTc;
+		w = -lambda*cdTUc;
+		for(i=0;i<3;++i)
+		{
+			vel[i] = v[i];
+			vel[i+3] = w[i];
+			err[i] = cdTc[i];
+			err[i+3] = cdTUc[i];
+		}
+
+		// update feat
+		setVelocity(vpRobot::CAMERA_FRAME,vel);
+
+		// wait for it
+		vpTime::wait(t,10);
+		}
+	vel=0.;
+	set_velocity(vel);
+	set_artVel(vel);
+	setMaxTranslationVelocity(vMax);
+	setMaxRotationVelocity(wMax);
+
+	std::cout << "setPosition: final error " << err.t() << std::endl;
+	if(err.euclideanNorm()> errMax)
+		vpTRACE("setPosition: position not reached");
+}
