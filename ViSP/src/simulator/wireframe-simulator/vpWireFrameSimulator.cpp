@@ -315,9 +315,9 @@ void ifsToBound (Bound* bptr, vpList<indexFaceSet*> &ifs_list)
     indexFaceSet* ifs = ifs_list.value();
     for (int j = 0; j < ifs->nbPt; j++)
     {
-      bptr->point.ptr[iter].x = ifs->pt[j].get_oX();
-      bptr->point.ptr[iter].y = ifs->pt[j].get_oY();
-      bptr->point.ptr[iter].z = ifs->pt[j].get_oZ();
+      bptr->point.ptr[iter].x = (float)ifs->pt[j].get_oX();
+      bptr->point.ptr[iter].y = (float)ifs->pt[j].get_oY();
+      bptr->point.ptr[iter].z = (float)ifs->pt[j].get_oZ();
       iter++;
     }
     ifs_list.next();
