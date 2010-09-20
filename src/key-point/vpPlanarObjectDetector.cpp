@@ -229,8 +229,8 @@ vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
   
   modelROI.x = (int)iP.get_u();
   modelROI.y = (int)iP.get_v();
-  modelROI.width = _rectangle.getWidth();
-  modelROI.height = _rectangle.getHeight(); 
+  modelROI.width = (int)_rectangle.getWidth();
+  modelROI.height = (int)_rectangle.getHeight(); 
 
   initialiseRefCorners(modelROI);  
   
@@ -510,17 +510,17 @@ void
 vpPlanarObjectDetector::initialiseRefCorners(const cv::Rect& _modelROI)
 {
   cv::Point2f ip;
-  ip.y = _modelROI.y; 
-  ip.x = _modelROI.x;
+  ip.y = (float)_modelROI.y; 
+  ip.x = (float)_modelROI.x;
   ref_corners.push_back(ip);
-  ip.y = _modelROI.y+_modelROI.height; 
-  ip.x = _modelROI.x;  
+  ip.y = (float)(_modelROI.y+_modelROI.height); 
+  ip.x = (float)_modelROI.x;  
   ref_corners.push_back(ip);
-  ip.y = _modelROI.y+_modelROI.height; 
-  ip.x = _modelROI.x+_modelROI.width;  
+  ip.y = (float)(_modelROI.y+_modelROI.height); 
+  ip.x = (float)(_modelROI.x+_modelROI.width);  
   ref_corners.push_back(ip);  
-  ip.y = _modelROI.y; 
-  ip.x = _modelROI.x+_modelROI.width;  
+  ip.y = (float)_modelROI.y; 
+  ip.x = (float)(_modelROI.x+_modelROI.width);  
   ref_corners.push_back(ip);
 }
 

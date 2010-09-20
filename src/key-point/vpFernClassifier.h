@@ -43,10 +43,11 @@
 #ifndef vpFernClassifier_H
 #define vpFernClassifier_H
 
+#include <string>
+
 #include <visp/vpConfig.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
-
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #  include <opencv2/imgproc/imgproc.hpp>
 #  include <opencv2/features2d/features2d.hpp>
@@ -57,7 +58,16 @@
 
 #include <visp/vpBasicKeyPoint.h>
 
-#include <string>
+// For template instantiation with Visual Studio
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+#  ifdef VISP_HAVE_OPENCV
+template class VISP_EXPORT std::allocator<cv::KeyPoint>;
+template class VISP_EXPORT std::vector<cv::KeyPoint>;
+template class VISP_EXPORT std::allocator<cv::Point2f>;
+template class VISP_EXPORT std::vector<cv::Point2f>;
+#  endif
+#endif
+
 
 /*!
   \class vpFernClassifier
