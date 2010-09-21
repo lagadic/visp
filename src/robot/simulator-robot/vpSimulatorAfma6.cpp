@@ -2328,7 +2328,7 @@ vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned 
 	vpTranslationVector cdTc;vpRotationMatrix cdRc;vpThetaUVector cdTUc;
 	vpColVector err(6);err=1.;
 	const double lambda = 2.;
-	const double errMax = 0.00001;
+	const double errMax = 0.001;
 	double t;
 
 	vpVelocityTwistMatrix cVe;
