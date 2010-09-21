@@ -56,21 +56,6 @@
 */
 vpFernClassifier::vpFernClassifier():vpBasicKeyPoint(), gen(0, 256, 5, true, 0.6, 1.5, -CV_PI/2, CV_PI/2, -CV_PI/2, CV_PI/2)
 {
-  nbClassfier = 100;
-  ClassifierSize = 11;
-  nbPoints = 200;
-  curIplImg = NULL;
-  blurImage = true;
-  radiusBlur = 7;
-  sigmaBlur = 1;
-  patchSize = 32;
-  radius = 7;
-  threshold = 20;
-  nbOctave = 2;
-  nbView = 2000;
-  dist = 2;  
-  nbMinPoint = 10;
-  
   init();
 }
 
@@ -86,7 +71,7 @@ vpFernClassifier::vpFernClassifier():vpBasicKeyPoint(), gen(0, 256, 5, true, 0.6
 */
 vpFernClassifier::vpFernClassifier(const std::string& _dataFile, const std::string& _objectName)
 {
-  vpFernClassifier::vpFernClassifier();
+  init();
   this->load(_dataFile, _objectName);
 }
 
@@ -112,6 +97,20 @@ void
 vpFernClassifier::init()
 {
   hasLearn = false; 
+  nbClassfier = 100;
+  ClassifierSize = 11;
+  nbPoints = 200;
+  curIplImg = NULL;
+  blurImage = true;
+  radiusBlur = 7;
+  sigmaBlur = 1;
+  patchSize = 32;
+  radius = 7;
+  threshold = 20;
+  nbOctave = 2;
+  nbView = 2000;
+  dist = 2;  
+  nbMinPoint = 10;
 }
 
 
