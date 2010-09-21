@@ -46,7 +46,7 @@
   Robotics and Automation, ICRA'08, Pages 81-86, Pasadena, Californie,
   Mai 2008.
 */
-
+#include <stdlib.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
@@ -279,6 +279,8 @@ main(int argc, const char ** argv)
   #elif defined VISP_HAVE_GTK
   vpDisplayGTK d;
   #endif
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
   if (opt_display) {
     d.init(I, 20, 10, "Photometric visual servoing : s") ;
     vpDisplay::display(I);
@@ -287,6 +289,7 @@ main(int argc, const char ** argv)
   if (opt_display && opt_click_allowed) {
     vpDisplay::getClick(I) ;
   }
+#endif
 
 
   // ----------------------------------------------------------
@@ -302,6 +305,7 @@ main(int argc, const char ** argv)
   I =0 ;
   sim.getImage(I,cam);  // and aquire the image Id
   
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
   if (opt_display) {
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
@@ -309,7 +313,7 @@ main(int argc, const char ** argv)
   if (opt_display && opt_click_allowed) {
     vpDisplay::getClick(I) ;
   }
-  
+#endif  
  
   vpImage<unsigned char> Idiff ;
   Idiff = I ;
@@ -326,12 +330,13 @@ main(int argc, const char ** argv)
   #elif defined VISP_HAVE_GTK
   vpDisplayGTK d1;
   #endif
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
   if (opt_display) {
     d1.init(Idiff, 680, 10, "photometric visual servoing : s-s* ") ;
     vpDisplay::display(Idiff) ;
     vpDisplay::flush(Idiff) ;
   }
-
+#endif
   // create the robot (here the INRIA Rennes Afma6)
   vpRobotCamera robot ;
   robot.init();
@@ -424,15 +429,19 @@ main(int argc, const char ** argv)
       //  Acquire the new image
       sim.setCameraPosition(cMo) ;
       sim.getImage(I,cam) ;
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
+      if (opt_display) {
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;
-
+      }
+#endif
       vpImageTools::imageDifference(I,Id,Idiff) ;
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
       if (opt_display) {
       vpDisplay::display(Idiff) ;
       vpDisplay::flush(Idiff) ;
       }
-
+#endif
       // Compute current visual feature
       sI.buildFrom(I) ;
 
