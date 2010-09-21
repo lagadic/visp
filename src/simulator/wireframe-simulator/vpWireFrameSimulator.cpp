@@ -414,7 +414,7 @@ void vp2jlc_matrix (const vpHomogeneousMatrix vpM, Matrix &jlcM)
 void
 vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, vpImage<vpRGBa> &I, vpColor color)
 {
-  extern Bound *clipping_Bound ();
+ // extern Bound *clipping_Bound ();
   Bound *bp, *bend;
   Bound *clip; /* surface apres clipping */
   Byte b  = (Byte) *get_rfstack ();
@@ -464,7 +464,7 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, vpImage<vpRGBa>
 void
 vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, vpImage<unsigned char> &I, vpColor color)
 {
-  extern Bound *clipping_Bound ();
+  //extern Bound *clipping_Bound ();
 
   Bound *bp, *bend;
   Bound *clip; /* surface apres clipping */
