@@ -385,6 +385,7 @@ SET(VISP_HAVE_QT3_FOUND "no")       # for ViSP-third-party.txt
 
 IF(USE_COIN)
   IF (COIN_FOUND)
+    MESSAGE(STATUS "Coin3D found")
     SET(VISP_HAVE_COIN_FOUND "yes")   # for ViSP-third-party.txt
     SET(VISP_HAVE_COIN TRUE)          # for header vpConfig.h
     SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
@@ -402,7 +403,12 @@ IF(USE_COIN)
     ELSE(UNIX)
       #MESSAGE("COIN_LIBRARY_RELEASE = ${COIN_LIBRARY_RELEASE}")
       #MESSAGE("COIN_LIBRARY_DEBUG = ${COIN_LIBRARY_DEBUG}")
-      LIST(APPEND VISP_EXTERN_LIBS optimized ${COIN_LIBRARY_RELEASE} debug ${COIN_LIBRARY_DEBUG})
+      IF(COIN_LIBRARY_DEBUG)
+        LIST(APPEND VISP_EXTERN_LIBS debug ${COIN_LIBRARY_DEBUG})
+      ENDIF()
+      IF(COIN_LIBRARY_RELEASE)
+        LIST(APPEND VISP_EXTERN_LIBS optimized ${COIN_LIBRARY_RELEASE})
+      ENDIF()
     ENDIF(UNIX)
     IF (USE_SOWIN AND SOWIN_FOUND)
       # We manage SoWin and Coin
