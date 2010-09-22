@@ -221,7 +221,7 @@ main(int argc, const char ** argv)
   }
 
   vpImage<unsigned char> Itexture ;
-  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.jpeg");
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
   vpImageIo::read(Itexture,filename) ;
 
   vpColVector X[4];
