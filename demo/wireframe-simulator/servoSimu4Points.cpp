@@ -103,8 +103,8 @@ SYNOPSIS\n\
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
-     Set mire.jpg image input path.\n\
-     From this path read \"ViSP-images/mire/mire.jpg\"\n\
+     Set mire.pgm image input path.\n\
+     From this path read \"ViSP-images/mire/mire.pgm\"\n\
      video.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -302,7 +302,7 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty())
     ipath = opt_ipath;
   
-  filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.jpg");
+  filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.pgm");
   
   try
   {
