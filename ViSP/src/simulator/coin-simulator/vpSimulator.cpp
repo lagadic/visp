@@ -167,9 +167,9 @@ createArrow (float longueur,
   Cree un objet repere dans un noeud separator, et le renvoie.
   \return          : code d'erreur, SIMU_CODE_OK si tout s'est bien passe.
 */
-#define LONGUEUR_FLECHE                           1.0
-#define RAYON_FLECHE                              0.002
-#define PROPORTION_FLECHE                         0.1
+#define LONGUEUR_FLECHE                           1.0f
+#define RAYON_FLECHE                              0.002f
+#define PROPORTION_FLECHE                         0.1f
 
 SoSeparator *
 createFrame (float longueurFleche = LONGUEUR_FLECHE    ,
@@ -740,7 +740,7 @@ vpSimulator::addFrame (const vpHomogeneousMatrix &fMo, float zoom)
   \param zoom : Zoom factor.
 */
 void
-vpSimulator::addAbsoluteFrame (double zoom)
+vpSimulator::addAbsoluteFrame (float zoom)
 {
   scene->addChild(createFrame (LONGUEUR_FLECHE*zoom, PROPORTION_FLECHE*zoom, RAYON_FLECHE*zoom)) ;
 }
