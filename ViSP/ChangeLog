@@ -6,12 +6,13 @@
                   www: http://www.irisa.fr/lagadic
 
 
-ViSP (Subversion trunk)
+ViSP 2.6.0 (released January 8th, 2010)
   - License:
       Change the open source license from QPL to GPL v2
   - New Features
-    - Introduction of a new wireframe simulator.
-    - Introduction of a new model-based tracker.
+    - Introduction of a new wireframe simulator. See vpWireFrameSimulator class.
+    - Introduction of a new model-based tracker that allows to track 
+      an object based on its 3D model. See vpMbEdgeTracker class.
     - New vpForceTwistMatrix class that allows to transfer a force/torque skew
       from one frame to an other.
     - New vpVelocityTwistMatrix class that allows to transfer a velocity skew
