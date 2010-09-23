@@ -219,7 +219,7 @@ public:
   void save(const char *name,bool binary=false) ;
 
   //!   Add the representation of the absolute frame
-  void addAbsoluteFrame (double zoom=1) ;
+  void addAbsoluteFrame (float zoom=1) ;
   //!   Add the representation of a frame
   void addFrame (const vpHomogeneousMatrix &fMo, float zoom=1) ;
   //! set the size of the camera/frame
