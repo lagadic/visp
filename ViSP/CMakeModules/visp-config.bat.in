@@ -59,7 +59,9 @@ set INCLUDE=${VISP_CONFIG_SCRIPT_INC}
 
 set LIBDIR=${VISP_CONFIG_SCRIPT_LIBDIR}
 
-set LIBS=${VISP_CONFIG_SCRIPT_LIBS}
+set LIBS_DEBUG=${VISP_CONFIG_SCRIPT_LIBS_DEBUG}
+
+set LIBS_OPTIMIZED=${VISP_CONFIG_SCRIPT_LIBS_OPTIMIZED}
 
 @rem Test if an argument is provided
 
@@ -87,8 +89,12 @@ for %%a in (%*) do (
 	echo %LIBDIR%
 	goto END
   )
-  if "%%a" == "--libs" (
-	echo %LIBS%
+  if "%%a" == "--libs-debug" (
+	echo %LIBS_DEBUG%
+	goto END
+  )
+  if "%%a" == "--libs-optimized" (
+	echo %LIBS_OPTIMIZED%
 	goto END
   )
   if "%%a" == "--version" (
@@ -109,16 +115,16 @@ echo ViSP %VERSION% (Visual Servoing Platform)
 echo Copyright (C) 1998-2010 Inria. All rights reserved.
 echo.
 echo Usage: %0 [--prefix] [--def] [--include] [--libpath] 
-echo [--libs] [--version] [--dumpversion] [--help]
+echo [--libs-debug] [--libs-optimized] [--version] [--dumpversion] [--help]
 echo.
-echo  --prefix      Show ViSP installation prefix.
-echo  --def         Print pre-processor definitions.
-echo  --include     Print include directories.
-echo  --libpath     Print library directories.
-echo  --libs        Print library dependencies.
-echo  --version     Output ViSP information.
-echo  --dumpversion Output ViSP version information.
-echo  --help        Display this help and exit.
+echo  --prefix          Show ViSP installation prefix.
+echo  --def             Print pre-processor definitions.
+echo  --include         Print include directories.
+echo  --libpath         Print library directories.
+echo  --libs-debug      Print library dependencies for debug configuration.
+echo  --libs-optimized  Print library dependencies for optimized configuration.
+echo  --dumpversion     Output ViSP version information.
+echo  --help            Display this help and exit.
 echo.
 goto END
 

@@ -1229,15 +1229,6 @@ ENDIF(VISP_EXTERN_LINK_DIR)
 LINK_DIRECTORIES(${VISP_EXTERN_LINK_DIR})
 
 #----------------------------------------------------------------------
-# Cleanify third party libraries
-#----------------------------------------------------------------------
-#MESSAGE("VISP_EXTERN_LIBS: ${VISP_EXTERN_LIBS}")
-#IF(VISP_EXTERN_LIBS)
-#  LIST(REMOVE_DUPLICATES VISP_EXTERN_LIBS)
-#ENDIF(VISP_EXTERN_LIBS)
-#MESSAGE("VISP_EXTERN_LIBS without duplicates: ${VISP_EXTERN_LIBS}")
-
-#----------------------------------------------------------------------
 # Generate the package dependent file include/visp/vpConfig.h
 #----------------------------------------------------------------------
 CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
