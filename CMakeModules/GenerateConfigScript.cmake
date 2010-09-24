@@ -66,24 +66,7 @@ IF (UNIX)
   ENDFOREACH(INCDIR)
 
   # Suppress twins
-  SET(myvar "")
-  FOREACH(element ${VISP_CONFIG_SCRIPT_CFLAGS})
-#     MESSAGE("element: ${element}")
-     SET(toadd 1)
-     FOREACH(elementadded ${myvar})
-#       MESSAGE("compare ${element} and ${elementadded}")
-       STRING(COMPARE EQUAL "${element}" "${elementadded}" iseq)
-       IF(${iseq})
-#	 MESSAGE("is equal")
-         SET(toadd 0)
-       ENDIF(${iseq})
-     ENDFOREACH(elementadded ${myvar})
-     IF(${toadd})
-#       MESSAGE("need to add ${element}")
-       LIST(APPEND myvar ${element})
-     ENDIF(${toadd})
-  ENDFOREACH(element ${VISP_CONFIG_SCRIPT_CFLAGS})
-  SET(VISP_CONFIG_SCRIPT_CFLAGS ${myvar})
+  LIST(REMOVE_DUPLICATES VISP_CONFIG_SCRIPT_CFLAGS)
 
   # Format the string to suppress CMake separators ";"
   SET(VISP_CONFIG_SCRIPT_CFLAGS_REFORMATED "")
@@ -100,122 +83,65 @@ IF (UNIX)
     # Because using -fprofile-arcs with shared lib can cause problems like:
     # hidden symbol `__bb_init_func', we add this option only for static 
     # library build
-    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+    SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -ftest-coverage -fprofile-arcs")
   ENDIF(BUILD_TEST_COVERAGE)
 
 
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_EXTERN_LIBS
   #
-  # add "-l" to "real" library names ending with .so or .a
-  # add "-L" to library path
-  # skip *.so  and *.a
+  # add "-l" to library names
+  # skip *.so, *.a, *.dylib, -framework*, -l*
   #
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS)
+ 
+  # Manage the lib path
   SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS)
   FOREACH(dir ${VISP_EXTERN_LINK_DIR})
     LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LDFLAGS "-L${dir}") 
   ENDFOREACH(dir)
   #MESSAGE("VISP_EXTERN_LINK_DIR: ${VISP_EXTERN_LINK_DIR}")
   #MESSAGE("VISP_CONFIG_SCRIPT_TMP_LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
-  SET(VISP_CONFIG_SCRIPT_TMP_LIBS "")
-  #MESSAGE("VISP_EXTERN_LIBS: ${VISP_EXTERN_LIBS}")
-  FOREACH(lib ${VISP_EXTERN_LIBS})
-    #MESSAGE("library to process: ${lib}")
-    IF("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
-      #MESSAGE("${lib} matches .so or .a, processing to create -L and -l")
-
-      # If the string lib to process is like: /usr/lib/libgtk-x11-2.0.so
-      # with GET_FILENAME_COMPONENT(libname_we ${LIB} NAME_WE) we get: 
-      # libgtk-x11-2 (it should be libgtk-x11-2.0)
-      # with GET_FILENAME_COMPONENT(libext ${LIB} EXT) we get: .0.so
-      # (it should be .so)
-      # So we use GET_FILENAME_COMPONENT(libname ${LIB} NAME) to get: 
-      # libgtk-x11-2.0.so which is good
-      # The idea is than to suppress the extension .so (or .a) and to replace
-      # lib by -l
-
-      # Get the library path 
-      GET_FILENAME_COMPONENT(path ${lib} PATH)
-      #MESSAGE("library path: ${path}")
-
-      # Get the library name
-      GET_FILENAME_COMPONENT(libname ${lib} NAME)
-      #MESSAGE("library name: ${libname}")
-      # Suppress the .so or .a suffix extension
-      IF("${libname}" MATCHES ".+[.][s][o]")
-        #STRING(REGEX REPLACE ".so" "" libname ${libname})
-        STRING(REGEX REPLACE "[.][s][o]" "" libname ${libname})
-      ENDIF("${libname}" MATCHES ".+[.][s][o]")
-      IF("${libname}" MATCHES ".+[.][a]")
-        #STRING(REGEX REPLACE ".a" "" libname ${libname})
-        STRING(REGEX REPLACE "[.][a]" "" libname ${libname})
-      ENDIF("${libname}" MATCHES ".+[.][a]")
-      #MESSAGE("library name without extension: ${libname}")
-      # In all cases, replace lib prefix by -l
-      STRING(REGEX REPLACE "^[l][i][b]" "-l" libname ${libname})
-      #MESSAGE("processed library name: ${libname}")
-
-      LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LIBS ${libname})
-      #----
-      # Add test to be sure that the library path is unique in 
-      # VISP_CONFIG_SCRIPT_TMP_LDFLAGS
-      SET(LDFLAGS_ADDED 0)
-
-      #MESSAGE("actual LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
-
-      FOREACH(ldflags ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS})
-	SET(ldflags_to_add "-L${path}")
-	#MESSAGE("compare:")
-	#MESSAGE("dummy${ldflags_to_add}dummy")
-	#MESSAGE("dummy${ldflags}dummy")
-	STRING(COMPARE EQUAL "${ldflags_to_add}" "${ldflags}" INLDFLAGS)
-	  
-	IF(INLDFLAGS)
-	  SET(LDFLAGS_ADDED 1)
-	  #MESSAGE("equal----")
-	#ELSE(INLDFLAGS)
-	  #MESSAGE("not equal----")
-	ENDIF(INLDFLAGS)
-      ENDFOREACH(ldflags)
-      IF(NOT ${LDFLAGS_ADDED})
-	#MESSAGE("add ${path} ")
-	# Add the path to ldflags
-	SET(LDFLAGS_TO_ADD "-L${path}")
-	LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LDFLAGS ${LDFLAGS_TO_ADD})
-
-      ENDIF(NOT ${LDFLAGS_ADDED})
-
-      #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
-      #MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
-#    ELSEIF("${lib}" MATCHES ".+[.][f][r][a][m][e][w][o][r][k]")
-    ELSEIF("${lib}" MATCHES ".[.][f][r][a][m][e][w][o][r][k]+$")
-      # Specific case of APPLE frameworks
-      #MESSAGE("Framework case: ${lib}")
-      # Get the framework name
-      GET_FILENAME_COMPONENT(framework ${lib} NAME_WE)
-      #MESSAGE("Framework name: ${framework}")
-      LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LIBS "-framework ${framework}")
-    ELSE("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
-      #MESSAGE("${lib} is not a library in .so or .a, to keep")
-      LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LIBS ${lib})
-    ENDIF("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
-  ENDFOREACH(lib)
-
-  #MESSAGE("LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
-  #MESSAGE("LIBS: ${VISP_CONFIG_SCRIPT_TMP_LIBS}")
-
   # convert semicolon-separated vector to space-separated string 
   FOREACH(val ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS})
-     SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} ${val}")
+     SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS_ALL_BUILD "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} ${val}")
   ENDFOREACH(val)
-  FOREACH(val ${VISP_CONFIG_SCRIPT_TMP_LIBS})
+
+  # Manage the libs	
+  LIST(REMOVE_ITEM VISP_EXTERN_LIBS "debug")
+  LIST(REMOVE_ITEM VISP_EXTERN_LIBS "optimized")
+  SET(TMP_LIBS)
+  FOREACH(lib ${VISP_EXTERN_LIBS})
+    IF("${lib}" MATCHES "[-][f][r][a][m][e][w][o][r][k]+.")
+      # does nothing
+      LIST(APPEND TMP_LIBS ${lib})
+    ELSEIF("${lib}" MATCHES ".[.][f][r][a][m][e][w][o][r][k]+$")
+      # replace /path/name.framework by -framework name
+      GET_FILENAME_COMPONENT(FRAMEWORK ${lib} NAME_WE)
+      #MESSAGE("add -framework ${FRAMEWORK}")
+      LIST(APPEND TMP_LIBS "-framework ${FRAMEWORK}")
+    ELSEIF("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
+      # does nothing
+      LIST(APPEND TMP_LIBS ${lib})
+    ELSEIF("${lib}" MATCHES ".[.][d][y][l][i][b]+$")
+      # does nothing
+      LIST(APPEND TMP_LIBS ${lib})
+    ELSEIF("${lib}" MATCHES "[-][l]+.")
+      # does nothing
+      LIST(APPEND TMP_LIBS ${lib})
+    ELSE()
+      # add -l prefix
+      #MESSAGE("add -l${lib}")
+      LIST(APPEND TMP_LIBS "-l${lib}")
+    ENDIF()
+  ENDFOREACH(lib)
+
+  FOREACH(val ${TMP_LIBS})
      SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} ${val}")
   ENDFOREACH(val)
 
-  #MESSAGE("EXTERN LIBS: ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
-
+  #MESSAGE("EXTERN LIBS : ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
+ 
   # prepend with ViSP own lib dir
   SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS  "-L$PREFIX/lib -l${VISP_INTERN_LIBS} ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
   IF(UNIX)
@@ -269,29 +195,11 @@ ELSE(UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_INCLUDE
   #----------------------------------------------------------------------
-  SET(TMP_SCRIPT_INC "%PREFIX%/include")
-#  MESSAGE(TMP_SCRIPT_INC: ${TMP_SCRIPT_INC})
-
-  # Suppress twins
-  FOREACH(element ${VISP_EXTERN_INCLUDE_DIR})
-#     MESSAGE("element: ${element}")
-     SET(toadd 1)
-     FOREACH(elementadded ${TMP_SCRIPT_INC})
-#       MESSAGE("compare ${element} and ${elementadded}")
-       STRING(COMPARE EQUAL "${element}" "${elementadded}" iseq)
-       IF(${iseq})
-#	 MESSAGE("is equal")
-         SET(toadd 0)
-       ENDIF(${iseq})
-     ENDFOREACH(elementadded ${TMP_SCRIPT_INC})
-     IF(${toadd})
-#       MESSAGE("need to add ${element}")
-       LIST(APPEND TMP_SCRIPT_INC ${element})
-     ENDIF(${toadd})
-  ENDFOREACH(element ${VISP_EXTERN_INCLUDE_DIR})
+  LIST(APPEND VISP_EXTERN_INCLUDE_DIR "%PREFIX%/include")
+  LIST(REMOVE_DUPLICATES VISP_EXTERN_INCLUDE_DIR)
 
   # Format the string
-  FOREACH(element ${TMP_SCRIPT_INC})
+  FOREACH(element ${VISP_EXTERN_INCLUDE_DIR})
     SET(VISP_CONFIG_SCRIPT_INC "\"${element}\"; ${VISP_CONFIG_SCRIPT_INC}")
   ENDFOREACH(element)
 
@@ -303,6 +211,7 @@ ELSE(UNIX)
   SET(TMP_SCRIPT_LIBDIR "%PREFIX%\\lib")
   SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} "%PREFIX%\\lib\\$(Outdir)")
   SET(TMP_SCRIPT_LIBDIR ${TMP_SCRIPT_LIBDIR} "%PREFIX%\\lib\\$(ConfigurationName)")
+  #MESSAGE("VISP_EXTERN_LINK_DIR ${VISP_EXTERN_LINK_DIR}")
   FOREACH(var ${VISP_EXTERN_LINK_DIR})
     #MESSAGE("var to process: ${var}")
     IF("${var}" MATCHES "[-][L]+.")
@@ -311,6 +220,7 @@ ELSE(UNIX)
 	#MESSAGE("new ${newvar} without -L")
     ENDIF("${var}" MATCHES "[-][L]+.")
     LIST(APPEND TMP_SCRIPT_LIBDIR ${var})
+    LIST(APPEND TMP_SCRIPT_LIBDIR "${var}\\$(ConfigurationName)")
   ENDFOREACH(var)
 
   FOREACH(lib ${VISP_EXTERN_LIBS})
@@ -321,29 +231,14 @@ ELSE(UNIX)
     LIST(APPEND TMP_SCRIPT_LIBDIR ${libpath})
   ENDFOREACH(lib)
 
-  # MESSAGE("TMP_SCRIPT_LIBDIR: ${TMP_SCRIPT_LIBDIR}")
+  #MESSAGE("TMP_SCRIPT_LIBDIR: ${TMP_SCRIPT_LIBDIR}")
 
   # Suppress twins
-  SET(TMP_TMP_SCRIPT_LIBDIR "")
-  FOREACH(element ${TMP_SCRIPT_LIBDIR})
-#     MESSAGE("element: ${element}")
-     SET(toadd 1)
-     FOREACH(elementadded ${TMP_TMP_SCRIPT_LIBDIR})
-#       MESSAGE("compare ${element} and ${elementadded}")
-       STRING(COMPARE EQUAL "${element}" "${elementadded}" iseq)
-       IF(${iseq})
-#	 MESSAGE("is equal")
-         SET(toadd 0)
-       ENDIF(${iseq})
-     ENDFOREACH(elementadded)
-     IF(${toadd})
-#       MESSAGE("need to add ${element}")
-       LIST(APPEND TMP_TMP_SCRIPT_LIBDIR ${element})
-     ENDIF(${toadd})
-  ENDFOREACH(element)
-
+  IF(TMP_SCRIPT_LIBDIR)
+    LIST(REMOVE_DUPLICATES TMP_SCRIPT_LIBDIR)
+  ENDIF()
   # Format the string
-  FOREACH(element ${TMP_TMP_SCRIPT_LIBDIR})
+  FOREACH(element ${TMP_SCRIPT_LIBDIR})
     SET(VISP_CONFIG_SCRIPT_LIBDIR "\"${element}\", ${VISP_CONFIG_SCRIPT_LIBDIR}")
   ENDFOREACH(element)
 
@@ -352,27 +247,49 @@ ELSE(UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_LIBS
   #----------------------------------------------------------------------
-  SET(TMP_SCRIPT_LIBS "${VISP_INTERN_LIBS}.lib")
+  SET(TMP_SCRIPT_LIBS_DEBUG "${VISP_INTERN_LIBS}.lib")
+  SET(TMP_SCRIPT_LIBS_OPTIMIZED "${VISP_INTERN_LIBS}.lib")
 
   #MESSAGE(VISP_EXTERN_LIBS: ${VISP_EXTERN_LIBS})
+  SET(TMP_IS_DEBUG FALSE)
+  SET(TMP_IS_OPTIMIZED FALSE)
   FOREACH(lib ${VISP_EXTERN_LIBS})
-    # Get the library name
-    GET_FILENAME_COMPONENT(libname ${lib} NAME)
-    IF("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
-      #MESSAGE("${libname} matches .lib or .Lib")
-    ELSE("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
-      # We need to add .lib suffix
-      #MESSAGE("For ${libname} we add .lib suffix")
-      SET(libname "${libname}.lib")
-    ENDIF("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
+    IF("${lib}" MATCHES "[d][e][b][u][g]")
+	  SET(TMP_IS_DEBUG TRUE)
+	ELSEIF("${lib}" MATCHES "[o][p][t][i][m][i][z][e][d]")
+	  SET(TMP_IS_OPTIMIZED TRUE)
+	ELSE()
+	  
+      # Get the library name
+      GET_FILENAME_COMPONENT(libname ${lib} NAME)
+      IF("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
+        #MESSAGE("${libname} matches .lib or .Lib")
+      ELSE("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
+        # We need to add .lib suffix
+        #MESSAGE("For ${libname} we add .lib suffix")
+        SET(libname "${libname}.lib")
+      ENDIF("${libname}" MATCHES ".+[.][l][i][b]" OR "${libname}" MATCHES ".+[.][L][i][b]")
+	  
+	  IF(TMP_IS_DEBUG)
+        SET(TMP_IS_DEBUG FALSE)
+		LIST(APPEND TMP_SCRIPT_LIBS_DEBUG ${libname})
+	  ELSEIF(TMP_IS_OPTIMIZED)
+	    SET(TMP_IS_OPTIMIZED FALSE)
+		LIST(APPEND TMP_SCRIPT_LIBS_OPTIMIZED ${libname})
+      ELSE()
+		LIST(APPEND TMP_SCRIPT_LIBS_DEBUG ${libname})
+		LIST(APPEND TMP_SCRIPT_LIBS_OPTIMIZED ${libname})
+	  ENDIF()
+    ENDIF()
 
-
-    LIST(APPEND TMP_SCRIPT_LIBS ${libname})
   ENDFOREACH(lib)
 
   # Format the string
-  FOREACH(element ${TMP_SCRIPT_LIBS})
-    SET(VISP_CONFIG_SCRIPT_LIBS "${VISP_CONFIG_SCRIPT_LIBS} ${element}")
+  FOREACH(element ${TMP_SCRIPT_LIBS_DEBUG})
+    SET(VISP_CONFIG_SCRIPT_LIBS_DEBUG "${VISP_CONFIG_SCRIPT_LIBS_DEBUG} ${element}")
+  ENDFOREACH(element)
+  FOREACH(element ${TMP_SCRIPT_LIBS_OPTIMIZED})
+    SET(VISP_CONFIG_SCRIPT_LIBS_OPTIMIZED "${VISP_CONFIG_SCRIPT_LIBS_OPTIMIZED} ${element}")
   ENDFOREACH(element)
 
   #MESSAGE(VISP_CONFIG_SCRIPT_LIBS: ${VISP_CONFIG_SCRIPT_LIBS})
