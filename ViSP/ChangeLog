@@ -6,7 +6,7 @@
                   www: http://www.irisa.fr/lagadic
 
 
-ViSP 2.6.0 (released January 8th, 2010)
+ViSP 2.6.0 (released September 23rd, 2010)
   - License:
       Change the open source license from QPL to GPL v2
   - New Features
@@ -14,7 +14,7 @@ ViSP 2.6.0 (released January 8th, 2010)
     - Introduction of a new model-based tracker that allows to track 
       an object based on its 3D model. See vpMbEdgeTracker class.
     - New vpForceTwistMatrix class that allows to transfer a force/torque skew
-      from one frame to an other.
+      from one frame to another.
     - New vpVelocityTwistMatrix class that allows to transfer a velocity skew
       from one frame to an other. The vpTwistMatrix class that does the same 
       work previously is from now deprecated.
@@ -22,7 +22,7 @@ ViSP 2.6.0 (released January 8th, 2010)
       robot at Inria.
     - New generic vpRobotSimulator class to create robot simulators.
     - New vpSimulatorViper850 class which simulates the viper850 robot.
-    - New vpSimulatorAfma6 class which simulates the viper850 robot.
+    - New vpSimulatorAfma6 class which simulates the Afma 6dof robot.
     - New vpPlanarObjectDetector class to detect a planar surface based on 
       the Ferns Classifier. 
     - New vpSickLDMRS class, a UNIX driver to get measures from a Sick LD-MRS 
@@ -30,12 +30,12 @@ ViSP 2.6.0 (released January 8th, 2010)
     - New vpPlot class that was recoded to suppress the XPlotter dependency. 
       This class aims real time drawing of 2D or 3D graphics under Linux, OSX 
       and Windows.
-    - Introduction of a model based tracker that allows to track 
-      an object based on its CAD model. See vpMbtTracker class.
+  - Third party library dependencies
+    - OpenCV 1.1 and 2.0 are no more supported. ViSP requires at least OpenCV 2.1.
+    - libplotter is no longer required.
+    - Itifg8 is no longer supported.
   - Improvements
     - Copy constructors were added to better support stl lists and vectors.
-    - Change the FindOpenCV.cmake in order to detect automatically 
-      OpenCV 1.1, 2.0 and 2.1.
     - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
       add possibility to change during the execution the shutter, the gain, the
       brightness, ... (see documentation for more details)
