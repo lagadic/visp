@@ -311,6 +311,54 @@ VISP_EXPORT inline vpImagePoint operator+( const vpImagePoint &ip1,
 				           const vpImagePoint &ip2 ) {
   return ( vpImagePoint(ip1.get_i()+ip2.get_i(), ip1.get_j()+ip2.get_j()));
 }
+/*!
+
+  \relates vpImagePoint
+
+  Returns a vpImagePoint with an offset added to the two coordinates.
+
+  \code
+#include <iostream>
+#include <visp/vpImagePoint.h>
+
+int main()
+{
+  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+  std::cout << "ip+10: " << ip+10 << std::endl; // new coordinates (110, 210)
+ 
+  return 0;
+}
+  \endcode
+*/
+VISP_EXPORT inline vpImagePoint operator+( const vpImagePoint &ip1, 
+				           const int offset ) {
+  return ( vpImagePoint(ip1.get_i()+offset, ip1.get_j()+offset));
+}
+/*!
+
+  \relates vpImagePoint
+
+  Returns a vpImagePoint with an offset added to the two coordinates.
+
+  \code
+#include <iostream>
+#include <visp/vpImagePoint.h>
+
+int main()
+{
+  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+  std::cout << "ip+12.34: " << ip+12.34 << std::endl; // new coordinates (112.34, 212.34)
+
+  return 0;
+}
+  \endcode
+*/
+VISP_EXPORT inline vpImagePoint operator+( const vpImagePoint &ip1, 
+				           const double offset ) {
+  return ( vpImagePoint(ip1.get_i()+offset, ip1.get_j()+offset));
+}
 
 /*!
 
@@ -322,6 +370,102 @@ VISP_EXPORT inline vpImagePoint operator+( const vpImagePoint &ip1,
 VISP_EXPORT inline vpImagePoint operator-( const vpImagePoint &ip1, 
 				           const vpImagePoint &ip2 ) {
   return ( vpImagePoint(ip1.get_i()-ip2.get_i(), ip1.get_j()-ip2.get_j()));
+}
+/*!
+
+  \relates vpImagePoint
+
+  Returns a vpImagePoint with an offset substracted to the two coordinates.
+
+  \code
+#include <iostream>
+#include <visp/vpImagePoint.h>
+
+int main()
+{
+  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+  std::cout << "ip-10: " << ip-10 << std::endl; // new coordinates (90, 190)
+
+  return 0;
+}
+  \endcode
+*/
+VISP_EXPORT inline vpImagePoint operator-( const vpImagePoint &ip1, 
+				           const int offset ) {
+  return ( vpImagePoint(ip1.get_i()-offset, ip1.get_j()-offset));
+}
+/*!
+
+  \relates vpImagePoint
+
+  Returns a vpImagePoint with an offset substracted to the two coordinates.
+
+  \code
+#include <iostream>
+#include <visp/vpImagePoint.h>
+
+int main()
+{
+  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+  std::cout << "ip-12.34: " << ip-12.34 << std::endl; // new coordinates (87.66, 187.66)
+
+  return 0;
+}
+  \endcode
+*/
+VISP_EXPORT inline vpImagePoint operator-( const vpImagePoint &ip1, 
+				           const double offset ) {
+  return ( vpImagePoint(ip1.get_i()-offset, ip1.get_j()-offset));
+}
+/*!
+
+  \relates vpImagePoint
+
+  Returns a vpImagePoint with coordinates multiplied by a scale factor.
+
+  \code
+#include <iostream>
+#include <visp/vpImagePoint.h>
+
+int main()
+{
+  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+  std::cout << "ip*2: " << ip*2 << std::endl; // new coordinates (200, 400)
+
+  return 0;
+}
+  \endcode
+*/
+VISP_EXPORT inline vpImagePoint operator*( const vpImagePoint &ip1, 
+				           const double scale ) {
+  return ( vpImagePoint(ip1.get_i()*scale, ip1.get_j()*scale));
+}
+/*!
+
+  \relates vpImagePoint
+
+  Returns a vpImagePoint with coordinates divided by a scale factor.
+
+  \code
+#include <iostream>
+#include <visp/vpImagePoint.h>
+
+int main()
+{
+  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+  std::cout << "ip/2: " << ip/2 << std::endl; // new coordinates (50, 100)
+
+  return 0;
+}
+  \endcode
+*/
+VISP_EXPORT inline vpImagePoint operator/( const vpImagePoint &ip1, 
+				           const double scale ) {
+  return ( vpImagePoint(ip1.get_i()/scale, ip1.get_j()/scale));
 }
 
 /*!
