@@ -35,8 +35,8 @@ display, simulation, ...) you need, prior to install ViSP you may
 install third party libraries <a
 href="http://www.irisa.fr/lagadic/visp/libraries.html" target="_parent">http://www.irisa.fr/lagadic/visp/libraries.html</a>.</p>
 
-<p>ViSP full installation procedure using CMake is available from <a
-href="http://www.irisa.fr/lagadic/visp/install.html" target="_parent">http://www.irisa.fr/lagadic/visp/install.html</a>.</p>
+<p>ViSP full installation procedure using CMake is explained in the getting started documents available from <a
+href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http://www.irisa.fr/lagadic/visp/publication.html</a>.</p>
  
 \section Examples_sec Using ViSP
 
