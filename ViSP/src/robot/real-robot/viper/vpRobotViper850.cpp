@@ -869,12 +869,12 @@ vpRobotViper850::getPositioningVelocity (void)
 
   \param frame : Frame in which the position is expressed.
 
-  - In the joint space, positions are respectively X, Y, Z, A, B, C,
-  with X,Y,Z the translations, and A,B,C the rotations of the
-  end-effector.
+  - In the joint space, positions are the six joint rotations starting
+    from the base to the end-effector.
 
-  - In the camera and the reference frame, rotations are
-  represented by a vpRxyzVector.
+  - In the camera and the reference frame, positions are respectively
+  X,Y,Z translations and 3 rotations arround the X, Y and Z
+  axis. Rotations are represented by a vpRxyzVector.
 
   - Mixt frame is not implemented. By mixt frame we mean, translations
   expressed in the reference frame, and rotations in the camera
