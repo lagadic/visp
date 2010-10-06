@@ -82,6 +82,12 @@ SET(CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
 # Create include directory which will contain all the headers
 MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
 
+#--------------------------------------------------------------------
+# By default set release configuration
+#--------------------------------------------------------------------
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE String "Choose the type of build, options are: None Debug Release" FORCE)
+endif()
 
 #--------------------------------------------------------------------
 # Option management
