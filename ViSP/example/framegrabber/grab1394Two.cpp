@@ -575,10 +575,12 @@ main(int argc, const char ** argv)
     // Array to know if color images or grey level images are acquired
     bool *grab_color = new bool [ncameras];
 
-    // allocate adisplay for each camera to consider
+#ifdef VISP_HAVE_X11
+    // allocate a display for each camera to consider
     vpDisplayX *d = NULL;
     if (display)
       d = new vpDisplayX [ncameras];
+#endif
 
     // allocate an Grey and color image for each camera to consider
     vpImage<vpRGBa> *Ic        = new vpImage<vpRGBa> [ncameras];
@@ -598,6 +600,7 @@ main(int argc, const char ** argv)
 		  << Ic[i].getWidth() << " height: " << Ic[i].getHeight()
 		  << std::endl;
 
+#ifdef VISP_HAVE_X11
 	if (display) {
 	  // Initialise the display
 	  char title[100];
@@ -606,6 +609,7 @@ main(int argc, const char ** argv)
 	  vpDisplay::display(Ic[i]);
 	  vpDisplay::flush(Ic[i]);
 	}
+#endif
       }
       else {
 	g.acquire(Ig[i]);
@@ -613,6 +617,7 @@ main(int argc, const char ** argv)
 		  << Ig[i].getWidth() << " height: " << Ig[i].getHeight()
 		  << std::endl;
 
+#ifdef VISP_HAVE_X11
 	if (display) {
 	  // Initialise the display
 	  char title[100];
@@ -621,6 +626,7 @@ main(int argc, const char ** argv)
 	  vpDisplay::display(Ig[i]);
 	  vpDisplay::flush(Ig[i]);
 	}
+#endif
 
       }
     }
@@ -639,19 +645,23 @@ main(int argc, const char ** argv)
 	// Acquire an image
 	if (grab_color[c]) {
 	  g.acquire(Ic[c]);
+#ifdef VISP_HAVE_X11
 	  if (display) {
 	    // Display the last image acquired
 	    vpDisplay::display(Ic[c]);
 	    vpDisplay::flush(Ic[c]);
 	  }
+#endif
 	}
 	else {
 	  g.acquire(Ig[c]);
+#ifdef VISP_HAVE_X11
 	  if (display) {
 	    // Display the last image acquired
 	    vpDisplay::display(Ig[c]);
 	    vpDisplay::flush(Ig[c]);
 	  }
+#endif
 
 	}
 	if (save) {
@@ -686,9 +696,10 @@ main(int argc, const char ** argv)
     delete [] Ig;
     delete [] grab_color;
 
+#ifdef VISP_HAVE_X11
     if (display)
       delete [] d;
-
+#endif
   }
   catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
