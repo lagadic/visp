@@ -83,8 +83,19 @@
 #include <visp/vpDot2.h>
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpMeterPixelConversion.h>
+
+#ifdef VISP_HAVE_OPENCV
+#   include <visp/vpOpenCVGrabber.h>
+#elif defined(VISP_HAVE_V4L2)
+#   include <visp/vpV4l2Grabber.h>
+#elif defined(VISP_HAVE_DIRECTSHOW)
+#   include <visp/vpDirectShowGrabber.h>
+#elif defined(VISP_HAVE_DC1394_2)
+#   include <visp/vp1394TwoGrabber.h>
+#endif
+
 // List of allowed command line options
-#define GETOPTARGS  "di:p:hf:g:n:s:l:c"
+#define GETOPTARGS  "di:p:hf:g:n:s:l:cv:"
 
 /*!
 
@@ -173,6 +184,12 @@ SYNOPSIS\n\
      for automatic tests using crontab under Unix or \n\
      using the task manager under Windows.\n\
  \n\
+  -v <generic image name>                                            \n\
+     Record a serie of images using a webcam. A framegrabber (either \n\
+     vpOpenCVGrabber, vpDirectShowGrabber, vp1394TwoGrabber or vpV4l2Grabber) is\n\
+     required. The images are recorded in the disk using the generic name in \n\
+     parameter (for example \"/tmp/img-%%03d.pgm\").\n\
+ \n\
   -c\n\
      Disable the mouse click.\n\
      If the image display is disabled (using -d)\n\
@@ -204,13 +221,19 @@ SYNOPSIS\n\
   under Unix or using the task manager under Windows.
 
   \param click : Set as false, disable the mouse click.
+  \param opt_video : Set as true, activates the recording of sequence of images
+  from a webcam. The sequence is then directly used to calibrate the camera. The 
+  sequence is stored in the disk (parameter opt_video_image_path). This option 
+  requires that at least one camera driver is avaiblable in ViSP. 
+  \param opt_video_image_path : Generic name used to stored the images acquired 
+  with a camera. 
 
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc,const char **argv, std::string &ipath, std::string &ppath,
     double &gray, unsigned &first, unsigned &nimages, unsigned &step,
-    double &lambda, bool &display, bool &click)
+    double &lambda, bool &display, bool &click, bool& opt_video, std::string& opt_video_image_path)
 {
   const char *optarg;
   int c;
@@ -226,6 +249,7 @@ bool getOptions(int argc,const char **argv, std::string &ipath, std::string &ppa
     case 's': step = (unsigned) atoi(optarg); break;
     case 'l': lambda = atof(optarg); break;
     case 'c': click = false; break;
+    case 'v': opt_video = true; opt_video_image_path = optarg; break;
     case 'h': usage(argv[0], NULL, ipath, ppath,gray, first, nimages, step, lambda);
       return false; break;
 
@@ -248,6 +272,20 @@ bool getOptions(int argc,const char **argv, std::string &ipath, std::string &ppa
 
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
+#if defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DIRECTSHOW) || defined(VISP_HAVE_DC1394_2)
+/*!
+  Record a sequence of an image. This function opens a camera driver, a display, 
+  and allow the user to select key frame to calibrate the camera. User can store
+  as many images as wanted. 
+  
+  \param out_path : The generic name used to store the images on the disk.
+  \param opt_step : The step in the name between two images.
+  \param first_image : the number to use to record the first image.
+  
+  \return The number of grabbed frame. 
+*/
+unsigned int recordImageSequence(const std::string& out_path, const unsigned int opt_step, const unsigned int first_image);
+#endif
 
 int main(int argc, const char ** argv)
 {
@@ -321,6 +359,9 @@ int main(int argc, const char ** argv)
   bool opt_display = true;
   bool opt_click = true;
   bool save = false;
+  bool opt_video = false;
+  std::string opt_video_image_path;
+  
   double dotSize;
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -333,8 +374,59 @@ int main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_gray,opt_first, opt_nimages,
-     opt_step, opt_lambda, opt_display, opt_click) == false) {
+     opt_step, opt_lambda, opt_display, opt_click, opt_video, opt_video_image_path) == false) {
     return (-1);
+  }
+  
+  if(opt_video){
+#if (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DIRECTSHOW) || defined(VISP_HAVE_DC1394_2))
+    if(!opt_display){
+      std::cerr << std::endl
+       << "ERROR:" << std::endl;
+      std::cerr << "Incompatible options -v and -d." << std::endl;
+      return -1;
+    }
+    if(!opt_click){
+      std::cerr << std::endl
+       << "ERROR:" << std::endl;
+      std::cerr << "Incompatible options -v and -c." << std::endl;
+      return -1;
+    }
+    if(!opt_ipath.empty()){
+      std::cerr << std::endl
+       << "ERROR:" << std::endl;
+      std::cerr << "Incompatible options -v and -i." << std::endl;
+      return -1;
+    }
+    if(!opt_ppath.empty()){
+      std::cerr << std::endl
+       << "ERROR:" << std::endl;
+      std::cerr << "Incompatible options -v and -p." << std::endl;
+      return -1;
+    }
+    if(opt_video_image_path.empty()){
+      std::cerr << std::endl
+       << "ERROR:" << std::endl;
+      std::cerr << "output image path empty." << std::endl;
+      return -1;
+    }
+    try{
+      opt_nimages = recordImageSequence(opt_video_image_path, opt_step, opt_first);
+    }
+    catch(...){
+      // no need to write the problem as it has already been writen.
+      return -1;
+    }
+    opt_ipath = opt_video_image_path;
+    opt_ppath = opt_video_image_path;
+#else
+    {
+      std::cerr << std::endl
+       << "ERROR:" << std::endl;
+      std::cerr << "No framegrabber installed with ViSP. Cannot record images from video stream." << std::endl;
+      return -1;
+    }
+#endif
   }
 
   if (!opt_display)
@@ -967,6 +1059,85 @@ int main(int argc, const char ** argv)
 }
 
 
+#if defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DIRECTSHOW) || defined(VISP_HAVE_DC1394_2)
+unsigned int recordImageSequence(const std::string& out_path, const unsigned int opt_step, const unsigned int first_image)
+{
+  unsigned int nbImg = first_image;
+  unsigned int index = 0;
+  
+#ifdef VISP_HAVE_OPENCV
+  vpOpenCVGrabber g;
+#elif defined(VISP_HAVE_V4L2)
+  vpV4l2Grabber g;
+#elif defined(VISP_HAVE_DIRECTSHOW)
+  vpDirectShowGrabber g;
+#elif defined(VISP_HAVE_DC1394_2)
+  vp1394TwoGrabber g;
+#endif  
+  
+  
+  vpImage<unsigned char> I;
+  
+  g.open(I);
+  g.acquire(I);
+  
+#if defined VISP_HAVE_GDI
+  vpDisplayGDI display;
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK display;
+#elif defined VISP_HAVE_X11  
+  vpDisplayX display;
+#elif defined VISP_HAVE_D3D9
+  vpDisplayD3D display;
+#endif
+  display.init(I, 100, 100, "record sequence for the calibration.");
+  
+  bool isOver = false;
+  std::cout << "Left click to record the current image." << std::endl;
+  std::cout << "Right click to stop the acquisition." << std::endl;
+  
+  while(!isOver){
+    g.acquire(I);
+    vpDisplay::display(I);
+    vpDisplay::displayCharString(I, vpImagePoint(15, 10), 
+        "Left click to record the current image.", vpColor::blue);
+    vpDisplay::displayCharString(I, vpImagePoint(30, 10), 
+        "Right click to stop the acquisition.", vpColor::blue);
+    vpDisplay::flush(I);
+        
+    vpImagePoint ip;
+    vpMouseButton::vpMouseButtonType button;
+    if(vpDisplay::getClick(I, ip, button, false)){
+      if(button == vpMouseButton::button1){
+        char curImgName[FILENAME_MAX];
+        sprintf(curImgName, out_path.c_str(), nbImg);
+        nbImg += opt_step;
+        index++;
+        try{
+          std::cout << "write image : " << curImgName << std::endl;
+          vpImageIo::writePGM(I, curImgName);
+        }
+        catch(...){
+          std::cerr << std::endl 
+           << "ERROR." << std::endl 
+           << "Cannot record the image : " << curImgName << std::endl
+           << "Check the path and the permissions." << std::endl;
+           throw vpException(vpException::ioError, "Cannot record image");
+        }
+      }
+      else if(button == vpMouseButton::button3){
+        isOver = true;
+      }
+    }
+  }
+  
+  display.close(I);
+
+  g.close();
+  
+  return index;
+}
+#endif
 
 #else // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)...)
 
