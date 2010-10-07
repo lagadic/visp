@@ -95,7 +95,7 @@ vpMbtPolygon::setNbPoint(int nb)
   \param P : The point to add.
 */
 void
-vpMbtPolygon::addPoint(int n, vpPoint &P)
+vpMbtPolygon::addPoint(unsigned int n, const vpPoint &P)
 {
   //if( p!NULL && n < nbpt )
     p[n] = P ;

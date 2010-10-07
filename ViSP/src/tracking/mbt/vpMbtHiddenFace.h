@@ -81,7 +81,7 @@ class VISP_EXPORT vpMbtPolygon
     void setIndex( int i ) { index = i ; } 
     void setNbPoint(int nb)  ;
     int getNbPoint() const {return nbpt ;  }
-    void addPoint(int n, vpPoint &P) ; 
+    void addPoint(unsigned int n, const vpPoint &P) ; 
 
     int getIndex() const {return index ;}
     void changeFrame(const vpHomogeneousMatrix &cMo) ;
