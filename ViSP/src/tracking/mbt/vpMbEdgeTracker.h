@@ -188,7 +188,7 @@ class VISP_EXPORT vpMbEdgeTracker
   unsigned int getNbPoints();
 
  protected:
-  void computeVVS();
+  void computeVVS(const vpImage<unsigned char>& _I);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
   void trackMovingEdge(const vpImage<unsigned char> &I) ;
   void updateMovingEdge(const vpImage<unsigned char> &I) ;
@@ -198,6 +198,7 @@ class VISP_EXPORT vpMbEdgeTracker
   void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");
   void removeLine(const std::string& name);
   void loadCAOModel(std::ifstream &file_id);
+  void computeJTR(const vpMatrix& interaction, const vpColVector& error, vpMatrix& JTR);
   
 #if defined(VISP_HAVE_COIN)
   void loadVRMLModel(const char* file_id);
