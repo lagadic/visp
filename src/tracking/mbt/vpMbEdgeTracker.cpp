@@ -58,6 +58,7 @@
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpMatrixException.h>
 
 #include <visp/vpMbEdgeTracker.h>
 #include <visp/vpMbtDistanceLine.h>
@@ -141,10 +142,12 @@ vpMbEdgeTracker::setMovingEdge(vpMe &_me)
   Compute the visual servoing loop to get the pose of the feature set.
  */
 void
-vpMbEdgeTracker::computeVVS()
+vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 {
   double residu_1 =1e3;
   double r =1e3-1;
+  vpMatrix LTL;
+  vpColVector LTR;
 
   // compute the interaction matrix and its pseudo inverse
   vpMbtDistanceLine *l ;
@@ -214,17 +217,22 @@ vpMbEdgeTracker::computeVVS()
       double fac = 1;
       if (iter == 0)
       {
-	l->Lindex_polygon.front();
-	while (!l->Lindex_polygon.outside())
-	{
-	  int index = l->Lindex_polygon.value();
-	  if (l->hiddenface->isAppearing(index))
-	  {
-	    fac = 0.2;
-	    break;
-	  }
-	  l->Lindex_polygon.next() ;
-	}
+	      l->Lindex_polygon.front();
+	      while (!l->Lindex_polygon.outside())
+	      {
+	        int index = l->Lindex_polygon.value();
+	        if (l->hiddenface->isAppearing(index))
+	        {
+	          fac = 0.2;
+	          break;
+	        }
+	        if(l->closeToImageBorder(_I, 10))
+	        {
+	          fac = 0.1;
+	          break;
+	        }
+	        l->Lindex_polygon.next() ;
+	      }
       }
       
       if (iter == 0 && l->meline != NULL)
@@ -254,16 +262,16 @@ vpMbEdgeTracker::computeVVS()
         if (i == 0)
         {
           e_cur = l->error[0];
-	  if (l->nbFeature > 1)
-	  {
+	        if (l->nbFeature > 1)
+	        {
             e_next = l->error[1];
             if ( fabs(e_cur - e_next) < limite && vpMath::sign(e_cur) == vpMath::sign(e_next) )
             {
               w[n+i] = 1/*0.5*/;
             }
             e_prev = e_cur;
-	  }
-	  else w[n+i] = 1;
+	        }
+	        else w[n+i] = 1;
         }
 
         //If pour la derniere extremite des moving edges
@@ -316,7 +324,6 @@ vpMbEdgeTracker::computeVVS()
       weighted_error[i] =  wi*eri ;
     }
 
-
     if((iter==0) || compute_interaction)
     {
       for (int i=0 ; i < nerror ; i++)
@@ -326,11 +333,11 @@ vpMbEdgeTracker::computeVVS()
           L[i][j] = w[i]*factor[i]*L[i][j] ;
         }
       }
-
-      L.pseudoInverse(Lp,1e-6) ;
     }
 
-    v = -0.7*Lp*weighted_error;
+    LTL = L.AtA();
+    computeJTR(L, weighted_error, LTR);
+    v = -0.7*LTL.pseudoInverse()*LTR; 
     cMo =  vpExponentialMap::direct(v).inverse() * cMo;
 
     iter++;
@@ -401,7 +408,6 @@ vpMbEdgeTracker::computeVVS()
     
     r = sqrt(num/den); //Le critere d'arret prend en compte le poids
 
-
     if((iter==0)|| compute_interaction)
     {
       for (int i=0 ; i < nerror ; i++)
@@ -411,11 +417,11 @@ vpMbEdgeTracker::computeVVS()
           L[i][j] = w[i]*factor[i]*L[i][j];
         }
       }
-
-      L.pseudoInverse(Lp,1e-6) ;
     }
 
-    v = -lambda*Lp*weighted_error;
+    LTL = L.AtA();
+    computeJTR(L, weighted_error, LTR);
+    v = -lambda*LTL.pseudoInverse()*LTR;
     cMo =  vpExponentialMap::direct(v).inverse() * cMo;
 
     iter++;
@@ -456,7 +462,7 @@ vpMbEdgeTracker::computeVVS()
     }
     Lline.next() ;
   }
-
+  
 //   cout << "\t Robust minimization in " << iter << " iteration " << endl ;
 //    std::cout << "error: " << (residu_1 - r) << std::endl;
 
@@ -539,7 +545,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 
   try
   {
-    computeVVS();
+    computeVVS(I);
   }
   catch(...)
   {
@@ -1643,5 +1649,39 @@ vpMbEdgeTracker::getNbPoints()
     Lline.next();
   }
   return nbGoodPoints;
+}
+
+/*!
+  Compute \f$ J^T R \f$, with J the interaction matrix and R the vector of 
+  residu.
+  
+  \throw vpMatrixException::incorrectMatrixSizeError if the sizes of the 
+  matrices do not allow the computation.
+  
+  \warning The JTR matrix is resized.
+  
+  \param _interaction : The interaction matrix (size Nx6).
+  \param _error : The residu vector (size Nx1).
+  \param _JTR : The resulting JTR matrix (size 6x1).
+  
+*/
+void 
+vpMbEdgeTracker::computeJTR(const vpMatrix& _interaction, const vpColVector& _error, vpMatrix& _JTR)
+{
+  if(_interaction.getRows() != _error.getRows() || _interaction.getCols() != 6 ){
+    throw vpMatrixException(vpMatrixException::incorrectMatrixSizeError, 
+              "Incorrect matrices size in computeJTR.");
+  }
+
+  _JTR.resize(6, 1);
+  const unsigned int N = _interaction.getRows();
+
+  for (unsigned int i = 0; i < 6; i += 1){
+    double ssum = 0;
+    for (unsigned int j = 0; j < N; j += 1){
+      ssum += _interaction[j][i] * _error[j];
+    }
+    _JTR[i][0] = ssum;
+  }
 }
 
