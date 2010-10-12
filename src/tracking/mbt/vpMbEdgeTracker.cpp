@@ -1616,7 +1616,7 @@ vpMbEdgeTracker::resetTracker()
   \param _cMo : the new vpHomogeneousMatrix between the camera and the new model
 */
 void
-vpMbEdgeTracker::reInitModel(vpImage<unsigned char>& I, const char* cad_name, vpHomogeneousMatrix& _cMo)
+vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& _cMo)
 {
   resetTracker();
   loadModel(cad_name);
