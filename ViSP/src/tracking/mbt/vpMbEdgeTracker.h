@@ -154,7 +154,7 @@ class VISP_EXPORT vpMbEdgeTracker
   void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1);
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1);
   void resetTracker();
-  void reInitModel(vpImage<unsigned char>& I, const char* cad_name, vpHomogeneousMatrix& _cMo);
+  void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& _cMo);
   
   /*!
     Enable to display the points along the line with a color corresponding to their state.
