@@ -1685,3 +1685,37 @@ vpMbEdgeTracker::computeJTR(const vpMatrix& _interaction, const vpColVector& _er
   }
 }
 
+
+/*!
+  return the polygon (face) index.
+  
+  \exception vpException::dimensionError if index does not represent a good 
+  polygon.
+  
+  \param _index : Index of the polygon to return.
+  \return Pointer to the polygon index.
+*/
+vpMbtPolygon* 
+vpMbEdgeTracker::getPolygon(const unsigned int _index)
+{
+  if(_index >= static_cast<unsigned int>(faces.getPolygon().nb) ){
+    throw vpException(vpException::dimensionError, "index out of range");
+  }
+  faces.getPolygon().front();
+  for(unsigned int i=0; i<_index; i++){
+    faces.getPolygon().next();
+  }
+  return faces.getPolygon().value();
+}
+
+/*!
+  Get the number of polygon (face) representing the object to track.
+  
+  \return Number of polygon.
+*/
+unsigned int 
+vpMbEdgeTracker::getNbPolygon() 
+{
+  return static_cast<unsigned int>(faces.getPolygon().nb);
+}
+

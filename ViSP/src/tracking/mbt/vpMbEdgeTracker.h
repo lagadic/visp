@@ -186,6 +186,8 @@ class VISP_EXPORT vpMbEdgeTracker
   inline void getMovingEdge(vpMe &_me ) { _me = this->me;}
   
   unsigned int getNbPoints();
+  vpMbtPolygon* getPolygon(const unsigned int _index); 
+  unsigned int getNbPolygon();
 
  protected:
   void computeVVS(const vpImage<unsigned char>& _I);
