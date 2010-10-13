@@ -272,8 +272,8 @@ main(int argc, const char ** argv)
   vpImagePoint ip, ip1, ip2;
 
   // Load a grey image from the disk
-  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-  vpImageIo::readPGM(I, filename) ;
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.png");
+  vpImageIo::read(I, filename) ;
 
   // Create a display using GTK
   vpDisplayGTK display;
@@ -360,7 +360,7 @@ main(int argc, const char ** argv)
 
     // Write the color image on the disk
     filename = odirname +  vpIoTools::path("/Klimt_grey.overlay.ppm");
-    vpImageIo::writePPM(Ioverlay, filename) ;
+    vpImageIo::write(Ioverlay, filename) ;
 
     // If click is allowed, wait for a mouse click to close the display
     if (opt_click_allowed) {
@@ -378,7 +378,7 @@ main(int argc, const char ** argv)
 
   // Load a grey image from the disk and convert it to a color image
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-  vpImageIo::readPGM(Irgba, filename) ;
+  vpImageIo::read(Irgba, filename) ;
 
   // Create a new GTK display
   vpDisplayGTK displayRGBa;
