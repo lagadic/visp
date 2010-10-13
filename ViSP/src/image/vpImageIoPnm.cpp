@@ -1979,7 +1979,13 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
   }
 
   /* read magic number */
-  fread (magic, 1, sizeof (magic), file);
+  if (fread (magic, 1, sizeof (magic), file) != sizeof (magic))
+  {
+    fclose (file);
+    vpERROR_TRACE("couldn't read magic number in file \"%s\"\n", filename) ;
+    throw (vpImageException(vpImageException::ioError,
+			    "error reading pgm file")) ;
+  }
 
   /* check for valid magic number */
   if (png_sig_cmp (magic,0, sizeof (magic)))
@@ -2184,7 +2190,13 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   }
 
   /* read magic number */
-  fread (magic, 1, sizeof (magic), file);
+  if (fread (magic, 1, sizeof (magic), file) != sizeof (magic))
+  {
+    fclose (file);
+    vpERROR_TRACE("couldn't read magic number in file \"%s\"\n", filename) ;
+    throw (vpImageException(vpImageException::ioError,
+			    "error reading pgm file")) ;
+  }
 
   /* check for valid magic number */
   if (png_sig_cmp (magic,0, sizeof (magic)))
