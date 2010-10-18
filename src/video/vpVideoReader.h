@@ -194,6 +194,16 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     bool getFrame(vpImage<unsigned char> &I, unsigned int frame);
     void close(){;}
     
+    /*!
+      Get the current frame index. This index is updated at each call of the 
+      acquire method. It can be used to detect the end of a file (comparison 
+      with getLastFrameIndex()).
+      
+      \return Returns the current frame index.
+    */
+    inline unsigned int getFrameIndex() const { return frameCount;}
+    
+    
   private:
     vpVideoFormatType getFormat(const char *filename);
     void findLastFrameIndex();
