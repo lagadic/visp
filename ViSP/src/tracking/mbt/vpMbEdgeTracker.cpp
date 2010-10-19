@@ -60,6 +60,9 @@
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpMatrixException.h>
 
+#include <visp/vpException.h>
+#include <visp/vpTrackingException.h>
+
 #include <visp/vpMbEdgeTracker.h>
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtXmlParser.h>
@@ -140,6 +143,9 @@ vpMbEdgeTracker::setMovingEdge(vpMe &_me)
 
 /*!
   Compute the visual servoing loop to get the pose of the feature set.
+  
+  \exception vpTrackingException::notEnoughPointError if the number of detected 
+  feature is equal to zero. 
  */
 void
 vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
@@ -173,7 +179,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   if (nbrow==0)
   {
     vpERROR_TRACE("\n\t\t Erreur-> plus de primitive...") ;
-    throw std::string("\n\t\t Erreur-> plus de primitive...");
+    throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Erreur-> plus de primitive...");
   }
   
   vpMatrix L(nbrow,6), Lp;
@@ -470,6 +476,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
 /*!
   Check if the tracking failed.
+  
+  \throw vpTrackingException::fatalError if the test fails. 
 */
 void
 vpMbEdgeTracker::testTracking()
@@ -503,7 +511,7 @@ vpMbEdgeTracker::testTracking()
     std::cout << "nbGoodPoint :" << nbGoodPoint << std::endl;
     std::cout << "nbBadPoint :" << nbBadPoint << std::endl;
     std::cout << "nbExpectedPoint :" << nbExpectedPoint << std::endl;
-    throw  std::string("test Tracking fail");;
+    throw vpTrackingException(vpTrackingException::fatalError, "test Tracking fail");
   }
 }
 
@@ -680,7 +688,7 @@ vpMbEdgeTracker::initClick(const vpImage<unsigned char>& I, const char *filename
     if (finit.fail())
     {
       std::cout << "cannot read " << s << "enter a character to continue" << std::endl;
-      throw std::string("cannot read init file");
+      throw vpException(vpException::ioError, "cannot read init file");
     }
 
     sprintf(s,"%s.ppm",filename);
@@ -1210,7 +1218,7 @@ vpMbEdgeTracker::loadModel(const char* file)
   if(infile.fail() )
   {
     std::cout << "cannot read model file" << file << std::endl;
-    throw std::string("cannot read model file");
+    throw vpException(vpException::ioError, "cannot read model file");
   }
 
   it = str.end();
@@ -1226,7 +1234,7 @@ vpMbEdgeTracker::loadModel(const char* file)
     loadVRMLModel(file);
 #else
     std::cout << "Coin not installed, cannot read VRML files" << std::endl;
-    throw std::string("Coin not installed, cannot read VRML files");
+    throw vpException(vpException::fatalError, "Coin not installed, cannot read VRML files");
 #endif
   }
   
@@ -1273,7 +1281,8 @@ vpMbEdgeTracker::loadCAOModel(std::ifstream &file_id)
   else
   {
     std::cout <<"in mbtCadModel::Load -> Bad parameter header file : use V0, V1, ...";
-    throw;
+    throw vpException(vpException::badValue, 
+      "in mbtCadModel::Load -> Bad parameter header file : use V0, V1, ...");
   }
 
 //   while( (file_id.get(c)!=NULL)&&(c!='\n'));
