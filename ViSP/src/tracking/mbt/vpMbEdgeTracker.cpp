@@ -178,8 +178,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   
   if (nbrow==0)
   {
-    vpERROR_TRACE("\n\t\t Erreur-> plus de primitive...") ;
-    throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Erreur-> plus de primitive...");
+    vpERROR_TRACE("\n\t\t Error-> not enough data in the interaction matrix...") ;
+    throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data in the interaction matrix...");
   }
   
   vpMatrix L(nbrow,6), Lp;
