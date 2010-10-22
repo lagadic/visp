@@ -151,11 +151,9 @@ main()
 
 
     // For the first graphic :
-    // - along the x axis the expected values are between 0 and 200 and 
-    //   the step is 1 
-    // - along the y axis the expected values are between -1.2 and 1.2 and the
-    //   step is 0.1
-    plot.initRange(0,0,200,1,-1.2,1.2,0.1);
+    // - along the x axis the expected values are between 0 and 200 
+    // - along the y axis the expected values are between -1.2 and 1.2 
+    plot.initRange(0, 0., 200., -1.2, 1.2);
     plot.setTitle(0, "Joint behavior");
 
     // For the second graphic :
@@ -163,7 +161,7 @@ main()
     //   the step is 1 
     // - along the y axis the expected values are between 0 and 0.0001 and the
     //   step is 0.00001
-    plot.initRange(1,0,200,1,0,1e-4,1e-5);
+    plot.initRange(1, 0., 200., 0., 1e-4);
     plot.setTitle(1, "Cost function");
 
     // For the first graphic, set the curves legend
