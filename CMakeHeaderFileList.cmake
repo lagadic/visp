@@ -243,6 +243,7 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMeSite.h
   tracking/moving-edges/vpMeTracker.h
   tracking/moving-edges/vpMeNurbs.h
+  tracking/mbt/vpMbTracker.h
   tracking/mbt/vpMbtDistanceLine.h
   tracking/mbt/vpMbtHiddenFace.h
   tracking/mbt/vpMbtMeLine.h

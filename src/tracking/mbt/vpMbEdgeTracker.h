@@ -51,6 +51,7 @@
 
 #include <visp/vpConfig.h>
 
+#include <visp/vpMbTracker.h>
 #include <visp/vpPoint.h>
 #include <visp/vpMe.h>
 #include <visp/vpMbtMeLine.h>
@@ -81,35 +82,37 @@
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
-class VISP_EXPORT vpMbEdgeTracker
+class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
 {
   protected :
-    vpCameraParameters cam ;
-    std::string modelFileName;
     
-    /* If this flag is true, the interaction matrix
+    /*! If this flag is true, the interaction matrix
      extracted from the FeatureSet is computed at each
      iteration in the visual servoing loop.
     */
     int compute_interaction;
+    //! The gain of the virtual visual servoing stage. 
     double lambda;
-    vpHomogeneousMatrix cMo;
     
+    //! The moving edges parameters. 
     vpMe  me;
+    //! List of all the lines tracked (each line is linked to a list of moving edges). 
     vpList<vpMbtDistanceLine *> Lline ;
+    //! Index of the polygon to add, and total number of polygon extracted so far. 
     int nline ;
     
+    //! Index of the polygon to add, and total number of polygon extracted so far. 
     int index_polygon;
+    //! Set of faces describing the object. 
     vpMbtHiddenFaces faces;
+    //! Number of polygon (face) currently visible. 
     int nbvisiblepolygone;
     
-    vpMbtPolygon *caoPolygonPoint;
-    vpMbtPolygon *caoPolygonLine;
-    
+    //! If true, the moving edges are displayed during the track() method. 
     bool displayMe;
     
+    //! Percentage of good points over total number of points below which tracking is supposed to have failed.
     double percentageGdPt;
-   // double percentageTtPt;
   
  public:
   
@@ -123,32 +126,10 @@ class VISP_EXPORT vpMbEdgeTracker
   */
   inline void setLambda(const double lambda) {this->lambda = lambda;}
   
-  /*! 
-    Get the pose of the camera.
-    cMo is the matrix which can be used to express 
-    coordinates from the object frame to camera frame.
-    
-    \param cMo : the vpHomogeneousMatrix used to store the pose.
-  */
-  inline void getPose(vpHomogeneousMatrix &cMo) const {cMo = this->cMo;}
-
-  /*!
-   Get the camera paramters.
-   
-   \param cam : The vpCameraParameters used to store the camera parameters.
- */
-  inline void getCameraParameters(vpCameraParameters &cam) const {cam = this->cam;}
-  
-  /*!
-   Set the camera paramters.
-   \param cam : The camera parameters.
- */
-  inline void setCameraParameters(const vpCameraParameters &cam) {this->cam = cam;}
-  
   void setMovingEdge(vpMe &_me);
+  void loadConfigFile(const std::string& _filename);
   void loadConfigFile(const char* filename);
   void loadModel(const char* cad_name);
-  void initClick(const vpImage<unsigned char>& I, const char *filename, bool displayHelp = false);
   void init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo) ;
   void track(const vpImage<unsigned char> &I);
   void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1);
@@ -174,12 +155,14 @@ class VISP_EXPORT vpMbEdgeTracker
     The condition which has to be be satisfied is the following : \f$ nbGoodPoint > threshold1 \times (nbGoodPoint + nbBadPoint)\f$.
     
     The threshold is ideally between 0 and 1.
+    
+    \param threshold1 : The new value of the threshold. 
   */
   void setFirstThreshold(const double  threshold1) {percentageGdPt = threshold1;}
 
 
   /*!
-    get the moving edge parameters.
+    Get the moving edge parameters.
     
     \return an instance of the moving edge parameters used by the tracker.
   */
@@ -199,17 +182,17 @@ class VISP_EXPORT vpMbEdgeTracker
   void addPolygon(vpMbtPolygon &p) ;
   void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");
   void removeLine(const std::string& name);
-  void loadCAOModel(std::ifstream &file_id);
-  void computeJTR(const vpMatrix& interaction, const vpColVector& error, vpMatrix& JTR);
+  virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
   
-#if defined(VISP_HAVE_COIN)
-  void loadVRMLModel(const char* file_id);
-  void extractFaces(SoVRMLIndexedFaceSet* face_set);
-  void extractLines(SoVRMLIndexedLineSet* line_set);
-#endif  
   void testTracking();
     
  public:
+  /*!
+    Get the list of the lines tracked. Each line contains the list of the 
+    vpMeSite. 
+    
+    \return Pointer to the list of the lines tracked. 
+  */
 	vpList<vpMbtDistanceLine *>* getLline(){ return &(this->Lline);};
 };
 
