@@ -181,13 +181,13 @@ main(int argc, const char ** argv)
 
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, configFile, modelFile, initFile, displayMovingEdge, opt_click_allowed, opt_display) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayMovingEdge, opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
   // Get the option values
   if (!opt_ipath.empty())
-    ipath = opt_ipath;
+    ipath = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube/image%04d.pgm");
   else
     ipath = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube/image%04d.pgm");
   
