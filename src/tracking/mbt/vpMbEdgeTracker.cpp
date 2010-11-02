@@ -968,7 +968,6 @@ vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
   faces.addPolygon(&p) ;
 
   int nbpt = p.getNbPoint() ;
-  if(1){std::cout << "ajout de la ligne" << std::endl;}
   for (int i=0 ; i < nbpt-1 ; i++)
     addLine(p.p[i],p.p[i+1],index_polygon) ;
   addLine(p.p[nbpt-1],p.p[0],index_polygon) ;
