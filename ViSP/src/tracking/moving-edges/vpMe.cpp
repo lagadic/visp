@@ -426,7 +426,10 @@ vpMe::vpMe(vpMe &me)
 const
 vpMe& vpMe::operator=(const vpMe &me)
 {
-  mask = NULL ;
+  if (mask != NULL) {
+    delete [] mask; 
+    mask = NULL ; 
+  }
   threshold = me.threshold ;
   mu1 = me.mu1 ;
   mu2 = me.mu2 ;
