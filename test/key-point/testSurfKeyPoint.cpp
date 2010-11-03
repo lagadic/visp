@@ -367,7 +367,7 @@ main(int argc, const char ** argv)
     }
   }
 
-  exit (0);
+  return (0);
 }
 #else
 int
