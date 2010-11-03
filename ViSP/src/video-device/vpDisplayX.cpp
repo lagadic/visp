@@ -169,11 +169,6 @@ vpDisplayX::vpDisplayX()
   windowXPosition = windowYPosition = -1 ;
 
   title = NULL ;
-  if ( title != NULL )
-  {
-    delete [] title ;
-    title = NULL ;
-  }
   title = new char[1] ;
   strcpy ( title,"" ) ;
 
