@@ -635,6 +635,9 @@ vpMbEdgeTracker::loadConfigFile(const std::string& _filename)
 /*!
   Load the xml configuration file.
   Write the parameters in the corresponding objects (Ecm, camera).
+  
+  \throw vpException::ioError if the file has not been properly parsed (file not
+  found or wrong format for the data). 
 
   \param filename : full name of the xml file.
 */
@@ -644,28 +647,12 @@ vpMbEdgeTracker::loadConfigFile(const char* filename)
 #ifdef VISP_HAVE_XML2
   vpMbtXmlParser xmlp;
 
-  // remove the caracter ->" ( 34 in ascii code)
-  int i=0;
-  int j=0;
-  char str[FILENAME_MAX];
-
-  for(i=0;i<(int)strlen(filename);i++)
-  {
-    while(filename[i]==34)
-      i++;
-    str[j]=filename[i];
-    j++;
-  }
-  str[j]='\0';
-
-//  printf("try to load : %s\n",str);
-
   if(xmlp.Parse(filename)!=vpMbtXmlParser::SEQUENCE_OK)
   {
     vpERROR_TRACE("Can't open XML file \"%s\"\n ",filename);
-    exit(-1);
+    throw vpException(vpException::ioError, "problem to parse configuration file.");
   }
-//  vpTRACE(" ");
+
   vpCameraParameters camera;
   vpMe meParser;
   xmlp.getCameraParameters(camera);
