@@ -578,6 +578,7 @@ vpWireFrameSimulator::~vpWireFrameSimulator()
     if(displayDesiredObject)
       free_Bound_scene (&(this->desiredScene));
   }
+  close_clipping();
   close_display ();
 
   cameraTrajectory.kill();
