@@ -78,7 +78,7 @@
 #include <visp/vpIoTools.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:h"
+#define GETOPTARGS	"cdi:n:h"
 
 /*!
 
@@ -87,15 +87,16 @@
   \param name : Program name.
   \param badparam : Bad parameter name.
   \param ipath : Input image path.
+  \param niter : Number of iterations.
 
 */
-void usage(const char *name, const char *badparam, std::string ipath)
+void usage(const char *name, const char *badparam, std::string ipath, int niter)
 {
   fprintf(stdout, "\n\
 Tracking of Surf key-points.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-c] [-d] [-h]\n", name);
+  %s [-i <input image path>] [-c] [-d] [-n <number of iterations>] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -114,9 +115,12 @@ OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
 \n\
+  -n %%d                                               %d\n\
+     Number of iterations.\n\
+\n\
   -h\n\
      Print the help.\n",
-	  ipath.c_str());
+	  ipath.c_str(), niter);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -130,12 +134,13 @@ OPTIONS:                                               Default\n\
   \param ipath : Input image path.
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
+  \param niter : Number of iterations.
 
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath,
-		bool &click_allowed, bool &display)
+		bool &click_allowed, bool &display, int &niter)
 {
   const char *optarg;
   int	c;
@@ -145,17 +150,18 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
     case 'i': ipath = optarg; break;
-    case 'h': usage(argv[0], NULL, ipath); return false; break;
+    case 'n': niter = atoi(optarg); break;
+    case 'h': usage(argv[0], NULL, ipath, niter); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath);
+      usage(argv[0], optarg, ipath, niter);
       return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath);
+    usage(argv[0], NULL, ipath, niter);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -175,6 +181,7 @@ main(int argc, const char ** argv)
   std::string filename;
   bool opt_click_allowed = true;
   bool opt_display = true;
+  int opt_niter = 400;
   
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -188,8 +195,8 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_click_allowed,
-		 opt_display) == false) {
-    exit (-1);
+		 opt_display, opt_niter) == false) {
+    return (-1);
   }
 
   // Get the option values
@@ -210,7 +217,7 @@ main(int argc, const char ** argv)
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL, ipath);
+    usage(argv[0], NULL, ipath, opt_niter);
     std::cerr << std::endl
 	 << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -287,6 +294,7 @@ main(int argc, const char ** argv)
     vpDisplay::flush(I);
   }
   if (opt_display && opt_click_allowed) {
+    std::cout << "Click in the image to continue..." << std::endl;
     vpDisplay::getClick(I) ;
   }
 #endif
@@ -311,6 +319,7 @@ main(int argc, const char ** argv)
     vpDisplay::flush(I) ;
   }
   if (opt_display && opt_click_allowed) {
+    std::cout << "Click in the image to continue..." << std::endl;
     vpDisplay::getClick(I) ;
   }
 #endif  
@@ -332,7 +341,7 @@ main(int argc, const char ** argv)
   #endif
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
   if (opt_display) {
-    d1.init(Idiff, 680, 10, "photometric visual servoing : s-s* ") ;
+    d1.init(Idiff, 40+I.getWidth(), 10, "photometric visual servoing : s-s* ") ;
     vpDisplay::display(Idiff) ;
     vpDisplay::flush(Idiff) ;
   }
@@ -484,7 +493,7 @@ main(int argc, const char ** argv)
       robot.getPosition(cMo) ;
 
     }
-  while(normeError > 10000);
+  while(normeError > 10000 && iter < opt_niter);
 
 
   v = 0 ;
