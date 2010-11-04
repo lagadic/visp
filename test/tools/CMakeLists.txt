@@ -43,21 +43,8 @@
 #
 # If you add/remove a directory, modify here
 SET (SRC_SUBDIRS
-  camera
-  feature
-  framegrabber
-  homography
-  image
-  key-point
-  math
-  pose
-  servo-afma4
-  servo-afma6
-  servo-viper
-  tools
-  tracking
-  video-device
-  visual-feature
+  time
+  xml
 )
 
 # Build process propagation in the sub directories
